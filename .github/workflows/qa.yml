@@ -4,10 +4,11 @@ on:
   push:
     branches: [main]
     paths:
-      - 'db/**'
-      - 'supabase/**'
-      - 'RUN_QA.ps1'
-      - 'RUN_LOCAL.ps1'
+      - "db/**"
+      - "supabase/**"
+      - "RUN_QA.ps1"
+      - "RUN_LOCAL.ps1"
+      - ".github/workflows/**"
   pull_request:
     branches: [main]
 
