@@ -190,47 +190,16 @@ if ($failCount -gt 0) {
 # ─── QA Checks (optional) ──────────────────────────────────────────────────────────
 
 if ($RunQA) {
-    $qaFile = Join-Path $PSScriptRoot "db" "qa" "QA__null_checks.sql"
-    if (-not (Test-Path $qaFile)) {
-        Write-Host "WARNING: QA file not found: $qaFile" -ForegroundColor Yellow
+    $qaScript = Join-Path $PSScriptRoot "RUN_QA.ps1"
+    if (-not (Test-Path $qaScript)) {
+        Write-Host "WARNING: RUN_QA.ps1 not found: $qaScript" -ForegroundColor Yellow
     }
     else {
         Write-Host ""
-        Write-Host "================================================" -ForegroundColor Cyan
-        Write-Host "  Running QA Checks" -ForegroundColor Cyan
-        Write-Host "================================================" -ForegroundColor Cyan
-        Write-Host ""
-
-        $qaContent = Get-Content $qaFile -Raw
-
-        # Run violation checks (queries 1-11) with --tuples-only to detect issues
-        # Strip the final summary query (query 12) before checking for violations
-        $checksOnly = ($qaContent -split '-- 12\. Summary counts')[0]
-        $qaChecksOutput = $checksOnly | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
-
+        & $qaScript
         if ($LASTEXITCODE -ne 0) {
-            Write-Host "ERROR: QA script failed to execute." -ForegroundColor Red
-            Write-Host "  $qaChecksOutput" -ForegroundColor DarkRed
+            exit 1
         }
-        else {
-            $violationLines = ($qaChecksOutput | Out-String).Trim()
-            if ($violationLines -eq "" -or $violationLines -match '^\s*$') {
-                Write-Host "  All QA checks passed (11/11 — zero violation rows)." -ForegroundColor Green
-            }
-            else {
-                Write-Host $violationLines
-                Write-Host ""
-                Write-Host "  Review the rows above — they indicate data quality issues." -ForegroundColor Yellow
-            }
-
-            # Run summary query separately for informational output
-            $summaryQuery = "SELECT (SELECT COUNT(*) FROM products) AS total_products, (SELECT COUNT(*) FROM products WHERE is_deprecated = true) AS deprecated, (SELECT COUNT(*) FROM servings) AS servings, (SELECT COUNT(*) FROM nutrition_facts) AS nutrition, (SELECT COUNT(*) FROM scores) AS scores, (SELECT COUNT(*) FROM ingredients) AS ingredients;"
-            $summaryOutput = echo $summaryQuery | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME 2>&1
-            Write-Host ""
-            Write-Host "  Database inventory:" -ForegroundColor Cyan
-            Write-Host ($summaryOutput | Out-String).Trim() -ForegroundColor DarkGray
-        }
-        Write-Host ""
     }
 }
 

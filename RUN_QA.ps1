@@ -5,7 +5,7 @@
 .DESCRIPTION
     Executes:
         1. QA__null_checks.sql (11 data integrity checks)
-        2. QA__scoring_formula_tests.sql (12 algorithm validation checks)
+        2. QA__scoring_formula_tests.sql (14 algorithm validation checks)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
 
@@ -71,7 +71,7 @@ if (-not (Test-Path $test2File)) {
 }
 
 Write-Host ""
-Write-Host "Running Test Suite 2: Scoring Formula (12 checks)..." -ForegroundColor Yellow
+Write-Host "Running Test Suite 2: Scoring Formula (14 checks)..." -ForegroundColor Yellow
 
 $test2Content = Get-Content $test2File -Raw
 $test2Output = $test2Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
@@ -84,7 +84,7 @@ if ($LASTEXITCODE -ne 0) {
 
 $test2Lines = ($test2Output | Out-String).Trim()
 if ($test2Lines -eq "" -or $test2Lines -match '^\s*$') {
-    Write-Host "  ✓ PASS (12/12 — zero violations)" -ForegroundColor Green
+    Write-Host "  ✓ PASS (14/14 — zero violations)" -ForegroundColor Green
     $test2Pass = $true
 }
 else {
@@ -119,7 +119,7 @@ Write-Host "  Test Summary" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 
 if ($test1Pass -and $test2Pass) {
-    Write-Host "  ✓ ALL TESTS PASSED (23/23 checks)" -ForegroundColor Green
+    Write-Host "  ✓ ALL TESTS PASSED (25/25 checks)" -ForegroundColor Green
     Write-Host ""
     exit 0
 }

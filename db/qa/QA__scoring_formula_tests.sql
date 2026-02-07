@@ -212,3 +212,31 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'Naleśniki z jabłkami i cynamonem'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 15 AND 19;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 13: Known product regression test (Melvit Płatki Owsiane Górskie)
+--          Unprocessed whole oats (NOVA 1), near-zero bad nutrients → score 9-13
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Melvit Owsiane score changed unexpectedly' AS issue,
+       CONCAT('Expected 9-13, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Melvit Płatki Owsiane Górskie'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 9 AND 13;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 14: Known product regression test (Coca-Cola Zero)
+--          Zero sugar/fat but 5 additives → score 6-10
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Coca-Cola Zero score changed unexpectedly' AS issue,
+       CONCAT('Expected 6-10, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Coca-Cola Zero'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 6 AND 10;
