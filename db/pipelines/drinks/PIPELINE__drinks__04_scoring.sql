@@ -61,22 +61,16 @@ where i.product_id = p.product_id;
 -- ═════════════════════════════════════════════════════════════════════════
 
 update scores sc set
-  unhealthiness_score = GREATEST(1, LEAST(100, round(
-      LEAST(100, COALESCE(nf.saturated_fat_g::numeric, 0) / 10.0 * 100) * 0.18 +
-      LEAST(100, COALESCE(nf.sugars_g::numeric, 0)        / 27.0 * 100) * 0.18 +
-      LEAST(100, COALESCE(nf.salt_g::numeric, 0)           / 3.0  * 100) * 0.18 +
-      LEAST(100, COALESCE(nf.calories::numeric, 0)         / 600.0 * 100) * 0.10 +
-      LEAST(100, COALESCE(nf.trans_fat_g::numeric, 0)      / 2.0  * 100) * 0.12 +
-      LEAST(100, COALESCE(i.additives_count::numeric, 0)   / 10.0 * 100) * 0.07 +
-      (CASE p.prep_method
-         WHEN 'air-popped' THEN 20 WHEN 'baked' THEN 40
-         WHEN 'fried' THEN 80 WHEN 'deep-fried' THEN 100 ELSE 50
-       END) * 0.09 +
-      (CASE p.controversies
-         WHEN 'none' THEN 0 WHEN 'minor' THEN 30
-         WHEN 'moderate' THEN 60 WHEN 'serious' THEN 100 ELSE 0
-       END) * 0.08
-  )))::text,
+  unhealthiness_score = compute_unhealthiness_v31(
+      nf.saturated_fat_g::numeric,
+      nf.sugars_g::numeric,
+      nf.salt_g::numeric,
+      nf.calories::numeric,
+      nf.trans_fat_g::numeric,
+      i.additives_count::numeric,
+      p.prep_method,
+      p.controversies
+  )::text,
   scored_at       = CURRENT_DATE,
   scoring_version = 'v3.1'
 from products p

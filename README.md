@@ -117,6 +117,8 @@ Run tests after **every** schema change or data update.
 
 ### v3.1 Formula (8 factors)
 
+Implemented as a reusable PostgreSQL function `compute_unhealthiness_v31()` — all category pipelines call this single function.
+
 ```
 unhealthiness_score =
   sat_fat(0.18) + sugars(0.18) + salt(0.18) + calories(0.10) +

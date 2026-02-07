@@ -35,7 +35,8 @@ poland-food-db/
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
-│       └── 20260207000400_remove_unused_columns.sql
+│       ├── 20260207000400_remove_unused_columns.sql
+│       └── 20260207000500_scoring_function.sql  # compute_unhealthiness_v31() function
 ├── db/                              # Operational SQL (NOT migrations)
 │   ├── migrations/                  # ⚠️ LEGACY — do NOT run these (see below)
 │   ├── pipelines/                   # Data pipelines, one folder per category
@@ -46,7 +47,7 @@ poland-food-db/
 │   ├── views/                       # SQL views
 │   └── qa/                          # Quality-assurance queries
 │       ├── QA__null_checks.sql      # 11 data integrity checks
-│       └── QA__scoring_formula_tests.sql  # 12 scoring formula validation checks
+│       └── QA__scoring_formula_tests.sql  # 14 scoring formula validation checks
 ├── .env.example                     # Template for environment variables
 ├── .gitignore                       # Git exclusion rules
 ├── copilot-instructions.md          # THIS FILE
@@ -276,9 +277,17 @@ Supabase Studio is available at `http://127.0.0.1:54323` for visual inspection.
 2. Copy the `chips` pipeline files as templates.
 3. Rename files: `PIPELINE__<category>__01_insert_products.sql`, etc.
 4. Update all `WHERE` clauses to filter by the new category name.
-5. Add the new category folder to `RUN_LOCAL.ps1` and `RUN_REMOTE.ps1`.
-6. Ensure all inserts use `country = 'PL'` and `category = '<new_category>'`.
-7. Test locally before any remote push.
+5. **Scoring:** Use `compute_unhealthiness_v31()` function (migration 000500) — do NOT inline the formula. Example:
+   ```sql
+   unhealthiness_score = compute_unhealthiness_v31(
+       nf.saturated_fat_g::numeric, nf.sugars_g::numeric, nf.salt_g::numeric,
+       nf.calories::numeric, nf.trans_fat_g::numeric, i.additives_count::numeric,
+       p.prep_method, p.controversies
+   )::text
+   ```
+6. Add the new category folder to `RUN_LOCAL.ps1` and `RUN_REMOTE.ps1`.
+7. Ensure all inserts use `country = 'PL'` and `category = '<new_category>'`.
+8. Test locally before any remote push.
 
 ---
 

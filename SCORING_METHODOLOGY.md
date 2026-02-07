@@ -89,27 +89,38 @@ CASE
 END
 ```
 
-### 2.4 Reference SQL Implementation
+### 2.4 PostgreSQL Function
+
+The scoring formula is implemented as a reusable PostgreSQL function, defined in migration `20260207000500_scoring_function.sql`. All 4 category pipelines call this single function — changing weights or ceilings for a future v3.2 requires editing only one place.
 
 ```sql
--- Pseudocode for scoring pipeline (per-product UPDATE)
+-- Function signature (returns INTEGER [1, 100])
+compute_unhealthiness_v31(
+    p_saturated_fat_g NUMERIC,    -- ceiling: 10g
+    p_sugars_g        NUMERIC,    -- ceiling: 27g
+    p_salt_g          NUMERIC,    -- ceiling: 3g
+    p_calories        NUMERIC,    -- ceiling: 600 kcal
+    p_trans_fat_g     NUMERIC,    -- ceiling: 2g
+    p_additives_count NUMERIC,    -- ceiling: 10
+    p_prep_method     TEXT,       -- categorical
+    p_controversies   TEXT        -- categorical
+)
+```
+
+**Pipeline usage** (each category's `04_scoring.sql`):
+
+```sql
 UPDATE scores sc SET
-  unhealthiness_score = GREATEST(1, LEAST(100, round(
-      LEAST(100, COALESCE(nf.saturated_fat_g::numeric, 0) / 10.0 * 100) * 0.18 +
-      LEAST(100, COALESCE(nf.sugars_g::numeric, 0)        / 27.0 * 100) * 0.18 +
-      LEAST(100, COALESCE(nf.salt_g::numeric, 0)           / 3.0  * 100) * 0.18 +
-      LEAST(100, COALESCE(nf.calories::numeric, 0)         / 600.0 * 100) * 0.10 +
-      LEAST(100, COALESCE(nf.trans_fat_g::numeric, 0)      / 2.0  * 100) * 0.12 +
-      LEAST(100, COALESCE(i.additives_count::numeric, 0)   / 10.0 * 100) * 0.07 +
-      (CASE p.prep_method
-         WHEN 'air-popped' THEN 20 WHEN 'baked' THEN 40
-         WHEN 'fried' THEN 80 WHEN 'deep-fried' THEN 100 ELSE 50
-       END) * 0.09 +
-      (CASE p.controversies
-         WHEN 'none' THEN 0 WHEN 'minor' THEN 30
-         WHEN 'moderate' THEN 60 WHEN 'serious' THEN 100 ELSE 0
-       END) * 0.08
-  )))::text,
+  unhealthiness_score = compute_unhealthiness_v31(
+      nf.saturated_fat_g::numeric,
+      nf.sugars_g::numeric,
+      nf.salt_g::numeric,
+      nf.calories::numeric,
+      nf.trans_fat_g::numeric,
+      i.additives_count::numeric,
+      p.prep_method,
+      p.controversies
+  )::text,
   scored_at = CURRENT_DATE,
   scoring_version = 'v3.1'
 FROM products p
@@ -119,10 +130,6 @@ LEFT JOIN ingredients i ON i.product_id = p.product_id
 WHERE p.product_id = sc.product_id
   AND p.country = 'PL' AND p.category = '<CATEGORY>';
 ```
-
-> **Note:** The current chips pipeline (v2.2) uses hardcoded case-when scores as interim placeholders.
-> As label-level nutrition data is populated per SKU, pipelines should migrate to the formula above.
-> When a pipeline adopts the formula, bump `scoring_version` to `v3.1`.
 
 ### 2.5 `scored_at` Timestamp
 
@@ -417,4 +424,4 @@ See `DATA_SOURCES.md` §5 and `RESEARCH_WORKFLOW.md` §6.4 for the full confiden
 | v2.2    | 2026-02-07 | Added personal lenses, data completeness, confidence                                                                                                                                                                                                                                                       |
 | v2.3    | 2026-02-07 | Added formula, Nutri-Score thresholds, flag SQL, healthiness_score def, scored_at, nova_classification mapping                                                                                                                                                                                             |
 | v3.0    | 2026-02-07 | Scientific justification for all thresholds, trace value parsing, data_completeness formula, weight rationale, energy cross-check, version bump                                                                                                                                                            |
-| v3.1    | 2026-02-07 | Removed healthiness_score (derivable), personal lenses (unimplemented), ingredient_complexity scoring factor (redundant with additives + NOVA). Dropped cholesterol_mg, potassium_mg, aluminium_based_additives columns. Redistributed 0.04 weight to additives (0.05→0.07) and controversies (0.06→0.08). |
+| v3.1    | 2026-02-07 | Removed healthiness_score (derivable), personal lenses (unimplemented), ingredient_complexity scoring factor (redundant with additives + NOVA). Dropped cholesterol_mg, potassium_mg, aluminium_based_additives columns. Redistributed 0.04 weight to additives (0.05→0.07) and controversies (0.06→0.08). Extracted formula into `compute_unhealthiness_v31()` PostgreSQL function (migration 000500); all 4 category pipelines now call the function instead of inline SQL. |
