@@ -9,7 +9,7 @@ The **easiest way** to browse your tables visually:
 1. **Open Studio**: http://127.0.0.1:54323
 2. **Navigate**: Click **"Table Editor"** in left sidebar
 3. **Explore tables**:
-   - `products` — 64 active products across chips, żabka, cereals & drinks
+   - `products` — 80 active products across chips, żabka, cereals, drinks & dairy
    - `nutrition_facts` — nutritional data per 100g
    - `scores` — unhealthiness scores, flags, Nutri-Score, NOVA
    - `ingredients` — additives count
@@ -40,6 +40,9 @@ echo "SELECT * FROM v_master WHERE category='Cereals' ORDER BY unhealthiness_sco
 # View all drinks
 echo "SELECT * FROM v_master WHERE category='Drinks' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres -x
 
+# View all dairy
+echo "SELECT * FROM v_master WHERE category='Dairy' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres -x
+
 # Count by category
 echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GROUP BY category;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
 ```
@@ -59,7 +62,7 @@ Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food
 
 ---
 
-### 2. **Scoring Formula Tests** (12 checks)
+### 2. **Scoring Formula Tests** (15 checks)
 Validates v3.1 algorithm correctness, flag logic, NOVA consistency, regression checks:
 
 ```powershell
@@ -82,9 +85,9 @@ Run all pipelines + both QA suites automatically:
 ================================================
   Execution Summary
 ================================================
-  Succeeded:  17
+  Succeeded:  21
   Failed:     0
-  Duration:   1.5s
+  Duration:   2.2s
 
 ================================================
   Running QA Checks
@@ -94,7 +97,7 @@ Run all pipelines + both QA suites automatically:
   Database inventory:
   total_products | deprecated | servings | nutrition | scores | ingredients
 ----------------+------------+----------+-----------+--------+-------------
-              64 |         17 |       64 |        64 |     64 |          64
+              80 |         17 |       80 |        80 |     80 |          80
 ```
 
 ---
@@ -109,8 +112,8 @@ Runs both test suites with color-coded output:
 **Expected output**:
 ```
 ✓ PASS (11/11 — zero violations)
-✓ PASS (14/14 — zero violations)
-ALL TESTS PASSED (25/25 checks)
+✓ PASS (15/15 — zero violations)
+ALL TESTS PASSED (26/26 checks)
 ```
 
 ---

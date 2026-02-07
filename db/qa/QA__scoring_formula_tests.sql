@@ -240,3 +240,17 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'Coca-Cola Zero'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 6 AND 10;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 15: Known product regression test (Piątnica Skyr Naturalny)
+--          Fat-free high-protein dairy (NOVA 1), zero additives → score 7-11
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Skyr Naturalny score changed unexpectedly' AS issue,
+       CONCAT('Expected 7-11, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Piątnica Skyr Naturalny'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 7 AND 11;

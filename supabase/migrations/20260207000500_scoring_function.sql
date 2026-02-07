@@ -1,7 +1,7 @@
 -- Migration: Create reusable scoring function
 -- Date: 2026-02-07
 -- Purpose: DRY up the v3.1 unhealthiness formula into a single PostgreSQL function.
---          All 4 category pipelines now call compute_unhealthiness_v31() instead of
+--          All 5 category pipelines now call compute_unhealthiness_v31() instead of
 --          each duplicating ~15 lines of identical scoring SQL.
 --          Changing weights or ceilings in a future v3.2 only requires editing this function.
 
