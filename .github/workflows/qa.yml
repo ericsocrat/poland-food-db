@@ -1,0 +1,129 @@
+name: QA Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'db/**'
+      - 'supabase/**'
+      - 'RUN_QA.ps1'
+      - 'RUN_LOCAL.ps1'
+  pull_request:
+    branches: [main]
+
+jobs:
+  qa:
+    name: Pipeline + QA (25 checks)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 54322:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Apply schema migrations
+        env:
+          PGHOST: localhost
+          PGPORT: 54322
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: postgres
+        run: |
+          for f in supabase/migrations/*.sql; do
+            echo "Applying: $f"
+            psql -f "$f"
+          done
+
+      - name: Run pipelines
+        env:
+          PGHOST: localhost
+          PGPORT: 54322
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: postgres
+        run: |
+          # Execute pipelines in alphabetical category order, files sorted by name
+          for category in db/pipelines/*/; do
+            cat_name=$(basename "$category")
+            for f in $(ls "$category"PIPELINE__*.sql 2>/dev/null | sort); do
+              echo "  RUN  $f"
+              psql -f "$f"
+              if [ $? -ne 0 ]; then
+                echo "FAILED: $f"
+                exit 1
+              fi
+            done
+          done
+
+      - name: Run QA — Data Integrity (11 checks)
+        env:
+          PGHOST: localhost
+          PGPORT: 54322
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: postgres
+        run: |
+          # Strip summary query, run checks only
+          checks=$(sed '/-- 12\. Summary counts/,$d' db/qa/QA__null_checks.sql)
+          result=$(echo "$checks" | psql --tuples-only 2>&1)
+          trimmed=$(echo "$result" | sed '/^\s*$/d')
+          if [ -z "$trimmed" ]; then
+            echo "✓ PASS (11/11 — zero violations)"
+          else
+            echo "✗ FAILED — violations detected:"
+            echo "$result"
+            exit 1
+          fi
+
+      - name: Run QA — Scoring Formula (14 checks)
+        env:
+          PGHOST: localhost
+          PGPORT: 54322
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: postgres
+        run: |
+          result=$(psql --tuples-only -f db/qa/QA__scoring_formula_tests.sql 2>&1)
+          trimmed=$(echo "$result" | sed '/^\s*$/d')
+          if [ -z "$trimmed" ]; then
+            echo "✓ PASS (14/14 — zero violations)"
+          else
+            echo "✗ FAILED — violations detected:"
+            echo "$result"
+            exit 1
+          fi
+
+      - name: Database inventory
+        env:
+          PGHOST: localhost
+          PGPORT: 54322
+          PGUSER: postgres
+          PGPASSWORD: postgres
+          PGDATABASE: postgres
+        run: |
+          psql -c "
+            SELECT
+              (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE) AS active_products,
+              (SELECT COUNT(*) FROM products WHERE is_deprecated = true) AS deprecated,
+              (SELECT COUNT(*) FROM nutrition_facts) AS nutrition_rows,
+              (SELECT COUNT(*) FROM scores) AS scores_rows,
+              (SELECT COUNT(DISTINCT category) FROM products WHERE is_deprecated IS NOT TRUE) AS categories,
+              (SELECT STRING_AGG(DISTINCT category, ', ' ORDER BY category)
+               FROM products WHERE is_deprecated IS NOT TRUE) AS category_list;
+          "
+          echo "✓ ALL TESTS PASSED (25/25 checks)"

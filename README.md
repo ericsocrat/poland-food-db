@@ -27,7 +27,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (23 checks)
+# All tests (25 checks)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -47,11 +47,11 @@ supabase start
 | **Cereals** | 16       | 7 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella)                     | 11–49       |
 | **Drinks**  | 16       | 10 (Coca-Cola, Pepsi, Fanta, Tymbark, Hortex, Tiger, 4Move, Cappy, Dawtona, Mlekovita) | 8–19        |
 
-**Test Coverage**: 23 automated checks
+**Test Coverage**: 25 automated checks
 - 11 data integrity checks (nulls, foreign keys, duplicates)
-- 12 scoring formula validation checks (ranges, flags, NOVA, regression)
+- 14 scoring formula validation checks (ranges, flags, NOVA, regression)
 
-**All tests passing**: ✅ 23/23
+**All tests passing**: ✅ 25/25
 
 ---
 
@@ -84,7 +84,7 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **23 automated checks**:
+Every change is validated against **25 automated checks**:
 
 ### Data Integrity (11 checks)
 - No missing required fields
@@ -95,7 +95,7 @@ Every change is validated against **23 automated checks**:
 - All active products have scores
 - All active products have ingredient rows
 
-### Scoring Formula (12 checks)
+### Scoring Formula (14 checks)
 - Scores in valid range [1, 100]
 - Clean products score ≤ 20
 - Maximum unhealthy products score high
@@ -154,7 +154,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 23/23 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 25/25 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---

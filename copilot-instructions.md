@@ -55,7 +55,7 @@ poland-food-db/
 ├── RESEARCH_WORKFLOW.md             # Step-by-step research & data collection process
 ├── COUNTRY_EXPANSION_GUIDE.md       # Future multi-country rules
 ├── RUN_LOCAL.ps1                    # Run all pipelines on local DB
-├── RUN_QA.ps1                      # Standalone QA test runner (23 checks)
+├── RUN_QA.ps1                      # Standalone QA test runner (25 checks)
 ├── RUN_REMOTE.ps1                   # Run all pipelines on remote DB (with confirmation)
 ├── README.md                        # Project overview
 ├── VIEWING_AND_TESTING.md           # Guide for viewing data & running tests
@@ -221,12 +221,12 @@ ON CONFLICT (source_id) DO NOTHING;
 
 ### Test Suite
 
-The project has 23 automated checks split into two SQL files:
+The project has 25 automated checks split into two SQL files:
 
 | File                            | Checks | Purpose                                                  |
 | ------------------------------- | ------ | -------------------------------------------------------- |
 | `QA__null_checks.sql`           | 11     | Data integrity — nulls, orphans, missing scores          |
-| `QA__scoring_formula_tests.sql` | 12     | Scoring formula validation — deterministic recomputation |
+| `QA__scoring_formula_tests.sql` | 14     | Scoring formula validation — deterministic recomputation |
 
 ### Running Tests
 
@@ -240,7 +240,7 @@ The project has 23 automated checks split into two SQL files:
 
 ### Test Expectations
 
-- All 23 checks must return **0 violations** (PASS).
+- All 25 checks must return **0 violations** (PASS).
 - After adding a new category, run `.\RUN_QA.ps1` to verify.
 - Formula tests recompute scores from raw nutrition and compare against stored values.
 

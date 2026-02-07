@@ -109,8 +109,8 @@ Runs both test suites with color-coded output:
 **Expected output**:
 ```
 ✓ PASS (11/11 — zero violations)
-✓ PASS (12/12 — zero violations)
-ALL TESTS PASSED (23/23 checks)
+✓ PASS (14/14 — zero violations)
+ALL TESTS PASSED (25/25 checks)
 ```
 
 ---
