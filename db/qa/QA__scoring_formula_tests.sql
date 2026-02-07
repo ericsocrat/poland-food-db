@@ -295,3 +295,16 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'Prince Polo XXL Classic'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 52 AND 56;
+
+-- Test 19: Known product regression test (Knorr Nudle Pomidorowe Pikantne)
+--          Instant noodle with 6 additives + palm oil → score 19-23
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Knorr Nudle Pomidorowe score changed unexpectedly' AS issue,
+       CONCAT('Expected 19-23, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Knorr Nudle Pomidorowe Pikantne'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 19 AND 23;
