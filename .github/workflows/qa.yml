@@ -14,7 +14,7 @@ on:
 
 jobs:
   qa:
-    name: Pipeline + QA (28 checks)
+    name: Pipeline + QA (29 checks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -91,7 +91,7 @@ jobs:
             exit 1
           fi
 
-      - name: Run QA — Scoring Formula (17 checks)
+      - name: Run QA — Scoring Formula (18 checks)
         env:
           PGHOST: localhost
           PGPORT: 54322
@@ -102,7 +102,7 @@ jobs:
           result=$(psql --tuples-only -f db/qa/QA__scoring_formula_tests.sql 2>&1)
           trimmed=$(echo "$result" | sed '/^\s*$/d')
           if [ -z "$trimmed" ]; then
-            echo "✓ PASS (17/17 — zero violations)"
+            echo "✓ PASS (18/18 — zero violations)"
           else
             echo "✗ FAILED — violations detected:"
             echo "$result"
@@ -127,4 +127,4 @@ jobs:
               (SELECT STRING_AGG(DISTINCT category, ', ' ORDER BY category)
                FROM products WHERE is_deprecated IS NOT TRUE) AS category_list;
           "
-          echo "✓ ALL TESTS PASSED (28/28 checks)"
+          echo "✓ ALL TESTS PASSED (29/29 checks)"

@@ -27,7 +27,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (28 checks)
+# All tests (29 checks)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 132 active products across 7 categories
+**Database**: 160 active products across 8 categories
 
 | Category    | Products | Brands                                                                                 | Score Range |
 | ----------- | -------- | -------------------------------------------------------------------------------------- | ----------- |
@@ -49,12 +49,13 @@ supabase start
 | **Dairy**   | 16       | 7 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio)                | 9–33        |
 | **Bread**   | 26       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)      | 15–30       |
 | **Meat**    | 26       | 8 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol)     | 21–56       |
+| **Sweets**  | 28       |                                                                                        | 32–55       |
 
-**Test Coverage**: 28 automated checks
+**Test Coverage**: 29 automated checks
 - 11 data integrity checks (nulls, foreign keys, duplicates)
-- 17 scoring formula validation checks (ranges, flags, NOVA, regression)
+- 18 scoring formula validation checks (ranges, flags, NOVA, regression)
 
-**All tests passing**: ✅ 28/28
+**All tests passing**: ✅ 29/29
 
 ---
 
@@ -71,10 +72,11 @@ poland-food-db/
 │   │   ├── dairy/           # 16 dairy products (4 SQL files)
 │   │   ├── drinks/          # 16 beverage products (4 SQL files)
 │   │   ├── meat/            # 26 meat & deli products (4 SQL files)
+│   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 16 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites
 │   │   ├── QA__null_checks.sql           # 11 integrity checks
-│   │   └── QA__scoring_formula_tests.sql # 17 algorithm tests
+│   │   └── QA__scoring_formula_tests.sql # 18 algorithm tests
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql
 ├── supabase/
@@ -90,7 +92,7 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **28 automated checks**:
+Every change is validated against **29 automated checks**:
 
 ### Data Integrity (11 checks)
 - No missing required fields
@@ -101,7 +103,7 @@ Every change is validated against **28 automated checks**:
 - All active products have scores
 - All active products have ingredient rows
 
-### Scoring Formula (17 checks)
+### Scoring Formula (18 checks)
 - Scores in valid range [1, 100]
 - Clean products score ≤ 20
 - Maximum unhealthy products score high
@@ -165,7 +167,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\.RUN_QA.ps1` (should be 28/28 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 29/29 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -176,7 +178,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data sourced from Open Food Facts** — EANs verified against Polish market
 - **Scoring version**: v3.1 (2026-02-07)
-- **132 active products**, 17 deprecated (removed from pipelines but kept in DB)
+- **160 active products**, 17 deprecated (removed from pipelines but kept in DB)
 
 ---
 

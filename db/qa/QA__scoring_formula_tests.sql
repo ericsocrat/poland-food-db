@@ -282,3 +282,16 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'Tarczyński Kabanosy Klasyczne'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 53 AND 57;
+
+-- Test 18: Known product regression test (Prince Polo XXL Classic)
+--          Iconic Polish wafer bar: palm oil controversy + 4 additives → score 52-56
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Prince Polo XXL Classic score changed unexpectedly' AS issue,
+       CONCAT('Expected 52-56, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Prince Polo XXL Classic'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 52 AND 56;
