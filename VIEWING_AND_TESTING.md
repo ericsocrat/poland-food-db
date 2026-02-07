@@ -9,7 +9,7 @@ The **easiest way** to browse your tables visually:
 1. **Open Studio**: http://127.0.0.1:54323
 2. **Navigate**: Click **"Table Editor"** in left sidebar
 3. **Explore tables**:
-   - `products` — 80 active products across chips, żabka, cereals, drinks & dairy
+   - `products` — 132 active products across chips, żabka, cereals, drinks, dairy, bread & meat
    - `nutrition_facts` — nutritional data per 100g
    - `scores` — unhealthiness scores, flags, Nutri-Score, NOVA
    - `ingredients` — additives count
@@ -62,7 +62,7 @@ Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food
 
 ---
 
-### 2. **Scoring Formula Tests** (15 checks)
+### 2. **Scoring Formula Tests** (17 checks)
 Validates v3.1 algorithm correctness, flag logic, NOVA consistency, regression checks:
 
 ```powershell
@@ -112,8 +112,8 @@ Runs both test suites with color-coded output:
 **Expected output**:
 ```
 ✓ PASS (11/11 — zero violations)
-✓ PASS (15/15 — zero violations)
-ALL TESTS PASSED (26/26 checks)
+✓ PASS (17/17 — zero violations)
+ALL TESTS PASSED (28/28 checks)
 ```
 
 ---

@@ -254,3 +254,31 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'Piątnica Skyr Naturalny'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 7 AND 11;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 16: Known product regression test (Mestemacher Pumpernikiel)
+--          Traditional German pumpernickel — low fat, low sugar, baked → score 15-19
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Mestemacher Pumpernikiel score changed unexpectedly' AS issue,
+       CONCAT('Expected 15-19, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Mestemacher Pumpernikiel'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 15 AND 19;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 17: Known product regression test (Tarczyński Kabanosy Klasyczne)
+--          High-fat, high-salt cured meat (IARC moderate) → score 53-57
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Kabanosy Klasyczne score changed unexpectedly' AS issue,
+       CONCAT('Expected 53-57, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Tarczyński Kabanosy Klasyczne'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 53 AND 57;

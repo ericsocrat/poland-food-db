@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-02-08
 > **Scope:** Poland (country code `PL`) only. No other countries are active.
-> **Active categories:** Chips (16), Żabka (16), Cereals (16), Drinks (16), Dairy (16) — 80 products
+> **Active categories:** Chips (16), Żabka (16), Cereals (16), Drinks (16), Dairy (16), Bread (26), Meat (26) — 132 products
 > **Scoring version:** v3.1 (8-factor weighted formula)
 
 ---
@@ -48,7 +48,7 @@ poland-food-db/
 │   ├── views/                       # SQL views
 │   └── qa/                          # Quality-assurance queries
 │       ├── QA__null_checks.sql      # 11 data integrity checks
-│       └── QA__scoring_formula_tests.sql  # 15 scoring formula validation checks
+│       └── QA__scoring_formula_tests.sql  # 17 scoring formula validation checks
 ├── .env.example                     # Template for environment variables
 ├── .gitignore                       # Git exclusion rules
 ├── copilot-instructions.md          # THIS FILE
@@ -57,7 +57,7 @@ poland-food-db/
 ├── RESEARCH_WORKFLOW.md             # Step-by-step research & data collection process
 ├── COUNTRY_EXPANSION_GUIDE.md       # Future multi-country rules
 ├── RUN_LOCAL.ps1                    # Run all pipelines on local DB
-├── RUN_QA.ps1                      # Standalone QA test runner (26 checks)
+├── RUN_QA.ps1                      # Standalone QA test runner (28 checks)
 ├── RUN_REMOTE.ps1                   # Run all pipelines on remote DB (with confirmation)
 ├── README.md                        # Project overview
 ├── VIEWING_AND_TESTING.md           # Guide for viewing data & running tests
@@ -242,7 +242,7 @@ The project has 25 automated checks split into two SQL files:
 
 ### Test Expectations
 
-- All 26 checks must return **0 violations** (PASS).
+- All 28 checks must return **0 violations** (PASS).
 - After adding a new category, run `.\RUN_QA.ps1` to verify.
 - Formula tests recompute scores from raw nutrition and compare against stored values.
 
