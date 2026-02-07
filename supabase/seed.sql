@@ -1,0 +1,6 @@
+-- seed.sql
+-- This file is referenced by supabase/config.toml and runs during `supabase db reset`.
+-- It is intentionally empty. Pipeline SQL files handle all data insertion.
+--
+-- DO NOT add product data here — use db/pipelines/<category>/ instead.
+-- This file exists only to prevent `supabase db reset` from failing on a missing seed file.

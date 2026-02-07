@@ -1,0 +1,21 @@
+{
+  "recommendations": [
+    "ms-python.python",
+    "ms-python.vscode-pylance",
+    "ms-python.black-formatter",
+    "ms-vscode.powershell",
+    "mtxr.sqltools",
+    "mtxr.sqltools-driver-pg",
+    "ms-ossdata.vscode-pgsql",
+    "tamasfe.even-better-toml",
+    "eamodio.gitlens",
+    "mhutchie.git-graph",
+    "yzhang.markdown-all-in-one",
+    "dotenv.dotenv-vscode",
+    "gruntfuggly.todo-tree",
+    "usernamehw.errorlens",
+    "streetsidesoftware.code-spell-checker",
+    "editorconfig.editorconfig",
+    "sonarsource.sonarlint-vscode"
+  ]
+}

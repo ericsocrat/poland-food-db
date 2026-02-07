@@ -1,0 +1,213 @@
+{
+  // ═══════════════════════════════════════════════════════════════════════
+  // Editor defaults
+  // ═══════════════════════════════════════════════════════════════════════
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "editor.rulers": [100],
+  "files.eol": "\n",
+  "files.trimTrailingWhitespace": true,
+  "files.insertFinalNewline": true,
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // File associations
+  // ═══════════════════════════════════════════════════════════════════════
+  "files.associations": {
+    "*.sql": "sql",
+    ".env.*": "dotenv",
+    ".env.example": "dotenv"
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SQLTools — local Supabase connection
+  // ═══════════════════════════════════════════════════════════════════════
+  "sqltools.connections": [
+    {
+      "name": "Local Supabase",
+      "driver": "PostgreSQL",
+      "server": "127.0.0.1",
+      "port": 54322,
+      "database": "postgres",
+      "username": "postgres",
+      "password": "postgres",
+      "previewLimit": 50
+    }
+  ],
+  "sqltools.autoOpenSessionFiles": false,
+  "sqltools.results.reuseTabs": "connection",
+  "sqltools.format.indentSize": 2,
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // PostgreSQL (ms-ossdata.vscode-pgsql)
+  // ═══════════════════════════════════════════════════════════════════════
+  "pgsql.defaultDatabase": "postgres",
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SQL formatting
+  // ═══════════════════════════════════════════════════════════════════════
+  "[sql]": {
+    "editor.tabSize": 2,
+    "editor.formatOnSave": false,
+    "editor.defaultFormatter": "mtxr.sqltools"
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // PowerShell
+  // ═══════════════════════════════════════════════════════════════════════
+  "[powershell]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "ms-vscode.powershell"
+  },
+  "powershell.codeFormatting.preset": "Stroustrup",
+  "powershell.integratedConsole.showOnStartup": false,
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // Python
+  // ═══════════════════════════════════════════════════════════════════════
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "ms-python.black-formatter"
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // Markdown
+  // ═══════════════════════════════════════════════════════════════════════
+  "[markdown]": {
+    "editor.wordWrap": "on",
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+  },
+  "markdown.extension.toc.levels": "2..4",
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // TOML
+  // ═══════════════════════════════════════════════════════════════════════
+  "[toml]": {
+    "editor.defaultFormatter": "tamasfe.even-better-toml"
+  },
+  "evenBetterToml.formatter.alignEntries": false,
+  "evenBetterToml.formatter.compactArrays": true,
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // Todo Tree — custom tags used in SQL & docs
+  // ═══════════════════════════════════════════════════════════════════════
+  "todo-tree.general.tags": [
+    "TODO",
+    "FIXME",
+    "HACK",
+    "LEGACY",
+    "PLACEHOLDER",
+    "REVIEW"
+  ],
+  "todo-tree.highlights.customHighlight": {
+    "TODO": { "icon": "checklist", "foreground": "#FFA500" },
+    "FIXME": { "icon": "alert", "foreground": "#FF4500" },
+    "HACK": { "icon": "flame", "foreground": "#FF6347" },
+    "LEGACY": { "icon": "archive", "foreground": "#A0A0A0" },
+    "PLACEHOLDER": { "icon": "pencil", "foreground": "#87CEEB" },
+    "REVIEW": { "icon": "eye", "foreground": "#9370DB" }
+  },
+  "todo-tree.filtering.includeGlobs": [
+    "**/*.sql",
+    "**/*.md",
+    "**/*.ps1",
+    "**/*.py",
+    "**/*.toml"
+  ],
+  "todo-tree.filtering.excludeGlobs": [
+    "**/node_modules/**",
+    "**/.supabase/**"
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // Code Spell Checker — project dictionary
+  // ═══════════════════════════════════════════════════════════════════════
+  "cSpell.words": [
+    "supabase",
+    "psql",
+    "postgres",
+    "upsert",
+    "upserts",
+    "idempotent",
+    "idempotency",
+    "nutri",
+    "nutriscore",
+    "NOVA",
+    "zabka",
+    "Żabka",
+    "Biedronka",
+    "Lidl",
+    "Rossmann",
+    "Auchan",
+    "Carrefour",
+    "Pringles",
+    "Doritos",
+    "Cheetos",
+    "Crunchips",
+    "Lorenz",
+    "Chio",
+    "saturated",
+    "unhealthiness",
+    "healthiness",
+    "additives",
+    "pipelines",
+    "servings",
+    "denormalized",
+    "Makro",
+    "Selgros",
+    "barcode",
+    "barcodes",
+    "reformulates",
+    "diacritics",
+    "SKU",
+    "HoReCa",
+    "subscore",
+    "Netto",
+    "Leclerc",
+    "nutriscore"
+  ],
+  "cSpell.enableFiletypes": [
+    "sql",
+    "powershell",
+    "toml"
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // Error Lens
+  // ═══════════════════════════════════════════════════════════════════════
+  "errorLens.enabledDiagnosticLevels": [
+    "error",
+    "warning"
+  ],
+  "errorLens.excludeBySource": [
+    "cSpell"
+  ],
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // GitLens
+  // ═══════════════════════════════════════════════════════════════════════
+  "gitlens.codeLens.enabled": true,
+  "gitlens.currentLine.enabled": true,
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // SonarLint
+  // ═══════════════════════════════════════════════════════════════════════
+  "sonarlint.analyzerProperties": {
+    "sonar.sql.dialect": "postgresql"
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // MSSQL — disable for this PostgreSQL workspace
+  // ═══════════════════════════════════════════════════════════════════════
+  "mssql.enabled": false,
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // Search — exclude noise
+  // ═══════════════════════════════════════════════════════════════════════
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/.supabase": true,
+    "**/__pycache__": true
+  }
+}

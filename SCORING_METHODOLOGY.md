@@ -1,0 +1,420 @@
+# Scoring Methodology
+
+> **Version:** 3.1
+> **Last updated:** 2026-02-07
+> **Scope:** Poland food quality database
+
+---
+
+## 1. Overview
+
+This project computes **three independent health dimensions** for every product:
+
+| Dimension               | Range / Values    | What it measures                                       |
+| ----------------------- | ----------------- | ------------------------------------------------------ |
+| **Unhealthiness Score** | 1–100 (integer)   | Composite harmfulness estimate across all risk factors |
+| **Nutri-Score Label**   | A, B, C, D, E     | EU front-of-pack nutrient profiling (where available)  |
+| **Processing Risk**     | Low, Medium, High | Degree of ultra-processing (NOVA-informed)             |
+
+These three dimensions are **not interchangeable**. A product can have a decent Nutri-Score but a high Processing Risk (e.g., low-calorie diet soda: Nutri-Score B, Processing Risk High).
+
+---
+
+## 2. Unhealthiness Score (1–100)
+
+### 2.1 Philosophy
+
+The Unhealthiness Score is the project's **primary composite metric**. It answers:
+
+> *"If a person ate this product regularly as part of their diet, how much cumulative harm potential does it carry?"*
+
+It is explicitly called **Unhealthiness** (not "healthiness") to avoid false-positive framing. A score of 30 does not mean a product is "healthy" — it means it is **less unhealthy** than a product scoring 70.
+
+### 2.2 Input Factors, Weights, and Scientific Justification
+
+The score is a **weighted sum of sub-scores**, each normalized to 0–100, then combined with the weights below.
+
+**Why these thresholds?** Each ceiling is set at the point where a product consumed regularly at that level would approach or exceed daily recommended limits. The per-100g ceiling represents the concentration at which ~2–3 servings would meet or exceed the WHO/EFSA daily guideline.
+
+| Factor            | Column source     | Weight   | Ceiling (per 100g) | Scientific basis for ceiling                                                                              |
+| ----------------- | ----------------- | -------- | ------------------ | --------------------------------------------------------------------------------------------------------- |
+| Saturated fat     | `saturated_fat_g` | 0.18     | 10g = 100          | EFSA DRV: <10% energy (~20g/day). 10g/100g = half daily limit in one portion.                             |
+| Sugars            | `sugars_g`        | 0.18     | 27g = 100          | WHO: <10% energy (~50g/day). 27g/100g = half daily limit. Aligned with Nutri-Score max penalty.           |
+| Salt              | `salt_g`          | 0.18     | 3.0g = 100         | WHO 2023: <5g/day. 3g/100g = >50% daily limit in 100g. EU Annex XIII "high" = 1.5g/100g.                  |
+| Calories (energy) | `calories`        | 0.10     | 600 kcal = 100     | Approx. energy density of pure fat (900) × 0.66. Products above 600 kcal/100g are extremely energy-dense. |
+| Trans fat         | `trans_fat_g`     | 0.12     | 2g = 100           | EU Reg. 2019/649: max 2g trans fat per 100g of fat. WHO: eliminate industrial trans fats.                 |
+| Additives count   | `additives_count` | 0.07     | 10 = 100           | NOVA research (Monteiro 2019): ultra-processed products average 8–12 additives. 10 = firmly NOVA 4.       |
+| Oil / prep method | `prep_method`     | 0.09     | categorical        | Acrylamide formation (EU Reg. 2017/2158): deep-fried > fried > baked > air-popped.                        |
+| Controversies     | `controversies`   | 0.08     | categorical        | E.g., palm oil (EFSA 2016: process contaminants), E171 (EFSA 2021: no longer safe).                       |
+|                   |                   | **1.00** |                    |                                                                                                           |
+
+**Weight rationale:** Saturated fat, sugars, and salt share the highest weight (0.18 each) because they are the three nutrients cited by WHO as primary dietary risks for NCDs (cardiovascular disease, diabetes, hypertension). Trans fat has a disproportionately high weight (0.12) relative to its threshold because trans fats have no safe level of intake (WHO). Calories carry moderate weight because energy density alone does not indicate harm (nutrient-dense foods can be calorie-rich). Additive count (0.07) and controversies (0.08) absorb the weight previously carried by the removed `ingredient_complexity` factor, which overlapped heavily with both (high additive count ≈ industrial complexity, and controversial additives ≈ ingredient concerns).
+
+### 2.3 Formula
+
+```
+Unhealthiness Score = round(
+    sat_fat_sub     * 0.18 +
+    sugar_sub       * 0.18 +
+    salt_sub        * 0.18 +
+    calorie_sub     * 0.10 +
+    trans_fat_sub   * 0.12 +
+    additive_sub    * 0.07 +
+    oil_sub         * 0.09 +
+    controversy_sub * 0.08
+)
+```
+
+Where each sub-score is computed as:
+
+```
+sub_score = LEAST(100, (value / threshold) * 100)
+```
+
+For categorical factors (oil method, complexity, controversies), use the fixed lookup values from the table above.
+
+**Clamping:** The final score is clamped to the range `[1, 100]`. A product with all zeroes scores 1 (not 0) to avoid implying "perfectly healthy."
+
+**NULL handling:** If a numeric nutrition field is `NULL` or non-numeric text (e.g., `'N/A'`), that sub-score defaults to **0** and `data_completeness_pct` is reduced. The score is still computed but `confidence` is downgraded. See `RESEARCH_WORKFLOW.md` §4.3 for trace value handling (`'<0.5'` → midpoint `0.25`).
+
+**Trace value parsing:** For text values like `'<0.5'`, the scoring pipeline extracts the numeric bound and uses the midpoint:
+
+```sql
+-- Extract numeric from trace values
+CASE
+  WHEN val ~ '^[0-9.]+$'  THEN val::numeric                    -- plain number
+  WHEN val ~ '^<[0-9.]+$' THEN (ltrim(val, '<')::numeric / 2)  -- midpoint of range
+  WHEN val = 'trace'       THEN 0                               -- negligible
+  ELSE 0                                                         -- N/A, NULL, unparseable
+END
+```
+
+### 2.4 Reference SQL Implementation
+
+```sql
+-- Pseudocode for scoring pipeline (per-product UPDATE)
+UPDATE scores sc SET
+  unhealthiness_score = GREATEST(1, LEAST(100, round(
+      LEAST(100, COALESCE(nf.saturated_fat_g::numeric, 0) / 10.0 * 100) * 0.18 +
+      LEAST(100, COALESCE(nf.sugars_g::numeric, 0)        / 27.0 * 100) * 0.18 +
+      LEAST(100, COALESCE(nf.salt_g::numeric, 0)           / 3.0  * 100) * 0.18 +
+      LEAST(100, COALESCE(nf.calories::numeric, 0)         / 600.0 * 100) * 0.10 +
+      LEAST(100, COALESCE(nf.trans_fat_g::numeric, 0)      / 2.0  * 100) * 0.12 +
+      LEAST(100, COALESCE(i.additives_count::numeric, 0)   / 10.0 * 100) * 0.07 +
+      (CASE p.prep_method
+         WHEN 'air-popped' THEN 20 WHEN 'baked' THEN 40
+         WHEN 'fried' THEN 80 WHEN 'deep-fried' THEN 100 ELSE 50
+       END) * 0.09 +
+      (CASE p.controversies
+         WHEN 'none' THEN 0 WHEN 'minor' THEN 30
+         WHEN 'moderate' THEN 60 WHEN 'serious' THEN 100 ELSE 0
+       END) * 0.08
+  )))::text,
+  scored_at = CURRENT_DATE,
+  scoring_version = 'v3.1'
+FROM products p
+JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
+JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
+LEFT JOIN ingredients i ON i.product_id = p.product_id
+WHERE p.product_id = sc.product_id
+  AND p.country = 'PL' AND p.category = '<CATEGORY>';
+```
+
+> **Note:** The current chips pipeline (v2.2) uses hardcoded case-when scores as interim placeholders.
+> As label-level nutrition data is populated per SKU, pipelines should migrate to the formula above.
+> When a pipeline adopts the formula, bump `scoring_version` to `v3.1`.
+
+### 2.5 `scored_at` Timestamp
+
+The `scored_at` column (type `date`) records **when the score was computed**, not when the label was read. It should be set to `CURRENT_DATE` in every scoring pipeline run. This allows tracking score freshness and identifying products that need re-scoring after methodology changes.
+
+### 2.6 Score Bands
+
+| Range  | Interpretation                              | Typical products                   |
+| ------ | ------------------------------------------- | ---------------------------------- |
+| 1–20   | Low concern                                 | Plain oats, raw vegetables         |
+| 21–40  | Moderate — acceptable for regular use       | Whole-grain bread, basic yogurt    |
+| 41–60  | Elevated — occasional consumption advised   | Baked chips, sweetened cereal      |
+| 61–80  | High — frequent use is a health risk        | Fried chips, sugary drinks         |
+| 81–100 | Very high — minimal consumption recommended | Deep-fried + high-salt + additives |
+
+### 2.7 Scoring Version
+
+All score records include a `scoring_version` field (currently `v3.1`). When methodology changes:
+
+1. Increment the version (e.g., `v2.3`, `v3.0`).
+2. Re-run all scoring pipelines.
+3. Document the change in this file.
+4. Do **not** delete historical scores — overwrite in place with the new version tag.
+
+---
+
+## 3. Nutri-Score (A–E)
+
+### 3.1 What Nutri-Score Is
+
+Nutri-Score is an **EU front-of-pack nutrient profiling system** developed by Santé Publique France and adopted (voluntarily or mandatorily) in several EU countries. It grades products A (best) to E (worst) based on:
+
+**Negative points** (0–10 each):
+- Energy (kJ)
+- Sugars (g)
+- Saturated fat (g)
+- Salt (g)
+
+**Positive points** (0–5 each):
+- Fruits, vegetables, legumes, nuts (%)
+- Fibre (g)
+- Protein (g)
+
+Final score = Negative − Positive → mapped to a letter grade.
+
+### 3.2 Nutri-Score 2024 Point Thresholds (Solid Foods)
+
+For **computed** Nutri-Score (when no label or Open Food Facts value exists), use these thresholds:
+
+**Negative points (N)** — each component scores 0–10:
+
+| Points | Energy (kJ) | Sugars (g) | Sat. fat (g) | Salt (g) |
+| ------ | ----------- | ---------- | ------------ | -------- |
+| 0      | ≤ 335       | ≤ 3.4      | ≤ 1.0        | ≤ 0.2    |
+| 1      | > 335       | > 3.4      | > 1.0        | > 0.2    |
+| 2      | > 670       | > 6.8      | > 2.0        | > 0.4    |
+| 3      | > 1005      | > 10.2     | > 3.0        | > 0.6    |
+| 4      | > 1340      | > 13.6     | > 4.0        | > 0.8    |
+| 5      | > 1675      | > 16.9     | > 5.0        | > 1.0    |
+| 6      | > 2010      | > 20.3     | > 6.0        | > 1.2    |
+| 7      | > 2345      | > 23.7     | > 7.0        | > 1.4    |
+| 8      | > 2680      | > 27.1     | > 8.0        | > 1.6    |
+| 9      | > 3015      | > 30.5     | > 9.0        | > 1.8    |
+| 10     | > 3350      | > 33.9     | > 10.0       | > 2.0    |
+
+**Positive points (P)** — each component scores 0–5:
+
+| Points | Fruit/veg/legumes (%) | Fibre (g) | Protein (g) |
+| ------ | --------------------- | --------- | ----------- |
+| 0      | ≤ 40                  | ≤ 3.0     | ≤ 2.4       |
+| 1      | > 40                  | > 3.0     | > 2.4       |
+| 2      | > 60                  | > 4.1     | > 4.8       |
+| 3      | —                     | > 5.2     | > 7.2       |
+| 4      | —                     | > 6.3     | > 9.6       |
+| 5      | > 80                  | > 7.4     | > 12.0      |
+
+**Letter grade mapping** (N − P):
+
+| Score range | Grade |
+| ----------- | ----- |
+| −15 to −2   | **A** |
+| −1 to 2     | **B** |
+| 3 to 10     | **C** |
+| 11 to 18    | **D** |
+| 19 to 40    | **E** |
+
+> **Source:** Santé Publique France, Nutri-Score algorithm update 2024.
+> **Important:** Beverages and fats/oils use different threshold tables — add those when drinks/oils pipelines are created.
+> When computing, set `confidence = 'computed'` and add a SQL comment noting the computation.
+
+### 3.3 Why Nutri-Score ≠ Health
+
+Nutri-Score has **known limitations** that this project explicitly acknowledges:
+
+| Limitation                        | Example                                                   |
+| --------------------------------- | --------------------------------------------------------- |
+| Ignores ultra-processing          | Diet soda scores B despite being NOVA 4 ultra-processed   |
+| Per-100g basis hides serving size | Olive oil scores D despite evidence of health benefits    |
+| No additive assessment            | Products with controversial additives can still score A/B |
+| Category-blind in practice        | Comparing chips (D) to cereal (B) is not an equivalence   |
+| Voluntary in most countries       | Not all Polish products carry Nutri-Score on labels       |
+
+**Our position:** Nutri-Score is a **useful but incomplete signal**. We record it when available but never use it as the sole determinant of product quality. The Unhealthiness Score exists precisely to fill Nutri-Score's gaps.
+
+### 3.4 Data Source for Nutri-Score
+
+In order of preference:
+1. **Official label** — if printed on the Polish packaging
+2. **Open Food Facts** — if the product entry exists and has been verified
+3. **Computed** — from nutrition facts using the 2024 Nutri-Score algorithm, with `confidence = 'computed'`
+4. **Not available** — if insufficient data, leave as `NULL`
+
+---
+
+## 4. Processing Risk (Low / Medium / High)
+
+### 4.1 NOVA Classification (Reference Framework)
+
+We use the NOVA food classification system as a conceptual guide:
+
+| NOVA Group | Description                       | Examples                            |
+| ---------- | --------------------------------- | ----------------------------------- |
+| 1          | Unprocessed / minimally processed | Fresh fruit, plain rice             |
+| 2          | Processed culinary ingredients    | Olive oil, butter, salt             |
+| 3          | Processed foods                   | Canned vegetables, artisan cheese   |
+| 4          | Ultra-processed food products     | Chips, instant noodles, soft drinks |
+
+### 4.2 Mapping to Processing Risk
+
+| Processing Risk | Typical NOVA | Criteria                                                    |
+| --------------- | ------------ | ----------------------------------------------------------- |
+| **Low**         | 1–2          | ≤5 recognizable ingredients, no industrial additives        |
+| **Medium**      | 3            | Some processing, limited additives, recognizable base       |
+| **High**        | 4            | Industrial formulations, emulsifiers, flavour systems, etc. |
+
+### 4.3 NOVA Classification Column
+
+The `scores.nova_classification` column stores the **NOVA group number** as text (`'1'`, `'2'`, `'3'`, or `'4'`). This is the raw NOVA group, distinct from `processing_risk` which is our simplified three-level mapping.
+
+| `nova_classification` | `processing_risk`                   |
+| --------------------- | ----------------------------------- |
+| `'1'`                 | `'Low'`                             |
+| `'2'`                 | `'Low'`                             |
+| `'3'`                 | `'Medium'`                          |
+| `'4'`                 | `'High'`                            |
+| `NULL`                | Derive from ingredients if possible |
+
+Set `nova_classification` when: (a) Open Food Facts provides it, or (b) it can be determined from the ingredient list. If neither is possible, leave `NULL` and set `processing_risk` based on ingredient inspection.
+
+### 4.4 Why This Matters
+
+Ultra-processed foods (NOVA 4) are independently associated with:
+- Higher all-cause mortality (Schnabel et al., 2019)
+- Increased cancer risk (Fiolet et al., 2018)
+- Metabolic syndrome (Louzada et al., 2015)
+
+These risks exist **even when the Nutri-Score looks acceptable**, which is why Processing Risk is a separate dimension.
+
+---
+
+## 5. Flag Columns
+
+The `scores` table includes binary flags for critical thresholds:
+
+| Flag                 | Trigger condition            | Basis                                                |
+| -------------------- | ---------------------------- | ---------------------------------------------------- |
+| `high_salt_flag`     | Salt > 1.5 g per 100g        | EU "high salt" threshold (Reg. 1169/2011 Annex XIII) |
+| `high_sugar_flag`    | Sugars > 12.5 g per 100g     | UK/EU "high sugar" threshold                         |
+| `high_sat_fat_flag`  | Saturated fat > 5 g per 100g | EU "high saturated fat" threshold                    |
+| `high_additive_load` | Additive count ≥ 5           | Project-defined threshold based on NOVA research     |
+
+These flags are **informational overlays** — they do not replace the Unhealthiness Score but provide quick visual warnings.
+
+### 5.1 Reference SQL for Flag Computation
+
+Flags should be computed in the scoring pipeline, after nutrition facts are populated:
+
+```sql
+-- Compute flags from nutrition_facts (run after nutrition insert)
+UPDATE scores sc SET
+  high_salt_flag = CASE
+    WHEN nf.salt_g ~ '^[0-9.]+$' AND nf.salt_g::numeric > 1.5 THEN 'Y' ELSE 'N'
+  END,
+  high_sugar_flag = CASE
+    WHEN nf.sugars_g ~ '^[0-9.]+$' AND nf.sugars_g::numeric > 12.5 THEN 'Y' ELSE 'N'
+  END,
+  high_sat_fat_flag = CASE
+    WHEN nf.saturated_fat_g ~ '^[0-9.]+$' AND nf.saturated_fat_g::numeric > 5.0 THEN 'Y' ELSE 'N'
+  END,
+  high_additive_load = CASE
+    WHEN i.additives_count ~ '^[0-9]+$' AND i.additives_count::numeric >= 5 THEN 'Y' ELSE 'N'
+  END
+FROM products p
+JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
+JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
+LEFT JOIN ingredients i ON i.product_id = p.product_id
+WHERE p.product_id = sc.product_id
+  AND p.country = 'PL' AND p.category = '<CATEGORY>';
+```
+
+> **Note on text columns:** Because nutrition columns are `text`, we guard with a regex check (`~ '^[0-9.]+$'`) before casting. Non-numeric values (e.g., `'N/A'`, `'<0.5'`) result in `'N'` (no flag).
+
+---
+
+## 6. Data Completeness
+
+Each score row tracks `data_completeness_pct` (0–100):
+
+| Completeness | Meaning                                                   |
+| ------------ | --------------------------------------------------------- |
+| 100%         | All nutrition fields filled from verified label data      |
+| 70–99%       | Most fields present; some estimated or missing            |
+| < 70%        | Significant gaps — score should be treated as approximate |
+
+### 6.1 Computation Formula
+
+`data_completeness_pct` is a **weighted** field-availability check — fields that carry more scoring weight contribute more to completeness:
+
+```sql
+data_completeness_pct = round(100.0 * (
+    -- EU mandatory 7 + key supplementary (weights = scoring importance)
+    (CASE WHEN nf.calories        IS NOT NULL AND nf.calories        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
+    (CASE WHEN nf.total_fat_g     IS NOT NULL AND nf.total_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
+    (CASE WHEN nf.saturated_fat_g IS NOT NULL AND nf.saturated_fat_g NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15%
+    (CASE WHEN nf.carbs_g         IS NOT NULL AND nf.carbs_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5%
+    (CASE WHEN nf.sugars_g        IS NOT NULL AND nf.sugars_g        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15%
+    (CASE WHEN nf.protein_g       IS NOT NULL AND nf.protein_g       NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5%
+    (CASE WHEN nf.salt_g          IS NOT NULL AND nf.salt_g          NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15%
+    (CASE WHEN nf.trans_fat_g     IS NOT NULL AND nf.trans_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
+    (CASE WHEN nf.fibre_g         IS NOT NULL AND nf.fibre_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5%
+    (CASE WHEN i.additives_count  IS NOT NULL AND i.additives_count  NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5% (scoring weight: 0.07)
+    (CASE WHEN i.ingredients_raw  IS NOT NULL AND i.ingredients_raw  != ''              THEN 1 ELSE 0 END) *  5    --  5%
+) / 100.0)
+```
+
+**Why weighted?** — Sat fat, sugars, and salt each carry 0.18 scoring weight, so their absence has the largest impact on score accuracy. Trans fat (0.12 weight) gets 10%. Fields with no direct scoring weight (carbs, protein) get minimal completeness weight (5%).
+
+**Trace values are NOT penalized** — `'<0.5'` and `'trace'` are real label information and count as "present."
+
+### 6.2 Energy Cross-Check
+
+As an additional validation, every score should include an energy cross-check:
+
+```
+Computed energy = (fat × 9) + (carbs × 4) + (protein × 4) + (fibre × 2)
+Tolerance       = ±15% of declared calories
+```
+
+If the computed energy falls outside the ±15% tolerance, add a SQL comment flagging the discrepancy. This catches data entry errors and label mismatches. The energy cross-check does not affect the score but serves as a quality gate.
+
+### 6.3 Confidence Levels
+
+The `confidence` column further qualifies the score:
+
+| Value       | Meaning                                             |
+| ----------- | --------------------------------------------------- |
+| `verified`  | All data from primary label source                  |
+| `estimated` | Some values estimated from category averages        |
+| `computed`  | Nutri-Score derived from nutrition facts, not label |
+| `low`       | Insufficient data for reliable scoring              |
+
+See `DATA_SOURCES.md` §5 and `RESEARCH_WORKFLOW.md` §6.4 for the full confidence determination workflow.
+
+---
+
+## 7. Scientific References
+
+- **WHO guidelines on sugars intake** (2015). Guideline: Sugars intake for adults and children. Geneva: WHO.
+- **WHO guidelines on sodium intake** (2023). Guideline: Sodium intake for adults and children. Geneva: WHO.
+- **WHO: REPLACE trans fat** (2023). An action package to eliminate industrially-produced trans-fatty acids. Geneva: WHO.
+- **EFSA scientific opinion on dietary reference values for fats** (2010). EFSA Journal 8(3):1461.
+- **EFSA opinion on process contaminants in palm oil** (2016). Risks for human health related to the presence of 3- and 2-MCPD in food. EFSA Journal 14(5):4426.
+- **EFSA opinion on titanium dioxide (E171)** (2021). Safety assessment of titanium dioxide (E171) as a food additive. EFSA Journal 19(5):6585.
+- **EU Regulation 2019/649** on maximum levels of trans fatty acids in food.
+- **EU Regulation 2017/2158** establishing mitigation measures and benchmark levels for the reduction of acrylamide in food.
+- **Monteiro et al.** (2019). Ultra-processed foods: what they are and how to identify them. Public Health Nutrition, 22(5), 936–941.
+- **Schnabel et al.** (2019). Association between ultra-processed food consumption and risk of mortality. JAMA Internal Medicine, 179(4), 490–498.
+- **Fiolet et al.** (2018). Consumption of ultra-processed foods and cancer risk. BMJ, 360, k322.
+- **Louzada et al.** (2015). Ultra-processed foods and the nutritional dietary profile in Brazil. Revista de Saúde Pública, 49, 38.
+- **Regulation (EU) No 1169/2011** on the provision of food information to consumers.
+- **Regulation (EU) No 1169/2011, Annex XIII** — Reference intakes and "high" thresholds for front-of-pack declarations.
+- **Nutri-Score algorithm** (2024 update). Santé Publique France.
+
+---
+
+## 8. Changelog
+
+| Version | Date       | Changes                                                                                                                                                                                                                                                                                                    |
+| ------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| v1.0    | 2026-02-07 | Initial methodology — basic nutrient scoring                                                                                                                                                                                                                                                               |
+| v2.0    | 2026-02-07 | Added NOVA, processing risk, flag columns                                                                                                                                                                                                                                                                  |
+| v2.2    | 2026-02-07 | Added personal lenses, data completeness, confidence                                                                                                                                                                                                                                                       |
+| v2.3    | 2026-02-07 | Added formula, Nutri-Score thresholds, flag SQL, healthiness_score def, scored_at, nova_classification mapping                                                                                                                                                                                             |
+| v3.0    | 2026-02-07 | Scientific justification for all thresholds, trace value parsing, data_completeness formula, weight rationale, energy cross-check, version bump                                                                                                                                                            |
+| v3.1    | 2026-02-07 | Removed healthiness_score (derivable), personal lenses (unimplemented), ingredient_complexity scoring factor (redundant with additives + NOVA). Dropped cholesterol_mg, potassium_mg, aluminium_based_additives columns. Redistributed 0.04 weight to additives (0.05→0.07) and controversies (0.06→0.08). |
