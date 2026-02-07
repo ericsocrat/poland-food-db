@@ -40,12 +40,12 @@ supabase start
 
 **Database**: 64 active products across 4 categories
 
-| Category    | Products | Brands                                                                 | Score Range |
-| ----------- | -------- | ---------------------------------------------------------------------- | ----------- |
-| **Chips**   | 16       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day) | 27–51       |
-| **Żabka**   | 16       | 3 (Żabka, Tomcio Paluch, Szamamm)                                      | 17–43       |
-| **Cereals** | 16       | 7 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella)     | 11–49       |
-| **Drinks**  | 16       | 10 (Coca-Cola, Pepsi, Fanta, Tymbark, Hortex, Tiger, 4Move, Cappy, Dawtona, Mlekovita) | 8–19 |
+| Category    | Products | Brands                                                                                 | Score Range |
+| ----------- | -------- | -------------------------------------------------------------------------------------- | ----------- |
+| **Chips**   | 16       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                 | 27–51       |
+| **Żabka**   | 16       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                      | 17–43       |
+| **Cereals** | 16       | 7 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella)                     | 11–49       |
+| **Drinks**  | 16       | 10 (Coca-Cola, Pepsi, Fanta, Tymbark, Hortex, Tiger, 4Move, Cappy, Dawtona, Mlekovita) | 8–19        |
 
 **Test Coverage**: 23 automated checks
 - 11 data integrity checks (nulls, foreign keys, duplicates)
