@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-02-08
 > **Scope:** Poland (country code `PL`) only. No other countries are active.
-> **Active categories:** Chips (16), Żabka (16), Cereals (16), Drinks (16), Dairy (16), Bread (26), Meat (26), Sweets (28), Instant & Frozen (26) — 186 products
+> **Active categories:** Chips (16), Żabka (16), Cereals (16), Drinks (16), Dairy (16), Bread (26), Meat (26), Sweets (28), Instant & Frozen (26), Sauces (27) — 213 products
 > **Scoring version:** v3.1 (8-factor weighted formula)
 
 ---
@@ -44,11 +44,12 @@ poland-food-db/
 │   │   ├── chips/                   # ✅ 16 products — reference implementation
 │   │   ├── dairy/                   # ✅ 16 products — milk, yogurt, cheese, kefir, butter
 │   │   ├── drinks/                  # ✅ 16 products
-│   │   ├── instant/                 # ✅ 26 products — instant noodles, frozen meals│   │   ├── sweets/                  # ✅ 28 products — chocolate, candy, wafers│   │   └── zabka/                   # ✅ 16 products — store-based pipeline
+│   │   ├── instant/                 # ✅ 26 products — instant noodles, frozen meals
+│   │   ├── sauces/                  # ✅ 27 products — sauces & condiments│   │   ├── sweets/                  # ✅ 28 products — chocolate, candy, wafers│   │   └── zabka/                   # ✅ 16 products — store-based pipeline
 │   ├── views/                       # SQL views
 │   └── qa/                          # Quality-assurance queries
 │       ├── QA__null_checks.sql      # 11 data integrity checks
-│       └── QA__scoring_formula_tests.sql  # 19 scoring formula validation checks
+│       └── QA__scoring_formula_tests.sql  # 20 scoring formula validation checks
 ├── .env.example                     # Template for environment variables
 ├── .gitignore                       # Git exclusion rules
 ├── copilot-instructions.md          # THIS FILE
@@ -57,7 +58,7 @@ poland-food-db/
 ├── RESEARCH_WORKFLOW.md             # Step-by-step research & data collection process
 ├── COUNTRY_EXPANSION_GUIDE.md       # Future multi-country rules
 ├── RUN_LOCAL.ps1                    # Run all pipelines on local DB
-├── RUN_QA.ps1                      # Standalone QA test runner (30 checks)
+├── RUN_QA.ps1                      # Standalone QA test runner (31 checks)
 ├── RUN_REMOTE.ps1                   # Run all pipelines on remote DB (with confirmation)
 ├── README.md                        # Project overview
 ├── VIEWING_AND_TESTING.md           # Guide for viewing data & running tests
@@ -223,12 +224,12 @@ ON CONFLICT (source_id) DO NOTHING;
 
 ### Test Suite
 
-The project has 30 automated checks split into two SQL files:
+The project has 31 automated checks split into two SQL files:
 
 | File                            | Checks | Purpose                                                  |
 | ------------------------------- | ------ | -------------------------------------------------------- |
 | `QA__null_checks.sql`           | 11     | Data integrity — nulls, orphans, missing scores          |
-| `QA__scoring_formula_tests.sql` | 19     | Scoring formula validation — deterministic recomputation |
+| `QA__scoring_formula_tests.sql` | 20     | Scoring formula validation — deterministic recomputation |
 
 ### Running Tests
 
@@ -242,7 +243,7 @@ The project has 30 automated checks split into two SQL files:
 
 ### Test Expectations
 
-- All 30 checks must return **0 violations** (PASS).
+- All 31 checks must return **0 violations** (PASS).
 - After adding a new category, run `.\RUN_QA.ps1` to verify.
 - Formula tests recompute scores from raw nutrition and compare against stored values.
 

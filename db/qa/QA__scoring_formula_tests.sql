@@ -308,3 +308,16 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'Knorr Nudle Pomidorowe Pikantne'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 19 AND 23;
+
+-- Test 20: Known product regression test (Pudliszki Ketchup Łagodny)
+--          Popular Polish ketchup: high sugar + high salt → score 33-37
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Pudliszki Ketchup Łagodny score changed unexpectedly' AS issue,
+       CONCAT('Expected 33-37, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Pudliszki Ketchup Łagodny'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 33 AND 37;

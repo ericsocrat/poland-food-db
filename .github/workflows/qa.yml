@@ -14,7 +14,7 @@ on:
 
 jobs:
   qa:
-    name: Pipeline + QA (30 checks)
+    name: Pipeline + QA (31 checks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -102,7 +102,7 @@ jobs:
           result=$(psql --tuples-only -f db/qa/QA__scoring_formula_tests.sql 2>&1)
           trimmed=$(echo "$result" | sed '/^\s*$/d')
           if [ -z "$trimmed" ]; then
-            echo "✓ PASS (19/19 — zero violations)"
+            echo "✓ PASS (20/20 — zero violations)"
           else
             echo "✗ FAILED — violations detected:"
             echo "$result"
@@ -127,4 +127,4 @@ jobs:
               (SELECT STRING_AGG(DISTINCT category, ', ' ORDER BY category)
                FROM products WHERE is_deprecated IS NOT TRUE) AS category_list;
           "
-          echo "✓ ALL TESTS PASSED (30/30 checks)"
+          echo "✓ ALL TESTS PASSED (31/31 checks)"
