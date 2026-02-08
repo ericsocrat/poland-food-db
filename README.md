@@ -48,7 +48,7 @@ supabase start
 | **Drinks**           | 28       | 16 (Coca-Cola, Pepsi, Fanta, Sprite, Tymbark, Hortex, Tiger, Red Bull, Monster, 4Move, Cappy, Dawtona, Mlekovita, Łaciate, Kubś, Costa) | 7–22        |
 | **Dairy**            | 28       | 13 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio, Sierpc, Président, Philadelphia, Müller, Mlekpol)              | 9–48        |
 | **Bread**            | 28       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)                                                       | 15–30       |
-| **Meat**             | 28       | 10 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol, Plukon)                                            | 21–56       |
+| **Meat**             | 28       | 10 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol, Plukon)                                             | 21–56       |
 | **Sweets**           | 28       |                                                                                                                                         | 32–55       |
 | **Instant & Frozen** | 28       |                                                                                                                                         | 13–30       |
 | **Sauces**           | 28       |                                                                                                                                         | 8–41        |
@@ -72,7 +72,7 @@ poland-food-db/
 │   ├── pipelines/           # Category-specific data pipelines
 │   │   ├── bread/           # 28 bread products (4 SQL files)
 │   │   ├── cereals/         # 28 cereal products (4 SQL files)
-│   │   ├── chips/           # 16 chip products (5 SQL files)
+│   │   ├── chips/           # 28 chip products (5 SQL files)
 │   │   ├── dairy/           # 28 dairy products (4 SQL files)
 │   │   ├── drinks/          # 28 beverage products (4 SQL files)
 │   │   ├── instant/          # 28 instant & frozen products (4 SQL files)
@@ -185,7 +185,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data sourced from Open Food Facts** — EANs verified against Polish market
 - **Scoring version**: v3.1 (2026-02-07)
-- **327 active products**, 18 deprecated (removed from pipelines but kept in DB)
+- **336 active products** (28 per category × 12 categories), 17 deprecated (removed from pipelines but kept in DB)
 
 ---
 
