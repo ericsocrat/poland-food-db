@@ -1,8 +1,8 @@
 -- PIPELINE (CHIPS): insert products
 -- PIPELINE__chips__01_insert_products.sql
--- 16 verified products from the Polish market.
+-- 28 verified products from the Polish market.
 -- Data sourced from Open Food Facts (openfoodfacts.org) — EANs verified.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
 values
@@ -50,7 +50,45 @@ values
 
 -- ── Snack Day / Lidl private label ──────────────────────────────────────
 -- EAN 4056489486459 — Snack Day Chipsy Solone (3 ingredients, NOVA 3)
-('PL','Snack Day (Lidl)','Grocery','Chips','Snack Day Chipsy Solone','fried','Lidl','none')
+('PL','Snack Day (Lidl)','Grocery','Chips','Snack Day Chipsy Solone','fried','Lidl','none'),
+
+-- ── Pringles (additional) ───────────────────────────────────────────────
+-- EAN 5053990101597 — Pringles Sour Cream & Onion (NOVA 4, 8 additives)
+('PL','Pringles','Grocery','Chips','Pringles Sour Cream & Onion','fried','Biedronka;Lidl;Żabka','minor'),
+
+-- ── Lay's (additional) ─────────────────────────────────────────────────
+-- EAN 5900259071194 — Lay's Zielona Cebulka (Green Onion, NOVA 4)
+('PL','Lay''s','Grocery','Chips','Lay''s Zielona Cebulka','fried','Biedronka;Lidl;Żabka','none'),
+-- EAN 5900259097538 — Lay's Pikantna Papryka (NOVA 4)
+('PL','Lay''s','Grocery','Chips','Lay''s Pikantna Papryka','fried','Biedronka;Lidl;Żabka','none'),
+-- EAN 5900259133281 — Lay's Max Karbowane Papryka (NOVA 4)
+('PL','Lay''s','Grocery','Chips','Lay''s Max Karbowane Papryka','fried','Biedronka;Lidl;Żabka','none'),
+-- EAN 5900259097392 — Lay's Maxx Ser z Cebulką (NOVA 4)
+('PL','Lay''s','Grocery','Chips','Lay''s Maxx Ser z Cebulką','fried','Biedronka;Lidl;Żabka','none'),
+
+-- ── Crunchips (additional) ──────────────────────────────────────────────
+-- EAN 5905187114692 — Crunchips X-Cut Solony (3 ingredients, NOVA 3)
+('PL','Crunchips','Grocery','Chips','Crunchips X-Cut Solony','fried','Biedronka;Lidl;Żabka','none'),
+-- EAN 5905187114753 — Crunchips Zielona Cebulka (NOVA 4)
+('PL','Crunchips','Grocery','Chips','Crunchips Zielona Cebulka','fried','Biedronka;Lidl;Żabka','none'),
+
+-- ── Wiejskie Ziemniaczki / Lorenz ───────────────────────────────────────
+-- EAN 5905187108981 — Wiejskie Ziemniaczki Masło z Solą (kettle-style, NOVA 4)
+('PL','Wiejskie Ziemniaczki','Grocery','Chips','Wiejskie Ziemniaczki Masło z Solą','fried','Biedronka;Lidl;Żabka','none'),
+-- EAN 5905187109025 — Wiejskie Ziemniaczki Cebulka (NOVA 4, sunflower oil)
+('PL','Wiejskie Ziemniaczki','Grocery','Chips','Wiejskie Ziemniaczki Cebulka','fried','Biedronka;Lidl;Żabka','none'),
+
+-- ── Star / PepsiCo (corn puff) ──────────────────────────────────────────
+-- EAN 5900259087898 — Star Maczugi ketchup (corn puffs, NOVA 4)
+('PL','Star','Grocery','Chips','Star Maczugi','fried','Biedronka;Lidl;Żabka','none'),
+
+-- ── Cheetos (additional) ────────────────────────────────────────────────
+-- EAN 5900259115614 — Cheetos Pizzerini (NOVA 4, 5 additives)
+('PL','Cheetos','Grocery','Chips','Cheetos Pizzerini','fried','Biedronka;Lidl;Żabka','none'),
+
+-- ── Snack Day / Lidl (additional) ───────────────────────────────────────
+-- EAN 4056489405115 — Snack Day Mega Karbowane Słodkie Chilli (NOVA 4)
+('PL','Snack Day (Lidl)','Grocery','Chips','Snack Day Mega Karbowane Słodkie Chilli','fried','Lidl','none')
 
 on conflict (country, brand, product_name)
 do update set
@@ -68,10 +106,15 @@ where country='PL' and category='Chips'
   and is_deprecated is not true
   and product_name not in (
     'Lay''s Solone','Lay''s Fromage','Lay''s Oven Baked Grilled Paprika',
-    'Pringles Original','Pringles Paprika',
+    'Lay''s Zielona Cebulka','Lay''s Pikantna Papryka',
+    'Lay''s Max Karbowane Papryka','Lay''s Maxx Ser z Cebulką',
+    'Pringles Original','Pringles Paprika','Pringles Sour Cream & Onion',
     'Crunchips X-Cut Papryka','Crunchips Pieczone Żeberka','Crunchips Chakalaka',
+    'Crunchips X-Cut Solony','Crunchips Zielona Cebulka',
     'Doritos Hot Corn','Doritos BBQ',
-    'Cheetos Flamin Hot','Cheetos Cheese','Cheetos Hamburger',
+    'Cheetos Flamin Hot','Cheetos Cheese','Cheetos Hamburger','Cheetos Pizzerini',
     'Top Chips Fromage','Top Chips Faliste',
-    'Snack Day Chipsy Solone'
+    'Snack Day Chipsy Solone','Snack Day Mega Karbowane Słodkie Chilli',
+    'Wiejskie Ziemniaczki Masło z Solą','Wiejskie Ziemniaczki Cebulka',
+    'Star Maczugi'
   );

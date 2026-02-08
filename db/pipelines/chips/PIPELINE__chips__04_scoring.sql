@@ -2,7 +2,7 @@
 -- PIPELINE__chips__04_scoring.sql
 -- Formula-based v3.1 scoring (replaces v2.2 hardcoded placeholders).
 -- See SCORING_METHODOLOGY.md §2.4 for the canonical formula.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 0. ENSURE rows exist in scores & ingredients
@@ -48,7 +48,19 @@ from (
     ('Cheetos',             'Cheetos Hamburger',                 '5'),
     ('Top Chips (Biedronka)','Top Chips Fromage',                '1'),
     ('Top Chips (Biedronka)','Top Chips Faliste',                '6'),
-    ('Snack Day (Lidl)',    'Snack Day Chipsy Solone',           '0')
+    ('Snack Day (Lidl)',    'Snack Day Chipsy Solone',           '0'),
+    ('Pringles',            'Pringles Sour Cream & Onion',       '8'),
+    ('Lay''s',              'Lay''s Zielona Cebulka',            '6'),
+    ('Lay''s',              'Lay''s Pikantna Papryka',           '5'),
+    ('Lay''s',              'Lay''s Max Karbowane Papryka',      '2'),
+    ('Lay''s',              'Lay''s Maxx Ser z Cebulką',         '6'),
+    ('Crunchips',           'Crunchips X-Cut Solony',            '0'),
+    ('Crunchips',           'Crunchips Zielona Cebulka',         '1'),
+    ('Wiejskie Ziemniaczki','Wiejskie Ziemniaczki Masło z Solą', '2'),
+    ('Wiejskie Ziemniaczki','Wiejskie Ziemniaczki Cebulka',      '1'),
+    ('Star',                'Star Maczugi',                      '3'),
+    ('Cheetos',             'Cheetos Pizzerini',                 '5'),
+    ('Snack Day (Lidl)',    'Snack Day Mega Karbowane Słodkie Chilli', '1')
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -104,7 +116,19 @@ from (
     ('Cheetos',             'Cheetos Hamburger',                 'D'),
     ('Top Chips (Biedronka)','Top Chips Fromage',                'D'),
     ('Top Chips (Biedronka)','Top Chips Faliste',                'E'),
-    ('Snack Day (Lidl)',    'Snack Day Chipsy Solone',           'D')
+    ('Snack Day (Lidl)',    'Snack Day Chipsy Solone',           'D'),
+    ('Pringles',            'Pringles Sour Cream & Onion',       'D'),
+    ('Lay''s',              'Lay''s Zielona Cebulka',            'D'),
+    ('Lay''s',              'Lay''s Pikantna Papryka',           'D'),
+    ('Lay''s',              'Lay''s Max Karbowane Papryka',      'D'),
+    ('Lay''s',              'Lay''s Maxx Ser z Cebulką',         'D'),
+    ('Crunchips',           'Crunchips X-Cut Solony',            'D'),
+    ('Crunchips',           'Crunchips Zielona Cebulka',         'D'),
+    ('Wiejskie Ziemniaczki','Wiejskie Ziemniaczki Masło z Solą', 'D'),
+    ('Wiejskie Ziemniaczki','Wiejskie Ziemniaczki Cebulka',      'D'),
+    ('Star',                'Star Maczugi',                      'D'),
+    ('Cheetos',             'Cheetos Pizzerini',                 'D'),
+    ('Snack Day (Lidl)',    'Snack Day Mega Karbowane Słodkie Chilli', 'D')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -137,7 +161,19 @@ from (
     ('Cheetos',             'Cheetos Hamburger',                 '4'),
     ('Top Chips (Biedronka)','Top Chips Fromage',                '4'),
     ('Top Chips (Biedronka)','Top Chips Faliste',                '4'),
-    ('Snack Day (Lidl)',    'Snack Day Chipsy Solone',           '3')   -- only potatoes, oils, salt
+    ('Snack Day (Lidl)',    'Snack Day Chipsy Solone',           '3'),   -- only potatoes, oils, salt
+    ('Pringles',            'Pringles Sour Cream & Onion',       '4'),
+    ('Lay''s',              'Lay''s Zielona Cebulka',            '4'),
+    ('Lay''s',              'Lay''s Pikantna Papryka',           '4'),
+    ('Lay''s',              'Lay''s Max Karbowane Papryka',      '4'),
+    ('Lay''s',              'Lay''s Maxx Ser z Cebulką',         '4'),
+    ('Crunchips',           'Crunchips X-Cut Solony',            '3'),   -- potatoes, oil, salt
+    ('Crunchips',           'Crunchips Zielona Cebulka',         '4'),
+    ('Wiejskie Ziemniaczki','Wiejskie Ziemniaczki Masło z Solą', '4'),
+    ('Wiejskie Ziemniaczki','Wiejskie Ziemniaczki Cebulka',      '4'),
+    ('Star',                'Star Maczugi',                      '4'),
+    ('Cheetos',             'Cheetos Pizzerini',                 '4'),
+    ('Snack Day (Lidl)',    'Snack Day Mega Karbowane Słodkie Chilli', '4')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

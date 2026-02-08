@@ -38,11 +38,11 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 265 active products across 12 categories
+**Database**: 277 active products across 12 categories
 
 | Category             | Products | Brands                                                                                 | Score Range |
 | -------------------- | -------- | -------------------------------------------------------------------------------------- | ----------- |
-| **Chips**            | 16       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                 | 27–51       |
+| **Chips**            | 28       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                 | 27–51       |
 | **Żabka**            | 16       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                      | 17–43       |
 | **Cereals**          | 16       | 7 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella)                     | 11–49       |
 | **Drinks**           | 16       | 10 (Coca-Cola, Pepsi, Fanta, Tymbark, Hortex, Tiger, 4Move, Cappy, Dawtona, Mlekovita) | 8–19        |
@@ -185,7 +185,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data sourced from Open Food Facts** — EANs verified against Polish market
 - **Scoring version**: v3.1 (2026-02-07)
-- **265 active products**, 17 deprecated (removed from pipelines but kept in DB)
+- **277 active products**, 17 deprecated (removed from pipelines but kept in DB)
 
 ---
 
