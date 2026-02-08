@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 334 active products across 12 categories
+**Database**: 336 active products across 12 categories
 
 | Category             | Products | Brands                                                                                                                                  | Score Range |
 | -------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
@@ -53,7 +53,7 @@ supabase start
 | **Instant & Frozen** | 28       |                                                                                                                                         | 13–30       |
 | **Sauces**           | 28       |                                                                                                                                         | 8–41        |
 | **Baby**             | 28       |                                                                                                                                         | 8–36        |
-| **Alcohol**          | 26       |                                                                                                                                         | 5–11        |
+| **Alcohol**          | 28       |                                                                                                                                         | 5–11        |
 
 **Test Coverage**: 33 automated checks
 - 11 data integrity checks (nulls, foreign keys, duplicates)

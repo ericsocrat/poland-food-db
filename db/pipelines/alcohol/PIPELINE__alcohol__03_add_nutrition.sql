@@ -2,7 +2,7 @@
 -- PIPELINE__alcohol__03_add_nutrition.sql
 -- Real per-SKU nutrition data (per 100 ml) from Open Food Facts.
 -- Source: openfoodfacts.org — verified against Polish-market product labels.
--- 26 products across beer, radler, cider, rtd, non_alcoholic_beer, wine.
+-- 28 products across beer, radler, cider, rtd, non_alcoholic_beer, wine.
 -- Missing fiber/trans_fat values defaulted to '0' per project rules.
 -- Last updated: 2026-02-08
 
@@ -27,13 +27,17 @@ select
 from (
   values
     -- ═══════════════════════════════════════════════════════════════════════
-    -- BEER — alcoholic (2)
+    -- BEER — alcoholic (4)
     -- ═══════════════════════════════════════════════════════════════════════
     --              brand             product_name                                                       cal    fat    sat    trans  carbs  sug    fib    prot   salt
     -- EAN 5900490000182 — Lech Premium (5% ABV)
     ('Lech',           'Lech Premium',                                                       '41',  '0.1', '0.1', '0',   '2.8', '0.8', '0',   '0.6', '0.1'),
     -- EAN 5901359062013 — Tyskie Gronie (5.2% ABV)
     ('Tyskie',         'Tyskie Gronie',                                                      '43',  '0',   '0',   '0',   '3',   '0.2', '0',   '0.5', '0'),
+    -- EAN 5901359001000 — Żubr Premium (5% ABV)
+    ('Żubr',           'Żubr Premium',                                                       '41',  '0',   '0',   '0',   '2.6', '0.5', '0',   '0.7', '0'),
+    -- EAN 5901359009232 — Zywiec Full (5.6% ABV)
+    ('Zywiec',         'Zywiec Full',                                                        '44',  '0',   '0',   '0',   '3.2', '0.3', '0',   '0.5', '0'),
 
     -- ═══════════════════════════════════════════════════════════════════════
     -- RADLER — alcoholic (1)

@@ -1,6 +1,6 @@
 -- PIPELINE (ALCOHOL): insert products
 -- PIPELINE__alcohol__01_insert_products.sql
--- 26 Polish alcohol & beer products verified via Open Food Facts.
+-- 28 Polish alcohol & beer products verified via Open Food Facts.
 -- Categories: beer (2), radler (5), cider (2), rtd (1),
 --   non_alcoholic_beer (14), wine (2).
 -- controversies = '1' for products with >0% ABV (alcohol is a health concern).
@@ -12,9 +12,11 @@
 
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
 values
-  -- BEER — alcoholic (2)
+  -- BEER — alcoholic (4)
   ('PL', 'Lech',           'beer',                 'Alcohol', 'Lech Premium',                                                       'none', 'widespread', '1'),
   ('PL', 'Tyskie',         'beer',                 'Alcohol', 'Tyskie Gronie',                                                      'none', 'widespread', '1'),
+  ('PL', 'Żubr',           'beer',                 'Alcohol', 'Żubr Premium',                                                       'none', 'widespread', '1'),
+  ('PL', 'Zywiec',         'beer',                 'Alcohol', 'Zywiec Full',                                                        'none', 'widespread', '1'),
   -- RADLER — alcoholic (1)
   ('PL', 'Warka',          'radler',               'Alcohol', 'Piwo Warka Radler',                                                  'none', 'widespread', '1'),
   -- CIDER — alcoholic (1)

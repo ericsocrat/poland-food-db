@@ -5,6 +5,7 @@
 -- NOTE: Nutri-Score is marked 'not-applicable' for all alcohol products
 --       (EU regulation excludes alcoholic beverages from Nutri-Score).
 --       Non-alcoholic variants also marked not-applicable for consistency.
+-- 28 products (added Żubr Premium and Zywiec Full).
 -- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
@@ -38,6 +39,8 @@ from (
     -- BEER — alcoholic
     ('Lech',           'Lech Premium',                                                       '0'),
     ('Tyskie',         'Tyskie Gronie',                                                      '0'),
+    ('Żubr',           'Żubr Premium',                                                       '0'),
+    ('Zywiec',         'Zywiec Full',                                                        '0'),
     -- RADLER — alcoholic
     ('Warka',          'Piwo Warka Radler',                                                  '4'),   -- e290, e330, e414, e960a
     -- CIDER — alcoholic
@@ -131,6 +134,8 @@ from (
     -- BEER — alcoholic
     ('Lech',           'Lech Premium',                                                       '3'),   -- OFF NOVA 3
     ('Tyskie',         'Tyskie Gronie',                                                      '3'),   -- OFF NOVA 3
+    ('Żubr',           'Żubr Premium',                                                       '3'),   -- OFF NOVA 3
+    ('Zywiec',         'Zywiec Full',                                                        '3'),   -- OFF NOVA 3
     -- RADLER — alcoholic
     ('Warka',          'Piwo Warka Radler',                                                  '4'),   -- OFF NOVA 4 (4 additives)
     -- CIDER — alcoholic
