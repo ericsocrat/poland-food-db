@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 391 active products across 14 categories
+**Database**: 418 active products across 15 categories
 
 | Category             | Products | Brands                                                                                                                                  | Score Range |
 | -------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
@@ -55,8 +55,7 @@ supabase start
 | **Baby**             | 28       |                                                                                                                                         | 8–36        |
 | **Alcohol**          | 28       |                                                                                                                                         | 5–11        |
 | **Frozen & Prepared**| 28       | 11 (Dr. Oetker, Morey, Nowaco, Obiad, Mroźnia, Bonduelle, Makaronika, TVLine, Żabka Frost, Kulina, Berryland)                             | 42–64       |
-| **Plant-Based & Alternatives** | 27 | 11 (Alpro, Garden Gourmet, Violife, Taifun, LikeMeat, Sojasun, Kupiec, Beyond Meat, Naturalnie, Simply V, Green Legend)                 | TBD         |
-
+| **Plant-Based & Alternatives** | 27 | 11 (Alpro, Garden Gourmet, Violife, Taifun, LikeMeat, Sojasun, Kupiec, Beyond Meat, Naturalnie, Simply V, Green Legend)                 | TBD         || **Nuts, Seeds & Legumes** | 27 | 7 (Alesto, Bakalland, Fasting, Sante, Targroch, Helio, Naturavena, Społem)                                                       | TBD         |
 **Test Coverage**: 31 automated checks + 7 data quality reports
 - 11 data integrity checks (nulls, foreign keys, duplicates)
 - 20 scoring formula validation checks (ranges, flags, NOVA, regression)
@@ -81,6 +80,7 @@ poland-food-db/
 │   │   ├── frozen/          # 28 frozen & prepared products (4 SQL files)
 │   │   ├── instant/          # 28 instant & frozen products (4 SQL files)
 │   │   ├── meat/            # 28 meat & deli products (4 SQL files)
+│   │   ├── nuts-seeds/      # 27 nuts, seeds & legumes products (4 SQL files)
 │   │   ├── plant-based/     # 27 plant-based & alternative products (4 SQL files)
 │   │   ├── sauces/          # 28 sauces & condiments products (4 SQL files)
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
@@ -186,7 +186,7 @@ Every product receives an automated confidence rating based on data completeness
 | **estimated** | 70-89% complete OR single source       | Single-source data needing verification |
 | **low**       | <70% complete                          | Incomplete data, use with caution       |
 
-**Current status**: All 391 products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
+**Current status**: All 418 products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
 
 Confidence is auto-computed by the `assign_confidence()` function in all scoring pipelines.
 
@@ -253,7 +253,7 @@ EAN codes enable validation against:
 - **EAN barcodes** — 133/336 products (39.6%) have EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
 - **Scoring version**: v3.1 (2026-02-07)
-- **391 active products** (across 14 categories), 44 deprecated (kept in DB for historical tracking)
+- **418 active products** (across 15 categories), 44 deprecated (kept in DB for historical tracking)
 
 ---
 

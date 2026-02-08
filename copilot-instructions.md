@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-02-08
 > **Scope:** Poland (country code `PL`) only. No other countries are active.
-> **Active categories:** Chips (28), Żabka (28), Cereals (28), Drinks (28), Dairy (28), Bread (28), Meat (28), Sweets (28), Instant & Frozen (28), Sauces (28), Baby (28), Alcohol (28), Frozen & Prepared (28), Plant-Based & Alternatives (27) — 391 products
+> **Active categories:** Chips (28), Żabka (28), Cereals (28), Drinks (28), Dairy (28), Bread (28), Meat (28), Sweets (28), Instant & Frozen (28), Sauces (28), Baby (28), Alcohol (28), Frozen & Prepared (28), Plant-Based & Alternatives (27), Nuts, Seeds & Legumes (27) — 418 products
 > **Scoring version:** v3.1 (8-factor weighted formula)
 
 ---

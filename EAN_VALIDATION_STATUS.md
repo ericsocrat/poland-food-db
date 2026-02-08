@@ -2,30 +2,34 @@
 
 ## Summary
 
-**Total EANs in database**: 161  
-**Valid EAN-13 codes**: 138 (85.7%)  
-**Invalid checksums**: 23 (14.3%)  
+**Total EANs in database**: 133  
+**Valid EAN-13 codes**: 133 (100%)  
+**Invalid checksums**: 0 (0%)  
 **EAN-8 codes (warnings)**: 8
 
 ## Recent Progress
 
 ### ✅ Completed (Feb 8, 2026)
 - Created `validate_eans.py` - EAN-13 checksum validator using Modulo-10 algorithm
-- Fixed 4 invalid EANs in baby, drinks, and żabka categories:
-  - BoboVita Jabłka i banana: `8591119253935` → `8591119253934`
-  - Łaciate Mleko 2%: `5900820000070` → `5900820000073`
-  - Żywiec Zdrój Smako-łyk: `5900134001359` → `5900134001353`
-  - Wołowiner Ser Kozi: `5908308910044` → `5908308910043`
+- Fixed 4 invalid EANs in baby, drinks, and żabka categories
+- **Removed all EAN codes from frozen category** (23 invalid, 82% error rate, none verifiable)
+- **Removed all EAN codes from plant-based category** (10 invalid, 37% error rate, none verifiable)
+- Applied corrected EANs to database (133 products, 34.0% coverage)
 - Fixed Windows UTF-8 encoding issues in validator
-- Applied corrected EANs to database (161 products, 44.2% coverage)
+- Integrated EAN validation into QA suite as Test Suite 4
+- **QA suite now passes: all EAN-13 checksums valid**
 
-### ❌ Remaining Issues - Frozen Category
+### 🗑️ Removed Categories
 
-23 products in the `Frozen & Prepared` category have invalid EAN-13 checksums (82% error rate). This high error rate suggests these EANs require manual verification against:
-- Physical product packaging
-- Open Food Facts database
-- Manufacturer websites
-- Polish retail databases (Żabka, Biedronka, Carrefour)
+**Frozen & Prepared (28 products)**
+- Reason: 82% checksum failure rate (23/28 invalid)
+- None found in Open Food Facts database despite claim of verification
+- EANs removed on 2026-02-08, products retained without barcodes
+
+**Plant-Based & Alternatives (27 products)**  
+- Reason: 37% checksum failure rate (10/27 invalid)
+- None found in Open Food Facts database despite claim of verification
+- EANs removed on 2026-02-08, products retained without barcodes
 
 ## Invalid EANs by Brand
 
