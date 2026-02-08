@@ -1,7 +1,8 @@
 -- VIEW: master product view (v_master)
--- Flat denormalized view joining products → servings → nutrition_facts → scores.
+-- Flat denormalized view joining products → servings → nutrition_facts → scores → sources.
 -- This view is already created in the schema migration (20260207000100_create_schema.sql).
 -- Updated in migration 20260207000400_remove_unused_columns.sql.
+-- Updated 2026-02-08: added EAN, source provenance fields.
 -- This file exists for reference and for recreating the view if needed.
 --
 -- Usage: SELECT * FROM v_master WHERE country = 'PL' AND category = 'Chips';
@@ -48,9 +49,20 @@ SELECT
     p.controversies,
     -- Ingredients
     i.ingredients_raw,
-    i.additives_count
+    i.additives_count,
+    -- Source provenance (added 2026-02-08)
+    p.ean,
+    src.source_type,
+    src.ref AS source_ref,
+    src.url AS source_url,
+    src.notes AS source_notes
 FROM public.products p
 LEFT JOIN public.servings sv ON sv.product_id = p.product_id
 LEFT JOIN public.nutrition_facts n ON n.product_id = p.product_id AND n.serving_id = sv.serving_id
 LEFT JOIN public.scores s ON s.product_id = p.product_id
-LEFT JOIN public.ingredients i ON i.product_id = p.product_id;
+LEFT JOIN public.ingredients i ON i.product_id = p.product_id
+LEFT JOIN public.sources src ON (
+    -- Match sources.brand pattern "Multi-brand (CategoryName)" to products.category
+    -- e.g., "Multi-brand (Chips)" matches category = 'Chips'
+    src.brand LIKE '%(' || p.category || ')%'
+);
