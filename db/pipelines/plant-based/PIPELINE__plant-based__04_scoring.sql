@@ -39,49 +39,49 @@ from (
     ('Alpro',              'Alpro Napój Owsiany Naturalny',            '2'),  -- stabilizers, calcium
     ('Alpro',              'Alpro Jogurt Sojowy Naturalny',            '3'),  -- cultures, stabilizers, calcium
     ('Alpro',              'Alpro Napój Migdałowy Niesłodzony',        '2'),  -- stabilizers, calcium
-    
+
     -- ── GARDEN GOURMET (ultra-processed meat alternatives) ────────────────
     ('Garden Gourmet',     'Garden Gourmet Sensational Burger',        '8'),  -- methylcellulose, flavors, colors, etc.
     ('Garden Gourmet',     'Garden Gourmet Vegan Nuggets',             '7'),  -- coating, colorings, preservatives
     ('Garden Gourmet',     'Garden Gourmet Vegan Mince',               '6'),  -- flavorings, stabilizers
     ('Garden Gourmet',     'Garden Gourmet Vegan Schnitzel',           '7'),  -- coating, colorings, preservatives
-    
+
     -- ── VIOLIFE (coconut oil-based cheese with additives) ─────────────────
     ('Violife',            'Violife Original Block',                   '5'),  -- starches, flavors, colors
     ('Violife',            'Violife Mozzarella Style Shreds',          '6'),  -- starches, flavors, colors, preservatives
     ('Violife',            'Violife Cheddar Slices',                   '5'),  -- starches, flavors, colors
-    
+
     -- ── TAIFUN (organic, minimal additives) ──────────────────────────────
     ('Taifun',             'Taifun Tofu Natural',                      '0'),  -- soybeans, water, nigari
     ('Taifun',             'Taifun Tofu Smoked',                       '1'),  -- natural smoke
     ('Taifun',             'Taifun Tofu Rosso',                        '2'),  -- herbs, spices
-    
+
     -- ── LIKEMEAT (processed meat alternatives) ───────────────────────────
     ('LikeMeat',           'LikeMeat Like Chicken Pieces',             '6'),  -- flavorings, stabilizers, colors
     ('LikeMeat',           'LikeMeat Like Kebab',                      '7'),  -- seitan, flavorings, preservatives
-    
+
     -- ── SOJASUN (yogurt cultures + stabilizers) ──────────────────────────
     ('Sojasun',            'Sojasun Jogurt Sojowy Naturalny',          '3'),  -- cultures, stabilizers
     ('Sojasun',            'Sojasun Jogurt Sojowy Waniliowy',          '4'),  -- vanilla flavor, cultures, stabilizers
-    
+
     -- ── KUPIEC (Polish tofu, minimal processing) ─────────────────────────
     ('Kupiec',             'Kupiec Ser Tofu Naturalny',                '0'),  -- soybeans, water, coagulant
     ('Kupiec',             'Kupiec Ser Tofu Wędzony',                  '1'),  -- natural smoke
-    
+
     -- ── BEYOND MEAT (highly engineered meat alternatives) ────────────────
     ('Beyond Meat',        'Beyond Meat Beyond Burger',                '9'),  -- methylcellulose, flavors, colors, binders
     ('Beyond Meat',        'Beyond Meat Beyond Sausage',               '10'), -- extensive additive list for texture/flavor
-    
+
     -- ── NATURALNIE (Polish plant milks) ──────────────────────────────────
     ('Naturalnie',         'Naturalnie Napój Owsiany Klasyczny',       '2'),  -- stabilizers, calcium
     ('Naturalnie',         'Naturalnie Napój Kokosowy',                '1'),  -- stabilizers
-    
+
     -- ── SIMPLY V (almond-based cream cheese) ─────────────────────────────
     ('Simply V',           'Simply V Ser Kremowy Naturalny',           '4'),  -- starches, cultures, stabilizers
-    
+
     -- ── GREEN LEGEND (processed cutlets) ─────────────────────────────────
     ('Green Legend',       'Green Legend Kotlet Sojowy',               '5'),  -- coating, flavorings, preservatives
-    
+
     -- ── TEMPEH (fermented, minimal additives) ────────────────────────────
     ('Taifun',             'Taifun Tempeh Natural',                    '0')   -- soybeans, water, tempeh culture
 ) as d(brand, product_name, cnt)
@@ -130,49 +130,49 @@ from (
     ('Alpro',              'Alpro Napój Owsiany Naturalny',            'B'),  -- some natural sugars from oats
     ('Alpro',              'Alpro Jogurt Sojowy Naturalny',            'A'),  -- low fat, low sugar
     ('Alpro',              'Alpro Napój Migdałowy Niesłodzony',        'A'),  -- very low calorie, unsweetened
-    
+
     -- ── GARDEN GOURMET (processed but moderate nutrition) ─────────────────
     ('Garden Gourmet',     'Garden Gourmet Sensational Burger',        'C'),  -- moderate fat, good protein
     ('Garden Gourmet',     'Garden Gourmet Vegan Nuggets',             'C'),  -- breaded, moderate fat
     ('Garden Gourmet',     'Garden Gourmet Vegan Mince',               'B'),  -- low fat, high protein
     ('Garden Gourmet',     'Garden Gourmet Vegan Schnitzel',           'C'),  -- breaded, moderate processing
-    
+
     -- ── VIOLIFE (high sat fat from coconut oil) ──────────────────────────
     ('Violife',            'Violife Original Block',                   'E'),  -- 20g saturated fat per 100g
     ('Violife',            'Violife Mozzarella Style Shreds',          'D'),  -- 19g saturated fat
     ('Violife',            'Violife Cheddar Slices',                   'E'),  -- 20g saturated fat, high salt
-    
+
     -- ── TAIFUN (excellent nutrition profile) ─────────────────────────────
     ('Taifun',             'Taifun Tofu Natural',                      'A'),  -- high protein, low everything else
     ('Taifun',             'Taifun Tofu Smoked',                       'B'),  -- added salt from smoking
     ('Taifun',             'Taifun Tofu Rosso',                        'B'),  -- added ingredients, still healthy
-    
+
     -- ── LIKEMEAT (processed meat alternatives) ───────────────────────────
     ('LikeMeat',           'LikeMeat Like Chicken Pieces',             'C'),  -- moderate fat, good protein
     ('LikeMeat',           'LikeMeat Like Kebab',                      'C'),  -- similar profile
-    
+
     -- ── SOJASUN (yogurt alternatives) ────────────────────────────────────
     ('Sojasun',            'Sojasun Jogurt Sojowy Naturalny',          'A'),  -- low sugar, good protein
     ('Sojasun',            'Sojasun Jogurt Sojowy Waniliowy',          'B'),  -- added sugar
-    
+
     -- ── KUPIEC (Polish tofu, excellent profile) ──────────────────────────
     ('Kupiec',             'Kupiec Ser Tofu Naturalny',                'A'),  -- high protein, low everything
     ('Kupiec',             'Kupiec Ser Tofu Wędzony',                  'B'),  -- added salt
-    
+
     -- ── BEYOND MEAT (engineered but nutritious) ──────────────────────────
     ('Beyond Meat',        'Beyond Meat Beyond Burger',                'C'),  -- high fat but good protein
     ('Beyond Meat',        'Beyond Meat Beyond Sausage',               'C'),  -- moderate fat, decent protein
-    
+
     -- ── NATURALNIE (Polish plant milks) ──────────────────────────────────
     ('Naturalnie',         'Naturalnie Napój Owsiany Klasyczny',       'B'),  -- natural oat sugars
     ('Naturalnie',         'Naturalnie Napój Kokosowy',                'A'),  -- low calorie, low sugar
-    
+
     -- ── SIMPLY V (cream cheese alternative) ──────────────────────────────
     ('Simply V',           'Simply V Ser Kremowy Naturalny',           'D'),  -- high fat, moderate processing
-    
+
     -- ── GREEN LEGEND (processed cutlets) ─────────────────────────────────
     ('Green Legend',       'Green Legend Kotlet Sojowy',               'C'),  -- moderate fat, good protein
-    
+
     -- ── TEMPEH (fermented superfood) ─────────────────────────────────────
     ('Taifun',             'Taifun Tempeh Natural',                    'A')   -- excellent protein, minimal processing
 ) as d(brand, product_name, ns)
@@ -199,49 +199,49 @@ from (
     ('Alpro',              'Alpro Napój Owsiany Naturalny',            '3'),  -- processed drink
     ('Alpro',              'Alpro Jogurt Sojowy Naturalny',            '3'),  -- fermented, processed
     ('Alpro',              'Alpro Napój Migdałowy Niesłodzony',        '3'),  -- processed drink
-    
+
     -- ── GARDEN GOURMET (ultra-processed) ─────────────────────────────────
     ('Garden Gourmet',     'Garden Gourmet Sensational Burger',        '4'),  -- industrial formulation
     ('Garden Gourmet',     'Garden Gourmet Vegan Nuggets',             '4'),  -- breaded, many additives
     ('Garden Gourmet',     'Garden Gourmet Vegan Mince',               '4'),  -- ultra-processed texturized protein
     ('Garden Gourmet',     'Garden Gourmet Vegan Schnitzel',           '4'),  -- breaded, ultra-processed
-    
+
     -- ── VIOLIFE (ultra-processed cheese alternatives) ────────────────────
     ('Violife',            'Violife Original Block',                   '4'),  -- industrial formulation, many additives
     ('Violife',            'Violife Mozzarella Style Shreds',          '4'),  -- ultra-processed
     ('Violife',            'Violife Cheddar Slices',                   '4'),  -- ultra-processed
-    
+
     -- ── TAIFUN (minimally processed) ─────────────────────────────────────
     ('Taifun',             'Taifun Tofu Natural',                      '1'),  -- soybeans, water, coagulant only
     ('Taifun',             'Taifun Tofu Smoked',                       '3'),  -- smoked = processed
     ('Taifun',             'Taifun Tofu Rosso',                        '3'),  -- flavored = processed
-    
+
     -- ── LIKEMEAT (ultra-processed) ───────────────────────────────────────
     ('LikeMeat',           'LikeMeat Like Chicken Pieces',             '4'),  -- industrial formulation
     ('LikeMeat',           'LikeMeat Like Kebab',                      '4'),  -- ultra-processed seitan
-    
+
     -- ── SOJASUN (processed yogurt) ───────────────────────────────────────
     ('Sojasun',            'Sojasun Jogurt Sojowy Naturalny',          '3'),  -- fermented, processed
     ('Sojasun',            'Sojasun Jogurt Sojowy Waniliowy',          '3'),  -- fermented, flavored
-    
+
     -- ── KUPIEC (minimally processed) ─────────────────────────────────────
     ('Kupiec',             'Kupiec Ser Tofu Naturalny',                '1'),  -- basic tofu
     ('Kupiec',             'Kupiec Ser Tofu Wędzony',                  '3'),  -- smoked = processed
-    
+
     -- ── BEYOND MEAT (ultra-processed) ────────────────────────────────────
     ('Beyond Meat',        'Beyond Meat Beyond Burger',                '4'),  -- highly engineered
     ('Beyond Meat',        'Beyond Meat Beyond Sausage',               '4'),  -- ultra-processed
-    
+
     -- ── NATURALNIE (processed drinks) ────────────────────────────────────
     ('Naturalnie',         'Naturalnie Napój Owsiany Klasyczny',       '3'),  -- processed drink
     ('Naturalnie',         'Naturalnie Napój Kokosowy',                '3'),  -- processed drink
-    
+
     -- ── SIMPLY V (ultra-processed cheese alternative) ────────────────────
     ('Simply V',           'Simply V Ser Kremowy Naturalny',           '4'),  -- industrial formulation
-    
+
     -- ── GREEN LEGEND (ultra-processed) ───────────────────────────────────
     ('Green Legend',       'Green Legend Kotlet Sojowy',               '4'),  -- breaded, industrial
-    
+
     -- ── TEMPEH (minimally processed, fermented) ──────────────────────────
     ('Taifun',             'Taifun Tempeh Natural',                    '1')   -- soybeans + culture = minimal
 ) as d(brand, product_name, nova)
