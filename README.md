@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 336 active products across 12 categories
+**Database**: 364 active products across 13 categories
 
 | Category             | Products | Brands                                                                                                                                  | Score Range |
 | -------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
@@ -54,6 +54,7 @@ supabase start
 | **Sauces**           | 28       |                                                                                                                                         | 8–41        |
 | **Baby**             | 28       |                                                                                                                                         | 8–36        |
 | **Alcohol**          | 28       |                                                                                                                                         | 5–11        |
+| **Frozen & Prepared**| 28       | 11 (Dr. Oetker, Morey, Nowaco, Obiad, Mroźnia, Bonduelle, Makaronika, TVLine, Żabka Frost, Kulina, Berryland)                             | 42–64       |
 
 **Test Coverage**: 31 automated checks + 7 data quality reports
 - 11 data integrity checks (nulls, foreign keys, duplicates)
@@ -76,6 +77,7 @@ poland-food-db/
 │   │   ├── chips/           # 28 chip products (5 SQL files)
 │   │   ├── dairy/           # 28 dairy products (4 SQL files)
 │   │   ├── drinks/          # 28 beverage products (4 SQL files)
+│   │   ├── frozen/          # 28 frozen & prepared products (4 SQL files)
 │   │   ├── instant/          # 28 instant & frozen products (4 SQL files)
 │   │   ├── meat/            # 28 meat & deli products (4 SQL files)
 │   │   ├── sauces/          # 28 sauces & condiments products (4 SQL files)
