@@ -2,10 +2,10 @@
 
 ## Summary
 
-**Total EANs in database**: 133  
-**Valid EAN-13 codes**: 133 (100%)  
-**Invalid checksums**: 0 (0%)  
-**EAN-8 codes (warnings)**: 8
+**Total EANs in database**: 149
+**Valid EAN-13 codes**: 149 (100%)
+**Invalid checksums**: 0 (0%)
+**Overall EAN coverage**: 149/446 products (33.4%)
 
 ## Recent Progress
 
@@ -16,10 +16,12 @@
 - **Removed all EAN codes from plant-based category** (10 invalid, 37% error rate, none verifiable)
 - **Removed all EAN codes from nuts-seeds category** (10 invalid, 37% error rate, none verifiable)
 - **Removed all EAN codes from breakfast category** (25 invalid, 92% error rate, none verifiable)
-- Applied corrected EANs to database (133 products, 29.9% coverage)
+- Applied corrected EANs to database (133 products initially, 29.8% coverage)
 - Fixed Windows UTF-8 encoding issues in validator
 - Integrated EAN validation into QA suite as Test Suite 4
 - **QA suite now passes: all EAN-13 checksums valid (100%)**
+- **Added 16 verified EANs to Chips category** via Open Food Facts research (37/45 = 82.2%)
+- Total EANs expanded from 133 → 149 (+16, +12% increase)
 
 ### 🗑️ Removed Categories
 
@@ -28,7 +30,7 @@
 - None found in Open Food Facts database despite claim of verification
 - EANs removed on 2026-02-08, products retained without barcodes
 
-**Plant-Based & Alternatives (27 products)**  
+**Plant-Based & Alternatives (27 products)**
 - Reason: 37% checksum failure rate (10/27 invalid)
 - None found in Open Food Facts database despite claim of verification
 - EANs removed on 2026-02-08, products retained without barcodes
@@ -47,14 +49,14 @@
 
 ### ✅ Valid EAN Coverage
 
-| Category | Products with EANs | Checksum Status |
-|----------|-------------------|-----------------|
-| Baby | 28 | ✅ All valid |
-| Cereals | 28 | ✅ All valid |
-| Chips | 21 | ✅ All valid |
-| Drinks | 28 | ✅ All valid |
-| Żabka | 28 | ✅ All valid |
-| **Total** | **133** | **100% valid** |
+| Category  | Products with EANs | Total | Coverage | Checksum Status |
+| --------- | ------------------ | ----- | -------- | --------------- |
+| Baby      | 28                 | 28    | 100.0%   | ✅ All valid     |
+| Cereals   | 28                 | 28    | 100.0%   | ✅ All valid     |
+| **Chips** | **37**             | 45    | **82.2%**| ✅ All valid     |
+| Drinks    | 28                 | 28    | 100.0%   | ✅ All valid     |
+| Żabka     | 28                 | 28    | 100.0%   | ✅ All valid     |
+| **Total** | **149**            | **446**|**33.4%** | **100% valid**  |
 
 ### ⚠️ EAN-8 Warnings
 
@@ -66,6 +68,13 @@
 These are valid but should ideally be converted to EAN-13 format if 13-digit codes become available.
 
 ## Historical Context
+
+### Chips Expansion (Feb 8, 2026 — 16 EANs Added)
+- Researched 24 missing Chips products via Open Food Facts API
+- Found valid EANs for 16 products (brands: Cheetos, Chio, Crunchips, Doritos, Lay's, Snack Day)
+- All 16 EANs passed GS1 Modulo-10 checksum validation
+- Database updated: Chips category now 37/45 (82.2%)
+- 8 products still missing: Generic/Reference, Żabka store brand, Lorenz, others not found in API
 
 ### Fixed EANs (4 products)
 - BoboVita Jabłka i banana: `8591119253935` → `8591119253934`
