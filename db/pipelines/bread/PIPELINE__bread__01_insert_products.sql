@@ -1,9 +1,9 @@
 -- PIPELINE (BREAD): insert products
 -- PIPELINE__bread__01_insert_products.sql
--- 26 Polish bread products verified via Open Food Facts.
+-- 28 Polish bread products verified via Open Food Facts.
 -- Categories: sourdough rye, wholegrain rye, pumpernickel, wheat-rye,
---   toast, crispbread, wraps/tortillas, rolls/buns, seed bread.
--- Last updated: 2026-02-07
+--   toast, crispbread, wraps/tortillas, rolls/buns, seed bread, rusks.
+-- Last updated: 2026-02-08
 
 -- ═══════════════════════════════════════════════════════════════════
 -- INSERT products (idempotent via ON CONFLICT)
@@ -42,7 +42,10 @@ values
   -- ROLLS / BUNS / SEED (3)
   ('PL', 'Oskroba',               'bun',              'Bread', 'Oskroba Bułki Hamburgerowe',              'baked', 'widespread', 'none'),
   ('PL', 'Oskroba',               'seed_bread',       'Bread', 'Oskroba Chleb Pszenno-Żytni z Ziarnami', 'baked', 'widespread', 'none'),
-  ('PL', 'Pano',                   'roll',             'Bread', 'Pano Bułeczki Śniadaniowe',              'baked', 'widespread', 'none')
+  ('PL', 'Pano',                   'roll',             'Bread', 'Pano Bułeczki Śniadaniowe',              'baked', 'widespread', 'none'),
+  -- RUSKS / WHOLEGRAIN TOAST (2)
+  ('PL', 'Carrefour',              'rusk',             'Bread', 'Carrefour Sucharki Pełnoziarniste',        'baked', 'widespread', 'none'),
+  ('PL', 'Pano',                   'toast',            'Bread', 'Pano Tost Pełnoziarnisty',               'baked', 'widespread', 'none')
 on conflict (country, brand, product_name) do update set
   product_type       = excluded.product_type,
   category           = excluded.category,

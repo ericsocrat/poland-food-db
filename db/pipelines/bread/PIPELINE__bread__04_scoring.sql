@@ -2,7 +2,7 @@
 -- PIPELINE__bread__04_scoring.sql
 -- Formula-based v3.1 scoring via compute_unhealthiness_v31() function.
 -- See SCORING_METHODOLOGY.md §2.4 for the canonical formula.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 0. ENSURE rows exist in scores & ingredients
@@ -121,7 +121,9 @@ from (
     ('Pano',                   'Pano Tortilla',                           'D'),
     ('Oskroba',               'Oskroba Bułki Hamburgerowe',              'D'),
     ('Oskroba',               'Oskroba Chleb Pszenno-Żytni z Ziarnami', 'B'),
-    ('Pano',                   'Pano Bułeczki Śniadaniowe',              'C')
+    ('Pano',                   'Pano Bułeczki Śniadaniowe',              'C'),
+    ('Carrefour',              'Carrefour Sucharki Pełnoziarniste',        'C'),
+    ('Pano',                   'Pano Tost Pełnoziarnisty',               'B')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -164,7 +166,9 @@ from (
     ('Pano',                   'Pano Tortilla',                           '4'),
     ('Oskroba',               'Oskroba Bułki Hamburgerowe',              '3'),
     ('Oskroba',               'Oskroba Chleb Pszenno-Żytni z Ziarnami', '3'),
-    ('Pano',                   'Pano Bułeczki Śniadaniowe',              '4')    -- emulsifiers + flavoring
+    ('Pano',                   'Pano Bułeczki Śniadaniowe',              '4'),    -- emulsifiers + flavoring
+    ('Carrefour',              'Carrefour Sucharki Pełnoziarniste',        '4'),    -- industrial rusks
+    ('Pano',                   'Pano Tost Pełnoziarnisty',               '4')     -- industrial toast
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

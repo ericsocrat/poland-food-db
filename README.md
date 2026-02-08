@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 325 active products across 12 categories
+**Database**: 327 active products across 12 categories
 
 | Category             | Products | Brands                                                                                                                                  | Score Range |
 | -------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
@@ -47,7 +47,7 @@ supabase start
 | **Cereals**          | 28       | 9 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella, Kupiec, Kellogg's)                                                   | 11–49       |
 | **Drinks**           | 28       | 16 (Coca-Cola, Pepsi, Fanta, Sprite, Tymbark, Hortex, Tiger, Red Bull, Monster, 4Move, Cappy, Dawtona, Mlekovita, Łaciate, Kubś, Costa) | 7–22        |
 | **Dairy**            | 28       | 13 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio, Sierpc, Président, Philadelphia, Müller, Mlekpol)              | 9–48        |
-| **Bread**            | 26       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)                                                       | 15–30       |
+| **Bread**            | 28       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)                                                       | 15–30       |
 | **Meat**             | 26       | 8 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol)                                                      | 21–56       |
 | **Sweets**           | 28       |                                                                                                                                         | 32–55       |
 | **Instant & Frozen** | 26       |                                                                                                                                         | 13–30       |
@@ -70,7 +70,7 @@ poland-food-db/
 ├── db/
 │   ├── migrations/          # Supabase schema migrations
 │   ├── pipelines/           # Category-specific data pipelines
-│   │   ├── bread/           # 26 bread products (4 SQL files)
+│   │   ├── bread/           # 28 bread products (4 SQL files)
 │   │   ├── cereals/         # 28 cereal products (4 SQL files)
 │   │   ├── chips/           # 16 chip products (5 SQL files)
 │   │   ├── dairy/           # 28 dairy products (4 SQL files)
@@ -185,7 +185,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data sourced from Open Food Facts** — EANs verified against Polish market
 - **Scoring version**: v3.1 (2026-02-07)
-- **325 active products**, 18 deprecated (removed from pipelines but kept in DB)
+- **327 active products**, 18 deprecated (removed from pipelines but kept in DB)
 
 ---
 

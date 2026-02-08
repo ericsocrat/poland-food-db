@@ -1,7 +1,7 @@
 -- PIPELINE (BREAD): add nutrition facts
 -- PIPELINE__bread__03_add_nutrition.sql
 -- All values per 100 g from Open Food Facts (EAN-verified).
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- ═══════════════════════════════════════════════════════════════════
 -- UPSERT nutrition facts (idempotent via ON CONFLICT)
@@ -47,7 +47,10 @@ from (
     -- ROLLS / BUNS / SEED
     ('Oskroba',               'Oskroba Bułki Hamburgerowe',              '346','11.0', '1.6', '0', '53',   '7.3', '0',   '8.4', '1.0'),
     ('Oskroba',               'Oskroba Chleb Pszenno-Żytni z Ziarnami', '261', '3.6', '0.5', '0', '45',   '2.3', '3.5', '9.5', '1.3'),
-    ('Pano',                   'Pano Bułeczki Śniadaniowe',              '350', '7.0', '1.0', '0', '50',   '8.0', '2.5','10.0', '1.2')
+    ('Pano',                   'Pano Bułeczki Śniadaniowe',              '350', '7.0', '1.0', '0', '50',   '8.0', '2.5','10.0', '1.2'),
+    -- RUSKS / WHOLEGRAIN TOAST
+    ('Carrefour',              'Carrefour Sucharki Pełnoziarniste',        '366', '6.5', '0.5', '0', '62',   '5.5','12.0','12.0', '1.5'),
+    ('Pano',                   'Pano Tost Pełnoziarnisty',               '240', '2.0', '0.3', '0', '43',   '4.5', '5.6', '9.2', '1.1')
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
