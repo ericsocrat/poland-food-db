@@ -50,7 +50,7 @@ supabase start
 | **Bread**            | 28       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)                                                       | 15–30       |
 | **Meat**             | 28       | 10 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol, Plukon)                                            | 21–56       |
 | **Sweets**           | 28       |                                                                                                                                         | 32–55       |
-| **Instant & Frozen** | 26       |                                                                                                                                         | 13–30       |
+| **Instant & Frozen** | 28       |                                                                                                                                         | 13–30       |
 | **Sauces**           | 27       |                                                                                                                                         | 8–41        |
 | **Baby**             | 26       |                                                                                                                                         | 8–36        |
 | **Alcohol**          | 26       |                                                                                                                                         | 5–11        |
@@ -75,7 +75,7 @@ poland-food-db/
 │   │   ├── chips/           # 16 chip products (5 SQL files)
 │   │   ├── dairy/           # 28 dairy products (4 SQL files)
 │   │   ├── drinks/          # 28 beverage products (4 SQL files)
-│   │   ├── instant/          # 26 instant & frozen products (4 SQL files)
+│   │   ├── instant/          # 28 instant & frozen products (4 SQL files)
 │   │   ├── meat/            # 28 meat & deli products (4 SQL files)
 │   │   ├── sauces/          # 27 sauces & condiments products (4 SQL files)
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)

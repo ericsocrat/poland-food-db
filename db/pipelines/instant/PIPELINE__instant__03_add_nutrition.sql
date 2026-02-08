@@ -48,7 +48,9 @@ from (
     -- CUP SOUPS (per 100 g prepared)
     ('Knorr',           'Gorący Kubek Ogórkowa z Grzankami',     '23',  '0.6',  '0.3',  '0', '3.8',  '0.9',  '0.5', '0.5',  '1.1'),
     ('Knorr',           'Gorący Kubek Cebulowa z Grzankami',     '33',  '1.0',  '0.5',  '0', '5.2',  '1.0',  '0.5', '0.6',  '0.87'),
-    ('Knorr',           'Gorący Kubek Żurek z Grzankami',        '30',  '0.9',  '0.4',  '0', '4.5',  '0.8',  '0.3', '0.5',  '0.9')
+    ('Knorr',           'Gorący Kubek Żurek z Grzankami',        '30',  '0.9',  '0.4',  '0', '4.5',  '0.8',  '0.3', '0.5',  '0.9'),
+    ('Frużel',          'Frużel Instant Żurek',                 '88',  '3.2',  '1.6',  '0', '12',   '1.1',  '0.5', '1.8',  '1.05'),
+    ('Maggi',           'Maggi Cup Mushroom',                   '35',  '1.2',  '0.6',  '0', '5.5',  '1.2',  '0.5', '0.7',  '0.95')
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'

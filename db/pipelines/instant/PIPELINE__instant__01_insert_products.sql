@@ -1,9 +1,9 @@
 -- PIPELINE (INSTANT & FROZEN): insert products
 -- PIPELINE__instant__01_insert_products.sql
--- 26 Polish instant & frozen meal products verified via Open Food Facts.
+-- 28 Polish instant & frozen meal products verified via Open Food Facts.
 -- Categories: instant noodles, frozen pizza, frozen pierogi,
 --   frozen ready meals, cup soups.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- ═══════════════════════════════════════════════════════════════════
 -- INSERT products (idempotent via ON CONFLICT)
@@ -11,7 +11,7 @@
 
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
 values
-  -- INSTANT NOODLES / SOUPS (7)
+  -- INSTANT NOODLES / SOUPS (9)
   ('PL', 'Knorr',           'instant_noodles', 'Instant & Frozen', 'Knorr Nudle Pomidorowe Pikantne',      'none', 'widespread', 'palm oil'),
   ('PL', 'Knorr',           'instant_noodles', 'Instant & Frozen', 'Knorr Nudle Pieczony Kurczak',         'none', 'widespread', 'palm oil'),
   ('PL', 'Knorr',           'instant_noodles', 'Instant & Frozen', 'Knorr Nudle Ser w Ziołach',            'none', 'widespread', 'palm oil'),
@@ -19,6 +19,8 @@ values
   ('PL', 'Amino',           'instant_soup',    'Instant & Frozen', 'Amino Rosół z Makaronem',              'none', 'widespread', 'palm oil'),
   ('PL', 'Amino',           'instant_soup',    'Instant & Frozen', 'Amino Żurek po Śląsku',                'none', 'widespread', 'palm oil'),
   ('PL', 'Vifon',           'instant_noodles', 'Instant & Frozen', 'Vifon Kurczak Złocisty',               'none', 'widespread', 'moderate'),
+  ('PL', 'Frużel',          'instant_soup',    'Instant & Frozen', 'Frużel Instant Żurek',                 'none', 'widespread', 'moderate'),
+  ('PL', 'Maggi',           'cup_soup',        'Instant & Frozen', 'Maggi Cup Mushroom',                    'none', 'widespread', 'palm oil'),
   -- FROZEN PIZZA (7)
   ('PL', 'Iglotex',         'frozen_pizza',    'Instant & Frozen', 'Iglotex Pizza Kurczak ze Szpinakiem',   'baked', 'widespread', 'none'),
   ('PL', 'Iglotex',         'frozen_pizza',    'Instant & Frozen', 'Iglotex Pizza Cztery Sery',             'baked', 'widespread', 'none'),

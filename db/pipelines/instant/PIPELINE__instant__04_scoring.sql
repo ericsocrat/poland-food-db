@@ -2,7 +2,7 @@
 -- PIPELINE__instant__04_scoring.sql
 -- Formula-based v3.1 scoring via compute_unhealthiness_v31() function.
 -- See SCORING_METHODOLOGY.md §2.4 for the canonical formula.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 0. ENSURE rows exist in scores & ingredients
@@ -64,7 +64,9 @@ from (
     -- CUP SOUPS
     ('Knorr',           'Gorący Kubek Ogórkowa z Grzankami',     '2'),   -- e330, e392
     ('Knorr',           'Gorący Kubek Cebulowa z Grzankami',     '3'),   -- e330, e392, e471
-    ('Knorr',           'Gorący Kubek Żurek z Grzankami',        '3')    -- e330, e392, e621
+    ('Knorr',           'Gorący Kubek Żurek z Grzankami',        '3'),   -- e330, e392, e621
+    ('Frużel',          'Frużel Instant Żurek',                 '4'),   -- e14xx, e330, e621, e627
+    ('Maggi',           'Maggi Cup Mushroom',                    '2')    -- e330, e392
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -132,7 +134,9 @@ from (
     -- CUP SOUPS
     ('Knorr',           'Gorący Kubek Ogórkowa z Grzankami',     'C'),
     ('Knorr',           'Gorący Kubek Cebulowa z Grzankami',     'C'),
-    ('Knorr',           'Gorący Kubek Żurek z Grzankami',        'C')
+    ('Knorr',           'Gorący Kubek Żurek z Grzankami',        'C'),
+    ('Frużel',          'Frużel Instant Żurek',                 'C'),
+    ('Maggi',           'Maggi Cup Mushroom',                    'C')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -180,7 +184,9 @@ from (
     -- CUP SOUPS (all NOVA 4: instant powder + additives)
     ('Knorr',           'Gorący Kubek Ogórkowa z Grzankami',     '4'),
     ('Knorr',           'Gorący Kubek Cebulowa z Grzankami',     '4'),
-    ('Knorr',           'Gorący Kubek Żurek z Grzankami',        '4')
+    ('Knorr',           'Gorący Kubek Żurek z Grzankami',        '4'),
+    ('Frużel',          'Frużel Instant Żurek',                 '4'),
+    ('Maggi',           'Maggi Cup Mushroom',                    '4')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
