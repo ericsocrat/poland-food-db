@@ -1,6 +1,6 @@
 -- Migration: Remove invalid EANs from Sauces category
 -- Date: 2026-02-08
--- 
+--
 -- Issue: 5 Kotlin products and 1 Targroch product have invalid EAN checksums
 -- These are pre-existing erroneous codes that fail GS1 Modulo-10 validation
 --

@@ -1,6 +1,6 @@
 -- Migration: Remove invalid EANs from legacy dataset
 -- Date: 2026-02-08
--- 
+--
 -- Issue: 28 invalid EANs in Canned Goods, Breakfast, and Cereals categories
 -- These appear to be test/placeholder codes (sequential digits) from initial import
 --

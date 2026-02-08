@@ -13,8 +13,8 @@ import sys
 from io import TextIOWrapper
 
 # Fix Windows console encoding
-if sys.stdout.encoding != 'utf-8':
-    sys.stdout = TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+if sys.stdout.encoding != "utf-8":
+    sys.stdout = TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 
 # List of 28 sweets products from database
@@ -60,14 +60,14 @@ def search_open_food_facts(brand, product_name):
         "action": "process",
         "fields": "code,name,brands",
         "json": 1,
-        "page_size": 5
+        "page_size": 5,
     }
-    
+
     try:
         response = requests.get(url, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
-        
+
         if data.get("products"):
             product = data["products"][0]
             ean = product.get("code", "").strip()
@@ -87,11 +87,11 @@ found_count = 0
 for brand, product_name in sweets_products:
     ean = search_open_food_facts(brand, product_name)
     time.sleep(0.5)  # Rate limit: 0.5s between requests
-    
+
     status = "FOUND" if ean else "NOT FOUND"
     ean_display = ean if ean else "N/A"
     print(f"[{status:9s}] {brand:15s} {product_name:60s} {ean_display}")
-    
+
     if ean:
         found_count += 1
         results.append({"brand": brand, "product_name": product_name, "ean": ean})
