@@ -7,6 +7,7 @@
         1. QA__null_checks.sql (11 data integrity checks)
         2. QA__scoring_formula_tests.sql (14 algorithm validation checks)
         3. QA__source_coverage.sql (7 source provenance checks — informational)
+        4. validate_eans.py (EAN-13 checksum validation — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suite 3 is informational and does not affect the exit code.
@@ -15,6 +16,7 @@
     Prerequisites:
         - Docker Desktop running with local Supabase containers
         - Database populated with scored products
+        - Python 3.14+ with validate_eans.py script
 
     Usage:
         .\RUN_QA.ps1
@@ -122,6 +124,41 @@ if (Test-Path $test3File) {
     }
 }
 
+# ─── Test 4: EAN-13 Checksum Validation ────────────────────────────────────
+
+Write-Host ""
+Write-Host "Running Test Suite 4: EAN-13 Checksum Validation..." -ForegroundColor Yellow
+
+$validatorScript = Join-Path $PSScriptRoot "validate_eans.py"
+if (-not (Test-Path $validatorScript)) {
+    Write-Host "  ⚠ SKIPPED (validate_eans.py not found)" -ForegroundColor DarkYellow
+    $test4Pass = $true  # Non-blocking if validator doesn't exist
+}
+else {
+    # Run validator and capture output
+    $validatorOutput = & python $validatorScript 2>&1
+    $validatorExitCode = $LASTEXITCODE
+    
+    if ($validatorExitCode -eq 0) {
+        Write-Host "  ✓ PASS — All EAN codes have valid checksums" -ForegroundColor Green
+        $test4Pass = $true
+    }
+    else {
+        # Extract count of invalid EANs from output
+        $invalidMatch = $validatorOutput | Select-String -Pattern "Results: (\d+) valid, (\d+) invalid"
+        if ($invalidMatch) {
+            $validCount = $invalidMatch.Matches.Groups[1].Value
+            $invalidCount = $invalidMatch.Matches.Groups[2].Value
+            Write-Host "  ✗ FAILED — $invalidCount invalid EAN checksums detected (of $validCount total)" -ForegroundColor Red
+            Write-Host "    Run 'python validate_eans.py' for details or see EAN_VALIDATION_STATUS.md" -ForegroundColor DarkGray
+        }
+        else {
+            Write-Host "  ✗ FAILED — EAN validation errors detected" -ForegroundColor Red
+        }
+        $test4Pass = $false
+    }
+}
+
 # ─── Database Inventory ─────────────────────────────────────────────────────
 
 Write-Host ""
@@ -147,8 +184,8 @@ Write-Host "================================================" -ForegroundColor C
 Write-Host "  Test Summary" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 
-if ($test1Pass -and $test2Pass) {
-    Write-Host "  ✓ ALL TESTS PASSED (33/33 checks)" -ForegroundColor Green
+if ($test1Pass -and $test2Pass -and $test4Pass) {
+    Write-Host "  ✓ ALL TESTS PASSED" -ForegroundColor Green
     Write-Host ""
     exit 0
 }
@@ -156,6 +193,7 @@ else {
     Write-Host "  ✗ SOME TESTS FAILED" -ForegroundColor Red
     Write-Host "    Test Suite 1 (Integrity):  $(if ($test1Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test1Pass) { "Green" } else { "Red" })
     Write-Host "    Test Suite 2 (Formula):    $(if ($test2Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test2Pass) { "Green" } else { "Red" })
+    Write-Host "    Test Suite 4 (EAN):        $(if ($test4Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test4Pass) { "Green" } else { "Red" })
     Write-Host ""
     exit 1
 }
