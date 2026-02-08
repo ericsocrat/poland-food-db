@@ -2,7 +2,7 @@
 -- PIPELINE__cereals__03_add_nutrition.sql
 -- Real per-SKU nutrition data (per 100 g) from Open Food Facts.
 -- Source: openfoodfacts.org — verified against Polish-market product labels.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- 1) Remove existing nutrition for PL Cereals so this step is fully idempotent
 delete from nutrition_facts
@@ -40,7 +40,20 @@ from (
     ('Crownfield (Lidl)',       'Crownfield Goldini',                      '409','5.1','0.9','0',  '81.2','23.2','2.3', '8.5','1.28'),
     ('Crownfield (Lidl)',       'Crownfield Choco Muszelki',               '368','2.9','1.2','0',  '73.2','23.5','6.7', '8.8','0.22'),
     ('Melvit',                  'Melvit Płatki Owsiane Górskie',           '374','6.7','1.3','0',  '61',  '1.6', '9',   '13', '0'),
-    ('Lubella',                 'Lubella Corn Flakes Pełne Ziarno',        '388','3.6','0.5','0',  '77',  '4.8', '5.9', '9',  '1.6')
+    ('Lubella',                 'Lubella Corn Flakes Pełne Ziarno',        '388','3.6','0.5','0',  '77',  '4.8', '5.9', '9',  '1.6'),
+    -- ── new products (2026-02-08) ──────────────────────────────────────
+    ('Nestlé',                  'Nestlé Cookie Crisp',                     '391','5.2','0.7','0',  '76.1','22.4','5.9', '6.9','0.77'),
+    ('Nestlé',                  'Nestlé Nesquik Alphabet',                 '369','2.1','0.7','0',  '72.8','14.9','9.8', '9.7','0.43'),
+    ('Sante',                   'Sante Granola Nut',                       '458','17', '2.3','0',  '61',  '18',  '6.5', '12', '0.63'),
+    ('Sante',                   'Sante Granola Malina & Truskawka',        '448','14', '1.8','0',  '68',  '18.2','7.3', '9.1','0.5'),
+    ('Sante',                   'Sante Granola Czekolada & Pomarańcza',    '446','15', '3.7','0',  '66',  '21',  '6.3', '8.7','0.46'),
+    ('Lubella',                 'Lubella Choco Piegotaki',                 '380','2.2','0.9','0',  '80',  '27',  '4',   '8',  '0.89'),
+    ('Lubella',                 'Lubella Płatki Żytnie',                   '367','1.3','0.2','0',  '77',  '8.6', '10',  '6.8','1.1'),
+    ('Vitanella (Biedronka)',   'Vitanella Corn Flakes',                   '386','1.9','0.6','0',  '82.5','6.3', '2.3', '8.5','1.6'),
+    ('Vitanella (Biedronka)',   'Vitanella Crunchy Owocowe',               '401','12', '2.9','0',  '62',  '26',  '6.7', '7.9','0.12'),
+    ('Crownfield (Lidl)',       'Crownfield Choco Balls',                  '366','2.2','0.6','0',  '73.6','23.8','7.7', '9.2','0.45'),
+    ('Crownfield (Lidl)',       'Crownfield Musli Premium Multi-Frucht',   '377','9.7','5.1','0',  '60.5','24.8','8.2', '7.9','0.07'),
+    ('Kupiec',                  'Kupiec Coś na Ząb Owsianka',              '370','5.2','0.9','0',  '64',  '21',  '7.8', '13', '0')
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

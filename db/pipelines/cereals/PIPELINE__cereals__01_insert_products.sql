@@ -1,8 +1,8 @@
 -- PIPELINE (CEREALS): insert products
 -- PIPELINE__cereals__01_insert_products.sql
--- 16 verified products from the Polish market.
+-- 28 verified products from the Polish market.
 -- Data sourced from Open Food Facts (openfoodfacts.org) — EANs verified.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
 values
@@ -50,7 +50,43 @@ values
 
 -- ── Lubella ─────────────────────────────────────────────────────────────
 -- EAN 5900049011645 — Corn Flakes Pełne Ziarno (whole grain, NOVA 4)
-('PL','Lubella','Grocery','Cereals','Lubella Corn Flakes Pełne Ziarno','baked','Biedronka;Lidl;Żabka','none')
+('PL','Lubella','Grocery','Cereals','Lubella Corn Flakes Pełne Ziarno','baked','Biedronka;Lidl;Żabka','none'),
+
+-- ── Nestlé (additional) ────────────────────────────────────────────────
+-- EAN 5900020007728 — Cookie Crisp (cookie-shaped cereal, NOVA 4)
+('PL','Nestlé','Grocery','Cereals','Nestlé Cookie Crisp','baked','Biedronka;Lidl;Żabka','none'),
+-- EAN 5900020020154 — Nesquik Alphabet (letter-shaped cocoa cereal, NOVA 4)
+('PL','Nestlé','Grocery','Cereals','Nestlé Nesquik Alphabet','baked','Biedronka;Lidl;Żabka','none'),
+
+-- ── Sante (additional) ────────────────────────────────────────────────
+-- EAN 5900617002976 — Sante Granola Nut (nut & peanut butter, NOVA 4)
+('PL','Sante','Grocery','Cereals','Sante Granola Nut','baked','Biedronka;Lidl','none'),
+-- EAN 5900617002969 — Sante Granola Malina & Truskawka (raspberry & strawberry, NOVA 4)
+('PL','Sante','Grocery','Cereals','Sante Granola Malina & Truskawka','baked','Biedronka;Lidl','none'),
+-- EAN 5900617037176 — Sante Granola Czekolada & Pomarańcza (chocolate & orange, NOVA 4)
+('PL','Sante','Grocery','Cereals','Sante Granola Czekolada & Pomarańcza','baked','Biedronka;Lidl','none'),
+
+-- ── Lubella (additional) ──────────────────────────────────────────────
+-- EAN 5900049011621 — Lubella Choco Piegotaki (chocolate cereal, NOVA 4)
+('PL','Lubella','Grocery','Cereals','Lubella Choco Piegotaki','baked','Biedronka;Lidl;Żabka','none'),
+-- EAN 5900049812532 — Lubella Płatki Żytnie (rye flakes, NOVA 3)
+('PL','Lubella','Grocery','Cereals','Lubella Płatki Żytnie','baked','Biedronka;Lidl','none'),
+
+-- ── Vitanella / Biedronka (additional) ───────────────────────────────
+-- EAN 5907437361474 — Vitanella Corn Flakes (fortified corn flakes, NOVA 4 est.)
+('PL','Vitanella (Biedronka)','Grocery','Cereals','Vitanella Corn Flakes','baked','Biedronka','none'),
+-- EAN 5900749610520 — Vitanella Crunchy Owocowe (fruit crunchy granola, NOVA 4)
+('PL','Vitanella (Biedronka)','Grocery','Cereals','Vitanella Crunchy Owocowe','baked','Biedronka','none'),
+
+-- ── Crownfield / Lidl (additional) ───────────────────────────────────
+-- EAN 20013011 — Crownfield Choco Balls (chocolate cereal balls, NOVA 4)
+('PL','Crownfield (Lidl)','Grocery','Cereals','Crownfield Choco Balls','baked','Lidl','none'),
+-- EAN 20202859 — Crownfield Musli Premium Multi-Frucht (fruit muesli, NOVA 4)
+('PL','Crownfield (Lidl)','Grocery','Cereals','Crownfield Musli Premium Multi-Frucht','baked','Lidl','none'),
+
+-- ── Kupiec ───────────────────────────────────────────────────────────
+-- EAN 5906747171421 — Kupiec Coś na Ząb Owsianka (instant oat porridge, NOVA 4)
+('PL','Kupiec','Grocery','Cereals','Kupiec Coś na Ząb Owsianka','baked','Biedronka;Lidl','none')
 
 on conflict (country, brand, product_name)
 do update set
@@ -74,5 +110,11 @@ where country='PL' and category='Cereals'
     'Vitanella Miami Hopki','Vitanella Choki','Vitanella Orito Kakaowe',
     'Crownfield Goldini','Crownfield Choco Muszelki',
     'Melvit Płatki Owsiane Górskie',
-    'Lubella Corn Flakes Pełne Ziarno'
+    'Lubella Corn Flakes Pełne Ziarno',
+    'Nestlé Cookie Crisp','Nestlé Nesquik Alphabet',
+    'Sante Granola Nut','Sante Granola Malina & Truskawka','Sante Granola Czekolada & Pomarańcza',
+    'Lubella Choco Piegotaki','Lubella Płatki Żytnie',
+    'Vitanella Corn Flakes','Vitanella Crunchy Owocowe',
+    'Crownfield Choco Balls','Crownfield Musli Premium Multi-Frucht',
+    'Kupiec Coś na Ząb Owsianka'
   );

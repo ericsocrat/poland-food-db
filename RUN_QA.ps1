@@ -6,8 +6,10 @@
     Executes:
         1. QA__null_checks.sql (11 data integrity checks)
         2. QA__scoring_formula_tests.sql (14 algorithm validation checks)
+        3. QA__source_coverage.sql (7 source provenance checks — informational)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
+    Test Suite 3 is informational and does not affect the exit code.
 
 .NOTES
     Prerequisites:
@@ -91,6 +93,33 @@ else {
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
     Write-Host $test2Lines -ForegroundColor DarkRed
     $test2Pass = $false
+}
+
+# ─── Test 3: Source Coverage (Informational) ───────────────────────────────
+
+$test3File = Join-Path $QA_DIR "QA__source_coverage.sql"
+if (Test-Path $test3File) {
+    Write-Host ""
+    Write-Host "Running Test Suite 3: Source Coverage (7 checks — informational)..." -ForegroundColor Yellow
+
+    # Run only checks 1-4 (actionable items); 5-7 are informational summaries
+    $test3Content = Get-Content $test3File -Raw
+    $test3Output = $test3Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "  ⚠ FAILED TO EXECUTE (non-blocking)" -ForegroundColor DarkYellow
+    }
+    else {
+        $test3Lines = ($test3Output | Out-String).Trim()
+        if ($test3Lines -eq "" -or $test3Lines -match '^\s*$') {
+            Write-Host "  ✓ All products have multi-source coverage" -ForegroundColor Green
+        }
+        else {
+            $singleSourceCount = ($test3Lines -split "`n" | Where-Object { $_ -match '\S' }).Count
+            Write-Host "  ⚠ $singleSourceCount items flagged for cross-validation (non-blocking)" -ForegroundColor DarkYellow
+            Write-Host "    Run QA__source_coverage.sql directly for details." -ForegroundColor DarkGray
+        }
+    }
 }
 
 # ─── Database Inventory ─────────────────────────────────────────────────────

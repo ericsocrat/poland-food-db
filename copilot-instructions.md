@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-02-08
 > **Scope:** Poland (country code `PL`) only. No other countries are active.
-> **Active categories:** Chips (28), Żabka (28), Cereals (16), Drinks (16), Dairy (16), Bread (26), Meat (26), Sweets (28), Instant & Frozen (26), Sauces (27), Baby (26), Alcohol (26) — 289 products
+> **Active categories:** Chips (28), Żabka (28), Cereals (28), Drinks (16), Dairy (16), Bread (26), Meat (26), Sweets (28), Instant & Frozen (26), Sauces (27), Baby (26), Alcohol (26) — 301 products
 > **Scoring version:** v3.1 (8-factor weighted formula)
 
 ---
@@ -40,7 +40,7 @@ poland-food-db/
 ├── db/                              # Operational SQL (NOT migrations)
 │   ├── migrations/                  # ⚠️ LEGACY — do NOT run these (see below)
 │   ├── pipelines/                   # Data pipelines, one folder per category
-│   │   ├── cereals/                 # ✅ 16 products
+│   │   ├── cereals/                 # ✅ 28 products
 │   │   ├── chips/                   # ✅ 16 products — reference implementation
 │   │   ├── dairy/                   # ✅ 16 products — milk, yogurt, cheese, kefir, butter
 │   │   ├── drinks/                  # ✅ 16 products

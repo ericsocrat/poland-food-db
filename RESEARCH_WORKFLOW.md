@@ -1,6 +1,6 @@
 # Research Workflow
 
-> **Last updated:** 2026-02-07
+> **Last updated:** 2026-02-08
 > **Purpose:** Defines exactly how product data is researched, collected, validated, and entered into the database.
 > **Audience:** AI agent (Copilot) and human contributors.
 
@@ -51,7 +51,7 @@ When choosing which products to add first:
 | Factor                  | Weight | Why                                             |
 | ----------------------- | ------ | ----------------------------------------------- |
 | Market share            | High   | Lay's Classic outsells niche brands 50:1        |
-| Data availability       | High   | Products with Open Food Facts entries = faster  |
+| Data availability       | High   | Products with multiple source coverage = higher confidence |
 | Nutritional range       | Medium | Want the full spectrum, not just the worst      |
 | Private-label coverage  | Medium | Biedronka/Lidl private labels are under-tracked |
 | Reformulation relevance | Low    | Recently reformulated = fresh label data needed |
@@ -59,6 +59,45 @@ When choosing which products to add first:
 ---
 
 ## 3. Phase 2 — Data Collection
+
+### 3.0 Source Collection Order
+
+For every product, attempt data collection from **multiple sources** following the priority hierarchy in `DATA_SOURCES.md`:
+
+```
+1. Physical label     → Gold standard (if available)
+2. Manufacturer PL site → Check brand website for PL product page
+3. IŻŻ / NCEZ tables    → Cross-validate against category reference values
+4. Open Food Facts     → EAN lookup + verify PL label image
+5. Polish retailer     → Biedronka.pl, Lidl.pl, Auchan.pl product pages
+6. Category average    → Last resort only
+```
+
+**Minimum source requirement:** Every product should be traceable to **≥ 2 independent sources** before `confidence` can be set to `verified`. A single-source product (e.g., OFF only) should be flagged for future cross-validation.
+
+#### Manufacturer Website Lookup Steps
+
+| Step | Action |
+| --- | --- |
+| 1 | Identify the manufacturer from the label or product brand |
+| 2 | Find their PL website (see `DATA_SOURCES.md` §4 for URLs) |
+| 3 | Navigate to the specific product page |
+| 4 | Confirm nutrition table is per 100g |
+| 5 | Extract EU-7 + any voluntary fields |
+| 6 | Compare against OFF data — note any discrepancies |
+
+#### Governmental Database Cross-Check
+
+For every category batch, look up the **generic food type** in the IŻŻ / NCEZ food composition tables to establish expected ranges:
+
+```
+Example: Adding potato chips
+→ IŻŻ lookup: "chipsy ziemniaczane, solone"
+→ Expected ranges: fat 30–36g, salt 0.8–1.8g, calories 480–560 kcal
+→ Any product outside these ranges needs a second source or manual verification
+```
+
+This catch-all range check helps detect OFF data entry errors, wrong-country variants, or outdated formulations.
 
 ### 3.1 Required Data Points Per Product
 
@@ -456,11 +495,15 @@ Use this checklist for every product batch:
 - [ ] Batch size decided (brand sweep / store sweep / gap fill)
 
 ### Data Collection
-- [ ] Open Food Facts queried for all products
-- [ ] Nutrition facts collected (per 100g basis)
+- [ ] Manufacturer PL website checked for product nutrition data
+- [ ] IŻŻ / NCEZ category reference ranges recorded
+- [ ] Open Food Facts queried for all products (EAN where available)
+- [ ] Nutrition facts collected (per 100g basis) from best available source
+- [ ] Cross-validated against ≥ 2 sources where possible
 - [ ] Ingredient lists recorded in original Polish
 - [ ] Additives counted using counting rules
 - [ ] Prep method determined
+- [ ] Source URLs and access dates recorded
 
 ### Validation
 - [ ] Range sanity checks passed for all values

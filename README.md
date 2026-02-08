@@ -38,13 +38,13 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 289 active products across 12 categories
+**Database**: 301 active products across 12 categories
 
 | Category             | Products | Brands                                                                                 | Score Range |
 | -------------------- | -------- | -------------------------------------------------------------------------------------- | ----------- |
 | **Chips**            | 28       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                 | 27–51       |
 | **Żabka**            | 28       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                      | 15–43       |
-| **Cereals**          | 16       | 7 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella)                     | 11–49       |
+| **Cereals**          | 28       | 9 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella, Kupiec, Kellogg's) | 11–49       |
 | **Drinks**           | 16       | 10 (Coca-Cola, Pepsi, Fanta, Tymbark, Hortex, Tiger, 4Move, Cappy, Dawtona, Mlekovita) | 8–19        |
 | **Dairy**            | 16       | 7 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio)                | 9–33        |
 | **Bread**            | 26       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)      | 15–30       |
@@ -71,7 +71,7 @@ poland-food-db/
 │   ├── migrations/          # Supabase schema migrations
 │   ├── pipelines/           # Category-specific data pipelines
 │   │   ├── bread/           # 26 bread products (4 SQL files)
-│   │   ├── cereals/         # 16 cereal products (4 SQL files)
+│   │   ├── cereals/         # 28 cereal products (4 SQL files)
 │   │   ├── chips/           # 16 chip products (5 SQL files)
 │   │   ├── dairy/           # 16 dairy products (4 SQL files)
 │   │   ├── drinks/          # 16 beverage products (4 SQL files)
@@ -185,7 +185,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data sourced from Open Food Facts** — EANs verified against Polish market
 - **Scoring version**: v3.1 (2026-02-07)
-- **289 active products**, 17 deprecated (removed from pipelines but kept in DB)
+- **301 active products**, 17 deprecated (removed from pipelines but kept in DB)
 
 ---
 

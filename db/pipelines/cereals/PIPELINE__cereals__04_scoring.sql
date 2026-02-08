@@ -2,7 +2,7 @@
 -- PIPELINE__cereals__04_scoring.sql
 -- Formula-based v3.1 scoring.
 -- See SCORING_METHODOLOGY.md §2.4 for the canonical formula.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 0. ENSURE rows exist in scores & ingredients
@@ -47,7 +47,20 @@ from (
     ('Crownfield (Lidl)',       'Crownfield Goldini',                      '1'),   -- e471
     ('Crownfield (Lidl)',       'Crownfield Choco Muszelki',               '0'),
     ('Melvit',                  'Melvit Płatki Owsiane Górskie',           '0'),
-    ('Lubella',                 'Lubella Corn Flakes Pełne Ziarno',        '3')    -- e150a, e160a, e306
+    ('Lubella',                 'Lubella Corn Flakes Pełne Ziarno',        '3'),   -- e150a, e160a, e306
+    -- ── new products (2026-02-08) ──────────────────────────────────────
+    ('Nestlé',                  'Nestlé Cookie Crisp',                     '3'),   -- e101, e306, e500
+    ('Nestlé',                  'Nestlé Nesquik Alphabet',                 '0'),
+    ('Sante',                   'Sante Granola Nut',                       '2'),   -- e322, e500
+    ('Sante',                   'Sante Granola Malina & Truskawka',        '2'),   -- e322, e500
+    ('Sante',                   'Sante Granola Czekolada & Pomarańcza',    '3'),   -- e322, e322i, e500
+    ('Lubella',                 'Lubella Choco Piegotaki',                 '1'),   -- e500
+    ('Lubella',                 'Lubella Płatki Żytnie',                   '1'),   -- e306
+    ('Vitanella (Biedronka)',   'Vitanella Corn Flakes',                   '0'),   -- (est.) no additives listed on OFF
+    ('Vitanella (Biedronka)',   'Vitanella Crunchy Owocowe',               '2'),   -- e322, e330
+    ('Crownfield (Lidl)',       'Crownfield Choco Balls',                  '0'),
+    ('Crownfield (Lidl)',       'Crownfield Musli Premium Multi-Frucht',   '2'),   -- e220, e330
+    ('Kupiec',                  'Kupiec Coś na Ząb Owsianka',              '0')
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -103,7 +116,20 @@ from (
     ('Crownfield (Lidl)',       'Crownfield Goldini',                      'D'),
     ('Crownfield (Lidl)',       'Crownfield Choco Muszelki',               'C'),
     ('Melvit',                  'Melvit Płatki Owsiane Górskie',           'A'),
-    ('Lubella',                 'Lubella Corn Flakes Pełne Ziarno',        'C')
+    ('Lubella',                 'Lubella Corn Flakes Pełne Ziarno',        'C'),
+    -- ── new products (2026-02-08) ──────────────────────────────────────
+    ('Nestlé',                  'Nestlé Cookie Crisp',                     'C'),
+    ('Nestlé',                  'Nestlé Nesquik Alphabet',                 'B'),
+    ('Sante',                   'Sante Granola Nut',                       'D'),
+    ('Sante',                   'Sante Granola Malina & Truskawka',        'C'),
+    ('Sante',                   'Sante Granola Czekolada & Pomarańcza',    'D'),
+    ('Lubella',                 'Lubella Choco Piegotaki',                 'D'),
+    ('Lubella',                 'Lubella Płatki Żytnie',                   'C'),
+    ('Vitanella (Biedronka)',   'Vitanella Corn Flakes',                   'D'),
+    ('Vitanella (Biedronka)',   'Vitanella Crunchy Owocowe',               'C'),
+    ('Crownfield (Lidl)',       'Crownfield Choco Balls',                  'C'),
+    ('Crownfield (Lidl)',       'Crownfield Musli Premium Multi-Frucht',   'D'),
+    ('Kupiec',                  'Kupiec Coś na Ząb Owsianka',              'A')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -137,7 +163,20 @@ from (
     ('Crownfield (Lidl)',       'Crownfield Goldini',                      '4'),
     ('Crownfield (Lidl)',       'Crownfield Choco Muszelki',               '4'),
     ('Melvit',                  'Melvit Płatki Owsiane Górskie',           '1'),  -- unprocessed whole oats
-    ('Lubella',                 'Lubella Corn Flakes Pełne Ziarno',        '4')
+    ('Lubella',                 'Lubella Corn Flakes Pełne Ziarno',        '4'),
+    -- ── new products (2026-02-08) ──────────────────────────────────────
+    ('Nestlé',                  'Nestlé Cookie Crisp',                     '4'),
+    ('Nestlé',                  'Nestlé Nesquik Alphabet',                 '4'),
+    ('Sante',                   'Sante Granola Nut',                       '4'),
+    ('Sante',                   'Sante Granola Malina & Truskawka',        '4'),
+    ('Sante',                   'Sante Granola Czekolada & Pomarańcza',    '4'),
+    ('Lubella',                 'Lubella Choco Piegotaki',                 '4'),
+    ('Lubella',                 'Lubella Płatki Żytnie',                   '3'),  -- processed, not ultra-processed
+    ('Vitanella (Biedronka)',   'Vitanella Corn Flakes',                   '4'),  -- (est.) typical corn flakes classification
+    ('Vitanella (Biedronka)',   'Vitanella Crunchy Owocowe',               '4'),
+    ('Crownfield (Lidl)',       'Crownfield Choco Balls',                  '4'),
+    ('Crownfield (Lidl)',       'Crownfield Musli Premium Multi-Frucht',   '4'),
+    ('Kupiec',                  'Kupiec Coś na Ząb Owsianka',              '4')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
