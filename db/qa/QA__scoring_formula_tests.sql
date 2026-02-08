@@ -335,3 +335,17 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'BoboVita Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 34 AND 38;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 22: Known product regression test (Somersby Blueberry Cider)
+--          Alcoholic cider: moderate sugar 7.5g + controversies=1 → score 8-12
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Somersby Blueberry Cider score changed unexpectedly' AS issue,
+       CONCAT('Expected 8-12, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Somersby Blueberry Flavoured Cider'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 8 AND 12;

@@ -27,7 +27,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (32 checks)
+# All tests (33 checks)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 239 active products across 11 categories
+**Database**: 265 active products across 12 categories
 
 | Category             | Products | Brands                                                                                 | Score Range |
 | -------------------- | -------- | -------------------------------------------------------------------------------------- | ----------- |
@@ -53,12 +53,13 @@ supabase start
 | **Instant & Frozen** | 26       |                                                                                        | 13–30       |
 | **Sauces**           | 27       |                                                                                        | 8–41        |
 | **Baby**             | 26       |                                                                                        | 8–36        |
+| **Alcohol**          | 26       |                                                                                        | 5–11        |
 
-**Test Coverage**: 32 automated checks
+**Test Coverage**: 33 automated checks
 - 11 data integrity checks (nulls, foreign keys, duplicates)
-- 21 scoring formula validation checks (ranges, flags, NOVA, regression)
+- 22 scoring formula validation checks (ranges, flags, NOVA, regression)
 
-**All tests passing**: ✅ 32/32
+**All tests passing**: ✅ 33/33
 
 ---
 
@@ -173,7 +174,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 32/32 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 33/33 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -184,7 +185,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data sourced from Open Food Facts** — EANs verified against Polish market
 - **Scoring version**: v3.1 (2026-02-07)
-- **239 active products**, 17 deprecated (removed from pipelines but kept in DB)
+- **265 active products**, 17 deprecated (removed from pipelines but kept in DB)
 
 ---
 
