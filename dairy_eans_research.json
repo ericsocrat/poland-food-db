@@ -1,0 +1,163 @@
+[
+  {
+    "brand": "Bakoma",
+    "product_name": "Bakoma Kefir Naturalny",
+    "ean": "5900197011955",
+    "off_brand": "Bakoma",
+    "country": "Polska"
+  },
+  {
+    "brand": "Bakoma",
+    "product_name": "Bakoma Satino Kawowy",
+    "ean": "5900197017575",
+    "off_brand": "Bakoma",
+    "country": "Polska"
+  },
+  {
+    "brand": "Danio",
+    "product_name": "Danio Serek Waniliowy",
+    "ean": "5900643048580",
+    "off_brand": "Danio,Danone",
+    "country": "Polska"
+  },
+  {
+    "brand": "Danone",
+    "product_name": "Activia Jogurt Naturalny",
+    "ean": "5900643049273",
+    "off_brand": "Activia,Danone",
+    "country": "Polska"
+  },
+  {
+    "brand": "Danone",
+    "product_name": "Danonki Truskawka",
+    "ean": "5900643033746",
+    "off_brand": "Danone",
+    "country": "Polska"
+  },
+  {
+    "brand": "Hochland",
+    "product_name": "Hochland Kanapkowy ze Szczypiorkiem",
+    "ean": "5902899139661",
+    "off_brand": "Hochland",
+    "country": "Francja,Polska"
+  },
+  {
+    "brand": "Hochland",
+    "product_name": "Hochland Kremowy ze Śmietanką",
+    "ean": "5902899141701",
+    "off_brand": "Hochland",
+    "country": "Polska"
+  },
+  {
+    "brand": "Łaciate",
+    "product_name": "Łaciate Masło Extra",
+    "ean": "5900820000257",
+    "off_brand": "Łaciate, Mlekpol",
+    "country": "Polska"
+  },
+  {
+    "brand": "Mlekovita",
+    "product_name": "Mlekovita Gouda",
+    "ean": "5900512110271",
+    "off_brand": "Mlekovita",
+    "country": "Poland,United Kingdom"
+  },
+  {
+    "brand": "Mlekovita",
+    "product_name": "Mlekovita Kefir Naturalny",
+    "ean": "5902901004055",
+    "off_brand": "Mlekovita,Z Trzebownika",
+    "country": "Polska"
+  },
+  {
+    "brand": "Mlekovita",
+    "product_name": "Mlekovita Masło Ekstra",
+    "ean": "5900512220130",
+    "off_brand": "Mleczna Dolina, Mlekovita",
+    "country": "Polen, Ukraine, Germany"
+  },
+  {
+    "brand": "Mlekovita",
+    "product_name": "Mlekovita Mleko UHT 2%",
+    "ean": "5900512982335",
+    "off_brand": "Mlekovita",
+    "country": "Francja,Polska"
+  },
+  {
+    "brand": "Mlekpol",
+    "product_name": "Jogurt Augustowski Naturalny",
+    "ean": "5900820004088",
+    "off_brand": "Mlekpol",
+    "country": "Polska"
+  },
+  {
+    "brand": "Müller",
+    "product_name": "Müller Jogurt Choco Balls",
+    "ean": "42373261",
+    "off_brand": "Müller",
+    "country": "Czechy,Polska,Rumunia"
+  },
+  {
+    "brand": "Philadelphia",
+    "product_name": "Philadelphia Original",
+    "ean": "7622201695521",
+    "off_brand": "Philadelphia",
+    "country": "United Kingdom, en:ireland"
+  },
+  {
+    "brand": "Piątnica",
+    "product_name": "Piątnica Serek Wiejski",
+    "ean": "5900531000010",
+    "off_brand": "PIĄTNICA",
+    "country": "Francja,Polska,Zjednoczone Królestwo,POLAND"
+  },
+  {
+    "brand": "Piątnica",
+    "product_name": "Piątnica Skyr Naturalny",
+    "ean": "5901939103068",
+    "off_brand": "Piątnica",
+    "country": "Polska"
+  },
+  {
+    "brand": "Piątnica",
+    "product_name": "Piątnica Śmietana 18%",
+    "ean": "5900531001130",
+    "off_brand": "Piątnica",
+    "country": "Polen, Vereinigtes Königreich, Germany"
+  },
+  {
+    "brand": "Président",
+    "product_name": "Président Camembert",
+    "ean": "3228021170039",
+    "off_brand": "PRÉSIDENT",
+    "country": "Belgium, France, en:morocco"
+  },
+  {
+    "brand": "Sierpc",
+    "product_name": "Sierpc Ser Królewski",
+    "ean": "5901753000895",
+    "off_brand": "Sierpc",
+    "country": "en:Poland"
+  },
+  {
+    "brand": "Zott",
+    "product_name": "Jogobella Brzoskwinia",
+    "ean": "4014500006093",
+    "off_brand": "Zott",
+    "country": "Francja,Polska"
+  },
+  {
+    "brand": "Zott",
+    "product_name": "Zott Jogurt Naturalny",
+    "ean": "5906040063089",
+    "off_brand": "Zott Primo",
+    "country": "Polska"
+  },
+  {
+    "brand": "Zott",
+    "product_name": "Zott Monte",
+    "ean": "4014500036830",
+    "off_brand": "Zott",
+    "country": "Österreich,Deutschland"
+  }
+]
