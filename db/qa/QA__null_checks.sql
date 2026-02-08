@@ -119,7 +119,8 @@ HAVING COUNT(*) > 1;
 SELECT product_id, country, brand, product_name,
        'NON-PL COUNTRY' AS issue
 FROM products
-WHERE country != 'PL';
+WHERE country != 'PL'
+  AND is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 12. Summary counts (informational, not a failure check)
