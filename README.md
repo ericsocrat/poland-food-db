@@ -38,24 +38,24 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 446 active products across 16 categories
+**Database**: 473 active products across 17 categories
 
-| Category             | Products | Brands                                                                                                                                  | Score Range |
-| -------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Chips**            | 28       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                                                                  | 27–51       |
-| **Żabka**            | 28       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                                                                       | 15–43       |
-| **Cereals**          | 28       | 9 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella, Kupiec, Kellogg's)                                                   | 11–49       |
-| **Drinks**           | 28       | 16 (Coca-Cola, Pepsi, Fanta, Sprite, Tymbark, Hortex, Tiger, Red Bull, Monster, 4Move, Cappy, Dawtona, Mlekovita, Łaciate, Kubś, Costa) | 7–22        |
-| **Dairy**            | 28       | 13 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio, Sierpc, Président, Philadelphia, Müller, Mlekpol)              | 9–48        |
-| **Bread**            | 28       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)                                                       | 15–30       |
-| **Meat**             | 28       | 10 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol, Plukon)                                             | 21–56       |
-| **Sweets**           | 28       |                                                                                                                                         | 32–55       |
-| **Instant & Frozen** | 28       |                                                                                                                                         | 13–30       |
-| **Sauces**           | 28       |                                                                                                                                         | 8–41        |
-| **Baby**             | 28       |                                                                                                                                         | 8–36        |
-| **Alcohol**          | 28       |                                                                                                                                         | 5–11        |
-| **Frozen & Prepared**| 28       | 11 (Dr. Oetker, Morey, Nowaco, Obiad, Mroźnia, Bonduelle, Makaronika, TVLine, Żabka Frost, Kulina, Berryland)                             | 42–64       |
-| **Plant-Based & Alternatives** | 27 | 11 (Alpro, Garden Gourmet, Violife, Taifun, LikeMeat, Sojasun, Kupiec, Beyond Meat, Naturalnie, Simply V, Green Legend)                 | TBD         || **Nuts, Seeds & Legumes** | 27 | 7 (Alesto, Bakalland, Fasting, Sante, Targroch, Helio, Naturavena, Społem)                                                       | TBD         |
+| Category                       | Products | Brands                                                                                                                                  | Score Range |
+| ------------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
+| **Chips**                      | 28       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                                                                  | 27–51       |
+| **Żabka**                      | 28       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                                                                       | 15–43       |
+| **Cereals**                    | 28       | 9 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella, Kupiec, Kellogg's)                                                   | 11–49       |
+| **Drinks**                     | 28       | 16 (Coca-Cola, Pepsi, Fanta, Sprite, Tymbark, Hortex, Tiger, Red Bull, Monster, 4Move, Cappy, Dawtona, Mlekovita, Łaciate, Kubś, Costa) | 7–22        |
+| **Dairy**                      | 28       | 13 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio, Sierpc, Président, Philadelphia, Müller, Mlekpol)              | 9–48        |
+| **Bread**                      | 28       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)                                                       | 15–30       |
+| **Meat**                       | 28       | 10 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol, Plukon)                                             | 21–56       |
+| **Sweets**                     | 28       |                                                                                                                                         | 32–55       |
+| **Instant & Frozen**           | 28       |                                                                                                                                         | 13–30       |
+| **Sauces**                     | 28       |                                                                                                                                         | 8–41        |
+| **Baby**                       | 28       |                                                                                                                                         | 8–36        |
+| **Alcohol**                    | 28       |                                                                                                                                         | 5–11        |
+| **Frozen & Prepared**          | 28       | 11 (Dr. Oetker, Morey, Nowaco, Obiad, Mroźnia, Bonduelle, Makaronika, TVLine, Żabka Frost, Kulina, Berryland)                           | 42–64       |
+| **Plant-Based & Alternatives** | 27       | 11 (Alpro, Garden Gourmet, Violife, Taifun, LikeMeat, Sojasun, Kupiec, Beyond Meat, Naturalnie, Simply V, Green Legend)                 | TBD         |  | **Nuts, Seeds & Legumes** | 27 | 7 (Alesto, Bakalland, Fasting, Sante, Targroch, Helio, Naturavena, Społem) | TBD |
 **Test Coverage**: 31 automated checks + 7 data quality reports
 - 11 data integrity checks (nulls, foreign keys, duplicates)
 - 20 scoring formula validation checks (ranges, flags, NOVA, regression)
@@ -84,6 +84,7 @@ poland-food-db/
 │   │   ├── nuts-seeds/      # 27 nuts, seeds & legumes products (4 SQL files)
 │   │   ├── plant-based/     # 27 plant-based & alternative products (4 SQL files)
 │   │   ├── sauces/          # 28 sauces & condiments products (4 SQL files)
+│   │   ├── seafood/         # 27 seafood & fish products (4 SQL files)
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 28 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites
@@ -187,7 +188,7 @@ Every product receives an automated confidence rating based on data completeness
 | **estimated** | 70-89% complete OR single source       | Single-source data needing verification |
 | **low**       | <70% complete                          | Incomplete data, use with caution       |
 
-**Current status**: All 446 products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
+**Current status**: All 473 products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
 
 Confidence is auto-computed by the `assign_confidence()` function in all scoring pipelines.
 
@@ -254,7 +255,7 @@ EAN codes enable validation against:
 - **EAN barcodes** — 133/336 products (39.6%) have EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
 - **Scoring version**: v3.1 (2026-02-07)
-- **446 active products** (across 16 categories), 44 deprecated (kept in DB for historical tracking)
+- **473 active products** (across 17 categories), 44 deprecated (kept in DB for historical tracking)
 
 ---
 
