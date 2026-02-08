@@ -48,7 +48,7 @@ from (
     -- ═══════════════════════════════════════════════════════════════════════
     -- EAN 5900852068812 — BoboVita Delikatne jabłka z bananem
     ('BoboVita',        'BoboVita Delikatne jabłka z bananem',                       '52',  '0.1', '0',   '0',  '12',  '8.4', '1',   '0.4', '0'),
-    -- EAN 8591119253935 — BoboVita Jabłka i banana
+    -- EAN 8591119253934 — BoboVita Jabłka i banana
     ('BoboVita',        'BoboVita Jabłka i banana',                                 '52',  '0.1', '0',   '0',  '12',  '8.5', '1',   '0.4', '0'),
     -- EAN 7613033629303 — Gerber owoce jabłka z truskawkami i jagodami
     ('Gerber',         'Gerber owoce jabłka z truskawkami i jagodami',               '51.1','0.105','0',  '0',  '11.6','6.89','1.11','0.316','0'),

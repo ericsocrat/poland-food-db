@@ -41,7 +41,7 @@ values
 -- ── BoboVita ────────────────────────────────────────────────────────────
 -- EAN 5900852068812 — Delikatne jabłka z bananem (from 4 months)
 ('PL','BoboVita','baby_puree_fruit','Baby','BoboVita Delikatne jabłka z bananem','none','Biedronka;Rossmann','none'),
--- EAN 8591119253935 — BoboVita Jabłka i banana (from 4 months)
+-- EAN 8591119253934 — BoboVita Jabłka i banana (from 4 months)
 ('PL','BoboVita','baby_puree_fruit','Baby','BoboVita Jabłka i banana','none','Biedronka;Rossmann','none'),
 -- ── Gerber (Nestlé) ────────────────────────────────────────────────────
 -- EAN 7613033629303 — owoce jabłka z truskawkami i jagodami (NOVA 3)
@@ -124,4 +124,4 @@ do update set
   prep_method         = excluded.prep_method,
   store_availability  = excluded.store_availability,
   controversies       = excluded.controversies
-where products.ean not in ('8591119253935', '9062300126638');
+where products.ean not in ('8591119253934', '9062300126638');

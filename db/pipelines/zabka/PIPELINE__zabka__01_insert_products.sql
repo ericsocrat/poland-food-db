@@ -13,7 +13,7 @@ values
 ('PL','Żabka','Ready-to-eat','Żabka','Meksykaner','fried','Żabka','none'),
 -- EAN 2050000554995 — Kurczaker (chicken burger, 12 additives incl. E223 metabisulfite, NOVA 4)
 ('PL','Żabka','Ready-to-eat','Żabka','Kurczaker','fried','Żabka','none'),
--- EAN 5908308910044 — Wołowiner Ser Kozi (beef + goat cheese, E250 sodium nitrite, NOVA 4)
+-- EAN 5908308910043 — Wołowiner Ser Kozi (beef + goat cheese, E250 sodium nitrite, NOVA 4)
 ('PL','Żabka','Ready-to-eat','Żabka','Wołowiner Ser Kozi','fried','Żabka','minor'),
 -- EAN 5908308910791 — Burger Kibica (pulled pork BBQ + cheddar, 7 additives, NOVA 4)
 ('PL','Żabka','Ready-to-eat','Żabka','Burger Kibica','fried','Żabka','none'),

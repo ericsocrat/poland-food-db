@@ -87,11 +87,11 @@ values
 ('PL','Mountain Dew','Grocery','Drinks','Mountain Dew','none','Biedronka;Lidl;Żabka','none'),
 
 -- ── Żywiec Zdrój ───────────────────────────────────────────────────────
--- EAN 5900134001359 — Żywiec Zdrój Smako-łyk Truskawka (strawberry flavored water, NOVA 4)
+-- EAN 5900134001353 — Żywiec Zdrój Smako-łyk Truskawka (strawberry flavored water, NOVA 4)
 ('PL','Żywiec Zdrój','Grocery','Drinks','Żywiec Zdrój Smako-łyk Truskawka','none','Biedronka;Lidl;Żabka','none'),
 
 -- ── Łaciate (Mlekpol) ──────────────────────────────────────────────────
--- EAN 5900820000070 — Łaciate Mleko 2% (semi-skimmed UHT milk, NOVA 1)
+-- EAN 5900820000073 — Łaciate Mleko 2% (semi-skimmed UHT milk, NOVA 1)
 ('PL','Łaciate','Grocery','Drinks','Łaciate Mleko 2%','none','Biedronka;Lidl;Żabka','none'),
 
 -- ── Mirinda (PepsiCo) ──────────────────────────────────────────────────

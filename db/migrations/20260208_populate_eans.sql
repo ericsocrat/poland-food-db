@@ -31,7 +31,7 @@ WHERE country = 'PL'
   AND product_name = 'BoboVita Delikatne jabłka z bananem';
 
 UPDATE products
-SET ean = '8591119253935'
+SET ean = '8591119253934'
 WHERE country = 'PL'
   AND brand = 'BoboVita'
   AND product_name = 'BoboVita Jabłka i banana';
@@ -721,7 +721,7 @@ WHERE country = 'PL'
   AND product_name = 'dada baby food bio mus kokos';
 
 UPDATE products
-SET ean = '5900820000070'
+SET ean = '5900820000073'
 WHERE country = 'PL'
   AND brand = 'Łaciate'
   AND product_name = 'Łaciate Mleko 2%';
@@ -793,13 +793,13 @@ WHERE country = 'PL'
   AND product_name = 'Wieprzowiner';
 
 UPDATE products
-SET ean = '5908308910044'
+SET ean = '5908308910043'
 WHERE country = 'PL'
   AND brand = 'Żabka'
   AND product_name = 'Wołowiner Ser Kozi';
 
 UPDATE products
-SET ean = '5900134001359'
+SET ean = '5900134001353'
 WHERE country = 'PL'
   AND brand = 'Żywiec Zdrój'
   AND product_name = 'Żywiec Zdrój Smako-łyk Truskawka';
