@@ -27,7 +27,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (31 checks)
+# All tests (32 checks)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -38,26 +38,27 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 213 active products across 10 categories
+**Database**: 239 active products across 11 categories
 
-| Category    | Products | Brands                                                                                 | Score Range |
-| ----------- | -------- | -------------------------------------------------------------------------------------- | ----------- |
-| **Chips**   | 16       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                 | 27–51       |
-| **Żabka**   | 16       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                      | 17–43       |
-| **Cereals** | 16       | 7 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella)                     | 11–49       |
-| **Drinks**  | 16       | 10 (Coca-Cola, Pepsi, Fanta, Tymbark, Hortex, Tiger, 4Move, Cappy, Dawtona, Mlekovita) | 8–19        |
-| **Dairy**   | 16       | 7 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio)                | 9–33        |
-| **Bread**   | 26       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)      | 15–30       |
-| **Meat**    | 26       | 8 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol)     | 21–56       |
-| **Sweets**  | 28       |                                                                                        | 32–55       |
-| **Instant & Frozen** | 26 |                                                                                   | 13–30       |
-| **Sauces** | 27 |                                                                                        | 8–41        |
+| Category             | Products | Brands                                                                                 | Score Range |
+| -------------------- | -------- | -------------------------------------------------------------------------------------- | ----------- |
+| **Chips**            | 16       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                 | 27–51       |
+| **Żabka**            | 16       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                      | 17–43       |
+| **Cereals**          | 16       | 7 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella)                     | 11–49       |
+| **Drinks**           | 16       | 10 (Coca-Cola, Pepsi, Fanta, Tymbark, Hortex, Tiger, 4Move, Cappy, Dawtona, Mlekovita) | 8–19        |
+| **Dairy**            | 16       | 7 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio)                | 9–33        |
+| **Bread**            | 26       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)      | 15–30       |
+| **Meat**             | 26       | 8 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol)     | 21–56       |
+| **Sweets**           | 28       |                                                                                        | 32–55       |
+| **Instant & Frozen** | 26       |                                                                                        | 13–30       |
+| **Sauces**           | 27       |                                                                                        | 8–41        |
+| **Baby**             | 26       |                                                                                        | 8–36        |
 
-**Test Coverage**: 31 automated checks
+**Test Coverage**: 32 automated checks
 - 11 data integrity checks (nulls, foreign keys, duplicates)
-- 20 scoring formula validation checks (ranges, flags, NOVA, regression)
+- 21 scoring formula validation checks (ranges, flags, NOVA, regression)
 
-**All tests passing**: ✅ 31/31
+**All tests passing**: ✅ 32/32
 
 ---
 
@@ -172,7 +173,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 31/31 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 32/32 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -183,7 +184,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data sourced from Open Food Facts** — EANs verified against Polish market
 - **Scoring version**: v3.1 (2026-02-07)
-- **213 active products**, 17 deprecated (removed from pipelines but kept in DB)
+- **239 active products**, 17 deprecated (removed from pipelines but kept in DB)
 
 ---
 

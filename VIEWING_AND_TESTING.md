@@ -62,7 +62,7 @@ Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food
 
 ---
 
-### 2. **Scoring Formula Tests** (17 checks)
+### 2. **Scoring Formula Tests** (21 checks)
 Validates v3.1 algorithm correctness, flag logic, NOVA consistency, regression checks:
 
 ```powershell
@@ -112,8 +112,8 @@ Runs both test suites with color-coded output:
 **Expected output**:
 ```
 ✓ PASS (11/11 — zero violations)
-✓ PASS (17/17 — zero violations)
-ALL TESTS PASSED (28/28 checks)
+✓ PASS (21/21 — zero violations)
+ALL TESTS PASSED (32/32 checks)
 ```
 
 ---

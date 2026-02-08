@@ -321,3 +321,17 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'Pudliszki Ketchup Łagodny'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 33 AND 37;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 21: Known product regression test (BoboVita Kaszka Mleczna 7 Zbóż)
+--          Baby cereal: high sugars 31g + moderate sat-fat → score 34-38
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: BoboVita Kaszka Mleczna 7 Zbóż score changed unexpectedly' AS issue,
+       CONCAT('Expected 34-38, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'BoboVita Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 34 AND 38;
