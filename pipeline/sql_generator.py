@@ -1,0 +1,371 @@
+"""SQL file generator for the poland-food-db pipeline.
+
+Generates the 4-file SQL pattern used by every category pipeline:
+
+1. ``PIPELINE__{cat}__01_insert_products.sql``
+2. ``PIPELINE__{cat}__02_add_servings.sql``
+3. ``PIPELINE__{cat}__03_add_nutrition.sql``
+4. ``PIPELINE__{cat}__04_scoring.sql``
+"""
+
+from __future__ import annotations
+
+import datetime
+import logging
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
+
+
+# ---------------------------------------------------------------------------
+# Helpers
+# ---------------------------------------------------------------------------
+
+def _sql_text(value: str | None) -> str:
+    """Wrap a value in single quotes, escaping internal apostrophes.
+
+    Returns the SQL literal ``null`` when *value* is ``None``.
+    """
+    if value is None:
+        return "null"
+    return "'" + str(value).replace("'", "''") + "'"
+
+
+def _sql_null_or_text(value: str | None) -> str:
+    """Return ``null`` for None / empty, otherwise a quoted text literal."""
+    if not value:
+        return "null"
+    return _sql_text(value)
+
+
+def _slug(category: str) -> str:
+    """Convert a category name to a filesystem-safe slug.
+
+    ``'Nuts, Seeds & Legumes'`` → ``'nuts-seeds'``
+    """
+    return (
+        category.lower()
+        .replace("&", "")
+        .replace(",", "")
+        .replace("  ", " ")
+        .strip()
+        .replace(" ", "-")
+    )
+
+
+# ---------------------------------------------------------------------------
+# Individual file generators
+# ---------------------------------------------------------------------------
+
+def _gen_01_insert_products(category: str, products: list[dict], today: str) -> str:
+    """Generate file 01 — insert_products.sql."""
+    lines: list[str] = []
+
+    # Values rows
+    for i, p in enumerate(products):
+        brand = _sql_text(p["brand"])
+        name = _sql_text(p["product_name"])
+        ean = _sql_text(p.get("ean") or "")
+        product_type = _sql_text(p.get("product_type", "Grocery"))
+        prep = _sql_null_or_text(p.get("prep_method"))
+        store = _sql_null_or_text(p.get("store_availability"))
+        controversies = _sql_text(p.get("controversies", "none"))
+
+        comma = "," if i < len(products) - 1 else ""
+        lines.append(
+            f"  ('PL', {brand}, {product_type}, {_sql_text(category)}, "
+            f"{name}, {prep}, {store}, {controversies}, {ean}){comma}"
+        )
+
+    values_block = "\n".join(lines)
+
+    # Product names for deprecation block
+    name_literals = ", ".join(_sql_text(p["product_name"]) for p in products)
+
+    return f"""\
+-- PIPELINE ({category}): insert products
+-- Source: Open Food Facts API (automated pipeline)
+-- Generated: {today}
+
+-- 0. DEPRECATE old products
+update products
+set is_deprecated = true
+where country = 'Poland'
+and category = {_sql_text(category)};
+
+-- 1. INSERT products
+insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
+values
+{values_block}
+on conflict (country, brand, product_name) do update set
+  ean = excluded.ean,
+  product_type = excluded.product_type,
+  store_availability = excluded.store_availability,
+  controversies = excluded.controversies,
+  prep_method = excluded.prep_method,
+  is_deprecated = false;
+
+-- 2. DEPRECATE removed products
+update products
+set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
+where country = 'PL' and category = {_sql_text(category)}
+  and is_deprecated is not true
+  and product_name not in ({name_literals});
+"""
+
+
+def _gen_02_add_servings(category: str) -> str:
+    """Generate file 02 — add_servings.sql."""
+    return f"""\
+-- PIPELINE ({category}): add servings
+insert into servings (product_id, serving_basis, serving_amount_g_ml)
+select p.product_id, 'per 100 g', 100
+from products p
+left join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
+where p.country='PL' and p.category={_sql_text(category)}
+  and s.serving_id is null;
+"""
+
+
+def _gen_03_add_nutrition(category: str, products: list[dict]) -> str:
+    """Generate file 03 — add_nutrition.sql."""
+    nutrition_lines: list[str] = []
+    for i, p in enumerate(products):
+        brand = _sql_text(p["brand"])
+        name = _sql_text(p["product_name"])
+        vals = ", ".join(
+            _sql_text(p[k])
+            for k in (
+                "calories",
+                "total_fat_g",
+                "saturated_fat_g",
+                "trans_fat_g",
+                "carbs_g",
+                "sugars_g",
+                "fibre_g",
+                "protein_g",
+                "salt_g",
+            )
+        )
+        comma = "," if i < len(products) - 1 else ""
+        nutrition_lines.append(f"    ({brand}, {name}, {vals}){comma}")
+
+    nutrition_block = "\n".join(nutrition_lines)
+
+    return f"""\
+-- PIPELINE ({category}): add nutrition facts
+-- Source: Open Food Facts verified per-100g data
+
+-- 1) Remove existing
+delete from nutrition_facts
+where (product_id, serving_id) in (
+  select p.product_id, s.serving_id
+  from products p
+  join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
+  where p.country = 'PL' and p.category = {_sql_text(category)}
+);
+
+-- 2) Insert
+insert into nutrition_facts
+  (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+   carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+select
+  p.product_id, s.serving_id,
+  d.calories, d.total_fat_g, d.saturated_fat_g, d.trans_fat_g,
+  d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
+from (
+  values
+{nutrition_block}
+) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+       carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
+join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g';
+"""
+
+
+def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
+    """Generate file 04 — scoring.sql."""
+
+    # Additives values
+    add_lines: list[str] = []
+    for i, p in enumerate(products):
+        comma = "," if i < len(products) - 1 else ""
+        add_lines.append(
+            f"    ({_sql_text(p['brand'])}, {_sql_text(p['product_name'])}, "
+            f"{_sql_text(str(p.get('additives_count', 0)))}){comma}"
+        )
+    additives_block = "\n".join(add_lines)
+
+    # Nutri-Score values
+    ns_lines: list[str] = []
+    for i, p in enumerate(products):
+        ns = p.get("nutri_score_label")
+        comma = "," if i < len(products) - 1 else ""
+        ns_lines.append(
+            f"    ({_sql_text(p['brand'])}, {_sql_text(p['product_name'])}, "
+            f"{_sql_null_or_text(ns)}){comma}"
+        )
+    nutriscore_block = "\n".join(ns_lines)
+
+    # NOVA values
+    nova_lines: list[str] = []
+    for i, p in enumerate(products):
+        nova = p.get("nova_classification")
+        comma = "," if i < len(products) - 1 else ""
+        nova_lines.append(
+            f"    ({_sql_text(p['brand'])}, {_sql_text(p['product_name'])}, "
+            f"{_sql_null_or_text(nova)}){comma}"
+        )
+    nova_block = "\n".join(nova_lines)
+
+    return f"""\
+-- PIPELINE ({category}): scoring
+-- Generated: {today}
+
+-- 0. ENSURE rows in scores & ingredients
+insert into scores (product_id)
+select p.product_id
+from products p
+left join scores sc on sc.product_id = p.product_id
+where p.country = 'PL' and p.category = {_sql_text(category)}
+  and p.is_deprecated is not true
+  and sc.product_id is null;
+
+insert into ingredients (product_id)
+select p.product_id
+from products p
+left join ingredients i on i.product_id = p.product_id
+where p.country = 'PL' and p.category = {_sql_text(category)}
+  and p.is_deprecated is not true
+  and i.product_id is null;
+
+-- 1. Additives count
+update ingredients i set
+  additives_count = d.cnt
+from (
+  values
+{additives_block}
+) as d(brand, product_name, cnt)
+join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
+where i.product_id = p.product_id;
+
+-- 2. COMPUTE unhealthiness_score (v3.1)
+update scores sc set
+  unhealthiness_score = compute_unhealthiness_v31(
+      nf.saturated_fat_g::numeric,
+      nf.sugars_g::numeric,
+      nf.salt_g::numeric,
+      nf.calories::numeric,
+      nf.trans_fat_g::numeric,
+      i.additives_count::numeric,
+      p.prep_method,
+      p.controversies
+  )::text,
+  scored_at       = CURRENT_DATE,
+  scoring_version = 'v3.1'
+from products p
+join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
+join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
+left join ingredients i on i.product_id = p.product_id
+where p.product_id = sc.product_id
+  and p.country = 'PL' and p.category = {_sql_text(category)}
+  and p.is_deprecated is not true;
+
+-- 3. Nutri-Score
+update scores sc set
+  nutri_score_label = d.ns
+from (
+  values
+{nutriscore_block}
+) as d(brand, product_name, ns)
+join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
+where p.product_id = sc.product_id;
+
+-- 4. NOVA + processing risk
+update scores sc set
+  nova_classification = d.nova,
+  processing_risk = case d.nova
+    when '4' then 'High'
+    when '3' then 'Moderate'
+    when '2' then 'Low'
+    when '1' then 'Minimal'
+    else 'Unknown'
+  end
+from (
+  values
+{nova_block}
+) as d(brand, product_name, nova)
+join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
+where p.product_id = sc.product_id;
+
+-- 5. Health-risk flags
+update scores sc set
+  high_salt_flag = case when nf.salt_g::numeric >= 1.5 then 'YES' else 'NO' end,
+  high_sugar_flag = case when nf.sugars_g::numeric >= 5.0 then 'YES' else 'NO' end,
+  high_sat_fat_flag = case when nf.saturated_fat_g::numeric >= 5.0 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(i.additives_count::numeric, 0) >= 5 then 'YES' else 'NO' end,
+  data_completeness_pct = 100
+from products p
+join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
+join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
+left join ingredients i on i.product_id = p.product_id
+where p.product_id = sc.product_id
+  and p.country = 'PL' and p.category = {_sql_text(category)}
+  and p.is_deprecated is not true;
+"""
+
+
+# ---------------------------------------------------------------------------
+# Public entry point
+# ---------------------------------------------------------------------------
+
+def generate_pipeline(
+    category: str,
+    products: list[dict],
+    output_dir: str,
+) -> list[Path]:
+    """Generate 4 SQL pipeline files for *category*.
+
+    Parameters
+    ----------
+    category:
+        Database category name (e.g. ``"Dairy"``).
+    products:
+        List of validated, normalised product dicts.
+    output_dir:
+        Directory to write the SQL files into.
+
+    Returns
+    -------
+    list[Path]
+        Paths of the four generated files.
+    """
+    out = Path(output_dir)
+    out.mkdir(parents=True, exist_ok=True)
+
+    slug = _slug(category)
+    today = datetime.date.today().isoformat()
+
+    files: list[Path] = []
+
+    # 01 — insert products
+    path01 = out / f"PIPELINE__{slug}__01_insert_products.sql"
+    path01.write_text(_gen_01_insert_products(category, products, today), encoding="utf-8")
+    files.append(path01)
+
+    # 02 — add servings
+    path02 = out / f"PIPELINE__{slug}__02_add_servings.sql"
+    path02.write_text(_gen_02_add_servings(category), encoding="utf-8")
+    files.append(path02)
+
+    # 03 — add nutrition
+    path03 = out / f"PIPELINE__{slug}__03_add_nutrition.sql"
+    path03.write_text(_gen_03_add_nutrition(category, products), encoding="utf-8")
+    files.append(path03)
+
+    # 04 — scoring
+    path04 = out / f"PIPELINE__{slug}__04_scoring.sql"
+    path04.write_text(_gen_04_scoring(category, products, today), encoding="utf-8")
+    files.append(path04)
+
+    return files
