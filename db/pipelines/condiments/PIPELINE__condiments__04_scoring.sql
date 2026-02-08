@@ -34,51 +34,51 @@ UPDATE ingredients i SET
 FROM (
   VALUES
     -- brand,          product_name,                   cnt
-    
+
     -- KETCHUPS: 2-3 additives (preservatives, citric acid, natural flavors)
     ('Heinz',         'Tomato Ketchup',               '3'),
     ('Pudliszki',     'Ketchup Łagodny',              '2'),
     ('Develey',       'Hot Tomato Ketchup',           '3'),
     ('Kotlin',        'Ketchup Pikantny',             '3'),
-    
+
     -- MUSTARDS: 1-2 additives
     ('Develey',       'Classic Yellow Mustard',       '2'),
     ('Heinz',         'Dijon Mustard',                '1'),
     ('Kühne',         'Wholegrain Mustard',           '1'),
     ('Kotlin',        'Honey Mustard',                '2'),
-    
+
     -- MAYONNAISE: 2-3 additives (emulsifiers, preservatives)
     ('Winiary',       'Majonez Dekoracyjny',          '3'),
     ('Kotlin',        'Light Mayonnaise',             '3'),
     ('Develey',       'Mayonnaise with Lemon',        '2'),
     ('Pudliszki',     'Garlic Mayonnaise',            '3'),
-    
+
     -- HOT SAUCES: 2-3 additives (preservatives, thickeners)
     ('Tabasco',       'Original Red Sauce',           '2'),
     ('Lee Kum Kee',   'Sriracha Chili Sauce',         '3'),
     ('Kamis',         'Chili Sauce',                  '2'),
-    
+
     -- SOY SAUCE: 1-2 additives
     ('Lee Kum Kee',   'Premium Soy Sauce',            '1'),
     ('Knorr',         'Reduced Sodium Soy Sauce',     '2'),
-    
+
     -- VINEGARS: 0 additives (pure)
     ('Targroch',      'White Wine Vinegar',           '0'),
     ('Łowicz',        'Apple Cider Vinegar',          '0'),
     ('Kühne',         'Balsamic Vinegar of Modena',   '0'),
-    
+
     -- PICKLES: 0-1 additives (preservatives)
     ('Kühne',         'Dill Pickles',                 '1'),
     ('Łowicz',        'Gherkins',                     '0'),
     ('Pudliszki',     'Pickled Hot Peppers',          '1'),
     ('Kotlin',        'Pickled Onions',               '1'),
-    
+
     -- RELISHES & SPREADS: 1-4 additives (preservatives, citric acid, antioxidants)
     ('Kotlin',        'Horseradish',                  '1'),
     ('Pudliszki',     'Ajvar Mild',                   '2'),
     ('Prymat',        'Classic Hummus',               '3'),
     ('Develey',       'Basil Pesto',                  '4')
-    
+
 ) AS d(brand, product_name, cnt)
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
 WHERE i.product_id = p.product_id;
@@ -117,55 +117,55 @@ UPDATE scores sc SET
 FROM (
   VALUES
     -- brand,          product_name,                   ns
-    
+
     -- VINEGARS: B-C (low calories but minimal salt)
     ('Targroch',      'White Wine Vinegar',           'B'),
     ('Łowicz',        'Apple Cider Vinegar',          'B'),
     ('Kühne',         'Balsamic Vinegar of Modena',   'C'),
-    
+
     -- HOT SAUCES: B-C (low calories but high salt)
     ('Tabasco',       'Original Red Sauce',           'B'),
     ('Lee Kum Kee',   'Sriracha Chili Sauce',         'C'),
     ('Kamis',         'Chili Sauce',                  'C'),
-    
+
     -- PICKLES: B-C (low calories, high salt)
     ('Kühne',         'Dill Pickles',                 'C'),
     ('Łowicz',        'Gherkins',                     'B'),
     ('Pudliszki',     'Pickled Hot Peppers',          'C'),
     ('Kotlin',        'Pickled Onions',               'C'),
-    
+
     -- MUSTARDS: C-D (high salt)
     ('Develey',       'Classic Yellow Mustard',       'C'),
     ('Heinz',         'Dijon Mustard',                'D'),
     ('Kühne',         'Wholegrain Mustard',           'D'),
     ('Kotlin',        'Honey Mustard',                'D'),
-    
+
     -- KETCHUPS: C-D (high sugar + salt)
     ('Heinz',         'Tomato Ketchup',               'C'),
     ('Pudliszki',     'Ketchup Łagodny',              'C'),
     ('Develey',       'Hot Tomato Ketchup',           'D'),
     ('Kotlin',        'Ketchup Pikantny',             'D'),
-    
+
     -- SOY SAUCE: C-D (high salt)
     ('Lee Kum Kee',   'Premium Soy Sauce',            'D'),
     ('Knorr',         'Reduced Sodium Soy Sauce',     'C'),
-    
+
     -- SPREADS: C-D
     ('Kotlin',        'Horseradish',                  'C'),
     ('Pudliszki',     'Ajvar Mild',                   'C'),
     ('Prymat',        'Classic Hummus',               'D'),
-    
+
     -- LIGHT MAYO: D (high fat but reduced)
     ('Kotlin',        'Light Mayonnaise',             'D'),
-    
+
     -- REGULAR MAYO/AIOLI: E (very high fat)
     ('Winiary',       'Majonez Dekoracyjny',          'E'),
     ('Develey',       'Mayonnaise with Lemon',        'E'),
     ('Pudliszki',     'Garlic Mayonnaise',            'E'),
-    
+
     -- PESTO: E (very high fat from oil/nuts)
     ('Develey',       'Basil Pesto',                  'E')
-    
+
 ) AS d(brand, product_name, ns)
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
 WHERE p.product_id = sc.product_id;
@@ -184,12 +184,12 @@ UPDATE scores sc SET
 FROM (
   VALUES
     -- brand,          product_name,                   nova
-    
+
     -- NOVA 1 (Low): Plain vinegars (unprocessed)
     ('Targroch',      'White Wine Vinegar',           '1'),
     ('Łowicz',        'Apple Cider Vinegar',          '1'),
     ('Kühne',         'Balsamic Vinegar of Modena',   '1'),
-    
+
     -- NOVA 3 (Moderate): Simple pickles, basic mustards, horseradish
     ('Kühne',         'Dill Pickles',                 '3'),
     ('Łowicz',        'Gherkins',                     '3'),
@@ -199,7 +199,7 @@ FROM (
     ('Kühne',         'Wholegrain Mustard',           '3'),
     ('Kotlin',        'Horseradish',                  '3'),
     ('Pudliszki',     'Ajvar Mild',                   '3'),
-    
+
     -- NOVA 4 (High): Ketchups, flavored mayo, hot sauces with additives, hummus/pesto
     ('Heinz',         'Tomato Ketchup',               '4'),
     ('Pudliszki',     'Ketchup Łagodny',              '4'),
@@ -218,7 +218,7 @@ FROM (
     ('Knorr',         'Reduced Sodium Soy Sauce',     '4'),
     ('Prymat',        'Classic Hummus',               '4'),
     ('Develey',       'Basil Pesto',                  '4')
-    
+
 ) AS d(brand, product_name, nova)
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
 WHERE p.product_id = sc.product_id;

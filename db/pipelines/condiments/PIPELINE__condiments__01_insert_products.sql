@@ -2,7 +2,7 @@
 -- PIPELINE: Condiments - Step 1: Insert Products
 -- =====================================================================
 -- Purpose: Insert 28 condiment products available in Poland
--- Categories: Ketchup, mustard, mayonnaise, hot sauces, soy sauce, 
+-- Categories: Ketchup, mustard, mayonnaise, hot sauces, soy sauce,
 --            vinegar, pickles, relishes & spreads
 -- Last Updated: 2026-02-08
 -- =====================================================================
@@ -10,16 +10,16 @@
 -- =====================================================================
 -- Section 0: Deprecate Old Products with Incorrect Country Code
 -- =====================================================================
-UPDATE products 
+UPDATE products
 SET is_deprecated = true,
     deprecated_reason = 'Country code migration: Poland -> PL'
-WHERE country = 'Poland' 
+WHERE country = 'Poland'
   AND category = 'Condiments';
 
 -- =====================================================================
 -- Section 1: Insert 28 Condiment Products
 -- =====================================================================
-INSERT INTO products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean) 
+INSERT INTO products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 VALUES
     -- Ketchups (4 products)
     ('PL', 'Heinz', 'Ketchup', 'Condiments', 'Tomato Ketchup', NULL, 'Biedronka, Carrefour, Lidl, Auchan', NULL, '8715700110004'),
