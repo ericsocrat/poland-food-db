@@ -16,9 +16,9 @@ print(f"Validating {len(results)} Dairy EANs...\n")
 for item in results:
     ean = item["ean"]
     product_name = item["product_name"]
-    
+
     is_valid = validate_ean13(ean)
-    
+
     if is_valid:
         print(f"{product_name:<40} {ean:<15} OK")
         valid_eans.append(item)
@@ -37,9 +37,13 @@ if valid_eans:
     for item in valid_eans:
         product_name_sql = item["product_name"].replace("'", "''")
         brand_sql = item["brand"].replace("'", "''")
-        print(f"UPDATE products SET ean = '{item['ean']}' WHERE brand = '{brand_sql}' AND product_name = '{product_name_sql}' AND category = 'Dairy';")
+        print(
+            f"UPDATE products SET ean = '{item['ean']}' WHERE brand = '{brand_sql}' AND product_name = '{product_name_sql}' AND category = 'Dairy';"
+        )
 
 print(f"\n\nSummary:")
 print(f"  Valid EANs: {len(valid_eans)}")
 print(f"  Not found via API: 5")
-print(f"  Expected Dairy with EANs: {len(valid_eans)}/28 ({100.0 * len(valid_eans) / 28:.1f}%)")
+print(
+    f"  Expected Dairy with EANs: {len(valid_eans)}/28 ({100.0 * len(valid_eans) / 28:.1f}%)"
+)

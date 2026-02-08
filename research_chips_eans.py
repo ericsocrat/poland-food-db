@@ -9,7 +9,7 @@ from time import sleep
 
 # Fix Windows UTF-8 encoding for Polish characters
 if sys.platform == "win32":
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 # List of 24 missing Chips products (brand, product_name)
 missing_products = [
@@ -39,25 +39,26 @@ missing_products = [
     ("Top Chips (Biedronka)", "Top Chips Salted"),
 ]
 
+
 def search_open_food_facts(brand, product_name):
     """Search Open Food Facts for product and return EAN if found."""
     try:
         # Build search query - focus on Polish market where possible
         search_query = f"{brand} {product_name}"
-        
+
         # API endpoint for search
         url = "https://world.openfoodfacts.org/cgi/search.pl"
         params = {
             "search_terms": search_query,
             "action": "process",
             "json": 1,
-            "page_size": 5
+            "page_size": 5,
         }
-        
+
         response = requests.get(url, params=params, timeout=5)
         response.raise_for_status()
         data = response.json()
-        
+
         # Check if any products found
         if data.get("products"):
             for product in data["products"]:
@@ -73,48 +74,54 @@ def search_open_food_facts(brand, product_name):
     except Exception as e:
         return None
 
+
 def main():
     """Search for all missing products."""
     results = []
     found = 0
     not_found = 0
-    
+
     print("Searching for missing Chips products on Open Food Facts...\n")
     print(f"{'Brand':<20} {'Product Name':<50} {'EAN':<15} {'Status'}")
     print("=" * 100)
-    
+
     for brand, product_name in missing_products:
         result = search_open_food_facts(brand, product_name)
         sleep(0.5)  # Rate limit - be respectful to API
-        
+
         if result:
             print(f"{brand:<20} {product_name:<50} {result['ean']:<15} ✓ FOUND")
-            results.append({
-                "brand": brand,
-                "product_name": product_name,
-                "ean": result["ean"],
-                "off_brand": result.get("brand", ""),
-                "country": result.get("country", ""),
-            })
+            results.append(
+                {
+                    "brand": brand,
+                    "product_name": product_name,
+                    "ean": result["ean"],
+                    "off_brand": result.get("brand", ""),
+                    "country": result.get("country", ""),
+                }
+            )
             found += 1
         else:
             print(f"{brand:<20} {product_name:<50} {'N/A':<15} ✗ NOT FOUND")
             not_found += 1
-    
+
     print("=" * 100)
     print(f"\nResults: {found} found, {not_found} not found")
-    
+
     # Save results as JSON
     with open("chips_eans_research.json", "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
-    
+
     print(f"\nFound {len(results)} EANs. Saved to chips_eans_research.json")
-    
+
     if results:
         print("\nRecommended SQL UPDATEs:\n")
         for r in results:
             product_name_sql = r["product_name"].replace("'", "''")
-            print(f"update products set ean = '{r['ean']}' where brand = '{r['brand']}' and product_name = '{product_name_sql}' and category = 'Chips';")
+            print(
+                f"update products set ean = '{r['ean']}' where brand = '{r['brand']}' and product_name = '{product_name_sql}' and category = 'Chips';"
+            )
+
 
 if __name__ == "__main__":
     main()

@@ -9,7 +9,7 @@ from time import sleep
 
 # Load encoding before everything else
 if sys.platform == "win32":
-    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8')
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 # List of 28 Dairy products (brand, product_name)
 dairy_products = [
@@ -43,25 +43,26 @@ dairy_products = [
     ("Zott", "Zott Monte"),
 ]
 
+
 def search_open_food_facts(brand, product_name):
     """Search Open Food Facts for product and return EAN if found."""
     try:
         # Build search query
         search_query = f"{brand} {product_name}"
-        
+
         # API endpoint for search
         url = "https://world.openfoodfacts.org/cgi/search.pl"
         params = {
             "search_terms": search_query,
             "action": "process",
             "json": 1,
-            "page_size": 5
+            "page_size": 5,
         }
-        
+
         response = requests.get(url, params=params, timeout=5)
         response.raise_for_status()
         data = response.json()
-        
+
         # Check if any products found
         if data.get("products"):
             for product in data["products"]:
@@ -77,42 +78,46 @@ def search_open_food_facts(brand, product_name):
     except Exception as e:
         return None
 
+
 def main():
     """Search for all Dairy products."""
     results = []
     found = 0
     not_found = 0
-    
+
     print("Searching for Dairy products on Open Food Facts...\n")
-    
+
     for brand, product_name in dairy_products:
         result = search_open_food_facts(brand, product_name)
         sleep(0.5)  # Rate limit
-        
+
         status = "✓ FOUND" if result else "✗ NOT FOUND"
         ean = result["ean"] if result else "N/A"
         print(f"{brand:<15} {product_name:<35} {ean:<15} {status}")
-        
+
         if result:
-            results.append({
-                "brand": brand,
-                "product_name": product_name,
-                "ean": result["ean"],
-                "off_brand": result.get("brand", ""),
-                "country": result.get("country", ""),
-            })
+            results.append(
+                {
+                    "brand": brand,
+                    "product_name": product_name,
+                    "ean": result["ean"],
+                    "off_brand": result.get("brand", ""),
+                    "country": result.get("country", ""),
+                }
+            )
             found += 1
         else:
             not_found += 1
-    
+
     print("=" * 70)
     print(f"\nResults: {found} found, {not_found} not found\n")
-    
+
     # Save results as JSON
     with open("dairy_eans_research.json", "w", encoding="utf-8") as f:
         json.dump(results, f, indent=2, ensure_ascii=False)
-    
+
     print(f"Found {len(results)} EANs. Saved to dairy_eans_research.json")
+
 
 if __name__ == "__main__":
     main()

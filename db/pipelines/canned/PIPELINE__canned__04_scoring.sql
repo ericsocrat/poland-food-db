@@ -40,7 +40,7 @@ update ingredients i set
 from (
   values
     -- brand,               product_name,                         cnt
-    
+
     -- ── CANNED VEGETABLES ───────────────────────────────────────────────
     ('Bonduelle',           'Sweet Corn',                         '1'),  -- citric acid
     ('Kotlin',              'Green Peas',                         '1'),  -- calcium chloride
@@ -50,7 +50,7 @@ from (
     ('Pudliszki',           'Diced Tomatoes',                     '1'),  -- citric acid
     ('Pudliszki',           'Whole Beets',                        '0'),  -- beets, water, vinegar, salt
     ('Bonduelle',           'Champignon Mushrooms',               '1'),  -- citric acid, ascorbic acid
-    
+
     -- ── CANNED FRUITS ───────────────────────────────────────────────────
     ('Profi',               'Peaches in Syrup',                   '1'),  -- citric acid
     ('Profi',               'Pineapple Slices in Syrup',          '0'),  -- pineapple, water, sugar
@@ -58,29 +58,29 @@ from (
     ('Profi',               'Fruit Cocktail in Syrup',            '1'),  -- citric acid, ascorbic acid
     ('Kotlin',              'Cherries in Syrup',                  '0'),  -- cherries, sugar, water
     ('Profi',               'Pears in Syrup',                     '1'),  -- citric acid
-    
+
     -- ── CANNED LEGUMES ──────────────────────────────────────────────────
     ('Bonduelle',           'Chickpeas',                          '2'),  -- calcium chloride, EDTA
     ('Kotlin',              'White Beans',                        '1'),  -- calcium chloride
     ('Kotlin',              'Lentils',                            '1'),  -- EDTA
     ('Bonduelle',           'Mixed Beans',                        '2'),  -- calcium chloride, EDTA
     ('Kotlin',              'Beans in Tomato Sauce',              '3'),  -- +modified starch, sugar, spices
-    
+
     -- ── CANNED SOUPS ────────────────────────────────────────────────────
     ('Heinz',               'Cream of Tomato Soup',               '3'),  -- modified starch, sugar, citric acid
     ('Pudliszki',           'Cream of Mushroom Soup',             '3'),  -- modified starch, yeast extract, stabilizers
     ('Profi',               'Chicken Soup',                       '2'),  -- yeast extract, spice extracts
     ('Pudliszki',           'Vegetable Soup',                     '2'),  -- modified starch, sugar
-    
+
     -- ── CANNED PASTA & READY MEALS ──────────────────────────────────────
     ('Heinz',               'Ravioli in Tomato Sauce',            '4'),  -- modified starch, sugar, citric acid, flavorings
     ('Heinz',               'Spaghetti in Tomato Sauce',          '3'),  -- modified starch, sugar, citric acid
     ('Kotlin',              'Spaghetti Bolognese',                '3'),  -- modified starch, sugar, meat flavor
-    
+
     -- ── CANNED MEATS ────────────────────────────────────────────────────
     ('Profi',               'Pork Luncheon Meat',                 '4'),  -- sodium nitrite, phosphates, MSG, ascorbic acid
     ('Pudliszki',           'Corned Beef',                        '3')   -- sodium nitrite, phosphates, sugar
-    
+
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -124,7 +124,7 @@ update scores sc set
 from (
   values
     -- brand,               product_name,                         ns
-    
+
     -- ── CANNED VEGETABLES ───────────────────────────────────────────────
     ('Bonduelle',           'Sweet Corn',                         'A'),
     ('Kotlin',              'Green Peas',                         'A'),
@@ -134,7 +134,7 @@ from (
     ('Pudliszki',           'Diced Tomatoes',                     'A'),
     ('Pudliszki',           'Whole Beets',                        'B'),
     ('Bonduelle',           'Champignon Mushrooms',               'A'),
-    
+
     -- ── CANNED FRUITS ───────────────────────────────────────────────────
     ('Profi',               'Peaches in Syrup',                   'C'),
     ('Profi',               'Pineapple Slices in Syrup',          'C'),
@@ -142,29 +142,29 @@ from (
     ('Profi',               'Fruit Cocktail in Syrup',            'C'),
     ('Kotlin',              'Cherries in Syrup',                  'C'),
     ('Profi',               'Pears in Syrup',                     'B'),
-    
+
     -- ── CANNED LEGUMES ──────────────────────────────────────────────────
     ('Bonduelle',           'Chickpeas',                          'A'),
     ('Kotlin',              'White Beans',                        'A'),
     ('Kotlin',              'Lentils',                            'A'),
     ('Bonduelle',           'Mixed Beans',                        'A'),
     ('Kotlin',              'Beans in Tomato Sauce',              'B'),
-    
+
     -- ── CANNED SOUPS ────────────────────────────────────────────────────
     ('Heinz',               'Cream of Tomato Soup',               'C'),
     ('Pudliszki',           'Cream of Mushroom Soup',             'D'),
     ('Profi',               'Chicken Soup',                       'C'),
     ('Pudliszki',           'Vegetable Soup',                     'C'),
-    
+
     -- ── CANNED PASTA & READY MEALS ──────────────────────────────────────
     ('Heinz',               'Ravioli in Tomato Sauce',            'C'),
     ('Heinz',               'Spaghetti in Tomato Sauce',          'C'),
     ('Kotlin',              'Spaghetti Bolognese',                'C'),
-    
+
     -- ── CANNED MEATS ────────────────────────────────────────────────────
     ('Profi',               'Pork Luncheon Meat',                 'E'),
     ('Pudliszki',           'Corned Beef',                        'D')
-    
+
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -185,7 +185,7 @@ update scores sc set
 from (
   values
     -- brand,               product_name,                         nova
-    
+
     -- ── CANNED VEGETABLES ───────────────────────────────────────────────
     ('Bonduelle',           'Sweet Corn',                         '3'),
     ('Kotlin',              'Green Peas',                         '3'),
@@ -195,7 +195,7 @@ from (
     ('Pudliszki',           'Diced Tomatoes',                     '3'),
     ('Pudliszki',           'Whole Beets',                        '3'),
     ('Bonduelle',           'Champignon Mushrooms',               '3'),
-    
+
     -- ── CANNED FRUITS ───────────────────────────────────────────────────
     ('Profi',               'Peaches in Syrup',                   '3'),
     ('Profi',               'Pineapple Slices in Syrup',          '3'),
@@ -203,29 +203,29 @@ from (
     ('Profi',               'Fruit Cocktail in Syrup',            '3'),
     ('Kotlin',              'Cherries in Syrup',                  '3'),
     ('Profi',               'Pears in Syrup',                     '3'),
-    
+
     -- ── CANNED LEGUMES ──────────────────────────────────────────────────
     ('Bonduelle',           'Chickpeas',                          '3'),
     ('Kotlin',              'White Beans',                        '3'),
     ('Kotlin',              'Lentils',                            '3'),
     ('Bonduelle',           'Mixed Beans',                        '3'),
     ('Kotlin',              'Beans in Tomato Sauce',              '4'),  -- prepared sauce with additives
-    
+
     -- ── CANNED SOUPS ────────────────────────────────────────────────────
     ('Heinz',               'Cream of Tomato Soup',               '4'),
     ('Pudliszki',           'Cream of Mushroom Soup',             '4'),
     ('Profi',               'Chicken Soup',                       '4'),
     ('Pudliszki',           'Vegetable Soup',                     '4'),
-    
+
     -- ── CANNED PASTA & READY MEALS ──────────────────────────────────────
     ('Heinz',               'Ravioli in Tomato Sauce',            '4'),
     ('Heinz',               'Spaghetti in Tomato Sauce',          '4'),
     ('Kotlin',              'Spaghetti Bolognese',                '4'),
-    
+
     -- ── CANNED MEATS ────────────────────────────────────────────────────
     ('Profi',               'Pork Luncheon Meat',                 '4'),
     ('Pudliszki',           'Corned Beef',                        '4')
-    
+
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

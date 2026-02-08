@@ -8,9 +8,9 @@
 -- 0. DEPRECATE old products with incorrect country code
 -- ═════════════════════════════════════════════════════════════════════════
 
-update products 
-set is_deprecated = true 
-where country = 'Poland' 
+update products
+set is_deprecated = true
+where country = 'Poland'
 and category = 'Canned Goods';
 
 -- ═════════════════════════════════════════════════════════════════════════

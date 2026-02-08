@@ -2,11 +2,11 @@
 
 ## Summary
 
-**Total EANs in database**: 203
-**Valid EAN-13 codes**: 203 (100%)
+**Total EANs in database**: 245
+**Valid EAN-13 codes**: 245 (100%)
 **Invalid checksums**: 0 (0%)
-**Overall EAN coverage**: 203/545 products (37.2%)
-**Session Progress**: 133 → 203 EANs (+53% growth)
+**Overall EAN coverage**: 245/573 products (42.8%)
+**Session Progress**: 133 → 245 EANs (+84% growth)
 
 ## Recent Progress
 
@@ -26,7 +26,9 @@
 - **Added 11 verified EANs to Plant-Based & Alternatives category** (11/27 = 40.7% unique, 22/54 = 40.7% with duplicates)
 - **Removed 13 invalid EANs from Seafood/Fish** (Frosta 2, Graal 10+)
 - **Removed 21 invalid EANs from Instant & Frozen** (Kotlin 10, Profi 6, Pudliszki 5)
-- Total EANs expanded from 133 → 203 (+53% increase)
+- **Added 20 verified EANs to Bread category** via Open Food Facts research (20/28 = 71.4%, removed 1 invalid Graham)
+- **Removed 6 invalid EANs from Sauces category** (Kotlin 5, Targroch 1)
+- Total EANs expanded from 133 → 245 (+84% increase)
 
 ### 🗑️ Removed Categories
 
@@ -54,18 +56,18 @@
 
 ### ✅ Valid EAN Coverage
 
-| Category  | Products with EANs | Total | Coverage | Checksum Status |
-| --------- | ------------------ | ----- | -------- | --------------- |
-| Baby      | 28                 | 28    | 100.0%   | ✅ All valid     |
-| Cereals   | 28                 | 28    | 100.0%   | ✅ All valid     |
-| Drinks    | 28                 | 28    | 100.0%   | ✅ All valid     |
-| Żabka     | 28                 | 28    | 100.0%   | ✅ All valid     |
-| **Chips** | **37**             | 45    | **82.2%**| ✅ All valid     |
-| **Dairy** | **23**             | 28    | **82.1%**| ✅ All valid     |
-| Seafood & Fish | 13           | 27    | 48.1%    | ✅ All valid     |
-| Canned Goods | 7              | 28    | 25.0%    | ✅ All valid     |
-| **Plant-Based** | **11**      | 27 (54) | **40.7% / 20.4%** | ✅ All valid |
-| **Total** | **203**            | **545**|**37.2%** | **100% valid**  |
+| Category        | Products with EANs | Total   | Coverage          | Checksum Status |
+| --------------- | ------------------ | ------- | ----------------- | --------------- |
+| Baby            | 28                 | 28      | 100.0%            | ✅ All valid     |
+| Cereals         | 28                 | 28      | 100.0%            | ✅ All valid     |
+| Drinks          | 28                 | 28      | 100.0%            | ✅ All valid     |
+| Żabka           | 28                 | 28      | 100.0%            | ✅ All valid     |
+| **Chips**       | **37**             | 45      | **82.2%**         | ✅ All valid     |
+| **Dairy**       | **23**             | 28      | **82.1%**         | ✅ All valid     |
+| Seafood & Fish  | 13                 | 27      | 48.1%             | ✅ All valid     |
+| Canned Goods    | 7                  | 28      | 25.0%             | ✅ All valid     |
+| **Plant-Based** | **11**             | 27 (54) | **40.7% / 20.4%** | ✅ All valid     |
+| **Total**       | **203**            | **545** | **37.2%**         | **100% valid**  |
 
 ### ⚠️ EAN-8 Warnings
 
@@ -119,6 +121,23 @@ These are valid but should ideally be converted to EAN-13 format if 13-digit cod
 - Conservative fix: Removed all 21 invalid EANs to maintain 100% data integrity
 - Products retained without barcodes
 - Instant & Frozen category went to 0% EAN coverage (all invalid codes removed)
+
+### Phase 1 Completion: Bread Expansion (Feb 8, 2026)
+- Researched 28 Bread products via Open Food Facts API
+- Found valid EANs for 21 products (75% raw success rate)
+- 1 invalid EAN removed: Oskroba Chleb Graham (2434000070009 - checksum failed)
+- 20 EANs passed GS1 Modulo-10 checksum validation (100% valid)
+- Database updated: Bread category now 20/28 (71.4%)
+- Success by brand: Mestemacher 5/5 (100%), Wasa 3/3 (100%), Pano 4/4 (100%), Oskroba 5/9 (56%)
+- 7 products still missing: Carrefour Sucharki, Oskroba (3), Schulstad Toast, Sonko Pieczywo, Tastino Wraps
+
+### Sauces Data Quality Fix (Feb 8, 2026)
+- Discovered 6 invalid EAN checksums in Sauces category
+- Kotlin (5 products): Honey Mustard, Horseradish, Ketchup Pikantny, Light Mayonnaise, Pickled Onions
+- Targroch (1 product): White Wine Vinegar
+- Conservative fix: Removed all 6 invalid EANs to maintain 100% data integrity
+- Products retained without barcodes
+- Sauces category now at 0% EAN coverage (all codes were invalid)
 
 ### Fixed EANs (4 products)
 - BoboVita Jabłka i banana: `8591119253935` → `8591119253934`

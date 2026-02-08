@@ -16,9 +16,9 @@ print(f"Validating {len(results)} Plant-Based EANs...\n")
 for item in results:
     ean = item["ean"]
     product_name = item["product_name"]
-    
+
     is_valid = validate_ean13(ean)
-    
+
     if is_valid:
         print(f"{product_name:<40} {ean:<15} OK")
         valid_eans.append(item)
@@ -37,10 +37,16 @@ if valid_eans:
     for item in valid_eans:
         product_name_sql = item["product_name"].replace("'", "''")
         brand_sql = item["brand"].replace("'", "''")
-        print(f"UPDATE products SET ean = '{item['ean']}' WHERE brand = '{brand_sql}' AND product_name = '{product_name_sql}' AND category = 'Plant-Based & Alternatives';")
+        print(
+            f"UPDATE products SET ean = '{item['ean']}' WHERE brand = '{brand_sql}' AND product_name = '{product_name_sql}' AND category = 'Plant-Based & Alternatives';"
+        )
 
 print(f"\n\nSummary:")
 print(f"  Valid EANs: {len(valid_eans)}")
 print(f"  Not found via API: 16")
-print(f"  Expected Plant-Based with EANs: {len(valid_eans)}/27 ({100.0 * len(valid_eans) / 27:.1f}%)")
-print(f"  Full DB coverage with duplicates: {len(valid_eans) * 2}/54 ({100.0 * len(valid_eans) * 2 / 54:.1f}%)")
+print(
+    f"  Expected Plant-Based with EANs: {len(valid_eans)}/27 ({100.0 * len(valid_eans) / 27:.1f}%)"
+)
+print(
+    f"  Full DB coverage with duplicates: {len(valid_eans) * 2}/54 ({100.0 * len(valid_eans) * 2 / 54:.1f}%)"
+)

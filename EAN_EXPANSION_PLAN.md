@@ -8,19 +8,19 @@
 
 ## Categories With Zero EAN Coverage
 
-| Category | Count | Priority | Difficulty | Notes |
-|----------|-------|----------|------------|-------|
-| Plant-Based & Alternatives | 54 | ⭐⭐⭐ High | Medium | Largest gap, specialty products |
-| Frozen & Prepared | 28 | ⭐⭐ Medium | Hard | Previously removed due to quality issues |
-| Instant & Frozen | 28 | ⭐⭐ Medium | Hard | Duplicate/overlap category? |
-| Dairy | 28 | ⭐⭐⭐ High | Easy | Standardized products, major brands |
-| Bread | 28 | ⭐⭐⭐ High | Easy | Standardized products, national brands |
-| Meat | 28 | ⭐⭐ Medium | Medium | Polish specialty meats |
-| Alcohol | 28 | ⭐⭐ Medium | Easy | Major brands, standard products |
-| Sauces | 28 | ⭐ Low | Hard | Regional/specialty items |
-| Sweets | 28 | ⭐⭐ Medium | Medium | Major candy brands |
-| Seafood & Fish | 27 | ⭐ Low | Hard | Specialty/regional items |
-| Nuts, Seeds & Legumes | 27 | ⭐⭐ Medium | Easy | Bulk/commodity products |
+| Category                   | Count | Priority  | Difficulty | Notes                                    |
+| -------------------------- | ----- | --------- | ---------- | ---------------------------------------- |
+| Plant-Based & Alternatives | 54    | ⭐⭐⭐ High  | Medium     | Largest gap, specialty products          |
+| Frozen & Prepared          | 28    | ⭐⭐ Medium | Hard       | Previously removed due to quality issues |
+| Instant & Frozen           | 28    | ⭐⭐ Medium | Hard       | Duplicate/overlap category?              |
+| Dairy                      | 28    | ⭐⭐⭐ High  | Easy       | Standardized products, major brands      |
+| Bread                      | 28    | ⭐⭐⭐ High  | Easy       | Standardized products, national brands   |
+| Meat                       | 28    | ⭐⭐ Medium | Medium     | Polish specialty meats                   |
+| Alcohol                    | 28    | ⭐⭐ Medium | Easy       | Major brands, standard products          |
+| Sauces                     | 28    | ⭐ Low     | Hard       | Regional/specialty items                 |
+| Sweets                     | 28    | ⭐⭐ Medium | Medium     | Major candy brands                       |
+| Seafood & Fish             | 27    | ⭐ Low     | Hard       | Specialty/regional items                 |
+| Nuts, Seeds & Legumes      | 27    | ⭐⭐ Medium | Easy       | Bulk/commodity products                  |
 
 ## Recommended Sequence
 
