@@ -1,8 +1,4 @@
--- PIPELINE (DRINKS): add servings
--- PIPELINE__drinks__02_add_servings.sql
--- Adds per-100g servings for drinks.
--- Note: for beverages, per 100 g ≈ per 100 ml (density ≈ 1.0 g/ml).
-
+-- PIPELINE (Drinks): add servings
 insert into servings (product_id, serving_basis, serving_amount_g_ml)
 select p.product_id, 'per 100 g', 100
 from products p

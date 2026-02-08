@@ -1,54 +1,56 @@
--- PIPELINE (SWEETS): insert products
--- PIPELINE__sweets__01_insert_products.sql
--- 28 Polish sweets & chocolate products verified via Open Food Facts.
--- Categories: chocolate tablets, filled chocolates, wafer bars,
---   chocolate bars, biscuits, marshmallows, pralines, gummy candy.
--- Last updated: 2026-02-07
+-- PIPELINE (Sweets): insert products
+-- Source: Open Food Facts API (automated pipeline)
+-- Generated: 2026-02-08
 
--- ═══════════════════════════════════════════════════════════════════
--- INSERT products (idempotent via ON CONFLICT)
--- ═══════════════════════════════════════════════════════════════════
+-- 0. DEPRECATE old products & release their EANs
+update products
+set is_deprecated = true, ean = null
+where country = 'PL'
+  and category = 'Sweets'
+  and is_deprecated is not true;
 
-insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
+-- 1. INSERT products
+insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  -- CHOCOLATE TABLETS (8)
-  ('PL', 'Wawel',                  'chocolate_tablet', 'Sweets', 'Wawel Czekolada Gorzka 70%',             'none', 'widespread', 'none'),
-  ('PL', 'Wawel',                  'chocolate_tablet', 'Sweets', 'Wawel Mleczna z Rodzynkami i Orzeszkami', 'none', 'widespread', 'none'),
-  ('PL', 'Wedel',                  'chocolate_tablet', 'Sweets', 'Wedel Czekolada Gorzka 80%',             'none', 'widespread', 'none'),
-  ('PL', 'Wedel',                  'chocolate_tablet', 'Sweets', 'Wedel Czekolada Mleczna',                'none', 'widespread', 'none'),
-  ('PL', 'Wedel',                  'chocolate_tablet', 'Sweets', 'Wedel Mleczna z Bakaliami',              'none', 'widespread', 'none'),
-  ('PL', 'Wedel',                  'chocolate_tablet', 'Sweets', 'Wedel Mleczna z Orzechami',              'none', 'widespread', 'none'),
-  ('PL', 'Milka',                  'chocolate_tablet', 'Sweets', 'Milka Alpenmilch',                       'none', 'widespread', 'none'),
-  ('PL', 'Milka',                  'chocolate_tablet', 'Sweets', 'Milka Trauben-Nuss',                     'none', 'widespread', 'none'),
-  -- FILLED CHOCOLATES / PRALINES (6)
-  ('PL', 'Wawel',                  'filled_chocolate', 'Sweets', 'Wawel Tiki Taki Kokosowo-Orzechowe',     'none', 'widespread', 'palm oil'),
-  ('PL', 'Wawel',                  'filled_chocolate', 'Sweets', 'Wawel Tiramisu Nadziewana',              'none', 'widespread', 'palm oil'),
-  ('PL', 'Wawel',                  'filled_chocolate', 'Sweets', 'Wawel Czekolada Karmelowe',              'none', 'widespread', 'palm oil'),
-  ('PL', 'Wawel',                  'filled_chocolate', 'Sweets', 'Wawel Kasztanki Nadziewana',             'none', 'widespread', 'none'),
-  ('PL', 'Wedel',                  'filled_chocolate', 'Sweets', 'Wedel Mleczna Truskawkowa',              'none', 'widespread', 'palm oil'),
-  ('PL', 'Solidarność',            'praline',          'Sweets', 'Solidarność Śliwki w Czekoladzie',       'none', 'widespread', 'palm oil'),
-  -- WAFER BARS (5)
-  ('PL', 'Prince Polo',            'wafer_bar',        'Sweets', 'Prince Polo XXL Classic',                'none', 'widespread', 'palm oil'),
-  ('PL', 'Prince Polo',            'wafer_bar',        'Sweets', 'Prince Polo XXL Mleczne',               'none', 'widespread', 'palm oil'),
-  ('PL', 'Grześki',                'wafer_bar',        'Sweets', 'Grześki Mini Chocolate',                 'none', 'widespread', 'palm oil'),
-  ('PL', 'Grześki',                'wafer_bar',        'Sweets', 'Grześki Wafer Toffee',                   'none', 'widespread', 'palm oil'),
-  ('PL', 'Kinder',                 'wafer_bar',        'Sweets', 'Kinder Bueno Mini',                      'none', 'widespread', 'palm oil'),
-  -- CHOCOLATE BARS (3)
-  ('PL', 'Kinder',                 'chocolate_bar',    'Sweets', 'Kinder Chocolate Bar',                   'none', 'widespread', 'palm oil'),
-  ('PL', 'Snickers',               'chocolate_bar',    'Sweets', 'Snickers Bar',                           'none', 'widespread', 'palm oil'),
-  ('PL', 'Twix',                   'chocolate_bar',    'Sweets', 'Twix Twin',                              'none', 'widespread', 'palm oil'),
-  -- BISCUITS / COOKIES (3)
-  ('PL', 'Kinder',                 'biscuit',          'Sweets', 'Kinder Cards',                           'none', 'widespread', 'palm oil'),
-  ('PL', 'Goplana',                'biscuit',          'Sweets', 'Goplana Jeżyki Cherry',                  'none', 'widespread', 'palm oil'),
-  ('PL', 'Delicje',                'biscuit',          'Sweets', 'Delicje Szampańskie Wiśniowe',            'none', 'widespread', 'palm oil'),
-  -- MARSHMALLOW / CONFECTIONERY (2)
-  ('PL', 'Wedel',                  'marshmallow',      'Sweets', 'Wedel Ptasie Mleczko Waniliowe',         'none', 'widespread', 'none'),
-  ('PL', 'Wedel',                  'marshmallow',      'Sweets', 'Wedel Ptasie Mleczko Gorzka 80%',        'none', 'widespread', 'none'),
-  -- GUMMY CANDY (1)
-  ('PL', 'Haribo',                 'gummy_candy',      'Sweets', 'Haribo Goldbären',                       'none', 'widespread', 'none')
+  ('PL', 'Alpen Gold', 'Grocery', 'Sweets', 'Nussbeisser czekolada mleczna z całymi orzechami laskowymi', null, null, 'none', '5903189076314'),
+  ('PL', 'E. Wedel', 'Grocery', 'Sweets', 'Czekolada mocno gorzka 80%', null, 'Tesco', 'none', '5901588018195'),
+  ('PL', 'E. Wedel', 'Grocery', 'Sweets', 'Czekolada klasyczna gorzka 64%', null, 'Żabka', 'none', '5901588018768'),
+  ('PL', 'E. Wedel', 'Grocery', 'Sweets', 'Mleczna klasyczna', null, 'Żabka', 'none', '5901588018775'),
+  ('PL', 'Wawel', 'Grocery', 'Sweets', 'Gorzka Extra', null, null, 'none', '5900102028382'),
+  ('PL', 'Wawel', 'Grocery', 'Sweets', '100% Cocoa Ekstra Gorzka', null, null, 'none', '5900102025091'),
+  ('PL', 'Wawel', 'Grocery', 'Sweets', 'Gorzka 70%', null, null, 'none', '5900102025473'),
+  ('PL', 'Unknown', 'Grocery', 'Sweets', 'Czekolada gorzka Luximo', null, null, 'none', '5901669488824'),
+  ('PL', 'Luximo', 'Grocery', 'Sweets', 'Czekolada Gorzka (Z Platkami Pomaranczowymi)', null, null, 'none', '5901669488831'),
+  ('PL', 'fin CARRÉ', 'Grocery', 'Sweets', 'Extra dark 74% Cocoa', null, 'Lidl', 'none', '20022464'),
+  ('PL', 'Lindt Excellence', 'Grocery', 'Sweets', 'Excellence 85% Cacao Rich Dark', null, 'Carrefour,Asda,Kaufland,Оливье', 'none', '3046920028363'),
+  ('PL', 'Milka', 'Grocery', 'Sweets', 'Chocolat au lait', null, 'Intermarché,Leclerc,Carrefour,Aldi,eroski,Woolworths,REWE,Coles,Auchan,Netto', 'none', '3045140105502'),
+  ('PL', 'Toblerone', 'Grocery', 'Sweets', 'Milk Chocolate with Honey and Almond Nougat', null, 'Coop,Delhaize,Lidl,Kmart,Flow,Farmacorp,Chocolandia', 'none', '7614500010013'),
+  ('PL', 'Storck', 'Grocery', 'Sweets', 'Merci Finest Selection Assorted Chocolates', null, 'Delhaize,Coop,Tesco', 'none', '4014400901191'),
+  ('PL', 'Fin Carré', 'Grocery', 'Sweets', 'Milk Chocolate', null, 'Lidl', 'none', '20005825'),
+  ('PL', 'fin Carré', 'Grocery', 'Sweets', 'Dunkle Schokolade mit ganzen Haselnüssen', null, 'Lidl', 'none', '20815356'),
+  ('PL', 'Lindt', 'Grocery', 'Sweets', 'Lindt Excellence Dark Orange Intense', null, 'Tesco,Irma.dk,COOP,Ahorramás', 'none', '3046920028370'),
+  ('PL', 'Fin Carré', 'Grocery', 'Sweets', 'Weiße Schokolade', null, 'Lidl', 'none', '20368197'),
+  ('PL', 'Milka', 'Grocery', 'Sweets', 'Milka chocolate Hazelnuts', null, 'HIT,Żabka', 'none', '4025700001023'),
+  ('PL', 'Fin Carré', 'Grocery', 'Sweets', 'Extra Dark 85% Cocoa', null, 'lidl', 'none', '4056489366461'),
+  ('PL', 'Ritter SPORT', 'Grocery', 'Sweets', 'MARZIPAN DARK CHOCOLATE WITH MARZIPAN', null, 'Lidl,Irma.dk,Delhaize,REWE,Eurospar,Спар,Пятёрочка,Перекресток,Магнит,Визит,Сам Самыч,Willy''s,Соседи,Netto,Σκλαβενίτης', 'none', '4000417025005'),
+  ('PL', 'Milka', 'Grocery', 'Sweets', 'Happy Cow', null, 'Nahkauf,Lidl,Żabka', 'none', '7622400005190'),
+  ('PL', 'Heidi', 'Grocery', 'Sweets', 'Dark Intense', null, 'Auchan,Carrefour,Penny', 'none', '5941021001261'),
+  ('PL', 'Schogetten', 'Grocery', 'Sweets', 'Schogetten alpine milk chocolate', null, 'Lidl,Stokrotka', 'none', '4000607850004'),
+  ('PL', 'Milka', 'Grocery', 'Sweets', 'Milka Mmmax Oreo', null, 'Żabka', 'none', '7622210240200'),
+  ('PL', 'Milka', 'Grocery', 'Sweets', 'Schokolade Joghurt', null, 'Rewe,Żabka', 'none', '4025700001450'),
+  ('PL', 'Milka', 'Grocery', 'Sweets', 'Strawberry', null, 'Żabka', 'palm oil', '7622200007332'),
+  ('PL', 'Hatherwood', 'Grocery', 'Sweets', 'Salted Caramel Style', null, 'Lidl', 'none', '4056489350392')
 on conflict (country, brand, product_name) do update set
-  product_type       = excluded.product_type,
-  category           = excluded.category,
-  prep_method        = excluded.prep_method,
+  ean = excluded.ean,
+  product_type = excluded.product_type,
   store_availability = excluded.store_availability,
-  controversies      = excluded.controversies;
+  controversies = excluded.controversies,
+  prep_method = excluded.prep_method,
+  is_deprecated = false;
+
+-- 2. DEPRECATE removed products
+update products
+set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
+where country = 'PL' and category = 'Sweets'
+  and is_deprecated is not true
+  and product_name not in ('Nussbeisser czekolada mleczna z całymi orzechami laskowymi', 'Czekolada mocno gorzka 80%', 'Czekolada klasyczna gorzka 64%', 'Mleczna klasyczna', 'Gorzka Extra', '100% Cocoa Ekstra Gorzka', 'Gorzka 70%', 'Czekolada gorzka Luximo', 'Czekolada Gorzka (Z Platkami Pomaranczowymi)', 'Extra dark 74% Cocoa', 'Excellence 85% Cacao Rich Dark', 'Chocolat au lait', 'Milk Chocolate with Honey and Almond Nougat', 'Merci Finest Selection Assorted Chocolates', 'Milk Chocolate', 'Dunkle Schokolade mit ganzen Haselnüssen', 'Lindt Excellence Dark Orange Intense', 'Weiße Schokolade', 'Milka chocolate Hazelnuts', 'Extra Dark 85% Cocoa', 'MARZIPAN DARK CHOCOLATE WITH MARZIPAN', 'Happy Cow', 'Dark Intense', 'Schogetten alpine milk chocolate', 'Milka Mmmax Oreo', 'Schokolade Joghurt', 'Strawberry', 'Salted Caramel Style');

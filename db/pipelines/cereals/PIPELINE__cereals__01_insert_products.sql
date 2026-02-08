@@ -1,120 +1,56 @@
--- PIPELINE (CEREALS): insert products
--- PIPELINE__cereals__01_insert_products.sql
--- 28 verified products from the Polish market.
--- Data sourced from Open Food Facts (openfoodfacts.org) — EANs verified.
--- Last updated: 2026-02-08
+-- PIPELINE (Cereals): insert products
+-- Source: Open Food Facts API (automated pipeline)
+-- Generated: 2026-02-08
 
-insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
-values
--- ── Nestlé ──────────────────────────────────────────────────────────────
--- EAN 5900020019592 — Nestlé Corn Flakes (fortified, NOVA 4)
-('PL','Nestlé','Grocery','Cereals','Nestlé Corn Flakes','baked','Biedronka;Lidl;Żabka','none'),
--- EAN 5900020000590 — Chocapic (chocolate cereal, NOVA 4)
-('PL','Nestlé','Grocery','Cereals','Nestlé Chocapic','baked','Biedronka;Lidl;Żabka','none'),
--- EAN 5900020002730 — Cini Minis (cinnamon squares, NOVA 4)
-('PL','Nestlé','Grocery','Cereals','Nestlé Cini Minis','baked','Biedronka;Lidl;Żabka','none'),
--- EAN 5900020035929 — Cheerios Owsiany (oat-based rings, NOVA 4)
-('PL','Nestlé','Grocery','Cereals','Nestlé Cheerios Owsiany','baked','Biedronka;Lidl;Żabka','none'),
--- EAN 5900020021625 — Lion Caramel & Chocolate (dessert cereal, NOVA 4)
-('PL','Nestlé','Grocery','Cereals','Nestlé Lion Caramel & Chocolate','baked','Biedronka;Lidl;Żabka','none'),
--- EAN 5900020038593 — Ciniminis Churros (churros-shaped, NOVA 4)
-('PL','Nestlé','Grocery','Cereals','Nestlé Ciniminis Churros','baked','Biedronka;Lidl;Żabka','none'),
-
--- ── Nesquik / Nestlé ────────────────────────────────────────────────────
--- EAN 5900020013491 — Nesquik Mix (cocoa + vanilla, NOVA 4)
-('PL','Nesquik','Grocery','Cereals','Nesquik Mix','baked','Biedronka;Lidl;Żabka','none'),
-
--- ── Sante ───────────────────────────────────────────────────────────────
--- EAN 5900617037152 — Sante Gold Granola (premium crunchy granola, NOVA 4)
-('PL','Sante','Grocery','Cereals','Sante Gold Granola','baked','Biedronka;Lidl','none'),
--- EAN 5900617037213 — Sante Fit Granola Truskawka & Wiśnia (lower sugar, NOVA 4)
-('PL','Sante','Grocery','Cereals','Sante Fit Granola Truskawka & Wiśnia','baked','Biedronka;Lidl','none'),
-
--- ── Vitanella / Biedronka private label ─────────────────────────────────
--- EAN 5907437365489 — Miami Hopki (cocoa cereal balls, NOVA 4)
-('PL','Vitanella (Biedronka)','Grocery','Cereals','Vitanella Miami Hopki','baked','Biedronka','none'),
--- EAN 5907437366059 — Choki (chocolate wheat shells, NOVA 4)
-('PL','Vitanella (Biedronka)','Grocery','Cereals','Vitanella Choki','baked','Biedronka','none'),
--- EAN 5907437367919 — Orito Kakaowe (filled cocoa pillows, NOVA 4)
-('PL','Vitanella (Biedronka)','Grocery','Cereals','Vitanella Orito Kakaowe','baked','Biedronka','minor'),
-
--- ── Crownfield / Lidl private label ─────────────────────────────────────
--- EAN 20061449 — Goldini (honey loops, NOVA 4)
-('PL','Crownfield (Lidl)','Grocery','Cereals','Crownfield Goldini','baked','Lidl','none'),
--- EAN 4056489978701 — Choco Muszelki (chocolate shells, NOVA 4)
-('PL','Crownfield (Lidl)','Grocery','Cereals','Crownfield Choco Muszelki','baked','Lidl','none'),
-
--- ── Melvit ──────────────────────────────────────────────────────────────
--- EAN 5906827003802 — Płatki Owsiane Górskie (whole oat flakes, NOVA 1)
-('PL','Melvit','Grocery','Cereals','Melvit Płatki Owsiane Górskie','air-popped','Biedronka;Lidl','none'),
-
--- ── Lubella ─────────────────────────────────────────────────────────────
--- EAN 5900049011645 — Corn Flakes Pełne Ziarno (whole grain, NOVA 4)
-('PL','Lubella','Grocery','Cereals','Lubella Corn Flakes Pełne Ziarno','baked','Biedronka;Lidl;Żabka','none'),
-
--- ── Nestlé (additional) ────────────────────────────────────────────────
--- EAN 5900020007728 — Cookie Crisp (cookie-shaped cereal, NOVA 4)
-('PL','Nestlé','Grocery','Cereals','Nestlé Cookie Crisp','baked','Biedronka;Lidl;Żabka','none'),
--- EAN 5900020020154 — Nesquik Alphabet (letter-shaped cocoa cereal, NOVA 4)
-('PL','Nestlé','Grocery','Cereals','Nestlé Nesquik Alphabet','baked','Biedronka;Lidl;Żabka','none'),
-
--- ── Sante (additional) ────────────────────────────────────────────────
--- EAN 5900617002976 — Sante Granola Nut (nut & peanut butter, NOVA 4)
-('PL','Sante','Grocery','Cereals','Sante Granola Nut','baked','Biedronka;Lidl','none'),
--- EAN 5900617002969 — Sante Granola Malina & Truskawka (raspberry & strawberry, NOVA 4)
-('PL','Sante','Grocery','Cereals','Sante Granola Malina & Truskawka','baked','Biedronka;Lidl','none'),
--- EAN 5900617037176 — Sante Granola Czekolada & Pomarańcza (chocolate & orange, NOVA 4)
-('PL','Sante','Grocery','Cereals','Sante Granola Czekolada & Pomarańcza','baked','Biedronka;Lidl','none'),
-
--- ── Lubella (additional) ──────────────────────────────────────────────
--- EAN 5900049011621 — Lubella Choco Piegotaki (chocolate cereal, NOVA 4)
-('PL','Lubella','Grocery','Cereals','Lubella Choco Piegotaki','baked','Biedronka;Lidl;Żabka','none'),
--- EAN 5900049812532 — Lubella Płatki Żytnie (rye flakes, NOVA 3)
-('PL','Lubella','Grocery','Cereals','Lubella Płatki Żytnie','baked','Biedronka;Lidl','none'),
-
--- ── Vitanella / Biedronka (additional) ───────────────────────────────
--- EAN 5907437361474 — Vitanella Corn Flakes (fortified corn flakes, NOVA 4 est.)
-('PL','Vitanella (Biedronka)','Grocery','Cereals','Vitanella Corn Flakes','baked','Biedronka','none'),
--- EAN 5900749610520 — Vitanella Crunchy Owocowe (fruit crunchy granola, NOVA 4)
-('PL','Vitanella (Biedronka)','Grocery','Cereals','Vitanella Crunchy Owocowe','baked','Biedronka','none'),
-
--- ── Crownfield / Lidl (additional) ───────────────────────────────────
--- EAN 20013011 — Crownfield Choco Balls (chocolate cereal balls, NOVA 4)
-('PL','Crownfield (Lidl)','Grocery','Cereals','Crownfield Choco Balls','baked','Lidl','none'),
--- EAN 20202859 — Crownfield Musli Premium Multi-Frucht (fruit muesli, NOVA 4)
-('PL','Crownfield (Lidl)','Grocery','Cereals','Crownfield Musli Premium Multi-Frucht','baked','Lidl','none'),
-
--- ── Kupiec ───────────────────────────────────────────────────────────
--- EAN 5906747171421 — Kupiec Coś na Ząb Owsianka (instant oat porridge, NOVA 4)
-('PL','Kupiec','Grocery','Cereals','Kupiec Coś na Ząb Owsianka','baked','Biedronka;Lidl','none')
-
-on conflict (country, brand, product_name)
-do update set
-  product_type        = excluded.product_type,
-  category            = excluded.category,
-  prep_method         = excluded.prep_method,
-  store_availability  = excluded.store_availability,
-  controversies       = excluded.controversies;
-
--- Deprecate old placeholder products that are no longer in the pipeline
+-- 0. DEPRECATE old products & release their EANs
 update products
-set is_deprecated = true,
-    deprecated_reason = 'Removed: no verified Open Food Facts data for Polish market'
-where country='PL' and category='Cereals'
+set is_deprecated = true, ean = null
+where country = 'PL'
+  and category = 'Cereals'
+  and is_deprecated is not true;
+
+-- 1. INSERT products
+insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
+values
+  ('PL', 'Sante', 'Grocery', 'Cereals', 'Granola chocolate / pieces of chocolate', null, 'Green,Yerevan City', 'none', '5900617002983'),
+  ('PL', 'sante', 'Grocery', 'Cereals', 'Sante gold granola', null, 'sultan center', 'none', '5900617037152'),
+  ('PL', 'Sante', 'Grocery', 'Cereals', 'Granola Nut / peanuts & peanut butter', null, null, 'none', '5900617002976'),
+  ('PL', 'Sante', 'Grocery', 'Cereals', 'sante fit granola strawberry and cherry', null, null, 'none', '5900617037213'),
+  ('PL', 'GO ON', 'Grocery', 'Cereals', 'Protein granola', null, null, 'none', '5900617039262'),
+  ('PL', 'Santé', 'Grocery', 'Cereals', 'Sante Crunchy Crispy Muesli Banana With Chocolate 350G', null, null, 'none', '5900617002617'),
+  ('PL', 'GO ON', 'Grocery', 'Cereals', 'granola brownie & cherry', null, null, 'none', '5900617043481'),
+  ('PL', 'One Day More', 'Grocery', 'Cereals', 'Muesli chocolat', null, null, 'none', '5902884461890'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Copos de Avena / Fiocchi d''Avena', null, 'Carrefour,Carrefour Market,carrefour.fr', 'none', '3560070614202'),
+  ('PL', 'Chabrior', 'Grocery', 'Cereals', 'Flocons d''avoine complète 500g', null, 'Intermarché, INTERMARCHE FRANCE', 'none', '3250391896554'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Corn flakes', null, 'carrefour,carrefour.fr', 'none', '3560071016074'),
+  ('PL', 'Crownfield', 'Grocery', 'Cereals', 'Müsli Multifrucht', null, 'Lidl', 'none', '20003234'),
+  ('PL', 'Carrefour BIO', 'Grocery', 'Cereals', 'Corn flakes', null, 'Carrefour,carrefour.fr', 'none', '3560071267582'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Crunchy Chocolat noir intense', null, 'Carrefour,carrefour.fr', 'none', '3560071013035'),
+  ('PL', 'Crownfield', 'Grocery', 'Cereals', 'Traube-Nuss Müsli 68% Vollkorn', null, 'Lidl', 'none', '20353889'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Flocons d''avoine complete', null, 'carrefour', 'none', '3560071478643'),
+  ('PL', 'Carrefour BIO', 'Grocery', 'Cereals', 'Céréales cœur fondant', null, 'Carrefour,carrefour.fr', 'none', '3560070800209'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Stylesse Nature', null, 'Carrefour,carrefour.fr', 'none', '3560071013196'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'MUESLI & Co 6 FRUITS SECS', null, 'Carrefour Market,Carrefour,carrefour.fr', 'none', '3270190111108'),
+  ('PL', 'Carrefour BIO', 'Grocery', 'Cereals', 'Pétales au chocolat blé complet', null, 'Carrefour,Carrefour Market,carrefour.fr', 'none', '3560071267032'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Stylesse Chocolat Noir', null, 'Carrefour Market,Carrefour,carrefour.fr', 'none', '3560071013127'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Stylesse Fruits rouges', null, 'Carrefour,carrefour.fr', 'none', '3560071013110'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'CROCKS Goût CHOCO-NOISETTE', null, 'Carrefour Market,Carrefour,carrefour.fr', 'none', '3560070737710'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Crunchy', null, 'Carrefour,carrefour.fr', 'none', '3560070581870'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Muesly croustillant cruchy chocolat noir intense', null, 'carrefour, carrefour.fr', 'none', '3560071013042'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Choco Bollz', null, 'Carrefour,carrefour.fr', 'none', '3560071090821'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Choco Rice', null, 'Carrefour, carrefour.fr', 'none', '3560070800292'),
+  ('PL', 'Carrefour', 'Grocery', 'Cereals', 'Pétales de maïs', null, 'Carrefour,carrefour.fr', 'none', '3560071168674')
+on conflict (country, brand, product_name) do update set
+  ean = excluded.ean,
+  product_type = excluded.product_type,
+  store_availability = excluded.store_availability,
+  controversies = excluded.controversies,
+  prep_method = excluded.prep_method,
+  is_deprecated = false;
+
+-- 2. DEPRECATE removed products
+update products
+set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
+where country = 'PL' and category = 'Cereals'
   and is_deprecated is not true
-  and product_name not in (
-    'Nestlé Corn Flakes','Nestlé Chocapic','Nestlé Cini Minis',
-    'Nestlé Cheerios Owsiany','Nestlé Lion Caramel & Chocolate','Nestlé Ciniminis Churros',
-    'Nesquik Mix',
-    'Sante Gold Granola','Sante Fit Granola Truskawka & Wiśnia',
-    'Vitanella Miami Hopki','Vitanella Choki','Vitanella Orito Kakaowe',
-    'Crownfield Goldini','Crownfield Choco Muszelki',
-    'Melvit Płatki Owsiane Górskie',
-    'Lubella Corn Flakes Pełne Ziarno',
-    'Nestlé Cookie Crisp','Nestlé Nesquik Alphabet',
-    'Sante Granola Nut','Sante Granola Malina & Truskawka','Sante Granola Czekolada & Pomarańcza',
-    'Lubella Choco Piegotaki','Lubella Płatki Żytnie',
-    'Vitanella Corn Flakes','Vitanella Crunchy Owocowe',
-    'Crownfield Choco Balls','Crownfield Musli Premium Multi-Frucht',
-    'Kupiec Coś na Ząb Owsianka'
-  );
+  and product_name not in ('Granola chocolate / pieces of chocolate', 'Sante gold granola', 'Granola Nut / peanuts & peanut butter', 'sante fit granola strawberry and cherry', 'Protein granola', 'Sante Crunchy Crispy Muesli Banana With Chocolate 350G', 'granola brownie & cherry', 'Muesli chocolat', 'Copos de Avena / Fiocchi d''Avena', 'Flocons d''avoine complète 500g', 'Corn flakes', 'Müsli Multifrucht', 'Corn flakes', 'Crunchy Chocolat noir intense', 'Traube-Nuss Müsli 68% Vollkorn', 'Flocons d''avoine complete', 'Céréales cœur fondant', 'Stylesse Nature', 'MUESLI & Co 6 FRUITS SECS', 'Pétales au chocolat blé complet', 'Stylesse Chocolat Noir', 'Stylesse Fruits rouges', 'CROCKS Goût CHOCO-NOISETTE', 'Crunchy', 'Muesly croustillant cruchy chocolat noir intense', 'Choco Bollz', 'Choco Rice', 'Pétales de maïs');

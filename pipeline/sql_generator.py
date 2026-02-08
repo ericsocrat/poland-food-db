@@ -84,23 +84,36 @@ def _gen_01_insert_products(category: str, products: list[dict], today: str) -> 
     # Product names for deprecation block
     name_literals = ", ".join(_sql_text(p["product_name"]) for p in products)
 
+    # EAN list for cross-category release
+    eans_with_values = [p.get("ean", "") for p in products if p.get("ean")]
+    ean_release_block = ""
+    if eans_with_values:
+        ean_literals = ", ".join(_sql_text(e) for e in eans_with_values)
+        ean_release_block = f"""
+-- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
+update products set ean = null
+where ean in ({ean_literals})
+  and ean is not null;
+"""
+
     return f"""\
 -- PIPELINE ({category}): insert products
 -- Source: Open Food Facts API (automated pipeline)
 -- Generated: {today}
 
--- 0. DEPRECATE old products & release their EANs
+-- 0a. DEPRECATE old products in this category & release their EANs
 update products
 set is_deprecated = true, ean = null
 where country = 'PL'
   and category = {_sql_text(category)}
   and is_deprecated is not true;
-
+{ean_release_block}
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
 {values_block}
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,
@@ -126,6 +139,7 @@ select p.product_id, 'per 100 g', 100
 from products p
 left join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
 where p.country='PL' and p.category={_sql_text(category)}
+  and p.is_deprecated is not true
   and s.serving_id is null;
 """
 
@@ -166,6 +180,7 @@ where (product_id, serving_id) in (
   from products p
   join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
   where p.country = 'PL' and p.category = {_sql_text(category)}
+    and p.is_deprecated is not true
 );
 
 -- 2) Insert
@@ -182,7 +197,18 @@ from (
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g';
+  and p.category = {_sql_text(category)} and p.is_deprecated is not true
+join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
+on conflict (product_id, serving_id) do update set
+  calories = excluded.calories,
+  total_fat_g = excluded.total_fat_g,
+  saturated_fat_g = excluded.saturated_fat_g,
+  trans_fat_g = excluded.trans_fat_g,
+  carbs_g = excluded.carbs_g,
+  sugars_g = excluded.sugars_g,
+  fibre_g = excluded.fibre_g,
+  protein_g = excluded.protein_g,
+  salt_g = excluded.salt_g;
 """
 
 
@@ -292,7 +318,7 @@ update scores sc set
     when '4' then 'High'
     when '3' then 'Moderate'
     when '2' then 'Low'
-    when '1' then 'Minimal'
+    when '1' then 'Low'
     else 'Unknown'
   end
 from (

@@ -1,71 +1,54 @@
--- PIPELINE (MEAT): add nutrition facts
--- PIPELINE__meat__03_add_nutrition.sql
--- All values per 100 g from Open Food Facts (EAN-verified).
--- Meat/deli products tend to be high in salt, saturated fat, and calories.
--- Last updated: 2026-02-07
+-- PIPELINE (Meat): add nutrition facts
+-- Source: Open Food Facts verified per-100g data
 
--- ═══════════════════════════════════════════════════════════════════
--- UPSERT nutrition facts (idempotent via ON CONFLICT)
--- ═══════════════════════════════════════════════════════════════════
+-- 1) Remove existing
+delete from nutrition_facts
+where (product_id, serving_id) in (
+  select p.product_id, s.serving_id
+  from products p
+  join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
+  where p.country = 'PL' and p.category = 'Meat'
+);
 
-insert into nutrition_facts (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+-- 2) Insert
+insert into nutrition_facts
+  (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+   carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 select
-  p.product_id,
-  sv.serving_id,
+  p.product_id, s.serving_id,
   d.calories, d.total_fat_g, d.saturated_fat_g, d.trans_fat_g,
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
   values
-    -- KABANOSY
-    --                brand          product_name                             cal   fat   sat    trans  carbs sug   fib  prot  salt
-    ('Tarczyński',   'Tarczyński Kabanosy Klasyczne',       '397','28.0','11.0', '0.3', '2.0','1.0', '0','26.0', '2.8'),
-    ('Tarczyński',   'Tarczyński Kabanosy Exclusive',       '370','26.0','10.0', '0.2', '1.5','0.5', '0','30.0', '2.6'),
-    ('Tarczyński',   'Tarczyński Kabanosy z Serem',         '385','28.0','11.5', '0.3', '3.0','1.5', '0','25.0', '2.5'),
-    -- PARÓWKI / FRANKFURTERS
-    ('Berlinki',     'Berlinki Parówki Klasyczne',         '240','19.0', '7.0', '0',   '3.0','1.0', '0','14.0', '2.0'),
-    ('Berlinki',     'Berlinki Parówki z Szynki',          '195','13.0', '5.0', '0',   '3.5','1.5', '0','15.0', '2.0'),
-    ('Sokołów',      'Sokołów Parówki Cienkie',            '220','17.0', '6.5', '0',   '2.5','0.8', '0','13.5', '2.1'),
-    ('Krakus',       'Krakus Parówki Delikatesowe',        '235','18.0', '7.0', '0',   '3.0','1.0', '0','14.5', '1.9'),
-    ('Morliny',      'Morliny Parówki Polskie',            '225','17.0', '6.5', '0',   '3.5','1.2', '0','13.0', '2.0'),
-    -- SZYNKA / HAM
-    ('Krakus',       'Krakus Szynka Konserwowa',           '112', '4.0', '1.5', '0',   '1.0','0.5', '0','18.0', '2.0'),
-    ('Sokołów',      'Sokołów Szynka Mielona',             '195','14.0', '5.0', '0',   '2.0','0.5', '0','15.0', '2.2'),
-    ('Morliny',      'Morliny Szynka Tradycyjna',          '105', '2.5', '1.0', '0',   '1.0','0.5', '0','20.0', '2.0'),
-    ('Madej Wróbel', 'Madej Wróbel Szynka Gotowana',       '100', '2.0', '0.8', '0',   '1.5','0.5', '0','19.0', '1.9'),
-    -- KIEŁBASA / SAUSAGE
-    ('Sokołów',      'Sokołów Kiełbasa Krakowska Sucha',   '375','28.0','10.5', '0.2', '1.0','0.5', '0','30.0', '2.5'),
-    ('Morliny',      'Morliny Kiełbasa Podwawelska',       '265','20.0', '7.5', '0',   '2.0','0.5', '0','19.0', '2.2'),
-    ('Tarczyński',   'Tarczyński Kiełbasa Śląska',         '280','22.0', '8.0', '0',   '1.5','0.5', '0','19.0', '2.2'),
-    ('Krakus',       'Krakus Kiełbasa Zwyczajna',          '270','21.0', '7.5', '0',   '2.0','0.8', '0','18.0', '2.1'),
-    -- BOCZEK / BACON
-    ('Morliny',      'Morliny Boczek Wędzony',             '340','30.0','11.0', '0',   '0.5','0.5', '0','17.0', '2.3'),
-    ('Sokołów',      'Sokołów Boczek Pieczony',            '315','26.0','10.0', '0',   '1.0','0.5', '0','19.0', '2.0'),
-    -- PASZTET / PÂTÉ
-    ('Drosed',       'Drosed Pasztet Podlaski',            '275','21.0', '7.5', '0',   '5.0','1.0', '0','15.0', '1.6'),
-    ('Sokołów',      'Sokołów Pasztet Firmowy',            '260','19.0', '7.0', '0',   '6.0','1.5', '0','14.0', '1.8'),
-    -- SALAMI
-    ('Sokołów',      'Sokołów Salami Dojrzewające',        '420','34.0','13.0', '0.3', '1.0','0.5', '0','26.0', '3.0'),
-    ('Tarczyński',   'Tarczyński Salami Pepperoni',         '430','35.0','14.0', '0.3', '2.0','1.0', '0','25.0', '2.8'),
-    -- MIELONKA / LUNCHEON MEAT
-    ('Krakus',       'Krakus Mielonka Tyrolska',           '205','15.0', '5.5', '0',   '3.0','1.0', '0','14.0', '2.0'),
-    ('Sokołów',      'Sokołów Mielonka Poznańska',         '210','16.0', '6.0', '0',   '2.5','0.8', '0','14.0', '2.1'),
-    -- POLĘDWICA / LOIN
-    ('Krakus',       'Krakus Polędwica Sopocka',           '150', '5.5', '2.0', '0',   '1.0','0.5', '0','24.0', '2.2'),
-    ('Indykpol',     'Indykpol Polędwica z Indyka',        '100', '1.5', '0.5', '0',   '1.0','0.5', '0','21.0', '2.0'),
-    -- BOCZEK DROBIOWY / POULTRY BACON
-    ('Morliny',      'Morliny Boczek Drobiowy',            '165', '8.0', '2.5', '0',   '1.0','0.5', '0','22.0', '1.8'),
-    -- FILET MIĘSA / POULTRY FILLET
-    ('Plukon',       'Plukon Filet z Kurczaka',            '115', '2.0', '0.6', '0',   '0.0','0.0', '0','24.0', '1.2')
-) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+    ('Sokołów', 'Sokoliki parówki drobiowo-cielęce', '186.0', '13.0', '4.0', '0', '1.7', '0.5', '0.0', '15.5', '0.0'),
+    ('Tarczyński', 'Naturalne Parówki 100% z szynki', '291.0', '25.0', '9.4', '0', '1.3', '1.1', '0', '15.0', '2.1'),
+    ('Kraina Wędlin', 'Parówki z szynki', '277.0', '24.0', '9.6', '0', '1.3', '0.6', '0', '14.0', '1.8'),
+    ('Dolina Dobra', 'Soczysta Szynka 100% Mięsa', '110.0', '2.3', '0.9', '0', '0.0', '0.0', '0', '22.0', '1.9'),
+    ('Morliny', 'Szynka konserwowa z galaretką', '114.0', '4.9', '2.0', '0', '0.5', '0.0', '0.0', '17.0', '2.0'),
+    ('Stoczek', 'Kiełbasa z weka', '269.0', '24.0', '9.1', '0', '1.0', '0.5', '0', '13.0', '2.4'),
+    ('Drobimex', 'Szynka delikatesowa z kurcząt', '107.0', '2.5', '1.2', '0', '2.2', '0.5', '0', '19.0', '2.0'),
+    ('Biedra', 'Polędwica Wiejska Sadecka', '155.0', '5.0', '3.4', '0', '0.5', '0.5', '0', '27.0', '0.0'),
+    ('Krakus', 'Parówki z piersi kurczaka', '185.0', '13.0', '3.4', '0', '1.0', '0.7', '0', '16.0', '2.2'),
+    ('Strzała', 'Konserwa mięsna z dziczyzny z dodatkiem mięsa wieprzowego', '226.0', '18.0', '6.0', '0', '2.5', '1.0', '1.0', '13.0', '1.7'),
+    ('Krakus', 'Gulasz angielski 95 % mięsa', '241.0', '19.0', '7.6', '0', '0.5', '0.0', '0', '17.0', '2.1'),
+    ('Duda', 'Parówki wieprzowe Mediolanki', '280.0', '24.0', '10.0', '0', '2.9', '1.3', '0', '13.0', '2.2'),
+    ('Kraina Wędlin', 'Szynka Zawędzana', '102.0', '2.0', '0.7', '0', '3.0', '0.8', '0', '18.0', '2.5'),
+    ('Smaczne Wędliny', 'Schab Wędzony na wiśniowo', '102.0', '2.4', '1.2', '0', '2.0', '0.5', '0.0', '18.0', '2.2'),
+    ('Szubryt', 'Kiełbasa z czosnkiem', '237.0', '20.0', '6.7', '0', '0.6', '0.5', '0', '14.0', '1.6'),
+    ('Morliny', 'Berlinki Classic', '223.5', '18.0', '6.7', '0', '2.8', '1.0', '0', '13.0', '2.5'),
+    ('tarczyński', 'Kabanosy wieprzowe', '507.0', '42.0', '17.0', '0.0', '5.2', '1.9', '0.0', '26.0', '0.0'),
+    ('Morliny', 'Berlinki classic', '225.0', '18.0', '6.7', '0', '2.8', '1.0', '0', '13.0', '2.5'),
+    ('Animex Foods', 'Berlinki Kurczak', '181.0', '13.0', '3.9', '0', '1.1', '0.7', '0', '15.0', '2.4'),
+    ('Podlaski', 'Pasztet drobiowy', '160.0', '12.0', '2.3', '0', '5.5', '0.5', '0', '7.5', '1.4'),
+    ('Krakus', 'Szynka eksportowa', '98.0', '1.6', '0.6', '0', '2.0', '1.9', '0', '19.0', '2.5'),
+    ('Drosed', 'Podlaski pasztet drobiowy', '181.0', '15.0', '3.0', '0', '4.0', '0.8', '0', '7.0', '1.4'),
+    ('Profi', 'Chicken Pâté', '187.0', '14.0', '4.8', '0', '6.3', '0.7', '0', '8.6', '1.4'),
+    ('Berlinki', 'Z Serem', '256.0', '21.0', '7.5', '0', '2.8', '0.8', '0', '14.0', '2.9'),
+    ('Morliny', 'Boczek', '308.0', '28.0', '9.8', '0', '1.0', '0.0', '0', '13.0', '2.0'),
+    ('Profi', 'Wielkopolski Pasztet z drobiem i pieczarkami', '208.0', '17.0', '5.4', '0', '5.2', '0.6', '0', '8.2', '1.3'),
+    ('Tarczynski', 'Krakauer Wurst (polnische Brühwurst)', '209.0', '13.0', '5.1', '0', '1.0', '1.0', '0', '22.0', '2.2'),
+    ('Profi', 'Pasztet z pomidorami', '187.0', '14.0', '4.5', '0', '6.7', '1.4', '0', '8.4', '1.4')
+) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+       carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-on conflict (product_id, serving_id) do update set
-  calories        = excluded.calories,
-  total_fat_g     = excluded.total_fat_g,
-  saturated_fat_g = excluded.saturated_fat_g,
-  trans_fat_g     = excluded.trans_fat_g,
-  carbs_g         = excluded.carbs_g,
-  sugars_g        = excluded.sugars_g,
-  fibre_g         = excluded.fibre_g,
-  protein_g       = excluded.protein_g,
-  salt_g          = excluded.salt_g;
+join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g';

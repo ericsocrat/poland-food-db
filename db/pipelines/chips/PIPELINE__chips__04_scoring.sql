@@ -121,7 +121,7 @@ update scores sc set
     when '4' then 'High'
     when '3' then 'Moderate'
     when '2' then 'Low'
-    when '1' then 'Minimal'
+    when '1' then 'Low'
     else 'Unknown'
   end
 from (

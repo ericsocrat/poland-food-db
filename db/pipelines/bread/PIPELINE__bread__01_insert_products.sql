@@ -1,54 +1,56 @@
--- PIPELINE (BREAD): insert products
--- PIPELINE__bread__01_insert_products.sql
--- 28 Polish bread products verified via Open Food Facts.
--- Categories: sourdough rye, wholegrain rye, pumpernickel, wheat-rye,
---   toast, crispbread, wraps/tortillas, rolls/buns, seed bread, rusks.
--- Last updated: 2026-02-08
+-- PIPELINE (Bread): insert products
+-- Source: Open Food Facts API (automated pipeline)
+-- Generated: 2026-02-08
 
--- ═══════════════════════════════════════════════════════════════════
--- INSERT products (idempotent via ON CONFLICT)
--- ═══════════════════════════════════════════════════════════════════
+-- 0. DEPRECATE old products & release their EANs
+update products
+set is_deprecated = true, ean = null
+where country = 'PL'
+  and category = 'Bread'
+  and is_deprecated is not true;
 
-insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
+-- 1. INSERT products
+insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  -- SOURDOUGH / RYE BREADS (7)
-  ('PL', 'Oskroba',               'sourdough_rye',    'Bread', 'Oskroba Chleb Baltonowski',              'baked', 'widespread', 'none'),
-  ('PL', 'Oskroba',               'wheat_rye',        'Bread', 'Oskroba Chleb Pszenno-Żytni',            'baked', 'widespread', 'none'),
-  ('PL', 'Oskroba',               'wholemeal',        'Bread', 'Oskroba Chleb Graham',                   'baked', 'widespread', 'none'),
-  ('PL', 'Oskroba',               'multigrain_rye',   'Bread', 'Oskroba Chleb Żytni Wieloziarnisty',     'baked', 'widespread', 'none'),
-  ('PL', 'Oskroba',               'rye',              'Bread', 'Oskroba Chleb Litewski',                 'baked', 'widespread', 'none'),
-  ('PL', 'Oskroba',               'wholegrain_rye',   'Bread', 'Oskroba Chleb Żytni Pełnoziarnisty',     'baked', 'widespread', 'none'),
-  ('PL', 'Oskroba',               'dark_rye',         'Bread', 'Oskroba Chleb Żytni Razowy',             'baked', 'widespread', 'none'),
-  -- PUMPERNICKEL / GERMAN-STYLE (5)
-  ('PL', 'Mestemacher',            'pumpernickel',     'Bread', 'Mestemacher Pumpernikiel',                'baked', 'widespread', 'none'),
-  ('PL', 'Mestemacher',            'multigrain_rye',   'Bread', 'Mestemacher Chleb Wielozbożowy Żytni',    'baked', 'widespread', 'none'),
-  ('PL', 'Mestemacher',            'wholemeal',        'Bread', 'Mestemacher Chleb Razowy',                'baked', 'widespread', 'none'),
-  ('PL', 'Mestemacher',            'seed_bread',       'Bread', 'Mestemacher Chleb Ziarnisty',             'baked', 'widespread', 'none'),
-  ('PL', 'Mestemacher',            'rye',              'Bread', 'Mestemacher Chleb Żytni',                 'baked', 'widespread', 'none'),
-  -- TOAST BREADS (3)
-  ('PL', 'Schulstad',              'toast',            'Bread', 'Schulstad Toast Pszenny',                 'baked', 'widespread', 'none'),
-  ('PL', 'Klara',                  'toast',            'Bread', 'Klara American Sandwich Toast XXL',       'baked', 'widespread', 'none'),
-  ('PL', 'Pano',                   'toast',            'Bread', 'Pano Tost Maślany',                      'baked', 'widespread', 'none'),
-  -- CRISPBREADS (5)
-  ('PL', 'Wasa',                   'crispbread',       'Bread', 'Wasa Original',                           'baked', 'widespread', 'none'),
-  ('PL', 'Wasa',                   'crispbread',       'Bread', 'Wasa Pieczywo z Błonnikiem',              'baked', 'widespread', 'none'),
-  ('PL', 'Wasa',                   'crispbread',       'Bread', 'Wasa Lekkie 7 Ziaren',                   'baked', 'widespread', 'none'),
-  ('PL', 'Sonko',                  'crispbread',       'Bread', 'Sonko Pieczywo Chrupkie Ryżowe',          'baked', 'widespread', 'none'),
-  ('PL', 'Carrefour',              'crispbread',       'Bread', 'Carrefour Pieczywo Chrupkie Kukurydziane','baked', 'widespread', 'none'),
-  -- WRAPS / TORTILLAS (3)
-  ('PL', 'Tastino',                'wrap',             'Bread', 'Tastino Tortilla Wraps',                  'none', 'widespread', 'none'),
-  ('PL', 'Tastino',                'wrap',             'Bread', 'Tastino Wholegrain Wraps',                'none', 'widespread', 'none'),
-  ('PL', 'Pano',                   'wrap',             'Bread', 'Pano Tortilla',                           'none', 'widespread', 'palm oil'),
-  -- ROLLS / BUNS / SEED (3)
-  ('PL', 'Oskroba',               'bun',              'Bread', 'Oskroba Bułki Hamburgerowe',              'baked', 'widespread', 'none'),
-  ('PL', 'Oskroba',               'seed_bread',       'Bread', 'Oskroba Chleb Pszenno-Żytni z Ziarnami', 'baked', 'widespread', 'none'),
-  ('PL', 'Pano',                   'roll',             'Bread', 'Pano Bułeczki Śniadaniowe',              'baked', 'widespread', 'none'),
-  -- RUSKS / WHOLEGRAIN TOAST (2)
-  ('PL', 'Carrefour',              'rusk',             'Bread', 'Carrefour Sucharki Pełnoziarniste',        'baked', 'widespread', 'none'),
-  ('PL', 'Pano',                   'toast',            'Bread', 'Pano Tost Pełnoziarnisty',               'baked', 'widespread', 'none')
+  ('PL', 'Lajkonik', 'Grocery', 'Bread', 'Paluszki słone', null, 'Auchan', 'none', '5900320001303'),
+  ('PL', 'Gursz', 'Grocery', 'Bread', 'Chleb Pszenno-Żytni', null, 'Biedronka', 'none', '5905279941427'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Tost pełnoziarnisty', null, null, 'none', '5900340012815'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Tost  maślany', null, null, 'none', '5900340003912'),
+  ('PL', 'Sonko', 'Grocery', 'Bread', 'Lekkie żytnie', null, null, 'none', '5902180210505'),
+  ('PL', 'Aksam', 'Grocery', 'Bread', 'Beskidzkie paluszki z solą', null, null, 'none', '5907029010773'),
+  ('PL', 'Melvit', 'Grocery', 'Bread', 'Pieczywo Chrupkie Zytnie CRISPY z pomidorami i bazylią', null, null, 'none', '5906827017830'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Chleb żytni', null, null, 'none', '5900340009068'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Tortilla', null, 'Biedronka', 'none', '5900928032358'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Chleb żytni z dodatkiem amarantusa i komosy ryżowej', null, null, 'none', '5900340009082'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Pieczywo kukurydziane chrupkie', null, 'Biedronka', 'none', '5901534001745'),
+  ('PL', 'Dijo', 'Grocery', 'Bread', 'Fresh Wraps Grill Barbecue x4', null, 'Kaufland', 'none', '5900928007264'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'tosty pszenny', null, null, 'none', '5900340003929'),
+  ('PL', 'Sonko', 'Grocery', 'Bread', 'Pieczywo Sonko Lekkie 7 Ziaren', null, null, 'none', '5902180200506'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Chleb Wiejski', null, null, 'none', '5900340001758'),
+  ('PL', 'Dan Cake', 'Grocery', 'Bread', 'Toast bread', null, null, 'none', '5900864520117'),
+  ('PL', 'Wasa', 'Grocery', 'Bread', 'Pieczywo z pełnoziarnistej mąki żytniej', null, 'Biedronka', 'none', '7300400122054'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Wraps lo-carb whole wheat tortilla', null, null, 'none', '5900928008902'),
+  ('PL', 'Lestello', 'Grocery', 'Bread', 'Chickpea cakes', null, null, 'none', '5902609001400'),
+  ('PL', 'TOP', 'Grocery', 'Bread', 'Paluszki solone', null, null, 'none', '5904607000935'),
+  ('PL', 'Piekarnia w sercu Lidla', 'Grocery', 'Bread', 'Chleb Tostowy Z Mąką Pełnoziarnistą', null, null, 'none', '20319205'),
+  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Petits pains grilles', null, 'Dia,Carrefour,carrefour.fr', 'none', '3270190007425'),
+  ('PL', 'Carrefour', 'Grocery', 'Bread', 'biscottes braisées', null, 'Carrefour,carrefour.fr,Carrefour Market,Carrefour Express,Carrefour City', 'none', '3560070401826'),
+  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Biscottes sans sel ajouté', null, 'Carrefour,carrefour.fr', 'none', '5400101201712'),
+  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Biscottes Blé complet', null, 'Carrefour,carrefour.fr', 'none', '3560070823291'),
+  ('PL', 'Chabrior', 'Grocery', 'Bread', 'Biscottes complètes x36', null, 'Intermarché, INTERMARCHE FRANCE', 'none', '3250391699995'),
+  ('PL', 'Italiamo', 'Grocery', 'Bread', 'Piada sfogliata', null, 'LIDL', 'none', '20072483'),
+  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Biscuits Nature', null, 'Carrefour,carrefour.fr,Carefour Market', 'none', '3245412589980')
 on conflict (country, brand, product_name) do update set
-  product_type       = excluded.product_type,
-  category           = excluded.category,
-  prep_method        = excluded.prep_method,
+  ean = excluded.ean,
+  product_type = excluded.product_type,
   store_availability = excluded.store_availability,
-  controversies      = excluded.controversies;
+  controversies = excluded.controversies,
+  prep_method = excluded.prep_method,
+  is_deprecated = false;
+
+-- 2. DEPRECATE removed products
+update products
+set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
+where country = 'PL' and category = 'Bread'
+  and is_deprecated is not true
+  and product_name not in ('Paluszki słone', 'Chleb Pszenno-Żytni', 'Tost pełnoziarnisty', 'Tost  maślany', 'Lekkie żytnie', 'Beskidzkie paluszki z solą', 'Pieczywo Chrupkie Zytnie CRISPY z pomidorami i bazylią', 'Chleb żytni', 'Tortilla', 'Chleb żytni z dodatkiem amarantusa i komosy ryżowej', 'Pieczywo kukurydziane chrupkie', 'Fresh Wraps Grill Barbecue x4', 'tosty pszenny', 'Pieczywo Sonko Lekkie 7 Ziaren', 'Chleb Wiejski', 'Toast bread', 'Pieczywo z pełnoziarnistej mąki żytniej', 'Wraps lo-carb whole wheat tortilla', 'Chickpea cakes', 'Paluszki solone', 'Chleb Tostowy Z Mąką Pełnoziarnistą', 'Petits pains grilles', 'biscottes braisées', 'Biscottes sans sel ajouté', 'Biscottes Blé complet', 'Biscottes complètes x36', 'Piada sfogliata', 'Biscuits Nature');

@@ -1,135 +1,56 @@
--- PIPELINE (DRINKS): insert products
--- PIPELINE__drinks__01_insert_products.sql
--- 28 verified beverages from the Polish market.
--- Data sourced from Open Food Facts (openfoodfacts.org) — EANs verified.
--- Last updated: 2026-02-08
+-- PIPELINE (Drinks): insert products
+-- Source: Open Food Facts API (automated pipeline)
+-- Generated: 2026-02-08
 
-insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
-values
--- ── Coca-Cola Company ───────────────────────────────────────────────────
--- EAN 5449000130389 — Coca-Cola Original (classic cola, NOVA 4)
-('PL','Coca-Cola','Grocery','Drinks','Coca-Cola Original','none','Biedronka;Lidl;Żabka','none'),
--- EAN 5449000133328 — Coca-Cola Zero (zero-sugar cola, NOVA 4)
-('PL','Coca-Cola','Grocery','Drinks','Coca-Cola Zero','none','Biedronka;Lidl;Żabka','none'),
--- EAN 5449000136350 — Cappy 100% Orange (pure juice, NOVA 1)
-('PL','Cappy','Grocery','Drinks','Cappy 100% Orange','none','Biedronka;Lidl;Żabka','none'),
--- EAN 5449000053541 — Fanta Orange (orange soda, NOVA 4)
-('PL','Fanta','Grocery','Drinks','Fanta Orange','none','Biedronka;Lidl;Żabka','none'),
-
--- ── PepsiCo ─────────────────────────────────────────────────────────────
--- EAN 5900497312004 — Pepsi (classic cola, NOVA 4)
-('PL','Pepsi','Grocery','Drinks','Pepsi','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Tymbark (Maspex) ────────────────────────────────────────────────────
--- EAN 5900334012685 — Tymbark Sok 100% Pomarańczowy (100% OJ, NOVA 1)
-('PL','Tymbark','Grocery','Drinks','Tymbark Sok 100% Pomarańczowy','none','Biedronka;Lidl;Żabka','none'),
--- EAN 5900334005939 — Tymbark Sok 100% Jabłkowy (100% apple, NOVA 1)
-('PL','Tymbark','Grocery','Drinks','Tymbark Sok 100% Jabłkowy','none','Biedronka;Lidl;Żabka','none'),
--- EAN 5900334013378 — Tymbark Multiwitamina (multivitamin nectar, NOVA 4)
-('PL','Tymbark','Grocery','Drinks','Tymbark Multiwitamina','none','Biedronka;Lidl;Żabka','none'),
--- EAN 5900334001047 — Tymbark Cactus (low-cal flavored drink, NOVA 4)
-('PL','Tymbark','Grocery','Drinks','Tymbark Cactus','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Hortex ──────────────────────────────────────────────────────────────
--- EAN 5900500031397 — Hortex Sok Jabłkowy 100% (apple juice, NOVA 1)
-('PL','Hortex','Grocery','Drinks','Hortex Sok Jabłkowy 100%','none','Biedronka;Lidl;Żabka','none'),
--- EAN 5900500031434 — Hortex Sok Pomarańczowy 100% (orange juice, NOVA 1)
-('PL','Hortex','Grocery','Drinks','Hortex Sok Pomarańczowy 100%','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Tiger (FoodCare) ────────────────────────────────────────────────────
--- EAN 5900334008206 — Tiger Energy Drink (low-sugar energy, NOVA 4)
-('PL','Tiger','Grocery','Drinks','Tiger Energy Drink','none','Biedronka;Lidl;Żabka','none'),
--- EAN 5900334009142 — Tiger Energy Drink Classic (full-sugar energy, NOVA 4)
-('PL','Tiger','Grocery','Drinks','Tiger Energy Drink Classic','none','Biedronka;Lidl;Żabka','none'),
-
--- ── 4Move ───────────────────────────────────────────────────────────────
--- EAN 5900552077718 — 4Move Activevitamin (vitamin water, NOVA 4)
-('PL','4Move','Grocery','Drinks','4Move Activevitamin','none','Biedronka;Żabka','none'),
-
--- ── Dawtona ─────────────────────────────────────────────────────────────
--- EAN 5901713020307 — Dawtona Sok Pomidorowy (tomato juice, NOVA 3)
-('PL','Dawtona','Grocery','Drinks','Dawtona Sok Pomidorowy','none','Biedronka;Lidl','none'),
-
--- ── Mlekovita ───────────────────────────────────────────────────────────
--- EAN 5900512300320 — Mlekovita Mleko 3.2% (full-fat UHT milk, NOVA 1)
-('PL','Mlekovita','Grocery','Drinks','Mlekovita Mleko 3.2%','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Red Bull ────────────────────────────────────────────────────────────
--- EAN 9002490100070 — Red Bull Energy Drink (energy drink with taurine, NOVA 4)
-('PL','Red Bull','Grocery','Drinks','Red Bull Energy Drink','none','Biedronka;Lidl;Żabka','minor'),
-
--- ── Monster ─────────────────────────────────────────────────────────────
--- EAN 5060517883683 — Monster Energy Mango Loco (fruit energy drink with taurine, NOVA 4)
-('PL','Monster','Grocery','Drinks','Monster Energy Mango Loco','none','Biedronka;Lidl;Żabka','minor'),
-
--- ── Sprite (Coca-Cola Company) ──────────────────────────────────────────
--- EAN 5449000004840 — Sprite (lemon-lime soda, NOVA 4)
-('PL','Sprite','Grocery','Drinks','Sprite','none','Biedronka;Lidl;Żabka','none'),
-
--- ── 7UP (PepsiCo) ──────────────────────────────────────────────────────
--- EAN 5900497017770 — 7UP (lemon-lime soda, NOVA 4)
-('PL','7UP','Grocery','Drinks','7UP','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Lipton ──────────────────────────────────────────────────────────────
--- EAN 8722700406723 — Lipton Ice Tea Lemon (iced tea, NOVA 4)
-('PL','Lipton','Grocery','Drinks','Lipton Ice Tea Lemon','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Fuze Tea (Coca-Cola Company) ────────────────────────────────────────
--- EAN 5449000237620 — Fuze Tea Peach Hibiscus (iced tea with hibiscus, NOVA 4)
-('PL','Fuze Tea','Grocery','Drinks','Fuze Tea Peach Hibiscus','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Kubuś (Maspex) ─────────────────────────────────────────────────────
--- EAN 5900334005052 — Kubuś Play Marchew-Jabłko (carrot-apple drink, NOVA 3)
-('PL','Kubuś','Grocery','Drinks','Kubuś Play Marchew-Jabłko','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Mountain Dew (PepsiCo) ──────────────────────────────────────────────
--- EAN 4060800207272 — Mountain Dew (citrus soda with caffeine, NOVA 4)
-('PL','Mountain Dew','Grocery','Drinks','Mountain Dew','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Żywiec Zdrój ───────────────────────────────────────────────────────
--- EAN 5900134001353 — Żywiec Zdrój Smako-łyk Truskawka (strawberry flavored water, NOVA 4)
-('PL','Żywiec Zdrój','Grocery','Drinks','Żywiec Zdrój Smako-łyk Truskawka','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Łaciate (Mlekpol) ──────────────────────────────────────────────────
--- EAN 5900820000073 — Łaciate Mleko 2% (semi-skimmed UHT milk, NOVA 1)
-('PL','Łaciate','Grocery','Drinks','Łaciate Mleko 2%','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Mirinda (PepsiCo) ──────────────────────────────────────────────────
--- EAN 4060800102201 — Mirinda Orange (orange soda, NOVA 4)
-('PL','Mirinda','Grocery','Drinks','Mirinda Orange','none','Biedronka;Lidl;Żabka','none'),
-
--- ── Costa Coffee (Coca-Cola Company) ────────────────────────────────────
--- EAN 5449000298928 — Costa Coffee Latte (ready-to-drink latte, NOVA 4)
-('PL','Costa Coffee','Grocery','Drinks','Costa Coffee Latte','none','Biedronka;Żabka','none')
-
-on conflict (country, brand, product_name)
-do update set
-  product_type        = excluded.product_type,
-  category            = excluded.category,
-  prep_method         = excluded.prep_method,
-  store_availability  = excluded.store_availability,
-  controversies       = excluded.controversies;
-
--- Deprecate old placeholder products that are no longer in the pipeline
+-- 0. DEPRECATE old products & release their EANs
 update products
-set is_deprecated = true,
-    deprecated_reason = 'Removed: no verified Open Food Facts data for Polish market'
-where country='PL' and category='Drinks'
+set is_deprecated = true, ean = null
+where country = 'PL'
+  and category = 'Drinks'
+  and is_deprecated is not true;
+
+-- 1. INSERT products
+insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
+values
+  ('PL', 'Tymbark', 'Grocery', 'Drinks', 'Sok 100% Pomarańcza', null, null, 'none', '5900334012685'),
+  ('PL', 'Mlekovita', 'Grocery', 'Drinks', 'Kefir', null, 'Tesco', 'none', '5900512850290'),
+  ('PL', 'Krasnystaw', 'Grocery', 'Drinks', 'kefir', null, 'Intermarche,Morrisons,Biedronka', 'none', '5902057001748'),
+  ('PL', 'Żywiec Zdrój', 'Grocery', 'Drinks', 'Niegazowany', null, 'Biedronka,Żabka,Lidl', 'none', '5900541000000'),
+  ('PL', 'Piątnica', 'Grocery', 'Drinks', 'Skyr jogurt pitny typu islandzkiego mango & marakuja', null, 'Auchan,Carrefour,Kaufland', 'none', '5901939103068'),
+  ('PL', 'Krasnystaw', 'Grocery', 'Drinks', 'Kefir', null, null, 'none', '5902057003285'),
+  ('PL', 'oshee', 'Grocery', 'Drinks', 'Oshee Multifruit', null, 'YES! Stores', 'none', '5908260251963'),
+  ('PL', 'Lidl', 'Grocery', 'Drinks', 'Sok 100% tłoczony z miąższem Pomarańcza Grejpfrut Pitaja', null, 'Lidl', 'none', '4056489315605'),
+  ('PL', 'Coca-Cola', 'Grocery', 'Drinks', 'Napój gazowany o smaku cola', null, null, 'none', '5449000158895'),
+  ('PL', 'Coca-Cola', 'Grocery', 'Drinks', 'Coca-Cola Original Taste', null, 'Magasins U,Żabka,Biedronka,Hofer,Billa,Spar', 'none', '54491472'),
+  ('PL', 'Danone', 'Grocery', 'Drinks', 'Geröstete Mandel Ohne Zucker', null, 'Edeka,Carrefour,REMA 1000,Spar,K-Supermarket,Pingo Doce,Eroski,Netto,Konsum', 'none', '5411188112709'),
+  ('PL', 'Millbona', 'Grocery', 'Drinks', 'HIGH PROTEIN Caramel Pudding', null, 'Carrefour,Mercadona,Spar,Amazon,Billa', 'none', '5449000131805'),
+  ('PL', 'Coca-Cola', 'Grocery', 'Drinks', 'Coca Cola Original taste', null, 'Cora,E.leclerc,Auchan,Lidl,Carrefour Market,Magasin U,Monoprix,Métro,Spar', 'none', '5449000000439'),
+  ('PL', 'Vemondo', 'Grocery', 'Drinks', 'Almond Drink', null, 'Lidl', 'none', '4056489346357'),
+  ('PL', 'Oatly', 'Grocery', 'Drinks', 'Haferdrink Barista', null, 'Albert Heijn,kaufland', 'none', '7394376616501'),
+  ('PL', 'alpro', 'Grocery', 'Drinks', 'Coco Délicieuse et Tropicale', null, 'Intermarché,Biedronka,Tesco', 'none', '5411188116592'),
+  ('PL', 'Milbona', 'Grocery', 'Drinks', 'High Protein Drink Cacao', null, 'Lidl', 'none', '4056489406679'),
+  ('PL', 'Vemondo', 'Grocery', 'Drinks', 'Bio Hafer', null, 'Lidl', 'none', '4056489997511'),
+  ('PL', 'Milbona', 'Grocery', 'Drinks', 'High Protein Drink Gusto Vaniglia', null, 'Lidl', 'none', '4056489406662'),
+  ('PL', 'Kikkoman', 'Grocery', 'Drinks', 'Kikkoman Sojasauce', null, 'toko,asian supermarket,carrefour.fr,Biedronka,Tesco', 'none', '8715035110809'),
+  ('PL', 'Kikkoman', 'Grocery', 'Drinks', 'Teriyakisauce', null, 'Carrefour,Irma.dk', 'none', '8715035210301'),
+  ('PL', 'Carrefour BIO', 'Grocery', 'Drinks', 'Avoine', null, 'Carrefour,carrefour.fr', 'none', '3245413451804'),
+  ('PL', 'Vemondo', 'Grocery', 'Drinks', 'Boisson au soja', null, 'Lidl', 'none', '4056489695387'),
+  ('PL', 'Club Mate', 'Grocery', 'Drinks', 'Club-Mate Original', null, 'Späti,Piwna strefa,Delhaize,REWE,nahkauf,Carrefour', 'none', '4029764001807'),
+  ('PL', 'Coca-Cola', 'Grocery', 'Drinks', 'coca cola 1,75', null, 'Spar', 'none', '5449000130389'),
+  ('PL', 'Carrefour BIO', 'Grocery', 'Drinks', 'Amande Sans sucres', null, 'Carrefour,carrefour.fr', 'none', '3560071014094'),
+  ('PL', 'Carrefour BIO', 'Grocery', 'Drinks', 'SOJA Sans sucres ajoutés', null, 'Carrefour,carrefour.fr', 'none', '3270190128717'),
+  ('PL', 'Naturis', 'Grocery', 'Drinks', 'Apple Juice', null, 'Lidl', 'none', '20569105')
+on conflict (country, brand, product_name) do update set
+  ean = excluded.ean,
+  product_type = excluded.product_type,
+  store_availability = excluded.store_availability,
+  controversies = excluded.controversies,
+  prep_method = excluded.prep_method,
+  is_deprecated = false;
+
+-- 2. DEPRECATE removed products
+update products
+set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
+where country = 'PL' and category = 'Drinks'
   and is_deprecated is not true
-  and product_name not in (
-    'Coca-Cola Original','Coca-Cola Zero','Cappy 100% Orange','Fanta Orange',
-    'Pepsi',
-    'Tymbark Sok 100% Pomarańczowy','Tymbark Sok 100% Jabłkowy','Tymbark Multiwitamina','Tymbark Cactus',
-    'Hortex Sok Jabłkowy 100%','Hortex Sok Pomarańczowy 100%',
-    'Tiger Energy Drink','Tiger Energy Drink Classic',
-    '4Move Activevitamin',
-    'Dawtona Sok Pomidorowy',
-    'Mlekovita Mleko 3.2%',
-    'Red Bull Energy Drink','Monster Energy Mango Loco',
-    'Sprite','7UP',
-    'Lipton Ice Tea Lemon','Fuze Tea Peach Hibiscus',
-    'Kubuś Play Marchew-Jabłko','Mountain Dew',
-    'Żywiec Zdrój Smako-łyk Truskawka',
-    'Łaciate Mleko 2%',
-    'Mirinda Orange','Costa Coffee Latte'
-  );
+  and product_name not in ('Sok 100% Pomarańcza', 'Kefir', 'kefir', 'Niegazowany', 'Skyr jogurt pitny typu islandzkiego mango & marakuja', 'Kefir', 'Oshee Multifruit', 'Sok 100% tłoczony z miąższem Pomarańcza Grejpfrut Pitaja', 'Napój gazowany o smaku cola', 'Coca-Cola Original Taste', 'Geröstete Mandel Ohne Zucker', 'HIGH PROTEIN Caramel Pudding', 'Coca Cola Original taste', 'Almond Drink', 'Haferdrink Barista', 'Coco Délicieuse et Tropicale', 'High Protein Drink Cacao', 'Bio Hafer', 'High Protein Drink Gusto Vaniglia', 'Kikkoman Sojasauce', 'Teriyakisauce', 'Avoine', 'Boisson au soja', 'Club-Mate Original', 'coca cola 1,75', 'Amande Sans sucres', 'SOJA Sans sucres ajoutés', 'Apple Juice');

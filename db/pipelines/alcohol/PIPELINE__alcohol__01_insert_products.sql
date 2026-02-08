@@ -1,56 +1,40 @@
--- PIPELINE (ALCOHOL): insert products
--- PIPELINE__alcohol__01_insert_products.sql
--- 28 Polish alcohol & beer products verified via Open Food Facts.
--- Categories: beer (2), radler (5), cider (2), rtd (1),
---   non_alcoholic_beer (14), wine (2).
--- controversies = '1' for products with >0% ABV (alcohol is a health concern).
--- Last updated: 2026-02-08
+-- PIPELINE (Alcohol): insert products
+-- Source: Open Food Facts API (automated pipeline)
+-- Generated: 2026-02-08
 
--- ═══════════════════════════════════════════════════════════════════
--- INSERT products (idempotent via ON CONFLICT)
--- ═══════════════════════════════════════════════════════════════════
+-- 0. DEPRECATE old products & release their EANs
+update products
+set is_deprecated = true, ean = null
+where country = 'PL'
+  and category = 'Alcohol'
+  and is_deprecated is not true;
 
-insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
+-- 1. INSERT products
+insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  -- BEER — alcoholic (4)
-  ('PL', 'Lech',           'beer',                 'Alcohol', 'Lech Premium',                                                       'none', 'widespread', '1'),
-  ('PL', 'Tyskie',         'beer',                 'Alcohol', 'Tyskie Gronie',                                                      'none', 'widespread', '1'),
-  ('PL', 'Żubr',           'beer',                 'Alcohol', 'Żubr Premium',                                                       'none', 'widespread', '1'),
-  ('PL', 'Zywiec',         'beer',                 'Alcohol', 'Zywiec Full',                                                        'none', 'widespread', '1'),
-  -- RADLER — alcoholic (1)
-  ('PL', 'Warka',          'radler',               'Alcohol', 'Piwo Warka Radler',                                                  'none', 'widespread', '1'),
-  -- CIDER — alcoholic (1)
-  ('PL', 'Somersby',       'cider',                'Alcohol', 'Somersby Blueberry Flavoured Cider',                                  'none', 'widespread', '1'),
-  -- NON-ALCOHOLIC BEER (14)
-  ('PL', 'Karmi',          'non_alcoholic_beer',   'Alcohol', 'Karmi',                                                              'none', 'widespread', 'none'),
-  ('PL', 'Łomża',          'non_alcoholic_beer',   'Alcohol', 'Łomża piwo jasne bezalkoholowe',                                     'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free 0,0% - piwo bezalkoholowe o smaku granatu i acai',          'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free smoczy owoc i winogrono 0,0%',                              'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free',                                                          'none', 'widespread', 'none'),
-  ('PL', 'Okocim',         'non_alcoholic_beer',   'Alcohol', 'Okocim Piwo Jasne 0%',                                               'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free Active Hydrate mango i cytryna 0,0%',                       'none', 'widespread', 'none'),
-  ('PL', 'Łomża',          'non_alcoholic_beer',   'Alcohol', 'Łomża 0% o smaku jabłko & mięta',                                    'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free 0,0% piwo bezalkoholowe o smaku grejpfruta i guawy',        'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free 0,0% piwo bezalkoholowe o smaku arbuz mięta',               'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free 0,0% piwo bezalkoholowe o smaku jeżyny i wiśni',            'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free Citrus Sour',                                              'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free 0,0% limonka i mięta',                                     'none', 'widespread', 'none'),
-  ('PL', 'Lech',           'non_alcoholic_beer',   'Alcohol', 'Lech Free 0,0% piwo o smaku yuzu i pomelo',                           'none', 'widespread', 'none'),
-  -- NON-ALCOHOLIC RADLER (4)
-  ('PL', 'Karlsquell',     'radler',               'Alcohol', 'Free! Radler o smaku mango',                                         'none', 'widespread', 'none'),
-  ('PL', 'Warka',          'radler',               'Alcohol', 'Warka Kiwi Z Pigwą 0,0%',                                            'none', 'widespread', 'none'),
-  ('PL', 'Okocim',         'radler',               'Alcohol', 'Okocim 0,0% mango z marakują',                                       'none', 'widespread', 'none'),
-  ('PL', 'Łomża',          'radler',               'Alcohol', 'Łomża Radler 0,0%',                                                  'none', 'widespread', 'none'),
-  -- NON-ALCOHOLIC RTD (1)
-  ('PL', 'Somersby',       'rtd',                  'Alcohol', 'Somersby blackcurrant & lime 0%',                                     'none', 'widespread', 'none'),
-  -- NON-ALCOHOLIC CIDER (1)
-  ('PL', 'Dzik',           'cider',                'Alcohol', 'Dzik Cydr 0% jabłko i marakuja',                                      'none', 'regional',   'none'),
-  -- NON-ALCOHOLIC WINE (2)
-  ('PL', 'Just 0.',        'wine',                 'Alcohol', 'Just 0. White alcoholfree',                                           'none', 'widespread', 'none'),
-  ('PL', 'Just 0.',        'wine',                 'Alcohol', 'Just 0. Red',                                                         'none', 'widespread', 'none')
+  ('PL', 'Harnaś', 'Grocery', 'Alcohol', 'Harnaś jasne pełne', null, null, 'none', '5900014004245'),
+  ('PL', 'Karmi', 'Grocery', 'Alcohol', 'Karmi o smaku żurawina', null, null, 'none', '5900014002562'),
+  ('PL', 'Velkopopovicky Kozel', 'Grocery', 'Alcohol', 'Polnische Bier (Dose)', null, 'Kaufland,Netto', 'none', '5901359074269'),
+  ('PL', 'Tyskie', 'Grocery', 'Alcohol', 'Bier &quot;Tyskie Gronie&quot;', null, 'Real,Kaufland,Getränke Handel,Aral', 'none', '5901359062013'),
+  ('PL', 'Lomża', 'Grocery', 'Alcohol', 'Łomża jasne', null, null, 'none', '5903538900628'),
+  ('PL', 'Lech', 'Grocery', 'Alcohol', 'Lech Premium', null, null, 'none', '5900490000182'),
+  ('PL', 'Łomża', 'Grocery', 'Alcohol', 'Bière sans alcool', null, 'IN''s', 'none', '5900535015171'),
+  ('PL', 'Carlsberg', 'Grocery', 'Alcohol', 'Pilsner 0.0%', null, null, 'none', '5900014003569'),
+  ('PL', 'Lech', 'Grocery', 'Alcohol', 'Lech Free Lime Mint', null, null, 'none', '5901359144917'),
+  ('PL', 'Christkindl', 'Grocery', 'Alcohol', 'Christkindl Glühwein', null, 'Lidl', 'none', '4304493261709'),
+  ('PL', 'Heineken', 'Grocery', 'Alcohol', 'Heineken Beer', null, null, 'none', '8712000900045'),
+  ('PL', 'Ikea', 'Grocery', 'Alcohol', 'Glühwein', null, 'Ikea', 'none', '1704314830009')
 on conflict (country, brand, product_name) do update set
-  product_type       = excluded.product_type,
-  category            = excluded.category,
-  prep_method         = excluded.prep_method,
-  store_availability  = excluded.store_availability,
-  controversies       = excluded.controversies;
+  ean = excluded.ean,
+  product_type = excluded.product_type,
+  store_availability = excluded.store_availability,
+  controversies = excluded.controversies,
+  prep_method = excluded.prep_method,
+  is_deprecated = false;
+
+-- 2. DEPRECATE removed products
+update products
+set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
+where country = 'PL' and category = 'Alcohol'
+  and is_deprecated is not true
+  and product_name not in ('Harnaś jasne pełne', 'Karmi o smaku żurawina', 'Polnische Bier (Dose)', 'Bier &quot;Tyskie Gronie&quot;', 'Łomża jasne', 'Lech Premium', 'Bière sans alcool', 'Pilsner 0.0%', 'Lech Free Lime Mint', 'Christkindl Glühwein', 'Heineken Beer', 'Glühwein');

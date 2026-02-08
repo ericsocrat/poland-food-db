@@ -95,7 +95,7 @@ ORDER BY entry_count DESC;
 SELECT p.product_id, p.brand, p.product_name, p.category,
        sc.unhealthiness_score,
        sc.confidence,
-       CASE p.availability
+       CASE p.store_availability
          WHEN 'widespread' THEN 1
          WHEN 'common'     THEN 2
          WHEN 'regional'   THEN 3
@@ -107,6 +107,6 @@ JOIN scores sc ON sc.product_id = p.product_id
 LEFT JOIN sources s ON s.brand = p.brand
 WHERE p.is_deprecated IS NOT TRUE
 GROUP BY p.product_id, p.brand, p.product_name, p.category,
-         p.availability, sc.unhealthiness_score, sc.confidence
+         p.store_availability, sc.unhealthiness_score, sc.confidence
 HAVING COUNT(DISTINCT s.source_type) <= 1
 ORDER BY priority_rank ASC, p.category, p.brand;

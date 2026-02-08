@@ -25,6 +25,24 @@ OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
 USER_AGENT = "poland-food-db/1.0 (https://github.com/ericsocrat/poland-food-db)"
 PAGE_SIZE = 50
 REQUEST_DELAY = 1.0  # seconds between requests
+REQUEST_TIMEOUT = 60  # seconds (OFF API can be slow)
+MAX_RETRIES = 2
+
+
+def _get_json(session: requests.Session, url: str, params: dict) -> dict | None:
+    """GET with retry on timeout / server error."""
+    for attempt in range(MAX_RETRIES + 1):
+        try:
+            resp = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
+            resp.raise_for_status()
+            return resp.json()
+        except requests.RequestException as exc:
+            if attempt < MAX_RETRIES:
+                logger.debug("Retry %d for %s: %s", attempt + 1, url, exc)
+                time.sleep(REQUEST_DELAY * 2)
+                continue
+            logger.warning("Request failed after %d retries: %s", MAX_RETRIES, exc)
+            return None
 
 
 def _session() -> requests.Session:
@@ -89,14 +107,8 @@ def search_polish_products(
                 "page": page,
                 "page_size": PAGE_SIZE,
             }
-            try:
-                resp = session.get(OFF_SEARCH_URL, params=params, timeout=30)
-                resp.raise_for_status()
-                data = resp.json()
-            except requests.RequestException as exc:
-                logger.warning(
-                    "OFF tag search failed for tag=%r page=%d: %s", tag, page, exc
-                )
+            data = _get_json(session, OFF_SEARCH_URL, params)
+            if data is None:
                 break
 
             products = data.get("products", [])
@@ -137,17 +149,8 @@ def search_polish_products(
                     "page": page,
                     "page_size": PAGE_SIZE,
                 }
-                try:
-                    resp = session.get(OFF_SEARCH_URL, params=params, timeout=30)
-                    resp.raise_for_status()
-                    data = resp.json()
-                except requests.RequestException as exc:
-                    logger.warning(
-                        "OFF term search failed for term=%r page=%d: %s",
-                        term,
-                        page,
-                        exc,
-                    )
+                data = _get_json(session, OFF_SEARCH_URL, params)
+                if data is None:
                     break
 
                 products = data.get("products", [])
@@ -189,12 +192,8 @@ def fetch_product_by_ean(ean: str) -> dict | None:
     """
     session = _session()
     url = OFF_PRODUCT_URL.format(ean=ean)
-    try:
-        resp = session.get(url, timeout=30)
-        resp.raise_for_status()
-        data = resp.json()
-    except requests.RequestException as exc:
-        logger.warning("OFF fetch failed for EAN %s: %s", ean, exc)
+    data = _get_json(session, url, {})
+    if data is None:
         return None
 
     if data.get("status") != 1:

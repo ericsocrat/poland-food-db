@@ -1,66 +1,54 @@
--- PIPELINE (SWEETS): add nutrition facts
--- PIPELINE__sweets__03_add_nutrition.sql
--- All values per 100 g from Open Food Facts (EAN-verified).
--- Last updated: 2026-02-07
+-- PIPELINE (Sweets): add nutrition facts
+-- Source: Open Food Facts verified per-100g data
 
--- ═══════════════════════════════════════════════════════════════════
--- UPSERT nutrition facts (idempotent via ON CONFLICT)
--- ═══════════════════════════════════════════════════════════════════
+-- 1) Remove existing
+delete from nutrition_facts
+where (product_id, serving_id) in (
+  select p.product_id, s.serving_id
+  from products p
+  join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
+  where p.country = 'PL' and p.category = 'Sweets'
+);
 
-insert into nutrition_facts (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+-- 2) Insert
+insert into nutrition_facts
+  (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+   carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 select
-  p.product_id,
-  sv.serving_id,
+  p.product_id, s.serving_id,
   d.calories, d.total_fat_g, d.saturated_fat_g, d.trans_fat_g,
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
   values
-    -- CHOCOLATE TABLETS
-    --              brand             product_name                                 cal    fat    sat    trans  carbs   sug    fib    prot   salt
-    ('Wawel',                  'Wawel Czekolada Gorzka 70%',             '576', '43',   '27',   '0', '32',   '28',   '0',   '9.8',  '0.02'),
-    ('Wawel',                  'Wawel Mleczna z Rodzynkami i Orzeszkami', '539', '33',   '18',   '0', '52',   '46',   '0',   '7',    '0.15'),
-    ('Wedel',                  'Wedel Czekolada Gorzka 80%',             '558', '45',   '27',   '0', '21',   '16',   '16',  '10',   '0.02'),
-    ('Wedel',                  'Wedel Czekolada Mleczna',                '530', '30',   '19',   '0', '58',   '57',   '2.5', '6',    '0.25'),
-    ('Wedel',                  'Wedel Mleczna z Bakaliami',              '502', '27',   '12',   '0', '56',   '55',   '0',   '8',    '0.16'),
-    ('Wedel',                  'Wedel Mleczna z Orzechami',              '576', '38',   '16',   '0', '50',   '48',   '0',   '7.8',  '0.21'),
-    ('Milka',                  'Milka Alpenmilch',                       '539', '31',   '19',   '0', '57',   '55',   '2.3', '6.5',  '0.28'),
-    ('Milka',                  'Milka Trauben-Nuss',                     '508', '28',   '15',   '0', '57',   '53',   '3',   '6.2',  '0.22'),
-    -- FILLED CHOCOLATES / PRALINES
-    ('Wawel',                  'Wawel Tiki Taki Kokosowo-Orzechowe',     '564', '37',   '22',   '0', '47',   '45',   '0',   '8.1',  '0.09'),
-    ('Wawel',                  'Wawel Tiramisu Nadziewana',              '521', '30',   '19',   '0', '55',   '50',   '0',   '6.3',  '0.16'),
-    ('Wawel',                  'Wawel Czekolada Karmelowe',              '499', '28',   '17',   '0', '56',   '49',   '0',   '4',    '0.05'),
-    ('Wawel',                  'Wawel Kasztanki Nadziewana',             '537', '31',   '21',   '0', '57',   '50',   '0',   '5.3',  '0.08'),
-    ('Wedel',                  'Wedel Mleczna Truskawkowa',              '499', '26',   '13',   '0', '62',   '59',   '1.6', '4.6',  '0.15'),
-    ('Solidarność',            'Solidarność Śliwki w Czekoladzie',       '434', '18',   '11',   '0', '62',   '60',   '0',   '3.6',  '0.04'),
-    -- WAFER BARS
-    ('Prince Polo',            'Prince Polo XXL Classic',                '526', '29',   '16',   '0', '58',   '39',   '3.8', '5.6',  '0.32'),
-    ('Prince Polo',            'Prince Polo XXL Mleczne',               '526', '28',   '15',   '0', '63',   '41',   '2',   '5.1',  '0.23'),
-    ('Grześki',                'Grześki Mini Chocolate',                 '530', '30',   '18',   '0', '54',   '35',   '0',   '9.4',  '0.3'),
-    ('Grześki',                'Grześki Wafer Toffee',                   '530', '29',   '18',   '0', '58',   '35',   '0',   '7.8',  '0.32'),
-    ('Kinder',                 'Kinder Bueno Mini',                      '572', '36.6', '17.6', '0', '49.2', '40.6', '0',   '8.37', '0.27'),
-    -- CHOCOLATE BARS
-    ('Kinder',                 'Kinder Chocolate Bar',                   '566', '35',   '22.6', '0', '53.5', '53.5', '0',   '8.7',  '0.31'),
-    ('Snickers',               'Snickers Bar',                           '481', '22.5', '7.9',  '0', '60.5', '51.8', '4.3', '8.6',  '0.629'),
-    ('Twix',                   'Twix Twin',                              '492', '23.6', '14',   '0', '64',   '49.2', '1.6', '4.4',  '0.4'),
-    -- BISCUITS / COOKIES
-    ('Kinder',                 'Kinder Cards',                           '510', '26.3', '13.5', '0', '55.9', '42.9', '0',   '11.5', '0.45'),
-    ('Goplana',                'Goplana Jeżyki Cherry',                  '470', '20',   '12',   '0', '66',   '45',   '0',   '4.3',  '0.27'),
-    ('Delicje',                'Delicje Szampańskie Wiśniowe',            '360', '7.1',  '3.3',  '0', '70',   '51',   '1.3', '3.3',  '0.24'),
-    -- MARSHMALLOW / CONFECTIONERY
-    ('Wedel',                  'Wedel Ptasie Mleczko Waniliowe',         '442', '22',   '14',   '0', '57',   '48',   '2.8', '2.8',  '0.07'),
-    ('Wedel',                  'Wedel Ptasie Mleczko Gorzka 80%',        '451', '26',   '16',   '0', '47',   '37',   '5.4', '4.5',  '0.08'),
-    -- GUMMY CANDY
-    ('Haribo',                 'Haribo Goldbären',                       '340', '0.5',  '0.1',  '0', '77',   '46',   '0',   '6.9',  '0.07')
-) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+    ('Alpen Gold', 'Nussbeisser czekolada mleczna z całymi orzechami laskowymi', '557.0', '36.0', '16.0', '0', '49.0', '40.0', '4.0', '7.7', '0.1'),
+    ('E. Wedel', 'Czekolada mocno gorzka 80%', '558.0', '45.0', '27.0', '0', '21.0', '16.0', '16.0', '10.0', '0.0'),
+    ('E. Wedel', 'Czekolada klasyczna gorzka 64%', '508.0', '33.0', '20.0', '0', '36.0', '32.0', '14.0', '9.1', '0.0'),
+    ('E. Wedel', 'Mleczna klasyczna', '534.0', '31.0', '17.0', '0', '55.0', '55.0', '2.7', '6.3', '0.2'),
+    ('Wawel', 'Gorzka Extra', '556.0', '44.4', '28.9', '0.0', '33.3', '8.9', '17.8', '15.6', '0.0'),
+    ('Wawel', '100% Cocoa Ekstra Gorzka', '647.0', '60.0', '38.0', '0', '6.3', '1.2', '0', '13.0', '0.0'),
+    ('Wawel', 'Gorzka 70%', '576.0', '43.0', '27.0', '0', '32.0', '28.0', '0', '9.8', '0.0'),
+    ('Unknown', 'Czekolada gorzka Luximo', '555.0', '45.0', '30.0', '0', '18.0', '13.0', '17.0', '11.0', '0.1'),
+    ('Luximo', 'Czekolada Gorzka (Z Platkami Pomaranczowymi)', '527.0', '36.0', '24.0', '0', '38.0', '32.0', '12.0', '7.7', '0.1'),
+    ('fin CARRÉ', 'Extra dark 74% Cocoa', '571.0', '42.0', '26.0', '0', '32.0', '26.0', '0', '9.9', '0.0'),
+    ('Lindt Excellence', 'Excellence 85% Cacao Rich Dark', '578.0', '46.0', '27.0', '0', '22.0', '15.0', '0.0', '12.5', '0.0'),
+    ('Milka', 'Chocolat au lait', '539.0', '31.0', '19.0', '0', '57.0', '55.0', '2.3', '6.5', '0.3'),
+    ('Toblerone', 'Milk Chocolate with Honey and Almond Nougat', '528.0', '28.0', '17.0', '0', '61.0', '60.0', '2.4', '5.6', '0.1'),
+    ('Storck', 'Merci Finest Selection Assorted Chocolates', '563.0', '36.1', '19.9', '0', '49.9', '48.0', '0', '7.8', '0.2'),
+    ('Fin Carré', 'Milk Chocolate', '535.0', '30.2', '18.4', '0', '57.9', '56.6', '1.9', '6.9', '0.2'),
+    ('fin Carré', 'Dunkle Schokolade mit ganzen Haselnüssen', '587.0', '44.3', '17.9', '0', '34.4', '30.0', '8.0', '8.6', '0.0'),
+    ('Lindt', 'Lindt Excellence Dark Orange Intense', '535.0', '32.0', '17.0', '0', '51.0', '46.0', '0', '7.0', '0.1'),
+    ('Fin Carré', 'Weiße Schokolade', '539.0', '30.0', '18.5', '0', '59.7', '59.4', '0.0', '7.2', '0.4'),
+    ('Milka', 'Milka chocolate Hazelnuts', '551.0', '34.1', '17.4', '0', '52.1', '50.9', '3.0', '7.2', '0.0'),
+    ('Fin Carré', 'Extra Dark 85% Cocoa', '588.0', '48.1', '29.0', '0', '21.2', '12.8', '0', '10.5', '0.0'),
+    ('Ritter SPORT', 'MARZIPAN DARK CHOCOLATE WITH MARZIPAN', '516.1', '25.8', '11.3', '0.0', '61.3', '51.6', '6.5', '6.5', '0.0'),
+    ('Milka', 'Happy Cow', '538.0', '31.0', '18.0', '0', '58.0', '57.0', '1.9', '6.1', '0.3'),
+    ('Heidi', 'Dark Intense', '591.0', '48.0', '29.0', '0', '25.0', '22.0', '0', '7.8', '0.0'),
+    ('Schogetten', 'Schogetten alpine milk chocolate', '560.0', '35.0', '22.0', '0', '55.0', '55.0', '0', '5.4', '0.1'),
+    ('Milka', 'Milka Mmmax Oreo', '556.0', '34.0', '19.0', '0', '56.0', '48.0', '1.7', '5.0', '0.4'),
+    ('Milka', 'Schokolade Joghurt', '573.0', '37.0', '21.0', '0', '56.0', '55.0', '1.1', '4.4', '0.2'),
+    ('Milka', 'Strawberry', '560.0', '34.5', '19.5', '0', '55.0', '55.0', '1.0', '4.0', '0.2'),
+    ('Hatherwood', 'Salted Caramel Style', '459.0', '18.0', '2.0', '0', '71.0', '12.7', '1.0', '1.9', '0.1')
+) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+       carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-on conflict (product_id, serving_id) do update set
-  calories        = excluded.calories,
-  total_fat_g     = excluded.total_fat_g,
-  saturated_fat_g = excluded.saturated_fat_g,
-  trans_fat_g     = excluded.trans_fat_g,
-  carbs_g         = excluded.carbs_g,
-  sugars_g        = excluded.sugars_g,
-  fibre_g         = excluded.fibre_g,
-  protein_g       = excluded.protein_g,
-  salt_g          = excluded.salt_g;
+join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g';

@@ -49,10 +49,17 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:canned-vegetables": "Canned Goods",
     "en:canned-fruits": "Canned Goods",
     "en:canned-fish": "Canned Goods",
-    # Sauces
+    # Sauces (specific subtypes first — broad parent searched last)
+    "en:tomato-sauces": "Sauces",
+    "en:pasta-sauces": "Sauces",
+    "en:pestos": "Sauces",
+    "en:salad-dressings": "Sauces",
+    "en:hot-sauces": "Sauces",
     "en:sauces": "Sauces",
-    # Condiments
+    # Condiments (specific subtypes only — en:condiments is too broad on OFF)
     "en:ketchups": "Condiments",
+    "en:ketchup": "Condiments",
+    "en:tomato-ketchup": "Condiments",
     "en:mustards": "Condiments",
     "en:mayonnaises": "Condiments",
     # Snacks (broad — see BROAD_CATEGORIES)
@@ -97,6 +104,7 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
 BROAD_CATEGORIES: set[str] = {
     "Snacks",
     "Plant-Based & Alternatives",
+    "Drinks",   # yields to Alcohol (en:beverages is parent of en:alcoholic-beverages)
 }
 
 # ---------------------------------------------------------------------------
@@ -155,6 +163,10 @@ def resolve_category(off_categories_tags: list[str]) -> str | None:
     if not resolved:
         return None
 
-    # Prefer specific categories over broad parent categories
+    # OFF lists tags from broadest to most specific, so prefer the
+    # *last* non-broad category; this ensures e.g. ketchup → Condiments
+    # (not Sauces) and chips → Chips (not Snacks).
     specific = [c for c in resolved if c not in BROAD_CATEGORIES]
-    return specific[0] if specific else resolved[0]
+    if specific:
+        return specific[-1]
+    return resolved[-1]

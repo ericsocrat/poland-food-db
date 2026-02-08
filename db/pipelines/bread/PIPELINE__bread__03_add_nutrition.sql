@@ -1,66 +1,54 @@
--- PIPELINE (BREAD): add nutrition facts
--- PIPELINE__bread__03_add_nutrition.sql
--- All values per 100 g from Open Food Facts (EAN-verified).
--- Last updated: 2026-02-08
+-- PIPELINE (Bread): add nutrition facts
+-- Source: Open Food Facts verified per-100g data
 
--- ═══════════════════════════════════════════════════════════════════
--- UPSERT nutrition facts (idempotent via ON CONFLICT)
--- ═══════════════════════════════════════════════════════════════════
+-- 1) Remove existing
+delete from nutrition_facts
+where (product_id, serving_id) in (
+  select p.product_id, s.serving_id
+  from products p
+  join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
+  where p.country = 'PL' and p.category = 'Bread'
+);
 
-insert into nutrition_facts (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+-- 2) Insert
+insert into nutrition_facts
+  (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+   carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 select
-  p.product_id,
-  sv.serving_id,
+  p.product_id, s.serving_id,
   d.calories, d.total_fat_g, d.saturated_fat_g, d.trans_fat_g,
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
   values
-    -- SOURDOUGH / RYE BREADS
-    --                brand             product_name                                cal   fat   sat   trans  carbs  sug   fib   prot  salt
-    ('Oskroba',               'Oskroba Chleb Baltonowski',              '241', '1.1', '0.1', '0', '49',   '0.8', '6.9', '1.6', '1.1'),
-    ('Oskroba',               'Oskroba Chleb Pszenno-Żytni',            '227', '1.2', '0.3', '0', '47',   '2.9', '3.1', '6.8', '1.5'),
-    ('Oskroba',               'Oskroba Chleb Graham',                   '222', '2.2', '0.3', '0', '41',   '0.5', '0',   '7.3', '1.2'),
-    ('Oskroba',               'Oskroba Chleb Żytni Wieloziarnisty',     '234', '5.2', '0.4', '0', '40',   '2.5', '0',   '6.9', '1.0'),
-    ('Oskroba',               'Oskroba Chleb Litewski',                 '237', '1.1', '0.3', '0', '49',   '7.2', '3.4', '6.0', '1.4'),
-    ('Oskroba',               'Oskroba Chleb Żytni Pełnoziarnisty',     '199', '1.4', '0.2', '0', '37',   '5.1', '0',   '5.3', '1.5'),
-    ('Oskroba',               'Oskroba Chleb Żytni Razowy',             '219', '1.8', '0.3', '0', '44',   '1.6', '0',   '4.8', '1.4'),
-    -- PUMPERNICKEL / GERMAN-STYLE
-    ('Mestemacher',            'Mestemacher Pumpernikiel',                '181', '1.0', '0.2', '0', '34',   '3.8', '7.5', '5.1', '1.2'),
-    ('Mestemacher',            'Mestemacher Chleb Wielozbożowy Żytni',    '200', '1.9', '0.4', '0', '30.5', '4.9', '8.8', '5.8', '1.3'),
-    ('Mestemacher',            'Mestemacher Chleb Razowy',                '198', '1.2', '0.2', '0', '37.9', '3.0', '7.7', '5.7', '1.2'),
-    ('Mestemacher',            'Mestemacher Chleb Ziarnisty',             '264','13.8', '2.3', '0', '14.2', '0.8', '8.3','10.8', '1.1'),
-    ('Mestemacher',            'Mestemacher Chleb Żytni',                 '202', '1.1', '0.2', '0', '37',   '3.7', '9.8', '5.7', '1.2'),
-    -- TOAST BREADS
-    ('Schulstad',              'Schulstad Toast Pszenny',                 '252', '2.6', '0.3', '0', '48',   '4.7', '3.1', '8.0', '1.28'),
-    ('Klara',                  'Klara American Sandwich Toast XXL',       '273', '4.4', '0.5', '0', '49',   '2.5', '2.2', '7.8', '1.4'),
-    ('Pano',                   'Pano Tost Maślany',                      '244', '1.4', '0.3', '0', '47',   '3.5', '2.8', '7.5', '1.1'),
-    -- CRISPBREADS
-    ('Wasa',                   'Wasa Original',                           '334', '1.5', '0.3', '0', '63.5', '1.2','17.0', '9.0', '1.3'),
-    ('Wasa',                   'Wasa Pieczywo z Błonnikiem',              '333', '5.0', '0.7', '0', '46',   '2.5','26.0','14.0', '1.0'),
-    ('Wasa',                   'Wasa Lekkie 7 Ziaren',                   '388', '5.3', '0.7', '0', '72',   '5.0', '5.3','10.0', '1.4'),
-    ('Sonko',                  'Sonko Pieczywo Chrupkie Ryżowe',          '363', '1.0', '0.2', '0', '77',   '0.5', '6.0', '8.0', '0.98'),
-    ('Carrefour',              'Carrefour Pieczywo Chrupkie Kukurydziane','370', '2.9', '0.4', '0', '76',   '1.1', '3.3', '8.1', '0.57'),
-    -- WRAPS / TORTILLAS
-    ('Tastino',                'Tastino Tortilla Wraps',                  '310', '7.0', '1.0', '0', '52',   '3.9', '2.0', '7.9', '1.5'),
-    ('Tastino',                'Tastino Wholegrain Wraps',                '289', '5.7', '0.8', '0', '44',   '2.4', '6.4', '9.9', '1.3'),
-    ('Pano',                   'Pano Tortilla',                           '327', '7.7', '1.5', '0', '56.7', '3.5', '0',   '8.2', '1.5'),
-    -- ROLLS / BUNS / SEED
-    ('Oskroba',               'Oskroba Bułki Hamburgerowe',              '346','11.0', '1.6', '0', '53',   '7.3', '0',   '8.4', '1.0'),
-    ('Oskroba',               'Oskroba Chleb Pszenno-Żytni z Ziarnami', '261', '3.6', '0.5', '0', '45',   '2.3', '3.5', '9.5', '1.3'),
-    ('Pano',                   'Pano Bułeczki Śniadaniowe',              '350', '7.0', '1.0', '0', '50',   '8.0', '2.5','10.0', '1.2'),
-    -- RUSKS / WHOLEGRAIN TOAST
-    ('Carrefour',              'Carrefour Sucharki Pełnoziarniste',        '366', '6.5', '0.5', '0', '62',   '5.5','12.0','12.0', '1.5'),
-    ('Pano',                   'Pano Tost Pełnoziarnisty',               '240', '2.0', '0.3', '0', '43',   '4.5', '5.6', '9.2', '1.1')
-) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+    ('Lajkonik', 'Paluszki słone', '379.0', '4.0', '0.4', '0', '72.0', '2.7', '3.4', '12.0', '3.0'),
+    ('Gursz', 'Chleb Pszenno-Żytni', '245.0', '1.3', '0.3', '0', '49.3', '1.7', '2.8', '7.6', '1.3'),
+    ('Pano', 'Tost pełnoziarnisty', '240.0', '2.0', '0.4', '0', '43.0', '2.2', '5.6', '10.0', '1.1'),
+    ('Pano', 'Tost  maślany', '267.0', '3.2', '1.7', '0', '50.0', '2.9', '0', '8.6', '1.2'),
+    ('Sonko', 'Lekkie żytnie', '363.0', '1.6', '0.4', '0', '74.5', '0.7', '8.8', '8.2', '1.1'),
+    ('Aksam', 'Beskidzkie paluszki z solą', '390.0', '5.5', '0.6', '0', '73.0', '2.2', '2.1', '11.0', '3.7'),
+    ('Melvit', 'Pieczywo Chrupkie Zytnie CRISPY z pomidorami i bazylią', '434.0', '20.0', '3.0', '0', '58.0', '9.0', '13.0', '12.0', '2.7'),
+    ('Pano', 'Chleb żytni', '198.0', '1.4', '0.2', '0', '36.0', '3.0', '9.3', '5.6', '1.1'),
+    ('Pano', 'Tortilla', '300.0', '6.7', '1.3', '0', '49.0', '4.4', '4.7', '8.8', '1.1'),
+    ('Pano', 'Chleb żytni z dodatkiem amarantusa i komosy ryżowej', '218.0', '5.2', '0.7', '0', '31.7', '3.3', '12.0', '5.3', '1.2'),
+    ('Pano', 'Pieczywo kukurydziane chrupkie', '376.0', '0.9', '0.2', '0', '83.0', '1.1', '3.5', '7.8', '0.9'),
+    ('Dijo', 'Fresh Wraps Grill Barbecue x4', '313.0', '7.4', '1.4', '0', '54.0', '3.4', '0', '7.6', '1.6'),
+    ('Pano', 'tosty pszenny', '244.0', '1.4', '0.3', '0', '49.0', '2.9', '0', '7.9', '1.2'),
+    ('Sonko', 'Pieczywo Sonko Lekkie 7 Ziaren', '367.0', '1.5', '0.2', '0', '76.8', '3.5', '5.8', '8.6', '1.4'),
+    ('Pano', 'Chleb Wiejski', '232.0', '1.2', '0.3', '0', '47.0', '2.9', '3.2', '6.8', '1.4'),
+    ('Dan Cake', 'Toast bread', '281.0', '3.9', '0.4', '0', '52.0', '5.6', '0', '8.8', '1.3'),
+    ('Wasa', 'Pieczywo z pełnoziarnistej mąki żytniej', '344.0', '1.5', '0.3', '0', '65.0', '2.0', '17.0', '9.0', '0.9'),
+    ('Pano', 'Wraps lo-carb whole wheat tortilla', '303.0', '6.7', '1.7', '0', '48.3', '0', '5.2', '9.0', '1.2'),
+    ('Lestello', 'Chickpea cakes', '380.0', '3.2', '0.6', '0', '73.0', '1.9', '6.0', '12.0', '0.9'),
+    ('TOP', 'Paluszki solone', '394.0', '5.7', '0.7', '0', '72.0', '3.7', '0', '12.0', '3.0'),
+    ('Piekarnia w sercu Lidla', 'Chleb Tostowy Z Mąką Pełnoziarnistą', '250.0', '2.1', '0.4', '0', '45.0', '1.7', '6.9', '9.5', '1.2'),
+    ('Carrefour', 'Petits pains grilles', '408.0', '10.0', '0.9', '0', '66.0', '4.2', '6.9', '10.0', '1.0'),
+    ('Carrefour', 'biscottes braisées', '370.0', '5.6', '0.7', '0', '59.0', '3.8', '14.0', '14.0', '0.9'),
+    ('Carrefour', 'Biscottes sans sel ajouté', '401.0', '5.1', '0.6', '0', '75.0', '7.3', '3.9', '12.0', '0.0'),
+    ('Carrefour', 'Biscottes Blé complet', '366.0', '4.9', '0.5', '0', '62.0', '5.5', '12.0', '12.0', '1.5'),
+    ('Chabrior', 'Biscottes complètes x36', '375.0', '4.8', '0.5', '0', '63.0', '6.4', '10.0', '15.0', '1.4'),
+    ('Italiamo', 'Piada sfogliata', '311.0', '9.4', '3.9', '0', '48.0', '3.1', '0', '7.4', '1.6'),
+    ('Carrefour', 'Biscuits Nature', '393.0', '5.0', '0.7', '0', '74.0', '6.5', '4.0', '11.0', '1.1')
+) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+       carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-on conflict (product_id, serving_id) do update set
-  calories        = excluded.calories,
-  total_fat_g     = excluded.total_fat_g,
-  saturated_fat_g = excluded.saturated_fat_g,
-  trans_fat_g     = excluded.trans_fat_g,
-  carbs_g         = excluded.carbs_g,
-  sugars_g        = excluded.sugars_g,
-  fibre_g         = excluded.fibre_g,
-  protein_g       = excluded.protein_g,
-  salt_g          = excluded.salt_g;
+join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g';
