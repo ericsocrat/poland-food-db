@@ -1,0 +1,80 @@
+
+[X] Berryland - Owocownia Mieszana
+    EAN: 5901121004218
+    Error: Invalid checksum: expected 0, got 8
+[X] Bonduelle - Broku┼é
+    EAN: 5901652014621
+    Error: Invalid checksum: expected 7, got 1
+[X] Bonduelle - Mieszanka Warzyw Orientalna
+    EAN: 5901652014645
+    Error: Invalid checksum: expected 1, got 5
+    EAN: 20013011 (EAN-8 (valid but not EAN-13))
+    EAN: 20061449 (EAN-8 (valid but not EAN-13))
+    EAN: 20202859 (EAN-8 (valid but not EAN-13))
+[X] Dr. Oetker - Zcie┼╝ynka Margherita
+    EAN: 5901821102103
+    Error: Invalid checksum: expected 0, got 3
+[X] Dr. Oetker - Zcie┼╝ynka Pepperoni
+    EAN: 5901821102110
+    Error: Invalid checksum: expected 7, got 0
+[X] Goodmills - Placki Ziemniaczane
+    EAN: 5901652041237
+    Error: Invalid checksum: expected 4, got 7
+    EAN: 22009326 (EAN-8 (valid but not EAN-13))
+[X] Krystal - Kotlety Mielone
+    EAN: 5900121004521
+    Error: Invalid checksum: expected 7, got 1
+[X] Kulina - Nalisniki ze Serem
+    EAN: 5901822001456
+    Error: Invalid checksum: expected 7, got 6
+[X] Makaronika - Danie z Warzywami
+    EAN: 5901825000421
+    Error: Invalid checksum: expected 6, got 1
+[X] Mielczarski - Bigos My┼¢liwski
+    EAN: 5901121001234
+    Error: Invalid checksum: expected 3, got 4
+[X] Morey - Kluski ┼Ül─àskie
+    EAN: 5900779100234
+    Error: Invalid checksum: expected 7, got 4
+[X] Morey - Kopytka Mi─Öso
+    EAN: 5900779104567
+    Error: Invalid checksum: expected 3, got 7
+[X] Mro┼╝one Pierniki - Pierniki Tradycyjne
+    EAN: 5901239004521
+    Error: Invalid checksum: expected 2, got 1
+[X] Nowaco - Pierogi Mi─Öso Kapusta
+    EAN: 5901892000438
+    Error: Invalid checksum: expected 5, got 8
+[X] Nowaco - Pierogi Ruskie
+    EAN: 5901892000421
+    Error: Invalid checksum: expected 8, got 1
+[X] Obiad Tradycyjny - Danie Mi─Ösne Piekarsko
+    EAN: 5900285004213
+    Error: Invalid checksum: expected 0, got 3
+[X] Obiad Z Piekarni - ┼üazanki Mi─Ösne
+    EAN: 5900285003612
+    Error: Invalid checksum: expected 9, got 2
+[X] Pani Polska - Golabki Mi─Öso Ry┼╝
+    EAN: 5901245003842
+    Error: Invalid checksum: expected 7, got 2
+    EAN: 06638993 (EAN-8 (valid but not EAN-13))
+    EAN: 10471346 (EAN-8 (valid but not EAN-13))
+    EAN: 00719063 (EAN-8 (valid but not EAN-13))
+    EAN: 04998358 (EAN-8 (valid but not EAN-13))
+[X] TVDishes - Filet Drobiowy
+    EAN: 5900721002841
+    Error: Invalid checksum: expected 8, got 1
+[X] TVLine - Obiad Szybki Mi─Öso
+    EAN: 5900721002834
+    Error: Invalid checksum: expected 1, got 4
+[X] ┼╗abka Frost - Krokiety Mi─Ösne
+    EAN: 5901652030432
+    Error: Invalid checksum: expected 6, got 2
+[X] Zale┼¢na G├│ra - Paczki Mi─Ösne
+    EAN: 5900382000127
+    Error: Invalid checksum: expected 2, got 7
+[X] Zwierzenica - Kielbasa Zapiekanka
+    EAN: 5900481001823
+    Error: Invalid checksum: expected 2, got 3
+[X] Found 23 invalid EAN codes!
+
