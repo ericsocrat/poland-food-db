@@ -1,10 +1,10 @@
 -- PIPELINE (ŻABKA): insert products
 -- PIPELINE__zabka__01_insert_products.sql
--- 16 verified products sold at Żabka convenience stores in Poland.
+-- 28 verified products sold at Żabka convenience stores in Poland.
 -- Brands: Żabka (own-label), Szamamm (ready-meal sub-brand),
 --         Tomcio Paluch (sandwich supplier exclusive to Żabka).
 -- Data sourced from Open Food Facts (openfoodfacts.org) — EANs verified.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
 values
@@ -50,7 +50,41 @@ values
 -- EAN 5908308902093 — Penne z kurczakiem (chicken penne with basil & cheddar, Nutri-Score C)
 ('PL','Szamamm','Ready-to-eat','Żabka','Penne z kurczakiem','baked','Żabka','none'),
 -- EAN 06638993 — Kotlet de Volaille (chicken cordon bleu, 0 additives, NOVA 4)
-('PL','Szamamm','Ready-to-eat','Żabka','Kotlet de Volaille','fried','Żabka','none')
+('PL','Szamamm','Ready-to-eat','Żabka','Kotlet de Volaille','fried','Żabka','none'),
+
+-- ══════════════════════════════════════════════════════════════════════════
+-- NEW PRODUCTS (batch 2 — 2026-02-08, 12 products)
+-- ══════════════════════════════════════════════════════════════════════════
+
+-- ── Żabka own-brand (new) ────────────────────────────────────────────────
+-- EAN 2050000557415 — Wegger (vegan burger, Nutri-Score C est., NOVA 4 est.)
+('PL','Żabka','Ready-to-eat','Żabka','Wegger','baked','Żabka','none'),
+-- EAN 5908308911019 — Bao Burger (bao bun burger, very high salt 2.75g, NOVA 4 est.)
+('PL','Żabka','Ready-to-eat','Żabka','Bao Burger','baked','Żabka','none'),
+-- EAN 5908308911637 — Wieprzowiner (pork hot snack, Nutri-Score D est., NOVA 4 est.)
+('PL','Żabka','Ready-to-eat','Żabka','Wieprzowiner','fried','Żabka','none'),
+
+-- ── Tomcio Paluch sandwiches (new) ──────────────────────────────────────
+-- EAN 8586020100064 — Kanapka Cezar (caesar sandwich, Nutri-Score C, NOVA 4 est.)
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Kanapka Cezar','none','Żabka','none'),
+-- EAN 8586015136382 — Kebab z kurczaka (chicken kebab bread, Nutri-Score D)
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Kebab z kurczaka','baked','Żabka','none'),
+-- EAN 8586015136399 — BBQ Strips (chicken strips baguette, 14 additives, NOVA 4)
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','BBQ Strips','baked','Żabka','none'),
+-- EAN 8586020103768 — Pasta jajeczna, por, jajko gotowane (egg paste sandwich, Nutri-Score C)
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Pasta jajeczna, por, jajko gotowane','none','Żabka','none'),
+-- EAN 8586020105540 — High 24g protein (protein bread sandwich, E250 nitrite, NOVA 4)
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','High 24g protein','none','Żabka','minor'),
+
+-- ── Szamamm ready meals (new) ───────────────────────────────────────────
+-- EAN 00719063 — Pierogi ruskie ze smażoną cebulką (fried pierogi, NOVA 3 est.)
+('PL','Szamamm','Ready-to-eat','Żabka','Pierogi ruskie ze smażoną cebulką','fried','Żabka','none'),
+-- EAN 5908308911309 — Gnocchi z kurczakiem (chicken gnocchi, Nutri-Score B est.)
+('PL','Szamamm','Ready-to-eat','Żabka','Gnocchi z kurczakiem','baked','Żabka','none'),
+-- EAN 5900757067941 — Panierowane skrzydełka z kurczaka (breaded chicken wings, fried)
+('PL','Szamamm','Ready-to-eat','Żabka','Panierowane skrzydełka z kurczaka','fried','Żabka','none'),
+-- EAN 10471346 — Kotlet Drobiowy (chicken cutlet, Nutri-Score B est.)
+('PL','Szamamm','Ready-to-eat','Żabka','Kotlet Drobiowy','fried','Żabka','none')
 
 on conflict (country, brand, product_name)
 do update set
@@ -78,5 +112,18 @@ where country='PL' and category='Żabka'
     ('Szamamm','Naleśniki z jabłkami i cynamonem'),
     ('Szamamm','Placki ziemniaczane'),
     ('Szamamm','Penne z kurczakiem'),
-    ('Szamamm','Kotlet de Volaille')
+    ('Szamamm','Kotlet de Volaille'),
+    -- batch 2
+    ('Żabka','Wegger'),
+    ('Żabka','Bao Burger'),
+    ('Żabka','Wieprzowiner'),
+    ('Tomcio Paluch','Kanapka Cezar'),
+    ('Tomcio Paluch','Kebab z kurczaka'),
+    ('Tomcio Paluch','BBQ Strips'),
+    ('Tomcio Paluch','Pasta jajeczna, por, jajko gotowane'),
+    ('Tomcio Paluch','High 24g protein'),
+    ('Szamamm','Pierogi ruskie ze smażoną cebulką'),
+    ('Szamamm','Gnocchi z kurczakiem'),
+    ('Szamamm','Panierowane skrzydełka z kurczaka'),
+    ('Szamamm','Kotlet Drobiowy')
   );

@@ -2,7 +2,7 @@
 -- PIPELINE__zabka__04_scoring.sql
 -- Formula-based v3.1 scoring for Żabka convenience store products.
 -- See SCORING_METHODOLOGY.md §2.4 for the canonical formula.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 0. ENSURE rows exist in scores & ingredients
@@ -48,7 +48,20 @@ from (
     ('Szamamm',          'Naleśniki z jabłkami i cynamonem',       '0'),
     ('Szamamm',          'Placki ziemniaczane',                   '0'),
     ('Szamamm',          'Penne z kurczakiem',                    '3'),   -- est. (ready-meal pasta, moderate processing)
-    ('Szamamm',          'Kotlet de Volaille',                    '0')
+    ('Szamamm',          'Kotlet de Volaille',                    '0'),
+    -- ── Batch 2 — new products ────────────────────────────────────────────────────────────────────────
+    ('Żabka',            'Wegger',                                '8'),   -- est. (vegan patty: emulsifiers, stabilizers, colors)
+    ('Żabka',            'Bao Burger',                            '6'),   -- est. (bao bun + processed meat filling)
+    ('Żabka',            'Wieprzowiner',                          '9'),   -- est. (processed pork burger, Żabka hot-snack line)
+    ('Tomcio Paluch',    'Kanapka Cezar',                         '6'),   -- est. (caesar dressing + processed meat)
+    ('Tomcio Paluch',    'Kebab z kurczaka',                      '5'),   -- est. (kebab sauce + processed chicken)
+    ('Tomcio Paluch',    'BBQ Strips',                            '14'),  -- e101,e14xx,e150a,e160c,e202,e300,e322,e330,e385,e412,e415,e450,e451,e500
+    ('Tomcio Paluch',    'Pasta jajeczna, por, jajko gotowane',   '4'),   -- est. (egg paste sandwich, moderate processing)
+    ('Tomcio Paluch',    'High 24g protein',                      '6'),   -- e250,e263,e316,e471,e472e,e482
+    ('Szamamm',          'Pierogi ruskie ze smażoną cebulką',     '2'),   -- est. (simple pierogi, minimal processing)
+    ('Szamamm',          'Gnocchi z kurczakiem',                  '3'),   -- est. (ready-meal gnocchi)
+    ('Szamamm',          'Panierowane skrzydełka z kurczaka',     '6'),   -- est. (breaded + fried chicken wings)
+    ('Szamamm',          'Kotlet Drobiowy',                       '3')    -- est. (breaded chicken cutlet)
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -105,7 +118,20 @@ from (
     ('Szamamm',          'Naleśniki z jabłkami i cynamonem',       'C'),
     ('Szamamm',          'Placki ziemniaczane',                   'C'),
     ('Szamamm',          'Penne z kurczakiem',                    'C'),
-    ('Szamamm',          'Kotlet de Volaille',                    'C')
+    ('Szamamm',          'Kotlet de Volaille',                    'C'),
+    -- batch 2
+    ('Żabka',            'Wegger',                                'C'),   -- est. from nutrition profile
+    ('Żabka',            'Bao Burger',                            'D'),   -- est. (very high salt 2.75g)
+    ('Żabka',            'Wieprzowiner',                          'D'),   -- est. (high sugars 7.8g + salt 1.57g)
+    ('Tomcio Paluch',    'Kanapka Cezar',                         'C'),
+    ('Tomcio Paluch',    'Kebab z kurczaka',                      'D'),
+    ('Tomcio Paluch',    'BBQ Strips',                            'D'),
+    ('Tomcio Paluch',    'Pasta jajeczna, por, jajko gotowane',   'C'),
+    ('Tomcio Paluch',    'High 24g protein',                      'C'),
+    ('Szamamm',          'Pierogi ruskie ze smażoną cebulką',     'C'),   -- est. from nutrition profile
+    ('Szamamm',          'Gnocchi z kurczakiem',                  'B'),   -- est. (low cal/fat/salt)
+    ('Szamamm',          'Panierowane skrzydełka z kurczaka',     'C'),   -- est. from nutrition profile
+    ('Szamamm',          'Kotlet Drobiowy',                       'B')    -- est. (very low cal/fat)
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -138,7 +164,20 @@ from (
     ('Szamamm',          'Naleśniki z jabłkami i cynamonem',       '4'),
     ('Szamamm',          'Placki ziemniaczane',                   '3'),  -- simple: potatoes, oil, onion, flour, salt
     ('Szamamm',          'Penne z kurczakiem',                    '3'),  -- est. (basic pasta dish, moderate processing)
-    ('Szamamm',          'Kotlet de Volaille',                    '4')
+    ('Szamamm',          'Kotlet de Volaille',                    '4'),
+    -- batch 2
+    ('Żabka',            'Wegger',                                '4'),  -- est. (processed vegan patty with additives)
+    ('Żabka',            'Bao Burger',                            '4'),  -- est. (processed bao + filling)
+    ('Żabka',            'Wieprzowiner',                          '4'),  -- est. (processed pork hot snack)
+    ('Tomcio Paluch',    'Kanapka Cezar',                         '4'),  -- est. (sandwich with processed dressing)
+    ('Tomcio Paluch',    'Kebab z kurczaka',                      '4'),  -- est. (processed kebab meat)
+    ('Tomcio Paluch',    'BBQ Strips',                            '4'),  -- confirmed NOVA 4 from OFF
+    ('Tomcio Paluch',    'Pasta jajeczna, por, jajko gotowane',   '4'),  -- est. (processed sandwich)
+    ('Tomcio Paluch',    'High 24g protein',                      '4'),  -- confirmed NOVA 4 from OFF
+    ('Szamamm',          'Pierogi ruskie ze smażoną cebulką',     '3'),  -- est. (simple pierogi, fried onion)
+    ('Szamamm',          'Gnocchi z kurczakiem',                  '4'),  -- est. (ready-meal gnocchi)
+    ('Szamamm',          'Panierowane skrzydełka z kurczaka',     '4'),  -- est. (breaded + fried wings)
+    ('Szamamm',          'Kotlet Drobiowy',                       '4')   -- est. (breaded cutlet)
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -159,6 +198,10 @@ update scores sc set
     -- Products with some estimated fields: 90%
     when p.product_name in ('Kajzerka Kebab','Bajgiel z salami','Penne z kurczakiem') then 90
     when p.product_name in ('Meksykaner','Kurczaker','Pieczony bekon, sałata, jajko') then 95  -- fiber est.
+    -- batch 2: estimated fields
+    when p.product_name in ('Wegger','Panierowane skrzydełka z kurczaka') then 95  -- salt est.
+    when p.product_name in ('Kanapka Cezar','High 24g protein','Gnocchi z kurczakiem','Kotlet Drobiowy') then 95  -- fiber est.
+    when p.product_name in ('Bao Burger','Wieprzowiner','Kebab z kurczaka','BBQ Strips','Pasta jajeczna, por, jajko gotowane','Pierogi ruskie ze smażoną cebulką') then 100
     else 100
   end
 from products p

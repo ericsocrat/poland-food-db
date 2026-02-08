@@ -38,12 +38,12 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 277 active products across 12 categories
+**Database**: 289 active products across 12 categories
 
 | Category             | Products | Brands                                                                                 | Score Range |
 | -------------------- | -------- | -------------------------------------------------------------------------------------- | ----------- |
 | **Chips**            | 28       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                 | 27–51       |
-| **Żabka**            | 16       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                      | 17–43       |
+| **Żabka**            | 28       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                      | 15–43       |
 | **Cereals**          | 16       | 7 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella)                     | 11–49       |
 | **Drinks**           | 16       | 10 (Coca-Cola, Pepsi, Fanta, Tymbark, Hortex, Tiger, 4Move, Cappy, Dawtona, Mlekovita) | 8–19        |
 | **Dairy**            | 16       | 7 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio)                | 9–33        |
@@ -79,7 +79,7 @@ poland-food-db/
 │   │   ├── meat/            # 26 meat & deli products (4 SQL files)
 │   │   ├── sauces/          # 27 sauces & condiments products (4 SQL files)
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
-│   │   └── zabka/           # 16 convenience store products (5 SQL files)
+│   │   └── zabka/           # 28 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites
 │   │   ├── QA__null_checks.sql           # 11 integrity checks
 │   │   └── QA__scoring_formula_tests.sql # 20 algorithm tests
@@ -185,7 +185,7 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data sourced from Open Food Facts** — EANs verified against Polish market
 - **Scoring version**: v3.1 (2026-02-07)
-- **277 active products**, 17 deprecated (removed from pipelines but kept in DB)
+- **289 active products**, 17 deprecated (removed from pipelines but kept in DB)
 
 ---
 
