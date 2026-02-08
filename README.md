@@ -176,11 +176,11 @@ Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
 
 Every product receives an automated confidence rating based on data completeness and source verification:
 
-| Confidence | Criteria | Meaning |
-|---|---|---|
-| **verified** | ≥90% complete + ≥2 independent sources | Cross-validated across multiple sources |
-| **estimated** | 70-89% complete OR single source | Single-source data needing verification |
-| **low** | <70% complete | Incomplete data, use with caution |
+| Confidence    | Criteria                               | Meaning                                 |
+| ------------- | -------------------------------------- | --------------------------------------- |
+| **verified**  | ≥90% complete + ≥2 independent sources | Cross-validated across multiple sources |
+| **estimated** | 70-89% complete OR single source       | Single-source data needing verification |
+| **low**       | <70% complete                          | Incomplete data, use with caution       |
 
 **Current status**: All 336 products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
 
