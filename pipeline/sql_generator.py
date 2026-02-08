@@ -89,11 +89,12 @@ def _gen_01_insert_products(category: str, products: list[dict], today: str) -> 
 -- Source: Open Food Facts API (automated pipeline)
 -- Generated: {today}
 
--- 0. DEPRECATE old products
+-- 0. DEPRECATE old products & release their EANs
 update products
-set is_deprecated = true
-where country = 'Poland'
-and category = {_sql_text(category)};
+set is_deprecated = true, ean = null
+where country = 'PL'
+  and category = {_sql_text(category)}
+  and is_deprecated is not true;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
@@ -212,11 +213,12 @@ def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
     # NOVA values
     nova_lines: list[str] = []
     for i, p in enumerate(products):
-        nova = p.get("nova_classification")
+        nova_raw = p.get("nova_classification") or ""
+        nova = nova_raw if nova_raw in ("1", "2", "3", "4") else "4"
         comma = "," if i < len(products) - 1 else ""
         nova_lines.append(
             f"    ({_sql_text(p['brand'])}, {_sql_text(p['product_name'])}, "
-            f"{_sql_null_or_text(nova)}){comma}"
+            f"{_sql_text(nova)}){comma}"
         )
     nova_block = "\n".join(nova_lines)
 

@@ -1,7 +1,4 @@
--- PIPELINE (CHIPS): add servings
--- PIPELINE__chips__02_add_servings.sql
--- Adds per-100g servings for chips (since labels are per 100g in EU).
-
+-- PIPELINE (Chips): add servings
 insert into servings (product_id, serving_basis, serving_amount_g_ml)
 select p.product_id, 'per 100 g', 100
 from products p

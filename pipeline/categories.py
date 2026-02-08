@@ -10,11 +10,16 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:chips": "Chips",
     "en:crisps": "Chips",
     "en:potato-chips": "Chips",
+    "en:tortilla-chips": "Chips",
+    "en:corn-chips": "Chips",
     # Dairy
     "en:dairy": "Dairy",
+    "en:dairies": "Dairy",
     "en:milks": "Dairy",
     "en:yogurts": "Dairy",
     "en:cheeses": "Dairy",
+    "en:butters": "Dairy",
+    "en:creams": "Dairy",
     # Bread
     "en:breads": "Bread",
     # Cereals
@@ -25,42 +30,73 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:sodas": "Drinks",
     "en:juices": "Drinks",
     "en:waters": "Drinks",
+    "en:energy-drinks": "Drinks",
+    "en:non-alcoholic-beverages": "Drinks",
     # Meat
     "en:meats": "Meat",
     "en:sausages": "Meat",
+    "en:hams": "Meat",
+    "en:cold-cuts": "Meat",
+    "en:pork": "Meat",
+    "en:poultry": "Meat",
     # Sweets
     "en:chocolates": "Sweets",
     "en:candies": "Sweets",
     "en:biscuits": "Sweets",
+    "en:confectioneries": "Sweets",
     # Canned Goods
     "en:canned-foods": "Canned Goods",
     "en:canned-vegetables": "Canned Goods",
+    "en:canned-fruits": "Canned Goods",
+    "en:canned-fish": "Canned Goods",
     # Sauces
     "en:sauces": "Sauces",
     # Condiments
     "en:ketchups": "Condiments",
     "en:mustards": "Condiments",
     "en:mayonnaises": "Condiments",
-    # Snacks
+    # Snacks (broad — see BROAD_CATEGORIES)
     "en:snacks": "Snacks",
+    "en:salty-snacks": "Snacks",
+    "en:appetizers": "Snacks",
+    "en:crackers": "Snacks",
+    "en:pretzels": "Snacks",
+    "en:popcorn": "Snacks",
     # Nuts, Seeds & Legumes
     "en:nuts": "Nuts, Seeds & Legumes",
     "en:seeds": "Nuts, Seeds & Legumes",
+    "en:legumes": "Nuts, Seeds & Legumes",
+    "en:dried-fruits": "Nuts, Seeds & Legumes",
     # Baby
     "en:baby-foods": "Baby",
     # Alcohol
     "en:alcoholic-beverages": "Alcohol",
     "en:beers": "Alcohol",
     "en:wines": "Alcohol",
+    "en:spirits": "Alcohol",
     # Frozen & Prepared
     "en:frozen-foods": "Frozen & Prepared",
+    "en:frozen-pizzas": "Frozen & Prepared",
     # Instant & Frozen
     "en:instant-noodles": "Instant & Frozen",
-    # Plant-Based & Alternatives
+    "en:instant-soups": "Instant & Frozen",
+    # Plant-Based & Alternatives (broad — see BROAD_CATEGORIES)
     "en:plant-based-foods": "Plant-Based & Alternatives",
+    "en:plant-based-foods-and-beverages": "Plant-Based & Alternatives",
+    "en:meat-alternatives": "Plant-Based & Alternatives",
+    "en:tofu": "Plant-Based & Alternatives",
     # Seafood & Fish
     "en:seafood": "Seafood & Fish",
     "en:fish": "Seafood & Fish",
+    "en:smoked-fish": "Seafood & Fish",
+}
+
+# Broad categories that should yield to more specific ones during resolution.
+# Example: a product tagged [en:snacks, en:chips] should resolve to "Chips"
+# rather than "Snacks".
+BROAD_CATEGORIES: set[str] = {
+    "Snacks",
+    "Plant-Based & Alternatives",
 }
 
 # ---------------------------------------------------------------------------
@@ -95,7 +131,10 @@ for _tag, _cat in OFF_TO_DB_CATEGORY.items():
 
 
 def resolve_category(off_categories_tags: list[str]) -> str | None:
-    """Return the first matching database category for a list of OFF tags.
+    """Return the best matching database category for a list of OFF tags.
+
+    When multiple tags match, specific categories (e.g. ``"Chips"``) are
+    preferred over broad parent categories (e.g. ``"Snacks"``).
 
     Parameters
     ----------
@@ -107,7 +146,15 @@ def resolve_category(off_categories_tags: list[str]) -> str | None:
     str | None
         The matched database category, or *None* if no mapping exists.
     """
+    resolved: list[str] = []
     for tag in off_categories_tags:
-        if tag in OFF_TO_DB_CATEGORY:
-            return OFF_TO_DB_CATEGORY[tag]
-    return None
+        cat = OFF_TO_DB_CATEGORY.get(tag)
+        if cat and cat not in resolved:
+            resolved.append(cat)
+
+    if not resolved:
+        return None
+
+    # Prefer specific categories over broad parent categories
+    specific = [c for c in resolved if c not in BROAD_CATEGORIES]
+    return specific[0] if specific else resolved[0]

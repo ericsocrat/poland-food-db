@@ -16,7 +16,11 @@ from pathlib import Path
 from tqdm import tqdm
 
 from pipeline.categories import CATEGORY_SEARCH_TERMS, resolve_category
-from pipeline.off_client import extract_product_data, search_polish_products
+from pipeline.off_client import (
+    extract_product_data,
+    search_polish_products,
+    polish_market_score,
+)
 from pipeline.sql_generator import generate_pipeline
 from pipeline.validator import validate_product
 
@@ -151,6 +155,9 @@ def run_pipeline(
     if not unique:
         print("\nNo valid products found. Try increasing --max-products.")
         sys.exit(0)
+
+    # Sort by Polish market relevance (highest score first)
+    unique.sort(key=lambda p: polish_market_score(p), reverse=True)
 
     # Trim to requested max
     unique = unique[:max_products]

@@ -45,9 +45,14 @@ def search_polish_products(
 ) -> list[dict]:
     """Search Open Food Facts for Polish products in *category*.
 
-    Uses the OFF search endpoint filtered by ``countries_tags=en:poland`` and
-    iterates through search terms defined in ``CATEGORY_SEARCH_TERMS``.
-    Rate-limits to one request per second.
+    Uses a two-phase strategy:
+
+    1. **Tag search** — query by OFF category tags (most reliable).
+    2. **Term search** — fall back to keyword search terms if tag search
+       didn't find enough results.
+
+    Both phases filter by ``countries_tags=en:poland`` and rate-limit to
+    one request per second.
 
     Parameters
     ----------
@@ -67,33 +72,30 @@ def search_polish_products(
     results: list[dict] = []
     session = _session()
 
-    for term in search_terms:
+    # Phase 1: Search by OFF category tags (no search_terms)
+    for tag in off_tags:
         if len(results) >= max_results:
             break
 
         page = 1
         while len(results) < max_results:
             params: dict[str, Any] = {
-                "search_terms": term,
                 "countries_tags": "en:poland",
-                "search_simple": 1,
+                "tagtype_0": "categories",
+                "tag_contains_0": "contains",
+                "tag_0": tag,
                 "action": "process",
                 "json": 1,
                 "page": page,
                 "page_size": PAGE_SIZE,
             }
-            # Add category tag filter if we have OFF tags for this category
-            if off_tags:
-                params["tagtype_0"] = "categories"
-                params["tag_contains_0"] = "contains"
-                params["tag_0"] = off_tags[0]
             try:
                 resp = session.get(OFF_SEARCH_URL, params=params, timeout=30)
                 resp.raise_for_status()
                 data = resp.json()
             except requests.RequestException as exc:
                 logger.warning(
-                    "OFF search failed for term=%r page=%d: %s", term, page, exc
+                    "OFF tag search failed for tag=%r page=%d: %s", tag, page, exc
                 )
                 break
 
@@ -109,7 +111,6 @@ def search_polish_products(
                     if len(results) >= max_results:
                         break
 
-            # Stop if we've exhausted the result set
             total = int(data.get("count", 0))
             if page * PAGE_SIZE >= total:
                 break
@@ -118,6 +119,57 @@ def search_polish_products(
             time.sleep(REQUEST_DELAY)
 
         time.sleep(REQUEST_DELAY)
+
+    # Phase 2: Fall back to keyword search (no tag filter) if needed
+    if len(results) < max_results:
+        for term in search_terms:
+            if len(results) >= max_results:
+                break
+
+            page = 1
+            while len(results) < max_results:
+                params = {
+                    "search_terms": term,
+                    "countries_tags": "en:poland",
+                    "search_simple": 1,
+                    "action": "process",
+                    "json": 1,
+                    "page": page,
+                    "page_size": PAGE_SIZE,
+                }
+                try:
+                    resp = session.get(OFF_SEARCH_URL, params=params, timeout=30)
+                    resp.raise_for_status()
+                    data = resp.json()
+                except requests.RequestException as exc:
+                    logger.warning(
+                        "OFF term search failed for term=%r page=%d: %s",
+                        term,
+                        page,
+                        exc,
+                    )
+                    break
+
+                products = data.get("products", [])
+                if not products:
+                    break
+
+                for p in products:
+                    code = p.get("code", "")
+                    if code and code not in seen_codes:
+                        seen_codes.add(code)
+                        results.append(p)
+                        if len(results) >= max_results:
+                            break
+
+                total = int(data.get("count", 0))
+                if page * PAGE_SIZE >= total:
+                    break
+
+                page += 1
+                time.sleep(REQUEST_DELAY)
+
+            time.sleep(REQUEST_DELAY)
 
     return results[:max_results]
 
@@ -173,6 +225,79 @@ def _clean_text(text: str | None) -> str:
     return text.strip().replace("'", "''")
 
 
+# ---------------------------------------------------------------------------
+# Quality filters — ensure products are genuinely from the Polish market
+# ---------------------------------------------------------------------------
+
+# Require that ≥50% of product_name characters are Latin/Polish/digit/punctuation.
+_LATIN_RE = re.compile(r"[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻäöüÄÖÜéèêëàâîôùûçÉ0-9\s\-'.,&/!()#+%]")
+
+# Known Polish retailers (for market-relevance scoring)
+POLISH_RETAILERS: set[str] = {
+    "biedronka", "lidl", "żabka", "zabka", "kaufland", "auchan",
+    "carrefour", "netto", "dino", "stokrotka", "intermarché",
+    "intermarche", "makro", "selgros", "polo market", "lewiatan",
+    "groszek", "freshmarket", "piotr i paweł", "spar", "hebe",
+    "rossmann", "tesco", "e.leclerc",
+}
+
+# Common brand normalisations
+_BRAND_NORMALISE: dict[str, str] = {
+    "lays": "Lay's",
+    "lay's": "Lay's",
+    "lay's": "Lay's",
+    "pringles": "Pringles",
+    "doritos": "Doritos",
+    "cheetos": "Cheetos",
+    "nestle": "Nestlé",
+    "nestlé": "Nestlé",
+    "danone": "Danone",
+    "intersnack-poland": "Intersnack",
+}
+
+
+def _is_latin_name(name: str) -> bool:
+    """Return True if at least 50% of the name's characters are Latin/Polish."""
+    if not name:
+        return False
+    latin_count = sum(1 for c in name if _LATIN_RE.match(c))
+    return latin_count / len(name) >= 0.5
+
+
+def _normalise_brand(brand: str) -> str:
+    """Normalise common brand name variants."""
+    key = brand.lower().strip()
+    return _BRAND_NORMALISE.get(key, brand.strip())
+
+
+def polish_market_score(product: dict) -> int:
+    """Score how likely a product is genuinely sold in Poland.
+
+    Higher scores indicate stronger Polish market presence:
+      +3  EAN starts with 590 (Polish GS1 prefix)
+      +2  Product name contains Polish characters (ą, ć, ę, ł, ń, ó, ś, ź, ż)
+      +1  Store availability mentions a known Polish retailer
+      +1  OFF completeness ≥ 0.5
+    """
+    score = 0
+    ean = product.get("ean", "")
+    if ean.startswith("590"):
+        score += 3
+
+    name = product.get("product_name", "")
+    if re.search(r"[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]", name):
+        score += 2
+
+    stores = (product.get("store_availability") or "").lower()
+    if any(r in stores for r in POLISH_RETAILERS):
+        score += 1
+
+    if product.get("_completeness", 0) >= 0.5:
+        score += 1
+
+    return score
+
+
 def _detect_prep_method(categories_tags: list[str], product_name: str) -> str | None:
     """Infer prep_method from OFF category tags and product name."""
     combined = " ".join(categories_tags) + " " + product_name.lower()
@@ -225,11 +350,16 @@ def extract_product_data(off_product: dict) -> dict | None:
     if not product_name:
         return None
 
-    # Brand — take the first if comma-separated
+    # Reject names that are predominantly non-Latin (e.g. Cyrillic, Arabic)
+    if not _is_latin_name(product_name):
+        return None
+
+    # Brand — take the first if comma-separated, then normalise
     brands_raw = off_product.get("brands", "")
     brand = brands_raw.split(",")[0].strip() if brands_raw else "Unknown"
     if not brand:
         brand = "Unknown"
+    brand = _normalise_brand(brand)
 
     # EAN
     ean = off_product.get("code", "")
@@ -247,11 +377,12 @@ def extract_product_data(off_product: dict) -> dict | None:
 
     # NOVA & Nutri-Score
     nova_tags = off_product.get("nova_groups_tags", [])
+    nova = None
     if nova_tags:
         nova_raw = nova_tags[0].split(":")[-1]  # e.g. "4-ultra-processed..."
-        nova = nova_raw.split("-")[0] if "-" in nova_raw else nova_raw
-    else:
-        nova = None
+        digit = nova_raw.split("-")[0] if "-" in nova_raw else nova_raw
+        if digit in ("1", "2", "3", "4"):
+            nova = digit
 
     nutriscore_raw = off_product.get("nutriscore_grade")
     nutri_score_label = nutriscore_raw.upper() if nutriscore_raw else None
