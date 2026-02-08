@@ -1,7 +1,7 @@
 [
   {
     "brand": "Bonduelle",
-    "product_name": "Mushrooms",
+    "product_name": "Champignon Mushrooms",
     "ean": "3083681120189"
   },
   {
@@ -11,47 +11,132 @@
   },
   {
     "brand": "Bonduelle",
-    "product_name": "Beans",
-    "ean": "3083681040609"
+    "product_name": "Mixed Beans",
+    "ean": "3083681148619"
   },
   {
     "brand": "Bonduelle",
-    "product_name": "Corn",
+    "product_name": "Sweet Corn",
     "ean": "3083680025881"
   },
   {
     "brand": "Heinz",
-    "product_name": "Tomato Soup",
+    "product_name": "Cream of Tomato Soup",
     "ean": "5000157062673"
   },
   {
     "brand": "Heinz",
-    "product_name": "Ravioli",
-    "ean": "5000157068750"
+    "product_name": "Ravioli in Tomato Sauce",
+    "ean": "5000157068743"
   },
   {
     "brand": "Heinz",
-    "product_name": "Spaghetti",
-    "ean": "5000157006899"
+    "product_name": "Spaghetti in Tomato Sauce",
+    "ean": "5000157006875"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Beans in Tomato Sauce",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Cherries in Syrup",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Green Peas",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Lentils",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Mandarin Oranges in Syrup",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Red Kidney Beans",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Sliced Carrots",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Spaghetti Bolognese",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "White Beans",
+    "ean": "5900385012573"
+  },
+  {
+    "brand": "Kotlin",
+    "product_name": "Whole Tomatoes",
+    "ean": "5900385012573"
   },
   {
     "brand": "Profi",
-    "product_name": "Soup",
-    "ean": "5901696011880"
+    "product_name": "Chicken Soup",
+    "ean": "5901696000013"
   },
   {
     "brand": "Profi",
-    "product_name": "Meat",
+    "product_name": "Fruit Cocktail in Syrup",
+    "ean": "5901696000013"
+  },
+  {
+    "brand": "Profi",
+    "product_name": "Peaches in Syrup",
+    "ean": "5901696000013"
+  },
+  {
+    "brand": "Profi",
+    "product_name": "Pears in Syrup",
+    "ean": "5901696000013"
+  },
+  {
+    "brand": "Profi",
+    "product_name": "Pineapple Slices in Syrup",
+    "ean": "5901696000013"
+  },
+  {
+    "brand": "Profi",
+    "product_name": "Pork Luncheon Meat",
     "ean": "5901696000013"
   },
   {
     "brand": "Pudliszki",
-    "product_name": "Soup",
+    "product_name": "Corned Beef",
+    "ean": "5900783000424"
+  },
+  {
+    "brand": "Pudliszki",
+    "product_name": "Cream of Mushroom Soup",
+    "ean": "5900783000424"
+  },
+  {
+    "brand": "Pudliszki",
+    "product_name": "Diced Tomatoes",
+    "ean": "5900783000424"
+  },
+  {
+    "brand": "Pudliszki",
+    "product_name": "Vegetable Soup",
     "ean": "5900783004057"
   },
   {
     "brand": "Pudliszki",
-    "product_name": "Tomatoes",
-    "ean": "5900783002152"
+    "product_name": "Whole Beets",
+    "ean": "5900783000424"
   }
 ]
