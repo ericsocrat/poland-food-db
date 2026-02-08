@@ -2,10 +2,10 @@
 
 ## Summary
 
-**Total EANs in database**: 149
-**Valid EAN-13 codes**: 149 (100%)
+**Total EANs in database**: 185
+**Valid EAN-13 codes**: 185 (100%)
 **Invalid checksums**: 0 (0%)
-**Overall EAN coverage**: 149/446 products (33.4%)
+**Overall EAN coverage**: 185/517 products (35.8%)
 
 ## Recent Progress
 
@@ -21,7 +21,9 @@
 - Integrated EAN validation into QA suite as Test Suite 4
 - **QA suite now passes: all EAN-13 checksums valid (100%)**
 - **Added 16 verified EANs to Chips category** via Open Food Facts research (37/45 = 82.2%)
-- Total EANs expanded from 133 → 149 (+16, +12% increase)
+- **Added 23 verified EANs to Dairy category** via Open Food Facts research (23/28 = 82.1%)
+- **Removed 13 invalid EANs from Seafood/Fish categoriesince (Frosta 2, Graal 10+)**
+- Total EANs expanded from 133 → 185 (+52, +39% increase)
 
 ### 🗑️ Removed Categories
 
@@ -54,9 +56,10 @@
 | Baby      | 28                 | 28    | 100.0%   | ✅ All valid     |
 | Cereals   | 28                 | 28    | 100.0%   | ✅ All valid     |
 | **Chips** | **37**             | 45    | **82.2%**| ✅ All valid     |
+| **Dairy** | **23**             | 28    | **82.1%**| ✅ All valid     |
 | Drinks    | 28                 | 28    | 100.0%   | ✅ All valid     |
 | Żabka     | 28                 | 28    | 100.0%   | ✅ All valid     |
-| **Total** | **149**            | **446**|**33.4%** | **100% valid**  |
+| **Total** | **185**            | **517**|**35.8%** | **100% valid**  |
 
 ### ⚠️ EAN-8 Warnings
 
@@ -68,6 +71,20 @@
 These are valid but should ideally be converted to EAN-13 format if 13-digit codes become available.
 
 ## Historical Context
+
+### Phase 1 Completion: Dairy Expansion (Feb 8, 2026)
+- Researched 28 Dairy products via Open Food Facts API
+- Found valid EANs for 23 products (82.1% success rate)
+- All 23 EANs passed GS1 Modulo-10 checksum validation
+- Database updated: Dairy category now 23/28 (82.1%)
+- 5 products still missing: Actimel Wieloowocowy, Almette Śmietankowy, Mańlanka Naturalna, Mleko 3.2%, Twarób Półtłusty
+
+### Seafood Data Quality Fix (Feb 8, 2026)
+- Discovered 13 invalid EAN checksums in Seafood/Fish products
+- Frosta (2): Filety Mintaja, Paluszki Rybne
+- Graal (10+): Multiple fish products with failed checksums
+- Conservative fix: Removed all 13 invalid EANs to maintain data integrity
+- Products retained without barcodes
 
 ### Chips Expansion (Feb 8, 2026 — 16 EANs Added)
 - Researched 24 missing Chips products via Open Food Facts API
