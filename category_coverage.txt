@@ -1,0 +1,24 @@
+          category          | total | with_ean | coverage_pct 
+----------------------------+-------+----------+--------------
+ Breakfast & Grain-Based    |    28 |        0 |          0.0
+ Frozen & Prepared          |    28 |        0 |          0.0
+ Sauces                     |    28 |        0 |          0.0
+ Instant & Frozen           |    28 |        0 |          0.0
+ Snacks                     |    28 |        0 |          0.0
+ Meat                       |    28 |        4 |         14.3
+ Plant-Based & Alternatives |    54 |       11 |         20.4
+ Canned Goods               |    28 |        7 |         25.0
+ Nuts, Seeds & Legumes      |    27 |        7 |         25.9
+ Seafood & Fish             |    27 |       13 |         48.1
+ Bread                      |    28 |       20 |         71.4
+ Sweets                     |    28 |       20 |         71.4
+ Condiments                 |    28 |       22 |         78.6
+ Alcohol                    |    28 |       22 |         78.6
+ Dairy                      |    28 |       23 |         82.1
+ Chips                      |    45 |       37 |         82.2
+ Baby                       |    28 |       28 |        100.0
+ ┼╗abka                      |    28 |       28 |        100.0
+ Cereals                    |    28 |       28 |        100.0
+ Drinks                     |    28 |       28 |        100.0
+(20 rows)
+

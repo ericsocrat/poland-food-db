@@ -1,0 +1,57 @@
+[
+  {
+    "brand": "Bonduelle",
+    "product_name": "Mushrooms",
+    "ean": "3083681120189"
+  },
+  {
+    "brand": "Bonduelle",
+    "product_name": "Chickpeas",
+    "ean": "3083681003949"
+  },
+  {
+    "brand": "Bonduelle",
+    "product_name": "Beans",
+    "ean": "3083681040609"
+  },
+  {
+    "brand": "Bonduelle",
+    "product_name": "Corn",
+    "ean": "3083680025881"
+  },
+  {
+    "brand": "Heinz",
+    "product_name": "Tomato Soup",
+    "ean": "5000157062673"
+  },
+  {
+    "brand": "Heinz",
+    "product_name": "Ravioli",
+    "ean": "5000157068750"
+  },
+  {
+    "brand": "Heinz",
+    "product_name": "Spaghetti",
+    "ean": "5000157006899"
+  },
+  {
+    "brand": "Profi",
+    "product_name": "Soup",
+    "ean": "5901696011880"
+  },
+  {
+    "brand": "Profi",
+    "product_name": "Meat",
+    "ean": "5901696000013"
+  },
+  {
+    "brand": "Pudliszki",
+    "product_name": "Soup",
+    "ean": "5900783004057"
+  },
+  {
+    "brand": "Pudliszki",
+    "product_name": "Tomatoes",
+    "ean": "5900783002152"
+  }
+]

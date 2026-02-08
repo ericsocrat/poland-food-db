@@ -1,0 +1,32 @@
+    brand    |             product_name              
+-------------+---------------------------------------
+ Alesto      | Alesto Grissini Sticks
+ Alesto      | Alesto Mixed Nuts
+ Bakalland   | Bakalland Breadsticks
+ Bakalland   | Bakalland Dried Cranberries
+ Crownfield  | Crownfield Fruit Granola Bar
+ Crownfield  | Crownfield Plain Rice Cakes
+ Crunchips   | Crunchips Multigrain Crackers
+ Crunchips   | Crunchips Pretzel Rods
+ Crunchips   | Crunchips Spicy Cheese Puffs
+ Frito       | Frito Salted Pretzels
+ Grze┼¢kowiak | Grze┼¢kowiak Carrot Chips
+ Grze┼¢kowiak | Grze┼¢kowiak Salted Crackers
+ Kupiec      | Kupiec Beet Chips
+ Kupiec      | Kupiec Cheese-flavored Crackers
+ Lay's       | Lay's Classic Cheese Puffs
+ Lay's       | Lay's Classic Wheat Crackers
+ Lay's       | Lay's Salted Popcorn
+ Naturavena  | Naturavena Chocolate Granola Bar
+ Naturavena  | Naturavena Rice Cakes with Herbs
+ Pringles    | Pringles Butter Popcorn
+ Pringles    | Pringles Original Rye Crackers
+ Sante       | Sante Caramel Popcorn
+ Sante       | Sante Honey-Nut Granola Bar
+ Snack Day   | Snack Day Pumpkin Seeds
+ Snack Day   | Snack Day Sesame Crackers
+ Stop & Shop | Stop & Shop Reduced Sugar Granola Bar
+ Stop & Shop | Stop & Shop Sesame Rice Cakes
+ Vitanella   | Vitanella Raisins
+(28 rows)
+
