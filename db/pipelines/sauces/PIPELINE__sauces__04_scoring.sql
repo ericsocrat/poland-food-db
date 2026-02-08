@@ -225,8 +225,8 @@ where p.product_id = sc.product_id
 update scores sc set
   confidence = assign_confidence(
     sc.data_completeness_pct,
-    (SELECT src.source_type 
-     FROM sources src 
+    (SELECT src.source_type
+     FROM sources src
      WHERE src.brand LIKE '%(' || p.category || ')%'
      LIMIT 1)
   )
