@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 327 active products across 12 categories
+**Database**: 332 active products across 12 categories
 
 | Category             | Products | Brands                                                                                                                                  | Score Range |
 | -------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
@@ -51,7 +51,7 @@ supabase start
 | **Meat**             | 28       | 10 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol, Plukon)                                            | 21–56       |
 | **Sweets**           | 28       |                                                                                                                                         | 32–55       |
 | **Instant & Frozen** | 28       |                                                                                                                                         | 13–30       |
-| **Sauces**           | 27       |                                                                                                                                         | 8–41        |
+| **Sauces**           | 28       |                                                                                                                                         | 8–41        |
 | **Baby**             | 26       |                                                                                                                                         | 8–36        |
 | **Alcohol**          | 26       |                                                                                                                                         | 5–11        |
 
@@ -77,7 +77,7 @@ poland-food-db/
 │   │   ├── drinks/          # 28 beverage products (4 SQL files)
 │   │   ├── instant/          # 28 instant & frozen products (4 SQL files)
 │   │   ├── meat/            # 28 meat & deli products (4 SQL files)
-│   │   ├── sauces/          # 27 sauces & condiments products (4 SQL files)
+│   │   ├── sauces/          # 28 sauces & condiments products (4 SQL files)
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 28 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites

@@ -68,7 +68,9 @@ from (
     -- DRESSING / GARLIC SAUCE
     ('Develey',        'Develey Sos 1000 Wysp Madero',                '2'),   -- e330, e415
     ('Develey',        'Develey Sos 1000 Wysp',                       '1'),   -- e415
-    ('Develey',        'Develey Sos Czosnkowy',                       '2')    -- e330, e415
+    ('Develey',        'Develey Sos Czosnkowy',                       '2'),   -- e330, e415
+    -- SWEET & SOUR SAUCE
+    ('Pudliszki',      'Pudliszki Sos Słodko-Kwaśny',                 '3')    -- e330, e415, e202
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -140,7 +142,9 @@ from (
     -- DRESSING / GARLIC SAUCE
     ('Develey',        'Develey Sos 1000 Wysp Madero',                'C'),
     ('Develey',        'Develey Sos 1000 Wysp',                       'D'),
-    ('Develey',        'Develey Sos Czosnkowy',                       'D')
+    ('Develey',        'Develey Sos Czosnkowy',                       'D'),
+    -- SWEET & SOUR SAUCE
+    ('Pudliszki',      'Pudliszki Sos Słodko-Kwaśny',                 'D')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -192,7 +196,9 @@ from (
     -- DRESSING / GARLIC SAUCE
     ('Develey',        'Develey Sos 1000 Wysp Madero',                '4'),   -- emulsifiers + stabilisers
     ('Develey',        'Develey Sos 1000 Wysp',                       '4'),   -- emulsifiers + stabilisers
-    ('Develey',        'Develey Sos Czosnkowy',                       '4')    -- stabilisers + flavourings
+    ('Develey',        'Develey Sos Czosnkowy',                       '4'),   -- stabilisers + flavourings
+    -- SWEET & SOUR SAUCE
+    ('Pudliszki',      'Pudliszki Sos Słodko-Kwaśny',                 '4')    -- citric acid, xanthan gum, potassium sorbate
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

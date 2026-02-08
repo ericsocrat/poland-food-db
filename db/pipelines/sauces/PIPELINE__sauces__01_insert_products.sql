@@ -1,9 +1,9 @@
 -- PIPELINE (SAUCES): insert products
 -- PIPELINE__sauces__01_insert_products.sql
--- 27 Polish sauces & condiment products verified via Open Food Facts.
+-- 28 Polish sauces & condiment products verified via Open Food Facts.
 -- Categories: ketchup, mustard, mayonnaise, tomato sauce,
 --   soy/Asian sauce, hot sauce, horseradish, dressing.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 -- ═══════════════════════════════════════════════════════════════════
 -- INSERT products (idempotent via ON CONFLICT)
@@ -45,7 +45,9 @@ values
   -- DRESSING / GARLIC SAUCE (3)
   ('PL', 'Develey',        'dressing',     'Sauces', 'Develey Sos 1000 Wysp Madero',                'none', 'widespread', 'none'),
   ('PL', 'Develey',        'dressing',     'Sauces', 'Develey Sos 1000 Wysp',                       'none', 'widespread', 'none'),
-  ('PL', 'Develey',        'dressing',     'Sauces', 'Develey Sos Czosnkowy',                       'none', 'widespread', 'none')
+  ('PL', 'Develey',        'dressing',     'Sauces', 'Develey Sos Czosnkowy',                       'none', 'widespread', 'none'),
+  -- SWEET & SOUR SAUCE (1)
+  ('PL', 'Pudliszki',      'sweet_sour',   'Sauces', 'Pudliszki Sos Słodko-Kwaśny',                 'none', 'widespread', 'none')
 on conflict (country, brand, product_name) do update set
   product_type       = excluded.product_type,
   category           = excluded.category,

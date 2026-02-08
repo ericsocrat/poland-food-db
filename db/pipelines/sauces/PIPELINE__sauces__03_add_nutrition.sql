@@ -50,7 +50,9 @@ from (
     -- DRESSING / GARLIC SAUCE
     ('Develey',        'Develey Sos 1000 Wysp Madero',                '271', '25',   '1.9',  '0', '11',   '9',    '0.6', '0.7',  '1'),
     ('Develey',        'Develey Sos 1000 Wysp',                       '332', '30',   '2.3',  '0', '13',   '11',   '0',   '0.6',  '0.73'),
-    ('Develey',        'Develey Sos Czosnkowy',                       '224', '20',   '1.5',  '0', '8.9',  '5',    '0',   '0.8',  '1.6')
+    ('Develey',        'Develey Sos Czosnkowy',                       '224', '20',   '1.5',  '0', '8.9',  '5',    '0',   '0.8',  '1.6'),
+    -- SWEET & SOUR SAUCE
+    ('Pudliszki',      'Pudliszki Sos Słodko-Kwaśny',                 '85',  '0',    '0',    '0', '20',   '13',   '0',   '0.5',  '1.5')
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
