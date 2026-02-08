@@ -230,15 +230,36 @@ def _clean_text(text: str | None) -> str:
 # ---------------------------------------------------------------------------
 
 # Require that ≥50% of product_name characters are Latin/Polish/digit/punctuation.
-_LATIN_RE = re.compile(r"[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻäöüÄÖÜéèêëàâîôùûçÉ0-9\s\-'.,&/!()#+%]")
+_LATIN_RE = re.compile(
+    r"[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻäöüÄÖÜéèêëàâîôùûçÉ0-9\s\-'.,&/!()#+%]"
+)
 
 # Known Polish retailers (for market-relevance scoring)
 POLISH_RETAILERS: set[str] = {
-    "biedronka", "lidl", "żabka", "zabka", "kaufland", "auchan",
-    "carrefour", "netto", "dino", "stokrotka", "intermarché",
-    "intermarche", "makro", "selgros", "polo market", "lewiatan",
-    "groszek", "freshmarket", "piotr i paweł", "spar", "hebe",
-    "rossmann", "tesco", "e.leclerc",
+    "biedronka",
+    "lidl",
+    "żabka",
+    "zabka",
+    "kaufland",
+    "auchan",
+    "carrefour",
+    "netto",
+    "dino",
+    "stokrotka",
+    "intermarché",
+    "intermarche",
+    "makro",
+    "selgros",
+    "polo market",
+    "lewiatan",
+    "groszek",
+    "freshmarket",
+    "piotr i paweł",
+    "spar",
+    "hebe",
+    "rossmann",
+    "tesco",
+    "e.leclerc",
 }
 
 # Common brand normalisations
