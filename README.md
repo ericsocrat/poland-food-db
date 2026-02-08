@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 418 active products across 15 categories
+**Database**: 446 active products across 16 categories
 
 | Category             | Products | Brands                                                                                                                                  | Score Range |
 | -------------------- | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
@@ -73,6 +73,7 @@ poland-food-db/
 │   ├── migrations/          # Supabase schema migrations
 │   ├── pipelines/           # Category-specific data pipelines
 │   │   ├── bread/           # 28 bread products (4 SQL files)
+│   │   ├── breakfast/       # 28 breakfast & grain-based products (4 SQL files)
 │   │   ├── cereals/         # 28 cereal products (4 SQL files)
 │   │   ├── chips/           # 28 chip products (5 SQL files)
 │   │   ├── dairy/           # 28 dairy products (4 SQL files)
@@ -186,7 +187,7 @@ Every product receives an automated confidence rating based on data completeness
 | **estimated** | 70-89% complete OR single source       | Single-source data needing verification |
 | **low**       | <70% complete                          | Incomplete data, use with caution       |
 
-**Current status**: All 418 products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
+**Current status**: All 446 products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
 
 Confidence is auto-computed by the `assign_confidence()` function in all scoring pipelines.
 
@@ -253,7 +254,7 @@ EAN codes enable validation against:
 - **EAN barcodes** — 133/336 products (39.6%) have EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
 - **Scoring version**: v3.1 (2026-02-07)
-- **418 active products** (across 15 categories), 44 deprecated (kept in DB for historical tracking)
+- **446 active products** (across 16 categories), 44 deprecated (kept in DB for historical tracking)
 
 ---
 
