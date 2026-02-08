@@ -31,6 +31,12 @@ WHERE country = 'PL'
   AND product_name = 'BoboVita Delikatne jabłka z bananem';
 
 UPDATE products
+SET ean = '8591119253935'
+WHERE country = 'PL'
+  AND brand = 'BoboVita'
+  AND product_name = 'BoboVita Jabłka i banana';
+
+UPDATE products
 SET ean = '5900852041129'
 WHERE country = 'PL'
   AND brand = 'BoboVita'
@@ -251,6 +257,12 @@ SET ean = '9062300130833'
 WHERE country = 'PL'
   AND brand = 'HiPP'
   AND product_name = 'HiPP Spaghetti z pomidorami i mozzarellą';
+
+UPDATE products
+SET ean = '9062300126638'
+WHERE country = 'PL'
+  AND brand = 'HiPP'
+  AND product_name = 'HiPP Ziemniaki z buraczkami, jabłkiem i wołowiną';
 
 UPDATE products
 SET ean = '5900500031397'
