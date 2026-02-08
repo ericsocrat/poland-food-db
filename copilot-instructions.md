@@ -53,16 +53,21 @@ poland-food-db/
 ├── .env.example                     # Template for environment variables
 ├── .gitignore                       # Git exclusion rules
 ├── copilot-instructions.md          # THIS FILE
-├── SCORING_METHODOLOGY.md           # Scoring philosophy & formulas
-├── DATA_SOURCES.md                  # Data sourcing rules
-├── RESEARCH_WORKFLOW.md             # Step-by-step research & data collection process
-├── COUNTRY_EXPANSION_GUIDE.md       # Future multi-country rules
+├── docs/                            # Project documentation
+│   ├── DATA_SOURCES.md              # Data sourcing rules
+│   ├── SCORING_METHODOLOGY.md       # Scoring philosophy & formulas
+│   ├── RESEARCH_WORKFLOW.md         # Step-by-step research & data collection process
+│   ├── COUNTRY_EXPANSION_GUIDE.md   # Future multi-country rules
+│   ├── VIEWING_AND_TESTING.md       # Guide for viewing data & running tests
+│   ├── EAN_EXPANSION_PLAN.md        # EAN coverage strategy
+│   └── EAN_VALIDATION_STATUS.md     # Current EAN validation status
+├── scripts/                         # Utility scripts
+│   └── init_db_structure.py         # One-time folder scaffolding script (LEGACY)
+├── pipeline/                        # Python data pipeline (OFF API → SQL)
 ├── RUN_LOCAL.ps1                    # Run all pipelines on local DB
-├── RUN_QA.ps1                      # Standalone QA test runner (33 checks)
+├── RUN_QA.ps1                       # Standalone QA test runner (33 checks)
 ├── RUN_REMOTE.ps1                   # Run all pipelines on remote DB (with confirmation)
-├── README.md                        # Project overview
-├── VIEWING_AND_TESTING.md           # Guide for viewing data & running tests
-└── init_db_structure.py             # One-time folder scaffolding script (LEGACY)
+└── README.md                        # Project overview
 ```
 
 ---
@@ -157,7 +162,7 @@ Every SQL file you create must be safe to run 1 time or 100 times with the same 
 - All product inserts must use `country = 'PL'`.
 - All pipeline queries must filter by `country = 'PL'`.
 - Do NOT add products, stores, or regulatory references for any other country.
-- See `COUNTRY_EXPANSION_GUIDE.md` for future expansion rules.
+- See `docs/COUNTRY_EXPANSION_GUIDE.md` for future expansion rules.
 
 ---
 
@@ -168,9 +173,9 @@ Every SQL file you create must be safe to run 1 time or 100 times with the same 
 3. **All text values in numeric columns** (e.g., `calories`, `total_fat_g`) are stored as `text` — this is intentional to handle `'N/A'`, `'<0.5'`, and other label artifacts. Do not cast to numeric in INSERT statements.
 4. **Deprecation:** Products that are generic references (not real SKUs) should be flagged `is_deprecated = true` with a `deprecated_reason`.
 5. **Scoring version:** Always set `scoring_version` in the scores table (e.g., `'v3.1'`).
-6. **Source tracking:** When adding a new batch of products, insert a corresponding row into the `sources` table documenting where the data came from (label, website, Open Food Facts, etc.). See `DATA_SOURCES.md` §8.
-7. **Research process:** Follow `RESEARCH_WORKFLOW.md` for the complete data collection lifecycle — product identification, data collection, validation, normalization, implementation, verification, and documentation.
-8. **Trace values:** Label artifacts like `'<0.5'`, `'trace'` are stored as-is in text columns. The scoring pipeline applies midpoint parsing (see `RESEARCH_WORKFLOW.md` §4.3 and `SCORING_METHODOLOGY.md` §2.3).
+6. **Source tracking:** When adding a new batch of products, insert a corresponding row into the `sources` table documenting where the data came from (label, website, Open Food Facts, etc.). See `docs/DATA_SOURCES.md` §8.
+7. **Research process:** Follow `docs/RESEARCH_WORKFLOW.md` for the complete data collection lifecycle — product identification, data collection, validation, normalization, implementation, verification, and documentation.
+8. **Trace values:** Label artifacts like `'<0.5'`, `'trace'` are stored as-is in text columns. The scoring pipeline applies midpoint parsing (see `docs/RESEARCH_WORKFLOW.md` §4.3 and `docs/SCORING_METHODOLOGY.md` §2.3).
 
 ---
 
@@ -263,7 +268,7 @@ Supabase Studio is available at `http://127.0.0.1:54323` for visual inspection.
 
 - ❌ Modify existing migration files in `supabase/migrations/`
 - ❌ Invent food data or nutrition values
-- ❌ Assume Nutri-Score = health (see `SCORING_METHODOLOGY.md`)
+- ❌ Assume Nutri-Score = health (see `docs/SCORING_METHODOLOGY.md`)
 - ❌ Add products from countries other than Poland
 - ❌ Collapse categories (each category gets its own pipeline folder)
 - ❌ Remove the `text` type from numeric nutrition columns
@@ -301,7 +306,7 @@ This project is designed to scale to other EU countries. When that happens:
 - The `country` column isolates data per country.
 - Nutri-Score availability varies by country (mandatory in FR/BE/DE; voluntary elsewhere).
 - Regulation references (additives, labeling rules) differ per country.
-- See `COUNTRY_EXPANSION_GUIDE.md` for the full protocol.
+- See `docs/COUNTRY_EXPANSION_GUIDE.md` for the full protocol.
 
 Until expansion is approved, **all work is Poland-only**.
 
@@ -313,7 +318,7 @@ The extensions below are required for full project functionality. Install any mi
 
 | Extension               | ID                                      | Purpose                                                |
 | ----------------------- | --------------------------------------- | ------------------------------------------------------ |
-| **Python**              | `ms-python.python`                      | Python support (`init_db_structure.py`)                |
+| **Python**              | `ms-python.python`                      | Python support (`scripts/init_db_structure.py`)        |
 | **Pylance**             | `ms-python.vscode-pylance`              | Python type checking & IntelliSense                    |
 | **PowerShell**          | `ms-vscode.powershell`                  | PowerShell scripts (`RUN_LOCAL.ps1`, `RUN_REMOTE.ps1`) |
 | **SQLTools**            | `mtxr.sqltools`                         | SQL IntelliSense, formatting, runner                   |
@@ -352,7 +357,7 @@ The extensions below are required for full project functionality. Install any mi
 | `supabase/config.toml`                              | OS files (`.DS_Store`, `Thumbs.db`)                   |
 | `supabase/migrations/`                              | `.vscode/*` except `settings.json`, `extensions.json` |
 | `.vscode/settings.json`, `.vscode/extensions.json`  |                                                       |
-| `init_db_structure.py`                              |                                                       |
+| `scripts/init_db_structure.py`                      |                                                       |
 
 ### Commit Message Convention
 

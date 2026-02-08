@@ -23,7 +23,7 @@ supabase start
 
 ### 3. View Data
 - **Web UI**: Open http://127.0.0.1:54323 → **Table Editor** or **SQL Editor**
-- **Command-line**: See [VIEWING_AND_TESTING.md](VIEWING_AND_TESTING.md) for queries
+- **Command-line**: See [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) for queries
 
 ### 4. Run Tests
 ```powershell
@@ -97,13 +97,20 @@ poland-food-db/
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
 │   └── migrations/          # Baseline schema (3 files)
-├── extract_eans.py          # EAN barcode extraction script (generates migration SQL)
+├── docs/                    # Project documentation
+│   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
+│   ├── SCORING_METHODOLOGY.md # v3.1 algorithm documentation (421 lines)
+│   ├── RESEARCH_WORKFLOW.md # Step-by-step data collection process
+│   ├── VIEWING_AND_TESTING.md # Full viewing & testing guide
+│   ├── COUNTRY_EXPANSION_GUIDE.md # Future multi-country rules
+│   ├── EAN_EXPANSION_PLAN.md  # EAN coverage strategy
+│   └── EAN_VALIDATION_STATUS.md # Current EAN validation status
+├── scripts/                 # Utility scripts
+│   └── init_db_structure.py # One-time folder scaffolding (LEGACY)
+├── pipeline/                # Python data pipeline (OFF API → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
 ├── RUN_QA.ps1               # Standalone test runner
-├── VIEWING_AND_TESTING.md   # Full viewing & testing guide
-├── DATA_SOURCES.md          # Multi-source data hierarchy & validation workflow
-├── RESEARCH_WORKFLOW.md     # Step-by-step data collection process
-└── SCORING_METHODOLOGY.md   # v3.1 algorithm documentation (421 lines)
+└── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ```
 
 ---
@@ -173,7 +180,7 @@ unhealthiness_score =
 
 **Ceilings** (per 100g): sat fat 10g, sugars 27g, salt 3g, trans fat 2g, calories 600 kcal, additives 10
 
-Full documentation: [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)
+Full documentation: [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)
 
 ---
 
@@ -214,14 +221,14 @@ EAN codes enable validation against:
 - Primary: Open Food Facts (openfoodfacts.org) — 336/336 products
 - Secondary: None yet — all products pending cross-validation
 
-**Planned sources** (see [DATA_SOURCES.md](DATA_SOURCES.md)):
+**Planned sources** (see [DATA_SOURCES.md](docs/DATA_SOURCES.md)):
 1. Physical product labels (highest priority)
 2. Manufacturer websites
 3. Polish government databases (IŻŻ, NCEZ)
 4. Scientific literature (NOVA classification, Nutri-Score papers)
 5. Retailer websites
 
-**Research workflow**: See [RESEARCH_WORKFLOW.md](RESEARCH_WORKFLOW.md) for step-by-step data collection process.
+**Research workflow**: See [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) for step-by-step data collection process.
 
 ---
 
@@ -231,9 +238,9 @@ EAN codes enable validation against:
 | --------------------------------- | ---------------------------------------------------------------- |
 | **Supabase Studio** (Database UI) | http://127.0.0.1:54323                                           |
 | **Master View** (all data)        | `SELECT * FROM v_master ORDER BY unhealthiness_score::int DESC;` |
-| **Top 10 unhealthiest**           | See [VIEWING_AND_TESTING.md](VIEWING_AND_TESTING.md)             |
-| **Scoring reference**             | [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md)                 |
-| **All queries & tests**           | [VIEWING_AND_TESTING.md](VIEWING_AND_TESTING.md)                 |
+| **Top 10 unhealthiest**           | See [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)             |
+| **Scoring reference**             | [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)                 |
+| **All queries & tests**           | [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)                 |
 
 ---
 
@@ -262,8 +269,11 @@ EAN codes enable validation against:
 
 ## 📚 Documentation
 
-- [VIEWING_AND_TESTING.md](VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
-- [SCORING_METHODOLOGY.md](SCORING_METHODOLOGY.md) — Complete v3.1 algorithm specification (421 lines)
+- [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
+- [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md) — Complete v3.1 algorithm specification (421 lines)
+- [DATA_SOURCES.md](docs/DATA_SOURCES.md) — Multi-source data hierarchy & validation workflow
+- [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) — Step-by-step data collection process
+- [COUNTRY_EXPANSION_GUIDE.md](docs/COUNTRY_EXPANSION_GUIDE.md) — Future multi-country rules
 - `copilot-instructions.md` — AI agent context & project rules
 
 ---

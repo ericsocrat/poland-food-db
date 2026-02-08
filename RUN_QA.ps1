@@ -150,7 +150,7 @@ else {
             $validCount = $invalidMatch.Matches.Groups[1].Value
             $invalidCount = $invalidMatch.Matches.Groups[2].Value
             Write-Host "  ✗ FAILED — $invalidCount invalid EAN checksums detected (of $validCount total)" -ForegroundColor Red
-            Write-Host "    Run 'python validate_eans.py' for details or see EAN_VALIDATION_STATUS.md" -ForegroundColor DarkGray
+            Write-Host "    Run 'python validate_eans.py' for details or see docs/EAN_VALIDATION_STATUS.md" -ForegroundColor DarkGray
         }
         else {
             Write-Host "  ✗ FAILED — EAN validation errors detected" -ForegroundColor Red
