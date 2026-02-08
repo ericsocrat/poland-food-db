@@ -21,7 +21,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS products_ean_uniq
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Notes:
 -- ═══════════════════════════════════════════════════════════════════════════
--- 
+--
 -- EAN-13 format:
 --   - Store as TEXT (not numeric) to preserve leading zeros
 --   - Always 13 digits (e.g., '5900259000002')
