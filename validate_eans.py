@@ -15,7 +15,21 @@ Usage:
 
 import argparse
 import sys
+import os
 from pathlib import Path
+
+# Configure UTF-8 output on Windows
+if sys.platform == 'win32':
+    import io
+    sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+    sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+    SYMBOL_ERROR = "[X]"
+    SYMBOL_SUCCESS = "[OK]"
+    SYMBOL_WARNING = "[!]"
+else:
+    SYMBOL_ERROR = "❌"
+    SYMBOL_SUCCESS = "✅"
+    SYMBOL_WARNING = "⚠️"
 
 
 def calculate_ean13_checksum(ean_12_digits: str) -> int:
@@ -121,12 +135,12 @@ def validate_database_eans():
         if is_valid:
             valid_count += 1
             if "EAN-8" in message:
-                print(f"⚠️  {brand} - {product_name}")
+                print(f"{SYMBOL_WARNING} {brand} - {product_name}")
                 print(f"    EAN: {ean} ({message})")
                 print()
         else:
             invalid_count += 1
-            print(f"❌ {brand} - {product_name}")
+            print(f"{SYMBOL_ERROR} {brand} - {product_name}")
             print(f"    EAN: {ean}")
             print(f"    Error: {message}")
             print()
@@ -135,10 +149,10 @@ def validate_database_eans():
     print(f"Results: {valid_count} valid, {invalid_count} invalid")
     
     if invalid_count > 0:
-        print(f"\n❌ Found {invalid_count} invalid EAN codes!")
+        print(f"\n{SYMBOL_ERROR} Found {invalid_count} invalid EAN codes!")
         return False
     else:
-        print(f"\n✅ All EAN codes are valid!")
+        print(f"\n{SYMBOL_SUCCESS} All EAN codes are valid!")
         return True
 
 
