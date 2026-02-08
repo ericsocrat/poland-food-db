@@ -2,11 +2,11 @@
 
 ## Summary
 
-**Total EANs in database**: 245
-**Valid EAN-13 codes**: 245 (100%)
+**Total EANs in database**: 267
+**Valid EAN-13 codes**: 267 (100%)
 **Invalid checksums**: 0 (0%)
-**Overall EAN coverage**: 245/573 products (42.8%)
-**Session Progress**: 133 → 245 EANs (+84% growth)
+**Overall EAN coverage**: 267 active products (47.9% of 557 active)
+**Session Progress**: 133 → 267 EANs (+101% growth)
 
 ## Recent Progress
 
@@ -138,6 +138,21 @@ These are valid but should ideally be converted to EAN-13 format if 13-digit cod
 - Conservative fix: Removed all 6 invalid EANs to maintain 100% data integrity
 - Products retained without barcodes
 - Sauces category now at 0% EAN coverage (all codes were invalid)
+
+### Phase 3 Completion: Alcohol Expansion (Feb 8, 2026)
+- Researched 28 Alcohol products via Open Food Facts API
+- Found valid EANs for 22 products (78.6% success rate)
+- All 22 EANs passed GS1 Modulo-10 checksum validation (100% valid)
+- Database updated: Alcohol category now 22/28 (78.6%)
+- Success by brand: Multiple 100% (Dzik, Just 0., Karlsquell, Karmi, Łomża, Okocim, Somersby, Tyskie, Warka), Lech 56%
+- 6 products still missing: Lech Free (4 varieties), Żubr Premium, Zywiec Full
+
+### Legacy Data Quality Fix (Feb 8, 2026)
+- Discovered 44 invalid EANs in legacy dataset (Canned Goods, Breakfast, Cereals categories)
+- Pre-existing invalid codes: test/placeholder values (sequential digits), EAN-8 format in EAN-13 fields
+- Conservative fix: Removed all 44 invalid codes (28 legacy + 16 additional)
+- Products retained without barcodes
+- Global effect: Removed 44 invalid codes, maintained 267 valid EANs (100% pass rate)
 
 ### Fixed EANs (4 products)
 - BoboVita Jabłka i banana: `8591119253935` → `8591119253934`
