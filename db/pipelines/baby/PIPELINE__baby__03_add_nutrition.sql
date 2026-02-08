@@ -48,6 +48,8 @@ from (
     -- ═══════════════════════════════════════════════════════════════════════
     -- EAN 5900852068812 — BoboVita Delikatne jabłka z bananem
     ('BoboVita',        'BoboVita Delikatne jabłka z bananem',                       '52',  '0.1', '0',   '0',  '12',  '8.4', '1',   '0.4', '0'),
+    -- EAN 8591119253935 — BoboVita Jabłka i banana
+    ('BoboVita',        'BoboVita Jabłka i banana',                                 '52',  '0.1', '0',   '0',  '12',  '8.5', '1',   '0.4', '0'),
     -- EAN 7613033629303 — Gerber owoce jabłka z truskawkami i jagodami
     ('Gerber',         'Gerber owoce jabłka z truskawkami i jagodami',               '51.1','0.105','0',  '0',  '11.6','6.89','1.11','0.316','0'),
     -- EAN 22009326 — GutBio Puré de Frutas Manzana y Plátano
@@ -78,6 +80,8 @@ from (
     ('HiPP',          'HiPP Dynia z indykiem',                                      '59',  '2.5', '0.4', '0',  '5.7', '2.9', '0',   '2.9', '0.05'),
     -- EAN 9062300130833 — HiPP Spaghetti z pomidorami i mozzarellą (fiber missing on OFF → 0)
     ('HiPP',          'HiPP Spaghetti z pomidorami i mozzarellą',                   '75',  '3',   '0.7', '0',  '8.2', '3.1', '0',   '3.2', '0.1'),
+    -- EAN 9062300126638 — HiPP Ziemniaki z buraczkami, jabłkiem i wołowiną
+    ('HiPP',          'HiPP Ziemniaki z buraczkami, jabłkiem i wołowiną',           '45',  '1.2', '0.4', '0',  '5.5', '1.8', '0.9', '2.6', '0.08'),
 
     -- ═══════════════════════════════════════════════════════════════════════
     -- BABY SNACK (1)

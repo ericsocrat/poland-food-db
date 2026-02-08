@@ -1,6 +1,6 @@
 -- PIPELINE (BABY): insert products
 -- PIPELINE__baby__01_insert_products.sql
--- 26 verified products from the Polish market.
+-- 28 verified products from the Polish market.
 -- Data sourced from Open Food Facts (openfoodfacts.org) — EANs verified.
 -- Categories: baby_cereal (6), baby_puree_fruit (7), baby_puree_dinner (7),
 --             baby_snack (1), toddler_pouch (5)
@@ -41,7 +41,8 @@ values
 -- ── BoboVita ────────────────────────────────────────────────────────────
 -- EAN 5900852068812 — Delikatne jabłka z bananem (from 4 months)
 ('PL','BoboVita','baby_puree_fruit','Baby','BoboVita Delikatne jabłka z bananem','none','Biedronka;Rossmann','none'),
-
+-- EAN 8591119253935 — BoboVita Jabłka i banana (from 4 months)
+('PL','BoboVita','baby_puree_fruit','Baby','BoboVita Jabłka i banana','none','Biedronka;Rossmann','none'),
 -- ── Gerber (Nestlé) ────────────────────────────────────────────────────
 -- EAN 7613033629303 — owoce jabłka z truskawkami i jagodami (NOVA 3)
 ('PL','Gerber','baby_puree_fruit','Baby','Gerber owoce jabłka z truskawkami i jagodami','none','Biedronka;Rossmann','none'),
@@ -89,6 +90,8 @@ values
 ('PL','HiPP','baby_puree_dinner','Baby','HiPP Dynia z indykiem','none','Rossmann;Apteka','none'),
 -- EAN 9062300130833 — Spaghetti z pomidorami i mozzarellą (spaghetti with tomato, NOVA 3)
 ('PL','HiPP','baby_puree_dinner','Baby','HiPP Spaghetti z pomidorami i mozzarellą','none','Rossmann;Apteka','none'),
+-- EAN 9062300126638 — Ziemniaki z buraczkami, jabłkiem i wołowiną (potatoes with beef, NOVA 1)
+('PL','HiPP','baby_puree_dinner','Baby','HiPP Ziemniaki z buraczkami, jabłkiem i wołowiną','none','Rossmann;Apteka','none'),
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- BABY SNACK (1 product)
@@ -120,4 +123,5 @@ do update set
   category            = excluded.category,
   prep_method         = excluded.prep_method,
   store_availability  = excluded.store_availability,
-  controversies       = excluded.controversies;
+  controversies       = excluded.controversies
+where products.ean not in ('8591119253935', '9062300126638');

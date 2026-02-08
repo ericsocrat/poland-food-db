@@ -43,6 +43,7 @@ from (
     ('Gerber',         'Gerber Pełnia Zbóż Owsianka 5 Zbóż',                        '0'),
     -- BABY PUREE — FRUIT
     ('BoboVita',        'BoboVita Delikatne jabłka z bananem',                       '0'),
+    ('BoboVita',        'BoboVita Jabłka i banana',                                 '0'),
     ('Gerber',         'Gerber owoce jabłka z truskawkami i jagodami',               '0'),
     ('GutBio',         'GutBio Puré de Frutas Manzana y Plátano',                   '0'),
     ('Tymbark',        'Tymbark Mus gruszka jabłko',                                '0'),
@@ -57,6 +58,7 @@ from (
     ('BoboVita',       'BoboVita Pomidorowa z kurczakiem i ryżem',                   '0'),
     ('HiPP',          'HiPP Dynia z indykiem',                                      '0'),
     ('HiPP',          'HiPP Spaghetti z pomidorami i mozzarellą',                   '0'),
+    ('HiPP',          'HiPP Ziemniaki z buraczkami, jabłkiem i wołowiną',           '0'),
     -- BABY SNACK
     ('Gerber',         'Gerber organic Krakersy z pomidorem po 12 miesiącu',         '0'),
     -- TODDLER POUCH
@@ -133,6 +135,7 @@ from (
     ('Gerber',         'Gerber Pełnia Zbóż Owsianka 5 Zbóż',                        '3'),   -- no NOVA on OFF → estimated 3
     -- BABY PUREE — FRUIT
     ('BoboVita',        'BoboVita Delikatne jabłka z bananem',                       '1'),   -- no NOVA → estimated 1 (pure fruit)
+    ('BoboVita',        'BoboVita Jabłka i banana',                                 '1'),   -- OFF NOVA 1
     ('Gerber',         'Gerber owoce jabłka z truskawkami i jagodami',               '3'),   -- OFF NOVA 3
     ('GutBio',         'GutBio Puré de Frutas Manzana y Plátano',                   '1'),   -- no NOVA → estimated 1 (pure fruit)
     ('Tymbark',        'Tymbark Mus gruszka jabłko',                                '1'),   -- OFF NOVA 1
@@ -147,6 +150,7 @@ from (
     ('BoboVita',       'BoboVita Pomidorowa z kurczakiem i ryżem',                   '3'),   -- OFF NOVA 3
     ('HiPP',          'HiPP Dynia z indykiem',                                      '1'),   -- OFF NOVA 1
     ('HiPP',          'HiPP Spaghetti z pomidorami i mozzarellą',                   '3'),   -- OFF NOVA 3
+    ('HiPP',          'HiPP Ziemniaki z buraczkami, jabłkiem i wołowiną',           '1'),   -- OFF NOVA 1
     -- BABY SNACK
     ('Gerber',         'Gerber organic Krakersy z pomidorem po 12 miesiącu',         '3'),   -- OFF NOVA 3
     -- TODDLER POUCH
