@@ -60,7 +60,9 @@ from (
     ('Krakus',       'Krakus Mielonka Tyrolska',           '5'),   -- e250,e301,e407,e451,e452
     ('Sokołów',      'Sokołów Mielonka Poznańska',         '5'),   -- e250,e301,e407,e451,e452
     ('Krakus',       'Krakus Polędwica Sopocka',           '2'),   -- e250,e301
-    ('Indykpol',     'Indykpol Polędwica z Indyka',        '2')    -- e250,e301
+    ('Indykpol',     'Indykpol Polędwica z Indyka',        '2'),   -- e250,e301
+    ('Morliny',      'Morliny Boczek Drobiowy',            '2'),   -- e250,e301
+    ('Plukon',       'Plukon Filet z Kurczaka',            '1')    -- e250
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -123,7 +125,9 @@ from (
     ('Krakus',       'Krakus Mielonka Tyrolska',           'D'),
     ('Sokołów',      'Sokołów Mielonka Poznańska',         'D'),
     ('Krakus',       'Krakus Polędwica Sopocka',           'C'),
-    ('Indykpol',     'Indykpol Polędwica z Indyka',        'B')
+    ('Indykpol',     'Indykpol Polędwica z Indyka',        'B'),
+    ('Morliny',      'Morliny Boczek Drobiowy',            'C'),
+    ('Plukon',       'Plukon Filet z Kurczaka',            'A')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -168,7 +172,9 @@ from (
     ('Krakus',       'Krakus Mielonka Tyrolska',           '4'),
     ('Sokołów',      'Sokołów Mielonka Poznańska',         '4'),
     ('Krakus',       'Krakus Polędwica Sopocka',           '4'),
-    ('Indykpol',     'Indykpol Polędwica z Indyka',        '4')
+    ('Indykpol',     'Indykpol Polędwica z Indyka',        '4'),
+    ('Morliny',      'Morliny Boczek Drobiowy',            '4'),
+    ('Plukon',       'Plukon Filet z Kurczaka',            '3')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

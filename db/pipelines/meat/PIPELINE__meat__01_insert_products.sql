@@ -1,9 +1,9 @@
 -- PIPELINE (MEAT): insert products
 -- PIPELINE__meat__01_insert_products.sql
--- 26 Polish wędliny (meat & deli) products verified via Open Food Facts.
+-- 28 Polish wędliny (meat & deli) products verified via Open Food Facts.
 -- Categories: kabanosy, parówki, szynka, kiełbasa, boczek, pasztet,
---   salami, mielonka, polędwica.
--- Last updated: 2026-02-07
+--   salami, mielonka, polędwica, boczek drobiowy.
+-- Last updated: 2026-02-08
 
 -- ═══════════════════════════════════════════════════════════════════
 -- INSERT products (idempotent via ON CONFLICT)
@@ -46,7 +46,11 @@ values
   ('PL', 'Sokołów',      'mielonka',     'Meat', 'Sokołów Mielonka Poznańska',         'none', 'widespread', 'moderate'),
   -- POLĘDWICA / LOIN (2)
   ('PL', 'Krakus',       'polędwica',    'Meat', 'Krakus Polędwica Sopocka',           'none', 'widespread', 'moderate'),
-  ('PL', 'Indykpol',     'polędwica',    'Meat', 'Indykpol Polędwica z Indyka',        'none', 'widespread', 'none')
+  ('PL', 'Indykpol',     'polędwica',    'Meat', 'Indykpol Polędwica z Indyka',        'none', 'widespread', 'none'),
+  -- BOCZEK DROBIOWY / POULTRY BACON (1)
+  ('PL', 'Morliny',      'boczek drobiowy', 'Meat', 'Morliny Boczek Drobiowy',         'none', 'widespread', 'moderate'),
+  -- FILET MIĘSA / POULTRY FILLET (1)
+  ('PL', 'Plukon',       'filet mięsa',  'Meat', 'Plukon Filet z Kurczaka',            'none', 'widespread', 'none')
 on conflict (country, brand, product_name) do update set
   product_type       = excluded.product_type,
   category           = excluded.category,

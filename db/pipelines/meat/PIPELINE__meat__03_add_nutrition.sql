@@ -51,7 +51,11 @@ from (
     ('Sokołów',      'Sokołów Mielonka Poznańska',         '210','16.0', '6.0', '0',   '2.5','0.8', '0','14.0', '2.1'),
     -- POLĘDWICA / LOIN
     ('Krakus',       'Krakus Polędwica Sopocka',           '150', '5.5', '2.0', '0',   '1.0','0.5', '0','24.0', '2.2'),
-    ('Indykpol',     'Indykpol Polędwica z Indyka',        '100', '1.5', '0.5', '0',   '1.0','0.5', '0','21.0', '2.0')
+    ('Indykpol',     'Indykpol Polędwica z Indyka',        '100', '1.5', '0.5', '0',   '1.0','0.5', '0','21.0', '2.0'),
+    -- BOCZEK DROBIOWY / POULTRY BACON
+    ('Morliny',      'Morliny Boczek Drobiowy',            '165', '8.0', '2.5', '0',   '1.0','0.5', '0','22.0', '1.8'),
+    -- FILET MIĘSA / POULTRY FILLET
+    ('Plukon',       'Plukon Filet z Kurczaka',            '115', '2.0', '0.6', '0',   '0.0','0.0', '0','24.0', '1.2')
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'

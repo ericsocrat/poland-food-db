@@ -48,7 +48,7 @@ supabase start
 | **Drinks**           | 28       | 16 (Coca-Cola, Pepsi, Fanta, Sprite, Tymbark, Hortex, Tiger, Red Bull, Monster, 4Move, Cappy, Dawtona, Mlekovita, Łaciate, Kubś, Costa) | 7–22        |
 | **Dairy**            | 28       | 13 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio, Sierpc, Président, Philadelphia, Müller, Mlekpol)              | 9–48        |
 | **Bread**            | 28       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)                                                       | 15–30       |
-| **Meat**             | 26       | 8 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol)                                                      | 21–56       |
+| **Meat**             | 28       | 10 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol, Plukon)                                            | 21–56       |
 | **Sweets**           | 28       |                                                                                                                                         | 32–55       |
 | **Instant & Frozen** | 26       |                                                                                                                                         | 13–30       |
 | **Sauces**           | 27       |                                                                                                                                         | 8–41        |
@@ -76,7 +76,7 @@ poland-food-db/
 │   │   ├── dairy/           # 28 dairy products (4 SQL files)
 │   │   ├── drinks/          # 28 beverage products (4 SQL files)
 │   │   ├── instant/          # 26 instant & frozen products (4 SQL files)
-│   │   ├── meat/            # 26 meat & deli products (4 SQL files)
+│   │   ├── meat/            # 28 meat & deli products (4 SQL files)
 │   │   ├── sauces/          # 27 sauces & condiments products (4 SQL files)
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 28 convenience store products (5 SQL files)
