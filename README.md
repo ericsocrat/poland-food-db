@@ -238,9 +238,9 @@ EAN codes enable validation against:
 | --------------------------------- | ---------------------------------------------------------------- |
 | **Supabase Studio** (Database UI) | http://127.0.0.1:54323                                           |
 | **Master View** (all data)        | `SELECT * FROM v_master ORDER BY unhealthiness_score::int DESC;` |
-| **Top 10 unhealthiest**           | See [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)             |
-| **Scoring reference**             | [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)                 |
-| **All queries & tests**           | [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)                 |
+| **Top 10 unhealthiest**           | See [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)        |
+| **Scoring reference**             | [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)            |
+| **All queries & tests**           | [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)            |
 
 ---
 

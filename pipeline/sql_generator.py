@@ -21,6 +21,7 @@ logger = logging.getLogger(__name__)
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _sql_text(value: str | None) -> str:
     """Wrap a value in single quotes, escaping internal apostrophes.
 
@@ -56,6 +57,7 @@ def _slug(category: str) -> str:
 # ---------------------------------------------------------------------------
 # Individual file generators
 # ---------------------------------------------------------------------------
+
 
 def _gen_01_insert_products(category: str, products: list[dict], today: str) -> str:
     """Generate file 01 — insert_products.sql."""
@@ -319,6 +321,7 @@ where p.product_id = sc.product_id
 # Public entry point
 # ---------------------------------------------------------------------------
 
+
 def generate_pipeline(
     category: str,
     products: list[dict],
@@ -350,7 +353,9 @@ def generate_pipeline(
 
     # 01 — insert products
     path01 = out / f"PIPELINE__{slug}__01_insert_products.sql"
-    path01.write_text(_gen_01_insert_products(category, products, today), encoding="utf-8")
+    path01.write_text(
+        _gen_01_insert_products(category, products, today), encoding="utf-8"
+    )
     files.append(path01)
 
     # 02 — add servings

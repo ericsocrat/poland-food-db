@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 # Helpers
 # ---------------------------------------------------------------------------
 
+
 def _slug(category: str) -> str:
     """Convert a category name to a filesystem-safe slug."""
     return (
@@ -53,6 +54,7 @@ def _dedup(products: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 # Main pipeline
 # ---------------------------------------------------------------------------
+
 
 def run_pipeline(
     category: str,
@@ -159,9 +161,13 @@ def run_pipeline(
     # ------------------------------------------------------------------
     if dry_run:
         print("[DRY RUN] Would generate SQL files in:", output_dir)
-        print(f"  PIPELINE__{_slug(category)}__01_insert_products.sql ({len(unique)} products)")
+        print(
+            f"  PIPELINE__{_slug(category)}__01_insert_products.sql ({len(unique)} products)"
+        )
         print(f"  PIPELINE__{_slug(category)}__02_add_servings.sql")
-        print(f"  PIPELINE__{_slug(category)}__03_add_nutrition.sql ({len(unique)} nutrition rows)")
+        print(
+            f"  PIPELINE__{_slug(category)}__03_add_nutrition.sql ({len(unique)} nutrition rows)"
+        )
         print(f"  PIPELINE__{_slug(category)}__04_scoring.sql")
         return
 
@@ -184,6 +190,7 @@ def run_pipeline(
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
+
 
 def main() -> None:
     """Parse arguments and run the pipeline."""

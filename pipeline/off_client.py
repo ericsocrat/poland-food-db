@@ -38,6 +38,7 @@ def _session() -> requests.Session:
 # Public API
 # ---------------------------------------------------------------------------
 
+
 def search_polish_products(
     category: str,
     max_results: int = 50,
@@ -91,7 +92,9 @@ def search_polish_products(
                 resp.raise_for_status()
                 data = resp.json()
             except requests.RequestException as exc:
-                logger.warning("OFF search failed for term=%r page=%d: %s", term, page, exc)
+                logger.warning(
+                    "OFF search failed for term=%r page=%d: %s", term, page, exc
+                )
                 break
 
             products = data.get("products", [])
@@ -151,6 +154,7 @@ def fetch_product_by_ean(ean: str) -> dict | None:
 # ---------------------------------------------------------------------------
 # Extraction / normalisation
 # ---------------------------------------------------------------------------
+
 
 def _round1(value: Any, default: str = "0") -> str:
     """Round a numeric value to 1 decimal place and return as string."""

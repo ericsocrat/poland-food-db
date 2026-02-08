@@ -138,7 +138,7 @@ else {
     # Run validator and capture output
     $validatorOutput = & python $validatorScript 2>&1
     $validatorExitCode = $LASTEXITCODE
-    
+
     if ($validatorExitCode -eq 0) {
         Write-Host "  ✓ PASS — All EAN codes have valid checksums" -ForegroundColor Green
         $test4Pass = $true

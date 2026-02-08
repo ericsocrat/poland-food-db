@@ -25,12 +25,24 @@ CATEGORY_RANGES: dict[str, dict[str, tuple[float, float]]] = {
     "Canned Goods": {"calories": (15, 300), "total_fat_g": (0, 25), "salt_g": (0, 3)},
     "Condiments": {"calories": (10, 700), "total_fat_g": (0, 80), "salt_g": (0.5, 10)},
     "Snacks": {"calories": (300, 600), "total_fat_g": (5, 40), "salt_g": (0.3, 3.0)},
-    "Seafood & Fish": {"calories": (50, 300), "total_fat_g": (0.5, 25), "protein_g": (10, 30)},
+    "Seafood & Fish": {
+        "calories": (50, 300),
+        "total_fat_g": (0.5, 25),
+        "protein_g": (10, 30),
+    },
     "Baby": {"calories": (30, 200), "total_fat_g": (0, 10), "salt_g": (0, 0.5)},
     "Alcohol": {"calories": (20, 300), "total_fat_g": (0, 5), "sugars_g": (0, 30)},
     "Sauces": {"calories": (20, 400), "total_fat_g": (0, 40), "salt_g": (0.5, 8)},
-    "Frozen & Prepared": {"calories": (80, 350), "total_fat_g": (2, 20), "salt_g": (0.3, 3)},
-    "Instant & Frozen": {"calories": (50, 400), "total_fat_g": (1, 25), "salt_g": (0.5, 5)},
+    "Frozen & Prepared": {
+        "calories": (80, 350),
+        "total_fat_g": (2, 20),
+        "salt_g": (0.3, 3),
+    },
+    "Instant & Frozen": {
+        "calories": (50, 400),
+        "total_fat_g": (1, 25),
+        "salt_g": (0.5, 5),
+    },
     "Breakfast & Grain-Based": {
         "calories": (200, 450),
         "total_fat_g": (1, 20),
@@ -52,6 +64,7 @@ CATEGORY_RANGES: dict[str, dict[str, tuple[float, float]]] = {
 # ---------------------------------------------------------------------------
 # EAN-13 checksum
 # ---------------------------------------------------------------------------
+
 
 def validate_ean_checksum(ean: str) -> bool:
     """Validate an EAN-13 barcode using the Modulo-10 algorithm.
@@ -78,6 +91,7 @@ def validate_ean_checksum(ean: str) -> bool:
 # ---------------------------------------------------------------------------
 # Nutrition range checks
 # ---------------------------------------------------------------------------
+
 
 def check_nutrition_ranges(product: dict, category: str) -> list[str]:
     """Check each nutrition field against expected ranges for *category*.
@@ -117,6 +131,7 @@ def check_nutrition_ranges(product: dict, category: str) -> list[str]:
 # ---------------------------------------------------------------------------
 # Main validation entry point
 # ---------------------------------------------------------------------------
+
 
 def validate_product(product: dict, category: str) -> dict:
     """Validate a normalised product and annotate it with confidence + warnings.
