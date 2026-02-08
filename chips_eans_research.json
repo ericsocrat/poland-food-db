@@ -1,0 +1,114 @@
+[
+  {
+    "brand": "Cheetos",
+    "product_name": "Cheetos Puffs",
+    "ean": "0028400071659",
+    "off_brand": "Simply",
+    "country": "en:United States"
+  },
+  {
+    "brand": "Chio",
+    "product_name": "Chio Chips Paprika",
+    "ean": "4001242105931",
+    "off_brand": "Chio, Intersnack Deutschland",
+    "country": "Deutschland"
+  },
+  {
+    "brand": "Chio",
+    "product_name": "Chio Chips Salted",
+    "ean": "4001242105924",
+    "off_brand": "Chio",
+    "country": "Deutschland"
+  },
+  {
+    "brand": "Crunchips",
+    "product_name": "Crunchips X-Cut Paprika",
+    "ean": "5905187101074",
+    "off_brand": "Lorenz",
+    "country": "France, en:morocco"
+  },
+  {
+    "brand": "Crunchips",
+    "product_name": "Crunchips X-Cut Salted",
+    "ean": "4018077773419",
+    "off_brand": "Crunchips,Lorenz",
+    "country": "Hrvatska"
+  },
+  {
+    "brand": "Doritos",
+    "product_name": "Doritos Nacho Cheese",
+    "ean": "8710398161987",
+    "off_brand": "Doritos",
+    "country": "Belgium"
+  },
+  {
+    "brand": "Doritos",
+    "product_name": "Doritos Sweet Chilli",
+    "ean": "3168930173199",
+    "off_brand": "Doritos",
+    "country": "en:France"
+  },
+  {
+    "brand": "Lay's",
+    "product_name": "Lay's Classic Salted",
+    "ean": "8901491101837",
+    "off_brand": "Lay's",
+    "country": "Inde"
+  },
+  {
+    "brand": "Lay's",
+    "product_name": "Lay's Fromage",
+    "ean": "3168930000976",
+    "off_brand": "LAYS,Lay's",
+    "country": "en:canada, en:france, en:reunion"
+  },
+  {
+    "brand": "Lay's",
+    "product_name": "Lay's Max Karbowane Papryka",
+    "ean": "5900259133281",
+    "off_brand": "Lay's",
+    "country": "Polska"
+  },
+  {
+    "brand": "Lay's",
+    "product_name": "Lay's Oven Baked (paprika)",
+    "ean": "8710398160881",
+    "off_brand": "Lay's",
+    "country": "Belgium,France,Netherlands"
+  },
+  {
+    "brand": "Lay's",
+    "product_name": "Lay's Oven Baked Grilled Paprika",
+    "ean": "5900259133366",
+    "off_brand": "Lay’s",
+    "country": "en:Poland"
+  },
+  {
+    "brand": "Lay's",
+    "product_name": "Lay's Solone",
+    "ean": "5900259127600",
+    "off_brand": "Lay's,PepsiCo",
+    "country": "Estonia,Poland,United Kingdom,Norway"
+  },
+  {
+    "brand": "Lay's",
+    "product_name": "Lay's Zielona Cebulka",
+    "ean": "5900259099235",
+    "off_brand": "PepsiCo Inc.",
+    "country": "Polska"
+  },
+  {
+    "brand": "Snack Day (Lidl)",
+    "product_name": "Snack Day Paprika",
+    "ean": "20173258",
+    "off_brand": "Chips, Snack Day, Lidl",
+    "country": "en:ro"
+  },
+  {
+    "brand": "Snack Day (Lidl)",
+    "product_name": "Snack Day Salted",
+    "ean": "20940690",
+    "off_brand": "Snack Day,Lidl",
+    "country": "Hrvatska"
+  }
+]
