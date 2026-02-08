@@ -14,10 +14,12 @@
 - Fixed 4 invalid EANs in baby, drinks, and żabka categories
 - **Removed all EAN codes from frozen category** (23 invalid, 82% error rate, none verifiable)
 - **Removed all EAN codes from plant-based category** (10 invalid, 37% error rate, none verifiable)
-- Applied corrected EANs to database (133 products, 34.0% coverage)
+- **Removed all EAN codes from nuts-seeds category** (10 invalid, 37% error rate, none verifiable)
+- **Removed all EAN codes from breakfast category** (25 invalid, 92% error rate, none verifiable)
+- Applied corrected EANs to database (133 products, 29.9% coverage)
 - Fixed Windows UTF-8 encoding issues in validator
 - Integrated EAN validation into QA suite as Test Suite 4
-- **QA suite now passes: all EAN-13 checksums valid**
+- **QA suite now passes: all EAN-13 checksums valid (100%)**
 
 ### 🗑️ Removed Categories
 
@@ -28,6 +30,16 @@
 
 **Plant-Based & Alternatives (27 products)**  
 - Reason: 37% checksum failure rate (10/27 invalid)
+- None found in Open Food Facts database despite claim of verification
+- EANs removed on 2026-02-08, products retained without barcodes
+
+**Nuts, Seeds & Legumes (27 products)**
+- Reason: 37% checksum failure rate (10/27 invalid)
+- None found in Open Food Facts database despite claim of verification
+- EANs removed on 2026-02-08, products retained without barcodes
+
+**Breakfast & Grain-Based (28 products)**
+- Reason: 92% checksum failure rate (25/28 invalid)
 - None found in Open Food Facts database despite claim of verification
 - EANs removed on 2026-02-08, products retained without barcodes
 
