@@ -1,8 +1,8 @@
 -- PIPELINE (DRINKS): insert products
 -- PIPELINE__drinks__01_insert_products.sql
--- 16 verified beverages from the Polish market.
+-- 28 verified beverages from the Polish market.
 -- Data sourced from Open Food Facts (openfoodfacts.org) — EANs verified.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
 values
@@ -52,7 +52,55 @@ values
 
 -- ── Mlekovita ───────────────────────────────────────────────────────────
 -- EAN 5900512300320 — Mlekovita Mleko 3.2% (full-fat UHT milk, NOVA 1)
-('PL','Mlekovita','Grocery','Drinks','Mlekovita Mleko 3.2%','none','Biedronka;Lidl;Żabka','none')
+('PL','Mlekovita','Grocery','Drinks','Mlekovita Mleko 3.2%','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Red Bull ────────────────────────────────────────────────────────────
+-- EAN 9002490100070 — Red Bull Energy Drink (energy drink with taurine, NOVA 4)
+('PL','Red Bull','Grocery','Drinks','Red Bull Energy Drink','none','Biedronka;Lidl;Żabka','minor'),
+
+-- ── Monster ─────────────────────────────────────────────────────────────
+-- EAN 5060517883683 — Monster Energy Mango Loco (fruit energy drink with taurine, NOVA 4)
+('PL','Monster','Grocery','Drinks','Monster Energy Mango Loco','none','Biedronka;Lidl;Żabka','minor'),
+
+-- ── Sprite (Coca-Cola Company) ──────────────────────────────────────────
+-- EAN 5449000004840 — Sprite (lemon-lime soda, NOVA 4)
+('PL','Sprite','Grocery','Drinks','Sprite','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── 7UP (PepsiCo) ──────────────────────────────────────────────────────
+-- EAN 5900497017770 — 7UP (lemon-lime soda, NOVA 4)
+('PL','7UP','Grocery','Drinks','7UP','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Lipton ──────────────────────────────────────────────────────────────
+-- EAN 8722700406723 — Lipton Ice Tea Lemon (iced tea, NOVA 4)
+('PL','Lipton','Grocery','Drinks','Lipton Ice Tea Lemon','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Fuze Tea (Coca-Cola Company) ────────────────────────────────────────
+-- EAN 5449000237620 — Fuze Tea Peach Hibiscus (iced tea with hibiscus, NOVA 4)
+('PL','Fuze Tea','Grocery','Drinks','Fuze Tea Peach Hibiscus','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Kubuś (Maspex) ─────────────────────────────────────────────────────
+-- EAN 5900334005052 — Kubuś Play Marchew-Jabłko (carrot-apple drink, NOVA 3)
+('PL','Kubuś','Grocery','Drinks','Kubuś Play Marchew-Jabłko','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Mountain Dew (PepsiCo) ──────────────────────────────────────────────
+-- EAN 4060800207272 — Mountain Dew (citrus soda with caffeine, NOVA 4)
+('PL','Mountain Dew','Grocery','Drinks','Mountain Dew','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Żywiec Zdrój ───────────────────────────────────────────────────────
+-- EAN 5900134001359 — Żywiec Zdrój Smako-łyk Truskawka (strawberry flavored water, NOVA 4)
+('PL','Żywiec Zdrój','Grocery','Drinks','Żywiec Zdrój Smako-łyk Truskawka','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Łaciate (Mlekpol) ──────────────────────────────────────────────────
+-- EAN 5900820000070 — Łaciate Mleko 2% (semi-skimmed UHT milk, NOVA 1)
+('PL','Łaciate','Grocery','Drinks','Łaciate Mleko 2%','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Mirinda (PepsiCo) ──────────────────────────────────────────────────
+-- EAN 4060800102201 — Mirinda Orange (orange soda, NOVA 4)
+('PL','Mirinda','Grocery','Drinks','Mirinda Orange','none','Biedronka;Lidl;Żabka','none'),
+
+-- ── Costa Coffee (Coca-Cola Company) ────────────────────────────────────
+-- EAN 5449000298928 — Costa Coffee Latte (ready-to-drink latte, NOVA 4)
+('PL','Costa Coffee','Grocery','Drinks','Costa Coffee Latte','none','Biedronka;Żabka','none')
 
 on conflict (country, brand, product_name)
 do update set
@@ -76,5 +124,12 @@ where country='PL' and category='Drinks'
     'Tiger Energy Drink','Tiger Energy Drink Classic',
     '4Move Activevitamin',
     'Dawtona Sok Pomidorowy',
-    'Mlekovita Mleko 3.2%'
+    'Mlekovita Mleko 3.2%',
+    'Red Bull Energy Drink','Monster Energy Mango Loco',
+    'Sprite','7UP',
+    'Lipton Ice Tea Lemon','Fuze Tea Peach Hibiscus',
+    'Kubuś Play Marchew-Jabłko','Mountain Dew',
+    'Żywiec Zdrój Smako-łyk Truskawka',
+    'Łaciate Mleko 2%',
+    'Mirinda Orange','Costa Coffee Latte'
   );

@@ -11,15 +11,15 @@
 
 When collecting nutrition and product data for a Polish product, use sources in this strict order:
 
-| Priority | Source                                    | Type        | Confidence  | Notes                                                 |
-| -------- | ----------------------------------------- | ----------- | ----------- | ----------------------------------------------------- |
-| **1**    | Physical product label (PL market)        | Primary     | `verified`  | Gold standard — EU Reg. 1169/2011 mandates this       |
-| **2**    | Manufacturer's official website (PL)      | Primary     | `verified`  | Must match PL market variant, not US/UK version       |
-| **3**    | Polish governmental nutrition database    | Reference   | `verified`  | IŻŻ / NCEZ — cross-validation for generic categories  |
-| **4**    | Open Food Facts (PL barcode)              | Secondary   | `verified`  | Only if entry has been community-verified             |
-| **5**    | Polish retailer website                   | Secondary   | `estimated` | Biedronka.pl, Lidl.pl product pages                   |
-| **6**    | Scientific literature / EFSA opinions     | Reference   | `verified`  | For methodology, thresholds, and category benchmarks  |
-| **7**    | Category-typical averages                 | Tertiary    | `estimated` | Used only when no label data is available             |
+| Priority | Source                                 | Type      | Confidence  | Notes                                                |
+| -------- | -------------------------------------- | --------- | ----------- | ---------------------------------------------------- |
+| **1**    | Physical product label (PL market)     | Primary   | `verified`  | Gold standard — EU Reg. 1169/2011 mandates this      |
+| **2**    | Manufacturer's official website (PL)   | Primary   | `verified`  | Must match PL market variant, not US/UK version      |
+| **3**    | Polish governmental nutrition database | Reference | `verified`  | IŻŻ / NCEZ — cross-validation for generic categories |
+| **4**    | Open Food Facts (PL barcode)           | Secondary | `verified`  | Only if entry has been community-verified            |
+| **5**    | Polish retailer website                | Secondary | `estimated` | Biedronka.pl, Lidl.pl product pages                  |
+| **6**    | Scientific literature / EFSA opinions  | Reference | `verified`  | For methodology, thresholds, and category benchmarks |
+| **7**    | Category-typical averages              | Tertiary  | `estimated` | Used only when no label data is available            |
 
 ### Rules
 
@@ -117,41 +117,41 @@ Manufacturer websites are **Priority 2** sources. They often publish full per-10
 
 ### 4.1 Major Manufacturers by Category
 
-| Manufacturer | PL Website | Categories covered | Notes |
-| --- | --- | --- | --- |
-| PepsiCo Polska | https://www.pepsico.pl | Chips (Lay's, Doritos, Cheetos), Drinks (Pepsi, 7UP, Lipton) | Full nutrition tables on product pages |
-| Lorenz Snack-World | https://www.lorenz-snacks.pl | Chips (Crunchips, NicNac's) | Polish-specific product pages |
-| Intersnack (Funny Frisch) | https://www.intersnack.pl | Chips (Chio) | Limited PL web presence |
-| Maspex | https://www.maspex.com | Drinks (Tymbark, Kubuś), Cereals (Lubella), Instant | Group site with brand sub-pages |
-| Mondelēz International | https://www.mondelezinternational.com | Sweets (Milka, Oreo, Prince Polo, Alpen Gold) | Use PL product finder |
-| Nestlé Polska | https://www.nestle.pl | Cereals (Nestlé, Cheerios), Dairy, Sweets (KitKat) | Full PL product catalogue |
-| Danone Polska | https://www.danone.pl | Dairy (Danio, Activia, Actimel), Baby (Bebiko) | Nutrition tabs on product pages |
-| Ferrero | https://www.ferrero.pl | Sweets (Kinder, Nutella, Ferrero Rocher) | PL-specific pages |
-| Mars Polska | https://www.mars.com/poland-pl | Sweets (Snickers, M&M's, Twix) | Use PL country selector |
-| Sokołów | https://www.sokolow.pl | Meat (wędliny, kabanosy) | Full nutrition per product |
-| Morliny | https://www.morliny.pl | Meat (parówki, kiełbasy) | Detailed product pages |
-| Tarczyński | https://www.tarczynski.pl | Meat (kabanosy) | Product-level nutrition |
-| Pudliszki | https://www.pudliszki.pl | Sauces (ketchup, passata) | Full nutrition tables |
-| Łowicz | https://www.lowicz.com.pl | Sauces (dżemy, ketchup) | Product pages with nutrition |
-| Develey | https://www.develey.pl | Sauces (musztarda, ketchup) | PL product range |
-| Mlekpol | https://www.mlekpol.com.pl | Dairy (Łaciate) | Full nutrition info |
-| Mlekovita | https://www.mlekovita.com.pl | Dairy | Product-level data |
-| Żywiec Zdrój / Danone Waters | https://www.zywiec-zdroj.pl | Drinks (water) | Mineral composition |
-| Coca-Cola HBC Polska | https://www.cocacolaep.com/pl | Drinks (Coca-Cola, Fanta, Sprite) | PL product pages |
-| Red Bull Polska | https://www.redbull.com/pl-pl | Drinks (energy) | Nutrition on product page |
-| Kompania Piwowarska | https://www.kp.pl | Alcohol (Tyskie, Żubr, Lech) | Limited nutrition data |
+| Manufacturer                 | PL Website                            | Categories covered                                           | Notes                                  |
+| ---------------------------- | ------------------------------------- | ------------------------------------------------------------ | -------------------------------------- |
+| PepsiCo Polska               | https://www.pepsico.pl                | Chips (Lay's, Doritos, Cheetos), Drinks (Pepsi, 7UP, Lipton) | Full nutrition tables on product pages |
+| Lorenz Snack-World           | https://www.lorenz-snacks.pl          | Chips (Crunchips, NicNac's)                                  | Polish-specific product pages          |
+| Intersnack (Funny Frisch)    | https://www.intersnack.pl             | Chips (Chio)                                                 | Limited PL web presence                |
+| Maspex                       | https://www.maspex.com                | Drinks (Tymbark, Kubuś), Cereals (Lubella), Instant          | Group site with brand sub-pages        |
+| Mondelēz International       | https://www.mondelezinternational.com | Sweets (Milka, Oreo, Prince Polo, Alpen Gold)                | Use PL product finder                  |
+| Nestlé Polska                | https://www.nestle.pl                 | Cereals (Nestlé, Cheerios), Dairy, Sweets (KitKat)           | Full PL product catalogue              |
+| Danone Polska                | https://www.danone.pl                 | Dairy (Danio, Activia, Actimel), Baby (Bebiko)               | Nutrition tabs on product pages        |
+| Ferrero                      | https://www.ferrero.pl                | Sweets (Kinder, Nutella, Ferrero Rocher)                     | PL-specific pages                      |
+| Mars Polska                  | https://www.mars.com/poland-pl        | Sweets (Snickers, M&M's, Twix)                               | Use PL country selector                |
+| Sokołów                      | https://www.sokolow.pl                | Meat (wędliny, kabanosy)                                     | Full nutrition per product             |
+| Morliny                      | https://www.morliny.pl                | Meat (parówki, kiełbasy)                                     | Detailed product pages                 |
+| Tarczyński                   | https://www.tarczynski.pl             | Meat (kabanosy)                                              | Product-level nutrition                |
+| Pudliszki                    | https://www.pudliszki.pl              | Sauces (ketchup, passata)                                    | Full nutrition tables                  |
+| Łowicz                       | https://www.lowicz.com.pl             | Sauces (dżemy, ketchup)                                      | Product pages with nutrition           |
+| Develey                      | https://www.develey.pl                | Sauces (musztarda, ketchup)                                  | PL product range                       |
+| Mlekpol                      | https://www.mlekpol.com.pl            | Dairy (Łaciate)                                              | Full nutrition info                    |
+| Mlekovita                    | https://www.mlekovita.com.pl          | Dairy                                                        | Product-level data                     |
+| Żywiec Zdrój / Danone Waters | https://www.zywiec-zdroj.pl           | Drinks (water)                                               | Mineral composition                    |
+| Coca-Cola HBC Polska         | https://www.cocacolaep.com/pl         | Drinks (Coca-Cola, Fanta, Sprite)                            | PL product pages                       |
+| Red Bull Polska              | https://www.redbull.com/pl-pl         | Drinks (energy)                                              | Nutrition on product page              |
+| Kompania Piwowarska          | https://www.kp.pl                     | Alcohol (Tyskie, Żubr, Lech)                                 | Limited nutrition data                 |
 
 ### 4.2 Using Manufacturer Data
 
-| Step | Action |
-| --- | --- |
-| 1 | Navigate to the manufacturer's PL website |
-| 2 | Find the specific product page (match pack size + variant) |
-| 3 | Confirm nutrition table is per 100g (not per serving) |
-| 4 | Extract all available fields (EU-7 + voluntary) |
-| 5 | Cross-validate against OFF and/or label if available |
-| 6 | Record URL + access date in `sources` table |
-| 7 | Set `source_type = 'manufacturer'` |
+| Step | Action                                                     |
+| ---- | ---------------------------------------------------------- |
+| 1    | Navigate to the manufacturer's PL website                  |
+| 2    | Find the specific product page (match pack size + variant) |
+| 3    | Confirm nutrition table is per 100g (not per serving)      |
+| 4    | Extract all available fields (EU-7 + voluntary)            |
+| 5    | Cross-validate against OFF and/or label if available       |
+| 6    | Record URL + access date in `sources` table                |
+| 7    | Set `source_type = 'manufacturer'`                         |
 
 ---
 
@@ -210,38 +210,38 @@ Scientific publications are used to **justify methodology**, not to provide prod
 
 ### 6.1 Scoring & Classification Systems
 
-| Reference | Citation | Used for |
-| --- | --- | --- |
-| NOVA classification | Monteiro CA et al. (2019). Ultra-processed foods: what they are and how to identify them. *Public Health Nutrition*, 22(5), 936–941. doi:10.1017/S1368980018003762 | `processing_risk` and `nova_classification` basis |
-| Nutri-Score algorithm | Santé publique France (2024). Nutri-Score algorithm update. | `nutri_score_label` computation when not on label |
-| Nutri-Score validation | Julia C, Hercberg S (2017). Development of a new front-of-pack nutrition label in France. *Eur J Public Health*, 27(suppl_3). | Scientific basis for Nutri-Score adoption |
+| Reference              | Citation                                                                                                                                                           | Used for                                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| NOVA classification    | Monteiro CA et al. (2019). Ultra-processed foods: what they are and how to identify them. *Public Health Nutrition*, 22(5), 936–941. doi:10.1017/S1368980018003762 | `processing_risk` and `nova_classification` basis |
+| Nutri-Score algorithm  | Santé publique France (2024). Nutri-Score algorithm update.                                                                                                        | `nutri_score_label` computation when not on label |
+| Nutri-Score validation | Julia C, Hercberg S (2017). Development of a new front-of-pack nutrition label in France. *Eur J Public Health*, 27(suppl_3).                                      | Scientific basis for Nutri-Score adoption         |
 
 ### 6.2 Dietary Risk & Thresholds
 
-| Reference | Citation | Used for |
-| --- | --- | --- |
-| WHO salt guidelines | WHO (2023). Salt reduction. Fact sheet. | `salt_g` ceiling (3.0g/100g) in scoring |
-| WHO sugar guidelines | WHO (2015). Guideline: Sugars intake for adults and children. | `sugars_g` ceiling (27g/100g) in scoring |
-| WHO trans fat | WHO (2023). REPLACE trans fat: An action package. | `trans_fat_g` ceiling (2g/100g) and weight rationale |
-| EFSA saturated fat DRV | EFSA NDA Panel (2010). Scientific Opinion on DRVs for fats. *EFSA Journal*, 8(3):1461. | `saturated_fat_g` ceiling (10g/100g) |
-| EFSA energy DRV | EFSA NDA Panel (2013). Scientific Opinion on DRVs for energy. *EFSA Journal*, 11(1):3005. | `calories` ceiling (600 kcal/100g) |
+| Reference              | Citation                                                                                  | Used for                                             |
+| ---------------------- | ----------------------------------------------------------------------------------------- | ---------------------------------------------------- |
+| WHO salt guidelines    | WHO (2023). Salt reduction. Fact sheet.                                                   | `salt_g` ceiling (3.0g/100g) in scoring              |
+| WHO sugar guidelines   | WHO (2015). Guideline: Sugars intake for adults and children.                             | `sugars_g` ceiling (27g/100g) in scoring             |
+| WHO trans fat          | WHO (2023). REPLACE trans fat: An action package.                                         | `trans_fat_g` ceiling (2g/100g) and weight rationale |
+| EFSA saturated fat DRV | EFSA NDA Panel (2010). Scientific Opinion on DRVs for fats. *EFSA Journal*, 8(3):1461.    | `saturated_fat_g` ceiling (10g/100g)                 |
+| EFSA energy DRV        | EFSA NDA Panel (2013). Scientific Opinion on DRVs for energy. *EFSA Journal*, 11(1):3005. | `calories` ceiling (600 kcal/100g)                   |
 
 ### 6.3 Ultra-Processed Food & Health Outcomes
 
-| Reference | Citation | Used for |
-| --- | --- | --- |
-| UPF & cardiovascular | Srour B et al. (2019). Ultra-processed food intake and risk of cardiovascular disease. *BMJ*, 365:l1451. doi:10.1136/bmj.l1451 | Weight rationale for processing-related factors |
-| UPF meta-analysis | Elizabeth L et al. (2020). Ultra-Processed Foods and Health Outcomes: A Narrative Review. *Nutrients*, 12(7):1955. | General methodology justification |
-| Additives & UPF | Martínez Steele E et al. (2020). The share of ultra-processed foods and the quality of the diet. *Public Health Nutrition*, 23(3), 476–485. | `additives_count` weight rationale |
+| Reference            | Citation                                                                                                                                    | Used for                                        |
+| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| UPF & cardiovascular | Srour B et al. (2019). Ultra-processed food intake and risk of cardiovascular disease. *BMJ*, 365:l1451. doi:10.1136/bmj.l1451              | Weight rationale for processing-related factors |
+| UPF meta-analysis    | Elizabeth L et al. (2020). Ultra-Processed Foods and Health Outcomes: A Narrative Review. *Nutrients*, 12(7):1955.                          | General methodology justification               |
+| Additives & UPF      | Martínez Steele E et al. (2020). The share of ultra-processed foods and the quality of the diet. *Public Health Nutrition*, 23(3), 476–485. | `additives_count` weight rationale              |
 
 ### 6.4 Food Safety & Contaminants
 
-| Reference | Citation | Used for |
-| --- | --- | --- |
-| Palm oil contaminants | EFSA CONTAM Panel (2016). Risks for human health related to the presence of 3- and 2-MCPD in food. *EFSA Journal*, 14(5):4426. | `controversies = 'palm oil'` flag |
-| Titanium dioxide (E171) | EFSA FAF Panel (2021). Safety assessment of titanium dioxide (E171). *EFSA Journal*, 19(5):6585. | `controversies` flag for E171 |
-| Acrylamide in food | EU Commission Regulation 2017/2158. Establishing mitigation measures for acrylamide in food. | `prep_method` scoring (fried > baked) |
-| Trans fat regulation | EU Commission Regulation 2019/649. Maximum 2g industrial trans fat per 100g fat. | `trans_fat_g` ceiling validation |
+| Reference               | Citation                                                                                                                       | Used for                              |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------- |
+| Palm oil contaminants   | EFSA CONTAM Panel (2016). Risks for human health related to the presence of 3- and 2-MCPD in food. *EFSA Journal*, 14(5):4426. | `controversies = 'palm oil'` flag     |
+| Titanium dioxide (E171) | EFSA FAF Panel (2021). Safety assessment of titanium dioxide (E171). *EFSA Journal*, 19(5):6585.                               | `controversies` flag for E171         |
+| Acrylamide in food      | EU Commission Regulation 2017/2158. Establishing mitigation measures for acrylamide in food.                                   | `prep_method` scoring (fried > baked) |
+| Trans fat regulation    | EU Commission Regulation 2019/649. Maximum 2g industrial trans fat per 100g fat.                                               | `trans_fat_g` ceiling validation      |
 
 ### 6.5 Citing Sources in SQL
 
@@ -358,26 +358,26 @@ The following sources are **excluded** and must never be used:
 
 The `sources` table records where data came from:
 
-| Column        | Purpose                                                                          |
-| ------------- | -------------------------------------------------------------------------------- |
-| `source_id`   | Primary key                                                                      |
-| `brand`       | Which brand this source covers                                                   |
+| Column        | Purpose                                                                                                     |
+| ------------- | ----------------------------------------------------------------------------------------------------------- |
+| `source_id`   | Primary key                                                                                                 |
+| `brand`       | Which brand this source covers                                                                              |
 | `source_type` | `'label'`, `'manufacturer'`, `'openfoodfacts'`, `'government'`, `'retailer'`, `'estimated'`, `'scientific'` |
-| `ref`         | Short reference (e.g., "Biedronka label, 2026-01" or "IŻŻ food comp. tables")   |
-| `url`         | URL if applicable                                                                |
-| `notes`       | Any caveats, version notes, or cross-validation results                          |
+| `ref`         | Short reference (e.g., "Biedronka label, 2026-01" or "IŻŻ food comp. tables")                               |
+| `url`         | URL if applicable                                                                                           |
+| `notes`       | Any caveats, version notes, or cross-validation results                                                     |
 
 ### Source Type Definitions
 
-| `source_type`    | When to use                                                         |
-| ---------------- | ------------------------------------------------------------------- |
-| `label`          | Physical product label photographed or read in-store                |
-| `manufacturer`   | Manufacturer's official PL website product page                     |
-| `openfoodfacts`  | Open Food Facts entry (verified PL barcode)                         |
-| `government`     | IŻŻ / NCEZ / EFSA food composition tables                          |
-| `retailer`       | Polish retailer website (Biedronka, Lidl, Auchan, etc.)             |
-| `estimated`      | Category average or interpolated value                              |
-| `scientific`     | Scientific publication (used for methodology, not product data)     |
+| `source_type`   | When to use                                                     |
+| --------------- | --------------------------------------------------------------- |
+| `label`         | Physical product label photographed or read in-store            |
+| `manufacturer`  | Manufacturer's official PL website product page                 |
+| `openfoodfacts` | Open Food Facts entry (verified PL barcode)                     |
+| `government`    | IŻŻ / NCEZ / EFSA food composition tables                       |
+| `retailer`      | Polish retailer website (Biedronka, Lidl, Auchan, etc.)         |
+| `estimated`     | Category average or interpolated value                          |
+| `scientific`    | Scientific publication (used for methodology, not product data) |
 
 **Rule:** When adding a new product batch, also add a corresponding `sources` row documenting where the data came from. Products sourced only from Open Food Facts should be flagged for future cross-validation against manufacturer websites or labels.
 

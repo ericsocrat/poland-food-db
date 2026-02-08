@@ -48,13 +48,13 @@ When adding products, work in structured batches:
 
 When choosing which products to add first:
 
-| Factor                  | Weight | Why                                             |
-| ----------------------- | ------ | ----------------------------------------------- |
-| Market share            | High   | Lay's Classic outsells niche brands 50:1        |
+| Factor                  | Weight | Why                                                        |
+| ----------------------- | ------ | ---------------------------------------------------------- |
+| Market share            | High   | Lay's Classic outsells niche brands 50:1                   |
 | Data availability       | High   | Products with multiple source coverage = higher confidence |
-| Nutritional range       | Medium | Want the full spectrum, not just the worst      |
-| Private-label coverage  | Medium | Biedronka/Lidl private labels are under-tracked |
-| Reformulation relevance | Low    | Recently reformulated = fresh label data needed |
+| Nutritional range       | Medium | Want the full spectrum, not just the worst                 |
+| Private-label coverage  | Medium | Biedronka/Lidl private labels are under-tracked            |
+| Reformulation relevance | Low    | Recently reformulated = fresh label data needed            |
 
 ---
 
@@ -77,14 +77,14 @@ For every product, attempt data collection from **multiple sources** following t
 
 #### Manufacturer Website Lookup Steps
 
-| Step | Action |
-| --- | --- |
-| 1 | Identify the manufacturer from the label or product brand |
-| 2 | Find their PL website (see `DATA_SOURCES.md` §4 for URLs) |
-| 3 | Navigate to the specific product page |
-| 4 | Confirm nutrition table is per 100g |
-| 5 | Extract EU-7 + any voluntary fields |
-| 6 | Compare against OFF data — note any discrepancies |
+| Step | Action                                                    |
+| ---- | --------------------------------------------------------- |
+| 1    | Identify the manufacturer from the label or product brand |
+| 2    | Find their PL website (see `DATA_SOURCES.md` §4 for URLs) |
+| 3    | Navigate to the specific product page                     |
+| 4    | Confirm nutrition table is per 100g                       |
+| 5    | Extract EU-7 + any voluntary fields                       |
+| 6    | Compare against OFF data — note any discrepancies         |
 
 #### Governmental Database Cross-Check
 

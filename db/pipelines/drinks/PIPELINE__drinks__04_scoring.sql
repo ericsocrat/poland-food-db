@@ -2,7 +2,7 @@
 -- PIPELINE__drinks__04_scoring.sql
 -- Formula-based v3.1 scoring.
 -- See SCORING_METHODOLOGY.md §2.4 for the canonical formula.
--- Last updated: 2026-02-07
+-- Last updated: 2026-02-08
 -- Note: prep_method = 'none' for all beverages → maps to ELSE = 50 in formula.
 
 -- ═════════════════════════════════════════════════════════════════════════
@@ -48,7 +48,19 @@ from (
     ('Hortex',    'Hortex Sok Pomarańczowy 100%',    '0'),
     ('Cappy',     'Cappy 100% Orange',               '0'),
     ('Dawtona',   'Dawtona Sok Pomidorowy',          '0'),
-    ('Mlekovita', 'Mlekovita Mleko 3.2%',            '0')
+    ('Mlekovita', 'Mlekovita Mleko 3.2%',            '0'),
+    ('Red Bull',  'Red Bull Energy Drink',            '6'),
+    ('Monster',   'Monster Energy Mango Loco',        '9'),
+    ('Sprite',    'Sprite',                           '2'),
+    ('7UP',       '7UP',                              '2'),
+    ('Lipton',    'Lipton Ice Tea Lemon',             '3'),
+    ('Fuze Tea',  'Fuze Tea Peach Hibiscus',          '5'),
+    ('Kubuś',     'Kubuś Play Marchew-Jabłko',        '1'),
+    ('Mountain Dew','Mountain Dew',                   '4'),
+    ('Żywiec Zdrój','Żywiec Zdrój Smako-łyk Truskawka','1'),
+    ('Łaciate',   'Łaciate Mleko 2%',                 '0'),
+    ('Mirinda',   'Mirinda Orange',                   '3'),
+    ('Costa Coffee','Costa Coffee Latte',             '2')
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -104,7 +116,19 @@ from (
     ('Hortex',    'Hortex Sok Pomarańczowy 100%',    'C'),
     ('Cappy',     'Cappy 100% Orange',               'C'),
     ('Dawtona',   'Dawtona Sok Pomidorowy',          'B'),
-    ('Mlekovita', 'Mlekovita Mleko 3.2%',            'C')
+    ('Mlekovita', 'Mlekovita Mleko 3.2%',            'C'),
+    ('Red Bull',  'Red Bull Energy Drink',            'E'),
+    ('Monster',   'Monster Energy Mango Loco',        'E'),
+    ('Sprite',    'Sprite',                           'D'),
+    ('7UP',       '7UP',                              'D'),
+    ('Lipton',    'Lipton Ice Tea Lemon',             'D'),
+    ('Fuze Tea',  'Fuze Tea Peach Hibiscus',          'C'),
+    ('Kubuś',     'Kubuś Play Marchew-Jabłko',        'C'),
+    ('Mountain Dew','Mountain Dew',                   'E'),
+    ('Żywiec Zdrój','Żywiec Zdrój Smako-łyk Truskawka','B'),
+    ('Łaciate',   'Łaciate Mleko 2%',                 'C'),
+    ('Mirinda',   'Mirinda Orange',                   'E'),
+    ('Costa Coffee','Costa Coffee Latte',             'D')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -138,7 +162,19 @@ from (
     ('Hortex',    'Hortex Sok Pomarańczowy 100%',    '1'),   -- 100% juice
     ('Cappy',     'Cappy 100% Orange',               '1'),   -- 100% juice
     ('Dawtona',   'Dawtona Sok Pomidorowy',          '3'),   -- processed tomato juice
-    ('Mlekovita', 'Mlekovita Mleko 3.2%',            '1')    -- unprocessed UHT milk
+    ('Mlekovita', 'Mlekovita Mleko 3.2%',            '1'),   -- unprocessed UHT milk
+    ('Red Bull',  'Red Bull Energy Drink',            '4'),   -- UPF energy drink
+    ('Monster',   'Monster Energy Mango Loco',        '4'),   -- UPF energy drink
+    ('Sprite',    'Sprite',                           '4'),   -- UPF soda
+    ('7UP',       '7UP',                              '4'),   -- UPF soda
+    ('Lipton',    'Lipton Ice Tea Lemon',             '4'),   -- UPF iced tea
+    ('Fuze Tea',  'Fuze Tea Peach Hibiscus',          '4'),   -- UPF iced tea
+    ('Kubuś',     'Kubuś Play Marchew-Jabłko',        '3'),   -- processed juice drink
+    ('Mountain Dew','Mountain Dew',                   '4'),   -- UPF soda
+    ('Żywiec Zdrój','Żywiec Zdrój Smako-łyk Truskawka','4'),   -- UPF flavored water
+    ('Łaciate',   'Łaciate Mleko 2%',                 '1'),   -- unprocessed UHT milk
+    ('Mirinda',   'Mirinda Orange',                   '4'),   -- UPF soda
+    ('Costa Coffee','Costa Coffee Latte',             '4')    -- UPF RTD coffee
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
