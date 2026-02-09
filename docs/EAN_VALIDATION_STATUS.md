@@ -3,9 +3,11 @@
 ## Summary
 
 **Total active products**: 560
-**Products with EAN**: 559 (99.8%)
-**Products without EAN**: 1 (Zabka Kajzerka Kebab - store-prepared item, no barcode)
-**Checksum validity**: 100% of EANs pass GS1 Modulo-10 validation
+**Products with EAN**: 558 (99.6%)
+**Products without EAN**: 2
+  - Żabka Kajzerka Kebab — store-prepared item, no barcode in OFF
+  - Szamamm Kotlet Drobiowy — OFF code `10471346` fails EAN-8 checksum (nulled)
+**Checksum validity**: 100% of remaining EANs pass GS1 Modulo-10 validation (EAN-8 + EAN-13)
 
 All EAN codes are sourced directly from the Open Food Facts API during pipeline generation. Each product's EAN is the `code` field from its OFF record, ensuring authenticity.
 
@@ -32,12 +34,12 @@ All EAN codes are sourced directly from the Open Food Facts API during pipeline 
 | Seafood & Fish             |       28 |       28 |    100.0% |
 | Snacks                     |       28 |       28 |    100.0% |
 | Sweets                     |       28 |       28 |    100.0% |
-| Zabka                      |       28 |       27 |     96.4% |
-| **Total**                  |  **560** |  **559** | **99.8%** |
+| Żabka                      |       28 |       26 |     92.9% |
+| **Total**                  |  **560** |  **558** | **99.6%** |
 
 ## Validation
 
-- **Algorithm**: GS1 Modulo-10 checksum (ISO/IEC 15420 compliant)
+- **Algorithm**: GS1 Modulo-10 checksum (ISO/IEC 15420 compliant) — supports EAN-8 and EAN-13
 - **QA Suite**: `.\RUN_QA.ps1` - includes EAN validation checks
 - **OFF API**: EANs sourced from `https://world.openfoodfacts.org/api/v2/search`
 

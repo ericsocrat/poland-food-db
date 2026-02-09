@@ -4,7 +4,7 @@
 > **Last updated:** 2026-02-10
 > **Scope:** Poland (`PL`) only — no other countries active
 > **Products:** 560 active (20 categories × 28 each), 1068 deprecated
-> **EAN coverage:** 559/560 (99.8%)
+> **EAN coverage:** 558/560 (99.6%)
 > **Scoring:** v3.1 — 8-factor weighted formula via `compute_unhealthiness_v31()`
 > **QA:** 33 critical checks + 7 informational reports — all passing
 
@@ -68,7 +68,7 @@ poland-food-db/
 │   ├── validator.py                 # Data validation before SQL generation
 │   └── categories.py               # 20 category definitions + OFF tag mappings
 ├── db/
-│   ├── pipelines/                   # 20 category folders, 4-5 SQL files each
+│   ├── pipelines/                   # 20 category folders, 4 SQL files each
 │   │   ├── chips/                   # Reference implementation (copy for new categories)
 │   │   └── ... (19 more)            # All normalized to 28 active products
 │   ├── qa/                          # Test suites
@@ -101,6 +101,7 @@ poland-food-db/
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (33 critical + 7 info)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
+├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
 ├── .env.example
 └── README.md
 ```
@@ -240,8 +241,6 @@ unhealthiness_score = compute_unhealthiness_v31(
 - Prefer `IF NOT EXISTS` / `IF EXISTS` guards for idempotency.
 - New changes → new file with next timestamp.
 
-**`db/migrations/` is empty** — legacy scripts consolidated into the Supabase migration `20260209000100`. Do not add files there.
-
 ---
 
 ## 8. Testing & QA
@@ -296,7 +295,6 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-
 - ❌ Run pipelines against remote without explicit user confirmation
 - ❌ Drop or rename tables without a new migration
 - ❌ Collapse categories — each gets its own pipeline folder
-- ❌ Add files to `db/migrations/` — use `supabase/migrations/` only
 
 ---
 

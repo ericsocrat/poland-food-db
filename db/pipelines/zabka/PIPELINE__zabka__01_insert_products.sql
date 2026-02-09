@@ -83,7 +83,7 @@ values
 ('PL','Szamamm','Ready-to-eat','Żabka','Gnocchi z kurczakiem','baked','Żabka','none'),
 -- EAN 5900757067941 — Panierowane skrzydełka z kurczaka (breaded chicken wings, fried)
 ('PL','Szamamm','Ready-to-eat','Żabka','Panierowane skrzydełka z kurczaka','fried','Żabka','none'),
--- EAN 10471346 — Kotlet Drobiowy (chicken cutlet, Nutri-Score B est.)
+-- EAN n/a — Kotlet Drobiowy (chicken cutlet, Nutri-Score B est.) — OFF code 10471346 fails EAN-8 checksum
 ('PL','Szamamm','Ready-to-eat','Żabka','Kotlet Drobiowy','fried','Żabka','none')
 
 on conflict (country, brand, product_name)

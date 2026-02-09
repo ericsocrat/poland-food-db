@@ -69,7 +69,7 @@ supabase start
 
 **All critical tests passing**: ✅ 33/33
 
-**EAN Coverage**: 559/560 active products (99.8%) have EAN-13 barcodes
+**EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
 ---
 
@@ -212,9 +212,9 @@ Confidence is auto-computed by the `assign_confidence()` function in all scoring
 
 ### EAN Barcode Tracking
 
-Products include EAN-13 barcodes (where available) for cross-source product matching:
+Products include EAN-8/EAN-13 barcodes (where available) for cross-source product matching:
 
-**Coverage**: 559/560 active products (99.8%)
+**Coverage**: 558/560 active products (99.6%)
 
 EAN codes enable validation against:
 - Manufacturer product pages
@@ -267,7 +267,7 @@ EAN codes enable validation against:
 - **All data is local** — nothing is uploaded to remote Supabase (yet)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data quality tracking** — All products have confidence levels (`estimated`, `verified`, or `low`)
-- **EAN barcodes** — 559/560 active products (99.8%) have EAN-13 codes for cross-source matching
+- **EAN barcodes** — 558/560 active products (99.6%) have validated EAN-8/EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
 - **Scoring version**: v3.1 (2026-02-07)
 - **560 active products** (28 per category × 20 categories), 1068 deprecated (kept in DB for historical tracking)
