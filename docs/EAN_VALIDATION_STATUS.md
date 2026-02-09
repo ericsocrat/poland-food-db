@@ -11,28 +11,28 @@ All EAN codes are sourced directly from the Open Food Facts API during pipeline 
 
 ## Coverage by Category
 
-| Category                   | Products | With EAN | Coverage |
-| -------------------------- | -------: | -------: | -------: |
-| Alcohol                    |       28 |       28 |   100.0% |
-| Baby                       |       28 |       28 |   100.0% |
-| Bread                      |       28 |       28 |   100.0% |
-| Breakfast & Grain-Based    |       28 |       28 |   100.0% |
-| Canned Goods               |       28 |       28 |   100.0% |
-| Cereals                    |       28 |       28 |   100.0% |
-| Chips                      |       28 |       28 |   100.0% |
-| Condiments                 |       28 |       28 |   100.0% |
-| Dairy                      |       28 |       28 |   100.0% |
-| Drinks                     |       28 |       28 |   100.0% |
-| Frozen & Prepared          |       28 |       28 |   100.0% |
-| Instant & Frozen           |       28 |       28 |   100.0% |
-| Meat                       |       28 |       28 |   100.0% |
-| Nuts, Seeds & Legumes      |       28 |       28 |   100.0% |
-| Plant-Based & Alternatives |       28 |       28 |   100.0% |
-| Sauces                     |       28 |       28 |   100.0% |
-| Seafood & Fish             |       28 |       28 |   100.0% |
-| Snacks                     |       28 |       28 |   100.0% |
-| Sweets                     |       28 |       28 |   100.0% |
-| Zabka                      |       28 |       27 |    96.4% |
+| Category                   | Products | With EAN |  Coverage |
+| -------------------------- | -------: | -------: | --------: |
+| Alcohol                    |       28 |       28 |    100.0% |
+| Baby                       |       28 |       28 |    100.0% |
+| Bread                      |       28 |       28 |    100.0% |
+| Breakfast & Grain-Based    |       28 |       28 |    100.0% |
+| Canned Goods               |       28 |       28 |    100.0% |
+| Cereals                    |       28 |       28 |    100.0% |
+| Chips                      |       28 |       28 |    100.0% |
+| Condiments                 |       28 |       28 |    100.0% |
+| Dairy                      |       28 |       28 |    100.0% |
+| Drinks                     |       28 |       28 |    100.0% |
+| Frozen & Prepared          |       28 |       28 |    100.0% |
+| Instant & Frozen           |       28 |       28 |    100.0% |
+| Meat                       |       28 |       28 |    100.0% |
+| Nuts, Seeds & Legumes      |       28 |       28 |    100.0% |
+| Plant-Based & Alternatives |       28 |       28 |    100.0% |
+| Sauces                     |       28 |       28 |    100.0% |
+| Seafood & Fish             |       28 |       28 |    100.0% |
+| Snacks                     |       28 |       28 |    100.0% |
+| Sweets                     |       28 |       28 |    100.0% |
+| Zabka                      |       28 |       27 |     96.4% |
 | **Total**                  |  **560** |  **559** | **99.8%** |
 
 ## Validation
