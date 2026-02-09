@@ -123,7 +123,26 @@ WHERE country != 'PL'
   AND is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 12. Summary counts (informational, not a failure check)
+-- 12. v_master row count matches active products (detects join fan-out)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT
+  'V_MASTER ROW MISMATCH' AS issue,
+  (SELECT COUNT(*) FROM v_master) AS v_master_rows,
+  (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE) AS active_products
+WHERE (SELECT COUNT(*) FROM v_master) !=
+      (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 13. Duplicate source rows (prevents v_master fan-out)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT brand, COUNT(*) AS row_count,
+       'DUPLICATE SOURCE' AS issue
+FROM sources
+GROUP BY brand
+HAVING COUNT(*) > 1;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 14. Summary counts (informational, not a failure check)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
     (SELECT COUNT(*) FROM products)         AS total_products,

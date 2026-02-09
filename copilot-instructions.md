@@ -6,7 +6,7 @@
 > **Products:** 560 active (20 categories × 28 each), 1068 deprecated
 > **EAN coverage:** 558/560 (99.6%)
 > **Scoring:** v3.1 — 8-factor weighted formula via `compute_unhealthiness_v31()`
-> **QA:** 33 critical checks + 7 informational reports — all passing
+> **QA:** 35 critical checks + 7 informational reports — all passing
 
 ---
 
@@ -76,7 +76,7 @@ poland-food-db/
 │   │   ├── chips/                   # Reference implementation (copy for new categories)
 │   │   └── ... (19 more)            # All normalized to 28 active products
 │   ├── qa/                          # Test suites
-│   │   ├── QA__null_checks.sql      # 11 data integrity checks
+│   │   ├── QA__null_checks.sql      # 13 data integrity checks
 │   │   ├── QA__scoring_formula_tests.sql  # 22 scoring validation checks
 │   │   └── QA__source_coverage.sql  # 7 informational reports (non-blocking)
 │   └── views/
@@ -103,7 +103,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 559/560 coverage (99.8%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (33 critical + 7 info)
+├── RUN_QA.ps1                       # QA test runner (35 critical + 7 info)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
 ├── .env.example
@@ -253,11 +253,11 @@ unhealthiness_score = compute_unhealthiness_v31(
 
 | Suite           | File                            | Checks | Blocking? |
 | --------------- | ------------------------------- | -----: | --------- |
-| Data Integrity  | `QA__null_checks.sql`           |     11 | Yes       |
+| Data Integrity  | `QA__null_checks.sql`           |     13 | Yes       |
 | Scoring Formula | `QA__scoring_formula_tests.sql` |     22 | Yes       |
 | Source Coverage | `QA__source_coverage.sql`       |      7 | No        |
 
-**Run:** `.\RUN_QA.ps1` — expects **33/33 critical checks passing**.
+**Run:** `.\RUN_QA.ps1` — expects **35/35 critical checks passing**.
 
 **Key regression tests** (in scoring suite):
 
@@ -315,7 +315,7 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-
 4. Insert a `sources` row for provenance tracking.
 5. Register the folder in `RUN_LOCAL.ps1` and `RUN_REMOTE.ps1`.
 6. Add at least one regression test to `QA__scoring_formula_tests.sql`.
-7. Run `.\RUN_QA.ps1` — verify 33/33 pass.
+7. Run `.\RUN_QA.ps1` — verify 35/35 pass.
 
 **Reference implementation:** `chips/` pipeline. Copy its SQL patterns for manual work.
 
@@ -351,7 +351,7 @@ chore: normalize categories to 28 products
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 33/33 pass
+1. `.\RUN_QA.ps1` — 35/35 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed

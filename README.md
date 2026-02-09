@@ -27,7 +27,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (33 checks)
+# All tests (35 checks)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -62,12 +62,12 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 33 automated checks + 7 data quality reports
-- 11 data integrity checks (nulls, foreign keys, duplicates)
+**Test Coverage**: 35 automated checks + 7 data quality reports
+- 13 data integrity checks (nulls, foreign keys, duplicates, view consistency)
 - 22 scoring formula validation checks (ranges, flags, NOVA, regression)
 - 7 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 33/33
+**All critical tests passing**: ✅ 35/35
 
 **EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
@@ -101,7 +101,7 @@ poland-food-db/
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 28 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites
-│   │   ├── QA__null_checks.sql           # 11 integrity checks
+│   │   ├── QA__null_checks.sql           # 13 integrity checks
 │   │   ├── QA__scoring_formula_tests.sql # 20 algorithm tests
 │   │   └── QA__source_coverage.sql       # 7 data quality reports
 │   └── views/               # Denormalized reporting views
@@ -127,7 +127,7 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **33 automated checks** + 7 informational data quality reports:
+Every change is validated against **35 automated checks** + 7 informational data quality reports:
 
 ### Data Integrity (11 checks)
 - No missing required fields
@@ -257,7 +257,7 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 33/33 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 35/35 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---

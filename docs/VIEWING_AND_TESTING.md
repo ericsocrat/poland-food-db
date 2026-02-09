@@ -113,7 +113,7 @@ Runs both test suites with color-coded output:
 ```
 ✓ PASS (11/11 — zero violations)
 ✓ PASS (22/22 — zero violations)
-ALL TESTS PASSED (33/33 checks)
+ALL TESTS PASSED (35/35 checks)
 ```
 
 ---
