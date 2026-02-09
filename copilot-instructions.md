@@ -1,8 +1,8 @@
 # Copilot Instructions — Poland Food Quality Database
 
-> **Last updated:** 2026-02-08
+> **Last updated:** 2026-02-09
 > **Scope:** Poland (country code `PL`) only. No other countries are active.
-> **Active categories:** Chips (28), Żabka (28), Cereals (28), Drinks (28), Dairy (28), Bread (28), Meat (28), Sweets (28), Instant & Frozen (28), Sauces (28), Baby (28), Alcohol (28), Frozen & Prepared (28), Plant-Based & Alternatives (27), Nuts, Seeds & Legumes (27), Breakfast & Grain-Based (28), Canned Goods (28), Condiments (28), Seafood & Fish (27), Snacks (28) — 557 products
+> **Active categories:** Alcohol (31), Baby (49), Bread (60), Breakfast & Grain-Based (100), Canned Goods (28), Cereals (48), Chips (28), Condiments (28), Dairy (28), Drinks (60), Frozen & Prepared (35), Instant & Frozen (28), Meat (28), Nuts Seeds & Legumes (28), Plant-Based & Alternatives (51), Sauces (100), Seafood & Fish (35), Snacks (56), Sweets (28), Żabka (28) — 877 active products
 > **Scoring version:** v3.1 (8-factor weighted formula)
 
 ---
@@ -32,24 +32,40 @@ poland-food-db/
 │   ├── config.toml                  # Local Supabase config
 │   ├── seed.sql                     # Seed data (runs on `supabase db reset`)
 │   └── migrations/                  # Schema migrations (Supabase-managed)
-│       ├── 20260207000100_create_schema.sql
-│       ├── 20260207000200_baseline.sql
-│       ├── 20260207000300_add_chip_metadata.sql
-│       ├── 20260207000400_remove_unused_columns.sql
-│       └── 20260207000500_scoring_function.sql  # compute_unhealthiness_v31() function
+│       ├── 20260207000100_create_schema.sql      # Tables + initial v_master view
+│       ├── 20260207000200_baseline.sql           # Identity columns, UPSERT index, perf indexes
+│       ├── 20260207000300_add_chip_metadata.sql   # prep_method + store_availability
+│       ├── 20260207000400_data_uniformity.sql     # TEXT→NUMERIC conversions
+│       ├── 20260207000401_remove_unused_columns.sql
+│       ├── 20260207000500_column_metadata.sql     # column_metadata TABLE creation
+│       ├── 20260207000501_scoring_function.sql    # compute_unhealthiness_v31()
+│       ├── 20260208000100_add_ean_and_update_view.sql  # EAN column + v_master rebuild
+│       └── 20260209000100_seed_functions_and_metadata.sql  # assign_confidence(), sources, column_metadata seed
 ├── db/                              # Operational SQL (NOT migrations)
-│   ├── migrations/                  # ⚠️ LEGACY — do NOT run these (see below)
-│   ├── pipelines/                   # Data pipelines, one folder per category
-│   │   ├── cereals/                 # ✅ 28 products
-│   │   ├── chips/                   # ✅ 16 products — reference implementation
-│   │   ├── dairy/                   # ✅ 28 products — milk, yogurt, cheese, kefir, butter
-│   │   ├── drinks/                  # ✅ 28 products
-│   │   ├── instant/                 # ✅ 26 products — instant noodles, frozen meals
-│   │   ├── sauces/                  # ✅ 27 products — sauces & condiments│   │   ├── sweets/                  # ✅ 28 products — chocolate, candy, wafers│   │   └── zabka/                   # ✅ 28 products — store-based pipeline
+│   ├── pipelines/                   # Data pipelines, one folder per category (20 categories)
+│   │   ├── alcohol/                 # 31 products
+│   │   ├── baby/                    # 49 products
+│   │   ├── bread/                   # 60 products
+│   │   ├── breakfast-grain-based/   # 100 products
+│   │   ├── canned-goods/            # 28 products
+│   │   ├── cereals/                 # 48 products
+│   │   ├── chips/                   # 28 products — reference implementation
+│   │   ├── condiments/              # 28 products
+│   │   ├── dairy/                   # 28 products
+│   │   ├── drinks/                  # 60 products
+│   │   ├── frozen-prepared/         # 35 products
+│   │   ├── instant-frozen/          # 28 products
+│   │   ├── meat/                    # 28 products
+│   │   ├── nuts-seeds-legumes/      # 28 products
+│   │   ├── plant-based-alternatives/# 51 products
+│   │   ├── sauces/                  # 100 products
+│   │   ├── seafood-fish/            # 35 products
+│   │   ├── snacks/                  # 56 products
+│   │   ├── sweets/                  # 28 products
+│   │   └── zabka/                   # 28 products — store-based pipeline
 │   ├── views/                       # SQL views
 │   └── qa/                          # Quality-assurance queries
-│       ├── QA__null_checks.sql      # 11 data integrity checks
-│       └── QA__scoring_formula_tests.sql  # 20 scoring formula validation checks
+│       └── QA__null_checks.sql      # Data integrity checks
 ├── .env.example                     # Template for environment variables
 ├── .gitignore                       # Git exclusion rules
 ├── copilot-instructions.md          # THIS FILE
@@ -59,13 +75,12 @@ poland-food-db/
 │   ├── RESEARCH_WORKFLOW.md         # Step-by-step research & data collection process
 │   ├── COUNTRY_EXPANSION_GUIDE.md   # Future multi-country rules
 │   ├── VIEWING_AND_TESTING.md       # Guide for viewing data & running tests
-│   ├── EAN_EXPANSION_PLAN.md        # EAN coverage strategy
-│   └── EAN_VALIDATION_STATUS.md     # Current EAN validation status
-├── scripts/                         # Utility scripts
-│   └── init_db_structure.py         # One-time folder scaffolding script (LEGACY)
-├── pipeline/                        # Python data pipeline (OFF API → SQL)
+│   ├── UX_UI_DESIGN.md              # UI/UX design guidelines
+│   ├── EAN_EXPANSION_PLAN.md        # EAN coverage strategy (COMPLETED)
+│   └── EAN_VALIDATION_STATUS.md     # Current EAN validation status (876/877 = 99.9%)
+├── pipeline/                        # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1                    # Run all pipelines on local DB
-├── RUN_QA.ps1                       # Standalone QA test runner (33 checks)
+├── RUN_QA.ps1                       # Standalone QA test runner
 ├── RUN_REMOTE.ps1                   # Run all pipelines on remote DB (with confirmation)
 └── README.md                        # Project overview
 ```
@@ -89,12 +104,11 @@ poland-food-db/
 - **Purpose:** Insert, update, and score product data within existing schema.
 - **Organized by:** Product category (e.g., `chips`, `zabka`, `cereals`, `drinks`).
 
-### The `db/migrations/` Folder (LEGACY — DO NOT USE)
+### The `db/migrations/` Folder (EMPTY — DO NOT USE)
 
-- The folder `db/migrations/` contains **legacy stub files** from early project scaffolding.
-- These files are **superseded** by `supabase/migrations/` and must **never be executed**.
-- They exist only as historical reference. Do not add new files here.
-- All schema changes go through `supabase/migrations/` via the Supabase CLI.
+- The folder `db/migrations/` is **empty**. Legacy ad-hoc scripts that previously lived here
+  were consolidated into `supabase/migrations/20260209000100_seed_functions_and_metadata.sql`.
+- **Do not add new files here.** All schema and seed changes go through `supabase/migrations/`.
 
 ### Pipeline Rules:
 
@@ -170,7 +184,9 @@ Every SQL file you create must be safe to run 1 time or 100 times with the same 
 
 1. **Never invent nutrition data.** Use real EU label values, or mark as placeholder with a clear comment.
 2. **Never guess Nutri-Score.** Either compute from nutrition values or cite the official score from the product label/Open Food Facts.
-3. **All text values in numeric columns** (e.g., `calories`, `total_fat_g`) are stored as `text` — this is intentional to handle `'N/A'`, `'<0.5'`, and other label artifacts. Do not cast to numeric in INSERT statements.
+3. **Numeric nutrition columns** (e.g., `calories`, `total_fat_g`) are `numeric` type.
+   Values like `'N/A'` or `'<0.5'` are handled in the pipeline layer before insertion.
+   The scoring function casts inputs via `::numeric`.
 4. **Deprecation:** Products that are generic references (not real SKUs) should be flagged `is_deprecated = true` with a `deprecated_reason`.
 5. **Scoring version:** Always set `scoring_version` in the scores table (e.g., `'v3.1'`).
 6. **Source tracking:** When adding a new batch of products, insert a corresponding row into the `sources` table documenting where the data came from (label, website, Open Food Facts, etc.). See `docs/DATA_SOURCES.md` §8.
@@ -318,7 +334,7 @@ The extensions below are required for full project functionality. Install any mi
 
 | Extension               | ID                                      | Purpose                                                |
 | ----------------------- | --------------------------------------- | ------------------------------------------------------ |
-| **Python**              | `ms-python.python`                      | Python support (`scripts/init_db_structure.py`)        |
+| **Python**              | `ms-python.python`                      | Python support (pipeline scripts)                      |
 | **Pylance**             | `ms-python.vscode-pylance`              | Python type checking & IntelliSense                    |
 | **PowerShell**          | `ms-vscode.powershell`                  | PowerShell scripts (`RUN_LOCAL.ps1`, `RUN_REMOTE.ps1`) |
 | **SQLTools**            | `mtxr.sqltools`                         | SQL IntelliSense, formatting, runner                   |
@@ -357,7 +373,6 @@ The extensions below are required for full project functionality. Install any mi
 | `supabase/config.toml`                              | OS files (`.DS_Store`, `Thumbs.db`)                   |
 | `supabase/migrations/`                              | `.vscode/*` except `settings.json`, `extensions.json` |
 | `.vscode/settings.json`, `.vscode/extensions.json`  |                                                       |
-| `scripts/init_db_structure.py`                      |                                                       |
 
 ### Commit Message Convention
 

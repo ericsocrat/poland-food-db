@@ -1,1 +1,0 @@
--- MIGRATION: products.product_id identity + sequence sync

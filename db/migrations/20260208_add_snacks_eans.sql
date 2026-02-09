@@ -1,2 +1,0 @@
-UPDATE products SET ean = '0099482473709' WHERE brand = 'Snack Day' AND product_name = 'Snack Day Pumpkin Seeds' AND category = 'Snacks';
-UPDATE products SET ean = '4056489713777' WHERE brand = 'Snack Day' AND product_name = 'Snack Day Sesame Crackers' AND category = 'Snacks';
