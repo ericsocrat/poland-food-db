@@ -1,45 +1,57 @@
 -- PIPELINE (Frozen & Prepared): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
--- 0. DEPRECATE old products & release their EANs
+-- 0a. DEPRECATE old products in this category & release their EANs
 update products
 set is_deprecated = true, ean = null
 where country = 'PL'
   and category = 'Frozen & Prepared'
   and is_deprecated is not true;
 
+-- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
+update products set ean = null
+where ean in ('5900437007137', '5901398069936', '5902121011765', '5903548004262', '5907439112135', '5900477000846', '5901581232413', '5900437009988', '5900437007113', '5907377116578', '5902966009002', '5901537003142', '5900477012795', '5900972003960', '5901581232352', '5901028916616', '5901028908055', '5903154542622', '5901028917422', '5901028917941', '5901028917378', '5901028913479', '5901028917354', '5908280713045', '5901028917972', '5900437205137', '5907377116646', '5900130015835', '5901028913103', '5902533424665', '5907439112067', '5907377116677', '5900477000839', '5902121009793', '5901028913387')
+  and ean is not null;
+
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
   ('PL', 'Dr. Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza 4 sery, głęboko mrożona.', null, 'Tesco', 'none', '5900437007137'),
-  ('PL', 'Carrefour BIO', 'Grocery', 'Frozen & Prepared', 'Ratatouille', null, 'carrefour,carrefour.fr', 'none', '3270190174356'),
-  ('PL', 'Vitasia', 'Grocery', 'Frozen & Prepared', 'soba noodles', null, 'Lidl', 'none', '20561864'),
-  ('PL', 'Carrefour BIO', 'Grocery', 'Frozen & Prepared', 'Riz Sans sucres ajoutés**', null, 'Carrefour,Carrefour Market,carrefour.fr', 'none', '3245411573669'),
-  ('PL', 'Gelatelli', 'Grocery', 'Frozen & Prepared', 'Gelatelli Chocolate', null, 'LIDL', 'none', '4056489238614'),
-  ('PL', 'Bon Gelati', 'Grocery', 'Frozen & Prepared', 'Premium Bourbon - Dairy ice cream', null, 'Lidl', 'none', '40875125'),
-  ('PL', 'Gelatelli', 'Grocery', 'Frozen & Prepared', 'High Protein Salted Caramel Ice Cream', null, 'Lidl', 'none', '4056489238607'),
-  ('PL', 'Bonduelle', 'Grocery', 'Frozen & Prepared', 'Epinards Feuilles Préservées 750g', null, 'Franprix, carrefour.fr', 'none', '3083680836371'),
-  ('PL', 'Bon Gelati', 'Grocery', 'Frozen & Prepared', 'Salted caramel premium ice cream', null, 'Lidl', 'none', '20707330'),
-  ('PL', 'Carrefour', 'Grocery', 'Frozen & Prepared', 'Poisson pané', null, 'Carrefour,carrefour.fr', 'none', '3560071019228'),
-  ('PL', 'Carrefour BIO', 'Grocery', 'Frozen & Prepared', 'PIZZA Chèvre Cuite au feu de bois', null, 'Carrefour,Carrefour Bio, carrefour.fr', 'none', '3560070590728'),
-  ('PL', 'Bon Gelati', 'Grocery', 'Frozen & Prepared', 'Walnut Bon Gelati', null, 'Lidl', 'none', '20086091'),
-  ('PL', 'Carrefour BIO', 'Grocery', 'Frozen & Prepared', 'Galettes de riz chocolat au lait', null, 'Carrefour', 'none', '3560071469740'),
-  ('PL', 'Italiamo', 'Grocery', 'Frozen & Prepared', 'Pizza Prosciutto e Mozzarella', null, 'LIDL', 'none', '20490706'),
-  ('PL', 'Gelatelli', 'Grocery', 'Frozen & Prepared', 'High protein cookies & cream', null, 'LIDL', 'none', '4056489238621'),
-  ('PL', 'Freshona', 'Grocery', 'Frozen & Prepared', 'Vegetable Mix with Bamboo Shoots and Mun Mushrooms', null, 'Lidl', 'none', '4056489359593'),
-  ('PL', 'Harrys', 'Grocery', 'Frozen & Prepared', 'Brioche Tranchée Noix de Coco, Chocolat au Lait', null, 'Carrefour', 'none', '3228857001934'),
-  ('PL', 'Bon Gelati', 'Grocery', 'Frozen & Prepared', 'Bon Gelati Eiscreme mit Schlagsahne', null, 'Lidl', 'none', '20001407'),
-  ('PL', 'Carrefour', 'Grocery', 'Frozen & Prepared', 'Pain au Chocolat', null, 'Carrefour,carrefour.fr', 'none', '3560070343362'),
-  ('PL', 'Carrefour', 'Grocery', 'Frozen & Prepared', 'Spaghetti', null, 'Carrefour, carrefour.fr', 'none', '3560071016869'),
-  ('PL', 'Magnum', 'Grocery', 'Frozen & Prepared', 'Magnum Crème Glacée en Pot Amande 440ml', null, 'Żabka,Hofer', 'none', '8714100289983'),
-  ('PL', 'Gelatelli', 'Grocery', 'Frozen & Prepared', 'Creme al pistacchio', null, 'Lidl', 'none', '20219895'),
-  ('PL', 'Nixe', 'Grocery', 'Frozen & Prepared', 'Weisser Thunfish Alalunga', null, 'Lidl', 'none', '20916947'),
-  ('PL', 'Mars', 'Grocery', 'Frozen & Prepared', 'Snickers ice cream', null, 'Żabka', 'none', '5000159515481'),
-  ('PL', 'Bon Gelati', 'Grocery', 'Frozen & Prepared', 'Stracciatella Premium Eis', null, 'Lidl', 'none', '20001360'),
-  ('PL', 'Bon Gelati', 'Grocery', 'Frozen & Prepared', 'Glace Erdbeer Strawberry ice cream premium', null, 'Lidl', 'none', '20059903'),
-  ('PL', 'Simpl', 'Grocery', 'Frozen & Prepared', 'Tranches de filets de Colin d''Alaska', null, 'Carrefour,carrefour.fr', 'none', '3560070529636'),
-  ('PL', 'Carrefour', 'Grocery', 'Frozen & Prepared', 'Cônes parfum vanille', null, 'Carrefour,carrefour.fr', 'none', '3560070774265')
+  ('PL', 'Swojska Chata', 'Grocery', 'Frozen & Prepared', 'Pierogi z kapustą i grzybami', null, 'Biedronka', 'none', '5901398069936'),
+  ('PL', 'Koral', 'Grocery', 'Frozen & Prepared', 'Lody śmietankowe - kostka śnieżna', null, 'Biedronka', 'none', '5902121011765'),
+  ('PL', 'Dobra kaloria', 'Grocery', 'Frozen & Prepared', 'Roślinna kaszanka', null, 'Lidl', 'none', '5903548004262'),
+  ('PL', 'Grycan', 'Grocery', 'Frozen & Prepared', 'Lody śmietankowe', null, 'Intermarche', 'none', '5907439112135'),
+  ('PL', 'Hortex', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnię', null, 'Kaufland', 'none', '5900477000846'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnię z ziemniakami', null, 'Biedronka', 'none', '5901581232413'),
+  ('PL', 'Dr.Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza z szynką, pieczarkami i salami, głęboko mrożona.', null, 'Auchan', 'none', '5900437009988'),
+  ('PL', 'Dr.Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza z szynką i sosem pesto, głęboko mrożona.', null, 'Auchan', 'none', '5900437007113'),
+  ('PL', 'Biedronka', 'Grocery', 'Frozen & Prepared', 'Rożek z czekoladą', null, 'Biedronka', 'none', '5907377116578'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Jagody leśne', null, 'Biedronka', 'none', '5902966009002'),
+  ('PL', 'MaxTop Sławków', 'Grocery', 'Frozen & Prepared', 'Pizza głęboko mrożona z szynką i pieczarkami.', null, 'dino', 'none', '5901537003142'),
+  ('PL', 'Hortex', 'Grocery', 'Frozen & Prepared', 'Makaron na patelnię penne z sosem serowym', null, 'Auchan', 'none', '5900477012795'),
+  ('PL', 'Fish Time', 'Grocery', 'Frozen & Prepared', 'Ryba z piekarnika z sosem brokułowym', null, 'Biedronka', 'none', '5900972003960'),
+  ('PL', 'Morźna Kraina', 'Grocery', 'Frozen & Prepared', 'Włoszczyzna w słupkach', null, 'Biedronka', 'none', '5901581232352'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Fasolka szparagowa żółta i zielona, cała', null, null, 'none', '5901028916616'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Trio warzywne z mini marchewką', null, null, 'none', '5901028908055'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnię po włosku', 'fried', null, 'none', '5903154542622'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Kalafior różyczki', null, null, 'none', '5901028917422'),
+  ('PL', 'Mroźna kraina', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnię letnie', null, null, 'none', '5901028917941'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Polskie wiśnie bez pestek', null, null, 'none', '5901028917378'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnię po meksykańsku', null, null, 'none', '5901028913479'),
+  ('PL', 'Asia Flavours', 'Grocery', 'Frozen & Prepared', 'Mieszanka chińska', null, null, 'none', '5901028917354'),
+  ('PL', 'NewIce', 'Grocery', 'Frozen & Prepared', 'Plombie Śnieżynka', null, null, 'none', '5908280713045'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnię po europejsku', null, null, 'none', '5901028917972'),
+  ('PL', 'Dr. Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza Guseppe z szynką i pieczarkami', null, null, 'none', '5900437205137'),
+  ('PL', 'Kilargo', 'Grocery', 'Frozen & Prepared', 'Marletto Almond', null, 'Biedronka', 'none', '5907377116646'),
+  ('PL', 'Zielona Budka', 'Grocery', 'Frozen & Prepared', 'Lody Truskawkowe', null, 'Auchan', 'none', '5900130015835'),
+  ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnie z ziemniakami', null, 'Biedronka', 'none', '5901028913103'),
+  ('PL', 'Unknown', 'Grocery', 'Frozen & Prepared', 'Lody proteinowe śmietankowe go active', null, null, 'none', '5902533424665'),
+  ('PL', 'Grycan', 'Grocery', 'Frozen & Prepared', 'Lody truskawkowe', null, 'Auchan', 'none', '5907439112067'),
+  ('PL', 'Kilargo', 'Grocery', 'Frozen & Prepared', 'Marletto Salted Caramel Lava', null, 'Biedronka', 'none', '5907377116677'),
+  ('PL', 'Hortex', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnie', null, 'E. Leclerc,Auchan', 'none', '5900477000839'),
+  ('PL', 'Koral', 'Grocery', 'Frozen & Prepared', 'Lody Kukułka', null, null, 'none', '5902121009793'),
+  ('PL', 'Mroźna kraina', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnie', null, 'Biedronka', 'none', '5901028913387')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -54,4 +66,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Frozen & Prepared'
   and is_deprecated is not true
-  and product_name not in ('Pizza 4 sery, głęboko mrożona.', 'Ratatouille', 'soba noodles', 'Riz Sans sucres ajoutés**', 'Gelatelli Chocolate', 'Premium Bourbon - Dairy ice cream', 'High Protein Salted Caramel Ice Cream', 'Epinards Feuilles Préservées 750g', 'Salted caramel premium ice cream', 'Poisson pané', 'PIZZA Chèvre Cuite au feu de bois', 'Walnut Bon Gelati', 'Galettes de riz chocolat au lait', 'Pizza Prosciutto e Mozzarella', 'High protein cookies & cream', 'Vegetable Mix with Bamboo Shoots and Mun Mushrooms', 'Brioche Tranchée Noix de Coco, Chocolat au Lait', 'Bon Gelati Eiscreme mit Schlagsahne', 'Pain au Chocolat', 'Spaghetti', 'Magnum Crème Glacée en Pot Amande 440ml', 'Creme al pistacchio', 'Weisser Thunfish Alalunga', 'Snickers ice cream', 'Stracciatella Premium Eis', 'Glace Erdbeer Strawberry ice cream premium', 'Tranches de filets de Colin d''Alaska', 'Cônes parfum vanille');
+  and product_name not in ('Pizza 4 sery, głęboko mrożona.', 'Pierogi z kapustą i grzybami', 'Lody śmietankowe - kostka śnieżna', 'Roślinna kaszanka', 'Lody śmietankowe', 'Warzywa na patelnię', 'Warzywa na patelnię z ziemniakami', 'Pizza z szynką, pieczarkami i salami, głęboko mrożona.', 'Pizza z szynką i sosem pesto, głęboko mrożona.', 'Rożek z czekoladą', 'Jagody leśne', 'Pizza głęboko mrożona z szynką i pieczarkami.', 'Makaron na patelnię penne z sosem serowym', 'Ryba z piekarnika z sosem brokułowym', 'Włoszczyzna w słupkach', 'Fasolka szparagowa żółta i zielona, cała', 'Trio warzywne z mini marchewką', 'Warzywa na patelnię po włosku', 'Kalafior różyczki', 'Warzywa na patelnię letnie', 'Polskie wiśnie bez pestek', 'Warzywa na patelnię po meksykańsku', 'Mieszanka chińska', 'Plombie Śnieżynka', 'Warzywa na patelnię po europejsku', 'Pizza Guseppe z szynką i pieczarkami', 'Marletto Almond', 'Lody Truskawkowe', 'Warzywa na patelnie z ziemniakami', 'Lody proteinowe śmietankowe go active', 'Lody truskawkowe', 'Marletto Salted Caramel Lava', 'Warzywa na patelnie', 'Lody Kukułka', 'Warzywa na patelnie');

@@ -8,6 +8,7 @@ where (product_id, serving_id) in (
   from products p
   join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
   where p.country = 'PL' and p.category = 'Frozen & Prepared'
+    and p.is_deprecated is not true
 );
 
 -- 2) Insert
@@ -21,34 +22,52 @@ select
 from (
   values
     ('Dr. Oetker', 'Pizza 4 sery, głęboko mrożona.', 265.0, 9.5, 4.9, 0, 33.5, 3.7, 0, 10.2, 1.3),
-    ('Carrefour BIO', 'Ratatouille', 68.0, 4.3, 0.6, 0, 5.3, 4.3, 2.0, 1.1, 0.6),
-    ('Vitasia', 'soba noodles', 346.0, 1.4, 0.4, 0, 69.6, 2.1, 3.3, 12.0, 1.5),
-    ('Carrefour BIO', 'Riz Sans sucres ajoutés**', 57.0, 1.3, 0.1, 0, 11.0, 4.7, 0.0, 0.5, 0.1),
-    ('Gelatelli', 'Gelatelli Chocolate', 111.0, 3.0, 2.1, 0, 17.3, 8.2, 2.4, 8.4, 0.0),
-    ('Bon Gelati', 'Premium Bourbon - Dairy ice cream', 213.0, 12.5, 11.4, 0, 22.0, 19.6, 0.2, 3.0, 0.1),
-    ('Gelatelli', 'High Protein Salted Caramel Ice Cream', 131.0, 3.3, 2.3, 0, 22.7, 11.9, 2.7, 7.1, 0.4),
-    ('Bonduelle', 'Epinards Feuilles Préservées 750g', 24.0, 0.4, 0.1, 0, 1.5, 0.7, 2.3, 2.5, 0.1),
-    ('Bon Gelati', 'Salted caramel premium ice cream', 219.0, 10.5, 9.3, 0, 27.8, 23.6, 0.2, 3.1, 0.6),
-    ('Carrefour', 'Poisson pané', 195.0, 8.6, 1.1, 0, 17.0, 1.7, 0.5, 12.0, 0.9),
-    ('Carrefour BIO', 'PIZZA Chèvre Cuite au feu de bois', 241.0, 9.3, 4.3, 0, 29.0, 6.0, 2.6, 9.4, 0.8),
-    ('Bon Gelati', 'Walnut Bon Gelati', 255.0, 16.2, 10.3, 0, 22.7, 19.9, 0.6, 4.3, 0.1),
-    ('Carrefour BIO', 'Galettes de riz chocolat au lait', 501.0, 24.0, 14.0, 0, 63.0, 27.0, 3.0, 7.5, 0.1),
-    ('Italiamo', 'Pizza Prosciutto e Mozzarella', 202.0, 6.3, 3.0, 0, 25.5, 2.5, 0, 9.8, 1.1),
-    ('Gelatelli', 'High protein cookies & cream', 124.0, 3.7, 2.7, 0, 19.7, 9.3, 2.8, 7.2, 0.2),
-    ('Freshona', 'Vegetable Mix with Bamboo Shoots and Mun Mushrooms', 26.0, 0.0, 0, 0, 3.4, 3.0, 2.3, 2.0, 0.0),
-    ('Harrys', 'Brioche Tranchée Noix de Coco, Chocolat au Lait', 348.0, 14.0, 4.3, 0, 43.0, 14.0, 7.0, 9.2, 0.9),
-    ('Bon Gelati', 'Bon Gelati Eiscreme mit Schlagsahne', 247.0, 13.2, 8.9, 0, 26.6, 23.3, 0, 4.2, 0.1),
-    ('Carrefour', 'Pain au Chocolat', 401.0, 19.0, 9.7, 0, 48.0, 11.0, 3.0, 6.8, 0.9),
-    ('Carrefour', 'Spaghetti', 355.0, 1.8, 0.4, 0, 71.0, 3.5, 3.6, 12.0, 0.0),
-    ('Magnum', 'Magnum Crème Glacée en Pot Amande 440ml', 218.0, 13.0, 7.3, 0, 21.0, 19.0, 0.8, 3.1, 0.1),
-    ('Gelatelli', 'Creme al pistacchio', 328.0, 20.5, 14.2, 0, 30.2, 28.4, 2.9, 4.3, 0.1),
-    ('Nixe', 'Weisser Thunfish Alalunga', 370.0, 32.4, 5.6, 0, 0.0, 0.0, 0.0, 19.7, 0.6),
-    ('Mars', 'Snickers ice cream', 272.0, 17.0, 9.0, 0, 26.0, 23.0, 0, 4.3, 0.2),
-    ('Bon Gelati', 'Stracciatella Premium Eis', 231.0, 13.2, 11.6, 0, 24.8, 22.3, 0, 3.1, 0.1),
-    ('Bon Gelati', 'Glace Erdbeer Strawberry ice cream premium', 192.0, 7.6, 5.2, 0, 28.0, 24.1, 0, 2.7, 0.1),
-    ('Simpl', 'Tranches de filets de Colin d''Alaska', 78.0, 0.9, 0.2, 0, 0.0, 0.0, 0, 17.0, 0.3),
-    ('Carrefour', 'Cônes parfum vanille', 280.0, 12.0, 10.0, 0, 39.0, 26.0, 0.8, 3.5, 0.1)
+    ('Swojska Chata', 'Pierogi z kapustą i grzybami', 146.0, 3.8, 0.4, 0, 23.0, 1.8, 2.5, 3.9, 1.2),
+    ('Koral', 'Lody śmietankowe - kostka śnieżna', 196.0, 9.0, 7.6, 0, 25.0, 19.0, 0, 3.7, 0.2),
+    ('Dobra kaloria', 'Roślinna kaszanka', 244.0, 16.0, 7.0, 0, 16.0, 0.3, 6.2, 6.3, 1.0),
+    ('Grycan', 'Lody śmietankowe', 262.0, 15.5, 9.8, 0, 25.8, 22.9, 0.3, 4.6, 0.2),
+    ('Hortex', 'Warzywa na patelnię', 27.0, 0.5, 0.1, 0, 3.7, 2.5, 2.4, 1.4, 0.5),
+    ('Mroźna Kraina', 'Warzywa na patelnię z ziemniakami', 62.0, 1.3, 0.5, 0, 9.4, 1.3, 2.5, 1.9, 0.1),
+    ('Dr.Oetker', 'Pizza z szynką, pieczarkami i salami, głęboko mrożona.', 238.0, 7.3, 3.5, 0, 33.0, 3.7, 0, 9.6, 1.2),
+    ('Dr.Oetker', 'Pizza z szynką i sosem pesto, głęboko mrożona.', 229.0, 7.2, 3.3, 0, 31.4, 3.6, 1.8, 8.9, 1.0),
+    ('Biedronka', 'Rożek z czekoladą', 328.0, 18.0, 13.0, 0, 37.0, 26.0, 2.6, 4.6, 0.1),
+    ('Mroźna Kraina', 'Jagody leśne', 58.0, 0.4, 0.1, 0, 12.1, 9.7, 2.0, 0.4, 0.0),
+    ('MaxTop Sławków', 'Pizza głęboko mrożona z szynką i pieczarkami.', 240.0, 8.0, 2.5, 0, 34.0, 2.7, 0, 8.0, 1.5),
+    ('Hortex', 'Makaron na patelnię penne z sosem serowym', 66.0, 0.7, 0.3, 0, 10.8, 2.6, 0, 3.1, 0.5),
+    ('Fish Time', 'Ryba z piekarnika z sosem brokułowym', 115.0, 5.0, 2.3, 0, 5.3, 2.0, 0, 11.8, 0.7),
+    ('Morźna Kraina', 'Włoszczyzna w słupkach', 50.0, 0.5, 0.1, 0, 8.3, 2.5, 3.9, 1.6, 0.1),
+    ('Mroźna Kraina', 'Fasolka szparagowa żółta i zielona, cała', 32.0, 0.5, 0.1, 0, 3.1, 2.3, 3.4, 1.9, 0.0),
+    ('Mroźna Kraina', 'Trio warzywne z mini marchewką', 22.0, 0.4, 0.1, 0, 0.9, 0.6, 3.3, 2.0, 0.0),
+    ('Mroźna Kraina', 'Warzywa na patelnię po włosku', 34.0, 0.5, 0, 0, 4.4, 0, 0, 1.8, 0),
+    ('Mroźna Kraina', 'Kalafior różyczki', 21.0, 0.2, 0.1, 0, 2.7, 2.6, 1.0, 1.7, 0.0),
+    ('Mroźna kraina', 'Warzywa na patelnię letnie', 79.0, 5.4, 0.6, 0, 4.3, 4.3, 2.7, 2.0, 0.6),
+    ('Mroźna Kraina', 'Polskie wiśnie bez pestek', 71.3, 0.0, 0.0, 0, 15.9, 11.2, 1.2, 1.3, 0.0),
+    ('Mroźna Kraina', 'Warzywa na patelnię po meksykańsku', 60.0, 0.4, 0.2, 0, 9.7, 3.5, 2.5, 3.1, 0),
+    ('Asia Flavours', 'Mieszanka chińska', 29.0, 0.2, 0.1, 0, 5.5, 3.2, 0.5, 1.2, 0.0),
+    ('NewIce', 'Plombie Śnieżynka', 212.0, 11.3, 0, 0, 23.3, 0, 0, 4.2, 0),
+    ('Mroźna Kraina', 'Warzywa na patelnię po europejsku', 79.0, 2.7, 0.4, 0, 8.8, 1.7, 4.2, 2.7, 0.4),
+    ('Dr. Oetker', 'Pizza Guseppe z szynką i pieczarkami', 221.0, 8.8, 4.5, 0, 26.7, 3.3, 0, 8.1, 1.1),
+    ('Kilargo', 'Marletto Almond', 345.0, 22.0, 14.0, 0, 31.0, 29.0, 1.8, 4.8, 0.1),
+    ('Zielona Budka', 'Lody Truskawkowe', 114.0, 5.5, 5.0, 0, 15.0, 12.0, 0, 0.9, 0.0),
+    ('Mroźna Kraina', 'Warzywa na patelnie z ziemniakami', 52.4, 1.3, 0.5, 0, 6.6, 2.9, 3.1, 1.9, 0.0),
+    ('Unknown', 'Lody proteinowe śmietankowe go active', 120.0, 2.7, 1.9, 0, 14.0, 9.9, 5.4, 7.3, 0.5),
+    ('Grycan', 'Lody truskawkowe', 231.0, 12.1, 7.7, 0, 26.3, 23.2, 0.7, 3.6, 0.1),
+    ('Kilargo', 'Marletto Salted Caramel Lava', 342.0, 21.0, 13.0, 0, 34.0, 31.0, 0.8, 4.4, 0.4),
+    ('Hortex', 'Warzywa na patelnie', 57.0, 1.1, 0.2, 0, 8.6, 2.2, 2.4, 2.0, 0.4),
+    ('Koral', 'Lody Kukułka', 219.0, 11.0, 0, 0, 26.0, 0, 0, 4.1, 0),
+    ('Mroźna kraina', 'Warzywa na patelnie', 40.0, 0.4, 0, 0, 6.1, 0, 0, 1.6, 0)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g';
+  and p.category = 'Frozen & Prepared' and p.is_deprecated is not true
+join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
+on conflict (product_id, serving_id) do update set
+  calories = excluded.calories,
+  total_fat_g = excluded.total_fat_g,
+  saturated_fat_g = excluded.saturated_fat_g,
+  trans_fat_g = excluded.trans_fat_g,
+  carbs_g = excluded.carbs_g,
+  sugars_g = excluded.sugars_g,
+  fibre_g = excluded.fibre_g,
+  protein_g = excluded.protein_g,
+  salt_g = excluded.salt_g;

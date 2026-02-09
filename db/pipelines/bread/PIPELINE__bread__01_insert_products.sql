@@ -1,45 +1,82 @@
 -- PIPELINE (Bread): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
--- 0. DEPRECATE old products & release their EANs
+-- 0a. DEPRECATE old products in this category & release their EANs
 update products
 set is_deprecated = true, ean = null
 where country = 'PL'
   and category = 'Bread'
   and is_deprecated is not true;
 
+-- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
+update products set ean = null
+where ean in ('5905279941427', '5900320001303', '5900864721545', '5906395431007', '5901688800058', '5900585000028', '5904215137917', '5904215134251', '5906395431021', '5900697040172', '5906489239182', '5901688807163', '5904215138587', '5900340012815', '5900340003912', '5906827017830', '5900340009068', '5900864810003', '5902180210505', '5902620000116', '5907029010773', '5905279941120', '5900864727806', '5901486007406', '5900340007347', '5903111184322', '5907377301646', '5902180400500', '5900585000011', '5907577250027', '5905784301631', '5900340003615', '5906395431090', '5900864760346', '5907577250508', '5900320008142', '5900864789828', '5906739703012', '5900864883007', '5907577250461', '5900340011146', '5906598323055', '5901948004431', '5900928032358', '5900340009082', '5901534001745', '5905683298421', '5901549519211', '5900340003424', '5903111184230', '5905784344591', '5903111184261', '5902620000406', '5900340000294', '5905204650424', '5903111184766', '5906286063799', '5906489239373', '5904341989060', '5904276030240')
+  and ean is not null;
+
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('PL', 'Lajkonik', 'Grocery', 'Bread', 'Paluszki słone', null, 'Auchan', 'none', '5900320001303'),
   ('PL', 'Gursz', 'Grocery', 'Bread', 'Chleb Pszenno-Żytni', null, 'Biedronka', 'none', '5905279941427'),
+  ('PL', 'Lajkonik', 'Grocery', 'Bread', 'Paluszki słone', null, 'Auchan', 'none', '5900320001303'),
+  ('PL', 'Dan Cake', 'Grocery', 'Bread', 'Bułeczki mleczne z czekoladą', null, 'Lidl', 'none', '5900864721545'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Chleb mieszany pszenno-żytni z dodatkiem naturalnego zakwasu żytniego oraz ziaren, krojony. Złoty łan', null, 'Biedronka', 'none', '5906395431007'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Hot dog pszenno-żytni', null, 'Biedronka', 'none', '5901688800058'),
+  ('PL', 'Mestemacher', 'Grocery', 'Bread', 'Chleb wielozbożowy żytni pełnoziarnisty', null, 'Auchan', 'none', '5900585000028'),
+  ('PL', 'Auchan', 'Grocery', 'Bread', 'Bułki do Hamburgerów', null, 'Auchan', 'none', '5904215137917'),
+  ('PL', 'Auchan', 'Grocery', 'Bread', 'Tost pełnoziarnisty', null, 'Auchan', 'none', '5904215134251'),
+  ('PL', 'Vital', 'Grocery', 'Bread', 'Bułki śniadaniowe', 'baked', 'Kaufland', 'none', '5906395431021'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Bułka tarta', null, 'Biedronka', 'none', '5900697040172'),
+  ('PL', 'Piekarnia Gwóźdź', 'Grocery', 'Bread', 'Chleb z mąką krojony - pieczywo mieszane', null, 'Biedronka', 'none', '5906489239182'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Bułka do hot doga', null, 'Biedronka', 'none', '5901688807163'),
+  ('PL', 'Auchan', 'Grocery', 'Bread', 'Tortilla Pszenno-Żytnia', null, 'Auchan', 'none', '5904215138587'),
   ('PL', 'Pano', 'Grocery', 'Bread', 'Tost pełnoziarnisty', null, null, 'none', '5900340012815'),
   ('PL', 'Pano', 'Grocery', 'Bread', 'Tost  maślany', null, null, 'none', '5900340003912'),
-  ('PL', 'Sonko', 'Grocery', 'Bread', 'Lekkie żytnie', null, null, 'none', '5902180210505'),
-  ('PL', 'Aksam', 'Grocery', 'Bread', 'Beskidzkie paluszki z solą', null, null, 'none', '5907029010773'),
   ('PL', 'Melvit', 'Grocery', 'Bread', 'Pieczywo Chrupkie Zytnie CRISPY z pomidorami i bazylią', null, null, 'none', '5906827017830'),
   ('PL', 'Pano', 'Grocery', 'Bread', 'Chleb żytni', null, null, 'none', '5900340009068'),
+  ('PL', 'Dan Cake', 'Grocery', 'Bread', 'Mleczne bułeczki', null, null, 'none', '5900864810003'),
+  ('PL', 'Sonko', 'Grocery', 'Bread', 'Lekkie żytnie', null, null, 'none', '5902180210505'),
+  ('PL', 'Lantmannen Unibake', 'Grocery', 'Bread', 'Bułki pszenne do hot dogów.', null, null, 'none', '5902620000116'),
+  ('PL', 'Aksam', 'Grocery', 'Bread', 'Beskidzkie paluszki z solą', null, null, 'none', '5907029010773'),
+  ('PL', 'Wypieczone ze smakiem', 'Grocery', 'Bread', 'Chleb żytni z ziarnami', null, null, 'none', '5905279941120'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Bułeczki śniadaniowe', null, null, 'none', '5900864727806'),
+  ('PL', 'Spółdzielnia piekarsko ciastkarska w Warszawie', 'Grocery', 'Bread', 'Chleb wieloziarnisty złoty łan', null, null, 'none', '5901486007406'),
+  ('PL', 'PANO', 'Grocery', 'Bread', 'Chleb wieloziarnisty Złoty Łan', null, null, 'none', '5900340007347'),
+  ('PL', 'Z Piekarni Regionalnej', 'Grocery', 'Bread', 'Chleb zytni ze słonecznikiem', null, null, 'none', '5903111184322'),
+  ('PL', 'Pano', 'Grocery', 'Bread', 'Bułki do hamburgerów z sezamem', null, null, 'none', '5907377301646'),
+  ('PL', 'Sonko', 'Grocery', 'Bread', 'Lekkie ze słonecznikiem', null, null, 'none', '5902180400500'),
+  ('PL', 'Mastemacher', 'Grocery', 'Bread', 'Chleb żytni', null, null, 'none', '5900585000011'),
+  ('PL', 'Sendal', 'Grocery', 'Bread', 'Chleb firmowy, pieczywo mieszane pszenno-żytnie', null, 'Polska Chata', 'none', '5907577250027'),
+  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Chleb tostowy maślany', null, null, 'none', '5905784301631'),
+  ('PL', 'Oskroba', 'Grocery', 'Bread', 'Chleb żytni razowy', null, null, 'none', '5900340003615'),
+  ('PL', 'VITAL', 'Grocery', 'Bread', 'Bułki z ziarnami', null, null, 'none', '5906395431090'),
+  ('PL', 'DAN CAKE', 'Grocery', 'Bread', 'Bułki śniadaniowe', null, null, 'none', '5900864760346'),
+  ('PL', 'Sendal', 'Grocery', 'Bread', 'Chleb na maślance', null, 'Polska Chata', 'none', '5907577250508'),
+  ('PL', 'Lajkonik', 'Grocery', 'Bread', 'Bajgle z ziołami prowansalskimi', null, null, 'none', '5900320008142'),
+  ('PL', 'Dan cake', 'Grocery', 'Bread', 'Tost pełnoziarnisty', null, null, 'none', '5900864789828'),
+  ('PL', 'Piekarnia Wilkowo', 'Grocery', 'Bread', 'Chleb pszenno-żytni', null, null, 'none', '5906739703012'),
+  ('PL', 'Dan Cake', 'Grocery', 'Bread', 'Bułeczki pszenne częściowo pieczone - do samodzielnego wypieku.', null, null, 'none', '5900864883007'),
+  ('PL', 'Sendal', 'Grocery', 'Bread', 'Chleb żytni bez drożdzy', null, 'Mila', 'none', '5907577250461'),
+  ('PL', 'Piekarnia Oskrobia', 'Grocery', 'Bread', 'Chleb-pszenno-żytni z mąką pełnoziarnistą graham oraz dodatkiem zakwasu żytniego, krojony.', null, null, 'none', '5900340011146'),
+  ('PL', 'Mika', 'Grocery', 'Bread', 'Chleb żytni razowy', null, null, 'none', '5906598323055'),
+  ('PL', 'Putka', 'Grocery', 'Bread', 'Tost z mąką pełnoziarnistą (pszenno-żytni)', null, null, 'none', '5901948004431'),
   ('PL', 'Pano', 'Grocery', 'Bread', 'Tortilla', null, 'Biedronka', 'none', '5900928032358'),
   ('PL', 'Pano', 'Grocery', 'Bread', 'Chleb żytni z dodatkiem amarantusa i komosy ryżowej', null, null, 'none', '5900340009082'),
   ('PL', 'Pano', 'Grocery', 'Bread', 'Pieczywo kukurydziane chrupkie', null, 'Biedronka', 'none', '5901534001745'),
-  ('PL', 'Dijo', 'Grocery', 'Bread', 'Fresh Wraps Grill Barbecue x4', null, 'Kaufland', 'none', '5900928007264'),
-  ('PL', 'Pano', 'Grocery', 'Bread', 'tosty pszenny', null, null, 'none', '5900340003929'),
-  ('PL', 'Sonko', 'Grocery', 'Bread', 'Pieczywo Sonko Lekkie 7 Ziaren', null, null, 'none', '5902180200506'),
-  ('PL', 'Pano', 'Grocery', 'Bread', 'Chleb Wiejski', null, null, 'none', '5900340001758'),
-  ('PL', 'Dan Cake', 'Grocery', 'Bread', 'Toast bread', null, null, 'none', '5900864520117'),
-  ('PL', 'Wasa', 'Grocery', 'Bread', 'Pieczywo z pełnoziarnistej mąki żytniej', null, 'Biedronka', 'none', '7300400122054'),
-  ('PL', 'Pano', 'Grocery', 'Bread', 'Wraps lo-carb whole wheat tortilla', null, null, 'none', '5900928008902'),
-  ('PL', 'Lestello', 'Grocery', 'Bread', 'Chickpea cakes', null, null, 'none', '5902609001400'),
-  ('PL', 'TOP', 'Grocery', 'Bread', 'Paluszki solone', null, null, 'none', '5904607000935'),
-  ('PL', 'Piekarnia w sercu Lidla', 'Grocery', 'Bread', 'Chleb Tostowy Z Mąką Pełnoziarnistą', null, null, 'none', '20319205'),
-  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Petits pains grilles', null, 'Dia,Carrefour,carrefour.fr', 'none', '3270190007425'),
-  ('PL', 'Carrefour', 'Grocery', 'Bread', 'biscottes braisées', null, 'Carrefour,carrefour.fr,Carrefour Market,Carrefour Express,Carrefour City', 'none', '3560070401826'),
-  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Biscottes sans sel ajouté', null, 'Carrefour,carrefour.fr', 'none', '5400101201712'),
-  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Biscottes Blé complet', null, 'Carrefour,carrefour.fr', 'none', '3560070823291'),
-  ('PL', 'Chabrior', 'Grocery', 'Bread', 'Biscottes complètes x36', null, 'Intermarché, INTERMARCHE FRANCE', 'none', '3250391699995'),
-  ('PL', 'Italiamo', 'Grocery', 'Bread', 'Piada sfogliata', null, 'LIDL', 'none', '20072483'),
-  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Biscuits Nature', null, 'Carrefour,carrefour.fr,Carefour Market', 'none', '3245412589980')
+  ('PL', 'Bite IT', 'Grocery', 'Bread', 'LAWASZ pszenny chleb', null, 'Biedronka', 'none', '5905683298421'),
+  ('PL', 'Gwóźdź', 'Grocery', 'Bread', 'Chleb wieloziarnisty', null, 'Biedronka', 'none', '5901549519211'),
+  ('PL', 'Oskroba', 'Grocery', 'Bread', 'Tost maślany', null, null, 'none', '5900340003424'),
+  ('PL', 'Z dobrej piekarni', 'Grocery', 'Bread', 'Chleb baltonowski', null, 'Żabka', 'none', '5903111184230'),
+  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Tortilla pszenna', null, 'Carrefour,Auchan', 'none', '5905784344591'),
+  ('PL', 'Z Dobrej Piekarni', 'Grocery', 'Bread', 'Chleb wieloziarnisty', null, 'Żabka', 'none', '5903111184261'),
+  ('PL', 'Shulstad', 'Grocery', 'Bread', 'Classic Pszenny Hot Dog', null, 'Auchan', 'none', '5902620000406'),
+  ('PL', 'Oskroba', 'Grocery', 'Bread', 'Chleb żytni pełnoziarnisty pasteryzowany', null, null, 'none', '5900340000294'),
+  ('PL', 'Dakri', 'Grocery', 'Bread', 'Pinsa', null, 'Lidl', 'none', '5905204650424'),
+  ('PL', 'Żabka', 'Grocery', 'Bread', 'Kajzerka kebab', null, 'Żabka', 'none', '5903111184766'),
+  ('PL', 'Asprod', 'Grocery', 'Bread', 'Chleb jakubowy żytni razowy', null, null, 'none', '5906286063799'),
+  ('PL', 'Biedronka piekarnia gwóźdź', 'Grocery', 'Bread', 'Chleb żytni', null, null, 'none', '5906489239373'),
+  ('PL', 'Piekarnia &quot;Pod Rogalem&quot;', 'Grocery', 'Bread', 'Chleb Baltonowski krojony', null, 'Dino', 'none', '5904341989060'),
+  ('PL', 'Piekarnia Jesse', 'Grocery', 'Bread', 'Chleb wieloziarnisty ciemny', null, 'Dino', 'none', '5904276030240')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -54,4 +91,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Bread'
   and is_deprecated is not true
-  and product_name not in ('Paluszki słone', 'Chleb Pszenno-Żytni', 'Tost pełnoziarnisty', 'Tost  maślany', 'Lekkie żytnie', 'Beskidzkie paluszki z solą', 'Pieczywo Chrupkie Zytnie CRISPY z pomidorami i bazylią', 'Chleb żytni', 'Tortilla', 'Chleb żytni z dodatkiem amarantusa i komosy ryżowej', 'Pieczywo kukurydziane chrupkie', 'Fresh Wraps Grill Barbecue x4', 'tosty pszenny', 'Pieczywo Sonko Lekkie 7 Ziaren', 'Chleb Wiejski', 'Toast bread', 'Pieczywo z pełnoziarnistej mąki żytniej', 'Wraps lo-carb whole wheat tortilla', 'Chickpea cakes', 'Paluszki solone', 'Chleb Tostowy Z Mąką Pełnoziarnistą', 'Petits pains grilles', 'biscottes braisées', 'Biscottes sans sel ajouté', 'Biscottes Blé complet', 'Biscottes complètes x36', 'Piada sfogliata', 'Biscuits Nature');
+  and product_name not in ('Chleb Pszenno-Żytni', 'Paluszki słone', 'Bułeczki mleczne z czekoladą', 'Chleb mieszany pszenno-żytni z dodatkiem naturalnego zakwasu żytniego oraz ziaren, krojony. Złoty łan', 'Hot dog pszenno-żytni', 'Chleb wielozbożowy żytni pełnoziarnisty', 'Bułki do Hamburgerów', 'Tost pełnoziarnisty', 'Bułki śniadaniowe', 'Bułka tarta', 'Chleb z mąką krojony - pieczywo mieszane', 'Bułka do hot doga', 'Tortilla Pszenno-Żytnia', 'Tost pełnoziarnisty', 'Tost  maślany', 'Pieczywo Chrupkie Zytnie CRISPY z pomidorami i bazylią', 'Chleb żytni', 'Mleczne bułeczki', 'Lekkie żytnie', 'Bułki pszenne do hot dogów.', 'Beskidzkie paluszki z solą', 'Chleb żytni z ziarnami', 'Bułeczki śniadaniowe', 'Chleb wieloziarnisty złoty łan', 'Chleb wieloziarnisty Złoty Łan', 'Chleb zytni ze słonecznikiem', 'Bułki do hamburgerów z sezamem', 'Lekkie ze słonecznikiem', 'Chleb żytni', 'Chleb firmowy, pieczywo mieszane pszenno-żytnie', 'Chleb tostowy maślany', 'Chleb żytni razowy', 'Bułki z ziarnami', 'Bułki śniadaniowe', 'Chleb na maślance', 'Bajgle z ziołami prowansalskimi', 'Tost pełnoziarnisty', 'Chleb pszenno-żytni', 'Bułeczki pszenne częściowo pieczone - do samodzielnego wypieku.', 'Chleb żytni bez drożdzy', 'Chleb-pszenno-żytni z mąką pełnoziarnistą graham oraz dodatkiem zakwasu żytniego, krojony.', 'Chleb żytni razowy', 'Tost z mąką pełnoziarnistą (pszenno-żytni)', 'Tortilla', 'Chleb żytni z dodatkiem amarantusa i komosy ryżowej', 'Pieczywo kukurydziane chrupkie', 'LAWASZ pszenny chleb', 'Chleb wieloziarnisty', 'Tost maślany', 'Chleb baltonowski', 'Tortilla pszenna', 'Chleb wieloziarnisty', 'Classic Pszenny Hot Dog', 'Chleb żytni pełnoziarnisty pasteryzowany', 'Pinsa', 'Kajzerka kebab', 'Chleb jakubowy żytni razowy', 'Chleb żytni', 'Chleb Baltonowski krojony', 'Chleb wieloziarnisty ciemny');

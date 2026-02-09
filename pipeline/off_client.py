@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Constants
 # ---------------------------------------------------------------------------
-OFF_SEARCH_URL = "https://world.openfoodfacts.org/cgi/search.pl"
+OFF_SEARCH_URL = "https://world.openfoodfacts.org/api/v2/search"
 OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
 USER_AGENT = "poland-food-db/1.0 (https://github.com/ericsocrat/poland-food-db)"
 PAGE_SIZE = 50
@@ -84,12 +84,8 @@ def _search_by_tags(
         page = 1
         while len(results) < max_results:
             params: dict[str, Any] = {
-                "countries_tags": "en:poland",
-                "tagtype_0": "categories",
-                "tag_contains_0": "contains",
-                "tag_0": tag,
-                "action": "process",
-                "json": 1,
+                "categories_tags_en": tag,
+                "countries_tags_en": "poland",
                 "page": page,
                 "page_size": PAGE_SIZE,
             }
@@ -122,10 +118,7 @@ def _search_by_terms(
         while len(results) < max_results:
             params: dict[str, Any] = {
                 "search_terms": term,
-                "countries_tags": "en:poland",
-                "search_simple": 1,
-                "action": "process",
-                "json": 1,
+                "countries_tags_en": "poland",
                 "page": page,
                 "page_size": PAGE_SIZE,
             }
