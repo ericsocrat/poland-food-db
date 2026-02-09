@@ -65,4 +65,5 @@ LEFT JOIN public.sources src ON (
     -- Match sources.brand pattern "Multi-brand (CategoryName)" to products.category
     -- e.g., "Multi-brand (Chips)" matches category = 'Chips'
     src.brand LIKE '%(' || p.category || ')%'
-);
+)
+WHERE p.is_deprecated IS NOT TRUE;

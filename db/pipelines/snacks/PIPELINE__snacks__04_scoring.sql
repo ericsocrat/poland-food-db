@@ -23,16 +23,26 @@ update ingredients i set
   additives_count = d.cnt
 from (
   values
-    ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', '3'),
-    ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', '3'),
-    ('Sante', 'Vitamin coconut bar', '3'),
-    ('nakd', 'Blueberry Muffin Myrtilles', '0'),
-    ('Carrefour', 'Toast crock'' céréales complètes', '0'),
-    ('7 DAYS', 'Croissant with Cocoa Filling', '6'),
-    ('Favorina', 'Coeurs pain d''épices chocolat noir', '6'),
-    ('Crownfield', 'Muesli Bars Chocolate & Banana', '2'),
-    ('Milka', 'Cake & Chock', '5'),
-    ('Maretti', 'Bruschette Chips Pizza Flavour', '2')
+    ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', 0),
+    ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', 3),
+    ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', 3),
+    ('Sante', 'Vitamin coconut bar', 3),
+    ('Go On Nutrition', 'Protein 33% Caramel', 4),
+    ('Lajkonik', 'prezel', 2),
+    ('Nestlé', 'Cocoa fitness bar', 0),
+    ('nakd', 'Blueberry Muffin Myrtilles', 0),
+    ('Carrefour', 'Toast crock'' céréales complètes', 0),
+    ('7 DAYS', 'Croissant with Cocoa Filling', 6),
+    ('Favorina', 'Coeurs pain d''épices chocolat noir', 6),
+    ('Crownfield', 'Muesli Bars Chocolate & Banana', 2),
+    ('Carrefour BIO', 'Tartines craquantes Au blé complet', 0),
+    ('Carrefour', 'Barre patissière', 4),
+    ('Chabrior', 'Barres de céréales aux noisettes x6 - 126g', 3),
+    ('Milka', 'Cake & Chock', 5),
+    ('Maretti', 'Bruschette Chips Pizza Flavour', 2),
+    ('Milka', 'Choco brownie', 9),
+    ('Pilos', 'Barretta al quark gusto Nocciola', 3),
+    ('Happy Creations', 'Cracker Mix Classic', 2)
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -40,15 +50,15 @@ where i.product_id = p.product_id;
 -- 2. COMPUTE unhealthiness_score (v3.1)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v31(
-      nf.saturated_fat_g::numeric,
-      nf.sugars_g::numeric,
-      nf.salt_g::numeric,
-      nf.calories::numeric,
-      nf.trans_fat_g::numeric,
-      i.additives_count::numeric,
+      nf.saturated_fat_g,
+      nf.sugars_g,
+      nf.salt_g,
+      nf.calories,
+      nf.trans_fat_g,
+      i.additives_count,
       p.prep_method,
       p.controversies
-  )::text,
+  ),
   scored_at       = CURRENT_DATE,
   scoring_version = 'v3.1'
 from products p
@@ -64,16 +74,26 @@ update scores sc set
   nutri_score_label = d.ns
 from (
   values
+    ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', 'E'),
     ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', 'E'),
     ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', 'NOT-APPLICABLE'),
     ('Sante', 'Vitamin coconut bar', 'NOT-APPLICABLE'),
+    ('Go On Nutrition', 'Protein 33% Caramel', 'NOT-APPLICABLE'),
+    ('Lajkonik', 'prezel', 'B'),
+    ('Nestlé', 'Cocoa fitness bar', 'A'),
     ('nakd', 'Blueberry Muffin Myrtilles', 'D'),
     ('Carrefour', 'Toast crock'' céréales complètes', 'C'),
     ('7 DAYS', 'Croissant with Cocoa Filling', 'E'),
     ('Favorina', 'Coeurs pain d''épices chocolat noir', 'E'),
     ('Crownfield', 'Muesli Bars Chocolate & Banana', 'E'),
+    ('Carrefour BIO', 'Tartines craquantes Au blé complet', 'A'),
+    ('Carrefour', 'Barre patissière', 'E'),
+    ('Chabrior', 'Barres de céréales aux noisettes x6 - 126g', 'C'),
     ('Milka', 'Cake & Chock', 'E'),
-    ('Maretti', 'Bruschette Chips Pizza Flavour', 'D')
+    ('Maretti', 'Bruschette Chips Pizza Flavour', 'D'),
+    ('Milka', 'Choco brownie', 'E'),
+    ('Pilos', 'Barretta al quark gusto Nocciola', 'E'),
+    ('Happy Creations', 'Cracker Mix Classic', 'E')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -90,26 +110,36 @@ update scores sc set
   end
 from (
   values
+    ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', '4'),
     ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', '4'),
     ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', '4'),
     ('Sante', 'Vitamin coconut bar', '4'),
+    ('Go On Nutrition', 'Protein 33% Caramel', '4'),
+    ('Lajkonik', 'prezel', '3'),
+    ('Nestlé', 'Cocoa fitness bar', '4'),
     ('nakd', 'Blueberry Muffin Myrtilles', '4'),
     ('Carrefour', 'Toast crock'' céréales complètes', '3'),
     ('7 DAYS', 'Croissant with Cocoa Filling', '4'),
     ('Favorina', 'Coeurs pain d''épices chocolat noir', '4'),
     ('Crownfield', 'Muesli Bars Chocolate & Banana', '4'),
+    ('Carrefour BIO', 'Tartines craquantes Au blé complet', '3'),
+    ('Carrefour', 'Barre patissière', '4'),
+    ('Chabrior', 'Barres de céréales aux noisettes x6 - 126g', '4'),
     ('Milka', 'Cake & Chock', '4'),
-    ('Maretti', 'Bruschette Chips Pizza Flavour', '4')
+    ('Maretti', 'Bruschette Chips Pizza Flavour', '4'),
+    ('Milka', 'Choco brownie', '4'),
+    ('Pilos', 'Barretta al quark gusto Nocciola', '4'),
+    ('Happy Creations', 'Cracker Mix Classic', '4')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
 -- 5. Health-risk flags
 update scores sc set
-  high_salt_flag = case when nf.salt_g::numeric >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count::numeric, 0) >= 5 then 'YES' else 'NO' end,
+  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
+  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
+  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'

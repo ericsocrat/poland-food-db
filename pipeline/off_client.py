@@ -25,8 +25,8 @@ OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
 USER_AGENT = "poland-food-db/1.0 (https://github.com/ericsocrat/poland-food-db)"
 PAGE_SIZE = 50
 REQUEST_DELAY = 1.0  # seconds between requests
-REQUEST_TIMEOUT = 60  # seconds (OFF API can be slow)
-MAX_RETRIES = 2
+REQUEST_TIMEOUT = 90  # seconds (OFF API can be slow)
+MAX_RETRIES = 3
 
 
 def _get_json(session: requests.Session, url: str, params: dict) -> dict | None:
@@ -36,10 +36,11 @@ def _get_json(session: requests.Session, url: str, params: dict) -> dict | None:
             resp = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
             resp.raise_for_status()
             return resp.json()
-        except requests.RequestException as exc:
+        except (requests.RequestException, TimeoutError, ConnectionError) as exc:
             if attempt < MAX_RETRIES:
-                logger.debug("Retry %d for %s: %s", attempt + 1, url, exc)
-                time.sleep(REQUEST_DELAY * 2)
+                wait = REQUEST_DELAY * (attempt + 1) * 2
+                logger.debug("Retry %d for %s: %s (wait %.0fs)", attempt + 1, url, exc, wait)
+                time.sleep(wait)
                 continue
             logger.warning("Request failed after %d retries: %s", MAX_RETRIES, exc)
             return None

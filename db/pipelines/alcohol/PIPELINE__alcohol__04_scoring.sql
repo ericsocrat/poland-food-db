@@ -23,22 +23,22 @@ update ingredients i set
   additives_count = d.cnt
 from (
   values
-    ('Harnaś', 'Harnaś jasne pełne', '0'),
-    ('Karmi', 'Karmi o smaku żurawina', '1'),
-    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', '0'),
-    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '0'),
-    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '0'),
-    ('Lomża', 'Łomża jasne', '0'),
-    ('Kompania Piwowarska', 'Kozel cerny', '0'),
-    ('Lech', 'Lech Premium', '0'),
-    ('Łomża', 'Bière sans alcool', '0'),
-    ('Kompania Piwowarska', 'Lech free', '0'),
-    ('Carlsberg', 'Pilsner 0.0%', '0'),
-    ('Lech', 'Lech Free Lime Mint', '0'),
-    ('Christkindl', 'Christkindl Glühwein', '1'),
-    ('Heineken', 'Heineken Beer', '0'),
-    ('Ikea', 'Glühwein', '3'),
-    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', '0')
+    ('Harnaś', 'Harnaś jasne pełne', 0),
+    ('Karmi', 'Karmi o smaku żurawina', 1),
+    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', 0),
+    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 0),
+    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 0),
+    ('Lomża', 'Łomża jasne', 0),
+    ('Kompania Piwowarska', 'Kozel cerny', 0),
+    ('Lech', 'Lech Premium', 0),
+    ('Łomża', 'Bière sans alcool', 0),
+    ('Kompania Piwowarska', 'Lech free', 0),
+    ('Carlsberg', 'Pilsner 0.0%', 0),
+    ('Lech', 'Lech Free Lime Mint', 0),
+    ('Christkindl', 'Christkindl Glühwein', 1),
+    ('Heineken', 'Heineken Beer', 0),
+    ('Ikea', 'Glühwein', 3),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 0)
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -46,15 +46,15 @@ where i.product_id = p.product_id;
 -- 2. COMPUTE unhealthiness_score (v3.1)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v31(
-      nf.saturated_fat_g::numeric,
-      nf.sugars_g::numeric,
-      nf.salt_g::numeric,
-      nf.calories::numeric,
-      nf.trans_fat_g::numeric,
-      i.additives_count::numeric,
+      nf.saturated_fat_g,
+      nf.sugars_g,
+      nf.salt_g,
+      nf.calories,
+      nf.trans_fat_g,
+      i.additives_count,
       p.prep_method,
       p.controversies
-  )::text,
+  ),
   scored_at       = CURRENT_DATE,
   scoring_version = 'v3.1'
 from products p
@@ -102,32 +102,32 @@ update scores sc set
   end
 from (
   values
-    ('Harnaś', 'Harnaś jasne pełne', '3'),
-    ('Karmi', 'Karmi o smaku żurawina', '4'),
-    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', '4'),
-    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '4'),
-    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '3'),
-    ('Lomża', 'Łomża jasne', '4'),
-    ('Kompania Piwowarska', 'Kozel cerny', '3'),
-    ('Lech', 'Lech Premium', '3'),
-    ('Łomża', 'Bière sans alcool', '4'),
-    ('Kompania Piwowarska', 'Lech free', '4'),
-    ('Carlsberg', 'Pilsner 0.0%', '4'),
-    ('Lech', 'Lech Free Lime Mint', '4'),
-    ('Christkindl', 'Christkindl Glühwein', '4'),
-    ('Heineken', 'Heineken Beer', '3'),
-    ('Ikea', 'Glühwein', '4'),
-    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', '3')
+    ('Harnaś', 'Harnaś jasne pełne', 3),
+    ('Karmi', 'Karmi o smaku żurawina', 4),
+    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', 4),
+    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 4),
+    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 3),
+    ('Lomża', 'Łomża jasne', 4),
+    ('Kompania Piwowarska', 'Kozel cerny', 3),
+    ('Lech', 'Lech Premium', 3),
+    ('Łomża', 'Bière sans alcool', 4),
+    ('Kompania Piwowarska', 'Lech free', 4),
+    ('Carlsberg', 'Pilsner 0.0%', 4),
+    ('Lech', 'Lech Free Lime Mint', 4),
+    ('Christkindl', 'Christkindl Glühwein', 4),
+    ('Heineken', 'Heineken Beer', 3),
+    ('Ikea', 'Glühwein', 4),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 3)
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
 -- 5. Health-risk flags
 update scores sc set
-  high_salt_flag = case when nf.salt_g::numeric >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count::numeric, 0) >= 5 then 'YES' else 'NO' end,
+  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
+  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
+  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'

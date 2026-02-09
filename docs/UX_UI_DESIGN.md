@@ -1,19 +1,19 @@
 # Poland Food DB — UX/UI Design Document
 
-> **Status:** Conceptual — architecture, structure, and UX logic only.  
+> **Status:** Conceptual — architecture, structure, and UX logic only.
 > **No implementation yet.** This document guides future front-end development.
 
 ---
 
 ## 1. Design Philosophy
 
-| Principle | Meaning |
-|---|---|
-| **Clarity** | Every number, score, and label must be instantly understandable. No jargon without explanation. |
-| **Explainability** | Users can always ask "why?" — every score links to the data behind it. |
-| **Trust** | Show data sources, methodology, confidence levels. Never hide limitations. |
-| **No health halos** | Avoid misleading binary "healthy/unhealthy" labels. Show nuance via multi-axis scoring. |
-| **Progressive disclosure** | Show summary first, then let users drill into detail on demand. |
+| Principle                  | Meaning                                                                                         |
+| -------------------------- | ----------------------------------------------------------------------------------------------- |
+| **Clarity**                | Every number, score, and label must be instantly understandable. No jargon without explanation. |
+| **Explainability**         | Users can always ask "why?" — every score links to the data behind it.                          |
+| **Trust**                  | Show data sources, methodology, confidence levels. Never hide limitations.                      |
+| **No health halos**        | Avoid misleading binary "healthy/unhealthy" labels. Show nuance via multi-axis scoring.         |
+| **Progressive disclosure** | Show summary first, then let users drill into detail on demand.                                 |
 
 ---
 
@@ -282,7 +282,7 @@ Home (Dashboard)
 **Visual treatment:**
 - Horizontal progress bar with colour gradient
 - 0-25: Green (#22c55e) — "Low concern"
-- 26-50: Yellow (#eab308) — "Moderate concern"  
+- 26-50: Yellow (#eab308) — "Moderate concern"
 - 51-75: Orange (#f97316) — "High concern"
 - 76-100: Red (#ef4444) — "Very high concern"
 - Always show the numeric value alongside the bar
@@ -377,15 +377,15 @@ Response:      { display_label, description, tooltip_text, unit, value_range }
 
 ### 6.2 Example Tooltips
 
-| Column | Tooltip |
-|---|---|
-| unhealthiness_score | "Higher means less healthy. Combines sugar, fat, salt, processing." |
-| nutri_score_label | "Nutri-Score: A (healthiest) to E (least healthy)." |
-| nova_classification | "NOVA: 1=natural, 2=basic, 3=processed, 4=ultra-processed." |
-| high_salt_flag | "Flags products with salt > 1.5g per 100g." |
-| data_completeness_pct | "How complete the source data was for scoring." |
-| calories | "Kilocalories per serving." |
-| ean | "Barcode number. 590 prefix indicates Polish origin." |
+| Column                | Tooltip                                                             |
+| --------------------- | ------------------------------------------------------------------- |
+| unhealthiness_score   | "Higher means less healthy. Combines sugar, fat, salt, processing." |
+| nutri_score_label     | "Nutri-Score: A (healthiest) to E (least healthy)."                 |
+| nova_classification   | "NOVA: 1=natural, 2=basic, 3=processed, 4=ultra-processed."         |
+| high_salt_flag        | "Flags products with salt > 1.5g per 100g."                         |
+| data_completeness_pct | "How complete the source data was for scoring."                     |
+| calories              | "Kilocalories per serving."                                         |
+| ean                   | "Barcode number. 590 prefix indicates Polish origin."               |
 
 ---
 
@@ -393,29 +393,29 @@ Response:      { display_label, description, tooltip_text, unit, value_range }
 
 ### 7.1 Colours
 
-| Token | Hex | Usage |
-|---|---|---|
-| `--green-500` | `#22c55e` | Good scores, Nutri-Score A, NOVA 1 |
-| `--green-700` | `#15803d` | Nutri-Score A badge |
-| `--yellow-500` | `#eab308` | Moderate scores, Nutri-Score C, NOVA 2 |
-| `--orange-500` | `#f97316` | High concern, Nutri-Score D, NOVA 3 |
-| `--red-500` | `#ef4444` | Very high concern, Nutri-Score E, NOVA 4 |
-| `--slate-50` | `#f8fafc` | Background |
-| `--slate-900` | `#0f172a` | Primary text |
-| `--slate-500` | `#64748b` | Secondary text |
-| `--blue-600` | `#2563eb` | Links, interactive elements |
-| `--white` | `#ffffff` | Cards, surfaces |
+| Token          | Hex       | Usage                                    |
+| -------------- | --------- | ---------------------------------------- |
+| `--green-500`  | `#22c55e` | Good scores, Nutri-Score A, NOVA 1       |
+| `--green-700`  | `#15803d` | Nutri-Score A badge                      |
+| `--yellow-500` | `#eab308` | Moderate scores, Nutri-Score C, NOVA 2   |
+| `--orange-500` | `#f97316` | High concern, Nutri-Score D, NOVA 3      |
+| `--red-500`    | `#ef4444` | Very high concern, Nutri-Score E, NOVA 4 |
+| `--slate-50`   | `#f8fafc` | Background                               |
+| `--slate-900`  | `#0f172a` | Primary text                             |
+| `--slate-500`  | `#64748b` | Secondary text                           |
+| `--blue-600`   | `#2563eb` | Links, interactive elements              |
+| `--white`      | `#ffffff` | Cards, surfaces                          |
 
 ### 7.2 Typography
 
-| Element | Font | Size | Weight |
-|---|---|---|---|
-| Page title | Inter | 24px / 1.5rem | 700 (Bold) |
-| Section heading | Inter | 18px / 1.125rem | 600 (Semibold) |
-| Card title | Inter | 16px / 1rem | 600 |
-| Body text | Inter | 14px / 0.875rem | 400 (Regular) |
-| Caption / tooltip | Inter | 12px / 0.75rem | 400 |
-| Score number | JetBrains Mono | 20px / 1.25rem | 700 |
+| Element           | Font           | Size            | Weight         |
+| ----------------- | -------------- | --------------- | -------------- |
+| Page title        | Inter          | 24px / 1.5rem   | 700 (Bold)     |
+| Section heading   | Inter          | 18px / 1.125rem | 600 (Semibold) |
+| Card title        | Inter          | 16px / 1rem     | 600            |
+| Body text         | Inter          | 14px / 0.875rem | 400 (Regular)  |
+| Caption / tooltip | Inter          | 12px / 0.75rem  | 400            |
+| Score number      | JetBrains Mono | 20px / 1.25rem  | 700            |
 
 ---
 

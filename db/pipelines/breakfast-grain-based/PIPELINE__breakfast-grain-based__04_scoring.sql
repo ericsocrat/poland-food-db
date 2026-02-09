@@ -23,20 +23,20 @@ update ingredients i set
   additives_count = d.cnt
 from (
   values
-    ('Vitanella', 'Granola - Musli Prażone (Czekoladowe)', '0'),
-    ('Bakalland', 'Ba! Granola Z Żurawiną', '0'),
-    ('Go on', 'Granola proteinowa brownie & cherry', '0'),
-    ('Bakalland', 'Ba! Granola 5 bakalii', '0'),
-    ('Unknown', 'Étcsokis granola málnával', '0'),
-    ('All nutrition', 'F**king delicious Granola', '0'),
-    ('Unknown', 'Gyümölcsös granola', '0'),
-    ('All  nutrition', 'F**king delicious granola fruity', '0'),
-    ('Unknown', 'Granola with Fruits', '0'),
-    ('One Day More', 'Winter Granola', '0'),
-    ('One Day More', 'Protein Granola Caramel Nuts & Chocolate', '0'),
-    ('Sante', 'Granola o smaku rumu', '0'),
-    ('Vitanella', 'Granola Z Ciasteczkami', '0'),
-    ('Vitanella', 'Cherry granola', '0')
+    ('Vitanella', 'Granola - Musli Prażone (Czekoladowe)', 0),
+    ('Bakalland', 'Ba! Granola Z Żurawiną', 0),
+    ('Go on', 'Granola proteinowa brownie & cherry', 0),
+    ('Bakalland', 'Ba! Granola 5 bakalii', 0),
+    ('Unknown', 'Étcsokis granola málnával', 0),
+    ('All nutrition', 'F**king delicious Granola', 0),
+    ('Unknown', 'Gyümölcsös granola', 0),
+    ('All  nutrition', 'F**king delicious granola fruity', 0),
+    ('Unknown', 'Granola with Fruits', 0),
+    ('One Day More', 'Winter Granola', 0),
+    ('One Day More', 'Protein Granola Caramel Nuts & Chocolate', 0),
+    ('Sante', 'Granola o smaku rumu', 0),
+    ('Vitanella', 'Granola Z Ciasteczkami', 0),
+    ('Vitanella', 'Cherry granola', 0)
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -44,15 +44,15 @@ where i.product_id = p.product_id;
 -- 2. COMPUTE unhealthiness_score (v3.1)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v31(
-      nf.saturated_fat_g::numeric,
-      nf.sugars_g::numeric,
-      nf.salt_g::numeric,
-      nf.calories::numeric,
-      nf.trans_fat_g::numeric,
-      i.additives_count::numeric,
+      nf.saturated_fat_g,
+      nf.sugars_g,
+      nf.salt_g,
+      nf.calories,
+      nf.trans_fat_g,
+      i.additives_count,
       p.prep_method,
       p.controversies
-  )::text,
+  ),
   scored_at       = CURRENT_DATE,
   scoring_version = 'v3.1'
 from products p
@@ -98,30 +98,30 @@ update scores sc set
   end
 from (
   values
-    ('Vitanella', 'Granola - Musli Prażone (Czekoladowe)', '4'),
-    ('Bakalland', 'Ba! Granola Z Żurawiną', '4'),
-    ('Go on', 'Granola proteinowa brownie & cherry', '4'),
-    ('Bakalland', 'Ba! Granola 5 bakalii', '4'),
-    ('Unknown', 'Étcsokis granola málnával', '4'),
-    ('All nutrition', 'F**king delicious Granola', '4'),
-    ('Unknown', 'Gyümölcsös granola', '4'),
-    ('All  nutrition', 'F**king delicious granola fruity', '4'),
-    ('Unknown', 'Granola with Fruits', '4'),
-    ('One Day More', 'Winter Granola', '4'),
-    ('One Day More', 'Protein Granola Caramel Nuts & Chocolate', '4'),
-    ('Sante', 'Granola o smaku rumu', '4'),
-    ('Vitanella', 'Granola Z Ciasteczkami', '4'),
-    ('Vitanella', 'Cherry granola', '4')
+    ('Vitanella', 'Granola - Musli Prażone (Czekoladowe)', 4),
+    ('Bakalland', 'Ba! Granola Z Żurawiną', 4),
+    ('Go on', 'Granola proteinowa brownie & cherry', 4),
+    ('Bakalland', 'Ba! Granola 5 bakalii', 4),
+    ('Unknown', 'Étcsokis granola málnával', 4),
+    ('All nutrition', 'F**king delicious Granola', 4),
+    ('Unknown', 'Gyümölcsös granola', 4),
+    ('All  nutrition', 'F**king delicious granola fruity', 4),
+    ('Unknown', 'Granola with Fruits', 4),
+    ('One Day More', 'Winter Granola', 4),
+    ('One Day More', 'Protein Granola Caramel Nuts & Chocolate', 4),
+    ('Sante', 'Granola o smaku rumu', 4),
+    ('Vitanella', 'Granola Z Ciasteczkami', 4),
+    ('Vitanella', 'Cherry granola', 4)
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
 -- 5. Health-risk flags
 update scores sc set
-  high_salt_flag = case when nf.salt_g::numeric >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count::numeric, 0) >= 5 then 'YES' else 'NO' end,
+  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
+  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
+  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'

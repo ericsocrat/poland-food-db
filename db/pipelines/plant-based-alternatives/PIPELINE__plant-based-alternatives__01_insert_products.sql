@@ -11,26 +11,30 @@ where country = 'PL'
 
 -- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
 update products set ean = null
-where ean in ('5900617012197', '5900012000232', '5900617038289', '5000157072023', '5900617038265', '20000653', '3560070910366', '20173074', '8076800105056', '20487942', '4056489067740', '20199876', '4056489181293', '1103086260005', '94001129')
+where ean in ('5900012000232', '5000157072023', '3560070910366', '20173074', '8076800105056', '4056489067740', '4056489181293', '20422103', '3560071469641', '20411978', '4056489067566', '20229030', '4056489068204', '3560071469573', '20013578', '8717496041647', '4056489126287', '3560070328970', '94001129')
   and ean is not null;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('PL', 'Sante', 'Grocery', 'Plant-Based & Alternatives', 'Masło orzechowe', null, 'Kaufland', 'none', '5900617012197'),
   ('PL', 'Kujawski', 'Grocery', 'Plant-Based & Alternatives', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', null, null, 'none', '5900012000232'),
-  ('PL', 'GO ON', 'Grocery', 'Plant-Based & Alternatives', 'Peanut Butter Smooth', null, 'Lidl', 'none', '5900617038289'),
   ('PL', 'HEINZ', 'Grocery', 'Plant-Based & Alternatives', '5 rodzajów fasoli w sosie pomidorowym', 'baked', 'Sainsbury''s,Kaufland,Lidl', 'none', '5000157072023'),
-  ('PL', 'Go On', 'Grocery', 'Plant-Based & Alternatives', 'Peanut Butter Crunchy', null, null, 'none', '5900617038265'),
-  ('PL', 'Lidl', 'Grocery', 'Plant-Based & Alternatives', 'Doce Extra Fresa Morango', null, 'Lidl', 'none', '20000653'),
   ('PL', 'Carrefour BIO', 'Grocery', 'Plant-Based & Alternatives', 'Huile d''olive vierge extra', null, 'Dia,Carrefour,carrefour.fr', 'none', '3560070910366'),
   ('PL', 'Batts', 'Grocery', 'Plant-Based & Alternatives', 'Crispy Fried Onions', 'fried', 'Lidl', 'none', '20173074'),
   ('PL', 'Barilla', 'Grocery', 'Plant-Based & Alternatives', 'Pâtes spaghetti n°5 1kg', null, 'Magasins U,carrefour.fr', 'none', '8076800105056'),
-  ('PL', 'ITALIAMO', 'Grocery', 'Plant-Based & Alternatives', 'Paradizniki suseni lidl', null, 'Lidl', 'none', '20487942'),
   ('PL', 'DONAU SOJA', 'Grocery', 'Plant-Based & Alternatives', 'Tofu smoked', null, 'Lidl', 'none', '4056489067740'),
-  ('PL', 'Lidl Baresa', 'Grocery', 'Plant-Based & Alternatives', 'Aurinkokuivattuja tomaatteja', null, 'Lidl', 'none', '20199876'),
   ('PL', 'Vitasia', 'Grocery', 'Plant-Based & Alternatives', 'Rice Noodles', null, 'Lidl', 'none', '4056489181293'),
-  ('PL', 'IKEA', 'Grocery', 'Plant-Based & Alternatives', 'Lingonberry jam, organic', null, 'IKEA', 'none', '1103086260005'),
+  ('PL', 'LIDL', 'Grocery', 'Plant-Based & Alternatives', 'ground chili peppers in olive oil', null, 'Lidl', 'none', '20422103'),
+  ('PL', 'Carrefour BIO', 'Grocery', 'Plant-Based & Alternatives', 'Galettes épeautre', null, 'carrefour.fr, Carrefour', 'none', '3560071469641'),
+  ('PL', 'Baresa', 'Grocery', 'Plant-Based & Alternatives', 'Lasagnes', null, 'Lidl, Asda', 'none', '20411978'),
+  ('PL', 'Vemondo', 'Grocery', 'Plant-Based & Alternatives', 'Tofu naturalne', null, 'Lidl', 'none', '4056489067566'),
+  ('PL', 'Lidl', 'Grocery', 'Plant-Based & Alternatives', 'Avocados', null, 'Lidl', 'none', '20229030'),
+  ('PL', 'Vemondo', 'Grocery', 'Plant-Based & Alternatives', 'Tofu basil Bio', null, 'Lidl', 'none', '4056489068204'),
+  ('PL', 'Carrefour BIO', 'Grocery', 'Plant-Based & Alternatives', 'Galettes 4 Céréales', null, 'carrefour.fr, Carrefour', 'none', '3560071469573'),
+  ('PL', 'Vita D''or', 'Grocery', 'Plant-Based & Alternatives', 'Rapsöl', null, 'Lidl', 'none', '20013578'),
+  ('PL', 'Driscoll''s', 'Grocery', 'Plant-Based & Alternatives', 'Framboises', null, 'Cora,Lidl,Edeka,Netto MD', 'none', '8717496041647'),
+  ('PL', 'Lidl', 'Grocery', 'Plant-Based & Alternatives', 'Kalamata olive paste', null, 'Lidl', 'none', '4056489126287'),
+  ('PL', 'Carrefour', 'Grocery', 'Plant-Based & Alternatives', 'Spaghetti', null, 'Carrefour,Carrefour City, carrefour.fr', 'none', '3560070328970'),
   ('PL', 'ALDI Zespri', 'Grocery', 'Plant-Based & Alternatives', 'ALDI ZESPRI SunGold Kiwi Gold 1St. 0,65€', null, 'Colruyt,Costco,REWE', 'none', '94001129')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
@@ -46,4 +50,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Plant-Based & Alternatives'
   and is_deprecated is not true
-  and product_name not in ('Masło orzechowe', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', 'Peanut Butter Smooth', '5 rodzajów fasoli w sosie pomidorowym', 'Peanut Butter Crunchy', 'Doce Extra Fresa Morango', 'Huile d''olive vierge extra', 'Crispy Fried Onions', 'Pâtes spaghetti n°5 1kg', 'Paradizniki suseni lidl', 'Tofu smoked', 'Aurinkokuivattuja tomaatteja', 'Rice Noodles', 'Lingonberry jam, organic', 'ALDI ZESPRI SunGold Kiwi Gold 1St. 0,65€');
+  and product_name not in ('Olej rzepakowy z pierwszego tłoczenia, filtrowany', '5 rodzajów fasoli w sosie pomidorowym', 'Huile d''olive vierge extra', 'Crispy Fried Onions', 'Pâtes spaghetti n°5 1kg', 'Tofu smoked', 'Rice Noodles', 'ground chili peppers in olive oil', 'Galettes épeautre', 'Lasagnes', 'Tofu naturalne', 'Avocados', 'Tofu basil Bio', 'Galettes 4 Céréales', 'Rapsöl', 'Framboises', 'Kalamata olive paste', 'Spaghetti', 'ALDI ZESPRI SunGold Kiwi Gold 1St. 0,65€');

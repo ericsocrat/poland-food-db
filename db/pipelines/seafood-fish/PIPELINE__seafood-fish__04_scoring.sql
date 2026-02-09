@@ -23,33 +23,33 @@ update ingredients i set
   additives_count = d.cnt
 from (
   values
-    ('Jantar', 'Szprot wędzony na gorąco', '0'),
-    ('Dega', 'Ryba śledź po grecku', '6'),
-    ('Lisner', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', '0'),
-    ('Lisner', 'Śledzik na raz z suszonymi pomidorami', '0'),
-    ('GRAAL', 'Tuńczyk Mexicans z warzywami', '0'),
-    ('Fisher King', 'Pstrąg łososiowy wędzony w plastrach', '0'),
-    ('Marinero', 'Wiejskie filety śledziowe z cebulką', '0'),
-    ('Lisner', 'Pastella - pasta z łososia', '7'),
-    ('Baltica', 'Filety śledziowe w sosie pomidorowym', '2'),
-    ('Marinero', 'Filety z makreli w sosie pomidorowym', '4'),
-    ('Lisner', 'Marinated Herring in mushroom sauce', '7'),
-    ('MegaRyba', 'Szprot w sosie pomidorowym', '3'),
-    ('Lisner', 'Herring single portion with onion', '0'),
-    ('Graal', 'Filety z makreli w sosie pomidorowym', '3'),
-    ('nautica', 'Śledzie Wiejskie', '0'),
-    ('Lisner', 'Herring Snack', '0'),
-    ('K-Classic', 'Pstrąg tęczowy, wędzony na zimno w plastrach', '0'),
-    ('Graal', 'Szprot w sosie pomidorowym', '0'),
-    ('CONNOISSEUR seafood collection', 'Filetti di salmone al naturale', '0'),
-    ('House of Asia', 'wakame', '0'),
-    ('Carrefour Discount', 'Bâtonnets saveur crabe', '1'),
-    ('ocean sea', 'Paluszki surimi', '9'),
-    ('Carrefour', 'Queues de crevettes CRUES', '3'),
-    ('Carrefour', 'Crevettes sauvages décortiquées cuites', '3'),
-    ('Carrefour', 'Filets DE MERLU BLANC', '0'),
-    ('Vici', 'Classic surimi sticks', '0'),
-    ('Rio Mare', 'Insalatissime Sicily Edition', '1')
+    ('Jantar', 'Szprot wędzony na gorąco', 0),
+    ('Dega', 'Ryba śledź po grecku', 6),
+    ('Lisner', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', 0),
+    ('Lisner', 'Śledzik na raz z suszonymi pomidorami', 0),
+    ('GRAAL', 'Tuńczyk Mexicans z warzywami', 0),
+    ('Fisher King', 'Pstrąg łososiowy wędzony w plastrach', 0),
+    ('Marinero', 'Wiejskie filety śledziowe z cebulką', 0),
+    ('Lisner', 'Pastella - pasta z łososia', 7),
+    ('Baltica', 'Filety śledziowe w sosie pomidorowym', 2),
+    ('Marinero', 'Filety z makreli w sosie pomidorowym', 4),
+    ('Lisner', 'Marinated Herring in mushroom sauce', 7),
+    ('MegaRyba', 'Szprot w sosie pomidorowym', 3),
+    ('Lisner', 'Herring single portion with onion', 0),
+    ('Graal', 'Filety z makreli w sosie pomidorowym', 3),
+    ('nautica', 'Śledzie Wiejskie', 0),
+    ('Lisner', 'Herring Snack', 0),
+    ('K-Classic', 'Pstrąg tęczowy, wędzony na zimno w plastrach', 0),
+    ('Graal', 'Szprot w sosie pomidorowym', 0),
+    ('CONNOISSEUR seafood collection', 'Filetti di salmone al naturale', 0),
+    ('House of Asia', 'wakame', 0),
+    ('Carrefour Discount', 'Bâtonnets saveur crabe', 1),
+    ('ocean sea', 'Paluszki surimi', 9),
+    ('Carrefour', 'Queues de crevettes CRUES', 3),
+    ('Carrefour', 'Crevettes sauvages décortiquées cuites', 3),
+    ('Carrefour', 'Filets DE MERLU BLANC', 0),
+    ('Vici', 'Classic surimi sticks', 0),
+    ('Rio Mare', 'Insalatissime Sicily Edition', 1)
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -57,15 +57,15 @@ where i.product_id = p.product_id;
 -- 2. COMPUTE unhealthiness_score (v3.1)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v31(
-      nf.saturated_fat_g::numeric,
-      nf.sugars_g::numeric,
-      nf.salt_g::numeric,
-      nf.calories::numeric,
-      nf.trans_fat_g::numeric,
-      i.additives_count::numeric,
+      nf.saturated_fat_g,
+      nf.sugars_g,
+      nf.salt_g,
+      nf.calories,
+      nf.trans_fat_g,
+      i.additives_count,
       p.prep_method,
       p.controversies
-  )::text,
+  ),
   scored_at       = CURRENT_DATE,
   scoring_version = 'v3.1'
 from products p
@@ -124,43 +124,43 @@ update scores sc set
   end
 from (
   values
-    ('Jantar', 'Szprot wędzony na gorąco', '3'),
-    ('Dega', 'Ryba śledź po grecku', '4'),
-    ('Lisner', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', '3'),
-    ('Lisner', 'Śledzik na raz z suszonymi pomidorami', '3'),
-    ('GRAAL', 'Tuńczyk Mexicans z warzywami', '4'),
-    ('Fisher King', 'Pstrąg łososiowy wędzony w plastrach', '3'),
-    ('Marinero', 'Wiejskie filety śledziowe z cebulką', '3'),
-    ('Lisner', 'Pastella - pasta z łososia', '4'),
-    ('Baltica', 'Filety śledziowe w sosie pomidorowym', '4'),
-    ('Marinero', 'Filety z makreli w sosie pomidorowym', '4'),
-    ('Lisner', 'Marinated Herring in mushroom sauce', '4'),
-    ('MegaRyba', 'Szprot w sosie pomidorowym', '4'),
-    ('Lisner', 'Herring single portion with onion', '3'),
-    ('Graal', 'Filety z makreli w sosie pomidorowym', '4'),
-    ('nautica', 'Śledzie Wiejskie', '3'),
-    ('Lisner', 'Herring Snack', '3'),
-    ('K-Classic', 'Pstrąg tęczowy, wędzony na zimno w plastrach', '3'),
-    ('Graal', 'Szprot w sosie pomidorowym', '4'),
-    ('CONNOISSEUR seafood collection', 'Filetti di salmone al naturale', '3'),
-    ('House of Asia', 'wakame', '4'),
-    ('Carrefour Discount', 'Bâtonnets saveur crabe', '4'),
-    ('ocean sea', 'Paluszki surimi', '4'),
-    ('Carrefour', 'Queues de crevettes CRUES', '3'),
-    ('Carrefour', 'Crevettes sauvages décortiquées cuites', '4'),
-    ('Carrefour', 'Filets DE MERLU BLANC', '1'),
-    ('Vici', 'Classic surimi sticks', '4'),
-    ('Rio Mare', 'Insalatissime Sicily Edition', '4')
+    ('Jantar', 'Szprot wędzony na gorąco', 3),
+    ('Dega', 'Ryba śledź po grecku', 4),
+    ('Lisner', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', 3),
+    ('Lisner', 'Śledzik na raz z suszonymi pomidorami', 3),
+    ('GRAAL', 'Tuńczyk Mexicans z warzywami', 4),
+    ('Fisher King', 'Pstrąg łososiowy wędzony w plastrach', 3),
+    ('Marinero', 'Wiejskie filety śledziowe z cebulką', 3),
+    ('Lisner', 'Pastella - pasta z łososia', 4),
+    ('Baltica', 'Filety śledziowe w sosie pomidorowym', 4),
+    ('Marinero', 'Filety z makreli w sosie pomidorowym', 4),
+    ('Lisner', 'Marinated Herring in mushroom sauce', 4),
+    ('MegaRyba', 'Szprot w sosie pomidorowym', 4),
+    ('Lisner', 'Herring single portion with onion', 3),
+    ('Graal', 'Filety z makreli w sosie pomidorowym', 4),
+    ('nautica', 'Śledzie Wiejskie', 3),
+    ('Lisner', 'Herring Snack', 3),
+    ('K-Classic', 'Pstrąg tęczowy, wędzony na zimno w plastrach', 3),
+    ('Graal', 'Szprot w sosie pomidorowym', 4),
+    ('CONNOISSEUR seafood collection', 'Filetti di salmone al naturale', 3),
+    ('House of Asia', 'wakame', 4),
+    ('Carrefour Discount', 'Bâtonnets saveur crabe', 4),
+    ('ocean sea', 'Paluszki surimi', 4),
+    ('Carrefour', 'Queues de crevettes CRUES', 3),
+    ('Carrefour', 'Crevettes sauvages décortiquées cuites', 4),
+    ('Carrefour', 'Filets DE MERLU BLANC', 1),
+    ('Vici', 'Classic surimi sticks', 4),
+    ('Rio Mare', 'Insalatissime Sicily Edition', 4)
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
 -- 5. Health-risk flags
 update scores sc set
-  high_salt_flag = case when nf.salt_g::numeric >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count::numeric, 0) >= 5 then 'YES' else 'NO' end,
+  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
+  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
+  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'

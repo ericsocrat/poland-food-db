@@ -23,29 +23,29 @@ update ingredients i set
   additives_count = d.cnt
 from (
   values
-    ('BoboVita', 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa', '0'),
-    ('Nutricia', 'Kaszka zbożowa jabłko, śliwka.', '0'),
-    ('Bobovita', 'Pomidorowa z kurczakiem i ryżem', '0'),
-    ('Bobovita', 'Kaszka ryżowa bobovita', '0'),
-    ('Bobovita', 'Kaszka zbożowa Jabłko Śliwka', '0'),
-    ('Bobovita', 'Kaszka Mleczna Ryżowa Kakao', '0'),
-    ('BoboVita', 'Kaszka Ryżowa Banan', '0'),
-    ('bobovita', 'kaszka mleczno-ryżowa straciatella', '0'),
-    ('Bobovita', 'Delikatne jabłka z bananem', '0'),
-    ('BoboVita', 'Kaszka Mleczna Ryżowa 3 Owoce', '0'),
-    ('Hipp', 'Kaszka mleczna z biszkoptami i jabłkami', '0'),
-    ('Bobovita', 'Kaszka manna', '0'),
-    ('BoboVita', 'BoboVita Jabłka z marchewka', '0'),
-    ('Nestlé', 'Bobovita', '0'),
-    ('Bobovita', 'Kaszka Ryzowa Malina', '0'),
-    ('Bobovita', 'Kasza Manna', '0'),
-    ('Nestle Gerber', 'owoce jabłka z truskawkami i jagodami', '0'),
-    ('Nestlé', 'Leczo z mozzarellą i kluseczkami', '0'),
-    ('Gerber organic', 'Krakersy z pomidorem po 12 miesiącu', '0'),
-    ('Gerber', 'Pełnia Zbóż Owsianka 5 Zbóż', '0'),
-    ('Gerber', 'Bukiet warzyw z łososiem w sosie pomidorowym', '0'),
-    ('dada baby food', 'bio mus kokos', '0'),
-    ('Gerber', 'Warzywa  z delikatnym indykiem w pomidorach', '0')
+    ('BoboVita', 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa', 0),
+    ('Nutricia', 'Kaszka zbożowa jabłko, śliwka.', 0),
+    ('Bobovita', 'Pomidorowa z kurczakiem i ryżem', 0),
+    ('Bobovita', 'Kaszka ryżowa bobovita', 0),
+    ('Bobovita', 'Kaszka zbożowa Jabłko Śliwka', 0),
+    ('Bobovita', 'Kaszka Mleczna Ryżowa Kakao', 0),
+    ('BoboVita', 'Kaszka Ryżowa Banan', 0),
+    ('bobovita', 'kaszka mleczno-ryżowa straciatella', 0),
+    ('Bobovita', 'Delikatne jabłka z bananem', 0),
+    ('BoboVita', 'Kaszka Mleczna Ryżowa 3 Owoce', 0),
+    ('Hipp', 'Kaszka mleczna z biszkoptami i jabłkami', 0),
+    ('Bobovita', 'Kaszka manna', 0),
+    ('BoboVita', 'BoboVita Jabłka z marchewka', 0),
+    ('Nestlé', 'Bobovita', 0),
+    ('Bobovita', 'Kaszka Ryzowa Malina', 0),
+    ('Bobovita', 'Kasza Manna', 0),
+    ('Nestle Gerber', 'owoce jabłka z truskawkami i jagodami', 0),
+    ('Nestlé', 'Leczo z mozzarellą i kluseczkami', 0),
+    ('Gerber organic', 'Krakersy z pomidorem po 12 miesiącu', 0),
+    ('Gerber', 'Pełnia Zbóż Owsianka 5 Zbóż', 0),
+    ('Gerber', 'Bukiet warzyw z łososiem w sosie pomidorowym', 0),
+    ('dada baby food', 'bio mus kokos', 0),
+    ('Gerber', 'Warzywa  z delikatnym indykiem w pomidorach', 0)
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -53,15 +53,15 @@ where i.product_id = p.product_id;
 -- 2. COMPUTE unhealthiness_score (v3.1)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v31(
-      nf.saturated_fat_g::numeric,
-      nf.sugars_g::numeric,
-      nf.salt_g::numeric,
-      nf.calories::numeric,
-      nf.trans_fat_g::numeric,
-      i.additives_count::numeric,
+      nf.saturated_fat_g,
+      nf.sugars_g,
+      nf.salt_g,
+      nf.calories,
+      nf.trans_fat_g,
+      i.additives_count,
       p.prep_method,
       p.controversies
-  )::text,
+  ),
   scored_at       = CURRENT_DATE,
   scoring_version = 'v3.1'
 from products p
@@ -116,39 +116,39 @@ update scores sc set
   end
 from (
   values
-    ('BoboVita', 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa', '3'),
-    ('Nutricia', 'Kaszka zbożowa jabłko, śliwka.', '4'),
-    ('Bobovita', 'Pomidorowa z kurczakiem i ryżem', '3'),
-    ('Bobovita', 'Kaszka ryżowa bobovita', '4'),
-    ('Bobovita', 'Kaszka zbożowa Jabłko Śliwka', '4'),
-    ('Bobovita', 'Kaszka Mleczna Ryżowa Kakao', '4'),
-    ('BoboVita', 'Kaszka Ryżowa Banan', '4'),
-    ('bobovita', 'kaszka mleczno-ryżowa straciatella', '4'),
-    ('Bobovita', 'Delikatne jabłka z bananem', '4'),
-    ('BoboVita', 'Kaszka Mleczna Ryżowa 3 Owoce', '4'),
-    ('Hipp', 'Kaszka mleczna z biszkoptami i jabłkami', '4'),
-    ('Bobovita', 'Kaszka manna', '4'),
-    ('BoboVita', 'BoboVita Jabłka z marchewka', '1'),
-    ('Nestlé', 'Bobovita', '4'),
-    ('Bobovita', 'Kaszka Ryzowa Malina', '4'),
-    ('Bobovita', 'Kasza Manna', '4'),
-    ('Nestle Gerber', 'owoce jabłka z truskawkami i jagodami', '3'),
-    ('Nestlé', 'Leczo z mozzarellą i kluseczkami', '3'),
-    ('Gerber organic', 'Krakersy z pomidorem po 12 miesiącu', '3'),
-    ('Gerber', 'Pełnia Zbóż Owsianka 5 Zbóż', '4'),
-    ('Gerber', 'Bukiet warzyw z łososiem w sosie pomidorowym', '4'),
-    ('dada baby food', 'bio mus kokos', '4'),
-    ('Gerber', 'Warzywa  z delikatnym indykiem w pomidorach', '4')
+    ('BoboVita', 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa', 3),
+    ('Nutricia', 'Kaszka zbożowa jabłko, śliwka.', 4),
+    ('Bobovita', 'Pomidorowa z kurczakiem i ryżem', 3),
+    ('Bobovita', 'Kaszka ryżowa bobovita', 4),
+    ('Bobovita', 'Kaszka zbożowa Jabłko Śliwka', 4),
+    ('Bobovita', 'Kaszka Mleczna Ryżowa Kakao', 4),
+    ('BoboVita', 'Kaszka Ryżowa Banan', 4),
+    ('bobovita', 'kaszka mleczno-ryżowa straciatella', 4),
+    ('Bobovita', 'Delikatne jabłka z bananem', 4),
+    ('BoboVita', 'Kaszka Mleczna Ryżowa 3 Owoce', 4),
+    ('Hipp', 'Kaszka mleczna z biszkoptami i jabłkami', 4),
+    ('Bobovita', 'Kaszka manna', 4),
+    ('BoboVita', 'BoboVita Jabłka z marchewka', 1),
+    ('Nestlé', 'Bobovita', 4),
+    ('Bobovita', 'Kaszka Ryzowa Malina', 4),
+    ('Bobovita', 'Kasza Manna', 4),
+    ('Nestle Gerber', 'owoce jabłka z truskawkami i jagodami', 3),
+    ('Nestlé', 'Leczo z mozzarellą i kluseczkami', 3),
+    ('Gerber organic', 'Krakersy z pomidorem po 12 miesiącu', 3),
+    ('Gerber', 'Pełnia Zbóż Owsianka 5 Zbóż', 4),
+    ('Gerber', 'Bukiet warzyw z łososiem w sosie pomidorowym', 4),
+    ('dada baby food', 'bio mus kokos', 4),
+    ('Gerber', 'Warzywa  z delikatnym indykiem w pomidorach', 4)
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
 -- 5. Health-risk flags
 update scores sc set
-  high_salt_flag = case when nf.salt_g::numeric >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count::numeric, 0) >= 5 then 'YES' else 'NO' end,
+  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
+  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
+  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'

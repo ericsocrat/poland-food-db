@@ -21,22 +21,22 @@ select
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
   values
-    ('Harnaś', 'Harnaś jasne pełne', '43.0', '0.0', '0.0', '0', '0.0', '0.0', '0', '0.0', '0.0'),
-    ('Karmi', 'Karmi o smaku żurawina', '42.0', '0.0', '0.0', '0', '9.8', '8.9', '0.0', '0.3', '0.0'),
-    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', '24.0', '0.0', '0.0', '0', '5.5', '3.3', '0.0', '0.5', '0.0'),
-    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '40.0', '0.0', '0.0', '0', '3.3', '0.2', '0', '0.2', '0.0'),
-    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '43.0', '0.0', '0.0', '0', '3.0', '0.2', '0', '0.5', '0.0'),
-    ('Lomża', 'Łomża jasne', '43.0', '0.0', '0', '0', '3.6', '0', '0', '0.4', '0'),
-    ('Kompania Piwowarska', 'Kozel cerny', '36.0', '0.1', '0.1', '0', '0.0', '0.0', '0.0', '0.0', '0.1'),
-    ('Lech', 'Lech Premium', '41.0', '0.1', '0.1', '0', '2.8', '0.8', '0', '0.6', '0.1'),
-    ('Łomża', 'Bière sans alcool', '32.0', '0.0', '0.0', '0', '7.5', '2.8', '0.0', '0.5', '0.0'),
-    ('Kompania Piwowarska', 'Lech free', '22.0', '0.0', '0.0', '0', '5.5', '3.0', '0', '0.0', '0.0'),
-    ('Carlsberg', 'Pilsner 0.0%', '15.0', '0.0', '0', '0', '3.2', '0', '0', '0.0', '0.0'),
-    ('Lech', 'Lech Free Lime Mint', '28.0', '0.0', '0', '0', '7.8', '5.8', '0', '0.0', '0'),
-    ('Christkindl', 'Christkindl Glühwein', '82.0', '0.5', '0.1', '0', '9.0', '8.5', '0.0', '0.5', '0.0'),
-    ('Heineken', 'Heineken Beer', '42.0', '0.0', '0.0', '0', '3.2', '0.0', '0', '0.0', '0.0'),
-    ('Ikea', 'Glühwein', '77.0', '0.0', '0.0', '0', '19.0', '19.0', '0.0', '0.0', '0.0'),
-    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', '44.1', '0.0', '0.0', '0', '3.5', '0.1', '0', '0.5', '0.0')
+    ('Harnaś', 'Harnaś jasne pełne', 43.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0.0, 0.0),
+    ('Karmi', 'Karmi o smaku żurawina', 42.0, 0.0, 0.0, 0, 9.8, 8.9, 0.0, 0.3, 0.0),
+    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', 24.0, 0.0, 0.0, 0, 5.5, 3.3, 0.0, 0.5, 0.0),
+    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 40.0, 0.0, 0.0, 0, 3.3, 0.2, 0, 0.2, 0.0),
+    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 43.0, 0.0, 0.0, 0, 3.0, 0.2, 0, 0.5, 0.0),
+    ('Lomża', 'Łomża jasne', 43.0, 0.0, 0, 0, 3.6, 0, 0, 0.4, 0),
+    ('Kompania Piwowarska', 'Kozel cerny', 36.0, 0.1, 0.1, 0, 0.0, 0.0, 0.0, 0.0, 0.1),
+    ('Lech', 'Lech Premium', 41.0, 0.1, 0.1, 0, 2.8, 0.8, 0, 0.6, 0.1),
+    ('Łomża', 'Bière sans alcool', 32.0, 0.0, 0.0, 0, 7.5, 2.8, 0.0, 0.5, 0.0),
+    ('Kompania Piwowarska', 'Lech free', 22.0, 0.0, 0.0, 0, 5.5, 3.0, 0, 0.0, 0.0),
+    ('Carlsberg', 'Pilsner 0.0%', 15.0, 0.0, 0, 0, 3.2, 0, 0, 0.0, 0.0),
+    ('Lech', 'Lech Free Lime Mint', 28.0, 0.0, 0, 0, 7.8, 5.8, 0, 0.0, 0),
+    ('Christkindl', 'Christkindl Glühwein', 82.0, 0.5, 0.1, 0, 9.0, 8.5, 0.0, 0.5, 0.0),
+    ('Heineken', 'Heineken Beer', 42.0, 0.0, 0.0, 0, 3.2, 0.0, 0, 0.0, 0.0),
+    ('Ikea', 'Glühwein', 77.0, 0.0, 0.0, 0, 19.0, 19.0, 0.0, 0.0, 0.0),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 44.1, 0.0, 0.0, 0, 3.5, 0.1, 0, 0.5, 0.0)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

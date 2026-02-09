@@ -32,6 +32,29 @@ def _sql_text(value: str | None) -> str:
     return "'" + str(value).replace("'", "''") + "'"
 
 
+def _sql_num(value: str | float | int | None) -> str:
+    """Return a bare numeric literal or ``null``.
+
+    Strips non-numeric characters (except ``-`` and ``.``) so values like
+    ``"12.5 g"`` become ``12.5``.
+    """
+    if value is None:
+        return "null"
+    s = str(value).strip()
+    if not s:
+        return "null"
+    # Strip trailing units / whitespace
+    cleaned = ""
+    for ch in s:
+        if ch in "0123456789.-":
+            cleaned += ch
+        elif cleaned:
+            break
+    if not cleaned or cleaned in (".", "-", "-."):
+        return "null"
+    return cleaned
+
+
 def _sql_null_or_text(value: str | None) -> str:
     """Return ``null`` for None / empty, otherwise a quoted text literal."""
     if not value:
@@ -151,7 +174,7 @@ def _gen_03_add_nutrition(category: str, products: list[dict]) -> str:
         brand = _sql_text(p["brand"])
         name = _sql_text(p["product_name"])
         vals = ", ".join(
-            _sql_text(p[k])
+            _sql_num(p[k])
             for k in (
                 "calories",
                 "total_fat_g",
@@ -221,7 +244,7 @@ def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
         comma = "," if i < len(products) - 1 else ""
         add_lines.append(
             f"    ({_sql_text(p['brand'])}, {_sql_text(p['product_name'])}, "
-            f"{_sql_text(str(p.get('additives_count', 0)))}){comma}"
+            f"{_sql_num(p.get('additives_count', 0))}){comma}"
         )
     additives_block = "\n".join(add_lines)
 
@@ -282,15 +305,15 @@ where i.product_id = p.product_id;
 -- 2. COMPUTE unhealthiness_score (v3.1)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v31(
-      nf.saturated_fat_g::numeric,
-      nf.sugars_g::numeric,
-      nf.salt_g::numeric,
-      nf.calories::numeric,
-      nf.trans_fat_g::numeric,
-      i.additives_count::numeric,
+      nf.saturated_fat_g,
+      nf.sugars_g,
+      nf.salt_g,
+      nf.calories,
+      nf.trans_fat_g,
+      i.additives_count,
       p.prep_method,
       p.controversies
-  )::text,
+  ),
   scored_at       = CURRENT_DATE,
   scoring_version = 'v3.1'
 from products p
@@ -330,10 +353,10 @@ where p.product_id = sc.product_id;
 
 -- 5. Health-risk flags
 update scores sc set
-  high_salt_flag = case when nf.salt_g::numeric >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count::numeric, 0) >= 5 then 'YES' else 'NO' end,
+  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
+  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
+  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
