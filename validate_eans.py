@@ -44,7 +44,10 @@ def validate_ean(ean: str) -> tuple[bool, str]:
     last = ean[-1]
     if last != expected:
         fmt = "EAN-8" if len(ean) == 8 else "EAN-13"
-        return False, f"bad {fmt} checksum: {ean} (expected ...{expected}, got ...{last})"
+        return (
+            False,
+            f"bad {fmt} checksum: {ean} (expected ...{expected}, got ...{last})",
+        )
     return True, ""
 
 
@@ -66,10 +69,21 @@ def main() -> int:
     # Query the database
     result = subprocess.run(
         [
-            "docker", "exec", "-i", DB_CONTAINER,
-            "psql", "-U", DB_USER, "-d", DB_NAME,
-            "-t", "-A", "-F", "|",
-            "-c", QUERY,
+            "docker",
+            "exec",
+            "-i",
+            DB_CONTAINER,
+            "psql",
+            "-U",
+            DB_USER,
+            "-d",
+            DB_NAME,
+            "-t",
+            "-A",
+            "-F",
+            "|",
+            "-c",
+            QUERY,
         ],
         capture_output=True,
         text=True,
@@ -99,9 +113,7 @@ def main() -> int:
             valid_count += 1
         else:
             invalid_count += 1
-            invalid_details.append(
-                f"  [{category}] {brand} — {product_name}: {reason}"
-            )
+            invalid_details.append(f"  [{category}] {brand} — {product_name}: {reason}")
 
     # Print results
     if invalid_details:
