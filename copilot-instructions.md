@@ -245,12 +245,12 @@ ON CONFLICT (source_id) DO NOTHING;
 
 ### Test Suite
 
-The project has 31 automated checks split into two SQL files:
+The project has 33 automated checks split into two SQL files:
 
 | File                            | Checks | Purpose                                                  |
 | ------------------------------- | ------ | -------------------------------------------------------- |
 | `QA__null_checks.sql`           | 11     | Data integrity — nulls, orphans, missing scores          |
-| `QA__scoring_formula_tests.sql` | 20     | Scoring formula validation — deterministic recomputation |
+| `QA__scoring_formula_tests.sql` | 22     | Scoring formula validation — deterministic recomputation |
 
 ### Running Tests
 

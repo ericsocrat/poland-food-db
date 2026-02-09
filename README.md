@@ -62,12 +62,12 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 31 automated checks + 7 data quality reports
+**Test Coverage**: 33 automated checks + 7 data quality reports
 - 11 data integrity checks (nulls, foreign keys, duplicates)
-- 20 scoring formula validation checks (ranges, flags, NOVA, regression)
+- 22 scoring formula validation checks (ranges, flags, NOVA, regression)
 - 7 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 31/31
+**All critical tests passing**: ✅ 33/33
 
 **EAN Coverage**: 559/560 active products (99.8%) have EAN-13 barcodes
 
@@ -127,7 +127,7 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **31 automated checks** + 7 informational data quality reports:
+Every change is validated against **33 automated checks** + 7 informational data quality reports:
 
 ### Data Integrity (11 checks)
 - No missing required fields
@@ -138,7 +138,7 @@ Every change is validated against **31 automated checks** + 7 informational data
 - All active products have scores
 - All active products have ingredient rows
 
-### Scoring Formula (20 checks)
+### Scoring Formula (22 checks)
 - Scores in valid range [1, 100]
 - Clean products score ≤ 20
 - Maximum unhealthy products score high
@@ -257,7 +257,7 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 31/31 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 33/33 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
