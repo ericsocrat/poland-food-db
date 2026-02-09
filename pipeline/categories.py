@@ -3,155 +3,178 @@
 from __future__ import annotations
 
 # ---------------------------------------------------------------------------
+# Category name constants (avoids duplicated string literals)
+# ---------------------------------------------------------------------------
+CAT_CHIPS = "Chips"
+CAT_DAIRY = "Dairy"
+CAT_BREAD = "Bread"
+CAT_CEREALS = "Cereals"
+CAT_DRINKS = "Drinks"
+CAT_MEAT = "Meat"
+CAT_SWEETS = "Sweets"
+CAT_CANNED = "Canned Goods"
+CAT_SAUCES = "Sauces"
+CAT_CONDIMENTS = "Condiments"
+CAT_SNACKS = "Snacks"
+CAT_NUTS = "Nuts, Seeds & Legumes"
+CAT_BABY = "Baby"
+CAT_ALCOHOL = "Alcohol"
+CAT_FROZEN = "Frozen & Prepared"
+CAT_BREAKFAST = "Breakfast & Grain-Based"
+CAT_INSTANT = "Instant & Frozen"
+CAT_PLANT = "Plant-Based & Alternatives"
+CAT_SEAFOOD = "Seafood & Fish"
+
+# ---------------------------------------------------------------------------
 # OFF category tag  →  our database category
 # ---------------------------------------------------------------------------
 OFF_TO_DB_CATEGORY: dict[str, str] = {
     # Chips
-    "en:chips": "Chips",
-    "en:crisps": "Chips",
-    "en:potato-chips": "Chips",
-    "en:tortilla-chips": "Chips",
-    "en:corn-chips": "Chips",
+    "en:chips": CAT_CHIPS,
+    "en:crisps": CAT_CHIPS,
+    "en:potato-chips": CAT_CHIPS,
+    "en:tortilla-chips": CAT_CHIPS,
+    "en:corn-chips": CAT_CHIPS,
     # Dairy
-    "en:dairy": "Dairy",
-    "en:dairies": "Dairy",
-    "en:milks": "Dairy",
-    "en:yogurts": "Dairy",
-    "en:cheeses": "Dairy",
-    "en:butters": "Dairy",
-    "en:creams": "Dairy",
+    "en:dairy": CAT_DAIRY,
+    "en:dairies": CAT_DAIRY,
+    "en:milks": CAT_DAIRY,
+    "en:yogurts": CAT_DAIRY,
+    "en:cheeses": CAT_DAIRY,
+    "en:butters": CAT_DAIRY,
+    "en:creams": CAT_DAIRY,
     # Bread
-    "en:breads": "Bread",
+    "en:breads": CAT_BREAD,
     # Cereals
-    "en:cereals": "Cereals",
-    "en:breakfast-cereals": "Cereals",
+    "en:cereals": CAT_CEREALS,
+    "en:breakfast-cereals": CAT_CEREALS,
     # Drinks
-    "en:beverages": "Drinks",
-    "en:sodas": "Drinks",
-    "en:juices": "Drinks",
-    "en:waters": "Drinks",
-    "en:energy-drinks": "Drinks",
-    "en:non-alcoholic-beverages": "Drinks",
+    "en:beverages": CAT_DRINKS,
+    "en:sodas": CAT_DRINKS,
+    "en:juices": CAT_DRINKS,
+    "en:waters": CAT_DRINKS,
+    "en:energy-drinks": CAT_DRINKS,
+    "en:non-alcoholic-beverages": CAT_DRINKS,
     # Meat
-    "en:meats": "Meat",
-    "en:sausages": "Meat",
-    "en:hams": "Meat",
-    "en:cold-cuts": "Meat",
-    "en:pork": "Meat",
-    "en:poultry": "Meat",
+    "en:meats": CAT_MEAT,
+    "en:sausages": CAT_MEAT,
+    "en:hams": CAT_MEAT,
+    "en:cold-cuts": CAT_MEAT,
+    "en:pork": CAT_MEAT,
+    "en:poultry": CAT_MEAT,
     # Sweets
-    "en:chocolates": "Sweets",
-    "en:candies": "Sweets",
-    "en:biscuits": "Sweets",
-    "en:confectioneries": "Sweets",
+    "en:chocolates": CAT_SWEETS,
+    "en:candies": CAT_SWEETS,
+    "en:biscuits": CAT_SWEETS,
+    "en:confectioneries": CAT_SWEETS,
     # Canned Goods
-    "en:canned-foods": "Canned Goods",
-    "en:canned-vegetables": "Canned Goods",
-    "en:canned-fruits": "Canned Goods",
-    "en:canned-fish": "Canned Goods",
+    "en:canned-foods": CAT_CANNED,
+    "en:canned-vegetables": CAT_CANNED,
+    "en:canned-fruits": CAT_CANNED,
+    "en:canned-fish": CAT_CANNED,
     # Sauces (specific subtypes first — broad parent searched last)
-    "en:tomato-sauces": "Sauces",
-    "en:pasta-sauces": "Sauces",
-    "en:pestos": "Sauces",
-    "en:salad-dressings": "Sauces",
-    "en:hot-sauces": "Sauces",
-    "en:barbecue-sauces": "Sauces",
-    "en:soy-sauces": "Sauces",
-    "en:curry-sauces": "Sauces",
-    "en:cooking-sauces": "Sauces",
-    "en:sauces": "Sauces",
+    "en:tomato-sauces": CAT_SAUCES,
+    "en:pasta-sauces": CAT_SAUCES,
+    "en:pestos": CAT_SAUCES,
+    "en:salad-dressings": CAT_SAUCES,
+    "en:hot-sauces": CAT_SAUCES,
+    "en:barbecue-sauces": CAT_SAUCES,
+    "en:soy-sauces": CAT_SAUCES,
+    "en:curry-sauces": CAT_SAUCES,
+    "en:cooking-sauces": CAT_SAUCES,
+    "en:sauces": CAT_SAUCES,
     # Condiments (specific subtypes only — en:condiments is too broad on OFF)
-    "en:ketchups": "Condiments",
-    "en:ketchup": "Condiments",
-    "en:tomato-ketchup": "Condiments",
-    "en:mustards": "Condiments",
-    "en:mayonnaises": "Condiments",
+    "en:ketchups": CAT_CONDIMENTS,
+    "en:ketchup": CAT_CONDIMENTS,
+    "en:tomato-ketchup": CAT_CONDIMENTS,
+    "en:mustards": CAT_CONDIMENTS,
+    "en:mayonnaises": CAT_CONDIMENTS,
     # Snacks (broad — see BROAD_CATEGORIES)
-    "en:snacks": "Snacks",
-    "en:salty-snacks": "Snacks",
-    "en:appetizers": "Snacks",
-    "en:crackers": "Snacks",
-    "en:pretzels": "Snacks",
-    "en:popcorn": "Snacks",
-    "en:rice-cakes": "Snacks",
-    "en:corn-snacks": "Snacks",
-    "en:breadsticks": "Snacks",
-    "en:extruded-snacks": "Snacks",
-    "en:puffed-rice-cakes": "Snacks",
+    "en:snacks": CAT_SNACKS,
+    "en:salty-snacks": CAT_SNACKS,
+    "en:appetizers": CAT_SNACKS,
+    "en:crackers": CAT_SNACKS,
+    "en:pretzels": CAT_SNACKS,
+    "en:popcorn": CAT_SNACKS,
+    "en:rice-cakes": CAT_SNACKS,
+    "en:corn-snacks": CAT_SNACKS,
+    "en:breadsticks": CAT_SNACKS,
+    "en:extruded-snacks": CAT_SNACKS,
+    "en:puffed-rice-cakes": CAT_SNACKS,
     # Nuts, Seeds & Legumes
-    "en:nuts": "Nuts, Seeds & Legumes",
-    "en:seeds": "Nuts, Seeds & Legumes",
-    "en:legumes": "Nuts, Seeds & Legumes",
-    "en:dried-fruits": "Nuts, Seeds & Legumes",
+    "en:nuts": CAT_NUTS,
+    "en:seeds": CAT_NUTS,
+    "en:legumes": CAT_NUTS,
+    "en:dried-fruits": CAT_NUTS,
     # Baby
-    "en:baby-foods": "Baby",
-    "en:baby-milks": "Baby",
-    "en:infant-formulas": "Baby",
-    "en:baby-cereals": "Baby",
-    "en:baby-meals": "Baby",
+    "en:baby-foods": CAT_BABY,
+    "en:baby-milks": CAT_BABY,
+    "en:infant-formulas": CAT_BABY,
+    "en:baby-cereals": CAT_BABY,
+    "en:baby-meals": CAT_BABY,
     # Alcohol
-    "en:alcoholic-beverages": "Alcohol",
-    "en:beers": "Alcohol",
-    "en:wines": "Alcohol",
-    "en:spirits": "Alcohol",
-    "en:ciders": "Alcohol",
-    "en:liqueurs": "Alcohol",
-    "en:meads": "Alcohol",
+    "en:alcoholic-beverages": CAT_ALCOHOL,
+    "en:beers": CAT_ALCOHOL,
+    "en:wines": CAT_ALCOHOL,
+    "en:spirits": CAT_ALCOHOL,
+    "en:ciders": CAT_ALCOHOL,
+    "en:liqueurs": CAT_ALCOHOL,
+    "en:meads": CAT_ALCOHOL,
     # Frozen & Prepared
-    "en:frozen-foods": "Frozen & Prepared",
-    "en:frozen-pizzas": "Frozen & Prepared",
+    "en:frozen-foods": CAT_FROZEN,
+    "en:frozen-pizzas": CAT_FROZEN,
     # Breakfast & Grain-Based
-    "en:granolas": "Breakfast & Grain-Based",
-    "en:crispbreads": "Breakfast & Grain-Based",
-    "en:pancakes": "Breakfast & Grain-Based",
-    "en:flat-breads": "Breakfast & Grain-Based",
+    "en:granolas": CAT_BREAKFAST,
+    "en:crispbreads": CAT_BREAKFAST,
+    "en:pancakes": CAT_BREAKFAST,
+    "en:flat-breads": CAT_BREAKFAST,
     # Instant & Frozen
-    "en:instant-noodles": "Instant & Frozen",
-    "en:instant-soups": "Instant & Frozen",
+    "en:instant-noodles": CAT_INSTANT,
+    "en:instant-soups": CAT_INSTANT,
     # Plant-Based & Alternatives (broad — see BROAD_CATEGORIES)
-    "en:plant-based-foods": "Plant-Based & Alternatives",
-    "en:plant-based-foods-and-beverages": "Plant-Based & Alternatives",
-    "en:meat-alternatives": "Plant-Based & Alternatives",
-    "en:tofu": "Plant-Based & Alternatives",
-    "en:soy-milks": "Plant-Based & Alternatives",
-    "en:oat-milks": "Plant-Based & Alternatives",
-    "en:almond-milks": "Plant-Based & Alternatives",
-    "en:rice-milks": "Plant-Based & Alternatives",
-    "en:plant-based-milk-alternatives": "Plant-Based & Alternatives",
+    "en:plant-based-foods": CAT_PLANT,
+    "en:plant-based-foods-and-beverages": CAT_PLANT,
+    "en:meat-alternatives": CAT_PLANT,
+    "en:tofu": CAT_PLANT,
+    "en:soy-milks": CAT_PLANT,
+    "en:oat-milks": CAT_PLANT,
+    "en:almond-milks": CAT_PLANT,
+    "en:rice-milks": CAT_PLANT,
+    "en:plant-based-milk-alternatives": CAT_PLANT,
     # Seafood & Fish
-    "en:seafood": "Seafood & Fish",
-    "en:fish": "Seafood & Fish",
-    "en:smoked-fish": "Seafood & Fish",
-    "en:smoked-salmon": "Seafood & Fish",
-    "en:sardines": "Seafood & Fish",
-    "en:herrings": "Seafood & Fish",
-    "en:mackerels": "Seafood & Fish",
-    "en:tunas": "Seafood & Fish",
+    "en:seafood": CAT_SEAFOOD,
+    "en:fish": CAT_SEAFOOD,
+    "en:smoked-fish": CAT_SEAFOOD,
+    "en:smoked-salmon": CAT_SEAFOOD,
+    "en:sardines": CAT_SEAFOOD,
+    "en:herrings": CAT_SEAFOOD,
+    "en:mackerels": CAT_SEAFOOD,
+    "en:tunas": CAT_SEAFOOD,
 }
 
 # Broad categories that should yield to more specific ones during resolution.
 # Example: a product tagged [en:snacks, en:chips] should resolve to "Chips"
 # rather than "Snacks".
 BROAD_CATEGORIES: set[str] = {
-    "Snacks",
-    "Plant-Based & Alternatives",
-    "Drinks",  # yields to Alcohol (en:beverages is parent of en:alcoholic-beverages)
+    CAT_SNACKS,
+    CAT_PLANT,
+    CAT_DRINKS,  # yields to Alcohol (en:beverages is parent of en:alcoholic-beverages)
 }
 
 # ---------------------------------------------------------------------------
 # Search terms used when querying the OFF API for each database category
 # ---------------------------------------------------------------------------
 CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
-    "Chips": ["chips", "crisps", "potato chips"],
-    "Dairy": ["milk", "yogurt", "cheese", "kefir", "butter", "cream"],
-    "Bread": ["bread", "rolls", "baguette", "toast"],
-    "Cereals": ["cereals", "muesli", "cornflakes", "oatmeal"],
-    "Drinks": ["cola", "juice", "soda", "energy drink", "water"],
-    "Meat": ["sausage", "ham", "bacon", "kabanos", "pate"],
-    "Sweets": ["chocolate", "candy", "wafer", "biscuit", "praline"],
-    "Canned Goods": ["canned", "preserves", "konserwa"],
-    "Condiments": ["ketchup", "mustard", "mayonnaise", "vinegar", "sauce"],
-    "Snacks": [
+    CAT_CHIPS: ["chips", "crisps", "potato chips"],
+    CAT_DAIRY: ["milk", "yogurt", "cheese", "kefir", "butter", "cream"],
+    CAT_BREAD: ["bread", "rolls", "baguette", "toast"],
+    CAT_CEREALS: ["cereals", "muesli", "cornflakes", "oatmeal"],
+    CAT_DRINKS: ["cola", "juice", "soda", "energy drink", "water"],
+    CAT_MEAT: ["sausage", "ham", "bacon", "kabanos", "pate"],
+    CAT_SWEETS: ["chocolate", "candy", "wafer", "biscuit", "praline"],
+    CAT_CANNED: ["canned", "preserves", "konserwa"],
+    CAT_CONDIMENTS: ["ketchup", "mustard", "mayonnaise", "vinegar", "sauce"],
+    CAT_SNACKS: [
         "crackers",
         "pretzels",
         "popcorn",
@@ -163,7 +186,7 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "paluszki",
         "extruded snacks",
     ],
-    "Seafood & Fish": [
+    CAT_SEAFOOD: [
         "fish",
         "tuna",
         "salmon",
@@ -176,7 +199,7 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "shrimp",
         "crab sticks",
     ],
-    "Baby": [
+    CAT_BABY: [
         "baby food",
         "baby formula",
         "baby snack",
@@ -186,7 +209,7 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "baby cereal",
         "baby milk",
     ],
-    "Alcohol": [
+    CAT_ALCOHOL: [
         "beer",
         "wine",
         "vodka",
@@ -197,7 +220,7 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "cider",
         "liqueur",
     ],
-    "Sauces": [
+    CAT_SAUCES: [
         "pasta sauce",
         "tomato sauce",
         "pesto",
@@ -208,9 +231,9 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "cooking sauce",
         "teriyaki",
     ],
-    "Frozen & Prepared": ["frozen pizza", "frozen meals", "pierogi"],
-    "Instant & Frozen": ["instant noodles", "cup noodles", "instant soup"],
-    "Breakfast & Grain-Based": [
+    CAT_FROZEN: ["frozen pizza", "frozen meals", "pierogi"],
+    CAT_INSTANT: ["instant noodles", "cup noodles", "instant soup"],
+    CAT_BREAKFAST: [
         "granola",
         "pancake",
         "waffle",
@@ -221,7 +244,7 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "cereal bar",
         "muesli bar",
     ],
-    "Plant-Based & Alternatives": [
+    CAT_PLANT: [
         "soy milk",
         "tofu",
         "plant-based",
@@ -233,7 +256,7 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "tempeh",
         "seitan",
     ],
-    "Nuts, Seeds & Legumes": ["peanuts", "almonds", "walnuts", "sunflower seeds"],
+    CAT_NUTS: ["peanuts", "almonds", "walnuts", "sunflower seeds"],
 }
 
 # Reverse lookup: DB category → list of OFF tags

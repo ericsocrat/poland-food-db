@@ -57,6 +57,95 @@ def _session() -> requests.Session:
 # ---------------------------------------------------------------------------
 
 
+def _search_by_tags(
+    session: requests.Session,
+    off_tags: list[str],
+    seen_codes: set[str],
+    results: list[dict],
+    max_results: int,
+) -> None:
+    """Phase 1: search OFF by category tags (mutates *results* and *seen_codes*)."""
+    for tag in off_tags:
+        if len(results) >= max_results:
+            return
+        page = 1
+        while len(results) < max_results:
+            params: dict[str, Any] = {
+                "countries_tags": "en:poland",
+                "tagtype_0": "categories",
+                "tag_contains_0": "contains",
+                "tag_0": tag,
+                "action": "process",
+                "json": 1,
+                "page": page,
+                "page_size": PAGE_SIZE,
+            }
+            data = _get_json(session, OFF_SEARCH_URL, params)
+            if data is None:
+                break
+            products = data.get("products", [])
+            if not products:
+                break
+            _collect_products(products, seen_codes, results, max_results)
+            if page * PAGE_SIZE >= int(data.get("count", 0)):
+                break
+            page += 1
+            time.sleep(REQUEST_DELAY)
+        time.sleep(REQUEST_DELAY)
+
+
+def _search_by_terms(
+    session: requests.Session,
+    search_terms: list[str],
+    seen_codes: set[str],
+    results: list[dict],
+    max_results: int,
+) -> None:
+    """Phase 2: fall back to keyword search (mutates *results* and *seen_codes*)."""
+    for term in search_terms:
+        if len(results) >= max_results:
+            return
+        page = 1
+        while len(results) < max_results:
+            params: dict[str, Any] = {
+                "search_terms": term,
+                "countries_tags": "en:poland",
+                "search_simple": 1,
+                "action": "process",
+                "json": 1,
+                "page": page,
+                "page_size": PAGE_SIZE,
+            }
+            data = _get_json(session, OFF_SEARCH_URL, params)
+            if data is None:
+                break
+            products = data.get("products", [])
+            if not products:
+                break
+            _collect_products(products, seen_codes, results, max_results)
+            if page * PAGE_SIZE >= int(data.get("count", 0)):
+                break
+            page += 1
+            time.sleep(REQUEST_DELAY)
+        time.sleep(REQUEST_DELAY)
+
+
+def _collect_products(
+    products: list[dict],
+    seen_codes: set[str],
+    results: list[dict],
+    max_results: int,
+) -> None:
+    """Append unseen products to *results* (mutates both collections)."""
+    for p in products:
+        code = p.get("code", "")
+        if code and code not in seen_codes:
+            seen_codes.add(code)
+            results.append(p)
+            if len(results) >= max_results:
+                return
+
+
 def search_polish_products(
     category: str,
     max_results: int = 50,
@@ -90,89 +179,12 @@ def search_polish_products(
     results: list[dict] = []
     session = _session()
 
-    # Phase 1: Search by OFF category tags (no search_terms)
-    for tag in off_tags:
-        if len(results) >= max_results:
-            break
+    # Phase 1: Search by OFF category tags
+    _search_by_tags(session, off_tags, seen_codes, results, max_results)
 
-        page = 1
-        while len(results) < max_results:
-            params: dict[str, Any] = {
-                "countries_tags": "en:poland",
-                "tagtype_0": "categories",
-                "tag_contains_0": "contains",
-                "tag_0": tag,
-                "action": "process",
-                "json": 1,
-                "page": page,
-                "page_size": PAGE_SIZE,
-            }
-            data = _get_json(session, OFF_SEARCH_URL, params)
-            if data is None:
-                break
-
-            products = data.get("products", [])
-            if not products:
-                break
-
-            for p in products:
-                code = p.get("code", "")
-                if code and code not in seen_codes:
-                    seen_codes.add(code)
-                    results.append(p)
-                    if len(results) >= max_results:
-                        break
-
-            total = int(data.get("count", 0))
-            if page * PAGE_SIZE >= total:
-                break
-
-            page += 1
-            time.sleep(REQUEST_DELAY)
-
-        time.sleep(REQUEST_DELAY)
-
-    # Phase 2: Fall back to keyword search (no tag filter) if needed
+    # Phase 2: Fall back to keyword search if needed
     if len(results) < max_results:
-        for term in search_terms:
-            if len(results) >= max_results:
-                break
-
-            page = 1
-            while len(results) < max_results:
-                params = {
-                    "search_terms": term,
-                    "countries_tags": "en:poland",
-                    "search_simple": 1,
-                    "action": "process",
-                    "json": 1,
-                    "page": page,
-                    "page_size": PAGE_SIZE,
-                }
-                data = _get_json(session, OFF_SEARCH_URL, params)
-                if data is None:
-                    break
-
-                products = data.get("products", [])
-                if not products:
-                    break
-
-                for p in products:
-                    code = p.get("code", "")
-                    if code and code not in seen_codes:
-                        seen_codes.add(code)
-                        results.append(p)
-                        if len(results) >= max_results:
-                            break
-
-                total = int(data.get("count", 0))
-                if page * PAGE_SIZE >= total:
-                    break
-
-                page += 1
-                time.sleep(REQUEST_DELAY)
-
-            time.sleep(REQUEST_DELAY)
+        _search_by_terms(session, search_terms, seen_codes, results, max_results)
 
     return results[:max_results]
 
@@ -262,15 +274,17 @@ POLISH_RETAILERS: set[str] = {
 }
 
 # Common brand normalisations
+_BRAND_LAYS = "Lay's"
+_BRAND_NESTLE = "Nestlé"
+
 _BRAND_NORMALISE: dict[str, str] = {
-    "lays": "Lay's",
-    "lay's": "Lay's",
-    "lay's": "Lay's",
+    "lays": _BRAND_LAYS,
+    "lay's": _BRAND_LAYS,
     "pringles": "Pringles",
     "doritos": "Doritos",
     "cheetos": "Cheetos",
-    "nestle": "Nestlé",
-    "nestlé": "Nestlé",
+    "nestle": _BRAND_NESTLE,
+    "nestlé": _BRAND_NESTLE,
     "danone": "Danone",
     "intersnack-poland": "Intersnack",
 }

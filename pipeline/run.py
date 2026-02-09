@@ -60,6 +60,52 @@ def _dedup(products: list[dict]) -> list[dict]:
 # ---------------------------------------------------------------------------
 
 
+def _extract_products(
+    raw_products: list[dict],
+    category: str,
+    min_completeness: float,
+) -> list[dict]:
+    """Phase 2: extract, normalise, and filter raw OFF products."""
+    extracted: list[dict] = []
+    for raw in tqdm(raw_products, desc="Extracting", leave=False):
+        product = extract_product_data(raw)
+        if product is None:
+            continue
+        off_cats = raw.get("categories_tags", [])
+        resolved = resolve_category(off_cats)
+        if resolved is not None and resolved != category:
+            continue
+        product["category"] = category
+        try:
+            completeness = float(product.get("_completeness", 0))
+        except (ValueError, TypeError):
+            completeness = 0.0
+        if completeness < min_completeness:
+            continue
+        extracted.append(product)
+    return extracted
+
+
+def _validate_products(
+    extracted: list[dict],
+    category: str,
+    max_warnings: int,
+) -> tuple[list[dict], int]:
+    """Phase 3: validate products and count warnings."""
+    validated: list[dict] = []
+    warn_count = 0
+    for product in tqdm(extracted, desc="Validating", leave=False):
+        result = validate_product(product, category)
+        n_warnings = len(result.get("validation_warnings", []))
+        if n_warnings > max_warnings:
+            warn_count += 1
+            continue
+        if n_warnings > 0:
+            warn_count += 1
+        validated.append(result)
+    return validated, warn_count
+
+
 def run_pipeline(
     category: str,
     max_products: int = 30,
@@ -100,57 +146,19 @@ def run_pipeline(
     print(f"Category: {category}")
     print()
 
-    # ------------------------------------------------------------------
     # 1. Search OFF
-    # ------------------------------------------------------------------
     print("Searching Open Food Facts for Polish products...")
     raw_products = search_polish_products(category, max_results=max_products * 3)
     print(f"  Found {len(raw_products)} raw products")
 
-    # ------------------------------------------------------------------
     # 2. Extract & normalise
-    # ------------------------------------------------------------------
-    extracted: list[dict] = []
-    for raw in tqdm(raw_products, desc="Extracting", leave=False):
-        product = extract_product_data(raw)
-        if product is None:
-            continue
-        # Verify OFF categories match the target — skip mismatches
-        off_cats = raw.get("categories_tags", [])
-        resolved = resolve_category(off_cats)
-        if resolved is not None and resolved != category:
-            continue
-        # Override category to the one the user requested
-        product["category"] = category
-        # Completeness filter
-        try:
-            completeness = float(product.get("_completeness", 0))
-        except (ValueError, TypeError):
-            completeness = 0.0
-        if completeness < min_completeness:
-            continue
-        extracted.append(product)
+    extracted = _extract_products(raw_products, category, min_completeness)
 
-    # ------------------------------------------------------------------
     # 3. Validate
-    # ------------------------------------------------------------------
-    validated: list[dict] = []
-    warn_count = 0
-    for product in tqdm(extracted, desc="Validating", leave=False):
-        result = validate_product(product, category)
-        n_warnings = len(result.get("validation_warnings", []))
-        if n_warnings > max_warnings:
-            warn_count += 1
-            continue
-        if n_warnings > 0:
-            warn_count += 1
-        validated.append(result)
-
+    validated, warn_count = _validate_products(extracted, category, max_warnings)
     print(f"  After validation: {len(validated)} products")
 
-    # ------------------------------------------------------------------
     # 4. De-duplicate
-    # ------------------------------------------------------------------
     unique = _dedup(validated)
     print(f"  After dedup: {len(unique)} unique products")
     if warn_count:
@@ -162,37 +170,41 @@ def run_pipeline(
 
     # Sort by Polish market relevance (highest score first)
     unique.sort(key=lambda p: polish_market_score(p), reverse=True)
-
-    # Trim to requested max
     unique = unique[:max_products]
     print()
 
-    # ------------------------------------------------------------------
     # 5. Generate SQL
-    # ------------------------------------------------------------------
+    _generate_sql_output(category, unique, output_dir, dry_run)
+
+
+def _generate_sql_output(
+    category: str,
+    products: list[dict],
+    output_dir: str,
+    dry_run: bool,
+) -> None:
+    """Phase 5: generate SQL files or print dry-run summary."""
+    slug = _slug(category)
     if dry_run:
         print("[DRY RUN] Would generate SQL files in:", output_dir)
+        print(f"  PIPELINE__{slug}__01_insert_products.sql ({len(products)} products)")
+        print(f"  PIPELINE__{slug}__02_add_servings.sql")
         print(
-            f"  PIPELINE__{_slug(category)}__01_insert_products.sql ({len(unique)} products)"
+            f"  PIPELINE__{slug}__03_add_nutrition.sql ({len(products)} nutrition rows)"
         )
-        print(f"  PIPELINE__{_slug(category)}__02_add_servings.sql")
-        print(
-            f"  PIPELINE__{_slug(category)}__03_add_nutrition.sql ({len(unique)} nutrition rows)"
-        )
-        print(f"  PIPELINE__{_slug(category)}__04_scoring.sql")
+        print(f"  PIPELINE__{slug}__04_scoring.sql")
         return
 
     print("Generating SQL files...")
-    files = generate_pipeline(category, unique, output_dir)
+    files = generate_pipeline(category, products, output_dir)
     for f in files:
         size_label = ""
         if "01_insert" in f.name:
-            size_label = f" ({len(unique)} products)"
+            size_label = f" ({len(products)} products)"
         elif "03_add_nutrition" in f.name:
-            size_label = f" ({len(unique)} nutrition rows)"
+            size_label = f" ({len(products)} nutrition rows)"
         print(f"  OK {f.name}{size_label}")
 
-    slug = _slug(category)
     print()
     print("Pipeline ready! Run with:")
     print(f"  .\\RUN_LOCAL.ps1 -Category {slug} -RunQA")

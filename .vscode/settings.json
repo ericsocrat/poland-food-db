@@ -14,7 +14,7 @@
   // File associations
   // ═══════════════════════════════════════════════════════════════════════
   "files.associations": {
-    "*.sql": "sql",
+    "*.sql": "postgres",
     ".env.*": "dotenv",
     ".env.example": "dotenv"
   },
@@ -201,6 +201,7 @@
   // MSSQL — disable for this PostgreSQL workspace
   // ═══════════════════════════════════════════════════════════════════════
   "mssql.enabled": false,
+  "mssql.intelliSense.enableIntelliSense": false,
 
   // ═══════════════════════════════════════════════════════════════════════
   // Search — exclude noise
