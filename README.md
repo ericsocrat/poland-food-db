@@ -38,30 +38,38 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 557 active products across 20 categories
+**Database**: 877 active products across 20 categories (751 deprecated, kept for history)
 
-| Category                       | Products | Brands                                                                                                                                  | Score Range |
-| ------------------------------ | -------- | --------------------------------------------------------------------------------------------------------------------------------------- | ----------- |
-| **Chips**                      | 28       | 7 (Lay's, Pringles, Crunchips, Doritos, Cheetos, Top Chips, Snack Day)                                                                  | 27–51       |
-| **Żabka**                      | 28       | 3 (Żabka, Tomcio Paluch, Szamamm)                                                                                                       | 15–43       |
-| **Cereals**                    | 28       | 9 (Nestlé, Nesquik, Sante, Vitanella, Crownfield, Melvit, Lubella, Kupiec, Kellogg's)                                                   | 11–49       |
-| **Drinks**                     | 28       | 16 (Coca-Cola, Pepsi, Fanta, Sprite, Tymbark, Hortex, Tiger, Red Bull, Monster, 4Move, Cappy, Dawtona, Mlekovita, Łaciate, Kubś, Costa) | 7–22        |
-| **Dairy**                      | 28       | 13 (Mlekovita, Łaciate, Danone, Zott, Piątnica, Hochland, Bakoma, Danio, Sierpc, Président, Philadelphia, Müller, Mlekpol)              | 9–48        |
-| **Bread**                      | 28       | 7 (Oskroba, Mestemacher, Schulstad, Klara, Wasa, Sonko, Pano, Tastino, Carrefour)                                                       | 15–30       |
-| **Meat**                       | 28       | 10 (Tarczyński, Berlinki, Sokołów, Krakus, Morliny, Madej Wróbel, Drosed, Indykpol, Plukon)                                             | 21–56       |
-| **Sweets**                     | 28       |                                                                                                                                         | 32–55       |
-| **Instant & Frozen**           | 28       |                                                                                                                                         | 13–30       |
-| **Sauces**                     | 28       |                                                                                                                                         | 8–41        |
-| **Baby**                       | 28       |                                                                                                                                         | 8–36        |
-| **Alcohol**                    | 28       |                                                                                                                                         | 5–11        |
-| **Frozen & Prepared**          | 28       | 11 (Dr. Oetker, Morey, Nowaco, Obiad, Mroźnia, Bonduelle, Makaronika, TVLine, Żabka Frost, Kulina, Berryland)                           | 42–64       |
-| **Plant-Based & Alternatives** | 27       | 11 (Alpro, Garden Gourmet, Violife, Taifun, LikeMeat, Sojasun, Kupiec, Beyond Meat, Naturalnie, Simply V, Green Legend)                 | TBD         |  | **Nuts, Seeds & Legumes** | 27 | 7 (Alesto, Bakalland, Fasting, Sante, Targroch, Helio, Naturavena, Społem) | TBD |
+| Category                       | Products | Brands | Score Range |
+| ------------------------------ | -------: | -----: | ----------- |
+| **Alcohol**                    |       31 |     27 | 5–21        |
+| **Baby**                       |       49 |     36 | 6–46        |
+| **Bread**                      |       60 |     38 | 11–44       |
+| **Breakfast & Grain-Based**    |      100 |     45 | 7–48        |
+| **Canned Goods**               |       28 |     18 | 8–33        |
+| **Cereals**                    |       48 |     19 | 13–48       |
+| **Chips**                      |       28 |     12 | 15–44       |
+| **Condiments**                 |       28 |     10 | 8–43        |
+| **Dairy**                      |       28 |     13 | 9–48        |
+| **Drinks**                     |       60 |     33 | 5–27        |
+| **Frozen & Prepared**          |       35 |     18 | 5–55        |
+| **Instant & Frozen**           |       28 |     15 | 10–54       |
+| **Meat**                       |       28 |     20 | 14–47       |
+| **Nuts, Seeds & Legumes**      |       28 |     11 | 25–49       |
+| **Plant-Based & Alternatives** |       51 |     40 | 6–43        |
+| **Sauces**                     |      100 |     49 | 7–46        |
+| **Seafood & Fish**             |       35 |     17 | 9–36        |
+| **Snacks**                     |       56 |     44 | 9–55        |
+| **Sweets**                     |       28 |     17 | 28–55       |
+| **Żabka**                      |       28 |      3 | 15–43       |
 **Test Coverage**: 31 automated checks + 7 data quality reports
 - 11 data integrity checks (nulls, foreign keys, duplicates)
 - 20 scoring formula validation checks (ranges, flags, NOVA, regression)
 - 7 source coverage & confidence tracking reports (informational, non-blocking)
 
 **All critical tests passing**: ✅ 31/31
+
+**EAN Coverage**: 876/877 active products (99.9%) have EAN-13 barcodes
 
 ---
 
@@ -72,20 +80,24 @@ poland-food-db/
 ├── db/
 │   ├── migrations/          # Supabase schema migrations
 │   ├── pipelines/           # Category-specific data pipelines
-│   │   ├── bread/           # 28 bread products (4 SQL files)
-│   │   ├── breakfast/       # 28 breakfast & grain-based products (4 SQL files)
-│   │   ├── canned/          # 28 canned goods products (4 SQL files)
-│   │   ├── cereals/         # 28 cereal products (4 SQL files)
+│   │   ├── alcohol/         # 31 alcohol products (4 SQL files)
+│   │   ├── baby/            # 49 baby products (4 SQL files)
+│   │   ├── bread/           # 60 bread products (4 SQL files)
+│   │   ├── breakfast-grain-based/ # 100 breakfast products (4 SQL files)
+│   │   ├── canned-goods/    # 28 canned goods products (4 SQL files)
+│   │   ├── cereals/         # 48 cereal products (4 SQL files)
 │   │   ├── chips/           # 28 chip products (5 SQL files)
+│   │   ├── condiments/      # 28 condiment products (4 SQL files)
 │   │   ├── dairy/           # 28 dairy products (4 SQL files)
-│   │   ├── drinks/          # 28 beverage products (4 SQL files)
-│   │   ├── frozen/          # 28 frozen & prepared products (4 SQL files)
-│   │   ├── instant/          # 28 instant & frozen products (4 SQL files)
+│   │   ├── drinks/          # 60 beverage products (4 SQL files)
+│   │   ├── frozen-prepared/ # 35 frozen & prepared products (4 SQL files)
+│   │   ├── instant-frozen/  # 28 instant & frozen products (4 SQL files)
 │   │   ├── meat/            # 28 meat & deli products (4 SQL files)
-│   │   ├── nuts-seeds/      # 27 nuts, seeds & legumes products (4 SQL files)
-│   │   ├── plant-based/     # 27 plant-based & alternative products (4 SQL files)
-│   │   ├── sauces/          # 28 sauces & condiments products (4 SQL files)
-│   │   ├── seafood/         # 27 seafood & fish products (4 SQL files)
+│   │   ├── nuts-seeds-legumes/ # 28 nuts, seeds & legumes products (4 SQL files)
+│   │   ├── plant-based-alternatives/ # 51 plant-based products (4 SQL files)
+│   │   ├── sauces/          # 100 sauce products (4 SQL files)
+│   │   ├── seafood-fish/    # 35 seafood & fish products (4 SQL files)
+│   │   ├── snacks/          # 56 snack products (4 SQL files)
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 28 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites
@@ -96,7 +108,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-│   └── migrations/          # Baseline schema (3 files)
+│   └── migrations/          # Schema migrations (8 files)
 ├── docs/                    # Project documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.1 algorithm documentation (421 lines)
@@ -196,7 +208,7 @@ Every product receives an automated confidence rating based on data completeness
 | **estimated** | 70-89% complete OR single source       | Single-source data needing verification |
 | **low**       | <70% complete                          | Incomplete data, use with caution       |
 
-**Current status**: All 557 products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
+**Current status**: All 877 active products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
 
 Confidence is auto-computed by the `assign_confidence()` function in all scoring pipelines.
 
@@ -204,10 +216,7 @@ Confidence is auto-computed by the `assign_confidence()` function in all scoring
 
 Products include EAN-13 barcodes (where available) for cross-source product matching:
 
-**Coverage**: 133/336 products (39.6%)
-- ✅ **100%**: Baby (28), Żabka (28), Drinks (28), Cereals (28)
-- ⚠️ **75%**: Chips (21/28)
-- ❌ **0%**: Sweets, Bread, Instant, Alcohol, Sauces, Dairy, Meat
+**Coverage**: 876/877 active products (99.9%)
 
 EAN codes enable validation against:
 - Manufacturer product pages
@@ -218,7 +227,7 @@ EAN codes enable validation against:
 ### Multi-Source Workflow
 
 **Current sources**:
-- Primary: Open Food Facts (openfoodfacts.org) — 336/336 products
+- Primary: Open Food Facts (openfoodfacts.org) — 877/877 active products
 - Secondary: None yet — all products pending cross-validation
 
 **Planned sources** (see [DATA_SOURCES.md](docs/DATA_SOURCES.md)):
@@ -237,7 +246,7 @@ EAN codes enable validation against:
 | Resource                          | URL / Command                                                    |
 | --------------------------------- | ---------------------------------------------------------------- |
 | **Supabase Studio** (Database UI) | http://127.0.0.1:54323                                           |
-| **Master View** (all data)        | `SELECT * FROM v_master ORDER BY unhealthiness_score::int DESC;` |
+| **Master View** (all data)        | `SELECT * FROM v_master ORDER BY unhealthiness_score DESC;`      |
 | **Top 10 unhealthiest**           | See [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)        |
 | **Scoring reference**             | [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)            |
 | **All queries & tests**           | [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)            |
@@ -250,7 +259,7 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 33/33 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 31/31 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -260,10 +269,10 @@ EAN codes enable validation against:
 - **All data is local** — nothing is uploaded to remote Supabase (yet)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data quality tracking** — All products have confidence levels (`estimated`, `verified`, or `low`)
-- **EAN barcodes** — 133/336 products (39.6%) have EAN-13 codes for cross-source matching
+- **EAN barcodes** — 876/877 active products (99.9%) have EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
 - **Scoring version**: v3.1 (2026-02-07)
-- **557 active products** (across 20 categories), 44 deprecated (kept in DB for historical tracking)
+- **877 active products** (across 20 categories), 751 deprecated (kept in DB for historical tracking)
 
 ---
 

@@ -2,174 +2,49 @@
 
 ## Summary
 
-**Total EANs in database**: 267
-**Valid EAN-13 codes**: 267 (100%)
-**Invalid checksums**: 0 (0%)
-**Overall EAN coverage**: 267 active products (47.9% of 557 active)
-**Session Progress**: 133 → 267 EANs (+101% growth)
+**Total active products**: 877
+**Products with EAN**: 876 (99.9%)
+**Products without EAN**: 1 (Zabka Kajzerka Kebab - store-prepared item, no barcode)
+**Checksum validity**: 100% of EANs pass GS1 Modulo-10 validation
 
-## Recent Progress
+All EAN codes are sourced directly from the Open Food Facts API during pipeline generation. Each product's EAN is the `code` field from its OFF record, ensuring authenticity.
 
-### ✅ Completed (Feb 8, 2026)
-- Created `validate_eans.py` - EAN-13 checksum validator using Modulo-10 algorithm
-- Fixed 4 invalid EANs in baby, drinks, and żabka categories
-- **Removed all EAN codes from frozen category** (23 invalid, 82% error rate, none verifiable)
-- **Removed all EAN codes from plant-based category** (10 invalid, 37% error rate, none verifiable)
-- **Removed all EAN codes from nuts-seeds category** (10 invalid, 37% error rate, none verifiable)
-- **Removed all EAN codes from breakfast category** (25 invalid, 92% error rate, none verifiable)
-- Applied corrected EANs to database (133 products initially, 29.8% coverage)
-- Fixed Windows UTF-8 encoding issues in validator
-- Integrated EAN validation into QA suite as Test Suite 4
-- **QA suite now passes: all EAN-13 checksums valid (100%)**
-- **Added 16 verified EANs to Chips category** via Open Food Facts research (37/45 = 82.2%)
-- **Added 23 verified EANs to Dairy category** via Open Food Facts research (23/28 = 82.1%)
-- **Added 11 verified EANs to Plant-Based & Alternatives category** (11/27 = 40.7% unique, 22/54 = 40.7% with duplicates)
-- **Removed 13 invalid EANs from Seafood/Fish** (Frosta 2, Graal 10+)
-- **Removed 21 invalid EANs from Instant & Frozen** (Kotlin 10, Profi 6, Pudliszki 5)
-- **Added 20 verified EANs to Bread category** via Open Food Facts research (20/28 = 71.4%, removed 1 invalid Graham)
-- **Removed 6 invalid EANs from Sauces category** (Kotlin 5, Targroch 1)
-- Total EANs expanded from 133 → 245 (+84% increase)
+## Coverage by Category
 
-### 🗑️ Removed Categories
+| Category                   | Products | With EAN | Coverage |
+| -------------------------- | -------: | -------: | -------: |
+| Alcohol                    |       31 |       31 |   100.0% |
+| Baby                       |       49 |       49 |   100.0% |
+| Bread                      |       60 |       60 |   100.0% |
+| Breakfast & Grain-Based    |      100 |      100 |   100.0% |
+| Canned Goods               |       28 |       28 |   100.0% |
+| Cereals                    |       48 |       48 |   100.0% |
+| Chips                      |       28 |       28 |   100.0% |
+| Condiments                 |       28 |       28 |   100.0% |
+| Dairy                      |       28 |       28 |   100.0% |
+| Drinks                     |       60 |       60 |   100.0% |
+| Frozen & Prepared          |       35 |       35 |   100.0% |
+| Instant & Frozen           |       28 |       28 |   100.0% |
+| Meat                       |       28 |       28 |   100.0% |
+| Nuts, Seeds & Legumes      |       28 |       28 |   100.0% |
+| Plant-Based & Alternatives |       51 |       51 |   100.0% |
+| Sauces                     |      100 |      100 |   100.0% |
+| Seafood & Fish             |       35 |       35 |   100.0% |
+| Snacks                     |       56 |       56 |   100.0% |
+| Sweets                     |       28 |       28 |   100.0% |
+| Zabka                      |       28 |       27 |    96.4% |
+| **Total**                  |  **877** |  **876** | **99.9%** |
 
-**Frozen & Prepared (28 products)**
-- Reason: 82% checksum failure rate (23/28 invalid)
-- None found in Open Food Facts database despite claim of verification
-- EANs removed on 2026-02-08, products retained without barcodes
+## Validation
 
-**Plant-Based & Alternatives (27 products)**
-- Reason: 37% checksum failure rate (10/27 invalid)
-- None found in Open Food Facts database despite claim of verification
-- EANs removed on 2026-02-08, products retained without barcodes
-
-**Nuts, Seeds & Legumes (27 products)**
-- Reason: 37% checksum failure rate (10/27 invalid)
-- None found in Open Food Facts database despite claim of verification
-- EANs removed on 2026-02-08, products retained without barcodes
-
-**Breakfast & Grain-Based (28 products)**
-- Reason: 92% checksum failure rate (25/28 invalid)
-- None found in Open Food Facts database despite claim of verification
-- EANs removed on 2026-02-08, products retained without barcodes
-
-## Current Status by Category
-
-### ✅ Valid EAN Coverage
-
-| Category        | Products with EANs | Total   | Coverage          | Checksum Status |
-| --------------- | ------------------ | ------- | ----------------- | --------------- |
-| Baby            | 28                 | 28      | 100.0%            | ✅ All valid     |
-| Cereals         | 28                 | 28      | 100.0%            | ✅ All valid     |
-| Drinks          | 28                 | 28      | 100.0%            | ✅ All valid     |
-| Żabka           | 28                 | 28      | 100.0%            | ✅ All valid     |
-| **Chips**       | **37**             | 45      | **82.2%**         | ✅ All valid     |
-| **Dairy**       | **23**             | 28      | **82.1%**         | ✅ All valid     |
-| Seafood & Fish  | 13                 | 27      | 48.1%             | ✅ All valid     |
-| Canned Goods    | 7                  | 28      | 25.0%             | ✅ All valid     |
-| **Plant-Based** | **11**             | 27 (54) | **40.7% / 20.4%** | ✅ All valid     |
-| **Total**       | **203**            | **545** | **37.2%**         | **100% valid**  |
-
-### ⚠️ EAN-8 Warnings
-
-8 products use EAN-8 format (valid but not standard EAN-13):
-- Crownfield (Lidl): 3 products (Choco Balls, Goldini, Musli Premium)
-- Szamamm: 4 products (frozen convenience foods)
-- GutBio: 1 product (baby food)
-
-These are valid but should ideally be converted to EAN-13 format if 13-digit codes become available.
-
-## Historical Context
-
-### Phase 2 Completion: Plant-Based & Alternatives Expansion (Feb 8, 2026)
-- Researched 27 unique plant-based products via Open Food Facts API
-- Found valid EANs for 11 products (40.7% success rate)
-- All 11 EANs passed GS1 Modulo-10 checksum validation
-- Handled database duplicates: all 27 products have 2 copies, updated only min(product_id)
-- Database updated: Plant-Based category now 11/27 unique (40.7%), 22/54 total (40.7%)
-- 16 products still missing: Alpro beverages, Kupiec tofu, LikeMeat, Sojasun, Taifun tempeh variants
-- Discovered and removed 21 invalid EANs from Instant & Frozen (Kotlin, Profi, Pudliszki canned goods brands)
-
-### Phase 1 Completion: Dairy Expansion (Feb 8, 2026)
-- Researched 28 Dairy products via Open Food Facts API
-- Found valid EANs for 23 products (82.1% success rate)
-- All 23 EANs passed GS1 Modulo-10 checksum validation
-- Database updated: Dairy category now 23/28 (82.1%)
-- 5 products still missing: Actimel Wieloowocowy, Almette Śmietankowy, Mańlanka Naturalna, Mleko 3.2%, Twarób Półtłusty
-
-### Chips Expansion (Feb 8, 2026 — 16 EANs Added)
-- Researched 24 missing Chips products via Open Food Facts API
-- Found valid EANs for 16 products (brands: Cheetos, Chio, Crunchips, Doritos, Lay's, Snack Day)
-- All 16 EANs passed GS1 Modulo-10 checksum validation
-- Database updated: Chips category now 37/45 (82.2%)
-- 8 products still missing: Generic/Reference, Żabka store brand, Lorenz, others not found in API
-
-### Seafood Data Quality Fix (Feb 8, 2026)
-- Discovered 13 invalid EAN checksums in Seafood/Fish products
-- Frosta (2): Filety Mintaja, Paluszki Rybne
-- Graal (10+): Multiple fish products with failed checksums
-- Conservative fix: Removed all 13 invalid EANs to maintain data integrity
-- Products retained without barcodes
-- Seafood & Fish category now at 13/27 (48.1%)
-
-### Instant & Frozen Data Quality Fix (Feb 8, 2026)
-
-### Instant & Frozen Data Quality Fix (Feb 8, 2026)
-- Discovered 21 invalid EAN checksums when adding Plant-Based EANs
-- Kotlin (10 products): Canned beans, vegetables, fruits
-- Profi (6 products): Soups, fruit cocktails, peaches, pears, pineapple
-- Pudliszki (5 products): Corned beef, beets, vegetable soup, cream of mushroom, diced tomatoes
-- Conservative fix: Removed all 21 invalid EANs to maintain 100% data integrity
-- Products retained without barcodes
-- Instant & Frozen category went to 0% EAN coverage (all invalid codes removed)
-
-### Phase 1 Completion: Bread Expansion (Feb 8, 2026)
-- Researched 28 Bread products via Open Food Facts API
-- Found valid EANs for 21 products (75% raw success rate)
-- 1 invalid EAN removed: Oskroba Chleb Graham (2434000070009 - checksum failed)
-- 20 EANs passed GS1 Modulo-10 checksum validation (100% valid)
-- Database updated: Bread category now 20/28 (71.4%)
-- Success by brand: Mestemacher 5/5 (100%), Wasa 3/3 (100%), Pano 4/4 (100%), Oskroba 5/9 (56%)
-- 7 products still missing: Carrefour Sucharki, Oskroba (3), Schulstad Toast, Sonko Pieczywo, Tastino Wraps
-
-### Sauces Data Quality Fix (Feb 8, 2026)
-- Discovered 6 invalid EAN checksums in Sauces category
-- Kotlin (5 products): Honey Mustard, Horseradish, Ketchup Pikantny, Light Mayonnaise, Pickled Onions
-- Targroch (1 product): White Wine Vinegar
-- Conservative fix: Removed all 6 invalid EANs to maintain 100% data integrity
-- Products retained without barcodes
-- Sauces category now at 0% EAN coverage (all codes were invalid)
-
-### Phase 3 Completion: Alcohol Expansion (Feb 8, 2026)
-- Researched 28 Alcohol products via Open Food Facts API
-- Found valid EANs for 22 products (78.6% success rate)
-- All 22 EANs passed GS1 Modulo-10 checksum validation (100% valid)
-- Database updated: Alcohol category now 22/28 (78.6%)
-- Success by brand: Multiple 100% (Dzik, Just 0., Karlsquell, Karmi, Łomża, Okocim, Somersby, Tyskie, Warka), Lech 56%
-- 6 products still missing: Lech Free (4 varieties), Żubr Premium, Zywiec Full
-
-### Legacy Data Quality Fix (Feb 8, 2026)
-- Discovered 44 invalid EANs in legacy dataset (Canned Goods, Breakfast, Cereals categories)
-- Pre-existing invalid codes: test/placeholder values (sequential digits), EAN-8 format in EAN-13 fields
-- Conservative fix: Removed all 44 invalid codes (28 legacy + 16 additional)
-- Products retained without barcodes
-- Global effect: Removed 44 invalid codes, maintained 267 valid EANs (100% pass rate)
-
-### Fixed EANs (4 products)
-- BoboVita Jabłka i banana: `8591119253935` → `8591119253934`
-- Łaciate Mleko 2%: `5900820000070` → `5900820000073`
-- Żywiec Zdrój Smako-łyk: `5900134001359` → `5900134001353`
-- Wołowiner Ser Kozi: `5908308910044` → `5908308910043`
-
-## Tools & Validation
-
-- **Validator**: `python validate_eans.py` (all EANs) or `python validate_eans.py --ean <code>` (single)
-- **QA Suite**: `.\RUN_QA.ps1` - includes EAN validation as Test Suite 4 (blocking)
 - **Algorithm**: GS1 Modulo-10 checksum (ISO/IEC 15420 compliant)
-- **Open Food Facts API**: `https://world.openfoodfacts.org/api/v0/product/{ean}.json`
+- **QA Suite**: `.\RUN_QA.ps1` - includes EAN validation checks
+- **OFF API**: EANs sourced from `https://world.openfoodfacts.org/api/v2/search`
 
-## Next Steps
+## Historical Notes
 
-1. ✅ **EAN validation infrastructure complete** - validator integrated into QA suite
-2. 🔄 **Expand EAN coverage** - add barcodes to remaining 9 categories (258 products without EANs)
-3. 🔄 **Verify frozen/plant-based** - research correct EANs if products need barcode tracking
-4. ✅ **Data integrity maintained** - all existing EANs have valid checksums
+EAN coverage evolved significantly across sessions:
+
+- **Session 5** (Feb 8): 133 EANs manually researched (29.8% of 446 products)
+- **Session 7** (Feb 8): 267 validated EANs after removing 44 invalid legacy codes, expanding Chips (+16), Dairy (+23), Plant-Based (+11), Bread (+20), Alcohol (+22)
+- **Session 8** (Feb 9): Migrated to OFF v2 API - all pipeline-generated products now include their OFF `code` as EAN automatically. Coverage jumped to 876/877 (99.9%).
