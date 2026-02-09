@@ -1,46 +1,52 @@
 -- PIPELINE (Condiments): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
--- 0. DEPRECATE old products & release their EANs
+-- 0a. DEPRECATE old products in this category & release their EANs
 update products
 set is_deprecated = true, ean = null
 where country = 'PL'
   and category = 'Condiments'
   and is_deprecated is not true;
 
+-- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
+update products set ean = null
+where ean in ('5900385012573', '5900783004996', '5900783003043', '5901044011074', '5900783008581', '5900084254700', '5900783000424', '5900385500148', '5901044022896', '5900385501756', '5901044003581', '5900385012528', '5906425121397', '5901713012692', '5901044022872', '5901044022889', '5906425121861', '5900084229395', '5901044016802', '5900242000187', '5906425111473', '5900783010287', '5900783008697', '5900783000417', '5900783003418', '5901044027549', '5900783009557', '5901248000911')
+  and ean is not null;
+
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
   ('PL', 'Kotlin', 'Grocery', 'Condiments', 'Ketchup Łagodny', null, 'Netto', 'none', '5900385012573'),
   ('PL', 'Heinz', 'Grocery', 'Condiments', 'Ketchup łagodny', null, 'Biedronka', 'none', '5900783004996'),
-  ('PL', 'Go Vege', 'Grocery', 'Condiments', 'Majonez sałatkowy wegański', null, 'Biedronka', 'none', '5901044021875'),
+  ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup łagodny - Najsmaczniejszy', null, 'Auchan,E. Leclerc', 'none', '5900783003043'),
+  ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup łagodny markowy', null, 'Auchan', 'none', '5901044011074'),
+  ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup Łagodny Premium', null, 'Lidl', 'none', '5900783008581'),
+  ('PL', 'Kamis', 'Grocery', 'Condiments', 'Ketchup włoski', null, 'Auchan', 'none', '5900084254700'),
   ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup łagodny', null, 'Asda', 'none', '5900783000424'),
   ('PL', 'Kotlin', 'Grocery', 'Condiments', 'Ketchup łagodny', null, null, 'none', '5900385500148'),
-  ('PL', 'Winiary', 'Grocery', 'Condiments', 'Majonez Dekoracyjny', null, 'Tesco', 'none', '5900085011012'),
-  ('PL', 'Kamis', 'Grocery', 'Condiments', 'Musztarda sarepska ostra', null, 'Tesco', 'none', '5900084229395'),
-  ('PL', 'Winiary', 'Grocery', 'Condiments', 'Mayonnaise Decorative', null, 'Lewiatan', 'none', '5900085011029'),
+  ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup Premium Łagodny', null, null, 'none', '5901044022896'),
+  ('PL', 'Madero', 'Grocery', 'Condiments', 'Ketchup Łagodny', null, null, 'none', '5900385501756'),
+  ('PL', 'Roleski', 'Grocery', 'Condiments', 'Musztarda Stołowa', null, null, 'none', '5901044003581'),
   ('PL', 'Kotlin', 'Grocery', 'Condiments', 'Ketchup hot', null, 'Netto,Stokrotka', 'none', '5900385012528'),
-  ('PL', 'Społem Kielce', 'Grocery', 'Condiments', 'Majonez Kielecki', null, 'Tesco', 'none', '5900242001610'),
-  ('PL', 'Roleski', 'Grocery', 'Condiments', 'Moutarde Dijon', null, 'intermarché,E-Leclerc', 'none', '5901044016840'),
-  ('PL', 'Krakus', 'Grocery', 'Condiments', 'Chrzan', null, 'Kaufland,Auchan', 'none', '5900397731554'),
-  ('PL', 'Madero', 'Grocery', 'Condiments', 'Majonez', null, 'Biedronka', 'none', '5906425150335'),
-  ('PL', 'Nestlé', 'Grocery', 'Condiments', 'Przyprawa Maggi', null, null, 'none', '5900085011180'),
+  ('PL', 'Madero', 'Grocery', 'Condiments', 'Ketchup junior', null, 'Biedronka', 'none', '5906425121397'),
+  ('PL', 'Madero', 'Grocery', 'Condiments', 'Ketchup pikantny', null, 'Biedronka', 'none', '5901713012692'),
+  ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup Premium', null, 'Kaufland,Biedronka', 'none', '5901044022872'),
+  ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup premium Pikantny', null, 'Kaufland', 'none', '5901044022889'),
+  ('PL', 'Madero', 'Grocery', 'Condiments', 'Premium ketchup pikantny', null, 'Biedronka', 'none', '5906425121861'),
+  ('PL', 'Kamis', 'Grocery', 'Condiments', 'Musztarda sarepska ostra', null, 'Tesco', 'none', '5900084229395'),
+  ('PL', 'Firma Roleski', 'Grocery', 'Condiments', 'Mutarde', null, 'Dino', 'none', '5901044016802'),
+  ('PL', 'Spolem', 'Grocery', 'Condiments', 'Spo?e Musztarda Delikatesowa 190Ml', null, 'carrefour', 'none', '5900242000187'),
+  ('PL', 'Unknown', 'Grocery', 'Condiments', 'Musztarda stołowa', null, null, 'none', '5906425111473'),
   ('PL', 'Heinz', 'Grocery', 'Condiments', 'Heinz Zero Sel Ajoute', null, null, 'none', '5900783010287'),
-  ('PL', 'Kielecki', 'Grocery', 'Condiments', 'Mayonnaise Kielecki', null, null, 'none', '5900242003089'),
   ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'ketchup pikantny', null, null, 'none', '5900783008697'),
   ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup pikantny', null, 'Asda', 'none', '5900783000417'),
-  ('PL', 'Prymat', 'Grocery', 'Condiments', 'Musztarda sarepska ostra', null, null, 'none', '5901135025737'),
-  ('PL', 'Kamis', 'Grocery', 'Condiments', 'Musztarda delikatesowa', null, null, 'none', '5900084229456'),
   ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup Lagodny', null, null, 'none', '5900783003418'),
-  ('PL', 'Madero', 'Grocery', 'Condiments', 'Sos czosnkowy', null, null, 'none', '5906425144587'),
-  ('PL', 'Barilla', 'Grocery', 'Condiments', 'Pesto alla Genovese', null, 'carrefour.fr,Denner AG,Carrefour,Super U,Coop Obs', 'none', '8076809513753'),
-  ('PL', 'Heinz', 'Grocery', 'Condiments', 'Tomato Ketchup', null, 'Magasins U,carrefour.fr,Leclerc', 'none', '87157215'),
-  ('PL', 'Kikkoman', 'Grocery', 'Condiments', 'Kikkoman Sojasauce', null, 'toko,asian supermarket,carrefour.fr,Biedronka,Tesco', 'none', '8715035110809'),
-  ('PL', 'Kikkoman', 'Grocery', 'Condiments', 'Teriyakisauce', null, 'Carrefour,Irma.dk', 'none', '8715035210301'),
-  ('PL', 'Italiamo', 'Grocery', 'Condiments', 'Sugo al pomodoro con basilico', null, 'Lidl', 'none', '20164041'),
-  ('PL', 'Heinz', 'Grocery', 'Condiments', 'Heinz Mayonesa', null, 'EDEKA,Lidl', 'none', '8715700117829')
+  ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup premium sycylijski KETO do pizzy', null, null, 'none', '5901044027549'),
+  ('PL', 'Heinz', 'Grocery', 'Condiments', 'Ketchup pikantny', null, null, 'none', '5900783009557'),
+  ('PL', 'Wloclawek', 'Grocery', 'Condiments', 'Wloclawek Mild Tomato Ketchup', null, null, 'none', '5901248000911')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,
@@ -53,4 +59,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Condiments'
   and is_deprecated is not true
-  and product_name not in ('Ketchup Łagodny', 'Ketchup łagodny', 'Majonez sałatkowy wegański', 'Ketchup łagodny', 'Ketchup łagodny', 'Majonez Dekoracyjny', 'Musztarda sarepska ostra', 'Mayonnaise Decorative', 'Ketchup hot', 'Majonez Kielecki', 'Moutarde Dijon', 'Chrzan', 'Majonez', 'Przyprawa Maggi', 'Heinz Zero Sel Ajoute', 'Mayonnaise Kielecki', 'ketchup pikantny', 'Ketchup pikantny', 'Musztarda sarepska ostra', 'Musztarda delikatesowa', 'Ketchup Lagodny', 'Sos czosnkowy', 'Pesto alla Genovese', 'Tomato Ketchup', 'Kikkoman Sojasauce', 'Teriyakisauce', 'Sugo al pomodoro con basilico', 'Heinz Mayonesa');
+  and product_name not in ('Ketchup Łagodny', 'Ketchup łagodny', 'Ketchup łagodny - Najsmaczniejszy', 'Ketchup łagodny markowy', 'Ketchup Łagodny Premium', 'Ketchup włoski', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup Premium Łagodny', 'Ketchup Łagodny', 'Musztarda Stołowa', 'Ketchup hot', 'Ketchup junior', 'Ketchup pikantny', 'Ketchup Premium', 'Ketchup premium Pikantny', 'Premium ketchup pikantny', 'Musztarda sarepska ostra', 'Mutarde', 'Spo?e Musztarda Delikatesowa 190Ml', 'Musztarda stołowa', 'Heinz Zero Sel Ajoute', 'ketchup pikantny', 'Ketchup pikantny', 'Ketchup Lagodny', 'Ketchup premium sycylijski KETO do pizzy', 'Ketchup pikantny', 'Wloclawek Mild Tomato Ketchup');

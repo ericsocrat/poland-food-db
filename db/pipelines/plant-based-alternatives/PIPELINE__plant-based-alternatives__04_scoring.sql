@@ -1,5 +1,5 @@
 -- PIPELINE (Plant-Based & Alternatives): scoring
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
 -- 0. ENSURE rows in scores & ingredients
 insert into scores (product_id)
@@ -24,14 +24,20 @@ update ingredients i set
 from (
   values
     ('Sante', 'Masło orzechowe', '0'),
+    ('Kujawski', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', '0'),
+    ('GO ON', 'Peanut Butter Smooth', '0'),
     ('HEINZ', '5 rodzajów fasoli w sosie pomidorowym', '0'),
+    ('Go On', 'Peanut Butter Crunchy', '0'),
     ('Lidl', 'Doce Extra Fresa Morango', '2'),
     ('Carrefour BIO', 'Huile d''olive vierge extra', '0'),
     ('Batts', 'Crispy Fried Onions', '0'),
     ('Barilla', 'Pâtes spaghetti n°5 1kg', '0'),
     ('ITALIAMO', 'Paradizniki suseni lidl', '0'),
     ('DONAU SOJA', 'Tofu smoked', '2'),
-    ('Lidl Baresa', 'Aurinkokuivattuja tomaatteja', '2')
+    ('Lidl Baresa', 'Aurinkokuivattuja tomaatteja', '2'),
+    ('Vitasia', 'Rice Noodles', '0'),
+    ('IKEA', 'Lingonberry jam, organic', '2'),
+    ('ALDI Zespri', 'ALDI ZESPRI SunGold Kiwi Gold 1St. 0,65€', '0')
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -64,14 +70,20 @@ update scores sc set
 from (
   values
     ('Sante', 'Masło orzechowe', 'C'),
+    ('Kujawski', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', 'B'),
+    ('GO ON', 'Peanut Butter Smooth', 'A'),
     ('HEINZ', '5 rodzajów fasoli w sosie pomidorowym', 'A'),
+    ('Go On', 'Peanut Butter Crunchy', 'A'),
     ('Lidl', 'Doce Extra Fresa Morango', 'E'),
     ('Carrefour BIO', 'Huile d''olive vierge extra', 'B'),
     ('Batts', 'Crispy Fried Onions', 'E'),
     ('Barilla', 'Pâtes spaghetti n°5 1kg', 'A'),
     ('ITALIAMO', 'Paradizniki suseni lidl', 'UNKNOWN'),
     ('DONAU SOJA', 'Tofu smoked', 'B'),
-    ('Lidl Baresa', 'Aurinkokuivattuja tomaatteja', 'D')
+    ('Lidl Baresa', 'Aurinkokuivattuja tomaatteja', 'D'),
+    ('Vitasia', 'Rice Noodles', 'B'),
+    ('IKEA', 'Lingonberry jam, organic', 'D'),
+    ('ALDI Zespri', 'ALDI ZESPRI SunGold Kiwi Gold 1St. 0,65€', 'A')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -89,14 +101,20 @@ update scores sc set
 from (
   values
     ('Sante', 'Masło orzechowe', '4'),
+    ('Kujawski', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', '4'),
+    ('GO ON', 'Peanut Butter Smooth', '1'),
     ('HEINZ', '5 rodzajów fasoli w sosie pomidorowym', '4'),
+    ('Go On', 'Peanut Butter Crunchy', '1'),
     ('Lidl', 'Doce Extra Fresa Morango', '4'),
     ('Carrefour BIO', 'Huile d''olive vierge extra', '2'),
     ('Batts', 'Crispy Fried Onions', '3'),
     ('Barilla', 'Pâtes spaghetti n°5 1kg', '1'),
     ('ITALIAMO', 'Paradizniki suseni lidl', '3'),
     ('DONAU SOJA', 'Tofu smoked', '4'),
-    ('Lidl Baresa', 'Aurinkokuivattuja tomaatteja', '3')
+    ('Lidl Baresa', 'Aurinkokuivattuja tomaatteja', '3'),
+    ('Vitasia', 'Rice Noodles', '3'),
+    ('IKEA', 'Lingonberry jam, organic', '4'),
+    ('ALDI Zespri', 'ALDI ZESPRI SunGold Kiwi Gold 1St. 0,65€', '1')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

@@ -169,7 +169,10 @@ def validate_product(product: dict, category: str) -> dict:
     result["validation_warnings"] = warnings
 
     # Confidence assignment
-    completeness = product.get("_completeness", 0)
+    try:
+        completeness = float(product.get("_completeness", 0))
+    except (ValueError, TypeError):
+        completeness = 0.0
     has_image = product.get("_has_image", False)
 
     if len(warnings) >= 2:

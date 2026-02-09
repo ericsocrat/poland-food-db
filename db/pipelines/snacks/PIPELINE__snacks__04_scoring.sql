@@ -28,6 +28,9 @@ from (
     ('Sante', 'Vitamin coconut bar', '3'),
     ('nakd', 'Blueberry Muffin Myrtilles', '0'),
     ('Carrefour', 'Toast crock'' céréales complètes', '0'),
+    ('7 DAYS', 'Croissant with Cocoa Filling', '6'),
+    ('Favorina', 'Coeurs pain d''épices chocolat noir', '6'),
+    ('Crownfield', 'Muesli Bars Chocolate & Banana', '2'),
     ('Milka', 'Cake & Chock', '5'),
     ('Maretti', 'Bruschette Chips Pizza Flavour', '2')
 ) as d(brand, product_name, cnt)
@@ -66,6 +69,9 @@ from (
     ('Sante', 'Vitamin coconut bar', 'NOT-APPLICABLE'),
     ('nakd', 'Blueberry Muffin Myrtilles', 'D'),
     ('Carrefour', 'Toast crock'' céréales complètes', 'C'),
+    ('7 DAYS', 'Croissant with Cocoa Filling', 'E'),
+    ('Favorina', 'Coeurs pain d''épices chocolat noir', 'E'),
+    ('Crownfield', 'Muesli Bars Chocolate & Banana', 'E'),
     ('Milka', 'Cake & Chock', 'E'),
     ('Maretti', 'Bruschette Chips Pizza Flavour', 'D')
 ) as d(brand, product_name, ns)
@@ -89,6 +95,9 @@ from (
     ('Sante', 'Vitamin coconut bar', '4'),
     ('nakd', 'Blueberry Muffin Myrtilles', '4'),
     ('Carrefour', 'Toast crock'' céréales complètes', '3'),
+    ('7 DAYS', 'Croissant with Cocoa Filling', '4'),
+    ('Favorina', 'Coeurs pain d''épices chocolat noir', '4'),
+    ('Crownfield', 'Muesli Bars Chocolate & Banana', '4'),
     ('Milka', 'Cake & Chock', '4'),
     ('Maretti', 'Bruschette Chips Pizza Flavour', '4')
 ) as d(brand, product_name, nova)

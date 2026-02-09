@@ -24,16 +24,21 @@ update ingredients i set
 from (
   values
     ('Harnaś', 'Harnaś jasne pełne', '0'),
+    ('Karmi', 'Karmi o smaku żurawina', '1'),
+    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', '0'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '0'),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '0'),
     ('Lomża', 'Łomża jasne', '0'),
+    ('Kompania Piwowarska', 'Kozel cerny', '0'),
     ('Lech', 'Lech Premium', '0'),
     ('Łomża', 'Bière sans alcool', '0'),
+    ('Kompania Piwowarska', 'Lech free', '0'),
     ('Carlsberg', 'Pilsner 0.0%', '0'),
     ('Lech', 'Lech Free Lime Mint', '0'),
     ('Christkindl', 'Christkindl Glühwein', '1'),
     ('Heineken', 'Heineken Beer', '0'),
-    ('Ikea', 'Glühwein', '3')
+    ('Ikea', 'Glühwein', '3'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', '0')
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -66,16 +71,21 @@ update scores sc set
 from (
   values
     ('Harnaś', 'Harnaś jasne pełne', 'NOT-APPLICABLE'),
+    ('Karmi', 'Karmi o smaku żurawina', 'NOT-APPLICABLE'),
+    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', 'NOT-APPLICABLE'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 'NOT-APPLICABLE'),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 'NOT-APPLICABLE'),
     ('Lomża', 'Łomża jasne', 'NOT-APPLICABLE'),
+    ('Kompania Piwowarska', 'Kozel cerny', 'NOT-APPLICABLE'),
     ('Lech', 'Lech Premium', 'NOT-APPLICABLE'),
     ('Łomża', 'Bière sans alcool', 'NOT-APPLICABLE'),
+    ('Kompania Piwowarska', 'Lech free', 'NOT-APPLICABLE'),
     ('Carlsberg', 'Pilsner 0.0%', 'NOT-APPLICABLE'),
     ('Lech', 'Lech Free Lime Mint', 'NOT-APPLICABLE'),
     ('Christkindl', 'Christkindl Glühwein', 'NOT-APPLICABLE'),
     ('Heineken', 'Heineken Beer', 'NOT-APPLICABLE'),
-    ('Ikea', 'Glühwein', 'NOT-APPLICABLE')
+    ('Ikea', 'Glühwein', 'NOT-APPLICABLE'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 'NOT-APPLICABLE')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -93,16 +103,21 @@ update scores sc set
 from (
   values
     ('Harnaś', 'Harnaś jasne pełne', '3'),
+    ('Karmi', 'Karmi o smaku żurawina', '4'),
+    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', '4'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '4'),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '3'),
     ('Lomża', 'Łomża jasne', '4'),
+    ('Kompania Piwowarska', 'Kozel cerny', '3'),
     ('Lech', 'Lech Premium', '3'),
     ('Łomża', 'Bière sans alcool', '4'),
+    ('Kompania Piwowarska', 'Lech free', '4'),
     ('Carlsberg', 'Pilsner 0.0%', '4'),
     ('Lech', 'Lech Free Lime Mint', '4'),
     ('Christkindl', 'Christkindl Glühwein', '4'),
     ('Heineken', 'Heineken Beer', '3'),
-    ('Ikea', 'Glühwein', '4')
+    ('Ikea', 'Glühwein', '4'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', '3')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

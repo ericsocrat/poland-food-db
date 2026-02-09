@@ -312,7 +312,11 @@ def polish_market_score(product: dict) -> int:
     if any(r in stores for r in POLISH_RETAILERS):
         score += 1
 
-    if product.get("_completeness", 0) >= 0.5:
+    try:
+        completeness = float(product.get("_completeness", 0))
+    except (ValueError, TypeError):
+        completeness = 0.0
+    if completeness >= 0.5:
         score += 1
 
     return score

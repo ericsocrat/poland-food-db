@@ -26,6 +26,9 @@ from (
     ('Sante', 'Vitamin coconut bar', '481.0', '27.0', '21.0', '0', '55.0', '39.0', '6.8', '3.5', '0.3'),
     ('nakd', 'Blueberry Muffin Myrtilles', '374.0', '11.1', '1.7', '0', '57.1', '48.6', '9.4', '6.6', '0.0'),
     ('Carrefour', 'Toast crock'' céréales complètes', '359.0', '3.1', '0.7', '0', '67.0', '3.6', '13.0', '9.9', '1.3'),
+    ('7 DAYS', 'Croissant with Cocoa Filling', '453.0', '28.0', '14.0', '0', '43.0', '17.0', '1.9', '5.6', '1.5'),
+    ('Favorina', 'Coeurs pain d''épices chocolat noir', '362.0', '9.0', '5.4', '0', '63.3', '37.8', '3.8', '4.5', '0.3'),
+    ('Crownfield', 'Muesli Bars Chocolate & Banana', '448.0', '16.8', '7.2', '0', '65.6', '31.6', '4.0', '6.8', '0.3'),
     ('Milka', 'Cake & Chock', '428.0', '21.0', '4.1', '0', '56.0', '30.0', '1.4', '5.5', '0.6'),
     ('Maretti', 'Bruschette Chips Pizza Flavour', '453.0', '14.0', '1.2', '0', '71.0', '5.5', '3.3', '9.1', '2.5')
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
