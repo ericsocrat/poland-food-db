@@ -55,6 +55,10 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:pestos": "Sauces",
     "en:salad-dressings": "Sauces",
     "en:hot-sauces": "Sauces",
+    "en:barbecue-sauces": "Sauces",
+    "en:soy-sauces": "Sauces",
+    "en:curry-sauces": "Sauces",
+    "en:cooking-sauces": "Sauces",
     "en:sauces": "Sauces",
     # Condiments (specific subtypes only — en:condiments is too broad on OFF)
     "en:ketchups": "Condiments",
@@ -69,6 +73,11 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:crackers": "Snacks",
     "en:pretzels": "Snacks",
     "en:popcorn": "Snacks",
+    "en:rice-cakes": "Snacks",
+    "en:corn-snacks": "Snacks",
+    "en:breadsticks": "Snacks",
+    "en:extruded-snacks": "Snacks",
+    "en:puffed-rice-cakes": "Snacks",
     # Nuts, Seeds & Legumes
     "en:nuts": "Nuts, Seeds & Legumes",
     "en:seeds": "Nuts, Seeds & Legumes",
@@ -76,14 +85,26 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:dried-fruits": "Nuts, Seeds & Legumes",
     # Baby
     "en:baby-foods": "Baby",
+    "en:baby-milks": "Baby",
+    "en:infant-formulas": "Baby",
+    "en:baby-cereals": "Baby",
+    "en:baby-meals": "Baby",
     # Alcohol
     "en:alcoholic-beverages": "Alcohol",
     "en:beers": "Alcohol",
     "en:wines": "Alcohol",
     "en:spirits": "Alcohol",
+    "en:ciders": "Alcohol",
+    "en:liqueurs": "Alcohol",
+    "en:meads": "Alcohol",
     # Frozen & Prepared
     "en:frozen-foods": "Frozen & Prepared",
     "en:frozen-pizzas": "Frozen & Prepared",
+    # Breakfast & Grain-Based
+    "en:granolas": "Breakfast & Grain-Based",
+    "en:crispbreads": "Breakfast & Grain-Based",
+    "en:pancakes": "Breakfast & Grain-Based",
+    "en:flat-breads": "Breakfast & Grain-Based",
     # Instant & Frozen
     "en:instant-noodles": "Instant & Frozen",
     "en:instant-soups": "Instant & Frozen",
@@ -92,10 +113,20 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:plant-based-foods-and-beverages": "Plant-Based & Alternatives",
     "en:meat-alternatives": "Plant-Based & Alternatives",
     "en:tofu": "Plant-Based & Alternatives",
+    "en:soy-milks": "Plant-Based & Alternatives",
+    "en:oat-milks": "Plant-Based & Alternatives",
+    "en:almond-milks": "Plant-Based & Alternatives",
+    "en:rice-milks": "Plant-Based & Alternatives",
+    "en:plant-based-milk-alternatives": "Plant-Based & Alternatives",
     # Seafood & Fish
     "en:seafood": "Seafood & Fish",
     "en:fish": "Seafood & Fish",
     "en:smoked-fish": "Seafood & Fish",
+    "en:smoked-salmon": "Seafood & Fish",
+    "en:sardines": "Seafood & Fish",
+    "en:herrings": "Seafood & Fish",
+    "en:mackerels": "Seafood & Fish",
+    "en:tunas": "Seafood & Fish",
 }
 
 # Broad categories that should yield to more specific ones during resolution.
@@ -120,15 +151,15 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
     "Sweets": ["chocolate", "candy", "wafer", "biscuit", "praline"],
     "Canned Goods": ["canned", "preserves", "konserwa"],
     "Condiments": ["ketchup", "mustard", "mayonnaise", "vinegar", "sauce"],
-    "Snacks": ["crackers", "pretzels", "popcorn", "rice cakes", "granola bar"],
-    "Seafood & Fish": ["fish", "tuna", "salmon", "sardine", "herring"],
-    "Baby": ["baby food", "baby formula", "baby snack"],
-    "Alcohol": ["beer", "wine", "vodka", "whisky"],
-    "Sauces": ["pasta sauce", "tomato sauce", "pesto", "dressing"],
+    "Snacks": ["crackers", "pretzels", "popcorn", "rice cakes", "granola bar", "rice wafers", "corn sticks", "breadsticks", "paluszki", "extruded snacks"],
+    "Seafood & Fish": ["fish", "tuna", "salmon", "sardine", "herring", "mackerel", "cod", "trout", "pangasius", "shrimp", "crab sticks"],
+    "Baby": ["baby food", "baby formula", "baby snack", "bobovita", "gerber", "hipp baby", "baby cereal", "baby milk"],
+    "Alcohol": ["beer", "wine", "vodka", "whisky", "piwo", "lager", "ale", "cider", "liqueur"],
+    "Sauces": ["pasta sauce", "tomato sauce", "pesto", "dressing", "barbecue sauce", "soy sauce", "curry sauce", "cooking sauce", "teriyaki"],
     "Frozen & Prepared": ["frozen pizza", "frozen meals", "pierogi"],
     "Instant & Frozen": ["instant noodles", "cup noodles", "instant soup"],
-    "Breakfast & Grain-Based": ["granola", "pancake", "waffle", "porridge"],
-    "Plant-Based & Alternatives": ["soy milk", "tofu", "plant-based", "vegan"],
+    "Breakfast & Grain-Based": ["granola", "pancake", "waffle", "porridge", "oatmeal", "crispbread", "corn flakes", "cereal bar", "muesli bar"],
+    "Plant-Based & Alternatives": ["soy milk", "tofu", "plant-based", "vegan", "oat milk", "almond milk", "coconut milk", "veggie burger", "tempeh", "seitan"],
     "Nuts, Seeds & Legumes": ["peanuts", "almonds", "walnuts", "sunflower seeds"],
 }
 

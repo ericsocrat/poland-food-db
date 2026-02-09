@@ -104,7 +104,7 @@ def run_pipeline(
     # 1. Search OFF
     # ------------------------------------------------------------------
     print("Searching Open Food Facts for Polish products...")
-    raw_products = search_polish_products(category, max_results=max_products * 2)
+    raw_products = search_polish_products(category, max_results=max_products * 3)
     print(f"  Found {len(raw_products)} raw products")
 
     # ------------------------------------------------------------------
@@ -123,7 +123,11 @@ def run_pipeline(
         # Override category to the one the user requested
         product["category"] = category
         # Completeness filter
-        if product.get("_completeness", 0) < min_completeness:
+        try:
+            completeness = float(product.get("_completeness", 0))
+        except (ValueError, TypeError):
+            completeness = 0.0
+        if completeness < min_completeness:
             continue
         extracted.append(product)
 
@@ -186,7 +190,7 @@ def run_pipeline(
             size_label = f" ({len(unique)} products)"
         elif "03_add_nutrition" in f.name:
             size_label = f" ({len(unique)} nutrition rows)"
-        print(f"  \u2713 {f.name}{size_label}")
+        print(f"  OK {f.name}{size_label}")
 
     slug = _slug(category)
     print()

@@ -1,13 +1,18 @@
 -- PIPELINE (Breakfast & Grain-Based): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
--- 0. DEPRECATE old products & release their EANs
+-- 0a. DEPRECATE old products in this category & release their EANs
 update products
 set is_deprecated = true, ean = null
 where country = 'PL'
   and category = 'Breakfast & Grain-Based'
   and is_deprecated is not true;
+
+-- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
+update products set ean = null
+where ean in ('5907437369043', '5900749615303', '5900617045126', '5900749614313', '5902884463184', '5902837740393', '5902884463160', '5902837740409', '5906660508199', '5902884462866', '5905108803360', '5900617046161', '5907437369319', '5907437369036')
+  and ean is not null;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
@@ -27,6 +32,7 @@ values
   ('PL', 'Vitanella', 'Grocery', 'Breakfast & Grain-Based', 'Granola Z Ciasteczkami', null, null, 'none', '5907437369319'),
   ('PL', 'Vitanella', 'Grocery', 'Breakfast & Grain-Based', 'Cherry granola', null, null, 'none', '5907437369036')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

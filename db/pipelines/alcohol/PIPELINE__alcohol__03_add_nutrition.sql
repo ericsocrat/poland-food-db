@@ -8,6 +8,7 @@ where (product_id, serving_id) in (
   from products p
   join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
   where p.country = 'PL' and p.category = 'Alcohol'
+    and p.is_deprecated is not true
 );
 
 -- 2) Insert
@@ -21,7 +22,6 @@ select
 from (
   values
     ('Harnaś', 'Harnaś jasne pełne', '43.0', '0.0', '0.0', '0', '0.0', '0.0', '0', '0.0', '0.0'),
-    ('Karmi', 'Karmi o smaku żurawina', '42.0', '0.0', '0.0', '0', '9.8', '8.9', '0.0', '0.3', '0.0'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '40.0', '0.0', '0.0', '0', '3.3', '0.2', '0', '0.2', '0.0'),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '43.0', '0.0', '0.0', '0', '3.0', '0.2', '0', '0.5', '0.0'),
     ('Lomża', 'Łomża jasne', '43.0', '0.0', '0', '0', '3.6', '0', '0', '0.4', '0'),
@@ -35,4 +35,15 @@ from (
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g';
+  and p.category = 'Alcohol' and p.is_deprecated is not true
+join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
+on conflict (product_id, serving_id) do update set
+  calories = excluded.calories,
+  total_fat_g = excluded.total_fat_g,
+  saturated_fat_g = excluded.saturated_fat_g,
+  trans_fat_g = excluded.trans_fat_g,
+  carbs_g = excluded.carbs_g,
+  sugars_g = excluded.sugars_g,
+  fibre_g = excluded.fibre_g,
+  protein_g = excluded.protein_g,
+  salt_g = excluded.salt_g;

@@ -1,5 +1,5 @@
 -- PIPELINE (Alcohol): scoring
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
 -- 0. ENSURE rows in scores & ingredients
 insert into scores (product_id)
@@ -24,7 +24,6 @@ update ingredients i set
 from (
   values
     ('Harnaś', 'Harnaś jasne pełne', '0'),
-    ('Karmi', 'Karmi o smaku żurawina', '1'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '0'),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '0'),
     ('Lomża', 'Łomża jasne', '0'),
@@ -67,7 +66,6 @@ update scores sc set
 from (
   values
     ('Harnaś', 'Harnaś jasne pełne', 'NOT-APPLICABLE'),
-    ('Karmi', 'Karmi o smaku żurawina', 'NOT-APPLICABLE'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 'NOT-APPLICABLE'),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 'NOT-APPLICABLE'),
     ('Lomża', 'Łomża jasne', 'NOT-APPLICABLE'),
@@ -95,7 +93,6 @@ update scores sc set
 from (
   values
     ('Harnaś', 'Harnaś jasne pełne', '3'),
-    ('Karmi', 'Karmi o smaku żurawina', '4'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '4'),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '3'),
     ('Lomża', 'Łomża jasne', '4'),

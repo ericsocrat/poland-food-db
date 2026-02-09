@@ -1,13 +1,18 @@
 -- PIPELINE (Sauces): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
--- 0. DEPRECATE old products & release their EANs
+-- 0a. DEPRECATE old products in this category & release their EANs
 update products
 set is_deprecated = true, ean = null
 where country = 'PL'
   and category = 'Sauces'
   and is_deprecated is not true;
+
+-- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
+update products set ean = null
+where ean in ('5900854002913', '5906716207359', '5900397016255', '20164041', '8005110519000', '4056489447160', '80042563', '8001310811050', '8002920016606')
+  and ean is not null;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
@@ -22,6 +27,7 @@ values
   ('PL', 'Polli', 'Grocery', 'Sauces', 'Pesto alla calabrese poivrons et ricotta', null, null, 'none', '8001310811050'),
   ('PL', 'gustobello', 'Grocery', 'Sauces', 'Passata', null, null, 'none', '8002920016606')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

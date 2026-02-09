@@ -1,5 +1,5 @@
 -- PIPELINE (Sauces): scoring
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
 -- 0. ENSURE rows in scores & ingredients
 insert into scores (product_id)

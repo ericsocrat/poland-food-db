@@ -1,13 +1,18 @@
 -- PIPELINE (Seafood & Fish): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-02-08
+-- Generated: 2026-02-09
 
--- 0. DEPRECATE old products & release their EANs
+-- 0a. DEPRECATE old products in this category & release their EANs
 update products
 set is_deprecated = true, ean = null
 where country = 'PL'
   and category = 'Seafood & Fish'
   and is_deprecated is not true;
+
+-- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
+update products set ean = null
+where ean in ('5906395035717', '5900672012606', '5903895632491', '5901576051616', '5900344000429', '5900344035278', '5903895039009', '5900344009293', '5903895080018', '5900344901818', '5903895010237', '20544508', '5900344901788', '4063367018657', '3560071099251', '4056489025115', '3560070422067', '3560071013493', '4770190041980', '8004030476004')
+  and ean is not null;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
@@ -33,6 +38,7 @@ values
   ('PL', 'Vici', 'Grocery', 'Seafood & Fish', 'Classic surimi sticks', null, null, 'none', '4770190041980'),
   ('PL', 'Rio Mare', 'Grocery', 'Seafood & Fish', 'Insalatissime Sicily Edition', null, null, 'none', '8004030476004')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,
