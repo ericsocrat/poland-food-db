@@ -1,8 +1,8 @@
 # Copilot Instructions — Poland Food Quality Database
 
-> **Last updated:** 2026-02-09
+> **Last updated:** 2026-02-10
 > **Scope:** Poland (country code `PL`) only. No other countries are active.
-> **Active categories:** Alcohol (31), Baby (49), Bread (60), Breakfast & Grain-Based (100), Canned Goods (28), Cereals (48), Chips (28), Condiments (28), Dairy (28), Drinks (60), Frozen & Prepared (35), Instant & Frozen (28), Meat (28), Nuts Seeds & Legumes (28), Plant-Based & Alternatives (51), Sauces (100), Seafood & Fish (35), Snacks (56), Sweets (28), Żabka (28) — 877 active products
+> **Active categories:** 20 categories × 28 products each = 560 active products
 > **Scoring version:** v3.1 (8-factor weighted formula)
 
 ---
