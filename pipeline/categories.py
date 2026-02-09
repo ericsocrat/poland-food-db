@@ -104,7 +104,7 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
 BROAD_CATEGORIES: set[str] = {
     "Snacks",
     "Plant-Based & Alternatives",
-    "Drinks",   # yields to Alcohol (en:beverages is parent of en:alcoholic-beverages)
+    "Drinks",  # yields to Alcohol (en:beverages is parent of en:alcoholic-beverages)
 }
 
 # ---------------------------------------------------------------------------
