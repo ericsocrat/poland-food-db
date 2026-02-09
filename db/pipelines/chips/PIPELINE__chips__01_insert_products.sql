@@ -41,6 +41,7 @@ values
   ('PL', 'Lay''s', 'Grocery', 'Chips', 'Oven Baked Chanterelles in a cream sauce flavoured', 'baked', null, 'none', '5900259128546'),
   ('PL', 'Lay''s', 'Grocery', 'Chips', 'Chips', null, null, 'none', '5900259128706')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

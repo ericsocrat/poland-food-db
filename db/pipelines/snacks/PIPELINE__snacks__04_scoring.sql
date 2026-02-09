@@ -110,26 +110,26 @@ update scores sc set
   end
 from (
   values
-    ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', '4'),
-    ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', '4'),
-    ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', '4'),
-    ('Sante', 'Vitamin coconut bar', '4'),
-    ('Go On Nutrition', 'Protein 33% Caramel', '4'),
-    ('Lajkonik', 'prezel', '3'),
-    ('Nestlé', 'Cocoa fitness bar', '4'),
-    ('nakd', 'Blueberry Muffin Myrtilles', '4'),
-    ('Carrefour', 'Toast crock'' céréales complètes', '3'),
-    ('7 DAYS', 'Croissant with Cocoa Filling', '4'),
-    ('Favorina', 'Coeurs pain d''épices chocolat noir', '4'),
-    ('Crownfield', 'Muesli Bars Chocolate & Banana', '4'),
-    ('Carrefour BIO', 'Tartines craquantes Au blé complet', '3'),
-    ('Carrefour', 'Barre patissière', '4'),
-    ('Chabrior', 'Barres de céréales aux noisettes x6 - 126g', '4'),
-    ('Milka', 'Cake & Chock', '4'),
-    ('Maretti', 'Bruschette Chips Pizza Flavour', '4'),
-    ('Milka', 'Choco brownie', '4'),
-    ('Pilos', 'Barretta al quark gusto Nocciola', '4'),
-    ('Happy Creations', 'Cracker Mix Classic', '4')
+    ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', 4),
+    ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', 4),
+    ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', 4),
+    ('Sante', 'Vitamin coconut bar', 4),
+    ('Go On Nutrition', 'Protein 33% Caramel', 4),
+    ('Lajkonik', 'prezel', 3),
+    ('Nestlé', 'Cocoa fitness bar', 4),
+    ('nakd', 'Blueberry Muffin Myrtilles', 4),
+    ('Carrefour', 'Toast crock'' céréales complètes', 3),
+    ('7 DAYS', 'Croissant with Cocoa Filling', 4),
+    ('Favorina', 'Coeurs pain d''épices chocolat noir', 4),
+    ('Crownfield', 'Muesli Bars Chocolate & Banana', 4),
+    ('Carrefour BIO', 'Tartines craquantes Au blé complet', 3),
+    ('Carrefour', 'Barre patissière', 4),
+    ('Chabrior', 'Barres de céréales aux noisettes x6 - 126g', 4),
+    ('Milka', 'Cake & Chock', 4),
+    ('Maretti', 'Bruschette Chips Pizza Flavour', 4),
+    ('Milka', 'Choco brownie', 4),
+    ('Pilos', 'Barretta al quark gusto Nocciola', 4),
+    ('Happy Creations', 'Cracker Mix Classic', 4)
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

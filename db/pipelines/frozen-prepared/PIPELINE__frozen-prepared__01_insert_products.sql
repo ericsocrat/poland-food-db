@@ -41,6 +41,7 @@ values
   ('PL', 'Simpl', 'Grocery', 'Frozen & Prepared', 'Tranches de filets de Colin d''Alaska', null, 'Carrefour,carrefour.fr', 'none', '3560070529636'),
   ('PL', 'Carrefour', 'Grocery', 'Frozen & Prepared', 'Cônes parfum vanille', null, 'Carrefour,carrefour.fr', 'none', '3560070774265')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

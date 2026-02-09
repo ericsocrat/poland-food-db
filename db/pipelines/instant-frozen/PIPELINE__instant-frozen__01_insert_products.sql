@@ -41,6 +41,7 @@ values
   ('PL', 'Nongshim', 'Grocery', 'Instant & Frozen', 'Bowl Noodles Hot & Spicy', null, 'Biedronka', 'none', '8801043057752'),
   ('PL', 'Reeva', 'Grocery', 'Instant & Frozen', 'REEVA Vegetable flavour Instant noodles', null, 'SPAR', 'none', '4820179256581')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

@@ -46,6 +46,7 @@ values
   ('PL', 'Tarczynski', 'Grocery', 'Meat', 'Krakauer Wurst (polnische Brühwurst)', null, 'Kaufland,Picnic,Tegut,Rewe', 'none', '5908230515804'),
   ('PL', 'Profi', 'Grocery', 'Meat', 'Pasztet z pomidorami', null, 'Auchan', 'none', '5901696000051')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

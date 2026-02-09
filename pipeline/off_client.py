@@ -30,16 +30,28 @@ MAX_RETRIES = 3
 
 
 def _get_json(session: requests.Session, url: str, params: dict) -> dict | None:
-    """GET with retry on timeout / server error."""
+    """GET with retry on timeout / server error.
+
+    Handles HTTP errors, connection failures, timeouts, and malformed JSON
+    responses.  Returns ``None`` after exhausting retries so callers can
+    gracefully degrade.
+    """
     for attempt in range(MAX_RETRIES + 1):
         try:
             resp = session.get(url, params=params, timeout=REQUEST_TIMEOUT)
             resp.raise_for_status()
             return resp.json()
+        except (ValueError, KeyError) as exc:
+            # json.JSONDecodeError is a subclass of ValueError — catches
+            # malformed responses (e.g. HTML error pages returned as 200).
+            logger.warning("Malformed JSON from %s: %s", url, exc)
+            return None
         except (requests.RequestException, TimeoutError, ConnectionError) as exc:
             if attempt < MAX_RETRIES:
                 wait = REQUEST_DELAY * (attempt + 1) * 2
-                logger.debug("Retry %d for %s: %s (wait %.0fs)", attempt + 1, url, exc, wait)
+                logger.debug(
+                    "Retry %d for %s: %s (wait %.0fs)", attempt + 1, url, exc, wait
+                )
                 time.sleep(wait)
                 continue
             logger.warning("Request failed after %d retries: %s", MAX_RETRIES, exc)

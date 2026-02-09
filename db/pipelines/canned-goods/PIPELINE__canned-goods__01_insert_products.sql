@@ -41,6 +41,7 @@ values
   ('PL', 'Carrefour', 'Grocery', 'Canned Goods', 'Olives à la farce aux anchois', null, 'Carrefour,carrefour.fr', 'none', '3560070105908'),
   ('PL', 'Carrefour', 'Grocery', 'Canned Goods', 'Miettes de thon', null, 'carrefour.fr, Carrefour', 'none', '3560071175221')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

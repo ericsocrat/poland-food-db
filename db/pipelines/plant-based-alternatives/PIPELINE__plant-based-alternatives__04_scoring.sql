@@ -108,25 +108,25 @@ update scores sc set
   end
 from (
   values
-    ('Kujawski', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', '4'),
-    ('HEINZ', '5 rodzajów fasoli w sosie pomidorowym', '4'),
-    ('Carrefour BIO', 'Huile d''olive vierge extra', '2'),
-    ('Batts', 'Crispy Fried Onions', '3'),
-    ('Barilla', 'Pâtes spaghetti n°5 1kg', '1'),
-    ('DONAU SOJA', 'Tofu smoked', '4'),
-    ('Vitasia', 'Rice Noodles', '3'),
-    ('LIDL', 'ground chili peppers in olive oil', '3'),
-    ('Carrefour BIO', 'Galettes épeautre', '3'),
-    ('Baresa', 'Lasagnes', '1'),
-    ('Vemondo', 'Tofu naturalne', '4'),
-    ('Lidl', 'Avocados', '1'),
-    ('Vemondo', 'Tofu basil Bio', '4'),
-    ('Carrefour BIO', 'Galettes 4 Céréales', '3'),
-    ('Vita D''or', 'Rapsöl', '4'),
-    ('Driscoll''s', 'Framboises', '1'),
-    ('Lidl', 'Kalamata olive paste', '3'),
-    ('Carrefour', 'Spaghetti', '1'),
-    ('ALDI Zespri', 'ALDI ZESPRI SunGold Kiwi Gold 1St. 0,65€', '1')
+    ('Kujawski', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', 4),
+    ('HEINZ', '5 rodzajów fasoli w sosie pomidorowym', 4),
+    ('Carrefour BIO', 'Huile d''olive vierge extra', 2),
+    ('Batts', 'Crispy Fried Onions', 3),
+    ('Barilla', 'Pâtes spaghetti n°5 1kg', 1),
+    ('DONAU SOJA', 'Tofu smoked', 4),
+    ('Vitasia', 'Rice Noodles', 3),
+    ('LIDL', 'ground chili peppers in olive oil', 3),
+    ('Carrefour BIO', 'Galettes épeautre', 3),
+    ('Baresa', 'Lasagnes', 1),
+    ('Vemondo', 'Tofu naturalne', 4),
+    ('Lidl', 'Avocados', 1),
+    ('Vemondo', 'Tofu basil Bio', 4),
+    ('Carrefour BIO', 'Galettes 4 Céréales', 3),
+    ('Vita D''or', 'Rapsöl', 4),
+    ('Driscoll''s', 'Framboises', 1),
+    ('Lidl', 'Kalamata olive paste', 3),
+    ('Carrefour', 'Spaghetti', 1),
+    ('ALDI Zespri', 'ALDI ZESPRI SunGold Kiwi Gold 1St. 0,65€', 1)
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

@@ -41,6 +41,7 @@ values
   ('PL', 'Piątnica', 'Grocery', 'Dairy', 'Skyr - jogurt typu islandzkiego z truskawkami', null, null, 'none', '5900531004506'),
   ('PL', 'Fruvita', 'Grocery', 'Dairy', 'Jogurt Grecki', null, null, 'none', '5900512901091')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

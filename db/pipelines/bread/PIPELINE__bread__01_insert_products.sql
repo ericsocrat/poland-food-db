@@ -41,6 +41,7 @@ values
   ('PL', 'Italiamo', 'Grocery', 'Bread', 'Piada sfogliata', null, 'LIDL', 'none', '20072483'),
   ('PL', 'Carrefour', 'Grocery', 'Bread', 'Biscuits Nature', null, 'Carrefour,carrefour.fr,Carefour Market', 'none', '3245412589980')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

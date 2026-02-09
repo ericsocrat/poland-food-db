@@ -23,20 +23,24 @@ update ingredients i set
   additives_count = d.cnt
 from (
   values
-    ('Vitanella', 'Granola - Musli Prażone (Czekoladowe)', 0),
-    ('Bakalland', 'Ba! Granola Z Żurawiną', 0),
-    ('Go on', 'Granola proteinowa brownie & cherry', 0),
-    ('Bakalland', 'Ba! Granola 5 bakalii', 0),
-    ('Unknown', 'Étcsokis granola málnával', 0),
-    ('All nutrition', 'F**king delicious Granola', 0),
-    ('Unknown', 'Gyümölcsös granola', 0),
-    ('All  nutrition', 'F**king delicious granola fruity', 0),
-    ('Unknown', 'Granola with Fruits', 0),
-    ('One Day More', 'Winter Granola', 0),
-    ('One Day More', 'Protein Granola Caramel Nuts & Chocolate', 0),
-    ('Sante', 'Granola o smaku rumu', 0),
-    ('Vitanella', 'Granola Z Ciasteczkami', 0),
-    ('Vitanella', 'Cherry granola', 0)
+    ('Vitanella', 'Mieszanka płatków zbożowych z suszonymi oraz kandyzowanymi owocami', 2),
+    ('Biedronka', 'Vitanella Granola z czekoladą', 2),
+    ('Vitanella', 'Musli prażone z suszoną, słodzoną żurawiną.', 3),
+    ('Vitanella', 'Płatki zbożowe z suszonymi i kandyzowanymi owocami.', 2),
+    ('vitanella', 'granola z kawałkami czekolady, prażonymi orzeszkami ziemnymi ilaskowymi', 3),
+    ('Sante', 'Masło orzechowe', 0),
+    ('Łowicz', 'Dżem truskawkowy', 3),
+    ('One Day More', 'Musli z suszonymi figami i prażonymi orzeszkami ziemnymi.', 0),
+    ('Laciaty', 'Serek puszysty naturalny Łaciaty', 0),
+    ('One day more', 'Muesli Protein', 0),
+    ('Vitanella', 'Musli premium', 1),
+    ('Vitanella', 'Banana Chocolate musli', 0),
+    ('GO ON', 'Peanut Butter Smooth', 0),
+    ('Mazurskie Miody', 'Polish Honey multiflower', 0),
+    ('Piątnica', 'Low Fat Cottage Cheese', 0),
+    ('Mlekovita', 'Oselka', 0),
+    ('ONE DAY MORE', 'Meusli Fruits et Chocolat Blanc', 0),
+    ('Biedronka', 'Granola', 2)
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -68,20 +72,24 @@ update scores sc set
   nutri_score_label = d.ns
 from (
   values
-    ('Vitanella', 'Granola - Musli Prażone (Czekoladowe)', 'UNKNOWN'),
-    ('Bakalland', 'Ba! Granola Z Żurawiną', 'UNKNOWN'),
-    ('Go on', 'Granola proteinowa brownie & cherry', 'UNKNOWN'),
-    ('Bakalland', 'Ba! Granola 5 bakalii', 'UNKNOWN'),
-    ('Unknown', 'Étcsokis granola málnával', 'UNKNOWN'),
-    ('All nutrition', 'F**king delicious Granola', 'UNKNOWN'),
-    ('Unknown', 'Gyümölcsös granola', 'UNKNOWN'),
-    ('All  nutrition', 'F**king delicious granola fruity', 'UNKNOWN'),
-    ('Unknown', 'Granola with Fruits', 'UNKNOWN'),
-    ('One Day More', 'Winter Granola', 'UNKNOWN'),
-    ('One Day More', 'Protein Granola Caramel Nuts & Chocolate', 'UNKNOWN'),
-    ('Sante', 'Granola o smaku rumu', 'UNKNOWN'),
-    ('Vitanella', 'Granola Z Ciasteczkami', 'UNKNOWN'),
-    ('Vitanella', 'Cherry granola', 'UNKNOWN')
+    ('Vitanella', 'Mieszanka płatków zbożowych z suszonymi oraz kandyzowanymi owocami', 'C'),
+    ('Biedronka', 'Vitanella Granola z czekoladą', 'D'),
+    ('Vitanella', 'Musli prażone z suszoną, słodzoną żurawiną.', 'C'),
+    ('Vitanella', 'Płatki zbożowe z suszonymi i kandyzowanymi owocami.', 'C'),
+    ('vitanella', 'granola z kawałkami czekolady, prażonymi orzeszkami ziemnymi ilaskowymi', 'D'),
+    ('Sante', 'Masło orzechowe', 'C'),
+    ('Łowicz', 'Dżem truskawkowy', 'D'),
+    ('One Day More', 'Musli z suszonymi figami i prażonymi orzeszkami ziemnymi.', 'A'),
+    ('Laciaty', 'Serek puszysty naturalny Łaciaty', 'D'),
+    ('One day more', 'Muesli Protein', 'C'),
+    ('Vitanella', 'Musli premium', 'D'),
+    ('Vitanella', 'Banana Chocolate musli', 'D'),
+    ('GO ON', 'Peanut Butter Smooth', 'A'),
+    ('Mazurskie Miody', 'Polish Honey multiflower', 'E'),
+    ('Piątnica', 'Low Fat Cottage Cheese', 'B'),
+    ('Mlekovita', 'Oselka', 'E'),
+    ('ONE DAY MORE', 'Meusli Fruits et Chocolat Blanc', 'C'),
+    ('Biedronka', 'Granola', 'C')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -98,20 +106,24 @@ update scores sc set
   end
 from (
   values
-    ('Vitanella', 'Granola - Musli Prażone (Czekoladowe)', 4),
-    ('Bakalland', 'Ba! Granola Z Żurawiną', 4),
-    ('Go on', 'Granola proteinowa brownie & cherry', 4),
-    ('Bakalland', 'Ba! Granola 5 bakalii', 4),
-    ('Unknown', 'Étcsokis granola málnával', 4),
-    ('All nutrition', 'F**king delicious Granola', 4),
-    ('Unknown', 'Gyümölcsös granola', 4),
-    ('All  nutrition', 'F**king delicious granola fruity', 4),
-    ('Unknown', 'Granola with Fruits', 4),
-    ('One Day More', 'Winter Granola', 4),
-    ('One Day More', 'Protein Granola Caramel Nuts & Chocolate', 4),
-    ('Sante', 'Granola o smaku rumu', 4),
-    ('Vitanella', 'Granola Z Ciasteczkami', 4),
-    ('Vitanella', 'Cherry granola', 4)
+    ('Vitanella', 'Mieszanka płatków zbożowych z suszonymi oraz kandyzowanymi owocami', '4'),
+    ('Biedronka', 'Vitanella Granola z czekoladą', '4'),
+    ('Vitanella', 'Musli prażone z suszoną, słodzoną żurawiną.', '4'),
+    ('Vitanella', 'Płatki zbożowe z suszonymi i kandyzowanymi owocami.', '4'),
+    ('vitanella', 'granola z kawałkami czekolady, prażonymi orzeszkami ziemnymi ilaskowymi', '4'),
+    ('Sante', 'Masło orzechowe', '4'),
+    ('Łowicz', 'Dżem truskawkowy', '4'),
+    ('One Day More', 'Musli z suszonymi figami i prażonymi orzeszkami ziemnymi.', '3'),
+    ('Laciaty', 'Serek puszysty naturalny Łaciaty', '4'),
+    ('One day more', 'Muesli Protein', '3'),
+    ('Vitanella', 'Musli premium', '3'),
+    ('Vitanella', 'Banana Chocolate musli', '4'),
+    ('GO ON', 'Peanut Butter Smooth', '1'),
+    ('Mazurskie Miody', 'Polish Honey multiflower', '4'),
+    ('Piątnica', 'Low Fat Cottage Cheese', '4'),
+    ('Mlekovita', 'Oselka', '2'),
+    ('ONE DAY MORE', 'Meusli Fruits et Chocolat Blanc', '4'),
+    ('Biedronka', 'Granola', '4')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

@@ -33,35 +33,35 @@ update ingredients i set
   additives_count = d.cnt
 from (
   values
-    ('Żabka',            'Meksykaner',                            '11'),  -- e14xx,e160b,e262,e300,e301,e330,e331,e415,e472e,e481,e509
-    ('Żabka',            'Kurczaker',                             '12'),  -- e14xx,e160b,e160c,e202,e223,e300,e330,e331,e412,e415,e450,e500
-    ('Żabka',            'Wołowiner Ser Kozi',                    '11'),  -- e14xx,e160a,e202,e250,e300,e316,e407,e415,e451,e472e,e481
-    ('Żabka',            'Burger Kibica',                         '7'),   -- e14xx,e160b,e202,e300,e330,e415,e471
-    ('Żabka',            'Falafel Rollo',                         '6'),   -- e14xx,e202,e211,e330,e412,e415
-    ('Żabka',            'Kajzerka Kebab',                        '5'),   -- est. (kebab sauce + processed meat)
-    ('Żabka',            'Panini z serem cheddar',                '10'),  -- e100,e14xx,e160b,e202,e270,e300,e385,e412,e415,e509
-    ('Żabka',            'Panini z kurczakiem',                   '10'),  -- e141,e14xx,e160a,e160c,e202,e211,e300,e330,e412,e415
-    ('Żabka',            'Kulki owsiane z czekoladą',             '1'),   -- e322 (lecithin — from chocolate)
-    ('Tomcio Paluch',    'Szynka & Jajko',                        '9'),   -- e14xx,e160a,e250,e316,e407a,e415,e450,e451,e482
-    ('Tomcio Paluch',    'Pieczony bekon, sałata, jajko',         '6'),   -- e14xx,e160a,e250,e300,e412,e415
-    ('Tomcio Paluch',    'Bajgiel z salami',                      '5'),   -- est. (cured salami + bread additives)
-    ('Szamamm',          'Naleśniki z jabłkami i cynamonem',       '0'),
-    ('Szamamm',          'Placki ziemniaczane',                   '0'),
-    ('Szamamm',          'Penne z kurczakiem',                    '3'),   -- est. (ready-meal pasta, moderate processing)
-    ('Szamamm',          'Kotlet de Volaille',                    '0'),
+    ('Żabka',            'Meksykaner',                            11),  -- e14xx,e160b,e262,e300,e301,e330,e331,e415,e472e,e481,e509
+    ('Żabka',            'Kurczaker',                             12),  -- e14xx,e160b,e160c,e202,e223,e300,e330,e331,e412,e415,e450,e500
+    ('Żabka',            'Wołowiner Ser Kozi',                    11),  -- e14xx,e160a,e202,e250,e300,e316,e407,e415,e451,e472e,e481
+    ('Żabka',            'Burger Kibica',                         7),   -- e14xx,e160b,e202,e300,e330,e415,e471
+    ('Żabka',            'Falafel Rollo',                         6),   -- e14xx,e202,e211,e330,e412,e415
+    ('Żabka',            'Kajzerka Kebab',                        5),   -- est. (kebab sauce + processed meat)
+    ('Żabka',            'Panini z serem cheddar',                10),  -- e100,e14xx,e160b,e202,e270,e300,e385,e412,e415,e509
+    ('Żabka',            'Panini z kurczakiem',                   10),  -- e141,e14xx,e160a,e160c,e202,e211,e300,e330,e412,e415
+    ('Żabka',            'Kulki owsiane z czekoladą',             1),   -- e322 (lecithin — from chocolate)
+    ('Tomcio Paluch',    'Szynka & Jajko',                        9),   -- e14xx,e160a,e250,e316,e407a,e415,e450,e451,e482
+    ('Tomcio Paluch',    'Pieczony bekon, sałata, jajko',         6),   -- e14xx,e160a,e250,e300,e412,e415
+    ('Tomcio Paluch',    'Bajgiel z salami',                      5),   -- est. (cured salami + bread additives)
+    ('Szamamm',          'Naleśniki z jabłkami i cynamonem',       0),
+    ('Szamamm',          'Placki ziemniaczane',                   0),
+    ('Szamamm',          'Penne z kurczakiem',                    3),   -- est. (ready-meal pasta, moderate processing)
+    ('Szamamm',          'Kotlet de Volaille',                    0),
     -- ── Batch 2 — new products ────────────────────────────────────────────────────────────────────────
-    ('Żabka',            'Wegger',                                '8'),   -- est. (vegan patty: emulsifiers, stabilizers, colors)
-    ('Żabka',            'Bao Burger',                            '6'),   -- est. (bao bun + processed meat filling)
-    ('Żabka',            'Wieprzowiner',                          '9'),   -- est. (processed pork burger, Żabka hot-snack line)
-    ('Tomcio Paluch',    'Kanapka Cezar',                         '6'),   -- est. (caesar dressing + processed meat)
-    ('Tomcio Paluch',    'Kebab z kurczaka',                      '5'),   -- est. (kebab sauce + processed chicken)
-    ('Tomcio Paluch',    'BBQ Strips',                            '14'),  -- e101,e14xx,e150a,e160c,e202,e300,e322,e330,e385,e412,e415,e450,e451,e500
-    ('Tomcio Paluch',    'Pasta jajeczna, por, jajko gotowane',   '4'),   -- est. (egg paste sandwich, moderate processing)
-    ('Tomcio Paluch',    'High 24g protein',                      '6'),   -- e250,e263,e316,e471,e472e,e482
-    ('Szamamm',          'Pierogi ruskie ze smażoną cebulką',     '2'),   -- est. (simple pierogi, minimal processing)
-    ('Szamamm',          'Gnocchi z kurczakiem',                  '3'),   -- est. (ready-meal gnocchi)
-    ('Szamamm',          'Panierowane skrzydełka z kurczaka',     '6'),   -- est. (breaded + fried chicken wings)
-    ('Szamamm',          'Kotlet Drobiowy',                       '3')    -- est. (breaded chicken cutlet)
+    ('Żabka',            'Wegger',                                8),   -- est. (vegan patty: emulsifiers, stabilizers, colors)
+    ('Żabka',            'Bao Burger',                            6),   -- est. (bao bun + processed meat filling)
+    ('Żabka',            'Wieprzowiner',                          9),   -- est. (processed pork burger, Żabka hot-snack line)
+    ('Tomcio Paluch',    'Kanapka Cezar',                         6),   -- est. (caesar dressing + processed meat)
+    ('Tomcio Paluch',    'Kebab z kurczaka',                      5),   -- est. (kebab sauce + processed chicken)
+    ('Tomcio Paluch',    'BBQ Strips',                            14),  -- e101,e14xx,e150a,e160c,e202,e300,e322,e330,e385,e412,e415,e450,e451,e500
+    ('Tomcio Paluch',    'Pasta jajeczna, por, jajko gotowane',   4),   -- est. (egg paste sandwich, moderate processing)
+    ('Tomcio Paluch',    'High 24g protein',                      6),   -- e250,e263,e316,e471,e472e,e482
+    ('Szamamm',          'Pierogi ruskie ze smażoną cebulką',     2),   -- est. (simple pierogi, minimal processing)
+    ('Szamamm',          'Gnocchi z kurczakiem',                  3),   -- est. (ready-meal gnocchi)
+    ('Szamamm',          'Panierowane skrzydełka z kurczaka',     6),   -- est. (breaded + fried chicken wings)
+    ('Szamamm',          'Kotlet Drobiowy',                       3)    -- est. (breaded chicken cutlet)
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
@@ -75,15 +75,15 @@ where i.product_id = p.product_id;
 
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v31(
-      nf.saturated_fat_g::numeric,
-      nf.sugars_g::numeric,
-      nf.salt_g::numeric,
-      nf.calories::numeric,
-      nf.trans_fat_g::numeric,
-      i.additives_count::numeric,
+      nf.saturated_fat_g,
+      nf.sugars_g,
+      nf.salt_g,
+      nf.calories,
+      nf.trans_fat_g,
+      i.additives_count,
       p.prep_method,
       p.controversies
-  )::text,
+  ),
   scored_at       = CURRENT_DATE,
   scoring_version = 'v3.1'
 from products p
@@ -149,35 +149,35 @@ update scores sc set
   end
 from (
   values
-    ('Żabka',            'Meksykaner',                            '4'),
-    ('Żabka',            'Kurczaker',                             '4'),
-    ('Żabka',            'Wołowiner Ser Kozi',                    '4'),
-    ('Żabka',            'Burger Kibica',                         '4'),
-    ('Żabka',            'Falafel Rollo',                         '4'),
-    ('Żabka',            'Kajzerka Kebab',                        '4'),  -- est. (processed kebab + sauces)
-    ('Żabka',            'Panini z serem cheddar',                '4'),
-    ('Żabka',            'Panini z kurczakiem',                   '4'),
-    ('Żabka',            'Kulki owsiane z czekoladą',             '4'),
-    ('Tomcio Paluch',    'Szynka & Jajko',                        '4'),
-    ('Tomcio Paluch',    'Pieczony bekon, sałata, jajko',         '4'),
-    ('Tomcio Paluch',    'Bajgiel z salami',                      '4'),  -- est. (processed cured meat)
-    ('Szamamm',          'Naleśniki z jabłkami i cynamonem',       '4'),
-    ('Szamamm',          'Placki ziemniaczane',                   '3'),  -- simple: potatoes, oil, onion, flour, salt
-    ('Szamamm',          'Penne z kurczakiem',                    '3'),  -- est. (basic pasta dish, moderate processing)
-    ('Szamamm',          'Kotlet de Volaille',                    '4'),
+    ('Żabka',            'Meksykaner',                            4),
+    ('Żabka',            'Kurczaker',                             4),
+    ('Żabka',            'Wołowiner Ser Kozi',                    4),
+    ('Żabka',            'Burger Kibica',                         4),
+    ('Żabka',            'Falafel Rollo',                         4),
+    ('Żabka',            'Kajzerka Kebab',                        4),  -- est. (processed kebab + sauces)
+    ('Żabka',            'Panini z serem cheddar',                4),
+    ('Żabka',            'Panini z kurczakiem',                   4),
+    ('Żabka',            'Kulki owsiane z czekoladą',             4),
+    ('Tomcio Paluch',    'Szynka & Jajko',                        4),
+    ('Tomcio Paluch',    'Pieczony bekon, sałata, jajko',         4),
+    ('Tomcio Paluch',    'Bajgiel z salami',                      4),  -- est. (processed cured meat)
+    ('Szamamm',          'Naleśniki z jabłkami i cynamonem',       4),
+    ('Szamamm',          'Placki ziemniaczane',                   3),  -- simple: potatoes, oil, onion, flour, salt
+    ('Szamamm',          'Penne z kurczakiem',                    3),  -- est. (basic pasta dish, moderate processing)
+    ('Szamamm',          'Kotlet de Volaille',                    4),
     -- batch 2
-    ('Żabka',            'Wegger',                                '4'),  -- est. (processed vegan patty with additives)
-    ('Żabka',            'Bao Burger',                            '4'),  -- est. (processed bao + filling)
-    ('Żabka',            'Wieprzowiner',                          '4'),  -- est. (processed pork hot snack)
-    ('Tomcio Paluch',    'Kanapka Cezar',                         '4'),  -- est. (sandwich with processed dressing)
-    ('Tomcio Paluch',    'Kebab z kurczaka',                      '4'),  -- est. (processed kebab meat)
-    ('Tomcio Paluch',    'BBQ Strips',                            '4'),  -- confirmed NOVA 4 from OFF
-    ('Tomcio Paluch',    'Pasta jajeczna, por, jajko gotowane',   '4'),  -- est. (processed sandwich)
-    ('Tomcio Paluch',    'High 24g protein',                      '4'),  -- confirmed NOVA 4 from OFF
-    ('Szamamm',          'Pierogi ruskie ze smażoną cebulką',     '3'),  -- est. (simple pierogi, fried onion)
-    ('Szamamm',          'Gnocchi z kurczakiem',                  '4'),  -- est. (ready-meal gnocchi)
-    ('Szamamm',          'Panierowane skrzydełka z kurczaka',     '4'),  -- est. (breaded + fried wings)
-    ('Szamamm',          'Kotlet Drobiowy',                       '4')   -- est. (breaded cutlet)
+    ('Żabka',            'Wegger',                                4),  -- est. (processed vegan patty with additives)
+    ('Żabka',            'Bao Burger',                            4),  -- est. (processed bao + filling)
+    ('Żabka',            'Wieprzowiner',                          4),  -- est. (processed pork hot snack)
+    ('Tomcio Paluch',    'Kanapka Cezar',                         4),  -- est. (sandwich with processed dressing)
+    ('Tomcio Paluch',    'Kebab z kurczaka',                      4),  -- est. (processed kebab meat)
+    ('Tomcio Paluch',    'BBQ Strips',                            4),  -- confirmed NOVA 4 from OFF
+    ('Tomcio Paluch',    'Pasta jajeczna, por, jajko gotowane',   4),  -- est. (processed sandwich)
+    ('Tomcio Paluch',    'High 24g protein',                      4),  -- confirmed NOVA 4 from OFF
+    ('Szamamm',          'Pierogi ruskie ze smażoną cebulką',     3),  -- est. (simple pierogi, fried onion)
+    ('Szamamm',          'Gnocchi z kurczakiem',                  4),  -- est. (ready-meal gnocchi)
+    ('Szamamm',          'Panierowane skrzydełka z kurczaka',     4),  -- est. (breaded + fried wings)
+    ('Szamamm',          'Kotlet Drobiowy',                       4)   -- est. (breaded cutlet)
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -189,10 +189,10 @@ where p.product_id = sc.product_id;
 -- ═════════════════════════════════════════════════════════════════════════
 
 update scores sc set
-  high_salt_flag = case when nf.salt_g::numeric >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g::numeric >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count::numeric, 0) >= 5 then 'YES' else 'NO' end,
+  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
+  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
+  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = case
     -- Products with all data from OFF: 100%
     -- Products with some estimated fields: 90%

@@ -148,8 +148,19 @@ def run_pipeline(
 
     # 1. Search OFF
     print("Searching Open Food Facts for Polish products...")
-    raw_products = search_polish_products(category, max_results=max_products * 3)
+    try:
+        raw_products = search_polish_products(category, max_results=max_products * 3)
+    except Exception as exc:
+        logger.error("Search failed with unexpected error: %s", exc)
+        raw_products = []
     print(f"  Found {len(raw_products)} raw products")
+
+    if not raw_products:
+        print(
+            "\nNo products found. The OFF API may be unavailable."
+            "\nTry again later or increase --max-products."
+        )
+        sys.exit(0)
 
     # 2. Extract & normalise
     extracted = _extract_products(raw_products, category, min_completeness)
@@ -165,12 +176,20 @@ def run_pipeline(
         print(f"  Warnings: {warn_count} products outside expected ranges")
 
     if not unique:
-        print("\nNo valid products found. Try increasing --max-products.")
+        print("\nNo valid products found after extraction/validation/dedup.")
+        print("  This may mean the OFF API returned too few results or the")
+        print("  category terms need expanding.  Try increasing --max-products.")
         sys.exit(0)
 
     # Sort by Polish market relevance (highest score first)
     unique.sort(key=lambda p: polish_market_score(p), reverse=True)
     unique = unique[:max_products]
+
+    if len(unique) < max_products:
+        print(
+            f"  NOTE: Only {len(unique)} of {max_products} requested products"
+            f" passed validation.  SQL will be generated for what we have."
+        )
     print()
 
     # 5. Generate SQL

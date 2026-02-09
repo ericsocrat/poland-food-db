@@ -41,6 +41,7 @@ values
   ('PL', 'Carrefour BIO', 'Grocery', 'Drinks', 'SOJA Sans sucres ajoutés', null, 'Carrefour,carrefour.fr', 'none', '3270190128717'),
   ('PL', 'Naturis', 'Grocery', 'Drinks', 'Apple Juice', null, 'Lidl', 'none', '20569105')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

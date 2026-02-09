@@ -21,20 +21,24 @@ select
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
   values
-    ('Vitanella', 'Granola - Musli Prażone (Czekoladowe)', 457.0, 17.3, 3.6, 0, 63.0, 24.0, 6.5, 8.7, 0.2),
-    ('Bakalland', 'Ba! Granola Z Żurawiną', 385.0, 9.2, 1.3, 0, 64.0, 27.0, 7.2, 7.9, 0.1),
-    ('Go on', 'Granola proteinowa brownie & cherry', 408.0, 13.0, 2.4, 0, 46.0, 2.7, 18.0, 21.0, 0.4),
-    ('Bakalland', 'Ba! Granola 5 bakalii', 379.0, 9.0, 1.2, 0, 63.0, 28.0, 7.1, 7.9, 0),
-    ('Unknown', 'Étcsokis granola málnával', 410.0, 8.4, 2.2, 0, 65.2, 10.1, 10.2, 12.5, 0),
-    ('All nutrition', 'F**king delicious Granola', 482.0, 22.0, 2.9, 0, 52.0, 21.0, 8.0, 15.0, 0),
-    ('Unknown', 'Gyümölcsös granola', 395.0, 8.4, 1.3, 0, 62.9, 15.4, 10.3, 11.3, 0),
-    ('All  nutrition', 'F**king delicious granola fruity', 448.0, 16.0, 1.8, 0, 58.0, 22.0, 8.1, 14.0, 0),
-    ('Unknown', 'Granola with Fruits', 458.0, 26.0, 6.0, 0, 44.0, 22.0, 0, 16.0, 0),
-    ('One Day More', 'Winter Granola', 404.0, 8.4, 1.0, 0, 67.8, 17.8, 7.0, 10.2, 0.2),
-    ('One Day More', 'Protein Granola Caramel Nuts & Chocolate', 438.0, 17.2, 3.0, 0, 52.5, 16.3, 7.5, 22.1, 0.4),
-    ('Sante', 'Granola o smaku rumu', 462.0, 16.0, 2.5, 0, 68.0, 22.0, 5.8, 8.6, 0.2),
-    ('Vitanella', 'Granola Z Ciasteczkami', 433.0, 13.3, 3.9, 0, 64.4, 20.6, 7.9, 9.9, 0.4),
-    ('Vitanella', 'Cherry granola', 408.0, 10.7, 2.4, 0, 63.7, 19.4, 0, 8.1, 0.3)
+    ('Vitanella', 'Mieszanka płatków zbożowych z suszonymi oraz kandyzowanymi owocami', 364.0, 7.3, 4.1, 0, 60.2, 10.3, 9.9, 9.4, 0.1),
+    ('Biedronka', 'Vitanella Granola z czekoladą', 468.0, 18.4, 5.5, 0, 63.6, 23.2, 5.6, 9.2, 0.3),
+    ('Vitanella', 'Musli prażone z suszoną, słodzoną żurawiną.', 437.0, 14.0, 3.4, 0, 64.2, 23.1, 9.0, 9.0, 0.4),
+    ('Vitanella', 'Płatki zbożowe z suszonymi i kandyzowanymi owocami.', 371.0, 6.3, 3.2, 0, 64.7, 18.7, 9.1, 9.4, 0.6),
+    ('vitanella', 'granola z kawałkami czekolady, prażonymi orzeszkami ziemnymi ilaskowymi', 457.0, 17.7, 4.4, 0, 59.6, 21.1, 9.4, 10.0, 0.4),
+    ('Sante', 'Masło orzechowe', 616.0, 50.0, 8.8, 0, 14.0, 9.0, 6.9, 24.0, 0.7),
+    ('Łowicz', 'Dżem truskawkowy', 142.0, 0.5, 0.1, 0, 35.0, 35.0, 0, 0.5, 0.0),
+    ('One Day More', 'Musli z suszonymi figami i prażonymi orzeszkami ziemnymi.', 387.0, 11.2, 1.7, 0, 52.7, 8.3, 10.4, 13.7, 0.1),
+    ('Laciaty', 'Serek puszysty naturalny Łaciaty', 249.0, 23.0, 16.0, 0, 4.8, 3.7, 0, 5.8, 0.3),
+    ('One day more', 'Muesli Protein', 410.0, 13.9, 2.1, 0, 42.9, 13.2, 7.7, 24.2, 0.4),
+    ('Vitanella', 'Musli premium', 398.0, 12.6, 6.1, 0, 59.4, 24.7, 7.7, 8.0, 0.0),
+    ('Vitanella', 'Banana Chocolate musli', 430.0, 13.0, 4.0, 0, 67.0, 25.0, 7.0, 7.8, 0.2),
+    ('GO ON', 'Peanut Butter Smooth', 603.0, 48.0, 6.4, 0, 12.0, 6.7, 7.6, 27.0, 0.0),
+    ('Mazurskie Miody', 'Polish Honey multiflower', 319.2, 0.0, 0.0, 0, 79.5, 73.4, 0, 0.3, 0.0),
+    ('Piątnica', 'Low Fat Cottage Cheese', 81.0, 3.0, 2.0, 0, 2.4, 2.0, 0, 11.0, 0.7),
+    ('Mlekovita', 'Oselka', 750.0, 82.0, 54.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0),
+    ('ONE DAY MORE', 'Meusli Fruits et Chocolat Blanc', 387.0, 8.4, 2.9, 0, 61.4, 11.2, 9.6, 0.0, 0.0),
+    ('Biedronka', 'Granola', 478.0, 21.1, 2.5, 0, 58.7, 14.3, 6.7, 9.9, 0.5)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

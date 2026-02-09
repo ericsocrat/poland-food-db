@@ -41,6 +41,7 @@ values
   ('PL', 'Milka', 'Grocery', 'Sweets', 'Strawberry', null, 'Żabka', 'palm oil', '7622200007332'),
   ('PL', 'Hatherwood', 'Grocery', 'Sweets', 'Salted Caramel Style', null, 'Lidl', 'none', '4056489350392')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,

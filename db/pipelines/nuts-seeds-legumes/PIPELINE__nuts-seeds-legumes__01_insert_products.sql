@@ -41,6 +41,7 @@ values
   ('PL', 'Carrefour', 'Grocery', 'Nuts, Seeds & Legumes', 'Cacahuètes', null, 'Carrefour,Carrefour market, carrefour.fr', 'none', '3560070142224'),
   ('PL', 'Carrefour', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistaches grillées salées', null, 'Carrefour', 'none', '3560071008574')
 on conflict (country, brand, product_name) do update set
+  category = excluded.category,
   ean = excluded.ean,
   product_type = excluded.product_type,
   store_availability = excluded.store_availability,
