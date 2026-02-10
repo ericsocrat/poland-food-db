@@ -335,7 +335,36 @@ WHERE pi.is_sub_ingredient = true
   AND pi.parent_ingredient_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 30. v_master new column coverage (informational)
+-- 30. concern_tier on ingredient_ref must be 0-3 (valid range)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT ir.ingredient_id, ir.name_en, ir.concern_tier,
+       'CONCERN TIER OUT OF RANGE' AS issue
+FROM ingredient_ref ir
+WHERE ir.concern_tier IS NOT NULL
+  AND ir.concern_tier NOT IN (0, 1, 2, 3);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 31. ingredient_concern_score must be non-negative and ≤ 100
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT sc.product_id, sc.ingredient_concern_score,
+       'CONCERN SCORE OUT OF RANGE' AS issue
+FROM scores sc
+WHERE sc.ingredient_concern_score IS NOT NULL
+  AND (sc.ingredient_concern_score < 0 OR sc.ingredient_concern_score > 100);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 32. Scored products must have ingredient_concern_score populated
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT sc.product_id, sc.scoring_version,
+       'MISSING CONCERN SCORE' AS issue
+FROM scores sc
+JOIN products p ON p.product_id = sc.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND sc.scoring_version = 'v3.2'
+  AND sc.ingredient_concern_score IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 33. v_master new column coverage (informational)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
   COUNT(*) AS active_products,
@@ -348,7 +377,7 @@ SELECT
 FROM v_master;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 31. Summary counts (informational, not a failure check)
+-- 34. Summary counts (informational, not a failure check)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
     (SELECT COUNT(*) FROM products)         AS total_products,

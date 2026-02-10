@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Executes:
-        1. QA__null_checks.sql (29 data integrity checks + 2 informational)
+        1. QA__null_checks.sql (32 data integrity checks + 2 informational)
         2. QA__scoring_formula_tests.sql (29 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)
@@ -41,11 +41,11 @@ if (-not (Test-Path $test1File)) {
     exit 1
 }
 
-Write-Host "Running Test Suite 1: Data Integrity (29 checks)..." -ForegroundColor Yellow
+Write-Host "Running Test Suite 1: Data Integrity (32 checks)..." -ForegroundColor Yellow
 
 # Strip final summary query to avoid false-positive
 $test1Content = Get-Content $test1File -Raw
-$test1ChecksOnly = ($test1Content -split '-- 30\. v_master new column coverage')[0]
+$test1ChecksOnly = ($test1Content -split '-- 33\. v_master new column coverage')[0]
 
 $test1Output = $test1ChecksOnly | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
 
@@ -57,7 +57,7 @@ if ($LASTEXITCODE -ne 0) {
 
 $test1Lines = ($test1Output | Out-String).Trim()
 if ($test1Lines -eq "" -or $test1Lines -match '^\s*$') {
-    Write-Host "  ✓ PASS (29/29 — zero violations)" -ForegroundColor Green
+    Write-Host "  ✓ PASS (32/32 — zero violations)" -ForegroundColor Green
     $test1Pass = $true
 }
 else {
@@ -168,6 +168,9 @@ $invQuery = @"
 SELECT
     (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE) AS active_products,
     (SELECT COUNT(*) FROM products WHERE is_deprecated = true) AS deprecated,
+    (SELECT COUNT(*) FROM servings) AS serving_rows,
+    (SELECT COUNT(*) FROM servings WHERE serving_basis = 'per 100 g') AS per_100g_servings,
+    (SELECT COUNT(*) FROM servings WHERE serving_basis != 'per 100 g') AS per_serving_rows,
     (SELECT COUNT(*) FROM nutrition_facts) AS nutrition_rows,
     (SELECT COUNT(*) FROM scores) AS scores_rows,
     (SELECT COUNT(*) FROM ingredient_ref) AS ingredient_refs,

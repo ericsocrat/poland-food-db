@@ -1,7 +1,7 @@
 # Scoring Methodology
 
-> **Version:** 3.1
-> **Last updated:** 2026-02-07
+> **Version:** 3.2
+> **Last updated:** 2026-02-10
 > **Scope:** Poland food quality database
 
 ---
@@ -36,32 +36,34 @@ The score is a **weighted sum of sub-scores**, each normalized to 0–100, then 
 
 **Why these thresholds?** Each ceiling is set at the point where a product consumed regularly at that level would approach or exceed daily recommended limits. The per-100g ceiling represents the concentration at which ~2–3 servings would meet or exceed the WHO/EFSA daily guideline.
 
-| Factor            | Column source     | Weight   | Ceiling (per 100g) | Scientific basis for ceiling                                                                              |
-| ----------------- | ----------------- | -------- | ------------------ | --------------------------------------------------------------------------------------------------------- |
-| Saturated fat     | `saturated_fat_g` | 0.18     | 10g = 100          | EFSA DRV: <10% energy (~20g/day). 10g/100g = half daily limit in one portion.                             |
-| Sugars            | `sugars_g`        | 0.18     | 27g = 100          | WHO: <10% energy (~50g/day). 27g/100g = half daily limit. Aligned with Nutri-Score max penalty.           |
-| Salt              | `salt_g`          | 0.18     | 3.0g = 100         | WHO 2023: <5g/day. 3g/100g = >50% daily limit in 100g. EU Annex XIII "high" = 1.5g/100g.                  |
-| Calories (energy) | `calories`        | 0.10     | 600 kcal = 100     | Approx. energy density of pure fat (900) × 0.66. Products above 600 kcal/100g are extremely energy-dense. |
-| Trans fat         | `trans_fat_g`     | 0.12     | 2g = 100           | EU Reg. 2019/649: max 2g trans fat per 100g of fat. WHO: eliminate industrial trans fats.                 |
-| Additives count   | `additives_count` | 0.07     | 10 = 100           | NOVA research (Monteiro 2019): ultra-processed products average 8–12 additives. 10 = firmly NOVA 4.       |
-| Oil / prep method | `prep_method`     | 0.09     | categorical        | Acrylamide/PAH/HCA formation: deep-fried > fried > smoked > grilled > baked > steamed > air-popped.       |
-| Controversies     | `controversies`   | 0.08     | categorical        | E.g., palm oil (EFSA 2016: process contaminants), E171 (EFSA 2021: no longer safe).                       |
-|                   |                   | **1.00** |                    |                                                                                                           |
+| Factor                 | Column source                | Weight   | Ceiling (per 100g) | Scientific basis for ceiling                                                                              |
+| ---------------------- | ---------------------------- | -------- | ------------------ | --------------------------------------------------------------------------------------------------------- |
+| Saturated fat          | `saturated_fat_g`            | 0.17     | 10g = 100          | EFSA DRV: <10% energy (~20g/day). 10g/100g = half daily limit in one portion.                             |
+| Sugars                 | `sugars_g`                   | 0.17     | 27g = 100          | WHO: <10% energy (~50g/day). 27g/100g = half daily limit. Aligned with Nutri-Score max penalty.           |
+| Salt                   | `salt_g`                     | 0.17     | 3.0g = 100         | WHO 2023: <5g/day. 3g/100g = >50% daily limit in 100g. EU Annex XIII "high" = 1.5g/100g.                  |
+| Calories (energy)      | `calories`                   | 0.10     | 600 kcal = 100     | Approx. energy density of pure fat (900) × 0.66. Products above 600 kcal/100g are extremely energy-dense. |
+| Trans fat              | `trans_fat_g`                | 0.11     | 2g = 100           | EU Reg. 2019/649: max 2g trans fat per 100g of fat. WHO: eliminate industrial trans fats.                 |
+| Additives count        | `additives_count`            | 0.07     | 10 = 100           | NOVA research (Monteiro 2019): ultra-processed products average 8–12 additives. 10 = firmly NOVA 4.       |
+| Oil / prep method      | `prep_method`                | 0.08     | categorical        | Acrylamide/PAH/HCA formation: deep-fried > fried > smoked > grilled > baked > steamed > air-popped.       |
+| Controversies          | `controversies`              | 0.08     | categorical        | E.g., palm oil (EFSA 2016: process contaminants), E171 (EFSA 2021: no longer safe).                       |
+| Ingredient concern     | `ingredient_concern_score`   | 0.05     | 100 = 100          | EFSA additive risk tiers. Nitrites (tier 3) = high; artificial sweeteners (tier 2) = moderate.            |
+|                        |                              | **1.00** |                    |                                                                                                           |
 
-**Weight rationale:** Saturated fat, sugars, and salt share the highest weight (0.18 each) because they are the three nutrients cited by WHO as primary dietary risks for NCDs (cardiovascular disease, diabetes, hypertension). Trans fat has a disproportionately high weight (0.12) relative to its threshold because trans fats have no safe level of intake (WHO). Calories carry moderate weight because energy density alone does not indicate harm (nutrient-dense foods can be calorie-rich). Additive count (0.07) and controversies (0.08) absorb the weight previously carried by the removed `ingredient_complexity` factor, which overlapped heavily with both (high additive count ≈ industrial complexity, and controversial additives ≈ ingredient concerns).
+**Weight rationale (v3.2):** Saturated fat, sugars, and salt share the highest weight (0.17 each, reduced from 0.18 in v3.1) because they are the three nutrients cited by WHO as primary dietary risks for NCDs. Trans fat has high weight (0.11) because trans fats have no safe level of intake (WHO). The new ingredient concern factor (0.05) captures additive safety signals from EFSA re-evaluations — separate from additive count (which measures processing degree) and controversies (which covers product-level issues like palm oil). Calories carry moderate weight because energy density alone does not indicate harm.
 
 ### 2.3 Formula
 
 ```
 Unhealthiness Score = round(
-    sat_fat_sub     * 0.18 +
-    sugar_sub       * 0.18 +
-    salt_sub        * 0.18 +
+    sat_fat_sub     * 0.17 +
+    sugar_sub       * 0.17 +
+    salt_sub        * 0.17 +
     calorie_sub     * 0.10 +
-    trans_fat_sub   * 0.12 +
+    trans_fat_sub   * 0.11 +
     additive_sub    * 0.07 +
-    oil_sub         * 0.09 +
-    controversy_sub * 0.08
+    oil_sub         * 0.08 +
+    controversy_sub * 0.08 +
+    concern_sub     * 0.05
 )
 ```
 
@@ -71,7 +73,7 @@ Where each sub-score is computed as:
 sub_score = LEAST(100, (value / threshold) * 100)
 ```
 
-For categorical factors (oil method, complexity, controversies), use the fixed lookup values from the table above.
+For categorical factors (oil method, controversies, ingredient concern), use the fixed lookup values from the tables above.
 
 **Clamping:** The final score is clamped to the range `[1, 100]`. A product with all zeroes scores 1 (not 0) to avoid implying "perfectly healthy."
 
@@ -91,7 +93,7 @@ END
 
 ### 2.4 PostgreSQL Function
 
-The scoring formula is implemented as a reusable PostgreSQL function, defined in migration `20260207000501_scoring_function.sql` (updated in `20260210001000`). All 20 category pipelines call this single function — changing weights or ceilings for a future v3.2 requires editing only one place.
+The scoring formula is implemented as a reusable PostgreSQL function, defined in migration `20260207000501_scoring_function.sql` (v3.1 in `20260210001000`, v3.2 in `20260210001900`). All 20 category pipelines call this single function — changing weights or ceilings requires editing only one place.
 
 **prep_method sub-score mapping:**
 
@@ -109,9 +111,22 @@ The scoring formula is implemented as a reusable PostgreSQL function, defined in
 
 Additional valid values (`'marinated'`, `'pasteurized'`, `'fermented'`, `'dried'`, `'raw'`, `'roasted'`) all map to 50 (default). These can be differentiated in future scoring versions.
 
+**ingredient_concern_score sub-score (v3.2):**
+
+Each ingredient in `ingredient_ref` has a `concern_tier` (0–3) assigned from EFSA additive re-evaluations:
+
+| Tier | Label       | Examples                                 | Score contribution |
+| ---- | ----------- | ---------------------------------------- | ------------------ |
+| 0    | None        | Water, sugar, salt, flour                | 0                  |
+| 1    | Low         | Lecithins (E322), citric acid (E330)     | 15                 |
+| 2    | Moderate    | Artificial sweeteners, some colorants    | 40                 |
+| 3    | High        | Nitrites (E250), BHA (E320), azo dyes    | 100                |
+
+The per-product `ingredient_concern_score` (0–100) is computed as: `LEAST(100, SUM(concern_tier_score_per_ingredient))`. Products with no classified additives score 0. The score is stored on the `scores` table and passed to `compute_unhealthiness_v32()` as the 9th parameter.
+
 ```sql
 -- Function signature (returns INTEGER [1, 100])
-compute_unhealthiness_v31(
+compute_unhealthiness_v32(
     p_saturated_fat_g NUMERIC,    -- ceiling: 10g
     p_sugars_g        NUMERIC,    -- ceiling: 27g
     p_salt_g          NUMERIC,    -- ceiling: 3g
@@ -119,7 +134,8 @@ compute_unhealthiness_v31(
     p_trans_fat_g     NUMERIC,    -- ceiling: 2g
     p_additives_count NUMERIC,    -- ceiling: 10
     p_prep_method     TEXT,       -- categorical
-    p_controversies   TEXT        -- categorical
+    p_controversies   TEXT,       -- categorical
+    p_concern_score   NUMERIC     -- 0-100 EFSA concern score
 )
 ```
 
@@ -127,7 +143,7 @@ compute_unhealthiness_v31(
 
 ```sql
 UPDATE scores sc SET
-  unhealthiness_score = compute_unhealthiness_v31(
+  unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g::numeric,
       nf.sugars_g::numeric,
       nf.salt_g::numeric,
@@ -135,10 +151,11 @@ UPDATE scores sc SET
       nf.trans_fat_g::numeric,
       i.additives_count::numeric,
       p.prep_method,
-      p.controversies
+      p.controversies,
+      sc.ingredient_concern_score
   )::text,
   scored_at = CURRENT_DATE,
-  scoring_version = 'v3.1'
+  scoring_version = 'v3.2'
 FROM products p
 JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
 JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
@@ -163,7 +180,7 @@ The `scored_at` column (type `date`) records **when the score was computed**, no
 
 ### 2.7 Scoring Version
 
-All score records include a `scoring_version` field (currently `v3.1`). When methodology changes:
+All score records include a `scoring_version` field (currently `v3.2`). When methodology changes:
 
 1. Increment the version (e.g., `v2.3`, `v3.0`).
 2. Re-run all scoring pipelines.
@@ -381,7 +398,7 @@ data_completeness_pct = round(100.0 * (
 ) / 100.0)
 ```
 
-**Why weighted?** — Sat fat, sugars, and salt each carry 0.18 scoring weight, so their absence has the largest impact on score accuracy. Trans fat (0.12 weight) gets 10%. Fields with no direct scoring weight (carbs, protein) get minimal completeness weight (5%).
+**Why weighted?** — Sat fat, sugars, and salt each carry 0.17 scoring weight, so their absence has the largest impact on score accuracy. Trans fat (0.11 weight) gets 10%. Fields with no direct scoring weight (carbs, protein) get minimal completeness weight (5%).
 
 **Trace values are NOT penalized** — `'<0.5'` and `'trace'` are real label information and count as "present."
 
@@ -444,3 +461,4 @@ See `DATA_SOURCES.md` §5 and `RESEARCH_WORKFLOW.md` §6.4 for the full confiden
 | v3.0    | 2026-02-07 | Scientific justification for all thresholds, trace value parsing, data_completeness formula, weight rationale, energy cross-check, version bump                                                                                                                                                                                                                                                                                                                             |
 | v3.1    | 2026-02-07 | Removed healthiness_score (derivable), personal lenses (unimplemented), ingredient_complexity scoring factor (redundant with additives + NOVA). Dropped cholesterol_mg, potassium_mg, aluminium_based_additives columns. Redistributed 0.04 weight to additives (0.05→0.07) and controversies (0.06→0.08). Extracted formula into `compute_unhealthiness_v31()` PostgreSQL function (migration 000501); all category pipelines now call the function instead of inline SQL. |
 | v3.1b   | 2026-02-10 | Expanded `prep_method` scoring: added `steamed=30`, `grilled=60`, `smoked=65` (were all 50 via ELSE). Backfilled 134 NULL prep_method values across 5 categories. Made `prep_method` NOT NULL with default `'not-applicable'`. Added scientific references for PAH (EFSA 2008), HCA (IARC Group 2A).                                                                                                                                                                        |
+| v3.2    | 2026-02-10 | Added 9th scoring factor: **ingredient concern** (weight 0.05) based on EFSA additive risk tiers (concern_tier 0–3 on ingredient_ref). New `compute_unhealthiness_v32()` function. Redistributed weights: sat_fat/sugars/salt 0.18→0.17, trans_fat 0.12→0.11, prep 0.09→0.08. Cleaned 375 foreign ingredient names to ASCII English. Rebuilt `ingredients_raw` from junction data (492 products). Added real serving sizes from OFF API (317 products). Fixed v_master fan-out with `serving_basis = 'per 100 g'` filter. |

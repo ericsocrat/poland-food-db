@@ -158,6 +158,7 @@ MANUAL_TRANSLATIONS = {
     "wasser": "water",
 }
 
+
 # Detect language from taxonomy_id prefix
 def get_lang(taxonomy_id):
     return taxonomy_id.split(":")[0] if ":" in taxonomy_id else "unknown"
@@ -187,6 +188,7 @@ def translate_with_google(text, source_lang="auto"):
     """Translate using deep-translator (Google Translate)."""
     try:
         from deep_translator import GoogleTranslator
+
         result = GoogleTranslator(source=source_lang, target="en").translate(text)
         if result:
             return result.lower().strip()
@@ -199,11 +201,23 @@ def translate_with_google(text, source_lang="auto"):
 print("Fetching non-English ingredient refs from DB...")
 result = subprocess.run(
     [
-        "docker", "exec", "supabase_db_poland-food-db", "psql", "-U", "postgres",
-        "-d", "postgres", "-t", "-A", "-c",
-        "SELECT ingredient_id, taxonomy_id, name_en FROM ingredient_ref WHERE taxonomy_id NOT LIKE 'en:%' ORDER BY ingredient_id"
+        "docker",
+        "exec",
+        "supabase_db_poland-food-db",
+        "psql",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres",
+        "-t",
+        "-A",
+        "-c",
+        "SELECT ingredient_id, taxonomy_id, name_en FROM ingredient_ref WHERE taxonomy_id NOT LIKE 'en:%' ORDER BY ingredient_id",
     ],
-    capture_output=True, text=True, encoding="utf-8", errors="replace",
+    capture_output=True,
+    text=True,
+    encoding="utf-8",
+    errors="replace",
 )
 
 non_english = []
@@ -212,22 +226,36 @@ for line in result.stdout.strip().split("\n"):
         continue
     parts = line.split("|", 2)
     if len(parts) == 3:
-        non_english.append({
-            "id": int(parts[0]),
-            "taxonomy_id": parts[1].strip(),
-            "name_en": parts[2].strip(),
-        })
+        non_english.append(
+            {
+                "id": int(parts[0]),
+                "taxonomy_id": parts[1].strip(),
+                "name_en": parts[2].strip(),
+            }
+        )
 
 print(f"Non-English ingredients to translate: {len(non_english)}")
 
 # Also get English ingredients that are not in taxonomy (might need cleanup)
 result2 = subprocess.run(
     [
-        "docker", "exec", "supabase_db_poland-food-db", "psql", "-U", "postgres",
-        "-d", "postgres", "-t", "-A", "-c",
-        "SELECT ingredient_id, taxonomy_id, name_en FROM ingredient_ref WHERE taxonomy_id LIKE 'en:%' AND NOT is_in_taxonomy ORDER BY ingredient_id"
+        "docker",
+        "exec",
+        "supabase_db_poland-food-db",
+        "psql",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres",
+        "-t",
+        "-A",
+        "-c",
+        "SELECT ingredient_id, taxonomy_id, name_en FROM ingredient_ref WHERE taxonomy_id LIKE 'en:%' AND NOT is_in_taxonomy ORDER BY ingredient_id",
     ],
-    capture_output=True, text=True, encoding="utf-8", errors="replace",
+    capture_output=True,
+    text=True,
+    encoding="utf-8",
+    errors="replace",
 )
 
 en_not_taxonomy = []
@@ -236,11 +264,13 @@ for line in result2.stdout.strip().split("\n"):
         continue
     parts = line.split("|", 2)
     if len(parts) == 3:
-        en_not_taxonomy.append({
-            "id": int(parts[0]),
-            "taxonomy_id": parts[1].strip(),
-            "name_en": parts[2].strip(),
-        })
+        en_not_taxonomy.append(
+            {
+                "id": int(parts[0]),
+                "taxonomy_id": parts[1].strip(),
+                "name_en": parts[2].strip(),
+            }
+        )
 
 print(f"English not-in-taxonomy ingredients: {len(en_not_taxonomy)}")
 
@@ -254,24 +284,36 @@ for i, item in enumerate(non_english):
     tid = item["taxonomy_id"]
     current = item["name_en"]
     iid = item["id"]
-    
+
     # Step 1: Check manual dictionary
     if current.lower() in MANUAL_TRANSLATIONS:
         new_name = MANUAL_TRANSLATIONS[current.lower()]
         updates.append({"id": iid, "new_name": new_name, "source": "manual"})
         manual_hits += 1
         continue
-    
-    # Step 2: Try to extract English name from taxonomy ID 
-    # e.g., "fr:nouilles-instantanees" -> try looking up canonical name  
+
+    # Step 2: Try to extract English name from taxonomy ID
+    # e.g., "fr:nouilles-instantanees" -> try looking up canonical name
     # For pl: prefix, the taxonomy ID IS the Polish text, so we need to translate
-    
+
     # Step 3: Google Translate the current name_en (which is in the source language)
     lang = get_lang(tid)
-    lang_map = {"pl": "pl", "fr": "fr", "de": "de", "hu": "hu", "sk": "sk", "ro": "ro", 
-                "cs": "cs", "hr": "hr", "et": "et", "es": "es", "da": "da", "az": "az"}
+    lang_map = {
+        "pl": "pl",
+        "fr": "fr",
+        "de": "de",
+        "hu": "hu",
+        "sk": "sk",
+        "ro": "ro",
+        "cs": "cs",
+        "hr": "hr",
+        "et": "et",
+        "es": "es",
+        "da": "da",
+        "az": "az",
+    }
     src_lang = lang_map.get(lang, "auto")
-    
+
     translated = None
     for attempt in range(3):
         try:
@@ -285,10 +327,12 @@ for i, item in enumerate(non_english):
     else:
         # Keep as-is but log
         kept += 1
-    
+
     # Rate limiting
     if (i + 1) % 20 == 0:
-        print(f"  Translated {i+1}/{len(non_english)}... (manual={manual_hits}, google={google_hits}, kept={kept})")
+        print(
+            f"  Translated {i+1}/{len(non_english)}... (manual={manual_hits}, google={google_hits}, kept={kept})"
+        )
         time.sleep(0.5)
 
 print(f"\nTranslation results:")
@@ -303,16 +347,18 @@ en_cleanups = []
 for item in en_not_taxonomy:
     tid = item["taxonomy_id"]
     current = item["name_en"]
-    # Extract from taxonomy ID: en:some-thing -> "some thing"  
+    # Extract from taxonomy ID: en:some-thing -> "some thing"
     if tid.startswith("en:"):
         clean = tid[3:].replace("-", " ").strip()
         if clean and clean != current.lower():
-            en_cleanups.append({"id": item["id"], "new_name": clean, "source": "tid_extract"})
+            en_cleanups.append(
+                {"id": item["id"], "new_name": clean, "source": "tid_extract"}
+            )
 
 print(f"  English cleanup from taxonomy IDs: {len(en_cleanups)}")
 
 # ── Also get the garbage entries we need to fix ──
-# Entries like "6 vztiahnute na obsahzložky v celom vyrobku" and "sk zloženie" 
+# Entries like "6 vztiahnute na obsahzložky v celom vyrobku" and "sk zloženie"
 # are not real ingredients — they're OCR artifacts
 GARBAGE_PATTERNS = [
     r"vztiahnute na",
@@ -348,35 +394,37 @@ for u in all_updates:
         f"UPDATE ingredient_ref SET name_en = '{escaped}' WHERE ingredient_id = {u['id']}; -- {u['source']}"
     )
 
-migration_lines.extend([
-    "",
-    "-- ═══════════════════════════════════════════════════════════════════════════",
-    "-- Part 2: Rebuild ingredients_raw from structured product_ingredient data",
-    "-- Each product gets a clean comma-separated English ingredient list",
-    "-- ═══════════════════════════════════════════════════════════════════════════",
-    "",
-    "UPDATE ingredients i",
-    "SET ingredients_raw = sub.clean_list",
-    "FROM (",
-    "  SELECT",
-    "    pi.product_id,",
-    "    STRING_AGG(",
-    "      CASE",
-    "        WHEN pi.percent IS NOT NULL THEN ir.name_en || ' ' || pi.percent || '%'",
-    "        ELSE ir.name_en",
-    "      END,",
-    "      ', '",
-    "      ORDER BY pi.position",
-    "    ) AS clean_list",
-    "  FROM product_ingredient pi",
-    "  JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id",
-    "  GROUP BY pi.product_id",
-    ") sub",
-    "WHERE sub.product_id = i.product_id",
-    "  AND sub.clean_list IS NOT NULL",
-    "  AND LENGTH(sub.clean_list) > 0;",
-    "",
-])
+migration_lines.extend(
+    [
+        "",
+        "-- ═══════════════════════════════════════════════════════════════════════════",
+        "-- Part 2: Rebuild ingredients_raw from structured product_ingredient data",
+        "-- Each product gets a clean comma-separated English ingredient list",
+        "-- ═══════════════════════════════════════════════════════════════════════════",
+        "",
+        "UPDATE ingredients i",
+        "SET ingredients_raw = sub.clean_list",
+        "FROM (",
+        "  SELECT",
+        "    pi.product_id,",
+        "    STRING_AGG(",
+        "      CASE",
+        "        WHEN pi.percent IS NOT NULL THEN ir.name_en || ' ' || pi.percent || '%'",
+        "        ELSE ir.name_en",
+        "      END,",
+        "      ', '",
+        "      ORDER BY pi.position",
+        "    ) AS clean_list",
+        "  FROM product_ingredient pi",
+        "  JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id",
+        "  GROUP BY pi.product_id",
+        ") sub",
+        "WHERE sub.product_id = i.product_id",
+        "  AND sub.clean_list IS NOT NULL",
+        "  AND LENGTH(sub.clean_list) > 0;",
+        "",
+    ]
+)
 
 # Write migration
 migration_path = "supabase/migrations/20260210001600_clean_ingredient_names.sql"
