@@ -105,13 +105,13 @@ For every product, collect **all** of the following. Mark missing fields explici
 
 #### Identity Fields
 
-| Field          | Source                         | Required | Example                  |
-| -------------- | ------------------------------ | -------- | ------------------------ |
-| `brand`        | Label front                    | Yes      | `Lay's`                  |
-| `product_name` | Label front (Polish market)    | Yes      | `Lay's Klasyczne Solone` |
-| `category`     | Our taxonomy                   | Yes      | `Chips`                  |
-| `product_type` | Label description              | Optional | `Chipsy ziemniaczane`    |
-| `ean`          | Barcode on label                 | Yes*     | `5900259000002`          |
+| Field          | Source                      | Required | Example                  |
+| -------------- | --------------------------- | -------- | ------------------------ |
+| `brand`        | Label front                 | Yes      | `Lay's`                  |
+| `product_name` | Label front (Polish market) | Yes      | `Lay's Klasyczne Solone` |
+| `category`     | Our taxonomy                | Yes      | `Chips`                  |
+| `product_type` | Label description           | Optional | `Chipsy ziemniaczane`    |
+| `ean`          | Barcode on label            | Yes*     | `5900259000002`          |
 
 *EAN is required where available — 558/560 products (99.6%) have validated EAN-8/EAN-13 barcodes.
 

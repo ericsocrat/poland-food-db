@@ -294,11 +294,11 @@ As of 2026, Nutri-Score is **voluntary** in Poland. Many products do not display
 
 Every scored product carries a `confidence` tag:
 
-| Level       | Criteria                                                                |
-| ----------- | ----------------------------------------------------------------------- |
-| `verified`  | data_completeness ≥ 90% (nutrition data from label or verified source)  |
-| `estimated` | data_completeness 70–89% or single source needing verification          |
-| `low`       | data_completeness < 70%; score is approximate                           |
+| Level       | Criteria                                                               |
+| ----------- | ---------------------------------------------------------------------- |
+| `verified`  | data_completeness ≥ 90% (nutrition data from label or verified source) |
+| `estimated` | data_completeness 70–89% or single source needing verification         |
+| `low`       | data_completeness < 70%; score is approximate                          |
 
 > **Note:** `computed` is not a valid confidence level in the database. The CHECK constraint only allows `verified`, `estimated`, `low`.
 

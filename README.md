@@ -182,7 +182,7 @@ Run tests after **every** schema change or data update.
 | products        | `chk_products_prep_method`       | Valid prep method or null            |
 | products        | `chk_products_controversies`     | controversies IN ('none','palm oil') |
 | scores          | `chk_scores_unhealthiness_range` | 1–100                                |
-| scores          | `chk_scores_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE    |
+| scores          | `chk_scores_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE      |
 | scores          | `chk_scores_confidence`          | verified / estimated / low           |
 | scores          | `chk_scores_nova`                | 1–4                                  |
 | scores          | `chk_scores_processing_risk`     | Low / Moderate / High                |
