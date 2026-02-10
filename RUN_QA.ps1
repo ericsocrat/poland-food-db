@@ -83,7 +83,8 @@ function Invoke-Psql {
         $psqlArgs = @()
         if ($TuplesOnly) { $psqlArgs += "--tuples-only" }
         return ($InputSql | psql @psqlArgs 2>&1)
-    } else {
+    }
+    else {
         $psqlArgs = @("-U", $DB_USER, "-d", $DB_NAME)
         if ($TuplesOnly) { $psqlArgs += "--tuples-only" }
         return ($InputSql | docker exec -i $CONTAINER psql @psqlArgs 2>&1)

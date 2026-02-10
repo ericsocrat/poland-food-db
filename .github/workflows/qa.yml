@@ -78,6 +78,12 @@ jobs:
             done
           done
 
+      - name: Post-pipeline fixup
+        run: |
+          echo "Applying CI post-pipeline fixup..."
+          psql -f db/ci_post_pipeline.sql
+          echo "Post-pipeline fixup complete."
+
       - name: Run QA via RUN_QA.ps1
         id: qa
         shell: pwsh
