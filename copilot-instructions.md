@@ -3,7 +3,7 @@
 
 > **Last updated:** 2026-02-10
 > **Scope:** Poland (`PL`) only — no other countries active
-> **Products:** 560 active (20 categories × 28 each), 1068 deprecated
+> **Products:** 560 active (20 categories × 28 each), deprecated products purged
 > **EAN coverage:** 558/560 (99.6%)
 > **Scoring:** v3.1 — 8-factor weighted formula via `compute_unhealthiness_v31()`
 > **QA:** 47 critical checks + 7 informational reports — all passing
@@ -158,7 +158,7 @@ poland-food-db/
 
 ## 5. Categories (20)
 
-All categories normalized to **28 active products** each. Excess products are deprecated (not deleted).
+All categories normalized to **28 active products** each. Excess products are deprecated and periodically purged.
 
 | Category                   | Folder slug                 |
 | -------------------------- | --------------------------- |

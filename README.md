@@ -38,7 +38,7 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 560 active products across 20 categories (28 per category, 1068 deprecated kept for history)
+**Database**: 560 active products across 20 categories (28 per category, deprecated products purged)
 
 | Category                       | Products | Brands | Score Range |
 | ------------------------------ | -------: | -----: | ----------- |
@@ -270,7 +270,7 @@ EAN codes enable validation against:
 - **EAN barcodes** — 558/560 active products (99.6%) have validated EAN-8/EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
 - **Scoring version**: v3.1 (2026-02-07)
-- **560 active products** (28 per category × 20 categories), 1068 deprecated (kept in DB for historical tracking)
+- **560 active products** (28 per category × 20 categories), deprecated products periodically purged
 
 ---
 

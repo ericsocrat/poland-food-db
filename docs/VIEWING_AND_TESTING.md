@@ -92,12 +92,12 @@ Run all pipelines + both QA suites automatically:
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (11/11 — zero violation rows).
+  All QA checks passed (22/22 — zero violation rows).
 
   Database inventory:
   total_products | deprecated | servings | nutrition | scores | ingredients
 ----------------+------------+----------+-----------+--------+-------------
-              80 |         17 |       80 |        80 |     80 |          80
+             560 |          0 |      560 |       560 |    560 |         560
 ```
 
 ---
