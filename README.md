@@ -1,6 +1,6 @@
 # Poland Food Quality Database
 
-A **world-class** food quality database scoring products sold in Poland using an 8-factor weighted algorithm (v3.1) based on nutritional science and EU regulatory guidelines.
+A **world-class** food quality database scoring products sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
 
 ## 🎯 Quick Start
 
@@ -62,12 +62,12 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 47 automated checks + 7 data quality reports
-- 22 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency)
-- 25 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
-- 7 source coverage & confidence tracking reports (informational, non-blocking)
+**Test Coverage**: 61 automated checks + 11 data quality reports
+- 32 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check)
+- 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
+- 11 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 47/47
+**All critical tests passing**: ✅ 61/61
 
 **EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
@@ -101,17 +101,17 @@ poland-food-db/
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 28 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites
-│   │   ├── QA__null_checks.sql           # 22 integrity checks
-│   │   ├── QA__scoring_formula_tests.sql # 25 algorithm tests
-│   │   └── QA__source_coverage.sql       # 7 data quality reports
+│   │   ├── QA__null_checks.sql           # 32 integrity checks
+│   │   ├── QA__scoring_formula_tests.sql # 29 algorithm tests
+│   │   └── QA__source_coverage.sql       # 11 data quality reports
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-│   └── migrations/          # Schema migrations (16 files)
+│   └── migrations/          # Schema migrations (31 files)
 ├── docs/                    # Project documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
-│   ├── SCORING_METHODOLOGY.md # v3.1 algorithm documentation (421 lines)
+│   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
 │   ├── RESEARCH_WORKFLOW.md # Step-by-step data collection process
 │   ├── VIEWING_AND_TESTING.md # Full viewing & testing guide
 │   ├── COUNTRY_EXPANSION_GUIDE.md # Future multi-country rules
@@ -127,9 +127,9 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **47 automated checks** + 7 informational data quality reports:
+Every change is validated against **61 automated checks** + 11 informational data quality reports:
 
-### Data Integrity (22 checks)
+### Data Integrity (32 checks)
 - No missing required fields (product_name, brand, country, category)
 - No orphaned foreign keys (nutrition, scores, servings, ingredients)
 - No duplicate products
@@ -139,7 +139,7 @@ Every change is validated against **47 automated checks** + 7 informational data
 - Score fields not null for active products
 - View consistency (v_master row count matches products)
 
-### Scoring Formula (25 checks)
+### Scoring Formula (29 checks)
 - Scores in valid range [1, 100]
 - Clean products score ≤ 20
 - Maximum unhealthy products score high
@@ -148,7 +148,7 @@ Every change is validated against **47 automated checks** + 7 informational data
 - High additive load flag consistency
 - NOVA classification valid (1–4)
 - Processing risk alignment with NOVA
-- Scoring version = v3.1
+- Scoring version = v3.2
 - Nutri-Score label domain (A–E or UNKNOWN)
 - Confidence domain (verified, estimated, low)
 - **Regression**: Top Chips Faliste = 51±2 (palm oil)
@@ -198,14 +198,15 @@ Run tests after **every** schema change or data update.
 
 ## 📈 Scoring Methodology
 
-### v3.1 Formula (8 factors)
+### v3.2 Formula (9 factors)
 
-Implemented as a reusable PostgreSQL function `compute_unhealthiness_v31()` — all category pipelines call this single function.
+Implemented as a reusable PostgreSQL function `compute_unhealthiness_v32()` — all category pipelines call this single function.
 
 ```
 unhealthiness_score =
-  sat_fat(0.18) + sugars(0.18) + salt(0.18) + calories(0.10) +
-  trans_fat(0.12) + additives(0.07) + prep_method(0.09) + controversies(0.08)
+  sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +
+  trans_fat(0.11) + additives(0.07) + prep_method(0.08) +
+  controversies(0.08) + ingredient_concern(0.05)
 ```
 
 **Score Bands**:
@@ -233,7 +234,7 @@ Every product receives an automated confidence rating based on data completeness
 | **estimated** | 70-89% complete OR single source       | Single-source data needing verification |
 | **low**       | <70% complete                          | Incomplete data, use with caution       |
 
-**Current status**: All 560 active products are `estimated` (single-source Open Food Facts data awaiting cross-validation).
+**Current status**: 493 `verified` (≥90% data completeness) · 67 `estimated` · 0 `low`.
 
 Confidence is auto-computed by the `assign_confidence()` function in all scoring pipelines.
 
@@ -284,7 +285,7 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 47/47 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 61/61 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -296,7 +297,7 @@ EAN codes enable validation against:
 - **Data quality tracking** — All products have confidence levels (`estimated`, `verified`, or `low`)
 - **EAN barcodes** — 558/560 active products (99.6%) have validated EAN-8/EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
-- **Scoring version**: v3.1 (2026-02-07)
+- **Scoring version**: v3.2 (2026-02-10)
 - **560 active products** (28 per category × 20 categories), deprecated products periodically purged
 
 ---
@@ -304,7 +305,7 @@ EAN codes enable validation against:
 ## 📚 Documentation
 
 - [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
-- [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md) — Complete v3.1 algorithm specification (421 lines)
+- [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md) — Complete v3.2 algorithm specification
 - [DATA_SOURCES.md](docs/DATA_SOURCES.md) — Multi-source data hierarchy & validation workflow
 - [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) — Step-by-step data collection process
 - [COUNTRY_EXPANSION_GUIDE.md](docs/COUNTRY_EXPANSION_GUIDE.md) — Future multi-country rules

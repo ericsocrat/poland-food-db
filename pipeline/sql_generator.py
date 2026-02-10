@@ -373,9 +373,9 @@ where i.product_id = p.product_id;
 """
 
     scoring_sql += f"""
--- 2. COMPUTE unhealthiness_score (v3.1)
+-- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
-  unhealthiness_score = compute_unhealthiness_v31(
+  unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
       nf.sugars_g,
       nf.salt_g,
@@ -383,10 +383,11 @@ update scores sc set
       nf.trans_fat_g,
       i.additives_count,
       p.prep_method,
-      p.controversies
+      p.controversies,
+      sc.ingredient_concern_score
   ),
   scored_at       = CURRENT_DATE,
-  scoring_version = 'v3.1'
+  scoring_version = 'v3.2'
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id

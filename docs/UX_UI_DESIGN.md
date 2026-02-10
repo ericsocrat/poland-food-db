@@ -189,7 +189,7 @@ Home (Dashboard)
 │  [Compare with...]  [Add to Watchlist]                  │
 │                                                         │
 │  Data source: Open Food Facts · Scored: 2025-02-07      │
-│  Scoring version: v3.1 · Completeness: 90%              │
+│  Scoring version: v3.2 · Completeness: 90%              │
 └─────────────────────────────────────────────────────────┘
 ```
 

@@ -1,6 +1,6 @@
 -- PIPELINE (ŻABKA): scoring updates
 -- PIPELINE__zabka__04_scoring.sql
--- Formula-based v3.1 scoring for Żabka convenience store products.
+-- Formula-based v3.2 scoring for Żabka convenience store products.
 -- See SCORING_METHODOLOGY.md §2.4 for the canonical formula.
 -- Last updated: 2026-02-08
 
@@ -67,14 +67,15 @@ join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d
 where i.product_id = p.product_id;
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 2. COMPUTE unhealthiness_score (v3.1 formula)
---    8 factors × weighted → clamped [1, 100]
---    sat_fat(0.18) + sugars(0.18) + salt(0.18) + calories(0.10) +
---    trans_fat(0.12) + additives(0.07) + prep_method(0.09) + controversies(0.08)
+-- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+--    9 factors × weighted → clamped [1, 100]
+--    sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +
+--    trans_fat(0.11) + additives(0.07) + prep_method(0.08) +
+--    controversies(0.08) + concern(0.05)
 -- ═════════════════════════════════════════════════════════════════════════
 
 update scores sc set
-  unhealthiness_score = compute_unhealthiness_v31(
+  unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
       nf.sugars_g,
       nf.salt_g,
@@ -82,10 +83,11 @@ update scores sc set
       nf.trans_fat_g,
       i.additives_count,
       p.prep_method,
-      p.controversies
+      p.controversies,
+      sc.ingredient_concern_score
   ),
   scored_at       = CURRENT_DATE,
-  scoring_version = 'v3.1'
+  scoring_version = 'v3.2'
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id

@@ -51,7 +51,7 @@ echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GR
 
 ## ✅ How to Know Everything Is Working
 
-### 1. **Data Integrity Tests** (11 checks)
+### 1. **Data Integrity Tests** (32 checks)
 Validates foreign keys, nulls, duplicates, orphaned rows:
 
 ```powershell
@@ -62,8 +62,8 @@ Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food
 
 ---
 
-### 2. **Scoring Formula Tests** (22 checks)
-Validates v3.1 algorithm correctness, flag logic, NOVA consistency, regression checks:
+### 2. **Scoring Formula Tests** (29 checks)
+Validates v3.2 algorithm correctness, flag logic, NOVA consistency, regression checks:
 
 ```powershell
 Get-Content "db\qa\QA__scoring_formula_tests.sql" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres --tuples-only
@@ -92,7 +92,7 @@ Run all pipelines + both QA suites automatically:
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (22/22 — zero violation rows).
+  All QA checks passed (32/32 — zero violation rows).
 
   Database inventory:
   total_products | deprecated | servings | nutrition | scores | ingredients
@@ -111,9 +111,9 @@ Runs both test suites with color-coded output:
 
 **Expected output**:
 ```
-✓ PASS (11/11 — zero violations)
-✓ PASS (22/22 — zero violations)
-ALL TESTS PASSED (47/47 checks)
+✓ PASS (32/32 — zero violations)
+✓ PASS (29/29 — zero violations)
+ALL TESTS PASSED (61/61 checks)
 ```
 
 ---

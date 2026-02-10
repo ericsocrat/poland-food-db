@@ -1,4 +1,4 @@
--- QA: Scoring Formula Tests (v3.1)
+-- QA: Scoring Formula Tests (v3.2)
 -- Validates that the scoring formula produces expected results for known test cases.
 -- Each test includes a product with controlled nutrition values and expected score.
 -- Run after pipelines to verify scoring algorithm correctness.

@@ -398,7 +398,7 @@ Verify:
 - [ ] All 7 mandatory nutrition fields are populated
 - [ ] `unhealthiness_score` is between 1 and 100
 - [ ] Flags (`high_salt_flag`, etc.) are consistent with nutrition values
-- [ ] `scoring_version` is current (e.g., `v3.1`)
+- [ ] `scoring_version` is current (e.g., `v3.2`)
 - [ ] `scored_at` is today's date
 - [ ] `confidence` is correctly assigned
 
@@ -443,7 +443,7 @@ feat(chips): add 5 Lay's SKUs from Biedronka labels
 Sources: Physical labels (Biedronka Kraków, 2026-02-05)
 Cross-validated: Open Food Facts (all 5 products verified)
 Data completeness: 95-100% across all products
-Scoring version: v3.1
+Scoring version: v3.2
 ```
 
 ---
@@ -515,7 +515,7 @@ Use this checklist for every product batch:
 ### Implementation
 - [ ] Product INSERT with full provenance comments
 - [ ] Nutrition INSERT with correct per-100g values
-- [ ] Scoring UPDATE with current formula (v3.1)
+- [ ] Scoring UPDATE with current formula (v3.2)
 - [ ] Source INSERT with date and reference
 - [ ] data_completeness_pct computed
 - [ ] confidence level assigned
