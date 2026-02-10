@@ -283,7 +283,7 @@ WHERE p.product_id IS NULL;
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 25. additives_count mismatch between ingredients table and junction table
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT i.product_id, i.additives_count AS stored_count, 
+SELECT i.product_id, i.additives_count AS stored_count,
        COALESCE(sub.cnt, 0) AS junction_count,
        'ADDITIVES COUNT MISMATCH' AS issue
 FROM ingredients i
@@ -354,6 +354,8 @@ SELECT
     (SELECT COUNT(*) FROM products)         AS total_products,
     (SELECT COUNT(*) FROM products WHERE is_deprecated = true) AS deprecated_products,
     (SELECT COUNT(*) FROM servings)         AS total_servings,
+    (SELECT COUNT(*) FROM servings WHERE serving_basis = 'per 100 g') AS per_100g_servings,
+    (SELECT COUNT(*) FROM servings WHERE serving_basis = 'per serving') AS per_serving_rows,
     (SELECT COUNT(*) FROM nutrition_facts)  AS total_nutrition_rows,
     (SELECT COUNT(*) FROM scores)           AS total_score_rows,
     (SELECT COUNT(*) FROM ingredients)      AS total_ingredient_rows,

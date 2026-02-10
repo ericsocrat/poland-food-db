@@ -1,19 +1,12 @@
--- VIEW: master product view (v_master)
--- Flat denormalized view joining products → servings → nutrition_facts → scores → sources
--- plus ingredient analytics from normalized ingredient tables.
--- This view is already created in the schema migration (20260207000100_create_schema.sql).
--- Updated in migration 20260207000400_remove_unused_columns.sql.
--- Updated 2026-02-08: added EAN, source provenance fields.
--- Updated 2026-02-10: sources join changed from LIKE pattern to equijoin on sources.category.
--- Updated 2026-02-10: added ingredient analytics (ingredient_count, additive_names,
---   has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags).
--- Updated 2026-02-10: filtered to per-100g basis only (prevents fan-out from real serving rows).
--- Updated 2026-02-10: added per-serving columns (serving_qty_g, per_serving_calories, etc.).
--- This file exists for reference and for recreating the view if needed.
---
--- Usage: SELECT * FROM v_master WHERE country = 'PL' AND category = 'Chips';
+-- Migration: Fix v_master fan-out after adding real serving sizes
+-- Problem: v_master joined servings without filtering on serving_basis,
+--          producing 877 rows (560 per-100g + 317 per-serving) instead of 560.
+-- Solution: Filter to per-100g for canonical nutrition columns,
+--           add per-serving columns via separate LEFT JOIN.
 
-CREATE OR REPLACE VIEW public.v_master AS
+DROP VIEW IF EXISTS public.v_master;
+
+CREATE VIEW public.v_master AS
 SELECT
     p.product_id,
     p.country,
@@ -57,7 +50,6 @@ SELECT
     s.scored_at,
     s.data_completeness_pct,
     s.confidence,
-    s.ingredient_concern_score,
     -- Flags
     s.high_salt_flag,
     s.high_sugar_flag,

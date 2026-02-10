@@ -66,7 +66,7 @@ WHERE p.is_deprecated IS NOT TRUE
 WITH scored_products AS (
   SELECT
     p.product_id, p.product_name, p.prep_method, p.controversies,
-    sc.unhealthiness_score,
+    sc.unhealthiness_score, sc.ingredient_concern_score,
     nf.calories, nf.saturated_fat_g, nf.sugars_g, nf.salt_g,
     nf.trans_fat_g, COALESCE(i.additives_count::int, 0) AS additives
   FROM products p
@@ -92,6 +92,7 @@ WHERE a.calories = b.calories
   AND a.additives = b.additives
   AND a.prep_method = b.prep_method
   AND a.controversies = b.controversies
+  AND COALESCE(a.ingredient_concern_score, 0) = COALESCE(b.ingredient_concern_score, 0)
   AND a.unhealthiness_score <> b.unhealthiness_score;
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -175,7 +176,7 @@ WHERE p.is_deprecated IS NOT TRUE
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 10: Scoring version consistency
---          All scores should be v3.1
+--          All scores should be v3.2
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        sc.scoring_version,
@@ -183,7 +184,7 @@ SELECT p.product_id, p.brand, p.product_name,
 FROM products p
 JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
-  AND (sc.scoring_version IS NULL OR sc.scoring_version <> 'v3.1');
+  AND (sc.scoring_version IS NULL OR sc.scoring_version <> 'v3.2');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 11: Known product regression test (Top Chips Faliste)

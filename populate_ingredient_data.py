@@ -7,6 +7,7 @@ Strategy:
   2. Build a canonical ingredient_ref dictionary (deduped by taxonomy_id)
   3. Generate migration SQL with INSERTs for all four tables
 """
+
 import requests
 import subprocess
 import time
@@ -27,12 +28,26 @@ OFF_FIELDS = (
 # ── Get products from DB ──
 print("Fetching products from DB...")
 result = subprocess.run(
-    ["docker", "exec", "supabase_db_poland-food-db", "psql", "-U", "postgres",
-     "-d", "postgres", "-t", "-A", "-c",
-     "SELECT p.product_id, p.ean FROM products p "
-     "WHERE p.is_deprecated = false AND p.ean IS NOT NULL "
-     "ORDER BY p.product_id"],
-    capture_output=True, text=True, encoding="utf-8", errors="replace"
+    [
+        "docker",
+        "exec",
+        "supabase_db_poland-food-db",
+        "psql",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres",
+        "-t",
+        "-A",
+        "-c",
+        "SELECT p.product_id, p.ean FROM products p "
+        "WHERE p.is_deprecated = false AND p.ean IS NOT NULL "
+        "ORDER BY p.product_id",
+    ],
+    capture_output=True,
+    text=True,
+    encoding="utf-8",
+    errors="replace",
 )
 products = []
 for line in result.stdout.strip().split("\n"):
@@ -52,9 +67,11 @@ session.headers.update({"User-Agent": "poland-food-db/1.0"})
 # Canonical ingredient dictionary: taxonomy_id -> properties
 ingredient_dict = OrderedDict()  # preserves insertion order
 # Per-product data
-product_ingredients = []  # (product_id, taxonomy_id, position, percent, percent_est, is_sub, parent_taxonomy_id)
-product_allergens = []    # (product_id, allergen_tag)
-product_traces = []       # (product_id, trace_tag)
+product_ingredients = (
+    []
+)  # (product_id, taxonomy_id, position, percent, percent_est, is_sub, parent_taxonomy_id)
+product_allergens = []  # (product_id, allergen_tag)
+product_traces = []  # (product_id, trace_tag)
 
 # Stats
 stats = {
@@ -82,7 +99,11 @@ def extract_ingredients(items, product_id, position_counter, parent_taxonomy_id=
             text = item.get("text", "unknown").strip().lower()
             taxonomy_id = f"xx:{text.replace(' ', '-')}"
 
-        name_en = taxonomy_id.split(":", 1)[-1].replace("-", " ") if ":" in taxonomy_id else taxonomy_id
+        name_en = (
+            taxonomy_id.split(":", 1)[-1].replace("-", " ")
+            if ":" in taxonomy_id
+            else taxonomy_id
+        )
         is_in_tax = bool(item.get("is_in_taxonomy", 0))
         vegan = item.get("vegan", "unknown") or "unknown"
         vegetarian = item.get("vegetarian", "unknown") or "unknown"
@@ -120,11 +141,17 @@ def extract_ingredients(items, product_id, position_counter, parent_taxonomy_id=
         percent = item.get("percent")
         percent_est = item.get("percent_estimate")
 
-        product_ingredients.append((
-            product_id, taxonomy_id, pos,
-            percent, percent_est,
-            is_sub, parent_taxonomy_id
-        ))
+        product_ingredients.append(
+            (
+                product_id,
+                taxonomy_id,
+                pos,
+                percent,
+                percent_est,
+                is_sub,
+                parent_taxonomy_id,
+            )
+        )
 
         # Process sub-ingredients
         sub_items = item.get("ingredients", [])
@@ -161,7 +188,9 @@ for i, prod in enumerate(products):
             counter = position_gen()
             extract_ingredients(ingredients, pid, counter)
             stats["products_with_ingredients"] += 1
-            stats["total_ingredient_links"] += sum(1 for pi in product_ingredients if pi[0] == pid)
+            stats["total_ingredient_links"] += sum(
+                1 for pi in product_ingredients if pi[0] == pid
+            )
 
         # Allergens
         allergens = product.get("allergens_tags", [])
@@ -184,11 +213,13 @@ for i, prod in enumerate(products):
         stats["errors"] += 1
 
     if (i + 1) % 50 == 0:
-        print(f"  Processed {i+1}/{len(products)} — "
-              f"ingr_dict={len(ingredient_dict)}, "
-              f"links={len(product_ingredients)}, "
-              f"allergens={len(product_allergens)}, "
-              f"traces={len(product_traces)}")
+        print(
+            f"  Processed {i+1}/{len(products)} — "
+            f"ingr_dict={len(ingredient_dict)}, "
+            f"links={len(product_ingredients)}, "
+            f"allergens={len(product_allergens)}, "
+            f"traces={len(product_traces)}"
+        )
 
     time.sleep(0.15)
 
@@ -238,10 +269,13 @@ sql_lines.extend(["", "-- ── 2. product_ingredient inserts ──", ""])
 for pi in product_ingredients:
     pid, tax_id, pos, pct, pct_est, is_sub, parent_tax = pi
     pct_sql = f"{pct}" if pct is not None else "NULL"
-    pct_est_sql = f"{max(min(round(pct_est, 2), 100), 0)}" if pct_est is not None else "NULL"
+    pct_est_sql = (
+        f"{max(min(round(pct_est, 2), 100), 0)}" if pct_est is not None else "NULL"
+    )
     parent_sql = (
         f"(SELECT ingredient_id FROM ingredient_ref WHERE taxonomy_id = {esc(parent_tax)})"
-        if parent_tax else "NULL"
+        if parent_tax
+        else "NULL"
     )
 
     sql_lines.append(
