@@ -31,9 +31,20 @@ MIGRATION_PATH = "supabase/migrations/20260210001100_backfill_ingredients_raw.sq
 def get_products_from_db() -> list[dict]:
     """Fetch all active products with EANs from the local DB."""
     cmd = [
-        "docker", "exec", "supabase_db_poland-food-db",
-        "psql", "-U", "postgres", "-d", "postgres", "-t", "-A", "-F", "|",
-        "-c", """
+        "docker",
+        "exec",
+        "supabase_db_poland-food-db",
+        "psql",
+        "-U",
+        "postgres",
+        "-d",
+        "postgres",
+        "-t",
+        "-A",
+        "-F",
+        "|",
+        "-c",
+        """
             SELECT p.product_id, p.ean, p.brand, p.product_name, p.category
             FROM products p
             JOIN ingredients i ON i.product_id = p.product_id
@@ -54,13 +65,15 @@ def get_products_from_db() -> list[dict]:
             continue
         parts = line.split("|")
         if len(parts) >= 5:
-            products.append({
-                "product_id": parts[0].strip(),
-                "ean": parts[1].strip(),
-                "brand": parts[2].strip(),
-                "product_name": parts[3].strip(),
-                "category": parts[4].strip(),
-            })
+            products.append(
+                {
+                    "product_id": parts[0].strip(),
+                    "ean": parts[1].strip(),
+                    "brand": parts[2].strip(),
+                    "product_name": parts[3].strip(),
+                    "category": parts[4].strip(),
+                }
+            )
     return products
 
 
@@ -107,7 +120,9 @@ def main() -> None:
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
 
-    results: list[tuple[str, str, str, str]] = []  # (product_id, brand, name, ingredients)
+    results: list[tuple[str, str, str, str]] = (
+        []
+    )  # (product_id, brand, name, ingredients)
     found = 0
     skipped = 0
 
@@ -115,7 +130,9 @@ def main() -> None:
         ean = p["ean"]
         ingredients = fetch_ingredients(ean, session)
         if ingredients:
-            results.append((p["product_id"], p["brand"], p["product_name"], ingredients))
+            results.append(
+                (p["product_id"], p["brand"], p["product_name"], ingredients)
+            )
             found += 1
         else:
             skipped += 1
@@ -143,6 +160,7 @@ def main() -> None:
 
     # Group by category for readability
     from collections import defaultdict
+
     by_category: dict[str, list[tuple[str, str]]] = defaultdict(list)
     for pid, brand, name, ingr in results:
         # Find category from products list
