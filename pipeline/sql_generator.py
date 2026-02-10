@@ -285,6 +285,22 @@ def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
         )
     additives_block = "\n".join(add_lines)
 
+    # Ingredients-raw values (where available from OFF)
+    raw_lines: list[str] = []
+    for i, p in enumerate(products):
+        raw = p.get("ingredients_raw")
+        if raw:
+            comma = "," if i < len(products) - 1 else ""
+            raw_lines.append(
+                f"    ({_sql_text(p['brand'])}, {_sql_text(p['product_name'])}, "
+                f"{_sql_text(raw)}){comma}"
+            )
+    # Fix trailing commas — re-join without trailing comma on last entry
+    if raw_lines:
+        raw_lines = [l.rstrip(",") if i == len(raw_lines) - 1 else l
+                     for i, l in enumerate(raw_lines)]
+    ingredients_raw_block = "\n".join(raw_lines) if raw_lines else ""
+
     # Nutri-Score values
     ns_lines: list[str] = []
     for i, p in enumerate(products):
@@ -308,7 +324,7 @@ def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
         )
     nova_block = "\n".join(nova_lines)
 
-    return f"""\
+    scoring_sql = f"""\
 -- PIPELINE ({category}): scoring
 -- Generated: {today}
 
@@ -338,7 +354,23 @@ from (
 ) as d(brand, product_name, cnt)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where i.product_id = p.product_id;
+"""
 
+    # Conditionally add ingredients_raw section
+    if ingredients_raw_block:
+        scoring_sql += f"""
+-- 1b. Ingredients raw text (from OFF)
+update ingredients i set
+  ingredients_raw = d.raw_text
+from (
+  values
+{ingredients_raw_block}
+) as d(brand, product_name, raw_text)
+join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
+where i.product_id = p.product_id;
+"""
+
+    scoring_sql += f"""
 -- 2. COMPUTE unhealthiness_score (v3.1)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v31(
@@ -411,6 +443,8 @@ where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = {_sql_text(category)}
   and p.is_deprecated is not true;
 """
+
+    return scoring_sql
 
 
 # ---------------------------------------------------------------------------

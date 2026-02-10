@@ -343,12 +343,32 @@ def polish_market_score(product: dict) -> int:
 
 
 def _detect_prep_method(categories_tags: list[str], product_name: str) -> str | None:
-    """Infer prep_method from OFF category tags and product name."""
+    """Infer prep_method from OFF category tags and product name.
+
+    Checks for common preparation methods in order of specificity.
+    Returns ``None`` when no method can be inferred (caller decides
+    whether to fall back to ``'not-applicable'``).
+    """
     combined = " ".join(categories_tags) + " " + product_name.lower()
-    if re.search(r"\bfried\b", combined):
-        return "fried"
-    if re.search(r"\bbaked\b", combined):
-        return "baked"
+
+    # Order matters: check more specific terms first
+    _PREP_PATTERNS: list[tuple[str, str]] = [
+        (r"\bfried\b|\bfrying\b|\bdeep[- ]?fried\b|\bsmażon", "fried"),
+        (r"\bsmoked\b|\bsmoking\b|\bwędzon", "smoked"),
+        (r"\broasted\b|\broast\b|\bpieczony\b|\bpieczon", "roasted"),
+        (r"\bsteamed\b|\bsteaming\b|\bna parze\b", "steamed"),
+        (r"\bgrilled\b|\bgrill\b|\bgrillowany\b", "grilled"),
+        (r"\bbaked\b|\bbaking\b|\bwypiekany\b", "baked"),
+        (r"\bmarinated\b|\bmarynowany\b", "marinated"),
+        (r"\bpasteurized\b|\bpasteryzowany\b|\bUHT\b", "pasteurized"),
+        (r"\bfermented\b|\bfermentowany\b|\bkiszony\b", "fermented"),
+        (r"\bdried\b|\bsuszony\b|\bdehydrated\b", "dried"),
+        (r"\braw\b|\bsurowy\b", "raw"),
+    ]
+
+    for pattern, method in _PREP_PATTERNS:
+        if re.search(pattern, combined, re.IGNORECASE):
+            return method
     return None
 
 
@@ -419,6 +439,9 @@ def extract_product_data(off_product: dict) -> dict | None:
     # Store availability
     store_availability = off_product.get("stores") or None
 
+    # Ingredients text (raw)
+    ingredients_raw = (off_product.get("ingredients_text") or "").strip() or None
+
     # NOVA & Nutri-Score
     nova_tags = off_product.get("nova_groups_tags", [])
     nova = None
@@ -454,6 +477,8 @@ def extract_product_data(off_product: dict) -> dict | None:
         "additives_count": off_product.get("additives_n", 0) or 0,
         "nova_classification": nova,
         "nutri_score_label": nutri_score_label,
+        # Ingredients
+        "ingredients_raw": ingredients_raw,
         # OFF metadata (used by validator)
         "_completeness": off_product.get("completeness", 0),
         "_has_image": bool(off_product.get("image_url")),

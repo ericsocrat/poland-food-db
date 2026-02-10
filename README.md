@@ -27,7 +27,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (35 checks)
+# All tests (47 checks)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -62,9 +62,9 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 35 automated checks + 7 data quality reports
-- 22 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, view consistency)
-- 25 scoring formula validation checks (ranges, flags, NOVA, domain validation, regression)
+**Test Coverage**: 47 automated checks + 7 data quality reports
+- 22 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency)
+- 25 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
 - 7 source coverage & confidence tracking reports (informational, non-blocking)
 
 **All critical tests passing**: ✅ 47/47
@@ -102,13 +102,13 @@ poland-food-db/
 │   │   └── zabka/           # 28 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites
 │   │   ├── QA__null_checks.sql           # 22 integrity checks
-│   │   ├── QA__scoring_formula_tests.sql # 20 algorithm tests
+│   │   ├── QA__scoring_formula_tests.sql # 25 algorithm tests
 │   │   └── QA__source_coverage.sql       # 7 data quality reports
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-│   └── migrations/          # Schema migrations (9 files)
+│   └── migrations/          # Schema migrations (16 files)
 ├── docs/                    # Project documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.1 algorithm documentation (421 lines)
@@ -127,33 +127,37 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **35 automated checks** + 7 informational data quality reports:
+Every change is validated against **47 automated checks** + 7 informational data quality reports:
 
-### Data Integrity (11 checks)
-- No missing required fields
-- No orphaned foreign keys
+### Data Integrity (22 checks)
+- No missing required fields (product_name, brand, country, category)
+- No orphaned foreign keys (nutrition, scores, servings, ingredients)
 - No duplicate products
-- All active products have servings
-- All active products have nutrition data
-- All active products have scores
-- All active products have ingredient rows
+- All active products have servings, nutrition, scores, and ingredient rows
+- Nutrition sanity (no negative values, sat_fat ≤ total_fat, sugars ≤ carbs, calories ≤ 900)
+- Category invariant (exactly 28 products per active category)
+- Score fields not null for active products
+- View consistency (v_master row count matches products)
 
-### Scoring Formula (22 checks)
+### Scoring Formula (25 checks)
 - Scores in valid range [1, 100]
 - Clean products score ≤ 20
 - Maximum unhealthy products score high
 - Identical nutrition → identical scores
 - Flag logic (salt ≥1.5g, sugar ≥5g, sat fat ≥5g)
+- High additive load flag consistency
 - NOVA classification valid (1–4)
 - Processing risk alignment with NOVA
 - Scoring version = v3.1
+- Nutri-Score label domain (A–E or UNKNOWN)
+- Confidence domain (verified, estimated, low)
 - **Regression**: Top Chips Faliste = 51±2 (palm oil)
 - **Regression**: Naleśniki = 17±2 (healthiest Żabka)
 - **Regression**: Melvit Płatki Owsiane = 11±2 (healthiest cereal)
 - **Regression**: Coca-Cola Zero = 8±2 (lowest-scoring drink)
 - **Regression**: Piątnica Skyr Naturalny = 9±2 (healthiest dairy)
 - **Regression**: Mestemacher Pumpernikiel = 17±2 (traditional rye)
-- **Tarczyński Kabanosy Klasyczne = 55±2 (high-fat cured meat)
+- **Regression**: Tarczyński Kabanosy Klasyczne = 55±2 (high-fat cured meat)
 - **Regression**: Knorr Nudle Pomidorowe Pikantne = 21±2 (instant noodle, palm oil)
 
 ### Source Coverage (7 informational reports)
@@ -166,6 +170,29 @@ Every change is validated against **35 automated checks** + 7 informational data
 **Test files**: `db/qa/QA__*.sql` — Run via `.\RUN_QA.ps1`
 
 Run tests after **every** schema change or data update.
+
+### Database Constraints
+
+19 CHECK constraints enforce domain rules at the database level:
+
+| Table            | Constraint                           | Rule                                          |
+| ---------------- | ------------------------------------ | --------------------------------------------- |
+| products         | `chk_products_country`               | country IN ('PL')                             |
+| products         | `chk_products_prep_method`           | Valid prep method or null                     |
+| products         | `chk_products_controversies`         | controversies IN ('none','palm oil')          |
+| scores           | `chk_scores_unhealthiness_range`     | 1–100                                         |
+| scores           | `chk_scores_nutri_label`             | A–E or UNKNOWN                                |
+| scores           | `chk_scores_confidence`              | verified / estimated / low                    |
+| scores           | `chk_scores_nova`                    | 1–4                                           |
+| scores           | `chk_scores_processing_risk`         | Low / Moderate / High / Unknown               |
+| scores           | `chk_scores_*_flag`                  | YES / NO (4 flags)                            |
+| scores           | `chk_scores_completeness`            | 0–100                                         |
+| nutrition_facts  | `chk_nf_non_negative` (7 cols)       | ≥ 0                                           |
+| nutrition_facts  | `chk_nf_sat_fat_le_total`            | saturated_fat ≤ total_fat                     |
+| nutrition_facts  | `chk_nf_sugars_le_carbs`             | sugars ≤ carbs                                |
+| servings         | `chk_servings_basis`                 | 'per 100 g' or 'per serving'                  |
+| servings         | `chk_servings_amount_positive`       | amount > 0                                    |
+| ingredients      | `chk_ingredients_additives`          | additives_count ≥ 0                           |
 
 ---
 
