@@ -110,3 +110,16 @@ GROUP BY p.product_id, p.brand, p.product_name, p.category,
          p.store_availability, sc.unhealthiness_score, sc.confidence
 HAVING COUNT(DISTINCT s.source_type) <= 1
 ORDER BY priority_rank ASC, p.category, p.brand;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 8. Ingredients raw text coverage by category (informational)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.category,
+       COUNT(*) AS total,
+       COUNT(*) FILTER (WHERE i.ingredients_raw IS NOT NULL AND i.ingredients_raw != '') AS has_ingredients,
+       ROUND(100.0 * COUNT(*) FILTER (WHERE i.ingredients_raw IS NOT NULL AND i.ingredients_raw != '') / COUNT(*), 0) AS pct
+FROM products p
+JOIN ingredients i ON i.product_id = p.product_id
+WHERE p.is_deprecated IS NOT TRUE
+GROUP BY p.category
+ORDER BY pct ASC, p.category;

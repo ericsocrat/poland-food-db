@@ -6,7 +6,7 @@
     Executes:
         1. QA__null_checks.sql (22 data integrity checks)
         2. QA__scoring_formula_tests.sql (29 algorithm validation checks)
-        3. QA__source_coverage.sql (7 source provenance checks — informational)
+        3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
@@ -102,7 +102,7 @@ else {
 $test3File = Join-Path $QA_DIR "QA__source_coverage.sql"
 if (Test-Path $test3File) {
     Write-Host ""
-    Write-Host "Running Test Suite 3: Source Coverage (7 checks — informational)..." -ForegroundColor Yellow
+    Write-Host "Running Test Suite 3: Source Coverage (8 checks — informational)..." -ForegroundColor Yellow
 
     # Run only checks 1-4 (actionable items); 5-7 are informational summaries
     $test3Content = Get-Content $test3File -Raw
