@@ -256,24 +256,24 @@ partial data — remaining NULLs are genuine gaps to fill. Żabka is fully popul
 
 19 CHECK constraints enforce domain values at the DB level:
 
-| Table             | Constraint                         | Rule                                                    |
-| ----------------- | ---------------------------------- | ------------------------------------------------------- |
-| `products`        | `chk_products_country`             | `country IN ('PL')`                                     |
-| `products`        | `chk_products_prep_method`         | NULL or `IN ('air-popped','baked','fried','deep-fried','none','not-applicable')` |
-| `products`        | `chk_products_controversies`       | `IN ('none','minor','moderate','serious','palm oil')`   |
-| `scores`          | `chk_scores_unhealthiness_range`   | 1–100                                                   |
-| `scores`          | `chk_scores_nutri_score_label`     | NULL or `IN ('A','B','C','D','E','UNKNOWN','NOT-APPLICABLE')` |
-| `scores`          | `chk_scores_confidence`            | NULL or `IN ('verified','estimated','low')`              |
-| `scores`          | `chk_scores_nova`                  | NULL or `IN ('1','2','3','4')`                           |
-| `scores`          | `chk_scores_processing_risk`       | NULL or `IN ('Low','Moderate','High')`                   |
-| `scores`          | 4 × `chk_scores_high_*_flag`       | NULL or `IN ('YES','NO')`                                |
-| `scores`          | `chk_scores_completeness`          | 0–100                                                   |
-| `nutrition_facts` | `chk_nutrition_non_negative`       | All 9 nutrition columns ≥ 0                             |
-| `nutrition_facts` | `chk_nutrition_satfat_le_totalfat`  | saturated_fat ≤ total_fat                               |
-| `nutrition_facts` | `chk_nutrition_sugars_le_carbs`    | sugars ≤ carbs                                          |
-| `servings`        | `chk_servings_basis`               | `IN ('per 100 g','per 100 ml','per piece','per serving')` |
-| `servings`        | `chk_servings_amount_positive`     | serving_amount > 0                                      |
-| `ingredients`     | `chk_ingredients_additives_non_negative` | additives_count ≥ 0                               |
+| Table             | Constraint                               | Rule                                                                             |
+| ----------------- | ---------------------------------------- | -------------------------------------------------------------------------------- |
+| `products`        | `chk_products_country`                   | `country IN ('PL')`                                                              |
+| `products`        | `chk_products_prep_method`               | NULL or `IN ('air-popped','baked','fried','deep-fried','none','not-applicable')` |
+| `products`        | `chk_products_controversies`             | `IN ('none','minor','moderate','serious','palm oil')`                            |
+| `scores`          | `chk_scores_unhealthiness_range`         | 1–100                                                                            |
+| `scores`          | `chk_scores_nutri_score_label`           | NULL or `IN ('A','B','C','D','E','UNKNOWN','NOT-APPLICABLE')`                    |
+| `scores`          | `chk_scores_confidence`                  | NULL or `IN ('verified','estimated','low')`                                      |
+| `scores`          | `chk_scores_nova`                        | NULL or `IN ('1','2','3','4')`                                                   |
+| `scores`          | `chk_scores_processing_risk`             | NULL or `IN ('Low','Moderate','High')`                                           |
+| `scores`          | 4 × `chk_scores_high_*_flag`             | NULL or `IN ('YES','NO')`                                                        |
+| `scores`          | `chk_scores_completeness`                | 0–100                                                                            |
+| `nutrition_facts` | `chk_nutrition_non_negative`             | All 9 nutrition columns ≥ 0                                                      |
+| `nutrition_facts` | `chk_nutrition_satfat_le_totalfat`       | saturated_fat ≤ total_fat                                                        |
+| `nutrition_facts` | `chk_nutrition_sugars_le_carbs`          | sugars ≤ carbs                                                                   |
+| `servings`        | `chk_servings_basis`                     | `IN ('per 100 g','per 100 ml','per piece','per serving')`                        |
+| `servings`        | `chk_servings_amount_positive`           | serving_amount > 0                                                               |
+| `ingredients`     | `chk_ingredients_additives_non_negative` | additives_count ≥ 0                                                              |
 
 ---
 
@@ -283,7 +283,7 @@ partial data — remaining NULLs are genuine gaps to fill. Żabka is fully popul
 | --------------- | ------------------------------- | -----: | --------- |
 | Data Integrity  | `QA__null_checks.sql`           |     22 | Yes       |
 | Scoring Formula | `QA__scoring_formula_tests.sql` |     25 | Yes       |
-| Source Coverage  | `QA__source_coverage.sql`       |      7 | No        |
+| Source Coverage | `QA__source_coverage.sql`       |      7 | No        |
 | EAN Validation  | `validate_eans.py`              |    all | Yes       |
 
 **Run:** `.\RUN_QA.ps1` — expects **47/47 critical checks passing**.
