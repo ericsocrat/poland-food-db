@@ -1,6 +1,7 @@
 # Poland Food DB — UX/UI Design Document
 
 > **Status:** Conceptual — architecture, structure, and UX logic only.
+> **Last updated:** 2026-02-10 (Phase 9: score explanation, confidence bands, better alternatives, misinterpretation defense)
 > **No implementation yet.** This document guides future front-end development.
 
 ---
@@ -157,7 +158,7 @@ Home (Dashboard)
 │  ║  Unhealthiness Score    12 / 100  ████░░░░░░ 🟢   ║   │
 │  ║  Nutri-Score            A        [green badge]    ║   │
 │  ║  Processing Risk        Low      NOVA 1           ║   │
-│  ║  Confidence             Full data                 ║   │
+│  ║  Data Confidence        High (92/100)  🟢         ║   │
 │  ╚═══════════════════════════════════════════════════╝   │
 │                                                         │
 │  ┌───────────────────────────────────────────────────┐  │
@@ -186,10 +187,51 @@ Home (Dashboard)
 │  │  Mleko pasteryzowane, kultury bakterii...         │  │
 │  └───────────────────────────────────────────────────┘  │
 │                                                         │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │  WHY THIS SCORE?  [expandable ▼]                  │  │
+│  │  ─────────────────────────────────────────────    │  │
+│  │  "This product scores well thanks to low sugar,   │  │
+│  │   low fat, and minimal processing."               │  │
+│  │                                                   │  │
+│  │  Factor Breakdown:                                │  │
+│  │  ├─ Sugar penalty      2/20  ██░░░░░░░░░░░░░░    │  │
+│  │  ├─ Sat fat penalty    3/20  ███░░░░░░░░░░░░░    │  │
+│  │  ├─ Salt penalty       1/15  █░░░░░░░░░░░░░░░    │  │
+│  │  ├─ Calorie penalty    2/10  ██░░░░░░░░░░░░░░    │  │
+│  │  ├─ Processing risk    0/10  ░░░░░░░░░░░░░░░░    │  │
+│  │  ├─ Additive load      0/10  ░░░░░░░░░░░░░░░░    │  │
+│  │  └─ Other factors      4/15  ████░░░░░░░░░░░░    │  │
+│  │                                                   │  │
+│  │  Category context: Ranked #3 of 28 in Dairy       │  │
+│  │  (avg: 28, this product: 61% better than avg)     │  │
+│  └───────────────────────────────────────────────────┘  │
+│                                                         │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │  BETTER ALTERNATIVES (same category)              │  │
+│  │  ─────────────────────────────────────────────    │  │
+│  │  1. Jogurt Naturalny (Score: 8)      -4 pts 🟢   │  │
+│  │  2. Maślanka Naturalna (Score: 10)   -2 pts 🟢   │  │
+│  │  3. Kefir Lekki (Score: 11)          -1 pt  🟢   │  │
+│  │                                    [See all →]    │  │
+│  └───────────────────────────────────────────────────┘  │
+│                                                         │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │  DATA CONFIDENCE  [expandable ▼]                  │  │
+│  │  ─────────────────────────────────────────────    │  │
+│  │  Overall: 92/100 (High)                           │  │
+│  │  ├─ Nutrition data     30/30  ████████████████    │  │
+│  │  ├─ Ingredient data    25/25  ████████████████    │  │
+│  │  ├─ Source quality     18/20  ███████████████░    │  │
+│  │  ├─ EAN present        10/10  ████████████████    │  │
+│  │  ├─ Allergen info       0/10  ░░░░░░░░░░░░░░░░   │  │
+│  │  └─ Serving data        5/5   ████████████████    │  │
+│  │  Missing: allergen declarations                   │  │
+│  └───────────────────────────────────────────────────┘  │
+│                                                         │
 │  [Compare with...]  [Add to Watchlist]                  │
 │                                                         │
-│  Data source: Open Food Facts · Scored: 2025-02-07      │
-│  Scoring version: v3.2 · Completeness: 90%              │
+│  Data source: Open Food Facts + Żabka manual            │
+│  Scoring version: v3.2 · Last scored: 2026-02-10        │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -317,6 +359,57 @@ Home (Dashboard)
 - NO: Check icon (✅) with muted text
 - NULL: Dash (—) to indicate "not assessed"
 
+### 4.5 Data Confidence (0-100)
+
+**Visual treatment:**
+- Small shield icon + score + band label
+- High (≥80): Green shield — "High confidence · Data is comprehensive"
+- Medium (50-79): Amber shield — "Medium confidence · Some data may be estimated"
+- Low (<50): Red shield — "Low confidence · Limited data available"
+
+**When confidence is medium or low:**
+- Show a subtle banner below the Health Summary box:
+  `"⚠ This product's score is based on incomplete data. Some values may be estimated."`
+- Visually de-emphasize the unhealthiness score (reduce opacity to 70%)
+- Add `(estimated)` suffix to any score shown in listings
+
+**Expandable breakdown:**
+- On click/tap, reveal the 6-component breakdown (nutrition, ingredients, source, EAN, allergens, serving data)
+- Each component shows points earned vs. max as a micro progress bar
+- List missing data items explicitly (e.g., "Missing: allergen declarations, per-serving data")
+
+**In listings (Category Listing, Search Results, Compare View):**
+- Show small confidence indicator next to score: `12 🛡️` (high), `28 ⚠` (medium/low)
+- Filter dropdown: "Show: All / High confidence only"
+
+### 4.6 Score Explanation
+
+**Visual treatment:** Expandable panel on Product Detail page.
+
+**Header (always visible):**
+- Human-readable headline from `api_score_explanation().headline`:
+  e.g., *"This product scores well thanks to low sugar and minimal processing."*
+
+**Expanded content:**
+- **Factor breakdown:** Horizontal bar chart showing each scoring factor's contribution
+  - Sort by impact (largest penalty first)
+  - Each bar shows: factor name, points/max, input value, visual bar
+  - Colour: green (0-30% of max), yellow (30-60%), orange (60-80%), red (>80%)
+  
+- **Category context:** Comparative positioning
+  - "Ranked #3 of 28 in Dairy"
+  - "61% better than the category average (28)"
+  - Small histogram showing score distribution in the category with this product highlighted
+
+- **Warnings array:** Displayed as amber callout boxes
+  - e.g., "⚠ Ultra-processed (NOVA 4) — high additive load"
+  - e.g., "⚠ Contains palm oil"
+
+**Anti-misinterpretation rules:**
+- Never show the breakdown without the headline narrative
+- Always show category context — raw numbers without comparison are misleading
+- If confidence < 50, prefix with: "Note: This breakdown is based on limited data."
+
 ---
 
 ## 5. Mobile App Design
@@ -383,6 +476,11 @@ Response:      { display_label, description, tooltip_text, unit, value_range }
 | nutri_score_label     | "Nutri-Score: A (healthiest) to E (least healthy)."                 |
 | nova_classification   | "NOVA: 1=natural, 2=basic, 3=processed, 4=ultra-processed."         |
 | high_salt_flag        | "Flags products with salt > 1.5g per 100g."                         |
+| confidence_score      | "How reliable the data is (0-100). Based on nutrition completeness, ingredient availability, source quality, and EAN coverage." |
+| confidence_band       | "High (≥80): comprehensive data. Medium (50-79): partial data. Low (<50): limited data." |
+| prep_method           | "How the product is typically prepared: ready-to-eat, needs-heating, needs-cooking, etc." |
+| ingredients_english   | "Ingredients translated to English from the Polish label."          |
+| store_availability    | "Retail chains where this product has been confirmed available."     |
 | data_completeness_pct | "How complete the source data was for scoring."                     |
 | calories              | "Kilocalories per serving."                                         |
 | ean                   | "Barcode number. 590 prefix indicates Polish origin."               |
@@ -437,16 +535,29 @@ Response:      { display_label, description, tooltip_text, unit, value_range }
 ```
 
 **API endpoints (via Supabase PostgREST):**
-- `GET /rest/v1/v_master?is_deprecated=eq.false&order=unhealthiness_score.asc`
-- `GET /rest/v1/v_master?category=eq.Dairy&order=unhealthiness_score.asc`
-- `GET /rest/v1/v_master?product_id=eq.42`
-- `GET /rest/v1/column_metadata?table_name=eq.scores`
-- `GET /rest/v1/rpc/search_products?query=mleko`
 
-**Key queries pre-defined as Postgres functions:**
-- `search_products(query text)` — full-text search
-- `category_stats()` — product count + avg score per category
-- `top_picks(category text, limit int)` — best choices per category
+Views (direct GET):
+- `GET /rest/v1/v_api_category_overview` — Dashboard category grid (20 rows)
+- `GET /rest/v1/v_product_confidence?confidence_band=eq.low` — Confidence filtering
+- `GET /rest/v1/column_metadata?table_name=eq.scores` — Tooltip/help text
+
+RPC functions (POST /rpc/):
+- `POST /rpc/api_product_detail` — Full product detail as structured JSONB
+- `POST /rpc/api_category_listing` — Paged category listing with sort/filter
+- `POST /rpc/api_search_products` — Full-text + trigram search
+- `POST /rpc/api_score_explanation` — Score breakdown + category context
+- `POST /rpc/api_better_alternatives` — Healthier substitutes
+- `POST /rpc/api_data_confidence` — Data confidence score + breakdown
+
+> **See [API_CONTRACTS.md](API_CONTRACTS.md) for complete response shapes and field documentation.**
+
+**Key Postgres functions (internal, not exposed directly):**
+- `compute_unhealthiness_v32()` — 9-factor scoring formula
+- `compute_data_confidence()` — 6-component confidence scoring
+- `find_similar_products()` — Jaccard ingredient similarity
+- `find_better_alternatives()` — Healthier alternatives ranking
+- `refresh_all_materialized_views()` — Refresh all MVs after data changes
+- `mv_staleness_check()` — Check if MVs need refresh
 
 ---
 
@@ -465,22 +576,108 @@ Response:      { display_label, description, tooltip_text, unit, value_range }
 ## 10. Trust & Transparency
 
 ### 10.1 Source Attribution
-Every product shows: data source, scoring version, scored date, and completeness percentage.
+Every product shows: data source (may be multi-source), scoring version, last scored date, and data confidence score with band.
 
 ### 10.2 Limitations Badge
-Products with `data_completeness_pct < 70` or `confidence = 'estimated'` show a visible badge:
-`⚠ Limited data — score is estimated`
+Products with `confidence_band = 'low'` (score < 50) show a visible warning:
+`"⚠ Limited data — this score has lower reliability. Check the product label for details."`
+
+Products with `confidence_band = 'medium'` (score 50-79) show a subtle note:
+`"ℹ Some data may be estimated. Confidence: Medium (score/100)."`
+
+Products with `confidence_band = 'high'` (score ≥ 80) show a green shield:
+`"🛡️ High confidence — comprehensive data from verified sources."`
 
 ### 10.3 Methodology Page (`/about`)
-- How unhealthiness_score is calculated (formula breakdown)
-- What each NOVA group means
+- How unhealthiness_score is calculated (9-factor formula breakdown with weights)
+- What each NOVA group means and how it affects the score
 - How Nutri-Score is assigned
-- Data sources (Open Food Facts, Żabka manual data)
-- Update frequency
-- Known limitations
+- Data sources (Open Food Facts API, Żabka manual data, other category-specific sources)
+- How data confidence is calculated (6 components, full formula)
+- Update frequency and MV refresh strategy
+- Known limitations and caveats
 
 ### 10.4 Anti-Health-Halo Principles
 1. **Never rank a category as "healthy" overall** — e.g. "Dairy" is not inherently healthy.
 2. **Always show NOVA alongside Nutri-Score** — prevents ultra-processed foods with good Nutri-Scores from appearing "healthy."
 3. **Show context**: "12/100 within Dairy" not just "12/100."
 4. **Disclaimers visible (not buried in footer)**: "This data is for informational purposes only."
+5. **Show conflicting signals explicitly**: When Nutri-Score is A/B but NOVA is 4, show a prominent amber callout: "Good nutrition score but ultra-processed. Consider the processing level."
+6. **De-emphasize uncertain scores**: When confidence is medium/low, visually reduce score prominence (opacity, smaller font) and add "(estimated)" suffix.
+
+---
+
+## 11. Misinterpretation Defense
+
+This section defines patterns to prevent users from drawing incorrect conclusions from the data.
+
+### 11.1 Conflicting Signal Patterns
+
+| Scenario | Signal Conflict | UX Response |
+|---|---|---|
+| Good Nutri-Score (A/B) + NOVA 4 | Nutrition looks good but highly processed | Amber callout: *"Good nutrition profile but ultra-processed. Processing adds additives not captured by Nutri-Score."* |
+| Low score + High salt flag | Score seems fine but salt is extreme | Red flag badge remains visible even when overall score is green |
+| Low score + Low confidence | Score looks good but data is incomplete | De-emphasize score visually, show confidence warning prominently |
+| NOVA 1 + High score | Minimally processed but high in sugar/fat/salt | Note: *"While minimally processed, this product has high sugar/fat/salt content."* |
+
+### 11.2 Score Context Rules
+
+1. **Never show a score without category context.** A score of 25 in "Candy" is excellent; in "Water" it's terrible.
+   - Always display: "X/100 in [Category]" with the category average
+   - On listings: show rank badge (#3 of 28) 
+
+2. **Never compare scores across categories without a disclaimer.**
+   - Cross-category comparison view must show: *"Scores are relative within each category. A low score in Chips ≠ a low score in Dairy."*
+
+3. **Show the score distribution, not just the number.**
+   - On Product Detail, include a mini histogram of the category's score distribution
+   - Highlight the current product's position
+
+### 11.3 "What This Score Doesn't Tell You"
+
+Display this as an expandable section or info icon on the methodology page and Product Detail:
+
+> **What this score captures:**
+> - Nutrient density (sugar, salt, saturated fat, calories)
+> - Processing level (NOVA classification)
+> - Additive load (EFSA concern tiers)
+> - Data quality (confidence scoring)
+>
+> **What this score does NOT capture:**
+> - Individual dietary needs (allergies, medications, pregnancy)
+> - Portion sizes as actually consumed
+> - Micronutrient content (vitamins, minerals)
+> - Environmental impact or ethical sourcing
+> - Taste, freshness, or preparation quality
+> - Whether this product is appropriate for your specific health goals
+>
+> **Always consult a healthcare professional for dietary advice.**
+
+### 11.4 Confidence-Aware Display Rules
+
+| Confidence Band | Score Display | Comparison Allowed? | Better Alternatives? |
+|---|---|---|---|
+| High (≥80) | Full colour, normal size | Yes | Yes |
+| Medium (50-79) | Muted colour (70% opacity), "(estimated)" suffix | Yes, with caveat | Yes, with caveat |
+| Low (<50) | Grey, "(limited data)" suffix, warning banner | No — hide from comparison | Show with warning: "Alternatives may be more reliable" |
+
+### 11.5 Copy Blocks for Common Scenarios
+
+**Product with perfect score (0-10):**
+> "This product has one of the lowest unhealthiness scores in its category. However, 'low unhealthiness' does not mean 'eat unlimited amounts.' Portion size and your overall diet matter."
+
+**Product with very high score (80+):**
+> "This product scores high on our unhealthiness scale. This doesn't mean you should never eat it — occasional consumption as part of a balanced diet is fine. Consider the 'Better Alternatives' section for everyday options."
+
+**Product missing key data:**
+> "We don't have complete data for this product (confidence: X/100). The score shown may not fully reflect its nutritional profile. We recommend checking the product label for accurate information."
+
+**Score explanation unavailable:**
+> "Score breakdown is not available for this product because it uses an older scoring version. The overall score is still valid."
+
+### 11.6 Comparison View Safeguards
+
+1. **Block comparing products with confidence_band = 'low'** — show message: *"This product has insufficient data for reliable comparison."*
+2. **When comparing across categories**, show a persistent banner: *"These products belong to different categories. Scores are most meaningful when compared within the same category."*
+3. **Highlight the winner clearly but add nuance**: Instead of "Product A is healthier", say "Product A has a lower unhealthiness score (12 vs 38 in Dairy). Both are relatively low concern."
+4. **Never auto-rank by score alone** — default sort should consider confidence, so low-confidence products don't appear at the top.
