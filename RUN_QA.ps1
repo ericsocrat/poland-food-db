@@ -5,7 +5,7 @@
 .DESCRIPTION
     Executes:
         1. QA__null_checks.sql (22 data integrity checks)
-        2. QA__scoring_formula_tests.sql (25 algorithm validation checks)
+        2. QA__scoring_formula_tests.sql (29 algorithm validation checks)
         3. QA__source_coverage.sql (7 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)
 
@@ -75,7 +75,7 @@ if (-not (Test-Path $test2File)) {
 }
 
 Write-Host ""
-Write-Host "Running Test Suite 2: Scoring Formula (25 checks)..." -ForegroundColor Yellow
+Write-Host "Running Test Suite 2: Scoring Formula (29 checks)..." -ForegroundColor Yellow
 
 $test2Content = Get-Content $test2File -Raw
 $test2Output = $test2Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
@@ -88,7 +88,7 @@ if ($LASTEXITCODE -ne 0) {
 
 $test2Lines = ($test2Output | Out-String).Trim()
 if ($test2Lines -eq "" -or $test2Lines -match '^\s*$') {
-    Write-Host "  ✓ PASS (25/25 — zero violations)" -ForegroundColor Green
+    Write-Host "  ✓ PASS (29/29 — zero violations)" -ForegroundColor Green
     $test2Pass = $true
 }
 else {

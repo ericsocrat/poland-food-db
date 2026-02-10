@@ -137,20 +137,20 @@ poland-food-db/
 
 ### Products Columns (key)
 
-| Column               | Type      | Notes                                                               |
-| -------------------- | --------- | ------------------------------------------------------------------- |
-| `product_id`         | `bigint`  | Auto-incrementing identity                                          |
-| `country`            | `text`    | Always `'PL'`                                                       |
-| `brand`              | `text`    | Manufacturer or brand name                                          |
-| `product_name`       | `text`    | Full product name including variant                                 |
-| `category`           | `text`    | One of 20 food categories                                           |
-| `product_type`       | `text`    | Subtype (e.g., `'yogurt'`, `'beer'`)                                |
-| `ean`                | `text`    | EAN-13 barcode (unique index)                                       |
-| `prep_method`        | `text`    | Preparation method (affects scoring)                                |
-| `store_availability` | `text`    | Normalized Polish chain name (Biedronka, Lidl, Żabka, etc.) or NULL |
-| `controversies`      | `text`    | `'none'` or `'palm oil'` etc.                                       |
-| `is_deprecated`      | `boolean` | Soft-delete flag                                                    |
-| `deprecated_reason`  | `text`    | Why deprecated                                                      |
+| Column               | Type      | Notes                                                                      |
+| -------------------- | --------- | -------------------------------------------------------------------------- |
+| `product_id`         | `bigint`  | Auto-incrementing identity                                                 |
+| `country`            | `text`    | Always `'PL'`                                                              |
+| `brand`              | `text`    | Manufacturer or brand name                                                 |
+| `product_name`       | `text`    | Full product name including variant                                        |
+| `category`           | `text`    | One of 20 food categories                                                  |
+| `product_type`       | `text`    | Subtype (e.g., `'yogurt'`, `'beer'`)                                       |
+| `ean`                | `text`    | EAN-13 barcode (unique index)                                              |
+| `prep_method`        | `text`    | Preparation method (affects scoring). NOT NULL, default `'not-applicable'` |
+| `store_availability` | `text`    | Normalized Polish chain name (Biedronka, Lidl, Żabka, etc.) or NULL        |
+| `controversies`      | `text`    | `'none'` or `'palm oil'` etc.                                              |
+| `is_deprecated`      | `boolean` | Soft-delete flag                                                           |
+| `deprecated_reason`  | `text`    | Why deprecated                                                             |
 
 ### Key Functions
 
@@ -238,9 +238,12 @@ unhealthiness_score = compute_unhealthiness_v31(
 | Value              | Internal Score |
 | ------------------ | -------------- |
 | `'air-popped'`     | 20             |
+| `'steamed'`        | 30             |
 | `'baked'`          | 40             |
 | `'not-applicable'` | 50 (default)   |
 | `'none'`           | 50 (default)   |
+| `'grilled'`        | 60             |
+| `'smoked'`         | 65             |
 | `'fried'`          | 80             |
 | `'deep-fried'`     | 100            |
 
@@ -312,11 +315,11 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | Suite           | File                            | Checks | Blocking? |
 | --------------- | ------------------------------- | -----: | --------- |
 | Data Integrity  | `QA__null_checks.sql`           |     22 | Yes       |
-| Scoring Formula | `QA__scoring_formula_tests.sql` |     25 | Yes       |
+| Scoring Formula | `QA__scoring_formula_tests.sql` |     29 | Yes       |
 | Source Coverage | `QA__source_coverage.sql`       |      7 | No        |
 | EAN Validation  | `validate_eans.py`              |    all | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **47/47 critical checks passing**.
+**Run:** `.\RUN_QA.ps1` — expects **51/51 critical checks passing**.
 
 **Key regression tests** (in scoring suite):
 
@@ -327,6 +330,10 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 - Melvit Płatki Owsiane ≈ 11 (healthiest cereal)
 - BoboVita Kaszka Mleczna ≈ varies (baby food regression)
 - Somersby Blueberry Cider ≈ varies (alcohol regression)
+- Mestemacher Chleb wielozbożowy ≈ 19 (bread regression, baked)
+- Marinero Łosoś wędzony ≈ 30 (smoked salmon regression)
+- Dr. Oetker Pizza 4 sery ≈ 31 (frozen pizza regression, baked)
+- Lajkonik Paluszki extra cienkie ≈ 32 (snacks regression, baked)
 
 Run QA after **every** schema change, data update, or scoring formula adjustment.
 

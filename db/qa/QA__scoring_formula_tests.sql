@@ -390,3 +390,63 @@ FROM products p
 JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND sc.confidence NOT IN ('estimated', 'verified');
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 26: Known product regression test (Mestemacher Chleb wielozbożowy)
+--          Bread category: whole-grain rye, baked, low score → 17-21
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Mestemacher Chleb wielozbożowy score changed unexpectedly' AS issue,
+       CONCAT('Expected 17-21, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Chleb wielozbożowy żytni pełnoziarnisty'
+  AND p.brand = 'Mestemacher'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 17 AND 21;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 27: Known product regression test (Marinero Łosoś wędzony)
+--          Seafood & Fish: smoked salmon, prep_method='smoked' → 28-32
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Marinero Łosoś wędzony score changed unexpectedly' AS issue,
+       CONCAT('Expected 28-32, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Łosoś wędzony na zimno'
+  AND p.brand = 'Marinero'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 28 AND 32;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 28: Known product regression test (Dr. Oetker Pizza 4 sery)
+--          Frozen & Prepared: frozen pizza, baked → 29-33
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Dr. Oetker Pizza 4 sery score changed unexpectedly' AS issue,
+       CONCAT('Expected 29-33, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Pizza 4 sery, głęboko mrożona.'
+  AND p.brand = 'Dr. Oetker'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 29 AND 33;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 29: Known product regression test (Lajkonik Paluszki extra cienkie)
+--          Snacks: baked pretzels, moderate salt/fat → 30-34
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.unhealthiness_score,
+       'REGRESSION: Lajkonik Paluszki score changed unexpectedly' AS issue,
+       CONCAT('Expected 30-34, got ', sc.unhealthiness_score) AS detail
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.product_name = 'Paluszki extra cienkie'
+  AND p.brand = 'Lajkonik'
+  AND p.is_deprecated IS NOT TRUE
+  AND sc.unhealthiness_score::int NOT BETWEEN 30 AND 34;
