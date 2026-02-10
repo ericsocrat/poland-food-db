@@ -88,7 +88,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 38 append-only schema migrations
+│   └── migrations/                  # 39 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -119,10 +119,12 @@ poland-food-db/
 │       └── 20260210001900_ingredient_concern_scoring.sql   # EFSA concern tiers + v3.2 scoring function
 │       └── ...                                              # (migrations 2000–2700: see file listing)
 │       ├── 20260210002800_api_surfaces.sql                  # API views + RPC functions + pg_trgm search indexes
-│       └── 20260210002900_confidence_scoring.sql            # Composite confidence score (0-100) + MV
+│       ├── 20260210002900_confidence_scoring.sql            # Composite confidence score (0-100) + MV
+│       └── 20260210003000_performance_guardrails.sql        # MV refresh helper, staleness check, partial indexes
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── API_CONTRACTS.md             # API surface contracts (6 endpoints) — response shapes, hidden columns
+│   ├── PERFORMANCE_REPORT.md        # Performance audit, scale projections, query patterns
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
 │   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
@@ -197,6 +199,8 @@ poland-food-db/
 | `api_score_explanation()`     | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                      |
 | `api_better_alternatives()`   | Healthier substitutes wrapper with source product context and structured JSON                                                |
 | `api_search_products()`       | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                          |
+| `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                            |
+| `mv_staleness_check()`        | Checks if MVs are stale by comparing row counts to source tables                                                             |
 
 ### Views
 
