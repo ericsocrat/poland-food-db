@@ -426,3 +426,25 @@ WHERE sv.serving_basis = 'per 100 g'
        + COALESCE(n.fibre_g,0)*2))
       > n.calories * 0.15
 ORDER BY pct_diff DESC;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 36. Ingredient data coverage (informational)
+--     Products without product_ingredient rows cannot have accurate
+--     ingredient concern scores. These are OFF upstream data gaps.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT
+  COUNT(*) AS active_products,
+  COUNT(*) FILTER (WHERE pi_count > 0) AS with_ingredient_data,
+  COUNT(*) FILTER (WHERE pi_count = 0) AS without_ingredient_data,
+  ROUND(COUNT(*) FILTER (WHERE pi_count = 0)::numeric / COUNT(*)::numeric * 100, 1) AS pct_missing,
+  COUNT(*) FILTER (WHERE pi_count = 0 AND additives_count > 0) AS has_additives_but_no_data
+FROM (
+  SELECT p.product_id,
+         COALESCE(pc.cnt, 0) AS pi_count,
+         COALESCE(i.additives_count, 0) AS additives_count
+  FROM products p
+  LEFT JOIN (SELECT product_id, COUNT(*) AS cnt FROM product_ingredient GROUP BY product_id) pc
+    ON pc.product_id = p.product_id
+  LEFT JOIN ingredients i ON i.product_id = p.product_id
+  WHERE p.is_deprecated IS NOT TRUE
+) sub;

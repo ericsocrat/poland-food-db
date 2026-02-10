@@ -9,7 +9,7 @@
 > **Servings:** 877 rows — 560 per-100g (canonical) + 317 per-serving (57% real serving size coverage)
 > **Ingredient analytics:** 1,257 unique ingredients (all clean ASCII English), 728 allergen declarations, 782 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 61 critical checks + 11 informational reports — all passing
+> **QA:** 61 critical checks + 12 informational reports — all passing
 
 ---
 
@@ -79,7 +79,7 @@ poland-food-db/
 │   │   ├── chips/                   # Reference implementation (copy for new categories)
 │   │   └── ... (19 more)            # All normalized to 28 active products
 │   ├── qa/                          # Test suites
-│   │   ├── QA__null_checks.sql      # 32 data integrity checks + 3 informational
+│   │   ├── QA__null_checks.sql      # 32 data integrity checks + 4 informational
 │   │   ├── QA__scoring_formula_tests.sql  # 29 scoring validation checks
 │   │   └── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   └── views/
@@ -224,7 +224,6 @@ PIPELINE__<category>__01_insert_products.sql   # Upsert products (must run FIRST
 PIPELINE__<category>__02_add_servings.sql       # Serving definitions
 PIPELINE__<category>__03_add_nutrition.sql      # Nutrition facts
 PIPELINE__<category>__04_scoring.sql            # Scores + flags + Nutri-Score + NOVA
-PIPELINE__<category>__05_personal_lenses.sql    # (optional, Żabka only)
 ```
 
 **Order matters:** Products (01) must exist before servings (02) and nutrition (03). Scoring (04) creates score/ingredient rows if missing, then computes all values.
@@ -342,7 +341,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | --------------- | ------------------------------- | -----: | --------- |
 | Data Integrity  | `QA__null_checks.sql`           |     32 | Yes       |
 | Scoring Formula | `QA__scoring_formula_tests.sql` |     29 | Yes       |
-| Source Coverage | `QA__source_coverage.sql`       |      7 | No        |
+| Source Coverage | `QA__source_coverage.sql`       |      8 | No        |
 | EAN Validation  | `validate_eans.py`              |    all | Yes       |
 
 **Run:** `.\RUN_QA.ps1` — expects **61/61 critical checks passing**.
@@ -454,11 +453,12 @@ chore: normalize categories to 28 products
 
 ```
 unhealthiness_score (1-100) =
-  sat_fat(0.18) + sugars(0.18) + salt(0.18) + calories(0.10) +
-  trans_fat(0.12) + additives(0.07) + prep_method(0.09) + controversies(0.08)
+  sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +
+  trans_fat(0.11) + additives(0.07) + prep_method(0.08) +
+  controversies(0.08) + ingredient_concern(0.05)
 ```
 
-**Ceilings** (per 100g): sat fat 10g, sugars 27g, salt 3g, trans fat 2g, calories 600 kcal, additives 10.
+**Ceilings** (per 100g): sat fat 10g, sugars 27g, salt 3g, trans fat 2g, calories 600 kcal, additives 10, ingredient concern 100.
 
 | Band     | Score  | Meaning        |
 | -------- | ------ | -------------- |

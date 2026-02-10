@@ -127,7 +127,7 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **61 automated checks** + 11 informational data quality reports:
+Every change is validated against **61 automated checks** + 12 informational data quality reports:
 
 ### Data Integrity (32 checks)
 - No missing required fields (product_name, brand, country, category)
