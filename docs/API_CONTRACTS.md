@@ -463,12 +463,82 @@ Body: {
 - `api_product_detail(id)` — single product lookup, fast
 - `api_category_listing(cat, sort, dir, limit, offset)` — paged, max 100/page
 - `api_search_products(query)` — debounce 300ms, max 100/page
+- `api_data_confidence(id)` — single product confidence lookup, fast
+- `v_product_confidence` — materialized view, pre-computed for all 560 products
 
 ### Expensive Patterns (cache or limit)
 - `api_score_explanation(id)` — computes score + category context, ~50ms
 - `api_better_alternatives(id)` — joins similarity function, ~200ms for large categories
+- `compute_data_confidence(id)` — dynamic computation, prefer `v_product_confidence` or `api_data_confidence()`
 
 ### Never Do
 - `SELECT * FROM v_master` in frontend — exposes 63 internal columns
 - Call `find_similar_products()` directly — use `api_better_alternatives()` wrapper
 - Skip pagination on category listings — always pass `p_limit`
+
+---
+
+## 7. Data Confidence API
+
+### `api_data_confidence(p_product_id bigint)` → JSONB
+
+Returns a composite data confidence score (0–100) indicating how reliable the data is.
+
+**PostgREST:** `POST /rpc/api_data_confidence` with `{ "p_product_id": 32 }`
+
+**Response shape:**
+```jsonc
+{
+  "product_id": 32,
+  "confidence_score": 98,        // 0-100
+  "confidence_band": "high",     // "high" (≥80) | "medium" (50-79) | "low" (<50)
+  "components": {
+    "nutrition":    { "points": 30, "max": 30 },  // 5 pts each for 6 key nutrients
+    "ingredients":  { "points": 25, "max": 25 },  // 15 if raw text + 10 if normalized
+    "source":       { "points": 18, "max": 20 },  // mapped from product_sources.confidence_pct
+    "ean":          { "points": 10, "max": 10 },  // 10 if EAN present
+    "allergens":    { "points": 10, "max": 10 },  // 10 if allergen declarations exist
+    "serving_data": { "points": 5,  "max": 5 }   // 5 if real per-serving data exists
+  },
+  "data_completeness_profile": {
+    "ingredients": "complete",   // "complete" | "partial" | "missing"
+    "nutrition":   "full",       // "full" | "partial" | "missing"
+    "allergens":   "known"       // "known" | "unknown"
+  },
+  "missing_data": [],            // e.g. ["ean", "allergen_declarations", "per_serving_data"]
+  "explanation": "This product has comprehensive data from verified sources. The score is highly reliable."
+}
+```
+
+**Confidence bands:**
+| Band | Score | Meaning |
+|------|-------|---------|
+| `high` | ≥80 | Comprehensive data from verified sources. Score is highly reliable. |
+| `medium` | 50–79 | Partial data coverage. Some fields may be estimated. |
+| `low` | <50 | Limited data. Score may not fully reflect the product's profile. |
+
+### `v_product_confidence` (Materialized View)
+
+Pre-computed confidence for all 560 products. Faster than calling `compute_data_confidence()` per-product.
+
+**PostgREST:** `GET /v_product_confidence?confidence_band=eq.low`
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `product_id` | bigint | Product identifier |
+| `product_name` | text | Product name |
+| `brand` | text | Brand name |
+| `category` | text | Product category |
+| `nutrition_pts` | int | 0–30 nutrition completeness |
+| `ingredient_pts` | int | 0–25 ingredient completeness |
+| `source_pts` | int | 0–20 source confidence |
+| `ean_pts` | int | 0–10 EAN presence |
+| `allergen_pts` | int | 0–10 allergen declarations |
+| `serving_pts` | int | 0–5 per-serving data |
+| `confidence_score` | int | 0–100 composite |
+| `confidence_band` | text | high/medium/low |
+| `ingredient_status` | text | complete/partial/missing |
+| `nutrition_status` | text | full/partial/missing |
+| `allergen_status` | text | known/unknown |
+
+> **Refresh:** Run `REFRESH MATERIALIZED VIEW CONCURRENTLY v_product_confidence;` after data updates.

@@ -9,6 +9,7 @@
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)
         5. QA__api_surfaces.sql (8 API contract validation checks — blocking)
+        6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suite 3 is informational and does not affect the exit code.
@@ -242,6 +243,45 @@ else {
     }
 }
 
+# ─── Test 6: Confidence Scoring Validation ─────────────────────────────────
+
+$test6File = Join-Path $QA_DIR "QA__confidence_scoring.sql"
+if (-not (Test-Path $test6File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 6: Confidence Scoring (file not found)" -ForegroundColor DarkYellow
+    $test6Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 6: Confidence Scoring (10 checks)..." -ForegroundColor Yellow
+
+    $test6Content = Get-Content $test6File -Raw
+    $test6Output = $test6Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test6Output" -ForegroundColor DarkRed
+        $test6Pass = $false
+        $jsonResult.suites += @{ name = "Confidence Scoring"; checks = 10; status = "error"; violations = @() }
+    }
+    else {
+        $test6Lines = ($test6Output | Out-String).Trim()
+        $test6Violations = ($test6Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test6Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (10/10 — zero violations)" -ForegroundColor Green
+            $test6Pass = $true
+            $jsonResult.suites += @{ name = "Confidence Scoring"; checks = 10; status = "pass"; violations = @() }
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test6Lines -ForegroundColor DarkRed
+            $test6Pass = $false
+            $violationList6 = ($test6Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "Confidence Scoring"; checks = 10; status = "fail"; violations = @($violationList6) }
+        }
+    }
+}
+
 # ─── Database Inventory ─────────────────────────────────────────────────────
 
 Write-Host ""
@@ -268,7 +308,7 @@ Write-Host ($invOutput | Out-String).Trim() -ForegroundColor DarkGray
 
 # ─── Summary ────────────────────────────────────────────────────────────────
 
-$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass
+$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass -and $test6Pass
 $jsonResult.overall = if ($allPass) { "pass" } else { "fail" }
 
 # Parse inventory into JSON-friendly structure
@@ -318,10 +358,11 @@ if ($allPass) {
 }
 else {
     Write-Host "  ✗ SOME TESTS FAILED" -ForegroundColor Red
-    Write-Host "    Test Suite 1 (Integrity):  $(if ($test1Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test1Pass) { "Green" } else { "Red" })
-    Write-Host "    Test Suite 2 (Formula):    $(if ($test2Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test2Pass) { "Green" } else { "Red" })
-    Write-Host "    Test Suite 4 (EAN):        $(if ($test4Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test4Pass) { "Green" } else { "Red" })
-    Write-Host "    Test Suite 5 (API):        $(if ($test5Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test5Pass) { "Green" } else { "Red" })
+    Write-Host "    Test Suite 1 (Integrity):    $(if ($test1Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test1Pass) { "Green" } else { "Red" })
+    Write-Host "    Test Suite 2 (Formula):      $(if ($test2Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test2Pass) { "Green" } else { "Red" })
+    Write-Host "    Test Suite 4 (EAN):          $(if ($test4Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test4Pass) { "Green" } else { "Red" })
+    Write-Host "    Test Suite 5 (API):          $(if ($test5Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test5Pass) { "Green" } else { "Red" })
+    Write-Host "    Test Suite 6 (Confidence):   $(if ($test6Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test6Pass) { "Green" } else { "Red" })
     Write-Host ""
     exit 1
 }

@@ -29,7 +29,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (72 critical checks + EAN + 8 informational)
+# All tests (82 critical checks + EAN + 8 informational)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -106,12 +106,13 @@ poland-food-db/
 │   │   ├── QA__null_checks.sql           # 35 integrity checks
 │   │   ├── QA__scoring_formula_tests.sql # 29 algorithm tests
 │   │   ├── QA__api_surfaces.sql          # 8 API contract checks
+│   │   ├── QA__confidence_scoring.sql    # 10 confidence scoring checks
     │   └── QA__source_coverage.sql       # 8 data quality reports
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (37 files)
+    └── migrations/          # Schema migrations (38 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
