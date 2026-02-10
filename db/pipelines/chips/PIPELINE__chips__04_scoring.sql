@@ -181,12 +181,3 @@ from products p
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Chips'
   and p.is_deprecated is not true;
-
-
--- 6. SET confidence level
-update scores sc set
-  confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
-from products p
-where p.product_id = sc.product_id
-  and p.country = 'PL' and p.category = 'Chips'
-  and p.is_deprecated is not true;
