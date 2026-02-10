@@ -393,3 +393,36 @@ SELECT
     (SELECT COUNT(*) FROM product_allergen) AS total_allergen_rows,
     (SELECT COUNT(*) FROM product_trace)    AS total_trace_rows,
     (SELECT COUNT(*) FROM sources)          AS total_source_rows;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 35. Energy cross-check: declared vs computed calories (informational)
+--     Formula: (fat×9) + (carbs×4) + (protein×4) + (fibre×2)
+--     ±15% tolerance. Alcohol products expected to fail (ethanol = 7 kcal/g
+--     not captured in macros).
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.category, p.brand, p.product_name,
+       n.calories AS declared_kcal,
+       ROUND(COALESCE(n.total_fat_g,0)*9
+           + COALESCE(n.carbs_g,0)*4
+           + COALESCE(n.protein_g,0)*4
+           + COALESCE(n.fibre_g,0)*2) AS computed_kcal,
+       ROUND(ABS(n.calories
+           - (COALESCE(n.total_fat_g,0)*9
+            + COALESCE(n.carbs_g,0)*4
+            + COALESCE(n.protein_g,0)*4
+            + COALESCE(n.fibre_g,0)*2))
+           / NULLIF(n.calories, 0) * 100, 1) AS pct_diff,
+       'ENERGY CROSS-CHECK FAIL' AS issue
+FROM nutrition_facts n
+JOIN servings sv ON sv.serving_id = n.serving_id
+JOIN products p ON p.product_id = n.product_id
+WHERE sv.serving_basis = 'per 100 g'
+  AND p.is_deprecated IS NOT TRUE
+  AND n.calories IS NOT NULL AND n.calories > 0
+  AND ABS(n.calories
+      - (COALESCE(n.total_fat_g,0)*9
+       + COALESCE(n.carbs_g,0)*4
+       + COALESCE(n.protein_g,0)*4
+       + COALESCE(n.fibre_g,0)*2))
+      > n.calories * 0.15
+ORDER BY pct_diff DESC;

@@ -9,7 +9,7 @@
 > **Servings:** 877 rows — 560 per-100g (canonical) + 317 per-serving (57% real serving size coverage)
 > **Ingredient analytics:** 1,257 unique ingredients (all clean ASCII English), 728 allergen declarations, 782 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 58 critical checks + 10 informational reports — all passing
+> **QA:** 61 critical checks + 11 informational reports — all passing
 
 ---
 
@@ -79,14 +79,14 @@ poland-food-db/
 │   │   ├── chips/                   # Reference implementation (copy for new categories)
 │   │   └── ... (19 more)            # All normalized to 28 active products
 │   ├── qa/                          # Test suites
-│   │   ├── QA__null_checks.sql      # 29 data integrity checks + 2 informational
+│   │   ├── QA__null_checks.sql      # 32 data integrity checks + 3 informational
 │   │   ├── QA__scoring_formula_tests.sql  # 29 scoring validation checks
 │   │   └── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   └── views/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 30 append-only schema migrations
+│   └── migrations/                  # 31 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -115,6 +115,7 @@ poland-food-db/
 │       ├── 20260210001700_add_real_servings.sql            # 317 real per-serving rows + nutrition
 │       ├── 20260210001800_fix_vmaster_serving_fanout.sql   # Filter v_master to per-100g + add per-serving columns
 │       └── 20260210001900_ingredient_concern_scoring.sql   # EFSA concern tiers + v3.2 scoring function
+│       └── 20260210002000_update_confidence.sql             # Confidence verified/estimated from completeness
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
@@ -125,7 +126,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 558/560 coverage (99.6%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (51 critical + 7 info)
+├── RUN_QA.ps1                       # QA test runner (61 critical + 10 info)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
 ├── populate_ingredient_data.py      # OFF API → ingredient_ref/product_ingredient/allergens/traces
@@ -339,12 +340,12 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 | Suite           | File                            | Checks | Blocking? |
 | --------------- | ------------------------------- | -----: | --------- |
-| Data Integrity  | `QA__null_checks.sql`           |     29 | Yes       |
+| Data Integrity  | `QA__null_checks.sql`           |     32 | Yes       |
 | Scoring Formula | `QA__scoring_formula_tests.sql` |     29 | Yes       |
 | Source Coverage | `QA__source_coverage.sql`       |      7 | No        |
 | EAN Validation  | `validate_eans.py`              |    all | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **58/58 critical checks passing**.
+**Run:** `.\RUN_QA.ps1` — expects **61/61 critical checks passing**.
 
 **Key regression tests** (in scoring suite):
 
@@ -406,7 +407,7 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-
 4. Insert a `sources` row for provenance tracking.
 5. Register the folder in `RUN_LOCAL.ps1` and `RUN_REMOTE.ps1`.
 6. Add at least one regression test to `QA__scoring_formula_tests.sql`.
-7. Run `.\RUN_QA.ps1` — verify 58/58 pass.
+7. Run `.\RUN_QA.ps1` — verify 61/61 pass.
 
 **Reference implementation:** `chips/` pipeline. Copy its SQL patterns for manual work.
 
@@ -442,7 +443,7 @@ chore: normalize categories to 28 products
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 58/58 pass
+1. `.\RUN_QA.ps1` — 61/61 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed
