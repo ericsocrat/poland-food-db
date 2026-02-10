@@ -9,7 +9,7 @@
 > **Servings:** 877 rows — 560 per-100g (canonical) + 317 per-serving (57% real serving size coverage)
 > **Ingredient analytics:** 1,257 unique ingredients (all clean ASCII English), 728 allergen declarations, 782 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 64 critical checks + 14 informational reports — all passing
+> **QA:** 72 critical checks + 14 informational reports — all passing
 
 ---
 
@@ -81,6 +81,7 @@ poland-food-db/
 │   ├── qa/                          # Test suites
 │   │   ├── QA__null_checks.sql      # 35 data integrity checks + 6 informational
 │   │   ├── QA__scoring_formula_tests.sql  # 29 scoring validation checks
+│   │   ├── QA__api_surfaces.sql     # 8 API contract validation checks
 │   │   └── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   └── views/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
@@ -115,15 +116,12 @@ poland-food-db/
 │       ├── 20260210001700_add_real_servings.sql            # 317 real per-serving rows + nutrition
 │       ├── 20260210001800_fix_vmaster_serving_fanout.sql   # Filter v_master to per-100g + add per-serving columns
 │       └── 20260210001900_ingredient_concern_scoring.sql   # EFSA concern tiers + v3.2 scoring function
-│       └── 20260210002000_update_confidence.sql             # Confidence verified/estimated from completeness
-│       └── 20260210002100_vmaster_ingredient_data_quality.sql # Add ingredient_data_quality column to v_master
-│       └── 20260210002200_vmaster_nutrition_data_quality.sql  # Add nutrition_data_quality column to v_master
-│       └── 20260210002400_product_sources.sql                 # Product-level provenance + v_master LATERAL join
-│       └── 20260210002500_reference_tables.sql                 # country_ref, category_ref, nutri_score_ref, concern_tier_ref + FKs
-│       └── 20260210002600_score_explainability.sql             # explain_score_v32() + score_breakdown in v_master
-│       └── 20260210002700_cross_product_analytics.sql          # mv_ingredient_frequency + find_similar_products + find_better_alternatives
+│       └── ...                                              # (migrations 2000–2700: see file listing)
+│       └── 20260210002800_api_surfaces.sql                  # API views, RPC functions, search indexes
+│       └── 20260210002800_api_surfaces.sql                      # API views + RPC functions + pg_trgm search indexes
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
+│   ├── API_CONTRACTS.md             # API surface contracts (6 endpoints) — response shapes, hidden columns
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
 │   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
@@ -132,7 +130,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 558/560 coverage (99.6%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (64 critical + 14 info)
+├── RUN_QA.ps1                       # QA test runner (72 critical + 14 info)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
 ├── populate_ingredient_data.py      # OFF API → ingredient_ref/product_ingredient/allergens/traces
@@ -187,14 +185,21 @@ poland-food-db/
 | Function                      | Purpose                                                                                                                     |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `compute_unhealthiness_v32()` | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern |
-| `explain_score_v32()`         | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling              |
-| `find_similar_products()`     | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                               |
-| `find_better_alternatives()`  | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                   |
+| `explain_score_v32()`         | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling          |
+| `find_similar_products()`     | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                          |
+| `find_better_alternatives()`  | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                              |
 | `assign_confidence()`         | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                           |
+| `api_product_detail()`        | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                       |
+| `api_category_listing()`      | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                 |
+| `api_score_explanation()`     | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                      |
+| `api_better_alternatives()`   | Healthier substitutes wrapper with source product context and structured JSON                                                |
+| `api_search_products()`       | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                          |
 
-### View
+### Views
 
-**`v_master`** — Flat denormalized join: products → servings → nutrition_facts → scores → ingredients → product_sources (via LATERAL, primary row) + ingredient analytics via LATERAL subqueries (ingredient_count, additive_names, has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags). Includes `score_breakdown` (JSONB), `ingredient_data_quality`, and `nutrition_data_quality` columns. 63 columns total. Filtered to `is_deprecated = false`. This is the primary query surface.
+**`v_master`** — Flat denormalized join: products → servings → nutrition_facts → scores → ingredients → product_sources (via LATERAL, primary row) + ingredient analytics via LATERAL subqueries (ingredient_count, additive_names, has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags). Includes `score_breakdown` (JSONB), `ingredient_data_quality`, and `nutrition_data_quality` columns. 63 columns total. Filtered to `is_deprecated = false`. This is the primary internal query surface.
+
+**`v_api_category_overview`** — Dashboard-ready category statistics. One row per active category (20 total). Includes product_count, avg/min/max/median score, pct_nutri_a_b, pct_nova_4, display metadata from category_ref.
 
 ---
 

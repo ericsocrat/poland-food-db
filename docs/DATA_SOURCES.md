@@ -360,18 +360,18 @@ The following sources are **excluded** and must never be used:
 
 The `product_sources` table tracks provenance at the **individual product** level and is the primary source join used by `v_master`:
 
-| Column             | Purpose                                                                                      |
-| ------------------ | -------------------------------------------------------------------------------------------- |
-| `product_source_id`| Primary key (identity)                                                                       |
-| `product_id`       | FK → products                                                                                |
-| `source_type`      | `'off_api'`, `'off_search'`, `'manual'`, `'label_scan'`, `'retailer_api'`                    |
-| `source_url`       | URL to the specific product page (e.g., OFF product page)                                    |
-| `source_ean`       | EAN used to look up this product                                                             |
-| `fields_populated` | Array of fields sourced from this source (e.g., `{nutrition,ingredients,additives}`)          |
-| `collected_at`     | When the data was collected                                                                  |
-| `is_primary`       | Whether this is the primary source for the product (unique per product)                      |
-| `confidence_pct`   | 0–100 confidence in data accuracy                                                            |
-| `notes`            | Additional context                                                                           |
+| Column              | Purpose                                                                              |
+| ------------------- | ------------------------------------------------------------------------------------ |
+| `product_source_id` | Primary key (identity)                                                               |
+| `product_id`        | FK → products                                                                        |
+| `source_type`       | `'off_api'`, `'off_search'`, `'manual'`, `'label_scan'`, `'retailer_api'`            |
+| `source_url`        | URL to the specific product page (e.g., OFF product page)                            |
+| `source_ean`        | EAN used to look up this product                                                     |
+| `fields_populated`  | Array of fields sourced from this source (e.g., `{nutrition,ingredients,additives}`) |
+| `collected_at`      | When the data was collected                                                          |
+| `is_primary`        | Whether this is the primary source for the product (unique per product)              |
+| `confidence_pct`    | 0–100 confidence in data accuracy                                                    |
+| `notes`             | Additional context                                                                   |
 
 **Constraints:**
 - Unique on `(product_id, source_type, source_url)` — no duplicate source entries

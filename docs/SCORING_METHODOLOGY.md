@@ -113,13 +113,13 @@ Additional valid values (`'marinated'`, `'pasteurized'`, `'fermented'`, `'dried'
 
 **controversies sub-score mapping:**
 
-| Value          | Sub-score | Scientific basis                                                          |
-| -------------- | --------- | ------------------------------------------------------------------------- |
-| `'none'`       | 0         | No known controversy                                                      |
-| `'minor'`      | 30        | Low-level concern (e.g., debated processing methods)                      |
-| `'palm oil'`   | 40        | EFSA 2016: process contaminants (3-MCPD, glycidyl esters) in refined oil  |
-| `'moderate'`   | 60        | Notable health controversy with regulatory discussion                     |
-| `'serious'`    | 100       | E.g., E171 (EFSA 2021: no longer considered safe), banned substances      |
+| Value        | Sub-score | Scientific basis                                                         |
+| ------------ | --------- | ------------------------------------------------------------------------ |
+| `'none'`     | 0         | No known controversy                                                     |
+| `'minor'`    | 30        | Low-level concern (e.g., debated processing methods)                     |
+| `'palm oil'` | 40        | EFSA 2016: process contaminants (3-MCPD, glycidyl esters) in refined oil |
+| `'moderate'` | 60        | Notable health controversy with regulatory discussion                    |
+| `'serious'`  | 100       | E.g., E171 (EFSA 2021: no longer considered safe), banned substances     |
 
 **ingredient_concern_score sub-score (v3.2):**
 

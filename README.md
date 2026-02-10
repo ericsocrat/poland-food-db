@@ -29,7 +29,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (64 checks)
+# All tests (72 critical checks + EAN + 8 informational)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -69,7 +69,7 @@ supabase start
 - 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
 - 8 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 64/64
+**All critical tests passing**: ✅ 72/72
 
 **EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
@@ -105,13 +105,15 @@ poland-food-db/
 │   ├── qa/                  # Quality assurance test suites
 │   │   ├── QA__null_checks.sql           # 35 integrity checks
 │   │   ├── QA__scoring_formula_tests.sql # 29 algorithm tests
+│   │   ├── QA__api_surfaces.sql          # 8 API contract checks
     │   └── QA__source_coverage.sql       # 8 data quality reports
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (36 files)
+    └── migrations/          # Schema migrations (37 files)
 ├── docs/                    # Project documentation
+│   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
 │   ├── RESEARCH_WORKFLOW.md # Step-by-step data collection process
@@ -129,7 +131,7 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **64 automated checks** + 14 informational data quality reports:
+Every change is validated against **72 automated checks** + 14 informational data quality reports:
 
 ### Data Integrity (35 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -171,6 +173,14 @@ Every change is validated against **64 automated checks** + 14 informational dat
 - Confidence level distribution
 - Ingredient data coverage
 
+### API Surface Validation (8 checks)
+- Category overview row count matches reference table
+- Product count sums match v_master
+- All products return valid API JSON
+- Required JSON keys present in product detail
+- Score explanation covers all scored products
+- Search and listing return valid structures
+
 **Test files**: `db/qa/QA__*.sql` — Run via `.\RUN_QA.ps1`
 
 Run tests after **every** schema change or data update.
@@ -181,33 +191,33 @@ Run tests after **every** schema change or data update.
 
 **Reference Tables** (FK constraints):
 
-| FK Constraint                 | Table → Reference Table                      | Purpose                              |
-| ----------------------------- | -------------------------------------------- | ------------------------------------ |
-| `fk_products_country`         | products → country_ref                       | ISO 3166-1 country validation        |
-| `fk_products_category`        | products → category_ref                      | Category master list (20 active)     |
-| `fk_scores_nutri_score`       | scores → nutri_score_ref                     | Nutri-Score label definitions (A–E)  |
-| `fk_ingredient_concern_tier`  | ingredient_ref → concern_tier_ref            | EFSA concern tiers (0–3)             |
+| FK Constraint                | Table → Reference Table           | Purpose                             |
+| ---------------------------- | --------------------------------- | ----------------------------------- |
+| `fk_products_country`        | products → country_ref            | ISO 3166-1 country validation       |
+| `fk_products_category`       | products → category_ref           | Category master list (20 active)    |
+| `fk_scores_nutri_score`      | scores → nutri_score_ref          | Nutri-Score label definitions (A–E) |
+| `fk_ingredient_concern_tier` | ingredient_ref → concern_tier_ref | EFSA concern tiers (0–3)            |
 
 **CHECK Constraints** (19+):
 
-| Table           | Constraint                       | Rule                                 |
-| --------------- | -------------------------------- | ------------------------------------ |
-| products        | `chk_products_country`           | country IN ('PL')                    |
-| products        | `chk_products_prep_method`       | Valid prep method or null            |
+| Table           | Constraint                       | Rule                                                              |
+| --------------- | -------------------------------- | ----------------------------------------------------------------- |
+| products        | `chk_products_country`           | country IN ('PL')                                                 |
+| products        | `chk_products_prep_method`       | Valid prep method or null                                         |
 | products        | `chk_products_controversies`     | controversies IN ('none','minor','moderate','serious','palm oil') |
-| scores          | `chk_scores_unhealthiness_range` | 1–100                                |
-| scores          | `chk_scores_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE      |
-| scores          | `chk_scores_confidence`          | verified / estimated / low           |
-| scores          | `chk_scores_nova`                | 1–4                                  |
-| scores          | `chk_scores_processing_risk`     | Low / Moderate / High                |
-| scores          | `chk_scores_*_flag`              | YES / NO (4 flags)                   |
-| scores          | `chk_scores_completeness`        | 0–100                                |
-| nutrition_facts | `chk_nf_non_negative` (7 cols)   | ≥ 0                                  |
-| nutrition_facts | `chk_nf_sat_fat_le_total`        | saturated_fat ≤ total_fat            |
-| nutrition_facts | `chk_nf_sugars_le_carbs`         | sugars ≤ carbs                       |
-| servings        | `chk_servings_basis`             | 'per 100 g' or 'per serving'         |
-| servings        | `chk_servings_amount_positive`   | amount > 0                           |
-| ingredients     | `chk_ingredients_additives`      | additives_count ≥ 0                  |
+| scores          | `chk_scores_unhealthiness_range` | 1–100                                                             |
+| scores          | `chk_scores_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE                                   |
+| scores          | `chk_scores_confidence`          | verified / estimated / low                                        |
+| scores          | `chk_scores_nova`                | 1–4                                                               |
+| scores          | `chk_scores_processing_risk`     | Low / Moderate / High                                             |
+| scores          | `chk_scores_*_flag`              | YES / NO (4 flags)                                                |
+| scores          | `chk_scores_completeness`        | 0–100                                                             |
+| nutrition_facts | `chk_nf_non_negative` (7 cols)   | ≥ 0                                                               |
+| nutrition_facts | `chk_nf_sat_fat_le_total`        | saturated_fat ≤ total_fat                                         |
+| nutrition_facts | `chk_nf_sugars_le_carbs`         | sugars ≤ carbs                                                    |
+| servings        | `chk_servings_basis`             | 'per 100 g' or 'per serving'                                      |
+| servings        | `chk_servings_amount_positive`   | amount > 0                                                        |
+| ingredients     | `chk_ingredients_additives`      | additives_count ≥ 0                                               |
 
 ---
 
@@ -300,7 +310,7 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 61/61 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 72/72 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -319,6 +329,7 @@ EAN codes enable validation against:
 
 ## 📚 Documentation
 
+- [API_CONTRACTS.md](docs/API_CONTRACTS.md) — API surface contracts (6 endpoints)
 - [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
 - [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md) — Complete v3.2 algorithm specification
 - [DATA_SOURCES.md](docs/DATA_SOURCES.md) — Multi-source data hierarchy & validation workflow

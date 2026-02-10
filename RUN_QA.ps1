@@ -8,6 +8,7 @@
         2. QA__scoring_formula_tests.sql (29 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)
+        5. QA__api_surfaces.sql (8 API contract validation checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suite 3 is informational and does not affect the exit code.
@@ -201,6 +202,46 @@ else {
     }
 }
 
+# ─── Test 5: API Surface Validation ────────────────────────────────────────
+
+$test5File = Join-Path $QA_DIR "QA__api_surfaces.sql"
+if (-not (Test-Path $test5File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 5: API Surfaces (file not found)" -ForegroundColor DarkYellow
+    $test5Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 5: API Surface Validation (8 checks)..." -ForegroundColor Yellow
+
+    $test5Content = Get-Content $test5File -Raw
+    $test5Output = $test5Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
+
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test5Output" -ForegroundColor DarkRed
+        $test5Pass = $false
+        $jsonResult.suites += @{ name = "API Surfaces"; checks = 8; status = "error"; violations = @() }
+    }
+    else {
+        $test5Lines = ($test5Output | Out-String).Trim()
+        # Check for any violations > 0
+        $test5Violations = ($test5Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test5Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (8/8 — zero violations)" -ForegroundColor Green
+            $test5Pass = $true
+            $jsonResult.suites += @{ name = "API Surfaces"; checks = 8; status = "pass"; violations = @() }
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test5Lines -ForegroundColor DarkRed
+            $test5Pass = $false
+            $violationList5 = ($test5Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "API Surfaces"; checks = 8; status = "fail"; violations = @($violationList5) }
+        }
+    }
+}
+
 # ─── Database Inventory ─────────────────────────────────────────────────────
 
 Write-Host ""
@@ -227,7 +268,7 @@ Write-Host ($invOutput | Out-String).Trim() -ForegroundColor DarkGray
 
 # ─── Summary ────────────────────────────────────────────────────────────────
 
-$allPass = $test1Pass -and $test2Pass -and $test4Pass
+$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass
 $jsonResult.overall = if ($allPass) { "pass" } else { "fail" }
 
 # Parse inventory into JSON-friendly structure
@@ -280,6 +321,7 @@ else {
     Write-Host "    Test Suite 1 (Integrity):  $(if ($test1Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test1Pass) { "Green" } else { "Red" })
     Write-Host "    Test Suite 2 (Formula):    $(if ($test2Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test2Pass) { "Green" } else { "Red" })
     Write-Host "    Test Suite 4 (EAN):        $(if ($test4Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test4Pass) { "Green" } else { "Red" })
+    Write-Host "    Test Suite 5 (API):        $(if ($test5Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test5Pass) { "Green" } else { "Red" })
     Write-Host ""
     exit 1
 }
