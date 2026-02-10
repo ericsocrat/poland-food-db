@@ -108,7 +108,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (33 files)
+    └── migrations/          # Schema migrations (34 files)
 ├── docs/                    # Project documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
@@ -175,7 +175,18 @@ Run tests after **every** schema change or data update.
 
 ### Database Constraints
 
-19 CHECK constraints enforce domain rules at the database level:
+28 CHECK constraints enforce domain rules at the database level, plus 4 FK-backed reference tables:
+
+**Reference Tables** (FK constraints):
+
+| FK Constraint                 | Table → Reference Table                      | Purpose                              |
+| ----------------------------- | -------------------------------------------- | ------------------------------------ |
+| `fk_products_country`         | products → country_ref                       | ISO 3166-1 country validation        |
+| `fk_products_category`        | products → category_ref                      | Category master list (20 active)     |
+| `fk_scores_nutri_score`       | scores → nutri_score_ref                     | Nutri-Score label definitions (A–E)  |
+| `fk_ingredient_concern_tier`  | ingredient_ref → concern_tier_ref            | EFSA concern tiers (0–3)             |
+
+**CHECK Constraints** (19+):
 
 | Table           | Constraint                       | Rule                                 |
 | --------------- | -------------------------------- | ------------------------------------ |

@@ -86,7 +86,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 33 append-only schema migrations
+│   └── migrations/                  # 34 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -119,6 +119,7 @@ poland-food-db/
 │       └── 20260210002100_vmaster_ingredient_data_quality.sql # Add ingredient_data_quality column to v_master
 │       └── 20260210002200_vmaster_nutrition_data_quality.sql  # Add nutrition_data_quality column to v_master
 │       └── 20260210002400_product_sources.sql                 # Product-level provenance + v_master LATERAL join
+│       └── 20260210002500_reference_tables.sql                 # country_ref, category_ref, nutri_score_ref, concern_tier_ref + FKs
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
@@ -156,6 +157,10 @@ poland-food-db/
 | `product_trace`      | Declared traces per product                  | `(product_id, trace_tag)`               | 782 rows across 250 products (45% coverage); source: OFF traces_tags                                  |
 | `sources`            | Legacy category-level provenance (registry)  | `source_id`                             | 20 rows (one per category); no longer joined by v_master                                              |
 | `product_sources`    | Product-level data provenance                | `product_source_id` (identity)          | 560 rows; FK → products; source_type, source_url, confidence_pct, is_primary; joined by v_master      |
+| `country_ref`        | ISO 3166-1 alpha-2 country codes             | `country_code` (text PK)                | 1 row (PL); FK from products.country                                                                  |
+| `category_ref`       | Product category master list                 | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                 |
+| `nutri_score_ref`    | Nutri-Score label definitions                | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description     |
+| `concern_tier_ref`   | EFSA ingredient concern tiers                | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance              |
 | `column_metadata`    | Data dictionary for all tables               | `(table_name, column_name)`             | UI tooltips, type info, examples                                                                      |
 
 ### Products Columns (key)
