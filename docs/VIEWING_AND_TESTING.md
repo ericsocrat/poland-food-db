@@ -9,11 +9,11 @@ The **easiest way** to browse your tables visually:
 1. **Open Studio**: http://127.0.0.1:54323
 2. **Navigate**: Click **"Table Editor"** in left sidebar
 3. **Explore tables**:
-   - `products` — 132 active products across chips, żabka, cereals, drinks, dairy, bread & meat
-   - `nutrition_facts` — nutritional data per 100g
-   - `scores` — unhealthiness scores, flags, Nutri-Score, NOVA
-   - `ingredients` — additives count
-   - `servings` — serving definitions
+   - `products` — 560 active products across 20 categories (28 per category)
+   - `nutrition_facts` — nutritional data per 100g and per serving
+   - `scores` — unhealthiness scores (v3.2), flags, Nutri-Score, NOVA, confidence
+   - `ingredients` — raw ingredient text, additives count, allergens, traces
+   - `servings` — 877 serving definitions (560 per-100g + 317 per-serving)
 4. **Run custom queries**: Click **"SQL Editor"** → paste any SQL → click **Run**
 
 **Pro tip**: Click on `v_master` view for a denormalized "master report" with all data joined.
@@ -51,8 +51,8 @@ echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GR
 
 ## ✅ How to Know Everything Is Working
 
-### 1. **Data Integrity Tests** (32 checks)
-Validates foreign keys, nulls, duplicates, orphaned rows:
+### 1. **Data Integrity Tests** (32 checks + 4 informational)
+Validates foreign keys, nulls, duplicates, orphaned rows, energy cross-check, ingredient data coverage:
 
 ```powershell
 Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres --tuples-only
@@ -85,19 +85,19 @@ Run all pipelines + both QA suites automatically:
 ================================================
   Execution Summary
 ================================================
-  Succeeded:  21
+  Succeeded:  80
   Failed:     0
-  Duration:   2.2s
+  Duration:   ~5s
 
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (32/32 — zero violation rows).
+  All QA checks passed (61/61 — zero violation rows).
 
   Database inventory:
   total_products | deprecated | servings | nutrition | scores | ingredients
 ----------------+------------+----------+-----------+--------+-------------
-             560 |          0 |      560 |       560 |    560 |         560
+             560 |          0 |      877 |       877 |    560 |         560
 ```
 
 ---
@@ -124,6 +124,10 @@ ALL TESTS PASSED (61/61 checks)
 - **Naleśniki z jabłkami** (healthiest żabka) → Score: **17±2**
 - **Melvit Płatki Owsiane Górskie** (whole oats, NOVA 1) → Score: **11±2**
 - **Coca-Cola Zero** (zero sugar, high additives) → Score: **8±2**
+- **Piątnica Skyr Naturalny** (healthiest dairy) → Score: **9±2**
+- **Mestemacher Pumpernikiel** (traditional rye) → Score: **17±2**
+- **Tarczyński Kabanosy Klasyczne** (high-fat cured meat) → Score: **55±2**
+- **Knorr Nudle Pomidorowe Pikantne** (instant noodle, palm oil) → Score: **21±2**
 
 If these products' scores drift outside expected ranges, the tests will flag it.
 
@@ -139,14 +143,19 @@ SELECT * FROM v_master
 ORDER BY unhealthiness_score::int DESC;
 ```
 
-**Columns available**:
-- `product_id`, `country`, `brand`, `product_name`, `category`
-- `prep_method`, `store_availability`, `controversies`
-- `unhealthiness_score`, `nutri_score_label`, `nova_classification`
-- `processing_risk`, `high_salt_flag`, `high_sugar_flag`, `high_sat_fat_flag`
-- `high_additive_load`, `data_completeness_pct`
-- `additives_count`, `calories`, `total_fat_g`, `saturated_fat_g`, `trans_fat_g`
-- `carbs_g`, `sugars_g`, `fibre_g`, `protein_g`, `salt_g`
+**Columns available** (62 columns):
+- **Identity**: `product_id`, `country`, `brand`, `product_name`, `category`, `product_type`, `ean`
+- **Qualitative**: `prep_method`, `store_availability`, `controversies`
+- **Scoring**: `unhealthiness_score`, `scoring_version`, `scored_at`, `confidence`, `data_completeness_pct`
+- **Labels**: `nutri_score_label`, `nova_classification`, `processing_risk`
+- **Flags**: `high_salt_flag`, `high_sugar_flag`, `high_sat_fat_flag`, `high_additive_load`
+- **Nutrition (per 100g)**: `calories`, `total_fat_g`, `saturated_fat_g`, `trans_fat_g`, `carbs_g`, `sugars_g`, `fibre_g`, `protein_g`, `salt_g`
+- **Nutrition (per serving)**: `serving_amount_g`, `srv_calories`, `srv_total_fat_g`, `srv_saturated_fat_g`, `srv_trans_fat_g`, `srv_carbs_g`, `srv_sugars_g`, `srv_fibre_g`, `srv_protein_g`, `srv_salt_g`
+- **Ingredients**: `additives_count`, `ingredients_raw`, `ingredient_count`, `additive_names`, `ingredient_concern_score`
+- **Dietary**: `vegan_status`, `vegetarian_status`
+- **Allergens**: `allergen_count`, `allergen_tags`, `trace_count`, `trace_tags`
+- **Sources**: `source_type`, `source_ref`, `source_url`, `source_notes`
+- **Data quality**: `ingredient_data_quality`
 
 ---
 

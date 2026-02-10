@@ -1,6 +1,6 @@
 # Data Sources
 
-> **Last updated:** 2026-02-08
+> **Last updated:** 2026-02-10
 > **Scope:** Poland (`PL`) only
 > **Related:** See `RESEARCH_WORKFLOW.md` for the full step-by-step data collection process,
 > and `SCORING_METHODOLOGY.md` for how collected data is scored.
@@ -59,8 +59,7 @@ Under **Regulation (EU) No 1169/2011**, all pre-packaged food sold in Poland mus
 
 Polish labels are in **Polish**. When recording data:
 
-- Store ingredient lists in the original Polish text in `ingredients_raw`.
-- Do NOT translate ingredient lists — translation introduces errors.
+- The `ingredients_raw` column stores ingredient lists in **standardized English** (cleaned ASCII, deduplicated, comma-separated). This was normalized via migrations `001200` and `001600`.
 - Product names should be recorded as they appear on the Polish label, using Polish diacritics (ą, ć, ę, ł, ń, ó, ś, ź, ż).
 - Brand names may remain in their international form (e.g., "Lay's", "Pringles").
 
@@ -286,8 +285,8 @@ As of 2026, Nutri-Score is **voluntary** in Poland. Many products do not display
 
 1. Check Open Food Facts for a computed Nutri-Score.
 2. If not available, compute from nutrition facts using the 2024 algorithm.
-3. Set `confidence = 'computed'` in the scores table.
-4. If data is insufficient to compute, leave `nutri_score_label = NULL`.
+3. If nutrition data is insufficient to compute, set `nutri_score_label = 'UNKNOWN'`.
+4. Alcohol and similar categories use `nutri_score_label = 'NOT-APPLICABLE'`.
 
 ---
 
@@ -295,12 +294,13 @@ As of 2026, Nutri-Score is **voluntary** in Poland. Many products do not display
 
 Every scored product carries a `confidence` tag:
 
-| Level       | Criteria                                                        |
-| ----------- | --------------------------------------------------------------- |
-| `verified`  | Nutrition data from physical label or verified Open Food Facts  |
-| `estimated` | Some nutrition values estimated from category or brand averages |
-| `computed`  | Nutri-Score derived algorithmically, not from label             |
-| `low`       | Multiple critical fields missing; score is approximate          |
+| Level       | Criteria                                                                |
+| ----------- | ----------------------------------------------------------------------- |
+| `verified`  | data_completeness ≥ 90% (nutrition data from label or verified source)  |
+| `estimated` | data_completeness 70–89% or single source needing verification          |
+| `low`       | data_completeness < 70%; score is approximate                           |
+
+> **Note:** `computed` is not a valid confidence level in the database. The CHECK constraint only allows `verified`, `estimated`, `low`.
 
 ### Confidence Workflow
 
@@ -331,7 +331,7 @@ Physical label available?
 | ------------------ | ----------------------------------------------------- |
 | Product name       | As printed on label (Polish market version)           |
 | Brand name         | International form (e.g., "Lay's" not "Lays")         |
-| Ingredient list    | Original Polish — never translate                     |
+| Ingredient list    | Standardized English (cleaned via pipeline)           |
 | Category name      | English in database (e.g., `'Chips'`, `'Cereals'`)    |
 | Store name         | Original Polish name (e.g., `'Żabka'`, `'Biedronka'`) |
 | EU regulation refs | English citation with EU regulation number            |
@@ -393,27 +393,23 @@ EAN-13 barcodes are the standard product identifier in Polish retail. They are c
 
 ### 12.1 Current Schema Status
 
-The `products` table does **not yet have** a barcode column. This is a known gap.
+The `products` table has an `ean` TEXT column (added in migration `20260208000100`). A unique conditional index prevents barcode collisions.
 
-**Planned migration** (to be added when barcode data collection begins):
+**Coverage:** 558/560 active products (99.6%) have validated EAN-8 or EAN-13 barcodes.
 
-```sql
-ALTER TABLE public.products
-  ADD COLUMN IF NOT EXISTS ean TEXT;
+**Missing EANs (2):**
+- Kajzerka Kebab (product_id 43) — custom Zabka product, no universal barcode
+- Kotlet Drobiowy (product_id 804) — custom Zabka product, no universal barcode
 
-CREATE UNIQUE INDEX IF NOT EXISTS products_ean_uniq
-  ON public.products (ean)
-  WHERE ean IS NOT NULL;
-```
+### 12.2 Barcode Rules
 
-### 12.2 Rules for When Barcodes Are Added
-
-- Store as **text** (not numeric) — EAN-13 codes have leading zeros.
-- Always store the full 13-digit code (e.g., `'5900259000002'`).
-- `ean` should be **nullable** — private-label and bulk products may not have universal EANs.
+- Stored as **text** (not numeric) — EAN codes have leading zeros.
+- Both EAN-8 and EAN-13 formats are supported.
+- `ean` is **nullable** — private-label and deli products may not have universal EANs.
 - The unique index is conditional (`WHERE ean IS NOT NULL`) to allow multiple rows without barcodes.
 - One barcode = one product. If a product reformulates under the same EAN, update the existing row (do not create a new row).
 - Multi-pack EANs (e.g., 6-pack of chips) are **different products** from single-pack EANs.
+- EAN checksums are validated by `validate_eans.py` (called by `RUN_QA.ps1`).
 
 ### 12.3 Using Barcodes for Open Food Facts Lookup
 

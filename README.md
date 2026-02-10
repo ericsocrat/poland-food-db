@@ -27,7 +27,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (47 checks)
+# All tests (61 checks)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -62,10 +62,10 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 61 automated checks + 11 data quality reports
-- 32 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check)
+**Test Coverage**: 61 automated checks + 12 data quality reports
+- 32 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check) + 4 informational
 - 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
-- 11 source coverage & confidence tracking reports (informational, non-blocking)
+- 8 source coverage & confidence tracking reports (informational, non-blocking)
 
 **All critical tests passing**: ✅ 61/61
 
@@ -86,7 +86,7 @@ poland-food-db/
 │   │   ├── breakfast-grain-based/ # 28 breakfast products (4 SQL files)
 │   │   ├── canned-goods/    # 28 canned goods products (4 SQL files)
 │   │   ├── cereals/         # 28 cereal products (4 SQL files)
-│   │   ├── chips/           # 28 chip products (5 SQL files)
+    │   ├── chips/           # 28 chip products (4 SQL files)
 │   │   ├── condiments/      # 28 condiment products (4 SQL files)
 │   │   ├── dairy/           # 28 dairy products (4 SQL files)
 │   │   ├── drinks/          # 28 beverage products (4 SQL files)
@@ -99,16 +99,16 @@ poland-food-db/
 │   │   ├── seafood-fish/    # 28 seafood & fish products (4 SQL files)
 │   │   ├── snacks/          # 28 snack products (4 SQL files)
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
-│   │   └── zabka/           # 28 convenience store products (5 SQL files)
+    │   └── zabka/           # 28 convenience store products (4 SQL files)
 │   ├── qa/                  # Quality assurance test suites
 │   │   ├── QA__null_checks.sql           # 32 integrity checks
 │   │   ├── QA__scoring_formula_tests.sql # 29 algorithm tests
-│   │   └── QA__source_coverage.sql       # 11 data quality reports
+    │   └── QA__source_coverage.sql       # 8 data quality reports
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-│   └── migrations/          # Schema migrations (32 files)
+    └── migrations/          # Schema migrations (30 files)
 ├── docs/                    # Project documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
@@ -160,12 +160,13 @@ Every change is validated against **61 automated checks** + 12 informational dat
 - **Regression**: Tarczyński Kabanosy Klasyczne = 55±2 (high-fat cured meat)
 - **Regression**: Knorr Nudle Pomidorowe Pikantne = 21±2 (instant noodle, palm oil)
 
-### Source Coverage (7 informational reports)
+### Source Coverage (8 informational reports + 4 in null_checks)
 - Products without source metadata
 - Single-source products needing cross-validation
 - High-impact products (score >40, single-source)
 - EAN coverage by category
 - Confidence level distribution
+- Ingredient data coverage
 
 **Test files**: `db/qa/QA__*.sql` — Run via `.\RUN_QA.ps1`
 
@@ -181,10 +182,10 @@ Run tests after **every** schema change or data update.
 | products        | `chk_products_prep_method`       | Valid prep method or null            |
 | products        | `chk_products_controversies`     | controversies IN ('none','palm oil') |
 | scores          | `chk_scores_unhealthiness_range` | 1–100                                |
-| scores          | `chk_scores_nutri_label`         | A–E or UNKNOWN                       |
+| scores          | `chk_scores_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE    |
 | scores          | `chk_scores_confidence`          | verified / estimated / low           |
 | scores          | `chk_scores_nova`                | 1–4                                  |
-| scores          | `chk_scores_processing_risk`     | Low / Moderate / High / Unknown      |
+| scores          | `chk_scores_processing_risk`     | Low / Moderate / High                |
 | scores          | `chk_scores_*_flag`              | YES / NO (4 flags)                   |
 | scores          | `chk_scores_completeness`        | 0–100                                |
 | nutrition_facts | `chk_nf_non_negative` (7 cols)   | ≥ 0                                  |

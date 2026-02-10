@@ -1,6 +1,6 @@
 # Research Workflow
 
-> **Last updated:** 2026-02-08
+> **Last updated:** 2026-02-10
 > **Purpose:** Defines exactly how product data is researched, collected, validated, and entered into the database.
 > **Audience:** AI agent (Copilot) and human contributors.
 
@@ -30,7 +30,7 @@ Before researching a product, confirm ALL of the following:
 
 - [ ] Currently sold in Poland (not discontinued, not seasonal-only unless flagged)
 - [ ] Pre-packaged with EU-mandated nutrition declaration
-- [ ] Falls within an active or planned category (`chips`, `zabka`, `cereals`, `drinks`)
+- [ ] Falls within an active category (20 categories: Alcohol, Baby, Bread, Breakfast & Grain-Based, Canned Goods, Cereals, Chips, Condiments, Dairy, Drinks, Frozen & Prepared, Instant & Frozen, Meat, Nuts Seeds & Legumes, Plant-Based & Alternatives, Sauces, Seafood & Fish, Snacks, Sweets, Żabka)
 - [ ] Has a distinguishable SKU (not a deli/bakery item weighed at checkout)
 
 ### 2.2 Batch Planning
@@ -111,7 +111,9 @@ For every product, collect **all** of the following. Mark missing fields explici
 | `product_name` | Label front (Polish market)    | Yes      | `Lay's Klasyczne Solone` |
 | `category`     | Our taxonomy                   | Yes      | `Chips`                  |
 | `product_type` | Label description              | Optional | `Chipsy ziemniaczane`    |
-| `ean`          | Barcode (when schema supports) | Planned  | `5900259000002`          |
+| `ean`          | Barcode on label                 | Yes*     | `5900259000002`          |
+
+*EAN is required where available — 558/560 products (99.6%) have validated EAN-8/EAN-13 barcodes.
 
 #### EU Mandatory 7 (per 100g)
 
@@ -136,7 +138,7 @@ For every product, collect **all** of the following. Mark missing fields explici
 
 | Field           | How to determine                                     | Store as              |
 | --------------- | ---------------------------------------------------- | --------------------- |
-| Ingredient list | Label back (original Polish)                         | `ingredients_raw`     |
+| Ingredient list | Label back (stored as standardized English)          | `ingredients_raw`     |
 | Additive count  | Count E-numbers in ingredient list                   | `additives_count`     |
 | Prep method     | Infer from label: "smażone"=fried, "pieczone"=baked  | `prep_method`         |
 | Oil method      | Label: e.g., "w oleju słonecznikowym"                | `oil_method`          |
@@ -312,11 +314,9 @@ For each product batch, create or update these pipeline files:
 | Step | File                                      | What it does                          |
 | ---- | ----------------------------------------- | ------------------------------------- |
 | 01   | `PIPELINE__<cat>__01_insert_products.sql` | Upsert product identity rows          |
-| 02   | `PIPELINE__<cat>__02_ensure_deps.sql`     | Create empty scores/ingredients rows  |
-| 03   | `PIPELINE__<cat>__03_add_servings.sql`    | Add 'per 100 g' serving row           |
-| 04   | `PIPELINE__<cat>__04_add_nutrition.sql`   | Insert nutrition facts                |
-| 05   | `PIPELINE__<cat>__05_scoring.sql`         | Compute all scores, flags, confidence |
-| 06   | `PIPELINE__<cat>__06_add_sources.sql`     | Source provenance rows                |
+| 02   | `PIPELINE__<cat>__02_add_servings.sql`    | Add 'per 100 g' serving row           |
+| 03   | `PIPELINE__<cat>__03_add_nutrition.sql`   | Insert nutrition facts                |
+| 04   | `PIPELINE__<cat>__04_scoring.sql`         | Compute all scores, flags, confidence |
 
 ### 6.2 SQL Comment Standards
 
@@ -349,17 +349,19 @@ Computed in the scoring pipeline as the percentage of available core fields:
 data_completeness_pct = round(100.0 * (
     (CASE WHEN nf.calories        IS NOT NULL AND nf.calories        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
     (CASE WHEN nf.total_fat_g     IS NOT NULL AND nf.total_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
-    (CASE WHEN nf.saturated_fat_g IS NOT NULL AND nf.saturated_fat_g NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.18)
+    (CASE WHEN nf.saturated_fat_g IS NOT NULL AND nf.saturated_fat_g NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.17)
     (CASE WHEN nf.carbs_g         IS NOT NULL AND nf.carbs_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5%
-    (CASE WHEN nf.sugars_g        IS NOT NULL AND nf.sugars_g        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.18)
+    (CASE WHEN nf.sugars_g        IS NOT NULL AND nf.sugars_g        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.17)
     (CASE WHEN nf.protein_g       IS NOT NULL AND nf.protein_g       NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5%
-    (CASE WHEN nf.salt_g          IS NOT NULL AND nf.salt_g          NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.18)
-    (CASE WHEN nf.trans_fat_g     IS NOT NULL AND nf.trans_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10% (scoring weight: 0.12)
+    (CASE WHEN nf.salt_g          IS NOT NULL AND nf.salt_g          NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.17)
+    (CASE WHEN nf.trans_fat_g     IS NOT NULL AND nf.trans_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10% (scoring weight: 0.11)
     (CASE WHEN nf.fibre_g         IS NOT NULL AND nf.fibre_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5%
     (CASE WHEN i.additives_count  IS NOT NULL AND i.additives_count  NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5% (scoring weight: 0.07)
     (CASE WHEN i.ingredients_raw  IS NOT NULL AND i.ingredients_raw  != ''              THEN 1 ELSE 0 END) * 5     -- 5%
 ) / 100.0)
 ```
+
+> **Note:** The scoring formula v3.2 uses 9 factors: saturated fat (0.17), sugars (0.17), salt (0.17), calories (0.10), trans fat (0.11), additives (0.07), prep method (0.08), controversies (0.08), and ingredient concern (0.05).
 
 ### 6.4 Confidence Level Determination
 
@@ -368,8 +370,9 @@ data_completeness_pct = round(100.0 * (
 | All EU-7 from verified label + data_completeness ≥ 90% | `verified`  |
 | All EU-7 from Open Food Facts (verified entry)         | `verified`  |
 | Most fields present, 1–2 estimated from category avg   | `estimated` |
-| Nutri-Score computed algorithmically (not from label)  | `computed`  |
 | data_completeness < 70% or multiple fields estimated   | `low`       |
+
+> **Note:** `computed` is not a valid confidence level. The database CHECK constraint only allows `verified`, `estimated`, `low`.
 
 ---
 
@@ -501,7 +504,7 @@ Use this checklist for every product batch:
 - [ ] Open Food Facts queried for all products (EAN where available)
 - [ ] Nutrition facts collected (per 100g basis) from best available source
 - [ ] Cross-validated against ≥ 2 sources where possible
-- [ ] Ingredient lists recorded in original Polish
+- [ ] Ingredient lists recorded (stored as standardized English)
 - [ ] Additives counted using counting rules
 - [ ] Prep method determined
 - [ ] Source URLs and access dates recorded
