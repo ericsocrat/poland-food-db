@@ -10,11 +10,11 @@
 
 This project computes **three independent health dimensions** for every product:
 
-| Dimension               | Range / Values    | What it measures                                       |
-| ----------------------- | ----------------- | ------------------------------------------------------ |
-| **Unhealthiness Score** | 1–100 (integer)   | Composite harmfulness estimate across all risk factors |
+| Dimension               | Range / Values               | What it measures                                       |
+| ----------------------- | ---------------------------- | ------------------------------------------------------ |
+| **Unhealthiness Score** | 1–100 (integer)              | Composite harmfulness estimate across all risk factors |
 | **Nutri-Score Label**   | A–E, UNKNOWN, NOT-APPLICABLE | EU front-of-pack nutrient profiling (where available)  |
-| **Processing Risk**     | Low, Moderate, High | Degree of ultra-processing (NOVA-informed)             |
+| **Processing Risk**     | Low, Moderate, High          | Degree of ultra-processing (NOVA-informed)             |
 
 These three dimensions are **not interchangeable**. A product can have a decent Nutri-Score but a high Processing Risk (e.g., low-calorie diet soda: Nutri-Score B, Processing Risk High).
 
@@ -418,11 +418,11 @@ If the computed energy falls outside the ±15% tolerance, add a SQL comment flag
 
 The `confidence` column further qualifies the score:
 
-| Value       | Meaning                                             |
-| ----------- | --------------------------------------------------- |
-| `verified`  | All data from primary label source                  |
-| `estimated` | Some values estimated from category averages        |
-| `low`       | Insufficient data for reliable scoring              |
+| Value       | Meaning                                      |
+| ----------- | -------------------------------------------- |
+| `verified`  | All data from primary label source           |
+| `estimated` | Some values estimated from category averages |
+| `low`       | Insufficient data for reliable scoring       |
 
 > **Note:** `computed` is not a valid confidence level. The database CHECK constraint only allows `verified`, `estimated`, `low`.
 
