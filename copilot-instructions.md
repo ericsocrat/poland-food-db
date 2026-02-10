@@ -86,7 +86,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 34 append-only schema migrations
+│   └── migrations/                  # 35 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -120,6 +120,7 @@ poland-food-db/
 │       └── 20260210002200_vmaster_nutrition_data_quality.sql  # Add nutrition_data_quality column to v_master
 │       └── 20260210002400_product_sources.sql                 # Product-level provenance + v_master LATERAL join
 │       └── 20260210002500_reference_tables.sql                 # country_ref, category_ref, nutri_score_ref, concern_tier_ref + FKs
+│       └── 20260210002600_score_explainability.sql             # explain_score_v32() + score_breakdown in v_master
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
@@ -185,11 +186,12 @@ poland-food-db/
 | Function                      | Purpose                                                                                                                     |
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `compute_unhealthiness_v32()` | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern |
+| `explain_score_v32()`         | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling              |
 | `assign_confidence()`         | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                           |
 
 ### View
 
-**`v_master`** — Flat denormalized join: products → servings → nutrition_facts → scores → ingredients → product_sources (via LATERAL, primary row) + ingredient analytics via LATERAL subqueries (ingredient_count, additive_names, has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags). Includes computed `ingredient_data_quality` and `nutrition_data_quality` columns. 66 columns total. Filtered to `is_deprecated = false`. This is the primary query surface.
+**`v_master`** — Flat denormalized join: products → servings → nutrition_facts → scores → ingredients → product_sources (via LATERAL, primary row) + ingredient analytics via LATERAL subqueries (ingredient_count, additive_names, has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags). Includes `score_breakdown` (JSONB), `ingredient_data_quality`, and `nutrition_data_quality` columns. 63 columns total. Filtered to `is_deprecated = false`. This is the primary query surface.
 
 ---
 

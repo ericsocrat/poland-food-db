@@ -143,10 +143,10 @@ SELECT * FROM v_master
 ORDER BY unhealthiness_score::int DESC;
 ```
 
-**Columns available** (66 columns):
+**Columns available** (63 columns):
 - **Identity**: `product_id`, `country`, `brand`, `product_name`, `category`, `product_type`, `ean`
 - **Qualitative**: `prep_method`, `store_availability`, `controversies`
-- **Scoring**: `unhealthiness_score`, `scoring_version`, `scored_at`, `confidence`, `data_completeness_pct`
+- **Scores**: `unhealthiness_score`, `scoring_version`, `scored_at`, `confidence`, `data_completeness_pct`, `score_breakdown` (JSONB)
 - **Labels**: `nutri_score_label`, `nova_classification`, `processing_risk`
 - **Flags**: `high_salt_flag`, `high_sugar_flag`, `high_sat_fat_flag`, `high_additive_load`
 - **Nutrition (per 100g)**: `calories`, `total_fat_g`, `saturated_fat_g`, `trans_fat_g`, `carbs_g`, `sugars_g`, `fibre_g`, `protein_g`, `salt_g`
