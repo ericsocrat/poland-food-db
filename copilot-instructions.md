@@ -86,7 +86,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 31 append-only schema migrations
+│   └── migrations/                  # 32 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -116,6 +116,7 @@ poland-food-db/
 │       ├── 20260210001800_fix_vmaster_serving_fanout.sql   # Filter v_master to per-100g + add per-serving columns
 │       └── 20260210001900_ingredient_concern_scoring.sql   # EFSA concern tiers + v3.2 scoring function
 │       └── 20260210002000_update_confidence.sql             # Confidence verified/estimated from completeness
+│       └── 20260210002100_vmaster_ingredient_data_quality.sql # Add ingredient_data_quality column to v_master
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
@@ -180,7 +181,7 @@ poland-food-db/
 
 ### View
 
-**`v_master`** — Flat denormalized join: products → servings → nutrition_facts → scores → ingredients → sources (via `category` equijoin) + ingredient analytics via LATERAL subqueries (ingredient_count, additive_names, has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags). Filtered to `is_deprecated = false`. This is the primary query surface.
+**`v_master`** — Flat denormalized join: products → servings → nutrition_facts → scores → ingredients → sources (via `category` equijoin) + ingredient analytics via LATERAL subqueries (ingredient_count, additive_names, has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags). Includes computed `ingredient_data_quality` column (`'complete'`/`'partial'`/`'missing'`). Filtered to `is_deprecated = false`. This is the primary query surface.
 
 ---
 

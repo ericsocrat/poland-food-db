@@ -1,18 +1,12 @@
--- VIEW: master product view (v_master)
--- Flat denormalized view joining products → servings → nutrition_facts → scores → sources
--- plus ingredient analytics from normalized ingredient tables.
--- This view is already created in the schema migration (20260207000100_create_schema.sql).
--- Updated in migration 20260207000400_remove_unused_columns.sql.
--- Updated 2026-02-08: added EAN, source provenance fields.
--- Updated 2026-02-10: sources join changed from LIKE pattern to equijoin on sources.category.
--- Updated 2026-02-10: added ingredient analytics (ingredient_count, additive_names,
---   has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags).
--- Updated 2026-02-10: filtered to per-100g basis only (prevents fan-out from real serving rows).
--- Updated 2026-02-10: added per-serving columns (serving_qty_g, per_serving_calories, etc.).
--- Updated 2026-02-10: added ingredient_data_quality indicator (complete/partial/missing).
--- This file exists for reference and for recreating the view if needed.
+-- Migration: Add ingredient_data_quality column to v_master
+-- Purpose: Expose ingredient data availability as a machine-readable flag.
+--   'complete' = has normalized ingredient rows in product_ingredient
+--   'partial'  = has raw ingredient text but no normalized rows
+--   'missing'  = no ingredient data available (upstream OFF limitation)
 --
--- Usage: SELECT * FROM v_master WHERE country = 'PL' AND category = 'Chips';
+-- Context: 492/560 products have full ingredient data. 68 products lack
+-- raw ingredient text from Open Food Facts, preventing normalization.
+-- This column enables UIs to indicate data quality transparently.
 
 CREATE OR REPLACE VIEW public.v_master AS
 SELECT
@@ -85,7 +79,7 @@ SELECT
     src.ref AS source_ref,
     src.url AS source_url,
     src.notes AS source_notes,
-    -- Ingredient data quality indicator
+    -- Ingredient data quality indicator (added in migration 002100)
     CASE
         WHEN ingr_stats.ingredient_count > 0 THEN 'complete'
         WHEN i.ingredients_raw IS NOT NULL AND length(i.ingredients_raw) > 5 THEN 'partial'
@@ -140,3 +134,6 @@ LEFT JOIN LATERAL (
     GROUP BY pt.product_id
 ) trace_agg ON true
 WHERE p.is_deprecated IS NOT TRUE;
+
+COMMENT ON VIEW public.v_master IS
+  'Flat denormalized product view: products → servings → nutrition → scores → ingredients → sources. Filtered to active products with per-100g basis. Includes per-serving, ingredient analytics, allergens, traces, and data quality indicators.';
