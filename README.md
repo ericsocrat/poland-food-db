@@ -108,7 +108,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (31 files)
+    └── migrations/          # Schema migrations (32 files)
 ├── docs/                    # Project documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
@@ -180,7 +180,7 @@ Run tests after **every** schema change or data update.
 | --------------- | -------------------------------- | ------------------------------------ |
 | products        | `chk_products_country`           | country IN ('PL')                    |
 | products        | `chk_products_prep_method`       | Valid prep method or null            |
-| products        | `chk_products_controversies`     | controversies IN ('none','palm oil') |
+| products        | `chk_products_controversies`     | controversies IN ('none','minor','moderate','serious','palm oil') |
 | scores          | `chk_scores_unhealthiness_range` | 1–100                                |
 | scores          | `chk_scores_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE      |
 | scores          | `chk_scores_confidence`          | verified / estimated / low           |

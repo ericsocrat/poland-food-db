@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Runs all QA test suites against the LOCAL Supabase database.
 
@@ -25,7 +25,8 @@
 $CONTAINER = "supabase_db_poland-food-db"
 $DB_USER = "postgres"
 $DB_NAME = "postgres"
-$QA_DIR = Join-Path $PSScriptRoot "db" "qa"
+$SCRIPT_ROOT = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
+$QA_DIR = Join-Path (Join-Path $SCRIPT_ROOT "db") "qa"
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
@@ -129,7 +130,7 @@ if (Test-Path $test3File) {
 Write-Host ""
 Write-Host "Running Test Suite 4: EAN-13 Checksum Validation..." -ForegroundColor Yellow
 
-$validatorScript = Join-Path $PSScriptRoot "validate_eans.py"
+$validatorScript = Join-Path $SCRIPT_ROOT "validate_eans.py"
 if (-not (Test-Path $validatorScript)) {
     Write-Host "  ⚠ SKIPPED (validate_eans.py not found)" -ForegroundColor DarkYellow
     $test4Pass = $true  # Non-blocking if validator doesn't exist
