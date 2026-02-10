@@ -64,9 +64,24 @@ def _sql_null_or_text(value: str | None) -> str:
 
 # Recognised Polish retail chains, ordered by market presence.
 _POLISH_CHAINS = [
-    "Biedronka", "Lidl", "Żabka", "Kaufland", "Auchan", "Dino",
-    "Carrefour", "Netto", "Stokrotka", "Tesco", "Lewiatan", "Aldi",
-    "Penny", "Selgros", "Delikatesy Centrum", "Dealz", "Ikea", "Rossmann",
+    "Biedronka",
+    "Lidl",
+    "Żabka",
+    "Kaufland",
+    "Auchan",
+    "Dino",
+    "Carrefour",
+    "Netto",
+    "Stokrotka",
+    "Tesco",
+    "Lewiatan",
+    "Aldi",
+    "Penny",
+    "Selgros",
+    "Delikatesy Centrum",
+    "Dealz",
+    "Ikea",
+    "Rossmann",
 ]
 
 
