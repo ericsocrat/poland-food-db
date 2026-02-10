@@ -448,3 +448,79 @@ FROM (
   LEFT JOIN ingredients i ON i.product_id = p.product_id
   WHERE p.is_deprecated IS NOT TRUE
 ) sub;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 37. Nutrition anomaly detection (informational)
+--     Flags products with physiologically implausible nutrition values,
+--     typically caused by incomplete or incorrect OFF data entries.
+--     Categories:
+--       A) sat_fat = 0 but total_fat > 10  (all fats contain some saturated fat)
+--       B) salt = 0 in categories known to contain salt
+--       C) sugars = 0 but carbs > 20  (most carb-heavy foods have some sugar)
+--       D) salt > 10 g/100g  (extreme — likely data entry error or concentrate)
+--       E) calories < 10 for non-beverage products  (suspicious)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.product_name, p.category,
+       anomaly_type, detail
+FROM (
+  -- A) Sat fat impossibly zero
+  SELECT n.product_id, 'SAT_FAT_ZERO_HIGH_FAT' AS anomaly_type,
+         FORMAT('sat_fat=0 but total_fat=%s', n.total_fat_g) AS detail
+  FROM nutrition_facts n
+  JOIN servings sv USING(product_id, serving_id)
+  WHERE sv.serving_basis = 'per 100 g'
+    AND n.saturated_fat_g = 0
+    AND n.total_fat_g > 10
+
+  UNION ALL
+
+  -- B) Salt zero in salty categories
+  SELECT n.product_id, 'SALT_ZERO_SALTY_CATEGORY',
+         FORMAT('salt=0, carbs=%s', n.carbs_g)
+  FROM nutrition_facts n
+  JOIN servings sv USING(product_id, serving_id)
+  JOIN products p2 ON p2.product_id = n.product_id
+  WHERE sv.serving_basis = 'per 100 g'
+    AND p2.is_deprecated IS NOT TRUE
+    AND n.salt_g = 0
+    AND p2.category IN ('Chips','Instant & Frozen','Meat','Snacks',
+                         'Sauces','Condiments','Canned Goods','Bread',
+                         'Frozen & Prepared','Żabka')
+
+  UNION ALL
+
+  -- C) Sugars zero but high carbs
+  SELECT n.product_id, 'SUGARS_ZERO_HIGH_CARBS',
+         FORMAT('sugars=0 but carbs=%s', n.carbs_g)
+  FROM nutrition_facts n
+  JOIN servings sv USING(product_id, serving_id)
+  WHERE sv.serving_basis = 'per 100 g'
+    AND n.sugars_g = 0
+    AND n.carbs_g > 20
+
+  UNION ALL
+
+  -- D) Extreme salt
+  SELECT n.product_id, 'EXTREME_SALT',
+         FORMAT('salt=%sg/100g', n.salt_g)
+  FROM nutrition_facts n
+  JOIN servings sv USING(product_id, serving_id)
+  WHERE sv.serving_basis = 'per 100 g'
+    AND n.salt_g > 10
+
+  UNION ALL
+
+  -- E) Near-zero calories for non-beverage
+  SELECT n.product_id, 'NEAR_ZERO_CALORIES',
+         FORMAT('calories=%s, category expects higher', n.calories)
+  FROM nutrition_facts n
+  JOIN servings sv USING(product_id, serving_id)
+  JOIN products p2 ON p2.product_id = n.product_id
+  WHERE sv.serving_basis = 'per 100 g'
+    AND p2.is_deprecated IS NOT TRUE
+    AND n.calories < 10
+    AND p2.category NOT IN ('Drinks','Alcohol')
+) anomalies
+JOIN products p ON p.product_id = anomalies.product_id
+WHERE p.is_deprecated IS NOT TRUE
+ORDER BY anomaly_type, p.category, p.product_name;

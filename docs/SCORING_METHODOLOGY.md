@@ -13,8 +13,8 @@ This project computes **three independent health dimensions** for every product:
 | Dimension               | Range / Values    | What it measures                                       |
 | ----------------------- | ----------------- | ------------------------------------------------------ |
 | **Unhealthiness Score** | 1–100 (integer)   | Composite harmfulness estimate across all risk factors |
-| **Nutri-Score Label**   | A, B, C, D, E     | EU front-of-pack nutrient profiling (where available)  |
-| **Processing Risk**     | Low, Medium, High | Degree of ultra-processing (NOVA-informed)             |
+| **Nutri-Score Label**   | A–E, UNKNOWN, NOT-APPLICABLE | EU front-of-pack nutrient profiling (where available)  |
+| **Processing Risk**     | Low, Moderate, High | Degree of ultra-processing (NOVA-informed)             |
 
 These three dimensions are **not interchangeable**. A product can have a decent Nutri-Score but a high Processing Risk (e.g., low-calorie diet soda: Nutri-Score B, Processing Risk High).
 
@@ -210,7 +210,7 @@ Final score = Negative − Positive → mapped to a letter grade.
 
 ### 3.2 Nutri-Score 2024 Point Thresholds (Solid Foods)
 
-For **computed** Nutri-Score (when no label or Open Food Facts value exists), use these thresholds:
+For **derived** Nutri-Score (when no label or Open Food Facts value exists), use these thresholds:
 
 **Negative points (N)** — each component scores 0–10:
 
@@ -251,7 +251,7 @@ For **computed** Nutri-Score (when no label or Open Food Facts value exists), us
 
 > **Source:** Santé Publique France, Nutri-Score algorithm update 2024.
 > **Important:** Beverages and fats/oils use different threshold tables — add those when drinks/oils pipelines are created.
-> When computing, set `confidence = 'computed'` and add a SQL comment noting the computation.
+> When deriving Nutri-Score from nutrition facts, add a SQL comment noting the derivation.
 
 ### 3.3 Why Nutri-Score ≠ Health
 
@@ -272,12 +272,13 @@ Nutri-Score has **known limitations** that this project explicitly acknowledges:
 In order of preference:
 1. **Official label** — if printed on the Polish packaging
 2. **Open Food Facts** — if the product entry exists and has been verified
-3. **Computed** — from nutrition facts using the 2024 Nutri-Score algorithm, with `confidence = 'computed'`
-4. **Not available** — if insufficient data, leave as `NULL`
+3. **Derived** — from nutrition facts using the 2024 Nutri-Score algorithm
+4. **UNKNOWN** — if insufficient data to derive
+5. **NOT-APPLICABLE** — for categories where Nutri-Score is not meaningful (e.g., alcohol)
 
 ---
 
-## 4. Processing Risk (Low / Medium / High)
+## 4. Processing Risk (Low / Moderate / High)
 
 ### 4.1 NOVA Classification (Reference Framework)
 
@@ -295,7 +296,7 @@ We use the NOVA food classification system as a conceptual guide:
 | Processing Risk | Typical NOVA | Criteria                                                    |
 | --------------- | ------------ | ----------------------------------------------------------- |
 | **Low**         | 1–2          | ≤5 recognizable ingredients, no industrial additives        |
-| **Medium**      | 3            | Some processing, limited additives, recognizable base       |
+| **Moderate**    | 3            | Some processing, limited additives, recognizable base       |
 | **High**        | 4            | Industrial formulations, emulsifiers, flavour systems, etc. |
 
 ### 4.3 NOVA Classification Column
@@ -306,7 +307,7 @@ The `scores.nova_classification` column stores the **NOVA group number** as text
 | --------------------- | ----------------------------------- |
 | `'1'`                 | `'Low'`                             |
 | `'2'`                 | `'Low'`                             |
-| `'3'`                 | `'Medium'`                          |
+| `'3'`                 | `'Moderate'`                        |
 | `'4'`                 | `'High'`                            |
 | `NULL`                | Derive from ingredients if possible |
 
@@ -421,8 +422,9 @@ The `confidence` column further qualifies the score:
 | ----------- | --------------------------------------------------- |
 | `verified`  | All data from primary label source                  |
 | `estimated` | Some values estimated from category averages        |
-| `computed`  | Nutri-Score derived from nutrition facts, not label |
 | `low`       | Insufficient data for reliable scoring              |
+
+> **Note:** `computed` is not a valid confidence level. The database CHECK constraint only allows `verified`, `estimated`, `low`.
 
 See `DATA_SOURCES.md` §5 and `RESEARCH_WORKFLOW.md` §6.4 for the full confidence determination workflow.
 

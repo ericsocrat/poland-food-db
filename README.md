@@ -62,8 +62,8 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 61 automated checks + 12 data quality reports
-- 32 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check) + 4 informational
+**Test Coverage**: 61 automated checks + 13 data quality reports
+- 32 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check) + 5 informational
 - 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
 - 8 source coverage & confidence tracking reports (informational, non-blocking)
 
@@ -127,7 +127,7 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **61 automated checks** + 12 informational data quality reports:
+Every change is validated against **61 automated checks** + 13 informational data quality reports:
 
 ### Data Integrity (32 checks)
 - No missing required fields (product_name, brand, country, category)
