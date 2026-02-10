@@ -62,8 +62,8 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 61 automated checks + 13 data quality reports
-- 32 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check) + 5 informational
+**Test Coverage**: 61 automated checks + 14 data quality reports
+- 32 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check) + 6 informational
 - 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
 - 8 source coverage & confidence tracking reports (informational, non-blocking)
 
@@ -108,7 +108,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (30 files)
+    └── migrations/          # Schema migrations (31 files)
 ├── docs/                    # Project documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
@@ -127,7 +127,7 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **61 automated checks** + 13 informational data quality reports:
+Every change is validated against **61 automated checks** + 14 informational data quality reports:
 
 ### Data Integrity (32 checks)
 - No missing required fields (product_name, brand, country, category)

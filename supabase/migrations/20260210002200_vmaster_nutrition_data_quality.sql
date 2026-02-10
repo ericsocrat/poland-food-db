@@ -1,19 +1,13 @@
--- VIEW: master product view (v_master)
--- Flat denormalized view joining products → servings → nutrition_facts → scores → sources
--- plus ingredient analytics from normalized ingredient tables.
--- This view is already created in the schema migration (20260207000100_create_schema.sql).
--- Updated in migration 20260207000400_remove_unused_columns.sql.
--- Updated 2026-02-08: added EAN, source provenance fields.
--- Updated 2026-02-10: sources join changed from LIKE pattern to equijoin on sources.category.
--- Updated 2026-02-10: added ingredient analytics (ingredient_count, additive_names,
---   has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags).
--- Updated 2026-02-10: filtered to per-100g basis only (prevents fan-out from real serving rows).
--- Updated 2026-02-10: added per-serving columns (serving_qty_g, per_serving_calories, etc.).
--- Updated 2026-02-10: added ingredient_data_quality indicator (complete/partial/missing).
--- Updated 2026-02-10: added nutrition_data_quality indicator (clean/suspect).
--- This file exists for reference and for recreating the view if needed.
+-- Migration: Add nutrition_data_quality column to v_master
+-- Flags products with physiologically implausible nutrition values from OFF.
+-- Categories:
+--   'clean'   — no anomalies detected
+--   'suspect' — one or more suspicious values (zero sat_fat with high fat,
+--               zero salt in salty category, zero sugars with high carbs,
+--               extreme salt >10g, near-zero calories for non-beverage)
 --
--- Usage: SELECT * FROM v_master WHERE country = 'PL' AND category = 'Chips';
+-- This is an informational column — it does NOT change scores, but helps
+-- users and downstream consumers identify data needing cross-validation.
 
 CREATE OR REPLACE VIEW public.v_master AS
 SELECT

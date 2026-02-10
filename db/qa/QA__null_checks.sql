@@ -524,3 +524,18 @@ FROM (
 JOIN products p ON p.product_id = anomalies.product_id
 WHERE p.is_deprecated IS NOT TRUE
 ORDER BY anomaly_type, p.category, p.product_name;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 38. Suspect nutrition + verified confidence mismatch (informational)
+--     Products flagged as 'suspect' nutrition quality but marked 'verified'
+--     confidence represent the highest-priority cross-validation targets —
+--     their scores may be inaccurate due to bad OFF data.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT
+  COUNT(*) AS total_suspect,
+  COUNT(*) FILTER (WHERE confidence = 'verified')  AS suspect_and_verified,
+  COUNT(*) FILTER (WHERE confidence = 'estimated') AS suspect_and_estimated,
+  ROUND(COUNT(*) FILTER (WHERE confidence = 'verified')::numeric
+      / NULLIF(COUNT(*), 0)::numeric * 100, 1) AS pct_verified_but_suspect
+FROM v_master
+WHERE nutrition_data_quality = 'suspect';

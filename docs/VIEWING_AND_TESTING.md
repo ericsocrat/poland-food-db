@@ -143,7 +143,7 @@ SELECT * FROM v_master
 ORDER BY unhealthiness_score::int DESC;
 ```
 
-**Columns available** (62 columns):
+**Columns available** (63 columns):
 - **Identity**: `product_id`, `country`, `brand`, `product_name`, `category`, `product_type`, `ean`
 - **Qualitative**: `prep_method`, `store_availability`, `controversies`
 - **Scoring**: `unhealthiness_score`, `scoring_version`, `scored_at`, `confidence`, `data_completeness_pct`
@@ -155,7 +155,7 @@ ORDER BY unhealthiness_score::int DESC;
 - **Dietary**: `vegan_status`, `vegetarian_status`
 - **Allergens**: `allergen_count`, `allergen_tags`, `trace_count`, `trace_tags`
 - **Sources**: `source_type`, `source_ref`, `source_url`, `source_notes`
-- **Data quality**: `ingredient_data_quality`
+- **Data quality**: `ingredient_data_quality`, `nutrition_data_quality`
 
 ---
 
