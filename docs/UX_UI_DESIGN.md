@@ -2,7 +2,7 @@
 
 > **Status:** Production-ready specification — architecture, data contracts, and UX rules locked.
 > **Last updated:** 2026-02-10 (incremental hardening: score disambiguation, API-to-component mapping, misinterpretation defense v2)
-> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (82/82 checks). This document is the single source of truth for any future front-end implementation.
+> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (83/83 checks). This document is the single source of truth for any future front-end implementation.
 
 ---
 
@@ -323,11 +323,11 @@ Home (Dashboard)
 
 This database shows three independent scores. They measure **different things**, are computed **differently**, and must never be conflated in the UI.
 
-| System                     | What It Measures                                               | Range    | Source                                       | What It Does NOT Mean                                                                       |
-| -------------------------- | -------------------------------------------------------------- | -------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- |
-| **Unhealthiness Score**    | Nutritional risk from 9 weighted factors (sugar, fat, salt, processing, additives, etc.) | 1–100    | Computed by `compute_unhealthiness_v32()`    | NOT a "health score." A low number ≠ "eat unlimited amounts." Does not capture vitamins, minerals, portions, or individual needs. |
-| **Nutri-Score (A–E)**      | EU-style front-of-pack nutrition grade. Positive & negative nutrient balance. | A–E      | Assigned from `nutri_score_ref` lookup       | NOT a safety rating. Nutri-Score B ≠ "healthy." A NOVA 4 product can still be Nutri-Score A if its macro profile is favourable. |
-| **Data Confidence (0–100)**| How much data we have about the product, NOT how good the product is. | 0–100    | Computed by `compute_data_confidence()`      | NOT a quality score. Confidence 95 ≠ "trustworthy product." It means we have comprehensive data to score it accurately. |
+| System                      | What It Measures                                                                         | Range | Source                                    | What It Does NOT Mean                                                                                                             |
+| --------------------------- | ---------------------------------------------------------------------------------------- | ----- | ----------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Unhealthiness Score**     | Nutritional risk from 9 weighted factors (sugar, fat, salt, processing, additives, etc.) | 1–100 | Computed by `compute_unhealthiness_v32()` | NOT a "health score." A low number ≠ "eat unlimited amounts." Does not capture vitamins, minerals, portions, or individual needs. |
+| **Nutri-Score (A–E)**       | EU-style front-of-pack nutrition grade. Positive & negative nutrient balance.            | A–E   | Assigned from `nutri_score_ref` lookup    | NOT a safety rating. Nutri-Score B ≠ "healthy." A NOVA 4 product can still be Nutri-Score A if its macro profile is favourable.   |
+| **Data Confidence (0–100)** | How much data we have about the product, NOT how good the product is.                    | 0–100 | Computed by `compute_data_confidence()`   | NOT a quality score. Confidence 95 ≠ "trustworthy product." It means we have comprehensive data to score it accurately.           |
 
 **Critical UX rule:** These three numbers must never appear in a single "overall score" or be averaged. They are always displayed separately with distinct visual treatments (bar, badge, shield).
 
@@ -573,16 +573,16 @@ RPC functions (POST /rpc/):
 
 Every UI component maps to exactly one API call. No component should ever call multiple endpoints and merge results client-side.
 
-| UI Component                    | API Endpoint                          | Key Response Fields                                                                  | Caching Strategy    |
-| ------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ | ------------------- |
-| Dashboard — Category Grid       | `GET v_api_category_overview`         | `category`, `product_count`, `avg_unhealthiness`, `score_band`                       | 5 min TTL           |
-| Category Listing — Product List | `POST /rpc/api_category_listing`      | `product_id`, `product_name`, `brand`, `unhealthiness_score`, `nutri_score_label`    | 2 min TTL           |
-| Product Detail — Identity       | `POST /rpc/api_product_detail`        | Full JSONB: identity, nutrition, flags, ingredients, allergens, traces, confidence    | On navigation       |
-| Product Detail — Score Panel    | `POST /rpc/api_score_explanation`     | `headline`, `factor_breakdown[]`, `category_rank`, `category_avg`, `warnings[]`      | On navigation       |
-| Product Detail — Confidence     | `POST /rpc/api_data_confidence`       | `total_score`, `band`, `components[]`, `missing_items[]`                             | On navigation       |
-| Product Detail — Alternatives   | `POST /rpc/api_better_alternatives`   | `product_id`, `product_name`, `score`, `score_diff`                                  | On navigation       |
-| Search Results                  | `POST /rpc/api_search_products`       | Same as category listing + `rank` from `ts_rank_cd`                                  | No cache (live)     |
-| Tooltips                        | `GET column_metadata`                 | `tooltip_text`, `display_label`, `unit`                                              | Session-level cache |
+| UI Component                    | API Endpoint                        | Key Response Fields                                                                | Caching Strategy    |
+| ------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------- | ------------------- |
+| Dashboard — Category Grid       | `GET v_api_category_overview`       | `category`, `product_count`, `avg_unhealthiness`, `score_band`                     | 5 min TTL           |
+| Category Listing — Product List | `POST /rpc/api_category_listing`    | `product_id`, `product_name`, `brand`, `unhealthiness_score`, `nutri_score_label`  | 2 min TTL           |
+| Product Detail — Identity       | `POST /rpc/api_product_detail`      | Full JSONB: identity, nutrition, flags, ingredients, allergens, traces, confidence | On navigation       |
+| Product Detail — Score Panel    | `POST /rpc/api_score_explanation`   | `headline`, `factor_breakdown[]`, `category_rank`, `category_avg`, `warnings[]`    | On navigation       |
+| Product Detail — Confidence     | `POST /rpc/api_data_confidence`     | `total_score`, `band`, `components[]`, `missing_items[]`                           | On navigation       |
+| Product Detail — Alternatives   | `POST /rpc/api_better_alternatives` | `product_id`, `product_name`, `score`, `score_diff`                                | On navigation       |
+| Search Results                  | `POST /rpc/api_search_products`     | Same as category listing + `rank` from `ts_rank_cd`                                | No cache (live)     |
+| Tooltips                        | `GET column_metadata`               | `tooltip_text`, `display_label`, `unit`                                            | Session-level cache |
 
 ### 8.3 Product Detail — Render Order
 
@@ -748,14 +748,14 @@ Display this as an expandable section or info icon on the methodology page and P
 
 When expanding beyond Poland, the following UX elements must adapt:
 
-| Element                | Poland (Current)         | Multi-Country (Future)                                      |
-| ---------------------- | ------------------------ | ----------------------------------------------------------- |
-| Country filter         | Hardcoded PL             | Dropdown: PL, DE, CZ, etc. (from `country_ref`)            |
-| Nutri-Score display    | Standard EU badge        | May vary — some countries use traffic-light labels          |
-| Currency in prices     | PLN (future)             | EUR, CZK, etc. — locale-aware formatting                   |
-| Ingredient language    | Polish + English         | Native language + English translation                       |
-| Store chains           | Polish retailers         | Country-specific retailer lists                             |
-| EAN prefix validation  | 590 = Polish origin      | Country-specific prefix mapping                             |
-| Regulatory disclaimers | Polish food law          | Country-specific legal requirements                         |
+| Element                | Poland (Current)    | Multi-Country (Future)                             |
+| ---------------------- | ------------------- | -------------------------------------------------- |
+| Country filter         | Hardcoded PL        | Dropdown: PL, DE, CZ, etc. (from `country_ref`)    |
+| Nutri-Score display    | Standard EU badge   | May vary — some countries use traffic-light labels |
+| Currency in prices     | PLN (future)        | EUR, CZK, etc. — locale-aware formatting           |
+| Ingredient language    | Polish + English    | Native language + English translation              |
+| Store chains           | Polish retailers    | Country-specific retailer lists                    |
+| EAN prefix validation  | 590 = Polish origin | Country-specific prefix mapping                    |
+| Regulatory disclaimers | Polish food law     | Country-specific legal requirements                |
 
 **UX rule:** All country-specific data must come from the database (reference tables), never from front-end hardcoding. See [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md).

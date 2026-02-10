@@ -16,16 +16,16 @@ This is **not** a Nutri-Score app, a calorie counter, or a "healthy/unhealthy" b
 
 ## How It Differs From Nutri-Score Apps
 
-| Dimension               | Nutri-Score Apps      | This Project                                                  |
-| ------------------------ | --------------------- | ------------------------------------------------------------- |
-| Scoring axes             | 1 (A-E letter)        | 4 independent axes (unhealthiness, nutri-score, NOVA, confidence) |
-| Additive analysis        | No                    | Yes — EFSA concern tiers, additive count                      |
-| Processing level         | No                    | Yes — NOVA 1-4 integrated into score                         |
-| Trans fat tracking       | No                    | Yes — separate weighted factor                                |
-| Controversy tracking     | No                    | Yes — palm oil, artificial sweeteners flagged                 |
-| Data quality visibility  | Hidden                | Explicit — confidence score per product                       |
-| Score explainability     | None                  | Full factor breakdown with category context                   |
-| Source provenance         | Opaque                | Tracked — every product links to its data source              |
+| Dimension               | Nutri-Score Apps | This Project                                                      |
+| ----------------------- | ---------------- | ----------------------------------------------------------------- |
+| Scoring axes            | 1 (A-E letter)   | 4 independent axes (unhealthiness, nutri-score, NOVA, confidence) |
+| Additive analysis       | No               | Yes — EFSA concern tiers, additive count                          |
+| Processing level        | No               | Yes — NOVA 1-4 integrated into score                              |
+| Trans fat tracking      | No               | Yes — separate weighted factor                                    |
+| Controversy tracking    | No               | Yes — palm oil, artificial sweeteners flagged                     |
+| Data quality visibility | Hidden           | Explicit — confidence score per product                           |
+| Score explainability    | None             | Full factor breakdown with category context                       |
+| Source provenance       | Opaque           | Tracked — every product links to its data source                  |
 
 ## 🎯 Quick Start
 
@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (82 critical checks + EAN + 8 informational)
+# All tests (83 critical checks + 8 informational)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -87,14 +87,15 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 82 automated checks + 8 data quality reports
+**Test Coverage**: 83 automated critical checks + 8 data quality reports
 - 35 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check, product-source provenance) + 6 informational
 - 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
+- 1 EAN checksum validation (all barcodes verified)
 - 8 API surface validation checks (contract validation, JSON structure, listing consistency)
 - 10 confidence scoring checks (range, distribution, component totals, band assignment)
 - 8 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 82/82
+**All critical tests passing**: ✅ 83/83
 
 **EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
@@ -160,7 +161,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **82 automated checks** + 8 informational data quality reports:
+Every change is validated against **83 automated critical checks** + 8 informational data quality reports:
 
 ### Data Integrity (35 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -220,7 +221,7 @@ Every change is validated against **82 automated checks** + 8 informational data
 
 **Test files**: `db/qa/QA__*.sql` — Run via `.\RUN_QA.ps1`
 
-**CI**: All 82 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 1% low-confidence products).
+**CI**: All 83 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 1% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -292,11 +293,11 @@ Full documentation: [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)
 
 Every product receives an automated **data confidence** score (0-100) measuring how complete and verified the underlying data is. This is NOT a quality or healthiness score — it tells you how much to trust the displayed numbers.
 
-| Confidence    | Score  | Criteria                               | Meaning                                 |
-| ------------- | ------ | -------------------------------------- | --------------------------------------- |
-| **High**      | ≥80    | Comprehensive nutrition + ingredients  | Data is reliable for scoring            |
-| **Medium**    | 50-79  | Some gaps (allergens, serving data)    | Score may shift as data improves        |
-| **Low**       | <50    | Major data gaps                        | Use with caution                        |
+| Confidence | Score | Criteria                              | Meaning                          |
+| ---------- | ----- | ------------------------------------- | -------------------------------- |
+| **High**   | ≥80   | Comprehensive nutrition + ingredients | Data is reliable for scoring     |
+| **Medium** | 50-79 | Some gaps (allergens, serving data)   | Score may shift as data improves |
+| **Low**    | <50   | Major data gaps                       | Use with caution                 |
 
 **Current distribution**: 493 high · 65 medium · 2 low
 
@@ -349,7 +350,7 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 82/82 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 83/83 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---

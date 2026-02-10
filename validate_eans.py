@@ -12,6 +12,7 @@ Output format (last line):
     Results: N valid, M invalid
 """
 
+import os
 import subprocess
 import sys
 
@@ -66,9 +67,12 @@ ORDER BY category, brand, product_name;
 
 
 def main() -> int:
-    # Query the database
-    result = subprocess.run(
-        [
+    # Build psql command — CI mode (PGHOST set) uses psql directly,
+    # local mode uses docker exec into the Supabase container
+    if os.environ.get("PGHOST"):
+        cmd = ["psql", "-t", "-A", "-F", "|", "-c", QUERY]
+    else:
+        cmd = [
             "docker",
             "exec",
             "-i",
@@ -84,7 +88,11 @@ def main() -> int:
             "|",
             "-c",
             QUERY,
-        ],
+        ]
+
+    # Query the database
+    result = subprocess.run(
+        cmd,
         capture_output=True,
         text=True,
         encoding="utf-8",

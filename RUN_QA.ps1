@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Runs all QA test suites against the LOCAL Supabase database.
 
@@ -71,6 +71,25 @@ $DB_NAME = "postgres"
 $SCRIPT_ROOT = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
 $QA_DIR = Join-Path (Join-Path $SCRIPT_ROOT "db") "qa"
 
+# ─── Database Connection Abstraction ───────────────────────────────────────
+# CI mode  (PGHOST set): uses psql directly — PGHOST/PGPORT/PGUSER/PGPASSWORD env vars
+# Local mode (default) : uses docker exec into the Supabase container
+function Invoke-Psql {
+    param(
+        [string]$InputSql,
+        [switch]$TuplesOnly
+    )
+    if ($env:PGHOST) {
+        $psqlArgs = @()
+        if ($TuplesOnly) { $psqlArgs += "--tuples-only" }
+        return ($InputSql | psql @psqlArgs 2>&1)
+    } else {
+        $psqlArgs = @("-U", $DB_USER, "-d", $DB_NAME)
+        if ($TuplesOnly) { $psqlArgs += "--tuples-only" }
+        return ($InputSql | docker exec -i $CONTAINER psql @psqlArgs 2>&1)
+    }
+}
+
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "  Poland Food DB — QA Test Suite" -ForegroundColor Cyan
@@ -97,7 +116,7 @@ $sw1 = [System.Diagnostics.Stopwatch]::StartNew()
 $test1Content = Get-Content $test1File -Raw
 $test1ChecksOnly = ($test1Content -split '-- 36\. v_master new column coverage')[0]
 
-$test1Output = $test1ChecksOnly | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
+$test1Output = Invoke-Psql -InputSql $test1ChecksOnly -TuplesOnly
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
@@ -137,7 +156,7 @@ Write-Host "Running Test Suite 2: Scoring Formula (29 checks)..." -ForegroundCol
 $sw2 = [System.Diagnostics.Stopwatch]::StartNew()
 
 $test2Content = Get-Content $test2File -Raw
-$test2Output = $test2Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
+$test2Output = Invoke-Psql -InputSql $test2Content -TuplesOnly
 
 if ($LASTEXITCODE -ne 0) {
     Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
@@ -174,7 +193,7 @@ if (Test-Path $test3File) {
 
     # Run only checks 1-4 (actionable items); 5-7 are informational summaries
     $test3Content = Get-Content $test3File -Raw
-    $test3Output = $test3Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
+    $test3Output = Invoke-Psql -InputSql $test3Content -TuplesOnly
 
     if ($LASTEXITCODE -ne 0) {
         $sw3.Stop()
@@ -254,7 +273,7 @@ else {
 
     $sw5 = [System.Diagnostics.Stopwatch]::StartNew()
     $test5Content = Get-Content $test5File -Raw
-    $test5Output = $test5Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
+    $test5Output = Invoke-Psql -InputSql $test5Content -TuplesOnly
 
     if ($LASTEXITCODE -ne 0) {
         $sw5.Stop()
@@ -299,7 +318,7 @@ else {
 
     $sw6 = [System.Diagnostics.Stopwatch]::StartNew()
     $test6Content = Get-Content $test6File -Raw
-    $test6Output = $test6Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
+    $test6Output = Invoke-Psql -InputSql $test6Content -TuplesOnly
 
     if ($LASTEXITCODE -ne 0) {
         $sw6.Stop()
@@ -350,7 +369,7 @@ SELECT
     (SELECT COUNT(DISTINCT category) FROM products WHERE is_deprecated IS NOT TRUE) AS categories;
 "@
 
-$invOutput = echo $invQuery | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME 2>&1
+$invOutput = Invoke-Psql -InputSql $invQuery
 Write-Host ($invOutput | Out-String).Trim() -ForegroundColor DarkGray
 
 # ─── Summary ────────────────────────────────────────────────────────────────
@@ -409,7 +428,8 @@ if ($allPass -and -not $warnFail) {
 else {
     if (-not $allPass) {
         Write-Host "  ✗ SOME TESTS FAILED" -ForegroundColor Red
-    } elseif ($warnFail) {
+    }
+    elseif ($warnFail) {
         Write-Host "  ⚠ PASSED WITH WARNINGS (-FailOnWarn is set)" -ForegroundColor DarkYellow
     }
     Write-Host "    Suite 1 (Integrity):    $(if ($test1Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test1Pass) { "Green" } else { "Red" })

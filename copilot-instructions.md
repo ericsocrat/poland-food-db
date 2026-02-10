@@ -9,7 +9,7 @@
 > **Servings:** 877 rows — 560 per-100g (canonical) + 317 per-serving (57% real serving size coverage)
 > **Ingredient analytics:** 1,257 unique ingredients (all clean ASCII English), 728 allergen declarations, 782 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 82 critical checks + 14 informational reports — all passing
+> **QA:** 83 critical checks + 8 informational reports — all passing
 
 ---
 
@@ -133,7 +133,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 558/560 coverage (99.6%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (82 critical + 14 info)
+├── RUN_QA.ps1                       # QA test runner (83 critical + 8 info)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
 ├── populate_ingredient_data.py      # OFF API → ingredient_ref/product_ingredient/allergens/traces

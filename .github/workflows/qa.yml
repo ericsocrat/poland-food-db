@@ -13,10 +13,16 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      fail_on_warn:
+        description: "Treat informational warnings as failures"
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   qa:
-    name: Pipeline + QA (82 checks)
+    name: Pipeline + QA (83 checks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -72,119 +78,94 @@ jobs:
             done
           done
 
-      - name: Run QA — Data Integrity (35 checks)
+      - name: Run QA via RUN_QA.ps1
+        id: qa
+        shell: pwsh
         run: |
-          # Strip informational checks (36+), run blocking checks only
-          checks=$(sed '/-- 36\. v_master new column coverage/,$d' db/qa/QA__null_checks.sql)
-          result=$(echo "$checks" | psql --tuples-only 2>&1)
-          trimmed=$(echo "$result" | sed '/^\s*$/d')
-          if [ -z "$trimmed" ]; then
-            echo "✓ PASS (35/35 — zero violations)"
-          else
-            echo "✗ FAILED — violations detected:"
-            echo "$result"
-            exit 1
-          fi
+          $failOnWarn = '${{ inputs.fail_on_warn }}' -eq 'true'
+          $args = @('-Json', '-OutFile', 'qa.json')
+          if ($failOnWarn) { $args += '-FailOnWarn' }
+          & ./RUN_QA.ps1 @args
+          $exitCode = $LASTEXITCODE
+          # Write exit code for downstream steps
+          "qa_exit_code=$exitCode" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
+          # Don't fail yet — let summary + artifact steps run
+          if ($exitCode -ne 0) {
+            Write-Host "::warning::QA exited with code $exitCode"
+          }
 
-      - name: Run QA — Scoring Formula (29 checks)
-        run: |
-          result=$(psql --tuples-only -f db/qa/QA__scoring_formula_tests.sql 2>&1)
-          trimmed=$(echo "$result" | sed '/^\s*$/d')
-          if [ -z "$trimmed" ]; then
-            echo "✓ PASS (29/29 — zero violations)"
-          else
-            echo "✗ FAILED — violations detected:"
-            echo "$result"
-            exit 1
-          fi
-
-      - name: Run QA — Source Coverage (informational)
-        continue-on-error: true
-        run: |
-          result=$(psql --tuples-only -f db/qa/QA__source_coverage.sql 2>&1)
-          trimmed=$(echo "$result" | sed '/^\s*$/d')
-          if [ -z "$trimmed" ]; then
-            echo "✓ All products have multi-source coverage"
-          else
-            count=$(echo "$trimmed" | wc -l)
-            echo "⚠ $count items flagged for cross-validation (non-blocking)"
-          fi
-
-      - name: Run QA — EAN Checksum Validation
-        run: |
-          python validate_eans.py
-
-      - name: Run QA — API Surface Validation (8 checks)
-        run: |
-          result=$(psql --tuples-only -f db/qa/QA__api_surfaces.sql 2>&1)
-          trimmed=$(echo "$result" | sed '/^\s*$/d')
-          # Check for violations (lines with non-zero counts after |)
-          violations=$(echo "$trimmed" | grep -E '\|\s*[1-9]' || true)
-          if [ -z "$violations" ]; then
-            echo "✓ PASS (8/8 — zero violations)"
-          else
-            echo "✗ FAILED — API violations detected:"
-            echo "$trimmed"
-            exit 1
-          fi
-
-      - name: Run QA — Confidence Scoring (10 checks)
-        run: |
-          result=$(psql --tuples-only -f db/qa/QA__confidence_scoring.sql 2>&1)
-          trimmed=$(echo "$result" | sed '/^\s*$/d')
-          violations=$(echo "$trimmed" | grep -E '\|\s*[1-9]' || true)
-          if [ -z "$violations" ]; then
-            echo "✓ PASS (10/10 — zero violations)"
-          else
-            echo "✗ FAILED — Confidence scoring violations detected:"
-            echo "$trimmed"
-            exit 1
-          fi
+      - name: Upload QA results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qa-results
+          path: qa.json
+          retention-days: 30
 
       - name: Confidence coverage threshold
         run: |
           # Fail if more than 1% of products have low confidence
-          result=$(psql --tuples-only -c "
+          low_count=$(psql --tuples-only -c "
             SELECT COUNT(*) FROM v_product_confidence WHERE confidence_band = 'low';
-          " 2>&1)
-          low_count=$(echo "$result" | tr -d ' ')
-          total=$(psql --tuples-only -c "SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE;" 2>&1 | tr -d ' ')
-          echo "Low confidence products: $low_count / $total"
-          if [ "$low_count" -gt "$(echo "$total * 0.01 / 1" | bc)" ]; then
+          " 2>&1 | tr -d ' ')
+          total=$(psql --tuples-only -c "
+            SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE;
+          " 2>&1 | tr -d ' ')
+          # Integer math: threshold = total / 100 (floor division, no bc needed)
+          threshold=$((total / 100))
+          echo "Low confidence: $low_count / $total (threshold: $threshold)"
+          if [ "$low_count" -gt "$threshold" ]; then
             echo "✗ FAILED — More than 1% of products have low confidence ($low_count / $total)"
             exit 1
           else
-            echo "✓ PASS — Low confidence products within threshold"
+            echo "✓ PASS — Low confidence within threshold"
           fi
-
-      - name: Database inventory
-        if: always()
-        run: |
-          psql -c "
-            SELECT
-              (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE) AS active_products,
-              (SELECT COUNT(*) FROM products WHERE is_deprecated = true) AS deprecated,
-              (SELECT COUNT(*) FROM servings) AS serving_rows,
-              (SELECT COUNT(*) FROM nutrition_facts) AS nutrition_rows,
-              (SELECT COUNT(*) FROM scores) AS scores_rows,
-              (SELECT COUNT(*) FROM ingredient_ref) AS ingredient_refs,
-              (SELECT COUNT(*) FROM product_ingredient) AS product_ingredients,
-              (SELECT COUNT(*) FROM product_sources) AS product_source_rows,
-              (SELECT COUNT(DISTINCT category) FROM products WHERE is_deprecated IS NOT TRUE) AS categories;
-          "
 
       - name: Generate QA summary
         if: always()
+        shell: pwsh
         run: |
-          echo "## QA Summary" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Suite | Checks | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|--------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Data Integrity | 35 | ${{ steps.*.outcome == 'failure' && '✗ FAIL' || '✓ PASS' }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Scoring Formula | 29 | ✓ |" >> $GITHUB_STEP_SUMMARY
-          echo "| Source Coverage | 8 | ℹ info |" >> $GITHUB_STEP_SUMMARY
-          echo "| EAN Checksum | 1 | ✓ |" >> $GITHUB_STEP_SUMMARY
-          echo "| API Surfaces | 8 | ✓ |" >> $GITHUB_STEP_SUMMARY
-          echo "| Confidence Scoring | 10 | ✓ |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "**Total: 82 critical checks + 8 informational**" >> $GITHUB_STEP_SUMMARY
+          if (-not (Test-Path 'qa.json')) {
+            "## QA Summary`n`n:x: qa.json not found — QA step may have failed to start." | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+            exit 0
+          }
+          $qa = Get-Content 'qa.json' -Raw | ConvertFrom-Json
+          $sb = [System.Text.StringBuilder]::new()
+          [void]$sb.AppendLine("## QA Summary")
+          [void]$sb.AppendLine("")
+          [void]$sb.AppendLine("| Suite | ID | Checks | Status | Runtime |")
+          [void]$sb.AppendLine("|-------|----|--------|--------|---------|")
+          foreach ($s in $qa.suites) {
+            $icon = switch ($s.status) {
+              'pass' { ':white_check_mark:' }
+              'fail' { ':x:' }
+              'warn' { ':warning:' }
+              'error' { ':boom:' }
+              default { ':grey_question:' }
+            }
+            $rt = if ($s.runtime_ms) { "$($s.runtime_ms) ms" } else { '—' }
+            [void]$sb.AppendLine("| $($s.name) | ``$($s.suite_id)`` | $($s.checks) | $icon $($s.status) | $rt |")
+          }
+          [void]$sb.AppendLine("")
+          [void]$sb.AppendLine("**Overall: $($qa.overall)** — $($qa.summary.passed) passed, $($qa.summary.failed) failed, $($qa.summary.warnings) warnings")
+          [void]$sb.AppendLine("")
+          [void]$sb.AppendLine("*Schema version: $($qa.version) · Timestamp: $($qa.timestamp)*")
+          $sb.ToString() | Out-File -FilePath $env:GITHUB_STEP_SUMMARY -Append
+
+      - name: Fail if QA failed
+        if: always()
+        shell: pwsh
+        run: |
+          if (-not (Test-Path 'qa.json')) { exit 1 }
+          $qa = Get-Content 'qa.json' -Raw | ConvertFrom-Json
+          if ($qa.overall -eq 'fail') {
+            Write-Host "::error::QA FAILED — $($qa.summary.failed) check(s) failed"
+            exit 1
+          }
+          if ($qa.overall -eq 'warn') {
+            Write-Host "::warning::QA passed with warnings ($($qa.summary.warnings) flagged items)"
+            # Only fail on warn if explicitly requested
+            $failOnWarn = '${{ inputs.fail_on_warn }}' -eq 'true'
+            if ($failOnWarn) { exit 2 }
+          }
+          Write-Host "QA passed: $($qa.summary.passed)/$($qa.summary.total_checks) checks"
