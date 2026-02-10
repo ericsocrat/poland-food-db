@@ -51,7 +51,7 @@ echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GR
 
 ## ✅ How to Know Everything Is Working
 
-### 1. **Data Integrity Tests** (32 checks + 4 informational)
+### 1. **Data Integrity Tests** (35 checks + 6 informational)
 Validates foreign keys, nulls, duplicates, orphaned rows, energy cross-check, ingredient data coverage:
 
 ```powershell
@@ -92,7 +92,7 @@ Run all pipelines + both QA suites automatically:
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (61/61 — zero violation rows).
+  All QA checks passed (64/64 — zero violation rows).
 
   Database inventory:
   total_products | deprecated | servings | nutrition | scores | ingredients
@@ -111,9 +111,9 @@ Runs both test suites with color-coded output:
 
 **Expected output**:
 ```
-✓ PASS (32/32 — zero violations)
+✓ PASS (35/35 — zero violations)
 ✓ PASS (29/29 — zero violations)
-ALL TESTS PASSED (61/61 checks)
+ALL TESTS PASSED (64/64 checks)
 ```
 
 ---
@@ -143,7 +143,7 @@ SELECT * FROM v_master
 ORDER BY unhealthiness_score::int DESC;
 ```
 
-**Columns available** (63 columns):
+**Columns available** (66 columns):
 - **Identity**: `product_id`, `country`, `brand`, `product_name`, `category`, `product_type`, `ean`
 - **Qualitative**: `prep_method`, `store_availability`, `controversies`
 - **Scoring**: `unhealthiness_score`, `scoring_version`, `scored_at`, `confidence`, `data_completeness_pct`
@@ -154,7 +154,7 @@ ORDER BY unhealthiness_score::int DESC;
 - **Ingredients**: `additives_count`, `ingredients_raw`, `ingredient_count`, `additive_names`, `ingredient_concern_score`
 - **Dietary**: `vegan_status`, `vegetarian_status`
 - **Allergens**: `allergen_count`, `allergen_tags`, `trace_count`, `trace_tags`
-- **Sources**: `source_type`, `source_ref`, `source_url`, `source_notes`
+- **Sources**: `source_type`, `source_url`, `source_ean`, `source_confidence`, `source_fields`, `source_collected_at`, `source_notes`
 - **Data quality**: `ingredient_data_quality`, `nutrition_data_quality`
 
 ---

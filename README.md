@@ -27,7 +27,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (61 checks)
+# All tests (64 checks)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -62,12 +62,12 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 61 automated checks + 14 data quality reports
-- 32 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check) + 6 informational
+**Test Coverage**: 64 automated checks + 14 data quality reports
+- 35 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check, product-source provenance) + 6 informational
 - 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
 - 8 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 61/61
+**All critical tests passing**: ✅ 64/64
 
 **EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
@@ -101,14 +101,14 @@ poland-food-db/
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
     │   └── zabka/           # 28 convenience store products (4 SQL files)
 │   ├── qa/                  # Quality assurance test suites
-│   │   ├── QA__null_checks.sql           # 32 integrity checks
+│   │   ├── QA__null_checks.sql           # 35 integrity checks
 │   │   ├── QA__scoring_formula_tests.sql # 29 algorithm tests
     │   └── QA__source_coverage.sql       # 8 data quality reports
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (32 files)
+    └── migrations/          # Schema migrations (33 files)
 ├── docs/                    # Project documentation
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
@@ -127,9 +127,9 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **61 automated checks** + 14 informational data quality reports:
+Every change is validated against **64 automated checks** + 14 informational data quality reports:
 
-### Data Integrity (32 checks)
+### Data Integrity (35 checks)
 - No missing required fields (product_name, brand, country, category)
 - No orphaned foreign keys (nutrition, scores, servings, ingredients)
 - No duplicate products
@@ -138,6 +138,7 @@ Every change is validated against **61 automated checks** + 14 informational dat
 - Category invariant (exactly 28 products per active category)
 - Score fields not null for active products
 - View consistency (v_master row count matches products)
+- Product-source provenance (every product has a source, single primary, no fan-out)
 
 ### Scoring Formula (29 checks)
 - Scores in valid range [1, 100]

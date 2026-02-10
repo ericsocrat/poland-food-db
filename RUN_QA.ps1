@@ -42,11 +42,11 @@ if (-not (Test-Path $test1File)) {
     exit 1
 }
 
-Write-Host "Running Test Suite 1: Data Integrity (32 checks)..." -ForegroundColor Yellow
+Write-Host "Running Test Suite 1: Data Integrity (35 checks)..." -ForegroundColor Yellow
 
 # Strip final summary query to avoid false-positive
 $test1Content = Get-Content $test1File -Raw
-$test1ChecksOnly = ($test1Content -split '-- 33\. v_master new column coverage')[0]
+$test1ChecksOnly = ($test1Content -split '-- 36\. v_master new column coverage')[0]
 
 $test1Output = $test1ChecksOnly | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
 
@@ -58,7 +58,7 @@ if ($LASTEXITCODE -ne 0) {
 
 $test1Lines = ($test1Output | Out-String).Trim()
 if ($test1Lines -eq "" -or $test1Lines -match '^\s*$') {
-    Write-Host "  ✓ PASS (32/32 — zero violations)" -ForegroundColor Green
+    Write-Host "  ✓ PASS (35/35 — zero violations)" -ForegroundColor Green
     $test1Pass = $true
 }
 else {

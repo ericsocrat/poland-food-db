@@ -364,7 +364,38 @@ WHERE p.is_deprecated IS NOT TRUE
   AND sc.ingredient_concern_score IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 33. v_master new column coverage (informational)
+-- 33. Every active product must have at least one product_sources row
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       'MISSING PRODUCT SOURCE' AS issue
+FROM products p
+LEFT JOIN product_sources ps ON ps.product_id = p.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND ps.product_source_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 34. Only one primary source per product (no multi-primary)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT ps.product_id,
+       COUNT(*) AS primary_count,
+       'MULTIPLE PRIMARY SOURCES' AS issue
+FROM product_sources ps
+WHERE ps.is_primary = true
+GROUP BY ps.product_id
+HAVING COUNT(*) > 1;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 35. v_master fan-out guard: row count must equal active product count
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT
+    (SELECT COUNT(*) FROM v_master) AS view_rows,
+    (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE) AS active_products,
+    'FAN-OUT DETECTED' AS issue
+WHERE (SELECT COUNT(*) FROM v_master) <>
+      (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 36. v_master new column coverage (informational)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
   COUNT(*) AS active_products,
@@ -377,7 +408,7 @@ SELECT
 FROM v_master;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 34. Summary counts (informational, not a failure check)
+-- 37. Summary counts (informational, not a failure check)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
     (SELECT COUNT(*) FROM products)         AS total_products,
@@ -395,7 +426,7 @@ SELECT
     (SELECT COUNT(*) FROM sources)          AS total_source_rows;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 35. Energy cross-check: declared vs computed calories (informational)
+-- 38. Energy cross-check: declared vs computed calories (informational)
 --     Formula: (fat×9) + (carbs×4) + (protein×4) + (fibre×2)
 --     ±15% tolerance. Alcohol products expected to fail (ethanol = 7 kcal/g
 --     not captured in macros).
@@ -428,7 +459,7 @@ WHERE sv.serving_basis = 'per 100 g'
 ORDER BY pct_diff DESC;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 36. Ingredient data coverage (informational)
+-- 39. Ingredient data coverage (informational)
 --     Products without product_ingredient rows cannot have accurate
 --     ingredient concern scores. These are OFF upstream data gaps.
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -450,7 +481,7 @@ FROM (
 ) sub;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 37. Nutrition anomaly detection (informational)
+-- 40. Nutrition anomaly detection (informational)
 --     Flags products with physiologically implausible nutrition values,
 --     typically caused by incomplete or incorrect OFF data entries.
 --     Categories:
@@ -526,7 +557,7 @@ WHERE p.is_deprecated IS NOT TRUE
 ORDER BY anomaly_type, p.category, p.product_name;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 38. Suspect nutrition + verified confidence mismatch (informational)
+-- 41. Suspect nutrition + verified confidence mismatch (informational)
 --     Products flagged as 'suspect' nutrition quality but marked 'verified'
 --     confidence represent the highest-priority cross-validation targets —
 --     their scores may be inaccurate due to bad OFF data.

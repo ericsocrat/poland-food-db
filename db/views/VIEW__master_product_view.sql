@@ -1,5 +1,5 @@
 -- VIEW: master product view (v_master)
--- Flat denormalized view joining products → servings → nutrition_facts → scores → sources
+-- Flat denormalized view joining products → servings → nutrition_facts → scores → product_sources
 -- plus ingredient analytics from normalized ingredient tables.
 -- This view is already created in the schema migration (20260207000100_create_schema.sql).
 -- Updated in migration 20260207000400_remove_unused_columns.sql.
@@ -11,6 +11,9 @@
 -- Updated 2026-02-10: added per-serving columns (serving_qty_g, per_serving_calories, etc.).
 -- Updated 2026-02-10: added ingredient_data_quality indicator (complete/partial/missing).
 -- Updated 2026-02-10: added nutrition_data_quality indicator (clean/suspect).
+-- Updated 2026-02-10: migrated provenance from category-level sources to product-level
+--   product_sources via LATERAL join. Added source_ean, source_confidence, source_fields,
+--   source_collected_at. Removed source_ref. 66 columns total.
 -- This file exists for reference and for recreating the view if needed.
 --
 -- Usage: SELECT * FROM v_master WHERE country = 'PL' AND category = 'Chips';
@@ -80,12 +83,15 @@ SELECT
     allergen_agg.allergen_tags,
     trace_agg.trace_count,
     trace_agg.trace_tags,
-    -- Source provenance
+    -- Product-level provenance (replaces category-level source join)
     p.ean,
-    src.source_type,
-    src.ref AS source_ref,
-    src.url AS source_url,
-    src.notes AS source_notes,
+    ps.source_type,
+    ps.source_url,
+    ps.source_ean,
+    ps.confidence_pct    AS source_confidence,
+    ps.fields_populated  AS source_fields,
+    ps.collected_at      AS source_collected_at,
+    ps.notes             AS source_notes,
     -- Ingredient data quality indicator
     CASE
         WHEN ingr_stats.ingredient_count > 0 THEN 'complete'
@@ -116,7 +122,12 @@ LEFT JOIN public.nutrition_facts ns
     ON ns.product_id = p.product_id AND ns.serving_id = sv_real.serving_id
 LEFT JOIN public.scores s ON s.product_id = p.product_id
 LEFT JOIN public.ingredients i ON i.product_id = p.product_id
-LEFT JOIN public.sources src ON src.category = p.category
+LEFT JOIN LATERAL (
+    SELECT ps_inner.*
+    FROM public.product_sources ps_inner
+    WHERE ps_inner.product_id = p.product_id AND ps_inner.is_primary = true
+    LIMIT 1
+) ps ON true
 LEFT JOIN LATERAL (
     SELECT
         COUNT(*)::int AS ingredient_count,

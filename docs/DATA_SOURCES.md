@@ -112,7 +112,7 @@ Manufacturer websites are **Priority 2** sources. They often publish full per-10
 - Confirm the website serves the **Polish market** (`.pl` domain or PL language selector)
 - Verify the product page matches the current formulation (check pack design photo)
 - Screenshot or archive the page for traceability
-- Record the URL and access date in the `sources` table
+- Record the URL and access date in the `product_sources` table
 
 ### 4.1 Major Manufacturers by Category
 
@@ -356,7 +356,31 @@ The following sources are **excluded** and must never be used:
 
 ## 11. Source Tracking in Database
 
-The `sources` table records where data came from:
+### Product-Level Provenance (`product_sources`)
+
+The `product_sources` table tracks provenance at the **individual product** level and is the primary source join used by `v_master`:
+
+| Column             | Purpose                                                                                      |
+| ------------------ | -------------------------------------------------------------------------------------------- |
+| `product_source_id`| Primary key (identity)                                                                       |
+| `product_id`       | FK → products                                                                                |
+| `source_type`      | `'off_api'`, `'off_search'`, `'manual'`, `'label_scan'`, `'retailer_api'`                    |
+| `source_url`       | URL to the specific product page (e.g., OFF product page)                                    |
+| `source_ean`       | EAN used to look up this product                                                             |
+| `fields_populated` | Array of fields sourced from this source (e.g., `{nutrition,ingredients,additives}`)          |
+| `collected_at`     | When the data was collected                                                                  |
+| `is_primary`       | Whether this is the primary source for the product (unique per product)                      |
+| `confidence_pct`   | 0–100 confidence in data accuracy                                                            |
+| `notes`            | Additional context                                                                           |
+
+**Constraints:**
+- Unique on `(product_id, source_type, source_url)` — no duplicate source entries
+- At most one `is_primary = true` per product
+- `confidence_pct` between 0 and 100
+
+### Legacy Category Registry (`sources`)
+
+The legacy `sources` table records category-level acquisition metadata (20 rows, one per category). It is **no longer joined by `v_master`** but is retained as a registry of how each category's data was originally sourced.
 
 | Column        | Purpose                                                                                                     |
 | ------------- | ----------------------------------------------------------------------------------------------------------- |
@@ -379,7 +403,7 @@ The `sources` table records where data came from:
 | `estimated`     | Category average or interpolated value                          |
 | `scientific`    | Scientific publication (used for methodology, not product data) |
 
-**Rule:** When adding a new product batch, also add a corresponding `sources` row documenting where the data came from. Products sourced only from Open Food Facts should be flagged for future cross-validation against manufacturer websites or labels.
+**Rule:** When adding a new product, create a corresponding `product_sources` row with the appropriate `source_type`, `source_url`, and `confidence_pct`. Set `is_primary = true` for the most authoritative source. Products sourced only from Open Food Facts should be flagged for future cross-validation against manufacturer websites or labels.
 
 ---
 

@@ -9,7 +9,7 @@
 > **Servings:** 877 rows — 560 per-100g (canonical) + 317 per-serving (57% real serving size coverage)
 > **Ingredient analytics:** 1,257 unique ingredients (all clean ASCII English), 728 allergen declarations, 782 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 61 critical checks + 14 informational reports — all passing
+> **QA:** 64 critical checks + 14 informational reports — all passing
 
 ---
 
@@ -79,14 +79,14 @@ poland-food-db/
 │   │   ├── chips/                   # Reference implementation (copy for new categories)
 │   │   └── ... (19 more)            # All normalized to 28 active products
 │   ├── qa/                          # Test suites
-│   │   ├── QA__null_checks.sql      # 32 data integrity checks + 6 informational
+│   │   ├── QA__null_checks.sql      # 35 data integrity checks + 6 informational
 │   │   ├── QA__scoring_formula_tests.sql  # 29 scoring validation checks
 │   │   └── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   └── views/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 32 append-only schema migrations
+│   └── migrations/                  # 33 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -118,6 +118,7 @@ poland-food-db/
 │       └── 20260210002000_update_confidence.sql             # Confidence verified/estimated from completeness
 │       └── 20260210002100_vmaster_ingredient_data_quality.sql # Add ingredient_data_quality column to v_master
 │       └── 20260210002200_vmaster_nutrition_data_quality.sql  # Add nutrition_data_quality column to v_master
+│       └── 20260210002400_product_sources.sql                 # Product-level provenance + v_master LATERAL join
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
@@ -128,7 +129,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 558/560 coverage (99.6%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (61 critical + 14 info)
+├── RUN_QA.ps1                       # QA test runner (64 critical + 14 info)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
 ├── populate_ingredient_data.py      # OFF API → ingredient_ref/product_ingredient/allergens/traces
@@ -153,7 +154,8 @@ poland-food-db/
 | `product_ingredient` | Product ↔ ingredient junction                | `(product_id, ingredient_id, position)` | 7,435 rows; tracks percent, percent_estimate, sub-ingredients, position order                         |
 | `product_allergen`   | Declared allergens per product               | `(product_id, allergen_tag)`            | 728 rows across 347 products (62% coverage); source: OFF allergens_tags                               |
 | `product_trace`      | Declared traces per product                  | `(product_id, trace_tag)`               | 782 rows across 250 products (45% coverage); source: OFF traces_tags                                  |
-| `sources`            | Data provenance per category                 | `source_id`                             | 20 rows (one per category); joined via `category`                                                     |
+| `sources`            | Legacy category-level provenance (registry)  | `source_id`                             | 20 rows (one per category); no longer joined by v_master                                              |
+| `product_sources`    | Product-level data provenance                | `product_source_id` (identity)          | 560 rows; FK → products; source_type, source_url, confidence_pct, is_primary; joined by v_master      |
 | `column_metadata`    | Data dictionary for all tables               | `(table_name, column_name)`             | UI tooltips, type info, examples                                                                      |
 
 ### Products Columns (key)
@@ -182,7 +184,7 @@ poland-food-db/
 
 ### View
 
-**`v_master`** — Flat denormalized join: products → servings → nutrition_facts → scores → ingredients → sources (via `category` equijoin) + ingredient analytics via LATERAL subqueries (ingredient_count, additive_names, has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags). Includes computed `ingredient_data_quality` column (`'complete'`/`'partial'`/`'missing'`). Filtered to `is_deprecated = false`. This is the primary query surface.
+**`v_master`** — Flat denormalized join: products → servings → nutrition_facts → scores → ingredients → product_sources (via LATERAL, primary row) + ingredient analytics via LATERAL subqueries (ingredient_count, additive_names, has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags). Includes computed `ingredient_data_quality` and `nutrition_data_quality` columns. 66 columns total. Filtered to `is_deprecated = false`. This is the primary query surface.
 
 ---
 
