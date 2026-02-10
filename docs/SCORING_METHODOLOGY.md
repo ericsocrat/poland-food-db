@@ -44,7 +44,7 @@ The score is a **weighted sum of sub-scores**, each normalized to 0–100, then 
 | Calories (energy) | `calories`        | 0.10     | 600 kcal = 100     | Approx. energy density of pure fat (900) × 0.66. Products above 600 kcal/100g are extremely energy-dense. |
 | Trans fat         | `trans_fat_g`     | 0.12     | 2g = 100           | EU Reg. 2019/649: max 2g trans fat per 100g of fat. WHO: eliminate industrial trans fats.                 |
 | Additives count   | `additives_count` | 0.07     | 10 = 100           | NOVA research (Monteiro 2019): ultra-processed products average 8–12 additives. 10 = firmly NOVA 4.       |
-| Oil / prep method | `prep_method`     | 0.09     | categorical        | Acrylamide formation (EU Reg. 2017/2158): deep-fried > fried > baked > air-popped.                        |
+| Oil / prep method | `prep_method`     | 0.09     | categorical        | Acrylamide/PAH/HCA formation: deep-fried > fried > smoked > grilled > baked > steamed > air-popped.       |
 | Controversies     | `controversies`   | 0.08     | categorical        | E.g., palm oil (EFSA 2016: process contaminants), E171 (EFSA 2021: no longer safe).                       |
 |                   |                   | **1.00** |                    |                                                                                                           |
 
@@ -91,7 +91,23 @@ END
 
 ### 2.4 PostgreSQL Function
 
-The scoring formula is implemented as a reusable PostgreSQL function, defined in migration `20260207000500_scoring_function.sql`. All 5 category pipelines call this single function — changing weights or ceilings for a future v3.2 requires editing only one place.
+The scoring formula is implemented as a reusable PostgreSQL function, defined in migration `20260207000501_scoring_function.sql` (updated in `20260210001000`). All 20 category pipelines call this single function — changing weights or ceilings for a future v3.2 requires editing only one place.
+
+**prep_method sub-score mapping:**
+
+| Value              | Sub-score | Scientific basis                                                |
+| ------------------ | --------- | --------------------------------------------------------------- |
+| `'air-popped'`     | 20        | No oil, minimal thermal processing                              |
+| `'steamed'`        | 30        | No oil, no browning — no acrylamide/HCA/PAH formation           |
+| `'baked'`          | 40        | Moderate heat — some acrylamide formation at >120°C              |
+| `'not-applicable'` | 50        | Default for products where method is irrelevant (canned, raw)   |
+| `'none'`           | 50        | Unclassified — conservative default                              |
+| `'grilled'`        | 60        | High-temp browning — HCA formation (IARC Group 2A)              |
+| `'smoked'`         | 65        | PAH exposure from wood smoke (EFSA 2008), nitrate concerns      |
+| `'fried'`          | 80        | Oil absorption + acrylamide (EU Reg. 2017/2158)                 |
+| `'deep-fried'`     | 100       | Maximum oil absorption + acrylamide + HCA                       |
+
+Additional valid values (`'marinated'`, `'pasteurized'`, `'fermented'`, `'dried'`, `'raw'`, `'roasted'`) all map to 50 (default). These can be differentiated in future scoring versions.
 
 ```sql
 -- Function signature (returns INTEGER [1, 100])
@@ -405,6 +421,8 @@ See `DATA_SOURCES.md` §5 and `RESEARCH_WORKFLOW.md` §6.4 for the full confiden
 - **EFSA opinion on titanium dioxide (E171)** (2021). Safety assessment of titanium dioxide (E171) as a food additive. EFSA Journal 19(5):6585.
 - **EU Regulation 2019/649** on maximum levels of trans fatty acids in food.
 - **EU Regulation 2017/2158** establishing mitigation measures and benchmark levels for the reduction of acrylamide in food.
+- **EFSA scientific opinion on PAHs in food** (2008). Polycyclic Aromatic Hydrocarbons in Food. EFSA Journal 724, 1–114.
+- **IARC Monographs Vol. 114** (2018). Red meat and processed meat — HCA/PAH classification (Group 2A probable carcinogen).
 - **Monteiro et al.** (2019). Ultra-processed foods: what they are and how to identify them. Public Health Nutrition, 22(5), 936–941.
 - **Schnabel et al.** (2019). Association between ultra-processed food consumption and risk of mortality. JAMA Internal Medicine, 179(4), 490–498.
 - **Fiolet et al.** (2018). Consumption of ultra-processed foods and cancer risk. BMJ, 360, k322.
@@ -424,4 +442,5 @@ See `DATA_SOURCES.md` §5 and `RESEARCH_WORKFLOW.md` §6.4 for the full confiden
 | v2.2    | 2026-02-07 | Added personal lenses, data completeness, confidence                                                                                                                                                                                                                                                                                                                                                                                                                          |
 | v2.3    | 2026-02-07 | Added formula, Nutri-Score thresholds, flag SQL, healthiness_score def, scored_at, nova_classification mapping                                                                                                                                                                                                                                                                                                                                                                |
 | v3.0    | 2026-02-07 | Scientific justification for all thresholds, trace value parsing, data_completeness formula, weight rationale, energy cross-check, version bump                                                                                                                                                                                                                                                                                                                               |
-| v3.1    | 2026-02-07 | Removed healthiness_score (derivable), personal lenses (unimplemented), ingredient_complexity scoring factor (redundant with additives + NOVA). Dropped cholesterol_mg, potassium_mg, aluminium_based_additives columns. Redistributed 0.04 weight to additives (0.05→0.07) and controversies (0.06→0.08). Extracted formula into `compute_unhealthiness_v31()` PostgreSQL function (migration 000500); all 4 category pipelines now call the function instead of inline SQL. |
+| v3.1    | 2026-02-07 | Removed healthiness_score (derivable), personal lenses (unimplemented), ingredient_complexity scoring factor (redundant with additives + NOVA). Dropped cholesterol_mg, potassium_mg, aluminium_based_additives columns. Redistributed 0.04 weight to additives (0.05→0.07) and controversies (0.06→0.08). Extracted formula into `compute_unhealthiness_v31()` PostgreSQL function (migration 000501); all category pipelines now call the function instead of inline SQL. |
+| v3.1b   | 2026-02-10 | Expanded `prep_method` scoring: added `steamed=30`, `grilled=60`, `smoked=65` (were all 50 via ELSE). Backfilled 134 NULL prep_method values across 5 categories. Made `prep_method` NOT NULL with default `'not-applicable'`. Added scientific references for PAH (EFSA 2008), HCA (IARC Group 2A). |

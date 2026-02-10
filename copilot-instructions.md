@@ -5,8 +5,8 @@
 > **Scope:** Poland (`PL`) only — no other countries active
 > **Products:** 560 active (20 categories × 28 each), deprecated products purged
 > **EAN coverage:** 558/560 (99.6%)
-> **Scoring:** v3.1 — 8-factor weighted formula via `compute_unhealthiness_v31()`
-> **QA:** 47 critical checks + 7 informational reports — all passing
+> **Scoring:** v3.1b — 8-factor weighted formula via `compute_unhealthiness_v31()`
+> **QA:** 51 critical checks + 7 informational reports — all passing
 
 ---
 
@@ -83,7 +83,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 18 append-only schema migrations
+│   └── migrations/                  # 20 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -101,9 +101,10 @@ poland-food-db/
 │       ├── 20260210000600_add_check_constraints.sql
 │       ├── 20260210000700_index_tuning.sql
 │       ├── 20260210000800_expand_prep_method_domain.sql
-│       └── 20260210000900_backfill_prep_method.sql
+│       ├── 20260210000900_backfill_prep_method.sql
+│       └── 20260210001000_prep_method_not_null_and_scoring_v31b.sql
 ├── docs/
-│   ├── SCORING_METHODOLOGY.md       # v3.1 algorithm (8 factors, ceilings, bands)
+│   ├── SCORING_METHODOLOGY.md       # v3.1b algorithm (8 factors, ceilings, bands)
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
 │   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
@@ -248,8 +249,7 @@ unhealthiness_score = compute_unhealthiness_v31(
 | `'deep-fried'`     | 100            |
 
 Additional valid values (scored as 50/default unless added to the scoring function):
-`'grilled'`, `'roasted'`, `'smoked'`, `'steamed'`, `'marinated'`, `'pasteurized'`,
-`'fermented'`, `'dried'`, `'raw'`.
+`'roasted'`, `'marinated'`, `'pasteurized'`, `'fermented'`, `'dried'`, `'raw'`.
 
 The pipeline's `_detect_prep_method()` infers these from OFF category tags and
 product names (both English and Polish keywords).
@@ -280,7 +280,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | Table             | Constraint                               | Rule                                                                                                                                                                                             |
 | ----------------- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `products`        | `chk_products_country`                   | `country IN ('PL')`                                                                                                                                                                              |
-| `products`        | `chk_products_prep_method`               | NULL or valid method: `air-popped`, `baked`, `fried`, `deep-fried`, `grilled`, `roasted`, `smoked`, `steamed`, `marinated`, `pasteurized`, `fermented`, `dried`, `raw`, `none`, `not-applicable` |
+| `products`        | `chk_products_prep_method`               | Valid method (NOT NULL): `air-popped`, `baked`, `fried`, `deep-fried`, `grilled`, `roasted`, `smoked`, `steamed`, `marinated`, `pasteurized`, `fermented`, `dried`, `raw`, `none`, `not-applicable` |
 | `products`        | `chk_products_controversies`             | `IN ('none','minor','moderate','serious','palm oil')`                                                                                                                                            |
 | `scores`          | `chk_scores_unhealthiness_range`         | 1–100                                                                                                                                                                                            |
 | `scores`          | `chk_scores_nutri_score_label`           | NULL or `IN ('A','B','C','D','E','UNKNOWN','NOT-APPLICABLE')`                                                                                                                                    |
@@ -381,7 +381,7 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-
 4. Insert a `sources` row for provenance tracking.
 5. Register the folder in `RUN_LOCAL.ps1` and `RUN_REMOTE.ps1`.
 6. Add at least one regression test to `QA__scoring_formula_tests.sql`.
-7. Run `.\RUN_QA.ps1` — verify 47/47 pass.
+7. Run `.\RUN_QA.ps1` — verify 51/51 pass.
 
 **Reference implementation:** `chips/` pipeline. Copy its SQL patterns for manual work.
 
@@ -417,7 +417,7 @@ chore: normalize categories to 28 products
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 47/47 pass
+1. `.\RUN_QA.ps1` — 51/51 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed

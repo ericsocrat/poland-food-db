@@ -353,7 +353,8 @@ def _detect_prep_method(categories_tags: list[str], product_name: str) -> str | 
 
     # Order matters: check more specific terms first
     _PREP_PATTERNS: list[tuple[str, str]] = [
-        (r"\bfried\b|\bfrying\b|\bdeep[- ]?fried\b|\bsmażon", "fried"),
+        (r"\bdeep[- ]?fried\b|\bdeep[- ]?frying\b", "deep-fried"),
+        (r"\bfried\b|\bfrying\b|\bsmażon", "fried"),
         (r"\bsmoked\b|\bsmoking\b|\bwędzon", "smoked"),
         (r"\broasted\b|\broast\b|\bpieczony\b|\bpieczon", "roasted"),
         (r"\bsteamed\b|\bsteaming\b|\bna parze\b", "steamed"),
@@ -433,7 +434,7 @@ def extract_product_data(off_product: dict) -> dict | None:
     category = resolve_category(categories_tags)
 
     # Prep method & controversies
-    prep_method = _detect_prep_method(categories_tags, product_name)
+    prep_method = _detect_prep_method(categories_tags, product_name) or "not-applicable"
     controversies = _detect_controversies(off_product)
 
     # Store availability
