@@ -349,3 +349,44 @@ JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.product_name = 'Somersby Blueberry Flavoured Cider'
   AND p.is_deprecated IS NOT TRUE
   AND sc.unhealthiness_score::int NOT BETWEEN 8 AND 12;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 23: high_additive_load flag consistency
+--          high_additive_load should be YES when additives_count >= 5
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       COALESCE(i.additives_count, 0) AS additives_count,
+       sc.high_additive_load,
+       'INCORRECT high_additive_load' AS issue
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+LEFT JOIN ingredients i ON i.product_id = p.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND (
+    (COALESCE(i.additives_count, 0) >= 5 AND sc.high_additive_load <> 'YES')
+    OR (COALESCE(i.additives_count, 0) < 5 AND sc.high_additive_load = 'YES')
+  );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 24: nutri_score_label valid domain
+--          Must be one of A, B, C, D, E, UNKNOWN, or NOT-APPLICABLE
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.nutri_score_label,
+       'INVALID NUTRI-SCORE LABEL' AS issue
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND sc.nutri_score_label NOT IN ('A', 'B', 'C', 'D', 'E', 'UNKNOWN', 'NOT-APPLICABLE');
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 25: confidence valid domain
+--          Must be 'estimated' or 'verified'
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       sc.confidence,
+       'INVALID CONFIDENCE VALUE' AS issue
+FROM products p
+JOIN scores sc ON sc.product_id = p.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND sc.confidence NOT IN ('estimated', 'verified');

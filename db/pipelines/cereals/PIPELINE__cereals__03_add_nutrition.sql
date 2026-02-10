@@ -33,7 +33,7 @@ from (
     ('Unknown', 'Choco kulki', 377.0, 4.5, 1.2, 0, 71.0, 25.0, 8.4, 9.0, 9.0),
     ('Nestlé', 'Cini Minis Scorțișoară', 410.0, 9.3, 1.1, 0, 72.6, 24.9, 6.5, 5.8, 0.9),
     ('Kupiec', 'Płatki owsiane błyskawiczne', 418.0, 7.6, 1.4, 0, 69.0, 1.3, 0, 14.0, 0),
-    ('Unknown', 'Sante granola czekolada z truskawką', 452.0, 15.0, 28.0, 0, 67.0, 21.0, 6.7, 9.0, 0.6),
+    ('Unknown', 'Sante granola czekolada z truskawką', 452.0, 15.0, 2.8, 0, 67.0, 21.0, 6.7, 9.0, 0.6),  -- OFF has 28.0 sat_fat (decimal error); corrected to 2.8
     ('Vitanella', 'Crunchy Klasyczne', 444.0, 14.0, 2.9, 0, 67.0, 21.0, 6.4, 9.3, 0.3),
     ('Nestlé', 'Corn flakes', 382.0, 1.4, 0.5, 0, 82.9, 8.8, 4.2, 7.4, 1.3),
     ('Lidl', 'Crownfield Płatki owsiane górskie', 354.0, 6.3, 1.6, 0, 55.9, 1.2, 11.6, 12.5, 0),

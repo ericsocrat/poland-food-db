@@ -123,7 +123,128 @@ WHERE country != 'PL'
   AND is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 12. v_master row count matches active products (detects join fan-out)
+-- 12. Orphaned scores (no matching product)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT sc.product_id,
+       'ORPHANED SCORE' AS issue
+FROM scores sc
+LEFT JOIN products p ON p.product_id = sc.product_id
+WHERE p.product_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 13. Orphaned ingredients (no matching product)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT i.product_id,
+       'ORPHANED INGREDIENT' AS issue
+FROM ingredients i
+LEFT JOIN products p ON p.product_id = i.product_id
+WHERE p.product_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 14. Products with no ingredients row
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       'NO INGREDIENTS ROW' AS issue
+FROM products p
+LEFT JOIN ingredients i ON i.product_id = p.product_id
+WHERE i.product_id IS NULL
+  AND p.is_deprecated IS NOT TRUE;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 15. Negative nutrition values (physically impossible)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       'NEGATIVE NUTRITION VALUE' AS issue,
+       CASE
+         WHEN nf.calories < 0        THEN 'calories = ' || nf.calories
+         WHEN nf.total_fat_g < 0     THEN 'total_fat_g = ' || nf.total_fat_g
+         WHEN nf.saturated_fat_g < 0 THEN 'saturated_fat_g = ' || nf.saturated_fat_g
+         WHEN nf.trans_fat_g < 0     THEN 'trans_fat_g = ' || nf.trans_fat_g
+         WHEN nf.carbs_g < 0         THEN 'carbs_g = ' || nf.carbs_g
+         WHEN nf.sugars_g < 0        THEN 'sugars_g = ' || nf.sugars_g
+         WHEN nf.fibre_g < 0         THEN 'fibre_g = ' || nf.fibre_g
+         WHEN nf.protein_g < 0       THEN 'protein_g = ' || nf.protein_g
+         WHEN nf.salt_g < 0          THEN 'salt_g = ' || nf.salt_g
+       END AS detail
+FROM nutrition_facts nf
+JOIN products p ON p.product_id = nf.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND (nf.calories < 0 OR nf.total_fat_g < 0 OR nf.saturated_fat_g < 0
+    OR nf.trans_fat_g < 0 OR nf.carbs_g < 0 OR nf.sugars_g < 0
+    OR nf.fibre_g < 0 OR nf.protein_g < 0 OR nf.salt_g < 0);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 16. Saturated fat exceeds total fat (logically impossible)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       'SAT FAT > TOTAL FAT' AS issue,
+       CONCAT('sat_fat=', nf.saturated_fat_g, ' > total_fat=', nf.total_fat_g) AS detail
+FROM nutrition_facts nf
+JOIN products p ON p.product_id = nf.product_id
+JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
+WHERE p.is_deprecated IS NOT TRUE
+  AND nf.saturated_fat_g > nf.total_fat_g
+  AND nf.total_fat_g IS NOT NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 17. Sugars exceed total carbohydrates (logically impossible)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       'SUGARS > CARBS' AS issue,
+       CONCAT('sugars=', nf.sugars_g, ' > carbs=', nf.carbs_g) AS detail
+FROM nutrition_facts nf
+JOIN products p ON p.product_id = nf.product_id
+JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
+WHERE p.is_deprecated IS NOT TRUE
+  AND nf.sugars_g > nf.carbs_g
+  AND nf.carbs_g IS NOT NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 18. Calories exceed 900 per 100g (physically impossible — pure fat = 900)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       'CALORIES > 900' AS issue,
+       CONCAT('calories=', nf.calories) AS detail
+FROM nutrition_facts nf
+JOIN products p ON p.product_id = nf.product_id
+JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
+WHERE p.is_deprecated IS NOT TRUE
+  AND nf.calories > 900;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 19. Each category must have exactly 28 active products
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT category, COUNT(*) AS product_count,
+       'CATEGORY COUNT NOT 28' AS issue
+FROM products
+WHERE is_deprecated IS NOT TRUE
+GROUP BY category
+HAVING COUNT(*) <> 28;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 20. Scores missing scored_at, data_completeness_pct, nutri_score_label,
+--     or high_additive_load (all required for active products)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT sc.product_id, p.brand, p.product_name,
+       'SCORE FIELD NULL' AS issue,
+       CASE
+         WHEN sc.scored_at IS NULL            THEN 'scored_at is NULL'
+         WHEN sc.data_completeness_pct IS NULL THEN 'data_completeness_pct is NULL'
+         WHEN sc.nutri_score_label IS NULL     THEN 'nutri_score_label is NULL'
+         WHEN sc.high_additive_load IS NULL    THEN 'high_additive_load is NULL'
+         WHEN sc.confidence IS NULL            THEN 'confidence is NULL'
+       END AS detail
+FROM scores sc
+JOIN products p ON p.product_id = sc.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND (sc.scored_at IS NULL
+    OR sc.data_completeness_pct IS NULL
+    OR sc.nutri_score_label IS NULL
+    OR sc.high_additive_load IS NULL
+    OR sc.confidence IS NULL);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 21. v_master row count matches active products (detects join fan-out)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
   'V_MASTER ROW MISMATCH' AS issue,
@@ -133,7 +254,7 @@ WHERE (SELECT COUNT(*) FROM v_master) !=
       (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 13. Duplicate source rows (prevents v_master fan-out)
+-- 22. Duplicate source rows (prevents v_master fan-out)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT brand, COUNT(*) AS row_count,
        'DUPLICATE SOURCE' AS issue
@@ -142,7 +263,7 @@ GROUP BY brand
 HAVING COUNT(*) > 1;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 14. Summary counts (informational, not a failure check)
+-- 23. Summary counts (informational, not a failure check)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
     (SELECT COUNT(*) FROM products)         AS total_products,

@@ -63,11 +63,11 @@ supabase start
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
 **Test Coverage**: 35 automated checks + 7 data quality reports
-- 13 data integrity checks (nulls, foreign keys, duplicates, view consistency)
-- 22 scoring formula validation checks (ranges, flags, NOVA, regression)
+- 22 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, view consistency)
+- 25 scoring formula validation checks (ranges, flags, NOVA, domain validation, regression)
 - 7 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 35/35
+**All critical tests passing**: ✅ 47/47
 
 **EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
@@ -101,7 +101,7 @@ poland-food-db/
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 28 convenience store products (5 SQL files)
 │   ├── qa/                  # Quality assurance test suites
-│   │   ├── QA__null_checks.sql           # 13 integrity checks
+│   │   ├── QA__null_checks.sql           # 22 integrity checks
 │   │   ├── QA__scoring_formula_tests.sql # 20 algorithm tests
 │   │   └── QA__source_coverage.sql       # 7 data quality reports
 │   └── views/               # Denormalized reporting views
@@ -257,7 +257,7 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 35/35 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 47/47 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
