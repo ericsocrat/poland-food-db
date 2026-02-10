@@ -11,7 +11,7 @@ SELECT p.product_id, p.brand, p.product_name, p.category,
        'NO SOURCE ROW' AS issue,
        'Add a sources entry documenting where this data came from' AS action
 FROM products p
-LEFT JOIN sources s ON s.brand = p.brand
+LEFT JOIN sources s ON s.category = p.category
 WHERE s.source_id IS NULL
   AND p.is_deprecated IS NOT TRUE
 ORDER BY p.category, p.brand, p.product_name;
@@ -71,7 +71,7 @@ SELECT p.category,
          2
        ) AS sources_per_product_avg
 FROM products p
-LEFT JOIN sources s ON s.brand = p.brand
+LEFT JOIN sources s ON s.category = p.category
 WHERE p.is_deprecated IS NOT TRUE
 GROUP BY p.category
 ORDER BY sources_per_product_avg ASC;
@@ -104,7 +104,7 @@ SELECT p.product_id, p.brand, p.product_name, p.category,
        'HIGH-IMPACT SINGLE-SOURCE — prioritise for cross-validation' AS action
 FROM products p
 JOIN scores sc ON sc.product_id = p.product_id
-LEFT JOIN sources s ON s.brand = p.brand
+LEFT JOIN sources s ON s.category = p.category
 WHERE p.is_deprecated IS NOT TRUE
 GROUP BY p.product_id, p.brand, p.product_name, p.category,
          p.store_availability, sc.unhealthiness_score, sc.confidence

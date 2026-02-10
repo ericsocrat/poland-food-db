@@ -422,14 +422,15 @@ If the computed energy falls outside this tolerance, add a SQL comment flagging 
 Every product batch gets a `sources` row:
 
 ```sql
-INSERT INTO sources (source_id, brand, source_type, ref, url, notes)
+INSERT INTO sources (source_id, brand, source_type, ref, url, notes, category)
 VALUES (
     nextval('sources_source_id_seq'),
     'Lay''s',
     'label',
     'Biedronka Kraków, 2026-02-05',
     NULL,
-    'PL market, per 100g table, 5 SKUs verified against OFF'
+    'PL market, per 100g table, 5 SKUs verified against OFF',
+    'Chips'
 )
 ON CONFLICT (source_id) DO NOTHING;
 ```
