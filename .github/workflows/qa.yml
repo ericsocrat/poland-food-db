@@ -8,13 +8,15 @@ on:
       - "supabase/**"
       - "RUN_QA.ps1"
       - "RUN_LOCAL.ps1"
+      - "validate_eans.py"
       - ".github/workflows/**"
   pull_request:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   qa:
-    name: Pipeline + QA (47 checks)
+    name: Pipeline + QA (64 checks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -33,17 +35,23 @@ jobs:
           --health-timeout=5s
           --health-retries=5
 
+    env:
+      PGHOST: localhost
+      PGPORT: 54322
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
       - name: Apply schema migrations
-        env:
-          PGHOST: localhost
-          PGPORT: 54322
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: postgres
         run: |
           for f in supabase/migrations/*.sql; do
             echo "Applying: $f"
@@ -51,14 +59,7 @@ jobs:
           done
 
       - name: Run pipelines
-        env:
-          PGHOST: localhost
-          PGPORT: 54322
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: postgres
         run: |
-          # Execute pipelines in alphabetical category order, files sorted by name
           for category in db/pipelines/*/; do
             cat_name=$(basename "$category")
             for f in $(ls "$category"PIPELINE__*.sql 2>/dev/null | sort); do
@@ -71,60 +72,61 @@ jobs:
             done
           done
 
-      - name: Run QA — Data Integrity (22 checks)
-        env:
-          PGHOST: localhost
-          PGPORT: 54322
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: postgres
+      - name: Run QA — Data Integrity (35 checks)
         run: |
-          # Strip summary query, run checks only
-          checks=$(sed '/-- 23\. Summary counts/,$d' db/qa/QA__null_checks.sql)
+          # Strip informational checks (36+), run blocking checks only
+          checks=$(sed '/-- 36\. v_master new column coverage/,$d' db/qa/QA__null_checks.sql)
           result=$(echo "$checks" | psql --tuples-only 2>&1)
           trimmed=$(echo "$result" | sed '/^\s*$/d')
           if [ -z "$trimmed" ]; then
-            echo "✓ PASS (22/22 — zero violations)"
+            echo "✓ PASS (35/35 — zero violations)"
           else
             echo "✗ FAILED — violations detected:"
             echo "$result"
             exit 1
           fi
 
-      - name: Run QA — Scoring Formula (25 checks)
-        env:
-          PGHOST: localhost
-          PGPORT: 54322
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: postgres
+      - name: Run QA — Scoring Formula (29 checks)
         run: |
           result=$(psql --tuples-only -f db/qa/QA__scoring_formula_tests.sql 2>&1)
           trimmed=$(echo "$result" | sed '/^\s*$/d')
           if [ -z "$trimmed" ]; then
-            echo "✓ PASS (25/25 — zero violations)"
+            echo "✓ PASS (29/29 — zero violations)"
           else
             echo "✗ FAILED — violations detected:"
             echo "$result"
             exit 1
           fi
 
+      - name: Run QA — Source Coverage (informational)
+        continue-on-error: true
+        run: |
+          result=$(psql --tuples-only -f db/qa/QA__source_coverage.sql 2>&1)
+          trimmed=$(echo "$result" | sed '/^\s*$/d')
+          if [ -z "$trimmed" ]; then
+            echo "✓ All products have multi-source coverage"
+          else
+            count=$(echo "$trimmed" | wc -l)
+            echo "⚠ $count items flagged for cross-validation (non-blocking)"
+          fi
+
+      - name: Run QA — EAN Checksum Validation
+        run: |
+          python validate_eans.py
+
       - name: Database inventory
-        env:
-          PGHOST: localhost
-          PGPORT: 54322
-          PGUSER: postgres
-          PGPASSWORD: postgres
-          PGDATABASE: postgres
+        if: always()
         run: |
           psql -c "
             SELECT
               (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE) AS active_products,
               (SELECT COUNT(*) FROM products WHERE is_deprecated = true) AS deprecated,
+              (SELECT COUNT(*) FROM servings) AS serving_rows,
               (SELECT COUNT(*) FROM nutrition_facts) AS nutrition_rows,
               (SELECT COUNT(*) FROM scores) AS scores_rows,
-              (SELECT COUNT(DISTINCT category) FROM products WHERE is_deprecated IS NOT TRUE) AS categories,
-              (SELECT STRING_AGG(DISTINCT category, ', ' ORDER BY category)
-               FROM products WHERE is_deprecated IS NOT TRUE) AS category_list;
+              (SELECT COUNT(*) FROM ingredient_ref) AS ingredient_refs,
+              (SELECT COUNT(*) FROM product_ingredient) AS product_ingredients,
+              (SELECT COUNT(*) FROM product_sources) AS product_source_rows,
+              (SELECT COUNT(DISTINCT category) FROM products WHERE is_deprecated IS NOT TRUE) AS categories;
           "
-          echo "✓ ALL TESTS PASSED (47/47 checks)"
+          echo "✓ ALL TESTS PASSED (64/64 checks)"

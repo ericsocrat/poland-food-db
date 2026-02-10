@@ -1,5 +1,7 @@
 # Poland Food Quality Database
 
+[![QA Tests](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml)
+
 A **world-class** food quality database scoring products sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
 
 ## 🎯 Quick Start

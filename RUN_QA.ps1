@@ -4,13 +4,21 @@
 
 .DESCRIPTION
     Executes:
-        1. QA__null_checks.sql (32 data integrity checks + 6 informational)
+        1. QA__null_checks.sql (35 data integrity checks + 6 informational)
         2. QA__scoring_formula_tests.sql (29 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suite 3 is informational and does not affect the exit code.
+
+.PARAMETER Json
+    Output results as machine-readable JSON instead of colored text.
+    JSON includes: timestamp, suites (name, checks, status, violations),
+    inventory, and overall pass/fail.
+
+.PARAMETER OutFile
+    Write JSON output to this file path (implies -Json).
 
 .NOTES
     Prerequisites:
@@ -19,8 +27,26 @@
         - Python 3.14+ with validate_eans.py script
 
     Usage:
-        .\RUN_QA.ps1
+        .\RUN_QA.ps1              # Human-readable output
+        .\RUN_QA.ps1 -Json        # Machine-readable JSON to stdout
+        .\RUN_QA.ps1 -OutFile qa-results.json  # JSON to file
 #>
+
+param(
+    [switch]$Json,
+    [string]$OutFile
+)
+
+if ($OutFile) { $Json = $true }
+
+# JSON result accumulator
+$jsonResult = @{
+    timestamp = (Get-Date -Format "o")
+    version   = "1.0"
+    suites    = @()
+    inventory = @{}
+    overall   = "unknown"
+}
 
 $CONTAINER = "supabase_db_poland-food-db"
 $DB_USER = "postgres"
@@ -33,6 +59,10 @@ Write-Host "================================================" -ForegroundColor C
 Write-Host "  Poland Food DB — QA Test Suite" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
+
+if (-not $Json) {
+    # Header already printed above
+}
 
 # ─── Test 1: Data Integrity Checks ─────────────────────────────────────────
 
@@ -60,11 +90,14 @@ $test1Lines = ($test1Output | Out-String).Trim()
 if ($test1Lines -eq "" -or $test1Lines -match '^\s*$') {
     Write-Host "  ✓ PASS (35/35 — zero violations)" -ForegroundColor Green
     $test1Pass = $true
+    $jsonResult.suites += @{ name = "Data Integrity"; checks = 35; status = "pass"; violations = @() }
 }
 else {
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
     Write-Host $test1Lines -ForegroundColor DarkRed
     $test1Pass = $false
+    $violationList = ($test1Lines -split "`n" | Where-Object { $_ -match '\S' })
+    $jsonResult.suites += @{ name = "Data Integrity"; checks = 35; status = "fail"; violations = @($violationList) }
 }
 
 # ─── Test 2: Scoring Formula Validation ────────────────────────────────────
@@ -91,11 +124,14 @@ $test2Lines = ($test2Output | Out-String).Trim()
 if ($test2Lines -eq "" -or $test2Lines -match '^\s*$') {
     Write-Host "  ✓ PASS (29/29 — zero violations)" -ForegroundColor Green
     $test2Pass = $true
+    $jsonResult.suites += @{ name = "Scoring Formula"; checks = 29; status = "pass"; violations = @() }
 }
 else {
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
     Write-Host $test2Lines -ForegroundColor DarkRed
     $test2Pass = $false
+    $violationList2 = ($test2Lines -split "`n" | Where-Object { $_ -match '\S' })
+    $jsonResult.suites += @{ name = "Scoring Formula"; checks = 29; status = "fail"; violations = @($violationList2) }
 }
 
 # ─── Test 3: Source Coverage (Informational) ───────────────────────────────
@@ -111,16 +147,19 @@ if (Test-Path $test3File) {
 
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  ⚠ FAILED TO EXECUTE (non-blocking)" -ForegroundColor DarkYellow
+        $jsonResult.suites += @{ name = "Source Coverage"; checks = 8; status = "error"; blocking = $false }
     }
     else {
         $test3Lines = ($test3Output | Out-String).Trim()
         if ($test3Lines -eq "" -or $test3Lines -match '^\s*$') {
             Write-Host "  ✓ All products have multi-source coverage" -ForegroundColor Green
+            $jsonResult.suites += @{ name = "Source Coverage"; checks = 8; status = "pass"; blocking = $false; flagged = 0 }
         }
         else {
             $singleSourceCount = ($test3Lines -split "`n" | Where-Object { $_ -match '\S' }).Count
             Write-Host "  ⚠ $singleSourceCount items flagged for cross-validation (non-blocking)" -ForegroundColor DarkYellow
             Write-Host "    Run QA__source_coverage.sql directly for details." -ForegroundColor DarkGray
+            $jsonResult.suites += @{ name = "Source Coverage"; checks = 8; status = "info"; blocking = $false; flagged = $singleSourceCount }
         }
     }
 }
@@ -143,6 +182,7 @@ else {
     if ($validatorExitCode -eq 0) {
         Write-Host "  ✓ PASS — All EAN codes have valid checksums" -ForegroundColor Green
         $test4Pass = $true
+        $jsonResult.suites += @{ name = "EAN Checksum"; checks = 1; status = "pass"; violations = @() }
     }
     else {
         # Extract count of invalid EANs from output
@@ -157,6 +197,7 @@ else {
             Write-Host "  ✗ FAILED — EAN validation errors detected" -ForegroundColor Red
         }
         $test4Pass = $false
+        $jsonResult.suites += @{ name = "EAN Checksum"; checks = 1; status = "fail"; violations = @($validatorOutput) }
     }
 }
 
@@ -186,12 +227,50 @@ Write-Host ($invOutput | Out-String).Trim() -ForegroundColor DarkGray
 
 # ─── Summary ────────────────────────────────────────────────────────────────
 
+$allPass = $test1Pass -and $test2Pass -and $test4Pass
+$jsonResult.overall = if ($allPass) { "pass" } else { "fail" }
+
+# Parse inventory into JSON-friendly structure
+if ($invOutput) {
+    $invText = ($invOutput | Out-String).Trim()
+    # Extract numbers from the psql output
+    if ($invText -match '(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)') {
+        $jsonResult.inventory = @{
+            active_products     = [int]$Matches[1]
+            deprecated          = [int]$Matches[2]
+            serving_rows        = [int]$Matches[3]
+            per_100g_servings   = [int]$Matches[4]
+            per_serving_rows    = [int]$Matches[5]
+            nutrition_rows      = [int]$Matches[6]
+            scores_rows         = [int]$Matches[7]
+            ingredient_refs     = [int]$Matches[8]
+            product_ingredients = [int]$Matches[9]
+            allergen_rows       = [int]$Matches[10]
+            trace_rows          = [int]$Matches[11]
+            categories          = [int]$Matches[12]
+        }
+    }
+}
+
+# JSON output mode
+if ($Json) {
+    $jsonOutput = $jsonResult | ConvertTo-Json -Depth 4
+    if ($OutFile) {
+        $jsonOutput | Out-File -FilePath $OutFile -Encoding utf8
+        Write-Host "QA results written to: $OutFile" -ForegroundColor Green
+    }
+    else {
+        Write-Output $jsonOutput
+    }
+    exit $(if ($allPass) { 0 } else { 1 })
+}
+
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "  Test Summary" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 
-if ($test1Pass -and $test2Pass -and $test4Pass) {
+if ($allPass) {
     Write-Host "  ✓ ALL TESTS PASSED" -ForegroundColor Green
     Write-Host ""
     exit 0
