@@ -17,14 +17,14 @@ All API surfaces are **read-only** PostgreSQL views or RPC functions exposed via
 
 ### What Is Intentionally Hidden
 
-| Internal Column | Reason | Exposed Via |
-|---|---|---|
-| `ingredients_raw` | Raw Polish text, not user-facing | `ingredients.count`, `ingredients.additive_names` |
-| `source_url`, `source_ean`, `source_fields`, `source_collected_at`, `source_notes` | Backend provenance details | `trust.source_type`, `trust.source_confidence_pct` |
-| `scoring_version`, `scored_at` | Internal metadata | Not exposed |
-| `controversies` | Raw text enum | Converted to warning in `api_score_explanation` |
-| `ingredient_concern_score` | Scoring internal | Visible in `score_breakdown.factors` |
-| `score_breakdown` (raw JSONB) | Complex structure | Structured via `api_score_explanation` |
+| Internal Column                                                                    | Reason                           | Exposed Via                                        |
+| ---------------------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------- |
+| `ingredients_raw`                                                                  | Raw Polish text, not user-facing | `ingredients.count`, `ingredients.additive_names`  |
+| `source_url`, `source_ean`, `source_fields`, `source_collected_at`, `source_notes` | Backend provenance details       | `trust.source_type`, `trust.source_confidence_pct` |
+| `scoring_version`, `scored_at`                                                     | Internal metadata                | Not exposed                                        |
+| `controversies`                                                                    | Raw text enum                    | Converted to warning in `api_score_explanation`    |
+| `ingredient_concern_score`                                                         | Scoring internal                 | Visible in `score_breakdown.factors`               |
+| `score_breakdown` (raw JSONB)                                                      | Complex structure                | Structured via `api_score_explanation`             |
 
 ---
 
@@ -41,20 +41,20 @@ GET /rest/v1/v_api_category_overview?order=sort_order.asc
 
 ### Response Shape
 
-| Field | Type | Nullable | Description |
-|---|---|---|---|
-| `category` | text | No | Internal category key (e.g. `"Chips"`) |
-| `display_name` | text | No | Human-readable name (e.g. `"Chips"`) |
-| `category_description` | text | No | Short description of the category |
-| `icon_emoji` | text | No | Emoji icon for display |
-| `sort_order` | integer | No | Display order (1-20) |
-| `product_count` | integer | No | Number of active products |
-| `avg_score` | numeric | Yes¹ | Average unhealthiness score |
-| `min_score` | integer | Yes¹ | Lowest score in category |
-| `max_score` | integer | Yes¹ | Highest score in category |
-| `median_score` | integer | Yes¹ | Median score in category |
-| `pct_nutri_a_b` | numeric | Yes¹ | % of products with Nutri-Score A or B |
-| `pct_nova_4` | numeric | Yes¹ | % of products classified as ultra-processed |
+| Field                  | Type    | Nullable | Description                                 |
+| ---------------------- | ------- | -------- | ------------------------------------------- |
+| `category`             | text    | No       | Internal category key (e.g. `"Chips"`)      |
+| `display_name`         | text    | No       | Human-readable name (e.g. `"Chips"`)        |
+| `category_description` | text    | No       | Short description of the category           |
+| `icon_emoji`           | text    | No       | Emoji icon for display                      |
+| `sort_order`           | integer | No       | Display order (1-20)                        |
+| `product_count`        | integer | No       | Number of active products                   |
+| `avg_score`            | numeric | Yes¹     | Average unhealthiness score                 |
+| `min_score`            | integer | Yes¹     | Lowest score in category                    |
+| `max_score`            | integer | Yes¹     | Highest score in category                   |
+| `median_score`         | integer | Yes¹     | Median score in category                    |
+| `pct_nutri_a_b`        | numeric | Yes¹     | % of products with Nutri-Score A or B       |
+| `pct_nova_4`           | numeric | Yes¹     | % of products classified as ultra-processed |
 
 ¹ Null only if category has 0 products (theoretically impossible with current data).
 
@@ -185,13 +185,13 @@ Body: {
 
 ### Parameters
 
-| Param | Type | Default | Description |
-|---|---|---|---|
-| `p_category` | text | *required* | Category key (must match `category_ref.category`) |
-| `p_sort_by` | text | `"score"` | Sort field: `score`, `calories`, `protein`, `name`, `nutri_score` |
-| `p_sort_dir` | text | `"asc"` | Sort direction: `asc` or `desc` |
-| `p_limit` | integer | 20 | Page size (1-100, clamped) |
-| `p_offset` | integer | 0 | Offset for pagination (clamped to ≥0) |
+| Param        | Type    | Default    | Description                                                       |
+| ------------ | ------- | ---------- | ----------------------------------------------------------------- |
+| `p_category` | text    | *required* | Category key (must match `category_ref.category`)                 |
+| `p_sort_by`  | text    | `"score"`  | Sort field: `score`, `calories`, `protein`, `name`, `nutri_score` |
+| `p_sort_dir` | text    | `"asc"`    | Sort direction: `asc` or `desc`                                   |
+| `p_limit`    | integer | 20         | Page size (1-100, clamped)                                        |
+| `p_offset`   | integer | 0          | Offset for pagination (clamped to ≥0)                             |
 
 ### Response Shape
 
@@ -305,23 +305,23 @@ Body: {"p_product_id": 32}
 
 ### Headline Logic
 
-| Score Range | Headline |
-|---|---|
-| ≤15 | "This product scores very well. It has low levels of nutrients of concern." |
-| 16-30 | "This product has a moderate profile. Some areas could be better." |
-| 31-50 | "This product has several areas of nutritional concern." |
-| >50 | "This product has significant nutritional concerns across multiple factors." |
+| Score Range | Headline                                                                     |
+| ----------- | ---------------------------------------------------------------------------- |
+| ≤15         | "This product scores very well. It has low levels of nutrients of concern."  |
+| 16-30       | "This product has a moderate profile. Some areas could be better."           |
+| 31-50       | "This product has several areas of nutritional concern."                     |
+| >50         | "This product has significant nutritional concerns across multiple factors." |
 
 ### Warning Types
 
-| Type | Trigger | Message |
-|---|---|---|
-| `high_salt` | `high_salt_flag = 'YES'` | "Salt content exceeds 1.5g per 100g." |
-| `high_sugar` | `high_sugar_flag = 'YES'` | "Sugar content is elevated." |
-| `high_sat_fat` | `high_sat_fat_flag = 'YES'` | "Saturated fat content is elevated." |
-| `additives` | `high_additive_load = 'YES'` | "This product has a high additive load." |
-| `palm_oil` | `has_palm_oil = true` | "Contains palm oil." |
-| `nova_4` | `nova_classification = '4'` | "Classified as ultra-processed (NOVA 4)." |
+| Type           | Trigger                      | Message                                   |
+| -------------- | ---------------------------- | ----------------------------------------- |
+| `high_salt`    | `high_salt_flag = 'YES'`     | "Salt content exceeds 1.5g per 100g."     |
+| `high_sugar`   | `high_sugar_flag = 'YES'`    | "Sugar content is elevated."              |
+| `high_sat_fat` | `high_sat_fat_flag = 'YES'`  | "Saturated fat content is elevated."      |
+| `additives`    | `high_additive_load = 'YES'` | "This product has a high additive load."  |
+| `palm_oil`     | `has_palm_oil = true`        | "Contains palm oil."                      |
+| `nova_4`       | `nova_classification = '4'`  | "Classified as ultra-processed (NOVA 4)." |
 
 ---
 
@@ -341,11 +341,11 @@ Body: {
 
 ### Parameters
 
-| Param | Type | Default | Description |
-|---|---|---|---|
-| `p_product_id` | bigint | *required* | Source product ID |
-| `p_same_category` | boolean | `true` | Restrict to same category only |
-| `p_limit` | integer | 5 | Max alternatives to return |
+| Param             | Type    | Default    | Description                    |
+| ----------------- | ------- | ---------- | ------------------------------ |
+| `p_product_id`    | bigint  | *required* | Source product ID              |
+| `p_same_category` | boolean | `true`     | Restrict to same category only |
+| `p_limit`         | integer | 5          | Max alternatives to return     |
 
 ### Response Shape
 
@@ -397,12 +397,12 @@ Body: {
 
 ### Parameters
 
-| Param | Type | Default | Description |
-|---|---|---|---|
-| `p_query` | text | *required* | Search string (min 2 characters) |
-| `p_category` | text | `null` | Optional category filter |
-| `p_limit` | integer | 20 | Page size (1-100, clamped) |
-| `p_offset` | integer | 0 | Offset for pagination |
+| Param        | Type    | Default    | Description                      |
+| ------------ | ------- | ---------- | -------------------------------- |
+| `p_query`    | text    | *required* | Search string (min 2 characters) |
+| `p_category` | text    | `null`     | Optional category filter         |
+| `p_limit`    | integer | 20         | Page size (1-100, clamped)       |
+| `p_offset`   | integer | 0          | Offset for pagination            |
 
 ### Response Shape
 
@@ -447,12 +447,12 @@ Body: {
 
 ## Supported Indexes
 
-| Index | Table | Type | Supports |
-|---|---|---|---|
-| `idx_products_category_score` | `products` | btree `(category, product_id)` | Category listings |
-| `idx_scores_unhealthiness` | `scores` | btree `(product_id, unhealthiness_score)` | Sorted score queries |
-| `idx_products_name_trgm` | `products` | GIN trigram | Search by product name |
-| `idx_products_brand_trgm` | `products` | GIN trigram | Search by brand |
+| Index                         | Table      | Type                                      | Supports               |
+| ----------------------------- | ---------- | ----------------------------------------- | ---------------------- |
+| `idx_products_category_score` | `products` | btree `(category, product_id)`            | Category listings      |
+| `idx_scores_unhealthiness`    | `scores`   | btree `(product_id, unhealthiness_score)` | Sorted score queries   |
+| `idx_products_name_trgm`      | `products` | GIN trigram                               | Search by product name |
+| `idx_products_brand_trgm`     | `products` | GIN trigram                               | Search by brand        |
 
 ---
 
@@ -511,11 +511,11 @@ Returns a composite data confidence score (0–100) indicating how reliable the 
 ```
 
 **Confidence bands:**
-| Band | Score | Meaning |
-|------|-------|---------|
-| `high` | ≥80 | Comprehensive data from verified sources. Score is highly reliable. |
-| `medium` | 50–79 | Partial data coverage. Some fields may be estimated. |
-| `low` | <50 | Limited data. Score may not fully reflect the product's profile. |
+| Band     | Score | Meaning                                                             |
+| -------- | ----- | ------------------------------------------------------------------- |
+| `high`   | ≥80   | Comprehensive data from verified sources. Score is highly reliable. |
+| `medium` | 50–79 | Partial data coverage. Some fields may be estimated.                |
+| `low`    | <50   | Limited data. Score may not fully reflect the product's profile.    |
 
 ### `v_product_confidence` (Materialized View)
 
@@ -523,22 +523,22 @@ Pre-computed confidence for all 560 products. Faster than calling `compute_data_
 
 **PostgREST:** `GET /v_product_confidence?confidence_band=eq.low`
 
-| Column | Type | Description |
-|--------|------|-------------|
-| `product_id` | bigint | Product identifier |
-| `product_name` | text | Product name |
-| `brand` | text | Brand name |
-| `category` | text | Product category |
-| `nutrition_pts` | int | 0–30 nutrition completeness |
-| `ingredient_pts` | int | 0–25 ingredient completeness |
-| `source_pts` | int | 0–20 source confidence |
-| `ean_pts` | int | 0–10 EAN presence |
-| `allergen_pts` | int | 0–10 allergen declarations |
-| `serving_pts` | int | 0–5 per-serving data |
-| `confidence_score` | int | 0–100 composite |
-| `confidence_band` | text | high/medium/low |
-| `ingredient_status` | text | complete/partial/missing |
-| `nutrition_status` | text | full/partial/missing |
-| `allergen_status` | text | known/unknown |
+| Column              | Type   | Description                  |
+| ------------------- | ------ | ---------------------------- |
+| `product_id`        | bigint | Product identifier           |
+| `product_name`      | text   | Product name                 |
+| `brand`             | text   | Brand name                   |
+| `category`          | text   | Product category             |
+| `nutrition_pts`     | int    | 0–30 nutrition completeness  |
+| `ingredient_pts`    | int    | 0–25 ingredient completeness |
+| `source_pts`        | int    | 0–20 source confidence       |
+| `ean_pts`           | int    | 0–10 EAN presence            |
+| `allergen_pts`      | int    | 0–10 allergen declarations   |
+| `serving_pts`       | int    | 0–5 per-serving data         |
+| `confidence_score`  | int    | 0–100 composite              |
+| `confidence_band`   | text   | high/medium/low              |
+| `ingredient_status` | text   | complete/partial/missing     |
+| `nutrition_status`  | text   | full/partial/missing         |
+| `allergen_status`   | text   | known/unknown                |
 
 > **Refresh:** Run `REFRESH MATERIALIZED VIEW CONCURRENTLY v_product_confidence;` after data updates.

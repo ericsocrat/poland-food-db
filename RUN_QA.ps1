@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Runs all QA test suites against the LOCAL Supabase database.
 
@@ -16,11 +16,15 @@
 
 .PARAMETER Json
     Output results as machine-readable JSON instead of colored text.
-    JSON includes: timestamp, suites (name, checks, status, violations),
+    JSON includes: timestamp, suites (name, checks, status, violations, runtime_ms),
     inventory, and overall pass/fail.
 
 .PARAMETER OutFile
     Write JSON output to this file path (implies -Json).
+
+.PARAMETER FailOnWarn
+    Treat informational suite warnings (Source Coverage) as failures.
+    When set, any flagged items in Suite 3 cause a non-zero exit code.
 
 .NOTES
     Prerequisites:
@@ -28,15 +32,22 @@
         - Database populated with scored products
         - Python 3.14+ with validate_eans.py script
 
+    Exit codes:
+        0  All critical checks pass (and no warnings if -FailOnWarn)
+        1  One or more critical checks failed
+        2  Informational warnings present (only with -FailOnWarn)
+
     Usage:
-        .\RUN_QA.ps1              # Human-readable output
-        .\RUN_QA.ps1 -Json        # Machine-readable JSON to stdout
+        .\RUN_QA.ps1                        # Human-readable output
+        .\RUN_QA.ps1 -Json                  # Machine-readable JSON to stdout
         .\RUN_QA.ps1 -OutFile qa-results.json  # JSON to file
+        .\RUN_QA.ps1 -FailOnWarn            # Fail on informational warnings too
 #>
 
 param(
     [switch]$Json,
-    [string]$OutFile
+    [string]$OutFile,
+    [switch]$FailOnWarn
 )
 
 if ($OutFile) { $Json = $true }
@@ -44,11 +55,15 @@ if ($OutFile) { $Json = $true }
 # JSON result accumulator
 $jsonResult = @{
     timestamp = (Get-Date -Format "o")
-    version   = "1.0"
+    version   = "2.0"
     suites    = @()
+    summary   = @{ total_checks = 0; passed = 0; failed = 0; warnings = 0 }
     inventory = @{}
     overall   = "unknown"
 }
+
+# Track warning state for -FailOnWarn
+$hasWarnings = $false
 
 $CONTAINER = "supabase_db_poland-food-db"
 $DB_USER = "postgres"
@@ -76,6 +91,8 @@ if (-not (Test-Path $test1File)) {
 
 Write-Host "Running Test Suite 1: Data Integrity (35 checks)..." -ForegroundColor Yellow
 
+$sw1 = [System.Diagnostics.Stopwatch]::StartNew()
+
 # Strip final summary query to avoid false-positive
 $test1Content = Get-Content $test1File -Raw
 $test1ChecksOnly = ($test1Content -split '-- 36\. v_master new column coverage')[0]
@@ -90,16 +107,20 @@ if ($LASTEXITCODE -ne 0) {
 
 $test1Lines = ($test1Output | Out-String).Trim()
 if ($test1Lines -eq "" -or $test1Lines -match '^\s*$') {
-    Write-Host "  ✓ PASS (35/35 — zero violations)" -ForegroundColor Green
+    $sw1.Stop()
+    Write-Host "  ✓ PASS (35/35 — zero violations) [$([math]::Round($sw1.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
     $test1Pass = $true
-    $jsonResult.suites += @{ name = "Data Integrity"; checks = 35; status = "pass"; violations = @() }
+    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 35; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
+    $jsonResult.summary.total_checks += 35; $jsonResult.summary.passed += 35
 }
 else {
+    $sw1.Stop()
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
     Write-Host $test1Lines -ForegroundColor DarkRed
     $test1Pass = $false
     $violationList = ($test1Lines -split "`n" | Where-Object { $_ -match '\S' })
-    $jsonResult.suites += @{ name = "Data Integrity"; checks = 35; status = "fail"; violations = @($violationList) }
+    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 35; status = "fail"; violations = @($violationList); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
+    $jsonResult.summary.total_checks += 35; $jsonResult.summary.failed += $violationList.Count; $jsonResult.summary.passed += (35 - $violationList.Count)
 }
 
 # ─── Test 2: Scoring Formula Validation ────────────────────────────────────
@@ -113,6 +134,8 @@ if (-not (Test-Path $test2File)) {
 Write-Host ""
 Write-Host "Running Test Suite 2: Scoring Formula (29 checks)..." -ForegroundColor Yellow
 
+$sw2 = [System.Diagnostics.Stopwatch]::StartNew()
+
 $test2Content = Get-Content $test2File -Raw
 $test2Output = $test2Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
 
@@ -124,16 +147,20 @@ if ($LASTEXITCODE -ne 0) {
 
 $test2Lines = ($test2Output | Out-String).Trim()
 if ($test2Lines -eq "" -or $test2Lines -match '^\s*$') {
-    Write-Host "  ✓ PASS (29/29 — zero violations)" -ForegroundColor Green
+    $sw2.Stop()
+    Write-Host "  ✓ PASS (29/29 — zero violations) [$([math]::Round($sw2.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
     $test2Pass = $true
-    $jsonResult.suites += @{ name = "Scoring Formula"; checks = 29; status = "pass"; violations = @() }
+    $jsonResult.suites += @{ name = "Scoring Formula"; suite_id = "scoring"; checks = 29; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw2.Elapsed.TotalMilliseconds) }
+    $jsonResult.summary.total_checks += 29; $jsonResult.summary.passed += 29
 }
 else {
+    $sw2.Stop()
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
     Write-Host $test2Lines -ForegroundColor DarkRed
     $test2Pass = $false
     $violationList2 = ($test2Lines -split "`n" | Where-Object { $_ -match '\S' })
-    $jsonResult.suites += @{ name = "Scoring Formula"; checks = 29; status = "fail"; violations = @($violationList2) }
+    $jsonResult.suites += @{ name = "Scoring Formula"; suite_id = "scoring"; checks = 29; status = "fail"; violations = @($violationList2); runtime_ms = [math]::Round($sw2.Elapsed.TotalMilliseconds) }
+    $jsonResult.summary.total_checks += 29; $jsonResult.summary.failed += $violationList2.Count; $jsonResult.summary.passed += (29 - $violationList2.Count)
 }
 
 # ─── Test 3: Source Coverage (Informational) ───────────────────────────────
@@ -143,25 +170,31 @@ if (Test-Path $test3File) {
     Write-Host ""
     Write-Host "Running Test Suite 3: Source Coverage (8 checks — informational)..." -ForegroundColor Yellow
 
+    $sw3 = [System.Diagnostics.Stopwatch]::StartNew()
+
     # Run only checks 1-4 (actionable items); 5-7 are informational summaries
     $test3Content = Get-Content $test3File -Raw
     $test3Output = $test3Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
 
     if ($LASTEXITCODE -ne 0) {
+        $sw3.Stop()
         Write-Host "  ⚠ FAILED TO EXECUTE (non-blocking)" -ForegroundColor DarkYellow
-        $jsonResult.suites += @{ name = "Source Coverage"; checks = 8; status = "error"; blocking = $false }
+        $jsonResult.suites += @{ name = "Source Coverage"; suite_id = "source_coverage"; checks = 8; status = "error"; blocking = $false; runtime_ms = [math]::Round($sw3.Elapsed.TotalMilliseconds) }
     }
     else {
+        $sw3.Stop()
         $test3Lines = ($test3Output | Out-String).Trim()
         if ($test3Lines -eq "" -or $test3Lines -match '^\s*$') {
-            Write-Host "  ✓ All products have multi-source coverage" -ForegroundColor Green
-            $jsonResult.suites += @{ name = "Source Coverage"; checks = 8; status = "pass"; blocking = $false; flagged = 0 }
+            Write-Host "  ✓ All products have multi-source coverage [$([math]::Round($sw3.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            $jsonResult.suites += @{ name = "Source Coverage"; suite_id = "source_coverage"; checks = 8; status = "pass"; blocking = $false; flagged = 0; runtime_ms = [math]::Round($sw3.Elapsed.TotalMilliseconds) }
         }
         else {
             $singleSourceCount = ($test3Lines -split "`n" | Where-Object { $_ -match '\S' }).Count
-            Write-Host "  ⚠ $singleSourceCount items flagged for cross-validation (non-blocking)" -ForegroundColor DarkYellow
+            Write-Host "  ⚠ $singleSourceCount items flagged for cross-validation (non-blocking) [$([math]::Round($sw3.Elapsed.TotalMilliseconds))ms]" -ForegroundColor DarkYellow
             Write-Host "    Run QA__source_coverage.sql directly for details." -ForegroundColor DarkGray
-            $jsonResult.suites += @{ name = "Source Coverage"; checks = 8; status = "info"; blocking = $false; flagged = $singleSourceCount }
+            $hasWarnings = $true
+            $jsonResult.suites += @{ name = "Source Coverage"; suite_id = "source_coverage"; checks = 8; status = "warn"; blocking = $false; flagged = $singleSourceCount; runtime_ms = [math]::Round($sw3.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.warnings += $singleSourceCount
         }
     }
 }
@@ -178,13 +211,16 @@ if (-not (Test-Path $validatorScript)) {
 }
 else {
     # Run validator and capture output
+    $sw4 = [System.Diagnostics.Stopwatch]::StartNew()
     $validatorOutput = & python $validatorScript 2>&1
     $validatorExitCode = $LASTEXITCODE
+    $sw4.Stop()
 
     if ($validatorExitCode -eq 0) {
-        Write-Host "  ✓ PASS — All EAN codes have valid checksums" -ForegroundColor Green
+        Write-Host "  ✓ PASS — All EAN codes have valid checksums [$([math]::Round($sw4.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
         $test4Pass = $true
-        $jsonResult.suites += @{ name = "EAN Checksum"; checks = 1; status = "pass"; violations = @() }
+        $jsonResult.suites += @{ name = "EAN Checksum"; suite_id = "ean"; checks = 1; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw4.Elapsed.TotalMilliseconds) }
+        $jsonResult.summary.total_checks += 1; $jsonResult.summary.passed += 1
     }
     else {
         # Extract count of invalid EANs from output
@@ -199,7 +235,8 @@ else {
             Write-Host "  ✗ FAILED — EAN validation errors detected" -ForegroundColor Red
         }
         $test4Pass = $false
-        $jsonResult.suites += @{ name = "EAN Checksum"; checks = 1; status = "fail"; violations = @($validatorOutput) }
+        $jsonResult.suites += @{ name = "EAN Checksum"; suite_id = "ean"; checks = 1; status = "fail"; violations = @($validatorOutput); runtime_ms = [math]::Round($sw4.Elapsed.TotalMilliseconds) }
+        $jsonResult.summary.total_checks += 1; $jsonResult.summary.failed += 1
     }
 }
 
@@ -215,30 +252,35 @@ else {
     Write-Host ""
     Write-Host "Running Test Suite 5: API Surface Validation (8 checks)..." -ForegroundColor Yellow
 
+    $sw5 = [System.Diagnostics.Stopwatch]::StartNew()
     $test5Content = Get-Content $test5File -Raw
     $test5Output = $test5Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
 
     if ($LASTEXITCODE -ne 0) {
+        $sw5.Stop()
         Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
         Write-Host "  $test5Output" -ForegroundColor DarkRed
         $test5Pass = $false
-        $jsonResult.suites += @{ name = "API Surfaces"; checks = 8; status = "error"; violations = @() }
+        $jsonResult.suites += @{ name = "API Surfaces"; suite_id = "api"; checks = 8; status = "error"; violations = @(); runtime_ms = [math]::Round($sw5.Elapsed.TotalMilliseconds) }
     }
     else {
+        $sw5.Stop()
         $test5Lines = ($test5Output | Out-String).Trim()
         # Check for any violations > 0
         $test5Violations = ($test5Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
         if ($test5Violations.Count -eq 0) {
-            Write-Host "  ✓ PASS (8/8 — zero violations)" -ForegroundColor Green
+            Write-Host "  ✓ PASS (8/8 — zero violations) [$([math]::Round($sw5.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
             $test5Pass = $true
-            $jsonResult.suites += @{ name = "API Surfaces"; checks = 8; status = "pass"; violations = @() }
+            $jsonResult.suites += @{ name = "API Surfaces"; suite_id = "api"; checks = 8; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw5.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 8; $jsonResult.summary.passed += 8
         }
         else {
             Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
             Write-Host $test5Lines -ForegroundColor DarkRed
             $test5Pass = $false
             $violationList5 = ($test5Violations | ForEach-Object { $_.Trim() })
-            $jsonResult.suites += @{ name = "API Surfaces"; checks = 8; status = "fail"; violations = @($violationList5) }
+            $jsonResult.suites += @{ name = "API Surfaces"; suite_id = "api"; checks = 8; status = "fail"; violations = @($violationList5); runtime_ms = [math]::Round($sw5.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 8; $jsonResult.summary.failed += $violationList5.Count; $jsonResult.summary.passed += (8 - $violationList5.Count)
         }
     }
 }
@@ -255,29 +297,34 @@ else {
     Write-Host ""
     Write-Host "Running Test Suite 6: Confidence Scoring (10 checks)..." -ForegroundColor Yellow
 
+    $sw6 = [System.Diagnostics.Stopwatch]::StartNew()
     $test6Content = Get-Content $test6File -Raw
     $test6Output = $test6Content | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only 2>&1
 
     if ($LASTEXITCODE -ne 0) {
+        $sw6.Stop()
         Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
         Write-Host "  $test6Output" -ForegroundColor DarkRed
         $test6Pass = $false
-        $jsonResult.suites += @{ name = "Confidence Scoring"; checks = 10; status = "error"; violations = @() }
+        $jsonResult.suites += @{ name = "Confidence Scoring"; suite_id = "confidence"; checks = 10; status = "error"; violations = @(); runtime_ms = [math]::Round($sw6.Elapsed.TotalMilliseconds) }
     }
     else {
+        $sw6.Stop()
         $test6Lines = ($test6Output | Out-String).Trim()
         $test6Violations = ($test6Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
         if ($test6Violations.Count -eq 0) {
-            Write-Host "  ✓ PASS (10/10 — zero violations)" -ForegroundColor Green
+            Write-Host "  ✓ PASS (10/10 — zero violations) [$([math]::Round($sw6.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
             $test6Pass = $true
-            $jsonResult.suites += @{ name = "Confidence Scoring"; checks = 10; status = "pass"; violations = @() }
+            $jsonResult.suites += @{ name = "Confidence Scoring"; suite_id = "confidence"; checks = 10; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw6.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 10; $jsonResult.summary.passed += 10
         }
         else {
             Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
             Write-Host $test6Lines -ForegroundColor DarkRed
             $test6Pass = $false
             $violationList6 = ($test6Violations | ForEach-Object { $_.Trim() })
-            $jsonResult.suites += @{ name = "Confidence Scoring"; checks = 10; status = "fail"; violations = @($violationList6) }
+            $jsonResult.suites += @{ name = "Confidence Scoring"; suite_id = "confidence"; checks = 10; status = "fail"; violations = @($violationList6); runtime_ms = [math]::Round($sw6.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 10; $jsonResult.summary.failed += $violationList6.Count; $jsonResult.summary.passed += (10 - $violationList6.Count)
         }
     }
 }
@@ -309,7 +356,8 @@ Write-Host ($invOutput | Out-String).Trim() -ForegroundColor DarkGray
 # ─── Summary ────────────────────────────────────────────────────────────────
 
 $allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass -and $test6Pass
-$jsonResult.overall = if ($allPass) { "pass" } else { "fail" }
+$warnFail = $FailOnWarn -and $hasWarnings
+$jsonResult.overall = if (-not $allPass) { "fail" } elseif ($warnFail) { "warn" } else { "pass" }
 
 # Parse inventory into JSON-friendly structure
 if ($invOutput) {
@@ -343,7 +391,9 @@ if ($Json) {
     else {
         Write-Output $jsonOutput
     }
-    exit $(if ($allPass) { 0 } else { 1 })
+    if (-not $allPass) { exit 1 }
+    if ($warnFail) { exit 2 }
+    exit 0
 }
 
 Write-Host ""
@@ -351,18 +401,26 @@ Write-Host "================================================" -ForegroundColor C
 Write-Host "  Test Summary" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 
-if ($allPass) {
-    Write-Host "  ✓ ALL TESTS PASSED" -ForegroundColor Green
+if ($allPass -and -not $warnFail) {
+    Write-Host "  ✓ ALL TESTS PASSED ($($jsonResult.summary.passed)/$($jsonResult.summary.total_checks) checks)" -ForegroundColor Green
     Write-Host ""
     exit 0
 }
 else {
-    Write-Host "  ✗ SOME TESTS FAILED" -ForegroundColor Red
-    Write-Host "    Test Suite 1 (Integrity):    $(if ($test1Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test1Pass) { "Green" } else { "Red" })
-    Write-Host "    Test Suite 2 (Formula):      $(if ($test2Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test2Pass) { "Green" } else { "Red" })
-    Write-Host "    Test Suite 4 (EAN):          $(if ($test4Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test4Pass) { "Green" } else { "Red" })
-    Write-Host "    Test Suite 5 (API):          $(if ($test5Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test5Pass) { "Green" } else { "Red" })
-    Write-Host "    Test Suite 6 (Confidence):   $(if ($test6Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test6Pass) { "Green" } else { "Red" })
+    if (-not $allPass) {
+        Write-Host "  ✗ SOME TESTS FAILED" -ForegroundColor Red
+    } elseif ($warnFail) {
+        Write-Host "  ⚠ PASSED WITH WARNINGS (-FailOnWarn is set)" -ForegroundColor DarkYellow
+    }
+    Write-Host "    Suite 1 (Integrity):    $(if ($test1Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test1Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 2 (Scoring):      $(if ($test2Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test2Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 3 (Source):       $(if ($hasWarnings) { '⚠ WARN' } else { '✓ PASS' }) (informational$(if ($FailOnWarn) { ', -FailOnWarn active' }))" -ForegroundColor $(if ($hasWarnings) { "DarkYellow" } else { "Green" })
+    Write-Host "    Suite 4 (EAN):          $(if ($test4Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test4Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 5 (API):          $(if ($test5Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test5Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 6 (Confidence):   $(if ($test6Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test6Pass) { "Green" } else { "Red" })
     Write-Host ""
-    exit 1
+    if (-not $allPass) { exit 1 }
+    if ($warnFail) { exit 2 }
+    exit 0
 }
+

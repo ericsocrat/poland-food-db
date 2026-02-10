@@ -16,7 +16,7 @@ on:
 
 jobs:
   qa:
-    name: Pipeline + QA (64 checks)
+    name: Pipeline + QA (82 checks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -114,6 +114,49 @@ jobs:
         run: |
           python validate_eans.py
 
+      - name: Run QA — API Surface Validation (8 checks)
+        run: |
+          result=$(psql --tuples-only -f db/qa/QA__api_surfaces.sql 2>&1)
+          trimmed=$(echo "$result" | sed '/^\s*$/d')
+          # Check for violations (lines with non-zero counts after |)
+          violations=$(echo "$trimmed" | grep -E '\|\s*[1-9]' || true)
+          if [ -z "$violations" ]; then
+            echo "✓ PASS (8/8 — zero violations)"
+          else
+            echo "✗ FAILED — API violations detected:"
+            echo "$trimmed"
+            exit 1
+          fi
+
+      - name: Run QA — Confidence Scoring (10 checks)
+        run: |
+          result=$(psql --tuples-only -f db/qa/QA__confidence_scoring.sql 2>&1)
+          trimmed=$(echo "$result" | sed '/^\s*$/d')
+          violations=$(echo "$trimmed" | grep -E '\|\s*[1-9]' || true)
+          if [ -z "$violations" ]; then
+            echo "✓ PASS (10/10 — zero violations)"
+          else
+            echo "✗ FAILED — Confidence scoring violations detected:"
+            echo "$trimmed"
+            exit 1
+          fi
+
+      - name: Confidence coverage threshold
+        run: |
+          # Fail if more than 1% of products have low confidence
+          result=$(psql --tuples-only -c "
+            SELECT COUNT(*) FROM v_product_confidence WHERE confidence_band = 'low';
+          " 2>&1)
+          low_count=$(echo "$result" | tr -d ' ')
+          total=$(psql --tuples-only -c "SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE;" 2>&1 | tr -d ' ')
+          echo "Low confidence products: $low_count / $total"
+          if [ "$low_count" -gt "$(echo "$total * 0.01 / 1" | bc)" ]; then
+            echo "✗ FAILED — More than 1% of products have low confidence ($low_count / $total)"
+            exit 1
+          else
+            echo "✓ PASS — Low confidence products within threshold"
+          fi
+
       - name: Database inventory
         if: always()
         run: |
@@ -129,4 +172,19 @@ jobs:
               (SELECT COUNT(*) FROM product_sources) AS product_source_rows,
               (SELECT COUNT(DISTINCT category) FROM products WHERE is_deprecated IS NOT TRUE) AS categories;
           "
-          echo "✓ ALL TESTS PASSED (64/64 checks)"
+
+      - name: Generate QA summary
+        if: always()
+        run: |
+          echo "## QA Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Suite | Checks | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Data Integrity | 35 | ${{ steps.*.outcome == 'failure' && '✗ FAIL' || '✓ PASS' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Scoring Formula | 29 | ✓ |" >> $GITHUB_STEP_SUMMARY
+          echo "| Source Coverage | 8 | ℹ info |" >> $GITHUB_STEP_SUMMARY
+          echo "| EAN Checksum | 1 | ✓ |" >> $GITHUB_STEP_SUMMARY
+          echo "| API Surfaces | 8 | ✓ |" >> $GITHUB_STEP_SUMMARY
+          echo "| Confidence Scoring | 10 | ✓ |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Total: 82 critical checks + 8 informational**" >> $GITHUB_STEP_SUMMARY

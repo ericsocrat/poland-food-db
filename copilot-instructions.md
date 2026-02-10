@@ -185,22 +185,22 @@ poland-food-db/
 
 ### Key Functions
 
-| Function                      | Purpose                                                                                                                     |
-| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| `compute_unhealthiness_v32()` | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern |
-| `explain_score_v32()`         | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling          |
-| `find_similar_products()`     | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                          |
-| `find_better_alternatives()`  | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                              |
-| `assign_confidence()`         | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                           |
-| `compute_data_confidence()`   | Composite confidence score (0-100) with 6 components, band, completeness profile, missing data list                         |
-| `api_data_confidence()`       | API wrapper for compute_data_confidence(); returns structured JSONB                                                          |
-| `api_product_detail()`        | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                       |
-| `api_category_listing()`      | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                 |
-| `api_score_explanation()`     | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                      |
-| `api_better_alternatives()`   | Healthier substitutes wrapper with source product context and structured JSON                                                |
-| `api_search_products()`       | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                          |
-| `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                            |
-| `mv_staleness_check()`        | Checks if MVs are stale by comparing row counts to source tables                                                             |
+| Function                           | Purpose                                                                                                                     |
+| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| `compute_unhealthiness_v32()`      | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern |
+| `explain_score_v32()`              | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling          |
+| `find_similar_products()`          | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                          |
+| `find_better_alternatives()`       | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                              |
+| `assign_confidence()`              | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                           |
+| `compute_data_confidence()`        | Composite confidence score (0-100) with 6 components, band, completeness profile, missing data list                         |
+| `api_data_confidence()`            | API wrapper for compute_data_confidence(); returns structured JSONB                                                         |
+| `api_product_detail()`             | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                      |
+| `api_category_listing()`           | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                 |
+| `api_score_explanation()`          | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                      |
+| `api_better_alternatives()`        | Healthier substitutes wrapper with source product context and structured JSON                                               |
+| `api_search_products()`            | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                          |
+| `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                                 |
+| `mv_staleness_check()`             | Checks if MVs are stale by comparing row counts to source tables                                                            |
 
 ### Views
 

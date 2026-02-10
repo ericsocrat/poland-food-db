@@ -2,7 +2,30 @@
 
 [![QA Tests](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml)
 
-A **world-class** food quality database scoring products sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
+A multi-axis food quality database scoring **560 products** sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
+
+## What This Project Is
+
+A **nutritional risk database** that scores packaged food products on multiple independent axes:
+- **Unhealthiness Score (1-100):** 9-factor weighted penalty score — higher = more nutritional risk factors
+- **Nutri-Score (A-E):** EU-style front-of-pack nutrition grade
+- **NOVA (1-4):** Processing level classification
+- **Data Confidence (0-100):** How complete and verified the underlying data is
+
+This is **not** a Nutri-Score app, a calorie counter, or a "healthy/unhealthy" binary classifier. It is a transparent, multi-dimensional scoring system where every number links back to the data and methodology that produced it.
+
+## How It Differs From Nutri-Score Apps
+
+| Dimension               | Nutri-Score Apps      | This Project                                                  |
+| ------------------------ | --------------------- | ------------------------------------------------------------- |
+| Scoring axes             | 1 (A-E letter)        | 4 independent axes (unhealthiness, nutri-score, NOVA, confidence) |
+| Additive analysis        | No                    | Yes — EFSA concern tiers, additive count                      |
+| Processing level         | No                    | Yes — NOVA 1-4 integrated into score                         |
+| Trans fat tracking       | No                    | Yes — separate weighted factor                                |
+| Controversy tracking     | No                    | Yes — palm oil, artificial sweeteners flagged                 |
+| Data quality visibility  | Hidden                | Explicit — confidence score per product                       |
+| Score explainability     | None                  | Full factor breakdown with category context                   |
+| Source provenance         | Opaque                | Tracked — every product links to its data source              |
 
 ## 🎯 Quick Start
 
@@ -64,12 +87,14 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 64 automated checks + 14 data quality reports
+**Test Coverage**: 82 automated checks + 8 data quality reports
 - 35 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check, product-source provenance) + 6 informational
 - 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
+- 8 API surface validation checks (contract validation, JSON structure, listing consistency)
+- 10 confidence scoring checks (range, distribution, component totals, band assignment)
 - 8 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 72/72
+**All critical tests passing**: ✅ 82/82
 
 **EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
@@ -133,7 +158,9 @@ poland-food-db/
 
 ## 🧪 Testing Philosophy
 
-Every change is validated against **72 automated checks** + 14 informational data quality reports:
+**Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
+
+Every change is validated against **82 automated checks** + 8 informational data quality reports:
 
 ### Data Integrity (35 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -183,7 +210,17 @@ Every change is validated against **72 automated checks** + 14 informational dat
 - Score explanation covers all scored products
 - Search and listing return valid structures
 
+### Confidence Scoring (10 checks)
+- Confidence scores in valid range (0-100)
+- Band assignment matches score thresholds (high ≥80, medium 50-79, low <50)
+- All 6 components sum to total score
+- No products missing confidence data
+- Distribution sanity (≥80% should be high confidence)
+- Component weights match formula specification
+
 **Test files**: `db/qa/QA__*.sql` — Run via `.\RUN_QA.ps1`
+
+**CI**: All 82 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 1% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -253,17 +290,17 @@ Full documentation: [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)
 
 ### Confidence Levels
 
-Every product receives an automated confidence rating based on data completeness and source verification:
+Every product receives an automated **data confidence** score (0-100) measuring how complete and verified the underlying data is. This is NOT a quality or healthiness score — it tells you how much to trust the displayed numbers.
 
-| Confidence    | Criteria                               | Meaning                                 |
-| ------------- | -------------------------------------- | --------------------------------------- |
-| **verified**  | ≥90% complete + ≥2 independent sources | Cross-validated across multiple sources |
-| **estimated** | 70-89% complete OR single source       | Single-source data needing verification |
-| **low**       | <70% complete                          | Incomplete data, use with caution       |
+| Confidence    | Score  | Criteria                               | Meaning                                 |
+| ------------- | ------ | -------------------------------------- | --------------------------------------- |
+| **High**      | ≥80    | Comprehensive nutrition + ingredients  | Data is reliable for scoring            |
+| **Medium**    | 50-79  | Some gaps (allergens, serving data)    | Score may shift as data improves        |
+| **Low**       | <50    | Major data gaps                        | Use with caution                        |
 
-**Current status**: 493 `verified` (≥90% data completeness) · 67 `estimated` · 0 `low`.
+**Current distribution**: 493 high · 65 medium · 2 low
 
-Confidence is auto-computed by the `assign_confidence()` function in all scoring pipelines.
+The 6 components of confidence: nutrition data (0-30), ingredient data (0-25), source quality (0-20), EAN coverage (0-10), allergen info (0-10), serving data (0-5). Computed by `compute_data_confidence()`.
 
 ### EAN Barcode Tracking
 
@@ -312,10 +349,18 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 72/72 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 82/82 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
+
+## 📝 Ethical Positioning
+
+- **Education over judgment** — Scores inform, they don't prescribe. "Lower concern" not "healthy."
+- **Transparency over gamification** — Every number links to its source data and computation method.
+- **Multi-axis over single-number** — No single score captures nutritional reality. We show 4 independent axes.
+- **Confidence over certainty** — We tell you how reliable each score is. Incomplete data gets flagged, not hidden.
+- **Category context over absolutes** — A score of 25 means different things in Candy vs. Water. We always show context.
 
 ## 📝 Notes
 
@@ -331,7 +376,9 @@ EAN codes enable validation against:
 
 ## 📚 Documentation
 
-- [API_CONTRACTS.md](docs/API_CONTRACTS.md) — API surface contracts (6 endpoints)
+- [API_CONTRACTS.md](docs/API_CONTRACTS.md) — API surface contracts (6 RPC endpoints + 3 views)
+- [UX_UI_DESIGN.md](docs/UX_UI_DESIGN.md) — Production-ready UX spec (score disambiguation, API mapping, misinterpretation defense)
+- [PERFORMANCE_REPORT.md](docs/PERFORMANCE_REPORT.md) — Performance audit & scale projections to 50K products
 - [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
 - [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md) — Complete v3.2 algorithm specification
 - [DATA_SOURCES.md](docs/DATA_SOURCES.md) — Multi-source data hierarchy & validation workflow

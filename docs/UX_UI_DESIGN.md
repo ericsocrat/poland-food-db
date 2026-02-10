@@ -1,8 +1,8 @@
 # Poland Food DB — UX/UI Design Document
 
-> **Status:** Conceptual — architecture, structure, and UX logic only.
-> **Last updated:** 2026-02-10 (Phase 9: score explanation, confidence bands, better alternatives, misinterpretation defense)
-> **No implementation yet.** This document guides future front-end development.
+> **Status:** Production-ready specification — architecture, data contracts, and UX rules locked.
+> **Last updated:** 2026-02-10 (incremental hardening: score disambiguation, API-to-component mapping, misinterpretation defense v2)
+> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (82/82 checks). This document is the single source of truth for any future front-end implementation.
 
 ---
 
@@ -65,13 +65,13 @@ Home (Dashboard)
 │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘         │
 │  ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐ ┌──────┐         │
 │  │Bread │ │Cereal│ │Canned│ │Sauce │ │Condi │         │
-│  │ 28   │ │ 28   │ │ 28   │ │ 17   │ │ 28   │         │
+│  │ 28   │ │ 28   │ │ 28   │ │ 28   │ │ 28   │         │
 │  └──────┘ └──────┘ └──────┘ └──────┘ └──────┘         │
 │  ... (4 rows total)                                     │
 │                                                         │
 │  ┌─────────────────────┐  ┌──────────────────────────┐  │
 │  │ Quick Stats         │  │ Recently Scored           │  │
-│  │ 485 active products │  │ 1. Lay's Classic     72   │  │
+│  │ 560 active products │  │ 1. Lay's Classic     72   │  │
 │  │ 20 categories       │  │ 2. Mlekovita Kefir   12   │  │
 │  │ 139 brands          │  │ 3. Alpro Soja        18   │  │
 │  └─────────────────────┘  └──────────────────────────┘  │
@@ -319,6 +319,24 @@ Home (Dashboard)
 
 ## 4. Scoring Visualisation Strategy
 
+### 4.0 Three Distinct Scoring Systems — What They Are and Are Not
+
+This database shows three independent scores. They measure **different things**, are computed **differently**, and must never be conflated in the UI.
+
+| System                     | What It Measures                                               | Range    | Source                                       | What It Does NOT Mean                                                                       |
+| -------------------------- | -------------------------------------------------------------- | -------- | -------------------------------------------- | ------------------------------------------------------------------------------------------- |
+| **Unhealthiness Score**    | Nutritional risk from 9 weighted factors (sugar, fat, salt, processing, additives, etc.) | 1–100    | Computed by `compute_unhealthiness_v32()`    | NOT a "health score." A low number ≠ "eat unlimited amounts." Does not capture vitamins, minerals, portions, or individual needs. |
+| **Nutri-Score (A–E)**      | EU-style front-of-pack nutrition grade. Positive & negative nutrient balance. | A–E      | Assigned from `nutri_score_ref` lookup       | NOT a safety rating. Nutri-Score B ≠ "healthy." A NOVA 4 product can still be Nutri-Score A if its macro profile is favourable. |
+| **Data Confidence (0–100)**| How much data we have about the product, NOT how good the product is. | 0–100    | Computed by `compute_data_confidence()`      | NOT a quality score. Confidence 95 ≠ "trustworthy product." It means we have comprehensive data to score it accurately. |
+
+**Critical UX rule:** These three numbers must never appear in a single "overall score" or be averaged. They are always displayed separately with distinct visual treatments (bar, badge, shield).
+
+**Why Nutri-Score B ≠ "Healthy":**
+Nutri-Score evaluates macro-nutrient balance (fibre, protein vs. sugar, fat, salt, calories) but ignores: processing level (NOVA), additive load, ingredient concern tiers, trans fats, and controversies. A breakfast cereal with added vitamins can score Nutri-Score A while being NOVA 4 (ultra-processed) with 6 additives. Our unhealthiness score captures these dimensions; Nutri-Score does not.
+
+**Why Confidence ≠ Healthiness:**
+A product with confidence 95/100 has comprehensive, verified data — it could still have an unhealthiness score of 55 (elevated). A product with confidence 40/100 has incomplete data — its actual score might be higher OR lower than displayed. Confidence tells you how much to trust the displayed score, not how good the product is.
+
 ### 4.1 Unhealthiness Score (0-100)
 
 **Visual treatment:**
@@ -395,7 +413,7 @@ Home (Dashboard)
   - Sort by impact (largest penalty first)
   - Each bar shows: factor name, points/max, input value, visual bar
   - Colour: green (0-30% of max), yellow (30-60%), orange (60-80%), red (>80%)
-  
+
 - **Category context:** Comparative positioning
   - "Ranked #3 of 28 in Dairy"
   - "61% better than the category average (28)"
@@ -470,20 +488,20 @@ Response:      { display_label, description, tooltip_text, unit, value_range }
 
 ### 6.2 Example Tooltips
 
-| Column                | Tooltip                                                             |
-| --------------------- | ------------------------------------------------------------------- |
-| unhealthiness_score   | "Higher means less healthy. Combines sugar, fat, salt, processing." |
-| nutri_score_label     | "Nutri-Score: A (healthiest) to E (least healthy)."                 |
-| nova_classification   | "NOVA: 1=natural, 2=basic, 3=processed, 4=ultra-processed."         |
-| high_salt_flag        | "Flags products with salt > 1.5g per 100g."                         |
+| Column                | Tooltip                                                                                                                         |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
+| unhealthiness_score   | "Higher means less healthy. Combines sugar, fat, salt, processing."                                                             |
+| nutri_score_label     | "Nutri-Score: A (healthiest) to E (least healthy)."                                                                             |
+| nova_classification   | "NOVA: 1=natural, 2=basic, 3=processed, 4=ultra-processed."                                                                     |
+| high_salt_flag        | "Flags products with salt > 1.5g per 100g."                                                                                     |
 | confidence_score      | "How reliable the data is (0-100). Based on nutrition completeness, ingredient availability, source quality, and EAN coverage." |
-| confidence_band       | "High (≥80): comprehensive data. Medium (50-79): partial data. Low (<50): limited data." |
-| prep_method           | "How the product is typically prepared: ready-to-eat, needs-heating, needs-cooking, etc." |
-| ingredients_english   | "Ingredients translated to English from the Polish label."          |
-| store_availability    | "Retail chains where this product has been confirmed available."     |
-| data_completeness_pct | "How complete the source data was for scoring."                     |
-| calories              | "Kilocalories per serving."                                         |
-| ean                   | "Barcode number. 590 prefix indicates Polish origin."               |
+| confidence_band       | "High (≥80): comprehensive data. Medium (50-79): partial data. Low (<50): limited data."                                        |
+| prep_method           | "How the product is typically prepared: ready-to-eat, needs-heating, needs-cooking, etc."                                       |
+| ingredients_english   | "Ingredients translated to English from the Polish label."                                                                      |
+| store_availability    | "Retail chains where this product has been confirmed available."                                                                |
+| data_completeness_pct | "How complete the source data was for scoring."                                                                                 |
+| calories              | "Kilocalories per serving."                                                                                                     |
+| ean                   | "Barcode number. 590 prefix indicates Polish origin."                                                                           |
 
 ---
 
@@ -551,6 +569,35 @@ RPC functions (POST /rpc/):
 
 > **See [API_CONTRACTS.md](API_CONTRACTS.md) for complete response shapes and field documentation.**
 
+### 8.2 API-to-Component Mapping
+
+Every UI component maps to exactly one API call. No component should ever call multiple endpoints and merge results client-side.
+
+| UI Component                    | API Endpoint                          | Key Response Fields                                                                  | Caching Strategy    |
+| ------------------------------- | ------------------------------------- | ------------------------------------------------------------------------------------ | ------------------- |
+| Dashboard — Category Grid       | `GET v_api_category_overview`         | `category`, `product_count`, `avg_unhealthiness`, `score_band`                       | 5 min TTL           |
+| Category Listing — Product List | `POST /rpc/api_category_listing`      | `product_id`, `product_name`, `brand`, `unhealthiness_score`, `nutri_score_label`    | 2 min TTL           |
+| Product Detail — Identity       | `POST /rpc/api_product_detail`        | Full JSONB: identity, nutrition, flags, ingredients, allergens, traces, confidence    | On navigation       |
+| Product Detail — Score Panel    | `POST /rpc/api_score_explanation`     | `headline`, `factor_breakdown[]`, `category_rank`, `category_avg`, `warnings[]`      | On navigation       |
+| Product Detail — Confidence     | `POST /rpc/api_data_confidence`       | `total_score`, `band`, `components[]`, `missing_items[]`                             | On navigation       |
+| Product Detail — Alternatives   | `POST /rpc/api_better_alternatives`   | `product_id`, `product_name`, `score`, `score_diff`                                  | On navigation       |
+| Search Results                  | `POST /rpc/api_search_products`       | Same as category listing + `rank` from `ts_rank_cd`                                  | No cache (live)     |
+| Tooltips                        | `GET column_metadata`                 | `tooltip_text`, `display_label`, `unit`                                              | Session-level cache |
+
+### 8.3 Product Detail — Render Order
+
+The Product Detail page loads data from 4 API calls (parallelised) and renders sections in this fixed order:
+
+1. **Identity** — from `api_product_detail`: name, brand, category, EAN, stores
+2. **Health Summary** — from `api_product_detail`: unhealthiness score bar + nutri-score badge + NOVA badge + confidence shield
+3. **Nutrition Facts** — from `api_product_detail`: per-100g table with mini bars
+4. **Flags & Warnings** — from `api_product_detail`: salt/sugar/sat-fat/additive flags
+5. **Score Explanation** — from `api_score_explanation`: headline → factor breakdown → category context → warnings (expandable, collapsed by default)
+6. **Data Confidence** — from `api_data_confidence`: overall score → 6-component breakdown → missing items (expandable, collapsed by default)
+7. **Ingredients** — from `api_product_detail`: raw Polish text + English translation
+8. **Better Alternatives** — from `api_better_alternatives`: up to 3 products with score diff (expandable, collapsed by default)
+9. **Footer** — data source, scoring version, last scored date
+
 **Key Postgres functions (internal, not exposed directly):**
 - `compute_unhealthiness_v32()` — 9-factor scoring formula
 - `compute_data_confidence()` — 6-component confidence scoring
@@ -613,18 +660,18 @@ This section defines patterns to prevent users from drawing incorrect conclusion
 
 ### 11.1 Conflicting Signal Patterns
 
-| Scenario | Signal Conflict | UX Response |
-|---|---|---|
-| Good Nutri-Score (A/B) + NOVA 4 | Nutrition looks good but highly processed | Amber callout: *"Good nutrition profile but ultra-processed. Processing adds additives not captured by Nutri-Score."* |
-| Low score + High salt flag | Score seems fine but salt is extreme | Red flag badge remains visible even when overall score is green |
-| Low score + Low confidence | Score looks good but data is incomplete | De-emphasize score visually, show confidence warning prominently |
-| NOVA 1 + High score | Minimally processed but high in sugar/fat/salt | Note: *"While minimally processed, this product has high sugar/fat/salt content."* |
+| Scenario                        | Signal Conflict                                | UX Response                                                                                                           |
+| ------------------------------- | ---------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Good Nutri-Score (A/B) + NOVA 4 | Nutrition looks good but highly processed      | Amber callout: *"Good nutrition profile but ultra-processed. Processing adds additives not captured by Nutri-Score."* |
+| Low score + High salt flag      | Score seems fine but salt is extreme           | Red flag badge remains visible even when overall score is green                                                       |
+| Low score + Low confidence      | Score looks good but data is incomplete        | De-emphasize score visually, show confidence warning prominently                                                      |
+| NOVA 1 + High score             | Minimally processed but high in sugar/fat/salt | Note: *"While minimally processed, this product has high sugar/fat/salt content."*                                    |
 
 ### 11.2 Score Context Rules
 
 1. **Never show a score without category context.** A score of 25 in "Candy" is excellent; in "Water" it's terrible.
    - Always display: "X/100 in [Category]" with the category average
-   - On listings: show rank badge (#3 of 28) 
+   - On listings: show rank badge (#3 of 28)
 
 2. **Never compare scores across categories without a disclaimer.**
    - Cross-category comparison view must show: *"Scores are relative within each category. A low score in Chips ≠ a low score in Dairy."*
@@ -655,11 +702,18 @@ Display this as an expandable section or info icon on the methodology page and P
 
 ### 11.4 Confidence-Aware Display Rules
 
-| Confidence Band | Score Display | Comparison Allowed? | Better Alternatives? |
-|---|---|---|---|
-| High (≥80) | Full colour, normal size | Yes | Yes |
-| Medium (50-79) | Muted colour (70% opacity), "(estimated)" suffix | Yes, with caveat | Yes, with caveat |
-| Low (<50) | Grey, "(limited data)" suffix, warning banner | No — hide from comparison | Show with warning: "Alternatives may be more reliable" |
+| Confidence Band | Score Display                                    | Comparison Allowed?       | Better Alternatives?                                   |
+| --------------- | ------------------------------------------------ | ------------------------- | ------------------------------------------------------ |
+| High (≥80)      | Full colour, normal size                         | Yes                       | Yes                                                    |
+| Medium (50-79)  | Muted colour (70% opacity), "(estimated)" suffix | Yes, with caveat          | Yes, with caveat                                       |
+| Low (<50)       | Grey, "(limited data)" suffix, warning banner    | No — hide from comparison | Show with warning: "Alternatives may be more reliable" |
+
+**Hard UX guardrails (non-negotiable):**
+1. If `confidence_band = 'low'`, the product MUST NOT appear in Compare View. The "Compare" button is disabled with tooltip: "Insufficient data for reliable comparison."
+2. If `confidence_band = 'low'`, the "Better Alternatives" section header shows: "⚠ These alternatives have higher data confidence and may be more reliably scored."
+3. If ANY product in a comparison has `confidence_band = 'medium'`, show a persistent banner: "One or more products have estimated data. Differences under 5 points may not be meaningful."
+4. Sort tiebreaker: when two products have identical unhealthiness scores, rank the higher-confidence product first.
+5. Never auto-select a "Winner" in Compare View if the score difference is <3 points — show "Too close to call" instead.
 
 ### 11.5 Copy Blocks for Common Scenarios
 
@@ -677,7 +731,31 @@ Display this as an expandable section or info icon on the methodology page and P
 
 ### 11.6 Comparison View Safeguards
 
-1. **Block comparing products with confidence_band = 'low'** — show message: *"This product has insufficient data for reliable comparison."*
+1. **Block comparing products with confidence_band = 'low'** — show message: *"This product has insufficient data for reliable comparison."* Disable the "Add to compare" button entirely; don't just warn after the fact.
 2. **When comparing across categories**, show a persistent banner: *"These products belong to different categories. Scores are most meaningful when compared within the same category."*
 3. **Highlight the winner clearly but add nuance**: Instead of "Product A is healthier", say "Product A has a lower unhealthiness score (12 vs 38 in Dairy). Both are relatively low concern."
 4. **Never auto-rank by score alone** — default sort should consider confidence, so low-confidence products don't appear at the top.
+5. **Score difference thresholds for comparison language:**
+   - Difference <3 points: "Too close to distinguish meaningfully"
+   - Difference 3-10 points: "Slightly lower unhealthiness"
+   - Difference 11-25 points: "Noticeably lower unhealthiness"
+   - Difference >25 points: "Substantially lower unhealthiness"
+6. **Never use the word "healthier"** in comparison results. Always use "lower unhealthiness score" or "fewer nutritional risk factors."
+
+---
+
+## 12. EU Expansion Readiness
+
+When expanding beyond Poland, the following UX elements must adapt:
+
+| Element                | Poland (Current)         | Multi-Country (Future)                                      |
+| ---------------------- | ------------------------ | ----------------------------------------------------------- |
+| Country filter         | Hardcoded PL             | Dropdown: PL, DE, CZ, etc. (from `country_ref`)            |
+| Nutri-Score display    | Standard EU badge        | May vary — some countries use traffic-light labels          |
+| Currency in prices     | PLN (future)             | EUR, CZK, etc. — locale-aware formatting                   |
+| Ingredient language    | Polish + English         | Native language + English translation                       |
+| Store chains           | Polish retailers         | Country-specific retailer lists                             |
+| EAN prefix validation  | 590 = Polish origin      | Country-specific prefix mapping                             |
+| Regulatory disclaimers | Polish food law          | Country-specific legal requirements                         |
+
+**UX rule:** All country-specific data must come from the database (reference tables), never from front-end hardcoding. See [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md).

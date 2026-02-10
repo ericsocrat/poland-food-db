@@ -1,7 +1,7 @@
 # Poland Food DB — Performance & Scale Readiness Report
 
-> **Generated:** 2026-02-10  
-> **Database:** PostgreSQL 15 (Supabase Docker)  
+> **Generated:** 2026-02-10
+> **Database:** PostgreSQL 15 (Supabase Docker)
 > **Dataset:** 560 active products, 20 categories, 877 servings, 7,435 product-ingredient links
 
 ---
@@ -12,25 +12,25 @@ All benchmarks taken on a local Supabase Docker instance with warm caches.
 
 ### Query Latencies
 
-| Operation | Execution Time | Buffer Hits | Notes |
-|---|---|---|---|
-| `v_master` (category filter + sort + limit 10) | **4.5ms** | 569 | Uses `products_category_idx` bitmap scan |
-| `api_product_detail(id)` | **~5ms** | ~500 | Single-product JSONB assembly |
-| `api_better_alternatives(id, true, 5)` | **6.3ms** | 1,771 | Includes `find_similar_products` Jaccard join |
-| `find_similar_products(id, 5)` | **6.6ms** | ~800 | Jaccard coefficient via `product_ingredient` self-join |
-| `api_score_explanation(id)` | **7.5ms** | 1,500 | Score computation + category context |
-| `api_search_products('cola')` | **7.8ms** | 422 | pg_trgm GIN index scan |
-| `api_category_listing(cat, sort, dir, 28, 0)` | **~5ms** | ~600 | Full category scan with sort |
-| `v_product_confidence` (indexed lookup) | **0.025ms** | 3 | Materialized view with btree index |
-| `compute_data_confidence(id)` | **~3ms** | ~200 | Per-product confidence computation |
-| `v_api_category_overview` | **~2ms** | ~100 | 20-row view from pre-indexed data |
+| Operation                                      | Execution Time | Buffer Hits | Notes                                                  |
+| ---------------------------------------------- | -------------- | ----------- | ------------------------------------------------------ |
+| `v_master` (category filter + sort + limit 10) | **4.5ms**      | 569         | Uses `products_category_idx` bitmap scan               |
+| `api_product_detail(id)`                       | **~5ms**       | ~500        | Single-product JSONB assembly                          |
+| `api_better_alternatives(id, true, 5)`         | **6.3ms**      | 1,771       | Includes `find_similar_products` Jaccard join          |
+| `find_similar_products(id, 5)`                 | **6.6ms**      | ~800        | Jaccard coefficient via `product_ingredient` self-join |
+| `api_score_explanation(id)`                    | **7.5ms**      | 1,500       | Score computation + category context                   |
+| `api_search_products('cola')`                  | **7.8ms**      | 422         | pg_trgm GIN index scan                                 |
+| `api_category_listing(cat, sort, dir, 28, 0)`  | **~5ms**       | ~600        | Full category scan with sort                           |
+| `v_product_confidence` (indexed lookup)        | **0.025ms**    | 3           | Materialized view with btree index                     |
+| `compute_data_confidence(id)`                  | **~3ms**       | ~200        | Per-product confidence computation                     |
+| `v_api_category_overview`                      | **~2ms**       | ~100        | 20-row view from pre-indexed data                      |
 
 ### Materialized View Refresh Times
 
-| View | Refresh Time | Row Count | Strategy |
-|---|---|---|---|
-| `mv_ingredient_frequency` | **27ms** | 1,257 | Full refresh (no unique index) |
-| `v_product_confidence` | **31ms** | 560 | `CONCURRENTLY` (has unique index) |
+| View                      | Refresh Time | Row Count | Strategy                          |
+| ------------------------- | ------------ | --------- | --------------------------------- |
+| `mv_ingredient_frequency` | **27ms**     | 1,257     | Full refresh (no unique index)    |
+| `v_product_confidence`    | **31ms**     | 560       | `CONCURRENTLY` (has unique index) |
 
 **Verdict:** All queries <10ms. MV refreshes <50ms. No performance issues at current scale.
 
@@ -40,19 +40,19 @@ All benchmarks taken on a local Supabase Docker instance with warm caches.
 
 ### Coverage Assessment
 
-| Table | Indexes | Assessment |
-|---|---|---|
-| `products` | 7 (PK, category, active, EAN, country+brand+name, name_trgm, brand_trgm) | ✅ Well-covered |
-| `product_ingredient` | 4 (PK, product FK, ingredient FK, sub-ingredient FK) | ✅ Complete |
-| `ingredient_ref` | 5 (PK, taxonomy_id, name, additive, concern) | ✅ Complete |
-| `scores` | 2 (PK, unhealthiness_score) | ✅ Sufficient |
-| `servings` | 2 (PK, product_id) | ✅ Sufficient |
-| `nutrition_facts` | 1 (PK only) | ⚠️ Note below |
-| `product_sources` | 4 (PK, product FK, unique constraint × 2) | ✅ Complete |
-| `product_allergen` | 2 (PK, allergen_tag) | ✅ Sufficient |
-| `product_trace` | 2 (PK, trace_tag) | ✅ Sufficient |
-| `v_product_confidence` | 2 (product_id unique, band+score) | ✅ Complete |
-| `mv_ingredient_frequency` | 3 (ingredient_id unique, count, concern) | ✅ Complete |
+| Table                     | Indexes                                                                  | Assessment     |
+| ------------------------- | ------------------------------------------------------------------------ | -------------- |
+| `products`                | 7 (PK, category, active, EAN, country+brand+name, name_trgm, brand_trgm) | ✅ Well-covered |
+| `product_ingredient`      | 4 (PK, product FK, ingredient FK, sub-ingredient FK)                     | ✅ Complete     |
+| `ingredient_ref`          | 5 (PK, taxonomy_id, name, additive, concern)                             | ✅ Complete     |
+| `scores`                  | 2 (PK, unhealthiness_score)                                              | ✅ Sufficient   |
+| `servings`                | 2 (PK, product_id)                                                       | ✅ Sufficient   |
+| `nutrition_facts`         | 1 (PK only)                                                              | ⚠️ Note below   |
+| `product_sources`         | 4 (PK, product FK, unique constraint × 2)                                | ✅ Complete     |
+| `product_allergen`        | 2 (PK, allergen_tag)                                                     | ✅ Sufficient   |
+| `product_trace`           | 2 (PK, trace_tag)                                                        | ✅ Sufficient   |
+| `v_product_confidence`    | 2 (product_id unique, band+score)                                        | ✅ Complete     |
+| `mv_ingredient_frequency` | 3 (ingredient_id unique, count, concern)                                 | ✅ Complete     |
 
 ### Observations
 
@@ -68,14 +68,14 @@ All benchmarks taken on a local Supabase Docker instance with warm caches.
 
 ### Growth Scenarios
 
-| Metric | Current | 5K Products | 50K Products | Notes |
-|---|---|---|---|---|
-| `v_master` category query | 4.5ms | ~20ms | ~100ms | Linear with category size |
-| `find_similar_products` | 6.6ms | ~150ms | ~3s | O(n²) Jaccard — **bottleneck** |
-| `api_search_products` | 7.8ms | ~15ms | ~50ms | pg_trgm GIN scales well |
-| MV refresh (confidence) | 31ms | ~300ms | ~3s | Linear |
-| MV refresh (ingredient freq) | 27ms | ~200ms | ~2s | Linear |
-| Total index storage | ~2MB | ~20MB | ~200MB | Linear |
+| Metric                       | Current | 5K Products | 50K Products | Notes                          |
+| ---------------------------- | ------- | ----------- | ------------ | ------------------------------ |
+| `v_master` category query    | 4.5ms   | ~20ms       | ~100ms       | Linear with category size      |
+| `find_similar_products`      | 6.6ms   | ~150ms      | ~3s          | O(n²) Jaccard — **bottleneck** |
+| `api_search_products`        | 7.8ms   | ~15ms       | ~50ms        | pg_trgm GIN scales well        |
+| MV refresh (confidence)      | 31ms    | ~300ms      | ~3s          | Linear                         |
+| MV refresh (ingredient freq) | 27ms    | ~200ms      | ~2s          | Linear                         |
+| Total index storage          | ~2MB    | ~20MB       | ~200MB       | Linear                         |
 
 ### Identified Bottleneck: `find_similar_products`
 
@@ -115,10 +115,10 @@ The Jaccard similarity computation self-joins `product_ingredient` (~13 rows/pro
 ## 5. MV Refresh Strategy
 
 ### Current State
-| View | Has Unique Index | Supports CONCURRENTLY | Refresh Frequency |
-|---|---|---|---|
-| `mv_ingredient_frequency` | ✅ `idx_mv_ingredient_freq_id` | ✅ Yes | After ingredient data changes |
-| `v_product_confidence` | ✅ `idx_product_confidence_id` | ✅ Yes | After scoring/nutrition/source updates |
+| View                      | Has Unique Index              | Supports CONCURRENTLY | Refresh Frequency                      |
+| ------------------------- | ----------------------------- | --------------------- | -------------------------------------- |
+| `mv_ingredient_frequency` | ✅ `idx_mv_ingredient_freq_id` | ✅ Yes                 | After ingredient data changes          |
+| `v_product_confidence`    | ✅ `idx_product_confidence_id` | ✅ Yes                 | After scoring/nutrition/source updates |
 
 ### Recommended Refresh Policy
 ```
@@ -134,27 +134,27 @@ Estimated combined refresh time at current scale: ~60ms
 ## 6. Safe vs Expensive Query Patterns
 
 ### Safe (use freely in frontend)
-| Pattern | Why Safe |
-|---|---|
-| `v_api_category_overview` | 20 rows, view over indexed tables |
-| `api_product_detail(id)` | Single-row lookup, all indexed |
-| `api_data_confidence(id)` | Single-row function |
-| `v_product_confidence` (any filter) | Materialized, indexed |
-| `api_category_listing(..., limit ≤ 50)` | Paged, indexed |
-| `api_search_products(query)` | GIN index, returns max ~20 |
+| Pattern                                 | Why Safe                          |
+| --------------------------------------- | --------------------------------- |
+| `v_api_category_overview`               | 20 rows, view over indexed tables |
+| `api_product_detail(id)`                | Single-row lookup, all indexed    |
+| `api_data_confidence(id)`               | Single-row function               |
+| `v_product_confidence` (any filter)     | Materialized, indexed             |
+| `api_category_listing(..., limit ≤ 50)` | Paged, indexed                    |
+| `api_search_products(query)`            | GIN index, returns max ~20        |
 
 ### Moderate (cache 60s)
-| Pattern | Why Moderate |
-|---|---|
-| `api_score_explanation(id)` | Computes score + category context |
-| `api_category_listing(..., limit > 50)` | Larger result sets |
+| Pattern                                 | Why Moderate                      |
+| --------------------------------------- | --------------------------------- |
+| `api_score_explanation(id)`             | Computes score + category context |
+| `api_category_listing(..., limit > 50)` | Larger result sets                |
 
 ### Expensive (cache 300s or pre-compute)
-| Pattern | Why Expensive | Mitigation |
-|---|---|---|
-| `api_better_alternatives(id)` | Self-join for Jaccard similarity | Cache result, limit 5 |
-| `find_similar_products(id, n)` | O(n²) ingredient comparison | Always pass `p_same_category = true` |
-| `REFRESH MATERIALIZED VIEW` | Full table scan | Run during maintenance window |
+| Pattern                        | Why Expensive                    | Mitigation                           |
+| ------------------------------ | -------------------------------- | ------------------------------------ |
+| `api_better_alternatives(id)`  | Self-join for Jaccard similarity | Cache result, limit 5                |
+| `find_similar_products(id, n)` | O(n²) ingredient comparison      | Always pass `p_same_category = true` |
+| `REFRESH MATERIALIZED VIEW`    | Full table scan                  | Run during maintenance window        |
 
 ---
 
