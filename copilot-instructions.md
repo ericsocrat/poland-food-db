@@ -83,7 +83,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 9 append-only schema migrations
+│   └── migrations/                  # 18 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -92,7 +92,16 @@ poland-food-db/
 │       ├── 20260207000500_column_metadata.sql
 │       ├── 20260207000501_scoring_function.sql
 │       ├── 20260208000100_add_ean_and_update_view.sql
-│       └── 20260209000100_seed_functions_and_metadata.sql
+│       ├── 20260209000100_seed_functions_and_metadata.sql
+│       ├── 20260210000100_deduplicate_sources.sql
+│       ├── 20260210000200_purge_deprecated_products.sql
+│       ├── 20260210000300_sources_category_equijoin.sql
+│       ├── 20260210000400_normalize_prep_method.sql
+│       ├── 20260210000500_normalize_store_availability.sql
+│       ├── 20260210000600_add_check_constraints.sql
+│       ├── 20260210000700_index_tuning.sql
+│       ├── 20260210000800_expand_prep_method_domain.sql
+│       └── 20260210000900_backfill_prep_method.sql
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.1 algorithm (8 factors, ceilings, bands)
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
@@ -100,7 +109,7 @@ poland-food-db/
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
 │   ├── COUNTRY_EXPANSION_GUIDE.md   # Future multi-country protocol
 │   ├── UX_UI_DESIGN.md              # UI/UX guidelines
-│   ├── EAN_VALIDATION_STATUS.md     # 559/560 coverage (99.8%)
+│   ├── EAN_VALIDATION_STATUS.md     # 558/560 coverage (99.6%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (47 critical + 7 info)
@@ -242,9 +251,11 @@ Additional valid values (scored as 50/default unless added to the scoring functi
 The pipeline's `_detect_prep_method()` infers these from OFF category tags and
 product names (both English and Polish keywords).
 
-**Data state:** 14 categories use `'not-applicable'` (prep method doesn't apply).
-5 categories (Bread, Chips, Frozen & Prepared, Seafood & Fish, Snacks) have
-partial data — remaining NULLs are genuine gaps to fill. Żabka is fully populated.
+**Data state:** All 560 active products have `prep_method` populated (0 NULLs).
+14 categories use `'not-applicable'`. 5 method-sensitive categories (Bread,
+Chips, Frozen & Prepared, Seafood & Fish, Snacks) use category-specific values
+(`'baked'`, `'fried'`, `'smoked'`, `'marinated'`, `'not-applicable'`). Żabka uses
+a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ---
 
