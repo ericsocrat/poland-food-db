@@ -175,24 +175,24 @@ Run tests after **every** schema change or data update.
 
 19 CHECK constraints enforce domain rules at the database level:
 
-| Table            | Constraint                           | Rule                                          |
-| ---------------- | ------------------------------------ | --------------------------------------------- |
-| products         | `chk_products_country`               | country IN ('PL')                             |
-| products         | `chk_products_prep_method`           | Valid prep method or null                     |
-| products         | `chk_products_controversies`         | controversies IN ('none','palm oil')          |
-| scores           | `chk_scores_unhealthiness_range`     | 1–100                                         |
-| scores           | `chk_scores_nutri_label`             | A–E or UNKNOWN                                |
-| scores           | `chk_scores_confidence`              | verified / estimated / low                    |
-| scores           | `chk_scores_nova`                    | 1–4                                           |
-| scores           | `chk_scores_processing_risk`         | Low / Moderate / High / Unknown               |
-| scores           | `chk_scores_*_flag`                  | YES / NO (4 flags)                            |
-| scores           | `chk_scores_completeness`            | 0–100                                         |
-| nutrition_facts  | `chk_nf_non_negative` (7 cols)       | ≥ 0                                           |
-| nutrition_facts  | `chk_nf_sat_fat_le_total`            | saturated_fat ≤ total_fat                     |
-| nutrition_facts  | `chk_nf_sugars_le_carbs`             | sugars ≤ carbs                                |
-| servings         | `chk_servings_basis`                 | 'per 100 g' or 'per serving'                  |
-| servings         | `chk_servings_amount_positive`       | amount > 0                                    |
-| ingredients      | `chk_ingredients_additives`          | additives_count ≥ 0                           |
+| Table           | Constraint                       | Rule                                 |
+| --------------- | -------------------------------- | ------------------------------------ |
+| products        | `chk_products_country`           | country IN ('PL')                    |
+| products        | `chk_products_prep_method`       | Valid prep method or null            |
+| products        | `chk_products_controversies`     | controversies IN ('none','palm oil') |
+| scores          | `chk_scores_unhealthiness_range` | 1–100                                |
+| scores          | `chk_scores_nutri_label`         | A–E or UNKNOWN                       |
+| scores          | `chk_scores_confidence`          | verified / estimated / low           |
+| scores          | `chk_scores_nova`                | 1–4                                  |
+| scores          | `chk_scores_processing_risk`     | Low / Moderate / High / Unknown      |
+| scores          | `chk_scores_*_flag`              | YES / NO (4 flags)                   |
+| scores          | `chk_scores_completeness`        | 0–100                                |
+| nutrition_facts | `chk_nf_non_negative` (7 cols)   | ≥ 0                                  |
+| nutrition_facts | `chk_nf_sat_fat_le_total`        | saturated_fat ≤ total_fat            |
+| nutrition_facts | `chk_nf_sugars_le_carbs`         | sugars ≤ carbs                       |
+| servings        | `chk_servings_basis`             | 'per 100 g' or 'per serving'         |
+| servings        | `chk_servings_amount_positive`   | amount > 0                           |
+| ingredients     | `chk_ingredients_additives`      | additives_count ≥ 0                  |
 
 ---
 

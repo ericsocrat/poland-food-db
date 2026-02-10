@@ -297,8 +297,10 @@ def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
             )
     # Fix trailing commas — re-join without trailing comma on last entry
     if raw_lines:
-        raw_lines = [l.rstrip(",") if i == len(raw_lines) - 1 else l
-                     for i, l in enumerate(raw_lines)]
+        raw_lines = [
+            l.rstrip(",") if i == len(raw_lines) - 1 else l
+            for i, l in enumerate(raw_lines)
+        ]
     ingredients_raw_block = "\n".join(raw_lines) if raw_lines else ""
 
     # Nutri-Score values
