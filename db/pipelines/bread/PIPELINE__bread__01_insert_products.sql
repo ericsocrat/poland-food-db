@@ -67,7 +67,7 @@ values
   ('PL', 'Gwóźdź', 'Grocery', 'Bread', 'Chleb wieloziarnisty', null, 'Biedronka', 'none', '5901549519211'),
   ('PL', 'Oskroba', 'Grocery', 'Bread', 'Tost maślany', null, null, 'none', '5900340003424'),
   ('PL', 'Z dobrej piekarni', 'Grocery', 'Bread', 'Chleb baltonowski', null, 'Żabka', 'none', '5903111184230'),
-  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Tortilla pszenna', null, 'Carrefour,Auchan', 'none', '5905784344591'),
+  ('PL', 'Carrefour', 'Grocery', 'Bread', 'Tortilla pszenna', null, 'Auchan', 'none', '5905784344591'),
   ('PL', 'Z Dobrej Piekarni', 'Grocery', 'Bread', 'Chleb wieloziarnisty', null, 'Żabka', 'none', '5903111184261'),
   ('PL', 'Shulstad', 'Grocery', 'Bread', 'Classic Pszenny Hot Dog', null, 'Auchan', 'none', '5902620000406'),
   ('PL', 'Oskroba', 'Grocery', 'Bread', 'Chleb żytni pełnoziarnisty pasteryzowany', null, null, 'none', '5900340000294'),

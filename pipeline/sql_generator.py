@@ -62,6 +62,28 @@ def _sql_null_or_text(value: str | None) -> str:
     return _sql_text(value)
 
 
+# Recognised Polish retail chains, ordered by market presence.
+_POLISH_CHAINS = [
+    "Biedronka", "Lidl", "Żabka", "Kaufland", "Auchan", "Dino",
+    "Carrefour", "Netto", "Stokrotka", "Tesco", "Lewiatan", "Aldi",
+    "Penny", "Selgros", "Delikatesy Centrum", "Dealz", "Ikea", "Rossmann",
+]
+
+
+def _normalize_store(raw: str | None) -> str | None:
+    """Extract the primary Polish chain from a raw OFF store string.
+
+    Returns ``None`` when no recognised Polish chain is found.
+    """
+    if not raw:
+        return None
+    low = raw.lower()
+    for chain in _POLISH_CHAINS:
+        if chain.lower() in low:
+            return chain
+    return None
+
+
 def _slug(category: str) -> str:
     """Convert a category name to a filesystem-safe slug.
 
@@ -93,7 +115,7 @@ def _gen_01_insert_products(category: str, products: list[dict], today: str) -> 
         ean = _sql_text(p.get("ean") or "")
         product_type = _sql_text(p.get("product_type", "Grocery"))
         prep = _sql_null_or_text(p.get("prep_method"))
-        store = _sql_null_or_text(p.get("store_availability"))
+        store = _sql_null_or_text(_normalize_store(p.get("store_availability")))
         controversies = _sql_text(p.get("controversies", "none"))
 
         comma = "," if i < len(products) - 1 else ""

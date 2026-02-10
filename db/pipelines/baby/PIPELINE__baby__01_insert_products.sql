@@ -19,7 +19,7 @@ insert into products (country, brand, product_type, category, product_name, prep
 values
   ('PL', 'Magnetic', 'Grocery', 'Baby', 'Kakao o obniżonej zawartości tłuszczu ekstra ciemne', 'not-applicable', 'Biedronka', 'none', '5900910010906'),
   ('PL', 'Diamant', 'Grocery', 'Baby', 'Cukier Biały', 'not-applicable', 'Kaufland', 'none', '5907069000017'),
-  ('PL', 'owolovo', 'Grocery', 'Baby', 'Truskawkowo Mus jabłkowo-truskawkowy', 'not-applicable', 'Lidl,Biedronka,Carrefour,Aldi,Selgros,Kaufland', 'none', '5901958612367'),
+  ('PL', 'owolovo', 'Grocery', 'Baby', 'Truskawkowo Mus jabłkowo-truskawkowy', 'not-applicable', 'Biedronka', 'none', '5901958612367'),
   ('PL', 'OwoLovo', 'Grocery', 'Baby', 'OwoLowo Jabłkowo', 'not-applicable', 'Biedronka', 'none', '5901958612343'),
   ('PL', 'Mlekovita', 'Grocery', 'Baby', 'Bezwodny tłuszcz mleczny, Masło klarowane', 'not-applicable', 'Lidl', 'none', '5900512300054'),
   ('PL', 'Vital Fresh', 'Grocery', 'Baby', 'Surówka Smakołyk', 'not-applicable', 'Biedronka', 'none', '5900449006913'),
