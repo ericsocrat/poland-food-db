@@ -86,7 +86,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 35 append-only schema migrations
+│   └── migrations/                  # 36 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -121,6 +121,7 @@ poland-food-db/
 │       └── 20260210002400_product_sources.sql                 # Product-level provenance + v_master LATERAL join
 │       └── 20260210002500_reference_tables.sql                 # country_ref, category_ref, nutri_score_ref, concern_tier_ref + FKs
 │       └── 20260210002600_score_explainability.sql             # explain_score_v32() + score_breakdown in v_master
+│       └── 20260210002700_cross_product_analytics.sql          # mv_ingredient_frequency + find_similar_products + find_better_alternatives
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
@@ -187,6 +188,8 @@ poland-food-db/
 | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `compute_unhealthiness_v32()` | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern |
 | `explain_score_v32()`         | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling              |
+| `find_similar_products()`     | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                               |
+| `find_better_alternatives()`  | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                   |
 | `assign_confidence()`         | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                           |
 
 ### View

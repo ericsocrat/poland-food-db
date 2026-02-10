@@ -179,6 +179,51 @@ ORDER BY unhealthiness_score::int DESC;
 
 ---
 
+## 🔍 Cross-Product Analytics
+
+### Ingredient Frequency
+```sql
+-- Most common ingredients across all products
+SELECT name_en, product_count, usage_pct, concern_tier
+FROM mv_ingredient_frequency ORDER BY product_count DESC LIMIT 20;
+
+-- High-concern ingredients and where they appear
+SELECT name_en, product_count, concern_tier, categories
+FROM mv_ingredient_frequency WHERE concern_tier >= 2
+ORDER BY product_count DESC;
+```
+
+### Product Similarity
+```sql
+-- Find 5 products most similar to product #42 by ingredient overlap
+SELECT * FROM find_similar_products(42);
+
+-- Find 10 similar products
+SELECT * FROM find_similar_products(42, 10);
+```
+
+### Better Alternatives
+```sql
+-- Find healthier alternatives in the same category
+SELECT * FROM find_better_alternatives(42);
+
+-- Find healthier alternatives across ALL categories
+SELECT * FROM find_better_alternatives(42, false);
+
+-- Find top 10 healthier alternatives
+SELECT * FROM find_better_alternatives(42, true, 10);
+```
+
+### Score Breakdown
+```sql
+-- See how a product's score was computed
+SELECT product_name, unhealthiness_score,
+       score_breakdown->'factors' AS factors
+FROM v_master WHERE product_id = 42;
+```
+
+---
+
 ## 🔗 Useful URLs (Local Dev)
 
 | Service                           | URL                                                       |
