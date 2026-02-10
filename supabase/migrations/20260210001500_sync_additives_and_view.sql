@@ -1,15 +1,70 @@
--- VIEW: master product view (v_master)
--- Flat denormalized view joining products → servings → nutrition_facts → scores → sources
--- plus ingredient analytics from normalized ingredient tables.
--- This view is already created in the schema migration (20260207000100_create_schema.sql).
--- Updated in migration 20260207000400_remove_unused_columns.sql.
--- Updated 2026-02-08: added EAN, source provenance fields.
--- Updated 2026-02-10: sources join changed from LIKE pattern to equijoin on sources.category.
--- Updated 2026-02-10: added ingredient analytics (ingredient_count, additive_names,
---   has_palm_oil, vegan_status, vegetarian_status, allergen_count/tags, trace_count/tags).
--- This file exists for reference and for recreating the view if needed.
---
--- Usage: SELECT * FROM v_master WHERE country = 'PL' AND category = 'Chips';
+-- Migration: sync additives_count from junction table + enhanced v_master view
+-- Date: 2026-02-10
+-- Depends on: 20260210001300_ingredient_normalization.sql, 20260210001400_populate_ingredient_data.sql
+
+-- 1. Backfill additives_count from product_ingredient junction table
+--    (more authoritative than pipeline-sourced values)
+UPDATE ingredients i
+SET additives_count = sub.cnt
+FROM (
+  SELECT pi.product_id, COUNT(*) AS cnt
+  FROM product_ingredient pi
+  JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+  WHERE ir.is_additive = true
+  GROUP BY pi.product_id
+) sub
+WHERE i.product_id = sub.product_id
+  AND i.additives_count IS DISTINCT FROM sub.cnt;
+
+-- Set to 0 for products with junction data but no additives detected
+UPDATE ingredients i
+SET additives_count = 0
+FROM (
+  SELECT DISTINCT pi.product_id
+  FROM product_ingredient pi
+) has_data
+LEFT JOIN (
+  SELECT pi.product_id
+  FROM product_ingredient pi
+  JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+  WHERE ir.is_additive = true
+  GROUP BY pi.product_id
+) has_additives ON has_additives.product_id = has_data.product_id
+WHERE has_additives.product_id IS NULL
+  AND i.product_id = has_data.product_id
+  AND i.additives_count != 0;
+
+-- 2. Re-score products whose additives_count changed
+--    Recompute unhealthiness_score using the scoring function
+UPDATE scores s
+SET unhealthiness_score = compute_unhealthiness_v31(
+      n.saturated_fat_g, n.sugars_g, n.salt_g, n.calories, n.trans_fat_g,
+      i.additives_count, p.prep_method, p.controversies
+    ),
+    scored_at = NOW()
+FROM products p
+JOIN nutrition_facts n ON n.product_id = p.product_id
+JOIN ingredients i ON i.product_id = p.product_id
+WHERE s.product_id = p.product_id
+  AND p.is_deprecated IS NOT TRUE
+  AND s.unhealthiness_score != compute_unhealthiness_v31(
+      n.saturated_fat_g, n.sugars_g, n.salt_g, n.calories, n.trans_fat_g,
+      i.additives_count, p.prep_method, p.controversies
+    );
+
+-- 3. Re-sync high_additive_load flags after additives_count change
+--    Threshold: additives_count >= 5 → YES
+UPDATE scores sc
+SET high_additive_load = CASE WHEN COALESCE(i.additives_count, 0) >= 5 THEN 'YES' ELSE 'NO' END
+FROM ingredients i
+WHERE i.product_id = sc.product_id
+  AND (
+    (COALESCE(i.additives_count, 0) >= 5 AND sc.high_additive_load <> 'YES')
+    OR (COALESCE(i.additives_count, 0) < 5 AND sc.high_additive_load = 'YES')
+  );
+
+-- 3. Drop and recreate v_master with ingredient analytics columns
+DROP VIEW IF EXISTS public.v_master CASCADE;
 
 CREATE OR REPLACE VIEW public.v_master AS
 SELECT
@@ -23,7 +78,6 @@ SELECT
     p.store_availability,
     p.is_deprecated,
     p.deprecated_reason,
-    -- Nutrition (per serving basis)
     sv.serving_basis,
     sv.serving_amount_g_ml,
     n.calories,
@@ -35,7 +89,6 @@ SELECT
     n.fibre_g,
     n.protein_g,
     n.salt_g,
-    -- Scores
     s.unhealthiness_score,
     s.nutri_score_label,
     s.processing_risk,
@@ -44,17 +97,14 @@ SELECT
     s.scored_at,
     s.data_completeness_pct,
     s.confidence,
-    -- Flags
     s.high_salt_flag,
     s.high_sugar_flag,
     s.high_sat_fat_flag,
     s.high_additive_load,
-    -- Product metadata
     p.controversies,
-    -- Ingredients
     i.ingredients_raw,
     i.additives_count,
-    -- Ingredient analytics (from normalized tables)
+    -- Ingredient analytics (from normalized ingredient tables)
     ingr_stats.ingredient_count,
     ingr_stats.additive_names,
     ingr_stats.has_palm_oil,
@@ -113,3 +163,5 @@ LEFT JOIN LATERAL (
     GROUP BY pt.product_id
 ) trace_agg ON true
 WHERE p.is_deprecated IS NOT TRUE;
+
+COMMENT ON VIEW public.v_master IS 'Denormalized master view with nutrition, scores, ingredient analytics, allergens, traces, and source provenance.';

@@ -263,7 +263,92 @@ GROUP BY brand
 HAVING COUNT(*) > 1;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 23. Summary counts (informational, not a failure check)
+-- 23. Orphan ingredient_ref rows (not linked to any product)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT ir.ingredient_id, ir.taxonomy_id, ir.name_en,
+       'ORPHAN INGREDIENT REF' AS issue
+FROM ingredient_ref ir
+LEFT JOIN product_ingredient pi ON pi.ingredient_id = ir.ingredient_id
+WHERE pi.ingredient_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 24. product_ingredient rows referencing non-existent products
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT pi.product_id, pi.ingredient_id, pi.position,
+       'INGREDIENT FK BROKEN' AS issue
+FROM product_ingredient pi
+LEFT JOIN products p ON p.product_id = pi.product_id
+WHERE p.product_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 25. additives_count mismatch between ingredients table and junction table
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT i.product_id, i.additives_count AS stored_count, 
+       COALESCE(sub.cnt, 0) AS junction_count,
+       'ADDITIVES COUNT MISMATCH' AS issue
+FROM ingredients i
+JOIN (SELECT DISTINCT product_id FROM product_ingredient) has_data
+  ON has_data.product_id = i.product_id
+LEFT JOIN (
+  SELECT pi.product_id, COUNT(*) AS cnt
+  FROM product_ingredient pi
+  JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+  WHERE ir.is_additive = true
+  GROUP BY pi.product_id
+) sub ON sub.product_id = i.product_id
+WHERE i.additives_count != COALESCE(sub.cnt, 0);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 26. product_allergen rows referencing non-existent products
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT pa.product_id, pa.allergen_tag,
+       'ALLERGEN FK BROKEN' AS issue
+FROM product_allergen pa
+LEFT JOIN products p ON p.product_id = pa.product_id
+WHERE p.product_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 27. product_trace rows referencing non-existent products
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT pt.product_id, pt.trace_tag,
+       'TRACE FK BROKEN' AS issue
+FROM product_trace pt
+LEFT JOIN products p ON p.product_id = pt.product_id
+WHERE p.product_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 28. Duplicate positions in product_ingredient (data integrity)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT product_id, position, COUNT(*) AS dupes,
+       'DUPLICATE INGREDIENT POSITION' AS issue
+FROM product_ingredient
+GROUP BY product_id, position
+HAVING COUNT(*) > 1;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 29. Sub-ingredients without parent (constraint check)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT pi.product_id, pi.ingredient_id, pi.position,
+       'SUB_INGREDIENT WITHOUT PARENT' AS issue
+FROM product_ingredient pi
+WHERE pi.is_sub_ingredient = true
+  AND pi.parent_ingredient_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 30. v_master new column coverage (informational)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT
+  COUNT(*) AS active_products,
+  COUNT(ingredient_count) AS with_ingredient_analytics,
+  COUNT(allergen_count) AS with_allergens,
+  COUNT(trace_count) AS with_traces,
+  COUNT(CASE WHEN has_palm_oil THEN 1 END) AS palm_oil_products,
+  COUNT(CASE WHEN vegan_status = 'yes' THEN 1 END) AS vegan_products,
+  COUNT(CASE WHEN vegan_status = 'no' THEN 1 END) AS non_vegan_products
+FROM v_master;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 31. Summary counts (informational, not a failure check)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
     (SELECT COUNT(*) FROM products)         AS total_products,
@@ -272,4 +357,8 @@ SELECT
     (SELECT COUNT(*) FROM nutrition_facts)  AS total_nutrition_rows,
     (SELECT COUNT(*) FROM scores)           AS total_score_rows,
     (SELECT COUNT(*) FROM ingredients)      AS total_ingredient_rows,
+    (SELECT COUNT(*) FROM ingredient_ref)   AS total_ingredient_refs,
+    (SELECT COUNT(*) FROM product_ingredient) AS total_product_ingredients,
+    (SELECT COUNT(*) FROM product_allergen) AS total_allergen_rows,
+    (SELECT COUNT(*) FROM product_trace)    AS total_trace_rows,
     (SELECT COUNT(*) FROM sources)          AS total_source_rows;
