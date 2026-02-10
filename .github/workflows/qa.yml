@@ -89,9 +89,11 @@ jobs:
         shell: pwsh
         run: |
           $failOnWarn = '${{ inputs.fail_on_warn }}' -eq 'true'
-          $qaArgs = @('-Json', '-OutFile', 'qa.json')
-          if ($failOnWarn) { $qaArgs += '-FailOnWarn' }
-          & ./RUN_QA.ps1 @qaArgs
+          if ($failOnWarn) {
+            & ./RUN_QA.ps1 -Json -OutFile qa.json -FailOnWarn
+          } else {
+            & ./RUN_QA.ps1 -Json -OutFile qa.json
+          }
           $exitCode = $LASTEXITCODE
           # Write exit code for downstream steps
           "qa_exit_code=$exitCode" | Out-File -FilePath $env:GITHUB_OUTPUT -Append
