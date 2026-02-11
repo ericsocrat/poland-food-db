@@ -150,8 +150,8 @@ Manufacturer websites are **Priority 2** sources. They often publish full per-10
 | 3    | Confirm nutrition table is per 100g (not per serving)      |
 | 4    | Extract all available fields (EU-7 + voluntary)            |
 | 5    | Cross-validate against OFF and/or label if available       |
-| 6    | Record URL + access date in `product_sources` table            |
-| 7    | Set `source_type = 'off_api'`                                  |
+| 6    | Record URL + access date in `product_sources` table        |
+| 7    | Set `source_type = 'off_api'`                              |
 
 ---
 
@@ -365,7 +365,7 @@ The `product_sources` table tracks provenance at the **individual product** leve
 | ------------------- | ------------------------------------------------------------------------------------ |
 | `product_source_id` | Primary key (identity)                                                               |
 | `product_id`        | FK → products                                                                        |
-| `source_type`       | Currently `'off_api'` only                                                                   |
+| `source_type`       | Currently `'off_api'` only                                                           |
 | `source_url`        | URL to the specific product page (e.g., OFF product page)                            |
 | `source_ean`        | EAN used to look up this product                                                     |
 | `fields_populated`  | Array of fields sourced from this source (e.g., `{nutrition,ingredients,additives}`) |

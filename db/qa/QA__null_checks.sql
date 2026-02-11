@@ -265,7 +265,7 @@ HAVING COUNT(*) > 1;
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 23. Orphan ingredient_ref rows (not linked to any product)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT ir.ingredient_id, ir.taxonomy_id, ir.name_en,
+SELECT ir.ingredient_id, ir.name_en,
        'ORPHAN INGREDIENT REF' AS issue
 FROM ingredient_ref ir
 LEFT JOIN product_ingredient pi ON pi.ingredient_id = ir.ingredient_id
