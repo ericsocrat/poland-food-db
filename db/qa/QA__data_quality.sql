@@ -309,3 +309,12 @@ FROM products
 WHERE is_deprecated IS NOT TRUE
   AND product_type IS NULL;
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 29. concern_reason populated for all tier 1-3 ingredients
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '29. concern_reason populated for tier 1-3 ingredients' AS check_name,
+       COUNT(*) AS violations
+FROM ingredient_ref
+WHERE concern_tier >= 1
+  AND (concern_reason IS NULL OR concern_reason = '');
+
