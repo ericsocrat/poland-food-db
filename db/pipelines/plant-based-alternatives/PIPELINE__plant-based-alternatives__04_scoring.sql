@@ -1,7 +1,7 @@
 -- PIPELINE (Plant-Based & Alternatives): scoring
 -- Generated: 2026-02-09
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -10,75 +10,7 @@ where p.country = 'PL' and p.category = 'Plant-Based & Alternatives'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Plant-Based & Alternatives'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('Biedronka', 'Wyborny olej słonecznikowy', 0),
-    ('Lubella', 'Makaron Lubella Pióra nr 17', 0),
-    ('Go Active', 'Kuskus perłowy z ciecierzycą, fasolką i hummusem', 1),
-    ('Go Vege', 'Parówki sojowe klasyczne', 4),
-    ('Nasza Spiżarnia', 'Nasza Spiżarnia Korniszony z chilli', 3),
-    ('Kujawski', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', 0),
-    ('Lubella', 'Świderki', 0),
-    ('Plony natury', 'Mąka orkiszowa pełnoziarnista typ 2000', 0),
-    ('Polskie Mlyny', 'Mąka pszenna Szymanowska 480', 0),
-    ('Unknown', 'Mąka kukurydziana', 0),
-    ('Komagra', 'Polski olej rzepakowy', 0),
-    ('Vitanella', 'Olej kokosowy, bezzapachowy', 0),
-    ('Culineo', 'Koncentrat Pomidorowy 30%', 0),
-    ('Kujawski', 'Olej rzepakowy pomidor czosnek bazylia', 0),
-    ('Dr. Oetker', 'KASZKA manna z malinami', 0),
-    ('Wyborny Olej', 'Wyborny olej rzepakowy', 0),
-    ('Kujawski', 'Olej 3 ziarna', 0),
-    ('Dawtona', 'Koncentrat pomidorowy', 0),
-    ('Sante', 'Extra thin corn cakes', 0),
-    ('Go Vege', 'Tofu Wędzone', 0),
-    ('AntyBaton', 'Antybaton Choco Nuts', 0),
-    ('AntyBaton', 'Antybaton Choco Coco', 0),
-    ('Culineo', 'Passata klasyczna', 0),
-    ('Kamis', 'cynamon', 0),
-    ('Biedronka', 'Borówka amerykańska odmiany Brightwell', 0),
-    ('Plony Natury', 'Kasza bulgur', 0),
-    ('Heinz', 'Heinz beanz', 0),
-    ('Pudliszki', 'Koncentrat pomidorowy', 0),
-    ('Lidl', 'Mąka pszenna typ 650', 0),
-    ('Biedronka', 'Olej z awokado z pierwszego tłoczenia', 0),
-    ('Pano', 'Wafle kukurydziane', 0),
-    ('Polsoja', 'TOFU naturalne', 1),
-    ('Kujawski', 'Olej z lnu', 0),
-    ('Unknown', 'Pastani Makaron', 0),
-    ('Tymbark', 'Tymbark mus mango', 0),
-    ('Gustobello', 'Gnocchi', 0),
-    ('Vita D''or', 'Rapsöl', 0),
-    ('Barilla', 'Pâtes spaghetti n°5 1kg', 0),
-    ('go VEGE', 'Tofu sweet chili', 2),
-    ('Primadonna', 'Olivenöl (nativ, extra)', 0),
-    ('Vemondo', 'Tofu naturalne', 2),
-    ('GoVege', 'Tofu naturalne', 2),
-    ('Garden Gourmet', 'Veggie Balls', 1),
-    ('MONINI', 'Oliwa z oliwek', 0),
-    ('Tastino', 'Wafle Kukurydziane', 0),
-    ('Gallo', 'Olive Oil', 0),
-    ('Dania Express', 'Lasaña', 2),
-    ('El toro rojo', 'oliwki zielone drylowane', 3),
-    ('GustoBello', 'Gnocchi di patate', 2),
-    ('Violife', 'Cheddar flavour slices', 3),
-    ('Unknown', 'Oliwa z Oliwek', 0)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -86,7 +18,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -94,12 +26,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Plant-Based & Alternatives'
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -159,7 +95,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -219,22 +155,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Plant-Based & Alternatives'
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p

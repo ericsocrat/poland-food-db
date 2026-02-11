@@ -159,7 +159,7 @@ UPDATE scores sc SET
       nf.salt_g::numeric,
       nf.calories::numeric,
       nf.trans_fat_g::numeric,
-      i.additives_count::numeric,
+      ia.additives_count::numeric,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -167,7 +167,11 @@ UPDATE scores sc SET
 FROM products p
 JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
 JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-LEFT JOIN ingredients i ON i.product_id = p.product_id
+LEFT JOIN (
+    SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
+    FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+    GROUP BY pi.product_id
+) ia ON ia.product_id = p.product_id
 WHERE p.product_id = sc.product_id
   AND p.country = 'PL' AND p.category = '<CATEGORY>';
 ```
@@ -357,12 +361,16 @@ UPDATE scores sc SET
     WHEN nf.saturated_fat_g ~ '^[0-9.]+$' AND nf.saturated_fat_g::numeric > 5.0 THEN 'Y' ELSE 'N'
   END,
   high_additive_load = CASE
-    WHEN i.additives_count ~ '^[0-9]+$' AND i.additives_count::numeric >= 5 THEN 'Y' ELSE 'N'
+    WHEN COALESCE(ia.additives_count, 0) >= 5 THEN 'Y' ELSE 'N'
   END
 FROM products p
 JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
 JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-LEFT JOIN ingredients i ON i.product_id = p.product_id
+LEFT JOIN (
+    SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
+    FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+    GROUP BY pi.product_id
+) ia ON ia.product_id = p.product_id
 WHERE p.product_id = sc.product_id
   AND p.country = 'PL' AND p.category = '<CATEGORY>';
 ```
@@ -397,8 +405,9 @@ data_completeness_pct = round(100.0 * (
     (CASE WHEN nf.salt_g          IS NOT NULL AND nf.salt_g          NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15%
     (CASE WHEN nf.trans_fat_g     IS NOT NULL AND nf.trans_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
     (CASE WHEN nf.fibre_g         IS NOT NULL AND nf.fibre_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5%
-    (CASE WHEN i.additives_count  IS NOT NULL AND i.additives_count  NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5% (scoring weight: 0.07)
-    (CASE WHEN i.ingredients_raw  IS NOT NULL AND i.ingredients_raw  != ''              THEN 1 ELSE 0 END) *  5    --  5%
+    -- additives_count & ingredients_raw derived from product_ingredient + ingredient_ref junction
+    (CASE WHEN additives_count  IS NOT NULL                                           THEN 1 ELSE 0 END) *  5 +  --  5% (scoring weight: 0.07)
+    (CASE WHEN ingredients_raw  IS NOT NULL AND ingredients_raw  != ''                THEN 1 ELSE 0 END) *  5    --  5%
 ) / 100.0)
 ```
 

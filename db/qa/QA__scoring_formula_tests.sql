@@ -26,13 +26,17 @@ FROM products p
 JOIN scores sc ON sc.product_id = p.product_id
 JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
 JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-LEFT JOIN ingredients i ON i.product_id = p.product_id
+LEFT JOIN (
+    SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
+    FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+    GROUP BY pi.product_id
+) ia ON ia.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND COALESCE(nf.saturated_fat_g::numeric, 0) = 0
   AND COALESCE(nf.sugars_g::numeric, 0) = 0
   AND COALESCE(nf.salt_g::numeric, 0) = 0
   AND COALESCE(nf.trans_fat_g::numeric, 0) = 0
-  AND COALESCE(i.additives_count::numeric, 0) = 0
+  AND COALESCE(ia.additives_count::numeric, 0) = 0
   AND COALESCE(nf.calories::numeric, 0) = 0
   AND sc.unhealthiness_score::int > 20;
 
@@ -50,7 +54,11 @@ FROM products p
 JOIN scores sc ON sc.product_id = p.product_id
 JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
 JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-LEFT JOIN ingredients i ON i.product_id = p.product_id
+LEFT JOIN (
+    SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
+    FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+    GROUP BY pi.product_id
+) ia ON ia.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.saturated_fat_g::numeric >= 10
   AND nf.sugars_g::numeric >= 25
@@ -68,12 +76,16 @@ WITH scored_products AS (
     p.product_id, p.product_name, p.prep_method, p.controversies,
     sc.unhealthiness_score, sc.ingredient_concern_score,
     nf.calories, nf.saturated_fat_g, nf.sugars_g, nf.salt_g,
-    nf.trans_fat_g, COALESCE(i.additives_count::int, 0) AS additives
+    nf.trans_fat_g, COALESCE(ia.additives_count::int, 0) AS additives
   FROM products p
   JOIN scores sc ON sc.product_id = p.product_id
   JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
   JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-  LEFT JOIN ingredients i ON i.product_id = p.product_id
+  LEFT JOIN (
+      SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
+      FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+      GROUP BY pi.product_id
+  ) ia ON ia.product_id = p.product_id
   WHERE p.is_deprecated IS NOT TRUE
 )
 SELECT
@@ -336,16 +348,20 @@ WHERE p.product_name = 'Somersby Blueberry Flavoured Cider'
 --          high_additive_load should be YES when additives_count >= 5
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
-       COALESCE(i.additives_count, 0) AS additives_count,
+       COALESCE(ia.additives_count, 0) AS additives_count,
        sc.high_additive_load,
        'INCORRECT high_additive_load' AS issue
 FROM products p
 JOIN scores sc ON sc.product_id = p.product_id
-LEFT JOIN ingredients i ON i.product_id = p.product_id
+LEFT JOIN (
+    SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
+    FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+    GROUP BY pi.product_id
+) ia ON ia.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND (
-    (COALESCE(i.additives_count, 0) >= 5 AND sc.high_additive_load <> 'YES')
-    OR (COALESCE(i.additives_count, 0) < 5 AND sc.high_additive_load = 'YES')
+    (COALESCE(ia.additives_count, 0) >= 5 AND sc.high_additive_load <> 'YES')
+    OR (COALESCE(ia.additives_count, 0) < 5 AND sc.high_additive_load = 'YES')
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════

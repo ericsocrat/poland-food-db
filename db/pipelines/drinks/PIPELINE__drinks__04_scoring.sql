@@ -1,7 +1,7 @@
 -- PIPELINE (Drinks): scoring
 -- Generated: 2026-02-09
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -10,84 +10,7 @@ where p.country = 'PL' and p.category = 'Drinks'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Drinks'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('Hortex', 'Sok jabłkowy', 0),
-    ('Riviva', 'Sok 100% pomarańcza z witaminą C', 0),
-    ('go VEGE', 'Napój roślinny owies bio', 0),
-    ('Polaris', 'Napój gazowany Vital Red', 2),
-    ('Bracia Sadownicy', 'Sok 100% tłoczony tłoczone jabłko z marchewką', 0),
-    ('Rivia', 'Rivia Marchew Brzoskwinia Jabkło', 2),
-    ('Tymbark', 'Sok 100% Pomarańcza', 0),
-    ('Tymbark', 'Sok 100% jabłko', 0),
-    ('kubuš', '100% jabłko', 0),
-    ('Żywiec Zdrój', 'Żywiec Zdrój NGaz 0.5', 0),
-    ('Hortex', 'Sok 100% pomarańcza', 0),
-    ('Bracia Sadownicy', 'Tłoczone Jabłko słodkie odmiany', 0),
-    ('Tymbark', 'Tymbark Jabłko-Wiśnia', 3),
-    ('GoVege', 'Ryż', 0),
-    ('MWS', 'Kubuś Waterrr Truskawka', 0),
-    ('Tymbark', 'Tymbark Jabłko Wiśnia 2l', 3),
-    ('Riviva', 'Sok 100% jabłko', 0),
-    ('Tymbark', 'Tymbark Jablko Mięta 0.5', 1),
-    ('Żywiec Zdrój', 'Niegazowany', 0),
-    ('pepsico', 'pepsi', 3),
-    ('Tymbark', 'Cactus', 7),
-    ('Unknown', 'Żywiec Zdrój NGaz 1l', 0),
-    ('Unknown', 'Żywiec Zdrój Minerals', 0),
-    ('Tymbark', 'Tymbark 100% jablko', 0),
-    ('Riviva', 'Sok 100% multiwitamina', 0),
-    ('Go vege', 'Barista owies', 1),
-    ('Frugo', 'Frugo ultragreen', 3),
-    ('kubus', 'Kubus Play Malina', 0),
-    ('Pepsi', 'Pepsi Zero', 6),
-    ('Riviva', 'Jus d''orange 100%', 0),
-    ('Vitanella', 'Vitanella Breakfast Smoothie', 0),
-    ('Tiger', 'Tiger placebo classic', 8),
-    ('Tymbark', 'Tymbark Jabłko Wiśnia', 0),
-    ('Tymbark', 'Sok 100% Multiwitamina', 0),
-    ('OSHEE', 'OSHEE VITAMIN WATER', 0),
-    ('Black', 'Black Energy', 5),
-    ('4move', 'Activevitamin', 7),
-    ('Dawtona', 'Sok pomidorowy', 0),
-    ('Oshee', 'Oshee lemonade Malina-Grejpfrut', 1),
-    ('Pepsico', 'Pepsi 1.5', 3),
-    ('active vitamin', '4move', 3),
-    ('Vital FRESH', 'smoothie Mango Jabłko Banan Marakuja', 0),
-    ('oshee', 'Oshee Multifruit', 9),
-    ('Tiger', 'TIGER Energy drink', 6),
-    ('Oshee', 'Vitamin Water zero', 3),
-    ('Tymbark', 'Tymbark nektar czerwony grejpfrut', 1),
-    ('Pepsi', 'Pepsi 330ML Max Soft Drink', 0),
-    ('Pepsi', 'Pepsi 0.5', 3),
-    ('Vital FRESH', 'smoothie Marchewka Ananas Brzoskwinia Pomarańcza', 0),
-    ('Black', 'Black Zero Sugar', 7),
-    ('Pepsi', 'Pepsi Max 1.5', 7),
-    ('Asia Flavours', 'Coconut Milk', 1),
-    ('OSHEE', 'OSHEE Zero', 9),
-    ('zywiec zdroj', 'Zywiec Woda Srednio Gazowana', 0),
-    ('Tymbark', 'Jablko Arbuz', 3),
-    ('I♥Vege', 'Owsiane', 2),
-    ('Tymbark', 'Mousse', 0),
-    ('Lidl', 'Sok 100% tłoczony z miąższem Pomarańcza Grejpfrut Pitaja', 0),
-    ('Hortex', 'Ananas nektar', 1),
-    ('Herbapol', 'Malina', 0)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -95,7 +18,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -103,12 +26,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Drinks'
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -177,7 +104,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -246,22 +173,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Drinks'
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p

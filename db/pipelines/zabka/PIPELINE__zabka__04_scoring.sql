@@ -5,7 +5,7 @@
 -- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 0. ENSURE rows exist in scores & ingredients
+-- 0. ENSURE rows exist in scores
 -- ═════════════════════════════════════════════════════════════════════════
 
 insert into scores (product_id)
@@ -16,58 +16,8 @@ where p.country = 'PL' and p.category = 'Żabka'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Żabka'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
 -- ═════════════════════════════════════════════════════════════════════════
--- 1. POPULATE additives_count (from Open Food Facts verified data)
---    Counts marked (est.) are food-scientist estimates where OFF lacked data.
--- ═════════════════════════════════════════════════════════════════════════
-
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('Żabka',            'Meksykaner',                            11),  -- e14xx,e160b,e262,e300,e301,e330,e331,e415,e472e,e481,e509
-    ('Żabka',            'Kurczaker',                             12),  -- e14xx,e160b,e160c,e202,e223,e300,e330,e331,e412,e415,e450,e500
-    ('Żabka',            'Wołowiner Ser Kozi',                    11),  -- e14xx,e160a,e202,e250,e300,e316,e407,e415,e451,e472e,e481
-    ('Żabka',            'Burger Kibica',                         7),   -- e14xx,e160b,e202,e300,e330,e415,e471
-    ('Żabka',            'Falafel Rollo',                         6),   -- e14xx,e202,e211,e330,e412,e415
-    ('Żabka',            'Kajzerka Kebab',                        5),   -- est. (kebab sauce + processed meat)
-    ('Żabka',            'Panini z serem cheddar',                10),  -- e100,e14xx,e160b,e202,e270,e300,e385,e412,e415,e509
-    ('Żabka',            'Panini z kurczakiem',                   10),  -- e141,e14xx,e160a,e160c,e202,e211,e300,e330,e412,e415
-    ('Żabka',            'Kulki owsiane z czekoladą',             1),   -- e322 (lecithin — from chocolate)
-    ('Tomcio Paluch',    'Szynka & Jajko',                        9),   -- e14xx,e160a,e250,e316,e407a,e415,e450,e451,e482
-    ('Tomcio Paluch',    'Pieczony bekon, sałata, jajko',         6),   -- e14xx,e160a,e250,e300,e412,e415
-    ('Tomcio Paluch',    'Bajgiel z salami',                      5),   -- est. (cured salami + bread additives)
-    ('Szamamm',          'Naleśniki z jabłkami i cynamonem',       0),
-    ('Szamamm',          'Placki ziemniaczane',                   0),
-    ('Szamamm',          'Penne z kurczakiem',                    3),   -- est. (ready-meal pasta, moderate processing)
-    ('Szamamm',          'Kotlet de Volaille',                    0),
-    -- ── Batch 2 — new products ────────────────────────────────────────────────────────────────────────
-    ('Żabka',            'Wegger',                                8),   -- est. (vegan patty: emulsifiers, stabilizers, colors)
-    ('Żabka',            'Bao Burger',                            6),   -- est. (bao bun + processed meat filling)
-    ('Żabka',            'Wieprzowiner',                          9),   -- est. (processed pork burger, Żabka hot-snack line)
-    ('Tomcio Paluch',    'Kanapka Cezar',                         6),   -- est. (caesar dressing + processed meat)
-    ('Tomcio Paluch',    'Kebab z kurczaka',                      5),   -- est. (kebab sauce + processed chicken)
-    ('Tomcio Paluch',    'BBQ Strips',                            14),  -- e101,e14xx,e150a,e160c,e202,e300,e322,e330,e385,e412,e415,e450,e451,e500
-    ('Tomcio Paluch',    'Pasta jajeczna, por, jajko gotowane',   4),   -- est. (egg paste sandwich, moderate processing)
-    ('Tomcio Paluch',    'High 24g protein',                      6),   -- e250,e263,e316,e471,e472e,e482
-    ('Szamamm',          'Pierogi ruskie ze smażoną cebulką',     2),   -- est. (simple pierogi, minimal processing)
-    ('Szamamm',          'Gnocchi z kurczakiem',                  3),   -- est. (ready-meal gnocchi)
-    ('Szamamm',          'Panierowane skrzydełka z kurczaka',     6),   -- est. (breaded + fried chicken wings)
-    ('Szamamm',          'Kotlet Drobiowy',                       3)    -- est. (breaded chicken cutlet)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- ═════════════════════════════════════════════════════════════════════════
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 --    9 factors × weighted → clamped [1, 100]
 --    sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +
 --    trans_fat(0.11) + additives(0.07) + prep_method(0.08) +
@@ -81,7 +31,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -89,13 +39,17 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Żabka'
   and p.is_deprecated is not true;
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 3. SET Nutri-Score label (from Open Food Facts where available)
+-- 2. SET Nutri-Score label (from Open Food Facts where available)
 --    Products marked (est.) are inferred from nutrition-score-fr value.
 -- ═════════════════════════════════════════════════════════════════════════
 
@@ -137,7 +91,7 @@ join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d
 where p.product_id = sc.product_id;
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 4. SET NOVA classification
+-- 3. SET NOVA classification
 -- ═════════════════════════════════════════════════════════════════════════
 
 update scores sc set
@@ -178,7 +132,7 @@ join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d
 where p.product_id = sc.product_id;
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 5. SET health-risk flags (derived from nutrition facts)
+-- 4. SET health-risk flags (derived from nutrition facts)
 --    Thresholds per 100 g following EU "high" front-of-pack guidelines:
 --      salt ≥ 1.5 g | sugars ≥ 5 g | sat fat ≥ 5 g | additives ≥ 5
 -- ═════════════════════════════════════════════════════════════════════════
@@ -187,7 +141,7 @@ update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = case
     -- Products with all data from OFF: 100%
     -- Products with some estimated fields: 90%
@@ -202,13 +156,17 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Żabka'
   and p.is_deprecated is not true;
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 6. SET confidence level (auto-assigned based on data completeness + sources)
+-- 5. SET confidence level (auto-assigned based on data completeness + sources)
 --    Uses assign_confidence() function from 20260208_assign_confidence.sql
 -- ═════════════════════════════════════════════════════════════════════════
 

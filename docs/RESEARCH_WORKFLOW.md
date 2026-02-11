@@ -136,16 +136,16 @@ For every product, collect **all** of the following. Mark missing fields explici
 
 #### Processing & Qualitative Fields
 
-| Field           | How to determine                                     | Store as              |
-| --------------- | ---------------------------------------------------- | --------------------- |
-| Ingredient list | Label back (stored as standardized English)          | `ingredients_raw`     |
-| Additive count  | Count E-numbers in ingredient list                   | `additives_count`     |
-| Prep method     | Infer from label: "smażone"=fried, "pieczone"=baked  | `prep_method`         |
-| Oil method      | Label: e.g., "w oleju słonecznikowym"                | `oil_method`          |
+| Field           | How to determine                                     | Store as                 |
+| --------------- | ---------------------------------------------------- | ------------------------ |
+| Ingredient list | Label back (stored as standardized English)          | `ingredients_raw`        |
+| Additive count  | Count E-numbers in ingredient list                   | `additives_count`        |
+| Prep method     | Infer from label: "smażone"=fried, "pieczone"=baked  | `prep_method`            |
+| Oil method      | Label: e.g., "w oleju słonecznikowym"                | `oil_method`             |
 | Processing risk | Derived from NOVA group in v_master (CASE)           | `processing_risk` (view) |
-| NOVA group      | Open Food Facts or manual classification             | `nova_classification` |
-| Controversies   | Known issues: palm oil, MSG, controversial additives | `controversies`       |
-| Nutri-Score     | Label, OFF, or computed                              | `nutri_score_label`   |
+| NOVA group      | Open Food Facts or manual classification             | `nova_classification`    |
+| Controversies   | Known issues: palm oil, MSG, controversial additives | `controversies`          |
+| Nutri-Score     | Label, OFF, or computed                              | `nutri_score_label`      |
 
 ### 3.2 Additive Counting Rules
 
@@ -356,8 +356,9 @@ data_completeness_pct = round(100.0 * (
     (CASE WHEN nf.salt_g          IS NOT NULL AND nf.salt_g          NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.17)
     (CASE WHEN nf.trans_fat_g     IS NOT NULL AND nf.trans_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10% (scoring weight: 0.11)
     (CASE WHEN nf.fibre_g         IS NOT NULL AND nf.fibre_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5%
-    (CASE WHEN i.additives_count  IS NOT NULL AND i.additives_count  NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5% (scoring weight: 0.07)
-    (CASE WHEN i.ingredients_raw  IS NOT NULL AND i.ingredients_raw  != ''              THEN 1 ELSE 0 END) * 5     -- 5%
+    -- additives_count & ingredients_raw derived from product_ingredient + ingredient_ref junction
+    (CASE WHEN additives_count  IS NOT NULL                                           THEN 1 ELSE 0 END) * 5  +  -- 5% (scoring weight: 0.07)
+    (CASE WHEN ingredients_raw  IS NOT NULL AND ingredients_raw  != ''                THEN 1 ELSE 0 END) * 5     -- 5%
 ) / 100.0)
 ```
 

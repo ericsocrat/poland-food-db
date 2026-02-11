@@ -1,7 +1,7 @@
 -- PIPELINE (Cereals): scoring
 -- Generated: 2026-02-09
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -10,72 +10,7 @@ where p.country = 'PL' and p.category = 'Cereals'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Cereals'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('Vitanella', 'Płatki Owsiane Górskie', 0),
-    ('GO ACTIVE', 'GO ACTIVE  granola wysokobiałkowa', 1),
-    ('Melvit', 'Płatki owsiane górskie', 0),
-    ('Tymbark', 'Mus wieloowocowy z dodatkiem kaszy manny i płatków owsianych', 0),
-    ('Mlyny Stoislaw', 'Płatki owsiane', 0),
-    ('Kupiec', 'Ciasteczka zbożowe', 3),
-    ('Melvit', 'Płatki owsiane Górskie XXL', 0),
-    ('Cenos', 'Płatki owsiane błyskawiczne', 0),
-    ('Vitanella', 'Miami Hopki', 0),
-    ('Unknown', 'Choco kulki', 0),
-    ('Nestlé', 'Cini Minis Scorțișoară', 0),
-    ('Kupiec', 'Płatki owsiane błyskawiczne', 0),
-    ('Unknown', 'Sante granola czekolada z truskawką', 0),
-    ('Vitanella', 'Crunchy Klasyczne', 1),
-    ('Nestlé', 'Corn flakes', 1),
-    ('Lidl', 'Crownfield Płatki owsiane górskie', 0),
-    ('Lubella', 'Chocko Muszelki', 0),
-    ('Nestlé', 'Nestle Chocapic', 1),
-    ('GO ON', 'Protein granola', 4),
-    ('Nestlé', 'Corn Flakes', 1),
-    ('Nestlé', 'Nestle Corn Flakes', 0),
-    ('sante', 'Sante gold granola', 2),
-    ('Nestlé', 'Nestke Gold flakes', 0),
-    ('Vitanella', 'Choki', 0),
-    ('Nestlé', 'Fitness', 0),
-    ('Lubella', 'Owsianka z bananami, kakao', 0),
-    ('Nestlé', 'Cheerios Owsiany', 3),
-    ('GO ON', 'granola brownie & cherry', 3),
-    ('Vitanella', 'Vitanella owsianka mango-truskawka', 0),
-    ('Lubella', 'choco piegotaki', 1),
-    ('lubella', 'chrupersy', 0),
-    ('One Day More', 'Porridge chocolate', 1),
-    ('Nestlé', 'Lion caramel and chocolate', 0),
-    ('Nestlé', 'Cheerios owsiany', 3),
-    ('Nesquik', 'Nesquik Alphabet', 1),
-    ('Vitanella', 'Orito kakaowe', 2),
-    ('One day more', 'Porridge', 0),
-    ('Nesquik', 'Nesquik Mix', 0),
-    ('Vitanella', 'Corn Flakes', 0),
-    ('Nestlé', 'Corn flakes choco', 0),
-    ('Ba!', 'Ba granola czekoladowa', 0),
-    ('Lidl', 'Płatki owsiane górskie', 0),
-    ('Lidl', 'Owsianka Żurawina', 0),
-    ('Crownfield', 'Płatki owsiane błyskawiczne', 0),
-    ('Crownfield', 'Space Cookies', 2),
-    ('Crownfield', 'Goldini', 1),
-    ('Crownfield', 'Porridge', 1),
-    ('Lidl', 'Owsiankaowoce i orzechy', 0)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -83,7 +18,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -91,12 +26,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Cereals'
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -153,7 +92,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -210,22 +149,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Cereals'
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p

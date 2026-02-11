@@ -131,10 +131,10 @@ if ($LASTEXITCODE -ne 0) {
 $test1Lines = ($test1Output | Out-String).Trim()
 if ($test1Lines -eq "" -or $test1Lines -match '^\s*$') {
     $sw1.Stop()
-    Write-Host "  ✓ PASS (34/34 — zero violations) [$([math]::Round($sw1.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+    Write-Host "  ✓ PASS (31/31 — zero violations) [$([math]::Round($sw1.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
     $test1Pass = $true
-    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 34; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
-    $jsonResult.summary.total_checks += 34; $jsonResult.summary.passed += 34
+    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 31; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
+    $jsonResult.summary.total_checks += 31; $jsonResult.summary.passed += 31
 }
 else {
     $sw1.Stop()
@@ -142,8 +142,8 @@ else {
     Write-Host $test1Lines -ForegroundColor DarkRed
     $test1Pass = $false
     $violationList = ($test1Lines -split "`n" | Where-Object { $_ -match '\S' })
-    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 34; status = "fail"; violations = @($violationList); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
-    $jsonResult.summary.total_checks += 34; $jsonResult.summary.failed += $violationList.Count; $jsonResult.summary.passed += (34 - $violationList.Count)
+    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 31; status = "fail"; violations = @($violationList); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
+    $jsonResult.summary.total_checks += 31; $jsonResult.summary.failed += $violationList.Count; $jsonResult.summary.passed += (31 - $violationList.Count)
 }
 
 # ─── Test 2: Scoring Formula Validation ────────────────────────────────────

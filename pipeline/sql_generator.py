@@ -276,33 +276,9 @@ on conflict (product_id, serving_id) do update set
 def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
     """Generate file 04 — scoring.sql."""
 
-    # Additives values
-    add_lines: list[str] = []
-    for i, p in enumerate(products):
-        comma = "," if i < len(products) - 1 else ""
-        add_lines.append(
-            f"    ({_sql_text(p['brand'])}, {_sql_text(p['product_name'])}, "
-            f"{_sql_num(p.get('additives_count', 0))}){comma}"
-        )
-    additives_block = "\n".join(add_lines)
-
-    # Ingredients-raw values (where available from OFF)
-    raw_lines: list[str] = []
-    for i, p in enumerate(products):
-        raw = p.get("ingredients_raw")
-        if raw:
-            comma = "," if i < len(products) - 1 else ""
-            raw_lines.append(
-                f"    ({_sql_text(p['brand'])}, {_sql_text(p['product_name'])}, "
-                f"{_sql_text(raw)}){comma}"
-            )
-    # Fix trailing commas — re-join without trailing comma on last entry
-    if raw_lines:
-        raw_lines = [
-            l.rstrip(",") if i == len(raw_lines) - 1 else l
-            for i, l in enumerate(raw_lines)
-        ]
-    ingredients_raw_block = "\n".join(raw_lines) if raw_lines else ""
+    # (additives_count and ingredients_raw are now derived from
+    #  product_ingredient + ingredient_ref junction at query time;
+    #  no INSERT/UPDATE to ingredients table needed.)
 
     # Nutri-Score values
     ns_lines: list[str] = []
@@ -331,7 +307,7 @@ def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
 -- PIPELINE ({category}): scoring
 -- Generated: {today}
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -339,42 +315,10 @@ left join scores sc on sc.product_id = p.product_id
 where p.country = 'PL' and p.category = {_sql_text(category)}
   and p.is_deprecated is not true
   and sc.product_id is null;
-
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = {_sql_text(category)}
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-{additives_block}
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-"""
-
-    # Conditionally add ingredients_raw section
-    if ingredients_raw_block:
-        scoring_sql += f"""
--- 1b. Ingredients raw text (from OFF)
-update ingredients i set
-  ingredients_raw = d.raw_text
-from (
-  values
-{ingredients_raw_block}
-) as d(brand, product_name, raw_text)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
 """
 
     scoring_sql += f"""
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -382,7 +326,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -390,12 +334,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = {_sql_text(category)}
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -405,7 +353,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -415,22 +363,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = {_sql_text(category)}
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p

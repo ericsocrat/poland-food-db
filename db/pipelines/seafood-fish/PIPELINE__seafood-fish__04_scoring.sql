@@ -1,7 +1,7 @@
 -- PIPELINE (Seafood & Fish): scoring
 -- Generated: 2026-02-09
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -10,59 +10,7 @@ where p.country = 'PL' and p.category = 'Seafood & Fish'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Seafood & Fish'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('marinero', 'Pstrąg Tęczowy Łososiowy Wędzony Na Zimno', 0),
-    ('Marinero', 'Łosoś wędzony na zimno', 0),
-    ('Graal', 'Tuńczyk kawałki w sosie własnym', 0),
-    ('Lisner', 'Szybki śledzik w sosie czosnkowym z ziołami prowansalskimi', 3),
-    ('Marinero', 'Łosoś wędzony na gorąco dymem z drewna bukowego', 0),
-    ('Komersmag', 'Filety śledziowe panierowane i smażone w zalewie octowej.', 10),
-    ('Lisner', 'Śledzik na raz z suszonymi pomidorami', 0),
-    ('Lisner', 'Filety śledziowe w oleju a''la Matjas', 5),
-    ('GRAAL', 'Tuńczyk Mexicans z warzywami', 0),
-    ('Marinero', 'Wiejskie filety śledziowe z cebulką', 0),
-    ('Lisner', 'Śledzik na raz w sosie grzybowym kurki', 0),
-    ('Marinero', 'Śledź filety z suszonymi pomidorami', 0),
-    ('Śledzie od serca', 'Śledzie po żydowsku', 0),
-    ('Suempol', 'Łosoś atlantycki, wędzony na zimno, plastrowany', 0),
-    ('Marinero', 'Łosoś wędzony na gorąco dymem drewna bukowego', 0),
-    ('Lisner', 'Śledzik na raz z suszonymi pomidorami i ziołami włoskimi', 0),
-    ('Pescadero', 'Filety z pstrąga', 0),
-    ('Contimax', 'Wiejskie filety śledziowe marynowane z cebulą', 0),
-    ('Suempol Pan Łosoś', 'Łosoś Wędzony Plastrowany', 0),
-    ('Lisner', 'Tuńczyk Stek Z Kropla Oliwy Z Oliwek', 0),
-    ('Marinero', 'Łosoś łagodny', 0),
-    ('Marinero', 'Filety z makreli w sosie pomidorowym', 4),
-    ('MegaRyba', 'Szprot w sosie pomidorowym', 3),
-    ('Lisner', 'Marinated Herring in mushroom sauce', 7),
-    ('Suempol', 'Gniazda z łososia', 0),
-    ('Koryb', 'Łosoś atlantycki', 0),
-    ('Port netto', 'Łosoś atlantycki wędzony na zimno', 0),
-    ('Unknown', 'Łosoś wędzony na gorąco', 0),
-    ('Lisner', 'Herring single portion with onion', 0),
-    ('Graal', 'Filety z makreli w sosie pomidorowym', 3),
-    ('Lisner', 'Herring Snack', 0),
-    ('nautica', 'Śledzie Wiejskie', 0),
-    ('Well done', 'Łosoś atlantycki', 0),
-    ('Graal', 'Szprot w sosie pomidorowym', 0),
-    ('Marinero', 'Filety śledziowe a''la Matjas', 7)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -70,7 +18,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -78,12 +26,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Seafood & Fish'
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -127,7 +79,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -171,22 +123,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Seafood & Fish'
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p

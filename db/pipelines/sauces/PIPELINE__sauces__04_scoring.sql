@@ -1,7 +1,7 @@
 -- PIPELINE (Sauces): scoring
 -- Generated: 2026-02-09
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -10,124 +10,7 @@ where p.country = 'PL' and p.category = 'Sauces'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Sauces'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('Pudliszki', 'Po Bolońsku sos do spaghetti', 1),
-    ('Culineo', 'Sos meksykański', 1),
-    ('Dawtona', 'Sos do spaghetti pomidorowo-śmietankowy.', 0),
-    ('Dawtona', 'Sos Neapolitański z papryką', 0),
-    ('Dawtona', 'Sos Boloński z ziołami', 1),
-    ('Dawtona', 'Sos meksykański', 0),
-    ('Dawtona', 'Sos słodko-kwaśny z ananasem', 1),
-    ('Polskie Przetwory', 'Sos Boloński z bazylią', 2),
-    ('Międzychód', 'Sos Boloński z mięsem', 0),
-    ('Roleski', 'Sos tysiąca wysp', 3),
-    ('Heinz', 'Sos tysiąca wysp', 3),
-    ('Heinz', 'Sos Barbecue. Sos do grilla z cebulą i papryką', 2),
-    ('Fanex', 'Sos meksykański', 5),
-    ('Łowicz', 'Sos Boloński', 0),
-    ('Culineo', 'Sos boloński', 1),
-    ('Dawtona', 'Sos do pizzy z ziołami', 0),
-    ('Roleski', 'Sos pomidor + miód + limonka + nasiona chia', 0),
-    ('Pudliszki', 'Duszone pomidory o smaku smażonej cebuli i czosnku, z olejem', 0),
-    ('Fanex', 'Sos tysiąc wysp', 0),
-    ('Vital FRESH', 'Sałatka w stylu greckim', 0),
-    ('Vifon', 'Sos chili tajski słodko-pikantny', 3),
-    ('Sottile Gusto', 'Passata z czosnkiem', 1),
-    ('Sottile Gusto', 'Passata', 1),
-    ('Dawtona', 'Sos Pomidorowy do Makaronu', 1),
-    ('Międzychód', 'Sos pomidorowy', 0),
-    ('Dawtona', 'Sos Curry', 2),
-    ('Carrefour', 'Przecier pomidorowy', 0),
-    ('Culineo', 'SOS Spaghetti', 2),
-    ('Develey', 'Sos 1000 wysp', 2),
-    ('Madero', 'Sos jogurtowy z ziołami', 0),
-    ('Go Vege', 'Sos z jalapeño', 1),
-    ('Biedronka', 'Sos z chili', 1),
-    ('Vifon', 'Sos chili pikantny', 4),
-    ('Develey', 'Sos jalapeño', 2),
-    ('Dawtona', 'Sos BBQ', 0),
-    ('Madero', 'Sos BBQ z chipotle', 2),
-    ('ŁOWICZ', 'Sos Spaghetti', 2),
-    ('Pudliszki', 'Sos Do Spaghetti Oryginalny', 1),
-    ('Łowicz', 'Sos Spaghetti', 2),
-    ('Dawtona', 'Passata rustica', 0),
-    ('Pudliszki', 'Przecier pomidorowy', 1),
-    ('Łowicz', 'Leczo', 0),
-    ('Roleski', 'Avocaboo!', 1),
-    ('Sottile Gusto', 'Przecier pomidorowy', 0),
-    ('Jamar', 'Passata - przecier pomidorowy klasyczny', 0),
-    ('Roleski', 'Sos do kurczaka z czosnkiem', 1),
-    ('Rolnik', 'Passata', 1),
-    ('GustoBello', 'Arrabbiata Bruschetta', 1),
-    ('Helcom', 'Dip in mexicana style', 1),
-    ('Roleski', 'Sos pomidor + czarnuszka ostry', 1),
-    ('Roleski', 'Sos pomidor + jagody goji', 0),
-    ('MW Food', 'Sauce tomate', 0),
-    ('Pudliszki', 'Bolonski', 0),
-    ('Biedronka', 'Pesto Zielone. Sos na bazie bazyli.', 2),
-    ('GustoBello', 'White wine vinegar cream with pesto alla genovese', 1),
-    ('Kucharek', 'Kucharek', 2),
-    ('Develey', 'Sos 1000 Wysp', 1),
-    ('Roleski', 'Sos vinaigrette', 4),
-    ('Knorr', 'Sos sałatkowy paprykowo-ziołowy', 2),
-    ('Madero', 'Sos chilli pikantny', 0),
-    ('Asia Flavours', 'Sos Sriracha mayo', 3),
-    ('House of asia', 'Sos Sriracha', 4),
-    ('Asia Flavours', 'Sos Sambal Oelek', 2),
-    ('House of Asia', 'Sos z Czarnym Pieprzem', 3),
-    ('Madero', 'Sos BBQ z miodem gryczanym', 0),
-    ('Roleski', 'BBQ sos whisky', 0),
-    ('Roleski', 'Texas sos BBQ', 1),
-    ('Kotlin', 'Sos BBQ', 0),
-    ('Jamar', 'Passata klasyczna', 0),
-    ('Waldi Ben', 'Koncentrat pomidorowy 30%', 0),
-    ('Winiary', 'Spaghetti sos z pomidorów', 0),
-    ('Pingo Doce', 'Sos pomidorowy z bazylią', 3),
-    ('Podravka', 'Przecier pomidorowy z bazylią', 0),
-    ('HELCOM', 'Sauce a la mexicaine', 0),
-    ('Dawtona', 'Sos pomidorowy ostry z papryczkami jalapeño', 0),
-    ('Schedro', 'Sos Chersoński', 3),
-    ('Unknown', 'Pesto all Genovese', 0),
-    ('Pure Line', 'Sos jogurtowy z czosnkiem', 0),
-    ('Asia Flavours', 'Sos Sriracha', 0),
-    ('Develey', 'Sos Mayo Sriracha z chili i czosnkiem', 0),
-    ('Heinz', 'słodki sos barbecue', 1),
-    ('Winiary', 'Sos amerykański BBQ', 0),
-    ('Roleski', 'Sos BBQ dark beer', 0),
-    ('Italiamo', 'Sugo al pomodoro con basilico', 0),
-    ('Mutti', 'Sauce Tomate aux légumes grillés', 0),
-    ('Auchan', 'Passata con basilico', 0),
-    ('mondo italiano', 'passierte Tomaten', 0),
-    ('Combino', 'Sauce tomate bio à la napolitaine', 0),
-    ('Extra Line', 'Passata garlic', 0),
-    ('Carrefour', 'Tomates basilic', 2),
-    ('Baresa', 'Pesto alla Genovese', 1),
-    ('Barilla', 'Pesto alla Genovese', 1),
-    ('Carrefour', 'Pesto verde', 3),
-    ('Go Vege', 'Pesto z tofu', 3),
-    ('Deluxe', 'Pesto con rucola', 3),
-    ('Heinz', 'Sauce Salade Caesar', 5),
-    ('Sol & Mar', 'Piri-Piri', 7),
-    ('Kikkoman', 'Kikkoman Sojasauce', 0),
-    ('Mutti', 'Passierte Tomaten', 0),
-    ('gustobello', 'Passata', 0)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -135,7 +18,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -143,12 +26,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Sauces'
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -257,7 +144,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -366,22 +253,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Sauces'
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p

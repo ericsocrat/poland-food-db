@@ -45,7 +45,7 @@ WHERE p.is_deprecated IS NOT TRUE
     OR nf.salt_g > 40 OR nf.fibre_g > 100);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 4. No empty strings where NULL is expected (ean, brand, ingredients_raw)
+-- 4. No empty strings where NULL is expected (ean, brand)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '4. no empty strings in key fields' AS check_name,
        COUNT(*) AS violations
@@ -53,8 +53,6 @@ FROM (
     SELECT product_id FROM products WHERE ean = ''
     UNION ALL
     SELECT product_id FROM products WHERE brand = ''
-    UNION ALL
-    SELECT product_id FROM ingredients WHERE ingredients_raw = ''
 ) q;
 
 -- ═══════════════════════════════════════════════════════════════════════════

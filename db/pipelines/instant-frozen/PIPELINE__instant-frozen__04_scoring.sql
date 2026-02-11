@@ -1,7 +1,7 @@
 -- PIPELINE (Instant & Frozen): scoring
 -- Generated: 2026-02-08
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -10,52 +10,7 @@ where p.country = 'PL' and p.category = 'Instant & Frozen'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Instant & Frozen'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('Ajinomoto', 'Oyakata Miso Ramen', 5),
-    ('Vifon', 'Kurczak curry instant noodle soup', 9),
-    ('Ajinomoto', 'Oyakata Kurczak Teriyaki', 7),
-    ('VIFON', 'Chinese Chicken flavour instant noodle soup (mild)', 9),
-    ('Vifon', 'Barbecue Chicken', 10),
-    ('Asia Style', 'VeggieMeal hot and sour SICHUAN STYLE', 6),
-    ('Ajinomoto', 'Nouilles de blé poulet teriyaki', 6),
-    ('Tan-Viet', 'Kurczak Zloty', 9),
-    ('Oyakata', 'Yakisoba soja classique', 7),
-    ('Oyakata', 'Nouilles de blé', 4),
-    ('Oyakata', 'Ramen Miso et Légumes', 3),
-    ('Oyakata', 'Yakisoba saveur Poulet pad thaï', 5),
-    ('Oyakata', 'Ramen soja', 0),
-    ('Ajinomoto', 'Ramen nouille de blé saveur poulet shio', 6),
-    ('Knorr', 'Nudle ser w ziołach', 6),
-    ('Goong', 'Curry Noodles', 13),
-    ('Vifon', 'Kimchi', 9),
-    ('Ajinomoto', 'Pork Ramen', 5),
-    ('Vifon', 'Ramen Soy Souce', 13),
-    ('Reeva', 'Zupa błyskawiczna o smaku kurczaka', 9),
-    ('Rollton', 'Zupa błyskawiczna o smaku gulaszu', 5),
-    ('Indomie', 'Noodles Chicken Flavour', 10),
-    ('Nongshim', 'Super Spicy Red Shin', 11),
-    ('mama', 'Mama salted egg', 9),
-    ('NongshimSamyang', 'Ramen kimchi', 12),
-    ('MAMA', 'ORIENTAL KITCHEN INSTANT NOODLES CARBONARA BACON FLAVOUR', 7),
-    ('Nongshim', 'Bowl Noodles Hot & Spicy', 8),
-    ('Reeva', 'REEVA Vegetable flavour Instant noodles', 10)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -63,7 +18,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -71,12 +26,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Instant & Frozen'
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -113,7 +72,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -150,22 +109,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Instant & Frozen'
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p

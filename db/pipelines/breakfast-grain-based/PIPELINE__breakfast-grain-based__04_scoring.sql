@@ -1,7 +1,7 @@
 -- PIPELINE (Breakfast & Grain-Based): scoring
 -- Generated: 2026-02-09
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -10,124 +10,7 @@ where p.country = 'PL' and p.category = 'Breakfast & Grain-Based'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Breakfast & Grain-Based'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('Vitanella', 'Mieszanka płatków zbożowych z suszonymi oraz kandyzowanymi owocami', 2),
-    ('Biedronka', 'Vitanella Granola z czekoladą', 2),
-    ('vitanella', 'granola z kawałkami czekolady, prażonymi orzeszkami ziemnymi ilaskowymi', 3),
-    ('Vitanella', 'Musli prażone z suszoną, słodzoną żurawiną.', 3),
-    ('Biedronka', 'Mieszanka płatków zbożowych z rodzynkami i orzechami laskowymi', 1),
-    ('Vitanella', 'Mieszanka płatków zbożowych z suszonymi owocami oraz kawałkami prażonych orzeszków laskowych', 1),
-    ('Bakalland', 'Musli chrupkie klasyczne z dodatkiem wiórków kokosowych', 2),
-    ('Vitanella', 'Płatki zbożowe z suszonymi i kandyzowanymi owocami.', 2),
-    ('Melvit', 'CRISPY PIECZYWO CHRUPKIE z serem i cebulką', 0),
-    ('Łowicz', 'Dżem truskawkowy', 3),
-    ('Rapsodia', 'Produkt owocowy z brzoskwiń.', 1),
-    ('Herbapol', 'Dżem z Czarnych Porzeczek', 2),
-    ('Raspodia', 'Dżem wiśniowy', 1),
-    ('Rapsodia', 'Dżem wiśniowy', 1),
-    ('Rapsodia', 'Powidła węgierkowe', 0),
-    ('Herbapol', 'Powidła wegierkowe', 0),
-    ('Rapsodia', 'Dżem czarna porzeczka', 1),
-    ('Dawtona', 'Dżem Brzoskwiniowy niskosłodzony', 4),
-    ('Dawtona', 'Powidła śliwkowe', 0),
-    ('Łowicz', 'Dżem z truskawek i limonki niskosłodzony.', 5),
-    ('Kupiec', 'Coś na ząb owsianka z jabłkiem i bananem', 0),
-    ('Vivi Polska', 'Musli owocowe pożywne śniadanie.', 0),
-    ('Go Active', 'Musli wyobiałkowe', 1),
-    ('Vitanella', 'Musli 5 zbóż', 0),
-    ('Go Bio', 'Musli z czekoladą i orzechami', 0),
-    ('Biedronka', 'Vitanella Owsianka - śliwka, migdał, żurawina', 0),
-    ('Fitella', 'Musli chrupkie bananowe z kawałkami czekolady', 2),
-    ('Kupiec', 'Coś na Ząb', 0),
-    ('One Day More', 'Musli z suszonymi figami i prażonymi orzeszkami ziemnymi.', 0),
-    ('OneDayMore', 'Musli z truskawkami, czerwonymi porzeczkami i czekoladą mleczna', 0),
-    ('Kupiec', 'Owsianka z jabłkiem i cynamonem', 0),
-    ('Brüggen', 'Płatki owsiane z suszonymi owocami i orzechami', 0),
-    ('Brüggen', 'Płatki owsiane z mlekiem w proszku odtłuszczonym, kawałkami białej czekolady i liofilizowanych malin.', 1),
-    ('OneDayMore', 'Musli z malinami i jeżynami', 0),
-    ('Promienie Słońca', 'Promienie Słońca Słoneczna granola z orzechami i miodem', 0),
-    ('Dawtona', 'Drugie śniadanie', 0),
-    ('Pano', 'Pieczywo żytnie chrupkie', 0),
-    ('Rapsodia', 'Dżem malinowy', 0),
-    ('Herbapol', 'Dżem truskawkowy', 2),
-    ('Łowicz', 'Łowicz - Dżem Wiśniowy', 3),
-    ('Rapsodia', 'Dżem truskawkowy', 5),
-    ('Łowicz', 'Dżem Malinowy', 3),
-    ('Łowicz', 'Extra konfitura z wiśni', 4),
-    ('Łowicz', 'Dżem 100% z owoców wiśnia', 1),
-    ('Lidl', 'Dżem truskawkowy Rapsodia', 0),
-    ('Łowicz', 'Konfitura z żółtych owoców', 4),
-    ('Łowicz', 'Dżem brzoskwiniowy super gładki', 1),
-    ('One day more', 'Muesli Protein', 0),
-    ('Vitanella', 'Banana Chocolate musli', 0),
-    ('Vitanella', 'Musli z owocami i orzechami', 1),
-    ('Inna Bajka', 'Owsianka Mango i Jagody Goji', 0),
-    ('Vitanella', 'Granola z czekoladą i orzechami', 0),
-    ('Vitanella', 'Musli premium', 1),
-    ('Bell''s', 'Owsianka owoce i orzechy', 0),
-    ('Inna Bajka', 'Musli Marakuja i Pitaja', 0),
-    ('Dobra Kaloria', 'Owsianka królewska z jabłkiem', 0),
-    ('Vitanella', 'Muesli z owocami i siemieniem lnianym', 1),
-    ('Rapsodia', 'Dżem wiśniowy o obniżonej zawartości cukru', 0),
-    ('Rapsodia', 'Dżem brzoskwiniowy', 0),
-    ('Łowicz', 'Dżem z agrestu i kiwi', 0),
-    ('Mirella', 'Powidła śliwkowe', 0),
-    ('Rolnik', 'Borówka cala', 0),
-    ('Dawtona', 'Eperdzsem', 2),
-    ('Sante', 'Granola chocolate / pieces of chocolate', 2),
-    ('Biedronka', 'Granola', 2),
-    ('Sante', 'Granola Nut / peanuts & peanut butter', 2),
-    ('One Day More', 'Muesli chocolat', 1),
-    ('One Day More', 'Muesli for focused ones', 1),
-    ('Sante', 'sante fit granola strawberry and cherry', 1),
-    ('Santé', 'Sante Crunchy Crispy Muesli Banana With Chocolate 350G', 1),
-    ('Promienie słońca', 'Baton musli z owocami', 0),
-    ('Nestlé', 'Musli tropical', 3),
-    ('Nestlé', 'musli classic', 0),
-    ('Promienie słońca', 'Baton musli z orzechami i miodem', 0),
-    ('Purella', 'Purella Super Musli Proteinowe', 2),
-    ('One Day More', 'Porridge Orange', 2),
-    ('Bell''s', 'Crunchy', 0),
-    ('OneDayMore', 'Musli Keto Choco', 2),
-    ('ONE DAY MORE', 'Meusli Fruits et Chocolat Blanc', 0),
-    ('Kupiec', 'Cosnazab', 0),
-    ('Go on', 'Protein granola', 4),
-    ('Tesco', 'Musli prażone z kawałkami suszonych i kandyzowanych owoców.', 3),
-    ('Vitanella', 'Owsianka ananas, kokos', 0),
-    ('Kupiec', 'Cos na Zab', 0),
-    ('Sante', 'Musli Lo z owocami', 0),
-    ('Bell’s', 'Owsianka', 1),
-    ('Go On', 'Protein Granola Go On', 4),
-    ('Vivi', 'Musli owocowe: polskie owoce', 0),
-    ('BakallanD', 'Granola klasyczna z kokosem', 0),
-    ('One day more', 'Fruit Granola', 0),
-    ('Bifood', 'Muesli crunchy', 0),
-    ('Vitanella', 'Muesli z owocami i orzechami', 2),
-    ('Vitanella', 'Granola z kakao i orzechami', 1),
-    ('Purella Superfoods', 'purella superfoods granola', 2),
-    ('One Day More', 'Granola with salty caramel and white chocolate', 1),
-    ('Wasa', 'Pieczywo z pełnoziarnistej mąki żytniej', 0),
-    ('Lestello', 'Chickpea cakes', 0),
-    ('Wasa', 'Wasa Pieczywo chrupkie z błonnikiem', 0),
-    ('Chaber', 'Maca razowa', 0),
-    ('Dr. Oetker', 'Protein Pancakes', 0)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -135,7 +18,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -143,12 +26,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Breakfast & Grain-Based'
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -257,7 +144,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -366,22 +253,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Breakfast & Grain-Based'
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p

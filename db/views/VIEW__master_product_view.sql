@@ -15,6 +15,9 @@
 --   product_sources via LATERAL join. Added source_ean, source_confidence, source_fields,
 --   source_collected_at. Removed source_ref. Added score_breakdown (JSONB).
 --   63 columns total.
+-- Updated 2026-02-11: dropped ingredients table dependency. additives_count and
+--   ingredients_raw are now derived from LATERAL ingr (product_ingredient + ingredient_ref).
+--   ingredient_data_quality simplified to complete/missing (no more 'partial').
 -- This file exists for reference and for recreating the view if needed.
 --
 -- Usage: SELECT * FROM v_master WHERE country = 'PL' AND category = 'Chips';
@@ -76,13 +79,13 @@ SELECT
     -- Score explainability (JSONB breakdown of all 9 factors)
     explain_score_v32(
         nf.saturated_fat_g, nf.sugars_g, nf.salt_g, nf.calories,
-        nf.trans_fat_g, i.additives_count, p.prep_method, p.controversies,
+        nf.trans_fat_g, ingr.additives_count, p.prep_method, p.controversies,
         s.ingredient_concern_score
     ) AS score_breakdown,
 
-    -- Ingredients
-    i.additives_count,
-    i.ingredients_raw,
+    -- Ingredients (derived from junction tables)
+    ingr.additives_count,
+    ingr.ingredients_text AS ingredients_raw,
 
     -- Product-level provenance (LATERAL join to product_sources)
     p.ean,
@@ -107,8 +110,7 @@ SELECT
 
     -- Data quality indicators
     CASE
-        WHEN i.ingredients_raw IS NOT NULL AND ingr.ingredient_count > 0 THEN 'complete'
-        WHEN i.ingredients_raw IS NOT NULL THEN 'partial'
+        WHEN ingr.ingredient_count > 0 THEN 'complete'
         ELSE 'missing'
     END AS ingredient_data_quality,
 
@@ -136,7 +138,6 @@ LEFT JOIN public.servings sv_real
 LEFT JOIN public.nutrition_facts ns
     ON ns.product_id = p.product_id AND ns.serving_id = sv_real.serving_id
 LEFT JOIN public.scores s ON s.product_id = p.product_id
-LEFT JOIN public.ingredients i ON i.product_id = p.product_id
 LEFT JOIN LATERAL (
     SELECT ps_inner.*
     FROM public.product_sources ps_inner
@@ -146,6 +147,8 @@ LEFT JOIN LATERAL (
 LEFT JOIN LATERAL (
     SELECT
         COUNT(*)::int AS ingredient_count,
+        COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count,
+        STRING_AGG(ir.name_en, ', ' ORDER BY pi.position) AS ingredients_text,
         STRING_AGG(CASE WHEN ir.is_additive THEN ir.name_en END, ', ' ORDER BY pi.position) AS additive_names,
         BOOL_OR(ir.from_palm_oil = 'yes') AS has_palm_oil,
         CASE

@@ -125,23 +125,8 @@ LEFT JOIN products p ON p.product_id = sc.product_id
 WHERE p.product_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 13. Orphaned ingredients (no matching product)
+-- 13–14. (Removed — ingredients table dropped in migration 20260211000600)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT i.product_id,
-       'ORPHANED INGREDIENT' AS issue
-FROM ingredients i
-LEFT JOIN products p ON p.product_id = i.product_id
-WHERE p.product_id IS NULL;
-
--- ═══════════════════════════════════════════════════════════════════════════
--- 14. Products with no ingredients row
--- ═══════════════════════════════════════════════════════════════════════════
-SELECT p.product_id, p.brand, p.product_name,
-       'NO INGREDIENTS ROW' AS issue
-FROM products p
-LEFT JOIN ingredients i ON i.product_id = p.product_id
-WHERE i.product_id IS NULL
-  AND p.is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 15. Negative nutrition values (physically impossible)
@@ -272,22 +257,8 @@ LEFT JOIN products p ON p.product_id = pi.product_id
 WHERE p.product_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 25. additives_count mismatch between ingredients table and junction table
+-- 25. (Removed — ingredients table dropped in migration 20260211000600)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT i.product_id, i.additives_count AS stored_count,
-       COALESCE(sub.cnt, 0) AS junction_count,
-       'ADDITIVES COUNT MISMATCH' AS issue
-FROM ingredients i
-JOIN (SELECT DISTINCT product_id FROM product_ingredient) has_data
-  ON has_data.product_id = i.product_id
-LEFT JOIN (
-  SELECT pi.product_id, COUNT(*) AS cnt
-  FROM product_ingredient pi
-  JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
-  WHERE ir.is_additive = true
-  GROUP BY pi.product_id
-) sub ON sub.product_id = i.product_id
-WHERE i.additives_count != COALESCE(sub.cnt, 0);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 26. product_allergen rows referencing non-existent products
@@ -409,7 +380,6 @@ SELECT
     (SELECT COUNT(*) FROM servings WHERE serving_basis = 'per serving') AS per_serving_rows,
     (SELECT COUNT(*) FROM nutrition_facts)  AS total_nutrition_rows,
     (SELECT COUNT(*) FROM scores)           AS total_score_rows,
-    (SELECT COUNT(*) FROM ingredients)      AS total_ingredient_rows,
     (SELECT COUNT(*) FROM ingredient_ref)   AS total_ingredient_refs,
     (SELECT COUNT(*) FROM product_ingredient) AS total_product_ingredients,
     (SELECT COUNT(*) FROM product_allergen) AS total_allergen_rows,
@@ -463,11 +433,15 @@ SELECT
 FROM (
   SELECT p.product_id,
          COALESCE(pc.cnt, 0) AS pi_count,
-         COALESCE(i.additives_count, 0) AS additives_count
+         COALESCE(ac.cnt, 0) AS additives_count
   FROM products p
   LEFT JOIN (SELECT product_id, COUNT(*) AS cnt FROM product_ingredient GROUP BY product_id) pc
     ON pc.product_id = p.product_id
-  LEFT JOIN ingredients i ON i.product_id = p.product_id
+  LEFT JOIN (
+    SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive) AS cnt
+    FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+    GROUP BY pi.product_id
+  ) ac ON ac.product_id = p.product_id
   WHERE p.is_deprecated IS NOT TRUE
 ) sub;
 

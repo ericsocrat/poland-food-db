@@ -171,9 +171,9 @@ Every change is validated against **144 automated critical checks** + 14 informa
 
 ### Data Integrity (35 checks)
 - No missing required fields (product_name, brand, country, category)
-- No orphaned foreign keys (nutrition, scores, servings, ingredients)
+- No orphaned foreign keys (nutrition, scores, servings)
 - No duplicate products
-- All active products have servings, nutrition, scores, and ingredient rows
+- All active products have servings, nutrition, and scores rows
 - Nutrition sanity (no negative values, sat_fat ≤ total_fat, sugars ≤ carbs, calories ≤ 900)
 - Category invariant (exactly 28 products per active category)
 - Score fields not null for active products
@@ -263,7 +263,6 @@ Run tests after **every** schema change or data update.
 | nutrition_facts | `chk_nf_sugars_le_carbs`         | sugars ≤ carbs                                                    |
 | servings        | `chk_servings_basis`             | 'per 100 g' or 'per serving'                                      |
 | servings        | `chk_servings_amount_positive`   | amount > 0                                                        |
-| ingredients     | `chk_ingredients_additives`      | additives_count ≥ 0                                               |
 
 ---
 

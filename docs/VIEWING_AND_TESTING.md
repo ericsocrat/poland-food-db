@@ -12,7 +12,6 @@ The **easiest way** to browse your tables visually:
    - `products` — 560 active products across 20 categories (28 per category)
    - `nutrition_facts` — nutritional data per 100g and per serving
    - `scores` — unhealthiness scores (v3.2), flags, Nutri-Score, NOVA, confidence
-   - `ingredients` — raw ingredient text, additives count, allergens, traces
    - `servings` — 877 serving definitions (560 per-100g + 317 per-serving)
 4. **Run custom queries**: Click **"SQL Editor"** → paste any SQL → click **Run**
 
@@ -95,9 +94,9 @@ Run all pipelines + both QA suites automatically:
   All QA checks passed (64/64 — zero violation rows).
 
   Database inventory:
-  total_products | deprecated | servings | nutrition | scores | ingredients
-----------------+------------+----------+-----------+--------+-------------
-             560 |          0 |      877 |       877 |    560 |         560
+  total_products | deprecated | servings | nutrition | scores
+----------------+------------+----------+-----------+--------
+             560 |          0 |      877 |       877 |    560
 ```
 
 ---

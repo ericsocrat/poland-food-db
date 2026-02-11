@@ -1,7 +1,7 @@
 -- PIPELINE (Baby): scoring
 -- Generated: 2026-02-09
 
--- 0. ENSURE rows in scores & ingredients
+-- 0. ENSURE rows in scores
 insert into scores (product_id)
 select p.product_id
 from products p
@@ -10,73 +10,7 @@ where p.country = 'PL' and p.category = 'Baby'
   and p.is_deprecated is not true
   and sc.product_id is null;
 
-insert into ingredients (product_id)
-select p.product_id
-from products p
-left join ingredients i on i.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Baby'
-  and p.is_deprecated is not true
-  and i.product_id is null;
-
--- 1. Additives count
-update ingredients i set
-  additives_count = d.cnt
-from (
-  values
-    ('Magnetic', 'Kakao o obniżonej zawartości tłuszczu ekstra ciemne', 1),
-    ('Diamant', 'Cukier Biały', 0),
-    ('owolovo', 'Truskawkowo Mus jabłkowo-truskawkowy', 0),
-    ('OwoLovo', 'OwoLowo Jabłkowo', 0),
-    ('Mlekovita', 'Bezwodny tłuszcz mleczny, Masło klarowane', 0),
-    ('Vital Fresh', 'Surówka Smakołyk', 4),
-    ('Bobovita', 'Pomidorowa z kurczakiem i ryżem', 0),
-    ('BoboVita', 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa', 0),
-    ('Polski Cukier', 'Cukier biały', 0),
-    ('Piątnica', 'Twaróg wiejski tłusty', 0),
-    ('Vital Fresh', 'Mus 100% owoców jabłko gruszka', 0),
-    ('kubuś', 'kubuś malina', 0),
-    ('owolovo', 'mus jabłkowo-malinowo', 0),
-    ('Piątnica', 'Koktajl z białkiem serwatkowym', 0),
-    ('Nestlé', 'Barszcz czerwony', 1),
-    ('Swojska Chata', 'Pierogi ruskie', 1),
-    ('Kraina Wędlin', 'POLĘDWICA SOPOCKA', 0),
-    ('Kapitan navi', 'Śledzie po kołobrzesku', 0),
-    ('Magnetic', 'QuickCao', 1),
-    ('Królewski', 'Cukier 1 kg', 0),
-    ('Nestlé', 'Przyprawa Maggi', 2),
-    ('Gryzzale', 'polutry kabanos sausages', 1),
-    ('Dania Express Biedronka', 'Lasagne Bolognese', 1),
-    ('Owolovo', 'Owolovo ananasowo', 0),
-    ('Tarczyński', 'Kabanosy Z Kurczaka Protein', 5),
-    ('OWOLOVO', 'BRZOSKWINIOWO', 0),
-    ('Leibniz', 'Minis classic', 1),
-    ('Hipp', 'Ziemniaki z buraczkami, jabłkiem i wołowiną', 0),
-    ('Nestle Gerber', 'owoce jabłka z truskawkami i jagodami', 0),
-    ('Hipp', 'Spaghetti z pomidorami i mozzarellą', 0),
-    ('Nestlé', 'Leczo z mozzarellą i kluseczkami', 0),
-    ('BoboVita', 'BoboVita Jabłka z marchewka', 0),
-    ('Hipp', 'Kaszka mleczna z biszkoptami i jabłkami', 0),
-    ('Pudliszki', 'Pudliszki', 0),
-    ('Kamis', 'Kamis Musztarda Kremska 185G.', 0),
-    ('tarczyński', 'gryzzale', 0),
-    ('Dolina Dobra', '5908226815710', 0),
-    ('Hyperfood', 'Eatyx Wanilla', 0),
-    ('GO ACTIVE', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 4),
-    ('Vitanella', 'Ciastka Czekolada & Zboża', 5),
-    ('Vitanella', 'Baton select orzeszki ziemne, migdały, sól morska', 0),
-    ('Maribel', 'Ahorn sirup', 0),
-    ('Nestlé', 'Nestle Sinlac', 2),
-    ('Hipp', 'Dynia z indykiem', 0),
-    ('GutBio', 'Puré de Frutas Manzana y Plátano', 0),
-    ('Go active', 'Pudding proteinowy', 5),
-    ('Nestlé', 'Bulion drobiowy', 0),
-    ('GO Active', 'pudding czekolada', 4),
-    ('Tastino', 'Papryka Barbecue', 3)
-) as d(brand, product_name, cnt)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where i.product_id = p.product_id;
-
--- 2. COMPUTE unhealthiness_score (v3.2 — 9 factors)
+-- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update scores sc set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
@@ -84,7 +18,7 @@ update scores sc set
       nf.salt_g,
       nf.calories,
       nf.trans_fat_g,
-      i.additives_count,
+      ia.additives_count,
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
@@ -92,12 +26,16 @@ update scores sc set
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Baby'
   and p.is_deprecated is not true;
 
--- 3. Nutri-Score
+-- 2. Nutri-Score
 update scores sc set
   nutri_score_label = d.ns
 from (
@@ -155,7 +93,7 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 4. NOVA classification
+-- 3. NOVA classification
 update scores sc set
   nova_classification = d.nova
 from (
@@ -213,22 +151,26 @@ from (
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
 
--- 5. Health-risk flags
+-- 4. Health-risk flags
 update scores sc set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(i.additives_count, 0) >= 5 then 'YES' else 'NO' end,
+  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
-left join ingredients i on i.product_id = p.product_id
+left join (
+    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
+    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
+    group by pi.product_id
+) ia on ia.product_id = p.product_id
 where p.product_id = sc.product_id
   and p.country = 'PL' and p.category = 'Baby'
   and p.is_deprecated is not true;
 
--- 6. SET confidence level
+-- 5. SET confidence level
 update scores sc set
   confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
 from products p
