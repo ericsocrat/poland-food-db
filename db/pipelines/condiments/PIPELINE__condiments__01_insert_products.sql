@@ -39,7 +39,7 @@ values
   ('PL', 'Spolem', 'Grocery', 'Condiments', 'Spo?e Musztarda Delikatesowa 190Ml', 'not-applicable', 'Carrefour', 'none', '5900242000187'),
   ('PL', 'Unknown', 'Grocery', 'Condiments', 'Musztarda stołowa', 'not-applicable', null, 'none', '5906425111473'),
   ('PL', 'Heinz', 'Grocery', 'Condiments', 'Heinz Zero Sel Ajoute', 'not-applicable', null, 'none', '5900783010287'),
-  ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'ketchup pikantny', 'not-applicable', null, 'none', '5900783008697'),
+  ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup pikantny', 'not-applicable', null, 'none', '5900783008697'),
   ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup pikantny', 'not-applicable', null, 'none', '5900783000417'),
   ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup Lagodny', 'not-applicable', null, 'none', '5900783003418'),
   ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup premium sycylijski KETO do pizzy', 'not-applicable', null, 'none', '5901044027549'),

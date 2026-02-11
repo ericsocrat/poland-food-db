@@ -17,18 +17,18 @@ where ean in ('5900437007137', '5901398069936', '5902121011765', '5903548004262'
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('PL', 'Dr. Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza 4 sery, głęboko mrożona.', 'baked', 'Tesco', 'none', '5900437007137'),
+  ('PL', 'Dr. Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza 4 sery, głęboko mrożona', 'baked', 'Tesco', 'none', '5900437007137'),
   ('PL', 'Swojska Chata', 'Grocery', 'Frozen & Prepared', 'Pierogi z kapustą i grzybami', 'not-applicable', 'Biedronka', 'none', '5901398069936'),
   ('PL', 'Koral', 'Grocery', 'Frozen & Prepared', 'Lody śmietankowe - kostka śnieżna', 'not-applicable', 'Biedronka', 'none', '5902121011765'),
   ('PL', 'Dobra kaloria', 'Grocery', 'Frozen & Prepared', 'Roślinna kaszanka', 'not-applicable', 'Lidl', 'none', '5903548004262'),
   ('PL', 'Grycan', 'Grocery', 'Frozen & Prepared', 'Lody śmietankowe', 'not-applicable', null, 'none', '5907439112135'),
   ('PL', 'Hortex', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnię', 'not-applicable', 'Kaufland', 'none', '5900477000846'),
   ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Warzywa na patelnię z ziemniakami', 'not-applicable', 'Biedronka', 'none', '5901581232413'),
-  ('PL', 'Dr.Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza z szynką, pieczarkami i salami, głęboko mrożona.', 'baked', 'Auchan', 'none', '5900437009988'),
-  ('PL', 'Dr.Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza z szynką i sosem pesto, głęboko mrożona.', 'baked', 'Auchan', 'none', '5900437007113'),
+  ('PL', 'Dr.Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza z szynką, pieczarkami i salami, głęboko mrożona', 'baked', 'Auchan', 'none', '5900437009988'),
+  ('PL', 'Dr.Oetker', 'Grocery', 'Frozen & Prepared', 'Pizza z szynką i sosem pesto, głęboko mrożona', 'baked', 'Auchan', 'none', '5900437007113'),
   ('PL', 'Biedronka', 'Grocery', 'Frozen & Prepared', 'Rożek z czekoladą', 'not-applicable', 'Biedronka', 'none', '5907377116578'),
   ('PL', 'Mroźna Kraina', 'Grocery', 'Frozen & Prepared', 'Jagody leśne', 'not-applicable', 'Biedronka', 'none', '5902966009002'),
-  ('PL', 'MaxTop Sławków', 'Grocery', 'Frozen & Prepared', 'Pizza głęboko mrożona z szynką i pieczarkami.', 'baked', 'Dino', 'none', '5901537003142'),
+  ('PL', 'MaxTop Sławków', 'Grocery', 'Frozen & Prepared', 'Pizza głęboko mrożona z szynką i pieczarkami', 'baked', 'Dino', 'none', '5901537003142'),
   ('PL', 'Hortex', 'Grocery', 'Frozen & Prepared', 'Makaron na patelnię penne z sosem serowym', 'not-applicable', 'Auchan', 'none', '5900477012795'),
   ('PL', 'Fish Time', 'Grocery', 'Frozen & Prepared', 'Ryba z piekarnika z sosem brokułowym', 'not-applicable', 'Biedronka', 'none', '5900972003960'),
   ('PL', 'Morźna Kraina', 'Grocery', 'Frozen & Prepared', 'Włoszczyzna w słupkach', 'not-applicable', 'Biedronka', 'none', '5901581232352'),

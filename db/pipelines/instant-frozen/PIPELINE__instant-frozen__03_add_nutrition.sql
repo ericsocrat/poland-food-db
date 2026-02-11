@@ -32,7 +32,7 @@ from (
     ('Oyakata', 'Nouilles de blé', 84.0, 3.5, 1.7, 0, 11.0, 0.8, 0, 1.8, 0),
     ('Oyakata', 'Ramen Miso et Légumes', 86.0, 3.6, 1.8, 0, 11.0, 1.0, 0, 2.0, 0.8),
     ('Oyakata', 'Yakisoba saveur Poulet pad thaï', 236.0, 11.0, 5.1, 0, 29.0, 2.9, 1.0, 4.6, 1.4),
-    ('Oyakata', 'Ramen soja', 90.0, 41.0, 2.0, 0, 11.0, 0.8, 0, 2.0, 0),
+    ('Oyakata', 'Ramen soja', 90.0, 4.1, 2.0, 0, 11.0, 0.8, 0, 2.0, 0),
     ('Ajinomoto', 'Ramen nouille de blé saveur poulet shio', 90.0, 4.5, 2.2, 0, 10.0, 0.7, 0, 2.0, 1.0),
     ('Knorr', 'Nudle ser w ziołach', 86.3, 4.3, 0.8, 0, 9.4, 0.5, 0.3, 1.7, 0.9),
     ('Goong', 'Curry Noodles', 69.0, 2.9, 0, 0, 9.7, 0.7, 0, 0.0, 0.9),

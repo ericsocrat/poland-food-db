@@ -33,7 +33,7 @@ values
   ('PL', 'Smaczne Wędliny', 'Grocery', 'Meat', 'Schab Wędzony na wiśniowo', 'not-applicable', null, 'none', '5906245780330'),
   ('PL', 'Szubryt', 'Grocery', 'Meat', 'Kiełbasa z czosnkiem', 'not-applicable', null, 'none', '5906190371676'),
   ('PL', 'Morliny', 'Grocery', 'Meat', 'Berlinki Classic', 'not-applicable', 'Dino', 'none', '5900567001746'),
-  ('PL', 'tarczyński', 'Grocery', 'Meat', 'Kabanosy wieprzowe', 'not-applicable', 'Biedronka', 'none', '5908230521485'),
+  ('PL', 'Tarczyński', 'Grocery', 'Meat', 'Kabanosy wieprzowe', 'not-applicable', 'Biedronka', 'none', '5908230521485'),
   ('PL', 'Morliny', 'Grocery', 'Meat', 'Berlinki classic', 'not-applicable', 'Biedronka', 'none', '5900567009681'),
   ('PL', 'Animex Foods', 'Grocery', 'Meat', 'Berlinki Kurczak', 'not-applicable', 'Dino', 'none', '5901664003749'),
   ('PL', 'Podlaski', 'Grocery', 'Meat', 'Pasztet drobiowy', 'not-applicable', 'Auchan', 'none', '5901204000733'),

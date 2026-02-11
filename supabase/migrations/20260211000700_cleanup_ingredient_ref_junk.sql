@@ -175,7 +175,7 @@ WHERE name_en = 'product derived from cereals';
 -- Get merge-target ingredient_ids
 DELETE FROM product_ingredient pi
 WHERE pi.ingredient_id IN (
-    SELECT ingredient_id FROM ingredient_ref 
+    SELECT ingredient_id FROM ingredient_ref
     WHERE name_en IN ('soya', 'freeze-dried fruit', 'e635')
 )
 AND EXISTS (
@@ -214,11 +214,11 @@ DECLARE
 BEGIN
     SELECT COUNT(*) INTO ref_count FROM ingredient_ref;
     SELECT COUNT(*) INTO pi_count FROM product_ingredient;
-    
+
     SELECT COUNT(*) INTO orphan_count FROM product_ingredient pi
     LEFT JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
     WHERE ir.ingredient_id IS NULL;
-    
+
     IF orphan_count > 0 THEN
         RAISE EXCEPTION '% orphaned product_ingredient rows found', orphan_count;
     END IF;
@@ -228,7 +228,7 @@ BEGIN
     WHERE length(trim(name_en)) <= 1
        OR name_en ~* '^\d+\s*(kcal|kj)'
        OR name_en ~* 'nahrwertangaben|urella';
-    
+
     IF junk_remain > 0 THEN
         RAISE NOTICE 'WARNING: % entries still look like junk, manual review may be needed', junk_remain;
     END IF;

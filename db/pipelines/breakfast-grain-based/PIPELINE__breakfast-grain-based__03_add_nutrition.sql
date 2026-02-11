@@ -119,7 +119,7 @@ from (
     ('Wasa', 'Pieczywo z pełnoziarnistej mąki żytniej', 344.0, 1.5, 0.3, 0, 65.0, 2.0, 17.0, 9.0, 0.9),
     ('Lestello', 'Chickpea cakes', 380.0, 3.2, 0.6, 0, 73.0, 1.9, 6.0, 12.0, 0.9),
     ('Wasa', 'Wasa Pieczywo chrupkie z błonnikiem', 333.0, 5.0, 1.0, 0, 46.0, 2.0, 26.0, 13.0, 1.1),
-    ('Chaber', 'Maca razowa', 882.0, 1.4, 0.1, 0, 7.8, 0.5, 3.8, 9.4, 0.5),
+    ('Chaber', 'Maca razowa', 335.0, 1.4, 0.1, 0, 78.0, 0.5, 3.8, 9.4, 0.5),
     ('Dr. Oetker', 'Protein Pancakes', 231.0, 8.1, 1.8, 0, 27.0, 2.7, 0, 12.0, 0)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)

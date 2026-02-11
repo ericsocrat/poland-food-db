@@ -17,15 +17,15 @@ where ean in ('5901576058059', '5906730621100', '5903895631418', '5900344000337'
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('PL', 'marinero', 'Grocery', 'Seafood & Fish', 'Pstrąg Tęczowy Łososiowy Wędzony Na Zimno', 'smoked', 'Biedronka', 'none', '5901576058059'),
+  ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Pstrąg Tęczowy Łososiowy Wędzony Na Zimno', 'smoked', 'Biedronka', 'none', '5901576058059'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Łosoś wędzony na zimno', 'smoked', 'Biedronka', 'none', '5906730621100'),
   ('PL', 'Graal', 'Grocery', 'Seafood & Fish', 'Tuńczyk kawałki w sosie własnym', 'not-applicable', 'Biedronka', 'none', '5903895631418'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Szybki śledzik w sosie czosnkowym z ziołami prowansalskimi', 'not-applicable', 'Biedronka', 'none', '5900344000337'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Łosoś wędzony na gorąco dymem z drewna bukowego', 'smoked', 'Biedronka', 'none', '5903475460131'),
-  ('PL', 'Komersmag', 'Grocery', 'Seafood & Fish', 'Filety śledziowe panierowane i smażone w zalewie octowej.', 'fried', 'Auchan', 'none', '5904468000228'),
+  ('PL', 'Komersmag', 'Grocery', 'Seafood & Fish', 'Filety śledziowe panierowane i smażone w zalewie octowej', 'fried', 'Auchan', 'none', '5904468000228'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Śledzik na raz z suszonymi pomidorami', 'not-applicable', 'Biedronka', 'none', '5900344901825'),
-  ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Filety śledziowe w oleju a''la Matjas', 'not-applicable', 'Tesco', 'none', '5900344016697'),
-  ('PL', 'GRAAL', 'Grocery', 'Seafood & Fish', 'Tuńczyk Mexicans z warzywami', 'not-applicable', null, 'none', '5903895632491'),
+  ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Filety śledziowe w oleju a''La Matjas', 'not-applicable', 'Tesco', 'none', '5900344016697'),
+  ('PL', 'Graal', 'Grocery', 'Seafood & Fish', 'Tuńczyk Mexicans z warzywami', 'not-applicable', null, 'none', '5903895632491'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Wiejskie filety śledziowe z cebulką', 'not-applicable', null, 'none', '5900344000429'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Śledzik na raz w sosie grzybowym kurki', 'not-applicable', null, 'none', '5900344030129'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Śledź filety z suszonymi pomidorami', 'not-applicable', null, 'none', '5903496036971'),
@@ -48,10 +48,10 @@ values
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Herring single portion with onion', 'not-applicable', 'Biedronka', 'none', '5900344901818'),
   ('PL', 'Graal', 'Grocery', 'Seafood & Fish', 'Filety z makreli w sosie pomidorowym', 'not-applicable', null, 'none', '5903895010237'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Herring Snack', 'not-applicable', null, 'none', '5900344901788'),
-  ('PL', 'nautica', 'Grocery', 'Seafood & Fish', 'Śledzie Wiejskie', 'not-applicable', 'Lidl', 'none', '20544508'),
+  ('PL', 'Nautica', 'Grocery', 'Seafood & Fish', 'Śledzie Wiejskie', 'not-applicable', 'Lidl', 'none', '20544508'),
   ('PL', 'Well done', 'Grocery', 'Seafood & Fish', 'Łosoś atlantycki', 'not-applicable', 'Stokrotka', 'none', '2098765853199'),
   ('PL', 'Graal', 'Grocery', 'Seafood & Fish', 'Szprot w sosie pomidorowym', 'not-applicable', null, 'none', '5903895010169'),
-  ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Filety śledziowe a''la Matjas', 'not-applicable', 'Biedronka', 'none', '20503031')
+  ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Filety śledziowe a''La Matjas', 'not-applicable', 'Biedronka', 'none', '20503031')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,

@@ -14,7 +14,7 @@ values
 -- EAN 2050000554995 — Kurczaker (chicken burger, 12 additives incl. E223 metabisulfite, NOVA 4)
 ('PL','Żabka','Ready-to-eat','Żabka','Kurczaker','fried','Żabka','none'),
 -- EAN 5908308910043 — Wołowiner Ser Kozi (beef + goat cheese, E250 sodium nitrite, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Wołowiner Ser Kozi','fried','Żabka','minor'),
+('PL','Żabka','Ready-to-eat','Żabka','Wołowiner Ser Kozi','fried','Żabka','Minor'),
 -- EAN 5908308910791 — Burger Kibica (pulled pork BBQ + cheddar, 7 additives, NOVA 4)
 ('PL','Żabka','Ready-to-eat','Żabka','Burger Kibica','fried','Żabka','none'),
 
@@ -36,9 +36,9 @@ values
 
 -- ── Tomcio Paluch sandwiches (Żabka-exclusive supplier) ─────────────────
 -- EAN 8586020103553 — Szynka & Jajko (ham & egg, E250 sodium nitrite, NOVA 4)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','Szynka & Jajko','baked','Żabka','minor'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Szynka & Jajko','baked','Żabka','Minor'),
 -- EAN 8586020104505 — Pieczony bekon, sałata, jajko (BLT, E250 nitrite, NOVA 4)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','Pieczony bekon, sałata, jajko','baked','Żabka','minor'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Pieczony bekon, sałata, jajko','baked','Żabka','Minor'),
 -- EAN 5903111184339 — Bajgiel z salami (salami bagel, cured meat, Nutri-Score D)
 ('PL','Tomcio Paluch','Ready-to-eat','Żabka','Bajgiel z salami','baked','Żabka','none'),
 
@@ -74,7 +74,7 @@ values
 -- EAN 8586020103768 — Pasta jajeczna, por, jajko gotowane (egg paste sandwich, Nutri-Score C)
 ('PL','Tomcio Paluch','Ready-to-eat','Żabka','Pasta jajeczna, por, jajko gotowane','none','Żabka','none'),
 -- EAN 8586020105540 — High 24g protein (protein bread sandwich, E250 nitrite, NOVA 4)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','High 24g protein','none','Żabka','minor'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','High 24g protein','none','Żabka','Minor'),
 
 -- ── Szamamm ready meals (new) ───────────────────────────────────────────
 -- EAN 00719063 — Pierogi ruskie ze smażoną cebulką (fried pierogi, NOVA 3 est.)
