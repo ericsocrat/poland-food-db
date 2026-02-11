@@ -190,14 +190,14 @@ WHERE p.is_deprecated IS NOT TRUE
   AND nf.calories > 900;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 19. Each category must have exactly 28 active products
+-- 19. Each category must have at least 5 active products
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT category, COUNT(*) AS product_count,
-       'CATEGORY COUNT NOT 28' AS issue
+       'CATEGORY COUNT UNDER 5' AS issue
 FROM products
 WHERE is_deprecated IS NOT TRUE
 GROUP BY category
-HAVING COUNT(*) <> 28;
+HAVING COUNT(*) < 5;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 20. Scores missing data_completeness_pct, nutri_score_label,

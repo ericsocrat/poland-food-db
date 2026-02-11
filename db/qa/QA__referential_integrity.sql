@@ -69,7 +69,7 @@ WHERE confidence_pct < 0 OR confidence_pct > 100;
 SELECT '7. product_sources source_type valid' AS check_name,
        COUNT(*) AS violations
 FROM product_sources
-WHERE source_type != 'off_api';
+WHERE source_type NOT IN ('off_api', 'off_search', 'manual', 'label_scan', 'retailer_api');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 8. ingredient_ref.vegan/vegetarian/from_palm_oil in valid domain

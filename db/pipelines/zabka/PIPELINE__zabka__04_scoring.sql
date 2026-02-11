@@ -35,7 +35,7 @@ update scores sc set
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
-  ),
+  )
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
@@ -167,15 +167,15 @@ where p.product_id = sc.product_id
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 5. SET confidence level (auto-assigned based on data completeness + sources)
---    Uses assign_confidence() function from 20260208_assign_confidence.sql
 -- ═════════════════════════════════════════════════════════════════════════
 
 update scores sc set
   confidence = assign_confidence(
     sc.data_completeness_pct,
-    (SELECT src.source_type
-     FROM sources src
-     WHERE src.brand LIKE '%(' || p.category || ')%'
+    (SELECT ps.source_type
+     FROM product_sources ps
+     WHERE ps.product_id = p.product_id
+       AND ps.is_primary = true
      LIMIT 1)
   )
 from products p

@@ -36,7 +36,8 @@ Open Food Facts API v2 Python pipeline SQL files PostgreSQL
 (categories_tags_en, off_client.py 01_insert_products servings
 countries_tags_en=poland) sql_generator.py 02_add_servings nutrition_facts
 validator.py 03_add_nutrition scores
-                                 categories.py 04_scoring
+categories.py 04_scoring
+
 ````
 
 **Pipeline CLI:**
@@ -319,22 +320,22 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 19 CHECK constraints enforce domain values at the DB level:
 
-| Table             | Constraint                               | Rule                                                                                                                                                                                                |
-| ----------------- | ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `products`        | `chk_products_country`                   | `country IN ('PL')`                                                                                                                                                                                 |
-| `products`        | `chk_products_prep_method`               | Valid method (NOT NULL): `air-popped`, `baked`, `fried`, `deep-fried`, `grilled`, `roasted`, `smoked`, `steamed`, `marinated`, `pasteurized`, `fermented`, `dried`, `raw`, `none`, `not-applicable` |
-| `products`        | `chk_products_controversies`             | `IN ('none','minor','moderate','serious','palm oil')`                                                                                                                                               |
-| `scores`          | `chk_scores_unhealthiness_range`         | 1–100                                                                                                                                                                                               |
-| `scores`          | `chk_scores_nutri_score_label`           | NULL or `IN ('A','B','C','D','E','UNKNOWN','NOT-APPLICABLE')`                                                                                                                                       |
-| `scores`          | `chk_scores_confidence`                  | NULL or `IN ('verified','estimated','low')`                                                                                                                                                         |
-| `scores`          | `chk_scores_nova`                        | NULL or `IN ('1','2','3','4')`                                                                                                                                                                      |
-| `scores`          | 4 × `chk_scores_high_*_flag`             | NULL or `IN ('YES','NO')`                                                                                                                                                                           |
-| `scores`          | `chk_scores_completeness`                | 0–100                                                                                                                                                                                               |
-| `nutrition_facts` | `chk_nutrition_non_negative`             | All 9 nutrition columns ≥ 0                                                                                                                                                                         |
-| `nutrition_facts` | `chk_nutrition_satfat_le_totalfat`       | saturated_fat ≤ total_fat                                                                                                                                                                           |
-| `nutrition_facts` | `chk_nutrition_sugars_le_carbs`          | sugars ≤ carbs                                                                                                                                                                                      |
-| `servings`        | `chk_servings_basis`                     | `IN ('per 100 g','per 100 ml','per piece','per serving')`                                                                                                                                           |
-| `servings`        | `chk_servings_amount_positive`           | serving_amount > 0                                                                                                                                                                                  |
+| Table             | Constraint                         | Rule                                                                                                                                                                                                |
+| ----------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `products`        | `chk_products_country`             | `country IN ('PL')`                                                                                                                                                                                 |
+| `products`        | `chk_products_prep_method`         | Valid method (NOT NULL): `air-popped`, `baked`, `fried`, `deep-fried`, `grilled`, `roasted`, `smoked`, `steamed`, `marinated`, `pasteurized`, `fermented`, `dried`, `raw`, `none`, `not-applicable` |
+| `products`        | `chk_products_controversies`       | `IN ('none','minor','moderate','serious','palm oil')`                                                                                                                                               |
+| `scores`          | `chk_scores_unhealthiness_range`   | 1–100                                                                                                                                                                                               |
+| `scores`          | `chk_scores_nutri_score_label`     | NULL or `IN ('A','B','C','D','E','UNKNOWN','NOT-APPLICABLE')`                                                                                                                                       |
+| `scores`          | `chk_scores_confidence`            | NULL or `IN ('verified','estimated','low')`                                                                                                                                                         |
+| `scores`          | `chk_scores_nova`                  | NULL or `IN ('1','2','3','4')`                                                                                                                                                                      |
+| `scores`          | 4 × `chk_scores_high_*_flag`       | NULL or `IN ('YES','NO')`                                                                                                                                                                           |
+| `scores`          | `chk_scores_completeness`          | 0–100                                                                                                                                                                                               |
+| `nutrition_facts` | `chk_nutrition_non_negative`       | All 9 nutrition columns ≥ 0                                                                                                                                                                         |
+| `nutrition_facts` | `chk_nutrition_satfat_le_totalfat` | saturated_fat ≤ total_fat                                                                                                                                                                           |
+| `nutrition_facts` | `chk_nutrition_sugars_le_carbs`    | sugars ≤ carbs                                                                                                                                                                                      |
+| `servings`        | `chk_servings_basis`               | `IN ('per 100 g','per 100 ml','per piece','per serving')`                                                                                                                                           |
+| `servings`        | `chk_servings_amount_positive`     | serving_amount > 0                                                                                                                                                                                  |
 
 ### Performance Indexes
 

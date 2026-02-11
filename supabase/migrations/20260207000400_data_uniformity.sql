@@ -115,7 +115,6 @@ SELECT
   s.confidence,
   p.prep_method,
   p.store_availability,
-  p.ean,
   p.controversies,
   p.is_deprecated,
   p.deprecated_reason,

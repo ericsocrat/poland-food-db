@@ -22,7 +22,7 @@ update scores sc set
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
-  ),
+  )
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id

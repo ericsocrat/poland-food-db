@@ -102,13 +102,13 @@ SELECT '11. api_better_alternatives has required keys' AS check_name,
        CASE WHEN result ? 'source_product' AND result ? 'alternatives'
                  AND result ? 'alternatives_count' AND result ? 'search_scope'
             THEN 0 ELSE 1 END AS violations
-FROM api_better_alternatives(2121) AS result;
+FROM api_better_alternatives((SELECT product_id FROM products WHERE is_deprecated IS NOT TRUE ORDER BY product_id LIMIT 1)) AS result;
 
 -- 12. api_better_alternatives alternatives_count matches array length
 SELECT '12. api_better_alternatives count matches array' AS check_name,
        CASE WHEN (result->>'alternatives_count')::int = jsonb_array_length(result->'alternatives')
             THEN 0 ELSE 1 END AS violations
-FROM api_better_alternatives(2121) AS result;
+FROM api_better_alternatives((SELECT product_id FROM products WHERE is_deprecated IS NOT TRUE ORDER BY product_id LIMIT 1)) AS result;
 
 -- 13. api_data_confidence returns non-null for all active products
 SELECT '13. api_data_confidence covers all products' AS check_name,

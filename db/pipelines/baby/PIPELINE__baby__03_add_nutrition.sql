@@ -38,7 +38,7 @@ from (
     ('Nestlé', 'Barszcz czerwony', 114.0, 1.1, 0.6, 0, 25.0, 19.2, 0.3, 1.1, 4.7),
     ('Swojska Chata', 'Pierogi ruskie', 164.0, 4.1, 0.7, 0, 25.0, 1.4, 2.3, 5.7, 1.0),
     ('Kraina Wędlin', 'POLĘDWICA SOPOCKA', 97.1, 2.6, 1.1, 0, 1.4, 1.4, 0, 17.4, 2.2),
-    ('Kapitan navi', 'Śledzie po kołobrzesku', 402.0, 41.0, 3.7, 0, 0.7, 0.7, 0, 75.0, 2.7),
+    ('Kapitan navi', 'Śledzie po kołobrzesku', 402.0, 41.0, 3.7, 0, 0.7, 0.7, 0, 7.5, 2.7),
     ('Magnetic', 'QuickCao', 370.0, 2.1, 1.3, 0, 80.0, 78.0, 6.3, 4.5, 0.1),
     ('Królewski', 'Cukier 1 kg', 400.0, 0.0, 0.0, 0, 100.0, 100.0, 0.0, 0.0, 0.0),
     ('Nestlé', 'Przyprawa Maggi', 20.0, 0.0, 0.0, 0, 2.2, 0.9, 0.0, 2.8, 22.8),

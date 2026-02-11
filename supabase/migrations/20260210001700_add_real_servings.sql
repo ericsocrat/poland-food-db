@@ -3,6 +3,9 @@
 -- Adds per-serving rows for 317 products
 -- Each product now has TWO serving rows: per 100g (comparison) + per serving (real portion)
 
+BEGIN;
+SET session_replication_role = 'replica';
+
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Part 1: Insert per-serving serving rows
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -646,3 +649,8 @@ INSERT INTO nutrition_facts (product_id, serving_id, calories, total_fat_g, satu
 INSERT INTO nutrition_facts (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g) SELECT 5324, sv.serving_id, 48.0, 0.0, 0.0, 0.0, 11.52, 11.52, 0.0, 0.0, 0.0 FROM servings sv WHERE sv.product_id = 5324 AND sv.serving_basis = 'per serving' AND NOT EXISTS (SELECT 1 FROM nutrition_facts nf JOIN servings s2 ON s2.serving_id = nf.serving_id WHERE nf.product_id = 5324 AND s2.serving_basis = 'per serving');
 INSERT INTO nutrition_facts (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g) SELECT 5327, sv.serving_id, 107.5, 0.0, 0.0, 0.0, 27.5, 27.5, 0.0, 0.0, 0.0 FROM servings sv WHERE sv.product_id = 5327 AND sv.serving_basis = 'per serving' AND NOT EXISTS (SELECT 1 FROM nutrition_facts nf JOIN servings s2 ON s2.serving_id = nf.serving_id WHERE nf.product_id = 5327 AND s2.serving_basis = 'per serving');
 INSERT INTO nutrition_facts (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g) SELECT 5329, sv.serving_id, 116.0, 6.0, 0.6, 0.0, 11.0, 2.2, 1.8, 3.4, 0.2 FROM servings sv WHERE sv.product_id = 5329 AND sv.serving_basis = 'per serving' AND NOT EXISTS (SELECT 1 FROM nutrition_facts nf JOIN servings s2 ON s2.serving_id = nf.serving_id WHERE nf.product_id = 5329 AND s2.serving_basis = 'per serving');
+
+SET session_replication_role = 'origin';
+DELETE FROM nutrition_facts WHERE product_id NOT IN (SELECT product_id FROM products);
+DELETE FROM servings WHERE product_id NOT IN (SELECT product_id FROM products);
+COMMIT;

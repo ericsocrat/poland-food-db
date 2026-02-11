@@ -4,6 +4,9 @@
 
 BEGIN;
 
+-- Temporarily disable FK checks so inserts for purged products are silently skipped
+SET session_replication_role = 'replica';
+
 -- ── 1. ingredient_ref inserts ──
 
 INSERT INTO ingredient_ref (taxonomy_id, name_en, is_additive, is_in_taxonomy, vegan, vegetarian, from_palm_oil) VALUES ('en:cornmeal', 'cornmeal', false, true, 'yes', 'yes', 'unknown') ON CONFLICT (taxonomy_id) DO NOTHING;
@@ -10326,5 +10329,13 @@ INSERT INTO product_trace (product_id, trace_tag) VALUES (5306, 'en:soybeans') O
 INSERT INTO product_trace (product_id, trace_tag) VALUES (5314, 'pl:sok') ON CONFLICT DO NOTHING;
 INSERT INTO product_trace (product_id, trace_tag) VALUES (5329, 'en:nuts') ON CONFLICT DO NOTHING;
 INSERT INTO product_trace (product_id, trace_tag) VALUES (5329, 'en:soybeans') ON CONFLICT DO NOTHING;
+
+-- Re-enable FK checks
+SET session_replication_role = 'origin';
+
+-- Clean up any orphaned rows inserted while FKs were disabled
+DELETE FROM product_ingredient WHERE product_id NOT IN (SELECT product_id FROM products);
+DELETE FROM product_allergen  WHERE product_id NOT IN (SELECT product_id FROM products);
+DELETE FROM product_trace     WHERE product_id NOT IN (SELECT product_id FROM products);
 
 COMMIT;

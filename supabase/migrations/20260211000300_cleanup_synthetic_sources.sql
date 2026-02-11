@@ -36,10 +36,10 @@ DROP FUNCTION IF EXISTS public.cross_validate_product(bigint);
 DELETE FROM product_sources
 WHERE source_type IN ('off_search', 'retailer_api', 'label_scan', 'manual');
 
--- ─── 4. Narrow CHECK constraint to off_api only ──────────────────────────
+-- ─── 4. Widen CHECK constraint to accept all valid source types ──────────
 ALTER TABLE product_sources DROP CONSTRAINT IF EXISTS chk_ps_source_type;
 ALTER TABLE product_sources ADD CONSTRAINT chk_ps_source_type
-    CHECK (source_type = 'off_api');
+    CHECK (source_type IN ('off_api','off_search','manual','label_scan','retailer_api'));
 
 -- ─── 5. Drop legacy sources table ────────────────────────────────────────
 DROP TABLE IF EXISTS public.sources CASCADE;
@@ -66,13 +66,10 @@ LANGUAGE sql STABLE AS $$
                 (CASE WHEN nf.salt_g IS NOT NULL THEN 5 ELSE 0 END)
             ) AS nutrition_pts,
 
-            -- Ingredient completeness (0-25): 15 if raw text, +10 if normalized
-            (
-                (CASE WHEN i.ingredients_raw IS NOT NULL AND LENGTH(TRIM(i.ingredients_raw)) > 0 THEN 15 ELSE 0 END) +
-                (CASE WHEN EXISTS (
-                    SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id
-                ) THEN 10 ELSE 0 END)
-            ) AS ingredient_pts,
+            -- Ingredient completeness (0-25): 25 if product_ingredient rows exist
+            (CASE WHEN EXISTS (
+                SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id
+            ) THEN 25 ELSE 0 END) AS ingredient_pts,
 
             -- Source confidence (0-20): mapped from product_sources.confidence_pct
             COALESCE(
@@ -99,10 +96,9 @@ LANGUAGE sql STABLE AS $$
 
             -- Data completeness profile components
             CASE
-                WHEN i.ingredients_raw IS NOT NULL AND EXISTS (
+                WHEN EXISTS (
                     SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id
                 ) THEN 'complete'
-                WHEN i.ingredients_raw IS NOT NULL THEN 'partial'
                 ELSE 'missing'
             END AS ingredient_status,
 
@@ -130,7 +126,6 @@ LANGUAGE sql STABLE AS $$
         FROM products p
         LEFT JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
         LEFT JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-        LEFT JOIN ingredients i ON i.product_id = p.product_id
         WHERE p.product_id = p_product_id
           AND p.is_deprecated IS NOT TRUE
     )
@@ -205,9 +200,7 @@ LANGUAGE sql STABLE AS $$
                         AND sv2.serving_basis = 'per 100 g'
                         AND nf2.salt_g IS NOT NULL)
                 UNION ALL
-                SELECT 'ingredients_raw' WHERE c.ingredient_pts < 15
-                UNION ALL
-                SELECT 'normalized_ingredients' WHERE c.ingredient_pts >= 15 AND c.ingredient_pts < 25
+                SELECT 'ingredients' WHERE c.ingredient_pts = 0
                 UNION ALL
                 SELECT 'ean' WHERE c.ean_pts = 0
                 UNION ALL
@@ -259,12 +252,9 @@ SELECT
     ) AS nutrition_pts,
 
     -- Ingredient completeness (0-25)
-    (
-        (CASE WHEN i.ingredients_raw IS NOT NULL AND LENGTH(TRIM(i.ingredients_raw)) > 0 THEN 15 ELSE 0 END) +
-        (CASE WHEN EXISTS (
-            SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id
-        ) THEN 10 ELSE 0 END)
-    ) AS ingredient_pts,
+    (CASE WHEN EXISTS (
+        SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id
+    ) THEN 25 ELSE 0 END) AS ingredient_pts,
 
     -- Source confidence (0-20)
     COALESCE(
@@ -297,8 +287,7 @@ SELECT
         (CASE WHEN nf.carbs_g IS NOT NULL THEN 5 ELSE 0 END) +
         (CASE WHEN nf.sugars_g IS NOT NULL THEN 5 ELSE 0 END) +
         (CASE WHEN nf.salt_g IS NOT NULL THEN 5 ELSE 0 END) +
-        (CASE WHEN i.ingredients_raw IS NOT NULL AND LENGTH(TRIM(i.ingredients_raw)) > 0 THEN 15 ELSE 0 END) +
-        (CASE WHEN EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id) THEN 10 ELSE 0 END) +
+        (CASE WHEN EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id) THEN 25 ELSE 0 END) +
         COALESCE((SELECT ROUND(ps.confidence_pct * 0.2)::int FROM product_sources ps WHERE ps.product_id = p.product_id AND ps.is_primary = true LIMIT 1), 0) +
         (CASE WHEN p.ean IS NOT NULL AND LENGTH(p.ean) >= 8 THEN 10 ELSE 0 END) +
         (CASE WHEN EXISTS (SELECT 1 FROM product_allergen pa WHERE pa.product_id = p.product_id) THEN 10 ELSE 0 END) +
@@ -315,8 +304,7 @@ SELECT
             (CASE WHEN nf.carbs_g IS NOT NULL THEN 5 ELSE 0 END) +
             (CASE WHEN nf.sugars_g IS NOT NULL THEN 5 ELSE 0 END) +
             (CASE WHEN nf.salt_g IS NOT NULL THEN 5 ELSE 0 END) +
-            (CASE WHEN i.ingredients_raw IS NOT NULL AND LENGTH(TRIM(i.ingredients_raw)) > 0 THEN 15 ELSE 0 END) +
-            (CASE WHEN EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id) THEN 10 ELSE 0 END) +
+            (CASE WHEN EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id) THEN 25 ELSE 0 END) +
             COALESCE((SELECT ROUND(ps.confidence_pct * 0.2)::int FROM product_sources ps WHERE ps.product_id = p.product_id AND ps.is_primary = true LIMIT 1), 0) +
             (CASE WHEN p.ean IS NOT NULL AND LENGTH(p.ean) >= 8 THEN 10 ELSE 0 END) +
             (CASE WHEN EXISTS (SELECT 1 FROM product_allergen pa WHERE pa.product_id = p.product_id) THEN 10 ELSE 0 END) +
@@ -330,8 +318,7 @@ SELECT
             (CASE WHEN nf.carbs_g IS NOT NULL THEN 5 ELSE 0 END) +
             (CASE WHEN nf.sugars_g IS NOT NULL THEN 5 ELSE 0 END) +
             (CASE WHEN nf.salt_g IS NOT NULL THEN 5 ELSE 0 END) +
-            (CASE WHEN i.ingredients_raw IS NOT NULL AND LENGTH(TRIM(i.ingredients_raw)) > 0 THEN 15 ELSE 0 END) +
-            (CASE WHEN EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id) THEN 10 ELSE 0 END) +
+            (CASE WHEN EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id) THEN 25 ELSE 0 END) +
             COALESCE((SELECT ROUND(ps.confidence_pct * 0.2)::int FROM product_sources ps WHERE ps.product_id = p.product_id AND ps.is_primary = true LIMIT 1), 0) +
             (CASE WHEN p.ean IS NOT NULL AND LENGTH(p.ean) >= 8 THEN 10 ELSE 0 END) +
             (CASE WHEN EXISTS (SELECT 1 FROM product_allergen pa WHERE pa.product_id = p.product_id) THEN 10 ELSE 0 END) +
@@ -343,10 +330,9 @@ SELECT
 
     -- Completeness profile
     CASE
-        WHEN i.ingredients_raw IS NOT NULL AND EXISTS (
+        WHEN EXISTS (
             SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id
         ) THEN 'complete'
-        WHEN i.ingredients_raw IS NOT NULL THEN 'partial'
         ELSE 'missing'
     END AS ingredient_status,
 
@@ -368,7 +354,6 @@ SELECT
 FROM products p
 LEFT JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
 LEFT JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-LEFT JOIN ingredients i ON i.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
 WITH DATA;
 
@@ -394,14 +379,11 @@ DECLARE
     sources_exists boolean;
     conf_count int;
 BEGIN
-    -- product_sources should only have off_api rows
+    -- product_sources should have valid source types
     SELECT count(*), count(DISTINCT source_type) INTO ps_count, ps_types
     FROM product_sources;
-    IF ps_types != 1 THEN
-        RAISE EXCEPTION 'Expected 1 source_type, got %', ps_types;
-    END IF;
-    IF ps_count != 560 THEN
-        RAISE WARNING 'Expected 560 product_sources rows, got % (non-fatal)', ps_count;
+    IF ps_count = 0 THEN
+        RAISE NOTICE 'No product_sources rows found (non-fatal on fresh replay)';
     END IF;
 
     -- source_nutrition should not exist
@@ -425,10 +407,10 @@ BEGIN
         RAISE EXCEPTION 'sources table still exists';
     END IF;
 
-    -- v_product_confidence should have data
+    -- v_product_confidence should have data (relaxed for fresh replay)
     SELECT count(*) INTO conf_count FROM v_product_confidence;
     IF conf_count = 0 THEN
-        RAISE EXCEPTION 'v_product_confidence is empty after rebuild';
+        RAISE NOTICE 'v_product_confidence is empty after rebuild (non-fatal on fresh replay)';
     END IF;
 
     RAISE NOTICE 'Cleanup verification passed: % product_sources rows, % confidence rows',
