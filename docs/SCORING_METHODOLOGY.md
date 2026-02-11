@@ -163,9 +163,7 @@ UPDATE scores sc SET
       p.prep_method,
       p.controversies,
       sc.ingredient_concern_score
-  )::text,
-  scored_at = CURRENT_DATE,
-  scoring_version = 'v3.2'
+  )::text
 FROM products p
 JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
 JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
@@ -174,9 +172,9 @@ WHERE p.product_id = sc.product_id
   AND p.country = 'PL' AND p.category = '<CATEGORY>';
 ```
 
-### 2.5 `scored_at` Timestamp
+### ~~2.5 `scored_at` Timestamp~~ (removed — column dropped in migration 20260211000500)
 
-The `scored_at` column (type `date`) records **when the score was computed**, not when the label was read. It should be set to `CURRENT_DATE` in every scoring pipeline run. This allows tracking score freshness and identifying products that need re-scoring after methodology changes.
+> The `scored_at` column was dropped as redundant pipeline metadata. Score freshness can be tracked through migration history and pipeline run logs.
 
 ### 2.6 Score Bands
 
@@ -188,14 +186,9 @@ The `scored_at` column (type `date`) records **when the score was computed**, no
 | 61–80  | High — frequent use is a health risk        | Fried chips, sugary drinks         |
 | 81–100 | Very high — minimal consumption recommended | Deep-fried + high-salt + additives |
 
-### 2.7 Scoring Version
+### ~~2.7 Scoring Version~~ (removed — column dropped in migration 20260211000500)
 
-All score records include a `scoring_version` field (currently `v3.2`). When methodology changes:
-
-1. Increment the version (e.g., `v2.3`, `v3.0`).
-2. Re-run all scoring pipelines.
-3. Document the change in this file.
-4. Do **not** delete historical scores — overwrite in place with the new version tag.
+> The `scoring_version` column was dropped because all rows were `'v3.2'`. The version is now tracked only in `score_breakdown->>'version'` (JSONB). When methodology changes, update the function and this document.
 
 ---
 
@@ -311,17 +304,17 @@ We use the NOVA food classification system as a conceptual guide:
 
 ### 4.3 NOVA Classification Column
 
-The `scores.nova_classification` column stores the **NOVA group number** as text (`'1'`, `'2'`, `'3'`, or `'4'`). This is the raw NOVA group, distinct from `processing_risk` which is our simplified three-level mapping.
+The `scores.nova_classification` column stores the **NOVA group number** as text (`'1'`, `'2'`, `'3'`, or `'4'`). The `processing_risk` label (Low/Moderate/High) is now **derived at query time** in `v_master` via a CASE expression on `nova_classification`, rather than stored as a separate column.
 
-| `nova_classification` | `processing_risk`                   |
-| --------------------- | ----------------------------------- |
-| `'1'`                 | `'Low'`                             |
-| `'2'`                 | `'Low'`                             |
-| `'3'`                 | `'Moderate'`                        |
-| `'4'`                 | `'High'`                            |
-| `NULL`                | Derive from ingredients if possible |
+| `nova_classification` | Derived `processing_risk` |
+| --------------------- | ------------------------- |
+| `'1'`                 | `'Low'`                   |
+| `'2'`                 | `'Low'`                   |
+| `'3'`                 | `'Moderate'`              |
+| `'4'`                 | `'High'`                  |
+| `NULL`                | `'Unknown'`               |
 
-Set `nova_classification` when: (a) Open Food Facts provides it, or (b) it can be determined from the ingredient list. If neither is possible, leave `NULL` and set `processing_risk` based on ingredient inspection.
+Set `nova_classification` when: (a) Open Food Facts provides it, or (b) it can be determined from the ingredient list.
 
 ### 4.4 Why This Matters
 

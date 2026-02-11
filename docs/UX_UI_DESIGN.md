@@ -235,8 +235,8 @@ Home (Dashboard)
 └─────────────────────────────────────────────────────────┘
 ```
 
-**Hover/tooltip behaviour (links to `column_metadata`):**
-- Hovering over any score or label shows `tooltip_text` from `column_metadata`
+**Hover/tooltip behaviour (hardcoded in frontend):**
+- Hovering over any score or label shows a contextual tooltip
 - Example: hover "Nutri-Score" → "Nutri-Score: A (healthiest) to E (least healthy)."
 - Example: hover "NOVA 1" → "NOVA: 1=natural, 2=basic, 3=processed, 4=ultra-processed."
 - Example: hover "Unhealthiness Score" → "Higher means less healthy. Combines sugar, fat, salt, processing."
@@ -465,15 +465,15 @@ A product with confidence 95/100 has comprehensive, verified data — it could s
 
 ---
 
-## 6. Tooltip / Hover System (from `column_metadata`)
+## 6. Tooltip / Hover System
 
 ### 6.1 Implementation Plan
 
-The `column_metadata` table drives all tooltips:
+Tooltips are hardcoded in the frontend based on the definitions below (the `column_metadata` table was dropped as stale):
 
 ```
-API endpoint:  GET /api/metadata/:table_name/:column_name
-Response:      { display_label, description, tooltip_text, unit, value_range }
+Tooltip data is embedded in the frontend as a static dictionary.
+No API call needed — tooltips render instantly on hover/long-press.
 ```
 
 **Web:** On hover, show a small popover with:
@@ -557,7 +557,6 @@ Response:      { display_label, description, tooltip_text, unit, value_range }
 Views (direct GET):
 - `GET /rest/v1/v_api_category_overview` — Dashboard category grid (20 rows)
 - `GET /rest/v1/v_product_confidence?confidence_band=eq.low` — Confidence filtering
-- `GET /rest/v1/column_metadata?table_name=eq.scores` — Tooltip/help text
 
 RPC functions (POST /rpc/):
 - `POST /rpc/api_product_detail` — Full product detail as structured JSONB
@@ -582,7 +581,7 @@ Every UI component maps to exactly one API call. No component should ever call m
 | Product Detail — Confidence     | `POST /rpc/api_data_confidence`     | `total_score`, `band`, `components[]`, `missing_items[]`                           | On navigation       |
 | Product Detail — Alternatives   | `POST /rpc/api_better_alternatives` | `product_id`, `product_name`, `score`, `score_diff`                                | On navigation       |
 | Search Results                  | `POST /rpc/api_search_products`     | Same as category listing + `rank` from `ts_rank_cd`                                | No cache (live)     |
-| Tooltips                        | `GET column_metadata`               | `tooltip_text`, `display_label`, `unit`                                            | Session-level cache |
+| Tooltips                        | Hardcoded in frontend               | `tooltip_text`, `display_label`, `unit`                                            | Static (build-time) |
 
 ### 8.3 Product Detail — Render Order
 

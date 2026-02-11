@@ -77,12 +77,8 @@ WHERE ean IS NOT NULL
   AND ean !~ '^[0-9]{13}$';
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 7. scored_at must not be in the future
+-- 7. (removed — scored_at column dropped)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '7. scored_at not in future' AS check_name,
-       COUNT(*) AS violations
-FROM scores
-WHERE scored_at > NOW();
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 8. Deprecated products should have deprecated_reason (when column exists)
@@ -117,14 +113,8 @@ WHERE p.is_deprecated IS NOT TRUE
   AND sc.nova_classification IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 11. processing_risk not null for active products
+-- 11. (removed — processing_risk column dropped; now derived in v_master)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '11. processing_risk not null' AS check_name,
-       COUNT(*) AS violations
-FROM scores sc
-JOIN products p ON p.product_id = sc.product_id
-WHERE p.is_deprecated IS NOT TRUE
-  AND sc.processing_risk IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 12. Per-serving nutrition must have a matching per-100g row
@@ -195,14 +185,8 @@ WHERE score_breakdown IS NOT NULL
   AND (score_breakdown->>'final_score')::int != unhealthiness_score;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 17. score_breakdown version matches scoring_version
+-- 17. (removed — scoring_version column dropped)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '17. score_breakdown version consistency' AS check_name,
-       COUNT(*) AS violations
-FROM v_master m
-JOIN scores sc ON sc.product_id = m.product_id
-WHERE m.score_breakdown IS NOT NULL
-  AND m.score_breakdown->>'version' IS DISTINCT FROM sc.scoring_version;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 18. MV staleness: v_master and v_product_confidence must be fresh

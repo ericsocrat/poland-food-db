@@ -142,7 +142,7 @@ For every product, collect **all** of the following. Mark missing fields explici
 | Additive count  | Count E-numbers in ingredient list                   | `additives_count`     |
 | Prep method     | Infer from label: "smażone"=fried, "pieczone"=baked  | `prep_method`         |
 | Oil method      | Label: e.g., "w oleju słonecznikowym"                | `oil_method`          |
-| Processing risk | Derive from NOVA group or ingredient inspection      | `processing_risk`     |
+| Processing risk | Derived from NOVA group in v_master (CASE)           | `processing_risk` (view) |
 | NOVA group      | Open Food Facts or manual classification             | `nova_classification` |
 | Controversies   | Known issues: palm oil, MSG, controversial additives | `controversies`       |
 | Nutri-Score     | Label, OFF, or computed                              | `nutri_score_label`   |
@@ -401,8 +401,7 @@ Verify:
 - [ ] All 7 mandatory nutrition fields are populated
 - [ ] `unhealthiness_score` is between 1 and 100
 - [ ] Flags (`high_salt_flag`, etc.) are consistent with nutrition values
-- [ ] `scoring_version` is current (e.g., `v3.2`)
-- [ ] `scored_at` is today's date
+- [ ] `score_breakdown->>'version'` is current (e.g., `v3.2`)
 - [ ] `confidence` is correctly assigned
 
 ### 7.3 Energy Cross-Check

@@ -56,13 +56,17 @@ SELECT
 
     -- Scores
     s.unhealthiness_score,
-    s.scoring_version,
-    s.scored_at,
     s.confidence,
     s.data_completeness_pct,
     s.nutri_score_label,
     s.nova_classification,
-    s.processing_risk,
+    CASE s.nova_classification
+        WHEN '4' THEN 'High'
+        WHEN '3' THEN 'Moderate'
+        WHEN '2' THEN 'Low'
+        WHEN '1' THEN 'Low'
+        ELSE 'Unknown'
+    END AS processing_risk,
     s.high_salt_flag,
     s.high_sugar_flag,
     s.high_sat_fat_flag,

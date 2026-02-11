@@ -75,15 +75,8 @@ WHERE sc.unhealthiness_score IS NULL
   AND p.is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 7. Scores missing scoring_version
+-- 7. (removed — scoring_version column dropped)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT sc.product_id, p.brand, p.product_name,
-       'SCORING VERSION NULL' AS issue,
-       sc.unhealthiness_score
-FROM scores sc
-JOIN products p ON p.product_id = sc.product_id
-WHERE sc.scoring_version IS NULL
-  AND sc.unhealthiness_score IS NOT NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 8. Orphaned servings (no matching product)
@@ -222,13 +215,12 @@ GROUP BY category
 HAVING COUNT(*) <> 28;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 20. Scores missing scored_at, data_completeness_pct, nutri_score_label,
+-- 20. Scores missing data_completeness_pct, nutri_score_label,
 --     or high_additive_load (all required for active products)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT sc.product_id, p.brand, p.product_name,
        'SCORE FIELD NULL' AS issue,
        CASE
-         WHEN sc.scored_at IS NULL            THEN 'scored_at is NULL'
          WHEN sc.data_completeness_pct IS NULL THEN 'data_completeness_pct is NULL'
          WHEN sc.nutri_score_label IS NULL     THEN 'nutri_score_label is NULL'
          WHEN sc.high_additive_load IS NULL    THEN 'high_additive_load is NULL'
@@ -237,8 +229,7 @@ SELECT sc.product_id, p.brand, p.product_name,
 FROM scores sc
 JOIN products p ON p.product_id = sc.product_id
 WHERE p.is_deprecated IS NOT TRUE
-  AND (sc.scored_at IS NULL
-    OR sc.data_completeness_pct IS NULL
+  AND (sc.data_completeness_pct IS NULL
     OR sc.nutri_score_label IS NULL
     OR sc.high_additive_load IS NULL
     OR sc.confidence IS NULL);
@@ -355,12 +346,12 @@ WHERE sc.ingredient_concern_score IS NOT NULL
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 32. Scored products must have ingredient_concern_score populated
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT sc.product_id, sc.scoring_version,
+SELECT sc.product_id,
        'MISSING CONCERN SCORE' AS issue
 FROM scores sc
 JOIN products p ON p.product_id = sc.product_id
 WHERE p.is_deprecated IS NOT TRUE
-  AND sc.scoring_version = 'v3.2'
+  AND sc.unhealthiness_score IS NOT NULL
   AND sc.ingredient_concern_score IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════

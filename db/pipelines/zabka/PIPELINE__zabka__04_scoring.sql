@@ -86,8 +86,6 @@ update scores sc set
       p.controversies,
       sc.ingredient_concern_score
   ),
-  scored_at       = CURRENT_DATE,
-  scoring_version = 'v3.2'
 from products p
 join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
 join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
@@ -139,16 +137,11 @@ join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d
 where p.product_id = sc.product_id;
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 4. SET NOVA classification + processing risk
+-- 4. SET NOVA classification
 -- ═════════════════════════════════════════════════════════════════════════
 
 update scores sc set
-  nova_classification = d.nova,
-  processing_risk = case d.nova
-    when '4' then 'High'
-    when '3' then 'Moderate'
-    else 'Low'
-  end
+  nova_classification = d.nova
 from (
   values
     ('Żabka',            'Meksykaner',                            4),

@@ -159,32 +159,12 @@ WHERE p.is_deprecated IS NOT TRUE
   AND sc.nova_classification NOT IN ('1', '2', '3', '4');
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Test 9: Processing risk consistency
---         Should align with NOVA: 4=High, 3=Moderate, 1-2=Low
+-- Test 9: (removed — processing_risk column dropped; now derived in v_master)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT p.product_id, p.brand, p.product_name,
-       sc.nova_classification, sc.processing_risk,
-       'PROCESSING RISK MISMATCH WITH NOVA' AS issue
-FROM products p
-JOIN scores sc ON sc.product_id = p.product_id
-WHERE p.is_deprecated IS NOT TRUE
-  AND (
-    (sc.nova_classification = '4' AND sc.processing_risk <> 'High')
-    OR (sc.nova_classification = '3' AND sc.processing_risk <> 'Moderate')
-    OR (sc.nova_classification IN ('1', '2') AND sc.processing_risk <> 'Low')
-  );
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Test 10: Scoring version consistency
---          All scores should be v3.2
+-- Test 10: (removed — scoring_version column dropped)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT p.product_id, p.brand, p.product_name,
-       sc.scoring_version,
-       'INCORRECT SCORING VERSION' AS issue
-FROM products p
-JOIN scores sc ON sc.product_id = p.product_id
-WHERE p.is_deprecated IS NOT TRUE
-  AND (sc.scoring_version IS NULL OR sc.scoring_version <> 'v3.2');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 11: Known product regression test (Top Chips Faliste)
