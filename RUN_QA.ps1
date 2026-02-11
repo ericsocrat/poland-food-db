@@ -11,6 +11,9 @@
         5. QA__api_surfaces.sql (8 API contract validation checks — blocking)
         6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
         7. QA__cross_validation.sql (6 cross-validation checks — blocking)
+        8. QA__data_quality.sql (25 data quality & plausibility checks — blocking)
+        9. QA__referential_integrity.sql (15 referential integrity checks — blocking)
+       10. QA__view_consistency.sql (10 view & function consistency checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suite 3 is informational and does not affect the exit code.
@@ -394,6 +397,138 @@ else {
     }
 }
 
+# ─── Test 8: Data Quality & Plausibility ───────────────────────────────────
+
+$test8File = Join-Path $QA_DIR "QA__data_quality.sql"
+if (-not (Test-Path $test8File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 8: Data Quality (file not found)" -ForegroundColor DarkYellow
+    $test8Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 8: Data Quality (25 checks)..." -ForegroundColor Yellow
+
+    $sw8 = [System.Diagnostics.Stopwatch]::StartNew()
+    $test8Content = Get-Content $test8File -Raw
+    $test8Output = Invoke-Psql -InputSql $test8Content -TuplesOnly
+
+    if ($LASTEXITCODE -ne 0) {
+        $sw8.Stop()
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test8Output" -ForegroundColor DarkRed
+        $test8Pass = $false
+        $jsonResult.suites += @{ name = "Data Quality"; suite_id = "data_quality"; checks = 25; status = "error"; violations = @(); runtime_ms = [math]::Round($sw8.Elapsed.TotalMilliseconds) }
+    }
+    else {
+        $sw8.Stop()
+        $test8Lines = ($test8Output | Out-String).Trim()
+        $test8Violations = ($test8Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test8Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (25/25 — zero violations) [$([math]::Round($sw8.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            $test8Pass = $true
+            $jsonResult.suites += @{ name = "Data Quality"; suite_id = "data_quality"; checks = 25; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw8.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 25; $jsonResult.summary.passed += 25
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test8Lines -ForegroundColor DarkRed
+            $test8Pass = $false
+            $violationList8 = ($test8Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "Data Quality"; suite_id = "data_quality"; checks = 25; status = "fail"; violations = @($violationList8); runtime_ms = [math]::Round($sw8.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 25; $jsonResult.summary.failed += $violationList8.Count; $jsonResult.summary.passed += (25 - $violationList8.Count)
+        }
+    }
+}
+
+# ─── Test 9: Referential Integrity ─────────────────────────────────────────
+
+$test9File = Join-Path $QA_DIR "QA__referential_integrity.sql"
+if (-not (Test-Path $test9File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 9: Referential Integrity (file not found)" -ForegroundColor DarkYellow
+    $test9Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 9: Referential Integrity (15 checks)..." -ForegroundColor Yellow
+
+    $sw9 = [System.Diagnostics.Stopwatch]::StartNew()
+    $test9Content = Get-Content $test9File -Raw
+    $test9Output = Invoke-Psql -InputSql $test9Content -TuplesOnly
+
+    if ($LASTEXITCODE -ne 0) {
+        $sw9.Stop()
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test9Output" -ForegroundColor DarkRed
+        $test9Pass = $false
+        $jsonResult.suites += @{ name = "Referential Integrity"; suite_id = "referential"; checks = 15; status = "error"; violations = @(); runtime_ms = [math]::Round($sw9.Elapsed.TotalMilliseconds) }
+    }
+    else {
+        $sw9.Stop()
+        $test9Lines = ($test9Output | Out-String).Trim()
+        $test9Violations = ($test9Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test9Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (15/15 — zero violations) [$([math]::Round($sw9.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            $test9Pass = $true
+            $jsonResult.suites += @{ name = "Referential Integrity"; suite_id = "referential"; checks = 15; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw9.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 15; $jsonResult.summary.passed += 15
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test9Lines -ForegroundColor DarkRed
+            $test9Pass = $false
+            $violationList9 = ($test9Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "Referential Integrity"; suite_id = "referential"; checks = 15; status = "fail"; violations = @($violationList9); runtime_ms = [math]::Round($sw9.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 15; $jsonResult.summary.failed += $violationList9.Count; $jsonResult.summary.passed += (15 - $violationList9.Count)
+        }
+    }
+}
+
+# ─── Test 10: View & Function Consistency ──────────────────────────────────
+
+$test10File = Join-Path $QA_DIR "QA__view_consistency.sql"
+if (-not (Test-Path $test10File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 10: View Consistency (file not found)" -ForegroundColor DarkYellow
+    $test10Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 10: View & Function Consistency (10 checks)..." -ForegroundColor Yellow
+
+    $sw10 = [System.Diagnostics.Stopwatch]::StartNew()
+    $test10Content = Get-Content $test10File -Raw
+    $test10Output = Invoke-Psql -InputSql $test10Content -TuplesOnly
+
+    if ($LASTEXITCODE -ne 0) {
+        $sw10.Stop()
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test10Output" -ForegroundColor DarkRed
+        $test10Pass = $false
+        $jsonResult.suites += @{ name = "View Consistency"; suite_id = "views"; checks = 10; status = "error"; violations = @(); runtime_ms = [math]::Round($sw10.Elapsed.TotalMilliseconds) }
+    }
+    else {
+        $sw10.Stop()
+        $test10Lines = ($test10Output | Out-String).Trim()
+        $test10Violations = ($test10Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test10Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (10/10 — zero violations) [$([math]::Round($sw10.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            $test10Pass = $true
+            $jsonResult.suites += @{ name = "View Consistency"; suite_id = "views"; checks = 10; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw10.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 10; $jsonResult.summary.passed += 10
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test10Lines -ForegroundColor DarkRed
+            $test10Pass = $false
+            $violationList10 = ($test10Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "View Consistency"; suite_id = "views"; checks = 10; status = "fail"; violations = @($violationList10); runtime_ms = [math]::Round($sw10.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 10; $jsonResult.summary.failed += $violationList10.Count; $jsonResult.summary.passed += (10 - $violationList10.Count)
+        }
+    }
+}
+
 # ─── Database Inventory ─────────────────────────────────────────────────────
 
 Write-Host ""
@@ -420,7 +555,7 @@ Write-Host ($invOutput | Out-String).Trim() -ForegroundColor DarkGray
 
 # ─── Summary ────────────────────────────────────────────────────────────────
 
-$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass -and $test6Pass -and $test7Pass
+$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass -and $test6Pass -and $test7Pass -and $test8Pass -and $test9Pass -and $test10Pass
 $warnFail = $FailOnWarn -and $hasWarnings
 $jsonResult.overall = if (-not $allPass) { "fail" } elseif ($warnFail) { "warn" } else { "pass" }
 
@@ -485,6 +620,9 @@ else {
     Write-Host "    Suite 5 (API):          $(if ($test5Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test5Pass) { "Green" } else { "Red" })
     Write-Host "    Suite 6 (Confidence):   $(if ($test6Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test6Pass) { "Green" } else { "Red" })
     Write-Host "    Suite 7 (CrossVal):     $(if ($test7Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test7Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 8 (DataQuality):  $(if ($test8Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test8Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 9 (RefInteg):     $(if ($test9Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test9Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 10 (Views):       $(if ($test10Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test10Pass) { "Green" } else { "Red" })
     Write-Host ""
     if (-not $allPass) { exit 1 }
     if ($warnFail) { exit 2 }

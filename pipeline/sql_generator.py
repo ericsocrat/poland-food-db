@@ -470,17 +470,13 @@ def _gen_05_source_provenance(category: str, products: list[dict], today: str) -
 
         # Source URL: if we have an EAN, link to the OFF product page
         if ean:
-            source_url = _sql_text(
-                f"https://world.openfoodfacts.org/product/{ean}"
-            )
+            source_url = _sql_text(f"https://world.openfoodfacts.org/product/{ean}")
             source_ean = _sql_text(ean)
         else:
             source_url = "null"
             source_ean = "null"
 
-        prov_lines.append(
-            f"    ({brand}, {name}, {source_url}, {source_ean}){comma}"
-        )
+        prov_lines.append(f"    ({brand}, {name}, {source_url}, {source_ean}){comma}")
 
         # Source nutrition values
         vals = ", ".join(

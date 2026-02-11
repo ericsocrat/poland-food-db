@@ -222,7 +222,7 @@ Every change is validated against **83 automated critical checks** + 8 informati
 
 **Test files**: `db/qa/QA__*.sql` — Run via `.\RUN_QA.ps1`
 
-**CI**: All 89 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 139 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
