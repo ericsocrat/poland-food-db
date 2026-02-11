@@ -123,3 +123,36 @@ LEFT JOIN (
 ) pt ON pt.product_id = m.product_id
 WHERE COALESCE(m.trace_count, 0) != COALESCE(pt.cnt, 0);
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 11. mv_ingredient_frequency row count = used ingredient_ref count
+--     MV uses INNER JOIN to product_ingredient + non-deprecated products,
+--     so unused ingredients are excluded by design.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '11. mv_ingredient_frequency row count matches used ingredients' AS check_name,
+       ABS(
+         (SELECT COUNT(*) FROM mv_ingredient_frequency) -
+         (SELECT COUNT(DISTINCT ir.ingredient_id)
+          FROM ingredient_ref ir
+          JOIN product_ingredient pi ON pi.ingredient_id = ir.ingredient_id
+          JOIN products p ON p.product_id = pi.product_id AND p.is_deprecated IS NOT TRUE)
+       ) AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 12. mv_ingredient_frequency product_count accuracy (spot-check top-5)
+--     For each of the 5 most-used ingredients, the MV count should match
+--     the actual product_ingredient count.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '12. mv_ingredient_frequency counts accurate' AS check_name,
+       COUNT(*) AS violations
+FROM (
+  SELECT mv.ingredient_id, mv.product_count,
+         (SELECT COUNT(DISTINCT pi.product_id)
+          FROM product_ingredient pi
+          JOIN products p ON p.product_id = pi.product_id AND p.is_deprecated IS NOT TRUE
+          WHERE pi.ingredient_id = mv.ingredient_id) AS actual
+  FROM mv_ingredient_frequency mv
+  ORDER BY mv.product_count DESC
+  LIMIT 5
+) x
+WHERE x.product_count <> x.actual;
+

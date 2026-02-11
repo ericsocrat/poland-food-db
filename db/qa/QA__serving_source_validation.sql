@@ -7,12 +7,13 @@
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. serving_basis must be in allowed domain
---    Valid values: 'per 100 g', 'per 100 ml', 'per serving'
+--    Valid values: 'per 100 g', 'per 100 ml', 'per serving', 'per piece'
+--    (matches DB CHECK constraint chk_servings_basis)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '1. serving_basis in valid domain' AS check_name,
        COUNT(*) AS violations
 FROM servings
-WHERE serving_basis NOT IN ('per 100 g', 'per 100 ml', 'per serving');
+WHERE serving_basis NOT IN ('per 100 g', 'per 100 ml', 'per serving', 'per piece');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. serving_amount_g_ml must be positive for per-serving rows
@@ -36,11 +37,12 @@ WHERE serving_basis = 'per serving'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 4. product_sources.source_type in valid domain
+--    (matches DB CHECK constraint chk_ps_source_type)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '4. source_type in valid domain' AS check_name,
        COUNT(*) AS violations
 FROM product_sources
-WHERE source_type NOT IN ('off_api', 'manual', 'label', 'retailer');
+WHERE source_type NOT IN ('off_api', 'off_search', 'manual', 'label_scan', 'retailer_api');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 5. product_sources.confidence_pct in [0, 100]
@@ -121,4 +123,46 @@ SELECT '12. controversies in valid domain' AS check_name,
 FROM products
 WHERE is_deprecated IS NOT TRUE
   AND controversies NOT IN ('none', 'palm oil', 'minor', 'moderate', 'serious');
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 13. Every product with sources must have at least one primary source
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '13. at least one primary source per product' AS check_name,
+       COUNT(*) AS violations
+FROM (
+  SELECT ps.product_id
+  FROM product_sources ps
+  GROUP BY ps.product_id
+  HAVING bool_or(is_primary) IS NOT TRUE
+) x;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 14. store_availability must not be empty string for active products
+--     NULL is allowed (store info not yet collected).
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '14. store_availability not empty string' AS check_name,
+       COUNT(*) AS violations
+FROM products
+WHERE is_deprecated IS NOT TRUE
+  AND store_availability IS NOT NULL
+  AND trim(store_availability) = '';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 15. store_availability must not have leading/trailing whitespace
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '15. store_availability is trimmed' AS check_name,
+       COUNT(*) AS violations
+FROM products
+WHERE is_deprecated IS NOT TRUE
+  AND store_availability IS NOT NULL
+  AND store_availability <> trim(store_availability);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 16. source_url should be a valid URL format (http/https)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '16. source_url is valid URL format' AS check_name,
+       COUNT(*) AS violations
+FROM product_sources
+WHERE source_url IS NOT NULL
+  AND source_url !~ '^https?://';
 

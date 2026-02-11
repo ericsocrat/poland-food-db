@@ -170,3 +170,13 @@ SELECT '17. refresh_all_materialized_views returns valid JSON' AS check_name,
             THEN 0 ELSE 1 END AS violations
 FROM refresh_all_materialized_views() AS result;
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 18. nutrition_facts.serving_id must reference an existing servings row
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '18. nutrition_facts serving_id FK valid' AS check_name,
+       COUNT(*) AS violations
+FROM nutrition_facts nf
+WHERE NOT EXISTS (
+  SELECT 1 FROM servings s WHERE s.serving_id = nf.serving_id
+);
+

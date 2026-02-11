@@ -41,13 +41,13 @@ JOIN products p ON p.product_id = s.product_id AND p.is_deprecated IS NOT TRUE
 WHERE s.nova_classification::int NOT IN (1, 2, 3, 4);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 4. unhealthiness_score in [0, 100]
+-- 4. unhealthiness_score in [1, 100] (matches DB CHECK chk_scores_unhealthiness_range)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '4. unhealthiness_score in [0, 100]' AS check_name,
+SELECT '4. unhealthiness_score in [1, 100]' AS check_name,
        COUNT(*) AS violations
 FROM scores s
 JOIN products p ON p.product_id = s.product_id AND p.is_deprecated IS NOT TRUE
-WHERE s.unhealthiness_score::numeric < 0 OR s.unhealthiness_score::numeric > 100;
+WHERE s.unhealthiness_score::numeric < 1 OR s.unhealthiness_score::numeric > 100;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 5. data_completeness_pct in [0, 100]
@@ -89,14 +89,16 @@ WHERE p.is_deprecated IS NOT TRUE
   AND p.product_type NOT IN ('Grocery', 'Ready-to-eat');
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 9. prep_method must be in allowed domain
+-- 9. prep_method must be in allowed domain (matches DB CHECK chk_products_prep_method)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '9. prep_method in valid domain' AS check_name,
        COUNT(*) AS violations
 FROM products p
 WHERE p.is_deprecated IS NOT TRUE
   AND p.prep_method NOT IN (
-    'not-applicable', 'baked', 'fried', 'smoked', 'none', 'marinated'
+    'air-popped', 'baked', 'fried', 'deep-fried', 'grilled', 'roasted',
+    'smoked', 'steamed', 'marinated', 'pasteurized', 'fermented',
+    'dried', 'raw', 'none', 'not-applicable'
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════
