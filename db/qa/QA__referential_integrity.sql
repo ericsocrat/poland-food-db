@@ -56,44 +56,25 @@ WHERE ir.concern_tier IS NOT NULL
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 6. sources.category must match a category_ref entry
+-- 6. product_sources.confidence_pct in valid range [0,100]
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '6. sources.category in category_ref' AS check_name,
-       COUNT(*) AS violations
-FROM sources s
-WHERE s.category IS NOT NULL
-  AND NOT EXISTS (
-      SELECT 1 FROM category_ref cr WHERE cr.category = s.category
-  );
-
--- ═══════════════════════════════════════════════════════════════════════════
--- 7. product_sources.confidence_pct in valid range [0,100]
--- ═══════════════════════════════════════════════════════════════════════════
-SELECT '7. product_sources confidence_pct in [0,100]' AS check_name,
+SELECT '6. product_sources confidence_pct in [0,100]' AS check_name,
        COUNT(*) AS violations
 FROM product_sources
 WHERE confidence_pct < 0 OR confidence_pct > 100;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 8. product_sources.source_type in valid domain
+-- 7. product_sources.source_type is off_api
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '8. product_sources source_type valid' AS check_name,
+SELECT '7. product_sources source_type valid' AS check_name,
        COUNT(*) AS violations
 FROM product_sources
-WHERE source_type NOT IN ('off_api', 'off_search', 'manual', 'label_scan', 'retailer_api');
+WHERE source_type != 'off_api';
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 9. source_nutrition.source_type in valid domain
+-- 8. ingredient_ref.vegan/vegetarian/from_palm_oil in valid domain
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '9. source_nutrition source_type valid' AS check_name,
-       COUNT(*) AS violations
-FROM source_nutrition
-WHERE source_type NOT IN ('off_api', 'off_search', 'manual', 'label_scan', 'retailer_api');
-
--- ═══════════════════════════════════════════════════════════════════════════
--- 10. ingredient_ref.vegan/vegetarian/from_palm_oil in valid domain
--- ═══════════════════════════════════════════════════════════════════════════
-SELECT '10. ingredient_ref enum values valid' AS check_name,
+SELECT '8. ingredient_ref enum values valid' AS check_name,
        COUNT(*) AS violations
 FROM ingredient_ref
 WHERE (vegan NOT IN ('yes', 'no', 'maybe', 'unknown'))
@@ -101,9 +82,9 @@ WHERE (vegan NOT IN ('yes', 'no', 'maybe', 'unknown'))
    OR (from_palm_oil NOT IN ('yes', 'no', 'maybe', 'unknown'));
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 11. Every per-100g serving must have a nutrition_facts row
+-- 9. Every per-100g serving must have a nutrition_facts row
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '11. per-100g serving has nutrition_facts' AS check_name,
+SELECT '9. per-100g serving has nutrition_facts' AS check_name,
        COUNT(*) AS violations
 FROM servings sv
 LEFT JOIN nutrition_facts nf ON nf.serving_id = sv.serving_id
@@ -111,36 +92,36 @@ WHERE sv.serving_basis IN ('per 100 g', 'per 100 ml')
   AND nf.product_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 12. serving_amount_g_ml must be positive when set
+-- 10. serving_amount_g_ml must be positive when set
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '12. serving_amount positive' AS check_name,
+SELECT '10. serving_amount positive' AS check_name,
        COUNT(*) AS violations
 FROM servings
 WHERE serving_amount_g_ml IS NOT NULL
   AND serving_amount_g_ml <= 0;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 13. product_ingredient.percent_estimate non-negative
+-- 11. product_ingredient.percent_estimate non-negative
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '13. percent_estimate non-negative' AS check_name,
+SELECT '11. percent_estimate non-negative' AS check_name,
        COUNT(*) AS violations
 FROM product_ingredient
 WHERE percent_estimate IS NOT NULL
   AND percent_estimate < 0;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 14. product_ingredient.percent in [0,100]
+-- 12. product_ingredient.percent in [0,100]
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '14. percent in [0,100]' AS check_name,
+SELECT '12. percent in [0,100]' AS check_name,
        COUNT(*) AS violations
 FROM product_ingredient
 WHERE percent IS NOT NULL
   AND (percent < 0 OR percent > 100);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 15. Each product must have exactly one per-100g (or per-100ml) serving
+-- 13. Each product must have exactly one per-100g (or per-100ml) serving
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '15. exactly one per-100g serving per active product' AS check_name,
+SELECT '13. exactly one per-100g serving per active product' AS check_name,
        COUNT(*) AS violations
 FROM (
     SELECT p.product_id, COUNT(sv.serving_id) AS cnt
@@ -153,9 +134,9 @@ FROM (
 ) bad;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 16. nutri_score_ref has expected labels (A-E + UNKNOWN + NOT-APPLICABLE)
+-- 14. nutri_score_ref has expected labels (A-E + UNKNOWN + NOT-APPLICABLE)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '16. nutri_score_ref has expected labels' AS check_name,
+SELECT '14. nutri_score_ref has expected labels' AS check_name,
        COUNT(*) AS violations
 FROM (
     SELECT (SELECT COUNT(*) FROM nutri_score_ref) AS actual,
@@ -164,9 +145,9 @@ FROM (
 WHERE actual != expected;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 17. concern_tier_ref has expected tiers (0-3)
+-- 15. concern_tier_ref has expected tiers (0-3)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '17. concern_tier_ref has expected tiers' AS check_name,
+SELECT '15. concern_tier_ref has expected tiers' AS check_name,
        COUNT(*) AS violations
 FROM (
     SELECT (SELECT COUNT(*) FROM concern_tier_ref) AS actual,
@@ -175,16 +156,16 @@ FROM (
 WHERE actual != expected;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 18. country_ref has PL entry
+-- 16. country_ref has PL entry
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '18. country_ref has PL entry' AS check_name,
+SELECT '16. country_ref has PL entry' AS check_name,
        CASE WHEN EXISTS (SELECT 1 FROM country_ref WHERE country_code = 'PL')
             THEN 0 ELSE 1 END AS violations;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 19. refresh_all_materialized_views returns valid JSON
+-- 17. refresh_all_materialized_views returns valid JSON
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '19. refresh_all_materialized_views returns valid JSON' AS check_name,
+SELECT '17. refresh_all_materialized_views returns valid JSON' AS check_name,
        CASE WHEN result ? 'refreshed_at' AND result ? 'views' AND result ? 'total_ms'
             THEN 0 ELSE 1 END AS violations
 FROM refresh_all_materialized_views() AS result;

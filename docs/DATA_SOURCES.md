@@ -1,7 +1,8 @@
 # Data Sources
 
-> **Last updated:** 2026-02-10
+> **Last updated:** 2026-02-11
 > **Scope:** Poland (`PL`) only
+> **Active sources:** 1 type (off_api), 560 entries
 > **Related:** See `RESEARCH_WORKFLOW.md` for the full step-by-step data collection process,
 > and `SCORING_METHODOLOGY.md` for how collected data is scored.
 
@@ -149,8 +150,8 @@ Manufacturer websites are **Priority 2** sources. They often publish full per-10
 | 3    | Confirm nutrition table is per 100g (not per serving)      |
 | 4    | Extract all available fields (EU-7 + voluntary)            |
 | 5    | Cross-validate against OFF and/or label if available       |
-| 6    | Record URL + access date in `sources` table                |
-| 7    | Set `source_type = 'manufacturer'`                         |
+| 6    | Record URL + access date in `product_sources` table            |
+| 7    | Set `source_type = 'off_api'`                                  |
 
 ---
 
@@ -364,7 +365,7 @@ The `product_sources` table tracks provenance at the **individual product** leve
 | ------------------- | ------------------------------------------------------------------------------------ |
 | `product_source_id` | Primary key (identity)                                                               |
 | `product_id`        | FK → products                                                                        |
-| `source_type`       | `'off_api'`, `'off_search'`, `'manual'`, `'label_scan'`, `'retailer_api'`            |
+| `source_type`       | Currently `'off_api'` only                                                                   |
 | `source_url`        | URL to the specific product page (e.g., OFF product page)                            |
 | `source_ean`        | EAN used to look up this product                                                     |
 | `fields_populated`  | Array of fields sourced from this source (e.g., `{nutrition,ingredients,additives}`) |
@@ -377,33 +378,9 @@ The `product_sources` table tracks provenance at the **individual product** leve
 - Unique on `(product_id, source_type, source_url)` — no duplicate source entries
 - At most one `is_primary = true` per product
 - `confidence_pct` between 0 and 100
+- `source_type` CHECK constraint: `'off_api'` only
 
-### Legacy Category Registry (`sources`)
-
-The legacy `sources` table records category-level acquisition metadata (20 rows, one per category). It is **no longer joined by `v_master`** but is retained as a registry of how each category's data was originally sourced.
-
-| Column        | Purpose                                                                                                     |
-| ------------- | ----------------------------------------------------------------------------------------------------------- |
-| `source_id`   | Primary key                                                                                                 |
-| `brand`       | Which brand this source covers                                                                              |
-| `source_type` | `'label'`, `'manufacturer'`, `'openfoodfacts'`, `'government'`, `'retailer'`, `'estimated'`, `'scientific'` |
-| `ref`         | Short reference (e.g., "Biedronka label, 2026-01" or "IŻŻ food comp. tables")                               |
-| `url`         | URL if applicable                                                                                           |
-| `notes`       | Any caveats, version notes, or cross-validation results                                                     |
-
-### Source Type Definitions
-
-| `source_type`   | When to use                                                     |
-| --------------- | --------------------------------------------------------------- |
-| `label`         | Physical product label photographed or read in-store            |
-| `manufacturer`  | Manufacturer's official PL website product page                 |
-| `openfoodfacts` | Open Food Facts entry (verified PL barcode)                     |
-| `government`    | IŻŻ / NCEZ / EFSA food composition tables                       |
-| `retailer`      | Polish retailer website (Biedronka, Lidl, Auchan, etc.)         |
-| `estimated`     | Category average or interpolated value                          |
-| `scientific`    | Scientific publication (used for methodology, not product data) |
-
-**Rule:** When adding a new product, create a corresponding `product_sources` row with the appropriate `source_type`, `source_url`, and `confidence_pct`. Set `is_primary = true` for the most authoritative source. Products sourced only from Open Food Facts should be flagged for future cross-validation against manufacturer websites or labels.
+**Rule:** When adding a new product, create a corresponding `product_sources` row with `source_type = 'off_api'`, `source_url`, and `confidence_pct`. Set `is_primary = true`. All products currently use Open Food Facts as the single source.
 
 ---
 

@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (89 critical checks + 8 informational)
+# All tests (144 critical checks + 14 informational)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -87,15 +87,18 @@ supabase start
 | **Snacks**                     |       28 |     26 | 13–55       |
 | **Sweets**                     |       28 |     17 | 28–55       |
 | **Żabka**                      |       28 |      3 | 15–43       |
-**Test Coverage**: 83 automated critical checks + 8 data quality reports
+**Test Coverage**: 144 automated critical checks + 14 data quality reports
 - 35 data integrity checks (nulls, orphans, foreign keys, duplicates, nutrition sanity, category invariant, view consistency, energy cross-check, product-source provenance) + 6 informational
 - 29 scoring formula validation checks (ranges, flags, NOVA, domain validation, confidence, regression tests)
 - 1 EAN checksum validation (all barcodes verified)
-- 8 API surface validation checks (contract validation, JSON structure, listing consistency)
+- 14 API surface validation checks (contract validation, JSON structure, listing consistency)
 - 10 confidence scoring checks (range, distribution, component totals, band assignment)
+- 28 data quality checks (completeness, constraints, domains)
+- 17 referential integrity checks (FK validation, domain constraints)
+- 10 view consistency checks
 - 8 source coverage & confidence tracking reports (informational, non-blocking)
 
-**All critical tests passing**: ✅ 83/83
+**All critical tests passing**: ✅ 144/144
 
 **EAN Coverage**: 558/560 active products (99.6%) have valid EAN-8/EAN-13 barcodes
 
@@ -133,7 +136,9 @@ poland-food-db/
 │   │   ├── QA__scoring_formula_tests.sql # 29 algorithm tests
 │   │   ├── QA__api_surfaces.sql          # 8 API contract checks
 │   │   ├── QA__confidence_scoring.sql    # 10 confidence scoring checks
-│   │   ├── QA__cross_validation.sql      # 6 cross-validation checks
+│   │   ├── QA__data_quality.sql          # 28 data quality checks
+│   │   ├── QA__referential_integrity.sql # 17 referential integrity checks
+│   │   ├── QA__view_consistency.sql      # 10 view consistency checks
     │   └── QA__source_coverage.sql       # 8 data quality reports
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
@@ -162,7 +167,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **83 automated critical checks** + 8 informational data quality reports:
+Every change is validated against **144 automated critical checks** + 14 informational data quality reports:
 
 ### Data Integrity (35 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -222,7 +227,7 @@ Every change is validated against **83 automated critical checks** + 8 informati
 
 **Test files**: `db/qa/QA__*.sql` — Run via `.\RUN_QA.ps1`
 
-**CI**: All 153 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 144 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -316,18 +321,9 @@ EAN codes enable validation against:
 - Retailer catalogs (Biedronka, Lidl, Żabka)
 - Physical product packaging
 
-### Multi-Source Workflow
+### Source Provenance
 
-**Current sources**:
-- Primary: Open Food Facts (openfoodfacts.org) — 560/560 active products
-- Secondary: None yet — all products pending cross-validation
-
-**Planned sources** (see [DATA_SOURCES.md](docs/DATA_SOURCES.md)):
-1. Physical product labels (highest priority)
-2. Manufacturer websites
-3. Polish government databases (IŻŻ, NCEZ)
-4. Scientific literature (NOVA classification, Nutri-Score papers)
-5. Retailer websites
+All 560 products are sourced from the **Open Food Facts API** (`off_api`). Each product has a corresponding entry in the `product_sources` table with `source_type = 'off_api'`, source URL, EAN, confidence percentage, and collection timestamp.
 
 **Research workflow**: See [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) for step-by-step data collection process.
 
@@ -351,7 +347,7 @@ EAN codes enable validation against:
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 83/83 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 144/144 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---

@@ -254,12 +254,12 @@ WHERE (SELECT COUNT(*) FROM v_master) !=
       (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 22. Duplicate source rows (prevents v_master fan-out)
+-- 22. Duplicate product_sources rows (prevents v_master fan-out)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT brand, COUNT(*) AS row_count,
-       'DUPLICATE SOURCE' AS issue
-FROM sources
-GROUP BY brand
+SELECT ps.product_id, COUNT(*) AS row_count,
+       'DUPLICATE PRODUCT SOURCE' AS issue
+FROM product_sources ps
+GROUP BY ps.product_id
 HAVING COUNT(*) > 1;
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -423,7 +423,7 @@ SELECT
     (SELECT COUNT(*) FROM product_ingredient) AS total_product_ingredients,
     (SELECT COUNT(*) FROM product_allergen) AS total_allergen_rows,
     (SELECT COUNT(*) FROM product_trace)    AS total_trace_rows,
-    (SELECT COUNT(*) FROM sources)          AS total_source_rows;
+    (SELECT COUNT(*) FROM product_sources)  AS total_product_source_rows;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 38. Energy cross-check: declared vs computed calories (informational)

@@ -293,26 +293,18 @@ FROM product_sources
 WHERE collected_at > NOW();
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 27. collected_at not in the future (source_nutrition)
+-- 27. product_type not null for active products
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '27. source_nutrition collected_at not in future' AS check_name,
-       COUNT(*) AS violations
-FROM source_nutrition
-WHERE collected_at > NOW();
-
--- ═══════════════════════════════════════════════════════════════════════════
--- 28. product_type not null for active products
--- ═══════════════════════════════════════════════════════════════════════════
-SELECT '28. product_type not null for active products' AS check_name,
+SELECT '27. product_type not null for active products' AS check_name,
        COUNT(*) AS violations
 FROM products
 WHERE is_deprecated IS NOT TRUE
   AND product_type IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 29. concern_reason populated for all tier 1-3 ingredients
+-- 28. concern_reason populated for all tier 1-3 ingredients
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '29. concern_reason populated for tier 1-3 ingredients' AS check_name,
+SELECT '28. concern_reason populated for tier 1-3 ingredients' AS check_name,
        COUNT(*) AS violations
 FROM ingredient_ref
 WHERE concern_tier >= 1
