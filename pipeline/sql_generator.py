@@ -1,11 +1,12 @@
 """SQL file generator for the poland-food-db pipeline.
 
-Generates the 4-file SQL pattern used by every category pipeline:
+Generates the 5-file SQL pattern used by every category pipeline:
 
 1. ``PIPELINE__{cat}__01_insert_products.sql``
 2. ``PIPELINE__{cat}__02_add_servings.sql``
 3. ``PIPELINE__{cat}__03_add_nutrition.sql``
 4. ``PIPELINE__{cat}__04_scoring.sql``
+5. ``PIPELINE__{cat}__05_source_provenance.sql``
 """
 
 from __future__ import annotations
@@ -450,6 +451,106 @@ where p.product_id = sc.product_id
     return scoring_sql
 
 
+def _gen_05_source_provenance(category: str, products: list[dict], today: str) -> str:
+    """Generate file 05 — source provenance & source nutrition.
+
+    Populates ``product_sources`` and ``source_nutrition`` for every product
+    in the category, recording where the data came from and storing a
+    per-source nutrition snapshot for cross-validation.
+    """
+    # Build (brand, product_name, ean, source_url) values
+    prov_lines: list[str] = []
+    nutr_lines: list[str] = []
+
+    for i, p in enumerate(products):
+        brand = _sql_text(p["brand"])
+        name = _sql_text(p["product_name"])
+        ean = p.get("ean") or ""
+        comma = "," if i < len(products) - 1 else ""
+
+        # Source URL: if we have an EAN, link to the OFF product page
+        if ean:
+            source_url = _sql_text(
+                f"https://world.openfoodfacts.org/product/{ean}"
+            )
+            source_ean = _sql_text(ean)
+        else:
+            source_url = "null"
+            source_ean = "null"
+
+        prov_lines.append(
+            f"    ({brand}, {name}, {source_url}, {source_ean}){comma}"
+        )
+
+        # Source nutrition values
+        vals = ", ".join(
+            _sql_num(p[k])
+            for k in (
+                "calories",
+                "total_fat_g",
+                "saturated_fat_g",
+                "trans_fat_g",
+                "carbs_g",
+                "sugars_g",
+                "fibre_g",
+                "protein_g",
+                "salt_g",
+            )
+        )
+        nutr_lines.append(f"    ({brand}, {name}, {vals}){comma}")
+
+    prov_block = "\n".join(prov_lines)
+    nutr_block = "\n".join(nutr_lines)
+
+    return f"""\
+-- PIPELINE ({category}): source provenance & cross-validation data
+-- Generated: {today}
+
+-- 1. Populate product_sources (one row per product from OFF API)
+INSERT INTO product_sources
+       (product_id, source_type, source_url, source_ean, fields_populated,
+        confidence_pct, is_primary)
+SELECT p.product_id,
+       'off_api',
+       d.source_url,
+       d.source_ean,
+       ARRAY['product_name','brand','category','product_type','ean',
+             'prep_method','store_availability','controversies',
+             'calories','total_fat_g','saturated_fat_g',
+             'carbohydrates_g','sugars_g','protein_g',
+             'fiber_g','salt_g','sodium_mg','trans_fat_g'],
+       90,
+       true
+FROM (
+  VALUES
+{prov_block}
+) AS d(brand, product_name, source_url, source_ean)
+JOIN products p ON p.country = 'PL' AND p.brand = d.brand
+  AND p.product_name = d.product_name
+  AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE
+ON CONFLICT ON CONSTRAINT uq_product_source_entry DO NOTHING;
+
+-- 2. Populate source_nutrition (OFF API nutrition snapshot for cross-validation)
+INSERT INTO source_nutrition
+       (product_id, source_type, calories, total_fat_g, saturated_fat_g,
+        trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g, notes)
+SELECT p.product_id,
+       'off_api',
+       d.calories, d.total_fat_g, d.saturated_fat_g,
+       d.trans_fat_g, d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g,
+       'Pipeline-generated from OFF API data'
+FROM (
+  VALUES
+{nutr_block}
+) AS d(brand, product_name, calories, total_fat_g, saturated_fat_g,
+       trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
+JOIN products p ON p.country = 'PL' AND p.brand = d.brand
+  AND p.product_name = d.product_name
+  AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE
+ON CONFLICT ON CONSTRAINT uq_source_nutrition_entry DO NOTHING;
+"""
+
+
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
@@ -460,7 +561,7 @@ def generate_pipeline(
     products: list[dict],
     output_dir: str,
 ) -> list[Path]:
-    """Generate 4 SQL pipeline files for *category*.
+    """Generate 5 SQL pipeline files for *category*.
 
     Parameters
     ----------
@@ -474,7 +575,7 @@ def generate_pipeline(
     Returns
     -------
     list[Path]
-        Paths of the four generated files.
+        Paths of the five generated files.
     """
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -505,5 +606,12 @@ def generate_pipeline(
     path04 = out / f"PIPELINE__{slug}__04_scoring.sql"
     path04.write_text(_gen_04_scoring(category, products, today), encoding="utf-8")
     files.append(path04)
+
+    # 05 — source provenance & source nutrition
+    path05 = out / f"PIPELINE__{slug}__05_source_provenance.sql"
+    path05.write_text(
+        _gen_05_source_provenance(category, products, today), encoding="utf-8"
+    )
+    files.append(path05)
 
     return files

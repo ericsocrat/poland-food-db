@@ -10,6 +10,7 @@
         4. validate_eans.py (EAN-13 checksum validation — blocking)
         5. QA__api_surfaces.sql (8 API contract validation checks — blocking)
         6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
+        7. QA__cross_validation.sql (6 cross-validation checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suite 3 is informational and does not affect the exit code.
@@ -349,6 +350,50 @@ else {
     }
 }
 
+# ─── Test 7: Cross-Validation ──────────────────────────────────────────────
+
+$test7File = Join-Path $QA_DIR "QA__cross_validation.sql"
+if (-not (Test-Path $test7File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 7: Cross-Validation (file not found)" -ForegroundColor DarkYellow
+    $test7Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 7: Cross-Validation (6 checks)..." -ForegroundColor Yellow
+
+    $sw7 = [System.Diagnostics.Stopwatch]::StartNew()
+    $test7Content = Get-Content $test7File -Raw
+    $test7Output = Invoke-Psql -InputSql $test7Content -TuplesOnly
+
+    if ($LASTEXITCODE -ne 0) {
+        $sw7.Stop()
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test7Output" -ForegroundColor DarkRed
+        $test7Pass = $false
+        $jsonResult.suites += @{ name = "Cross-Validation"; suite_id = "cross_validation"; checks = 6; status = "error"; violations = @(); runtime_ms = [math]::Round($sw7.Elapsed.TotalMilliseconds) }
+    }
+    else {
+        $sw7.Stop()
+        $test7Lines = ($test7Output | Out-String).Trim()
+        $test7Violations = ($test7Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test7Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (6/6 — zero violations) [$([math]::Round($sw7.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            $test7Pass = $true
+            $jsonResult.suites += @{ name = "Cross-Validation"; suite_id = "cross_validation"; checks = 6; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw7.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 6; $jsonResult.summary.passed += 6
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test7Lines -ForegroundColor DarkRed
+            $test7Pass = $false
+            $violationList7 = ($test7Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "Cross-Validation"; suite_id = "cross_validation"; checks = 6; status = "fail"; violations = @($violationList7); runtime_ms = [math]::Round($sw7.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 6; $jsonResult.summary.failed += $violationList7.Count; $jsonResult.summary.passed += (6 - $violationList7.Count)
+        }
+    }
+}
+
 # ─── Database Inventory ─────────────────────────────────────────────────────
 
 Write-Host ""
@@ -375,7 +420,7 @@ Write-Host ($invOutput | Out-String).Trim() -ForegroundColor DarkGray
 
 # ─── Summary ────────────────────────────────────────────────────────────────
 
-$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass -and $test6Pass
+$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass -and $test6Pass -and $test7Pass
 $warnFail = $FailOnWarn -and $hasWarnings
 $jsonResult.overall = if (-not $allPass) { "fail" } elseif ($warnFail) { "warn" } else { "pass" }
 
@@ -439,6 +484,7 @@ else {
     Write-Host "    Suite 4 (EAN):          $(if ($test4Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test4Pass) { "Green" } else { "Red" })
     Write-Host "    Suite 5 (API):          $(if ($test5Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test5Pass) { "Green" } else { "Red" })
     Write-Host "    Suite 6 (Confidence):   $(if ($test6Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test6Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 7 (CrossVal):     $(if ($test7Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test7Pass) { "Green" } else { "Red" })
     Write-Host ""
     if (-not $allPass) { exit 1 }
     if ($warnFail) { exit 2 }

@@ -32,18 +32,20 @@ WHERE (confidence_band = 'high'   AND confidence_score < 80)
 SELECT '4. component sub-scores within max ranges' AS check_name,
        COUNT(*) AS violations
 FROM v_product_confidence
-WHERE nutrition_pts   < 0 OR nutrition_pts   > 30
-   OR ingredient_pts  < 0 OR ingredient_pts  > 25
-   OR source_pts      < 0 OR source_pts      > 20
-   OR ean_pts         < 0 OR ean_pts         > 10
-   OR allergen_pts    < 0 OR allergen_pts    > 10
-   OR serving_pts     < 0 OR serving_pts     > 5;
+WHERE nutrition_pts         < 0 OR nutrition_pts         > 30
+   OR ingredient_pts        < 0 OR ingredient_pts        > 25
+   OR source_pts            < 0 OR source_pts            > 20
+   OR cross_validation_pts  < 0 OR cross_validation_pts  > 5
+   OR ean_pts               < 0 OR ean_pts               > 10
+   OR allergen_pts          < 0 OR allergen_pts          > 10
+   OR serving_pts           < 0 OR serving_pts           > 5;
 
--- 5. Component sum equals confidence_score
+-- 5. Component sum equals confidence_score (capped at 100)
 SELECT '5. component sum equals confidence_score' AS check_name,
        COUNT(*) AS violations
 FROM v_product_confidence
-WHERE (nutrition_pts + ingredient_pts + source_pts + ean_pts + allergen_pts + serving_pts)
+WHERE LEAST(nutrition_pts + ingredient_pts + source_pts + cross_validation_pts
+            + ean_pts + allergen_pts + serving_pts, 100)
       != confidence_score;
 
 -- 6. compute_data_confidence() returns non-null for all active products

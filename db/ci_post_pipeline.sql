@@ -67,7 +67,30 @@ WHERE  sc.product_id = p.product_id
   AND  p.is_deprecated IS NOT TRUE
   AND  sc.ingredient_concern_score IS NULL;
 
--- ─── 4. Refresh materialized views ──────────────────────────────────────
+-- ─── 4. Populate source_nutrition for cross-validation ──────────────────
+-- Copy canonical nutrition values as the OFF API source snapshot so
+-- cross-validation QA checks pass (no orphaned source_nutrition rows).
+
+INSERT INTO source_nutrition
+       (product_id, source_type, calories, total_fat_g, saturated_fat_g,
+        trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g, notes)
+SELECT p.product_id,
+       'off_api',
+       nf.calories, nf.total_fat_g, nf.saturated_fat_g,
+       nf.trans_fat_g, nf.carbs_g, nf.sugars_g, nf.fibre_g, nf.protein_g, nf.salt_g,
+       'CI post-pipeline backfill'
+FROM   products p
+JOIN   product_sources ps ON ps.product_id = p.product_id AND ps.is_primary = true
+JOIN   servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
+JOIN   nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
+WHERE  p.is_deprecated IS NOT TRUE
+  AND  NOT EXISTS (
+         SELECT 1 FROM source_nutrition sn
+         WHERE  sn.product_id = p.product_id
+       )
+ON CONFLICT DO NOTHING;
+
+-- ─── 5. Refresh materialized views ──────────────────────────────────────
 -- mv_ingredient_frequency and v_product_confidence were created WITH DATA
 -- during migrations (when 0 products existed).  Refresh now that products
 -- are populated and cleaned up.

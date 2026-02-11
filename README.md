@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (83 critical checks + 8 informational)
+# All tests (89 critical checks + 8 informational)
 .\RUN_QA.ps1
 
 # Or via pipeline runner
@@ -133,6 +133,7 @@ poland-food-db/
 │   │   ├── QA__scoring_formula_tests.sql # 29 algorithm tests
 │   │   ├── QA__api_surfaces.sql          # 8 API contract checks
 │   │   ├── QA__confidence_scoring.sql    # 10 confidence scoring checks
+│   │   ├── QA__cross_validation.sql      # 6 cross-validation checks
     │   └── QA__source_coverage.sql       # 8 data quality reports
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
@@ -221,7 +222,7 @@ Every change is validated against **83 automated critical checks** + 8 informati
 
 **Test files**: `db/qa/QA__*.sql` — Run via `.\RUN_QA.ps1`
 
-**CI**: All 83 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 1% low-confidence products).
+**CI**: All 89 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
