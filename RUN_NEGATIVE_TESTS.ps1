@@ -13,10 +13,10 @@
 #>
 
 $CONTAINER = "supabase_db_poland-food-db"
-$DB_USER   = "postgres"
-$DB_NAME   = "postgres"
+$DB_USER = "postgres"
+$DB_NAME = "postgres"
 $SCRIPT_ROOT = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
-$SQL_FILE  = Join-Path (Join-Path $SCRIPT_ROOT "db") "qa\TEST__negative_checks.sql"
+$SQL_FILE = Join-Path (Join-Path $SCRIPT_ROOT "db") "qa\TEST__negative_checks.sql"
 
 if (-not (Test-Path $SQL_FILE)) {
     Write-Host "ERROR: $SQL_FILE not found" -ForegroundColor Red
@@ -47,9 +47,9 @@ if ($LASTEXITCODE -ne 0) {
 # Parse result lines
 $lines = ($output | Out-String) -split "`n" | Where-Object { $_ -match '(CAUGHT|MISSED)' }
 
-$caught  = 0
-$missed  = 0
-$total   = 0
+$caught = 0
+$missed = 0
+$total = 0
 
 foreach ($line in $lines) {
     $total++
