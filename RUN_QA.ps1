@@ -619,6 +619,144 @@ else {
     }
 }
 
+# ═══════════════════════════════════════════════════════════════════════════════
+# Test Suite 13: Allergen & Trace Integrity (14 checks)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+$test13File = Join-Path $QA_DIR "QA__allergen_integrity.sql"
+if (-not (Test-Path $test13File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 13: Allergen Integrity (file not found)" -ForegroundColor DarkYellow
+    $test13Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 13: Allergen & Trace Integrity (14 checks)..." -ForegroundColor Yellow
+
+    $sw13 = [System.Diagnostics.Stopwatch]::StartNew()
+    $test13Content = Get-Content $test13File -Raw
+    $test13Output = Invoke-Psql -InputSql $test13Content -TuplesOnly
+
+    if ($LASTEXITCODE -ne 0) {
+        $sw13.Stop()
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test13Output" -ForegroundColor DarkRed
+        $test13Pass = $false
+        $jsonResult.suites += @{ name = "Allergen Integrity"; suite_id = "allergen_integrity"; checks = 14; status = "error"; violations = @(); runtime_ms = [math]::Round($sw13.Elapsed.TotalMilliseconds) }
+    }
+    else {
+        $sw13.Stop()
+        $test13Lines = ($test13Output | Out-String).Trim()
+        $test13Violations = ($test13Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test13Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (14/14 — zero violations) [$([math]::Round($sw13.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            $test13Pass = $true
+            $jsonResult.suites += @{ name = "Allergen Integrity"; suite_id = "allergen_integrity"; checks = 14; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw13.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 14; $jsonResult.summary.passed += 14
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test13Lines -ForegroundColor DarkRed
+            $test13Pass = $false
+            $violationList13 = ($test13Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "Allergen Integrity"; suite_id = "allergen_integrity"; checks = 14; status = "fail"; violations = @($violationList13); runtime_ms = [math]::Round($sw13.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 14; $jsonResult.summary.failed += $violationList13.Count; $jsonResult.summary.passed += (14 - $violationList13.Count)
+        }
+    }
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Test Suite 14: Serving & Source Validation (12 checks)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+$test14File = Join-Path $QA_DIR "QA__serving_source_validation.sql"
+if (-not (Test-Path $test14File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 14: Serving & Source Validation (file not found)" -ForegroundColor DarkYellow
+    $test14Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 14: Serving & Source Validation (12 checks)..." -ForegroundColor Yellow
+
+    $sw14 = [System.Diagnostics.Stopwatch]::StartNew()
+    $test14Content = Get-Content $test14File -Raw
+    $test14Output = Invoke-Psql -InputSql $test14Content -TuplesOnly
+
+    if ($LASTEXITCODE -ne 0) {
+        $sw14.Stop()
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test14Output" -ForegroundColor DarkRed
+        $test14Pass = $false
+        $jsonResult.suites += @{ name = "Serving & Source"; suite_id = "serving_source"; checks = 12; status = "error"; violations = @(); runtime_ms = [math]::Round($sw14.Elapsed.TotalMilliseconds) }
+    }
+    else {
+        $sw14.Stop()
+        $test14Lines = ($test14Output | Out-String).Trim()
+        $test14Violations = ($test14Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test14Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (12/12 — zero violations) [$([math]::Round($sw14.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            $test14Pass = $true
+            $jsonResult.suites += @{ name = "Serving & Source"; suite_id = "serving_source"; checks = 12; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw14.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 12; $jsonResult.summary.passed += 12
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test14Lines -ForegroundColor DarkRed
+            $test14Pass = $false
+            $violationList14 = ($test14Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "Serving & Source"; suite_id = "serving_source"; checks = 12; status = "fail"; violations = @($violationList14); runtime_ms = [math]::Round($sw14.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 12; $jsonResult.summary.failed += $violationList14.Count; $jsonResult.summary.passed += (12 - $violationList14.Count)
+        }
+    }
+}
+
+# ═══════════════════════════════════════════════════════════════════════════════
+# Test Suite 15: Ingredient Data Quality (14 checks)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+$test15File = Join-Path $QA_DIR "QA__ingredient_quality.sql"
+if (-not (Test-Path $test15File)) {
+    Write-Host ""
+    Write-Host "  ⚠ SKIPPED Test Suite 15: Ingredient Quality (file not found)" -ForegroundColor DarkYellow
+    $test15Pass = $true
+}
+else {
+    Write-Host ""
+    Write-Host "Running Test Suite 15: Ingredient Data Quality (14 checks)..." -ForegroundColor Yellow
+
+    $sw15 = [System.Diagnostics.Stopwatch]::StartNew()
+    $test15Content = Get-Content $test15File -Raw
+    $test15Output = Invoke-Psql -InputSql $test15Content -TuplesOnly
+
+    if ($LASTEXITCODE -ne 0) {
+        $sw15.Stop()
+        Write-Host "  ✗ FAILED TO EXECUTE" -ForegroundColor Red
+        Write-Host "  $test15Output" -ForegroundColor DarkRed
+        $test15Pass = $false
+        $jsonResult.suites += @{ name = "Ingredient Quality"; suite_id = "ingredient_quality"; checks = 14; status = "error"; violations = @(); runtime_ms = [math]::Round($sw15.Elapsed.TotalMilliseconds) }
+    }
+    else {
+        $sw15.Stop()
+        $test15Lines = ($test15Output | Out-String).Trim()
+        $test15Violations = ($test15Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
+        if ($test15Violations.Count -eq 0) {
+            Write-Host "  ✓ PASS (14/14 — zero violations) [$([math]::Round($sw15.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            $test15Pass = $true
+            $jsonResult.suites += @{ name = "Ingredient Quality"; suite_id = "ingredient_quality"; checks = 14; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw15.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 14; $jsonResult.summary.passed += 14
+        }
+        else {
+            Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
+            Write-Host $test15Lines -ForegroundColor DarkRed
+            $test15Pass = $false
+            $violationList15 = ($test15Violations | ForEach-Object { $_.Trim() })
+            $jsonResult.suites += @{ name = "Ingredient Quality"; suite_id = "ingredient_quality"; checks = 14; status = "fail"; violations = @($violationList15); runtime_ms = [math]::Round($sw15.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 14; $jsonResult.summary.failed += $violationList15.Count; $jsonResult.summary.passed += (14 - $violationList15.Count)
+        }
+    }
+}
+
 # ─── Database Inventory ─────────────────────────────────────────────────────
 
 Write-Host ""
@@ -645,7 +783,7 @@ Write-Host ($invOutput | Out-String).Trim() -ForegroundColor DarkGray
 
 # ─── Summary ────────────────────────────────────────────────────────────────
 
-$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass -and $test6Pass -and $test7Pass -and $test8Pass -and $test9Pass -and $test10Pass -and $test11Pass -and $test12Pass
+$allPass = $test1Pass -and $test2Pass -and $test4Pass -and $test5Pass -and $test6Pass -and $test7Pass -and $test8Pass -and $test9Pass -and $test10Pass -and $test11Pass -and $test12Pass -and $test13Pass -and $test14Pass -and $test15Pass
 $warnFail = $FailOnWarn -and $hasWarnings
 $jsonResult.overall = if (-not $allPass) { "fail" } elseif ($warnFail) { "warn" } else { "pass" }
 
@@ -715,6 +853,9 @@ else {
     Write-Host "    Suite 10 (Naming):      $(if ($test10Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test10Pass) { "Green" } else { "Red" })
     Write-Host "    Suite 11 (NutriRange):  $(if ($test11Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test11Pass) { "Green" } else { "Red" })
     Write-Host "    Suite 12 (DataConsist): $(if ($test12Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test12Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 13 (Allergen):    $(if ($test13Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test13Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 14 (ServSource):  $(if ($test14Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test14Pass) { "Green" } else { "Red" })
+    Write-Host "    Suite 15 (IngredQual):  $(if ($test15Pass) { '✓ PASS' } else { '✗ FAIL' })" -ForegroundColor $(if ($test15Pass) { "Green" } else { "Red" })
     Write-Host ""
     if (-not $allPass) { exit 1 }
     if ($warnFail) { exit 2 }
