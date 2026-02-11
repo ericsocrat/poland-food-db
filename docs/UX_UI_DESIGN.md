@@ -2,7 +2,7 @@
 
 > **Status:** Production-ready specification — architecture, data contracts, and UX rules locked.
 > **Last updated:** 2026-02-10 (incremental hardening: score disambiguation, API-to-component mapping, misinterpretation defense v2)
-> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (139/139 checks). This document is the single source of truth for any future front-end implementation.
+> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (152/152 checks). This document is the single source of truth for any future front-end implementation.
 
 ---
 

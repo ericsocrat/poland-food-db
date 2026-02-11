@@ -69,3 +69,66 @@ SELECT '8. api_category_listing returns valid structure' AS check_name,
                  AND result ? 'limit' AND result ? 'offset'
             THEN 0 ELSE 1 END AS violations
 FROM api_category_listing('Chips', 'score', 'asc', 5, 0) AS result;
+
+-- 9. find_similar_products returns results for products with ingredients
+SELECT '9. find_similar_products returns results' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT DISTINCT pi.product_id
+    FROM product_ingredient pi
+    JOIN products p ON p.product_id = pi.product_id
+    WHERE p.is_deprecated IS NOT TRUE
+    LIMIT 5
+) sample
+WHERE NOT EXISTS (
+    SELECT 1 FROM find_similar_products(sample.product_id, 1)
+);
+
+-- 10. find_better_alternatives returns only lower-scoring products
+SELECT '10. find_better_alternatives scores are lower' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT p.product_id, sc.unhealthiness_score AS source_score
+    FROM products p
+    JOIN scores sc ON sc.product_id = p.product_id
+    WHERE p.is_deprecated IS NOT TRUE AND sc.unhealthiness_score > 15
+    LIMIT 5
+) sample
+CROSS JOIN LATERAL find_better_alternatives(sample.product_id, true, 3) AS alt
+WHERE alt.unhealthiness_score >= sample.source_score;
+
+-- 11. api_better_alternatives has required JSON keys
+SELECT '11. api_better_alternatives has required keys' AS check_name,
+       CASE WHEN result ? 'source_product' AND result ? 'alternatives'
+                 AND result ? 'alternatives_count' AND result ? 'search_scope'
+            THEN 0 ELSE 1 END AS violations
+FROM api_better_alternatives(2121) AS result;
+
+-- 12. api_better_alternatives alternatives_count matches array length
+SELECT '12. api_better_alternatives count matches array' AS check_name,
+       CASE WHEN (result->>'alternatives_count')::int = jsonb_array_length(result->'alternatives')
+            THEN 0 ELSE 1 END AS violations
+FROM api_better_alternatives(2121) AS result;
+
+-- 13. api_data_confidence returns non-null for all active products
+SELECT '13. api_data_confidence covers all products' AS check_name,
+       COUNT(*) AS violations
+FROM products p
+WHERE p.is_deprecated IS NOT TRUE
+  AND api_data_confidence(p.product_id) IS NULL;
+
+-- 14. api_data_confidence has required JSON keys
+SELECT '14. api_data_confidence has required keys' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT api_data_confidence(product_id) AS detail
+    FROM products
+    WHERE is_deprecated IS NOT TRUE
+    LIMIT 5
+) sample
+WHERE NOT (
+    sample.detail ? 'confidence_score'
+    AND sample.detail ? 'confidence_band'
+    AND sample.detail ? 'components'
+    AND sample.detail ? 'data_completeness_profile'
+);

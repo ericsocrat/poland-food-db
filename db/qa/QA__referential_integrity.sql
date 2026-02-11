@@ -152,3 +152,40 @@ FROM (
     HAVING COUNT(sv.serving_id) != 1
 ) bad;
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 16. nutri_score_ref has expected labels (A-E + UNKNOWN + NOT-APPLICABLE)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '16. nutri_score_ref has expected labels' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT (SELECT COUNT(*) FROM nutri_score_ref) AS actual,
+           7 AS expected
+) sub
+WHERE actual != expected;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 17. concern_tier_ref has expected tiers (0-3)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '17. concern_tier_ref has expected tiers' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT (SELECT COUNT(*) FROM concern_tier_ref) AS actual,
+           4 AS expected
+) sub
+WHERE actual != expected;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 18. country_ref has PL entry
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '18. country_ref has PL entry' AS check_name,
+       CASE WHEN EXISTS (SELECT 1 FROM country_ref WHERE country_code = 'PL')
+            THEN 0 ELSE 1 END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 19. refresh_all_materialized_views returns valid JSON
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '19. refresh_all_materialized_views returns valid JSON' AS check_name,
+       CASE WHEN result ? 'refreshed_at' AND result ? 'views' AND result ? 'total_ms'
+            THEN 0 ELSE 1 END AS violations
+FROM refresh_all_materialized_views() AS result;
+

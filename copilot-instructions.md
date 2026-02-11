@@ -9,7 +9,7 @@
 > **Servings:** 877 rows — 560 per-100g (canonical) + 317 per-serving (57% real serving size coverage)
 > **Ingredient analytics:** 1,257 unique ingredients (all clean ASCII English), 728 allergen declarations, 782 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 139 critical checks + 8 informational reports — all passing
+> **QA:** 152 critical checks + 8 informational reports — all passing
 
 ---
 
@@ -133,7 +133,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 558/560 coverage (99.6%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (139 critical + 8 info)
+├── RUN_QA.ps1                       # QA test runner (152 critical + 8 info)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
 ├── populate_ingredient_data.py      # OFF API → ingredient_ref/product_ingredient/allergens/traces
@@ -375,7 +375,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | Confidence       | `QA__confidence_scoring.sql`    |     10 | Yes       |
 | Cross-Validation | `QA__cross_validation.sql`      |      6 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **139/139 critical checks passing**.
+**Run:** `.\RUN_QA.ps1` — expects **152/152 critical checks passing**.
 
 **Key regression tests** (in scoring suite):
 

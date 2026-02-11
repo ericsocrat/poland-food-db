@@ -284,3 +284,28 @@ FROM product_ingredient pi
 LEFT JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
 WHERE ir.ingredient_id IS NULL;
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 26. collected_at not in the future (product_sources)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '26. product_sources collected_at not in future' AS check_name,
+       COUNT(*) AS violations
+FROM product_sources
+WHERE collected_at > NOW();
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 27. collected_at not in the future (source_nutrition)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '27. source_nutrition collected_at not in future' AS check_name,
+       COUNT(*) AS violations
+FROM source_nutrition
+WHERE collected_at > NOW();
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 28. product_type not null for active products
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '28. product_type not null for active products' AS check_name,
+       COUNT(*) AS violations
+FROM products
+WHERE is_deprecated IS NOT TRUE
+  AND product_type IS NULL;
+

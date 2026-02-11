@@ -8,11 +8,11 @@
         2. QA__scoring_formula_tests.sql (29 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)
-        5. QA__api_surfaces.sql (8 API contract validation checks — blocking)
+        5. QA__api_surfaces.sql (14 API contract validation checks — blocking)
         6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
         7. QA__cross_validation.sql (6 cross-validation checks — blocking)
-        8. QA__data_quality.sql (25 data quality & plausibility checks — blocking)
-        9. QA__referential_integrity.sql (15 referential integrity checks — blocking)
+        8. QA__data_quality.sql (28 data quality & plausibility checks — blocking)
+        9. QA__referential_integrity.sql (19 referential integrity checks — blocking)
        10. QA__view_consistency.sql (10 view & function consistency checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
@@ -274,7 +274,7 @@ if (-not (Test-Path $test5File)) {
 }
 else {
     Write-Host ""
-    Write-Host "Running Test Suite 5: API Surface Validation (8 checks)..." -ForegroundColor Yellow
+    Write-Host "Running Test Suite 5: API Surface Validation (14 checks)..." -ForegroundColor Yellow
 
     $sw5 = [System.Diagnostics.Stopwatch]::StartNew()
     $test5Content = Get-Content $test5File -Raw
@@ -293,18 +293,18 @@ else {
         # Check for any violations > 0
         $test5Violations = ($test5Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
         if ($test5Violations.Count -eq 0) {
-            Write-Host "  ✓ PASS (8/8 — zero violations) [$([math]::Round($sw5.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            Write-Host "  ✓ PASS (14/14 — zero violations) [$([math]::Round($sw5.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
             $test5Pass = $true
-            $jsonResult.suites += @{ name = "API Surfaces"; suite_id = "api"; checks = 8; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw5.Elapsed.TotalMilliseconds) }
-            $jsonResult.summary.total_checks += 8; $jsonResult.summary.passed += 8
+            $jsonResult.suites += @{ name = "API Surfaces"; suite_id = "api"; checks = 14; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw5.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 14; $jsonResult.summary.passed += 14
         }
         else {
             Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
             Write-Host $test5Lines -ForegroundColor DarkRed
             $test5Pass = $false
             $violationList5 = ($test5Violations | ForEach-Object { $_.Trim() })
-            $jsonResult.suites += @{ name = "API Surfaces"; suite_id = "api"; checks = 8; status = "fail"; violations = @($violationList5); runtime_ms = [math]::Round($sw5.Elapsed.TotalMilliseconds) }
-            $jsonResult.summary.total_checks += 8; $jsonResult.summary.failed += $violationList5.Count; $jsonResult.summary.passed += (8 - $violationList5.Count)
+            $jsonResult.suites += @{ name = "API Surfaces"; suite_id = "api"; checks = 14; status = "fail"; violations = @($violationList5); runtime_ms = [math]::Round($sw5.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 14; $jsonResult.summary.failed += $violationList5.Count; $jsonResult.summary.passed += (14 - $violationList5.Count)
         }
     }
 }
@@ -407,7 +407,7 @@ if (-not (Test-Path $test8File)) {
 }
 else {
     Write-Host ""
-    Write-Host "Running Test Suite 8: Data Quality (25 checks)..." -ForegroundColor Yellow
+    Write-Host "Running Test Suite 8: Data Quality (28 checks)..." -ForegroundColor Yellow
 
     $sw8 = [System.Diagnostics.Stopwatch]::StartNew()
     $test8Content = Get-Content $test8File -Raw
@@ -425,18 +425,18 @@ else {
         $test8Lines = ($test8Output | Out-String).Trim()
         $test8Violations = ($test8Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
         if ($test8Violations.Count -eq 0) {
-            Write-Host "  ✓ PASS (25/25 — zero violations) [$([math]::Round($sw8.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            Write-Host "  ✓ PASS (28/28 — zero violations) [$([math]::Round($sw8.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
             $test8Pass = $true
-            $jsonResult.suites += @{ name = "Data Quality"; suite_id = "data_quality"; checks = 25; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw8.Elapsed.TotalMilliseconds) }
-            $jsonResult.summary.total_checks += 25; $jsonResult.summary.passed += 25
+            $jsonResult.suites += @{ name = "Data Quality"; suite_id = "data_quality"; checks = 28; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw8.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 28; $jsonResult.summary.passed += 28
         }
         else {
             Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
             Write-Host $test8Lines -ForegroundColor DarkRed
             $test8Pass = $false
             $violationList8 = ($test8Violations | ForEach-Object { $_.Trim() })
-            $jsonResult.suites += @{ name = "Data Quality"; suite_id = "data_quality"; checks = 25; status = "fail"; violations = @($violationList8); runtime_ms = [math]::Round($sw8.Elapsed.TotalMilliseconds) }
-            $jsonResult.summary.total_checks += 25; $jsonResult.summary.failed += $violationList8.Count; $jsonResult.summary.passed += (25 - $violationList8.Count)
+            $jsonResult.suites += @{ name = "Data Quality"; suite_id = "data_quality"; checks = 28; status = "fail"; violations = @($violationList8); runtime_ms = [math]::Round($sw8.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 28; $jsonResult.summary.failed += $violationList8.Count; $jsonResult.summary.passed += (28 - $violationList8.Count)
         }
     }
 }
@@ -451,7 +451,7 @@ if (-not (Test-Path $test9File)) {
 }
 else {
     Write-Host ""
-    Write-Host "Running Test Suite 9: Referential Integrity (15 checks)..." -ForegroundColor Yellow
+    Write-Host "Running Test Suite 9: Referential Integrity (19 checks)..." -ForegroundColor Yellow
 
     $sw9 = [System.Diagnostics.Stopwatch]::StartNew()
     $test9Content = Get-Content $test9File -Raw
@@ -469,18 +469,18 @@ else {
         $test9Lines = ($test9Output | Out-String).Trim()
         $test9Violations = ($test9Lines -split "`n" | Where-Object { $_ -match '\|\s*[1-9]' })
         if ($test9Violations.Count -eq 0) {
-            Write-Host "  ✓ PASS (15/15 — zero violations) [$([math]::Round($sw9.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+            Write-Host "  ✓ PASS (19/19 — zero violations) [$([math]::Round($sw9.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
             $test9Pass = $true
-            $jsonResult.suites += @{ name = "Referential Integrity"; suite_id = "referential"; checks = 15; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw9.Elapsed.TotalMilliseconds) }
-            $jsonResult.summary.total_checks += 15; $jsonResult.summary.passed += 15
+            $jsonResult.suites += @{ name = "Referential Integrity"; suite_id = "referential"; checks = 19; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw9.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 19; $jsonResult.summary.passed += 19
         }
         else {
             Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
             Write-Host $test9Lines -ForegroundColor DarkRed
             $test9Pass = $false
             $violationList9 = ($test9Violations | ForEach-Object { $_.Trim() })
-            $jsonResult.suites += @{ name = "Referential Integrity"; suite_id = "referential"; checks = 15; status = "fail"; violations = @($violationList9); runtime_ms = [math]::Round($sw9.Elapsed.TotalMilliseconds) }
-            $jsonResult.summary.total_checks += 15; $jsonResult.summary.failed += $violationList9.Count; $jsonResult.summary.passed += (15 - $violationList9.Count)
+            $jsonResult.suites += @{ name = "Referential Integrity"; suite_id = "referential"; checks = 19; status = "fail"; violations = @($violationList9); runtime_ms = [math]::Round($sw9.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.total_checks += 19; $jsonResult.summary.failed += $violationList9.Count; $jsonResult.summary.passed += (19 - $violationList9.Count)
         }
     }
 }
