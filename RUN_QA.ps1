@@ -4,18 +4,21 @@
 
 .DESCRIPTION
     Executes:
-        1. QA__null_checks.sql (34 data integrity checks + 6 informational)
+        1. QA__null_checks.sql (31 data integrity checks)
         2. QA__scoring_formula_tests.sql (27 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)
         5. QA__api_surfaces.sql (14 API contract validation checks — blocking)
         6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
         7. QA__data_quality.sql (25 data quality & plausibility checks — blocking)
-        8. QA__referential_integrity.sql (17 referential integrity checks — blocking)
-        9. QA__view_consistency.sql (10 view & function consistency checks — blocking)
+        8. QA__referential_integrity.sql (18 referential integrity checks — blocking)
+        9. QA__view_consistency.sql (12 view & function consistency checks — blocking)
        10. QA__naming_conventions.sql (12 naming/formatting convention checks — blocking)
        11. QA__nutrition_ranges.sql (16 nutrition range & plausibility checks — blocking)
        12. QA__data_consistency.sql (18 data consistency & domain checks — blocking)
+       13. QA__allergen_integrity.sql (14 allergen & trace integrity checks — blocking)
+       14. QA__serving_source_validation.sql (16 serving & source checks — blocking)
+       15. QA__ingredient_quality.sql (14 ingredient quality checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suite 3 is informational and does not affect the exit code.
@@ -115,7 +118,7 @@ if (-not (Test-Path $test1File)) {
     exit 1
 }
 
-Write-Host "Running Test Suite 1: Data Integrity (34 checks)..." -ForegroundColor Yellow
+Write-Host "Running Test Suite 1: Data Integrity (31 checks)..." -ForegroundColor Yellow
 
 $sw1 = [System.Diagnostics.Stopwatch]::StartNew()
 

@@ -22,6 +22,7 @@ from pipeline.off_client import (
     polish_market_score,
 )
 from pipeline.sql_generator import generate_pipeline
+from pipeline.utils import slug as _slug
 from pipeline.validator import validate_product
 
 logger = logging.getLogger(__name__)
@@ -29,18 +30,6 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
-
-
-def _slug(category: str) -> str:
-    """Convert a category name to a filesystem-safe slug."""
-    return (
-        category.lower()
-        .replace("&", "")
-        .replace(",", "")
-        .replace("  ", " ")
-        .strip()
-        .replace(" ", "-")
-    )
 
 
 def _dedup(products: list[dict]) -> list[dict]:

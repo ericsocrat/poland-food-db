@@ -7,9 +7,6 @@ checksum verification.
 
 from __future__ import annotations
 
-import logging
-
-logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
 # Category reference ranges (per 100 g) — plausible, not strict limits

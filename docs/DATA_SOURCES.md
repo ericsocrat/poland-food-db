@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-02-11
 > **Scope:** Poland (`PL`) only
-> **Active sources:** 1 type (off_api), 560 entries
+> **Active sources:** 1 type (off_api), 877 entries
 > **Related:** See `RESEARCH_WORKFLOW.md` for the full step-by-step data collection process,
 > and `SCORING_METHODOLOGY.md` for how collected data is scored.
 
@@ -396,7 +396,7 @@ EAN-13 barcodes are the standard product identifier in Polish retail. They are c
 
 The `products` table has an `ean` TEXT column (added in migration `20260208000100`). A unique conditional index prevents barcode collisions.
 
-**Coverage:** 558/560 active products (99.6%) have validated EAN-8 or EAN-13 barcodes.
+**Coverage:** 839/867 active products (96.8%) have validated EAN-8 or EAN-13 barcodes.
 
 **Missing EANs (2):**
 - Kajzerka Kebab (product_id 43) — custom Zabka product, no universal barcode

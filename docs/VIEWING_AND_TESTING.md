@@ -9,10 +9,10 @@ The **easiest way** to browse your tables visually:
 1. **Open Studio**: http://127.0.0.1:54323
 2. **Navigate**: Click **"Table Editor"** in left sidebar
 3. **Explore tables**:
-   - `products` — 560 active products across 20 categories (28 per category)
-   - `nutrition_facts` — nutritional data per 100g and per serving
+   - `products` — 867 active products across 20 categories (variable size per category)
+   - `nutrition_facts` — nutritional data per 100g
    - `scores` — unhealthiness scores (v3.2), flags, Nutri-Score, NOVA, confidence
-   - `servings` — 877 serving definitions (560 per-100g + 317 per-serving)
+   - `servings` — 877 serving definitions (per-100g basis)
 4. **Run custom queries**: Click **"SQL Editor"** → paste any SQL → click **Run**
 
 **Pro tip**: Click on `v_master` view for a denormalized "master report" with all data joined.
@@ -50,8 +50,8 @@ echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GR
 
 ## ✅ How to Know Everything Is Working
 
-### 1. **Data Integrity Tests** (35 checks + 6 informational)
-Validates foreign keys, nulls, duplicates, orphaned rows, energy cross-check, ingredient data coverage:
+### 1. **Data Integrity Tests** (31 checks)
+Validates foreign keys, nulls, duplicates, orphaned rows, nutrition sanity, provenance:
 
 ```powershell
 Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres --tuples-only
@@ -61,7 +61,7 @@ Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food
 
 ---
 
-### 2. **Scoring Formula Tests** (29 checks)
+### 2. **Scoring Formula Tests** (27 checks)
 Validates v3.2 algorithm correctness, flag logic, NOVA consistency, regression checks:
 
 ```powershell
@@ -73,7 +73,7 @@ Get-Content "db\qa\QA__scoring_formula_tests.sql" | docker exec -i supabase_db_p
 ---
 
 ### 3. **Automated Pipeline Test** (All-in-One)
-Run all pipelines + both QA suites automatically:
+Run all pipelines + QA suites automatically:
 
 ```powershell
 .\RUN_LOCAL.ps1 -RunQA
@@ -91,18 +91,18 @@ Run all pipelines + both QA suites automatically:
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (64/64 — zero violation rows).
+  All QA checks passed (228/228 — zero violation rows).
 
   Database inventory:
   total_products | deprecated | servings | nutrition | scores
 ----------------+------------+----------+-----------+--------
-             560 |          0 |      877 |       877 |    560
+             877 |         10 |      877 |       877 |    877
 ```
 
 ---
 
 ### 4. **Standalone QA Runner** (Recommended)
-Runs both test suites with color-coded output:
+Runs all 15 test suites with color-coded output:
 
 ```powershell
 .\RUN_QA.ps1
@@ -110,14 +110,39 @@ Runs both test suites with color-coded output:
 
 **Expected output**:
 ```
-✓ PASS (35/35 — zero violations)
-✓ PASS (29/29 — zero violations)
-ALL TESTS PASSED (64/64 checks)
+Suite  1 — Data Integrity:          ✓ PASS (31/31)
+Suite  2 — Scoring Formula:         ✓ PASS (27/27)
+Suite  3 — Source Coverage:         ℹ INFO (8 reports)
+Suite  4 — EAN Validation:          ✓ PASS (1/1)
+Suite  5 — API Surfaces:            ✓ PASS (14/14)
+Suite  6 — Confidence Scoring:      ✓ PASS (10/10)
+Suite  7 — Data Quality:            ✓ PASS (25/25)
+Suite  8 — Referential Integrity:   ✓ PASS (18/18)
+Suite  9 — View Consistency:        ✓ PASS (12/12)
+Suite 10 — Naming Conventions:      ✓ PASS (12/12)
+Suite 11 — Nutrition Ranges:        ✓ PASS (16/16)
+Suite 12 — Data Consistency:        ✓ PASS (18/18)
+Suite 13 — Allergen Integrity:      ✓ PASS (14/14)
+Suite 14 — Serving & Source:        ✓ PASS (16/16)
+Suite 15 — Ingredient Quality:      ✓ PASS (14/14)
+
+ALL TESTS PASSED (228/228 checks across 15 suites)
 ```
 
 ---
 
-### 5. **Known Regression Tests** (Embedded in formula tests)
+### 5. **Negative Validation Tests** (29 constraint tests)
+Verifies the database correctly rejects invalid data:
+
+```powershell
+.\RUN_NEGATIVE_TESTS.ps1
+```
+
+**Expected output**: `29/29 CAUGHT, 0 MISSED`
+
+---
+
+### 6. **Known Regression Tests** (Embedded in scoring formula suite)
 
 - **Top Chips Faliste** (palm oil, 16g sat fat) → Score: **51±2**
 - **Naleśniki z jabłkami** (healthiest żabka) → Score: **17±2**

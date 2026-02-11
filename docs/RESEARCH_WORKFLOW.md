@@ -113,7 +113,7 @@ For every product, collect **all** of the following. Mark missing fields explici
 | `product_type` | Label description           | Optional | `Chipsy ziemniaczane`    |
 | `ean`          | Barcode on label            | Yes*     | `5900259000002`          |
 
-*EAN is required where available — 558/560 products (99.6%) have validated EAN-8/EAN-13 barcodes.
+*EAN is required where available — 839/867 products (96.8%) have validated EAN-8/EAN-13 barcodes.
 
 #### EU Mandatory 7 (per 100g)
 
@@ -420,22 +420,28 @@ If the computed energy falls outside this tolerance, add a SQL comment flagging 
 
 ## 8. Phase 7 — Documentation & Commit
 
-### 8.1 Sources Table Entry
+### 8.1 Product Sources Entry
 
-Every product batch gets a `sources` row:
+Every product batch gets a `product_sources` row via the pipeline's `05_source_provenance.sql` file:
 
 ```sql
-INSERT INTO sources (source_id, brand, source_type, ref, url, notes, category)
-VALUES (
-    nextval('sources_source_id_seq'),
-    'Lay''s',
-    'label',
-    'Biedronka Kraków, 2026-02-05',
-    NULL,
-    'PL market, per 100g table, 5 SKUs verified against OFF',
-    'Chips'
-)
-ON CONFLICT (source_id) DO NOTHING;
+INSERT INTO product_sources (
+    product_id, source_type, source_url, source_ean,
+    fields_populated, confidence_pct, is_primary)
+SELECT p.product_id,
+       'off_api',
+       'https://world.openfoodfacts.org/product/5900259128904',
+       '5900259128904',
+       ARRAY['product_name','brand','category','calories','total_fat_g',
+             'saturated_fat_g','carbs_g','sugars_g','protein_g','salt_g'],
+       90,
+       true
+FROM products p
+WHERE p.brand = 'Lay''s'
+  AND p.product_name = 'Chipsy Zielona Cebulka'
+  AND p.category = 'Chips'
+  AND p.is_deprecated IS NOT TRUE
+ON CONFLICT ON CONSTRAINT uq_product_source_entry DO NOTHING;
 ```
 
 ### 8.2 Git Commit

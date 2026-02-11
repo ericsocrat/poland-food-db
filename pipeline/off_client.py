@@ -65,6 +65,14 @@ def _session() -> requests.Session:
     return s
 
 
+def _safe_int(value: Any, default: int = 0) -> int:
+    """Safely convert a value to int, returning *default* on failure."""
+    try:
+        return int(value)
+    except (ValueError, TypeError):
+        return default
+
+
 # ---------------------------------------------------------------------------
 # Public API
 # ---------------------------------------------------------------------------
@@ -96,7 +104,7 @@ def _search_by_tags(
             if not products:
                 break
             _collect_products(products, seen_codes, results, max_results)
-            if page * PAGE_SIZE >= int(data.get("count", 0)):
+            if page * PAGE_SIZE >= _safe_int(data.get("count", 0)):
                 break
             page += 1
             time.sleep(REQUEST_DELAY)
@@ -129,7 +137,7 @@ def _search_by_terms(
             if not products:
                 break
             _collect_products(products, seen_codes, results, max_results)
-            if page * PAGE_SIZE >= int(data.get("count", 0)):
+            if page * PAGE_SIZE >= _safe_int(data.get("count", 0)):
                 break
             page += 1
             time.sleep(REQUEST_DELAY)
@@ -183,14 +191,14 @@ def search_polish_products(
     off_tags = DB_TO_OFF_TAGS.get(category, [])
     seen_codes: set[str] = set()
     results: list[dict] = []
-    session = _session()
 
-    # Phase 1: Search by OFF category tags
-    _search_by_tags(session, off_tags, seen_codes, results, max_results)
+    with _session() as session:
+        # Phase 1: Search by OFF category tags
+        _search_by_tags(session, off_tags, seen_codes, results, max_results)
 
-    # Phase 2: Fall back to keyword search if needed
-    if len(results) < max_results:
-        _search_by_terms(session, search_terms, seen_codes, results, max_results)
+        # Phase 2: Fall back to keyword search if needed
+        if len(results) < max_results:
+            _search_by_terms(session, search_terms, seen_codes, results, max_results)
 
     return results[:max_results]
 
@@ -208,16 +216,16 @@ def fetch_product_by_ean(ean: str) -> dict | None:
     dict | None
         The raw OFF product dict, or *None* on failure / not found.
     """
-    session = _session()
-    url = OFF_PRODUCT_URL.format(ean=ean)
-    data = _get_json(session, url, {})
-    if data is None:
-        return None
+    with _session() as session:
+        url = OFF_PRODUCT_URL.format(ean=ean)
+        data = _get_json(session, url, {})
+        if data is None:
+            return None
 
-    if data.get("status") != 1:
-        return None
+        if data.get("status") != 1:
+            return None
 
-    return data.get("product")
+        return data.get("product")
 
 
 # ---------------------------------------------------------------------------
@@ -233,13 +241,6 @@ def _round1(value: Any, default: str = "0") -> str:
         return str(round(float(value), 1))
     except (ValueError, TypeError):
         return default
-
-
-def _clean_text(text: str | None) -> str:
-    """Escape single quotes for SQL and strip whitespace."""
-    if not text:
-        return ""
-    return text.strip().replace("'", "''")
 
 
 # ---------------------------------------------------------------------------

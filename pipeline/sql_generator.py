@@ -12,10 +12,9 @@ Generates the 5-file SQL pattern used by every category pipeline:
 from __future__ import annotations
 
 import datetime
-import logging
 from pathlib import Path
 
-logger = logging.getLogger(__name__)
+from pipeline.utils import slug as _slug
 
 
 # ---------------------------------------------------------------------------
@@ -98,21 +97,6 @@ def _normalize_store(raw: str | None) -> str | None:
         if chain.lower() in low:
             return chain
     return None
-
-
-def _slug(category: str) -> str:
-    """Convert a category name to a filesystem-safe slug.
-
-    ``'Nuts, Seeds & Legumes'`` → ``'nuts-seeds'``
-    """
-    return (
-        category.lower()
-        .replace("&", "")
-        .replace(",", "")
-        .replace("  ", " ")
-        .strip()
-        .replace(" ", "-")
-    )
 
 
 # ---------------------------------------------------------------------------
@@ -456,8 +440,8 @@ SELECT p.product_id,
        ARRAY['product_name','brand','category','product_type','ean',
              'prep_method','store_availability','controversies',
              'calories','total_fat_g','saturated_fat_g',
-             'carbohydrates_g','sugars_g','protein_g',
-             'fiber_g','salt_g','sodium_mg','trans_fat_g'],
+             'carbs_g','sugars_g','protein_g',
+             'fibre_g','salt_g','trans_fat_g'],
        90,
        true
 FROM (

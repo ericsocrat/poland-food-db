@@ -464,7 +464,7 @@ Body: {
 - `api_category_listing(cat, sort, dir, limit, offset)` — paged, max 100/page
 - `api_search_products(query)` — debounce 300ms, max 100/page
 - `api_data_confidence(id)` — single product confidence lookup, fast
-- `v_product_confidence` — materialized view, pre-computed for all 560 products
+- `v_product_confidence` — materialized view, pre-computed for all 867 products
 
 ### Expensive Patterns (cache or limit)
 - `api_score_explanation(id)` — computes score + category context, ~50ms
@@ -519,7 +519,7 @@ Returns a composite data confidence score (0–100) indicating how reliable the 
 
 ### `v_product_confidence` (Materialized View)
 
-Pre-computed confidence for all 560 products. Faster than calling `compute_data_confidence()` per-product.
+Pre-computed confidence for all 867 products. Faster than calling `compute_data_confidence()` per-product.
 
 **PostgREST:** `GET /v_product_confidence?confidence_band=eq.low`
 
