@@ -11,8 +11,7 @@ This script scans enrichment migration files and fails if INSERT statements for:
 use direct VALUES with product_id literals instead of JOINing products by
 (country, ean).
 
-Historical exception:
-- 20260213000500_populate_ingredients_allergens.sql is legacy and grandfathered.
+All enrichment migrations must use the portable (country, ean) JOIN pattern.
 """
 
 from __future__ import annotations
@@ -23,9 +22,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).parent
 MIGRATIONS_DIR = ROOT / "supabase" / "migrations"
-LEGACY_ALLOWLIST = {
-    "20260213000500_populate_ingredients_allergens.sql",
-}
+LEGACY_ALLOWLIST: set[str] = set()  # no exceptions — all migrations must be portable
 
 TARGET_PATTERNS = [
     "_populate_ingredients_allergens.sql",
