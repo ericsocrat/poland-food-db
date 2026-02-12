@@ -240,7 +240,7 @@ Every change is validated against **226 automated checks** across 15 QA suites +
 - Band assignment matches score thresholds (high ≥80, medium 50-79, low <50)
 - All 6 components sum to total score
 - No products missing confidence data
-- Distribution sanity (≥80% should be high confidence)
+- Distribution sanity (no impossible band values; monitor shifts after data resets)
 - Component weights match formula specification
 
 ### Additional Suites

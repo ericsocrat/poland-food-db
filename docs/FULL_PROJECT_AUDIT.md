@@ -41,7 +41,7 @@
 | 2   | **Regenerate EAN_VALIDATION_STATUS.md** — entire document stale                            |   ✅    | Fully regenerated: 839/867, per-category table, 28 Żabka items identified, historical note added                                                         |
 | 3   | **Update VIEWING_AND_TESTING.md** — QA section incomplete (2/15 suites, 64→228)            |   ✅    | All 15 suites listed with expected output, negative tests added, product counts fixed                                                                    |
 | 4   | **Fix RUN_QA.ps1 header** — says "34 checks" for Suite 1, validates 31                     |   ✅    | Fixed header (34→31), added suites 13-15 to docstring, fixed ref integrity (17→18), view consistency (10→12)                                             |
-| 5   | **Fix copilot-instructions.md body** — "28/category", "39 migrations", "61/61"             |   ✅    | Fixed: variable counts, 47 migrations, 228/228 checks, full QA file list with 15 suites                                                                  |
+| 5   | **Fix copilot-instructions.md body** — "28/category", "39 migrations", "61/61"             |   ✅    | Fixed: variable counts, 50 migrations, 226/226 checks, full QA file list with 15 suites                                                                  |
 
 ### Should Fix — Code Hygiene
 
