@@ -1,6 +1,8 @@
 -- QA: null checks
 -- Run after pipelines to detect missing or incomplete data.
 -- Each query returns rows that need attention. Zero rows = pass.
+-- Updated 2026-02-12: adapted for consolidated schema (no servings, scores,
+--   product_sources, product_allergen, product_trace tables).
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Products missing required fields
@@ -20,14 +22,8 @@ WHERE country IS NULL
    OR category IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 2. Products with no serving row
+-- 2. (Removed — servings table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT p.product_id, p.brand, p.product_name,
-       'NO SERVING ROW' AS issue
-FROM products p
-LEFT JOIN servings sv ON sv.product_id = p.product_id
-WHERE sv.serving_id IS NULL
-  AND p.is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. Products with no nutrition facts
@@ -40,13 +36,12 @@ WHERE nf.product_id IS NULL
   AND p.is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 4. Products with no score row
+-- 4. Products with no unhealthiness_score (scores now on products)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
-       'NO SCORE ROW' AS issue
+       'NO SCORE' AS issue
 FROM products p
-LEFT JOIN scores sc ON sc.product_id = p.product_id
-WHERE sc.product_id IS NULL
+WHERE p.unhealthiness_score IS NULL
   AND p.is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -65,32 +60,26 @@ WHERE nf.calories IS NULL
   AND nf.salt_g IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 6. Scores missing unhealthiness_score
+-- 6. Products missing unhealthiness_score (active only)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT sc.product_id, p.brand, p.product_name,
+SELECT p.product_id, p.brand, p.product_name,
        'UNHEALTHINESS SCORE NULL' AS issue
-FROM scores sc
-JOIN products p ON p.product_id = sc.product_id
-WHERE sc.unhealthiness_score IS NULL
+FROM products p
+WHERE p.unhealthiness_score IS NULL
   AND p.is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 7. (removed — scoring_version column dropped)
+-- 7. (Removed — scoring_version column dropped)
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 8. Orphaned servings (no matching product)
+-- 8. (Removed — servings table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT sv.serving_id, sv.product_id,
-       'ORPHANED SERVING' AS issue
-FROM servings sv
-LEFT JOIN products p ON p.product_id = sv.product_id
-WHERE p.product_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 9. Orphaned nutrition_facts (no matching product)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT nf.product_id, nf.serving_id,
+SELECT nf.product_id,
        'ORPHANED NUTRITION FACT' AS issue
 FROM nutrition_facts nf
 LEFT JOIN products p ON p.product_id = nf.product_id
@@ -116,13 +105,8 @@ WHERE country != 'PL'
   AND is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 12. Orphaned scores (no matching product)
+-- 12. (Removed — scores table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT sc.product_id,
-       'ORPHANED SCORE' AS issue
-FROM scores sc
-LEFT JOIN products p ON p.product_id = sc.product_id
-WHERE p.product_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 13–14. (Removed — ingredients table dropped in migration 20260211000600)
@@ -159,7 +143,6 @@ SELECT p.product_id, p.brand, p.product_name,
        CONCAT('sat_fat=', nf.saturated_fat_g, ' > total_fat=', nf.total_fat_g) AS detail
 FROM nutrition_facts nf
 JOIN products p ON p.product_id = nf.product_id
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.saturated_fat_g > nf.total_fat_g
   AND nf.total_fat_g IS NOT NULL;
@@ -172,7 +155,6 @@ SELECT p.product_id, p.brand, p.product_name,
        CONCAT('sugars=', nf.sugars_g, ' > carbs=', nf.carbs_g) AS detail
 FROM nutrition_facts nf
 JOIN products p ON p.product_id = nf.product_id
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.sugars_g > nf.carbs_g
   AND nf.carbs_g IS NOT NULL;
@@ -185,7 +167,6 @@ SELECT p.product_id, p.brand, p.product_name,
        CONCAT('calories=', nf.calories) AS detail
 FROM nutrition_facts nf
 JOIN products p ON p.product_id = nf.product_id
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.calories > 900;
 
@@ -200,24 +181,22 @@ GROUP BY category
 HAVING COUNT(*) < 5;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 20. Scores missing data_completeness_pct, nutri_score_label,
---     or high_additive_load (all required for active products)
+-- 20. Score fields null on active products
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT sc.product_id, p.brand, p.product_name,
+SELECT p.product_id, p.brand, p.product_name,
        'SCORE FIELD NULL' AS issue,
        CASE
-         WHEN sc.data_completeness_pct IS NULL THEN 'data_completeness_pct is NULL'
-         WHEN sc.nutri_score_label IS NULL     THEN 'nutri_score_label is NULL'
-         WHEN sc.high_additive_load IS NULL    THEN 'high_additive_load is NULL'
-         WHEN sc.confidence IS NULL            THEN 'confidence is NULL'
+         WHEN p.data_completeness_pct IS NULL THEN 'data_completeness_pct is NULL'
+         WHEN p.nutri_score_label IS NULL     THEN 'nutri_score_label is NULL'
+         WHEN p.high_additive_load IS NULL    THEN 'high_additive_load is NULL'
+         WHEN p.confidence IS NULL            THEN 'confidence is NULL'
        END AS detail
-FROM scores sc
-JOIN products p ON p.product_id = sc.product_id
+FROM products p
 WHERE p.is_deprecated IS NOT TRUE
-  AND (sc.data_completeness_pct IS NULL
-    OR sc.nutri_score_label IS NULL
-    OR sc.high_additive_load IS NULL
-    OR sc.confidence IS NULL);
+  AND (p.data_completeness_pct IS NULL
+    OR p.nutri_score_label IS NULL
+    OR p.high_additive_load IS NULL
+    OR p.confidence IS NULL);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 21. v_master row count matches active products (detects join fan-out)
@@ -230,13 +209,8 @@ WHERE (SELECT COUNT(*) FROM v_master) !=
       (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 22. Duplicate product_sources rows (prevents v_master fan-out)
+-- 22. (Removed — product_sources table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT ps.product_id, COUNT(*) AS row_count,
-       'DUPLICATE PRODUCT SOURCE' AS issue
-FROM product_sources ps
-GROUP BY ps.product_id
-HAVING COUNT(*) > 1;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 23. Orphan ingredient_ref rows (not linked to any product)
@@ -261,22 +235,17 @@ WHERE p.product_id IS NULL;
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 26. product_allergen rows referencing non-existent products
+-- 26. product_allergen_info rows referencing non-existent products
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT pa.product_id, pa.allergen_tag,
-       'ALLERGEN FK BROKEN' AS issue
-FROM product_allergen pa
-LEFT JOIN products p ON p.product_id = pa.product_id
+SELECT ai.product_id, ai.tag, ai.type,
+       'ALLERGEN INFO FK BROKEN' AS issue
+FROM product_allergen_info ai
+LEFT JOIN products p ON p.product_id = ai.product_id
 WHERE p.product_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 27. product_trace rows referencing non-existent products
+-- 27. (Merged into #26 — product_trace eliminated, uses product_allergen_info)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT pt.product_id, pt.trace_tag,
-       'TRACE FK BROKEN' AS issue
-FROM product_trace pt
-LEFT JOIN products p ON p.product_id = pt.product_id
-WHERE p.product_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 28. Duplicate positions in product_ingredient (data integrity)
@@ -306,45 +275,36 @@ WHERE ir.concern_tier IS NOT NULL
   AND ir.concern_tier NOT IN (0, 1, 2, 3);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 31. ingredient_concern_score must be non-negative and ≤ 100
+-- 31. ingredient_concern_score must be non-negative and <= 100
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT sc.product_id, sc.ingredient_concern_score,
+SELECT p.product_id, p.ingredient_concern_score,
        'CONCERN SCORE OUT OF RANGE' AS issue
-FROM scores sc
-WHERE sc.ingredient_concern_score IS NOT NULL
-  AND (sc.ingredient_concern_score < 0 OR sc.ingredient_concern_score > 100);
+FROM products p
+WHERE p.ingredient_concern_score IS NOT NULL
+  AND (p.ingredient_concern_score < 0 OR p.ingredient_concern_score > 100);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 32. Scored products must have ingredient_concern_score populated
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT sc.product_id,
+SELECT p.product_id,
        'MISSING CONCERN SCORE' AS issue
-FROM scores sc
-JOIN products p ON p.product_id = sc.product_id
+FROM products p
 WHERE p.is_deprecated IS NOT TRUE
-  AND sc.unhealthiness_score IS NOT NULL
-  AND sc.ingredient_concern_score IS NULL;
+  AND p.unhealthiness_score IS NOT NULL
+  AND p.ingredient_concern_score IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 33. Every active product must have at least one product_sources row
+-- 33. Active products missing source_type (source info now on products)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
-       'MISSING PRODUCT SOURCE' AS issue
+       'MISSING SOURCE TYPE' AS issue
 FROM products p
-LEFT JOIN product_sources ps ON ps.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
-  AND ps.product_source_id IS NULL;
+  AND p.source_type IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 34. Only one primary source per product (no multi-primary)
+-- 34. (Removed — product_sources table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT ps.product_id,
-       COUNT(*) AS primary_count,
-       'MULTIPLE PRIMARY SOURCES' AS issue
-FROM product_sources ps
-WHERE ps.is_primary = true
-GROUP BY ps.product_id
-HAVING COUNT(*) > 1;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 35. v_master fan-out guard: row count must equal active product count
@@ -357,7 +317,7 @@ WHERE (SELECT COUNT(*) FROM v_master) <>
       (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 36. v_master new column coverage (informational)
+-- 36. v_master column coverage (informational)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
   COUNT(*) AS active_products,
@@ -375,21 +335,17 @@ FROM v_master;
 SELECT
     (SELECT COUNT(*) FROM products)         AS total_products,
     (SELECT COUNT(*) FROM products WHERE is_deprecated = true) AS deprecated_products,
-    (SELECT COUNT(*) FROM servings)         AS total_servings,
-    (SELECT COUNT(*) FROM servings WHERE serving_basis = 'per 100 g') AS per_100g_servings,
-    (SELECT COUNT(*) FROM servings WHERE serving_basis = 'per serving') AS per_serving_rows,
     (SELECT COUNT(*) FROM nutrition_facts)  AS total_nutrition_rows,
-    (SELECT COUNT(*) FROM scores)           AS total_score_rows,
     (SELECT COUNT(*) FROM ingredient_ref)   AS total_ingredient_refs,
     (SELECT COUNT(*) FROM product_ingredient) AS total_product_ingredients,
-    (SELECT COUNT(*) FROM product_allergen) AS total_allergen_rows,
-    (SELECT COUNT(*) FROM product_trace)    AS total_trace_rows,
-    (SELECT COUNT(*) FROM product_sources)  AS total_product_source_rows;
+    (SELECT COUNT(*) FROM product_allergen_info WHERE type = 'contains') AS total_allergen_rows,
+    (SELECT COUNT(*) FROM product_allergen_info WHERE type = 'traces') AS total_trace_rows,
+    (SELECT COUNT(*) FROM product_allergen_info) AS total_allergen_info_rows;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 38. Energy cross-check: declared vs computed calories (informational)
---     Formula: (fat×9) + (carbs×4) + (protein×4) + (fibre×2)
---     ±15% tolerance. Alcohol products expected to fail (ethanol = 7 kcal/g
+--     Formula: (fat*9) + (carbs*4) + (protein*4) + (fibre*2)
+--     +/-15% tolerance. Alcohol products expected to fail (ethanol = 7 kcal/g
 --     not captured in macros).
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.category, p.brand, p.product_name,
@@ -406,10 +362,8 @@ SELECT p.product_id, p.category, p.brand, p.product_name,
            / NULLIF(n.calories, 0) * 100, 1) AS pct_diff,
        'ENERGY CROSS-CHECK FAIL' AS issue
 FROM nutrition_facts n
-JOIN servings sv ON sv.serving_id = n.serving_id
 JOIN products p ON p.product_id = n.product_id
-WHERE sv.serving_basis = 'per 100 g'
-  AND p.is_deprecated IS NOT TRUE
+WHERE p.is_deprecated IS NOT TRUE
   AND n.calories IS NOT NULL AND n.calories > 0
   AND ABS(n.calories
       - (COALESCE(n.total_fat_g,0)*9
@@ -421,8 +375,6 @@ ORDER BY pct_diff DESC;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 39. Ingredient data coverage (informational)
---     Products without product_ingredient rows cannot have accurate
---     ingredient concern scores. These are OFF upstream data gaps.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
   COUNT(*) AS active_products,
@@ -447,14 +399,6 @@ FROM (
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 40. Nutrition anomaly detection (informational)
---     Flags products with physiologically implausible nutrition values,
---     typically caused by incomplete or incorrect OFF data entries.
---     Categories:
---       A) sat_fat = 0 but total_fat > 10  (all fats contain some saturated fat)
---       B) salt = 0 in categories known to contain salt
---       C) sugars = 0 but carbs > 20  (most carb-heavy foods have some sugar)
---       D) salt > 10 g/100g  (extreme — likely data entry error or concentrate)
---       E) calories < 10 for non-beverage products  (suspicious)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.product_name, p.category,
        anomaly_type, detail
@@ -463,9 +407,7 @@ FROM (
   SELECT n.product_id, 'SAT_FAT_ZERO_HIGH_FAT' AS anomaly_type,
          FORMAT('sat_fat=0 but total_fat=%s', n.total_fat_g) AS detail
   FROM nutrition_facts n
-  JOIN servings sv USING(product_id, serving_id)
-  WHERE sv.serving_basis = 'per 100 g'
-    AND n.saturated_fat_g = 0
+  WHERE n.saturated_fat_g = 0
     AND n.total_fat_g > 10
 
   UNION ALL
@@ -474,14 +416,12 @@ FROM (
   SELECT n.product_id, 'SALT_ZERO_SALTY_CATEGORY',
          FORMAT('salt=0, carbs=%s', n.carbs_g)
   FROM nutrition_facts n
-  JOIN servings sv USING(product_id, serving_id)
   JOIN products p2 ON p2.product_id = n.product_id
-  WHERE sv.serving_basis = 'per 100 g'
-    AND p2.is_deprecated IS NOT TRUE
+  WHERE p2.is_deprecated IS NOT TRUE
     AND n.salt_g = 0
     AND p2.category IN ('Chips','Instant & Frozen','Meat','Snacks',
                          'Sauces','Condiments','Canned Goods','Bread',
-                         'Frozen & Prepared','Żabka')
+                         'Frozen & Prepared','Zabka')
 
   UNION ALL
 
@@ -489,9 +429,7 @@ FROM (
   SELECT n.product_id, 'SUGARS_ZERO_HIGH_CARBS',
          FORMAT('sugars=0 but carbs=%s', n.carbs_g)
   FROM nutrition_facts n
-  JOIN servings sv USING(product_id, serving_id)
-  WHERE sv.serving_basis = 'per 100 g'
-    AND n.sugars_g = 0
+  WHERE n.sugars_g = 0
     AND n.carbs_g > 20
 
   UNION ALL
@@ -500,9 +438,7 @@ FROM (
   SELECT n.product_id, 'EXTREME_SALT',
          FORMAT('salt=%sg/100g', n.salt_g)
   FROM nutrition_facts n
-  JOIN servings sv USING(product_id, serving_id)
-  WHERE sv.serving_basis = 'per 100 g'
-    AND n.salt_g > 10
+  WHERE n.salt_g > 10
 
   UNION ALL
 
@@ -510,10 +446,8 @@ FROM (
   SELECT n.product_id, 'NEAR_ZERO_CALORIES',
          FORMAT('calories=%s, category expects higher', n.calories)
   FROM nutrition_facts n
-  JOIN servings sv USING(product_id, serving_id)
   JOIN products p2 ON p2.product_id = n.product_id
-  WHERE sv.serving_basis = 'per 100 g'
-    AND p2.is_deprecated IS NOT TRUE
+  WHERE p2.is_deprecated IS NOT TRUE
     AND n.calories < 10
     AND p2.category NOT IN ('Drinks','Alcohol')
 ) anomalies
@@ -523,9 +457,6 @@ ORDER BY anomaly_type, p.category, p.product_name;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 41. Suspect nutrition + verified confidence mismatch (informational)
---     Products flagged as 'suspect' nutrition quality but marked 'verified'
---     confidence represent the highest-priority cross-validation targets —
---     their scores may be inaccurate due to bad OFF data.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT
   COUNT(*) AS total_suspect,

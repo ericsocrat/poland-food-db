@@ -3,6 +3,8 @@
 -- Validates data hygiene, plausibility bounds, and cross-field
 -- consistency that go beyond NULL/orphan checks.
 -- All checks are BLOCKING unless marked informational.
+-- Updated: scores merged into products; servings eliminated;
+-- product_sources merged into products.
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -11,7 +13,6 @@
 SELECT '1. trans_fat <= total_fat' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.trans_fat_g IS NOT NULL
@@ -25,7 +26,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '2. total macros <= 105g per 100g' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND (COALESCE(nf.total_fat_g, 0) + COALESCE(nf.carbs_g, 0)
@@ -38,7 +38,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '3. individual macro bounds' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND (nf.total_fat_g > 100 OR nf.carbs_g > 100 OR nf.protein_g > 100
@@ -89,50 +88,30 @@ WHERE is_deprecated = true
   AND category IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 9. Duplicate servings per product per basis (must be exactly 1 each)
+-- 9. (removed — servings table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '9. no duplicate servings per product per basis' AS check_name,
-       COUNT(*) AS violations
-FROM (
-    SELECT product_id, serving_basis, COUNT(*) AS cnt
-    FROM servings
-    GROUP BY product_id, serving_basis
-    HAVING COUNT(*) > 1
-) dupes;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 10. NOVA classification not null for active products
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '10. NOVA not null for active products' AS check_name,
        COUNT(*) AS violations
-FROM scores sc
-JOIN products p ON p.product_id = sc.product_id
+FROM products p
 WHERE p.is_deprecated IS NOT TRUE
-  AND sc.nova_classification IS NULL;
+  AND p.nova_classification IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 11. (removed — processing_risk column dropped; now derived in v_master)
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 12. Per-serving nutrition must have a matching per-100g row
+-- 12. (removed — servings table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '12. per-serving has matching per-100g nutrition' AS check_name,
-       COUNT(*) AS violations
-FROM servings sv_srv
-JOIN nutrition_facts nf_srv ON nf_srv.serving_id = sv_srv.serving_id
-WHERE sv_srv.serving_basis NOT IN ('per 100 g', 'per 100 ml')
-  AND NOT EXISTS (
-      SELECT 1 FROM servings sv100
-      JOIN nutrition_facts nf100 ON nf100.serving_id = sv100.serving_id
-      WHERE sv100.product_id = sv_srv.product_id
-        AND sv100.serving_basis IN ('per 100 g', 'per 100 ml')
-  );
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 13. Sat fat ≤ total fat across ALL serving types (not just per-100g)
+-- 13. Sat fat ≤ total fat across ALL nutrition rows (not just per-100g)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '13. sat_fat <= total_fat (all servings)' AS check_name,
+SELECT '13. sat_fat <= total_fat (all nutrition)' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
 WHERE nf.saturated_fat_g IS NOT NULL
@@ -140,9 +119,9 @@ WHERE nf.saturated_fat_g IS NOT NULL
   AND nf.saturated_fat_g > nf.total_fat_g;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 14. Sugars ≤ carbs across ALL serving types
+-- 14. Sugars ≤ carbs across ALL nutrition rows
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '14. sugars <= carbs (all servings)' AS check_name,
+SELECT '14. sugars <= carbs (all nutrition)' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
 WHERE nf.sugars_g IS NOT NULL
@@ -150,28 +129,8 @@ WHERE nf.sugars_g IS NOT NULL
   AND nf.sugars_g > nf.carbs_g;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 15. Per-serving proportionality: calories should be roughly
---     (per_100g_calories × serving_g / 100) within ±20% tolerance
---     Only checks where per-100g calories > 10 to avoid division issues
+-- 15. (removed — per-serving proportionality check; servings table eliminated)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '15. per-serving calories proportional to per-100g' AS check_name,
-       COUNT(*) AS violations
-FROM (
-    SELECT p.product_id,
-           n100.calories AS cal100,
-           ns.calories AS cal_srv,
-           sv.serving_amount_g_ml AS grams,
-           n100.calories * sv.serving_amount_g_ml / 100.0 AS expected_cal
-    FROM products p
-    JOIN servings sv100 ON sv100.product_id = p.product_id AND sv100.serving_basis = 'per 100 g'
-    JOIN nutrition_facts n100 ON n100.product_id = p.product_id AND n100.serving_id = sv100.serving_id
-    JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per serving'
-    JOIN nutrition_facts ns ON ns.product_id = p.product_id AND ns.serving_id = sv.serving_id
-    WHERE p.is_deprecated IS NOT TRUE
-      AND n100.calories > 10 AND ns.calories IS NOT NULL AND sv.serving_amount_g_ml > 0
-      AND ABS(ns.calories - n100.calories * sv.serving_amount_g_ml / 100.0)
-          > n100.calories * sv.serving_amount_g_ml / 100.0 * 0.20
-) bad;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 16. score_breakdown.final_score must match unhealthiness_score
@@ -201,34 +160,24 @@ WHERE (s.staleness->>'is_stale')::boolean = true;
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '19. scored products have nutrition' AS check_name,
        COUNT(*) AS violations
-FROM scores sc
-JOIN products p ON p.product_id = sc.product_id
+FROM products p
 WHERE p.is_deprecated IS NOT TRUE
-  AND sc.unhealthiness_score IS NOT NULL
+  AND p.unhealthiness_score IS NOT NULL
   AND NOT EXISTS (
       SELECT 1 FROM nutrition_facts nf
-      JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
-      WHERE nf.product_id = sc.product_id
+      WHERE nf.product_id = p.product_id
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 20. product_sources must not have duplicate entries (same product + source_type)
+-- 20. (removed — product_sources table merged into products in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '20. no duplicate product_sources' AS check_name,
-       COUNT(*) AS violations
-FROM (
-    SELECT product_id, source_type, COUNT(*) AS cnt
-    FROM product_sources
-    GROUP BY product_id, source_type
-    HAVING COUNT(*) > 1
-) dupes;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 21. data_completeness_pct in [0, 100] (redundant with CHECK but belt-and-suspenders)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '21. data_completeness_pct in valid range' AS check_name,
        COUNT(*) AS violations
-FROM scores
+FROM products
 WHERE data_completeness_pct IS NOT NULL
   AND (data_completeness_pct < 0 OR data_completeness_pct > 100);
 
@@ -267,12 +216,8 @@ LEFT JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
 WHERE ir.ingredient_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 26. collected_at not in the future (product_sources)
+-- 26. (removed — product_sources.collected_at eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '26. product_sources collected_at not in future' AS check_name,
-       COUNT(*) AS violations
-FROM product_sources
-WHERE collected_at > NOW();
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 27. product_type not null for active products

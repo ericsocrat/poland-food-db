@@ -2,9 +2,10 @@
 -- QA: Nutrition Ranges & Plausibility
 -- Validates that nutrition values fall within physiologically
 -- plausible ranges and detects likely decimal point errors.
--- Checks per-100g values only (serving-proportional checks
--- are in QA__data_quality.sql check 15).
+-- Checks per-100g values only.
 -- All checks are BLOCKING.
+-- Updated: servings table eliminated; nutrition_facts joins
+-- directly to products.
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -14,7 +15,6 @@
 SELECT '1. calories in [0, 900] per 100g' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.calories IS NOT NULL
@@ -29,7 +29,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '2. calorie back-calculation within 35%' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.calories IS NOT NULL AND nf.calories::numeric > 50
@@ -47,7 +46,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '3. protein in [0, 95] per 100g' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.protein_g IS NOT NULL
@@ -60,7 +58,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '4. total_fat in [0, 100] per 100g' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.total_fat_g IS NOT NULL
@@ -73,7 +70,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '5. carbs in [0, 100] per 100g' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.carbs_g IS NOT NULL
@@ -86,7 +82,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '6. salt in [0, 100] per 100g' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.salt_g IS NOT NULL
@@ -98,7 +93,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '7. saturated_fat <= total_fat + 0.5' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.saturated_fat_g IS NOT NULL AND nf.total_fat_g IS NOT NULL
@@ -110,7 +104,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '8. sugars <= carbs + 0.5' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.sugars_g IS NOT NULL AND nf.carbs_g IS NOT NULL
@@ -123,7 +116,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '9. fibre in [0, 60] per 100g' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.fibre_g IS NOT NULL
@@ -136,7 +128,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '10. trans_fat in [0, 30] per 100g' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.trans_fat_g IS NOT NULL
@@ -149,7 +140,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '11. suspect high protein (possible decimal error)' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.protein_g::numeric >= 50
@@ -165,7 +155,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '12. suspect high salt (possible decimal error)' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.salt_g IS NOT NULL
@@ -179,7 +168,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '13. suspect high sugar (possible decimal error)' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.sugars_g IS NOT NULL
@@ -199,7 +187,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '14. zero-cal products have near-zero macros' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.calories IS NOT NULL AND nf.calories::numeric = 0
@@ -233,7 +220,6 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '16. likely kJ stored as kcal' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
-JOIN servings sv ON sv.serving_id = nf.serving_id AND sv.serving_basis = 'per 100 g'
 JOIN products p  ON p.product_id  = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.calories IS NOT NULL AND nf.calories::numeric > 400

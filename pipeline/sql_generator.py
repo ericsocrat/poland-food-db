@@ -1,12 +1,11 @@
 """SQL file generator for the poland-food-db pipeline.
 
-Generates the 5-file SQL pattern used by every category pipeline:
+Generates the 4-file SQL pattern used by every category pipeline:
 
 1. ``PIPELINE__{cat}__01_insert_products.sql``
-2. ``PIPELINE__{cat}__02_add_servings.sql``
-3. ``PIPELINE__{cat}__03_add_nutrition.sql``
-4. ``PIPELINE__{cat}__04_scoring.sql``
-5. ``PIPELINE__{cat}__05_source_provenance.sql``
+2. ``PIPELINE__{cat}__03_add_nutrition.sql``
+3. ``PIPELINE__{cat}__04_scoring.sql``
+4. ``PIPELINE__{cat}__05_source_provenance.sql``
 """
 
 from __future__ import annotations
@@ -175,20 +174,6 @@ where country = 'PL' and category = {_sql_text(category)}
 """
 
 
-def _gen_02_add_servings(category: str) -> str:
-    """Generate file 02 — add_servings.sql."""
-    return f"""\
--- PIPELINE ({category}): add servings
-insert into servings (product_id, serving_basis, serving_amount_g_ml)
-select p.product_id, 'per 100 g', 100
-from products p
-left join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
-where p.country='PL' and p.category={_sql_text(category)}
-  and p.is_deprecated is not true
-  and s.serving_id is null;
-"""
-
-
 def _gen_03_add_nutrition(category: str, products: list[dict]) -> str:
     """Generate file 03 — add_nutrition.sql."""
     nutrition_lines: list[str] = []
@@ -220,20 +205,19 @@ def _gen_03_add_nutrition(category: str, products: list[dict]) -> str:
 
 -- 1) Remove existing
 delete from nutrition_facts
-where (product_id, serving_id) in (
-  select p.product_id, s.serving_id
+where product_id in (
+  select p.product_id
   from products p
-  join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
   where p.country = 'PL' and p.category = {_sql_text(category)}
     and p.is_deprecated is not true
 );
 
 -- 2) Insert
 insert into nutrition_facts
-  (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+  (product_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
    carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 select
-  p.product_id, s.serving_id,
+  p.product_id,
   d.calories, d.total_fat_g, d.saturated_fat_g, d.trans_fat_g,
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
@@ -243,8 +227,7 @@ from (
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
   and p.category = {_sql_text(category)} and p.is_deprecated is not true
-join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
-on conflict (product_id, serving_id) do update set
+on conflict (product_id) do update set
   calories = excluded.calories,
   total_fat_g = excluded.total_fat_g,
   saturated_fat_g = excluded.saturated_fat_g,
@@ -291,19 +274,8 @@ def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
 -- PIPELINE ({category}): scoring
 -- Generated: {today}
 
--- 0. ENSURE rows in scores
-insert into scores (product_id)
-select p.product_id
-from products p
-left join scores sc on sc.product_id = p.product_id
-where p.country = 'PL' and p.category = {_sql_text(category)}
-  and p.is_deprecated is not true
-  and sc.product_id is null;
-"""
-
-    scoring_sql += f"""
 -- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
-update scores sc set
+update products p set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
       nf.sugars_g,
@@ -313,65 +285,59 @@ update scores sc set
       ia.additives_count,
       p.prep_method,
       p.controversies,
-      sc.ingredient_concern_score
+      p.ingredient_concern_score
   )
-from products p
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
+from nutrition_facts nf
 left join (
     select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
     from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
     group by pi.product_id
-) ia on ia.product_id = p.product_id
-where p.product_id = sc.product_id
+) ia on ia.product_id = nf.product_id
+where nf.product_id = p.product_id
   and p.country = 'PL' and p.category = {_sql_text(category)}
   and p.is_deprecated is not true;
+"""
 
+    scoring_sql += f"""
 -- 2. Nutri-Score
-update scores sc set
+update products p set
   nutri_score_label = d.ns
 from (
   values
 {nutriscore_block}
 ) as d(brand, product_name, ns)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where p.product_id = sc.product_id;
+where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
 -- 3. NOVA classification
-update scores sc set
+update products p set
   nova_classification = d.nova
 from (
   values
 {nova_block}
 ) as d(brand, product_name, nova)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where p.product_id = sc.product_id;
+where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
 -- 4. Health-risk flags
-update scores sc set
+update products p set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
   high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
-from products p
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
+from nutrition_facts nf
 left join (
     select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
     from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
     group by pi.product_id
-) ia on ia.product_id = p.product_id
-where p.product_id = sc.product_id
+) ia on ia.product_id = nf.product_id
+where nf.product_id = p.product_id
   and p.country = 'PL' and p.category = {_sql_text(category)}
   and p.is_deprecated is not true;
 
 -- 5. SET confidence level
-update scores sc set
-  confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
-from products p
-where p.product_id = sc.product_id
-  and p.country = 'PL' and p.category = {_sql_text(category)}
+update products p set
+  confidence = assign_confidence(p.data_completeness_pct, 'openfoodfacts')
+where p.country = 'PL' and p.category = {_sql_text(category)}
   and p.is_deprecated is not true;
 """
 
@@ -381,8 +347,8 @@ where p.product_id = sc.product_id
 def _gen_05_source_provenance(category: str, products: list[dict], today: str) -> str:
     """Generate file 05 — source provenance.
 
-    Populates ``product_sources`` for every product in the category,
-    recording where the data came from.
+    Updates ``products`` with source URL, EAN, and type for every
+    product in the category.
     """
     # Build (brand, product_name, ean, source_url) values
     prov_lines: list[str] = []
@@ -409,29 +375,18 @@ def _gen_05_source_provenance(category: str, products: list[dict], today: str) -
 -- PIPELINE ({category}): source provenance
 -- Generated: {today}
 
--- 1. Populate product_sources (one row per product from OFF API)
-INSERT INTO product_sources
-       (product_id, source_type, source_url, source_ean, fields_populated,
-        confidence_pct, is_primary)
-SELECT p.product_id,
-       'off_api',
-       d.source_url,
-       d.source_ean,
-       ARRAY['product_name','brand','category','product_type','ean',
-             'prep_method','store_availability','controversies',
-             'calories','total_fat_g','saturated_fat_g',
-             'carbs_g','sugars_g','protein_g',
-             'fibre_g','salt_g','trans_fat_g'],
-       90,
-       true
+-- 1. Update source info on products
+UPDATE products p SET
+  source_type = 'off_api',
+  source_url = d.source_url,
+  source_ean = d.source_ean
 FROM (
   VALUES
 {prov_block}
 ) AS d(brand, product_name, source_url, source_ean)
-JOIN products p ON p.country = 'PL' AND p.brand = d.brand
+WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name
-  AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE
-ON CONFLICT DO NOTHING;
+  AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE;
 """
 
 
@@ -476,11 +431,6 @@ def generate_pipeline(
     )
     files.append(path01)
 
-    # 02 — add servings
-    path02 = out / f"PIPELINE__{slug}__02_add_servings.sql"
-    path02.write_text(_gen_02_add_servings(category), encoding="utf-8")
-    files.append(path02)
-
     # 03 — add nutrition
     path03 = out / f"PIPELINE__{slug}__03_add_nutrition.sql"
     path03.write_text(_gen_03_add_nutrition(category, products), encoding="utf-8")
@@ -491,7 +441,7 @@ def generate_pipeline(
     path04.write_text(_gen_04_scoring(category, products, today), encoding="utf-8")
     files.append(path04)
 
-    # 05 — source provenance & source nutrition
+    # 05 — source provenance
     path05 = out / f"PIPELINE__{slug}__05_source_provenance.sql"
     path05.write_text(
         _gen_05_source_provenance(category, products, today), encoding="utf-8"

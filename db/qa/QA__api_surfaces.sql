@@ -2,6 +2,7 @@
 -- QA: API Surface Validation
 -- Ensures all API views and functions return correct results
 -- with no fan-out, null gaps, or structural issues.
+-- Updated: scores merged into products.
 -- ============================================================
 
 -- 1. Category overview: row count = active categories (20)
@@ -88,10 +89,9 @@ WHERE NOT EXISTS (
 SELECT '10. find_better_alternatives scores are lower' AS check_name,
        COUNT(*) AS violations
 FROM (
-    SELECT p.product_id, sc.unhealthiness_score AS source_score
+    SELECT p.product_id, p.unhealthiness_score AS source_score
     FROM products p
-    JOIN scores sc ON sc.product_id = p.product_id
-    WHERE p.is_deprecated IS NOT TRUE AND sc.unhealthiness_score > 15
+    WHERE p.is_deprecated IS NOT TRUE AND p.unhealthiness_score > 15
     LIMIT 5
 ) sample
 CROSS JOIN LATERAL find_better_alternatives(sample.product_id, true, 3) AS alt

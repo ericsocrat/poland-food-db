@@ -3,6 +3,8 @@
 -- Validates that materialized views, API functions, and
 -- computed columns are internally consistent with base tables.
 -- All checks are BLOCKING.
+-- Updated: scores merged into products; product_allergen and
+-- product_trace merged into product_allergen_info.
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -33,9 +35,8 @@ WHERE api_cats != ref_cats;
 SELECT '3. api_score_explanation covers all products' AS check_name,
        COUNT(*) AS violations
 FROM products p
-JOIN scores sc ON sc.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
-  AND sc.unhealthiness_score IS NOT NULL
+  AND p.unhealthiness_score IS NOT NULL
   AND api_score_explanation(p.product_id) IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -44,10 +45,9 @@ WHERE p.is_deprecated IS NOT TRUE
 SELECT '4. api_score_explanation has required keys' AS check_name,
        COUNT(*) AS violations
 FROM products p
-JOIN scores sc ON sc.product_id = p.product_id
 CROSS JOIN LATERAL api_score_explanation(p.product_id) AS detail
 WHERE p.is_deprecated IS NOT TRUE
-  AND sc.unhealthiness_score IS NOT NULL
+  AND p.unhealthiness_score IS NOT NULL
   AND NOT (
     detail ? 'product_id'
     AND detail ? 'score_breakdown'
@@ -98,30 +98,32 @@ LEFT JOIN (
 WHERE COALESCE(m.ingredient_count, 0) != COALESCE(pi.cnt, 0);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 9. v_master allergen_count matches product_allergen junction table
+-- 9. v_master allergen_count matches product_allergen_info (type='contains')
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '9. v_master allergen_count accurate' AS check_name,
        COUNT(*) AS violations
 FROM v_master m
 LEFT JOIN (
-    SELECT product_id, COUNT(DISTINCT allergen_tag) AS cnt
-    FROM product_allergen
+    SELECT product_id, COUNT(DISTINCT tag) AS cnt
+    FROM product_allergen_info
+    WHERE type = 'contains'
     GROUP BY product_id
-) pa ON pa.product_id = m.product_id
-WHERE COALESCE(m.allergen_count, 0) != COALESCE(pa.cnt, 0);
+) pai ON pai.product_id = m.product_id
+WHERE COALESCE(m.allergen_count, 0) != COALESCE(pai.cnt, 0);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 10. v_master trace_count matches product_trace junction table
+-- 10. v_master trace_count matches product_allergen_info (type='traces')
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '10. v_master trace_count accurate' AS check_name,
        COUNT(*) AS violations
 FROM v_master m
 LEFT JOIN (
-    SELECT product_id, COUNT(DISTINCT trace_tag) AS cnt
-    FROM product_trace
+    SELECT product_id, COUNT(DISTINCT tag) AS cnt
+    FROM product_allergen_info
+    WHERE type = 'traces'
     GROUP BY product_id
-) pt ON pt.product_id = m.product_id
-WHERE COALESCE(m.trace_count, 0) != COALESCE(pt.cnt, 0);
+) pai ON pai.product_id = m.product_id
+WHERE COALESCE(m.trace_count, 0) != COALESCE(pai.cnt, 0);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 11. mv_ingredient_frequency row count = used ingredient_ref count

@@ -3,6 +3,8 @@
 -- Validates FK relationships, domain constraints, and
 -- cross-table consistency beyond what CHECK constraints cover.
 -- All checks are BLOCKING.
+-- Updated: scores merged into products; servings eliminated;
+-- product_sources merged into products.
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -34,14 +36,14 @@ LEFT JOIN country_ref cr ON cr.country_code = p.country
 WHERE cr.country_code IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 4. scores.nutri_score_label must exist in nutri_score_ref
+-- 4. nutri_score_label must exist in nutri_score_ref
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '4. nutri_score_label in nutri_score_ref' AS check_name,
        COUNT(*) AS violations
-FROM scores sc
-WHERE sc.nutri_score_label IS NOT NULL
+FROM products p
+WHERE p.nutri_score_label IS NOT NULL
   AND NOT EXISTS (
-      SELECT 1 FROM nutri_score_ref ns WHERE ns.label = sc.nutri_score_label
+      SELECT 1 FROM nutri_score_ref ns WHERE ns.label = p.nutri_score_label
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -56,20 +58,17 @@ WHERE ir.concern_tier IS NOT NULL
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 6. product_sources.confidence_pct in valid range [0,100]
+-- 6. (removed — product_sources.confidence_pct eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '6. product_sources confidence_pct in [0,100]' AS check_name,
-       COUNT(*) AS violations
-FROM product_sources
-WHERE confidence_pct < 0 OR confidence_pct > 100;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 7. product_sources.source_type is off_api
+-- 7. source_type must be valid when set
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '7. product_sources source_type valid' AS check_name,
+SELECT '7. source_type valid' AS check_name,
        COUNT(*) AS violations
-FROM product_sources
-WHERE source_type NOT IN ('off_api', 'off_search', 'manual', 'label_scan', 'retailer_api');
+FROM products
+WHERE source_type IS NOT NULL
+  AND source_type NOT IN ('off_api', 'off_search', 'manual', 'label_scan', 'retailer_api');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 8. ingredient_ref.vegan/vegetarian/from_palm_oil in valid domain
@@ -82,23 +81,12 @@ WHERE (vegan NOT IN ('yes', 'no', 'maybe', 'unknown'))
    OR (from_palm_oil NOT IN ('yes', 'no', 'maybe', 'unknown'));
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 9. Every per-100g serving must have a nutrition_facts row
+-- 9. (removed — servings table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '9. per-100g serving has nutrition_facts' AS check_name,
-       COUNT(*) AS violations
-FROM servings sv
-LEFT JOIN nutrition_facts nf ON nf.serving_id = sv.serving_id
-WHERE sv.serving_basis IN ('per 100 g', 'per 100 ml')
-  AND nf.product_id IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 10. serving_amount_g_ml must be positive when set
+-- 10. (removed — servings table eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '10. serving_amount positive' AS check_name,
-       COUNT(*) AS violations
-FROM servings
-WHERE serving_amount_g_ml IS NOT NULL
-  AND serving_amount_g_ml <= 0;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 11. product_ingredient.percent_estimate non-negative
@@ -119,18 +107,17 @@ WHERE percent IS NOT NULL
   AND (percent < 0 OR percent > 100);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 13. Each product must have exactly one per-100g (or per-100ml) serving
+-- 13. Each active product must have exactly one nutrition_facts row
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '13. exactly one per-100g serving per active product' AS check_name,
+SELECT '13. exactly one nutrition_facts row per active product' AS check_name,
        COUNT(*) AS violations
 FROM (
-    SELECT p.product_id, COUNT(sv.serving_id) AS cnt
+    SELECT p.product_id, COUNT(nf.product_id) AS cnt
     FROM products p
-    LEFT JOIN servings sv ON sv.product_id = p.product_id
-        AND sv.serving_basis IN ('per 100 g', 'per 100 ml')
+    LEFT JOIN nutrition_facts nf ON nf.product_id = p.product_id
     WHERE p.is_deprecated IS NOT TRUE
     GROUP BY p.product_id
-    HAVING COUNT(sv.serving_id) != 1
+    HAVING COUNT(nf.product_id) != 1
 ) bad;
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -171,12 +158,6 @@ SELECT '17. refresh_all_materialized_views returns valid JSON' AS check_name,
 FROM refresh_all_materialized_views() AS result;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 18. nutrition_facts.serving_id must reference an existing servings row
+-- 18. (removed — nutrition_facts.serving_id FK eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '18. nutrition_facts serving_id FK valid' AS check_name,
-       COUNT(*) AS violations
-FROM nutrition_facts nf
-WHERE NOT EXISTS (
-  SELECT 1 FROM servings s WHERE s.serving_id = nf.serving_id
-);
 

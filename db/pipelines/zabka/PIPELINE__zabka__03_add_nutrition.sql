@@ -9,20 +9,18 @@
 
 -- 1) Remove existing nutrition for PL Żabka so this step is fully idempotent
 delete from nutrition_facts
-where (product_id, serving_id) in (
-  select p.product_id, s.serving_id
+where product_id in (
+  select p.product_id
   from products p
-  join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g'
   where p.country = 'PL' and p.category = 'Żabka'
 );
 
 -- 2) Insert verified per-SKU nutrition
 insert into nutrition_facts
-  (product_id, serving_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
+  (product_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
    carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 select
   p.product_id,
-  s.serving_id,
   d.calories, d.total_fat_g, d.saturated_fat_g, d.trans_fat_g,
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
@@ -64,5 +62,4 @@ from (
     ('Szamamm',          'Kotlet Drobiowy',                       101,3.7,0.9,0,   9.4,3.4, 1.5, 6.5, 1.18)   -- fiber: est.
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-join servings s on s.product_id = p.product_id and s.serving_basis = 'per 100 g';
+join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;

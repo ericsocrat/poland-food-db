@@ -1,17 +1,8 @@
 -- PIPELINE (Meat): scoring
 -- Generated: 2026-02-11
 
--- 0. ENSURE rows in scores
-insert into scores (product_id)
-select p.product_id
-from products p
-left join scores sc on sc.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Meat'
-  and p.is_deprecated is not true
-  and sc.product_id is null;
-
 -- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
-update scores sc set
+update products p set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
       nf.sugars_g,
@@ -21,22 +12,20 @@ update scores sc set
       ia.additives_count,
       p.prep_method,
       p.controversies,
-      sc.ingredient_concern_score
+      p.ingredient_concern_score
   )
-from products p
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
+from nutrition_facts nf
 left join (
     select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
     from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
     group by pi.product_id
-) ia on ia.product_id = p.product_id
-where p.product_id = sc.product_id
+) ia on ia.product_id = nf.product_id
+where nf.product_id = p.product_id
   and p.country = 'PL' and p.category = 'Meat'
   and p.is_deprecated is not true;
 
 -- 2. Nutri-Score
-update scores sc set
+update products p set
   nutri_score_label = d.ns
 from (
   values
@@ -91,11 +80,10 @@ from (
     ('Unknown', 'Polędwiczki z kurczaka panierowane łagodna', 'UNKNOWN'),
     ('Animex Foods', 'Berlinki Kurczak', 'D')
 ) as d(brand, product_name, ns)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where p.product_id = sc.product_id;
+where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
 -- 3. NOVA classification
-update scores sc set
+update products p set
   nova_classification = d.nova
 from (
   values
@@ -150,32 +138,27 @@ from (
     ('Unknown', 'Polędwiczki z kurczaka panierowane łagodna', '4'),
     ('Animex Foods', 'Berlinki Kurczak', '4')
 ) as d(brand, product_name, nova)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where p.product_id = sc.product_id;
+where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
 -- 4. Health-risk flags
-update scores sc set
+update products p set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
   high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
   data_completeness_pct = 100
-from products p
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
+from nutrition_facts nf
 left join (
     select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
     from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
     group by pi.product_id
-) ia on ia.product_id = p.product_id
-where p.product_id = sc.product_id
+) ia on ia.product_id = nf.product_id
+where nf.product_id = p.product_id
   and p.country = 'PL' and p.category = 'Meat'
   and p.is_deprecated is not true;
 
 -- 5. SET confidence level
-update scores sc set
-  confidence = assign_confidence(sc.data_completeness_pct, 'openfoodfacts')
-from products p
-where p.product_id = sc.product_id
-  and p.country = 'PL' and p.category = 'Meat'
+update products p set
+  confidence = assign_confidence(p.data_completeness_pct, 'openfoodfacts')
+where p.country = 'PL' and p.category = 'Meat'
   and p.is_deprecated is not true;

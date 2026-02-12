@@ -5,18 +5,6 @@
 -- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 0. ENSURE rows exist in scores
--- ═════════════════════════════════════════════════════════════════════════
-
-insert into scores (product_id)
-select p.product_id
-from products p
-left join scores sc on sc.product_id = p.product_id
-where p.country = 'PL' and p.category = 'Żabka'
-  and p.is_deprecated is not true
-  and sc.product_id is null;
-
--- ═════════════════════════════════════════════════════════════════════════
 -- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 --    9 factors × weighted → clamped [1, 100]
 --    sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +
@@ -24,7 +12,7 @@ where p.country = 'PL' and p.category = 'Żabka'
 --    controversies(0.08) + concern(0.05)
 -- ═════════════════════════════════════════════════════════════════════════
 
-update scores sc set
+update products p set
   unhealthiness_score = compute_unhealthiness_v32(
       nf.saturated_fat_g,
       nf.sugars_g,
@@ -34,17 +22,15 @@ update scores sc set
       ia.additives_count,
       p.prep_method,
       p.controversies,
-      sc.ingredient_concern_score
+      p.ingredient_concern_score
   )
-from products p
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
+from nutrition_facts nf
 left join (
     select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
     from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
     group by pi.product_id
-) ia on ia.product_id = p.product_id
-where p.product_id = sc.product_id
+) ia on ia.product_id = nf.product_id
+where nf.product_id = p.product_id
   and p.country = 'PL' and p.category = 'Żabka'
   and p.is_deprecated is not true;
 
@@ -53,7 +39,7 @@ where p.product_id = sc.product_id
 --    Products marked (est.) are inferred from nutrition-score-fr value.
 -- ═════════════════════════════════════════════════════════════════════════
 
-update scores sc set
+update products p set
   nutri_score_label = d.ns
 from (
   values
@@ -87,14 +73,13 @@ from (
     ('Szamamm',          'Panierowane skrzydełka z kurczaka',     'C'),   -- est. from nutrition profile
     ('Szamamm',          'Kotlet Drobiowy',                       'B')    -- est. (very low cal/fat)
 ) as d(brand, product_name, ns)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where p.product_id = sc.product_id;
+where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 3. SET NOVA classification
 -- ═════════════════════════════════════════════════════════════════════════
 
-update scores sc set
+update products p set
   nova_classification = d.nova
 from (
   values
@@ -128,8 +113,7 @@ from (
     ('Szamamm',          'Panierowane skrzydełka z kurczaka',     4),  -- est. (breaded + fried wings)
     ('Szamamm',          'Kotlet Drobiowy',                       4)   -- est. (breaded cutlet)
 ) as d(brand, product_name, nova)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
-where p.product_id = sc.product_id;
+where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 4. SET health-risk flags (derived from nutrition facts)
@@ -137,7 +121,7 @@ where p.product_id = sc.product_id;
 --      salt ≥ 1.5 g | sugars ≥ 5 g | sat fat ≥ 5 g | additives ≥ 5
 -- ═════════════════════════════════════════════════════════════════════════
 
-update scores sc set
+update products p set
   high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
   high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
   high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
@@ -153,32 +137,21 @@ update scores sc set
     when p.product_name in ('Bao Burger','Wieprzowiner','Kebab z kurczaka','BBQ Strips','Pasta jajeczna, por, jajko gotowane','Pierogi ruskie ze smażoną cebulką') then 100
     else 100
   end
-from products p
-join servings sv on sv.product_id = p.product_id and sv.serving_basis = 'per 100 g'
-join nutrition_facts nf on nf.product_id = p.product_id and nf.serving_id = sv.serving_id
+from nutrition_facts nf
 left join (
     select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
     from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
     group by pi.product_id
-) ia on ia.product_id = p.product_id
-where p.product_id = sc.product_id
+) ia on ia.product_id = nf.product_id
+where nf.product_id = p.product_id
   and p.country = 'PL' and p.category = 'Żabka'
   and p.is_deprecated is not true;
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 5. SET confidence level (auto-assigned based on data completeness + sources)
+-- 5. SET confidence level
 -- ═════════════════════════════════════════════════════════════════════════
 
-update scores sc set
-  confidence = assign_confidence(
-    sc.data_completeness_pct,
-    (SELECT ps.source_type
-     FROM product_sources ps
-     WHERE ps.product_id = p.product_id
-       AND ps.is_primary = true
-     LIMIT 1)
-  )
-from products p
-where p.product_id = sc.product_id
-  and p.country = 'PL' and p.category = 'Żabka'
+update products p set
+  confidence = assign_confidence(p.data_completeness_pct, 'openfoodfacts')
+where p.country = 'PL' and p.category = 'Żabka'
   and p.is_deprecated is not true;

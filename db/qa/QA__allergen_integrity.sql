@@ -4,6 +4,8 @@
 -- ingredient data against declared allergens, and detects
 -- orphaned or junk entries.
 -- All checks are BLOCKING.
+-- Updated: product_allergen and product_trace merged into
+-- product_allergen_info (product_id, tag, type).
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -13,16 +15,18 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '1. allergen tags use en: prefix' AS check_name,
        COUNT(*) AS violations
-FROM product_allergen
-WHERE allergen_tag NOT LIKE 'en:%';
+FROM product_allergen_info
+WHERE type = 'contains'
+  AND tag NOT LIKE 'en:%';
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. Trace tags must use the 'en:' taxonomy prefix
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '2. trace tags use en: prefix' AS check_name,
        COUNT(*) AS violations
-FROM product_trace
-WHERE trace_tag NOT LIKE 'en:%';
+FROM product_allergen_info
+WHERE type = 'traces'
+  AND tag NOT LIKE 'en:%';
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. Allergen tags must be in the EU-14 major allergens + accepted extras
@@ -30,8 +34,9 @@ WHERE trace_tag NOT LIKE 'en:%';
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '3. allergen tags in recognized domain' AS check_name,
        COUNT(*) AS violations
-FROM product_allergen
-WHERE allergen_tag NOT IN (
+FROM product_allergen_info
+WHERE type = 'contains'
+  AND tag NOT IN (
   'en:gluten', 'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans',
   'en:molluscs', 'en:peanuts', 'en:nuts', 'en:soybeans', 'en:celery',
   'en:mustard', 'en:sesame-seeds', 'en:lupin',
@@ -45,8 +50,9 @@ WHERE allergen_tag NOT IN (
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '4. trace tags in recognized domain' AS check_name,
        COUNT(*) AS violations
-FROM product_trace
-WHERE trace_tag NOT IN (
+FROM product_allergen_info
+WHERE type = 'traces'
+  AND tag NOT IN (
   'en:gluten', 'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans',
   'en:molluscs', 'en:peanuts', 'en:nuts', 'en:soybeans', 'en:celery',
   'en:mustard', 'en:sesame-seeds', 'en:lupin',
@@ -60,9 +66,10 @@ WHERE trace_tag NOT IN (
 SELECT '5. no duplicate allergen per product' AS check_name,
        COUNT(*) AS violations
 FROM (
-  SELECT product_id, allergen_tag
-  FROM product_allergen
-  GROUP BY product_id, allergen_tag
+  SELECT product_id, tag
+  FROM product_allergen_info
+  WHERE type = 'contains'
+  GROUP BY product_id, tag
   HAVING COUNT(*) > 1
 ) x;
 
@@ -72,9 +79,10 @@ FROM (
 SELECT '6. no duplicate trace per product' AS check_name,
        COUNT(*) AS violations
 FROM (
-  SELECT product_id, trace_tag
-  FROM product_trace
-  GROUP BY product_id, trace_tag
+  SELECT product_id, tag
+  FROM product_allergen_info
+  WHERE type = 'traces'
+  GROUP BY product_id, tag
   HAVING COUNT(*) > 1
 ) x;
 
@@ -83,9 +91,10 @@ FROM (
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '7. no orphan allergen rows' AS check_name,
        COUNT(*) AS violations
-FROM product_allergen pa
-WHERE NOT EXISTS (
-  SELECT 1 FROM products p WHERE p.product_id = pa.product_id
+FROM product_allergen_info pai
+WHERE pai.type = 'contains'
+  AND NOT EXISTS (
+  SELECT 1 FROM products p WHERE p.product_id = pai.product_id
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -93,9 +102,10 @@ WHERE NOT EXISTS (
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '8. no orphan trace rows' AS check_name,
        COUNT(*) AS violations
-FROM product_trace pt
-WHERE NOT EXISTS (
-  SELECT 1 FROM products p WHERE p.product_id = pt.product_id
+FROM product_allergen_info pai
+WHERE pai.type = 'traces'
+  AND NOT EXISTS (
+  SELECT 1 FROM products p WHERE p.product_id = pai.product_id
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -122,8 +132,8 @@ FROM (
     '%ice cream plant%','%buttercup%'
   ])
   AND NOT EXISTS (
-    SELECT 1 FROM product_allergen pa
-    WHERE pa.product_id = pi.product_id AND pa.allergen_tag = 'en:milk'
+    SELECT 1 FROM product_allergen_info pai
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:milk' AND pai.type = 'contains'
   )
 ) x;
 
@@ -144,8 +154,8 @@ FROM (
   ])
   AND ir.name_en NOT ILIKE '%buckwheat%'
   AND NOT EXISTS (
-    SELECT 1 FROM product_allergen pa
-    WHERE pa.product_id = pi.product_id AND pa.allergen_tag = 'en:gluten'
+    SELECT 1 FROM product_allergen_info pai
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:gluten' AND pai.type = 'contains'
   )
 ) x;
 
@@ -162,8 +172,8 @@ FROM (
   WHERE ir.name_en ILIKE ANY(ARRAY['%egg%'])
   AND ir.name_en NOT ILIKE ANY(ARRAY['%eggplant%','%reggiano%'])
   AND NOT EXISTS (
-    SELECT 1 FROM product_allergen pa
-    WHERE pa.product_id = pi.product_id AND pa.allergen_tag = 'en:eggs'
+    SELECT 1 FROM product_allergen_info pai
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:eggs' AND pai.type = 'contains'
   )
 ) x;
 
@@ -179,8 +189,8 @@ FROM (
   JOIN products p ON p.product_id = pi.product_id AND p.is_deprecated IS NOT TRUE
   WHERE ir.name_en ILIKE ANY(ARRAY['%soy%','%soja%'])
   AND NOT EXISTS (
-    SELECT 1 FROM product_allergen pa
-    WHERE pa.product_id = pi.product_id AND pa.allergen_tag = 'en:soybeans'
+    SELECT 1 FROM product_allergen_info pai
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:soybeans' AND pai.type = 'contains'
   )
 ) x;
 
@@ -196,8 +206,8 @@ FROM (
   JOIN products p ON p.product_id = pi.product_id AND p.is_deprecated IS NOT TRUE
   WHERE ir.name_en ILIKE '%peanut%'
   AND NOT EXISTS (
-    SELECT 1 FROM product_allergen pa
-    WHERE pa.product_id = pi.product_id AND pa.allergen_tag = 'en:peanuts'
+    SELECT 1 FROM product_allergen_info pai
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:peanuts' AND pai.type = 'contains'
   )
 ) x;
 
@@ -213,8 +223,8 @@ FROM (
   JOIN products p ON p.product_id = pi.product_id AND p.is_deprecated IS NOT TRUE
   WHERE ir.name_en ILIKE ANY(ARRAY['%fish%','%salmon%','%tuna%','%herring%','%mackerel%','%anchov%','%cod %','%trout%'])
   AND NOT EXISTS (
-    SELECT 1 FROM product_allergen pa
-    WHERE pa.product_id = pi.product_id AND pa.allergen_tag = 'en:fish'
+    SELECT 1 FROM product_allergen_info pai
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:fish' AND pai.type = 'contains'
   )
 ) x;
 

@@ -769,15 +769,11 @@ $invQuery = @"
 SELECT
     (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE) AS active_products,
     (SELECT COUNT(*) FROM products WHERE is_deprecated = true) AS deprecated,
-    (SELECT COUNT(*) FROM servings) AS serving_rows,
-    (SELECT COUNT(*) FROM servings WHERE serving_basis = 'per 100 g') AS per_100g_servings,
-    (SELECT COUNT(*) FROM servings WHERE serving_basis != 'per 100 g') AS per_serving_rows,
     (SELECT COUNT(*) FROM nutrition_facts) AS nutrition_rows,
-    (SELECT COUNT(*) FROM scores) AS scores_rows,
     (SELECT COUNT(*) FROM ingredient_ref) AS ingredient_refs,
     (SELECT COUNT(*) FROM product_ingredient) AS product_ingredients,
-    (SELECT COUNT(*) FROM product_allergen) AS allergen_rows,
-    (SELECT COUNT(*) FROM product_trace) AS trace_rows,
+    (SELECT COUNT(*) FROM product_allergen_info WHERE type = 'contains') AS allergen_rows,
+    (SELECT COUNT(*) FROM product_allergen_info WHERE type = 'traces') AS trace_rows,
     (SELECT COUNT(DISTINCT category) FROM products WHERE is_deprecated IS NOT TRUE) AS categories;
 "@
 
@@ -794,20 +790,16 @@ $jsonResult.overall = if (-not $allPass) { "fail" } elseif ($warnFail) { "warn" 
 if ($invOutput) {
     $invText = ($invOutput | Out-String).Trim()
     # Extract numbers from the psql output
-    if ($invText -match '(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)') {
+    if ($invText -match '(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)\s*\|\s*(\d+)') {
         $jsonResult.inventory = @{
             active_products     = [int]$Matches[1]
             deprecated          = [int]$Matches[2]
-            serving_rows        = [int]$Matches[3]
-            per_100g_servings   = [int]$Matches[4]
-            per_serving_rows    = [int]$Matches[5]
-            nutrition_rows      = [int]$Matches[6]
-            scores_rows         = [int]$Matches[7]
-            ingredient_refs     = [int]$Matches[8]
-            product_ingredients = [int]$Matches[9]
-            allergen_rows       = [int]$Matches[10]
-            trace_rows          = [int]$Matches[11]
-            categories          = [int]$Matches[12]
+            nutrition_rows      = [int]$Matches[3]
+            ingredient_refs     = [int]$Matches[4]
+            product_ingredients = [int]$Matches[5]
+            allergen_rows       = [int]$Matches[6]
+            trace_rows          = [int]$Matches[7]
+            categories          = [int]$Matches[8]
         }
     }
 }

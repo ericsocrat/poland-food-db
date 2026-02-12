@@ -1,21 +1,11 @@
 -- PIPELINE (Sweets): source provenance
 -- Generated: 2026-02-11
 
--- 1. Populate product_sources (one row per product from OFF API)
-INSERT INTO product_sources
-       (product_id, source_type, source_url, source_ean, fields_populated,
-        confidence_pct, is_primary)
-SELECT p.product_id,
-       'off_api',
-       d.source_url,
-       d.source_ean,
-       ARRAY['product_name','brand','category','product_type','ean',
-             'prep_method','store_availability','controversies',
-             'calories','total_fat_g','saturated_fat_g',
-             'carbs_g','sugars_g','protein_g',
-             'fibre_g','salt_g','trans_fat_g'],
-       90,
-       true
+-- 1. Update source info on products
+UPDATE products p SET
+  source_type = 'off_api',
+  source_url = d.source_url,
+  source_ean = d.source_ean
 FROM (
   VALUES
     ('E.Wedel', 'Czekolada gorzka Wiśniowa', 'https://world.openfoodfacts.org/product/5901588017457', '5901588017457'),
@@ -69,7 +59,6 @@ FROM (
     ('Terravita', 'Czekolada deserowa', 'https://world.openfoodfacts.org/product/5900915028890', '5900915028890'),
     ('E. Wedel', 'Jedyna Czekolada Wyborowa', 'https://world.openfoodfacts.org/product/5901588017822', '5901588017822')
 ) AS d(brand, product_name, source_url, source_ean)
-JOIN products p ON p.country = 'PL' AND p.brand = d.brand
+WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name
-  AND p.category = 'Sweets' AND p.is_deprecated IS NOT TRUE
-ON CONFLICT DO NOTHING;
+  AND p.category = 'Sweets' AND p.is_deprecated IS NOT TRUE;
