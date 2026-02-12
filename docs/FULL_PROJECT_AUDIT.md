@@ -26,12 +26,12 @@
 | v_product_confidence                    | 1,025                                  |
 | EAN coverage                            | 997/1,025 active (97.3%)               |
 | Source provenance                        | 1,025/1,025 (100%)                     |
-| Score range / avg                       | 4–51 / 23.2                            |
+| Score range / avg                       | 4–58 / 23.7                            |
 | Confidence (products.confidence)        | 1,025 verified · 0 estimated · 0 low   |
 | CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
-| Migration files                         | 54                                     |
+| Migration files                         | 55                                     |
 | QA checks                               | 226/226 pass + 29/29 negative tests    |
 
 ---

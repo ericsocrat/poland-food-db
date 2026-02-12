@@ -49,7 +49,7 @@ def get_products() -> list[dict]:
     if result.returncode != 0:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
         sys.exit(1)
-    
+
     products = []
     for line in result.stdout.strip().split("\n"):
         if not line.strip():
@@ -77,7 +77,7 @@ def get_ingredient_ref() -> dict[str, int]:
     if result.returncode != 0:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
         sys.exit(1)
-    
+
     lookup = {}
     for line in result.stdout.strip().split("\n"):
         if not line.strip():
@@ -96,7 +96,7 @@ def fetch_off_product(ean: str) -> dict | None:
     """Fetch a single product from OFF API."""
     url = OFF_PRODUCT_URL.format(ean=ean)
     headers = {"User-Agent": USER_AGENT}
-    
+
     for attempt in range(MAX_RETRIES + 1):
         try:
             resp = requests.get(
@@ -152,39 +152,39 @@ def process_ingredients(off_product: dict, product_id: int,
                         ingredient_lookup: dict[str, int],
                         new_ingredients: dict[str, dict]) -> list[dict]:
     """Extract ingredient rows for a product.
-    
-    Returns list of dicts with keys: product_id, ingredient_id, position, 
+
+    Returns list of dicts with keys: product_id, ingredient_id, position,
     percent, percent_estimate, is_sub_ingredient, parent_ingredient_id
     """
     ingredients = off_product.get("ingredients", [])
     if not ingredients:
         return []
-    
+
     rows = []
     position = 1
-    
+
     def process_item(item: dict, pos: int, is_sub: bool, parent_id: int | None) -> int:
         """Process a single ingredient item. Returns next position."""
         text = item.get("text", "").strip()
         off_id = item.get("id", "").strip()
-        
+
         if not text and not off_id:
             return pos
-        
+
         # Normalize the name
         name = text if text else off_id
         name_lower = normalize_ingredient_name(name)
-        
+
         if not name_lower:
             return pos
-        
+
         # Try to find in ingredient_ref
         ing_id = ingredient_lookup.get(name_lower)
-        
+
         if ing_id is None:
             # Check if it's an additive by tag
             is_add = is_additive_tag(off_id) if off_id else False
-            
+
             # Create new ingredient_ref entry
             if name_lower not in new_ingredients:
                 # Use title case for the display name
@@ -192,20 +192,20 @@ def process_ingredients(off_product: dict, product_id: int,
                 display_name = display_name.strip()
                 if len(display_name) > 200:
                     display_name = display_name[:200]
-                
+
                 new_ingredients[name_lower] = {
                     "name_en": display_name,
                     "is_additive": is_add,
                     "vegan": item.get("vegan", "unknown") or "unknown",
-                    "vegetarian": item.get("vegetarian", "unknown") or "unknown", 
+                    "vegetarian": item.get("vegetarian", "unknown") or "unknown",
                     "from_palm_oil": item.get("from_palm_oil", "unknown") or "unknown",
                 }
             # We'll resolve the ID after inserting new ingredients
             ing_id = f"NEW:{name_lower}"
-        
+
         pct = item.get("percent")
         pct_est = item.get("percent_estimate")
-        
+
         row = {
             "product_id": product_id,
             "ingredient_id": ing_id,
@@ -216,26 +216,26 @@ def process_ingredients(off_product: dict, product_id: int,
             "parent_ingredient_id": parent_id if is_sub else None,
         }
         rows.append(row)
-        
+
         current_id = ing_id
         next_pos = pos + 1
-        
+
         # Process sub-ingredients
         for sub in item.get("ingredients", []):
             next_pos = process_item(sub, next_pos, True, current_id)
-        
+
         return next_pos
-    
+
     for item in ingredients:
         position = process_item(item, position, False, None)
-    
+
     return rows
 
 
 def process_allergens(off_product: dict, product_id: int) -> list[dict]:
     """Extract allergen_info rows for a product."""
     rows = []
-    
+
     allergens = off_product.get("allergens_tags", [])
     for tag in allergens:
         # Remove language prefix
@@ -247,7 +247,7 @@ def process_allergens(off_product: dict, product_id: int) -> list[dict]:
                 "tag": clean_tag,
                 "type": "contains",
             })
-    
+
     traces = off_product.get("traces_tags", [])
     for tag in traces:
         clean_tag = tag.split(":")[-1] if ":" in tag else tag
@@ -258,7 +258,7 @@ def process_allergens(off_product: dict, product_id: int) -> list[dict]:
                 "tag": clean_tag,
                 "type": "traces",
             })
-    
+
     return rows
 
 
@@ -269,7 +269,7 @@ def sql_escape(val: str | None) -> str:
     return "'" + str(val).replace("'", "''") + "'"
 
 
-def generate_migration(ingredient_rows: list[dict], 
+def generate_migration(ingredient_rows: list[dict],
                        allergen_rows: list[dict],
                        new_ingredients: dict[str, dict],
                        stats: dict) -> str:
@@ -286,7 +286,7 @@ def generate_migration(ingredient_rows: list[dict],
     lines.append("")
     lines.append("BEGIN;")
     lines.append("")
-    
+
     # 1. Insert new ingredients into ingredient_ref
     if new_ingredients:
         lines.append("-- ═══════════════════════════════════════════════════════════════")
@@ -295,7 +295,7 @@ def generate_migration(ingredient_rows: list[dict],
         lines.append("")
         lines.append("INSERT INTO ingredient_ref (name_en, is_additive, vegan, vegetarian, from_palm_oil)")
         lines.append("VALUES")
-        
+
         vals = []
         for name_lower, info in sorted(new_ingredients.items()):
             vals.append(
@@ -308,14 +308,14 @@ def generate_migration(ingredient_rows: list[dict],
         lines.append(",\n".join(vals))
         lines.append("ON CONFLICT DO NOTHING;")
         lines.append("")
-    
+
     # 2. Insert product_allergen_info (simpler — no FK to ingredient_ref)
     if allergen_rows:
         lines.append("-- ═══════════════════════════════════════════════════════════════")
         lines.append("-- 2. Populate product_allergen_info")
         lines.append("-- ═══════════════════════════════════════════════════════════════")
         lines.append("")
-        
+
         # Batch by 500 rows
         batch_size = 500
         for i in range(0, len(allergen_rows), batch_size):
@@ -328,7 +328,7 @@ def generate_migration(ingredient_rows: list[dict],
             lines.append(",\n".join(vals))
             lines.append("ON CONFLICT (product_id, tag, type) DO NOTHING;")
             lines.append("")
-    
+
     # 3. Insert product_ingredient — needs resolved ingredient_ids
     # For new ingredients, we use a subquery to look up the ID by name
     if ingredient_rows:
@@ -337,11 +337,11 @@ def generate_migration(ingredient_rows: list[dict],
         lines.append("-- ═══════════════════════════════════════════════════════════════")
         lines.append("-- Using a CTE to resolve ingredient names to IDs")
         lines.append("")
-        
+
         # Group by whether they need name resolution
         resolved = [r for r in ingredient_rows if not isinstance(r["ingredient_id"], str)]
         unresolved = [r for r in ingredient_rows if isinstance(r["ingredient_id"], str)]
-        
+
         # Insert resolved rows (direct ingredient_id)
         if resolved:
             batch_size = 500
@@ -362,7 +362,7 @@ def generate_migration(ingredient_rows: list[dict],
                 lines.append(",\n".join(vals))
                 lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
                 lines.append("")
-        
+
         # Insert unresolved rows (need name lookup)
         if unresolved:
             batch_size = 500
@@ -397,7 +397,7 @@ def generate_migration(ingredient_rows: list[dict],
     lines.append("SELECT refresh_all_materialized_views();")
     lines.append("")
     lines.append("COMMIT;")
-    
+
     return "\n".join(lines)
 
 
@@ -405,25 +405,25 @@ def main():
     print("=" * 60)
     print("Ingredient & Allergen Enrichment")
     print("=" * 60)
-    
+
     # 1. Load products and ingredient_ref
     print("\n[1/4] Loading products from database...")
     products = get_products()
     print(f"  Found {len(products)} active products with EANs")
-    
+
     print("\n[2/4] Loading ingredient_ref...")
     ingredient_lookup = get_ingredient_ref()
     print(f"  Found {len(ingredient_lookup)} ingredients in reference table")
-    
+
     # 2. Fetch from OFF API
     print(f"\n[3/4] Fetching ingredient data from OFF API...")
     print(f"  Rate limit: {DELAY}s between requests")
     print(f"  Estimated time: ~{len(products) * DELAY / 60:.0f} minutes")
-    
+
     all_ingredient_rows = []
     all_allergen_rows = []
     new_ingredients: dict[str, dict] = {}
-    
+
     stats = {
         "processed": 0,
         "with_ingredients": 0,
@@ -431,37 +431,37 @@ def main():
         "not_found": 0,
         "api_errors": 0,
     }
-    
+
     for i, product in enumerate(products):
         if (i + 1) % 50 == 0 or i == 0:
             print(f"  Processing {i+1}/{len(products)} "
                   f"(ingredients: {stats['with_ingredients']}, "
                   f"allergens: {stats['with_allergens']}, "
                   f"not found: {stats['not_found']})...")
-        
+
         off_data = fetch_off_product(product["ean"])
         stats["processed"] += 1
-        
+
         if off_data is None:
             stats["not_found"] += 1
             time.sleep(DELAY)
             continue
-        
+
         # Process ingredients
         ing_rows = process_ingredients(off_data, product["product_id"],
                                        ingredient_lookup, new_ingredients)
         if ing_rows:
             stats["with_ingredients"] += 1
             all_ingredient_rows.extend(ing_rows)
-        
+
         # Process allergens/traces
         alg_rows = process_allergens(off_data, product["product_id"])
         if alg_rows:
             stats["with_allergens"] += 1
             all_allergen_rows.extend(alg_rows)
-        
+
         time.sleep(DELAY)
-    
+
     # 3. Generate migration
     print(f"\n[4/4] Generating migration SQL...")
     print(f"  Products processed: {stats['processed']}")
@@ -471,10 +471,10 @@ def main():
     print(f"  New ingredients to add: {len(new_ingredients)}")
     print(f"  Total ingredient rows: {len(all_ingredient_rows)}")
     print(f"  Total allergen rows: {len(all_allergen_rows)}")
-    
+
     sql = generate_migration(all_ingredient_rows, all_allergen_rows,
                               new_ingredients, stats)
-    
+
     MIGRATION_FILE.write_text(sql, encoding="utf-8")
     print(f"\n  Migration written to: {MIGRATION_FILE}")
     print(f"  File size: {MIGRATION_FILE.stat().st_size / 1024:.1f} KB")
