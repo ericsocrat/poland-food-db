@@ -142,12 +142,12 @@
 | ------------------------- | ----: | ---------------------------------------------------------------------------------------- |
 | pipeline/__init__.py      |     0 | ✅ None                                                                                   |
 | pipeline/__main__.py      |     5 | ✅ None                                                                                   |
-| pipeline/categories.py    |   378 | ⚠️ Leaked loop vars; unnecessary `__future__` import                                      |
-| pipeline/off_client.py    |   487 | ⚠️ Dead `_clean_text()`; unclosed sessions; `_round1()` phantom zeros; `int()` crash risk |
-| pipeline/run.py           |   232 | ⚠️ Unused `resolve_category` import; duplicate `_slug()`; `sys.exit(0)` swallows errors   |
-| pipeline/sql_generator.py |   557 | ⚠️ Unused logger; `sodium_mg` in fields_populated; duplicate `_slug()`                    |
-| pipeline/validator.py     |   169 | ⚠️ EAN-8 not supported (unlike standalone script); unused logger                          |
-| validate_eans.py          |   118 | ⚠️ Unhandled `FileNotFoundError` for missing docker/psql                                  |
+| pipeline/categories.py    |   378 | ⚠️ [Historical] Leaked loop vars; unnecessary `__future__` import                                      |
+| pipeline/off_client.py    |   487 | ⚠️ [Historical] Dead `_clean_text()`; unclosed sessions; `_round1()` phantom zeros; `int()` crash risk |
+| pipeline/run.py           |   232 | ⚠️ [Historical] Unused `resolve_category` import; duplicate `_slug()`; `sys.exit(0)` swallows errors   |
+| pipeline/sql_generator.py |   557 | ⚠️ [Historical] Unused logger; `sodium_mg` in fields_populated; duplicate `_slug()`                    |
+| pipeline/validator.py     |   169 | ⚠️ [Historical] EAN-8 not supported (unlike standalone script); unused logger                          |
+| validate_eans.py          |   118 | ⚠️ [Historical] Unhandled `FileNotFoundError` for missing docker/psql                                  |
 
 **Security**: No vulnerabilities. SQL escaping adequate. No hardcoded secrets.
 
@@ -162,14 +162,14 @@
 | ----------------------- | ----: | ------------------------------------------------------ |
 | RUN_LOCAL.ps1           |   207 | ✅ Clean — dry-run, preflight, single-transaction       |
 | RUN_REMOTE.ps1          |   251 | ✅ SecureString password, cleared after use             |
-| RUN_QA.ps1              |   865 | ⚠️ Header mismatch (34 vs 31); ~600 lines copy-paste    |
+| RUN_QA.ps1              |   865 | ⚠️ [Historical] Header mismatch (34 vs 31); ~600 lines copy-paste    |
 | RUN_NEGATIVE_TESTS.ps1  |    86 | ✅ Clean                                                |
 | supabase/config.toml    |   385 | ✅ Standard, no hardcoded secrets                       |
 | .env.example            |    12 | ✅ Correct                                              |
 | requirements.txt        |     2 | ✅ Sensible version pins                                |
 | .editorconfig           |    28 | ✅ Proper                                               |
 | .gitignore              |    57 | ✅ Comprehensive                                        |
-| .vscode/settings.json   |   215 | ⚠️ Duplicate cSpell word; local dev password (expected) |
+| .vscode/settings.json   |   215 | ⚠️ [Historical] Duplicate cSpell word; local dev password (expected) |
 | .vscode/extensions.json |    21 | ✅ Good extension list                                  |
 
 ---
@@ -224,5 +224,6 @@ _Fixes are logged below as they are completed._
 | 13  | 2026-02-11 | `_safe_int()` guard added                             | pipeline/off_client.py                                                                                                    |
 | 16  | 2026-02-11 | 5 remaining docs updated (14 stale refs)              | docs/PERFORMANCE_REPORT.md, docs/DATA_SOURCES.md, docs/EAN_EXPANSION_PLAN.md, docs/API_CONTRACTS.md, docs/UX_UI_DESIGN.md |
 | 17  | 2026-02-12 | Final consistency sweep (counts + docs alignment)     | README.md, docs/EAN_VALIDATION_STATUS.md, copilot-instructions.md, docs/FULL_PROJECT_AUDIT.md |
+
 
 
