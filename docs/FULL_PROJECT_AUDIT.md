@@ -124,7 +124,7 @@
 | Postgres 15 service container                                            | ✅ Pass |
 | Full pipeline: migrations → pipelines → fixup → QA → threshold → summary | ✅ Pass |
 | Fails job on QA failure                                                  | ✅ Pass |
-| Job name check count matches (228)                                       | ✅ Pass |
+| Job name check count matches (226)                                       | ✅ Pass |
 
 **Verdict**: CI pipeline correctly configured.
 

@@ -2,7 +2,7 @@
 
 [![QA Tests](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml)
 
-A multi-axis food quality database scoring **1,036 products** sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
+A multi-axis food quality database scoring **1,029 products** sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
 
 ## What This Project Is
 
@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (228 checks across 15 suites)
+# All tests (226 checks across 15 suites)
 .\RUN_QA.ps1
 
 # Negative validation (29 constraint tests)
@@ -66,32 +66,32 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 1,036 active products across 20 categories (variable size, 187 deprecated products excluded)
+**Database**: 1,029 active products across 20 categories (variable size, 34 deprecated products excluded)
 
 | Category                       | Products | Brands | Score Range |
 | ------------------------------ | -------: | -----: | ----------- |
-| **Alcohol**                    |       29 |     25 | 4–22        |
+| **Alcohol**                    |       30 |     26 | 4–17        |
 | **Baby**                       |       39 |     26 | 6–43        |
-| **Bread**                      |       57 |     33 | 9–40        |
-| **Breakfast & Grain-Based**    |       88 |     40 | 6–41        |
-| **Canned Goods**               |       50 |     29 | 5–30        |
-| **Cereals**                    |       44 |     17 | 12–47       |
-| **Chips**                      |       50 |     23 | 11–45       |
-| **Condiments**                 |       50 |     23 | 17–40       |
-| **Dairy**                      |       50 |     23 | 8–45        |
+| **Bread**                      |       60 |     34 | 9–40        |
+| **Breakfast & Grain-Based**    |       95 |     40 | 6–44        |
+| **Canned Goods**               |       49 |     29 | 5–30        |
+| **Cereals**                    |       42 |     17 | 12–45       |
+| **Chips**                      |       49 |     21 | 11–37       |
+| **Condiments**                 |       48 |     23 | 17–40       |
+| **Dairy**                      |       46 |     20 | 8–44        |
 | **Drinks**                     |       55 |     29 | 4–25        |
-| **Frozen & Prepared**          |       50 |     26 | 5–56        |
-| **Instant & Frozen**           |       50 |     21 | 6–56        |
-| **Meat**                       |       50 |     28 | 9–49        |
-| **Nuts, Seeds & Legumes**      |       50 |     27 | 23–48       |
-| **Plant-Based & Alternatives** |       48 |     36 | 6–40        |
-| **Sauces**                     |       95 |     47 | 6–47        |
-| **Seafood & Fish**             |       50 |     26 | 8–36        |
-| **Snacks**                     |       53 |     40 | 9–57        |
-| **Sweets**                     |       50 |     19 | 30–51       |
+| **Frozen & Prepared**          |       49 |     25 | 5–46        |
+| **Instant & Frozen**           |       50 |     19 | 6–49        |
+| **Meat**                       |       48 |     27 | 9–46        |
+| **Nuts, Seeds & Legumes**      |       46 |     22 | 23–46       |
+| **Plant-Based & Alternatives** |       48 |     36 | 6–39        |
+| **Sauces**                     |       96 |     47 | 7–41        |
+| **Seafood & Fish**             |       50 |     24 | 8–34        |
+| **Snacks**                     |       53 |     40 | 9–49        |
+| **Sweets**                     |       48 |     18 | 30–51       |
 | **Żabka**                      |       28 |      3 | 13–34       |
-**Test Coverage**: 228 automated checks across 15 QA suites + 29 negative validation tests
-- 31 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
+**Test Coverage**: 226 automated checks across 15 QA suites + 29 negative validation tests
+- 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 14 API surface checks (contract validation, JSON structure, listing consistency)
 - 12 view consistency checks (v_master, v_api_category_overview, materialized views)
@@ -108,9 +108,9 @@ supabase start
 - 8 source coverage reports (informational, non-blocking)
 - 29 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 228/228 + 29/29 negative
+**All tests passing**: ✅ 226/226 + 29/29 negative
 
-**EAN Coverage**: 1,008/1,036 active products (97.3%) have valid EAN-8/EAN-13 barcodes
+**EAN Coverage**: 1,000/1,029 active products (97.2%) have valid EAN-8/EAN-13 barcodes
 
 ---
 
@@ -142,7 +142,7 @@ poland-food-db/
 │   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
     │   └── zabka/           # 28 convenience store products (4 SQL files)
 │   ├── qa/                  # Quality assurance test suites
-│   │   ├── QA__null_checks.sql           # 31 integrity checks
+│   │   ├── QA__null_checks.sql           # 29 integrity checks
 │   │   ├── QA__scoring_formula_tests.sql # 27 algorithm tests
 │   │   ├── QA__api_surfaces.sql          # 14 API contract checks
 │   │   ├── QA__confidence_scoring.sql    # 10 confidence scoring checks
@@ -161,7 +161,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (47 files)
+    └── migrations/          # Schema migrations (50 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
@@ -175,7 +175,7 @@ poland-food-db/
 │   └── UX_UI_DESIGN.md      # Production-ready UX specification
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (228 checks)
+├── RUN_QA.ps1               # Standalone test runner (226 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
 └── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ```
@@ -186,17 +186,17 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **228 automated checks** across 15 QA suites + 29 negative validation tests:
+Every change is validated against **226 automated checks** across 15 QA suites + 29 negative validation tests:
 
-### Data Integrity (31 checks)
+### Data Integrity (29 checks)
 - No missing required fields (product_name, brand, country, category)
-- No orphaned foreign keys (nutrition, scores, servings)
+- No orphaned foreign keys (nutrition)
 - No duplicate products
-- All active products have servings, nutrition, and scores rows
+- All active products have nutrition rows and scoring data
 - Nutrition sanity (no negative values, sat_fat ≤ total_fat, sugars ≤ carbs, calories ≤ 900)
 - Score fields not null for active products
 - View consistency (v_master row count matches products)
-- Product-source provenance (every product has a source, single primary, no fan-out)
+- Source provenance (every product has source_type, no orphaned data)
 
 ### Scoring Formula (27 checks)
 - Scores in valid range [1, 100]
@@ -256,7 +256,7 @@ Constraint violation tests that verify the database correctly rejects invalid da
 
 **Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
 
-**CI**: All 228 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 226 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -270,28 +270,25 @@ Run tests after **every** schema change or data update.
 | ---------------------------- | --------------------------------- | ----------------------------------- |
 | `fk_products_country`        | products → country_ref            | ISO 3166-1 country validation       |
 | `fk_products_category`       | products → category_ref           | Category master list (20 active)    |
-| `fk_scores_nutri_score`      | scores → nutri_score_ref          | Nutri-Score label definitions (A–E) |
+| `fk_products_nutri_score`    | products → nutri_score_ref          | Nutri-Score label definitions (A–E) |
 | `fk_ingredient_concern_tier` | ingredient_ref → concern_tier_ref | EFSA concern tiers (0–3)            |
 
 **CHECK Constraints** (26):
 
-| Table           | Constraint                       | Rule                                                              |
-| --------------- | -------------------------------- | ----------------------------------------------------------------- |
-| products        | `chk_products_country`           | country IN ('PL')                                                 |
-| products        | `chk_products_prep_method`       | Valid prep method or null                                         |
-| products        | `chk_products_controversies`     | controversies IN ('none','minor','moderate','serious','palm oil') |
-| scores          | `chk_scores_unhealthiness_range` | 0–100                                                             |
-| scores          | `chk_scores_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE                                   |
-| scores          | `chk_scores_confidence`          | verified / estimated / low                                        |
-| scores          | `chk_scores_nova`                | 1–4                                                               |
-| scores          | `chk_scores_processing_risk`     | Low / Moderate / High                                             |
-| scores          | `chk_scores_*_flag`              | YES / NO (4 flags)                                                |
-| scores          | `chk_scores_completeness`        | 0–100                                                             |
-| nutrition_facts | `chk_nf_non_negative` (7 cols)   | ≥ 0                                                               |
-| nutrition_facts | `chk_nf_sat_fat_le_total`        | saturated_fat ≤ total_fat                                         |
-| nutrition_facts | `chk_nf_sugars_le_carbs`         | sugars ≤ carbs                                                    |
-| servings        | `chk_servings_basis`             | 'per 100 g' or 'per serving'                                      |
-| servings        | `chk_servings_amount_positive`   | amount > 0                                                        |
+| Table           | Constraint                          | Rule                                                              |
+| --------------- | ----------------------------------- | ----------------------------------------------------------------- |
+| products        | `chk_products_country`              | country IN ('PL')                                                 |
+| products        | `chk_products_prep_method`          | Valid prep method or null                                         |
+| products        | `chk_products_controversies`        | controversies IN ('none','minor','moderate','serious','palm oil') |
+| products        | `chk_products_unhealthiness_range`  | 0–100                                                             |
+| products        | `chk_products_nutri_label`          | A–E, UNKNOWN, or NOT-APPLICABLE                                   |
+| products        | `chk_products_confidence`           | verified / estimated / low                                        |
+| products        | `chk_products_nova`                 | 1–4                                                               |
+| products        | `chk_products_*_flag`               | Y / N (4 flags)                                                   |
+| products        | `chk_products_completeness`         | 0–100                                                             |
+| nutrition_facts | `chk_nf_non_negative` (7 cols)      | ≥ 0                                                               |
+| nutrition_facts | `chk_nf_sat_fat_le_total`           | saturated_fat ≤ total_fat                                         |
+| nutrition_facts | `chk_nf_sugars_le_carbs`            | sugars ≤ carbs                                                    |
 
 ---
 
@@ -333,7 +330,7 @@ Every product receives an automated **data confidence** score (0-100) measuring 
 | **Medium** | 50-79 | Some gaps (allergens, serving data)   | Score may shift as data improves |
 | **Low**    | <50   | Major data gaps                       | Use with caution                 |
 
-**Current distribution**: 475 high · 364 medium · 28 low
+**Current distribution**: 0 high · 1,000 medium · 29 low (ingredient data pending re-enrichment)
 
 The 6 components of confidence: nutrition data (0-30), ingredient data (0-25), source quality (0-20), EAN coverage (0-10), allergen info (0-10), serving data (0-5). Computed by `compute_data_confidence()`.
 
@@ -341,7 +338,7 @@ The 6 components of confidence: nutrition data (0-30), ingredient data (0-25), s
 
 Products include EAN-8/EAN-13 barcodes (where available) for cross-source product matching:
 
-**Coverage**: 839/867 active products (96.8%)
+**Coverage**: 1,000/1,029 active products (97.2%)
 
 EAN codes enable validation against:
 - Manufacturer product pages
@@ -351,7 +348,7 @@ EAN codes enable validation against:
 
 ### Source Provenance
 
-All 867 products are sourced from the **Open Food Facts API** (`off_api`). Each product has a corresponding entry in the `product_sources` table with `source_type = 'off_api'`, source URL, EAN, confidence percentage, and collection timestamp.
+All 1,029 active products are sourced from the **Open Food Facts API** (`off_api`). Each product has `source_type`, `source_url`, and `source_ean` columns on the `products` table, providing full provenance tracking.
 
 **Research workflow**: See [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) for step-by-step data collection process.
 
@@ -375,7 +372,7 @@ All 867 products are sourced from the **Open Food Facts API** (`off_api`). Each 
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 228/228 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 226/226 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -393,10 +390,10 @@ All 867 products are sourced from the **Open Food Facts API** (`off_api`). Each 
 - **All data is local** — nothing is uploaded to remote Supabase (yet)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data quality tracking** — All products have confidence levels (`estimated`, `verified`, or `low`)
-- **EAN barcodes** — 839/867 active products (96.8%) have validated EAN-8/EAN-13 codes for cross-source matching
+- **EAN barcodes** — 1,000/1,029 active products (97.2%) have validated EAN-8/EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
 - **Scoring version**: v3.2 (2026-02-10)
-- **867 active products** across 20 categories (variable size), 10 deprecated products excluded
+- **1,029 active products** across 20 categories (variable size), 34 deprecated products excluded
 
 ---
 
