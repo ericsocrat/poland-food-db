@@ -22,7 +22,6 @@ from (
   values
     ('Hortex', 'Sok jabłkowy', 44.0, 0.0, 0.0, 0, 10.7, 10.3, 0, 0.2, 0.0),
     ('Riviva', 'Sok 100% pomarańcza z witaminą C', 46.0, 0.0, 0.0, 0, 11.0, 11.0, 0.6, 0.0, 0.0),
-    ('go VEGE', 'Napój roślinny owies bio', 42.0, 0.8, 0.1, 0, 7.8, 4.5, 0.6, 0.7, 0.1),
     ('Polaris', 'Napój gazowany Vital Red', 20.0, 0.5, 0.0, 0, 4.9, 4.7, 0, 0.5, 0.0),
     ('Bracia Sadownicy', 'Sok 100% tłoczony tłoczone jabłko z marchewką', 46.0, 0.0, 0.0, 0, 12.0, 12.0, 0, 0.0, 0.0),
     ('Rivia', 'Rivia Marchew Brzoskwinia Jabkło', 37.0, 0.5, 0.1, 0, 7.9, 7.9, 0.0, 0.5, 0.0),
@@ -79,7 +78,15 @@ from (
     ('Tymbark', 'Mousse', 58.3, 0.4, 0.0, 0.0, 14.2, 0.0, 0.0, 0.8, 0.0),
     ('Lidl', 'Sok 100% tłoczony z miąższem Pomarańcza Grejpfrut Pitaja', 41.0, 0.0, 0.0, 0, 8.8, 8.7, 0, 0.7, 0.0),
     ('Hortex', 'Ananas nektar', 25.0, 0.0, 0, 0, 6.0, 6.0, 0, 0.2, 0),
-    ('Herbapol', 'Malina', 1.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0)
+    ('Herbapol', 'Malina', 1.0, 0.0, 0.0, 0, 0.0, 0.0, 0.0, 0.0, 0.0),
+    -- ── Batch 2 — drinks (new) ──────────────────────────────────────────────────────
+    ('Active Vitamin',  '4move',                        44, 0, 0, 0, 10, 10, 0, 0, 0),           -- OFF
+    ('Go Vege',         'Napój roślinny owies bio',       45, 1.5, 0.2, 0, 6.5, 4.0, 0.8, 1.0, 0.10),  -- est. typical oat drink
+    ('Kubus',           'Kubus Play Malina',            22, 0.5, 0.1, 0, 5.4, 5.4, 0.5, 0, 0),    -- OFF
+    ('Kubuš',           '100% jabłko',                  46, 0.1, 0, 0, 11, 10, 0.2, 0.1, 0.01),     -- est. typical apple juice
+    ('Oshee',           'Oshee Multifruit',             18, 0, 0, 0, 4.1, 4.0, 0, 0, 0.14),       -- OFF
+    ('Oshee',           'OSHEE Zero',                    0, 0, 0, 0, 0, 0, 0, 0, 0.07),           -- OFF
+    ('Zywiec Zdroj',    'Zywiec Woda Srednio Gazowana',  0, 0, 0, 0, 0, 0, 0, 0, 0)               -- OFF (mineral water)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

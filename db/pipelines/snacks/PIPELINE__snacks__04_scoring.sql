@@ -29,7 +29,7 @@ update products p set
   nutri_score_label = d.ns
 from (
   values
-    ('PANO', 'Wafle Kukurydziane z Kaszą jaglaną i Pieprzem', 'B'),
+    ('Pano', 'Wafle Kukurydziane z Kaszą jaglaną i Pieprzem', 'B'),
     ('Go Active', 'Baton wysokobiałkowy Peanut Butter', 'C'),
     ('Go active', 'Baton białkowy malinowy', 'C'),
     ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', 'E'),
@@ -45,7 +45,7 @@ from (
     ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', 'NOT-APPLICABLE'),
     ('Lajkonik', 'Paluszki extra cienkie', 'E'),
     ('Wafle Dzik', 'Kukurydziane - ser', 'D'),
-    ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', 'E'),
+    ('Sante A. Kowalski sp. j', 'Crunchy Cranberry & Raspberry - Santé', 'E'),
     ('Miami', 'Paleczki', 'B'),
     ('Aksam', 'Beskidzkie paluszki o smaku sera i cebulki', 'E'),
     ('Go On Nutrition', 'Protein 33% Caramel', 'NOT-APPLICABLE'),
@@ -85,7 +85,9 @@ from (
     ('Aviko', 'Frytki karbowane Zig Zag', 'A'),
     ('7 Days', 'family', 'UNKNOWN'),
     ('Milka', 'Cake & Chock', 'E'),
-    ('Wasa', 'Lekkie 7 Ziaren', 'B')
+    ('Wasa', 'Lekkie 7 Ziaren', 'B'),
+    -- batch 2
+    ('Sante A. Kowalski sp. j', 'Crunchy Cranberry & Raspberry - Santé', 'D')  -- high sugar cereal bar
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
@@ -94,7 +96,7 @@ update products p set
   nova_classification = d.nova
 from (
   values
-    ('PANO', 'Wafle Kukurydziane z Kaszą jaglaną i Pieprzem', '3'),
+    ('Pano', 'Wafle Kukurydziane z Kaszą jaglaną i Pieprzem', '3'),
     ('Go Active', 'Baton wysokobiałkowy Peanut Butter', '4'),
     ('Go active', 'Baton białkowy malinowy', '4'),
     ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', '4'),
@@ -110,7 +112,7 @@ from (
     ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', '4'),
     ('Lajkonik', 'Paluszki extra cienkie', '3'),
     ('Wafle Dzik', 'Kukurydziane - ser', '4'),
-    ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', '4'),
+    ('Sante A. Kowalski sp. j', 'Crunchy Cranberry & Raspberry - Santé', '4'),
     ('Miami', 'Paleczki', '1'),
     ('Aksam', 'Beskidzkie paluszki o smaku sera i cebulki', '4'),
     ('Go On Nutrition', 'Protein 33% Caramel', '4'),
@@ -150,7 +152,9 @@ from (
     ('Aviko', 'Frytki karbowane Zig Zag', '4'),
     ('7 Days', 'family', '4'),
     ('Milka', 'Cake & Chock', '4'),
-    ('Wasa', 'Lekkie 7 Ziaren', '3')
+    ('Wasa', 'Lekkie 7 Ziaren', '3'),
+    -- batch 2
+    ('Sante A. Kowalski sp. j', 'Crunchy Cranberry & Raspberry - Santé', '4')  -- coated cereal bar
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 

@@ -33,9 +33,7 @@ values
   ('PL', 'Unknown', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', 'Netto', 'none', '5901529031436'),
   ('PL', 'Pegaz', 'Grocery', 'Condiments', 'Musztarda stołowa', 'not-applicable', 'Biedronka', 'none', '5901658000020'),
   ('PL', 'Pudliszki', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5900783008680'),
-  ('PL', 'Kotlin', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5900385500148'),
   ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup Premium Łagodny', 'not-applicable', null, 'none', '5901044022896'),
-  ('PL', 'Madero', 'Grocery', 'Condiments', 'Ketchup Łagodny', 'not-applicable', null, 'none', '5900385501756'),
   ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup premium meksykański KETO', 'not-applicable', null, 'none', '5901044027532'),
   ('PL', 'Międzychód', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5901619150948'),
   ('PL', 'Na Szlaku Smaku', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5906734827294'),
@@ -51,8 +49,8 @@ values
   ('PL', 'Madero', 'Grocery', 'Condiments', 'Ketchup pikantny', 'not-applicable', 'Biedronka', 'none', '5901713012692'),
   ('PL', 'Madero', 'Grocery', 'Condiments', 'Ketchup junior', 'not-applicable', 'Biedronka', 'none', '5906425121397'),
   ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup Premium', 'not-applicable', 'Biedronka', 'none', '5901044022872'),
-  ('PL', 'Kotlin sp. z o. o.', 'Grocery', 'Condiments', 'Ketchup kotliński', 'not-applicable', null, 'none', '5901307006519'),
-  ('PL', 'Develey', 'Grocery', 'Condiments', 'Ketchup z dodatkiem miodu, czosnku i tymianku.', 'not-applicable', 'Biedronka', 'none', '5906425121243'),
+  ('PL', 'Kotlin sp. z o. o', 'Grocery', 'Condiments', 'Ketchup kotliński', 'not-applicable', null, 'none', '5901307006519'),
+  ('PL', 'Develey', 'Grocery', 'Condiments', 'Ketchup z dodatkiem miodu, czosnku i tymianku', 'not-applicable', 'Biedronka', 'none', '5906425121243'),
   ('PL', 'Dawtona', 'Grocery', 'Condiments', 'Ketchup pikantny', 'not-applicable', 'Biedronka', 'none', '5901713012654'),
   ('PL', 'Włocławek', 'Grocery', 'Condiments', 'Ketchup', 'not-applicable', 'Auchan', 'none', '5901248002076'),
   ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup premium Pikantny', 'not-applicable', 'Kaufland', 'none', '5901044022889'),
@@ -81,4 +79,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Condiments'
   and is_deprecated is not true
-  and product_name not in ('Ketchup Łagodny', 'Ketchup łagodny', 'Ketchup łagodny - Najsmaczniejszy', 'Ketchup Łagodny Premium', 'Ketchup łagodny markowy', 'Ketchup łagodny', 'Ketchup łagodny Pudliszek', 'Ketchup pikantny z pomidorów z Kujaw', 'Ketchup łagodny', 'Ketchup włoski', 'Ketchup łagodny', 'Ketchup markowy łagodny', 'Ketchup łagodny', 'Ketchup łagodny', 'Musztarda stołowa', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup Premium Łagodny', 'Ketchup Łagodny', 'Ketchup premium meksykański KETO', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup z truskawką', 'Ketchup Ziołowy Premium z Nasionami Konopi', 'Ketchup premium łagodny', 'Ketchup Łagodny', 'Ketchup łagodny', 'Musztarda Stołowa', 'Ketchup hot', 'Ketchup pikantny', 'Ketchup junior', 'Ketchup Premium', 'Ketchup kotliński', 'Ketchup z dodatkiem miodu, czosnku i tymianku.', 'Ketchup pikantny', 'Ketchup', 'Ketchup premium Pikantny', 'Ketchup premium jalapeño KETO', 'Kotlin Ketchup Premium', 'Premium ketchup pikantny', 'Ketchup pikantny', 'Ketchup classic', 'Ketchup nr. VII', 'Ketchup nr VII', 'Ketchup pikantny', 'Ketchup lagoduy', 'Ketchup Super Pikantny', 'Ketchup Pikantny');
+  and product_name not in ('Ketchup Łagodny', 'Ketchup łagodny', 'Ketchup łagodny - Najsmaczniejszy', 'Ketchup Łagodny Premium', 'Ketchup łagodny markowy', 'Ketchup łagodny', 'Ketchup łagodny Pudliszek', 'Ketchup pikantny z pomidorów z Kujaw', 'Ketchup łagodny', 'Ketchup włoski', 'Ketchup łagodny', 'Ketchup markowy łagodny', 'Ketchup łagodny', 'Ketchup łagodny', 'Musztarda stołowa', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup Premium Łagodny', 'Ketchup Łagodny', 'Ketchup premium meksykański KETO', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup łagodny', 'Ketchup z truskawką', 'Ketchup Ziołowy Premium z Nasionami Konopi', 'Ketchup premium łagodny', 'Ketchup Łagodny', 'Ketchup łagodny', 'Musztarda Stołowa', 'Ketchup hot', 'Ketchup pikantny', 'Ketchup junior', 'Ketchup Premium', 'Ketchup kotliński', 'Ketchup z dodatkiem miodu, czosnku i tymianku', 'Ketchup pikantny', 'Ketchup', 'Ketchup premium Pikantny', 'Ketchup premium jalapeño KETO', 'Kotlin Ketchup Premium', 'Premium ketchup pikantny', 'Ketchup pikantny', 'Ketchup classic', 'Ketchup nr. VII', 'Ketchup nr VII', 'Ketchup pikantny', 'Ketchup lagoduy', 'Ketchup Super Pikantny', 'Ketchup Pikantny');

@@ -22,7 +22,7 @@ from (
   values
     ('Pudliszki', 'Po Bolońsku sos do spaghetti', 53.0, 0.6, 0.1, 0, 9.2, 6.3, 2.0, 1.7, 1.2),
     ('Culineo', 'Sos meksykański', 65.0, 0.5, 0.1, 0, 12.0, 9.0, 1.8, 1.8, 1.4),
-    ('Dawtona', 'Sos do spaghetti pomidorowo-śmietankowy.', 57.0, 1.9, 0.6, 0, 8.6, 4.0, 0.5, 1.1, 1.3),
+    ('Dawtona', 'Sos do spaghetti pomidorowo-śmietankowy', 57.0, 1.9, 0.6, 0, 8.6, 4.0, 0.5, 1.1, 1.3),
     ('Dawtona', 'Sos Neapolitański z papryką', 58.0, 0.5, 0.1, 0, 12.0, 7.9, 0.7, 1.0, 1.5),
     ('Dawtona', 'Sos Boloński z ziołami', 73.0, 0.5, 0.1, 0, 16.0, 10.0, 0.5, 1.0, 2.0),
     ('Dawtona', 'Sos meksykański', 70.0, 0.6, 0.1, 0, 14.0, 9.1, 1.1, 1.6, 1.8),
@@ -56,9 +56,8 @@ from (
     ('Develey', 'Sos jalapeño', 67.0, 0.5, 0.1, 0, 13.0, 12.0, 0, 1.7, 2.0),
     ('Dawtona', 'Sos BBQ', 128.0, 0.0, 0.0, 0, 32.0, 26.0, 0.0, 0.0, 2.2),
     ('Madero', 'Sos BBQ z chipotle', 138.0, 0.5, 0.1, 0, 32.0, 29.0, 0.0, 0.0, 0.3),
-    ('ŁOWICZ', 'Sos Spaghetti', 81.0, 2.0, 0.2, 0, 14.0, 12.0, 0, 1.6, 1.1),
+    ('Łowicz', 'Sos Spaghetti', 81.0, 2.0, 0.2, 0, 14.0, 12.0, 0, 1.6, 1.1),
     ('Pudliszki', 'Sos Do Spaghetti Oryginalny', 59.0, 1.0, 0.1, 0, 9.0, 7.1, 0, 1.7, 1.0),
-    ('Łowicz', 'Sos Spaghetti', 81.0, 2.0, 0.2, 0, 14.0, 12.0, 0, 1.6, 0.9),
     ('Dawtona', 'Passata rustica', 34.0, 0.2, 0.1, 0, 5.5, 3.8, 2.0, 1.3, 0.3),
     ('Pudliszki', 'Przecier pomidorowy', 33.0, 0.3, 0.1, 0, 5.7, 4.0, 0.8, 1.4, 0.5),
     ('Łowicz', 'Leczo', 57.0, 1.8, 0, 0, 7.4, 7.3, 0, 1.6, 0),
@@ -73,10 +72,9 @@ from (
     ('Roleski', 'Sos pomidor + jagody goji', 110.0, 0.5, 0.1, 0, 25.0, 24.0, 0, 1.5, 1.4),
     ('MW Food', 'Sauce tomate', 51.0, 1.2, 0.1, 0, 7.8, 5.9, 0.0, 1.5, 1.0),
     ('Pudliszki', 'Bolonski', 70.0, 2.3, 0.6, 0, 8.0, 4.7, 1.1, 3.6, 1.3),
-    ('Biedronka', 'Pesto Zielone. Sos na bazie bazyli.', 401.0, 39.0, 5.3, 0, 7.6, 3.2, 2.2, 4.7, 2.0),
+    ('Biedronka', 'Pesto Zielone. Sos na bazie bazyli', 401.0, 39.0, 5.3, 0, 7.6, 3.2, 2.2, 4.7, 2.0),
     ('GustoBello', 'White wine vinegar cream with pesto alla genovese', 180.0, 3.2, 0.6, 0, 37.0, 31.0, 0.6, 0.5, 0.9),
     ('Kucharek', 'Kucharek', 144.0, 0.1, 0.1, 0, 25.0, 16.0, 0, 7.9, 25.0),
-    ('Develey', 'Sos 1000 Wysp', 332.0, 30.0, 2.3, 0, 13.0, 11.0, 0, 0.6, 0.7),
     ('Roleski', 'Sos vinaigrette', 44.0, 4.5, 0.3, 0, 0.6, 0.0, 0, 0.0, 2.5),
     ('Knorr', 'Sos sałatkowy paprykowo-ziołowy', 424.0, 45.0, 6.5, 0, 4.8, 3.8, 0.7, 0.5, 2.2),
     ('Madero', 'Sos chilli pikantny', 83.0, 0.3, 0.0, 0, 17.4, 15.0, 0, 1.2, 2.0),
@@ -119,7 +117,11 @@ from (
     ('Sol & Mar', 'Piri-Piri', 16.0, 0.8, 0.2, 0, 0.9, 0.5, 1.6, 0.6, 5.3),
     ('Kikkoman', 'Kikkoman Sojasauce', 77.0, 0.0, 0.0, 0, 3.2, 0.6, 0.0, 10.0, 16.9),
     ('Mutti', 'Passierte Tomaten', 36.0, 0.5, 0.1, 0, 5.1, 4.5, 0, 1.6, 0.5),
-    ('gustobello', 'Passata', 28.0, 0.1, 0, 0, 4.1, 3.5, 1.8, 1.4, 0.0)
+    ('gustobello', 'Passata', 28.0, 0.1, 0, 0, 4.1, 3.5, 1.8, 1.4, 0.0),
+    -- ── Batch 2 — sauces (new) ───────────────────────────────────────────────────────
+    ('Gustobello',      'Passata',          28, 0.1, 0.02, 0, 4.1, 3.5, 1.8, 1.4, 0.01),   -- OFF
+    ('Helcom',          'Sauce a la mexicaine', 52, 0, 0, 0, 11, 8.9, 1.0, 1.4, 1.0),       -- OFF
+    ('Mondo Italiano',  'Passierte Tomaten', 30, 0.2, 0.05, 0, 4.5, 4.0, 0.5, 1.3, 0.10)    -- OFF
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

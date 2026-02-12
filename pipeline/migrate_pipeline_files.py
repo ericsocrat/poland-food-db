@@ -31,9 +31,7 @@ def transform_03_nutrition(text: str) -> str:
             "delete from nutrition_facts\n"
             "where product_id in (\n"
             "  select p.product_id\n"
-            "  from products p\n"
-            + m.group(1)
-            + ");"
+            "  from products p\n" + m.group(1) + ");"
         ),
         text,
     )
@@ -84,8 +82,10 @@ def transform_04_scoring(text: str) -> str:
 
     # 1) Section 1: unhealthiness_score
     # "update scores sc set" → "update products p set"
-    text = text.replace("update scores sc set\n  unhealthiness_score",
-                        "update products p set\n  unhealthiness_score")
+    text = text.replace(
+        "update scores sc set\n  unhealthiness_score",
+        "update products p set\n  unhealthiness_score",
+    )
 
     # "sc.ingredient_concern_score" → "p.ingredient_concern_score"
     text = text.replace("sc.ingredient_concern_score", "p.ingredient_concern_score")
@@ -102,9 +102,7 @@ def transform_04_scoring(text: str) -> str:
         r"    group by pi\.product_id\n"
         r"\) ia on ia\.product_id = p\.product_id\n)"
         r"where p\.product_id = sc\.product_id\n",
-        r"from nutrition_facts nf\n"
-        r"\1"
-        r"where nf.product_id = p.product_id\n",
+        r"from nutrition_facts nf\n" r"\1" r"where nf.product_id = p.product_id\n",
         text,
         flags=re.DOTALL,
     )
@@ -121,17 +119,17 @@ def transform_04_scoring(text: str) -> str:
         r"    group by pi\.product_id\n"
         r"\) ia on ia\.product_id = p\.product_id\n)"
         r"where p\.product_id = sc\.product_id\n",
-        r"from nutrition_facts nf\n"
-        r"\1"
-        r"where nf.product_id = p.product_id\n",
+        r"from nutrition_facts nf\n" r"\1" r"where nf.product_id = p.product_id\n",
         text,
         flags=re.DOTALL,
     )
 
     # 2) Nutri-Score section:
     # "update scores sc set\n  nutri_score_label" → "update products p set\n  nutri_score_label"
-    text = text.replace("update scores sc set\n  nutri_score_label",
-                        "update products p set\n  nutri_score_label")
+    text = text.replace(
+        "update scores sc set\n  nutri_score_label",
+        "update products p set\n  nutri_score_label",
+    )
 
     # The FROM clause for nutri-score VALUES block:
     # "join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name\n"
@@ -146,8 +144,10 @@ def transform_04_scoring(text: str) -> str:
     )
 
     # 3) NOVA section: same pattern
-    text = text.replace("update scores sc set\n  nova_classification",
-                        "update products p set\n  nova_classification")
+    text = text.replace(
+        "update scores sc set\n  nova_classification",
+        "update products p set\n  nova_classification",
+    )
 
     # After the nutri-score fix above, the NOVA block has the same remaining pattern
     # (if the join+where wasn't already caught, handle it)
@@ -159,8 +159,10 @@ def transform_04_scoring(text: str) -> str:
     )
 
     # 4) Health-risk flags: "update scores sc set\n  high_salt_flag" → "update products p set\n  high_salt_flag"
-    text = text.replace("update scores sc set\n  high_salt_flag",
-                        "update products p set\n  high_salt_flag")
+    text = text.replace(
+        "update scores sc set\n  high_salt_flag",
+        "update products p set\n  high_salt_flag",
+    )
 
     # 5) Confidence section:
     # "update scores sc set\n  confidence = assign_confidence(sc.data_completeness_pct"
@@ -204,8 +206,12 @@ def transform_05_source(text: str) -> str:
     values_block = values_match.group(1)
 
     # Extract the header comment
-    header_match = re.search(r"(-- PIPELINE \(.*?\): source provenance\n-- Generated:.*?\n)", text)
-    header = header_match.group(1) if header_match else "-- PIPELINE: source provenance\n"
+    header_match = re.search(
+        r"(-- PIPELINE \(.*?\): source provenance\n-- Generated:.*?\n)", text
+    )
+    header = (
+        header_match.group(1) if header_match else "-- PIPELINE: source provenance\n"
+    )
 
     return f"""{header}
 -- 1. Update source info on products

@@ -17,22 +17,22 @@ where ean in ('5901576058059', '5906730621100', '5903895631418', '5900344000337'
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('PL', 'marinero', 'Grocery', 'Seafood & Fish', 'Pstrąg Tęczowy Łososiowy Wędzony Na Zimno', 'smoked', 'Biedronka', 'none', '5901576058059'),
+  ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Pstrąg Tęczowy Łososiowy Wędzony Na Zimno', 'smoked', 'Biedronka', 'none', '5901576058059'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Łosoś wędzony na zimno', 'smoked', 'Biedronka', 'none', '5906730621100'),
   ('PL', 'Graal', 'Grocery', 'Seafood & Fish', 'Tuńczyk kawałki w sosie własnym', 'not-applicable', 'Biedronka', 'none', '5903895631418'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Szybki śledzik w sosie czosnkowym z ziołami prowansalskimi', 'not-applicable', 'Biedronka', 'none', '5900344000337'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Łosoś wędzony na gorąco dymem z drewna bukowego', 'smoked', 'Biedronka', 'none', '5903475460131'),
-  ('PL', 'Komersmag', 'Grocery', 'Seafood & Fish', 'Filety śledziowe panierowane i smażone w zalewie octowej.', 'fried', 'Auchan', 'none', '5904468000228'),
+  ('PL', 'Komersmag', 'Grocery', 'Seafood & Fish', 'Filety śledziowe panierowane i smażone w zalewie octowej', 'fried', 'Auchan', 'none', '5904468000228'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Śledzik na raz z suszonymi pomidorami', 'not-applicable', 'Biedronka', 'none', '5900344901825'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Filety śledziowe w oleju a''la Matjas', 'not-applicable', 'Tesco', 'none', '5900344016697'),
   ('PL', 'Jantar', 'Grocery', 'Seafood & Fish', 'Szprot wędzony na gorąco', 'smoked', 'Auchan', 'none', '5906395035717'),
-  ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', 'not-applicable', 'Biedronka', 'none', '5900344901832'),
+  ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym', 'not-applicable', 'Biedronka', 'none', '5900344901832'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Szybki Śledzik w sosie śmietankowym', 'not-applicable', 'Biedronka', 'none', '5900344000375'),
   ('PL', 'Fischer King', 'Grocery', 'Seafood & Fish', 'Stek z łososia', 'not-applicable', 'Netto', 'none', '5901576050404'),
   ('PL', 'Dega', 'Grocery', 'Seafood & Fish', 'Ryba śledź po grecku', 'not-applicable', 'Lewiatan', 'none', '5900672012606'),
   ('PL', 'Kong Oskar', 'Grocery', 'Seafood & Fish', 'Tuńczyk w kawałkach w oleju roślinnym', 'not-applicable', 'Auchan', 'none', '5901489215273'),
-  ('PL', 'Auchan', 'Grocery', 'Seafood & Fish', 'ŁOSOŚ PACYFICZNY DZIKI', 'smoked', 'Auchan', 'none', '5904215131335'),
-  ('PL', 'GRAAL', 'Grocery', 'Seafood & Fish', 'Tuńczyk Mexicans z warzywami', 'not-applicable', null, 'none', '5903895632491'),
+  ('PL', 'Auchan', 'Grocery', 'Seafood & Fish', 'Łosoś pacyficzny dziki', 'smoked', 'Auchan', 'none', '5904215131335'),
+  ('PL', 'Graal', 'Grocery', 'Seafood & Fish', 'Tuńczyk Mexicans z warzywami', 'not-applicable', null, 'none', '5903895632491'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Wiejskie filety śledziowe z cebulką', 'not-applicable', null, 'none', '5900344000429'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Śledzik na raz w sosie grzybowym kurki', 'not-applicable', null, 'none', '5900344030129'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Śledź filety z suszonymi pomidorami', 'not-applicable', null, 'none', '5903496036971'),
@@ -57,7 +57,7 @@ values
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Herring single portion with onion', 'not-applicable', 'Biedronka', 'none', '5900344901818'),
   ('PL', 'Graal', 'Grocery', 'Seafood & Fish', 'Filety z makreli w sosie pomidorowym', 'not-applicable', null, 'none', '5903895010237'),
   ('PL', 'Lisner', 'Grocery', 'Seafood & Fish', 'Herring Snack', 'not-applicable', null, 'none', '5900344901788'),
-  ('PL', 'nautica', 'Grocery', 'Seafood & Fish', 'Śledzie Wiejskie', 'not-applicable', 'Lidl', 'none', '20544508'),
+  ('PL', 'Nautica', 'Grocery', 'Seafood & Fish', 'Śledzie Wiejskie', 'not-applicable', 'Lidl', 'none', '20544508'),
   ('PL', 'Well done', 'Grocery', 'Seafood & Fish', 'Łosoś atlantycki', 'smoked', 'Stokrotka', 'none', '2098765853199'),
   ('PL', 'Graal', 'Grocery', 'Seafood & Fish', 'Szprot w sosie pomidorowym', 'not-applicable', null, 'none', '5903895010169'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Filety śledziowe a''la Matjas', 'not-applicable', 'Biedronka', 'none', '20503031'),
@@ -81,4 +81,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Seafood & Fish'
   and is_deprecated is not true
-  and product_name not in ('Pstrąg Tęczowy Łososiowy Wędzony Na Zimno', 'Łosoś wędzony na zimno', 'Tuńczyk kawałki w sosie własnym', 'Szybki śledzik w sosie czosnkowym z ziołami prowansalskimi', 'Łosoś wędzony na gorąco dymem z drewna bukowego', 'Filety śledziowe panierowane i smażone w zalewie octowej.', 'Śledzik na raz z suszonymi pomidorami', 'Filety śledziowe w oleju a''la Matjas', 'Szprot wędzony na gorąco', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', 'Szybki Śledzik w sosie śmietankowym', 'Stek z łososia', 'Ryba śledź po grecku', 'Tuńczyk w kawałkach w oleju roślinnym', 'ŁOSOŚ PACYFICZNY DZIKI', 'Tuńczyk Mexicans z warzywami', 'Wiejskie filety śledziowe z cebulką', 'Śledzik na raz w sosie grzybowym kurki', 'Śledź filety z suszonymi pomidorami', 'Śledzie po żydowsku', 'Łosoś atlantycki, wędzony na zimno, plastrowany', 'Łosoś wędzony na gorąco dymem drewna bukowego', 'Śledzik na raz z suszonymi pomidorami i ziołami włoskimi', 'Filety z pstrąga', 'Wiejskie filety śledziowe marynowane z cebulą', 'Łosoś Wędzony Plastrowany', 'Tuńczyk Stek Z Kropla Oliwy Z Oliwek', 'Łosoś łagodny', 'Śledzik na raz Pikantny', 'Filety śledziowe w sosie pomidorowym', 'Filety z makreli w sosie pomidorowym', 'Szprot w sosie pomidorowym', 'Marinated Herring in mushroom sauce', 'Gniazda z łososia', 'Łosoś atlantycki', 'Łosoś atlantycki wędzony na zimno', 'Łosoś wędzony na gorąco', 'Herring single portion with onion', 'Filety z makreli w sosie pomidorowym', 'Herring Snack', 'Śledzie Wiejskie', 'Łosoś atlantycki', 'Szprot w sosie pomidorowym', 'Filety śledziowe a''la Matjas', 'Paluszki z fileta z dorsza', 'Sushi Nori', 'Nori', 'Chlorella detoks', 'Dried wakame', 'Tuńczyk kawałki w sosie własnym');
+  and product_name not in ('Pstrąg Tęczowy Łososiowy Wędzony Na Zimno', 'Łosoś wędzony na zimno', 'Tuńczyk kawałki w sosie własnym', 'Szybki śledzik w sosie czosnkowym z ziołami prowansalskimi', 'Łosoś wędzony na gorąco dymem z drewna bukowego', 'Filety śledziowe panierowane i smażone w zalewie octowej', 'Śledzik na raz z suszonymi pomidorami', 'Filety śledziowe w oleju a''la Matjas', 'Szprot wędzony na gorąco', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym', 'Szybki Śledzik w sosie śmietankowym', 'Stek z łososia', 'Ryba śledź po grecku', 'Tuńczyk w kawałkach w oleju roślinnym', 'Łosoś pacyficzny dziki', 'Tuńczyk Mexicans z warzywami', 'Wiejskie filety śledziowe z cebulką', 'Śledzik na raz w sosie grzybowym kurki', 'Śledź filety z suszonymi pomidorami', 'Śledzie po żydowsku', 'Łosoś atlantycki, wędzony na zimno, plastrowany', 'Łosoś wędzony na gorąco dymem drewna bukowego', 'Śledzik na raz z suszonymi pomidorami i ziołami włoskimi', 'Filety z pstrąga', 'Wiejskie filety śledziowe marynowane z cebulą', 'Łosoś Wędzony Plastrowany', 'Tuńczyk Stek Z Kropla Oliwy Z Oliwek', 'Łosoś łagodny', 'Śledzik na raz Pikantny', 'Filety śledziowe w sosie pomidorowym', 'Filety z makreli w sosie pomidorowym', 'Szprot w sosie pomidorowym', 'Marinated Herring in mushroom sauce', 'Gniazda z łososia', 'Łosoś atlantycki', 'Łosoś atlantycki wędzony na zimno', 'Łosoś wędzony na gorąco', 'Herring single portion with onion', 'Filety z makreli w sosie pomidorowym', 'Herring Snack', 'Śledzie Wiejskie', 'Łosoś atlantycki', 'Szprot w sosie pomidorowym', 'Filety śledziowe a''la Matjas', 'Paluszki z fileta z dorsza', 'Sushi Nori', 'Nori', 'Chlorella detoks', 'Dried wakame', 'Tuńczyk kawałki w sosie własnym');

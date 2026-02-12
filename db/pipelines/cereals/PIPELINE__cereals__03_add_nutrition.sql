@@ -21,7 +21,7 @@ select
 from (
   values
     ('Vitanella', 'Płatki Owsiane Górskie', 363.0, 5.7, 1.2, 0, 60.0, 1.8, 10.0, 13.0, 0.0),
-    ('GO ACTIVE', 'GO ACTIVE  granola wysokobiałkowa', 454.0, 18.0, 3.9, 0, 37.0, 17.0, 12.0, 30.0, 0.2),
+    ('Go Active', 'GO ACTIVE  granola wysokobiałkowa', 454.0, 18.0, 3.9, 0, 37.0, 17.0, 12.0, 30.0, 0.2),
     ('Melvit', 'Płatki owsiane górskie', 374.0, 6.7, 1.3, 0, 61.0, 1.6, 9.0, 13.0, 0.0),
     ('Tymbark', 'Mus wieloowocowy z dodatkiem kaszy manny i płatków owsianych', 88.0, 0.5, 0.1, 0, 18.0, 12.0, 2.7, 1.4, 0.0),
     ('Mlyny Stoislaw', 'Płatki owsiane', 377.0, 7.4, 2.0, 0, 57.0, 1.3, 11.0, 15.0, 0.0),
@@ -39,7 +39,6 @@ from (
     ('Lubella', 'Chocko Muszelki', 380.0, 3.7, 1.2, 0, 75.0, 25.0, 6.2, 8.5, 0.4),
     ('Nestlé', 'Nestle Chocapic', 389.0, 4.8, 1.3, 0, 73.6, 22.4, 7.7, 8.9, 0.2),
     ('GO ON', 'Protein granola', 416.0, 15.0, 3.0, 0, 44.0, 1.6, 18.0, 21.0, 0.0),
-    ('Nestlé', 'Corn Flakes', 382.0, 1.4, 0.5, 0, 82.6, 8.8, 4.2, 7.4, 1.3),
     ('Nestlé', 'Nestle Corn Flakes', 382.0, 1.4, 0.5, 0, 82.9, 8.8, 4.2, 7.4, 1.3),
     ('sante', 'Sante gold granola', 469.0, 18.0, 2.7, 0, 61.0, 15.0, 6.3, 9.8, 0.4),
     ('Nestlé', 'Nestke Gold flakes', 400.0, 4.6, 1.0, 0, 80.3, 29.7, 0, 7.6, 1.3),
@@ -53,7 +52,6 @@ from (
     ('lubella', 'chrupersy', 382.0, 1.6, 0.8, 0, 84.0, 22.0, 0, 5.6, 0.8),
     ('One Day More', 'Porridge chocolate', 386.0, 8.6, 3.1, 0, 58.8, 12.6, 10.9, 12.5, 0.0),
     ('Nestlé', 'Lion caramel and chocolate', 402.0, 6.3, 1.1, 0, 74.2, 25.0, 6.6, 8.5, 0.5),
-    ('Nestlé', 'Cheerios owsiany', 381.0, 6.6, 1.3, 0, 65.7, 9.0, 10.3, 10.4, 0.7),
     ('Nesquik', 'Nesquik Alphabet', 369.0, 2.1, 0.7, 0, 72.8, 14.9, 9.8, 9.7, 0.4),
     ('Vitanella', 'Orito kakaowe', 442.0, 17.5, 7.7, 0, 61.6, 26.5, 3.5, 7.7, 0.5),
     ('One day more', 'Porridge', 396.0, 8.7, 2.6, 0, 62.5, 9.6, 6.6, 12.8, 0.2),
@@ -67,7 +65,11 @@ from (
     ('Crownfield', 'Space Cookies', 375.0, 3.0, 1.2, 0, 75.0, 25.0, 7.5, 8.3, 0.5),
     ('Crownfield', 'Goldini', 409.0, 5.1, 0.9, 0, 81.2, 23.2, 2.3, 8.5, 1.3),
     ('Crownfield', 'Porridge', 389.0, 8.0, 1.0, 0, 64.0, 17.0, 8.4, 11.0, 0.5),
-    ('Lidl', 'Owsiankaowoce i orzechy', 369.0, 8.2, 1.4, 0, 57.1, 12.3, 9.5, 11.9, 0.0)
+    ('Lidl', 'Owsiankaowoce i orzechy', 369.0, 8.2, 1.4, 0, 57.1, 12.3, 9.5, 11.9, 0.0),
+    -- ── Batch 2 — cereals (new) ──────────────────────────────────────────────────────
+    ('Ba',    'Ba granola czekoladowa', 416, 13, 3.2, 0, 63, 23, 5.8, 8.8, 0.30),     -- OFF
+    ('Go On', 'Protein granola',        416, 15, 2.9, 0, 44, 1.6, 18, 21, 0.41),       -- OFF
+    ('Sante', 'Sante gold granola',     446, 15, 3.7, 0, 66, 21, 6.3, 8.7, 0.46)       -- OFF
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

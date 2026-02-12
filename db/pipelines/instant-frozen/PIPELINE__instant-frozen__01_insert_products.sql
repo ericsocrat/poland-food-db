@@ -22,13 +22,13 @@ values
   ('PL', 'Goong', 'Grocery', 'Instant & Frozen', 'Zupa błyskawiczna o smaku kurczaka STRONG', 'dried', 'Aldi', 'none', '5907501001404'),
   ('PL', 'Ajinomoto', 'Grocery', 'Instant & Frozen', 'Oyakata Kurczak Teriyaki', 'dried', 'Auchan', 'palm oil', '5901384502768'),
   ('PL', 'Vifon', 'Grocery', 'Instant & Frozen', 'Kurczak curry instant noodle soup', 'dried', 'Biedronka', 'palm oil', '5901882110069'),
-  ('PL', 'VIFON', 'Grocery', 'Instant & Frozen', 'Chinese Chicken flavour instant noodle soup (mild)', 'dried', 'Carrefour', 'palm oil', '5901882110151'),
+  ('PL', 'Vifon', 'Grocery', 'Instant & Frozen', 'Chinese Chicken flavour instant noodle soup (mild)', 'dried', 'Carrefour', 'palm oil', '5901882110151'),
   ('PL', 'Vifon', 'Grocery', 'Instant & Frozen', 'Barbecue Chicken', 'dried', 'Auchan', 'none', '5901882110090'),
   ('PL', 'Asia Style', 'Grocery', 'Instant & Frozen', 'VeggieMeal hot and sour CHINESE STYLE', 'dried', 'Biedronka', 'none', '5905118013384'),
   ('PL', 'Asia Style', 'Grocery', 'Instant & Frozen', 'VeggieMeal hot and sour SICHUAN STYLE', 'dried', 'Biedronka', 'none', '5905118013391'),
-  ('PL', 'TAN-VIET International S.A.', 'Grocery', 'Instant & Frozen', 'Zupa z nudlami o smaku kimchi (pikantna)', 'dried', 'Carrefour', 'none', '5901882312623'),
+  ('PL', 'TAN-VIET International S.A', 'Grocery', 'Instant & Frozen', 'Zupa z nudlami o smaku kimchi (pikantna)', 'dried', 'Carrefour', 'none', '5901882312623'),
   ('PL', 'Ajinomoto', 'Grocery', 'Instant & Frozen', 'Oyakata Miso Ramen', 'dried', 'Biedronka', 'none', '5901384503789'),
-  ('PL', 'VIFON', 'Grocery', 'Instant & Frozen', 'KOREAN HOT BEEF', 'dried', 'Carrefour', 'none', '5901882315075'),
+  ('PL', 'Vifon', 'Grocery', 'Instant & Frozen', 'Korean Hot Beef', 'dried', 'Carrefour', 'none', '5901882315075'),
   ('PL', 'Tan-Viet', 'Grocery', 'Instant & Frozen', 'Kurczak Zloty', 'dried', null, 'palm oil', '5901882110014'),
   ('PL', 'Knorr', 'Grocery', 'Instant & Frozen', 'Nudle ser w ziołach', 'dried', 'Auchan', 'none', '8714100666838'),
   ('PL', 'Vifon', 'Grocery', 'Instant & Frozen', 'Kimchi', 'dried', null, 'palm oil', '5901882110298'),
@@ -58,15 +58,15 @@ values
   ('PL', 'Reeva', 'Grocery', 'Instant & Frozen', 'REEVA Vegetable flavour Instant noodles', 'dried', null, 'none', '4820179256581'),
   ('PL', 'Nongshim', 'Grocery', 'Instant & Frozen', 'Kimchi Bowl Noodles', 'dried', 'Netto', 'none', '8801043057776'),
   ('PL', 'NongshimSamyang', 'Grocery', 'Instant & Frozen', 'Ramen kimchi', 'dried', 'Carrefour', 'none', '0074603003287'),
-  ('PL', 'MAMA', 'Grocery', 'Instant & Frozen', 'ORIENTAL KITCHEN INSTANT NOODLES CARBONARA BACON FLAVOUR', 'dried', 'Carrefour', 'palm oil', '8850987150098'),
+  ('PL', 'Mama', 'Grocery', 'Instant & Frozen', 'Oriental Kitchen Instant Noodles Carbonara Bacon Flavour', 'dried', 'Carrefour', 'palm oil', '8850987150098'),
   ('PL', 'มาม่า', 'Grocery', 'Instant & Frozen', 'Mala Beef Instant Noodle', 'dried', 'Carrefour', 'none', '8850987151279'),
-  ('PL', 'mama', 'Grocery', 'Instant & Frozen', 'Mama salted egg', 'dried', 'Carrefour', 'none', '8850987148651'),
+  ('PL', 'Mama', 'Grocery', 'Instant & Frozen', 'Mama salted egg', 'dried', 'Carrefour', 'none', '8850987148651'),
   ('PL', 'Knorr', 'Grocery', 'Instant & Frozen', 'Danie makaron Bolognese', 'dried', null, 'none', '8712423024588'),
   ('PL', 'Nongshim', 'Grocery', 'Instant & Frozen', 'Shin Kimchi Noodles', 'dried', null, 'palm oil', '8801043028158'),
   ('PL', 'Reeva', 'Grocery', 'Instant & Frozen', 'Zupa o smaku sera i boczku', 'dried', null, 'none', '4820179256895'),
   ('PL', 'Winiary', 'Grocery', 'Instant & Frozen', 'Saucy noodles smak sweet chili', 'dried', null, 'none', '7613039253045'),
   ('PL', 'Knorr', 'Grocery', 'Instant & Frozen', 'Nudle Pieczony kurczak', 'roasted', null, 'none', '8714100666630'),
-  ('PL', 'KO-LEE', 'Grocery', 'Instant & Frozen', 'Instant Noodles Tomato Flavour', 'dried', null, 'palm oil', '5023751000339')
+  ('PL', 'Ko-Lee', 'Grocery', 'Instant & Frozen', 'Instant Noodles Tomato Flavour', 'dried', null, 'palm oil', '5023751000339')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -81,4 +81,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Instant & Frozen'
   and is_deprecated is not true
-  and product_name not in ('Hot Beef pikantne w stylu syczuańskim', 'Mie Goreng łagodne w stylu indonezyjskim', 'Zupa błyskawiczna o smaku kurczaka STRONG', 'Oyakata Kurczak Teriyaki', 'Kurczak curry instant noodle soup', 'Chinese Chicken flavour instant noodle soup (mild)', 'Barbecue Chicken', 'VeggieMeal hot and sour CHINESE STYLE', 'VeggieMeal hot and sour SICHUAN STYLE', 'Zupa z nudlami o smaku kimchi (pikantna)', 'Oyakata Miso Ramen', 'KOREAN HOT BEEF', 'Kurczak Zloty', 'Nudle ser w ziołach', 'Kimchi', 'Pork Ramen', 'Curry Noodles', 'VeggieMeal Thai Spicy Ramen', 'Ramen Soy Souce', 'Ramen Tonkotsu', 'Ramen soja', 'Pomidorowa', 'Ramen Miso et Légumes', 'Ramen nouille de blé saveur poulet shio', 'Nouilles de blé poulet teriyaki', 'Nouilles de blé', 'Yakisoba soja classique', 'Yakisoba saveur Poulet pad thaï', 'Ramen Barbecue', 'Zupa błyskawiczna o smaku kurczaka', 'Zupa błyskawiczna o smaku gulaszu', 'SamSmak o smaku serowa 4 sery', 'Tomato soup', 'Mushrood soup', 'Zupka hińska', 'Bowl Noodles Hot & Spicy', 'Super Spicy Red Shin', 'Noodles Chicken Flavour', 'REEVA Vegetable flavour Instant noodles', 'Kimchi Bowl Noodles', 'Ramen kimchi', 'ORIENTAL KITCHEN INSTANT NOODLES CARBONARA BACON FLAVOUR', 'Mala Beef Instant Noodle', 'Mama salted egg', 'Danie makaron Bolognese', 'Shin Kimchi Noodles', 'Zupa o smaku sera i boczku', 'Saucy noodles smak sweet chili', 'Nudle Pieczony kurczak', 'Instant Noodles Tomato Flavour');
+  and product_name not in ('Hot Beef pikantne w stylu syczuańskim', 'Mie Goreng łagodne w stylu indonezyjskim', 'Zupa błyskawiczna o smaku kurczaka STRONG', 'Oyakata Kurczak Teriyaki', 'Kurczak curry instant noodle soup', 'Chinese Chicken flavour instant noodle soup (mild)', 'Barbecue Chicken', 'VeggieMeal hot and sour CHINESE STYLE', 'VeggieMeal hot and sour SICHUAN STYLE', 'Zupa z nudlami o smaku kimchi (pikantna)', 'Oyakata Miso Ramen', 'Korean Hot Beef', 'Kurczak Zloty', 'Nudle ser w ziołach', 'Kimchi', 'Pork Ramen', 'Curry Noodles', 'VeggieMeal Thai Spicy Ramen', 'Ramen Soy Souce', 'Ramen Tonkotsu', 'Ramen soja', 'Pomidorowa', 'Ramen Miso et Légumes', 'Ramen nouille de blé saveur poulet shio', 'Nouilles de blé poulet teriyaki', 'Nouilles de blé', 'Yakisoba soja classique', 'Yakisoba saveur Poulet pad thaï', 'Ramen Barbecue', 'Zupa błyskawiczna o smaku kurczaka', 'Zupa błyskawiczna o smaku gulaszu', 'SamSmak o smaku serowa 4 sery', 'Tomato soup', 'Mushrood soup', 'Zupka hińska', 'Bowl Noodles Hot & Spicy', 'Super Spicy Red Shin', 'Noodles Chicken Flavour', 'REEVA Vegetable flavour Instant noodles', 'Kimchi Bowl Noodles', 'Ramen kimchi', 'Oriental Kitchen Instant Noodles Carbonara Bacon Flavour', 'Mala Beef Instant Noodle', 'Mama salted egg', 'Danie makaron Bolognese', 'Shin Kimchi Noodles', 'Zupa o smaku sera i boczku', 'Saucy noodles smak sweet chili', 'Nudle Pieczony kurczak', 'Instant Noodles Tomato Flavour');

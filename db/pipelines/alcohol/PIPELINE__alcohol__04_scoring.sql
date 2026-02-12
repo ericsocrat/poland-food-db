@@ -34,14 +34,14 @@ from (
     ('Diamant', 'Cukier Biały', 'E'),
     ('owolovo', 'Truskawkowo Mus jabłkowo-truskawkowy', 'A'),
     ('Harnaś', 'Harnaś jasne pełne', 'NOT-APPLICABLE'),
-    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', 'NOT-APPLICABLE'),
+    ('VAN PUR S.A', 'Łomża piwo jasne bezalkoholowe', 'NOT-APPLICABLE'),
     ('Karmi', 'Karmi o smaku żurawina', 'NOT-APPLICABLE'),
     ('Żywiec', 'Limonż 0%', 'NOT-APPLICABLE'),
     ('Polski Cukier', 'Cukier biały', 'E'),
     ('Lomża', 'Łomża jasne', 'NOT-APPLICABLE'),
     ('Kompania Piwowarska', 'Kozel cerny', 'NOT-APPLICABLE'),
     ('Browar Fortuna', 'Piwo Pilzner, dolnej fermentacji', 'NOT-APPLICABLE'),
-    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 'NOT-APPLICABLE'),
+    ('Tyskie', 'Bier "Tyskie Gronie"', 'NOT-APPLICABLE'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 'NOT-APPLICABLE'),
     ('Książęce', 'Książęce czerwony lager', 'NOT-APPLICABLE'),
     ('Lech', 'Lech Premium', 'NOT-APPLICABLE'),
@@ -58,7 +58,7 @@ from (
     ('Unknown', 'LECH FREE CITRUS SOUR', 'NOT-APPLICABLE'),
     ('Shroom', 'Shroom power', 'NOT-APPLICABLE'),
     ('Christkindl', 'Christkindl Glühwein', 'NOT-APPLICABLE'),
-    ('GO ACTIVE', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 'A'),
+    ('Go Active', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 'A'),
     ('Heineken', 'Heineken Beer', 'NOT-APPLICABLE'),
     ('Just 0.', 'Just 0 White alcoholfree', 'NOT-APPLICABLE'),
     ('Just 0.', 'Just 0. Red', 'NOT-APPLICABLE'),
@@ -66,7 +66,13 @@ from (
     ('Ikea', 'Glühwein', 'NOT-APPLICABLE'),
     ('Choya', 'Silver', 'NOT-APPLICABLE'),
     ('Carlo Rossi', 'Vin carlo rossi', 'NOT-APPLICABLE'),
-    ('Somersby', 'Somersby Blueberry Flavoured Cider', 'NOT-APPLICABLE')
+    ('Somersby', 'Somersby Blueberry Flavoured Cider', 'NOT-APPLICABLE'),
+    -- batch 2 (non-alcoholic)
+    ('Just 0',                         'Just 0. Red',                                      'B'),
+    ('Just 0',                         'Just 0 White alcoholfree',                          'B'),
+    ('Seth & Riley''S Garage Euphoriq', 'Bezalkoholowy napój piwny o smaku jagód i marakui', 'C'),  -- est. sugars
+    ('Van Pur S.A',                    'Łomża piwo jasne bezalkoholowe',                     'B'),
+    ('Owolovo',                        'Truskawkowo Mus jabłkowo-truskawkowy',               'A')   -- baby mousse
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
@@ -80,14 +86,14 @@ from (
     ('Diamant', 'Cukier Biały', '2'),
     ('owolovo', 'Truskawkowo Mus jabłkowo-truskawkowy', '1'),
     ('Harnaś', 'Harnaś jasne pełne', '3'),
-    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', '4'),
+    ('VAN PUR S.A', 'Łomża piwo jasne bezalkoholowe', '4'),
     ('Karmi', 'Karmi o smaku żurawina', '4'),
     ('Żywiec', 'Limonż 0%', '4'),
     ('Polski Cukier', 'Cukier biały', '2'),
     ('Lomża', 'Łomża jasne', '4'),
     ('Kompania Piwowarska', 'Kozel cerny', '3'),
     ('Browar Fortuna', 'Piwo Pilzner, dolnej fermentacji', '4'),
-    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', '3'),
+    ('Tyskie', 'Bier "Tyskie Gronie"', '3'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', '4'),
     ('Książęce', 'Książęce czerwony lager', '4'),
     ('Lech', 'Lech Premium', '3'),
@@ -104,7 +110,7 @@ from (
     ('Unknown', 'LECH FREE CITRUS SOUR', '3'),
     ('Shroom', 'Shroom power', '4'),
     ('Christkindl', 'Christkindl Glühwein', '4'),
-    ('GO ACTIVE', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', '4'),
+    ('Go Active', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', '4'),
     ('Heineken', 'Heineken Beer', '3'),
     ('Just 0.', 'Just 0 White alcoholfree', '4'),
     ('Just 0.', 'Just 0. Red', '3'),
@@ -112,7 +118,13 @@ from (
     ('Ikea', 'Glühwein', '4'),
     ('Choya', 'Silver', '3'),
     ('Carlo Rossi', 'Vin carlo rossi', '4'),
-    ('Somersby', 'Somersby Blueberry Flavoured Cider', '4')
+    ('Somersby', 'Somersby Blueberry Flavoured Cider', '4'),
+    -- batch 2 (non-alcoholic)
+    ('Just 0',                         'Just 0. Red',                                      '1'),  -- natural wine dealcoholized
+    ('Just 0',                         'Just 0 White alcoholfree',                          '1'),
+    ('Seth & Riley''S Garage Euphoriq', 'Bezalkoholowy napój piwny o smaku jagód i marakui', '4'),  -- flavored beverage
+    ('Van Pur S.A',                    'Łomża piwo jasne bezalkoholowe',                     '3'),  -- brewed beer, dealcoholized
+    ('Owolovo',                        'Truskawkowo Mus jabłkowo-truskawkowy',               '1')   -- fruit mousse, minimal processing
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 

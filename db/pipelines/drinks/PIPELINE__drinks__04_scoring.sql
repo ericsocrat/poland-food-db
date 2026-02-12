@@ -31,7 +31,7 @@ from (
   values
     ('Hortex', 'Sok jabłkowy', 'C'),
     ('Riviva', 'Sok 100% pomarańcza z witaminą C', 'C'),
-    ('go VEGE', 'Napój roślinny owies bio', 'C'),
+    ('Go Vege', 'Napój roślinny owies bio', 'C'),
     ('Polaris', 'Napój gazowany Vital Red', 'C'),
     ('Bracia Sadownicy', 'Sok 100% tłoczony tłoczone jabłko z marchewką', 'D'),
     ('Rivia', 'Rivia Marchew Brzoskwinia Jabkło', 'D'),
@@ -88,7 +88,9 @@ from (
     ('Tymbark', 'Mousse', 'B'),
     ('Lidl', 'Sok 100% tłoczony z miąższem Pomarańcza Grejpfrut Pitaja', 'C'),
     ('Hortex', 'Ananas nektar', 'UNKNOWN'),
-    ('Herbapol', 'Malina', 'B')
+    ('Herbapol', 'Malina', 'B'),
+    -- batch 2
+    ('Kubuš', '100% jabłko', 'D')  -- high sugars in juice
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
@@ -99,7 +101,7 @@ from (
   values
     ('Hortex', 'Sok jabłkowy', '1'),
     ('Riviva', 'Sok 100% pomarańcza z witaminą C', '1'),
-    ('go VEGE', 'Napój roślinny owies bio', '3'),
+    ('Go Vege', 'Napój roślinny owies bio', '3'),
     ('Polaris', 'Napój gazowany Vital Red', '4'),
     ('Bracia Sadownicy', 'Sok 100% tłoczony tłoczone jabłko z marchewką', '1'),
     ('Rivia', 'Rivia Marchew Brzoskwinia Jabkło', '4'),
@@ -156,7 +158,9 @@ from (
     ('Tymbark', 'Mousse', '4'),
     ('Lidl', 'Sok 100% tłoczony z miąższem Pomarańcza Grejpfrut Pitaja', '4'),
     ('Hortex', 'Ananas nektar', '3'),
-    ('Herbapol', 'Malina', '4')
+    ('Herbapol', 'Malina', '4'),
+    -- batch 2
+    ('Kubuš', '100% jabłko', '1')  -- 100% juice, no additives
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 

@@ -20,7 +20,6 @@ select
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
   values
-    ('PANO', 'Wafle Kukurydziane z Kaszą jaglaną i Pieprzem', 386.0, 2.8, 0.4, 0, 77.0, 1.8, 5.5, 11.0, 1.2),
     ('Go Active', 'Baton wysokobiałkowy Peanut Butter', 387.0, 17.0, 2.7, 0, 23.0, 19.0, 21.0, 25.0, 0.2),
     ('Go active', 'Baton białkowy malinowy', 368.0, 16.0, 9.3, 0, 30.0, 3.9, 12.0, 30.0, 0.4),
     ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', 471.0, 19.0, 12.0, 0, 65.0, 24.0, 3.5, 8.2, 0.1),
@@ -36,7 +35,6 @@ from (
     ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', 416.0, 17.0, 9.2, 0, 44.0, 29.0, 9.4, 20.0, 0.0),
     ('Lajkonik', 'Paluszki extra cienkie', 385.0, 3.7, 0.6, 0, 74.0, 2.4, 3.9, 12.0, 3.9),
     ('Wafle Dzik', 'Kukurydziane - ser', 376.0, 2.2, 0.3, 0, 79.0, 1.3, 0.0, 9.1, 2.7),
-    ('Sante A. Kowalski sp. j.', 'Crunchy Cranberry & Raspberry - Santé', 422.0, 13.0, 8.1, 0, 72.0, 36.0, 2.6, 3.7, 0.3),
     ('Miami', 'Paleczki', 384.0, 2.6, 0.4, 0, 80.0, 2.3, 0, 9.0, 0.0),
     ('Aksam', 'Beskidzkie paluszki o smaku sera i cebulki', 396.7, 5.7, 0.7, 0.0, 76.0, 0.0, 2.7, 3.2, 8.0),
     ('Go On Nutrition', 'Protein 33% Caramel', 390.0, 19.0, 9.4, 0, 21.0, 2.8, 14.0, 33.0, 0.9),
@@ -76,7 +74,12 @@ from (
     ('Aviko', 'Frytki karbowane Zig Zag', 156.0, 4.5, 0.5, 0, 25.0, 0.8, 0, 2.5, 0.1),
     ('7 Days', 'family', 453.4, 28.0, 14.0, 0, 43.0, 0, 1.9, 5.5, 0.6),
     ('Milka', 'Cake & Chock', 428.0, 21.0, 4.1, 0, 56.0, 30.0, 1.4, 5.5, 0.6),
-    ('Wasa', 'Lekkie 7 Ziaren', 364.0, 2.0, 0.3, 0, 71.1, 5.0, 10.5, 10.2, 1.2)
+    ('Wasa', 'Lekkie 7 Ziaren', 364.0, 2.0, 0.3, 0, 71.1, 5.0, 10.5, 10.2, 1.2),
+    -- ── Batch 2 — snacks (new) ───────────────────────────────────────────────────────
+    ('7 Days',                  'Croissant with Cocoa Filling',                          453, 28, 14, 0, 43, 17, 1.9, 5.6, 0.60),   -- OFF
+    ('Pano',                    'Wafle Kukurydziane z Kaszą jaglaną i Pieprzem',        381, 2.3, 0.4, 0, 77, 1.7, 5.3, 11, 1.05),  -- OFF
+    ('Sante A. Kowalski sp. j', 'Crunchy Cranberry & Raspberry - Santé',               420, 13, 8.1, 0, 72, 36, 0, 3.7, 0.31),   -- OFF
+    ('Tastino',                 'Małe Wafle Kukurydziane O Smaku Pizzy',                420, 5.4, 0.8, 0, 76, 3.0, 3.3, 8.0, 1.1)    -- est. based on similar wafers
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

@@ -24,7 +24,8 @@ SELECT '2. brand not ALL CAPS' AS check_name,
 FROM products
 WHERE is_deprecated IS NOT TRUE
   AND length(brand) > 3
-  AND brand = upper(brand);
+  AND brand = upper(brand)
+  AND brand ~ '[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]';  -- exclude non-Latin script brands
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. Product names must start with an uppercase letter (Latin or Polish)
@@ -44,7 +45,8 @@ SELECT '4. brand starts with uppercase' AS check_name,
 FROM products
 WHERE is_deprecated IS NOT TRUE
   AND brand IS NOT NULL
-  AND brand ~ '^[a-ząćęłńóśźżäöüàèéêîôùûâïëæœ]';
+  AND brand ~ '^[a-ząćęłńóśźżäöüàèéêîôùûâïëæœ]'
+  AND brand !~ '\.[a-z]{2,}$';  -- exclude domain-style brands (e.g. brat.pl)
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 5. No double (or more) consecutive spaces in product names or brands

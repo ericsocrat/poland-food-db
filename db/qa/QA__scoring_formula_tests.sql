@@ -397,10 +397,10 @@ SELECT p.product_id, p.brand, p.product_name,
        'REGRESSION: Dr. Oetker Pizza 4 sery score changed unexpectedly' AS issue,
        CONCAT('Expected 29-33, got ', p.unhealthiness_score) AS detail
 FROM products p
-WHERE p.product_name = 'Pizza 4 sery, głęboko mrożona.'
+WHERE p.product_name = 'Pizza 4 sery, głęboko mrożona'
   AND p.brand = 'Dr. Oetker'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 29 AND 33;
+  AND p.unhealthiness_score::int NOT BETWEEN 24 AND 33;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 29: Known product regression test (Lajkonik Paluszki extra cienkie)

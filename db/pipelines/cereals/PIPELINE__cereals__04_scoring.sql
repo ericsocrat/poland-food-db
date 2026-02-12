@@ -30,7 +30,7 @@ update products p set
 from (
   values
     ('Vitanella', 'Płatki Owsiane Górskie', 'A'),
-    ('GO ACTIVE', 'GO ACTIVE  granola wysokobiałkowa', 'C'),
+    ('Go Active', 'GO ACTIVE  granola wysokobiałkowa', 'C'),
     ('Melvit', 'Płatki owsiane górskie', 'A'),
     ('Tymbark', 'Mus wieloowocowy z dodatkiem kaszy manny i płatków owsianych', 'E'),
     ('Mlyny Stoislaw', 'Płatki owsiane', 'A'),
@@ -48,7 +48,6 @@ from (
     ('Lubella', 'Chocko Muszelki', 'C'),
     ('Nestlé', 'Nestle Chocapic', 'C'),
     ('GO ON', 'Protein granola', 'A'),
-    ('Nestlé', 'Corn Flakes', 'C'),
     ('Nestlé', 'Nestle Corn Flakes', 'C'),
     ('sante', 'Sante gold granola', 'C'),
     ('Nestlé', 'Nestke Gold flakes', 'D'),
@@ -62,7 +61,6 @@ from (
     ('lubella', 'chrupersy', 'D'),
     ('One Day More', 'Porridge chocolate', 'A'),
     ('Nestlé', 'Lion caramel and chocolate', 'D'),
-    ('Nestlé', 'Cheerios owsiany', 'B'),
     ('Nesquik', 'Nesquik Alphabet', 'B'),
     ('Vitanella', 'Orito kakaowe', 'E'),
     ('One day more', 'Porridge', 'A'),
@@ -76,7 +74,9 @@ from (
     ('Crownfield', 'Space Cookies', 'C'),
     ('Crownfield', 'Goldini', 'D'),
     ('Crownfield', 'Porridge', 'B'),
-    ('Lidl', 'Owsiankaowoce i orzechy', 'A')
+    ('Lidl', 'Owsiankaowoce i orzechy', 'A'),
+    -- batch 2
+    ('Ba', 'Ba granola czekoladowa', 'C')
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
@@ -86,7 +86,7 @@ update products p set
 from (
   values
     ('Vitanella', 'Płatki Owsiane Górskie', '1'),
-    ('GO ACTIVE', 'GO ACTIVE  granola wysokobiałkowa', '4'),
+    ('Go Active', 'GO ACTIVE  granola wysokobiałkowa', '4'),
     ('Melvit', 'Płatki owsiane górskie', '1'),
     ('Tymbark', 'Mus wieloowocowy z dodatkiem kaszy manny i płatków owsianych', '4'),
     ('Mlyny Stoislaw', 'Płatki owsiane', '1'),
@@ -104,7 +104,6 @@ from (
     ('Lubella', 'Chocko Muszelki', '4'),
     ('Nestlé', 'Nestle Chocapic', '4'),
     ('GO ON', 'Protein granola', '4'),
-    ('Nestlé', 'Corn Flakes', '4'),
     ('Nestlé', 'Nestle Corn Flakes', '4'),
     ('sante', 'Sante gold granola', '4'),
     ('Nestlé', 'Nestke Gold flakes', '4'),
@@ -118,7 +117,6 @@ from (
     ('lubella', 'chrupersy', '4'),
     ('One Day More', 'Porridge chocolate', '4'),
     ('Nestlé', 'Lion caramel and chocolate', '4'),
-    ('Nestlé', 'Cheerios owsiany', '4'),
     ('Nesquik', 'Nesquik Alphabet', '4'),
     ('Vitanella', 'Orito kakaowe', '4'),
     ('One day more', 'Porridge', '4'),
@@ -132,7 +130,9 @@ from (
     ('Crownfield', 'Space Cookies', '4'),
     ('Crownfield', 'Goldini', '4'),
     ('Crownfield', 'Porridge', '4'),
-    ('Lidl', 'Owsiankaowoce i orzechy', '1')
+    ('Lidl', 'Owsiankaowoce i orzechy', '1'),
+    -- batch 2
+    ('Ba', 'Ba granola czekoladowa', '4')
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 

@@ -28,7 +28,7 @@ values
   ('PL', 'Krakus', 'Grocery', 'Meat', 'Gulasz angielski 95 % mięsa', 'not-applicable', 'Biedronka', 'none', '5900244010030'),
   ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Szynka Zawędzana', 'smoked', 'Biedronka', 'none', '5900562460111'),
   ('PL', 'Dania Express', 'Grocery', 'Meat', 'Polędwiczki z kurczaka panierowane', 'not-applicable', 'Biedronka', 'none', '5900757062090'),
-  ('PL', 'KRAINA WEDLIN', 'Grocery', 'Meat', 'Polędwica drobiowa', 'not-applicable', 'Biedronka', 'none', '5900331602155'),
+  ('PL', 'Kraina Wedlin', 'Grocery', 'Meat', 'Polędwica drobiowa', 'not-applicable', 'Biedronka', 'none', '5900331602155'),
   ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Kiełbasa Żywiecka z indyka', 'not-applicable', 'Biedronka', 'none', '5900567012001'),
   ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Szynka Wędzona', 'smoked', 'Biedronka', 'none', '5900562435614'),
   ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Kiełbasa Myśliwska', 'not-applicable', 'Biedronka', 'none', '5906245779020'),
@@ -36,9 +36,8 @@ values
   ('PL', 'Masarnia Strzała', 'Grocery', 'Meat', 'Wołowina w sosie własnym', 'not-applicable', 'Auchan', 'none', '5903111916411'),
   ('PL', 'Goodvalley', 'Grocery', 'Meat', 'Wędzony Schab 100% polskiego mięsa', 'smoked', 'Selgros', 'none', '5908226815017'),
   ('PL', 'Yeemy', 'Grocery', 'Meat', 'Pikantne skrzydełka panierowane z kurczaka', 'not-applicable', 'Biedronka', 'none', '5900757060768'),
-  ('PL', 'Kraina Mięs', 'Grocery', 'Meat', 'mięso mielone z łopatki wieprzowej i wołowiny', 'not-applicable', 'Biedronka', 'none', '5903282202719'),
   ('PL', 'Stoczek', 'Grocery', 'Meat', 'Kiełbasa z weka', 'not-applicable', 'Auchan', 'none', '5901002006524'),
-  ('PL', 'Olewnik', 'Grocery', 'Meat', 'Żywiecka kiełbasa sucha z szynki.', 'not-applicable', 'Auchan', 'none', '5906245779693'),
+  ('PL', 'Olewnik', 'Grocery', 'Meat', 'Żywiecka kiełbasa sucha z szynki', 'not-applicable', 'Auchan', 'none', '5906245779693'),
   ('PL', 'Biedronka', 'Grocery', 'Meat', 'Kiełbasa krakowska - konserwa wieprzowa grubo rozdrobniona, sterylizowana', 'not-applicable', 'Biedronka', 'none', '5901874905079'),
   ('PL', 'Provincja', 'Grocery', 'Meat', 'Pasztet z dzika z wątróbką drobiową', 'not-applicable', 'Lewiatan', 'none', '5907693698086'),
   ('PL', 'Duda', 'Grocery', 'Meat', 'Parówki wieprzowe Mediolanki', 'not-applicable', 'Tesco', 'none', '5900331193400'),
@@ -58,8 +57,7 @@ values
   ('PL', 'Drobimex', 'Grocery', 'Meat', 'Pierś pieczona z pomidorami i ziołami', 'roasted', null, 'none', '5900196007133'),
   ('PL', 'Sokołów', 'Grocery', 'Meat', 'Boczek surowy wędzony', 'smoked', null, 'none', '5900562362316'),
   ('PL', 'Morliny', 'Grocery', 'Meat', 'Berlinki classic', 'not-applicable', 'Biedronka', 'none', '5900567009681'),
-  ('PL', 'tarczyński', 'Grocery', 'Meat', 'Kabanosy wieprzowe', 'not-applicable', 'Lidl', 'none', '5908230521485'),
-  ('PL', 'Morliny', 'Grocery', 'Meat', 'Berlinki Classic', 'not-applicable', 'Dino', 'none', '5900567001746'),
+  ('PL', 'Tarczyński', 'Grocery', 'Meat', 'Kabanosy wieprzowe', 'not-applicable', 'Lidl', 'none', '5908230521485'),
   ('PL', 'Krakus', 'Grocery', 'Meat', 'Szynka eksportowa', 'not-applicable', 'Stokrotka', 'none', '5900567015613'),
   ('PL', 'Drosed', 'Grocery', 'Meat', 'Podlaski pasztet drobiowy', 'not-applicable', 'Auchan', 'none', '5901204000788'),
   ('PL', 'Morliny', 'Grocery', 'Meat', 'Boczek', 'not-applicable', 'Biedronka', 'none', '5900244001199'),
@@ -81,4 +79,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Meat'
   and is_deprecated is not true
-  and product_name not in ('Sokoliki parówki drobiowo-cielęce', 'Naturalne Parówki 100% z szynki', 'Parówki z szynki', 'Soczysta Szynka 100% Mięsa', 'Szynka konserwowa z galaretką', 'Szynka delikatesowa z kurcząt', 'Polędwica Wiejska Sadecka', 'Parówki z piersi kurczaka', 'Gulasz angielski 95 % mięsa', 'Szynka Zawędzana', 'Polędwiczki z kurczaka panierowane', 'Polędwica drobiowa', 'Kiełbasa Żywiecka z indyka', 'Szynka Wędzona', 'Kiełbasa Myśliwska', 'Sałatka z pieczonym mięsem z kurczaka, kukurydzą i białą kapustą', 'Wołowina w sosie własnym', 'Wędzony Schab 100% polskiego mięsa', 'Pikantne skrzydełka panierowane z kurczaka', 'mięso mielone z łopatki wieprzowej i wołowiny', 'Kiełbasa z weka', 'Żywiecka kiełbasa sucha z szynki.', 'Kiełbasa krakowska - konserwa wieprzowa grubo rozdrobniona, sterylizowana', 'Pasztet z dzika z wątróbką drobiową', 'Parówki wieprzowe Mediolanki', 'Tatar wołowy', 'Mięsiwo w sosie własnym', 'Salami ostródzkie', 'Schab Wędzony na wiśniowo', 'Mięso Mielone Z Kurczaka Świeże', 'Boczek wędzony', 'Salami z cebulą', 'Boczek wędzony surowy', 'Tatar wołowy', 'Polędwica z kurcząt', 'Stówki z mięsa z piersi kurczaka', 'Kiełbaski 100% mięsa', 'Mięsko ze smalczykiem', 'Pierś pieczona z pomidorami i ziołami', 'Boczek surowy wędzony', 'Berlinki classic', 'Kabanosy wieprzowe', 'Berlinki Classic', 'Szynka eksportowa', 'Podlaski pasztet drobiowy', 'Boczek', 'Z Serem', 'Pasztet drobiowy', 'Polędwiczki z kurczaka panierowane łagodna', 'Berlinki Kurczak');
+  and product_name not in ('Sokoliki parówki drobiowo-cielęce', 'Naturalne Parówki 100% z szynki', 'Parówki z szynki', 'Soczysta Szynka 100% Mięsa', 'Szynka konserwowa z galaretką', 'Szynka delikatesowa z kurcząt', 'Polędwica Wiejska Sadecka', 'Parówki z piersi kurczaka', 'Gulasz angielski 95 % mięsa', 'Szynka Zawędzana', 'Polędwiczki z kurczaka panierowane', 'Polędwica drobiowa', 'Kiełbasa Żywiecka z indyka', 'Szynka Wędzona', 'Kiełbasa Myśliwska', 'Sałatka z pieczonym mięsem z kurczaka, kukurydzą i białą kapustą', 'Wołowina w sosie własnym', 'Wędzony Schab 100% polskiego mięsa', 'Pikantne skrzydełka panierowane z kurczaka', 'mięso mielone z łopatki wieprzowej i wołowiny', 'Kiełbasa z weka', 'Żywiecka kiełbasa sucha z szynki', 'Kiełbasa krakowska - konserwa wieprzowa grubo rozdrobniona, sterylizowana', 'Pasztet z dzika z wątróbką drobiową', 'Parówki wieprzowe Mediolanki', 'Tatar wołowy', 'Mięsiwo w sosie własnym', 'Salami ostródzkie', 'Schab Wędzony na wiśniowo', 'Mięso Mielone Z Kurczaka Świeże', 'Boczek wędzony', 'Salami z cebulą', 'Boczek wędzony surowy', 'Tatar wołowy', 'Polędwica z kurcząt', 'Stówki z mięsa z piersi kurczaka', 'Kiełbaski 100% mięsa', 'Mięsko ze smalczykiem', 'Pierś pieczona z pomidorami i ziołami', 'Boczek surowy wędzony', 'Berlinki classic', 'Kabanosy wieprzowe', 'Berlinki Classic', 'Szynka eksportowa', 'Podlaski pasztet drobiowy', 'Boczek', 'Z Serem', 'Pasztet drobiowy', 'Polędwiczki z kurczaka panierowane łagodna', 'Berlinki Kurczak');

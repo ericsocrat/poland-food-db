@@ -58,7 +58,6 @@ from (
     ('Gustobello', 'Gnocchi', 142.0, 1.3, 0.8, 0, 28.0, 0, 2.2, 3.2, 0),
     ('Vita D''or', 'Rapsöl', 83.0, 9.2, 0.6, 0, 0.0, 0.0, 0.0, 0.0, 0.0),
     ('Barilla', 'Pâtes spaghetti n°5 1kg', 359.0, 2.0, 0.5, 0, 71.0, 3.5, 3.0, 13.0, 0.0),
-    ('go VEGE', 'Tofu sweet chili', 138.0, 8.0, 1.0, 0, 2.4, 2.0, 2.0, 13.0, 1.5),
     ('Primadonna', 'Olivenöl (nativ, extra)', 824.0, 91.6, 14.2, 0, 0.0, 0.0, 0, 0.0, 0.0),
     ('Vemondo', 'Tofu naturalne', 125.0, 7.5, 1.0, 0, 2.3, 0.5, 0.1, 12.0, 0.2),
     ('GoVege', 'Tofu naturalne', 138.0, 8.0, 1.0, 0, 1.5, 0.5, 2.0, 14.0, 0.2),
@@ -70,7 +69,10 @@ from (
     ('El toro rojo', 'oliwki zielone drylowane', 82.0, 7.6, 2.0, 0, 0.0, 0.0, 3.7, 1.3, 4.9),
     ('GustoBello', 'Gnocchi di patate', 168.0, 0.2, 0.1, 0, 36.0, 0.2, 0.9, 4.4, 0.8),
     ('Violife', 'Cheddar flavour slices', 285.0, 23.0, 21.0, 0, 20.0, 0.0, 0, 0.0, 2.3),
-    ('Unknown', 'Oliwa z Oliwek', 819.0, 89.0, 14.0, 0, 0.0, 0.0, 0, 0.0, 0.0)
+    ('Unknown', 'Oliwa z Oliwek', 819.0, 89.0, 14.0, 0, 0.0, 0.0, 0, 0.0, 0.0),
+    -- ── Batch 2 — plant-based (new) ────────────────────────────────────────────────
+    ('Go Vege', 'Tofu sweet chili',  138, 8.0, 1.0, 0, 2.4, 2.0, 2.0, 13, 1.5),       -- OFF
+    ('Monini',  'Oliwa z oliwek',    824, 91.6, 12.8, 0, 0, 0, 0, 0, 0)                -- OFF (EVOO standard)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

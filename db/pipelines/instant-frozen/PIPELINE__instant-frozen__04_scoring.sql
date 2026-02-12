@@ -34,13 +34,13 @@ from (
     ('Goong', 'Zupa błyskawiczna o smaku kurczaka STRONG', 'UNKNOWN'),
     ('Ajinomoto', 'Oyakata Kurczak Teriyaki', 'D'),
     ('Vifon', 'Kurczak curry instant noodle soup', 'C'),
-    ('VIFON', 'Chinese Chicken flavour instant noodle soup (mild)', 'C'),
+    ('Vifon', 'Chinese Chicken flavour instant noodle soup (mild)', 'C'),
     ('Vifon', 'Barbecue Chicken', 'C'),
     ('Asia Style', 'VeggieMeal hot and sour CHINESE STYLE', 'UNKNOWN'),
     ('Asia Style', 'VeggieMeal hot and sour SICHUAN STYLE', 'UNKNOWN'),
-    ('TAN-VIET International S.A.', 'Zupa z nudlami o smaku kimchi (pikantna)', 'C'),
+    ('TAN-VIET International S.A', 'Zupa z nudlami o smaku kimchi (pikantna)', 'C'),
     ('Ajinomoto', 'Oyakata Miso Ramen', 'C'),
-    ('VIFON', 'KOREAN HOT BEEF', 'UNKNOWN'),
+    ('Vifon', 'Korean Hot Beef', 'UNKNOWN'),
     ('Tan-Viet', 'Kurczak Zloty', 'C'),
     ('Knorr', 'Nudle ser w ziołach', 'C'),
     ('Vifon', 'Kimchi', 'UNKNOWN'),
@@ -70,15 +70,15 @@ from (
     ('Reeva', 'REEVA Vegetable flavour Instant noodles', 'UNKNOWN'),
     ('Nongshim', 'Kimchi Bowl Noodles', 'UNKNOWN'),
     ('NongshimSamyang', 'Ramen kimchi', 'UNKNOWN'),
-    ('MAMA', 'ORIENTAL KITCHEN INSTANT NOODLES CARBONARA BACON FLAVOUR', 'UNKNOWN'),
+    ('Mama', 'Oriental Kitchen Instant Noodles Carbonara Bacon Flavour', 'UNKNOWN'),
     ('มาม่า', 'Mala Beef Instant Noodle', 'UNKNOWN'),
-    ('mama', 'Mama salted egg', 'UNKNOWN'),
+    ('Mama', 'Mama salted egg', 'UNKNOWN'),
     ('Knorr', 'Danie makaron Bolognese', 'C'),
     ('Nongshim', 'Shin Kimchi Noodles', 'UNKNOWN'),
     ('Reeva', 'Zupa o smaku sera i boczku', 'UNKNOWN'),
     ('Winiary', 'Saucy noodles smak sweet chili', 'C'),
     ('Knorr', 'Nudle Pieczony kurczak', 'UNKNOWN'),
-    ('KO-LEE', 'Instant Noodles Tomato Flavour', 'UNKNOWN')
+    ('Ko-Lee', 'Instant Noodles Tomato Flavour', 'UNKNOWN')
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
@@ -92,13 +92,13 @@ from (
     ('Goong', 'Zupa błyskawiczna o smaku kurczaka STRONG', '4'),
     ('Ajinomoto', 'Oyakata Kurczak Teriyaki', '4'),
     ('Vifon', 'Kurczak curry instant noodle soup', '4'),
-    ('VIFON', 'Chinese Chicken flavour instant noodle soup (mild)', '4'),
+    ('Vifon', 'Chinese Chicken flavour instant noodle soup (mild)', '4'),
     ('Vifon', 'Barbecue Chicken', '4'),
     ('Asia Style', 'VeggieMeal hot and sour CHINESE STYLE', '4'),
     ('Asia Style', 'VeggieMeal hot and sour SICHUAN STYLE', '4'),
-    ('TAN-VIET International S.A.', 'Zupa z nudlami o smaku kimchi (pikantna)', '4'),
+    ('TAN-VIET International S.A', 'Zupa z nudlami o smaku kimchi (pikantna)', '4'),
     ('Ajinomoto', 'Oyakata Miso Ramen', '4'),
-    ('VIFON', 'KOREAN HOT BEEF', '4'),
+    ('Vifon', 'Korean Hot Beef', '4'),
     ('Tan-Viet', 'Kurczak Zloty', '4'),
     ('Knorr', 'Nudle ser w ziołach', '4'),
     ('Vifon', 'Kimchi', '4'),
@@ -128,15 +128,15 @@ from (
     ('Reeva', 'REEVA Vegetable flavour Instant noodles', '4'),
     ('Nongshim', 'Kimchi Bowl Noodles', '4'),
     ('NongshimSamyang', 'Ramen kimchi', '4'),
-    ('MAMA', 'ORIENTAL KITCHEN INSTANT NOODLES CARBONARA BACON FLAVOUR', '4'),
+    ('Mama', 'Oriental Kitchen Instant Noodles Carbonara Bacon Flavour', '4'),
     ('มาม่า', 'Mala Beef Instant Noodle', '4'),
-    ('mama', 'Mama salted egg', '4'),
+    ('Mama', 'Mama salted egg', '4'),
     ('Knorr', 'Danie makaron Bolognese', '4'),
     ('Nongshim', 'Shin Kimchi Noodles', '4'),
     ('Reeva', 'Zupa o smaku sera i boczku', '4'),
     ('Winiary', 'Saucy noodles smak sweet chili', '4'),
     ('Knorr', 'Nudle Pieczony kurczak', '4'),
-    ('KO-LEE', 'Instant Noodles Tomato Flavour', '4')
+    ('Ko-Lee', 'Instant Noodles Tomato Flavour', '4')
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 

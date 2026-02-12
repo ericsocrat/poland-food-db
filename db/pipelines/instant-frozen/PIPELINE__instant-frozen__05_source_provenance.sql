@@ -13,13 +13,13 @@ FROM (
     ('Goong', 'Zupa błyskawiczna o smaku kurczaka STRONG', 'https://world.openfoodfacts.org/product/5907501001404', '5907501001404'),
     ('Ajinomoto', 'Oyakata Kurczak Teriyaki', 'https://world.openfoodfacts.org/product/5901384502768', '5901384502768'),
     ('Vifon', 'Kurczak curry instant noodle soup', 'https://world.openfoodfacts.org/product/5901882110069', '5901882110069'),
-    ('VIFON', 'Chinese Chicken flavour instant noodle soup (mild)', 'https://world.openfoodfacts.org/product/5901882110151', '5901882110151'),
+    ('Vifon', 'Chinese Chicken flavour instant noodle soup (mild)', 'https://world.openfoodfacts.org/product/5901882110151', '5901882110151'),
     ('Vifon', 'Barbecue Chicken', 'https://world.openfoodfacts.org/product/5901882110090', '5901882110090'),
     ('Asia Style', 'VeggieMeal hot and sour CHINESE STYLE', 'https://world.openfoodfacts.org/product/5905118013384', '5905118013384'),
     ('Asia Style', 'VeggieMeal hot and sour SICHUAN STYLE', 'https://world.openfoodfacts.org/product/5905118013391', '5905118013391'),
-    ('TAN-VIET International S.A.', 'Zupa z nudlami o smaku kimchi (pikantna)', 'https://world.openfoodfacts.org/product/5901882312623', '5901882312623'),
+    ('TAN-VIET International S.A', 'Zupa z nudlami o smaku kimchi (pikantna)', 'https://world.openfoodfacts.org/product/5901882312623', '5901882312623'),
     ('Ajinomoto', 'Oyakata Miso Ramen', 'https://world.openfoodfacts.org/product/5901384503789', '5901384503789'),
-    ('VIFON', 'KOREAN HOT BEEF', 'https://world.openfoodfacts.org/product/5901882315075', '5901882315075'),
+    ('Vifon', 'Korean Hot Beef', 'https://world.openfoodfacts.org/product/5901882315075', '5901882315075'),
     ('Tan-Viet', 'Kurczak Zloty', 'https://world.openfoodfacts.org/product/5901882110014', '5901882110014'),
     ('Knorr', 'Nudle ser w ziołach', 'https://world.openfoodfacts.org/product/8714100666838', '8714100666838'),
     ('Vifon', 'Kimchi', 'https://world.openfoodfacts.org/product/5901882110298', '5901882110298'),
@@ -49,15 +49,15 @@ FROM (
     ('Reeva', 'REEVA Vegetable flavour Instant noodles', 'https://world.openfoodfacts.org/product/4820179256581', '4820179256581'),
     ('Nongshim', 'Kimchi Bowl Noodles', 'https://world.openfoodfacts.org/product/8801043057776', '8801043057776'),
     ('NongshimSamyang', 'Ramen kimchi', 'https://world.openfoodfacts.org/product/0074603003287', '0074603003287'),
-    ('MAMA', 'ORIENTAL KITCHEN INSTANT NOODLES CARBONARA BACON FLAVOUR', 'https://world.openfoodfacts.org/product/8850987150098', '8850987150098'),
+    ('Mama', 'Oriental Kitchen Instant Noodles Carbonara Bacon Flavour', 'https://world.openfoodfacts.org/product/8850987150098', '8850987150098'),
     ('มาม่า', 'Mala Beef Instant Noodle', 'https://world.openfoodfacts.org/product/8850987151279', '8850987151279'),
-    ('mama', 'Mama salted egg', 'https://world.openfoodfacts.org/product/8850987148651', '8850987148651'),
+    ('Mama', 'Mama salted egg', 'https://world.openfoodfacts.org/product/8850987148651', '8850987148651'),
     ('Knorr', 'Danie makaron Bolognese', 'https://world.openfoodfacts.org/product/8712423024588', '8712423024588'),
     ('Nongshim', 'Shin Kimchi Noodles', 'https://world.openfoodfacts.org/product/8801043028158', '8801043028158'),
     ('Reeva', 'Zupa o smaku sera i boczku', 'https://world.openfoodfacts.org/product/4820179256895', '4820179256895'),
     ('Winiary', 'Saucy noodles smak sweet chili', 'https://world.openfoodfacts.org/product/7613039253045', '7613039253045'),
     ('Knorr', 'Nudle Pieczony kurczak', 'https://world.openfoodfacts.org/product/8714100666630', '8714100666630'),
-    ('KO-LEE', 'Instant Noodles Tomato Flavour', 'https://world.openfoodfacts.org/product/5023751000339', '5023751000339')
+    ('Ko-Lee', 'Instant Noodles Tomato Flavour', 'https://world.openfoodfacts.org/product/5023751000339', '5023751000339')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

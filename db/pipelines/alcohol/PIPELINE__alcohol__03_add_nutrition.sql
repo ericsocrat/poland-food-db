@@ -25,14 +25,14 @@ from (
     ('Diamant', 'Cukier Biały', 400.0, 0.0, 0.0, 0, 100.0, 100.0, 0.0, 0.0, 0.0),
     ('owolovo', 'Truskawkowo Mus jabłkowo-truskawkowy', 51.0, 0.5, 0.1, 0, 13.0, 11.0, 1.3, 0.5, 0.0),
     ('Harnaś', 'Harnaś jasne pełne', 43.0, 0.0, 0.0, 0, 0.0, 0.0, 0, 0.0, 0.0),
-    ('VAN PUR S.A.', 'Łomża piwo jasne bezalkoholowe', 24.0, 0.0, 0.0, 0, 5.5, 3.3, 0.0, 0.5, 0.0),
+    ('VAN PUR S.A', 'Łomża piwo jasne bezalkoholowe', 24.0, 0.0, 0.0, 0, 5.5, 3.3, 0.0, 0.5, 0.0),
     ('Karmi', 'Karmi o smaku żurawina', 42.0, 0.0, 0.0, 0, 9.8, 8.9, 0.0, 0.3, 0.0),
     ('Żywiec', 'Limonż 0%', 18.0, 0.0, 0.0, 0, 4.7, 2.9, 0, 0.0, 0.0),
     ('Polski Cukier', 'Cukier biały', 400.0, 0.0, 0.0, 0, 100.0, 100.0, 0.0, 0.0, 0.0),
     ('Lomża', 'Łomża jasne', 43.0, 0.0, 0, 0, 3.6, 0, 0, 0.4, 0),
     ('Kompania Piwowarska', 'Kozel cerny', 36.0, 0.1, 0.1, 0, 0.0, 0.0, 0.0, 0.0, 0.1),
     ('Browar Fortuna', 'Piwo Pilzner, dolnej fermentacji', 43.0, 0.0, 0.0, 0, 3.4, 0, 0, 0.1, 0),
-    ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 43.0, 0.0, 0.0, 0, 3.0, 0.2, 0, 0.5, 0.0),
+    ('Tyskie', 'Bier "Tyskie Gronie"', 43.0, 0.0, 0.0, 0, 3.0, 0.2, 0, 0.5, 0.0),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 40.0, 0.0, 0.0, 0, 3.3, 0.2, 0, 0.2, 0.0),
     ('Książęce', 'Książęce czerwony lager', 42.0, 0.0, 0, 0, 3.2, 0, 0, 0.6, 0),
     ('Lech', 'Lech Premium', 41.0, 0.1, 0.1, 0, 2.8, 0.8, 0, 0.6, 0.1),
@@ -49,7 +49,7 @@ from (
     ('Unknown', 'LECH FREE CITRUS SOUR', 21.0, 0.0, 0.0, 0, 5.4, 4.1, 0.0, 0.0, 0.0),
     ('Shroom', 'Shroom power', 16.1, 0.0, 0.0, 0, 3.4, 0.8, 3.2, 0.0, 0.1),
     ('Christkindl', 'Christkindl Glühwein', 82.0, 0.5, 0.1, 0, 9.0, 8.5, 0.0, 0.5, 0.0),
-    ('GO ACTIVE', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 81.0, 1.5, 0.9, 0, 6.9, 4.8, 0.1, 10.0, 0.3),
+    ('Go Active', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 81.0, 1.5, 0.9, 0, 6.9, 4.8, 0.1, 10.0, 0.3),
     ('Heineken', 'Heineken Beer', 42.0, 0.0, 0.0, 0, 3.2, 0.0, 0, 0.0, 0.0),
     ('Just 0.', 'Just 0 White alcoholfree', 29.0, 0.0, 0.0, 0, 6.8, 6.3, 0, 0.0, 0.0),
     ('Just 0.', 'Just 0. Red', 22.0, 0.0, 0.0, 0, 4.9, 4.3, 0, 0.0, 0.0),
@@ -57,7 +57,13 @@ from (
     ('Ikea', 'Glühwein', 77.0, 0.0, 0.0, 0, 19.0, 19.0, 0.0, 0.0, 0.0),
     ('Choya', 'Silver', 112.0, 0.0, 0.0, 0, 14.0, 14.0, 0.0, 0.0, 0.0),
     ('Carlo Rossi', 'Vin carlo rossi', 92.0, 0.0, 0, 0, 23.0, 0, 0, 0.0, 0),
-    ('Somersby', 'Somersby Blueberry Flavoured Cider', 57.0, 0.0, 0.0, 0, 7.7, 7.5, 0, 0.0, 0.0)
+    ('Somersby', 'Somersby Blueberry Flavoured Cider', 57.0, 0.0, 0.0, 0, 7.7, 7.5, 0, 0.0, 0.0),
+    -- ── Batch 2 — non-alcoholic (new) ──────────────────────────────────────────────────
+    ('Just 0',                         'Just 0. Red',                                      22, 0, 0, 0, 5.0, 4.0, 0, 0, 0),          -- est. typical NA red wine
+    ('Just 0',                         'Just 0 White alcoholfree',                          24, 0, 0, 0, 5.5, 4.5, 0, 0, 0),          -- est. typical NA white wine
+    ('Seth & Riley''S Garage Euphoriq', 'Bezalkoholowy napój piwny o smaku jagód i marakui', 24, 0, 0, 0, 5.8, 4.9, 0, 0, 0),          -- OFF
+    ('Van Pur S.A',                    'Łomża piwo jasne bezalkoholowe',                     25, 0, 0, 0, 5.5, 1.5, 0, 0.3, 0.01),    -- est. typical NA lager
+    ('Owolovo',                        'Truskawkowo Mus jabłkowo-truskawkowy',               48, 0, 0, 0, 11, 10, 1.2, 0.5, 0)        -- OFF (miscategorized — baby mousse)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

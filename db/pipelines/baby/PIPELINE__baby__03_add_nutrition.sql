@@ -45,7 +45,7 @@ from (
     ('Dania Express Biedronka', 'Lasagne Bolognese', 172.0, 8.8, 3.6, 0, 15.0, 1.5, 1.5, 7.5, 1.0),
     ('Owolovo', 'Owolovo ananasowo', 46.0, 0.0, 0.0, 0, 10.0, 9.5, 1.7, 0.5, 0.0),
     ('Tarczyński', 'Kabanosy Z Kurczaka Protein', 309.0, 14.0, 4.2, 0, 4.9, 1.6, 0.0, 40.0, 3.4),
-    ('OWOLOVO', 'BRZOSKWINIOWO', 49.0, 0.2, 0.1, 0, 14.0, 12.0, 1.3, 0.4, 0.0),
+    ('Owolovo', 'BRZOSKWINIOWO', 49.0, 0.2, 0.1, 0, 14.0, 12.0, 1.3, 0.4, 0.0),
     ('Leibniz', 'Minis classic', 449.0, 12.0, 7.8, 0, 76.0, 23.0, 2.2, 8.1, 0.6),
     ('Hipp', 'Ziemniaki z buraczkami, jabłkiem i wołowiną', 80.0, 3.1, 0.6, 0, 10.1, 3.0, 0, 0.1, 0.0),
     ('Nestle Gerber', 'owoce jabłka z truskawkami i jagodami', 51.1, 0.1, 0.0, 0, 11.6, 6.9, 1.1, 0.3, 0.0),
@@ -54,11 +54,10 @@ from (
     ('BoboVita', 'BoboVita Jabłka z marchewka', 42.0, 0.2, 0, 0, 8.7, 8.3, 2.0, 0.4, 0),
     ('Hipp', 'Kaszka mleczna z biszkoptami i jabłkami', 78.0, 3.0, 1.4, 0, 10.7, 4.8, 0.4, 1.9, 0.1),
     ('Pudliszki', 'Pudliszki', 99.0, 0.5, 0, 0, 17.0, 0, 0, 5.3, 0),
-    ('Kamis', 'Kamis Musztarda Kremska 185G.', 96.0, 4.2, 1.6, 0, 7.8, 7.6, 0, 4.5, 2.1),
-    ('tarczyński', 'gryzzale', 381.0, 29.0, 12.0, 0, 3.9, 1.1, 0, 26.0, 2.2),
-    ('Dolina Dobra', '5908226815710', 321.0, 29.0, 11.0, 0, 3.5, 1.8, 0, 13.0, 2.2),
+    ('Kamis', 'Kamis Musztarda Kremska 185G', 96.0, 4.2, 1.6, 0, 7.8, 7.6, 0, 4.5, 2.1),
+    ('Tarczyński', 'gryzzale', 381.0, 29.0, 12.0, 0, 3.9, 1.1, 0, 26.0, 2.2),
     ('Hyperfood', 'Eatyx Wanilla', 68.0, 3.8, 0.3, 0, 3.6, 0.5, 1.2, 4.2, 0.2),
-    ('GO ACTIVE', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 81.0, 1.5, 0.9, 0, 6.9, 4.8, 0.1, 10.0, 0.3),
+    ('Go Active', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 81.0, 1.5, 0.9, 0, 6.9, 4.8, 0.1, 10.0, 0.3),
     ('Vitanella', 'Ciastka Czekolada & Zboża', 419.0, 12.0, 3.6, 0, 64.0, 28.0, 9.3, 9.1, 0.6),
     ('Vitanella', 'Baton select orzeszki ziemne, migdały, sól morska', 557.0, 40.2, 5.8, 0, 33.1, 25.5, 6.4, 12.6, 0.6),
     ('Maribel', 'Ahorn sirup', 349.0, 0.0, 0.0, 0, 87.2, 81.5, 0, 0.0, 0.0),
@@ -68,7 +67,9 @@ from (
     ('Go active', 'Pudding proteinowy', 76.0, 1.3, 0.8, 0, 6.0, 4.4, 0.1, 10.0, 0.3),
     ('Nestlé', 'Bulion drobiowy', 6.0, 0.3, 0.1, 0, 0.5, 0.4, 0, 0.2, 0.8),
     ('GO Active', 'pudding czekolada', 81.0, 1.5, 1.0, 0, 6.4, 5.2, 0.9, 10.0, 0.0),
-    ('Tastino', 'Papryka Barbecue', 412.0, 8.5, 0.8, 0, 75.0, 3.3, 2.9, 7.4, 1.6)
+    ('Tastino', 'Papryka Barbecue', 412.0, 8.5, 0.8, 0, 75.0, 3.3, 2.9, 7.4, 1.6),
+    -- ── Batch 2 — baby (new) ─────────────────────────────────────────────────────────
+    ('Owolovo', 'Truskawkowo Mus jabłkowo-truskawkowy', 48, 0, 0, 0, 11, 10, 1.2, 0.5, 0)   -- OFF (nearest Owolovo mus variant)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
