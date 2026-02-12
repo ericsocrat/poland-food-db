@@ -59,30 +59,31 @@ CATEGORY_RANGES: dict[str, dict[str, tuple[float, float]]] = {
 
 
 # ---------------------------------------------------------------------------
-# EAN-13 checksum
+# EAN checksum (EAN-8 / EAN-13)
 # ---------------------------------------------------------------------------
 
 
 def validate_ean_checksum(ean: str) -> bool:
-    """Validate an EAN-13 barcode using the Modulo-10 algorithm.
+    """Validate an EAN-8 or EAN-13 barcode using the Modulo-10 algorithm.
 
     Parameters
     ----------
     ean:
-        The barcode string (should be 13 digits for EAN-13).
+        The barcode string (should be 8 or 13 digits).
 
     Returns
     -------
     bool
         *True* if the checksum is valid, *False* otherwise.
     """
-    if not ean or not ean.isdigit() or len(ean) != 13:
+    if not ean or not ean.isdigit() or len(ean) not in (8, 13):
         return False
 
     digits = [int(d) for d in ean]
-    total = sum(d * (1 if i % 2 == 0 else 3) for i, d in enumerate(digits[:12]))
+    payload = digits[:-1]
+    total = sum(d * (3 if i % 2 == 0 else 1) for i, d in enumerate(reversed(payload)))
     check = (10 - (total % 10)) % 10
-    return check == digits[12]
+    return check == digits[-1]
 
 
 # ---------------------------------------------------------------------------
