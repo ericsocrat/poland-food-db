@@ -418,8 +418,17 @@ function Invoke-SqlQASuite {
     }
     else {
         Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
-        Write-TrimmedViolationOutput -Text $lines
-        $violationList = ($violations | ForEach-Object { $_.Trim() })
+        $allLineItems = @(Get-NonEmptyLines -Text $lines)
+        $violationList = @($violations | ForEach-Object { $_.Trim() })
+        if ($violationList.Count -gt 0) {
+            Write-Host ($violationList -join "`n") -ForegroundColor DarkRed
+            if ($allLineItems.Count -gt $violationList.Count) {
+                Write-Host "  ... ($($allLineItems.Count - $violationList.Count) zero-violation rows omitted)" -ForegroundColor DarkGray
+            }
+        }
+        else {
+            Write-TrimmedViolationOutput -Text $lines
+        }
         $script:jsonResult.suites += @{ name = $Name; suite_id = $SuiteId; checks = $Checks; status = "fail"; violations = @($violationList); runtime_ms = [math]::Round($sw.Elapsed.TotalMilliseconds) }
         $script:jsonResult.summary.total_checks += $Checks; $script:jsonResult.summary.failed += $violationList.Count; $script:jsonResult.summary.passed += ($Checks - $violationList.Count)
         return $false
