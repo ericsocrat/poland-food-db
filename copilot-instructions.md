@@ -76,7 +76,7 @@ poland-food-db/
 │   │   ├── chips/                   # Reference implementation (copy for new categories)
 │   │   └── ... (19 more)            # Variable product counts per category
 │   ├── qa/                          # Test suites
-│   │   ├── QA__null_checks.sql      # 31 data integrity checks
+│   │   ├── QA__null_checks.sql      # 29 data integrity checks
 │   │   ├── QA__scoring_formula_tests.sql  # 27 scoring validation checks
 │   │   ├── QA__api_surfaces.sql     # 14 API contract validation checks
 │   │   ├── QA__confidence_scoring.sql  # 10 confidence scoring checks
@@ -140,7 +140,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 1,008/1,036 coverage (97.3%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (228 checks across 15 suites)
+├── RUN_QA.ps1                       # QA test runner (226 checks across 15 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (29 injection tests)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
@@ -476,7 +476,7 @@ chore: normalize categories to 28 products
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 228/228 pass
+1. `.\RUN_QA.ps1` — 226/226 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed

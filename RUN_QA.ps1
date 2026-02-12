@@ -118,7 +118,7 @@ if (-not (Test-Path $test1File)) {
     exit 1
 }
 
-Write-Host "Running Test Suite 1: Data Integrity (31 checks)..." -ForegroundColor Yellow
+Write-Host "Running Test Suite 1: Data Integrity (29 checks)..." -ForegroundColor Yellow
 
 $sw1 = [System.Diagnostics.Stopwatch]::StartNew()
 
@@ -137,10 +137,10 @@ if ($LASTEXITCODE -ne 0) {
 $test1Lines = ($test1Output | Out-String).Trim()
 if ($test1Lines -eq "" -or $test1Lines -match '^\s*$') {
     $sw1.Stop()
-    Write-Host "  ✓ PASS (31/31 — zero violations) [$([math]::Round($sw1.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
+    Write-Host "  ✓ PASS (29/29 — zero violations) [$([math]::Round($sw1.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
     $test1Pass = $true
-    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 31; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
-    $jsonResult.summary.total_checks += 31; $jsonResult.summary.passed += 31
+    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 29; status = "pass"; violations = @(); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
+    $jsonResult.summary.total_checks += 29; $jsonResult.summary.passed += 29
 }
 else {
     $sw1.Stop()
@@ -148,8 +148,8 @@ else {
     Write-Host $test1Lines -ForegroundColor DarkRed
     $test1Pass = $false
     $violationList = ($test1Lines -split "`n" | Where-Object { $_ -match '\S' })
-    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 31; status = "fail"; violations = @($violationList); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
-    $jsonResult.summary.total_checks += 31; $jsonResult.summary.failed += $violationList.Count; $jsonResult.summary.passed += (31 - $violationList.Count)
+    $jsonResult.suites += @{ name = "Data Integrity"; suite_id = "integrity"; checks = 29; status = "fail"; violations = @($violationList); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
+    $jsonResult.summary.total_checks += 29; $jsonResult.summary.failed += $violationList.Count; $jsonResult.summary.passed += (29 - $violationList.Count)
 }
 
 # ─── Test 2: Scoring Formula Validation ────────────────────────────────────

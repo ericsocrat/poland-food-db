@@ -25,10 +25,15 @@ def _sql_text(value: str | None) -> str:
     """Wrap a value in single quotes, escaping internal apostrophes.
 
     Returns the SQL literal ``null`` when *value* is ``None``.
+    Also normalises Unicode curly quotes (U+2018, U+2019) to straight
+    apostrophes so SQL literals never contain invisible encoding surprises.
     """
     if value is None:
         return "null"
-    return "'" + str(value).replace("'", "''") + "'"
+    s = str(value)
+    # Normalise Unicode curly single-quotes to ASCII apostrophe
+    s = s.replace("\u2019", "'").replace("\u2018", "'")
+    return "'" + s.replace("'", "''") + "'"
 
 
 def _sql_num(value: str | float | int | None) -> str:
