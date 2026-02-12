@@ -12,23 +12,11 @@
 
 BEGIN;
 
--- ─── 1. Cap each category to 28 active products ──────────────────────────
--- Pipeline SQL files for some categories contain >28 products.
--- Keep the first 28 inserted (by product_id) per category and deprecate
--- the rest.  This matches the local database invariant.
-
-WITH ranked AS (
-    SELECT product_id,
-           ROW_NUMBER() OVER (PARTITION BY category ORDER BY product_id) AS rn
-    FROM   products
-    WHERE  is_deprecated IS NOT TRUE
-)
-UPDATE products p
-SET    is_deprecated      = true,
-       deprecated_reason  = 'CI: excess beyond 28 per category'
-FROM   ranked r
-WHERE  p.product_id = r.product_id
-  AND  r.rn > 28;
+-- ─── 1. (Removed) ───────────────────────────────────────────────────────
+-- Previously capped each category to 28 active products.  This was stale:
+-- local categories range from 9 to 98 products.  CI now runs the full
+-- dataset so that QA checks are validated against the same data shape
+-- as the local environment.
 
 -- ─── 2. Default source columns for products missing them ─────────────────
 -- All pipeline products come from Open Food Facts, so set source_type

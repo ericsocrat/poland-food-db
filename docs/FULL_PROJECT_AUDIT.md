@@ -31,8 +31,8 @@
 | CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
-| Migration files                         | 56                                     |
-| QA checks                               | 228/228 pass + 29/29 negative tests    |
+| Migration files                         | 58                                     |
+| QA checks                               | 229/229 pass + 29/29 negative tests    |
 
 ---
 

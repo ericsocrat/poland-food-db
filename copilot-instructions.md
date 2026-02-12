@@ -7,9 +7,9 @@
 > **EAN coverage:** 997/1,025 (97.3%)
 > **Scoring:** v3.2 — 9-factor weighted formula via `compute_unhealthiness_v32()` (added ingredient concern scoring)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
-> **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,309 trace declarations
+> **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,304 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 226 checks across 15 suites + 29 negative validation tests — all passing
+> **QA:** 229 checks across 15 suites + 29 negative validation tests — all passing
 
 ---
 
@@ -95,7 +95,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 55 append-only schema migrations
+│   └── migrations/                  # 58 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -140,7 +140,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 997/1,025 coverage (97.3%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (226 checks across 15 suites)
+├── RUN_QA.ps1                       # QA test runner (229 checks across 15 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (29 injection tests)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
@@ -321,7 +321,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ### CHECK Constraints
 
-19 CHECK constraints enforce domain values at the DB level:
+24 CHECK constraints enforce domain values at the DB level:
 
 | Table             | Constraint                         | Rule                                                                                                                                                                                                |
 | ----------------- | ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -334,9 +334,18 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | `products`          | `chk_products_nova`                  | NULL or `IN ('1','2','3','4')`                                                                                                                                                                      |
 | `products`          | 4 × `chk_products_high_*_flag`       | NULL or `IN ('YES','NO')`                                                                                                                                                                           |
 | `products`          | `chk_products_completeness`          | 0–100 (data_completeness_pct)                                                                                                       |
+| `products`          | `chk_products_source_type`           | NULL or `IN ('off_api','manual','off_search','csv_import')`                                                                         |
 | `nutrition_facts` | `chk_nutrition_non_negative`       | All 9 nutrition columns ≥ 0                                                                                                                                                                         |
 | `nutrition_facts` | `chk_nutrition_satfat_le_totalfat` | saturated_fat ≤ total_fat                                                                                                                                                                           |
 | `nutrition_facts` | `chk_nutrition_sugars_le_carbs`    | sugars ≤ carbs                                                                                                                                                                                      |
+| `ingredient_ref`  | `chk_concern_tier_range`           | concern_tier 0–3                                                                                                                                                                                    |
+| `ingredient_ref`  | `chk_palm_oil_values`              | contains_palm_oil IN ('yes','no','maybe')                                                                                                                                                           |
+| `ingredient_ref`  | `chk_vegan_values`                 | vegan IN ('yes','no','maybe')                                                                                                                                                                       |
+| `ingredient_ref`  | `chk_vegetarian_values`            | vegetarian IN ('yes','no','maybe')                                                                                                                                                                  |
+| `product_allergen_info` | `product_allergen_info_type_check` | type IN ('contains','traces')                                                                                                                                                                |
+| `product_ingredient` | `chk_percent_range`              | percent BETWEEN 0 AND 100                                                                                                                                                                           |
+| `product_ingredient` | `chk_percent_estimate_range`     | percent_estimate BETWEEN 0 AND 100                                                                                                                                                                  |
+| `product_ingredient` | `chk_sub_has_parent`             | NOT is_sub OR parent_ingredient_id IS NOT NULL                                                                                                                                                      |
 
 ### Performance Indexes
 

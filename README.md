@@ -90,14 +90,14 @@ supabase start
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 226 automated checks across 15 QA suites + 29 negative validation tests
+**Test Coverage**: 229 automated checks across 15 QA suites + 29 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 14 API surface checks (contract validation, JSON structure, listing consistency)
-- 12 view consistency checks (v_master, v_api_category_overview, materialized views)
+- 13 view consistency checks (v_master, v_api_category_overview, materialized views)
 - 25 data quality checks (completeness, constraints, domains)
 - 18 referential integrity checks (FK validation, domain constraints)
-- 18 data consistency checks (cross-table relationships, formula verification)
+- 20 data consistency checks (cross-table relationships, formula verification)
 - 16 nutrition range checks (physiological bounds, cross-field validation)
 - 14 allergen integrity checks (FK validation, duplicate detection, coverage)
 - 16 serving & source validation checks (basis rules, source completeness)
@@ -148,10 +148,10 @@ poland-food-db/
 │   │   ├── QA__confidence_scoring.sql    # 10 confidence scoring checks
 │   │   ├── QA__data_quality.sql          # 25 data quality checks
 │   │   ├── QA__referential_integrity.sql # 18 referential integrity checks
-│   │   ├── QA__view_consistency.sql      # 12 view consistency checks
+│   │   ├── QA__view_consistency.sql      # 13 view consistency checks
 │   │   ├── QA__naming_conventions.sql    # 12 naming convention checks
 │   │   ├── QA__nutrition_ranges.sql      # 16 nutrition range checks
-│   │   ├── QA__data_consistency.sql      # 18 data consistency checks
+│   │   ├── QA__data_consistency.sql      # 20 data consistency checks
 │   │   ├── QA__allergen_integrity.sql    # 14 allergen integrity checks
 │   │   ├── QA__serving_source_validation.sql # 16 serving & source checks
 │   │   ├── QA__ingredient_quality.sql    # 14 ingredient quality checks
@@ -161,7 +161,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (55 files)
+    └── migrations/          # Schema migrations (58 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
@@ -175,7 +175,7 @@ poland-food-db/
 │   └── UX_UI_DESIGN.md      # Production-ready UX specification
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (226 checks)
+├── RUN_QA.ps1               # Standalone test runner (229 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
 └── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ```
@@ -186,7 +186,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **226 automated checks** across 15 QA suites + 29 negative validation tests:
+Every change is validated against **229 automated checks** across 15 QA suites + 29 negative validation tests:
 
 ### Data Integrity (29 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -246,7 +246,7 @@ Every change is validated against **226 automated checks** across 15 QA suites +
 ### Additional Suites
 - **Naming Conventions** (12 checks): Product name format, brand consistency, slug validation
 - **Nutrition Ranges** (16 checks): Physiological bounds, cross-field validation
-- **Data Consistency** (18 checks): Cross-table relationships, formula verification
+- **Data Consistency** (20 checks): Cross-table relationships, formula verification
 - **Allergen Integrity** (14 checks): FK validation, duplicate detection, valid values
 - **Serving & Source Validation** (16 checks): Basis rules, source completeness
 - **Ingredient Quality** (14 checks): Naming, frequency, concern tier distribution
@@ -256,7 +256,7 @@ Constraint violation tests that verify the database correctly rejects invalid da
 
 **Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
 
-**CI**: All 226 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 229 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 

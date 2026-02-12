@@ -12,7 +12,7 @@
         6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
         7. QA__data_quality.sql (25 data quality & plausibility checks — blocking)
         8. QA__referential_integrity.sql (18 referential integrity checks — blocking)
-        9. QA__view_consistency.sql (12 view & function consistency checks — blocking)
+        9. QA__view_consistency.sql (13 view & function consistency checks — blocking)
        10. QA__naming_conventions.sql (12 naming/formatting convention checks — blocking)
        11. QA__nutrition_ranges.sql (16 nutrition range & plausibility checks — blocking)
        12. QA__data_consistency.sql (20 data consistency & domain checks — blocking)
@@ -108,7 +108,7 @@ $suiteCatalog = @(
     @{ Num = 6;  Name = "Confidence Scoring";               Short = "Confidence";   Id = "confidence";          Checks = 10; Blocking = $true;  Kind = "sql";         File = "QA__confidence_scoring.sql" },
     @{ Num = 7;  Name = "Data Quality & Plausibility";      Short = "DataQuality";  Id = "data_quality";        Checks = 25; Blocking = $true;  Kind = "sql";         File = "QA__data_quality.sql" },
     @{ Num = 8;  Name = "Referential Integrity";            Short = "RefInteg";     Id = "referential";         Checks = 18; Blocking = $true;  Kind = "sql";         File = "QA__referential_integrity.sql" },
-    @{ Num = 9;  Name = "View & Function Consistency";      Short = "Views";        Id = "views";               Checks = 12; Blocking = $true;  Kind = "sql";         File = "QA__view_consistency.sql" },
+    @{ Num = 9;  Name = "View & Function Consistency";      Short = "Views";        Id = "views";               Checks = 13; Blocking = $true;  Kind = "sql";         File = "QA__view_consistency.sql" },
     @{ Num = 10; Name = "Naming Conventions";               Short = "Naming";       Id = "naming";              Checks = 12; Blocking = $true;  Kind = "sql";         File = "QA__naming_conventions.sql" },
     @{ Num = 11; Name = "Nutrition Ranges & Plausibility";  Short = "NutriRange";   Id = "nutrition_ranges";    Checks = 16; Blocking = $true;  Kind = "sql";         File = "QA__nutrition_ranges.sql" },
     @{ Num = 12; Name = "Data Consistency";                 Short = "DataConsist";   Id = "data_consistency";    Checks = 20; Blocking = $true;  Kind = "sql";         File = "QA__data_consistency.sql" },

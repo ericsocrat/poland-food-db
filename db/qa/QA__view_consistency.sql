@@ -158,3 +158,13 @@ FROM (
 ) x
 WHERE x.product_count <> x.actual;
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 13. v_master column count matches expected (drift detection)
+--     v_master should have exactly 47 columns.  If a migration adds or
+--     removes columns without updating the reference, this catches it.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '13. v_master has expected column count (47)' AS check_name,
+       ABS(47 - COUNT(*)) AS violations
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'v_master';
