@@ -55,7 +55,7 @@ def _psql_cmd(query: str) -> list[str]:
 def get_products() -> list[dict]:
     """Get all active products with EANs from the local DB."""
     cmd = _psql_cmd("""
-        SELECT product_id, ean, brand, product_name, category
+        SELECT product_id, country, ean, brand, product_name, category
         FROM products
         WHERE is_deprecated = FALSE AND ean IS NOT NULL
         ORDER BY product_id;
@@ -73,10 +73,11 @@ def get_products() -> list[dict]:
         if len(parts) >= 4:
             products.append({
                 "product_id": int(parts[0]),
-                "ean": parts[1].strip(),
-                "brand": parts[2].strip(),
-                "product_name": parts[3].strip(),
-                "category": parts[4].strip() if len(parts) > 4 else "",
+                "country": parts[1].strip(),
+                "ean": parts[2].strip(),
+                "brand": parts[3].strip(),
+                "product_name": parts[4].strip() if len(parts) > 4 else "",
+                "category": parts[5].strip() if len(parts) > 5 else "",
             })
     return products
 
@@ -159,12 +160,12 @@ def is_additive_tag(tag: str) -> bool:
 # Main logic
 # ---------------------------------------------------------------------------
 
-def process_ingredients(off_product: dict, product_id: int,
+def process_ingredients(off_product: dict, country: str, ean: str,
                         ingredient_lookup: dict[str, int],
                         new_ingredients: dict[str, dict]) -> list[dict]:
     """Extract ingredient rows for a product.
 
-    Returns list of dicts with keys: product_id, ingredient_id, position,
+    Returns list of dicts with keys: country, ean, ingredient_id, position,
     percent, percent_estimate, is_sub_ingredient, parent_ingredient_id
     """
     ingredients = off_product.get("ingredients", [])
@@ -218,7 +219,8 @@ def process_ingredients(off_product: dict, product_id: int,
         pct_est = item.get("percent_estimate")
 
         row = {
-            "product_id": product_id,
+            "country": country,
+            "ean": ean,
             "ingredient_id": ing_id,
             "position": pos,
             "percent": pct,
@@ -243,29 +245,40 @@ def process_ingredients(off_product: dict, product_id: int,
     return rows
 
 
-def process_allergens(off_product: dict, product_id: int) -> list[dict]:
+def canonical_taxonomy_tag(tag: str) -> str:
+    """Normalize OFF taxonomy tags to canonical en:* namespace."""
+    t = (tag or "").strip().lower()
+    if not t:
+        return ""
+    if t.startswith("en:"):
+        return t
+    if ":" in t:
+        t = t.split(":", 1)[1].strip()
+    return f"en:{t}" if t else ""
+
+
+def process_allergens(off_product: dict, country: str, ean: str) -> list[dict]:
     """Extract allergen_info rows for a product."""
     rows = []
 
     allergens = off_product.get("allergens_tags", [])
     for tag in allergens:
-        # Remove language prefix
-        clean_tag = tag.split(":")[-1] if ":" in tag else tag
-        clean_tag = clean_tag.strip()
+        clean_tag = canonical_taxonomy_tag(tag)
         if clean_tag:
             rows.append({
-                "product_id": product_id,
+                "country": country,
+                "ean": ean,
                 "tag": clean_tag,
                 "type": "contains",
             })
 
     traces = off_product.get("traces_tags", [])
     for tag in traces:
-        clean_tag = tag.split(":")[-1] if ":" in tag else tag
-        clean_tag = clean_tag.strip()
+        clean_tag = canonical_taxonomy_tag(tag)
         if clean_tag:
             rows.append({
-                "product_id": product_id,
+                "country": country,
+                "ean": ean,
                 "tag": clean_tag,
                 "type": "traces",
             })
@@ -329,11 +342,12 @@ def generate_migration(ingredient_rows: list[dict],
         lines.append("ON CONFLICT DO NOTHING;")
         lines.append("")
 
-    # 2. Insert product_allergen_info (simpler — no FK to ingredient_ref)
+    # 2. Insert product_allergen_info (resolved via country + ean)
     if allergen_rows:
         lines.append("-- ═══════════════════════════════════════════════════════════════")
         lines.append("-- 2. Populate product_allergen_info")
         lines.append("-- ═══════════════════════════════════════════════════════════════")
+        lines.append("-- Resolve product_id by stable key (country + ean) for portability")
         lines.append("")
 
         # Batch by 500 rows
@@ -341,11 +355,18 @@ def generate_migration(ingredient_rows: list[dict],
         for i in range(0, len(allergen_rows), batch_size):
             batch = allergen_rows[i:i + batch_size]
             lines.append("INSERT INTO product_allergen_info (product_id, tag, type)")
-            lines.append("VALUES")
+            lines.append("SELECT p.product_id, v.tag, v.type")
+            lines.append("FROM (VALUES")
             vals = []
             for r in batch:
-                vals.append(f"  ({r['product_id']}, {sql_escape(r['tag'])}, {sql_escape(r['type'])})")
+                vals.append(
+                    f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
+                    f"{sql_escape(r['tag'])}, {sql_escape(r['type'])})"
+                )
             lines.append(",\n".join(vals))
+            lines.append(") AS v(country, ean, tag, type)")
+            lines.append("JOIN products p ON p.country = v.country AND p.ean = v.ean")
+            lines.append("WHERE p.is_deprecated IS NOT TRUE")
             lines.append("ON CONFLICT (product_id, tag, type) DO NOTHING;")
             lines.append("")
 
@@ -355,7 +376,7 @@ def generate_migration(ingredient_rows: list[dict],
         lines.append("-- ═══════════════════════════════════════════════════════════════")
         lines.append("-- 3. Populate product_ingredient")
         lines.append("-- ═══════════════════════════════════════════════════════════════")
-        lines.append("-- Using a CTE to resolve ingredient names to IDs")
+        lines.append("-- Resolve product_id by stable key (country + ean) for portability")
         lines.append("")
 
         # Group by whether they need name resolution
@@ -368,18 +389,22 @@ def generate_migration(ingredient_rows: list[dict],
             for i in range(0, len(resolved), batch_size):
                 batch = resolved[i:i + batch_size]
                 lines.append("INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
-                lines.append("VALUES")
+                lines.append("SELECT p.product_id, v.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id")
+                lines.append("FROM (VALUES")
                 vals = []
                 for r in batch:
                     pct = str(r['percent']) if r['percent'] is not None else 'NULL'
                     pct_est = str(r['percent_estimate']) if r['percent_estimate'] is not None else 'NULL'
                     parent = str(r['parent_ingredient_id']) if r['parent_ingredient_id'] is not None and not isinstance(r['parent_ingredient_id'], str) else 'NULL'
                     vals.append(
-                        f"  ({r['product_id']}, {r['ingredient_id']}, {r['position']}, "
-                        f"{pct}, {pct_est}, "
+                        f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
+                        f"{r['ingredient_id']}, {r['position']}, {pct}, {pct_est}, "
                         f"{'true' if r['is_sub_ingredient'] else 'false'}, {parent})"
                     )
                 lines.append(",\n".join(vals))
+                lines.append(") AS v(country, ean, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
+                lines.append("JOIN products p ON p.country = v.country AND p.ean = v.ean")
+                lines.append("WHERE p.is_deprecated IS NOT TRUE")
                 lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
                 lines.append("")
 
@@ -389,7 +414,7 @@ def generate_migration(ingredient_rows: list[dict],
             for i in range(0, len(unresolved), batch_size):
                 batch = unresolved[i:i + batch_size]
                 lines.append("INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
-                lines.append("SELECT v.product_id, ir.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id")
+                lines.append("SELECT p.product_id, ir.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id")
                 lines.append("FROM (VALUES")
                 vals = []
                 for r in batch:
@@ -399,13 +424,15 @@ def generate_migration(ingredient_rows: list[dict],
                     pct_est = str(r['percent_estimate']) if r['percent_estimate'] is not None else 'NULL'
                     parent = str(r['parent_ingredient_id']) if r['parent_ingredient_id'] is not None and not isinstance(r['parent_ingredient_id'], str) else 'NULL'
                     vals.append(
-                        f"  ({r['product_id']}, {sql_escape(display_name)}, {r['position']}, "
+                        f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, {sql_escape(display_name)}, {r['position']}, "
                         f"{pct}::numeric, {pct_est}::numeric, "
                         f"{'true' if r['is_sub_ingredient'] else 'false'}, {parent}::bigint)"
                     )
                 lines.append(",\n".join(vals))
-                lines.append(") AS v(product_id, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
+                lines.append(") AS v(country, ean, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
+                lines.append("JOIN products p ON p.country = v.country AND p.ean = v.ean")
                 lines.append("JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)")
+                lines.append("WHERE p.is_deprecated IS NOT TRUE")
                 lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
                 lines.append("")
 
@@ -473,14 +500,14 @@ def main():
             continue
 
         # Process ingredients
-        ing_rows = process_ingredients(off_data, product["product_id"],
+        ing_rows = process_ingredients(off_data, product["country"], product["ean"],
                                        ingredient_lookup, new_ingredients)
         if ing_rows:
             stats["with_ingredients"] += 1
             all_ingredient_rows.extend(ing_rows)
 
         # Process allergens/traces
-        alg_rows = process_allergens(off_data, product["product_id"])
+        alg_rows = process_allergens(off_data, product["country"], product["ean"])
         if alg_rows:
             stats["with_allergens"] += 1
             all_allergen_rows.extend(alg_rows)
