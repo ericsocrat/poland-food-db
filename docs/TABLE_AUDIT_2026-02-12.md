@@ -19,7 +19,7 @@ Audited all public base tables in local Supabase/PostgreSQL:
 - Foreign keys structurally valid (no invalid constraints): **pass**
 
 ## Cardinality Snapshot
-- products: 1063 (1028 active, 35 deprecated)
+- products: 1063 (1025 active, 38 deprecated)
 - nutrition_facts: 1032
 - ingredient_ref: 1132
 - product_ingredient: 0
@@ -34,7 +34,7 @@ From `RUN_QA.ps1 -Json` (final):
 - Total checks: 226
 - Passed: **226**
 - Failed: **0**
-- Warnings: 1028 (actionable source-coverage warnings)
+- Warnings: 1025 (actionable source-coverage warnings)
 - Overall: **pass**
 
 ### Remediated Issues (5 → 0)
@@ -57,12 +57,22 @@ From `RUN_QA.ps1 -Json` (final):
    26 products re-categorized to correct categories; 4 ambiguous fruit mus → Drinks.
    Baby category now contains only 9 actual baby food products (BoboVita, Hipp, Sinlac, GutBio).
 
+### Additional Remediation (Pass 3)
+7. **Brand name normalization** — FIXED.
+   27 brand variants standardized (casing, diacriticals, spacing, typos).
+   3 additional duplicates deprecated (product IDs 160, 702, 724).
+   Migration: `20260213000300_normalize_brands.sql`.
+
 ### Informational Findings
 - Product 112 (Pano Chleb wieloziarnisty Złoty Łan): salt 13g, sugars 23g — suspected
   10× decimal-point error in OFF source data (OFF also flags these values). Not overridden
   since our DB faithfully mirrors the source.
 - 97 products with `nutri_score_label = 'UNKNOWN'` and 49 with `'NOT-APPLICABLE'` —
   these are expected (insufficient data or categories where Nutri-Score doesn't apply).
+- `high_additive_load` flag is always "NO" — depends on empty `product_ingredient` table.
+  Will become meaningful when the ingredient pipeline is built.
+- 1 active product (BakaD'Or, ID 1841) retains non-canonical brand spelling because
+  deprecated product 715 blocks the unique constraint `(country, brand, product_name)`.
 
 ## Table-by-Table Assessment
 
@@ -73,7 +83,7 @@ From `RUN_QA.ps1 -Json` (final):
 - nutri_score_ref: structurally healthy, populated (7)
 
 ### Core Data Tables
-- products: structurally healthy, **data quality remediated** (1 duplicate deprecated, missing labels/reasons filled)
+- products: structurally healthy, **data quality remediated** (4 duplicates deprecated, missing labels/reasons filled, brands normalized, categories corrected)
 - nutrition_facts: structurally healthy, no orphan rows
 
 ### Ingredient/Allergen Domain
@@ -90,5 +100,17 @@ From `RUN_QA.ps1 -Json` (final):
 - Pipeline SQL files corrected (brand casing in 6 category `*__04_scoring.sql` files)
 - QA test `QA__scoring_formula_tests.sql` Test 29 range corrected (30–34 → 29–34)
 - QA check 23 (`QA__null_checks.sql`) made conditional — skips orphan check when `product_ingredient` is empty
-- 30 products re-categorized from "Baby" to correct categories (DB-level, no pipeline file yet)
+- 30 products re-categorized from "Baby" to correct categories → migration `20260213000200_fix_baby_category.sql`
+- 27 brand name variants standardized → migration `20260213000300_normalize_brands.sql`
+- 3 additional duplicates deprecated (products 160, 702, 724)
 - Materialized view `v_product_confidence` refreshed
+
+## Score Distribution (active products)
+| Bucket | Count | % |
+|--------|-------|---|
+| 0–9 | 120 | 11.7 |
+| 10–19 | 304 | 29.7 |
+| 20–29 | 306 | 29.9 |
+| 30–39 | 203 | 19.8 |
+| 40–49 | 91 | 8.9 |
+| 50+ | 1 | 0.1 |
