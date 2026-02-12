@@ -161,7 +161,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (51 files)
+    └── migrations/          # Schema migrations (54 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
@@ -330,7 +330,7 @@ Every product receives an automated **data confidence** score (0-100) measuring 
 | **Medium** | 50-79 | Some gaps (allergens, serving data)   | Score may shift as data improves |
 | **Low**    | <50   | Major data gaps                       | Use with caution                 |
 
-**Current distribution**: 0 high · 1,000 medium · 29 low (ingredient data pending re-enrichment)
+**Current distribution**: 859 high · 138 medium · 28 low
 
 The 6 components of confidence: nutrition data (0-30), ingredient data (0-25), source quality (0-20), EAN coverage (0-10), allergen info (0-10), serving data (0-5). Computed by `compute_data_confidence()`.
 

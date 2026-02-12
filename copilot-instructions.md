@@ -7,7 +7,7 @@
 > **EAN coverage:** 997/1,025 (97.3%)
 > **Scoring:** v3.2 — 9-factor weighted formula via `compute_unhealthiness_v32()` (added ingredient concern scoring)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
-> **Ingredient analytics:** 1,471 unique ingredients (all clean ASCII English), 988 allergen declarations, 999 trace declarations
+> **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,309 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
 > **QA:** 226 checks across 15 suites + 29 negative validation tests — all passing
 
@@ -95,7 +95,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 51 append-only schema migrations
+│   └── migrations/                  # 54 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -158,9 +158,9 @@ poland-food-db/
 | -------------------- | -------------------------------------------- | --------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | `products`           | Product identity, scores, flags, provenance  | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.           |
 | `nutrition_facts`    | Nutrition per product (per 100g)             | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                           |
-| `ingredient_ref`     | Canonical ingredient dictionary              | `ingredient_id` (identity)              | 1,471 unique ingredients; name_en, vegan/vegetarian/palm_oil/is_additive/concern_tier flags       |
-| `product_ingredient` | Product ↔ ingredient junction                | `(product_id, ingredient_id, position)` | ~10,145 rows; tracks percent, percent_estimate, sub-ingredients, position order                   |
-| `product_allergen_info` | Allergens + traces per product (unified)    | `(product_id, tag, type)`               | ~1,987 rows; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags              |
+| `ingredient_ref`     | Canonical ingredient dictionary              | `ingredient_id` (identity)              | 2,740 unique ingredients; name_en, vegan/vegetarian/palm_oil/is_additive/concern_tier flags       |
+| `product_ingredient` | Product ↔ ingredient junction                | `(product_id, ingredient_id, position)` | ~12,892 rows across 859 products; tracks percent, percent_estimate, sub-ingredients, position order |
+| `product_allergen_info` | Allergens + traces per product (unified)    | `(product_id, tag, type)`               | ~2,527 rows (1,218 allergens + 1,309 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags |
 | `country_ref`        | ISO 3166-1 alpha-2 country codes             | `country_code` (text PK)                | 1 row (PL); FK from products.country                                                              |
 | `category_ref`       | Product category master list                 | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order             |
 | `nutri_score_ref`    | Nutri-Score label definitions                | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description |

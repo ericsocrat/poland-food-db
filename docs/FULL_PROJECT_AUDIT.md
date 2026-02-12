@@ -19,10 +19,10 @@
 | Total products                          | 1,063 (1,025 active + 38 deprecated)  |
 | Categories                              | 20                                     |
 | Nutrition                               | 1,032 (1:1 with scored products)       |
-| ingredient_ref                          | 1,132                                  |
-| product_ingredient                      | 0 (reset — awaiting re-enrichment)     |
-| product_allergen_info                   | 0 (reset — awaiting re-enrichment)     |
-| mv_ingredient_frequency                 | 1,132                                  |
+| ingredient_ref                          | 2,740                                  |
+| product_ingredient                      | 12,892 rows across 859 products        |
+| product_allergen_info                   | 2,527 (1,218 allergens + 1,309 traces) across 655 products |
+| mv_ingredient_frequency                 | 2,740                                  |
 | v_product_confidence                    | 1,025                                  |
 | EAN coverage                            | 997/1,025 active (97.3%)               |
 | Source provenance                        | 1,025/1,025 (100%)                     |
@@ -31,7 +31,7 @@
 | CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
-| Migration files                         | 52                                     |
+| Migration files                         | 54                                     |
 | QA checks                               | 226/226 pass + 29/29 negative tests    |
 
 ---
@@ -101,7 +101,7 @@
 | 477 null store_availability — expected (only Żabka products have this)      | ✅ Pass |
 | 161 products without ingredients — expected (not all OFF records have data) | ⚠️ Info |
 | 389 products without allergens — expected (same reason)                     | ⚠️ Info |
-| Confidence: 0 high / 1,000 medium / 29 low — reflects current post-reset ingredient state | ✅ Pass |
+| Confidence: 859 high / 138 medium / 28 low — reflects enriched ingredient + allergen data | ✅ Pass |
 
 **Verdict**: Data is healthy. Coverage gaps are understood.
 
