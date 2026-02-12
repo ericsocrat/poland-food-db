@@ -39,7 +39,7 @@
     Prerequisites:
         - Docker Desktop running with local Supabase containers
         - Database populated with scored products
-        - Python 3.14+ with validate_eans.py script
+        - Python 3.12+ with validate_eans.py script
 
     Exit codes:
         0  All critical checks pass (and no warnings if -FailOnWarn)

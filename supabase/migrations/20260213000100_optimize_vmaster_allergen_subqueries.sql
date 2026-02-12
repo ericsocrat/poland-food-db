@@ -1,16 +1,13 @@
--- VIEW: master product view (v_master)
--- Flat denormalized view joining products → nutrition_facts
--- plus ingredient analytics from normalized ingredient tables.
--- This view is already created in the schema migration (20260207000100_create_schema.sql).
--- Updated 2026-02-13: Optimized allergen/trace subqueries — moved 4 correlated subqueries
---   into a single LEFT JOIN LATERAL on product_allergen_info with conditional aggregation.
--- Updated 2026-02-12: Schema consolidation — servings, scores, product_sources removed as
---   separate tables. Scores columns now live on products. Source columns (source_type,
---   source_url, source_ean) now on products. Allergen/trace data from unified
---   product_allergen_info table. Serving columns removed (all data was per-100g anyway).
--- This file exists for reference and for recreating the view if needed.
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Migration: optimize v_master allergen/trace subqueries
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Previously, the LATERAL join on product_ingredient contained 4 separate
+-- correlated subqueries against product_allergen_info (allergen_count,
+-- allergen_tags, trace_count, trace_tags) — scanning the table 4× per product.
 --
--- Usage: SELECT * FROM v_master WHERE country = 'PL' AND category = 'Chips';
+-- This migration moves allergen/trace aggregation into a separate LEFT JOIN
+-- LATERAL with conditional aggregation, reducing to a single scan per product.
+-- ═══════════════════════════════════════════════════════════════════════════
 
 CREATE OR REPLACE VIEW public.v_master AS
 SELECT

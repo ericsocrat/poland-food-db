@@ -221,6 +221,33 @@ foreach ($file in $allFiles) {
 
 $stopwatch.Stop()
 
+# ─── Post-Pipeline: CI fixup + MV Refresh ───────────────────────────────────
+
+if ($failCount -eq 0) {
+    Write-Host ""
+    Write-Host "Applying post-pipeline fixup..." -ForegroundColor Yellow
+    $env:PGPASSWORD = $dbPassword
+    $output = & psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -f (Join-Path $PSScriptRoot "db" "ci_post_pipeline.sql") -v ON_ERROR_STOP=1 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  Post-pipeline fixup complete." -ForegroundColor Green
+    }
+    else {
+        Write-Host "  Post-pipeline fixup FAILED: $output" -ForegroundColor Red
+        $failCount++
+    }
+
+    Write-Host "Refreshing materialized views..." -ForegroundColor Yellow
+    $env:PGPASSWORD = $dbPassword
+    $output = & psql -h $DB_HOST -p $DB_PORT -U $DB_USER -d $DB_NAME -c "SELECT refresh_all_materialized_views();" 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  Materialized views refreshed." -ForegroundColor Green
+    }
+    else {
+        Write-Host "  MV refresh FAILED: $output" -ForegroundColor Red
+        $failCount++
+    }
+}
+
 # ─── Cleanup ────────────────────────────────────────────────────────────────
 
 # Clear password from environment

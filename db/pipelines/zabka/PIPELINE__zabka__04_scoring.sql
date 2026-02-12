@@ -2,46 +2,7 @@
 -- PIPELINE__zabka__04_scoring.sql
 -- Formula-based v3.2 scoring for Żabka convenience store products.
 -- See SCORING_METHODOLOGY.md §2.4 for the canonical formula.
--- Last updated: 2026-02-08
-
--- ═════════════════════════════════════════════════════════════════════════
--- 0. DEFAULT concern score for products without ingredient data
--- ═════════════════════════════════════════════════════════════════════════
-
-update products set ingredient_concern_score = 0
-where country = 'PL' and category = 'Żabka'
-  and is_deprecated is not true
-  and ingredient_concern_score is null;
-
--- ═════════════════════════════════════════════════════════════════════════
--- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
---    9 factors × weighted → clamped [1, 100]
---    sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +
---    trans_fat(0.11) + additives(0.07) + prep_method(0.08) +
---    controversies(0.08) + concern(0.05)
--- ═════════════════════════════════════════════════════════════════════════
-
-update products p set
-  unhealthiness_score = compute_unhealthiness_v32(
-      nf.saturated_fat_g,
-      nf.sugars_g,
-      nf.salt_g,
-      nf.calories,
-      nf.trans_fat_g,
-      ia.additives_count,
-      p.prep_method,
-      p.controversies,
-      p.ingredient_concern_score
-  )
-from nutrition_facts nf
-left join (
-    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
-    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
-    group by pi.product_id
-) ia on ia.product_id = nf.product_id
-where nf.product_id = p.product_id
-  and p.country = 'PL' and p.category = 'Żabka'
-  and p.is_deprecated is not true;
+-- Last updated: 2026-02-13
 
 -- ═════════════════════════════════════════════════════════════════════════
 -- 2. SET Nutri-Score label (from Open Food Facts where available)
@@ -124,43 +85,29 @@ from (
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
--- ═════════════════════════════════════════════════════════════════════════
--- 4. SET health-risk flags (derived from nutrition facts)
---    Thresholds per 100 g following EU "high" front-of-pack guidelines:
---      salt ≥ 1.5 g | sugars ≥ 5 g | sat fat ≥ 5 g | additives ≥ 5
--- ═════════════════════════════════════════════════════════════════════════
-
-update products p set
-  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
-  data_completeness_pct = case
-    -- Products with all data from OFF: 100%
-    -- Products with some estimated fields: 90%
-    when p.product_name in ('Kajzerka Kebab','Bajgiel z salami','Penne z kurczakiem') then 90
-    when p.product_name in ('Meksykaner','Kurczaker','Pieczony bekon, sałata, jajko') then 95  -- fiber est.
-    -- batch 2: estimated fields
-    when p.product_name in ('Wegger','Panierowane skrzydełka z kurczaka') then 95  -- salt est.
-    when p.product_name in ('Kanapka Cezar','High 24g protein','Gnocchi z kurczakiem','Kotlet Drobiowy') then 95  -- fiber est.
-    when p.product_name in ('Bao Burger','Wieprzowiner','Kebab z kurczaka','BBQ Strips','Pasta jajeczna, por, jajko gotowane','Pierogi ruskie ze smażoną cebulką') then 100
-    else 100
-  end
-from nutrition_facts nf
-left join (
-    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
-    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
-    group by pi.product_id
-) ia on ia.product_id = nf.product_id
-where nf.product_id = p.product_id
-  and p.country = 'PL' and p.category = 'Żabka'
-  and p.is_deprecated is not true;
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Żabka');
 
 -- ═════════════════════════════════════════════════════════════════════════
--- 5. SET confidence level
+-- 4b. PATCH data_completeness_pct for products with estimated fields
+--     score_category() sets all to 100; override the few that aren't.
+--     Re-assign confidence afterwards so it reflects patched completeness.
 -- ═════════════════════════════════════════════════════════════════════════
+
+update products set data_completeness_pct = 90
+where country = 'PL' and category = 'Żabka' and is_deprecated is not true
+  and product_name in ('Kajzerka Kebab','Bajgiel z salami','Penne z kurczakiem');
+
+update products set data_completeness_pct = 95
+where country = 'PL' and category = 'Żabka' and is_deprecated is not true
+  and product_name in (
+    'Meksykaner','Kurczaker','Pieczony bekon, sałata, jajko',
+    'Wegger','Panierowane skrzydełka z kurczaka',
+    'Kanapka Cezar','High 24g protein','Gnocchi z kurczakiem','Kotlet Drobiowy'
+  );
 
 update products p set
   confidence = assign_confidence(p.data_completeness_pct, 'openfoodfacts')
 where p.country = 'PL' and p.category = 'Żabka'
-  and p.is_deprecated is not true;
+  and p.is_deprecated is not true
+  and p.data_completeness_pct < 100;

@@ -28,7 +28,7 @@ jobs:
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:17
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -57,9 +57,12 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Install Python dependencies
+        run: pip install -r requirements.txt
+
       - name: Apply schema migrations
         run: |
-          for f in supabase/migrations/*.sql; do
+          for f in $(ls supabase/migrations/*.sql | sort); do
             echo "Applying: $f"
             psql -f "$f"
           done
