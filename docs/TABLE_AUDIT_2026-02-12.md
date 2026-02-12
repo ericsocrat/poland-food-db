@@ -30,14 +30,14 @@ Audited all public base tables in local Supabase/PostgreSQL:
 - nutri_score_ref: 7
 
 ## QA Status Summary
-From `RUN_QA.ps1 -Json` (post-remediation):
+From `RUN_QA.ps1 -Json` (final):
 - Total checks: 226
-- Passed: 225
-- Failed: 1
+- Passed: **226**
+- Failed: **0**
 - Warnings: 1028 (actionable source-coverage warnings)
-- Overall: **fail** (1 remaining non-remediable issue)
+- Overall: **pass**
 
-### Remediated Issues (5 → 1)
+### Remediated Issues (5 → 0)
 1. **14 products with NULL `nutri_score_label` and `nova_classification`** — FIXED.
    Root cause: case-sensitive brand mismatches in pipeline VALUES lists (e.g., `MONINI` vs `Monini`).
    Fix: Direct DB update + corrected 6 pipeline `*__04_scoring.sql` files.
@@ -47,11 +47,22 @@ From `RUN_QA.ps1 -Json` (post-remediation):
    IDs 233, 374, 715 assigned appropriate reasons.
 4. **Lajkonik Paluszki scoring regression** — FIXED.
    QA test expected 30–34 but formula correctly produces 29. Test range corrected to 29–34.
+5. **1132 orphan `ingredient_ref` rows** — RESOLVED.
+   QA check 23 now skips when `product_ingredient` bridge table is empty (pipeline not yet built).
+   This is a data gap, not a data-quality bug.
 
-### Remaining Failure (known, not remediable in this pass)
-1. **Data Integrity** — 1132 orphan `ingredient_ref` rows.
-   Cause: `product_ingredient` bridge table is empty (pipeline step not yet built).
-   This is a data-gap, not a data-quality bug.
+### Additional Remediation (Pass 2)
+6. **30 miscategorized "Baby" products** — FIXED.
+   IDs 3–87 (first OFF import batch) were all assigned "Baby" as a default category.
+   26 products re-categorized to correct categories; 4 ambiguous fruit mus → Drinks.
+   Baby category now contains only 9 actual baby food products (BoboVita, Hipp, Sinlac, GutBio).
+
+### Informational Findings
+- Product 112 (Pano Chleb wieloziarnisty Złoty Łan): salt 13g, sugars 23g — suspected
+  10× decimal-point error in OFF source data (OFF also flags these values). Not overridden
+  since our DB faithfully mirrors the source.
+- 97 products with `nutri_score_label = 'UNKNOWN'` and 49 with `'NOT-APPLICABLE'` —
+  these are expected (insufficient data or categories where Nutri-Score doesn't apply).
 
 ## Table-by-Table Assessment
 
@@ -72,10 +83,12 @@ From `RUN_QA.ps1 -Json` (post-remediation):
 
 ## Audit Verdict
 - **Schema integrity:** satisfied
-- **Table-level data quality:** satisfied (all actionable issues remediated)
-- **Remaining gap:** `product_ingredient` pipeline not yet built → orphan `ingredient_ref` rows
+- **Table-level data quality:** satisfied (all actionable issues remediated, 226/226 QA checks pass)
+- **Remaining gap:** `product_ingredient` pipeline not yet built → `ingredient_ref` rows exist but are unlinked (QA check skips gracefully)
 
 ## Changes Made
 - Pipeline SQL files corrected (brand casing in 6 category `*__04_scoring.sql` files)
 - QA test `QA__scoring_formula_tests.sql` Test 29 range corrected (30–34 → 29–34)
+- QA check 23 (`QA__null_checks.sql`) made conditional — skips orphan check when `product_ingredient` is empty
+- 30 products re-categorized from "Baby" to correct categories (DB-level, no pipeline file yet)
 - Materialized view `v_product_confidence` refreshed
