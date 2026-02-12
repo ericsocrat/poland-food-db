@@ -9,7 +9,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,304 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 241 checks across 16 suites + 29 negative validation tests — all passing
+> **QA:** 263 checks across 17 suites + 29 negative validation tests — all passing
 
 ---
 
@@ -140,7 +140,7 @@ poland-food-db/
 │   ├── EAN_VALIDATION_STATUS.md     # 997/1,025 coverage (97.3%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (241 checks across 16 suites)
+├── RUN_QA.ps1                       # QA test runner (263 checks across 17 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (29 injection tests)
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
@@ -390,7 +390,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | Ingredient Quality      | `QA__ingredient_quality.sql`        |     14 | Yes       |
 | **Negative Validation** | `TEST__negative_checks.sql`         |     29 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **241/241 checks passing**.
+**Run:** `.\RUN_QA.ps1` — expects **263/263 checks passing**.
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
 
 **Key regression tests** (in scoring suite):
@@ -486,7 +486,7 @@ chore: normalize categories to 28 products
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 241/241 pass
+1. `.\RUN_QA.ps1` — 263/263 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed

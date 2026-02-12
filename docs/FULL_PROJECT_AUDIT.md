@@ -32,7 +32,7 @@
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
 | Migration files                         | 58                                     |
-| QA checks                               | 241/241 pass + 29/29 negative tests    |
+| QA checks                               | 263/263 pass + 29/29 negative tests    |
 
 ---
 
@@ -111,7 +111,7 @@
 
 | Check                                                                                                                                                    | Result |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 16 QA suites, 241 checks — 241/241 PASS                                                                                                                  | ✅ Pass |
+| 17 QA suites, 263 checks — 263/263 PASS                                                                                                                  | ✅ Pass |
 | 29 negative validation tests — 29/29 CAUGHT                                                                                                              | ✅ Pass |
 | Coverage: data integrity, scoring, sources, EAN, API, confidence, quality, refs, views, naming, nutrition, consistency, allergens, servings, ingredients | ✅ Pass |
 | RUN_QA.ps1 / RUN_NEGATIVE_TESTS.ps1 — correct exit codes                                                                                                 | ✅ Pass |

@@ -47,3 +47,4 @@ schema_*.txt
 *.log
 qa-test.json
 _func_dump.txt
+__api_defs.txt

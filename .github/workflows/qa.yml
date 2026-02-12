@@ -24,7 +24,7 @@ on:
 
 jobs:
   qa:
-    name: Pipeline + QA (241 checks)
+    name: Pipeline + QA (263 checks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
