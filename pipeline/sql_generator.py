@@ -379,15 +379,13 @@ where p.product_id = sc.product_id
 
 
 def _gen_05_source_provenance(category: str, products: list[dict], today: str) -> str:
-    """Generate file 05 — source provenance & source nutrition.
+    """Generate file 05 — source provenance.
 
-    Populates ``product_sources`` and ``source_nutrition`` for every product
-    in the category, recording where the data came from and storing a
-    per-source nutrition snapshot for cross-validation.
+    Populates ``product_sources`` for every product in the category,
+    recording where the data came from.
     """
     # Build (brand, product_name, ean, source_url) values
     prov_lines: list[str] = []
-    nutr_lines: list[str] = []
 
     for i, p in enumerate(products):
         brand = _sql_text(p["brand"])
@@ -405,28 +403,10 @@ def _gen_05_source_provenance(category: str, products: list[dict], today: str) -
 
         prov_lines.append(f"    ({brand}, {name}, {source_url}, {source_ean}){comma}")
 
-        # Source nutrition values
-        vals = ", ".join(
-            _sql_num(p[k])
-            for k in (
-                "calories",
-                "total_fat_g",
-                "saturated_fat_g",
-                "trans_fat_g",
-                "carbs_g",
-                "sugars_g",
-                "fibre_g",
-                "protein_g",
-                "salt_g",
-            )
-        )
-        nutr_lines.append(f"    ({brand}, {name}, {vals}){comma}")
-
     prov_block = "\n".join(prov_lines)
-    nutr_block = "\n".join(nutr_lines)
 
     return f"""\
--- PIPELINE ({category}): source provenance & cross-validation data
+-- PIPELINE ({category}): source provenance
 -- Generated: {today}
 
 -- 1. Populate product_sources (one row per product from OFF API)
@@ -451,26 +431,7 @@ FROM (
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name
   AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE
-ON CONFLICT ON CONSTRAINT uq_product_source_entry DO NOTHING;
-
--- 2. Populate source_nutrition (OFF API nutrition snapshot for cross-validation)
-INSERT INTO source_nutrition
-       (product_id, source_type, calories, total_fat_g, saturated_fat_g,
-        trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g, notes)
-SELECT p.product_id,
-       'off_api',
-       d.calories, d.total_fat_g, d.saturated_fat_g,
-       d.trans_fat_g, d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g,
-       'Pipeline-generated from OFF API data'
-FROM (
-  VALUES
-{nutr_block}
-) AS d(brand, product_name, calories, total_fat_g, saturated_fat_g,
-       trans_fat_g, carbs_g, sugars_g, fibre_g, protein_g, salt_g)
-JOIN products p ON p.country = 'PL' AND p.brand = d.brand
-  AND p.product_name = d.product_name
-  AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE
-ON CONFLICT ON CONSTRAINT uq_source_nutrition_entry DO NOTHING;
+ON CONFLICT DO NOTHING;
 """
 
 

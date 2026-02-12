@@ -2,7 +2,7 @@
 
 [![QA Tests](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml)
 
-A multi-axis food quality database scoring **867 products** sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
+A multi-axis food quality database scoring **1,036 products** sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
 
 ## What This Project Is
 
@@ -66,29 +66,29 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 867 active products across 20 categories (variable size, 10 deprecated products excluded)
+**Database**: 1,036 active products across 20 categories (variable size, 187 deprecated products excluded)
 
 | Category                       | Products | Brands | Score Range |
 | ------------------------------ | -------: | -----: | ----------- |
-| **Alcohol**                    |       31 |     27 | 4–22        |
-| **Baby**                       |       49 |     33 | 6–43        |
-| **Bread**                      |       59 |     34 | 9–40        |
-| **Breakfast & Grain-Based**    |       99 |     42 | 6–46        |
-| **Canned Goods**               |       27 |     18 | 7–30        |
-| **Cereals**                    |       46 |     18 | 12–47       |
-| **Chips**                      |       28 |     12 | 17–47       |
-| **Condiments**                 |       26 |     10 | 8–40        |
-| **Dairy**                      |       28 |     11 | 8–45        |
-| **Drinks**                     |       60 |     30 | 4–25        |
-| **Frozen & Prepared**          |       35 |     18 | 5–56        |
-| **Instant & Frozen**           |       28 |     13 | 9–57        |
-| **Meat**                       |       27 |     19 | 14–49       |
-| **Nuts, Seeds & Legumes**      |       28 |      9 | 23–48       |
-| **Plant-Based & Alternatives** |       50 |     38 | 6–40        |
-| **Sauces**                     |       98 |     47 | 6–47        |
-| **Seafood & Fish**             |       35 |     15 | 8–36        |
-| **Snacks**                     |       57 |     41 | 9–57        |
-| **Sweets**                     |       28 |     15 | 26–52       |
+| **Alcohol**                    |       29 |     25 | 4–22        |
+| **Baby**                       |       39 |     26 | 6–43        |
+| **Bread**                      |       57 |     33 | 9–40        |
+| **Breakfast & Grain-Based**    |       88 |     40 | 6–41        |
+| **Canned Goods**               |       50 |     29 | 5–30        |
+| **Cereals**                    |       44 |     17 | 12–47       |
+| **Chips**                      |       50 |     23 | 11–45       |
+| **Condiments**                 |       50 |     23 | 17–40       |
+| **Dairy**                      |       50 |     23 | 8–45        |
+| **Drinks**                     |       55 |     29 | 4–25        |
+| **Frozen & Prepared**          |       50 |     26 | 5–56        |
+| **Instant & Frozen**           |       50 |     21 | 6–56        |
+| **Meat**                       |       50 |     28 | 9–49        |
+| **Nuts, Seeds & Legumes**      |       50 |     27 | 23–48       |
+| **Plant-Based & Alternatives** |       48 |     36 | 6–40        |
+| **Sauces**                     |       95 |     47 | 6–47        |
+| **Seafood & Fish**             |       50 |     26 | 8–36        |
+| **Snacks**                     |       53 |     40 | 9–57        |
+| **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       28 |      3 | 13–34       |
 **Test Coverage**: 228 automated checks across 15 QA suites + 29 negative validation tests
 - 31 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
@@ -110,7 +110,7 @@ supabase start
 
 **All tests passing**: ✅ 228/228 + 29/29 negative
 
-**EAN Coverage**: 839/867 active products (96.8%) have valid EAN-8/EAN-13 barcodes
+**EAN Coverage**: 1,008/1,036 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
 ---
 

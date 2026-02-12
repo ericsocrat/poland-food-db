@@ -1,5 +1,5 @@
 -- PIPELINE (Seafood & Fish): scoring
--- Generated: 2026-02-09
+-- Generated: 2026-02-11
 
 -- 0. ENSURE rows in scores
 insert into scores (product_id)
@@ -48,6 +48,13 @@ from (
     ('Komersmag', 'Filety śledziowe panierowane i smażone w zalewie octowej.', 'C'),
     ('Lisner', 'Śledzik na raz z suszonymi pomidorami', 'E'),
     ('Lisner', 'Filety śledziowe w oleju a''la Matjas', 'E'),
+    ('Jantar', 'Szprot wędzony na gorąco', 'D'),
+    ('Lisner', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', 'E'),
+    ('Lisner', 'Szybki Śledzik w sosie śmietankowym', 'E'),
+    ('Fischer King', 'Stek z łososia', 'D'),
+    ('Dega', 'Ryba śledź po grecku', 'C'),
+    ('Kong Oskar', 'Tuńczyk w kawałkach w oleju roślinnym', 'B'),
+    ('Auchan', 'ŁOSOŚ PACYFICZNY DZIKI', 'D'),
     ('GRAAL', 'Tuńczyk Mexicans z warzywami', 'C'),
     ('Marinero', 'Wiejskie filety śledziowe z cebulką', 'D'),
     ('Lisner', 'Śledzik na raz w sosie grzybowym kurki', 'D'),
@@ -61,6 +68,8 @@ from (
     ('Suempol Pan Łosoś', 'Łosoś Wędzony Plastrowany', 'D'),
     ('Lisner', 'Tuńczyk Stek Z Kropla Oliwy Z Oliwek', 'UNKNOWN'),
     ('Marinero', 'Łosoś łagodny', 'D'),
+    ('Lisner', 'Śledzik na raz Pikantny', 'E'),
+    ('Baltica', 'Filety śledziowe w sosie pomidorowym', 'C'),
     ('Marinero', 'Filety z makreli w sosie pomidorowym', 'C'),
     ('MegaRyba', 'Szprot w sosie pomidorowym', 'C'),
     ('Lisner', 'Marinated Herring in mushroom sauce', 'C'),
@@ -74,7 +83,13 @@ from (
     ('nautica', 'Śledzie Wiejskie', 'E'),
     ('Well done', 'Łosoś atlantycki', 'E'),
     ('Graal', 'Szprot w sosie pomidorowym', 'C'),
-    ('Marinero', 'Filety śledziowe a''la Matjas', 'E')
+    ('Marinero', 'Filety śledziowe a''la Matjas', 'E'),
+    ('Marinero', 'Paluszki z fileta z dorsza', 'A'),
+    ('Asia Flavours', 'Sushi Nori', 'C'),
+    ('House Od Asia', 'Nori', 'UNKNOWN'),
+    ('Purella', 'Chlorella detoks', 'A'),
+    ('Asia Flavours', 'Dried wakame', 'D'),
+    ('Marinero', 'Tuńczyk kawałki w sosie własnym', 'A')
 ) as d(brand, product_name, ns)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;
@@ -92,6 +107,13 @@ from (
     ('Komersmag', 'Filety śledziowe panierowane i smażone w zalewie octowej.', '4'),
     ('Lisner', 'Śledzik na raz z suszonymi pomidorami', '3'),
     ('Lisner', 'Filety śledziowe w oleju a''la Matjas', '4'),
+    ('Jantar', 'Szprot wędzony na gorąco', '3'),
+    ('Lisner', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', '3'),
+    ('Lisner', 'Szybki Śledzik w sosie śmietankowym', '3'),
+    ('Fischer King', 'Stek z łososia', '3'),
+    ('Dega', 'Ryba śledź po grecku', '4'),
+    ('Kong Oskar', 'Tuńczyk w kawałkach w oleju roślinnym', '3'),
+    ('Auchan', 'ŁOSOŚ PACYFICZNY DZIKI', '3'),
     ('GRAAL', 'Tuńczyk Mexicans z warzywami', '4'),
     ('Marinero', 'Wiejskie filety śledziowe z cebulką', '3'),
     ('Lisner', 'Śledzik na raz w sosie grzybowym kurki', '4'),
@@ -105,6 +127,8 @@ from (
     ('Suempol Pan Łosoś', 'Łosoś Wędzony Plastrowany', '4'),
     ('Lisner', 'Tuńczyk Stek Z Kropla Oliwy Z Oliwek', '3'),
     ('Marinero', 'Łosoś łagodny', '3'),
+    ('Lisner', 'Śledzik na raz Pikantny', '4'),
+    ('Baltica', 'Filety śledziowe w sosie pomidorowym', '4'),
     ('Marinero', 'Filety z makreli w sosie pomidorowym', '4'),
     ('MegaRyba', 'Szprot w sosie pomidorowym', '4'),
     ('Lisner', 'Marinated Herring in mushroom sauce', '4'),
@@ -118,7 +142,13 @@ from (
     ('nautica', 'Śledzie Wiejskie', '3'),
     ('Well done', 'Łosoś atlantycki', '3'),
     ('Graal', 'Szprot w sosie pomidorowym', '4'),
-    ('Marinero', 'Filety śledziowe a''la Matjas', '4')
+    ('Marinero', 'Filety śledziowe a''la Matjas', '4'),
+    ('Marinero', 'Paluszki z fileta z dorsza', '4'),
+    ('Asia Flavours', 'Sushi Nori', '1'),
+    ('House Od Asia', 'Nori', '4'),
+    ('Purella', 'Chlorella detoks', '1'),
+    ('Asia Flavours', 'Dried wakame', '1'),
+    ('Marinero', 'Tuńczyk kawałki w sosie własnym', '3')
 ) as d(brand, product_name, nova)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
 where p.product_id = sc.product_id;

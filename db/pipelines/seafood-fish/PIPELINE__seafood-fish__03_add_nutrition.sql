@@ -29,6 +29,13 @@ from (
     ('Komersmag', 'Filety śledziowe panierowane i smażone w zalewie octowej.', 212.0, 17.0, 3.4, 0, 4.1, 0.2, 0, 10.0, 0.8),
     ('Lisner', 'Śledzik na raz z suszonymi pomidorami', 304.0, 27.8, 2.8, 0, 4.7, 4.0, 0, 8.5, 3.0),
     ('Lisner', 'Filety śledziowe w oleju a''la Matjas', 175.0, 12.7, 2.4, 0, 0.1, 0.0, 0, 15.0, 6.3),
+    ('Jantar', 'Szprot wędzony na gorąco', 229.0, 17.0, 4.7, 0, 0.2, 0.2, 0, 19.0, 2.0),
+    ('Lisner', 'Marynowane, krojone filety bez skórki ze śledzia atlantyckiego z ogórkiem konserwowym i czosnkiem w oleju rzepakowym.', 293.0, 26.3, 2.7, 0, 5.2, 3.7, 0, 8.7, 2.8),
+    ('Lisner', 'Szybki Śledzik w sosie śmietankowym', 318.0, 29.3, 4.5, 0, 6.9, 6.2, 0, 6.6, 2.3),
+    ('Fischer King', 'Stek z łososia', 211.0, 19.0, 3.3, 0, 0.0, 0.0, 0, 9.7, 2.0),
+    ('Dega', 'Ryba śledź po grecku', 126.0, 7.3, 1.0, 0, 9.4, 6.5, 0, 5.1, 0.9),
+    ('Kong Oskar', 'Tuńczyk w kawałkach w oleju roślinnym', 245.0, 17.0, 3.0, 0, 0.0, 0.0, 0, 23.0, 1.0),
+    ('Auchan', 'ŁOSOŚ PACYFICZNY DZIKI', 105.0, 2.0, 0.6, 0, 0.5, 0.5, 0, 21.0, 3.0),
     ('GRAAL', 'Tuńczyk Mexicans z warzywami', 212.0, 15.0, 1.2, 0, 9.3, 4.3, 0, 8.9, 0.8),
     ('Marinero', 'Wiejskie filety śledziowe z cebulką', 195.0, 12.7, 2.8, 0, 10.0, 9.2, 0.6, 9.9, 2.4),
     ('Lisner', 'Śledzik na raz w sosie grzybowym kurki', 309.0, 28.0, 4.2, 0, 6.4, 5.6, 0, 7.8, 1.9),
@@ -42,6 +49,8 @@ from (
     ('Suempol Pan Łosoś', 'Łosoś Wędzony Plastrowany', 200.0, 13.0, 1.5, 0, 0.8, 0.6, 0, 20.0, 3.0),
     ('Lisner', 'Tuńczyk Stek Z Kropla Oliwy Z Oliwek', 189.0, 9.8, 1.7, 0, 0.0, 0, 0, 25.0, 0),
     ('Marinero', 'Łosoś łagodny', 195.0, 11.0, 2.0, 0, 0.0, 0.0, 0, 24.0, 1.7),
+    ('Lisner', 'Śledzik na raz Pikantny', 275.0, 25.0, 2.7, 0, 3.8, 3.6, 0, 8.5, 2.9),
+    ('Baltica', 'Filety śledziowe w sosie pomidorowym', 151.0, 11.0, 2.7, 0, 4.4, 2.3, 0, 9.7, 1.3),
     ('Marinero', 'Filety z makreli w sosie pomidorowym', 196.0, 15.0, 3.4, 0, 5.3, 4.8, 0, 10.0, 0.9),
     ('MegaRyba', 'Szprot w sosie pomidorowym', 127.0, 6.8, 1.7, 0, 5.5, 5.5, 0, 11.0, 1.2),
     ('Lisner', 'Marinated Herring in mushroom sauce', 322.0, 30.0, 4.5, 0, 6.4, 5.5, 0, 6.5, 0.0),
@@ -55,7 +64,13 @@ from (
     ('nautica', 'Śledzie Wiejskie', 188.0, 13.1, 2.9, 0, 7.6, 5.8, 0.8, 9.4, 2.9),
     ('Well done', 'Łosoś atlantycki', 179.0, 11.0, 2.1, 0, 0.0, 0.0, 0, 20.0, 3.3),
     ('Graal', 'Szprot w sosie pomidorowym', 109.0, 4.3, 1.6, 0, 5.6, 4.1, 0, 12.0, 1.4),
-    ('Marinero', 'Filety śledziowe a''la Matjas', 127.0, 10.2, 2.8, 0, 0.6, 0.6, 0, 8.5, 7.5)
+    ('Marinero', 'Filety śledziowe a''la Matjas', 127.0, 10.2, 2.8, 0, 0.6, 0.6, 0, 8.5, 7.5),
+    ('Marinero', 'Paluszki z fileta z dorsza', 188.0, 8.7, 0.7, 0, 12.0, 1.5, 0.8, 15.0, 0.9),
+    ('Asia Flavours', 'Sushi Nori', 353.0, 2.2, 0.9, 0, 40.0, 0.0, 0, 43.0, 1.6),
+    ('House Od Asia', 'Nori', 391.0, 5.5, 2.2, 0, 37.0, 0, 0, 44.0, 0),
+    ('Purella', 'Chlorella detoks', 381.0, 11.0, 4.6, 0, 14.0, 0.4, 12.5, 54.2, 0.3),
+    ('Asia Flavours', 'Dried wakame', 412.0, 0.9, 0.6, 0, 54.0, 0.5, 54.0, 20.0, 18.3),
+    ('Marinero', 'Tuńczyk kawałki w sosie własnym', 114.0, 1.1, 0.4, 0, 0.0, 0.0, 0.0, 26.0, 1.2)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
