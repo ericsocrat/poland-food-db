@@ -142,12 +142,12 @@
 | ------------------------- | ----: | ---------------------------------------------------------------------------------------- |
 | pipeline/__init__.py      |     0 | ✅ None                                                                                   |
 | pipeline/__main__.py      |     5 | ✅ None                                                                                   |
-| pipeline/categories.py    |   378 | ⚠️ [Historical] Leaked loop vars; unnecessary `__future__` import                                      |
+| pipeline/categories.py    |   378 | ⚠️ [Historical] Leaked loop vars; unnecessary `__future__` import                        |
 | pipeline/off_client.py    |   487 | ⚠️ [Historical] Dead `_clean_text()`; unclosed sessions; `_round1()` phantom zeros; `int()` crash risk |
 | pipeline/run.py           |   232 | ⚠️ [Historical] Unused `resolve_category` import; duplicate `_slug()`; `sys.exit(0)` swallows errors   |
-| pipeline/sql_generator.py |   557 | ⚠️ [Historical] Unused logger; `sodium_mg` in fields_populated; duplicate `_slug()`                    |
-| pipeline/validator.py     |   169 | ⚠️ [Historical] EAN-8 not supported (unlike standalone script); unused logger                          |
-| validate_eans.py          |   118 | ⚠️ [Historical] Unhandled `FileNotFoundError` for missing docker/psql                                  |
+| pipeline/sql_generator.py |   557 | ⚠️ [Historical] Unused logger; `sodium_mg` in fields_populated; duplicate `_slug()`      |
+| pipeline/validator.py     |   169 | ⚠️ [Historical] EAN-8 not supported (unlike standalone script); unused logger            |
+| validate_eans.py          |   118 | ⚠️ [Historical] Unhandled `FileNotFoundError` for missing docker/psql                    |
 
 **Security**: No vulnerabilities. SQL escaping adequate. No hardcoded secrets.
 
@@ -162,7 +162,7 @@
 | ----------------------- | ----: | ------------------------------------------------------ |
 | RUN_LOCAL.ps1           |   207 | ✅ Clean — dry-run, preflight, single-transaction       |
 | RUN_REMOTE.ps1          |   251 | ✅ SecureString password, cleared after use             |
-| RUN_QA.ps1              |   865 | ⚠️ [Historical] Header mismatch (34 vs 31); ~600 lines copy-paste    |
+| RUN_QA.ps1              |   865 | ⚠️ [Historical] Header mismatch (34 vs 31); ~600 lines copy-paste |
 | RUN_NEGATIVE_TESTS.ps1  |    86 | ✅ Clean                                                |
 | supabase/config.toml    |   385 | ✅ Standard, no hardcoded secrets                       |
 | .env.example            |    12 | ✅ Correct                                              |
