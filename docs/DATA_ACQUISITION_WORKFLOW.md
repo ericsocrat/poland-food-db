@@ -125,7 +125,7 @@ that don't have them yet.
 .\RUN_QA.ps1
 ```
 
-All checks must pass. Current suite: 263 checks across 17 suites.
+All checks must pass. Current suite: 278 checks across 18 suites.
 
 ---
 
