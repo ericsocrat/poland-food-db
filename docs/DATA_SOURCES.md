@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-02-11
 > **Scope:** Poland (`PL`) only
-> **Active sources:** 1 type (off_api), 877 entries
+> **Active sources:** 1 type (off_api), 1,029 entries
 > **Related:** See `RESEARCH_WORKFLOW.md` for the full step-by-step data collection process,
 > and `SCORING_METHODOLOGY.md` for how collected data is scored.
 
@@ -113,7 +113,7 @@ Manufacturer websites are **Priority 2** sources. They often publish full per-10
 - Confirm the website serves the **Polish market** (`.pl` domain or PL language selector)
 - Verify the product page matches the current formulation (check pack design photo)
 - Screenshot or archive the page for traceability
-- Record the URL and access date in the `product_sources` table
+- Record the URL and access date in the `products` table (`source_url`, `source_ean` columns)
 
 ### 4.1 Major Manufacturers by Category
 
@@ -150,8 +150,8 @@ Manufacturer websites are **Priority 2** sources. They often publish full per-10
 | 3    | Confirm nutrition table is per 100g (not per serving)      |
 | 4    | Extract all available fields (EU-7 + voluntary)            |
 | 5    | Cross-validate against OFF and/or label if available       |
-| 6    | Record URL + access date in `product_sources` table        |
-| 7    | Set `source_type = 'off_api'`                              |
+| 6    | Record URL + access date in `products` table (`source_url`, `source_ean`) |
+| 7    | Set `source_type = 'off_api'` on the `products` row        |
 
 ---
 
@@ -357,30 +357,17 @@ The following sources are **excluded** and must never be used:
 
 ## 11. Source Tracking in Database
 
-### Product-Level Provenance (`product_sources`)
+### Product-Level Provenance (columns on `products`)
 
-The `product_sources` table tracks provenance at the **individual product** level and is the primary source join used by `v_master`:
+Source provenance is tracked directly on the `products` table via dedicated columns:
 
-| Column              | Purpose                                                                              |
-| ------------------- | ------------------------------------------------------------------------------------ |
-| `product_source_id` | Primary key (identity)                                                               |
-| `product_id`        | FK → products                                                                        |
-| `source_type`       | Currently `'off_api'` only                                                           |
-| `source_url`        | URL to the specific product page (e.g., OFF product page)                            |
-| `source_ean`        | EAN used to look up this product                                                     |
-| `fields_populated`  | Array of fields sourced from this source (e.g., `{nutrition,ingredients,additives}`) |
-| `collected_at`      | When the data was collected                                                          |
-| `is_primary`        | Whether this is the primary source for the product (unique per product)              |
-| `confidence_pct`    | 0–100 confidence in data accuracy                                                    |
-| `notes`             | Additional context                                                                   |
+| Column        | Purpose                                                       |
+| ------------- | ------------------------------------------------------------- |
+| `source_type` | Currently `'off_api'` only                                    |
+| `source_url`  | URL to the specific product page (e.g., OFF product page)     |
+| `source_ean`  | EAN used to look up this product                              |
 
-**Constraints:**
-- Unique on `(product_id, source_type, source_url)` — no duplicate source entries
-- At most one `is_primary = true` per product
-- `confidence_pct` between 0 and 100
-- `source_type` CHECK constraint: `'off_api'` only
-
-**Rule:** When adding a new product, create a corresponding `product_sources` row with `source_type = 'off_api'`, `source_url`, and `confidence_pct`. Set `is_primary = true`. All products currently use Open Food Facts as the single source.
+**Rule:** When adding a new product, set `source_type = 'off_api'`, `source_url`, and `source_ean` on the product row. All products currently use Open Food Facts as the single source.
 
 ---
 
@@ -396,7 +383,7 @@ EAN-13 barcodes are the standard product identifier in Polish retail. They are c
 
 The `products` table has an `ean` TEXT column (added in migration `20260208000100`). A unique conditional index prevents barcode collisions.
 
-**Coverage:** 839/867 active products (96.8%) have validated EAN-8 or EAN-13 barcodes.
+**Coverage:** 1,000/1,029 active products (97.2%) have validated EAN-8 or EAN-13 barcodes.
 
 **Missing EANs (2):**
 - Kajzerka Kebab (product_id 43) — custom Zabka product, no universal barcode

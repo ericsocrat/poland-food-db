@@ -269,9 +269,11 @@ if ($failCount -gt 0) {
     Write-Host "  Some pipelines failed. DO NOT re-run blindly." -ForegroundColor Red
     Write-Host "  Review errors, fix the SQL, test locally first, then retry." -ForegroundColor Yellow
     Write-Host ""
+    Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
     exit 1
 }
 
 Write-Host "  All pipelines completed successfully." -ForegroundColor Green
 Write-Host ""
+Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
 exit 0

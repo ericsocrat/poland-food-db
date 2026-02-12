@@ -113,7 +113,7 @@ For every product, collect **all** of the following. Mark missing fields explici
 | `product_type` | Label description           | Optional | `Chipsy ziemniaczane`    |
 | `ean`          | Barcode on label            | Yes*     | `5900259000002`          |
 
-*EAN is required where available — 839/867 products (96.8%) have validated EAN-8/EAN-13 barcodes.
+*EAN is required where available — 1,000/1,029 products (97.2%) have validated EAN-8/EAN-13 barcodes.
 
 #### EU Mandatory 7 (per 100g)
 
@@ -314,9 +314,9 @@ For each product batch, create or update these pipeline files:
 | Step | File                                      | What it does                          |
 | ---- | ----------------------------------------- | ------------------------------------- |
 | 01   | `PIPELINE__<cat>__01_insert_products.sql` | Upsert product identity rows          |
-| 02   | `PIPELINE__<cat>__02_add_servings.sql`    | Add 'per 100 g' serving row           |
 | 03   | `PIPELINE__<cat>__03_add_nutrition.sql`   | Insert nutrition facts                |
 | 04   | `PIPELINE__<cat>__04_scoring.sql`         | Compute all scores, flags, confidence |
+| 05   | `PIPELINE__<cat>__05_source_provenance.sql` | Set source_type, source_url, source_ean |
 
 ### 6.2 SQL Comment Standards
 
@@ -422,26 +422,23 @@ If the computed energy falls outside this tolerance, add a SQL comment flagging 
 
 ### 8.1 Product Sources Entry
 
-Every product batch gets a `product_sources` row via the pipeline's `05_source_provenance.sql` file:
+Every product batch gets source provenance via the pipeline's `05_source_provenance.sql` file,
+which updates columns directly on the `products` table:
 
 ```sql
-INSERT INTO product_sources (
-    product_id, source_type, source_url, source_ean,
-    fields_populated, confidence_pct, is_primary)
-SELECT p.product_id,
-       'off_api',
-       'https://world.openfoodfacts.org/product/5900259128904',
-       '5900259128904',
-       ARRAY['product_name','brand','category','calories','total_fat_g',
-             'saturated_fat_g','carbs_g','sugars_g','protein_g','salt_g'],
-       90,
-       true
-FROM products p
-WHERE p.brand = 'Lay''s'
-  AND p.product_name = 'Chipsy Zielona Cebulka'
-  AND p.category = 'Chips'
-  AND p.is_deprecated IS NOT TRUE
-ON CONFLICT ON CONSTRAINT uq_product_source_entry DO NOTHING;
+UPDATE products p SET
+  source_type = 'off_api',
+  source_url = d.source_url,
+  source_ean = d.source_ean
+FROM (
+  VALUES
+    ('Lay''s', 'Chipsy Zielona Cebulka',
+     'https://world.openfoodfacts.org/product/5900259128904',
+     '5900259128904')
+) AS d(brand, product_name, source_url, source_ean)
+WHERE p.country = 'PL' AND p.brand = d.brand
+  AND p.product_name = d.product_name
+  AND p.category = 'Chips' AND p.is_deprecated IS NOT TRUE;
 ```
 
 ### 8.2 Git Commit

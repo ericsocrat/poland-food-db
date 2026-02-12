@@ -132,7 +132,7 @@ Each ingredient in `ingredient_ref` has a `concern_tier` (0–3) assigned from E
 | 2    | Moderate | Artificial sweeteners, some colorants | 40                 |
 | 3    | High     | Nitrites (E250), BHA (E320), azo dyes | 100                |
 
-The per-product `ingredient_concern_score` (0–100) is computed as: `LEAST(100, SUM(concern_tier_score_per_ingredient))`. Products with no classified additives score 0. The score is stored on the `scores` table and passed to `compute_unhealthiness_v32()` as the 9th parameter.
+The per-product `ingredient_concern_score` (0–100) is computed as: `LEAST(100, SUM(concern_tier_score_per_ingredient))`. Products with no classified additives score 0. The score is stored on the `products` table and passed to `compute_unhealthiness_v32()` as the 9th parameter.
 
 ```sql
 -- Function signature (returns INTEGER [1, 100])
@@ -151,30 +151,17 @@ compute_unhealthiness_v32(
 
 **Pipeline usage** (each category's `04_scoring.sql`):
 
+Scoring is now consolidated into the `score_category()` procedure. Each category's
+`04_scoring.sql` calls it after setting Nutri-Score and NOVA:
+
 ```sql
-UPDATE scores sc SET
-  unhealthiness_score = compute_unhealthiness_v32(
-      nf.saturated_fat_g::numeric,
-      nf.sugars_g::numeric,
-      nf.salt_g::numeric,
-      nf.calories::numeric,
-      nf.trans_fat_g::numeric,
-      ia.additives_count::numeric,
-      p.prep_method,
-      p.controversies,
-      sc.ingredient_concern_score
-  )::text
-FROM products p
-JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
-JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-LEFT JOIN (
-    SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
-    FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
-    GROUP BY pi.product_id
-) ia ON ia.product_id = p.product_id
-WHERE p.product_id = sc.product_id
-  AND p.country = 'PL' AND p.category = '<CATEGORY>';
+-- Set Nutri-Score and NOVA via data-driven UPDATE ... FROM (VALUES ...)
+-- then call the consolidated scoring procedure:
+CALL score_category('<CATEGORY>');
 ```
+
+The `score_category()` procedure handles: ingredient concern defaults,
+`compute_unhealthiness_v32()`, flag computation, data completeness, and confidence.
 
 ### ~~2.5 `scored_at` Timestamp~~ (removed — column dropped in migration 20260211000500)
 
@@ -308,7 +295,7 @@ We use the NOVA food classification system as a conceptual guide:
 
 ### 4.3 NOVA Classification Column
 
-The `scores.nova_classification` column stores the **NOVA group number** as text (`'1'`, `'2'`, `'3'`, or `'4'`). The `processing_risk` label (Low/Moderate/High) is now **derived at query time** in `v_master` via a CASE expression on `nova_classification`, rather than stored as a separate column.
+The `products.nova_classification` column stores the **NOVA group number** as text (`'1'`, `'2'`, `'3'`, or `'4'`). The `processing_risk` label (Low/Moderate/High) is now **derived at query time** in `v_master` via a CASE expression on `nova_classification`, rather than stored as a separate column.
 
 | `nova_classification` | Derived `processing_risk` |
 | --------------------- | ------------------------- |
@@ -333,7 +320,7 @@ These risks exist **even when the Nutri-Score looks acceptable**, which is why P
 
 ## 5. Flag Columns
 
-The `scores` table includes binary flags for critical thresholds:
+The `products` table includes binary flags for critical thresholds:
 
 | Flag                 | Trigger condition            | Basis                                                |
 | -------------------- | ---------------------------- | ---------------------------------------------------- |
@@ -346,33 +333,15 @@ These flags are **informational overlays** — they do not replace the Unhealthi
 
 ### 5.1 Reference SQL for Flag Computation
 
-Flags should be computed in the scoring pipeline, after nutrition facts are populated:
+Flags are computed by the `score_category()` procedure after nutrition facts are populated:
 
 ```sql
--- Compute flags from nutrition_facts (run after nutrition insert)
-UPDATE scores sc SET
-  high_salt_flag = CASE
-    WHEN nf.salt_g ~ '^[0-9.]+$' AND nf.salt_g::numeric > 1.5 THEN 'Y' ELSE 'N'
-  END,
-  high_sugar_flag = CASE
-    WHEN nf.sugars_g ~ '^[0-9.]+$' AND nf.sugars_g::numeric > 12.5 THEN 'Y' ELSE 'N'
-  END,
-  high_sat_fat_flag = CASE
-    WHEN nf.saturated_fat_g ~ '^[0-9.]+$' AND nf.saturated_fat_g::numeric > 5.0 THEN 'Y' ELSE 'N'
-  END,
-  high_additive_load = CASE
-    WHEN COALESCE(ia.additives_count, 0) >= 5 THEN 'Y' ELSE 'N'
-  END
-FROM products p
-JOIN servings sv ON sv.product_id = p.product_id AND sv.serving_basis = 'per 100 g'
-JOIN nutrition_facts nf ON nf.product_id = p.product_id AND nf.serving_id = sv.serving_id
-LEFT JOIN (
-    SELECT pi.product_id, COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
-    FROM product_ingredient pi JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
-    GROUP BY pi.product_id
-) ia ON ia.product_id = p.product_id
-WHERE p.product_id = sc.product_id
-  AND p.country = 'PL' AND p.category = '<CATEGORY>';
+-- Flags are set automatically by CALL score_category('<CATEGORY>');
+-- which internally computes:
+--   high_salt_flag     = CASE WHEN salt_g > 1.5 THEN 'Y' ELSE 'N' END
+--   high_sugar_flag    = CASE WHEN sugars_g > 12.5 THEN 'Y' ELSE 'N' END
+--   high_sat_fat_flag  = CASE WHEN saturated_fat_g > 5.0 THEN 'Y' ELSE 'N' END
+--   high_additive_load = CASE WHEN additives_count >= 5 THEN 'Y' ELSE 'N' END
 ```
 
 > **Note on text columns:** Because nutrition columns are `text`, we guard with a regex check (`~ '^[0-9.]+$'`) before casting. Non-numeric values (e.g., `'N/A'`, `'<0.5'`) result in `'N'` (no flag).

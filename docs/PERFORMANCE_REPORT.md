@@ -1,8 +1,8 @@
 # Poland Food DB — Performance & Scale Readiness Report
 
 > **Generated:** 2026-02-10
-> **Database:** PostgreSQL 15 (Supabase Docker)
-> **Dataset:** 867 active products, 20 categories, 877 servings, 10,145 product-ingredient links
+> **Database:** PostgreSQL 17 (Supabase Docker)
+> **Dataset:** 1,029 active products, 20 categories, product-ingredient links (pending re-enrichment)
 
 ---
 
@@ -30,7 +30,7 @@ All benchmarks taken on a local Supabase Docker instance with warm caches.
 | View                      | Refresh Time | Row Count | Strategy                          |
 | ------------------------- | ------------ | --------- | --------------------------------- |
 | `mv_ingredient_frequency` | **27ms**     | 1,471     | Full refresh (no unique index)    |
-| `v_product_confidence`    | **31ms**     | 867       | `CONCURRENTLY` (has unique index) |
+| `v_product_confidence`    | **31ms**     | 1,029     | `CONCURRENTLY` (has unique index) |
 
 **Verdict:** All queries <10ms. MV refreshes <50ms. No performance issues at current scale.
 
@@ -45,22 +45,18 @@ All benchmarks taken on a local Supabase Docker instance with warm caches.
 | `products`                | 7 (PK, category, active, EAN, country+brand+name, name_trgm, brand_trgm) | ✅ Well-covered |
 | `product_ingredient`      | 4 (PK, product FK, ingredient FK, sub-ingredient FK)                     | ✅ Complete     |
 | `ingredient_ref`          | 5 (PK, taxonomy_id, name, additive, concern)                             | ✅ Complete     |
-| `scores`                  | 2 (PK, unhealthiness_score)                                              | ✅ Sufficient   |
-| `servings`                | 2 (PK, product_id)                                                       | ✅ Sufficient   |
 | `nutrition_facts`         | 1 (PK only)                                                              | ⚠️ Note below   |
-| `product_sources`         | 4 (PK, product FK, unique constraint × 2)                                | ✅ Complete     |
-| `product_allergen`        | 2 (PK, allergen_tag)                                                     | ✅ Sufficient   |
-| `product_trace`           | 2 (PK, trace_tag)                                                        | ✅ Sufficient   |
+| `product_allergen_info`   | 2 (product+type, tag+type)                                               | ✅ Sufficient   |
 | `v_product_confidence`    | 2 (product_id unique, band+score)                                        | ✅ Complete     |
 | `mv_ingredient_frequency` | 3 (ingredient_id unique, count, concern)                                 | ✅ Complete     |
 
 ### Observations
 
-1. **`nutrition_facts`** has only a PK index. At 877 rows this is fine — seq scans are <1ms. An index on `(product_id, serving_id)` would be redundant since the PK already provides this.
+1. **`nutrition_facts`** has only a PK index. At 1,032 rows this is fine — seq scans are <1ms. An index on `(product_id)` would be redundant since the PK already provides this.
 
 2. **No missing indexes identified.** All JOIN paths used in `v_master`, API functions, and QA checks hit indexed columns.
 
-3. **No unused indexes detected.** At 867 products, all indexes are small and maintenance overhead is negligible.
+3. **No unused indexes detected.** At 1,029 products, all indexes are small and maintenance overhead is negligible.
 
 ---
 
@@ -99,7 +95,6 @@ The Jaccard similarity computation self-joins `product_ingredient` (~13 rows/pro
 
 ### 🟡 Recommended at 5K+ Products
 - [ ] Add `CONCURRENTLY` support to `mv_ingredient_frequency` (add unique index)
-- [ ] Consider partial index on `servings(product_id) WHERE serving_basis = 'per 100 g'`
 - [ ] Set up periodic MV refresh (cron or trigger-based)
 - [ ] Add `statement_timeout` to PostgREST config (suggest 5s)
 

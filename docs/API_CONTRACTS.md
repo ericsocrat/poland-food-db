@@ -464,7 +464,7 @@ Body: {
 - `api_category_listing(cat, sort, dir, limit, offset)` — paged, max 100/page
 - `api_search_products(query)` — debounce 300ms, max 100/page
 - `api_data_confidence(id)` — single product confidence lookup, fast
-- `v_product_confidence` — materialized view, pre-computed for all 867 products
+- `v_product_confidence` — materialized view, pre-computed for all 1,029 products
 
 ### Expensive Patterns (cache or limit)
 - `api_score_explanation(id)` — computes score + category context, ~50ms
@@ -495,7 +495,7 @@ Returns a composite data confidence score (0–100) indicating how reliable the 
   "components": {
     "nutrition":    { "points": 30, "max": 30 },  // 5 pts each for 6 key nutrients
     "ingredients":  { "points": 25, "max": 25 },  // 15 if raw text + 10 if normalized
-    "source":       { "points": 18, "max": 20 },  // mapped from product_sources.confidence_pct
+    "source":       { "points": 18, "max": 20 },  // mapped from products.source_type
     "ean":          { "points": 10, "max": 10 },  // 10 if EAN present
     "allergens":    { "points": 10, "max": 10 },  // 10 if allergen declarations exist
     "serving_data": { "points": 5,  "max": 5 }   // 5 if real per-serving data exists
@@ -519,7 +519,7 @@ Returns a composite data confidence score (0–100) indicating how reliable the 
 
 ### `v_product_confidence` (Materialized View)
 
-Pre-computed confidence for all 867 products. Faster than calling `compute_data_confidence()` per-product.
+Pre-computed confidence for all 1,029 products. Faster than calling `compute_data_confidence()` per-product.
 
 **PostgREST:** `GET /v_product_confidence?confidence_band=eq.low`
 

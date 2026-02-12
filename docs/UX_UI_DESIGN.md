@@ -2,7 +2,7 @@
 
 > **Status:** Production-ready specification — architecture, data contracts, and UX rules locked.
 > **Last updated:** 2026-02-10 (incremental hardening: score disambiguation, API-to-component mapping, misinterpretation defense v2)
-> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (228/228 checks). This document is the single source of truth for any future front-end implementation.
+> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (226/226 checks). This document is the single source of truth for any future front-end implementation.
 
 ---
 
@@ -71,7 +71,7 @@ Home (Dashboard)
 │                                                         │
 │  ┌─────────────────────┐  ┌──────────────────────────┐  │
 │  │ Quick Stats         │  │ Recently Scored           │  │
-│  │ 867 active products │  │ 1. Lay's Classic     72   │  │
+│  │ 1,029 active products │  │ 1. Lay's Classic     72   │  │
 │  │ 20 categories       │  │ 2. Mlekovita Kefir   12   │  │
 │  │ 139 brands          │  │ 3. Alpro Soja        18   │  │
 │  └─────────────────────┘  └──────────────────────────┘  │

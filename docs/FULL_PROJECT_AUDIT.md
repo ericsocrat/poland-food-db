@@ -11,22 +11,22 @@
 
 | Metric                                  | Value                                  |
 | --------------------------------------- | -------------------------------------- |
-| Total products                          | 877 (867 active + 10 deprecated)       |
+| Total products                          | 1,063 (1,029 active + 34 deprecated)   |
 | Categories                              | 20                                     |
-| Servings / Nutrition / Scores / Sources | 877 each (1:1 with products)           |
-| ingredient_ref                          | 1,471                                  |
-| product_ingredient                      | 10,145                                 |
-| product_allergen / product_trace        | 988 / 999                              |
-| mv_ingredient_frequency                 | 1,469                                  |
-| v_product_confidence                    | 867                                    |
-| EAN coverage                            | 839/867 active (96.8%)                 |
+| Nutrition                               | 1,032 (1:1 with scored products)       |
+| ingredient_ref                          | 1,132                                  |
+| product_ingredient                      | 0 (reset — awaiting re-enrichment)     |
+| product_allergen_info                   | 0 (reset — awaiting re-enrichment)     |
+| mv_ingredient_frequency                 | 1,132                                  |
+| v_product_confidence                    | 1,029                                  |
+| EAN coverage                            | 1,000/1,029 active (97.2%)             |
 | Score range / avg                       | 4–57 / 24.0                            |
 | Confidence bands                        | 475 high · 364 medium · 28 low         |
 | CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
-| Migration files                         | 47                                     |
-| QA checks                               | 228/228 pass + 29/29 negative tests    |
+| Migration files                         | 50                                     |
+| QA checks                               | 226/226 pass + 29/29 negative tests    |
 | Project files                           | 177 files (4.61 MB)                    |
 
 ---
@@ -74,11 +74,11 @@
 | All 14 FK constraints enforced                                        | ✅ Pass |
 | 26 CHECK constraints applied (domain values, ranges)                  | ✅ Pass |
 | 40 indexes present (covering queries + pg_trgm search)                | ✅ Pass |
-| 4 identity columns (products, servings, ingredient_ref, category_ref) | ✅ Pass |
+| 3 identity columns (products, ingredient_ref, category_ref)           | ✅ Pass |
 | 2 views (v_master, v_api_category_overview)                           | ✅ Pass |
 | 2 materialized views (mv_ingredient_frequency, v_product_confidence)  | ✅ Pass |
 | 14 custom functions + 32 pg_trgm functions                            | ✅ Pass |
-| 0 orphaned servings / nutrition / scores / sources                    | ✅ Pass |
+| 0 orphaned nutrition rows                                            | ✅ Pass |
 | 0 triggers (expected — scoring is pipeline-based)                     | ✅ Pass |
 
 **Verdict**: Schema is clean. No issues.
@@ -89,8 +89,8 @@
 
 | Check                                                                       | Result |
 | --------------------------------------------------------------------------- | ------ |
-| Every active product has serving, nutrition_facts, score, source            | ✅ Pass |
-| EAN coverage 839/867 (96.8%) — 28 without (expected for some products)      | ✅ Pass |
+| Every active product has nutrition_facts and scores on products      | ✅ Pass |
+| EAN coverage 1,000/1,029 (97.2%) — 29 without (expected for some)    | ✅ Pass |
 | Score range 4–57, avg 24.0 — within 0–100 constraint                        | ✅ Pass |
 | 0 null brand / product_type / prep_method / controversies                   | ✅ Pass |
 | 477 null store_availability — expected (only Żabka products have this)      | ✅ Pass |
@@ -106,7 +106,7 @@
 
 | Check                                                                                                                                                    | Result |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 15 QA suites, 228 checks — 228/228 PASS                                                                                                                  | ✅ Pass |
+| 15 QA suites, 226 checks — 226/226 PASS                                                                                                                  | ✅ Pass |
 | 29 negative validation tests — 29/29 CAUGHT                                                                                                              | ✅ Pass |
 | Coverage: data integrity, scoring, sources, EAN, API, confidence, quality, refs, views, naming, nutrition, consistency, allergens, servings, ingredients | ✅ Pass |
 | RUN_QA.ps1 / RUN_NEGATIVE_TESTS.ps1 — correct exit codes                                                                                                 | ✅ Pass |
@@ -182,13 +182,13 @@
 | EAN_VALIDATION_STATUS.md   |    56 | **A** | ✅ Fixed — fully regenerated with per-category data     |
 | copilot-instructions.md    |   513 | **A** | ✅ Fixed — all stale numbers corrected                  |
 
-**Root cause**: All staleness from the 560 → 867 expansion has been resolved.
+**Root cause**: All staleness from the 560 → 867 → 1,029 expansion and schema consolidation (scores/servings/product_sources merged into products) has been resolved.
 
 ---
 
 ## Overall Project Grade: **A**
 
-**Strengths**: Schema is rock-solid (0 orphans, all constraints enforced). QA coverage is exceptional (228 + 29 tests, 100% pass rate). CI is properly configured. No security vulnerabilities. All 12 docs are now accurate.
+**Strengths**: Schema is rock-solid (0 orphans, all constraints enforced). QA coverage is exceptional (226 + 29 tests, 100% pass rate). CI is properly configured. No security vulnerabilities. All 12 docs are now accurate.
 
 **Remaining (deferred)**: EAN-8 support in validator.py (item 14) and RUN_QA.ps1 refactor (item 15) — both cosmetic / low-risk.
 

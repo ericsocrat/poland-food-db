@@ -9,10 +9,9 @@ The **easiest way** to browse your tables visually:
 1. **Open Studio**: http://127.0.0.1:54323
 2. **Navigate**: Click **"Table Editor"** in left sidebar
 3. **Explore tables**:
-   - `products` — 867 active products across 20 categories (variable size per category)
+   - `products` — 1,029 active products across 20 categories (variable size per category)
    - `nutrition_facts` — nutritional data per 100g
-   - `scores` — unhealthiness scores (v3.2), flags, Nutri-Score, NOVA, confidence
-   - `servings` — 877 serving definitions (per-100g basis)
+   - `product_allergen_info` — allergen/trace declarations (unified table)
 4. **Run custom queries**: Click **"SQL Editor"** → paste any SQL → click **Run**
 
 **Pro tip**: Click on `v_master` view for a denormalized "master report" with all data joined.
@@ -50,7 +49,7 @@ echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GR
 
 ## ✅ How to Know Everything Is Working
 
-### 1. **Data Integrity Tests** (31 checks)
+### 1. **Data Integrity Tests** (29 checks)
 Validates foreign keys, nulls, duplicates, orphaned rows, nutrition sanity, provenance:
 
 ```powershell
@@ -84,19 +83,19 @@ Run all pipelines + QA suites automatically:
 ================================================
   Execution Summary
 ================================================
-  Succeeded:  80
+  Succeeded:  70
   Failed:     0
-  Duration:   ~5s
+  Duration:   ~10s
 
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (228/228 — zero violation rows).
+  All QA checks passed (226/226 — zero violation rows).
 
   Database inventory:
-  total_products | deprecated | servings | nutrition | scores
-----------------+------------+----------+-----------+--------
-             877 |         10 |      877 |       877 |    877
+  active_products | deprecated | nutrition | categories
+-----------------+------------+-----------+------------
+            1029 |         34 |      1032 |         20
 ```
 
 ---
@@ -110,7 +109,7 @@ Runs all 15 test suites with color-coded output:
 
 **Expected output**:
 ```
-Suite  1 — Data Integrity:          ✓ PASS (31/31)
+Suite  1 — Data Integrity:          ✓ PASS (29/29)
 Suite  2 — Scoring Formula:         ✓ PASS (27/27)
 Suite  3 — Source Coverage:         ℹ INFO (8 reports)
 Suite  4 — EAN Validation:          ✓ PASS (1/1)
@@ -126,7 +125,7 @@ Suite 13 — Allergen Integrity:      ✓ PASS (14/14)
 Suite 14 — Serving & Source:        ✓ PASS (16/16)
 Suite 15 — Ingredient Quality:      ✓ PASS (14/14)
 
-ALL TESTS PASSED (228/228 checks across 15 suites)
+ALL TESTS PASSED (226/226 checks across 15 suites)
 ```
 
 ---
@@ -167,18 +166,17 @@ SELECT * FROM v_master
 ORDER BY unhealthiness_score::int DESC;
 ```
 
-**Columns available** (63 columns):
+**Columns available** (47 columns):
 - **Identity**: `product_id`, `country`, `brand`, `product_name`, `category`, `product_type`, `ean`
 - **Qualitative**: `prep_method`, `store_availability`, `controversies`
 - **Scores**: `unhealthiness_score`, `confidence`, `data_completeness_pct`, `score_breakdown` (JSONB)
 - **Labels**: `nutri_score_label`, `nova_classification`, `processing_risk` (derived from NOVA)
 - **Flags**: `high_salt_flag`, `high_sugar_flag`, `high_sat_fat_flag`, `high_additive_load`
 - **Nutrition (per 100g)**: `calories`, `total_fat_g`, `saturated_fat_g`, `trans_fat_g`, `carbs_g`, `sugars_g`, `fibre_g`, `protein_g`, `salt_g`
-- **Nutrition (per serving)**: `serving_amount_g`, `srv_calories`, `srv_total_fat_g`, `srv_saturated_fat_g`, `srv_trans_fat_g`, `srv_carbs_g`, `srv_sugars_g`, `srv_fibre_g`, `srv_protein_g`, `srv_salt_g`
-- **Ingredients**: `additives_count`, `ingredients_raw`, `ingredient_count`, `additive_names`, `ingredient_concern_score`
+- **Ingredients**: `additives_count`, `ingredients_raw`, `ingredient_count`, `additive_names`, `ingredient_concern_score`, `has_palm_oil`
 - **Dietary**: `vegan_status`, `vegetarian_status`
 - **Allergens**: `allergen_count`, `allergen_tags`, `trace_count`, `trace_tags`
-- **Sources**: `source_type`, `source_url`, `source_ean`, `source_confidence`, `source_fields`, `source_collected_at`, `source_notes`
+- **Source**: `source_type`, `source_url`, `source_ean`
 - **Data quality**: `ingredient_data_quality`, `nutrition_data_quality`
 
 ---
