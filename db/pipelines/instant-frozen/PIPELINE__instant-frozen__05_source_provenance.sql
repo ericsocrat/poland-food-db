@@ -42,7 +42,7 @@ FROM (
     ('Unknown', 'SamSmak o smaku serowa 4 sery', 'https://world.openfoodfacts.org/product/5901384508074', '5901384508074'),
     ('Ajinomoto', 'Tomato soup', 'https://world.openfoodfacts.org/product/5901384505646', '5901384505646'),
     ('Ajinomoto', 'Mushrood soup', 'https://world.openfoodfacts.org/product/5901384505653', '5901384505653'),
-    ('Vifon', 'Zupka hińska', 'https://world.openfoodfacts.org/product/08153825', '08153825'),
+    ('Vifon', 'Zupka hińska', 'https://world.openfoodfacts.org/product/08153825', null),  -- RCN, not a real EAN
     ('Nongshim', 'Bowl Noodles Hot & Spicy', 'https://world.openfoodfacts.org/product/8801043057752', '8801043057752'),
     ('Nongshim', 'Super Spicy Red Shin', 'https://world.openfoodfacts.org/product/8801043053167', '8801043053167'),
     ('Indomie', 'Noodles Chicken Flavour', 'https://world.openfoodfacts.org/product/8994963002824', '8994963002824'),

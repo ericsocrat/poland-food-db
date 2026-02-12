@@ -53,7 +53,7 @@ values
   ('PL', 'Develey', 'Grocery', 'Sauces', 'Sos jalapeño', 'not-applicable', 'Biedronka', 'none', '5906425141944'),
   ('PL', 'Dawtona', 'Grocery', 'Sauces', 'Sos BBQ', 'not-applicable', 'Kaufland', 'none', '5901713012210'),
   ('PL', 'Madero', 'Grocery', 'Sauces', 'Sos BBQ z chipotle', 'not-applicable', 'Biedronka', 'none', '5901044023084'),
-  ('PL', 'Łowicz', 'Grocery', 'Sauces', 'Sos Spaghetti', 'not-applicable', null, 'none', '5900397016255'),
+  ('PL', 'Łowicz', 'Grocery', 'Sauces', 'Sos Spaghetti', 'not-applicable', null, 'none', '5900397016224'),
   ('PL', 'Pudliszki', 'Grocery', 'Sauces', 'Sos Do Spaghetti Oryginalny', 'not-applicable', null, 'none', '5900783003609'),
   ('PL', 'Dawtona', 'Grocery', 'Sauces', 'Passata rustica', 'not-applicable', null, 'none', '5901713016270'),
   ('PL', 'Pudliszki', 'Grocery', 'Sauces', 'Przecier pomidorowy', 'not-applicable', null, 'none', '5900783002138'),

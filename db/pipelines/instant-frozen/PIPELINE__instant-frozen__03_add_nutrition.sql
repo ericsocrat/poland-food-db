@@ -40,7 +40,7 @@ from (
     ('Asia Style', 'VeggieMeal Thai Spicy Ramen', 309.0, 5.4, 0.8, 0, 60.0, 3.5, 0, 4.6, 2.9),
     ('Vifon', 'Ramen Soy Souce', 72.0, 3.2, 1.0, 0, 9.3, 0.0, 0, 1.4, 0.7),
     ('Vifon', 'Ramen Tonkotsu', 87.0, 3.0, 1.6, 0, 13.0, 1.2, 0, 1.6, 0.9),
-    ('Oyakata', 'Ramen soja', 90.0, 41.0, 2.0, 0, 11.0, 0.8, 0, 2.0, 0),
+    ('Oyakata', 'Ramen soja', 90.0, 4.1, 2.0, 0, 11.0, 0.8, 0, 2.0, 0),
     ('Sam Smak', 'Pomidorowa', 77.0, 3.4, 1.7, 0, 9.6, 1.2, 0, 1.6, 0.7),
     ('Oyakata', 'Ramen Miso et Légumes', 86.0, 3.6, 1.8, 0, 11.0, 1.0, 0, 2.0, 0.8),
     ('Ajinomoto', 'Ramen nouille de blé saveur poulet shio', 90.0, 4.5, 2.2, 0, 10.0, 0.7, 0, 2.0, 1.0),

@@ -1,6 +1,12 @@
 -- PIPELINE (Condiments): scoring
 -- Generated: 2026-02-11
 
+-- 0. DEFAULT concern score for products without ingredient data
+update products set ingredient_concern_score = 0
+where country = 'PL' and category = 'Condiments'
+  and is_deprecated is not true
+  and ingredient_concern_score is null;
+
 -- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 update products p set
   unhealthiness_score = compute_unhealthiness_v32(

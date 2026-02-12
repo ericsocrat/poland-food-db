@@ -187,6 +187,17 @@ if ($failCount -gt 0) {
     exit 1
 }
 
+# ─── Refresh Materialized Views ─────────────────────────────────────────────────────
+
+Write-Host "Refreshing materialized views..." -ForegroundColor Yellow
+$mvOutput = "REFRESH MATERIALIZED VIEW v_product_confidence;" | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME 2>&1
+if ($LASTEXITCODE -eq 0) {
+    Write-Host "  ✓ v_product_confidence refreshed" -ForegroundColor Green
+}
+else {
+    Write-Host "  ⚠ MV refresh failed (non-blocking): $mvOutput" -ForegroundColor DarkYellow
+}
+
 # ─── QA Checks (optional) ──────────────────────────────────────────────────────────
 
 if ($RunQA) {

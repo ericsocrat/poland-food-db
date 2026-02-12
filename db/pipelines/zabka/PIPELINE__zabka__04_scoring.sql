@@ -5,6 +5,15 @@
 -- Last updated: 2026-02-08
 
 -- ═════════════════════════════════════════════════════════════════════════
+-- 0. DEFAULT concern score for products without ingredient data
+-- ═════════════════════════════════════════════════════════════════════════
+
+update products set ingredient_concern_score = 0
+where country = 'PL' and category = 'Żabka'
+  and is_deprecated is not true
+  and ingredient_concern_score is null;
+
+-- ═════════════════════════════════════════════════════════════════════════
 -- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
 --    9 factors × weighted → clamped [1, 100]
 --    sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +

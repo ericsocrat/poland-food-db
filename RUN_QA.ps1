@@ -124,7 +124,7 @@ $sw1 = [System.Diagnostics.Stopwatch]::StartNew()
 
 # Strip final summary query to avoid false-positive
 $test1Content = Get-Content $test1File -Raw
-$test1ChecksOnly = ($test1Content -split '-- 36\. v_master new column coverage')[0]
+$test1ChecksOnly = ($test1Content -split '-- 36\. v_master column coverage')[0]
 
 $test1Output = Invoke-Psql -InputSql $test1ChecksOnly -TuplesOnly
 
