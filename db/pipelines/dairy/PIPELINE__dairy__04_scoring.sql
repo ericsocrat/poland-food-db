@@ -50,7 +50,7 @@ from (
     ('Piątnica', 'Serek homogenizowany truskawkowy', 'C'),
     ('Mlekovita', 'Jogurt Grecki naturalny', 'C'),
     ('Delikate', 'Delikate Serek Smetankowy', 'D'),
-    ('Mleczna dolina', 'Śmietana', 'D'),
+    ('Mleczna Dolina', 'Śmietana', 'D'),
     ('OSM Łowicz', 'Mleko UHT 3,2', 'C')
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
@@ -104,7 +104,7 @@ from (
     ('Piątnica', 'Serek homogenizowany truskawkowy', '4'),
     ('Mlekovita', 'Jogurt Grecki naturalny', '3'),
     ('Delikate', 'Delikate Serek Smetankowy', '4'),
-    ('Mleczna dolina', 'Śmietana', '4'),
+    ('Mleczna Dolina', 'Śmietana', '4'),
     ('OSM Łowicz', 'Mleko UHT 3,2', '4')
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;

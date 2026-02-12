@@ -54,7 +54,7 @@ FROM (
     ('Marinero', 'Filety śledziowe a''la Matjas', 'https://world.openfoodfacts.org/product/20503031', '20503031'),
     ('Marinero', 'Paluszki z fileta z dorsza', 'https://world.openfoodfacts.org/product/5908257108836', '5908257108836'),
     ('Asia Flavours', 'Sushi Nori', 'https://world.openfoodfacts.org/product/5903050791537', '5903050791537'),
-    ('House Od Asia', 'Nori', 'https://world.openfoodfacts.org/product/5907599956204', '5907599956204'),
+    ('House of Asia', 'Nori', 'https://world.openfoodfacts.org/product/5907599956204', '5907599956204'),
     ('Purella', 'Chlorella detoks', 'https://world.openfoodfacts.org/product/5903246561913', '5903246561913'),
     ('Asia Flavours', 'Dried wakame', 'https://world.openfoodfacts.org/product/5905118020511', '5905118020511'),
     ('Marinero', 'Tuńczyk kawałki w sosie własnym', 'https://world.openfoodfacts.org/product/8429583014433', '8429583014433')

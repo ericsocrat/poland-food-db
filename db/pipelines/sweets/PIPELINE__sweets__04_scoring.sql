@@ -6,7 +6,7 @@ update products p set
   nutri_score_label = d.ns
 from (
   values
-    ('E.Wedel', 'Czekolada gorzka Wiśniowa', 'E'),
+    ('E. Wedel', 'Czekolada gorzka Wiśniowa', 'E'),
     ('Choctopus', 'Czekolada bąbelkowa mleczna', 'E'),
     ('Wawel', 'Czekolada gorzka z kandyzowaną skórką pomarańczy', 'E'),
     ('Biedronka', 'Belgijska czekolada mleczna z kawałkami słonego karmelu', 'E'),
@@ -31,7 +31,7 @@ from (
     ('E. Wedel', 'Gorzka Kokosowa', 'E'),
     ('Mellie', 'Dark Chocolate Orange', 'UNKNOWN'),
     ('E. Wedel', 'Mocno Mleczna', 'E'),
-    ('E.Wedel', 'Czekolada Tiramisu', 'E'),
+    ('E. Wedel', 'Czekolada Tiramisu', 'E'),
     ('E. Wedel', 'Mleczna malinowa', 'E'),
     ('Biedronka', 'Czekolada gorzka 95% kakao', 'D'),
     ('Unknown', 'Czekolada Biała z chrupkami kakaowymi', 'E'),
@@ -62,7 +62,7 @@ update products p set
   nova_classification = d.nova
 from (
   values
-    ('E.Wedel', 'Czekolada gorzka Wiśniowa', '4'),
+    ('E. Wedel', 'Czekolada gorzka Wiśniowa', '4'),
     ('Choctopus', 'Czekolada bąbelkowa mleczna', '4'),
     ('Wawel', 'Czekolada gorzka z kandyzowaną skórką pomarańczy', '4'),
     ('Biedronka', 'Belgijska czekolada mleczna z kawałkami słonego karmelu', '4'),
@@ -87,7 +87,7 @@ from (
     ('E. Wedel', 'Gorzka Kokosowa', '4'),
     ('Mellie', 'Dark Chocolate Orange', '4'),
     ('E. Wedel', 'Mocno Mleczna', '4'),
-    ('E.Wedel', 'Czekolada Tiramisu', '4'),
+    ('E. Wedel', 'Czekolada Tiramisu', '4'),
     ('E. Wedel', 'Mleczna malinowa', '4'),
     ('Biedronka', 'Czekolada gorzka 95% kakao', '3'),
     ('Unknown', 'Czekolada Biała z chrupkami kakaowymi', '4'),

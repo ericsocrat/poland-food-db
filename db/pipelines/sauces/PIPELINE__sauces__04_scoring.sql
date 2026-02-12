@@ -25,7 +25,7 @@ from (
     ('Roleski', 'Sos pomidor + miód + limonka + nasiona chia', 'D'),
     ('Pudliszki', 'Duszone pomidory o smaku smażonej cebuli i czosnku, z olejem', 'A'),
     ('Fanex', 'Sos tysiąc wysp', 'UNKNOWN'),
-    ('Vital FRESH', 'Sałatka w stylu greckim', 'C'),
+    ('Vital Fresh', 'Sałatka w stylu greckim', 'C'),
     ('Vifon', 'Sos chili tajski słodko-pikantny', 'D'),
     ('Sottile Gusto', 'Passata z czosnkiem', 'B'),
     ('Sottile Gusto', 'Passata', 'A'),
@@ -65,7 +65,7 @@ from (
     ('Knorr', 'Sos sałatkowy paprykowo-ziołowy', 'E'),
     ('Madero', 'Sos chilli pikantny', 'D'),
     ('Asia Flavours', 'Sos Sriracha mayo', 'E'),
-    ('House of asia', 'Sos Sriracha', 'E'),
+    ('House of Asia', 'Sos Sriracha', 'E'),
     ('Asia Flavours', 'Sos Sambal Oelek', 'E'),
     ('House of Asia', 'Sos z Czarnym Pieprzem', 'E'),
     ('Madero', 'Sos BBQ z miodem gryczanym', 'E'),
@@ -103,7 +103,7 @@ from (
     ('Sol & Mar', 'Piri-Piri', 'NOT-APPLICABLE'),
     ('Kikkoman', 'Kikkoman Sojasauce', 'E'),
     ('Mutti', 'Passierte Tomaten', 'A'),
-    ('Gustobello', 'Passata', 'A')
+    ('GustoBello', 'Passata', 'A')
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
@@ -131,7 +131,7 @@ from (
     ('Roleski', 'Sos pomidor + miód + limonka + nasiona chia', '4'),
     ('Pudliszki', 'Duszone pomidory o smaku smażonej cebuli i czosnku, z olejem', '4'),
     ('Fanex', 'Sos tysiąc wysp', '4'),
-    ('Vital FRESH', 'Sałatka w stylu greckim', '4'),
+    ('Vital Fresh', 'Sałatka w stylu greckim', '4'),
     ('Vifon', 'Sos chili tajski słodko-pikantny', '4'),
     ('Sottile Gusto', 'Passata z czosnkiem', '3'),
     ('Sottile Gusto', 'Passata', '3'),
@@ -171,7 +171,7 @@ from (
     ('Knorr', 'Sos sałatkowy paprykowo-ziołowy', '4'),
     ('Madero', 'Sos chilli pikantny', '4'),
     ('Asia Flavours', 'Sos Sriracha mayo', '4'),
-    ('House of asia', 'Sos Sriracha', '4'),
+    ('House of Asia', 'Sos Sriracha', '4'),
     ('Asia Flavours', 'Sos Sambal Oelek', '3'),
     ('House of Asia', 'Sos z Czarnym Pieprzem', '4'),
     ('Madero', 'Sos BBQ z miodem gryczanym', '4'),
@@ -209,7 +209,7 @@ from (
     ('Sol & Mar', 'Piri-Piri', '4'),
     ('Kikkoman', 'Kikkoman Sojasauce', '3'),
     ('Mutti', 'Passierte Tomaten', '3'),
-    ('Gustobello', 'Passata', '4')
+    ('GustoBello', 'Passata', '4')
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 

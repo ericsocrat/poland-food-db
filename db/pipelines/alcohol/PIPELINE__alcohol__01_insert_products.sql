@@ -26,7 +26,7 @@ values
   ('PL', 'Karmi', 'Grocery', 'Alcohol', 'Karmi o smaku żurawina', 'not-applicable', null, 'none', '5900014002562'),
   ('PL', 'Żywiec', 'Grocery', 'Alcohol', 'Limonż 0%', 'not-applicable', null, 'none', '5900699106388'),
   ('PL', 'Polski Cukier', 'Grocery', 'Alcohol', 'Cukier biały', 'not-applicable', null, 'none', '5906340630011'),
-  ('PL', 'Lomża', 'Grocery', 'Alcohol', 'Łomża jasne', 'not-applicable', null, 'none', '5903538900628'),
+  ('PL', 'Łomża', 'Grocery', 'Alcohol', 'Łomża jasne', 'not-applicable', null, 'none', '5903538900628'),
   ('PL', 'Kompania Piwowarska', 'Grocery', 'Alcohol', 'Kozel cerny', 'not-applicable', 'Auchan', 'none', '5901359074290'),
   ('PL', 'Browar Fortuna', 'Grocery', 'Alcohol', 'Piwo Pilzner, dolnej fermentacji', 'not-applicable', 'Kaufland', 'none', '5902709615323'),
   ('PL', 'Tyskie', 'Grocery', 'Alcohol', 'Bier "Tyskie Gronie"', 'not-applicable', 'Kaufland', 'none', '5901359062013'),

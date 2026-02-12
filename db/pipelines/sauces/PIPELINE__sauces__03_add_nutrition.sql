@@ -39,7 +39,7 @@ from (
     ('Roleski', 'Sos pomidor + miód + limonka + nasiona chia', 107.0, 0.5, 0.1, 0, 23.0, 21.0, 0, 1.5, 2.1),
     ('Pudliszki', 'Duszone pomidory o smaku smażonej cebuli i czosnku, z olejem', 73.0, 3.5, 0.4, 0, 9.3, 6.0, 1.3, 1.1, 0.9),
     ('Fanex', 'Sos tysiąc wysp', 301.0, 28.0, 0, 0, 10.0, 6.9, 0, 1.1, 1.2),
-    ('Vital FRESH', 'Sałatka w stylu greckim', 136.0, 12.0, 3.7, 0, 3.0, 2.6, 1.0, 3.2, 0.8),
+    ('Vital Fresh', 'Sałatka w stylu greckim', 136.0, 12.0, 3.7, 0, 3.0, 2.6, 1.0, 3.2, 0.8),
     ('Vifon', 'Sos chili tajski słodko-pikantny', 138.0, 0.0, 0.0, 0, 34.0, 31.0, 0, 0.0, 1.7),
     ('Sottile Gusto', 'Passata z czosnkiem', 32.0, 0.5, 0.1, 0, 4.6, 4.3, 0, 1.8, 0.2),
     ('Sottile Gusto', 'Passata', 30.9, 0.5, 0.1, 0, 4.3, 4.2, 0, 1.7, 0.2),
@@ -79,7 +79,7 @@ from (
     ('Knorr', 'Sos sałatkowy paprykowo-ziołowy', 424.0, 45.0, 6.5, 0, 4.8, 3.8, 0.7, 0.5, 2.2),
     ('Madero', 'Sos chilli pikantny', 83.0, 0.3, 0.0, 0, 17.4, 15.0, 0, 1.2, 2.0),
     ('Asia Flavours', 'Sos Sriracha mayo', 240.0, 20.2, 3.1, 0, 13.8, 11.1, 0.5, 0.8, 2.9),
-    ('House of asia', 'Sos Sriracha', 152.0, 0.4, 0.1, 0, 35.0, 25.0, 0, 1.2, 5.8),
+    ('House of Asia', 'Sos Sriracha', 152.0, 0.4, 0.1, 0, 35.0, 25.0, 0, 1.2, 5.8),
     ('Asia Flavours', 'Sos Sambal Oelek', 47.0, 0.6, 0.2, 0, 8.7, 1.7, 0, 1.7, 9.9),
     ('House of Asia', 'Sos z Czarnym Pieprzem', 93.0, 1.9, 0.0, 0, 16.0, 6.0, 0, 3.0, 7.0),
     ('Madero', 'Sos BBQ z miodem gryczanym', 126.0, 0.5, 0.1, 0, 29.0, 26.0, 0.8, 1.0, 2.4),
@@ -117,9 +117,9 @@ from (
     ('Sol & Mar', 'Piri-Piri', 16.0, 0.8, 0.2, 0, 0.9, 0.5, 1.6, 0.6, 5.3),
     ('Kikkoman', 'Kikkoman Sojasauce', 77.0, 0.0, 0.0, 0, 3.2, 0.6, 0.0, 10.0, 16.9),
     ('Mutti', 'Passierte Tomaten', 36.0, 0.5, 0.1, 0, 5.1, 4.5, 0, 1.6, 0.5),
-    ('gustobello', 'Passata', 28.0, 0.1, 0, 0, 4.1, 3.5, 1.8, 1.4, 0.0),
+    ('GustoBello', 'Passata', 28.0, 0.1, 0, 0, 4.1, 3.5, 1.8, 1.4, 0.0),
     -- ── Batch 2 — sauces (new) ───────────────────────────────────────────────────────
-    ('Gustobello',      'Passata',          28, 0.1, 0.02, 0, 4.1, 3.5, 1.8, 1.4, 0.01),   -- OFF
+    ('GustoBello',      'Passata',          28, 0.1, 0.02, 0, 4.1, 3.5, 1.8, 1.4, 0.01),   -- OFF
     ('Helcom',          'Sauce a la mexicaine', 52, 0, 0, 0, 11, 8.9, 1.0, 1.4, 1.0),       -- OFF
     ('Mondo Italiano',  'Passierte Tomaten', 30, 0.2, 0.05, 0, 4.5, 4.0, 0.5, 1.3, 0.10)    -- OFF
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,

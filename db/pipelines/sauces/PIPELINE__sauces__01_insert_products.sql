@@ -36,7 +36,7 @@ values
   ('PL', 'Roleski', 'Grocery', 'Sauces', 'Sos pomidor + miód + limonka + nasiona chia', 'not-applicable', null, 'none', '5901044030532'),
   ('PL', 'Pudliszki', 'Grocery', 'Sauces', 'Duszone pomidory o smaku smażonej cebuli i czosnku, z olejem', 'not-applicable', null, 'none', '5900783009717'),
   ('PL', 'Fanex', 'Grocery', 'Sauces', 'Sos tysiąc wysp', 'not-applicable', null, 'none', '5900854003187'),
-  ('PL', 'Vital FRESH', 'Grocery', 'Sauces', 'Sałatka w stylu greckim', 'not-applicable', null, 'none', '5904378243708'),
+  ('PL', 'Vital Fresh', 'Grocery', 'Sauces', 'Sałatka w stylu greckim', 'not-applicable', null, 'none', '5904378243708'),
   ('PL', 'Vifon', 'Grocery', 'Sauces', 'Sos chili tajski słodko-pikantny', 'not-applicable', null, 'none', '5901882210394'),
   ('PL', 'Sottile Gusto', 'Grocery', 'Sauces', 'Passata z czosnkiem', 'not-applicable', 'Biedronka', 'none', '5906716207373'),
   ('PL', 'Sottile Gusto', 'Grocery', 'Sauces', 'Passata', 'not-applicable', 'Biedronka', 'none', '5906716207359'),
@@ -76,7 +76,7 @@ values
   ('PL', 'Knorr', 'Grocery', 'Sauces', 'Sos sałatkowy paprykowo-ziołowy', 'not-applicable', 'Biedronka', 'none', '8714100855171'),
   ('PL', 'Madero', 'Grocery', 'Sauces', 'Sos chilli pikantny', 'not-applicable', null, 'none', '5906425141760'),
   ('PL', 'Asia Flavours', 'Grocery', 'Sauces', 'Sos Sriracha mayo', 'not-applicable', null, 'none', '5907501005105'),
-  ('PL', 'House of asia', 'Grocery', 'Sauces', 'Sos Sriracha', 'not-applicable', null, 'none', '5902898823332'),
+  ('PL', 'House of Asia', 'Grocery', 'Sauces', 'Sos Sriracha', 'not-applicable', null, 'none', '5902898823332'),
   ('PL', 'Asia Flavours', 'Grocery', 'Sauces', 'Sos Sambal Oelek', 'not-applicable', null, 'none', '5901801581116'),
   ('PL', 'House of Asia', 'Grocery', 'Sauces', 'Sos z Czarnym Pieprzem', 'not-applicable', null, 'none', '5901752703346'),
   ('PL', 'Madero', 'Grocery', 'Sauces', 'Sos BBQ z miodem gryczanym', 'not-applicable', null, 'none', '5901044023060'),
@@ -114,7 +114,7 @@ values
   ('PL', 'Sol & Mar', 'Grocery', 'Sauces', 'Piri-Piri', 'not-applicable', 'Lidl', 'none', '20026752'),
   ('PL', 'Kikkoman', 'Grocery', 'Sauces', 'Kikkoman Sojasauce', 'not-applicable', 'Biedronka', 'none', '8715035110809'),
   ('PL', 'Mutti', 'Grocery', 'Sauces', 'Passierte Tomaten', 'not-applicable', null, 'none', '80042563'),
-  ('PL', 'Gustobello', 'Grocery', 'Sauces', 'Passata', 'not-applicable', null, 'none', '8002920016606')
+  ('PL', 'GustoBello', 'Grocery', 'Sauces', 'Passata', 'not-applicable', null, 'none', '8002920016606')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,

@@ -8,7 +8,7 @@ UPDATE products p SET
   source_ean = d.source_ean
 FROM (
   VALUES
-    ('E.Wedel', 'Czekolada gorzka Wiśniowa', 'https://world.openfoodfacts.org/product/5901588017457', '5901588017457'),
+    ('E. Wedel', 'Czekolada gorzka Wiśniowa', 'https://world.openfoodfacts.org/product/5901588017457', '5901588017457'),
     ('Choctopus', 'Czekolada bąbelkowa mleczna', 'https://world.openfoodfacts.org/product/5905858671592', '5905858671592'),
     ('Wawel', 'Czekolada gorzka z kandyzowaną skórką pomarańczy', 'https://world.openfoodfacts.org/product/5900102009978', '5900102009978'),
     ('Biedronka', 'Belgijska czekolada mleczna z kawałkami słonego karmelu', 'https://world.openfoodfacts.org/product/5907180316417', '5907180316417'),
@@ -33,7 +33,7 @@ FROM (
     ('E. Wedel', 'Gorzka Kokosowa', 'https://world.openfoodfacts.org/product/5901588017839', '5901588017839'),
     ('Mellie', 'Dark Chocolate Orange', 'https://world.openfoodfacts.org/product/5905858670755', '5905858670755'),
     ('E. Wedel', 'Mocno Mleczna', 'https://world.openfoodfacts.org/product/5901588018652', '5901588018652'),
-    ('E.Wedel', 'Czekolada Tiramisu', 'https://world.openfoodfacts.org/product/5901588017617', '5901588017617'),
+    ('E. Wedel', 'Czekolada Tiramisu', 'https://world.openfoodfacts.org/product/5901588017617', '5901588017617'),
     ('E. Wedel', 'Mleczna malinowa', 'https://world.openfoodfacts.org/product/5901588016498', '5901588016498'),
     ('Biedronka', 'Czekolada gorzka 95% kakao', 'https://world.openfoodfacts.org/product/5904358565844', '5904358565844'),
     ('Unknown', 'Czekolada Biała z chrupkami kakaowymi', 'https://world.openfoodfacts.org/product/5907443604817', '5907443604817'),

@@ -51,7 +51,7 @@ values
   ('PL', 'Nestlé', 'Grocery', 'Cereals', 'Lion caramel and chocolate', 'not-applicable', null, 'none', '5900020021625'),
   ('PL', 'Nesquik', 'Grocery', 'Cereals', 'Nesquik Alphabet', 'not-applicable', null, 'none', '5900020020635'),
   ('PL', 'Vitanella', 'Grocery', 'Cereals', 'Orito kakaowe', 'not-applicable', null, 'none', '5907437367919'),
-  ('PL', 'One day more', 'Grocery', 'Cereals', 'Porridge', 'not-applicable', null, 'none', '5902884464525'),
+  ('PL', 'One Day More', 'Grocery', 'Cereals', 'Porridge', 'not-applicable', null, 'none', '5902884464525'),
   ('PL', 'Nesquik', 'Grocery', 'Cereals', 'Nesquik Mix', 'not-applicable', null, 'none', '5900020013491'),
   ('PL', 'Vitanella', 'Grocery', 'Cereals', 'Corn Flakes', 'not-applicable', null, 'none', '5907437361474'),
   ('PL', 'Nestlé', 'Grocery', 'Cereals', 'Corn flakes choco', 'not-applicable', null, 'none', '5900020026439'),

@@ -20,10 +20,10 @@ values
   ('PL', 'Magnetic', 'Grocery', 'Baby', 'Kakao o obniżonej zawartości tłuszczu ekstra ciemne', 'not-applicable', 'Biedronka', 'none', '5900910010906'),
   ('PL', 'Diamant', 'Grocery', 'Baby', 'Cukier Biały', 'not-applicable', 'Kaufland', 'none', '5907069000017'),
   ('PL', 'Owolovo', 'Grocery', 'Baby', 'Truskawkowo Mus jabłkowo-truskawkowy', 'not-applicable', 'Biedronka', 'none', '5901958612367'),
-  ('PL', 'OwoLovo', 'Grocery', 'Baby', 'OwoLowo Jabłkowo', 'not-applicable', 'Biedronka', 'none', '5901958612343'),
+  ('PL', 'Owolovo', 'Grocery', 'Baby', 'OwoLowo Jabłkowo', 'not-applicable', 'Biedronka', 'none', '5901958612343'),
   ('PL', 'Mlekovita', 'Grocery', 'Baby', 'Bezwodny tłuszcz mleczny, Masło klarowane', 'not-applicable', 'Lidl', 'none', '5900512300054'),
   ('PL', 'Vital Fresh', 'Grocery', 'Baby', 'Surówka Smakołyk', 'not-applicable', 'Biedronka', 'none', '5900449006913'),
-  ('PL', 'Bobovita', 'Grocery', 'Baby', 'Pomidorowa z kurczakiem i ryżem', 'not-applicable', null, 'none', '5900852150005'),
+  ('PL', 'BoboVita', 'Grocery', 'Baby', 'Pomidorowa z kurczakiem i ryżem', 'not-applicable', null, 'none', '5900852150005'),
   ('PL', 'BoboVita', 'Grocery', 'Baby', 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa', 'not-applicable', null, 'none', '5900852041129'),
   ('PL', 'Polski Cukier', 'Grocery', 'Baby', 'Cukier biały', 'not-applicable', null, 'none', '5906340630011'),
   ('PL', 'Piątnica', 'Grocery', 'Baby', 'Twaróg wiejski tłusty', 'not-applicable', null, 'none', '5900531004025'),
@@ -61,9 +61,9 @@ values
   ('PL', 'Nestlé', 'Grocery', 'Baby', 'Nestle Sinlac', 'not-applicable', null, 'none', '7613287666819'),
   ('PL', 'Hipp', 'Grocery', 'Baby', 'Dynia z indykiem', 'not-applicable', null, 'none', '9062300109365'),
   ('PL', 'GutBio', 'Grocery', 'Baby', 'Puré de Frutas Manzana y Plátano', 'not-applicable', 'Aldi', 'none', '22009326'),
-  ('PL', 'Go active', 'Grocery', 'Baby', 'Pudding proteinowy', 'not-applicable', null, 'none', '8595588200697'),
+  ('PL', 'Go Active', 'Grocery', 'Baby', 'Pudding proteinowy', 'not-applicable', null, 'none', '8595588200697'),
   ('PL', 'Nestlé', 'Grocery', 'Baby', 'Bulion drobiowy', 'not-applicable', null, 'none', '7613036599009'),
-  ('PL', 'GO Active', 'Grocery', 'Baby', 'Pudding czekolada', 'not-applicable', null, 'none', '8595588200727'),
+  ('PL', 'Go Active', 'Grocery', 'Baby', 'Pudding czekolada', 'not-applicable', null, 'none', '8595588200727'),
   ('PL', 'Tastino', 'Grocery', 'Baby', 'Papryka Barbecue', 'not-applicable', null, 'none', '4056489784043')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
@@ -79,4 +79,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Baby'
   and is_deprecated is not true
-  and product_name not in ('Kakao o obniżonej zawartości tłuszczu ekstra ciemne', 'Cukier Biały', 'Truskawkowo Mus jabłkowo-truskawkowy', 'OwoLowo Jabłkowo', 'Bezwodny tłuszcz mleczny, Masło klarowane', 'Surówka Smakołyk', 'Pomidorowa z kurczakiem i ryżem', 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa', 'Cukier biały', 'Twaróg wiejski tłusty', 'Mus 100% owoców jabłko gruszka', 'kubuś malina', 'mus jabłkowo-malinowo', 'Koktajl z białkiem serwatkowym', 'Barszcz czerwony', 'Pierogi ruskie', 'POLĘDWICA SOPOCKA', 'Śledzie po kołobrzesku', 'QuickCao', 'Cukier 1 kg', 'Przyprawa Maggi', 'polutry kabanos sausages', 'Lasagne Bolognese', 'Owolovo ananasowo', 'Kabanosy Z Kurczaka Protein', 'BRZOSKWINIOWO', 'Minis classic', 'Ziemniaki z buraczkami, jabłkiem i wołowiną', 'owoce jabłka z truskawkami i jagodami', 'Spaghetti z pomidorami i mozzarellą', 'Leczo z mozzarellą i kluseczkami', 'BoboVita Jabłka z marchewka', 'Kaszka mleczna z biszkoptami i jabłkami', 'Pudliszki', 'Kamis Musztarda Kremska 185G', 'gryzzale', '5908226815710', 'Eatyx Wanilla', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 'Ciastka Czekolada & Zboża', 'Baton select orzeszki ziemne, migdały, sól morska', 'Ahorn sirup', 'Nestle Sinlac', 'Dynia z indykiem', 'Puré de Frutas Manzana y Plátano', 'Pudding proteinowy', 'Bulion drobiowy', 'pudding czekolada', 'Papryka Barbecue');
+  and product_name not in ('Kakao o obniżonej zawartości tłuszczu ekstra ciemne', 'Cukier Biały', 'Truskawkowo Mus jabłkowo-truskawkowy', 'OwoLowo Jabłkowo', 'Bezwodny tłuszcz mleczny, Masło klarowane', 'Surówka Smakołyk', 'Pomidorowa z kurczakiem i ryżem', 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa', 'Cukier biały', 'Twaróg wiejski tłusty', 'Mus 100% owoców jabłko gruszka', 'Kubuś malina', 'mus jabłkowo-malinowo', 'Koktajl z białkiem serwatkowym', 'Barszcz czerwony', 'Pierogi ruskie', 'POLĘDWICA SOPOCKA', 'Śledzie po kołobrzesku', 'QuickCao', 'Cukier 1 kg', 'Przyprawa Maggi', 'polutry kabanos sausages', 'Lasagne Bolognese', 'Owolovo ananasowo', 'Kabanosy Z Kurczaka Protein', 'BRZOSKWINIOWO', 'Minis classic', 'Ziemniaki z buraczkami, jabłkiem i wołowiną', 'owoce jabłka z truskawkami i jagodami', 'Spaghetti z pomidorami i mozzarellą', 'Leczo z mozzarellą i kluseczkami', 'BoboVita Jabłka z marchewka', 'Kaszka mleczna z biszkoptami i jabłkami', 'Pudliszki', 'Kamis Musztarda Kremska 185G', 'gryzzale', '5908226815710', 'Eatyx Wanilla', 'PUDDING PROTEINOWY SMAK CAFFE LATTE', 'Ciastka Czekolada & Zboża', 'Baton select orzeszki ziemne, migdały, sól morska', 'Ahorn sirup', 'Nestle Sinlac', 'Dynia z indykiem', 'Puré de Frutas Manzana y Plátano', 'Pudding proteinowy', 'Bulion drobiowy', 'pudding czekolada', 'Papryka Barbecue');

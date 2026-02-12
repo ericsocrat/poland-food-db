@@ -54,6 +54,10 @@ UPDATE public.products SET brand = 'Łomża'             WHERE brand = 'Lomża';
 UPDATE public.products SET brand = 'Mroźna Kraina'     WHERE brand = 'Morźna Kraina';
 UPDATE public.products SET brand = 'Żywiec Zdrój'      WHERE brand = 'Zywiec Zdroj';
 
+-- === Additional brand normalization ===
+UPDATE public.products SET brand = 'Kubuś'             WHERE brand IN ('Kubuš', 'Kubus');
+UPDATE public.products SET brand = 'Sante'             WHERE brand IN ('Santé', 'Sante A. Kowalski sp. j');
+
 -- Note: BakaD'Or product 1841 cannot be renamed to Bakador because
 -- deprecated product 715 (same brand+name) blocks the unique constraint.
 

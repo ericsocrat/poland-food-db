@@ -69,7 +69,7 @@ from (
     ('Bite IT', 'LAWASZ pszenny chleb', 285.0, 3.7, 0.5, 0, 53.3, 1.5, 1.4, 8.7, 1.2),
     ('Gwóźdź', 'Chleb wieloziarnisty', 272.0, 4.1, 0.6, 0, 46.0, 2.1, 5.4, 9.8, 1.4),
     ('Oskroba', 'Tost maślany', 259.0, 3.0, 1.7, 0, 50.0, 2.9, 0, 8.6, 1.2),
-    ('Z dobrej piekarni', 'Chleb baltonowski', 239.0, 1.3, 0.3, 0, 47.0, 1.7, 3.2, 8.2, 1.4),
+    ('Z Dobrej Piekarni', 'Chleb baltonowski', 239.0, 1.3, 0.3, 0, 47.0, 1.7, 3.2, 8.2, 1.4),
     ('Carrefour', 'Tortilla pszenna', 324.0, 7.2, 1.8, 0, 54.4, 1.8, 1.8, 9.5, 1.1),
     ('Z Dobrej Piekarni', 'Chleb wieloziarnisty', 285.0, 7.0, 0.8, 0, 43.0, 3.0, 3.7, 10.0, 1.3),
     ('Shulstad', 'Classic Pszenny Hot Dog', 254.0, 1.4, 0.2, 0, 48.0, 2.5, 4.4, 9.9, 1.2),

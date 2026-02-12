@@ -66,7 +66,7 @@ from (
     ('Marinero', 'Filety śledziowe a''la Matjas', 127.0, 10.2, 2.8, 0, 0.6, 0.6, 0, 8.5, 7.5),
     ('Marinero', 'Paluszki z fileta z dorsza', 188.0, 8.7, 0.7, 0, 12.0, 1.5, 0.8, 15.0, 0.9),
     ('Asia Flavours', 'Sushi Nori', 353.0, 2.2, 0.9, 0, 40.0, 0.0, 0, 43.0, 1.6),
-    ('House Od Asia', 'Nori', 391.0, 5.5, 2.2, 0, 37.0, 0, 0, 44.0, 0),
+    ('House of Asia', 'Nori', 391.0, 5.5, 2.2, 0, 37.0, 0, 0, 44.0, 0),
     ('Purella', 'Chlorella detoks', 381.0, 11.0, 4.6, 0, 14.0, 0.4, 12.5, 54.2, 0.3),
     ('Asia Flavours', 'Dried wakame', 412.0, 0.9, 0.6, 0, 54.0, 0.5, 54.0, 20.0, 18.3),
     ('Marinero', 'Tuńczyk kawałki w sosie własnym', 114.0, 1.1, 0.4, 0, 0.0, 0.0, 0.0, 26.0, 1.2)

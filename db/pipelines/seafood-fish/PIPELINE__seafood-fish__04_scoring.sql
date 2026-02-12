@@ -52,7 +52,7 @@ from (
     ('Marinero', 'Filety śledziowe a''la Matjas', 'E'),
     ('Marinero', 'Paluszki z fileta z dorsza', 'A'),
     ('Asia Flavours', 'Sushi Nori', 'C'),
-    ('House Od Asia', 'Nori', 'UNKNOWN'),
+    ('House of Asia', 'Nori', 'UNKNOWN'),
     ('Purella', 'Chlorella detoks', 'A'),
     ('Asia Flavours', 'Dried wakame', 'D'),
     ('Marinero', 'Tuńczyk kawałki w sosie własnym', 'A')
@@ -110,7 +110,7 @@ from (
     ('Marinero', 'Filety śledziowe a''la Matjas', '4'),
     ('Marinero', 'Paluszki z fileta z dorsza', '4'),
     ('Asia Flavours', 'Sushi Nori', '1'),
-    ('House Od Asia', 'Nori', '4'),
+    ('House of Asia', 'Nori', '4'),
     ('Purella', 'Chlorella detoks', '1'),
     ('Asia Flavours', 'Dried wakame', '1'),
     ('Marinero', 'Tuńczyk kawałki w sosie własnym', '3')

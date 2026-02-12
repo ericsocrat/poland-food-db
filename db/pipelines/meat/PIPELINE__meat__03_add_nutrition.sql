@@ -31,7 +31,7 @@ from (
     ('Krakus', 'Gulasz angielski 95 % mięsa', 241.0, 19.0, 7.6, 0, 0.5, 0.0, 0, 17.0, 2.1),
     ('Kraina Wędlin', 'Szynka Zawędzana', 102.0, 2.0, 0.7, 0, 3.0, 0.8, 0, 18.0, 2.5),
     ('Dania Express', 'Polędwiczki z kurczaka panierowane', 175.0, 7.7, 0.9, 0, 7.8, 0.3, 0.5, 18.5, 1.8),
-    ('Kraina Wedlin', 'Polędwica drobiowa', 100.0, 2.0, 0.6, 0, 2.5, 1.0, 0.0, 18.0, 1.9),
+    ('Kraina Wędlin', 'Polędwica drobiowa', 100.0, 2.0, 0.6, 0, 2.5, 1.0, 0.0, 18.0, 1.9),
     ('Kraina Wędlin', 'Kiełbasa Żywiecka z indyka', 160.0, 7.4, 2.2, 0, 0.3, 0.1, 0.1, 23.0, 2.8),
     ('Kraina Wędlin', 'Szynka Wędzona', 114.0, 3.0, 1.2, 0, 1.1, 0.6, 0, 20.0, 2.3),
     ('Kraina Wędlin', 'Kiełbasa Myśliwska', 309.0, 21.1, 7.1, 0, 1.1, 1.1, 0.0, 28.9, 3.1),

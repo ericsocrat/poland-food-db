@@ -37,7 +37,7 @@ values
   ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup premium meksykański KETO', 'not-applicable', null, 'none', '5901044027532'),
   ('PL', 'Międzychód', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5901619150948'),
   ('PL', 'Na Szlaku Smaku', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5906734827294'),
-  ('PL', 'Polskie przetwory', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5901986081050'),
+  ('PL', 'Polskie Przetwory', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5901986081050'),
   ('PL', 'Roleski', 'Grocery', 'Condiments', 'Ketchup łagodny', 'not-applicable', null, 'none', '5908235940083'),
   ('PL', 'Kotlin', 'Grocery', 'Condiments', 'Ketchup z truskawką', 'not-applicable', null, 'none', '5900385501640'),
   ('PL', 'Reypol', 'Grocery', 'Condiments', 'Ketchup Ziołowy Premium z Nasionami Konopi', 'not-applicable', null, 'none', '5902501342007'),

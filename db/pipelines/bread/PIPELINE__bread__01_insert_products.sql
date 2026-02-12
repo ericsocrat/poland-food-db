@@ -66,7 +66,7 @@ values
   ('PL', 'Bite IT', 'Grocery', 'Bread', 'LAWASZ pszenny chleb', 'baked', 'Biedronka', 'none', '5905683298421'),
   ('PL', 'Gwóźdź', 'Grocery', 'Bread', 'Chleb wieloziarnisty', 'baked', 'Biedronka', 'none', '5901549519211'),
   ('PL', 'Oskroba', 'Grocery', 'Bread', 'Tost maślany', 'baked', null, 'none', '5900340003424'),
-  ('PL', 'Z dobrej piekarni', 'Grocery', 'Bread', 'Chleb baltonowski', 'baked', 'Żabka', 'none', '5903111184230'),
+  ('PL', 'Z Dobrej Piekarni', 'Grocery', 'Bread', 'Chleb baltonowski', 'baked', 'Żabka', 'none', '5903111184230'),
   ('PL', 'Carrefour', 'Grocery', 'Bread', 'Tortilla pszenna', 'baked', 'Auchan', 'none', '5905784344591'),
   ('PL', 'Z Dobrej Piekarni', 'Grocery', 'Bread', 'Chleb wieloziarnisty', 'baked', 'Żabka', 'none', '5903111184261'),
   ('PL', 'Shulstad', 'Grocery', 'Bread', 'Classic Pszenny Hot Dog', 'baked', 'Auchan', 'none', '5902620000406'),

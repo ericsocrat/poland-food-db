@@ -64,7 +64,7 @@ from (
     ('Piątnica', 'Serek homogenizowany truskawkowy', 130.0, 6.3, 4.3, 0, 12.0, 6.3, 0, 6.3, 0.1),
     ('Mlekovita', 'Jogurt Grecki naturalny', 124.0, 10.0, 6.5, 0, 5.0, 5.0, 0.0, 3.6, 0.1),
     ('Delikate', 'Delikate Serek Smetankowy', 243.0, 23.0, 15.0, 0, 3.0, 3.0, 0.0, 6.0, 0.7),
-    ('Mleczna dolina', 'Śmietana', 188.0, 18.0, 12.3, 0, 3.1, 3.1, 0, 2.6, 0.1),
+    ('Mleczna Dolina', 'Śmietana', 188.0, 18.0, 12.3, 0, 3.1, 3.1, 0, 2.6, 0.1),
     ('OSM Łowicz', 'Mleko UHT 3,2', 60.0, 3.2, 1.9, 0, 4.7, 4.7, 0, 3.0, 0.1)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)

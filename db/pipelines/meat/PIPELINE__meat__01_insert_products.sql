@@ -28,7 +28,7 @@ values
   ('PL', 'Krakus', 'Grocery', 'Meat', 'Gulasz angielski 95 % mięsa', 'not-applicable', 'Biedronka', 'none', '5900244010030'),
   ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Szynka Zawędzana', 'smoked', 'Biedronka', 'none', '5900562460111'),
   ('PL', 'Dania Express', 'Grocery', 'Meat', 'Polędwiczki z kurczaka panierowane', 'not-applicable', 'Biedronka', 'none', '5900757062090'),
-  ('PL', 'Kraina Wedlin', 'Grocery', 'Meat', 'Polędwica drobiowa', 'not-applicable', 'Biedronka', 'none', '5900331602155'),
+  ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Polędwica drobiowa', 'not-applicable', 'Biedronka', 'none', '5900331602155'),
   ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Kiełbasa Żywiecka z indyka', 'not-applicable', 'Biedronka', 'none', '5900567012001'),
   ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Szynka Wędzona', 'smoked', 'Biedronka', 'none', '5900562435614'),
   ('PL', 'Kraina Wędlin', 'Grocery', 'Meat', 'Kiełbasa Myśliwska', 'not-applicable', 'Biedronka', 'none', '5906245779020'),

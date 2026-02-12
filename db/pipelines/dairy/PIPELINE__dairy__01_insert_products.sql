@@ -61,7 +61,7 @@ values
   ('PL', 'Piątnica', 'Grocery', 'Dairy', 'Serek homogenizowany truskawkowy', 'fermented', 'Lidl', 'none', '5900531011023'),
   ('PL', 'Mlekovita', 'Grocery', 'Dairy', 'Jogurt Grecki naturalny', 'fermented', 'Kaufland', 'none', '5900512350080'),
   ('PL', 'Delikate', 'Grocery', 'Dairy', 'Delikate Serek Smetankowy', 'fermented', 'Biedronka', 'none', '5900120072480'),
-  ('PL', 'Mleczna dolina', 'Grocery', 'Dairy', 'Śmietana', 'fermented', null, 'none', '5907180315847'),
+  ('PL', 'Mleczna Dolina', 'Grocery', 'Dairy', 'Śmietana', 'fermented', null, 'none', '5907180315847'),
   ('PL', 'OSM Łowicz', 'Grocery', 'Dairy', 'Mleko UHT 3,2', 'pasteurized', 'Tesco', 'none', '5900120011199')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,

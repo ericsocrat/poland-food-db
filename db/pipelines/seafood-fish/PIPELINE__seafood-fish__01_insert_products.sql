@@ -63,7 +63,7 @@ values
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Filety śledziowe a''la Matjas', 'not-applicable', 'Biedronka', 'none', '20503031'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Paluszki z fileta z dorsza', 'not-applicable', null, 'none', '5908257108836'),
   ('PL', 'Asia Flavours', 'Grocery', 'Seafood & Fish', 'Sushi Nori', 'dried', null, 'none', '5903050791537'),
-  ('PL', 'House Od Asia', 'Grocery', 'Seafood & Fish', 'Nori', 'not-applicable', null, 'none', '5907599956204'),
+  ('PL', 'House of Asia', 'Grocery', 'Seafood & Fish', 'Nori', 'not-applicable', null, 'none', '5907599956204'),
   ('PL', 'Purella', 'Grocery', 'Seafood & Fish', 'Chlorella detoks', 'dried', null, 'none', '5903246561913'),
   ('PL', 'Asia Flavours', 'Grocery', 'Seafood & Fish', 'Dried wakame', 'dried', null, 'none', '5905118020511'),
   ('PL', 'Marinero', 'Grocery', 'Seafood & Fish', 'Tuńczyk kawałki w sosie własnym', 'not-applicable', 'Biedronka', 'none', '8429583014433')

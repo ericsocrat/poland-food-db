@@ -34,7 +34,7 @@ from (
     ('Crunchips', 'Crunchips X-CUT, Papryka', 516.0, 31.0, 2.3, 0, 51.0, 1.0, 4.6, 6.0, 1.8),
     ('Lorenz', 'Crunchips Sticks Ketchup', 510.0, 29.0, 2.2, 0, 54.0, 2.6, 4.6, 5.9, 0.8),
     ('Lorenz', 'Crunchips X-cut Chakalaka', 514.0, 31.0, 2.5, 0, 51.0, 1.7, 4.3, 5.5, 1.6),
-    ('TOP', 'Tortilla', 472.0, 22.0, 1.3, 0, 58.0, 0.0, 5.7, 7.3, 0.9),
+    ('Top', 'Tortilla', 472.0, 22.0, 1.3, 0, 58.0, 0.0, 5.7, 7.3, 0.9),
     ('Crunchips', 'Crunchips o smaku zielona cebulka', 528.0, 34.0, 2.3, 0, 48.0, 1.5, 4.2, 5.5, 1.7),
     ('Miami', 'Chrupki kukurydziane', 383.0, 2.7, 0.4, 0, 80.0, 0.6, 3.3, 8.1, 0.0),
     ('Top', 'Sticks smak ketchup', 519.0, 31.0, 3.0, 0, 52.0, 3.9, 4.5, 5.8, 1.1),

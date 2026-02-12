@@ -40,7 +40,7 @@ from (
     ('Roleski', 'Ketchup premium meksykański KETO', 43.0, 0.5, 0.1, 0, 6.7, 4.8, 0, 2.1, 2.4),
     ('Międzychód', 'Ketchup łagodny', 100.0, 0.5, 0.1, 0, 21.0, 19.0, 0, 1.7, 1.2),
     ('Na Szlaku Smaku', 'Ketchup łagodny', 135.0, 0.5, 0.1, 0, 32.0, 32.0, 0, 1.3, 2.8),
-    ('Polskie przetwory', 'Ketchup łagodny', 102.0, 0.5, 0.1, 0, 21.6, 18.9, 0, 1.8, 1.5),
+    ('Polskie Przetwory', 'Ketchup łagodny', 102.0, 0.5, 0.1, 0, 21.6, 18.9, 0, 1.8, 1.5),
     ('Roleski', 'Ketchup łagodny', 46.0, 0.5, 0.1, 0, 11.0, 5.9, 0, 0.5, 2.1),
     ('Kotlin', 'Ketchup z truskawką', 101.0, 0.5, 0.1, 0, 22.0, 19.0, 0, 1.4, 2.0),
     ('Reypol', 'Ketchup Ziołowy Premium z Nasionami Konopi', 121.0, 3.6, 0.4, 0, 17.0, 16.0, 2.2, 3.9, 1.9),

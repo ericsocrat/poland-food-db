@@ -20,7 +20,7 @@ select
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
 from (
   values
-    ('E.Wedel', 'Czekolada gorzka Wiśniowa', 484.0, 26.0, 14.0, 0, 56.0, 53.0, 4.8, 4.7, 0.1),
+    ('E. Wedel', 'Czekolada gorzka Wiśniowa', 484.0, 26.0, 14.0, 0, 56.0, 53.0, 4.8, 4.7, 0.1),
     ('Choctopus', 'Czekolada bąbelkowa mleczna', 531.0, 29.0, 18.0, 0, 59.0, 59.0, 0, 5.9, 0.2),
     ('Wawel', 'Czekolada gorzka z kandyzowaną skórką pomarańczy', 546.0, 39.0, 24.0, 0, 35.0, 32.0, 0, 8.8, 0.0),
     ('Biedronka', 'Belgijska czekolada mleczna z kawałkami słonego karmelu', 530.0, 29.0, 19.0, 0, 60.0, 59.0, 2.0, 5.6, 0.3),
@@ -45,7 +45,7 @@ from (
     ('E. Wedel', 'Gorzka Kokosowa', 532.0, 32.0, 19.0, 0, 52.0, 50.0, 5.8, 6.0, 0.2),
     ('Mellie', 'Dark Chocolate Orange', 532.0, 36.0, 0, 0, 38.0, 32.0, 12.0, 7.7, 0.1),
     ('E. Wedel', 'Mocno Mleczna', 556.0, 33.3, 18.5, 0.0, 55.6, 55.6, 0.0, 7.4, 0.2),
-    ('E.Wedel', 'Czekolada Tiramisu', 524.0, 29.0, 15.0, 0, 58.0, 57.0, 1.3, 5.5, 0.2),
+    ('E. Wedel', 'Czekolada Tiramisu', 524.0, 29.0, 15.0, 0, 58.0, 57.0, 1.3, 5.5, 0.2),
     ('E. Wedel', 'Mleczna malinowa', 483.0, 26.0, 13.0, 0, 59.0, 57.0, 1.5, 3.5, 0.1),
     ('Biedronka', 'Czekolada gorzka 95% kakao', 591.0, 52.0, 32.0, 0, 10.0, 3.0, 18.0, 12.0, 0.1),
     ('Unknown', 'Czekolada Biała z chrupkami kakaowymi', 520.8, 27.1, 17.1, 0, 62.5, 58.3, 0, 5.4, 0.0),

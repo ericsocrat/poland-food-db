@@ -17,7 +17,7 @@ where ean in ('5901588017457', '5905858671592', '5900102009978', '5907180316417'
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('PL', 'E.Wedel', 'Grocery', 'Sweets', 'Czekolada gorzka Wiśniowa', 'not-applicable', 'Auchan', 'none', '5901588017457'),
+  ('PL', 'E. Wedel', 'Grocery', 'Sweets', 'Czekolada gorzka Wiśniowa', 'not-applicable', 'Auchan', 'none', '5901588017457'),
   ('PL', 'Choctopus', 'Grocery', 'Sweets', 'Czekolada bąbelkowa mleczna', 'not-applicable', 'Żabka', 'none', '5905858671592'),
   ('PL', 'Wawel', 'Grocery', 'Sweets', 'Czekolada gorzka z kandyzowaną skórką pomarańczy', 'not-applicable', 'Auchan', 'none', '5900102009978'),
   ('PL', 'Biedronka', 'Grocery', 'Sweets', 'Belgijska czekolada mleczna z kawałkami słonego karmelu', 'not-applicable', 'Biedronka', 'none', '5907180316417'),
@@ -42,7 +42,7 @@ values
   ('PL', 'E. Wedel', 'Grocery', 'Sweets', 'Gorzka Kokosowa', 'not-applicable', 'Żabka', 'none', '5901588017839'),
   ('PL', 'Mellie', 'Grocery', 'Sweets', 'Dark Chocolate Orange', 'not-applicable', 'Biedronka', 'none', '5905858670755'),
   ('PL', 'E. Wedel', 'Grocery', 'Sweets', 'Mocno Mleczna', 'not-applicable', 'Żabka', 'none', '5901588018652'),
-  ('PL', 'E.Wedel', 'Grocery', 'Sweets', 'Czekolada Tiramisu', 'not-applicable', 'Biedronka', 'none', '5901588017617'),
+  ('PL', 'E. Wedel', 'Grocery', 'Sweets', 'Czekolada Tiramisu', 'not-applicable', 'Biedronka', 'none', '5901588017617'),
   ('PL', 'E. Wedel', 'Grocery', 'Sweets', 'Mleczna malinowa', 'not-applicable', 'Żabka', 'none', '5901588016498'),
   ('PL', 'Biedronka', 'Grocery', 'Sweets', 'Czekolada gorzka 95% kakao', 'not-applicable', 'Biedronka', 'none', '5904358565844'),
   ('PL', 'Unknown', 'Grocery', 'Sweets', 'Czekolada Biała z chrupkami kakaowymi', 'not-applicable', null, 'none', '5907443604817'),

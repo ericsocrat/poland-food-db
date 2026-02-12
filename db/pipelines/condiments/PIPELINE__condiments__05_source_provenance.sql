@@ -28,7 +28,7 @@ FROM (
     ('Roleski', 'Ketchup premium meksykański KETO', 'https://world.openfoodfacts.org/product/5901044027532', '5901044027532'),
     ('Międzychód', 'Ketchup łagodny', 'https://world.openfoodfacts.org/product/5901619150948', '5901619150948'),
     ('Na Szlaku Smaku', 'Ketchup łagodny', 'https://world.openfoodfacts.org/product/5906734827294', '5906734827294'),
-    ('Polskie przetwory', 'Ketchup łagodny', 'https://world.openfoodfacts.org/product/5901986081050', '5901986081050'),
+    ('Polskie Przetwory', 'Ketchup łagodny', 'https://world.openfoodfacts.org/product/5901986081050', '5901986081050'),
     ('Roleski', 'Ketchup łagodny', 'https://world.openfoodfacts.org/product/5908235940083', '5908235940083'),
     ('Kotlin', 'Ketchup z truskawką', 'https://world.openfoodfacts.org/product/5900385501640', '5900385501640'),
     ('Reypol', 'Ketchup Ziołowy Premium z Nasionami Konopi', 'https://world.openfoodfacts.org/product/5902501342007', '5902501342007'),

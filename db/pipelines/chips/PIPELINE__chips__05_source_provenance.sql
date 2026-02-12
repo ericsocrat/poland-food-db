@@ -22,7 +22,7 @@ FROM (
     ('Crunchips', 'Crunchips X-CUT, Papryka', 'https://world.openfoodfacts.org/product/5905187114685', '5905187114685'),
     ('Lorenz', 'Crunchips Sticks Ketchup', 'https://world.openfoodfacts.org/product/5905187114883', '5905187114883'),
     ('Lorenz', 'Crunchips X-cut Chakalaka', 'https://world.openfoodfacts.org/product/5905187114708', '5905187114708'),
-    ('TOP', 'Tortilla', 'https://world.openfoodfacts.org/product/5900928088607', '5900928088607'),
+    ('Top', 'Tortilla', 'https://world.openfoodfacts.org/product/5900928088607', '5900928088607'),
     ('Crunchips', 'Crunchips o smaku zielona cebulka', 'https://world.openfoodfacts.org/product/5905187114753', '5905187114753'),
     ('Miami', 'Chrupki kukurydziane', 'https://world.openfoodfacts.org/product/5900672001709', '5900672001709'),
     ('Top', 'Sticks smak ketchup', 'https://world.openfoodfacts.org/product/5900073020583', '5900073020583'),

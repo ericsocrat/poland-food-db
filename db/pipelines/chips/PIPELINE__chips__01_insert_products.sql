@@ -31,7 +31,7 @@ values
   ('PL', 'Crunchips', 'Grocery', 'Chips', 'Crunchips X-CUT, Papryka', 'not-applicable', 'Żabka', 'none', '5905187114685'),
   ('PL', 'Lorenz', 'Grocery', 'Chips', 'Crunchips Sticks Ketchup', 'not-applicable', 'Biedronka', 'none', '5905187114883'),
   ('PL', 'Lorenz', 'Grocery', 'Chips', 'Crunchips X-cut Chakalaka', 'not-applicable', 'Auchan', 'none', '5905187114708'),
-  ('PL', 'TOP', 'Grocery', 'Chips', 'Tortilla', 'not-applicable', 'Biedronka', 'none', '5900928088607'),
+  ('PL', 'Top', 'Grocery', 'Chips', 'Tortilla', 'not-applicable', 'Biedronka', 'none', '5900928088607'),
   ('PL', 'Crunchips', 'Grocery', 'Chips', 'Crunchips o smaku zielona cebulka', 'not-applicable', 'Auchan', 'none', '5905187114753'),
   ('PL', 'Miami', 'Grocery', 'Chips', 'Chrupki kukurydziane', 'not-applicable', 'Biedronka', 'none', '5900672001709'),
   ('PL', 'Top', 'Grocery', 'Chips', 'Sticks smak ketchup', 'not-applicable', 'Biedronka', 'none', '5900073020583'),

@@ -19,7 +19,7 @@ FROM (
     ('Krakus', 'Gulasz angielski 95 % mięsa', 'https://world.openfoodfacts.org/product/5900244010030', '5900244010030'),
     ('Kraina Wędlin', 'Szynka Zawędzana', 'https://world.openfoodfacts.org/product/5900562460111', '5900562460111'),
     ('Dania Express', 'Polędwiczki z kurczaka panierowane', 'https://world.openfoodfacts.org/product/5900757062090', '5900757062090'),
-    ('Kraina Wedlin', 'Polędwica drobiowa', 'https://world.openfoodfacts.org/product/5900331602155', '5900331602155'),
+    ('Kraina Wędlin', 'Polędwica drobiowa', 'https://world.openfoodfacts.org/product/5900331602155', '5900331602155'),
     ('Kraina Wędlin', 'Kiełbasa Żywiecka z indyka', 'https://world.openfoodfacts.org/product/5900567012001', '5900567012001'),
     ('Kraina Wędlin', 'Szynka Wędzona', 'https://world.openfoodfacts.org/product/5900562435614', '5900562435614'),
     ('Kraina Wędlin', 'Kiełbasa Myśliwska', 'https://world.openfoodfacts.org/product/5906245779020', '5906245779020'),
