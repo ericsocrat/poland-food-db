@@ -288,20 +288,42 @@ if (Test-Path $test3File) {
         $jsonResult.suites += @{ name = $suiteByNum[3].Name; suite_id = $suiteByNum[3].Id; checks = $suite3Checks; status = "error"; blocking = $false; runtime_ms = [math]::Round($sw3.Elapsed.TotalMilliseconds) }
     }
     else {
+        $actionableCountQuery = @"
+SELECT COUNT(DISTINCT p.product_id)
+FROM products p
+WHERE p.is_deprecated IS NOT TRUE
+  AND (
+      p.source_type IS NULL
+      OR p.source_type = 'off_api'
+      OR (p.source_type IS NOT NULL AND p.source_type NOT IN ('label_scan', 'retailer_api'))
+      OR p.confidence = 'estimated'
+  );
+"@
+
+        $actionableOutput = Invoke-Psql -InputSql $actionableCountQuery -TuplesOnly
+        $actionableCount = 0
+        if ($LASTEXITCODE -eq 0) {
+            $actionableText = ($actionableOutput | Out-String).Trim()
+            if ($actionableText -match '(\d+)') {
+                $actionableCount = [int]$Matches[1]
+            }
+        }
+
         $sw3.Stop()
         $test3Lines = ($test3Output | Out-String).Trim()
-        if ($test3Lines -eq "" -or $test3Lines -match '^\s*$') {
+        $infoRowCount = if ($test3Lines -eq "" -or $test3Lines -match '^\s*$') { 0 } else { (Get-NonEmptyLines -Text $test3Lines).Count }
+        if ($actionableCount -eq 0) {
             Write-Host "  ✓ All products have multi-source coverage [$([math]::Round($sw3.Elapsed.TotalMilliseconds))ms]" -ForegroundColor Green
-            $jsonResult.suites += @{ name = $suiteByNum[3].Name; suite_id = $suiteByNum[3].Id; checks = $suite3Checks; status = "pass"; blocking = $false; flagged = 0; runtime_ms = [math]::Round($sw3.Elapsed.TotalMilliseconds) }
+            $jsonResult.suites += @{ name = $suiteByNum[3].Name; suite_id = $suiteByNum[3].Id; checks = $suite3Checks; status = "pass"; blocking = $false; flagged_actionable = 0; flagged_rows_total = $infoRowCount; runtime_ms = [math]::Round($sw3.Elapsed.TotalMilliseconds) }
             $suitePass[3] = $true
         }
         else {
-            $singleSourceCount = ($test3Lines -split "`n" | Where-Object { $_ -match '\S' }).Count
-            Write-Host "  ⚠ $singleSourceCount items flagged for cross-validation (non-blocking) [$([math]::Round($sw3.Elapsed.TotalMilliseconds))ms]" -ForegroundColor DarkYellow
+            Write-Host "  ⚠ $actionableCount products flagged for cross-validation (non-blocking) [$([math]::Round($sw3.Elapsed.TotalMilliseconds))ms]" -ForegroundColor DarkYellow
+            Write-Host "    Informational rows returned by suite query set: $infoRowCount" -ForegroundColor DarkGray
             Write-Host "    Run QA__source_coverage.sql directly for details." -ForegroundColor DarkGray
             $hasWarnings = $true
-            $jsonResult.suites += @{ name = $suiteByNum[3].Name; suite_id = $suiteByNum[3].Id; checks = $suite3Checks; status = "warn"; blocking = $false; flagged = $singleSourceCount; runtime_ms = [math]::Round($sw3.Elapsed.TotalMilliseconds) }
-            $jsonResult.summary.warnings += $singleSourceCount
+            $jsonResult.suites += @{ name = $suiteByNum[3].Name; suite_id = $suiteByNum[3].Id; checks = $suite3Checks; status = "warn"; blocking = $false; flagged_actionable = $actionableCount; flagged_rows_total = $infoRowCount; runtime_ms = [math]::Round($sw3.Elapsed.TotalMilliseconds) }
+            $jsonResult.summary.warnings += $actionableCount
             $suitePass[3] = $false
         }
     }
