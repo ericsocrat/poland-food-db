@@ -7,7 +7,7 @@
         1. QA__null_checks.sql (29 data integrity checks)
         2. QA__scoring_formula_tests.sql (27 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
-        4. validate_eans.py (EAN-13 checksum validation — blocking)
+        4. validate_eans.py (EAN-8/EAN-13 checksum validation — blocking)
         5. QA__api_surfaces.sql (14 API contract validation checks — blocking)
         6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
         7. QA__data_quality.sql (25 data quality & plausibility checks — blocking)
@@ -137,6 +137,23 @@ function Get-FailedCheckLines {
     return @($allLines | Where-Object { $_ -match '^\s*\d+\.\s+.+\|\s*[1-9]\d*\s*$' })
 }
 
+function Write-TrimmedViolationOutput {
+    param(
+        [string]$Text,
+        [int]$MaxLines = 40
+    )
+
+    $lines = @(Get-NonEmptyLines -Text $Text)
+    if ($lines.Count -le $MaxLines) {
+        Write-Host $Text -ForegroundColor DarkRed
+        return
+    }
+
+    $head = @($lines | Select-Object -First $MaxLines)
+    Write-Host ($head -join "`n") -ForegroundColor DarkRed
+    Write-Host "  ... ($($lines.Count - $MaxLines) additional lines omitted; use individual QA SQL for full details)" -ForegroundColor DarkGray
+}
+
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "  Poland Food DB — QA Test Suite" -ForegroundColor Cyan
@@ -183,7 +200,7 @@ if ($test1Lines -eq "" -or $test1Lines -match '^\s*$') {
 else {
     $sw1.Stop()
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
-    Write-Host $test1Lines -ForegroundColor DarkRed
+    Write-TrimmedViolationOutput -Text $test1Lines
     $test1Pass = $false
     $failedCheckLines = @(Get-FailedCheckLines -Text $test1Lines)
     $nonEmptyLines = @(Get-NonEmptyLines -Text $test1Lines)
@@ -234,7 +251,7 @@ if ($test2Lines -eq "" -or $test2Lines -match '^\s*$') {
 else {
     $sw2.Stop()
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
-    Write-Host $test2Lines -ForegroundColor DarkRed
+    Write-TrimmedViolationOutput -Text $test2Lines
     $test2Pass = $false
     $failedCheckLines2 = @(Get-FailedCheckLines -Text $test2Lines)
     $nonEmptyLines2 = @(Get-NonEmptyLines -Text $test2Lines)
@@ -379,7 +396,7 @@ function Invoke-SqlQASuite {
     }
     else {
         Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
-        Write-Host $lines -ForegroundColor DarkRed
+        Write-TrimmedViolationOutput -Text $lines
         $violationList = ($violations | ForEach-Object { $_.Trim() })
         $script:jsonResult.suites += @{ name = $Name; suite_id = $SuiteId; checks = $Checks; status = "fail"; violations = @($violationList); runtime_ms = [math]::Round($sw.Elapsed.TotalMilliseconds) }
         $script:jsonResult.summary.total_checks += $Checks; $script:jsonResult.summary.failed += $violationList.Count; $script:jsonResult.summary.passed += ($Checks - $violationList.Count)
