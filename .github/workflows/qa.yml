@@ -11,6 +11,8 @@ on:
       - "validate_eans.py"
       - "enrich_ingredients.py"
       - "check_enrichment_identity.py"
+      - "check_pipeline_structure.py"
+      - "fetch_off_category.py"
       - ".github/workflows/**"
   pull_request:
     branches: [main]
@@ -66,6 +68,11 @@ jobs:
         run: |
           set -euo pipefail
           python check_enrichment_identity.py
+
+      - name: Pipeline structure guard
+        run: |
+          set -euo pipefail
+          python check_pipeline_structure.py
 
       - name: Apply schema migrations
         run: |
