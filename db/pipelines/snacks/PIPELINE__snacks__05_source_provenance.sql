@@ -1,0 +1,70 @@
+-- PIPELINE (Snacks): source provenance
+-- Generated: 2026-02-12
+
+-- 1. Update source info on products
+UPDATE products p SET
+  source_type = 'off_api',
+  source_url = d.source_url,
+  source_ean = d.source_ean
+FROM (
+  VALUES
+    ('7 Days', '7days', 'https://world.openfoodfacts.org/product/5201360677351', '5201360677351'),
+    ('7 Days', 'Croissant with Cocoa Filling', 'https://world.openfoodfacts.org/product/5201360521210', '5201360521210'),
+    ('Aksam', 'Beskidzkie paluszki o smaku sera i cebulki', 'https://world.openfoodfacts.org/product/5907029010797', '5907029010797'),
+    ('As Babuni', 'Chrup Asy Wafle Paprykowe', 'https://world.openfoodfacts.org/product/5905299001194', '5905299001194'),
+    ('Aviko', 'Frytki karbowane Zig Zag', 'https://world.openfoodfacts.org/product/8710449944439', '8710449944439'),
+    ('Bakalland', 'Ba! żurawina', 'https://world.openfoodfacts.org/product/5900749610988', '5900749610988'),
+    ('Baron', 'Protein BarMax Caramel', 'https://world.openfoodfacts.org/product/59096009', '59096009'),
+    ('Be raw', 'Energy Raspberry', 'https://world.openfoodfacts.org/product/5903246562552', '5903246562552'),
+    ('Bob Snail', 'Jabłkowo-truskawkowe przekąski', 'https://world.openfoodfacts.org/product/4820162520316', '4820162520316'),
+    ('Brześć', 'Słomka ptysiowa', 'https://world.openfoodfacts.org/product/5907799960902', '5907799960902'),
+    ('Dobra Kaloria', 'Kokos & Orzech', 'https://world.openfoodfacts.org/product/5903548002022', '5903548002022'),
+    ('Dobra Kaloria', 'Mini batoniki z nerkowców à la tarta malinowa', 'https://world.openfoodfacts.org/product/5903548002411', '5903548002411'),
+    ('Dobra Kaloria', 'Wysokobiałkowy Baton Krem Orzechowy Z Nutą Karmelu', 'https://world.openfoodfacts.org/product/5903548002206', '5903548002206'),
+    ('Go Active', 'Baton białkowy malinowy', 'https://world.openfoodfacts.org/product/5901888021314', '5901888021314'),
+    ('Go Active', 'Baton Proteinowy Smak Waniliowy 50%', 'https://world.openfoodfacts.org/product/5907554476143', '5907554476143'),
+    ('Go Active', 'Baton wysokobiałkowy Peanut Butter', 'https://world.openfoodfacts.org/product/5905186300003', '5905186300003'),
+    ('Go Active', 'Baton wysokobiałkowy z migdałami i kokosem', 'https://world.openfoodfacts.org/product/8595229924449', '8595229924449'),
+    ('Go Active', 'Baton wysokobiałkowy z pistacjami', 'https://world.openfoodfacts.org/product/8595229924432', '8595229924432'),
+    ('Go On', 'Keto Bar', 'https://world.openfoodfacts.org/product/5900617044341', '5900617044341'),
+    ('Go On', 'Sante Baton Proteinowy Go On Kakaowy', 'https://world.openfoodfacts.org/product/5900617013064', '5900617013064'),
+    ('Go On Nutrition', 'Protein 33% Caramel', 'https://world.openfoodfacts.org/product/5900617035905', '5900617035905'),
+    ('Góralki', 'Góralki mleczne', 'https://world.openfoodfacts.org/product/8584004042089', '8584004042089'),
+    ('Hyperfood', 'Eatyx Wanilla', 'https://world.openfoodfacts.org/product/5905741540004', '5905741540004'),
+    ('Kupiec', 'Wafle ryżowe naturalne', 'https://world.openfoodfacts.org/product/5902172001524', '5902172001524'),
+    ('Lajkonik', 'Drobne pieczywo o smaku waniliowym', 'https://world.openfoodfacts.org/product/5900320003536', '5900320003536'),
+    ('Lajkonik', 'Junior Safari', 'https://world.openfoodfacts.org/product/5900320003420', '5900320003420'),
+    ('Lajkonik', 'Krakersy mini', 'https://world.openfoodfacts.org/product/5900320008463', '5900320008463'),
+    ('Lajkonik', 'Paluszki extra cienkie', 'https://world.openfoodfacts.org/product/5900320005950', '5900320005950'),
+    ('Lajkonik', 'Precelki chrupkie', 'https://world.openfoodfacts.org/product/5900320007794', '5900320007794'),
+    ('Lajkonik', 'Salted cracker', 'https://world.openfoodfacts.org/product/5900320001136', '5900320001136'),
+    ('Lay''s', 'Oven Baked Krakersy wielozbożowe', 'https://world.openfoodfacts.org/product/5900259115393', '5900259115393'),
+    ('Lorenz', 'Chrupki Curly', 'https://world.openfoodfacts.org/product/5905187001237', '5905187001237'),
+    ('Lubella', 'Paluszki z solą', 'https://world.openfoodfacts.org/product/5900049041017', '5900049041017'),
+    ('Maretti', 'Bruschette Chips Pizza Flavour', 'https://world.openfoodfacts.org/product/3800205871255', '3800205871255'),
+    ('Miami', 'Paleczki', 'https://world.openfoodfacts.org/product/5900672001563', '5900672001563'),
+    ('Milka', 'Cake & Chock', 'https://world.openfoodfacts.org/product/7622300784751', '7622300784751'),
+    ('Oshee', 'Raspberry & Almond High Protein Bar PROMO', 'https://world.openfoodfacts.org/product/5905868420999', '5905868420999'),
+    ('Pano', 'Wafle Kukurydziane z Kaszą jaglaną i Pieprzem', 'https://world.openfoodfacts.org/product/5900125008750', '5900125008750'),
+    ('Pano', 'Wafle mini, zbożowe', 'https://world.openfoodfacts.org/product/5902973790894', '5902973790894'),
+    ('Pilos', 'Barretta al quark gusto Nocciola', 'https://world.openfoodfacts.org/product/20720285', '20720285'),
+    ('San', 'San bieszczadzkie suchary', 'https://world.openfoodfacts.org/product/5906747309893', '5906747309893'),
+    ('Sante', 'Crunchy Cranberry & Raspberry - Santé', 'https://world.openfoodfacts.org/product/5900617015723', '5900617015723'),
+    ('Sante', 'Vitamin coconut bar', 'https://world.openfoodfacts.org/product/5900617034809', '5900617034809'),
+    ('Sonko', 'Wafle ryżowe w czekoladzie mlecznej', 'https://world.openfoodfacts.org/product/5902180470336', '5902180470336'),
+    ('Tastino', 'Małe Wafle Kukurydziane O Smaku Pizzy', 'https://world.openfoodfacts.org/product/4056489814092', '4056489814092'),
+    ('Tastino', 'Wafle Kukurydziane', 'https://world.openfoodfacts.org/product/4056489784050', '4056489784050'),
+    ('Top', 'Paluszki solone', 'https://world.openfoodfacts.org/product/5900928004676', '5900928004676'),
+    ('Tutti', 'Batonik twarogowy Tutti w polewie czekoladowej', 'https://world.openfoodfacts.org/product/4770299395595', '4770299395595'),
+    ('Unknown', 'Baton Vitanella z migdałami, żurawiną i orzeszkami ziemnymi', 'https://world.openfoodfacts.org/product/5201049132560', '5201049132560'),
+    ('Unknown', 'Protein vanillia raspberry', 'https://world.openfoodfacts.org/product/5907554479731', '5907554479731'),
+    ('Vital Fresh', 'Surówka Colesław z białej kapusty', 'https://world.openfoodfacts.org/product/5900449006890', '5900449006890'),
+    ('Vital Fresh', 'Surówka Smakołyk', 'https://world.openfoodfacts.org/product/5900449006913', '5900449006913'),
+    ('Vitanella', 'Barony', 'https://world.openfoodfacts.org/product/8595229923398', '8595229923398'),
+    ('Vitanella', 'Baton select orzeszki ziemne, migdały, sól morska', 'https://world.openfoodfacts.org/product/5201049132584', '5201049132584'),
+    ('Wafle Dzik', 'Kukurydziane - ser', 'https://world.openfoodfacts.org/product/5902176738938', '5902176738938'),
+    ('Wasa', 'Lekkie 7 Ziaren', 'https://world.openfoodfacts.org/product/7300400115889', '7300400115889')
+) AS d(brand, product_name, source_url, source_ean)
+WHERE p.brand = d.brand
+  AND p.product_name = d.product_name
+  AND p.is_deprecated = FALSE;

@@ -53,7 +53,11 @@ FROM (
     ('Mlekovita', 'Jogurt Grecki naturalny', 'https://world.openfoodfacts.org/product/5900512350080', '5900512350080'),
     ('Delikate', 'Delikate Serek Smetankowy', 'https://world.openfoodfacts.org/product/5900120072480', '5900120072480'),
     ('Mleczna Dolina', 'Śmietana', 'https://world.openfoodfacts.org/product/5907180315847', '5907180315847'),
-    ('OSM Łowicz', 'Mleko UHT 3,2', 'https://world.openfoodfacts.org/product/5900120011199', '5900120011199')
+    ('OSM Łowicz', 'Mleko UHT 3,2', 'https://world.openfoodfacts.org/product/5900120011199', '5900120011199'),
+    ('Go Active', 'Pudding proteinowy', 'https://world.openfoodfacts.org/product/8595588200697', '8595588200697'),
+    ('Mlekovita', 'Bezwodny tłuszcz mleczny, Masło klarowane', 'https://world.openfoodfacts.org/product/5900512300054', '5900512300054'),
+    ('Piątnica', 'Twaróg wiejski tłusty', 'https://world.openfoodfacts.org/product/5900531004025', '5900531004025'),
+    ('Piątnica', 'Koktajl z białkiem serwatkowym', 'https://world.openfoodfacts.org/product/5901939006031', '5901939006031')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

@@ -3,8 +3,8 @@
 
 > **Last updated:** 2026-02-12
 > **Scope:** Poland (`PL`) only — no other countries active
-> **Products:** 1,029 active (20 categories), 34 deprecated
-> **EAN coverage:** 1,000/1,029 (97.2%)
+> **Products:** 1,025 active (20 categories), 38 deprecated
+> **EAN coverage:** 997/1,025 (97.3%)
 > **Scoring:** v3.2 — 9-factor weighted formula via `compute_unhealthiness_v32()` (added ingredient concern scoring)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 1,471 unique ingredients (all clean ASCII English), 988 allergen declarations, 999 trace declarations
@@ -95,7 +95,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 50 append-only schema migrations
+│   └── migrations/                  # 51 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -137,7 +137,7 @@ poland-food-db/
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
 │   ├── COUNTRY_EXPANSION_GUIDE.md   # Future multi-country protocol
 │   ├── UX_UI_DESIGN.md              # UI/UX guidelines
-│   ├── EAN_VALIDATION_STATUS.md     # 1,000/1,029 coverage (97.2%)
+│   ├── EAN_VALIDATION_STATUS.md     # 997/1,025 coverage (97.3%)
 │   └── EAN_EXPANSION_PLAN.md        # Completed
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (226 checks across 15 suites)
@@ -209,7 +209,7 @@ poland-food-db/
 
 **`v_api_category_overview`** — Dashboard-ready category statistics. One row per active category (20 total). Includes product_count, avg/min/max/median score, pct_nutri_a_b, pct_nova_4, display metadata from category_ref.
 
-**`v_product_confidence`** — Materialized view of data confidence scores for all 1,029 active products. Columns: product_id, product_name, brand, category, nutrition_pts(0-30), ingredient_pts(0-25), source_pts(0-20), ean_pts(0-10), allergen_pts(0-10), serving_pts(0-5), confidence_score(0-100), confidence_band(high/medium/low). Unique index on product_id.
+**`v_product_confidence`** — Materialized view of data confidence scores for all 1,025 active products. Columns: product_id, product_name, brand, category, nutrition_pts(0-30), ingredient_pts(0-25), source_pts(0-20), ean_pts(0-10), allergen_pts(0-10), serving_pts(0-5), confidence_score(0-100), confidence_band(high/medium/low). Unique index on product_id.
 
 ---
 
@@ -299,7 +299,7 @@ Additional valid values (scored as 50/default unless added to the scoring functi
 The pipeline's `_detect_prep_method()` infers these from OFF category tags and
 product names (both English and Polish keywords).
 
-**Data state:** All 1,029 active products have `prep_method` populated (0 NULLs).
+**Data state:** All 1,025 active products have `prep_method` populated (0 NULLs).
 14 categories use `'not-applicable'`. 5 method-sensitive categories (Bread,
 Chips, Frozen & Prepared, Seafood & Fish, Snacks) use category-specific values
 (`'baked'`, `'fried'`, `'smoked'`, `'marinated'`, `'not-applicable'`). Żabka uses

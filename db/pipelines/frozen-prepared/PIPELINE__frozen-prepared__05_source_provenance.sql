@@ -56,7 +56,8 @@ FROM (
     ('Kilargo', 'Marletto Salted Caramel Lava', 'https://world.openfoodfacts.org/product/5907377116677', '5907377116677'),
     ('Hortex', 'Warzywa na patelnie', 'https://world.openfoodfacts.org/product/5900477000839', '5900477000839'),
     ('Koral', 'Lody Kukułka', 'https://world.openfoodfacts.org/product/5902121009793', '5902121009793'),
-    ('Mroźna Kraina', 'Warzywa na patelnie', 'https://world.openfoodfacts.org/product/5901028913387', '5901028913387')
+    ('Mroźna Kraina', 'Warzywa na patelnie', 'https://world.openfoodfacts.org/product/5901028913387', '5901028913387'),
+    ('Swojska Chata', 'Pierogi ruskie', 'https://world.openfoodfacts.org/product/5901398069974', '5901398069974')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

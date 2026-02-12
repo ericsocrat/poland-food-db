@@ -2,7 +2,7 @@
 
 [![QA Tests](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml)
 
-A multi-axis food quality database scoring **1,029 products** sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
+A multi-axis food quality database scoring **1,025 products** sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
 
 ## What This Project Is
 
@@ -66,30 +66,30 @@ supabase start
 
 ## 📊 Current Status
 
-**Database**: 1,029 active products across 20 categories (variable size, 34 deprecated products excluded)
+**Database**: 1,025 active products across 20 categories (variable size, 38 deprecated products excluded)
 
 | Category                       | Products | Brands | Score Range |
 | ------------------------------ | -------: | -----: | ----------- |
-| **Alcohol**                    |       30 |     26 | 4–17        |
-| **Baby**                       |       39 |     26 | 6–43        |
-| **Bread**                      |       60 |     34 | 9–40        |
-| **Breakfast & Grain-Based**    |       95 |     40 | 6–44        |
-| **Canned Goods**               |       49 |     29 | 5–30        |
-| **Cereals**                    |       42 |     17 | 12–45       |
-| **Chips**                      |       49 |     21 | 11–37       |
-| **Condiments**                 |       48 |     23 | 17–40       |
-| **Dairy**                      |       46 |     20 | 8–44        |
-| **Drinks**                     |       55 |     29 | 4–25        |
-| **Frozen & Prepared**          |       49 |     25 | 5–46        |
-| **Instant & Frozen**           |       50 |     19 | 6–49        |
-| **Meat**                       |       48 |     27 | 9–46        |
-| **Nuts, Seeds & Legumes**      |       46 |     22 | 23–46       |
-| **Plant-Based & Alternatives** |       48 |     36 | 6–39        |
-| **Sauces**                     |       96 |     47 | 7–41        |
-| **Seafood & Fish**             |       50 |     24 | 8–34        |
-| **Snacks**                     |       53 |     40 | 9–49        |
-| **Sweets**                     |       48 |     18 | 30–51       |
-| **Żabka**                      |       28 |      3 | 13–34       |
+| **Alcohol**                    |       30 |     25 | 4–17        |
+| **Baby**                       |        9 |      4 | 8–34        |
+| **Bread**                      |       60 |     33 | 9–40        |
+| **Breakfast & Grain-Based**    |       94 |     34 | 6–44        |
+| **Canned Goods**               |       49 |     27 | 5–30        |
+| **Cereals**                    |       42 |     16 | 12–45       |
+| **Chips**                      |       50 |     21 | 11–37       |
+| **Condiments**                 |       55 |     28 | 9–40        |
+| **Dairy**                      |       50 |     20 | 8–44        |
+| **Drinks**                     |       61 |     28 | 4–30        |
+| **Frozen & Prepared**          |       50 |     23 | 5–46        |
+| **Instant & Frozen**           |       52 |     21 | 6–49        |
+| **Meat**                       |       49 |     26 | 9–46        |
+| **Nuts, Seeds & Legumes**      |       44 |     21 | 23–46       |
+| **Plant-Based & Alternatives** |       48 |     33 | 6–39        |
+| **Sauces**                     |       98 |     46 | 6–41        |
+| **Seafood & Fish**             |       51 |     25 | 8–34        |
+| **Snacks**                     |       56 |     37 | 7–49        |
+| **Sweets**                     |       50 |     19 | 30–51       |
+| **Żabka**                      |       27 |      3 | 13–34       |
 **Test Coverage**: 226 automated checks across 15 QA suites + 29 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
@@ -110,7 +110,7 @@ supabase start
 
 **All tests passing**: ✅ 226/226 + 29/29 negative
 
-**EAN Coverage**: 1,000/1,029 active products (97.2%) have valid EAN-8/EAN-13 barcodes
+**EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
 ---
 
@@ -121,26 +121,26 @@ poland-food-db/
 ├── db/
 │   ├── migrations/          # (empty — consolidated into supabase/migrations)
 │   ├── pipelines/           # Category-specific data pipelines
-│   │   ├── alcohol/         # 31 alcohol products (4 SQL files)
-│   │   ├── baby/            # 49 baby products (4 SQL files)
-│   │   ├── bread/           # 59 bread products (4 SQL files)
-│   │   ├── breakfast-grain-based/ # 99 breakfast products (4 SQL files)
-│   │   ├── canned-goods/    # 27 canned goods products (4 SQL files)
-│   │   ├── cereals/         # 46 cereal products (4 SQL files)
-    │   ├── chips/           # 28 chip products (4 SQL files)
-│   │   ├── condiments/      # 26 condiment products (4 SQL files)
-│   │   ├── dairy/           # 28 dairy products (4 SQL files)
-│   │   ├── drinks/          # 60 beverage products (4 SQL files)
-│   │   ├── frozen-prepared/ # 35 frozen & prepared products (4 SQL files)
-│   │   ├── instant-frozen/  # 28 instant & frozen products (4 SQL files)
-│   │   ├── meat/            # 27 meat & deli products (4 SQL files)
-│   │   ├── nuts-seeds-legumes/ # 28 nuts, seeds & legumes products (4 SQL files)
-│   │   ├── plant-based-alternatives/ # 50 plant-based products (4 SQL files)
-│   │   ├── sauces/          # 98 sauce products (4 SQL files)
-│   │   ├── seafood-fish/    # 35 seafood & fish products (4 SQL files)
-│   │   ├── snacks/          # 57 snack products (4 SQL files)
-│   │   ├── sweets/          # 28 sweets & chocolate products (4 SQL files)
-    │   └── zabka/           # 28 convenience store products (4 SQL files)
+│   │   ├── alcohol/         # 30 alcohol products (3 SQL files)
+│   │   ├── baby/            # 9 baby products (3 SQL files)
+│   │   ├── bread/           # 60 bread products (3 SQL files)
+│   │   ├── breakfast-grain-based/ # 94 breakfast products (3 SQL files)
+│   │   ├── canned-goods/    # 49 canned goods products (4 SQL files)
+│   │   ├── cereals/         # 42 cereal products (3 SQL files)
+│   │   ├── chips/           # 50 chip products (4 SQL files)
+│   │   ├── condiments/      # 55 condiment products (4 SQL files)
+│   │   ├── dairy/           # 50 dairy products (4 SQL files)
+│   │   ├── drinks/          # 61 beverage products (3 SQL files)
+│   │   ├── frozen-prepared/ # 50 frozen & prepared products (4 SQL files)
+│   │   ├── instant-frozen/  # 52 instant & frozen products (4 SQL files)
+│   │   ├── meat/            # 49 meat & deli products (4 SQL files)
+│   │   ├── nuts-seeds-legumes/ # 44 nuts, seeds & legumes products (4 SQL files)
+│   │   ├── plant-based-alternatives/ # 48 plant-based products (3 SQL files)
+│   │   ├── sauces/          # 98 sauce products (3 SQL files)
+│   │   ├── seafood-fish/    # 51 seafood & fish products (4 SQL files)
+│   │   ├── snacks/          # 56 snack products (3 SQL files)
+│   │   ├── sweets/          # 50 sweets & chocolate products (4 SQL files)
+│   │   └── zabka/           # 27 convenience store products (3 SQL files)
 │   ├── qa/                  # Quality assurance test suites
 │   │   ├── QA__null_checks.sql           # 29 integrity checks
 │   │   ├── QA__scoring_formula_tests.sql # 27 algorithm tests
@@ -161,7 +161,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (50 files)
+    └── migrations/          # Schema migrations (51 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness

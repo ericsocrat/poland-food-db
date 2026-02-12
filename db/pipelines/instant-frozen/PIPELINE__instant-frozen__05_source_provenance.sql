@@ -57,7 +57,9 @@ FROM (
     ('Reeva', 'Zupa o smaku sera i boczku', 'https://world.openfoodfacts.org/product/4820179256895', '4820179256895'),
     ('Winiary', 'Saucy noodles smak sweet chili', 'https://world.openfoodfacts.org/product/7613039253045', '7613039253045'),
     ('Knorr', 'Nudle Pieczony kurczak', 'https://world.openfoodfacts.org/product/8714100666630', '8714100666630'),
-    ('Ko-Lee', 'Instant Noodles Tomato Flavour', 'https://world.openfoodfacts.org/product/5023751000339', '5023751000339')
+    ('Ko-Lee', 'Instant Noodles Tomato Flavour', 'https://world.openfoodfacts.org/product/5023751000339', '5023751000339'),
+    ('Dania Express Biedronka', 'Lasagne Bolognese', 'https://world.openfoodfacts.org/product/5909000920620', '5909000920620'),
+    ('Nestlé', 'Leczo z mozzarellą i kluseczkami', 'https://world.openfoodfacts.org/product/7613035507142', '7613035507142')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

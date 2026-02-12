@@ -55,7 +55,14 @@ FROM (
     ('Włocławek', 'Ketchup pikantny', 'https://world.openfoodfacts.org/product/5901248001123', '5901248001123'),
     ('Krajowa Spółka Cukrowa', 'Ketchup lagoduy', 'https://world.openfoodfacts.org/product/5901986081111', '5901986081111'),
     ('Pudliszki', 'Ketchup Super Pikantny', 'https://world.openfoodfacts.org/product/5900783006426', '5900783006426'),
-    ('Develey', 'Ketchup Pikantny', 'https://world.openfoodfacts.org/product/5906425120215', '5906425120215')
+    ('Develey', 'Ketchup Pikantny', 'https://world.openfoodfacts.org/product/5906425120215', '5906425120215'),
+    ('Diamant', 'Cukier Biały', 'https://world.openfoodfacts.org/product/5907069000017', '5907069000017'),
+    ('Kamis', 'Kamis Musztarda Kremska 185G', 'https://world.openfoodfacts.org/product/5900084237895', '5900084237895'),
+    ('Królewski', 'Cukier 1 kg', 'https://world.openfoodfacts.org/product/5902136817550', '5902136817550'),
+    ('Maribel', 'Ahorn sirup', 'https://world.openfoodfacts.org/product/40893358', '40893358'),
+    ('Nestlé', 'Bulion drobiowy', 'https://world.openfoodfacts.org/product/7613036599009', '7613036599009'),
+    ('Nestlé', 'Przyprawa Maggi', 'https://world.openfoodfacts.org/product/5900085011180', '5900085011180'),
+    ('Polski Cukier', 'Cukier biały', 'https://world.openfoodfacts.org/product/5906340630011', '5906340630011')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

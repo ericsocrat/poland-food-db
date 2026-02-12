@@ -55,7 +55,9 @@ FROM (
     ('Magnetic', 'Czekolada mleczna', 'https://world.openfoodfacts.org/product/5902581689764', '5902581689764'),
     ('Allegro', 'Czekolada mleczna', 'https://world.openfoodfacts.org/product/5901677000612', '5901677000612'),
     ('Terravita', 'Czekolada deserowa', 'https://world.openfoodfacts.org/product/5900915028890', '5900915028890'),
-    ('E. Wedel', 'Jedyna Czekolada Wyborowa', 'https://world.openfoodfacts.org/product/5901588017822', '5901588017822')
+    ('E. Wedel', 'Jedyna Czekolada Wyborowa', 'https://world.openfoodfacts.org/product/5901588017822', '5901588017822'),
+    ('Leibniz', 'Minis classic', 'https://world.openfoodfacts.org/product/5901414204747', '5901414204747'),
+    ('Vitanella', 'Ciastka Czekolada & Zboża', 'https://world.openfoodfacts.org/product/5604127000216', '5604127000216')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

@@ -12,25 +12,27 @@
 
 ## Verified Baseline (live database at latest reconciliation)
 
+> **Updated 2026-02-12** after Baby re-categorization, brand normalization, source provenance backfill, and confidence function fix.
+
 | Metric                                  | Value                                  |
 | --------------------------------------- | -------------------------------------- |
-| Total products                          | 1,063 (1,029 active + 34 deprecated)   |
+| Total products                          | 1,063 (1,025 active + 38 deprecated)  |
 | Categories                              | 20                                     |
 | Nutrition                               | 1,032 (1:1 with scored products)       |
 | ingredient_ref                          | 1,132                                  |
 | product_ingredient                      | 0 (reset — awaiting re-enrichment)     |
 | product_allergen_info                   | 0 (reset — awaiting re-enrichment)     |
 | mv_ingredient_frequency                 | 1,132                                  |
-| v_product_confidence                    | 1,029                                  |
-| EAN coverage                            | 1,000/1,029 active (97.2%)             |
-| Score range / avg                       | 4–57 / 24.0                            |
-| Confidence bands                        | 0 high · 1,000 medium · 29 low         |
+| v_product_confidence                    | 1,025                                  |
+| EAN coverage                            | 997/1,025 active (97.3%)               |
+| Source provenance                        | 1,025/1,025 (100%)                     |
+| Score range / avg                       | 4–51 / 23.2                            |
+| Confidence (products.confidence)        | 1,025 verified · 0 estimated · 0 low   |
 | CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
-| Migration files                         | 50                                     |
+| Migration files                         | 52                                     |
 | QA checks                               | 226/226 pass + 29/29 negative tests    |
-| Project files                           | 177 files (4.61 MB)                    |
 
 ---
 

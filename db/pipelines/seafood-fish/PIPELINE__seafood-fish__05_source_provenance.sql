@@ -57,7 +57,8 @@ FROM (
     ('House of Asia', 'Nori', 'https://world.openfoodfacts.org/product/5907599956204', '5907599956204'),
     ('Purella', 'Chlorella detoks', 'https://world.openfoodfacts.org/product/5903246561913', '5903246561913'),
     ('Asia Flavours', 'Dried wakame', 'https://world.openfoodfacts.org/product/5905118020511', '5905118020511'),
-    ('Marinero', 'Tuńczyk kawałki w sosie własnym', 'https://world.openfoodfacts.org/product/8429583014433', '8429583014433')
+    ('Marinero', 'Tuńczyk kawałki w sosie własnym', 'https://world.openfoodfacts.org/product/8429583014433', '8429583014433'),
+    ('Kapitan navi', 'Śledzie po kołobrzesku', 'https://world.openfoodfacts.org/product/5900672220643', '5900672220643')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

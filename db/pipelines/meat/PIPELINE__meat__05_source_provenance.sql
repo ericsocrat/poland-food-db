@@ -55,7 +55,8 @@ FROM (
     ('Berlinki', 'Z Serem', 'https://world.openfoodfacts.org/product/5900567001517', '5900567001517'),
     ('Podlaski', 'Pasztet drobiowy', 'https://world.openfoodfacts.org/product/5901204000733', '5901204000733'),
     ('Unknown', 'Polędwiczki z kurczaka panierowane łagodna', 'https://world.openfoodfacts.org/product/5907799011031', '5907799011031'),
-    ('Animex Foods', 'Berlinki Kurczak', 'https://world.openfoodfacts.org/product/5901664003749', '5901664003749')
+    ('Animex Foods', 'Berlinki Kurczak', 'https://world.openfoodfacts.org/product/5901664003749', '5901664003749'),
+    ('Tarczyński', 'Kabanosy Z Kurczaka Protein', 'https://world.openfoodfacts.org/product/5908230535994', '5908230535994')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

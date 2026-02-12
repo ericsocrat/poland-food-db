@@ -56,7 +56,8 @@ FROM (
     ('Lay''s', 'Flamin'' Hot', 'https://world.openfoodfacts.org/product/5900259135339', '5900259135339'),
     ('Lorenz', 'Peppies Bacon Flavour', 'https://world.openfoodfacts.org/product/5905187001985', '5905187001985'),
     ('Lorenz', 'Monster Munch Mr BIG', 'https://world.openfoodfacts.org/product/5905187003897', '5905187003897'),
-    ('Lorenz', 'Wiejskie Ziemniaczki Cebulka', 'https://world.openfoodfacts.org/product/5905187109025', '5905187109025')
+    ('Lorenz', 'Wiejskie Ziemniaczki Cebulka', 'https://world.openfoodfacts.org/product/5905187109025', '5905187109025'),
+    ('Tastino', 'Papryka Barbecue', 'https://world.openfoodfacts.org/product/4056489784043', '4056489784043')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name
