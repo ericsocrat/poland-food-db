@@ -61,6 +61,24 @@ param(
 
 if ($OutFile) { $Json = $true }
 
+$script:JsonMode = [bool]$Json
+
+function Write-Host {
+    [CmdletBinding()]
+    param(
+        [Parameter(Position = 0, ValueFromRemainingArguments = $true)]
+        [object[]]$Object,
+        [ConsoleColor]$ForegroundColor,
+        [ConsoleColor]$BackgroundColor,
+        [switch]$NoNewline,
+        [object]$Separator
+    )
+
+    if (-not $script:JsonMode) {
+        Microsoft.PowerShell.Utility\Write-Host @PSBoundParameters
+    }
+}
+
 # JSON result accumulator
 $jsonResult = @{
     timestamp = (Get-Date -Format "o")
@@ -200,17 +218,21 @@ if ($test1Lines -eq "" -or $test1Lines -match '^\s*$') {
 else {
     $sw1.Stop()
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
-    Write-TrimmedViolationOutput -Text $test1Lines
     $test1Pass = $false
     $failedCheckLines = @(Get-FailedCheckLines -Text $test1Lines)
     $nonEmptyLines = @(Get-NonEmptyLines -Text $test1Lines)
     if ($failedCheckLines.Count -gt 0) {
         $violationList = $failedCheckLines
         $failedCount = $failedCheckLines.Count
+        Write-Host ($violationList -join "`n") -ForegroundColor DarkRed
+        if ($nonEmptyLines.Count -gt $failedCheckLines.Count) {
+            Write-Host "  ... ($($nonEmptyLines.Count - $failedCheckLines.Count) zero-violation rows omitted)" -ForegroundColor DarkGray
+        }
     }
     else {
         $violationList = @($nonEmptyLines | Select-Object -First 20)
         $failedCount = 1
+        Write-TrimmedViolationOutput -Text $test1Lines -MaxLines 20
     }
     $jsonResult.suites += @{ name = $suiteByNum[1].Name; suite_id = $suiteByNum[1].Id; checks = $suite1Checks; status = "fail"; violations = @($violationList); runtime_ms = [math]::Round($sw1.Elapsed.TotalMilliseconds) }
     $jsonResult.summary.total_checks += $suite1Checks; $jsonResult.summary.failed += $failedCount; $jsonResult.summary.passed += ($suite1Checks - $failedCount)
@@ -251,17 +273,21 @@ if ($test2Lines -eq "" -or $test2Lines -match '^\s*$') {
 else {
     $sw2.Stop()
     Write-Host "  ✗ FAILED — violations detected:" -ForegroundColor Red
-    Write-TrimmedViolationOutput -Text $test2Lines
     $test2Pass = $false
     $failedCheckLines2 = @(Get-FailedCheckLines -Text $test2Lines)
     $nonEmptyLines2 = @(Get-NonEmptyLines -Text $test2Lines)
     if ($failedCheckLines2.Count -gt 0) {
         $violationList2 = $failedCheckLines2
         $failedCount2 = $failedCheckLines2.Count
+        Write-Host ($violationList2 -join "`n") -ForegroundColor DarkRed
+        if ($nonEmptyLines2.Count -gt $failedCheckLines2.Count) {
+            Write-Host "  ... ($($nonEmptyLines2.Count - $failedCheckLines2.Count) zero-violation rows omitted)" -ForegroundColor DarkGray
+        }
     }
     else {
         $violationList2 = @($nonEmptyLines2 | Select-Object -First 20)
         $failedCount2 = 1
+        Write-TrimmedViolationOutput -Text $test2Lines -MaxLines 20
     }
     $jsonResult.suites += @{ name = $suiteByNum[2].Name; suite_id = $suiteByNum[2].Id; checks = $suite2Checks; status = "fail"; violations = @($violationList2); runtime_ms = [math]::Round($sw2.Elapsed.TotalMilliseconds) }
     $jsonResult.summary.total_checks += $suite2Checks; $jsonResult.summary.failed += $failedCount2; $jsonResult.summary.passed += ($suite2Checks - $failedCount2)
