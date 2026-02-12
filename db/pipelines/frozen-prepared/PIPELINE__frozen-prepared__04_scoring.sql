@@ -1,35 +1,6 @@
 -- PIPELINE (Frozen & Prepared): scoring
 -- Generated: 2026-02-11
 
--- 0. DEFAULT concern score for products without ingredient data
-update products set ingredient_concern_score = 0
-where country = 'PL' and category = 'Frozen & Prepared'
-  and is_deprecated is not true
-  and ingredient_concern_score is null;
-
--- 1. COMPUTE unhealthiness_score (v3.2 — 9 factors)
-update products p set
-  unhealthiness_score = compute_unhealthiness_v32(
-      nf.saturated_fat_g,
-      nf.sugars_g,
-      nf.salt_g,
-      nf.calories,
-      nf.trans_fat_g,
-      ia.additives_count,
-      p.prep_method,
-      p.controversies,
-      p.ingredient_concern_score
-  )
-from nutrition_facts nf
-left join (
-    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
-    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
-    group by pi.product_id
-) ia on ia.product_id = nf.product_id
-where nf.product_id = p.product_id
-  and p.country = 'PL' and p.category = 'Frozen & Prepared'
-  and p.is_deprecated is not true;
-
 -- 2. Nutri-Score
 update products p set
   nutri_score_label = d.ns
@@ -144,25 +115,5 @@ from (
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
--- 4. Health-risk flags
-update products p set
-  high_salt_flag = case when nf.salt_g >= 1.5 then 'YES' else 'NO' end,
-  high_sugar_flag = case when nf.sugars_g >= 5.0 then 'YES' else 'NO' end,
-  high_sat_fat_flag = case when nf.saturated_fat_g >= 5.0 then 'YES' else 'NO' end,
-  high_additive_load = case when coalesce(ia.additives_count, 0) >= 5 then 'YES' else 'NO' end,
-  data_completeness_pct = 100
-from nutrition_facts nf
-left join (
-    select pi.product_id, count(*) filter (where ir.is_additive)::int as additives_count
-    from product_ingredient pi join ingredient_ref ir on ir.ingredient_id = pi.ingredient_id
-    group by pi.product_id
-) ia on ia.product_id = nf.product_id
-where nf.product_id = p.product_id
-  and p.country = 'PL' and p.category = 'Frozen & Prepared'
-  and p.is_deprecated is not true;
-
--- 5. SET confidence level
-update products p set
-  confidence = assign_confidence(p.data_completeness_pct, 'openfoodfacts')
-where p.country = 'PL' and p.category = 'Frozen & Prepared'
-  and p.is_deprecated is not true;
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Frozen & Prepared');

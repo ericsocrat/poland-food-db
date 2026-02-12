@@ -30,42 +30,25 @@ FROM   ranked r
 WHERE  p.product_id = r.product_id
   AND  r.rn > 28;
 
--- ─── 2. Populate product_sources for products missing them ───────────────
--- All pipeline products come from Open Food Facts, so give them a default
--- source row so QA check #33 (MISSING PRODUCT SOURCE) passes.
+-- ─── 2. Default source columns for products missing them ─────────────────
+-- All pipeline products come from Open Food Facts, so set source_type
+-- and source_url on products that lack them.
 
-INSERT INTO product_sources
-       (product_id, source_type, source_url, fields_populated,
-        confidence_pct, is_primary)
-SELECT p.product_id,
-       'off_api',
-       'https://world.openfoodfacts.org/api/v2/search',
-       ARRAY['product_name','brand','category','product_type','ean',
-             'prep_method','store_availability','controversies',
-             'calories','total_fat_g','saturated_fat_g',
-             'carbohydrates_g','sugars_g','protein_g',
-             'fiber_g','salt_g','sodium_mg','trans_fat_g'],
-       80,
-       true
-FROM   products p
-WHERE  p.is_deprecated IS NOT TRUE
-  AND  NOT EXISTS (
-         SELECT 1 FROM product_sources ps
-         WHERE  ps.product_id = p.product_id
-       )
-ON CONFLICT DO NOTHING;
+UPDATE products
+SET    source_type = 'off_api',
+       source_url  = 'https://world.openfoodfacts.org/api/v2/search'
+WHERE  is_deprecated IS NOT TRUE
+  AND  source_type IS NULL;
 
 -- ─── 3. Default ingredient_concern_score to 0 where missing ─────────────
 -- The ingredient data migration (20260210001400) uses hardcoded product_ids
 -- that don't exist in CI, so product_ingredient is empty and concern scores
 -- are never computed.  Default to 0 (= no additive concerns detected).
 
-UPDATE scores sc
+UPDATE products
 SET    ingredient_concern_score = 0
-FROM   products p
-WHERE  sc.product_id = p.product_id
-  AND  p.is_deprecated IS NOT TRUE
-  AND  sc.ingredient_concern_score IS NULL;
+WHERE  is_deprecated IS NOT TRUE
+  AND  ingredient_concern_score IS NULL;
 
 -- ─── 4. Refresh materialized views ──────────────────────────────────────
 -- mv_ingredient_frequency and v_product_confidence were created WITH DATA

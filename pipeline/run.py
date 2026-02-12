@@ -196,7 +196,6 @@ def _generate_sql_output(
     if dry_run:
         print("[DRY RUN] Would generate SQL files in:", output_dir)
         print(f"  PIPELINE__{slug}__01_insert_products.sql ({len(products)} products)")
-        print(f"  PIPELINE__{slug}__02_add_servings.sql")
         print(
             f"  PIPELINE__{slug}__03_add_nutrition.sql ({len(products)} nutrition rows)"
         )
