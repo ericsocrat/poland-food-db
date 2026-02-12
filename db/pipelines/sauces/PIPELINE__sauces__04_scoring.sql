@@ -42,7 +42,7 @@ from (
     ('Develey', 'Sos jalapeño', 'C'),
     ('Dawtona', 'Sos BBQ', 'D'),
     ('Madero', 'Sos BBQ z chipotle', 'C'),
-    ('ŁOWICZ', 'Sos Spaghetti', 'C'),
+    ('Łowicz', 'Sos Spaghetti', 'C'),
     ('Pudliszki', 'Sos Do Spaghetti Oryginalny', 'B'),
     ('Dawtona', 'Passata rustica', 'A'),
     ('Pudliszki', 'Przecier pomidorowy', 'A'),
@@ -77,7 +77,7 @@ from (
     ('Winiary', 'Spaghetti sos z pomidorów', 'B'),
     ('Pingo Doce', 'Sos pomidorowy z bazylią', 'A'),
     ('Podravka', 'Przecier pomidorowy z bazylią', 'A'),
-    ('HELCOM', 'Sauce a la mexicaine', 'C'),
+    ('Helcom', 'Sauce a la mexicaine', 'C'),
     ('Dawtona', 'Sos pomidorowy ostry z papryczkami jalapeño', 'C'),
     ('Schedro', 'Sos Chersoński', 'D'),
     ('Unknown', 'Pesto all Genovese', 'E'),
@@ -90,7 +90,7 @@ from (
     ('Italiamo', 'Sugo al pomodoro con basilico', 'A'),
     ('Mutti', 'Sauce Tomate aux légumes grillés', 'A'),
     ('Auchan', 'Passata con basilico', 'UNKNOWN'),
-    ('mondo italiano', 'passierte Tomaten', 'A'),
+    ('Mondo Italiano', 'Passierte Tomaten', 'A'),
     ('Combino', 'Sauce tomate bio à la napolitaine', 'C'),
     ('Extra Line', 'Passata garlic', 'A'),
     ('Carrefour', 'Tomates basilic', 'A'),
@@ -103,7 +103,7 @@ from (
     ('Sol & Mar', 'Piri-Piri', 'NOT-APPLICABLE'),
     ('Kikkoman', 'Kikkoman Sojasauce', 'E'),
     ('Mutti', 'Passierte Tomaten', 'A'),
-    ('gustobello', 'Passata', 'UNKNOWN')
+    ('Gustobello', 'Passata', 'A')
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
@@ -148,7 +148,7 @@ from (
     ('Develey', 'Sos jalapeño', '4'),
     ('Dawtona', 'Sos BBQ', '4'),
     ('Madero', 'Sos BBQ z chipotle', '4'),
-    ('ŁOWICZ', 'Sos Spaghetti', '4'),
+    ('Łowicz', 'Sos Spaghetti', '4'),
     ('Pudliszki', 'Sos Do Spaghetti Oryginalny', '3'),
     ('Dawtona', 'Passata rustica', '3'),
     ('Pudliszki', 'Przecier pomidorowy', '3'),
@@ -183,7 +183,7 @@ from (
     ('Winiary', 'Spaghetti sos z pomidorów', '3'),
     ('Pingo Doce', 'Sos pomidorowy z bazylią', '4'),
     ('Podravka', 'Przecier pomidorowy z bazylią', '3'),
-    ('HELCOM', 'Sauce a la mexicaine', '4'),
+    ('Helcom', 'Sauce a la mexicaine', '4'),
     ('Dawtona', 'Sos pomidorowy ostry z papryczkami jalapeño', '4'),
     ('Schedro', 'Sos Chersoński', '4'),
     ('Unknown', 'Pesto all Genovese', '4'),
@@ -196,7 +196,7 @@ from (
     ('Italiamo', 'Sugo al pomodoro con basilico', '3'),
     ('Mutti', 'Sauce Tomate aux légumes grillés', '4'),
     ('Auchan', 'Passata con basilico', '4'),
-    ('mondo italiano', 'passierte Tomaten', '4'),
+    ('Mondo Italiano', 'Passierte Tomaten', '4'),
     ('Combino', 'Sauce tomate bio à la napolitaine', '3'),
     ('Extra Line', 'Passata garlic', '3'),
     ('Carrefour', 'Tomates basilic', '4'),
@@ -209,7 +209,7 @@ from (
     ('Sol & Mar', 'Piri-Piri', '4'),
     ('Kikkoman', 'Kikkoman Sojasauce', '3'),
     ('Mutti', 'Passierte Tomaten', '3'),
-    ('gustobello', 'Passata', '4')
+    ('Gustobello', 'Passata', '4')
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 

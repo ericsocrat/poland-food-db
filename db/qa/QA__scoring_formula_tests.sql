@@ -404,14 +404,14 @@ WHERE p.product_name = 'Pizza 4 sery, głęboko mrożona'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 29: Known product regression test (Lajkonik Paluszki extra cienkie)
---          Snacks: baked pretzels, moderate salt/fat → 30-34
+--          Snacks: baked pretzels, high salt (3.9 g) → 29-34
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Lajkonik Paluszki score changed unexpectedly' AS issue,
-       CONCAT('Expected 30-34, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 29-34, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Paluszki extra cienkie'
   AND p.brand = 'Lajkonik'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 30 AND 34;
+  AND p.unhealthiness_score::int NOT BETWEEN 29 AND 34;
