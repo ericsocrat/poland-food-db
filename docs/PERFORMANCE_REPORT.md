@@ -2,7 +2,7 @@
 
 > **Generated:** 2026-02-10
 > **Database:** PostgreSQL 17 (Supabase Docker)
-> **Dataset:** 1,029 active products, 20 categories, product-ingredient links (pending re-enrichment)
+> **Dataset:** 1,025 active products, 20 categories, 12,892 product-ingredient links
 
 ---
 
@@ -30,7 +30,7 @@ All benchmarks taken on a local Supabase Docker instance with warm caches.
 | View                      | Refresh Time | Row Count | Strategy                          |
 | ------------------------- | ------------ | --------- | --------------------------------- |
 | `mv_ingredient_frequency` | **27ms**     | 1,471     | Full refresh (no unique index)    |
-| `v_product_confidence`    | **31ms**     | 1,029     | `CONCURRENTLY` (has unique index) |
+| `v_product_confidence`    | **31ms**     | 1,025     | `CONCURRENTLY` (has unique index) |
 
 **Verdict:** All queries <10ms. MV refreshes <50ms. No performance issues at current scale.
 
@@ -56,7 +56,7 @@ All benchmarks taken on a local Supabase Docker instance with warm caches.
 
 2. **No missing indexes identified.** All JOIN paths used in `v_master`, API functions, and QA checks hit indexed columns.
 
-3. **No unused indexes detected.** At 1,029 products, all indexes are small and maintenance overhead is negligible.
+3. **No unused indexes detected.** At 1,025 products, all indexes are small and maintenance overhead is negligible.
 
 ---
 

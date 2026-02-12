@@ -113,7 +113,7 @@ For every product, collect **all** of the following. Mark missing fields explici
 | `product_type` | Label description           | Optional | `Chipsy ziemniaczane`    |
 | `ean`          | Barcode on label            | Yes*     | `5900259000002`          |
 
-*EAN is required where available — 1,000/1,029 products (97.2%) have validated EAN-8/EAN-13 barcodes.
+*EAN is required where available — 997/1,025 products (97.3%) have validated EAN-8/EAN-13 barcodes.
 
 #### EU Mandatory 7 (per 100g)
 

@@ -15,7 +15,7 @@
         9. QA__view_consistency.sql (12 view & function consistency checks — blocking)
        10. QA__naming_conventions.sql (12 naming/formatting convention checks — blocking)
        11. QA__nutrition_ranges.sql (16 nutrition range & plausibility checks — blocking)
-       12. QA__data_consistency.sql (18 data consistency & domain checks — blocking)
+       12. QA__data_consistency.sql (20 data consistency & domain checks — blocking)
        13. QA__allergen_integrity.sql (14 allergen & trace integrity checks — blocking)
        14. QA__serving_source_validation.sql (16 serving & source checks — blocking)
        15. QA__ingredient_quality.sql (14 ingredient quality checks — blocking)
@@ -111,7 +111,7 @@ $suiteCatalog = @(
     @{ Num = 9;  Name = "View & Function Consistency";      Short = "Views";        Id = "views";               Checks = 12; Blocking = $true;  Kind = "sql";         File = "QA__view_consistency.sql" },
     @{ Num = 10; Name = "Naming Conventions";               Short = "Naming";       Id = "naming";              Checks = 12; Blocking = $true;  Kind = "sql";         File = "QA__naming_conventions.sql" },
     @{ Num = 11; Name = "Nutrition Ranges & Plausibility";  Short = "NutriRange";   Id = "nutrition_ranges";    Checks = 16; Blocking = $true;  Kind = "sql";         File = "QA__nutrition_ranges.sql" },
-    @{ Num = 12; Name = "Data Consistency";                 Short = "DataConsist";   Id = "data_consistency";    Checks = 18; Blocking = $true;  Kind = "sql";         File = "QA__data_consistency.sql" },
+    @{ Num = 12; Name = "Data Consistency";                 Short = "DataConsist";   Id = "data_consistency";    Checks = 20; Blocking = $true;  Kind = "sql";         File = "QA__data_consistency.sql" },
     @{ Num = 13; Name = "Allergen & Trace Integrity";       Short = "Allergen";     Id = "allergen_integrity";  Checks = 14; Blocking = $true;  Kind = "sql";         File = "QA__allergen_integrity.sql" },
     @{ Num = 14; Name = "Serving & Source Validation";      Short = "ServSource";   Id = "serving_source";      Checks = 16; Blocking = $true;  Kind = "sql";         File = "QA__serving_source_validation.sql" },
     @{ Num = 15; Name = "Ingredient Data Quality";          Short = "IngredQual";   Id = "ingredient_quality";  Checks = 14; Blocking = $true;  Kind = "sql";         File = "QA__ingredient_quality.sql" }

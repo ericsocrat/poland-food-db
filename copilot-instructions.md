@@ -85,7 +85,7 @@ poland-food-db/
 │   │   ├── QA__view_consistency.sql      # 12 view consistency checks
 │   │   ├── QA__naming_conventions.sql    # 12 naming convention checks
 │   │   ├── QA__nutrition_ranges.sql      # 16 nutrition range checks
-│   │   ├── QA__data_consistency.sql      # 18 data consistency checks
+│   │   ├── QA__data_consistency.sql      # 20 data consistency checks
 │   │   ├── QA__allergen_integrity.sql    # 14 allergen integrity checks
 │   │   ├── QA__serving_source_validation.sql # 16 serving & source checks
 │   │   ├── QA__ingredient_quality.sql    # 14 ingredient quality checks
@@ -375,13 +375,13 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | View Consistency        | `QA__view_consistency.sql`          |     12 | Yes       |
 | Naming Conventions      | `QA__naming_conventions.sql`        |     12 | Yes       |
 | Nutrition Ranges        | `QA__nutrition_ranges.sql`          |     16 | Yes       |
-| Data Consistency        | `QA__data_consistency.sql`          |     18 | Yes       |
+| Data Consistency        | `QA__data_consistency.sql`          |     20 | Yes       |
 | Allergen Integrity      | `QA__allergen_integrity.sql`        |     14 | Yes       |
 | Serving & Source        | `QA__serving_source_validation.sql` |     16 | Yes       |
 | Ingredient Quality      | `QA__ingredient_quality.sql`        |     14 | Yes       |
 | **Negative Validation** | `TEST__negative_checks.sql`         |     29 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **226/226 checks passing**.
+**Run:** `.\RUN_QA.ps1` — expects **228/228 checks passing**.
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
 
 **Key regression tests** (in scoring suite):
@@ -477,7 +477,7 @@ chore: normalize categories to 28 products
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 226/226 pass
+1. `.\RUN_QA.ps1` — 228/228 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed

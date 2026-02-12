@@ -86,28 +86,6 @@ from (
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
 -- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+-- score_category() now computes data_completeness_pct dynamically via
+-- compute_data_completeness() — no manual patches needed.
 CALL score_category('Żabka');
-
--- ═════════════════════════════════════════════════════════════════════════
--- 4b. PATCH data_completeness_pct for products with estimated fields
---     score_category() sets all to 100; override the few that aren't.
---     Re-assign confidence afterwards so it reflects patched completeness.
--- ═════════════════════════════════════════════════════════════════════════
-
-update products set data_completeness_pct = 90
-where country = 'PL' and category = 'Żabka' and is_deprecated is not true
-  and product_name in ('Kajzerka Kebab','Bajgiel z salami','Penne z kurczakiem');
-
-update products set data_completeness_pct = 95
-where country = 'PL' and category = 'Żabka' and is_deprecated is not true
-  and product_name in (
-    'Meksykaner','Kurczaker','Pieczony bekon, sałata, jajko',
-    'Wegger','Panierowane skrzydełka z kurczaka',
-    'Kanapka Cezar','High 24g protein','Gnocchi z kurczakiem','Kotlet Drobiowy'
-  );
-
-update products p set
-  confidence = assign_confidence(p.data_completeness_pct, 'openfoodfacts')
-where p.country = 'PL' and p.category = 'Żabka'
-  and p.is_deprecated is not true
-  and p.data_completeness_pct < 100;

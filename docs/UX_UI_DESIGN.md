@@ -71,7 +71,7 @@ Home (Dashboard)
 │                                                         │
 │  ┌─────────────────────┐  ┌──────────────────────────┐  │
 │  │ Quick Stats         │  │ Recently Scored           │  │
-│  │ 1,029 active products │  │ 1. Lay's Classic     72   │  │
+│  │ 1,025 active products │  │ 1. Lay's Classic     72   │  │
 │  │ 20 categories       │  │ 2. Mlekovita Kefir   12   │  │
 │  │ 139 brands          │  │ 3. Alpro Soja        18   │  │
 │  └─────────────────────┘  └──────────────────────────┘  │

@@ -9,7 +9,7 @@ The **easiest way** to browse your tables visually:
 1. **Open Studio**: http://127.0.0.1:54323
 2. **Navigate**: Click **"Table Editor"** in left sidebar
 3. **Explore tables**:
-   - `products` — 1,029 active products across 20 categories (variable size per category)
+   - `products` — 1,025 active products across 20 categories (variable size per category)
    - `nutrition_facts` — nutritional data per 100g
    - `product_allergen_info` — allergen/trace declarations (unified table)
 4. **Run custom queries**: Click **"SQL Editor"** → paste any SQL → click **Run**
@@ -90,12 +90,12 @@ Run all pipelines + QA suites automatically:
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (226/226 — zero violation rows).
+  All QA checks passed (228/228 — zero violation rows).
 
   Database inventory:
   active_products | deprecated | nutrition | categories
 -----------------+------------+-----------+------------
-            1029 |         34 |      1032 |         20
+            1025 |         38 |      1032 |         20
 ```
 
 ---
@@ -125,7 +125,7 @@ Suite 13 — Allergen Integrity:      ✓ PASS (14/14)
 Suite 14 — Serving & Source:        ✓ PASS (16/16)
 Suite 15 — Ingredient Quality:      ✓ PASS (14/14)
 
-ALL TESTS PASSED (226/226 checks across 15 suites)
+ALL TESTS PASSED (228/228 checks across 15 suites)
 ```
 
 ---

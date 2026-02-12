@@ -32,7 +32,7 @@
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
 | Migration files                         | 56                                     |
-| QA checks                               | 226/226 pass + 29/29 negative tests    |
+| QA checks                               | 228/228 pass + 29/29 negative tests    |
 
 ---
 
@@ -95,7 +95,7 @@
 | Check                                                                       | Result |
 | --------------------------------------------------------------------------- | ------ |
 | Every active product has nutrition_facts and scores on products      | ✅ Pass |
-| EAN coverage 1,000/1,029 (97.2%) — 29 without (expected for some)    | ✅ Pass |
+| EAN coverage 997/1,025 (97.3%) — 28 without (expected for some)      | ✅ Pass |
 | Score range 4–57, avg 24.0 — within 0–100 constraint                        | ✅ Pass |
 | 0 null brand / product_type / prep_method / controversies                   | ✅ Pass |
 | 477 null store_availability — expected (only Żabka products have this)      | ✅ Pass |
@@ -111,7 +111,7 @@
 
 | Check                                                                                                                                                    | Result |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 15 QA suites, 226 checks — 226/226 PASS                                                                                                                  | ✅ Pass |
+| 15 QA suites, 228 checks — 228/228 PASS                                                                                                                  | ✅ Pass |
 | 29 negative validation tests — 29/29 CAUGHT                                                                                                              | ✅ Pass |
 | Coverage: data integrity, scoring, sources, EAN, API, confidence, quality, refs, views, naming, nutrition, consistency, allergens, servings, ingredients | ✅ Pass |
 | RUN_QA.ps1 / RUN_NEGATIVE_TESTS.ps1 — correct exit codes                                                                                                 | ✅ Pass |

@@ -108,7 +108,7 @@ supabase start
 - 8 source coverage reports (informational, non-blocking)
 - 29 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 226/226 + 29/29 negative
+**All tests passing**: ✅ 228/228 + 29/29 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
@@ -338,7 +338,7 @@ The 6 components of confidence: nutrition data (0-30), ingredient data (0-25), s
 
 Products include EAN-8/EAN-13 barcodes (where available) for cross-source product matching:
 
-**Coverage**: 1,000/1,029 active products (97.2%)
+**Coverage**: 997/1,025 active products (97.3%)
 
 EAN codes enable validation against:
 - Manufacturer product pages
@@ -348,7 +348,7 @@ EAN codes enable validation against:
 
 ### Source Provenance
 
-All 1,029 active products are sourced from the **Open Food Facts API** (`off_api`). Each product has `source_type`, `source_url`, and `source_ean` columns on the `products` table, providing full provenance tracking.
+All 1,025 active products are sourced from the **Open Food Facts API** (`off_api`). Each product has `source_type`, `source_url`, and `source_ean` columns on the `products` table, providing full provenance tracking.
 
 **Research workflow**: See [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) for step-by-step data collection process.
 
@@ -372,7 +372,7 @@ All 1,029 active products are sourced from the **Open Food Facts API** (`off_api
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 226/226 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 228/228 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -390,10 +390,10 @@ All 1,029 active products are sourced from the **Open Food Facts API** (`off_api
 - **All data is local** — nothing is uploaded to remote Supabase (yet)
 - **Pipelines are idempotent** — safe to run repeatedly
 - **Data quality tracking** — All products have confidence levels (`estimated`, `verified`, or `low`)
-- **EAN barcodes** — 1,000/1,029 active products (97.2%) have validated EAN-8/EAN-13 codes for cross-source matching
+- **EAN barcodes** — 997/1,025 active products (97.3%) have validated EAN-8/EAN-13 codes for cross-source matching
 - **Primary source**: Open Food Facts — all products pending cross-validation
 - **Scoring version**: v3.2 (2026-02-10)
-- **1,029 active products** across 20 categories (variable size), 34 deprecated products excluded
+- **1,025 active products** across 20 categories (variable size), 38 deprecated products excluded
 
 ---
 

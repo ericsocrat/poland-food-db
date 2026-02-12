@@ -180,3 +180,23 @@ WHERE NOT EXISTS (
 -- 18. (removed — scores table merged into products in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 19. Stored data_completeness_pct matches dynamic computation
+--     Detects drift between stored value and compute_data_completeness()
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '19. data_completeness_pct matches dynamic computation' AS check_name,
+       COUNT(*) AS violations
+FROM products p
+WHERE p.is_deprecated IS NOT TRUE
+  AND p.data_completeness_pct != compute_data_completeness(p.product_id);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 20. Confidence consistent with data_completeness_pct + source_type
+--     Verifies assign_confidence() output matches stored confidence
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '20. confidence matches assign_confidence()' AS check_name,
+       COUNT(*) AS violations
+FROM products p
+WHERE p.is_deprecated IS NOT TRUE
+  AND p.confidence != assign_confidence(p.data_completeness_pct, p.source_type);
+
