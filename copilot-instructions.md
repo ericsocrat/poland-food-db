@@ -192,8 +192,9 @@ poland-food-db/
 | `find_similar_products()`          | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                          |
 | `find_better_alternatives()`       | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                              |
 | `assign_confidence()`              | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                           |
-| `score_category()`                 | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags, confidence) for a given category     |
+| `score_category()`                 | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category |
 | `compute_data_confidence()`        | Composite confidence score (0-100) with 6 components; band, completeness profile                                            |
+| `compute_data_completeness()`      | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source) |
 | `api_data_confidence()`            | API wrapper for compute_data_confidence(); returns structured JSONB                                                         |
 | `api_product_detail()`             | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                      |
 | `api_category_listing()`           | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                 |
@@ -276,8 +277,8 @@ CALL score_category('CategoryName');
 ```
 
 This procedure handles Steps 0 (default concern score), 1 (compute unhealthiness),
-4 (health-risk flags + data_completeness), and 5 (confidence). See
-`20260212000200_score_category_procedure.sql` for the full implementation.
+4 (health-risk flags + dynamic `data_completeness_pct` via `compute_data_completeness()`), and 5 (confidence). See
+`20260213000800_dynamic_data_completeness.sql` for the latest implementation.
 
 ### prep_method Scoring
 

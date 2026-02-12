@@ -339,25 +339,21 @@ ON CONFLICT (country, brand, product_name) DO UPDATE SET
 
 ### 6.3 data_completeness_pct Computation
 
-Computed in the scoring pipeline as the percentage of available core fields:
+Computed dynamically by the `compute_data_completeness(product_id)` function using 15 equal-weight checkpoints covering EAN, 9 nutrition fields, Nutri-Score grade, NOVA, ingredients, allergen assessment, and source provenance:
 
 ```sql
--- Weighted field availability (EU mandatory 7 + key supplementary)
--- Each field contributes to total based on importance for scoring
-data_completeness_pct = round(100.0 * (
-    (CASE WHEN nf.calories        IS NOT NULL AND nf.calories        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
-    (CASE WHEN nf.total_fat_g     IS NOT NULL AND nf.total_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
-    (CASE WHEN nf.saturated_fat_g IS NOT NULL AND nf.saturated_fat_g NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.17)
-    (CASE WHEN nf.carbs_g         IS NOT NULL AND nf.carbs_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5%
-    (CASE WHEN nf.sugars_g        IS NOT NULL AND nf.sugars_g        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.17)
-    (CASE WHEN nf.protein_g       IS NOT NULL AND nf.protein_g       NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5%
-    (CASE WHEN nf.salt_g          IS NOT NULL AND nf.salt_g          NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15% (scoring weight: 0.17)
-    (CASE WHEN nf.trans_fat_g     IS NOT NULL AND nf.trans_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10% (scoring weight: 0.11)
-    (CASE WHEN nf.fibre_g         IS NOT NULL AND nf.fibre_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) * 5  +  -- 5%
-    -- additives_count & ingredients_raw derived from product_ingredient + ingredient_ref junction
-    (CASE WHEN additives_count  IS NOT NULL                                           THEN 1 ELSE 0 END) * 5  +  -- 5% (scoring weight: 0.07)
-    (CASE WHEN ingredients_raw  IS NOT NULL AND ingredients_raw  != ''                THEN 1 ELSE 0 END) * 5     -- 5%
-) / 100.0)
+-- 15 checkpoints, each ~6.67% — called by score_category() automatically
+SELECT compute_data_completeness(product_id);
+
+-- Checkpoints:
+-- 1. EAN present                    9. fibre_g present
+-- 2. calories present               10. trans_fat_g present
+-- 3. total_fat_g present            11. Nutri-Score != 'UNKNOWN'
+-- 4. saturated_fat_g present        12. NOVA classification present
+-- 5. sugars_g present               13. Has ≥1 ingredient row
+-- 6. salt_g present                 14. Allergen assessed (has allergen OR ingredient data)
+-- 7. protein_g present              15. Source provenance present
+-- 8. carbs_g present
 ```
 
 > **Note:** The scoring formula v3.2 uses 9 factors: saturated fat (0.17), sugars (0.17), salt (0.17), calories (0.10), trans fat (0.11), additives (0.07), prep method (0.08), controversies (0.08), and ingredient concern (0.05).

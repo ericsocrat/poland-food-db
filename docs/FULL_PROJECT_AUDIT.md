@@ -27,11 +27,11 @@
 | EAN coverage                            | 997/1,025 active (97.3%)               |
 | Source provenance                        | 1,025/1,025 (100%)                     |
 | Score range / avg                       | 4–58 / 23.7                            |
-| Confidence (products.confidence)        | 1,025 verified · 0 estimated · 0 low   |
+| Confidence (products.confidence)        | 859 verified · 166 estimated · 0 low   |
 | CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
-| Migration files                         | 55                                     |
+| Migration files                         | 56                                     |
 | QA checks                               | 226/226 pass + 29/29 negative tests    |
 
 ---
@@ -101,7 +101,7 @@
 | 477 null store_availability — expected (only Żabka products have this)      | ✅ Pass |
 | 161 products without ingredients — expected (not all OFF records have data) | ⚠️ Info |
 | 389 products without allergens — expected (same reason)                     | ⚠️ Info |
-| Confidence: 859 high / 138 medium / 28 low — reflects enriched ingredient + allergen data | ✅ Pass |
+| Confidence: 858 high / 139 medium / 28 low — reflects enriched ingredient + allergen data | ✅ Pass |
 
 **Verdict**: Data is healthy. Coverage gaps are understood.
 
@@ -226,6 +226,7 @@ _Fixes are logged below as they are completed._
 | 13  | 2026-02-11 | `_safe_int()` guard added                             | pipeline/off_client.py                                                                                                    |
 | 16  | 2026-02-11 | 5 remaining docs updated (14 stale refs)              | docs/PERFORMANCE_REPORT.md, docs/DATA_SOURCES.md, docs/EAN_EXPANSION_PLAN.md, docs/API_CONTRACTS.md, docs/UX_UI_DESIGN.md |
 | 17  | 2026-02-12 | Final consistency sweep (counts + docs alignment)     | README.md, docs/EAN_VALIDATION_STATUS.md, copilot-instructions.md, docs/FULL_PROJECT_AUDIT.md |
+| 18  | 2026-02-13 | Dynamic `data_completeness_pct` (15-checkpoint formula) | supabase/migrations/20260213000800_dynamic_data_completeness.sql, docs/SCORING_METHODOLOGY.md, docs/RESEARCH_WORKFLOW.md, copilot-instructions.md, README.md |
 
 
 

@@ -360,27 +360,36 @@ Each score row tracks `data_completeness_pct` (0–100):
 
 ### 6.1 Computation Formula
 
-`data_completeness_pct` is a **weighted** field-availability check — fields that carry more scoring weight contribute more to completeness:
+`data_completeness_pct` is now computed **dynamically** by the `compute_data_completeness(product_id)` function, using 15 equal-weight checkpoints that cover the full data surface:
 
 ```sql
-data_completeness_pct = round(100.0 * (
-    -- EU mandatory 7 + key supplementary (weights = scoring importance)
-    (CASE WHEN nf.calories        IS NOT NULL AND nf.calories        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
-    (CASE WHEN nf.total_fat_g     IS NOT NULL AND nf.total_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
-    (CASE WHEN nf.saturated_fat_g IS NOT NULL AND nf.saturated_fat_g NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15%
-    (CASE WHEN nf.carbs_g         IS NOT NULL AND nf.carbs_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5%
-    (CASE WHEN nf.sugars_g        IS NOT NULL AND nf.sugars_g        NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15%
-    (CASE WHEN nf.protein_g       IS NOT NULL AND nf.protein_g       NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5%
-    (CASE WHEN nf.salt_g          IS NOT NULL AND nf.salt_g          NOT IN ('N/A','') THEN 1 ELSE 0 END) * 15 +  -- 15%
-    (CASE WHEN nf.trans_fat_g     IS NOT NULL AND nf.trans_fat_g     NOT IN ('N/A','') THEN 1 ELSE 0 END) * 10 +  -- 10%
-    (CASE WHEN nf.fibre_g         IS NOT NULL AND nf.fibre_g         NOT IN ('N/A','') THEN 1 ELSE 0 END) *  5 +  --  5%
-    -- additives_count & ingredients_raw derived from product_ingredient + ingredient_ref junction
-    (CASE WHEN additives_count  IS NOT NULL                                           THEN 1 ELSE 0 END) *  5 +  --  5% (scoring weight: 0.07)
-    (CASE WHEN ingredients_raw  IS NOT NULL AND ingredients_raw  != ''                THEN 1 ELSE 0 END) *  5    --  5%
-) / 100.0)
+-- 15 checkpoints, each ~6.67%:
+SELECT ROUND((
+    (CASE WHEN p.ean IS NOT NULL THEN 1 ELSE 0 END) +                          -- 1. EAN
+    (CASE WHEN nf.calories        IS NOT NULL THEN 1 ELSE 0 END) +             -- 2. Calories
+    (CASE WHEN nf.total_fat_g     IS NOT NULL THEN 1 ELSE 0 END) +             -- 3. Total fat
+    (CASE WHEN nf.saturated_fat_g IS NOT NULL THEN 1 ELSE 0 END) +             -- 4. Saturated fat
+    (CASE WHEN nf.sugars_g        IS NOT NULL THEN 1 ELSE 0 END) +             -- 5. Sugars
+    (CASE WHEN nf.salt_g          IS NOT NULL THEN 1 ELSE 0 END) +             -- 6. Salt
+    (CASE WHEN nf.protein_g       IS NOT NULL THEN 1 ELSE 0 END) +             -- 7. Protein
+    (CASE WHEN nf.carbs_g         IS NOT NULL THEN 1 ELSE 0 END) +             -- 8. Carbs
+    (CASE WHEN nf.fibre_g         IS NOT NULL THEN 1 ELSE 0 END) +             -- 9. Fibre
+    (CASE WHEN nf.trans_fat_g     IS NOT NULL THEN 1 ELSE 0 END) +             -- 10. Trans fat
+    (CASE WHEN p.nutri_score_label != 'UNKNOWN' THEN 1 ELSE 0 END) +           -- 11. Nutri-Score (A-E or NOT-APPLICABLE)
+    (CASE WHEN p.nova_classification IS NOT NULL THEN 1 ELSE 0 END) +           -- 12. NOVA
+    (CASE WHEN EXISTS (...product_ingredient...) THEN 1 ELSE 0 END) +           -- 13. Ingredients
+    (CASE WHEN EXISTS (...allergen OR ingredient...) THEN 1 ELSE 0 END) +       -- 14. Allergen assessment
+    (CASE WHEN p.source_type IS NOT NULL THEN 1 ELSE 0 END)                     -- 15. Source provenance
+)::numeric / 15.0 * 100)
 ```
 
-**Why weighted?** — Sat fat, sugars, and salt each carry 0.17 scoring weight, so their absence has the largest impact on score accuracy. Trans fat (0.11 weight) gets 10%. Fields with no direct scoring weight (carbs, protein) get minimal completeness weight (5%).
+**Key design decisions:**
+- **Equal weights** — Each checkpoint is worth ~6.67%. This avoids over-weighting nutrition fields (which are almost always complete) at the expense of ingredient/allergen coverage.
+- **Allergen assessment** (checkpoint 14) counts as passed if the product has allergen data OR ingredient data (since ingredient data implies allergen assessment was possible, even if the product is allergen-free).
+- **NOT-APPLICABLE Nutri-Score** counts as "complete" — it's a valid assessment, not missing data.
+- **Dynamic computation** — `score_category()` calls `compute_data_completeness()` automatically; the static `p_data_completeness` parameter is retained for backward compatibility but ignored.
+
+**Current distribution** (1,025 active products): 791 at 100% · 68 at 93% · 110 at 87% · 55 at 80% · 1 at 73%.
 
 **Trace values are NOT penalized** — `'<0.5'` and `'trace'` are real label information and count as "present."
 
