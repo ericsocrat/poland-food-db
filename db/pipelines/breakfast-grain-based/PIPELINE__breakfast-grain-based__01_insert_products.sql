@@ -102,7 +102,7 @@ values
   ('PL', 'Vitanella', 'Grocery', 'Breakfast & Grain-Based', 'Owsianka ananas, kokos', 'not-applicable', null, 'none', '5907437366967'),
   ('PL', 'Kupiec', 'Grocery', 'Breakfast & Grain-Based', 'Cos na Zab', 'not-applicable', null, 'none', '5906747170707'),
   ('PL', 'Sante', 'Grocery', 'Breakfast & Grain-Based', 'Musli Lo z owocami', 'not-applicable', null, 'none', '5900617011299'),
-  ('PL', 'Bell’s', 'Grocery', 'Breakfast & Grain-Based', 'Owsianka', 'not-applicable', null, 'none', '5901529083626'),
+  ('PL', 'Bell''s', 'Grocery', 'Breakfast & Grain-Based', 'Owsianka', 'not-applicable', null, 'none', '5901529083626'),
   ('PL', 'Go On', 'Grocery', 'Breakfast & Grain-Based', 'Protein Granola Go On', 'not-applicable', null, 'none', '5900617045133'),
   ('PL', 'Vivi', 'Grocery', 'Breakfast & Grain-Based', 'Musli owocowe: polskie owoce', 'not-applicable', null, 'none', '5900971000359'),
   ('PL', 'BakallanD', 'Grocery', 'Breakfast & Grain-Based', 'Granola klasyczna z kokosem', 'not-applicable', null, 'none', '5900749651301'),

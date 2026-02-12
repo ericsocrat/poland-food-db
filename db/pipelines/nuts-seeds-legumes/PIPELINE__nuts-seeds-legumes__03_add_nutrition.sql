@@ -41,7 +41,7 @@ from (
     ('Felix', 'Carmelove z wiórkami kokosowymi', 532.0, 33.0, 5.9, 0, 41.0, 35.0, 5.6, 16.0, 0.0),
     ('Felix', 'Orzeszki ziemne prażone', 609.0, 49.0, 7.8, 0, 12.0, 5.6, 8.6, 26.0, 0.0),
     ('Aga Holtex', 'Migdały', 604.0, 52.0, 4.7, 0, 7.6, 4.9, 13.0, 20.0, 0.0),
-    ('BakaD’Or', 'Migdały łuskane kalifornijskie', 596.0, 49.0, 3.9, 0, 8.0, 4.6, 12.0, 24.0, 0),
+    ('BakaD''Or', 'Migdały łuskane kalifornijskie', 596.0, 49.0, 3.9, 0, 8.0, 4.6, 12.0, 24.0, 0),
     ('Felix', 'Orzeszki z pieca z solą', 598.0, 48.0, 7.6, 0, 12.0, 5.4, 8.4, 25.0, 1.5),
     ('Ecobi', 'Orzechy włoskie łuskane', 654.0, 65.2, 6.1, 0, 17.7, 2.6, 6.7, 15.2, 0.0),
     ('Green Essence', 'Migdały naturalne całe', 621.0, 52.0, 4.7, 0, 7.6, 4.9, 12.9, 24.1, 0.0),

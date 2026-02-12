@@ -4,7 +4,7 @@
 
 .DESCRIPTION
     Executes:
-        1. QA__null_checks.sql (31 data integrity checks)
+        1. QA__null_checks.sql (29 data integrity checks)
         2. QA__scoring_formula_tests.sql (27 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-13 checksum validation — blocking)

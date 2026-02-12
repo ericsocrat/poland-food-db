@@ -9,7 +9,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 1,471 unique ingredients (all clean ASCII English), 988 allergen declarations, 999 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 228 checks across 15 suites + 29 negative validation tests — all passing
+> **QA:** 226 checks across 15 suites + 29 negative validation tests — all passing
 
 ---
 
@@ -160,8 +160,7 @@ poland-food-db/
 | `nutrition_facts`    | Nutrition per product (per 100g)             | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                           |
 | `ingredient_ref`     | Canonical ingredient dictionary              | `ingredient_id` (identity)              | 1,471 unique ingredients; name_en, vegan/vegetarian/palm_oil/is_additive/concern_tier flags       |
 | `product_ingredient` | Product ↔ ingredient junction                | `(product_id, ingredient_id, position)` | ~10,145 rows; tracks percent, percent_estimate, sub-ingredients, position order                   |
-| `product_allergen`   | Declared allergens per product               | `(product_id, allergen_tag)`            | 988 rows across 484 products (56% coverage); source: OFF allergens_tags                           |
-| `product_trace`      | Declared traces per product                  | `(product_id, trace_tag)`               | 999 rows across 333 products (38% coverage); source: OFF traces_tags                              |
+| `product_allergen_info` | Allergens + traces per product (unified)    | `(product_id, tag, type)`               | ~1,987 rows; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags              |
 | `country_ref`        | ISO 3166-1 alpha-2 country codes             | `country_code` (text PK)                | 1 row (PL); FK from products.country                                                              |
 | `category_ref`       | Product category master list                 | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order             |
 | `nutri_score_ref`    | Nutri-Score label definitions                | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description |
@@ -253,9 +252,10 @@ Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has
 PIPELINE__<category>__01_insert_products.sql   # Upsert products (must run FIRST)
 PIPELINE__<category>__03_add_nutrition.sql      # Nutrition facts
 PIPELINE__<category>__04_scoring.sql            # Nutri-Score + NOVA + CALL score_category()
+PIPELINE__<category>__05_source_provenance.sql  # Source URLs + EANs (generated categories only)
 ```
 
-**Order matters:** Products (01) must exist before nutrition (03). Scoring (04) sets Nutri-Score/NOVA data, then calls `score_category()` which computes unhealthiness, flags, and confidence.
+**Order matters:** Products (01) must exist before nutrition (03). Scoring (04) sets Nutri-Score/NOVA data, then calls `score_category()` which computes unhealthiness, flags, and confidence. Source provenance (05) is optional and only present for pipeline-generated categories.
 
 ### Idempotency Patterns
 
@@ -353,8 +353,8 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | `product_ingredient` | `idx_prod_ingr_product` | `product_id` |
 | `product_ingredient` | `idx_prod_ingr_ingredient` | `ingredient_id` |
 | `product_ingredient` | `idx_prod_ingr_sub` | `(product_id, parent_ingredient_id)` WHERE sub |
-| `product_allergen` | `idx_allergen_tag` | `allergen_tag` |
-| `product_trace` | `idx_trace_tag` | `trace_tag` |
+| `product_allergen_info` | `idx_allergen_info_product` | `product_id` |
+| `product_allergen_info` | `idx_allergen_info_tag_type` | `(tag, type)` |
 | child tables | FK PK indexes | `product_id` (nutrition_facts, etc.) |
 
 ---
@@ -363,7 +363,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 | Suite                   | File                                | Checks | Blocking? |
 | ----------------------- | ----------------------------------- | -----: | --------- |
-| Data Integrity          | `QA__null_checks.sql`               |     31 | Yes       |
+| Data Integrity          | `QA__null_checks.sql`               |     29 | Yes       |
 | Scoring Formula         | `QA__scoring_formula_tests.sql`     |     27 | Yes       |
 | Source Coverage         | `QA__source_coverage.sql`           |      8 | No        |
 | EAN Validation          | `validate_eans.py`                  |      1 | Yes       |
@@ -380,7 +380,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | Ingredient Quality      | `QA__ingredient_quality.sql`        |     14 | Yes       |
 | **Negative Validation** | `TEST__negative_checks.sql`         |     29 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **228/228 checks passing**.
+**Run:** `.\RUN_QA.ps1` — expects **226/226 checks passing**.
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
 
 **Key regression tests** (in scoring suite):

@@ -29,7 +29,7 @@ FROM (
     ('Felix', 'Carmelove z wiórkami kokosowymi', 'https://world.openfoodfacts.org/product/5900571101975', '5900571101975'),
     ('Felix', 'Orzeszki ziemne prażone', 'https://world.openfoodfacts.org/product/5900571001206', '5900571001206'),
     ('Aga Holtex', 'Migdały', 'https://world.openfoodfacts.org/product/5905027000192', '5905027000192'),
-    ('BakaD’Or', 'Migdały łuskane kalifornijskie', 'https://world.openfoodfacts.org/product/5900587042514', '5900587042514'),
+    ('BakaD''Or', 'Migdały łuskane kalifornijskie', 'https://world.openfoodfacts.org/product/5900587042514', '5900587042514'),
     ('Felix', 'Orzeszki z pieca z solą', 'https://world.openfoodfacts.org/product/5900571101005', '5900571101005'),
     ('Ecobi', 'Orzechy włoskie łuskane', 'https://world.openfoodfacts.org/product/5902751531237', '5902751531237'),
     ('Green Essence', 'Migdały naturalne całe', 'https://world.openfoodfacts.org/product/5902315400757', '5902315400757'),

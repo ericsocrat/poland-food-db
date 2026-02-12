@@ -1,4 +1,4 @@
--- QA: null checks
+-- QA: null checks (29 data integrity checks)
 -- Run after pipelines to detect missing or incomplete data.
 -- Each query returns rows that need attention. Zero rows = pass.
 -- Updated 2026-02-12: adapted for consolidated schema (no servings, scores,
@@ -60,13 +60,8 @@ WHERE nf.calories IS NULL
   AND nf.salt_g IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 6. Products missing unhealthiness_score (active only)
+-- 6. (Merged into #4 — identical unhealthiness_score NULL check)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT p.product_id, p.brand, p.product_name,
-       'UNHEALTHINESS SCORE NULL' AS issue
-FROM products p
-WHERE p.unhealthiness_score IS NULL
-  AND p.is_deprecated IS NOT TRUE;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 7. (Removed — scoring_version column dropped)
@@ -307,14 +302,8 @@ WHERE p.is_deprecated IS NOT TRUE
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 35. v_master fan-out guard: row count must equal active product count
+-- 35. (Merged into #21 — identical v_master fan-out guard)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT
-    (SELECT COUNT(*) FROM v_master) AS view_rows,
-    (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE) AS active_products,
-    'FAN-OUT DETECTED' AS issue
-WHERE (SELECT COUNT(*) FROM v_master) <>
-      (SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 36. v_master column coverage (informational)

@@ -105,7 +105,7 @@ from (
     ('Vitanella', 'Owsianka ananas, kokos', 415.0, 16.0, 8.8, 0, 51.2, 16.6, 11.7, 10.8, 0.0),
     ('Kupiec', 'Cos na Zab', 371.0, 5.7, 1.0, 0, 63.0, 17.0, 6.3, 13.0, 0.2),
     ('Sante', 'Musli Lo z owocami', 347.0, 4.2, 0.8, 0, 62.0, 21.0, 12.0, 8.6, 0.2),
-    ('Bell’s', 'Owsianka', 377.0, 6.5, 1.9, 0, 62.3, 18.9, 8.3, 13.7, 0.1),
+    ('Bell''s', 'Owsianka', 377.0, 6.5, 1.9, 0, 62.3, 18.9, 8.3, 13.7, 0.1),
     ('Go On', 'Protein Granola Go On', 416.0, 15.0, 2.9, 0, 44.0, 1.6, 18.0, 21.0, 0.4),
     ('Vivi', 'Musli owocowe: polskie owoce', 332.0, 2.7, 0.7, 0, 75.3, 6.3, 8.2, 5.6, 1.2),
     ('BakallanD', 'Granola klasyczna z kokosem', 421.0, 16.0, 6.7, 0, 56.0, 17.0, 8.4, 8.9, 0.1),

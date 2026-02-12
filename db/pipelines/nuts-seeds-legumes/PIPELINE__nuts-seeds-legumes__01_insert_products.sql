@@ -38,7 +38,7 @@ values
   ('PL', 'Felix', 'Grocery', 'Nuts, Seeds & Legumes', 'Carmelove z wiórkami kokosowymi', 'not-applicable', null, 'none', '5900571101975'),
   ('PL', 'Felix', 'Grocery', 'Nuts, Seeds & Legumes', 'Orzeszki ziemne prażone', 'roasted', null, 'none', '5900571001206'),
   ('PL', 'Aga Holtex', 'Grocery', 'Nuts, Seeds & Legumes', 'Migdały', 'not-applicable', null, 'none', '5905027000192'),
-  ('PL', 'BakaD’Or', 'Grocery', 'Nuts, Seeds & Legumes', 'Migdały łuskane kalifornijskie', 'not-applicable', null, 'none', '5900587042514'),
+  ('PL', 'BakaD''Or', 'Grocery', 'Nuts, Seeds & Legumes', 'Migdały łuskane kalifornijskie', 'not-applicable', null, 'none', '5900587042514'),
   ('PL', 'Felix', 'Grocery', 'Nuts, Seeds & Legumes', 'Orzeszki z pieca z solą', 'not-applicable', null, 'none', '5900571101005'),
   ('PL', 'Ecobi', 'Grocery', 'Nuts, Seeds & Legumes', 'Orzechy włoskie łuskane', 'dried', null, 'none', '5902751531237'),
   ('PL', 'Green Essence', 'Grocery', 'Nuts, Seeds & Legumes', 'Migdały naturalne całe', 'not-applicable', null, 'none', '5902315400757'),
