@@ -42,7 +42,7 @@ WHERE type = 'contains'
   'en:mustard', 'en:sesame-seeds', 'en:lupin',
   'en:sulphur-dioxide-and-sulphites',
   -- Accepted extras beyond EU-14
-  'en:kiwi', 'en:pork', 'en:none', 'en:peach'
+  'en:kiwi', 'en:pork', 'en:peach'
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -57,7 +57,7 @@ WHERE type = 'traces'
   'en:molluscs', 'en:peanuts', 'en:nuts', 'en:soybeans', 'en:celery',
   'en:mustard', 'en:sesame-seeds', 'en:lupin',
   'en:sulphur-dioxide-and-sulphites',
-  'en:kiwi', 'en:pork', 'en:none'
+  'en:kiwi', 'en:pork'
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
