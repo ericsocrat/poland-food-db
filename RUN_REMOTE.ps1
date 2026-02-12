@@ -177,12 +177,14 @@ try {
         Write-Host "ERROR: Cannot connect to remote database." -ForegroundColor Red
         Write-Host "Check your password and network connection." -ForegroundColor Yellow
         Write-Host "Output: $testResult" -ForegroundColor DarkGray
+        Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
         exit 1
     }
     Write-Host "Connection OK." -ForegroundColor Green
 }
 catch {
     Write-Host "ERROR: psql failed — $($_.Exception.Message)" -ForegroundColor Red
+    Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
     exit 1
 }
 

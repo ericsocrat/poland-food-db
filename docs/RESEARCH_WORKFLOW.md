@@ -141,7 +141,6 @@ For every product, collect **all** of the following. Mark missing fields explici
 | Ingredient list | Label back (stored as standardized English)          | `ingredients_raw`        |
 | Additive count  | Count E-numbers in ingredient list                   | `additives_count`        |
 | Prep method     | Infer from label: "smażone"=fried, "pieczone"=baked  | `prep_method`            |
-| Oil method      | Label: e.g., "w oleju słonecznikowym"                | `oil_method`             |
 | Processing risk | Derived from NOVA group in v_master (CASE)           | `processing_risk` (view) |
 | NOVA group      | Open Food Facts or manual classification             | `nova_classification`    |
 | Controversies   | Known issues: palm oil, MSG, controversial additives | `controversies`          |
@@ -212,7 +211,7 @@ When using retailer websites:
 | 2    | Verify the product name matches what's on shelves                 |
 | 3    | Extract nutrition table (per 100g — NOT per serving unless noted) |
 | 4    | Check if ingredient list is provided                              |
-| 5    | Note the URL and access date for `sources` table                  |
+| 5    | Record `source_url` / `source_ean` on the `products` row         |
 | 6    | Flag any discrepancy with label data in a SQL comment             |
 
 **Warning:** Retailer websites sometimes show per-serving values without clearly labeling them. Always confirm the basis is per 100g.
@@ -329,13 +328,12 @@ Every product insert MUST include inline provenance documentation:
 -- OFF: https://world.openfoodfacts.org/product/5900259000002
 -- Notes: Per 100g values from back-of-pack nutrition table
 -- Cross-check: OFF values match label within 2% on all fields
-INSERT INTO products (country, brand, product_type, category, product_name, prep_method, oil_method, controversies)
+INSERT INTO products (country, brand, product_type, category, product_name, prep_method, controversies)
 VALUES ('PL', 'Lay''s', 'Chipsy ziemniaczane', 'Chips', 'Lay''s Klasyczne Solone',
-        'fried', 'sunflower_oil', 'none')
+  'fried', 'none')
 ON CONFLICT (country, brand, product_name) DO UPDATE SET
   product_type = EXCLUDED.product_type,
   prep_method = EXCLUDED.prep_method,
-  oil_method = EXCLUDED.oil_method,
   controversies = EXCLUDED.controversies;
 ```
 

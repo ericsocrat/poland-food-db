@@ -62,29 +62,28 @@ jobs:
 
       - name: Apply schema migrations
         run: |
+          set -euo pipefail
           for f in $(ls supabase/migrations/*.sql | sort); do
             echo "Applying: $f"
-            psql -f "$f"
+            psql -v ON_ERROR_STOP=1 -f "$f"
           done
 
       - name: Run pipelines
         run: |
+          set -euo pipefail
           for category in db/pipelines/*/; do
             cat_name=$(basename "$category")
             for f in $(ls "$category"PIPELINE__*.sql 2>/dev/null | sort); do
               echo "  RUN  $f"
-              psql -f "$f"
-              if [ $? -ne 0 ]; then
-                echo "FAILED: $f"
-                exit 1
-              fi
+              psql -v ON_ERROR_STOP=1 -f "$f"
             done
           done
 
       - name: Post-pipeline fixup
         run: |
+          set -euo pipefail
           echo "Applying CI post-pipeline fixup..."
-          psql -f db/ci_post_pipeline.sql
+          psql -v ON_ERROR_STOP=1 -f db/ci_post_pipeline.sql
           echo "Post-pipeline fixup complete."
 
       - name: Run QA via RUN_QA.ps1

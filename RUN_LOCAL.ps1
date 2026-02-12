@@ -31,7 +31,7 @@ param(
     [Parameter(HelpMessage = "Print the SQL files that would be executed without running them.")]
     [switch]$DryRun,
 
-    [Parameter(HelpMessage = "Run QA null checks after pipeline execution.")]
+    [Parameter(HelpMessage = "Run the full QA suite (via RUN_QA.ps1) after pipeline execution.")]
     [switch]$RunQA
 )
 

@@ -135,11 +135,10 @@ Copy-Item -Recurse db/pipelines/chips db/pipelines/chips_de
 ### Step 2: Rename All Files
 
 ```
-PIPELINE__chips_de__00_ensure_scores.sql
 PIPELINE__chips_de__01_insert_products.sql
-PIPELINE__chips_de__02_add_servings.sql
 PIPELINE__chips_de__03_add_nutrition.sql
 PIPELINE__chips_de__04_scoring.sql
+PIPELINE__chips_de__05_source_provenance.sql
 ```
 
 ### Step 3: Update All Queries
@@ -171,8 +170,9 @@ Run the new pipeline against local Supabase. Verify:
 The current schema is **country-agnostic by design**:
 
 - `products.country` — discriminator column, part of the unique constraint
-- `scores`, `servings`, `nutrition_facts` — linked by `product_id`, inheriting country from the product
-- `sources` — can reference country-specific data sources via `notes`
+- `products` — stores scores, flags, confidence, and source provenance inline (`source_type`, `source_url`, `source_ean`)
+- `nutrition_facts` — linked by `product_id`, inheriting country from the product
+- `product_allergen_info` — linked by `product_id` for contains/traces declarations
 
 ### Potential Future Schema Changes
 
@@ -180,9 +180,9 @@ These changes are **not needed now** but may be required during expansion:
 
 | Change                                | Trigger                                      |
 | ------------------------------------- | -------------------------------------------- |
-| Add `country` to `sources` table      | When tracking per-country data sources        |
+| Add `country` to source reference table (if introduced) | Only if multi-source lineage is normalized to a separate table |
 | Add `currency` column for price data  | If price tracking is ever added (out of scope) |
-| Add `regulation_ref` to `scores`      | To cite country-specific labeling regulations |
+| Add `regulation_ref` to `products`    | To cite country-specific labeling regulations |
 | Separate schema per country           | Only if dataset exceeds millions of rows      |
 
 **Rule:** Any schema change requires a new Supabase migration. Never modify existing migrations.

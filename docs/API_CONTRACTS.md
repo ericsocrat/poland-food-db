@@ -20,8 +20,8 @@ All API surfaces are **read-only** PostgreSQL views or RPC functions exposed via
 | Internal Column                                                                    | Reason                           | Exposed Via                                        |
 | ---------------------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------- |
 | `ingredients_raw`                                                                  | Raw Polish text, not user-facing | `ingredients.count`, `ingredients.additive_names`  |
-| `source_url`, `source_ean`, `source_fields`, `source_collected_at`, `source_notes` | Backend provenance details       | `trust.source_type`, `trust.source_confidence_pct` |
-| `scoring_version`, `scored_at`                                                     | Internal metadata                | Not exposed                                        |
+| `source_url`, `source_ean`                                                         | Backend provenance details       | `trust.source_type`, `trust.source_confidence_pct` |
+| `score_breakdown` version internals                                                | Internal metadata                | Not exposed                                        |
 | `controversies`                                                                    | Raw text enum                    | Converted to warning in `api_score_explanation`    |
 | `ingredient_concern_score`                                                         | Scoring internal                 | Visible in `score_breakdown.factors`               |
 | `score_breakdown` (raw JSONB)                                                      | Complex structure                | Structured via `api_score_explanation`             |
@@ -155,7 +155,7 @@ Body: {"p_product_id": 32}
 
   // Data trust
   "trust": {
-    "confidence": "verified",               // "verified" | "estimated" | "unknown"
+    "confidence": "verified",               // "verified" | "estimated" | "low"
     "data_completeness_pct": 100,            // integer (0-100)
     "source_type": "off_api",                // "off_api" | "manual" | "label_scan"
     "source_confidence_pct": 90,             // integer (0-100)
