@@ -135,6 +135,9 @@
 
 ## 5. Code Quality Audit
 
+> **Historical context:** Findings in this section reflect the original 2026-02-11 audit pass.
+> Resolved items are tracked in the checklist above and in the fix log below.
+
 | File                      | Lines | Findings                                                                                 |
 | ------------------------- | ----: | ---------------------------------------------------------------------------------------- |
 | pipeline/__init__.py      |     0 | ✅ None                                                                                   |
@@ -151,6 +154,9 @@
 ---
 
 ## 6. Scripts & Config Audit
+
+> **Historical context:** Findings here are snapshot observations from the original audit run.
+> Current script behavior and check counts are reflected in `RUN_QA.ps1`, `RUN_LOCAL.ps1`, and the latest QA output.
 
 | File                    | Lines | Findings                                               |
 | ----------------------- | ----: | ------------------------------------------------------ |
@@ -216,10 +222,7 @@ _Fixes are logged below as they are completed._
 | 11  | 2026-02-11 | RESEARCH_WORKFLOW.md §8.1 rewritten                   | docs/RESEARCH_WORKFLOW.md                                                                                                 |
 | 12  | 2026-02-11 | Session context managers added                        | pipeline/off_client.py                                                                                                    |
 | 13  | 2026-02-11 | `_safe_int()` guard added                             | pipeline/off_client.py                                                                                                    |
-
+| 16  | 2026-02-11 | 5 remaining docs updated (14 stale refs)              | docs/PERFORMANCE_REPORT.md, docs/DATA_SOURCES.md, docs/EAN_EXPANSION_PLAN.md, docs/API_CONTRACTS.md, docs/UX_UI_DESIGN.md |
 | 17  | 2026-02-12 | Final consistency sweep (counts + docs alignment)     | README.md, docs/EAN_VALIDATION_STATUS.md, copilot-instructions.md, docs/FULL_PROJECT_AUDIT.md |
-
-
-
 
 
