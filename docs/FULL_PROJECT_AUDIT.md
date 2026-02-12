@@ -5,9 +5,12 @@
 **Commit**: `e054423` (pre-audit baseline)
 **Branch**: `main`
 
+> **Note:** This document preserves a historical audit snapshot (2026-02-11) and includes pre-fix findings.
+> For current authoritative operational metrics, use `README.md`, `copilot-instructions.md`, and the latest QA output from `RUN_QA.ps1`.
+
 ---
 
-## Verified Baseline (live database)
+## Verified Baseline (live database at latest reconciliation)
 
 | Metric                                  | Value                                  |
 | --------------------------------------- | -------------------------------------- |
@@ -21,7 +24,7 @@
 | v_product_confidence                    | 1,029                                  |
 | EAN coverage                            | 1,000/1,029 active (97.2%)             |
 | Score range / avg                       | 4–57 / 24.0                            |
-| Confidence bands                        | 475 high · 364 medium · 28 low         |
+| Confidence bands                        | 0 high · 1,000 medium · 29 low         |
 | CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
@@ -96,7 +99,7 @@
 | 477 null store_availability — expected (only Żabka products have this)      | ✅ Pass |
 | 161 products without ingredients — expected (not all OFF records have data) | ⚠️ Info |
 | 389 products without allergens — expected (same reason)                     | ⚠️ Info |
-| Confidence: 475 high / 364 medium / 28 low — low = products missing EAN     | ✅ Pass |
+| Confidence: 0 high / 1,000 medium / 29 low — reflects current post-reset ingredient state | ✅ Pass |
 
 **Verdict**: Data is healthy. Coverage gaps are understood.
 
@@ -213,4 +216,10 @@ _Fixes are logged below as they are completed._
 | 11  | 2026-02-11 | RESEARCH_WORKFLOW.md §8.1 rewritten                   | docs/RESEARCH_WORKFLOW.md                                                                                                 |
 | 12  | 2026-02-11 | Session context managers added                        | pipeline/off_client.py                                                                                                    |
 | 13  | 2026-02-11 | `_safe_int()` guard added                             | pipeline/off_client.py                                                                                                    |
-| 16  | 2026-02-11 | 5 remaining docs updated (14 stale refs)              | docs/PERFORMANCE_REPORT.md, docs/DATA_SOURCES.md, docs/EAN_EXPANSION_PLAN.md, docs/API_CONTRACTS.md, docs/UX_UI_DESIGN.md |
+
+| 17  | 2026-02-12 | Final consistency sweep (counts + docs alignment)     | README.md, docs/EAN_VALIDATION_STATUS.md, copilot-instructions.md, docs/FULL_PROJECT_AUDIT.md |
+
+
+
+
+
