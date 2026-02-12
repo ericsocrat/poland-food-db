@@ -114,7 +114,8 @@ $suiteCatalog = @(
     @{ Num = 12; Name = "Data Consistency";                 Short = "DataConsist";   Id = "data_consistency";    Checks = 20; Blocking = $true;  Kind = "sql";         File = "QA__data_consistency.sql" },
     @{ Num = 13; Name = "Allergen & Trace Integrity";       Short = "Allergen";     Id = "allergen_integrity";  Checks = 14; Blocking = $true;  Kind = "sql";         File = "QA__allergen_integrity.sql" },
     @{ Num = 14; Name = "Serving & Source Validation";      Short = "ServSource";   Id = "serving_source";      Checks = 16; Blocking = $true;  Kind = "sql";         File = "QA__serving_source_validation.sql" },
-    @{ Num = 15; Name = "Ingredient Data Quality";          Short = "IngredQual";   Id = "ingredient_quality";  Checks = 14; Blocking = $true;  Kind = "sql";         File = "QA__ingredient_quality.sql" }
+    @{ Num = 15; Name = "Ingredient Data Quality";          Short = "IngredQual";   Id = "ingredient_quality";  Checks = 14; Blocking = $true;  Kind = "sql";         File = "QA__ingredient_quality.sql" },
+    @{ Num = 16; Name = "Security Posture";                 Short = "Security";     Id = "security_posture";    Checks = 12; Blocking = $true;  Kind = "sql";         File = "QA__security_posture.sql" }
 )
 
 $suiteByNum = @{}

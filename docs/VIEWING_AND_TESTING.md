@@ -90,7 +90,7 @@ Run all pipelines + QA suites automatically:
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (228/228 — zero violation rows).
+  All QA checks passed (241/241 — zero violation rows).
 
   Database inventory:
   active_products | deprecated | nutrition | categories
@@ -125,7 +125,7 @@ Suite 13 — Allergen Integrity:      ✓ PASS (14/14)
 Suite 14 — Serving & Source:        ✓ PASS (16/16)
 Suite 15 — Ingredient Quality:      ✓ PASS (14/14)
 
-ALL TESTS PASSED (228/228 checks across 15 suites)
+ALL TESTS PASSED (241/241 checks across 16 suites)
 ```
 
 ---

@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (226 checks across 15 suites)
+# All tests (241 checks across 16 suites)
 .\RUN_QA.ps1
 
 # Negative validation (29 constraint tests)
@@ -108,7 +108,7 @@ supabase start
 - 8 source coverage reports (informational, non-blocking)
 - 29 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 228/228 + 29/29 negative
+**All tests passing**: ✅ 241/241 + 29/29 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
@@ -175,7 +175,7 @@ poland-food-db/
 │   └── UX_UI_DESIGN.md      # Production-ready UX specification
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (229 checks)
+├── RUN_QA.ps1               # Standalone test runner (241 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
 └── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ```
@@ -256,7 +256,7 @@ Constraint violation tests that verify the database correctly rejects invalid da
 
 **Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
 
-**CI**: All 229 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 241 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -372,7 +372,7 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 228/228 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 241/241 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
