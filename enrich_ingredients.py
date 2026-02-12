@@ -8,10 +8,12 @@ Usage:
     python enrich_ingredients.py
 """
 import json
+import os
 import re
 import subprocess
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 
 import requests
@@ -27,24 +29,37 @@ TIMEOUT = 30
 MAX_RETRIES = 2
 
 OUTPUT_DIR = Path(__file__).parent / "supabase" / "migrations"
-MIGRATION_FILE = OUTPUT_DIR / "20260213000500_populate_ingredients_allergens.sql"
+# Migration filename is generated dynamically at runtime to avoid overwrites
+MIGRATION_FILE: Path | None = None  # set in main()
+
+DB_CONTAINER = "supabase_db_poland-food-db"
+DB_USER = "postgres"
+DB_NAME = "postgres"
 
 # ---------------------------------------------------------------------------
 # DB helpers
 # ---------------------------------------------------------------------------
 
+def _psql_cmd(query: str) -> list[str]:
+    """Build psql command — CI mode (PGHOST set) uses psql directly,
+    local mode uses docker exec into the Supabase container."""
+    if os.environ.get("PGHOST"):
+        return ["psql", "-t", "-A", "-F", "|", "-c", query]
+    return [
+        "docker", "exec", DB_CONTAINER,
+        "psql", "-U", DB_USER, "-d", DB_NAME,
+        "-t", "-A", "-F", "|", "-c", query,
+    ]
+
+
 def get_products() -> list[dict]:
     """Get all active products with EANs from the local DB."""
-    cmd = [
-        "docker", "exec", "supabase_db_poland-food-db",
-        "psql", "-U", "postgres", "-d", "postgres", "-t", "-A", "-F", "|",
-        "-c", """
+    cmd = _psql_cmd("""
         SELECT product_id, ean, brand, product_name, category
         FROM products
         WHERE is_deprecated = FALSE AND ean IS NOT NULL
         ORDER BY product_id;
-        """
-    ]
+    """)
     result = subprocess.run(cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace")
     if result.returncode != 0:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
@@ -68,11 +83,7 @@ def get_products() -> list[dict]:
 
 def get_ingredient_ref() -> dict[str, int]:
     """Get ingredient_ref lookup: name_en → ingredient_id."""
-    cmd = [
-        "docker", "exec", "supabase_db_poland-food-db",
-        "psql", "-U", "postgres", "-d", "postgres", "-t", "-A", "-F", "|",
-        "-c", "SELECT ingredient_id, lower(name_en) FROM ingredient_ref ORDER BY ingredient_id;"
-    ]
+    cmd = _psql_cmd("SELECT ingredient_id, lower(name_en) FROM ingredient_ref ORDER BY ingredient_id;")
     result = subprocess.run(cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace")
     if result.returncode != 0:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
@@ -263,10 +274,19 @@ def process_allergens(off_product: dict, product_id: int) -> list[dict]:
 
 
 def sql_escape(val: str | None) -> str:
-    """Escape a string for SQL."""
+    """Escape a string for safe SQL embedding.
+
+    Handles single quotes, backslashes, and null bytes that can
+    appear in OFF API data.
+    """
     if val is None:
         return "NULL"
-    return "'" + str(val).replace("'", "''") + "'"
+    s = str(val).replace("\x00", "")  # strip null bytes
+    s = s.replace("'", "''")
+    if "\\" in s:
+        # Use E'' escape-string syntax for backslash-containing values
+        return "E'" + s.replace("\\", "\\\\") + "'"
+    return "'" + s + "'"
 
 
 def generate_migration(ingredient_rows: list[dict],
@@ -276,7 +296,7 @@ def generate_migration(ingredient_rows: list[dict],
     """Generate the migration SQL."""
     lines = []
     lines.append("-- Populate product_ingredient and product_allergen_info tables")
-    lines.append("-- Generated: 2026-02-12")
+    lines.append(f"-- Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
     lines.append(f"-- Products processed: {stats['processed']}")
     lines.append(f"-- Products with ingredients: {stats['with_ingredients']}")
     lines.append(f"-- Products with allergens: {stats['with_allergens']}")
@@ -405,6 +425,11 @@ def main():
     print("=" * 60)
     print("Ingredient & Allergen Enrichment")
     print("=" * 60)
+
+    # Set migration filename dynamically to avoid overwrites
+    global MIGRATION_FILE
+    ts = datetime.now().strftime("%Y%m%d%H%M%S")
+    MIGRATION_FILE = OUTPUT_DIR / f"{ts}_populate_ingredients_allergens.sql"
 
     # 1. Load products and ingredient_ref
     print("\n[1/4] Loading products from database...")
