@@ -11,28 +11,30 @@ Audited all public base tables in local Supabase/PostgreSQL:
 - product_allergen_info
 - product_ingredient
 - products
+- user_preferences
 
 ## Structural Integrity (Schema/Constraints)
-- Public tables audited: **9/9**
-- Tables with primary key: **9/9**
+- Public tables audited: **10/10**
+- Tables with primary key: **10/10**
 - Constraints present and validated: **42/42** (`convalidated = true`)
 - Foreign keys structurally valid (no invalid constraints): **pass**
 
 ## Cardinality Snapshot
 - products: 1063 (1025 active, 38 deprecated)
 - nutrition_facts: 1032
-- ingredient_ref: 1132
-- product_ingredient: 0
-- product_allergen_info: 0
+- ingredient_ref: 2,740
+- product_ingredient: 12,892
+- product_allergen_info: 2,527 (1,218 allergens + 1,309 traces)
 - category_ref: 20
 - concern_tier_ref: 4
-- country_ref: 1
+- country_ref: 1 (PL active; multi-country support implemented)
 - nutri_score_ref: 7
+- user_preferences: per-user (authenticated), RLS-scoped
 
 ## QA Status Summary
 From `RUN_QA.ps1 -Json` (final):
-- Total checks: 226
-- Passed: **226**
+- Total checks: 333
+- Passed: **333**
 - Failed: **0**
 - Warnings: 1025 (actionable source-coverage warnings)
 - Overall: **pass**
@@ -87,14 +89,17 @@ From `RUN_QA.ps1 -Json` (final):
 - nutrition_facts: structurally healthy, no orphan rows
 
 ### Ingredient/Allergen Domain
-- ingredient_ref: structurally healthy, **currently fully orphaned** relative to `product_ingredient` (1132/1132)
-- product_ingredient: structurally healthy, empty (pipeline step not yet built)
-- product_allergen_info: structurally healthy, empty
+- ingredient_ref: structurally healthy, populated (2,740 rows), linked via 12,892 product_ingredient rows
+- product_ingredient: structurally healthy, populated (12,892 rows across 859 products)
+- product_allergen_info: structurally healthy, populated (2,527 rows — 1,218 allergens + 1,309 traces across 655 products). Schema-enforced `en:` prefix via CHECK constraint.
+
+### User Data
+- user_preferences: structurally healthy, RLS-scoped (`auth.uid() = user_id`). Stores country, diet, allergen preferences per authenticated user.
 
 ## Audit Verdict
 - **Schema integrity:** satisfied
-- **Table-level data quality:** satisfied (all actionable issues remediated, 226/226 QA checks pass)
-- **Remaining gap:** `product_ingredient` pipeline not yet built → `ingredient_ref` rows exist but are unlinked (QA check skips gracefully)
+- **Table-level data quality:** satisfied (all actionable issues remediated, 333/333 QA checks pass)
+- **Remaining gap:** None — `product_ingredient` pipeline built, `ingredient_ref` rows linked, allergen data populated
 
 ## Changes Made
 - Pipeline SQL files corrected (brand casing in 6 category `*__04_scoring.sql` files)

@@ -31,8 +31,8 @@
 | CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
 | FK constraints                          | 14                                     |
 | Indexes                                 | 40                                     |
-| Migration files                         | 58                                     |
-| QA checks                               | 263/263 pass + 29/29 negative tests    |
+| Migration files                         | 66                                     |
+| QA checks                               | 333/333 pass + 23/23 negative tests    |
 
 ---
 
@@ -75,14 +75,14 @@
 
 | Check                                                                 | Result |
 | --------------------------------------------------------------------- | ------ |
-| All 13 tables present with correct columns                            | ✅ Pass |
+| All 14 tables present with correct columns (incl. user_preferences)   | ✅ Pass |
 | All 14 FK constraints enforced                                        | ✅ Pass |
-| 26 CHECK constraints applied (domain values, ranges)                  | ✅ Pass |
-| 40 indexes present (covering queries + pg_trgm search)                | ✅ Pass |
+| 26+ CHECK constraints applied (domain values, ranges, allergen tags)  | ✅ Pass |
+| 40+ indexes present (covering queries + pg_trgm search)               | ✅ Pass |
 | 3 identity columns (products, ingredient_ref, category_ref)           | ✅ Pass |
-| 2 views (v_master, v_api_category_overview)                           | ✅ Pass |
+| 3 views (v_master, v_api_category_overview, v_api_category_overview_by_country) | ✅ Pass |
 | 2 materialized views (mv_ingredient_frequency, v_product_confidence)  | ✅ Pass |
-| 14 custom functions + 32 pg_trgm functions                            | ✅ Pass |
+| 20+ custom functions (incl. resolve_effective_country, check_product_preferences) + 32 pg_trgm functions | ✅ Pass |
 | 0 orphaned nutrition rows                                            | ✅ Pass |
 | 0 triggers (expected — scoring is pipeline-based)                     | ✅ Pass |
 
@@ -111,8 +111,8 @@
 
 | Check                                                                                                                                                    | Result |
 | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 17 QA suites, 263 checks — 263/263 PASS                                                                                                                  | ✅ Pass |
-| 29 negative validation tests — 29/29 CAUGHT                                                                                                              | ✅ Pass |
+| 22 QA suites, 333 checks — 333/333 PASS                                                                                                                  | ✅ Pass |
+| 23 negative validation tests — 23/23 CAUGHT                                                                                                              | ✅ Pass |
 | Coverage: data integrity, scoring, sources, EAN, API, confidence, quality, refs, views, naming, nutrition, consistency, allergens, servings, ingredients | ✅ Pass |
 | RUN_QA.ps1 / RUN_NEGATIVE_TESTS.ps1 — correct exit codes                                                                                                 | ✅ Pass |
 
@@ -129,7 +129,7 @@
 | Postgres 15 service container                                            | ✅ Pass |
 | Full pipeline: migrations → pipelines → fixup → QA → threshold → summary | ✅ Pass |
 | Fails job on QA failure                                                  | ✅ Pass |
-| Job name check count matches (226)                                       | ✅ Pass |
+| Job name check count matches (333)                                       | ✅ Pass |
 
 **Verdict**: CI pipeline correctly configured.
 
@@ -183,12 +183,12 @@
 | README.md                  |   389 | **A** | ✅ Fixed — all 15+ stale references updated             |
 | SCORING_METHODOLOGY.md     |   479 | **A** | No issues — version-locked to v3.2                     |
 | COUNTRY_EXPANSION_GUIDE.md |   212 | **A** | No issues — future-facing doc                          |
-| UX_UI_DESIGN.md            |   761 | **A** | ✅ Fixed — product counts and QA counts updated         |
-| API_CONTRACTS.md           |   545 | **A** | ✅ Fixed — product counts updated                       |
+| UX_UI_DESIGN.md            |   780 | **A** | ✅ Fixed — scanner implemented, preferences/country, 9 APIs, 333 QA          |
+| API_CONTRACTS.md           |   700 | **A** | ✅ Fixed — REVOKE includes authenticated, product counts updated             |
 | DATA_SOURCES.md            |   431 | **A** | ✅ Fixed — product counts and EAN coverage updated      |
 | RESEARCH_WORKFLOW.md       |   537 | **A** | ✅ Fixed — §8.1 SQL rewritten, EAN coverage updated     |
 | PERFORMANCE_REPORT.md      |   195 | **A** | ✅ Fixed — all baseline numbers and index count updated |
-| VIEWING_AND_TESTING.md     |   196 | **A** | ✅ Fixed — all 15 suites listed, negative tests added   |
+| VIEWING_AND_TESTING.md     |   266 | **A** | ✅ Fixed — all 22 suites listed, 333/333 + 23/23 negative tests              |
 | EAN_EXPANSION_PLAN.md      |    18 | **A** | ✅ Fixed — coverage and product counts updated          |
 | EAN_VALIDATION_STATUS.md   |    56 | **A** | ✅ Fixed — fully regenerated with per-category data     |
 | copilot-instructions.md    |   513 | **A** | ✅ Fixed — all stale numbers corrected                  |
@@ -199,7 +199,7 @@
 
 ## Overall Project Grade: **A**
 
-**Strengths**: Schema is rock-solid (0 orphans, all constraints enforced). QA coverage is exceptional (226 + 29 tests, 100% pass rate). CI is properly configured. No security vulnerabilities. All 12 docs are now accurate.
+**Strengths**: Schema is rock-solid (0 orphans, all constraints enforced). QA coverage is exceptional (333 + 23 tests, 100% pass rate). CI is properly configured. No security vulnerabilities. All 12+ docs are now accurate.
 
 **Remaining (deferred)**: EAN-8 support in validator.py (item 14) and RUN_QA.ps1 refactor (item 15) — both cosmetic / low-risk.
 

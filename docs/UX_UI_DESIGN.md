@@ -1,8 +1,8 @@
 # Poland Food DB — UX/UI Design Document
 
 > **Status:** Production-ready specification — architecture, data contracts, and UX rules locked.
-> **Last updated:** 2026-02-10 (incremental hardening: score disambiguation, API-to-component mapping, misinterpretation defense v2)
-> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (263/263 checks). This document is the single source of truth for any future front-end implementation.
+> **Last updated:** 2026-02-13 (docs sync: scanner/preferences/country/diet-allergen features now implemented)
+> **Implementation stage:** Spec-complete. No front-end code yet. All API endpoints exist and pass QA (333/333 checks + 23/23 negative tests). This document is the single source of truth for any future front-end implementation.
 
 ---
 
@@ -25,9 +25,11 @@
 ```
 Home (Dashboard)
 ├── Browse by Category  →  Category Grid  →  Product List  →  Product Detail
+├── Scan (Barcode)      →  EAN lookup  →  Product Detail (or "not found")
 ├── Compare Products    →  Side-by-side comparison (up to 4)
-├── Search              →  Full-text search with filters
+├── Search              →  Full-text search with diet/allergen filters
 ├── Best Choices        →  "Top picks" per category (lowest unhealthiness)
+├── Preferences         →  Country, diet, allergen settings (authenticated)
 ├── My Watchlist        →  Saved products for quick access (future)
 └── About / Methodology →  How scores are calculated, data sources
 ```
@@ -38,6 +40,8 @@ Home (Dashboard)
 /                           →  Dashboard
 /category/:slug             →  Category listing (e.g. /category/dairy)
 /product/:id                →  Product detail
+/scan                       →  Barcode scanner → product detail
+/preferences                →  User preferences (country, diet, allergens)
 /compare?ids=1,2,3          →  Comparison view
 /search?q=mleko&cat=dairy   →  Search results
 /best/:category             →  Best choices for a category
@@ -133,6 +137,8 @@ Home (Dashboard)
 - Processing risk (Low, Moderate, High)
 - Flags (high salt, high sugar, high sat fat — toggle)
 - Prep method
+- Diet preference (vegan, vegetarian — via `p_diet_preference` / `p_strict_diet`)
+- Allergen exclusion (multi-select from known allergens, with may-contain toggle — via `p_avoid_allergens` / `p_strict_allergen` / `p_treat_may_contain`)
 
 ---
 
@@ -435,20 +441,21 @@ A product with confidence 95/100 has comprehensive, verified data — it could s
 ### 5.1 Navigation (Bottom Tab Bar)
 
 ```
-┌─────────────────────────────────────┐
-│           [Screen Content]           │
-├────────┬────────┬────────┬──────────┤
-│ 🏠     │ 🔍     │ ⚖️     │ ★        │
-│ Home   │ Search │ Compare│ Best     │
-└────────┴────────┴────────┴──────────┘
+┌─────────────────────────────────────────────┐
+│             [Screen Content]                 │
+├────────┬────────┬────────┬────────┬─────────┤
+│ 🏠     │ 🔍     │ 📷     │ ⚖️     │ ★       │
+│ Home   │ Search │ Scan   │ Compare│ Best    │
+└────────┴────────┴────────┴────────┴─────────┘
 ```
 
 ### 5.2 Mobile-Specific Features
 
-**Barcode Scanner (future):**
+**Barcode Scanner (implemented):**
 - Tap camera icon in search → scan EAN barcode
-- Instant lookup against products.ean
-- If found: show product detail
+- Backend: `api_product_detail_by_ean(p_ean, p_country)` — returns full product detail with scan metadata (`scanned_ean`, `found`, `alternative_count`)
+- Auto-country resolution: if `p_country` is NULL, resolves via user preferences or first active country
+- If found: show product detail + "X better alternatives in this category"
 - If not found: "Not in our database yet" with suggestion to add
 
 **Swipe Gestures:**
@@ -560,11 +567,14 @@ Views (direct GET):
 
 RPC functions (POST /rpc/):
 - `POST /rpc/api_product_detail` — Full product detail as structured JSONB
-- `POST /rpc/api_category_listing` — Paged category listing with sort/filter
-- `POST /rpc/api_search_products` — Full-text + trigram search
+- `POST /rpc/api_category_listing` — Paged category listing with sort/filter (11 params incl. diet/allergen)
+- `POST /rpc/api_search_products` — Full-text + trigram search (10 params incl. diet/allergen)
+- `POST /rpc/api_product_detail_by_ean` — Barcode scanner lookup (auto-country resolution)
 - `POST /rpc/api_score_explanation` — Score breakdown + category context
 - `POST /rpc/api_better_alternatives` — Healthier substitutes
 - `POST /rpc/api_data_confidence` — Data confidence score + breakdown
+- `POST /rpc/api_get_user_preferences` — Retrieve authenticated user's preferences
+- `POST /rpc/api_set_user_preferences` — Save country, diet, allergen settings (auth required)
 
 > **See [API_CONTRACTS.md](API_CONTRACTS.md) for complete response shapes and field documentation.**
 
@@ -572,16 +582,18 @@ RPC functions (POST /rpc/):
 
 Every UI component maps to exactly one API call. No component should ever call multiple endpoints and merge results client-side.
 
-| UI Component                    | API Endpoint                        | Key Response Fields                                                                | Caching Strategy    |
-| ------------------------------- | ----------------------------------- | ---------------------------------------------------------------------------------- | ------------------- |
-| Dashboard — Category Grid       | `GET v_api_category_overview`       | `category`, `product_count`, `avg_unhealthiness`, `score_band`                     | 5 min TTL           |
-| Category Listing — Product List | `POST /rpc/api_category_listing`    | `product_id`, `product_name`, `brand`, `unhealthiness_score`, `nutri_score_label`  | 2 min TTL           |
-| Product Detail — Identity       | `POST /rpc/api_product_detail`      | Full JSONB: identity, nutrition, flags, ingredients, allergens, traces, confidence | On navigation       |
-| Product Detail — Score Panel    | `POST /rpc/api_score_explanation`   | `headline`, `factor_breakdown[]`, `category_rank`, `category_avg`, `warnings[]`    | On navigation       |
-| Product Detail — Confidence     | `POST /rpc/api_data_confidence`     | `total_score`, `band`, `components[]`, `missing_items[]`                           | On navigation       |
-| Product Detail — Alternatives   | `POST /rpc/api_better_alternatives` | `product_id`, `product_name`, `score`, `score_diff`                                | On navigation       |
-| Search Results                  | `POST /rpc/api_search_products`     | Same as category listing + `rank` from `ts_rank_cd`                                | No cache (live)     |
-| Tooltips                        | Hardcoded in frontend               | `tooltip_text`, `display_label`, `unit`                                            | Static (build-time) |
+| UI Component                    | API Endpoint                                                      | Key Response Fields                                                                | Caching Strategy    |
+| ------------------------------- | ----------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------- |
+| Dashboard — Category Grid       | `GET v_api_category_overview`                                     | `category`, `product_count`, `avg_unhealthiness`, `score_band`                     | 5 min TTL           |
+| Category Listing — Product List | `POST /rpc/api_category_listing`                                  | `product_id`, `product_name`, `brand`, `unhealthiness_score`, `nutri_score_label`  | 2 min TTL           |
+| Product Detail — Identity       | `POST /rpc/api_product_detail`                                    | Full JSONB: identity, nutrition, flags, ingredients, allergens, traces, confidence | On navigation       |
+| Product Detail — Score Panel    | `POST /rpc/api_score_explanation`                                 | `headline`, `factor_breakdown[]`, `category_rank`, `category_avg`, `warnings[]`    | On navigation       |
+| Product Detail — Confidence     | `POST /rpc/api_data_confidence`                                   | `total_score`, `band`, `components[]`, `missing_items[]`                           | On navigation       |
+| Product Detail — Alternatives   | `POST /rpc/api_better_alternatives`                               | `product_id`, `product_name`, `score`, `score_diff`                                | On navigation       |
+| Search Results                  | `POST /rpc/api_search_products`                                   | Same as category listing + `rank` from `ts_rank_cd`                                | No cache (live)     |
+| Barcode Scanner — Result        | `POST /rpc/api_product_detail_by_ean`                             | `found`, `scanned_ean`, `alternative_count`, full product detail (if found)        | No cache (live)     |
+| Preferences — View/Edit         | `POST /rpc/api_get_user_preferences` / `api_set_user_preferences` | `country`, `diet_preference`, `avoid_allergens[]`, flags                           | No cache (auth)     |
+| Tooltips                        | Hardcoded in frontend                                             | `tooltip_text`, `display_label`, `unit`                                            | Static (build-time) |
 
 ### 8.3 Product Detail — Render Order
 
@@ -602,6 +614,8 @@ The Product Detail page loads data from 4 API calls (parallelised) and renders s
 - `compute_data_confidence()` — 6-component confidence scoring
 - `find_similar_products()` — Jaccard ingredient similarity
 - `find_better_alternatives()` — Healthier alternatives ranking
+- `resolve_effective_country()` — 3-tier country resolution (param → user prefs → first active). SECURITY DEFINER, EXECUTE revoked from PUBLIC/anon/authenticated
+- `check_product_preferences()` — Diet/allergen preference matching for product filtering
 - `refresh_all_materialized_views()` — Refresh all MVs after data changes
 - `mv_staleness_check()` — Check if MVs need refresh
 
@@ -743,18 +757,24 @@ Display this as an expandable section or info icon on the methodology page and P
 
 ---
 
-## 12. EU Expansion Readiness
+## 12. Multi-Country Support (Implemented)
 
-When expanding beyond Poland, the following UX elements must adapt:
+Country expansion is **fully implemented** in the backend. The UX elements adapt as follows:
 
-| Element                | Poland (Current)    | Multi-Country (Future)                             |
-| ---------------------- | ------------------- | -------------------------------------------------- |
-| Country filter         | Hardcoded PL        | Dropdown: PL, DE, CZ, etc. (from `country_ref`)    |
-| Nutri-Score display    | Standard EU badge   | May vary — some countries use traffic-light labels |
-| Currency in prices     | PLN (future)        | EUR, CZK, etc. — locale-aware formatting           |
-| Ingredient language    | Polish + English    | Native language + English translation              |
-| Store chains           | Polish retailers    | Country-specific retailer lists                    |
-| EAN prefix validation  | 590 = Polish origin | Country-specific prefix mapping                    |
-| Regulatory disclaimers | Polish food law     | Country-specific legal requirements                |
+| Element                  | Implementation Status | How It Works                                                                                                         |
+| ------------------------ | --------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| Country resolution       | ✅ Implemented         | `resolve_effective_country()`: explicit param → `user_preferences.country` → first active country from `country_ref` |
+| Country filter           | ✅ Implemented         | `p_country` param on `api_search_products`, `api_category_listing`, `api_product_detail_by_ean`                      |
+| Country echo in response | ✅ Contract-enforced   | Every API response includes a non-null `country` field (QA checks #31-#33)                                           |
+| User preference storage  | ✅ Implemented         | `api_set_user_preferences(p_country := 'DE')` — persisted in `user_preferences` with RLS                             |
+| Country-scoped data      | ✅ Implemented         | All queries filter by resolved country — no cross-country data leakage (11 isolation QA checks)                      |
+| Nutri-Score display      | Standard EU badge     | May vary by country — some use traffic-light labels                                                                  |
+| Currency in prices       | PLN (future)          | EUR, CZK, etc. — locale-aware formatting                                                                             |
+| Ingredient language      | Polish + English      | Native language + English translation per country                                                                    |
+| Store chains             | Polish retailers      | Country-specific retailer lists via `store_availability`                                                             |
+| EAN prefix validation    | 590 = Polish origin   | Country-specific prefix mapping                                                                                      |
+| Regulatory disclaimers   | Polish food law       | Country-specific legal requirements                                                                                  |
+
+**Currently active:** PL (Poland). Additional countries can be activated by inserting into `country_ref` with `is_active = true`.
 
 **UX rule:** All country-specific data must come from the database (reference tables), never from front-end hardcoding. See [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md).

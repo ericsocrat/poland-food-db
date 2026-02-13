@@ -492,7 +492,7 @@ only among products from the **same country** as the source product.
 - `api_search_products(query)` — debounce 300ms, max 100/page
 - `api_data_confidence(id)` — single product confidence lookup, fast
 - `api_get_user_preferences()` — authenticated user's preferences, fast
-- `v_product_confidence` — materialized view, pre-computed for all 1,029 products
+- `v_product_confidence` — materialized view, pre-computed for all 1,025 products
 
 ### Expensive Patterns (cache or limit)
 - `api_score_explanation(id)` — computes score + category context, ~50ms
@@ -547,7 +547,7 @@ Returns a composite data confidence score (0–100) indicating how reliable the 
 
 ### `v_product_confidence` (Materialized View)
 
-Pre-computed confidence for all 1,029 products. Faster than calling `compute_data_confidence()` per-product.
+Pre-computed confidence for all 1,025 products. Faster than calling `compute_data_confidence()` per-product.
 
 **PostgREST:** `GET /v_product_confidence?confidence_band=eq.low`
 
@@ -685,7 +685,7 @@ All country-scoped API functions (`api_search_products`, `api_category_listing`,
 - Anonymous callers with no explicit `p_country` get the system default (currently `'PL'`).
 - There is no "all countries" mode — every query is scoped to exactly one country.
 - `api_better_alternatives` does NOT use this helper; it infers country from the source product.
-- `resolve_effective_country` is an internal function: REVOKE'd from `anon` and `PUBLIC`.
+- `resolve_effective_country` is an internal SECURITY DEFINER function with `SET search_path = public`: EXECUTE REVOKE'd from `PUBLIC`, `anon`, and `authenticated`.
 
 ### Allergen Tag Enforcement
 
