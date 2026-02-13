@@ -234,3 +234,17 @@ SELECT '20. user_preferences has updated_at trigger' AS check_name,
            WHERE trigger_name = 'user_preferences_updated_at'
              AND event_object_table = 'user_preferences'
        ) THEN 0 ELSE 1 END AS violations;
+
+-- 21. resolve_effective_country is SECURITY DEFINER with search_path set
+SELECT '21. resolve_effective_country is SECURITY DEFINER with search_path' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc p
+           JOIN pg_namespace n ON p.pronamespace = n.oid
+           WHERE n.nspname = 'public'
+             AND p.proname = 'resolve_effective_country'
+             AND p.prosecdef = true
+             AND EXISTS (
+                 SELECT 1 FROM unnest(p.proconfig) AS cfg
+                 WHERE cfg LIKE 'search_path=%'
+             )
+       ) THEN 0 ELSE 1 END AS violations;

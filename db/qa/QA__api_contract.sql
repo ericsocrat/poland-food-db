@@ -329,3 +329,24 @@ SELECT
         SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_set_user_preferences()) k
     ) = ARRAY['api_version','error']
     THEN 'PASS' ELSE 'FAIL' END AS "#30 set_user_preferences auth error keys (2)";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #31 api_search_products — country is never null (auto-resolved)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN api_search_products('cola')->>'country' IS NOT NULL
+    THEN 'PASS' ELSE 'FAIL' END AS "#31 search_products country never null";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #32 api_category_listing — country is never null (auto-resolved)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN api_category_listing('Chips')->>'country' IS NOT NULL
+    THEN 'PASS' ELSE 'FAIL' END AS "#32 category_listing country never null";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #33 api_product_detail_by_ean — country is never null (auto-resolved)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN api_product_detail_by_ean('0000000000000')->>'country' IS NOT NULL
+    THEN 'PASS' ELSE 'FAIL' END AS "#33 ean_lookup country never null";
