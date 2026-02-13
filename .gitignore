@@ -46,5 +46,6 @@ schema_*.txt
 # ─── Logs ───────────────────────────────────────────────────────────────────
 *.log
 qa-test.json
+qa_*.json
 _func_dump.txt
 __api_defs.txt

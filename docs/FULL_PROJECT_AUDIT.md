@@ -14,25 +14,25 @@
 
 > **Updated 2026-02-12** after Baby re-categorization, brand normalization, source provenance backfill, and confidence function fix.
 
-| Metric                                  | Value                                  |
-| --------------------------------------- | -------------------------------------- |
-| Total products                          | 1,063 (1,025 active + 38 deprecated)  |
-| Categories                              | 20                                     |
-| Nutrition                               | 1,032 (1:1 with scored products)       |
-| ingredient_ref                          | 2,740                                  |
-| product_ingredient                      | 12,892 rows across 859 products        |
-| product_allergen_info                   | 2,527 (1,218 allergens + 1,309 traces) across 655 products |
-| mv_ingredient_frequency                 | 2,740                                  |
-| v_product_confidence                    | 1,025                                  |
-| EAN coverage                            | 997/1,025 active (97.3%)               |
-| Source provenance                        | 1,025/1,025 (100%)                     |
-| Score range / avg                       | 4–58 / 23.7                            |
-| Confidence (products.confidence)        | 859 verified · 166 estimated · 0 low   |
-| CHECK constraints                       | 26 (domain rules, excluding NOT NULLs) |
-| FK constraints                          | 14                                     |
-| Indexes                                 | 40                                     |
-| Migration files                         | 66                                     |
-| QA checks                               | 333/333 pass + 23/23 negative tests    |
+| Metric                           | Value                                                      |
+| -------------------------------- | ---------------------------------------------------------- |
+| Total products                   | 1,063 (1,025 active + 38 deprecated)                       |
+| Categories                       | 20                                                         |
+| Nutrition                        | 1,032 (1:1 with scored products)                           |
+| ingredient_ref                   | 2,740                                                      |
+| product_ingredient               | 12,892 rows across 859 products                            |
+| product_allergen_info            | 2,527 (1,218 allergens + 1,309 traces) across 655 products |
+| mv_ingredient_frequency          | 2,740                                                      |
+| v_product_confidence             | 1,025                                                      |
+| EAN coverage                     | 997/1,025 active (97.3%)                                   |
+| Source provenance                | 1,025/1,025 (100%)                                         |
+| Score range / avg                | 4–58 / 23.7                                                |
+| Confidence (products.confidence) | 859 verified · 166 estimated · 0 low                       |
+| CHECK constraints                | 26 (domain rules, excluding NOT NULLs)                     |
+| FK constraints                   | 14                                                         |
+| Indexes                          | 40                                                         |
+| Migration files                  | 66                                                         |
+| QA checks                        | 333/333 pass + 23/23 negative tests                        |
 
 ---
 
@@ -73,18 +73,18 @@
 
 ## 1. Schema & Constraints Audit
 
-| Check                                                                 | Result |
-| --------------------------------------------------------------------- | ------ |
-| All 14 tables present with correct columns (incl. user_preferences)   | ✅ Pass |
-| All 14 FK constraints enforced                                        | ✅ Pass |
-| 26+ CHECK constraints applied (domain values, ranges, allergen tags)  | ✅ Pass |
-| 40+ indexes present (covering queries + pg_trgm search)               | ✅ Pass |
-| 3 identity columns (products, ingredient_ref, category_ref)           | ✅ Pass |
-| 3 views (v_master, v_api_category_overview, v_api_category_overview_by_country) | ✅ Pass |
-| 2 materialized views (mv_ingredient_frequency, v_product_confidence)  | ✅ Pass |
+| Check                                                                                                    | Result |
+| -------------------------------------------------------------------------------------------------------- | ------ |
+| All 14 tables present with correct columns (incl. user_preferences)                                      | ✅ Pass |
+| All 14 FK constraints enforced                                                                           | ✅ Pass |
+| 26+ CHECK constraints applied (domain values, ranges, allergen tags)                                     | ✅ Pass |
+| 40+ indexes present (covering queries + pg_trgm search)                                                  | ✅ Pass |
+| 3 identity columns (products, ingredient_ref, category_ref)                                              | ✅ Pass |
+| 3 views (v_master, v_api_category_overview, v_api_category_overview_by_country)                          | ✅ Pass |
+| 2 materialized views (mv_ingredient_frequency, v_product_confidence)                                     | ✅ Pass |
 | 20+ custom functions (incl. resolve_effective_country, check_product_preferences) + 32 pg_trgm functions | ✅ Pass |
-| 0 orphaned nutrition rows                                            | ✅ Pass |
-| 0 triggers (expected — scoring is pipeline-based)                     | ✅ Pass |
+| 0 orphaned nutrition rows                                                                                | ✅ Pass |
+| 0 triggers (expected — scoring is pipeline-based)                                                        | ✅ Pass |
 
 **Verdict**: Schema is clean. No issues.
 
@@ -92,15 +92,15 @@
 
 ## 2. Data Integrity Audit
 
-| Check                                                                       | Result |
-| --------------------------------------------------------------------------- | ------ |
-| Every active product has nutrition_facts and scores on products      | ✅ Pass |
-| EAN coverage 997/1,025 (97.3%) — 28 without (expected for some)      | ✅ Pass |
-| Score range 4–57, avg 24.0 — within 0–100 constraint                        | ✅ Pass |
-| 0 null brand / product_type / prep_method / controversies                   | ✅ Pass |
-| 477 null store_availability — expected (only Żabka products have this)      | ✅ Pass |
-| 161 products without ingredients — expected (not all OFF records have data) | ⚠️ Info |
-| 389 products without allergens — expected (same reason)                     | ⚠️ Info |
+| Check                                                                                     | Result |
+| ----------------------------------------------------------------------------------------- | ------ |
+| Every active product has nutrition_facts and scores on products                           | ✅ Pass |
+| EAN coverage 997/1,025 (97.3%) — 28 without (expected for some)                           | ✅ Pass |
+| Score range 4–57, avg 24.0 — within 0–100 constraint                                      | ✅ Pass |
+| 0 null brand / product_type / prep_method / controversies                                 | ✅ Pass |
+| 477 null store_availability — expected (only Żabka products have this)                    | ✅ Pass |
+| 161 products without ingredients — expected (not all OFF records have data)               | ⚠️ Info |
+| 389 products without allergens — expected (same reason)                                   | ⚠️ Info |
 | Confidence: 858 high / 139 medium / 28 low — reflects enriched ingredient + allergen data | ✅ Pass |
 
 **Verdict**: Data is healthy. Coverage gaps are understood.
@@ -140,16 +140,16 @@
 > **Historical context:** Findings in this section reflect the original 2026-02-11 audit pass.
 > Resolved items are tracked in the checklist above and in the fix log below.
 
-| File                      | Lines | Findings                                                                                 |
-| ------------------------- | ----: | ---------------------------------------------------------------------------------------- |
-| pipeline/__init__.py      |     0 | ✅ None                                                                                   |
-| pipeline/__main__.py      |     5 | ✅ None                                                                                   |
-| pipeline/categories.py    |   378 | ⚠️ [Historical] Leaked loop vars; unnecessary `__future__` import                        |
+| File                      | Lines | Findings                                                                                              |
+| ------------------------- | ----: | ----------------------------------------------------------------------------------------------------- |
+| pipeline/__init__.py      |     0 | ✅ None                                                                                                |
+| pipeline/__main__.py      |     5 | ✅ None                                                                                                |
+| pipeline/categories.py    |   378 | ⚠️ [Historical] Leaked loop vars; unnecessary `__future__` import                                      |
 | pipeline/off_client.py    |   487 | ⚠️ [Historical] Dead `_clean_text()`; unclosed sessions; `_round1()` phantom zeros; `int()` crash risk |
 | pipeline/run.py           |   232 | ⚠️ [Historical] Unused `resolve_category` import; duplicate `_slug()`; `sys.exit(0)` swallows errors   |
-| pipeline/sql_generator.py |   557 | ⚠️ [Historical] Unused logger; `sodium_mg` in fields_populated; duplicate `_slug()`      |
-| pipeline/validator.py     |   169 | ⚠️ [Historical] EAN-8 not supported (unlike standalone script); unused logger            |
-| validate_eans.py          |   118 | ⚠️ [Historical] Unhandled `FileNotFoundError` for missing docker/psql                    |
+| pipeline/sql_generator.py |   557 | ⚠️ [Historical] Unused logger; `sodium_mg` in fields_populated; duplicate `_slug()`                    |
+| pipeline/validator.py     |   169 | ⚠️ [Historical] EAN-8 not supported (unlike standalone script); unused logger                          |
+| validate_eans.py          |   118 | ⚠️ [Historical] Unhandled `FileNotFoundError` for missing docker/psql                                  |
 
 **Security**: No vulnerabilities. SQL escaping adequate. No hardcoded secrets.
 
@@ -160,38 +160,38 @@
 > **Historical context:** Findings here are snapshot observations from the original audit run.
 > Current script behavior and check counts are reflected in `RUN_QA.ps1`, `RUN_LOCAL.ps1`, and the latest QA output.
 
-| File                    | Lines | Findings                                               |
-| ----------------------- | ----: | ------------------------------------------------------ |
-| RUN_LOCAL.ps1           |   207 | ✅ Clean — dry-run, preflight, single-transaction       |
-| RUN_REMOTE.ps1          |   251 | ✅ SecureString password, cleared after use             |
-| RUN_QA.ps1              |   865 | ⚠️ [Historical] Header mismatch (34 vs 31); ~600 lines copy-paste |
-| RUN_NEGATIVE_TESTS.ps1  |    86 | ✅ Clean                                                |
-| supabase/config.toml    |   385 | ✅ Standard, no hardcoded secrets                       |
-| .env.example            |    12 | ✅ Correct                                              |
-| requirements.txt        |     2 | ✅ Sensible version pins                                |
-| .editorconfig           |    28 | ✅ Proper                                               |
-| .gitignore              |    57 | ✅ Comprehensive                                        |
+| File                    | Lines | Findings                                                            |
+| ----------------------- | ----: | ------------------------------------------------------------------- |
+| RUN_LOCAL.ps1           |   207 | ✅ Clean — dry-run, preflight, single-transaction                    |
+| RUN_REMOTE.ps1          |   251 | ✅ SecureString password, cleared after use                          |
+| RUN_QA.ps1              |   865 | ⚠️ [Historical] Header mismatch (34 vs 31); ~600 lines copy-paste    |
+| RUN_NEGATIVE_TESTS.ps1  |    86 | ✅ Clean                                                             |
+| supabase/config.toml    |   385 | ✅ Standard, no hardcoded secrets                                    |
+| .env.example            |    12 | ✅ Correct                                                           |
+| requirements.txt        |     2 | ✅ Sensible version pins                                             |
+| .editorconfig           |    28 | ✅ Proper                                                            |
+| .gitignore              |    57 | ✅ Comprehensive                                                     |
 | .vscode/settings.json   |   215 | ⚠️ [Historical] Duplicate cSpell word; local dev password (expected) |
-| .vscode/extensions.json |    21 | ✅ Good extension list                                  |
+| .vscode/extensions.json |    21 | ✅ Good extension list                                               |
 
 ---
 
 ## 7. Documentation Accuracy Audit
 
-| Document                   | Lines | Grade | Key Issues                                             |
-| -------------------------- | ----: | :---: | ------------------------------------------------------ |
-| README.md                  |   389 | **A** | ✅ Fixed — all 15+ stale references updated             |
-| SCORING_METHODOLOGY.md     |   479 | **A** | No issues — version-locked to v3.2                     |
-| COUNTRY_EXPANSION_GUIDE.md |   212 | **A** | No issues — future-facing doc                          |
-| UX_UI_DESIGN.md            |   780 | **A** | ✅ Fixed — scanner implemented, preferences/country, 9 APIs, 333 QA          |
-| API_CONTRACTS.md           |   700 | **A** | ✅ Fixed — REVOKE includes authenticated, product counts updated             |
-| DATA_SOURCES.md            |   431 | **A** | ✅ Fixed — product counts and EAN coverage updated      |
-| RESEARCH_WORKFLOW.md       |   537 | **A** | ✅ Fixed — §8.1 SQL rewritten, EAN coverage updated     |
-| PERFORMANCE_REPORT.md      |   195 | **A** | ✅ Fixed — all baseline numbers and index count updated |
-| VIEWING_AND_TESTING.md     |   266 | **A** | ✅ Fixed — all 22 suites listed, 333/333 + 23/23 negative tests              |
-| EAN_EXPANSION_PLAN.md      |    18 | **A** | ✅ Fixed — coverage and product counts updated          |
-| EAN_VALIDATION_STATUS.md   |    56 | **A** | ✅ Fixed — fully regenerated with per-category data     |
-| copilot-instructions.md    |   513 | **A** | ✅ Fixed — all stale numbers corrected                  |
+| Document                   | Lines | Grade | Key Issues                                                         |
+| -------------------------- | ----: | :---: | ------------------------------------------------------------------ |
+| README.md                  |   389 | **A** | ✅ Fixed — all 15+ stale references updated                         |
+| SCORING_METHODOLOGY.md     |   479 | **A** | No issues — version-locked to v3.2                                 |
+| COUNTRY_EXPANSION_GUIDE.md |   212 | **A** | No issues — future-facing doc                                      |
+| UX_UI_DESIGN.md            |   780 | **A** | ✅ Fixed — scanner implemented, preferences/country, 9 APIs, 333 QA |
+| API_CONTRACTS.md           |   700 | **A** | ✅ Fixed — REVOKE includes authenticated, product counts updated    |
+| DATA_SOURCES.md            |   431 | **A** | ✅ Fixed — product counts and EAN coverage updated                  |
+| RESEARCH_WORKFLOW.md       |   537 | **A** | ✅ Fixed — §8.1 SQL rewritten, EAN coverage updated                 |
+| PERFORMANCE_REPORT.md      |   195 | **A** | ✅ Fixed — all baseline numbers and index count updated             |
+| VIEWING_AND_TESTING.md     |   266 | **A** | ✅ Fixed — all 22 suites listed, 333/333 + 23/23 negative tests     |
+| EAN_EXPANSION_PLAN.md      |    18 | **A** | ✅ Fixed — coverage and product counts updated                      |
+| EAN_VALIDATION_STATUS.md   |    56 | **A** | ✅ Fixed — fully regenerated with per-category data                 |
+| copilot-instructions.md    |   513 | **A** | ✅ Fixed — all stale numbers corrected                              |
 
 **Root cause**: All staleness from the 560 → 867 → 1,029 expansion and schema consolidation (scores/servings/product_sources merged into products) has been resolved.
 
@@ -209,23 +209,23 @@
 
 _Fixes are logged below as they are completed._
 
-| #   | Date       | Item                                                  | Files Changed                                                                                                             |
-| --- | ---------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| 1   | 2026-02-11 | README.md — 15+ stale refs fixed                      | README.md                                                                                                                 |
-| 2   | 2026-02-11 | EAN_VALIDATION_STATUS.md — fully regenerated          | docs/EAN_VALIDATION_STATUS.md                                                                                             |
-| 3   | 2026-02-11 | VIEWING_AND_TESTING.md — QA section rewritten         | docs/VIEWING_AND_TESTING.md                                                                                               |
-| 4   | 2026-02-11 | RUN_QA.ps1 header — check counts fixed                | RUN_QA.ps1                                                                                                                |
-| 5   | 2026-02-11 | copilot-instructions.md body — stale numbers fixed    | copilot-instructions.md                                                                                                   |
-| 6   | 2026-02-11 | Dead `_clean_text()` removed                          | pipeline/off_client.py                                                                                                    |
-| 7   | 2026-02-11 | `resolve_category` import — false positive, no change | —                                                                                                                         |
-| 8   | 2026-02-11 | Unused `logger` removed from 2 files                  | pipeline/sql_generator.py, pipeline/validator.py                                                                          |
-| 9   | 2026-02-11 | Shared `slug()` extracted to utils.py                 | pipeline/utils.py, pipeline/run.py, pipeline/sql_generator.py                                                             |
-| 10  | 2026-02-11 | `sodium_mg` + 2 field names fixed                     | pipeline/sql_generator.py                                                                                                 |
-| 11  | 2026-02-11 | RESEARCH_WORKFLOW.md §8.1 rewritten                   | docs/RESEARCH_WORKFLOW.md                                                                                                 |
-| 12  | 2026-02-11 | Session context managers added                        | pipeline/off_client.py                                                                                                    |
-| 13  | 2026-02-11 | `_safe_int()` guard added                             | pipeline/off_client.py                                                                                                    |
-| 16  | 2026-02-11 | 5 remaining docs updated (14 stale refs)              | docs/PERFORMANCE_REPORT.md, docs/DATA_SOURCES.md, docs/EAN_EXPANSION_PLAN.md, docs/API_CONTRACTS.md, docs/UX_UI_DESIGN.md |
-| 17  | 2026-02-12 | Final consistency sweep (counts + docs alignment)     | README.md, docs/EAN_VALIDATION_STATUS.md, copilot-instructions.md, docs/FULL_PROJECT_AUDIT.md |
+| #   | Date       | Item                                                    | Files Changed                                                                                                                                                |
+| --- | ---------- | ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | 2026-02-11 | README.md — 15+ stale refs fixed                        | README.md                                                                                                                                                    |
+| 2   | 2026-02-11 | EAN_VALIDATION_STATUS.md — fully regenerated            | docs/EAN_VALIDATION_STATUS.md                                                                                                                                |
+| 3   | 2026-02-11 | VIEWING_AND_TESTING.md — QA section rewritten           | docs/VIEWING_AND_TESTING.md                                                                                                                                  |
+| 4   | 2026-02-11 | RUN_QA.ps1 header — check counts fixed                  | RUN_QA.ps1                                                                                                                                                   |
+| 5   | 2026-02-11 | copilot-instructions.md body — stale numbers fixed      | copilot-instructions.md                                                                                                                                      |
+| 6   | 2026-02-11 | Dead `_clean_text()` removed                            | pipeline/off_client.py                                                                                                                                       |
+| 7   | 2026-02-11 | `resolve_category` import — false positive, no change   | —                                                                                                                                                            |
+| 8   | 2026-02-11 | Unused `logger` removed from 2 files                    | pipeline/sql_generator.py, pipeline/validator.py                                                                                                             |
+| 9   | 2026-02-11 | Shared `slug()` extracted to utils.py                   | pipeline/utils.py, pipeline/run.py, pipeline/sql_generator.py                                                                                                |
+| 10  | 2026-02-11 | `sodium_mg` + 2 field names fixed                       | pipeline/sql_generator.py                                                                                                                                    |
+| 11  | 2026-02-11 | RESEARCH_WORKFLOW.md §8.1 rewritten                     | docs/RESEARCH_WORKFLOW.md                                                                                                                                    |
+| 12  | 2026-02-11 | Session context managers added                          | pipeline/off_client.py                                                                                                                                       |
+| 13  | 2026-02-11 | `_safe_int()` guard added                               | pipeline/off_client.py                                                                                                                                       |
+| 16  | 2026-02-11 | 5 remaining docs updated (14 stale refs)                | docs/PERFORMANCE_REPORT.md, docs/DATA_SOURCES.md, docs/EAN_EXPANSION_PLAN.md, docs/API_CONTRACTS.md, docs/UX_UI_DESIGN.md                                    |
+| 17  | 2026-02-12 | Final consistency sweep (counts + docs alignment)       | README.md, docs/EAN_VALIDATION_STATUS.md, copilot-instructions.md, docs/FULL_PROJECT_AUDIT.md                                                                |
 | 18  | 2026-02-13 | Dynamic `data_completeness_pct` (15-checkpoint formula) | supabase/migrations/20260213000800_dynamic_data_completeness.sql, docs/SCORING_METHODOLOGY.md, docs/RESEARCH_WORKFLOW.md, copilot-instructions.md, README.md |
 
 

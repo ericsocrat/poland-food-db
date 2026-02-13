@@ -7,6 +7,7 @@ Generates a migration SQL file that populates:
 Usage:
     python enrich_ingredients.py
 """
+
 import json
 import os
 import re
@@ -40,27 +41,48 @@ DB_NAME = "postgres"
 # DB helpers
 # ---------------------------------------------------------------------------
 
+
 def _psql_cmd(query: str) -> list[str]:
     """Build psql command — CI mode (PGHOST set) uses psql directly,
     local mode uses docker exec into the Supabase container."""
     if os.environ.get("PGHOST"):
         return ["psql", "-t", "-A", "-F", "|", "-c", query]
     return [
-        "docker", "exec", DB_CONTAINER,
-        "psql", "-U", DB_USER, "-d", DB_NAME,
-        "-t", "-A", "-F", "|", "-c", query,
+        "docker",
+        "exec",
+        DB_CONTAINER,
+        "psql",
+        "-U",
+        DB_USER,
+        "-d",
+        DB_NAME,
+        "-t",
+        "-A",
+        "-F",
+        "|",
+        "-c",
+        query,
     ]
 
 
 def get_products() -> list[dict]:
-    """Get all active products with EANs from the local DB."""
-    cmd = _psql_cmd("""
-        SELECT product_id, country, ean, brand, product_name, category
-        FROM products
-        WHERE is_deprecated = FALSE AND ean IS NOT NULL
-        ORDER BY product_id;
-    """)
-    result = subprocess.run(cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace")
+    """Get active products with EANs that are MISSING ingredient or allergen data."""
+    cmd = _psql_cmd(
+        """
+        SELECT p.product_id, p.country, p.ean, p.brand, p.product_name, p.category
+        FROM products p
+        WHERE p.is_deprecated = FALSE
+          AND p.ean IS NOT NULL
+          AND (
+            NOT EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id)
+            OR NOT EXISTS (SELECT 1 FROM product_allergen_info pai WHERE pai.product_id = p.product_id)
+          )
+        ORDER BY p.product_id;
+    """
+    )
+    result = subprocess.run(
+        cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace"
+    )
     if result.returncode != 0:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
         sys.exit(1)
@@ -71,21 +93,27 @@ def get_products() -> list[dict]:
             continue
         parts = line.split("|")
         if len(parts) >= 4:
-            products.append({
-                "product_id": int(parts[0]),
-                "country": parts[1].strip(),
-                "ean": parts[2].strip(),
-                "brand": parts[3].strip(),
-                "product_name": parts[4].strip() if len(parts) > 4 else "",
-                "category": parts[5].strip() if len(parts) > 5 else "",
-            })
+            products.append(
+                {
+                    "product_id": int(parts[0]),
+                    "country": parts[1].strip(),
+                    "ean": parts[2].strip(),
+                    "brand": parts[3].strip(),
+                    "product_name": parts[4].strip() if len(parts) > 4 else "",
+                    "category": parts[5].strip() if len(parts) > 5 else "",
+                }
+            )
     return products
 
 
 def get_ingredient_ref() -> dict[str, int]:
     """Get ingredient_ref lookup: name_en → ingredient_id."""
-    cmd = _psql_cmd("SELECT ingredient_id, lower(name_en) FROM ingredient_ref ORDER BY ingredient_id;")
-    result = subprocess.run(cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace")
+    cmd = _psql_cmd(
+        "SELECT ingredient_id, lower(name_en) FROM ingredient_ref ORDER BY ingredient_id;"
+    )
+    result = subprocess.run(
+        cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace"
+    )
     if result.returncode != 0:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
         sys.exit(1)
@@ -104,6 +132,7 @@ def get_ingredient_ref() -> dict[str, int]:
 # OFF API
 # ---------------------------------------------------------------------------
 
+
 def fetch_off_product(ean: str) -> dict | None:
     """Fetch a single product from OFF API."""
     url = OFF_PRODUCT_URL.format(ean=ean)
@@ -112,10 +141,7 @@ def fetch_off_product(ean: str) -> dict | None:
     for attempt in range(MAX_RETRIES + 1):
         try:
             resp = requests.get(
-                url,
-                params={"fields": FIELDS},
-                headers=headers,
-                timeout=TIMEOUT
+                url, params={"fields": FIELDS}, headers=headers, timeout=TIMEOUT
             )
             if resp.status_code == 404:
                 return None
@@ -136,6 +162,7 @@ def fetch_off_product(ean: str) -> dict | None:
 # Ingredient normalization
 # ---------------------------------------------------------------------------
 
+
 def normalize_ingredient_name(name: str) -> str:
     """Normalize an OFF ingredient name to match ingredient_ref.name_en."""
     # OFF ingredients use format like "en:sugar" or just "sugar"
@@ -153,16 +180,21 @@ def normalize_ingredient_name(name: str) -> str:
 def is_additive_tag(tag: str) -> bool:
     """Check if an OFF ingredient ID looks like an additive (e.g., en:e300)."""
     tag_lower = tag.lower()
-    return bool(re.match(r'(en:)?e\d{3}', tag_lower))
+    return bool(re.match(r"(en:)?e\d{3}", tag_lower))
 
 
 # ---------------------------------------------------------------------------
 # Main logic
 # ---------------------------------------------------------------------------
 
-def process_ingredients(off_product: dict, country: str, ean: str,
-                        ingredient_lookup: dict[str, int],
-                        new_ingredients: dict[str, dict]) -> list[dict]:
+
+def process_ingredients(
+    off_product: dict,
+    country: str,
+    ean: str,
+    ingredient_lookup: dict[str, int],
+    new_ingredients: dict[str, dict],
+) -> list[dict]:
     """Extract ingredient rows for a product.
 
     Returns list of dicts with keys: country, ean, ingredient_id, position,
@@ -200,7 +232,9 @@ def process_ingredients(off_product: dict, country: str, ean: str,
             # Create new ingredient_ref entry
             if name_lower not in new_ingredients:
                 # Use title case for the display name
-                display_name = name.title() if not any(c.isupper() for c in name[1:]) else name
+                display_name = (
+                    name.title() if not any(c.isupper() for c in name[1:]) else name
+                )
                 display_name = display_name.strip()
                 if len(display_name) > 200:
                     display_name = display_name[:200]
@@ -217,6 +251,9 @@ def process_ingredients(off_product: dict, country: str, ean: str,
 
         pct = item.get("percent")
         pct_est = item.get("percent_estimate")
+        # Clamp negative percent_estimate to 0 (OFF API sometimes returns negatives)
+        if pct_est is not None and pct_est < 0:
+            pct_est = 0
 
         row = {
             "country": country,
@@ -265,23 +302,27 @@ def process_allergens(off_product: dict, country: str, ean: str) -> list[dict]:
     for tag in allergens:
         clean_tag = canonical_taxonomy_tag(tag)
         if clean_tag:
-            rows.append({
-                "country": country,
-                "ean": ean,
-                "tag": clean_tag,
-                "type": "contains",
-            })
+            rows.append(
+                {
+                    "country": country,
+                    "ean": ean,
+                    "tag": clean_tag,
+                    "type": "contains",
+                }
+            )
 
     traces = off_product.get("traces_tags", [])
     for tag in traces:
         clean_tag = canonical_taxonomy_tag(tag)
         if clean_tag:
-            rows.append({
-                "country": country,
-                "ean": ean,
-                "tag": clean_tag,
-                "type": "traces",
-            })
+            rows.append(
+                {
+                    "country": country,
+                    "ean": ean,
+                    "tag": clean_tag,
+                    "type": "traces",
+                }
+            )
 
     return rows
 
@@ -302,10 +343,12 @@ def sql_escape(val: str | None) -> str:
     return "'" + s + "'"
 
 
-def generate_migration(ingredient_rows: list[dict],
-                       allergen_rows: list[dict],
-                       new_ingredients: dict[str, dict],
-                       stats: dict) -> str:
+def generate_migration(
+    ingredient_rows: list[dict],
+    allergen_rows: list[dict],
+    new_ingredients: dict[str, dict],
+    stats: dict,
+) -> str:
     """Generate the migration SQL."""
     lines = []
     lines.append("-- Populate product_ingredient and product_allergen_info tables")
@@ -322,11 +365,17 @@ def generate_migration(ingredient_rows: list[dict],
 
     # 1. Insert new ingredients into ingredient_ref
     if new_ingredients:
-        lines.append("-- ═══════════════════════════════════════════════════════════════")
+        lines.append(
+            "-- ═══════════════════════════════════════════════════════════════"
+        )
         lines.append("-- 1. Add new ingredients to ingredient_ref")
-        lines.append("-- ═══════════════════════════════════════════════════════════════")
+        lines.append(
+            "-- ═══════════════════════════════════════════════════════════════"
+        )
         lines.append("")
-        lines.append("INSERT INTO ingredient_ref (name_en, is_additive, vegan, vegetarian, from_palm_oil)")
+        lines.append(
+            "INSERT INTO ingredient_ref (name_en, is_additive, vegan, vegetarian, from_palm_oil)"
+        )
         lines.append("VALUES")
 
         vals = []
@@ -344,16 +393,22 @@ def generate_migration(ingredient_rows: list[dict],
 
     # 2. Insert product_allergen_info (resolved via country + ean)
     if allergen_rows:
-        lines.append("-- ═══════════════════════════════════════════════════════════════")
+        lines.append(
+            "-- ═══════════════════════════════════════════════════════════════"
+        )
         lines.append("-- 2. Populate product_allergen_info")
-        lines.append("-- ═══════════════════════════════════════════════════════════════")
-        lines.append("-- Resolve product_id by stable key (country + ean) for portability")
+        lines.append(
+            "-- ═══════════════════════════════════════════════════════════════"
+        )
+        lines.append(
+            "-- Resolve product_id by stable key (country + ean) for portability"
+        )
         lines.append("")
 
         # Batch by 500 rows
         batch_size = 500
         for i in range(0, len(allergen_rows), batch_size):
-            batch = allergen_rows[i:i + batch_size]
+            batch = allergen_rows[i : i + batch_size]
             lines.append("INSERT INTO product_allergen_info (product_id, tag, type)")
             lines.append("SELECT p.product_id, v.tag, v.type")
             lines.append("FROM (VALUES")
@@ -373,67 +428,119 @@ def generate_migration(ingredient_rows: list[dict],
     # 3. Insert product_ingredient — needs resolved ingredient_ids
     # For new ingredients, we use a subquery to look up the ID by name
     if ingredient_rows:
-        lines.append("-- ═══════════════════════════════════════════════════════════════")
+        lines.append(
+            "-- ═══════════════════════════════════════════════════════════════"
+        )
         lines.append("-- 3. Populate product_ingredient")
-        lines.append("-- ═══════════════════════════════════════════════════════════════")
-        lines.append("-- Resolve product_id by stable key (country + ean) for portability")
+        lines.append(
+            "-- ═══════════════════════════════════════════════════════════════"
+        )
+        lines.append(
+            "-- Resolve product_id by stable key (country + ean) for portability"
+        )
         lines.append("")
 
         # Group by whether they need name resolution
-        resolved = [r for r in ingredient_rows if not isinstance(r["ingredient_id"], str)]
+        resolved = [
+            r for r in ingredient_rows if not isinstance(r["ingredient_id"], str)
+        ]
         unresolved = [r for r in ingredient_rows if isinstance(r["ingredient_id"], str)]
 
         # Insert resolved rows (direct ingredient_id)
         if resolved:
             batch_size = 500
             for i in range(0, len(resolved), batch_size):
-                batch = resolved[i:i + batch_size]
-                lines.append("INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
-                lines.append("SELECT p.product_id, v.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id")
+                batch = resolved[i : i + batch_size]
+                lines.append(
+                    "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
+                )
+                lines.append(
+                    "SELECT p.product_id, v.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id"
+                )
                 lines.append("FROM (VALUES")
                 vals = []
                 for r in batch:
-                    pct = str(r['percent']) if r['percent'] is not None else 'NULL'
-                    pct_est = str(r['percent_estimate']) if r['percent_estimate'] is not None else 'NULL'
-                    parent = str(r['parent_ingredient_id']) if r['parent_ingredient_id'] is not None and not isinstance(r['parent_ingredient_id'], str) else 'NULL'
+                    pct = str(r["percent"]) if r["percent"] is not None else "NULL"
+                    pct_est = (
+                        str(r["percent_estimate"])
+                        if r["percent_estimate"] is not None
+                        else "NULL"
+                    )
+                    parent = (
+                        str(r["parent_ingredient_id"])
+                        if r["parent_ingredient_id"] is not None
+                        and not isinstance(r["parent_ingredient_id"], str)
+                        else "NULL"
+                    )
+                    # If parent can't be resolved, force is_sub=false to satisfy chk_sub_has_parent
+                    is_sub = r["is_sub_ingredient"] and parent != "NULL"
                     vals.append(
                         f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
                         f"{r['ingredient_id']}, {r['position']}, {pct}, {pct_est}, "
-                        f"{'true' if r['is_sub_ingredient'] else 'false'}, {parent})"
+                        f"{'true' if is_sub else 'false'}, {parent})"
                     )
                 lines.append(",\n".join(vals))
-                lines.append(") AS v(country, ean, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
-                lines.append("JOIN products p ON p.country = v.country AND p.ean = v.ean")
+                lines.append(
+                    ") AS v(country, ean, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
+                )
+                lines.append(
+                    "JOIN products p ON p.country = v.country AND p.ean = v.ean"
+                )
                 lines.append("WHERE p.is_deprecated IS NOT TRUE")
-                lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
+                lines.append(
+                    "ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;"
+                )
                 lines.append("")
 
         # Insert unresolved rows (need name lookup)
         if unresolved:
             batch_size = 500
             for i in range(0, len(unresolved), batch_size):
-                batch = unresolved[i:i + batch_size]
-                lines.append("INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
-                lines.append("SELECT p.product_id, ir.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id")
+                batch = unresolved[i : i + batch_size]
+                lines.append(
+                    "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
+                )
+                lines.append(
+                    "SELECT p.product_id, ir.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id"
+                )
                 lines.append("FROM (VALUES")
                 vals = []
                 for r in batch:
-                    name_lower = r['ingredient_id'].replace("NEW:", "")
-                    display_name = new_ingredients[name_lower]['name_en']
-                    pct = str(r['percent']) if r['percent'] is not None else 'NULL'
-                    pct_est = str(r['percent_estimate']) if r['percent_estimate'] is not None else 'NULL'
-                    parent = str(r['parent_ingredient_id']) if r['parent_ingredient_id'] is not None and not isinstance(r['parent_ingredient_id'], str) else 'NULL'
+                    name_lower = r["ingredient_id"].replace("NEW:", "")
+                    display_name = new_ingredients[name_lower]["name_en"]
+                    pct = str(r["percent"]) if r["percent"] is not None else "NULL"
+                    pct_est = (
+                        str(r["percent_estimate"])
+                        if r["percent_estimate"] is not None
+                        else "NULL"
+                    )
+                    parent = (
+                        str(r["parent_ingredient_id"])
+                        if r["parent_ingredient_id"] is not None
+                        and not isinstance(r["parent_ingredient_id"], str)
+                        else "NULL"
+                    )
+                    # If parent can't be resolved, force is_sub=false to satisfy chk_sub_has_parent
+                    is_sub = r["is_sub_ingredient"] and parent != "NULL"
                     vals.append(
                         f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, {sql_escape(display_name)}, {r['position']}, "
                         f"{pct}::numeric, {pct_est}::numeric, "
-                        f"{'true' if r['is_sub_ingredient'] else 'false'}, {parent}::bigint)"
+                        f"{'true' if is_sub else 'false'}, {parent}::bigint)"
                     )
                 lines.append(",\n".join(vals))
-                lines.append(") AS v(country, ean, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)")
-                lines.append("JOIN products p ON p.country = v.country AND p.ean = v.ean")
-                lines.append("JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)")
+                lines.append(
+                    ") AS v(country, ean, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
+                )
+                lines.append(
+                    "JOIN products p ON p.country = v.country AND p.ean = v.ean"
+                )
+                lines.append(
+                    "JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)"
+                )
                 lines.append("WHERE p.is_deprecated IS NOT TRUE")
-                lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
+                lines.append(
+                    "ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;"
+                )
                 lines.append("")
 
     # 4. Refresh materialized views
@@ -486,10 +593,12 @@ def main():
 
     for i, product in enumerate(products):
         if (i + 1) % 50 == 0 or i == 0:
-            print(f"  Processing {i+1}/{len(products)} "
-                  f"(ingredients: {stats['with_ingredients']}, "
-                  f"allergens: {stats['with_allergens']}, "
-                  f"not found: {stats['not_found']})...")
+            print(
+                f"  Processing {i+1}/{len(products)} "
+                f"(ingredients: {stats['with_ingredients']}, "
+                f"allergens: {stats['with_allergens']}, "
+                f"not found: {stats['not_found']})..."
+            )
 
         off_data = fetch_off_product(product["ean"])
         stats["processed"] += 1
@@ -500,8 +609,13 @@ def main():
             continue
 
         # Process ingredients
-        ing_rows = process_ingredients(off_data, product["country"], product["ean"],
-                                       ingredient_lookup, new_ingredients)
+        ing_rows = process_ingredients(
+            off_data,
+            product["country"],
+            product["ean"],
+            ingredient_lookup,
+            new_ingredients,
+        )
         if ing_rows:
             stats["with_ingredients"] += 1
             all_ingredient_rows.extend(ing_rows)
@@ -524,15 +638,20 @@ def main():
     print(f"  Total ingredient rows: {len(all_ingredient_rows)}")
     print(f"  Total allergen rows: {len(all_allergen_rows)}")
 
-    sql = generate_migration(all_ingredient_rows, all_allergen_rows,
-                              new_ingredients, stats)
+    sql = generate_migration(
+        all_ingredient_rows, all_allergen_rows, new_ingredients, stats
+    )
 
     MIGRATION_FILE.write_text(sql, encoding="utf-8")
     print(f"\n  Migration written to: {MIGRATION_FILE}")
     print(f"  File size: {MIGRATION_FILE.stat().st_size / 1024:.1f} KB")
     print("\nDone! Run the migration with:")
-    print(f"  docker exec supabase_db_poland-food-db psql -U postgres -d postgres -f ...")
-    print(f"  or: Get-Content '{MIGRATION_FILE}' -Raw | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres")
+    print(
+        f"  docker exec supabase_db_poland-food-db psql -U postgres -d postgres -f ..."
+    )
+    print(
+        f"  or: Get-Content '{MIGRATION_FILE}' -Raw | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres"
+    )
 
 
 if __name__ == "__main__":
