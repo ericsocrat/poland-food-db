@@ -1,7 +1,8 @@
 // ─── Protected app layout ────────────────────────────────────────────────────
 // Server component that checks onboarding_complete via api_get_user_preferences().
 // If onboarding is incomplete, redirects to /onboarding/region.
-// This is the ONLY place where onboarding gating happens.
+// This is the AUTHORITATIVE onboarding gate (server-side).
+// RouteGuard provides a secondary client-side gate for UX + session expiry handling.
 
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";

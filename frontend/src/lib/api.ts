@@ -89,41 +89,21 @@ export function getCategoryListing(
   });
 }
 
-// ─── Category Overview (via view — read from RPC or direct) ─────────────────
+// ─── Category Overview ──────────────────────────────────────────────────────
 
 export async function getCategoryOverview(
   supabase: SupabaseClient,
 ): Promise<RpcResult<CategoryOverviewItem[]>> {
-  // The view v_api_category_overview_by_country is service_role only.
-  // For authenticated users, we call the RPC wrapper or fallback to a simple query.
-  // If no RPC exists yet, we use the view (which requires service_role).
-  // For now, call the search RPC to infer categories, or use a dedicated RPC.
-  //
-  // Preferred: backend should expose an api_category_overview() RPC.
-  // Fallback: query the view directly (works because service_role grants).
-  try {
-    const { data, error } = await supabase
-      .from("v_api_category_overview_by_country")
-      .select("*")
-      .order("sort_order", { ascending: true });
+  const result = await callRpc<{ api_version: string; country: string; categories: CategoryOverviewItem[] }>(
+    supabase,
+    "api_category_overview",
+    { p_country: null },
+  );
 
-    if (error) {
-      return {
-        ok: false,
-        error: { code: error.code ?? "VIEW_ERROR", message: error.message },
-      };
-    }
+  if (!result.ok) return result;
 
-    return { ok: true, data: data as CategoryOverviewItem[] };
-  } catch (err) {
-    return {
-      ok: false,
-      error: {
-        code: "EXCEPTION",
-        message: err instanceof Error ? err.message : "Unknown error",
-      },
-    };
-  }
+  // Unwrap: the RPC returns { api_version, country, categories: [...] }
+  return { ok: true, data: result.data.categories };
 }
 
 // ─── Product Detail ─────────────────────────────────────────────────────────

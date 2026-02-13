@@ -262,6 +262,15 @@ export default function ScanPage() {
                 <button onClick={toggleTorch} className="btn-secondary flex-1">
                   {torchOn ? "🔦 Torch Off" : "🔦 Torch On"}
                 </button>
+                <button
+                  onClick={() => {
+                    stopScanner();
+                    startScanner();
+                  }}
+                  className="btn-secondary flex-1"
+                >
+                  🔄 Restart
+                </button>
               </div>
             </>
           )}
