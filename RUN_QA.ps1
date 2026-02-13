@@ -125,7 +125,7 @@ $suiteCatalog = @(
     @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 20; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
     @{ Num = 17; Name = "API Contract"; Short = "Contract"; Id = "api_contract"; Checks = 30; Blocking = $true; Kind = "sql"; File = "QA__api_contract.sql" },
     @{ Num = 18; Name = "Scale Guardrails"; Short = "Scale"; Id = "scale_guardrails"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scale_guardrails.sql" },
-    @{ Num = 19; Name = "Country Isolation"; Short = "Country"; Id = "country_isolation"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__country_isolation.sql" },
+    @{ Num = 19; Name = "Country Isolation"; Short = "Country"; Id = "country_isolation"; Checks = 11; Blocking = $true; Kind = "sql"; File = "QA__country_isolation.sql" },
     @{ Num = 20; Name = "Diet Filtering"; Short = "Diet"; Id = "diet_filtering"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__diet_filtering.sql" },
     @{ Num = 21; Name = "Allergen Filtering"; Short = "Allergen"; Id = "allergen_filtering"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__allergen_filtering.sql" },
     @{ Num = 22; Name = "Barcode Lookup"; Short = "Barcode"; Id = "barcode_lookup"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__barcode_lookup.sql" }

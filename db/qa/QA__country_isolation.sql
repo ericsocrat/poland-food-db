@@ -2,7 +2,7 @@
 -- QA Suite: Country Isolation
 -- Validates that no API surface returns mixed-country results,
 -- and that auto-country resolution always produces a valid country.
--- 10 checks.
+-- 11 checks.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- 1. api_search_products with p_country returns only that country's products
@@ -98,3 +98,34 @@ SELECT '10. EAN with NULL country echoes resolved country' AS check_name,
            api_product_detail_by_ean('0000000000000', NULL)
        )->>'country' IS NOT NULL
        THEN 0 ELSE 1 END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 11. Authenticated user with user_preferences.country='DE' must resolve to DE
+--     Proves tier-2 lookup (user pref) works through the SECURITY DEFINER chain.
+--     Setup: insert test user_preferences, simulate JWT via request.jwt.claims.
+--     Teardown: delete test row, reset JWT claims.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+-- Setup: test user with country='DE'
+DO $setup$
+BEGIN
+    INSERT INTO user_preferences (user_id, country)
+    VALUES ('00000000-0000-0000-0000-000000000099'::uuid, 'DE')
+    ON CONFLICT (user_id) DO UPDATE SET country = 'DE';
+    PERFORM set_config('request.jwt.claims',
+        '{"sub":"00000000-0000-0000-0000-000000000099"}', false);
+END $setup$;
+
+SELECT '11. auth user with DE pref search resolves country=DE' AS check_name,
+       CASE WHEN (
+           api_search_products('ch', NULL, 1, 0, NULL)
+       )->>'country' = 'DE'
+       THEN 0 ELSE 1 END AS violations;
+
+-- Teardown: remove test user, reset JWT
+DO $teardown$
+BEGIN
+    DELETE FROM user_preferences
+    WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
+    PERFORM set_config('request.jwt.claims', '', false);
+END $teardown$;

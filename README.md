@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (327 checks across 22 suites)
+# All tests (328 checks across 22 suites)
 .\RUN_QA.ps1
 
 # Negative validation (23 constraint tests)
@@ -90,7 +90,7 @@ supabase start
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 327 automated checks across 22 QA suites + 23 negative validation tests
+**Test Coverage**: 328 automated checks across 22 QA suites + 23 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 14 API surface checks (contract validation, JSON structure, listing consistency)
@@ -107,7 +107,7 @@ supabase start
 - 20 security posture checks (RLS, grants, SECURITY DEFINER, user_preferences isolation)
 - 30 API contract checks (key sets, api_version, SECURITY DEFINER, EAN lookup, preferences)
 - 15 scale guardrail checks (index presence, query plan validation)
-- 10 country isolation checks (no mixed-country results, auto-country resolution)
+- 11 country isolation checks (no mixed-country results, auto-country resolution)
 - 6 diet filtering checks (vegan/vegetarian exclusion, strict mode)
 - 6 allergen filtering checks (contains/traces exclusion, may-contain toggle)
 - 6 barcode lookup checks (EAN resolution, scan metadata, error handling)
@@ -115,7 +115,7 @@ supabase start
 - 8 source coverage reports (informational, non-blocking)
 - 23 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 327/327 + 23/23 negative
+**All tests passing**: ✅ 328/328 + 23/23 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
