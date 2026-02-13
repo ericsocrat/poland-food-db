@@ -1,8 +1,8 @@
 # Country Expansion Guide
 
-> **Last updated:** 2026-02-07
+> **Last updated:** 2026-02-13
 > **Current status:** Poland (`PL`) is the only active country.
-> **Do NOT add other countries until this guide's prerequisites are met.**
+> **Technical blockers resolved.** See Section 2.5 for go/no-go checklist.
 
 ---
 
@@ -47,11 +47,24 @@ Before any data for country `XX` enters the database, **all** of the following m
 
 ### 2.4 Technical Setup (Implementation)
 
-- [ ] Create pipeline folder: `db/pipelines/<country_lower>/` or `db/pipelines/<category>_<country>/`
-- [ ] Verify that the `products(country, brand, product_name)` unique constraint handles the new country
-- [ ] Confirm that all schemas support the new country's data without migration changes
+- [x] Create pipeline folder: `db/pipelines/<country_lower>/` or `db/pipelines/<category>_<country>/`
+- [x] Verify that the `products(country, brand, product_name)` unique constraint handles the new country
+- [x] Confirm that all schemas support the new country's data without migration changes
 - [ ] Create `RUN_LOCAL.ps1` / `RUN_REMOTE.ps1` entries for the new pipelines
 - [ ] Update `copilot-instructions.md` to list the new country as active
+
+### 2.5 Country Expansion Readiness (Go/No-Go Bar)
+
+All of these must be true before activating a second country:
+
+- [x] API supports country filtering on search + listings (`p_country` param, RPC-compatible)
+- [x] Alternatives/similarity are country-isolated (inferred from source product)
+- [x] Scoring + completeness are country-parameterized (`score_category` accepts `p_country`)
+- [x] Dashboard stats are country-aware (`v_api_category_overview_by_country` view)
+- [x] Activation gating exists (`country_ref.is_active` enforced by QA)
+- [x] `sql_generator.py` accepts `country` parameter (no more hardcoded `'PL'`)
+- [x] QA checks for cross-country leakage (api_surfaces #16, #17, #18)
+- [ ] Pilot country with 5–10 products: all QA passes, no cross-country leakage
 
 ---
 

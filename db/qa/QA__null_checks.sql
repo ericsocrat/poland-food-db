@@ -91,13 +91,17 @@ GROUP BY country, brand, product_name
 HAVING COUNT(*) > 1;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 11. Products with country other than PL (scope violation)
+-- 11. Products with inactive or unregistered country
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT product_id, country, brand, product_name,
-       'NON-PL COUNTRY' AS issue
-FROM products
-WHERE country != 'PL'
-  AND is_deprecated IS NOT TRUE;
+       'INACTIVE COUNTRY' AS issue
+FROM products p
+WHERE p.is_deprecated IS NOT TRUE
+  AND NOT EXISTS (
+      SELECT 1 FROM country_ref cr
+      WHERE cr.country_code = p.country
+        AND cr.is_active = true
+  );
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 12. (Removed — scores table eliminated in consolidation)

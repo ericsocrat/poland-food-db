@@ -132,3 +132,47 @@ WHERE NOT (
     AND sample.detail ? 'components'
     AND sample.detail ? 'data_completeness_profile'
 );
+
+-- 15. v_api_category_overview_by_country: PL rows match global overview
+SELECT '15. overview_by_country PL matches global overview' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT (SELECT SUM(product_count) FROM v_api_category_overview_by_country WHERE country_code = 'PL') AS by_country_sum,
+           (SELECT SUM(product_count) FROM v_api_category_overview) AS global_sum
+) sub
+WHERE by_country_sum != global_sum;
+
+-- 16. find_better_alternatives: alternatives are same country as source
+SELECT '16. find_better_alternatives same-country isolation' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT p.product_id, p.country AS source_country
+    FROM products p
+    WHERE p.is_deprecated IS NOT TRUE AND p.unhealthiness_score > 15
+    LIMIT 5
+) sample
+CROSS JOIN LATERAL find_better_alternatives(sample.product_id, true, 3) AS alt
+JOIN products p_alt ON p_alt.product_id = alt.alt_product_id
+WHERE p_alt.country != sample.source_country;
+
+-- 17. find_similar_products: similar products are same country as source
+SELECT '17. find_similar_products same-country isolation' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT DISTINCT pi.product_id
+    FROM product_ingredient pi
+    JOIN products p ON p.product_id = pi.product_id
+    WHERE p.is_deprecated IS NOT TRUE
+    LIMIT 5
+) sample
+CROSS JOIN LATERAL find_similar_products(sample.product_id, 3) AS sim
+JOIN products p_sim ON p_sim.product_id = sim.similar_product_id
+WHERE p_sim.country != (SELECT country FROM products WHERE product_id = sample.product_id);
+
+-- 18. No non-deprecated products for inactive countries (activation gating)
+SELECT '18. no products for inactive countries' AS check_name,
+       COUNT(*) AS violations
+FROM products p
+JOIN country_ref cr ON cr.country_code = p.country
+WHERE p.is_deprecated IS NOT TRUE
+  AND cr.is_active = false;

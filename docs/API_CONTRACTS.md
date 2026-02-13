@@ -1,6 +1,6 @@
 # Poland Food DB — API Contract Documentation
 
-> **Version:** 1.0 · **Date:** 2026-02-10
+> **Version:** 1.0 · **Date:** 2026-02-13
 > **Stability:** Stable — these surfaces are safe for frontend consumption.
 
 ---
@@ -57,6 +57,19 @@ GET /rest/v1/v_api_category_overview?order=sort_order.asc
 | `pct_nova_4`           | numeric | Yes¹     | % of products classified as ultra-processed |
 
 ¹ Null only if category has 0 products (theoretically impossible with current data).
+
+### 1b. `v_api_category_overview_by_country` (SQL View) — NEW
+
+**Purpose:** Country-dimensioned dashboard — same columns as the global view plus `country_code`.
+
+One row per `(country, category)` pair for active countries and active categories.
+
+| Field                  | Type    | Description                         |
+| ---------------------- | ------- | ----------------------------------- |
+| `country_code`         | text    | ISO 3166-1 alpha-2 (e.g. `"PL"`)   |
+| *(all other columns)*  |         | Same as `v_api_category_overview`   |
+
+> **Note:** Not directly accessible via PostgREST (RPC-only model). Wrap in an RPC function if frontend access is needed.
 
 ---
 
@@ -192,12 +205,14 @@ Body: {
 | `p_sort_dir` | text    | `"asc"`    | Sort direction: `asc` or `desc`                                   |
 | `p_limit`    | integer | 20         | Page size (1-100, clamped)                                        |
 | `p_offset`   | integer | 0          | Offset for pagination (clamped to ≥0)                             |
+| `p_country`  | text    | `null`     | Optional country filter (`null` = all countries)                  |
 
 ### Response Shape
 
 ```jsonc
 {
   "category": "Chips",
+  "country": null,              // echoes p_country filter (null = all)
   "total_count": 28,        // total products in category (for pagination)
   "limit": 20,
   "offset": 0,
@@ -403,6 +418,7 @@ Body: {
 | `p_category` | text    | `null`     | Optional category filter         |
 | `p_limit`    | integer | 20         | Page size (1-100, clamped)       |
 | `p_offset`   | integer | 0          | Offset for pagination            |
+| `p_country`  | text    | `null`     | Optional country filter (`null` = all countries) |
 
 ### Response Shape
 
@@ -410,6 +426,7 @@ Body: {
 {
   "query": "Lay",
   "category": null,
+  "country": null,              // echoes p_country filter (null = all)
   "total_count": 16,
   "limit": 20,
   "offset": 0,
@@ -440,8 +457,17 @@ Body: {
 ### Error Response
 
 ```json
-{"error": "Query must be at least 2 characters."}
+{"api_version": "1.0", "error": "Query must be at least 2 characters."}
 ```
+
+### Country Isolation
+
+`find_better_alternatives()` and `find_similar_products()` automatically restrict
+results to the **same country** as the source product. This prevents cross-country
+leakage in alternatives and similarity results.
+
+`api_score_explanation()` computes `category_context` (rank, average, position)
+only among products from the **same country** as the source product.
 
 ---
 

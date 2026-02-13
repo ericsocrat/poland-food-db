@@ -8,7 +8,7 @@
         2. QA__scoring_formula_tests.sql (27 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-8/EAN-13 checksum validation — blocking)
-        5. QA__api_surfaces.sql (14 API contract validation checks — blocking)
+        5. QA__api_surfaces.sql (18 API contract validation checks — blocking)
         6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
         7. QA__data_quality.sql (25 data quality & plausibility checks — blocking)
         8. QA__referential_integrity.sql (18 referential integrity checks — blocking)
@@ -104,7 +104,7 @@ $suiteCatalog = @(
     @{ Num = 2; Name = "Scoring Formula"; Short = "Scoring"; Id = "scoring"; Checks = 27; Blocking = $true; Kind = "sql-special"; File = "QA__scoring_formula_tests.sql" },
     @{ Num = 3; Name = "Source Coverage"; Short = "Source"; Id = "source_coverage"; Checks = 8; Blocking = $false; Kind = "sql-special"; File = "QA__source_coverage.sql" },
     @{ Num = 4; Name = "EAN Checksum Validation"; Short = "EAN"; Id = "ean"; Checks = 1; Blocking = $true; Kind = "python"; File = "validate_eans.py" },
-    @{ Num = 5; Name = "API Surface Validation"; Short = "API"; Id = "api"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__api_surfaces.sql" },
+    @{ Num = 5; Name = "API Surface Validation"; Short = "API"; Id = "api"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__api_surfaces.sql" },
     @{ Num = 6; Name = "Confidence Scoring"; Short = "Confidence"; Id = "confidence"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__confidence_scoring.sql" },
     @{ Num = 7; Name = "Data Quality & Plausibility"; Short = "DataQuality"; Id = "data_quality"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__data_quality.sql" },
     @{ Num = 8; Name = "Referential Integrity"; Short = "RefInteg"; Id = "referential"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__referential_integrity.sql" },
@@ -116,7 +116,7 @@ $suiteCatalog = @(
     @{ Num = 14; Name = "Serving & Source Validation"; Short = "ServSource"; Id = "serving_source"; Checks = 16; Blocking = $true; Kind = "sql"; File = "QA__serving_source_validation.sql" },
     @{ Num = 15; Name = "Ingredient Data Quality"; Short = "IngredQual"; Id = "ingredient_quality"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__ingredient_quality.sql" },
     @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
-    @{ Num = 17; Name = "API Contract"; Short = "Contract"; Id = "api_contract"; Checks = 23; Blocking = $true; Kind = "sql"; File = "QA__api_contract.sql" },
+    @{ Num = 17; Name = "API Contract"; Short = "Contract"; Id = "api_contract"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__api_contract.sql" },
     @{ Num = 18; Name = "Scale Guardrails"; Short = "Scale"; Id = "scale_guardrails"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scale_guardrails.sql" }
 )
 

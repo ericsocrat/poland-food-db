@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (282 checks across 18 suites)
+# All tests (288 checks across 18 suites)
 .\RUN_QA.ps1
 
 # Negative validation (29 constraint tests)
@@ -90,7 +90,7 @@ supabase start
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 282 automated checks across 18 QA suites + 29 negative validation tests
+**Test Coverage**: 288 automated checks across 18 QA suites + 25 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 14 API surface checks (contract validation, JSON structure, listing consistency)
@@ -106,9 +106,9 @@ supabase start
 - 10 confidence scoring checks (range, distribution, components, bands)
 - 1 EAN checksum validation (all barcodes verified)
 - 8 source coverage reports (informational, non-blocking)
-- 29 negative tests (constraint violation detection)
+- 25 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 282/282 + 29/29 negative
+**All tests passing**: ✅ 288/288 + 25/25 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
@@ -156,12 +156,12 @@ poland-food-db/
 │   │   ├── QA__serving_source_validation.sql # 16 serving & source checks
 │   │   ├── QA__ingredient_quality.sql    # 14 ingredient quality checks
 │   │   ├── QA__source_coverage.sql       # 8 data quality reports
-    │   └── TEST__negative_checks.sql     # 29 negative validation tests
+    │   └── TEST__negative_checks.sql     # 25 negative validation tests
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (62 files)
+    └── migrations/          # Schema migrations (63 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
@@ -175,7 +175,7 @@ poland-food-db/
 │   └── UX_UI_DESIGN.md      # Production-ready UX specification
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (282 checks)
+├── RUN_QA.ps1               # Standalone test runner (288 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
 └── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ```
@@ -186,7 +186,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **282 automated checks** across 18 QA suites + 29 negative validation tests:
+Every change is validated against **288 automated checks** across 18 QA suites + 25 negative validation tests:
 
 ### Data Integrity (29 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -256,7 +256,7 @@ Constraint violation tests that verify the database correctly rejects invalid da
 
 **Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
 
-**CI**: All 282 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 288 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -371,7 +371,7 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 282/282 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 288/288 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---

@@ -91,13 +91,13 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#8  product_detail → freshness keys (3)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #9  api_search_products — top-level keys (7)
+-- #9  api_search_products — top-level keys (8)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
         SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_search_products('cola')) k
-    ) = ARRAY['api_version','category','limit','offset','query','results','total_count']
-    THEN 'PASS' ELSE 'FAIL' END AS "#9  search_products top-level keys (7)";
+    ) = ARRAY['api_version','category','country','limit','offset','query','results','total_count']
+    THEN 'PASS' ELSE 'FAIL' END AS "#9  search_products top-level keys (8)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #10 api_search_products → result item keys (9)
@@ -112,13 +112,13 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#10 search_products → item keys (9)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #11 api_category_listing — top-level keys (8)
+-- #11 api_category_listing — top-level keys (9)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
         SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_category_listing('Chips')) k
-    ) = ARRAY['api_version','category','limit','offset','products','sort_by','sort_dir','total_count']
-    THEN 'PASS' ELSE 'FAIL' END AS "#11 category_listing top-level keys (8)";
+    ) = ARRAY['api_version','category','country','limit','offset','products','sort_by','sort_dir','total_count']
+    THEN 'PASS' ELSE 'FAIL' END AS "#11 category_listing top-level keys (9)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #12 api_category_listing → product item keys (19)
@@ -247,3 +247,28 @@ JOIN pg_namespace n ON n.oid = p.pronamespace
 WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
   AND p.prosecdef = true;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #24 v_api_category_overview_by_country has expected columns
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT array_agg(column_name::text ORDER BY column_name)
+        FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'v_api_category_overview_by_country'
+    ) = ARRAY[
+        'avg_score','category','category_description','country_code','display_name',
+        'icon_emoji','max_score','median_score','min_score','pct_nova_4',
+        'pct_nutri_a_b','product_count','sort_order'
+    ]
+    THEN 'PASS' ELSE 'FAIL' END AS "#24 overview_by_country columns (13)";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #25 api_search_products with p_country returns filtered results
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT (api_search_products('a', NULL, 5, 0, 'PL'))->>'country'
+    ) = 'PL'
+    THEN 'PASS' ELSE 'FAIL' END AS "#25 search with p_country echoes country";

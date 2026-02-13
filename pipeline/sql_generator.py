@@ -108,7 +108,9 @@ def _normalize_store(raw: str | None) -> str | None:
 # ---------------------------------------------------------------------------
 
 
-def _gen_01_insert_products(category: str, products: list[dict], today: str) -> str:
+def _gen_01_insert_products(
+    category: str, products: list[dict], today: str, country: str = "PL"
+) -> str:
     """Generate file 01 — insert_products.sql."""
     lines: list[str] = []
 
@@ -124,7 +126,7 @@ def _gen_01_insert_products(category: str, products: list[dict], today: str) -> 
 
         comma = "," if i < len(products) - 1 else ""
         lines.append(
-            f"  ('PL', {brand}, {product_type}, {_sql_text(category)}, "
+            f"  ({_sql_text(country)}, {brand}, {product_type}, {_sql_text(category)}, "
             f"{name}, {prep}, {store}, {controversies}, {ean}){comma}"
         )
 
@@ -153,7 +155,7 @@ where ean in ({ean_literals})
 -- 0a. DEPRECATE old products in this category & release their EANs
 update products
 set is_deprecated = true, ean = null
-where country = 'PL'
+where country = {_sql_text(country)}
   and category = {_sql_text(category)}
   and is_deprecated is not true;
 {ean_release_block}
@@ -173,13 +175,15 @@ on conflict (country, brand, product_name) do update set
 -- 2. DEPRECATE removed products
 update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
-where country = 'PL' and category = {_sql_text(category)}
+where country = {_sql_text(country)} and category = {_sql_text(category)}
   and is_deprecated is not true
   and product_name not in ({name_literals});
 """
 
 
-def _gen_03_add_nutrition(category: str, products: list[dict]) -> str:
+def _gen_03_add_nutrition(
+    category: str, products: list[dict], country: str = "PL"
+) -> str:
     """Generate file 03 — add_nutrition.sql."""
     nutrition_lines: list[str] = []
     for i, p in enumerate(products):
@@ -213,7 +217,7 @@ delete from nutrition_facts
 where product_id in (
   select p.product_id
   from products p
-  where p.country = 'PL' and p.category = {_sql_text(category)}
+  where p.country = {_sql_text(country)} and p.category = {_sql_text(category)}
     and p.is_deprecated is not true
 );
 
@@ -230,7 +234,7 @@ from (
 {nutrition_block}
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
-join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
+join products p on p.country = {_sql_text(country)} and p.brand = d.brand and p.product_name = d.product_name
   and p.category = {_sql_text(category)} and p.is_deprecated is not true
 on conflict (product_id) do update set
   calories = excluded.calories,
@@ -245,7 +249,9 @@ on conflict (product_id) do update set
 """
 
 
-def _gen_04_scoring(category: str, products: list[dict], today: str) -> str:
+def _gen_04_scoring(
+    category: str, products: list[dict], today: str, country: str = "PL"
+) -> str:
     """Generate file 04 — scoring.sql."""
 
     # (additives_count and ingredients_raw are now derived from
@@ -286,7 +292,7 @@ from (
   values
 {nutriscore_block}
 ) as d(brand, product_name, ns)
-where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
+where p.country = {_sql_text(country)} and p.brand = d.brand and p.product_name = d.product_name;
 
 -- 3. NOVA classification
 update products p set
@@ -295,16 +301,18 @@ from (
   values
 {nova_block}
 ) as d(brand, product_name, nova)
-where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
+where p.country = {_sql_text(country)} and p.brand = d.brand and p.product_name = d.product_name;
 
 -- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
-CALL score_category({_sql_text(category)});
+CALL score_category({_sql_text(category)}, 100, {_sql_text(country)});
 """
 
     return scoring_sql
 
 
-def _gen_05_source_provenance(category: str, products: list[dict], today: str) -> str:
+def _gen_05_source_provenance(
+    category: str, products: list[dict], today: str, country: str = "PL"
+) -> str:
     """Generate file 05 — source provenance.
 
     Updates ``products`` with source URL, EAN, and type for every
@@ -344,7 +352,7 @@ FROM (
   VALUES
 {prov_block}
 ) AS d(brand, product_name, source_url, source_ean)
-WHERE p.country = 'PL' AND p.brand = d.brand
+WHERE p.country = {_sql_text(country)} AND p.brand = d.brand
   AND p.product_name = d.product_name
   AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE;
 """
@@ -359,8 +367,9 @@ def generate_pipeline(
     category: str,
     products: list[dict],
     output_dir: str,
+    country: str = "PL",
 ) -> list[Path]:
-    """Generate 5 SQL pipeline files for *category*.
+    """Generate 4 SQL pipeline files for *category* in *country*.
 
     Parameters
     ----------
@@ -370,11 +379,13 @@ def generate_pipeline(
         List of validated, normalised product dicts.
     output_dir:
         Directory to write the SQL files into.
+    country:
+        ISO 3166-1 alpha-2 country code (default ``"PL"``).
 
     Returns
     -------
     list[Path]
-        Paths of the five generated files.
+        Paths of the four generated files.
     """
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -387,24 +398,28 @@ def generate_pipeline(
     # 01 — insert products
     path01 = out / f"PIPELINE__{slug}__01_insert_products.sql"
     path01.write_text(
-        _gen_01_insert_products(category, products, today), encoding="utf-8"
+        _gen_01_insert_products(category, products, today, country), encoding="utf-8"
     )
     files.append(path01)
 
     # 03 — add nutrition
     path03 = out / f"PIPELINE__{slug}__03_add_nutrition.sql"
-    path03.write_text(_gen_03_add_nutrition(category, products), encoding="utf-8")
+    path03.write_text(
+        _gen_03_add_nutrition(category, products, country), encoding="utf-8"
+    )
     files.append(path03)
 
     # 04 — scoring
     path04 = out / f"PIPELINE__{slug}__04_scoring.sql"
-    path04.write_text(_gen_04_scoring(category, products, today), encoding="utf-8")
+    path04.write_text(
+        _gen_04_scoring(category, products, today, country), encoding="utf-8"
+    )
     files.append(path04)
 
     # 05 — source provenance
     path05 = out / f"PIPELINE__{slug}__05_source_provenance.sql"
     path05.write_text(
-        _gen_05_source_provenance(category, products, today), encoding="utf-8"
+        _gen_05_source_provenance(category, products, today, country), encoding="utf-8"
     )
     files.append(path05)
 
