@@ -248,3 +248,11 @@ SELECT '21. resolve_effective_country is SECURITY DEFINER with search_path' AS c
                  WHERE cfg LIKE 'search_path=%'
              )
        ) THEN 0 ELSE 1 END AS violations;
+
+-- 22. resolve_effective_country EXECUTE revoked from authenticated (internal-only)
+SELECT '22. resolve_effective_country EXECUTE revoked from authenticated' AS check_name,
+       CASE WHEN has_function_privilege(
+           'authenticated',
+           'public.resolve_effective_country(text)',
+           'EXECUTE'
+       ) THEN 1 ELSE 0 END AS violations;

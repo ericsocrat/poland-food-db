@@ -54,6 +54,8 @@ COMMENT ON FUNCTION public.resolve_effective_country(text) IS
 'SECURITY DEFINER: ensures user_preferences read bypasses RLS regardless of owner role superuser status.';
 
 -- Maintain existing privilege model: internal-only
-REVOKE EXECUTE ON FUNCTION public.resolve_effective_country(text) FROM PUBLIC, anon;
+-- Revoke from all RPC-callable roles (PUBLIC, anon, authenticated)
+REVOKE EXECUTE ON FUNCTION public.resolve_effective_country(text)
+    FROM PUBLIC, anon, authenticated;
 
 COMMIT;

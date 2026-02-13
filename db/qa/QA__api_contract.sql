@@ -331,22 +331,51 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#30 set_user_preferences auth error keys (2)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #31 api_search_products — country is never null (auto-resolved)
+-- #31 api_search_products — country is never null (explicit args, NULL country)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
-    CASE WHEN api_search_products('cola')->>'country' IS NOT NULL
+    CASE WHEN api_search_products(
+        p_query := 'cola',
+        p_category := NULL,
+        p_limit := 5,
+        p_offset := 0,
+        p_country := NULL,
+        p_diet_preference := NULL,
+        p_avoid_allergens := NULL,
+        p_strict_diet := false,
+        p_strict_allergen := false,
+        p_treat_may_contain := false
+    )->>'country' IS NOT NULL
     THEN 'PASS' ELSE 'FAIL' END AS "#31 search_products country never null";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #32 api_category_listing — country is never null (auto-resolved)
+-- #32 api_category_listing — country is never null (dynamic category, NULL country)
 -- ─────────────────────────────────────────────────────────────────────────────
+WITH active_cat AS (
+    SELECT category FROM category_ref WHERE is_active = true ORDER BY category LIMIT 1
+)
 SELECT
-    CASE WHEN api_category_listing('Chips')->>'country' IS NOT NULL
+    CASE WHEN api_category_listing(
+        p_category := (SELECT category FROM active_cat),
+        p_sort_by := 'score',
+        p_sort_dir := 'asc',
+        p_limit := 5,
+        p_offset := 0,
+        p_country := NULL,
+        p_diet_preference := NULL,
+        p_avoid_allergens := NULL,
+        p_strict_diet := false,
+        p_strict_allergen := false,
+        p_treat_may_contain := false
+    )->>'country' IS NOT NULL
     THEN 'PASS' ELSE 'FAIL' END AS "#32 category_listing country never null";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #33 api_product_detail_by_ean — country is never null (auto-resolved)
+-- #33 api_product_detail_by_ean — country is never null (explicit args, NULL country)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
-    CASE WHEN api_product_detail_by_ean('0000000000000')->>'country' IS NOT NULL
+    CASE WHEN api_product_detail_by_ean(
+        p_ean := '0000000000000',
+        p_country := NULL
+    )->>'country' IS NOT NULL
     THEN 'PASS' ELSE 'FAIL' END AS "#33 ean_lookup country never null";
