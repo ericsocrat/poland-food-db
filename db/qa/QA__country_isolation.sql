@@ -73,30 +73,33 @@ FROM v_api_category_overview_by_country ov
 JOIN country_ref cr ON cr.country_code = ov.country_code
 WHERE cr.is_active = false;
 
--- 7. resolve_effective_country returns non-NULL when called with NULL
-SELECT '7. resolve_effective_country(NULL) returns non-NULL' AS check_name,
-       CASE WHEN resolve_effective_country(NULL) IS NOT NULL
+-- 7. resolve_effective_country(NULL) returns NULL without JWT context (tier-3 removed)
+SELECT '7. resolve_effective_country(NULL) returns NULL without JWT' AS check_name,
+       CASE WHEN resolve_effective_country(NULL) IS NULL
        THEN 0 ELSE 1 END AS violations;
 
--- 8. api_search_products with NULL country echoes a resolved country (not NULL)
-SELECT '8. search with NULL country echoes resolved country' AS check_name,
+-- 8. search with explicit country still works (no tier-3 needed)
+SELECT '8. search with explicit country returns that country' AS check_name,
        CASE WHEN (
-           api_search_products('ch', NULL, 5, 0, NULL)
-       )->>'country' IS NOT NULL
+           api_search_products('ch', NULL, 5, 0, 'PL')
+       )->>'country' = 'PL'
        THEN 0 ELSE 1 END AS violations;
 
--- 9. api_category_listing with NULL country echoes a resolved country
-SELECT '9. listing with NULL country echoes resolved country' AS check_name,
+-- 9. listing with explicit country still works
+SELECT '9. listing with explicit country returns that country' AS check_name,
        CASE WHEN (
-           api_category_listing('Chips', 'score', 'asc', 5, 0, NULL)
-       )->>'country' IS NOT NULL
+           api_category_listing('Chips', 'score', 'asc', 5, 0, 'PL')
+       )->>'country' = 'PL'
        THEN 0 ELSE 1 END AS violations;
 
--- 10. api_product_detail_by_ean with NULL country echoes a resolved country
-SELECT '10. EAN with NULL country echoes resolved country' AS check_name,
+-- 10. EAN with explicit country returns PL
+SELECT '10. EAN with explicit country returns that country' AS check_name,
        CASE WHEN (
-           api_product_detail_by_ean('0000000000000', NULL)
-       )->>'country' IS NOT NULL
+           api_product_detail_by_ean(
+               (SELECT ean FROM products WHERE ean IS NOT NULL AND country = 'PL' LIMIT 1),
+               'PL'
+           )
+       )->>'country' = 'PL'
        THEN 0 ELSE 1 END AS violations;
 
 -- ═══════════════════════════════════════════════════════════════════════════════

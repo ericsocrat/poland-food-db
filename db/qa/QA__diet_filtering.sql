@@ -10,11 +10,11 @@ SELECT '1. vegan filter excludes non-vegan from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, NULL, 'vegan')->'results'
-    ) r(val)
-) search_results
-JOIN v_master m ON m.product_id = search_results.pid::bigint
-WHERE m.vegan_status = 'no';
+api_search_products('a', NULL, 100, 0, 'PL', 'vegan')->'results'
+               ) r(val)
+           ) search_results
+           JOIN v_master m ON m.product_id = search_results.pid::bigint
+           WHERE m.vegan_status = 'no';
 
 -- 2. Vegetarian filter excludes products with vegetarian_status = 'no'
 SELECT '2. vegetarian filter excludes non-vegetarian from search' AS check_name,
@@ -22,7 +22,7 @@ SELECT '2. vegetarian filter excludes non-vegetarian from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, NULL, 'vegetarian')->'results'
+        api_search_products('a', NULL, 100, 0, 'PL', 'vegetarian')->'results'
     ) r(val)
 ) search_results
 JOIN v_master m ON m.product_id = search_results.pid::bigint
@@ -34,7 +34,7 @@ SELECT '3. strict vegan excludes maybe-vegan from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, NULL, 'vegan', NULL, true)->'results'
+        api_search_products('a', NULL, 100, 0, 'PL', 'vegan', NULL, true)->'results'
     ) r(val)
 ) search_results
 JOIN v_master m ON m.product_id = search_results.pid::bigint
@@ -46,7 +46,7 @@ SELECT '4. vegan filter excludes non-vegan from category listing' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_category_listing('Chips', 'score', 'asc', 100, 0, NULL, 'vegan')->'products'
+        api_category_listing('Chips', 'score', 'asc', 100, 0, 'PL', 'vegan')->'products'
     ) r(val)
 ) listing_results
 JOIN v_master m ON m.product_id = listing_results.pid::bigint
@@ -74,7 +74,7 @@ SELECT '6. no diet filter includes all diet statuses' AS check_name,
            FROM (
                SELECT r.val->>'product_id' AS pid
                FROM jsonb_array_elements(
-                   api_search_products('ch', NULL, 100, 0)->'results'
+                   api_search_products('ch', NULL, 100, 0, 'PL')->'results'
                ) r(val)
            ) search_results
            JOIN v_master m ON m.product_id = search_results.pid::bigint

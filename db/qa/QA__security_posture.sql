@@ -103,15 +103,14 @@ WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
   AND p.prosecdef = false;
 
--- 9. anon can EXECUTE public-facing api_* functions (excludes auth-only)
-SELECT '9. anon can EXECUTE public api_* functions' AS check_name,
+-- 9. anon CANNOT EXECUTE any api_* function (auth-only platform)
+SELECT '9. anon blocked from ALL api_* functions' AS check_name,
        COUNT(*) AS violations
 FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
-  AND p.proname NOT IN ('api_get_user_preferences','api_set_user_preferences')
-  AND NOT has_function_privilege('anon', p.oid, 'EXECUTE');
+  AND has_function_privilege('anon', p.oid, 'EXECUTE');
 
 -- 10. anon cannot EXECUTE internal computation functions
 SELECT '10. anon blocked from internal functions' AS check_name,
@@ -209,23 +208,24 @@ SELECT '17. user_preferences has SIUD policies' AS check_name,
        ) >= 4
        THEN 0 ELSE 1 END AS violations;
 
--- 18. anon cannot EXECUTE api_get_user_preferences
-SELECT '18. anon blocked from api_get_user_preferences' AS check_name,
+-- 18. authenticated CAN EXECUTE all api_* functions
+SELECT '18. authenticated can execute all api_* functions' AS check_name,
        COUNT(*) AS violations
 FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE n.nspname = 'public'
-  AND p.proname = 'api_get_user_preferences'
-  AND has_function_privilege('anon', p.oid, 'EXECUTE');
+  AND p.proname LIKE 'api_%'
+  AND NOT has_function_privilege('authenticated', p.oid, 'EXECUTE');
 
--- 19. anon cannot EXECUTE api_set_user_preferences
-SELECT '19. anon blocked from api_set_user_preferences' AS check_name,
-       COUNT(*) AS violations
-FROM pg_proc p
-JOIN pg_namespace n ON p.pronamespace = n.oid
-WHERE n.nspname = 'public'
-  AND p.proname = 'api_set_user_preferences'
-  AND has_function_privilege('anon', p.oid, 'EXECUTE');
+-- 19. user_preferences.country allows NULL (pre-onboarding state)
+SELECT '19. user_preferences.country nullable for onboarding' AS check_name,
+       CASE WHEN (
+           SELECT is_nullable FROM information_schema.columns
+           WHERE table_schema = 'public'
+             AND table_name = 'user_preferences'
+             AND column_name = 'country'
+       ) = 'YES'
+       THEN 0 ELSE 1 END AS violations;
 
 -- 20. user_preferences has updated_at trigger
 SELECT '20. user_preferences has updated_at trigger' AS check_name,

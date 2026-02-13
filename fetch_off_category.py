@@ -69,15 +69,15 @@ MAX_RETRIES = 2
 
 # Nutrition columns that map from OFF nutriments
 NUTRITION_MAP = {
-    "calories":       ("energy-kcal_100g",),
-    "total_fat_g":    ("fat_100g",),
-    "saturated_fat_g":("saturated-fat_100g",),
-    "trans_fat_g":    ("trans-fat_100g",),
-    "carbs_g":        ("carbohydrates_100g",),
-    "sugars_g":       ("sugars_100g",),
-    "fibre_g":        ("fiber_100g",),
-    "protein_g":      ("proteins_100g",),
-    "salt_g":         ("salt_100g",),
+    "calories": ("energy-kcal_100g",),
+    "total_fat_g": ("fat_100g",),
+    "saturated_fat_g": ("saturated-fat_100g",),
+    "trans_fat_g": ("trans-fat_100g",),
+    "carbs_g": ("carbohydrates_100g",),
+    "sugars_g": ("sugars_100g",),
+    "fibre_g": ("fiber_100g",),
+    "protein_g": ("proteins_100g",),
+    "salt_g": ("salt_100g",),
 }
 
 PIPELINE_DIR = Path(__file__).parent / "db" / "pipelines"
@@ -88,22 +88,41 @@ DB_NAME = "postgres"
 
 # Country code → OFF country tag mapping
 COUNTRY_TAGS = {
-    "PL": "poland", "DE": "germany", "FR": "france",
-    "ES": "spain", "IT": "italy", "GB": "united-kingdom",
-    "US": "united-states", "CZ": "czech-republic",
-    "SK": "slovakia", "AT": "austria", "NL": "netherlands",
-    "BE": "belgium", "SE": "sweden", "DK": "denmark",
-    "NO": "norway", "FI": "finland", "PT": "portugal",
-    "RO": "romania", "HU": "hungary", "BG": "bulgaria",
-    "HR": "croatia", "LT": "lithuania", "LV": "latvia",
-    "EE": "estonia", "SI": "slovenia", "IE": "ireland",
-    "GR": "greece", "CH": "switzerland",
+    "PL": "poland",
+    "DE": "germany",
+    "FR": "france",
+    "ES": "spain",
+    "IT": "italy",
+    "GB": "united-kingdom",
+    "US": "united-states",
+    "CZ": "czech-republic",
+    "SK": "slovakia",
+    "AT": "austria",
+    "NL": "netherlands",
+    "BE": "belgium",
+    "SE": "sweden",
+    "DK": "denmark",
+    "NO": "norway",
+    "FI": "finland",
+    "PT": "portugal",
+    "RO": "romania",
+    "HU": "hungary",
+    "BG": "bulgaria",
+    "HR": "croatia",
+    "LT": "lithuania",
+    "LV": "latvia",
+    "EE": "estonia",
+    "SI": "slovenia",
+    "IE": "ireland",
+    "GR": "greece",
+    "CH": "switzerland",
 }
 
 
 # ──────────────────────────────────────────────────────────────────────────────
 # Helpers
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def sql_escape(val: str) -> str:
     """Escape a string for SQL literal embedding (single-quote doubling)."""
@@ -165,7 +184,7 @@ def extract_nova(product: dict) -> str:
         return str(ng)
     # Try nova_groups_tags
     tags = product.get("nova_groups_tags", [])
-    for tag in (tags or []):
+    for tag in tags or []:
         for n in ("1", "2", "3", "4"):
             if n in str(tag):
                 return n
@@ -177,17 +196,29 @@ def _psql_cmd(query: str) -> list[str]:
     if os.environ.get("PGHOST"):
         return ["psql", "-t", "-A", "-F", "|", "-c", query]
     return [
-        "docker", "exec", DB_CONTAINER,
-        "psql", "-U", DB_USER, "-d", DB_NAME,
-        "-t", "-A", "-F", "|", "-c", query,
+        "docker",
+        "exec",
+        DB_CONTAINER,
+        "psql",
+        "-U",
+        DB_USER,
+        "-d",
+        DB_NAME,
+        "-t",
+        "-A",
+        "-F",
+        "|",
+        "-c",
+        query,
     ]
 
 
 def get_existing_categories() -> set[str]:
     """Get set of registered category names from category_ref."""
     cmd = _psql_cmd("SELECT category FROM category_ref;")
-    result = subprocess.run(cmd, capture_output=True, timeout=30,
-                            encoding="utf-8", errors="replace")
+    result = subprocess.run(
+        cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace"
+    )
     if result.returncode != 0:
         return set()
     return {line.strip() for line in result.stdout.strip().split("\n") if line.strip()}
@@ -196,6 +227,7 @@ def get_existing_categories() -> set[str]:
 # ──────────────────────────────────────────────────────────────────────────────
 # OFF API
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def search_off_products(
     off_tag: str,
@@ -214,10 +246,133 @@ def search_off_products(
 
     # Map country codes to EAN prefixes for client-side filtering
     country_ean_prefixes = {
-        "PL": ("590",), "DE": ("400", "401", "402", "403", "404", "440"),
-        "FR": ("300", "301", "302", "303", "304", "305", "306", "307", "308", "309", "310", "311", "312", "313", "314", "315", "316", "317", "318", "319", "320", "321", "322", "323", "324", "325", "326", "327", "328", "329", "330", "331", "332", "333", "334", "335", "336", "337", "338", "339", "340", "341", "342", "343", "344", "345", "346", "347", "348", "349", "350", "351", "352", "353", "354", "355", "356", "357", "358", "359", "360", "361", "362", "363", "364", "365", "366", "367", "368", "369", "370", "371", "372", "373", "374", "375", "376", "377", "378", "379"),
+        "PL": ("590",),
+        "DE": ("400", "401", "402", "403", "404", "440"),
+        "FR": (
+            "300",
+            "301",
+            "302",
+            "303",
+            "304",
+            "305",
+            "306",
+            "307",
+            "308",
+            "309",
+            "310",
+            "311",
+            "312",
+            "313",
+            "314",
+            "315",
+            "316",
+            "317",
+            "318",
+            "319",
+            "320",
+            "321",
+            "322",
+            "323",
+            "324",
+            "325",
+            "326",
+            "327",
+            "328",
+            "329",
+            "330",
+            "331",
+            "332",
+            "333",
+            "334",
+            "335",
+            "336",
+            "337",
+            "338",
+            "339",
+            "340",
+            "341",
+            "342",
+            "343",
+            "344",
+            "345",
+            "346",
+            "347",
+            "348",
+            "349",
+            "350",
+            "351",
+            "352",
+            "353",
+            "354",
+            "355",
+            "356",
+            "357",
+            "358",
+            "359",
+            "360",
+            "361",
+            "362",
+            "363",
+            "364",
+            "365",
+            "366",
+            "367",
+            "368",
+            "369",
+            "370",
+            "371",
+            "372",
+            "373",
+            "374",
+            "375",
+            "376",
+            "377",
+            "378",
+            "379",
+        ),
         "ES": ("840", "841", "842", "843", "844", "845", "846", "847", "848", "849"),
-        "IT": ("800", "801", "802", "803", "804", "805", "806", "807", "808", "809", "810", "811", "812", "813", "814", "815", "816", "817", "818", "819", "820", "821", "822", "823", "824", "825", "826", "827", "828", "829", "830", "831", "832", "833", "834", "835", "836", "837", "838", "839"),
+        "IT": (
+            "800",
+            "801",
+            "802",
+            "803",
+            "804",
+            "805",
+            "806",
+            "807",
+            "808",
+            "809",
+            "810",
+            "811",
+            "812",
+            "813",
+            "814",
+            "815",
+            "816",
+            "817",
+            "818",
+            "819",
+            "820",
+            "821",
+            "822",
+            "823",
+            "824",
+            "825",
+            "826",
+            "827",
+            "828",
+            "829",
+            "830",
+            "831",
+            "832",
+            "833",
+            "834",
+            "835",
+            "836",
+            "837",
+            "838",
+            "839",
+        ),
         "GB": ("500", "501", "502", "503", "504", "505", "506", "507", "508", "509"),
     }
     ean_prefixes = country_ean_prefixes.get(country, ())
@@ -244,10 +399,12 @@ def search_off_products(
                 break
             except requests.RequestException as e:
                 if attempt == MAX_RETRIES:
-                    print(f"  WARN: Search page {page} failed after {MAX_RETRIES+1} attempts: {e}",
-                          file=sys.stderr)
+                    print(
+                        f"  WARN: Search page {page} failed after {MAX_RETRIES+1} attempts: {e}",
+                        file=sys.stderr,
+                    )
                     return products
-                time.sleep(2 ** attempt)
+                time.sleep(2**attempt)
 
         data = resp.json()
         page_products = data.get("products", [])
@@ -269,8 +426,10 @@ def search_off_products(
                     break
 
         total = data.get("count", 0)
-        print(f"  Page {page}: scanned {len(page_products)} "
-              f"(matched: {len(products)}/{max_products}, total on OFF: {total})")
+        print(
+            f"  Page {page}: scanned {len(page_products)} "
+            f"(matched: {len(products)}/{max_products}, total on OFF: {total})"
+        )
 
         if len(page_products) < page_size:
             break  # last page
@@ -296,15 +455,16 @@ def fetch_products_by_eans(eans: list[str]) -> list[dict]:
 
         for attempt in range(MAX_RETRIES + 1):
             try:
-                resp = session.get(url, params={"fields": PRODUCT_FIELDS},
-                                   timeout=TIMEOUT)
+                resp = session.get(
+                    url, params={"fields": PRODUCT_FIELDS}, timeout=TIMEOUT
+                )
                 resp.raise_for_status()
                 break
             except requests.RequestException as e:
                 if attempt == MAX_RETRIES:
                     print(f"FAILED ({e})")
                     break
-                time.sleep(2 ** attempt)
+                time.sleep(2**attempt)
         else:
             # All retries failed
             continue
@@ -330,6 +490,7 @@ def fetch_products_by_eans(eans: list[str]) -> list[dict]:
 # ──────────────────────────────────────────────────────────────────────────────
 # Product processing
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def process_off_products(
     raw_products: list[dict],
@@ -374,19 +535,21 @@ def process_off_products(
         nutri_score = extract_nutri_score(raw)
         nova = extract_nova(raw)
 
-        processed.append({
-            "country": country,
-            "ean": ean,
-            "brand": brand,
-            "product_name": name,
-            "product_type": "Grocery",
-            "prep_method": "not-applicable",
-            "store_availability": None,
-            "controversies": "none",
-            "nutrition": nutrition,
-            "nutri_score": nutri_score,
-            "nova": nova,
-        })
+        processed.append(
+            {
+                "country": country,
+                "ean": ean,
+                "brand": brand,
+                "product_name": name,
+                "product_type": "Grocery",
+                "prep_method": "not-applicable",
+                "store_availability": None,
+                "controversies": "none",
+                "nutrition": nutrition,
+                "nutri_score": nutri_score,
+                "nova": nova,
+            }
+        )
 
     return processed
 
@@ -394,6 +557,7 @@ def process_off_products(
 # ──────────────────────────────────────────────────────────────────────────────
 # SQL generation
 # ──────────────────────────────────────────────────────────────────────────────
+
 
 def generate_step_01(products: list[dict], category: str, country: str) -> str:
     """Generate 01_insert_products.sql matching the project's exact pattern."""
@@ -403,7 +567,11 @@ def generate_step_01(products: list[dict], category: str, country: str) -> str:
 
     values = []
     for p in products:
-        store = f"'{sql_escape(p['store_availability'])}'" if p["store_availability"] else "null"
+        store = (
+            f"'{sql_escape(p['store_availability'])}'"
+            if p["store_availability"]
+            else "null"
+        )
         values.append(
             f"  ('{p['country']}', '{sql_escape(p['brand'])}', '{p['product_type']}', "
             f"'{sql_escape(category)}', '{sql_escape(p['product_name'])}', "
@@ -515,7 +683,7 @@ def generate_step_04(products: list[dict], category: str, country: str) -> str:
             f"    ('{sql_escape(p['brand'])}', '{sql_escape(p['product_name'])}', "
             f"'{p['nutri_score']}')"
         )
-        nova_val = "NULL" if p['nova'] == 'UNKNOWN' else f"'{p['nova']}'"
+        nova_val = "NULL" if p["nova"] == "UNKNOWN" else f"'{p['nova']}'"
         nova_values.append(
             f"    ('{sql_escape(p['brand'])}', '{sql_escape(p['product_name'])}', "
             f"{nova_val})"
@@ -580,14 +748,15 @@ WHERE p.country = '{country}' AND p.brand = d.brand AND p.product_name = d.produ
 # Main
 # ──────────────────────────────────────────────────────────────────────────────
 
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Fetch products from Open Food Facts and generate pipeline SQL.",
         epilog=(
             "Examples:\n"
             "  # Primary: fetch by EAN list (most reliable for PL)\n"
-            '  python fetch_off_category.py --country PL --category Chips --ean-file eans.txt\n'
-            '  python fetch_off_category.py --country PL --category Chips --eans 5900073020262,5905187114760\n'
+            "  python fetch_off_category.py --country PL --category Chips --ean-file eans.txt\n"
+            "  python fetch_off_category.py --country PL --category Chips --eans 5900073020262,5905187114760\n"
             "\n"
             "  # Discovery: search OFF by category tag\n"
             '  python fetch_off_category.py --country PL --category Chips --off-search "en:chips" --limit 100\n'
@@ -597,26 +766,49 @@ def main() -> None:
         ),
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
-    parser.add_argument("--country", required=True,
-                        help="Two-letter country code (e.g., PL, DE, FR)")
-    parser.add_argument("--category", required=True,
-                        help="Category name as it appears in category_ref (e.g., 'Chips', 'Frozen & Prepared')")
+    parser.add_argument(
+        "--country", required=True, help="Two-letter country code (e.g., PL, DE, FR)"
+    )
+    parser.add_argument(
+        "--category",
+        required=True,
+        help="Category name as it appears in category_ref (e.g., 'Chips', 'Frozen & Prepared')",
+    )
 
     # Acquisition modes (at least one required)
     acq = parser.add_argument_group("acquisition modes (at least one required)")
-    acq.add_argument("--eans", type=str, default=None,
-                     help="Comma-separated list of EAN barcodes")
-    acq.add_argument("--ean-file", type=str, default=None,
-                     help="Path to a text file with one EAN per line")
-    acq.add_argument("--off-search", type=str, default=None,
-                     help="OFF category tag for search discovery (e.g., 'en:chips')")
+    acq.add_argument(
+        "--eans", type=str, default=None, help="Comma-separated list of EAN barcodes"
+    )
+    acq.add_argument(
+        "--ean-file",
+        type=str,
+        default=None,
+        help="Path to a text file with one EAN per line",
+    )
+    acq.add_argument(
+        "--off-search",
+        type=str,
+        default=None,
+        help="OFF category tag for search discovery (e.g., 'en:chips')",
+    )
 
-    parser.add_argument("--limit", type=int, default=100,
-                        help="Max products from OFF search (default: 100, ignored for EAN mode)")
-    parser.add_argument("--dry-run", action="store_true",
-                        help="Fetch and report without writing SQL files")
-    parser.add_argument("--overwrite", action="store_true",
-                        help="Overwrite existing pipeline files if present")
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=100,
+        help="Max products from OFF search (default: 100, ignored for EAN mode)",
+    )
+    parser.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Fetch and report without writing SQL files",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite existing pipeline files if present",
+    )
 
     args = parser.parse_args()
 
@@ -625,8 +817,10 @@ def main() -> None:
 
     # Validate country
     if country not in COUNTRY_TAGS:
-        print(f"ERROR: Unknown country code '{country}'. "
-              f"Supported: {', '.join(sorted(COUNTRY_TAGS.keys()))}")
+        print(
+            f"ERROR: Unknown country code '{country}'. "
+            f"Supported: {', '.join(sorted(COUNTRY_TAGS.keys()))}"
+        )
         sys.exit(1)
 
     # Validate at least one acquisition mode
@@ -652,8 +846,10 @@ def main() -> None:
     # Validate EAN format
     invalid_eans = [e for e in ean_list if not e.isdigit() or len(e) not in (8, 13)]
     if invalid_eans:
-        print(f"WARNING: Skipping {len(invalid_eans)} invalid EANs: "
-              f"{', '.join(invalid_eans[:5])}{'...' if len(invalid_eans) > 5 else ''}")
+        print(
+            f"WARNING: Skipping {len(invalid_eans)} invalid EANs: "
+            f"{', '.join(invalid_eans[:5])}{'...' if len(invalid_eans) > 5 else ''}"
+        )
         ean_list = [e for e in ean_list if e not in invalid_eans]
 
     folder_name = sanitize_folder_name(category)
@@ -697,8 +893,10 @@ def main() -> None:
     if args.off_search:
         print(f"Searching OFF for '{args.off_search}' in {country}...")
         search_products = search_off_products(
-            args.off_search, country,
-            page_size=100, max_products=args.limit,
+            args.off_search,
+            country,
+            page_size=100,
+            max_products=args.limit,
         )
         raw_products.extend(search_products)
         print(f"  Search mode: {len(search_products)} matched")
@@ -719,25 +917,34 @@ def main() -> None:
     ns_known = sum(1 for p in products if p["nutri_score"] != "UNKNOWN")
     nova_known = sum(1 for p in products if p["nova"] != "UNKNOWN")
     nutrition_complete = sum(
-        1 for p in products
+        1
+        for p in products
         if p["nutrition"]["calories"] > 0 and p["nutrition"]["protein_g"] >= 0
     )
 
     print("Data quality summary:")
     print(f"  Products with valid EAN:    {len(products)}")
-    print(f"  Nutri-Score available:      {ns_known}/{len(products)} "
-          f"({100*ns_known//len(products)}%)")
-    print(f"  NOVA group available:       {nova_known}/{len(products)} "
-          f"({100*nova_known//len(products)}%)")
-    print(f"  Nutrition data present:     {nutrition_complete}/{len(products)} "
-          f"({100*nutrition_complete//len(products)}%)")
+    print(
+        f"  Nutri-Score available:      {ns_known}/{len(products)} "
+        f"({100*ns_known//len(products)}%)"
+    )
+    print(
+        f"  NOVA group available:       {nova_known}/{len(products)} "
+        f"({100*nova_known//len(products)}%)"
+    )
+    print(
+        f"  Nutrition data present:     {nutrition_complete}/{len(products)} "
+        f"({100*nutrition_complete//len(products)}%)"
+    )
     print()
 
     if args.dry_run:
         print("DRY RUN — no files written. Product preview:")
         for i, p in enumerate(products[:10], 1):
-            print(f"  {i:3d}. [{p['ean']}] {p['brand']} — {p['product_name']} "
-                  f"(NS:{p['nutri_score']}, NOVA:{p['nova']})")
+            print(
+                f"  {i:3d}. [{p['ean']}] {p['brand']} — {p['product_name']} "
+                f"(NS:{p['nutri_score']}, NOVA:{p['nova']})"
+            )
         if len(products) > 10:
             print(f"  ... and {len(products) - 10} more")
         return
@@ -748,14 +955,18 @@ def main() -> None:
         print(f"Created pipeline folder: {output_dir}")
 
     files = {
-        f"PIPELINE__{folder_name}__01_insert_products.sql":
-            generate_step_01(products, category, country),
-        f"PIPELINE__{folder_name}__03_add_nutrition.sql":
-            generate_step_03(products, category, country),
-        f"PIPELINE__{folder_name}__04_scoring.sql":
-            generate_step_04(products, category, country),
-        f"PIPELINE__{folder_name}__05_source_provenance.sql":
-            generate_step_05(products, category, country),
+        f"PIPELINE__{folder_name}__01_insert_products.sql": generate_step_01(
+            products, category, country
+        ),
+        f"PIPELINE__{folder_name}__03_add_nutrition.sql": generate_step_03(
+            products, category, country
+        ),
+        f"PIPELINE__{folder_name}__04_scoring.sql": generate_step_04(
+            products, category, country
+        ),
+        f"PIPELINE__{folder_name}__05_source_provenance.sql": generate_step_05(
+            products, category, country
+        ),
     }
 
     for filename, content in files.items():
