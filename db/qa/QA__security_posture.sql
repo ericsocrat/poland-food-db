@@ -103,13 +103,14 @@ WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
   AND p.prosecdef = false;
 
--- 9. anon can EXECUTE all api_* functions
-SELECT '9. anon can EXECUTE all api_* functions' AS check_name,
+-- 9. anon can EXECUTE public-facing api_* functions (excludes auth-only)
+SELECT '9. anon can EXECUTE public api_* functions' AS check_name,
        COUNT(*) AS violations
 FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
+  AND p.proname NOT IN ('api_get_user_preferences','api_set_user_preferences')
   AND NOT has_function_privilege('anon', p.oid, 'EXECUTE');
 
 -- 10. anon cannot EXECUTE internal computation functions
@@ -122,7 +123,8 @@ WHERE n.nspname = 'public'
     'compute_unhealthiness_v31','compute_unhealthiness_v32',
     'explain_score_v32','compute_data_confidence','compute_data_completeness',
     'assign_confidence','find_similar_products','find_better_alternatives',
-    'refresh_all_materialized_views','mv_staleness_check'
+    'refresh_all_materialized_views','mv_staleness_check',
+    'check_product_preferences'
   )
   AND has_function_privilege('anon', p.oid, 'EXECUTE');
 
@@ -183,4 +185,52 @@ SELECT '15. products has updated_at trigger' AS check_name,
            SELECT 1 FROM information_schema.triggers
            WHERE trigger_name = 'trg_products_updated_at'
              AND event_object_table = 'products'
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 16. user_preferences has RLS enabled
+SELECT '16. user_preferences has RLS enabled' AS check_name,
+       COUNT(*) AS violations
+FROM pg_class c
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relkind = 'r'
+  AND c.relname = 'user_preferences'
+  AND c.relrowsecurity = false;
+
+-- 17. user_preferences has per-user RLS policies (SIUD)
+SELECT '17. user_preferences has SIUD policies' AS check_name,
+       CASE WHEN (
+           SELECT COUNT(DISTINCT pol.polcmd)
+           FROM pg_policy pol
+           JOIN pg_class c ON pol.polrelid = c.oid
+           JOIN pg_namespace n ON c.relnamespace = n.oid
+           WHERE n.nspname = 'public'
+             AND c.relname = 'user_preferences'
+       ) >= 4
+       THEN 0 ELSE 1 END AS violations;
+
+-- 18. anon cannot EXECUTE api_get_user_preferences
+SELECT '18. anon blocked from api_get_user_preferences' AS check_name,
+       COUNT(*) AS violations
+FROM pg_proc p
+JOIN pg_namespace n ON p.pronamespace = n.oid
+WHERE n.nspname = 'public'
+  AND p.proname = 'api_get_user_preferences'
+  AND has_function_privilege('anon', p.oid, 'EXECUTE');
+
+-- 19. anon cannot EXECUTE api_set_user_preferences
+SELECT '19. anon blocked from api_set_user_preferences' AS check_name,
+       COUNT(*) AS violations
+FROM pg_proc p
+JOIN pg_namespace n ON p.pronamespace = n.oid
+WHERE n.nspname = 'public'
+  AND p.proname = 'api_set_user_preferences'
+  AND has_function_privilege('anon', p.oid, 'EXECUTE');
+
+-- 20. user_preferences has updated_at trigger
+SELECT '20. user_preferences has updated_at trigger' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM information_schema.triggers
+           WHERE trigger_name = 'user_preferences_updated_at'
+             AND event_object_table = 'user_preferences'
        ) THEN 0 ELSE 1 END AS violations;

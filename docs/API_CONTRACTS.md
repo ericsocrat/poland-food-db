@@ -17,14 +17,14 @@ All API surfaces are **read-only** PostgreSQL views or RPC functions exposed via
 
 ### What Is Intentionally Hidden
 
-| Internal Column                                                                    | Reason                           | Exposed Via                                        |
-| ---------------------------------------------------------------------------------- | -------------------------------- | -------------------------------------------------- |
-| `ingredients_raw`                                                                  | Raw Polish text, not user-facing | `ingredients.count`, `ingredients.additive_names`  |
-| `source_url`, `source_ean`                                                         | Backend provenance details       | `trust.source_type`, `trust.source_confidence_pct` |
-| `score_breakdown` version internals                                                | Internal metadata                | Not exposed                                        |
-| `controversies`                                                                    | Raw text enum                    | Converted to warning in `api_score_explanation`    |
-| `ingredient_concern_score`                                                         | Scoring internal                 | Visible in `score_breakdown.factors`               |
-| `score_breakdown` (raw JSONB)                                                      | Complex structure                | Structured via `api_score_explanation`             |
+| Internal Column                     | Reason                           | Exposed Via                                        |
+| ----------------------------------- | -------------------------------- | -------------------------------------------------- |
+| `ingredients_raw`                   | Raw Polish text, not user-facing | `ingredients.count`, `ingredients.additive_names`  |
+| `source_url`, `source_ean`          | Backend provenance details       | `trust.source_type`, `trust.source_confidence_pct` |
+| `score_breakdown` version internals | Internal metadata                | Not exposed                                        |
+| `controversies`                     | Raw text enum                    | Converted to warning in `api_score_explanation`    |
+| `ingredient_concern_score`          | Scoring internal                 | Visible in `score_breakdown.factors`               |
+| `score_breakdown` (raw JSONB)       | Complex structure                | Structured via `api_score_explanation`             |
 
 ---
 
@@ -64,10 +64,10 @@ GET /rest/v1/v_api_category_overview?order=sort_order.asc
 
 One row per `(country, category)` pair for active countries and active categories.
 
-| Field                  | Type    | Description                         |
-| ---------------------- | ------- | ----------------------------------- |
-| `country_code`         | text    | ISO 3166-1 alpha-2 (e.g. `"PL"`)   |
-| *(all other columns)*  |         | Same as `v_api_category_overview`   |
+| Field                 | Type | Description                       |
+| --------------------- | ---- | --------------------------------- |
+| `country_code`        | text | ISO 3166-1 alpha-2 (e.g. `"PL"`)  |
+| *(all other columns)* |      | Same as `v_api_category_overview` |
 
 > **Note:** Not directly accessible via PostgREST (RPC-only model). Wrap in an RPC function if frontend access is needed.
 
@@ -412,12 +412,12 @@ Body: {
 
 ### Parameters
 
-| Param        | Type    | Default    | Description                      |
-| ------------ | ------- | ---------- | -------------------------------- |
-| `p_query`    | text    | *required* | Search string (min 2 characters) |
-| `p_category` | text    | `null`     | Optional category filter         |
-| `p_limit`    | integer | 20         | Page size (1-100, clamped)       |
-| `p_offset`   | integer | 0          | Offset for pagination            |
+| Param        | Type    | Default    | Description                                      |
+| ------------ | ------- | ---------- | ------------------------------------------------ |
+| `p_query`    | text    | *required* | Search string (min 2 characters)                 |
+| `p_category` | text    | `null`     | Optional category filter                         |
+| `p_limit`    | integer | 20         | Page size (1-100, clamped)                       |
+| `p_offset`   | integer | 0          | Offset for pagination                            |
 | `p_country`  | text    | `null`     | Optional country filter (`null` = all countries) |
 
 ### Response Shape
@@ -487,9 +487,11 @@ only among products from the **same country** as the source product.
 ### Safe Patterns (use freely)
 - `v_api_category_overview` — cached dashboard data, 20 rows max
 - `api_product_detail(id)` — single product lookup, fast
+- `api_product_detail_by_ean(ean)` — barcode scanner lookup, fast
 - `api_category_listing(cat, sort, dir, limit, offset)` — paged, max 100/page
 - `api_search_products(query)` — debounce 300ms, max 100/page
 - `api_data_confidence(id)` — single product confidence lookup, fast
+- `api_get_user_preferences()` — authenticated user's preferences, fast
 - `v_product_confidence` — materialized view, pre-computed for all 1,029 products
 
 ### Expensive Patterns (cache or limit)
@@ -568,3 +570,103 @@ Pre-computed confidence for all 1,029 products. Faster than calling `compute_dat
 | `allergen_status`   | text   | known/unknown                |
 
 > **Refresh:** Run `REFRESH MATERIALIZED VIEW CONCURRENTLY v_product_confidence;` after data updates.
+
+---
+
+## 8. Barcode Scanner: `api_product_detail_by_ean(p_ean text, p_country text DEFAULT NULL)`
+
+**Purpose:** Barcode scanner endpoint. Looks up a product by EAN, optionally scoped to a country.
+
+**PostgREST:** `POST /rpc/api_product_detail_by_ean` with `{ "p_ean": "5900259135360" }`
+
+**Success Response:** Same as `api_product_detail` plus `scan` metadata:
+```jsonc
+{
+  // ... all api_product_detail keys ...
+  "scan": {
+    "scanned_ean": "5900259135360",
+    "found": true,
+    "alternative_count": 3       // number of healthier alternatives available
+  }
+}
+```
+
+**Not Found Response:**
+```json
+{"api_version": "1.0", "ean": "0000000000000", "country": null, "found": false, "error": "Product not found for this barcode."}
+```
+
+**Access:** anon, authenticated, service_role
+
+---
+
+## 9. Preference-Aware Filtering
+
+All major API surfaces (`api_search_products`, `api_category_listing`, `api_better_alternatives`) now accept optional preference parameters:
+
+| Parameter             | Type    | Default | Description                                          |
+| --------------------- | ------- | ------- | ---------------------------------------------------- |
+| `p_diet_preference`   | text    | NULL    | `'vegan'` or `'vegetarian'` — excludes non-matching  |
+| `p_avoid_allergens`   | text[]  | NULL    | Array of `en:` tags (e.g. `ARRAY['en:gluten']`)      |
+| `p_strict_diet`       | boolean | false   | When true, `'maybe'`/`'unknown'` also excluded       |
+| `p_strict_allergen`   | boolean | false   | When true, products with no allergen data are hidden |
+| `p_treat_may_contain` | boolean | false   | When true, `'traces'` treated as unsafe              |
+
+All parameters have defaults — existing callers are unaffected. `api_version` remains `'1.0'`.
+
+### Internal: `check_product_preferences()`
+
+Reusable STABLE function that returns `true` if a product passes all diet + allergen filters. Used by all preference-aware API surfaces. Not callable by anon.
+
+---
+
+## 10. User Preferences: `api_get_user_preferences()` / `api_set_user_preferences(...)`
+
+**Purpose:** Manage per-user personalization settings (requires authentication).
+
+### `api_get_user_preferences()`
+
+**PostgREST:** `POST /rpc/api_get_user_preferences` (no body, uses JWT)
+
+**Response (preferences set):**
+```jsonc
+{
+  "api_version": "1.0",
+  "user_id": "uuid",
+  "country": "PL",
+  "diet_preference": "vegan",
+  "avoid_allergens": ["en:gluten", "en:milk"],
+  "strict_allergen": false,
+  "strict_diet": false,
+  "treat_may_contain_as_unsafe": false,
+  "created_at": "...",
+  "updated_at": "..."
+}
+```
+
+**Response (no preferences):**
+```json
+{"api_version": "1.0", "has_preferences": false, "message": "No preferences set. Use api_set_user_preferences to configure."}
+```
+
+### `api_set_user_preferences(...)`
+
+| Parameter                       | Type    | Default | Notes                                  |
+| ------------------------------- | ------- | ------- | -------------------------------------- |
+| `p_country`                     | text    | `'PL'`  | Validated against `country_ref`        |
+| `p_diet_preference`             | text    | NULL    | `'none'`, `'vegetarian'`, or `'vegan'` |
+| `p_avoid_allergens`             | text[]  | NULL    | Tags must use `en:` prefix             |
+| `p_strict_allergen`             | boolean | false   |                                        |
+| `p_strict_diet`                 | boolean | false   |                                        |
+| `p_treat_may_contain_as_unsafe` | boolean | false   |                                        |
+
+**PostgREST:** `POST /rpc/api_set_user_preferences` with `{ "p_country": "PL", "p_diet_preference": "vegan" }`
+
+Returns the updated preference profile (same shape as `api_get_user_preferences`).
+
+**Access:** authenticated, service_role only (anon blocked)
+
+### `user_preferences` Table
+
+RLS-protected. Each user can only read/write their own row. Enforced by `auth.uid() = user_id` policies on SELECT, INSERT, UPDATE, and DELETE.
+

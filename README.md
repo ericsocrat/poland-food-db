@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (288 checks across 18 suites)
+# All tests (322 checks across 22 suites)
 .\RUN_QA.ps1
 
 # Negative validation (29 constraint tests)
@@ -90,7 +90,7 @@ supabase start
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 288 automated checks across 18 QA suites + 25 negative validation tests
+**Test Coverage**: 322 automated checks across 22 QA suites + 25 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 14 API surface checks (contract validation, JSON structure, listing consistency)
@@ -104,11 +104,18 @@ supabase start
 - 14 ingredient quality checks (naming, frequency, concern tier distribution)
 - 12 naming convention checks (product names, brands, slugs)
 - 10 confidence scoring checks (range, distribution, components, bands)
+- 20 security posture checks (RLS, grants, SECURITY DEFINER, user_preferences isolation)
+- 30 API contract checks (key sets, api_version, SECURITY DEFINER, EAN lookup, preferences)
+- 15 scale guardrail checks (index presence, query plan validation)
+- 6 country isolation checks (no mixed-country results across all API surfaces)
+- 6 diet filtering checks (vegan/vegetarian exclusion, strict mode)
+- 6 allergen filtering checks (contains/traces exclusion, may-contain toggle)
+- 6 barcode lookup checks (EAN resolution, scan metadata, error handling)
 - 1 EAN checksum validation (all barcodes verified)
 - 8 source coverage reports (informational, non-blocking)
 - 25 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 288/288 + 25/25 negative
+**All tests passing**: ✅ 322/322 + 25/25 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
@@ -175,7 +182,7 @@ poland-food-db/
 │   └── UX_UI_DESIGN.md      # Production-ready UX specification
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (288 checks)
+├── RUN_QA.ps1               # Standalone test runner (322 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
 └── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ```
@@ -186,7 +193,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **288 automated checks** across 18 QA suites + 25 negative validation tests:
+Every change is validated against **322 automated checks** across 22 QA suites + 25 negative validation tests:
 
 ### Data Integrity (29 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -250,13 +257,20 @@ Every change is validated against **288 automated checks** across 18 QA suites +
 - **Allergen Integrity** (14 checks): FK validation, duplicate detection, valid values
 - **Serving & Source Validation** (16 checks): Basis rules, source completeness
 - **Ingredient Quality** (14 checks): Naming, frequency, concern tier distribution
+- **Security Posture** (20 checks): RLS, grants, SECURITY DEFINER, user_preferences isolation
+- **API Contract** (30 checks): Key sets, api_version, EAN lookup, preferences endpoints
+- **Scale Guardrails** (15 checks): Index presence, query plan validation
+- **Country Isolation** (6 checks): No mixed-country results across all API surfaces
+- **Diet Filtering** (6 checks): Vegan/vegetarian exclusion, strict mode
+- **Allergen Filtering** (6 checks): Contains/traces exclusion, may-contain toggle
+- **Barcode Lookup** (6 checks): EAN resolution, scan metadata, error handling
 
 ### Negative Validation (29 tests)
 Constraint violation tests that verify the database correctly rejects invalid data (bad EANs, out-of-range scores, invalid domains, FK violations).
 
 **Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
 
-**CI**: All 288 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 322 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -371,7 +385,7 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 288/288 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 322/322 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---

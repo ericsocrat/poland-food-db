@@ -97,11 +97,11 @@ db/pipelines/
 
 **Naming convention options** — **decided: use category + country suffix for multi-country**:
 
-| Strategy             | Example                       | When to use                   | Status        |
-| -------------------- | ----------------------------- | ----------------------------- | ------------- |
-| Category-only        | `chips/`                      | Single-country (current PL)   | **Current**   |
-| Category + country   | `chips_de/`                   | When 2nd country adds same category | **Adopted** |
-| Store-based          | `zabka/`, `rewe/`             | Country-specific store chains | **Adopted**   |
+| Strategy           | Example           | When to use                         | Status      |
+| ------------------ | ----------------- | ----------------------------------- | ----------- |
+| Category-only      | `chips/`          | Single-country (current PL)         | **Current** |
+| Category + country | `chips_de/`       | When 2nd country adds same category | **Adopted** |
+| Store-based        | `zabka/`, `rewe/` | Country-specific store chains       | **Adopted** |
 
 **Transition rule:** When a second country is added for an existing category:
 1. Rename the PL folder: `chips/` → `chips_pl/` (update `RUN_*.ps1` accordingly)
@@ -121,14 +121,14 @@ db/pipelines/
 
 ## 4. Store Differences Across Countries
 
-| Aspect                | Poland (PL)                    | Germany (DE) — Example          |
-| --------------------- | ------------------------------ | ------------------------------- |
-| Discount leaders      | Biedronka, Lidl               | Aldi, Lidl                      |
-| Convenience           | Żabka                         | REWE To Go, Aral               |
-| Hypermarkets          | Auchan, Carrefour              | Kaufland, Real                  |
-| Private label density | High (Biedronka, Lidl)         | Very high (Aldi, Lidl, REWE)   |
-| Nutri-Score adoption  | Voluntary                      | Voluntary (widely used)         |
-| Label language        | Polish                         | German                          |
+| Aspect                | Poland (PL)            | Germany (DE) — Example       |
+| --------------------- | ---------------------- | ---------------------------- |
+| Discount leaders      | Biedronka, Lidl        | Aldi, Lidl                   |
+| Convenience           | Żabka                  | REWE To Go, Aral             |
+| Hypermarkets          | Auchan, Carrefour      | Kaufland, Real               |
+| Private label density | High (Biedronka, Lidl) | Very high (Aldi, Lidl, REWE) |
+| Nutri-Score adoption  | Voluntary              | Voluntary (widely used)      |
+| Label language        | Polish                 | German                       |
 
 **Implication:** Store-based pipelines (like `zabka/`) are **country-specific by definition** and cannot be reused across countries. Category-based pipelines (like `chips/`) can serve as **templates** but must be duplicated and customized.
 
@@ -191,12 +191,12 @@ The current schema is **country-agnostic by design**:
 
 These changes are **not needed now** but may be required during expansion:
 
-| Change                                | Trigger                                      |
-| ------------------------------------- | -------------------------------------------- |
+| Change                                                  | Trigger                                                        |
+| ------------------------------------------------------- | -------------------------------------------------------------- |
 | Add `country` to source reference table (if introduced) | Only if multi-source lineage is normalized to a separate table |
-| Add `currency` column for price data  | If price tracking is ever added (out of scope) |
-| Add `regulation_ref` to `products`    | To cite country-specific labeling regulations |
-| Separate schema per country           | Only if dataset exceeds millions of rows      |
+| Add `currency` column for price data                    | If price tracking is ever added (out of scope)                 |
+| Add `regulation_ref` to `products`                      | To cite country-specific labeling regulations                  |
+| Separate schema per country                             | Only if dataset exceeds millions of rows                       |
 
 **Rule:** Any schema change requires a new Supabase migration. Never modify existing migrations.
 
@@ -204,15 +204,15 @@ These changes are **not needed now** but may be required during expansion:
 
 ## 7. Regulatory Differences to Watch
 
-| Regulation area              | Varies by country? | Impact on scoring                 |
-| ---------------------------- | ------------------- | --------------------------------- |
-| Mandatory nutrition fields   | Slightly            | Core 7 fields are EU-wide        |
-| Nutri-Score adoption         | Yes                 | Affects data availability         |
-| Traffic light labeling (UK)  | Post-Brexit only    | Not applicable in EU             |
-| Additive restrictions        | Rarely              | Some national bans beyond EU list |
-| Organic certification marks  | Yes                 | Different national logos           |
-| Allergen labeling format     | Slightly            | Bolding vs. separate list         |
-| Trans fat declaration        | Voluntary in EU     | May become mandatory              |
+| Regulation area             | Varies by country? | Impact on scoring                 |
+| --------------------------- | ------------------ | --------------------------------- |
+| Mandatory nutrition fields  | Slightly           | Core 7 fields are EU-wide         |
+| Nutri-Score adoption        | Yes                | Affects data availability         |
+| Traffic light labeling (UK) | Post-Brexit only   | Not applicable in EU              |
+| Additive restrictions       | Rarely             | Some national bans beyond EU list |
+| Organic certification marks | Yes                | Different national logos          |
+| Allergen labeling format    | Slightly           | Bolding vs. separate list         |
+| Trans fat declaration       | Voluntary in EU    | May become mandatory              |
 
 ---
 
@@ -220,14 +220,14 @@ These changes are **not needed now** but may be required during expansion:
 
 This is a **suggested** order based on data availability, market size, and Nutri-Score adoption:
 
-| Phase | Country   | Code | Rationale                                          | Status       |
-| ----- | --------- | ---- | -------------------------------------------------- | ------------ |
-| 1     | Poland    | PL   | Founder's market; full access to labels            | **Active**   |
-| 2     | Germany   | DE   | Largest EU market; strong Open Food Facts coverage | Planned      |
-| 3     | France    | FR   | Nutri-Score origin country; best data quality      | Planned      |
-| 4     | Spain     | ES   | Large market; growing Nutri-Score adoption         | Future       |
-| 5     | Italy     | IT   | Complex food landscape; controversial with NS      | Future       |
-| 6     | Czechia   | CZ   | Regional neighbor; similar retail landscape to PL  | Future       |
+| Phase | Country | Code | Rationale                                          | Status     |
+| ----- | ------- | ---- | -------------------------------------------------- | ---------- |
+| 1     | Poland  | PL   | Founder's market; full access to labels            | **Active** |
+| 2     | Germany | DE   | Largest EU market; strong Open Food Facts coverage | Planned    |
+| 3     | France  | FR   | Nutri-Score origin country; best data quality      | Planned    |
+| 4     | Spain   | ES   | Large market; growing Nutri-Score adoption         | Future     |
+| 5     | Italy   | IT   | Complex food landscape; controversial with NS      | Future     |
+| 6     | Czechia | CZ   | Regional neighbor; similar retail landscape to PL  | Future     |
 
 **This roadmap is non-binding.** Expansion happens only when prerequisites in Section 2 are fully met.
 

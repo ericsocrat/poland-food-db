@@ -217,13 +217,16 @@ SELECT
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
-        SELECT COUNT(*) = 6 FROM (
+        SELECT COUNT(*) = 9 FROM (
             SELECT api_product_detail(2)->>'api_version'       AS v
             UNION ALL SELECT api_search_products('cola')->>'api_version'
             UNION ALL SELECT api_category_listing('Chips')->>'api_version'
             UNION ALL SELECT api_score_explanation(2)->>'api_version'
             UNION ALL SELECT api_better_alternatives(2)->>'api_version'
             UNION ALL SELECT api_data_confidence(2)->>'api_version'
+            UNION ALL SELECT api_product_detail_by_ean('0000000000000')->>'api_version'
+            UNION ALL SELECT api_get_user_preferences()->>'api_version'
+            UNION ALL SELECT api_set_user_preferences()->>'api_version'
         ) sub WHERE v = '1.0'
     )
     THEN 'PASS' ELSE 'FAIL' END AS "#21 all API functions return api_version = 1.0";
@@ -240,7 +243,7 @@ SELECT
 -- #23 All api_* functions are SECURITY DEFINER (still, after recreation)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
-    CASE WHEN COUNT(*) = 6
+    CASE WHEN COUNT(*) = 9
     THEN 'PASS' ELSE 'FAIL' END AS "#23 all api_* remain SECURITY DEFINER"
 FROM pg_proc p
 JOIN pg_namespace n ON n.oid = p.pronamespace
@@ -272,3 +275,57 @@ SELECT
         SELECT (api_search_products('a', NULL, 5, 0, 'PL'))->>'country'
     ) = 'PL'
     THEN 'PASS' ELSE 'FAIL' END AS "#25 search with p_country echoes country";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #26 api_product_detail_by_ean — error response keys (5)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_product_detail_by_ean('0000000000000')) k
+    ) = ARRAY['api_version','country','ean','error','found']
+    THEN 'PASS' ELSE 'FAIL' END AS "#26 ean_lookup error response keys (5)";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #27 api_product_detail_by_ean — success response has scan key
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT api_product_detail_by_ean(p.ean) ? 'scan'
+        FROM products p
+        WHERE p.ean IS NOT NULL AND p.is_deprecated IS NOT TRUE
+        LIMIT 1
+    )
+    THEN 'PASS' ELSE 'FAIL' END AS "#27 ean_lookup success has scan key";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #28 api_product_detail_by_ean → scan metadata keys (3)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT array_agg(k ORDER BY k)
+        FROM jsonb_object_keys((
+            SELECT api_product_detail_by_ean(p.ean)->'scan'
+            FROM products p
+            WHERE p.ean IS NOT NULL AND p.is_deprecated IS NOT TRUE
+            LIMIT 1
+        )) k
+    ) = ARRAY['alternative_count','found','scanned_ean']
+    THEN 'PASS' ELSE 'FAIL' END AS "#28 ean_lookup → scan keys (3)";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #29 api_get_user_preferences — no-prefs response keys (3)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_get_user_preferences()) k
+    ) = ARRAY['api_version','has_preferences','message']
+    THEN 'PASS' ELSE 'FAIL' END AS "#29 get_user_preferences no-prefs keys (3)";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #30 api_set_user_preferences — auth-required error response keys (2)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_set_user_preferences()) k
+    ) = ARRAY['api_version','error']
+    THEN 'PASS' ELSE 'FAIL' END AS "#30 set_user_preferences auth error keys (2)";
