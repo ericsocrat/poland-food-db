@@ -446,4 +446,66 @@ All API functions return `api_version` in every response (currently `"1.0"`).
 
 ---
 
-**Built with**: Supabase (PostgreSQL), Open Food Facts API, PowerShell automation
+## 🖥️ Frontend (Next.js)
+
+The `frontend/` directory contains a Next.js 14 (App Router) web application for browsing and searching products.
+
+### Stack
+- **Next.js 14** (App Router, TypeScript, Tailwind CSS)
+- **@supabase/ssr** for auth (replaces deprecated auth-helpers)
+- **TanStack Query v5** for data fetching with defined cache keys and stale times
+- **@zxing/browser + @zxing/library** for barcode scanning (EAN-13, EAN-8, UPC)
+- **sonner** for toast notifications
+
+### Setup
+```powershell
+cd frontend
+npm install
+cp .env.local.example .env.local
+# Edit .env.local with your Supabase URL + anon key
+npm run dev
+```
+App starts at http://localhost:3000
+
+### Architecture Rules
+- **Frontend never passes `p_country`** — always `null`, backend resolves from `user_preferences.country`
+- **Middleware is auth-only** — no onboarding logic (Edge runtime limitation)
+- **Server-side onboarding gate** in `/app/layout.tsx` checks `onboarding_complete` via RPC
+- **All RPCs go through `callRpc<T>()`** for normalized error handling
+- **Session expiry** detected via `isAuthError()` → toast + redirect to `/auth/login?reason=expired`
+
+### Smoke Test Checklist
+1. Sign up → check email → confirm
+2. Log in → redirected to `/onboarding/region`
+3. Select country → Continue → `/onboarding/preferences`
+4. Set diet/allergens (or skip) → redirected to `/app/search`
+5. Search a product → see results with score badges
+6. Click product → see detail tabs (Overview, Nutrition, Alternatives, Scoring)
+7. Navigate to Categories → see category grid with avg scores
+8. Click category → see paginated product listing with sort controls
+9. Navigate to Scan → camera or manual EAN entry → product lookup
+10. Navigate to Settings → change preferences → Save → verify cache invalidation
+11. Sign out → redirected to login
+
+### Page Map
+| Route                     | Description                             |
+| ------------------------- | --------------------------------------- |
+| `/`                       | Public landing page                     |
+| `/auth/login`             | Email/password login                    |
+| `/auth/signup`            | Registration                            |
+| `/auth/callback`          | OAuth code exchange                     |
+| `/onboarding/region`      | Step 1: country selection               |
+| `/onboarding/preferences` | Step 2: diet + allergens (optional)     |
+| `/app/search`             | Debounced product search                |
+| `/app/categories`         | Category overview grid                  |
+| `/app/categories/[slug]`  | Category product listing (paginated)    |
+| `/app/product/[id]`       | Product detail (4 tabs)                 |
+| `/app/scan`               | Barcode scanner (ZXing camera + manual) |
+| `/app/settings`           | Preferences + logout                    |
+| `/contact`                | Contact page                            |
+| `/privacy`                | Privacy policy                          |
+| `/terms`                  | Terms of service                        |
+
+---
+
+**Built with**: Supabase (PostgreSQL), Open Food Facts API, PowerShell automation, Next.js

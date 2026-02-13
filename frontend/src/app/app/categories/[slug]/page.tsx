@@ -1,0 +1,187 @@
+"use client";
+
+// ─── Category listing — paginated product list for a single category ────────
+
+import { useState } from "react";
+import { useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
+import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
+import { getCategoryListing } from "@/lib/api";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import type { CategoryProduct } from "@/lib/types";
+
+const PAGE_SIZE = 20;
+
+const SORT_OPTIONS = [
+  { value: "unhealthiness_score", label: "Healthiness" },
+  { value: "product_name", label: "Name" },
+  { value: "calories", label: "Calories" },
+] as const;
+
+export default function CategoryListingPage() {
+  const params = useParams();
+  const slug = params.slug as string;
+  const supabase = createClient();
+
+  const [sortBy, setSortBy] = useState("unhealthiness_score");
+  const [sortDir, setSortDir] = useState("asc");
+  const [offset, setOffset] = useState(0);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: queryKeys.categoryListing(slug, sortBy, sortDir, offset),
+    queryFn: async () => {
+      const result = await getCategoryListing(supabase, {
+        p_category: slug,
+        p_sort_by: sortBy,
+        p_sort_dir: sortDir,
+        p_limit: PAGE_SIZE,
+        p_offset: offset,
+      });
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
+    staleTime: staleTimes.categoryListing,
+  });
+
+  const totalPages = data ? Math.ceil(data.total_count / PAGE_SIZE) : 0;
+  const currentPage = Math.floor(offset / PAGE_SIZE) + 1;
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold capitalize text-gray-900">
+          {slug.replace(/_/g, " ")}
+        </h1>
+        {data && (
+          <span className="text-sm text-gray-500">
+            {data.total_count} product{data.total_count !== 1 && "s"}
+          </span>
+        )}
+      </div>
+
+      {/* Sort controls */}
+      <div className="flex items-center gap-2">
+        <select
+          value={sortBy}
+          onChange={(e) => {
+            setSortBy(e.target.value);
+            setOffset(0);
+          }}
+          className="input-field text-sm"
+        >
+          {SORT_OPTIONS.map((opt) => (
+            <option key={opt.value} value={opt.value}>
+              {opt.label}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={() => {
+            setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+            setOffset(0);
+          }}
+          className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+        >
+          {sortDir === "asc" ? "↑ Asc" : "↓ Desc"}
+        </button>
+      </div>
+
+      {/* Product list */}
+      {isLoading ? (
+        <div className="flex justify-center py-12">
+          <LoadingSpinner />
+        </div>
+      ) : error ? (
+        <p className="py-12 text-center text-sm text-red-500">
+          Failed to load products.
+        </p>
+      ) : data?.products.length === 0 ? (
+        <p className="py-12 text-center text-sm text-gray-400">
+          No products in this category.
+        </p>
+      ) : (
+        <ul className="space-y-2">
+          {data?.products.map((p) => (
+            <ProductRow key={p.product_id} product={p} />
+          ))}
+        </ul>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-center gap-3 pt-2">
+          <button
+            disabled={offset === 0}
+            onClick={() => setOffset((o) => Math.max(0, o - PAGE_SIZE))}
+            className="btn-secondary text-sm disabled:opacity-40"
+          >
+            Previous
+          </button>
+          <span className="text-sm text-gray-500">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            disabled={currentPage >= totalPages}
+            onClick={() => setOffset((o) => o + PAGE_SIZE)}
+            className="btn-secondary text-sm disabled:opacity-40"
+          >
+            Next
+          </button>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ProductRow({ product }: { product: CategoryProduct }) {
+  const band = SCORE_BANDS[product.score_band];
+  const nutriClass = product.nutri_score
+    ? NUTRI_COLORS[product.nutri_score]
+    : "bg-gray-200 text-gray-500";
+
+  return (
+    <Link href={`/app/product/${product.product_id}`}>
+      <li className="card flex items-center gap-3 transition-shadow hover:shadow-md">
+        <div
+          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
+        >
+          {product.unhealthiness_score}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-medium text-gray-900">
+            {product.product_name}
+          </p>
+          <p className="text-sm text-gray-500">
+            {product.brand} &middot; {product.calories} kcal
+          </p>
+          <div className="mt-1 flex flex-wrap gap-1">
+            {product.high_sugar_flag && (
+              <span className="rounded bg-red-50 px-1.5 py-0.5 text-xs text-red-600">
+                High sugar
+              </span>
+            )}
+            {product.high_salt_flag && (
+              <span className="rounded bg-red-50 px-1.5 py-0.5 text-xs text-red-600">
+                High salt
+              </span>
+            )}
+            {product.high_sat_fat_flag && (
+              <span className="rounded bg-red-50 px-1.5 py-0.5 text-xs text-red-600">
+                High sat. fat
+              </span>
+            )}
+          </div>
+        </div>
+        <span
+          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
+        >
+          {product.nutri_score ?? "?"}
+        </span>
+      </li>
+    </Link>
+  );
+}

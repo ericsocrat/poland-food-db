@@ -19,11 +19,13 @@ Desktop.ini
 .env.local
 .env.*.local
 
-# ─── Node (if ever used for tooling) ────────────────────────────────────────
+# ─── Node / Frontend ────────────────────────────────────────────────────────
 node_modules/
 package-lock.json
 yarn.lock
 pnpm-lock.yaml
+.next/
+out/
 
 # ─── Python ─────────────────────────────────────────────────────────────────
 __pycache__/

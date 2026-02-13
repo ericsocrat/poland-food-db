@@ -69,15 +69,15 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 }
 ```
 
-| Property                           | Details                                 |
-| ---------------------------------- | --------------------------------------- |
-| `p_country` default                | `NULL` → auto-resolved                    |
-| Uses `resolve_effective_country()` | **Yes**                                   |
-| Limit clamping                     | `1–100`                                   |
-| Min query length                   | 2 characters                              |
-| Auth required                      | **Yes**                                   |
-| Roles                              | `authenticated`, `service_role` only      |
-| Security                           | `SECURITY DEFINER`                        |
+| Property                           | Details                              |
+| ---------------------------------- | ------------------------------------ |
+| `p_country` default                | `NULL` → auto-resolved               |
+| Uses `resolve_effective_country()` | **Yes**                              |
+| Limit clamping                     | `1–100`                              |
+| Min query length                   | 2 characters                         |
+| Auth required                      | **Yes**                              |
+| Roles                              | `authenticated`, `service_role` only |
+| Security                           | `SECURITY DEFINER`                   |
 
 ---
 
@@ -141,14 +141,14 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 }
 ```
 
-| Property                           | Details                                 |
-| ---------------------------------- | --------------------------------------- |
-| `p_country` default                | `NULL` → auto-resolved                    |
-| Uses `resolve_effective_country()` | **Yes**                                   |
-| Limit clamping                     | `1–100`                                   |
-| Auth required                      | **Yes**                                   |
-| Roles                              | `authenticated`, `service_role` only      |
-| Security                           | `SECURITY DEFINER`                        |
+| Property                           | Details                              |
+| ---------------------------------- | ------------------------------------ |
+| `p_country` default                | `NULL` → auto-resolved               |
+| Uses `resolve_effective_country()` | **Yes**                              |
+| Limit clamping                     | `1–100`                              |
+| Auth required                      | **Yes**                              |
+| Roles                              | `authenticated`, `service_role` only |
+| Security                           | `SECURITY DEFINER`                   |
 
 ---
 
@@ -233,13 +233,13 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 }
 ```
 
-| Property                           | Details                                 |
-| ---------------------------------- | --------------------------------------- |
-| Has `p_country`                    | **No**                                    |
-| Uses `resolve_effective_country()` | **No**                                    |
-| Auth required                      | **Yes**                                   |
-| Roles                              | `authenticated`, `service_role` only      |
-| Security                           | `SECURITY DEFINER`                        |
+| Property                           | Details                              |
+| ---------------------------------- | ------------------------------------ |
+| Has `p_country`                    | **No**                               |
+| Uses `resolve_effective_country()` | **No**                               |
+| Auth required                      | **Yes**                              |
+| Roles                              | `authenticated`, `service_role` only |
+| Security                           | `SECURITY DEFINER`                   |
 
 ---
 
@@ -280,12 +280,12 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 
 | Property                           | Details                                              |
 | ---------------------------------- | ---------------------------------------------------- |
-| `p_country` default                | `NULL` → auto-resolved                                |
-| Uses `resolve_effective_country()` | **Yes**                                               |
-| Internally calls                   | `api_product_detail()`, `find_better_alternatives()`  |
-| Auth required                      | **Yes**                                               |
-| Roles                              | `authenticated`, `service_role` only                  |
-| Security                           | `SECURITY DEFINER`                                    |
+| `p_country` default                | `NULL` → auto-resolved                               |
+| Uses `resolve_effective_country()` | **Yes**                                              |
+| Internally calls                   | `api_product_detail()`, `find_better_alternatives()` |
+| Auth required                      | **Yes**                                              |
+| Roles                              | `authenticated`, `service_role` only                 |
+| Security                           | `SECURITY DEFINER`                                   |
 
 ---
 
@@ -341,7 +341,7 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 | ---------------------------------- | ---------------------------------------------------------------------------- |
 | Has `p_country`                    | **No** (country inferred from source product via `find_better_alternatives`) |
 | Uses `resolve_effective_country()` | **No** (country isolation is implicit)                                       |
-| Limit clamping                     | `1–20`                                                                      |
+| Limit clamping                     | `1–20`                                                                       |
 | Auth required                      | **Yes**                                                                      |
 | Roles                              | `authenticated`, `service_role` only                                         |
 | Security                           | `SECURITY DEFINER`                                                           |
@@ -423,13 +423,13 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 }
 ```
 
-| Property                           | Details                                 |
-| ---------------------------------- | --------------------------------------- |
-| Has `p_country`                    | **No**                                    |
-| Uses `resolve_effective_country()` | **No**                                    |
-| Auth required                      | **Yes**                                   |
-| Roles                              | `authenticated`, `service_role` only      |
-| Security                           | `SECURITY DEFINER`                        |
+| Property                           | Details                              |
+| ---------------------------------- | ------------------------------------ |
+| Has `p_country`                    | **No**                               |
+| Uses `resolve_effective_country()` | **No**                               |
+| Auth required                      | **Yes**                              |
+| Roles                              | `authenticated`, `service_role` only |
+| Security                           | `SECURITY DEFINER`                   |
 
 ---
 
@@ -501,7 +501,7 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 
 | Property                           | Details                                                    |
 | ---------------------------------- | ---------------------------------------------------------- |
-| `p_country` default                | `NULL` (not hardcoded; pass country explicitly)             |
+| `p_country` default                | `NULL` (not hardcoded; pass country explicitly)            |
 | Uses `resolve_effective_country()` | **No**                                                     |
 | Auth required                      | **Yes** (`auth.uid()`)                                     |
 | Validates country                  | Against `country_ref.is_active = true`                     |
