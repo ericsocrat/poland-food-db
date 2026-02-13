@@ -45,7 +45,9 @@ export async function middleware(request: NextRequest) {
   // Protected routes require auth
   if (!user) {
     const loginUrl = new URL("/auth/login", request.url);
-    loginUrl.searchParams.set("redirect", pathname);
+    // Preserve full path + querystring so login can redirect back
+    const redirectTo = request.nextUrl.pathname + request.nextUrl.search;
+    loginUrl.searchParams.set("redirect", redirectTo);
     return NextResponse.redirect(loginUrl);
   }
 
@@ -55,6 +57,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     // Match all paths except static files and API routes
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

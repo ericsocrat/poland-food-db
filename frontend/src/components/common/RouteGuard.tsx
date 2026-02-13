@@ -44,7 +44,12 @@ export function RouteGuard({ children }: RouteGuardProps) {
       const err = error as Error & { code?: string };
       if (isAuthError({ code: err.code ?? "", message: err.message })) {
         toast.error("Session expired. Please log in again.");
-        router.push("/auth/login?reason=expired");
+        // Preserve current path + querystring so login can redirect back
+        const redirectTo =
+          window.location.pathname + window.location.search;
+        router.push(
+          `/auth/login?reason=expired&redirect=${encodeURIComponent(redirectTo)}`,
+        );
         return;
       }
       toast.error("Failed to load preferences.");
