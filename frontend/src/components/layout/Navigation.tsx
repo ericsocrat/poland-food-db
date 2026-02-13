@@ -16,7 +16,10 @@ export function Navigation() {
   const pathname = usePathname();
 
   return (
-    <nav className="sticky bottom-0 z-40 border-t border-gray-200 bg-white">
+    <nav
+      className="sticky bottom-0 z-40 border-t border-gray-200 bg-white"
+      aria-label="Main navigation"
+    >
       <div className="mx-auto flex max-w-5xl">
         {NAV_ITEMS.map((item) => {
           const isActive = pathname.startsWith(item.href);
@@ -24,6 +27,8 @@ export function Navigation() {
             <Link
               key={item.href}
               href={item.href}
+              aria-label={item.label}
+              aria-current={isActive ? "page" : undefined}
               className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs transition-colors ${
                 isActive
                   ? "text-brand-700 font-semibold"

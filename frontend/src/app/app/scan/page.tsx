@@ -10,7 +10,6 @@ import { createClient } from "@/lib/supabase/client";
 import { lookupByEan } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import type { EanLookupResponse, EanNotFoundResponse } from "@/lib/types";
 
 export default function ScanPage() {
   const router = useRouter();
@@ -22,6 +21,7 @@ export default function ScanPage() {
   const [torchOn, setTorchOn] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const readerRef = useRef<any>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
@@ -64,7 +64,7 @@ export default function ScanPage() {
       reader.decodeFromVideoDevice(
         deviceId,
         videoRef.current!,
-        (result, error) => {
+        (result, _error) => {
           if (result) {
             const code = result.getText();
             // Validate EAN format (8 or 13 digits)
@@ -81,10 +81,11 @@ export default function ScanPage() {
       if (videoRef.current?.srcObject) {
         streamRef.current = videoRef.current.srcObject as MediaStream;
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errObj = err as { name?: string };
       if (
-        err.name === "NotAllowedError" ||
-        err.name === "PermissionDeniedError"
+        errObj.name === "NotAllowedError" ||
+        errObj.name === "PermissionDeniedError"
       ) {
         setCameraError(
           "Camera permission denied. Please allow camera access in your browser settings.",
@@ -115,9 +116,11 @@ export default function ScanPage() {
     if (!track) return;
 
     try {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const capabilities = track.getCapabilities() as any;
       if (capabilities.torch) {
         const newState = !torchOn;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         await (track as any).applyConstraints({
           advanced: [{ torch: newState }],
         });
@@ -296,7 +299,7 @@ export default function ScanPage() {
           <button
             type="submit"
             disabled={manualEan.length < 8}
-            className="btn-primary w-full disabled:opacity-40"
+            className="btn-primary w-full"
           >
             Look up
           </button>

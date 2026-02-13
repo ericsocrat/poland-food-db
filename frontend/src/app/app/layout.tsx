@@ -35,12 +35,10 @@ export default async function AppLayout({
           Something went wrong
         </h1>
         <p className="mb-6 text-sm text-gray-500">
-          We couldn&apos;t load your preferences. This is usually a temporary issue.
+          We couldn&apos;t load your preferences. This is usually a temporary
+          issue.
         </p>
-        <a
-          href="/app/search"
-          className="btn-primary inline-block px-6"
-        >
+        <a href="/app/search" className="btn-primary inline-block px-6">
           Try again
         </a>
       </div>

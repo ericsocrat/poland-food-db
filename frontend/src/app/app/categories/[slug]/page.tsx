@@ -51,6 +51,21 @@ export default function CategoryListingPage() {
 
   return (
     <div className="space-y-4">
+      {/* Back link */}
+      <Link
+        href="/app/categories"
+        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+      >
+        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+            clipRule="evenodd"
+          />
+        </svg>
+        Categories
+      </Link>
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold capitalize text-gray-900">
@@ -117,7 +132,7 @@ export default function CategoryListingPage() {
           <button
             disabled={offset === 0}
             onClick={() => setOffset((o) => Math.max(0, o - PAGE_SIZE))}
-            className="btn-secondary text-sm disabled:opacity-40"
+            className="btn-secondary text-sm"
           >
             Previous
           </button>
@@ -127,7 +142,7 @@ export default function CategoryListingPage() {
           <button
             disabled={currentPage >= totalPages}
             onClick={() => setOffset((o) => o + PAGE_SIZE)}
-            className="btn-secondary text-sm disabled:opacity-40"
+            className="btn-secondary text-sm"
           >
             Next
           </button>

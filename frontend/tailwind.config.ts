@@ -17,13 +17,7 @@ const config: Config = {
           800: "#166534",
           900: "#14532d",
         },
-        // Score band colors
-        score: {
-          low: "#22c55e",
-          moderate: "#f59e0b",
-          high: "#f97316",
-          "very-high": "#ef4444",
-        },
+
         // Nutri-Score colors
         nutri: {
           A: "#038141",
@@ -35,7 +29,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("@tailwindcss/typography")],
 };
 
 export default config;

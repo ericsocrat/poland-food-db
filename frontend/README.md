@@ -4,16 +4,16 @@ Next.js 14 (App Router) + TypeScript + Tailwind CSS frontend for the Poland Food
 
 ## Tech Stack
 
-| Layer          | Choice                                           |
-| -------------- | ------------------------------------------------ |
-| Framework      | Next.js 14 (App Router)                          |
-| Language       | TypeScript (strict)                              |
-| Styling        | Tailwind CSS (custom `brand` palette)            |
-| Auth           | `@supabase/ssr` (browser + server + middleware)  |
-| Data fetching  | TanStack Query (`@tanstack/react-query`)         |
-| Toasts         | Sonner                                           |
-| Barcode scan   | ZXing (`@zxing/browser` + `@zxing/library`)      |
-| Validation     | Zod                                              |
+| Layer         | Choice                                          |
+| ------------- | ----------------------------------------------- |
+| Framework     | Next.js 14 (App Router)                         |
+| Language      | TypeScript (strict)                             |
+| Styling       | Tailwind CSS (custom `brand` palette)           |
+| Auth          | `@supabase/ssr` (browser + server + middleware) |
+| Data fetching | TanStack Query (`@tanstack/react-query`)        |
+| Toasts        | Sonner                                          |
+| Barcode scan  | ZXing (`@zxing/browser` + `@zxing/library`)     |
+| Validation    | Zod                                             |
 
 ## Getting Started
 

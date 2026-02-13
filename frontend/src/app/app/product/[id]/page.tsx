@@ -25,7 +25,11 @@ export default function ProductDetailPage() {
   const supabase = createClient();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
-  const { data: product, isLoading } = useQuery({
+  const {
+    data: product,
+    isLoading,
+    error,
+  } = useQuery({
     queryKey: queryKeys.product(productId),
     queryFn: async () => {
       const result = await getProductDetail(supabase, productId);
@@ -44,11 +48,27 @@ export default function ProductDetailPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <BackButton />
+        <div className="card border-red-200 bg-red-50 text-center">
+          <p className="text-sm text-red-600">
+            Failed to load product. Please try again.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   if (!product) {
     return (
-      <p className="py-12 text-center text-sm text-red-500">
-        Product not found.
-      </p>
+      <div className="space-y-4">
+        <BackButton />
+        <p className="py-12 text-center text-sm text-gray-400">
+          Product not found.
+        </p>
+      </div>
     );
   }
 
@@ -66,6 +86,8 @@ export default function ProductDetailPage() {
 
   return (
     <div className="space-y-4">
+      <BackButton />
+
       {/* Header */}
       <div className="card">
         <div className="flex items-start gap-4">
@@ -119,11 +141,13 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Tab bar */}
-      <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+      <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="tablist">
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
+            role="tab"
+            aria-selected={activeTab === tab.key}
             className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
               activeTab === tab.key
                 ? "bg-white text-brand-700 shadow-sm"
@@ -147,6 +171,24 @@ export default function ProductDetailPage() {
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
+
+function BackButton() {
+  return (
+    <Link
+      href="/app/search"
+      className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+    >
+      <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+        <path
+          fillRule="evenodd"
+          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+          clipRule="evenodd"
+        />
+      </svg>
+      Back
+    </Link>
+  );
+}
 
 function Flag({ label }: { label: string }) {
   return (

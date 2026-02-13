@@ -12,10 +12,15 @@ export function LoadingSpinner({
   size?: keyof typeof SIZES;
 }) {
   return (
-    <div className={`flex items-center justify-center ${className}`}>
+    <div
+      className={`flex items-center justify-center ${className}`}
+      role="status"
+      aria-label="Loading"
+    >
       <div
         className={`animate-spin rounded-full border-gray-200 border-t-brand-600 ${SIZES[size]}`}
       />
+      <span className="sr-only">Loading…</span>
     </div>
   );
 }

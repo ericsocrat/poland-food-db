@@ -39,9 +39,9 @@ export const SCORE_BANDS = {
 
 // Nutri-Score display config
 export const NUTRI_COLORS: Record<string, string> = {
-  A: "bg-[#038141] text-white",
-  B: "bg-[#85BB2F] text-white",
-  C: "bg-[#FECB02] text-gray-900",
-  D: "bg-[#EE8100] text-white",
-  E: "bg-[#E63E11] text-white",
+  A: "bg-nutri-A text-white",
+  B: "bg-nutri-B text-white",
+  C: "bg-nutri-C text-gray-900",
+  D: "bg-nutri-D text-white",
+  E: "bg-nutri-E text-white",
 };
