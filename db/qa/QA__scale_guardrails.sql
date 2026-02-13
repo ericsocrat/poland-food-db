@@ -161,5 +161,5 @@ SELECT '14. authenticator has statement_timeout' AS check_name,
 --      Verifies the check_table_ceilings function returns expected columns
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT '15. check_table_ceilings returns all tables' AS check_name,
-       CASE WHEN (SELECT COUNT(*) FROM check_table_ceilings()) >= 5
+       CASE WHEN (SELECT COUNT(*) FROM check_table_ceilings()) >= 7
        THEN 0 ELSE 1 END AS violations;

@@ -52,7 +52,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (263 checks across 17 suites)
+# All tests (282 checks across 18 suites)
 .\RUN_QA.ps1
 
 # Negative validation (29 constraint tests)
@@ -90,7 +90,7 @@ supabase start
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 229 automated checks across 15 QA suites + 29 negative validation tests
+**Test Coverage**: 282 automated checks across 18 QA suites + 29 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 14 API surface checks (contract validation, JSON structure, listing consistency)
@@ -108,7 +108,7 @@ supabase start
 - 8 source coverage reports (informational, non-blocking)
 - 29 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 263/263 + 29/29 negative
+**All tests passing**: ✅ 282/282 + 29/29 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
@@ -175,7 +175,7 @@ poland-food-db/
 │   └── UX_UI_DESIGN.md      # Production-ready UX specification
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (263 checks)
+├── RUN_QA.ps1               # Standalone test runner (282 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
 └── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ```
@@ -186,7 +186,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **229 automated checks** across 15 QA suites + 29 negative validation tests:
+Every change is validated against **282 automated checks** across 18 QA suites + 29 negative validation tests:
 
 ### Data Integrity (29 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -400,6 +400,7 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 ## 📚 Documentation
 
 - [API_CONTRACTS.md](docs/API_CONTRACTS.md) — API surface contracts (6 RPC endpoints + 3 views)
+- [SECURITY.md](docs/SECURITY.md) — Threat model, access control architecture, RPC-only model
 - [UX_UI_DESIGN.md](docs/UX_UI_DESIGN.md) — Production-ready UX spec (score disambiguation, API mapping, misinterpretation defense)
 - [PERFORMANCE_REPORT.md](docs/PERFORMANCE_REPORT.md) — Performance audit & scale projections to 50K products
 - [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
@@ -409,6 +410,26 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 - [COUNTRY_EXPANSION_GUIDE.md](docs/COUNTRY_EXPANSION_GUIDE.md) — Future multi-country rules
 - [FULL_PROJECT_AUDIT.md](docs/FULL_PROJECT_AUDIT.md) — Comprehensive project audit & checklist
 - `copilot-instructions.md` — AI agent context & project rules
+
+---
+
+## 📋 API Deprecation Policy
+
+All API functions return `api_version` in every response (currently `"1.0"`).
+
+| Change type                        | Version bump | Migration window |
+| ---------------------------------- | ------------ | ---------------- |
+| New keys added to response         | Minor (1.x)  | None — additive  |
+| Key renamed or removed             | Major (x.0)  | 2 pipeline runs  |
+| Response structure change          | Major (x.0)  | 2 pipeline runs  |
+| New optional parameter added       | Minor (1.x)  | None — optional  |
+| Required parameter changed/removed | Major (x.0)  | 2 pipeline runs  |
+
+**Process:**
+1. Bump `api_version` in the affected function
+2. Update `QA__api_contract.sql` expected key arrays (23 checks enforce exact structure)
+3. Document the change in the migration file header
+4. Old version is never served alongside new — no multi-version routing
 
 ---
 

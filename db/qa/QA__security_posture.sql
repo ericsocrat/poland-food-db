@@ -155,3 +155,32 @@ WHERE n.nspname = 'public'
     FROM unnest(p.proconfig) AS cfg
     WHERE cfg LIKE 'search_path=%'
   ));
+
+-- 13. anon cannot SELECT any data table directly (RPC-only model)
+SELECT '13. anon has no SELECT on data tables (RPC-only)' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT unnest(ARRAY[
+        'products','nutrition_facts','product_allergen_info','product_ingredient',
+        'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref'
+    ]) AS tbl
+) t
+WHERE has_table_privilege('anon', 'public.' || t.tbl, 'SELECT');
+
+-- 14. New tables have RLS enabled
+SELECT '14. New tables have RLS enabled' AS check_name,
+       COUNT(*) AS violations
+FROM pg_class c
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relkind = 'r'
+  AND c.relname IN ('product_field_provenance','source_nutrition')
+  AND c.relrowsecurity = false;
+
+-- 15. products has updated_at trigger
+SELECT '15. products has updated_at trigger' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM information_schema.triggers
+           WHERE trigger_name = 'trg_products_updated_at'
+             AND event_object_table = 'products'
+       ) THEN 0 ELSE 1 END AS violations;
