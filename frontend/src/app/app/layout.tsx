@@ -25,9 +25,26 @@ export default async function AppLayout({
   // Check onboarding status via backend RPC
   const { data, error } = await supabase.rpc("api_get_user_preferences");
 
+  // Transient RPC / network failure — show error instead of wrongly redirecting
+  // an onboarded user back to region selection.
   if (error || !data) {
-    // If we can't fetch preferences, redirect to onboarding as safe default
-    redirect("/onboarding/region");
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
+        <p className="mb-2 text-4xl">⚠️</p>
+        <h1 className="mb-1 text-lg font-bold text-gray-900">
+          Something went wrong
+        </h1>
+        <p className="mb-6 text-sm text-gray-500">
+          We couldn&apos;t load your preferences. This is usually a temporary issue.
+        </p>
+        <a
+          href="/app/search"
+          className="btn-primary inline-block px-6"
+        >
+          Try again
+        </a>
+      </div>
+    );
   }
 
   const prefs = data as {

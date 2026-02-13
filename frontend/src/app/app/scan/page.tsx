@@ -106,6 +106,7 @@ export default function ScanPage() {
       streamRef.current.getTracks().forEach((t: MediaStreamTrack) => t.stop());
       streamRef.current = null;
     }
+    setTorchOn(false);
   }
 
   async function toggleTorch() {
