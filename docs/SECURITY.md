@@ -4,15 +4,15 @@
 
 This project is a **public food quality database** — there is no user-generated content, no PII, and no authentication-gated data. The primary security concerns are:
 
-| Threat                          | Mitigation                                                                                |
-| ------------------------------- | ----------------------------------------------------------------------------------------- |
-| **Unauthorized data mutation**  | RLS enabled + FORCE on all tables; no INSERT/UPDATE/DELETE policies; anon/auth are read-only |
-| **Schema/data exfiltration**    | Raw table SELECT revoked from `anon` and `authenticated`; all data served via SECURITY DEFINER RPCs |
-| **SQL injection via RPC args**  | All API functions use parameterized queries (no dynamic SQL with user input in `api_product_detail`, `api_search_products`, etc.) |
-| **Function privilege escalation** | Internal functions (`compute_*`, `find_*`, `refresh_*`, `cross_validate_*`) are revoked from `anon`/`authenticated` |
-| **Denial of service (query)**   | `statement_timeout = 5s` on `anon`, `authenticated`, `authenticator`; `idle_in_transaction_session_timeout = 30s` |
-| **Unbounded result sets**       | All list/search APIs clamp `p_limit` to max 100; `max_rows = 1000` in PostgREST config |
-| **Stale materialized views**    | `mv_staleness_check()` alerts when views exceed refresh threshold |
+| Threat                            | Mitigation                                                                                                                        |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| **Unauthorized data mutation**    | RLS enabled + FORCE on all tables; no INSERT/UPDATE/DELETE policies; anon/auth are read-only                                      |
+| **Schema/data exfiltration**      | Raw table SELECT revoked from `anon` and `authenticated`; all data served via SECURITY DEFINER RPCs                               |
+| **SQL injection via RPC args**    | All API functions use parameterized queries (no dynamic SQL with user input in `api_product_detail`, `api_search_products`, etc.) |
+| **Function privilege escalation** | Internal functions (`compute_*`, `find_*`, `refresh_*`, `cross_validate_*`) are revoked from `anon`/`authenticated`               |
+| **Denial of service (query)**     | `statement_timeout = 5s` on `anon`, `authenticated`, `authenticator`; `idle_in_transaction_session_timeout = 30s`                 |
+| **Unbounded result sets**         | All list/search APIs clamp `p_limit` to max 100; `max_rows = 1000` in PostgREST config                                            |
+| **Stale materialized views**      | `mv_staleness_check()` alerts when views exceed refresh threshold                                                                 |
 
 ## Access Control Architecture
 
@@ -49,14 +49,14 @@ This project is a **public food quality database** — there is no user-generate
 
 Direct REST access to tables and views is **blocked** for client-facing roles (`anon`, `authenticated`). All data access is routed through six curated API functions:
 
-| Function                    | Purpose                              |
-| --------------------------- | ------------------------------------ |
-| `api_product_detail`        | Full product view with freshness     |
-| `api_search_products`       | Text search with relevance ranking   |
-| `api_category_listing`      | Browse by category with sort/page    |
-| `api_score_explanation`     | Score breakdown with category context|
-| `api_better_alternatives`   | Healthier alternatives for a product |
-| `api_data_confidence`       | Data quality assessment per product  |
+| Function                  | Purpose                               |
+| ------------------------- | ------------------------------------- |
+| `api_product_detail`      | Full product view with freshness      |
+| `api_search_products`     | Text search with relevance ranking    |
+| `api_category_listing`    | Browse by category with sort/page     |
+| `api_score_explanation`   | Score breakdown with category context |
+| `api_better_alternatives` | Healthier alternatives for a product  |
+| `api_data_confidence`     | Data quality assessment per product   |
 
 This approach provides:
 - **Contract stability** — API key sets are locked and tested (23 QA checks)

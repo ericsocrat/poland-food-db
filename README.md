@@ -161,7 +161,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (58 files)
+    └── migrations/          # Schema migrations (62 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
@@ -256,7 +256,7 @@ Constraint violation tests that verify the database correctly rejects invalid da
 
 **Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
 
-**CI**: All 263 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 282 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -270,25 +270,24 @@ Run tests after **every** schema change or data update.
 | ---------------------------- | --------------------------------- | ----------------------------------- |
 | `fk_products_country`        | products → country_ref            | ISO 3166-1 country validation       |
 | `fk_products_category`       | products → category_ref           | Category master list (20 active)    |
-| `fk_products_nutri_score`    | products → nutri_score_ref          | Nutri-Score label definitions (A–E) |
+| `fk_products_nutri_score`    | products → nutri_score_ref        | Nutri-Score label definitions (A–E) |
 | `fk_ingredient_concern_tier` | ingredient_ref → concern_tier_ref | EFSA concern tiers (0–3)            |
 
 **CHECK Constraints** (26):
 
-| Table           | Constraint                          | Rule                                                              |
-| --------------- | ----------------------------------- | ----------------------------------------------------------------- |
-| products        | `chk_products_country`              | country IN ('PL')                                                 |
-| products        | `chk_products_prep_method`          | Valid prep method or null                                         |
-| products        | `chk_products_controversies`        | controversies IN ('none','minor','moderate','serious','palm oil') |
-| products        | `chk_products_unhealthiness_range`  | 0–100                                                             |
-| products        | `chk_products_nutri_label`          | A–E, UNKNOWN, or NOT-APPLICABLE                                   |
-| products        | `chk_products_confidence`           | verified / estimated / low                                        |
-| products        | `chk_products_nova`                 | 1–4                                                               |
-| products        | `chk_products_*_flag`               | Y / N (4 flags)                                                   |
-| products        | `chk_products_completeness`         | 0–100                                                             |
-| nutrition_facts | `chk_nf_non_negative` (7 cols)      | ≥ 0                                                               |
-| nutrition_facts | `chk_nf_sat_fat_le_total`           | saturated_fat ≤ total_fat                                         |
-| nutrition_facts | `chk_nf_sugars_le_carbs`            | sugars ≤ carbs                                                    |
+| Table           | Constraint                         | Rule                                                              |
+| --------------- | ---------------------------------- | ----------------------------------------------------------------- |
+| products        | `chk_products_prep_method`         | Valid prep method or null                                         |
+| products        | `chk_products_controversies`       | controversies IN ('none','minor','moderate','serious','palm oil') |
+| products        | `chk_products_unhealthiness_range` | 0–100                                                             |
+| products        | `chk_products_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE                                   |
+| products        | `chk_products_confidence`          | verified / estimated / low                                        |
+| products        | `chk_products_nova`                | 1–4                                                               |
+| products        | `chk_products_*_flag`              | Y / N (4 flags)                                                   |
+| products        | `chk_products_completeness`        | 0–100                                                             |
+| nutrition_facts | `chk_nf_non_negative` (7 cols)     | ≥ 0                                                               |
+| nutrition_facts | `chk_nf_sat_fat_le_total`          | saturated_fat ≤ total_fat                                         |
+| nutrition_facts | `chk_nf_sugars_le_carbs`           | sugars ≤ carbs                                                    |
 
 ---
 
@@ -372,7 +371,7 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 263/263 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 282/282 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---

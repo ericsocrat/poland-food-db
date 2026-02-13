@@ -24,14 +24,14 @@ BEGIN;
 -- All INSERTs respect FK and CHECK constraints so no constraint errors.
 -- ═══════════════════════════════════════════════════════════════════════════
 
--- ── Product 99999: Bad basics, NO child rows ────────────────────────────
+-- ── Product 99999: Bad basics, NO child rows, NULL source_type ────────
 --    Uses valid category 'Chips' (FK enforced), valid country 'PL' (FK+CHECK)
 INSERT INTO products
   (product_id, country, product_name, brand, category, ean,
-   product_type, prep_method, controversies, store_availability, is_deprecated)
+   product_type, prep_method, controversies, store_availability, source_type, is_deprecated)
 VALUES
   (99999, 'PL', '  Bad Test Product  ', '', 'Chips', '12345',
-   NULL, 'not-applicable', 'none', '', false);
+   NULL, 'not-applicable', 'none', '', NULL, false);
 
 -- ── Product 99998: Semi-clean, has children with issues ─────────────────
 INSERT INTO products

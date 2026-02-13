@@ -100,24 +100,24 @@ $QA_DIR = Join-Path (Join-Path $SCRIPT_ROOT "db") "qa"
 
 # Single source of truth for suite metadata (names, counts, blocking behavior)
 $suiteCatalog = @(
-    @{ Num = 1;  Name = "Data Integrity";                   Short = "Integrity";    Id = "integrity";           Checks = 29; Blocking = $true;  Kind = "sql-special"; File = "QA__null_checks.sql" },
-    @{ Num = 2;  Name = "Scoring Formula";                  Short = "Scoring";      Id = "scoring";             Checks = 27; Blocking = $true;  Kind = "sql-special"; File = "QA__scoring_formula_tests.sql" },
-    @{ Num = 3;  Name = "Source Coverage";                  Short = "Source";       Id = "source_coverage";     Checks = 8;  Blocking = $false; Kind = "sql-special"; File = "QA__source_coverage.sql" },
-    @{ Num = 4;  Name = "EAN Checksum Validation";          Short = "EAN";          Id = "ean";                 Checks = 1;  Blocking = $true;  Kind = "python";      File = "validate_eans.py" },
-    @{ Num = 5;  Name = "API Surface Validation";           Short = "API";          Id = "api";                 Checks = 14; Blocking = $true;  Kind = "sql";         File = "QA__api_surfaces.sql" },
-    @{ Num = 6;  Name = "Confidence Scoring";               Short = "Confidence";   Id = "confidence";          Checks = 10; Blocking = $true;  Kind = "sql";         File = "QA__confidence_scoring.sql" },
-    @{ Num = 7;  Name = "Data Quality & Plausibility";      Short = "DataQuality";  Id = "data_quality";        Checks = 25; Blocking = $true;  Kind = "sql";         File = "QA__data_quality.sql" },
-    @{ Num = 8;  Name = "Referential Integrity";            Short = "RefInteg";     Id = "referential";         Checks = 18; Blocking = $true;  Kind = "sql";         File = "QA__referential_integrity.sql" },
-    @{ Num = 9;  Name = "View & Function Consistency";      Short = "Views";        Id = "views";               Checks = 13; Blocking = $true;  Kind = "sql";         File = "QA__view_consistency.sql" },
-    @{ Num = 10; Name = "Naming Conventions";               Short = "Naming";       Id = "naming";              Checks = 12; Blocking = $true;  Kind = "sql";         File = "QA__naming_conventions.sql" },
-    @{ Num = 11; Name = "Nutrition Ranges & Plausibility";  Short = "NutriRange";   Id = "nutrition_ranges";    Checks = 16; Blocking = $true;  Kind = "sql";         File = "QA__nutrition_ranges.sql" },
-    @{ Num = 12; Name = "Data Consistency";                 Short = "DataConsist";   Id = "data_consistency";    Checks = 20; Blocking = $true;  Kind = "sql";         File = "QA__data_consistency.sql" },
-    @{ Num = 13; Name = "Allergen & Trace Integrity";       Short = "Allergen";     Id = "allergen_integrity";  Checks = 14; Blocking = $true;  Kind = "sql";         File = "QA__allergen_integrity.sql" },
-    @{ Num = 14; Name = "Serving & Source Validation";      Short = "ServSource";   Id = "serving_source";      Checks = 16; Blocking = $true;  Kind = "sql";         File = "QA__serving_source_validation.sql" },
-    @{ Num = 15; Name = "Ingredient Data Quality";          Short = "IngredQual";   Id = "ingredient_quality";  Checks = 14; Blocking = $true;  Kind = "sql";         File = "QA__ingredient_quality.sql" },
-    @{ Num = 16; Name = "Security Posture";                 Short = "Security";     Id = "security_posture";    Checks = 15; Blocking = $true;  Kind = "sql";         File = "QA__security_posture.sql" },
-    @{ Num = 17; Name = "API Contract";                     Short = "Contract";     Id = "api_contract";        Checks = 23; Blocking = $true;  Kind = "sql";         File = "QA__api_contract.sql" },
-    @{ Num = 18; Name = "Scale Guardrails";                  Short = "Scale";        Id = "scale_guardrails";    Checks = 15; Blocking = $true;  Kind = "sql";         File = "QA__scale_guardrails.sql" }
+    @{ Num = 1; Name = "Data Integrity"; Short = "Integrity"; Id = "integrity"; Checks = 29; Blocking = $true; Kind = "sql-special"; File = "QA__null_checks.sql" },
+    @{ Num = 2; Name = "Scoring Formula"; Short = "Scoring"; Id = "scoring"; Checks = 27; Blocking = $true; Kind = "sql-special"; File = "QA__scoring_formula_tests.sql" },
+    @{ Num = 3; Name = "Source Coverage"; Short = "Source"; Id = "source_coverage"; Checks = 8; Blocking = $false; Kind = "sql-special"; File = "QA__source_coverage.sql" },
+    @{ Num = 4; Name = "EAN Checksum Validation"; Short = "EAN"; Id = "ean"; Checks = 1; Blocking = $true; Kind = "python"; File = "validate_eans.py" },
+    @{ Num = 5; Name = "API Surface Validation"; Short = "API"; Id = "api"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__api_surfaces.sql" },
+    @{ Num = 6; Name = "Confidence Scoring"; Short = "Confidence"; Id = "confidence"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__confidence_scoring.sql" },
+    @{ Num = 7; Name = "Data Quality & Plausibility"; Short = "DataQuality"; Id = "data_quality"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__data_quality.sql" },
+    @{ Num = 8; Name = "Referential Integrity"; Short = "RefInteg"; Id = "referential"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__referential_integrity.sql" },
+    @{ Num = 9; Name = "View & Function Consistency"; Short = "Views"; Id = "views"; Checks = 13; Blocking = $true; Kind = "sql"; File = "QA__view_consistency.sql" },
+    @{ Num = 10; Name = "Naming Conventions"; Short = "Naming"; Id = "naming"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__naming_conventions.sql" },
+    @{ Num = 11; Name = "Nutrition Ranges & Plausibility"; Short = "NutriRange"; Id = "nutrition_ranges"; Checks = 16; Blocking = $true; Kind = "sql"; File = "QA__nutrition_ranges.sql" },
+    @{ Num = 12; Name = "Data Consistency"; Short = "DataConsist"; Id = "data_consistency"; Checks = 20; Blocking = $true; Kind = "sql"; File = "QA__data_consistency.sql" },
+    @{ Num = 13; Name = "Allergen & Trace Integrity"; Short = "Allergen"; Id = "allergen_integrity"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__allergen_integrity.sql" },
+    @{ Num = 14; Name = "Serving & Source Validation"; Short = "ServSource"; Id = "serving_source"; Checks = 16; Blocking = $true; Kind = "sql"; File = "QA__serving_source_validation.sql" },
+    @{ Num = 15; Name = "Ingredient Data Quality"; Short = "IngredQual"; Id = "ingredient_quality"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__ingredient_quality.sql" },
+    @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
+    @{ Num = 17; Name = "API Contract"; Short = "Contract"; Id = "api_contract"; Checks = 23; Blocking = $true; Kind = "sql"; File = "QA__api_contract.sql" },
+    @{ Num = 18; Name = "Scale Guardrails"; Short = "Scale"; Id = "scale_guardrails"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scale_guardrails.sql" }
 )
 
 $suiteByNum = @{}
@@ -400,7 +400,7 @@ else {
         $jsonResult.summary.total_checks += $suite4Checks; $jsonResult.summary.failed += $suite4Checks
     }
 }
-    $suitePass[4] = $test4Pass
+$suitePass[4] = $test4Pass
 
 # ─── Test 5–15: Generic SQL QA Suites ──────────────────────────────────────
 # All remaining suites follow the same pattern: load SQL, run via Invoke-Psql,
