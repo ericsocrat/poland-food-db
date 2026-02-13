@@ -124,7 +124,7 @@ WHERE n.nspname = 'public'
     'explain_score_v32','compute_data_confidence','compute_data_completeness',
     'assign_confidence','find_similar_products','find_better_alternatives',
     'refresh_all_materialized_views','mv_staleness_check',
-    'check_product_preferences'
+    'check_product_preferences','resolve_effective_country'
   )
   AND has_function_privilege('anon', p.oid, 'EXECUTE');
 

@@ -85,10 +85,10 @@ WHERE product_id = 99998;
 
 -- ── Bad allergen/trace tags for 99998 ───────────────────────────────────
 --    (product_allergen + product_trace → product_allergen_info)
+--    NOTE: non-en: prefix tags (pl:mleko, fr:lait) are now rejected by
+--    chk_allergen_tag_en_prefix CHECK constraint — see CHECK-PROTECTED below.
 INSERT INTO product_allergen_info (product_id, tag, type)
-VALUES (99998, 'pl:mleko',    'contains'),  -- non-en prefix → S13.01
-       (99998, 'en:unicorn',  'contains'),  -- outside domain → S13.03
-       (99998, 'fr:lait',     'traces'),    -- non-en prefix → S13.02
+VALUES (99998, 'en:unicorn',  'contains'),  -- outside domain → S13.03
        (99998, 'en:dragon',   'traces');    -- outside domain → S13.04
 
 -- ── Bad ingredient_ref entries ───────────────────────────────────────────
@@ -226,17 +226,7 @@ SELECT CASE WHEN (
   || ' | S12.10 | product without score (unhealthiness_score IS NULL)';
 
 -- ─── Suite 13: Allergen & Trace Integrity ───────────────────────────────
-SELECT CASE WHEN (
-  SELECT COUNT(*) FROM product_allergen_info
-  WHERE type = 'contains' AND tag NOT LIKE 'en:%'
-) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S13.01 | allergen tag non-en: prefix';
-
-SELECT CASE WHEN (
-  SELECT COUNT(*) FROM product_allergen_info
-  WHERE type = 'traces' AND tag NOT LIKE 'en:%'
-) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S13.02 | trace tag non-en: prefix';
+-- S13.01 / S13.02 removed — now CHECK-PROTECTED by chk_allergen_tag_en_prefix
 
 SELECT CASE WHEN (
   SELECT COUNT(*) FROM product_allergen_info
@@ -407,6 +397,8 @@ SELECT CASE WHEN (
 --   S15.12 invalid ingredient_id        → product_ingredient_ingredient_id_fkey
 --
 -- CHECK-PROTECTED (domain/range checks):
+--   S13.01 allergen tag non-en: prefix  → chk_allergen_tag_en_prefix
+--   S13.02 trace tag non-en: prefix     → chk_allergen_tag_en_prefix
 --   S12.04 unhealthiness_score range    → chk_products_unhealthiness_range
 --   S12.09 prep_method domain           → chk_products_prep_method
 --   S14.04 source_type domain           → chk_products_source_type

@@ -1,7 +1,8 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- QA Suite: Country Isolation
--- Validates that no API surface returns mixed-country results.
--- 6 checks.
+-- Validates that no API surface returns mixed-country results,
+-- and that auto-country resolution always produces a valid country.
+-- 10 checks.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- 1. api_search_products with p_country returns only that country's products
@@ -10,7 +11,7 @@ SELECT '1. search with country filter returns only PL products' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, 'PL')->'results'
+        api_search_products('ch', NULL, 100, 0, 'PL')->'results'
     ) r(val)
 ) search_results
 JOIN products p ON p.product_id = search_results.pid::bigint
@@ -71,3 +72,29 @@ SELECT '6. overview_by_country excludes inactive countries' AS check_name,
 FROM v_api_category_overview_by_country ov
 JOIN country_ref cr ON cr.country_code = ov.country_code
 WHERE cr.is_active = false;
+
+-- 7. resolve_effective_country returns non-NULL when called with NULL
+SELECT '7. resolve_effective_country(NULL) returns non-NULL' AS check_name,
+       CASE WHEN resolve_effective_country(NULL) IS NOT NULL
+       THEN 0 ELSE 1 END AS violations;
+
+-- 8. api_search_products with NULL country echoes a resolved country (not NULL)
+SELECT '8. search with NULL country echoes resolved country' AS check_name,
+       CASE WHEN (
+           api_search_products('ch', NULL, 5, 0, NULL)
+       )->>'country' IS NOT NULL
+       THEN 0 ELSE 1 END AS violations;
+
+-- 9. api_category_listing with NULL country echoes a resolved country
+SELECT '9. listing with NULL country echoes resolved country' AS check_name,
+       CASE WHEN (
+           api_category_listing('Chips', 'score', 'asc', 5, 0, NULL)
+       )->>'country' IS NOT NULL
+       THEN 0 ELSE 1 END AS violations;
+
+-- 10. api_product_detail_by_ean with NULL country echoes a resolved country
+SELECT '10. EAN with NULL country echoes resolved country' AS check_name,
+       CASE WHEN (
+           api_product_detail_by_ean('0000000000000', NULL)
+       )->>'country' IS NOT NULL
+       THEN 0 ELSE 1 END AS violations;

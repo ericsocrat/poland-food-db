@@ -205,14 +205,14 @@ Body: {
 | `p_sort_dir` | text    | `"asc"`    | Sort direction: `asc` or `desc`                                   |
 | `p_limit`    | integer | 20         | Page size (1-100, clamped)                                        |
 | `p_offset`   | integer | 0          | Offset for pagination (clamped to ≥0)                             |
-| `p_country`  | text    | `null`     | Optional country filter (`null` = all countries)                  |
+| `p_country`  | text    | `null`     | Country filter — auto-resolved if NULL (see §10)                  |
 
 ### Response Shape
 
 ```jsonc
 {
   "category": "Chips",
-  "country": null,              // echoes p_country filter (null = all)
+  "country": "PL",              // resolved country (never null — see §10)
   "total_count": 28,        // total products in category (for pagination)
   "limit": 20,
   "offset": 0,
@@ -418,7 +418,7 @@ Body: {
 | `p_category` | text    | `null`     | Optional category filter                         |
 | `p_limit`    | integer | 20         | Page size (1-100, clamped)                       |
 | `p_offset`   | integer | 0          | Offset for pagination                            |
-| `p_country`  | text    | `null`     | Optional country filter (`null` = all countries) |
+| `p_country`  | text    | `null`     | Country filter — auto-resolved if NULL (see §10) |
 
 ### Response Shape
 
@@ -426,7 +426,7 @@ Body: {
 {
   "query": "Lay",
   "category": null,
-  "country": null,              // echoes p_country filter (null = all)
+  "country": "PL",              // resolved country (never null — see §10)
   "total_count": 16,
   "limit": 20,
   "offset": 0,
@@ -575,7 +575,7 @@ Pre-computed confidence for all 1,029 products. Faster than calling `compute_dat
 
 ## 8. Barcode Scanner: `api_product_detail_by_ean(p_ean text, p_country text DEFAULT NULL)`
 
-**Purpose:** Barcode scanner endpoint. Looks up a product by EAN, optionally scoped to a country.
+**Purpose:** Barcode scanner endpoint. Looks up a product by EAN, scoped to a resolved country (see §10).
 
 **PostgREST:** `POST /rpc/api_product_detail_by_ean` with `{ "p_ean": "5900259135360" }`
 
@@ -593,7 +593,7 @@ Pre-computed confidence for all 1,029 products. Faster than calling `compute_dat
 
 **Not Found Response:**
 ```json
-{"api_version": "1.0", "ean": "0000000000000", "country": null, "found": false, "error": "Product not found for this barcode."}
+{"api_version": "1.0", "ean": "0000000000000", "country": "PL", "found": false, "error": "Product not found for this barcode."}
 ```
 
 **Access:** anon, authenticated, service_role
@@ -669,4 +669,25 @@ Returns the updated preference profile (same shape as `api_get_user_preferences`
 ### `user_preferences` Table
 
 RLS-protected. Each user can only read/write their own row. Enforced by `auth.uid() = user_id` policies on SELECT, INSERT, UPDATE, and DELETE.
+
+---
+
+## 10. Auto-Country Resolution
+
+All country-scoped API functions (`api_search_products`, `api_category_listing`, `api_product_detail_by_ean`) use `resolve_effective_country(p_country)` internally to guarantee a non-NULL country scope. The resolution order is:
+
+1. **Explicit parameter** — if the caller passes a non-empty `p_country`, use it as-is.
+2. **User preference** — if the caller is authenticated and has a row in `user_preferences`, use `user_preferences.country`.
+3. **System default** — fall back to the first active country in `country_ref` (alphabetically).
+
+**Implications:**
+- The `country` field in all responses is **never null** — it always reflects the resolved value.
+- Anonymous callers with no explicit `p_country` get the system default (currently `'PL'`).
+- There is no "all countries" mode — every query is scoped to exactly one country.
+- `api_better_alternatives` does NOT use this helper; it infers country from the source product.
+- `resolve_effective_country` is an internal function: REVOKE'd from `anon` and `PUBLIC`.
+
+### Allergen Tag Enforcement
+
+All tags in `product_allergen_info` must start with `en:` (e.g., `en:gluten`, `en:milk`). This is enforced at the schema level by the `chk_allergen_tag_en_prefix` CHECK constraint. Tags that don't match the `en:` prefix are rejected by the database on INSERT/UPDATE.
 

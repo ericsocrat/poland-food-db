@@ -58,6 +58,7 @@ Before any data for country `XX` enters the database, **all** of the following m
 All of these must be true before activating a second country:
 
 - [x] API supports country filtering on search + listings (`p_country` param, RPC-compatible)
+- [x] Auto-country resolution when `p_country` is NULL (`resolve_effective_country` — user pref → system default)
 - [x] Alternatives/similarity are country-isolated (inferred from source product)
 - [x] Scoring + completeness are country-parameterized (`score_category` accepts `p_country`)
 - [x] Dashboard stats are country-aware (`v_api_category_overview_by_country` view)

@@ -52,10 +52,10 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (322 checks across 22 suites)
+# All tests (327 checks across 22 suites)
 .\RUN_QA.ps1
 
-# Negative validation (29 constraint tests)
+# Negative validation (23 constraint tests)
 .\RUN_NEGATIVE_TESTS.ps1
 
 # Or via pipeline runner
@@ -90,7 +90,7 @@ supabase start
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 322 automated checks across 22 QA suites + 25 negative validation tests
+**Test Coverage**: 327 automated checks across 22 QA suites + 23 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 14 API surface checks (contract validation, JSON structure, listing consistency)
@@ -99,7 +99,7 @@ supabase start
 - 18 referential integrity checks (FK validation, domain constraints)
 - 20 data consistency checks (cross-table relationships, formula verification)
 - 16 nutrition range checks (physiological bounds, cross-field validation)
-- 14 allergen integrity checks (FK validation, duplicate detection, coverage)
+- 15 allergen integrity checks (FK validation, duplicate detection, coverage, schema constraint)
 - 16 serving & source validation checks (basis rules, source completeness)
 - 14 ingredient quality checks (naming, frequency, concern tier distribution)
 - 12 naming convention checks (product names, brands, slugs)
@@ -107,15 +107,15 @@ supabase start
 - 20 security posture checks (RLS, grants, SECURITY DEFINER, user_preferences isolation)
 - 30 API contract checks (key sets, api_version, SECURITY DEFINER, EAN lookup, preferences)
 - 15 scale guardrail checks (index presence, query plan validation)
-- 6 country isolation checks (no mixed-country results across all API surfaces)
+- 10 country isolation checks (no mixed-country results, auto-country resolution)
 - 6 diet filtering checks (vegan/vegetarian exclusion, strict mode)
 - 6 allergen filtering checks (contains/traces exclusion, may-contain toggle)
 - 6 barcode lookup checks (EAN resolution, scan metadata, error handling)
 - 1 EAN checksum validation (all barcodes verified)
 - 8 source coverage reports (informational, non-blocking)
-- 25 negative tests (constraint violation detection)
+- 23 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 322/322 + 25/25 negative
+**All tests passing**: ✅ 327/327 + 23/23 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 

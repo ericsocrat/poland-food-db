@@ -228,3 +228,13 @@ FROM (
   )
 ) x;
 
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 15. product_allergen_info has CHECK constraint enforcing en: prefix
+-- ═══════════════════════════════════════════════════════════════════════════════
+SELECT '15. allergen tag en: prefix enforced at schema level' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_constraint
+           WHERE conrelid = 'product_allergen_info'::regclass
+             AND conname = 'chk_allergen_tag_en_prefix'
+       ) THEN 0 ELSE 1 END AS violations;
+
