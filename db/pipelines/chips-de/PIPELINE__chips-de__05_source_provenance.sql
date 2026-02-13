@@ -1,0 +1,63 @@
+-- PIPELINE (Chips): source provenance
+-- Generated: 2026-02-13
+
+-- 1. Update source info on products
+UPDATE products p SET
+  source_type = 'off_api',
+  source_url = d.source_url,
+  source_ean = d.source_ean
+FROM (
+  VALUES
+    ('Tyrrell''s', 'Lightly sea salted crisps', 'https://world.openfoodfacts.org/product/5060042641000', '5060042641000'),
+    ('Kellogg''s', 'Pringles Original', 'https://world.openfoodfacts.org/product/5053990167807', '5053990167807'),
+    ('Pringles', 'Pringles', 'https://world.openfoodfacts.org/product/5053990107339', '5053990107339'),
+    ('Tyrrells', 'Sea salt & cider vinegar chips', 'https://world.openfoodfacts.org/product/5060042641406', '5060042641406'),
+    ('Pringles', 'Sour Cream & Onion', 'https://world.openfoodfacts.org/product/5053990155354', '5053990155354'),
+    ('Pringles', 'Pringles Original', 'https://world.openfoodfacts.org/product/5053990127726', '5053990127726'),
+    ('Pringles', 'Sour Cream & Onion chips', 'https://world.openfoodfacts.org/product/5053990167845', '5053990167845'),
+    ('Pringles', 'Pringles sour cream & onion', 'https://world.openfoodfacts.org/product/5053990107384', '5053990107384'),
+    ('Pringles', 'Pringles Sour Cream', 'https://world.openfoodfacts.org/product/5053990127740', '5053990127740'),
+    ('PRINGLES', 'TEXAS BBQ SAUCE', 'https://world.openfoodfacts.org/product/5053990161966', '5053990161966'),
+    ('Old El Paso', 'Tortilla Nachips Original', 'https://world.openfoodfacts.org/product/8410076481597', '8410076481597'),
+    ('pringles', 'pringles hot & spicy', 'https://world.openfoodfacts.org/product/5053990101542', '5053990101542'),
+    ('Pringles', 'Pringles Paprika', 'https://world.openfoodfacts.org/product/5053990161607', '5053990161607'),
+    ('Tyrrell’s', 'Chips sel de mer et poivre noir', 'https://world.openfoodfacts.org/product/5060042641420', '5060042641420'),
+    ('Tyrrell’s', 'Tyrrell''s Sweet Chilli & Red Pepper', 'https://world.openfoodfacts.org/product/5060042641413', '5060042641413'),
+    ('Tyrell''s', 'Mature Cheddar & Chive', 'https://world.openfoodfacts.org/product/5060042641437', '5060042641437'),
+    ('Walkers', 'Baked Sea Salt', 'https://world.openfoodfacts.org/product/5000328015927', '5000328015927'),
+    ('Brets', 'Chips saveur Poulet Braisé', 'https://world.openfoodfacts.org/product/3497911101129', '3497911101129'),
+    ('LIDL', 'Lightly salted tortilla', 'https://world.openfoodfacts.org/product/20952174', '20952174'),
+    ('funny-frisch', 'chipsfrisch ungarisch', 'https://world.openfoodfacts.org/product/4003586100313', '4003586100313'),
+    ('Pringles', 'Pringles Salt & Vinegar', 'https://world.openfoodfacts.org/product/5053990167531', '5053990167531'),
+    ('Barcel', 'Takis Fuego', 'https://world.openfoodfacts.org/product/8412600019672', '8412600019672'),
+    ('General Mills', 'Tortilla chips', 'https://world.openfoodfacts.org/product/8410076481757', '8410076481757'),
+    ('Gran Pavesi', 'Gpav cracker salato pav 560 gr', 'https://world.openfoodfacts.org/product/8013355501506', '8013355501506'),
+    ('Zweifel vaya', 'BEAN SALT SNACK', 'https://world.openfoodfacts.org/product/7610095231505', '7610095231505'),
+    ('Harvest Basket', 'Potato Wedges sült krumpli', 'https://world.openfoodfacts.org/product/20047900', '20047900'),
+    ('Arvid Nordquist Norge AS', 'Curvies original gluten free', 'https://world.openfoodfacts.org/product/8008698031056', '8008698031056'),
+    ('funny-frisch', 'Linsen Chips Paprika Style', 'https://world.openfoodfacts.org/product/4003586104120', '4003586104120'),
+    ('Pringles', 'Hot & Spicy', 'https://world.openfoodfacts.org/product/5053990167913', '5053990167913'),
+    ('Pringles', 'Pringles Hot Smokin’ BBQ Ribs Flavour', 'https://world.openfoodfacts.org/product/5053990175949', '5053990175949'),
+    ('Mister Free''d', 'Tortilla Chips Avocado Guacamole Flavour', 'https://world.openfoodfacts.org/product/5060367450578', '5060367450578'),
+    ('Lorenz', 'Crunchips Paprika', 'https://world.openfoodfacts.org/product/4018077004377', '4018077004377'),
+    ('Snack Day', 'Nature Tortilla', 'https://world.openfoodfacts.org/product/20063399', '20063399'),
+    ('Suzi Wan', 'Chips à la crevette', 'https://world.openfoodfacts.org/product/4002359014895', '4002359014895'),
+    ('Eat Real', 'Veggie Straws - With Kale, Tomato & Spinach', 'https://world.openfoodfacts.org/product/5026489490892', '5026489490892'),
+    ('Barcel', 'Takis Queso Volcano 100g', 'https://world.openfoodfacts.org/product/8412600019689', '8412600019689'),
+    ('PRINGLES', 'Pringles Cheese & onion', 'https://world.openfoodfacts.org/product/5053990127641', '5053990127641'),
+    ('Takis', 'Takis Dragon Sweet chilli', 'https://world.openfoodfacts.org/product/0757528048112', '0757528048112'),
+    ('Doritos', 'Doritos Sweet Chilli Pepper Flavour', 'https://world.openfoodfacts.org/product/8710398162045', '8710398162045'),
+    ('Wasa', 'Sans gluten et sans lactose', 'https://world.openfoodfacts.org/product/7300400481823', '7300400481823'),
+    ('Funny-frisch', 'Chipsfrisch Peperoni', 'https://world.openfoodfacts.org/product/4003586100306', '4003586100306'),
+    ('Pringles', 'Pringles hot cheese', 'https://world.openfoodfacts.org/product/5053990175888', '5053990175888'),
+    ('Pringles', 'Original', 'https://world.openfoodfacts.org/product/0038000138416', '0038000138416'),
+    ('ASIA GREEN GARDEN', 'PRAWN CRACKERS', 'https://world.openfoodfacts.org/product/4088600004167', '4088600004167'),
+    ('Tyrrell’s', 'Furrows Sea Salt & Vinegar', 'https://world.openfoodfacts.org/product/5060042643509', '5060042643509'),
+    ('Pringles', 'Hot Kickin'' Sour Cream Flavour', 'https://world.openfoodfacts.org/product/5053990175826', '5053990175826'),
+    ('Funny-Frisch', 'Chipsfrisch Oriental', 'https://world.openfoodfacts.org/product/4003586100399', '4003586100399'),
+    ('Elephant', 'Baked squeezed pretzels with tomatoes and herbs', 'https://world.openfoodfacts.org/product/5949040203000', '5949040203000'),
+    ('Finn Crisp', 'Finn Crisp Snacks', 'https://world.openfoodfacts.org/product/7310130010354', '7310130010354'),
+    ('funny-frisch', 'Chipsfrisch gesalzen', 'https://world.openfoodfacts.org/product/4003586101389', '4003586101389'),
+    ('Mister Free''d', 'Blue Maize Tortilla Chips', 'https://world.openfoodfacts.org/product/5060367450356', '5060367450356')
+) AS d(brand, product_name, source_url, source_ean)
+WHERE p.country = 'DE' AND p.brand = d.brand AND p.product_name = d.product_name;

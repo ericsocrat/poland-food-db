@@ -515,9 +515,10 @@ def generate_step_04(products: list[dict], category: str, country: str) -> str:
             f"    ('{sql_escape(p['brand'])}', '{sql_escape(p['product_name'])}', "
             f"'{p['nutri_score']}')"
         )
+        nova_val = "NULL" if p['nova'] == 'UNKNOWN' else f"'{p['nova']}'"
         nova_values.append(
             f"    ('{sql_escape(p['brand'])}', '{sql_escape(p['product_name'])}', "
-            f"'{p['nova']}')"
+            f"{nova_val})"
         )
 
     return f"""\
@@ -543,7 +544,7 @@ from (
 where p.country = '{country}' and p.brand = d.brand and p.product_name = d.product_name;
 
 -- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
-CALL score_category('{sql_escape(category)}');
+CALL score_category('{sql_escape(category)}', 100, '{country}');
 """
 
 
@@ -656,6 +657,8 @@ def main() -> None:
         ean_list = [e for e in ean_list if e not in invalid_eans]
 
     folder_name = sanitize_folder_name(category)
+    # Multi-country: append country code as suffix (e.g., chips-de, chips-pl)
+    folder_name = f"{folder_name}-{country.lower()}"
     output_dir = PIPELINE_DIR / folder_name
 
     print("=" * 60)

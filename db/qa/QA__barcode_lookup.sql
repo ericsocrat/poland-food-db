@@ -7,9 +7,10 @@
 -- 1. Known EAN resolves to correct product
 SELECT '1. known EAN resolves to correct product' AS check_name,
        CASE WHEN (
-           SELECT (api_product_detail_by_ean(p.ean))->>'product_name'
+           SELECT (api_product_detail_by_ean(p.ean, p.country))->>'product_name'
            FROM products p
            WHERE p.ean IS NOT NULL AND p.is_deprecated IS NOT TRUE
+           ORDER BY p.product_id
            LIMIT 1
        ) IS NOT NULL
        THEN 0 ELSE 1 END AS violations;

@@ -1,0 +1,123 @@
+-- PIPELINE (Chips): scoring
+-- Generated: 2026-02-13
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Tyrrell''s', 'Lightly sea salted crisps', 'C'),
+    ('Kellogg''s', 'Pringles Original', 'D'),
+    ('Pringles', 'Pringles', 'D'),
+    ('Tyrrells', 'Sea salt & cider vinegar chips', 'D'),
+    ('Pringles', 'Sour Cream & Onion', 'D'),
+    ('Pringles', 'Pringles Original', 'D'),
+    ('Pringles', 'Sour Cream & Onion chips', 'D'),
+    ('Pringles', 'Pringles sour cream & onion', 'D'),
+    ('Pringles', 'Pringles Sour Cream', 'D'),
+    ('PRINGLES', 'TEXAS BBQ SAUCE', 'D'),
+    ('Old El Paso', 'Tortilla Nachips Original', 'C'),
+    ('pringles', 'pringles hot & spicy', 'D'),
+    ('Pringles', 'Pringles Paprika', 'C'),
+    ('Tyrrell’s', 'Chips sel de mer et poivre noir', 'C'),
+    ('Tyrrell’s', 'Tyrrell''s Sweet Chilli & Red Pepper', 'B'),
+    ('Tyrell''s', 'Mature Cheddar & Chive', 'B'),
+    ('Walkers', 'Baked Sea Salt', 'C'),
+    ('Brets', 'Chips saveur Poulet Braisé', 'D'),
+    ('LIDL', 'Lightly salted tortilla', 'C'),
+    ('funny-frisch', 'chipsfrisch ungarisch', 'D'),
+    ('Pringles', 'Pringles Salt & Vinegar', 'C'),
+    ('Barcel', 'Takis Fuego', 'E'),
+    ('General Mills', 'Tortilla chips', 'B'),
+    ('Gran Pavesi', 'Gpav cracker salato pav 560 gr', 'D'),
+    ('Zweifel vaya', 'BEAN SALT SNACK', 'C'),
+    ('Harvest Basket', 'Potato Wedges sült krumpli', 'C'),
+    ('Arvid Nordquist Norge AS', 'Curvies original gluten free', 'D'),
+    ('funny-frisch', 'Linsen Chips Paprika Style', 'C'),
+    ('Pringles', 'Hot & Spicy', 'D'),
+    ('Pringles', 'Pringles Hot Smokin’ BBQ Ribs Flavour', 'C'),
+    ('Mister Free''d', 'Tortilla Chips Avocado Guacamole Flavour', 'D'),
+    ('Lorenz', 'Crunchips Paprika', 'D'),
+    ('Snack Day', 'Nature Tortilla', 'C'),
+    ('Suzi Wan', 'Chips à la crevette', 'E'),
+    ('Eat Real', 'Veggie Straws - With Kale, Tomato & Spinach', 'D'),
+    ('Barcel', 'Takis Queso Volcano 100g', 'D'),
+    ('PRINGLES', 'Pringles Cheese & onion', 'D'),
+    ('Takis', 'Takis Dragon Sweet chilli', 'E'),
+    ('Doritos', 'Doritos Sweet Chilli Pepper Flavour', 'C'),
+    ('Wasa', 'Sans gluten et sans lactose', 'C'),
+    ('Funny-frisch', 'Chipsfrisch Peperoni', 'D'),
+    ('Pringles', 'Pringles hot cheese', 'C'),
+    ('Pringles', 'Original', 'C'),
+    ('ASIA GREEN GARDEN', 'PRAWN CRACKERS', 'D'),
+    ('Tyrrell’s', 'Furrows Sea Salt & Vinegar', 'D'),
+    ('Pringles', 'Hot Kickin'' Sour Cream Flavour', 'C'),
+    ('Funny-Frisch', 'Chipsfrisch Oriental', 'D'),
+    ('Elephant', 'Baked squeezed pretzels with tomatoes and herbs', 'D'),
+    ('Finn Crisp', 'Finn Crisp Snacks', 'C'),
+    ('funny-frisch', 'Chipsfrisch gesalzen', 'D'),
+    ('Mister Free''d', 'Blue Maize Tortilla Chips', 'C')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Tyrrell''s', 'Lightly sea salted crisps', '3'),
+    ('Kellogg''s', 'Pringles Original', '4'),
+    ('Pringles', 'Pringles', NULL),
+    ('Tyrrells', 'Sea salt & cider vinegar chips', '4'),
+    ('Pringles', 'Sour Cream & Onion', '4'),
+    ('Pringles', 'Pringles Original', '4'),
+    ('Pringles', 'Sour Cream & Onion chips', '4'),
+    ('Pringles', 'Pringles sour cream & onion', '4'),
+    ('Pringles', 'Pringles Sour Cream', '4'),
+    ('PRINGLES', 'TEXAS BBQ SAUCE', '4'),
+    ('Old El Paso', 'Tortilla Nachips Original', '3'),
+    ('pringles', 'pringles hot & spicy', '4'),
+    ('Pringles', 'Pringles Paprika', '4'),
+    ('Tyrrell’s', 'Chips sel de mer et poivre noir', '4'),
+    ('Tyrrell’s', 'Tyrrell''s Sweet Chilli & Red Pepper', '4'),
+    ('Tyrell''s', 'Mature Cheddar & Chive', '4'),
+    ('Walkers', 'Baked Sea Salt', '4'),
+    ('Brets', 'Chips saveur Poulet Braisé', '4'),
+    ('LIDL', 'Lightly salted tortilla', '3'),
+    ('funny-frisch', 'chipsfrisch ungarisch', '4'),
+    ('Pringles', 'Pringles Salt & Vinegar', '4'),
+    ('Barcel', 'Takis Fuego', '4'),
+    ('General Mills', 'Tortilla chips', '4'),
+    ('Gran Pavesi', 'Gpav cracker salato pav 560 gr', '3'),
+    ('Zweifel vaya', 'BEAN SALT SNACK', '3'),
+    ('Harvest Basket', 'Potato Wedges sült krumpli', '4'),
+    ('Arvid Nordquist Norge AS', 'Curvies original gluten free', '4'),
+    ('funny-frisch', 'Linsen Chips Paprika Style', '4'),
+    ('Pringles', 'Hot & Spicy', '4'),
+    ('Pringles', 'Pringles Hot Smokin’ BBQ Ribs Flavour', '4'),
+    ('Mister Free''d', 'Tortilla Chips Avocado Guacamole Flavour', '4'),
+    ('Lorenz', 'Crunchips Paprika', '4'),
+    ('Snack Day', 'Nature Tortilla', '3'),
+    ('Suzi Wan', 'Chips à la crevette', '3'),
+    ('Eat Real', 'Veggie Straws - With Kale, Tomato & Spinach', '3'),
+    ('Barcel', 'Takis Queso Volcano 100g', '4'),
+    ('PRINGLES', 'Pringles Cheese & onion', '4'),
+    ('Takis', 'Takis Dragon Sweet chilli', '4'),
+    ('Doritos', 'Doritos Sweet Chilli Pepper Flavour', '4'),
+    ('Wasa', 'Sans gluten et sans lactose', '4'),
+    ('Funny-frisch', 'Chipsfrisch Peperoni', '4'),
+    ('Pringles', 'Pringles hot cheese', '4'),
+    ('Pringles', 'Original', '4'),
+    ('ASIA GREEN GARDEN', 'PRAWN CRACKERS', '3'),
+    ('Tyrrell’s', 'Furrows Sea Salt & Vinegar', '4'),
+    ('Pringles', 'Hot Kickin'' Sour Cream Flavour', '4'),
+    ('Funny-Frisch', 'Chipsfrisch Oriental', '4'),
+    ('Elephant', 'Baked squeezed pretzels with tomatoes and herbs', '4'),
+    ('Finn Crisp', 'Finn Crisp Snacks', '4'),
+    ('funny-frisch', 'Chipsfrisch gesalzen', '3'),
+    ('Mister Free''d', 'Blue Maize Tortilla Chips', '3')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Chips', 100, 'DE');

@@ -133,11 +133,11 @@ WHERE NOT (
     AND sample.detail ? 'data_completeness_profile'
 );
 
--- 15. v_api_category_overview_by_country: PL rows match global overview
-SELECT '15. overview_by_country PL matches global overview' AS check_name,
+-- 15. v_api_category_overview_by_country: all-country sum matches global overview
+SELECT '15. overview_by_country totals match global overview' AS check_name,
        COUNT(*) AS violations
 FROM (
-    SELECT (SELECT SUM(product_count) FROM v_api_category_overview_by_country WHERE country_code = 'PL') AS by_country_sum,
+    SELECT (SELECT SUM(product_count) FROM v_api_category_overview_by_country) AS by_country_sum,
            (SELECT SUM(product_count) FROM v_api_category_overview) AS global_sum
 ) sub
 WHERE by_country_sum != global_sum;

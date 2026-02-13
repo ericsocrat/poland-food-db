@@ -94,7 +94,7 @@ SELECT '6. no allergen filter includes all products' AS check_name,
            FROM (
                SELECT r.val->>'product_id' AS pid
                FROM jsonb_array_elements(
-                   api_search_products('ch', NULL, 100, 0)->'results'
+                   api_search_products('ch', NULL, 100, 0, 'PL')->'results'
                ) r(val)
            ) search_results
            WHERE EXISTS (
