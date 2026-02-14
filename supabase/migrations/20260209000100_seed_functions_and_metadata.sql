@@ -18,13 +18,8 @@ BEGIN
     IF p_data_completeness_pct < 70 THEN
         RETURN 'low';
     END IF;
-    IF p_data_completeness_pct >= 90 THEN
-        IF p_source_type = 'openfoodfacts' THEN
-            RETURN 'estimated';
-        ELSE
-            RETURN 'estimated';
-        END IF;
-    END IF;
+    -- All sources above 70% completeness are currently treated as 'estimated'.
+    -- When verified sources are introduced, add source_type checks here.
     RETURN 'estimated';
 END;
 $$ LANGUAGE plpgsql IMMUTABLE;

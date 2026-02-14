@@ -35,7 +35,7 @@ jobs:
         image: postgres:17
         env:
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_PASSWORD: postgres # NOSONAR — ephemeral CI-only container
           POSTGRES_DB: postgres
         ports:
           - 54322:5432
@@ -49,7 +49,7 @@ jobs:
       PGHOST: localhost
       PGPORT: 54322
       PGUSER: postgres
-      PGPASSWORD: postgres
+      PGPASSWORD: postgres # NOSONAR — ephemeral CI-only container
       PGDATABASE: postgres
 
     steps:
