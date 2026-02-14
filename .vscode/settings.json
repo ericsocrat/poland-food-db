@@ -210,5 +210,9 @@
     "**/node_modules": true,
     "**/.supabase": true,
     "**/__pycache__": true
+  },
+  "sonarlint.connectedMode.project": {
+    "connectionId": "ericsocrat",
+    "projectKey": "ericsocrat_poland-food-db"
   }
 }

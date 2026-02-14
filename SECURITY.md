@@ -6,12 +6,12 @@ Last audited: 2026-02-14
 
 ### Summary
 
-| Package               | Severity | Advisory                                        | Status         |
-| --------------------- | -------- | ----------------------------------------------- | -------------- |
-| `next` 14.2.35        | High     | [GHSA-9g9p-9gw9-jx7f][1] (Image Optimizer DoS) | Accepted risk  |
-| `next` 14.2.35        | High     | [GHSA-h25m-26qc-wcjf][2] (RSC deserialization)  | Accepted risk  |
-| `glob` 10.3.10        | High     | [GHSA-5j98-mcp5-4vw2][3] (CLI injection)        | Accepted risk  |
-| `@next/eslint-plugin` | High     | Transitive via `glob`                            | Accepted risk  |
+| Package               | Severity | Advisory                                       | Status        |
+| --------------------- | -------- | ---------------------------------------------- | ------------- |
+| `next` 14.2.35        | High     | [GHSA-9g9p-9gw9-jx7f][1] (Image Optimizer DoS) | Accepted risk |
+| `next` 14.2.35        | High     | [GHSA-h25m-26qc-wcjf][2] (RSC deserialization) | Accepted risk |
+| `glob` 10.3.10        | High     | [GHSA-5j98-mcp5-4vw2][3] (CLI injection)       | Accepted risk |
+| `@next/eslint-plugin` | High     | Transitive via `glob`                          | Accepted risk |
 
 [1]: https://github.com/advisories/GHSA-9g9p-9gw9-jx7f
 [2]: https://github.com/advisories/GHSA-h25m-26qc-wcjf
