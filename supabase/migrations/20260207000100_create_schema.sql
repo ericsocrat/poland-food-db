@@ -299,7 +299,15 @@ ALTER TABLE ONLY "public"."servings"
 
 
 
-ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_catalog.pg_publication WHERE pubname = 'supabase_realtime'
+    ) THEN
+        ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+    END IF;
+END
+$$;
 
 
 GRANT USAGE ON SCHEMA "public" TO "postgres";
