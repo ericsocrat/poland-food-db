@@ -9,6 +9,7 @@ on:
 env:
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
 jobs:
   lint-typecheck-build:
@@ -39,7 +40,7 @@ jobs:
         run: npx next build
 
   playwright:
-    name: Playwright Smoke Tests
+    name: Playwright E2E Tests
     runs-on: ubuntu-latest
     needs: lint-typecheck-build
     defaults:
