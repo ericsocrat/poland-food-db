@@ -11,6 +11,10 @@ import type {
   DataConfidence,
   EanLookupResponse,
   EanNotFoundResponse,
+  HealthProfileActiveResponse,
+  HealthProfileListResponse,
+  HealthProfileMutationResponse,
+  HealthWarningsResponse,
   ProductDetail,
   RpcResult,
   ScoreExplanation,
@@ -174,4 +178,91 @@ export function getDataConfidence(
   return callRpc<DataConfidence>(supabase, "api_data_confidence", {
     p_product_id: productId,
   });
+}
+
+// ─── Health Profiles ────────────────────────────────────────────────────────
+
+export function listHealthProfiles(
+  supabase: SupabaseClient,
+): Promise<RpcResult<HealthProfileListResponse>> {
+  return callRpc<HealthProfileListResponse>(
+    supabase,
+    "api_list_health_profiles",
+  );
+}
+
+export function getActiveHealthProfile(
+  supabase: SupabaseClient,
+): Promise<RpcResult<HealthProfileActiveResponse>> {
+  return callRpc<HealthProfileActiveResponse>(
+    supabase,
+    "api_get_active_health_profile",
+  );
+}
+
+export function createHealthProfile(
+  supabase: SupabaseClient,
+  params: {
+    p_profile_name: string;
+    p_health_conditions?: string[];
+    p_is_active?: boolean;
+    p_max_sugar_g?: number;
+    p_max_salt_g?: number;
+    p_max_saturated_fat_g?: number;
+    p_max_calories_kcal?: number;
+    p_notes?: string;
+  },
+): Promise<RpcResult<HealthProfileMutationResponse>> {
+  return callRpc<HealthProfileMutationResponse>(
+    supabase,
+    "api_create_health_profile",
+    params,
+  );
+}
+
+export function updateHealthProfile(
+  supabase: SupabaseClient,
+  params: {
+    p_profile_id: string;
+    p_profile_name?: string;
+    p_health_conditions?: string[];
+    p_is_active?: boolean;
+    p_max_sugar_g?: number;
+    p_max_salt_g?: number;
+    p_max_saturated_fat_g?: number;
+    p_max_calories_kcal?: number;
+    p_notes?: string;
+  },
+): Promise<RpcResult<HealthProfileMutationResponse>> {
+  return callRpc<HealthProfileMutationResponse>(
+    supabase,
+    "api_update_health_profile",
+    params,
+  );
+}
+
+export function deleteHealthProfile(
+  supabase: SupabaseClient,
+  profileId: string,
+): Promise<RpcResult<HealthProfileMutationResponse>> {
+  return callRpc<HealthProfileMutationResponse>(
+    supabase,
+    "api_delete_health_profile",
+    { p_profile_id: profileId },
+  );
+}
+
+export function getProductHealthWarnings(
+  supabase: SupabaseClient,
+  productId: number,
+  profileId?: string,
+): Promise<RpcResult<HealthWarningsResponse>> {
+  return callRpc<HealthWarningsResponse>(
+    supabase,
+    "api_product_health_warnings",
+    {
+      p_product_id: productId,
+      ...(profileId ? { p_profile_id: profileId } : {}),
+    },
+  );
 }

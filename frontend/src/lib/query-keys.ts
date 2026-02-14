@@ -35,6 +35,16 @@ export const queryKeys = {
   /** Data confidence for a product */
   dataConfidence: (productId: number) =>
     ["data-confidence", productId] as const,
+
+  /** Health profiles list */
+  healthProfiles: ["health-profiles"] as const,
+
+  /** Active health profile */
+  activeHealthProfile: ["active-health-profile"] as const,
+
+  /** Product health warnings */
+  healthWarnings: (productId: number) =>
+    ["health-warnings", productId] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -63,4 +73,7 @@ export const staleTimes = {
 
   /** Score explanation — 10 min */
   scoreExplanation: 10 * 60 * 1000,
+
+  /** Health profiles — 5 min */
+  healthProfiles: 5 * 60 * 1000,
 } as const;

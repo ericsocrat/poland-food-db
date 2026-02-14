@@ -11,6 +11,7 @@ import { getUserPreferences, setUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { COUNTRIES, DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { HealthProfileSection } from "@/components/settings/HealthProfileSection";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -227,6 +228,9 @@ export default function SettingsPage() {
           </div>
         )}
       </section>
+
+      {/* Health Profiles */}
+      <HealthProfileSection />
 
       {/* Save button */}
       {dirty && (
