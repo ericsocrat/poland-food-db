@@ -25,7 +25,13 @@ export default function GlobalError({
             fontFamily: "system-ui, sans-serif",
           }}
         >
-          <h1 style={{ fontSize: "1.5rem", fontWeight: 700, marginBottom: "0.5rem" }}>
+          <h1
+            style={{
+              fontSize: "1.5rem",
+              fontWeight: 700,
+              marginBottom: "0.5rem",
+            }}
+          >
             Something went wrong
           </h1>
           <p style={{ color: "#6b7280", marginBottom: "1.5rem" }}>
