@@ -16,6 +16,15 @@ SET row_security = off;
 COMMENT ON SCHEMA "public" IS 'standard public schema';
 
 CREATE SCHEMA IF NOT EXISTS "extensions";
+CREATE SCHEMA IF NOT EXISTS "auth";
+
+CREATE OR REPLACE FUNCTION auth.uid()
+RETURNS uuid
+LANGUAGE sql
+STABLE
+AS $$
+    SELECT NULL::uuid;
+$$;
 
 DO $$
 BEGIN
