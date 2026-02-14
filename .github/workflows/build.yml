@@ -41,6 +41,25 @@ jobs:
         working-directory: frontend
         run: npm run test:coverage
 
+      - name: Install Playwright browsers
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright e2e tests
+        working-directory: frontend
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-key
+        run: npx playwright test
+
+      - name: Upload Playwright artifacts
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: frontend/test-results/
+          retention-days: 7
+
       - name: SonarQube Scan
         uses: SonarSource/sonarqube-scan-action@v6
         env:

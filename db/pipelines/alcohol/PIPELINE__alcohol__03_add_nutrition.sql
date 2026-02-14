@@ -14,7 +14,7 @@ where product_id in (
 insert into nutrition_facts
   (product_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
    carbs_g, sugars_g, fibre_g, protein_g, salt_g)
-select
+select distinct on (p.product_id)
   p.product_id,
   d.calories, d.total_fat_g, d.saturated_fat_g, d.trans_fat_g,
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
@@ -68,6 +68,7 @@ from (
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name
   and p.category = 'Alcohol' and p.is_deprecated is not true
+order by p.product_id
 on conflict (product_id) do update set
   calories = excluded.calories,
   total_fat_g = excluded.total_fat_g,

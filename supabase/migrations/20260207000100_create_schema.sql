@@ -15,9 +15,43 @@ SET row_security = off;
 
 COMMENT ON SCHEMA "public" IS 'standard public schema';
 
+CREATE SCHEMA IF NOT EXISTS "extensions";
+CREATE SCHEMA IF NOT EXISTS "auth";
+
+CREATE OR REPLACE FUNCTION auth.uid()
+RETURNS uuid
+LANGUAGE sql
+STABLE
+AS $$
+    SELECT NULL::uuid;
+$$;
+
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'anon') THEN
+        CREATE ROLE anon NOLOGIN;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticated') THEN
+        CREATE ROLE authenticated NOLOGIN;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN
+        CREATE ROLE service_role NOLOGIN;
+    END IF;
+END
+$$;
 
 
-CREATE EXTENSION IF NOT EXISTS "pg_graphql" WITH SCHEMA "graphql";
+
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_available_extensions WHERE name = 'pg_graphql'
+    ) THEN
+        CREATE SCHEMA IF NOT EXISTS graphql;
+        CREATE EXTENSION IF NOT EXISTS "pg_graphql" WITH SCHEMA "graphql";
+    END IF;
+END
+$$;
 
 
 
@@ -38,7 +72,16 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA "extensions";
 
 
 
-CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA "vault";
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_available_extensions WHERE name = 'supabase_vault'
+    ) THEN
+        CREATE SCHEMA IF NOT EXISTS vault;
+        CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA "vault";
+    END IF;
+END
+$$;
 
 
 
@@ -279,7 +322,15 @@ ALTER TABLE ONLY "public"."servings"
 
 
 
-ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_catalog.pg_publication WHERE pubname = 'supabase_realtime'
+    ) THEN
+        ALTER PUBLICATION "supabase_realtime" OWNER TO "postgres";
+    END IF;
+END
+$$;
 
 
 GRANT USAGE ON SCHEMA "public" TO "postgres";

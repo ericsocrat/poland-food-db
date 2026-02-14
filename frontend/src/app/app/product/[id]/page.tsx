@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -23,6 +23,7 @@ export default function ProductDetailPage() {
   const params = useParams();
   const productId = Number(params.id);
   const supabase = createClient();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   const {
@@ -52,10 +53,19 @@ export default function ProductDetailPage() {
     return (
       <div className="space-y-4">
         <BackButton />
-        <div className="card border-red-200 bg-red-50 text-center">
-          <p className="text-sm text-red-600">
-            Failed to load product. Please try again.
-          </p>
+        <div className="card border-red-200 bg-red-50 py-8 text-center">
+          <p className="mb-3 text-sm text-red-600">Failed to load product.</p>
+          <button
+            type="button"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            onClick={() =>
+              queryClient.invalidateQueries({
+                queryKey: queryKeys.product(productId),
+              })
+            }
+          >
+            Retry
+          </button>
         </div>
       </div>
     );
@@ -130,14 +140,50 @@ export default function ProductDetailPage() {
           )}
         </div>
 
-        {/* Flags */}
-        <div className="mt-3 flex flex-wrap gap-1">
-          {product.flags.high_sugar && <Flag label="High sugar" />}
-          {product.flags.high_salt && <Flag label="High salt" />}
-          {product.flags.high_sat_fat && <Flag label="High sat. fat" />}
-          {product.flags.high_additive_load && <Flag label="Many additives" />}
-          {product.flags.has_palm_oil && <Flag label="Palm oil" />}
-        </div>
+        {/* Flags — with "why" explanations */}
+        {(product.flags.high_sugar ||
+          product.flags.high_salt ||
+          product.flags.high_sat_fat ||
+          product.flags.high_additive_load ||
+          product.flags.has_palm_oil) && (
+          <div className="mt-3 space-y-1">
+            <p className="text-xs font-medium text-gray-400">
+              Health flags
+            </p>
+            <div className="flex flex-wrap gap-1">
+              {product.flags.high_sugar && (
+                <FlagWithExplanation
+                  label="High sugar"
+                  explanation="Sugar exceeds recommended threshold per 100 g (>13.5 g for food, >6.75 g for drinks)"
+                />
+              )}
+              {product.flags.high_salt && (
+                <FlagWithExplanation
+                  label="High salt"
+                  explanation="Salt exceeds 1.5 g per 100 g — UK FSA high-salt threshold"
+                />
+              )}
+              {product.flags.high_sat_fat && (
+                <FlagWithExplanation
+                  label="High sat. fat"
+                  explanation="Saturated fat exceeds 5 g per 100 g — UK FSA high threshold"
+                />
+              )}
+              {product.flags.high_additive_load && (
+                <FlagWithExplanation
+                  label="Many additives"
+                  explanation="Contains 5 or more food additives (E-numbers)"
+                />
+              )}
+              {product.flags.has_palm_oil && (
+                <FlagWithExplanation
+                  label="Palm oil"
+                  explanation="Contains palm oil — linked to deforestation and high in saturated fat"
+                />
+              )}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Tab bar */}
@@ -190,10 +236,33 @@ function BackButton() {
   );
 }
 
-function Flag({ label }: Readonly<{ label: string }>) {
+function FlagWithExplanation({
+  label,
+  explanation,
+}: Readonly<{ label: string; explanation: string }>) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <span className="rounded bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
-      {label}
+    <span className="group relative inline-block">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="inline-flex items-center gap-1 rounded bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
+      >
+        {label}
+        <svg className="h-3 w-3 opacity-50" viewBox="0 0 20 20" fill="currentColor">
+          <path
+            fillRule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+            clipRule="evenodd"
+          />
+        </svg>
+      </button>
+      {open && (
+        <span className="absolute bottom-full left-0 z-10 mb-1 w-56 rounded-lg border border-gray-200 bg-white p-2 text-xs text-gray-600 shadow-lg">
+          {explanation}
+        </span>
+      )}
     </span>
   );
 }
