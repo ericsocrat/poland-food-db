@@ -14,7 +14,7 @@ where product_id in (
 insert into nutrition_facts
   (product_id, calories, total_fat_g, saturated_fat_g, trans_fat_g,
    carbs_g, sugars_g, fibre_g, protein_g, salt_g)
-select
+select distinct on (p.product_id)
   p.product_id,
   d.calories, d.total_fat_g, d.saturated_fat_g, d.trans_fat_g,
   d.carbs_g, d.sugars_g, d.fibre_g, d.protein_g, d.salt_g
