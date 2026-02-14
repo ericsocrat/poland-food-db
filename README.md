@@ -62,6 +62,23 @@ supabase start
 .\RUN_LOCAL.ps1 -RunQA
 ```
 
+### 5. Frontend Development
+```bash
+cd frontend
+npm ci               # Install dependencies (uses lockfile)
+npm run dev          # Start dev server on http://localhost:3000
+npm run type-check   # TypeScript check (tsc --noEmit)
+npm run lint         # ESLint
+npm run build        # Production build
+npx playwright test  # E2E smoke tests (14 tests)
+```
+
+### CI Pipeline
+
+The GitHub Actions CI workflow runs automatically on pushes to `main` and pull requests. It checks: **install → type-check → lint → build → Playwright E2E tests**.
+
+See [DEPLOYMENT.md](DEPLOYMENT.md) for full deployment and CI configuration details.
+
 ---
 
 ## 📊 Current Status
