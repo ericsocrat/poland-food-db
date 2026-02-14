@@ -6,7 +6,7 @@
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { lookupByEan } from "@/lib/api";
@@ -15,15 +15,16 @@ import { isValidEan, stripNonDigits } from "@/lib/validation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 type ScanState =
-  | "idle"       // camera / manual input ready, no EAN submitted
+  | "idle" // camera / manual input ready, no EAN submitted
   | "looking-up" // EAN submitted, waiting for API
-  | "found"      // product exists → auto-redirect
-  | "not-found"  // EAN valid but not in DB
-  | "error";     // lookup failed
+  | "found" // product exists → auto-redirect
+  | "not-found" // EAN valid but not in DB
+  | "error"; // lookup failed
 
 export default function ScanPage() {
   const router = useRouter();
   const supabase = createClient();
+  const queryClient = useQueryClient();
   const [ean, setEan] = useState("");
   const [manualEan, setManualEan] = useState("");
   const [mode, setMode] = useState<"camera" | "manual">("camera");
@@ -219,13 +220,20 @@ export default function ScanPage() {
           <button
             onClick={() => {
               setScanState("looking-up");
-              setEan(ean); // re-trigger query
+              queryClient.invalidateQueries({
+                queryKey: queryKeys.scan(ean),
+              });
             }}
             className="btn-secondary flex-1"
+            aria-label="Retry lookup"
           >
             🔄 Retry
           </button>
-          <button onClick={handleReset} className="btn-primary flex-1">
+          <button
+            onClick={handleReset}
+            className="btn-primary flex-1"
+            aria-label="Scan another barcode"
+          >
             Scan another
           </button>
         </div>
