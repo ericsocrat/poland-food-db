@@ -5,6 +5,56 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import type { RpcResult } from "./types";
 
+// ─── Auth error detection constants ─────────────────────────────────────────
+
+/** Error codes that indicate an auth/session issue. */
+export const AUTH_CODES = [
+  "PGRST301",
+  "401",
+  "403",
+  "JWT_EXPIRED",
+] as const;
+
+/** Substrings in error messages that indicate an auth/session issue. */
+export const AUTH_MESSAGES = [
+  "JWT expired",
+  "not authenticated",
+  "permission denied",
+  "Invalid JWT",
+] as const;
+
+// ─── Error normalisation helpers ────────────────────────────────────────────
+
+export interface NormalizedError {
+  code: string;
+  message: string;
+}
+
+/** Turn a Supabase error (possibly partial) into a stable shape. */
+export function normalizeRpcError(
+  err: { code?: string | null; message?: string | null } | null | undefined,
+): NormalizedError {
+  return {
+    code: err?.code ?? "RPC_ERROR",
+    message: err?.message ?? "Unknown error",
+  };
+}
+
+/** Extract an error message from a backend-level `{ error: "..." }` payload. */
+export function extractBusinessError(
+  data: unknown,
+): NormalizedError | null {
+  if (data && typeof data === "object" && "error" in data) {
+    return {
+      code: "BUSINESS_ERROR",
+      message: String((data as Record<string, unknown>).error),
+    };
+  }
+  return null;
+}
+
+// ─── Core RPC caller ────────────────────────────────────────────────────────
+
 /**
  * Normalized RPC caller.
  * - Catches Supabase errors and normalizes them.
@@ -21,10 +71,7 @@ export async function callRpc<T>(
 
     // Supabase-level error (network, auth, permission)
     if (error) {
-      const normalized = {
-        code: error.code ?? "RPC_ERROR",
-        message: error.message ?? "Unknown error",
-      };
+      const normalized = normalizeRpcError(error);
 
       if (process.env.NODE_ENV === "development") {
         console.error(`[RPC] ${fnName} failed:`, error);
@@ -34,14 +81,13 @@ export async function callRpc<T>(
     }
 
     // Backend-level error (function returned { error: "..." })
-    if (data && typeof data === "object" && "error" in data) {
-      const msg = String((data as Record<string, unknown>).error);
-
+    const businessError = extractBusinessError(data);
+    if (businessError) {
       if (process.env.NODE_ENV === "development") {
-        console.warn(`[RPC] ${fnName} returned error:`, msg);
+        console.warn(`[RPC] ${fnName} returned error:`, businessError.message);
       }
 
-      return { ok: false, error: { code: "BUSINESS_ERROR", message: msg } };
+      return { ok: false, error: businessError };
     }
 
     return { ok: true, data: data as T };
@@ -56,21 +102,15 @@ export async function callRpc<T>(
   }
 }
 
+// ─── Auth error detection ───────────────────────────────────────────────────
+
 /**
  * Checks if an RPC error is an auth/session error that should trigger redirect.
  */
 export function isAuthError(error: { code: string; message: string }): boolean {
-  const authCodes = ["PGRST301", "401", "403", "JWT_EXPIRED"];
-  const authMessages = [
-    "JWT expired",
-    "not authenticated",
-    "permission denied",
-    "Invalid JWT",
-  ];
-
   return (
-    authCodes.includes(error.code) ||
-    authMessages.some((m) =>
+    (AUTH_CODES as readonly string[]).includes(error.code) ||
+    AUTH_MESSAGES.some((m) =>
       error.message.toLowerCase().includes(m.toLowerCase()),
     )
   );
