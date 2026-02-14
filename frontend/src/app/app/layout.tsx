@@ -11,9 +11,9 @@ import { CountryChip } from "@/components/common/CountryChip";
 
 export default async function AppLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   const supabase = createServerSupabaseClient();
 
   // Double-check auth (middleware should have caught this, but belt-and-suspenders)

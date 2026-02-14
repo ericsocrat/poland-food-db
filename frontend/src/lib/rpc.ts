@@ -35,7 +35,7 @@ export async function callRpc<T>(
 
     // Backend-level error (function returned { error: "..." })
     if (data && typeof data === "object" && "error" in data) {
-      const msg = (data as Record<string, unknown>).error as string;
+      const msg = String((data as Record<string, unknown>).error);
 
       if (process.env.NODE_ENV === "development") {
         console.warn(`[RPC] ${fnName} returned error:`, msg);

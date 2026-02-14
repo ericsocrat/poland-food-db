@@ -7,20 +7,19 @@ const SIZES = {
 export function LoadingSpinner({
   className = "",
   size = "md",
-}: {
+}: Readonly<{
   className?: string;
   size?: keyof typeof SIZES;
-}) {
+}>) {
   return (
-    <div
+    <output
       className={`flex items-center justify-center ${className}`}
-      role="status"
       aria-label="Loading"
     >
       <div
         className={`animate-spin rounded-full border-gray-200 border-t-brand-600 ${SIZES[size]}`}
       />
       <span className="sr-only">Loading…</span>
-    </div>
+    </output>
   );
 }

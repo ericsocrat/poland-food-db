@@ -106,21 +106,27 @@ export default function CategoryListingPage() {
       </div>
 
       {/* Product list */}
-      {isLoading ? (
+      {isLoading && (
         <div className="flex justify-center py-12">
           <LoadingSpinner />
         </div>
-      ) : error ? (
+      )}
+
+      {!isLoading && error && (
         <p className="py-12 text-center text-sm text-red-500">
           Failed to load products.
         </p>
-      ) : data?.products.length === 0 ? (
+      )}
+
+      {!isLoading && !error && data?.products.length === 0 && (
         <p className="py-12 text-center text-sm text-gray-400">
           No products in this category.
         </p>
-      ) : (
+      )}
+
+      {!isLoading && !error && data && data.products.length > 0 && (
         <ul className="space-y-2">
-          {data?.products.map((p) => (
+          {data.products.map((p) => (
             <ProductRow key={p.product_id} product={p} />
           ))}
         </ul>
@@ -152,7 +158,7 @@ export default function CategoryListingPage() {
   );
 }
 
-function ProductRow({ product }: { product: CategoryProduct }) {
+function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
   const band = SCORE_BANDS[product.score_band];
   const nutriClass = product.nutri_score
     ? NUTRI_COLORS[product.nutri_score]

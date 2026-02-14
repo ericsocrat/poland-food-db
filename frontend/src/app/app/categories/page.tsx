@@ -59,7 +59,7 @@ export default function CategoriesPage() {
   );
 }
 
-function CategoryCard({ category }: { category: CategoryOverviewItem }) {
+function CategoryCard({ category }: Readonly<{ category: CategoryOverviewItem }>) {
   const band = scoreToBand(category.avg_score);
   const display = SCORE_BANDS[band];
 

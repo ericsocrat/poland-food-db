@@ -18,7 +18,7 @@ interface RouteGuardProps {
   children: React.ReactNode;
 }
 
-export function RouteGuard({ children }: RouteGuardProps) {
+export function RouteGuard({ children }: Readonly<RouteGuardProps>) {
   const router = useRouter();
   const supabase = createClient();
 
@@ -45,7 +45,7 @@ export function RouteGuard({ children }: RouteGuardProps) {
       if (isAuthError({ code: err.code ?? "", message: err.message })) {
         toast.error("Session expired. Please log in again.");
         // Preserve current path + querystring so login can redirect back
-        const redirectTo = window.location.pathname + window.location.search;
+        const redirectTo = globalThis.location.pathname + globalThis.location.search;
         router.push(
           `/auth/login?reason=expired&redirect=${encodeURIComponent(redirectTo)}`,
         );

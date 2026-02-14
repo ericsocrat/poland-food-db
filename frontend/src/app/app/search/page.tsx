@@ -65,11 +65,12 @@ export default function SearchPage() {
             d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
           />
         </svg>
-        {isFetching ? (
+        {isFetching && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
             <LoadingSpinner size="sm" />
           </div>
-        ) : query.length > 0 ? (
+        )}
+        {!isFetching && query.length > 0 && (
           <button
             onClick={() => setQuery("")}
             className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
@@ -83,7 +84,7 @@ export default function SearchPage() {
               />
             </svg>
           </button>
-        ) : null}
+        )}
       </div>
 
       {/* Results */}
@@ -136,7 +137,7 @@ export default function SearchPage() {
   );
 }
 
-function ProductRow({ product }: { product: SearchResult }) {
+function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
   const band = SCORE_BANDS[product.score_band];
   const nutriClass = product.nutri_score
     ? NUTRI_COLORS[product.nutri_score]

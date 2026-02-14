@@ -37,7 +37,7 @@ export default function ProductDetailPage() {
       return result.data;
     },
     staleTime: staleTimes.product,
-    enabled: !isNaN(productId),
+    enabled: !Number.isNaN(productId),
   });
 
   if (isLoading) {
@@ -190,7 +190,7 @@ function BackButton() {
   );
 }
 
-function Flag({ label }: { label: string }) {
+function Flag({ label }: Readonly<{ label: string }>) {
   return (
     <span className="rounded bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600">
       {label}
@@ -200,7 +200,7 @@ function Flag({ label }: { label: string }) {
 
 // ─── Overview Tab ───────────────────────────────────────────────────────────
 
-function OverviewTab({ product }: { product: ProductDetail }) {
+function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
   return (
     <div className="space-y-4">
       {/* Ingredients */}
@@ -233,7 +233,7 @@ function OverviewTab({ product }: { product: ProductDetail }) {
                 key={tag}
                 className="rounded bg-amber-50 px-2 py-0.5 text-xs text-amber-700"
               >
-                {tag.replace("en:", "")}
+                {tag.replaceAll("en:", "")}
               </span>
             ))}
           </div>
@@ -246,7 +246,7 @@ function OverviewTab({ product }: { product: ProductDetail }) {
                     key={tag}
                     className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
                   >
-                    {tag.replace("en:", "")}
+                    {tag.replaceAll("en:", "")}
                   </span>
                 ))}
               </div>
@@ -273,7 +273,7 @@ function OverviewTab({ product }: { product: ProductDetail }) {
 
 // ─── Nutrition Tab ──────────────────────────────────────────────────────────
 
-function NutritionTab({ product }: { product: ProductDetail }) {
+function NutritionTab({ product }: Readonly<{ product: ProductDetail }>) {
   const n = product.nutrition_per_100g;
   const rows = [
     { label: "Calories", value: `${n.calories} kcal` },
@@ -316,7 +316,7 @@ function NutritionTab({ product }: { product: ProductDetail }) {
 
 // ─── Alternatives Tab ───────────────────────────────────────────────────────
 
-function AlternativesTab({ productId }: { productId: number }) {
+function AlternativesTab({ productId }: Readonly<{ productId: number }>) {
   const supabase = createClient();
 
   const { data, isLoading } = useQuery({
@@ -358,7 +358,7 @@ function AlternativesTab({ productId }: { productId: number }) {
   );
 }
 
-function AlternativeCard({ alt }: { alt: Alternative }) {
+function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
   const nutriClass = alt.nutri_score
     ? NUTRI_COLORS[alt.nutri_score]
     : "bg-gray-200 text-gray-500";
@@ -390,7 +390,7 @@ function AlternativeCard({ alt }: { alt: Alternative }) {
 
 // ─── Scoring Tab ────────────────────────────────────────────────────────────
 
-function ScoringTab({ productId }: { productId: number }) {
+function ScoringTab({ productId }: Readonly<{ productId: number }>) {
   const supabase = createClient();
 
   const { data, isLoading } = useQuery({
@@ -456,8 +456,8 @@ function ScoringTab({ productId }: { productId: number }) {
             Warnings
           </h3>
           <ul className="list-inside list-disc space-y-1 text-sm text-amber-700">
-            {data.warnings.map((w, i) => (
-              <li key={i}>{w.message}</li>
+            {data.warnings.map((w) => (
+              <li key={w.message}>{w.message}</li>
             ))}
           </ul>
         </div>

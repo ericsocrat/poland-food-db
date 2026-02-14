@@ -8,10 +8,10 @@ import { useEffect } from "react";
 export default function Error({
   error,
   reset,
-}: {
+}: Readonly<{
   error: Error & { digest?: string };
   reset: () => void;
-}) {
+}>) {
   useEffect(() => {
     // Log error for debugging (console in dev, could be a service in prod)
     console.error("[ErrorBoundary]", error);

@@ -61,11 +61,11 @@ function Feature({
   icon,
   title,
   desc,
-}: {
+}: Readonly<{
   icon: string;
   title: string;
   desc: string;
-}) {
+}>) {
   return (
     <div className="text-center">
       <span className="text-3xl">{icon}</span>

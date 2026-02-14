@@ -3,9 +3,9 @@
 
 export default function OnboardingLayout({
   children,
-}: {
+}: Readonly<{
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <div className="flex min-h-screen flex-col bg-gray-50">
       <header className="border-b border-gray-200 bg-white">
