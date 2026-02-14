@@ -2,7 +2,7 @@
 
 // ─── Categories overview — grid of category cards ───────────────────────────
 
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getCategoryOverview } from "@/lib/api";
@@ -20,6 +20,7 @@ function scoreToBand(score: number): ScoreBand {
 
 export default function CategoriesPage() {
   const supabase = createClient();
+  const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.categoryOverview,
@@ -41,9 +42,22 @@ export default function CategoriesPage() {
 
   if (error) {
     return (
-      <p className="py-12 text-center text-sm text-red-500">
-        Failed to load categories. Please try again.
-      </p>
+      <div className="py-12 text-center">
+        <p className="mb-3 text-sm text-red-500">
+          Failed to load categories.
+        </p>
+        <button
+          type="button"
+          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          onClick={() =>
+            queryClient.invalidateQueries({
+              queryKey: queryKeys.categoryOverview,
+            })
+          }
+        >
+          Retry
+        </button>
+      </div>
     );
   }
 

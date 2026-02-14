@@ -182,6 +182,33 @@ export default function ScanPage() {
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
+  // Lookup error state
+  if (ean && lookupError) {
+    return (
+      <div className="space-y-4">
+        <div className="card border-red-200 bg-red-50 text-center">
+          <p className="mb-2 text-4xl">⚠️</p>
+          <p className="text-lg font-semibold text-gray-900">Lookup failed</p>
+          <p className="mt-1 text-sm text-gray-500">
+            Could not look up EAN {ean}. Please check your connection and try
+            again.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setEan(ean)}
+            className="btn-secondary flex-1"
+          >
+            🔄 Retry
+          </button>
+          <button onClick={handleReset} className="btn-primary flex-1">
+            Scan another
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   // Show result if EAN was looked up but not found
   if (ean && lookupResult && "found" in lookupResult && !lookupResult.found) {
     return (
@@ -302,13 +329,10 @@ export default function ScanPage() {
           >
             Look up
           </button>
+          <p className="text-center text-xs text-gray-400">
+            Enter 8 digits (EAN-8) or 13 digits (EAN-13)
+          </p>
         </form>
-      )}
-
-      {lookupError && (
-        <p className="text-center text-sm text-red-500">
-          Lookup failed. Please try again.
-        </p>
       )}
     </div>
   );

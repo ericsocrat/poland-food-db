@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import {
@@ -23,6 +23,7 @@ export default function ProductDetailPage() {
   const params = useParams();
   const productId = Number(params.id);
   const supabase = createClient();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
 
   const {
@@ -52,10 +53,21 @@ export default function ProductDetailPage() {
     return (
       <div className="space-y-4">
         <BackButton />
-        <div className="card border-red-200 bg-red-50 text-center">
-          <p className="text-sm text-red-600">
-            Failed to load product. Please try again.
+        <div className="card border-red-200 bg-red-50 py-8 text-center">
+          <p className="mb-3 text-sm text-red-600">
+            Failed to load product.
           </p>
+          <button
+            type="button"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            onClick={() =>
+              queryClient.invalidateQueries({
+                queryKey: queryKeys.product(productId),
+              })
+            }
+          >
+            Retry
+          </button>
         </div>
       </div>
     );

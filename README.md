@@ -70,14 +70,27 @@ npm run dev          # Start dev server on http://localhost:3000
 npm run type-check   # TypeScript check (tsc --noEmit)
 npm run lint         # ESLint
 npm run build        # Production build
+npm test             # Unit tests (Vitest, 56 tests)
+npm run test:coverage # Unit tests + v8 coverage (lcov)
 npx playwright test  # E2E smoke tests (14 tests)
+```
+
+#### Running Playwright Locally
+```bash
+cd frontend
+npx playwright install --with-deps chromium   # first time only
+npx playwright test                           # runs against local dev server
+npx playwright test --ui                      # interactive UI mode
+npx playwright show-report                    # open last HTML report
 ```
 
 ### CI Pipeline
 
-The GitHub Actions CI workflow runs automatically on pushes to `main` and pull requests. It checks: **install → type-check → lint → build → Playwright E2E tests**.
+The GitHub Actions CI workflow runs automatically on pushes to `main` and pull requests:
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for full deployment and CI configuration details.
+**install → type-check → lint → build → unit tests (coverage) → Playwright e2e → SonarCloud scan → Quality Gate**
+
+Failed Playwright runs upload screenshots and traces as artifacts for debugging. See [DEPLOYMENT.md](DEPLOYMENT.md) for full deployment configuration details.
 
 ---
 

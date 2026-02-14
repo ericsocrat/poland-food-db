@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getCategoryListing } from "@/lib/api";
@@ -26,6 +26,7 @@ export default function CategoryListingPage() {
   const params = useParams();
   const slug = params.slug as string;
   const supabase = createClient();
+  const queryClient = useQueryClient();
 
   const [sortBy, setSortBy] = useState("unhealthiness_score");
   const [sortDir, setSortDir] = useState("asc");
@@ -114,9 +115,22 @@ export default function CategoryListingPage() {
       )}
 
       {!isLoading && error && (
-        <p className="py-12 text-center text-sm text-red-500">
-          Failed to load products.
-        </p>
+        <div className="py-12 text-center">
+          <p className="mb-3 text-sm text-red-500">
+            Failed to load products.
+          </p>
+          <button
+            type="button"
+            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            onClick={() =>
+              queryClient.invalidateQueries({
+                queryKey: queryKeys.categoryListing(slug, sortBy, sortDir, offset),
+              })
+            }
+          >
+            Retry
+          </button>
+        </div>
       )}
 
       {!isLoading && !error && data?.products.length === 0 && (
