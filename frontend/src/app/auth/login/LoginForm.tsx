@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { sanitizeRedirect } from "@/lib/validation";
 
 export function LoginForm() {
   const router = useRouter();
@@ -15,12 +16,7 @@ export function LoginForm() {
   const [loading, setLoading] = useState(false);
 
   const reason = searchParams.get("reason");
-  // Prevent open redirect — only allow relative paths starting with /
-  const rawRedirect = searchParams.get("redirect");
-  const redirect =
-    rawRedirect && rawRedirect.startsWith("/") && !rawRedirect.startsWith("//")
-      ? rawRedirect
-      : "/app/search";
+  const redirect = sanitizeRedirect(searchParams.get("redirect"));
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault();

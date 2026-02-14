@@ -11,6 +11,7 @@ import { getCategoryListing } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { formatSlug } from "@/lib/validation";
 import type { CategoryProduct } from "@/lib/types";
 
 const PAGE_SIZE = 20;
@@ -69,7 +70,7 @@ export default function CategoryListingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold capitalize text-gray-900">
-          {slug.replaceAll("_", " ")}
+          {formatSlug(slug)}
         </h1>
         {data && (
           <span className="text-sm text-gray-500">

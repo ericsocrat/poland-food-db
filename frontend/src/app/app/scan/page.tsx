@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { lookupByEan } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { isValidEan, stripNonDigits } from "@/lib/validation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
 export default function ScanPage() {
@@ -68,7 +69,7 @@ export default function ScanPage() {
           if (result) {
             const code = result.getText();
             // Validate EAN format (8 or 13 digits)
-            if (/^\d{8}$|^\d{13}$/.test(code)) {
+            if (isValidEan(code)) {
               setEan(code);
               stopScanner();
             }
@@ -166,7 +167,7 @@ export default function ScanPage() {
   function handleManualSubmit(e: React.FormEvent) {
     e.preventDefault();
     const cleaned = manualEan.trim();
-    if (!/^\d{8}$|^\d{13}$/.test(cleaned)) {
+    if (!isValidEan(cleaned)) {
       toast.error("Please enter a valid 8 or 13 digit barcode");
       return;
     }
@@ -287,7 +288,7 @@ export default function ScanPage() {
           <input
             type="text"
             value={manualEan}
-            onChange={(e) => setManualEan(e.target.value.replaceAll(/\D/g, ""))}
+            onChange={(e) => setManualEan(stripNonDigits(e.target.value))}
             placeholder="Enter EAN barcode (8 or 13 digits)"
             className="input-field text-center text-lg tracking-widest"
             maxLength={13}

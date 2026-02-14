@@ -27,6 +27,7 @@ pnpm-lock.yaml
 out/
 playwright-report/
 test-results/
+coverage/
 tsconfig.tsbuildinfo
 
 # ─── Python ─────────────────────────────────────────────────────────────────
