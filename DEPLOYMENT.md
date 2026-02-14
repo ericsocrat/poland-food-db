@@ -18,10 +18,10 @@ The frontend is deployed on Vercel from the `frontend/` directory.
 
 Set these in **Vercel > Project Settings > Environment Variables**:
 
-| Key                            | Example Value                                    |
-| ------------------------------ | ------------------------------------------------ |
-| `NEXT_PUBLIC_SUPABASE_URL`     | `https://your-project.supabase.co`               |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`| `eyJhbGciOiJIUzI1NiIsInR5cCI6...`                |
+| Key                             | Example Value                      |
+| ------------------------------- | ---------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | `https://your-project.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `eyJhbGciOiJIUzI1NiIsInR5cCI6...`  |
 
 These are public keys (embedded in the client bundle). The anon key only grants access allowed by RLS policies.
 
@@ -46,11 +46,13 @@ These are public keys (embedded in the client bundle). The anon key only grants 
 
 ### Preview Deployments
 
-For Vercel preview deployments, add additional redirect URLs:
+For Vercel preview deployments, add a wildcard redirect URL matching your preview domain pattern:
 
 ```
-https://*-ericsocrat.vercel.app/auth/callback
+https://*-<your-vercel-username>.vercel.app/auth/callback
 ```
+
+Replace `<your-vercel-username>` with your actual Vercel account name (e.g., `https://*-janedoe.vercel.app/auth/callback`).
 
 > **Note:** Supabase supports wildcard subdomains in redirect URLs. This allows all Vercel preview deployments to use auth callbacks.
 
@@ -66,7 +68,9 @@ User signs up → Supabase sends confirmation email
   → If false → /onboarding/region → /onboarding/preferences → /app/search
 ```
 
-The callback route (`/auth/callback`) is the only auth callback target. It validates the redirect parameter to prevent open-redirect attacks (only relative paths starting with `/` are accepted).
+The callback route (`/auth/callback`) is the only auth callback target. It exchanges the Supabase auth code for a session and redirects to `/app/search`.
+
+Post-login redirect validation happens in the **login form** (`LoginForm.tsx`): the `redirect` query parameter is validated to prevent open-redirect attacks — only relative paths starting with `/` are accepted, and `//` prefixes are blocked.
 
 ---
 
@@ -88,10 +92,10 @@ The callback route (`/auth/callback`) is the only auth callback target. It valid
 
 Add these in **GitHub > Settings > Secrets and variables > Actions > Repository secrets**:
 
-| Secret                         | Value                                            |
-| ------------------------------ | ------------------------------------------------ |
-| `NEXT_PUBLIC_SUPABASE_URL`     | `https://your-project.supabase.co`               |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`| Your Supabase anon key                           |
+| Secret                          | Value                              |
+| ------------------------------- | ---------------------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`      | `https://your-project.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key             |
 
 ### CI Pipeline
 
@@ -111,5 +115,5 @@ npm ci
 npm run type-check    # TypeScript check
 npm run lint          # ESLint
 npm run build         # Production build
-npx playwright test   # E2E tests (requires dev server)
+npx playwright test   # E2E tests (auto-starts dev server via webServer config)
 ```
