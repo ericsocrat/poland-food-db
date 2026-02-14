@@ -5,6 +5,8 @@ import {
   DIET_OPTIONS,
   SCORE_BANDS,
   NUTRI_COLORS,
+  HEALTH_CONDITIONS,
+  WARNING_SEVERITY,
 } from "@/lib/constants";
 
 describe("COUNTRIES", () => {
@@ -67,6 +69,41 @@ describe("NUTRI_COLORS", () => {
   it("has entries for A through E", () => {
     for (const grade of ["A", "B", "C", "D", "E"]) {
       expect(NUTRI_COLORS[grade]).toBeTruthy();
+    }
+  });
+});
+
+describe("HEALTH_CONDITIONS", () => {
+  it("has 7 conditions", () => {
+    expect(HEALTH_CONDITIONS).toHaveLength(7);
+  });
+
+  it("each condition has value, label, and icon", () => {
+    for (const condition of HEALTH_CONDITIONS) {
+      expect(condition.value).toBeTruthy();
+      expect(condition.label).toBeTruthy();
+      expect(condition.icon).toBeTruthy();
+    }
+  });
+
+  it("includes diabetes and celiac_disease", () => {
+    const values = HEALTH_CONDITIONS.map((c) => c.value);
+    expect(values).toContain("diabetes");
+    expect(values).toContain("celiac_disease");
+  });
+});
+
+describe("WARNING_SEVERITY", () => {
+  it("has critical, high, and moderate levels", () => {
+    expect(Object.keys(WARNING_SEVERITY)).toEqual(["critical", "high", "moderate"]);
+  });
+
+  it("each level has label, color, bg, and border", () => {
+    for (const level of Object.values(WARNING_SEVERITY)) {
+      expect(level.label).toBeTruthy();
+      expect(level.color).toMatch(/^text-/);
+      expect(level.bg).toMatch(/^bg-/);
+      expect(level.border).toMatch(/^border-/);
     }
   });
 });

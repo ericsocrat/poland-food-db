@@ -48,6 +48,18 @@ describe("queryKeys", () => {
   it("scoreExplanation key for a given product", () => {
     expect(queryKeys.scoreExplanation(7)).toEqual(["score-explanation", 7]);
   });
+
+  it("healthProfiles is a static tuple", () => {
+    expect(queryKeys.healthProfiles).toEqual(["health-profiles"]);
+  });
+
+  it("activeHealthProfile is a static tuple", () => {
+    expect(queryKeys.activeHealthProfile).toEqual(["active-health-profile"]);
+  });
+
+  it("healthWarnings key for a given product", () => {
+    expect(queryKeys.healthWarnings(99)).toEqual(["health-warnings", 99]);
+  });
 });
 
 // ─── staleTimes ─────────────────────────────────────────────────────────────
@@ -69,5 +81,9 @@ describe("staleTimes", () => {
     for (const [, value] of Object.entries(staleTimes)) {
       expect(value).toBeGreaterThan(0);
     }
+  });
+
+  it("healthProfiles is 5 minutes", () => {
+    expect(staleTimes.healthProfiles).toBe(5 * 60 * 1000);
   });
 });

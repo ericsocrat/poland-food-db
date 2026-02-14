@@ -22,11 +22,11 @@ function ProfileForm({
   initial,
   onSave,
   onCancel,
-}: {
+}: Readonly<{
   initial?: HealthProfile;
   onSave: () => void;
   onCancel: () => void;
-}) {
+}>) {
   const supabase = createClient();
   const [name, setName] = useState(initial?.profile_name ?? "");
   const [conditions, setConditions] = useState<HealthCondition[]>(
@@ -36,9 +36,7 @@ function ProfileForm({
   const [maxSugar, setMaxSugar] = useState(
     initial?.max_sugar_g?.toString() ?? "",
   );
-  const [maxSalt, setMaxSalt] = useState(
-    initial?.max_salt_g?.toString() ?? "",
-  );
+  const [maxSalt, setMaxSalt] = useState(initial?.max_salt_g?.toString() ?? "");
   const [maxSatFat, setMaxSatFat] = useState(
     initial?.max_saturated_fat_g?.toString() ?? "",
   );
@@ -91,14 +89,22 @@ function ProfileForm({
     onSave();
   }
 
+  let submitLabel = "Create";
+  if (saving) submitLabel = "Saving…";
+  else if (initial) submitLabel = "Update";
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {/* Name */}
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="hp-name"
+          className="mb-1 block text-sm font-medium text-gray-700"
+        >
           Profile name
         </label>
         <input
+          id="hp-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -110,9 +116,9 @@ function ProfileForm({
 
       {/* Conditions */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">
+        <p className="mb-2 block text-sm font-medium text-gray-700">
           Health conditions
-        </label>
+        </p>
         <div className="flex flex-wrap gap-2">
           {HEALTH_CONDITIONS.map((c) => (
             <button
@@ -133,15 +139,19 @@ function ProfileForm({
 
       {/* Nutrient limits */}
       <div>
-        <label className="mb-2 block text-sm font-medium text-gray-700">
+        <p className="mb-2 block text-sm font-medium text-gray-700">
           Nutrient limits (per 100g, optional)
-        </label>
+        </p>
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="mb-1 block text-xs text-gray-500">
+            <label
+              htmlFor="hp-max-sugar"
+              className="mb-1 block text-xs text-gray-500"
+            >
               Max sugar (g)
             </label>
             <input
+              id="hp-max-sugar"
               type="number"
               min="0"
               step="0.1"
@@ -152,10 +162,14 @@ function ProfileForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-gray-500">
+            <label
+              htmlFor="hp-max-salt"
+              className="mb-1 block text-xs text-gray-500"
+            >
               Max salt (g)
             </label>
             <input
+              id="hp-max-salt"
               type="number"
               min="0"
               step="0.01"
@@ -166,10 +180,14 @@ function ProfileForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-gray-500">
+            <label
+              htmlFor="hp-max-sat-fat"
+              className="mb-1 block text-xs text-gray-500"
+            >
               Max sat. fat (g)
             </label>
             <input
+              id="hp-max-sat-fat"
               type="number"
               min="0"
               step="0.1"
@@ -180,10 +198,14 @@ function ProfileForm({
             />
           </div>
           <div>
-            <label className="mb-1 block text-xs text-gray-500">
+            <label
+              htmlFor="hp-max-cal"
+              className="mb-1 block text-xs text-gray-500"
+            >
               Max calories (kcal)
             </label>
             <input
+              id="hp-max-cal"
               type="number"
               min="0"
               step="1"
@@ -198,10 +220,14 @@ function ProfileForm({
 
       {/* Notes */}
       <div>
-        <label className="mb-1 block text-sm font-medium text-gray-700">
+        <label
+          htmlFor="hp-notes"
+          className="mb-1 block text-sm font-medium text-gray-700"
+        >
           Notes (optional)
         </label>
         <textarea
+          id="hp-notes"
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
@@ -219,19 +245,13 @@ function ProfileForm({
           onChange={(e) => setIsActive(e.target.checked)}
           className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
         />
-        <span className="text-sm text-gray-700">
-          Set as active profile
-        </span>
+        <span className="text-sm text-gray-700">Set as active profile</span>
       </label>
 
       {/* Actions */}
       <div className="flex gap-2">
-        <button
-          type="submit"
-          disabled={saving}
-          className="btn-primary flex-1"
-        >
-          {saving ? "Saving…" : initial ? "Update" : "Create"}
+        <button type="submit" disabled={saving} className="btn-primary flex-1">
+          {submitLabel}
         </button>
         <button
           type="button"
@@ -323,9 +343,7 @@ export function HealthProfileSection() {
   return (
     <section className="card">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-700">
-          Health Profiles
-        </h2>
+        <h2 className="text-sm font-semibold text-gray-700">Health Profiles</h2>
         {!editingProfile && profiles.length < 5 && (
           <button
             onClick={() => setEditingProfile("new")}
@@ -384,9 +402,7 @@ export function HealthProfileSection() {
                   <button
                     onClick={() => handleToggleActive(profile)}
                     className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
-                    title={
-                      profile.is_active ? "Deactivate" : "Set as active"
-                    }
+                    title={profile.is_active ? "Deactivate" : "Set as active"}
                   >
                     {profile.is_active ? "⏸" : "▶"}
                   </button>
@@ -412,9 +428,7 @@ export function HealthProfileSection() {
       {/* Form (create or edit) */}
       {editingProfile && (
         <ProfileForm
-          initial={
-            editingProfile === "new" ? undefined : editingProfile
-          }
+          initial={editingProfile === "new" ? undefined : editingProfile}
           onSave={handleSaved}
           onCancel={() => setEditingProfile(null)}
         />
