@@ -1,5 +1,39 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// Auth e2e tests require SUPABASE_SERVICE_ROLE_KEY to provision test users.
+// When the key is not set, only smoke tests run (no auth coverage).
+const HAS_AUTH = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+/* ── Project definitions ─────────────────────────────────────────────────── */
+
+const smokeProject = {
+  name: "smoke",
+  testMatch: /smoke\.spec\.ts/,
+  use: { ...devices["Desktop Chrome"] },
+};
+
+const authSetupProject = {
+  name: "auth-setup",
+  testMatch: /auth\.setup\.ts/,
+  use: { ...devices["Desktop Chrome"] },
+};
+
+const authenticatedProject = {
+  name: "authenticated",
+  testMatch: /authenticated\.spec\.ts/,
+  dependencies: ["auth-setup"],
+  use: {
+    ...devices["Desktop Chrome"],
+    storageState: "e2e/.auth/user.json",
+  },
+};
+
+const projects = HAS_AUTH
+  ? [authSetupProject, smokeProject, authenticatedProject]
+  : [smokeProject];
+
+/* ── Config ──────────────────────────────────────────────────────────────── */
+
 export default defineConfig({
   testDir: "./e2e",
   fullyParallel: true,
@@ -8,18 +42,15 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? "list" : "html",
 
+  ...(HAS_AUTH && { globalTeardown: "./e2e/global-teardown" }),
+
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
   },
 
-  projects: [
-    {
-      name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
-    },
-  ],
+  projects,
 
   webServer: {
     command: "npm run dev -- --port 3000",
