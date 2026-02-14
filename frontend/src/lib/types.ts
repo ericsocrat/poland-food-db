@@ -263,3 +263,61 @@ export interface DataConfidence {
 export type ScoreBand = "low" | "moderate" | "high" | "very_high";
 export type NutriGrade = "A" | "B" | "C" | "D" | "E" | null;
 export type DietPreference = "none" | "vegetarian" | "vegan";
+
+// ─── Health Profiles ────────────────────────────────────────────────────────
+
+export type HealthCondition =
+  | "diabetes"
+  | "hypertension"
+  | "heart_disease"
+  | "celiac_disease"
+  | "gout"
+  | "kidney_disease"
+  | "ibs";
+
+export interface HealthProfile {
+  profile_id: string;
+  profile_name: string;
+  is_active: boolean;
+  health_conditions: HealthCondition[];
+  max_sugar_g: number | null;
+  max_salt_g: number | null;
+  max_saturated_fat_g: number | null;
+  max_calories_kcal: number | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HealthProfileListResponse {
+  api_version: string;
+  profiles: HealthProfile[];
+}
+
+export interface HealthProfileActiveResponse {
+  api_version: string;
+  profile: HealthProfile | null;
+}
+
+export interface HealthProfileMutationResponse {
+  api_version: string;
+  profile_id: string;
+  created?: boolean;
+  updated?: boolean;
+  deleted?: boolean;
+}
+
+export type WarningSeverity = "critical" | "high" | "moderate";
+
+export interface HealthWarning {
+  condition: string;
+  severity: WarningSeverity;
+  message: string;
+}
+
+export interface HealthWarningsResponse {
+  api_version: string;
+  product_id: number;
+  warning_count: number;
+  warnings: HealthWarning[];
+}
