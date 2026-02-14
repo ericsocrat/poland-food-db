@@ -17,7 +17,16 @@ COMMENT ON SCHEMA "public" IS 'standard public schema';
 
 
 
-CREATE EXTENSION IF NOT EXISTS "pg_graphql" WITH SCHEMA "graphql";
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_available_extensions WHERE name = 'pg_graphql'
+    ) THEN
+        CREATE SCHEMA IF NOT EXISTS graphql;
+        CREATE EXTENSION IF NOT EXISTS "pg_graphql" WITH SCHEMA "graphql";
+    END IF;
+END
+$$;
 
 
 
@@ -38,7 +47,16 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto" WITH SCHEMA "extensions";
 
 
 
-CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA "vault";
+DO $$
+BEGIN
+    IF EXISTS (
+        SELECT 1 FROM pg_available_extensions WHERE name = 'supabase_vault'
+    ) THEN
+        CREATE SCHEMA IF NOT EXISTS vault;
+        CREATE EXTENSION IF NOT EXISTS "supabase_vault" WITH SCHEMA "vault";
+    END IF;
+END
+$$;
 
 
 
