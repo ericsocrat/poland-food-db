@@ -54,9 +54,7 @@ export default function ProductDetailPage() {
       <div className="space-y-4">
         <BackButton />
         <div className="card border-red-200 bg-red-50 py-8 text-center">
-          <p className="mb-3 text-sm text-red-600">
-            Failed to load product.
-          </p>
+          <p className="mb-3 text-sm text-red-600">Failed to load product.</p>
           <button
             type="button"
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"

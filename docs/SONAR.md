@@ -46,11 +46,11 @@ sonar.javascript.lcov.reportPaths=frontend/coverage/lcov.info
 
 All SQL pipeline and migration files are **excluded** from Sonar analysis:
 
-| Exclusion pattern       | Reason                                                                              |
-| ----------------------- | ------------------------------------------------------------------------------------ |
-| `db/pipelines/**`       | Seed-data INSERT scripts — produce ~2k false-positive "duplicate literal" warnings.  |
-| `db/migrations/**`      | Schema migration scripts, not application logic.                                     |
-| `supabase/migrations/**`| Supabase migration scripts.                                                          |
+| Exclusion pattern        | Reason                                                                              |
+| ------------------------ | ----------------------------------------------------------------------------------- |
+| `db/pipelines/**`        | Seed-data INSERT scripts — produce ~2k false-positive "duplicate literal" warnings. |
+| `db/migrations/**`       | Schema migration scripts, not application logic.                                    |
+| `supabase/migrations/**` | Supabase migration scripts.                                                         |
 
 ### PL/SQL Data Dictionary Warning
 
@@ -81,8 +81,8 @@ The GitHub Actions workflow (`.github/workflows/build.yml`) runs:
 
 ## Known Accepted Issues
 
-| Issue | Reason | Resolution |
-|-------|--------|------------|
-| `@supabase/ssr` deprecated overload warning (TS6387) | Library keeps the old overload for backward compat. Our code uses the correct `getAll`/`setAll` API. | Will resolve when `@supabase/ssr` v1.0 ships. |
-| Middleware matcher uses escaped `\\.` in a string (Sonar prefers `String.raw`) | Next.js requires a **plain string literal** in `config.matcher` for static analysis. `String.raw` tagged templates break the build. | Accepted with `eslint-disable` comment. |
-| ~117 legacy maintainability issues | Inherited from initial rapid development. | Paid down gradually in touched files; not bulk-fixed. |
+| Issue                                                                          | Reason                                                                                                                              | Resolution                                            |
+| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| `@supabase/ssr` deprecated overload warning (TS6387)                           | Library keeps the old overload for backward compat. Our code uses the correct `getAll`/`setAll` API.                                | Will resolve when `@supabase/ssr` v1.0 ships.         |
+| Middleware matcher uses escaped `\\.` in a string (Sonar prefers `String.raw`) | Next.js requires a **plain string literal** in `config.matcher` for static analysis. `String.raw` tagged templates break the build. | Accepted with `eslint-disable` comment.               |
+| ~117 legacy maintainability issues                                             | Inherited from initial rapid development.                                                                                           | Paid down gradually in touched files; not bulk-fixed. |

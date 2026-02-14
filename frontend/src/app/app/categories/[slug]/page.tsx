@@ -116,15 +116,18 @@ export default function CategoryListingPage() {
 
       {!isLoading && error && (
         <div className="py-12 text-center">
-          <p className="mb-3 text-sm text-red-500">
-            Failed to load products.
-          </p>
+          <p className="mb-3 text-sm text-red-500">Failed to load products.</p>
           <button
             type="button"
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             onClick={() =>
               queryClient.invalidateQueries({
-                queryKey: queryKeys.categoryListing(slug, sortBy, sortDir, offset),
+                queryKey: queryKeys.categoryListing(
+                  slug,
+                  sortBy,
+                  sortDir,
+                  offset,
+                ),
               })
             }
           >

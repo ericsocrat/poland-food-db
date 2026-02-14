@@ -195,10 +195,7 @@ export default function ScanPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <button
-            onClick={() => setEan(ean)}
-            className="btn-secondary flex-1"
-          >
+          <button onClick={() => setEan(ean)} className="btn-secondary flex-1">
             🔄 Retry
           </button>
           <button onClick={handleReset} className="btn-primary flex-1">
