@@ -23,7 +23,10 @@ RETURNS uuid
 LANGUAGE sql
 STABLE
 AS $$
-    SELECT NULL::uuid;
+    SELECT NULLIF(
+        current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
+        ''
+    )::uuid;
 $$;
 
 DO $$
@@ -36,6 +39,9 @@ BEGIN
     END IF;
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'service_role') THEN
         CREATE ROLE service_role NOLOGIN;
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'authenticator') THEN
+        CREATE ROLE authenticator NOLOGIN;
     END IF;
 END
 $$;
