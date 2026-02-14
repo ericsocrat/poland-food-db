@@ -20,18 +20,40 @@ BEGIN;
 --    service_role and postgres remain unlimited for pipeline operations.
 -- ─────────────────────────────────────────────────────────────────────────────
 
-ALTER ROLE anon SET statement_timeout = '5s';
-ALTER ROLE authenticated SET statement_timeout = '5s';
-ALTER ROLE authenticator SET statement_timeout = '5s';
+DO $$
+DECLARE
+    role_name text;
+BEGIN
+    FOREACH role_name IN ARRAY ARRAY['anon', 'authenticated', 'authenticator']
+    LOOP
+        IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = role_name) THEN
+            EXECUTE format('ALTER ROLE %I SET statement_timeout = %L', role_name, '5s');
+        END IF;
+    END LOOP;
+END
+$$;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 2. Idle-in-transaction timeout
 --    Kills sessions that hold transactions open without activity.
 -- ─────────────────────────────────────────────────────────────────────────────
 
-ALTER ROLE anon SET idle_in_transaction_session_timeout = '30s';
-ALTER ROLE authenticated SET idle_in_transaction_session_timeout = '30s';
-ALTER ROLE authenticator SET idle_in_transaction_session_timeout = '30s';
+DO $$
+DECLARE
+    role_name text;
+BEGIN
+    FOREACH role_name IN ARRAY ARRAY['anon', 'authenticated', 'authenticator']
+    LOOP
+        IF EXISTS (SELECT 1 FROM pg_roles WHERE rolname = role_name) THEN
+            EXECUTE format(
+                'ALTER ROLE %I SET idle_in_transaction_session_timeout = %L',
+                role_name,
+                '30s'
+            );
+        END IF;
+    END LOOP;
+END
+$$;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- 3. Clamp api_better_alternatives limit to 1-20
