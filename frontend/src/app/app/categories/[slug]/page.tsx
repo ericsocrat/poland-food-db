@@ -69,7 +69,7 @@ export default function CategoryListingPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold capitalize text-gray-900">
-          {slug.replace(/_/g, " ")}
+          {slug.replaceAll("_", " ")}
         </h1>
         {data && (
           <span className="text-sm text-gray-500">

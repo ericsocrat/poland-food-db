@@ -63,7 +63,7 @@ export default function ScanPage() {
 
       reader.decodeFromVideoDevice(
         deviceId,
-        videoRef.current!,
+        videoRef.current,
         (result, _error) => {
           if (result) {
             const code = result.getText();
@@ -287,7 +287,7 @@ export default function ScanPage() {
           <input
             type="text"
             value={manualEan}
-            onChange={(e) => setManualEan(e.target.value.replace(/\D/g, ""))}
+            onChange={(e) => setManualEan(e.target.value.replaceAll(/\D/g, ""))}
             placeholder="Enter EAN barcode (8 or 13 digits)"
             className="input-field text-center text-lg tracking-widest"
             maxLength={13}

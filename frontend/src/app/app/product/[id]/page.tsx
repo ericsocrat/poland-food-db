@@ -281,13 +281,13 @@ function NutritionTab({ product }: Readonly<{ product: ProductDetail }>) {
     { label: "Saturated Fat", value: `${n.saturated_fat_g} g` },
     {
       label: "Trans Fat",
-      value: n.trans_fat_g !== null ? `${n.trans_fat_g} g` : "—",
+      value: n.trans_fat_g === null ? "—" : `${n.trans_fat_g} g`,
     },
     { label: "Carbs", value: `${n.carbs_g} g` },
     { label: "Sugars", value: `${n.sugars_g} g` },
     {
       label: "Fibre",
-      value: n.fibre_g !== null ? `${n.fibre_g} g` : "—",
+      value: n.fibre_g === null ? "—" : `${n.fibre_g} g`,
     },
     { label: "Protein", value: `${n.protein_g} g` },
     { label: "Salt", value: `${n.salt_g} g` },
