@@ -1,6 +1,8 @@
 "use client";
 
 // ─── Barcode scanner page — ZXing camera + manual EAN fallback ──────────────
+// State machine: idle → scanning → looking-up → found / not-found / error
+//   "scan another" always resets back to idle → scanning.
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
@@ -12,6 +14,13 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { isValidEan, stripNonDigits } from "@/lib/validation";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 
+type ScanState =
+  | "idle"       // camera / manual input ready, no EAN submitted
+  | "looking-up" // EAN submitted, waiting for API
+  | "found"      // product exists → auto-redirect
+  | "not-found"  // EAN valid but not in DB
+  | "error";     // lookup failed
+
 export default function ScanPage() {
   const router = useRouter();
   const supabase = createClient();
@@ -20,6 +29,7 @@ export default function ScanPage() {
   const [mode, setMode] = useState<"camera" | "manual">("camera");
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [torchOn, setTorchOn] = useState(false);
+  const [scanState, setScanState] = useState<ScanState>("idle");
 
   const videoRef = useRef<HTMLVideoElement>(null);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -70,6 +80,7 @@ export default function ScanPage() {
             const code = result.getText();
             // Validate EAN format (8 or 13 digits)
             if (isValidEan(code)) {
+              setScanState("looking-up");
               setEan(code);
               stopScanner();
             }
@@ -160,9 +171,17 @@ export default function ScanPage() {
   // Auto-redirect if product found
   useEffect(() => {
     if (lookupResult && "product_id" in lookupResult) {
+      setScanState("found");
       router.push(`/app/product/${lookupResult.product_id}`);
+    } else if (lookupResult && "found" in lookupResult && !lookupResult.found) {
+      setScanState("not-found");
     }
   }, [lookupResult, router]);
+
+  // Transition to error state
+  useEffect(() => {
+    if (lookupError) setScanState("error");
+  }, [lookupError]);
 
   function handleManualSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -171,19 +190,21 @@ export default function ScanPage() {
       toast.error("Please enter a valid 8 or 13 digit barcode");
       return;
     }
+    setScanState("looking-up");
     setEan(cleaned);
   }
 
   function handleReset() {
     setEan("");
     setManualEan("");
+    setScanState("idle");
     setMode("camera");
   }
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
-  // Lookup error state
-  if (ean && lookupError) {
+  // Error state — lookup failed
+  if (scanState === "error" && lookupError) {
     return (
       <div className="space-y-4">
         <div className="card border-red-200 bg-red-50 text-center">
@@ -195,7 +216,13 @@ export default function ScanPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <button onClick={() => setEan(ean)} className="btn-secondary flex-1">
+          <button
+            onClick={() => {
+              setScanState("looking-up");
+              setEan(ean); // re-trigger query
+            }}
+            className="btn-secondary flex-1"
+          >
             🔄 Retry
           </button>
           <button onClick={handleReset} className="btn-primary flex-1">
@@ -206,8 +233,8 @@ export default function ScanPage() {
     );
   }
 
-  // Show result if EAN was looked up but not found
-  if (ean && lookupResult && "found" in lookupResult && !lookupResult.found) {
+  // Not found state
+  if (scanState === "not-found") {
     return (
       <div className="space-y-4">
         <div className="card text-center">
@@ -226,8 +253,8 @@ export default function ScanPage() {
     );
   }
 
-  // Loading state
-  if (ean && lookingUp) {
+  // Looking-up state
+  if (scanState === "looking-up" && lookingUp) {
     return (
       <div className="flex flex-col items-center gap-3 py-12">
         <LoadingSpinner />
