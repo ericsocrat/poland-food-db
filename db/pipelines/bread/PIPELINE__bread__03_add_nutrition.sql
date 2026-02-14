@@ -75,7 +75,7 @@ from (
     ('Shulstad', 'Classic Pszenny Hot Dog', 254.0, 1.4, 0.2, 0, 48.0, 2.5, 4.4, 9.9, 1.2),
     ('Oskroba', 'Chleb żytni pełnoziarnisty pasteryzowany', 199.0, 1.4, 0.2, 0, 37.0, 5.1, 0, 5.3, 1.5),
     ('Dakri', 'Pinsa', 255.0, 4.3, 0.7, 0, 46.0, 0.6, 0.2, 8.0, 1.0),
-    ('Żabka', 'Kajzerka kebab', 306.0, 16.0, 1.9, 0, 29.0, 4.1, 1.6, 9.8, 1.6),
+    ('Żabka', 'Kajzerka Kebab', 306.0, 16.0, 1.9, 0, 29.0, 4.1, 1.6, 9.8, 1.6),
     ('Asprod', 'Chleb jakubowy żytni razowy', 234.0, 6.5, 0.7, 0, 31.0, 2.7, 10.0, 7.4, 0.9),
     ('Biedronka piekarnia gwóźdź', 'Chleb żytni', 262.0, 5.7, 0.7, 0, 43.0, 1.5, 0, 7.6, 1.7),
     ('Piekarnia "Pod Rogalem"', 'Chleb Baltonowski krojony', 322.0, 1.0, 0.0, 0, 68.0, 0.8, 0, 7.2, 1.2),

@@ -67,7 +67,7 @@ FROM (
     ('Z Dobrej Piekarni', 'Chleb baltonowski', 'https://world.openfoodfacts.org/product/5903111184230', '5903111184230'),
     ('Z Dobrej Piekarni', 'Chleb wieloziarnisty', 'https://world.openfoodfacts.org/product/5903111184261', '5903111184261'),
     ('Z Piekarni Regionalnej', 'Chleb zytni ze słonecznikiem', 'https://world.openfoodfacts.org/product/5903111184322', '5903111184322'),
-    ('Żabka', 'Kajzerka kebab', 'https://world.openfoodfacts.org/product/5903111184766', '5903111184766')
+    ('Żabka', 'Kajzerka Kebab', 'https://world.openfoodfacts.org/product/5903111184766', '5903111184766')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.brand = d.brand
   AND p.product_name = d.product_name
