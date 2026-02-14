@@ -76,6 +76,20 @@ JOIN products p ON p.country = v.country AND p.ean = v.ean
 WHERE p.is_deprecated IS NOT TRUE
 ON CONFLICT (product_id, tag, type) DO NOTHING;
 
+-- ─── 4a. Recalculate data_completeness_pct & confidence ─────────────────
+-- The allergen insert above changes the result of compute_data_completeness()
+-- for affected products.  Re-sync stored values so QA check 19 passes.
+
+UPDATE products p
+SET    data_completeness_pct = compute_data_completeness(p.product_id)
+WHERE  p.is_deprecated IS NOT TRUE
+  AND  p.data_completeness_pct != compute_data_completeness(p.product_id);
+
+UPDATE products p
+SET    confidence = assign_confidence(p.data_completeness_pct, p.source_type)
+WHERE  p.is_deprecated IS NOT TRUE
+  AND  p.confidence != assign_confidence(p.data_completeness_pct, p.source_type);
+
 -- ─── 5. Refresh materialized views ──────────────────────────────────────
 -- mv_ingredient_frequency and v_product_confidence were created WITH DATA
 -- during migrations (when 0 products existed).  Refresh now that products
