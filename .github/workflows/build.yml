@@ -47,6 +47,9 @@ jobs:
 
       - name: Playwright e2e tests
         working-directory: frontend
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: http://localhost:54321
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-placeholder-key
         run: npx playwright test
 
       - name: Upload Playwright artifacts
