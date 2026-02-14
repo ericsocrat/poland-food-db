@@ -8,7 +8,10 @@ interface CountryChipProps {
   className?: string;
 }
 
-export function CountryChip({ country, className = "" }: Readonly<CountryChipProps>) {
+export function CountryChip({
+  country,
+  className = "",
+}: Readonly<CountryChipProps>) {
   if (!country) return null;
 
   const meta = COUNTRIES.find((c) => c.code === country);

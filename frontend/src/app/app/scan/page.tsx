@@ -287,9 +287,7 @@ export default function ScanPage() {
           <input
             type="text"
             value={manualEan}
-            onChange={(e) =>
-              setManualEan(e.target.value.replace(/\D/g, ""))
-            }
+            onChange={(e) => setManualEan(e.target.value.replace(/\D/g, ""))}
             placeholder="Enter EAN barcode (8 or 13 digits)"
             className="input-field text-center text-lg tracking-widest"
             maxLength={13}
