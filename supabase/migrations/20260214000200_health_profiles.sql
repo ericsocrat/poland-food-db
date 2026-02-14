@@ -645,13 +645,14 @@ GRANT EXECUTE ON FUNCTION public.api_product_health_warnings(bigint, uuid)
     TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.compute_health_warnings(bigint, uuid)   TO authenticated, service_role;
 
--- Revoke from anon
-REVOKE EXECUTE ON FUNCTION public.api_list_health_profiles()              FROM anon;
-REVOKE EXECUTE ON FUNCTION public.api_get_active_health_profile()         FROM anon;
+-- Revoke from PUBLIC and anon (PostgreSQL grants EXECUTE to PUBLIC by default)
+REVOKE EXECUTE ON FUNCTION public.api_list_health_profiles()              FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.api_get_active_health_profile()         FROM PUBLIC, anon;
 REVOKE EXECUTE ON FUNCTION public.api_create_health_profile(text, text[], boolean, numeric, numeric, numeric, numeric, text)
-    FROM anon;
+    FROM PUBLIC, anon;
 REVOKE EXECUTE ON FUNCTION public.api_update_health_profile(uuid, text, text[], boolean, numeric, numeric, numeric, numeric, text)
-    FROM anon;
-REVOKE EXECUTE ON FUNCTION public.api_delete_health_profile(uuid)         FROM anon;
+    FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.api_delete_health_profile(uuid)         FROM PUBLIC, anon;
 REVOKE EXECUTE ON FUNCTION public.api_product_health_warnings(bigint, uuid)
-    FROM anon;
+    FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.compute_health_warnings(bigint, uuid)   FROM PUBLIC, anon;
