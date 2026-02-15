@@ -32,11 +32,7 @@ interface CompareRow {
 // ─── Format helpers (avoid negated ternaries) ──────────────────────────────
 
 /** Format a nullable value with a unit, or return fallback. */
-function fmtUnit(
-  v: CellValue,
-  unit: string,
-  fallback = "—",
-): string {
+function fmtUnit(v: CellValue, unit: string, fallback = "—"): string {
   return v == null ? fallback : `${v} ${unit}`;
 }
 

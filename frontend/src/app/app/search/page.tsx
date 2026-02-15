@@ -89,11 +89,7 @@ export default function SearchPage() {
 
   // Search query
   const { data, isLoading, isFetching, error } = useQuery({
-    queryKey: queryKeys.search(
-      submittedQuery,
-      filters,
-      page,
-    ),
+    queryKey: queryKeys.search(submittedQuery, filters, page),
     queryFn: async () => {
       const result = await searchProducts(supabase, {
         p_query: activeQuery,
@@ -139,11 +135,7 @@ export default function SearchPage() {
 
   const handleRetry = useCallback(() => {
     queryClient.invalidateQueries({
-      queryKey: queryKeys.search(
-        submittedQuery,
-        filters,
-        page,
-      ),
+      queryKey: queryKeys.search(submittedQuery, filters, page),
     });
   }, [queryClient, submittedQuery, filters, page]);
 

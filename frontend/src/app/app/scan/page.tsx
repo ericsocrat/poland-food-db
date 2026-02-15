@@ -15,7 +15,11 @@ import { recordScan } from "@/lib/api";
 import { isValidEan, stripNonDigits } from "@/lib/validation";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import type { RecordScanResponse, RecordScanFoundResponse, FormSubmitEvent } from "@/lib/types";
+import type {
+  RecordScanResponse,
+  RecordScanFoundResponse,
+  FormSubmitEvent,
+} from "@/lib/types";
 
 type ScanState = "idle" | "looking-up" | "found" | "not-found" | "error";
 
@@ -30,7 +34,10 @@ interface BarcodeReader {
   decodeFromVideoDevice: (
     deviceId: string,
     videoElement: HTMLVideoElement | null,
-    callback: (result: { getText: () => string } | null, error: unknown) => void,
+    callback: (
+      result: { getText: () => string } | null,
+      error: unknown,
+    ) => void,
   ) => void;
   reset: () => void;
 }
@@ -146,7 +153,8 @@ export default function ScanPage() {
       }
     } catch (err: unknown) {
       const errName =
-        err instanceof Error || (err && typeof err === "object" && "name" in err)
+        err instanceof Error ||
+        (err && typeof err === "object" && "name" in err)
           ? String((err as { name: string }).name)
           : "";
       if (

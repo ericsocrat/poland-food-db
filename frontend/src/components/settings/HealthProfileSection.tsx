@@ -14,7 +14,11 @@ import {
 } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { HEALTH_CONDITIONS } from "@/lib/constants";
-import type { HealthCondition, HealthProfile, FormSubmitEvent } from "@/lib/types";
+import type {
+  HealthCondition,
+  HealthProfile,
+  FormSubmitEvent,
+} from "@/lib/types";
 
 // ─── Sub-component: Create/Edit form ────────────────────────────────────────
 

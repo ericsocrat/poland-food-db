@@ -249,7 +249,9 @@ export function HealthWarningBadge({
   // Show warning count badge with severity coloring
   const topSeverity = warningsData.warnings.reduce<WarningSeverity>(
     (worst, w) => {
-      return SEVERITY_ORDER[w.severity] < SEVERITY_ORDER[worst] ? w.severity : worst;
+      return SEVERITY_ORDER[w.severity] < SEVERITY_ORDER[worst]
+        ? w.severity
+        : worst;
     },
     "moderate",
   );
