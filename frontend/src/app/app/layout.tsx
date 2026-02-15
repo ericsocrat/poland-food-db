@@ -14,7 +14,7 @@ export default async function AppLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const supabase = createServerSupabaseClient();
+  const supabase = await createServerSupabaseClient();
 
   // Double-check auth (middleware should have caught this, but belt-and-suspenders)
   const {
