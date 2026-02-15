@@ -304,6 +304,71 @@ if ($Env -ne "local" -and -not $Force) {
     Write-Host ""
 }
 
+# ─── Helper: Row Count Snapshot ─────────────────────────────────────────────
+
+function Get-RowCounts {
+    <# Returns a hashtable of table_name → row_count for core data tables. #>
+    $countSql = @"
+SELECT 'products' AS t, count(*) AS c FROM products
+UNION ALL SELECT 'active_products', count(*) FROM products WHERE is_deprecated IS NOT TRUE
+UNION ALL SELECT 'nutrition_facts', count(*) FROM nutrition_facts
+UNION ALL SELECT 'product_ingredient', count(*) FROM product_ingredient
+UNION ALL SELECT 'product_allergen_info', count(*) FROM product_allergen_info
+UNION ALL SELECT 'ingredient_ref', count(*) FROM ingredient_ref
+UNION ALL SELECT 'category_ref', count(*) FROM category_ref
+ORDER BY t;
+"@
+    if ($usePsql) {
+        $env:PGPASSWORD = $dbPassword
+        $raw = & psql -h $dbHost -p $DB_PORT -U $DB_USER -d $DB_NAME --tuples-only --no-align -c $countSql 2>&1
+    }
+    else {
+        $raw = $countSql | docker exec -i $DOCKER_CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only --no-align 2>&1
+    }
+    $counts = @{}
+    foreach ($line in ($raw -split "`n")) {
+        $parts = $line.Trim() -split '\|'
+        if ($parts.Count -eq 2 -and $parts[1] -match '^\d+$') {
+            $counts[$parts[0].Trim()] = [int]$parts[1].Trim()
+        }
+    }
+    return $counts
+}
+
+function Show-RowCounts {
+    param([hashtable]$Counts, [string]$Label)
+    Write-Host "  $Label" -ForegroundColor Cyan
+    $order = @('products', 'active_products', 'nutrition_facts', 'product_ingredient', 'product_allergen_info', 'ingredient_ref', 'category_ref')
+    foreach ($tbl in $order) {
+        if ($Counts.ContainsKey($tbl)) {
+            $display = $tbl.Replace('_', ' ')
+            Write-Host "    $($display.PadRight(24)) $($Counts[$tbl])" -ForegroundColor White
+        }
+    }
+}
+
+function Show-RowDelta {
+    param([hashtable]$Before, [hashtable]$After)
+    Write-Host "  Row Count Changes:" -ForegroundColor Cyan
+    $order = @('products', 'active_products', 'nutrition_facts', 'product_ingredient', 'product_allergen_info', 'ingredient_ref', 'category_ref')
+    $anyChange = $false
+    foreach ($tbl in $order) {
+        if ($Before.ContainsKey($tbl) -and $After.ContainsKey($tbl)) {
+            $delta = $After[$tbl] - $Before[$tbl]
+            if ($delta -ne 0) {
+                $anyChange = $true
+                $sign = if ($delta -gt 0) { "+$delta" } else { "$delta" }
+                $color = if ($delta -gt 0) { "Green" } elseif ($delta -lt 0) { "Yellow" } else { "White" }
+                $display = $tbl.Replace('_', ' ')
+                Write-Host "    $($display.PadRight(24)) $($Before[$tbl]) → $($After[$tbl]) ($sign)" -ForegroundColor $color
+            }
+        }
+    }
+    if (-not $anyChange) {
+        Write-Host "    (no row count changes)" -ForegroundColor DarkGray
+    }
+}
+
 # ─── Helper: Execute SQL ────────────────────────────────────────────────────
 
 function Invoke-Sql {
@@ -321,6 +386,14 @@ function Invoke-Sql {
 }
 
 # ─── Execution ──────────────────────────────────────────────────────────────
+
+# ─── Row Count: Before ───────────────────────────────────────────────────────
+
+$beforeCounts = Get-RowCounts
+if ($beforeCounts.Count -gt 0) {
+    Show-RowCounts -Counts $beforeCounts -Label "Row counts (before):"
+    Write-Host ""
+}
 
 Write-Host "Executing against $envLabel ..." -ForegroundColor Yellow
 Write-Host ""
@@ -388,6 +461,10 @@ if ($usePsql) {
 
 # ─── Summary ────────────────────────────────────────────────────────────────
 
+# ─── Row Count: After ────────────────────────────────────────────────────────
+
+$afterCounts = Get-RowCounts
+
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host "  Seed Summary" -ForegroundColor Cyan
@@ -397,6 +474,14 @@ Write-Host "  Succeeded:   $successCount" -ForegroundColor Green
 Write-Host "  Failed:      $failCount" -ForegroundColor $(if ($failCount -gt 0) { "Red" } else { "Green" })
 Write-Host "  Duration:    $($stopwatch.Elapsed.TotalSeconds.ToString('F1'))s" -ForegroundColor White
 Write-Host ""
+
+if ($beforeCounts.Count -gt 0 -and $afterCounts.Count -gt 0) {
+    Show-RowDelta -Before $beforeCounts -After $afterCounts
+    Write-Host ""
+} elseif ($afterCounts.Count -gt 0) {
+    Show-RowCounts -Counts $afterCounts -Label "Row counts (after):"
+    Write-Host ""
+}
 
 if ($failCount -gt 0) {
     exit 1
