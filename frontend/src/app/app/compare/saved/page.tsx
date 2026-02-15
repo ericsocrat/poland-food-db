@@ -54,9 +54,7 @@ export default function SavedComparisonsPage() {
       {data && data.comparisons.length === 0 && (
         <div className="card py-12 text-center">
           <p className="mb-2 text-4xl">📂</p>
-          <p className="mb-1 text-sm text-gray-500">
-            No saved comparisons yet
-          </p>
+          <p className="mb-1 text-sm text-gray-500">No saved comparisons yet</p>
           <p className="mb-4 text-xs text-gray-400">
             Compare products and save them for later reference.
           </p>

@@ -5,8 +5,17 @@ export const queryKeys = {
   preferences: ["preferences"] as const,
 
   /** Product search results */
-  search: (query: string, category?: string) =>
-    ["search", { query, category }] as const,
+  search: (query: string, filters?: Record<string, unknown>, page?: number) =>
+    ["search", { query, filters, page }] as const,
+
+  /** Autocomplete suggestions */
+  autocomplete: (query: string) => ["autocomplete", query] as const,
+
+  /** Filter options (category/nutri/allergen counts) */
+  filterOptions: ["filter-options"] as const,
+
+  /** Saved searches */
+  savedSearches: ["saved-searches"] as const,
 
   /** Category listing (paginated) */
   categoryListing: (
@@ -84,6 +93,15 @@ export const staleTimes = {
 
   /** Search results — 2 min */
   search: 2 * 60 * 1000,
+
+  /** Autocomplete — 30 sec (frequently changes) */
+  autocomplete: 30 * 1000,
+
+  /** Filter options — 10 min (rarely changes) */
+  filterOptions: 10 * 60 * 1000,
+
+  /** Saved searches — 5 min */
+  savedSearches: 5 * 60 * 1000,
 
   /** Category listing — 5 min */
   categoryListing: 5 * 60 * 1000,

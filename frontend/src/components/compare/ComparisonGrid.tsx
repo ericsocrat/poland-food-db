@@ -48,7 +48,7 @@ const COMPARE_ROWS: CompareRow[] = [
   {
     label: "NOVA Group",
     key: "nova_group",
-    getValue: (p) => p.nova_group ? Number(p.nova_group) : null,
+    getValue: (p) => (p.nova_group ? Number(p.nova_group) : null),
     format: (v) => (v != null ? String(v) : "?"),
     betterDirection: "lower",
   },
@@ -207,7 +207,8 @@ function DesktopGrid({
               Metric
             </th>
             {products.map((p, i) => {
-              const band = SCORE_BANDS[scoreBandFromScore(p.unhealthiness_score)];
+              const band =
+                SCORE_BANDS[scoreBandFromScore(p.unhealthiness_score)];
               const nutriClass = p.nutri_score
                 ? NUTRI_COLORS[p.nutri_score]
                 : "bg-gray-200 text-gray-500";
@@ -486,44 +487,44 @@ function MobileSwipeView({
 
           {/* Nutrition data */}
           <div className="divide-y divide-gray-100">
-            {COMPARE_ROWS.filter((r) => r.key !== "nutri_score" && r.key !== "nova_group").map(
-              (row) => {
-                const rawValue = row.getValue(product);
-                const formatted = row.format
-                  ? row.format(rawValue)
-                  : rawValue != null
-                    ? String(rawValue)
-                    : "—";
+            {COMPARE_ROWS.filter(
+              (r) => r.key !== "nutri_score" && r.key !== "nova_group",
+            ).map((row) => {
+              const rawValue = row.getValue(product);
+              const formatted = row.format
+                ? row.format(rawValue)
+                : rawValue != null
+                  ? String(rawValue)
+                  : "—";
 
-                // Compare with other products
-                const allValues = products.map((p) => {
-                  const v = row.getValue(p);
-                  return typeof v === "number" ? v : null;
-                });
-                const ranking = getBestWorst(allValues, row.betterDirection);
-                let indicator = "";
-                if (ranking) {
-                  if (activeIdx === ranking.bestIdx)
-                    indicator = "text-green-600 font-semibold";
-                  else if (activeIdx === ranking.worstIdx)
-                    indicator = "text-red-600";
-                }
+              // Compare with other products
+              const allValues = products.map((p) => {
+                const v = row.getValue(p);
+                return typeof v === "number" ? v : null;
+              });
+              const ranking = getBestWorst(allValues, row.betterDirection);
+              let indicator = "";
+              if (ranking) {
+                if (activeIdx === ranking.bestIdx)
+                  indicator = "text-green-600 font-semibold";
+                else if (activeIdx === ranking.worstIdx)
+                  indicator = "text-red-600";
+              }
 
-                return (
-                  <div
-                    key={row.key}
-                    className="flex items-center justify-between py-2"
-                  >
-                    <span className="text-sm text-gray-500">{row.label}</span>
-                    <span className={`text-sm ${indicator || "text-gray-900"}`}>
-                      {formatted}
-                      {ranking && activeIdx === ranking.bestIdx && " ✓"}
-                      {ranking && activeIdx === ranking.worstIdx && " ✗"}
-                    </span>
-                  </div>
-                );
-              },
-            )}
+              return (
+                <div
+                  key={row.key}
+                  className="flex items-center justify-between py-2"
+                >
+                  <span className="text-sm text-gray-500">{row.label}</span>
+                  <span className={`text-sm ${indicator || "text-gray-900"}`}>
+                    {formatted}
+                    {ranking && activeIdx === ranking.bestIdx && " ✓"}
+                    {ranking && activeIdx === ranking.worstIdx && " ✗"}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
           {/* Allergens */}

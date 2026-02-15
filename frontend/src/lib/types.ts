@@ -31,27 +31,119 @@ export interface UserPreferences {
 
 // ─── Search ─────────────────────────────────────────────────────────────────
 
+export interface SearchFilters {
+  category?: string[];
+  nutri_score?: string[];
+  allergen_free?: string[];
+  max_unhealthiness?: number;
+  country?: string;
+  sort_by?: 'relevance' | 'name' | 'unhealthiness' | 'nutri_score' | 'calories';
+  sort_order?: 'asc' | 'desc';
+}
+
 export interface SearchResult {
   product_id: number;
   product_name: string;
   brand: string;
   category: string;
+  category_display: string;
+  category_icon: string;
   unhealthiness_score: number;
   score_band: ScoreBand;
   nutri_score: NutriGrade;
   nova_group: string;
+  calories: number | null;
+  high_salt: boolean;
+  high_sugar: boolean;
+  high_sat_fat: boolean;
+  high_additive_load: boolean;
+  is_avoided: boolean;
   relevance: number;
 }
 
 export interface SearchResponse {
   api_version: string;
-  query: string;
-  category: string | null;
+  query: string | null;
   country: string;
-  total_count: number;
-  limit: number;
-  offset: number;
+  total: number;
+  page: number;
+  pages: number;
+  page_size: number;
+  filters_applied: SearchFilters;
   results: SearchResult[];
+}
+
+// ─── Autocomplete ───────────────────────────────────────────────────────────
+
+export interface AutocompleteSuggestion {
+  product_id: number;
+  product_name: string;
+  brand: string;
+  category: string;
+  nutri_score: NutriGrade;
+  unhealthiness_score: number;
+  score_band: ScoreBand;
+}
+
+export interface AutocompleteResponse {
+  api_version: string;
+  query: string;
+  suggestions: AutocompleteSuggestion[];
+}
+
+// ─── Filter Options ─────────────────────────────────────────────────────────
+
+export interface FilterCategoryOption {
+  category: string;
+  display_name: string;
+  icon_emoji: string;
+  count: number;
+}
+
+export interface FilterNutriOption {
+  label: string;
+  count: number;
+}
+
+export interface FilterAllergenOption {
+  tag: string;
+  count: number;
+}
+
+export interface FilterOptionsResponse {
+  api_version: string;
+  country: string;
+  categories: FilterCategoryOption[];
+  nutri_scores: FilterNutriOption[];
+  allergens: FilterAllergenOption[];
+}
+
+// ─── Saved Searches ─────────────────────────────────────────────────────────
+
+export interface SavedSearch {
+  id: string;
+  name: string;
+  query: string | null;
+  filters: SearchFilters;
+  created_at: string;
+}
+
+export interface SavedSearchesResponse {
+  api_version: string;
+  searches: SavedSearch[];
+}
+
+export interface SaveSearchResponse {
+  api_version: string;
+  id: string;
+  name: string;
+  created: boolean;
+}
+
+export interface DeleteSavedSearchResponse {
+  api_version: string;
+  success: boolean;
+  deleted: boolean;
 }
 
 // ─── Category Listing ───────────────────────────────────────────────────────

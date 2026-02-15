@@ -1,8 +1,8 @@
 "use client";
 
-// ─── Search page — submit-first search with optional instant mode ───────────
+// ─── Enhanced Search page — autocomplete, multi-faceted filters, pagination ─
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
@@ -14,33 +14,18 @@ import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
-import type { SearchResult } from "@/lib/types";
+import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
+import { FilterPanel } from "@/components/search/FilterPanel";
+import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
+import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
+import type { SearchResult, SearchFilters } from "@/lib/types";
 
 const RECENT_KEY = "fooddb:recent-searches";
-const MAX_RECENT = 5;
-const MODE_KEY = "fooddb:search-mode";
+const MAX_RECENT = 10;
+const AVOID_TOGGLE_KEY = "fooddb:show-avoided";
+const PAGE_SIZE = 20;
 
-type SearchMode = "submit" | "instant";
-
-function useDebounce(value: string, delay: number) {
-  const [debounced, setDebounced] = useState(value);
-  useEffect(() => {
-    const id = setTimeout(() => setDebounced(value), delay);
-    return () => clearTimeout(id);
-  }, [value, delay]);
-  return debounced;
-}
-
-function getSearchMode(): SearchMode {
-  if (typeof globalThis.localStorage === "undefined") return "submit";
-  const stored = globalThis.localStorage.getItem(MODE_KEY);
-  return stored === "instant" ? "instant" : "submit";
-}
-
-function saveSearchMode(mode: SearchMode) {
-  if (typeof globalThis.localStorage === "undefined") return;
-  globalThis.localStorage.setItem(MODE_KEY, mode);
-}
+/* ── localStorage helpers ─────────────────────────────────────────────────── */
 
 function getRecentSearches(): string[] {
   if (typeof globalThis.localStorage === "undefined") return [];
@@ -58,251 +43,443 @@ function saveRecentSearch(q: string) {
   globalThis.localStorage.setItem(RECENT_KEY, JSON.stringify(next));
 }
 
+function getShowAvoided(): boolean {
+  if (typeof globalThis.localStorage === "undefined") return false;
+  return globalThis.localStorage.getItem(AVOID_TOGGLE_KEY) === "true";
+}
+
+function setShowAvoidedStorage(val: boolean) {
+  if (typeof globalThis.localStorage === "undefined") return;
+  globalThis.localStorage.setItem(AVOID_TOGGLE_KEY, String(val));
+}
+
+/* ── Page component ───────────────────────────────────────────────────────── */
+
 export default function SearchPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
-  const [searchMode, setSearchMode] = useState<SearchMode>("submit");
+  const [filters, setFilters] = useState<SearchFilters>({});
+  const [page, setPage] = useState(1);
+  const [showAvoided, setShowAvoided] = useState(false);
+  const [showAutocomplete, setShowAutocomplete] = useState(false);
+  const [showFilters, setShowFilters] = useState(false);
+  const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const debouncedQuery = useDebounce(query, 350);
 
-  // The active query depends on the mode
-  const activeQuery =
-    searchMode === "instant" ? debouncedQuery : submittedQuery;
+  // The active search query (submitted)
+  const activeQuery = submittedQuery || undefined;
 
-  // Load recent searches and search mode on mount
+  // Load localStorage prefs on mount
   useEffect(() => {
     setRecentSearches(getRecentSearches());
-    setSearchMode(getSearchMode());
+    setShowAvoided(getShowAvoided());
   }, []);
 
-  function handleModeToggle() {
-    const next: SearchMode = searchMode === "submit" ? "instant" : "submit";
-    setSearchMode(next);
-    saveSearchMode(next);
-    // When switching to instant, seed active query from current input
-    if (next === "instant" && query.length >= 2) {
-      // debouncedQuery will naturally kick in
+  // Reset page when filters or query change
+  useEffect(() => {
+    setPage(1);
+  }, [submittedQuery, filters]);
+
+  // Search query
+  const { data, isLoading, isFetching, error } = useQuery({
+    queryKey: queryKeys.search(
+      submittedQuery,
+      filters as Record<string, unknown>,
+      page,
+    ),
+    queryFn: async () => {
+      const result = await searchProducts(supabase, {
+        p_query: activeQuery,
+        p_filters: filters,
+        p_page: page,
+        p_page_size: PAGE_SIZE,
+        p_show_avoided: showAvoided,
+      });
+      if (!result.ok) throw new Error(result.error.message);
+      // Save successful text search
+      if (activeQuery && activeQuery.length >= 2) {
+        saveRecentSearch(activeQuery);
+        setRecentSearches(getRecentSearches());
+      }
+      return result.data;
+    },
+    enabled:
+      (activeQuery !== undefined && activeQuery.length >= 1) ||
+      hasActiveFilters(filters),
+    staleTime: staleTimes.search,
+  });
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    const q = query.trim();
+    if (q.length >= 1) {
+      setSubmittedQuery(q);
+      setShowAutocomplete(false);
+    } else if (hasActiveFilters(filters)) {
+      // Allow empty query with filters (browse mode)
+      setSubmittedQuery("");
+      setShowAutocomplete(false);
     }
-    // When switching to submit, clear submitted so stale results go away
-    if (next === "submit") {
+  }
+
+  function handleAvoidToggle() {
+    const next = !showAvoided;
+    setShowAvoided(next);
+    setShowAvoidedStorage(next);
+    // Invalidate current search to re-fetch with new avoid setting
+    queryClient.invalidateQueries({ queryKey: ["search"] });
+  }
+
+  const handleRetry = useCallback(() => {
+    queryClient.invalidateQueries({
+      queryKey: queryKeys.search(
+        submittedQuery,
+        filters as Record<string, unknown>,
+        page,
+      ),
+    });
+  }, [queryClient, submittedQuery, filters, page]);
+
+  function selectRecent(q: string) {
+    setQuery(q);
+    setSubmittedQuery(q);
+  }
+
+  function handleFiltersChange(newFilters: SearchFilters) {
+    setFilters(newFilters);
+    // If browse mode with filters, trigger search
+    if (!submittedQuery && hasActiveFilters(newFilters)) {
       setSubmittedQuery("");
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    if (query.trim().length >= 2) {
-      setSubmittedQuery(query.trim());
-    }
-  }
-
-  const { data, isLoading, isFetching, error } = useQuery({
-    queryKey: queryKeys.search(activeQuery),
-    queryFn: async () => {
-      const result = await searchProducts(supabase, {
-        p_query: activeQuery,
-        p_limit: 30,
-      });
-      if (!result.ok) throw new Error(result.error.message);
-      // Save successful search
-      saveRecentSearch(activeQuery);
-      setRecentSearches(getRecentSearches());
-      return result.data;
-    },
-    enabled: activeQuery.length >= 2,
-    staleTime: staleTimes.search,
-  });
-
-  const handleRetry = useCallback(() => {
-    queryClient.invalidateQueries({
-      queryKey: queryKeys.search(activeQuery),
-    });
-  }, [queryClient, activeQuery]);
-
-  function selectRecent(q: string) {
-    setQuery(q);
-    // In submit mode, also trigger the search immediately
-    if (searchMode === "submit") {
-      setSubmittedQuery(q);
-    }
-  }
+  const isSearchActive =
+    (activeQuery !== undefined && activeQuery.length >= 1) ||
+    hasActiveFilters(filters);
 
   return (
-    <div className="space-y-4">
-      {/* Search input */}
-      <form onSubmit={handleSubmit} className="space-y-2">
-        <div className="relative">
-          <input
-            type="text"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search products…"
-            className="input-field pl-10 pr-10"
-            autoFocus
-          />
-          <svg
-            className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
-          {isFetching && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2">
-              <LoadingSpinner size="sm" />
-            </div>
-          )}
-          {!isFetching && query.length > 0 && (
-            <button
-              type="button"
-              onClick={() => {
-                setQuery("");
-                setSubmittedQuery("");
-              }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-              aria-label="Clear search"
-            >
-              <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            </button>
-          )}
-        </div>
+    <div className="flex gap-6">
+      {/* Filter sidebar (desktop) */}
+      <FilterPanel
+        filters={filters}
+        onChange={handleFiltersChange}
+        show={showFilters}
+        onClose={() => setShowFilters(false)}
+      />
 
-        {/* Submit button (only in submit mode) & mode toggle */}
-        <div className="flex items-center justify-between">
-          {searchMode === "submit" ? (
+      {/* Main content */}
+      <div className="min-w-0 flex-1 space-y-4">
+        {/* Search input */}
+        <form onSubmit={handleSubmit} className="space-y-2">
+          <div className="relative">
+            <input
+              ref={inputRef}
+              type="text"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                if (e.target.value.length >= 1) {
+                  setShowAutocomplete(true);
+                } else {
+                  setShowAutocomplete(false);
+                }
+              }}
+              onFocus={() => {
+                if (query.length >= 1) setShowAutocomplete(true);
+              }}
+              placeholder="Search products…"
+              className="input-field pl-10 pr-10"
+              autoFocus
+            />
+            <svg
+              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+              />
+            </svg>
+            {isFetching && (
+              <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                <LoadingSpinner size="sm" />
+              </div>
+            )}
+            {!isFetching && query.length > 0 && (
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  setSubmittedQuery("");
+                  setShowAutocomplete(false);
+                }}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label="Clear search"
+              >
+                <svg
+                  className="h-5 w-5"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
+            )}
+
+            {/* Autocomplete dropdown */}
+            <SearchAutocomplete
+              query={query}
+              onSelect={() => setShowAutocomplete(false)}
+              onQuerySubmit={(q) => {
+                setSubmittedQuery(q);
+                setShowAutocomplete(false);
+              }}
+              onQueryChange={setQuery}
+              show={showAutocomplete}
+              onClose={() => setShowAutocomplete(false)}
+            />
+          </div>
+
+          {/* Action row: search button, filter toggle, avoid toggle, save */}
+          <div className="flex flex-wrap items-center gap-2">
             <button
               type="submit"
-              disabled={query.trim().length < 2}
+              disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
               className="btn-primary px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
             >
               Search
             </button>
-          ) : (
-            <span className="text-xs text-gray-400">
-              Results update as you type
-            </span>
-          )}
-          <button
-            type="button"
-            onClick={handleModeToggle}
-            className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700"
-            title={
-              searchMode === "submit"
-                ? "Switch to search-as-you-type"
-                : "Switch to search on submit"
-            }
-          >
-            <span
-              className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
-                searchMode === "instant" ? "bg-brand-600" : "bg-gray-300"
-              }`}
+
+            {/* Mobile filter toggle */}
+            <button
+              type="button"
+              onClick={() => setShowFilters(true)}
+              className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 lg:hidden"
+            >
+              🎛️ Filters
+              {hasActiveFilters(filters) && (
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+                  {countActiveFilters(filters)}
+                </span>
+              )}
+            </button>
+
+            {/* Avoid toggle */}
+            <button
+              type="button"
+              onClick={handleAvoidToggle}
+              className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700"
+              title={
+                showAvoided
+                  ? "Avoided products shown normally"
+                  : "Avoided products demoted to bottom"
+              }
             >
               <span
-                className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
-                  searchMode === "instant"
-                    ? "translate-x-3.5"
-                    : "translate-x-0.5"
+                className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
+                  showAvoided ? "bg-brand-600" : "bg-gray-300"
                 }`}
-              />
-            </span>
-            Instant
-          </button>
-        </div>
-      </form>
-
-      {/* Recent searches — shown when input is empty */}
-      {activeQuery.length < 2 && recentSearches.length > 0 && (
-        <div>
-          <p className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-400">
-            Recent searches
-          </p>
-          <div className="flex flex-wrap gap-2">
-            {recentSearches.map((q) => (
-              <button
-                key={q}
-                onClick={() => selectRecent(q)}
-                className="rounded-full border border-gray-200 px-3 py-1 text-sm text-gray-600 transition-colors hover:border-gray-400 hover:text-gray-900"
               >
-                {q}
+                <span
+                  className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                    showAvoided ? "translate-x-3.5" : "translate-x-0.5"
+                  }`}
+                />
+              </span>
+              Show avoided
+            </button>
+
+            {/* Save search */}
+            {isSearchActive && (
+              <button
+                type="button"
+                onClick={() => setShowSaveDialog(true)}
+                className="ml-auto text-xs text-gray-400 hover:text-brand-600"
+              >
+                💾 Save search
               </button>
-            ))}
+            )}
+
+            {/* Saved searches link */}
+            <Link
+              href="/app/search/saved"
+              className="text-xs text-gray-400 hover:text-brand-600"
+            >
+              📋 Saved
+            </Link>
           </div>
-        </div>
-      )}
+        </form>
 
-      {/* Empty state — no query yet */}
-      {activeQuery.length < 2 && recentSearches.length === 0 && (
-        <p className="py-12 text-center text-sm text-gray-400">
-          Type at least 2 characters to search
-        </p>
-      )}
+        {/* Active filter chips */}
+        <ActiveFilterChips filters={filters} onChange={handleFiltersChange} />
 
-      {/* Loading */}
-      {isLoading && activeQuery.length >= 2 && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
-
-      {/* Error state with retry */}
-      {error && (
-        <div className="card border-red-200 bg-red-50 text-center">
-          <p className="mb-2 text-sm text-red-600">
-            Search failed. Please try again.
-          </p>
-          <button
-            onClick={handleRetry}
-            className="inline-flex items-center gap-1 text-sm font-medium text-red-700 hover:text-red-800"
-          >
-            🔄 Retry
-          </button>
-        </div>
-      )}
-
-      {/* Results */}
-      {data && (
-        <>
-          <p className="text-sm text-gray-500">
-            {data.total_count} result{data.total_count !== 1 && "s"} for &ldquo;
-            {data.query}&rdquo;
-          </p>
-
-          {data.results.length === 0 ? (
-            <div className="py-12 text-center">
-              <p className="mb-2 text-4xl">🔍</p>
-              <p className="mb-1 text-sm text-gray-500">
-                No products found for &ldquo;{data.query}&rdquo;
-              </p>
-              <p className="text-xs text-gray-400">
-                Try a different spelling, brand name, or broader term.
-              </p>
-            </div>
-          ) : (
-            <ul className="space-y-2">
-              {data.results.map((product) => (
-                <ProductRow key={product.product_id} product={product} />
+        {/* Recent searches — shown when no active search */}
+        {!isSearchActive && recentSearches.length > 0 && (
+          <div>
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-400">
+              Recent searches
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {recentSearches.map((q) => (
+                <button
+                  key={q}
+                  onClick={() => selectRecent(q)}
+                  className="rounded-full border border-gray-200 px-3 py-1 text-sm text-gray-600 transition-colors hover:border-gray-400 hover:text-gray-900"
+                >
+                  {q}
+                </button>
               ))}
-            </ul>
-          )}
-        </>
-      )}
+            </div>
+          </div>
+        )}
+
+        {/* Empty state — no search or filters active */}
+        {!isSearchActive && recentSearches.length === 0 && (
+          <p className="py-12 text-center text-sm text-gray-400">
+            Search by name, brand, or browse with filters
+          </p>
+        )}
+
+        {/* Loading */}
+        {isLoading && isSearchActive && (
+          <div className="flex justify-center py-12">
+            <LoadingSpinner />
+          </div>
+        )}
+
+        {/* Error state */}
+        {error && (
+          <div className="card border-red-200 bg-red-50 text-center">
+            <p className="mb-2 text-sm text-red-600">
+              Search failed. Please try again.
+            </p>
+            <button
+              onClick={handleRetry}
+              className="inline-flex items-center gap-1 text-sm font-medium text-red-700 hover:text-red-800"
+            >
+              🔄 Retry
+            </button>
+          </div>
+        )}
+
+        {/* Results */}
+        {data && (
+          <>
+            <div className="flex items-center justify-between">
+              <p className="text-sm text-gray-500">
+                {data.total} result{data.total !== 1 && "s"}
+                {data.query && <> for &ldquo;{data.query}&rdquo;</>}
+              </p>
+              {data.pages > 1 && (
+                <p className="text-xs text-gray-400">
+                  Page {data.page} of {data.pages}
+                </p>
+              )}
+            </div>
+
+            {data.results.length === 0 ? (
+              <div className="py-12 text-center">
+                <p className="mb-2 text-4xl">🔍</p>
+                <p className="mb-1 text-sm text-gray-500">
+                  No products match your {data.query ? "search" : "filters"}
+                </p>
+                <p className="mb-4 text-xs text-gray-400">
+                  Try adjusting your filters or using a different search term.
+                </p>
+                {hasActiveFilters(filters) && (
+                  <button
+                    type="button"
+                    onClick={() => setFilters({})}
+                    className="text-sm text-brand-600 hover:text-brand-700"
+                  >
+                    Clear all filters
+                  </button>
+                )}
+              </div>
+            ) : (
+              <>
+                <ul className="space-y-2">
+                  {data.results.map((product) => (
+                    <ProductRow key={product.product_id} product={product} />
+                  ))}
+                </ul>
+
+                {/* Pagination */}
+                {data.pages > 1 && (
+                  <div className="flex items-center justify-center gap-2 pt-4">
+                    <button
+                      type="button"
+                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      disabled={page <= 1}
+                      className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      ← Prev
+                    </button>
+                    {generatePageNumbers(data.page, data.pages).map((p, i) =>
+                      p === null ? (
+                        <span
+                          key={`ellipsis-${i}`}
+                          className="px-1 text-gray-400"
+                        >
+                          …
+                        </span>
+                      ) : (
+                        <button
+                          key={p}
+                          type="button"
+                          onClick={() => setPage(p)}
+                          className={`h-8 w-8 rounded-lg text-sm font-medium transition-colors ${
+                            p === page
+                              ? "bg-brand-600 text-white"
+                              : "text-gray-600 hover:bg-gray-100"
+                          }`}
+                        >
+                          {p}
+                        </button>
+                      ),
+                    )}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setPage((p) => Math.min(data.pages, p + 1))
+                      }
+                      disabled={page >= data.pages}
+                      className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                    >
+                      Next →
+                    </button>
+                  </div>
+                )}
+              </>
+            )}
+          </>
+        )}
+
+        {/* Save search dialog */}
+        <SaveSearchDialog
+          query={submittedQuery || null}
+          filters={filters}
+          show={showSaveDialog}
+          onClose={() => setShowSaveDialog(false)}
+        />
+      </div>
     </div>
   );
 }
+
+/* ── ProductRow ────────────────────────────────────────────────────────────── */
 
 function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
   const band = SCORE_BANDS[product.score_band];
@@ -312,7 +489,11 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
 
   return (
     <Link href={`/app/product/${product.product_id}`}>
-      <li className="card flex items-center gap-3 transition-shadow hover:shadow-md">
+      <li
+        className={`card flex items-center gap-3 transition-shadow hover:shadow-md ${
+          product.is_avoided ? "opacity-50" : ""
+        }`}
+      >
         {/* Score badge */}
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
@@ -326,7 +507,13 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
             {product.product_name}
           </p>
           <p className="truncate text-sm text-gray-500">
-            {product.brand} &middot; {product.category}
+            {product.brand} · {product.category_icon}{" "}
+            {product.category_display ?? product.category}
+            {product.calories !== null && (
+              <span className="ml-1 text-xs text-gray-400">
+                · {Math.round(product.calories)} kcal
+              </span>
+            )}
           </p>
         </div>
 
@@ -351,4 +538,45 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
       </li>
     </Link>
   );
+}
+
+/* ── Helpers ──────────────────────────────────────────────────────────────── */
+
+function hasActiveFilters(f: SearchFilters): boolean {
+  return (
+    (f.category?.length ?? 0) > 0 ||
+    (f.nutri_score?.length ?? 0) > 0 ||
+    (f.allergen_free?.length ?? 0) > 0 ||
+    f.max_unhealthiness !== undefined
+  );
+}
+
+function countActiveFilters(f: SearchFilters): number {
+  let count = 0;
+  count += f.category?.length ?? 0;
+  count += f.nutri_score?.length ?? 0;
+  count += f.allergen_free?.length ?? 0;
+  if (f.max_unhealthiness !== undefined) count++;
+  return count;
+}
+
+function generatePageNumbers(
+  current: number,
+  total: number,
+): (number | null)[] {
+  if (total <= 7) {
+    return Array.from({ length: total }, (_, i) => i + 1);
+  }
+  const pages: (number | null)[] = [1];
+  if (current > 3) pages.push(null);
+  for (
+    let i = Math.max(2, current - 1);
+    i <= Math.min(total - 1, current + 1);
+    i++
+  ) {
+    pages.push(i);
+  }
+  if (current < total - 2) pages.push(null);
+  pages.push(total);
+  return pages;
 }

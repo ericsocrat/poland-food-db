@@ -7,15 +7,18 @@ import { callRpc } from "./rpc";
 import type {
   AddToListResponse,
   AlternativesResponse,
+  AutocompleteResponse,
   AvoidProductIdsResponse,
   CategoryListingResponse,
   CategoryOverviewItem,
   CompareResponse,
   CreateListResponse,
   DataConfidence,
+  DeleteSavedSearchResponse,
   EanLookupResponse,
   EanNotFoundResponse,
   FavoriteProductIdsResponse,
+  FilterOptionsResponse,
   HealthProfileActiveResponse,
   HealthProfileListResponse,
   HealthProfileMutationResponse,
@@ -28,7 +31,10 @@ import type {
   RpcResult,
   SaveComparisonResponse,
   SavedComparisonsResponse,
+  SavedSearchesResponse,
+  SaveSearchResponse,
   ScoreExplanation,
+  SearchFilters,
   SearchResponse,
   SharedComparisonResponse,
   SharedListResponse,
@@ -67,21 +73,69 @@ export function setUserPreferences(
 export function searchProducts(
   supabase: SupabaseClient,
   params: {
-    p_query: string;
-    p_category?: string;
-    p_limit?: number;
-    p_offset?: number;
-    p_diet_preference?: string;
-    p_avoid_allergens?: string[];
-    p_strict_diet?: boolean;
-    p_strict_allergen?: boolean;
-    p_treat_may_contain?: boolean;
+    p_query?: string;
+    p_filters?: SearchFilters;
+    p_page?: number;
+    p_page_size?: number;
+    p_show_avoided?: boolean;
   },
 ): Promise<RpcResult<SearchResponse>> {
   return callRpc<SearchResponse>(supabase, "api_search_products", {
-    ...params,
-    p_country: null, // always let backend resolve
+    p_query: params.p_query ?? null,
+    p_filters: params.p_filters ?? {},
+    p_page: params.p_page ?? 1,
+    p_page_size: params.p_page_size ?? 20,
+    p_show_avoided: params.p_show_avoided ?? false,
   });
+}
+
+export function searchAutocomplete(
+  supabase: SupabaseClient,
+  query: string,
+  limit?: number,
+): Promise<RpcResult<AutocompleteResponse>> {
+  return callRpc<AutocompleteResponse>(supabase, "api_search_autocomplete", {
+    p_query: query,
+    ...(limit !== undefined ? { p_limit: limit } : {}),
+  });
+}
+
+export function getFilterOptions(
+  supabase: SupabaseClient,
+): Promise<RpcResult<FilterOptionsResponse>> {
+  return callRpc<FilterOptionsResponse>(supabase, "api_get_filter_options", {
+    p_country: null,
+  });
+}
+
+export function saveSearch(
+  supabase: SupabaseClient,
+  name: string,
+  query?: string,
+  filters?: SearchFilters,
+): Promise<RpcResult<SaveSearchResponse>> {
+  return callRpc<SaveSearchResponse>(supabase, "api_save_search", {
+    p_name: name,
+    ...(query ? { p_query: query } : {}),
+    ...(filters ? { p_filters: filters } : {}),
+  });
+}
+
+export function getSavedSearches(
+  supabase: SupabaseClient,
+): Promise<RpcResult<SavedSearchesResponse>> {
+  return callRpc<SavedSearchesResponse>(supabase, "api_get_saved_searches");
+}
+
+export function deleteSavedSearch(
+  supabase: SupabaseClient,
+  searchId: string,
+): Promise<RpcResult<DeleteSavedSearchResponse>> {
+  return callRpc<DeleteSavedSearchResponse>(
+    supabase,
+    "api_delete_saved_search",
+    { p_id: searchId },
+  );
 }
 
 // ─── Category Listing ───────────────────────────────────────────────────────
