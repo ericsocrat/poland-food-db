@@ -16,17 +16,27 @@ SET row_security = off;
 COMMENT ON SCHEMA "public" IS 'standard public schema';
 
 CREATE SCHEMA IF NOT EXISTS "extensions";
-CREATE SCHEMA IF NOT EXISTS "auth";
 
-CREATE OR REPLACE FUNCTION auth.uid()
-RETURNS uuid
-LANGUAGE sql
-STABLE
-AS $$
-    SELECT NULLIF(
-        current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
-        ''
-    )::uuid;
+-- auth schema and auth.uid() already exist on hosted Supabase and local dev.
+-- Only create them if missing (e.g. bare Postgres).
+DO $$
+BEGIN
+    IF NOT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'auth') THEN
+        CREATE SCHEMA auth;
+    END IF;
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_proc p
+        JOIN pg_namespace n ON n.oid = p.pronamespace
+        WHERE n.nspname = 'auth' AND p.proname = 'uid'
+    ) THEN
+        CREATE FUNCTION auth.uid() RETURNS uuid LANGUAGE sql STABLE AS $fn$
+            SELECT NULLIF(
+                current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
+                ''
+            )::uuid;
+        $fn$;
+    END IF;
+END
 $$;
 
 DO $$
