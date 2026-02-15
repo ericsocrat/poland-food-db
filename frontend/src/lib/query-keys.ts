@@ -76,4 +76,7 @@ export const staleTimes = {
 
   /** Health profiles — 5 min */
   healthProfiles: 5 * 60 * 1000,
+
+  /** Health warnings — 5 min (same as profiles, invalidated together) */
+  healthWarnings: 5 * 60 * 1000,
 } as const;

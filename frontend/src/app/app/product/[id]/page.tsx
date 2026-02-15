@@ -15,6 +15,7 @@ import {
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { HealthWarningsCard, HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import type { ProductDetail, Alternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
@@ -185,6 +186,9 @@ export default function ProductDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Personalized health warnings */}
+      <HealthWarningsCard productId={productId} />
 
       {/* Tab bar */}
       <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="tablist">
@@ -447,6 +451,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
             −{alt.score_improvement} points better
           </p>
         </div>
+        <HealthWarningBadge productId={alt.product_id} />
         <span
           className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
         >
