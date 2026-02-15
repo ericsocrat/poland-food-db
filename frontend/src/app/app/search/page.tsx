@@ -18,7 +18,7 @@ import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
 import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
-import type { SearchResult, SearchFilters } from "@/lib/types";
+import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
 const RECENT_KEY = "fooddb:recent-searches";
 const MAX_RECENT = 10;
@@ -91,7 +91,7 @@ export default function SearchPage() {
   const { data, isLoading, isFetching, error } = useQuery({
     queryKey: queryKeys.search(
       submittedQuery,
-      filters as Record<string, unknown>,
+      filters,
       page,
     ),
     queryFn: async () => {
@@ -116,7 +116,7 @@ export default function SearchPage() {
     staleTime: staleTimes.search,
   });
 
-  function handleSubmit(e: { preventDefault: () => void }) {
+  function handleSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     const q = query.trim();
     if (q.length >= 1) {
@@ -141,7 +141,7 @@ export default function SearchPage() {
     queryClient.invalidateQueries({
       queryKey: queryKeys.search(
         submittedQuery,
-        filters as Record<string, unknown>,
+        filters,
         page,
       ),
     });

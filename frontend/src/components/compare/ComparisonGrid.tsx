@@ -8,7 +8,7 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
-import type { CompareProduct } from "@/lib/types";
+import type { CompareProduct, CellValue } from "@/lib/types";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -22,8 +22,8 @@ interface ComparisonGridProps {
 interface CompareRow {
   label: string;
   key: string;
-  getValue: (p: CompareProduct) => number | string | null;
-  format?: (v: number | string | null) => string;
+  getValue: (p: CompareProduct) => CellValue;
+  format?: (v: CellValue) => string;
   /** 'lower' = lower is better, 'higher' = higher is better, 'none' = no ranking */
   betterDirection: "lower" | "higher" | "none";
   unit?: string;
@@ -33,7 +33,7 @@ interface CompareRow {
 
 /** Format a nullable value with a unit, or return fallback. */
 function fmtUnit(
-  v: number | string | null,
+  v: CellValue,
   unit: string,
   fallback = "—",
 ): string {
@@ -41,7 +41,7 @@ function fmtUnit(
 }
 
 /** Format a nullable value as string, or return fallback. */
-function fmtStr(v: number | string | null, fallback = "—"): string {
+function fmtStr(v: CellValue, fallback = "—"): string {
   return v == null ? fallback : String(v);
 }
 
@@ -150,6 +150,35 @@ const COMPARE_ROWS: CompareRow[] = [
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
+interface IndexedValue {
+  idx: number;
+  val: number;
+}
+
+/** Collect non-null numeric entries with their indices. */
+function filterNumericEntries(values: (number | null)[]): IndexedValue[] {
+  const result: IndexedValue[] = [];
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i];
+    if (typeof v === "number") result.push({ idx: i, val: v });
+  }
+  return result;
+}
+
+/** Find the min or max entry in a non-empty array. */
+function findExtreme(
+  entries: IndexedValue[],
+  mode: "min" | "max",
+): IndexedValue {
+  let result = entries[0];
+  for (const entry of entries) {
+    const isBetter =
+      mode === "min" ? entry.val < result.val : entry.val > result.val;
+    if (isBetter) result = entry;
+  }
+  return result;
+}
+
 function getWinnerIndex(products: CompareProduct[]): number {
   let bestIdx = 0;
   let bestScore = products[0].unhealthiness_score;
@@ -168,28 +197,13 @@ function getBestWorst(
 ): { bestIdx: number; worstIdx: number } | null {
   if (direction === "none") return null;
 
-  const validEntries = values.reduce<{ idx: number; val: number }[]>(
-    (acc, v, i) => {
-      if (typeof v === "number") acc.push({ idx: i, val: v });
-      return acc;
-    },
-    [],
-  );
+  const valid = filterNumericEntries(values);
+  if (valid.length < 2) return null;
 
-  if (validEntries.length < 2) return null;
-
-  const comparator =
-    direction === "lower"
-      ? (a: number, b: number) => a < b
-      : (a: number, b: number) => a > b;
-
-  let best = validEntries[0];
-  let worst = validEntries[0];
-
-  for (const entry of validEntries) {
-    if (comparator(entry.val, best.val)) best = entry;
-    if (comparator(worst.val, entry.val)) worst = entry;
-  }
+  const bestMode = direction === "lower" ? "min" : "max";
+  const worstMode = direction === "lower" ? "max" : "min";
+  const best = findExtreme(valid, bestMode);
+  const worst = findExtreme(valid, worstMode);
 
   // Don't highlight if all values are equal
   if (best.val === worst.val) return null;

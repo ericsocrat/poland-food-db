@@ -51,7 +51,16 @@ export function SaveSearchDialog({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+      <div
+        className="absolute inset-0 bg-black/30"
+        role="button"
+        tabIndex={0}
+        aria-label="Close dialog"
+        onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") onClose();
+        }}
+      />
       {/* Dialog */}
       <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
         <h3 className="mb-1 text-base font-semibold text-gray-900">

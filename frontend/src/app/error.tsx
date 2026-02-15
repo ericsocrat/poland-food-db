@@ -13,8 +13,10 @@ export default function ErrorPage({
   reset: () => void;
 }>) {
   useEffect(() => {
-    // Log error for debugging (console in dev, could be a service in prod)
-    console.error("[ErrorBoundary]", error);
+    // Log error only in development; in production use an error-reporting service
+    if (process.env.NODE_ENV === "development") {
+      console.error("[ErrorBoundary]", error);
+    }
   }, [error]);
 
   return (

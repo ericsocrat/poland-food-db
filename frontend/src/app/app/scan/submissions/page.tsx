@@ -186,7 +186,7 @@ function SubmissionRow({
         {/* View product link if merged/approved */}
         {submission.merged_product_id && (
           <button
-            onClick={() => onViewProduct(submission.merged_product_id!)}
+            onClick={() => onViewProduct(submission.merged_product_id ?? 0)}
             className="flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50"
           >
             View →

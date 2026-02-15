@@ -14,7 +14,7 @@ import {
 } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { HEALTH_CONDITIONS } from "@/lib/constants";
-import type { HealthCondition, HealthProfile } from "@/lib/types";
+import type { HealthCondition, HealthProfile, FormSubmitEvent } from "@/lib/types";
 
 // ─── Sub-component: Create/Edit form ────────────────────────────────────────
 
@@ -52,7 +52,7 @@ function ProfileForm({
     );
   }
 
-  async function handleSubmit(e: { preventDefault: () => void }) {
+  async function handleSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     if (!name.trim()) {
       toast.error("Profile name is required");

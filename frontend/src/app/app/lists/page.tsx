@@ -8,7 +8,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useLists, useCreateList, useDeleteList } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import type { ProductList } from "@/lib/types";
+import type { ProductList, FormSubmitEvent } from "@/lib/types";
 
 export default function ListsPage() {
   const { data, isLoading, error } = useLists();
@@ -21,7 +21,7 @@ export default function ListsPage() {
 
   const lists: ProductList[] = data?.lists ?? [];
 
-  function handleCreate(e: { preventDefault: () => void }) {
+  function handleCreate(e: FormSubmitEvent) {
     e.preventDefault();
     if (!newName.trim()) return;
     createList.mutate(

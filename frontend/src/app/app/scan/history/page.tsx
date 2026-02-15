@@ -177,7 +177,7 @@ function ScanRow({
     return (
       <li className="card">
         <button
-          onClick={() => onNavigate(scan.product_id!)}
+          onClick={() => onNavigate(scan.product_id ?? 0)}
           className="flex w-full items-center gap-3 text-left"
         >
           {/* Nutri badge */}

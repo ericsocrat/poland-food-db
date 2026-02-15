@@ -1,5 +1,13 @@
 // ─── TypeScript interfaces matching backend RPC response shapes ─────────────
 
+// ─── Utility types ──────────────────────────────────────────────────────────
+
+/** Minimal form-event type — prevents tight coupling to React.FormEvent. */
+export type FormSubmitEvent = { preventDefault: () => void };
+
+/** Nullable cell value used in comparison grids. */
+export type CellValue = number | string | null;
+
 // ─── Common ─────────────────────────────────────────────────────────────────
 
 export interface ApiError {

@@ -15,9 +15,25 @@ import { recordScan } from "@/lib/api";
 import { isValidEan, stripNonDigits } from "@/lib/validation";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import type { RecordScanResponse, RecordScanFoundResponse } from "@/lib/types";
+import type { RecordScanResponse, RecordScanFoundResponse, FormSubmitEvent } from "@/lib/types";
 
 type ScanState = "idle" | "looking-up" | "found" | "not-found" | "error";
+
+/** Torch extensions not yet in the standard MediaTrack types. */
+interface TorchCapabilities extends MediaTrackCapabilities {
+  torch?: boolean;
+}
+
+/** Reader instance from @zxing/library (dynamically imported). */
+interface BarcodeReader {
+  listVideoInputDevices: () => Promise<MediaDeviceInfo[]>;
+  decodeFromVideoDevice: (
+    deviceId: string,
+    videoElement: HTMLVideoElement | null,
+    callback: (result: { getText: () => string } | null, error: unknown) => void,
+  ) => void;
+  reset: () => void;
+}
 
 export default function ScanPage() {
   const router = useRouter();
@@ -36,8 +52,7 @@ export default function ScanPage() {
   );
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const readerRef = useRef<any>(null);
+  const readerRef = useRef<BarcodeReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
   // ─── Record scan mutation ─────────────────────────────────────────────────
@@ -130,10 +145,13 @@ export default function ScanPage() {
         streamRef.current = videoRef.current.srcObject as MediaStream;
       }
     } catch (err: unknown) {
-      const errObj = err as { name?: string };
+      const errName =
+        err instanceof Error || (err && typeof err === "object" && "name" in err)
+          ? String((err as { name: string }).name)
+          : "";
       if (
-        errObj.name === "NotAllowedError" ||
-        errObj.name === "PermissionDeniedError"
+        errName === "NotAllowedError" ||
+        errName === "PermissionDeniedError"
       ) {
         setCameraError(
           "Camera permission denied. Please allow camera access in your browser settings.",
@@ -165,13 +183,11 @@ export default function ScanPage() {
     if (!track) return;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const capabilities = track.getCapabilities() as any;
+      const capabilities = track.getCapabilities() as TorchCapabilities;
       if (capabilities.torch) {
         const newState = !torchOn;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (track as any).applyConstraints({
-          advanced: [{ torch: newState }],
+        await track.applyConstraints({
+          advanced: [{ torch: newState } as MediaTrackConstraintSet],
         });
         setTorchOn(newState);
       } else {
@@ -189,7 +205,7 @@ export default function ScanPage() {
     return () => stopScanner();
   }, [mode, scanState, startScanner]);
 
-  function handleManualSubmit(e: { preventDefault: () => void }) {
+  function handleManualSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     const cleaned = manualEan.trim();
     if (!isValidEan(cleaned)) {

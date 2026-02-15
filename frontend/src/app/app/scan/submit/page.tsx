@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { submitProduct } from "@/lib/api";
+import type { FormSubmitEvent } from "@/lib/types";
 
 export default function SubmitProductPage() {
   const supabase = createClient();
@@ -44,7 +45,7 @@ export default function SubmitProductPage() {
     },
   });
 
-  function handleSubmit(e: { preventDefault: () => void }) {
+  function handleSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     if (ean.length < 8 || productName.length < 2) return;
     mutation.mutate();

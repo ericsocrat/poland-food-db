@@ -17,11 +17,11 @@ import {
 } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
-import type { ListItem } from "@/lib/types";
+import type { ListItem, FormSubmitEvent } from "@/lib/types";
 
 export default function ListDetailPage() {
   const params = useParams();
-  const listId = params.id as string;
+  const listId = String(params.id ?? "");
 
   const { data: listsData } = useLists();
   const { data: itemsData, isLoading, error } = useListItems(listId);
@@ -39,7 +39,7 @@ export default function ListDetailPage() {
   const list = listsData?.lists?.find((l) => l.id === listId);
   const items: ListItem[] = itemsData?.items ?? [];
 
-  function handleSaveEdit(e: { preventDefault: () => void }) {
+  function handleSaveEdit(e: FormSubmitEvent) {
     e.preventDefault();
     if (!editName.trim()) return;
     updateMutation.mutate(

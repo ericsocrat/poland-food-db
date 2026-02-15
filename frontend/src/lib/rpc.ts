@@ -45,9 +45,10 @@ export function extractBusinessError(
   data: unknown,
 ): NormalizedError | null {
   if (data && typeof data === "object" && "error" in data) {
+    const record = data as { error: unknown };
     return {
       code: "BUSINESS_ERROR",
-      message: String((data as Record<string, unknown>).error),
+      message: String(record.error),
     };
   }
   return null;

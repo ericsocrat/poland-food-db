@@ -28,7 +28,7 @@ const SORT_OPTIONS = [
 
 export default function CategoryListingPage() {
   const params = useParams();
-  const slug = params.slug as string;
+  const slug = String(params.slug ?? "");
   const supabase = createClient();
   const queryClient = useQueryClient();
 

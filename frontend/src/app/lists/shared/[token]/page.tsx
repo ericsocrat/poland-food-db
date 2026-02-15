@@ -12,7 +12,7 @@ import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 
 export default function SharedListPage() {
   const params = useParams();
-  const token = params.token as string;
+  const token = String(params.token ?? "");
 
   const { data, isLoading, error } = useSharedList(token);
 

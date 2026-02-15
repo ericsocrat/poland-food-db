@@ -1,11 +1,13 @@
 // ─── TanStack Query key constants and caching rules ─────────────────────────
 
+import type { SearchFilters } from "@/lib/types";
+
 export const queryKeys = {
   /** User preferences — invalidated after set */
   preferences: ["preferences"] as const,
 
   /** Product search results */
-  search: (query: string, filters?: Record<string, unknown>, page?: number) =>
+  search: (query: string, filters?: SearchFilters, page?: number) =>
     ["search", { query, filters, page }] as const,
 
   /** Autocomplete suggestions */

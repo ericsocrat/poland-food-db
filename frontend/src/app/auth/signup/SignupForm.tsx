@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import type { FormSubmitEvent } from "@/lib/types";
 
 export function SignupForm() {
   const router = useRouter();
@@ -13,7 +14,7 @@ export function SignupForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSignup(e: { preventDefault: () => void }) {
+  async function handleSignup(e: FormSubmitEvent) {
     e.preventDefault();
     setLoading(true);
 

@@ -14,9 +14,8 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
           queries: {
             // Don't retry on 4xx (auth errors, validation errors)
             retry: (failureCount, error) => {
-              const err = error as unknown as Record<string, unknown>;
-              if (err && typeof err === "object" && "code" in err) {
-                const code = String(err.code);
+              if (error && typeof error === "object" && "code" in error) {
+                const code = String((error as { code: unknown }).code);
                 if (["401", "403", "PGRST301"].includes(code)) return false;
               }
               return failureCount < 2;

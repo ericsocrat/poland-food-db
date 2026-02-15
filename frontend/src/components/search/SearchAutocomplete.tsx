@@ -70,7 +70,8 @@ export function SearchAutocomplete({
     function handleClick(e: MouseEvent) {
       if (
         containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
+        e.target instanceof Node &&
+        !containerRef.current.contains(e.target)
       ) {
         onClose();
       }
