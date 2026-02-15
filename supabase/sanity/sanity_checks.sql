@@ -48,7 +48,11 @@ FROM (VALUES
 LEFT JOIN information_schema.tables ist
     ON ist.table_schema = 'public'
     AND ist.table_name = v.expected_view
-WHERE ist.table_name IS NULL;
+LEFT JOIN pg_matviews mv
+    ON mv.schemaname = 'public'
+    AND mv.matviewname = v.expected_view
+WHERE ist.table_name IS NULL
+  AND mv.matviewname IS NULL;
 
 -- ═══════════════════════════════════════════════════════════════
 -- CHECK 3: Required functions exist

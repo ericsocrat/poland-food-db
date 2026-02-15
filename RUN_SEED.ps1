@@ -68,6 +68,7 @@ param(
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 $PRODUCTION_PROJECT_REF = "uskvezwftkkudvksmken"
+$POOLER_HOST = "aws-1-eu-west-1.pooler.supabase.com"
 $DOCKER_CONTAINER = "supabase_db_poland-food-db"
 $DB_NAME = "postgres"
 $DB_USER = "postgres"
@@ -107,14 +108,16 @@ switch ($Env) {
             Write-Host "Set it in your .env file or environment variables." -ForegroundColor Yellow
             exit 1
         }
-        $dbHost = "db.$stagingRef.supabase.co"
+        $dbHost = $POOLER_HOST
+        $DB_USER = "postgres.$stagingRef"
         $dbPassword = [System.Environment]::GetEnvironmentVariable("SUPABASE_STAGING_DB_PASSWORD")
         $envLabel = "STAGING ($stagingRef)"
         $envColor = "Yellow"
         $usePsql = $true
     }
     "production" {
-        $dbHost = "db.$PRODUCTION_PROJECT_REF.supabase.co"
+        $dbHost = $POOLER_HOST
+        $DB_USER = "postgres.$PRODUCTION_PROJECT_REF"
         $dbPassword = [System.Environment]::GetEnvironmentVariable("SUPABASE_DB_PASSWORD")
         $envLabel = "PRODUCTION ($PRODUCTION_PROJECT_REF)"
         $envColor = "Red"

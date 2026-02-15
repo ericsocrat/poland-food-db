@@ -45,10 +45,10 @@ param(
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 $PROJECT_REF = "uskvezwftkkudvksmken"
-$DB_HOST = "db.$PROJECT_REF.supabase.co"
+$DB_HOST = "aws-1-eu-west-1.pooler.supabase.com"
 $DB_PORT = "5432"
 $DB_NAME = "postgres"
-$DB_USER = "postgres"
+$DB_USER = "postgres.$PROJECT_REF"
 
 $PIPELINE_ROOT = Join-Path $PSScriptRoot "db" "pipelines"
 

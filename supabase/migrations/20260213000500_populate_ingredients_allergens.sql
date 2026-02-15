@@ -1,4 +1,4 @@
-﻿-- Populate product_ingredient and product_allergen_info tables
+-- Populate product_ingredient and product_allergen_info tables
 -- Generated: 2026-02-12
 -- Products processed: 997
 -- Products with ingredients: 859
