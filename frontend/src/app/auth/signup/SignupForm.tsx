@@ -13,7 +13,7 @@ export function SignupForm() {
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
 
-  async function handleSignup(e: React.FormEvent) {
+  async function handleSignup(e: { preventDefault: () => void }) {
     e.preventDefault();
     setLoading(true);
 

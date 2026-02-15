@@ -19,13 +19,15 @@ export function ShareComparison({
   const [shareToken, setShareToken] = useState(existingShareToken ?? "");
   const { mutate: save, isPending } = useSaveComparison();
 
-  const shareUrl = shareToken
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/compare/shared/${shareToken}`
-    : "";
+  const origin =
+    typeof globalThis !== "undefined" && globalThis.location
+      ? globalThis.location.origin
+      : "";
+  const shareUrl = shareToken ? `${origin}/compare/shared/${shareToken}` : "";
 
   function handleCopyUrl() {
     // Copy the current URL params version (no auth needed)
-    const url = `${window.location.origin}/app/compare?ids=${productIds.join(",")}`;
+    const url = `${globalThis.location.origin}/app/compare?ids=${productIds.join(",")}`;
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);

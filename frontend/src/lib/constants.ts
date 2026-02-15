@@ -1,6 +1,8 @@
 // ─── Constants: countries, allergens, diets ─────────────────────────────────
 // Keeping these in sync with backend reference tables.
 
+import type { ScoreBand } from "@/lib/types";
+
 export const COUNTRIES = [
   { code: "DE", name: "Germany", native: "Deutschland", flag: "🇩🇪" },
   { code: "PL", name: "Poland", native: "Polska", flag: "🇵🇱" },
@@ -36,6 +38,14 @@ export const SCORE_BANDS = {
   high: { label: "High", color: "text-orange-600", bg: "bg-orange-100" },
   very_high: { label: "Very High", color: "text-red-600", bg: "bg-red-100" },
 } as const;
+
+/** Map a 0-100 unhealthiness score to a score band key. */
+export function scoreBandFromScore(score: number): ScoreBand {
+  if (score <= 25) return "low";
+  if (score <= 50) return "moderate";
+  if (score <= 75) return "high";
+  return "very_high";
+}
 
 // Nutri-Score display config
 export const NUTRI_COLORS: Record<string, string> = {

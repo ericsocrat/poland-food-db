@@ -18,6 +18,8 @@ interface SearchAutocompleteProps {
   onQueryChange: (query: string) => void;
   show: boolean;
   onClose: () => void;
+  /** Ref callback — receives the keyboard handler so the parent input can use it */
+  onInputKeyDown?: (handler: (e: React.KeyboardEvent) => void) => void;
 }
 
 function useDebounce(value: string, delay: number) {
@@ -36,6 +38,7 @@ export function SearchAutocomplete({
   onQueryChange: _onQueryChange,
   show,
   onClose,
+  onInputKeyDown,
 }: Readonly<SearchAutocompleteProps>) {
   const supabase = createClient();
   const router = useRouter();
@@ -124,6 +127,11 @@ export function SearchAutocomplete({
     ],
   );
 
+  // Expose keyboard handler to parent input
+  useEffect(() => {
+    onInputKeyDown?.(handleKeyDown);
+  }, [handleKeyDown, onInputKeyDown]);
+
   // Scroll active item into view
   useEffect(() => {
     if (activeIndex >= 0 && listRef.current) {
@@ -140,7 +148,6 @@ export function SearchAutocomplete({
     <div
       ref={containerRef}
       className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg"
-      onKeyDown={handleKeyDown}
     >
       {isFetching && suggestions.length === 0 && (
         <div className="px-4 py-3 text-center text-sm text-gray-400">

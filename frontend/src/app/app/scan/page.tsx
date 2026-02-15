@@ -56,7 +56,7 @@ export default function ScanPage() {
       });
 
       if (data.found) {
-        const found = data as RecordScanFoundResponse;
+        const found = data;
         if (batchMode) {
           // Batch mode: add to list, keep scanning
           setBatchResults((prev) => [found, ...prev]);
@@ -189,7 +189,7 @@ export default function ScanPage() {
     return () => stopScanner();
   }, [mode, scanState, startScanner]);
 
-  function handleManualSubmit(e: React.FormEvent) {
+  function handleManualSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
     const cleaned = manualEan.trim();
     if (!isValidEan(cleaned)) {

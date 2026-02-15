@@ -76,7 +76,7 @@ export const queryKeys = {
 
   /** Products for comparison view */
   compareProducts: (ids: number[]) =>
-    ["compare-products", ids.sort((a, b) => a - b).join(",")] as const,
+    ["compare-products", ids.toSorted((a, b) => a - b).join(",")] as const,
 
   /** User's saved comparisons */
   savedComparisons: ["saved-comparisons"] as const,

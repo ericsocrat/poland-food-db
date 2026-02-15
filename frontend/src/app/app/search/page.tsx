@@ -59,6 +59,9 @@ export default function SearchPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const inputRef = useRef<HTMLInputElement>(null);
+  const autocompleteKeyDownRef = useRef<
+    ((e: React.KeyboardEvent) => void) | null
+  >(null);
 
   const [query, setQuery] = useState("");
   const [submittedQuery, setSubmittedQuery] = useState("");
@@ -191,6 +194,7 @@ export default function SearchPage() {
               onFocus={() => {
                 if (query.length >= 1) setShowAutocomplete(true);
               }}
+              onKeyDown={(e) => autocompleteKeyDownRef.current?.(e)}
               placeholder="Search products…"
               className="input-field pl-10 pr-10"
               autoFocus
@@ -249,6 +253,9 @@ export default function SearchPage() {
               onQueryChange={setQuery}
               show={showAutocomplete}
               onClose={() => setShowAutocomplete(false)}
+              onInputKeyDown={(handler) => {
+                autocompleteKeyDownRef.current = handler;
+              }}
             />
           </div>
 

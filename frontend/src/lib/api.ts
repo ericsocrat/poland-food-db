@@ -100,7 +100,7 @@ export function searchAutocomplete(
 ): Promise<RpcResult<AutocompleteResponse>> {
   return callRpc<AutocompleteResponse>(supabase, "api_search_autocomplete", {
     p_query: query,
-    ...(limit !== undefined ? { p_limit: limit } : {}),
+    ...(limit === undefined ? {} : { p_limit: limit }),
   });
 }
 
@@ -359,8 +359,8 @@ export function getListItems(
 ): Promise<RpcResult<ListItemsResponse>> {
   return callRpc<ListItemsResponse>(supabase, "api_get_list_items", {
     p_list_id: listId,
-    ...(limit !== undefined ? { p_limit: limit } : {}),
-    ...(offset !== undefined ? { p_offset: offset } : {}),
+    ...(limit === undefined ? {} : { p_limit: limit }),
+    ...(offset === undefined ? {} : { p_offset: offset }),
   });
 }
 
@@ -385,8 +385,8 @@ export function updateList(
 ): Promise<RpcResult<MutationSuccess>> {
   return callRpc<MutationSuccess>(supabase, "api_update_list", {
     p_list_id: listId,
-    ...(name !== undefined ? { p_name: name } : {}),
-    ...(description !== undefined ? { p_description: description } : {}),
+    ...(name === undefined ? {} : { p_name: name }),
+    ...(description === undefined ? {} : { p_description: description }),
   });
 }
 
@@ -462,8 +462,8 @@ export function getSharedList(
 ): Promise<RpcResult<SharedListResponse>> {
   return callRpc<SharedListResponse>(supabase, "api_get_shared_list", {
     p_share_token: shareToken,
-    ...(limit !== undefined ? { p_limit: limit } : {}),
-    ...(offset !== undefined ? { p_offset: offset } : {}),
+    ...(limit === undefined ? {} : { p_limit: limit }),
+    ...(offset === undefined ? {} : { p_offset: offset }),
   });
 }
 
@@ -527,8 +527,8 @@ export function getSavedComparisons(
     supabase,
     "api_get_saved_comparisons",
     {
-      ...(limit !== undefined ? { p_limit: limit } : {}),
-      ...(offset !== undefined ? { p_offset: offset } : {}),
+      ...(limit === undefined ? {} : { p_limit: limit }),
+      ...(offset === undefined ? {} : { p_offset: offset }),
     },
   );
 }

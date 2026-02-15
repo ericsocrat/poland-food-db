@@ -18,7 +18,7 @@ export function LoginForm() {
   const reason = searchParams.get("reason");
   const redirect = sanitizeRedirect(searchParams.get("redirect"));
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: { preventDefault: () => void }) {
     e.preventDefault();
     setLoading(true);
 
