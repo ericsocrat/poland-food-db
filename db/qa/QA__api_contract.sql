@@ -243,7 +243,7 @@ SELECT
 -- #23 All api_* functions are SECURITY DEFINER (still, after recreation)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
-    CASE WHEN COUNT(*) = 9
+    CASE WHEN COUNT(*) = 16
     THEN 'PASS' ELSE 'FAIL' END AS "#23 all api_* remain SECURITY DEFINER"
 FROM pg_proc p
 JOIN pg_namespace n ON n.oid = p.pronamespace
@@ -272,7 +272,7 @@ SELECT
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
-        SELECT (api_search_products('a', NULL, 5, 0, 'PL'))->>'country'
+        SELECT (api_search_products('co', NULL, 5, 0, 'PL'))->>'country'
     ) = 'PL'
     THEN 'PASS' ELSE 'FAIL' END AS "#25 search with p_country echoes country";
 
@@ -292,7 +292,7 @@ SELECT
     CASE WHEN (
         SELECT api_product_detail_by_ean(p.ean) ? 'scan'
         FROM products p
-        WHERE p.ean IS NOT NULL AND p.is_deprecated IS NOT TRUE
+        WHERE p.ean IS NOT NULL AND p.is_deprecated IS NOT TRUE AND p.country = 'PL'
         LIMIT 1
     )
     THEN 'PASS' ELSE 'FAIL' END AS "#27 ean_lookup success has scan key";
@@ -306,20 +306,21 @@ SELECT
         FROM jsonb_object_keys((
             SELECT api_product_detail_by_ean(p.ean)->'scan'
             FROM products p
-            WHERE p.ean IS NOT NULL AND p.is_deprecated IS NOT TRUE
+            WHERE p.ean IS NOT NULL AND p.is_deprecated IS NOT TRUE AND p.country = 'PL'
             LIMIT 1
         )) k
     ) = ARRAY['alternative_count','found','scanned_ean']
     THEN 'PASS' ELSE 'FAIL' END AS "#28 ean_lookup → scan keys (3)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #29 api_get_user_preferences — no-prefs response keys (3)
+-- #29 api_get_user_preferences — auth-required error response keys (2)
+--      Without auth context (QA runs as postgres), returns auth error.
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
         SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_get_user_preferences()) k
-    ) = ARRAY['api_version','has_preferences','message']
-    THEN 'PASS' ELSE 'FAIL' END AS "#29 get_user_preferences no-prefs keys (3)";
+    ) = ARRAY['api_version','error']
+    THEN 'PASS' ELSE 'FAIL' END AS "#29 get_user_preferences auth-error keys (2)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #30 api_set_user_preferences — auth-required error response keys (2)
