@@ -590,3 +590,104 @@ export interface SharedComparisonResponse {
   product_count: number;
   products: CompareProduct[];
 }
+
+// ─── Scanner & Submissions ──────────────────────────────────────────────────
+
+export interface RecordScanFoundResponse {
+  api_version: string;
+  found: true;
+  product_id: number;
+  product_name: string;
+  brand: string;
+  category: string;
+  unhealthiness_score: number;
+  nutri_score: NutriGrade;
+}
+
+export interface RecordScanNotFoundResponse {
+  api_version: string;
+  found: false;
+  ean: string;
+  has_pending_submission: boolean;
+}
+
+export type RecordScanResponse =
+  | RecordScanFoundResponse
+  | RecordScanNotFoundResponse;
+
+export interface ScanHistoryItem {
+  scan_id: string;
+  ean: string;
+  found: boolean;
+  scanned_at: string;
+  product_id: number | null;
+  product_name: string | null;
+  brand: string | null;
+  category: string | null;
+  unhealthiness_score: number | null;
+  nutri_score: NutriGrade | null;
+  submission_status: string | null;
+}
+
+export interface ScanHistoryResponse {
+  api_version: string;
+  total: number;
+  page: number;
+  pages: number;
+  page_size: number;
+  filter: string;
+  scans: ScanHistoryItem[];
+}
+
+export interface Submission {
+  id: string;
+  ean: string;
+  product_name: string;
+  brand: string | null;
+  category: string | null;
+  photo_url: string | null;
+  status: 'pending' | 'approved' | 'rejected' | 'merged';
+  merged_product_id: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SubmissionsResponse {
+  api_version: string;
+  total: number;
+  page: number;
+  pages: number;
+  page_size: number;
+  submissions: Submission[];
+}
+
+export interface SubmitProductResponse {
+  api_version: string;
+  submission_id: string;
+  status: string;
+  error?: string;
+}
+
+export interface AdminSubmission extends Submission {
+  notes: string | null;
+  user_id: string;
+  reviewed_at: string | null;
+}
+
+export interface AdminSubmissionsResponse {
+  api_version: string;
+  total: number;
+  page: number;
+  pages: number;
+  page_size: number;
+  status_filter: string;
+  submissions: AdminSubmission[];
+}
+
+export interface AdminReviewResponse {
+  api_version: string;
+  submission_id: string;
+  status: string;
+  merged_product_id?: number;
+  error?: string;
+}

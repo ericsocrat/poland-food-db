@@ -83,6 +83,13 @@ export const queryKeys = {
 
   /** Shared comparison (public, by token) */
   sharedComparison: (token: string) => ["shared-comparison", token] as const,
+
+  /** Scan history (paginated) */
+  scanHistory: (page: number, filter: string) =>
+    ["scan-history", { page, filter }] as const,
+
+  /** User's product submissions */
+  mySubmissions: (page: number) => ["my-submissions", page] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -153,4 +160,10 @@ export const staleTimes = {
 
   /** Shared comparison — 5 min */
   sharedComparison: 5 * 60 * 1000,
+
+  /** Scan history — 2 min */
+  scanHistory: 2 * 60 * 1000,
+
+  /** User submissions — 5 min */
+  mySubmissions: 5 * 60 * 1000,
 } as const;

@@ -28,16 +28,20 @@ import type {
   MutationSuccess,
   ProductDetail,
   ProductListMembershipResponse,
+  RecordScanResponse,
   RpcResult,
   SaveComparisonResponse,
   SavedComparisonsResponse,
   SavedSearchesResponse,
   SaveSearchResponse,
+  ScanHistoryResponse,
   ScoreExplanation,
   SearchFilters,
   SearchResponse,
   SharedComparisonResponse,
   SharedListResponse,
+  SubmissionsResponse,
+  SubmitProductResponse,
   ToggleShareResponse,
   UserPreferences,
 } from "./types";
@@ -546,5 +550,61 @@ export function deleteComparison(
 ): Promise<RpcResult<MutationSuccess>> {
   return callRpc<MutationSuccess>(supabase, "api_delete_comparison", {
     p_comparison_id: comparisonId,
+  });
+}
+
+// ─── Scanner & Submissions ──────────────────────────────────────────────────
+
+export function recordScan(
+  supabase: SupabaseClient,
+  ean: string,
+): Promise<RpcResult<RecordScanResponse>> {
+  return callRpc<RecordScanResponse>(supabase, "api_record_scan", {
+    p_ean: ean,
+  });
+}
+
+export function getScanHistory(
+  supabase: SupabaseClient,
+  page?: number,
+  pageSize?: number,
+  filter?: string,
+): Promise<RpcResult<ScanHistoryResponse>> {
+  return callRpc<ScanHistoryResponse>(supabase, "api_get_scan_history", {
+    p_page: page ?? 1,
+    p_page_size: pageSize ?? 20,
+    p_filter: filter ?? "all",
+  });
+}
+
+export function submitProduct(
+  supabase: SupabaseClient,
+  params: {
+    ean: string;
+    productName: string;
+    brand?: string;
+    category?: string;
+    photoUrl?: string;
+    notes?: string;
+  },
+): Promise<RpcResult<SubmitProductResponse>> {
+  return callRpc<SubmitProductResponse>(supabase, "api_submit_product", {
+    p_ean: params.ean,
+    p_product_name: params.productName,
+    p_brand: params.brand ?? null,
+    p_category: params.category ?? null,
+    p_photo_url: params.photoUrl ?? null,
+    p_notes: params.notes ?? null,
+  });
+}
+
+export function getMySubmissions(
+  supabase: SupabaseClient,
+  page?: number,
+  pageSize?: number,
+): Promise<RpcResult<SubmissionsResponse>> {
+  return callRpc<SubmissionsResponse>(supabase, "api_get_my_submissions", {
+    p_page: page ?? 1,
+    p_page_size: pageSize ?? 20,
   });
 }
