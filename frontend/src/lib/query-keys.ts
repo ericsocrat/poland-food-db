@@ -1,12 +1,23 @@
 // ─── TanStack Query key constants and caching rules ─────────────────────────
 
+import type { SearchFilters } from "@/lib/types";
+
 export const queryKeys = {
   /** User preferences — invalidated after set */
   preferences: ["preferences"] as const,
 
   /** Product search results */
-  search: (query: string, category?: string) =>
-    ["search", { query, category }] as const,
+  search: (query: string, filters?: SearchFilters, page?: number) =>
+    ["search", { query, filters, page }] as const,
+
+  /** Autocomplete suggestions */
+  autocomplete: (query: string) => ["autocomplete", query] as const,
+
+  /** Filter options (category/nutri/allergen counts) */
+  filterOptions: ["filter-options"] as const,
+
+  /** Saved searches */
+  savedSearches: ["saved-searches"] as const,
 
   /** Category listing (paginated) */
   categoryListing: (
@@ -67,13 +78,20 @@ export const queryKeys = {
 
   /** Products for comparison view */
   compareProducts: (ids: number[]) =>
-    ["compare-products", ids.sort((a, b) => a - b).join(",")] as const,
+    ["compare-products", ids.toSorted((a, b) => a - b).join(",")] as const,
 
   /** User's saved comparisons */
   savedComparisons: ["saved-comparisons"] as const,
 
   /** Shared comparison (public, by token) */
   sharedComparison: (token: string) => ["shared-comparison", token] as const,
+
+  /** Scan history (paginated) */
+  scanHistory: (page: number, filter: string) =>
+    ["scan-history", { page, filter }] as const,
+
+  /** User's product submissions */
+  mySubmissions: (page: number) => ["my-submissions", page] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -84,6 +102,15 @@ export const staleTimes = {
 
   /** Search results — 2 min */
   search: 2 * 60 * 1000,
+
+  /** Autocomplete — 30 sec (frequently changes) */
+  autocomplete: 30 * 1000,
+
+  /** Filter options — 10 min (rarely changes) */
+  filterOptions: 10 * 60 * 1000,
+
+  /** Saved searches — 5 min */
+  savedSearches: 5 * 60 * 1000,
 
   /** Category listing — 5 min */
   categoryListing: 5 * 60 * 1000,
@@ -135,4 +162,10 @@ export const staleTimes = {
 
   /** Shared comparison — 5 min */
   sharedComparison: 5 * 60 * 1000,
+
+  /** Scan history — 2 min */
+  scanHistory: 2 * 60 * 1000,
+
+  /** User submissions — 5 min */
+  mySubmissions: 5 * 60 * 1000,
 } as const;

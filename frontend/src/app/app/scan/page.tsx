@@ -2,24 +2,38 @@
 
 // ─── Barcode scanner page — ZXing camera + manual EAN fallback ──────────────
 // State machine: idle → scanning → looking-up → found / not-found / error
-//   "scan another" always resets back to idle → scanning.
+// Enhancements: records scans to history, batch mode, submission CTA,
+// scan history link.
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { lookupByEan } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { recordScan } from "@/lib/api";
 import { isValidEan, stripNonDigits } from "@/lib/validation";
+import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import type { RecordScanResponse, RecordScanFoundResponse, FormSubmitEvent } from "@/lib/types";
 
-type ScanState =
-  | "idle" // camera / manual input ready, no EAN submitted
-  | "looking-up" // EAN submitted, waiting for API
-  | "found" // product exists → auto-redirect
-  | "not-found" // EAN valid but not in DB
-  | "error"; // lookup failed
+type ScanState = "idle" | "looking-up" | "found" | "not-found" | "error";
+
+/** Torch extensions not yet in the standard MediaTrack types. */
+interface TorchCapabilities extends MediaTrackCapabilities {
+  torch?: boolean;
+}
+
+/** Reader instance from @zxing/library (dynamically imported). */
+interface BarcodeReader {
+  listVideoInputDevices: () => Promise<MediaDeviceInfo[]>;
+  decodeFromVideoDevice: (
+    deviceId: string,
+    videoElement: HTMLVideoElement | null,
+    callback: (result: { getText: () => string } | null, error: unknown) => void,
+  ) => void;
+  reset: () => void;
+}
 
 export default function ScanPage() {
   const router = useRouter();
@@ -31,18 +45,57 @@ export default function ScanPage() {
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [torchOn, setTorchOn] = useState(false);
   const [scanState, setScanState] = useState<ScanState>("idle");
+  const [scanResult, setScanResult] = useState<RecordScanResponse | null>(null);
+  const [batchMode, setBatchMode] = useState(false);
+  const [batchResults, setBatchResults] = useState<RecordScanFoundResponse[]>(
+    [],
+  );
 
   const videoRef = useRef<HTMLVideoElement>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const readerRef = useRef<any>(null);
+  const readerRef = useRef<BarcodeReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  // ZXing barcode scanning
+  // ─── Record scan mutation ─────────────────────────────────────────────────
+
+  const scanMutation = useMutation({
+    mutationFn: async (scanEan: string) => {
+      const result = await recordScan(supabase, scanEan);
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
+    onSuccess: (data) => {
+      setScanResult(data);
+      // Invalidate scan history
+      queryClient.invalidateQueries({
+        queryKey: ["scan-history"],
+      });
+
+      if (data.found) {
+        const found = data;
+        if (batchMode) {
+          // Batch mode: add to list, keep scanning
+          setBatchResults((prev) => [found, ...prev]);
+          toast.success(`✓ ${found.product_name}`);
+          handleReset(true); // reset but stay in camera mode
+        } else {
+          setScanState("found");
+          router.push(`/app/product/${found.product_id}`);
+        }
+      } else {
+        setScanState("not-found");
+      }
+    },
+    onError: () => {
+      setScanState("error");
+    },
+  });
+
+  // ─── ZXing barcode scanning ───────────────────────────────────────────────
+
   const startScanner = useCallback(async () => {
     setCameraError(null);
 
     try {
-      // Dynamically import ZXing to avoid SSR issues
       const { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } =
         await import("@zxing/library");
 
@@ -64,7 +117,6 @@ export default function ScanPage() {
         return;
       }
 
-      // Prefer back camera
       const backCamera = devices.find(
         (d) =>
           d.label.toLowerCase().includes("back") ||
@@ -79,26 +131,27 @@ export default function ScanPage() {
         (result, _error) => {
           if (result) {
             const code = result.getText();
-            // Validate EAN format (8 or 13 digits)
             if (isValidEan(code)) {
               setScanState("looking-up");
               setEan(code);
               stopScanner();
+              scanMutation.mutate(code);
             }
           }
-          // Silently ignore decode errors (continuous scanning)
         },
       );
 
-      // Track the stream for torch control
       if (videoRef.current?.srcObject) {
         streamRef.current = videoRef.current.srcObject as MediaStream;
       }
     } catch (err: unknown) {
-      const errObj = err as { name?: string };
+      const errName =
+        err instanceof Error || (err && typeof err === "object" && "name" in err)
+          ? String((err as { name: string }).name)
+          : "";
       if (
-        errObj.name === "NotAllowedError" ||
-        errObj.name === "PermissionDeniedError"
+        errName === "NotAllowedError" ||
+        errName === "PermissionDeniedError"
       ) {
         setCameraError(
           "Camera permission denied. Please allow camera access in your browser settings.",
@@ -109,6 +162,7 @@ export default function ScanPage() {
       }
       setMode("manual");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function stopScanner() {
@@ -129,13 +183,11 @@ export default function ScanPage() {
     if (!track) return;
 
     try {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const capabilities = track.getCapabilities() as any;
+      const capabilities = track.getCapabilities() as TorchCapabilities;
       if (capabilities.torch) {
         const newState = !torchOn;
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await (track as any).applyConstraints({
-          advanced: [{ torch: newState }],
+        await track.applyConstraints({
+          advanced: [{ torch: newState } as MediaTrackConstraintSet],
         });
         setTorchOn(newState);
       } else {
@@ -147,44 +199,13 @@ export default function ScanPage() {
   }
 
   useEffect(() => {
-    if (mode === "camera") {
+    if (mode === "camera" && scanState === "idle") {
       startScanner();
     }
     return () => stopScanner();
-  }, [mode, startScanner]);
+  }, [mode, scanState, startScanner]);
 
-  // EAN lookup query
-  const {
-    data: lookupResult,
-    isLoading: lookingUp,
-    error: lookupError,
-  } = useQuery({
-    queryKey: queryKeys.scan(ean),
-    queryFn: async () => {
-      const result = await lookupByEan(supabase, ean);
-      if (!result.ok) throw new Error(result.error.message);
-      return result.data;
-    },
-    enabled: ean.length > 0,
-    staleTime: staleTimes.scan,
-  });
-
-  // Auto-redirect if product found
-  useEffect(() => {
-    if (lookupResult && "product_id" in lookupResult) {
-      setScanState("found");
-      router.push(`/app/product/${lookupResult.product_id}`);
-    } else if (lookupResult && "found" in lookupResult && !lookupResult.found) {
-      setScanState("not-found");
-    }
-  }, [lookupResult, router]);
-
-  // Transition to error state
-  useEffect(() => {
-    if (lookupError) setScanState("error");
-  }, [lookupError]);
-
-  function handleManualSubmit(e: React.FormEvent) {
+  function handleManualSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     const cleaned = manualEan.trim();
     if (!isValidEan(cleaned)) {
@@ -193,19 +214,23 @@ export default function ScanPage() {
     }
     setScanState("looking-up");
     setEan(cleaned);
+    scanMutation.mutate(cleaned);
   }
 
-  function handleReset() {
+  function handleReset(keepCamera = false) {
     setEan("");
     setManualEan("");
     setScanState("idle");
-    setMode("camera");
+    setScanResult(null);
+    if (!keepCamera) {
+      setMode("camera");
+    }
   }
 
   // ─── Render ─────────────────────────────────────────────────────────────────
 
-  // Error state — lookup failed
-  if (scanState === "error" && lookupError) {
+  // Error state
+  if (scanState === "error") {
     return (
       <div className="space-y-4">
         <div className="card border-red-200 bg-red-50 text-center">
@@ -220,20 +245,13 @@ export default function ScanPage() {
           <button
             onClick={() => {
               setScanState("looking-up");
-              queryClient.invalidateQueries({
-                queryKey: queryKeys.scan(ean),
-              });
+              scanMutation.mutate(ean);
             }}
             className="btn-secondary flex-1"
-            aria-label="Retry lookup"
           >
             🔄 Retry
           </button>
-          <button
-            onClick={handleReset}
-            className="btn-primary flex-1"
-            aria-label="Scan another barcode"
-          >
+          <button onClick={() => handleReset()} className="btn-primary flex-1">
             Scan another
           </button>
         </div>
@@ -241,8 +259,10 @@ export default function ScanPage() {
     );
   }
 
-  // Not found state
-  if (scanState === "not-found") {
+  // Not found state — with submission CTA
+  if (scanState === "not-found" && scanResult && !scanResult.found) {
+    const hasPending = scanResult.has_pending_submission;
+
     return (
       <div className="space-y-4">
         <div className="card text-center">
@@ -251,18 +271,47 @@ export default function ScanPage() {
             Product not found
           </p>
           <p className="mt-1 text-sm text-gray-500">
-            EAN: {ean} was not found in our database.
+            EAN: <span className="font-mono">{ean}</span> is not in our database
+            yet.
           </p>
         </div>
-        <button onClick={handleReset} className="btn-primary w-full">
-          Scan another
-        </button>
+
+        {hasPending ? (
+          <div className="card border-amber-200 bg-amber-50">
+            <p className="text-sm text-amber-700">
+              ⏳ Someone has already submitted this product. It&apos;s pending
+              review.
+            </p>
+          </div>
+        ) : (
+          <Link
+            href={`/app/scan/submit?ean=${ean}`}
+            className="btn-primary block w-full text-center"
+          >
+            📝 Help us add it!
+          </Link>
+        )}
+
+        <div className="flex gap-2">
+          <button
+            onClick={() => handleReset()}
+            className="btn-secondary flex-1"
+          >
+            Scan another
+          </button>
+          <Link
+            href="/app/scan/history"
+            className="btn-secondary flex-1 text-center"
+          >
+            📋 History
+          </Link>
+        </div>
       </div>
     );
   }
 
   // Looking-up state
-  if (scanState === "looking-up" && lookingUp) {
+  if (scanState === "looking-up" && scanMutation.isPending) {
     return (
       <div className="flex flex-col items-center gap-3 py-12">
         <LoadingSpinner />
@@ -273,7 +322,40 @@ export default function ScanPage() {
 
   return (
     <div className="space-y-4">
-      <h1 className="text-xl font-bold text-gray-900">Scan Barcode</h1>
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <h1 className="text-xl font-bold text-gray-900">📷 Scan Barcode</h1>
+        <div className="flex gap-2">
+          <Link
+            href="/app/scan/history"
+            className="text-sm text-brand-600 hover:text-brand-700"
+          >
+            📋 History
+          </Link>
+          <Link
+            href="/app/scan/submissions"
+            className="text-sm text-brand-600 hover:text-brand-700"
+          >
+            📝 My Submissions
+          </Link>
+        </div>
+      </div>
+
+      {/* Batch mode toggle */}
+      <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 px-3 py-2">
+        <input
+          type="checkbox"
+          checked={batchMode}
+          onChange={(e) => {
+            setBatchMode(e.target.checked);
+            if (!e.target.checked) setBatchResults([]);
+          }}
+          className="h-4 w-4 rounded border-gray-300 text-brand-600"
+        />
+        <span className="text-sm text-gray-700">
+          Batch mode — scan multiple without stopping
+        </span>
+      </label>
 
       {/* Mode toggle */}
       <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
@@ -317,14 +399,29 @@ export default function ScanPage() {
                   playsInline
                   muted
                 />
-                {/* Scanning indicator overlay */}
+                {/* Viewfinder overlay with alignment guides */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                  <div className="h-32 w-64 rounded-xl border-2 border-white/50" />
+                  <div className="relative h-32 w-64">
+                    <div className="absolute inset-0 rounded-xl border-2 border-white/60" />
+                    {/* Corner guides */}
+                    <div className="absolute -left-0.5 -top-0.5 h-4 w-4 border-l-[3px] border-t-[3px] border-white rounded-tl" />
+                    <div className="absolute -right-0.5 -top-0.5 h-4 w-4 border-r-[3px] border-t-[3px] border-white rounded-tr" />
+                    <div className="absolute -bottom-0.5 -left-0.5 h-4 w-4 border-b-[3px] border-l-[3px] border-white rounded-bl" />
+                    <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 border-b-[3px] border-r-[3px] border-white rounded-br" />
+                    {/* Center scan line */}
+                    <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-red-400/70" />
+                  </div>
                 </div>
+                {/* Batch mode indicator */}
+                {batchMode && (
+                  <div className="absolute left-3 top-3 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-medium text-white">
+                    Batch: {batchResults.length} scanned
+                  </div>
+                )}
               </div>
               <div className="flex gap-2">
                 <button onClick={toggleTorch} className="btn-secondary flex-1">
-                  {torchOn ? "🔦 Torch Off" : "🔦 Torch On"}
+                  {torchOn ? "🔦 Off" : "🔦 Torch"}
                 </button>
                 <button
                   onClick={() => {
@@ -365,6 +462,55 @@ export default function ScanPage() {
             Enter 8 digits (EAN-8) or 13 digits (EAN-13)
           </p>
         </form>
+      )}
+
+      {/* Batch results tally */}
+      {batchMode && batchResults.length > 0 && (
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <h2 className="text-sm font-semibold text-gray-900">
+              Scanned ({batchResults.length})
+            </h2>
+            <button
+              onClick={() => setBatchResults([])}
+              className="text-xs text-gray-400 hover:text-gray-600"
+            >
+              Clear
+            </button>
+          </div>
+          <ul className="max-h-48 space-y-1 overflow-y-auto">
+            {batchResults.map((p, i) => (
+              <li
+                key={`${p.product_id}-${i}`}
+                className="flex items-center gap-2 rounded-lg border border-gray-100 px-3 py-2"
+              >
+                <span
+                  className={`inline-flex h-5 w-5 items-center justify-center rounded text-xs font-bold text-white ${
+                    (p.nutri_score && NUTRI_COLORS[p.nutri_score]) ??
+                    "bg-gray-400"
+                  }`}
+                >
+                  {p.nutri_score}
+                </span>
+                <button
+                  onClick={() => router.push(`/app/product/${p.product_id}`)}
+                  className="min-w-0 flex-1 truncate text-left text-sm text-gray-800 hover:text-brand-600"
+                >
+                  {p.product_name}
+                </button>
+                <span className="flex-shrink-0 text-xs text-gray-400">
+                  {p.brand}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <button
+            onClick={() => setBatchMode(false)}
+            className="btn-primary w-full"
+          >
+            Done scanning
+          </button>
+        </div>
       )}
     </div>
   );

@@ -6,6 +6,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { sanitizeRedirect } from "@/lib/validation";
+import type { FormSubmitEvent } from "@/lib/types";
 
 export function LoginForm() {
   const router = useRouter();
@@ -18,7 +19,7 @@ export function LoginForm() {
   const reason = searchParams.get("reason");
   const redirect = sanitizeRedirect(searchParams.get("redirect"));
 
-  async function handleLogin(e: React.FormEvent) {
+  async function handleLogin(e: FormSubmitEvent) {
     e.preventDefault();
     setLoading(true);
 

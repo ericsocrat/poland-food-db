@@ -16,7 +16,7 @@ const queryClient = new QueryClient();
 
 function SharedComparisonContent() {
   const params = useParams();
-  const token = params.token as string;
+  const token = String(params.token ?? "");
   const { data, isLoading, error } = useSharedComparison(token);
 
   return (
@@ -69,10 +69,7 @@ function SharedComparisonContent() {
               </div>
             </div>
 
-            <ComparisonGrid
-              products={data.products}
-              showAvoidBadge={false}
-            />
+            <ComparisonGrid products={data.products} showAvoidBadge={false} />
           </>
         )}
 

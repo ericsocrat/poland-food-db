@@ -17,11 +17,11 @@ import {
 } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
-import type { ListItem } from "@/lib/types";
+import type { ListItem, FormSubmitEvent } from "@/lib/types";
 
 export default function ListDetailPage() {
   const params = useParams();
-  const listId = params.id as string;
+  const listId = String(params.id ?? "");
 
   const { data: listsData } = useLists();
   const { data: itemsData, isLoading, error } = useListItems(listId);
@@ -39,7 +39,7 @@ export default function ListDetailPage() {
   const list = listsData?.lists?.find((l) => l.id === listId);
   const items: ListItem[] = itemsData?.items ?? [];
 
-  function handleSaveEdit(e: React.FormEvent) {
+  function handleSaveEdit(e: FormSubmitEvent) {
     e.preventDefault();
     if (!editName.trim()) return;
     updateMutation.mutate(
@@ -60,7 +60,7 @@ export default function ListDetailPage() {
 
   function handleCopyLink() {
     if (!list?.share_token) return;
-    const url = `${window.location.origin}/lists/shared/${list.share_token}`;
+    const url = `${globalThis.location.origin}/lists/shared/${list.share_token}`;
     navigator.clipboard.writeText(url).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
@@ -262,6 +262,15 @@ export default function ListDetailPage() {
   );
 }
 
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function scoreToBandKey(score: number): keyof typeof SCORE_BANDS {
+  if (score <= 25) return "low";
+  if (score <= 50) return "moderate";
+  if (score <= 75) return "high";
+  return "very_high";
+}
+
 // ─── ListItemRow ────────────────────────────────────────────────────────────
 
 function ListItemRow({
@@ -275,14 +284,7 @@ function ListItemRow({
 }>) {
   // Derive score band from unhealthiness_score
   const score = item.unhealthiness_score;
-  const bandKey =
-    score <= 25
-      ? "low"
-      : score <= 50
-        ? "moderate"
-        : score <= 75
-          ? "high"
-          : "very_high";
+  const bandKey = scoreToBandKey(score);
   const band = SCORE_BANDS[bandKey];
 
   const nutriClass = item.nutri_score_label

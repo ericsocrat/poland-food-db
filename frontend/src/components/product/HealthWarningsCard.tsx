@@ -20,6 +20,13 @@ const SEVERITY_ICON: Record<WarningSeverity, string> = {
   moderate: "ℹ️",
 };
 
+/** Sort order for warning severities (lower = more severe). */
+const SEVERITY_ORDER: Record<WarningSeverity, number> = {
+  critical: 0,
+  high: 1,
+  moderate: 2,
+};
+
 // ─── Condition icon lookup ──────────────────────────────────────────────────
 
 function getConditionIcon(condition: string): string {
@@ -120,7 +127,7 @@ export function HealthWarningsCard({
             </p>
             <p className="text-xs text-green-600">
               No warnings for your profile &ldquo;
-              {profileData.profile!.profile_name}&rdquo;
+              {profileData.profile?.profile_name}&rdquo;
             </p>
           </div>
         </div>
@@ -129,14 +136,9 @@ export function HealthWarningsCard({
   }
 
   // Sort: critical first, then high, then moderate
-  const severityOrder: Record<WarningSeverity, number> = {
-    critical: 0,
-    high: 1,
-    moderate: 2,
-  };
   const sorted = [...warningsData.warnings].sort(
     (a, b) =>
-      (severityOrder[a.severity] ?? 3) - (severityOrder[b.severity] ?? 3),
+      (SEVERITY_ORDER[a.severity] ?? 3) - (SEVERITY_ORDER[b.severity] ?? 3),
   );
 
   // Determine overall card severity (use the highest)
@@ -155,7 +157,7 @@ export function HealthWarningsCard({
           </p>
         </div>
         <span className="text-xs text-gray-400">
-          Profile: {profileData.profile!.profile_name}
+          Profile: {profileData.profile?.profile_name}
         </span>
       </div>
 
@@ -247,12 +249,7 @@ export function HealthWarningBadge({
   // Show warning count badge with severity coloring
   const topSeverity = warningsData.warnings.reduce<WarningSeverity>(
     (worst, w) => {
-      const order: Record<WarningSeverity, number> = {
-        critical: 0,
-        high: 1,
-        moderate: 2,
-      };
-      return order[w.severity] < order[worst] ? w.severity : worst;
+      return SEVERITY_ORDER[w.severity] < SEVERITY_ORDER[worst] ? w.severity : worst;
     },
     "moderate",
   );

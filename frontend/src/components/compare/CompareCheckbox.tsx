@@ -17,6 +17,19 @@ export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
 
   const disabled = !isSelected && isFull;
 
+  function getTitle(): string {
+    if (disabled) return "Max 4 products — deselect one first";
+    if (isSelected) return "Remove from comparison";
+    return "Add to comparison";
+  }
+
+  function getVariantClass(): string {
+    if (isSelected) return "border-brand-600 bg-brand-600 text-white";
+    if (disabled)
+      return "border-gray-200 bg-gray-50 text-gray-300 cursor-not-allowed";
+    return "border-gray-300 bg-white text-gray-400 hover:border-brand-400 hover:text-brand-500";
+  }
+
   return (
     <button
       type="button"
@@ -26,20 +39,8 @@ export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
         if (!disabled) toggle(productId);
       }}
       disabled={disabled}
-      title={
-        disabled
-          ? "Max 4 products — deselect one first"
-          : isSelected
-            ? "Remove from comparison"
-            : "Add to comparison"
-      }
-      className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded border transition-colors ${
-        isSelected
-          ? "border-brand-600 bg-brand-600 text-white"
-          : disabled
-            ? "border-gray-200 bg-gray-50 text-gray-300 cursor-not-allowed"
-            : "border-gray-300 bg-white text-gray-400 hover:border-brand-400 hover:text-brand-500"
-      }`}
+      title={getTitle()}
+      className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded border transition-colors ${getVariantClass()}`}
       aria-label={isSelected ? "Remove from comparison" : "Add to comparison"}
     >
       {isSelected ? (

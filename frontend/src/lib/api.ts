@@ -7,15 +7,18 @@ import { callRpc } from "./rpc";
 import type {
   AddToListResponse,
   AlternativesResponse,
+  AutocompleteResponse,
   AvoidProductIdsResponse,
   CategoryListingResponse,
   CategoryOverviewItem,
   CompareResponse,
   CreateListResponse,
   DataConfidence,
+  DeleteSavedSearchResponse,
   EanLookupResponse,
   EanNotFoundResponse,
   FavoriteProductIdsResponse,
+  FilterOptionsResponse,
   HealthProfileActiveResponse,
   HealthProfileListResponse,
   HealthProfileMutationResponse,
@@ -25,13 +28,20 @@ import type {
   MutationSuccess,
   ProductDetail,
   ProductListMembershipResponse,
+  RecordScanResponse,
   RpcResult,
   SaveComparisonResponse,
   SavedComparisonsResponse,
+  SavedSearchesResponse,
+  SaveSearchResponse,
+  ScanHistoryResponse,
   ScoreExplanation,
+  SearchFilters,
   SearchResponse,
   SharedComparisonResponse,
   SharedListResponse,
+  SubmissionsResponse,
+  SubmitProductResponse,
   ToggleShareResponse,
   UserPreferences,
 } from "./types";
@@ -67,21 +77,69 @@ export function setUserPreferences(
 export function searchProducts(
   supabase: SupabaseClient,
   params: {
-    p_query: string;
-    p_category?: string;
-    p_limit?: number;
-    p_offset?: number;
-    p_diet_preference?: string;
-    p_avoid_allergens?: string[];
-    p_strict_diet?: boolean;
-    p_strict_allergen?: boolean;
-    p_treat_may_contain?: boolean;
+    p_query?: string;
+    p_filters?: SearchFilters;
+    p_page?: number;
+    p_page_size?: number;
+    p_show_avoided?: boolean;
   },
 ): Promise<RpcResult<SearchResponse>> {
   return callRpc<SearchResponse>(supabase, "api_search_products", {
-    ...params,
-    p_country: null, // always let backend resolve
+    p_query: params.p_query ?? null,
+    p_filters: params.p_filters ?? {},
+    p_page: params.p_page ?? 1,
+    p_page_size: params.p_page_size ?? 20,
+    p_show_avoided: params.p_show_avoided ?? false,
   });
+}
+
+export function searchAutocomplete(
+  supabase: SupabaseClient,
+  query: string,
+  limit?: number,
+): Promise<RpcResult<AutocompleteResponse>> {
+  return callRpc<AutocompleteResponse>(supabase, "api_search_autocomplete", {
+    p_query: query,
+    ...(limit === undefined ? {} : { p_limit: limit }),
+  });
+}
+
+export function getFilterOptions(
+  supabase: SupabaseClient,
+): Promise<RpcResult<FilterOptionsResponse>> {
+  return callRpc<FilterOptionsResponse>(supabase, "api_get_filter_options", {
+    p_country: null,
+  });
+}
+
+export function saveSearch(
+  supabase: SupabaseClient,
+  name: string,
+  query?: string,
+  filters?: SearchFilters,
+): Promise<RpcResult<SaveSearchResponse>> {
+  return callRpc<SaveSearchResponse>(supabase, "api_save_search", {
+    p_name: name,
+    ...(query ? { p_query: query } : {}),
+    ...(filters ? { p_filters: filters } : {}),
+  });
+}
+
+export function getSavedSearches(
+  supabase: SupabaseClient,
+): Promise<RpcResult<SavedSearchesResponse>> {
+  return callRpc<SavedSearchesResponse>(supabase, "api_get_saved_searches");
+}
+
+export function deleteSavedSearch(
+  supabase: SupabaseClient,
+  searchId: string,
+): Promise<RpcResult<DeleteSavedSearchResponse>> {
+  return callRpc<DeleteSavedSearchResponse>(
+    supabase,
+    "api_delete_saved_search",
+    { p_id: searchId },
+  );
 }
 
 // ─── Category Listing ───────────────────────────────────────────────────────
@@ -301,8 +359,8 @@ export function getListItems(
 ): Promise<RpcResult<ListItemsResponse>> {
   return callRpc<ListItemsResponse>(supabase, "api_get_list_items", {
     p_list_id: listId,
-    ...(limit !== undefined ? { p_limit: limit } : {}),
-    ...(offset !== undefined ? { p_offset: offset } : {}),
+    ...(limit === undefined ? {} : { p_limit: limit }),
+    ...(offset === undefined ? {} : { p_offset: offset }),
   });
 }
 
@@ -327,8 +385,8 @@ export function updateList(
 ): Promise<RpcResult<MutationSuccess>> {
   return callRpc<MutationSuccess>(supabase, "api_update_list", {
     p_list_id: listId,
-    ...(name !== undefined ? { p_name: name } : {}),
-    ...(description !== undefined ? { p_description: description } : {}),
+    ...(name === undefined ? {} : { p_name: name }),
+    ...(description === undefined ? {} : { p_description: description }),
   });
 }
 
@@ -404,8 +462,8 @@ export function getSharedList(
 ): Promise<RpcResult<SharedListResponse>> {
   return callRpc<SharedListResponse>(supabase, "api_get_shared_list", {
     p_share_token: shareToken,
-    ...(limit !== undefined ? { p_limit: limit } : {}),
-    ...(offset !== undefined ? { p_offset: offset } : {}),
+    ...(limit === undefined ? {} : { p_limit: limit }),
+    ...(offset === undefined ? {} : { p_offset: offset }),
   });
 }
 
@@ -469,8 +527,8 @@ export function getSavedComparisons(
     supabase,
     "api_get_saved_comparisons",
     {
-      ...(limit !== undefined ? { p_limit: limit } : {}),
-      ...(offset !== undefined ? { p_offset: offset } : {}),
+      ...(limit === undefined ? {} : { p_limit: limit }),
+      ...(offset === undefined ? {} : { p_offset: offset }),
     },
   );
 }
@@ -492,5 +550,61 @@ export function deleteComparison(
 ): Promise<RpcResult<MutationSuccess>> {
   return callRpc<MutationSuccess>(supabase, "api_delete_comparison", {
     p_comparison_id: comparisonId,
+  });
+}
+
+// ─── Scanner & Submissions ──────────────────────────────────────────────────
+
+export function recordScan(
+  supabase: SupabaseClient,
+  ean: string,
+): Promise<RpcResult<RecordScanResponse>> {
+  return callRpc<RecordScanResponse>(supabase, "api_record_scan", {
+    p_ean: ean,
+  });
+}
+
+export function getScanHistory(
+  supabase: SupabaseClient,
+  page?: number,
+  pageSize?: number,
+  filter?: string,
+): Promise<RpcResult<ScanHistoryResponse>> {
+  return callRpc<ScanHistoryResponse>(supabase, "api_get_scan_history", {
+    p_page: page ?? 1,
+    p_page_size: pageSize ?? 20,
+    p_filter: filter ?? "all",
+  });
+}
+
+export function submitProduct(
+  supabase: SupabaseClient,
+  params: {
+    ean: string;
+    productName: string;
+    brand?: string;
+    category?: string;
+    photoUrl?: string;
+    notes?: string;
+  },
+): Promise<RpcResult<SubmitProductResponse>> {
+  return callRpc<SubmitProductResponse>(supabase, "api_submit_product", {
+    p_ean: params.ean,
+    p_product_name: params.productName,
+    p_brand: params.brand ?? null,
+    p_category: params.category ?? null,
+    p_photo_url: params.photoUrl ?? null,
+    p_notes: params.notes ?? null,
+  });
+}
+
+export function getMySubmissions(
+  supabase: SupabaseClient,
+  page?: number,
+  pageSize?: number,
+): Promise<RpcResult<SubmissionsResponse>> {
+  return callRpc<SubmissionsResponse>(supabase, "api_get_my_submissions", {
+    p_page: page ?? 1,
+    p_page_size: pageSize ?? 20,
   });
 }

@@ -51,12 +51,10 @@ export default function SavedComparisonsPage() {
       )}
 
       {/* Empty state */}
-      {data && data.comparisons.length === 0 && (
+      {data?.comparisons.length === 0 && (
         <div className="card py-12 text-center">
           <p className="mb-2 text-4xl">📂</p>
-          <p className="mb-1 text-sm text-gray-500">
-            No saved comparisons yet
-          </p>
+          <p className="mb-1 text-sm text-gray-500">No saved comparisons yet</p>
           <p className="mb-4 text-xs text-gray-400">
             Compare products and save them for later reference.
           </p>
@@ -104,9 +102,9 @@ function ComparisonCard({
               `Compare ${comparison.product_ids.length} products`}
           </p>
           <div className="mt-1 flex flex-wrap gap-1">
-            {comparison.product_names.map((name, i) => (
+            {comparison.product_names.map((name) => (
               <span
-                key={i}
+                key={name}
                 className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
               >
                 {name}
@@ -123,7 +121,7 @@ function ComparisonCard({
               type="button"
               onClick={(e) => {
                 e.preventDefault();
-                const url = `${window.location.origin}/compare/shared/${comparison.share_token}`;
+                const url = `${globalThis.location.origin}/compare/shared/${comparison.share_token}`;
                 navigator.clipboard.writeText(url);
               }}
               className="text-sm text-gray-400 hover:text-brand-600"

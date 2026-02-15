@@ -1,5 +1,13 @@
 // ─── TypeScript interfaces matching backend RPC response shapes ─────────────
 
+// ─── Utility types ──────────────────────────────────────────────────────────
+
+/** Minimal form-event type — prevents tight coupling to React.FormEvent. */
+export type FormSubmitEvent = { preventDefault: () => void };
+
+/** Nullable cell value used in comparison grids. */
+export type CellValue = number | string | null;
+
 // ─── Common ─────────────────────────────────────────────────────────────────
 
 export interface ApiError {
@@ -31,27 +39,119 @@ export interface UserPreferences {
 
 // ─── Search ─────────────────────────────────────────────────────────────────
 
+export interface SearchFilters {
+  category?: string[];
+  nutri_score?: string[];
+  allergen_free?: string[];
+  max_unhealthiness?: number;
+  country?: string;
+  sort_by?: 'relevance' | 'name' | 'unhealthiness' | 'nutri_score' | 'calories';
+  sort_order?: 'asc' | 'desc';
+}
+
 export interface SearchResult {
   product_id: number;
   product_name: string;
   brand: string;
   category: string;
+  category_display: string;
+  category_icon: string;
   unhealthiness_score: number;
   score_band: ScoreBand;
   nutri_score: NutriGrade;
   nova_group: string;
+  calories: number | null;
+  high_salt: boolean;
+  high_sugar: boolean;
+  high_sat_fat: boolean;
+  high_additive_load: boolean;
+  is_avoided: boolean;
   relevance: number;
 }
 
 export interface SearchResponse {
   api_version: string;
-  query: string;
-  category: string | null;
+  query: string | null;
   country: string;
-  total_count: number;
-  limit: number;
-  offset: number;
+  total: number;
+  page: number;
+  pages: number;
+  page_size: number;
+  filters_applied: SearchFilters;
   results: SearchResult[];
+}
+
+// ─── Autocomplete ───────────────────────────────────────────────────────────
+
+export interface AutocompleteSuggestion {
+  product_id: number;
+  product_name: string;
+  brand: string;
+  category: string;
+  nutri_score: NutriGrade;
+  unhealthiness_score: number;
+  score_band: ScoreBand;
+}
+
+export interface AutocompleteResponse {
+  api_version: string;
+  query: string;
+  suggestions: AutocompleteSuggestion[];
+}
+
+// ─── Filter Options ─────────────────────────────────────────────────────────
+
+export interface FilterCategoryOption {
+  category: string;
+  display_name: string;
+  icon_emoji: string;
+  count: number;
+}
+
+export interface FilterNutriOption {
+  label: string;
+  count: number;
+}
+
+export interface FilterAllergenOption {
+  tag: string;
+  count: number;
+}
+
+export interface FilterOptionsResponse {
+  api_version: string;
+  country: string;
+  categories: FilterCategoryOption[];
+  nutri_scores: FilterNutriOption[];
+  allergens: FilterAllergenOption[];
+}
+
+// ─── Saved Searches ─────────────────────────────────────────────────────────
+
+export interface SavedSearch {
+  id: string;
+  name: string;
+  query: string | null;
+  filters: SearchFilters;
+  created_at: string;
+}
+
+export interface SavedSearchesResponse {
+  api_version: string;
+  searches: SavedSearch[];
+}
+
+export interface SaveSearchResponse {
+  api_version: string;
+  id: string;
+  name: string;
+  created: boolean;
+}
+
+export interface DeleteSavedSearchResponse {
+  api_version: string;
+  success: boolean;
+  deleted: boolean;
 }
 
 // ─── Category Listing ───────────────────────────────────────────────────────
@@ -497,4 +597,105 @@ export interface SharedComparisonResponse {
   created_at: string;
   product_count: number;
   products: CompareProduct[];
+}
+
+// ─── Scanner & Submissions ──────────────────────────────────────────────────
+
+export interface RecordScanFoundResponse {
+  api_version: string;
+  found: true;
+  product_id: number;
+  product_name: string;
+  brand: string;
+  category: string;
+  unhealthiness_score: number;
+  nutri_score: NutriGrade;
+}
+
+export interface RecordScanNotFoundResponse {
+  api_version: string;
+  found: false;
+  ean: string;
+  has_pending_submission: boolean;
+}
+
+export type RecordScanResponse =
+  | RecordScanFoundResponse
+  | RecordScanNotFoundResponse;
+
+export interface ScanHistoryItem {
+  scan_id: string;
+  ean: string;
+  found: boolean;
+  scanned_at: string;
+  product_id: number | null;
+  product_name: string | null;
+  brand: string | null;
+  category: string | null;
+  unhealthiness_score: number | null;
+  nutri_score: NutriGrade | null;
+  submission_status: string | null;
+}
+
+export interface ScanHistoryResponse {
+  api_version: string;
+  total: number;
+  page: number;
+  pages: number;
+  page_size: number;
+  filter: string;
+  scans: ScanHistoryItem[];
+}
+
+export interface Submission {
+  id: string;
+  ean: string;
+  product_name: string;
+  brand: string | null;
+  category: string | null;
+  photo_url: string | null;
+  status: 'pending' | 'approved' | 'rejected' | 'merged';
+  merged_product_id: number | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface SubmissionsResponse {
+  api_version: string;
+  total: number;
+  page: number;
+  pages: number;
+  page_size: number;
+  submissions: Submission[];
+}
+
+export interface SubmitProductResponse {
+  api_version: string;
+  submission_id: string;
+  status: string;
+  error?: string;
+}
+
+export interface AdminSubmission extends Submission {
+  notes: string | null;
+  user_id: string;
+  reviewed_at: string | null;
+}
+
+export interface AdminSubmissionsResponse {
+  api_version: string;
+  total: number;
+  page: number;
+  pages: number;
+  page_size: number;
+  status_filter: string;
+  submissions: AdminSubmission[];
+}
+
+export interface AdminReviewResponse {
+  api_version: string;
+  submission_id: string;
+  status: string;
+  merged_product_id?: number;
+  error?: string;
 }

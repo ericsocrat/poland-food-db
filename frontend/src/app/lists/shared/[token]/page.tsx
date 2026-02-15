@@ -8,11 +8,11 @@ import { useParams } from "next/navigation";
 import Link from "next/link";
 import { useSharedList } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 
 export default function SharedListPage() {
   const params = useParams();
-  const token = params.token as string;
+  const token = String(params.token ?? "");
 
   const { data, isLoading, error } = useSharedList(token);
 
@@ -76,14 +76,7 @@ export default function SharedListPage() {
             <ul className="space-y-2">
               {data.items.map((item) => {
                 const score = item.unhealthiness_score;
-                const bandKey =
-                  score <= 25
-                    ? "low"
-                    : score <= 50
-                      ? "moderate"
-                      : score <= 75
-                        ? "high"
-                        : "very_high";
+                const bandKey = scoreBandFromScore(score);
                 const band = SCORE_BANDS[bandKey];
                 const nutriClass = item.nutri_score_label
                   ? (NUTRI_COLORS[item.nutri_score_label] ??

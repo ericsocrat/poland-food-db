@@ -62,7 +62,10 @@ export default function ComparePage() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-900">⚖️ Compare Products</h1>
         <div className="flex items-center gap-2">
-          <Link href="/app/compare/saved" className="text-sm text-brand-600 hover:text-brand-700">
+          <Link
+            href="/app/compare/saved"
+            className="text-sm text-brand-600 hover:text-brand-700"
+          >
             📂 Saved
           </Link>
           <button

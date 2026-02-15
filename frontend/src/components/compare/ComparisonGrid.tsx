@@ -6,9 +6,9 @@
 // Highlights best/worst values per row with green/red coloring.
 
 import { useState, useRef, useCallback, useEffect } from "react";
-import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
-import type { CompareProduct, ScoreBand } from "@/lib/types";
+import type { CompareProduct, CellValue } from "@/lib/types";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -22,11 +22,27 @@ interface ComparisonGridProps {
 interface CompareRow {
   label: string;
   key: string;
-  getValue: (p: CompareProduct) => number | string | null;
-  format?: (v: number | string | null) => string;
+  getValue: (p: CompareProduct) => CellValue;
+  format?: (v: CellValue) => string;
   /** 'lower' = lower is better, 'higher' = higher is better, 'none' = no ranking */
   betterDirection: "lower" | "higher" | "none";
   unit?: string;
+}
+
+// ─── Format helpers (avoid negated ternaries) ──────────────────────────────
+
+/** Format a nullable value with a unit, or return fallback. */
+function fmtUnit(
+  v: CellValue,
+  unit: string,
+  fallback = "—",
+): string {
+  return v == null ? fallback : `${v} ${unit}`;
+}
+
+/** Format a nullable value as string, or return fallback. */
+function fmtStr(v: CellValue, fallback = "—"): string {
+  return v == null ? fallback : String(v);
 }
 
 // ─── Row definitions ────────────────────────────────────────────────────────
@@ -48,15 +64,15 @@ const COMPARE_ROWS: CompareRow[] = [
   {
     label: "NOVA Group",
     key: "nova_group",
-    getValue: (p) => p.nova_group ? Number(p.nova_group) : null,
-    format: (v) => (v != null ? String(v) : "?"),
+    getValue: (p) => (p.nova_group ? Number(p.nova_group) : null),
+    format: (v) => fmtStr(v, "?"),
     betterDirection: "lower",
   },
   {
     label: "Calories",
     key: "calories",
     getValue: (p) => p.calories,
-    format: (v) => (v != null ? `${v} kcal` : "—"),
+    format: (v) => fmtUnit(v, "kcal"),
     betterDirection: "lower",
     unit: "kcal",
   },
@@ -64,7 +80,7 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Total Fat",
     key: "total_fat_g",
     getValue: (p) => p.total_fat_g,
-    format: (v) => (v != null ? `${v} g` : "—"),
+    format: (v) => fmtUnit(v, "g"),
     betterDirection: "lower",
     unit: "g",
   },
@@ -72,7 +88,7 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Saturated Fat",
     key: "saturated_fat_g",
     getValue: (p) => p.saturated_fat_g,
-    format: (v) => (v != null ? `${v} g` : "—"),
+    format: (v) => fmtUnit(v, "g"),
     betterDirection: "lower",
     unit: "g",
   },
@@ -80,7 +96,7 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Sugars",
     key: "sugars_g",
     getValue: (p) => p.sugars_g,
-    format: (v) => (v != null ? `${v} g` : "—"),
+    format: (v) => fmtUnit(v, "g"),
     betterDirection: "lower",
     unit: "g",
   },
@@ -88,7 +104,7 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Salt",
     key: "salt_g",
     getValue: (p) => p.salt_g,
-    format: (v) => (v != null ? `${v} g` : "—"),
+    format: (v) => fmtUnit(v, "g"),
     betterDirection: "lower",
     unit: "g",
   },
@@ -96,7 +112,7 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Fibre",
     key: "fibre_g",
     getValue: (p) => p.fibre_g,
-    format: (v) => (v != null ? `${v} g` : "—"),
+    format: (v) => fmtUnit(v, "g"),
     betterDirection: "higher",
     unit: "g",
   },
@@ -104,7 +120,7 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Protein",
     key: "protein_g",
     getValue: (p) => p.protein_g,
-    format: (v) => (v != null ? `${v} g` : "—"),
+    format: (v) => fmtUnit(v, "g"),
     betterDirection: "higher",
     unit: "g",
   },
@@ -112,7 +128,7 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Carbs",
     key: "carbs_g",
     getValue: (p) => p.carbs_g,
-    format: (v) => (v != null ? `${v} g` : "—"),
+    format: (v) => fmtUnit(v, "g"),
     betterDirection: "lower",
     unit: "g",
   },
@@ -120,19 +136,48 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Additives",
     key: "additives_count",
     getValue: (p) => p.additives_count,
-    format: (v) => (v != null ? String(v) : "—"),
+    format: (v) => fmtStr(v),
     betterDirection: "lower",
   },
   {
     label: "Allergens",
     key: "allergen_count",
     getValue: (p) => p.allergen_count,
-    format: (v) => (v != null ? String(v) : "0"),
+    format: (v) => fmtStr(v, "0"),
     betterDirection: "lower",
   },
 ];
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
+
+interface IndexedValue {
+  idx: number;
+  val: number;
+}
+
+/** Collect non-null numeric entries with their indices. */
+function filterNumericEntries(values: (number | null)[]): IndexedValue[] {
+  const result: IndexedValue[] = [];
+  for (let i = 0; i < values.length; i++) {
+    const v = values[i];
+    if (typeof v === "number") result.push({ idx: i, val: v });
+  }
+  return result;
+}
+
+/** Find the min or max entry in a non-empty array. */
+function findExtreme(
+  entries: IndexedValue[],
+  mode: "min" | "max",
+): IndexedValue {
+  let result = entries[0];
+  for (const entry of entries) {
+    const isBetter =
+      mode === "min" ? entry.val < result.val : entry.val > result.val;
+    if (isBetter) result = entry;
+  }
+  return result;
+}
 
 function getWinnerIndex(products: CompareProduct[]): number {
   let bestIdx = 0;
@@ -151,41 +196,19 @@ function getBestWorst(
   direction: "lower" | "higher" | "none",
 ): { bestIdx: number; worstIdx: number } | null {
   if (direction === "none") return null;
-  const numericValues = values.map((v) => (typeof v === "number" ? v : null));
-  const validIndices = numericValues
-    .map((v, i) => (v !== null ? i : -1))
-    .filter((i) => i >= 0);
 
-  if (validIndices.length < 2) return null;
+  const valid = filterNumericEntries(values);
+  if (valid.length < 2) return null;
 
-  let bestIdx = validIndices[0];
-  let worstIdx = validIndices[0];
-
-  for (const i of validIndices) {
-    const val = numericValues[i]!;
-    const bestVal = numericValues[bestIdx]!;
-    const worstVal = numericValues[worstIdx]!;
-
-    if (direction === "lower") {
-      if (val < bestVal) bestIdx = i;
-      if (val > worstVal) worstIdx = i;
-    } else {
-      if (val > bestVal) bestIdx = i;
-      if (val < worstVal) worstIdx = i;
-    }
-  }
+  const bestMode = direction === "lower" ? "min" : "max";
+  const worstMode = direction === "lower" ? "max" : "min";
+  const best = findExtreme(valid, bestMode);
+  const worst = findExtreme(valid, worstMode);
 
   // Don't highlight if all values are equal
-  if (numericValues[bestIdx] === numericValues[worstIdx]) return null;
+  if (best.val === worst.val) return null;
 
-  return { bestIdx, worstIdx };
-}
-
-function scoreBandFromScore(score: number): ScoreBand {
-  if (score <= 25) return "low";
-  if (score <= 50) return "moderate";
-  if (score <= 75) return "high";
-  return "very_high";
+  return { bestIdx: best.idx, worstIdx: worst.idx };
 }
 
 // ─── Desktop Grid ───────────────────────────────────────────────────────────
@@ -207,7 +230,8 @@ function DesktopGrid({
               Metric
             </th>
             {products.map((p, i) => {
-              const band = SCORE_BANDS[scoreBandFromScore(p.unhealthiness_score)];
+              const band =
+                SCORE_BANDS[scoreBandFromScore(p.unhealthiness_score)];
               const nutriClass = p.nutri_score
                 ? NUTRI_COLORS[p.nutri_score]
                 : "bg-gray-200 text-gray-500";
@@ -275,9 +299,7 @@ function DesktopGrid({
                   const rawValue = row.getValue(p);
                   const formatted = row.format
                     ? row.format(rawValue)
-                    : rawValue != null
-                      ? String(rawValue)
-                      : "—";
+                    : fmtStr(rawValue);
 
                   let cellClass = "";
                   if (ranking) {
@@ -400,8 +422,8 @@ function MobileSwipeView({
       if (e.key === "ArrowLeft") swipeTo(activeIdx - 1);
       if (e.key === "ArrowRight") swipeTo(activeIdx + 1);
     }
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
+    globalThis.addEventListener("keydown", onKey);
+    return () => globalThis.removeEventListener("keydown", onKey);
   }, [activeIdx, swipeTo]);
 
   const product = products[activeIdx];
@@ -434,9 +456,9 @@ function MobileSwipeView({
         </div>
         {/* Dots indicator */}
         <div className="mt-1 flex justify-center gap-1">
-          {products.map((_, i) => (
+          {products.map((p, i) => (
             <span
-              key={i}
+              key={`dot-${p.product_id}`}
               className={`h-1.5 w-1.5 rounded-full transition-colors ${
                 i === activeIdx ? "bg-brand-600" : "bg-gray-300"
               }`}
@@ -486,44 +508,42 @@ function MobileSwipeView({
 
           {/* Nutrition data */}
           <div className="divide-y divide-gray-100">
-            {COMPARE_ROWS.filter((r) => r.key !== "nutri_score" && r.key !== "nova_group").map(
-              (row) => {
-                const rawValue = row.getValue(product);
-                const formatted = row.format
-                  ? row.format(rawValue)
-                  : rawValue != null
-                    ? String(rawValue)
-                    : "—";
+            {COMPARE_ROWS.filter(
+              (r) => r.key !== "nutri_score" && r.key !== "nova_group",
+            ).map((row) => {
+              const rawValue = row.getValue(product);
+              const formatted = row.format
+                ? row.format(rawValue)
+                : fmtStr(rawValue);
 
-                // Compare with other products
-                const allValues = products.map((p) => {
-                  const v = row.getValue(p);
-                  return typeof v === "number" ? v : null;
-                });
-                const ranking = getBestWorst(allValues, row.betterDirection);
-                let indicator = "";
-                if (ranking) {
-                  if (activeIdx === ranking.bestIdx)
-                    indicator = "text-green-600 font-semibold";
-                  else if (activeIdx === ranking.worstIdx)
-                    indicator = "text-red-600";
-                }
+              // Compare with other products
+              const allValues = products.map((p) => {
+                const v = row.getValue(p);
+                return typeof v === "number" ? v : null;
+              });
+              const ranking = getBestWorst(allValues, row.betterDirection);
+              let indicator = "";
+              if (ranking) {
+                if (activeIdx === ranking.bestIdx)
+                  indicator = "text-green-600 font-semibold";
+                else if (activeIdx === ranking.worstIdx)
+                  indicator = "text-red-600";
+              }
 
-                return (
-                  <div
-                    key={row.key}
-                    className="flex items-center justify-between py-2"
-                  >
-                    <span className="text-sm text-gray-500">{row.label}</span>
-                    <span className={`text-sm ${indicator || "text-gray-900"}`}>
-                      {formatted}
-                      {ranking && activeIdx === ranking.bestIdx && " ✓"}
-                      {ranking && activeIdx === ranking.worstIdx && " ✗"}
-                    </span>
-                  </div>
-                );
-              },
-            )}
+              return (
+                <div
+                  key={row.key}
+                  className="flex items-center justify-between py-2"
+                >
+                  <span className="text-sm text-gray-500">{row.label}</span>
+                  <span className={`text-sm ${indicator || "text-gray-900"}`}>
+                    {formatted}
+                    {ranking?.bestIdx === activeIdx && " ✓"}
+                    {ranking?.worstIdx === activeIdx && " ✗"}
+                  </span>
+                </div>
+              );
+            })}
           </div>
 
           {/* Allergens */}

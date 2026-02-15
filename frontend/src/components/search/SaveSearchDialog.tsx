@@ -1,0 +1,118 @@
+"use client";
+
+// ─── SaveSearchDialog — save current query + filters ────────────────────────
+
+import { useState } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { createClient } from "@/lib/supabase/client";
+import { saveSearch } from "@/lib/api";
+import { queryKeys } from "@/lib/query-keys";
+import type { SearchFilters } from "@/lib/types";
+
+interface SaveSearchDialogProps {
+  query: string | null;
+  filters: SearchFilters;
+  show: boolean;
+  onClose: () => void;
+}
+
+export function SaveSearchDialog({
+  query,
+  filters,
+  show,
+  onClose,
+}: Readonly<SaveSearchDialogProps>) {
+  const supabase = createClient();
+  const queryClient = useQueryClient();
+  const [name, setName] = useState("");
+
+  const mutation = useMutation({
+    mutationFn: async (searchName: string) => {
+      const result = await saveSearch(
+        supabase,
+        searchName,
+        query ?? undefined,
+        filters,
+      );
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.savedSearches,
+      });
+      setName("");
+      onClose();
+    },
+  });
+
+  if (!show) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-black/30"
+        role="button"
+        tabIndex={0}
+        aria-label="Close dialog"
+        onClick={onClose}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") onClose();
+        }}
+      />
+      {/* Dialog */}
+      <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
+        <h3 className="mb-1 text-base font-semibold text-gray-900">
+          💾 Save Search
+        </h3>
+        <p className="mb-4 text-sm text-gray-500">
+          {query ? `Query: "${query}"` : "Browse mode"}
+          {Object.keys(filters).length > 0 ? " + filters" : ""}
+        </p>
+
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (name.trim().length > 0) {
+              mutation.mutate(name.trim());
+            }
+          }}
+        >
+          <input
+            type="text"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Search name…"
+            className="input-field mb-4"
+            autoFocus
+            maxLength={100}
+          />
+
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={onClose}
+              className="btn-secondary flex-1 py-2 text-sm"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              disabled={name.trim().length === 0 || mutation.isPending}
+              className="btn-primary flex-1 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              {mutation.isPending ? "Saving…" : "Save"}
+            </button>
+          </div>
+
+          {mutation.isError && (
+            <p className="mt-2 text-center text-xs text-red-500">
+              {mutation.error.message}
+            </p>
+          )}
+        </form>
+      </div>
+    </div>
+  );
+}

@@ -3,7 +3,12 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HealthProfileSection } from "./HealthProfileSection";
-import type { HealthProfile, RpcResult, HealthProfileListResponse, HealthProfileMutationResponse } from "@/lib/types";
+import type {
+  HealthProfile,
+  RpcResult,
+  HealthProfileListResponse,
+  HealthProfileMutationResponse,
+} from "@/lib/types";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -65,9 +70,7 @@ function createWrapper() {
   });
   return function Wrapper({ children }: { children: React.ReactNode }) {
     return (
-      <QueryClientProvider client={queryClient}>
-        {children}
-      </QueryClientProvider>
+      <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     );
   };
 }
@@ -186,7 +189,9 @@ describe("HealthProfileSection", () => {
 
     expect(screen.getByLabelText("Profile name")).toBeInTheDocument();
     expect(screen.getByText("Health conditions")).toBeInTheDocument();
-    expect(screen.getByText("Nutrient limits (per 100g, optional)")).toBeInTheDocument();
+    expect(
+      screen.getByText("Nutrient limits (per 100g, optional)"),
+    ).toBeInTheDocument();
     expect(screen.getByLabelText("Notes (optional)")).toBeInTheDocument();
     expect(screen.getByText("Set as active profile")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Create" })).toBeInTheDocument();
@@ -345,11 +350,11 @@ describe("HealthProfileSection", () => {
     // Click edit button (✏️)
     await userEvent.click(screen.getByText("✏️"));
 
-    const nameInput = screen.getByLabelText("Profile name") as HTMLInputElement;
-    expect(nameInput.value).toBe("Existing Plan");
+    const nameInput = screen.getByLabelText("Profile name");
+    expect(nameInput).toHaveValue("Existing Plan");
 
-    const notesInput = screen.getByLabelText("Notes (optional)") as HTMLTextAreaElement;
-    expect(notesInput.value).toBe("Some notes");
+    const notesInput = screen.getByLabelText("Notes (optional)");
+    expect(notesInput).toHaveValue("Some notes");
   });
 
   // ─── Submit update ─────────────────────────────────────────────────
@@ -426,7 +431,7 @@ describe("HealthProfileSection", () => {
     await userEvent.click(screen.getByText("✏️"));
 
     // Clear the sugar threshold
-    const sugarInput = screen.getByLabelText("Max sugar (g)") as HTMLInputElement;
+    const sugarInput = screen.getByLabelText("Max sugar (g)");
     await userEvent.clear(sugarInput);
 
     await userEvent.click(screen.getByRole("button", { name: "Update" }));
@@ -447,7 +452,10 @@ describe("HealthProfileSection", () => {
   // ─── Delete profile ─────────────────────────────────────────────────
 
   it("calls delete API when delete button clicked", async () => {
-    const profile = makeProfile({ profile_id: "del-1", profile_name: "To Delete" });
+    const profile = makeProfile({
+      profile_id: "del-1",
+      profile_name: "To Delete",
+    });
 
     mockListHealthProfiles.mockResolvedValue(
       okResult<HealthProfileListResponse>({
@@ -631,12 +639,18 @@ describe("HealthProfileSection", () => {
 
     await userEvent.click(screen.getByText("+ New Profile"));
 
-    await userEvent.type(screen.getByLabelText("Profile name"), "Full Input Test");
+    await userEvent.type(
+      screen.getByLabelText("Profile name"),
+      "Full Input Test",
+    );
     await userEvent.type(screen.getByLabelText("Max sugar (g)"), "15");
     await userEvent.type(screen.getByLabelText("Max salt (g)"), "2.5");
     await userEvent.type(screen.getByLabelText("Max sat. fat (g)"), "8");
     await userEvent.type(screen.getByLabelText("Max calories (kcal)"), "500");
-    await userEvent.type(screen.getByLabelText("Notes (optional)"), "Test note");
+    await userEvent.type(
+      screen.getByLabelText("Notes (optional)"),
+      "Test note",
+    );
 
     // Toggle active checkbox
     await userEvent.click(screen.getByRole("checkbox"));
@@ -661,8 +675,16 @@ describe("HealthProfileSection", () => {
 
   it("shows active badge only on active profiles", async () => {
     const profiles = [
-      makeProfile({ profile_id: "a-1", profile_name: "Active One", is_active: true }),
-      makeProfile({ profile_id: "a-2", profile_name: "Inactive One", is_active: false }),
+      makeProfile({
+        profile_id: "a-1",
+        profile_name: "Active One",
+        is_active: true,
+      }),
+      makeProfile({
+        profile_id: "a-2",
+        profile_name: "Inactive One",
+        is_active: false,
+      }),
     ];
 
     mockListHealthProfiles.mockResolvedValue(
