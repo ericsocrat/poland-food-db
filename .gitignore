@@ -43,6 +43,9 @@ venv/
 supabase/.temp/
 supabase/.branches/
 
+# ─── Database backups (pre-push safety dumps) ───────────────────────────────
+backups/
+
 # ─── Pipeline output / scratch ──────────────────────────────────────────────
 pipeline_output/
 *_research.json
