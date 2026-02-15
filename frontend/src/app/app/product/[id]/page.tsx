@@ -15,6 +15,10 @@ import {
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import {
+  HealthWarningsCard,
+  HealthWarningBadge,
+} from "@/components/product/HealthWarningsCard";
 import type { ProductDetail, Alternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
@@ -147,9 +151,7 @@ export default function ProductDetailPage() {
           product.flags.high_additive_load ||
           product.flags.has_palm_oil) && (
           <div className="mt-3 space-y-1">
-            <p className="text-xs font-medium text-gray-400">
-              Health flags
-            </p>
+            <p className="text-xs font-medium text-gray-400">Health flags</p>
             <div className="flex flex-wrap gap-1">
               {product.flags.high_sugar && (
                 <FlagWithExplanation
@@ -185,6 +187,9 @@ export default function ProductDetailPage() {
           </div>
         )}
       </div>
+
+      {/* Personalized health warnings */}
+      <HealthWarningsCard productId={productId} />
 
       {/* Tab bar */}
       <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="tablist">
@@ -250,7 +255,11 @@ function FlagWithExplanation({
         className="inline-flex items-center gap-1 rounded bg-red-50 px-2 py-0.5 text-xs font-medium text-red-600 transition-colors hover:bg-red-100"
       >
         {label}
-        <svg className="h-3 w-3 opacity-50" viewBox="0 0 20 20" fill="currentColor">
+        <svg
+          className="h-3 w-3 opacity-50"
+          viewBox="0 0 20 20"
+          fill="currentColor"
+        >
           <path
             fillRule="evenodd"
             d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
@@ -447,6 +456,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
             −{alt.score_improvement} points better
           </p>
         </div>
+        <HealthWarningBadge productId={alt.product_id} />
         <span
           className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
         >

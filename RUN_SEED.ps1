@@ -478,7 +478,8 @@ Write-Host ""
 if ($beforeCounts.Count -gt 0 -and $afterCounts.Count -gt 0) {
     Show-RowDelta -Before $beforeCounts -After $afterCounts
     Write-Host ""
-} elseif ($afterCounts.Count -gt 0) {
+}
+elseif ($afterCounts.Count -gt 0) {
     Show-RowCounts -Counts $afterCounts -Label "Row counts (after):"
     Write-Host ""
 }

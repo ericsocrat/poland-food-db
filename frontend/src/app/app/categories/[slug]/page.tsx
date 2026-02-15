@@ -11,6 +11,7 @@ import { getCategoryListing } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { formatSlug } from "@/lib/validation";
 import type { CategoryProduct } from "@/lib/types";
 
@@ -215,6 +216,10 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
             )}
           </div>
         </div>
+
+        {/* Health warning badge */}
+        <HealthWarningBadge productId={product.product_id} />
+
         <span
           className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
         >
