@@ -7,9 +7,11 @@ on:
     branches: [main]
 
 env:
+  # ── Least-privilege (§8.1A) ──────────────────────────────────────────────
+  # NEXT_PUBLIC_* vars are read-only client-side keys — safe for all jobs.
+  # SUPABASE_SERVICE_ROLE_KEY is scoped to the playwright job only (auth E2E).
   NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
   NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
-  SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
 jobs:
   lint-typecheck-build:
@@ -63,6 +65,10 @@ jobs:
 
       - name: Run Playwright tests
         run: npx playwright test
+        env:
+          # Service role key scoped to this step only — used for test user
+          # provisioning in auth E2E tests. Not available to lint/build jobs.
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       - uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}

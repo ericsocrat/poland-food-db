@@ -8,6 +8,8 @@ on:
       - "supabase/**"
       - "RUN_QA.ps1"
       - "RUN_LOCAL.ps1"
+      - "RUN_SEED.ps1"
+      - "RUN_SANITY.ps1"
       - "validate_eans.py"
       - "enrich_ingredients.py"
       - "check_enrichment_identity.py"
@@ -26,7 +28,7 @@ on:
 
 jobs:
   qa:
-    name: Pipeline + QA (362 checks)
+    name: Pipeline + QA (362 checks) + Sanity (16 checks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -125,6 +127,24 @@ jobs:
           name: qa-results
           path: qa.json
           retention-days: 30
+
+      - name: Run sanity checks
+        shell: pwsh
+        run: |
+          & ./RUN_SANITY.ps1 -Env local -Json -OutFile sanity.json
+          $exitCode = $LASTEXITCODE
+          if ($exitCode -ne 0) {
+            Write-Host "::warning::Sanity checks exited with code $exitCode"
+          }
+
+      - name: Upload sanity results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sanity-results
+          path: sanity.json
+          retention-days: 30
+          if-no-files-found: ignore
 
       - name: Confidence coverage threshold
         run: |

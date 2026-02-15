@@ -308,7 +308,9 @@ There is **no automated deployment workflow** to push schema changes or data to 
 | ------ | ------- | ------ |
 | `RUN_LOCAL.ps1` | Execute all pipeline SQL files against local Supabase | Local (docker exec) |
 | `RUN_REMOTE.ps1` | Execute all pipeline SQL files against remote Supabase | Remote (psql) |
-| `RUN_QA.ps1` | Run 25 QA test suites (358 checks) | Local or CI |
+| `RUN_SEED.ps1` | Unified seed runner — reference data + pipelines for any environment | Local / Staging / Production |
+| `RUN_SANITY.ps1` | Cross-environment sanity checks (16 checks) | Any environment |
+| `RUN_QA.ps1` | Run 25 QA test suites (362 checks) | Local or CI |
 | `RUN_NEGATIVE_TESTS.ps1` | Run 29 negative injection tests (rollback) | Local |
 | `validate_eans.py` | EAN-8/EAN-13 checksum validation | Called by RUN_QA |
 | `check_enrichment_identity.py` | Block migrations using raw `product_id` anchors | CI guard |

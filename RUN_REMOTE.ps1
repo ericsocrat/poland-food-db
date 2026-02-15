@@ -8,11 +8,14 @@
 
     ⚠️  THIS MODIFIES PRODUCTION DATA. ⚠️
 
+    This is the ONLY cloud project (single-cloud mode — §8.1A).
+
     Safety features:
         - Requires explicit -Force flag OR interactive confirmation
+        - Blocks execution on non-main branches (unless -Force)
         - Displays a warning banner before execution
-        - Never runs automatically or unattended
         - Shows exact files that will be executed before prompting
+        - All pipelines use ON CONFLICT DO UPDATE (upsert) — never drops or truncates
 
 .NOTES
     Prerequisites:
@@ -42,10 +45,10 @@ param(
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 $PROJECT_REF = "uskvezwftkkudvksmken"
-$DB_HOST     = "db.$PROJECT_REF.supabase.co"
-$DB_PORT     = "5432"
-$DB_NAME     = "postgres"
-$DB_USER     = "postgres"
+$DB_HOST = "db.$PROJECT_REF.supabase.co"
+$DB_PORT = "5432"
+$DB_NAME = "postgres"
+$DB_USER = "postgres"
 
 $PIPELINE_ROOT = Join-Path $PSScriptRoot "db" "pipelines"
 
@@ -65,6 +68,20 @@ Write-Host "  REMOTE Supabase database. Changes cannot be easily undone." -Foreg
 Write-Host ""
 
 # ─── Preflight Checks ───────────────────────────────────────────────────────
+
+# Branch check — hard block unless -Force (§8.1A)
+$currentBranch = git branch --show-current 2>$null
+if ($currentBranch -and $currentBranch -ne "main") {
+    Write-Host "  BLOCKED: You are on branch '$currentBranch', not 'main'." -ForegroundColor Red
+    Write-Host "  Remote pipelines must be run from 'main' to ensure reviewed code." -ForegroundColor Yellow
+    if (-not $Force) {
+        Write-Host "  Use -Force to override this check (NOT recommended)." -ForegroundColor DarkGray
+        Write-Host ""
+        exit 1
+    }
+    Write-Host "  -Force flag detected — overriding branch check." -ForegroundColor DarkYellow
+    Write-Host ""
+}
 
 # Check psql is available
 $psqlCmd = Get-Command psql -ErrorAction SilentlyContinue
@@ -253,7 +270,7 @@ if ($failCount -eq 0) {
 # ─── Cleanup ────────────────────────────────────────────────────────────────
 
 # Clear password from environment
-$env:PGPASSWORD = ""
+Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
 
 # ─── Summary ────────────────────────────────────────────────────────────────
 

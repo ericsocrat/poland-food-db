@@ -209,12 +209,19 @@ poland-food-db/
 │   ├── COUNTRY_EXPANSION_GUIDE.md # Future multi-country rules
 │   ├── EAN_EXPANSION_PLAN.md  # EAN coverage strategy
 │   ├── EAN_VALIDATION_STATUS.md # Current EAN validation status
-│   └── UX_UI_DESIGN.md      # Production-ready UX specification
+│   ├── UX_UI_DESIGN.md      # Production-ready UX specification
+│   ├── ENVIRONMENT_STRATEGY.md # Local / Staging / Production env strategy
+│   └── STAGING_SETUP.md     # Step-by-step staging setup guide
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (322 checks)
+├── RUN_QA.ps1               # Standalone test runner (362 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
-└── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
+├── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
+├── RUN_SEED.ps1             # Unified seed runner (any environment)
+├── RUN_SANITY.ps1           # Cross-environment sanity checks (16 checks)
+└── supabase/
+    ├── seed/                # Reference data seeds
+    └── sanity/              # Sanity check SQL
 ```
 
 ---
