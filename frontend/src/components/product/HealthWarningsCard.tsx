@@ -46,7 +46,8 @@ export function HealthWarningsCard({
   });
 
   // Fetch warnings only when user has an active profile
-  const hasProfile = profileData?.profile !== null && profileData?.profile !== undefined;
+  const hasProfile =
+    profileData?.profile !== null && profileData?.profile !== undefined;
 
   const { data: warningsData, isLoading: warningsLoading } = useQuery({
     queryKey: queryKeys.healthWarnings(productId),
@@ -55,12 +56,21 @@ export function HealthWarningsCard({
       if (!result.ok) throw new Error(result.error.message);
       return result.data;
     },
-    staleTime: staleTimes.healthProfiles,
+    staleTime: staleTimes.healthWarnings,
     enabled: hasProfile,
   });
 
-  // Don't render anything while loading profile
-  if (profileLoading) return null;
+  // Loading profile — show skeleton to avoid layout jump
+  if (profileLoading) {
+    return (
+      <div className="card animate-pulse">
+        <div className="flex items-center gap-2">
+          <div className="h-5 w-5 rounded-full bg-gray-200" />
+          <div className="h-4 w-48 rounded bg-gray-200" />
+        </div>
+      </div>
+    );
+  }
 
   // No active profile — show a subtle prompt
   if (!hasProfile) {
@@ -109,7 +119,8 @@ export function HealthWarningsCard({
               Within your limits
             </p>
             <p className="text-xs text-green-600">
-              No warnings for your profile &ldquo;{profileData.profile!.profile_name}&rdquo;
+              No warnings for your profile &ldquo;
+              {profileData.profile!.profile_name}&rdquo;
             </p>
           </div>
         </div>
@@ -151,7 +162,10 @@ export function HealthWarningsCard({
       {/* Warning list */}
       <ul className="space-y-1.5">
         {sorted.map((warning) => (
-          <WarningRow key={`${warning.condition}-${warning.severity}`} warning={warning} />
+          <WarningRow
+            key={`${warning.condition}-${warning.severity}`}
+            warning={warning}
+          />
         ))}
       </ul>
     </div>
@@ -200,7 +214,8 @@ export function HealthWarningBadge({
     staleTime: staleTimes.healthProfiles,
   });
 
-  const hasProfile = profileData?.profile !== null && profileData?.profile !== undefined;
+  const hasProfile =
+    profileData?.profile !== null && profileData?.profile !== undefined;
 
   const { data: warningsData } = useQuery({
     queryKey: queryKeys.healthWarnings(productId),
@@ -209,7 +224,7 @@ export function HealthWarningBadge({
       if (!result.ok) throw new Error(result.error.message);
       return result.data;
     },
-    staleTime: staleTimes.healthProfiles,
+    staleTime: staleTimes.healthWarnings,
     enabled: hasProfile,
   });
 
