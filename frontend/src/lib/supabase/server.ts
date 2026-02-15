@@ -21,8 +21,9 @@ export async function createServerSupabaseClient() {
               cookieStore.set(name, value, options),
             );
           } catch {
-            // In Server Components, cookies can only be read.
-            // setAll is called from middleware refreshing tokens.
+            // Expected in Server Components where cookies are read-only.
+            // setAll is called from middleware refreshing tokens — safe to ignore.
+            void 0;
           }
         },
       },

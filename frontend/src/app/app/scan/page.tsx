@@ -28,6 +28,16 @@ interface TorchCapabilities extends MediaTrackCapabilities {
   torch?: boolean;
 }
 
+interface TorchConstraintSet extends MediaTrackConstraintSet {
+  torch?: boolean;
+}
+
+function isTorchCapable(
+  caps: MediaTrackCapabilities,
+): caps is TorchCapabilities {
+  return "torch" in caps;
+}
+
 /** Reader instance from @zxing/library (dynamically imported). */
 interface BarcodeReader {
   listVideoInputDevices: () => Promise<MediaDeviceInfo[]>;
@@ -97,7 +107,23 @@ export default function ScanPage() {
     },
   });
 
+  // Stable ref for mutation — avoids stale closure in ZXing callback
+  const scanMutateRef = useRef(scanMutation.mutate);
+  scanMutateRef.current = scanMutation.mutate;
+
   // ─── ZXing barcode scanning ───────────────────────────────────────────────
+
+  const stopScanner = useCallback(() => {
+    if (readerRef.current) {
+      readerRef.current.reset();
+      readerRef.current = null;
+    }
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((t: MediaStreamTrack) => t.stop());
+      streamRef.current = null;
+    }
+    setTorchOn(false);
+  }, []);
 
   const startScanner = useCallback(async () => {
     setCameraError(null);
@@ -142,21 +168,22 @@ export default function ScanPage() {
               setScanState("looking-up");
               setEan(code);
               stopScanner();
-              scanMutation.mutate(code);
+              scanMutateRef.current(code);
             }
           }
         },
       );
 
-      if (videoRef.current?.srcObject) {
-        streamRef.current = videoRef.current.srcObject as MediaStream;
+      if (videoRef.current?.srcObject instanceof MediaStream) {
+        streamRef.current = videoRef.current.srcObject;
       }
     } catch (err: unknown) {
-      const errName =
-        err instanceof Error ||
-        (err && typeof err === "object" && "name" in err)
-          ? String((err as { name: string }).name)
-          : "";
+      let errName = "";
+      if (err instanceof Error) {
+        errName = err.name;
+      } else if (err && typeof err === "object" && "name" in err) {
+        errName = String(err.name);
+      }
       if (
         errName === "NotAllowedError" ||
         errName === "PermissionDeniedError"
@@ -170,20 +197,7 @@ export default function ScanPage() {
       }
       setMode("manual");
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  function stopScanner() {
-    if (readerRef.current) {
-      readerRef.current.reset();
-      readerRef.current = null;
-    }
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t: MediaStreamTrack) => t.stop());
-      streamRef.current = null;
-    }
-    setTorchOn(false);
-  }
+  }, [stopScanner]);
 
   async function toggleTorch() {
     if (!streamRef.current) return;
@@ -191,12 +205,11 @@ export default function ScanPage() {
     if (!track) return;
 
     try {
-      const capabilities = track.getCapabilities() as TorchCapabilities;
-      if (capabilities.torch) {
+      const capabilities = track.getCapabilities();
+      if (isTorchCapable(capabilities) && capabilities.torch) {
         const newState = !torchOn;
-        await track.applyConstraints({
-          advanced: [{ torch: newState } as MediaTrackConstraintSet],
-        });
+        const constraint: TorchConstraintSet = { torch: newState };
+        await track.applyConstraints({ advanced: [constraint] });
         setTorchOn(newState);
       } else {
         toast.error("Torch not supported on this device");

@@ -136,8 +136,10 @@ export function SearchAutocomplete({
   // Scroll active item into view
   useEffect(() => {
     if (activeIndex >= 0 && listRef.current) {
-      const item = listRef.current.children[activeIndex] as HTMLElement;
-      item?.scrollIntoView({ block: "nearest" });
+      const item = listRef.current.children[activeIndex];
+      if (item instanceof HTMLElement) {
+        item.scrollIntoView({ block: "nearest" });
+      }
     }
   }, [activeIndex]);
 

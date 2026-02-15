@@ -8,6 +8,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useLists, useCreateList, useDeleteList } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { ProductList, FormSubmitEvent } from "@/lib/types";
 
 export default function ListsPage() {
@@ -18,6 +19,7 @@ export default function ListsPage() {
   const [showForm, setShowForm] = useState(false);
   const [newName, setNewName] = useState("");
   const [newDesc, setNewDesc] = useState("");
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const lists: ProductList[] = data?.lists ?? [];
 
@@ -123,19 +125,24 @@ export default function ListsPage() {
             key={list.id}
             list={list}
             onDelete={
-              list.is_default
-                ? undefined
-                : () => {
-                    if (
-                      confirm(`Delete "${list.name}"? This cannot be undone.`)
-                    ) {
-                      deleteList.mutate(list.id);
-                    }
-                  }
+              list.is_default ? undefined : () => setConfirmDeleteId(list.id)
             }
           />
         ))}
       </div>
+
+      <ConfirmDialog
+        open={confirmDeleteId !== null}
+        title="Delete list?"
+        description="This cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={() => {
+          if (confirmDeleteId) deleteList.mutate(confirmDeleteId);
+          setConfirmDeleteId(null);
+        }}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 }

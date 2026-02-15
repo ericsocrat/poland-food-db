@@ -16,6 +16,7 @@ import {
   useRevokeShare,
 } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import type { ListItem, FormSubmitEvent } from "@/lib/types";
 
@@ -35,6 +36,7 @@ export default function ListDetailPage() {
   const [editDesc, setEditDesc] = useState("");
   const [showSharePanel, setShowSharePanel] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [showRevokeConfirm, setShowRevokeConfirm] = useState(false);
 
   const list = listsData?.lists?.find((l) => l.id === listId);
   const items: ListItem[] = itemsData?.items ?? [];
@@ -206,15 +208,7 @@ export default function ListDetailPage() {
                     <button
                       type="button"
                       className="text-xs text-red-500 hover:text-red-700"
-                      onClick={() => {
-                        if (
-                          confirm(
-                            "Revoke sharing? Old links will stop working.",
-                          )
-                        ) {
-                          revokeShareMutation.mutate(listId);
-                        }
-                      }}
+                      onClick={() => setShowRevokeConfirm(true)}
                     >
                       Revoke
                     </button>
@@ -258,6 +252,19 @@ export default function ListDetailPage() {
           ))}
         </ul>
       )}
+
+      <ConfirmDialog
+        open={showRevokeConfirm}
+        title="Revoke sharing?"
+        description="Old links will stop working."
+        confirmLabel="Revoke"
+        variant="danger"
+        onConfirm={() => {
+          revokeShareMutation.mutate(listId);
+          setShowRevokeConfirm(false);
+        }}
+        onCancel={() => setShowRevokeConfirm(false)}
+      />
     </div>
   );
 }

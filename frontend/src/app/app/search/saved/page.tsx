@@ -2,7 +2,7 @@
 
 // ─── Saved Searches page — CRUD for authenticated users ─────────────────────
 
-import { useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -11,12 +11,15 @@ import { getSavedSearches, deleteSavedSearch } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { ALLERGEN_TAGS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import type { SavedSearch, SearchFilters } from "@/lib/types";
 
 export default function SavedSearchesPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const router = useRouter();
+
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.savedSearches,
@@ -154,11 +157,7 @@ export default function SavedSearchesPage() {
                   </button>
                   <button
                     type="button"
-                    onClick={() => {
-                      if (confirm("Delete this saved search?")) {
-                        deleteMutation.mutate(search.id);
-                      }
-                    }}
+                    onClick={() => setConfirmDeleteId(search.id)}
                     disabled={deleteMutation.isPending}
                     className="rounded-lg px-2 py-1.5 text-xs text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
                   >
@@ -170,6 +169,19 @@ export default function SavedSearchesPage() {
           ))}
         </ul>
       )}
+
+      <ConfirmDialog
+        open={confirmDeleteId !== null}
+        title="Delete saved search?"
+        description="This action cannot be undone."
+        confirmLabel="Delete"
+        variant="danger"
+        onConfirm={() => {
+          if (confirmDeleteId) deleteMutation.mutate(confirmDeleteId);
+          setConfirmDeleteId(null);
+        }}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   );
 }

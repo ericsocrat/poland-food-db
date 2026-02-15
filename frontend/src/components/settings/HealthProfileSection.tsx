@@ -135,9 +135,9 @@ function ProfileForm({
             <button
               key={c.value}
               type="button"
-              onClick={() => toggleCondition(c.value as HealthCondition)}
+              onClick={() => toggleCondition(c.value)}
               className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
-                conditions.includes(c.value as HealthCondition)
+                conditions.includes(c.value)
                   ? "border-brand-300 bg-brand-50 text-brand-700"
                   : "border-gray-200 text-gray-600 hover:border-gray-300"
               }`}

@@ -8,12 +8,12 @@ import type { RpcResult } from "./types";
 // ─── Auth error detection constants ─────────────────────────────────────────
 
 /** Error codes that indicate an auth/session issue. */
-export const AUTH_CODES = [
+export const AUTH_CODES: readonly string[] = [
   "PGRST301",
   "401",
   "403",
   "JWT_EXPIRED",
-] as const;
+];
 
 /** Substrings in error messages that indicate an auth/session issue. */
 export const AUTH_MESSAGES = [
@@ -40,15 +40,21 @@ export function normalizeRpcError(
   };
 }
 
+/** Type guard for objects with an `error` property. */
+function hasErrorProperty(
+  value: object,
+): value is Record<"error", unknown> {
+  return "error" in value;
+}
+
 /** Extract an error message from a backend-level `{ error: "..." }` payload. */
 export function extractBusinessError(
   data: unknown,
 ): NormalizedError | null {
-  if (data && typeof data === "object" && "error" in data) {
-    const record = data as { error: unknown };
+  if (data && typeof data === "object" && hasErrorProperty(data)) {
     return {
       code: "BUSINESS_ERROR",
-      message: String(record.error),
+      message: String(data.error),
     };
   }
   return null;
@@ -110,7 +116,7 @@ export async function callRpc<T>(
  */
 export function isAuthError(error: { code: string; message: string }): boolean {
   return (
-    (AUTH_CODES as readonly string[]).includes(error.code) ||
+    AUTH_CODES.includes(error.code) ||
     AUTH_MESSAGES.some((m) =>
       error.message.toLowerCase().includes(m.toLowerCase()),
     )
