@@ -232,6 +232,10 @@ export function updateHealthProfile(
     p_max_saturated_fat_g?: number;
     p_max_calories_kcal?: number;
     p_notes?: string;
+    p_clear_max_sugar?: boolean;
+    p_clear_max_salt?: boolean;
+    p_clear_max_sat_fat?: boolean;
+    p_clear_max_calories?: boolean;
   },
 ): Promise<RpcResult<HealthProfileMutationResponse>> {
   return callRpc<HealthProfileMutationResponse>(

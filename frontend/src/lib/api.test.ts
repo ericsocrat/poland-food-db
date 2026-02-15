@@ -87,6 +87,26 @@ describe("Health Profile API functions", () => {
     );
   });
 
+  it("updateHealthProfile passes clear flags to api_update_health_profile", async () => {
+    const params = {
+      p_profile_id: "p-2",
+      p_clear_max_sugar: true,
+      p_clear_max_salt: false,
+      p_clear_max_sat_fat: true,
+      p_clear_max_calories: false,
+    };
+    mockCallRpc.mockResolvedValue({
+      ok: true,
+      data: { profile_id: "p-2", updated: true },
+    });
+    await updateHealthProfile(fakeSupabase, params);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_update_health_profile",
+      params,
+    );
+  });
+
   // ─── deleteHealthProfile ──────────────────────────────────────────
 
   it("deleteHealthProfile passes profile_id to api_delete_health_profile", async () => {
