@@ -42,7 +42,7 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? "list" : "html",
 
-  /* Hard cap: kill the entire suite if it exceeds 2 minutes */
+  /* Hard cap so the suite never hangs indefinitely */
   globalTimeout: 120_000,
   /* Per-test timeout */
   timeout: 30_000,
@@ -59,10 +59,15 @@ export default defineConfig({
 
   projects,
 
-  webServer: {
-    command: "npm run dev -- --port 3000",
-    url: "http://localhost:3000",
-    reuseExistingServer: !process.env.CI,
-    timeout: 60_000,
-  },
+  /* CI starts its own dev server; locally you must run `npm run dev` first.
+     The webServer block caused hangs when a stale Node process held port 3000
+     without actually serving — Playwright's "plugin setup" waited forever. */
+  ...(process.env.CI && {
+    webServer: {
+      command: "npm run dev -- --port 3000",
+      url: "http://localhost:3000",
+      reuseExistingServer: false,
+      timeout: 60_000,
+    },
+  }),
 });
