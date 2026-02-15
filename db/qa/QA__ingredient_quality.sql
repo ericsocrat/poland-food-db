@@ -131,14 +131,16 @@ WHERE NOT EXISTS (
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 13. Additive ingredients (is_additive=true) should have e-number name_en
---     (e.g., 'e330', 'e472e') — catches misclassified entries
+-- 13. Additive ingredients (is_additive=true) have recognizable name_en
+--     Accepts e-number codes (e.g., 'e330') OR natural language names
+--     (e.g., 'Acetic Acid', 'Acesulfame K') from OFF API.
+--     Flags only junk/empty/numeric names.
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '13. additives have e-number name' AS check_name,
+SELECT '13. additives have recognizable name' AS check_name,
        COUNT(*) AS violations
 FROM ingredient_ref
 WHERE is_additive = true
-  AND name_en !~ '^e\d';
+  AND (length(trim(name_en)) <= 1 OR name_en ~ '^\d+$');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 14. No unused ingredient_ref entries (zero product_ingredient links)
