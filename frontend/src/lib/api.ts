@@ -10,6 +10,7 @@ import type {
   AvoidProductIdsResponse,
   CategoryListingResponse,
   CategoryOverviewItem,
+  CompareResponse,
   CreateListResponse,
   DataConfidence,
   EanLookupResponse,
@@ -25,8 +26,11 @@ import type {
   ProductDetail,
   ProductListMembershipResponse,
   RpcResult,
+  SaveComparisonResponse,
+  SavedComparisonsResponse,
   ScoreExplanation,
   SearchResponse,
+  SharedComparisonResponse,
   SharedListResponse,
   ToggleShareResponse,
   UserPreferences,
@@ -432,4 +436,61 @@ export function getFavoriteProductIds(
     supabase,
     "api_get_favorite_product_ids",
   );
+}
+
+// ─── Product Comparisons ────────────────────────────────────────────────────
+
+export function getProductsForCompare(
+  supabase: SupabaseClient,
+  productIds: number[],
+): Promise<RpcResult<CompareResponse>> {
+  return callRpc<CompareResponse>(supabase, "api_get_products_for_compare", {
+    p_product_ids: productIds,
+  });
+}
+
+export function saveComparison(
+  supabase: SupabaseClient,
+  productIds: number[],
+  title?: string,
+): Promise<RpcResult<SaveComparisonResponse>> {
+  return callRpc<SaveComparisonResponse>(supabase, "api_save_comparison", {
+    p_product_ids: productIds,
+    ...(title ? { p_title: title } : {}),
+  });
+}
+
+export function getSavedComparisons(
+  supabase: SupabaseClient,
+  limit?: number,
+  offset?: number,
+): Promise<RpcResult<SavedComparisonsResponse>> {
+  return callRpc<SavedComparisonsResponse>(
+    supabase,
+    "api_get_saved_comparisons",
+    {
+      ...(limit !== undefined ? { p_limit: limit } : {}),
+      ...(offset !== undefined ? { p_offset: offset } : {}),
+    },
+  );
+}
+
+export function getSharedComparison(
+  supabase: SupabaseClient,
+  shareToken: string,
+): Promise<RpcResult<SharedComparisonResponse>> {
+  return callRpc<SharedComparisonResponse>(
+    supabase,
+    "api_get_shared_comparison",
+    { p_share_token: shareToken },
+  );
+}
+
+export function deleteComparison(
+  supabase: SupabaseClient,
+  comparisonId: string,
+): Promise<RpcResult<MutationSuccess>> {
+  return callRpc<MutationSuccess>(supabase, "api_delete_comparison", {
+    p_comparison_id: comparisonId,
+  });
 }

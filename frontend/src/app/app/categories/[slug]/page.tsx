@@ -14,6 +14,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
+import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { formatSlug } from "@/lib/validation";
 import type { CategoryProduct } from "@/lib/types";
 
@@ -227,6 +228,9 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
 
         {/* Favorites heart */}
         <AddToListMenu productId={product.product_id} compact />
+
+        {/* Compare checkbox */}
+        <CompareCheckbox productId={product.product_id} />
 
         <span
           className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}

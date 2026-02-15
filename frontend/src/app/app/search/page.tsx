@@ -13,6 +13,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
+import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import type { SearchResult } from "@/lib/types";
 
 const RECENT_KEY = "fooddb:recent-searches";
@@ -337,6 +338,9 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
 
         {/* Favorites heart */}
         <AddToListMenu productId={product.product_id} compact />
+
+        {/* Compare checkbox */}
+        <CompareCheckbox productId={product.product_id} />
 
         {/* Nutri badge */}
         <span

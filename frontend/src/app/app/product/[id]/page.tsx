@@ -21,6 +21,7 @@ import {
 } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
+import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import type { ProductDetail, Alternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
@@ -123,6 +124,7 @@ export default function ProductDetailPage() {
               <div className="flex items-center gap-2">
                 <AvoidBadge productId={productId} />
                 <AddToListMenu productId={productId} />
+                <CompareCheckbox productId={productId} />
               </div>
             </div>
             <div className="mt-2 flex items-center gap-2">

@@ -9,6 +9,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { Navigation } from "@/components/layout/Navigation";
 import { CountryChip } from "@/components/common/CountryChip";
 import { ListsHydrator } from "@/components/product/ListsHydrator";
+import { CompareFloatingButton } from "@/components/compare/CompareFloatingButton";
 
 export default async function AppLayout({
   children,
@@ -69,6 +70,7 @@ export default async function AppLayout({
         {children}
       </main>
 
+      <CompareFloatingButton />
       <Navigation />
     </div>
   );

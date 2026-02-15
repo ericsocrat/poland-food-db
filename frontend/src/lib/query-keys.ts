@@ -64,6 +64,16 @@ export const queryKeys = {
   /** Which lists contain a specific product (for dropdown toggle state) */
   productListMembership: (productId: number) =>
     ["product-list-membership", productId] as const,
+
+  /** Products for comparison view */
+  compareProducts: (ids: number[]) =>
+    ["compare-products", ids.sort((a, b) => a - b).join(",")] as const,
+
+  /** User's saved comparisons */
+  savedComparisons: ["saved-comparisons"] as const,
+
+  /** Shared comparison (public, by token) */
+  sharedComparison: (token: string) => ["shared-comparison", token] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -116,4 +126,13 @@ export const staleTimes = {
 
   /** Product list membership — 2 min (fetched per dropdown) */
   productListMembership: 2 * 60 * 1000,
+
+  /** Comparison products — 5 min (bounded data, max 4 products) */
+  compareProducts: 5 * 60 * 1000,
+
+  /** Saved comparisons — 5 min */
+  savedComparisons: 5 * 60 * 1000,
+
+  /** Shared comparison — 5 min */
+  sharedComparison: 5 * 60 * 1000,
 } as const;

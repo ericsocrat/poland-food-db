@@ -421,3 +421,80 @@ export interface FavoriteProductIdsResponse {
   api_version: string;
   product_ids: number[];
 }
+
+// ─── Product Comparisons ────────────────────────────────────────────────────
+
+export interface CompareProduct {
+  product_id: number;
+  ean: string | null;
+  product_name: string;
+  brand: string;
+  category: string;
+  category_display: string;
+  category_icon: string;
+  unhealthiness_score: number;
+  score_band: ScoreBand;
+  nutri_score: NutriGrade;
+  nova_group: string;
+  processing_risk: string;
+  calories: number;
+  total_fat_g: number;
+  saturated_fat_g: number;
+  trans_fat_g: number | null;
+  carbs_g: number;
+  sugars_g: number;
+  fibre_g: number | null;
+  protein_g: number;
+  salt_g: number;
+  high_salt: boolean;
+  high_sugar: boolean;
+  high_sat_fat: boolean;
+  high_additive_load: boolean;
+  additives_count: number;
+  ingredient_count: number;
+  allergen_count: number;
+  allergen_tags: string | null;
+  trace_tags: string | null;
+  confidence: string;
+  data_completeness_pct: number;
+}
+
+export interface CompareResponse {
+  api_version: string;
+  product_count: number;
+  products: CompareProduct[];
+}
+
+export interface SaveComparisonResponse {
+  api_version: string;
+  comparison_id: string;
+  share_token: string;
+  product_ids: number[];
+  title: string | null;
+}
+
+export interface SavedComparison {
+  comparison_id: string;
+  title: string | null;
+  product_ids: number[];
+  share_token: string;
+  created_at: string;
+  product_names: string[];
+}
+
+export interface SavedComparisonsResponse {
+  api_version: string;
+  total_count: number;
+  limit: number;
+  offset: number;
+  comparisons: SavedComparison[];
+}
+
+export interface SharedComparisonResponse {
+  api_version: string;
+  comparison_id: string;
+  title: string | null;
+  created_at: string;
+  product_count: number;
+  products: CompareProduct[];
+}
