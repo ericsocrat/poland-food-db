@@ -45,6 +45,25 @@ export const queryKeys = {
   /** Product health warnings */
   healthWarnings: (productId: number) =>
     ["health-warnings", productId] as const,
+
+  /** User product lists */
+  lists: ["lists"] as const,
+
+  /** Items in a specific list */
+  listItems: (listId: string) => ["list-items", listId] as const,
+
+  /** Shared list (public, by token) */
+  sharedList: (token: string) => ["shared-list", token] as const,
+
+  /** Avoided product IDs (for badge rendering) */
+  avoidProductIds: ["avoid-product-ids"] as const,
+
+  /** Favorite product IDs (for heart badge) */
+  favoriteProductIds: ["favorite-product-ids"] as const,
+
+  /** Which lists contain a specific product (for dropdown toggle state) */
+  productListMembership: (productId: number) =>
+    ["product-list-membership", productId] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -79,4 +98,22 @@ export const staleTimes = {
 
   /** Health warnings — 5 min (same as profiles, invalidated together) */
   healthWarnings: 5 * 60 * 1000,
+
+  /** User lists — 5 min */
+  lists: 5 * 60 * 1000,
+
+  /** List items — 2 min (changes more frequently) */
+  listItems: 2 * 60 * 1000,
+
+  /** Shared list — 5 min */
+  sharedList: 5 * 60 * 1000,
+
+  /** Avoid product IDs — 10 min (fetched once, invalidated on mutation) */
+  avoidProductIds: 10 * 60 * 1000,
+
+  /** Favorite product IDs — 10 min (same pattern as avoid) */
+  favoriteProductIds: 10 * 60 * 1000,
+
+  /** Product list membership — 2 min (fetched per dropdown) */
+  productListMembership: 2 * 60 * 1000,
 } as const;

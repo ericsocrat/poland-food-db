@@ -1,0 +1,359 @@
+"use client";
+
+// ─── List detail page ───────────────────────────────────────────────────────
+// Shows all products in a list with health scores, supports removing items,
+// and has share toggle for custom/favorites lists.
+
+import { useState } from "react";
+import { useParams } from "next/navigation";
+import Link from "next/link";
+import {
+  useLists,
+  useListItems,
+  useRemoveFromList,
+  useUpdateList,
+  useToggleShare,
+  useRevokeShare,
+} from "@/hooks/use-lists";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import type { ListItem } from "@/lib/types";
+
+export default function ListDetailPage() {
+  const params = useParams();
+  const listId = params.id as string;
+
+  const { data: listsData } = useLists();
+  const { data: itemsData, isLoading, error } = useListItems(listId);
+  const removeMutation = useRemoveFromList();
+  const updateMutation = useUpdateList();
+  const toggleShareMutation = useToggleShare();
+  const revokeShareMutation = useRevokeShare();
+
+  const [editing, setEditing] = useState(false);
+  const [editName, setEditName] = useState("");
+  const [editDesc, setEditDesc] = useState("");
+  const [showSharePanel, setShowSharePanel] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const list = listsData?.lists?.find((l) => l.id === listId);
+  const items: ListItem[] = itemsData?.items ?? [];
+
+  function handleSaveEdit(e: React.FormEvent) {
+    e.preventDefault();
+    if (!editName.trim()) return;
+    updateMutation.mutate(
+      {
+        listId,
+        name: editName.trim(),
+        description: editDesc.trim() || undefined,
+      },
+      {
+        onSuccess: () => setEditing(false),
+      },
+    );
+  }
+
+  function handleShare(enabled: boolean) {
+    toggleShareMutation.mutate({ listId, enabled });
+  }
+
+  function handleCopyLink() {
+    if (!list?.share_token) return;
+    const url = `${window.location.origin}/lists/shared/${list.share_token}`;
+    navigator.clipboard.writeText(url).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    });
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-12">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="space-y-4">
+        <BackLink />
+        <div className="card border-red-200 bg-red-50 py-8 text-center">
+          <p className="text-sm text-red-600">Failed to load list.</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      <BackLink />
+
+      {/* Header */}
+      {list && (
+        <div className="card">
+          {editing ? (
+            <form onSubmit={handleSaveEdit} className="space-y-3">
+              <input
+                type="text"
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                className="input-field"
+                maxLength={100}
+                required
+                autoFocus
+              />
+              <input
+                type="text"
+                value={editDesc}
+                onChange={(e) => setEditDesc(e.target.value)}
+                className="input-field"
+                placeholder="Description (optional)"
+                maxLength={500}
+              />
+              <div className="flex gap-2">
+                <button
+                  type="submit"
+                  className="btn-primary text-sm"
+                  disabled={updateMutation.isPending}
+                >
+                  Save
+                </button>
+                <button
+                  type="button"
+                  className="btn-secondary text-sm"
+                  onClick={() => setEditing(false)}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          ) : (
+            <div className="flex items-start justify-between">
+              <div>
+                <h1 className="text-lg font-bold text-gray-900">
+                  {list.list_type === "favorites" && "❤️ "}
+                  {list.list_type === "avoid" && "🚫 "}
+                  {list.name}
+                </h1>
+                {list.description && (
+                  <p className="mt-1 text-sm text-gray-500">
+                    {list.description}
+                  </p>
+                )}
+                <p className="mt-1 text-xs text-gray-400">
+                  {list.item_count} {list.item_count === 1 ? "item" : "items"}
+                </p>
+              </div>
+              <div className="flex gap-1">
+                {/* Edit button (not for defaults unless custom) */}
+                <button
+                  type="button"
+                  title="Edit list"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-gray-100"
+                  onClick={() => {
+                    setEditName(list.name);
+                    setEditDesc(list.description ?? "");
+                    setEditing(true);
+                  }}
+                >
+                  ✏️
+                </button>
+                {/* Share button (not for avoid lists) */}
+                {list.list_type !== "avoid" && (
+                  <button
+                    type="button"
+                    title="Share settings"
+                    className={`flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-gray-100 ${
+                      list.share_enabled ? "text-blue-600" : ""
+                    }`}
+                    onClick={() => setShowSharePanel((v) => !v)}
+                  >
+                    🔗
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Share panel */}
+          {showSharePanel && list.list_type !== "avoid" && (
+            <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
+              <p className="mb-2 text-sm font-medium text-gray-700">Sharing</p>
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
+                    list.share_enabled
+                      ? "bg-blue-100 text-blue-700"
+                      : "bg-gray-200 text-gray-600"
+                  }`}
+                  onClick={() => handleShare(!list.share_enabled)}
+                  disabled={toggleShareMutation.isPending}
+                >
+                  {list.share_enabled ? "On" : "Off"}
+                </button>
+                {list.share_enabled && list.share_token && (
+                  <>
+                    <button
+                      type="button"
+                      className="btn-secondary text-xs"
+                      onClick={handleCopyLink}
+                    >
+                      {copied ? "Copied!" : "Copy link"}
+                    </button>
+                    <button
+                      type="button"
+                      className="text-xs text-red-500 hover:text-red-700"
+                      onClick={() => {
+                        if (
+                          confirm(
+                            "Revoke sharing? Old links will stop working.",
+                          )
+                        ) {
+                          revokeShareMutation.mutate(listId);
+                        }
+                      }}
+                    >
+                      Revoke
+                    </button>
+                  </>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Empty state */}
+      {items.length === 0 && (
+        <div className="py-12 text-center">
+          <p className="mb-2 text-4xl">📭</p>
+          <p className="text-sm text-gray-500">
+            This list is empty. Browse products and add them here.
+          </p>
+          <Link href="/app/search" className="btn-primary mt-4 inline-block">
+            Search products
+          </Link>
+        </div>
+      )}
+
+      {/* Items */}
+      {items.length > 0 && (
+        <ul className="space-y-2">
+          {items.map((item) => (
+            <ListItemRow
+              key={item.item_id}
+              item={item}
+              onRemove={() =>
+                removeMutation.mutate({
+                  listId,
+                  productId: item.product_id,
+                  listType: list?.list_type,
+                })
+              }
+              isRemoving={removeMutation.isPending}
+            />
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+}
+
+// ─── ListItemRow ────────────────────────────────────────────────────────────
+
+function ListItemRow({
+  item,
+  onRemove,
+  isRemoving,
+}: Readonly<{
+  item: ListItem;
+  onRemove: () => void;
+  isRemoving: boolean;
+}>) {
+  // Derive score band from unhealthiness_score
+  const score = item.unhealthiness_score;
+  const bandKey =
+    score <= 25
+      ? "low"
+      : score <= 50
+        ? "moderate"
+        : score <= 75
+          ? "high"
+          : "very_high";
+  const band = SCORE_BANDS[bandKey];
+
+  const nutriClass = item.nutri_score_label
+    ? (NUTRI_COLORS[item.nutri_score_label] ?? "bg-gray-200 text-gray-500")
+    : "bg-gray-200 text-gray-500";
+
+  return (
+    <li className="card flex items-center gap-3 transition-shadow hover:shadow-md">
+      <Link
+        href={`/app/product/${item.product_id}`}
+        className="flex min-w-0 flex-1 items-center gap-3"
+      >
+        {/* Score badge */}
+        <div
+          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
+        >
+          {item.unhealthiness_score}
+        </div>
+
+        {/* Product info */}
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-medium text-gray-900">
+            {item.product_name}
+          </p>
+          <p className="truncate text-sm text-gray-500">
+            {item.brand}
+            {item.category && ` · ${item.category}`}
+          </p>
+          {item.notes && (
+            <p className="mt-0.5 truncate text-xs text-gray-400 italic">
+              {item.notes}
+            </p>
+          )}
+        </div>
+
+        {/* Nutri badge */}
+        <span
+          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
+        >
+          {item.nutri_score_label ?? "?"}
+        </span>
+      </Link>
+
+      {/* Remove button */}
+      <button
+        type="button"
+        title="Remove from list"
+        aria-label={`Remove ${item.product_name}`}
+        disabled={isRemoving}
+        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          onRemove();
+        }}
+      >
+        ✕
+      </button>
+    </li>
+  );
+}
+
+// ─── BackLink ───────────────────────────────────────────────────────────────
+
+function BackLink() {
+  return (
+    <Link
+      href="/app/lists"
+      className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+    >
+      ← Back to lists
+    </Link>
+  );
+}

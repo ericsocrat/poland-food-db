@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { Navigation } from "@/components/layout/Navigation";
 import { CountryChip } from "@/components/common/CountryChip";
+import { ListsHydrator } from "@/components/product/ListsHydrator";
 
 export default async function AppLayout({
   children,
@@ -64,6 +65,7 @@ export default async function AppLayout({
       </header>
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+        <ListsHydrator />
         {children}
       </main>
 

@@ -321,3 +321,103 @@ export interface HealthWarningsResponse {
   warning_count: number;
   warnings: HealthWarning[];
 }
+
+// ─── Product Lists ──────────────────────────────────────────────────────────
+
+export type ListType = "favorites" | "avoid" | "custom";
+
+export interface ProductList {
+  id: string;
+  name: string;
+  description: string | null;
+  list_type: ListType;
+  is_default: boolean;
+  share_enabled: boolean;
+  share_token: string | null;
+  item_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ListsResponse {
+  api_version: string;
+  lists: ProductList[];
+}
+
+export interface ListItem {
+  item_id: string;
+  product_id: number;
+  position: number;
+  notes: string | null;
+  added_at: string;
+  product_name: string;
+  brand: string;
+  category: string;
+  unhealthiness_score: number;
+  nutri_score_label: string;
+  nova_classification: string;
+  calories: number | null;
+}
+
+export interface ListItemsResponse {
+  api_version: string;
+  list_id: string;
+  list_name: string;
+  list_type: ListType;
+  description: string | null;
+  total_count: number;
+  limit: number;
+  offset: number;
+  items: ListItem[];
+}
+
+export interface CreateListResponse {
+  api_version: string;
+  list_id: string;
+  name: string;
+  list_type: ListType;
+}
+
+export interface ToggleShareResponse {
+  api_version: string;
+  share_enabled: boolean;
+  share_token: string | null;
+}
+
+export interface SharedListResponse {
+  api_version: string;
+  list_name: string;
+  description: string | null;
+  list_type: ListType;
+  total_count: number;
+  limit: number;
+  offset: number;
+  items: Omit<ListItem, "item_id" | "notes" | "added_at" | "nova_classification">[];
+}
+
+export interface AddToListResponse {
+  api_version: string;
+  item_id: string;
+  list_type: ListType;
+}
+
+export interface AvoidProductIdsResponse {
+  api_version: string;
+  product_ids: number[];
+}
+
+export interface MutationSuccess {
+  api_version: string;
+  success: boolean;
+}
+
+export interface ProductListMembershipResponse {
+  api_version: string;
+  product_id: number;
+  list_ids: string[];
+}
+
+export interface FavoriteProductIdsResponse {
+  api_version: string;
+  product_ids: number[];
+}

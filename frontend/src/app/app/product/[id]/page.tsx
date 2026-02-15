@@ -19,6 +19,8 @@ import {
   HealthWarningsCard,
   HealthWarningBadge,
 } from "@/components/product/HealthWarningsCard";
+import { AvoidBadge } from "@/components/product/AvoidBadge";
+import { AddToListMenu } from "@/components/product/AddToListMenu";
 import type { ProductDetail, Alternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
@@ -111,10 +113,18 @@ export default function ProductDetailPage() {
             {product.scores.unhealthiness_score}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-lg font-bold text-gray-900">
-              {product.product_name}
-            </p>
-            <p className="text-sm text-gray-500">{product.brand}</p>
+            <div className="flex items-start justify-between">
+              <div>
+                <p className="text-lg font-bold text-gray-900">
+                  {product.product_name}
+                </p>
+                <p className="text-sm text-gray-500">{product.brand}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <AvoidBadge productId={productId} />
+                <AddToListMenu productId={productId} />
+              </div>
+            </div>
             <div className="mt-2 flex items-center gap-2">
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-bold ${nutriClass}`}

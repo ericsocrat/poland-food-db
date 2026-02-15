@@ -9,6 +9,7 @@ const NAV_ITEMS = [
   { href: "/app/search", label: "Search", icon: "🔍" },
   { href: "/app/categories", label: "Categories", icon: "📂" },
   { href: "/app/scan", label: "Scan", icon: "📷" },
+  { href: "/app/lists", label: "Lists", icon: "📋" },
   { href: "/app/settings", label: "Settings", icon: "⚙️" },
 ];
 

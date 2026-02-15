@@ -4,37 +4,37 @@ on:
   push:
     branches: [main]
     paths:
-      - 'supabase/migrations/**'
+      - "supabase/migrations/**"
 
 jobs:
   sync:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
         with:
           version: latest
-      
+
       - name: Link to production project
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           supabase link --project-ref uskvezwftkkudvksmken
-        
+
       - name: Backup cloud DB
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           mkdir -p backups
           supabase db dump --linked --data-only -f backups/cloud_backup_$(date +%Y%m%d_%H%M%S).sql
-      
+
       - name: Push migrations
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: supabase db push --yes
-      
+
       - name: Upload backup artifact
         uses: actions/upload-artifact@v4
         with:

@@ -11,6 +11,8 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
+import { AvoidBadge } from "@/components/product/AvoidBadge";
+import { AddToListMenu } from "@/components/product/AddToListMenu";
 import type { SearchResult } from "@/lib/types";
 
 const RECENT_KEY = "fooddb:recent-searches";
@@ -329,6 +331,12 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
 
         {/* Health warning badge */}
         <HealthWarningBadge productId={product.product_id} />
+
+        {/* Avoid badge */}
+        <AvoidBadge productId={product.product_id} />
+
+        {/* Favorites heart */}
+        <AddToListMenu productId={product.product_id} compact />
 
         {/* Nutri badge */}
         <span

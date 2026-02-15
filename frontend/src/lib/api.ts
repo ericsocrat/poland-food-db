@@ -5,20 +5,30 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { callRpc } from "./rpc";
 import type {
+  AddToListResponse,
   AlternativesResponse,
+  AvoidProductIdsResponse,
   CategoryListingResponse,
   CategoryOverviewItem,
+  CreateListResponse,
   DataConfidence,
   EanLookupResponse,
   EanNotFoundResponse,
+  FavoriteProductIdsResponse,
   HealthProfileActiveResponse,
   HealthProfileListResponse,
   HealthProfileMutationResponse,
   HealthWarningsResponse,
+  ListItemsResponse,
+  ListsResponse,
+  MutationSuccess,
   ProductDetail,
+  ProductListMembershipResponse,
   RpcResult,
   ScoreExplanation,
   SearchResponse,
+  SharedListResponse,
+  ToggleShareResponse,
   UserPreferences,
 } from "./types";
 
@@ -268,5 +278,158 @@ export function getProductHealthWarnings(
       p_product_id: productId,
       ...(profileId ? { p_profile_id: profileId } : {}),
     },
+  );
+}
+
+// ─── Product Lists ──────────────────────────────────────────────────────────
+
+export function getLists(
+  supabase: SupabaseClient,
+): Promise<RpcResult<ListsResponse>> {
+  return callRpc<ListsResponse>(supabase, "api_get_lists");
+}
+
+export function getListItems(
+  supabase: SupabaseClient,
+  listId: string,
+  limit?: number,
+  offset?: number,
+): Promise<RpcResult<ListItemsResponse>> {
+  return callRpc<ListItemsResponse>(supabase, "api_get_list_items", {
+    p_list_id: listId,
+    ...(limit !== undefined ? { p_limit: limit } : {}),
+    ...(offset !== undefined ? { p_offset: offset } : {}),
+  });
+}
+
+export function createList(
+  supabase: SupabaseClient,
+  name: string,
+  description?: string,
+  listType?: string,
+): Promise<RpcResult<CreateListResponse>> {
+  return callRpc<CreateListResponse>(supabase, "api_create_list", {
+    p_name: name,
+    ...(description ? { p_description: description } : {}),
+    ...(listType ? { p_list_type: listType } : {}),
+  });
+}
+
+export function updateList(
+  supabase: SupabaseClient,
+  listId: string,
+  name?: string,
+  description?: string,
+): Promise<RpcResult<MutationSuccess>> {
+  return callRpc<MutationSuccess>(supabase, "api_update_list", {
+    p_list_id: listId,
+    ...(name !== undefined ? { p_name: name } : {}),
+    ...(description !== undefined ? { p_description: description } : {}),
+  });
+}
+
+export function deleteList(
+  supabase: SupabaseClient,
+  listId: string,
+): Promise<RpcResult<MutationSuccess>> {
+  return callRpc<MutationSuccess>(supabase, "api_delete_list", {
+    p_list_id: listId,
+  });
+}
+
+export function addToList(
+  supabase: SupabaseClient,
+  listId: string,
+  productId: number,
+  notes?: string,
+): Promise<RpcResult<AddToListResponse>> {
+  return callRpc<AddToListResponse>(supabase, "api_add_to_list", {
+    p_list_id: listId,
+    p_product_id: productId,
+    ...(notes ? { p_notes: notes } : {}),
+  });
+}
+
+export function removeFromList(
+  supabase: SupabaseClient,
+  listId: string,
+  productId: number,
+): Promise<RpcResult<MutationSuccess>> {
+  return callRpc<MutationSuccess>(supabase, "api_remove_from_list", {
+    p_list_id: listId,
+    p_product_id: productId,
+  });
+}
+
+export function reorderList(
+  supabase: SupabaseClient,
+  listId: string,
+  productIds: number[],
+): Promise<RpcResult<MutationSuccess>> {
+  return callRpc<MutationSuccess>(supabase, "api_reorder_list", {
+    p_list_id: listId,
+    p_product_ids: productIds,
+  });
+}
+
+export function toggleShare(
+  supabase: SupabaseClient,
+  listId: string,
+  enabled: boolean,
+): Promise<RpcResult<ToggleShareResponse>> {
+  return callRpc<ToggleShareResponse>(supabase, "api_toggle_share", {
+    p_list_id: listId,
+    p_enabled: enabled,
+  });
+}
+
+export function revokeShare(
+  supabase: SupabaseClient,
+  listId: string,
+): Promise<RpcResult<MutationSuccess>> {
+  return callRpc<MutationSuccess>(supabase, "api_revoke_share", {
+    p_list_id: listId,
+  });
+}
+
+export function getSharedList(
+  supabase: SupabaseClient,
+  shareToken: string,
+  limit?: number,
+  offset?: number,
+): Promise<RpcResult<SharedListResponse>> {
+  return callRpc<SharedListResponse>(supabase, "api_get_shared_list", {
+    p_share_token: shareToken,
+    ...(limit !== undefined ? { p_limit: limit } : {}),
+    ...(offset !== undefined ? { p_offset: offset } : {}),
+  });
+}
+
+export function getAvoidProductIds(
+  supabase: SupabaseClient,
+): Promise<RpcResult<AvoidProductIdsResponse>> {
+  return callRpc<AvoidProductIdsResponse>(
+    supabase,
+    "api_get_avoid_product_ids",
+  );
+}
+
+export function getProductListMembership(
+  supabase: SupabaseClient,
+  productId: number,
+): Promise<RpcResult<ProductListMembershipResponse>> {
+  return callRpc<ProductListMembershipResponse>(
+    supabase,
+    "api_get_product_list_membership",
+    { p_product_id: productId },
+  );
+}
+
+export function getFavoriteProductIds(
+  supabase: SupabaseClient,
+): Promise<RpcResult<FavoriteProductIdsResponse>> {
+  return callRpc<FavoriteProductIdsResponse>(
+    supabase,
+    "api_get_favorite_product_ids",
   );
 }
