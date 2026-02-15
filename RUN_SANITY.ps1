@@ -3,7 +3,9 @@
     Runs the sanity check pack against any environment (local, staging, production).
 
 .DESCRIPTION
-    Executes 16 cross-environment validation checks from supabase/sanity/sanity_checks.sql:
+    Executes 16 cross-environment validation checks from supabase/sanity/sanity_checks.sql.
+    All checks are READ-ONLY SELECT queries — safe to run against production at any time
+    (§8.1A single-cloud guardrail compliance).
         1.  Required tables exist
         2.  Required views exist
         3.  Required functions exist
@@ -63,10 +65,10 @@ if ($OutFile) { $Json = $true }
 # ─── Configuration ───────────────────────────────────────────────────────────
 
 $PRODUCTION_PROJECT_REF = "uskvezwftkkudvksmken"
-$DOCKER_CONTAINER       = "supabase_db_poland-food-db"
-$DB_NAME                = "postgres"
-$DB_USER                = "postgres"
-$DB_PORT                = "5432"
+$DOCKER_CONTAINER = "supabase_db_poland-food-db"
+$DB_NAME = "postgres"
+$DB_USER = "postgres"
+$DB_PORT = "5432"
 
 $SANITY_FILE = Join-Path $PSScriptRoot "supabase" "sanity" "sanity_checks.sql"
 
@@ -105,18 +107,18 @@ switch ($Env) {
             Write-Host "ERROR: SUPABASE_STAGING_PROJECT_REF not set." -ForegroundColor Red
             exit 1
         }
-        $dbHost     = "db.$stagingRef.supabase.co"
+        $dbHost = "db.$stagingRef.supabase.co"
         $dbPassword = [System.Environment]::GetEnvironmentVariable("SUPABASE_STAGING_DB_PASSWORD")
-        $envLabel   = "STAGING ($stagingRef)"
-        $envColor   = "Yellow"
-        $usePsql    = $true
+        $envLabel = "STAGING ($stagingRef)"
+        $envColor = "Yellow"
+        $usePsql = $true
     }
     "production" {
-        $dbHost     = "db.$PRODUCTION_PROJECT_REF.supabase.co"
+        $dbHost = "db.$PRODUCTION_PROJECT_REF.supabase.co"
         $dbPassword = [System.Environment]::GetEnvironmentVariable("SUPABASE_DB_PASSWORD")
-        $envLabel   = "PRODUCTION ($PRODUCTION_PROJECT_REF)"
-        $envColor   = "Red"
-        $usePsql    = $true
+        $envLabel = "PRODUCTION ($PRODUCTION_PROJECT_REF)"
+        $envColor = "Red"
+        $usePsql = $true
     }
 }
 
@@ -180,7 +182,7 @@ if ($checks.Count -eq 0) {
 
 # ─── Execute checks ─────────────────────────────────────────────────────────
 
-$results   = @()
+$results = @()
 $passCount = 0
 $failCount = 0
 $stopwatch = [System.Diagnostics.Stopwatch]::StartNew()
@@ -208,9 +210,9 @@ foreach ($check in $checks) {
     if ($hasFailures) { $failCount++ } else { $passCount++ }
 
     if (-not $Json) {
-        $icon  = if ($hasFailures) { "✗" } else { "✓" }
+        $icon = if ($hasFailures) { "✗" } else { "✓" }
         $color = if ($hasFailures) { "Red" } else { "Green" }
-        $ms    = $checkTimer.ElapsedMilliseconds
+        $ms = $checkTimer.ElapsedMilliseconds
         Write-Host "  $icon  Check $($check.Number): $($check.Name) ($($ms)ms)" -ForegroundColor $color
 
         if ($hasFailures -and $outputLines.Length -gt 0) {
@@ -227,7 +229,8 @@ foreach ($check in $checks) {
         runtime_ms = $checkTimer.ElapsedMilliseconds
         violations = if ($hasFailures -and $outputLines.Length -gt 0) {
             ($outputLines -split "`n" | Select-Object -First 10)
-        } else { @() }
+        }
+        else { @() }
     }
 }
 

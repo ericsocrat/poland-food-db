@@ -1,5 +1,13 @@
 # Staging Setup Guide
 
+> **Status: DEFERRED** — We are in single-cloud mode. The sole Supabase project
+> `uskvezwftkkudvksmken` serves as production-for-now. This guide is preserved
+> for when we onboard real users or need a safe preview / E2E mutation environment.
+>
+> See [ENVIRONMENT_STRATEGY.md](ENVIRONMENT_STRATEGY.md) §8.1 for the deferral decision.
+
+---
+
 > Step-by-step instructions to create and configure the Staging Supabase project.
 
 ---
@@ -91,11 +99,11 @@ In the Staging Supabase Dashboard → **Authentication → URL Configuration**:
 
 Go to **Settings → Secrets and variables → Actions** and add:
 
-| Secret | Value |
-| ------ | ----- |
-| `SUPABASE_URL_STAGING` | `https://<staging-ref>.supabase.co` |
-| `SUPABASE_ANON_KEY_STAGING` | Staging project anon key (from Dashboard → Settings → API) |
-| `SUPABASE_SERVICE_ROLE_KEY_STAGING` | Staging project service role key |
+| Secret                              | Value                                                      |
+| ----------------------------------- | ---------------------------------------------------------- |
+| `SUPABASE_URL_STAGING`              | `https://<staging-ref>.supabase.co`                        |
+| `SUPABASE_ANON_KEY_STAGING`         | Staging project anon key (from Dashboard → Settings → API) |
+| `SUPABASE_SERVICE_ROLE_KEY_STAGING` | Staging project service role key                           |
 
 ### Vercel Preview Environment
 

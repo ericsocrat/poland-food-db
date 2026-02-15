@@ -9,11 +9,12 @@
         3. Post-pipeline fixup (db/ci_post_pipeline.sql)
         4. Materialized view refresh
 
-    Safety guardrails for production:
-        - Requires explicit '-Env production' flag
+    Safety guardrails for production (single-cloud mode — §8.1A):
+        - Requires explicit '-Env production' flag (never defaults to cloud)
         - Requires interactive 'YES' confirmation (unless -Force)
-        - Checks current Git branch (warns if not on 'main')
+        - Blocks execution on non-main branches (unless -Force)
         - Shows existing product count before execution
+        - All writes use ON CONFLICT DO UPDATE (upsert) — never drops or truncates
 
 .PARAMETER Env
     Target environment: local, staging, or production.
@@ -130,17 +131,24 @@ Write-Host "  Target: $envLabel" -ForegroundColor $envColor
 Write-Host "================================================" -ForegroundColor $envColor
 Write-Host ""
 
-# ─── Production Guard Rails ──────────────────────────────────────────────────
+# ─── Production Guard Rails (§8.1A — single-cloud mode) ─────────────────────
 
 if ($Env -eq "production") {
     Write-Host "  ⚠️  PRODUCTION ENVIRONMENT — Data changes cannot be easily undone." -ForegroundColor Red
+    Write-Host "  This is the ONLY cloud project (single-cloud mode)." -ForegroundColor Red
     Write-Host ""
 
-    # Branch check
+    # Branch check — hard block unless -Force
     $currentBranch = git branch --show-current 2>$null
     if ($currentBranch -and $currentBranch -ne "main") {
-        Write-Host "  WARNING: You are on branch '$currentBranch', not 'main'." -ForegroundColor Yellow
-        Write-Host "  Production seeds should typically be run from the 'main' branch." -ForegroundColor Yellow
+        Write-Host "  BLOCKED: You are on branch '$currentBranch', not 'main'." -ForegroundColor Red
+        Write-Host "  Production seeds must be run from 'main' to ensure reviewed code." -ForegroundColor Yellow
+        if (-not $Force) {
+            Write-Host "  Use -Force to override this check (NOT recommended)." -ForegroundColor DarkGray
+            Write-Host ""
+            exit 1
+        }
+        Write-Host "  -Force flag detected — overriding branch check." -ForegroundColor DarkYellow
         Write-Host ""
     }
 }
