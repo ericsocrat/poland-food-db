@@ -22,17 +22,39 @@ function getAdminClient(): SupabaseClient {
   });
 }
 
+/**
+ * Find the test user by email using paginated search.
+ * Stops early when found instead of loading all users.
+ */
+async function findTestUserById(
+  supabase: SupabaseClient,
+): Promise<string | null> {
+  const PAGE_SIZE = 50;
+  let page = 1;
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const {
+      data: { users },
+    } = await supabase.auth.admin.listUsers({ page, perPage: PAGE_SIZE });
+
+    const match = users.find((u) => u.email === TEST_EMAIL);
+    if (match) return match.id;
+
+    // No more pages
+    if (users.length < PAGE_SIZE) return null;
+    page++;
+  }
+}
+
 /** Delete any existing test user, then create a fresh auto-confirmed one. */
 export async function ensureTestUser(): Promise<string> {
   const supabase = getAdminClient();
 
-  // Remove stale test user if present (idempotent)
-  const {
-    data: { users },
-  } = await supabase.auth.admin.listUsers();
-  const existing = users.find((u) => u.email === TEST_EMAIL);
-  if (existing) {
-    await supabase.auth.admin.deleteUser(existing.id);
+  // Remove stale test user if present (idempotent) — paginated search
+  const existingId = await findTestUserById(supabase);
+  if (existingId) {
+    await supabase.auth.admin.deleteUser(existingId);
   }
 
   // Create fresh, pre-confirmed user
@@ -53,11 +75,8 @@ export async function ensureTestUser(): Promise<string> {
 export async function deleteTestUser(): Promise<void> {
   const supabase = getAdminClient();
 
-  const {
-    data: { users },
-  } = await supabase.auth.admin.listUsers();
-  const user = users.find((u) => u.email === TEST_EMAIL);
-  if (user) {
-    await supabase.auth.admin.deleteUser(user.id);
+  const userId = await findTestUserById(supabase);
+  if (userId) {
+    await supabase.auth.admin.deleteUser(userId);
   }
 }

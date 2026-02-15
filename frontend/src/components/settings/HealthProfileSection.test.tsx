@@ -391,6 +391,59 @@ describe("HealthProfileSection", () => {
     });
   });
 
+  // ─── Clear thresholds sends clear flags ────────────────────────────
+
+  it("sends clear flags when clearing existing thresholds on update", async () => {
+    const profile = makeProfile({
+      profile_id: "clr-1",
+      profile_name: "Has Thresholds",
+      max_sugar_g: 15,
+      max_salt_g: 2,
+      max_saturated_fat_g: 5,
+      max_calories_kcal: 500,
+    });
+
+    mockListHealthProfiles.mockResolvedValue(
+      okResult<HealthProfileListResponse>({
+        api_version: "1",
+        profiles: [profile],
+      }),
+    );
+    mockUpdateHealthProfile.mockResolvedValue(
+      okResult<HealthProfileMutationResponse>({
+        api_version: "1",
+        profile_id: "clr-1",
+        updated: true,
+      }),
+    );
+
+    render(<HealthProfileSection />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Has Thresholds")).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByText("✏️"));
+
+    // Clear the sugar threshold
+    const sugarInput = screen.getByLabelText("Max sugar (g)") as HTMLInputElement;
+    await userEvent.clear(sugarInput);
+
+    await userEvent.click(screen.getByRole("button", { name: "Update" }));
+
+    await waitFor(() => {
+      expect(mockUpdateHealthProfile).toHaveBeenCalledTimes(1);
+    });
+
+    const callArgs = mockUpdateHealthProfile.mock.calls[0][1];
+    // Sugar was cleared: clear flag should be true
+    expect(callArgs.p_clear_max_sugar).toBe(true);
+    // Other thresholds still have values: clear flags should be false
+    expect(callArgs.p_clear_max_salt).toBe(false);
+    expect(callArgs.p_clear_max_sat_fat).toBe(false);
+    expect(callArgs.p_clear_max_calories).toBe(false);
+  });
+
   // ─── Delete profile ─────────────────────────────────────────────────
 
   it("calls delete API when delete button clicked", async () => {

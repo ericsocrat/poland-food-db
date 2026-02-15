@@ -75,6 +75,12 @@ function ProfileForm({
       ? await updateHealthProfile(supabase, {
           p_profile_id: initial.profile_id,
           ...params,
+          // Send clear flags when editing: if the field was set before but is
+          // now empty, explicitly clear it to NULL in the database.
+          p_clear_max_sugar: !maxSugar && initial.max_sugar_g != null,
+          p_clear_max_salt: !maxSalt && initial.max_salt_g != null,
+          p_clear_max_sat_fat: !maxSatFat && initial.max_saturated_fat_g != null,
+          p_clear_max_calories: !maxCal && initial.max_calories_kcal != null,
         })
       : await createHealthProfile(supabase, params);
 
