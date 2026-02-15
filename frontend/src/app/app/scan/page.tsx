@@ -470,7 +470,8 @@ export default function ScanPage() {
               >
                 <span
                   className={`inline-flex h-5 w-5 items-center justify-center rounded text-xs font-bold text-white ${
-                    (p.nutri_score && NUTRI_COLORS[p.nutri_score]) ?? "bg-gray-400"
+                    (p.nutri_score && NUTRI_COLORS[p.nutri_score]) ??
+                    "bg-gray-400"
                   }`}
                 >
                   {p.nutri_score}

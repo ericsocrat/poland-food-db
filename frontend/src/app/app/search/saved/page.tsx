@@ -96,7 +96,7 @@ export default function SavedSearchesPage() {
       )}
 
       {/* Empty state */}
-      {data && data.searches.length === 0 && (
+      {data?.searches.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">💾</p>
           <p className="mb-1 text-sm text-gray-500">No saved searches yet</p>
@@ -119,8 +119,9 @@ export default function SavedSearchesPage() {
             <li key={search.id} className="card">
               <div className="flex items-start gap-3">
                 {/* Info */}
-                <div
-                  className="min-w-0 flex-1 cursor-pointer"
+                <button
+                  type="button"
+                  className="min-w-0 flex-1 cursor-pointer text-left"
                   onClick={() => applySearch(search)}
                 >
                   <p className="font-medium text-gray-900">{search.name}</p>
@@ -140,7 +141,7 @@ export default function SavedSearchesPage() {
                   <p className="mt-1 text-xs text-gray-400">
                     {new Date(search.created_at).toLocaleDateString()}
                   </p>
-                </div>
+                </button>
 
                 {/* Actions */}
                 <div className="flex flex-shrink-0 gap-1">

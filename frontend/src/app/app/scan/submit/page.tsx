@@ -44,7 +44,7 @@ export default function SubmitProductPage() {
     },
   });
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
     if (ean.length < 8 || productName.length < 2) return;
     mutation.mutate();
@@ -83,7 +83,7 @@ export default function SubmitProductPage() {
               type="text"
               value={ean}
               onChange={(e) =>
-                setEan(e.target.value.replace(/\D/g, "").slice(0, 13))
+                setEan(e.target.value.replaceAll(/\D/g, "").slice(0, 13))
               }
               className="input-field font-mono tracking-widest"
               placeholder="8 or 13 digits"

@@ -103,7 +103,7 @@ export default function ScanHistoryPage() {
       )}
 
       {/* Empty */}
-      {data && data.scans.length === 0 && (
+      {data?.scans.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">📷</p>
           <p className="mb-1 text-sm text-gray-500">No scans yet</p>

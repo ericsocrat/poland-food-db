@@ -28,7 +28,7 @@ const PAGE_SIZE = 20;
 /* ── localStorage helpers ─────────────────────────────────────────────────── */
 
 function getRecentSearches(): string[] {
-  if (typeof globalThis.localStorage === "undefined") return [];
+  if (globalThis.localStorage === undefined) return [];
   try {
     return JSON.parse(globalThis.localStorage.getItem(RECENT_KEY) ?? "[]");
   } catch {
@@ -37,19 +37,19 @@ function getRecentSearches(): string[] {
 }
 
 function saveRecentSearch(q: string) {
-  if (typeof globalThis.localStorage === "undefined") return;
+  if (globalThis.localStorage === undefined) return;
   const prev = getRecentSearches().filter((s) => s !== q);
   const next = [q, ...prev].slice(0, MAX_RECENT);
   globalThis.localStorage.setItem(RECENT_KEY, JSON.stringify(next));
 }
 
 function getShowAvoided(): boolean {
-  if (typeof globalThis.localStorage === "undefined") return false;
+  if (globalThis.localStorage === undefined) return false;
   return globalThis.localStorage.getItem(AVOID_TOGGLE_KEY) === "true";
 }
 
 function setShowAvoidedStorage(val: boolean) {
-  if (typeof globalThis.localStorage === "undefined") return;
+  if (globalThis.localStorage === undefined) return;
   globalThis.localStorage.setItem(AVOID_TOGGLE_KEY, String(val));
 }
 
@@ -113,7 +113,7 @@ export default function SearchPage() {
     staleTime: staleTimes.search,
   });
 
-  function handleSubmit(e: React.FormEvent) {
+  function handleSubmit(e: { preventDefault: () => void }) {
     e.preventDefault();
     const q = query.trim();
     if (q.length >= 1) {
@@ -297,7 +297,7 @@ export default function SearchPage() {
                     showAvoided ? "translate-x-3.5" : "translate-x-0.5"
                   }`}
                 />
-              </span>
+              </span>{" "}
               Show avoided
             </button>
 
@@ -430,7 +430,7 @@ export default function SearchPage() {
                     {generatePageNumbers(data.page, data.pages).map((p, i) =>
                       p === null ? (
                         <span
-                          key={`ellipsis-${i}`}
+                          key={`ellipsis-${i > 0 ? "end" : "start"}`}
                           className="px-1 text-gray-400"
                         >
                           …

@@ -9,10 +9,10 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import type { AdminSubmission } from "@/lib/types";
 import { callRpc } from "@/lib/rpc";
-import type { RpcResult } from "@/lib/types";
 import type {
+  AdminSubmission,
+  RpcResult,
   AdminSubmissionsResponse,
   AdminReviewResponse,
 } from "@/lib/types";
@@ -145,7 +145,7 @@ export default function AdminSubmissionsPage() {
       )}
 
       {/* Empty */}
-      {data && data.submissions.length === 0 && (
+      {data?.submissions.length === 0 && (
         <div className="py-12 text-center">
           <p className="text-sm text-gray-500">
             No {statusFilter} submissions.
@@ -204,6 +204,19 @@ export default function AdminSubmissionsPage() {
   );
 }
 
+function statusBadgeClass(status: string): string {
+  switch (status) {
+    case "pending":
+      return "bg-amber-100 text-amber-700";
+    case "approved":
+      return "bg-green-100 text-green-700";
+    case "rejected":
+      return "bg-red-100 text-red-700";
+    default:
+      return "bg-blue-100 text-blue-700";
+  }
+}
+
 function AdminSubmissionCard({
   submission,
   onApprove,
@@ -232,15 +245,7 @@ function AdminSubmissionCard({
             </p>
           </div>
           <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${
-              submission.status === "pending"
-                ? "bg-amber-100 text-amber-700"
-                : submission.status === "approved"
-                  ? "bg-green-100 text-green-700"
-                  : submission.status === "rejected"
-                    ? "bg-red-100 text-red-700"
-                    : "bg-blue-100 text-blue-700"
-            }`}
+            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(submission.status)}`}
           >
             {submission.status}
           </span>

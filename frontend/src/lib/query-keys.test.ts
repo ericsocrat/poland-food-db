@@ -9,13 +9,13 @@ describe("queryKeys", () => {
   });
 
   it("search produces deterministic keys", () => {
-    const key = queryKeys.search("chips", "snacks");
-    expect(key).toEqual(["search", { query: "chips", category: "snacks" }]);
+    const key = queryKeys.search("chips", { category: "snacks" });
+    expect(key).toEqual(["search", { query: "chips", filters: { category: "snacks" }, page: undefined }]);
   });
 
-  it("search key without category", () => {
+  it("search key without filters", () => {
     const key = queryKeys.search("water");
-    expect(key).toEqual(["search", { query: "water", category: undefined }]);
+    expect(key).toEqual(["search", { query: "water", filters: undefined, page: undefined }]);
   });
 
   it("product key for a given id", () => {

@@ -21,7 +21,7 @@ export default function ListsPage() {
 
   const lists: ProductList[] = data?.lists ?? [];
 
-  function handleCreate(e: React.FormEvent) {
+  function handleCreate(e: { preventDefault: () => void }) {
     e.preventDefault();
     if (!newName.trim()) return;
     createList.mutate(
@@ -123,15 +123,15 @@ export default function ListsPage() {
             key={list.id}
             list={list}
             onDelete={
-              !list.is_default
-                ? () => {
+              list.is_default
+                ? undefined
+                : () => {
                     if (
                       confirm(`Delete "${list.name}"? This cannot be undone.`)
                     ) {
                       deleteList.mutate(list.id);
                     }
                   }
-                : undefined
             }
           />
         ))}
@@ -142,6 +142,17 @@ export default function ListsPage() {
 
 // ─── ListCard ───────────────────────────────────────────────────────────────
 
+function listTypeIcon(type: string): string {
+  switch (type) {
+    case "favorites":
+      return "❤️";
+    case "avoid":
+      return "🚫";
+    default:
+      return "📝";
+  }
+}
+
 function ListCard({
   list,
   onDelete,
@@ -149,12 +160,7 @@ function ListCard({
   list: ProductList;
   onDelete?: () => void;
 }>) {
-  const typeIcon =
-    list.list_type === "favorites"
-      ? "❤️"
-      : list.list_type === "avoid"
-        ? "🚫"
-        : "📝";
+  const typeIcon = listTypeIcon(list.list_type);
 
   return (
     <Link href={`/app/lists/${list.id}`}>

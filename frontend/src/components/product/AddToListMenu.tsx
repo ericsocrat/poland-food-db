@@ -18,6 +18,17 @@ import {
 import { useFavoritesStore } from "@/stores/favorites-store";
 import type { ProductList } from "@/lib/types";
 
+function getListIcon(listType: string, inList: boolean): string {
+  switch (listType) {
+    case "favorites":
+      return inList ? "❤️" : "🤍";
+    case "avoid":
+      return inList ? "🚫" : "⭕";
+    default:
+      return inList ? "✅" : "➕";
+  }
+}
+
 interface AddToListMenuProps {
   readonly productId: number;
   /** Compact mode: just the heart icon for favorites toggle */
@@ -147,18 +158,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
 
           {lists.map((list) => {
             const inList = isInList(list);
-            const icon =
-              list.list_type === "favorites"
-                ? inList
-                  ? "❤️"
-                  : "🤍"
-                : list.list_type === "avoid"
-                  ? inList
-                    ? "🚫"
-                    : "⭕"
-                  : inList
-                    ? "✅"
-                    : "➕";
+            const icon = getListIcon(list.list_type, inList);
 
             return (
               <button

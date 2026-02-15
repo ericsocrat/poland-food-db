@@ -272,7 +272,7 @@ export function FilterPanel({
                 step={5}
                 value={filters.max_unhealthiness ?? 100}
                 onChange={(e) => {
-                  const val = parseInt(e.target.value);
+                  const val = Number.parseInt(e.target.value);
                   setMaxScore(val >= 100 ? undefined : val);
                 }}
                 className="w-full accent-brand-600"
@@ -280,9 +280,9 @@ export function FilterPanel({
               <div className="flex justify-between text-xs text-gray-400">
                 <span>0</span>
                 <span className="font-medium text-gray-600">
-                  {filters.max_unhealthiness !== undefined
-                    ? `≤ ${filters.max_unhealthiness}`
-                    : "Any"}
+                  {filters.max_unhealthiness === undefined
+                    ? "Any"
+                    : `≤ ${filters.max_unhealthiness}`}
                 </span>
                 <span>100</span>
               </div>
@@ -329,7 +329,12 @@ export function FilterPanel({
       {show && (
         <div className="fixed inset-0 z-50 lg:hidden">
           {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/30" onClick={onClose} />
+          <button
+            type="button"
+            className="absolute inset-0 bg-black/30"
+            onClick={onClose}
+            aria-label="Close filters"
+          />
           {/* Sheet */}
           <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-2xl bg-white px-4 pb-8 pt-3 shadow-2xl">
             {/* Handle */}

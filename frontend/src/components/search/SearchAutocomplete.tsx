@@ -140,7 +140,6 @@ export function SearchAutocomplete({
     <div
       ref={containerRef}
       className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg"
-      role="listbox"
       onKeyDown={handleKeyDown}
     >
       {isFetching && suggestions.length === 0 && (
@@ -158,43 +157,46 @@ export function SearchAutocomplete({
           return (
             <li
               key={s.product_id}
-              role="option"
-              aria-selected={i === activeIndex}
               className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors ${
                 i === activeIndex
                   ? "bg-brand-50 text-brand-900"
                   : "hover:bg-gray-50"
               }`}
-              onMouseEnter={() => setActiveIndex(i)}
-              onClick={() => {
-                onSelect(s);
-                router.push(`/app/product/${s.product_id}`);
-                onClose();
-              }}
             >
-              {/* Score badge */}
-              <div
-                className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
+              <button
+                type="button"
+                className="flex w-full items-center gap-3"
+                onMouseEnter={() => setActiveIndex(i)}
+                onClick={() => {
+                  onSelect(s);
+                  router.push(`/app/product/${s.product_id}`);
+                  onClose();
+                }}
               >
-                {s.unhealthiness_score}
-              </div>
+                {/* Score badge */}
+                <div
+                  className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
+                >
+                  {s.unhealthiness_score}
+                </div>
 
-              {/* Product info */}
-              <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-900">
-                  {s.product_name}
-                </p>
-                <p className="truncate text-xs text-gray-500">
-                  {s.brand} · {s.category}
-                </p>
-              </div>
+                {/* Product info */}
+                <div className="min-w-0 flex-1">
+                  <p className="truncate text-sm font-medium text-gray-900">
+                    {s.product_name}
+                  </p>
+                  <p className="truncate text-xs text-gray-500">
+                    {s.brand} · {s.category}
+                  </p>
+                </div>
 
-              {/* Nutri badge */}
-              <span
-                className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${nutriClass}`}
-              >
-                {s.nutri_score ?? "?"}
-              </span>
+                {/* Nutri badge */}
+                <span
+                  className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${nutriClass}`}
+                >
+                  {s.nutri_score ?? "?"}
+                </span>
+              </button>
             </li>
           );
         })}
@@ -204,9 +206,7 @@ export function SearchAutocomplete({
       {query.trim().length >= 1 && (
         <button
           type="button"
-          className={`flex w-full items-center gap-2 border-t border-gray-100 px-4 py-2.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 ${
-            activeIndex === -1 && suggestions.length > 0 ? "" : ""
-          }`}
+          className={`flex w-full items-center gap-2 border-t border-gray-100 px-4 py-2.5 text-sm text-gray-600 transition-colors hover:bg-gray-50`}
           onClick={() => {
             onQuerySubmit(query.trim());
             onClose();

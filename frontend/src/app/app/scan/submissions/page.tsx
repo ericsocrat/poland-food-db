@@ -91,7 +91,7 @@ export default function MySubmissionsPage() {
       )}
 
       {/* Empty */}
-      {data && data.submissions.length === 0 && (
+      {data?.submissions.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">📝</p>
           <p className="mb-1 text-sm text-gray-500">No submissions yet</p>
@@ -201,21 +201,9 @@ function SubmissionRow({
         <span className="mx-1">→</span>
         <StatusDot
           active={submission.status !== "pending"}
-          color={
-            submission.status === "rejected"
-              ? "bg-red-400"
-              : submission.status === "pending"
-                ? "bg-gray-300"
-                : "bg-green-400"
-          }
+          color={statusDotColor(submission.status)}
         />
-        <span>
-          {submission.status === "pending"
-            ? "In Review"
-            : submission.status === "rejected"
-              ? "Rejected"
-              : "Approved"}
-        </span>
+        <span>{statusReviewLabel(submission.status)}</span>
         {(submission.status === "approved" ||
           submission.status === "merged") && (
           <>
@@ -232,6 +220,28 @@ function SubmissionRow({
       </div>
     </li>
   );
+}
+
+function statusDotColor(status: string): string {
+  switch (status) {
+    case "rejected":
+      return "bg-red-400";
+    case "pending":
+      return "bg-gray-300";
+    default:
+      return "bg-green-400";
+  }
+}
+
+function statusReviewLabel(status: string): string {
+  switch (status) {
+    case "pending":
+      return "In Review";
+    case "rejected":
+      return "Rejected";
+    default:
+      return "Approved";
+  }
 }
 
 function StatusDot({

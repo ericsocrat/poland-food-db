@@ -42,12 +42,19 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   reporter: process.env.CI ? "list" : "html",
 
+  /* Hard cap: kill the entire suite if it exceeds 2 minutes */
+  globalTimeout: 120_000,
+  /* Per-test timeout */
+  timeout: 30_000,
+
   ...(HAS_AUTH && { globalTeardown: "./e2e/global-teardown" }),
 
   use: {
     baseURL: "http://localhost:3000",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
+    actionTimeout: 10_000,
+    navigationTimeout: 15_000,
   },
 
   projects,
