@@ -197,10 +197,16 @@
     "sonar.sql.dialect": "postgresql"
   },
   "sonarlint.pathExclusions": [
-    "supabase/migrations/**",
-    "db/pipelines/**",
-    "db/migrations/**"
+    "**/supabase/migrations/**",
+    "**/db/pipelines/**",
+    "**/db/migrations/**"
   ],
+  "sonarlint.rules": {
+    "plsql:S1192": { "level": "off" },
+    "plsql:S1138": { "level": "off" },
+    "plsql:NullComparison": { "level": "off" },
+    "plsql:JoinConditionNumberCheck": { "level": "off" }
+  },
 
   // ═══════════════════════════════════════════════════════════════════════
   // MSSQL — disable for this PostgreSQL workspace
