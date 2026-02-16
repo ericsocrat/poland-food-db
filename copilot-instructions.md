@@ -753,6 +753,29 @@ These are **anchor products** whose scores must remain stable. If a scoring chan
 
 Run QA after **every** schema change, data update, or scoring formula adjustment.
 
+### 8.20 pgTAP Tests for API Functions & Views
+
+If you **modify, rename, or add** any SQL function or view used by the app API (any `api_*` function, `v_*` view, or `mv_*` materialized view), you **must** add or update the corresponding pgTAP test in `supabase/tests/`.
+
+**Current test files:**
+
+| File | Covers |
+| --- | --- |
+| `scanner_functions.test.sql` | `api_record_scan`, `api_get_scan_history` |
+| `product_functions.test.sql` | `api_product_detail_by_ean`, `api_product_detail`, `api_better_alternatives`, `api_score_explanation`, `api_data_confidence` |
+| `category_functions.test.sql` | `api_category_overview`, `api_category_listing` |
+| `search_functions.test.sql` | `api_search_products`, `api_search_autocomplete`, `api_get_filter_options` |
+| `comparison_functions.test.sql` | `api_get_products_for_compare`, `api_save_comparison`, `api_get_shared_comparison` |
+| `user_functions.test.sql` | Auth-error branches for all `authenticated`-only functions |
+| `schema_contracts.test.sql` | Table/view/function existence checks |
+
+**Rules:**
+1. Every new `api_*` function must have at least a `lives_ok` test and response-key assertions.
+2. Auth-required functions: test the error branch (returns `{api_version, error}` when `auth.uid()` is NULL).
+3. No-auth functions: test with fixture data — insert test rows, call the function, assert keys and values.
+4. Schema contract tests: add `has_table` / `has_view` / `has_function` for any new schema object.
+5. Run `supabase test db` to verify all pgTAP tests pass before committing.
+
 ---
 
 ## 9. Environment

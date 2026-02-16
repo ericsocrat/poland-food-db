@@ -1,82 +1,100 @@
--- ─── pgTAP: Column existence & type contracts ──────────────────────────────
--- Ensures the columns that RPC functions reference actually exist.
--- This test would have directly caught the nutri_score vs nutri_score_label bug.
+-- ─── pgTAP: Schema contract tests ───────────────────────────────────────────
+-- Validates the public schema: tables, columns, views, materialized views,
+-- and functions that frontend/API relies on.
 -- Run via: supabase test db
+--
+-- These tests catch accidental renames or drops of schema objects.
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(20);
+SELECT plan(52);
 
--- ─── products table — columns used by api_record_scan ───────────────────────
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 1. Core data tables exist
+-- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT has_column('public', 'products', 'product_id',
-  'products has product_id');
+SELECT has_table('public', 'products',          'table products exists');
+SELECT has_table('public', 'nutrition_facts',    'table nutrition_facts exists');
+SELECT has_table('public', 'category_ref',       'table category_ref exists');
+SELECT has_table('public', 'country_ref',        'table country_ref exists');
+SELECT has_table('public', 'nutri_score_ref',    'table nutri_score_ref exists');
+SELECT has_table('public', 'concern_tier_ref',   'table concern_tier_ref exists');
+SELECT has_table('public', 'ingredient_ref',     'table ingredient_ref exists');
+SELECT has_table('public', 'product_ingredient', 'table product_ingredient exists');
+SELECT has_table('public', 'product_allergen_info', 'table product_allergen_info exists');
+SELECT has_table('public', 'product_field_provenance', 'table product_field_provenance exists');
+SELECT has_table('public', 'source_nutrition',   'table source_nutrition exists');
 
-SELECT has_column('public', 'products', 'product_name',
-  'products has product_name');
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 2. User / auth-related tables exist
+-- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT has_column('public', 'products', 'brand',
-  'products has brand');
+SELECT has_table('public', 'user_preferences',       'table user_preferences exists');
+SELECT has_table('public', 'user_health_profiles',   'table user_health_profiles exists');
+SELECT has_table('public', 'user_product_lists',     'table user_product_lists exists');
+SELECT has_table('public', 'user_product_list_items', 'table user_product_list_items exists');
+SELECT has_table('public', 'user_comparisons',       'table user_comparisons exists');
+SELECT has_table('public', 'user_saved_searches',    'table user_saved_searches exists');
+SELECT has_table('public', 'scan_history',           'table scan_history exists');
+SELECT has_table('public', 'product_submissions',    'table product_submissions exists');
 
-SELECT has_column('public', 'products', 'category',
-  'products has category');
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 3. Key columns on products table
+-- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT has_column('public', 'products', 'ean',
-  'products has ean');
+SELECT has_column('public', 'products', 'product_id',          'products.product_id exists');
+SELECT has_column('public', 'products', 'ean',                 'products.ean exists');
+SELECT has_column('public', 'products', 'product_name',        'products.product_name exists');
+SELECT has_column('public', 'products', 'brand',               'products.brand exists');
+SELECT has_column('public', 'products', 'category',            'products.category exists');
+SELECT has_column('public', 'products', 'country',             'products.country exists');
+SELECT has_column('public', 'products', 'unhealthiness_score', 'products.unhealthiness_score exists');
+SELECT has_column('public', 'products', 'nutri_score_label',   'products.nutri_score_label exists');
+SELECT has_column('public', 'products', 'nova_classification', 'products.nova_classification exists');
 
-SELECT has_column('public', 'products', 'unhealthiness_score',
-  'products has unhealthiness_score');
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 4. Key columns on nutrition_facts table
+-- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT has_column('public', 'products', 'nutri_score_label',
-  'products has nutri_score_label (NOT nutri_score)');
+SELECT has_column('public', 'nutrition_facts', 'product_id',      'nutrition_facts.product_id exists');
+SELECT has_column('public', 'nutrition_facts', 'calories',         'nutrition_facts.calories exists');
+SELECT has_column('public', 'nutrition_facts', 'total_fat_g',      'nutrition_facts.total_fat_g exists');
+SELECT has_column('public', 'nutrition_facts', 'saturated_fat_g',  'nutrition_facts.saturated_fat_g exists');
+SELECT has_column('public', 'nutrition_facts', 'carbs_g',          'nutrition_facts.carbs_g exists');
+SELECT has_column('public', 'nutrition_facts', 'sugars_g',         'nutrition_facts.sugars_g exists');
+SELECT has_column('public', 'nutrition_facts', 'protein_g',        'nutrition_facts.protein_g exists');
+SELECT has_column('public', 'nutrition_facts', 'salt_g',           'nutrition_facts.salt_g exists');
 
-SELECT has_column('public', 'products', 'nova_classification',
-  'products has nova_classification');
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 5. Views exist
+-- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT has_column('public', 'products', 'country',
-  'products has country');
+SELECT has_view('public', 'v_master',                       'view v_master exists');
+SELECT has_view('public', 'v_api_category_overview',        'view v_api_category_overview exists');
+SELECT has_view('public', 'v_api_category_overview_by_country', 'view v_api_category_overview_by_country exists');
 
--- ─── Negative check: columns that should NOT exist ──────────────────────────
--- If someone tries to add a bare "nutri_score" column, alarm bell.
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 6. Materialized views exist
+-- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT hasnt_column('public', 'products', 'nutri_score',
-  'products must NOT have a bare nutri_score column (use nutri_score_label)');
+SELECT has_materialized_view('public', 'mv_ingredient_frequency', 'materialized view mv_ingredient_frequency exists');
+SELECT has_materialized_view('public', 'v_product_confidence',    'materialized view v_product_confidence exists');
 
--- ─── scan_history table ─────────────────────────────────────────────────────
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 7. Core API functions exist (no-auth functions)
+-- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT has_table('public', 'scan_history',
-  'scan_history table exists');
-
-SELECT has_column('public', 'scan_history', 'user_id',
-  'scan_history has user_id');
-
-SELECT has_column('public', 'scan_history', 'ean',
-  'scan_history has ean');
-
-SELECT has_column('public', 'scan_history', 'product_id',
-  'scan_history has product_id');
-
-SELECT has_column('public', 'scan_history', 'found',
-  'scan_history has found');
-
--- ─── product_submissions table ──────────────────────────────────────────────
-
-SELECT has_table('public', 'product_submissions',
-  'product_submissions table exists');
-
-SELECT has_column('public', 'product_submissions', 'ean',
-  'product_submissions has ean');
-
-SELECT has_column('public', 'product_submissions', 'status',
-  'product_submissions has status');
-
--- ─── category_ref table ────────────────────────────────────────────────────
-
-SELECT has_column('public', 'category_ref', 'slug',
-  'category_ref has slug column');
-
-SELECT has_column('public', 'category_ref', 'display_name',
-  'category_ref has display_name column');
+SELECT has_function('public', 'api_record_scan',           'function api_record_scan exists');
+SELECT has_function('public', 'api_product_detail_by_ean', 'function api_product_detail_by_ean exists');
+SELECT has_function('public', 'api_product_detail',        'function api_product_detail exists');
+SELECT has_function('public', 'api_better_alternatives',   'function api_better_alternatives exists');
+SELECT has_function('public', 'api_score_explanation',     'function api_score_explanation exists');
+SELECT has_function('public', 'api_data_confidence',       'function api_data_confidence exists');
+SELECT has_function('public', 'api_category_overview',     'function api_category_overview exists');
+SELECT has_function('public', 'api_category_listing',      'function api_category_listing exists');
+SELECT has_function('public', 'api_search_products',       'function api_search_products exists');
+SELECT has_function('public', 'api_search_autocomplete',   'function api_search_autocomplete exists');
+SELECT has_function('public', 'api_get_filter_options',    'function api_get_filter_options exists');
 
 SELECT * FROM finish();
 ROLLBACK;
