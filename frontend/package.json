@@ -10,7 +10,10 @@
     "type-check": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:integration": "INTEGRATION=1 vitest run --testPathPattern=rpc-contract",
+    "test:e2e": "npx playwright test",
+    "test:e2e:scanner": "npx playwright test authenticated-scanner"
   },
   "dependencies": {
     "@supabase/ssr": "^0.8.0",
