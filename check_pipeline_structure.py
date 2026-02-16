@@ -39,7 +39,7 @@ REQUIRED_STEPS = {
 # This catches hardcoded product_id references like "product_id = 42"
 _PID_EQUALS = re.compile(r"\bproduct_id\s*=\s*\d+", re.IGNORECASE)
 _PID_VALUES = re.compile(r"VALUES\s*\(\s*\d+\s*,", re.IGNORECASE)
-_PID_TUPLE = re.compile(r"\(\s*\d+\s*,\s*\d+\.?\d*\s*,", re.IGNORECASE)
+_PID_TUPLE = re.compile(r"\(\s*\d+\s*,\s*\d+(?:\.\d+)?\s*,", re.IGNORECASE)
 HARDCODED_PID_PATTERNS = (_PID_EQUALS, _PID_VALUES, _PID_TUPLE)
 
 # Step 01 must have the upsert conflict key
