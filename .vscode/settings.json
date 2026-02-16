@@ -201,7 +201,8 @@
     "**/supabase/migrations/**",
     "**/db/pipelines/**",
     "**/db/migrations/**",
-    "**/db/*.sql"
+    "**/db/*.sql",
+    "**/.github/workflows/**"
   ],
   "sonarlint.rules": {
     "plsql:S1192": { "level": "off" },
