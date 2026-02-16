@@ -6,6 +6,15 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useState, type ReactNode } from "react";
 import { Toaster } from "sonner";
 
+/** Don't retry on 4xx auth or PostgREST JWT errors; retry up to 2× otherwise */
+export function shouldRetry(failureCount: number, error: Error): boolean {
+  if (error && typeof error === "object" && "code" in error) {
+    const code = String((error as { code: unknown }).code);
+    if (["401", "403", "PGRST301"].includes(code)) return false;
+  }
+  return failureCount < 2;
+}
+
 export function Providers({ children }: Readonly<{ children: ReactNode }>) {
   const [queryClient] = useState(
     () =>
@@ -13,13 +22,7 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
         defaultOptions: {
           queries: {
             // Don't retry on 4xx (auth errors, validation errors)
-            retry: (failureCount, error) => {
-              if (error && typeof error === "object" && "code" in error) {
-                const code = String((error as { code: unknown }).code);
-                if (["401", "403", "PGRST301"].includes(code)) return false;
-              }
-              return failureCount < 2;
-            },
+            retry: shouldRetry,
             refetchOnWindowFocus: false,
           },
         },

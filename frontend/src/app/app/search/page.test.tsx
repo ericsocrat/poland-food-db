@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -37,7 +37,22 @@ vi.mock("@/components/search/SearchAutocomplete", () => ({
 }));
 
 vi.mock("@/components/search/FilterPanel", () => ({
-  FilterPanel: () => <div data-testid="filter-panel" />,
+  FilterPanel: ({
+    onChange,
+  }: {
+    filters: unknown;
+    onChange: (f: Record<string, unknown>) => void;
+    show: boolean;
+    onClose: () => void;
+  }) => (
+    <div data-testid="filter-panel">
+      <button
+        data-testid="mock-set-category-filter"
+        onClick={() => onChange({ category: ["chips"] })}
+      />
+      <button data-testid="mock-clear-filters" onClick={() => onChange({})} />
+    </div>
+  ),
 }));
 
 vi.mock("@/components/search/ActiveFilterChips", () => ({
@@ -447,6 +462,181 @@ describe("SearchPage", () => {
 
     await waitFor(() => {
       expect(screen.getByText(/530 kcal/)).toBeInTheDocument();
+    });
+  });
+
+  it("renders page number buttons for many pages", async () => {
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({ total: 200, pages: 10, page: 5 }),
+    );
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+    await user.type(screen.getByPlaceholderText("Search products…"), "test");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Page 5 of 10")).toBeInTheDocument();
+    });
+
+    // Should show ellipsis for large page sets
+    const ellipses = screen.getAllByText("…");
+    expect(ellipses.length).toBeGreaterThan(0);
+
+    // Should show page 1 and page 10
+    expect(screen.getByRole("button", { name: "1" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "10" })).toBeInTheDocument();
+  });
+
+  it("clicking a page number button fetches that page", async () => {
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({ total: 60, pages: 3, page: 1 }),
+    );
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+    await user.type(screen.getByPlaceholderText("Search products…"), "test");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
+    });
+
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({ total: 60, pages: 3, page: 2 }),
+    );
+
+    await user.click(screen.getByRole("button", { name: "2" }));
+
+    await waitFor(() => {
+      expect(mockSearchProducts).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it("Prev button navigates back a page", async () => {
+    // Start at page 1
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({ total: 60, pages: 3, page: 1 }),
+    );
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+    await user.type(screen.getByPlaceholderText("Search products…"), "test");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
+    });
+
+    // Navigate to page 2 via page button
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({ total: 60, pages: 3, page: 2 }),
+    );
+    await user.click(screen.getByRole("button", { name: "2" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Page 2 of 3")).toBeInTheDocument();
+    });
+
+    // Now click Prev
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({ total: 60, pages: 3, page: 1 }),
+    );
+    await user.click(screen.getByRole("button", { name: "← Prev" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
+    });
+  });
+
+  it("shows empty results with clear-all-filters button when filters active", async () => {
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({ total: 0, results: [] }),
+    );
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    // Set category filter first
+    await user.click(screen.getByTestId("mock-set-category-filter"));
+
+    await waitFor(() => {
+      expect(screen.getByText(/No products match your/)).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Clear all filters")).toBeInTheDocument();
+  });
+
+  it("browse mode triggers search with empty query when filters set", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    // Set filter — should trigger browse mode
+    await user.click(screen.getByTestId("mock-set-category-filter"));
+
+    await waitFor(() => {
+      expect(mockSearchProducts).toHaveBeenCalled();
+    });
+  });
+
+  it("renders product with null calories without crashing", async () => {
+    mockSearchProducts.mockResolvedValue({
+      ok: true,
+      data: {
+        api_version: "v1",
+        query: "test",
+        country: "PL",
+        total: 1,
+        page: 1,
+        pages: 1,
+        page_size: 20,
+        filters_applied: {},
+        results: [makeSearchResult({ calories: null })],
+      },
+    });
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+    await user.type(screen.getByPlaceholderText("Search products…"), "test");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+  });
+
+  it("shows save search button when search is active", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText(/Save search/)).toBeInTheDocument();
+  });
+
+  it("handles API error with message", async () => {
+    mockSearchProducts.mockResolvedValue({
+      ok: false,
+      error: { message: "Rate limited" },
+    });
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Search failed. Please try again."),
+      ).toBeInTheDocument();
     });
   });
 });

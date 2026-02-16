@@ -407,4 +407,232 @@ describe("ScanPage", () => {
       screen.getByText("Enter 8 digits (EAN-8) or 13 digits (EAN-13)"),
     ).toBeInTheDocument();
   });
+
+  it("disables look up button when EAN is too short", async () => {
+    const user = userEvent.setup();
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    await user.click(screen.getByText("⌨️ Manual"));
+
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "1234",
+    );
+
+    expect(screen.getByRole("button", { name: "Look up" })).toBeDisabled();
+  });
+
+  it("enables look up button when EAN has 8+ digits", async () => {
+    const user = userEvent.setup();
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    await user.click(screen.getByText("⌨️ Manual"));
+
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "12345678",
+    );
+
+    expect(screen.getByRole("button", { name: "Look up" })).toBeEnabled();
+  });
+
+  it("navigates to product page when scan finds a product (single mode)", async () => {
+    mockRecordScan.mockResolvedValue({
+      ok: true,
+      data: {
+        found: true,
+        product_id: 42,
+        product_name: "Test Product",
+        brand: "TestBrand",
+        nutri_score: "B",
+      },
+    });
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("⌨️ Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/app/product/42");
+    });
+  });
+
+  it("shows looking-up state with spinner while scan is pending", async () => {
+    // Make scan hang indefinitely
+    mockRecordScan.mockReturnValue(new Promise(() => {}));
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("⌨️ Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    });
+  });
+
+  it("batch mode adds found products to scanned list with toast", async () => {
+    mockRecordScan.mockResolvedValue({
+      ok: true,
+      data: {
+        found: true,
+        product_id: 42,
+        product_name: "Batch Product",
+        brand: "TestBrand",
+        nutri_score: "A",
+      },
+    });
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    // Enable batch mode
+    await user.click(screen.getByLabelText(/Batch mode/));
+
+    // Switch to manual and scan
+    await user.click(screen.getByText("⌨️ Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Batch Product")).toBeInTheDocument();
+    });
+    expect(screen.getByText("Scanned (1)")).toBeInTheDocument();
+    expect(mockToast.success).toHaveBeenCalledWith("✓ Batch Product");
+    // In batch mode, should NOT navigate
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("batch mode shows Clear and Done scanning buttons", async () => {
+    mockRecordScan.mockResolvedValue({
+      ok: true,
+      data: {
+        found: true,
+        product_id: 42,
+        product_name: "Batch Product",
+        brand: "TestBrand",
+        nutri_score: "A",
+      },
+    });
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByLabelText(/Batch mode/));
+    await user.click(screen.getByText("⌨️ Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Scanned (1)")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Clear")).toBeInTheDocument();
+    expect(screen.getByText("Done scanning")).toBeInTheDocument();
+  });
+
+  it("batch mode Clear button removes all scanned items", async () => {
+    mockRecordScan.mockResolvedValue({
+      ok: true,
+      data: {
+        found: true,
+        product_id: 42,
+        product_name: "Batch Product",
+        brand: "TestBrand",
+        nutri_score: "A",
+      },
+    });
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByLabelText(/Batch mode/));
+    await user.click(screen.getByText("⌨️ Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Scanned (1)")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Clear"));
+
+    expect(screen.queryByText("Scanned (1)")).not.toBeInTheDocument();
+    expect(screen.queryByText("Batch Product")).not.toBeInTheDocument();
+  });
+
+  it("batch mode product click navigates to product page", async () => {
+    mockRecordScan.mockResolvedValue({
+      ok: true,
+      data: {
+        found: true,
+        product_id: 42,
+        product_name: "Batch Product",
+        brand: "TestBrand",
+        nutri_score: "A",
+      },
+    });
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByLabelText(/Batch mode/));
+    await user.click(screen.getByText("⌨️ Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Batch Product")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Batch Product"));
+    expect(mockPush).toHaveBeenCalledWith("/app/product/42");
+  });
+
+  it("shows camera info text in camera mode", () => {
+    render(<ScanPage />, { wrapper: createWrapper() });
+    expect(
+      screen.getByText(/Supports EAN-13, EAN-8, UPC-A, UPC-E/),
+    ).toBeInTheDocument();
+  });
+
+  it("mutation error sets scan state to error", async () => {
+    mockRecordScan.mockResolvedValue({
+      ok: false,
+      error: { message: "Server error" },
+    });
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("⌨️ Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Something went wrong|error|try again/i),
+      ).toBeInTheDocument();
+    });
+  });
 });
