@@ -97,10 +97,20 @@ if (Test-Path $dotenvPath) {
 
 $usePsql = $false
 
+# CI mode: if PGHOST is set, use psql directly regardless of -Env value
+$ciMode = [bool]$env:PGHOST
+
 switch ($Env) {
     "local" {
-        $envLabel = "LOCAL (Docker)"
-        $envColor = "Green"
+        if ($ciMode) {
+            $envLabel = "CI (psql via PGHOST=$($env:PGHOST))"
+            $envColor = "Cyan"
+            $usePsql = $true
+        }
+        else {
+            $envLabel = "LOCAL (Docker)"
+            $envColor = "Green"
+        }
     }
     "staging" {
         $stagingRef = [System.Environment]::GetEnvironmentVariable("SUPABASE_STAGING_PROJECT_REF")
@@ -144,7 +154,8 @@ if ($usePsql) {
         Write-Host "ERROR: psql not found on PATH." -ForegroundColor Red
         exit 1
     }
-    if (-not $dbPassword) {
+    # In CI mode, PGPASSWORD env var handles authentication — no prompt needed
+    if (-not $ciMode -and -not $dbPassword) {
         Write-Host "Enter the database password for $envLabel :" -ForegroundColor Yellow
         $securePassword = Read-Host -AsSecureString
         $dbPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
@@ -194,8 +205,14 @@ foreach ($check in $checks) {
     $checkTimer = [System.Diagnostics.Stopwatch]::StartNew()
 
     if ($usePsql) {
-        $env:PGPASSWORD = $dbPassword
-        $output = $check.SQL | & psql -h $dbHost -p $DB_PORT -U $DB_USER -d $DB_NAME --tuples-only --no-align -v ON_ERROR_STOP=1 2>&1
+        if ($ciMode) {
+            # CI mode: rely on PGHOST/PGPORT/PGUSER/PGPASSWORD/PGDATABASE env vars
+            $output = $check.SQL | & psql --tuples-only --no-align -v ON_ERROR_STOP=1 2>&1
+        }
+        else {
+            $env:PGPASSWORD = $dbPassword
+            $output = $check.SQL | & psql -h $dbHost -p $DB_PORT -U $DB_USER -d $DB_NAME --tuples-only --no-align -v ON_ERROR_STOP=1 2>&1
+        }
     }
     else {
         $output = $check.SQL | docker exec -i $DOCKER_CONTAINER psql -U $DB_USER -d $DB_NAME --tuples-only --no-align -v ON_ERROR_STOP=1 2>&1

@@ -188,6 +188,44 @@ def is_additive_tag(tag: str) -> bool:
 # ---------------------------------------------------------------------------
 
 
+def _display_name_for(name: str) -> str:
+    """Produce a display name (max 200 chars) from a raw ingredient name."""
+    display = name.title() if not any(c.isupper() for c in name[1:]) else name
+    return display.strip()[:200]
+
+
+def _resolve_ingredient(
+    item: dict,
+    off_id: str,
+    name_lower: str,
+    name: str,
+    ingredient_lookup: dict[str, int],
+    new_ingredients: dict[str, dict],
+) -> int | str:
+    """Look up or register an ingredient. Returns its ID (int or 'NEW:...')."""
+    ing_id = ingredient_lookup.get(name_lower)
+    if ing_id is not None:
+        return ing_id
+
+    is_add = is_additive_tag(off_id) if off_id else False
+    if name_lower not in new_ingredients:
+        new_ingredients[name_lower] = {
+            "name_en": _display_name_for(name),
+            "is_additive": is_add,
+            "vegan": item.get("vegan", "unknown") or "unknown",
+            "vegetarian": item.get("vegetarian", "unknown") or "unknown",
+            "from_palm_oil": item.get("from_palm_oil", "unknown") or "unknown",
+        }
+    return f"NEW:{name_lower}"
+
+
+def _clamp_percent_estimate(pct_est: float | None) -> float | None:
+    """Clamp negative percent_estimate to 0 and round to 2 decimals."""
+    if pct_est is None:
+        return None
+    return round(max(pct_est, 0), 2)
+
+
 def process_ingredients(
     off_product: dict,
     country: str,
@@ -204,8 +242,7 @@ def process_ingredients(
     if not ingredients:
         return []
 
-    rows = []
-    position = 1
+    rows: list[dict] = []
 
     def process_item(item: dict, pos: int, is_sub: bool, parent_id: int | None) -> int:
         """Process a single ingredient item. Returns next position."""
@@ -215,67 +252,32 @@ def process_ingredients(
         if not text and not off_id:
             return pos
 
-        # Normalize the name
-        name = text if text else off_id
+        name = text or off_id
         name_lower = normalize_ingredient_name(name)
-
         if not name_lower:
             return pos
 
-        # Try to find in ingredient_ref
-        ing_id = ingredient_lookup.get(name_lower)
+        ing_id = _resolve_ingredient(
+            item, off_id, name_lower, name, ingredient_lookup, new_ingredients
+        )
 
-        if ing_id is None:
-            # Check if it's an additive by tag
-            is_add = is_additive_tag(off_id) if off_id else False
-
-            # Create new ingredient_ref entry
-            if name_lower not in new_ingredients:
-                # Use title case for the display name
-                display_name = (
-                    name.title() if not any(c.isupper() for c in name[1:]) else name
-                )
-                display_name = display_name.strip()
-                if len(display_name) > 200:
-                    display_name = display_name[:200]
-
-                new_ingredients[name_lower] = {
-                    "name_en": display_name,
-                    "is_additive": is_add,
-                    "vegan": item.get("vegan", "unknown") or "unknown",
-                    "vegetarian": item.get("vegetarian", "unknown") or "unknown",
-                    "from_palm_oil": item.get("from_palm_oil", "unknown") or "unknown",
-                }
-            # We'll resolve the ID after inserting new ingredients
-            ing_id = f"NEW:{name_lower}"
-
-        pct = item.get("percent")
-        pct_est = item.get("percent_estimate")
-        # Clamp negative percent_estimate to 0 (OFF API sometimes returns negatives)
-        if pct_est is not None and pct_est < 0:
-            pct_est = 0
-
-        row = {
+        rows.append({
             "country": country,
             "ean": ean,
             "ingredient_id": ing_id,
             "position": pos,
-            "percent": pct,
-            "percent_estimate": round(pct_est, 2) if pct_est is not None else None,
+            "percent": item.get("percent"),
+            "percent_estimate": _clamp_percent_estimate(item.get("percent_estimate")),
             "is_sub_ingredient": is_sub,
             "parent_ingredient_id": parent_id if is_sub else None,
-        }
-        rows.append(row)
+        })
 
-        current_id = ing_id
         next_pos = pos + 1
-
-        # Process sub-ingredients
         for sub in item.get("ingredients", []):
-            next_pos = process_item(sub, next_pos, True, current_id)
-
+            next_pos = process_item(sub, next_pos, True, ing_id)
         return next_pos
 
+    position = 1
     for item in ingredients:
         position = process_item(item, position, False, None)
 
@@ -343,6 +345,190 @@ def sql_escape(val: str | None) -> str:
     return "'" + s + "'"
 
 
+# ---------------------------------------------------------------------------
+# SQL generation constants (avoid duplication flagged by SonarCloud)
+# ---------------------------------------------------------------------------
+
+SQL_SECTION_SEPARATOR = "-- ═══════════════════════════════════════════════════════════════"
+SQL_FROM_VALUES = "FROM (VALUES"
+SQL_JOIN_PRODUCTS = "JOIN products p ON p.country = v.country AND p.ean = v.ean"
+SQL_WHERE_ACTIVE = "WHERE p.is_deprecated IS NOT TRUE"
+
+
+# ---------------------------------------------------------------------------
+# Migration section generators
+# ---------------------------------------------------------------------------
+
+
+def _format_nullable(val: object) -> str:
+    """Format a potentially None value as SQL literal."""
+    return str(val) if val is not None else "NULL"
+
+
+def _format_ingredient_row(r: dict) -> tuple[str, str, str, bool]:
+    """Extract common fields from an ingredient row for SQL generation."""
+    pct = _format_nullable(r["percent"])
+    pct_est = _format_nullable(r["percent_estimate"])
+    parent_id = r["parent_ingredient_id"]
+    parent = (
+        str(parent_id)
+        if parent_id is not None and not isinstance(parent_id, str)
+        else "NULL"
+    )
+    # If parent can't be resolved, force is_sub=false to satisfy chk_sub_has_parent
+    is_sub = r["is_sub_ingredient"] and parent != "NULL"
+    return pct, pct_est, parent, is_sub
+
+
+def _gen_new_ingredients_section(new_ingredients: dict[str, dict]) -> list[str]:
+    """Generate SQL for inserting new ingredients into ingredient_ref."""
+    lines = [
+        SQL_SECTION_SEPARATOR,
+        "-- 1. Add new ingredients to ingredient_ref",
+        SQL_SECTION_SEPARATOR,
+        "",
+        "INSERT INTO ingredient_ref (name_en, is_additive, vegan, vegetarian, from_palm_oil)",
+        "VALUES",
+    ]
+    vals = []
+    for _name_lower, info in sorted(new_ingredients.items()):
+        vals.append(
+            f"  ({sql_escape(info['name_en'])}, "
+            f"{'true' if info['is_additive'] else 'false'}, "
+            f"{sql_escape(info['vegan'])}, "
+            f"{sql_escape(info['vegetarian'])}, "
+            f"{sql_escape(info['from_palm_oil'])})"
+        )
+    lines.append(",\n".join(vals))
+    lines.append("ON CONFLICT DO NOTHING;")
+    lines.append("")
+    return lines
+
+
+def _gen_allergen_batch(batch: list[dict]) -> list[str]:
+    """Generate SQL for a single batch of allergen inserts."""
+    lines = ["INSERT INTO product_allergen_info (product_id, tag, type)"]
+    lines.append("SELECT p.product_id, v.tag, v.type")
+    lines.append(SQL_FROM_VALUES)
+    vals = []
+    for r in batch:
+        vals.append(
+            f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
+            f"{sql_escape(r['tag'])}, {sql_escape(r['type'])})"
+        )
+    lines.append(",\n".join(vals))
+    lines.append(") AS v(country, ean, tag, type)")
+    lines.append(SQL_JOIN_PRODUCTS)
+    lines.append(SQL_WHERE_ACTIVE)
+    lines.append("ON CONFLICT (product_id, tag, type) DO NOTHING;")
+    lines.append("")
+    return lines
+
+
+def _gen_allergen_section(allergen_rows: list[dict]) -> list[str]:
+    """Generate SQL for populating product_allergen_info."""
+    lines = [
+        SQL_SECTION_SEPARATOR,
+        "-- 2. Populate product_allergen_info",
+        SQL_SECTION_SEPARATOR,
+        "-- Resolve product_id by stable key (country + ean) for portability",
+        "",
+    ]
+    batch_size = 500
+    for i in range(0, len(allergen_rows), batch_size):
+        lines.extend(_gen_allergen_batch(allergen_rows[i : i + batch_size]))
+    return lines
+
+
+def _gen_resolved_ingredient_batch(batch: list[dict]) -> list[str]:
+    """Generate SQL for a batch of resolved ingredient inserts."""
+    lines = [
+        "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)",
+        "SELECT p.product_id, v.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id",
+        SQL_FROM_VALUES,
+    ]
+    vals = []
+    for r in batch:
+        pct, pct_est, parent, is_sub = _format_ingredient_row(r)
+        vals.append(
+            f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
+            f"{r['ingredient_id']}, {r['position']}, {pct}, {pct_est}, "
+            f"{'true' if is_sub else 'false'}, {parent})"
+        )
+    lines.append(",\n".join(vals))
+    lines.append(
+        ") AS v(country, ean, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
+    )
+    lines.append(SQL_JOIN_PRODUCTS)
+    lines.append(SQL_WHERE_ACTIVE)
+    lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
+    lines.append("")
+    return lines
+
+
+def _gen_unresolved_ingredient_batch(
+    batch: list[dict], new_ingredients: dict[str, dict]
+) -> list[str]:
+    """Generate SQL for a batch of unresolved ingredient inserts (need name lookup)."""
+    lines = [
+        "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)",
+        "SELECT p.product_id, ir.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id",
+        SQL_FROM_VALUES,
+    ]
+    vals = []
+    for r in batch:
+        name_lower = r["ingredient_id"].replace("NEW:", "")
+        display_name = new_ingredients[name_lower]["name_en"]
+        pct, pct_est, parent, is_sub = _format_ingredient_row(r)
+        vals.append(
+            f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, {sql_escape(display_name)}, {r['position']}, "
+            f"{pct}::numeric, {pct_est}::numeric, "
+            f"{'true' if is_sub else 'false'}, {parent}::bigint)"
+        )
+    lines.append(",\n".join(vals))
+    lines.append(
+        ") AS v(country, ean, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
+    )
+    lines.append(SQL_JOIN_PRODUCTS)
+    lines.append(
+        "JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)"
+    )
+    lines.append(SQL_WHERE_ACTIVE)
+    lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
+    lines.append("")
+    return lines
+
+
+def _gen_ingredient_section(
+    ingredient_rows: list[dict], new_ingredients: dict[str, dict]
+) -> list[str]:
+    """Generate SQL for populating product_ingredient."""
+    lines = [
+        SQL_SECTION_SEPARATOR,
+        "-- 3. Populate product_ingredient",
+        SQL_SECTION_SEPARATOR,
+        "-- Resolve product_id by stable key (country + ean) for portability",
+        "",
+    ]
+
+    # Group by whether they need name resolution
+    resolved = [r for r in ingredient_rows if not isinstance(r["ingredient_id"], str)]
+    unresolved = [r for r in ingredient_rows if isinstance(r["ingredient_id"], str)]
+
+    batch_size = 500
+    for i in range(0, len(resolved), batch_size):
+        lines.extend(_gen_resolved_ingredient_batch(resolved[i : i + batch_size]))
+
+    for i in range(0, len(unresolved), batch_size):
+        lines.extend(
+            _gen_unresolved_ingredient_batch(
+                unresolved[i : i + batch_size], new_ingredients
+            )
+        )
+
+    return lines
+
+
 def generate_migration(
     ingredient_rows: list[dict],
     allergen_rows: list[dict],
@@ -350,203 +536,33 @@ def generate_migration(
     stats: dict,
 ) -> str:
     """Generate the migration SQL."""
-    lines = []
-    lines.append("-- Populate product_ingredient and product_allergen_info tables")
-    lines.append(f"-- Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}")
-    lines.append(f"-- Products processed: {stats['processed']}")
-    lines.append(f"-- Products with ingredients: {stats['with_ingredients']}")
-    lines.append(f"-- Products with allergens: {stats['with_allergens']}")
-    lines.append(f"-- New ingredient_ref entries: {len(new_ingredients)}")
-    lines.append(f"-- Total product_ingredient rows: {len(ingredient_rows)}")
-    lines.append(f"-- Total product_allergen_info rows: {len(allergen_rows)}")
-    lines.append("")
-    lines.append("BEGIN;")
-    lines.append("")
+    lines = [
+        "-- Populate product_ingredient and product_allergen_info tables",
+        f"-- Generated: {datetime.now().strftime('%Y-%m-%d %H:%M')}",
+        f"-- Products processed: {stats['processed']}",
+        f"-- Products with ingredients: {stats['with_ingredients']}",
+        f"-- Products with allergens: {stats['with_allergens']}",
+        f"-- New ingredient_ref entries: {len(new_ingredients)}",
+        f"-- Total product_ingredient rows: {len(ingredient_rows)}",
+        f"-- Total product_allergen_info rows: {len(allergen_rows)}",
+        "",
+        "BEGIN;",
+        "",
+    ]
 
-    # 1. Insert new ingredients into ingredient_ref
     if new_ingredients:
-        lines.append(
-            "-- ═══════════════════════════════════════════════════════════════"
-        )
-        lines.append("-- 1. Add new ingredients to ingredient_ref")
-        lines.append(
-            "-- ═══════════════════════════════════════════════════════════════"
-        )
-        lines.append("")
-        lines.append(
-            "INSERT INTO ingredient_ref (name_en, is_additive, vegan, vegetarian, from_palm_oil)"
-        )
-        lines.append("VALUES")
+        lines.extend(_gen_new_ingredients_section(new_ingredients))
 
-        vals = []
-        for name_lower, info in sorted(new_ingredients.items()):
-            vals.append(
-                f"  ({sql_escape(info['name_en'])}, "
-                f"{'true' if info['is_additive'] else 'false'}, "
-                f"{sql_escape(info['vegan'])}, "
-                f"{sql_escape(info['vegetarian'])}, "
-                f"{sql_escape(info['from_palm_oil'])})"
-            )
-        lines.append(",\n".join(vals))
-        lines.append("ON CONFLICT DO NOTHING;")
-        lines.append("")
-
-    # 2. Insert product_allergen_info (resolved via country + ean)
     if allergen_rows:
-        lines.append(
-            "-- ═══════════════════════════════════════════════════════════════"
-        )
-        lines.append("-- 2. Populate product_allergen_info")
-        lines.append(
-            "-- ═══════════════════════════════════════════════════════════════"
-        )
-        lines.append(
-            "-- Resolve product_id by stable key (country + ean) for portability"
-        )
-        lines.append("")
+        lines.extend(_gen_allergen_section(allergen_rows))
 
-        # Batch by 500 rows
-        batch_size = 500
-        for i in range(0, len(allergen_rows), batch_size):
-            batch = allergen_rows[i : i + batch_size]
-            lines.append("INSERT INTO product_allergen_info (product_id, tag, type)")
-            lines.append("SELECT p.product_id, v.tag, v.type")
-            lines.append("FROM (VALUES")
-            vals = []
-            for r in batch:
-                vals.append(
-                    f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
-                    f"{sql_escape(r['tag'])}, {sql_escape(r['type'])})"
-                )
-            lines.append(",\n".join(vals))
-            lines.append(") AS v(country, ean, tag, type)")
-            lines.append("JOIN products p ON p.country = v.country AND p.ean = v.ean")
-            lines.append("WHERE p.is_deprecated IS NOT TRUE")
-            lines.append("ON CONFLICT (product_id, tag, type) DO NOTHING;")
-            lines.append("")
-
-    # 3. Insert product_ingredient — needs resolved ingredient_ids
-    # For new ingredients, we use a subquery to look up the ID by name
     if ingredient_rows:
-        lines.append(
-            "-- ═══════════════════════════════════════════════════════════════"
-        )
-        lines.append("-- 3. Populate product_ingredient")
-        lines.append(
-            "-- ═══════════════════════════════════════════════════════════════"
-        )
-        lines.append(
-            "-- Resolve product_id by stable key (country + ean) for portability"
-        )
-        lines.append("")
-
-        # Group by whether they need name resolution
-        resolved = [
-            r for r in ingredient_rows if not isinstance(r["ingredient_id"], str)
-        ]
-        unresolved = [r for r in ingredient_rows if isinstance(r["ingredient_id"], str)]
-
-        # Insert resolved rows (direct ingredient_id)
-        if resolved:
-            batch_size = 500
-            for i in range(0, len(resolved), batch_size):
-                batch = resolved[i : i + batch_size]
-                lines.append(
-                    "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
-                )
-                lines.append(
-                    "SELECT p.product_id, v.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id"
-                )
-                lines.append("FROM (VALUES")
-                vals = []
-                for r in batch:
-                    pct = str(r["percent"]) if r["percent"] is not None else "NULL"
-                    pct_est = (
-                        str(r["percent_estimate"])
-                        if r["percent_estimate"] is not None
-                        else "NULL"
-                    )
-                    parent = (
-                        str(r["parent_ingredient_id"])
-                        if r["parent_ingredient_id"] is not None
-                        and not isinstance(r["parent_ingredient_id"], str)
-                        else "NULL"
-                    )
-                    # If parent can't be resolved, force is_sub=false to satisfy chk_sub_has_parent
-                    is_sub = r["is_sub_ingredient"] and parent != "NULL"
-                    vals.append(
-                        f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
-                        f"{r['ingredient_id']}, {r['position']}, {pct}, {pct_est}, "
-                        f"{'true' if is_sub else 'false'}, {parent})"
-                    )
-                lines.append(",\n".join(vals))
-                lines.append(
-                    ") AS v(country, ean, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
-                )
-                lines.append(
-                    "JOIN products p ON p.country = v.country AND p.ean = v.ean"
-                )
-                lines.append("WHERE p.is_deprecated IS NOT TRUE")
-                lines.append(
-                    "ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;"
-                )
-                lines.append("")
-
-        # Insert unresolved rows (need name lookup)
-        if unresolved:
-            batch_size = 500
-            for i in range(0, len(unresolved), batch_size):
-                batch = unresolved[i : i + batch_size]
-                lines.append(
-                    "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
-                )
-                lines.append(
-                    "SELECT p.product_id, ir.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id"
-                )
-                lines.append("FROM (VALUES")
-                vals = []
-                for r in batch:
-                    name_lower = r["ingredient_id"].replace("NEW:", "")
-                    display_name = new_ingredients[name_lower]["name_en"]
-                    pct = str(r["percent"]) if r["percent"] is not None else "NULL"
-                    pct_est = (
-                        str(r["percent_estimate"])
-                        if r["percent_estimate"] is not None
-                        else "NULL"
-                    )
-                    parent = (
-                        str(r["parent_ingredient_id"])
-                        if r["parent_ingredient_id"] is not None
-                        and not isinstance(r["parent_ingredient_id"], str)
-                        else "NULL"
-                    )
-                    # If parent can't be resolved, force is_sub=false to satisfy chk_sub_has_parent
-                    is_sub = r["is_sub_ingredient"] and parent != "NULL"
-                    vals.append(
-                        f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, {sql_escape(display_name)}, {r['position']}, "
-                        f"{pct}::numeric, {pct_est}::numeric, "
-                        f"{'true' if is_sub else 'false'}, {parent}::bigint)"
-                    )
-                lines.append(",\n".join(vals))
-                lines.append(
-                    ") AS v(country, ean, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
-                )
-                lines.append(
-                    "JOIN products p ON p.country = v.country AND p.ean = v.ean"
-                )
-                lines.append(
-                    "JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)"
-                )
-                lines.append("WHERE p.is_deprecated IS NOT TRUE")
-                lines.append(
-                    "ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;"
-                )
-                lines.append("")
+        lines.extend(_gen_ingredient_section(ingredient_rows, new_ingredients))
 
     # 4. Refresh materialized views
-    lines.append("-- ═══════════════════════════════════════════════════════════════")
+    lines.append(SQL_SECTION_SEPARATOR)
     lines.append("-- 4. Refresh materialized views")
-    lines.append("-- ═══════════════════════════════════════════════════════════════")
+    lines.append(SQL_SECTION_SEPARATOR)
     lines.append("")
     lines.append("SELECT refresh_all_materialized_views();")
     lines.append("")

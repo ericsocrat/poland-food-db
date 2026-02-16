@@ -24,6 +24,17 @@ BEGIN
     IF NOT EXISTS (SELECT 1 FROM information_schema.schemata WHERE schema_name = 'auth') THEN
         CREATE SCHEMA auth;
     END IF;
+    -- Stub auth.users table for bare Postgres (CI).
+    -- Supabase provides this table; we only need the PK column so that
+    -- REFERENCES auth.users(id) foreign-key constraints compile.
+    IF NOT EXISTS (
+        SELECT 1 FROM information_schema.tables
+        WHERE table_schema = 'auth' AND table_name = 'users'
+    ) THEN
+        CREATE TABLE auth.users (
+            id uuid PRIMARY KEY DEFAULT gen_random_uuid()
+        );
+    END IF;
     IF NOT EXISTS (
         SELECT 1 FROM pg_proc p
         JOIN pg_namespace n ON n.oid = p.pronamespace

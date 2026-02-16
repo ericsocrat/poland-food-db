@@ -86,6 +86,16 @@ DB_CONTAINER = "supabase_db_poland-food-db"
 DB_USER = "postgres"
 DB_NAME = "postgres"
 
+# Country code → EAN prefix ranges for client-side filtering
+COUNTRY_EAN_PREFIXES: dict[str, tuple[str, ...]] = {
+    "PL": ("590",),
+    "DE": ("400", "401", "402", "403", "404", "440"),
+    "FR": tuple(str(i) for i in range(300, 380)),
+    "ES": tuple(str(i) for i in range(840, 850)),
+    "IT": tuple(str(i) for i in range(800, 840)),
+    "GB": tuple(str(i) for i in range(500, 510)),
+}
+
 # Country code → OFF country tag mapping
 COUNTRY_TAGS = {
     "PL": "poland",
@@ -229,6 +239,43 @@ def get_existing_categories() -> set[str]:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+def _matches_country(product: dict, ean_prefixes: tuple[str, ...], country_tag: str) -> bool:
+    """Return True if the product matches the target country by EAN prefix or tag."""
+    code = str(product.get("code", ""))
+    countries = product.get("countries_tags") or []
+    ean_match = ean_prefixes and any(code.startswith(pf) for pf in ean_prefixes)
+    return ean_match or country_tag in countries
+
+
+def _fetch_search_page(
+    session: requests.Session,
+    off_tag: str,
+    page: int,
+    page_size: int,
+) -> list[dict] | None:
+    """Fetch a single search page with retries. Returns None on total failure."""
+    params = {
+        "categories_tags": off_tag,
+        "page_size": page_size,
+        "page": page,
+        "fields": SEARCH_FIELDS,
+    }
+    for attempt in range(MAX_RETRIES + 1):
+        try:
+            resp = session.get(OFF_SEARCH_URL, params=params, timeout=TIMEOUT)
+            resp.raise_for_status()
+            return resp.json().get("products", [])
+        except requests.RequestException as e:
+            if attempt == MAX_RETRIES:
+                print(
+                    f"  WARN: Search page {page} failed after {MAX_RETRIES+1} attempts: {e}",
+                    file=sys.stderr,
+                )
+                return None
+            time.sleep(2**attempt)
+    return None  # unreachable, but keeps linters happy
+
+
 def search_off_products(
     off_tag: str,
     country: str,
@@ -244,139 +291,8 @@ def search_off_products(
     page = 1
     pages_needed = math.ceil(max_products / page_size)
 
-    # Map country codes to EAN prefixes for client-side filtering
-    country_ean_prefixes = {
-        "PL": ("590",),
-        "DE": ("400", "401", "402", "403", "404", "440"),
-        "FR": (
-            "300",
-            "301",
-            "302",
-            "303",
-            "304",
-            "305",
-            "306",
-            "307",
-            "308",
-            "309",
-            "310",
-            "311",
-            "312",
-            "313",
-            "314",
-            "315",
-            "316",
-            "317",
-            "318",
-            "319",
-            "320",
-            "321",
-            "322",
-            "323",
-            "324",
-            "325",
-            "326",
-            "327",
-            "328",
-            "329",
-            "330",
-            "331",
-            "332",
-            "333",
-            "334",
-            "335",
-            "336",
-            "337",
-            "338",
-            "339",
-            "340",
-            "341",
-            "342",
-            "343",
-            "344",
-            "345",
-            "346",
-            "347",
-            "348",
-            "349",
-            "350",
-            "351",
-            "352",
-            "353",
-            "354",
-            "355",
-            "356",
-            "357",
-            "358",
-            "359",
-            "360",
-            "361",
-            "362",
-            "363",
-            "364",
-            "365",
-            "366",
-            "367",
-            "368",
-            "369",
-            "370",
-            "371",
-            "372",
-            "373",
-            "374",
-            "375",
-            "376",
-            "377",
-            "378",
-            "379",
-        ),
-        "ES": ("840", "841", "842", "843", "844", "845", "846", "847", "848", "849"),
-        "IT": (
-            "800",
-            "801",
-            "802",
-            "803",
-            "804",
-            "805",
-            "806",
-            "807",
-            "808",
-            "809",
-            "810",
-            "811",
-            "812",
-            "813",
-            "814",
-            "815",
-            "816",
-            "817",
-            "818",
-            "819",
-            "820",
-            "821",
-            "822",
-            "823",
-            "824",
-            "825",
-            "826",
-            "827",
-            "828",
-            "829",
-            "830",
-            "831",
-            "832",
-            "833",
-            "834",
-            "835",
-            "836",
-            "837",
-            "838",
-            "839",
-        ),
-        "GB": ("500", "501", "502", "503", "504", "505", "506", "507", "508", "509"),
-    }
-    ean_prefixes = country_ean_prefixes.get(country, ())
-    country_tag_filter = f"en:{COUNTRY_TAGS.get(country, country.lower())}"
+    ean_prefixes = COUNTRY_EAN_PREFIXES.get(country, ())
+    country_tag = f"en:{COUNTRY_TAGS.get(country, country.lower())}"
 
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
@@ -385,50 +301,22 @@ def search_off_products(
     max_pages = pages_needed * 5  # allow up to 5x more pages for sparse data
 
     while page <= max_pages and len(products) < max_products:
-        params = {
-            "categories_tags": off_tag,
-            "page_size": page_size,
-            "page": page,
-            "fields": SEARCH_FIELDS,
-        }
-
-        for attempt in range(MAX_RETRIES + 1):
-            try:
-                resp = session.get(OFF_SEARCH_URL, params=params, timeout=TIMEOUT)
-                resp.raise_for_status()
-                break
-            except requests.RequestException as e:
-                if attempt == MAX_RETRIES:
-                    print(
-                        f"  WARN: Search page {page} failed after {MAX_RETRIES+1} attempts: {e}",
-                        file=sys.stderr,
-                    )
-                    return products
-                time.sleep(2**attempt)
-
-        data = resp.json()
-        page_products = data.get("products", [])
+        page_products = _fetch_search_page(session, off_tag, page, page_size)
+        if page_products is None:
+            return products
         if not page_products:
             break
 
         # Client-side country filtering
         for p in page_products:
-            code = str(p.get("code", ""))
-            countries = p.get("countries_tags") or []
-
-            # Match by EAN prefix OR by countries_tags
-            ean_match = ean_prefixes and any(code.startswith(pf) for pf in ean_prefixes)
-            tag_match = country_tag_filter in countries
-
-            if ean_match or tag_match:
+            if _matches_country(p, ean_prefixes, country_tag):
                 products.append(p)
                 if len(products) >= max_products:
                     break
 
-        total = data.get("count", 0)
         print(
             f"  Page {page}: scanned {len(page_products)} "
-            f"(matched: {len(products)}/{max_products}, total on OFF: {total})"
+            f"(matched: {len(products)}/{max_products})"
         )
 
         if len(page_products) < page_size:
@@ -492,6 +380,18 @@ def fetch_products_by_eans(eans: list[str]) -> list[dict]:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
+def _is_valid_ean(ean: str) -> bool:
+    """Check if an EAN string is a valid 8- or 13-digit barcode."""
+    return (
+        bool(ean) and ean.isdigit() and len(ean) in (8, 13) and ean_checksum_valid(ean)
+    )
+
+
+def _is_valid_product_name(name: str) -> bool:
+    """Check if a product name is valid (non-empty, at least 3 chars)."""
+    return bool(name) and len(name) >= 3
+
+
 def process_off_products(
     raw_products: list[dict],
     country: str,
@@ -511,11 +411,7 @@ def process_off_products(
         brand = (raw.get("brands") or "Unknown").split(",")[0].strip()
 
         # --- Filters ---
-        if not ean or not ean.isdigit() or len(ean) not in (8, 13):
-            continue
-        if not ean_checksum_valid(ean):
-            continue
-        if not name or len(name) < 3:
+        if not _is_valid_ean(ean) or not _is_valid_product_name(name):
             continue
         if ean in seen_eans:
             continue
@@ -745,6 +641,131 @@ WHERE p.country = '{country}' AND p.brand = d.brand AND p.product_name = d.produ
 
 
 # ──────────────────────────────────────────────────────────────────────────────
+# Main helpers
+# ──────────────────────────────────────────────────────────────────────────────
+
+
+def _collect_ean_list(args: argparse.Namespace) -> list[str]:
+    """Build the EAN list from --eans and --ean-file arguments."""
+    ean_list: list[str] = []
+    if args.eans:
+        ean_list.extend(e.strip() for e in args.eans.split(",") if e.strip())
+    if args.ean_file:
+        ean_path = Path(args.ean_file)
+        if not ean_path.exists():
+            print(f"ERROR: EAN file not found: {ean_path}")
+            sys.exit(1)
+        for line in ean_path.read_text(encoding="utf-8").splitlines():
+            clean = line.strip()
+            if clean and not clean.startswith("#"):
+                ean_list.append(clean)
+
+    # Validate EAN format
+    invalid_eans = [e for e in ean_list if not e.isdigit() or len(e) not in (8, 13)]
+    if invalid_eans:
+        print(
+            f"WARNING: Skipping {len(invalid_eans)} invalid EANs: "
+            f"{', '.join(invalid_eans[:5])}{'...' if len(invalid_eans) > 5 else ''}"
+        )
+        ean_list = [e for e in ean_list if e not in invalid_eans]
+    return ean_list
+
+
+def _fetch_raw_products(
+    args: argparse.Namespace, ean_list: list[str], country: str
+) -> list[dict]:
+    """Fetch raw product data via EAN list and/or OFF search."""
+    raw_products: list[dict] = []
+
+    if ean_list:
+        print(f"Fetching {len(ean_list)} products by EAN...")
+        ean_products = fetch_products_by_eans(ean_list)
+        raw_products.extend(ean_products)
+        print(f"  EAN mode: {len(ean_products)}/{len(ean_list)} found\n")
+
+    if args.off_search:
+        print(f"Searching OFF for '{args.off_search}' in {country}...")
+        search_products = search_off_products(
+            args.off_search, country, page_size=100, max_products=args.limit
+        )
+        raw_products.extend(search_products)
+        print(f"  Search mode: {len(search_products)} matched\n")
+
+    return raw_products
+
+
+def _print_data_quality(products: list[dict]) -> None:
+    """Print data quality statistics for processed products."""
+    total = len(products)
+    ns_known = sum(1 for p in products if p["nutri_score"] != "UNKNOWN")
+    nova_known = sum(1 for p in products if p["nova"] != "UNKNOWN")
+    nutrition_complete = sum(
+        1
+        for p in products
+        if p["nutrition"]["calories"] > 0 and p["nutrition"]["protein_g"] >= 0
+    )
+
+    print("Data quality summary:")
+    print(f"  Products with valid EAN:    {total}")
+    print(f"  Nutri-Score available:      {ns_known}/{total} ({100*ns_known//total}%)")
+    print(f"  NOVA group available:       {nova_known}/{total} ({100*nova_known//total}%)")
+    print(
+        f"  Nutrition data present:     {nutrition_complete}/{total} "
+        f"({100*nutrition_complete//total}%)"
+    )
+    print()
+
+
+def _write_pipeline_files(
+    products: list[dict],
+    output_dir: Path,
+    folder_name: str,
+    category: str,
+    country: str,
+    overwrite: bool,
+) -> None:
+    """Generate and write the 4-step pipeline SQL files."""
+    if not output_dir.exists():
+        output_dir.mkdir(parents=True)
+        print(f"Created pipeline folder: {output_dir}")
+
+    files = {
+        f"PIPELINE__{folder_name}__01_insert_products.sql": generate_step_01(
+            products, category, country
+        ),
+        f"PIPELINE__{folder_name}__03_add_nutrition.sql": generate_step_03(
+            products, category, country
+        ),
+        f"PIPELINE__{folder_name}__04_scoring.sql": generate_step_04(
+            products, category, country
+        ),
+        f"PIPELINE__{folder_name}__05_source_provenance.sql": generate_step_05(
+            products, category, country
+        ),
+    }
+
+    for filename, content in files.items():
+        path = output_dir / filename
+        if path.exists() and not overwrite:
+            print(f"  SKIP: {path.name} (exists — use --overwrite to replace)")
+            continue
+        path.write_text(content, encoding="utf-8", newline="\n")
+        print(f"  WROTE: {path.name} ({len(content):,} bytes)")
+
+    print()
+    print("=" * 60)
+    print(f"  Pipeline generated: {len(products)} products")
+    print("=" * 60)
+    print()
+    print("Next steps:")
+    print(f"  1. Review generated SQL in {output_dir}/")
+    print(f"  2. Run pipeline:  .\\RUN_LOCAL.ps1 -Category {folder_name}")
+    print(f"  3. Enrich:        python enrich_ingredients.py")
+    print(f"  4. Validate:      .\\RUN_QA.ps1")
+    print()
+
+
+# ──────────────────────────────────────────────────────────────────────────────
 # Main
 # ──────────────────────────────────────────────────────────────────────────────
 
@@ -830,30 +851,9 @@ def main() -> None:
         sys.exit(1)
 
     # Collect EANs from arguments
-    ean_list: list[str] = []
-    if args.eans:
-        ean_list.extend(e.strip() for e in args.eans.split(",") if e.strip())
-    if args.ean_file:
-        ean_path = Path(args.ean_file)
-        if not ean_path.exists():
-            print(f"ERROR: EAN file not found: {ean_path}")
-            sys.exit(1)
-        for line in ean_path.read_text(encoding="utf-8").splitlines():
-            line = line.strip()
-            if line and not line.startswith("#"):
-                ean_list.append(line)
-
-    # Validate EAN format
-    invalid_eans = [e for e in ean_list if not e.isdigit() or len(e) not in (8, 13)]
-    if invalid_eans:
-        print(
-            f"WARNING: Skipping {len(invalid_eans)} invalid EANs: "
-            f"{', '.join(invalid_eans[:5])}{'...' if len(invalid_eans) > 5 else ''}"
-        )
-        ean_list = [e for e in ean_list if e not in invalid_eans]
+    ean_list = _collect_ean_list(args)
 
     folder_name = sanitize_folder_name(category)
-    # Multi-country: append country code as suffix (e.g., chips-de, chips-pl)
     folder_name = f"{folder_name}-{country.lower()}"
     output_dir = PIPELINE_DIR / folder_name
 
@@ -879,29 +879,7 @@ def main() -> None:
         print()
 
     # ── Fetch from OFF ──
-    raw_products: list[dict] = []
-
-    # Mode 1: EAN list (primary)
-    if ean_list:
-        print(f"Fetching {len(ean_list)} products by EAN...")
-        ean_products = fetch_products_by_eans(ean_list)
-        raw_products.extend(ean_products)
-        print(f"  EAN mode: {len(ean_products)}/{len(ean_list)} found")
-        print()
-
-    # Mode 2: OFF search (discovery)
-    if args.off_search:
-        print(f"Searching OFF for '{args.off_search}' in {country}...")
-        search_products = search_off_products(
-            args.off_search,
-            country,
-            page_size=100,
-            max_products=args.limit,
-        )
-        raw_products.extend(search_products)
-        print(f"  Search mode: {len(search_products)} matched")
-        print()
-
+    raw_products = _fetch_raw_products(args, ean_list, country)
     print(f"  Total raw products: {len(raw_products)}")
 
     # ── Process & filter ──
@@ -914,29 +892,7 @@ def main() -> None:
         sys.exit(1)
 
     # ── Statistics ──
-    ns_known = sum(1 for p in products if p["nutri_score"] != "UNKNOWN")
-    nova_known = sum(1 for p in products if p["nova"] != "UNKNOWN")
-    nutrition_complete = sum(
-        1
-        for p in products
-        if p["nutrition"]["calories"] > 0 and p["nutrition"]["protein_g"] >= 0
-    )
-
-    print("Data quality summary:")
-    print(f"  Products with valid EAN:    {len(products)}")
-    print(
-        f"  Nutri-Score available:      {ns_known}/{len(products)} "
-        f"({100*ns_known//len(products)}%)"
-    )
-    print(
-        f"  NOVA group available:       {nova_known}/{len(products)} "
-        f"({100*nova_known//len(products)}%)"
-    )
-    print(
-        f"  Nutrition data present:     {nutrition_complete}/{len(products)} "
-        f"({100*nutrition_complete//len(products)}%)"
-    )
-    print()
+    _print_data_quality(products)
 
     if args.dry_run:
         print("DRY RUN — no files written. Product preview:")
@@ -950,43 +906,7 @@ def main() -> None:
         return
 
     # ── Generate SQL files ──
-    if not output_dir.exists():
-        output_dir.mkdir(parents=True)
-        print(f"Created pipeline folder: {output_dir}")
-
-    files = {
-        f"PIPELINE__{folder_name}__01_insert_products.sql": generate_step_01(
-            products, category, country
-        ),
-        f"PIPELINE__{folder_name}__03_add_nutrition.sql": generate_step_03(
-            products, category, country
-        ),
-        f"PIPELINE__{folder_name}__04_scoring.sql": generate_step_04(
-            products, category, country
-        ),
-        f"PIPELINE__{folder_name}__05_source_provenance.sql": generate_step_05(
-            products, category, country
-        ),
-    }
-
-    for filename, content in files.items():
-        path = output_dir / filename
-        if path.exists() and not args.overwrite:
-            print(f"  SKIP: {path.name} (exists — use --overwrite to replace)")
-            continue
-        path.write_text(content, encoding="utf-8", newline="\n")
-        print(f"  WROTE: {path.name} ({len(content):,} bytes)")
-
-    print()
-    print("=" * 60)
-    print(f"  Pipeline generated: {len(products)} products")
-    print("=" * 60)
-    print()
-    print("Next steps:")
-    print(f"  1. Review generated SQL in {output_dir}/")
-    print(f"  2. Run pipeline:  .\\RUN_LOCAL.ps1 -Category {folder_name}")
-    print(f"  3. Enrich:        python enrich_ingredients.py")
-    print(f"  4. Validate:      .\\RUN_QA.ps1")
+    _write_pipeline_files(products, output_dir, folder_name, category, country, args.overwrite)
     print()
 
 

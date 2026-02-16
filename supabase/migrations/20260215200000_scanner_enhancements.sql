@@ -80,33 +80,47 @@ GRANT SELECT, INSERT ON public.product_submissions TO authenticated;
 
 -- ──────────────────────────────────────────────────────────────────────────
 -- 3. Supabase Storage bucket for submission photos
+--    (Guarded: storage.buckets only exists on Supabase, not bare Postgres/CI)
 -- ──────────────────────────────────────────────────────────────────────────
 
-INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
-VALUES (
-  'submission-photos',
-  'submission-photos',
-  false,
-  5242880,  -- 5 MB
-  ARRAY['image/jpeg', 'image/png', 'image/webp']
-)
-ON CONFLICT (id) DO NOTHING;
+DO $guard$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM information_schema.tables
+    WHERE table_schema = 'storage' AND table_name = 'buckets'
+  ) THEN
+    INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+    VALUES (
+      'submission-photos',
+      'submission-photos',
+      false,
+      5242880,  -- 5 MB
+      ARRAY['image/jpeg', 'image/png', 'image/webp']
+    )
+    ON CONFLICT (id) DO NOTHING;
 
--- Authenticated users can upload to their own folder
-CREATE POLICY "Users upload own photos"
-  ON storage.objects FOR INSERT
-  WITH CHECK (
-    bucket_id = 'submission-photos'
-    AND auth.uid()::text = (storage.foldername(name))[1]
-  );
+    -- Authenticated users can upload to their own folder
+    EXECUTE $pol$
+      CREATE POLICY "Users upload own photos"
+        ON storage.objects FOR INSERT
+        WITH CHECK (
+          bucket_id = 'submission-photos'
+          AND auth.uid()::text = (storage.foldername(name))[1]
+        )
+    $pol$;
 
--- Authenticated users can read any submission photo (needed for admin review fallback)
-CREATE POLICY "Authenticated read submission photos"
-  ON storage.objects FOR SELECT
-  USING (
-    bucket_id = 'submission-photos'
-    AND auth.role() = 'authenticated'
-  );
+    -- Authenticated users can read any submission photo (needed for admin review fallback)
+    EXECUTE $pol$
+      CREATE POLICY "Authenticated read submission photos"
+        ON storage.objects FOR SELECT
+        USING (
+          bucket_id = 'submission-photos'
+          AND auth.role() = 'authenticated'
+        )
+    $pol$;
+  END IF;
+END
+$guard$;
 
 -- ──────────────────────────────────────────────────────────────────────────
 -- 4. api_record_scan — look up EAN & record to scan_history

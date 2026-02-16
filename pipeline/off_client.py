@@ -382,6 +382,35 @@ def _detect_controversies(off_product: dict) -> str:
     return "none"
 
 
+def _parse_nova(off_product: dict) -> str | None:
+    """Extract NOVA classification (1-4) from OFF product tags."""
+    nova_tags = off_product.get("nova_groups_tags", [])
+    if not nova_tags:
+        return None
+    nova_raw = nova_tags[0].split(":")[-1]  # e.g. "4-ultra-processed..."
+    digit = nova_raw.split("-")[0] if "-" in nova_raw else nova_raw
+    return digit if digit in ("1", "2", "3", "4") else None
+
+
+def _resolve_product_name(off_product: dict) -> str | None:
+    """Extract and validate a Latin product name from an OFF product dict."""
+    product_name = (
+        off_product.get("product_name")
+        or off_product.get("abbreviated_product_name")
+        or ""
+    ).strip()
+    if not product_name or not _is_latin_name(product_name):
+        return None
+    return product_name
+
+
+def _resolve_brand(off_product: dict) -> str:
+    """Extract and normalise the brand from an OFF product dict."""
+    brands_raw = off_product.get("brands", "")
+    brand = brands_raw.split(",")[0].strip() if brands_raw else "Unknown"
+    return _normalise_brand(brand or "Unknown")
+
+
 def extract_product_data(off_product: dict) -> dict | None:
     """Normalise a raw OFF product dict into the poland-food-db schema.
 
@@ -408,24 +437,12 @@ def extract_product_data(off_product: dict) -> dict | None:
         return None
 
     # Product name
-    product_name = (
-        off_product.get("product_name")
-        or off_product.get("abbreviated_product_name")
-        or ""
-    ).strip()
+    product_name = _resolve_product_name(off_product)
     if not product_name:
         return None
 
-    # Reject names that are predominantly non-Latin (e.g. Cyrillic, Arabic)
-    if not _is_latin_name(product_name):
-        return None
-
-    # Brand — take the first if comma-separated, then normalise
-    brands_raw = off_product.get("brands", "")
-    brand = brands_raw.split(",")[0].strip() if brands_raw else "Unknown"
-    if not brand:
-        brand = "Unknown"
-    brand = _normalise_brand(brand)
+    # Brand
+    brand = _resolve_brand(off_product)
 
     # EAN
     ean = off_product.get("code", "")
@@ -445,14 +462,7 @@ def extract_product_data(off_product: dict) -> dict | None:
     ingredients_raw = (off_product.get("ingredients_text") or "").strip() or None
 
     # NOVA & Nutri-Score
-    nova_tags = off_product.get("nova_groups_tags", [])
-    nova = None
-    if nova_tags:
-        nova_raw = nova_tags[0].split(":")[-1]  # e.g. "4-ultra-processed..."
-        digit = nova_raw.split("-")[0] if "-" in nova_raw else nova_raw
-        if digit in ("1", "2", "3", "4"):
-            nova = digit
-
+    nova = _parse_nova(off_product)
     nutriscore_raw = off_product.get("nutriscore_grade")
     nutri_score_label = nutriscore_raw.upper() if nutriscore_raw else None
 

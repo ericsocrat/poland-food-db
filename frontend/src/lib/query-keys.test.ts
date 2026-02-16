@@ -9,8 +9,8 @@ describe("queryKeys", () => {
   });
 
   it("search produces deterministic keys", () => {
-    const key = queryKeys.search("chips", { category: "snacks" });
-    expect(key).toEqual(["search", { query: "chips", filters: { category: "snacks" }, page: undefined }]);
+    const key = queryKeys.search("chips", { category: ["snacks"] });
+    expect(key).toEqual(["search", { query: "chips", filters: { category: ["snacks"] }, page: undefined }]);
   });
 
   it("search key without filters", () => {

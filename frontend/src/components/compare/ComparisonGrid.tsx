@@ -207,6 +207,31 @@ function getBestWorst(
   return { bestIdx: best.idx, worstIdx: worst.idx };
 }
 
+// ─── Desktop Grid helpers ───────────────────────────────────────────────────
+
+/** Collect warning flags for a single product. */
+function getProductWarnings(p: CompareProduct): string[] {
+  const flags: string[] = [];
+  if (p.high_salt) flags.push("🧂 High Salt");
+  if (p.high_sugar) flags.push("🍬 High Sugar");
+  if (p.high_sat_fat) flags.push("🧈 High Sat Fat");
+  if (p.high_additive_load) flags.push("⚗️ Additives");
+  return flags;
+}
+
+/** Determine CSS class for a comparison cell based on ranking. */
+function getCellHighlightClass(
+  idx: number,
+  ranking: { bestIdx: number; worstIdx: number } | null,
+  winnerIdx: number,
+): string {
+  if (ranking && idx === ranking.bestIdx)
+    return "bg-green-50 text-green-700 font-semibold";
+  if (ranking && idx === ranking.worstIdx) return "bg-red-50 text-red-600";
+  if (idx === winnerIdx) return "bg-green-50/30";
+  return "";
+}
+
 // ─── Desktop Grid ───────────────────────────────────────────────────────────
 
 function DesktopGrid({
@@ -296,21 +321,16 @@ function DesktopGrid({
                   const formatted = row.format
                     ? row.format(rawValue)
                     : fmtStr(rawValue);
-
-                  let cellClass = "";
-                  if (ranking) {
-                    if (i === ranking.bestIdx)
-                      cellClass = "bg-green-50 text-green-700 font-semibold";
-                    else if (i === ranking.worstIdx)
-                      cellClass = "bg-red-50 text-red-600";
-                  }
+                  const cellClass = getCellHighlightClass(
+                    i,
+                    ranking,
+                    winnerIdx,
+                  );
 
                   return (
                     <td
                       key={p.product_id}
-                      className={`px-3 py-2 text-center ${cellClass} ${
-                        i === winnerIdx && !cellClass ? "bg-green-50/30" : ""
-                      }`}
+                      className={`px-3 py-2 text-center ${cellClass}`}
                     >
                       {formatted}
                     </td>
@@ -346,11 +366,7 @@ function DesktopGrid({
               Warnings
             </td>
             {products.map((p) => {
-              const flags = [];
-              if (p.high_salt) flags.push("🧂 High Salt");
-              if (p.high_sugar) flags.push("🍬 High Sugar");
-              if (p.high_sat_fat) flags.push("🧈 High Sat Fat");
-              if (p.high_additive_load) flags.push("⚗️ Additives");
+              const flags = getProductWarnings(p);
               return (
                 <td
                   key={p.product_id}

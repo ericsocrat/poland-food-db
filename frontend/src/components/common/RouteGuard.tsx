@@ -42,9 +42,7 @@ export function RouteGuard({ children }: Readonly<RouteGuardProps>) {
   useEffect(() => {
     if (error) {
       const code =
-        error instanceof Error && "code" in error
-          ? String(error.code)
-          : "";
+        error instanceof Error && "code" in error ? String(error.code) : "";
       if (isAuthError({ code, message: error.message })) {
         toast.error("Session expired. Please log in again.");
         // Preserve current path + querystring so login can redirect back

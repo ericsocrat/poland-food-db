@@ -65,17 +65,77 @@ STEP_04_SCORE_CALL = re.compile(
 )
 
 
+def _check_required_files(category: str, folder: Path) -> list[str]:
+    """Check that all required step files exist for a category."""
+    violations: list[str] = []
+    sql_files = {f.name for f in folder.glob("PIPELINE__*.sql")}
+    for step in REQUIRED_STEPS:
+        pattern = f"PIPELINE__{category}__{step}.sql"
+        if pattern not in sql_files:
+            violations.append(f"[{category}] Missing: {pattern}")
+    return violations
+
+
+def _is_conflict_context(content: str, start: int) -> bool:
+    """Return True if the match position occurs near an ON CONFLICT clause."""
+    prefix = content[max(0, start - 20) : start].lower()
+    return "on conflict" in prefix
+
+
+def _is_subquery_context(content: str, start: int, end: int) -> bool:
+    """Return True if the match occurs in a p.product_id subquery context."""
+    context = content[max(0, start - 50) : end + 10]
+    return bool(re.search(r"\bp\.product_id\b", context, re.IGNORECASE))
+
+
+def _check_hardcoded_pids(category: str, fname: str, content: str) -> list[str]:
+    """Detect hardcoded product_id literals in pipeline SQL."""
+    violations: list[str] = []
+    for match in HARDCODED_PID.finditer(content):
+        if _is_conflict_context(content, match.start()):
+            continue
+        if _is_subquery_context(content, match.start(), match.end()):
+            continue
+        violations.append(
+            f"[{category}/{fname}] Possible hardcoded product_id: {match.group().strip()}"
+        )
+    return violations
+
+
+def _check_step_structure(
+    category: str, fname: str, step: str, content: str
+) -> list[str]:
+    """Validate step-specific SQL patterns."""
+    violations: list[str] = []
+
+    if step == "01_insert_products" and not STEP_01_CONFLICT.search(content):
+        violations.append(
+            f"[{category}/{fname}] Missing ON CONFLICT (country, brand, product_name)"
+        )
+
+    elif step == "03_add_nutrition":
+        has_upsert = STEP_03_CONFLICT.search(content)
+        has_delete_insert = re.search(
+            r"delete\s+from\s+nutrition_facts", content, re.IGNORECASE
+        ) and re.search(r"insert\s+into\s+nutrition_facts", content, re.IGNORECASE)
+        if not has_upsert and not has_delete_insert:
+            violations.append(
+                f"[{category}/{fname}] Missing ON CONFLICT (product_id) or delete-then-insert pattern"
+            )
+
+    elif step == "04_scoring" and not STEP_04_SCORE_CALL.search(content):
+        violations.append(f"[{category}/{fname}] Missing CALL score_category()")
+
+    return violations
+
+
 def check_category(folder: Path) -> list[str]:
     """Check a single pipeline category folder. Returns list of violations."""
     violations: list[str] = []
     category = folder.name
 
     # 1. Check all required files exist
-    sql_files = {f.name for f in folder.glob("PIPELINE__*.sql")}
-    for step in REQUIRED_STEPS:
-        pattern = f"PIPELINE__{category}__{step}.sql"
-        if pattern not in sql_files:
-            violations.append(f"[{category}] Missing: {pattern}")
+    violations.extend(_check_required_files(category, folder))
 
     # 2. Validate each file
     for sql_file in sorted(folder.glob("PIPELINE__*.sql")):
@@ -88,41 +148,10 @@ def check_category(folder: Path) -> list[str]:
 
         # Check for hardcoded product_id integers in step 01 and 03
         if step in ("01_insert_products", "03_add_nutrition"):
-            # Step 03 legitimately resolves product_id via subqueries,
-            # but should NOT have raw integer literals as product_id values
-            for match in HARDCODED_PID.finditer(content):
-                # Allow "ON CONFLICT (product_id)" — that's structural, not a literal
-                text = match.group()
-                if "on conflict" in content[max(0, match.start()-20):match.start()].lower():
-                    continue
-                # Allow subquery resolutions: "p.product_id" or "SELECT ... product_id"
-                context = content[max(0, match.start()-50):match.end()+10]
-                if re.search(r"\bp\.product_id\b", context, re.IGNORECASE):
-                    continue
-                violations.append(
-                    f"[{category}/{fname}] Possible hardcoded product_id: {text.strip()}")
+            violations.extend(_check_hardcoded_pids(category, fname, content))
 
         # Step-specific structural checks
-        if step == "01_insert_products":
-            if not STEP_01_CONFLICT.search(content):
-                violations.append(
-                    f"[{category}/{fname}] Missing ON CONFLICT (country, brand, product_name)")
-
-        elif step == "03_add_nutrition":
-            # Accept either ON CONFLICT (product_id) upsert or delete-then-insert
-            has_upsert = STEP_03_CONFLICT.search(content)
-            has_delete_insert = (
-                re.search(r"delete\s+from\s+nutrition_facts", content, re.IGNORECASE)
-                and re.search(r"insert\s+into\s+nutrition_facts", content, re.IGNORECASE)
-            )
-            if not has_upsert and not has_delete_insert:
-                violations.append(
-                    f"[{category}/{fname}] Missing ON CONFLICT (product_id) or delete-then-insert pattern")
-
-        elif step == "04_scoring":
-            if not STEP_04_SCORE_CALL.search(content):
-                violations.append(
-                    f"[{category}/{fname}] Missing CALL score_category()")
+        violations.extend(_check_step_structure(category, fname, step, content))
 
     return violations
 

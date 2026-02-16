@@ -190,8 +190,8 @@ BEGIN
         -- Avoid list IDs for demotion
         SELECT ARRAY_AGG(li.product_id)
         INTO   v_avoid_ids
-        FROM   user_list_items li
-        JOIN   user_lists l ON l.id = li.list_id
+        FROM   user_product_list_items li
+        JOIN   user_product_lists l ON l.id = li.list_id
         WHERE  l.user_id = v_user_id AND l.list_type = 'avoid';
     END IF;
     v_avoid_ids := COALESCE(v_avoid_ids, ARRAY[]::bigint[]);
