@@ -29,9 +29,7 @@ describe("CountryChip", () => {
   });
 
   it("applies custom className", () => {
-    const { container } = render(
-      <CountryChip country="PL" className="ml-2" />,
-    );
+    const { container } = render(<CountryChip country="PL" className="ml-2" />);
     const chip = container.querySelector("span");
     expect(chip?.className).toContain("ml-2");
   });

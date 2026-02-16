@@ -65,7 +65,13 @@ describe("ConfirmDialog", () => {
   });
 
   it("applies danger variant styling to confirm button", () => {
-    render(<ConfirmDialog {...defaultProps} variant="danger" confirmLabel="Delete" />);
+    render(
+      <ConfirmDialog
+        {...defaultProps}
+        variant="danger"
+        confirmLabel="Delete"
+      />,
+    );
     const btn = screen.getByText("Delete");
     expect(btn.className).toContain("bg-red-600");
   });

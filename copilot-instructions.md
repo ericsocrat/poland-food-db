@@ -260,32 +260,32 @@ poland-food-db/
 
 ### Tables
 
-| Table                   | Purpose                                     | Primary Key                             | Notes                                                                                                                                     |
-| ----------------------- | ------------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
-| `products`              | Product identity, scores, flags, provenance | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.                                                   |
-| `nutrition_facts`       | Nutrition per product (per 100g)            | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                                                                   |
-| `ingredient_ref`        | Canonical ingredient dictionary             | `ingredient_id` (identity)              | 2,740 unique ingredients; name_en, vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                               |
-| `product_ingredient`    | Product ↔ ingredient junction               | `(product_id, ingredient_id, position)` | ~12,892 rows across 859 products; tracks percent, percent_estimate, sub-ingredients, position order                                       |
-| `product_allergen_info` | Allergens + traces per product (unified)    | `(product_id, tag, type)`               | ~2,527 rows (1,218 allergens + 1,309 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags |
-| `country_ref`           | ISO 3166-1 alpha-2 country codes            | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag; FK from products.country                                                                                 |
-| `category_ref`          | Product category master list                | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                     |
-| `nutri_score_ref`       | Nutri-Score label definitions               | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                         |
-| `concern_tier_ref`      | EFSA ingredient concern tiers               | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                  |
-| `user_preferences`      | User personalization (country, diet, allergens) | `user_id` (FK → auth.users)           | One row per user; diet enum, allergen arrays, strict_mode flags; RLS by user                                                              |
-| `user_health_profiles`  | Health condition profiles                   | `profile_id` (identity)                 | Conditions + nutrient thresholds (sodium, sugar, sat fat limits). One active profile per user. RLS by user                                |
-| `user_product_lists`    | User-created product lists                  | `list_id` (identity)                    | Name, description, share_token, is_public. Default lists: Favorites, Avoid. RLS by user                                                   |
-| `user_product_list_items`| Items in product lists                     | `(list_id, product_id)`                 | sort_order, notes. FK to user_product_lists + products. RLS by user                                                                       |
-| `user_comparisons`      | Saved product comparisons                   | `comparison_id` (identity)              | product_ids array (2-4), share_token, title. RLS by user                                                                                  |
-| `user_saved_searches`   | Saved search queries                        | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                          |
-| `scan_history`          | Barcode scan history                        | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                           |
-| `product_submissions`   | User-submitted products                     | `submission_id` (identity)              | ean, product_name, brand, photo_url, status ('pending'/'approved'/'rejected'). Admin-reviewable                                           |
+| Table                     | Purpose                                         | Primary Key                             | Notes                                                                                                                                     |
+| ------------------------- | ----------------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `products`                | Product identity, scores, flags, provenance     | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.                                                   |
+| `nutrition_facts`         | Nutrition per product (per 100g)                | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                                                                   |
+| `ingredient_ref`          | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,740 unique ingredients; name_en, vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                               |
+| `product_ingredient`      | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~12,892 rows across 859 products; tracks percent, percent_estimate, sub-ingredients, position order                                       |
+| `product_allergen_info`   | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,527 rows (1,218 allergens + 1,309 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags |
+| `country_ref`             | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag; FK from products.country                                                                                 |
+| `category_ref`            | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                     |
+| `nutri_score_ref`         | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                         |
+| `concern_tier_ref`        | EFSA ingredient concern tiers                   | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                  |
+| `user_preferences`        | User personalization (country, diet, allergens) | `user_id` (FK → auth.users)             | One row per user; diet enum, allergen arrays, strict_mode flags; RLS by user                                                              |
+| `user_health_profiles`    | Health condition profiles                       | `profile_id` (identity)                 | Conditions + nutrient thresholds (sodium, sugar, sat fat limits). One active profile per user. RLS by user                                |
+| `user_product_lists`      | User-created product lists                      | `list_id` (identity)                    | Name, description, share_token, is_public. Default lists: Favorites, Avoid. RLS by user                                                   |
+| `user_product_list_items` | Items in product lists                          | `(list_id, product_id)`                 | sort_order, notes. FK to user_product_lists + products. RLS by user                                                                       |
+| `user_comparisons`        | Saved product comparisons                       | `comparison_id` (identity)              | product_ids array (2-4), share_token, title. RLS by user                                                                                  |
+| `user_saved_searches`     | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                          |
+| `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                            |
+| `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, status ('pending'/'approved'/'rejected'). Admin-reviewable                                           |
 
 ### Products Columns (key)
 
 | Column               | Type      | Notes                                                                      |
 | -------------------- | --------- | -------------------------------------------------------------------------- |
 | `product_id`         | `bigint`  | Auto-incrementing identity                                                 |
-| `country`            | `text`    | `'PL'` or `'DE'` — FK to country_ref                                      |
+| `country`            | `text`    | `'PL'` or `'DE'` — FK to country_ref                                       |
 | `brand`              | `text`    | Manufacturer or brand name                                                 |
 | `product_name`       | `text`    | Full product name including variant                                        |
 | `category`           | `text`    | One of 20 food categories                                                  |
@@ -707,7 +707,7 @@ At the end of every PR-like change, include a **Verification** section:
 | ----------------------- | ----------------------------------- | -----: | --------- |
 | Data Integrity          | `QA__null_checks.sql`               |     29 | Yes       |
 | Scoring Formula         | `QA__scoring_formula_tests.sql`     |     27 | Yes       |
-| Source Coverage          | `QA__source_coverage.sql`           |      8 | No        |
+| Source Coverage         | `QA__source_coverage.sql`           |      8 | No        |
 | EAN Validation          | `validate_eans.py`                  |      1 | Yes       |
 | API Surfaces            | `QA__api_surfaces.sql`              |     18 | Yes       |
 | API Contract            | `QA__api_contract.sql`              |     30 | Yes       |

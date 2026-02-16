@@ -334,16 +334,12 @@ def search_off_products(
     return products[:max_products]
 
 
-def _fetch_single_ean(
-    session: requests.Session, ean: str
-) -> requests.Response | None:
+def _fetch_single_ean(session: requests.Session, ean: str) -> requests.Response | None:
     """Fetch a single EAN with retry logic. Returns response or None."""
     url = OFF_PRODUCT_URL.format(ean=ean)
     for attempt in range(MAX_RETRIES + 1):
         try:
-            resp = session.get(
-                url, params={"fields": PRODUCT_FIELDS}, timeout=TIMEOUT
-            )
+            resp = session.get(url, params={"fields": PRODUCT_FIELDS}, timeout=TIMEOUT)
             resp.raise_for_status()
             return resp
         except requests.RequestException as e:

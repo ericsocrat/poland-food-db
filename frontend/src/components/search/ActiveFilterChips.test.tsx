@@ -204,7 +204,9 @@ describe("ActiveFilterChips", () => {
   it("clears all filters on Clear all click", () => {
     render(
       <ActiveFilterChips
-        filters={{ category: ["Chips"], max_unhealthiness: 50 } as SearchFilters}
+        filters={
+          { category: ["Chips"], max_unhealthiness: 50 } as SearchFilters
+        }
         onChange={onChange}
       />,
     );

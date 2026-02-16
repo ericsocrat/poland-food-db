@@ -7,8 +7,9 @@ import { AvoidBadge } from "./AvoidBadge";
 const mockIsAvoided = vi.fn();
 
 vi.mock("@/stores/avoid-store", () => ({
-  useAvoidStore: (selector: (s: { isAvoided: typeof mockIsAvoided }) => unknown) =>
-    selector({ isAvoided: mockIsAvoided }),
+  useAvoidStore: (
+    selector: (s: { isAvoided: typeof mockIsAvoided }) => unknown,
+  ) => selector({ isAvoided: mockIsAvoided }),
 }));
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
