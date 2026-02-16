@@ -11,7 +11,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(88);
+SELECT plan(92);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -719,6 +719,42 @@ SELECT is(
     (SELECT api_product_detail(999804)->>'product_name_display'),
     'Ciastka Testowe Czekoladowe',
     'product_name_display falls back to product_name when product_name_en IS NULL'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 28. Country-driven language: resolve_language() fallback chain
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- resolve_language() still returns 'en' for anon (no auth.uid, no user_prefs)
+SELECT is(
+    public.resolve_language(NULL),
+    'en',
+    'resolve_language(NULL) still returns en for anonymous users (country-driven)'
+);
+
+-- Verify country_ref.default_language is populated for PL and DE
+SELECT is(
+    (SELECT default_language FROM country_ref WHERE country_code = 'PL'),
+    'pl',
+    'country_ref PL has default_language = pl'
+);
+
+SELECT is(
+    (SELECT default_language FROM country_ref WHERE country_code = 'DE'),
+    'de',
+    'country_ref DE has default_language = de'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 29. Country-driven language: resolve_language country_ref fallback
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- The resolve_language SQL function includes country_ref.default_language
+-- in its COALESCE chain (Priority 3). Verify the function body references it.
+SELECT ok(
+    (SELECT prosrc ILIKE '%country_ref%' AND prosrc ILIKE '%default_language%'
+     FROM pg_proc WHERE proname = 'resolve_language'),
+    'resolve_language() references country_ref.default_language in its body'
 );
 
 SELECT * FROM finish();

@@ -5,12 +5,16 @@
 // language store from user preferences. On first load (or when preferences
 // change), syncs preferred_language into the store so all i18n hooks
 // re-render in the correct language.
+//
+// Country-language binding: if the user has no explicit preferred_language,
+// fall back to their country's default language (e.g. PL → "pl", DE → "de").
 
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { COUNTRY_DEFAULT_LANGUAGES } from "@/lib/constants";
 import {
   useLanguageStore,
   type SupportedLanguage,
@@ -39,10 +43,22 @@ export function LanguageHydrator() {
       if (SUPPORTED.has(lang)) {
         setLanguage(lang);
       } else if (!loaded) {
-        setLanguage("en");
+        // Invalid language — fall back to country default or English
+        const countryDefault = prefs.country
+          ? (COUNTRY_DEFAULT_LANGUAGES[prefs.country] as
+              | SupportedLanguage
+              | undefined)
+          : undefined;
+        setLanguage(countryDefault ?? "en");
       }
     } else if (prefs && !loaded) {
-      setLanguage("en");
+      // No preferred_language set — use country default or English
+      const countryDefault = prefs.country
+        ? (COUNTRY_DEFAULT_LANGUAGES[prefs.country] as
+            | SupportedLanguage
+            | undefined)
+        : undefined;
+      setLanguage(countryDefault ?? "en");
     }
   }, [prefs, setLanguage, loaded]);
 

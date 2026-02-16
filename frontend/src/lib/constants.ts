@@ -14,6 +14,22 @@ export const LANGUAGES = [
   { code: "de", name: "German", native: "Deutsch", flag: "🇩🇪" },
 ] as const;
 
+/**
+ * Maps country codes to their default (native) language.
+ * Each country offers exactly 2 languages: its native language + English.
+ * Kept in sync with country_ref.default_language in the database.
+ */
+export const COUNTRY_DEFAULT_LANGUAGES: Record<string, string> = {
+  PL: "pl",
+  DE: "de",
+} as const;
+
+/** Get the available languages for a country: [native, English]. */
+export function getLanguagesForCountry(countryCode: string) {
+  const nativeLang = COUNTRY_DEFAULT_LANGUAGES[countryCode] ?? "en";
+  return LANGUAGES.filter((l) => l.code === nativeLang || l.code === "en");
+}
+
 export const ALLERGEN_TAGS = [
   { tag: "en:gluten", label: "Gluten" },
   { tag: "en:milk", label: "Milk / Dairy" },

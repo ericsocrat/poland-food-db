@@ -11,9 +11,10 @@ import { getUserPreferences, setUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import {
   COUNTRIES,
-  LANGUAGES,
+  COUNTRY_DEFAULT_LANGUAGES,
   DIET_OPTIONS,
   ALLERGEN_TAGS,
+  getLanguagesForCountry,
 } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthProfileSection } from "@/components/settings/HealthProfileSection";
@@ -145,6 +146,10 @@ export default function SettingsPage() {
               key={c.code}
               onClick={() => {
                 setCountry(c.code);
+                // Auto-switch language to new country's default
+                const newDefault = (COUNTRY_DEFAULT_LANGUAGES[c.code] ??
+                  "en") as SupportedLanguage;
+                setLanguage(newDefault);
                 markDirty();
               }}
               className={`rounded-lg border-2 px-3 py-3 text-center transition-colors ${
@@ -162,13 +167,13 @@ export default function SettingsPage() {
         </div>
       </section>
 
-      {/* Language */}
+      {/* Language — filtered by selected country (native + English) */}
       <section className="card">
         <h2 className="mb-3 text-sm font-semibold text-gray-700">
           {t("settings.language")}
         </h2>
-        <div className="grid grid-cols-3 gap-2">
-          {LANGUAGES.map((lang) => (
+        <div className="grid grid-cols-2 gap-2">
+          {getLanguagesForCountry(country).map((lang) => (
             <button
               key={lang.code}
               onClick={() => {

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import SettingsPage from "./page";
+import { useLanguageStore } from "@/stores/language-store";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -56,6 +57,7 @@ function createWrapper() {
 const mockPrefsData = {
   user_id: "abc12345-6789-def0-1234-567890abcdef",
   country: "PL",
+  preferred_language: "en",
   diet_preference: "none",
   avoid_allergens: [] as string[],
   strict_diet: false,
@@ -65,6 +67,7 @@ const mockPrefsData = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  useLanguageStore.getState().reset();
   mockGetPrefs.mockResolvedValue({ ok: true, data: mockPrefsData });
 });
 
@@ -275,5 +278,37 @@ describe("SettingsPage", () => {
       expect(mockPush).toHaveBeenCalledWith("/auth/login");
       expect(mockRefresh).toHaveBeenCalled();
     });
+  });
+
+  it("shows only 2 language options for selected country (native + English)", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Settings")).toBeInTheDocument();
+    });
+
+    // Poland = Polski + English (2 options, NOT Deutsch)
+    expect(screen.getByText("Polski")).toBeInTheDocument();
+    expect(screen.getByText("English")).toBeInTheDocument();
+    expect(screen.queryByText("Deutsch")).not.toBeInTheDocument();
+  });
+
+  it("auto-switches language when country changes", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Deutschland")).toBeInTheDocument();
+    });
+
+    // Switch to Germany
+    await user.click(screen.getByText("Deutschland"));
+
+    // Language options should now be Deutsch + English (not Polski)
+    await waitFor(() => {
+      expect(screen.getByText("Deutsch")).toBeInTheDocument();
+    });
+    expect(screen.getByText("English")).toBeInTheDocument();
+    expect(screen.queryByText("Polski")).not.toBeInTheDocument();
   });
 });

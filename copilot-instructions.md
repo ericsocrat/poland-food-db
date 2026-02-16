@@ -759,19 +759,20 @@ If you **modify, rename, or add** any SQL function or view used by the app API (
 
 **Current test files:**
 
-| File | Covers |
-| --- | --- |
-| `scanner_functions.test.sql` | `api_record_scan`, `api_get_scan_history` |
-| `product_functions.test.sql` | `api_product_detail_by_ean`, `api_product_detail`, `api_better_alternatives`, `api_score_explanation`, `api_data_confidence` |
-| `category_functions.test.sql` | `api_category_overview`, `api_category_listing` |
-| `search_functions.test.sql` | `api_search_products`, `api_search_autocomplete`, `api_get_filter_options` |
-| `comparison_functions.test.sql` | `api_get_products_for_compare`, `api_save_comparison`, `api_get_shared_comparison` |
-| `telemetry_functions.test.sql` | `api_track_event`, `api_admin_get_event_summary`, `api_admin_get_top_events`, `api_admin_get_funnel` |
-| `dashboard_functions.test.sql` | `api_record_product_view`, `api_get_recently_viewed`, `api_get_dashboard_data` |
-| `user_functions.test.sql` | Auth-error branches for all `authenticated`-only functions |
-| `schema_contracts.test.sql` | Table/view/function existence checks |
+| File                            | Covers                                                                                                                       |
+| ------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `scanner_functions.test.sql`    | `api_record_scan`, `api_get_scan_history`                                                                                    |
+| `product_functions.test.sql`    | `api_product_detail_by_ean`, `api_product_detail`, `api_better_alternatives`, `api_score_explanation`, `api_data_confidence` |
+| `category_functions.test.sql`   | `api_category_overview`, `api_category_listing`                                                                              |
+| `search_functions.test.sql`     | `api_search_products`, `api_search_autocomplete`, `api_get_filter_options`                                                   |
+| `comparison_functions.test.sql` | `api_get_products_for_compare`, `api_save_comparison`, `api_get_shared_comparison`                                           |
+| `telemetry_functions.test.sql`  | `api_track_event`, `api_admin_get_event_summary`, `api_admin_get_top_events`, `api_admin_get_funnel`                         |
+| `dashboard_functions.test.sql`  | `api_record_product_view`, `api_get_recently_viewed`, `api_get_dashboard_data`                                               |
+| `user_functions.test.sql`       | Auth-error branches for all `authenticated`-only functions                                                                   |
+| `schema_contracts.test.sql`     | Table/view/function existence checks                                                                                         |
 
 **Rules:**
+
 1. Every new `api_*` function must have at least a `lives_ok` test and response-key assertions.
 2. Auth-required functions: test the error branch (returns `{api_version, error}` when `auth.uid()` is NULL).
 3. No-auth functions: test with fixture data — insert test rows, call the function, assert keys and values.
@@ -906,13 +907,14 @@ Every feature issue must open with:
 
 Evaluate **at least 2–3 approaches** in a comparison table:
 
-| Approach | Verdict | Reason |
-|----------|---------|--------|
-| A. ... | ❌ Rejected | ... |
-| B. ... | ❌ Rejected | ... |
-| C. ... | ✅ Chosen | ... |
+| Approach | Verdict     | Reason |
+| -------- | ----------- | ------ |
+| A. ...   | ❌ Rejected | ...    |
+| B. ...   | ❌ Rejected | ...    |
+| C. ...   | ✅ Chosen   | ...    |
 
 Rules:
+
 - **Explicitly reject** inferior approaches with rationale.
 - **Reference prior art** — how do Yuka, Open Food Facts, MyFitnessPal, or similar platforms solve this?
 - **Consider scale** — will this work at 10 countries, 10K products, 100K users?
@@ -923,16 +925,16 @@ Rules:
 
 Define rules that **must never be violated** during implementation:
 
-| Category | Examples from this project |
-|----------|---------------------------|
-| **Data integrity** | Never invent nutrition data. `product_name` is the legal label — never modify it. |
-| **Backward compatibility** | All API changes must be additive. No breaking changes to response shapes. |
-| **Idempotency** | Every migration safe to run 1× or 100×. Use `IF NOT EXISTS`, `ON CONFLICT DO UPDATE`. |
-| **Test coverage** | All new SQL functions must have pgTAP tests (§8.20). No exceptions. |
-| **Country isolation** | All queries scoped by `country`. No cross-contamination between PL and DE data. |
-| **No runtime dependencies** | No live translation APIs, no external calls at query time. |
-| **Append-only migrations** | Never modify an existing `supabase/migrations/` file. |
-| **_ref table pattern** | Extensible domain values use `_ref` tables + FK, not CHECK constraints (unless the domain is truly closed). |
+| Category                    | Examples from this project                                                                                  |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Data integrity**          | Never invent nutrition data. `product_name` is the legal label — never modify it.                           |
+| **Backward compatibility**  | All API changes must be additive. No breaking changes to response shapes.                                   |
+| **Idempotency**             | Every migration safe to run 1× or 100×. Use `IF NOT EXISTS`, `ON CONFLICT DO UPDATE`.                       |
+| **Test coverage**           | All new SQL functions must have pgTAP tests (§8.20). No exceptions.                                         |
+| **Country isolation**       | All queries scoped by `country`. No cross-contamination between PL and DE data.                             |
+| **No runtime dependencies** | No live translation APIs, no external calls at query time.                                                  |
+| **Append-only migrations**  | Never modify an existing `supabase/migrations/` file.                                                       |
+| **\_ref table pattern**     | Extensible domain values use `_ref` tables + FK, not CHECK constraints (unless the domain is truly closed). |
 
 Every feature must restate **which invariants apply** and confirm they are preserved.
 
@@ -940,20 +942,21 @@ Every feature must restate **which invariants apply** and confirm they are prese
 
 Complex features must be broken into **sequential phases**. Each phase must document:
 
-| Field | Required |
-|-------|----------|
-| Phase title & scope | ✅ |
-| Commit reference(s) | ✅ (after shipping) |
-| Migration filename | ✅ (e.g., `20260216000800_localization_phase1.sql`) |
-| Rationale | ✅ Why this order? What does this phase unlock? |
-| DB changes | ✅ Tables, columns, functions, triggers, indexes |
-| API changes | ✅ Modified `api_*` functions, new/changed parameters |
-| Frontend changes | ✅ Components, hooks, stores, pages affected |
-| Search/index implications | ✅ `search_vector` trigger updates, new GIN indexes |
-| Performance implications | ✅ New indexes, materialized views, query plan impact |
-| i18n implications | ✅ New dictionary keys, translated category/product names |
+| Field                     | Required                                                  |
+| ------------------------- | --------------------------------------------------------- |
+| Phase title & scope       | ✅                                                        |
+| Commit reference(s)       | ✅ (after shipping)                                       |
+| Migration filename        | ✅ (e.g., `20260216000800_localization_phase1.sql`)       |
+| Rationale                 | ✅ Why this order? What does this phase unlock?           |
+| DB changes                | ✅ Tables, columns, functions, triggers, indexes          |
+| API changes               | ✅ Modified `api_*` functions, new/changed parameters     |
+| Frontend changes          | ✅ Components, hooks, stores, pages affected              |
+| Search/index implications | ✅ `search_vector` trigger updates, new GIN indexes       |
+| Performance implications  | ✅ New indexes, materialized views, query plan impact     |
+| i18n implications         | ✅ New dictionary keys, translated category/product names |
 
 **Phase ordering rules:**
+
 1. Foundation/schema first (no data dependency)
 2. Data population second (depends on schema)
 3. API surface third (depends on data)
@@ -965,17 +968,18 @@ Each phase must be **independently shippable** — the system must work correctl
 
 For **every** schema change:
 
-| Requirement | Details |
-|-------------|---------|
-| Migration filename | Follows `YYYYMMDDHHMMSS_description.sql` (Supabase convention) |
-| Idempotent design | `CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS`, `DO UPDATE SET` |
-| Constraints defined explicitly | All domain constraints as CHECK or FK |
-| FK over CHECK when extensible | Use `_ref` table + FK when the domain will grow (e.g., `language_ref` instead of `CHECK (language IN ('en','pl'))`) |
-| Fallback behavior | DEFAULT values documented, NULL semantics explained |
-| Index strategy | Justify every new index. GIN for JSONB/tsvector, B-tree for FK lookups, partial indexes where appropriate |
-| Rollback note | Comment in migration file: "To roll back: DROP TABLE/COLUMN IF EXISTS ..." |
+| Requirement                    | Details                                                                                                             |
+| ------------------------------ | ------------------------------------------------------------------------------------------------------------------- |
+| Migration filename             | Follows `YYYYMMDDHHMMSS_description.sql` (Supabase convention)                                                      |
+| Idempotent design              | `CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS`, `DO UPDATE SET`                                           |
+| Constraints defined explicitly | All domain constraints as CHECK or FK                                                                               |
+| FK over CHECK when extensible  | Use `_ref` table + FK when the domain will grow (e.g., `language_ref` instead of `CHECK (language IN ('en','pl'))`) |
+| Fallback behavior              | DEFAULT values documented, NULL semantics explained                                                                 |
+| Index strategy                 | Justify every new index. GIN for JSONB/tsvector, B-tree for FK lookups, partial indexes where appropriate           |
+| Rollback note                  | Comment in migration file: "To roll back: DROP TABLE/COLUMN IF EXISTS ..."                                          |
 
 **SQL code patterns to follow (mandatory):**
+
 ```sql
 -- ✅ Correct: _ref table for extensible domains
 CREATE TABLE IF NOT EXISTS public.language_ref (
@@ -998,17 +1002,17 @@ ALTER TABLE user_preferences
 
 For each modified `api_*` function, document:
 
-| Field | Required |
-|-------|----------|
-| Function name | ✅ |
-| New/changed parameters | ✅ (with defaults for backward compat) |
-| Response shape changes | ✅ (new keys are additive, never remove existing keys) |
-| Backward compatibility confirmation | ✅ Explicit "existing callers unaffected" statement |
-| Fallback logic | ✅ What happens if new param is NULL/omitted? |
-| Auth requirement | ✅ `anon` vs `authenticated` — unchanged? |
-| Test coverage | ✅ pgTAP test file + test names |
-| `docs/API_CONTRACTS.md` updated | ✅ |
-| `docs/FRONTEND_API_MAP.md` updated | ✅ (if frontend wiring changes) |
+| Field                               | Required                                               |
+| ----------------------------------- | ------------------------------------------------------ |
+| Function name                       | ✅                                                     |
+| New/changed parameters              | ✅ (with defaults for backward compat)                 |
+| Response shape changes              | ✅ (new keys are additive, never remove existing keys) |
+| Backward compatibility confirmation | ✅ Explicit "existing callers unaffected" statement    |
+| Fallback logic                      | ✅ What happens if new param is NULL/omitted?          |
+| Auth requirement                    | ✅ `anon` vs `authenticated` — unchanged?              |
+| Test coverage                       | ✅ pgTAP test file + test names                        |
+| `docs/API_CONTRACTS.md` updated     | ✅                                                     |
+| `docs/FRONTEND_API_MAP.md` updated  | ✅ (if frontend wiring changes)                        |
 
 **Golden rule:** New parameters must have defaults. Existing response keys must not be removed or renamed. New keys are always safe to add.
 
@@ -1016,20 +1020,21 @@ For each modified `api_*` function, document:
 
 If the feature touches searchable fields:
 
-| Check | Details |
-|-------|---------|
+| Check                            | Details                                                                                 |
+| -------------------------------- | --------------------------------------------------------------------------------------- |
 | `search_vector` trigger updated? | Include new columns with appropriate weights (A=names, B=brand, C=category, D=metadata) |
-| Weight assignments justified? | A for primary identifiers, B for secondary, C for categorical, D for supplementary |
-| Extensions required? | `unaccent` (diacritic folding), `pg_trgm` (fuzzy matching) — both already enabled |
-| Synonym table updated? | New food terms → `search_synonyms` entries for cross-language search |
-| Index type appropriate? | GIN for tsvector/JSONB, GiST for trigram similarity |
-| Performance tested? | EXPLAIN ANALYZE on representative queries, especially with new indexes |
+| Weight assignments justified?    | A for primary identifiers, B for secondary, C for categorical, D for supplementary      |
+| Extensions required?             | `unaccent` (diacritic folding), `pg_trgm` (fuzzy matching) — both already enabled       |
+| Synonym table updated?           | New food terms → `search_synonyms` entries for cross-language search                    |
+| Index type appropriate?          | GIN for tsvector/JSONB, GiST for trigram similarity                                     |
+| Performance tested?              | EXPLAIN ANALYZE on representative queries, especially with new indexes                  |
 
 ### 15.8 Fallback Logic Definition
 
 Define **explicit** fallback chains. Never rely on implicit behavior.
 
 **Standard pattern (from Issue #32):**
+
 ```
 resolve_language(p_language):
   If p_language is valid and enabled in language_ref → use it
@@ -1043,6 +1048,7 @@ product_name_display:
 ```
 
 Every feature with conditional logic must document its fallback chain in this format:
+
 ```
 If A → use X
 Else if B → use Y
@@ -1055,19 +1061,20 @@ No feature is complete without **all** of these:
 
 #### pgTAP Tests (`supabase/tests/*.test.sql`)
 
-| Category | Examples |
-|----------|----------|
-| Schema existence | `has_table('language_ref')`, `has_column('products', 'product_name_en')` |
-| Constraints | FK validation, CHECK constraint enforcement |
-| Function behavior | Happy path: correct inputs → expected outputs |
-| Edge cases | NULL inputs, empty strings, invalid codes, disabled flags |
-| Fallback logic | `resolve_language('xx')` → falls back to `'en'` |
-| Negative tests | Invalid inputs rejected, auth failures return error JSONB |
-| Auth branches | Unauthenticated calls to `authenticated`-only functions return `{error}` |
+| Category          | Examples                                                                 |
+| ----------------- | ------------------------------------------------------------------------ |
+| Schema existence  | `has_table('language_ref')`, `has_column('products', 'product_name_en')` |
+| Constraints       | FK validation, CHECK constraint enforcement                              |
+| Function behavior | Happy path: correct inputs → expected outputs                            |
+| Edge cases        | NULL inputs, empty strings, invalid codes, disabled flags                |
+| Fallback logic    | `resolve_language('xx')` → falls back to `'en'`                          |
+| Negative tests    | Invalid inputs rejected, auth failures return error JSONB                |
+| Auth branches     | Unauthenticated calls to `authenticated`-only functions return `{error}` |
 
 #### Schema Contract Tests (`supabase/tests/schema_contracts.test.sql`)
 
 Add for **every** new schema object:
+
 - `has_table('new_table')` / `has_view('new_view')`
 - `has_column('table', 'new_column')`
 - `has_function('new_function')`
@@ -1080,38 +1087,38 @@ Add for **every** new schema object:
 
 #### Frontend Tests
 
-| Check | Tool | Command |
-|-------|------|---------|
-| TypeScript compiles clean | `tsc` | `cd frontend && npx tsc --noEmit` |
-| Dictionary parity | Vitest | Assert `Object.keys(en) ≡ Object.keys(pl)` for all i18n keys |
-| State management | Vitest | Zustand store tests for new state |
-| RPC contract | Vitest | Mock Supabase, assert request/response shapes |
-| Component rendering | Testing Library | New UI components have co-located `.test.tsx` |
-| E2E flows | Playwright | If new pages/routes, add to `smoke.spec.ts` or `authenticated.spec.ts` |
+| Check                     | Tool            | Command                                                                |
+| ------------------------- | --------------- | ---------------------------------------------------------------------- |
+| TypeScript compiles clean | `tsc`           | `cd frontend && npx tsc --noEmit`                                      |
+| Dictionary parity         | Vitest          | Assert `Object.keys(en) ≡ Object.keys(pl)` for all i18n keys           |
+| State management          | Vitest          | Zustand store tests for new state                                      |
+| RPC contract              | Vitest          | Mock Supabase, assert request/response shapes                          |
+| Component rendering       | Testing Library | New UI components have co-located `.test.tsx`                          |
+| E2E flows                 | Playwright      | If new pages/routes, add to `smoke.spec.ts` or `authenticated.spec.ts` |
 
 ### 15.10 Performance & Safety
 
 Every feature must pass these checks:
 
-| Rule | Verification |
-|------|-------------|
-| No N+1 queries | `EXPLAIN ANALYZE` on new queries; use JOINs/LATERAL/CTEs, not loops |
-| No unbounded loops | Defensive LIMIT caps on all expansion/aggregation logic |
-| No unindexed JSONB lookups | GIN index required for any `jsonb @>` or `->>` filter in WHERE clauses |
-| Defensive caps | Scale guardrails: `QA__scale_guardrails.sql` checks pass |
-| Graceful degradation | Features with `is_enabled` flags must work correctly when disabled |
-| MV refresh considered | If new MV added, include in `refresh_all_materialized_views()` and `mv_staleness_check()` |
-| No expensive triggers | Triggers must be O(1) per row; bulk operations must not cascade pathologically |
+| Rule                       | Verification                                                                              |
+| -------------------------- | ----------------------------------------------------------------------------------------- |
+| No N+1 queries             | `EXPLAIN ANALYZE` on new queries; use JOINs/LATERAL/CTEs, not loops                       |
+| No unbounded loops         | Defensive LIMIT caps on all expansion/aggregation logic                                   |
+| No unindexed JSONB lookups | GIN index required for any `jsonb @>` or `->>` filter in WHERE clauses                    |
+| Defensive caps             | Scale guardrails: `QA__scale_guardrails.sql` checks pass                                  |
+| Graceful degradation       | Features with `is_enabled` flags must work correctly when disabled                        |
+| MV refresh considered      | If new MV added, include in `refresh_all_materialized_views()` and `mv_staleness_check()` |
+| No expensive triggers      | Triggers must be O(1) per row; bulk operations must not cascade pathologically            |
 
 ### 15.11 Decision Log
 
 Every feature must include an **Architectural Decisions Log** table:
 
-| Decision | Choice | Rationale |
-|----------|--------|-----------|
+| Decision              | Choice            | Rationale                                          |
+| --------------------- | ----------------- | -------------------------------------------------- |
 | Storage pattern for X | `_ref` table + FK | Follows established pattern, INSERT-only expansion |
-| Translation approach | Curated + stored | No runtime API calls, searchable, consistent |
-| ... | ... | ... |
+| Translation approach  | Curated + stored  | No runtime API calls, searchable, consistent       |
+| ...                   | ...               | ...                                                |
 
 Log **all** non-trivial choices. If you debated between two approaches for more than 30 seconds, it belongs in the decision log.
 
@@ -1145,25 +1152,25 @@ This enables quick impact assessment during code review.
 
 If the feature adds user-visible strings or data:
 
-| Check | Action |
-|-------|--------|
-| New UI strings? | Add to `/messages/en.json` (source of truth) + `/messages/pl.json` |
-| New category/domain labels? | Add to `category_translations` or equivalent `_translations` table |
-| New product data columns? | Consider `_en` column + provenance metadata (`_source`, `_reviewed_at`) |
-| New searchable text? | Update `search_vector` trigger + add `search_synonyms` entries |
+| Check                            | Action                                                                                                      |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| New UI strings?                  | Add to `/messages/en.json` (source of truth) + `/messages/pl.json`                                          |
+| New category/domain labels?      | Add to `category_translations` or equivalent `_translations` table                                          |
+| New product data columns?        | Consider `_en` column + provenance metadata (`_source`, `_reviewed_at`)                                     |
+| New searchable text?             | Update `search_vector` trigger + add `search_synonyms` entries                                              |
 | Structured data vs display text? | SQL returns structured flags/keys; frontend localizes via dictionary (never embed English in SQL responses) |
 
 ### 15.15 Expansion Checklist (If Applicable)
 
 If the feature scales across countries, languages, or markets, provide a step-by-step addition checklist:
 
-| Step | Action | Effort |
-|------|--------|--------|
-| 1 | `INSERT INTO country_ref (...)` | 1 row |
-| 2 | `INSERT INTO language_ref` (if new) | 1 row |
-| 3 | `INSERT INTO category_translations` | ~20 rows |
-| 4 | Create `/messages/{xx}.json` | ~556 strings |
-| ... | ... | ... |
+| Step | Action                              | Effort       |
+| ---- | ----------------------------------- | ------------ |
+| 1    | `INSERT INTO country_ref (...)`     | 1 row        |
+| 2    | `INSERT INTO language_ref` (if new) | 1 row        |
+| 3    | `INSERT INTO category_translations` | ~20 rows     |
+| 4    | Create `/messages/{xx}.json`        | ~556 strings |
+| ...  | ...                                 | ...          |
 
 Include **estimated effort** (hours/days) for each step.
 
@@ -1171,18 +1178,18 @@ Include **estimated effort** (hours/days) for each step.
 
 Before a feature is considered complete, verify against all CI gates:
 
-| Gate | Command | Expected |
-|------|---------|----------|
-| Pipeline structure | `python check_pipeline_structure.py` | 0 errors |
-| DB QA | `.\RUN_QA.ps1` | All checks pass (currently 360+) |
-| Negative tests | `.\RUN_NEGATIVE_TESTS.ps1` | All caught (currently 29) |
-| pgTAP tests | `supabase test db` | All pass |
-| TypeScript | `cd frontend && npx tsc --noEmit` | 0 errors |
-| Unit tests | `cd frontend && npx vitest run` | All pass |
-| E2E smoke | `cd frontend && npx playwright test` | All pass |
-| EAN validation | `python validate_eans.py` | 0 failures |
-| Enrichment identity | `python check_enrichment_identity.py` | 0 violations |
-| SonarCloud | CI pipeline (`build.yml`) | Quality Gate pass |
+| Gate                | Command                               | Expected                         |
+| ------------------- | ------------------------------------- | -------------------------------- |
+| Pipeline structure  | `python check_pipeline_structure.py`  | 0 errors                         |
+| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 360+) |
+| Negative tests      | `.\RUN_NEGATIVE_TESTS.ps1`            | All caught (currently 29)        |
+| pgTAP tests         | `supabase test db`                    | All pass                         |
+| TypeScript          | `cd frontend && npx tsc --noEmit`     | 0 errors                         |
+| Unit tests          | `cd frontend && npx vitest run`       | All pass                         |
+| E2E smoke           | `cd frontend && npx playwright test`  | All pass                         |
+| EAN validation      | `python validate_eans.py`             | 0 failures                       |
+| Enrichment identity | `python check_enrichment_identity.py` | 0 violations                     |
+| SonarCloud          | CI pipeline (`build.yml`)             | Quality Gate pass                |
 
 ### 15.17 Enforcement Rule
 
@@ -1208,53 +1215,70 @@ Use this structure when creating GitHub issues for major features:
 # Feature Title
 
 ## Problem
+
 - User problem: ...
 - Current limitation: ...
 - Measurable improvement: ...
 
 ## Architecture Evaluation
+
 | Approach | Verdict | Reason |
-|----------|---------|--------|
+| -------- | ------- | ------ |
 
 ## Core Principles (Invariants)
+
 - ...
 
 ## Implementation Plan
+
 ### Phase 1 — ...
+
 ### Phase 2 — ...
 
 ## Database Changes
+
 - Migration: `YYYYMMDDHHMMSS_description.sql`
 - Tables: ...
 - Functions: ...
 
 ## API Contract Impact
+
 | Function | Changes | Backward Compatible? |
 
 ## Search & Indexing Impact
+
 - ...
 
 ## Fallback Logic
+
 - If A → X, Else if B → Y, Else → Z
 
 ## Test Requirements
+
 ### pgTAP: ...
+
 ### Schema Contracts: ...
+
 ### Frontend: ...
 
 ## Performance & Safety
+
 - ...
 
 ## Decision Log
+
 | Decision | Choice | Rationale |
 
 ## Constraints
+
 - ...
 
 ## File Impact
+
 - N files, +X / -Y lines
 
 ## Expansion Checklist (if applicable)
+
 | Step | Action | Effort |
 ```
 
