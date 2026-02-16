@@ -191,15 +191,17 @@
   "gitlens.currentLine.enabled": true,
 
   // ═══════════════════════════════════════════════════════════════════════
-  // SonarLint
+  // SonarLint / SonarQube for IDE
   // ═══════════════════════════════════════════════════════════════════════
   "sonarlint.analyzerProperties": {
-    "sonar.sql.dialect": "postgresql"
+    "sonar.sql.dialect": "postgresql",
+    "sonar.plsql.file.suffixes": "plsql,pkb,pks,pkg"
   },
   "sonarlint.pathExclusions": [
     "**/supabase/migrations/**",
     "**/db/pipelines/**",
-    "**/db/migrations/**"
+    "**/db/migrations/**",
+    "**/db/*.sql"
   ],
   "sonarlint.rules": {
     "plsql:S1192": { "level": "off" },
