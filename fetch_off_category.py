@@ -239,7 +239,9 @@ def get_existing_categories() -> set[str]:
 # ──────────────────────────────────────────────────────────────────────────────
 
 
-def _matches_country(product: dict, ean_prefixes: tuple[str, ...], country_tag: str) -> bool:
+def _matches_country(
+    product: dict, ean_prefixes: tuple[str, ...], country_tag: str
+) -> bool:
     """Return True if the product matches the target country by EAN prefix or tag."""
     code = str(product.get("code", ""))
     countries = product.get("countries_tags") or []
@@ -708,7 +710,9 @@ def _print_data_quality(products: list[dict]) -> None:
     print("Data quality summary:")
     print(f"  Products with valid EAN:    {total}")
     print(f"  Nutri-Score available:      {ns_known}/{total} ({100*ns_known//total}%)")
-    print(f"  NOVA group available:       {nova_known}/{total} ({100*nova_known//total}%)")
+    print(
+        f"  NOVA group available:       {nova_known}/{total} ({100*nova_known//total}%)"
+    )
     print(
         f"  Nutrition data present:     {nutrition_complete}/{total} "
         f"({100*nutrition_complete//total}%)"
@@ -906,7 +910,9 @@ def main() -> None:
         return
 
     # ── Generate SQL files ──
-    _write_pipeline_files(products, output_dir, folder_name, category, country, args.overwrite)
+    _write_pipeline_files(
+        products, output_dir, folder_name, category, country, args.overwrite
+    )
     print()
 
 

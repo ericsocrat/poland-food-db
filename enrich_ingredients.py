@@ -261,16 +261,20 @@ def process_ingredients(
             item, off_id, name_lower, name, ingredient_lookup, new_ingredients
         )
 
-        rows.append({
-            "country": country,
-            "ean": ean,
-            "ingredient_id": ing_id,
-            "position": pos,
-            "percent": item.get("percent"),
-            "percent_estimate": _clamp_percent_estimate(item.get("percent_estimate")),
-            "is_sub_ingredient": is_sub,
-            "parent_ingredient_id": parent_id if is_sub else None,
-        })
+        rows.append(
+            {
+                "country": country,
+                "ean": ean,
+                "ingredient_id": ing_id,
+                "position": pos,
+                "percent": item.get("percent"),
+                "percent_estimate": _clamp_percent_estimate(
+                    item.get("percent_estimate")
+                ),
+                "is_sub_ingredient": is_sub,
+                "parent_ingredient_id": parent_id if is_sub else None,
+            }
+        )
 
         next_pos = pos + 1
         for sub in item.get("ingredients", []):
@@ -349,7 +353,9 @@ def sql_escape(val: str | None) -> str:
 # SQL generation constants (avoid duplication flagged by SonarCloud)
 # ---------------------------------------------------------------------------
 
-SQL_SECTION_SEPARATOR = "-- ═══════════════════════════════════════════════════════════════"
+SQL_SECTION_SEPARATOR = (
+    "-- ═══════════════════════════════════════════════════════════════"
+)
 SQL_FROM_VALUES = "FROM (VALUES"
 SQL_JOIN_PRODUCTS = "JOIN products p ON p.country = v.country AND p.ean = v.ean"
 SQL_WHERE_ACTIVE = "WHERE p.is_deprecated IS NOT TRUE"
