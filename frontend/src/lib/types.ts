@@ -367,6 +367,137 @@ export interface DataConfidence {
   [key: string]: unknown;
 }
 
+// ─── Product Profile (Composite) ────────────────────────────────────────────
+
+export interface ProductProfileMeta {
+  product_id: number;
+  language: string;
+  retrieved_at: string;
+}
+
+export interface ProductProfileProduct {
+  product_id: number;
+  product_name: string;
+  product_name_en: string | null;
+  product_name_display: string;
+  original_language: string;
+  brand: string;
+  category: string;
+  category_display: string;
+  category_icon: string;
+  product_type: string | null;
+  country: string;
+  ean: string | null;
+  prep_method: string | null;
+  store_availability: string | null;
+  controversies: string | null;
+}
+
+export interface NutritionPer100g {
+  calories_kcal: number;
+  total_fat_g: number;
+  saturated_fat_g: number;
+  trans_fat_g: number | null;
+  carbs_g: number;
+  sugars_g: number;
+  fibre_g: number | null;
+  protein_g: number;
+  salt_g: number;
+}
+
+export interface NutritionPerServing extends NutritionPer100g {
+  serving_size: string;
+  serving_grams: number;
+}
+
+export interface ProfileIngredients {
+  count: number;
+  additive_count: number;
+  additive_names: string | null;
+  has_palm_oil: boolean;
+  vegan_status: string | null;
+  vegetarian_status: string | null;
+  ingredients_text: string | null;
+  top_ingredients: {
+    name: string;
+    position: number;
+    concern_tier: number;
+    is_additive: boolean;
+  }[];
+}
+
+export interface ProfileAllergens {
+  contains: string;
+  traces: string;
+  contains_count: number;
+  traces_count: number;
+}
+
+export interface CategoryContext {
+  rank: number;
+  total_in_category: number;
+  category_avg_score: number;
+  relative_position: string;
+}
+
+export interface ProfileScores {
+  unhealthiness_score: number;
+  score_band: ScoreBand;
+  nutri_score_label: NutriGrade;
+  nutri_score_color: string;
+  nova_group: string;
+  processing_risk: string;
+  score_breakdown: Record<string, unknown>[];
+  headline: string;
+  category_context: CategoryContext;
+}
+
+export interface ProfileWarning {
+  type: string;
+  severity: "warning" | "info";
+  message: string;
+}
+
+export interface ProfileAlternative {
+  product_id: number;
+  product_name: string;
+  brand: string;
+  category: string;
+  unhealthiness_score: number;
+  score_delta: number;
+  nutri_score: NutriGrade;
+  similarity: number;
+}
+
+export interface ProductProfile {
+  api_version: string;
+  meta: ProductProfileMeta;
+  product: ProductProfileProduct;
+  nutrition: {
+    per_100g: NutritionPer100g;
+    per_serving: NutritionPerServing | null;
+  };
+  ingredients: ProfileIngredients;
+  allergens: ProfileAllergens;
+  scores: ProfileScores;
+  warnings: ProfileWarning[];
+  quality: DataConfidence;
+  alternatives: ProfileAlternative[];
+  flags: {
+    high_salt: boolean;
+    high_sugar: boolean;
+    high_sat_fat: boolean;
+    high_additive_load: boolean;
+    has_palm_oil: boolean;
+  };
+}
+
+export interface ProductProfileNotFound {
+  api_version: string;
+  error: "product_not_found";
+  ean: string;
+}
+
 // ─── Enums / Literals ───────────────────────────────────────────────────────
 
 export type ScoreBand = "low" | "moderate" | "high" | "very_high";

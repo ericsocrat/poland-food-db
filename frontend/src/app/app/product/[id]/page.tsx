@@ -1,18 +1,14 @@
 "use client";
 
 // ─── Product detail page ────────────────────────────────────────────────────
+// Uses the composite api_get_product_profile() endpoint for a single round-trip.
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import {
-  getProductDetail,
-  getBetterAlternatives,
-  getScoreExplanation,
-  recordProductView,
-} from "@/lib/api";
+import { getProductProfile, recordProductView } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -25,7 +21,7 @@ import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
-import type { ProductDetail, Alternative } from "@/lib/types";
+import type { ProductProfile, ProfileAlternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
 
@@ -39,26 +35,26 @@ export default function ProductDetailPage() {
   const { t } = useTranslation();
 
   const {
-    data: product,
+    data: profile,
     isLoading,
     error,
   } = useQuery({
-    queryKey: queryKeys.product(productId),
+    queryKey: queryKeys.productProfile(productId),
     queryFn: async () => {
-      const result = await getProductDetail(supabase, productId);
+      const result = await getProductProfile(supabase, productId);
       if (!result.ok) throw new Error(result.error.message);
       return result.data;
     },
-    staleTime: staleTimes.product,
+    staleTime: staleTimes.productProfile,
     enabled: !Number.isNaN(productId),
   });
 
   useEffect(() => {
-    if (product) {
+    if (profile) {
       track("product_viewed", {
         product_id: productId,
-        product_name: product.product_name,
-        category: product.category,
+        product_name: profile.product.product_name,
+        category: profile.product.category,
       });
       // Record view for dashboard recently-viewed section
       recordProductView(supabase, productId);
@@ -85,7 +81,7 @@ export default function ProductDetailPage() {
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
             onClick={() =>
               queryClient.invalidateQueries({
-                queryKey: queryKeys.product(productId),
+                queryKey: queryKeys.productProfile(productId),
               })
             }
           >
@@ -96,7 +92,7 @@ export default function ProductDetailPage() {
     );
   }
 
-  if (!product) {
+  if (!profile) {
     return (
       <div className="space-y-4">
         <BackButton />
@@ -107,9 +103,9 @@ export default function ProductDetailPage() {
     );
   }
 
-  const band = SCORE_BANDS[product.scores.score_band];
-  const nutriClass = product.scores.nutri_score
-    ? NUTRI_COLORS[product.scores.nutri_score]
+  const band = SCORE_BANDS[profile.scores.score_band];
+  const nutriClass = profile.scores.nutri_score_label
+    ? NUTRI_COLORS[profile.scores.nutri_score_label]
     : "bg-gray-200 text-gray-500";
 
   const tabs: { key: Tab; label: string }[] = [
@@ -129,21 +125,24 @@ export default function ProductDetailPage() {
           <div
             className={`flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl text-2xl font-bold ${band.bg} ${band.color}`}
           >
-            {product.scores.unhealthiness_score}
+            {profile.scores.unhealthiness_score}
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-lg font-bold text-gray-900">
-                  {product.product_name_display ?? product.product_name}
+                  {profile.product.product_name_display ??
+                    profile.product.product_name}
                 </p>
-                {product.product_name_en &&
-                  product.product_name_display !== product.product_name && (
+                {profile.product.product_name_en &&
+                  profile.product.product_name_display !==
+                    profile.product.product_name && (
                     <p className="text-xs text-gray-400">
-                      {t("product.originalName")}: {product.product_name}
+                      {t("product.originalName")}:{" "}
+                      {profile.product.product_name}
                     </p>
                   )}
-                <p className="text-sm text-gray-500">{product.brand}</p>
+                <p className="text-sm text-gray-500">{profile.product.brand}</p>
               </div>
               <div className="flex items-center gap-2">
                 <AvoidBadge productId={productId} />
@@ -156,11 +155,11 @@ export default function ProductDetailPage() {
                 className={`rounded-full px-2 py-0.5 text-xs font-bold ${nutriClass}`}
               >
                 {t("product.nutriScore", {
-                  grade: product.scores.nutri_score ?? "?",
+                  grade: profile.scores.nutri_score_label ?? "?",
                 })}
               </span>
               <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                {t("product.novaGroup", { group: product.scores.nova_group })}
+                {t("product.novaGroup", { group: profile.scores.nova_group })}
               </span>
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-medium ${band.bg} ${band.color}`}
@@ -174,50 +173,50 @@ export default function ProductDetailPage() {
         {/* Category & EAN */}
         <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
           <span>
-            {product.category_icon} {product.category_display}
+            {profile.product.category_icon} {profile.product.category_display}
           </span>
-          {product.ean && <span>EAN: {product.ean}</span>}
-          {product.store_availability && (
-            <span>Store: {product.store_availability}</span>
+          {profile.product.ean && <span>EAN: {profile.product.ean}</span>}
+          {profile.product.store_availability && (
+            <span>Store: {profile.product.store_availability}</span>
           )}
         </div>
 
         {/* Flags — with "why" explanations */}
-        {(product.flags.high_sugar ||
-          product.flags.high_salt ||
-          product.flags.high_sat_fat ||
-          product.flags.high_additive_load ||
-          product.flags.has_palm_oil) && (
+        {(profile.flags.high_sugar ||
+          profile.flags.high_salt ||
+          profile.flags.high_sat_fat ||
+          profile.flags.high_additive_load ||
+          profile.flags.has_palm_oil) && (
           <div className="mt-3 space-y-1">
             <p className="text-xs font-medium text-gray-400">
               {t("product.healthFlags")}
             </p>
             <div className="flex flex-wrap gap-1">
-              {product.flags.high_sugar && (
+              {profile.flags.high_sugar && (
                 <FlagWithExplanation
                   label={t("product.highSugar")}
                   explanation={t("product.highSugarExplanation")}
                 />
               )}
-              {product.flags.high_salt && (
+              {profile.flags.high_salt && (
                 <FlagWithExplanation
                   label={t("product.highSalt")}
                   explanation={t("product.highSaltExplanation")}
                 />
               )}
-              {product.flags.high_sat_fat && (
+              {profile.flags.high_sat_fat && (
                 <FlagWithExplanation
                   label={t("product.highSatFat")}
                   explanation={t("product.highSatFatExplanation")}
                 />
               )}
-              {product.flags.high_additive_load && (
+              {profile.flags.high_additive_load && (
                 <FlagWithExplanation
                   label={t("product.manyAdditives")}
                   explanation={t("product.manyAdditivesExplanation")}
                 />
               )}
-              {product.flags.has_palm_oil && (
+              {profile.flags.has_palm_oil && (
                 <FlagWithExplanation
                   label={t("product.palmOil")}
                   explanation={t("product.palmOilExplanation")}
@@ -251,12 +250,12 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Tab content */}
-      {activeTab === "overview" && <OverviewTab product={product} />}
-      {activeTab === "nutrition" && <NutritionTab product={product} />}
+      {activeTab === "overview" && <OverviewTab profile={profile} />}
+      {activeTab === "nutrition" && <NutritionTab profile={profile} />}
       {activeTab === "alternatives" && (
-        <AlternativesTab productId={productId} />
+        <AlternativesTab alternatives={profile.alternatives} />
       )}
-      {activeTab === "scoring" && <ScoringTab productId={productId} />}
+      {activeTab === "scoring" && <ScoringTab profile={profile} />}
     </div>
   );
 }
@@ -319,7 +318,7 @@ function FlagWithExplanation({
 
 // ─── Overview Tab ───────────────────────────────────────────────────────────
 
-function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
+function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const { t } = useTranslation();
   return (
     <div className="space-y-4">
@@ -330,80 +329,92 @@ function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
         </h3>
         <div className="space-y-1 text-sm text-gray-600">
           <p>
-            {t("product.ingredientCount", { count: product.ingredients.count })}
+            {t("product.ingredientCount", { count: profile.ingredients.count })}
           </p>
           <p>
             {t("product.additiveCount", {
-              count: product.ingredients.additives_count,
+              count: profile.ingredients.additive_count,
             })}
           </p>
-          {product.ingredients.additive_names.length > 0 && (
+          {profile.ingredients.additive_names && (
             <p className="text-xs text-gray-400">
-              {product.ingredients.additive_names.join(", ")}
+              {profile.ingredients.additive_names}
             </p>
           )}
           <p>
-            {t("product.vegan", { status: product.ingredients.vegan_status })}
+            {t("product.vegan", {
+              status: profile.ingredients.vegan_status ?? "unknown",
+            })}
           </p>
           <p>
             {t("product.vegetarian", {
-              status: product.ingredients.vegetarian_status,
+              status: profile.ingredients.vegetarian_status ?? "unknown",
             })}
           </p>
         </div>
       </div>
 
       {/* Allergens */}
-      {product.allergens.count > 0 && (
+      {profile.allergens.contains_count > 0 && (
         <div className="card">
           <h3 className="mb-2 text-sm font-semibold text-gray-700">
             {t("product.allergens")}
           </h3>
           <div className="flex flex-wrap gap-1">
-            {product.allergens.tags.map((tag) => (
-              <span
-                key={tag}
-                className="rounded bg-amber-50 px-2 py-0.5 text-xs text-amber-700"
-              >
-                {tag.replaceAll("en:", "")}
-              </span>
-            ))}
+            {profile.allergens.contains
+              .split(",")
+              .filter(Boolean)
+              .map((tag) => (
+                <span
+                  key={tag}
+                  className="rounded bg-amber-50 px-2 py-0.5 text-xs text-amber-700"
+                >
+                  {tag.trim().replaceAll("en:", "")}
+                </span>
+              ))}
           </div>
-          {product.allergens.trace_count > 0 && (
+          {profile.allergens.traces_count > 0 && (
             <div className="mt-2">
               <p className="mb-1 text-xs text-gray-400">
                 {t("product.mayContain")}
               </p>
               <div className="flex flex-wrap gap-1">
-                {product.allergens.trace_tags.map((tag) => (
-                  <span
-                    key={tag}
-                    className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
-                  >
-                    {tag.replaceAll("en:", "")}
-                  </span>
-                ))}
+                {profile.allergens.traces
+                  .split(",")
+                  .filter(Boolean)
+                  .map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
+                    >
+                      {tag.trim().replaceAll("en:", "")}
+                    </span>
+                  ))}
               </div>
             </div>
           )}
         </div>
       )}
 
-      {/* Trust & data quality */}
+      {/* Data quality */}
       <div className="card">
         <h3 className="mb-2 text-sm font-semibold text-gray-700">
           {t("product.dataQuality")}
         </h3>
         <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-          <p>{t("product.confidence", { value: product.trust.confidence })}</p>
           <p>
-            {t("product.completeness", {
-              pct: product.trust.data_completeness_pct,
+            {t("product.confidence", {
+              value:
+                ((profile.quality as Record<string, unknown>)
+                  .confidence_band as string) ?? "unknown",
             })}
           </p>
-          <p>{t("product.source", { type: product.trust.source_type })}</p>
           <p>
-            {t("product.dataAge", { days: product.freshness.data_age_days })}
+            {t("product.completeness", {
+              pct:
+                ((profile.quality as Record<string, unknown>)
+                  .confidence_score as number) ?? 0,
+            })}
           </p>
         </div>
       </div>
@@ -413,11 +424,11 @@ function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
 
 // ─── Nutrition Tab ──────────────────────────────────────────────────────────
 
-function NutritionTab({ product }: Readonly<{ product: ProductDetail }>) {
+function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const { t } = useTranslation();
-  const n = product.nutrition_per_100g;
+  const n = profile.nutrition.per_100g;
   const rows = [
-    { label: t("product.caloriesLabel"), value: `${n.calories} kcal` },
+    { label: t("product.caloriesLabel"), value: `${n.calories_kcal} kcal` },
     { label: t("product.totalFat"), value: `${n.total_fat_g} g` },
     { label: t("product.saturatedFat"), value: `${n.saturated_fat_g} g` },
     {
@@ -457,29 +468,12 @@ function NutritionTab({ product }: Readonly<{ product: ProductDetail }>) {
 
 // ─── Alternatives Tab ───────────────────────────────────────────────────────
 
-function AlternativesTab({ productId }: Readonly<{ productId: number }>) {
+function AlternativesTab({
+  alternatives,
+}: Readonly<{ alternatives: ProfileAlternative[] }>) {
   const { t } = useTranslation();
-  const supabase = createClient();
 
-  const { data, isLoading } = useQuery({
-    queryKey: queryKeys.alternatives(productId),
-    queryFn: async () => {
-      const result = await getBetterAlternatives(supabase, productId);
-      if (!result.ok) throw new Error(result.error.message);
-      return result.data;
-    },
-    staleTime: staleTimes.alternatives,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-8">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  if (!data || data.alternatives.length === 0) {
+  if (alternatives.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-gray-400">
         {t("product.noAlternatives")}
@@ -490,16 +484,16 @@ function AlternativesTab({ productId }: Readonly<{ productId: number }>) {
   return (
     <div className="space-y-2">
       <p className="text-sm text-gray-500">
-        {t("product.healthierOptions", { count: data.alternatives_count })}
+        {t("product.healthierOptions", { count: alternatives.length })}
       </p>
-      {data.alternatives.map((alt) => (
+      {alternatives.map((alt) => (
         <AlternativeCard key={alt.product_id} alt={alt} />
       ))}
     </div>
   );
 }
 
-function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
+function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
   const { t } = useTranslation();
   const nutriClass = alt.nutri_score
     ? NUTRI_COLORS[alt.nutri_score]
@@ -517,7 +511,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
           </p>
           <p className="text-sm text-gray-500">{alt.brand}</p>
           <p className="text-xs text-green-600">
-            {t("product.pointsBetter", { points: alt.score_improvement })}
+            {t("product.pointsBetter", { points: alt.score_delta })}
           </p>
         </div>
         <HealthWarningBadge productId={alt.product_id} />
@@ -533,35 +527,19 @@ function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
 
 // ─── Scoring Tab ────────────────────────────────────────────────────────────
 
-function ScoringTab({ productId }: Readonly<{ productId: number }>) {
+function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const { t } = useTranslation();
-  const supabase = createClient();
+  const scores = profile.scores;
 
-  const { data, isLoading } = useQuery({
-    queryKey: queryKeys.scoreExplanation(productId),
-    queryFn: async () => {
-      const result = await getScoreExplanation(supabase, productId);
-      if (!result.ok) throw new Error(result.error.message);
-      return result.data;
-    },
-    staleTime: staleTimes.scoreExplanation,
-  });
-
-  if (isLoading) {
-    return (
-      <div className="flex justify-center py-8">
-        <LoadingSpinner />
-      </div>
-    );
-  }
-
-  if (!data) {
-    return (
-      <p className="py-8 text-center text-sm text-gray-400">
-        {t("product.scoreBreakdownUnavailable")}
-      </p>
-    );
-  }
+  const topFactors = Array.isArray(scores.score_breakdown)
+    ? scores.score_breakdown
+        .toSorted(
+          (a, b) =>
+            ((b as Record<string, number>).weighted ?? 0) -
+            ((a as Record<string, number>).weighted ?? 0),
+        )
+        .slice(0, 5)
+    : [];
 
   return (
     <div className="space-y-4">
@@ -570,24 +548,24 @@ function ScoringTab({ productId }: Readonly<{ productId: number }>) {
         <h3 className="mb-2 text-sm font-semibold text-gray-700">
           {t("product.summary")}
         </h3>
-        <p className="text-sm text-gray-600">{data.summary.headline}</p>
+        <p className="text-sm text-gray-600">{scores.headline}</p>
       </div>
 
-      {/* Top factors */}
-      {data.top_factors.length > 0 && (
+      {/* Score breakdown factors */}
+      {topFactors.length > 0 && (
         <div className="card">
           <h3 className="mb-2 text-sm font-semibold text-gray-700">
             {t("product.topScoreFactors")}
           </h3>
           <div className="space-y-2">
-            {data.top_factors.map((f) => (
+            {topFactors.map((f) => (
               <div
-                key={f.factor}
+                key={String(f.factor)}
                 className="flex items-center justify-between text-sm"
               >
-                <span className="text-gray-600">{f.factor}</span>
+                <span className="text-gray-600">{String(f.factor)}</span>
                 <span className="font-medium text-gray-900">
-                  +{f.weighted.toFixed(1)}
+                  +{Number(f.weighted).toFixed(1)}
                 </span>
               </div>
             ))}
@@ -596,14 +574,14 @@ function ScoringTab({ productId }: Readonly<{ productId: number }>) {
       )}
 
       {/* Warnings */}
-      {data.warnings.length > 0 && (
+      {profile.warnings.length > 0 && (
         <div className="card border-amber-200 bg-amber-50">
           <h3 className="mb-2 text-sm font-semibold text-amber-800">
             {t("product.warnings")}
           </h3>
           <ul className="list-inside list-disc space-y-1 text-sm text-amber-700">
-            {data.warnings.map((w) => (
-              <li key={w.message}>{w.message}</li>
+            {profile.warnings.map((w) => (
+              <li key={w.type}>{w.message}</li>
             ))}
           </ul>
         </div>
@@ -617,16 +595,16 @@ function ScoringTab({ productId }: Readonly<{ productId: number }>) {
         <div className="text-sm text-gray-600">
           <p>
             {t("product.rank", {
-              rank: data.category_context.category_rank,
-              total: data.category_context.category_total,
+              rank: scores.category_context.rank,
+              total: scores.category_context.total_in_category,
             })}
           </p>
           <p>
             {t("product.categoryAvg", {
-              avg: Math.round(data.category_context.category_avg_score),
+              avg: Math.round(scores.category_context.category_avg_score),
             })}
           </p>
-          <p>Position: {data.category_context.relative_position}</p>
+          <p>Position: {scores.category_context.relative_position}</p>
         </div>
       </div>
     </div>

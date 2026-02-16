@@ -31,15 +31,11 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-const mockGetProductDetail = vi.fn();
-const mockGetBetterAlternatives = vi.fn();
-const mockGetScoreExplanation = vi.fn();
+const mockGetProductProfile = vi.fn();
 
 vi.mock("@/lib/api", () => ({
-  getProductDetail: (...args: unknown[]) => mockGetProductDetail(...args),
-  getBetterAlternatives: (...args: unknown[]) =>
-    mockGetBetterAlternatives(...args),
-  getScoreExplanation: (...args: unknown[]) => mockGetScoreExplanation(...args),
+  getProductProfile: (...args: unknown[]) => mockGetProductProfile(...args),
+  recordProductView: vi.fn().mockResolvedValue({ ok: true }),
 }));
 
 vi.mock("@/components/product/HealthWarningsCard", () => ({
@@ -79,28 +75,105 @@ function createWrapper() {
   return Wrapper;
 }
 
-function makeProduct(overrides: Record<string, unknown> = {}) {
+function makeProfile(overrides: Record<string, unknown> = {}) {
   return {
     api_version: "v1",
-    product_id: 42,
-    ean: "5901234123457",
-    product_name: "Test Chips Original",
-    brand: "TestBrand",
-    category: "chips",
-    category_display: "Chips",
-    category_icon: "🍟",
-    product_type: "snack",
-    country: "PL",
-    store_availability: "Żabka",
-    prep_method: null,
+    meta: {
+      product_id: 42,
+      language: "en",
+      retrieved_at: "2026-01-15T10:00:00Z",
+    },
+    product: {
+      product_id: 42,
+      product_name: "Test Chips Original",
+      product_name_en: null,
+      product_name_display: "Test Chips Original",
+      original_language: "pl",
+      brand: "TestBrand",
+      category: "chips",
+      category_display: "Chips",
+      category_icon: "🍟",
+      product_type: "snack",
+      country: "PL",
+      ean: "5901234123457",
+      prep_method: null,
+      store_availability: "Żabka",
+      controversies: null,
+    },
+    nutrition: {
+      per_100g: {
+        calories_kcal: 530,
+        total_fat_g: 32,
+        saturated_fat_g: 14,
+        trans_fat_g: null,
+        carbs_g: 52,
+        sugars_g: 3,
+        fibre_g: 4,
+        protein_g: 6,
+        salt_g: 1.8,
+      },
+      per_serving: null,
+    },
+    ingredients: {
+      count: 12,
+      additive_count: 3,
+      additive_names: "E621, E330, E250",
+      has_palm_oil: true,
+      vegan_status: "yes",
+      vegetarian_status: "yes",
+      ingredients_text: null,
+      top_ingredients: [],
+    },
+    allergens: {
+      contains: "en:gluten,en:milk",
+      traces: "en:soy",
+      contains_count: 2,
+      traces_count: 1,
+    },
     scores: {
       unhealthiness_score: 65,
       score_band: "high",
-      nutri_score: "D",
+      nutri_score_label: "D",
       nutri_score_color: "#e63946",
       nova_group: "4",
       processing_risk: "high",
+      score_breakdown: [
+        { factor: "Saturated fat", raw: 14, weighted: 8.5 },
+        { factor: "Salt content", raw: 1.8, weighted: 6.2 },
+      ],
+      headline:
+        "This product has significant nutritional concerns across multiple factors.",
+      category_context: {
+        rank: 18,
+        total_in_category: 42,
+        category_avg_score: 55,
+        relative_position: "worse_than_average",
+      },
     },
+    warnings: [
+      {
+        type: "high_salt",
+        severity: "warning",
+        message: "High salt content",
+      },
+    ],
+    quality: {
+      api_version: "1.0",
+      confidence_band: "high",
+      confidence_score: 92,
+    },
+    alternatives: [
+      {
+        product_id: 99,
+        product_name: "Healthy Veggie Sticks",
+        brand: "HealthBrand",
+        category: "chips",
+        unhealthiness_score: 25,
+        score_delta: 40,
+        nutri_score: "B",
+        similarity: 0.8,
+      },
+    ],
     flags: {
       high_salt: true,
       high_sugar: false,
@@ -108,109 +181,7 @@ function makeProduct(overrides: Record<string, unknown> = {}) {
       high_additive_load: false,
       has_palm_oil: true,
     },
-    nutrition_per_100g: {
-      calories: 530,
-      total_fat_g: 32,
-      saturated_fat_g: 14,
-      trans_fat_g: null,
-      carbs_g: 52,
-      sugars_g: 3,
-      fibre_g: 4,
-      protein_g: 6,
-      salt_g: 1.8,
-    },
-    ingredients: {
-      count: 12,
-      additives_count: 3,
-      additive_names: ["E621", "E330", "E250"],
-      vegan_status: "yes",
-      vegetarian_status: "yes",
-      data_quality: "good",
-    },
-    allergens: {
-      count: 2,
-      tags: ["en:gluten", "en:milk"],
-      trace_count: 1,
-      trace_tags: ["en:soy"],
-    },
-    trust: {
-      confidence: "high",
-      data_completeness_pct: 92,
-      source_type: "openfoodfacts",
-      nutrition_data_quality: "good",
-      ingredient_data_quality: "good",
-    },
-    freshness: {
-      created_at: "2025-12-01",
-      updated_at: "2026-01-15",
-      data_age_days: 32,
-    },
     ...overrides,
-  };
-}
-
-function makeAlternatives() {
-  return {
-    ok: true,
-    data: {
-      api_version: "v1",
-      source_product: {
-        product_id: 42,
-        product_name: "Test Chips",
-        brand: "TestBrand",
-        category: "chips",
-        unhealthiness_score: 65,
-        nutri_score: "D",
-      },
-      search_scope: "category",
-      alternatives: [
-        {
-          product_id: 99,
-          product_name: "Healthy Veggie Sticks",
-          brand: "HealthBrand",
-          category: "chips",
-          unhealthiness_score: 25,
-          score_improvement: 40,
-          nutri_score: "B",
-          similarity: 0.8,
-          shared_ingredients: 3,
-        },
-      ],
-      alternatives_count: 1,
-    },
-  };
-}
-
-function makeScoreExplanation() {
-  return {
-    ok: true,
-    data: {
-      api_version: "v1",
-      product_id: 42,
-      product_name: "Test Chips",
-      brand: "TestBrand",
-      category: "chips",
-      score_breakdown: {},
-      summary: {
-        score: 65,
-        score_band: "high",
-        headline: "This product has a high unhealthiness score.",
-        nutri_score: "D",
-        nova_group: "4",
-        processing_risk: "high",
-      },
-      top_factors: [
-        { factor: "Saturated fat", raw: 14, weighted: 8.5 },
-        { factor: "Salt content", raw: 1.8, weighted: 6.2 },
-      ],
-      warnings: [{ type: "high_salt", message: "Very high salt content" }],
-      category_context: {
-        category_avg_score: 55,
-        category_rank: 18,
-        category_total: 42,
-        relative_position: "worse than average",
-      },
-    },
   };
 }
 
@@ -218,15 +189,13 @@ function makeScoreExplanation() {
 
 beforeEach(() => {
   vi.clearAllMocks();
-  mockGetBetterAlternatives.mockResolvedValue(makeAlternatives());
-  mockGetScoreExplanation.mockResolvedValue(makeScoreExplanation());
 });
 
 describe("ProductDetailPage", () => {
   // ── Loading state ───────────────────────────────────────────────────────
 
   it("renders loading spinner initially", () => {
-    mockGetProductDetail.mockReturnValue(new Promise(() => {})); // never resolves
+    mockGetProductProfile.mockReturnValue(new Promise(() => {})); // never resolves
     render(<ProductDetailPage />, { wrapper: createWrapper() });
     expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
   });
@@ -234,7 +203,7 @@ describe("ProductDetailPage", () => {
   // ── Error state ─────────────────────────────────────────────────────────
 
   it("renders error state with retry button", async () => {
-    mockGetProductDetail.mockRejectedValue(new Error("API error"));
+    mockGetProductProfile.mockRejectedValue(new Error("API error"));
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
@@ -244,7 +213,7 @@ describe("ProductDetailPage", () => {
   });
 
   it("retries loading on retry click", async () => {
-    mockGetProductDetail.mockRejectedValueOnce(new Error("fail"));
+    mockGetProductProfile.mockRejectedValueOnce(new Error("fail"));
     const user = userEvent.setup();
 
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -253,9 +222,9 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("Failed to load product.")).toBeInTheDocument();
     });
 
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     await user.click(screen.getByRole("button", { name: "Retry" }));
 
@@ -267,7 +236,7 @@ describe("ProductDetailPage", () => {
   // ── Not found state ─────────────────────────────────────────────────────
 
   it("renders not found message when product is null", async () => {
-    mockGetProductDetail.mockResolvedValue({ ok: true, data: null });
+    mockGetProductProfile.mockResolvedValue({ ok: true, data: null });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
@@ -278,9 +247,9 @@ describe("ProductDetailPage", () => {
   // ── Success state — header ──────────────────────────────────────────────
 
   it("renders product name and brand", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -291,9 +260,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("renders unhealthiness score badge", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -303,9 +272,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("renders nutri-score badge", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -315,9 +284,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("renders NOVA group", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -327,9 +296,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("renders EAN code", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -339,9 +308,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("renders store availability", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -351,9 +320,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("renders category with icon", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -365,9 +334,9 @@ describe("ProductDetailPage", () => {
   // ── Health flags ────────────────────────────────────────────────────────
 
   it("renders active health flags", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -381,9 +350,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("shows explanation on flag click", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -401,9 +370,9 @@ describe("ProductDetailPage", () => {
   // ── Tabs ────────────────────────────────────────────────────────────────
 
   it("renders all four tabs", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -418,9 +387,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("overview tab is selected by default", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -435,9 +404,9 @@ describe("ProductDetailPage", () => {
   // ── Overview tab content ────────────────────────────────────────────────
 
   it("overview shows ingredients info", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -449,9 +418,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("overview shows allergen tags", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -462,9 +431,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("overview shows trace allergens", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -475,9 +444,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("overview shows data quality info", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -488,9 +457,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("overview shows vegan/vegetarian status", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -503,9 +472,9 @@ describe("ProductDetailPage", () => {
   // ── Nutrition tab ───────────────────────────────────────────────────────
 
   it("nutrition tab shows macronutrient table", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -526,9 +495,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("nutrition tab shows dash for null trans fat", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -546,9 +515,9 @@ describe("ProductDetailPage", () => {
   // ── Alternatives tab ──────────────────────────────────────────────────
 
   it("alternatives tab shows healthier options", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -569,17 +538,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("alternatives tab shows empty message when no alternatives", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
-    });
-    mockGetBetterAlternatives.mockResolvedValue({
-      ok: true,
-      data: {
-        ...makeAlternatives().data,
-        alternatives: [],
-        alternatives_count: 0,
-      },
+      data: makeProfile({ alternatives: [] }),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -602,9 +563,9 @@ describe("ProductDetailPage", () => {
   // ── Scoring tab ─────────────────────────────────────────────────────────
 
   it("scoring tab shows score factors", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -624,9 +585,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("scoring tab shows summary headline", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -639,15 +600,17 @@ describe("ProductDetailPage", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByText("This product has a high unhealthiness score."),
+        screen.getByText(
+          "This product has significant nutritional concerns across multiple factors.",
+        ),
       ).toBeInTheDocument();
     });
   });
 
   it("scoring tab shows warnings", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -659,14 +622,14 @@ describe("ProductDetailPage", () => {
     await user.click(screen.getByRole("tab", { name: "Scoring" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Very high salt content")).toBeInTheDocument();
+      expect(screen.getByText("High salt content")).toBeInTheDocument();
     });
   });
 
   it("scoring tab shows category context", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     const user = userEvent.setup();
     render(<ProductDetailPage />, { wrapper: createWrapper() });
@@ -681,16 +644,16 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("Rank: 18 of 42")).toBeInTheDocument();
     });
     expect(
-      screen.getByText("Position: worse than average"),
+      screen.getByText("Position: worse_than_average"),
     ).toBeInTheDocument();
   });
 
   // ── Back button ─────────────────────────────────────────────────────────
 
   it("renders back button linking to search", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -706,9 +669,9 @@ describe("ProductDetailPage", () => {
   // ── Child components rendered ───────────────────────────────────────────
 
   it("renders HealthWarningsCard component", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -718,9 +681,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("renders AvoidBadge component", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -730,9 +693,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("renders CompareCheckbox component", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct(),
+      data: makeProfile(),
     });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
@@ -744,10 +707,9 @@ describe("ProductDetailPage", () => {
   // ── Edge cases ──────────────────────────────────────────────────────────
 
   it("handles product without EAN", async () => {
-    mockGetProductDetail.mockResolvedValue({
-      ok: true,
-      data: makeProduct({ ean: null }),
-    });
+    const p = makeProfile();
+    p.product.ean = null;
+    mockGetProductProfile.mockResolvedValue({ ok: true, data: p });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
@@ -757,10 +719,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("handles product without store availability", async () => {
-    mockGetProductDetail.mockResolvedValue({
-      ok: true,
-      data: makeProduct({ store_availability: null }),
-    });
+    const p = makeProfile();
+    p.product.store_availability = null;
+    mockGetProductProfile.mockResolvedValue({ ok: true, data: p });
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
@@ -770,9 +731,9 @@ describe("ProductDetailPage", () => {
   });
 
   it("handles product with no flags set", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct({
+      data: makeProfile({
         flags: {
           high_salt: false,
           high_sugar: false,
@@ -791,14 +752,14 @@ describe("ProductDetailPage", () => {
   });
 
   it("handles product with no allergens", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct({
+      data: makeProfile({
         allergens: {
-          count: 0,
-          tags: [],
-          trace_count: 0,
-          trace_tags: [],
+          contains: "",
+          traces: "",
+          contains_count: 0,
+          traces_count: 0,
         },
       }),
     });
@@ -811,13 +772,14 @@ describe("ProductDetailPage", () => {
   });
 
   it("handles null nutri_score with question mark", async () => {
-    mockGetProductDetail.mockResolvedValue({
+    mockGetProductProfile.mockResolvedValue({
       ok: true,
-      data: makeProduct({
+      data: makeProfile({
         scores: {
+          ...makeProfile().scores,
           unhealthiness_score: 50,
           score_band: "moderate",
-          nutri_score: null,
+          nutri_score_label: null,
           nutri_score_color: "#ccc",
           nova_group: "3",
           processing_risk: "moderate",

@@ -1,13 +1,14 @@
 -- ─── pgTAP: Product detail, alternatives, score explanation & confidence ────
 -- Tests api_product_detail_by_ean, api_product_detail, api_better_alternatives,
---       api_product_health_warnings, api_score_explanation, api_data_confidence.
+--       api_product_health_warnings, api_score_explanation, api_data_confidence,
+--       api_get_product_profile, api_get_product_profile_by_ean.
 -- Run via: supabase test db
 --
 -- Self-contained: inserts own fixture data so tests work on an empty DB.
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(48);
+SELECT plan(75);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -329,6 +330,158 @@ SELECT ok(
 SELECT ok(
   (public.api_data_confidence(999997)) ? 'confidence_score',
   'data confidence has confidence_score'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 8. api_get_product_profile — composite profile endpoint
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT lives_ok(
+  $$SELECT public.api_get_product_profile(999997::bigint)$$,
+  'api_get_product_profile does not throw'
+);
+
+-- Top-level keys
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'api_version',
+  'product profile has api_version'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'meta',
+  'product profile has meta section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'product',
+  'product profile has product section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'nutrition',
+  'product profile has nutrition section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'ingredients',
+  'product profile has ingredients section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'allergens',
+  'product profile has allergens section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'scores',
+  'product profile has scores section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'warnings',
+  'product profile has warnings section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'quality',
+  'product profile has quality section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'alternatives',
+  'product profile has alternatives section'
+);
+
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'flags',
+  'product profile has flags section'
+);
+
+-- meta sub-keys
+SELECT is(
+  ((public.api_get_product_profile(999997::bigint))->'meta'->>'product_id')::bigint,
+  999997::bigint,
+  'meta.product_id matches requested id'
+);
+
+-- product sub-keys
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'product') ? 'product_name',
+  'product section has product_name'
+);
+
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'product') ? 'brand',
+  'product section has brand'
+);
+
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'product') ? 'category',
+  'product section has category'
+);
+
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'product') ? 'ean',
+  'product section has ean'
+);
+
+-- scores sub-keys
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'scores') ? 'unhealthiness_score',
+  'scores section has unhealthiness_score'
+);
+
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'scores') ? 'score_band',
+  'scores section has score_band'
+);
+
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'scores') ? 'category_context',
+  'scores section has category_context'
+);
+
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'scores') ? 'score_breakdown',
+  'scores section has score_breakdown'
+);
+
+-- NULL for non-existent product
+SELECT is(
+  public.api_get_product_profile(0::bigint),
+  NULL,
+  'api_get_product_profile returns NULL for non-existent product_id'
+);
+
+-- with explicit language parameter
+SELECT lives_ok(
+  $$SELECT public.api_get_product_profile(999997::bigint, 'en')$$,
+  'api_get_product_profile with language param does not throw'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 9. api_get_product_profile_by_ean — EAN-based lookup
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT lives_ok(
+  $$SELECT public.api_get_product_profile_by_ean('5901234123459')$$,
+  'api_get_product_profile_by_ean does not throw for known EAN'
+);
+
+SELECT ok(
+  (public.api_get_product_profile_by_ean('5901234123459')) ? 'product',
+  'profile by EAN has product section'
+);
+
+-- Unknown EAN returns error envelope
+SELECT lives_ok(
+  $$SELECT public.api_get_product_profile_by_ean('0000000000000')$$,
+  'profile by unknown EAN does not throw'
+);
+
+SELECT ok(
+  (public.api_get_product_profile_by_ean('0000000000000')) ? 'error',
+  'unknown EAN returns error key'
 );
 
 SELECT * FROM finish();

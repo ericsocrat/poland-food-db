@@ -7,14 +7,17 @@ import { callRpc } from "./rpc";
 import type {
   AddToListResponse,
   AlternativesResponse,
+  AnalyticsEventName,
   AutocompleteResponse,
   AvoidProductIdsResponse,
   CategoryListingResponse,
   CategoryOverviewItem,
   CompareResponse,
   CreateListResponse,
+  DashboardData,
   DataConfidence,
   DeleteSavedSearchResponse,
+  DeviceType,
   EanLookupResponse,
   EanNotFoundResponse,
   FavoriteProductIdsResponse,
@@ -28,6 +31,10 @@ import type {
   MutationSuccess,
   ProductDetail,
   ProductListMembershipResponse,
+  ProductProfile,
+  ProductProfileNotFound,
+  RecentlyViewedResponse,
+  RecordProductViewResponse,
   RecordScanResponse,
   RpcResult,
   SaveComparisonResponse,
@@ -45,12 +52,6 @@ import type {
   ToggleShareResponse,
   TrackEventResponse,
   UserPreferences,
-} from "./types";
-import type { AnalyticsEventName, DeviceType } from "./types";
-import type {
-  DashboardData,
-  RecentlyViewedResponse,
-  RecordProductViewResponse,
 } from "./types";
 
 // ─── User Preferences ──────────────────────────────────────────────────────
@@ -258,6 +259,34 @@ export function getDataConfidence(
   return callRpc<DataConfidence>(supabase, "api_data_confidence", {
     p_product_id: productId,
   });
+}
+
+// ─── Product Profile (Composite) ────────────────────────────────────────────
+
+export function getProductProfile(
+  supabase: SupabaseClient,
+  productId: number,
+  language?: string,
+): Promise<RpcResult<ProductProfile>> {
+  return callRpc<ProductProfile>(supabase, "api_get_product_profile", {
+    p_product_id: productId,
+    ...(language ? { p_language: language } : {}),
+  });
+}
+
+export function getProductProfileByEan(
+  supabase: SupabaseClient,
+  ean: string,
+  language?: string,
+): Promise<RpcResult<ProductProfile | ProductProfileNotFound>> {
+  return callRpc<ProductProfile | ProductProfileNotFound>(
+    supabase,
+    "api_get_product_profile_by_ean",
+    {
+      p_ean: ean,
+      ...(language ? { p_language: language } : {}),
+    },
+  );
 }
 
 // ─── Health Profiles ────────────────────────────────────────────────────────
