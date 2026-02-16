@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(52);
+SELECT plan(58);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -37,6 +37,8 @@ SELECT has_table('public', 'user_comparisons',       'table user_comparisons exi
 SELECT has_table('public', 'user_saved_searches',    'table user_saved_searches exists');
 SELECT has_table('public', 'scan_history',           'table scan_history exists');
 SELECT has_table('public', 'product_submissions',    'table product_submissions exists');
+SELECT has_table('public', 'analytics_events',       'table analytics_events exists');
+SELECT has_table('public', 'allowed_event_names',    'table allowed_event_names exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. Key columns on products table
@@ -95,6 +97,10 @@ SELECT has_function('public', 'api_category_listing',      'function api_categor
 SELECT has_function('public', 'api_search_products',       'function api_search_products exists');
 SELECT has_function('public', 'api_search_autocomplete',   'function api_search_autocomplete exists');
 SELECT has_function('public', 'api_get_filter_options',    'function api_get_filter_options exists');
+SELECT has_function('public', 'api_track_event',           'function api_track_event exists');
+SELECT has_function('public', 'api_admin_get_event_summary', 'function api_admin_get_event_summary exists');
+SELECT has_function('public', 'api_admin_get_top_events',  'function api_admin_get_top_events exists');
+SELECT has_function('public', 'api_admin_get_funnel',      'function api_admin_get_funnel exists');
 
 SELECT * FROM finish();
 ROLLBACK;
