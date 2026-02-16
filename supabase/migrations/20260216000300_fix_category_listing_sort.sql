@@ -41,8 +41,11 @@ COMMENT ON COLUMN public.category_ref.slug IS
 'URL-safe slug for this category (e.g. "seafood-fish"). Used in frontend routes. Unique.';
 
 -- ─── 2. Rebuild view to include slug ────────────────────────────────────────
+-- Must DROP first — CREATE OR REPLACE cannot add/reorder columns on an existing view.
 
-CREATE OR REPLACE VIEW public.v_api_category_overview_by_country AS
+DROP VIEW IF EXISTS public.v_api_category_overview_by_country;
+
+CREATE VIEW public.v_api_category_overview_by_country AS
 SELECT
     p.country                                               AS country_code,
     cr.category,
