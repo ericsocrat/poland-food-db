@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(58);
+SELECT plan(62);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -39,6 +39,7 @@ SELECT has_table('public', 'scan_history',           'table scan_history exists'
 SELECT has_table('public', 'product_submissions',    'table product_submissions exists');
 SELECT has_table('public', 'analytics_events',       'table analytics_events exists');
 SELECT has_table('public', 'allowed_event_names',    'table allowed_event_names exists');
+SELECT has_table('public', 'user_product_views',     'table user_product_views exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. Key columns on products table
@@ -101,6 +102,9 @@ SELECT has_function('public', 'api_track_event',           'function api_track_e
 SELECT has_function('public', 'api_admin_get_event_summary', 'function api_admin_get_event_summary exists');
 SELECT has_function('public', 'api_admin_get_top_events',  'function api_admin_get_top_events exists');
 SELECT has_function('public', 'api_admin_get_funnel',      'function api_admin_get_funnel exists');
+SELECT has_function('public', 'api_record_product_view',   'function api_record_product_view exists');
+SELECT has_function('public', 'api_get_recently_viewed',   'function api_get_recently_viewed exists');
+SELECT has_function('public', 'api_get_dashboard_data',    'function api_get_dashboard_data exists');
 
 SELECT * FROM finish();
 ROLLBACK;

@@ -54,6 +54,10 @@ import {
   getMySubmissions,
   // Analytics
   trackEvent,
+  // Dashboard
+  recordProductView,
+  getRecentlyViewed,
+  getDashboardData,
 } from "@/lib/api";
 
 // ─── Mock the RPC layer ─────────────────────────────────────────────────────
@@ -743,5 +747,50 @@ describe("Analytics API functions", () => {
       p_session_id: null,
       p_device_type: null,
     });
+  });
+});
+
+// ─── Dashboard / Recently Viewed ────────────────────────────────────────────
+
+describe("Dashboard API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("recordProductView calls api_record_product_view with product ID", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { api_version: "1.0", recorded: true } });
+    await recordProductView(fakeSupabase, 42);
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_record_product_view", {
+      p_product_id: 42,
+    });
+  });
+
+  it("getRecentlyViewed calls api_get_recently_viewed with defaults", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { api_version: "1.0", products: [] } });
+    await getRecentlyViewed(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_get_recently_viewed", {});
+  });
+
+  it("getRecentlyViewed passes custom limit", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { api_version: "1.0", products: [] } });
+    await getRecentlyViewed(fakeSupabase, 20);
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_get_recently_viewed", {
+      p_limit: 20,
+    });
+  });
+
+  it("getDashboardData calls api_get_dashboard_data with no params", async () => {
+    mockCallRpc.mockResolvedValue({
+      ok: true,
+      data: {
+        api_version: "1.0",
+        recently_viewed: [],
+        favorites_preview: [],
+        new_products: [],
+        stats: { total_scanned: 0, total_viewed: 0, lists_count: 0, favorites_count: 0, most_viewed_category: null },
+      },
+    });
+    await getDashboardData(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_get_dashboard_data");
   });
 });

@@ -730,3 +730,64 @@ export interface TrackEventResponse {
   tracked: boolean;
   error?: string;
 }
+
+// ─── Dashboard / Recently Viewed ────────────────────────────────────────────
+
+export interface RecentlyViewedProduct {
+  product_id: number;
+  product_name: string;
+  brand: string | null;
+  category: string;
+  country: string;
+  unhealthiness_score: number | null;
+  nutri_score_label: NutriGrade | null;
+  viewed_at: string;
+}
+
+export interface RecentlyViewedResponse {
+  api_version: string;
+  products: RecentlyViewedProduct[];
+}
+
+export interface RecordProductViewResponse {
+  api_version: string;
+  recorded?: boolean;
+  error?: string;
+}
+
+export interface DashboardStats {
+  total_scanned: number;
+  total_viewed: number;
+  lists_count: number;
+  favorites_count: number;
+  most_viewed_category: string | null;
+}
+
+export interface DashboardFavoritePreview {
+  product_id: number;
+  product_name: string;
+  brand: string | null;
+  category: string;
+  country: string;
+  unhealthiness_score: number | null;
+  nutri_score_label: NutriGrade | null;
+  added_at: string;
+}
+
+export interface DashboardNewProduct {
+  product_id: number;
+  product_name: string;
+  brand: string | null;
+  category: string;
+  country: string;
+  unhealthiness_score: number | null;
+  nutri_score_label: NutriGrade | null;
+}
+
+export interface DashboardData {
+  api_version: string;
+  recently_viewed: RecentlyViewedProduct[];
+  favorites_preview: DashboardFavoritePreview[];
+  new_products: DashboardNewProduct[];
+  stats: DashboardStats;
+}

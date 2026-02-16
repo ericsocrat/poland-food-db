@@ -92,6 +92,13 @@ export const queryKeys = {
 
   /** User's product submissions */
   mySubmissions: (page: number) => ["my-submissions", page] as const,
+
+  /** Dashboard data (batched) */
+  dashboard: ["dashboard"] as const,
+
+  /** Recently viewed products */
+  recentlyViewed: (limit?: number) =>
+    ["recently-viewed", { limit }] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -168,4 +175,10 @@ export const staleTimes = {
 
   /** User submissions — 5 min */
   mySubmissions: 5 * 60 * 1000,
+
+  /** Dashboard data — 2 min (aggregated, changes frequently) */
+  dashboard: 2 * 60 * 1000,
+
+  /** Recently viewed — 1 min (updates on every product view) */
+  recentlyViewed: 60 * 1000,
 } as const;

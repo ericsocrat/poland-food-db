@@ -767,6 +767,7 @@ If you **modify, rename, or add** any SQL function or view used by the app API (
 | `search_functions.test.sql` | `api_search_products`, `api_search_autocomplete`, `api_get_filter_options` |
 | `comparison_functions.test.sql` | `api_get_products_for_compare`, `api_save_comparison`, `api_get_shared_comparison` |
 | `telemetry_functions.test.sql` | `api_track_event`, `api_admin_get_event_summary`, `api_admin_get_top_events`, `api_admin_get_funnel` |
+| `dashboard_functions.test.sql` | `api_record_product_view`, `api_get_recently_viewed`, `api_get_dashboard_data` |
 | `user_functions.test.sql` | Auth-error branches for all `authenticated`-only functions |
 | `schema_contracts.test.sql` | Table/view/function existence checks |
 

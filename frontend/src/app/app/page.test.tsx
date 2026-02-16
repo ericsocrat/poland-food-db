@@ -1,0 +1,302 @@
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
+import type { DashboardData } from "@/lib/types";
+
+// ─── Mocks ──────────────────────────────────────────────────────────────────
+
+const mockGetDashboardData = vi.fn();
+
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({}),
+}));
+
+vi.mock("@/lib/api", () => ({
+  getDashboardData: (...args: unknown[]) => mockGetDashboardData(...args),
+}));
+
+vi.mock("next/link", () => ({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  default: ({ href, children }: any) => <a href={href}>{children}</a>,
+}));
+
+// ─── Wrapper ────────────────────────────────────────────────────────────────
+
+function Wrapper({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: { queries: { retry: false, staleTime: 0 } },
+      }),
+  );
+  return (
+    <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
+  );
+}
+
+function createWrapper() {
+  return ({ children }: { children: React.ReactNode }) => (
+    <Wrapper>{children}</Wrapper>
+  );
+}
+
+// ─── Mock data ──────────────────────────────────────────────────────────────
+
+const mockDashboard: DashboardData = {
+  api_version: "1.0",
+  recently_viewed: [
+    {
+      product_id: 1,
+      product_name: "Lay's Classic",
+      brand: "Lay's",
+      category: "chips",
+      country: "PL",
+      unhealthiness_score: 65,
+      nutri_score_label: "D",
+      viewed_at: "2026-02-16T10:00:00Z",
+    },
+    {
+      product_id: 2,
+      product_name: "Pepsi Max",
+      brand: "Pepsi",
+      category: "drinks",
+      country: "PL",
+      unhealthiness_score: 30,
+      nutri_score_label: "B",
+      viewed_at: "2026-02-15T09:00:00Z",
+    },
+  ],
+  favorites_preview: [
+    {
+      product_id: 3,
+      product_name: "Activia Natural",
+      brand: "Danone",
+      category: "dairy",
+      country: "PL",
+      unhealthiness_score: 15,
+      nutri_score_label: "A",
+      added_at: "2026-02-14T08:00:00Z",
+    },
+  ],
+  new_products: [
+    {
+      product_id: 4,
+      product_name: "New Crunchy Chips",
+      brand: "Crunchies",
+      category: "chips",
+      country: "PL",
+      unhealthiness_score: 72,
+      nutri_score_label: "D",
+    },
+  ],
+  stats: {
+    total_scanned: 42,
+    total_viewed: 15,
+    lists_count: 3,
+    favorites_count: 7,
+    most_viewed_category: "chips",
+  },
+};
+
+// ─── Import page after mocks ────────────────────────────────────────────────
+
+import DashboardPage from "./page";
+
+// ─── Tests ──────────────────────────────────────────────────────────────────
+
+describe("DashboardPage", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockGetDashboardData.mockResolvedValue({ ok: true, data: mockDashboard });
+  });
+
+  it("shows loading spinner initially", () => {
+    // Never resolve to keep loading state
+    mockGetDashboardData.mockReturnValue(new Promise(() => {}));
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    expect(screen.getByLabelText("Loading")).toBeInTheDocument();
+  });
+
+  it("renders the dashboard title", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    });
+  });
+
+  it("renders stats bar with correct values", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("42")).toBeInTheDocument();
+      // "15" appears twice (stats + score pill), so use getAllByText
+      expect(screen.getAllByText("15").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText("3")).toBeInTheDocument();
+      expect(screen.getByText("7")).toBeInTheDocument();
+    });
+  });
+
+  it("renders stats labels", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Scanned")).toBeInTheDocument();
+      expect(screen.getByText("Viewed")).toBeInTheDocument();
+      expect(screen.getByText("Lists")).toBeInTheDocument();
+      expect(screen.getByText("Favorites")).toBeInTheDocument();
+    });
+  });
+
+  it("renders recently viewed products", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+      expect(screen.getByText("Pepsi Max")).toBeInTheDocument();
+    });
+  });
+
+  it("renders recently viewed section header", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Recently Viewed/),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("renders favorites preview", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Activia Natural")).toBeInTheDocument();
+    });
+  });
+
+  it("renders favorites section with view all link", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("View all →")).toBeInTheDocument();
+    });
+    const viewAllLink = screen.getByText("View all →").closest("a");
+    expect(viewAllLink).toHaveAttribute("href", "/app/lists");
+  });
+
+  it("renders new products section", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("New Crunchy Chips")).toBeInTheDocument();
+    });
+  });
+
+  it("renders new products with category context", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText(/New in chips/)).toBeInTheDocument();
+    });
+  });
+
+  it("renders product links with correct hrefs", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    const link = screen.getByText("Lay's Classic").closest("a");
+    expect(link).toHaveAttribute("href", "/app/product/1");
+  });
+
+  it("renders nutri-score badges", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    // Should have D and B badges plus A from favorites and D from new products
+    const badges = screen.getAllByText("D");
+    expect(badges.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("renders score pills", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("65")).toBeInTheDocument();
+      expect(screen.getByText("30")).toBeInTheDocument();
+    });
+  });
+
+  it("shows error state on failure", async () => {
+    mockGetDashboardData.mockResolvedValue({
+      ok: false,
+      error: { code: "500", message: "Server error" },
+    });
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Something went wrong/),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("shows empty dashboard when no content", async () => {
+    mockGetDashboardData.mockResolvedValue({
+      ok: true,
+      data: {
+        ...mockDashboard,
+        recently_viewed: [],
+        favorites_preview: [],
+        new_products: [],
+      },
+    });
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Welcome to your Dashboard")).toBeInTheDocument();
+    });
+  });
+
+  it("shows scan CTA on empty dashboard", async () => {
+    mockGetDashboardData.mockResolvedValue({
+      ok: true,
+      data: {
+        ...mockDashboard,
+        recently_viewed: [],
+        favorites_preview: [],
+        new_products: [],
+      },
+    });
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      const scanLink = screen.getByText(/Scan a Product/).closest("a");
+      expect(scanLink).toHaveAttribute("href", "/app/scan");
+    });
+  });
+
+  it("hides recently viewed section when empty", async () => {
+    mockGetDashboardData.mockResolvedValue({
+      ok: true,
+      data: {
+        ...mockDashboard,
+        recently_viewed: [],
+        // Keep favorites so dashboard is not empty
+        favorites_preview: mockDashboard.favorites_preview,
+      },
+    });
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Activia Natural")).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Recently Viewed/)).not.toBeInTheDocument();
+  });
+
+  it("hides favorites section when empty", async () => {
+    mockGetDashboardData.mockResolvedValue({
+      ok: true,
+      data: {
+        ...mockDashboard,
+        favorites_preview: [],
+        // Keep recently viewed so dashboard is not empty
+        recently_viewed: mockDashboard.recently_viewed,
+      },
+    });
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    expect(screen.queryByText("View all →")).not.toBeInTheDocument();
+  });
+});

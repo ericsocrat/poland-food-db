@@ -47,6 +47,11 @@ import type {
   UserPreferences,
 } from "./types";
 import type { AnalyticsEventName, DeviceType } from "./types";
+import type {
+  DashboardData,
+  RecentlyViewedResponse,
+  RecordProductViewResponse,
+} from "./types";
 
 // ─── User Preferences ──────────────────────────────────────────────────────
 
@@ -628,4 +633,34 @@ export function trackEvent(
     p_session_id: params.sessionId ?? null,
     p_device_type: params.deviceType ?? null,
   });
+}
+
+// ─── Dashboard / Recently Viewed ────────────────────────────────────────────
+
+export function recordProductView(
+  supabase: SupabaseClient,
+  productId: number,
+): Promise<RpcResult<RecordProductViewResponse>> {
+  return callRpc<RecordProductViewResponse>(
+    supabase,
+    "api_record_product_view",
+    { p_product_id: productId },
+  );
+}
+
+export function getRecentlyViewed(
+  supabase: SupabaseClient,
+  limit?: number,
+): Promise<RpcResult<RecentlyViewedResponse>> {
+  return callRpc<RecentlyViewedResponse>(
+    supabase,
+    "api_get_recently_viewed",
+    { ...(limit ? { p_limit: limit } : {}) },
+  );
+}
+
+export function getDashboardData(
+  supabase: SupabaseClient,
+): Promise<RpcResult<DashboardData>> {
+  return callRpc<DashboardData>(supabase, "api_get_dashboard_data");
 }

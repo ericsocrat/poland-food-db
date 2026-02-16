@@ -11,6 +11,7 @@ import {
   getProductDetail,
   getBetterAlternatives,
   getScoreExplanation,
+  recordProductView,
 } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
@@ -57,6 +58,8 @@ export default function ProductDetailPage() {
         product_name: product.product_name,
         category: product.category,
       });
+      // Record view for dashboard recently-viewed section
+      recordProductView(supabase, productId);
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
