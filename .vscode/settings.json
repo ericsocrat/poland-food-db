@@ -207,7 +207,9 @@
     "plsql:S1192": { "level": "off" },
     "plsql:S1138": { "level": "off" },
     "plsql:NullComparison": { "level": "off" },
-    "plsql:JoinConditionNumberCheck": { "level": "off" }
+    "plsql:JoinConditionNumberCheck": { "level": "off" },
+    "typescript:S7780": { "level": "off" },
+    "yaml:S2068": { "level": "off" }
   },
 
   // ═══════════════════════════════════════════════════════════════════════
