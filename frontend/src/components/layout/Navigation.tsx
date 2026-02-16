@@ -4,17 +4,19 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslation } from "@/lib/i18n";
 
 const NAV_ITEMS = [
-  { href: "/app", label: "Home", icon: "🏠", exact: true },
-  { href: "/app/search", label: "Search", icon: "🔍", exact: false },
-  { href: "/app/scan", label: "Scan", icon: "📷", exact: false },
-  { href: "/app/lists", label: "Lists", icon: "📋", exact: false },
-  { href: "/app/settings", label: "Settings", icon: "⚙️", exact: false },
+  { href: "/app", labelKey: "nav.home", icon: "🏠", exact: true },
+  { href: "/app/search", labelKey: "nav.search", icon: "🔍", exact: false },
+  { href: "/app/scan", labelKey: "nav.scan", icon: "📷", exact: false },
+  { href: "/app/lists", labelKey: "nav.lists", icon: "📋", exact: false },
+  { href: "/app/settings", labelKey: "nav.settings", icon: "⚙️", exact: false },
 ];
 
 export function Navigation() {
   const pathname = usePathname();
+  const { t } = useTranslation();
 
   return (
     <nav
@@ -26,11 +28,12 @@ export function Navigation() {
           const isActive = item.exact
             ? pathname === item.href
             : pathname.startsWith(item.href);
+          const label = t(item.labelKey);
           return (
             <Link
               key={item.href}
               href={item.href}
-              aria-label={item.label}
+              aria-label={label}
               aria-current={isActive ? "page" : undefined}
               className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs transition-colors ${
                 isActive
@@ -39,7 +42,7 @@ export function Navigation() {
               }`}
             >
               <span className="text-xl">{item.icon}</span>
-              <span>{item.label}</span>
+              <span>{label}</span>
             </Link>
           );
         })}

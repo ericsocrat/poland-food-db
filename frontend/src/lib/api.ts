@@ -65,6 +65,7 @@ export function setUserPreferences(
   supabase: SupabaseClient,
   prefs: {
     p_country?: string;
+    p_preferred_language?: string;
     p_diet_preference?: string;
     p_avoid_allergens?: string[];
     p_strict_allergen?: boolean;

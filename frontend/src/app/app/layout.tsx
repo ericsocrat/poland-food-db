@@ -9,6 +9,7 @@ import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { Navigation } from "@/components/layout/Navigation";
 import { CountryChip } from "@/components/common/CountryChip";
 import { ListsHydrator } from "@/components/product/ListsHydrator";
+import { LanguageHydrator } from "@/components/i18n/LanguageHydrator";
 import { CompareFloatingButton } from "@/components/compare/CompareFloatingButton";
 import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
@@ -70,6 +71,7 @@ export default async function AppLayout({
 
       <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
         <ListsHydrator />
+        <LanguageHydrator />
         {children}
       </main>
 

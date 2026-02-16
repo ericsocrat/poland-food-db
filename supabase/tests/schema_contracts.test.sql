@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(62);
+SELECT plan(66);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -24,6 +24,8 @@ SELECT has_table('public', 'product_ingredient', 'table product_ingredient exist
 SELECT has_table('public', 'product_allergen_info', 'table product_allergen_info exists');
 SELECT has_table('public', 'product_field_provenance', 'table product_field_provenance exists');
 SELECT has_table('public', 'source_nutrition',   'table source_nutrition exists');
+SELECT has_table('public', 'language_ref',       'table language_ref exists');
+SELECT has_table('public', 'category_translations', 'table category_translations exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. User / auth-related tables exist
@@ -54,6 +56,7 @@ SELECT has_column('public', 'products', 'country',             'products.country
 SELECT has_column('public', 'products', 'unhealthiness_score', 'products.unhealthiness_score exists');
 SELECT has_column('public', 'products', 'nutri_score_label',   'products.nutri_score_label exists');
 SELECT has_column('public', 'products', 'nova_classification', 'products.nova_classification exists');
+SELECT has_column('public', 'user_preferences', 'preferred_language', 'user_preferences.preferred_language exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 4. Key columns on nutrition_facts table
@@ -105,6 +108,7 @@ SELECT has_function('public', 'api_admin_get_funnel',      'function api_admin_g
 SELECT has_function('public', 'api_record_product_view',   'function api_record_product_view exists');
 SELECT has_function('public', 'api_get_recently_viewed',   'function api_get_recently_viewed exists');
 SELECT has_function('public', 'api_get_dashboard_data',    'function api_get_dashboard_data exists');
+SELECT has_function('public', 'resolve_language',           'function resolve_language exists');
 
 SELECT * FROM finish();
 ROLLBACK;

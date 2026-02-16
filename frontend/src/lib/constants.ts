@@ -8,6 +8,12 @@ export const COUNTRIES = [
   { code: "PL", name: "Poland", native: "Polska", flag: "🇵🇱" },
 ] as const;
 
+export const LANGUAGES = [
+  { code: "en", name: "English", native: "English", flag: "🇬🇧" },
+  { code: "pl", name: "Polish", native: "Polski", flag: "🇵🇱" },
+  { code: "de", name: "German", native: "Deutsch", flag: "🇩🇪" },
+] as const;
+
 export const ALLERGEN_TAGS = [
   { tag: "en:gluten", label: "Gluten" },
   { tag: "en:milk", label: "Milk / Dairy" },

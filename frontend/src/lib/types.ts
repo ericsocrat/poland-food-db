@@ -27,6 +27,7 @@ export interface UserPreferences {
   api_version: string;
   user_id: string;
   country: string | null;
+  preferred_language: string;
   diet_preference: string | null;
   avoid_allergens: string[];
   strict_allergen: boolean;

@@ -9,16 +9,20 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences, setUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { COUNTRIES, DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
+import { COUNTRIES, LANGUAGES, DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthProfileSection } from "@/components/settings/HealthProfileSection";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useTranslation } from "@/lib/i18n";
+import { useLanguageStore, type SupportedLanguage } from "@/stores/language-store";
 
 export default function SettingsPage() {
   const router = useRouter();
   const supabase = createClient();
   const queryClient = useQueryClient();
   const { track } = useAnalytics();
+  const { t } = useTranslation();
+  const setStoreLanguage = useLanguageStore((s) => s.setLanguage);
 
   const { data: prefs, isLoading } = useQuery({
     queryKey: queryKeys.preferences,
@@ -31,6 +35,7 @@ export default function SettingsPage() {
   });
 
   const [country, setCountry] = useState("");
+  const [language, setLanguage] = useState<SupportedLanguage>("en");
   const [diet, setDiet] = useState("none");
   const [allergens, setAllergens] = useState<string[]>([]);
   const [strictDiet, setStrictDiet] = useState(false);
@@ -43,6 +48,7 @@ export default function SettingsPage() {
   useEffect(() => {
     if (prefs) {
       setCountry(prefs.country ?? "");
+      setLanguage((prefs.preferred_language ?? "en") as SupportedLanguage);
       setDiet(prefs.diet_preference ?? "none");
       setAllergens(prefs.avoid_allergens ?? []);
       setStrictDiet(prefs.strict_diet);
@@ -66,6 +72,7 @@ export default function SettingsPage() {
     setSaving(true);
     const result = await setUserPreferences(supabase, {
       p_country: country,
+      p_preferred_language: language,
       p_diet_preference: diet,
       p_avoid_allergens: allergens.length > 0 ? allergens : undefined,
       p_strict_diet: strictDiet,
@@ -79,7 +86,10 @@ export default function SettingsPage() {
       return;
     }
 
-    // Invalidate all product-related caches since country/diet may have changed
+    // Sync the language store so the entire UI re-renders in the new language
+    setStoreLanguage(language);
+
+    // Invalidate all product-related caches since country/diet/language may have changed
     await queryClient.invalidateQueries({ queryKey: queryKeys.preferences });
     await queryClient.invalidateQueries({ queryKey: ["search"] });
     await queryClient.invalidateQueries({ queryKey: ["category-listing"] });
@@ -88,8 +98,8 @@ export default function SettingsPage() {
     });
 
     setDirty(false);
-    track("preferences_updated", { country, diet, allergen_count: allergens.length });
-    toast.success("Preferences saved!");
+    track("preferences_updated", { country, language, diet, allergen_count: allergens.length });
+    toast.success(t("settings.preferencesSaved"));
   }
 
   async function handleLogout() {
@@ -109,11 +119,11 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-gray-900">Settings</h1>
+      <h1 className="text-xl font-bold text-gray-900">{t("settings.title")}</h1>
 
       {/* Country */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">Country</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">{t("settings.country")}</h2>
         <div className="grid grid-cols-2 gap-2">
           {COUNTRIES.map((c) => (
             <button
@@ -137,10 +147,36 @@ export default function SettingsPage() {
         </div>
       </section>
 
+      {/* Language */}
+      <section className="card">
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">{t("settings.language")}</h2>
+        <div className="grid grid-cols-3 gap-2">
+          {LANGUAGES.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => {
+                setLanguage(lang.code as SupportedLanguage);
+                markDirty();
+              }}
+              className={`rounded-lg border-2 px-3 py-3 text-center transition-colors ${
+                language === lang.code
+                  ? "border-brand-500 bg-brand-50"
+                  : "border-gray-200 hover:border-gray-300"
+              }`}
+            >
+              <span className="text-2xl">{lang.flag}</span>
+              <p className="mt-1 text-sm font-medium text-gray-900">
+                {lang.native}
+              </p>
+            </button>
+          ))}
+        </div>
+      </section>
+
       {/* Diet */}
       <section className="card">
         <h2 className="mb-3 text-sm font-semibold text-gray-700">
-          Diet preference
+          {t("settings.dietPreference")}
         </h2>
         <div className="grid grid-cols-3 gap-2">
           {DIET_OPTIONS.map((opt) => (
@@ -172,7 +208,7 @@ export default function SettingsPage() {
               className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
             />
             <span className="text-sm text-gray-700">
-              Strict — exclude &quot;maybe&quot; products
+              {t("settings.strictDiet")}
             </span>
           </label>
         )}
@@ -181,7 +217,7 @@ export default function SettingsPage() {
       {/* Allergens */}
       <section className="card">
         <h2 className="mb-3 text-sm font-semibold text-gray-700">
-          Allergens to avoid
+          {t("settings.allergensToAvoid")}
         </h2>
         <div className="flex flex-wrap gap-2">
           {ALLERGEN_TAGS.map((a) => (
@@ -211,7 +247,7 @@ export default function SettingsPage() {
                 className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
               />
               <span className="text-sm text-gray-700">
-                Strict allergen matching
+                {t("settings.strictAllergen")}
               </span>
             </label>
             <label className="flex cursor-pointer items-center gap-3">
@@ -225,7 +261,7 @@ export default function SettingsPage() {
                 className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
               />
               <span className="text-sm text-gray-700">
-                Treat &quot;may contain&quot; as unsafe
+                {t("settings.treatMayContain")}
               </span>
             </label>
           </div>
@@ -242,13 +278,13 @@ export default function SettingsPage() {
           disabled={saving}
           className="btn-primary w-full"
         >
-          {saving ? "Saving…" : "Save changes"}
+          {saving ? t("common.saving") : t("settings.saveChanges")}
         </button>
       )}
 
       {/* Account section */}
       <section className="card border-red-100">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">Account</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">{t("settings.account")}</h2>
         <p className="mb-3 text-xs text-gray-500">
           {prefs?.user_id && `User ID: ${prefs.user_id.slice(0, 8)}…`}
         </p>
@@ -256,7 +292,7 @@ export default function SettingsPage() {
           onClick={handleLogout}
           className="w-full rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
         >
-          Sign out
+          {t("settings.signOut")}
         </button>
       </section>
     </div>
