@@ -60,6 +60,78 @@ describe("queryKeys", () => {
   it("healthWarnings key for a given product", () => {
     expect(queryKeys.healthWarnings(99)).toEqual(["health-warnings", 99]);
   });
+
+  it("autocomplete key for a query string", () => {
+    expect(queryKeys.autocomplete("choc")).toEqual(["autocomplete", "choc"]);
+  });
+
+  it("filterOptions is a static tuple", () => {
+    expect(queryKeys.filterOptions).toEqual(["filter-options"]);
+  });
+
+  it("savedSearches is a static tuple", () => {
+    expect(queryKeys.savedSearches).toEqual(["saved-searches"]);
+  });
+
+  it("dataConfidence key for a product", () => {
+    expect(queryKeys.dataConfidence(5)).toEqual(["data-confidence", 5]);
+  });
+
+  it("lists is a static tuple", () => {
+    expect(queryKeys.lists).toEqual(["lists"]);
+  });
+
+  it("listItems key for a list id", () => {
+    expect(queryKeys.listItems("abc")).toEqual(["list-items", "abc"]);
+  });
+
+  it("sharedList key for a token", () => {
+    expect(queryKeys.sharedList("tok")).toEqual(["shared-list", "tok"]);
+  });
+
+  it("avoidProductIds is a static tuple", () => {
+    expect(queryKeys.avoidProductIds).toEqual(["avoid-product-ids"]);
+  });
+
+  it("favoriteProductIds is a static tuple", () => {
+    expect(queryKeys.favoriteProductIds).toEqual(["favorite-product-ids"]);
+  });
+
+  it("productListMembership key for a product", () => {
+    expect(queryKeys.productListMembership(3)).toEqual([
+      "product-list-membership",
+      3,
+    ]);
+  });
+
+  it("compareProducts sorts ids deterministically", () => {
+    expect(queryKeys.compareProducts([3, 1, 2])).toEqual([
+      "compare-products",
+      "1,2,3",
+    ]);
+  });
+
+  it("savedComparisons is a static tuple", () => {
+    expect(queryKeys.savedComparisons).toEqual(["saved-comparisons"]);
+  });
+
+  it("sharedComparison key for a token", () => {
+    expect(queryKeys.sharedComparison("xyz")).toEqual([
+      "shared-comparison",
+      "xyz",
+    ]);
+  });
+
+  it("scanHistory key includes page and filter", () => {
+    expect(queryKeys.scanHistory(2, "food")).toEqual([
+      "scan-history",
+      { page: 2, filter: "food" },
+    ]);
+  });
+
+  it("mySubmissions key for a page number", () => {
+    expect(queryKeys.mySubmissions(1)).toEqual(["my-submissions", 1]);
+  });
 });
 
 // ─── staleTimes ─────────────────────────────────────────────────────────────
@@ -85,5 +157,51 @@ describe("staleTimes", () => {
 
   it("healthProfiles is 5 minutes", () => {
     expect(staleTimes.healthProfiles).toBe(5 * 60 * 1000);
+  });
+
+  it("autocomplete is 30 seconds", () => {
+    expect(staleTimes.autocomplete).toBe(30 * 1000);
+  });
+
+  it("filterOptions is 10 minutes", () => {
+    expect(staleTimes.filterOptions).toBe(10 * 60 * 1000);
+  });
+
+  it("categoryListing is 5 minutes", () => {
+    expect(staleTimes.categoryListing).toBe(5 * 60 * 1000);
+  });
+
+  it("categoryOverview is 10 minutes", () => {
+    expect(staleTimes.categoryOverview).toBe(10 * 60 * 1000);
+  });
+
+  it("alternatives is 10 minutes", () => {
+    expect(staleTimes.alternatives).toBe(10 * 60 * 1000);
+  });
+
+  it("listItems is 2 minutes", () => {
+    expect(staleTimes.listItems).toBe(2 * 60 * 1000);
+  });
+
+  it("compareProducts is 5 minutes", () => {
+    expect(staleTimes.compareProducts).toBe(5 * 60 * 1000);
+  });
+
+  it("scanHistory is 2 minutes", () => {
+    expect(staleTimes.scanHistory).toBe(2 * 60 * 1000);
+  });
+
+  it("mySubmissions is 5 minutes", () => {
+    expect(staleTimes.mySubmissions).toBe(5 * 60 * 1000);
+  });
+
+  it("has the same keys as queryKeys (completeness check)", () => {
+    const qkKeys = Object.keys(queryKeys);
+    const stKeys = Object.keys(staleTimes);
+    // staleTimes may not cover every queryKey (some share stale times)
+    // but every staleTime key should correspond to a queryKey
+    for (const key of stKeys) {
+      expect(qkKeys).toContain(key);
+    }
   });
 });
