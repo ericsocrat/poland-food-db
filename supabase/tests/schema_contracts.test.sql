@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(69);
+SELECT plan(71);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -26,6 +26,7 @@ SELECT has_table('public', 'product_field_provenance', 'table product_field_prov
 SELECT has_table('public', 'source_nutrition',   'table source_nutrition exists');
 SELECT has_table('public', 'language_ref',       'table language_ref exists');
 SELECT has_table('public', 'category_translations', 'table category_translations exists');
+SELECT has_table('public', 'search_synonyms',       'table search_synonyms exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. User / auth-related tables exist
@@ -112,6 +113,7 @@ SELECT has_function('public', 'api_record_product_view',   'function api_record_
 SELECT has_function('public', 'api_get_recently_viewed',   'function api_get_recently_viewed exists');
 SELECT has_function('public', 'api_get_dashboard_data',    'function api_get_dashboard_data exists');
 SELECT has_function('public', 'resolve_language',           'function resolve_language exists');
+SELECT has_function('public', 'expand_search_query',        'function expand_search_query exists');
 
 SELECT * FROM finish();
 ROLLBACK;

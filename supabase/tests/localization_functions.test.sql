@@ -1,14 +1,15 @@
--- ─── pgTAP: Localization Phase 1 (#32) ──────────────────────────────────────
+-- ─── pgTAP: Localization Phases 1-3 (#32) ────────────────────────────────────
 -- Tests for language_ref, category_translations, resolve_language(),
 -- preferred_language on user_preferences, localized API responses,
--- and Phase 2 product_name_en / search enhancements.
+-- Phase 2 product_name_en / search enhancements,
+-- and Phase 3 cross-language search synonyms.
 -- Run via: supabase test db
 --
 -- Self-contained: inserts own fixture data so tests work on an empty DB.
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(49);
+SELECT plan(67);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -70,6 +71,32 @@ INSERT INTO public.products (
 ) ON CONFLICT (product_id) DO UPDATE SET
     product_name_en = NULL,
     unhealthiness_score = 30;
+
+-- Phase 3 fixture: product with EN name containing "Milk" but no "mleko" anywhere
+-- Used to test PL→EN synonym: searching "mleko" should find this via synonym→"milk"
+INSERT INTO public.products (
+    product_id, product_name, product_name_en, brand, category, country,
+    is_deprecated, unhealthiness_score
+) VALUES (
+    999805, 'Testowy Napój ABC', 'Test Milk Drink ABC', 'TestBrand',
+    'pgtap-l10n', 'PL', false, 35
+) ON CONFLICT (product_id) DO UPDATE SET
+    product_name = 'Testowy Napój ABC',
+    product_name_en = 'Test Milk Drink ABC',
+    unhealthiness_score = 35;
+
+-- Phase 3 fixture: product with Polish name containing "Mleko" but NO EN translation
+-- Used to test EN→PL synonym: searching "milk" should find this via synonym→"mleko"
+INSERT INTO public.products (
+    product_id, product_name, brand, category, country,
+    is_deprecated, unhealthiness_score
+) VALUES (
+    999806, 'Mleko Testowe UVW', 'TestBrand',
+    'pgtap-l10n', 'PL', false, 25
+) ON CONFLICT (product_id) DO UPDATE SET
+    product_name = 'Mleko Testowe UVW',
+    product_name_en = NULL,
+    unhealthiness_score = 25;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. language_ref table structure
@@ -369,6 +396,129 @@ SELECT is(
     (SELECT api_product_detail(999803)->>'original_language'),
     'pl',
     'api_product_detail returns original_language derived from country'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 12. Phase 3: search_synonyms table structure
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT has_table('public', 'search_synonyms', 'search_synonyms table exists');
+
+SELECT has_column('public', 'search_synonyms', 'id',
+    'search_synonyms.id exists');
+SELECT has_column('public', 'search_synonyms', 'term_original',
+    'search_synonyms.term_original exists');
+SELECT has_column('public', 'search_synonyms', 'term_target',
+    'search_synonyms.term_target exists');
+SELECT has_column('public', 'search_synonyms', 'language_from',
+    'search_synonyms.language_from exists');
+SELECT has_column('public', 'search_synonyms', 'language_to',
+    'search_synonyms.language_to exists');
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 13. Phase 3: search_synonyms seed data
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- PL→EN direction has seed data
+SELECT ok(
+    (SELECT COUNT(*)::int FROM public.search_synonyms
+     WHERE language_from = 'pl' AND language_to = 'en') >= 50,
+    'search_synonyms has >= 50 PL→EN term pairs'
+);
+
+-- EN→PL direction has seed data
+SELECT ok(
+    (SELECT COUNT(*)::int FROM public.search_synonyms
+     WHERE language_from = 'en' AND language_to = 'pl') >= 50,
+    'search_synonyms has >= 50 EN→PL term pairs'
+);
+
+-- Spot-check: mleko→milk exists
+SELECT is(
+    (SELECT term_target FROM public.search_synonyms
+     WHERE term_original = 'mleko' AND language_from = 'pl' AND language_to = 'en'),
+    'milk',
+    'synonym mleko→milk (PL→EN) exists'
+);
+
+-- Spot-check: milk→mleko exists (reverse direction)
+SELECT is(
+    (SELECT term_target FROM public.search_synonyms
+     WHERE term_original = 'milk' AND language_from = 'en' AND language_to = 'pl'),
+    'mleko',
+    'synonym milk→mleko (EN→PL) exists'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 14. Phase 3: expand_search_query() function
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT has_function('public', 'expand_search_query', ARRAY['text'],
+    'expand_search_query(text) exists');
+
+-- Single word: mleko → should include 'milk'
+SELECT ok(
+    'milk' = ANY(expand_search_query('mleko')),
+    'expand_search_query(''mleko'') includes ''milk'''
+);
+
+-- Case-insensitive: MLEKO also works
+SELECT ok(
+    'milk' = ANY(expand_search_query('MLEKO')),
+    'expand_search_query is case-insensitive (MLEKO → milk)'
+);
+
+-- Reverse: milk → should include 'mleko'
+SELECT ok(
+    'mleko' = ANY(expand_search_query('milk')),
+    'expand_search_query(''milk'') includes ''mleko'''
+);
+
+-- Non-synonym word returns empty array
+SELECT is(
+    array_length(expand_search_query('zzzznotaword'), 1),
+    NULL,
+    'expand_search_query returns empty for unknown term'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 15. Phase 3: cross-language search — PL term finds EN-named product
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Searching "mleko" in country PL should find product 999805
+-- (product_name_en = 'Test Milk Drink ABC', no "mleko" in product_name)
+SELECT ok(
+    (SELECT (api_search_products('mleko', '{"country":"PL"}'::jsonb))->>'total')::int >= 1,
+    'search "mleko" finds at least 1 result in PL (via synonym → milk)'
+);
+
+-- Verify product 999805 is in the results
+SELECT ok(
+    EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements(
+            (api_search_products('mleko', '{"country":"PL"}'::jsonb))->'results'
+        ) AS r
+        WHERE (r->>'product_id')::bigint = 999805
+    ),
+    'search "mleko" finds product 999805 (EN name contains Milk)'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 16. Phase 3: cross-language search — EN term finds PL-named product
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Searching "milk" in country PL should find product 999806
+-- (product_name = 'Mleko Testowe UVW', no product_name_en set)
+SELECT ok(
+    EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements(
+            (api_search_products('milk', '{"country":"PL"}'::jsonb))->'results'
+        ) AS r
+        WHERE (r->>'product_id')::bigint = 999806
+    ),
+    'search "milk" finds product 999806 (PL name contains Mleko)'
 );
 
 SELECT * FROM finish();
