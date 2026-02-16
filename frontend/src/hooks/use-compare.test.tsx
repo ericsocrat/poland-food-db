@@ -24,10 +24,8 @@ vi.mock("@/lib/supabase/client", () => ({
 vi.mock("@/lib/api", () => ({
   getProductsForCompare: (...args: unknown[]) =>
     mockGetProductsForCompare(...args),
-  getSavedComparisons: (...args: unknown[]) =>
-    mockGetSavedComparisons(...args),
-  getSharedComparison: (...args: unknown[]) =>
-    mockGetSharedComparison(...args),
+  getSavedComparisons: (...args: unknown[]) => mockGetSavedComparisons(...args),
+  getSharedComparison: (...args: unknown[]) => mockGetSharedComparison(...args),
   saveComparison: (...args: unknown[]) => mockSaveComparison(...args),
   deleteComparison: (...args: unknown[]) => mockDeleteComparison(...args),
 }));

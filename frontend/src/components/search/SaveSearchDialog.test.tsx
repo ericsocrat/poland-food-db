@@ -37,10 +37,9 @@ const defaultProps = {
 };
 
 function renderDialog(overrides?: Partial<typeof defaultProps>) {
-  return render(
-    <SaveSearchDialog {...defaultProps} {...overrides} />,
-    { wrapper: createWrapper() },
-  );
+  return render(<SaveSearchDialog {...defaultProps} {...overrides} />, {
+    wrapper: createWrapper(),
+  });
 }
 
 // ─── Tests ──────────────────────────────────────────────────────────────────

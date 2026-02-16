@@ -28,10 +28,9 @@ function createWrapper() {
 }
 
 function renderComponent(props?: { existingShareToken?: string }) {
-  return render(
-    <ShareComparison productIds={[1, 2, 3]} {...props} />,
-    { wrapper: createWrapper() },
-  );
+  return render(<ShareComparison productIds={[1, 2, 3]} {...props} />, {
+    wrapper: createWrapper(),
+  });
 }
 
 // ─── Tests ──────────────────────────────────────────────────────────────────

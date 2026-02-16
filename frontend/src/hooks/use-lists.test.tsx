@@ -44,8 +44,10 @@ vi.mock("@/lib/api", () => ({
   getListItems: (...args: unknown[]) => mockGetListItems(...args),
   getSharedList: (...args: unknown[]) => mockGetSharedList(...args),
   getAvoidProductIds: (...args: unknown[]) => mockGetAvoidProductIds(...args),
-  getFavoriteProductIds: (...args: unknown[]) => mockGetFavoriteProductIds(...args),
-  getProductListMembership: (...args: unknown[]) => mockGetProductListMembership(...args),
+  getFavoriteProductIds: (...args: unknown[]) =>
+    mockGetFavoriteProductIds(...args),
+  getProductListMembership: (...args: unknown[]) =>
+    mockGetProductListMembership(...args),
   createList: (...args: unknown[]) => mockCreateList(...args),
   updateList: (...args: unknown[]) => mockUpdateList(...args),
   deleteList: (...args: unknown[]) => mockDeleteList(...args),
@@ -221,10 +223,9 @@ describe("useProductListMembership", () => {
   });
 
   it("does not fetch when disabled", () => {
-    const { result } = renderHook(
-      () => useProductListMembership(42, false),
-      { wrapper: createWrapper() },
-    );
+    const { result } = renderHook(() => useProductListMembership(42, false), {
+      wrapper: createWrapper(),
+    });
     expect(result.current.fetchStatus).toBe("idle");
   });
 });
