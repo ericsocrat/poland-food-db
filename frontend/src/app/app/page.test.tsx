@@ -36,9 +36,11 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 }
 
 function createWrapper() {
-  return ({ children }: { children: React.ReactNode }) => (
+  const TestWrapper = ({ children }: { children: React.ReactNode }) => (
     <Wrapper>{children}</Wrapper>
   );
+  TestWrapper.displayName = "TestWrapper";
+  return TestWrapper;
 }
 
 // ─── Mock data ──────────────────────────────────────────────────────────────
