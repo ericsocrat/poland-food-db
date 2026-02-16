@@ -10,14 +10,13 @@ const mockAddMutate = vi.fn();
 const mockRemoveMutate = vi.fn();
 const mockMembership =
   vi.fn<() => { data: { list_ids: number[] } | undefined }>();
-const mockListsData =
-  vi.fn<
-    () => {
-      data:
-        | { lists: Array<{ id: number; name: string; list_type: string }> }
-        | undefined;
-    }
-  >();
+const mockListsData = vi.fn<
+  () => {
+    data:
+      | { lists: Array<{ id: number; name: string; list_type: string }> }
+      | undefined;
+  }
+>();
 
 vi.mock("@/hooks/use-lists", () => ({
   useLists: () => mockListsData(),
