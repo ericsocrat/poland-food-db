@@ -50,9 +50,7 @@ export function InstallPrompt() {
       <div className="flex items-start gap-3">
         <span className="text-2xl">📲</span>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-900">
-            Install FoodDB
-          </p>
+          <p className="text-sm font-semibold text-gray-900">Install FoodDB</p>
           <p className="mt-0.5 text-xs text-gray-500">
             Add to your home screen for quick access and offline support.
           </p>

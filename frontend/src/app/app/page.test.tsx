@@ -159,9 +159,7 @@ describe("DashboardPage", () => {
   it("renders recently viewed section header", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(
-        screen.getByText(/Recently Viewed/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Recently Viewed/)).toBeInTheDocument();
     });
   });
 
@@ -229,9 +227,7 @@ describe("DashboardPage", () => {
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(
-        screen.getByText(/Something went wrong/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Something went wrong/)).toBeInTheDocument();
     });
   });
 

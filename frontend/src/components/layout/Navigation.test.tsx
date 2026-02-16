@@ -55,9 +55,7 @@ describe("Navigation", () => {
       "aria-current",
       "page",
     );
-    expect(screen.getByLabelText("Home")).not.toHaveAttribute(
-      "aria-current",
-    );
+    expect(screen.getByLabelText("Home")).not.toHaveAttribute("aria-current");
   });
 
   it("matches nested route as active", () => {
@@ -81,9 +79,7 @@ describe("Navigation", () => {
   it("does not mark Home active for nested paths", () => {
     mockPathname.mockReturnValue("/app/search");
     render(<Navigation />);
-    expect(screen.getByLabelText("Home")).not.toHaveAttribute(
-      "aria-current",
-    );
+    expect(screen.getByLabelText("Home")).not.toHaveAttribute("aria-current");
   });
 
   it("no item active for unmatched path", () => {
