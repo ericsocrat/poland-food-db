@@ -53,6 +53,8 @@ export interface SearchFilters {
 export interface SearchResult {
   product_id: number;
   product_name: string;
+  product_name_en: string | null;
+  product_name_display: string;
   brand: string;
   category: string;
   category_display: string;
@@ -87,6 +89,8 @@ export interface SearchResponse {
 export interface AutocompleteSuggestion {
   product_id: number;
   product_name: string;
+  product_name_en: string | null;
+  product_name_display: string;
   brand: string;
   category: string;
   nutri_score: NutriGrade;
@@ -217,6 +221,9 @@ export interface ProductDetail {
   product_id: number;
   ean: string | null;
   product_name: string;
+  product_name_en: string | null;
+  product_name_display: string;
+  original_language: string;
   brand: string;
   category: string;
   category_display: string;
@@ -608,8 +615,12 @@ export interface RecordScanFoundResponse {
   found: true;
   product_id: number;
   product_name: string;
+  product_name_en: string | null;
+  product_name_display: string;
   brand: string;
   category: string;
+  category_display: string;
+  category_icon: string;
   unhealthiness_score: number;
   nutri_score: NutriGrade;
 }

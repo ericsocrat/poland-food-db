@@ -97,7 +97,9 @@ export default function ScanPage() {
         if (batchMode) {
           // Batch mode: add to list, keep scanning
           setBatchResults((prev) => [found, ...prev]);
-          toast.success(`✓ ${found.product_name}`);
+          toast.success(
+            `✓ ${found.product_name_display ?? found.product_name}`,
+          );
           handleReset(true); // reset but stay in camera mode
         } else {
           setScanState("found");
@@ -523,7 +525,7 @@ export default function ScanPage() {
                   onClick={() => router.push(`/app/product/${p.product_id}`)}
                   className="min-w-0 flex-1 truncate text-left text-sm text-gray-800 hover:text-brand-600"
                 >
-                  {p.product_name}
+                  {p.product_name_display ?? p.product_name}
                 </button>
                 <span className="flex-shrink-0 text-xs text-gray-400">
                   {p.brand}

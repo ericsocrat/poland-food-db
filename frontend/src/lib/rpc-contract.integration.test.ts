@@ -59,8 +59,12 @@ describeIntegration("RPC Contract: api_record_scan", () => {
       "found",
       "product_id",
       "product_name",
+      "product_name_en",
+      "product_name_display",
       "brand",
       "category",
+      "category_display",
+      "category_icon",
       "unhealthiness_score",
       "nutri_score",
     ]);

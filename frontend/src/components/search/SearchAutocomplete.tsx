@@ -195,7 +195,7 @@ export function SearchAutocomplete({
                 {/* Product info */}
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-sm font-medium text-gray-900">
-                    {s.product_name}
+                    {s.product_name_display ?? s.product_name}
                   </p>
                   <p className="truncate text-xs text-gray-500">
                     {s.brand} · {s.category}

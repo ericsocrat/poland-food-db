@@ -838,17 +838,17 @@ AS $func$
         ),
         'ingredients', jsonb_build_object(
             'count',            m.ingredient_count,
-            'additives_count',  m.additive_count,
-            'additive_names',   COALESCE(m.additive_names, ARRAY[]::text[]),
+            'additives_count',  m.additives_count,
+            'additive_names',   m.additive_names,
             'vegan_status',     m.vegan_status,
             'vegetarian_status',m.vegetarian_status,
             'data_quality',     m.ingredient_data_quality
         ),
         'allergens', jsonb_build_object(
             'count',       m.allergen_count,
-            'tags',        COALESCE(m.allergen_tags, ARRAY[]::text[]),
+            'tags',        m.allergen_tags,
             'trace_count', m.trace_count,
-            'trace_tags',  COALESCE(m.trace_tags, ARRAY[]::text[])
+            'trace_tags',  m.trace_tags
         ),
         'trust', jsonb_build_object(
             'confidence',            m.confidence,
@@ -858,12 +858,13 @@ AS $func$
             'ingredient_data_quality',m.ingredient_data_quality
         ),
         'freshness', jsonb_build_object(
-            'created_at',     m.created_at,
-            'updated_at',     m.updated_at,
-            'data_age_days',  EXTRACT(day FROM now() - m.updated_at)::int
+            'created_at',     p_ts.created_at,
+            'updated_at',     p_ts.updated_at,
+            'data_age_days',  EXTRACT(day FROM now() - p_ts.updated_at)::int
         )
     )
     FROM v_master m
+    JOIN products p_ts ON p_ts.product_id = m.product_id
     LEFT JOIN category_ref cr ON cr.category = m.category
     LEFT JOIN category_translations ct
         ON ct.category = m.category AND ct.language_code = resolve_language(NULL)

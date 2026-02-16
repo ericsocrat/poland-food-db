@@ -105,6 +105,7 @@ function makeSearchResult(overrides: Record<string, unknown> = {}) {
   return {
     product_id: 1,
     product_name: "Test Chips",
+    product_name_en: null,
     brand: "TestBrand",
     category: "chips",
     category_display: "Chips",

@@ -254,7 +254,8 @@
     "healthierAlternatives": "Healthier Alternatives",
     "found": "{count} found",
     "scanResult": "Scan Result",
-    "scanAnother": "Scan Another"
+    "scanAnother": "Scan Another",
+    "originalName": "Original name"
   },
   "categories": {
     "title": "Categories",

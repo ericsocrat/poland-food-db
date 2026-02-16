@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(66);
+SELECT plan(69);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -56,6 +56,9 @@ SELECT has_column('public', 'products', 'country',             'products.country
 SELECT has_column('public', 'products', 'unhealthiness_score', 'products.unhealthiness_score exists');
 SELECT has_column('public', 'products', 'nutri_score_label',   'products.nutri_score_label exists');
 SELECT has_column('public', 'products', 'nova_classification', 'products.nova_classification exists');
+SELECT has_column('public', 'products', 'product_name_en',        'products.product_name_en exists');
+SELECT has_column('public', 'products', 'product_name_en_source', 'products.product_name_en_source exists');
+SELECT has_column('public', 'products', 'product_name_en_reviewed_at', 'products.product_name_en_reviewed_at exists');
 SELECT has_column('public', 'user_preferences', 'preferred_language', 'user_preferences.preferred_language exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════

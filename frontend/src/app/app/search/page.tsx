@@ -518,7 +518,7 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
         {/* Product info */}
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-gray-900">
-            {product.product_name}
+            {product.product_name_display ?? product.product_name}
           </p>
           <p className="truncate text-sm text-gray-500">
             {product.brand} · {product.category_icon}{" "}

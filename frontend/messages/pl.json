@@ -254,7 +254,8 @@
     "healthierAlternatives": "Zdrowsze zamienniki",
     "found": "{count} znalezione",
     "scanResult": "Wynik skanowania",
-    "scanAnother": "Skanuj kolejny"
+    "scanAnother": "Skanuj kolejny",
+    "originalName": "Oryginalna nazwa"
   },
   "categories": {
     "title": "Kategorie",

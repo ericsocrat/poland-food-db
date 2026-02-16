@@ -41,6 +41,8 @@ const SUGGESTIONS = [
   {
     product_id: 1,
     product_name: "Lay's Classic",
+    product_name_en: null,
+    product_name_display: "Lay's Classic",
     brand: "Lay's",
     category: "Chips",
     unhealthiness_score: 65,
@@ -50,6 +52,8 @@ const SUGGESTIONS = [
   {
     product_id: 2,
     product_name: "Pringles Original",
+    product_name_en: null,
+    product_name_display: "Pringles Original",
     brand: "Pringles",
     category: "Chips",
     unhealthiness_score: 72,

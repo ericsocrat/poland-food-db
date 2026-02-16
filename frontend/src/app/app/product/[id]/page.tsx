@@ -135,8 +135,14 @@ export default function ProductDetailPage() {
             <div className="flex items-start justify-between">
               <div>
                 <p className="text-lg font-bold text-gray-900">
-                  {product.product_name}
+                  {product.product_name_display ?? product.product_name}
                 </p>
+                {product.product_name_en &&
+                  product.product_name_display !== product.product_name && (
+                    <p className="text-xs text-gray-400">
+                      {t("product.originalName")}: {product.product_name}
+                    </p>
+                  )}
                 <p className="text-sm text-gray-500">{product.brand}</p>
               </div>
               <div className="flex items-center gap-2">

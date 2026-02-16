@@ -1,13 +1,14 @@
 -- ─── pgTAP: Localization Phase 1 (#32) ──────────────────────────────────────
 -- Tests for language_ref, category_translations, resolve_language(),
--- preferred_language on user_preferences, and localized API responses.
+-- preferred_language on user_preferences, localized API responses,
+-- and Phase 2 product_name_en / search enhancements.
 -- Run via: supabase test db
 --
 -- Self-contained: inserts own fixture data so tests work on an empty DB.
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(42);
+SELECT plan(49);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -47,6 +48,28 @@ ON CONFLICT (product_id) DO UPDATE SET category = 'pgtap-l10n';
 INSERT INTO public.products (product_id, product_name, brand, category, country, is_deprecated)
 VALUES (999802, 'L10n Fallback Product', 'TestBrand', 'pgtap-l10n-noPl', 'XX', false)
 ON CONFLICT (product_id) DO UPDATE SET category = 'pgtap-l10n-noPl';
+
+-- Phase 2 fixture: product with English translation + EAN for search/scan tests
+INSERT INTO public.products (
+    product_id, product_name, product_name_en, product_name_en_source,
+    brand, category, country, ean, is_deprecated, unhealthiness_score
+) VALUES (
+    999803, 'Chipsy Testowe o smaku Papryka', 'Test Paprika Flavored Chips', 'ai',
+    'TestBrand', 'pgtap-l10n', 'PL', '5901234123457', false, 42
+) ON CONFLICT (product_id) DO UPDATE SET
+    product_name_en = 'Test Paprika Flavored Chips',
+    product_name_en_source = 'ai',
+    ean = '5901234123457',
+    unhealthiness_score = 42;
+
+-- Phase 2 fixture: product WITHOUT English translation (tests fallback)
+INSERT INTO public.products (
+    product_id, product_name, brand, category, country, is_deprecated, unhealthiness_score
+) VALUES (
+    999804, 'Ciastka Testowe Czekoladowe', 'TestBrand', 'pgtap-l10n', 'PL', false, 30
+) ON CONFLICT (product_id) DO UPDATE SET
+    product_name_en = NULL,
+    unhealthiness_score = 30;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. language_ref table structure
@@ -278,6 +301,74 @@ SELECT is(
     (SELECT api_product_detail(999802)->>'category_display'),
     'No Polish Name',
     'api_product_detail falls back to English for untranslated category'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 10. Phase 2: product_name_en column structure
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT has_column('public', 'products', 'product_name_en',
+    'products.product_name_en column exists');
+
+SELECT has_column('public', 'products', 'product_name_en_source',
+    'products.product_name_en_source column exists');
+
+SELECT has_column('public', 'products', 'product_name_en_reviewed_at',
+    'products.product_name_en_reviewed_at column exists');
+
+SELECT has_column('public', 'products', 'product_name_en_reviewed_by',
+    'products.product_name_en_reviewed_by column exists');
+
+-- product_name_en IS nullable (NULL = not yet translated)
+SELECT col_is_null('public', 'products', 'product_name_en',
+    'product_name_en is nullable');
+
+-- product_name_en is NOT part of the unique constraint
+-- (the unique constraint is on country, brand, product_name — not product_name_en)
+SELECT ok(
+    NOT EXISTS (
+        SELECT 1 FROM information_schema.key_column_usage kcu
+        JOIN information_schema.table_constraints tc
+            ON tc.constraint_name = kcu.constraint_name
+            AND tc.table_schema = kcu.table_schema
+        WHERE tc.constraint_type = 'UNIQUE'
+          AND kcu.table_schema = 'public'
+          AND kcu.table_name = 'products'
+          AND kcu.column_name = 'product_name_en'
+    ),
+    'product_name_en is NOT in any unique constraint'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 11. Phase 2: api_product_detail returns product_name_en + product_name_display
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Product 999803 has product_name_en set
+SELECT is(
+    (SELECT api_product_detail(999803)->>'product_name_en'),
+    'Test Paprika Flavored Chips',
+    'api_product_detail returns product_name_en when available'
+);
+
+-- product_name_display for anonymous user (language=en): should show EN name
+SELECT is(
+    (SELECT api_product_detail(999803)->>'product_name_display'),
+    'Test Paprika Flavored Chips',
+    'api_product_detail returns EN product_name_display for default language'
+);
+
+-- Product 999804 has NO English translation — product_name_display falls back
+SELECT is(
+    (SELECT api_product_detail(999804)->>'product_name_display'),
+    'Ciastka Testowe Czekoladowe',
+    'api_product_detail falls back to product_name when product_name_en is NULL'
+);
+
+-- original_language derived from country
+SELECT is(
+    (SELECT api_product_detail(999803)->>'original_language'),
+    'pl',
+    'api_product_detail returns original_language derived from country'
 );
 
 SELECT * FROM finish();
