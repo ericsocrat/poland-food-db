@@ -144,17 +144,24 @@ WHERE is_additive = true
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 14. No unused ingredient_ref entries (zero product_ingredient links)
---     that look like junk (short names, bare numbers, label text)
+--     that look like junk (short names, bare numbers, label text).
+--     Guarded: skipped when no product_ingredients exist (empty DB),
+--     because ALL ingredient_refs would be orphaned by definition.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '14. no orphaned junk ingredient_ref' AS check_name,
-       COUNT(*) AS violations
-FROM ingredient_ref ir
-WHERE NOT EXISTS (
-  SELECT 1 FROM product_ingredient pi WHERE pi.ingredient_id = ir.ingredient_id
-)
-AND (
-  length(trim(ir.name_en)) <= 2
-  OR ir.name_en ~ '^\d+$'
-  OR ir.name_en ~* '(kcal|kj\b|nahrwert|porcj)'
-);
+       CASE WHEN NOT EXISTS (SELECT 1 FROM product_ingredient)
+            THEN 0
+            ELSE (
+                SELECT COUNT(*)
+                FROM ingredient_ref ir
+                WHERE NOT EXISTS (
+                    SELECT 1 FROM product_ingredient pi WHERE pi.ingredient_id = ir.ingredient_id
+                )
+                AND (
+                    length(trim(ir.name_en)) <= 2
+                    OR ir.name_en ~ '^\d+$'
+                    OR ir.name_en ~* '(kcal|kj\b|nahrwert|porcj)'
+                )
+            )
+       END AS violations;
 

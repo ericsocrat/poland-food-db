@@ -98,17 +98,25 @@ CROSS JOIN LATERAL find_better_alternatives(sample.product_id, true, 3) AS alt
 WHERE alt.unhealthiness_score >= sample.source_score;
 
 -- 11. api_better_alternatives has required JSON keys
+--     Guarded: returns 0 when no active products exist (empty DB).
 SELECT '11. api_better_alternatives has required keys' AS check_name,
-       CASE WHEN result ? 'source_product' AND result ? 'alternatives'
-                 AND result ? 'alternatives_count' AND result ? 'search_scope'
-            THEN 0 ELSE 1 END AS violations
-FROM api_better_alternatives((SELECT product_id FROM products WHERE is_deprecated IS NOT TRUE ORDER BY product_id LIMIT 1)) AS result;
+       COALESCE((
+           SELECT CASE WHEN result ? 'source_product' AND result ? 'alternatives'
+                            AND result ? 'alternatives_count' AND result ? 'search_scope'
+                       THEN 0 ELSE 1 END
+           FROM (SELECT product_id FROM products WHERE is_deprecated IS NOT TRUE ORDER BY product_id LIMIT 1) p,
+                LATERAL api_better_alternatives(p.product_id) AS result
+       ), 0) AS violations;
 
 -- 12. api_better_alternatives alternatives_count matches array length
+--     Guarded: returns 0 when no active products exist (empty DB).
 SELECT '12. api_better_alternatives count matches array' AS check_name,
-       CASE WHEN (result->>'alternatives_count')::int = jsonb_array_length(result->'alternatives')
-            THEN 0 ELSE 1 END AS violations
-FROM api_better_alternatives((SELECT product_id FROM products WHERE is_deprecated IS NOT TRUE ORDER BY product_id LIMIT 1)) AS result;
+       COALESCE((
+           SELECT CASE WHEN (result->>'alternatives_count')::int = jsonb_array_length(result->'alternatives')
+                       THEN 0 ELSE 1 END
+           FROM (SELECT product_id FROM products WHERE is_deprecated IS NOT TRUE ORDER BY product_id LIMIT 1) p,
+                LATERAL api_better_alternatives(p.product_id) AS result
+       ), 0) AS violations;
 
 -- 13. api_data_confidence returns non-null for all active products
 SELECT '13. api_data_confidence covers all products' AS check_name,

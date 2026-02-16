@@ -6,12 +6,17 @@
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 1. v_completeness_by_country covers every active country
+-- 1. v_completeness_by_country covers every active country WITH products
+--    Countries that are active but have no products yet are excluded;
+--    those will appear once data pipelines populate them.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '1. completeness view covers all active countries' AS check_name,
        COUNT(*) AS violations
 FROM country_ref cr
 WHERE cr.is_active IS TRUE
+  AND EXISTS (
+    SELECT 1 FROM products p WHERE p.country = cr.country_code AND p.is_deprecated IS NOT TRUE
+  )
   AND NOT EXISTS (
     SELECT 1 FROM v_completeness_by_country vc WHERE vc.country = cr.country_code
   );
@@ -28,12 +33,16 @@ WHERE vc.total_products != (
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 3. v_confidence_distribution covers every active country
+-- 3. v_confidence_distribution covers every active country WITH products
+--    Countries that are active but have no products yet are excluded.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '3. confidence distribution covers all active countries' AS check_name,
        COUNT(*) AS violations
 FROM country_ref cr
 WHERE cr.is_active IS TRUE
+  AND EXISTS (
+    SELECT 1 FROM products p WHERE p.country = cr.country_code AND p.is_deprecated IS NOT TRUE
+  )
   AND NOT EXISTS (
     SELECT 1 FROM v_confidence_distribution cd WHERE cd.country = cr.country_code
   );

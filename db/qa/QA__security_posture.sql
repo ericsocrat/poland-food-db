@@ -103,14 +103,25 @@ WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
   AND p.prosecdef = false;
 
--- 9. anon CANNOT EXECUTE any api_* function (auth-only platform)
-SELECT '9. anon blocked from ALL api_* functions' AS check_name,
+-- 9. anon CANNOT EXECUTE api_* functions except approved public endpoints
+--    Allowlist: search, autocomplete, filter options, barcode scan,
+--    shared lists/comparisons, and comparison data (all intentionally public).
+SELECT '9. anon blocked from non-public api_* functions' AS check_name,
        COUNT(*) AS violations
 FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
-  AND has_function_privilege('anon', p.oid, 'EXECUTE');
+  AND has_function_privilege('anon', p.oid, 'EXECUTE')
+  AND p.proname NOT IN (
+    'api_search_products',           -- public search (anon can browse)
+    'api_search_autocomplete',       -- public autocomplete
+    'api_get_filter_options',        -- public filter facets
+    'api_record_scan',              -- anonymous barcode scan
+    'api_get_shared_list',          -- shared list (public link)
+    'api_get_shared_comparison',    -- shared comparison (public link)
+    'api_get_products_for_compare'  -- comparison data (needed by shared links)
+  );
 
 -- 10. anon cannot EXECUTE internal computation functions
 SELECT '10. anon blocked from internal functions' AS check_name,

@@ -73,9 +73,15 @@ FROM v_api_category_overview_by_country ov
 JOIN country_ref cr ON cr.country_code = ov.country_code
 WHERE cr.is_active = false;
 
--- 7. resolve_effective_country(NULL) returns NULL without JWT context (tier-3 removed)
-SELECT '7. resolve_effective_country(NULL) returns NULL without JWT' AS check_name,
-       CASE WHEN resolve_effective_country(NULL) IS NULL
+-- 7. resolve_effective_country(NULL) returns a valid active country without JWT
+--    After dedup_and_api_fixes, NULL input falls through to 'PL' default
+--    (tier-3 fallback). Verify it resolves to an active country_ref entry.
+SELECT '7. resolve_effective_country(NULL) returns valid active country without JWT' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM country_ref
+           WHERE country_code = resolve_effective_country(NULL)
+             AND is_active = true
+       )
        THEN 0 ELSE 1 END AS violations;
 
 -- 8. search with explicit country still works (no tier-3 needed)

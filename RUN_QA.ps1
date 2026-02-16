@@ -29,6 +29,9 @@
        23. QA__auth_onboarding.sql (8 auth & onboarding checks — blocking)
        24. QA__confidence_reporting.sql (7 confidence reporting checks — blocking)
        25. QA__health_profiles.sql (14 health profile checks — blocking)
+       26. QA__lists_comparisons.sql (12 lists & comparisons checks — blocking)
+       27. QA__scanner_submissions.sql (12 scanner & submissions checks — blocking)
+       28. QA__index_temporal.sql (15 index coverage & temporal checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suite 3 is informational and does not affect the exit code.
@@ -134,7 +137,10 @@ $suiteCatalog = @(
     @{ Num = 22; Name = "Barcode Lookup"; Short = "Barcode"; Id = "barcode_lookup"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__barcode_lookup.sql" },
     @{ Num = 23; Name = "Auth & Onboarding"; Short = "AuthOnboard"; Id = "auth_onboarding"; Checks = 8; Blocking = $true; Kind = "sql"; File = "QA__auth_onboarding.sql" },
     @{ Num = 24; Name = "Confidence Reporting"; Short = "ConfReport"; Id = "confidence_reporting"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__confidence_reporting.sql" },
-    @{ Num = 25; Name = "Health Profiles"; Short = "Health"; Id = "health_profiles"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__health_profiles.sql" }
+    @{ Num = 25; Name = "Health Profiles"; Short = "Health"; Id = "health_profiles"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__health_profiles.sql" },
+    @{ Num = 26; Name = "Lists & Comparisons"; Short = "ListsComp"; Id = "lists_comparisons"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__lists_comparisons.sql" },
+    @{ Num = 27; Name = "Scanner & Submissions"; Short = "Scanner"; Id = "scanner_submissions"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__scanner_submissions.sql" },
+    @{ Num = 28; Name = "Index & Temporal Integrity"; Short = "IdxTemporal"; Id = "index_temporal"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__index_temporal.sql" }
 )
 
 $suiteByNum = @{}
