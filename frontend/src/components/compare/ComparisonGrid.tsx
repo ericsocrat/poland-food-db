@@ -225,9 +225,9 @@ function getCellHighlightClass(
   ranking: { bestIdx: number; worstIdx: number } | null,
   winnerIdx: number,
 ): string {
-  if (ranking && idx === ranking.bestIdx)
+  if (idx === ranking?.bestIdx)
     return "bg-green-50 text-green-700 font-semibold";
-  if (ranking && idx === ranking.worstIdx) return "bg-red-50 text-red-600";
+  if (idx === ranking?.worstIdx) return "bg-red-50 text-red-600";
   if (idx === winnerIdx) return "bg-green-50/30";
   return "";
 }

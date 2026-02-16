@@ -35,7 +35,6 @@ import argparse
 import math
 import os
 import re
-import string
 import subprocess
 import sys
 import time
@@ -44,9 +43,7 @@ from pathlib import Path
 
 import requests
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Constants
-# ──────────────────────────────────────────────────────────────────────────────
+# --- Constants ---
 
 OFF_SEARCH_URL = "https://world.openfoodfacts.org/api/v2/search"
 OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
@@ -129,9 +126,7 @@ COUNTRY_TAGS = {
 }
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Helpers
-# ──────────────────────────────────────────────────────────────────────────────
+# --- Helpers ---
 
 
 def sql_escape(val: str) -> str:
@@ -234,9 +229,7 @@ def get_existing_categories() -> set[str]:
     return {line.strip() for line in result.stdout.strip().split("\n") if line.strip()}
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# OFF API
-# ──────────────────────────────────────────────────────────────────────────────
+# --- OFF API ---
 
 
 def _matches_country(
@@ -278,6 +271,21 @@ def _fetch_search_page(
     return None  # unreachable, but keeps linters happy
 
 
+def _filter_country_matches(
+    page_products: list[dict],
+    ean_prefixes: tuple[str, ...],
+    country_tag: str,
+    products: list[dict],
+    max_products: int,
+) -> None:
+    """Append country-matched products from a search page to the results list."""
+    for p in page_products:
+        if _matches_country(p, ean_prefixes, country_tag):
+            products.append(p)
+            if len(products) >= max_products:
+                break
+
+
 def search_off_products(
     off_tag: str,
     country: str,
@@ -289,7 +297,7 @@ def search_off_products(
     Country filtering is done client-side by EAN prefix and countries_tags
     because OFF search indexing for non-Western countries is unreliable.
     """
-    products = []
+    products: list[dict] = []
     page = 1
     pages_needed = math.ceil(max_products / page_size)
 
@@ -299,7 +307,6 @@ def search_off_products(
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
 
-    # We may need to fetch more pages to find enough country-matched products
     max_pages = pages_needed * 5  # allow up to 5x more pages for sparse data
 
     while page <= max_pages and len(products) < max_products:
@@ -309,12 +316,9 @@ def search_off_products(
         if not page_products:
             break
 
-        # Client-side country filtering
-        for p in page_products:
-            if _matches_country(p, ean_prefixes, country_tag):
-                products.append(p)
-                if len(products) >= max_products:
-                    break
+        _filter_country_matches(
+            page_products, ean_prefixes, country_tag, products, max_products
+        )
 
         print(
             f"  Page {page}: scanned {len(page_products)} "
@@ -330,56 +334,71 @@ def search_off_products(
     return products[:max_products]
 
 
+def _fetch_single_ean(
+    session: requests.Session, ean: str
+) -> requests.Response | None:
+    """Fetch a single EAN with retry logic. Returns response or None."""
+    url = OFF_PRODUCT_URL.format(ean=ean)
+    for attempt in range(MAX_RETRIES + 1):
+        try:
+            resp = session.get(
+                url, params={"fields": PRODUCT_FIELDS}, timeout=TIMEOUT
+            )
+            resp.raise_for_status()
+            return resp
+        except requests.RequestException as e:
+            if attempt == MAX_RETRIES:
+                print(f"FAILED ({e})")
+                return None
+            time.sleep(2**attempt)
+    return None
+
+
+def _extract_valid_product(data: dict) -> dict | None:
+    """Extract and validate a product from OFF API response data."""
+    if data.get("status") != 1 or not data.get("product"):
+        print("NOT FOUND on OFF")
+        return None
+
+    product = data["product"]
+    name = (product.get("product_name") or "").strip()
+    brand = (product.get("brands") or "").strip()
+
+    if not name or not brand:
+        print("SKIP — missing name or brand")
+        return None
+
+    print(f"OK — {brand} | {name}")
+    return product
+
+
 def fetch_products_by_eans(eans: list[str]) -> list[dict]:
     """Fetch product data from OFF for a list of EANs.
 
     This is the primary acquisition mode — most reliable for Polish products.
     """
-    products = []
+    products: list[dict] = []
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
 
     for i, ean in enumerate(eans, 1):
-        url = OFF_PRODUCT_URL.format(ean=ean)
         print(f"  [{i}/{len(eans)}] Fetching {ean}...", end=" ")
 
-        for attempt in range(MAX_RETRIES + 1):
-            try:
-                resp = session.get(
-                    url, params={"fields": PRODUCT_FIELDS}, timeout=TIMEOUT
-                )
-                resp.raise_for_status()
-                break
-            except requests.RequestException as e:
-                if attempt == MAX_RETRIES:
-                    print(f"FAILED ({e})")
-                    break
-                time.sleep(2**attempt)
-        else:
-            # All retries failed
+        resp = _fetch_single_ean(session, ean)
+        if resp is None:
+            time.sleep(DELAY)
             continue
 
-        data = resp.json()
-        if data.get("status") == 1 and data.get("product"):
-            product = data["product"]
-            name = (product.get("product_name") or "").strip()
-            brand = (product.get("brands") or "").strip()
-            if name and brand:
-                print(f"OK — {brand} | {name}")
-                products.append(product)
-            else:
-                print(f"SKIP — missing name or brand")
-        else:
-            print(f"NOT FOUND on OFF")
+        product = _extract_valid_product(resp.json())
+        if product is not None:
+            products.append(product)
 
         time.sleep(DELAY)
 
     return products
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Product processing
-# ──────────────────────────────────────────────────────────────────────────────
+# --- Product processing ---
 
 
 def _is_valid_ean(ean: str) -> bool:
@@ -452,9 +471,7 @@ def process_off_products(
     return processed
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# SQL generation
-# ──────────────────────────────────────────────────────────────────────────────
+# --- SQL generation ---
 
 
 def generate_step_01(products: list[dict], category: str, country: str) -> str:
@@ -642,9 +659,7 @@ WHERE p.country = '{country}' AND p.brand = d.brand AND p.product_name = d.produ
 """
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Main helpers
-# ──────────────────────────────────────────────────────────────────────────────
+# --- Main helpers ---
 
 
 def _collect_ean_list(args: argparse.Namespace) -> list[str]:
@@ -764,14 +779,12 @@ def _write_pipeline_files(
     print("Next steps:")
     print(f"  1. Review generated SQL in {output_dir}/")
     print(f"  2. Run pipeline:  .\\RUN_LOCAL.ps1 -Category {folder_name}")
-    print(f"  3. Enrich:        python enrich_ingredients.py")
-    print(f"  4. Validate:      .\\RUN_QA.ps1")
+    print("  3. Enrich:        python enrich_ingredients.py")
+    print("  4. Validate:      .\\RUN_QA.ps1")
     print()
 
 
-# ──────────────────────────────────────────────────────────────────────────────
-# Main
-# ──────────────────────────────────────────────────────────────────────────────
+# --- Main ---
 
 
 def main() -> None:
@@ -879,7 +892,7 @@ def main() -> None:
     if existing and category not in existing:
         print(f"  WARNING: Category '{category}' is not in category_ref.")
         print(f"  Registered categories: {', '.join(sorted(existing))}")
-        print(f"  You may need to add it before running the pipeline.")
+        print("  You may need to add it before running the pipeline.")
         print()
 
     # ── Fetch from OFF ──

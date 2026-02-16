@@ -37,14 +37,10 @@ REQUIRED_STEPS = {
 
 # Regex: literal integer after "product_id =" or "product_id IN (" or "VALUES (\d"
 # This catches hardcoded product_id references like "product_id = 42"
-HARDCODED_PID = re.compile(
-    r"""
-    \bproduct_id\s*=\s*\d+           |  # product_id = 42
-    VALUES\s*\(\s*\d+\s*,            |  # VALUES (42, ...
-    \(\s*\d+\s*,\s*\d+\.?\d*\s*,        # (42, 500.0, ... — nutrition insert with raw id
-    """,
-    re.IGNORECASE | re.VERBOSE,
-)
+_PID_EQUALS = re.compile(r"\bproduct_id\s*=\s*\d+", re.IGNORECASE)
+_PID_VALUES = re.compile(r"VALUES\s*\(\s*\d+\s*,", re.IGNORECASE)
+_PID_TUPLE = re.compile(r"\(\s*\d+\s*,\s*\d+\.?\d*\s*,", re.IGNORECASE)
+HARDCODED_PID_PATTERNS = (_PID_EQUALS, _PID_VALUES, _PID_TUPLE)
 
 # Step 01 must have the upsert conflict key
 STEP_01_CONFLICT = re.compile(
@@ -91,14 +87,15 @@ def _is_subquery_context(content: str, start: int, end: int) -> bool:
 def _check_hardcoded_pids(category: str, fname: str, content: str) -> list[str]:
     """Detect hardcoded product_id literals in pipeline SQL."""
     violations: list[str] = []
-    for match in HARDCODED_PID.finditer(content):
-        if _is_conflict_context(content, match.start()):
-            continue
-        if _is_subquery_context(content, match.start(), match.end()):
-            continue
-        violations.append(
-            f"[{category}/{fname}] Possible hardcoded product_id: {match.group().strip()}"
-        )
+    for pattern in HARDCODED_PID_PATTERNS:
+        for match in pattern.finditer(content):
+            if _is_conflict_context(content, match.start()):
+                continue
+            if _is_subquery_context(content, match.start(), match.end()):
+                continue
+            violations.append(
+                f"[{category}/{fname}] Possible hardcoded product_id: {match.group().strip()}"
+            )
     return violations
 
 

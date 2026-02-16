@@ -597,7 +597,7 @@ def main():
     print(f"  Found {len(ingredient_lookup)} ingredients in reference table")
 
     # 2. Fetch from OFF API
-    print(f"\n[3/4] Fetching ingredient data from OFF API...")
+    print("\n[3/4] Fetching ingredient data from OFF API...")
     print(f"  Rate limit: {DELAY}s between requests")
     print(f"  Estimated time: ~{len(products) * DELAY / 60:.0f} minutes")
 
@@ -651,7 +651,7 @@ def main():
         time.sleep(DELAY)
 
     # 3. Generate migration
-    print(f"\n[4/4] Generating migration SQL...")
+    print("\n[4/4] Generating migration SQL...")
     print(f"  Products processed: {stats['processed']}")
     print(f"  With ingredients: {stats['with_ingredients']}")
     print(f"  With allergens/traces: {stats['with_allergens']}")
@@ -669,7 +669,7 @@ def main():
     print(f"  File size: {MIGRATION_FILE.stat().st_size / 1024:.1f} KB")
     print("\nDone! Run the migration with:")
     print(
-        f"  docker exec supabase_db_poland-food-db psql -U postgres -d postgres -f ..."
+        "  docker exec supabase_db_poland-food-db psql -U postgres -d postgres -f ..."
     )
     print(
         f"  or: Get-Content '{MIGRATION_FILE}' -Raw | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres"
