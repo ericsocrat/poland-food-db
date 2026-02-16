@@ -59,7 +59,8 @@ describe("ConfirmDialog", () => {
   });
 
   it("does not render description when omitted", () => {
-    const { description: _, ...propsWithoutDesc } = defaultProps;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { description: _desc, ...propsWithoutDesc } = defaultProps;
     render(<ConfirmDialog {...propsWithoutDesc} />);
     expect(screen.queryByText("This action cannot be undone.")).toBeNull();
   });

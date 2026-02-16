@@ -12,8 +12,6 @@ import type { CompareProduct, CellValue } from "@/lib/types";
 import {
   fmtUnit,
   fmtStr,
-  filterNumericEntries,
-  findExtreme,
   getWinnerIndex,
   getBestWorst,
   getProductWarnings,

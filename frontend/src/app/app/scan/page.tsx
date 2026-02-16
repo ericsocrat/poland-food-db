@@ -224,7 +224,7 @@ export default function ScanPage() {
       startScanner();
     }
     return () => stopScanner();
-  }, [mode, scanState, startScanner]);
+  }, [mode, scanState, startScanner, stopScanner]);
 
   function handleManualSubmit(e: FormSubmitEvent) {
     e.preventDefault();

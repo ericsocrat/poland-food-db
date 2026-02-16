@@ -1,10 +1,6 @@
+import { useState } from "react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-} from "@testing-library/react";
+import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SearchAutocomplete } from "./SearchAutocomplete";
 
@@ -17,8 +13,7 @@ vi.mock("next/navigation", () => ({
 
 const mockSearchAutocomplete = vi.fn();
 vi.mock("@/lib/api", () => ({
-  searchAutocomplete: (...args: unknown[]) =>
-    mockSearchAutocomplete(...args),
+  searchAutocomplete: (...args: unknown[]) => mockSearchAutocomplete(...args),
 }));
 
 vi.mock("@/lib/supabase/client", () => ({
@@ -63,13 +58,18 @@ const SUGGESTIONS = [
   },
 ];
 
-function createWrapper() {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: false, staleTime: 0 } },
-  });
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={client}>{children}</QueryClientProvider>
+function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+  const [client] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: { queries: { retry: false, staleTime: 0 } },
+      }),
   );
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+}
+
+function createWrapper() {
+  return Wrapper;
 }
 
 const defaultProps = {

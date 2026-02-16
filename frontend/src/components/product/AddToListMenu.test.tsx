@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -40,13 +41,15 @@ const LISTS = [
   { id: 3, name: "Groceries", list_type: "custom" },
 ];
 
-function createWrapper() {
-  const client = new QueryClient({
-    defaultOptions: { queries: { retry: false } },
-  });
-  return ({ children }: { children: React.ReactNode }) => (
-    <QueryClientProvider client={client}>{children}</QueryClientProvider>
+function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
+  const [client] = useState(
+    () => new QueryClient({ defaultOptions: { queries: { retry: false } } }),
   );
+  return <QueryClientProvider client={client}>{children}</QueryClientProvider>;
+}
+
+function createWrapper() {
+  return Wrapper;
 }
 
 beforeEach(() => {
