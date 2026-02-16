@@ -60,13 +60,17 @@ jobs:
           path: frontend/test-results/
           retention-days: 7
 
-      - name: SonarQube Scan
+      - name: SonarCloud Scan
+        if: env.SONAR_TOKEN != ''
         uses: SonarSource/sonarqube-scan-action@v6
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
 
-      - name: SonarQube Quality Gate
+      - name: SonarCloud Quality Gate
+        if: env.SONAR_TOKEN != ''
         uses: SonarSource/sonarqube-quality-gate-action@v1
         timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io

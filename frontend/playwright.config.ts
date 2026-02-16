@@ -8,7 +8,7 @@ const HAS_AUTH = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 const smokeProject = {
   name: "smoke",
-  testMatch: /smoke\.spec\.ts/,
+  testMatch: /smoke.*\.spec\.ts/,
   use: { ...devices["Desktop Chrome"] },
 };
 
@@ -20,7 +20,7 @@ const authSetupProject = {
 
 const authenticatedProject = {
   name: "authenticated",
-  testMatch: /authenticated\.spec\.ts/,
+  testMatch: /authenticated.*\.spec\.ts/,
   dependencies: ["auth-setup"],
   use: {
     ...devices["Desktop Chrome"],
@@ -40,7 +40,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? "list" : "html",
+  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "html",
 
   /* Hard cap so the suite never hangs indefinitely */
   globalTimeout: 120_000,

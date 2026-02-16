@@ -27,9 +27,15 @@ export async function middleware(request: NextRequest) {
   const supabase = createMiddlewareClient(request, response);
 
   // Refresh session token (important for @supabase/ssr)
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // Wrap in try/catch so pages still load when Supabase is unreachable
+  // (e.g. paused free-tier project, CI without a real instance).
+  let user = null;
+  try {
+    const { data } = await supabase.auth.getUser();
+    user = data.user;
+  } catch {
+    // Supabase unreachable — treat as unauthenticated
+  }
 
   const { pathname } = request.nextUrl;
 
