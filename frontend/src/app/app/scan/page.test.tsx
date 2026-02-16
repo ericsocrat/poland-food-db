@@ -195,7 +195,7 @@ describe("ScanPage", () => {
     expect(screen.getByText("Look up")).toBeEnabled();
   });
 
-  it("submits manual EAN and navigates to product on found", async () => {
+  it("submits manual EAN and navigates to scan result on found", async () => {
     mockRecordScan.mockResolvedValue(mockFoundResponse);
     const user = userEvent.setup();
 
@@ -209,7 +209,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Look up"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/app/product/42");
+      expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
     });
   });
 
@@ -299,7 +299,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("🔄 Retry"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/app/product/42");
+      expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
     });
   });
 
@@ -458,7 +458,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Look up"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/app/product/42");
+      expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
     });
   });
 

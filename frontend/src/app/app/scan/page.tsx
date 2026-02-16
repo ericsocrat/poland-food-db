@@ -96,7 +96,7 @@ export default function ScanPage() {
           handleReset(true); // reset but stay in camera mode
         } else {
           setScanState("found");
-          router.push(`/app/product/${found.product_id}`);
+          router.push(`/app/scan/result/${found.product_id}`);
         }
       } else {
         setScanState("not-found");

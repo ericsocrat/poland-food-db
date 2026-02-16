@@ -44,21 +44,24 @@ function createWrapper() {
 
 const mockCategories = [
   {
-    category: "chips",
+    category: "Chips",
+    slug: "chips",
     display_name: "Chips",
     icon_emoji: "🍟",
     product_count: 42,
     avg_score: 72,
   },
   {
-    category: "drinks",
+    category: "Drinks",
+    slug: "drinks",
     display_name: "Drinks",
     icon_emoji: "🥤",
     product_count: 1,
     avg_score: 30,
   },
   {
-    category: "cereals",
+    category: "Cereals",
+    slug: "cereals",
     display_name: "Cereals",
     icon_emoji: "🥣",
     product_count: 10,
@@ -132,6 +135,34 @@ describe("CategoriesPage", () => {
 
     const chipsLink = screen.getByText("Chips").closest("a");
     expect(chipsLink).toHaveAttribute("href", "/app/categories/chips");
+  });
+
+  it("uses slug in category detail links", async () => {
+    mockGetCategoryOverview.mockResolvedValue({
+      ok: true,
+      data: [
+        {
+          category: "Seafood & Fish",
+          slug: "seafood-fish",
+          display_name: "Seafood & Fish",
+          icon_emoji: "🐟",
+          product_count: 15,
+          avg_score: 40,
+        },
+      ],
+    });
+
+    render(<CategoriesPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Seafood & Fish")).toBeInTheDocument();
+    });
+
+    const link = screen.getByText("Seafood & Fish").closest("a");
+    expect(link).toHaveAttribute(
+      "href",
+      "/app/categories/seafood-fish",
+    );
   });
 
   it("shows error state on API failure", async () => {

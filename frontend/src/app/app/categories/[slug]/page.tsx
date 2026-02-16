@@ -21,8 +21,8 @@ import type { CategoryProduct } from "@/lib/types";
 const PAGE_SIZE = 20;
 
 const SORT_OPTIONS = [
-  { value: "unhealthiness_score", label: "Healthiness" },
-  { value: "product_name", label: "Name" },
+  { value: "score", label: "Healthiness" },
+  { value: "name", label: "Name" },
   { value: "calories", label: "Calories" },
 ] as const;
 
@@ -32,7 +32,7 @@ export default function CategoryListingPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
 
-  const [sortBy, setSortBy] = useState("unhealthiness_score");
+  const [sortBy, setSortBy] = useState("score");
   const [sortDir, setSortDir] = useState("asc");
   const [offset, setOffset] = useState(0);
 

@@ -107,15 +107,23 @@ describe("stripNonDigits", () => {
 // ─── formatSlug ─────────────────────────────────────────────────────────────
 
 describe("formatSlug", () => {
+  it("replaces hyphens with spaces", () => {
+    expect(formatSlug("seafood-fish")).toBe("seafood fish");
+  });
+
   it("replaces underscores with spaces", () => {
     expect(formatSlug("soft_drinks")).toBe("soft drinks");
+  });
+
+  it("handles multiple hyphens", () => {
+    expect(formatSlug("nuts-seeds-legumes")).toBe("nuts seeds legumes");
   });
 
   it("handles multiple underscores", () => {
     expect(formatSlug("chips_and_crisps")).toBe("chips and crisps");
   });
 
-  it("returns string unchanged when no underscores", () => {
+  it("returns string unchanged when no separators", () => {
     expect(formatSlug("cereals")).toBe("cereals");
   });
 

@@ -30,8 +30,8 @@ export function stripNonDigits(value: string): string {
 }
 
 /**
- * Convert a URL-safe slug (e.g. "soft_drinks") into a display name ("soft drinks").
+ * Convert a URL-safe slug (e.g. "seafood-fish") into a display name ("seafood fish").
  */
 export function formatSlug(slug: string): string {
-  return slug.replaceAll("_", " ");
+  return slug.replaceAll("-", " ").replaceAll("_", " ");
 }

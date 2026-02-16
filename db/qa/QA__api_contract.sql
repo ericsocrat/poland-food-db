@@ -263,9 +263,9 @@ SELECT
     ) = ARRAY[
         'avg_score','category','category_description','country_code','display_name',
         'icon_emoji','max_score','median_score','min_score','pct_nova_4',
-        'pct_nutri_a_b','product_count','sort_order'
+        'pct_nutri_a_b','product_count','slug','sort_order'
     ]
-    THEN 'PASS' ELSE 'FAIL' END AS "#24 overview_by_country columns (13)";
+    THEN 'PASS' ELSE 'FAIL' END AS "#24 overview_by_country columns (14)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #25 api_search_products with p_country returns filtered results

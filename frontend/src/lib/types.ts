@@ -195,6 +195,7 @@ export interface CategoryListingResponse {
 export interface CategoryOverviewItem {
   country_code: string;
   category: string;
+  slug: string;
   display_name: string;
   category_description: string | null;
   icon_emoji: string;
