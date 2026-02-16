@@ -11,7 +11,10 @@ import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { useLanguageStore, type SupportedLanguage } from "@/stores/language-store";
+import {
+  useLanguageStore,
+  type SupportedLanguage,
+} from "@/stores/language-store";
 
 const SUPPORTED = new Set<SupportedLanguage>(["en", "pl", "de"]);
 

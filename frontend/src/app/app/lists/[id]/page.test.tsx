@@ -190,7 +190,7 @@ describe("ListDetailPage", () => {
 
   it("shows item count", () => {
     render(<ListDetailPage />);
-    expect(screen.getByText("2 items")).toBeInTheDocument();
+    expect(screen.getByText("2 item(s)")).toBeInTheDocument();
   });
 
   it("renders product items", () => {
@@ -361,6 +361,6 @@ describe("ListDetailPage", () => {
       data: { lists: [{ ...mockList, item_count: 1 }] },
     });
     render(<ListDetailPage />);
-    expect(screen.getByText("1 item")).toBeInTheDocument();
+    expect(screen.getByText("1 item(s)")).toBeInTheDocument();
   });
 });

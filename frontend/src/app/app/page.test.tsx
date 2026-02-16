@@ -189,7 +189,7 @@ describe("DashboardPage", () => {
   it("renders new products with category context", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText(/New in chips/)).toBeInTheDocument();
+      expect(screen.getByText(/New chips/)).toBeInTheDocument();
     });
   });
 

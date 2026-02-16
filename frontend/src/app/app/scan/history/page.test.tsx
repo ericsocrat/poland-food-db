@@ -278,7 +278,7 @@ describe("ScanHistoryPage", () => {
   it("shows not-found indicator for failed lookups", async () => {
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      const notFoundTexts = screen.getAllByText("Not found");
+      const notFoundTexts = screen.getAllByText("Not Found");
       expect(notFoundTexts.length).toBeGreaterThanOrEqual(1);
     });
   });

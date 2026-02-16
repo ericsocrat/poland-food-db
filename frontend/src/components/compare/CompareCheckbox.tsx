@@ -5,12 +5,14 @@
 // Max 4 selected — disables further selection with tooltip.
 
 import { useCompareStore } from "@/stores/compare-store";
+import { useTranslation } from "@/lib/i18n";
 
 interface CompareCheckboxProps {
   productId: number;
 }
 
 export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
+  const { t } = useTranslation();
   const isSelected = useCompareStore((s) => s.isSelected(productId));
   const isFull = useCompareStore((s) => s.isFull());
   const toggle = useCompareStore((s) => s.toggle);
@@ -18,9 +20,9 @@ export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
   const disabled = !isSelected && isFull;
 
   function getTitle(): string {
-    if (disabled) return "Max 4 products — deselect one first";
-    if (isSelected) return "Remove from comparison";
-    return "Add to comparison";
+    if (disabled) return t("compare.maxProducts");
+    if (isSelected) return t("compare.removeFromComparison");
+    return t("compare.addToComparison");
   }
 
   function getVariantClass(): string {
@@ -41,7 +43,11 @@ export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
       disabled={disabled}
       title={getTitle()}
       className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded border transition-colors ${getVariantClass()}`}
-      aria-label={isSelected ? "Remove from comparison" : "Add to comparison"}
+      aria-label={
+        isSelected
+          ? t("compare.removeFromComparison")
+          : t("compare.addToComparison")
+      }
     >
       {isSelected ? (
         <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">

@@ -19,6 +19,7 @@ import { FilterPanel } from "@/components/search/FilterPanel";
 import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
 import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useTranslation } from "@/lib/i18n";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
 const RECENT_KEY = "fooddb:recent-searches";
@@ -59,6 +60,7 @@ function setShowAvoidedStorage(val: boolean) {
 export default function SearchPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteKeyDownRef = useRef<
     ((e: React.KeyboardEvent) => void) | null
@@ -121,7 +123,10 @@ export default function SearchPage() {
     if (q.length >= 1) {
       setSubmittedQuery(q);
       setShowAutocomplete(false);
-      track("search_performed", { query: q, has_filters: hasActiveFilters(filters) });
+      track("search_performed", {
+        query: q,
+        has_filters: hasActiveFilters(filters),
+      });
     } else if (hasActiveFilters(filters)) {
       // Allow empty query with filters (browse mode)
       setSubmittedQuery("");
@@ -193,7 +198,7 @@ export default function SearchPage() {
                 if (query.length >= 1) setShowAutocomplete(true);
               }}
               onKeyDown={(e) => autocompleteKeyDownRef.current?.(e)}
-              placeholder="Search products…"
+              placeholder={t("search.placeholder")}
               className="input-field pl-10 pr-10"
               autoFocus
             />
@@ -224,7 +229,7 @@ export default function SearchPage() {
                   setShowAutocomplete(false);
                 }}
                 className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                aria-label="Clear search"
+                aria-label={t("search.clearSearch")}
               >
                 <svg
                   className="h-5 w-5"
@@ -264,7 +269,7 @@ export default function SearchPage() {
               disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
               className="btn-primary px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
             >
-              Search
+              {t("search.searchButton")}
             </button>
 
             {/* Mobile filter toggle */}
@@ -273,7 +278,7 @@ export default function SearchPage() {
               onClick={() => setShowFilters(true)}
               className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 lg:hidden"
             >
-              🎛️ Filters
+              🎛️ {t("search.filters")}
               {hasActiveFilters(filters) && (
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
                   {countActiveFilters(filters)}
@@ -288,8 +293,8 @@ export default function SearchPage() {
               className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700"
               title={
                 showAvoided
-                  ? "Avoided products shown normally"
-                  : "Avoided products demoted to bottom"
+                  ? t("search.avoidedShown")
+                  : t("search.avoidedDemoted")
               }
             >
               <span
@@ -303,7 +308,7 @@ export default function SearchPage() {
                   }`}
                 />
               </span>{" "}
-              Show avoided
+              {t("search.showAvoided")}
             </button>
 
             {/* Save search */}
@@ -313,7 +318,7 @@ export default function SearchPage() {
                 onClick={() => setShowSaveDialog(true)}
                 className="ml-auto text-xs text-gray-400 hover:text-brand-600"
               >
-                💾 Save search
+                💾 {t("search.saveSearch")}
               </button>
             )}
 
@@ -322,7 +327,7 @@ export default function SearchPage() {
               href="/app/search/saved"
               className="text-xs text-gray-400 hover:text-brand-600"
             >
-              📋 Saved
+              📋 {t("search.saved")}
             </Link>
           </div>
         </form>
@@ -334,7 +339,7 @@ export default function SearchPage() {
         {!isSearchActive && recentSearches.length > 0 && (
           <div>
             <p className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-400">
-              Recent searches
+              {t("search.recentSearches")}
             </p>
             <div className="flex flex-wrap gap-2">
               {recentSearches.map((q) => (
@@ -353,7 +358,7 @@ export default function SearchPage() {
         {/* Empty state — no search or filters active */}
         {!isSearchActive && recentSearches.length === 0 && (
           <p className="py-12 text-center text-sm text-gray-400">
-            Search by name, brand, or browse with filters
+            {t("search.emptyState")}
           </p>
         )}
 
@@ -368,13 +373,13 @@ export default function SearchPage() {
         {error && (
           <div className="card border-red-200 bg-red-50 text-center">
             <p className="mb-2 text-sm text-red-600">
-              Search failed. Please try again.
+              {t("search.searchFailed")}
             </p>
             <button
               onClick={handleRetry}
               className="inline-flex items-center gap-1 text-sm font-medium text-red-700 hover:text-red-800"
             >
-              🔄 Retry
+              🔄 {t("common.retry")}
             </button>
           </div>
         )}
@@ -384,12 +389,14 @@ export default function SearchPage() {
           <>
             <div className="flex items-center justify-between">
               <p className="text-sm text-gray-500">
-                {data.total} result{data.total !== 1 && "s"}
-                {data.query && <> for &ldquo;{data.query}&rdquo;</>}
+                {t("search.result", { count: data.total })}
+                {data.query && (
+                  <> {t("search.resultsFor", { query: data.query })}</>
+                )}
               </p>
               {data.pages > 1 && (
                 <p className="text-xs text-gray-400">
-                  Page {data.page} of {data.pages}
+                  {t("common.pageOf", { page: data.page, pages: data.pages })}
                 </p>
               )}
             </div>
@@ -398,10 +405,12 @@ export default function SearchPage() {
               <div className="py-12 text-center">
                 <p className="mb-2 text-4xl">🔍</p>
                 <p className="mb-1 text-sm text-gray-500">
-                  No products match your {data.query ? "search" : "filters"}
+                  {data.query
+                    ? t("search.noMatchSearch")
+                    : t("search.noMatchFilters")}
                 </p>
                 <p className="mb-4 text-xs text-gray-400">
-                  Try adjusting your filters or using a different search term.
+                  {t("search.adjustFilters")}
                 </p>
                 {hasActiveFilters(filters) && (
                   <button
@@ -409,7 +418,7 @@ export default function SearchPage() {
                     onClick={() => setFilters({})}
                     className="text-sm text-brand-600 hover:text-brand-700"
                   >
-                    Clear all filters
+                    {t("search.clearAllFilters")}
                   </button>
                 )}
               </div>
@@ -430,7 +439,7 @@ export default function SearchPage() {
                       disabled={page <= 1}
                       className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      ← Prev
+                      {t("common.prev")}
                     </button>
                     {generatePageNumbers(data.page, data.pages).map((p, i) =>
                       p === null ? (
@@ -463,7 +472,7 @@ export default function SearchPage() {
                       disabled={page >= data.pages}
                       className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
                     >
-                      Next →
+                      {t("common.next")}
                     </button>
                   </div>
                 )}

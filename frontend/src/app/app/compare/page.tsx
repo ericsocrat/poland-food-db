@@ -14,11 +14,13 @@ import { ShareComparison } from "@/components/compare/ShareComparison";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useCompareStore } from "@/stores/compare-store";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ComparePage() {
   const searchParams = useSearchParams();
   const idsParam = searchParams.get("ids") ?? "";
   const clear = useCompareStore((s) => s.clear);
+  const { t } = useTranslation();
 
   const productIds = useMemo(() => {
     if (!idsParam) return [];
@@ -34,30 +36,35 @@ export default function ComparePage() {
 
   useEffect(() => {
     if (productIds.length >= 2) {
-      track("compare_opened", { product_ids: productIds, count: productIds.length });
+      track("compare_opened", {
+        product_ids: productIds,
+        count: productIds.length,
+      });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productIds.length]);
 
   // Empty state — no IDs provided
   if (productIds.length < 2) {
     return (
       <div className="space-y-4">
-        <h1 className="text-xl font-bold text-gray-900">⚖️ Compare Products</h1>
+        <h1 className="text-xl font-bold text-gray-900">
+          ⚖️ {t("compare.title")}
+        </h1>
         <div className="card py-12 text-center">
           <p className="mb-2 text-4xl">⚖️</p>
           <p className="mb-1 text-sm text-gray-500">
-            Select 2–4 products to compare
+            {t("compare.selectPrompt")}
           </p>
           <p className="mb-4 text-xs text-gray-400">
-            Use the ⚖️ checkbox on product cards in search or categories.
+            {t("compare.useCheckbox")}
           </p>
           <div className="flex justify-center gap-3">
             <Link href="/app/search" className="btn-primary text-sm">
-              🔍 Search Products
+              🔍 {t("compare.searchProducts")}
             </Link>
             <Link href="/app/compare/saved" className="btn-secondary text-sm">
-              📂 Saved Comparisons
+              📂 {t("compare.savedComparisons")}
             </Link>
           </div>
         </div>
@@ -69,20 +76,22 @@ export default function ComparePage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">⚖️ Compare Products</h1>
+        <h1 className="text-xl font-bold text-gray-900">
+          ⚖️ {t("compare.title")}
+        </h1>
         <div className="flex items-center gap-2">
           <Link
             href="/app/compare/saved"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            📂 Saved
+            📂 {t("compare.savedComparisons")}
           </Link>
           <button
             type="button"
             onClick={clear}
             className="text-sm text-gray-500 hover:text-gray-700"
           >
-            Clear selection
+            {t("compare.clearSelection")}
           </button>
         </div>
       </div>
@@ -97,9 +106,7 @@ export default function ComparePage() {
       {/* Error */}
       {error && (
         <div className="card border-red-200 bg-red-50 text-center">
-          <p className="mb-2 text-sm text-red-600">
-            Failed to load comparison data.
-          </p>
+          <p className="mb-2 text-sm text-red-600">{t("compare.loadFailed")}</p>
           <p className="text-xs text-gray-500">{error.message}</p>
         </div>
       )}
@@ -110,7 +117,7 @@ export default function ComparePage() {
           {/* Share / Save toolbar */}
           <div className="card flex items-center justify-between">
             <p className="text-sm text-gray-500">
-              Comparing {data.product_count} products
+              {t("compare.comparing", { count: data.product_count })}
             </p>
             <ShareComparison productIds={productIds} />
           </div>

@@ -195,7 +195,7 @@ describe("SearchPage", () => {
       expect(screen.getByText("Test Chips")).toBeInTheDocument();
     });
     expect(screen.getByText("Healthy Water")).toBeInTheDocument();
-    expect(screen.getByText(/2 results/)).toBeInTheDocument();
+    expect(screen.getByText(/2 result\(s\)/)).toBeInTheDocument();
   });
 
   it("shows error state when search fails", async () => {

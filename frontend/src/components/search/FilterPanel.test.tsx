@@ -242,7 +242,7 @@ describe("FilterPanel", () => {
     renderPanel({ filters: { category: ["chips"] } });
     await waitFor(() => {
       expect(
-        screen.getAllByText("Clear all filters").length,
+        screen.getAllByText("Clear all").length,
       ).toBeGreaterThanOrEqual(1);
     });
   });
@@ -252,7 +252,7 @@ describe("FilterPanel", () => {
     await waitFor(() => {
       expect(screen.getAllByText("Relevance").length).toBeGreaterThanOrEqual(1);
     });
-    expect(screen.queryAllByText("Clear all filters")).toHaveLength(0);
+    expect(screen.queryAllByText("Clear all")).toHaveLength(0);
   });
 
   it("calls onChange with empty object on clear all", async () => {
@@ -262,11 +262,11 @@ describe("FilterPanel", () => {
 
     await waitFor(() => {
       expect(
-        screen.getAllByText("Clear all filters").length,
+        screen.getAllByText("Clear all").length,
       ).toBeGreaterThanOrEqual(1);
     });
 
-    await user.click(screen.getAllByText("Clear all filters")[0]);
+    await user.click(screen.getAllByText("Clear all")[0]);
 
     expect(onChange).toHaveBeenCalledWith({});
   });

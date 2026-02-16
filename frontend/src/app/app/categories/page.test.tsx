@@ -110,10 +110,10 @@ describe("CategoriesPage", () => {
     render(<CategoriesPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("42 products")).toBeInTheDocument();
+      expect(screen.getByText("42 product(s)")).toBeInTheDocument();
     });
-    expect(screen.getByText("1 product")).toBeInTheDocument();
-    expect(screen.getByText("10 products")).toBeInTheDocument();
+    expect(screen.getByText("1 product(s)")).toBeInTheDocument();
+    expect(screen.getByText("10 product(s)")).toBeInTheDocument();
   });
 
   it("shows average score badges", async () => {

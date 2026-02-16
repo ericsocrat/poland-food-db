@@ -12,12 +12,14 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { ALLERGEN_TAGS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { useTranslation } from "@/lib/i18n";
 import type { SavedSearch, SearchFilters } from "@/lib/types";
 
 export default function SavedSearchesPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const router = useRouter();
+  const { t } = useTranslation();
 
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
@@ -62,17 +64,16 @@ export default function SavedSearchesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-gray-900">
-            📋 Saved Searches
+            {"📋 "}
+            {t("savedSearches.title")}
           </h1>
-          <p className="text-sm text-gray-500">
-            Your saved search configurations
-          </p>
+          <p className="text-sm text-gray-500">{t("savedSearches.subtitle")}</p>
         </div>
         <Link
           href="/app/search"
           className="text-sm text-brand-600 hover:text-brand-700"
         >
-          ← Back to Search
+          {t("savedSearches.backToSearch")}
         </Link>
       </div>
 
@@ -87,13 +88,14 @@ export default function SavedSearchesPage() {
       {error && (
         <div className="card border-red-200 bg-red-50 text-center">
           <p className="mb-2 text-sm text-red-600">
-            Failed to load saved searches.
+            {t("savedSearches.loadFailed")}
           </p>
           <button
             onClick={handleRetry}
             className="text-sm font-medium text-red-700 hover:text-red-800"
           >
-            🔄 Retry
+            {"🔄 "}
+            {t("common.retry")}
           </button>
         </div>
       )}
@@ -102,15 +104,17 @@ export default function SavedSearchesPage() {
       {data?.searches.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">💾</p>
-          <p className="mb-1 text-sm text-gray-500">No saved searches yet</p>
+          <p className="mb-1 text-sm text-gray-500">
+            {t("savedSearches.emptyTitle")}
+          </p>
           <p className="mb-4 text-xs text-gray-400">
-            Save a search from the search page to quickly re-apply it later.
+            {t("savedSearches.emptyMessage")}
           </p>
           <Link
             href="/app/search"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            Go to Search →
+            {t("savedSearches.goToSearch")}
           </Link>
         </div>
       )}
@@ -129,11 +133,9 @@ export default function SavedSearchesPage() {
                 >
                   <p className="font-medium text-gray-900">{search.name}</p>
                   <p className="mt-0.5 text-sm text-gray-500">
-                    {search.query ? (
-                      <>Query: &ldquo;{search.query}&rdquo;</>
-                    ) : (
-                      "Browse mode"
-                    )}
+                    {search.query
+                      ? t("savedSearches.query", { query: search.query })
+                      : t("savedSearches.browseMode")}
                   </p>
                   {/* Filter summary */}
                   {search.filters && Object.keys(search.filters).length > 0 && (
@@ -153,7 +155,7 @@ export default function SavedSearchesPage() {
                     onClick={() => applySearch(search)}
                     className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 transition-colors hover:bg-brand-50"
                   >
-                    Apply
+                    {t("savedSearches.apply")}
                   </button>
                   <button
                     type="button"
@@ -172,9 +174,9 @@ export default function SavedSearchesPage() {
 
       <ConfirmDialog
         open={confirmDeleteId !== null}
-        title="Delete saved search?"
-        description="This action cannot be undone."
-        confirmLabel="Delete"
+        title={t("savedSearches.deleteConfirm")}
+        description={t("savedSearches.cannotUndo")}
+        confirmLabel={t("common.delete")}
         variant="danger"
         onConfirm={() => {
           if (confirmDeleteId) deleteMutation.mutate(confirmDeleteId);
@@ -187,26 +189,37 @@ export default function SavedSearchesPage() {
 }
 
 function FilterSummaryChips({ filters }: Readonly<{ filters: SearchFilters }>) {
+  const { t } = useTranslation();
   const chips: string[] = [];
 
   if (filters.category?.length) {
-    chips.push(`${filters.category.length} categories`);
+    chips.push(
+      t("savedSearches.categories", { count: filters.category.length }),
+    );
   }
   if (filters.nutri_score?.length) {
-    chips.push(`Nutri: ${filters.nutri_score.join(", ")}`);
+    chips.push(
+      t("savedSearches.nutriFilter", {
+        values: filters.nutri_score.join(", "),
+      }),
+    );
   }
   if (filters.allergen_free?.length) {
     const labels = filters.allergen_free.map((tag) => {
       const info = ALLERGEN_TAGS.find((a) => a.tag === tag);
       return info?.label ?? tag.replace("en:", "");
     });
-    chips.push(`Free: ${labels.join(", ")}`);
+    chips.push(
+      t("savedSearches.allergenFreeFilter", { values: labels.join(", ") }),
+    );
   }
   if (filters.max_unhealthiness !== undefined) {
-    chips.push(`Score ≤ ${filters.max_unhealthiness}`);
+    chips.push(
+      t("savedSearches.maxScoreFilter", { score: filters.max_unhealthiness }),
+    );
   }
   if (filters.sort_by && filters.sort_by !== "relevance") {
-    chips.push(`Sort: ${filters.sort_by}`);
+    chips.push(t("savedSearches.sortFilter", { sortBy: filters.sort_by }));
   }
 
   return (

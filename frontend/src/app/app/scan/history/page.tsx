@@ -11,18 +11,20 @@ import { getScanHistory } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useTranslation } from "@/lib/i18n";
 import type { ScanHistoryItem } from "@/lib/types";
 
 const FILTERS = [
-  { value: "all", label: "All" },
-  { value: "found", label: "Found" },
-  { value: "not_found", label: "Not Found" },
+  { value: "all", labelKey: "scanHistory.all" },
+  { value: "found", labelKey: "scanHistory.found" },
+  { value: "not_found", labelKey: "scanHistory.notFound" },
 ] as const;
 
 export default function ScanHistoryPage() {
   const supabase = createClient();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [filter, setFilter] = useState<string>("all");
 
@@ -48,15 +50,15 @@ export default function ScanHistoryPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-gray-900">
-            📋 Scan History
+            📋 {t("scanHistory.title")}
           </h1>
-          <p className="text-sm text-gray-500">Your barcode scan activity</p>
+          <p className="text-sm text-gray-500">{t("scanHistory.subtitle")}</p>
         </div>
         <Link
           href="/app/scan"
           className="text-sm text-brand-600 hover:text-brand-700"
         >
-          ← Back to Scanner
+          {t("scanHistory.backToScanner")}
         </Link>
       </div>
 
@@ -75,7 +77,7 @@ export default function ScanHistoryPage() {
                 : "text-gray-500 hover:text-gray-700"
             }`}
           >
-            {f.label}
+            {t(f.labelKey)}
           </button>
         ))}
       </div>
@@ -91,13 +93,13 @@ export default function ScanHistoryPage() {
       {error && (
         <div className="card border-red-200 bg-red-50 text-center">
           <p className="mb-2 text-sm text-red-600">
-            Failed to load scan history.
+            {t("scanHistory.loadFailed")}
           </p>
           <button
             onClick={handleRetry}
             className="text-sm font-medium text-red-700 hover:text-red-800"
           >
-            🔄 Retry
+            🔄 {t("common.retry")}
           </button>
         </div>
       )}
@@ -106,15 +108,17 @@ export default function ScanHistoryPage() {
       {data?.scans.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">📷</p>
-          <p className="mb-1 text-sm text-gray-500">No scans yet</p>
+          <p className="mb-1 text-sm text-gray-500">
+            {t("scanHistory.emptyTitle")}
+          </p>
           <p className="mb-4 text-xs text-gray-400">
-            Scan a barcode to start building your history.
+            {t("scanHistory.emptyMessage")}
           </p>
           <Link
             href="/app/scan"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            Start scanning →
+            {t("scanHistory.startScanning")}
           </Link>
         </div>
       )}
@@ -140,17 +144,17 @@ export default function ScanHistoryPage() {
             disabled={page <= 1}
             className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
-            ← Prev
+            {t("common.prev")}
           </button>
           <span className="text-sm text-gray-500">
-            Page {data.page} of {data.pages}
+            {t("common.pageOf", { page: data.page, pages: data.pages })}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(data.pages, p + 1))}
             disabled={page >= data.pages}
             className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
-            Next →
+            {t("common.next")}
           </button>
         </div>
       )}
@@ -165,6 +169,7 @@ function ScanRow({
   scan: ScanHistoryItem;
   onNavigate: (productId: number) => void;
 }>) {
+  const { t } = useTranslation();
   const date = new Date(scan.scanned_at);
   const timeStr = date.toLocaleString(undefined, {
     month: "short",
@@ -219,10 +224,13 @@ function ScanRow({
         <div className="min-w-0 flex-1">
           <p className="font-mono text-sm text-gray-700">{scan.ean}</p>
           <p className="text-xs text-gray-500">
-            Not found
+            {t("scanHistory.notFound")}
             {scan.submission_status && (
               <span className="ml-1">
-                · Submission: {scan.submission_status}
+                ·{" "}
+                {t("scanHistory.submissionStatus", {
+                  status: scan.submission_status,
+                })}
               </span>
             )}
           </p>
@@ -234,7 +242,7 @@ function ScanRow({
               href={`/app/scan/submit?ean=${scan.ean}`}
               className="text-xs text-brand-600 hover:text-brand-700"
             >
-              Submit →
+              {t("scanHistory.submit")}
             </Link>
           )}
         </div>

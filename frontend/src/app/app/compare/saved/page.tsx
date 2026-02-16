@@ -6,11 +6,13 @@
 import Link from "next/link";
 import { useSavedComparisons, useDeleteComparison } from "@/hooks/use-compare";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useTranslation } from "@/lib/i18n";
 import type { SavedComparison } from "@/lib/types";
 
 export default function SavedComparisonsPage() {
   const { data, isLoading, error } = useSavedComparisons();
   const { mutate: remove } = useDeleteComparison();
+  const { t } = useTranslation();
 
   return (
     <div className="space-y-4">
@@ -28,10 +30,11 @@ export default function SavedComparisonsPage() {
                 clipRule="evenodd"
               />
             </svg>
-            Compare
+            {t("compare.title")}
           </Link>
           <h1 className="mt-1 text-xl font-bold text-gray-900">
-            📂 Saved Comparisons
+            {"📂 "}
+            {t("compare.savedComparisons")}
           </h1>
         </div>
       </div>
@@ -46,7 +49,7 @@ export default function SavedComparisonsPage() {
       {/* Error */}
       {error && (
         <div className="card border-red-200 bg-red-50 text-center">
-          <p className="text-sm text-red-600">Failed to load comparisons.</p>
+          <p className="text-sm text-red-600">{t("compare.loadFailed")}</p>
         </div>
       )}
 
@@ -54,12 +57,13 @@ export default function SavedComparisonsPage() {
       {data?.comparisons.length === 0 && (
         <div className="card py-12 text-center">
           <p className="mb-2 text-4xl">📂</p>
-          <p className="mb-1 text-sm text-gray-500">No saved comparisons yet</p>
+          <p className="mb-1 text-sm text-gray-500">{t("compare.noSaved")}</p>
           <p className="mb-4 text-xs text-gray-400">
-            Compare products and save them for later reference.
+            {t("compare.noSavedDescription")}
           </p>
           <Link href="/app/search" className="btn-primary text-sm">
-            🔍 Find Products
+            {"🔍 "}
+            {t("compare.findProducts")}
           </Link>
         </div>
       )}
@@ -87,6 +91,7 @@ function ComparisonCard({
   comparison: SavedComparison;
   onDelete: () => void;
 }>) {
+  const { t } = useTranslation();
   const ids = comparison.product_ids.join(",");
   const date = new Date(comparison.created_at).toLocaleDateString();
 
@@ -99,7 +104,9 @@ function ComparisonCard({
         >
           <p className="font-medium text-gray-900">
             {comparison.title ??
-              `Compare ${comparison.product_ids.length} products`}
+              t("compare.compareProducts", {
+                count: comparison.product_ids.length,
+              })}
           </p>
           <div className="mt-1 flex flex-wrap gap-1">
             {comparison.product_names.map((name) => (
@@ -125,7 +132,7 @@ function ComparisonCard({
                 navigator.clipboard.writeText(url);
               }}
               className="text-sm text-gray-400 hover:text-brand-600"
-              title="Copy share link"
+              title={t("compare.copyShareLink")}
             >
               🔗
             </button>
@@ -139,7 +146,7 @@ function ComparisonCard({
               onDelete();
             }}
             className="text-sm text-gray-400 hover:text-red-500"
-            title="Delete comparison"
+            title={t("compare.deleteComparison")}
           >
             🗑️
           </button>

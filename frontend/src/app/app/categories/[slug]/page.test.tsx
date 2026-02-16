@@ -136,7 +136,7 @@ describe("CategoryListingPage", () => {
   it("shows total product count", async () => {
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("2 products")).toBeInTheDocument();
+      expect(screen.getByText("2 product(s)")).toBeInTheDocument();
     });
   });
 
@@ -161,7 +161,7 @@ describe("CategoryListingPage", () => {
     });
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Failed to load products.")).toBeInTheDocument();
+      expect(screen.getByText("Failed to load categories.")).toBeInTheDocument();
     });
   });
 
@@ -252,7 +252,7 @@ describe("CategoryListingPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Previous")).toBeInTheDocument();
     });
-    expect(screen.getByText("Next")).toBeInTheDocument();
+    expect(screen.getByText("Next →")).toBeInTheDocument();
     expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
   });
 
@@ -282,7 +282,7 @@ describe("CategoryListingPage", () => {
     });
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("1 product")).toBeInTheDocument();
+      expect(screen.getByText("1 product(s)")).toBeInTheDocument();
     });
   });
 

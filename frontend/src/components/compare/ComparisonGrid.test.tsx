@@ -176,10 +176,10 @@ describe("ComparisonGrid", () => {
   it("renders warnings row", () => {
     render(<ComparisonGrid products={products} />);
     // Product A has high_salt only
-    const highSalt = screen.getAllByText(/High Salt/);
+    const highSalt = screen.getAllByText(/High salt/);
     expect(highSalt.length).toBeGreaterThanOrEqual(1);
     // Product B has all flags
-    const highSugar = screen.getAllByText(/High Sugar/);
+    const highSugar = screen.getAllByText(/High sugar/);
     expect(highSugar.length).toBeGreaterThanOrEqual(1);
   });
 

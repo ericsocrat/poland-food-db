@@ -16,6 +16,7 @@ import { isValidEan, stripNonDigits } from "@/lib/validation";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useTranslation } from "@/lib/i18n";
 import type {
   RecordScanResponse,
   RecordScanFoundResponse,
@@ -58,6 +59,7 @@ export default function ScanPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const { track } = useAnalytics();
+  const { t } = useTranslation();
   const [ean, setEan] = useState("");
   const [manualEan, setManualEan] = useState("");
   const [mode, setMode] = useState<"camera" | "manual">("camera");
@@ -148,7 +150,7 @@ export default function ScanPage() {
 
       const devices = await reader.listVideoInputDevices();
       if (devices.length === 0) {
-        setCameraError("No camera found on this device.");
+        setCameraError(t("scan.noCamera"));
         setMode("manual");
         return;
       }
@@ -191,16 +193,14 @@ export default function ScanPage() {
         errName === "NotAllowedError" ||
         errName === "PermissionDeniedError"
       ) {
-        setCameraError(
-          "Camera permission denied. Please allow camera access in your browser settings.",
-        );
-        toast.error("Camera permission denied");
+        setCameraError(t("scan.permissionDenied"));
+        toast.error(t("scan.permissionDenied"));
       } else {
-        setCameraError("Could not start camera. Try manual entry instead.");
+        setCameraError(t("scan.cameraError"));
       }
       setMode("manual");
     }
-  }, [stopScanner]);
+  }, [stopScanner, t]);
 
   async function toggleTorch() {
     if (!streamRef.current) return;
@@ -215,10 +215,10 @@ export default function ScanPage() {
         await track.applyConstraints({ advanced: [constraint] });
         setTorchOn(newState);
       } else {
-        toast.error("Torch not supported on this device");
+        toast.error(t("scan.torchNotSupported"));
       }
     } catch {
-      toast.error("Could not toggle torch");
+      toast.error(t("scan.torchError"));
     }
   }
 
@@ -233,7 +233,7 @@ export default function ScanPage() {
     e.preventDefault();
     const cleaned = manualEan.trim();
     if (!isValidEan(cleaned)) {
-      toast.error("Please enter a valid 8 or 13 digit barcode");
+      toast.error(t("scan.invalidBarcode"));
       return;
     }
     setScanState("looking-up");
@@ -259,10 +259,11 @@ export default function ScanPage() {
       <div className="space-y-4">
         <div className="card border-red-200 bg-red-50 text-center">
           <p className="mb-2 text-4xl">⚠️</p>
-          <p className="text-lg font-semibold text-gray-900">Lookup failed</p>
+          <p className="text-lg font-semibold text-gray-900">
+            {t("scan.lookupFailed")}
+          </p>
           <p className="mt-1 text-sm text-gray-500">
-            Could not look up EAN {ean}. Please check your connection and try
-            again.
+            {t("scan.lookupError", { ean })}
           </p>
         </div>
         <div className="flex gap-2">
@@ -273,10 +274,10 @@ export default function ScanPage() {
             }}
             className="btn-secondary flex-1"
           >
-            🔄 Retry
+            🔄 {t("common.retry")}
           </button>
           <button onClick={() => handleReset()} className="btn-primary flex-1">
-            Scan another
+            {t("scan.scanAnother")}
           </button>
         </div>
       </div>
@@ -292,19 +293,17 @@ export default function ScanPage() {
         <div className="card text-center">
           <p className="mb-2 text-4xl">🔍</p>
           <p className="text-lg font-semibold text-gray-900">
-            Product not found
+            {t("scan.notFound")}
           </p>
           <p className="mt-1 text-sm text-gray-500">
-            EAN: <span className="font-mono">{ean}</span> is not in our database
-            yet.
+            {t("scan.notFoundMessage", { ean })}
           </p>
         </div>
 
         {hasPending ? (
           <div className="card border-amber-200 bg-amber-50">
             <p className="text-sm text-amber-700">
-              ⏳ Someone has already submitted this product. It&apos;s pending
-              review.
+              ⏳ {t("scan.alreadySubmitted")}
             </p>
           </div>
         ) : (
@@ -312,7 +311,7 @@ export default function ScanPage() {
             href={`/app/scan/submit?ean=${ean}`}
             className="btn-primary block w-full text-center"
           >
-            📝 Help us add it!
+            📝 {t("scan.helpAdd")}
           </Link>
         )}
 
@@ -321,13 +320,13 @@ export default function ScanPage() {
             onClick={() => handleReset()}
             className="btn-secondary flex-1"
           >
-            Scan another
+            {t("scan.scanAnother")}
           </button>
           <Link
             href="/app/scan/history"
             className="btn-secondary flex-1 text-center"
           >
-            📋 History
+            📋 {t("scan.history")}
           </Link>
         </div>
       </div>
@@ -339,7 +338,7 @@ export default function ScanPage() {
     return (
       <div className="flex flex-col items-center gap-3 py-12">
         <LoadingSpinner />
-        <p className="text-sm text-gray-500">Looking up {ean}…</p>
+        <p className="text-sm text-gray-500">{t("scan.lookingUp", { ean })}</p>
       </div>
     );
   }
@@ -348,19 +347,21 @@ export default function ScanPage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">📷 Scan Barcode</h1>
+        <h1 className="text-xl font-bold text-gray-900">
+          📷 {t("scan.title")}
+        </h1>
         <div className="flex gap-2">
           <Link
             href="/app/scan/history"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            📋 History
+            📋 {t("scan.history")}
           </Link>
           <Link
             href="/app/scan/submissions"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            📝 My Submissions
+            📝 {t("scan.mySubmissions")}
           </Link>
         </div>
       </div>
@@ -376,9 +377,7 @@ export default function ScanPage() {
           }}
           className="h-4 w-4 rounded border-gray-300 text-brand-600"
         />
-        <span className="text-sm text-gray-700">
-          Batch mode — scan multiple without stopping
-        </span>
+        <span className="text-sm text-gray-700">{t("scan.batchMode")}</span>
       </label>
 
       {/* Mode toggle */}
@@ -391,7 +390,7 @@ export default function ScanPage() {
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
-          📷 Camera
+          📷 {t("scan.camera")}
         </button>
         <button
           onClick={() => {
@@ -404,7 +403,7 @@ export default function ScanPage() {
               : "text-gray-500 hover:text-gray-700"
           }`}
         >
-          ⌨️ Manual
+          ⌨️ {t("scan.manual")}
         </button>
       </div>
 
@@ -445,7 +444,11 @@ export default function ScanPage() {
               </div>
               <div className="flex gap-2">
                 <button onClick={toggleTorch} className="btn-secondary flex-1">
-                  {torchOn ? "🔦 Off" : "🔦 Torch"}
+                  {torchOn ? (
+                    <>🔦 {t("scan.off")}</>
+                  ) : (
+                    <>🔦 {t("scan.torch")}</>
+                  )}
                 </button>
                 <button
                   onClick={() => {
@@ -454,13 +457,13 @@ export default function ScanPage() {
                   }}
                   className="btn-secondary flex-1"
                 >
-                  🔄 Restart
+                  🔄 {t("scan.restart")}
                 </button>
               </div>
             </>
           )}
           <p className="text-center text-xs text-gray-400">
-            Point camera at a barcode. Supports EAN-13, EAN-8, UPC-A, UPC-E.
+            {t("scan.cameraHint")}
           </p>
         </div>
       ) : (
@@ -469,7 +472,7 @@ export default function ScanPage() {
             type="text"
             value={manualEan}
             onChange={(e) => setManualEan(stripNonDigits(e.target.value))}
-            placeholder="Enter EAN barcode (8 or 13 digits)"
+            placeholder={t("scan.manualPlaceholder")}
             className="input-field text-center text-lg tracking-widest"
             maxLength={13}
             inputMode="numeric"
@@ -480,10 +483,10 @@ export default function ScanPage() {
             disabled={manualEan.length < 8}
             className="btn-primary w-full"
           >
-            Look up
+            {t("scan.lookUp")}
           </button>
           <p className="text-center text-xs text-gray-400">
-            Enter 8 digits (EAN-8) or 13 digits (EAN-13)
+            {t("scan.digitHint")}
           </p>
         </form>
       )}
@@ -493,13 +496,13 @@ export default function ScanPage() {
         <div className="space-y-2">
           <div className="flex items-center justify-between">
             <h2 className="text-sm font-semibold text-gray-900">
-              Scanned ({batchResults.length})
+              {t("scan.scannedCount", { count: batchResults.length })}
             </h2>
             <button
               onClick={() => setBatchResults([])}
               className="text-xs text-gray-400 hover:text-gray-600"
             >
-              Clear
+              {t("common.clear")}
             </button>
           </div>
           <ul className="max-h-48 space-y-1 overflow-y-auto">
@@ -532,7 +535,7 @@ export default function ScanPage() {
             onClick={() => setBatchMode(false)}
             className="btn-primary w-full"
           >
-            Done scanning
+            {t("scan.doneScan")}
           </button>
         </div>
       )}

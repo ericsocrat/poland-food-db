@@ -119,7 +119,22 @@
     "torchNotSupported": "Torch not supported on this device",
     "torchError": "Could not toggle torch",
     "invalidBarcode": "Please enter a valid 8 or 13 digit barcode",
-    "lookingUp": "Looking up {ean}…"
+    "lookingUp": "Looking up {ean}…",
+    "submissionsSubtitle": "Products you've submitted for review",
+    "submissionsLoadFailed": "Failed to load submissions.",
+    "submissionsEmptyTitle": "No submissions yet",
+    "submissionsEmptyMessage": "When you scan a product not in our database, you can submit it for review.",
+    "startScanning": "Start scanning →",
+    "viewProduct": "View →",
+    "statusPending": "Pending",
+    "statusApproved": "Approved",
+    "statusRejected": "Rejected",
+    "statusMerged": "Merged",
+    "statusSubmitted": "Submitted",
+    "statusInReview": "In Review",
+    "statusLive": "Live",
+    "submittedDate": "Submitted {date}",
+    "categoryLabel": "Category: {category}"
   },
   "scanHistory": {
     "title": "Scan History",
@@ -204,6 +219,7 @@
     "additiveCount": "{count} additives",
     "vegan": "Vegan: {status}",
     "vegetarian": "Vegetarian: {status}",
+    "additives": "Additives",
     "allergens": "Allergens",
     "mayContain": "May contain:",
     "dataQuality": "Data Quality",
@@ -354,7 +370,11 @@
     "apply": "Apply",
     "deleteConfirm": "Delete saved search?",
     "cannotUndo": "This action cannot be undone.",
-    "categories": "{count} categories"
+    "categories": "{count} categories",
+    "nutriFilter": "Nutri: {values}",
+    "allergenFreeFilter": "Free: {values}",
+    "maxScoreFilter": "Score ≤ {score}",
+    "sortFilter": "Sort: {sortBy}"
   },
   "saveSearchDialog": {
     "title": "Save Search",

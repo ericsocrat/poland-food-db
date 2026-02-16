@@ -24,6 +24,7 @@ import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useTranslation } from "@/lib/i18n";
 import type { ProductDetail, Alternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
@@ -35,6 +36,7 @@ export default function ProductDetailPage() {
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const { track } = useAnalytics();
+  const { t } = useTranslation();
 
   const {
     data: product,
@@ -61,7 +63,7 @@ export default function ProductDetailPage() {
       // Record view for dashboard recently-viewed section
       recordProductView(supabase, productId);
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
 
   if (isLoading) {
@@ -77,7 +79,7 @@ export default function ProductDetailPage() {
       <div className="space-y-4">
         <BackButton />
         <div className="card border-red-200 bg-red-50 py-8 text-center">
-          <p className="mb-3 text-sm text-red-600">Failed to load product.</p>
+          <p className="mb-3 text-sm text-red-600">{t("product.loadFailed")}</p>
           <button
             type="button"
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
@@ -87,7 +89,7 @@ export default function ProductDetailPage() {
               })
             }
           >
-            Retry
+            {t("common.retry")}
           </button>
         </div>
       </div>
@@ -99,7 +101,7 @@ export default function ProductDetailPage() {
       <div className="space-y-4">
         <BackButton />
         <p className="py-12 text-center text-sm text-gray-400">
-          Product not found.
+          {t("product.notFoundPage")}
         </p>
       </div>
     );
@@ -111,10 +113,10 @@ export default function ProductDetailPage() {
     : "bg-gray-200 text-gray-500";
 
   const tabs: { key: Tab; label: string }[] = [
-    { key: "overview", label: "Overview" },
-    { key: "nutrition", label: "Nutrition" },
-    { key: "alternatives", label: "Alternatives" },
-    { key: "scoring", label: "Scoring" },
+    { key: "overview", label: t("product.overview") },
+    { key: "nutrition", label: t("product.nutrition") },
+    { key: "alternatives", label: t("product.alternatives") },
+    { key: "scoring", label: t("product.scoring") },
   ];
 
   return (
@@ -147,10 +149,12 @@ export default function ProductDetailPage() {
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-bold ${nutriClass}`}
               >
-                Nutri-Score {product.scores.nutri_score ?? "?"}
+                {t("product.nutriScore", {
+                  grade: product.scores.nutri_score ?? "?",
+                })}
               </span>
               <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                NOVA {product.scores.nova_group}
+                {t("product.novaGroup", { group: product.scores.nova_group })}
               </span>
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-medium ${band.bg} ${band.color}`}
@@ -179,36 +183,38 @@ export default function ProductDetailPage() {
           product.flags.high_additive_load ||
           product.flags.has_palm_oil) && (
           <div className="mt-3 space-y-1">
-            <p className="text-xs font-medium text-gray-400">Health flags</p>
+            <p className="text-xs font-medium text-gray-400">
+              {t("product.healthFlags")}
+            </p>
             <div className="flex flex-wrap gap-1">
               {product.flags.high_sugar && (
                 <FlagWithExplanation
-                  label="High sugar"
-                  explanation="Sugar exceeds recommended threshold per 100 g (>13.5 g for food, >6.75 g for drinks)"
+                  label={t("product.highSugar")}
+                  explanation={t("product.highSugarExplanation")}
                 />
               )}
               {product.flags.high_salt && (
                 <FlagWithExplanation
-                  label="High salt"
-                  explanation="Salt exceeds 1.5 g per 100 g — UK FSA high-salt threshold"
+                  label={t("product.highSalt")}
+                  explanation={t("product.highSaltExplanation")}
                 />
               )}
               {product.flags.high_sat_fat && (
                 <FlagWithExplanation
-                  label="High sat. fat"
-                  explanation="Saturated fat exceeds 5 g per 100 g — UK FSA high threshold"
+                  label={t("product.highSatFat")}
+                  explanation={t("product.highSatFatExplanation")}
                 />
               )}
               {product.flags.high_additive_load && (
                 <FlagWithExplanation
-                  label="Many additives"
-                  explanation="Contains 5 or more food additives (E-numbers)"
+                  label={t("product.manyAdditives")}
+                  explanation={t("product.manyAdditivesExplanation")}
                 />
               )}
               {product.flags.has_palm_oil && (
                 <FlagWithExplanation
-                  label="Palm oil"
-                  explanation="Contains palm oil — linked to deforestation and high in saturated fat"
+                  label={t("product.palmOil")}
+                  explanation={t("product.palmOilExplanation")}
                 />
               )}
             </div>
@@ -252,6 +258,7 @@ export default function ProductDetailPage() {
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function BackButton() {
+  const { t } = useTranslation();
   return (
     <Link
       href="/app/search"
@@ -264,7 +271,7 @@ function BackButton() {
           clipRule="evenodd"
         />
       </svg>
-      Back
+      {t("product.back")}
     </Link>
   );
 }
@@ -307,23 +314,36 @@ function FlagWithExplanation({
 // ─── Overview Tab ───────────────────────────────────────────────────────────
 
 function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
+  const { t } = useTranslation();
   return (
     <div className="space-y-4">
       {/* Ingredients */}
       <div className="card">
         <h3 className="mb-2 text-sm font-semibold text-gray-700">
-          Ingredients
+          {t("product.ingredients")}
         </h3>
         <div className="space-y-1 text-sm text-gray-600">
-          <p>{product.ingredients.count} ingredients</p>
-          <p>{product.ingredients.additives_count} additives</p>
+          <p>
+            {t("product.ingredientCount", { count: product.ingredients.count })}
+          </p>
+          <p>
+            {t("product.additiveCount", {
+              count: product.ingredients.additives_count,
+            })}
+          </p>
           {product.ingredients.additive_names.length > 0 && (
             <p className="text-xs text-gray-400">
               {product.ingredients.additive_names.join(", ")}
             </p>
           )}
-          <p>Vegan: {product.ingredients.vegan_status}</p>
-          <p>Vegetarian: {product.ingredients.vegetarian_status}</p>
+          <p>
+            {t("product.vegan", { status: product.ingredients.vegan_status })}
+          </p>
+          <p>
+            {t("product.vegetarian", {
+              status: product.ingredients.vegetarian_status,
+            })}
+          </p>
         </div>
       </div>
 
@@ -331,7 +351,7 @@ function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
       {product.allergens.count > 0 && (
         <div className="card">
           <h3 className="mb-2 text-sm font-semibold text-gray-700">
-            Allergens
+            {t("product.allergens")}
           </h3>
           <div className="flex flex-wrap gap-1">
             {product.allergens.tags.map((tag) => (
@@ -345,7 +365,9 @@ function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
           </div>
           {product.allergens.trace_count > 0 && (
             <div className="mt-2">
-              <p className="mb-1 text-xs text-gray-400">May contain:</p>
+              <p className="mb-1 text-xs text-gray-400">
+                {t("product.mayContain")}
+              </p>
               <div className="flex flex-wrap gap-1">
                 {product.allergens.trace_tags.map((tag) => (
                   <span
@@ -364,13 +386,19 @@ function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
       {/* Trust & data quality */}
       <div className="card">
         <h3 className="mb-2 text-sm font-semibold text-gray-700">
-          Data Quality
+          {t("product.dataQuality")}
         </h3>
         <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
-          <p>Confidence: {product.trust.confidence}</p>
-          <p>Completeness: {product.trust.data_completeness_pct}%</p>
-          <p>Source: {product.trust.source_type}</p>
-          <p>Age: {product.freshness.data_age_days}d</p>
+          <p>{t("product.confidence", { value: product.trust.confidence })}</p>
+          <p>
+            {t("product.completeness", {
+              pct: product.trust.data_completeness_pct,
+            })}
+          </p>
+          <p>{t("product.source", { type: product.trust.source_type })}</p>
+          <p>
+            {t("product.dataAge", { days: product.freshness.data_age_days })}
+          </p>
         </div>
       </div>
     </div>
@@ -380,29 +408,30 @@ function OverviewTab({ product }: Readonly<{ product: ProductDetail }>) {
 // ─── Nutrition Tab ──────────────────────────────────────────────────────────
 
 function NutritionTab({ product }: Readonly<{ product: ProductDetail }>) {
+  const { t } = useTranslation();
   const n = product.nutrition_per_100g;
   const rows = [
-    { label: "Calories", value: `${n.calories} kcal` },
-    { label: "Total Fat", value: `${n.total_fat_g} g` },
-    { label: "Saturated Fat", value: `${n.saturated_fat_g} g` },
+    { label: t("product.caloriesLabel"), value: `${n.calories} kcal` },
+    { label: t("product.totalFat"), value: `${n.total_fat_g} g` },
+    { label: t("product.saturatedFat"), value: `${n.saturated_fat_g} g` },
     {
-      label: "Trans Fat",
+      label: t("product.transFat"),
       value: n.trans_fat_g === null ? "—" : `${n.trans_fat_g} g`,
     },
-    { label: "Carbs", value: `${n.carbs_g} g` },
-    { label: "Sugars", value: `${n.sugars_g} g` },
+    { label: t("product.carbs"), value: `${n.carbs_g} g` },
+    { label: t("product.sugars"), value: `${n.sugars_g} g` },
     {
-      label: "Fibre",
+      label: t("product.fibre"),
       value: n.fibre_g === null ? "—" : `${n.fibre_g} g`,
     },
-    { label: "Protein", value: `${n.protein_g} g` },
-    { label: "Salt", value: `${n.salt_g} g` },
+    { label: t("product.protein"), value: `${n.protein_g} g` },
+    { label: t("product.salt"), value: `${n.salt_g} g` },
   ];
 
   return (
     <div className="card">
       <h3 className="mb-3 text-sm font-semibold text-gray-700">
-        Nutrition per 100 g
+        {t("product.nutritionPer100g")}
       </h3>
       <table className="w-full text-sm">
         <tbody>
@@ -423,6 +452,7 @@ function NutritionTab({ product }: Readonly<{ product: ProductDetail }>) {
 // ─── Alternatives Tab ───────────────────────────────────────────────────────
 
 function AlternativesTab({ productId }: Readonly<{ productId: number }>) {
+  const { t } = useTranslation();
   const supabase = createClient();
 
   const { data, isLoading } = useQuery({
@@ -446,7 +476,7 @@ function AlternativesTab({ productId }: Readonly<{ productId: number }>) {
   if (!data || data.alternatives.length === 0) {
     return (
       <p className="py-8 text-center text-sm text-gray-400">
-        No healthier alternatives found in this category.
+        {t("product.noAlternatives")}
       </p>
     );
   }
@@ -454,8 +484,7 @@ function AlternativesTab({ productId }: Readonly<{ productId: number }>) {
   return (
     <div className="space-y-2">
       <p className="text-sm text-gray-500">
-        {data.alternatives_count} healthier option
-        {data.alternatives_count !== 1 && "s"} found
+        {t("product.healthierOptions", { count: data.alternatives_count })}
       </p>
       {data.alternatives.map((alt) => (
         <AlternativeCard key={alt.product_id} alt={alt} />
@@ -465,6 +494,7 @@ function AlternativesTab({ productId }: Readonly<{ productId: number }>) {
 }
 
 function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
+  const { t } = useTranslation();
   const nutriClass = alt.nutri_score
     ? NUTRI_COLORS[alt.nutri_score]
     : "bg-gray-200 text-gray-500";
@@ -481,7 +511,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
           </p>
           <p className="text-sm text-gray-500">{alt.brand}</p>
           <p className="text-xs text-green-600">
-            −{alt.score_improvement} points better
+            {t("product.pointsBetter", { points: alt.score_improvement })}
           </p>
         </div>
         <HealthWarningBadge productId={alt.product_id} />
@@ -498,6 +528,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: Alternative }>) {
 // ─── Scoring Tab ────────────────────────────────────────────────────────────
 
 function ScoringTab({ productId }: Readonly<{ productId: number }>) {
+  const { t } = useTranslation();
   const supabase = createClient();
 
   const { data, isLoading } = useQuery({
@@ -521,7 +552,7 @@ function ScoringTab({ productId }: Readonly<{ productId: number }>) {
   if (!data) {
     return (
       <p className="py-8 text-center text-sm text-gray-400">
-        Score breakdown unavailable.
+        {t("product.scoreBreakdownUnavailable")}
       </p>
     );
   }
@@ -530,7 +561,9 @@ function ScoringTab({ productId }: Readonly<{ productId: number }>) {
     <div className="space-y-4">
       {/* Summary */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-gray-700">Summary</h3>
+        <h3 className="mb-2 text-sm font-semibold text-gray-700">
+          {t("product.summary")}
+        </h3>
         <p className="text-sm text-gray-600">{data.summary.headline}</p>
       </div>
 
@@ -538,7 +571,7 @@ function ScoringTab({ productId }: Readonly<{ productId: number }>) {
       {data.top_factors.length > 0 && (
         <div className="card">
           <h3 className="mb-2 text-sm font-semibold text-gray-700">
-            Top Score Factors
+            {t("product.topScoreFactors")}
           </h3>
           <div className="space-y-2">
             {data.top_factors.map((f) => (
@@ -560,7 +593,7 @@ function ScoringTab({ productId }: Readonly<{ productId: number }>) {
       {data.warnings.length > 0 && (
         <div className="card border-amber-200 bg-amber-50">
           <h3 className="mb-2 text-sm font-semibold text-amber-800">
-            Warnings
+            {t("product.warnings")}
           </h3>
           <ul className="list-inside list-disc space-y-1 text-sm text-amber-700">
             {data.warnings.map((w) => (
@@ -573,15 +606,19 @@ function ScoringTab({ productId }: Readonly<{ productId: number }>) {
       {/* Category context */}
       <div className="card">
         <h3 className="mb-2 text-sm font-semibold text-gray-700">
-          Category Context
+          {t("product.categoryContext")}
         </h3>
         <div className="text-sm text-gray-600">
           <p>
-            Rank: {data.category_context.category_rank} of{" "}
-            {data.category_context.category_total}
+            {t("product.rank", {
+              rank: data.category_context.category_rank,
+              total: data.category_context.category_total,
+            })}
           </p>
           <p>
-            Category avg: {Math.round(data.category_context.category_avg_score)}
+            {t("product.categoryAvg", {
+              avg: Math.round(data.category_context.category_avg_score),
+            })}
           </p>
           <p>Position: {data.category_context.relative_position}</p>
         </div>

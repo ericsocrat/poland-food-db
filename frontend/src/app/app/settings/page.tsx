@@ -9,12 +9,20 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences, setUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { COUNTRIES, LANGUAGES, DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
+import {
+  COUNTRIES,
+  LANGUAGES,
+  DIET_OPTIONS,
+  ALLERGEN_TAGS,
+} from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthProfileSection } from "@/components/settings/HealthProfileSection";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
-import { useLanguageStore, type SupportedLanguage } from "@/stores/language-store";
+import {
+  useLanguageStore,
+  type SupportedLanguage,
+} from "@/stores/language-store";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -98,7 +106,12 @@ export default function SettingsPage() {
     });
 
     setDirty(false);
-    track("preferences_updated", { country, language, diet, allergen_count: allergens.length });
+    track("preferences_updated", {
+      country,
+      language,
+      diet,
+      allergen_count: allergens.length,
+    });
     toast.success(t("settings.preferencesSaved"));
   }
 
@@ -123,7 +136,9 @@ export default function SettingsPage() {
 
       {/* Country */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">{t("settings.country")}</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+          {t("settings.country")}
+        </h2>
         <div className="grid grid-cols-2 gap-2">
           {COUNTRIES.map((c) => (
             <button
@@ -149,7 +164,9 @@ export default function SettingsPage() {
 
       {/* Language */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">{t("settings.language")}</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+          {t("settings.language")}
+        </h2>
         <div className="grid grid-cols-3 gap-2">
           {LANGUAGES.map((lang) => (
             <button
@@ -284,7 +301,9 @@ export default function SettingsPage() {
 
       {/* Account section */}
       <section className="card border-red-100">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">{t("settings.account")}</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+          {t("settings.account")}
+        </h2>
         <p className="mb-3 text-xs text-gray-500">
           {prefs?.user_id && `User ID: ${prefs.user_id.slice(0, 8)}…`}
         </p>

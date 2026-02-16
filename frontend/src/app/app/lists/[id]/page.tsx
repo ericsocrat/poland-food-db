@@ -17,10 +17,12 @@ import {
 } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { useTranslation } from "@/lib/i18n";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import type { ListItem, FormSubmitEvent } from "@/lib/types";
 
 export default function ListDetailPage() {
+  const { t } = useTranslation();
   const params = useParams();
   const listId = String(params.id ?? "");
 
@@ -111,7 +113,7 @@ export default function ListDetailPage() {
                 value={editDesc}
                 onChange={(e) => setEditDesc(e.target.value)}
                 className="input-field"
-                placeholder="Description (optional)"
+                placeholder={t("lists.descriptionPlaceholder")}
                 maxLength={500}
               />
               <div className="flex gap-2">
@@ -120,14 +122,14 @@ export default function ListDetailPage() {
                   className="btn-primary text-sm"
                   disabled={updateMutation.isPending}
                 >
-                  Save
+                  {t("common.save")}
                 </button>
                 <button
                   type="button"
                   className="btn-secondary text-sm"
                   onClick={() => setEditing(false)}
                 >
-                  Cancel
+                  {t("common.cancel")}
                 </button>
               </div>
             </form>
@@ -145,14 +147,14 @@ export default function ListDetailPage() {
                   </p>
                 )}
                 <p className="mt-1 text-xs text-gray-400">
-                  {list.item_count} {list.item_count === 1 ? "item" : "items"}
+                  {t("common.items", { count: list.item_count })}
                 </p>
               </div>
               <div className="flex gap-1">
                 {/* Edit button (not for defaults unless custom) */}
                 <button
                   type="button"
-                  title="Edit list"
+                  title={t("lists.editList")}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-gray-100"
                   onClick={() => {
                     setEditName(list.name);
@@ -166,7 +168,7 @@ export default function ListDetailPage() {
                 {list.list_type !== "avoid" && (
                   <button
                     type="button"
-                    title="Share settings"
+                    title={t("lists.shareSettings")}
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-gray-100 ${
                       list.share_enabled ? "text-blue-600" : ""
                     }`}
@@ -182,7 +184,9 @@ export default function ListDetailPage() {
           {/* Share panel */}
           {showSharePanel && list.list_type !== "avoid" && (
             <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
-              <p className="mb-2 text-sm font-medium text-gray-700">Sharing</p>
+              <p className="mb-2 text-sm font-medium text-gray-700">
+                {t("lists.sharing")}
+              </p>
               <div className="flex items-center gap-3">
                 <button
                   type="button"
@@ -194,7 +198,7 @@ export default function ListDetailPage() {
                   onClick={() => handleShare(!list.share_enabled)}
                   disabled={toggleShareMutation.isPending}
                 >
-                  {list.share_enabled ? "On" : "Off"}
+                  {list.share_enabled ? t("lists.on") : t("lists.off")}
                 </button>
                 {list.share_enabled && list.share_token && (
                   <>
@@ -203,14 +207,14 @@ export default function ListDetailPage() {
                       className="btn-secondary text-xs"
                       onClick={handleCopyLink}
                     >
-                      {copied ? "Copied!" : "Copy link"}
+                      {copied ? t("lists.copied") : t("lists.copyLink")}
                     </button>
                     <button
                       type="button"
                       className="text-xs text-red-500 hover:text-red-700"
                       onClick={() => setShowRevokeConfirm(true)}
                     >
-                      Revoke
+                      {t("lists.revoke")}
                     </button>
                   </>
                 )}
@@ -224,11 +228,9 @@ export default function ListDetailPage() {
       {items.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">📭</p>
-          <p className="text-sm text-gray-500">
-            This list is empty. Browse products and add them here.
-          </p>
+          <p className="text-sm text-gray-500">{t("lists.emptyList")}</p>
           <Link href="/app/search" className="btn-primary mt-4 inline-block">
-            Search products
+            {t("lists.searchProducts")}
           </Link>
         </div>
       )}
@@ -255,9 +257,9 @@ export default function ListDetailPage() {
 
       <ConfirmDialog
         open={showRevokeConfirm}
-        title="Revoke sharing?"
-        description="Old links will stop working."
-        confirmLabel="Revoke"
+        title={t("lists.revokeSharing")}
+        description={t("lists.revokeWarning")}
+        confirmLabel={t("lists.revoke")}
         variant="danger"
         onConfirm={() => {
           revokeShareMutation.mutate(listId);
@@ -289,6 +291,7 @@ function ListItemRow({
   onRemove: () => void;
   isRemoving: boolean;
 }>) {
+  const { t } = useTranslation();
   // Derive score band from unhealthiness_score
   const score = item.unhealthiness_score;
   const bandKey = scoreToBandKey(score);
@@ -338,7 +341,7 @@ function ListItemRow({
       {/* Remove button */}
       <button
         type="button"
-        title="Remove from list"
+        title={t("lists.removeFromList")}
         aria-label={`Remove ${item.product_name}`}
         disabled={isRemoving}
         className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
@@ -357,12 +360,13 @@ function ListItemRow({
 // ─── BackLink ───────────────────────────────────────────────────────────────
 
 function BackLink() {
+  const { t } = useTranslation();
   return (
     <Link
       href="/app/lists"
       className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
     >
-      ← Back to lists
+      {t("lists.backToLists")}
     </Link>
   );
 }

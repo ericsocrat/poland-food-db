@@ -4,6 +4,7 @@
 
 import { useState } from "react";
 import { useSaveComparison } from "@/hooks/use-compare";
+import { useTranslation } from "@/lib/i18n";
 
 interface ShareComparisonProps {
   productIds: number[];
@@ -15,6 +16,7 @@ export function ShareComparison({
   productIds,
   existingShareToken,
 }: Readonly<ShareComparisonProps>) {
+  const { t } = useTranslation();
   const [copied, setCopied] = useState(false);
   const [shareToken, setShareToken] = useState(existingShareToken ?? "");
   const { mutate: save, isPending } = useSaveComparison();
@@ -60,7 +62,7 @@ export function ShareComparison({
         onClick={handleCopyUrl}
         className="btn-secondary text-sm"
       >
-        {copied && !shareToken ? "✓ Copied!" : "📋 Copy URL"}
+        {copied && !shareToken ? "✓ Copied!" : `📋 ${t("compare.copyUrl")}`}
       </button>
 
       {/* Save comparison */}
@@ -71,7 +73,9 @@ export function ShareComparison({
           disabled={isPending}
           className="btn-primary text-sm disabled:opacity-50"
         >
-          {isPending ? "Saving…" : "💾 Save Comparison"}
+          {isPending
+            ? `${t("common.saving")}`
+            : `💾 ${t("compare.saveComparison")}`}
         </button>
       )}
 
@@ -82,7 +86,7 @@ export function ShareComparison({
           onClick={handleCopyShareLink}
           className="btn-primary text-sm"
         >
-          {copied ? "✓ Copied!" : "🔗 Copy Share Link"}
+          {copied ? "✓ Copied!" : `🔗 ${t("compare.copyShareLink")}`}
         </button>
       )}
     </div>

@@ -229,7 +229,7 @@ describe("ScanPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Product not found")).toBeInTheDocument();
     });
-    expect(screen.getByText("5901234123457")).toBeInTheDocument();
+    expect(screen.getByText(/5901234123457/)).toBeInTheDocument();
     expect(screen.getByText("📝 Help us add it!")).toBeInTheDocument();
   });
 

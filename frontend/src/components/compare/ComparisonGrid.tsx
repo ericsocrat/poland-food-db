@@ -8,13 +8,13 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
+import { useTranslation } from "@/lib/i18n";
 import type { CompareProduct, CellValue } from "@/lib/types";
 import {
   fmtUnit,
   fmtStr,
   getWinnerIndex,
   getBestWorst,
-  getProductWarnings,
   getCellHighlightClass,
 } from "./comparison-helpers";
 
@@ -38,6 +38,23 @@ interface CompareRow {
 }
 
 // ─── Row definitions ────────────────────────────────────────────────────────
+
+/** Maps row keys to i18n translation keys. */
+const ROW_LABEL_KEYS: Record<string, string> = {
+  unhealthiness_score: "compare.unhealthinessScore",
+  nutri_score: "filters.nutriScore",
+  nova_group: "compare.novaGroupLabel",
+  calories: "product.caloriesLabel",
+  total_fat_g: "product.totalFat",
+  saturated_fat_g: "product.saturatedFat",
+  sugars_g: "product.sugars",
+  salt_g: "product.salt",
+  fibre_g: "product.fibre",
+  protein_g: "product.protein",
+  carbs_g: "product.carbs",
+  additives_count: "product.additives",
+  allergen_count: "product.allergens",
+};
 
 const COMPARE_ROWS: CompareRow[] = [
   {
@@ -146,6 +163,7 @@ function DesktopGrid({
   products,
   showAvoidBadge,
 }: Readonly<ComparisonGridProps>) {
+  const { t } = useTranslation();
   const winnerIdx = getWinnerIndex(products);
   const colCount = products.length;
 
@@ -156,7 +174,7 @@ function DesktopGrid({
         <thead>
           <tr className="border-b-2 border-gray-200">
             <th className="sticky left-0 z-10 bg-white px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400 w-36">
-              Metric
+              {t("compare.metric")}
             </th>
             {products.map((p, i) => {
               const band =
@@ -178,7 +196,7 @@ function DesktopGrid({
                   <div className="space-y-1">
                     {i === winnerIdx && (
                       <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">
-                        🏆 Healthiest
+                        🏆 {t("compare.healthiest")}
                       </span>
                     )}
                     <div
@@ -222,7 +240,7 @@ function DesktopGrid({
             return (
               <tr key={row.key} className="border-b border-gray-100">
                 <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs font-medium text-gray-500">
-                  {row.label}
+                  {t(ROW_LABEL_KEYS[row.key]) ?? row.label}
                 </td>
                 {products.map((p, i) => {
                   const rawValue = row.getValue(p);
@@ -251,7 +269,7 @@ function DesktopGrid({
           {/* Allergen tags row */}
           <tr className="border-b border-gray-100">
             <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs font-medium text-gray-500">
-              Allergen Tags
+              {t("product.allergens")}
             </td>
             {products.map((p) => (
               <td
@@ -261,9 +279,9 @@ function DesktopGrid({
                 {p.allergen_tags
                   ? p.allergen_tags
                       .split(", ")
-                      .map((t) => t.replace("en:", ""))
+                      .map((tag) => tag.replace("en:", ""))
                       .join(", ")
-                  : "None"}
+                  : t("compare.none")}
               </td>
             ))}
           </tr>
@@ -271,10 +289,30 @@ function DesktopGrid({
           {/* Flags row */}
           <tr className="border-b border-gray-100">
             <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs font-medium text-gray-500">
-              Warnings
+              {t("product.warnings")}
             </td>
             {products.map((p) => {
-              const flags = getProductWarnings(p);
+              const flags: { key: string; label: string }[] = [];
+              if (p.high_salt)
+                flags.push({
+                  key: "salt",
+                  label: `🧂 ${t("product.highSalt")}`,
+                });
+              if (p.high_sugar)
+                flags.push({
+                  key: "sugar",
+                  label: `🍬 ${t("product.highSugar")}`,
+                });
+              if (p.high_sat_fat)
+                flags.push({
+                  key: "satfat",
+                  label: `🧈 ${t("product.highSatFat")}`,
+                });
+              if (p.high_additive_load)
+                flags.push({
+                  key: "additives",
+                  label: `⚗️ ${t("product.manyAdditives")}`,
+                });
               return (
                 <td
                   key={p.product_id}
@@ -284,15 +322,17 @@ function DesktopGrid({
                     <div className="flex flex-wrap justify-center gap-1">
                       {flags.map((f) => (
                         <span
-                          key={f}
+                          key={f.key}
                           className="rounded bg-orange-50 px-1 py-0.5 text-orange-600"
                         >
-                          {f}
+                          {f.label}
                         </span>
                       ))}
                     </div>
                   ) : (
-                    <span className="text-green-600">✓ None</span>
+                    <span className="text-green-600">
+                      {t("compare.noWarnings")}
+                    </span>
                   )}
                 </td>
               );
@@ -310,6 +350,7 @@ function MobileSwipeView({
   products,
   showAvoidBadge,
 }: Readonly<ComparisonGridProps>) {
+  const { t } = useTranslation();
   const [activeIdx, setActiveIdx] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
@@ -412,11 +453,11 @@ function MobileSwipeView({
                   {product.nutri_score ?? "?"}
                 </span>
                 <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
-                  NOVA {product.nova_group ?? "?"}
+                  {t("product.novaGroup", { group: product.nova_group ?? "?" })}
                 </span>
                 {activeIdx === winnerIdx && (
                   <span className="rounded-full bg-green-100 px-1.5 py-0.5 text-xs font-bold text-green-700">
-                    🏆 Best
+                    🏆 {t("compare.best")}
                   </span>
                 )}
                 {showAvoidBadge && (
@@ -455,7 +496,9 @@ function MobileSwipeView({
                   key={row.key}
                   className="flex items-center justify-between py-2"
                 >
-                  <span className="text-sm text-gray-500">{row.label}</span>
+                  <span className="text-sm text-gray-500">
+                    {t(ROW_LABEL_KEYS[row.key]) ?? row.label}
+                  </span>
                   <span className={`text-sm ${indicator || "text-gray-900"}`}>
                     {formatted}
                     {ranking?.bestIdx === activeIdx && " ✓"}
@@ -469,49 +512,51 @@ function MobileSwipeView({
           {/* Allergens */}
           <div className="pt-2 border-t border-gray-100">
             <p className="text-xs font-medium text-gray-400 uppercase mb-1">
-              Allergens
+              {t("product.allergens")}
             </p>
             <p className="text-sm text-gray-700">
               {product.allergen_tags
                 ? product.allergen_tags
                     .split(", ")
-                    .map((t) => t.replace("en:", ""))
+                    .map((tag) => tag.replace("en:", ""))
                     .join(", ")
-                : "None declared"}
+                : t("compare.noneDeclared")}
             </p>
           </div>
 
           {/* Flags */}
           <div>
             <p className="text-xs font-medium text-gray-400 uppercase mb-1">
-              Warnings
+              {t("product.warnings")}
             </p>
             <div className="flex flex-wrap gap-1">
               {product.high_salt && (
                 <span className="rounded bg-orange-50 px-2 py-0.5 text-xs text-orange-600">
-                  🧂 High Salt
+                  🧂 {t("product.highSalt")}
                 </span>
               )}
               {product.high_sugar && (
                 <span className="rounded bg-orange-50 px-2 py-0.5 text-xs text-orange-600">
-                  🍬 High Sugar
+                  🍬 {t("product.highSugar")}
                 </span>
               )}
               {product.high_sat_fat && (
                 <span className="rounded bg-orange-50 px-2 py-0.5 text-xs text-orange-600">
-                  🧈 High Sat Fat
+                  🧈 {t("product.highSatFat")}
                 </span>
               )}
               {product.high_additive_load && (
                 <span className="rounded bg-orange-50 px-2 py-0.5 text-xs text-orange-600">
-                  ⚗️ Additives
+                  ⚗️ {t("product.manyAdditives")}
                 </span>
               )}
               {!product.high_salt &&
                 !product.high_sugar &&
                 !product.high_sat_fat &&
                 !product.high_additive_load && (
-                  <span className="text-sm text-green-600">✓ No warnings</span>
+                  <span className="text-sm text-green-600">
+                    {t("compare.noWarnings")}
+                  </span>
                 )}
             </div>
           </div>
@@ -519,7 +564,10 @@ function MobileSwipeView({
 
         {/* Swipe hint */}
         <p className="mt-3 text-center text-xs text-gray-400">
-          ← Swipe to compare · {activeIdx + 1} of {products.length} →
+          {t("compare.swipeHint", {
+            current: activeIdx + 1,
+            total: products.length,
+          })}
         </p>
       </div>
     </div>
@@ -532,13 +580,13 @@ export function ComparisonGrid({
   products,
   showAvoidBadge = false,
 }: Readonly<ComparisonGridProps>) {
+  const { t } = useTranslation();
+
   if (products.length < 2) {
     return (
       <div className="py-12 text-center">
         <p className="mb-2 text-4xl">⚖️</p>
-        <p className="text-sm text-gray-500">
-          Select at least 2 products to compare
-        </p>
+        <p className="text-sm text-gray-500">{t("compare.selectAtLeast2")}</p>
       </div>
     );
   }

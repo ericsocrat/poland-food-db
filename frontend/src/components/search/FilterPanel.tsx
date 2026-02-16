@@ -9,6 +9,7 @@ import { getFilterOptions } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { ALLERGEN_TAGS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useTranslation } from "@/lib/i18n";
 import type { SearchFilters } from "@/lib/types";
 
 interface FilterPanelProps {
@@ -24,6 +25,7 @@ export function FilterPanel({
   show,
   onClose,
 }: Readonly<FilterPanelProps>) {
+  const { t } = useTranslation();
   const supabase = createClient();
 
   const { data, isLoading } = useQuery({
@@ -95,15 +97,21 @@ export function FilterPanel({
           {/* Sort */}
           <div>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-              Sort by
+              {t("filters.sortBy")}
             </h3>
             <div className="grid grid-cols-2 gap-1.5">
               {[
-                { value: "relevance" as const, label: "Relevance" },
-                { value: "name" as const, label: "Name" },
-                { value: "unhealthiness" as const, label: "Health Score" },
-                { value: "nutri_score" as const, label: "Nutri-Score" },
-                { value: "calories" as const, label: "Calories" },
+                { value: "relevance" as const, label: t("filters.relevance") },
+                { value: "name" as const, label: t("filters.name") },
+                {
+                  value: "unhealthiness" as const,
+                  label: t("filters.healthScore"),
+                },
+                {
+                  value: "nutri_score" as const,
+                  label: t("filters.nutriScore"),
+                },
+                { value: "calories" as const, label: t("filters.calories") },
               ].map((opt) => (
                 <button
                   key={opt.value}
@@ -130,7 +138,7 @@ export function FilterPanel({
                       : "bg-gray-100 text-gray-500"
                   }`}
                 >
-                  ↑ Asc
+                  {t("filters.asc")}
                 </button>
                 <button
                   type="button"
@@ -141,7 +149,7 @@ export function FilterPanel({
                       : "bg-gray-100 text-gray-500"
                   }`}
                 >
-                  ↓ Desc
+                  {t("filters.desc")}
                 </button>
               </div>
             )}
@@ -151,7 +159,7 @@ export function FilterPanel({
           {data && data.categories.length > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Category
+                {t("filters.category")}
               </h3>
               <div className="space-y-1 max-h-48 overflow-y-auto">
                 {data.categories.map((cat) => {
@@ -188,7 +196,7 @@ export function FilterPanel({
           {data && data.nutri_scores.length > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Nutri-Score
+                {t("filters.nutriScore")}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {data.nutri_scores.map((ns) => {
@@ -226,7 +234,7 @@ export function FilterPanel({
           {data && data.allergens.length > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-                Allergen-Free
+                {t("filters.allergenFree")}
               </h3>
               <div className="space-y-1 max-h-40 overflow-y-auto">
                 {data.allergens.map((al) => {
@@ -262,7 +270,7 @@ export function FilterPanel({
           {/* Max Unhealthiness Slider */}
           <div>
             <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-              Max Health Score
+              {t("filters.maxHealthScore")}
             </h3>
             <div className="px-1">
               <input
@@ -281,7 +289,7 @@ export function FilterPanel({
                 <span>0</span>
                 <span className="font-medium text-gray-600">
                   {filters.max_unhealthiness === undefined
-                    ? "Any"
+                    ? t("filters.any")
                     : `≤ ${filters.max_unhealthiness}`}
                 </span>
                 <span>100</span>
@@ -296,7 +304,7 @@ export function FilterPanel({
               onClick={clearAll}
               className="w-full rounded-lg border border-gray-200 py-2 text-sm text-gray-600 transition-colors hover:bg-gray-50"
             >
-              Clear all filters
+              {t("filters.clearAll")}
             </button>
           )}
         </>
@@ -310,14 +318,16 @@ export function FilterPanel({
       <div className="hidden lg:block">
         <div className="sticky top-20 w-64 rounded-xl border border-gray-200 bg-white p-4">
           <div className="mb-3 flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-900">Filters</h2>
+            <h2 className="text-sm font-semibold text-gray-900">
+              {t("search.filters")}
+            </h2>
             {hasFilters && (
               <button
                 type="button"
                 onClick={clearAll}
                 className="text-xs text-brand-600 hover:text-brand-700"
               >
-                Clear
+                {t("common.clear")}
               </button>
             )}
           </div>
@@ -333,14 +343,16 @@ export function FilterPanel({
             type="button"
             className="absolute inset-0 bg-black/30"
             onClick={onClose}
-            aria-label="Close filters"
+            aria-label={t("filters.closeFilters")}
           />
           {/* Sheet */}
           <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-2xl bg-white px-4 pb-8 pt-3 shadow-2xl">
             {/* Handle */}
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-gray-300" />
             <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-base font-semibold text-gray-900">Filters</h2>
+              <h2 className="text-base font-semibold text-gray-900">
+                {t("search.filters")}
+              </h2>
               <button
                 type="button"
                 onClick={onClose}
@@ -366,7 +378,7 @@ export function FilterPanel({
                 onClick={onClose}
                 className="btn-primary w-full py-2.5 text-sm"
               >
-                Show Results
+                {t("filters.showResults")}
               </button>
             </div>
           </div>

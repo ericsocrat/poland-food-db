@@ -15,11 +15,13 @@ import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthWarningsCard } from "@/components/product/HealthWarningsCard";
 import type { ProductDetail, Alternative } from "@/lib/types";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ScanResultPage() {
   const params = useParams();
   const productId = Number(params.id);
   const supabase = createClient();
+  const { t } = useTranslation();
 
   const {
     data: product,
@@ -36,10 +38,7 @@ export default function ScanResultPage() {
     enabled: !Number.isNaN(productId),
   });
 
-  const {
-    data: alternativesData,
-    isLoading: alternativesLoading,
-  } = useQuery({
+  const { data: alternativesData, isLoading: alternativesLoading } = useQuery({
     queryKey: queryKeys.alternatives(productId),
     queryFn: async () => {
       const result = await getBetterAlternatives(supabase, productId, {
@@ -59,7 +58,7 @@ export default function ScanResultPage() {
     return (
       <div className="flex flex-col items-center gap-3 py-12">
         <LoadingSpinner />
-        <p className="text-sm text-gray-500">Loading scan result…</p>
+        <p className="text-sm text-gray-500">{t("common.loading")}</p>
       </div>
     );
   }
@@ -71,10 +70,10 @@ export default function ScanResultPage() {
       <div className="space-y-4">
         <div className="card border-red-200 bg-red-50 py-8 text-center">
           <p className="mb-2 text-4xl">⚠️</p>
-          <p className="text-sm text-red-600">Could not load product details.</p>
+          <p className="text-sm text-red-600">{t("product.loadFailed")}</p>
         </div>
         <Link href="/app/scan" className="btn-primary block w-full text-center">
-          ← Back to Scanner
+          ← {t("common.back")}
         </Link>
       </div>
     );
@@ -94,12 +93,14 @@ export default function ScanResultPage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">📷 Scan Result</h1>
+        <h1 className="text-lg font-bold text-gray-900">
+          📷 {t("product.scanResult")}
+        </h1>
         <Link
           href="/app/scan"
           className="text-sm text-brand-600 hover:text-brand-700"
         >
-          Scan another →
+          {t("scan.scanAnother")} →
         </Link>
       </div>
 
@@ -120,10 +121,12 @@ export default function ScanResultPage() {
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-bold ${nutriClass}`}
               >
-                Nutri-Score {product.scores.nutri_score ?? "?"}
+                {t("product.nutriScore", {
+                  grade: product.scores.nutri_score ?? "?",
+                })}
               </span>
               <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
-                NOVA {product.scores.nova_group}
+                {t("product.novaGroup", { group: product.scores.nova_group })}
               </span>
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-medium ${band.bg} ${band.color}`}
@@ -152,15 +155,39 @@ export default function ScanResultPage() {
       {/* ── Quick Nutrition Summary ──────────────────────────────────────── */}
       <div className="card">
         <h2 className="mb-2 text-sm font-semibold text-gray-700">
-          Nutrition per 100 g
+          {t("product.nutritionPer100g")}
         </h2>
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
-          <NutrientPill label="Calories" value={`${product.nutrition_per_100g.calories}`} unit="kcal" />
-          <NutrientPill label="Sugars" value={`${product.nutrition_per_100g.sugars_g}`} unit="g" />
-          <NutrientPill label="Salt" value={`${product.nutrition_per_100g.salt_g}`} unit="g" />
-          <NutrientPill label="Fat" value={`${product.nutrition_per_100g.total_fat_g}`} unit="g" />
-          <NutrientPill label="Sat. Fat" value={`${product.nutrition_per_100g.saturated_fat_g}`} unit="g" />
-          <NutrientPill label="Protein" value={`${product.nutrition_per_100g.protein_g}`} unit="g" />
+          <NutrientPill
+            label={t("product.caloriesLabel")}
+            value={`${product.nutrition_per_100g.calories}`}
+            unit="kcal"
+          />
+          <NutrientPill
+            label={t("product.sugars")}
+            value={`${product.nutrition_per_100g.sugars_g}`}
+            unit="g"
+          />
+          <NutrientPill
+            label={t("product.salt")}
+            value={`${product.nutrition_per_100g.salt_g}`}
+            unit="g"
+          />
+          <NutrientPill
+            label={t("product.totalFat")}
+            value={`${product.nutrition_per_100g.total_fat_g}`}
+            unit="g"
+          />
+          <NutrientPill
+            label={t("product.saturatedFat")}
+            value={`${product.nutrition_per_100g.saturated_fat_g}`}
+            unit="g"
+          />
+          <NutrientPill
+            label={t("product.protein")}
+            value={`${product.nutrition_per_100g.protein_g}`}
+            unit="g"
+          />
         </div>
       </div>
 
@@ -168,11 +195,13 @@ export default function ScanResultPage() {
       <div className="space-y-2">
         <div className="flex items-center justify-between">
           <h2 className="text-base font-bold text-gray-900">
-            🥗 Healthier Alternatives
+            🥗 {t("product.healthierAlternatives")}
           </h2>
           {hasAlternatives && (
             <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
-              {alternativesData!.alternatives_count} found
+              {t("product.found", {
+                count: alternativesData!.alternatives_count,
+              })}
             </span>
           )}
         </div>
@@ -190,13 +219,10 @@ export default function ScanResultPage() {
           href={`/app/product/${productId}`}
           className="btn-secondary flex-1 text-center"
         >
-          📋 Full Details
+          📋 {t("product.fullDetails")}
         </Link>
-        <Link
-          href="/app/scan"
-          className="btn-primary flex-1 text-center"
-        >
-          📷 Scan Another
+        <Link href="/app/scan" className="btn-primary flex-1 text-center">
+          📷 {t("product.scanAnother")}
         </Link>
       </div>
     </div>
@@ -214,6 +240,8 @@ function AlternativesSection({
   alternatives: Alternative[];
   sourceScore: number;
 }>) {
+  const { t } = useTranslation();
+
   if (loading) {
     return (
       <div className="flex justify-center py-6">
@@ -225,9 +253,7 @@ function AlternativesSection({
   if (alternatives.length === 0) {
     return (
       <div className="card bg-gray-50 py-6 text-center">
-        <p className="text-sm text-gray-500">
-          🏆 This is already one of the best options in its category!
-        </p>
+        <p className="text-sm text-gray-500">🏆 {t("product.bestOption")}</p>
       </div>
     );
   }
@@ -248,13 +274,20 @@ function AlternativesSection({
 // ─── Health Flags ───────────────────────────────────────────────────────────
 
 function HealthFlags({ product }: Readonly<{ product: ProductDetail }>) {
+  const { t } = useTranslation();
   const activeFlags = [
-    product.flags.high_sugar && "🍬 High sugar",
-    product.flags.high_salt && "🧂 High salt",
-    product.flags.high_sat_fat && "🥓 High sat. fat",
-    product.flags.high_additive_load && "🧪 Many additives",
-    product.flags.has_palm_oil && "🌴 Palm oil",
-  ].filter(Boolean) as string[];
+    product.flags.high_sugar && { emoji: "🍬", label: t("product.highSugar") },
+    product.flags.high_salt && { emoji: "🧂", label: t("product.highSalt") },
+    product.flags.high_sat_fat && {
+      emoji: "🥓",
+      label: t("product.highSatFat"),
+    },
+    product.flags.high_additive_load && {
+      emoji: "🧪",
+      label: t("product.manyAdditives"),
+    },
+    product.flags.has_palm_oil && { emoji: "🌴", label: t("product.palmOil") },
+  ].filter(Boolean) as { emoji: string; label: string }[];
 
   if (activeFlags.length === 0) return null;
 
@@ -262,10 +295,10 @@ function HealthFlags({ product }: Readonly<{ product: ProductDetail }>) {
     <div className="mt-3 flex flex-wrap gap-1">
       {activeFlags.map((flag) => (
         <span
-          key={flag}
+          key={flag.label}
           className="rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700"
         >
-          {flag}
+          {flag.emoji} {flag.label}
         </span>
       ))}
     </div>
@@ -295,6 +328,7 @@ function ScanAlternativeCard({
   alt,
   sourceScore,
 }: Readonly<{ alt: Alternative; sourceScore: number }>) {
+  const { t } = useTranslation();
   const altBand = SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)];
   const nutriClass = alt.nutri_score
     ? NUTRI_COLORS[alt.nutri_score]
@@ -323,9 +357,12 @@ function ScanAlternativeCard({
           </p>
           <p className="truncate text-sm text-gray-500">{alt.brand}</p>
           <p className="text-xs font-medium text-green-600">
-            ↓ {alt.score_improvement} pts better
+            {t("product.pointsBetter", { points: alt.score_improvement })}
             {improvementPct > 0 && (
-              <span className="text-green-500"> ({improvementPct}% healthier)</span>
+              <span className="text-green-500">
+                {" "}
+                ({improvementPct}% healthier)
+              </span>
             )}
           </p>
         </div>

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { saveSearch } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useTranslation } from "@/lib/i18n";
 import type { SearchFilters } from "@/lib/types";
 
 interface SaveSearchDialogProps {
@@ -27,6 +28,7 @@ export function SaveSearchDialog({
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
   const { track } = useAnalytics();
+  const { t } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async (searchName: string) => {
@@ -40,7 +42,11 @@ export function SaveSearchDialog({
       return result.data;
     },
     onSuccess: () => {
-      track("search_saved", { name, query, filter_count: Object.keys(filters).length });
+      track("search_saved", {
+        name,
+        query,
+        filter_count: Object.keys(filters).length,
+      });
       queryClient.invalidateQueries({
         queryKey: queryKeys.savedSearches,
       });
@@ -63,11 +69,13 @@ export function SaveSearchDialog({
       {/* Dialog */}
       <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
         <h3 className="mb-1 text-base font-semibold text-gray-900">
-          💾 Save Search
+          💾 {t("saveSearchDialog.title")}
         </h3>
         <p className="mb-4 text-sm text-gray-500">
           {query ? `Query: "${query}"` : "Browse mode"}
-          {Object.keys(filters).length > 0 ? " + filters" : ""}
+          {Object.keys(filters).length > 0
+            ? ` ${t("saveSearchDialog.plusFilters")}`
+            : ""}
         </p>
 
         <form
@@ -82,7 +90,7 @@ export function SaveSearchDialog({
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
-            placeholder="Search name…"
+            placeholder={t("saveSearchDialog.namePlaceholder")}
             className="input-field mb-4"
             autoFocus
             maxLength={100}
@@ -94,14 +102,14 @@ export function SaveSearchDialog({
               onClick={onClose}
               className="btn-secondary flex-1 py-2 text-sm"
             >
-              Cancel
+              {t("common.cancel")}
             </button>
             <button
               type="submit"
               disabled={name.trim().length === 0 || mutation.isPending}
               className="btn-primary flex-1 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
             >
-              {mutation.isPending ? "Saving…" : "Save"}
+              {mutation.isPending ? `${t("common.saving")}` : t("common.save")}
             </button>
           </div>
 

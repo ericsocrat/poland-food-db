@@ -10,20 +10,37 @@ import { createClient } from "@/lib/supabase/client";
 import { getMySubmissions } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useTranslation } from "@/lib/i18n";
 import type { Submission } from "@/lib/types";
 
 const STATUS_STYLES: Record<
   string,
-  { bg: string; text: string; label: string }
+  { bg: string; text: string; emoji: string; labelKey: string }
 > = {
-  pending: { bg: "bg-amber-100", text: "text-amber-700", label: "⏳ Pending" },
+  pending: {
+    bg: "bg-amber-100",
+    text: "text-amber-700",
+    emoji: "⏳",
+    labelKey: "scan.statusPending",
+  },
   approved: {
     bg: "bg-green-100",
     text: "text-green-700",
-    label: "✅ Approved",
+    emoji: "✅",
+    labelKey: "scan.statusApproved",
   },
-  rejected: { bg: "bg-red-100", text: "text-red-700", label: "❌ Rejected" },
-  merged: { bg: "bg-blue-100", text: "text-blue-700", label: "🔗 Merged" },
+  rejected: {
+    bg: "bg-red-100",
+    text: "text-red-700",
+    emoji: "❌",
+    labelKey: "scan.statusRejected",
+  },
+  merged: {
+    bg: "bg-blue-100",
+    text: "text-blue-700",
+    emoji: "🔗",
+    labelKey: "scan.statusMerged",
+  },
 };
 
 export default function MySubmissionsPage() {
@@ -31,6 +48,7 @@ export default function MySubmissionsPage() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
+  const { t } = useTranslation();
 
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.mySubmissions(page),
@@ -54,17 +72,18 @@ export default function MySubmissionsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-gray-900">
-            📝 My Submissions
+            {"📝 "}
+            {t("scan.mySubmissions")}
           </h1>
           <p className="text-sm text-gray-500">
-            Products you&apos;ve submitted for review
+            {t("scan.submissionsSubtitle")}
           </p>
         </div>
         <Link
           href="/app/scan"
           className="text-sm text-brand-600 hover:text-brand-700"
         >
-          ← Back to Scanner
+          {t("scanHistory.backToScanner")}
         </Link>
       </div>
 
@@ -79,13 +98,14 @@ export default function MySubmissionsPage() {
       {error && (
         <div className="card border-red-200 bg-red-50 text-center">
           <p className="mb-2 text-sm text-red-600">
-            Failed to load submissions.
+            {t("scan.submissionsLoadFailed")}
           </p>
           <button
             onClick={handleRetry}
             className="text-sm font-medium text-red-700 hover:text-red-800"
           >
-            🔄 Retry
+            {"🔄 "}
+            {t("common.retry")}
           </button>
         </div>
       )}
@@ -94,16 +114,17 @@ export default function MySubmissionsPage() {
       {data?.submissions.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">📝</p>
-          <p className="mb-1 text-sm text-gray-500">No submissions yet</p>
+          <p className="mb-1 text-sm text-gray-500">
+            {t("scan.submissionsEmptyTitle")}
+          </p>
           <p className="mb-4 text-xs text-gray-400">
-            When you scan a product not in our database, you can submit it for
-            review.
+            {t("scan.submissionsEmptyMessage")}
           </p>
           <Link
             href="/app/scan"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            Start scanning →
+            {t("scan.startScanning")}
           </Link>
         </div>
       )}
@@ -129,17 +150,17 @@ export default function MySubmissionsPage() {
             disabled={page <= 1}
             className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
-            ← Prev
+            {t("common.prev")}
           </button>
           <span className="text-sm text-gray-500">
-            Page {data.page} of {data.pages}
+            {t("common.pageOf", { page: data.page, pages: data.pages })}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(data.pages, p + 1))}
             disabled={page >= data.pages}
             className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
-            Next →
+            {t("common.next")}
           </button>
         </div>
       )}
@@ -154,6 +175,7 @@ function SubmissionRow({
   submission: Submission;
   onViewProduct: (productId: number) => void;
 }>) {
+  const { t } = useTranslation();
   const style = STATUS_STYLES[submission.status] ?? STATUS_STYLES.pending;
   const date = new Date(submission.created_at).toLocaleDateString();
 
@@ -168,7 +190,7 @@ function SubmissionRow({
             <span
               className={`inline-flex flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
             >
-              {style.label}
+              {style.emoji} {t(style.labelKey)}
             </span>
           </div>
           <p className="mt-0.5 text-xs text-gray-500">
@@ -177,10 +199,12 @@ function SubmissionRow({
           </p>
           {submission.category && (
             <p className="text-xs text-gray-400">
-              Category: {submission.category}
+              {t("scan.categoryLabel", { category: submission.category })}
             </p>
           )}
-          <p className="mt-1 text-xs text-gray-400">Submitted {date}</p>
+          <p className="mt-1 text-xs text-gray-400">
+            {t("scan.submittedDate", { date })}
+          </p>
         </div>
 
         {/* View product link if merged/approved */}
@@ -189,7 +213,7 @@ function SubmissionRow({
             onClick={() => onViewProduct(submission.merged_product_id ?? 0)}
             className="flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50"
           >
-            View →
+            {t("scan.viewProduct")}
           </button>
         )}
       </div>
@@ -197,13 +221,13 @@ function SubmissionRow({
       {/* Status timeline */}
       <div className="mt-3 flex items-center gap-1 text-xs text-gray-400">
         <StatusDot active={true} />
-        <span>Submitted</span>
+        <span>{t("scan.statusSubmitted")}</span>
         <span className="mx-1">→</span>
         <StatusDot
           active={submission.status !== "pending"}
           color={statusDotColor(submission.status)}
         />
-        <span>{statusReviewLabel(submission.status)}</span>
+        <span>{t(statusReviewLabelKey(submission.status))}</span>
         {(submission.status === "approved" ||
           submission.status === "merged") && (
           <>
@@ -214,7 +238,7 @@ function SubmissionRow({
                 submission.status === "merged" ? "bg-blue-400" : "bg-gray-300"
               }
             />
-            <span>Live</span>
+            <span>{t("scan.statusLive")}</span>
           </>
         )}
       </div>
@@ -233,14 +257,14 @@ function statusDotColor(status: string): string {
   }
 }
 
-function statusReviewLabel(status: string): string {
+function statusReviewLabelKey(status: string): string {
   switch (status) {
     case "pending":
-      return "In Review";
+      return "scan.statusInReview";
     case "rejected":
-      return "Rejected";
+      return "scan.statusRejected";
     default:
-      return "Approved";
+      return "scan.statusApproved";
   }
 }
 

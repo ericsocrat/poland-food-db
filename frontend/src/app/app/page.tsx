@@ -4,13 +4,10 @@ import Link from "next/link";
 import { useEffect } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslation } from "@/lib/i18n";
 import { getDashboardData } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import {
-  NUTRI_COLORS,
-  SCORE_BANDS,
-  scoreBandFromScore,
-} from "@/lib/constants";
+import { NUTRI_COLORS, SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useAnalytics } from "@/hooks/use-analytics";
 import type {
@@ -50,11 +47,16 @@ function NutriBadge({ grade }: { grade: string | null }) {
 // ─── Section Components ─────────────────────────────────────────────────────
 
 function StatsBar({ stats }: { stats: DashboardStats }) {
+  const { t } = useTranslation();
   const items = [
-    { label: "Scanned", value: stats.total_scanned, icon: "📷" },
-    { label: "Viewed", value: stats.total_viewed, icon: "👁️" },
-    { label: "Lists", value: stats.lists_count, icon: "📋" },
-    { label: "Favorites", value: stats.favorites_count, icon: "❤️" },
+    { label: t("dashboard.scanned"), value: stats.total_scanned, icon: "📷" },
+    { label: t("dashboard.viewed"), value: stats.total_viewed, icon: "👁️" },
+    { label: t("dashboard.lists"), value: stats.lists_count, icon: "📋" },
+    {
+      label: t("dashboard.favorites"),
+      value: stats.favorites_count,
+      icon: "❤️",
+    },
   ];
 
   return (
@@ -112,13 +114,14 @@ function RecentlyViewedSection({
 }: {
   products: RecentlyViewedProduct[];
 }) {
+  const { t } = useTranslation();
   if (products.length === 0) return null;
 
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">
-          👁️ Recently Viewed
+          👁️ {t("dashboard.recentlyViewed")}
         </h2>
       </div>
       <div className="space-y-2">
@@ -139,19 +142,20 @@ function FavoritesSection({
 }: {
   products: DashboardFavoritePreview[];
 }) {
+  const { t } = useTranslation();
   if (products.length === 0) return null;
 
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">
-          ❤️ Favorites
+          ❤️ {t("dashboard.favorites")}
         </h2>
         <Link
           href="/app/lists"
           className="text-sm font-medium text-brand-600 hover:text-brand-700"
         >
-          View all →
+          {t("dashboard.viewAll")}
         </Link>
       </div>
       <div className="space-y-2">
@@ -170,19 +174,23 @@ function NewProductsSection({
   products: DashboardNewProduct[];
   category: string | null;
 }) {
+  const { t } = useTranslation();
   if (products.length === 0) return null;
 
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
         <h2 className="text-lg font-semibold text-gray-900">
-          ✨ New {category ? `in ${category}` : "Products"}
+          ✨{" "}
+          {category
+            ? t("dashboard.newInCategory", { category })
+            : t("dashboard.newProducts")}
         </h2>
         <Link
           href="/app/categories"
           className="text-sm font-medium text-brand-600 hover:text-brand-700"
         >
-          Browse →
+          {t("dashboard.browse")}
         </Link>
       </div>
       <div className="space-y-2">
@@ -195,22 +203,22 @@ function NewProductsSection({
 }
 
 function EmptyDashboard() {
+  const { t } = useTranslation();
   return (
     <div className="py-12 text-center">
       <p className="text-4xl">🏠</p>
       <h2 className="mt-4 text-lg font-semibold text-gray-900">
-        Welcome to your Dashboard
+        {t("dashboard.welcome")}
       </h2>
       <p className="mt-2 text-sm text-gray-500">
-        Start by scanning a product or browsing categories to see your
-        personalized feed here.
+        {t("dashboard.welcomeDescription")}
       </p>
       <div className="mt-6 flex justify-center gap-3">
         <Link href="/app/scan" className="btn-primary">
-          📷 Scan a Product
+          📷 {t("dashboard.scanProduct")}
         </Link>
         <Link href="/app/categories" className="btn-secondary">
-          Browse Categories
+          {t("dashboard.browseCategories")}
         </Link>
       </div>
     </div>
@@ -221,6 +229,7 @@ function EmptyDashboard() {
 
 export default function DashboardPage() {
   const supabase = createClient();
+  const { t } = useTranslation();
   const { track } = useAnalytics();
 
   const { data, isLoading, isError } = useQuery({
@@ -249,14 +258,12 @@ export default function DashboardPage() {
   if (isError || !data) {
     return (
       <div className="card border-red-200 bg-red-50 py-8 text-center">
-        <p className="text-sm text-red-600">
-          Something went wrong loading your dashboard.
-        </p>
+        <p className="text-sm text-red-600">{t("dashboard.errorMessage")}</p>
         <button
           className="btn-primary mt-4"
           onClick={() => window.location.reload()}
         >
-          Try again
+          {t("common.tryAgain")}
         </button>
       </div>
     );
@@ -274,7 +281,9 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-gray-900">Dashboard</h1>
+      <h1 className="text-xl font-bold text-gray-900">
+        {t("dashboard.title")}
+      </h1>
 
       <StatsBar stats={dashboard.stats} />
 

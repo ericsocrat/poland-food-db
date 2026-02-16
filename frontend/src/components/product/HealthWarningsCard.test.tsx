@@ -149,7 +149,7 @@ describe("HealthWarningsCard", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("2 health warnings")).toBeInTheDocument();
+      expect(screen.getByText("2 health warning(s)")).toBeInTheDocument();
     });
     expect(
       screen.getByText("Sugar exceeds your limit: 13.5g vs max 10g"),
@@ -169,7 +169,7 @@ describe("HealthWarningsCard", () => {
     });
 
     await waitFor(() => {
-      expect(screen.getByText("1 health warning")).toBeInTheDocument();
+      expect(screen.getByText("1 health warning(s)")).toBeInTheDocument();
     });
     expect(
       screen.getByText("Contains gluten — unsafe for celiac disease"),
@@ -236,7 +236,7 @@ describe("HealthWarningBadge", () => {
     await waitFor(() => {
       expect(screen.getByText("2")).toBeInTheDocument();
     });
-    expect(screen.getByTitle("2 health warnings")).toBeInTheDocument();
+    expect(screen.getByTitle("2 health warning(s)")).toBeInTheDocument();
   });
 
   it("renders 1 warning with singular title", async () => {
@@ -250,6 +250,6 @@ describe("HealthWarningBadge", () => {
     await waitFor(() => {
       expect(screen.getByText("1")).toBeInTheDocument();
     });
-    expect(screen.getByTitle("1 health warning")).toBeInTheDocument();
+    expect(screen.getByTitle("1 health warning(s)")).toBeInTheDocument();
   });
 });

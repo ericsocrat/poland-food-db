@@ -119,7 +119,22 @@
     "torchNotSupported": "Latarka nie jest obsługiwana na tym urządzeniu",
     "torchError": "Nie udało się przełączyć latarki",
     "invalidBarcode": "Wprowadź prawidłowy 8- lub 13-cyfrowy kod kreskowy",
-    "lookingUp": "Wyszukiwanie {ean}…"
+    "lookingUp": "Wyszukiwanie {ean}…",
+    "submissionsSubtitle": "Produkty zgłoszone przez Ciebie do weryfikacji",
+    "submissionsLoadFailed": "Nie udało się załadować zgłoszeń.",
+    "submissionsEmptyTitle": "Brak zgłoszeń",
+    "submissionsEmptyMessage": "Gdy skanujesz produkt, którego nie ma w naszej bazie, możesz go zgłosić do weryfikacji.",
+    "startScanning": "Zacznij skanować →",
+    "viewProduct": "Zobacz →",
+    "statusPending": "Oczekujące",
+    "statusApproved": "Zatwierdzony",
+    "statusRejected": "Odrzucony",
+    "statusMerged": "Scalony",
+    "statusSubmitted": "Zgłoszony",
+    "statusInReview": "W trakcie weryfikacji",
+    "statusLive": "Aktywny",
+    "submittedDate": "Zgłoszono {date}",
+    "categoryLabel": "Kategoria: {category}"
   },
   "scanHistory": {
     "title": "Historia skanowania",
@@ -204,6 +219,7 @@
     "additiveCount": "{count} dodatek(ów)",
     "vegan": "Wegańskie: {status}",
     "vegetarian": "Wegetariańskie: {status}",
+    "additives": "Dodatki",
     "allergens": "Alergeny",
     "mayContain": "Może zawierać:",
     "dataQuality": "Jakość danych",
@@ -354,7 +370,11 @@
     "apply": "Zastosuj",
     "deleteConfirm": "Usunąć zapisane wyszukiwanie?",
     "cannotUndo": "Tej operacji nie można cofnąć.",
-    "categories": "{count} kategorii"
+    "categories": "{count} kategorii",
+    "nutriFilter": "Nutri: {values}",
+    "allergenFreeFilter": "Bez: {values}",
+    "maxScoreFilter": "Wynik ≤ {score}",
+    "sortFilter": "Sortuj: {sortBy}"
   },
   "saveSearchDialog": {
     "title": "Zapisz wyszukiwanie",

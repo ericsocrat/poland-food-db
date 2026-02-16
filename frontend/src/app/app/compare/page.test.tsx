@@ -206,7 +206,7 @@ describe("ComparePage", () => {
         error: null,
       });
       render(<ComparePage />, { wrapper: createWrapper() });
-      const link = screen.getByText("📂 Saved");
+      const link = screen.getByText("📂 Saved Comparisons");
       expect(link.closest("a")).toHaveAttribute("href", "/app/compare/saved");
     });
   });

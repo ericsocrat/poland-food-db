@@ -14,6 +14,7 @@ import {
 } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { HEALTH_CONDITIONS } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
 import type {
   HealthCondition,
   HealthProfile,
@@ -32,6 +33,7 @@ function ProfileForm({
   onCancel: () => void;
 }>) {
   const supabase = createClient();
+  const { t } = useTranslation();
   const [name, setName] = useState(initial?.profile_name ?? "");
   const [conditions, setConditions] = useState<HealthCondition[]>(
     initial?.health_conditions ?? [],
@@ -59,7 +61,7 @@ function ProfileForm({
   async function handleSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error("Profile name is required");
+      toast.error(t("healthProfile.nameRequired"));
       return;
     }
     setSaving(true);
@@ -96,13 +98,17 @@ function ProfileForm({
       return;
     }
 
-    toast.success(initial ? "Profile updated" : "Profile created");
+    toast.success(
+      initial
+        ? t("healthProfile.profileUpdated")
+        : t("healthProfile.profileCreated"),
+    );
     onSave();
   }
 
-  let submitLabel = "Create";
-  if (saving) submitLabel = "Saving…";
-  else if (initial) submitLabel = "Update";
+  let submitLabel = t("healthProfile.create");
+  if (saving) submitLabel = `${t("common.saving")}`;
+  else if (initial) submitLabel = t("healthProfile.update");
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -112,14 +118,14 @@ function ProfileForm({
           htmlFor="hp-name"
           className="mb-1 block text-sm font-medium text-gray-700"
         >
-          Profile name
+          {t("healthProfile.profileName")}
         </label>
         <input
           id="hp-name"
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="e.g., My Diabetes Care"
+          placeholder={t("healthProfile.namePlaceholder")}
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           maxLength={50}
         />
@@ -128,7 +134,7 @@ function ProfileForm({
       {/* Conditions */}
       <div>
         <p className="mb-2 block text-sm font-medium text-gray-700">
-          Health conditions
+          {t("healthProfile.healthConditions")}
         </p>
         <div className="flex flex-wrap gap-2">
           {HEALTH_CONDITIONS.map((c) => (
@@ -151,7 +157,7 @@ function ProfileForm({
       {/* Nutrient limits */}
       <div>
         <p className="mb-2 block text-sm font-medium text-gray-700">
-          Nutrient limits (per 100g, optional)
+          {t("healthProfile.nutrientLimits")}
         </p>
         <div className="grid grid-cols-2 gap-3">
           <div>
@@ -159,7 +165,7 @@ function ProfileForm({
               htmlFor="hp-max-sugar"
               className="mb-1 block text-xs text-gray-500"
             >
-              Max sugar (g)
+              {t("healthProfile.maxSugar")}
             </label>
             <input
               id="hp-max-sugar"
@@ -177,7 +183,7 @@ function ProfileForm({
               htmlFor="hp-max-salt"
               className="mb-1 block text-xs text-gray-500"
             >
-              Max salt (g)
+              {t("healthProfile.maxSalt")}
             </label>
             <input
               id="hp-max-salt"
@@ -195,7 +201,7 @@ function ProfileForm({
               htmlFor="hp-max-sat-fat"
               className="mb-1 block text-xs text-gray-500"
             >
-              Max sat. fat (g)
+              {t("healthProfile.maxSatFat")}
             </label>
             <input
               id="hp-max-sat-fat"
@@ -213,7 +219,7 @@ function ProfileForm({
               htmlFor="hp-max-cal"
               className="mb-1 block text-xs text-gray-500"
             >
-              Max calories (kcal)
+              {t("healthProfile.maxCalories")}
             </label>
             <input
               id="hp-max-cal"
@@ -235,7 +241,7 @@ function ProfileForm({
           htmlFor="hp-notes"
           className="mb-1 block text-sm font-medium text-gray-700"
         >
-          Notes (optional)
+          {t("healthProfile.notesOptional")}
         </label>
         <textarea
           id="hp-notes"
@@ -244,7 +250,7 @@ function ProfileForm({
           rows={2}
           maxLength={200}
           className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
-          placeholder="Any personal notes…"
+          placeholder={t("healthProfile.notesPlaceholder")}
         />
       </div>
 
@@ -256,7 +262,9 @@ function ProfileForm({
           onChange={(e) => setIsActive(e.target.checked)}
           className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
         />
-        <span className="text-sm text-gray-700">Set as active profile</span>
+        <span className="text-sm text-gray-700">
+          {t("healthProfile.setActive")}
+        </span>
       </label>
 
       {/* Actions */}
@@ -269,7 +277,7 @@ function ProfileForm({
           onClick={onCancel}
           className="flex-1 rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
         >
-          Cancel
+          {t("common.cancel")}
         </button>
       </div>
     </form>
@@ -281,6 +289,7 @@ function ProfileForm({
 export function HealthProfileSection() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [editingProfile, setEditingProfile] = useState<
     HealthProfile | "new" | null
   >(null);
@@ -303,7 +312,7 @@ export function HealthProfileSection() {
       toast.error(result.error.message);
       return;
     }
-    toast.success("Profile deleted");
+    toast.success(t("healthProfile.profileDeleted"));
     await queryClient.invalidateQueries({
       queryKey: queryKeys.healthProfiles,
     });
@@ -322,7 +331,9 @@ export function HealthProfileSection() {
       return;
     }
     toast.success(
-      profile.is_active ? "Profile deactivated" : "Profile activated",
+      profile.is_active
+        ? t("healthProfile.profileDeactivated")
+        : t("healthProfile.profileActivated"),
     );
     await queryClient.invalidateQueries({
       queryKey: queryKeys.healthProfiles,
@@ -344,9 +355,9 @@ export function HealthProfileSection() {
     return (
       <section className="card">
         <h2 className="mb-3 text-sm font-semibold text-gray-700">
-          Health Profiles
+          {t("healthProfile.title")}
         </h2>
-        <p className="text-sm text-gray-400">Loading…</p>
+        <p className="text-sm text-gray-400">{t("common.loading")}</p>
       </section>
     );
   }
@@ -354,23 +365,22 @@ export function HealthProfileSection() {
   return (
     <section className="card">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-700">Health Profiles</h2>
+        <h2 className="text-sm font-semibold text-gray-700">
+          {t("healthProfile.title")}
+        </h2>
         {!editingProfile && profiles.length < 5 && (
           <button
             onClick={() => setEditingProfile("new")}
             className="rounded-lg border border-brand-200 px-3 py-1 text-xs font-medium text-brand-600 hover:bg-brand-50"
           >
-            + New Profile
+            {t("healthProfile.newProfile")}
           </button>
         )}
       </div>
 
       {/* Empty state */}
       {profiles.length === 0 && !editingProfile && (
-        <p className="text-sm text-gray-400">
-          No health profiles yet. Create one to get personalised product
-          warnings.
-        </p>
+        <p className="text-sm text-gray-400">{t("healthProfile.emptyState")}</p>
       )}
 
       {/* Profile list */}
@@ -393,7 +403,7 @@ export function HealthProfileSection() {
                     </span>
                     {profile.is_active && (
                       <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700">
-                        Active
+                        {t("healthProfile.active")}
                       </span>
                     )}
                   </div>
@@ -413,7 +423,11 @@ export function HealthProfileSection() {
                   <button
                     onClick={() => handleToggleActive(profile)}
                     className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
-                    title={profile.is_active ? "Deactivate" : "Set as active"}
+                    title={
+                      profile.is_active
+                        ? t("healthProfile.deactivate")
+                        : t("healthProfile.setActive")
+                    }
                   >
                     {profile.is_active ? "⏸" : "▶"}
                   </button>

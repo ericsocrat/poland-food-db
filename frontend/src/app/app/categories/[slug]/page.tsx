@@ -17,14 +17,15 @@ import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { formatSlug } from "@/lib/validation";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useTranslation } from "@/lib/i18n";
 import type { CategoryProduct } from "@/lib/types";
 
 const PAGE_SIZE = 20;
 
-const SORT_OPTIONS = [
-  { value: "score", label: "Healthiness" },
-  { value: "name", label: "Name" },
-  { value: "calories", label: "Calories" },
+const SORT_OPTIONS_KEYS = [
+  { value: "score", labelKey: "categories.healthiness" },
+  { value: "name", labelKey: "filters.name" },
+  { value: "calories", labelKey: "filters.calories" },
 ] as const;
 
 export default function CategoryListingPage() {
@@ -32,6 +33,7 @@ export default function CategoryListingPage() {
   const slug = String(params.slug ?? "");
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const [sortBy, setSortBy] = useState("score");
   const [sortDir, setSortDir] = useState("asc");
@@ -42,7 +44,7 @@ export default function CategoryListingPage() {
     if (slug) {
       track("category_viewed", { category: slug });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);
 
   const { data, isLoading, error } = useQuery({
@@ -88,7 +90,7 @@ export default function CategoryListingPage() {
         </h1>
         {data && (
           <span className="text-sm text-gray-500">
-            {data.total_count} product{data.total_count !== 1 && "s"}
+            {t("common.products", { count: data.total_count })}
           </span>
         )}
       </div>
@@ -103,9 +105,9 @@ export default function CategoryListingPage() {
           }}
           className="input-field text-sm"
         >
-          {SORT_OPTIONS.map((opt) => (
+          {SORT_OPTIONS_KEYS.map((opt) => (
             <option key={opt.value} value={opt.value}>
-              {opt.label}
+              {t(opt.labelKey)}
             </option>
           ))}
         </select>
@@ -116,7 +118,7 @@ export default function CategoryListingPage() {
           }}
           className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
         >
-          {sortDir === "asc" ? "↑ Asc" : "↓ Desc"}
+          {sortDir === "asc" ? t("filters.asc") : t("filters.desc")}
         </button>
       </div>
 
@@ -129,7 +131,9 @@ export default function CategoryListingPage() {
 
       {!isLoading && error && (
         <div className="py-12 text-center">
-          <p className="mb-3 text-sm text-red-500">Failed to load products.</p>
+          <p className="mb-3 text-sm text-red-500">
+            {t("categories.loadFailed")}
+          </p>
           <button
             type="button"
             className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
@@ -144,14 +148,14 @@ export default function CategoryListingPage() {
               })
             }
           >
-            Retry
+            {t("common.retry")}
           </button>
         </div>
       )}
 
       {!isLoading && !error && data?.products.length === 0 && (
         <p className="py-12 text-center text-sm text-gray-400">
-          No products in this category.
+          {t("categories.noProducts")}
         </p>
       )}
 
@@ -171,17 +175,17 @@ export default function CategoryListingPage() {
             onClick={() => setOffset((o) => Math.max(0, o - PAGE_SIZE))}
             className="btn-secondary text-sm"
           >
-            Previous
+            {t("categories.previous")}
           </button>
           <span className="text-sm text-gray-500">
-            Page {currentPage} of {totalPages}
+            {t("common.pageOf", { page: currentPage, pages: totalPages })}
           </span>
           <button
             disabled={currentPage >= totalPages}
             onClick={() => setOffset((o) => o + PAGE_SIZE)}
             className="btn-secondary text-sm"
           >
-            Next
+            {t("common.next")}
           </button>
         </div>
       )}
@@ -190,6 +194,7 @@ export default function CategoryListingPage() {
 }
 
 function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
+  const { t } = useTranslation();
   const band = SCORE_BANDS[product.score_band];
   const nutriClass = product.nutri_score
     ? NUTRI_COLORS[product.nutri_score]
@@ -213,17 +218,17 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
           <div className="mt-1 flex flex-wrap gap-1">
             {product.high_sugar_flag && (
               <span className="rounded bg-red-50 px-1.5 py-0.5 text-xs text-red-600">
-                High sugar
+                {t("product.highSugar")}
               </span>
             )}
             {product.high_salt_flag && (
               <span className="rounded bg-red-50 px-1.5 py-0.5 text-xs text-red-600">
-                High salt
+                {t("product.highSalt")}
               </span>
             )}
             {product.high_sat_fat_flag && (
               <span className="rounded bg-red-50 px-1.5 py-0.5 text-xs text-red-600">
-                High sat. fat
+                {t("product.highSatFat")}
               </span>
             )}
           </div>

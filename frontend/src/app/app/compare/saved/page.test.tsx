@@ -97,7 +97,7 @@ describe("SavedComparisonsPage", () => {
       error: new Error("Network"),
     });
     render(<SavedComparisonsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("Failed to load comparisons.")).toBeInTheDocument();
+    expect(screen.getByText("Failed to load comparison data.")).toBeInTheDocument();
   });
 
   it("shows empty state when no comparisons", () => {
@@ -147,14 +147,14 @@ describe("SavedComparisonsPage", () => {
 
   it("renders share button only when share_token exists", () => {
     render(<SavedComparisonsPage />, { wrapper: createWrapper() });
-    const shareButtons = screen.getAllByTitle("Copy share link");
+    const shareButtons = screen.getAllByTitle("Copy Share Link");
     // Only comparison c1 has a truthy share_token
     expect(shareButtons).toHaveLength(1);
   });
 
   it("links back to compare page", () => {
     render(<SavedComparisonsPage />, { wrapper: createWrapper() });
-    const backLink = screen.getByText("Compare").closest("a");
+    const backLink = screen.getByText("Compare Products").closest("a");
     expect(backLink).toHaveAttribute("href", "/app/compare");
   });
 });

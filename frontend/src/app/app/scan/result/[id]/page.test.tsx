@@ -193,7 +193,7 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
-      expect(screen.getByText("Loading scan result…")).toBeInTheDocument();
+      expect(screen.getByText("Loading…")).toBeInTheDocument();
     });
   });
 
@@ -209,7 +209,7 @@ describe("ScanResultPage", () => {
 
       await waitFor(() => {
         expect(
-          screen.getByText("Could not load product details."),
+          screen.getByText("Failed to load product."),
         ).toBeInTheDocument();
       });
     });
@@ -224,7 +224,7 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        const backLink = screen.getByText("← Back to Scanner");
+        const backLink = screen.getByText("← Back");
         expect(backLink.closest("a")).toHaveAttribute("href", "/app/scan");
       });
     });
@@ -372,7 +372,7 @@ describe("ScanResultPage", () => {
       expect(screen.getByText("Calories")).toBeInTheDocument();
       expect(screen.getByText("Sugars")).toBeInTheDocument();
       expect(screen.getByText("Salt")).toBeInTheDocument();
-      expect(screen.getByText("Fat")).toBeInTheDocument();
+      expect(screen.getByText("Total Fat")).toBeInTheDocument();
       expect(screen.getByText("Protein")).toBeInTheDocument();
     });
   });
@@ -433,9 +433,9 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText(/40 pts better/)).toBeInTheDocument();
+        expect(screen.getByText(/−40 points better/)).toBeInTheDocument();
       });
-      expect(screen.getByText(/35 pts better/)).toBeInTheDocument();
+      expect(screen.getByText(/−35 points better/)).toBeInTheDocument();
     });
 
     it("shows improvement percentage for alternatives", async () => {

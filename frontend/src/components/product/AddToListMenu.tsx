@@ -16,6 +16,7 @@ import {
   useProductListMembership,
 } from "@/hooks/use-lists";
 import { useFavoritesStore } from "@/stores/favorites-store";
+import { useTranslation } from "@/lib/i18n";
 import type { ProductList } from "@/lib/types";
 
 function getListIcon(listType: string, inList: boolean): string {
@@ -38,6 +39,7 @@ interface AddToListMenuProps {
 export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const { t } = useTranslation();
 
   const { data: listsResponse } = useLists();
   const addMutation = useAddToList();
@@ -104,8 +106,16 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
       <button
         type="button"
         disabled={isBusy}
-        title={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
-        aria-label={isFavorite ? "Remove from Favorites" : "Add to Favorites"}
+        title={
+          isFavorite
+            ? t("productActions.removeFromFavorites")
+            : t("productActions.addToFavorites")
+        }
+        aria-label={
+          isFavorite
+            ? t("productActions.removeFromFavorites")
+            : t("productActions.addToFavorites")
+        }
         className="flex-shrink-0 text-xl transition-transform hover:scale-110 disabled:opacity-50"
         onClick={(e) => {
           e.preventDefault();
@@ -134,8 +144,8 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
     <div ref={ref} className="relative flex-shrink-0">
       <button
         type="button"
-        title="Add to list"
-        aria-label="Add to list"
+        title={t("productActions.addToList")}
+        aria-label={t("productActions.addToList")}
         aria-expanded={open}
         className="flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-gray-100"
         onClick={(e) => {
@@ -153,11 +163,13 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
           role="menu"
         >
           <p className="px-3 py-1.5 text-xs font-medium text-gray-400">
-            Your lists
+            {t("productActions.yourLists")}
           </p>
 
           {lists.length === 0 && (
-            <p className="px-3 py-2 text-sm text-gray-400">No lists yet</p>
+            <p className="px-3 py-2 text-sm text-gray-400">
+              {t("productActions.noLists")}
+            </p>
           )}
 
           {lists.map((list) => {
@@ -182,7 +194,9 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
                   {list.name}
                 </span>
                 {inList && (
-                  <span className="text-xs text-gray-400">remove</span>
+                  <span className="text-xs text-gray-400">
+                    {t("productActions.remove")}
+                  </span>
                 )}
               </button>
             );

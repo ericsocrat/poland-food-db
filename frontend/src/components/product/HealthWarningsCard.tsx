@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getProductHealthWarnings, getActiveHealthProfile } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { WARNING_SEVERITY, HEALTH_CONDITIONS } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
 import type { HealthWarning, WarningSeverity } from "@/lib/types";
 
 // ─── Severity icon mapping ─────────────────────────────────────────────────
@@ -40,6 +41,7 @@ export function HealthWarningsCard({
   productId,
 }: Readonly<{ productId: number }>) {
   const supabase = createClient();
+  const { t } = useTranslation();
 
   // Check if user has an active health profile
   const { data: profileData, isLoading: profileLoading } = useQuery({
@@ -87,17 +89,25 @@ export function HealthWarningsCard({
           <span className="text-lg">🛡️</span>
           <div className="flex-1">
             <p className="text-sm font-medium text-gray-700">
-              Personalized health warnings
+              {t("healthWarnings.title")}
             </p>
             <p className="text-xs text-gray-500">
-              Set up a{" "}
+              {
+                t("healthWarnings.setupPrompt").split(
+                  t("healthWarnings.healthProfile"),
+                )[0]
+              }
               <Link
                 href="/app/settings"
                 className="text-brand-600 underline hover:text-brand-700"
               >
-                health profile
-              </Link>{" "}
-              to see warnings tailored to your conditions.
+                {t("healthWarnings.healthProfile")}
+              </Link>
+              {
+                t("healthWarnings.setupPrompt").split(
+                  t("healthWarnings.healthProfile"),
+                )[1]
+              }
             </p>
           </div>
         </div>
@@ -123,11 +133,12 @@ export function HealthWarningsCard({
           <span className="text-lg">✅</span>
           <div>
             <p className="text-sm font-medium text-green-800">
-              Within your limits
+              {t("healthWarnings.withinLimits")}
             </p>
             <p className="text-xs text-green-600">
-              No warnings for your profile &ldquo;
-              {profileData.profile?.profile_name}&rdquo;
+              {t("healthWarnings.noWarningsFor", {
+                name: profileData.profile?.profile_name,
+              })}
             </p>
           </div>
         </div>
@@ -152,12 +163,15 @@ export function HealthWarningsCard({
         <div className="flex items-center gap-2">
           <span className="text-lg">🛡️</span>
           <p className={`text-sm font-semibold ${cardStyle.color}`}>
-            {warningsData.warning_count} health warning
-            {warningsData.warning_count === 1 ? "" : "s"}
+            {t("healthWarnings.warningCount", {
+              count: warningsData.warning_count,
+            })}
           </p>
         </div>
         <span className="text-xs text-gray-400">
-          Profile: {profileData.profile?.profile_name}
+          {t("healthWarnings.profile", {
+            name: profileData.profile?.profile_name,
+          })}
         </span>
       </div>
 
@@ -204,6 +218,7 @@ export function HealthWarningBadge({
   productId,
 }: Readonly<{ productId: number }>) {
   const supabase = createClient();
+  const { t } = useTranslation();
 
   // Only fetch if user has an active profile
   const { data: profileData } = useQuery({
@@ -237,7 +252,7 @@ export function HealthWarningBadge({
       return (
         <span
           className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-xs"
-          title="No health warnings"
+          title={t("healthWarnings.noWarnings")}
         >
           ✓
         </span>
@@ -261,7 +276,7 @@ export function HealthWarningBadge({
   return (
     <span
       className={`flex h-5 min-w-5 flex-shrink-0 items-center justify-center rounded-full px-1 text-xs font-bold ${style.bg} ${style.color}`}
-      title={`${warningsData.warning_count} health warning${warningsData.warning_count === 1 ? "" : "s"}`}
+      title={t("healthWarnings.warningCount", { count: warningsData.warning_count })}
     >
       {warningsData.warning_count}
     </span>

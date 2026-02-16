@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { submitProduct } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n";
 import type { FormSubmitEvent } from "@/lib/types";
 
 export default function SubmitProductPage() {
@@ -22,6 +23,7 @@ export default function SubmitProductPage() {
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [notes, setNotes] = useState("");
+  const { t } = useTranslation();
 
   const mutation = useMutation({
     mutationFn: async () => {
@@ -37,7 +39,7 @@ export default function SubmitProductPage() {
       return result.data;
     },
     onSuccess: () => {
-      toast.success("Product submitted! We'll review it soon.");
+      toast.success(t("submit.successToast"));
       router.push("/app/scan/submissions");
     },
     onError: (error: Error) => {
@@ -57,15 +59,15 @@ export default function SubmitProductPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-lg font-semibold text-gray-900">
-            📝 Submit Product
+            📝 {t("submit.title")}
           </h1>
-          <p className="text-sm text-gray-500">Help us add a missing product</p>
+          <p className="text-sm text-gray-500">{t("submit.subtitle")}</p>
         </div>
         <Link
           href="/app/scan"
           className="text-sm text-brand-600 hover:text-brand-700"
         >
-          ← Back to Scanner
+          {t("submit.backToScanner")}
         </Link>
       </div>
 
@@ -77,7 +79,7 @@ export default function SubmitProductPage() {
               htmlFor="ean"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              EAN Barcode *
+              {t("submit.eanLabel")}
             </label>
             <input
               id="ean"
@@ -87,7 +89,7 @@ export default function SubmitProductPage() {
                 setEan(e.target.value.replaceAll(/\D/g, "").slice(0, 13))
               }
               className="input-field font-mono tracking-widest"
-              placeholder="8 or 13 digits"
+              placeholder={t("submit.eanPlaceholder")}
               inputMode="numeric"
               maxLength={13}
               required
@@ -101,7 +103,7 @@ export default function SubmitProductPage() {
               htmlFor="productName"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Product Name *
+              {t("submit.nameLabel")}
             </label>
             <input
               id="productName"
@@ -109,7 +111,7 @@ export default function SubmitProductPage() {
               value={productName}
               onChange={(e) => setProductName(e.target.value)}
               className="input-field"
-              placeholder="e.g. Lay's Paprika Chips 150g"
+              placeholder={t("submit.namePlaceholder")}
               maxLength={200}
               required
             />
@@ -121,7 +123,7 @@ export default function SubmitProductPage() {
               htmlFor="brand"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Brand
+              {t("submit.brandLabel")}
             </label>
             <input
               id="brand"
@@ -129,7 +131,7 @@ export default function SubmitProductPage() {
               value={brand}
               onChange={(e) => setBrand(e.target.value)}
               className="input-field"
-              placeholder="e.g. Lay's"
+              placeholder={t("submit.brandPlaceholder")}
               maxLength={100}
             />
           </div>
@@ -140,7 +142,7 @@ export default function SubmitProductPage() {
               htmlFor="category"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Category
+              {t("submit.categoryLabel")}
             </label>
             <input
               id="category"
@@ -148,7 +150,7 @@ export default function SubmitProductPage() {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="input-field"
-              placeholder="e.g. chips, drinks, cereal"
+              placeholder={t("submit.categoryPlaceholder")}
               maxLength={100}
             />
           </div>
@@ -159,14 +161,14 @@ export default function SubmitProductPage() {
               htmlFor="notes"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Notes
+              {t("submit.notesLabel")}
             </label>
             <textarea
               id="notes"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="input-field min-h-[60px] resize-y"
-              placeholder="Any additional info about this product…"
+              placeholder={t("submit.notesPlaceholder")}
               maxLength={500}
               rows={2}
             />
@@ -179,13 +181,15 @@ export default function SubmitProductPage() {
             }
             className="btn-primary w-full"
           >
-            {mutation.isPending ? "Submitting…" : "Submit Product"}
+            {mutation.isPending
+              ? t("submit.submitting")
+              : t("submit.submitButton")}
           </button>
         </form>
       </div>
 
       <p className="text-center text-xs text-gray-400">
-        Submissions are reviewed before being added to the database.
+        {t("submit.disclaimer")}
       </p>
     </div>
   );

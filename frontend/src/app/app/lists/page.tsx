@@ -9,9 +9,11 @@ import Link from "next/link";
 import { useLists, useCreateList, useDeleteList } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { useTranslation } from "@/lib/i18n";
 import type { ProductList, FormSubmitEvent } from "@/lib/types";
 
 export default function ListsPage() {
+  const { t } = useTranslation();
   const { data, isLoading, error } = useLists();
   const createList = useCreateList();
   const deleteList = useDeleteList();
@@ -58,13 +60,15 @@ export default function ListsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">📋 My Lists</h1>
+        <h1 className="text-xl font-bold text-gray-900">
+          📋 {t("lists.title")}
+        </h1>
         <button
           type="button"
           className="btn-primary text-sm"
           onClick={() => setShowForm((v) => !v)}
         >
-          {showForm ? "Cancel" : "+ New List"}
+          {showForm ? t("common.cancel") : t("lists.newList")}
         </button>
       </div>
 
@@ -73,7 +77,7 @@ export default function ListsPage() {
         <form onSubmit={handleCreate} className="card space-y-3">
           <input
             type="text"
-            placeholder="List name"
+            placeholder={t("lists.namePlaceholder")}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             className="input-field"
@@ -83,7 +87,7 @@ export default function ListsPage() {
           />
           <input
             type="text"
-            placeholder="Description (optional)"
+            placeholder={t("lists.descriptionPlaceholder")}
             value={newDesc}
             onChange={(e) => setNewDesc(e.target.value)}
             className="input-field"
@@ -95,14 +99,16 @@ export default function ListsPage() {
               className="btn-primary text-sm"
               disabled={createList.isPending || !newName.trim()}
             >
-              {createList.isPending ? "Creating…" : "Create List"}
+              {createList.isPending
+                ? t("lists.creating")
+                : t("lists.createList")}
             </button>
             <button
               type="button"
               className="btn-secondary text-sm"
               onClick={() => setShowForm(false)}
             >
-              Cancel
+              {t("common.cancel")}
             </button>
           </div>
         </form>
@@ -112,9 +118,7 @@ export default function ListsPage() {
       {lists.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">📋</p>
-          <p className="text-sm text-gray-500">
-            No lists yet. Create one to start organizing products.
-          </p>
+          <p className="text-sm text-gray-500">{t("lists.emptyState")}</p>
         </div>
       )}
 
@@ -133,9 +137,9 @@ export default function ListsPage() {
 
       <ConfirmDialog
         open={confirmDeleteId !== null}
-        title="Delete list?"
-        description="This cannot be undone."
-        confirmLabel="Delete"
+        title={t("lists.deleteList")}
+        description={t("lists.deleteWarning")}
+        confirmLabel={t("common.delete")}
         variant="danger"
         onConfirm={() => {
           if (confirmDeleteId) deleteList.mutate(confirmDeleteId);
@@ -167,6 +171,7 @@ function ListCard({
   list: ProductList;
   onDelete?: () => void;
 }>) {
+  const { t } = useTranslation();
   const typeIcon = listTypeIcon(list.list_type);
 
   return (
@@ -177,25 +182,25 @@ function ListCard({
         <div className="min-w-0 flex-1">
           <p className="font-medium text-gray-900">{list.name}</p>
           <p className="text-sm text-gray-500">
-            {list.item_count} {list.item_count === 1 ? "item" : "items"}
+            {t("common.items", { count: list.item_count })}
             {list.description && ` · ${list.description}`}
           </p>
         </div>
 
         {list.share_enabled && (
           <span
-            title="Shared"
+            title={t("lists.shared")}
             className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600"
           >
-            🔗 Shared
+            🔗 {t("lists.shared")}
           </span>
         )}
 
         {onDelete && (
           <button
             type="button"
-            title="Delete list"
-            aria-label={`Delete ${list.name}`}
+            title={t("common.delete")}
+            aria-label={`${t("common.delete")} ${list.name}`}
             className="flex h-8 w-8 items-center justify-center rounded-full text-sm text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
             onClick={(e) => {
               e.preventDefault();
