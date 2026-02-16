@@ -25,11 +25,9 @@ vi.mock("@/hooks/use-compare", () => ({
 
 // Stub ComparisonGrid since it's complex and tested separately
 vi.mock("@/components/compare/ComparisonGrid", () => ({
-  ComparisonGrid: ({
-    products,
-  }: {
-    products: unknown[];
-  }) => <div data-testid="comparison-grid">{products.length} products</div>,
+  ComparisonGrid: ({ products }: { products: unknown[] }) => (
+    <div data-testid="comparison-grid">{products.length} products</div>
+  ),
 }));
 
 beforeEach(() => {

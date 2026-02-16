@@ -196,6 +196,11 @@
   "sonarlint.analyzerProperties": {
     "sonar.sql.dialect": "postgresql"
   },
+  "sonarlint.pathExclusions": [
+    "supabase/migrations/**",
+    "db/pipelines/**",
+    "db/migrations/**"
+  ],
 
   // ═══════════════════════════════════════════════════════════════════════
   // MSSQL — disable for this PostgreSQL workspace
