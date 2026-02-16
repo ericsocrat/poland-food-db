@@ -206,9 +206,7 @@ describe("SearchAutocomplete", () => {
     await waitFor(
       () => {
         expect(
-          screen.getByText((_, el) =>
-            el?.textContent === "Lay's · Chips" ? true : false,
-          ),
+          screen.getByText((_, el) => el?.textContent === "Lay's · Chips"),
         ).toBeInTheDocument();
       },
       { timeout: 1000 },

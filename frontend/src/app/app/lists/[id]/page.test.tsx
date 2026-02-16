@@ -67,11 +67,9 @@ vi.mock("@/components/common/ConfirmDialog", () => ({
   }: {
     open: boolean;
     title: string;
-    description?: string;
-    confirmLabel?: string;
-    variant?: string;
     onConfirm: () => void;
     onCancel: () => void;
+    [key: string]: unknown;
   }) =>
     open ? (
       <div data-testid="confirm-dialog">

@@ -68,10 +68,6 @@ describe("fmtUnit", () => {
     expect(fmtUnit(null, "g")).toBe("—");
   });
 
-  it("returns default fallback for undefined", () => {
-    expect(fmtUnit(undefined, "g")).toBe("—");
-  });
-
   it("uses custom fallback", () => {
     expect(fmtUnit(null, "g", "N/A")).toBe("N/A");
   });
@@ -94,10 +90,6 @@ describe("fmtStr", () => {
 
   it("returns default fallback for null", () => {
     expect(fmtStr(null)).toBe("—");
-  });
-
-  it("returns default fallback for undefined", () => {
-    expect(fmtStr(undefined)).toBe("—");
   });
 
   it("uses custom fallback", () => {

@@ -6,10 +6,10 @@ import type { SearchFilters } from "@/lib/types";
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 describe("ActiveFilterChips", () => {
-  let onChange: ReturnType<typeof vi.fn>;
+  const onChange = vi.fn() as unknown as (filters: SearchFilters) => void;
 
   beforeEach(() => {
-    onChange = vi.fn();
+    vi.clearAllMocks();
   });
 
   it("renders nothing when no filters are active", () => {

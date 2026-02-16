@@ -29,7 +29,12 @@ function createWrapper() {
   };
 }
 
-const defaultProps = {
+const defaultProps: {
+  query: string | null;
+  filters: { category: string[] };
+  show: boolean;
+  onClose: () => void;
+} = {
   query: "chips",
   filters: { category: ["Chips"] },
   show: true,
