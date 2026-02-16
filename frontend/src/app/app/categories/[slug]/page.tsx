@@ -2,7 +2,7 @@
 
 // ─── Category listing — paginated product list for a single category ────────
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -16,6 +16,7 @@ import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { formatSlug } from "@/lib/validation";
+import { useAnalytics } from "@/hooks/use-analytics";
 import type { CategoryProduct } from "@/lib/types";
 
 const PAGE_SIZE = 20;
@@ -35,6 +36,14 @@ export default function CategoryListingPage() {
   const [sortBy, setSortBy] = useState("score");
   const [sortDir, setSortDir] = useState("asc");
   const [offset, setOffset] = useState(0);
+  const { track } = useAnalytics();
+
+  useEffect(() => {
+    if (slug) {
+      track("category_viewed", { category: slug });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [slug]);
 
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.categoryListing(slug, sortBy, sortDir, offset),

@@ -2,7 +2,7 @@
 
 // ─── Product detail page ────────────────────────────────────────────────────
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
@@ -22,6 +22,7 @@ import {
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
+import { useAnalytics } from "@/hooks/use-analytics";
 import type { ProductDetail, Alternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
@@ -32,6 +33,7 @@ export default function ProductDetailPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<Tab>("overview");
+  const { track } = useAnalytics();
 
   const {
     data: product,
@@ -47,6 +49,17 @@ export default function ProductDetailPage() {
     staleTime: staleTimes.product,
     enabled: !Number.isNaN(productId),
   });
+
+  useEffect(() => {
+    if (product) {
+      track("product_viewed", {
+        product_id: productId,
+        product_name: product.product_name,
+        category: product.category,
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productId]);
 
   if (isLoading) {
     return (

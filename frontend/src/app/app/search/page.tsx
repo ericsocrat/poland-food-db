@@ -18,6 +18,7 @@ import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
 import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
+import { useAnalytics } from "@/hooks/use-analytics";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
 const RECENT_KEY = "fooddb:recent-searches";
@@ -112,16 +113,20 @@ export default function SearchPage() {
     staleTime: staleTimes.search,
   });
 
+  const { track } = useAnalytics();
+
   function handleSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     const q = query.trim();
     if (q.length >= 1) {
       setSubmittedQuery(q);
       setShowAutocomplete(false);
+      track("search_performed", { query: q, has_filters: hasActiveFilters(filters) });
     } else if (hasActiveFilters(filters)) {
       // Allow empty query with filters (browse mode)
       setSubmittedQuery("");
       setShowAutocomplete(false);
+      track("search_performed", { query: "", has_filters: true });
     }
   }
 
@@ -146,6 +151,7 @@ export default function SearchPage() {
 
   function handleFiltersChange(newFilters: SearchFilters) {
     setFilters(newFilters);
+    track("filter_applied", { filters: newFilters });
     // If browse mode with filters, trigger search
     if (!submittedQuery && hasActiveFilters(newFilters)) {
       setSubmittedQuery("");

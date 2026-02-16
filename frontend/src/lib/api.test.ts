@@ -52,6 +52,8 @@ import {
   getScanHistory,
   submitProduct,
   getMySubmissions,
+  // Analytics
+  trackEvent,
 } from "@/lib/api";
 
 // ─── Mock the RPC layer ─────────────────────────────────────────────────────
@@ -703,6 +705,43 @@ describe("Scanner & Submissions API functions", () => {
     expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_get_my_submissions", {
       p_page: 3,
       p_page_size: 5,
+    });
+  });
+});
+
+// ─── Analytics ──────────────────────────────────────────────────────────────
+
+describe("Analytics API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("trackEvent calls api_track_event with all parameters", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { api_version: "1.0.0", tracked: true } });
+    await trackEvent(fakeSupabase, {
+      eventName: "search_performed",
+      eventData: { query: "milk" },
+      sessionId: "sess-123",
+      deviceType: "mobile",
+    });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_track_event", {
+      p_event_name: "search_performed",
+      p_event_data: { query: "milk" },
+      p_session_id: "sess-123",
+      p_device_type: "mobile",
+    });
+  });
+
+  it("trackEvent defaults optional params to null", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { api_version: "1.0.0", tracked: true } });
+    await trackEvent(fakeSupabase, {
+      eventName: "product_viewed",
+    });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_track_event", {
+      p_event_name: "product_viewed",
+      p_event_data: null,
+      p_session_id: null,
+      p_device_type: null,
     });
   });
 });

@@ -12,11 +12,13 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { COUNTRIES, DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthProfileSection } from "@/components/settings/HealthProfileSection";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function SettingsPage() {
   const router = useRouter();
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { track } = useAnalytics();
 
   const { data: prefs, isLoading } = useQuery({
     queryKey: queryKeys.preferences,
@@ -86,6 +88,7 @@ export default function SettingsPage() {
     });
 
     setDirty(false);
+    track("preferences_updated", { country, diet, allergen_count: allergens.length });
     toast.success("Preferences saved!");
   }
 

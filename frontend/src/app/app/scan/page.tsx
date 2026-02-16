@@ -15,6 +15,7 @@ import { recordScan } from "@/lib/api";
 import { isValidEan, stripNonDigits } from "@/lib/validation";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useAnalytics } from "@/hooks/use-analytics";
 import type {
   RecordScanResponse,
   RecordScanFoundResponse,
@@ -56,6 +57,7 @@ export default function ScanPage() {
   const router = useRouter();
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { track } = useAnalytics();
   const [ean, setEan] = useState("");
   const [manualEan, setManualEan] = useState("");
   const [mode, setMode] = useState<"camera" | "manual">("camera");
@@ -80,8 +82,9 @@ export default function ScanPage() {
       if (!result.ok) throw new Error(result.error.message);
       return result.data;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, scanEan) => {
       setScanResult(data);
+      track("scanner_used", { ean: scanEan, found: data.found, method: mode });
       // Invalidate scan history
       queryClient.invalidateQueries({
         queryKey: ["scan-history"],

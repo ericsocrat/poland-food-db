@@ -7,6 +7,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { saveSearch } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
+import { useAnalytics } from "@/hooks/use-analytics";
 import type { SearchFilters } from "@/lib/types";
 
 interface SaveSearchDialogProps {
@@ -25,6 +26,7 @@ export function SaveSearchDialog({
   const supabase = createClient();
   const queryClient = useQueryClient();
   const [name, setName] = useState("");
+  const { track } = useAnalytics();
 
   const mutation = useMutation({
     mutationFn: async (searchName: string) => {
@@ -38,6 +40,7 @@ export function SaveSearchDialog({
       return result.data;
     },
     onSuccess: () => {
+      track("search_saved", { name, query, filter_count: Object.keys(filters).length });
       queryClient.invalidateQueries({
         queryKey: queryKeys.savedSearches,
       });

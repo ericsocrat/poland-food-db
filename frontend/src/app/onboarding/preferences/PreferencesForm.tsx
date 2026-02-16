@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { setUserPreferences } from "@/lib/api";
 import { DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export function PreferencesForm() {
   const router = useRouter();
@@ -18,6 +19,7 @@ export function PreferencesForm() {
   const [strictAllergen, setStrictAllergen] = useState(false);
   const [treatMayContain, setTreatMayContain] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { track } = useAnalytics();
 
   function toggleAllergen(tag: string) {
     setAllergens((prev) =>
@@ -42,11 +44,13 @@ export function PreferencesForm() {
     }
 
     toast.success("Preferences saved!");
+    track("onboarding_completed", { diet, allergen_count: allergens.length, skipped: false });
     router.push("/app/search");
     router.refresh();
   }
 
   function handleSkip() {
+    track("onboarding_completed", { skipped: true });
     router.push("/app/search");
     router.refresh();
   }

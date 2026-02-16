@@ -5,7 +5,7 @@
 // Works with 2-4 product IDs from URL params.
 // Authenticated users can save comparisons and see avoid badges.
 
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useCompareProducts } from "@/hooks/use-compare";
@@ -13,6 +13,7 @@ import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
 import { ShareComparison } from "@/components/compare/ShareComparison";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useCompareStore } from "@/stores/compare-store";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export default function ComparePage() {
   const searchParams = useSearchParams();
@@ -29,6 +30,14 @@ export default function ComparePage() {
   }, [idsParam]);
 
   const { data, isLoading, error } = useCompareProducts(productIds);
+  const { track } = useAnalytics();
+
+  useEffect(() => {
+    if (productIds.length >= 2) {
+      track("compare_opened", { product_ids: productIds, count: productIds.length });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [productIds.length]);
 
   // Empty state — no IDs provided
   if (productIds.length < 2) {

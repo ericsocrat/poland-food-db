@@ -25,6 +25,7 @@ import {
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { useAvoidStore } from "@/stores/avoid-store";
 import { useFavoritesStore } from "@/stores/favorites-store";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { useEffect } from "react";
 
 // ─── Queries ────────────────────────────────────────────────────────────────
@@ -149,6 +150,7 @@ export function useProductListMembership(
 export function useCreateList() {
   const supabase = createClient();
   const queryClient = useQueryClient();
+  const { track } = useAnalytics();
 
   return useMutation({
     mutationFn: (params: {
@@ -156,7 +158,8 @@ export function useCreateList() {
       description?: string;
       listType?: string;
     }) => createList(supabase, params.name, params.description, params.listType),
-    onSuccess: () => {
+    onSuccess: (_data, variables) => {
+      track("list_created", { name: variables.name, list_type: variables.listType });
       queryClient.invalidateQueries({ queryKey: queryKeys.lists });
     },
   });
@@ -198,6 +201,7 @@ export function useAddToList() {
   const queryClient = useQueryClient();
   const addAvoided = useAvoidStore((s) => s.addAvoided);
   const addFavorite = useFavoritesStore((s) => s.addFavorite);
+  const { track } = useAnalytics();
 
   return useMutation({
     mutationFn: (params: {
@@ -214,6 +218,7 @@ export function useAddToList() {
       queryClient.invalidateQueries({
         queryKey: queryKeys.productListMembership(variables.productId),
       });
+      track("list_item_added", { list_id: variables.listId, product_id: variables.productId, list_type: variables.listType });
 
       const listType =
         variables.listType ?? (result.ok ? result.data.list_type : undefined);

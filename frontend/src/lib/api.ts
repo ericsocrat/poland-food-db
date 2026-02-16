@@ -43,8 +43,10 @@ import type {
   SubmissionsResponse,
   SubmitProductResponse,
   ToggleShareResponse,
+  TrackEventResponse,
   UserPreferences,
 } from "./types";
+import type { AnalyticsEventName, DeviceType } from "./types";
 
 // ─── User Preferences ──────────────────────────────────────────────────────
 
@@ -606,5 +608,24 @@ export function getMySubmissions(
   return callRpc<SubmissionsResponse>(supabase, "api_get_my_submissions", {
     p_page: page ?? 1,
     p_page_size: pageSize ?? 20,
+  });
+}
+
+// ─── Analytics / Telemetry ──────────────────────────────────────────────────
+
+export function trackEvent(
+  supabase: SupabaseClient,
+  params: {
+    eventName: AnalyticsEventName;
+    eventData?: Record<string, unknown>;
+    sessionId?: string;
+    deviceType?: DeviceType;
+  },
+): Promise<RpcResult<TrackEventResponse>> {
+  return callRpc<TrackEventResponse>(supabase, "api_track_event", {
+    p_event_name: params.eventName,
+    p_event_data: params.eventData ?? null,
+    p_session_id: params.sessionId ?? null,
+    p_device_type: params.deviceType ?? null,
   });
 }

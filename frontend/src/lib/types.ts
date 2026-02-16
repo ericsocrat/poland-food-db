@@ -700,3 +700,33 @@ export interface AdminReviewResponse {
   merged_product_id?: number;
   error?: string;
 }
+
+// ─── Analytics / Telemetry ──────────────────────────────────────────────────
+
+export type AnalyticsEventName =
+  | "search_performed"
+  | "filter_applied"
+  | "search_saved"
+  | "compare_opened"
+  | "list_created"
+  | "list_shared"
+  | "favorites_added"
+  | "list_item_added"
+  | "avoid_added"
+  | "scanner_used"
+  | "product_not_found"
+  | "submission_created"
+  | "product_viewed"
+  | "dashboard_viewed"
+  | "share_link_opened"
+  | "category_viewed"
+  | "preferences_updated"
+  | "onboarding_completed";
+
+export type DeviceType = "mobile" | "tablet" | "desktop";
+
+export interface TrackEventResponse {
+  api_version: string;
+  tracked: boolean;
+  error?: string;
+}
