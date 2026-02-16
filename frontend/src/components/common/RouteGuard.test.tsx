@@ -1,9 +1,8 @@
 import { useState } from "react";
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, renderHook } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { RouteGuard, usePreferences } from "./RouteGuard";
-import { renderHook } from "@testing-library/react";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 

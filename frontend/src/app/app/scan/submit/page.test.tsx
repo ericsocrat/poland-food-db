@@ -98,14 +98,14 @@ describe("SubmitProductPage", () => {
   it("pre-fills EAN from URL search params", () => {
     mockSearchGet.mockReturnValue("5901234123457");
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    const input = screen.getByLabelText("EAN Barcode *") as HTMLInputElement;
-    expect(input.value).toBe("5901234123457");
+    const input = screen.getByLabelText("EAN Barcode *");
+    expect(input).toHaveValue("5901234123457");
     expect(input).toHaveAttribute("readOnly");
   });
 
   it("EAN is editable when not pre-filled", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    const input = screen.getByLabelText("EAN Barcode *") as HTMLInputElement;
+    const input = screen.getByLabelText("EAN Barcode *");
     expect(input).not.toHaveAttribute("readOnly");
   });
 

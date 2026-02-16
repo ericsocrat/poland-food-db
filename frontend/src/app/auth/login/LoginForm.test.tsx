@@ -50,7 +50,7 @@ vi.mock("sonner", () => ({
 beforeEach(() => {
   vi.clearAllMocks();
   // Reset search params
-  for (const key of [...mockSearchParams.keys()]) {
+  for (const key of mockSearchParams.keys()) {
     mockSearchParams.delete(key);
   }
 });

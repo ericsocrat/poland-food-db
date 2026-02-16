@@ -29,7 +29,6 @@ vi.mock("@/components/compare/ComparisonGrid", () => ({
     products,
   }: {
     products: unknown[];
-    showAvoidBadge: boolean;
   }) => <div data-testid="comparison-grid">{products.length} products</div>,
 }));
 

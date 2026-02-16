@@ -47,7 +47,7 @@ describe("useCompareStore", () => {
 
   it("add is no-op for duplicate", () => {
     store().add(1);
-    store().add(1);
+    store().add(1); // NOSONAR — intentional: testing idempotency
     expect(store().count()).toBe(1);
   });
 

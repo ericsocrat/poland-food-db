@@ -207,7 +207,7 @@ describe("ComparisonGrid", () => {
   it("renders dots indicator for mobile", () => {
     const { container } = render(<ComparisonGrid products={products} />);
     // dots are small spans with rounded-full class
-    const dots = container.querySelectorAll(".rounded-full.h-1\\.5.w-1\\.5");
+    const dots = container.querySelectorAll(String.raw`.rounded-full.h-1\.5.w-1\.5`);
     expect(dots.length).toBe(2); // 2 products = 2 dots
   });
 
