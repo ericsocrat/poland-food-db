@@ -10,6 +10,8 @@ import { Navigation } from "@/components/layout/Navigation";
 import { CountryChip } from "@/components/common/CountryChip";
 import { ListsHydrator } from "@/components/product/ListsHydrator";
 import { CompareFloatingButton } from "@/components/compare/CompareFloatingButton";
+import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
+import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 
 export default async function AppLayout({
   children,
@@ -58,7 +60,8 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
-      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/80 backdrop-blur">
+      <OfflineIndicator />
+      <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/80 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
           <span className="text-lg font-bold text-brand-700">🥗 FoodDB</span>
           <CountryChip country={prefs.country} />
@@ -71,6 +74,7 @@ export default async function AppLayout({
       </main>
 
       <CompareFloatingButton />
+      <InstallPrompt />
       <Navigation />
     </div>
   );

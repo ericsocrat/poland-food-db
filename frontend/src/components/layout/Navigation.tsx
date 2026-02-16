@@ -6,11 +6,11 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV_ITEMS = [
-  { href: "/app/search", label: "Search", icon: "🔍" },
-  { href: "/app/categories", label: "Categories", icon: "📂" },
-  { href: "/app/scan", label: "Scan", icon: "📷" },
-  { href: "/app/lists", label: "Lists", icon: "📋" },
-  { href: "/app/settings", label: "Settings", icon: "⚙️" },
+  { href: "/app", label: "Home", icon: "🏠", exact: true },
+  { href: "/app/search", label: "Search", icon: "🔍", exact: false },
+  { href: "/app/scan", label: "Scan", icon: "📷", exact: false },
+  { href: "/app/lists", label: "Lists", icon: "📋", exact: false },
+  { href: "/app/settings", label: "Settings", icon: "⚙️", exact: false },
 ];
 
 export function Navigation() {
@@ -18,12 +18,14 @@ export function Navigation() {
 
   return (
     <nav
-      className="sticky bottom-0 z-40 border-t border-gray-200 bg-white"
+      className="sticky bottom-0 z-40 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]"
       aria-label="Main navigation"
     >
       <div className="mx-auto flex max-w-5xl">
         {NAV_ITEMS.map((item) => {
-          const isActive = pathname.startsWith(item.href);
+          const isActive = item.exact
+            ? pathname === item.href
+            : pathname.startsWith(item.href);
           return (
             <Link
               key={item.href}

@@ -25,8 +25,8 @@ vi.mock("next/link", () => ({
 describe("Navigation", () => {
   it("renders all 5 nav items", () => {
     render(<Navigation />);
+    expect(screen.getByText("Home")).toBeInTheDocument();
     expect(screen.getByText("Search")).toBeInTheDocument();
-    expect(screen.getByText("Categories")).toBeInTheDocument();
     expect(screen.getByText("Scan")).toBeInTheDocument();
     expect(screen.getByText("Lists")).toBeInTheDocument();
     expect(screen.getByText("Settings")).toBeInTheDocument();
@@ -34,6 +34,10 @@ describe("Navigation", () => {
 
   it("has correct hrefs", () => {
     render(<Navigation />);
+    expect(screen.getByLabelText("Home").closest("a")).toHaveAttribute(
+      "href",
+      "/app",
+    );
     expect(screen.getByLabelText("Search").closest("a")).toHaveAttribute(
       "href",
       "/app/search",
@@ -51,17 +55,34 @@ describe("Navigation", () => {
       "aria-current",
       "page",
     );
-    expect(screen.getByLabelText("Categories")).not.toHaveAttribute(
+    expect(screen.getByLabelText("Home")).not.toHaveAttribute(
       "aria-current",
     );
   });
 
   it("matches nested route as active", () => {
-    mockPathname.mockReturnValue("/app/categories/chips");
+    mockPathname.mockReturnValue("/app/search/results");
     render(<Navigation />);
-    expect(screen.getByLabelText("Categories")).toHaveAttribute(
+    expect(screen.getByLabelText("Search")).toHaveAttribute(
       "aria-current",
       "page",
+    );
+  });
+
+  it("marks Home active only on exact /app path", () => {
+    mockPathname.mockReturnValue("/app");
+    render(<Navigation />);
+    expect(screen.getByLabelText("Home")).toHaveAttribute(
+      "aria-current",
+      "page",
+    );
+  });
+
+  it("does not mark Home active for nested paths", () => {
+    mockPathname.mockReturnValue("/app/search");
+    render(<Navigation />);
+    expect(screen.getByLabelText("Home")).not.toHaveAttribute(
+      "aria-current",
     );
   });
 

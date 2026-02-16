@@ -31,6 +31,12 @@ coverage/
 e2e/.auth/
 tsconfig.tsbuildinfo
 
+# ─── PWA / Service Worker (generated at build time by Serwist) ──────────────
+frontend/public/sw.js
+frontend/public/sw.js.map
+frontend/public/serwist-worker-*
+frontend/public/workbox-*
+
 # ─── Python ─────────────────────────────────────────────────────────────────
 __pycache__/
 *.pyc

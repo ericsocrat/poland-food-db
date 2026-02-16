@@ -3,8 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    /* Prevent pull-to-refresh in standalone PWA mode */
+    overscroll-behavior-y: contain;
+    /* Smooth momentum scrolling on iOS */
+    -webkit-overflow-scrolling: touch;
+  }
+
   body {
     @apply bg-gray-50 text-gray-900 antialiased;
+    /* Prevent text selection / callout on long-press in PWA */
+    -webkit-tap-highlight-color: transparent;
   }
 }
 
@@ -14,6 +23,8 @@
            text-sm font-semibold text-white shadow-sm transition-colors
            hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2
            focus-visible:outline-brand-600 disabled:opacity-50 disabled:cursor-not-allowed;
+    /* Prevent double-tap zoom on buttons in PWA */
+    touch-action: manipulation;
   }
 
   .btn-secondary {
@@ -22,6 +33,7 @@
            transition-colors hover:bg-gray-50 focus-visible:outline-2
            focus-visible:outline-offset-2 focus-visible:outline-brand-600
            disabled:opacity-50 disabled:cursor-not-allowed;
+    touch-action: manipulation;
   }
 
   .input-field {
@@ -32,5 +44,16 @@
 
   .card {
     @apply rounded-xl border border-gray-200 bg-white p-4 shadow-sm;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
