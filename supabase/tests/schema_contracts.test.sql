@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(71);
+SELECT plan(73);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -60,7 +60,9 @@ SELECT has_column('public', 'products', 'nova_classification', 'products.nova_cl
 SELECT has_column('public', 'products', 'product_name_en',        'products.product_name_en exists');
 SELECT has_column('public', 'products', 'product_name_en_source', 'products.product_name_en_source exists');
 SELECT has_column('public', 'products', 'product_name_en_reviewed_at', 'products.product_name_en_reviewed_at exists');
+SELECT has_column('public', 'products', 'name_translations',             'products.name_translations exists');
 SELECT has_column('public', 'user_preferences', 'preferred_language', 'user_preferences.preferred_language exists');
+SELECT has_column('public', 'country_ref', 'default_language',             'country_ref.default_language exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 4. Key columns on nutrition_facts table

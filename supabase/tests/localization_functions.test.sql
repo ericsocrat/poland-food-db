@@ -1,15 +1,16 @@
--- ─── pgTAP: Localization Phases 1-3 (#32) ────────────────────────────────────
+-- ─── pgTAP: Localization Phases 1-4 (#32) ────────────────────────────────────
 -- Tests for language_ref, category_translations, resolve_language(),
 -- preferred_language on user_preferences, localized API responses,
 -- Phase 2 product_name_en / search enhancements,
--- and Phase 3 cross-language search synonyms.
+-- Phase 3 cross-language search synonyms,
+-- and Phase 4 European expansion (name_translations, default_language).
 -- Run via: supabase test db
 --
 -- Self-contained: inserts own fixture data so tests work on an empty DB.
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(67);
+SELECT plan(79);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -19,9 +20,9 @@ VALUES ('en', 'English', 'English', 1, true),
        ('de', 'German',  'Deutsch', 3, true)
 ON CONFLICT (code) DO NOTHING;
 
-INSERT INTO public.country_ref (country_code, country_name, is_active)
-VALUES ('XX', 'Test Country', true)
-ON CONFLICT (country_code) DO NOTHING;
+INSERT INTO public.country_ref (country_code, country_name, is_active, default_language)
+VALUES ('XX', 'Test Country', true, 'en')
+ON CONFLICT (country_code) DO UPDATE SET default_language = 'en';
 
 INSERT INTO public.category_ref (category, slug, display_name, sort_order, is_active)
 VALUES ('pgtap-l10n', 'pgtap-l10n', 'pgTAP Localization', 990, true)
@@ -97,6 +98,20 @@ INSERT INTO public.products (
     product_name = 'Mleko Testowe UVW',
     product_name_en = NULL,
     unhealthiness_score = 25;
+
+-- Phase 4 fixture: product with name_translations (German)
+INSERT INTO public.products (
+    product_id, product_name, product_name_en, name_translations,
+    brand, category, country, is_deprecated, unhealthiness_score
+) VALUES (
+    999807, 'Chipsy Paprykowe XYZ', 'Paprika Chips XYZ',
+    '{"de": "Paprika Chips XYZ", "fr": "Chips au Paprika XYZ"}'::jsonb,
+    'TestBrand', 'pgtap-l10n', 'PL', false, 38
+) ON CONFLICT (product_id) DO UPDATE SET
+    product_name = 'Chipsy Paprykowe XYZ',
+    product_name_en = 'Paprika Chips XYZ',
+    name_translations = '{"de": "Paprika Chips XYZ", "fr": "Chips au Paprika XYZ"}'::jsonb,
+    unhealthiness_score = 38;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. language_ref table structure
@@ -519,6 +534,106 @@ SELECT ok(
         WHERE (r->>'product_id')::bigint = 999806
     ),
     'search "milk" finds product 999806 (PL name contains Mleko)'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 17. Phase 4: name_translations column structure
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT has_column('public', 'products', 'name_translations',
+    'products.name_translations column exists');
+
+SELECT col_not_null('public', 'products', 'name_translations',
+    'name_translations is NOT NULL');
+
+SELECT col_default_is('public', 'products', 'name_translations', '{}',
+    'name_translations defaults to empty JSONB object');
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 18. Phase 4: country_ref.default_language column
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT has_column('public', 'country_ref', 'default_language',
+    'country_ref.default_language column exists');
+
+-- FK to language_ref
+SELECT fk_ok('public', 'country_ref', 'default_language',
+             'public', 'language_ref', 'code',
+             'default_language FK references language_ref.code');
+
+-- PL country has default_language = 'pl'
+SELECT is(
+    (SELECT default_language FROM public.country_ref WHERE country_code = 'PL'),
+    'pl',
+    'PL country has default_language = pl'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 19. Phase 4: product_name_display uses name_translations for non-EN/native
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Product 999807 has name_translations with "de" and "fr" keys
+-- For anonymous user (language=en), display should be EN name
+SELECT is(
+    (SELECT api_product_detail(999807)->>'product_name_display'),
+    'Paprika Chips XYZ',
+    'api_product_detail shows EN name for anonymous (language=en) user'
+);
+
+-- name_translations has "de" key
+SELECT ok(
+    (SELECT api_product_detail(999807)) ? 'product_name_en',
+    'api_product_detail response has product_name_en key'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 20. Phase 4: v_master includes name_translations
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT ok(
+    EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'v_master'
+          AND column_name = 'name_translations'
+    ),
+    'v_master view includes name_translations column'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 21. Phase 4: name_translations values are searchable
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Product 999807 has name_translations.de = 'Paprika Chips XYZ'
+-- The search_vector trigger should index these values
+-- Searching for the German translation term should find the product
+SELECT ok(
+    EXISTS (
+        SELECT 1
+        FROM jsonb_array_elements(
+            (api_search_products('Paprika Chips XYZ', '{"country":"PL"}'::jsonb))->'results'
+        ) AS r
+        WHERE (r->>'product_id')::bigint = 999807
+    ),
+    'search finds product 999807 via name_translations content'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 22. Phase 4: country_ref seed data validation
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- DE country should have default_language = 'de'
+SELECT is(
+    (SELECT default_language FROM public.country_ref WHERE country_code = 'DE'),
+    'de',
+    'DE country has default_language = de'
+);
+
+-- Test country XX has default_language = 'en'
+SELECT is(
+    (SELECT default_language FROM public.country_ref WHERE country_code = 'XX'),
+    'en',
+    'XX test country has default_language = en'
 );
 
 SELECT * FROM finish();
