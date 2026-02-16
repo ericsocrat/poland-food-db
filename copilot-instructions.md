@@ -1,7 +1,6 @@
-```instructions
 # Copilot Instructions — Poland Food Quality Database
 
-> **Last updated:** 2026-02-12
+> **Last updated:** 2026-02-16
 > **Scope:** Poland (`PL`) only — no other countries active
 > **Products:** 1,025 active (20 categories), 38 deprecated
 > **EAN coverage:** 997/1,025 (97.3%)
@@ -23,6 +22,7 @@ You are a **food scientist, nutrition researcher, and senior data engineer** mai
 - **Idempotent everything.** Every SQL file safe to run 1× or 100×.
 - **Reproducible setup.** `supabase db reset` + pipelines = full rebuild.
 - **Poland only.** All products `country = 'PL'`. See `docs/COUNTRY_EXPANSION_GUIDE.md` for future.
+- **Every change must be tested.** No code ships without corresponding tests. See §8.
 
 ---
 
@@ -142,8 +142,36 @@ poland-food-db/
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (278 checks across 18 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (29 injection tests)
+├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── validate_eans.py                 # EAN-8/EAN-13 checksum validator (called by RUN_QA)
+├── check_pipeline_structure.py      # Pipeline folder/file structure validator
+├── check_enrichment_identity.py     # Enrichment migration identity guard
+├── enrich_ingredients.py            # OFF API → ingredient/allergen migration SQL generator
+├── fetch_off_category.py            # OFF API → pipeline SQL generator (standalone)
+├── frontend/
+│   ├── src/
+│   │   ├── lib/                     # Shared utilities, API clients, types
+│   │   │   ├── *.ts                 # Source modules
+│   │   │   └── *.test.ts            # Co-located unit tests (Vitest)
+│   │   ├── components/              # React components (common/, compare/, product/, etc.)
+│   │   │   └── **/*.test.tsx        # Co-located component tests (Vitest + Testing Library)
+│   │   ├── app/                     # Next.js App Router pages
+│   │   └── __tests__/setup.ts       # Vitest global setup
+│   ├── e2e/                         # Playwright E2E tests
+│   │   ├── smoke.spec.ts            # Public page smoke tests
+│   │   ├── authenticated.spec.ts    # Auth-gated flow tests
+│   │   ├── auth.setup.ts            # Auth fixture setup
+│   │   └── helpers/test-user.ts     # Test user provisioning
+│   ├── vitest.config.ts             # Vitest configuration (jsdom, v8 coverage)
+│   ├── playwright.config.ts         # Playwright configuration (Chromium)
+│   └── package.json                 # Dependencies + scripts (test, test:coverage, etc.)
+├── .github/workflows/
+│   ├── ci.yml                       # Lint → Typecheck → Build → Playwright E2E
+│   ├── build.yml                    # Build → Unit tests + coverage → SonarCloud
+│   ├── qa.yml                       # Schema → Pipelines → QA (278) → Sanity (16)
+│   └── sync-cloud-db.yml            # Remote DB sync
+├── sonar-project.properties         # SonarCloud configuration
 ├── .env.example
 └── README.md
 ```
@@ -369,13 +397,215 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ---
 
-## 8. Testing & QA
+## 8. Testing & QA (NON-NEGOTIABLE)
+
+A change is **not done** unless relevant tests were added/updated, every suite is green, and coverage/quality gates are not degraded. This applies to every code change — no exceptions.
+
+### 8.1 Testing Stack & Architecture
+
+| Layer | Tool | Location | Runner |
+|-------|------|----------|--------|
+| Unit tests | **Vitest 4.x** (jsdom, v8 coverage) | `frontend/src/**/*.test.{ts,tsx}` co-located | `cd frontend && npx vitest run` |
+| Component tests | **Testing Library React** + Vitest | `frontend/src/components/**/*.test.tsx` | same as above |
+| E2E smoke | **Playwright 1.58** (Chromium) | `frontend/e2e/smoke.spec.ts` | `cd frontend && npx playwright test` |
+| E2E auth | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts` | same (CI auto-detects key) |
+| DB QA | Raw SQL (zero rows = pass) | `db/qa/QA__*.sql` | `.\RUN_QA.ps1` |
+| Negative validation | SQL injection/constraint tests | `db/qa/TEST__negative_checks.sql` | `.\RUN_NEGATIVE_TESTS.ps1` |
+| DB sanity | Row-count + schema assertions | via `RUN_SANITY.ps1` | `.\RUN_SANITY.ps1 -Env local` |
+| Pipeline structure | Python validator | `check_pipeline_structure.py` | `python check_pipeline_structure.py` |
+| EAN checksum | Python validator | `validate_eans.py` | `python validate_eans.py` |
+| Code quality | **SonarCloud** | `sonar-project.properties` | CI only (build.yml) |
+
+**Coverage** is collected via `npm run test:coverage` (v8 provider, LCOV output at `frontend/coverage/lcov.info`), fed to SonarCloud. Coverage exclusions are declared in both `vitest.config.ts` and `sonar-project.properties`.
+
+### 8.2 Always Discover Existing Patterns First
+
+Before writing or changing **any** code:
+1. Search the repo for existing tests covering the area you're touching and follow the established style.
+2. Prefer extending existing test files over inventing new patterns.
+3. Locate how tests run in CI (GitHub Actions workflows in `.github/workflows/`) and locally (scripts), and align with that.
+
+### 8.3 Every Code Change Must Include Tests
+
+For **any** functional change:
+- Add or update tests covering:
+  - **Happy path** — expected normal behavior.
+  - **Edge cases** — boundary values, empty inputs, unicode, null.
+  - **Error/validation paths** — invalid inputs, permission failures, missing data.
+  - **Regression** — for bug fixes, add a test that would have caught the bug.
+- If you add a feature flag, filter, profile option, or API parameter: test ON/OFF behavior.
+- If you touch database logic/migrations: add QA checks that validate schema + expected query behavior.
+
+### 8.4 Test Conventions (must follow)
+
+#### Vitest unit/component tests
+- Use `describe()` + `it()` blocks (not `test()`). Descriptions in plain English.
+- Import `{ describe, it, expect, vi, beforeEach }` from `"vitest"`.
+- Use `@/` path alias for imports (e.g., `@/lib/api`, `@/components/common/RouteGuard`).
+- Mock modules with `vi.mock("@/lib/module", () => ({ ... }))`.
+- Clear mocks in `beforeEach` with `vi.clearAllMocks()`.
+- Component tests: wrap in `QueryClientProvider` via a `createWrapper()` helper with `{ retry: false, staleTime: 0 }`.
+- Assertions: `expect(...).toEqual()`, `.toHaveBeenCalledWith()`, `.toBeTruthy()`, `.toBeVisible()`.
+- Use ASCII-art section dividers (`// ─── Section ───`) to group test blocks.
+- Setup file: `frontend/src/__tests__/setup.ts` (imports `@testing-library/jest-dom/vitest`).
+
+#### Playwright E2E tests
+- Use `test.describe()` + `test()` (not `it()`).
+- Import `{ test, expect }` from `@playwright/test` only.
+- No mocks — tests run against a live dev server at `http://localhost:3000`.
+- Locators: prefer `page.locator("text=...")`, `page.getByRole(...)`, CSS selectors.
+- Assertions: `expect(page).toHaveTitle(...)`, `expect(locator).toBeVisible()`.
+- Auth-protected routes: assert redirect via `page.waitForURL(/\/auth\/login/)`.
+- Smoke tests go in `e2e/smoke.spec.ts`; authenticated flows in `e2e/authenticated.spec.ts`.
+
+#### Database QA SQL
+- Each check is a numbered `SELECT` returning violation rows. **Zero rows = pass.**
+- Include `'ISSUE LABEL' AS issue` and a `detail` column for human-readable output.
+- Separate sections with `-- ═══...` ASCII dividers and numbered titles.
+- Header comment states total check count and purpose (e.g., `-- 29 checks`).
+- Add checks to existing suite files; only create a new `QA__*.sql` suite if the domain is genuinely new.
+
+### 8.5 Coverage & Quality Gates Must Not Regress
+
+- **Never reduce** overall coverage or weaken assertions.
+- Prefer strong assertions (specific outputs, types, error codes, DB row counts) over snapshot-only tests.
+- If coverage tooling exists (`npm run test:coverage`), ensure new code paths are covered.
+- If a change makes coverage impossible, **refactor to make it testable** (pure functions, dependency injection, smaller modules).
+- SonarCloud Quality Gate must pass. Do not lower thresholds, delete checks, or skip suites to make failures disappear.
+
+### 8.6 Update QA Checks When Needed
+
+If you add new constraints (validation rule, EAN rules, scoring rule, CHECK constraint):
+- Add/extend the corresponding QA check(s) in `db/qa/` so the rule is enforced.
+- Update check count in header comments and this document only if the total changes.
+- Keep totals consistent across `copilot-instructions.md`, `RUN_QA.ps1` output, and `qa.yml` job name.
+
+### 8.7 Run Commands and Report Results
+
+Before finalizing any change:
+1. Run the **full impacted suite** locally (same entrypoint CI uses).
+2. If the full suite is too heavy, run the impacted subset **and explain why**.
+3. In your response, include:
+   - Commands executed
+   - Pass/fail status
+   - Key output summaries (counts, durations, suite names)
+
+**Minimum validation per change type:**
+
+| Change type | Commands to run |
+|-------------|----------------|
+| Frontend component/lib | `cd frontend && npx tsc --noEmit && npx vitest run` |
+| Frontend + UI flow | above + `npx playwright test --project=smoke` |
+| Database schema/SQL | `python check_pipeline_structure.py`, then `.\RUN_QA.ps1` |
+| Scoring/nutrition | `.\RUN_QA.ps1` (covers scoring regression tests) |
+| Python pipeline code | `python -c "import py_compile; py_compile.compile('file.py', doraise=True)"` + `python check_pipeline_structure.py` |
+| Full stack | all of the above |
+
+### 8.8 Test Placement Rules
+
+| Area | Test location | Level |
+|------|---------------|-------|
+| `frontend/src/lib/*.ts` | Co-located `*.test.ts` in same dir | Unit |
+| `frontend/src/components/**/*.tsx` | Co-located `*.test.tsx` in same dir | Unit / Component |
+| API routes / RPC wrappers | `frontend/src/lib/rpc.test.ts` or `api.test.ts` | Unit (mocked Supabase) |
+| UI flows & navigation | `frontend/e2e/smoke.spec.ts` | E2E |
+| Auth-gated flows | `frontend/e2e/authenticated.spec.ts` | E2E |
+| DB schema & constraints | `db/qa/QA__*.sql` suites | DB QA |
+| Scoring formula | `db/qa/QA__scoring_formula_tests.sql` | DB regression |
+| Pipeline SQL structure | `check_pipeline_structure.py` | Python validator |
+| Bug fixes | Add regression test in the appropriate location above | Same as area |
+
+### 8.9 Determinism (Flake Prevention)
+
+All tests **must** be deterministic:
+- **No live network calls.** Mock external APIs (`vi.mock()` for OFF API, Supabase).
+- **No time-dependent assertions** without freezing time (`vi.useFakeTimers()`).
+- **No randomness** without seeding.
+- **No dependency on local machine state** (port availability, file system, env vars).
+- If unavoidable, mock/stub and document why.
+- Use local test DB / fixtures as per repo conventions.
+
+E2E tests are the **only** exception — they run against a live dev server but use Playwright's retry and timeout mechanisms.
+
+### 8.10 CI Parity (Don't "Green Locally, Red in CI")
+
+- Use the **same entrypoints** CI uses (`.github/workflows/ci.yml`, `build.yml`, `qa.yml`).
+- If a test needs env vars, provide defaults in test setup (not in CI-only secrets).
+- If you add a new dependency/tool, ensure it's installed in CI (`package.json` or `requirements.txt`).
+- CI workflows:
+  - **`ci.yml`**: Lint → Typecheck → Build → Playwright E2E
+  - **`build.yml`**: Lint → Typecheck → Build → Unit tests with coverage → Playwright → SonarCloud scan + Quality Gate
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Pipelines → QA (278 checks) → Sanity (16 checks) → Confidence threshold
+
+### 8.11 Test Plan Required (Before Coding)
+
+Before implementing a non-trivial change, write a short **Test Plan**:
+- **What** should be tested (bullet list)
+- **Where** the tests will live (file paths)
+- **What level** (unit / component / integration / e2e / DB QA)
+Then implement code + tests accordingly. Skip this for trivial one-line fixes.
+
+### 8.12 Contract Tests for APIs & RPC
+
+When modifying any API route or Supabase RPC wrapper:
+- Add tests that assert the **API contract**:
+  - Status codes / return types
+  - Response schema/fields
+  - Error shapes (type, message)
+  - Auth requirements (anon vs authenticated)
+- If a shared TypeScript type or Zod schema exists, assert against it.
+- Existing patterns: `frontend/src/lib/rpc.test.ts` (38 tests), `frontend/src/lib/api.test.ts` (8 tests).
+
+### 8.13 Database Safety Rules
+
+If adding/changing DB schema or SQL functions:
+- **Append-only migrations.** Never modify an existing `supabase/migrations/` file.
+- Provide a migration plan and rollback note (comment in the migration file).
+- Add a QA check that verifies the migration outcome (row counts, constraint behavior).
+- Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
+- Run `.\RUN_QA.ps1` to verify all 278 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 29 injection tests.
+
+### 8.14 Snapshots Are Not Enough
+
+Do not rely solely on snapshot tests for logic-heavy changes. Snapshots are only allowed for:
+- Stable UI rendering (component structure)
+- Large response payloads
+
+But they **must** be paired with explicit assertions on key fields/values.
+
+### 8.15 Refactors: Maintain Behavior and Prove It
+
+For refactors:
+1. **Lock behavior** — ensure existing tests pass before refactoring. If no tests exist, add characterization tests first.
+2. **Refactor** — make the structural change.
+3. **Prove no regression** — all tests must still pass with zero changes to assertions.
+4. Validate with `python -c "import py_compile; py_compile.compile('file.py', doraise=True)"` for Python, `npx tsc --noEmit` for TypeScript.
+
+### 8.16 Don't Weaken Gates to Fix Failures
+
+**Never** "fix" a failure by:
+- Lowering coverage or quality thresholds
+- Deleting or skipping checks/suites
+- Widening assertion tolerances without justification
+- Removing `ON_ERROR_STOP` or `set -euo pipefail`
+
+Only do this if explicitly requested **and** with a clear written justification.
+
+### 8.17 Verification Output
+
+At the end of every PR-like change, include a **Verification** section:
+- **Commands run** (with output)
+- **Results summary** (pass/fail, counts)
+- **New/updated tests** listed
+- **QA check changes** listed (if any)
+
+### 8.18 DB QA Suites Reference
 
 | Suite                   | File                                | Checks | Blocking? |
 | ----------------------- | ----------------------------------- | -----: | --------- |
 | Data Integrity          | `QA__null_checks.sql`               |     29 | Yes       |
 | Scoring Formula         | `QA__scoring_formula_tests.sql`     |     27 | Yes       |
-| Source Coverage         | `QA__source_coverage.sql`           |      8 | No        |
+| Source Coverage          | `QA__source_coverage.sql`           |      8 | No        |
 | EAN Validation          | `validate_eans.py`                  |      1 | Yes       |
 | API Surfaces            | `QA__api_surfaces.sql`              |     14 | Yes       |
 | Confidence              | `QA__confidence_scoring.sql`        |     10 | Yes       |
@@ -393,7 +623,9 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 **Run:** `.\RUN_QA.ps1` — expects **278/278 checks passing**.
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
 
-**Key regression tests** (in scoring suite):
+### 8.19 Key Regression Tests (Scoring Suite)
+
+These are **anchor products** whose scores must remain stable. If a scoring change causes drift beyond ±2 points, investigate before committing:
 
 - Top Chips Faliste ≈ 51 (palm oil penalty)
 - Coca-Cola Zero ≈ 8 (lowest-scoring drink)
@@ -514,6 +746,3 @@ unhealthiness_score (1-100) =
 
 Full documentation: `docs/SCORING_METHODOLOGY.md`
 
-```
-
-```
