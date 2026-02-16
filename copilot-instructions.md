@@ -1,6 +1,6 @@
 # Copilot Instructions — Poland Food Quality Database
 
-> **Last updated:** 2026-02-17
+> **Last updated:** 2026-02-16
 > **Scope:** Poland (`PL`) primary + Germany (`DE`) micro-pilot (51 Chips products)
 > **Products:** ~1,076 active (20 PL categories + 1 DE category), 38 deprecated
 > **EAN coverage:** 997/1,025 (97.3%)
@@ -882,3 +882,383 @@ unhealthiness_score (1-100) =
 | Dark red | 81–100 | Very high risk |
 
 Full documentation: `docs/SCORING_METHODOLOGY.md`
+
+---
+
+## 15. Feature Implementation Standard (Mandatory for All Major Features)
+
+> **Gold standard:** [Issue #32 — Localization & Multi-Language Support](https://github.com/ericsocrat/poland-food-db/issues/32)
+>
+> Every significant feature must follow this structure. **No exceptions.**
+> A "significant feature" is any change that introduces new tables, modifies API contracts, adds scoring dimensions, expands to new countries/languages, or touches more than ~5 files.
+
+### 15.1 Problem Statement
+
+Every feature issue must open with:
+
+- **What user problem does this solve?** (concrete scenario, not abstract)
+- **What current limitation exists?** (link to specific code/schema gaps)
+- **What measurable improvement does this introduce?** (quantifiable: new rows, faster queries, fewer clicks, new coverage %)
+
+> Example (from #32): "No way for an English-speaking user to search or understand Polish product names."
+
+### 15.2 Architectural Evaluation
+
+Evaluate **at least 2–3 approaches** in a comparison table:
+
+| Approach | Verdict | Reason |
+|----------|---------|--------|
+| A. ... | ❌ Rejected | ... |
+| B. ... | ❌ Rejected | ... |
+| C. ... | ✅ Chosen | ... |
+
+Rules:
+- **Explicitly reject** inferior approaches with rationale.
+- **Reference prior art** — how do Yuka, Open Food Facts, MyFitnessPal, or similar platforms solve this?
+- **Consider scale** — will this work at 10 countries, 10K products, 100K users?
+- **Document assumptions** that informed the choice.
+- Preference order: extend existing patterns > new pattern > new dependency > new extension.
+
+### 15.3 Core Principles (Invariants)
+
+Define rules that **must never be violated** during implementation:
+
+| Category | Examples from this project |
+|----------|---------------------------|
+| **Data integrity** | Never invent nutrition data. `product_name` is the legal label — never modify it. |
+| **Backward compatibility** | All API changes must be additive. No breaking changes to response shapes. |
+| **Idempotency** | Every migration safe to run 1× or 100×. Use `IF NOT EXISTS`, `ON CONFLICT DO UPDATE`. |
+| **Test coverage** | All new SQL functions must have pgTAP tests (§8.20). No exceptions. |
+| **Country isolation** | All queries scoped by `country`. No cross-contamination between PL and DE data. |
+| **No runtime dependencies** | No live translation APIs, no external calls at query time. |
+| **Append-only migrations** | Never modify an existing `supabase/migrations/` file. |
+| **_ref table pattern** | Extensible domain values use `_ref` tables + FK, not CHECK constraints (unless the domain is truly closed). |
+
+Every feature must restate **which invariants apply** and confirm they are preserved.
+
+### 15.4 Phased Implementation Plan
+
+Complex features must be broken into **sequential phases**. Each phase must document:
+
+| Field | Required |
+|-------|----------|
+| Phase title & scope | ✅ |
+| Commit reference(s) | ✅ (after shipping) |
+| Migration filename | ✅ (e.g., `20260216000800_localization_phase1.sql`) |
+| Rationale | ✅ Why this order? What does this phase unlock? |
+| DB changes | ✅ Tables, columns, functions, triggers, indexes |
+| API changes | ✅ Modified `api_*` functions, new/changed parameters |
+| Frontend changes | ✅ Components, hooks, stores, pages affected |
+| Search/index implications | ✅ `search_vector` trigger updates, new GIN indexes |
+| Performance implications | ✅ New indexes, materialized views, query plan impact |
+| i18n implications | ✅ New dictionary keys, translated category/product names |
+
+**Phase ordering rules:**
+1. Foundation/schema first (no data dependency)
+2. Data population second (depends on schema)
+3. API surface third (depends on data)
+4. Frontend/UX last (depends on API)
+
+Each phase must be **independently shippable** — the system must work correctly after each phase, even if later phases haven't been implemented.
+
+### 15.5 Database Changes
+
+For **every** schema change:
+
+| Requirement | Details |
+|-------------|---------|
+| Migration filename | Follows `YYYYMMDDHHMMSS_description.sql` (Supabase convention) |
+| Idempotent design | `CREATE TABLE IF NOT EXISTS`, `ADD COLUMN IF NOT EXISTS`, `DO UPDATE SET` |
+| Constraints defined explicitly | All domain constraints as CHECK or FK |
+| FK over CHECK when extensible | Use `_ref` table + FK when the domain will grow (e.g., `language_ref` instead of `CHECK (language IN ('en','pl'))`) |
+| Fallback behavior | DEFAULT values documented, NULL semantics explained |
+| Index strategy | Justify every new index. GIN for JSONB/tsvector, B-tree for FK lookups, partial indexes where appropriate |
+| Rollback note | Comment in migration file: "To roll back: DROP TABLE/COLUMN IF EXISTS ..." |
+
+**SQL code patterns to follow (mandatory):**
+```sql
+-- ✅ Correct: _ref table for extensible domains
+CREATE TABLE IF NOT EXISTS public.language_ref (
+    code text PRIMARY KEY,
+    name_en text NOT NULL,
+    is_enabled boolean NOT NULL DEFAULT true
+);
+
+-- ✅ Correct: FK instead of CHECK for growing domains
+ALTER TABLE user_preferences
+  ADD COLUMN preferred_language text NOT NULL DEFAULT 'en'
+  REFERENCES language_ref(code);
+
+-- ❌ Wrong: CHECK for domains that will grow
+ALTER TABLE user_preferences
+  ADD CONSTRAINT chk_language CHECK (preferred_language IN ('en','pl','de'));
+```
+
+### 15.6 API Contract Impact
+
+For each modified `api_*` function, document:
+
+| Field | Required |
+|-------|----------|
+| Function name | ✅ |
+| New/changed parameters | ✅ (with defaults for backward compat) |
+| Response shape changes | ✅ (new keys are additive, never remove existing keys) |
+| Backward compatibility confirmation | ✅ Explicit "existing callers unaffected" statement |
+| Fallback logic | ✅ What happens if new param is NULL/omitted? |
+| Auth requirement | ✅ `anon` vs `authenticated` — unchanged? |
+| Test coverage | ✅ pgTAP test file + test names |
+| `docs/API_CONTRACTS.md` updated | ✅ |
+| `docs/FRONTEND_API_MAP.md` updated | ✅ (if frontend wiring changes) |
+
+**Golden rule:** New parameters must have defaults. Existing response keys must not be removed or renamed. New keys are always safe to add.
+
+### 15.7 Search & Indexing Impact
+
+If the feature touches searchable fields:
+
+| Check | Details |
+|-------|---------|
+| `search_vector` trigger updated? | Include new columns with appropriate weights (A=names, B=brand, C=category, D=metadata) |
+| Weight assignments justified? | A for primary identifiers, B for secondary, C for categorical, D for supplementary |
+| Extensions required? | `unaccent` (diacritic folding), `pg_trgm` (fuzzy matching) — both already enabled |
+| Synonym table updated? | New food terms → `search_synonyms` entries for cross-language search |
+| Index type appropriate? | GIN for tsvector/JSONB, GiST for trigram similarity |
+| Performance tested? | EXPLAIN ANALYZE on representative queries, especially with new indexes |
+
+### 15.8 Fallback Logic Definition
+
+Define **explicit** fallback chains. Never rely on implicit behavior.
+
+**Standard pattern (from Issue #32):**
+```
+resolve_language(p_language):
+  If p_language is valid and enabled in language_ref → use it
+  Else if user has preferred_language set → use that
+  Else → 'en' (universal fallback)
+
+product_name_display:
+  If user_language = country default_language → product_name (native label)
+  Else if user_language = 'en' → COALESCE(product_name_en, product_name)
+  Else → COALESCE(name_translations->>lang, product_name_en, product_name)
+```
+
+Every feature with conditional logic must document its fallback chain in this format:
+```
+If A → use X
+Else if B → use Y
+Else → fallback Z (always safe, always returns a value)
+```
+
+### 15.9 Test Requirements (Mandatory)
+
+No feature is complete without **all** of these:
+
+#### pgTAP Tests (`supabase/tests/*.test.sql`)
+
+| Category | Examples |
+|----------|----------|
+| Schema existence | `has_table('language_ref')`, `has_column('products', 'product_name_en')` |
+| Constraints | FK validation, CHECK constraint enforcement |
+| Function behavior | Happy path: correct inputs → expected outputs |
+| Edge cases | NULL inputs, empty strings, invalid codes, disabled flags |
+| Fallback logic | `resolve_language('xx')` → falls back to `'en'` |
+| Negative tests | Invalid inputs rejected, auth failures return error JSONB |
+| Auth branches | Unauthenticated calls to `authenticated`-only functions return `{error}` |
+
+#### Schema Contract Tests (`supabase/tests/schema_contracts.test.sql`)
+
+Add for **every** new schema object:
+- `has_table('new_table')` / `has_view('new_view')`
+- `has_column('table', 'new_column')`
+- `has_function('new_function')`
+
+#### Database QA Checks (`db/qa/QA__*.sql`)
+
+- Add checks to appropriate existing suite (don't create new suites unless the domain is genuinely new).
+- Update check count in header comment and §8.18 table.
+- Run `.\RUN_QA.ps1` — all checks must pass.
+
+#### Frontend Tests
+
+| Check | Tool | Command |
+|-------|------|---------|
+| TypeScript compiles clean | `tsc` | `cd frontend && npx tsc --noEmit` |
+| Dictionary parity | Vitest | Assert `Object.keys(en) ≡ Object.keys(pl)` for all i18n keys |
+| State management | Vitest | Zustand store tests for new state |
+| RPC contract | Vitest | Mock Supabase, assert request/response shapes |
+| Component rendering | Testing Library | New UI components have co-located `.test.tsx` |
+| E2E flows | Playwright | If new pages/routes, add to `smoke.spec.ts` or `authenticated.spec.ts` |
+
+### 15.10 Performance & Safety
+
+Every feature must pass these checks:
+
+| Rule | Verification |
+|------|-------------|
+| No N+1 queries | `EXPLAIN ANALYZE` on new queries; use JOINs/LATERAL/CTEs, not loops |
+| No unbounded loops | Defensive LIMIT caps on all expansion/aggregation logic |
+| No unindexed JSONB lookups | GIN index required for any `jsonb @>` or `->>` filter in WHERE clauses |
+| Defensive caps | Scale guardrails: `QA__scale_guardrails.sql` checks pass |
+| Graceful degradation | Features with `is_enabled` flags must work correctly when disabled |
+| MV refresh considered | If new MV added, include in `refresh_all_materialized_views()` and `mv_staleness_check()` |
+| No expensive triggers | Triggers must be O(1) per row; bulk operations must not cascade pathologically |
+
+### 15.11 Decision Log
+
+Every feature must include an **Architectural Decisions Log** table:
+
+| Decision | Choice | Rationale |
+|----------|--------|-----------|
+| Storage pattern for X | `_ref` table + FK | Follows established pattern, INSERT-only expansion |
+| Translation approach | Curated + stored | No runtime API calls, searchable, consistent |
+| ... | ... | ... |
+
+Log **all** non-trivial choices. If you debated between two approaches for more than 30 seconds, it belongs in the decision log.
+
+### 15.12 Constraints (Restated)
+
+Every feature must explicitly restate:
+
+- **What must not break** — list affected API functions, views, QA suites
+- **What must remain immutable** — e.g., `product_name` is legal label text
+- **What must remain backward compatible** — existing callers, existing response shapes
+- **What URLs must remain stable** — no slug/route changes without redirect migration
+
+### 15.13 File Impact Summary
+
+At the end of every feature issue, include:
+
+```
+## File Impact
+
+**N files changed, +X / -Y lines** across all phases:
+- N new DB migrations (X lines)
+- N new/modified pgTAP test files (X lines)
+- N new/modified QA suites (checks: before → after)
+- N new/modified frontend files (X lines)
+- N i18n dictionary changes (X new keys)
+```
+
+This enables quick impact assessment during code review.
+
+### 15.14 i18n & Localization Impact
+
+If the feature adds user-visible strings or data:
+
+| Check | Action |
+|-------|--------|
+| New UI strings? | Add to `/messages/en.json` (source of truth) + `/messages/pl.json` |
+| New category/domain labels? | Add to `category_translations` or equivalent `_translations` table |
+| New product data columns? | Consider `_en` column + provenance metadata (`_source`, `_reviewed_at`) |
+| New searchable text? | Update `search_vector` trigger + add `search_synonyms` entries |
+| Structured data vs display text? | SQL returns structured flags/keys; frontend localizes via dictionary (never embed English in SQL responses) |
+
+### 15.15 Expansion Checklist (If Applicable)
+
+If the feature scales across countries, languages, or markets, provide a step-by-step addition checklist:
+
+| Step | Action | Effort |
+|------|--------|--------|
+| 1 | `INSERT INTO country_ref (...)` | 1 row |
+| 2 | `INSERT INTO language_ref` (if new) | 1 row |
+| 3 | `INSERT INTO category_translations` | ~20 rows |
+| 4 | Create `/messages/{xx}.json` | ~556 strings |
+| ... | ... | ... |
+
+Include **estimated effort** (hours/days) for each step.
+
+### 15.16 CI & Deployment Verification
+
+Before a feature is considered complete, verify against all CI gates:
+
+| Gate | Command | Expected |
+|------|---------|----------|
+| Pipeline structure | `python check_pipeline_structure.py` | 0 errors |
+| DB QA | `.\RUN_QA.ps1` | All checks pass (currently 360+) |
+| Negative tests | `.\RUN_NEGATIVE_TESTS.ps1` | All caught (currently 29) |
+| pgTAP tests | `supabase test db` | All pass |
+| TypeScript | `cd frontend && npx tsc --noEmit` | 0 errors |
+| Unit tests | `cd frontend && npx vitest run` | All pass |
+| E2E smoke | `cd frontend && npx playwright test` | All pass |
+| EAN validation | `python validate_eans.py` | 0 failures |
+| Enrichment identity | `python check_enrichment_identity.py` | 0 violations |
+| SonarCloud | CI pipeline (`build.yml`) | Quality Gate pass |
+
+### 15.17 Enforcement Rule
+
+**No feature is considered complete unless ALL of the following are true:**
+
+- [ ] All migrations are idempotent
+- [ ] pgTAP coverage exists for every new function/table/view
+- [ ] Schema contracts updated (`has_table`/`has_column`/`has_function`)
+- [ ] Fallback logic documented with explicit chain
+- [ ] API backward compatibility confirmed (no removed keys, defaults on new params)
+- [ ] QA checks updated and all passing
+- [ ] TypeScript compiles clean
+- [ ] All test suites pass (unit + E2E + DB QA + negative)
+- [ ] Decision log populated
+- [ ] File impact summary included
+- [ ] `copilot-instructions.md` updated (counts, tables, function list) if schema changed
+
+### 15.18 Issue Template
+
+Use this structure when creating GitHub issues for major features:
+
+```markdown
+# Feature Title
+
+## Problem
+- User problem: ...
+- Current limitation: ...
+- Measurable improvement: ...
+
+## Architecture Evaluation
+| Approach | Verdict | Reason |
+|----------|---------|--------|
+
+## Core Principles (Invariants)
+- ...
+
+## Implementation Plan
+### Phase 1 — ...
+### Phase 2 — ...
+
+## Database Changes
+- Migration: `YYYYMMDDHHMMSS_description.sql`
+- Tables: ...
+- Functions: ...
+
+## API Contract Impact
+| Function | Changes | Backward Compatible? |
+
+## Search & Indexing Impact
+- ...
+
+## Fallback Logic
+- If A → X, Else if B → Y, Else → Z
+
+## Test Requirements
+### pgTAP: ...
+### Schema Contracts: ...
+### Frontend: ...
+
+## Performance & Safety
+- ...
+
+## Decision Log
+| Decision | Choice | Rationale |
+
+## Constraints
+- ...
+
+## File Impact
+- N files, +X / -Y lines
+
+## Expansion Checklist (if applicable)
+| Step | Action | Effort |
+```
+
+---
+
+> **This standard transforms feature shipping into platform engineering discipline.**
+> Reference implementation: [Issue #32](https://github.com/ericsocrat/poland-food-db/issues/32).

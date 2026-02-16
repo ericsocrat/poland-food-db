@@ -1,10 +1,13 @@
+import fs from "node:fs";
+import path from "node:path";
 import { describe, expect, it } from "vitest";
 import en from "@/../messages/en.json";
 import pl from "@/../messages/pl.json";
 
 // ─── Message dictionary parity tests ────────────────────────────────────────
 // Ensures en.json and pl.json have identical key structures so no translation
-// keys are missing or extra.
+// keys are missing or extra.  Also dynamically discovers ALL *.json files in
+// messages/ and verifies each matches en.json keys exactly — hard fail in dev.
 
 type NestedObject = Record<string, unknown>;
 
@@ -20,6 +23,16 @@ function collectKeys(obj: NestedObject, prefix = ""): string[] {
     }
   }
   return keys.sort();
+}
+
+/** Discover all *.json locale files in messages/ directory. */
+function discoverLocaleFiles(): { locale: string; filePath: string }[] {
+  const messagesDir = path.resolve(__dirname, "../../../messages");
+  if (!fs.existsSync(messagesDir)) return [];
+  return fs
+    .readdirSync(messagesDir)
+    .filter((f) => f.endsWith(".json") && f !== "en.json")
+    .map((f) => ({ locale: f.replace(".json", ""), filePath: path.join(messagesDir, f) }));
 }
 
 describe("i18n message dictionaries", () => {
@@ -128,4 +141,81 @@ describe("i18n message dictionaries", () => {
       }
     }
   });
+
+  // ─── Dynamic locale parity (hard fail for any new language file) ────────
+  // If someone adds de.json (or any other locale), every key in en.json must
+  // exist in that file and vice-versa.  Missing or extra keys → test failure.
+  const localeFiles = discoverLocaleFiles();
+  for (const { locale, filePath } of localeFiles) {
+    // Skip pl.json — already checked exhaustively above
+    if (locale === "pl") continue;
+
+    describe(`${locale}.json parity with en.json`, () => {
+      const raw = JSON.parse(fs.readFileSync(filePath, "utf-8")) as NestedObject;
+      const localeKeys = collectKeys(raw);
+
+      it(`${locale}.json has identical key set to en.json`, () => {
+        const missing = enKeys.filter((k) => !localeKeys.includes(k));
+        const extra = localeKeys.filter((k) => !enKeys.includes(k));
+
+        if (missing.length > 0 || extra.length > 0) {
+          const msg = [
+            missing.length > 0
+              ? `Missing in ${locale}.json:\n  ${missing.join("\n  ")}`
+              : "",
+            extra.length > 0
+              ? `Extra in ${locale}.json:\n  ${extra.join("\n  ")}`
+              : "",
+          ]
+            .filter(Boolean)
+            .join("\n\n");
+          expect.fail(msg);
+        }
+      });
+
+      it(`all ${locale}.json leaf values are non-empty strings`, () => {
+        for (const key of localeKeys) {
+          const value = key
+            .split(".")
+            .reduce<unknown>(
+              (obj, k) => (obj as NestedObject)?.[k],
+              raw,
+            );
+          expect(
+            value,
+            `${locale}.json key "${key}" should be a non-empty string`,
+          ).toSatisfy((v: unknown) => typeof v === "string" && v.length > 0);
+        }
+      });
+
+      it(`${locale}.json preserves interpolation placeholders from en.json`, () => {
+        const paramRegex = /\{(\w+)\}/g;
+        for (const key of enKeys) {
+          if (!localeKeys.includes(key)) continue;
+          const enVal = key
+            .split(".")
+            .reduce<unknown>(
+              (obj, k) => (obj as NestedObject)?.[k],
+              en as NestedObject,
+            ) as string;
+          const localeVal = key
+            .split(".")
+            .reduce<unknown>(
+              (obj, k) => (obj as NestedObject)?.[k],
+              raw,
+            ) as string;
+
+          const enParams = [...enVal.matchAll(paramRegex)].map((m) => m[1]).sort();
+          const localeParams = [...localeVal.matchAll(paramRegex)].map((m) => m[1]).sort();
+
+          if (enParams.length > 0) {
+            expect(
+              localeParams,
+              `${locale}.json "${key}" should have same {params} as en.json`,
+            ).toEqual(enParams);
+          }
+        }
+      });
+    });
+  }
 });

@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(73);
+SELECT plan(75);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -116,6 +116,10 @@ SELECT has_function('public', 'api_get_recently_viewed',   'function api_get_rec
 SELECT has_function('public', 'api_get_dashboard_data',    'function api_get_dashboard_data exists');
 SELECT has_function('public', 'resolve_language',           'function resolve_language exists');
 SELECT has_function('public', 'expand_search_query',        'function expand_search_query exists');
+
+-- === Localization Hardening ===
+SELECT has_view('public', 'localization_metrics',            'view localization_metrics exists');
+SELECT has_column('public', 'products', 'product_name_en_confidence', 'column products.product_name_en_confidence exists');
 
 SELECT * FROM finish();
 ROLLBACK;

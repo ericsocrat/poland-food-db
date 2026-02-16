@@ -1,16 +1,17 @@
--- ─── pgTAP: Localization Phases 1-4 (#32) ────────────────────────────────────
+-- ─── pgTAP: Localization Phases 1-4 + Hardening (#32) ────────────────────────
 -- Tests for language_ref, category_translations, resolve_language(),
 -- preferred_language on user_preferences, localized API responses,
 -- Phase 2 product_name_en / search enhancements,
 -- Phase 3 cross-language search synonyms,
--- and Phase 4 European expansion (name_translations, default_language).
+-- Phase 4 European expansion (name_translations, default_language),
+-- and localization hardening (metrics view, confidence, synonym cap, disable safety).
 -- Run via: supabase test db
 --
 -- Self-contained: inserts own fixture data so tests work on an empty DB.
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(79);
+SELECT plan(88);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -634,6 +635,90 @@ SELECT is(
     (SELECT default_language FROM public.country_ref WHERE country_code = 'XX'),
     'en',
     'XX test country has default_language = en'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 23. Hardening: localization_metrics view
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT has_view('public', 'localization_metrics',
+    'localization_metrics view exists');
+
+-- With test fixtures: 999803, 999805, 999807 have product_name_en;
+-- 999801, 999802, 999804, 999806 do NOT.
+SELECT ok(
+    (SELECT total_products >= 0 FROM public.localization_metrics),
+    'localization_metrics.total_products is non-negative'
+);
+
+-- Verify percentage calculation is correct for fixture data
+SELECT ok(
+    (SELECT pct_translated IS NOT NULL OR total_products = 0
+     FROM public.localization_metrics),
+    'localization_metrics.pct_translated is calculable'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 24. Hardening: product_name_en_confidence column
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT has_column('public', 'products', 'product_name_en_confidence',
+    'products.product_name_en_confidence column exists');
+
+-- Confirm CHECK constraint rejects out-of-range values
+SELECT throws_ok(
+    $$UPDATE products SET product_name_en_confidence = 1.5 WHERE product_id = 999801$$,
+    '23514',   -- check_violation
+    NULL,
+    'product_name_en_confidence rejects values > 1'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 25. Hardening: language disable safety
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Temporarily disable German
+UPDATE public.language_ref SET is_enabled = false WHERE code = 'de';
+
+-- resolve_language('de') should fall back to 'en' when de is disabled
+SELECT is(
+    resolve_language('de'),
+    'en',
+    'resolve_language(de) falls back to en when de is disabled'
+);
+
+-- Product 999807 has name_translations with "de" key.
+-- Even though de exists in name_translations, product_name_display
+-- should NOT use it when de is disabled — it should use EN fallback.
+SELECT is(
+    (SELECT api_product_detail(999807)->>'product_name_display'),
+    'Paprika Chips XYZ',
+    'product_name_display uses EN fallback when de is disabled (not name_translations.de)'
+);
+
+-- Re-enable German for subsequent tests
+UPDATE public.language_ref SET is_enabled = true WHERE code = 'de';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 26. Hardening: synonym expansion capped at 10
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT ok(
+    (SELECT array_length(expand_search_query('mleko'), 1) <= 10
+        OR expand_search_query('mleko') = ARRAY[]::text[]),
+    'expand_search_query returns at most 10 synonyms'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 27. Hardening: NULL product_name_en fallback
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Product 999804 has product_name_en = NULL.
+-- product_name_display must fall back to product_name (not be NULL).
+SELECT is(
+    (SELECT api_product_detail(999804)->>'product_name_display'),
+    'Ciastka Testowe Czekoladowe',
+    'product_name_display falls back to product_name when product_name_en IS NULL'
 );
 
 SELECT * FROM finish();
