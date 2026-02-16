@@ -1,4 +1,4 @@
-import { describe, expect, it, beforeEach } from "vitest";
+import { describe, expect, it } from "vitest";
 import { translate } from "./i18n";
 
 // ─── translate() — pure function tests (no React needed) ───────────────────

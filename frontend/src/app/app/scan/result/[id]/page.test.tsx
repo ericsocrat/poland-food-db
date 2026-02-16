@@ -208,9 +208,7 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(
-          screen.getByText("Failed to load product."),
-        ).toBeInTheDocument();
+        expect(screen.getByText("Failed to load product.")).toBeInTheDocument();
       });
     });
 
@@ -348,9 +346,7 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(
-          screen.getByTestId("health-warnings-card"),
-        ).toBeInTheDocument();
+        expect(screen.getByTestId("health-warnings-card")).toBeInTheDocument();
       });
     });
   });

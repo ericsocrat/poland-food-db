@@ -137,7 +137,7 @@ export function HealthWarningsCard({
             </p>
             <p className="text-xs text-green-600">
               {t("healthWarnings.noWarningsFor", {
-                name: profileData.profile?.profile_name,
+                name: profileData.profile?.profile_name ?? "",
               })}
             </p>
           </div>
@@ -170,7 +170,7 @@ export function HealthWarningsCard({
         </div>
         <span className="text-xs text-gray-400">
           {t("healthWarnings.profile", {
-            name: profileData.profile?.profile_name,
+            name: profileData.profile?.profile_name ?? "",
           })}
         </span>
       </div>
@@ -276,7 +276,9 @@ export function HealthWarningBadge({
   return (
     <span
       className={`flex h-5 min-w-5 flex-shrink-0 items-center justify-center rounded-full px-1 text-xs font-bold ${style.bg} ${style.color}`}
-      title={t("healthWarnings.warningCount", { count: warningsData.warning_count })}
+      title={t("healthWarnings.warningCount", {
+        count: warningsData.warning_count,
+      })}
     >
       {warningsData.warning_count}
     </span>

@@ -97,7 +97,9 @@ describe("SavedComparisonsPage", () => {
       error: new Error("Network"),
     });
     render(<SavedComparisonsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("Failed to load comparison data.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Failed to load comparison data."),
+    ).toBeInTheDocument();
   });
 
   it("shows empty state when no comparisons", () => {

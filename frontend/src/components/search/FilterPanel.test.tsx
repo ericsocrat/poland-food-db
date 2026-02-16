@@ -241,9 +241,7 @@ describe("FilterPanel", () => {
   it("shows clear all button when filters are active", async () => {
     renderPanel({ filters: { category: ["chips"] } });
     await waitFor(() => {
-      expect(
-        screen.getAllByText("Clear all").length,
-      ).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Clear all").length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -261,9 +259,7 @@ describe("FilterPanel", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(
-        screen.getAllByText("Clear all").length,
-      ).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Clear all").length).toBeGreaterThanOrEqual(1);
     });
 
     await user.click(screen.getAllByText("Clear all")[0]);

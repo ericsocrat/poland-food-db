@@ -159,10 +159,7 @@ describe("CategoriesPage", () => {
     });
 
     const link = screen.getByText("Seafood & Fish").closest("a");
-    expect(link).toHaveAttribute(
-      "href",
-      "/app/categories/seafood-fish",
-    );
+    expect(link).toHaveAttribute("href", "/app/categories/seafood-fish");
   });
 
   it("shows error state on API failure", async () => {

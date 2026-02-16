@@ -161,7 +161,9 @@ describe("CategoryListingPage", () => {
     });
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Failed to load categories.")).toBeInTheDocument();
+      expect(
+        screen.getByText("Failed to load categories."),
+      ).toBeInTheDocument();
     });
   });
 
