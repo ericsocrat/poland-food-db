@@ -33,9 +33,13 @@ vi.mock("@/lib/api", () => ({
   submitProduct: (...args: unknown[]) => mockSubmitProduct(...args),
 }));
 
-const mockToast = { success: vi.fn(), error: vi.fn() };
+const mockToastSuccess = vi.fn();
+const mockToastError = vi.fn();
 vi.mock("sonner", () => ({
-  toast: mockToast,
+  toast: {
+    success: (...args: unknown[]) => mockToastSuccess(...args),
+    error: (...args: unknown[]) => mockToastError(...args),
+  },
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -139,7 +143,7 @@ describe("SubmitProductPage", () => {
     await user.click(screen.getByText("Submit Product"));
 
     await waitFor(() => {
-      expect(mockToast.success).toHaveBeenCalledWith(
+      expect(mockToastSuccess).toHaveBeenCalledWith(
         "Product submitted! We'll review it soon.",
       );
     });
@@ -159,7 +163,7 @@ describe("SubmitProductPage", () => {
     await user.click(screen.getByText("Submit Product"));
 
     await waitFor(() => {
-      expect(mockToast.error).toHaveBeenCalledWith("Duplicate EAN");
+      expect(mockToastError).toHaveBeenCalledWith("Duplicate EAN");
     });
   });
 
