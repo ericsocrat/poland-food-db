@@ -4,6 +4,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTranslation } from "@/lib/i18n";
 
 export default function ErrorPage({
   error,
@@ -12,6 +13,8 @@ export default function ErrorPage({
   error: Error & { digest?: string };
   reset: () => void;
 }>) {
+  const { t } = useTranslation();
+
   useEffect(() => {
     // Log error only in development; in production use an error-reporting service
     if (process.env.NODE_ENV === "development") {
@@ -22,13 +25,11 @@ export default function ErrorPage({
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
       <h1 className="mb-2 text-2xl font-bold text-gray-900">
-        Something went wrong
+        {t("error.somethingWrong")}
       </h1>
-      <p className="mb-6 text-gray-500">
-        An unexpected error occurred. Please try again.
-      </p>
+      <p className="mb-6 text-gray-500">{t("error.unexpected")}</p>
       <button onClick={reset} className="btn-primary px-6 py-3">
-        Try again
+        {t("common.tryAgain")}
       </button>
     </div>
   );

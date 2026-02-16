@@ -10,6 +10,7 @@ import { searchAutocomplete } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import type { AutocompleteSuggestion } from "@/lib/types";
+import { useTranslation } from "@/lib/i18n";
 
 interface SearchAutocompleteProps {
   query: string;
@@ -40,6 +41,7 @@ export function SearchAutocomplete({
   onClose,
   onInputKeyDown,
 }: Readonly<SearchAutocompleteProps>) {
+  const { t } = useTranslation();
   const supabase = createClient();
   const router = useRouter();
   const debouncedQuery = useDebounce(query, 200);
@@ -154,7 +156,7 @@ export function SearchAutocomplete({
     >
       {isFetching && suggestions.length === 0 && (
         <div className="px-4 py-3 text-center text-sm text-gray-400">
-          Searching…
+          {t("search.searching")}
         </div>
       )}
       <ul ref={listRef}>
@@ -235,7 +237,7 @@ export function SearchAutocomplete({
               d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
             />
           </svg>
-          Search for &ldquo;{query.trim()}&rdquo;
+          {t("search.searchFor", { query: query.trim() })}
         </button>
       )}
     </div>

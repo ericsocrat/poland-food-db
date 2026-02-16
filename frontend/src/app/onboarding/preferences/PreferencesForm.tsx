@@ -9,6 +9,7 @@ import { createClient } from "@/lib/supabase/client";
 import { setUserPreferences } from "@/lib/api";
 import { DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useTranslation } from "@/lib/i18n";
 
 export function PreferencesForm() {
   const router = useRouter();
@@ -20,6 +21,7 @@ export function PreferencesForm() {
   const [treatMayContain, setTreatMayContain] = useState(false);
   const [loading, setLoading] = useState(false);
   const { track } = useAnalytics();
+  const { t } = useTranslation();
 
   function toggleAllergen(tag: string) {
     setAllergens((prev) =>
@@ -43,8 +45,12 @@ export function PreferencesForm() {
       return;
     }
 
-    toast.success("Preferences saved!");
-    track("onboarding_completed", { diet, allergen_count: allergens.length, skipped: false });
+    toast.success(t("onboarding.preferencesSaved"));
+    track("onboarding_completed", {
+      diet,
+      allergen_count: allergens.length,
+      skipped: false,
+    });
     router.push("/app/search");
     router.refresh();
   }
@@ -64,16 +70,17 @@ export function PreferencesForm() {
       </div>
 
       <h1 className="mb-2 text-2xl font-bold text-gray-900">
-        Dietary preferences
+        {t("onboarding.dietaryPreferences")}
       </h1>
       <p className="mb-8 text-sm text-gray-500">
-        Optional — helps filter products to match your diet. You can change
-        these later in Settings.
+        {t("onboarding.dietarySubtitle")}
       </p>
 
       {/* Diet type */}
       <section className="mb-6">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">Diet type</h2>
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+          {t("onboarding.dietType")}
+        </h2>
         <div className="grid grid-cols-3 gap-2">
           {DIET_OPTIONS.map((opt) => (
             <button
@@ -101,7 +108,7 @@ export function PreferencesForm() {
             className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
           />
           <span className="text-sm text-gray-700">
-            Strict mode — exclude &quot;maybe&quot; products too
+            {t("onboarding.strictDiet")}
           </span>
         </label>
       )}
@@ -109,7 +116,7 @@ export function PreferencesForm() {
       {/* Allergens */}
       <section className="mb-6">
         <h2 className="mb-3 text-sm font-semibold text-gray-700">
-          Allergens to avoid
+          {t("onboarding.allergensToAvoid")}
         </h2>
         <div className="flex flex-wrap gap-2">
           {ALLERGEN_TAGS.map((a) => (
@@ -139,7 +146,7 @@ export function PreferencesForm() {
               className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
             />
             <span className="text-sm text-gray-700">
-              Strict allergen matching
+              {t("onboarding.strictAllergen")}
             </span>
           </label>
           <label className="flex cursor-pointer items-center gap-3">
@@ -150,7 +157,7 @@ export function PreferencesForm() {
               className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
             />
             <span className="text-sm text-gray-700">
-              Treat &quot;may contain&quot; as unsafe
+              {t("onboarding.treatMayContain")}
             </span>
           </label>
         </div>
@@ -158,14 +165,14 @@ export function PreferencesForm() {
 
       <div className="flex gap-3">
         <button onClick={handleSkip} className="btn-secondary flex-1">
-          Skip for now
+          {t("onboarding.skipForNow")}
         </button>
         <button
           onClick={handleSave}
           disabled={loading}
           className="btn-primary flex-1"
         >
-          {loading ? "Saving…" : "Save & Continue"}
+          {loading ? t("common.saving") : t("onboarding.saveAndContinue")}
         </button>
       </div>
     </div>

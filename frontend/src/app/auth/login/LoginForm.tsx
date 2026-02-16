@@ -6,6 +6,7 @@ import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { sanitizeRedirect } from "@/lib/validation";
+import { useTranslation } from "@/lib/i18n";
 import type { FormSubmitEvent } from "@/lib/types";
 
 export function LoginForm() {
@@ -15,6 +16,7 @@ export function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   const reason = searchParams.get("reason");
   const redirect = sanitizeRedirect(searchParams.get("redirect"));
@@ -43,15 +45,15 @@ export function LoginForm() {
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
-          Welcome back
+          {t("auth.welcomeBack")}
         </h1>
         <p className="mb-8 text-center text-sm text-gray-500">
-          Sign in to your FoodDB account.
+          {t("auth.signInSubtitle")}
         </p>
 
         {reason === "expired" && (
           <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-            Your session has expired. Please sign in again.
+            {t("auth.sessionExpiredBanner")}
           </div>
         )}
 
@@ -61,7 +63,7 @@ export function LoginForm() {
               htmlFor="email"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Email
+              {t("auth.email")}
             </label>
             <input
               id="email"
@@ -70,7 +72,7 @@ export function LoginForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="input-field"
-              placeholder="you@example.com"
+              placeholder={t("auth.emailPlaceholder")}
             />
           </div>
 
@@ -79,7 +81,7 @@ export function LoginForm() {
               htmlFor="password"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Password
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -96,17 +98,17 @@ export function LoginForm() {
             disabled={loading}
             className="btn-primary w-full"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? t("auth.signingIn") : t("auth.signIn")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-500">
-          Don&apos;t have an account?{" "}
+          {t("auth.noAccount")}{" "}
           <Link
             href="/auth/signup"
             className="font-medium text-brand-600 hover:text-brand-700"
           >
-            Sign up
+            {t("auth.signUp")}
           </Link>
         </p>
       </div>

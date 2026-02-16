@@ -1,10 +1,14 @@
 // ─── Public home page ─────────────────────────────────────────────────────
 
+"use client";
+
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { useTranslation } from "@/lib/i18n";
 
 export default function HomePage() {
+  const { t } = useTranslation();
   return (
     <div className="flex min-h-screen flex-col">
       <Header />
@@ -12,22 +16,18 @@ export default function HomePage() {
       <main className="flex flex-1 flex-col items-center justify-center px-4 py-16">
         <div className="max-w-md text-center">
           <h1 className="mb-4 text-4xl font-bold text-gray-900">
-            <span className="text-brand-600">healthier</span> choices,
-            <br />
-            made simple
+            {t("landing.tagline")}
           </h1>
           <p className="mb-8 text-lg text-gray-500">
-            Search, scan, and compare food products across Poland and Germany.
-            Get instant health scores, allergen warnings, and better
-            alternatives.
+            {t("landing.description")}
           </p>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-center">
             <Link href="/auth/signup" className="btn-primary px-8 py-3">
-              Get started
+              {t("landing.getStarted")}
             </Link>
             <Link href="/auth/login" className="btn-secondary px-8 py-3">
-              Sign in
+              {t("landing.signIn")}
             </Link>
           </div>
         </div>
@@ -36,18 +36,18 @@ export default function HomePage() {
         <div className="mt-16 grid max-w-lg gap-6 sm:grid-cols-3">
           <Feature
             icon="🔍"
-            title="Search"
-            desc="Find products by name, brand, or category"
+            title={t("landing.featureSearch")}
+            desc={t("landing.featureSearchDesc")}
           />
           <Feature
             icon="📷"
-            title="Scan"
-            desc="Scan barcodes for instant product info"
+            title={t("landing.featureScan")}
+            desc={t("landing.featureScanDesc")}
           />
           <Feature
             icon="📊"
-            title="Compare"
-            desc="See health scores and find better alternatives"
+            title={t("landing.featureCompare")}
+            desc={t("landing.featureCompareDesc")}
           />
         </div>
       </main>

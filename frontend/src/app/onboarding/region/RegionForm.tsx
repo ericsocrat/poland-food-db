@@ -8,16 +8,18 @@ import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { setUserPreferences } from "@/lib/api";
 import { COUNTRIES } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
 
 export function RegionForm() {
   const router = useRouter();
   const supabase = createClient();
   const [selected, setSelected] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   async function handleContinue() {
     if (!selected) {
-      toast.error("Please select your region.");
+      toast.error(t("onboarding.pleaseSelectRegion"));
       return;
     }
 
@@ -42,10 +44,10 @@ export function RegionForm() {
       </div>
 
       <h1 className="mb-2 text-2xl font-bold text-gray-900">
-        Select your region
+        {t("onboarding.selectRegion")}
       </h1>
       <p className="mb-8 text-sm text-gray-500">
-        We&apos;ll show you products available in your country.
+        {t("onboarding.regionSubtitle")}
       </p>
 
       <div className="space-y-3">
@@ -76,7 +78,7 @@ export function RegionForm() {
         disabled={!selected || loading}
         className="btn-primary mt-8 w-full"
       >
-        {loading ? "Saving…" : "Continue"}
+        {loading ? t("common.saving") : t("onboarding.continue")}
       </button>
     </div>
   );

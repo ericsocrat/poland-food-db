@@ -117,7 +117,7 @@ describe("DashboardPage", () => {
     // Never resolve to keep loading state
     mockGetDashboardData.mockReturnValue(new Promise(() => {}));
     render(<DashboardPage />, { wrapper: createWrapper() });
-    expect(screen.getByLabelText("Loading")).toBeInTheDocument();
+    expect(screen.getByLabelText("Loading…")).toBeInTheDocument();
   });
 
   it("renders the dashboard title", async () => {

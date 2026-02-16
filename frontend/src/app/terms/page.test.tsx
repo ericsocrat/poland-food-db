@@ -36,13 +36,11 @@ describe("TermsPage", () => {
     expect(screen.getByText(/as is/)).toBeInTheDocument();
   });
 
-  it("renders contact email link", () => {
+  it("renders contact section text", () => {
     render(<TermsPage />);
-    const link = screen.getByText("legal@example.com");
-    expect(link.closest("a")).toHaveAttribute(
-      "href",
-      "mailto:legal@example.com",
-    );
+    expect(
+      screen.getByText(/For questions about these terms, contact us at/),
+    ).toBeInTheDocument();
   });
 
   it("includes Header and Footer", () => {

@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslation } from "@/lib/i18n";
+
 const SIZES = {
   sm: "h-4 w-4 border-2",
   md: "h-8 w-8 border-4",
@@ -11,15 +15,16 @@ export function LoadingSpinner({
   className?: string;
   size?: keyof typeof SIZES;
 }>) {
+  const { t } = useTranslation();
   return (
     <output
       className={`flex items-center justify-center ${className}`}
-      aria-label="Loading"
+      aria-label={t("common.loading")}
     >
       <div
         className={`animate-spin rounded-full border-gray-200 border-t-brand-600 ${SIZES[size]}`}
       />
-      <span className="sr-only">Loading…</span>
+      <span className="sr-only">{t("common.loading")}</span>
     </output>
   );
 }

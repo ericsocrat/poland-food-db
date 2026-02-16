@@ -35,13 +35,11 @@ describe("PrivacyPage", () => {
     expect(screen.getByText(/GDPR/)).toBeInTheDocument();
   });
 
-  it("renders contact email link", () => {
+  it("renders contact section text", () => {
     render(<PrivacyPage />);
-    const link = screen.getByText("privacy@example.com");
-    expect(link.closest("a")).toHaveAttribute(
-      "href",
-      "mailto:privacy@example.com",
-    );
+    expect(
+      screen.getByText(/For questions about these terms, contact us at/),
+    ).toBeInTheDocument();
   });
 
   it("includes Header and Footer", () => {

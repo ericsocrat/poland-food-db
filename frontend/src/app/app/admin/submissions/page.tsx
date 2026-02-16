@@ -9,6 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useTranslation } from "@/lib/i18n";
 import { callRpc } from "@/lib/rpc";
 import type {
   AdminSubmission,
@@ -17,15 +18,24 @@ import type {
   AdminReviewResponse,
 } from "@/lib/types";
 
+const TAB_KEYS: Record<string, string> = {
+  pending: "admin.pendingTab",
+  approved: "admin.approvedTab",
+  rejected: "admin.rejectedTab",
+  merged: "admin.mergedTab",
+  all: "admin.allTab",
+};
+
 const STATUS_TABS = [
-  { value: "pending", label: "⏳ Pending" },
-  { value: "approved", label: "✅ Approved" },
-  { value: "rejected", label: "❌ Rejected" },
-  { value: "merged", label: "🔗 Merged" },
-  { value: "all", label: "All" },
+  { value: "pending", emoji: "⏳" },
+  { value: "approved", emoji: "✅" },
+  { value: "rejected", emoji: "❌" },
+  { value: "merged", emoji: "🔗" },
+  { value: "all", emoji: "" },
 ] as const;
 
 export default function AdminSubmissionsPage() {
+  const { t } = useTranslation();
   const supabase = createClient();
   const queryClient = useQueryClient();
   const [statusFilter, setStatusFilter] = useState("pending");
@@ -97,11 +107,9 @@ export default function AdminSubmissionsPage() {
     <div className="space-y-4">
       <div>
         <h1 className="text-lg font-semibold text-gray-900">
-          🛡️ Admin: Submission Review
+          {t("admin.submissionReview")}
         </h1>
-        <p className="text-sm text-gray-500">
-          Review and approve user-submitted products
-        </p>
+        <p className="text-sm text-gray-500">{t("admin.reviewSubtitle")}</p>
       </div>
 
       {/* Status tabs */}
@@ -119,7 +127,8 @@ export default function AdminSubmissionsPage() {
                 : "bg-gray-100 text-gray-600 hover:bg-gray-200"
             }`}
           >
-            {tab.label}
+            {tab.emoji ? `${tab.emoji} ` : ""}
+            {t(TAB_KEYS[tab.value])}
           </button>
         ))}
       </div>
@@ -134,12 +143,12 @@ export default function AdminSubmissionsPage() {
       {/* Error */}
       {error && (
         <div className="card border-red-200 bg-red-50 text-center">
-          <p className="mb-2 text-sm text-red-600">Failed to load.</p>
+          <p className="mb-2 text-sm text-red-600">{t("admin.loadFailed")}</p>
           <button
             onClick={handleRetry}
             className="text-sm font-medium text-red-700"
           >
-            🔄 Retry
+            🔄 {t("common.retry")}
           </button>
         </div>
       )}
@@ -148,7 +157,7 @@ export default function AdminSubmissionsPage() {
       {data?.submissions.length === 0 && (
         <div className="py-12 text-center">
           <p className="text-sm text-gray-500">
-            No {statusFilter} submissions.
+            {t("admin.noSubmissions", { status: statusFilter })}
           </p>
         </div>
       )}
@@ -186,7 +195,7 @@ export default function AdminSubmissionsPage() {
             disabled={page <= 1}
             className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
-            ← Prev
+            {t("common.prev")}
           </button>
           <span className="text-sm text-gray-500">
             {data.page} / {data.pages} ({data.total} total)
@@ -196,7 +205,7 @@ export default function AdminSubmissionsPage() {
             disabled={page >= data.pages}
             className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
-            Next →
+            {t("common.next")}
           </button>
         </div>
       )}
@@ -228,6 +237,7 @@ function AdminSubmissionCard({
   onReject: () => void;
   isPending: boolean;
 }>) {
+  const { t } = useTranslation();
   const date = new Date(submission.created_at).toLocaleString();
   const canReview = submission.status === "pending";
 
@@ -241,7 +251,8 @@ function AdminSubmissionCard({
             </p>
             <p className="text-sm text-gray-500">
               {submission.brand && `${submission.brand} · `}
-              EAN: <span className="font-mono">{submission.ean}</span>
+              {t("admin.eanLabel")}{" "}
+              <span className="font-mono">{submission.ean}</span>
             </p>
           </div>
           <span
@@ -253,7 +264,7 @@ function AdminSubmissionCard({
 
         {submission.category && (
           <p className="text-xs text-gray-500">
-            Category: {submission.category}
+            {t("admin.categoryLabel")} {submission.category}
           </p>
         )}
 
@@ -264,7 +275,9 @@ function AdminSubmissionCard({
         )}
 
         <div className="flex items-center justify-between text-xs text-gray-400">
-          <span>Submitted: {date}</span>
+          <span>
+            {t("admin.submittedLabel")} {date}
+          </span>
           <span className="font-mono">
             user: {submission.user_id.slice(0, 8)}…
           </span>
@@ -277,21 +290,22 @@ function AdminSubmissionCard({
               disabled={isPending}
               className="flex-1 rounded-lg bg-green-50 px-3 py-2 text-sm font-medium text-green-700 hover:bg-green-100 disabled:opacity-50"
             >
-              ✅ Approve
+              {t("admin.approve")}
             </button>
             <button
               onClick={onReject}
               disabled={isPending}
               className="flex-1 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
             >
-              ❌ Reject
+              {t("admin.reject")}
             </button>
           </div>
         )}
 
         {submission.reviewed_at && (
           <p className="text-xs text-gray-400">
-            Reviewed: {new Date(submission.reviewed_at).toLocaleString()}
+            {t("admin.reviewedLabel")}{" "}
+            {new Date(submission.reviewed_at).toLocaleString()}
           </p>
         )}
       </div>

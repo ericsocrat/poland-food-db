@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "sonner";
 import { createClient } from "@/lib/supabase/client";
+import { useTranslation } from "@/lib/i18n";
 import type { FormSubmitEvent } from "@/lib/types";
 
 export function SignupForm() {
@@ -13,6 +14,7 @@ export function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const { t } = useTranslation();
 
   async function handleSignup(e: FormSubmitEvent) {
     e.preventDefault();
@@ -33,7 +35,7 @@ export function SignupForm() {
       return;
     }
 
-    toast.success("Check your email to confirm your account.");
+    toast.success(t("auth.checkEmail"));
     router.push("/auth/login?msg=check-email");
   }
 
@@ -41,10 +43,10 @@ export function SignupForm() {
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm">
         <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
-          Create your account
+          {t("auth.createAccount")}
         </h1>
         <p className="mb-8 text-center text-sm text-gray-500">
-          Sign up to access food quality data for Poland and Germany.
+          {t("auth.signUpSubtitle")}
         </p>
 
         <form onSubmit={handleSignup} className="space-y-4">
@@ -53,7 +55,7 @@ export function SignupForm() {
               htmlFor="email"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Email
+              {t("auth.email")}
             </label>
             <input
               id="email"
@@ -62,7 +64,7 @@ export function SignupForm() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="input-field"
-              placeholder="you@example.com"
+              placeholder={t("auth.emailPlaceholder")}
             />
           </div>
 
@@ -71,7 +73,7 @@ export function SignupForm() {
               htmlFor="password"
               className="mb-1 block text-sm font-medium text-gray-700"
             >
-              Password
+              {t("auth.password")}
             </label>
             <input
               id="password"
@@ -81,7 +83,7 @@ export function SignupForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="input-field"
-              placeholder="At least 6 characters"
+              placeholder={t("auth.passwordPlaceholder")}
             />
           </div>
 
@@ -90,17 +92,17 @@ export function SignupForm() {
             disabled={loading}
             className="btn-primary w-full"
           >
-            {loading ? "Creating account…" : "Sign Up"}
+            {loading ? t("auth.creatingAccount") : t("auth.signUp")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-gray-500">
-          Already have an account?{" "}
+          {t("auth.hasAccount")}{" "}
           <Link
             href="/auth/login"
             className="font-medium text-brand-600 hover:text-brand-700"
           >
-            Sign in
+            {t("auth.signIn")}
           </Link>
         </p>
       </div>

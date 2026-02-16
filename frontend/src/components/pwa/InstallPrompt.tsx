@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useTranslation } from "@/lib/i18n";
 
 interface BeforeInstallPromptEvent extends Event {
   prompt(): Promise<void>;
@@ -8,6 +9,7 @@ interface BeforeInstallPromptEvent extends Event {
 }
 
 export function InstallPrompt() {
+  const { t } = useTranslation();
   const [deferredPrompt, setDeferredPrompt] =
     useState<BeforeInstallPromptEvent | null>(null);
   const [dismissed, setDismissed] = useState(false);
@@ -50,15 +52,17 @@ export function InstallPrompt() {
       <div className="flex items-start gap-3">
         <span className="text-2xl">📲</span>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-900">Install FoodDB</p>
+          <p className="text-sm font-semibold text-gray-900">
+            {t("pwa.installTitle")}
+          </p>
           <p className="mt-0.5 text-xs text-gray-500">
-            Add to your home screen for quick access and offline support.
+            {t("pwa.installDescription")}
           </p>
         </div>
         <button
           onClick={handleDismiss}
           className="text-gray-400 hover:text-gray-600"
-          aria-label="Dismiss install prompt"
+          aria-label={t("pwa.dismissInstall")}
         >
           ✕
         </button>
@@ -67,7 +71,7 @@ export function InstallPrompt() {
         onClick={handleInstall}
         className="btn-primary mt-3 w-full text-sm"
       >
-        Install
+        {t("common.install")}
       </button>
     </div>
   );

@@ -4,6 +4,8 @@
 
 "use client";
 
+import { translate } from "@/lib/i18n";
+
 export default function GlobalError({
   error: _error,
   reset,
@@ -32,10 +34,10 @@ export default function GlobalError({
               marginBottom: "0.5rem",
             }}
           >
-            Something went wrong
+            {translate("en", "error.somethingWrong")}
           </h1>
           <p style={{ color: "#6b7280", marginBottom: "1.5rem" }}>
-            A critical error occurred. Please try again.
+            {translate("en", "error.critical")}
           </p>
           <button
             onClick={reset}
@@ -50,7 +52,7 @@ export default function GlobalError({
               fontWeight: 500,
             }}
           >
-            Try again
+            {translate("en", "common.tryAgain")}
           </button>
         </div>
       </body>

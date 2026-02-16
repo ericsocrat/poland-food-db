@@ -5,6 +5,7 @@
 // Uses <dialog> for native focus-trapping and Escape handling.
 
 import { useRef, useEffect, useCallback } from "react";
+import { useTranslation } from "@/lib/i18n";
 
 interface ConfirmDialogProps {
   /** Whether the dialog is open */
@@ -27,11 +28,12 @@ export function ConfirmDialog({
   open,
   title,
   description,
-  confirmLabel = "Confirm",
+  confirmLabel,
   variant = "default",
   onConfirm,
   onCancel,
 }: Readonly<ConfirmDialogProps>) {
+  const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -77,10 +79,10 @@ export function ConfirmDialog({
           onClick={onCancel}
           className="btn-secondary px-4 py-2 text-sm"
         >
-          Cancel
+          {t("common.cancel")}
         </button>
         <button type="button" onClick={onConfirm} className={confirmBtnClass}>
-          {confirmLabel}
+          {confirmLabel ?? t("common.confirm")}
         </button>
       </div>
     </dialog>

@@ -11,6 +11,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useSharedComparison } from "@/hooks/use-compare";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { useTranslation } from "@/lib/i18n";
 
 const queryClient = new QueryClient();
 
@@ -18,6 +19,7 @@ function SharedComparisonContent() {
   const params = useParams();
   const token = String(params.token ?? "");
   const { data, isLoading, error } = useSharedComparison(token);
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -28,7 +30,7 @@ function SharedComparisonContent() {
             🥗 FoodDB
           </Link>
           <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
-            Shared comparison
+            {t("shared.sharedComparison")}
           </span>
         </div>
       </header>
@@ -46,10 +48,10 @@ function SharedComparisonContent() {
           <div className="card border-red-200 bg-red-50 py-8 text-center">
             <p className="mb-2 text-4xl">🔗</p>
             <p className="mb-1 text-sm text-red-600">
-              This comparison link is invalid or has expired.
+              {t("shared.comparisonInvalid")}
             </p>
             <Link href="/" className="mt-3 btn-primary inline-block text-sm">
-              Go to FoodDB
+              {t("shared.goToFoodDB")}
             </Link>
           </div>
         )}
@@ -60,10 +62,10 @@ function SharedComparisonContent() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-xl font-bold text-gray-900">
-                  ⚖️ {data.title ?? "Product Comparison"}
+                  ⚖️ {data.title ?? t("shared.productComparison")}
                 </h1>
                 <p className="text-sm text-gray-500">
-                  {data.product_count} products compared ·{" "}
+                  {data.product_count} {t("shared.productsCompared")} ·{" "}
                   {new Date(data.created_at).toLocaleDateString()}
                 </p>
               </div>
@@ -76,10 +78,10 @@ function SharedComparisonContent() {
         {/* CTA */}
         <div className="card bg-brand-50 text-center">
           <p className="mb-2 text-sm text-gray-700">
-            Want to compare your own products?
+            {t("shared.wantToCompare")}
           </p>
           <Link href="/auth/login" className="btn-primary inline-block text-sm">
-            Sign up for free
+            {t("shared.signUpFree")}
           </Link>
         </div>
       </main>

@@ -101,7 +101,7 @@ describe("FilterPanel", () => {
     mockGetFilterOptions.mockReturnValue(new Promise(() => {}));
     renderPanel();
     // The loading spinner uses <output aria-label="Loading">
-    const spinners = screen.getAllByLabelText("Loading");
+    const spinners = screen.getAllByLabelText("Loading…");
     expect(spinners.length).toBeGreaterThanOrEqual(1);
   });
 

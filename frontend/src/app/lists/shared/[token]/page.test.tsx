@@ -138,7 +138,7 @@ describe("SharedListPage", () => {
     });
 
     render(<SharedListPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("2 products")).toBeInTheDocument();
+    expect(screen.getByText("2 product(s)")).toBeInTheDocument();
   });
 
   it("renders singular product count", () => {
@@ -149,7 +149,7 @@ describe("SharedListPage", () => {
     });
 
     render(<SharedListPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("1 product")).toBeInTheDocument();
+    expect(screen.getByText("1 product(s)")).toBeInTheDocument();
   });
 
   it("renders product names and brands", () => {

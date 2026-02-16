@@ -9,12 +9,14 @@ import Link from "next/link";
 import { useSharedList } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
 
 export default function SharedListPage() {
   const params = useParams();
   const token = String(params.token ?? "");
 
   const { data, isLoading, error } = useSharedList(token);
+  const { t } = useTranslation();
 
   if (isLoading) {
     return (
@@ -28,12 +30,14 @@ export default function SharedListPage() {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 px-4">
         <p className="mb-2 text-4xl">🔒</p>
-        <h1 className="mb-1 text-lg font-bold text-gray-900">List not found</h1>
+        <h1 className="mb-1 text-lg font-bold text-gray-900">
+          {t("shared.listNotFound")}
+        </h1>
         <p className="mb-6 text-sm text-gray-500">
-          This shared list may have been removed or the link may be invalid.
+          {t("shared.listNotFoundMessage")}
         </p>
         <Link href="/" className="btn-primary">
-          Go home
+          {t("error.goHome")}
         </Link>
       </div>
     );
@@ -46,7 +50,7 @@ export default function SharedListPage() {
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
           <span className="text-lg font-bold text-brand-700">🥗 FoodDB</span>
           <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">
-            Shared list
+            {t("shared.sharedList")}
           </span>
         </div>
       </header>
@@ -62,15 +66,14 @@ export default function SharedListPage() {
               <p className="mt-1 text-sm text-gray-500">{data.description}</p>
             )}
             <p className="mt-1 text-xs text-gray-400">
-              {data.total_count}{" "}
-              {data.total_count === 1 ? "product" : "products"}
+              {t("common.products", { count: data.total_count })}
             </p>
           </div>
 
           {/* Items */}
           {data.items.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-gray-400">This list is empty.</p>
+              <p className="text-sm text-gray-400">{t("shared.listEmpty")}</p>
             </div>
           ) : (
             <ul className="space-y-2">

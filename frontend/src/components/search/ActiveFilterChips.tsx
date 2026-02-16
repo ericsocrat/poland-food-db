@@ -3,6 +3,7 @@
 // ─── ActiveFilterChips — chip bar showing active filters with × to remove ───
 
 import { ALLERGEN_TAGS } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
 import type { SearchFilters } from "@/lib/types";
 
 interface ActiveFilterChipsProps {
@@ -14,6 +15,7 @@ export function ActiveFilterChips({
   filters,
   onChange,
 }: Readonly<ActiveFilterChipsProps>) {
+  const { t } = useTranslation();
   const chips: { key: string; label: string; onRemove: () => void }[] = [];
 
   // Category chips
@@ -35,7 +37,7 @@ export function ActiveFilterChips({
   for (const ns of filters.nutri_score ?? []) {
     chips.push({
       key: `ns-${ns}`,
-      label: `Nutri ${ns}`,
+      label: t("chips.nutri", { value: ns }),
       onRemove: () => {
         const next = (filters.nutri_score ?? []).filter((n) => n !== ns);
         onChange({
@@ -50,8 +52,8 @@ export function ActiveFilterChips({
   for (const tag of filters.allergen_free ?? []) {
     const info = ALLERGEN_TAGS.find((a) => a.tag === tag);
     const label = info
-      ? `${info.label}-free`
-      : `${tag.replace("en:", "")}-free`;
+      ? t("chips.allergenFree", { label: info.label })
+      : t("chips.allergenFree", { label: tag.replace("en:", "") });
     chips.push({
       key: `al-${tag}`,
       label,
@@ -69,7 +71,7 @@ export function ActiveFilterChips({
   if (filters.max_unhealthiness !== undefined) {
     chips.push({
       key: "max-score",
-      label: `Score ≤ ${filters.max_unhealthiness}`,
+      label: t("chips.scoreMax", { value: filters.max_unhealthiness }),
       onRemove: () => onChange({ ...filters, max_unhealthiness: undefined }),
     });
   }
@@ -77,16 +79,18 @@ export function ActiveFilterChips({
   // Sort (if non-default)
   if (filters.sort_by && filters.sort_by !== "relevance") {
     const sortLabels: Record<string, string> = {
-      name: "Name",
-      unhealthiness: "Health Score",
-      nutri_score: "Nutri-Score",
-      calories: "Calories",
+      name: t("filters.name"),
+      unhealthiness: t("filters.healthScore"),
+      nutri_score: t("filters.nutriScore"),
+      calories: t("filters.calories"),
     };
     chips.push({
       key: "sort",
-      label: `Sort: ${sortLabels[filters.sort_by] ?? filters.sort_by} ${
-        filters.sort_order === "desc" ? "↓" : "↑"
-      }`,
+      label: t("chips.sortLabel", {
+        label: `${sortLabels[filters.sort_by] ?? filters.sort_by} ${
+          filters.sort_order === "desc" ? "↓" : "↑"
+        }`,
+      }),
       onRemove: () =>
         onChange({
           ...filters,
@@ -110,7 +114,7 @@ export function ActiveFilterChips({
             type="button"
             onClick={chip.onRemove}
             className="ml-0.5 rounded-full p-0.5 text-brand-400 transition-colors hover:bg-brand-100 hover:text-brand-600"
-            aria-label={`Remove ${chip.label} filter`}
+            aria-label={t("chips.removeFilter", { label: chip.label })}
           >
             <svg className="h-3 w-3" viewBox="0 0 20 20" fill="currentColor">
               <path
@@ -128,7 +132,7 @@ export function ActiveFilterChips({
           onClick={() => onChange({})}
           className="text-xs text-gray-400 hover:text-gray-600"
         >
-          Clear all
+          {t("filters.clearAll")}
         </button>
       )}
     </div>

@@ -56,7 +56,7 @@ describe("SignupForm", () => {
 
   it("renders sign in link", () => {
     render(<SignupForm />);
-    expect(screen.getByText("Sign in").closest("a")).toHaveAttribute(
+    expect(screen.getByText("Sign In").closest("a")).toHaveAttribute(
       "href",
       "/auth/login",
     );

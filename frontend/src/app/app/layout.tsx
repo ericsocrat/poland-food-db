@@ -6,6 +6,7 @@
 
 import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { translate } from "@/lib/i18n";
 import { Navigation } from "@/components/layout/Navigation";
 import { CountryChip } from "@/components/common/CountryChip";
 import { ListsHydrator } from "@/components/product/ListsHydrator";
@@ -37,14 +38,13 @@ export default async function AppLayout({
       <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
         <p className="mb-2 text-4xl">⚠️</p>
         <h1 className="mb-1 text-lg font-bold text-gray-900">
-          Something went wrong
+          {translate("en", "layout.errorTitle")}
         </h1>
         <p className="mb-6 text-sm text-gray-500">
-          We couldn&apos;t load your preferences. This is usually a temporary
-          issue.
+          {translate("en", "layout.errorMessage")}
         </p>
         <a href="/app/search" className="btn-primary inline-block px-6">
-          Try again
+          {translate("en", "common.tryAgain")}
         </a>
       </div>
     );
@@ -64,7 +64,9 @@ export default async function AppLayout({
       <OfflineIndicator />
       <header className="sticky top-0 z-40 border-b border-gray-200 bg-white/80 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-          <span className="text-lg font-bold text-brand-700">🥗 FoodDB</span>
+          <span className="text-lg font-bold text-brand-700">
+            {translate("en", "layout.appNameWithEmoji")}
+          </span>
           <CountryChip country={prefs.country} />
         </div>
       </header>

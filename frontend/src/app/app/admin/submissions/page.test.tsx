@@ -122,10 +122,10 @@ describe("AdminSubmissionsPage", () => {
 
   it("renders all status tabs", async () => {
     render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("⏳ Pending")).toBeInTheDocument();
-    expect(screen.getByText("✅ Approved")).toBeInTheDocument();
-    expect(screen.getByText("❌ Rejected")).toBeInTheDocument();
-    expect(screen.getByText("🔗 Merged")).toBeInTheDocument();
+    expect(screen.getByText(/⏳.*Pending/)).toBeInTheDocument();
+    expect(screen.getByText(/✅.*Approved/)).toBeInTheDocument();
+    expect(screen.getByText(/❌.*Rejected/)).toBeInTheDocument();
+    expect(screen.getByText(/🔗.*Merged/)).toBeInTheDocument();
     expect(screen.getByText("All")).toBeInTheDocument();
   });
 
