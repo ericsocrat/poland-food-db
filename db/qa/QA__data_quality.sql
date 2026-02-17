@@ -237,3 +237,19 @@ FROM ingredient_ref
 WHERE concern_tier >= 1
   AND (concern_reason IS NULL OR concern_reason = '');
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 29. daily_value_ref has complete EU RI data (9 nutrients)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '29. daily_value_ref EU RI completeness' AS check_name,
+       9 - COUNT(*) AS violations
+FROM daily_value_ref
+WHERE regulation = 'eu_ri';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 30. daily_value_ref has no zero or negative values
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '30. daily_value_ref positive values' AS check_name,
+       COUNT(*) AS violations
+FROM daily_value_ref
+WHERE daily_value <= 0;
+

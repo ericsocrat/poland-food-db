@@ -50,7 +50,9 @@ describe("ProductHeroImage", () => {
         categoryIcon="📦"
       />,
     );
-    expect(screen.getByLabelText("No Image Product — no image available")).toBeTruthy();
+    expect(
+      screen.getByLabelText("No Image Product — no image available"),
+    ).toBeTruthy();
     expect(screen.getByText("📦")).toBeTruthy();
   });
 

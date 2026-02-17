@@ -487,6 +487,36 @@ export interface ProductImages {
   additional: ProductImage[];
 }
 
+// ─── Daily Value / % DV ─────────────────────────────────────────────────────
+
+export type DVLevel = "low" | "moderate" | "high";
+
+export interface NutrientDV {
+  value: number;
+  daily_value: number;
+  pct: number;
+  level: DVLevel;
+}
+
+export interface DailyValuesPer100g {
+  calories: NutrientDV | null;
+  total_fat: NutrientDV | null;
+  saturated_fat: NutrientDV | null;
+  carbs: NutrientDV | null;
+  sugars: NutrientDV | null;
+  fiber: NutrientDV | null;
+  protein: NutrientDV | null;
+  salt: NutrientDV | null;
+  trans_fat: NutrientDV | null;
+}
+
+export interface DailyValues {
+  reference_type: "standard" | "personalized" | "none";
+  regulation: string;
+  per_100g: DailyValuesPer100g | null;
+  per_serving: DailyValuesPer100g | null;
+}
+
 export interface ProductProfile {
   api_version: string;
   meta: ProductProfileMeta;
@@ -494,6 +524,7 @@ export interface ProductProfile {
   nutrition: {
     per_100g: NutritionPer100g;
     per_serving: NutritionPerServing | null;
+    daily_values: DailyValues;
   };
   ingredients: ProfileIngredients;
   allergens: ProfileAllergens;

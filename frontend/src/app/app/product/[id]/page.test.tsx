@@ -113,6 +113,32 @@ function makeProfile(overrides: Record<string, unknown> = {}) {
         salt_g: 1.8,
       },
       per_serving: null,
+      daily_values: {
+        reference_type: "standard",
+        regulation: "eu_ri",
+        per_100g: {
+          calories: { value: 530, daily_value: 2000, pct: 26.5, level: "high" },
+          total_fat: { value: 32, daily_value: 70, pct: 45.7, level: "high" },
+          saturated_fat: {
+            value: 14,
+            daily_value: 20,
+            pct: 70,
+            level: "high",
+          },
+          carbs: {
+            value: 52,
+            daily_value: 260,
+            pct: 20,
+            level: "moderate",
+          },
+          sugars: { value: 3, daily_value: 90, pct: 3.3, level: "low" },
+          fiber: { value: 4, daily_value: 25, pct: 16, level: "moderate" },
+          protein: { value: 6, daily_value: 50, pct: 12, level: "moderate" },
+          salt: { value: 1.8, daily_value: 6, pct: 30, level: "high" },
+          trans_fat: null,
+        },
+        per_serving: null,
+      },
     },
     ingredients: {
       count: 12,

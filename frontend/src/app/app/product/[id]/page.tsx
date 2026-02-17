@@ -21,6 +21,9 @@ import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { ProductHeroImage } from "@/components/product/ProductHeroImage";
 import { ProductImageTabs } from "@/components/product/ProductImageTabs";
+import { NutritionDVBar } from "@/components/product/NutritionDVBar";
+import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
+import { DVLegend } from "@/components/product/DVLegend";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import type { ProductProfile, ProfileAlternative } from "@/lib/types";
@@ -449,41 +452,83 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const { t } = useTranslation();
   const n = profile.nutrition.per_100g;
+  const dv = profile.nutrition.daily_values;
+  const dvPer100g = dv?.per_100g ?? null;
+
   const rows = [
-    { label: t("product.caloriesLabel"), value: `${n.calories_kcal} kcal` },
-    { label: t("product.totalFat"), value: `${n.total_fat_g} g` },
-    { label: t("product.saturatedFat"), value: `${n.saturated_fat_g} g` },
+    {
+      label: t("product.caloriesLabel"),
+      value: `${n.calories_kcal} kcal`,
+      dv: dvPer100g?.calories ?? null,
+    },
+    {
+      label: t("product.totalFat"),
+      value: `${n.total_fat_g} g`,
+      dv: dvPer100g?.total_fat ?? null,
+    },
+    {
+      label: t("product.saturatedFat"),
+      value: `${n.saturated_fat_g} g`,
+      dv: dvPer100g?.saturated_fat ?? null,
+    },
     {
       label: t("product.transFat"),
       value: n.trans_fat_g === null ? "—" : `${n.trans_fat_g} g`,
+      dv: dvPer100g?.trans_fat ?? null,
     },
-    { label: t("product.carbs"), value: `${n.carbs_g} g` },
-    { label: t("product.sugars"), value: `${n.sugars_g} g` },
+    {
+      label: t("product.carbs"),
+      value: `${n.carbs_g} g`,
+      dv: dvPer100g?.carbs ?? null,
+    },
+    {
+      label: t("product.sugars"),
+      value: `${n.sugars_g} g`,
+      dv: dvPer100g?.sugars ?? null,
+    },
     {
       label: t("product.fibre"),
       value: n.fibre_g === null ? "—" : `${n.fibre_g} g`,
+      dv: dvPer100g?.fiber ?? null,
     },
-    { label: t("product.protein"), value: `${n.protein_g} g` },
-    { label: t("product.salt"), value: `${n.salt_g} g` },
+    {
+      label: t("product.protein"),
+      value: `${n.protein_g} g`,
+      dv: dvPer100g?.protein ?? null,
+    },
+    {
+      label: t("product.salt"),
+      value: `${n.salt_g} g`,
+      dv: dvPer100g?.salt ?? null,
+    },
   ];
 
   return (
     <div className="card">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
-        {t("product.nutritionPer100g")}
-      </h3>
+      <div className="mb-3 flex items-center justify-between">
+        <h3 className="text-sm font-semibold text-gray-700">
+          {t("product.nutritionPer100g")}
+        </h3>
+        {dv && dv.reference_type !== "none" && (
+          <DVReferenceBadge
+            referenceType={dv.reference_type}
+            regulation={dv.regulation}
+          />
+        )}
+      </div>
       <table className="w-full text-sm">
         <tbody>
           {rows.map((row) => (
-            <tr key={row.label} className="border-b border-gray-100">
-              <td className="py-2 text-gray-600">{row.label}</td>
-              <td className="py-2 text-right font-medium text-gray-900">
-                {row.value}
-              </td>
-            </tr>
+            <NutritionDVBar
+              key={row.label}
+              label={row.label}
+              rawValue={row.value}
+              dv={row.dv}
+            />
           ))}
         </tbody>
       </table>
+      {dv && dv.reference_type !== "none" && <DVLegend />}
     </div>
   );
 }

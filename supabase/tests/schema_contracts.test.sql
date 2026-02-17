@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(85);
+SELECT plan(93);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -135,6 +135,16 @@ SELECT has_column('public', 'product_images', 'is_primary',     'column product_
 SELECT has_column('public', 'product_images', 'source',         'column product_images.source exists');
 SELECT has_column('public', 'product_images', 'off_image_id',   'column product_images.off_image_id exists');
 SELECT has_column('public', 'product_images', 'created_at',     'column product_images.created_at exists');
+
+-- === Daily Value References (#37) ===
+SELECT has_table('public', 'daily_value_ref',                    'table daily_value_ref exists');
+SELECT has_column('public', 'daily_value_ref', 'nutrient',       'column daily_value_ref.nutrient exists');
+SELECT has_column('public', 'daily_value_ref', 'regulation',     'column daily_value_ref.regulation exists');
+SELECT has_column('public', 'daily_value_ref', 'daily_value',    'column daily_value_ref.daily_value exists');
+SELECT has_column('public', 'daily_value_ref', 'unit',           'column daily_value_ref.unit exists');
+SELECT has_column('public', 'daily_value_ref', 'source',         'column daily_value_ref.source exists');
+SELECT has_column('public', 'daily_value_ref', 'updated_at',     'column daily_value_ref.updated_at exists');
+SELECT has_function('public', 'compute_daily_value_pct',         'function compute_daily_value_pct exists');
 
 SELECT * FROM finish();
 ROLLBACK;

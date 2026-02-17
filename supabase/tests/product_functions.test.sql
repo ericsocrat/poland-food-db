@@ -8,7 +8,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(88);
+SELECT plan(100);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -568,6 +568,90 @@ DELETE FROM public.product_images WHERE product_id = 999997;
 SELECT ok(
   ((public.api_get_product_profile(999997::bigint))->'images'->>'has_image')::boolean = false,
   'images.has_image is false after removing images'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Section 11: Daily Value References (#37)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 11.1 daily_value_ref table is seeded with EU RI data
+SELECT is(
+  (SELECT COUNT(*) FROM public.daily_value_ref WHERE regulation = 'eu_ri')::int,
+  9,
+  'daily_value_ref has 9 EU RI nutrient rows'
+);
+
+-- 11.2 compute_daily_value_pct returns valid JSONB
+SELECT lives_ok(
+  $$SELECT public.compute_daily_value_pct(999997::bigint)$$,
+  'compute_daily_value_pct lives for valid product'
+);
+
+-- 11.3 result has reference_type key
+SELECT is(
+  (public.compute_daily_value_pct(999997::bigint))->>'reference_type',
+  'standard',
+  'compute_daily_value_pct returns standard reference_type when no user'
+);
+
+-- 11.4 result has regulation key
+SELECT is(
+  (public.compute_daily_value_pct(999997::bigint))->>'regulation',
+  'eu_ri',
+  'compute_daily_value_pct returns eu_ri regulation'
+);
+
+-- 11.5 per_100g key is not null
+SELECT ok(
+  (public.compute_daily_value_pct(999997::bigint))->'per_100g' IS NOT NULL,
+  'compute_daily_value_pct per_100g is not null'
+);
+
+-- 11.6 per_100g.calories has pct field
+SELECT ok(
+  (public.compute_daily_value_pct(999997::bigint))->'per_100g'->'calories'->>'pct' IS NOT NULL,
+  'per_100g.calories has pct field'
+);
+
+-- 11.7 per_100g.calories.level is a valid traffic light value
+SELECT ok(
+  (public.compute_daily_value_pct(999997::bigint))->'per_100g'->'calories'->>'level' IN ('low', 'moderate', 'high'),
+  'per_100g.calories.level is valid traffic light'
+);
+
+-- 11.8 product profile nutrition now has daily_values key
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint))->'nutrition'->'daily_values' IS NOT NULL,
+  'product profile nutrition has daily_values key'
+);
+
+-- 11.9 daily_values has reference_type in profile response
+SELECT is(
+  (public.api_get_product_profile(999997::bigint))->'nutrition'->'daily_values'->>'reference_type',
+  'standard',
+  'profile daily_values.reference_type is standard'
+);
+
+-- 11.10 daily_values has per_100g in profile response
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint))->'nutrition'->'daily_values'->'per_100g' IS NOT NULL,
+  'profile daily_values.per_100g is not null'
+);
+
+-- 11.11 compute_daily_value_pct returns none ref type for non-existent product
+SELECT is(
+  (public.compute_daily_value_pct(0::bigint))->>'reference_type',
+  'none',
+  'compute_daily_value_pct returns none for non-existent product'
+);
+
+-- 11.12 per_100g.salt has value/daily_value/pct/level structure
+SELECT ok(
+  (public.compute_daily_value_pct(999997::bigint))->'per_100g'->'salt'->>'value' IS NOT NULL
+  AND (public.compute_daily_value_pct(999997::bigint))->'per_100g'->'salt'->>'daily_value' IS NOT NULL
+  AND (public.compute_daily_value_pct(999997::bigint))->'per_100g'->'salt'->>'pct' IS NOT NULL
+  AND (public.compute_daily_value_pct(999997::bigint))->'per_100g'->'salt'->>'level' IS NOT NULL,
+  'per_100g.salt has complete value/daily_value/pct/level structure'
 );
 
 SELECT * FROM finish();
