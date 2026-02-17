@@ -26,6 +26,7 @@ import type {
   HealthProfileListResponse,
   HealthProfileMutationResponse,
   HealthWarningsResponse,
+  IngredientProfile,
   ListItemsResponse,
   ListsResponse,
   MutationSuccess,
@@ -287,6 +288,19 @@ export function getProductProfileByEan(
       ...(language ? { p_language: language } : {}),
     },
   );
+}
+
+// ─── Ingredient Profiles ────────────────────────────────────────────────────
+
+export function getIngredientProfile(
+  supabase: SupabaseClient,
+  ingredientId: number,
+  language?: string,
+): Promise<RpcResult<IngredientProfile>> {
+  return callRpc<IngredientProfile>(supabase, "api_get_ingredient_profile", {
+    p_ingredient_id: ingredientId,
+    ...(language ? { p_language: language } : {}),
+  });
 }
 
 // ─── Health Profiles ────────────────────────────────────────────────────────

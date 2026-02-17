@@ -220,6 +220,7 @@
     "vegan": "Vegan: {status}",
     "vegetarian": "Vegetarian: {status}",
     "additives": "Additives",
+    "topIngredients": "Top Ingredients",
     "allergens": "Allergens",
     "mayContain": "May contain:",
     "dataQuality": "Data Quality",
@@ -562,5 +563,24 @@
     "scoreMax": "Score ≤ {value}",
     "sortLabel": "Sort: {label}",
     "removeFilter": "Remove {label} filter"
+  },
+  "ingredient": {
+    "notFound": "Ingredient not found.",
+    "vegan": "Vegan",
+    "vegetarian": "Vegetarian",
+    "palmOil": "Palm oil",
+    "concernDetails": "Concern Details",
+    "efsaGuidance": "EFSA Guidance",
+    "scoreImpact": "Score impact",
+    "usage": "Usage Statistics",
+    "productsContaining": "products contain this ingredient",
+    "byCategory": "By Category",
+    "topProducts": "Top Products",
+    "relatedIngredients": "Often Found Together",
+    "coOccurrence": "{count} products in common",
+    "tierNone": "No concern",
+    "tierLow": "Low concern",
+    "tierModerate": "Moderate concern",
+    "tierHigh": "High concern"
   }
 }

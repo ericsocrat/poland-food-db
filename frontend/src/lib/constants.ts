@@ -110,3 +110,14 @@ export const WARNING_SEVERITY = {
     border: "border-amber-200",
   },
 } as const;
+
+/** Concern-tier styling: maps tier 0-3 to colors matching EFSA risk bands. */
+export const CONCERN_TIER_STYLES: Record<
+  number,
+  { color: string; bg: string; border: string }
+> = {
+  0: { color: "text-green-700", bg: "bg-green-100", border: "border-green-300" },
+  1: { color: "text-amber-700", bg: "bg-amber-100", border: "border-amber-300" },
+  2: { color: "text-orange-700", bg: "bg-orange-100", border: "border-orange-300" },
+  3: { color: "text-red-700", bg: "bg-red-100", border: "border-red-300" },
+};

@@ -10,7 +10,11 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getProductProfile, recordProductView } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import {
+  SCORE_BANDS,
+  NUTRI_COLORS,
+  CONCERN_TIER_STYLES,
+} from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import {
   HealthWarningsCard,
@@ -378,6 +382,31 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
             })}
           </p>
         </div>
+
+        {/* Top ingredients — clickable links to ingredient profiles */}
+        {profile.ingredients.top_ingredients.length > 0 && (
+          <div className="mt-3 border-t border-gray-100 pt-3">
+            <p className="mb-2 text-xs font-medium text-gray-500 uppercase">
+              {t("product.topIngredients")}
+            </p>
+            <div className="flex flex-wrap gap-1.5">
+              {profile.ingredients.top_ingredients.map((ing) => {
+                const style =
+                  CONCERN_TIER_STYLES[ing.concern_tier] ??
+                  CONCERN_TIER_STYLES[0];
+                return (
+                  <Link
+                    key={ing.ingredient_id}
+                    href={`/app/ingredient/${ing.ingredient_id}`}
+                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors hover:opacity-80 ${style.bg} ${style.color} ${style.border}`}
+                  >
+                    {ing.is_additive ? "🧪" : "🌿"} {ing.name}
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Allergens */}

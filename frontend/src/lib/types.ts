@@ -419,11 +419,61 @@ export interface ProfileIngredients {
   vegetarian_status: string | null;
   ingredients_text: string | null;
   top_ingredients: {
+    ingredient_id: number;
     name: string;
     position: number;
     concern_tier: number;
     is_additive: boolean;
+    concern_reason: string | null;
   }[];
+}
+
+// ─── Ingredient Profile ────────────────────────────────────────────────────
+
+export interface IngredientProfileIngredient {
+  ingredient_id: number;
+  taxonomy_id: string;
+  name_en: string;
+  name_display: string;
+  is_additive: boolean;
+  additive_code: string | null;
+  concern_tier: number;
+  concern_tier_label: string;
+  concern_reason: string | null;
+  concern_description: string | null;
+  efsa_guidance: string | null;
+  score_impact: string | null;
+  vegan: string;
+  vegetarian: string;
+  from_palm_oil: string;
+}
+
+export interface IngredientUsage {
+  product_count: number;
+  category_breakdown: { category: string; count: number }[];
+  top_products: {
+    product_id: number;
+    product_name: string;
+    brand: string;
+    score: number;
+    category: string;
+  }[];
+}
+
+export interface RelatedIngredient {
+  ingredient_id: number;
+  name_en: string;
+  is_additive: boolean;
+  concern_tier: number;
+  co_occurrence_count: number;
+}
+
+export interface IngredientProfile {
+  api_version: string;
+  ingredient: IngredientProfileIngredient;
+  usage: IngredientUsage;
+  related_ingredients: RelatedIngredient[];
+  error?: string;
 }
 
 export interface ProfileAllergens {

@@ -220,6 +220,7 @@
     "vegan": "Wegańskie: {status}",
     "vegetarian": "Wegetariańskie: {status}",
     "additives": "Dodatki",
+    "topIngredients": "Główne składniki",
     "allergens": "Alergeny",
     "mayContain": "Może zawierać:",
     "dataQuality": "Jakość danych",
@@ -562,5 +563,24 @@
     "scoreMax": "Wynik \u2264 {value}",
     "sortLabel": "Sortuj: {label}",
     "removeFilter": "Usuń filtr {label}"
+  },
+  "ingredient": {
+    "notFound": "Nie znaleziono składnika.",
+    "vegan": "Wegańskie",
+    "vegetarian": "Wegetariańskie",
+    "palmOil": "Olej palmowy",
+    "concernDetails": "Szczegóły zagrożeń",
+    "efsaGuidance": "Wytyczne EFSA",
+    "scoreImpact": "Wpływ na wynik",
+    "usage": "Statystyki użycia",
+    "productsContaining": "produktów zawiera ten składnik",
+    "byCategory": "Według kategorii",
+    "topProducts": "Najlepsze produkty",
+    "relatedIngredients": "Często spotykane razem",
+    "coOccurrence": "{count} wspólnych produktów",
+    "tierNone": "Brak zastrzeżeń",
+    "tierLow": "Niskie ryzyko",
+    "tierModerate": "Umiarkowane ryzyko",
+    "tierHigh": "Wysokie ryzyko"
   }
 }

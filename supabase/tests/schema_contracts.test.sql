@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(93);
+SELECT plan(95);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -145,6 +145,10 @@ SELECT has_column('public', 'daily_value_ref', 'unit',           'column daily_v
 SELECT has_column('public', 'daily_value_ref', 'source',         'column daily_value_ref.source exists');
 SELECT has_column('public', 'daily_value_ref', 'updated_at',     'column daily_value_ref.updated_at exists');
 SELECT has_function('public', 'compute_daily_value_pct',         'function compute_daily_value_pct exists');
+
+-- ─── Ingredient Profile API (#36) ───────────────────────────────────────────
+SELECT has_function('public', 'api_get_ingredient_profile',      'function api_get_ingredient_profile exists');
+SELECT volatility_is('public', 'api_get_ingredient_profile', ARRAY['bigint','text'], 'stable', 'api_get_ingredient_profile is STABLE');
 
 SELECT * FROM finish();
 ROLLBACK;

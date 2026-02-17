@@ -8,7 +8,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(100);
+SELECT plan(112);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -652,6 +652,87 @@ SELECT ok(
   AND (public.compute_daily_value_pct(999997::bigint))->'per_100g'->'salt'->>'pct' IS NOT NULL
   AND (public.compute_daily_value_pct(999997::bigint))->'per_100g'->'salt'->>'level' IS NOT NULL,
   'per_100g.salt has complete value/daily_value/pct/level structure'
+);
+
+-- ═════════════════════════════════════════════════════════════════════════════
+-- Section 12 — Ingredient Profile API (#36)
+-- Tests: 12.1–12.12  (12 tests)
+-- ═════════════════════════════════════════════════════════════════════════════
+
+-- 12.1 api_get_ingredient_profile lives (does not throw)
+SELECT lives_ok(
+  $$SELECT api_get_ingredient_profile(1)$$,
+  'api_get_ingredient_profile(1) does not throw'
+);
+
+-- 12.2 returns api_version key
+SELECT ok(
+  (api_get_ingredient_profile(1))->>'api_version' IS NOT NULL,
+  'ingredient profile has api_version'
+);
+
+-- 12.3 returns ingredient object
+SELECT ok(
+  (api_get_ingredient_profile(1))->'ingredient' IS NOT NULL,
+  'ingredient profile has ingredient object'
+);
+
+-- 12.4 ingredient object has expected keys
+SELECT ok(
+  (api_get_ingredient_profile(1))->'ingredient'->>'ingredient_id' IS NOT NULL
+  AND (api_get_ingredient_profile(1))->'ingredient'->>'name_en' IS NOT NULL
+  AND (api_get_ingredient_profile(1))->'ingredient'->>'concern_tier' IS NOT NULL,
+  'ingredient object has ingredient_id, name_en, concern_tier'
+);
+
+-- 12.5 returns usage stats
+SELECT ok(
+  (api_get_ingredient_profile(1))->'usage' IS NOT NULL,
+  'ingredient profile has usage object'
+);
+
+-- 12.6 usage has product_count
+SELECT ok(
+  (api_get_ingredient_profile(1))->'usage'->>'product_count' IS NOT NULL,
+  'usage has product_count'
+);
+
+-- 12.7 returns related_ingredients array
+SELECT ok(
+  jsonb_typeof((api_get_ingredient_profile(1))->'related_ingredients') = 'array',
+  'related_ingredients is array'
+);
+
+-- 12.8 returns error for non-existent ingredient
+SELECT is(
+  (api_get_ingredient_profile(0))->>'error',
+  'Ingredient not found',
+  'returns error for non-existent ingredient'
+);
+
+-- 12.9 error response includes ingredient_id
+SELECT is(
+  ((api_get_ingredient_profile(0))->>'ingredient_id')::bigint,
+  0::bigint,
+  'error response includes the requested ingredient_id'
+);
+
+-- 12.10 top_ingredients in product profile now includes ingredient_id
+SELECT ok(
+  (api_get_product_profile(999997))->'ingredients'->'top_ingredients'->0->>'ingredient_id' IS NOT NULL,
+  'product profile top_ingredients includes ingredient_id'
+);
+
+-- 12.11 top_ingredients in product profile now includes concern_reason
+SELECT ok(
+  (api_get_product_profile(999997))->'ingredients'->'top_ingredients'->0 ? 'concern_reason',
+  'product profile top_ingredients includes concern_reason key'
+);
+
+-- 12.12 ingredient profile concern_tier_label is populated
+SELECT ok(
+  (api_get_ingredient_profile(1))->'ingredient'->>'concern_tier_label' IS NOT NULL,
+  'ingredient profile has concern_tier_label'
 );
 
 SELECT * FROM finish();
