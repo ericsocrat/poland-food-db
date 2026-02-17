@@ -495,6 +495,15 @@ export interface ProfileAllergens {
   traces_count: number;
 }
 
+export interface ScoreBreakdownFactor {
+  name: string;
+  raw: number;
+  input: number | string;
+  weight: number;
+  ceiling?: number;
+  weighted: number;
+}
+
 export interface CategoryContext {
   rank: number;
   total_in_category: number;
@@ -509,7 +518,7 @@ export interface ProfileScores {
   nutri_score_color: string;
   nova_group: string;
   processing_risk: string;
-  score_breakdown: Record<string, unknown>[];
+  score_breakdown: ScoreBreakdownFactor[];
   headline: string;
   category_context: CategoryContext;
 }

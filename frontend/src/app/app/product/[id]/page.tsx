@@ -417,7 +417,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
                     href={`/app/ingredient/${ing.ingredient_id}`}
                     className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors hover:opacity-80 ${style.bg} ${style.color} ${style.border}`}
                   >
-                    {ing.is_additive ? "🧪" : "🌿"} {ing.name}
+                    {ing.is_additive ? "🧪" : "🌿"} {cleanIngredientName(ing.name)}
                   </Link>
                 );
               })}
@@ -649,17 +649,58 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
 
 // ─── Scoring Tab ────────────────────────────────────────────────────────────
 
+/** Convert snake_case to Title Case: "saturated_fat" → "Saturated Fat" */
+function formatSnakeCase(s: string): string {
+  return s
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+/** Human-friendly factor name mapping */
+const FACTOR_LABELS: Record<string, string> = {
+  saturated_fat: "Saturated Fat",
+  trans_fat: "Trans Fat",
+  sugars: "Sugars",
+  salt: "Salt",
+  calories: "Calories",
+  additives: "Additives",
+  prep_method: "Preparation Method",
+  controversies: "Controversies",
+  ingredient_concern: "Ingredient Concern",
+};
+
+function formatFactorName(name: string): string {
+  return FACTOR_LABELS[name] ?? formatSnakeCase(name);
+}
+
+/**
+ * Clean ingredient display name:
+ * - Strip markdown-style underscores ("Mąka _Pszenna_" → "Mąka Pszenna")
+ * - Normalise ALL-CAPS words to title-case ("gluten PSZENNY" → "Gluten Pszenny")
+ */
+function cleanIngredientName(raw: string): string {
+  // Remove underscores used as emphasis markers
+  let name = raw.replaceAll("_", "");
+  // Normalise each word: if entirely uppercase, title-case it
+  name = name
+    .split(/\s+/)
+    .map((w) =>
+      w === w.toUpperCase() && w.length > 1
+        ? w.charAt(0) + w.slice(1).toLowerCase()
+        : w,
+    )
+    .join(" ");
+  return name.trim();
+}
+
 function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const { t } = useTranslation();
   const scores = profile.scores;
 
   const topFactors = Array.isArray(scores.score_breakdown)
     ? scores.score_breakdown
-        .toSorted(
-          (a, b) =>
-            ((b as Record<string, number>).weighted ?? 0) -
-            ((a as Record<string, number>).weighted ?? 0),
-        )
+        .toSorted((a, b) => (b.weighted ?? 0) - (a.weighted ?? 0))
         .slice(0, 5)
     : [];
 
@@ -682,11 +723,11 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           <div className="space-y-2">
             {topFactors.map((f) => (
               <div
-                key={String(f.factor)}
+                key={String(f.name)}
                 className="flex items-center justify-between text-sm"
               >
                 <span className="text-foreground-secondary">
-                  {String(f.factor)}
+                  {formatFactorName(String(f.name))}
                 </span>
                 <span className="font-medium text-foreground">
                   +{Number(f.weighted).toFixed(1)}
@@ -728,7 +769,11 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
               avg: Math.round(scores.category_context.category_avg_score),
             })}
           </p>
-          <p>Position: {scores.category_context.relative_position}</p>
+          <p>
+            {t("product.position", {
+              position: formatSnakeCase(scores.category_context.relative_position),
+            })}
+          </p>
         </div>
       </div>
     </div>

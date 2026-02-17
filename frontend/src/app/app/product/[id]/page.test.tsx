@@ -169,8 +169,8 @@ function makeProfile(overrides: Record<string, unknown> = {}) {
       nova_group: "4",
       processing_risk: "high",
       score_breakdown: [
-        { factor: "Saturated fat", raw: 14, weighted: 8.5 },
-        { factor: "Salt content", raw: 1.8, weighted: 6.2 },
+        { name: "saturated_fat", raw: 14, input: 14, weight: 1, weighted: 8.5 },
+        { name: "salt", raw: 1.8, input: 1.8, weight: 1, weighted: 6.2 },
       ],
       headline:
         "This product has significant nutritional concerns across multiple factors.",
@@ -306,9 +306,7 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("65")).toBeInTheDocument();
     });
     expect(screen.getByText("/100")).toBeInTheDocument();
-    expect(
-      screen.getByLabelText("Score: 65 out of 100"),
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Score: 65 out of 100")).toBeInTheDocument();
   });
 
   it("renders nutri-score badge", async () => {
@@ -618,10 +616,10 @@ describe("ProductDetailPage", () => {
     await user.click(screen.getByRole("tab", { name: "Scoring" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Saturated fat")).toBeInTheDocument();
+      expect(screen.getByText("Saturated Fat")).toBeInTheDocument();
     });
     expect(screen.getByText("+8.5")).toBeInTheDocument();
-    expect(screen.getByText("Salt content")).toBeInTheDocument();
+    expect(screen.getByText("Salt")).toBeInTheDocument();
     expect(screen.getByText("+6.2")).toBeInTheDocument();
   });
 
@@ -685,7 +683,7 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("Rank: 18 of 42")).toBeInTheDocument();
     });
     expect(
-      screen.getByText("Position: worse_than_average"),
+      screen.getByText("Position: Worse Than Average"),
     ).toBeInTheDocument();
   });
 

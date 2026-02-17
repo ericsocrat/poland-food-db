@@ -275,6 +275,7 @@
     "categoryContext": "Kontekst kategorii",
     "rank": "Pozycja: {rank} z {total}",
     "categoryAvg": "Średnia kategorii: {avg}",
+    "position": "Pozycja: {position}",
     "loadFailed": "Nie udało się załadować produktu.",
     "notFoundPage": "Nie znaleziono produktu.",
     "fullDetails": "Pełne szczegóły",

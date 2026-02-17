@@ -275,6 +275,7 @@
     "categoryContext": "Category Context",
     "rank": "Rank: {rank} of {total}",
     "categoryAvg": "Category avg: {avg}",
+    "position": "Position: {position}",
     "loadFailed": "Failed to load product.",
     "notFoundPage": "Product not found.",
     "fullDetails": "Full Details",
