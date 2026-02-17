@@ -7,6 +7,7 @@ import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { createClient } from "@/lib/supabase/client";
 import { getProductProfile, recordProductView } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
@@ -84,7 +85,10 @@ export default function ProductDetailPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <BackButton />
+        <Breadcrumbs items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.search", href: "/app/search" },
+        ]} />
         <div className="card border-red-200 bg-red-50 py-8 text-center">
           <p className="mb-3 text-sm text-red-600">{t("product.loadFailed")}</p>
           <button
@@ -106,7 +110,10 @@ export default function ProductDetailPage() {
   if (!profile) {
     return (
       <div className="space-y-4">
-        <BackButton />
+        <Breadcrumbs items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.search", href: "/app/search" },
+        ]} />
         <p className="py-12 text-center text-sm text-foreground-muted">
           {t("product.notFoundPage")}
         </p>
@@ -125,7 +132,11 @@ export default function ProductDetailPage() {
 
   return (
     <div className="space-y-4">
-      <BackButton />
+      <Breadcrumbs items={[
+        { labelKey: "nav.home", href: "/app" },
+        { labelKey: "nav.search", href: "/app/search" },
+        { label: profile.product.product_name_display ?? profile.product.product_name },
+      ]} />
 
       {/* Header */}
       <div className="card">
@@ -312,24 +323,7 @@ export default function ProductDetailPage() {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-function BackButton() {
-  const { t } = useTranslation();
-  return (
-    <Link
-      href="/app/search"
-      className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
-    >
-      <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-        <path
-          fillRule="evenodd"
-          d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-          clipRule="evenodd"
-        />
-      </svg>
-      {t("product.back")}
-    </Link>
-  );
-}
+
 
 function FlagWithExplanation({
   label,

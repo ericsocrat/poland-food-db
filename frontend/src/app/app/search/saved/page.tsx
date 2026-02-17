@@ -4,7 +4,7 @@
 
 import { useState, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getSavedSearches, deleteSavedSearch } from "@/lib/api";
@@ -61,21 +61,20 @@ export default function SavedSearchesPage() {
 
   return (
     <div className="space-y-4">
+      {/* Breadcrumbs */}
+      <Breadcrumbs items={[
+        { labelKey: "nav.home", href: "/app" },
+        { labelKey: "nav.search", href: "/app/search" },
+        { labelKey: "savedSearches.title" },
+      ]} />
+
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground">
-            {"📋 "}
-            {t("savedSearches.title")}
-          </h1>
-          <p className="text-sm text-foreground-secondary">{t("savedSearches.subtitle")}</p>
-        </div>
-        <Link
-          href="/app/search"
-          className="text-sm text-brand-600 hover:text-brand-700"
-        >
-          {t("savedSearches.backToSearch")}
-        </Link>
+      <div>
+        <h1 className="text-lg font-semibold text-foreground">
+          {"📋 "}
+          {t("savedSearches.title")}
+        </h1>
+        <p className="text-sm text-foreground-secondary">{t("savedSearches.subtitle")}</p>
       </div>
 
       {/* Loading */}

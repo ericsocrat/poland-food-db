@@ -7,6 +7,7 @@
 import { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import {
   useLists,
   useListItems,
@@ -100,7 +101,10 @@ export default function ListDetailPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <BackLink />
+        <Breadcrumbs items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.lists", href: "/app/lists" },
+        ]} />
         <EmptyState variant="error" titleKey="lists.loadListFailed" />
       </div>
     );
@@ -108,7 +112,11 @@ export default function ListDetailPage() {
 
   return (
     <div className="space-y-4">
-      <BackLink />
+      <Breadcrumbs items={[
+        { labelKey: "nav.home", href: "/app" },
+        { labelKey: "nav.lists", href: "/app/lists" },
+        { label: list?.name ?? "…" },
+      ]} />
 
       {/* Header */}
       {list && (
@@ -378,16 +386,4 @@ function ListItemRow({
   );
 }
 
-// ─── BackLink ───────────────────────────────────────────────────────────────
 
-function BackLink() {
-  const { t } = useTranslation();
-  return (
-    <Link
-      href="/app/lists"
-      className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
-    >
-      {t("lists.backToLists")}
-    </Link>
-  );
-}

@@ -6,6 +6,7 @@
 
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { createClient } from "@/lib/supabase/client";
 import { getIngredientProfile } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
@@ -48,7 +49,10 @@ export default function IngredientProfilePage() {
   if (error || !profile || profile.error) {
     return (
       <div className="space-y-4">
-        <BackLink />
+        <Breadcrumbs items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.search", href: "/app/search" },
+        ]} />
         <div className="card py-8 text-center">
           <p className="mb-2 text-4xl">🔬</p>
           <p className="text-sm text-foreground-muted">{t("ingredient.notFound")}</p>
@@ -61,7 +65,11 @@ export default function IngredientProfilePage() {
 
   return (
     <div className="space-y-4">
-      <BackLink />
+      <Breadcrumbs items={[
+        { labelKey: "nav.home", href: "/app" },
+        { labelKey: "nav.search", href: "/app/search" },
+        { label: ing.name_display },
+      ]} />
 
       {/* ── Header Card ──────────────────────────────────────────────── */}
       <div className="card">
@@ -151,18 +159,7 @@ export default function IngredientProfilePage() {
 
 // ─── Helper Components ──────────────────────────────────────────────────────
 
-function BackLink() {
-  const { t } = useTranslation();
-  return (
-    <button
-      type="button"
-      onClick={() => globalThis.history.back()}
-      className="flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
-    >
-      ← {t("common.back")}
-    </button>
-  );
-}
+
 
 function DietaryFlag({
   label,

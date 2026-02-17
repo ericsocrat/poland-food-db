@@ -8,6 +8,7 @@
 import { useParams } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { createClient } from "@/lib/supabase/client";
 import { getProductDetail, getBetterAlternatives } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
@@ -66,6 +67,10 @@ export default function ScanResultPage() {
   if (productError || !product) {
     return (
       <div className="space-y-4">
+        <Breadcrumbs items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.scan", href: "/app/scan" },
+        ]} />
         <div className="card border-red-200 bg-red-50 py-8 text-center">
           <p className="mb-2 text-4xl">⚠️</p>
           <p className="text-sm text-red-600">{t("product.loadFailed")}</p>
@@ -89,6 +94,13 @@ export default function ScanResultPage() {
 
   return (
     <div className="space-y-4">
+      {/* Breadcrumbs */}
+      <Breadcrumbs items={[
+        { labelKey: "nav.home", href: "/app" },
+        { labelKey: "nav.scan", href: "/app/scan" },
+        { label: product.product_name },
+      ]} />
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-lg font-bold text-foreground">
