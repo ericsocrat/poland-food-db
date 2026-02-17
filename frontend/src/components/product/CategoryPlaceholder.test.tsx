@@ -32,8 +32,9 @@ describe("CategoryPlaceholder", () => {
       <CategoryPlaceholder icon="📦" productName="Box" size="lg" />,
     );
     const el = container.firstElementChild!;
-    expect(el.className).toContain("h-48");
+    expect(el.className).toContain("h-32");
     expect(el.className).toContain("w-full");
+    expect(el.className).toContain("max-w-xs");
   });
 
   it("defaults to md size", () => {

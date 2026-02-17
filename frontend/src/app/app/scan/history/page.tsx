@@ -53,7 +53,9 @@ export default function ScanHistoryPage() {
           <h1 className="text-lg font-semibold text-foreground">
             📋 {t("scanHistory.title")}
           </h1>
-          <p className="text-sm text-foreground-secondary">{t("scanHistory.subtitle")}</p>
+          <p className="text-sm text-foreground-secondary">
+            {t("scanHistory.subtitle")}
+          </p>
         </div>
         <Link
           href="/app/scan"
@@ -209,7 +211,9 @@ function ScanRow({
           ❓
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-sm text-foreground-secondary">{scan.ean}</p>
+          <p className="font-mono text-sm text-foreground-secondary">
+            {scan.ean}
+          </p>
           <p className="text-xs text-foreground-secondary">
             {t("scanHistory.notFound")}
             {scan.submission_status && (

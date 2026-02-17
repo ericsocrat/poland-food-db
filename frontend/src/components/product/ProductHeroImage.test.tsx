@@ -1,5 +1,5 @@
 import { describe, it, expect, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import { ProductHeroImage } from "./ProductHeroImage";
 import type { ProductImages } from "@/lib/types";
 
@@ -42,7 +42,7 @@ describe("ProductHeroImage", () => {
     expect(img.getAttribute("src")).toContain("openfoodfacts.org");
   });
 
-  it("renders CategoryPlaceholder when has_image is false", () => {
+  it("renders CategoryPlaceholder when has_image is false and no ean", () => {
     render(
       <ProductHeroImage
         images={makeImages({ has_image: false, primary: null })}
@@ -56,7 +56,7 @@ describe("ProductHeroImage", () => {
     expect(screen.getByText("📦")).toBeTruthy();
   });
 
-  it("renders CategoryPlaceholder when primary is null", () => {
+  it("renders CategoryPlaceholder when primary is null and no ean", () => {
     render(
       <ProductHeroImage
         images={makeImages({ has_image: false, primary: null })}
@@ -65,6 +65,58 @@ describe("ProductHeroImage", () => {
       />,
     );
     expect(screen.getByText("🧀")).toBeTruthy();
+  });
+
+  it("shows loading state then OFF image when ean is provided", async () => {
+    const mockImageUrl =
+      "https://images.openfoodfacts.org/images/products/590/039/775/6625/front_fr.3.400.jpg";
+    vi.spyOn(globalThis, "fetch").mockResolvedValueOnce({
+      ok: true,
+      json: async () => ({
+        product: { image_front_url: mockImageUrl },
+      }),
+    } as Response);
+
+    render(
+      <ProductHeroImage
+        images={makeImages({ has_image: false, primary: null })}
+        productName="OFF Fallback Product"
+        categoryIcon="📦"
+        ean="5900397756625"
+      />,
+    );
+
+    // Should show loading state first
+    expect(screen.getByText(/loading image/i)).toBeTruthy();
+
+    // After fetch resolves, should show the image
+    await waitFor(() => {
+      expect(screen.getByAltText("OFF Fallback Product")).toBeTruthy();
+    });
+
+    const img = screen.getByAltText("OFF Fallback Product");
+    expect(img.getAttribute("src")).toContain("openfoodfacts.org");
+  });
+
+  it("shows placeholder when OFF fetch fails", async () => {
+    vi.spyOn(globalThis, "fetch").mockRejectedValueOnce(
+      new Error("Network error"),
+    );
+
+    render(
+      <ProductHeroImage
+        images={makeImages({ has_image: false, primary: null })}
+        productName="Error Product"
+        categoryIcon="📦"
+        ean="0000000000000"
+      />,
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText("Error Product — no image available"),
+      ).toBeTruthy();
+    });
   });
 
   it("shows ImageSourceBadge with OFF source", () => {

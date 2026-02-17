@@ -11,7 +11,7 @@ interface CategoryPlaceholderProps {
 const sizeClasses = {
   sm: "h-10 w-10 text-lg",
   md: "h-16 w-16 text-2xl",
-  lg: "h-48 w-full text-6xl",
+  lg: "h-32 w-full max-w-xs text-5xl",
 } as const;
 
 export function CategoryPlaceholder({

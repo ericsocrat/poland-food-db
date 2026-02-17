@@ -247,7 +247,9 @@ function AlternativesSection({
   if (alternatives.length === 0) {
     return (
       <div className="card bg-surface-subtle py-6 text-center">
-        <p className="text-sm text-foreground-secondary">🏆 {t("product.bestOption")}</p>
+        <p className="text-sm text-foreground-secondary">
+          🏆 {t("product.bestOption")}
+        </p>
       </div>
     );
   }
@@ -349,7 +351,9 @@ function ScanAlternativeCard({
           <p className="truncate font-medium text-foreground">
             {alt.product_name}
           </p>
-          <p className="truncate text-sm text-foreground-secondary">{alt.brand}</p>
+          <p className="truncate text-sm text-foreground-secondary">
+            {alt.brand}
+          </p>
           <p className="text-xs font-medium text-green-600">
             {t("product.pointsBetter", { points: alt.score_improvement })}
             {improvementPct > 0 && (

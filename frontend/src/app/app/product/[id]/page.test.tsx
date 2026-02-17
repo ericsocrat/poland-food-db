@@ -295,7 +295,7 @@ describe("ProductDetailPage", () => {
     expect(screen.getByText("TestBrand")).toBeInTheDocument();
   });
 
-  it("renders unhealthiness score badge", async () => {
+  it("renders unhealthiness score badge with /100 denominator", async () => {
     mockGetProductProfile.mockResolvedValue({
       ok: true,
       data: makeProfile(),
@@ -305,6 +305,10 @@ describe("ProductDetailPage", () => {
     await waitFor(() => {
       expect(screen.getByText("65")).toBeInTheDocument();
     });
+    expect(screen.getByText("/100")).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("Score: 65 out of 100"),
+    ).toBeInTheDocument();
   });
 
   it("renders nutri-score badge", async () => {
@@ -315,8 +319,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Nutri-Score D")).toBeInTheDocument();
+      expect(screen.getByLabelText("Nutri-Score D")).toBeInTheDocument();
     });
+    expect(screen.getByText("Nutri-Score")).toBeInTheDocument();
   });
 
   it("renders NOVA group", async () => {
@@ -825,7 +830,7 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Nutri-Score ?")).toBeInTheDocument();
+      expect(screen.getByLabelText("Nutri-Score unknown")).toBeInTheDocument();
     });
   });
 });

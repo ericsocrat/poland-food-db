@@ -25,6 +25,7 @@ import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { ProductHeroImage } from "@/components/product/ProductHeroImage";
 import { ProductImageTabs } from "@/components/product/ProductImageTabs";
+import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { NutritionDVBar } from "@/components/product/NutritionDVBar";
 import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
 import { DVLegend } from "@/components/product/DVLegend";
@@ -111,9 +112,6 @@ export default function ProductDetailPage() {
   }
 
   const band = SCORE_BANDS[profile.scores.score_band];
-  const nutriClass = profile.scores.nutri_score_label
-    ? NUTRI_COLORS[profile.scores.nutri_score_label]
-    : "bg-surface-muted text-foreground-secondary";
 
   const tabs: { key: Tab; label: string }[] = [
     { key: "overview", label: t("product.overview") },
@@ -137,14 +135,19 @@ export default function ProductDetailPage() {
               profile.product.product_name
             }
             categoryIcon={profile.product.category_icon}
+            ean={profile.product.ean}
           />
         </div>
 
         <div className="flex items-start gap-4">
           <div
-            className={`flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl text-2xl font-bold ${band.bg} ${band.color}`}
+            className={`flex h-16 w-16 flex-shrink-0 flex-col items-center justify-center rounded-xl font-bold ${band.bg} ${band.color}`}
+            aria-label={`Score: ${profile.scores.unhealthiness_score} out of 100`}
           >
-            {profile.scores.unhealthiness_score}
+            <span className="text-2xl leading-none">
+              {profile.scores.unhealthiness_score}
+            </span>
+            <span className="text-[10px] font-medium opacity-70">/100</span>
           </div>
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between">
@@ -161,7 +164,9 @@ export default function ProductDetailPage() {
                       {profile.product.product_name}
                     </p>
                   )}
-                <p className="text-sm text-foreground-secondary">{profile.product.brand}</p>
+                <p className="text-sm text-foreground-secondary">
+                  {profile.product.brand}
+                </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <ShareButton
@@ -178,12 +183,14 @@ export default function ProductDetailPage() {
               </div>
             </div>
             <div className="mt-2 flex items-center gap-2">
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs font-bold ${nutriClass}`}
-              >
-                {t("product.nutriScore", {
-                  grade: profile.scores.nutri_score_label ?? "?",
-                })}
+              <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-xs font-bold">
+                <NutriScoreBadge
+                  grade={profile.scores.nutri_score_label}
+                  size="sm"
+                />
+                <span className="text-foreground-secondary">
+                  {t("product.nutriScoreLabel")}
+                </span>
               </span>
               <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary">
                 {t("product.novaGroup", { group: profile.scores.nova_group })}
@@ -678,7 +685,9 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
                 key={String(f.factor)}
                 className="flex items-center justify-between text-sm"
               >
-                <span className="text-foreground-secondary">{String(f.factor)}</span>
+                <span className="text-foreground-secondary">
+                  {String(f.factor)}
+                </span>
                 <span className="font-medium text-foreground">
                   +{Number(f.weighted).toFixed(1)}
                 </span>

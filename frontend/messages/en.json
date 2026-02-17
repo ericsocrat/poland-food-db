@@ -213,6 +213,7 @@
   "product": {
     "back": "Back",
     "nutriScore": "Nutri-Score {grade}",
+    "nutriScoreLabel": "Nutri-Score",
     "novaGroup": "NOVA {group}",
     "healthFlags": "Health flags",
     "highSugar": "High sugar",
