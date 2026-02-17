@@ -11,7 +11,7 @@ import Link from "next/link";
 import { useCompareProducts } from "@/hooks/use-compare";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
 import { ShareComparison } from "@/components/compare/ShareComparison";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ComparisonGridSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
 import { useCompareStore } from "@/stores/compare-store";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -93,11 +93,7 @@ export default function ComparePage() {
       </div>
 
       {/* Loading */}
-      {isLoading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
+      {isLoading && <ComparisonGridSkeleton />}
 
       {/* Error */}
       {error && <EmptyState variant="error" titleKey="compare.loadFailed" />}
@@ -113,7 +109,10 @@ export default function ComparePage() {
             <ShareComparison productIds={productIds} />
           </div>
 
-          <ErrorBoundary level="section" context={{ section: "comparison-grid" }}>
+          <ErrorBoundary
+            level="section"
+            context={{ section: "comparison-grid" }}
+          >
             <ComparisonGrid products={data.products} showAvoidBadge />
           </ErrorBoundary>
         </>

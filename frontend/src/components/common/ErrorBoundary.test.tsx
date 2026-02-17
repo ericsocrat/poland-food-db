@@ -139,9 +139,7 @@ describe("ErrorBoundary — section level", () => {
         <ThrowingComponent />
       </ErrorBoundary>,
     );
-    expect(
-      screen.getByText("This section couldn't load"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("This section couldn't load")).toBeInTheDocument();
   });
 
   it("section fallback has role=alert", () => {

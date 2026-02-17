@@ -8,8 +8,8 @@ import { useTranslation } from "@/lib/i18n";
 import { getDashboardData } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { NUTRI_COLORS, SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { EmptyState } from "@/components/common/EmptyState";
+import { DashboardSkeleton } from "@/components/common/skeletons";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { useAnalytics } from "@/hooks/use-analytics";
 import type {
@@ -243,11 +243,7 @@ export default function DashboardPage() {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <DashboardSkeleton />;
   }
 
   if (isError || !data) {

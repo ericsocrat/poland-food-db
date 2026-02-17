@@ -43,8 +43,18 @@ vi.mock("@/components/product/HealthWarningsCard", () => ({
   HealthWarningsCard: () => <div data-testid="health-warnings-card" />,
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="loading-spinner" />,
+vi.mock("@/components/common/skeletons", () => ({
+  ProductProfileSkeleton: () => (
+    <div data-testid="skeleton" role="status" aria-busy="true" />
+  ),
+  ProductCardSkeleton: ({ count }: { count?: number }) => (
+    <div
+      data-testid="skeleton-cards"
+      data-count={count ?? 3}
+      role="status"
+      aria-busy="true"
+    />
+  ),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -186,14 +196,13 @@ beforeEach(() => {
 
 describe("ScanResultPage", () => {
   describe("loading state", () => {
-    it("shows spinner while loading product data", () => {
+    it("shows skeleton while loading product data", () => {
       mockGetProductDetail.mockReturnValue(new Promise(() => {}));
       mockGetBetterAlternatives.mockReturnValue(new Promise(() => {}));
 
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
-      expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
-      expect(screen.getByText("Loading…")).toBeInTheDocument();
+      expect(screen.getByTestId("skeleton")).toBeInTheDocument();
     });
   });
 

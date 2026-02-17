@@ -55,8 +55,13 @@ vi.mock("@/components/compare/CompareCheckbox", () => ({
   CompareCheckbox: () => <span data-testid="compare-checkbox" />,
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="loading-spinner" />,
+vi.mock("@/components/common/skeletons", () => ({
+  ProductProfileSkeleton: () => (
+    <div data-testid="skeleton" role="status" aria-busy="true" />
+  ),
+  ProductCardSkeleton: () => (
+    <div data-testid="skeleton-cards" role="status" aria-busy="true" />
+  ),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -225,10 +230,10 @@ beforeEach(() => {
 describe("ProductDetailPage", () => {
   // ── Loading state ───────────────────────────────────────────────────────
 
-  it("renders loading spinner initially", () => {
+  it("renders skeleton loading state initially", () => {
     mockGetProductProfile.mockReturnValue(new Promise(() => {})); // never resolves
     render(<ProductDetailPage />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("loading-spinner")).toBeInTheDocument();
+    expect(screen.getByTestId("skeleton")).toBeInTheDocument();
   });
 
   // ── Error state ─────────────────────────────────────────────────────────

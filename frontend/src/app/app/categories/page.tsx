@@ -8,7 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getCategoryOverview } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS } from "@/lib/constants";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { CategoryGridSkeleton } from "@/components/common/skeletons";
 import { useTranslation } from "@/lib/i18n";
 import type { CategoryOverviewItem, ScoreBand } from "@/lib/types";
 
@@ -35,11 +35,7 @@ export default function CategoriesPage() {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <CategoryGridSkeleton />;
   }
 
   if (error) {

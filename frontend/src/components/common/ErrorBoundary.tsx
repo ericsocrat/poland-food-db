@@ -101,12 +101,7 @@ function PageFallback({
   );
 }
 
-function SectionFallback({
-  onReset,
-}: {
-  error: Error;
-  onReset: () => void;
-}) {
+function SectionFallback({ onReset }: { error: Error; onReset: () => void }) {
   return (
     <div
       className="my-4 flex flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center"

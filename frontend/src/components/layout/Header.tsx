@@ -28,7 +28,9 @@ export function Header() {
           <button
             onClick={toggleTheme}
             className="rounded-md p-1.5 text-foreground-secondary hover:bg-surface-muted hover:text-foreground transition-colors"
-            aria-label={resolved === "dark" ? t("theme.light") : t("theme.dark")}
+            aria-label={
+              resolved === "dark" ? t("theme.light") : t("theme.dark")
+            }
             title={resolved === "dark" ? t("theme.light") : t("theme.dark")}
           >
             {resolved === "dark" ? "☀️" : "🌙"}

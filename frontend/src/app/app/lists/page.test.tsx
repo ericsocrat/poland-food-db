@@ -27,8 +27,10 @@ vi.mock("next/link", () => ({
   }) => <a href={href}>{children}</a>,
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  ListViewSkeleton: () => (
+    <div data-testid="skeleton" role="status" aria-busy="true" />
+  ),
 }));
 
 // Stub ConfirmDialog to make testing easy
@@ -125,14 +127,14 @@ describe("ListsPage", () => {
     expect(screen.getByText("📋 My Lists")).toBeInTheDocument();
   });
 
-  it("shows loading spinner", () => {
+  it("shows skeleton loading state", () => {
     mockUseLists.mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
     });
     render(<ListsPage />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByTestId("skeleton")).toBeInTheDocument();
   });
 
   it("shows error state", () => {

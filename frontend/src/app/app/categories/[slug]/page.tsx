@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getCategoryListing } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { CategoryListingSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
 import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
@@ -124,11 +124,7 @@ export default function CategoryListingPage() {
       </div>
 
       {/* Product list */}
-      {isLoading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
+      {isLoading && <CategoryListingSkeleton />}
 
       {!isLoading && error && (
         <EmptyState

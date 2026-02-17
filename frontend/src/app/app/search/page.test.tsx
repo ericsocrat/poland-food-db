@@ -85,6 +85,12 @@ vi.mock("@/components/common/LoadingSpinner", () => ({
   ),
 }));
 
+vi.mock("@/components/common/skeletons", () => ({
+  SearchResultsSkeleton: () => (
+    <div data-testid="skeleton" role="status" aria-busy="true" />
+  ),
+}));
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {

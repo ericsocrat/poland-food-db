@@ -15,7 +15,7 @@ import {
   NUTRI_COLORS,
   CONCERN_TIER_STYLES,
 } from "@/lib/constants";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ProductProfileSkeleton } from "@/components/common/skeletons";
 import {
   HealthWarningsCard,
   HealthWarningBadge,
@@ -74,11 +74,7 @@ export default function ProductDetailPage() {
   }, [productId]);
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <ProductProfileSkeleton />;
   }
 
   if (error) {
@@ -259,7 +255,10 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Personalized health warnings */}
-      <ErrorBoundary level="section" context={{ section: "health-warnings", productId }}>
+      <ErrorBoundary
+        level="section"
+        context={{ section: "health-warnings", productId }}
+      >
         <HealthWarningsCard productId={productId} />
       </ErrorBoundary>
 
@@ -283,7 +282,10 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Tab content */}
-      <ErrorBoundary level="section" context={{ section: "tab-content", productId, tab: activeTab }}>
+      <ErrorBoundary
+        level="section"
+        context={{ section: "tab-content", productId, tab: activeTab }}
+      >
         {activeTab === "overview" && <OverviewTab profile={profile} />}
         {activeTab === "nutrition" && <NutritionTab profile={profile} />}
         {activeTab === "alternatives" && (

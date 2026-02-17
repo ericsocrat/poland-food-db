@@ -7,7 +7,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLists, useCreateList, useDeleteList } from "@/hooks/use-lists";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ListViewSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useTranslation } from "@/lib/i18n";
@@ -42,11 +42,7 @@ export default function ListsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <ListViewSkeleton />;
   }
 
   if (error) {

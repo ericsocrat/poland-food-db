@@ -12,7 +12,10 @@ import { createClient } from "@/lib/supabase/client";
 import { getProductDetail, getBetterAlternatives } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import {
+  ProductProfileSkeleton,
+  ProductCardSkeleton,
+} from "@/components/common/skeletons";
 import { HealthWarningsCard } from "@/components/product/HealthWarningsCard";
 import type { ProductDetail, Alternative } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
@@ -55,12 +58,7 @@ export default function ScanResultPage() {
   // ─── Loading ────────────────────────────────────────────────────────────
 
   if (productLoading) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-12">
-        <LoadingSpinner />
-        <p className="text-sm text-gray-500">{t("common.loading")}</p>
-      </div>
-    );
+    return <ProductProfileSkeleton />;
   }
 
   // ─── Error ──────────────────────────────────────────────────────────────
@@ -243,11 +241,7 @@ function AlternativesSection({
   const { t } = useTranslation();
 
   if (loading) {
-    return (
-      <div className="flex justify-center py-6">
-        <LoadingSpinner />
-      </div>
-    );
+    return <ProductCardSkeleton count={3} />;
   }
 
   if (alternatives.length === 0) {

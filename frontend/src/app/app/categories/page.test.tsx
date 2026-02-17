@@ -26,6 +26,12 @@ vi.mock("@/lib/api", () => ({
   getCategoryOverview: (...args: unknown[]) => mockGetCategoryOverview(...args),
 }));
 
+vi.mock("@/components/common/skeletons", () => ({
+  CategoryGridSkeleton: () => (
+    <div data-testid="skeleton" role="status" aria-busy="true" />
+  ),
+}));
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {

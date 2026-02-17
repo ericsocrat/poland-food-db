@@ -113,11 +113,13 @@ describe("DashboardPage", () => {
     mockGetDashboardData.mockResolvedValue({ ok: true, data: mockDashboard });
   });
 
-  it("shows loading spinner initially", () => {
+  it("shows skeleton loading state initially", () => {
     // Never resolve to keep loading state
     mockGetDashboardData.mockReturnValue(new Promise(() => {}));
     render(<DashboardPage />, { wrapper: createWrapper() });
-    expect(screen.getByLabelText("Loading…")).toBeInTheDocument();
+    const status = screen.getAllByRole("status");
+    expect(status.length).toBeGreaterThanOrEqual(1);
+    expect(status[0].getAttribute("aria-busy")).toBe("true");
   });
 
   it("renders the dashboard title", async () => {

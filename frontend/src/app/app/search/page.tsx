@@ -19,6 +19,7 @@ import { FilterPanel } from "@/components/search/FilterPanel";
 import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
 import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
 import { EmptyState } from "@/components/common/EmptyState";
+import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
@@ -366,11 +367,7 @@ export default function SearchPage() {
         )}
 
         {/* Loading */}
-        {isLoading && isSearchActive && (
-          <div className="flex justify-center py-12">
-            <LoadingSpinner />
-          </div>
-        )}
+        {isLoading && isSearchActive && <SearchResultsSkeleton />}
 
         {/* Error state */}
         {error && (

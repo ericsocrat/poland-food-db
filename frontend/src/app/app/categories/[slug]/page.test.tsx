@@ -30,8 +30,10 @@ vi.mock("@/lib/api", () => ({
   getCategoryListing: (...args: unknown[]) => mockGetCategoryListing(...args),
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  CategoryListingSkeleton: () => (
+    <div data-testid="skeleton" role="status" aria-busy="true" />
+  ),
 }));
 
 // Stub child components
@@ -148,10 +150,10 @@ describe("CategoryListingPage", () => {
     );
   });
 
-  it("shows loading spinner while fetching", () => {
+  it("shows skeleton loading state while fetching", () => {
     mockGetCategoryListing.mockReturnValue(new Promise(() => {}));
     render(<CategoryListingPage />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByTestId("skeleton")).toBeInTheDocument();
   });
 
   it("shows error state on API failure", async () => {

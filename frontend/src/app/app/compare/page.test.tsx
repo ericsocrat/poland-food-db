@@ -53,8 +53,10 @@ vi.mock("@/components/compare/ShareComparison", () => ({
   ),
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  ComparisonGridSkeleton: () => (
+    <div data-testid="skeleton" role="status" aria-busy="true" />
+  ),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -120,14 +122,14 @@ describe("ComparePage", () => {
       mockGet.mockReturnValue("1,2,3");
     });
 
-    it("shows loading spinner while fetching", () => {
+    it("shows skeleton loading state while fetching", () => {
       mockUseCompareProducts.mockReturnValue({
         data: undefined,
         isLoading: true,
         error: null,
       });
       render(<ComparePage />, { wrapper: createWrapper() });
-      expect(screen.getByTestId("spinner")).toBeInTheDocument();
+      expect(screen.getByTestId("skeleton")).toBeInTheDocument();
     });
 
     it("shows error state on failure", () => {
