@@ -18,6 +18,7 @@ import {
 } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthProfileSection } from "@/components/settings/HealthProfileSection";
+import { ThemeToggle } from "@/components/settings/ThemeToggle";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -193,6 +194,14 @@ export default function SettingsPage() {
             </button>
           ))}
         </div>
+      </section>
+
+      {/* Theme */}
+      <section className="card">
+        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+          {t("settings.theme")}
+        </h2>
+        <ThemeToggle />
       </section>
 
       {/* Diet */}

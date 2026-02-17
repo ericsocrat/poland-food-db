@@ -333,6 +333,7 @@
     "strictAllergen": "Ścisłe dopasowanie alergenów",
     "treatMayContain": "Traktuj \u201Emoże zawierać\u201D jako niebezpieczne",
     "saveChanges": "Zapisz zmiany",
+    "theme": "Motyw",
     "account": "Konto",
     "userId": "ID użytkownika: {id}…",
     "signOut": "Wyloguj się",
@@ -437,6 +438,12 @@
     "privacy": "Polityka prywatności",
     "terms": "Regulamin",
     "copyright": "© {year} Poland Food DB. Dane pochodzą z Open Food Facts."
+  },
+  "theme": {
+    "label": "Preferencja motywu",
+    "light": "Jasny",
+    "dark": "Ciemny",
+    "system": "Systemowy"
   },
   "offline": {
     "title": "Jesteś offline",

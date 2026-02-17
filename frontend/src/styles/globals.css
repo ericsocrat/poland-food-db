@@ -261,6 +261,15 @@
     @apply bg-surface-subtle text-foreground antialiased;
     /* Prevent text selection / callout on long-press in PWA */
     -webkit-tap-highlight-color: transparent;
+    /* Smooth theme transitions (150ms) — disabled during initial load */
+    transition: background-color 150ms ease, color 150ms ease;
+  }
+
+  /* Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    body {
+      transition: none;
+    }
   }
 }
 

@@ -2,9 +2,16 @@
 
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { useTheme } from "@/hooks/use-theme";
 
 export function Header() {
   const { t } = useTranslation();
+  const { resolved, setMode } = useTheme();
+
+  function toggleTheme() {
+    setMode(resolved === "dark" ? "light" : "dark");
+  }
+
   return (
     <header className="border-b bg-surface">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
@@ -18,6 +25,14 @@ export function Header() {
           >
             {t("layout.contact")}
           </Link>
+          <button
+            onClick={toggleTheme}
+            className="rounded-md p-1.5 text-foreground-secondary hover:bg-surface-muted hover:text-foreground transition-colors"
+            aria-label={resolved === "dark" ? t("theme.light") : t("theme.dark")}
+            title={resolved === "dark" ? t("theme.light") : t("theme.dark")}
+          >
+            {resolved === "dark" ? "☀️" : "🌙"}
+          </button>
           <Link href="/auth/login" className="btn-primary text-sm">
             {t("auth.signIn")}
           </Link>

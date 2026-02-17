@@ -333,6 +333,7 @@
     "strictAllergen": "Strict allergen matching",
     "treatMayContain": "Treat \"may contain\" as unsafe",
     "saveChanges": "Save changes",
+    "theme": "Theme",
     "account": "Account",
     "userId": "User ID: {id}…",
     "signOut": "Sign out",
@@ -437,6 +438,12 @@
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
     "copyright": "© {year} Poland Food DB. Data sourced from Open Food Facts."
+  },
+  "theme": {
+    "label": "Theme preference",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
   },
   "offline": {
     "title": "You're Offline",
