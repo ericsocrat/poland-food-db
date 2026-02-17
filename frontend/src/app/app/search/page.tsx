@@ -23,30 +23,16 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
+import {
+  getRecentSearches,
+  addRecentSearch,
+} from "@/lib/recent-searches";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
-const RECENT_KEY = "fooddb:recent-searches";
-const MAX_RECENT = 10;
 const AVOID_TOGGLE_KEY = "fooddb:show-avoided";
 const PAGE_SIZE = 20;
 
 /* ── localStorage helpers ─────────────────────────────────────────────────── */
-
-function getRecentSearches(): string[] {
-  if (globalThis.localStorage === undefined) return [];
-  try {
-    return JSON.parse(globalThis.localStorage.getItem(RECENT_KEY) ?? "[]");
-  } catch {
-    return [];
-  }
-}
-
-function saveRecentSearch(q: string) {
-  if (globalThis.localStorage === undefined) return;
-  const prev = getRecentSearches().filter((s) => s !== q);
-  const next = [q, ...prev].slice(0, MAX_RECENT);
-  globalThis.localStorage.setItem(RECENT_KEY, JSON.stringify(next));
-}
 
 function getShowAvoided(): boolean {
   if (globalThis.localStorage === undefined) return false;
@@ -107,7 +93,7 @@ export default function SearchPage() {
       if (!result.ok) throw new Error(result.error.message);
       // Save successful text search
       if (activeQuery && activeQuery.length >= 2) {
-        saveRecentSearch(activeQuery);
+        addRecentSearch(activeQuery);
         setRecentSearches(getRecentSearches());
       }
       return result.data;
@@ -196,15 +182,9 @@ export default function SearchPage() {
               value={query}
               onChange={(e) => {
                 setQuery(e.target.value);
-                if (e.target.value.length >= 1) {
-                  setShowAutocomplete(true);
-                } else {
-                  setShowAutocomplete(false);
-                }
+                setShowAutocomplete(true);
               }}
-              onFocus={() => {
-                if (query.length >= 1) setShowAutocomplete(true);
-              }}
+              onFocus={() => setShowAutocomplete(true)}
               onKeyDown={(e) => autocompleteKeyDownRef.current?.(e)}
               placeholder={t("search.placeholder")}
               aria-label={t("a11y.searchProducts")}

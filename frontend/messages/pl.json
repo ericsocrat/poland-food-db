@@ -113,7 +113,11 @@
     "adjustFilters": "Spróbuj zmienić filtry lub użyć innego hasła.",
     "clearAllFilters": "Wyczyść wszystkie filtry",
     "searching": "Wyszukiwanie…",
-    "searchFor": "Szukaj \"{query}\""
+    "searchFor": "Szukaj \"{query}\"",
+    "clearRecent": "Wyczyść",
+    "removeRecent": "Usuń {query} z ostatnich wyszukiwań",
+    "popularSearches": "Popularne wyszukiwania",
+    "suggestions": "Podpowiedzi"
   },
   "filters": {
     "sortBy": "Sortuj wg",

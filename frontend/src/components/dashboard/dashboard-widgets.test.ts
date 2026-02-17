@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import { translate } from "@/lib/i18n";
 import { getTimeOfDay } from "./DashboardGreeting";
 import { tipIndexForToday } from "./NutritionTip";
@@ -13,8 +13,8 @@ describe("getTimeOfDay", () => {
   });
 
   function mockHour(hour: number) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     globalThis.Date = class extends origDate {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       constructor(...args: any[]) {
         if (args.length === 0) {
           super(2026, 1, 10, hour, 0, 0);

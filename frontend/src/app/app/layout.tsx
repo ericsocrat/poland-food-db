@@ -15,6 +15,7 @@ import { LanguageHydrator } from "@/components/i18n/LanguageHydrator";
 import { CompareFloatingButton } from "@/components/compare/CompareFloatingButton";
 import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
+import { GlobalKeyboardShortcuts } from "@/components/layout/GlobalKeyboardShortcuts";
 
 export default async function AppLayout({
   children,
@@ -84,6 +85,7 @@ export default async function AppLayout({
 
       <CompareFloatingButton />
       <InstallPrompt />
+      <GlobalKeyboardShortcuts />
       <Navigation />
     </div>
   );

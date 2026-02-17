@@ -113,7 +113,11 @@
     "adjustFilters": "Try adjusting your filters or using a different search term.",
     "clearAllFilters": "Clear all filters",
     "searching": "Searching…",
-    "searchFor": "Search for \"{query}\""
+    "searchFor": "Search for \"{query}\"",
+    "clearRecent": "Clear",
+    "removeRecent": "Remove {query} from recent searches",
+    "popularSearches": "Popular Searches",
+    "suggestions": "Suggestions"
   },
   "filters": {
     "sortBy": "Sort by",
