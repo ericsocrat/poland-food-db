@@ -594,6 +594,21 @@
     "sortLabel": "Sort: {label}",
     "removeFilter": "Remove {label} filter"
   },
+  "badges": {
+    "na": "N/A",
+    "unknown": "Unknown",
+    "low": "Low",
+    "medium": "Medium",
+    "high": "High",
+    "extreme": "Extreme",
+    "contains": "Contains",
+    "mayContainTraces": "May contain traces of",
+    "freeFrom": "Free from",
+    "unprocessed": "Unprocessed",
+    "processedIngredients": "Processed ingredients",
+    "processed": "Processed",
+    "ultraProcessed": "Ultra-processed"
+  },
   "ingredient": {
     "notFound": "Ingredient not found.",
     "vegan": "Vegan",

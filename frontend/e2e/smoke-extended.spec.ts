@@ -57,12 +57,14 @@ test.describe("Footer links", () => {
   test("Privacy Policy link navigates correctly", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("link", { name: "Privacy Policy" }).click();
+    await page.waitForURL(/\/privacy/);
     await expect(page).toHaveURL("/privacy");
   });
 
   test("Terms of Service link navigates correctly", async ({ page }) => {
     await page.goto("/");
     await page.getByRole("link", { name: "Terms of Service" }).click();
+    await page.waitForURL(/\/terms/);
     await expect(page).toHaveURL("/terms");
   });
 });

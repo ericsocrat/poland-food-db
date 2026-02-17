@@ -202,6 +202,321 @@ Four global component classes are defined in `globals.css` using design tokens:
 
 ---
 
+## Component Library
+
+> **Issue**: #58 · **Import**: `@/components/common`
+
+All reusable UI components live in `src/components/common/` with a barrel export from `index.ts`. Components use design tokens exclusively — no hardcoded colors.
+
+### Primitives
+
+#### Button
+
+Styled button with variant, size, loading, and icon support.
+
+```tsx
+import { Button } from "@/components/common";
+
+<Button variant="primary" size="md" loading={saving} icon={<SaveIcon />}>
+  Save Changes
+</Button>
+```
+
+| Prop                 | Type                                              | Default     |
+| -------------------- | ------------------------------------------------- | ----------- |
+| `variant`            | `"primary" \| "secondary" \| "ghost" \| "danger"` | `"primary"` |
+| `size`               | `"sm" \| "md" \| "lg"`                            | `"md"`      |
+| `loading`            | `boolean`                                         | `false`     |
+| `icon` / `iconRight` | `ReactNode`                                       | —           |
+| `fullWidth`          | `boolean`                                         | `false`     |
+
+#### IconButton
+
+Square icon-only button for toolbar actions.
+
+```tsx
+<IconButton icon={<TrashIcon />} label="Delete" variant="danger" size="sm" />
+```
+
+| Prop      | Type                                              | Default        |
+| --------- | ------------------------------------------------- | -------------- |
+| `icon`    | `ReactNode`                                       | **(required)** |
+| `label`   | `string`                                          | **(required)** |
+| `variant` | `"primary" \| "secondary" \| "ghost" \| "danger"` | `"ghost"`      |
+| `size`    | `"sm" \| "md" \| "lg"`                            | `"md"`         |
+
+#### Input
+
+Text input with label, error, hint, and icon.
+
+```tsx
+<Input label="Product Name" error={errors.name} hint="Max 100 characters" icon={<SearchIcon />} />
+```
+
+| Prop    | Type                   | Default |
+| ------- | ---------------------- | ------- |
+| `label` | `string`               | —       |
+| `error` | `string`               | —       |
+| `hint`  | `string`               | —       |
+| `icon`  | `ReactNode`            | —       |
+| `size`  | `"sm" \| "md" \| "lg"` | `"md"`  |
+
+#### Select
+
+Native select with label, error, and placeholder.
+
+```tsx
+<Select label="Category" options={categories} placeholder="Choose…" error={errors.category} />
+```
+
+| Prop          | Type                      | Default        |
+| ------------- | ------------------------- | -------------- |
+| `label`       | `string`                  | —              |
+| `options`     | `readonly SelectOption[]` | **(required)** |
+| `error`       | `string`                  | —              |
+| `placeholder` | `string`                  | —              |
+| `size`        | `"sm" \| "md" \| "lg"`    | `"md"`         |
+
+#### Textarea
+
+Multi-line input with character counter.
+
+```tsx
+<Textarea label="Notes" showCount currentLength={notes.length} maxLength={500} />
+```
+
+| Prop            | Type      | Default |
+| --------------- | --------- | ------- |
+| `label`         | `string`  | —       |
+| `error`         | `string`  | —       |
+| `hint`          | `string`  | —       |
+| `showCount`     | `boolean` | `false` |
+| `currentLength` | `number`  | `0`     |
+
+#### Toggle
+
+Accessible boolean switch (`role="switch"`).
+
+```tsx
+<Toggle label="Dark mode" checked={dark} onChange={setDark} />
+```
+
+| Prop       | Type                         | Default        |
+| ---------- | ---------------------------- | -------------- |
+| `label`    | `string`                     | **(required)** |
+| `checked`  | `boolean`                    | **(required)** |
+| `onChange` | `(checked: boolean) => void` | **(required)** |
+| `size`     | `"sm" \| "md"`               | `"md"`         |
+| `disabled` | `boolean`                    | `false`        |
+
+#### Checkbox
+
+Checkbox with label and optional indeterminate state.
+
+```tsx
+<Checkbox label="I agree to terms" checked={agreed} onChange={handleCheck} />
+```
+
+| Prop            | Type      | Default        |
+| --------------- | --------- | -------------- |
+| `label`         | `string`  | **(required)** |
+| `indeterminate` | `boolean` | `false`        |
+
+#### Card
+
+Semantic container with variant and padding.
+
+```tsx
+<Card variant="elevated" padding="lg" as="section">
+  <h2>Product Details</h2>
+</Card>
+```
+
+| Prop      | Type                                    | Default     |
+| --------- | --------------------------------------- | ----------- |
+| `variant` | `"default" \| "elevated" \| "outlined"` | `"default"` |
+| `padding` | `"none" \| "sm" \| "md" \| "lg"`        | `"md"`      |
+| `as`      | `ElementType`                           | `"div"`     |
+
+### Display Components
+
+#### Badge
+
+Generic label pill for status indicators.
+
+```tsx
+<Badge variant="success" dot>Active</Badge>
+```
+
+| Prop      | Type                                                       | Default     |
+| --------- | ---------------------------------------------------------- | ----------- |
+| `variant` | `"info" \| "success" \| "warning" \| "error" \| "neutral"` | `"neutral"` |
+| `size`    | `"sm" \| "md"`                                             | `"sm"`      |
+| `dot`     | `boolean`                                                  | `false`     |
+
+#### Chip
+
+Removable tag for filters and categories.
+
+```tsx
+<Chip variant="primary" onRemove={() => removeFilter(id)}>Gluten Free</Chip>
+```
+
+| Prop          | Type                                                          | Default     |
+| ------------- | ------------------------------------------------------------- | ----------- |
+| `variant`     | `"default" \| "primary" \| "success" \| "warning" \| "error"` | `"default"` |
+| `interactive` | `boolean`                                                     | `false`     |
+| `onRemove`    | `() => void`                                                  | —           |
+| `removeLabel` | `string`                                                      | `"Remove"`  |
+
+#### ProgressBar
+
+Visual progress / DV bar.
+
+```tsx
+<ProgressBar value={65} variant="warning" size="md" showLabel />
+```
+
+| Prop        | Type                                                      | Default        |
+| ----------- | --------------------------------------------------------- | -------------- |
+| `value`     | `number` (0–100)                                          | **(required)** |
+| `variant`   | `"brand" \| "success" \| "warning" \| "error" \| "score"` | `"brand"`      |
+| `size`      | `"sm" \| "md" \| "lg"`                                    | `"md"`         |
+| `showLabel` | `boolean`                                                 | `false`        |
+
+#### Tooltip
+
+Pure-CSS hover/focus tooltip with arrow.
+
+```tsx
+<Tooltip content="Unhealthiness score 1–100" side="right">
+  <InfoIcon />
+</Tooltip>
+```
+
+| Prop      | Type                                     | Default        |
+| --------- | ---------------------------------------- | -------------- |
+| `content` | `string`                                 | **(required)** |
+| `side`    | `"top" \| "right" \| "bottom" \| "left"` | `"top"`        |
+
+### Feedback
+
+#### Alert
+
+Inline feedback banner with dismiss support.
+
+```tsx
+<Alert variant="error" title="Validation failed" dismissible>
+  Please fix the highlighted fields.
+</Alert>
+```
+
+| Prop          | Type                                          | Default  |
+| ------------- | --------------------------------------------- | -------- |
+| `variant`     | `"info" \| "success" \| "warning" \| "error"` | `"info"` |
+| `title`       | `string`                                      | —        |
+| `dismissible` | `boolean`                                     | `false`  |
+| `icon`        | `ReactNode`                                   | —        |
+
+### Domain-Specific Badges
+
+#### ScoreBadge
+
+Unhealthiness score (1–100) with color band.
+
+```tsx
+<ScoreBadge score={42} size="lg" showLabel />
+```
+
+| Prop        | Type                   | Default        |
+| ----------- | ---------------------- | -------------- |
+| `score`     | `number \| null`       | **(required)** |
+| `size`      | `"sm" \| "md" \| "lg"` | `"md"`         |
+| `showLabel` | `boolean`              | `false`        |
+
+#### NutriScoreBadge
+
+EU Nutri-Score grade (A–E).
+
+```tsx
+<NutriScoreBadge grade="B" size="md" />
+```
+
+| Prop    | Type                   | Default        |
+| ------- | ---------------------- | -------------- |
+| `grade` | `string \| null`       | **(required)** |
+| `size`  | `"sm" \| "md" \| "lg"` | `"md"`         |
+
+#### NovaBadge
+
+NOVA processing classification (1–4).
+
+```tsx
+<NovaBadge group={4} showLabel />
+```
+
+| Prop        | Type                   | Default        |
+| ----------- | ---------------------- | -------------- |
+| `group`     | `number \| null`       | **(required)** |
+| `size`      | `"sm" \| "md" \| "lg"` | `"md"`         |
+| `showLabel` | `boolean`              | `false`        |
+
+#### ConfidenceBadge
+
+Data confidence level indicator.
+
+```tsx
+<ConfidenceBadge level="high" percentage={95} />
+```
+
+| Prop         | Type                                  | Default        |
+| ------------ | ------------------------------------- | -------------- |
+| `level`      | `"high" \| "medium" \| "low" \| null` | **(required)** |
+| `percentage` | `number`                              | —              |
+| `size`       | `"sm" \| "md"`                        | `"sm"`         |
+
+#### NutrientTrafficLight
+
+FSA/EFSA traffic-light for fat, saturates, sugars, salt per 100 g.
+
+```tsx
+<NutrientTrafficLight nutrient="sugars" value={12.5} unit="g" />
+```
+
+| Prop       | Type                                         | Default        |
+| ---------- | -------------------------------------------- | -------------- |
+| `nutrient` | `"fat" \| "saturates" \| "sugars" \| "salt"` | **(required)** |
+| `value`    | `number`                                     | **(required)** |
+| `unit`     | `string`                                     | `"g"`          |
+
+#### AllergenBadge
+
+Allergen presence indicator.
+
+```tsx
+<AllergenBadge status="traces" allergenName="Milk" />
+```
+
+| Prop           | Type                              | Default        |
+| -------------- | --------------------------------- | -------------- |
+| `status`       | `"present" \| "traces" \| "free"` | **(required)** |
+| `allergenName` | `string`                          | **(required)** |
+| `size`         | `"sm" \| "md"`                    | `"sm"`         |
+
+### Existing Components (pre-#58)
+
+| Component        | Description                  |
+| ---------------- | ---------------------------- |
+| `ConfirmDialog`  | Modal confirmation dialog    |
+| `CountryChip`    | Country flag + label chip    |
+| `EmptyState`     | Placeholder for empty lists  |
+| `ErrorBoundary`  | React error boundary wrapper |
+| `LoadingSpinner` | Animated spinner             |
+| `RouteGuard`     | Auth-gated route wrapper     |
+| `Skeleton`       | Loading skeleton primitives  |
+
+---
+
 ## Migration Guide
 
 ### Replacing hardcoded colors

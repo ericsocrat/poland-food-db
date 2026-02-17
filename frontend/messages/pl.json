@@ -594,6 +594,21 @@
     "sortLabel": "Sortuj: {label}",
     "removeFilter": "Usuń filtr {label}"
   },
+  "badges": {
+    "na": "Brak danych",
+    "unknown": "Nieznany",
+    "low": "Niski",
+    "medium": "Średni",
+    "high": "Wysoki",
+    "extreme": "Ekstremalny",
+    "contains": "Zawiera",
+    "mayContainTraces": "Może zawierać śladowe ilości",
+    "freeFrom": "Bez",
+    "unprocessed": "Nieprzetworzone",
+    "processedIngredients": "Przetworzone składniki",
+    "processed": "Przetworzone",
+    "ultraProcessed": "Ultraprzetworzone"
+  },
   "ingredient": {
     "notFound": "Nie znaleziono składnika.",
     "vegan": "Wegańskie",
