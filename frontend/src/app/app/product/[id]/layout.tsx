@@ -15,9 +15,7 @@ interface ProductProfile {
   images?: { primary?: { url?: string } };
 }
 
-async function fetchProfile(
-  productId: number,
-): Promise<ProductProfile | null> {
+async function fetchProfile(productId: number): Promise<ProductProfile | null> {
   try {
     const supabase = await createServerSupabaseClient();
     const { data } = await supabase.rpc("api_get_product_profile", {

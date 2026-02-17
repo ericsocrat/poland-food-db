@@ -26,9 +26,7 @@ export const metadata: Metadata = {
     title: "FoodDB",
   },
   icons: {
-    icon: [
-      { url: "/icons/icon-192.svg", type: "image/svg+xml", sizes: "any" },
-    ],
+    icon: [{ url: "/icons/icon-192.svg", type: "image/svg+xml", sizes: "any" }],
     apple: [
       { url: "/icons/icon-192.svg", type: "image/svg+xml", sizes: "192x192" },
     ],
