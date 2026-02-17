@@ -23,10 +23,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
-import {
-  getRecentSearches,
-  addRecentSearch,
-} from "@/lib/recent-searches";
+import { getRecentSearches, addRecentSearch } from "@/lib/recent-searches";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
 const AVOID_TOGGLE_KEY = "fooddb:show-avoided";

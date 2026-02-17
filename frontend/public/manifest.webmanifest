@@ -1,7 +1,8 @@
 {
+  "id": "/app",
   "name": "Poland Food DB",
   "short_name": "FoodDB",
-  "description": "Compare unhealthiness scores and nutritional data for food products in Poland.",
+  "description": "Multi-axis food quality scoring — compare health scores and nutritional data for food products in Poland and Germany.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
@@ -14,13 +15,25 @@
       "src": "/icons/icon-192.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-512.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/icons/icon-512.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
     }
   ]
 }

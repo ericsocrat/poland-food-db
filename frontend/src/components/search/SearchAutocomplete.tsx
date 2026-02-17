@@ -130,15 +130,11 @@ export function SearchAutocomplete({
       switch (e.key) {
         case "ArrowDown":
           e.preventDefault();
-          setActiveIndex((prev) =>
-            prev < navigableCount - 1 ? prev + 1 : 0,
-          );
+          setActiveIndex((prev) => (prev < navigableCount - 1 ? prev + 1 : 0));
           break;
         case "ArrowUp":
           e.preventDefault();
-          setActiveIndex((prev) =>
-            prev > 0 ? prev - 1 : navigableCount - 1,
-          );
+          setActiveIndex((prev) => (prev > 0 ? prev - 1 : navigableCount - 1));
           break;
         case "Enter":
           e.preventDefault();
@@ -265,8 +261,18 @@ export function SearchAutocomplete({
                     setRecentSearches(updated);
                   }}
                 >
-                  <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="h-3.5 w-3.5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </li>
