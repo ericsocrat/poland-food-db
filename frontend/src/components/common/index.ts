@@ -16,6 +16,14 @@ export type { CheckboxProps } from "./Checkbox";
 export { Card } from "./Card";
 export type { CardProps } from "./Card";
 
+// Form infrastructure
+export { FormField } from "./FormField";
+export type { FormFieldProps } from "./FormField";
+export { FormErrorSummary } from "./FormErrorSummary";
+export type { FormErrorSummaryProps } from "./FormErrorSummary";
+export { SubmitButton } from "./SubmitButton";
+export type { SubmitButtonProps } from "./SubmitButton";
+
 // Domain badges
 export { Badge } from "./Badge";
 export type { BadgeProps } from "./Badge";

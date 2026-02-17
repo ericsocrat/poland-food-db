@@ -627,5 +627,26 @@
     "tierLow": "Niskie ryzyko",
     "tierModerate": "Umiarkowane ryzyko",
     "tierHigh": "Wysokie ryzyko"
+  },
+  "validation": {
+    "email_invalid": "Proszę podać prawidłowy adres e-mail.",
+    "password_required": "Hasło jest wymagane.",
+    "password_min_length": "Hasło musi mieć co najmniej 6 znaków.",
+    "country_required": "Proszę wybrać kraj.",
+    "language_required": "Proszę wybrać język.",
+    "list_name_required": "Nazwa listy jest wymagana.",
+    "list_name_too_long": "Nazwa listy nie może przekraczać 100 znaków.",
+    "description_too_long": "Opis nie może przekraczać 500 znaków.",
+    "profile_name_required": "Nazwa profilu jest wymagana.",
+    "must_be_positive": "Wartość musi być równa 0 lub większa.",
+    "limit_too_high": "Wartość jest za wysoka.",
+    "message_too_short": "Wiadomość musi mieć co najmniej 10 znaków.",
+    "message_too_long": "Wiadomość nie może przekraczać 2000 znaków.",
+    "ean_required": "Kod kreskowy jest wymagany.",
+    "ean_format": "Proszę podać prawidłowy kod kreskowy (8 lub 13 cyfr).",
+    "product_name_required": "Nazwa produktu jest wymagana.",
+    "notes_too_long": "Notatki nie mogą przekraczać 500 znaków.",
+    "fixErrors": "Proszę poprawić {count} błąd(ów):",
+    "fixFormErrors": "Proszę poprawić błędy formularza"
   }
 }

@@ -627,5 +627,26 @@
     "tierLow": "Low concern",
     "tierModerate": "Moderate concern",
     "tierHigh": "High concern"
+  },
+  "validation": {
+    "email_invalid": "Please enter a valid email address.",
+    "password_required": "Password is required.",
+    "password_min_length": "Password must be at least 6 characters.",
+    "country_required": "Please select your country.",
+    "language_required": "Please select your language.",
+    "list_name_required": "List name is required.",
+    "list_name_too_long": "List name must be 100 characters or fewer.",
+    "description_too_long": "Description must be 500 characters or fewer.",
+    "profile_name_required": "Profile name is required.",
+    "must_be_positive": "Value must be 0 or greater.",
+    "limit_too_high": "Value is too high.",
+    "message_too_short": "Message must be at least 10 characters.",
+    "message_too_long": "Message must be 2000 characters or fewer.",
+    "ean_required": "Barcode is required.",
+    "ean_format": "Please enter a valid 8 or 13 digit barcode.",
+    "product_name_required": "Product name is required.",
+    "notes_too_long": "Notes must be 500 characters or fewer.",
+    "fixErrors": "Please fix {count} error(s):",
+    "fixFormErrors": "Please fix form errors"
   }
 }
