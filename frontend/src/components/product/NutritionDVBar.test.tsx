@@ -30,7 +30,7 @@ describe("NutritionDVBar", () => {
         <tbody>
           <NutritionDVBar label="Total Fat" rawValue="33 g" dv={highDV} />
         </tbody>
-      </table>
+      </table>,
     );
     expect(screen.getByText("Total Fat")).toBeInTheDocument();
     expect(screen.getByText("33 g")).toBeInTheDocument();
@@ -42,7 +42,7 @@ describe("NutritionDVBar", () => {
         <tbody>
           <NutritionDVBar label="Total Fat" rawValue="33 g" dv={highDV} />
         </tbody>
-      </table>
+      </table>,
     );
     expect(screen.getByText("47.1%")).toBeInTheDocument();
   });
@@ -53,7 +53,7 @@ describe("NutritionDVBar", () => {
         <tbody>
           <NutritionDVBar label="Total Fat" rawValue="33 g" dv={highDV} />
         </tbody>
-      </table>
+      </table>,
     );
     const bar = screen.getByRole("progressbar");
     expect(bar).toHaveAttribute("value", "47.1");
@@ -65,7 +65,7 @@ describe("NutritionDVBar", () => {
         <tbody>
           <NutritionDVBar label="Sugars" rawValue="3 g" dv={lowDV} />
         </tbody>
-      </table>
+      </table>,
     );
     expect(screen.getByText("3.3%")).toHaveClass("text-green-700");
   });
@@ -76,7 +76,7 @@ describe("NutritionDVBar", () => {
         <tbody>
           <NutritionDVBar label="Carbs" rawValue="52 g" dv={moderateDV} />
         </tbody>
-      </table>
+      </table>,
     );
     expect(screen.getByText("20%")).toHaveClass("text-amber-700");
   });
@@ -87,7 +87,7 @@ describe("NutritionDVBar", () => {
         <tbody>
           <NutritionDVBar label="Total Fat" rawValue="33 g" dv={highDV} />
         </tbody>
-      </table>
+      </table>,
     );
     expect(screen.getByText("47.1%")).toHaveClass("text-red-700");
   });
@@ -98,7 +98,7 @@ describe("NutritionDVBar", () => {
         <tbody>
           <NutritionDVBar label="Trans Fat" rawValue="—" dv={null} />
         </tbody>
-      </table>
+      </table>,
     );
     expect(screen.getByText("Trans Fat")).toBeInTheDocument();
     expect(screen.getByText("—")).toBeInTheDocument();
@@ -117,7 +117,7 @@ describe("NutritionDVBar", () => {
         <tbody>
           <NutritionDVBar label="Fat" rawValue="150 g" dv={overDV} />
         </tbody>
-      </table>
+      </table>,
     );
     expect(screen.getByText("214.3%")).toBeInTheDocument();
   });

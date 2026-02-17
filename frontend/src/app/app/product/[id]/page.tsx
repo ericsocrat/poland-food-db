@@ -24,6 +24,7 @@ import { ProductImageTabs } from "@/components/product/ProductImageTabs";
 import { NutritionDVBar } from "@/components/product/NutritionDVBar";
 import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
 import { DVLegend } from "@/components/product/DVLegend";
+import { ShareButton } from "@/components/product/ShareButton";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import type { ProductProfile, ProfileAlternative } from "@/lib/types";
@@ -162,6 +163,14 @@ export default function ProductDetailPage() {
                 <p className="text-sm text-gray-500">{profile.product.brand}</p>
               </div>
               <div className="flex items-center gap-2">
+                <ShareButton
+                  productName={
+                    profile.product.product_name_display ??
+                    profile.product.product_name
+                  }
+                  score={profile.scores.unhealthiness_score}
+                  productId={productId}
+                />
                 <AvoidBadge productId={productId} />
                 <AddToListMenu productId={productId} />
                 <CompareCheckbox productId={productId} />

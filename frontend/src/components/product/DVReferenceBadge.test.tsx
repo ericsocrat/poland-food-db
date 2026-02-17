@@ -9,7 +9,7 @@ describe("DVReferenceBadge", () => {
 
   it("renders personalized badge", () => {
     render(
-      <DVReferenceBadge referenceType="personalized" regulation="eu_ri" />
+      <DVReferenceBadge referenceType="personalized" regulation="eu_ri" />,
     );
     const badge = screen.getByText(/health profile/);
     expect(badge).toBeInTheDocument();
@@ -29,7 +29,7 @@ describe("DVReferenceBadge", () => {
 
   it("shows person emoji for personalized", () => {
     render(
-      <DVReferenceBadge referenceType="personalized" regulation="eu_ri" />
+      <DVReferenceBadge referenceType="personalized" regulation="eu_ri" />,
     );
     expect(screen.getByText(/👤/)).toBeInTheDocument();
   });
