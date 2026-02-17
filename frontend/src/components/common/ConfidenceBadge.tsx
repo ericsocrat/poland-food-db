@@ -5,6 +5,7 @@
  */
 
 import React from "react";
+import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -18,6 +19,8 @@ export interface ConfidenceBadgeProps {
   readonly percentage?: number;
   /** Size preset. @default "sm" */
   readonly size?: ConfidenceBadgeSize;
+  /** Show explanatory tooltip on hover. @default false */
+  readonly showTooltip?: boolean;
   /** Additional CSS classes. */
   readonly className?: string;
 }
@@ -65,13 +68,15 @@ export const ConfidenceBadge = React.memo(function ConfidenceBadge({
   level,
   percentage,
   size = "sm",
+  showTooltip = false,
   className = "",
 }: Readonly<ConfidenceBadgeProps>) {
   const config = level ? (LEVEL_CONFIGS[level] ?? FALLBACK) : FALLBACK;
   const showPercentage =
     percentage != null && percentage >= 0 && percentage <= 100;
+  const tooltipKey = level ? `tooltip.confidence.${level}` : undefined;
 
-  return (
+  const badge = (
     <span
       className={[
         "inline-flex items-center gap-1 rounded-full font-medium whitespace-nowrap",
@@ -88,4 +93,10 @@ export const ConfidenceBadge = React.memo(function ConfidenceBadge({
       {showPercentage && <span className="opacity-75">{percentage}%</span>}
     </span>
   );
+
+  if (showTooltip && tooltipKey) {
+    return <InfoTooltip messageKey={tooltipKey}>{badge}</InfoTooltip>;
+  }
+
+  return badge;
 });

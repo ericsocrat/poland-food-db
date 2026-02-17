@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { ConcernBadge } from "./ConcernBadge";
 
 describe("ConcernBadge", () => {
@@ -52,5 +54,18 @@ describe("ConcernBadge", () => {
     render(<ConcernBadge tier={99} label="Unknown" />);
     const badge = screen.getByTestId("concern-badge");
     expect(badge.className).toContain("bg-confidence-high/10");
+  });
+
+  it("shows tooltip on hover when showTooltip is true", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipPrimitive.Provider delayDuration={0}>
+        <ConcernBadge tier={3} label="High concern" showTooltip />
+      </TooltipPrimitive.Provider>,
+    );
+
+    await user.hover(screen.getByTestId("concern-badge"));
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toContain("High concern");
   });
 });

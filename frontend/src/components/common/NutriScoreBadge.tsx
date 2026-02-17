@@ -9,6 +9,7 @@
  */
 
 import React from "react";
+import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -20,6 +21,8 @@ export interface NutriScoreBadgeProps {
   readonly grade: string | null | undefined;
   /** Size preset. @default "md" */
   readonly size?: NutriScoreBadgeSize;
+  /** Show explanatory tooltip on hover. @default false */
+  readonly showTooltip?: boolean;
   /** Additional CSS classes. */
   readonly className?: string;
 }
@@ -47,6 +50,7 @@ const SIZE_CLASSES: Record<NutriScoreBadgeSize, string> = {
 export const NutriScoreBadge = React.memo(function NutriScoreBadge({
   grade,
   size = "md",
+  showTooltip = false,
   className = "",
 }: Readonly<NutriScoreBadgeProps>) {
   const normalized = grade?.toUpperCase() ?? "";
@@ -60,8 +64,11 @@ export const NutriScoreBadge = React.memo(function NutriScoreBadge({
     ? GRADE_CLASSES[normalized as NutriGrade]
     : "bg-surface-muted text-foreground-muted";
   const displayText = isValid ? normalized : "?";
+  const tooltipKey = isValid
+    ? `tooltip.nutriScore.${normalized}`
+    : "tooltip.nutriScore.unknown";
 
-  return (
+  const badge = (
     <span
       className={[
         "inline-flex items-center justify-center rounded-md font-bold",
@@ -76,4 +83,10 @@ export const NutriScoreBadge = React.memo(function NutriScoreBadge({
       {displayText}
     </span>
   );
+
+  if (showTooltip) {
+    return <InfoTooltip messageKey={tooltipKey}>{badge}</InfoTooltip>;
+  }
+
+  return badge;
 });

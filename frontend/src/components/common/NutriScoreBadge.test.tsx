@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { NutriScoreBadge } from "./NutriScoreBadge";
 
 describe("NutriScoreBadge", () => {
@@ -58,5 +60,18 @@ describe("NutriScoreBadge", () => {
     const el = screen.getByText("C");
     expect(el.className).toContain("text-foreground");
     expect(el.className).not.toContain("text-foreground-inverse");
+  });
+
+  it("shows tooltip on hover when showTooltip is true", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipPrimitive.Provider delayDuration={0}>
+        <NutriScoreBadge grade="A" showTooltip />
+      </TooltipPrimitive.Provider>,
+    );
+
+    await user.hover(screen.getByText("A"));
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toContain("Nutri-Score A");
   });
 });

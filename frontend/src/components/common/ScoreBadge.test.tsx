@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { ScoreBadge } from "./ScoreBadge";
 
 describe("ScoreBadge", () => {
@@ -70,5 +72,23 @@ describe("ScoreBadge", () => {
   it("has accessible aria-label", () => {
     render(<ScoreBadge score={42} />);
     expect(screen.getByLabelText("Score: 42")).toBeTruthy();
+  });
+
+  it("shows tooltip on hover when showTooltip is true", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipPrimitive.Provider delayDuration={0}>
+        <ScoreBadge score={15} showTooltip />
+      </TooltipPrimitive.Provider>,
+    );
+
+    await user.hover(screen.getByText("15"));
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toContain("Score 1–20");
+  });
+
+  it("does not render tooltip when showTooltip is false", () => {
+    render(<ScoreBadge score={15} />);
+    expect(screen.queryByRole("tooltip")).toBeNull();
   });
 });

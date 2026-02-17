@@ -12,6 +12,7 @@
  */
 
 import React from "react";
+import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -24,6 +25,8 @@ export interface ScoreBadgeProps {
   readonly size?: ScoreBadgeSize;
   /** Show the band label text alongside the score. */
   readonly showLabel?: boolean;
+  /** Show explanatory tooltip on hover. @default false */
+  readonly showTooltip?: boolean;
   /** Additional CSS classes. */
   readonly className?: string;
 }
@@ -44,12 +47,30 @@ const BANDS: BandConfig[] = [
   { label: "Extreme", bg: "bg-score-darkred/10", text: "text-score-darkred" },
 ];
 
+type ScoreBandKey = "green" | "yellow" | "orange" | "red" | "darkred";
+
+const BAND_KEYS: ScoreBandKey[] = [
+  "green",
+  "yellow",
+  "orange",
+  "red",
+  "darkred",
+];
+
 function getBand(score: number): BandConfig {
   if (score <= 20) return BANDS[0];
   if (score <= 40) return BANDS[1];
   if (score <= 60) return BANDS[2];
   if (score <= 80) return BANDS[3];
   return BANDS[4];
+}
+
+function getBandKey(score: number): ScoreBandKey {
+  if (score <= 20) return BAND_KEYS[0];
+  if (score <= 40) return BAND_KEYS[1];
+  if (score <= 60) return BAND_KEYS[2];
+  if (score <= 80) return BAND_KEYS[3];
+  return BAND_KEYS[4];
 }
 
 const NA_BAND: BandConfig = {
@@ -72,11 +93,15 @@ export const ScoreBadge = React.memo(function ScoreBadge({
   score,
   size = "md",
   showLabel = false,
+  showTooltip = false,
   className = "",
 }: Readonly<ScoreBadgeProps>) {
   const isValid = score != null && score >= 1 && score <= 100;
   const band = isValid ? getBand(score) : NA_BAND;
   const displayText = isValid ? String(score) : "N/A";
+  const tooltipKey = isValid
+    ? `tooltip.score.${getBandKey(score)}`
+    : undefined;
 
   if (!isValid && score != null) {
     if (process.env.NODE_ENV === "development") {
@@ -84,7 +109,7 @@ export const ScoreBadge = React.memo(function ScoreBadge({
     }
   }
 
-  return (
+  const badge = (
     <span
       className={[
         "inline-flex items-center gap-1.5 rounded-full font-semibold whitespace-nowrap",
@@ -101,4 +126,10 @@ export const ScoreBadge = React.memo(function ScoreBadge({
       {showLabel && <span className="font-medium">{band.label}</span>}
     </span>
   );
+
+  if (showTooltip && tooltipKey) {
+    return <InfoTooltip messageKey={tooltipKey}>{badge}</InfoTooltip>;
+  }
+
+  return badge;
 });

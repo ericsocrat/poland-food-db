@@ -11,6 +11,7 @@
  */
 
 import React from "react";
+import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -24,6 +25,8 @@ export interface AllergenBadgeProps {
   readonly allergenName: string;
   /** Size preset. @default "sm" */
   readonly size?: AllergenBadgeSize;
+  /** Show explanatory tooltip on hover. @default false */
+  readonly showTooltip?: boolean;
   /** Additional CSS classes. */
   readonly className?: string;
 }
@@ -69,11 +72,12 @@ export const AllergenBadge = React.memo(function AllergenBadge({
   status,
   allergenName,
   size = "sm",
+  showTooltip = false,
   className = "",
 }: Readonly<AllergenBadgeProps>) {
   const config = STATUS_CONFIGS[status] ?? STATUS_CONFIGS.present;
 
-  return (
+  const badge = (
     <span
       className={[
         "inline-flex items-center gap-1.5 rounded-full font-medium whitespace-nowrap",
@@ -90,4 +94,17 @@ export const AllergenBadge = React.memo(function AllergenBadge({
       {allergenName}
     </span>
   );
+
+  if (showTooltip) {
+    return (
+      <InfoTooltip
+        messageKey={`tooltip.allergen.${status}`}
+        params={{ name: allergenName }}
+      >
+        {badge}
+      </InfoTooltip>
+    );
+  }
+
+  return badge;
 });

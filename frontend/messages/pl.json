@@ -703,5 +703,55 @@
     "notes_too_long": "Notatki nie mogą przekraczać 500 znaków.",
     "fixErrors": "Proszę poprawić {count} błąd(ów):",
     "fixFormErrors": "Proszę poprawić błędy formularza"
+  },
+  "tooltip": {
+    "nutriScore": {
+      "A": "Nutri-Score A — Doskonała jakość odżywcza. Jedno z najzdrowszych wyborów w swojej kategorii.",
+      "B": "Nutri-Score B — Dobra jakość odżywcza. Solidny codzienny wybór.",
+      "C": "Nutri-Score C — Średnia jakość odżywcza. Odpowiedni z umiarem.",
+      "D": "Nutri-Score D — Słaba jakość odżywcza. Ogranicz spożycie.",
+      "E": "Nutri-Score E — Bardzo słaba jakość odżywcza. Lepiej unikać lub spożywać rzadko.",
+      "unknown": "Nutri-Score niedostępny — niewystarczające dane do obliczenia."
+    },
+    "nova": {
+      "1": "NOVA 1 — Nieprzetworzone lub minimalnie przetworzone. Żywność naturalna bez dodatków.",
+      "2": "NOVA 2 — Przetworzone składniki kulinarne. Oleje, masło, cukier, sól używane w gotowaniu.",
+      "3": "NOVA 3 — Żywność przetworzona. Warzywa konserwowe, wędliny, sery.",
+      "4": "NOVA 4 — Ultraprzetworzone. Zawiera dodatki, aromaty lub substancje nieużywane w domowym gotowaniu."
+    },
+    "score": {
+      "green": "Wynik 1–20 — Niskie ryzyko. Produkt dobrze wypada pod względem żywienia, przetworzenia i dodatków.",
+      "yellow": "Wynik 21–40 — Umiarkowane ryzyko. Ogólnie akceptowalny, jest miejsce na poprawę.",
+      "orange": "Wynik 41–60 — Podwyższone ryzyko. Rozważ alternatywy lub ogranicz spożycie.",
+      "red": "Wynik 61–80 — Wysokie ryzyko. Znaczące zastrzeżenia żywieniowe lub przetwórcze.",
+      "darkred": "Wynik 81–100 — Skrajne ryzyko. Zidentyfikowano wiele poważnych zastrzeżeń."
+    },
+    "confidence": {
+      "high": "Wysoka pewność — Kompleksowe, zweryfikowane dane z wielu źródeł.",
+      "medium": "Średnia pewność — Większość pól wypełniona, niektóre mogą być szacunkowe.",
+      "low": "Niska pewność — Ograniczone dostępne dane. Wyniki mogą się zmienić w miarę poprawy danych."
+    },
+    "concern": {
+      "0": "Brak zastrzeżeń — Ogólnie uznawane za bezpieczne przez EFSA.",
+      "1": "Niskie ryzyko — Drobne problemy odnotowane w niektórych badaniach. Bezpieczne dla większości ludzi.",
+      "2": "Umiarkowane ryzyko — Zachowaj ostrożność. Ogranicz spożycie jeśli to możliwe.",
+      "3": "Wysokie ryzyko — Znaczące dowody na zagrożenia zdrowotne. Unikaj lub minimalizuj."
+    },
+    "allergen": {
+      "present": "Zawiera {name} — Ten produkt wymienia {name} jako składnik.",
+      "traces": "Może zawierać śladowe ilości {name} — Możliwe zanieczyszczenie krzyżowe.",
+      "free": "Bez {name} — Nie wykryto {name} w tym produkcie."
+    },
+    "nutrient": {
+      "low": "{nutrient}: {value}{unit} na 100g — Niski poziom (FSA zielony).",
+      "medium": "{nutrient}: {value}{unit} na 100g — Średni poziom (FSA bursztynowy). Kontroluj spożycie.",
+      "high": "{nutrient}: {value}{unit} na 100g — Wysoki poziom (FSA czerwony). Ogranicz spożycie."
+    },
+    "scoreBreakdown": {
+      "title": "Dlaczego taki wynik?",
+      "error": "Nie udało się załadować rozkładu wyniku. Spróbuj ponownie.",
+      "rank": "Pozycja #{rank} z {total} w kategorii",
+      "categoryAvg": "Średnia kategorii: {avg}/100"
+    }
   }
 }

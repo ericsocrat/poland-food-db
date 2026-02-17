@@ -11,6 +11,7 @@
  */
 
 import React from "react";
+import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -24,6 +25,8 @@ export interface NutrientTrafficLightProps {
   readonly value: number;
   /** Display unit. @default "g" */
   readonly unit?: string;
+  /** Show explanatory tooltip on hover. @default false */
+  readonly showTooltip?: boolean;
   /** Additional CSS classes. */
   readonly className?: string;
 }
@@ -79,13 +82,14 @@ export const NutrientTrafficLight = React.memo(function NutrientTrafficLight({
   nutrient,
   value,
   unit = "g",
+  showTooltip = false,
   className = "",
 }: Readonly<NutrientTrafficLightProps>) {
   const level = classifyLevel(nutrient, value);
   const config = LEVEL_CLASSES[level];
   const nutrientLabel = NUTRIENT_LABELS[nutrient];
 
-  return (
+  const badge = (
     <span
       className={[
         "inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap",
@@ -114,6 +118,23 @@ export const NutrientTrafficLight = React.memo(function NutrientTrafficLight({
       </span>
     </span>
   );
+
+  if (showTooltip) {
+    return (
+      <InfoTooltip
+        messageKey={`tooltip.nutrient.${level}`}
+        params={{
+          nutrient: nutrientLabel,
+          value: String(value),
+          unit,
+        }}
+      >
+        {badge}
+      </InfoTooltip>
+    );
+  }
+
+  return badge;
 });
 
 /** Exported for testing purposes. */

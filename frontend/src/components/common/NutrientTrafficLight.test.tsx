@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import {
   NutrientTrafficLight,
   classifyLevel,
@@ -87,6 +89,19 @@ describe("NutrientTrafficLight", () => {
     it("has accessible aria-label", () => {
       render(<NutrientTrafficLight nutrient="saturates" value={3} />);
       expect(screen.getByLabelText("Saturates: 3g (Medium)")).toBeTruthy();
+    });
+
+    it("shows tooltip on hover when showTooltip is true", async () => {
+      const user = userEvent.setup();
+      render(
+        <TooltipPrimitive.Provider delayDuration={0}>
+          <NutrientTrafficLight nutrient="sugars" value={25} showTooltip />
+        </TooltipPrimitive.Provider>,
+      );
+
+      await user.hover(screen.getByLabelText("Sugars: 25g (High)"));
+      const tooltip = await screen.findByRole("tooltip");
+      expect(tooltip.textContent).toContain("Sugars");
     });
   });
 

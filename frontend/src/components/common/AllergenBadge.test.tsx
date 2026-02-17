@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { AllergenBadge } from "./AllergenBadge";
 
 describe("AllergenBadge", () => {
@@ -46,5 +48,18 @@ describe("AllergenBadge", () => {
     render(<AllergenBadge status="present" allergenName="Gluten" size="md" />);
     const badge = screen.getByLabelText("Contains Gluten");
     expect(badge.className).toContain("text-sm");
+  });
+
+  it("shows tooltip on hover when showTooltip is true", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipPrimitive.Provider delayDuration={0}>
+        <AllergenBadge status="present" allergenName="Gluten" showTooltip />
+      </TooltipPrimitive.Provider>,
+    );
+
+    await user.hover(screen.getByText("Gluten"));
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toContain("Gluten");
   });
 });

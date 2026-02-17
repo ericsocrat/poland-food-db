@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { NovaBadge } from "./NovaBadge";
 
 describe("NovaBadge", () => {
@@ -52,5 +54,18 @@ describe("NovaBadge", () => {
   it("has accessible aria-label for unknown group", () => {
     render(<NovaBadge group={null} />);
     expect(screen.getByLabelText("NOVA unknown")).toBeTruthy();
+  });
+
+  it("shows tooltip on hover when showTooltip is true", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipPrimitive.Provider delayDuration={0}>
+        <NovaBadge group={4} showTooltip />
+      </TooltipPrimitive.Provider>,
+    );
+
+    await user.hover(screen.getByText("4"));
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toContain("NOVA 4");
   });
 });

@@ -703,5 +703,55 @@
     "notes_too_long": "Notes must be 500 characters or fewer.",
     "fixErrors": "Please fix {count} error(s):",
     "fixFormErrors": "Please fix form errors"
+  },
+  "tooltip": {
+    "nutriScore": {
+      "A": "Nutri-Score A — Excellent nutritional quality. Among the healthiest choices in its category.",
+      "B": "Nutri-Score B — Good nutritional quality. A solid everyday choice.",
+      "C": "Nutri-Score C — Average nutritional quality. Fine in moderation.",
+      "D": "Nutri-Score D — Poor nutritional quality. Limit consumption.",
+      "E": "Nutri-Score E — Very poor nutritional quality. Best avoided or consumed rarely.",
+      "unknown": "Nutri-Score unavailable — insufficient data to calculate."
+    },
+    "nova": {
+      "1": "NOVA 1 — Unprocessed or minimally processed. Whole foods with no added substances.",
+      "2": "NOVA 2 — Processed culinary ingredients. Oils, butter, sugar, salt used in cooking.",
+      "3": "NOVA 3 — Processed food. Canned vegetables, cured meats, cheese.",
+      "4": "NOVA 4 — Ultra-processed. Contains additives, flavors, or substances not used in home cooking."
+    },
+    "score": {
+      "green": "Score 1–20 — Low risk. This product scores well across nutrition, processing, and additives.",
+      "yellow": "Score 21–40 — Moderate risk. Generally acceptable, some room for improvement.",
+      "orange": "Score 41–60 — Elevated risk. Consider alternatives or limit intake.",
+      "red": "Score 61–80 — High risk. Significant nutritional or processing concerns.",
+      "darkred": "Score 81–100 — Extreme risk. Multiple serious concerns identified."
+    },
+    "confidence": {
+      "high": "High confidence — Comprehensive, verified data from multiple sources.",
+      "medium": "Medium confidence — Most fields populated, some may be estimated.",
+      "low": "Low confidence — Limited data available. Scores may change as data improves."
+    },
+    "concern": {
+      "0": "No concern — Generally recognized as safe by EFSA.",
+      "1": "Low concern — Minor issues noted in some studies. Safe for most people.",
+      "2": "Moderate concern — Use caution. Limit intake if possible.",
+      "3": "High concern — Significant evidence of health risks. Avoid or minimize."
+    },
+    "allergen": {
+      "present": "Contains {name} — This product lists {name} as an ingredient.",
+      "traces": "May contain traces of {name} — Cross-contamination possible.",
+      "free": "Free from {name} — No {name} detected in this product."
+    },
+    "nutrient": {
+      "low": "{nutrient}: {value}{unit} per 100g — Low level (FSA green).",
+      "medium": "{nutrient}: {value}{unit} per 100g — Medium level (FSA amber). Watch your intake.",
+      "high": "{nutrient}: {value}{unit} per 100g — High level (FSA red). Limit consumption."
+    },
+    "scoreBreakdown": {
+      "title": "Why this score?",
+      "error": "Could not load score breakdown. Please try again.",
+      "rank": "Ranked #{rank} of {total} in category",
+      "categoryAvg": "Category average: {avg}/100"
+    }
   }
 }

@@ -11,6 +11,7 @@
  */
 
 import React from "react";
+import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -24,6 +25,8 @@ export interface NovaBadgeProps {
   readonly size?: NovaBadgeSize;
   /** Show group label text. */
   readonly showLabel?: boolean;
+  /** Show explanatory tooltip on hover. @default false */
+  readonly showTooltip?: boolean;
   /** Additional CSS classes. */
   readonly className?: string;
 }
@@ -59,6 +62,7 @@ export const NovaBadge = React.memo(function NovaBadge({
   group,
   size = "md",
   showLabel = false,
+  showTooltip = false,
   className = "",
 }: Readonly<NovaBadgeProps>) {
   const isValid =
@@ -75,7 +79,9 @@ export const NovaBadge = React.memo(function NovaBadge({
     console.warn(`NovaBadge: unexpected group ${group}, expected 1–4`);
   }
 
-  return (
+  const tooltipKey = isValid ? `tooltip.nova.${group}` : undefined;
+
+  const badge = (
     <span
       className={[
         "inline-flex items-center gap-1.5 rounded-full font-semibold whitespace-nowrap",
@@ -92,4 +98,10 @@ export const NovaBadge = React.memo(function NovaBadge({
       {showLabel && <span className="font-medium">{config.label}</span>}
     </span>
   );
+
+  if (showTooltip && tooltipKey) {
+    return <InfoTooltip messageKey={tooltipKey}>{badge}</InfoTooltip>;
+  }
+
+  return badge;
 });

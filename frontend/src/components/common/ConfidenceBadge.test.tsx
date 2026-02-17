@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { ConfidenceBadge } from "./ConfidenceBadge";
 
 describe("ConfidenceBadge", () => {
@@ -47,5 +49,18 @@ describe("ConfidenceBadge", () => {
   it("has accessible aria-label without percentage", () => {
     render(<ConfidenceBadge level="high" />);
     expect(screen.getByLabelText("Confidence: High")).toBeTruthy();
+  });
+
+  it("shows tooltip on hover when showTooltip is true", async () => {
+    const user = userEvent.setup();
+    render(
+      <TooltipPrimitive.Provider delayDuration={0}>
+        <ConfidenceBadge level="high" showTooltip />
+      </TooltipPrimitive.Provider>,
+    );
+
+    await user.hover(screen.getByText("High"));
+    const tooltip = await screen.findByRole("tooltip");
+    expect(tooltip.textContent).toContain("High confidence");
   });
 });
