@@ -82,7 +82,7 @@ function CategoryCard({
 
   return (
     <Link href={`/app/categories/${category.slug}`}>
-      <div className="card flex flex-col items-center gap-2 p-4 text-center transition-shadow hover:shadow-md">
+      <div className="card hover-lift-press flex flex-col items-center gap-2 p-4 text-center">
         <span className="text-3xl">{category.icon_emoji}</span>
         <p className="text-sm font-semibold text-foreground">
           {category.display_name}

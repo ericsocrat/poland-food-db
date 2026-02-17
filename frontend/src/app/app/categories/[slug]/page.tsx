@@ -192,7 +192,7 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
 
   return (
     <Link href={`/app/product/${product.product_id}`}>
-      <li className="card flex items-center gap-3 transition-shadow hover:shadow-md">
+      <li className="card hover-lift-press flex items-center gap-3">
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
         >

@@ -335,7 +335,7 @@ function ListItemRow({
     : "bg-surface-muted text-foreground-secondary";
 
   return (
-    <li className="card flex items-center gap-3 transition-shadow hover:shadow-md">
+    <li className="card hover-lift-press flex items-center gap-3">
       <Link
         href={`/app/product/${item.product_id}`}
         className="flex min-w-0 flex-1 items-center gap-3"

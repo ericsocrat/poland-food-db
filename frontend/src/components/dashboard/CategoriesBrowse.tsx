@@ -17,7 +17,7 @@ function CategoryChip({
   return (
     <Link
       href={`/app/categories/${category.slug}`}
-      className="flex shrink-0 flex-col items-center gap-1.5 rounded-xl border bg-surface px-3 py-3 text-center shadow-sm transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+      className="flex shrink-0 flex-col items-center gap-1.5 rounded-xl border bg-surface px-3 py-3 text-center shadow-sm hover-lift-press"
       style={{ minWidth: "5rem" }}
     >
       <span className="text-2xl" aria-hidden="true">

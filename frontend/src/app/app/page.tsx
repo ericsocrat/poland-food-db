@@ -98,7 +98,7 @@ function ProductRow({
   return (
     <Link
       href={`/app/product/${product.product_id}`}
-      className="card flex items-center gap-3 transition-shadow hover:shadow-md"
+      className="card hover-lift-press flex items-center gap-3"
     >
       <NutriBadge grade={product.nutri_score_label} />
       <div className="min-w-0 flex-1">

@@ -118,6 +118,17 @@
     --transition-fast: 150ms ease;
     --transition-normal: 200ms ease;
     --transition-slow: 300ms ease;
+
+    /* ── Motion (#61) ── */
+    --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
+    --ease-accelerate: cubic-bezier(0.4, 0, 1, 1);
+    --ease-spring: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+    --duration-instant: 100ms;
+    --duration-fast: 150ms;
+    --duration-normal: 200ms;
+    --duration-slow: 300ms;
   }
 
   /* ── Dark mode overrides ── */
@@ -270,6 +281,12 @@
     body {
       transition: none;
     }
+    :root {
+      --duration-instant: 0ms;
+      --duration-fast: 0ms;
+      --duration-normal: 0ms;
+      --duration-slow: 0ms;
+    }
   }
 }
 
@@ -278,7 +295,8 @@
     @apply inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2.5
            text-sm font-semibold text-foreground-inverse shadow-sm transition-colors
            hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2
-           focus-visible:outline-brand disabled:opacity-50 disabled:cursor-not-allowed;
+           focus-visible:outline-brand disabled:opacity-50 disabled:cursor-not-allowed
+           press-scale;
     /* Prevent double-tap zoom on buttons in PWA */
     touch-action: manipulation;
   }
@@ -288,7 +306,8 @@
            bg-surface px-4 py-2.5 text-sm font-semibold text-foreground-secondary shadow-sm
            transition-colors hover:bg-surface-subtle focus-visible:outline-2
            focus-visible:outline-offset-2 focus-visible:outline-brand
-           disabled:opacity-50 disabled:cursor-not-allowed;
+           disabled:opacity-50 disabled:cursor-not-allowed
+           press-scale;
     touch-action: manipulation;
   }
 
@@ -300,6 +319,44 @@
 
   .card {
     @apply rounded-xl border bg-surface p-4 shadow-sm;
+  }
+
+  /* ── Motion Utility Classes (#61) ── */
+  .transition-interactive {
+    transition: transform var(--duration-fast) var(--ease-standard),
+                opacity var(--duration-fast) var(--ease-standard),
+                box-shadow var(--duration-fast) var(--ease-standard);
+    will-change: transform;
+  }
+
+  .hover-lift {
+    transition: transform var(--duration-fast) var(--ease-standard),
+                opacity var(--duration-fast) var(--ease-standard),
+                box-shadow var(--duration-fast) var(--ease-standard);
+  }
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
+  }
+
+  .press-scale {
+    transition: transform var(--duration-instant) var(--ease-standard);
+  }
+  .press-scale:active {
+    transform: scale(0.97);
+  }
+
+  .hover-lift-press {
+    transition: transform var(--duration-fast) var(--ease-standard),
+                box-shadow var(--duration-fast) var(--ease-standard);
+  }
+  .hover-lift-press:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
+  }
+  .hover-lift-press:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: none;
   }
 }
 
@@ -319,6 +376,46 @@
   from {
     opacity: 0;
     transform: translateY(1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Dialog / Modal animations (#61) ── */
+@keyframes dialogIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes backdropIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ── Staggered entrance for lists (#61) ── */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(0.5rem);
   }
   to {
     opacity: 1;

@@ -482,7 +482,7 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
 
   return (
     <li
-      className={`card flex items-center gap-3 transition-shadow hover:shadow-md ${
+      className={`card hover-lift-press flex items-center gap-3 ${
         product.is_avoided ? "opacity-50" : ""
       }`}
     >

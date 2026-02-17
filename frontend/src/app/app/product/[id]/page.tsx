@@ -639,7 +639,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
 
   return (
     <Link href={`/app/product/${alt.product_id}`}>
-      <div className="card flex items-center gap-3 transition-shadow hover:shadow-md">
+      <div className="card hover-lift-press flex items-center gap-3">
         <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-lg font-bold text-green-600">
           {alt.unhealthiness_score}
         </div>

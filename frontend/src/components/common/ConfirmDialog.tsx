@@ -67,7 +67,7 @@ export function ConfirmDialog({
     <dialog
       ref={dialogRef}
       aria-labelledby="confirm-dialog-title"
-      className="fixed inset-0 z-50 m-auto w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl backdrop:bg-black/30"
+      className="fixed inset-0 z-50 m-auto w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl backdrop:bg-black/30 open:animate-[dialogIn_200ms_var(--ease-decelerate)] open:backdrop:animate-[backdropIn_150ms_var(--ease-standard)]"
     >
       <h3
         id="confirm-dialog-title"

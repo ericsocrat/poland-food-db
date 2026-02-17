@@ -22,7 +22,7 @@ export function QuickActions() {
           <Link
             key={action.key}
             href={action.href}
-            className="card group flex flex-col items-center gap-2 py-4 text-center transition-all hover:shadow-md hover:scale-[1.02] active:scale-[0.98]"
+            className="card hover-lift-press group flex flex-col items-center gap-2 py-4 text-center"
           >
             <span className="text-2xl sm:text-3xl" aria-hidden="true">
               {action.icon}

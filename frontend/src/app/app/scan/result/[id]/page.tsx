@@ -354,7 +354,7 @@ function ScanAlternativeCard({
 
   return (
     <Link href={`/app/product/${alt.product_id}`}>
-      <div className="card flex items-center gap-3 border-green-100 transition-shadow hover:shadow-md">
+      <div className="card hover-lift-press flex items-center gap-3 border-green-100">
         {/* Score */}
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${altBand.bg} ${altBand.color}`}
