@@ -1,5 +1,6 @@
 import type { NutrientDV, DVLevel } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
+import { TrafficLightChip, type TrafficLight } from "./TrafficLightChip";
 
 const LEVEL_COLORS: Record<DVLevel, { bar: string; text: string }> = {
   low: { bar: "bg-green-500", text: "text-green-700" },
@@ -11,15 +12,26 @@ interface NutritionDVBarProps {
   readonly label: string;
   readonly rawValue: string;
   readonly dv: NutrientDV | null;
+  readonly trafficLight?: TrafficLight | null;
 }
 
-export function NutritionDVBar({ label, rawValue, dv }: NutritionDVBarProps) {
+export function NutritionDVBar({
+  label,
+  rawValue,
+  dv,
+  trafficLight,
+}: NutritionDVBarProps) {
   const { t } = useTranslation();
 
   if (!dv) {
     return (
       <tr className="border-b border">
-        <td className="py-2 text-foreground-secondary">{label}</td>
+        <td className="py-2 text-foreground-secondary">
+          <span className="flex items-center gap-1.5">
+            {label}
+            {trafficLight && <TrafficLightChip level={trafficLight} />}
+          </span>
+        </td>
         <td className="py-2 text-right font-medium text-foreground">
           {rawValue}
         </td>
@@ -33,8 +45,15 @@ export function NutritionDVBar({ label, rawValue, dv }: NutritionDVBarProps) {
 
   return (
     <tr className="border-b border">
-      <td className="py-2 text-foreground-secondary">{label}</td>
-      <td className="py-2 text-right font-medium text-foreground">{rawValue}</td>
+      <td className="py-2 text-foreground-secondary">
+        <span className="flex items-center gap-1.5">
+          {label}
+          {trafficLight && <TrafficLightChip level={trafficLight} />}
+        </span>
+      </td>
+      <td className="py-2 text-right font-medium text-foreground">
+        {rawValue}
+      </td>
       <td className="w-32 py-2 pl-3">
         <div className="flex items-center gap-2">
           <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-surface-muted">

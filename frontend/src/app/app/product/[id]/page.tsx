@@ -30,6 +30,9 @@ import { NutritionDVBar } from "@/components/product/NutritionDVBar";
 import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
 import { DVLegend } from "@/components/product/DVLegend";
 import { ShareButton } from "@/components/product/ShareButton";
+import { ScoreRadarChart } from "@/components/product/ScoreRadarChart";
+import { getTrafficLight } from "@/components/product/TrafficLightChip";
+import { NovaIndicator } from "@/components/product/NovaIndicator";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -417,7 +420,8 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
                     href={`/app/ingredient/${ing.ingredient_id}`}
                     className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors hover:opacity-80 ${style.bg} ${style.color} ${style.border}`}
                   >
-                    {ing.is_additive ? "🧪" : "🌿"} {cleanIngredientName(ing.name)}
+                    {ing.is_additive ? "🧪" : "🌿"}{" "}
+                    {cleanIngredientName(ing.name)}
                   </Link>
                 );
               })}
@@ -515,46 +519,55 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       label: t("product.caloriesLabel"),
       value: `${n.calories_kcal} kcal`,
       dv: dvPer100g?.calories ?? null,
+      tl: null as ReturnType<typeof getTrafficLight>,
     },
     {
       label: t("product.totalFat"),
       value: `${n.total_fat_g} g`,
       dv: dvPer100g?.total_fat ?? null,
+      tl: getTrafficLight("total_fat", n.total_fat_g),
     },
     {
       label: t("product.saturatedFat"),
       value: `${n.saturated_fat_g} g`,
       dv: dvPer100g?.saturated_fat ?? null,
+      tl: getTrafficLight("saturated_fat", n.saturated_fat_g),
     },
     {
       label: t("product.transFat"),
       value: n.trans_fat_g === null ? "—" : `${n.trans_fat_g} g`,
       dv: dvPer100g?.trans_fat ?? null,
+      tl: null as ReturnType<typeof getTrafficLight>,
     },
     {
       label: t("product.carbs"),
       value: `${n.carbs_g} g`,
       dv: dvPer100g?.carbs ?? null,
+      tl: null as ReturnType<typeof getTrafficLight>,
     },
     {
       label: t("product.sugars"),
       value: `${n.sugars_g} g`,
       dv: dvPer100g?.sugars ?? null,
+      tl: getTrafficLight("sugars", n.sugars_g),
     },
     {
       label: t("product.fibre"),
       value: n.fibre_g === null ? "—" : `${n.fibre_g} g`,
       dv: dvPer100g?.fiber ?? null,
+      tl: null as ReturnType<typeof getTrafficLight>,
     },
     {
       label: t("product.protein"),
       value: `${n.protein_g} g`,
       dv: dvPer100g?.protein ?? null,
+      tl: null as ReturnType<typeof getTrafficLight>,
     },
     {
       label: t("product.salt"),
       value: `${n.salt_g} g`,
       dv: dvPer100g?.salt ?? null,
+      tl: getTrafficLight("salt", n.salt_g),
     },
   ];
 
@@ -579,6 +592,7 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
               label={row.label}
               rawValue={row.value}
               dv={row.dv}
+              trafficLight={row.tl}
             />
           ))}
         </tbody>
@@ -714,6 +728,27 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
         <p className="text-sm text-foreground-secondary">{scores.headline}</p>
       </div>
 
+      {/* Radar chart */}
+      {Array.isArray(scores.score_breakdown) &&
+        scores.score_breakdown.length > 0 && (
+          <div className="card">
+            <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+              {t("product.scoreBreakdown")}
+            </h3>
+            <ScoreRadarChart breakdown={scores.score_breakdown} />
+          </div>
+        )}
+
+      {/* NOVA processing indicator */}
+      {scores.nova_group && (
+        <div className="card">
+          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+            {t("product.processingLevel")}
+          </h3>
+          <NovaIndicator novaGroup={scores.nova_group} />
+        </div>
+      )}
+
       {/* Score breakdown factors */}
       {topFactors.length > 0 && (
         <div className="card">
@@ -771,7 +806,9 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           </p>
           <p>
             {t("product.position", {
-              position: formatSnakeCase(scores.category_context.relative_position),
+              position: formatSnakeCase(
+                scores.category_context.relative_position,
+              ),
             })}
           </p>
         </div>

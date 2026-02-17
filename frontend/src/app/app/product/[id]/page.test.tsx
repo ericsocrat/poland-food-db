@@ -619,7 +619,8 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("Saturated Fat")).toBeInTheDocument();
     });
     expect(screen.getByText("+8.5")).toBeInTheDocument();
-    expect(screen.getByText("Salt")).toBeInTheDocument();
+    // "Salt" appears in both radar chart label and factors list
+    expect(screen.getAllByText("Salt").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("+6.2")).toBeInTheDocument();
   });
 
