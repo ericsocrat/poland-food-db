@@ -19,6 +19,8 @@ import {
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
+import { ProductHeroImage } from "@/components/product/ProductHeroImage";
+import { ProductImageTabs } from "@/components/product/ProductImageTabs";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import type { ProductProfile, ProfileAlternative } from "@/lib/types";
@@ -121,6 +123,18 @@ export default function ProductDetailPage() {
 
       {/* Header */}
       <div className="card">
+        {/* Product Hero Image */}
+        <div className="mb-4">
+          <ProductHeroImage
+            images={profile.images}
+            productName={
+              profile.product.product_name_display ??
+              profile.product.product_name
+            }
+            categoryIcon={profile.product.category_icon}
+          />
+        </div>
+
         <div className="flex items-start gap-4">
           <div
             className={`flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl text-2xl font-bold ${band.bg} ${band.color}`}
@@ -418,6 +432,14 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           </p>
         </div>
       </div>
+
+      {/* Product image gallery */}
+      <ProductImageTabs
+        images={profile.images}
+        productName={
+          profile.product.product_name_display ?? profile.product.product_name
+        }
+      />
     </div>
   );
 }

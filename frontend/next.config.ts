@@ -8,6 +8,16 @@ const withSerwist = withSerwistInit({
 });
 
 const nextConfig: NextConfig = {
+  // Allow Open Food Facts product images
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "images.openfoodfacts.org",
+        pathname: "/images/products/**",
+      },
+    ],
+  },
   // Security headers
   async headers() {
     return [

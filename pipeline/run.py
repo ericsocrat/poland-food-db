@@ -200,6 +200,8 @@ def _generate_sql_output(
             f"  PIPELINE__{slug}__03_add_nutrition.sql ({len(products)} nutrition rows)"
         )
         print(f"  PIPELINE__{slug}__04_scoring.sql")
+        print(f"  PIPELINE__{slug}__05_source_provenance.sql")
+        print(f"  PIPELINE__{slug}__06_add_images.sql")
         return
 
     print("Generating SQL files...")

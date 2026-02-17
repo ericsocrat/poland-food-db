@@ -8,7 +8,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(75);
+SELECT plan(88);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -482,6 +482,92 @@ SELECT lives_ok(
 SELECT ok(
   (public.api_get_product_profile_by_ean('0000000000000')) ? 'error',
   'unknown EAN returns error key'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 10. Product Images — images key in api_get_product_profile
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Profile should have images key
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint)) ? 'images',
+  'profile has images key'
+);
+
+-- images.has_image should be false when no images exist
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'images'->>'has_image')::boolean = false,
+  'images.has_image is false when no images inserted'
+);
+
+-- images.primary should be null when no images exist
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint))->'images'->'primary' IS NULL
+  OR (public.api_get_product_profile(999997::bigint))->'images'->>'primary' = 'null',
+  'images.primary is null when no images inserted'
+);
+
+-- images.additional should be empty array when no images exist
+SELECT is(
+  jsonb_array_length((public.api_get_product_profile(999997::bigint))->'images'->'additional'),
+  0,
+  'images.additional is empty array when no images inserted'
+);
+
+-- Insert test images
+INSERT INTO public.product_images (product_id, url, source, image_type, is_primary, alt_text, off_image_id)
+VALUES
+  (999997, 'https://images.openfoodfacts.org/images/products/123/front.jpg', 'off_api', 'front', true, 'Front of pgTAP product', 'front_pl.123.400'),
+  (999997, 'https://images.openfoodfacts.org/images/products/123/ingredients.jpg', 'off_api', 'ingredients', false, 'Ingredients of pgTAP product', 'ingredients_pl.456.400'),
+  (999997, 'https://images.openfoodfacts.org/images/products/123/nutrition.jpg', 'off_api', 'nutrition_label', false, 'Nutrition label of pgTAP product', 'nutrition_pl.789.400');
+
+-- After insert: has_image should be true
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'images'->>'has_image')::boolean = true,
+  'images.has_image is true after inserting images'
+);
+
+-- primary should not be null
+SELECT ok(
+  (public.api_get_product_profile(999997::bigint))->'images'->'primary' IS NOT NULL
+  AND (public.api_get_product_profile(999997::bigint))->'images'->>'primary' <> 'null',
+  'images.primary is not null after inserting primary image'
+);
+
+-- primary should have url
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'images'->'primary') ? 'url',
+  'images.primary has url field'
+);
+
+-- primary image_type should be front
+SELECT is(
+  (public.api_get_product_profile(999997::bigint))->'images'->'primary'->>'image_type',
+  'front',
+  'primary image type is front'
+);
+
+-- additional should have 2 images (ingredients + nutrition_label)
+SELECT is(
+  jsonb_array_length((public.api_get_product_profile(999997::bigint))->'images'->'additional'),
+  2,
+  'images.additional has 2 non-primary images'
+);
+
+-- primary image url should match
+SELECT is(
+  (public.api_get_product_profile(999997::bigint))->'images'->'primary'->>'url',
+  'https://images.openfoodfacts.org/images/products/123/front.jpg',
+  'primary image url matches expected'
+);
+
+-- Cleanup test images (rollback handles it, but be explicit)
+DELETE FROM public.product_images WHERE product_id = 999997;
+
+-- After cleanup: has_image should be false again
+SELECT ok(
+  ((public.api_get_product_profile(999997::bigint))->'images'->>'has_image')::boolean = false,
+  'images.has_image is false after removing images'
 );
 
 SELECT * FROM finish();

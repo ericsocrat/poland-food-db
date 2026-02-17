@@ -181,6 +181,11 @@ function makeProfile(overrides: Record<string, unknown> = {}) {
       high_additive_load: false,
       has_palm_oil: true,
     },
+    images: {
+      has_image: false,
+      primary: null,
+      additional: [],
+    },
     ...overrides,
   };
 }

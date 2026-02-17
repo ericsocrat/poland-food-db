@@ -1,11 +1,12 @@
 """SQL file generator for the poland-food-db pipeline.
 
-Generates the 4-file SQL pattern used by every category pipeline:
+Generates the 5-file SQL pattern used by every category pipeline:
 
 1. ``PIPELINE__{cat}__01_insert_products.sql``
 2. ``PIPELINE__{cat}__03_add_nutrition.sql``
 3. ``PIPELINE__{cat}__04_scoring.sql``
 4. ``PIPELINE__{cat}__05_source_provenance.sql``
+5. ``PIPELINE__{cat}__06_add_images.sql``
 """
 
 from __future__ import annotations
@@ -358,6 +359,86 @@ WHERE p.country = {_sql_text(country)} AND p.brand = d.brand
 """
 
 
+def _gen_06_add_images(
+    category: str, products: list[dict], today: str, country: str = "PL"
+) -> str:
+    """Generate file 06 — add product images.
+
+    Inserts image URLs from the OFF API into the ``product_images`` table.
+    Each product can have up to 3 images: front, ingredients, nutrition_label.
+    """
+    # Gather products that have image URLs
+    image_rows: list[str] = []
+    for p in products:
+        ean = p.get("ean") or ""
+        if not ean:
+            continue
+
+        brand = _sql_text(p["brand"])
+        name = _sql_text(p["product_name"])
+
+        # Try each image type
+        for off_key, image_type in [
+            ("image_front_url", "front"),
+            ("image_ingredients_url", "ingredients"),
+            ("image_nutrition_url", "nutrition_label"),
+        ]:
+            url = p.get(off_key)
+            if not url or not url.startswith("https://"):
+                continue
+
+            is_primary = "true" if image_type == "front" else "false"
+            off_id = _sql_text(f"{image_type}_{ean}")
+            alt = _sql_text(f"{image_type.replace('_', ' ').title()} — EAN {ean}")
+
+            image_rows.append(
+                f"    ({brand}, {name}, {_sql_text(url)}, 'off_api', "
+                f"{_sql_text(image_type)}, {is_primary}, {alt}, {off_id})"
+            )
+
+    if not image_rows:
+        return f"""\
+-- PIPELINE ({category}): add product images
+-- Generated: {today}
+
+-- No product images available from OFF API for this category.
+"""
+
+    image_block = ",\n".join(image_rows)
+
+    return f"""\
+-- PIPELINE ({category}): add product images
+-- Source: Open Food Facts API image URLs
+-- Generated: {today}
+
+-- 1. Remove existing OFF images for this category
+DELETE FROM product_images
+WHERE source = 'off_api'
+  AND product_id IN (
+    SELECT p.product_id FROM products p
+    WHERE p.country = {_sql_text(country)} AND p.category = {_sql_text(category)}
+      AND p.is_deprecated IS NOT TRUE
+  );
+
+-- 2. Insert images
+INSERT INTO product_images
+  (product_id, url, source, image_type, is_primary, alt_text, off_image_id)
+SELECT
+  p.product_id, d.url, d.source, d.image_type, d.is_primary, d.alt_text, d.off_image_id
+FROM (
+  VALUES
+{image_block}
+) AS d(brand, product_name, url, source, image_type, is_primary, alt_text, off_image_id)
+JOIN products p ON p.country = {_sql_text(country)} AND p.brand = d.brand AND p.product_name = d.product_name
+  AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE
+ON CONFLICT (off_image_id) WHERE off_image_id IS NOT NULL DO UPDATE SET
+  url = EXCLUDED.url,
+  image_type = EXCLUDED.image_type,
+  is_primary = EXCLUDED.is_primary,
+  alt_text = EXCLUDED.alt_text;
+"""
+
+
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
@@ -422,5 +503,12 @@ def generate_pipeline(
         _gen_05_source_provenance(category, products, today, country), encoding="utf-8"
     )
     files.append(path05)
+
+    # 06 — add images
+    path06 = out / f"PIPELINE__{slug}__06_add_images.sql"
+    path06.write_text(
+        _gen_06_add_images(category, products, today, country), encoding="utf-8"
+    )
+    files.append(path06)
 
     return files

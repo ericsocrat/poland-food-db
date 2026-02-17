@@ -461,3 +461,24 @@ SELECT
       / NULLIF(COUNT(*), 0)::numeric * 100, 1) AS pct_verified_but_suspect
 FROM v_master
 WHERE nutrition_data_quality = 'suspect';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 42. product_images: orphaned or invalid URLs
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '42. product_images invalid URLs' AS check_name,
+       COUNT(*) AS violations
+FROM product_images
+WHERE url NOT LIKE 'https://%';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 43. product_images: multiple primary images per product
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '43. product_images multiple primaries' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT product_id, COUNT(*) AS primary_count
+    FROM product_images
+    WHERE is_primary = true
+    GROUP BY product_id
+    HAVING COUNT(*) > 1
+) sub;

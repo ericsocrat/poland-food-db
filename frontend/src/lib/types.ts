@@ -469,6 +469,24 @@ export interface ProfileAlternative {
   similarity: number;
 }
 
+// ─── Product Images ─────────────────────────────────────────────────────────
+
+export interface ProductImage {
+  image_id: number;
+  url: string;
+  image_type: "front" | "ingredients" | "nutrition_label" | "packaging";
+  source: "off_api" | "manual";
+  width: number | null;
+  height: number | null;
+  alt_text: string | null;
+}
+
+export interface ProductImages {
+  has_image: boolean;
+  primary: ProductImage | null;
+  additional: ProductImage[];
+}
+
 export interface ProductProfile {
   api_version: string;
   meta: ProductProfileMeta;
@@ -490,6 +508,7 @@ export interface ProductProfile {
     high_additive_load: boolean;
     has_palm_oil: boolean;
   };
+  images: ProductImages;
 }
 
 export interface ProductProfileNotFound {

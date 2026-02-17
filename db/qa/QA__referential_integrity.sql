@@ -161,3 +161,21 @@ FROM refresh_all_materialized_views() AS result;
 -- 18. (removed — nutrition_facts.serving_id FK eliminated in consolidation)
 -- ═══════════════════════════════════════════════════════════════════════════
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 19. product_images FK → products (orphaned images)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '19. product_images orphaned rows' AS check_name,
+       COUNT(*) AS violations
+FROM product_images pi
+WHERE NOT EXISTS (
+    SELECT 1 FROM products p WHERE p.product_id = pi.product_id
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 20. product_images: source must be off_api or manual
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '20. product_images invalid source' AS check_name,
+       COUNT(*) AS violations
+FROM product_images
+WHERE source NOT IN ('off_api', 'manual');
+

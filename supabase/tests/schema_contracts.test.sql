@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(77);
+SELECT plan(85);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -124,6 +124,17 @@ SELECT has_column('public', 'products', 'product_name_en_confidence', 'column pr
 -- === Canonical Product Profile API ===
 SELECT has_function('public', 'api_get_product_profile',        'function api_get_product_profile exists');
 SELECT has_function('public', 'api_get_product_profile_by_ean', 'function api_get_product_profile_by_ean exists');
+
+-- === Product Images (#34) ===
+SELECT has_table('public', 'product_images',                    'table product_images exists');
+SELECT has_column('public', 'product_images', 'image_id',       'column product_images.image_id exists');
+SELECT has_column('public', 'product_images', 'product_id',     'column product_images.product_id exists');
+SELECT has_column('public', 'product_images', 'url',            'column product_images.url exists');
+SELECT has_column('public', 'product_images', 'image_type',     'column product_images.image_type exists');
+SELECT has_column('public', 'product_images', 'is_primary',     'column product_images.is_primary exists');
+SELECT has_column('public', 'product_images', 'source',         'column product_images.source exists');
+SELECT has_column('public', 'product_images', 'off_image_id',   'column product_images.off_image_id exists');
+SELECT has_column('public', 'product_images', 'created_at',     'column product_images.created_at exists');
 
 SELECT * FROM finish();
 ROLLBACK;

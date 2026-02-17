@@ -223,6 +223,7 @@
     "allergens": "Allergens",
     "mayContain": "May contain:",
     "dataQuality": "Data Quality",
+    "productPhotos": "Product Photos",
     "confidence": "Confidence: {value}",
     "completeness": "Completeness: {pct}%",
     "source": "Source: {type}",
