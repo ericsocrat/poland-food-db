@@ -152,10 +152,10 @@ export function SearchAutocomplete({
   return (
     <div
       ref={containerRef}
-      className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-xl border border-gray-200 bg-white shadow-lg"
+      className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-xl border border bg-surface shadow-lg"
     >
       {isFetching && suggestions.length === 0 && (
-        <div className="px-4 py-3 text-center text-sm text-gray-400">
+        <div className="px-4 py-3 text-center text-sm text-foreground-muted">
           {t("search.searching")}
         </div>
       )}
@@ -164,7 +164,7 @@ export function SearchAutocomplete({
           const band = SCORE_BANDS[s.score_band];
           const nutriClass = s.nutri_score
             ? NUTRI_COLORS[s.nutri_score]
-            : "bg-gray-200 text-gray-500";
+            : "bg-surface-muted text-foreground-secondary";
 
           return (
             <li
@@ -172,7 +172,7 @@ export function SearchAutocomplete({
               className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors ${
                 i === activeIndex
                   ? "bg-brand-50 text-brand-900"
-                  : "hover:bg-gray-50"
+                  : "hover:bg-surface-subtle"
               }`}
             >
               <button
@@ -194,10 +194,10 @@ export function SearchAutocomplete({
 
                 {/* Product info */}
                 <div className="min-w-0 flex-1">
-                  <p className="truncate text-sm font-medium text-gray-900">
+                  <p className="truncate text-sm font-medium text-foreground">
                     {s.product_name_display ?? s.product_name}
                   </p>
-                  <p className="truncate text-xs text-gray-500">
+                  <p className="truncate text-xs text-foreground-secondary">
                     {s.brand} · {s.category}
                   </p>
                 </div>
@@ -218,14 +218,14 @@ export function SearchAutocomplete({
       {query.trim().length >= 1 && (
         <button
           type="button"
-          className={`flex w-full items-center gap-2 border-t border-gray-100 px-4 py-2.5 text-sm text-gray-600 transition-colors hover:bg-gray-50`}
+          className={`flex w-full items-center gap-2 border-t border px-4 py-2.5 text-sm text-foreground-secondary transition-colors hover:bg-surface-subtle`}
           onClick={() => {
             onQuerySubmit(query.trim());
             onClose();
           }}
         >
           <svg
-            className="h-4 w-4 text-gray-400"
+            className="h-4 w-4 text-foreground-muted"
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"

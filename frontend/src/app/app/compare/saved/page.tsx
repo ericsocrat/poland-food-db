@@ -22,7 +22,7 @@ export default function SavedComparisonsPage() {
         <div>
           <Link
             href="/app/compare"
-            className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+            className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
           >
             <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
               <path
@@ -33,7 +33,7 @@ export default function SavedComparisonsPage() {
             </svg>
             {t("compare.title")}
           </Link>
-          <h1 className="mt-1 text-xl font-bold text-gray-900">
+          <h1 className="mt-1 text-xl font-bold text-foreground">
             {"📂 "}
             {t("compare.savedComparisons")}
           </h1>
@@ -95,7 +95,7 @@ function ComparisonCard({
           href={`/app/compare?ids=${ids}`}
           className="min-w-0 flex-1 hover:text-brand-600"
         >
-          <p className="font-medium text-gray-900">
+          <p className="font-medium text-foreground">
             {comparison.title ??
               t("compare.compareProducts", {
                 count: comparison.product_ids.length,
@@ -105,13 +105,13 @@ function ComparisonCard({
             {comparison.product_names.map((name) => (
               <span
                 key={name}
-                className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600"
+                className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary"
               >
                 {name}
               </span>
             ))}
           </div>
-          <p className="mt-1 text-xs text-gray-400">{date}</p>
+          <p className="mt-1 text-xs text-foreground-muted">{date}</p>
         </Link>
 
         <div className="ml-3 flex items-center gap-2">
@@ -124,7 +124,7 @@ function ComparisonCard({
                 const url = `${globalThis.location.origin}/compare/shared/${comparison.share_token}`;
                 navigator.clipboard.writeText(url);
               }}
-              className="text-sm text-gray-400 hover:text-brand-600"
+              className="text-sm text-foreground-muted hover:text-brand-600"
               title={t("compare.copyShareLink")}
             >
               🔗
@@ -138,7 +138,7 @@ function ComparisonCard({
               e.preventDefault();
               onDelete();
             }}
-            className="text-sm text-gray-400 hover:text-red-500"
+            className="text-sm text-foreground-muted hover:text-red-500"
             title={t("compare.deleteComparison")}
           >
             🗑️

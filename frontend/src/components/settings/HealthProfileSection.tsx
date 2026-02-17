@@ -117,7 +117,7 @@ function ProfileForm({
       <div>
         <label
           htmlFor="hp-name"
-          className="mb-1 block text-sm font-medium text-gray-700"
+          className="mb-1 block text-sm font-medium text-foreground-secondary"
         >
           {t("healthProfile.profileName")}
         </label>
@@ -127,14 +127,14 @@ function ProfileForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder={t("healthProfile.namePlaceholder")}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           maxLength={50}
         />
       </div>
 
       {/* Conditions */}
       <div>
-        <p className="mb-2 block text-sm font-medium text-gray-700">
+        <p className="mb-2 block text-sm font-medium text-foreground-secondary">
           {t("healthProfile.healthConditions")}
         </p>
         <div className="flex flex-wrap gap-2">
@@ -146,7 +146,7 @@ function ProfileForm({
               className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
                 conditions.includes(c.value)
                   ? "border-brand-300 bg-brand-50 text-brand-700"
-                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  : "border text-foreground-secondary hover:border-strong"
               }`}
             >
               {c.icon} {c.label}
@@ -157,14 +157,14 @@ function ProfileForm({
 
       {/* Nutrient limits */}
       <div>
-        <p className="mb-2 block text-sm font-medium text-gray-700">
+        <p className="mb-2 block text-sm font-medium text-foreground-secondary">
           {t("healthProfile.nutrientLimits")}
         </p>
         <div className="grid grid-cols-2 gap-3">
           <div>
             <label
               htmlFor="hp-max-sugar"
-              className="mb-1 block text-xs text-gray-500"
+              className="mb-1 block text-xs text-foreground-secondary"
             >
               {t("healthProfile.maxSugar")}
             </label>
@@ -175,14 +175,14 @@ function ProfileForm({
               step="0.1"
               value={maxSugar}
               onChange={(e) => setMaxSugar(e.target.value)}
-              className="w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+              className="w-full rounded border border-strong px-2 py-1.5 text-sm"
               placeholder="—"
             />
           </div>
           <div>
             <label
               htmlFor="hp-max-salt"
-              className="mb-1 block text-xs text-gray-500"
+              className="mb-1 block text-xs text-foreground-secondary"
             >
               {t("healthProfile.maxSalt")}
             </label>
@@ -193,14 +193,14 @@ function ProfileForm({
               step="0.01"
               value={maxSalt}
               onChange={(e) => setMaxSalt(e.target.value)}
-              className="w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+              className="w-full rounded border border-strong px-2 py-1.5 text-sm"
               placeholder="—"
             />
           </div>
           <div>
             <label
               htmlFor="hp-max-sat-fat"
-              className="mb-1 block text-xs text-gray-500"
+              className="mb-1 block text-xs text-foreground-secondary"
             >
               {t("healthProfile.maxSatFat")}
             </label>
@@ -211,14 +211,14 @@ function ProfileForm({
               step="0.1"
               value={maxSatFat}
               onChange={(e) => setMaxSatFat(e.target.value)}
-              className="w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+              className="w-full rounded border border-strong px-2 py-1.5 text-sm"
               placeholder="—"
             />
           </div>
           <div>
             <label
               htmlFor="hp-max-cal"
-              className="mb-1 block text-xs text-gray-500"
+              className="mb-1 block text-xs text-foreground-secondary"
             >
               {t("healthProfile.maxCalories")}
             </label>
@@ -229,7 +229,7 @@ function ProfileForm({
               step="1"
               value={maxCal}
               onChange={(e) => setMaxCal(e.target.value)}
-              className="w-full rounded border border-gray-300 px-2 py-1.5 text-sm"
+              className="w-full rounded border border-strong px-2 py-1.5 text-sm"
               placeholder="—"
             />
           </div>
@@ -240,7 +240,7 @@ function ProfileForm({
       <div>
         <label
           htmlFor="hp-notes"
-          className="mb-1 block text-sm font-medium text-gray-700"
+          className="mb-1 block text-sm font-medium text-foreground-secondary"
         >
           {t("healthProfile.notesOptional")}
         </label>
@@ -250,7 +250,7 @@ function ProfileForm({
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           maxLength={200}
-          className="w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
           placeholder={t("healthProfile.notesPlaceholder")}
         />
       </div>
@@ -261,9 +261,9 @@ function ProfileForm({
           type="checkbox"
           checked={isActive}
           onChange={(e) => setIsActive(e.target.checked)}
-          className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+          className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
         />
-        <span className="text-sm text-gray-700">
+        <span className="text-sm text-foreground-secondary">
           {t("healthProfile.setActive")}
         </span>
       </label>
@@ -276,7 +276,7 @@ function ProfileForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 rounded-lg border border-gray-200 px-4 py-2 text-sm text-gray-600 hover:bg-gray-50"
+          className="flex-1 rounded-lg border border px-4 py-2 text-sm text-foreground-secondary hover:bg-surface-subtle"
         >
           {t("common.cancel")}
         </button>
@@ -356,10 +356,10 @@ export function HealthProfileSection() {
   if (isLoading) {
     return (
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("healthProfile.title")}
         </h2>
-        <p className="text-sm text-gray-400">{t("common.loading")}</p>
+        <p className="text-sm text-foreground-muted">{t("common.loading")}</p>
       </section>
     );
   }
@@ -367,7 +367,7 @@ export function HealthProfileSection() {
   return (
     <section className="card">
       <div className="mb-3 flex items-center justify-between">
-        <h2 className="text-sm font-semibold text-gray-700">
+        <h2 className="text-sm font-semibold text-foreground-secondary">
           {t("healthProfile.title")}
         </h2>
         {!editingProfile && profiles.length < 5 && (
@@ -382,7 +382,7 @@ export function HealthProfileSection() {
 
       {/* Empty state */}
       {profiles.length === 0 && !editingProfile && (
-        <p className="text-sm text-gray-400">{t("healthProfile.emptyState")}</p>
+        <p className="text-sm text-foreground-muted">{t("healthProfile.emptyState")}</p>
       )}
 
       {/* Profile list */}
@@ -394,13 +394,13 @@ export function HealthProfileSection() {
               className={`rounded-lg border p-3 ${
                 profile.is_active
                   ? "border-brand-300 bg-brand-50"
-                  : "border-gray-200"
+                  : "border"
               }`}
             >
               <div className="flex items-start justify-between">
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium text-gray-900">
+                    <span className="text-sm font-medium text-foreground">
                       {profile.profile_name}
                     </span>
                     {profile.is_active && (
@@ -410,7 +410,7 @@ export function HealthProfileSection() {
                     )}
                   </div>
                   {profile.health_conditions.length > 0 && (
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-foreground-secondary">
                       {profile.health_conditions
                         .map(
                           (c) =>

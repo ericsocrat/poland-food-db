@@ -65,7 +65,7 @@ export function ProductProfileSkeleton() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-gray-200">
+      <div className="flex gap-1 border-b border">
         {Array.from({ length: 4 }, (_, i) => (
           <Skeleton
             key={i}

@@ -58,10 +58,10 @@ export default function SubmitProductPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">
+          <h1 className="text-lg font-semibold text-foreground">
             📝 {t("submit.title")}
           </h1>
-          <p className="text-sm text-gray-500">{t("submit.subtitle")}</p>
+          <p className="text-sm text-foreground-secondary">{t("submit.subtitle")}</p>
         </div>
         <Link
           href="/app/scan"
@@ -77,7 +77,7 @@ export default function SubmitProductPage() {
           <div>
             <label
               htmlFor="ean"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
               {t("submit.eanLabel")}
             </label>
@@ -101,7 +101,7 @@ export default function SubmitProductPage() {
           <div>
             <label
               htmlFor="productName"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
               {t("submit.nameLabel")}
             </label>
@@ -121,7 +121,7 @@ export default function SubmitProductPage() {
           <div>
             <label
               htmlFor="brand"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
               {t("submit.brandLabel")}
             </label>
@@ -140,7 +140,7 @@ export default function SubmitProductPage() {
           <div>
             <label
               htmlFor="category"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
               {t("submit.categoryLabel")}
             </label>
@@ -159,7 +159,7 @@ export default function SubmitProductPage() {
           <div>
             <label
               htmlFor="notes"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
               {t("submit.notesLabel")}
             </label>
@@ -188,7 +188,7 @@ export default function SubmitProductPage() {
         </form>
       </div>
 
-      <p className="text-center text-xs text-gray-400">
+      <p className="text-center text-xs text-foreground-muted">
         {t("submit.disclaimer")}
       </p>
     </div>

@@ -69,16 +69,16 @@ export function PreferencesForm() {
         <div className="h-2 flex-1 rounded-full bg-brand-500" />
       </div>
 
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("onboarding.dietaryPreferences")}
       </h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <p className="mb-8 text-sm text-foreground-secondary">
         {t("onboarding.dietarySubtitle")}
       </p>
 
       {/* Diet type */}
       <section className="mb-6">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("onboarding.dietType")}
         </h2>
         <div className="grid grid-cols-3 gap-2">
@@ -89,7 +89,7 @@ export function PreferencesForm() {
               className={`rounded-lg border-2 px-3 py-2 text-sm transition-colors ${
                 diet === opt.value
                   ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
-                  : "border-gray-200 text-gray-700 hover:border-gray-300"
+                  : "border text-foreground-secondary hover:border-strong"
               }`}
             >
               {opt.label}
@@ -105,9 +105,9 @@ export function PreferencesForm() {
             type="checkbox"
             checked={strictDiet}
             onChange={(e) => setStrictDiet(e.target.checked)}
-            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+            className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
           />
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-foreground-secondary">
             {t("onboarding.strictDiet")}
           </span>
         </label>
@@ -115,7 +115,7 @@ export function PreferencesForm() {
 
       {/* Allergens */}
       <section className="mb-6">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("onboarding.allergensToAvoid")}
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -126,7 +126,7 @@ export function PreferencesForm() {
               className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
                 allergens.includes(a.tag)
                   ? "border-red-300 bg-red-50 text-red-700"
-                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  : "border text-foreground-secondary hover:border-strong"
               }`}
             >
               {a.label}
@@ -143,9 +143,9 @@ export function PreferencesForm() {
               type="checkbox"
               checked={strictAllergen}
               onChange={(e) => setStrictAllergen(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
             />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-foreground-secondary">
               {t("onboarding.strictAllergen")}
             </span>
           </label>
@@ -154,9 +154,9 @@ export function PreferencesForm() {
               type="checkbox"
               checked={treatMayContain}
               onChange={(e) => setTreatMayContain(e.target.checked)}
-              className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
             />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-foreground-secondary">
               {t("onboarding.treatMayContain")}
             </span>
           </label>

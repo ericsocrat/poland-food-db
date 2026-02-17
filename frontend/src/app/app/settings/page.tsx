@@ -134,11 +134,11 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-gray-900">{t("settings.title")}</h1>
+      <h1 className="text-xl font-bold text-foreground">{t("settings.title")}</h1>
 
       {/* Country */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("settings.country")}
         </h2>
         <div className="grid grid-cols-2 gap-2">
@@ -156,11 +156,11 @@ export default function SettingsPage() {
               className={`rounded-lg border-2 px-3 py-3 text-center transition-colors ${
                 country === c.code
                   ? "border-brand-500 bg-brand-50"
-                  : "border-gray-200 hover:border-gray-300"
+                  : "border hover:border-strong"
               }`}
             >
               <span className="text-2xl">{c.flag}</span>
-              <p className="mt-1 text-sm font-medium text-gray-900">
+              <p className="mt-1 text-sm font-medium text-foreground">
                 {c.native}
               </p>
             </button>
@@ -170,7 +170,7 @@ export default function SettingsPage() {
 
       {/* Language — filtered by selected country (native + English) */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("settings.language")}
         </h2>
         <div className="grid grid-cols-2 gap-2">
@@ -184,11 +184,11 @@ export default function SettingsPage() {
               className={`rounded-lg border-2 px-3 py-3 text-center transition-colors ${
                 language === lang.code
                   ? "border-brand-500 bg-brand-50"
-                  : "border-gray-200 hover:border-gray-300"
+                  : "border hover:border-strong"
               }`}
             >
               <span className="text-2xl">{lang.flag}</span>
-              <p className="mt-1 text-sm font-medium text-gray-900">
+              <p className="mt-1 text-sm font-medium text-foreground">
                 {lang.native}
               </p>
             </button>
@@ -198,7 +198,7 @@ export default function SettingsPage() {
 
       {/* Theme */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("settings.theme")}
         </h2>
         <ThemeToggle />
@@ -206,7 +206,7 @@ export default function SettingsPage() {
 
       {/* Diet */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("settings.dietPreference")}
         </h2>
         <div className="grid grid-cols-3 gap-2">
@@ -220,7 +220,7 @@ export default function SettingsPage() {
               className={`rounded-lg border-2 px-3 py-2 text-sm transition-colors ${
                 diet === opt.value
                   ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
-                  : "border-gray-200 text-gray-700 hover:border-gray-300"
+                  : "border text-foreground-secondary hover:border-strong"
               }`}
             >
               {opt.label}
@@ -236,9 +236,9 @@ export default function SettingsPage() {
                 setStrictDiet(e.target.checked);
                 markDirty();
               }}
-              className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
             />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-foreground-secondary">
               {t("settings.strictDiet")}
             </span>
           </label>
@@ -247,7 +247,7 @@ export default function SettingsPage() {
 
       {/* Allergens */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("settings.allergensToAvoid")}
         </h2>
         <div className="flex flex-wrap gap-2">
@@ -258,7 +258,7 @@ export default function SettingsPage() {
               className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
                 allergens.includes(a.tag)
                   ? "border-red-300 bg-red-50 text-red-700"
-                  : "border-gray-200 text-gray-600 hover:border-gray-300"
+                  : "border text-foreground-secondary hover:border-strong"
               }`}
             >
               {a.label}
@@ -275,9 +275,9 @@ export default function SettingsPage() {
                   setStrictAllergen(e.target.checked);
                   markDirty();
                 }}
-                className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
               />
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-foreground-secondary">
                 {t("settings.strictAllergen")}
               </span>
             </label>
@@ -289,9 +289,9 @@ export default function SettingsPage() {
                   setTreatMayContain(e.target.checked);
                   markDirty();
                 }}
-                className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
               />
-              <span className="text-sm text-gray-700">
+              <span className="text-sm text-foreground-secondary">
                 {t("settings.treatMayContain")}
               </span>
             </label>
@@ -315,10 +315,10 @@ export default function SettingsPage() {
 
       {/* Account section */}
       <section className="card border-red-100">
-        <h2 className="mb-3 text-sm font-semibold text-gray-700">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("settings.account")}
         </h2>
-        <p className="mb-3 text-xs text-gray-500">
+        <p className="mb-3 text-xs text-foreground-secondary">
           {prefs?.user_id && `User ID: ${prefs.user_id.slice(0, 8)}…`}
         </p>
         <button

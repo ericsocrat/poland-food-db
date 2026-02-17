@@ -18,10 +18,10 @@ export function AllergensStep({ data, onChange, onNext, onBack }: StepProps) {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("onboarding.allergenTitle")}
       </h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <p className="mb-8 text-sm text-foreground-secondary">
         {t("onboarding.allergenSubtitle")}
       </p>
 
@@ -33,7 +33,7 @@ export function AllergensStep({ data, onChange, onNext, onBack }: StepProps) {
             className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
               data.allergens.includes(a.tag)
                 ? "border-red-300 bg-red-50 text-red-700"
-                : "border-gray-200 text-gray-600 hover:border-gray-300"
+                : "border text-foreground-secondary hover:border-strong"
             }`}
             data-testid={`allergen-${a.tag}`}
           >
@@ -50,9 +50,9 @@ export function AllergensStep({ data, onChange, onNext, onBack }: StepProps) {
               type="checkbox"
               checked={data.strictAllergen}
               onChange={(e) => onChange({ strictAllergen: e.target.checked })}
-              className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
             />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-foreground-secondary">
               {t("onboarding.strictAllergen")}
             </span>
           </label>
@@ -61,9 +61,9 @@ export function AllergensStep({ data, onChange, onNext, onBack }: StepProps) {
               type="checkbox"
               checked={data.treatMayContain}
               onChange={(e) => onChange({ treatMayContain: e.target.checked })}
-              className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
             />
-            <span className="text-sm text-gray-700">
+            <span className="text-sm text-foreground-secondary">
               {t("onboarding.treatMayContain")}
             </span>
           </label>

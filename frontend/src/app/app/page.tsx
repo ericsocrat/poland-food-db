@@ -39,7 +39,7 @@ function NutriBadge({ grade }: { grade: string | null }) {
   if (!grade) return null;
   return (
     <span
-      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${NUTRI_COLORS[grade] ?? "bg-gray-200 text-gray-600"}`}
+      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${NUTRI_COLORS[grade] ?? "bg-surface-muted text-foreground-secondary"}`}
     >
       {grade}
     </span>
@@ -69,8 +69,8 @@ function StatsBar({ stats }: { stats: DashboardStats }) {
           className="card flex flex-col items-center gap-1 py-3"
         >
           <span className="text-2xl">{s.icon}</span>
-          <span className="text-xl font-bold text-gray-900">{s.value}</span>
-          <span className="text-xs text-gray-500">{s.label}</span>
+          <span className="text-xl font-bold text-foreground">{s.value}</span>
+          <span className="text-xs text-foreground-secondary">{s.label}</span>
         </div>
       ))}
     </div>
@@ -98,10 +98,10 @@ function ProductRow({
     >
       <NutriBadge grade={product.nutri_score_label} />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-sm font-medium text-gray-900">
+        <p className="truncate text-sm font-medium text-foreground">
           {product.product_name}
         </p>
-        <p className="truncate text-xs text-gray-500">
+        <p className="truncate text-xs text-foreground-secondary">
           {product.brand ?? product.category}
           {subtitle ? ` · ${subtitle}` : ""}
         </p>
@@ -122,7 +122,7 @@ function RecentlyViewedSection({
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-foreground">
           👁️ {t("dashboard.recentlyViewed")}
         </h2>
       </div>
@@ -150,7 +150,7 @@ function FavoritesSection({
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-foreground">
           ❤️ {t("dashboard.favorites")}
         </h2>
         <Link
@@ -182,7 +182,7 @@ function NewProductsSection({
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-gray-900">
+        <h2 className="text-lg font-semibold text-foreground">
           ✨{" "}
           {category
             ? t("dashboard.newInCategory", { category })
@@ -271,7 +271,7 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-gray-900">
+      <h1 className="text-xl font-bold text-foreground">
         {t("dashboard.title")}
       </h1>
 

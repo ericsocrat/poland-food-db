@@ -165,10 +165,12 @@ describe("EmptyState", () => {
       <EmptyState
         variant="no-data"
         titleKey="common.noResults"
-        className="bg-gray-50"
+        className="bg-surface-subtle"
       />,
     );
-    expect(screen.getByTestId("empty-state").className).toContain("bg-gray-50");
+    expect(screen.getByTestId("empty-state").className).toContain(
+      "bg-surface-subtle",
+    );
   });
 
   // ── Interpolation params ──────────────────────────────────────────────

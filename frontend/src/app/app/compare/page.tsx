@@ -50,7 +50,7 @@ export default function ComparePage() {
   if (productIds.length < 2) {
     return (
       <div className="space-y-4">
-        <h1 className="text-xl font-bold text-gray-900">
+        <h1 className="text-xl font-bold text-foreground">
           ⚖️ {t("compare.title")}
         </h1>
         <EmptyState
@@ -72,7 +72,7 @@ export default function ComparePage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">
+        <h1 className="text-xl font-bold text-foreground">
           ⚖️ {t("compare.title")}
         </h1>
         <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export default function ComparePage() {
           <button
             type="button"
             onClick={clear}
-            className="text-sm text-gray-500 hover:text-gray-700"
+            className="text-sm text-foreground-secondary hover:text-foreground"
           >
             {t("compare.clearSelection")}
           </button>
@@ -103,7 +103,7 @@ export default function ComparePage() {
         <>
           {/* Share / Save toolbar */}
           <div className="card flex items-center justify-between">
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-foreground-secondary">
               {t("compare.comparing", { count: data.product_count })}
             </p>
             <ShareComparison productIds={productIds} />

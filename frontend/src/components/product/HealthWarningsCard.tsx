@@ -74,8 +74,8 @@ export function HealthWarningsCard({
     return (
       <div className="card animate-pulse">
         <div className="flex items-center gap-2">
-          <div className="h-5 w-5 rounded-full bg-gray-200" />
-          <div className="h-4 w-48 rounded bg-gray-200" />
+          <div className="h-5 w-5 rounded-full bg-surface-muted" />
+          <div className="h-4 w-48 rounded bg-surface-muted" />
         </div>
       </div>
     );
@@ -84,14 +84,14 @@ export function HealthWarningsCard({
   // No active profile — show a subtle prompt
   if (!hasProfile) {
     return (
-      <div className="card border-gray-200 bg-gray-50">
+      <div className="card border bg-surface-subtle">
         <div className="flex items-center gap-2">
           <span className="text-lg">🛡️</span>
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-700">
+            <p className="text-sm font-medium text-foreground-secondary">
               {t("healthWarnings.title")}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-foreground-secondary">
               {
                 t("healthWarnings.setupPrompt").split(
                   t("healthWarnings.healthProfile"),
@@ -119,8 +119,8 @@ export function HealthWarningsCard({
   if (warningsLoading) {
     return (
       <div className="card animate-pulse">
-        <div className="h-4 w-40 rounded bg-gray-200" />
-        <div className="mt-2 h-3 w-64 rounded bg-gray-100" />
+        <div className="h-4 w-40 rounded bg-surface-muted" />
+        <div className="mt-2 h-3 w-64 rounded bg-surface-muted" />
       </div>
     );
   }
@@ -168,7 +168,7 @@ export function HealthWarningsCard({
             })}
           </p>
         </div>
-        <span className="text-xs text-gray-400">
+        <span className="text-xs text-foreground-muted">
           {t("healthWarnings.profile", {
             name: profileData.profile?.profile_name ?? "",
           })}

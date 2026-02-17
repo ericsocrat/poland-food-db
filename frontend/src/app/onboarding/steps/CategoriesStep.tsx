@@ -18,10 +18,10 @@ export function CategoriesStep({ data, onChange, onNext, onBack }: StepProps) {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("onboarding.categoriesTitle")}
       </h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <p className="mb-8 text-sm text-foreground-secondary">
         {t("onboarding.categoriesSubtitle")}
       </p>
 
@@ -33,7 +33,7 @@ export function CategoriesStep({ data, onChange, onNext, onBack }: StepProps) {
             className={`flex items-center gap-2 rounded-lg border-2 px-3 py-2.5 text-sm transition-colors ${
               data.favoriteCategories.includes(cat.slug)
                 ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
-                : "border-gray-200 text-gray-700 hover:border-gray-300"
+                : "border text-foreground-secondary hover:border-strong"
             }`}
             data-testid={`category-${cat.slug}`}
           >

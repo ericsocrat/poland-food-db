@@ -67,11 +67,11 @@ export function SaveSearchDialog({
         onClick={onClose}
       />
       {/* Dialog */}
-      <div className="relative w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl">
-        <h3 className="mb-1 text-base font-semibold text-gray-900">
+      <div className="relative w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl">
+        <h3 className="mb-1 text-base font-semibold text-foreground">
           💾 {t("saveSearchDialog.title")}
         </h3>
-        <p className="mb-4 text-sm text-gray-500">
+        <p className="mb-4 text-sm text-foreground-secondary">
           {query ? `Query: "${query}"` : "Browse mode"}
           {Object.keys(filters).length > 0
             ? ` ${t("saveSearchDialog.plusFilters")}`

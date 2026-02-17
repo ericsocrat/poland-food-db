@@ -82,7 +82,7 @@ export default function ScanResultPage() {
   const band = SCORE_BANDS[product.scores.score_band];
   const nutriClass = product.scores.nutri_score
     ? NUTRI_COLORS[product.scores.nutri_score]
-    : "bg-gray-200 text-gray-500";
+    : "bg-surface-muted text-foreground-secondary";
 
   const alternatives = alternativesData?.alternatives ?? [];
   const hasAlternatives = alternatives.length > 0;
@@ -91,7 +91,7 @@ export default function ScanResultPage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-bold text-gray-900">
+        <h1 className="text-lg font-bold text-foreground">
           📷 {t("product.scanResult")}
         </h1>
         <Link
@@ -111,10 +111,10 @@ export default function ScanResultPage() {
             {product.scores.unhealthiness_score}
           </div>
           <div className="min-w-0 flex-1">
-            <p className="text-lg font-bold text-gray-900">
+            <p className="text-lg font-bold text-foreground">
               {product.product_name}
             </p>
-            <p className="text-sm text-gray-500">{product.brand}</p>
+            <p className="text-sm text-foreground-secondary">{product.brand}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
               <span
                 className={`rounded-full px-2 py-0.5 text-xs font-bold ${nutriClass}`}
@@ -123,7 +123,7 @@ export default function ScanResultPage() {
                   grade: product.scores.nutri_score ?? "?",
                 })}
               </span>
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+              <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary">
                 {t("product.novaGroup", { group: product.scores.nova_group })}
               </span>
               <span
@@ -136,7 +136,7 @@ export default function ScanResultPage() {
         </div>
 
         {/* Category & EAN */}
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
+        <div className="mt-3 flex flex-wrap gap-2 text-xs text-foreground-secondary">
           <span>
             {product.category_icon} {product.category_display}
           </span>
@@ -152,7 +152,7 @@ export default function ScanResultPage() {
 
       {/* ── Quick Nutrition Summary ──────────────────────────────────────── */}
       <div className="card">
-        <h2 className="mb-2 text-sm font-semibold text-gray-700">
+        <h2 className="mb-2 text-sm font-semibold text-foreground-secondary">
           {t("product.nutritionPer100g")}
         </h2>
         <div className="grid grid-cols-3 gap-2 text-center text-xs">
@@ -192,7 +192,7 @@ export default function ScanResultPage() {
       {/* ── Healthier Alternatives ───────────────────────────────────────── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-gray-900">
+          <h2 className="text-base font-bold text-foreground">
             🥗 {t("product.healthierAlternatives")}
           </h2>
           {hasAlternatives && (
@@ -246,8 +246,8 @@ function AlternativesSection({
 
   if (alternatives.length === 0) {
     return (
-      <div className="card bg-gray-50 py-6 text-center">
-        <p className="text-sm text-gray-500">🏆 {t("product.bestOption")}</p>
+      <div className="card bg-surface-subtle py-6 text-center">
+        <p className="text-sm text-foreground-secondary">🏆 {t("product.bestOption")}</p>
       </div>
     );
   }
@@ -307,11 +307,11 @@ function NutrientPill({
   unit,
 }: Readonly<{ label: string; value: string; unit: string }>) {
   return (
-    <div className="rounded-lg bg-gray-50 px-2 py-2">
-      <p className="font-medium text-gray-900">
-        {value} <span className="text-gray-400">{unit}</span>
+    <div className="rounded-lg bg-surface-subtle px-2 py-2">
+      <p className="font-medium text-foreground">
+        {value} <span className="text-foreground-muted">{unit}</span>
       </p>
-      <p className="text-gray-500">{label}</p>
+      <p className="text-foreground-secondary">{label}</p>
     </div>
   );
 }
@@ -326,7 +326,7 @@ function ScanAlternativeCard({
   const altBand = SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)];
   const nutriClass = alt.nutri_score
     ? NUTRI_COLORS[alt.nutri_score]
-    : "bg-gray-200 text-gray-500";
+    : "bg-surface-muted text-foreground-secondary";
 
   // Calculate improvement percentage
   const improvementPct =
@@ -346,10 +346,10 @@ function ScanAlternativeCard({
 
         {/* Product info */}
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-gray-900">
+          <p className="truncate font-medium text-foreground">
             {alt.product_name}
           </p>
-          <p className="truncate text-sm text-gray-500">{alt.brand}</p>
+          <p className="truncate text-sm text-foreground-secondary">{alt.brand}</p>
           <p className="text-xs font-medium text-green-600">
             {t("product.pointsBetter", { points: alt.score_improvement })}
             {improvementPct > 0 && (
@@ -369,7 +369,7 @@ function ScanAlternativeCard({
         </span>
 
         {/* Arrow */}
-        <span className="flex-shrink-0 text-gray-300">›</span>
+        <span className="flex-shrink-0 text-foreground-muted">›</span>
       </div>
     </Link>
   );

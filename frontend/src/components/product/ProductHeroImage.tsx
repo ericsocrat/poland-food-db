@@ -35,7 +35,7 @@ export function ProductHeroImage({
 
   return (
     <div className="group relative">
-      <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-gray-100">
+      <div className="relative aspect-square w-full overflow-hidden rounded-xl bg-surface-muted">
         <Image
           src={url}
           alt={alt_text ?? productName}

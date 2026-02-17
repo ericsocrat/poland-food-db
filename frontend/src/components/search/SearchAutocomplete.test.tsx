@@ -27,11 +27,11 @@ vi.mock("@/lib/constants", () => ({
     bad: { bg: "bg-red-100", color: "text-red-800" },
   },
   NUTRI_COLORS: {
-    A: "bg-green-500 text-white",
-    B: "bg-lime-400 text-gray-900",
-    C: "bg-yellow-400 text-gray-900",
-    D: "bg-orange-400 text-white",
-    E: "bg-red-500 text-white",
+    A: "bg-nutri-A text-foreground-inverse",
+    B: "bg-nutri-B text-foreground-inverse",
+    C: "bg-nutri-C text-foreground",
+    D: "bg-nutri-D text-foreground-inverse",
+    E: "bg-nutri-E text-foreground-inverse",
   },
 }));
 

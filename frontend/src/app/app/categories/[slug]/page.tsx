@@ -72,7 +72,7 @@ export default function CategoryListingPage() {
       {/* Back link */}
       <Link
         href="/app/categories"
-        className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+        className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
       >
         <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
           <path
@@ -86,11 +86,11 @@ export default function CategoryListingPage() {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold capitalize text-gray-900">
+        <h1 className="text-xl font-bold capitalize text-foreground">
           {formatSlug(slug)}
         </h1>
         {data && (
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-foreground-secondary">
             {t("common.products", { count: data.total_count })}
           </span>
         )}
@@ -117,7 +117,7 @@ export default function CategoryListingPage() {
             setSortDir((d) => (d === "asc" ? "desc" : "asc"));
             setOffset(0);
           }}
-          className="rounded-lg border border-gray-200 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+          className="rounded-lg border border px-3 py-2 text-sm text-foreground-secondary hover:bg-surface-subtle"
         >
           {sortDir === "asc" ? t("filters.asc") : t("filters.desc")}
         </button>
@@ -167,7 +167,7 @@ export default function CategoryListingPage() {
           >
             {t("categories.previous")}
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-foreground-secondary">
             {t("common.pageOf", { page: currentPage, pages: totalPages })}
           </span>
           <button
@@ -188,7 +188,7 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
   const band = SCORE_BANDS[product.score_band];
   const nutriClass = product.nutri_score
     ? NUTRI_COLORS[product.nutri_score]
-    : "bg-gray-200 text-gray-500";
+    : "bg-surface-muted text-foreground-secondary";
 
   return (
     <Link href={`/app/product/${product.product_id}`}>
@@ -199,10 +199,10 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
           {product.unhealthiness_score}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-gray-900">
+          <p className="truncate font-medium text-foreground">
             {product.product_name}
           </p>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-foreground-secondary">
             {product.brand} &middot; {product.calories} kcal
           </p>
           <div className="mt-1 flex flex-wrap gap-1">

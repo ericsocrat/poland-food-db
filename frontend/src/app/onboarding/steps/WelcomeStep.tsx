@@ -16,10 +16,10 @@ export function WelcomeStep({ onNext, onSkipAll }: WelcomeStepProps) {
     <div className="text-center">
       <div className="mb-6 text-6xl">🍎</div>
 
-      <h1 className="mb-3 text-2xl font-bold text-gray-900">
+      <h1 className="mb-3 text-2xl font-bold text-foreground">
         {t("onboarding.welcomeTitle")}
       </h1>
-      <p className="mb-10 text-sm text-gray-500">
+      <p className="mb-10 text-sm text-foreground-secondary">
         {t("onboarding.welcomeSubtitle")}
       </p>
 
@@ -33,7 +33,7 @@ export function WelcomeStep({ onNext, onSkipAll }: WelcomeStepProps) {
 
       <button
         onClick={onSkipAll}
-        className="w-full text-sm text-gray-500 underline hover:text-gray-700"
+        className="w-full text-sm text-foreground-secondary underline hover:text-foreground"
         data-testid="onboarding-skip-all"
       >
         {t("onboarding.skipAll")}

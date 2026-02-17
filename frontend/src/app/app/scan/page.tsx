@@ -262,10 +262,10 @@ export default function ScanPage() {
       <div className="space-y-4">
         <div className="card border-red-200 bg-red-50 text-center">
           <p className="mb-2 text-4xl">⚠️</p>
-          <p className="text-lg font-semibold text-gray-900">
+          <p className="text-lg font-semibold text-foreground">
             {t("scan.lookupFailed")}
           </p>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-foreground-secondary">
             {t("scan.lookupError", { ean })}
           </p>
         </div>
@@ -295,10 +295,10 @@ export default function ScanPage() {
       <div className="space-y-4">
         <div className="card text-center">
           <p className="mb-2 text-4xl">🔍</p>
-          <p className="text-lg font-semibold text-gray-900">
+          <p className="text-lg font-semibold text-foreground">
             {t("scan.notFound")}
           </p>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-sm text-foreground-secondary">
             {t("scan.notFoundMessage", { ean })}
           </p>
         </div>
@@ -341,7 +341,7 @@ export default function ScanPage() {
     return (
       <div className="flex flex-col items-center gap-3 py-12">
         <LoadingSpinner />
-        <p className="text-sm text-gray-500">{t("scan.lookingUp", { ean })}</p>
+        <p className="text-sm text-foreground-secondary">{t("scan.lookingUp", { ean })}</p>
       </div>
     );
   }
@@ -350,7 +350,7 @@ export default function ScanPage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">
+        <h1 className="text-xl font-bold text-foreground">
           📷 {t("scan.title")}
         </h1>
         <div className="flex gap-2">
@@ -378,7 +378,7 @@ export default function ScanPage() {
             setBatchMode(e.target.checked);
             if (!e.target.checked) setBatchResults([]);
           }}
-          className="h-5 w-5 rounded border-gray-300 text-brand-600"
+          className="h-5 w-5 rounded border-strong text-brand-600"
         />
         <span className="text-sm text-foreground">{t("scan.batchMode")}</span>
       </label>
@@ -465,7 +465,7 @@ export default function ScanPage() {
               </div>
             </>
           )}
-          <p className="text-center text-xs text-gray-400">
+          <p className="text-center text-xs text-foreground-muted">
             {t("scan.cameraHint")}
           </p>
         </div>
@@ -488,7 +488,7 @@ export default function ScanPage() {
           >
             {t("scan.lookUp")}
           </button>
-          <p className="text-center text-xs text-gray-400">
+          <p className="text-center text-xs text-foreground-muted">
             {t("scan.digitHint")}
           </p>
         </form>
@@ -498,12 +498,12 @@ export default function ScanPage() {
       {batchMode && batchResults.length > 0 && (
         <div className="space-y-2">
           <div className="flex items-center justify-between">
-            <h2 className="text-sm font-semibold text-gray-900">
+            <h2 className="text-sm font-semibold text-foreground">
               {t("scan.scannedCount", { count: batchResults.length })}
             </h2>
             <button
               onClick={() => setBatchResults([])}
-              className="text-xs text-gray-400 hover:text-gray-600"
+              className="text-xs text-foreground-muted hover:text-foreground-secondary"
             >
               {t("common.clear")}
             </button>
@@ -512,23 +512,23 @@ export default function ScanPage() {
             {batchResults.map((p, i) => (
               <li
                 key={`${p.product_id}-${i}`}
-                className="flex items-center gap-2 rounded-lg border border-gray-100 px-3 py-2"
+                className="flex items-center gap-2 rounded-lg border border px-3 py-2"
               >
                 <span
                   className={`inline-flex h-5 w-5 items-center justify-center rounded text-xs font-bold text-white ${
                     (p.nutri_score && NUTRI_COLORS[p.nutri_score]) ??
-                    "bg-gray-400"
+                    "bg-foreground-muted"
                   }`}
                 >
                   {p.nutri_score}
                 </span>
                 <button
                   onClick={() => router.push(`/app/product/${p.product_id}`)}
-                  className="min-w-0 flex-1 truncate text-left text-sm text-gray-800 hover:text-brand-600"
+                  className="min-w-0 flex-1 truncate text-left text-sm text-foreground hover:text-brand-600"
                 >
                   {p.product_name_display ?? p.product_name}
                 </button>
-                <span className="flex-shrink-0 text-xs text-gray-400">
+                <span className="flex-shrink-0 text-xs text-foreground-muted">
                   {p.brand}
                 </span>
               </li>

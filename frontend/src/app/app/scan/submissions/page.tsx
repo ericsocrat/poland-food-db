@@ -71,11 +71,11 @@ export default function MySubmissionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">
+          <h1 className="text-lg font-semibold text-foreground">
             {"📝 "}
             {t("scan.mySubmissions")}
           </h1>
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-foreground-secondary">
             {t("scan.submissionsSubtitle")}
           </p>
         </div>
@@ -114,10 +114,10 @@ export default function MySubmissionsPage() {
       {data?.submissions.length === 0 && (
         <div className="py-12 text-center">
           <p className="mb-2 text-4xl">📝</p>
-          <p className="mb-1 text-sm text-gray-500">
+          <p className="mb-1 text-sm text-foreground-secondary">
             {t("scan.submissionsEmptyTitle")}
           </p>
-          <p className="mb-4 text-xs text-gray-400">
+          <p className="mb-4 text-xs text-foreground-muted">
             {t("scan.submissionsEmptyMessage")}
           </p>
           <Link
@@ -152,7 +152,7 @@ export default function MySubmissionsPage() {
           >
             {t("common.prev")}
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-foreground-secondary">
             {t("common.pageOf", { page: data.page, pages: data.pages })}
           </span>
           <button
@@ -184,7 +184,7 @@ function SubmissionRow({
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <p className="truncate font-medium text-gray-900">
+            <p className="truncate font-medium text-foreground">
               {submission.product_name}
             </p>
             <span
@@ -193,16 +193,16 @@ function SubmissionRow({
               {style.emoji} {t(style.labelKey)}
             </span>
           </div>
-          <p className="mt-0.5 text-xs text-gray-500">
+          <p className="mt-0.5 text-xs text-foreground-secondary">
             {submission.brand && `${submission.brand} · `}
             EAN: <span className="font-mono">{submission.ean}</span>
           </p>
           {submission.category && (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-foreground-muted">
               {t("scan.categoryLabel", { category: submission.category })}
             </p>
           )}
-          <p className="mt-1 text-xs text-gray-400">
+          <p className="mt-1 text-xs text-foreground-muted">
             {t("scan.submittedDate", { date })}
           </p>
         </div>
@@ -219,7 +219,7 @@ function SubmissionRow({
       </div>
 
       {/* Status timeline */}
-      <div className="mt-3 flex items-center gap-1 text-xs text-gray-400">
+      <div className="mt-3 flex items-center gap-1 text-xs text-foreground-muted">
         <StatusDot active={true} />
         <span>{t("scan.statusSubmitted")}</span>
         <span className="mx-1">→</span>
@@ -235,7 +235,7 @@ function SubmissionRow({
             <StatusDot
               active={submission.status === "merged"}
               color={
-                submission.status === "merged" ? "bg-blue-400" : "bg-gray-300"
+                submission.status === "merged" ? "bg-blue-400" : "bg-surface-muted"
               }
             />
             <span>{t("scan.statusLive")}</span>
@@ -251,7 +251,7 @@ function statusDotColor(status: string): string {
     case "rejected":
       return "bg-red-400";
     case "pending":
-      return "bg-gray-300";
+      return "bg-surface-muted";
     default:
       return "bg-green-400";
   }
@@ -275,7 +275,7 @@ function StatusDot({
   return (
     <span
       className={`inline-block h-2 w-2 rounded-full ${
-        color ?? (active ? "bg-green-400" : "bg-gray-300")
+        color ?? (active ? "bg-green-400" : "bg-surface-muted")
       }`}
     />
   );

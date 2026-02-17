@@ -172,8 +172,8 @@ function DesktopGrid({
       <table className="w-full border-collapse text-sm">
         {/* Header row: product names */}
         <thead>
-          <tr className="border-b-2 border-gray-200">
-            <th className="sticky left-0 z-10 bg-white px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-400 w-36">
+          <tr className="border-b-2 border">
+            <th className="sticky left-0 z-10 bg-surface px-3 py-3 text-left text-xs font-medium uppercase tracking-wider text-foreground-muted w-36">
               {t("compare.metric")}
             </th>
             {products.map((p, i) => {
@@ -181,7 +181,7 @@ function DesktopGrid({
                 SCORE_BANDS[scoreBandFromScore(p.unhealthiness_score)];
               const nutriClass = p.nutri_score
                 ? NUTRI_COLORS[p.nutri_score]
-                : "bg-gray-200 text-gray-500";
+                : "bg-surface-muted text-foreground-secondary";
 
               return (
                 <th
@@ -204,17 +204,17 @@ function DesktopGrid({
                     >
                       {p.unhealthiness_score}
                     </div>
-                    <p className="text-sm font-semibold text-gray-900 line-clamp-2">
+                    <p className="text-sm font-semibold text-foreground line-clamp-2">
                       {p.product_name}
                     </p>
-                    <p className="text-xs text-gray-500">{p.brand}</p>
+                    <p className="text-xs text-foreground-secondary">{p.brand}</p>
                     <div className="flex items-center justify-center gap-1">
                       <span
                         className={`rounded-full px-1.5 py-0.5 text-xs font-bold ${nutriClass}`}
                       >
                         {p.nutri_score ?? "?"}
                       </span>
-                      <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
+                      <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-xs text-foreground-secondary">
                         N{p.nova_group ?? "?"}
                       </span>
                       {showAvoidBadge && (
@@ -238,8 +238,8 @@ function DesktopGrid({
             const ranking = getBestWorst(values, row.betterDirection);
 
             return (
-              <tr key={row.key} className="border-b border-gray-100">
-                <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs font-medium text-gray-500">
+              <tr key={row.key} className="border-b border">
+                <td className="sticky left-0 z-10 bg-surface px-3 py-2 text-xs font-medium text-foreground-secondary">
                   {t(ROW_LABEL_KEYS[row.key]) ?? row.label}
                 </td>
                 {products.map((p, i) => {
@@ -267,14 +267,14 @@ function DesktopGrid({
           })}
 
           {/* Allergen tags row */}
-          <tr className="border-b border-gray-100">
-            <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs font-medium text-gray-500">
+          <tr className="border-b border">
+            <td className="sticky left-0 z-10 bg-surface px-3 py-2 text-xs font-medium text-foreground-secondary">
               {t("product.allergens")}
             </td>
             {products.map((p) => (
               <td
                 key={p.product_id}
-                className="px-3 py-2 text-center text-xs text-gray-600"
+                className="px-3 py-2 text-center text-xs text-foreground-secondary"
               >
                 {p.allergen_tags
                   ? p.allergen_tags
@@ -287,8 +287,8 @@ function DesktopGrid({
           </tr>
 
           {/* Flags row */}
-          <tr className="border-b border-gray-100">
-            <td className="sticky left-0 z-10 bg-white px-3 py-2 text-xs font-medium text-gray-500">
+          <tr className="border-b border">
+            <td className="sticky left-0 z-10 bg-surface px-3 py-2 text-xs font-medium text-foreground-secondary">
               {t("product.warnings")}
             </td>
             {products.map((p) => {
@@ -391,7 +391,7 @@ function MobileSwipeView({
   const band = SCORE_BANDS[scoreBandFromScore(product.unhealthiness_score)];
   const nutriClass = product.nutri_score
     ? NUTRI_COLORS[product.nutri_score]
-    : "bg-gray-200 text-gray-500";
+    : "bg-surface-muted text-foreground-secondary";
 
   return (
     <div className="md:hidden">
@@ -421,7 +421,7 @@ function MobileSwipeView({
             <span
               key={`dot-${p.product_id}`}
               className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                i === activeIdx ? "bg-brand-600" : "bg-gray-300"
+                i === activeIdx ? "bg-brand-600" : "bg-surface-muted"
               }`}
             />
           ))}
@@ -444,15 +444,15 @@ function MobileSwipeView({
               {product.unhealthiness_score}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-bold text-gray-900">{product.product_name}</p>
-              <p className="text-sm text-gray-500">{product.brand}</p>
+              <p className="font-bold text-foreground">{product.product_name}</p>
+              <p className="text-sm text-foreground-secondary">{product.brand}</p>
               <div className="mt-1 flex items-center gap-1.5">
                 <span
                   className={`rounded-full px-1.5 py-0.5 text-xs font-bold ${nutriClass}`}
                 >
                   {product.nutri_score ?? "?"}
                 </span>
-                <span className="rounded-full bg-gray-100 px-1.5 py-0.5 text-xs text-gray-600">
+                <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-xs text-foreground-secondary">
                   {t("product.novaGroup", { group: product.nova_group ?? "?" })}
                 </span>
                 {activeIdx === winnerIdx && (
@@ -496,10 +496,10 @@ function MobileSwipeView({
                   key={row.key}
                   className="flex items-center justify-between py-2"
                 >
-                  <span className="text-sm text-gray-500">
+                  <span className="text-sm text-foreground-secondary">
                     {t(ROW_LABEL_KEYS[row.key]) ?? row.label}
                   </span>
-                  <span className={`text-sm ${indicator || "text-gray-900"}`}>
+                  <span className={`text-sm ${indicator || "text-foreground"}`}>
                     {formatted}
                     {ranking?.bestIdx === activeIdx && " ✓"}
                     {ranking?.worstIdx === activeIdx && " ✗"}
@@ -510,11 +510,11 @@ function MobileSwipeView({
           </div>
 
           {/* Allergens */}
-          <div className="pt-2 border-t border-gray-100">
-            <p className="text-xs font-medium text-gray-400 uppercase mb-1">
+          <div className="pt-2 border-t border">
+            <p className="text-xs font-medium text-foreground-muted uppercase mb-1">
               {t("product.allergens")}
             </p>
-            <p className="text-sm text-gray-700">
+            <p className="text-sm text-foreground-secondary">
               {product.allergen_tags
                 ? product.allergen_tags
                     .split(", ")
@@ -526,7 +526,7 @@ function MobileSwipeView({
 
           {/* Flags */}
           <div>
-            <p className="text-xs font-medium text-gray-400 uppercase mb-1">
+            <p className="text-xs font-medium text-foreground-muted uppercase mb-1">
               {t("product.warnings")}
             </p>
             <div className="flex flex-wrap gap-1">
@@ -563,7 +563,7 @@ function MobileSwipeView({
         </div>
 
         {/* Swipe hint */}
-        <p className="mt-3 text-center text-xs text-gray-400">
+        <p className="mt-3 text-center text-xs text-foreground-muted">
           {t("compare.swipeHint", {
             current: activeIdx + 1,
             total: products.length,
@@ -586,7 +586,7 @@ export function ComparisonGrid({
     return (
       <div className="py-12 text-center">
         <p className="mb-2 text-4xl">⚖️</p>
-        <p className="text-sm text-gray-500">{t("compare.selectAtLeast2")}</p>
+        <p className="text-sm text-foreground-secondary">{t("compare.selectAtLeast2")}</p>
       </div>
     );
   }

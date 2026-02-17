@@ -103,7 +103,7 @@ export default function ProductDetailPage() {
     return (
       <div className="space-y-4">
         <BackButton />
-        <p className="py-12 text-center text-sm text-gray-400">
+        <p className="py-12 text-center text-sm text-foreground-muted">
           {t("product.notFoundPage")}
         </p>
       </div>
@@ -113,7 +113,7 @@ export default function ProductDetailPage() {
   const band = SCORE_BANDS[profile.scores.score_band];
   const nutriClass = profile.scores.nutri_score_label
     ? NUTRI_COLORS[profile.scores.nutri_score_label]
-    : "bg-gray-200 text-gray-500";
+    : "bg-surface-muted text-foreground-secondary";
 
   const tabs: { key: Tab; label: string }[] = [
     { key: "overview", label: t("product.overview") },
@@ -149,19 +149,19 @@ export default function ProductDetailPage() {
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-lg font-bold text-gray-900">
+                <p className="text-lg font-bold text-foreground">
                   {profile.product.product_name_display ??
                     profile.product.product_name}
                 </p>
                 {profile.product.product_name_en &&
                   profile.product.product_name_display !==
                     profile.product.product_name && (
-                    <p className="text-xs text-gray-400">
+                    <p className="text-xs text-foreground-muted">
                       {t("product.originalName")}:{" "}
                       {profile.product.product_name}
                     </p>
                   )}
-                <p className="text-sm text-gray-500">{profile.product.brand}</p>
+                <p className="text-sm text-foreground-secondary">{profile.product.brand}</p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <ShareButton
@@ -185,7 +185,7 @@ export default function ProductDetailPage() {
                   grade: profile.scores.nutri_score_label ?? "?",
                 })}
               </span>
-              <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-600">
+              <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary">
                 {t("product.novaGroup", { group: profile.scores.nova_group })}
               </span>
               <span
@@ -198,7 +198,7 @@ export default function ProductDetailPage() {
         </div>
 
         {/* Category & EAN */}
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
+        <div className="mt-3 flex flex-wrap gap-2 text-xs text-foreground-secondary">
           <span>
             {profile.product.category_icon} {profile.product.category_display}
           </span>
@@ -215,7 +215,7 @@ export default function ProductDetailPage() {
           profile.flags.high_additive_load ||
           profile.flags.has_palm_oil) && (
           <div className="mt-3 space-y-1">
-            <p className="text-xs font-medium text-gray-400">
+            <p className="text-xs font-medium text-foreground-muted">
               {t("product.healthFlags")}
             </p>
             <div className="flex flex-wrap gap-1">
@@ -307,7 +307,7 @@ function BackButton() {
   return (
     <Link
       href="/app/search"
-      className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+      className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
     >
       <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
         <path
@@ -348,7 +348,7 @@ function FlagWithExplanation({
         </svg>
       </button>
       {open && (
-        <span className="absolute bottom-full left-0 z-10 mb-1 w-56 rounded-lg border border-gray-200 bg-white p-2 text-xs text-gray-600 shadow-lg">
+        <span className="absolute bottom-full left-0 z-10 mb-1 w-56 rounded-lg border border bg-surface p-2 text-xs text-foreground-secondary shadow-lg">
           {explanation}
         </span>
       )}
@@ -364,10 +364,10 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
     <div className="space-y-4">
       {/* Ingredients */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-gray-700">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
           {t("product.ingredients")}
         </h3>
-        <div className="space-y-1 text-sm text-gray-600">
+        <div className="space-y-1 text-sm text-foreground-secondary">
           <p>
             {t("product.ingredientCount", { count: profile.ingredients.count })}
           </p>
@@ -377,7 +377,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
             })}
           </p>
           {profile.ingredients.additive_names && (
-            <p className="text-xs text-gray-400">
+            <p className="text-xs text-foreground-muted">
               {profile.ingredients.additive_names}
             </p>
           )}
@@ -395,8 +395,8 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
         {/* Top ingredients — clickable links to ingredient profiles */}
         {profile.ingredients.top_ingredients.length > 0 && (
-          <div className="mt-3 border-t border-gray-100 pt-3">
-            <p className="mb-2 text-xs font-medium text-gray-500 uppercase">
+          <div className="mt-3 border-t border pt-3">
+            <p className="mb-2 text-xs font-medium text-foreground-secondary uppercase">
               {t("product.topIngredients")}
             </p>
             <div className="flex flex-wrap gap-1.5">
@@ -422,7 +422,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       {/* Allergens */}
       {profile.allergens.contains_count > 0 && (
         <div className="card">
-          <h3 className="mb-2 text-sm font-semibold text-gray-700">
+          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
             {t("product.allergens")}
           </h3>
           <div className="flex flex-wrap gap-1">
@@ -440,7 +440,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           </div>
           {profile.allergens.traces_count > 0 && (
             <div className="mt-2">
-              <p className="mb-1 text-xs text-gray-400">
+              <p className="mb-1 text-xs text-foreground-muted">
                 {t("product.mayContain")}
               </p>
               <div className="flex flex-wrap gap-1">
@@ -450,7 +450,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
                   .map((tag) => (
                     <span
                       key={tag}
-                      className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
+                      className="rounded bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary"
                     >
                       {tag.trim().replaceAll("en:", "")}
                     </span>
@@ -463,10 +463,10 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
       {/* Data quality */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-gray-700">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
           {t("product.dataQuality")}
         </h3>
-        <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
+        <div className="grid grid-cols-2 gap-2 text-sm text-foreground-secondary">
           <p>
             {t("product.confidence", {
               value:
@@ -554,7 +554,7 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   return (
     <div className="card">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-gray-700">
+        <h3 className="text-sm font-semibold text-foreground-secondary">
           {t("product.nutritionPer100g")}
         </h3>
         {dv && dv.reference_type !== "none" && (
@@ -590,7 +590,7 @@ function AlternativesTab({
 
   if (alternatives.length === 0) {
     return (
-      <p className="py-8 text-center text-sm text-gray-400">
+      <p className="py-8 text-center text-sm text-foreground-muted">
         {t("product.noAlternatives")}
       </p>
     );
@@ -598,7 +598,7 @@ function AlternativesTab({
 
   return (
     <div className="space-y-2">
-      <p className="text-sm text-gray-500">
+      <p className="text-sm text-foreground-secondary">
         {t("product.healthierOptions", { count: alternatives.length })}
       </p>
       {alternatives.map((alt) => (
@@ -612,7 +612,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
   const { t } = useTranslation();
   const nutriClass = alt.nutri_score
     ? NUTRI_COLORS[alt.nutri_score]
-    : "bg-gray-200 text-gray-500";
+    : "bg-surface-muted text-foreground-secondary";
 
   return (
     <Link href={`/app/product/${alt.product_id}`}>
@@ -621,10 +621,10 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
           {alt.unhealthiness_score}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-gray-900">
+          <p className="truncate font-medium text-foreground">
             {alt.product_name}
           </p>
-          <p className="text-sm text-gray-500">{alt.brand}</p>
+          <p className="text-sm text-foreground-secondary">{alt.brand}</p>
           <p className="text-xs text-green-600">
             {t("product.pointsBetter", { points: alt.score_delta })}
           </p>
@@ -660,16 +660,16 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
     <div className="space-y-4">
       {/* Summary */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-gray-700">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
           {t("product.summary")}
         </h3>
-        <p className="text-sm text-gray-600">{scores.headline}</p>
+        <p className="text-sm text-foreground-secondary">{scores.headline}</p>
       </div>
 
       {/* Score breakdown factors */}
       {topFactors.length > 0 && (
         <div className="card">
-          <h3 className="mb-2 text-sm font-semibold text-gray-700">
+          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
             {t("product.topScoreFactors")}
           </h3>
           <div className="space-y-2">
@@ -678,8 +678,8 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
                 key={String(f.factor)}
                 className="flex items-center justify-between text-sm"
               >
-                <span className="text-gray-600">{String(f.factor)}</span>
-                <span className="font-medium text-gray-900">
+                <span className="text-foreground-secondary">{String(f.factor)}</span>
+                <span className="font-medium text-foreground">
                   +{Number(f.weighted).toFixed(1)}
                 </span>
               </div>
@@ -704,10 +704,10 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
       {/* Category context */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-gray-700">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
           {t("product.categoryContext")}
         </h3>
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-foreground-secondary">
           <p>
             {t("product.rank", {
               rank: scores.category_context.rank,

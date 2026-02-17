@@ -51,7 +51,7 @@ export default function IngredientProfilePage() {
         <BackLink />
         <div className="card py-8 text-center">
           <p className="mb-2 text-4xl">🔬</p>
-          <p className="text-sm text-gray-400">{t("ingredient.notFound")}</p>
+          <p className="text-sm text-foreground-muted">{t("ingredient.notFound")}</p>
         </div>
       </div>
     );
@@ -66,11 +66,11 @@ export default function IngredientProfilePage() {
       {/* ── Header Card ──────────────────────────────────────────────── */}
       <div className="card">
         <div className="flex items-start gap-4">
-          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-gray-100 text-2xl">
+          <div className="flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl bg-surface-muted text-2xl">
             {ing.is_additive ? "🧪" : "🌿"}
           </div>
           <div className="min-w-0 flex-1">
-            <h1 className="text-lg font-bold text-gray-900">
+            <h1 className="text-lg font-bold text-foreground">
               {ing.name_display}
             </h1>
             {ing.additive_code && (
@@ -88,7 +88,7 @@ export default function IngredientProfilePage() {
         </div>
 
         {/* Dietary flags */}
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-gray-500">
+        <div className="mt-3 flex flex-wrap gap-2 text-xs text-foreground-secondary">
           <DietaryFlag label={t("ingredient.vegan")} value={ing.vegan} />
           <DietaryFlag
             label={t("ingredient.vegetarian")}
@@ -106,14 +106,14 @@ export default function IngredientProfilePage() {
       {/* ── Concern Explanation ───────────────────────────────────────── */}
       {(ing.concern_description || ing.concern_reason) && (
         <div className="card">
-          <h2 className="mb-2 text-sm font-semibold text-gray-700">
+          <h2 className="mb-2 text-sm font-semibold text-foreground-secondary">
             {t("ingredient.concernDetails")}
           </h2>
           {ing.concern_description && (
-            <p className="text-sm text-gray-600">{ing.concern_description}</p>
+            <p className="text-sm text-foreground-secondary">{ing.concern_description}</p>
           )}
           {ing.concern_reason && (
-            <p className="mt-1 text-sm text-gray-500 italic">
+            <p className="mt-1 text-sm text-foreground-secondary italic">
               {ing.concern_reason}
             </p>
           )}
@@ -126,7 +126,7 @@ export default function IngredientProfilePage() {
             </div>
           )}
           {ing.score_impact && (
-            <p className="mt-2 text-xs text-gray-400">
+            <p className="mt-2 text-xs text-foreground-muted">
               {t("ingredient.scoreImpact")}: {ing.score_impact}
             </p>
           )}
@@ -157,7 +157,7 @@ function BackLink() {
     <button
       type="button"
       onClick={() => globalThis.history.back()}
-      className="flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+      className="flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
     >
       ← {t("common.back")}
     </button>
@@ -176,7 +176,7 @@ function DietaryFlag({
   const icon = icons[value] ?? "❓";
   return (
     <span
-      className="rounded-full bg-gray-100 px-2 py-0.5"
+      className="rounded-full bg-surface-muted px-2 py-0.5"
       data-testid="dietary-flag"
     >
       {icon} {label}: {value}

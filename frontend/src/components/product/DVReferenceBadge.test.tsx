@@ -19,7 +19,7 @@ describe("DVReferenceBadge", () => {
   it("renders standard badge with gray styling", () => {
     render(<DVReferenceBadge referenceType="standard" regulation="eu_ri" />);
     const badge = screen.getByText(/eu_ri/);
-    expect(badge.closest("span")).toHaveClass("bg-gray-100");
+    expect(badge.closest("span")).toHaveClass("bg-surface-muted");
   });
 
   it("renders nothing when referenceType is none", () => {

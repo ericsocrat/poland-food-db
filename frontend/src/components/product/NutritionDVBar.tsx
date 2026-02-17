@@ -18,9 +18,9 @@ export function NutritionDVBar({ label, rawValue, dv }: NutritionDVBarProps) {
 
   if (!dv) {
     return (
-      <tr className="border-b border-gray-100">
-        <td className="py-2 text-gray-600">{label}</td>
-        <td className="py-2 text-right font-medium text-gray-900">
+      <tr className="border-b border">
+        <td className="py-2 text-foreground-secondary">{label}</td>
+        <td className="py-2 text-right font-medium text-foreground">
           {rawValue}
         </td>
         <td className="w-32 py-2 pl-3" />
@@ -32,12 +32,12 @@ export function NutritionDVBar({ label, rawValue, dv }: NutritionDVBarProps) {
   const widthPct = Math.min(dv.pct, 100);
 
   return (
-    <tr className="border-b border-gray-100">
-      <td className="py-2 text-gray-600">{label}</td>
-      <td className="py-2 text-right font-medium text-gray-900">{rawValue}</td>
+    <tr className="border-b border">
+      <td className="py-2 text-foreground-secondary">{label}</td>
+      <td className="py-2 text-right font-medium text-foreground">{rawValue}</td>
       <td className="w-32 py-2 pl-3">
         <div className="flex items-center gap-2">
-          <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-gray-200">
+          <div className="relative h-2 flex-1 overflow-hidden rounded-full bg-surface-muted">
             <div
               className={`h-full rounded-full ${colors.bar}`}
               style={{ width: `${widthPct}%` }}

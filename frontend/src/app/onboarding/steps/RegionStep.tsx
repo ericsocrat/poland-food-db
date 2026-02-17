@@ -21,10 +21,10 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("onboarding.regionTitle")}
       </h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <p className="mb-8 text-sm text-foreground-secondary">
         {t("onboarding.regionSubtitle")}
       </p>
 
@@ -36,14 +36,14 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
             className={`flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-colors ${
               data.country === country.code
                 ? "border-brand-500 bg-brand-50"
-                : "border-gray-200 bg-white hover:border-gray-300"
+                : "border bg-surface hover:border-strong"
             }`}
             data-testid={`country-${country.code}`}
           >
             <span className="text-3xl">{country.flag}</span>
             <div>
-              <p className="font-semibold text-gray-900">{country.name}</p>
-              <p className="text-sm text-gray-500">{country.native}</p>
+              <p className="font-semibold text-foreground">{country.name}</p>
+              <p className="text-sm text-foreground-secondary">{country.native}</p>
             </div>
             {data.country === country.code && (
               <span className="ml-auto text-brand-600">✓</span>
@@ -55,7 +55,7 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
       {/* Language selector (appears after country selection) */}
       {data.country && availableLanguages.length > 0 && (
         <section className="mt-6">
-          <h2 className="mb-3 text-sm font-semibold text-gray-700">
+          <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
             {t("onboarding.languageLabel")}
           </h2>
           <div className="flex gap-2">
@@ -66,7 +66,7 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
                 className={`flex items-center gap-2 rounded-lg border-2 px-4 py-2 text-sm transition-colors ${
                   data.language === lang.code
                     ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
-                    : "border-gray-200 text-gray-700 hover:border-gray-300"
+                    : "border text-foreground-secondary hover:border-strong"
                 }`}
               >
                 <span>{lang.flag}</span>

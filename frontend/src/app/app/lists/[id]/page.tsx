@@ -135,17 +135,17 @@ export default function ListDetailPage() {
           ) : (
             <div className="flex items-start justify-between">
               <div>
-                <h1 className="text-lg font-bold text-gray-900">
+                <h1 className="text-lg font-bold text-foreground">
                   {list.list_type === "favorites" && "❤️ "}
                   {list.list_type === "avoid" && "🚫 "}
                   {list.name}
                 </h1>
                 {list.description && (
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-sm text-foreground-secondary">
                     {list.description}
                   </p>
                 )}
-                <p className="mt-1 text-xs text-gray-400">
+                <p className="mt-1 text-xs text-foreground-muted">
                   {t("common.items", { count: list.item_count })}
                 </p>
               </div>
@@ -154,7 +154,7 @@ export default function ListDetailPage() {
                 <button
                   type="button"
                   title={t("lists.editList")}
-                  className="flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-gray-100"
+                  className="flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-surface-muted"
                   onClick={() => {
                     setEditName(list.name);
                     setEditDesc(list.description ?? "");
@@ -168,7 +168,7 @@ export default function ListDetailPage() {
                   <button
                     type="button"
                     title={t("lists.shareSettings")}
-                    className={`flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-gray-100 ${
+                    className={`flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-surface-muted ${
                       list.share_enabled ? "text-blue-600" : ""
                     }`}
                     onClick={() => setShowSharePanel((v) => !v)}
@@ -182,8 +182,8 @@ export default function ListDetailPage() {
 
           {/* Share panel */}
           {showSharePanel && list.list_type !== "avoid" && (
-            <div className="mt-3 rounded-lg border border-gray-200 bg-gray-50 p-3">
-              <p className="mb-2 text-sm font-medium text-gray-700">
+            <div className="mt-3 rounded-lg border border bg-surface-subtle p-3">
+              <p className="mb-2 text-sm font-medium text-foreground-secondary">
                 {t("lists.sharing")}
               </p>
               <div className="flex items-center gap-3">
@@ -192,7 +192,7 @@ export default function ListDetailPage() {
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                     list.share_enabled
                       ? "bg-blue-100 text-blue-700"
-                      : "bg-gray-200 text-gray-600"
+                      : "bg-surface-muted text-foreground-secondary"
                   }`}
                   onClick={() => handleShare(!list.share_enabled)}
                   disabled={toggleShareMutation.isPending}
@@ -296,8 +296,8 @@ function ListItemRow({
   const band = SCORE_BANDS[bandKey];
 
   const nutriClass = item.nutri_score_label
-    ? (NUTRI_COLORS[item.nutri_score_label] ?? "bg-gray-200 text-gray-500")
-    : "bg-gray-200 text-gray-500";
+    ? (NUTRI_COLORS[item.nutri_score_label] ?? "bg-surface-muted text-foreground-secondary")
+    : "bg-surface-muted text-foreground-secondary";
 
   return (
     <li className="card flex items-center gap-3 transition-shadow hover:shadow-md">
@@ -314,15 +314,15 @@ function ListItemRow({
 
         {/* Product info */}
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-gray-900">
+          <p className="truncate font-medium text-foreground">
             {item.product_name}
           </p>
-          <p className="truncate text-sm text-gray-500">
+          <p className="truncate text-sm text-foreground-secondary">
             {item.brand}
             {item.category && ` · ${item.category}`}
           </p>
           {item.notes && (
-            <p className="mt-0.5 truncate text-xs text-gray-400 italic">
+            <p className="mt-0.5 truncate text-xs text-foreground-muted italic">
               {item.notes}
             </p>
           )}
@@ -342,7 +342,7 @@ function ListItemRow({
         title={t("lists.removeFromList")}
         aria-label={`Remove ${item.product_name}`}
         disabled={isRemoving}
-        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -362,7 +362,7 @@ function BackLink() {
   return (
     <Link
       href="/app/lists"
-      className="inline-flex items-center gap-1 text-sm text-gray-500 hover:text-gray-700"
+      className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
     >
       {t("lists.backToLists")}
     </Link>

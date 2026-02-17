@@ -36,7 +36,7 @@ export function RelatedIngredientsList({
 
   return (
     <div className="card">
-      <h2 className="mb-2 text-sm font-semibold text-gray-700">
+      <h2 className="mb-2 text-sm font-semibold text-foreground-secondary">
         {t("ingredient.relatedIngredients")}
       </h2>
       <ul className="divide-y divide-gray-100">
@@ -44,14 +44,14 @@ export function RelatedIngredientsList({
           <li key={ing.ingredient_id}>
             <Link
               href={`/app/ingredient/${ing.ingredient_id}`}
-              className="flex items-center gap-3 py-2 hover:bg-gray-50 -mx-1 px-1 rounded"
+              className="flex items-center gap-3 py-2 hover:bg-surface-subtle -mx-1 px-1 rounded"
             >
               <span className="text-lg">{ing.is_additive ? "🧪" : "🌿"}</span>
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-800">
+                <p className="truncate text-sm font-medium text-foreground">
                   {ing.name_en}
                 </p>
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-foreground-muted">
                   {t("ingredient.coOccurrence", {
                     count: ing.co_occurrence_count,
                   })}

@@ -40,13 +40,13 @@ export function RegionForm() {
       {/* Progress indicator */}
       <div className="mb-8 flex items-center gap-2">
         <div className="h-2 flex-1 rounded-full bg-brand-500" />
-        <div className="h-2 flex-1 rounded-full bg-gray-200" />
+        <div className="h-2 flex-1 rounded-full bg-surface-muted" />
       </div>
 
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("onboarding.selectRegion")}
       </h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <p className="mb-8 text-sm text-foreground-secondary">
         {t("onboarding.regionSubtitle")}
       </p>
 
@@ -58,13 +58,13 @@ export function RegionForm() {
             className={`flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-colors ${
               selected === country.code
                 ? "border-brand-500 bg-brand-50"
-                : "border-gray-200 bg-white hover:border-gray-300"
+                : "border bg-surface hover:border-strong"
             }`}
           >
             <span className="text-3xl">{country.flag}</span>
             <div>
-              <p className="font-semibold text-gray-900">{country.name}</p>
-              <p className="text-sm text-gray-500">{country.native}</p>
+              <p className="font-semibold text-foreground">{country.name}</p>
+              <p className="text-sm text-foreground-secondary">{country.native}</p>
             </div>
             {selected === country.code && (
               <span className="ml-auto text-brand-600">✓</span>

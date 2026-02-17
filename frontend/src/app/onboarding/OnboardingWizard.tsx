@@ -124,7 +124,7 @@ export function OnboardingWizard() {
           <button
             onClick={handleSkipAll}
             disabled={loading}
-            className="text-sm text-gray-500 underline hover:text-gray-700"
+            className="text-sm text-foreground-secondary underline hover:text-foreground"
             data-testid="onboarding-skip-all"
           >
             {t("onboarding.skipAll")}

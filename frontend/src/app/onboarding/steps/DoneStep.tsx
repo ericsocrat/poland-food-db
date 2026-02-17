@@ -25,9 +25,9 @@ export function DoneStep({ data, loading, onComplete }: DoneStepProps) {
 
   function summaryRow(label: string, value: string) {
     return (
-      <div className="flex justify-between border-b border-gray-100 py-2">
-        <span className="text-sm text-gray-500">{label}</span>
-        <span className="text-sm font-medium text-gray-900">{value}</span>
+      <div className="flex justify-between border-b border py-2">
+        <span className="text-sm text-foreground-secondary">{label}</span>
+        <span className="text-sm font-medium text-foreground">{value}</span>
       </div>
     );
   }
@@ -35,15 +35,15 @@ export function DoneStep({ data, loading, onComplete }: DoneStepProps) {
   return (
     <div className="text-center">
       <div className="mb-4 text-5xl">🎉</div>
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("onboarding.doneTitle")}
       </h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <p className="mb-8 text-sm text-foreground-secondary">
         {t("onboarding.doneSubtitle")}
       </p>
 
       {/* Summary card */}
-      <div className="mb-8 rounded-xl border border-gray-200 bg-white p-4 text-left">
+      <div className="mb-8 rounded-xl border border bg-surface p-4 text-left">
         {summaryRow(t("onboarding.summaryRegion"), countryName)}
         {summaryRow(t("onboarding.summaryDiet"), dietLabel)}
         {summaryRow(

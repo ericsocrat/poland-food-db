@@ -48,20 +48,20 @@ export function InstallPrompt() {
   if (!deferredPrompt || dismissed) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-50 mx-auto max-w-sm animate-[slideUp_0.3s_ease-out] rounded-xl border border-gray-200 bg-white p-4 shadow-lg sm:left-auto sm:right-4 sm:max-w-xs">
+    <div className="fixed bottom-20 left-4 right-4 z-50 mx-auto max-w-sm animate-[slideUp_0.3s_ease-out] rounded-xl border border bg-surface p-4 shadow-lg sm:left-auto sm:right-4 sm:max-w-xs">
       <div className="flex items-start gap-3">
         <span className="text-2xl">📲</span>
         <div className="flex-1">
-          <p className="text-sm font-semibold text-gray-900">
+          <p className="text-sm font-semibold text-foreground">
             {t("pwa.installTitle")}
           </p>
-          <p className="mt-0.5 text-xs text-gray-500">
+          <p className="mt-0.5 text-xs text-foreground-secondary">
             {t("pwa.installDescription")}
           </p>
         </div>
         <button
           onClick={handleDismiss}
-          className="text-gray-400 hover:text-gray-600"
+          className="text-foreground-muted hover:text-foreground-secondary"
           aria-label={t("pwa.dismissInstall")}
         >
           ✕

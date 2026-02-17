@@ -18,10 +18,10 @@ export function HealthGoalsStep({ data, onChange, onNext, onBack }: StepProps) {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("onboarding.healthGoalsTitle")}
       </h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <p className="mb-8 text-sm text-foreground-secondary">
         {t("onboarding.healthGoalsSubtitle")}
       </p>
 
@@ -33,14 +33,14 @@ export function HealthGoalsStep({ data, onChange, onNext, onBack }: StepProps) {
             className={`flex w-full flex-col rounded-xl border-2 p-4 text-left transition-colors ${
               data.healthGoals.includes(goal.value)
                 ? "border-brand-500 bg-brand-50"
-                : "border-gray-200 bg-white hover:border-gray-300"
+                : "border bg-surface hover:border-strong"
             }`}
             data-testid={`goal-${goal.value}`}
           >
-            <span className="font-semibold text-gray-900">
+            <span className="font-semibold text-foreground">
               {t(goal.labelKey)}
             </span>
-            <span className="mt-1 text-sm text-gray-500">
+            <span className="mt-1 text-sm text-foreground-secondary">
               {t(goal.descKey)}
             </span>
           </button>

@@ -110,10 +110,10 @@ export default function AdminSubmissionsPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-lg font-semibold text-gray-900">
+        <h1 className="text-lg font-semibold text-foreground">
           {t("admin.submissionReview")}
         </h1>
-        <p className="text-sm text-gray-500">{t("admin.reviewSubtitle")}</p>
+        <p className="text-sm text-foreground-secondary">{t("admin.reviewSubtitle")}</p>
       </div>
 
       {/* Status tabs */}
@@ -128,7 +128,7 @@ export default function AdminSubmissionsPage() {
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               statusFilter === tab.value
                 ? "bg-brand-600 text-white"
-                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                : "bg-surface-muted text-foreground-secondary hover:bg-surface-muted"
             }`}
           >
             {tab.emoji ? `${tab.emoji} ` : ""}
@@ -160,7 +160,7 @@ export default function AdminSubmissionsPage() {
       {/* Empty */}
       {data?.submissions.length === 0 && (
         <div className="py-12 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-foreground-secondary">
             {t("admin.noSubmissions", { status: statusFilter })}
           </p>
         </div>
@@ -201,7 +201,7 @@ export default function AdminSubmissionsPage() {
           >
             {t("common.prev")}
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-foreground-secondary">
             {data.page} / {data.pages} ({data.total} total)
           </span>
           <button
@@ -250,10 +250,10 @@ function AdminSubmissionCard({
       <div className="space-y-2">
         <div className="flex items-start justify-between">
           <div>
-            <p className="font-medium text-gray-900">
+            <p className="font-medium text-foreground">
               {submission.product_name}
             </p>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-foreground-secondary">
               {submission.brand && `${submission.brand} · `}
               {t("admin.eanLabel")}{" "}
               <span className="font-mono">{submission.ean}</span>
@@ -267,18 +267,18 @@ function AdminSubmissionCard({
         </div>
 
         {submission.category && (
-          <p className="text-xs text-gray-500">
+          <p className="text-xs text-foreground-secondary">
             {t("admin.categoryLabel")} {submission.category}
           </p>
         )}
 
         {submission.notes && (
-          <p className="rounded-md bg-gray-50 p-2 text-xs text-gray-600">
+          <p className="rounded-md bg-surface-subtle p-2 text-xs text-foreground-secondary">
             📝 {submission.notes}
           </p>
         )}
 
-        <div className="flex items-center justify-between text-xs text-gray-400">
+        <div className="flex items-center justify-between text-xs text-foreground-muted">
           <span>
             {t("admin.submittedLabel")} {date}
           </span>
@@ -288,7 +288,7 @@ function AdminSubmissionCard({
         </div>
 
         {canReview && (
-          <div className="flex gap-2 border-t border-gray-100 pt-2">
+          <div className="flex gap-2 border-t border pt-2">
             <button
               onClick={onApprove}
               disabled={isPending}
@@ -307,7 +307,7 @@ function AdminSubmissionCard({
         )}
 
         {submission.reviewed_at && (
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-foreground-muted">
             {t("admin.reviewedLabel")}{" "}
             {new Date(submission.reviewed_at).toLocaleString()}
           </p>

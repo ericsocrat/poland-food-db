@@ -40,8 +40,8 @@ export function ProductImageTabs({
   if (!activeImage) return null;
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-white p-4">
-      <h3 className="mb-3 text-sm font-semibold text-gray-700">
+    <div className="rounded-xl border border bg-surface p-4">
+      <h3 className="mb-3 text-sm font-semibold text-foreground-secondary">
         {t("product.productPhotos")}
       </h3>
 
@@ -54,7 +54,7 @@ export function ProductImageTabs({
             className={`rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
               idx === activeIdx
                 ? "bg-blue-100 text-blue-700"
-                : "bg-gray-50 text-gray-500 hover:bg-gray-100"
+                : "bg-surface-subtle text-foreground-secondary hover:bg-surface-muted"
             }`}
           >
             {typeLabels[img.image_type] ?? img.image_type}
@@ -63,7 +63,7 @@ export function ProductImageTabs({
       </div>
 
       {/* Active image */}
-      <div className="relative overflow-hidden rounded-lg bg-gray-50">
+      <div className="relative overflow-hidden rounded-lg bg-surface-subtle">
         <Image
           src={activeImage.url}
           alt={

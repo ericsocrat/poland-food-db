@@ -159,15 +159,15 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
 
       {open && (
         <div
-          className="absolute right-0 top-full z-50 mt-1 w-56 rounded-xl border border-gray-200 bg-white py-1 shadow-lg"
+          className="absolute right-0 top-full z-50 mt-1 w-56 rounded-xl border border bg-surface py-1 shadow-lg"
           role="menu"
         >
-          <p className="px-3 py-1.5 text-xs font-medium text-gray-400">
+          <p className="px-3 py-1.5 text-xs font-medium text-foreground-muted">
             {t("productActions.yourLists")}
           </p>
 
           {lists.length === 0 && (
-            <p className="px-3 py-2 text-sm text-gray-400">
+            <p className="px-3 py-2 text-sm text-foreground-muted">
               {t("productActions.noLists")}
             </p>
           )}
@@ -182,7 +182,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
                 type="button"
                 role="menuitem"
                 disabled={isBusy}
-                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-gray-50 disabled:opacity-50"
+                className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm transition-colors hover:bg-surface-subtle disabled:opacity-50"
                 onClick={(e) => {
                   e.preventDefault();
                   e.stopPropagation();
@@ -190,11 +190,11 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
                 }}
               >
                 <span className="text-base">{icon}</span>
-                <span className="flex-1 truncate text-gray-700">
+                <span className="flex-1 truncate text-foreground-secondary">
                   {list.name}
                 </span>
                 {inList && (
-                  <span className="text-xs text-gray-400">
+                  <span className="text-xs text-foreground-muted">
                     {t("productActions.remove")}
                   </span>
                 )}

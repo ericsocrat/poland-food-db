@@ -15,7 +15,7 @@ export default function PrivacyPage() {
       <main className="flex flex-1 flex-col items-center px-4 py-16">
         <div className="prose max-w-lg">
           <h1>{t("legal.privacyTitle")}</h1>
-          <p className="text-sm text-gray-500">{t("legal.lastUpdated")}</p>
+          <p className="text-sm text-foreground-secondary">{t("legal.lastUpdated")}</p>
 
           <h2>{t("legal.dataWeCollect")}</h2>
           <p>{t("legal.dataWeCollectText")}</p>

@@ -50,10 +50,10 @@ export default function ScanHistoryPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">
+          <h1 className="text-lg font-semibold text-foreground">
             📋 {t("scanHistory.title")}
           </h1>
-          <p className="text-sm text-gray-500">{t("scanHistory.subtitle")}</p>
+          <p className="text-sm text-foreground-secondary">{t("scanHistory.subtitle")}</p>
         </div>
         <Link
           href="/app/scan"
@@ -64,7 +64,7 @@ export default function ScanHistoryPage() {
       </div>
 
       {/* Filter toggle */}
-      <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+      <div className="flex gap-1 rounded-lg bg-surface-muted p-1">
         {FILTERS.map((f) => (
           <button
             key={f.value}
@@ -74,8 +74,8 @@ export default function ScanHistoryPage() {
             }}
             className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
               filter === f.value
-                ? "bg-white text-brand-700 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-surface text-brand-700 shadow-sm"
+                : "text-foreground-secondary hover:text-foreground"
             }`}
           >
             {t(f.labelKey)}
@@ -133,7 +133,7 @@ export default function ScanHistoryPage() {
           >
             {t("common.prev")}
           </button>
-          <span className="text-sm text-gray-500">
+          <span className="text-sm text-foreground-secondary">
             {t("common.pageOf", { page: data.page, pages: data.pages })}
           </span>
           <button
@@ -176,23 +176,23 @@ function ScanRow({
           {scan.nutri_score && (
             <span
               className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-xs font-bold text-white ${
-                NUTRI_COLORS[scan.nutri_score] ?? "bg-gray-400"
+                NUTRI_COLORS[scan.nutri_score] ?? "bg-foreground-muted"
               }`}
             >
               {scan.nutri_score}
             </span>
           )}
           <div className="min-w-0 flex-1">
-            <p className="truncate font-medium text-gray-900">
+            <p className="truncate font-medium text-foreground">
               {scan.product_name}
             </p>
-            <p className="text-xs text-gray-500">
+            <p className="text-xs text-foreground-secondary">
               {scan.brand} · {scan.category}
             </p>
           </div>
           <div className="flex flex-shrink-0 flex-col items-end">
-            <span className="text-xs text-gray-400">{timeStr}</span>
-            <span className="mt-0.5 text-xs font-mono text-gray-300">
+            <span className="text-xs text-foreground-muted">{timeStr}</span>
+            <span className="mt-0.5 text-xs font-mono text-foreground-muted">
               {scan.ean}
             </span>
           </div>
@@ -209,8 +209,8 @@ function ScanRow({
           ❓
         </span>
         <div className="min-w-0 flex-1">
-          <p className="font-mono text-sm text-gray-700">{scan.ean}</p>
-          <p className="text-xs text-gray-500">
+          <p className="font-mono text-sm text-foreground-secondary">{scan.ean}</p>
+          <p className="text-xs text-foreground-secondary">
             {t("scanHistory.notFound")}
             {scan.submission_status && (
               <span className="ml-1">
@@ -223,7 +223,7 @@ function ScanRow({
           </p>
         </div>
         <div className="flex flex-shrink-0 flex-col items-end gap-1">
-          <span className="text-xs text-gray-400">{timeStr}</span>
+          <span className="text-xs text-foreground-muted">{timeStr}</span>
           {!scan.submission_status && (
             <Link
               href={`/app/scan/submit?ean=${scan.ean}`}

@@ -33,12 +33,12 @@ export function OnboardingProgress({
           <div
             key={i}
             className={`h-2 flex-1 rounded-full transition-colors ${
-              i < currentStep ? "bg-brand-500" : "bg-gray-200"
+              i < currentStep ? "bg-brand-500" : "bg-surface-muted"
             }`}
           />
         ))}
       </div>
-      <p className="text-center text-xs text-gray-500">
+      <p className="text-center text-xs text-foreground-secondary">
         {t("onboarding.stepOf", {
           current: String(currentStep),
           total: String(totalSteps),

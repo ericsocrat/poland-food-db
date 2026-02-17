@@ -53,7 +53,7 @@ export default function ListsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-gray-900">
+        <h1 className="text-xl font-bold text-foreground">
           📋 {t("lists.title")}
         </h1>
         <button
@@ -170,8 +170,8 @@ function ListCard({
         <span className="text-2xl">{typeIcon}</span>
 
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-gray-900">{list.name}</p>
-          <p className="text-sm text-gray-500">
+          <p className="font-medium text-foreground">{list.name}</p>
+          <p className="text-sm text-foreground-secondary">
             {t("common.items", { count: list.item_count })}
             {list.description && ` · ${list.description}`}
           </p>

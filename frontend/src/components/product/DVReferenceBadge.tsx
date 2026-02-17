@@ -23,7 +23,7 @@ export function DVReferenceBadge({
       className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium ${
         isPersonalized
           ? "bg-blue-100 text-blue-700"
-          : "bg-gray-100 text-gray-600"
+          : "bg-surface-muted text-foreground-secondary"
       }`}
     >
       {isPersonalized ? "👤" : "📊"} {label}

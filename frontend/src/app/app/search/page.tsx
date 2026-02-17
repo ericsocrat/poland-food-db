@@ -205,7 +205,7 @@ export default function SearchPage() {
               autoFocus
             />
             <svg
-              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-gray-400"
+              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground-muted"
               fill="none"
               viewBox="0 0 24 24"
               stroke="currentColor"
@@ -230,7 +230,7 @@ export default function SearchPage() {
                   setSubmittedQuery("");
                   setShowAutocomplete(false);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground-secondary"
                 aria-label={t("search.clearSearch")}
               >
                 <svg
@@ -301,11 +301,11 @@ export default function SearchPage() {
             >
               <span
                 className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
-                  showAvoided ? "bg-brand-600" : "bg-gray-300"
+                  showAvoided ? "bg-brand-600" : "bg-surface-muted"
                 }`}
               >
                 <span
-                  className={`inline-block h-3 w-3 transform rounded-full bg-white transition-transform ${
+                  className={`inline-block h-3 w-3 transform rounded-full bg-surface transition-transform ${
                     showAvoided ? "translate-x-3.5" : "translate-x-0.5"
                   }`}
                 />
@@ -340,7 +340,7 @@ export default function SearchPage() {
         {/* Recent searches — shown when no active search */}
         {!isSearchActive && recentSearches.length > 0 && (
           <div>
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-gray-400">
+            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-foreground-muted">
               {t("search.recentSearches")}
             </p>
             <div className="flex flex-wrap gap-2">
@@ -382,14 +382,14 @@ export default function SearchPage() {
         {data && (
           <>
             <div className="flex items-center justify-between">
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-foreground-secondary">
                 {t("search.result", { count: data.total })}
                 {data.query && (
                   <> {t("search.resultsFor", { query: data.query })}</>
                 )}
               </p>
               {data.pages > 1 && (
-                <p className="text-xs text-gray-400">
+                <p className="text-xs text-foreground-muted">
                   {t("common.pageOf", { page: data.page, pages: data.pages })}
                 </p>
               )}
@@ -488,7 +488,7 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
   const band = SCORE_BANDS[product.score_band];
   const nutriClass = product.nutri_score
     ? NUTRI_COLORS[product.nutri_score]
-    : "bg-gray-200 text-gray-500";
+    : "bg-surface-muted text-foreground-secondary";
 
   return (
     <Link href={`/app/product/${product.product_id}`}>
@@ -506,14 +506,14 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
 
         {/* Product info */}
         <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-gray-900">
+          <p className="truncate font-medium text-foreground">
             {product.product_name_display ?? product.product_name}
           </p>
-          <p className="truncate text-sm text-gray-500">
+          <p className="truncate text-sm text-foreground-secondary">
             {product.brand} · {product.category_icon}{" "}
             {product.category_display ?? product.category}
             {product.calories !== null && (
-              <span className="ml-1 text-xs text-gray-400">
+              <span className="ml-1 text-xs text-foreground-muted">
                 · {Math.round(product.calories)} kcal
               </span>
             )}

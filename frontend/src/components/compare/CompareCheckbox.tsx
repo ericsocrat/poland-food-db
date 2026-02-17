@@ -28,8 +28,8 @@ export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
   function getVariantClass(): string {
     if (isSelected) return "border-brand-600 bg-brand-600 text-white";
     if (disabled)
-      return "border-gray-200 bg-gray-50 text-gray-300 cursor-not-allowed";
-    return "border-gray-300 bg-white text-gray-400 hover:border-brand-400 hover:text-brand-500";
+      return "border bg-surface-subtle text-foreground-muted cursor-not-allowed";
+    return "border-strong bg-surface text-foreground-muted hover:border-brand-400 hover:text-brand-500";
   }
 
   return (

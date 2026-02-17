@@ -11,10 +11,10 @@ export function DietStep({ data, onChange, onNext, onBack }: StepProps) {
 
   return (
     <div>
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("onboarding.dietTitle")}
       </h1>
-      <p className="mb-8 text-sm text-gray-500">
+      <p className="mb-8 text-sm text-foreground-secondary">
         {t("onboarding.dietSubtitle")}
       </p>
 
@@ -26,7 +26,7 @@ export function DietStep({ data, onChange, onNext, onBack }: StepProps) {
             className={`rounded-lg border-2 px-3 py-3 text-sm transition-colors ${
               data.diet === opt.value
                 ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
-                : "border-gray-200 text-gray-700 hover:border-gray-300"
+                : "border text-foreground-secondary hover:border-strong"
             }`}
             data-testid={`diet-${opt.value}`}
           >
@@ -42,9 +42,9 @@ export function DietStep({ data, onChange, onNext, onBack }: StepProps) {
             type="checkbox"
             checked={data.strictDiet}
             onChange={(e) => onChange({ strictDiet: e.target.checked })}
-            className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+            className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
           />
-          <span className="text-sm text-gray-700">
+          <span className="text-sm text-foreground-secondary">
             {t("onboarding.strictDiet")}
           </span>
         </label>

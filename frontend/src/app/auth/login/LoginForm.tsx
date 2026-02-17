@@ -44,10 +44,10 @@ export function LoginForm() {
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
       <div className="w-full max-w-sm">
-        <h1 className="mb-2 text-center text-2xl font-bold text-gray-900">
+        <h1 className="mb-2 text-center text-2xl font-bold text-foreground">
           {t("auth.welcomeBack")}
         </h1>
-        <p className="mb-8 text-center text-sm text-gray-500">
+        <p className="mb-8 text-center text-sm text-foreground-secondary">
           {t("auth.signInSubtitle")}
         </p>
 
@@ -61,7 +61,7 @@ export function LoginForm() {
           <div>
             <label
               htmlFor="email"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
               {t("auth.email")}
             </label>
@@ -79,7 +79,7 @@ export function LoginForm() {
           <div>
             <label
               htmlFor="password"
-              className="mb-1 block text-sm font-medium text-gray-700"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
               {t("auth.password")}
             </label>
@@ -102,7 +102,7 @@ export function LoginForm() {
           </button>
         </form>
 
-        <p className="mt-6 text-center text-sm text-gray-500">
+        <p className="mt-6 text-center text-sm text-foreground-secondary">
           {t("auth.noAccount")}{" "}
           <Link
             href="/auth/signup"

@@ -20,7 +20,7 @@ export function ProductsContainingList({
 
   return (
     <div className="card">
-      <h2 className="mb-2 text-sm font-semibold text-gray-700">
+      <h2 className="mb-2 text-sm font-semibold text-foreground-secondary">
         {t("ingredient.topProducts")}
       </h2>
       <ul className="divide-y divide-gray-100">
@@ -28,14 +28,14 @@ export function ProductsContainingList({
           <li key={p.product_id}>
             <Link
               href={`/app/product/${p.product_id}`}
-              className="flex items-center gap-3 py-2 hover:bg-gray-50 -mx-1 px-1 rounded"
+              className="flex items-center gap-3 py-2 hover:bg-surface-subtle -mx-1 px-1 rounded"
             >
               <ScorePill score={p.score} />
               <div className="min-w-0 flex-1">
-                <p className="truncate text-sm font-medium text-gray-800">
+                <p className="truncate text-sm font-medium text-foreground">
                   {p.product_name}
                 </p>
-                <p className="truncate text-xs text-gray-400">
+                <p className="truncate text-xs text-foreground-muted">
                   {p.brand} · {p.category}
                 </p>
               </div>

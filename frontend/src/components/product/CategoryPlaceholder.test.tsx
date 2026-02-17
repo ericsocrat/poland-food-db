@@ -32,7 +32,7 @@ describe("CategoryPlaceholder", () => {
       <CategoryPlaceholder icon="📦" productName="Box" size="lg" />,
     );
     const el = container.firstElementChild!;
-    expect(el.className).toContain("aspect-square");
+    expect(el.className).toContain("h-48");
     expect(el.className).toContain("w-full");
   });
 

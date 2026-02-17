@@ -22,9 +22,9 @@ function SharedComparisonContent() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-surface-subtle">
       {/* Header */}
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border bg-surface">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
           <Link href="/" className="text-lg font-bold text-brand-700">
             🥗 FoodDB
@@ -61,10 +61,10 @@ function SharedComparisonContent() {
           <>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-bold text-gray-900">
+                <h1 className="text-xl font-bold text-foreground">
                   ⚖️ {data.title ?? t("shared.productComparison")}
                 </h1>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-foreground-secondary">
                   {data.product_count} {t("shared.productsCompared")} ·{" "}
                   {new Date(data.created_at).toLocaleDateString()}
                 </p>
@@ -77,7 +77,7 @@ function SharedComparisonContent() {
 
         {/* CTA */}
         <div className="card bg-brand-50 text-center">
-          <p className="mb-2 text-sm text-gray-700">
+          <p className="mb-2 text-sm text-foreground-secondary">
             {t("shared.wantToCompare")}
           </p>
           <Link href="/auth/login" className="btn-primary inline-block text-sm">

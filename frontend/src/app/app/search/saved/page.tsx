@@ -64,11 +64,11 @@ export default function SavedSearchesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-gray-900">
+          <h1 className="text-lg font-semibold text-foreground">
             {"📋 "}
             {t("savedSearches.title")}
           </h1>
-          <p className="text-sm text-gray-500">{t("savedSearches.subtitle")}</p>
+          <p className="text-sm text-foreground-secondary">{t("savedSearches.subtitle")}</p>
         </div>
         <Link
           href="/app/search"
@@ -117,8 +117,8 @@ export default function SavedSearchesPage() {
                   className="min-w-0 flex-1 cursor-pointer text-left"
                   onClick={() => applySearch(search)}
                 >
-                  <p className="font-medium text-gray-900">{search.name}</p>
-                  <p className="mt-0.5 text-sm text-gray-500">
+                  <p className="font-medium text-foreground">{search.name}</p>
+                  <p className="mt-0.5 text-sm text-foreground-secondary">
                     {search.query
                       ? t("savedSearches.query", { query: search.query })
                       : t("savedSearches.browseMode")}
@@ -129,7 +129,7 @@ export default function SavedSearchesPage() {
                       <FilterSummaryChips filters={search.filters} />
                     </div>
                   )}
-                  <p className="mt-1 text-xs text-gray-400">
+                  <p className="mt-1 text-xs text-foreground-muted">
                     {new Date(search.created_at).toLocaleDateString()}
                   </p>
                 </button>
@@ -147,7 +147,7 @@ export default function SavedSearchesPage() {
                     type="button"
                     onClick={() => setConfirmDeleteId(search.id)}
                     disabled={deleteMutation.isPending}
-                    className="rounded-lg px-2 py-1.5 text-xs text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+                    className="rounded-lg px-2 py-1.5 text-xs text-foreground-muted transition-colors hover:bg-red-50 hover:text-red-500"
                   >
                     🗑️
                   </button>
@@ -213,7 +213,7 @@ function FilterSummaryChips({ filters }: Readonly<{ filters: SearchFilters }>) {
       {chips.map((chip) => (
         <span
           key={chip}
-          className="rounded-full bg-gray-100 px-2 py-0.5 text-xs text-gray-500"
+          className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary"
         >
           {chip}
         </span>

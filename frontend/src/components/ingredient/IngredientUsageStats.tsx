@@ -17,33 +17,33 @@ export function IngredientUsageStats({ usage }: IngredientUsageStatsProps) {
 
   return (
     <div className="card">
-      <h2 className="mb-2 text-sm font-semibold text-gray-700">
+      <h2 className="mb-2 text-sm font-semibold text-foreground-secondary">
         {t("ingredient.usage")}
       </h2>
-      <p className="mb-3 text-2xl font-bold text-gray-900">
+      <p className="mb-3 text-2xl font-bold text-foreground">
         {usage.product_count.toLocaleString()}{" "}
-        <span className="text-sm font-normal text-gray-500">
+        <span className="text-sm font-normal text-foreground-secondary">
           {t("ingredient.productsContaining")}
         </span>
       </p>
 
       {usage.category_breakdown.length > 0 && (
         <div className="space-y-2">
-          <p className="text-xs font-medium text-gray-500 uppercase">
+          <p className="text-xs font-medium text-foreground-secondary uppercase">
             {t("ingredient.byCategory")}
           </p>
           {usage.category_breakdown.map((cat) => (
             <div key={cat.category} className="flex items-center gap-2">
-              <span className="w-28 truncate text-xs text-gray-600">
+              <span className="w-28 truncate text-xs text-foreground-secondary">
                 {cat.category}
               </span>
-              <div className="h-2 flex-1 overflow-hidden rounded-full bg-gray-100">
+              <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted">
                 <div
                   className="h-full rounded-full bg-brand-500"
                   style={{ width: `${(cat.count / maxCount) * 100}%` }}
                 />
               </div>
-              <span className="w-8 text-right text-xs text-gray-400">
+              <span className="w-8 text-right text-xs text-foreground-muted">
                 {cat.count}
               </span>
             </div>
