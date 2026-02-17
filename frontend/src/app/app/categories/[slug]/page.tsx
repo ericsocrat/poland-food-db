@@ -11,6 +11,7 @@ import { getCategoryListing } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
 import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
@@ -130,14 +131,12 @@ export default function CategoryListingPage() {
       )}
 
       {!isLoading && error && (
-        <div className="py-12 text-center">
-          <p className="mb-3 text-sm text-red-500">
-            {t("categories.loadFailed")}
-          </p>
-          <button
-            type="button"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-            onClick={() =>
+        <EmptyState
+          variant="error"
+          titleKey="categories.loadFailed"
+          action={{
+            labelKey: "common.retry",
+            onClick: () =>
               queryClient.invalidateQueries({
                 queryKey: queryKeys.categoryListing(
                   slug,
@@ -145,18 +144,13 @@ export default function CategoryListingPage() {
                   sortDir,
                   offset,
                 ),
-              })
-            }
-          >
-            {t("common.retry")}
-          </button>
-        </div>
+              }),
+          }}
+        />
       )}
 
       {!isLoading && !error && data?.products.length === 0 && (
-        <p className="py-12 text-center text-sm text-gray-400">
-          {t("categories.noProducts")}
-        </p>
+        <EmptyState variant="no-data" titleKey="categories.noProducts" />
       )}
 
       {!isLoading && !error && data && data.products.length > 0 && (

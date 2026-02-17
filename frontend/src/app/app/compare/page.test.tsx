@@ -104,13 +104,13 @@ describe("ComparePage", () => {
 
     it("links to search page from empty state", () => {
       render(<ComparePage />, { wrapper: createWrapper() });
-      const link = screen.getByText("🔍 Search Products");
+      const link = screen.getByText("Search Products");
       expect(link.closest("a")).toHaveAttribute("href", "/app/search");
     });
 
     it("links to saved comparisons from empty state", () => {
       render(<ComparePage />, { wrapper: createWrapper() });
-      const link = screen.getByText("📂 Saved Comparisons");
+      const link = screen.getByText("Saved Comparisons");
       expect(link.closest("a")).toHaveAttribute("href", "/app/compare/saved");
     });
   });
@@ -140,7 +140,7 @@ describe("ComparePage", () => {
       expect(
         screen.getByText("Failed to load comparison data."),
       ).toBeInTheDocument();
-      expect(screen.getByText("Network error")).toBeInTheDocument();
+      expect(screen.getByTestId("empty-state")).toHaveAttribute("data-variant", "error");
     });
 
     it("renders ComparisonGrid when data loaded", () => {

@@ -23,6 +23,9 @@
     "error": "Coś poszło nie tak",
     "tryAgain": "Spróbuj ponownie",
     "noResults": "Brak wyników",
+    "errorDescription": "Wystąpił nieoczekiwany błąd. Spróbuj ponownie.",
+    "offlineTitle": "Jesteś offline",
+    "offlineDescription": "Sprawdź połączenie internetowe i spróbuj ponownie.",
     "pageOf": "Strona {page} z {pages}",
     "items": "{count} element(ów)",
     "products": "{count} produkt(ów)"
@@ -193,7 +196,9 @@
     "searchProducts": "Szukaj produktów",
     "removeFromList": "Usuń z listy",
     "revokeSharing": "Cofnąć udostępnianie?",
-    "revokeWarning": "Stare linki przestaną działać."
+    "revokeWarning": "Stare linki przestaną działać.",
+    "loadFailed": "Nie udało się załadować list.",
+    "loadListFailed": "Nie udało się załadować listy."
   },
   "product": {
     "back": "Wstecz",

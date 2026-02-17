@@ -150,7 +150,7 @@ describe("SavedSearchesPage", () => {
         screen.getByText("Failed to load saved searches."),
       ).toBeInTheDocument();
     });
-    expect(screen.getByText("🔄 Retry")).toBeInTheDocument();
+    expect(screen.getByText("Retry")).toBeInTheDocument();
   });
 
   it("shows empty state when no saved searches", async () => {

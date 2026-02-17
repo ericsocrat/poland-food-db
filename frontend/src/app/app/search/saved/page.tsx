@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { getSavedSearches, deleteSavedSearch } from "@/lib/api";
+import { EmptyState } from "@/components/common/EmptyState";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { ALLERGEN_TAGS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -86,37 +87,22 @@ export default function SavedSearchesPage() {
 
       {/* Error */}
       {error && (
-        <div className="card border-red-200 bg-red-50 text-center">
-          <p className="mb-2 text-sm text-red-600">
-            {t("savedSearches.loadFailed")}
-          </p>
-          <button
-            onClick={handleRetry}
-            className="text-sm font-medium text-red-700 hover:text-red-800"
-          >
-            {"🔄 "}
-            {t("common.retry")}
-          </button>
-        </div>
+        <EmptyState
+          variant="error"
+          titleKey="savedSearches.loadFailed"
+          action={{ labelKey: "common.retry", onClick: handleRetry }}
+        />
       )}
 
       {/* Empty state */}
       {data?.searches.length === 0 && (
-        <div className="py-12 text-center">
-          <p className="mb-2 text-4xl">💾</p>
-          <p className="mb-1 text-sm text-gray-500">
-            {t("savedSearches.emptyTitle")}
-          </p>
-          <p className="mb-4 text-xs text-gray-400">
-            {t("savedSearches.emptyMessage")}
-          </p>
-          <Link
-            href="/app/search"
-            className="text-sm text-brand-600 hover:text-brand-700"
-          >
-            {t("savedSearches.goToSearch")}
-          </Link>
-        </div>
+        <EmptyState
+          variant="no-data"
+          icon={<span>💾</span>}
+          titleKey="savedSearches.emptyTitle"
+          descriptionKey="savedSearches.emptyMessage"
+          action={{ labelKey: "savedSearches.goToSearch", href: "/app/search" }}
+        />
       )}
 
       {/* List */}

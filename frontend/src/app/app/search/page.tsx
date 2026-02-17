@@ -18,6 +18,7 @@ import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
 import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
+import { EmptyState } from "@/components/common/EmptyState";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
@@ -357,9 +358,11 @@ export default function SearchPage() {
 
         {/* Empty state — no search or filters active */}
         {!isSearchActive && recentSearches.length === 0 && (
-          <p className="py-12 text-center text-sm text-gray-400">
-            {t("search.emptyState")}
-          </p>
+          <EmptyState
+            variant="no-data"
+            icon={<span>🔍</span>}
+            titleKey="search.emptyState"
+          />
         )}
 
         {/* Loading */}
@@ -371,17 +374,11 @@ export default function SearchPage() {
 
         {/* Error state */}
         {error && (
-          <div className="card border-red-200 bg-red-50 text-center">
-            <p className="mb-2 text-sm text-red-600">
-              {t("search.searchFailed")}
-            </p>
-            <button
-              onClick={handleRetry}
-              className="inline-flex items-center gap-1 text-sm font-medium text-red-700 hover:text-red-800"
-            >
-              🔄 {t("common.retry")}
-            </button>
-          </div>
+          <EmptyState
+            variant="error"
+            titleKey="search.searchFailed"
+            action={{ labelKey: "common.retry", onClick: handleRetry }}
+          />
         )}
 
         {/* Results */}
@@ -402,26 +399,21 @@ export default function SearchPage() {
             </div>
 
             {data.results.length === 0 ? (
-              <div className="py-12 text-center">
-                <p className="mb-2 text-4xl">🔍</p>
-                <p className="mb-1 text-sm text-gray-500">
-                  {data.query
-                    ? t("search.noMatchSearch")
-                    : t("search.noMatchFilters")}
-                </p>
-                <p className="mb-4 text-xs text-gray-400">
-                  {t("search.adjustFilters")}
-                </p>
-                {hasActiveFilters(filters) && (
-                  <button
-                    type="button"
-                    onClick={() => setFilters({})}
-                    className="text-sm text-brand-600 hover:text-brand-700"
-                  >
-                    {t("search.clearAllFilters")}
-                  </button>
-                )}
-              </div>
+              <EmptyState
+                variant="no-results"
+                titleKey={
+                  data.query ? "search.noMatchSearch" : "search.noMatchFilters"
+                }
+                descriptionKey="search.adjustFilters"
+                action={
+                  hasActiveFilters(filters)
+                    ? {
+                        labelKey: "search.clearAllFilters",
+                        onClick: () => setFilters({}),
+                      }
+                    : undefined
+                }
+              />
             ) : (
               <>
                 <ul className="space-y-2">

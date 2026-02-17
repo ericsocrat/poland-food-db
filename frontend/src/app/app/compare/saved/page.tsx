@@ -6,6 +6,7 @@
 import Link from "next/link";
 import { useSavedComparisons, useDeleteComparison } from "@/hooks/use-compare";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
 import { useTranslation } from "@/lib/i18n";
 import type { SavedComparison } from "@/lib/types";
 
@@ -47,25 +48,17 @@ export default function SavedComparisonsPage() {
       )}
 
       {/* Error */}
-      {error && (
-        <div className="card border-red-200 bg-red-50 text-center">
-          <p className="text-sm text-red-600">{t("compare.loadFailed")}</p>
-        </div>
-      )}
+      {error && <EmptyState variant="error" titleKey="compare.loadFailed" />}
 
       {/* Empty state */}
       {data?.comparisons.length === 0 && (
-        <div className="card py-12 text-center">
-          <p className="mb-2 text-4xl">📂</p>
-          <p className="mb-1 text-sm text-gray-500">{t("compare.noSaved")}</p>
-          <p className="mb-4 text-xs text-gray-400">
-            {t("compare.noSavedDescription")}
-          </p>
-          <Link href="/app/search" className="btn-primary text-sm">
-            {"🔍 "}
-            {t("compare.findProducts")}
-          </Link>
-        </div>
+        <EmptyState
+          variant="no-data"
+          icon={<span>📂</span>}
+          titleKey="compare.noSaved"
+          descriptionKey="compare.noSavedDescription"
+          action={{ labelKey: "compare.findProducts", href: "/app/search" }}
+        />
       )}
 
       {/* Comparisons list */}

@@ -8,6 +8,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useLists, useCreateList, useDeleteList } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useTranslation } from "@/lib/i18n";
 import type { ProductList, FormSubmitEvent } from "@/lib/types";
@@ -49,11 +50,7 @@ export default function ListsPage() {
   }
 
   if (error) {
-    return (
-      <div className="card border-red-200 bg-red-50 py-8 text-center">
-        <p className="mb-3 text-sm text-red-600">Failed to load lists.</p>
-      </div>
-    );
+    return <EmptyState variant="error" titleKey="lists.loadFailed" />;
   }
 
   return (
@@ -116,10 +113,7 @@ export default function ListsPage() {
 
       {/* Empty state */}
       {lists.length === 0 && (
-        <div className="py-12 text-center">
-          <p className="mb-2 text-4xl">📋</p>
-          <p className="text-sm text-gray-500">{t("lists.emptyState")}</p>
-        </div>
+        <EmptyState variant="no-data" titleKey="lists.emptyState" />
       )}
 
       {/* List grid */}

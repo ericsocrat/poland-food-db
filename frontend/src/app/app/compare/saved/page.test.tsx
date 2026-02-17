@@ -110,7 +110,7 @@ describe("SavedComparisonsPage", () => {
     });
     render(<SavedComparisonsPage />, { wrapper: createWrapper() });
     expect(screen.getByText("No saved comparisons yet")).toBeInTheDocument();
-    expect(screen.getByText("🔍 Find Products").closest("a")).toHaveAttribute(
+    expect(screen.getByText("Find Products").closest("a")).toHaveAttribute(
       "href",
       "/app/search",
     );

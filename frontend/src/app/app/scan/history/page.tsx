@@ -11,6 +11,7 @@ import { getScanHistory } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
 import { useTranslation } from "@/lib/i18n";
 import type { ScanHistoryItem } from "@/lib/types";
 
@@ -91,36 +92,22 @@ export default function ScanHistoryPage() {
 
       {/* Error */}
       {error && (
-        <div className="card border-red-200 bg-red-50 text-center">
-          <p className="mb-2 text-sm text-red-600">
-            {t("scanHistory.loadFailed")}
-          </p>
-          <button
-            onClick={handleRetry}
-            className="text-sm font-medium text-red-700 hover:text-red-800"
-          >
-            🔄 {t("common.retry")}
-          </button>
-        </div>
+        <EmptyState
+          variant="error"
+          titleKey="scanHistory.loadFailed"
+          action={{ labelKey: "common.retry", onClick: handleRetry }}
+        />
       )}
 
       {/* Empty */}
       {data?.scans.length === 0 && (
-        <div className="py-12 text-center">
-          <p className="mb-2 text-4xl">📷</p>
-          <p className="mb-1 text-sm text-gray-500">
-            {t("scanHistory.emptyTitle")}
-          </p>
-          <p className="mb-4 text-xs text-gray-400">
-            {t("scanHistory.emptyMessage")}
-          </p>
-          <Link
-            href="/app/scan"
-            className="text-sm text-brand-600 hover:text-brand-700"
-          >
-            {t("scanHistory.startScanning")}
-          </Link>
-        </div>
+        <EmptyState
+          variant="no-data"
+          icon={<span>📷</span>}
+          titleKey="scanHistory.emptyTitle"
+          descriptionKey="scanHistory.emptyMessage"
+          action={{ labelKey: "scanHistory.startScanning", href: "/app/scan" }}
+        />
       )}
 
       {/* Scan list */}

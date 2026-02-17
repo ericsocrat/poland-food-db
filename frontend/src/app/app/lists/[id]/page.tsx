@@ -16,6 +16,7 @@ import {
   useRevokeShare,
 } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useTranslation } from "@/lib/i18n";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
@@ -83,9 +84,7 @@ export default function ListDetailPage() {
     return (
       <div className="space-y-4">
         <BackLink />
-        <div className="card border-red-200 bg-red-50 py-8 text-center">
-          <p className="text-sm text-red-600">Failed to load list.</p>
-        </div>
+        <EmptyState variant="error" titleKey="lists.loadListFailed" />
       </div>
     );
   }
@@ -226,13 +225,12 @@ export default function ListDetailPage() {
 
       {/* Empty state */}
       {items.length === 0 && (
-        <div className="py-12 text-center">
-          <p className="mb-2 text-4xl">📭</p>
-          <p className="text-sm text-gray-500">{t("lists.emptyList")}</p>
-          <Link href="/app/search" className="btn-primary mt-4 inline-block">
-            {t("lists.searchProducts")}
-          </Link>
-        </div>
+        <EmptyState
+          variant="no-data"
+          icon={<span>📭</span>}
+          titleKey="lists.emptyList"
+          action={{ labelKey: "lists.searchProducts", href: "/app/search" }}
+        />
       )}
 
       {/* Items */}

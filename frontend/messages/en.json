@@ -23,6 +23,9 @@
     "error": "Something went wrong",
     "tryAgain": "Try again",
     "noResults": "No results found",
+    "errorDescription": "An unexpected error occurred. Please try again.",
+    "offlineTitle": "You're offline",
+    "offlineDescription": "Check your internet connection and try again.",
     "pageOf": "Page {page} of {pages}",
     "items": "{count} item(s)",
     "products": "{count} product(s)"
@@ -193,7 +196,9 @@
     "searchProducts": "Search products",
     "removeFromList": "Remove from list",
     "revokeSharing": "Revoke sharing?",
-    "revokeWarning": "Old links will stop working."
+    "revokeWarning": "Old links will stop working.",
+    "loadFailed": "Failed to load lists.",
+    "loadListFailed": "Failed to load list."
   },
   "product": {
     "back": "Back",

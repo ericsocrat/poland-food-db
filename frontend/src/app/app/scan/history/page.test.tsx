@@ -142,7 +142,7 @@ describe("ScanHistoryPage", () => {
         screen.getByText("Failed to load scan history."),
       ).toBeInTheDocument();
     });
-    expect(screen.getByText("🔄 Retry")).toBeInTheDocument();
+    expect(screen.getByText("Retry")).toBeInTheDocument();
   });
 
   it("shows empty state when no scans", async () => {

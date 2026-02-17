@@ -9,6 +9,7 @@ import { getDashboardData } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { NUTRI_COLORS, SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
 import { useAnalytics } from "@/hooks/use-analytics";
 import type {
   DashboardData,
@@ -203,25 +204,18 @@ function NewProductsSection({
 }
 
 function EmptyDashboard() {
-  const { t } = useTranslation();
   return (
-    <div className="py-12 text-center">
-      <p className="text-4xl">🏠</p>
-      <h2 className="mt-4 text-lg font-semibold text-gray-900">
-        {t("dashboard.welcome")}
-      </h2>
-      <p className="mt-2 text-sm text-gray-500">
-        {t("dashboard.welcomeDescription")}
-      </p>
-      <div className="mt-6 flex justify-center gap-3">
-        <Link href="/app/scan" className="btn-primary">
-          📷 {t("dashboard.scanProduct")}
-        </Link>
-        <Link href="/app/categories" className="btn-secondary">
-          {t("dashboard.browseCategories")}
-        </Link>
-      </div>
-    </div>
+    <EmptyState
+      variant="no-data"
+      icon={<span>🏠</span>}
+      titleKey="dashboard.welcome"
+      descriptionKey="dashboard.welcomeDescription"
+      action={{ labelKey: "dashboard.scanProduct", href: "/app/scan" }}
+      secondaryAction={{
+        labelKey: "dashboard.browseCategories",
+        href: "/app/categories",
+      }}
+    />
   );
 }
 
@@ -257,15 +251,14 @@ export default function DashboardPage() {
 
   if (isError || !data) {
     return (
-      <div className="card border-red-200 bg-red-50 py-8 text-center">
-        <p className="text-sm text-red-600">{t("dashboard.errorMessage")}</p>
-        <button
-          className="btn-primary mt-4"
-          onClick={() => window.location.reload()}
-        >
-          {t("common.tryAgain")}
-        </button>
-      </div>
+      <EmptyState
+        variant="error"
+        titleKey="dashboard.errorMessage"
+        action={{
+          labelKey: "common.tryAgain",
+          onClick: () => window.location.reload(),
+        }}
+      />
     );
   }
 

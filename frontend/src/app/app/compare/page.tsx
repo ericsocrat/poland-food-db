@@ -12,6 +12,7 @@ import { useCompareProducts } from "@/hooks/use-compare";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
 import { ShareComparison } from "@/components/compare/ShareComparison";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { EmptyState } from "@/components/common/EmptyState";
 import { useCompareStore } from "@/stores/compare-store";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
@@ -51,23 +52,17 @@ export default function ComparePage() {
         <h1 className="text-xl font-bold text-gray-900">
           ⚖️ {t("compare.title")}
         </h1>
-        <div className="card py-12 text-center">
-          <p className="mb-2 text-4xl">⚖️</p>
-          <p className="mb-1 text-sm text-gray-500">
-            {t("compare.selectPrompt")}
-          </p>
-          <p className="mb-4 text-xs text-gray-400">
-            {t("compare.useCheckbox")}
-          </p>
-          <div className="flex justify-center gap-3">
-            <Link href="/app/search" className="btn-primary text-sm">
-              🔍 {t("compare.searchProducts")}
-            </Link>
-            <Link href="/app/compare/saved" className="btn-secondary text-sm">
-              📂 {t("compare.savedComparisons")}
-            </Link>
-          </div>
-        </div>
+        <EmptyState
+          variant="no-data"
+          icon={<span>⚖️</span>}
+          titleKey="compare.selectPrompt"
+          descriptionKey="compare.useCheckbox"
+          action={{ labelKey: "compare.searchProducts", href: "/app/search" }}
+          secondaryAction={{
+            labelKey: "compare.savedComparisons",
+            href: "/app/compare/saved",
+          }}
+        />
       </div>
     );
   }
@@ -104,12 +99,7 @@ export default function ComparePage() {
       )}
 
       {/* Error */}
-      {error && (
-        <div className="card border-red-200 bg-red-50 text-center">
-          <p className="mb-2 text-sm text-red-600">{t("compare.loadFailed")}</p>
-          <p className="text-xs text-gray-500">{error.message}</p>
-        </div>
-      )}
+      {error && <EmptyState variant="error" titleKey="compare.loadFailed" />}
 
       {/* Comparison grid */}
       {data && data.products.length >= 2 && (
