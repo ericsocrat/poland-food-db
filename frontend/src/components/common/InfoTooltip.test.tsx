@@ -59,7 +59,7 @@ describe("InfoTooltip", () => {
     await user.hover(screen.getByText("Grade A"));
     const tooltip = await screen.findByRole("tooltip");
     expect(tooltip.textContent).toContain("Nutri-Score A");
-    expect(tooltip.textContent).toContain("Excellent");
+    expect(tooltip.textContent).toContain("Best nutritional quality");
   });
 
   it("resolves i18n messageKey with params", async () => {

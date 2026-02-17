@@ -66,6 +66,6 @@ describe("ConcernBadge", () => {
 
     await user.hover(screen.getByTestId("concern-badge"));
     const tooltip = await screen.findByRole("tooltip");
-    expect(tooltip.textContent).toContain("High concern");
+    expect(tooltip.textContent).toContain("EFSA Concern Level 3");
   });
 });

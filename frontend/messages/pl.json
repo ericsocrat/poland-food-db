@@ -706,46 +706,53 @@
   },
   "tooltip": {
     "nutriScore": {
-      "A": "Nutri-Score A — Doskonała jakość odżywcza. Jedno z najzdrowszych wyborów w swojej kategorii.",
-      "B": "Nutri-Score B — Dobra jakość odżywcza. Solidny codzienny wybór.",
-      "C": "Nutri-Score C — Średnia jakość odżywcza. Odpowiedni z umiarem.",
-      "D": "Nutri-Score D — Słaba jakość odżywcza. Ogranicz spożycie.",
-      "E": "Nutri-Score E — Bardzo słaba jakość odżywcza. Lepiej unikać lub spożywać rzadko.",
-      "unknown": "Nutri-Score niedostępny — niewystarczające dane do obliczenia."
+      "A": "Nutri-Score A: Najlepsza jakość odżywcza. Niska zawartość tłuszczu, cukru i soli. Bogaty w błonnik, białko oraz owoce/warzywa.",
+      "B": "Nutri-Score B: Dobra jakość odżywcza. Nieco wyższy poziom niektórych składników niż A, ale wciąż zdrowy wybór.",
+      "C": "Nutri-Score C: Średnia jakość odżywcza. Umiarkowany poziom tłuszczu, cukru lub soli. Spożywaj w rozsądnych ilościach.",
+      "D": "Nutri-Score D: Poniżej średniej jakości odżywczej. Wyższy poziom tłuszczu, cukru lub soli. Wybieraj rzadziej.",
+      "E": "Nutri-Score E: Najniższa jakość odżywcza. Wysoka zawartość tłuszczu, cukru i/lub soli. Spożywaj oszczędnie.",
+      "unknown": "Nutri-Score niedostępny. Niewystarczające dane do obliczenia wyniku dla tego produktu.",
+      "learnMore": "Dowiedz się więcej o Nutri-Score →"
     },
     "nova": {
-      "1": "NOVA 1 — Nieprzetworzone lub minimalnie przetworzone. Żywność naturalna bez dodatków.",
-      "2": "NOVA 2 — Przetworzone składniki kulinarne. Oleje, masło, cukier, sól używane w gotowaniu.",
-      "3": "NOVA 3 — Żywność przetworzona. Warzywa konserwowe, wędliny, sery.",
-      "4": "NOVA 4 — Ultraprzetworzone. Zawiera dodatki, aromaty lub substancje nieużywane w domowym gotowaniu."
+      "1": "NOVA 1: Żywność nieprzetworzona lub minimalnie przetworzona. Przykłady: świeże owoce, warzywa, zboża, surowe mięso, jajka.",
+      "2": "NOVA 2: Przetworzone składniki kulinarne. Używane w przygotowaniu posiłków. Przykłady: oleje, masło, cukier, sól, mąka.",
+      "3": "NOVA 3: Żywność przetworzona. Powstaje z połączenia NOVA 1 i 2. Przykłady: warzywa konserwowe, ser, chleb, wędliny.",
+      "4": "NOVA 4: Produkt ultraprzetworzone. Receptury przemysłowe z dodatkami. Przykłady: napoje gazowane, przekąski pakowane, zupki instant."
     },
     "score": {
-      "green": "Wynik 1–20 — Niskie ryzyko. Produkt dobrze wypada pod względem żywienia, przetworzenia i dodatków.",
-      "yellow": "Wynik 21–40 — Umiarkowane ryzyko. Ogólnie akceptowalny, jest miejsce na poprawę.",
-      "orange": "Wynik 41–60 — Podwyższone ryzyko. Rozważ alternatywy lub ogranicz spożycie.",
-      "red": "Wynik 61–80 — Wysokie ryzyko. Znaczące zastrzeżenia żywieniowe lub przetwórcze.",
-      "darkred": "Wynik 81–100 — Skrajne ryzyko. Zidentyfikowano wiele poważnych zastrzeżeń."
+      "green": "Wynik 1–20 (Zielony): Niskie ryzyko zdrowotne. Ten produkt ma korzystny skład odżywczy.",
+      "yellow": "Wynik 21–40 (Żółty): Umiarkowane ryzyko zdrowotne. Pewne zastrzeżenia żywieniowe, ale ogólnie akceptowalny.",
+      "orange": "Wynik 41–60 (Pomarańczowy): Podwyższone ryzyko zdrowotne. Zauważalny poziom niezdrowych składników lub dodatków.",
+      "red": "Wynik 61–80 (Czerwony): Wysokie ryzyko zdrowotne. Znaczne ilości tłuszczu, cukru, soli lub niepokojących dodatków.",
+      "darkred": "Wynik 81–100 (Ciemnoczerwony): Bardzo wysokie ryzyko zdrowotne. Wiele niezdrowych czynników na wysokim poziomie."
     },
     "confidence": {
-      "high": "Wysoka pewność — Kompleksowe, zweryfikowane dane z wielu źródeł.",
-      "medium": "Średnia pewność — Większość pól wypełniona, niektóre mogą być szacunkowe.",
-      "low": "Niska pewność — Ograniczone dostępne dane. Wyniki mogą się zmienić w miarę poprawy danych."
+      "high": "Wysoka pewność: Większość pól danych zweryfikowana. Wartości odżywcze, składniki, alergeny i informacje o źródle są kompletne i skrzyżowane.",
+      "medium": "Średnia pewność: Kluczowe dane obecne, ale niektóre pola szacunkowe lub niekompletne. Wyniki są wiarygodne, ale mogą się zmienić po uzupełnieniu danych.",
+      "low": "Niska pewność: Znaczne braki w danych. Wynik może nie odzwierciedlać prawdziwej jakości produktu. Pracujemy nad poprawą pokrycia."
     },
     "concern": {
-      "0": "Brak zastrzeżeń — Ogólnie uznawane za bezpieczne przez EFSA.",
-      "1": "Niskie ryzyko — Drobne problemy odnotowane w niektórych badaniach. Bezpieczne dla większości ludzi.",
-      "2": "Umiarkowane ryzyko — Zachowaj ostrożność. Ogranicz spożycie jeśli to możliwe.",
-      "3": "Wysokie ryzyko — Znaczące dowody na zagrożenia zdrowotne. Unikaj lub minimalizuj."
+      "0": "Poziom ryzyka EFSA 0: Brak znanych obaw dotyczących bezpieczeństwa. Ten dodatek jest dobrze zbadany i uznany za bezpieczny przy typowych poziomach spożycia.",
+      "1": "Poziom ryzyka EFSA 1 (Niski): Minimalne uwagi dotyczące bezpieczeństwa. Szeroko stosowany, ogólnie bezpieczny, ale niektóre badania sugerują kontrolę przy bardzo wysokim spożyciu.",
+      "2": "Poziom ryzyka EFSA 2 (Umiarkowany): Pewne uwagi dotyczące bezpieczeństwa. EFSA odnotowała potencjalne skutki przy wysokich dawkach. Stosowany w wielu produktach przetworzonych.",
+      "3": "Poziom ryzyka EFSA 3 (Wysoki): Znaczące uwagi dotyczące bezpieczeństwa. EFSA zaleca limity spożycia. Niektóre kraje ograniczają stosowanie w określonych kategoriach żywności."
     },
     "allergen": {
       "present": "Zawiera {name} — Ten produkt wymienia {name} jako składnik.",
-      "traces": "Może zawierać śladowe ilości {name} — Możliwe zanieczyszczenie krzyżowe.",
+      "traces": "Może zawierać śladowe ilości {name} — Możliwe zanieczyszczenie krzyżowe podczas produkcji.",
       "free": "Bez {name} — Nie wykryto {name} w tym produkcie."
     },
     "nutrient": {
-      "low": "{nutrient}: {value}{unit} na 100g — Niski poziom (FSA zielony).",
+      "low": "{nutrient}: {value}{unit} na 100g — Niski poziom (FSA zielony). W zalecanych granicach.",
       "medium": "{nutrient}: {value}{unit} na 100g — Średni poziom (FSA bursztynowy). Kontroluj spożycie.",
       "high": "{nutrient}: {value}{unit} na 100g — Wysoki poziom (FSA czerwony). Ogranicz spożycie."
+    },
+    "warning": {
+      "highSugar": "Wysoki cukier: Ten produkt zawiera {value}g cukru na 100g, przekraczając próg 22,5g. WHO zaleca ograniczenie dodanego cukru do <25g/dzień.",
+      "highSalt": "Wysoka sól: Ten produkt zawiera {value}g soli na 100g, przekraczając próg 1,5g. WHO zaleca <5g soli/dzień łącznie.",
+      "highFat": "Wysoki tłuszcz: Ten produkt zawiera {value}g tłuszczu na 100g, przekraczając próg 17,5g.",
+      "highSatFat": "Wysokie tłuszcze nasycone: Ten produkt zawiera {value}g tłuszczów nasyconych na 100g, przekraczając próg 5g. Powiązane z ryzykiem sercowo-naczyniowym."
     },
     "scoreBreakdown": {
       "title": "Dlaczego taki wynik?",

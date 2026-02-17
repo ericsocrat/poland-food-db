@@ -99,9 +99,7 @@ export const ScoreBadge = React.memo(function ScoreBadge({
   const isValid = score != null && score >= 1 && score <= 100;
   const band = isValid ? getBand(score) : NA_BAND;
   const displayText = isValid ? String(score) : "N/A";
-  const tooltipKey = isValid
-    ? `tooltip.score.${getBandKey(score)}`
-    : undefined;
+  const tooltipKey = isValid ? `tooltip.score.${getBandKey(score)}` : undefined;
 
   if (!isValid && score != null) {
     if (process.env.NODE_ENV === "development") {

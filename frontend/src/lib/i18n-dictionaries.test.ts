@@ -142,6 +142,185 @@ describe("i18n message dictionaries", () => {
     }
   });
 
+  // ─── Tooltip content coverage (#46) ───────────────────────────────────────
+  // Ensure all required tooltip namespaces and keys exist in both locales
+  // with proper content (not just non-empty strings).
+
+  const REQUIRED_TOOLTIP_NAMESPACES = [
+    "tooltip.nutriScore",
+    "tooltip.nova",
+    "tooltip.score",
+    "tooltip.confidence",
+    "tooltip.concern",
+    "tooltip.allergen",
+    "tooltip.nutrient",
+    "tooltip.warning",
+    "tooltip.scoreBreakdown",
+  ] as const;
+
+  const REQUIRED_TOOLTIP_KEYS = [
+    // Nutri-Score grades
+    "tooltip.nutriScore.A",
+    "tooltip.nutriScore.B",
+    "tooltip.nutriScore.C",
+    "tooltip.nutriScore.D",
+    "tooltip.nutriScore.E",
+    "tooltip.nutriScore.unknown",
+    "tooltip.nutriScore.learnMore",
+    // NOVA groups
+    "tooltip.nova.1",
+    "tooltip.nova.2",
+    "tooltip.nova.3",
+    "tooltip.nova.4",
+    // Score bands
+    "tooltip.score.green",
+    "tooltip.score.yellow",
+    "tooltip.score.orange",
+    "tooltip.score.red",
+    "tooltip.score.darkred",
+    // Confidence
+    "tooltip.confidence.high",
+    "tooltip.confidence.medium",
+    "tooltip.confidence.low",
+    // Concern tiers
+    "tooltip.concern.0",
+    "tooltip.concern.1",
+    "tooltip.concern.2",
+    "tooltip.concern.3",
+    // Allergen statuses
+    "tooltip.allergen.present",
+    "tooltip.allergen.traces",
+    "tooltip.allergen.free",
+    // Nutrient traffic light
+    "tooltip.nutrient.low",
+    "tooltip.nutrient.medium",
+    "tooltip.nutrient.high",
+    // Warning thresholds
+    "tooltip.warning.highSugar",
+    "tooltip.warning.highSalt",
+    "tooltip.warning.highFat",
+    "tooltip.warning.highSatFat",
+    // Score breakdown UI
+    "tooltip.scoreBreakdown.title",
+    "tooltip.scoreBreakdown.error",
+    "tooltip.scoreBreakdown.rank",
+    "tooltip.scoreBreakdown.categoryAvg",
+  ] as const;
+
+  it("en.json contains all required tooltip namespaces", () => {
+    for (const ns of REQUIRED_TOOLTIP_NAMESPACES) {
+      const tooltipKeys = enKeys.filter((k) => k.startsWith(`${ns}.`));
+      expect(
+        tooltipKeys.length,
+        `en.json should have keys under "${ns}"`,
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it("pl.json contains all required tooltip namespaces", () => {
+    for (const ns of REQUIRED_TOOLTIP_NAMESPACES) {
+      const tooltipKeys = plKeys.filter((k) => k.startsWith(`${ns}.`));
+      expect(
+        tooltipKeys.length,
+        `pl.json should have keys under "${ns}"`,
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it("all required tooltip keys exist in en.json", () => {
+    const missing = REQUIRED_TOOLTIP_KEYS.filter((k) => !enKeys.includes(k));
+    if (missing.length > 0) {
+      expect.fail(
+        `Missing required tooltip keys in en.json:\n  ${missing.join("\n  ")}`,
+      );
+    }
+  });
+
+  it("all required tooltip keys exist in pl.json", () => {
+    const missing = REQUIRED_TOOLTIP_KEYS.filter((k) => !plKeys.includes(k));
+    if (missing.length > 0) {
+      expect.fail(
+        `Missing required tooltip keys in pl.json:\n  ${missing.join("\n  ")}`,
+      );
+    }
+  });
+
+  it("en.json and pl.json have identical tooltip key sets", () => {
+    const enTooltipKeys = enKeys.filter((k) => k.startsWith("tooltip."));
+    const plTooltipKeys = plKeys.filter((k) => k.startsWith("tooltip."));
+    const missingInPl = enTooltipKeys.filter((k) => !plTooltipKeys.includes(k));
+    const extraInPl = plTooltipKeys.filter((k) => !enTooltipKeys.includes(k));
+
+    if (missingInPl.length > 0 || extraInPl.length > 0) {
+      const msg = [
+        missingInPl.length > 0
+          ? `Tooltip keys missing in pl.json:\n  ${missingInPl.join("\n  ")}`
+          : "",
+        extraInPl.length > 0
+          ? `Extra tooltip keys in pl.json:\n  ${extraInPl.join("\n  ")}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+      expect.fail(msg);
+    }
+  });
+
+  it("no tooltip key is an empty string in en.json", () => {
+    const tooltipKeys = enKeys.filter((k) => k.startsWith("tooltip."));
+    for (const key of tooltipKeys) {
+      const value = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          en as NestedObject,
+        );
+      expect(
+        value,
+        `en.json tooltip key "${key}" should be a non-empty string`,
+      ).toSatisfy((v: unknown) => typeof v === "string" && v.length > 0);
+    }
+  });
+
+  it("no tooltip key is an empty string in pl.json", () => {
+    const tooltipKeys = plKeys.filter((k) => k.startsWith("tooltip."));
+    for (const key of tooltipKeys) {
+      const value = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          pl as NestedObject,
+        );
+      expect(
+        value,
+        `pl.json tooltip key "${key}" should be a non-empty string`,
+      ).toSatisfy((v: unknown) => typeof v === "string" && v.length > 0);
+    }
+  });
+
+  it("tooltip.warning keys use {value} interpolation in both locales", () => {
+    const warningKeys = REQUIRED_TOOLTIP_KEYS.filter((k) =>
+      k.startsWith("tooltip.warning."),
+    );
+    for (const key of warningKeys) {
+      const enVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          en as NestedObject,
+        ) as string;
+      const plVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          pl as NestedObject,
+        ) as string;
+
+      expect(enVal, `en.json "${key}" should contain {value}`).toContain("{value}");
+      expect(plVal, `pl.json "${key}" should contain {value}`).toContain("{value}");
+    }
+  });
+
   // ─── Dynamic locale parity (hard fail for any new language file) ────────
   // If someone adds de.json (or any other locale), every key in en.json must
   // exist in that file and vice-versa.  Missing or extra keys → test failure.

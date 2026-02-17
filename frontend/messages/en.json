@@ -706,46 +706,53 @@
   },
   "tooltip": {
     "nutriScore": {
-      "A": "Nutri-Score A — Excellent nutritional quality. Among the healthiest choices in its category.",
-      "B": "Nutri-Score B — Good nutritional quality. A solid everyday choice.",
-      "C": "Nutri-Score C — Average nutritional quality. Fine in moderation.",
-      "D": "Nutri-Score D — Poor nutritional quality. Limit consumption.",
-      "E": "Nutri-Score E — Very poor nutritional quality. Best avoided or consumed rarely.",
-      "unknown": "Nutri-Score unavailable — insufficient data to calculate."
+      "A": "Nutri-Score A: Best nutritional quality. Low in fat, sugar, and salt. High in fiber, protein, and fruits/vegetables.",
+      "B": "Nutri-Score B: Good nutritional quality. Slightly higher in some nutrients than A, but still a healthy choice.",
+      "C": "Nutri-Score C: Average nutritional quality. Moderate levels of fat, sugar, or salt. Consume in reasonable amounts.",
+      "D": "Nutri-Score D: Below average nutritional quality. Higher in fat, sugar, or salt. Choose less frequently.",
+      "E": "Nutri-Score E: Lowest nutritional quality. High in fat, sugar, and/or salt. Consume sparingly.",
+      "unknown": "Nutri-Score not available. Insufficient data to compute the score for this product.",
+      "learnMore": "Learn more about Nutri-Score →"
     },
     "nova": {
-      "1": "NOVA 1 — Unprocessed or minimally processed. Whole foods with no added substances.",
-      "2": "NOVA 2 — Processed culinary ingredients. Oils, butter, sugar, salt used in cooking.",
-      "3": "NOVA 3 — Processed food. Canned vegetables, cured meats, cheese.",
-      "4": "NOVA 4 — Ultra-processed. Contains additives, flavors, or substances not used in home cooking."
+      "1": "NOVA 1: Unprocessed or minimally processed food. Examples: fresh fruits, vegetables, grains, plain meat, eggs.",
+      "2": "NOVA 2: Processed culinary ingredient. Used in food preparation. Examples: oils, butter, sugar, salt, flour.",
+      "3": "NOVA 3: Processed food. Made by combining NOVA 1 & 2. Examples: canned vegetables, cheese, bread, cured meats.",
+      "4": "NOVA 4: Ultra-processed product. Industrial formulations with additives. Examples: soft drinks, packaged snacks, instant noodles."
     },
     "score": {
-      "green": "Score 1–20 — Low risk. This product scores well across nutrition, processing, and additives.",
-      "yellow": "Score 21–40 — Moderate risk. Generally acceptable, some room for improvement.",
-      "orange": "Score 41–60 — Elevated risk. Consider alternatives or limit intake.",
-      "red": "Score 61–80 — High risk. Significant nutritional or processing concerns.",
-      "darkred": "Score 81–100 — Extreme risk. Multiple serious concerns identified."
+      "green": "Score 1–20 (Green): Low health risk. This product has favorable nutritional composition.",
+      "yellow": "Score 21–40 (Yellow): Moderate health risk. Some nutritional concerns but generally acceptable.",
+      "orange": "Score 41–60 (Orange): Elevated health risk. Notable levels of unhealthy nutrients or additives.",
+      "red": "Score 61–80 (Red): High health risk. Significant amounts of fat, sugar, salt, or concerning additives.",
+      "darkred": "Score 81–100 (Dark Red): Very high health risk. Multiple unhealthy factors at high levels."
     },
     "confidence": {
-      "high": "High confidence — Comprehensive, verified data from multiple sources.",
-      "medium": "Medium confidence — Most fields populated, some may be estimated.",
-      "low": "Low confidence — Limited data available. Scores may change as data improves."
+      "high": "High confidence: Most data fields verified. Nutrition, ingredients, allergens, and source information are complete and cross-validated.",
+      "medium": "Medium confidence: Key data present but some fields estimated or incomplete. Scores are reliable but may shift with better data.",
+      "low": "Low confidence: Significant data gaps. Score may not reflect true product quality. We're working to improve coverage."
     },
     "concern": {
-      "0": "No concern — Generally recognized as safe by EFSA.",
-      "1": "Low concern — Minor issues noted in some studies. Safe for most people.",
-      "2": "Moderate concern — Use caution. Limit intake if possible.",
-      "3": "High concern — Significant evidence of health risks. Avoid or minimize."
+      "0": "EFSA Concern Level 0: No known safety concerns. This additive is well-studied and considered safe at typical dietary levels.",
+      "1": "EFSA Concern Level 1 (Low): Minimal safety considerations. Widely used, generally safe, but some studies suggest monitoring at very high intake.",
+      "2": "EFSA Concern Level 2 (Moderate): Some safety considerations. EFSA has noted potential effects at high doses. Used in many processed foods.",
+      "3": "EFSA Concern Level 3 (High): Significant safety considerations. EFSA recommends intake limits. Some countries restrict use in certain food categories."
     },
     "allergen": {
       "present": "Contains {name} — This product lists {name} as an ingredient.",
-      "traces": "May contain traces of {name} — Cross-contamination possible.",
+      "traces": "May contain traces of {name} — Cross-contamination possible during manufacturing.",
       "free": "Free from {name} — No {name} detected in this product."
     },
     "nutrient": {
-      "low": "{nutrient}: {value}{unit} per 100g — Low level (FSA green).",
+      "low": "{nutrient}: {value}{unit} per 100g — Low level (FSA green). Within recommended limits.",
       "medium": "{nutrient}: {value}{unit} per 100g — Medium level (FSA amber). Watch your intake.",
       "high": "{nutrient}: {value}{unit} per 100g — High level (FSA red). Limit consumption."
+    },
+    "warning": {
+      "highSugar": "High sugar: This product contains {value}g of sugar per 100g, exceeding the 22.5g threshold. WHO recommends limiting added sugar to <25g/day.",
+      "highSalt": "High salt: This product contains {value}g of salt per 100g, exceeding the 1.5g threshold. WHO recommends <5g salt/day total.",
+      "highFat": "High fat: This product contains {value}g of fat per 100g, exceeding the 17.5g threshold.",
+      "highSatFat": "High saturated fat: This product contains {value}g of saturated fat per 100g, exceeding the 5g threshold. Linked to cardiovascular risk."
     },
     "scoreBreakdown": {
       "title": "Why this score?",
