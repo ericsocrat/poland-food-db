@@ -122,15 +122,16 @@ describe("SavedSearchesPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("links back to search page", async () => {
+  it("has breadcrumb link back to search page", async () => {
     render(<SavedSearchesPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("← Back to Search")).toBeInTheDocument();
+      expect(
+        screen.getByRole("navigation", { name: "Breadcrumb" }),
+      ).toBeInTheDocument();
     });
-    expect(screen.getByText("← Back to Search").closest("a")).toHaveAttribute(
-      "href",
-      "/app/search",
-    );
+    const nav = screen.getByRole("navigation", { name: "Breadcrumb" });
+    const link = nav.querySelector('a[href="/app/search"]');
+    expect(link).toBeTruthy();
   });
 
   it("shows loading spinner", () => {

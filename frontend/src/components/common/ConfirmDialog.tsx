@@ -66,9 +66,15 @@ export function ConfirmDialog({
   return (
     <dialog
       ref={dialogRef}
+      aria-labelledby="confirm-dialog-title"
       className="fixed inset-0 z-50 m-auto w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl backdrop:bg-black/30"
     >
-      <h3 className="mb-1 text-base font-semibold text-foreground">{title}</h3>
+      <h3
+        id="confirm-dialog-title"
+        className="mb-1 text-base font-semibold text-foreground"
+      >
+        {title}
+      </h3>
       {description && (
         <p className="mb-4 text-sm text-foreground-secondary">{description}</p>
       )}

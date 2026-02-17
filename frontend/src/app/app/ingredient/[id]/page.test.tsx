@@ -110,7 +110,9 @@ describe("IngredientProfilePage", () => {
       data: SAMPLE_PROFILE,
     });
     render(<IngredientProfilePage />, { wrapper: createWrapper() });
-    expect(await screen.findByText("Salt")).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { name: "Salt" }),
+    ).toBeInTheDocument();
   });
 
   it("renders concern badge", async () => {
@@ -189,7 +191,7 @@ describe("IngredientProfilePage", () => {
       data: SAMPLE_PROFILE,
     });
     render(<IngredientProfilePage />, { wrapper: createWrapper() });
-    await screen.findByText("Salt");
+    await screen.findAllByText("Salt");
     const flags = screen.getAllByTestId("dietary-flag");
     expect(flags.length).toBeGreaterThanOrEqual(2);
   });
@@ -200,7 +202,7 @@ describe("IngredientProfilePage", () => {
       data: SAMPLE_PROFILE,
     });
     render(<IngredientProfilePage />, { wrapper: createWrapper() });
-    await screen.findByText("Salt");
+    await screen.findAllByText("Salt");
     // The header icon is inside the 14×14 avatar circle
     const allIcons = screen.getAllByText("🌿");
     expect(allIcons.length).toBeGreaterThanOrEqual(1);
@@ -241,7 +243,7 @@ describe("IngredientProfilePage", () => {
       data: noConcern,
     });
     render(<IngredientProfilePage />, { wrapper: createWrapper() });
-    await screen.findByText("Salt");
+    await screen.findAllByText("Salt");
     expect(
       screen.queryByText("Excessive sodium can raise blood pressure."),
     ).not.toBeInTheDocument();

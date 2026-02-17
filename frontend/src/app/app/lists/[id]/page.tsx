@@ -101,10 +101,12 @@ export default function ListDetailPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <Breadcrumbs items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.lists", href: "/app/lists" },
-        ]} />
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.lists", href: "/app/lists" },
+          ]}
+        />
         <EmptyState variant="error" titleKey="lists.loadListFailed" />
       </div>
     );
@@ -112,11 +114,13 @@ export default function ListDetailPage() {
 
   return (
     <div className="space-y-4">
-      <Breadcrumbs items={[
-        { labelKey: "nav.home", href: "/app" },
-        { labelKey: "nav.lists", href: "/app/lists" },
-        { label: list?.name ?? "…" },
-      ]} />
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.lists", href: "/app/lists" },
+          { label: list?.name ?? "…" },
+        ]}
+      />
 
       {/* Header */}
       {list && (
@@ -385,5 +389,3 @@ function ListItemRow({
     </li>
   );
 }
-
-

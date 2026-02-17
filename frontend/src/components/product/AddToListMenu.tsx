@@ -70,8 +70,17 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
         setOpen(false);
       }
     }
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+      }
+    }
     document.addEventListener("mousedown", handleClick);
-    return () => document.removeEventListener("mousedown", handleClick);
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("mousedown", handleClick);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
   }, [open]);
 
   const isInList = useCallback(
@@ -147,6 +156,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
         title={t("productActions.addToList")}
         aria-label={t("productActions.addToList")}
         aria-expanded={open}
+        aria-haspopup="true"
         className="touch-target flex h-11 w-11 items-center justify-center rounded-full text-sm transition-colors hover:bg-surface-subtle"
         onClick={(e) => {
           e.preventDefault();

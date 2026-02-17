@@ -62,11 +62,13 @@ export default function SavedSearchesPage() {
   return (
     <div className="space-y-4">
       {/* Breadcrumbs */}
-      <Breadcrumbs items={[
-        { labelKey: "nav.home", href: "/app" },
-        { labelKey: "nav.search", href: "/app/search" },
-        { labelKey: "savedSearches.title" },
-      ]} />
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.search", href: "/app/search" },
+          { labelKey: "savedSearches.title" },
+        ]}
+      />
 
       {/* Header */}
       <div>
@@ -74,7 +76,9 @@ export default function SavedSearchesPage() {
           {"📋 "}
           {t("savedSearches.title")}
         </h1>
-        <p className="text-sm text-foreground-secondary">{t("savedSearches.subtitle")}</p>
+        <p className="text-sm text-foreground-secondary">
+          {t("savedSearches.subtitle")}
+        </p>
       </div>
 
       {/* Loading */}

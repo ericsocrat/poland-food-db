@@ -780,5 +780,11 @@
     "exportList": "Export list",
     "exportComparison": "Export comparison",
     "exportResults": "Export results"
+  },
+  "a11y": {
+    "skipToContent": "Skip to content",
+    "searchProducts": "Search products",
+    "searchResultsStatus": "{count} results found",
+    "saveSearchName": "Search name"
   }
 }

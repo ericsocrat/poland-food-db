@@ -161,16 +161,19 @@ describe("ListDetailPage", () => {
     expect(screen.getByText("Failed to load list.")).toBeInTheDocument();
   });
 
-  it("shows back link", () => {
+  it("shows breadcrumb link to lists", () => {
     render(<ListDetailPage />);
-    const link = screen.getByText("← Back to lists");
-    expect(link.closest("a")).toHaveAttribute("href", "/app/lists");
+    const nav = screen.getByRole("navigation", { name: "Breadcrumb" });
+    const link = nav.querySelector('a[href="/app/lists"]');
+    expect(link).toBeTruthy();
   });
 
   it("renders list name with favorites icon", () => {
     render(<ListDetailPage />);
     expect(screen.getByText(/❤️/)).toBeInTheDocument();
-    expect(screen.getByText(/My Favorites/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /My Favorites/ }),
+    ).toBeInTheDocument();
   });
 
   it("renders avoid icon for avoid lists", () => {
@@ -284,7 +287,9 @@ describe("ListDetailPage", () => {
     await user.click(screen.getByText("Cancel"));
     // Should be back to display mode
     expect(screen.queryByDisplayValue("My Favorites")).not.toBeInTheDocument();
-    expect(screen.getByText(/My Favorites/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /My Favorites/ }),
+    ).toBeInTheDocument();
   });
 
   it("opens share panel", async () => {

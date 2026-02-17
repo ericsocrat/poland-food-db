@@ -265,7 +265,9 @@ describe("ProductDetailPage", () => {
     await user.click(screen.getByRole("button", { name: "Retry" }));
 
     await waitFor(() => {
-      expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -290,7 +292,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     expect(screen.getByText("TestBrand")).toBeInTheDocument();
   });
@@ -688,9 +692,9 @@ describe("ProductDetailPage", () => {
     ).toBeInTheDocument();
   });
 
-  // ── Back button ─────────────────────────────────────────────────────────
+  // ── Breadcrumb navigation ──────────────────────────────────────────────
 
-  it("renders back button linking to search", async () => {
+  it("renders breadcrumb link back to search", async () => {
     mockGetProductProfile.mockResolvedValue({
       ok: true,
       data: makeProfile(),
@@ -698,12 +702,13 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Back")).toBeInTheDocument();
+      expect(
+        screen.getByRole("navigation", { name: "Breadcrumb" }),
+      ).toBeInTheDocument();
     });
-    expect(screen.getByText("Back").closest("a")).toHaveAttribute(
-      "href",
-      "/app/search",
-    );
+    const nav = screen.getByRole("navigation", { name: "Breadcrumb" });
+    const searchLink = nav.querySelector('a[href="/app/search"]');
+    expect(searchLink).toBeTruthy();
   });
 
   // ── Child components rendered ───────────────────────────────────────────
@@ -753,7 +758,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     expect(screen.queryByText(/EAN:/)).not.toBeInTheDocument();
   });
@@ -765,7 +772,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     expect(screen.queryByText(/Store:/)).not.toBeInTheDocument();
   });
@@ -786,7 +795,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     expect(screen.queryByText("Health flags")).not.toBeInTheDocument();
   });
@@ -806,7 +817,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     expect(screen.queryByText("Allergens")).not.toBeInTheDocument();
   });

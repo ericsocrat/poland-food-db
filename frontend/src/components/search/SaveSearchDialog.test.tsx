@@ -18,6 +18,16 @@ vi.mock("@/lib/api", () => ({
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
+// JSDOM doesn't implement showModal/close on <dialog>, so we polyfill them
+beforeEach(() => {
+  HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+    this.setAttribute("open", "");
+  };
+  HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+    this.removeAttribute("open");
+  };
+});
+
 function createWrapper() {
   const queryClient = new QueryClient({
     defaultOptions: { queries: { retry: false } },
@@ -58,14 +68,28 @@ describe("SaveSearchDialog", () => {
     });
   });
 
-  it("renders nothing when show is false", () => {
-    const { container } = renderDialog({ show: false });
-    expect(container.innerHTML).toBe("");
+  it("dialog is closed when show is false", () => {
+    renderDialog({ show: false });
+    const dialog = screen.getByRole("dialog", { hidden: true });
+    expect(dialog).not.toHaveAttribute("open");
+  });
+
+  it("dialog is open when show is true", () => {
+    renderDialog();
+    const dialog = screen.getByRole("dialog");
+    expect(dialog).toHaveAttribute("open");
   });
 
   it("renders dialog title when show is true", () => {
     renderDialog();
     expect(screen.getByText("💾 Save Search")).toBeTruthy();
+  });
+
+  it("has aria-labelledby linking to title", () => {
+    renderDialog();
+    const dialog = screen.getByRole("dialog");
+    expect(dialog.getAttribute("aria-labelledby")).toBe("save-search-title");
+    expect(document.getElementById("save-search-title")).toBeTruthy();
   });
 
   it("shows query in description", () => {
@@ -119,9 +143,10 @@ describe("SaveSearchDialog", () => {
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
   });
 
-  it("calls onClose on backdrop click", () => {
+  it("calls onClose on Escape via dialog cancel event", () => {
     renderDialog();
-    fireEvent.click(screen.getByLabelText("Close dialog"));
+    const dialog = screen.getByRole("dialog");
+    fireEvent(dialog, new Event("cancel"));
     expect(defaultProps.onClose).toHaveBeenCalledTimes(1);
   });
 
@@ -152,9 +177,33 @@ describe("SaveSearchDialog", () => {
     });
   });
 
+  it("error message has role=alert", async () => {
+    mockSaveSearch.mockResolvedValue({
+      ok: false,
+      error: { code: "ERR", message: "Save failed" },
+    });
+
+    renderDialog();
+    const input = screen.getByPlaceholderText("Search name…");
+    await userEvent.type(input, "Test");
+    fireEvent.click(screen.getByText("Save"));
+
+    await waitFor(() => {
+      expect(screen.getByRole("alert")).toBeTruthy();
+    });
+  });
+
   it("input has maxLength of 100", () => {
     renderDialog();
     const input = screen.getByPlaceholderText("Search name…");
     expect(input.getAttribute("maxLength")).toBe("100");
+  });
+
+  it("input has accessible label", () => {
+    renderDialog();
+    const input = screen.getByPlaceholderText("Search name…");
+    expect(input.id).toBe("save-search-name");
+    const label = document.querySelector('label[for="save-search-name"]');
+    expect(label).toBeTruthy();
   });
 });

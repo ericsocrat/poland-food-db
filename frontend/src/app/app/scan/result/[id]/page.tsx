@@ -67,10 +67,12 @@ export default function ScanResultPage() {
   if (productError || !product) {
     return (
       <div className="space-y-4">
-        <Breadcrumbs items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.scan", href: "/app/scan" },
-        ]} />
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.scan", href: "/app/scan" },
+          ]}
+        />
         <div className="card border-red-200 bg-red-50 py-8 text-center">
           <p className="mb-2 text-4xl">⚠️</p>
           <p className="text-sm text-red-600">{t("product.loadFailed")}</p>
@@ -95,11 +97,13 @@ export default function ScanResultPage() {
   return (
     <div className="space-y-4">
       {/* Breadcrumbs */}
-      <Breadcrumbs items={[
-        { labelKey: "nav.home", href: "/app" },
-        { labelKey: "nav.scan", href: "/app/scan" },
-        { label: product.product_name },
-      ]} />
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.scan", href: "/app/scan" },
+          { label: product.product_name },
+        ]}
+      />
 
       {/* Header */}
       <div className="flex items-center justify-between">

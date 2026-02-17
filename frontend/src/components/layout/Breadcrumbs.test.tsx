@@ -148,7 +148,10 @@ describe("Breadcrumbs", () => {
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
-          { label: "A very long product name that should be truncated in the UI" },
+          {
+            label:
+              "A very long product name that should be truncated in the UI",
+          },
         ]}
       />,
     );

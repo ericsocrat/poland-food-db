@@ -49,13 +49,17 @@ export default function IngredientProfilePage() {
   if (error || !profile || profile.error) {
     return (
       <div className="space-y-4">
-        <Breadcrumbs items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.search", href: "/app/search" },
-        ]} />
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.search", href: "/app/search" },
+          ]}
+        />
         <div className="card py-8 text-center">
           <p className="mb-2 text-4xl">🔬</p>
-          <p className="text-sm text-foreground-muted">{t("ingredient.notFound")}</p>
+          <p className="text-sm text-foreground-muted">
+            {t("ingredient.notFound")}
+          </p>
         </div>
       </div>
     );
@@ -65,11 +69,13 @@ export default function IngredientProfilePage() {
 
   return (
     <div className="space-y-4">
-      <Breadcrumbs items={[
-        { labelKey: "nav.home", href: "/app" },
-        { labelKey: "nav.search", href: "/app/search" },
-        { label: ing.name_display },
-      ]} />
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.search", href: "/app/search" },
+          { label: ing.name_display },
+        ]}
+      />
 
       {/* ── Header Card ──────────────────────────────────────────────── */}
       <div className="card">
@@ -118,7 +124,9 @@ export default function IngredientProfilePage() {
             {t("ingredient.concernDetails")}
           </h2>
           {ing.concern_description && (
-            <p className="text-sm text-foreground-secondary">{ing.concern_description}</p>
+            <p className="text-sm text-foreground-secondary">
+              {ing.concern_description}
+            </p>
           )}
           {ing.concern_reason && (
             <p className="mt-1 text-sm text-foreground-secondary italic">
@@ -158,8 +166,6 @@ export default function IngredientProfilePage() {
 }
 
 // ─── Helper Components ──────────────────────────────────────────────────────
-
-
 
 function DietaryFlag({
   label,

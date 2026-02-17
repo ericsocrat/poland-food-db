@@ -85,10 +85,12 @@ export default function ProductDetailPage() {
   if (error) {
     return (
       <div className="space-y-4">
-        <Breadcrumbs items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.search", href: "/app/search" },
-        ]} />
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.search", href: "/app/search" },
+          ]}
+        />
         <div className="card border-red-200 bg-red-50 py-8 text-center">
           <p className="mb-3 text-sm text-red-600">{t("product.loadFailed")}</p>
           <button
@@ -110,10 +112,12 @@ export default function ProductDetailPage() {
   if (!profile) {
     return (
       <div className="space-y-4">
-        <Breadcrumbs items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.search", href: "/app/search" },
-        ]} />
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.search", href: "/app/search" },
+          ]}
+        />
         <p className="py-12 text-center text-sm text-foreground-muted">
           {t("product.notFoundPage")}
         </p>
@@ -132,11 +136,17 @@ export default function ProductDetailPage() {
 
   return (
     <div className="space-y-4">
-      <Breadcrumbs items={[
-        { labelKey: "nav.home", href: "/app" },
-        { labelKey: "nav.search", href: "/app/search" },
-        { label: profile.product.product_name_display ?? profile.product.product_name },
-      ]} />
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.search", href: "/app/search" },
+          {
+            label:
+              profile.product.product_name_display ??
+              profile.product.product_name,
+          },
+        ]}
+      />
 
       {/* Header */}
       <div className="card">
@@ -322,8 +332,6 @@ export default function ProductDetailPage() {
 }
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
-
-
 
 function FlagWithExplanation({
   label,

@@ -262,7 +262,9 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+        expect(
+          screen.getAllByText("Test Chips Original").length,
+        ).toBeGreaterThanOrEqual(1);
       });
       expect(screen.getByText("TestBrand")).toBeInTheDocument();
     });
@@ -337,7 +339,9 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+        expect(
+          screen.getAllByText("Test Chips Original").length,
+        ).toBeGreaterThanOrEqual(1);
       });
       expect(screen.queryByText("🍬 High sugar")).not.toBeInTheDocument();
       expect(screen.queryByText("🧪 Many additives")).not.toBeInTheDocument();
@@ -520,7 +524,9 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+        expect(
+          screen.getAllByText("Test Chips Original").length,
+        ).toBeGreaterThanOrEqual(1);
       });
       expect(screen.queryByText(/found$/)).not.toBeInTheDocument();
     });
@@ -597,7 +603,9 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText("Test Chips Original")).toBeInTheDocument();
+        expect(
+          screen.getAllByText("Test Chips Original").length,
+        ).toBeGreaterThanOrEqual(1);
       });
       expect(screen.queryByText("🧂 High salt")).not.toBeInTheDocument();
       expect(screen.queryByText("🍬 High sugar")).not.toBeInTheDocument();

@@ -10,6 +10,7 @@ import { searchProducts } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { LiveRegion } from "@/components/common/LiveRegion";
 import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
@@ -182,7 +183,12 @@ export default function SearchPage() {
       {/* Main content */}
       <div className="min-w-0 flex-1 space-y-4">
         {/* Search input */}
-        <form onSubmit={handleSubmit} className="space-y-2">
+        <form
+          onSubmit={handleSubmit}
+          role="search"
+          aria-label={t("a11y.searchProducts")}
+          className="space-y-2"
+        >
           <div className="relative">
             <input
               ref={inputRef}
@@ -201,6 +207,7 @@ export default function SearchPage() {
               }}
               onKeyDown={(e) => autocompleteKeyDownRef.current?.(e)}
               placeholder={t("search.placeholder")}
+              aria-label={t("a11y.searchProducts")}
               className="input-field pl-10 pr-10"
               autoFocus
             />
@@ -381,6 +388,9 @@ export default function SearchPage() {
         {/* Results */}
         {data && (
           <>
+            <LiveRegion
+              message={t("a11y.searchResultsStatus", { count: data.total })}
+            />
             <div className="flex items-center justify-between">
               <p className="text-sm text-foreground-secondary">
                 {t("search.result", { count: data.total })}
@@ -491,11 +501,14 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
     : "bg-surface-muted text-foreground-secondary";
 
   return (
-    <Link href={`/app/product/${product.product_id}`}>
-      <li
-        className={`card flex items-center gap-3 transition-shadow hover:shadow-md ${
-          product.is_avoided ? "opacity-50" : ""
-        }`}
+    <li
+      className={`card flex items-center gap-3 transition-shadow hover:shadow-md ${
+        product.is_avoided ? "opacity-50" : ""
+      }`}
+    >
+      <Link
+        href={`/app/product/${product.product_id}`}
+        className="flex flex-1 items-center gap-3 min-w-0"
       >
         {/* Score badge */}
         <div
@@ -519,27 +532,27 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
             )}
           </p>
         </div>
+      </Link>
 
-        {/* Health warning badge */}
-        <HealthWarningBadge productId={product.product_id} />
+      {/* Health warning badge */}
+      <HealthWarningBadge productId={product.product_id} />
 
-        {/* Avoid badge */}
-        <AvoidBadge productId={product.product_id} />
+      {/* Avoid badge */}
+      <AvoidBadge productId={product.product_id} />
 
-        {/* Favorites heart */}
-        <AddToListMenu productId={product.product_id} compact />
+      {/* Favorites heart */}
+      <AddToListMenu productId={product.product_id} compact />
 
-        {/* Compare checkbox */}
-        <CompareCheckbox productId={product.product_id} />
+      {/* Compare checkbox */}
+      <CompareCheckbox productId={product.product_id} />
 
-        {/* Nutri badge */}
-        <span
-          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
-        >
-          {product.nutri_score ?? "?"}
-        </span>
-      </li>
-    </Link>
+      {/* Nutri badge */}
+      <span
+        className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
+      >
+        {product.nutri_score ?? "?"}
+      </span>
+    </li>
   );
 }
 

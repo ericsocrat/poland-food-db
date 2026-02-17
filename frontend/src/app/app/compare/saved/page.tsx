@@ -19,11 +19,13 @@ export default function SavedComparisonsPage() {
   return (
     <div className="space-y-4">
       {/* Breadcrumbs */}
-      <Breadcrumbs items={[
-        { labelKey: "nav.home", href: "/app" },
-        { labelKey: "compare.title", href: "/app/compare" },
-        { labelKey: "compare.savedComparisons" },
-      ]} />
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "compare.title", href: "/app/compare" },
+          { labelKey: "compare.savedComparisons" },
+        ]}
+      />
 
       {/* Header */}
       <h1 className="text-xl font-bold text-foreground">

@@ -47,7 +47,7 @@ export default function ComparePage() {
       category: p.category,
       unhealthiness_score: p.unhealthiness_score,
       nutri_score_label: p.nutri_score ?? "–",
-      nova_group: p.nova_group,
+      nova_group: p.nova_group ?? "–",
       calories_kcal: p.calories,
       total_fat_g: p.total_fat_g,
       saturated_fat_g: p.saturated_fat_g,

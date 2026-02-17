@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { translate } from "@/lib/i18n";
 import { Navigation } from "@/components/layout/Navigation";
+import { SkipLink } from "@/components/common/SkipLink";
 import { CountryChip } from "@/components/common/CountryChip";
 import { ListsHydrator } from "@/components/product/ListsHydrator";
 import { LanguageHydrator } from "@/components/i18n/LanguageHydrator";
@@ -61,6 +62,7 @@ export default async function AppLayout({
 
   return (
     <div className="flex min-h-screen flex-col">
+      <SkipLink />
       <OfflineIndicator />
       <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex h-12 md:h-14 max-w-5xl items-center justify-between px-4">
@@ -71,7 +73,10 @@ export default async function AppLayout({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-4 md:py-6">
+      <main
+        id="main-content"
+        className="mx-auto w-full max-w-5xl flex-1 px-4 py-4 md:py-6"
+      >
         <ListsHydrator />
         <LanguageHydrator />
         {children}
