@@ -42,7 +42,7 @@ export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
       }}
       disabled={disabled}
       title={getTitle()}
-      className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded border transition-colors ${getVariantClass()}`}
+      className={`touch-target flex h-10 w-10 flex-shrink-0 items-center justify-center rounded border transition-colors ${getVariantClass()}`}
       aria-label={
         isSelected
           ? t("compare.removeFromComparison")

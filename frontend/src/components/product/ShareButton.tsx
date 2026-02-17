@@ -51,7 +51,7 @@ export function ShareButton({
     <button
       type="button"
       onClick={handleShare}
-      className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition hover:bg-gray-50"
+      className="touch-target flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm text-foreground-secondary transition hover:bg-surface-subtle"
       aria-label={t("product.shareProduct")}
     >
       <svg

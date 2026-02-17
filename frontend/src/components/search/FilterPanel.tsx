@@ -117,10 +117,10 @@ export function FilterPanel({
                   key={opt.value}
                   type="button"
                   onClick={() => setSortBy(opt.value)}
-                  className={`rounded-lg px-2.5 py-1.5 text-xs font-medium transition-colors ${
+                  className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
                     (filters.sort_by ?? "relevance") === opt.value
                       ? "bg-brand-100 text-brand-700"
-                      : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                      : "bg-surface-muted text-foreground-secondary hover:bg-surface-subtle"
                   }`}
                 >
                   {opt.label}
@@ -132,10 +132,10 @@ export function FilterPanel({
                 <button
                   type="button"
                   onClick={() => setSortOrder("asc")}
-                  className={`rounded-md px-2 py-1 text-xs ${
+                  className={`rounded-md px-3 py-2 text-xs ${
                     (filters.sort_order ?? "asc") === "asc"
                       ? "bg-brand-100 text-brand-700"
-                      : "bg-gray-100 text-gray-500"
+                      : "bg-surface-muted text-foreground-muted"
                   }`}
                 >
                   {t("filters.asc")}
@@ -143,10 +143,10 @@ export function FilterPanel({
                 <button
                   type="button"
                   onClick={() => setSortOrder("desc")}
-                  className={`rounded-md px-2 py-1 text-xs ${
+                  className={`rounded-md px-3 py-2 text-xs ${
                     filters.sort_order === "desc"
                       ? "bg-brand-100 text-brand-700"
-                      : "bg-gray-100 text-gray-500"
+                      : "bg-surface-muted text-foreground-muted"
                   }`}
                 >
                   {t("filters.desc")}
@@ -169,7 +169,7 @@ export function FilterPanel({
                   return (
                     <label
                       key={cat.category}
-                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-gray-50"
+                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 transition-colors hover:bg-surface-subtle"
                     >
                       <input
                         type="checkbox"
@@ -177,7 +177,7 @@ export function FilterPanel({
                         onChange={() =>
                           toggleArrayFilter("category", cat.category)
                         }
-                        className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                        className="h-5 w-5 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
                       />
                       <span className="text-sm">
                         {cat.icon_emoji} {cat.display_name}
@@ -209,7 +209,7 @@ export function FilterPanel({
                       key={ns.label}
                       type="button"
                       onClick={() => toggleArrayFilter("nutri_score", ns.label)}
-                      className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition-all ${
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-bold transition-all ${
                         selected
                           ? `${nutriClass} ring-2 ring-offset-1 ring-brand-400`
                           : `${nutriClass} opacity-60 hover:opacity-100`
@@ -246,7 +246,7 @@ export function FilterPanel({
                   return (
                     <label
                       key={al.tag}
-                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-1.5 transition-colors hover:bg-gray-50"
+                      className="flex cursor-pointer items-center gap-2 rounded-lg px-2 py-2.5 transition-colors hover:bg-surface-subtle"
                     >
                       <input
                         type="checkbox"
@@ -254,7 +254,7 @@ export function FilterPanel({
                         onChange={() =>
                           toggleArrayFilter("allergen_free", al.tag)
                         }
-                        className="h-4 w-4 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
+                        className="h-5 w-5 rounded border-gray-300 text-brand-600 focus:ring-brand-500"
                       />
                       <span className="text-sm">{label}-free</span>
                       <span className="ml-auto text-xs text-gray-400">
@@ -356,7 +356,7 @@ export function FilterPanel({
               <button
                 type="button"
                 onClick={onClose}
-                className="rounded-full p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600"
+                className="touch-target rounded-full p-2 text-foreground-muted hover:bg-surface-muted hover:text-foreground-secondary"
               >
                 <svg
                   className="h-5 w-5"

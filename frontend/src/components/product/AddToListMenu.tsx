@@ -116,7 +116,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
             ? t("productActions.removeFromFavorites")
             : t("productActions.addToFavorites")
         }
-        className="flex-shrink-0 text-xl transition-transform hover:scale-110 disabled:opacity-50"
+        className="touch-target flex-shrink-0 text-xl transition-transform hover:scale-110 disabled:opacity-50"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -147,7 +147,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
         title={t("productActions.addToList")}
         aria-label={t("productActions.addToList")}
         aria-expanded={open}
-        className="flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-gray-100"
+        className="touch-target flex h-11 w-11 items-center justify-center rounded-full text-sm transition-colors hover:bg-surface-subtle"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();

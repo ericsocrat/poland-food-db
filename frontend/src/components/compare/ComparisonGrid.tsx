@@ -396,16 +396,16 @@ function MobileSwipeView({
   return (
     <div className="md:hidden">
       {/* Sticky header with product names */}
-      <div className="sticky top-14 z-30 bg-white border-b border-gray-200 px-4 py-2">
+      <div className="sticky top-12 md:top-14 z-30 bg-surface border-b border-border px-4 py-2">
         <div className="flex items-center justify-center gap-2">
           {products.map((p, i) => (
             <button
               key={p.product_id}
               onClick={() => setActiveIdx(i)}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition-colors ${
+              className={`touch-target rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 i === activeIdx
                   ? "bg-brand-600 text-white"
-                  : "bg-gray-100 text-gray-600"
+                  : "bg-surface-muted text-foreground-secondary"
               }`}
             >
               {i === winnerIdx && "🏆 "}

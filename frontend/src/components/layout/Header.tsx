@@ -21,13 +21,13 @@ export function Header() {
         <nav className="flex items-center gap-4">
           <Link
             href="/contact"
-            className="text-sm text-foreground-secondary hover:text-foreground"
+            className="touch-target text-sm text-foreground-secondary hover:text-foreground"
           >
             {t("layout.contact")}
           </Link>
           <button
             onClick={toggleTheme}
-            className="rounded-md p-1.5 text-foreground-secondary hover:bg-surface-muted hover:text-foreground transition-colors"
+            className="touch-target rounded-md p-2 text-foreground-secondary hover:bg-surface-muted hover:text-foreground transition-colors"
             aria-label={
               resolved === "dark" ? t("theme.light") : t("theme.dark")
             }

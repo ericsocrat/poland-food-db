@@ -373,7 +373,7 @@ export function HealthProfileSection() {
         {!editingProfile && profiles.length < 5 && (
           <button
             onClick={() => setEditingProfile("new")}
-            className="rounded-lg border border-brand-200 px-3 py-1 text-xs font-medium text-brand-600 hover:bg-brand-50"
+            className="touch-target rounded-lg border border-brand-200 px-3 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50"
           >
             {t("healthProfile.newProfile")}
           </button>
@@ -424,7 +424,7 @@ export function HealthProfileSection() {
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleToggleActive(profile)}
-                    className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
+                    className="touch-target rounded px-2 py-2 text-sm text-foreground-secondary hover:bg-surface-muted"
                     title={
                       profile.is_active
                         ? t("healthProfile.deactivate")
@@ -435,13 +435,13 @@ export function HealthProfileSection() {
                   </button>
                   <button
                     onClick={() => setEditingProfile(profile)}
-                    className="rounded px-2 py-1 text-xs text-gray-500 hover:bg-gray-100"
+                    className="touch-target rounded px-2 py-2 text-sm text-foreground-secondary hover:bg-surface-muted"
                   >
                     ✏️
                   </button>
                   <button
                     onClick={() => handleDelete(profile.profile_id)}
-                    className="rounded px-2 py-1 text-xs text-red-400 hover:bg-red-50"
+                    className="touch-target rounded px-2 py-2 text-sm text-error hover:bg-red-50"
                   >
                     🗑️
                   </button>

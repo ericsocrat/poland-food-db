@@ -269,7 +269,7 @@ export default function SearchPage() {
             <button
               type="submit"
               disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
-              className="btn-primary px-4 py-1.5 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+              className="btn-primary px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
             >
               {t("search.searchButton")}
             </button>
@@ -278,7 +278,7 @@ export default function SearchPage() {
             <button
               type="button"
               onClick={() => setShowFilters(true)}
-              className="flex items-center gap-1.5 rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 lg:hidden"
+              className="touch-target flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted lg:hidden"
             >
               🎛️ {t("search.filters")}
               {hasActiveFilters(filters) && (
@@ -292,7 +292,7 @@ export default function SearchPage() {
             <button
               type="button"
               onClick={handleAvoidToggle}
-              className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-700"
+              className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
               title={
                 showAvoided
                   ? t("search.avoidedShown")
@@ -318,7 +318,7 @@ export default function SearchPage() {
               <button
                 type="button"
                 onClick={() => setShowSaveDialog(true)}
-                className="ml-auto text-xs text-gray-400 hover:text-brand-600"
+                className="touch-target ml-auto text-xs text-foreground-muted hover:text-brand-600"
               >
                 💾 {t("search.saveSearch")}
               </button>
@@ -327,7 +327,7 @@ export default function SearchPage() {
             {/* Saved searches link */}
             <Link
               href="/app/search/saved"
-              className="text-xs text-gray-400 hover:text-brand-600"
+              className="touch-target text-xs text-foreground-muted hover:text-brand-600"
             >
               📋 {t("search.saved")}
             </Link>
@@ -348,7 +348,7 @@ export default function SearchPage() {
                 <button
                   key={q}
                   onClick={() => selectRecent(q)}
-                  className="rounded-full border border-gray-200 px-3 py-1 text-sm text-gray-600 transition-colors hover:border-gray-400 hover:text-gray-900"
+                  className="touch-target rounded-full border border-border px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:border-foreground-muted hover:text-foreground"
                 >
                   {q}
                 </button>
@@ -426,7 +426,7 @@ export default function SearchPage() {
                       type="button"
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page <= 1}
-                      className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="touch-target rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {t("common.prev")}
                     </button>
@@ -434,7 +434,7 @@ export default function SearchPage() {
                       p === null ? (
                         <span
                           key={`ellipsis-${i > 0 ? "end" : "start"}`}
-                          className="px-1 text-gray-400"
+                          className="px-1 text-foreground-muted"
                         >
                           …
                         </span>
@@ -443,10 +443,10 @@ export default function SearchPage() {
                           key={p}
                           type="button"
                           onClick={() => setPage(p)}
-                          className={`h-8 w-8 rounded-lg text-sm font-medium transition-colors ${
+                          className={`h-10 w-10 rounded-lg text-sm font-medium transition-colors ${
                             p === page
                               ? "bg-brand-600 text-white"
-                              : "text-gray-600 hover:bg-gray-100"
+                              : "text-foreground-secondary hover:bg-surface-muted"
                           }`}
                         >
                           {p}
@@ -459,7 +459,7 @@ export default function SearchPage() {
                         setPage((p) => Math.min(data.pages, p + 1))
                       }
                       disabled={page >= data.pages}
-                      className="rounded-lg border border-gray-200 px-3 py-1.5 text-sm text-gray-600 transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40"
+                      className="touch-target rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
                     >
                       {t("common.next")}
                     </button>

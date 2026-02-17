@@ -27,7 +27,7 @@ export function CompareFloatingButton() {
       <button
         type="button"
         onClick={clear}
-        className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-200 text-gray-600 shadow-md transition-colors hover:bg-gray-300"
+        className="touch-target flex h-11 w-11 items-center justify-center rounded-full bg-surface-muted text-foreground-secondary shadow-md transition-colors hover:bg-surface-subtle"
         title={t("compare.clearSelection")}
       >
         ✕

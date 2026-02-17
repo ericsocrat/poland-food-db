@@ -62,8 +62,8 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <OfflineIndicator />
-      <header className="sticky top-0 z-40 border-b bg-white/80 pt-[env(safe-area-inset-top)] backdrop-blur">
-        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
+      <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur">
+        <div className="mx-auto flex h-12 md:h-14 max-w-5xl items-center justify-between px-4">
           <span className="text-lg font-bold text-brand-700">
             {translate("en", "layout.appNameWithEmoji")}
           </span>
@@ -71,7 +71,7 @@ export default async function AppLayout({
         </div>
       </header>
 
-      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-6">
+      <main className="mx-auto w-full max-w-5xl flex-1 px-4 py-4 md:py-6">
         <ListsHydrator />
         <LanguageHydrator />
         {children}

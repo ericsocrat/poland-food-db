@@ -8,16 +8,25 @@ export function Footer() {
   return (
     <footer className="border-t bg-surface-subtle py-8">
       <div className="mx-auto max-w-5xl px-4 text-center text-sm text-foreground-secondary">
-        <div className="mb-3 flex items-center justify-center gap-4">
-          <Link href="/privacy" className="hover:text-foreground">
+        <div className="mb-3 flex items-center justify-center gap-2">
+          <Link
+            href="/privacy"
+            className="touch-target px-2 hover:text-foreground"
+          >
             {t("layout.privacy")}
           </Link>
-          <span>·</span>
-          <Link href="/terms" className="hover:text-foreground">
+          <span aria-hidden="true">·</span>
+          <Link
+            href="/terms"
+            className="touch-target px-2 hover:text-foreground"
+          >
             {t("layout.terms")}
           </Link>
-          <span>·</span>
-          <Link href="/contact" className="hover:text-foreground">
+          <span aria-hidden="true">·</span>
+          <Link
+            href="/contact"
+            className="touch-target px-2 hover:text-foreground"
+          >
             {t("layout.contact")}
           </Link>
         </div>

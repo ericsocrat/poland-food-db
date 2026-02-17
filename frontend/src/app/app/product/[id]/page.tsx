@@ -163,7 +163,7 @@ export default function ProductDetailPage() {
                   )}
                 <p className="text-sm text-gray-500">{profile.product.brand}</p>
               </div>
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <ShareButton
                   productName={
                     profile.product.product_name_display ??
@@ -263,17 +263,20 @@ export default function ProductDetailPage() {
       </ErrorBoundary>
 
       {/* Tab bar */}
-      <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="tablist">
+      <div
+        className="flex gap-1 rounded-lg bg-surface-muted p-1"
+        role="tablist"
+      >
         {tabs.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
             role="tab"
             aria-selected={activeTab === tab.key}
-            className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            className={`flex-1 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
               activeTab === tab.key
-                ? "bg-white text-brand-700 shadow-sm"
-                : "text-gray-500 hover:text-gray-700"
+                ? "bg-surface text-brand-700 shadow-sm"
+                : "text-foreground-secondary hover:text-foreground"
             }`}
           >
             {tab.label}

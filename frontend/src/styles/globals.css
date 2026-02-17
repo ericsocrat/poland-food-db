@@ -342,3 +342,47 @@
     background: var(--color-surface-muted);
   }
 }
+
+/* ── Touch Target Utilities ── */
+.touch-target {
+  position: relative;
+  min-height: 44px;
+  min-width: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Expand hit area beyond visual bounds for small interactive elements */
+.touch-target-expanded {
+  position: relative;
+}
+.touch-target-expanded::after {
+  content: "";
+  position: absolute;
+  inset: -8px;
+  min-width: 44px;
+  min-height: 44px;
+}
+
+/* ── Container Query Definitions ── */
+.product-card-container {
+  container-type: inline-size;
+}
+
+.compare-cell-container {
+  container-type: inline-size;
+}
+
+.filter-panel-container {
+  container-type: inline-size;
+}
+
+/* ── Safe Area Insets ── */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.safe-area-top {
+  padding-top: env(safe-area-inset-top, 0px);
+}

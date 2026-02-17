@@ -370,7 +370,7 @@ export default function ScanPage() {
       </div>
 
       {/* Batch mode toggle */}
-      <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-gray-200 px-3 py-2">
+      <label className="touch-target flex cursor-pointer items-center gap-2 rounded-lg border border-border px-3 py-2.5">
         <input
           type="checkbox"
           checked={batchMode}
@@ -378,19 +378,19 @@ export default function ScanPage() {
             setBatchMode(e.target.checked);
             if (!e.target.checked) setBatchResults([]);
           }}
-          className="h-4 w-4 rounded border-gray-300 text-brand-600"
+          className="h-5 w-5 rounded border-gray-300 text-brand-600"
         />
-        <span className="text-sm text-gray-700">{t("scan.batchMode")}</span>
+        <span className="text-sm text-foreground">{t("scan.batchMode")}</span>
       </label>
 
       {/* Mode toggle */}
-      <div className="flex gap-1 rounded-lg bg-gray-100 p-1">
+      <div className="flex gap-1 rounded-lg bg-surface-muted p-1">
         <button
           onClick={() => setMode("camera")}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+          className={`flex-1 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
             mode === "camera"
-              ? "bg-white text-brand-700 shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
+              ? "bg-surface text-brand-700 shadow-sm"
+              : "text-foreground-secondary hover:text-foreground"
           }`}
         >
           📷 {t("scan.camera")}
@@ -400,10 +400,10 @@ export default function ScanPage() {
             stopScanner();
             setMode("manual");
           }}
-          className={`flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+          className={`flex-1 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
             mode === "manual"
-              ? "bg-white text-brand-700 shadow-sm"
-              : "text-gray-500 hover:text-gray-700"
+              ? "bg-surface text-brand-700 shadow-sm"
+              : "text-foreground-secondary hover:text-foreground"
           }`}
         >
           ⌨️ {t("scan.manual")}

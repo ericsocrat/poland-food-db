@@ -191,7 +191,7 @@ function ListCard({
             type="button"
             title={t("common.delete")}
             aria-label={`${t("common.delete")} ${list.name}`}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-sm text-gray-400 transition-colors hover:bg-red-50 hover:text-red-500"
+            className="touch-target flex h-11 w-11 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-red-50 hover:text-red-500"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
