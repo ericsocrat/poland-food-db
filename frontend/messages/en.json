@@ -61,7 +61,36 @@
     "scanned": "Scanned",
     "viewed": "Viewed",
     "lists": "Lists",
-    "errorMessage": "Something went wrong loading your dashboard."
+    "errorMessage": "Something went wrong loading your dashboard.",
+    "greeting": {
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening",
+      "night": "Good night",
+      "morningNamed": "Good morning, {name}",
+      "afternoonNamed": "Good afternoon, {name}",
+      "eveningNamed": "Good evening, {name}",
+      "nightNamed": "Good night, {name}"
+    },
+    "subtitle": "Here's your food overview for today.",
+    "quickActions": "Quick actions",
+    "action": {
+      "scan": "Scan",
+      "search": "Search",
+      "compare": "Compare",
+      "lists": "Lists"
+    },
+    "categoriesTitle": "Categories",
+    "tipTitle": "Tip of the Day",
+    "tip": {
+      "0": "Whole grains are rich in fibre, B vitamins and minerals. Choose whole-wheat bread over white bread when possible.",
+      "1": "The WHO recommends less than 5 g of salt per day — roughly one teaspoon. Check sodium on the label.",
+      "2": "Fruits and vegetables should fill half your plate at every meal for optimal micronutrient intake.",
+      "3": "Ultra-processed foods (NOVA 4) are linked to higher health risks. Look for NOVA 1–2 alternatives.",
+      "4": "Drinking water instead of sugary beverages can cut hundreds of empty calories per day.",
+      "5": "Reading ingredient lists helps spot hidden sugars — look for words ending in '-ose' (glucose, fructose, sucrose).",
+      "6": "A Nutri-Score of A or B indicates better overall nutritional quality compared to similar products."
+    }
   },
   "search": {
     "title": "Search",

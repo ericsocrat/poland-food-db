@@ -12,6 +12,10 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { DashboardSkeleton } from "@/components/common/skeletons";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
+import { QuickActions } from "@/components/dashboard/QuickActions";
+import { CategoriesBrowse } from "@/components/dashboard/CategoriesBrowse";
+import { NutritionTip } from "@/components/dashboard/NutritionTip";
 import type {
   DashboardData,
   DashboardFavoritePreview,
@@ -224,7 +228,6 @@ function EmptyDashboard() {
 
 export default function DashboardPage() {
   const supabase = createClient();
-  const { t } = useTranslation();
   const { track } = useAnalytics();
 
   const { data, isLoading, isError } = useQuery({
@@ -271,11 +274,24 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-foreground">
-        {t("dashboard.title")}
-      </h1>
+      {/* Personalised greeting */}
+      <DashboardGreeting />
 
+      {/* Primary action buttons */}
+      <QuickActions />
+
+      {/* Horizontal category chips */}
+      <ErrorBoundary level="section" context={{ section: "categories-browse" }}>
+        <CategoriesBrowse />
+      </ErrorBoundary>
+
+      {/* Stats overview */}
       <StatsBar stats={dashboard.stats} />
+
+      {/* Daily nutrition tip */}
+      <ErrorBoundary level="section" context={{ section: "nutrition-tip" }}>
+        <NutritionTip />
+      </ErrorBoundary>
 
       <ErrorBoundary level="section" context={{ section: "recently-viewed" }}>
         <RecentlyViewedSection products={dashboard.recently_viewed} />

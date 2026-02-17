@@ -7,6 +7,7 @@ import type { DashboardData } from "@/lib/types";
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
 const mockGetDashboardData = vi.fn();
+const mockGetCategoryOverview = vi.fn();
 
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({}),
@@ -14,6 +15,7 @@ vi.mock("@/lib/supabase/client", () => ({
 
 vi.mock("@/lib/api", () => ({
   getDashboardData: (...args: unknown[]) => mockGetDashboardData(...args),
+  getCategoryOverview: (...args: unknown[]) => mockGetCategoryOverview(...args),
 }));
 
 vi.mock("next/link", () => ({
@@ -111,6 +113,7 @@ describe("DashboardPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockGetDashboardData.mockResolvedValue({ ok: true, data: mockDashboard });
+    mockGetCategoryOverview.mockResolvedValue({ ok: true, data: [] });
   });
 
   it("shows skeleton loading state initially", () => {
@@ -122,10 +125,15 @@ describe("DashboardPage", () => {
     expect(status[0].getAttribute("aria-busy")).toBe("true");
   });
 
-  it("renders the dashboard title", async () => {
+  it("renders a time-aware greeting", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Dashboard")).toBeInTheDocument();
+      // The greeting is time-dependent, so check for any of the possible greetings
+      const greetingEl = screen.getByRole("heading", { level: 1 });
+      expect(greetingEl).toBeInTheDocument();
+      expect(greetingEl.textContent).toMatch(
+        /Good morning|Good afternoon|Good evening|Good night/,
+      );
     });
   });
 
@@ -145,8 +153,10 @@ describe("DashboardPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Scanned")).toBeInTheDocument();
       expect(screen.getByText("Viewed")).toBeInTheDocument();
-      expect(screen.getByText("Lists")).toBeInTheDocument();
-      expect(screen.getByText("Favorites")).toBeInTheDocument();
+      // "Lists" appears in both StatsBar and QuickActions, so use getAllByText
+      expect(screen.getAllByText("Lists").length).toBeGreaterThanOrEqual(1);
+      // "Favorites" appears in both StatsBar section header
+      expect(screen.getAllByText("Favorites").length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -175,10 +185,13 @@ describe("DashboardPage", () => {
   it("renders favorites section with view all link", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("View all →")).toBeInTheDocument();
+      const viewAllLinks = screen.getAllByText("View all →");
+      // Find the one linking to /app/lists (favorites)
+      const favoritesLink = viewAllLinks
+        .map((el) => el.closest("a"))
+        .find((a) => a?.getAttribute("href") === "/app/lists");
+      expect(favoritesLink).toBeTruthy();
     });
-    const viewAllLink = screen.getByText("View all →").closest("a");
-    expect(viewAllLink).toHaveAttribute("href", "/app/lists");
   });
 
   it("renders new products section", async () => {
@@ -297,6 +310,11 @@ describe("DashboardPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
     });
-    expect(screen.queryByText("View all →")).not.toBeInTheDocument();
+    // "View all →" may still appear in CategoriesBrowse, so check no link to /app/lists
+    const viewAllLinks = screen.getAllByText("View all →");
+    const favoritesLink = viewAllLinks
+      .map((el) => el.closest("a"))
+      .find((a) => a?.getAttribute("href") === "/app/lists");
+    expect(favoritesLink).toBeUndefined();
   });
 });

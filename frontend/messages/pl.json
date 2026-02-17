@@ -61,7 +61,36 @@
     "scanned": "Zeskanowane",
     "viewed": "Przeglądane",
     "lists": "Listy",
-    "errorMessage": "Nie udało się załadować panelu."
+    "errorMessage": "Nie udało się załadować panelu.",
+    "greeting": {
+      "morning": "Dzień dobry",
+      "afternoon": "Dzień dobry",
+      "evening": "Dobry wieczór",
+      "night": "Dobranoc",
+      "morningNamed": "Dzień dobry, {name}",
+      "afternoonNamed": "Dzień dobry, {name}",
+      "eveningNamed": "Dobry wieczór, {name}",
+      "nightNamed": "Dobranoc, {name}"
+    },
+    "subtitle": "Oto Twój przegląd żywienia na dziś.",
+    "quickActions": "Szybkie akcje",
+    "action": {
+      "scan": "Skanuj",
+      "search": "Szukaj",
+      "compare": "Porównaj",
+      "lists": "Listy"
+    },
+    "categoriesTitle": "Kategorie",
+    "tipTitle": "Porada dnia",
+    "tip": {
+      "0": "Produkty pełnoziarniste są bogate w błonnik, witaminy z grupy B i minerały. Wybieraj chleb pełnoziarnisty zamiast białego.",
+      "1": "WHO zaleca mniej niż 5 g soli dziennie — to mniej więcej jedna łyżeczka. Sprawdzaj sód na etykiecie.",
+      "2": "Owoce i warzywa powinny zajmować połowę talerza przy każdym posiłku dla optymalnej podaży mikroskładników.",
+      "3": "Żywność ultra-przetworzona (NOVA 4) wiąże się z wyższym ryzykiem zdrowotnym. Szukaj alternatyw NOVA 1–2.",
+      "4": "Picie wody zamiast słodzonych napojów może zmniejszyć dzienny spożycie o setki pustych kalorii.",
+      "5": "Czytanie listy składników pomaga wykryć ukryte cukry — szukaj słów kończących się na '-oza' (glukoza, fruktoza, sacharoza).",
+      "6": "Nutri-Score A lub B wskazuje lepszą ogólną jakość odżywczą w porównaniu z podobnymi produktami."
+    }
   },
   "search": {
     "title": "Szukaj",
