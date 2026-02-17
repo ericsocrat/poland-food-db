@@ -1,19 +1,18 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { redirect } from "next/navigation";
 import OnboardingPreferencesPage from "./page";
 
-vi.mock("./PreferencesForm", () => ({
-  PreferencesForm: () => <div data-testid="preferences-form" />,
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn(),
 }));
 
 describe("OnboardingPreferencesPage", () => {
-  it("renders the PreferencesForm", () => {
-    render(<OnboardingPreferencesPage />);
-    expect(screen.getByTestId("preferences-form")).toBeInTheDocument();
-  });
-
-  it("exports dynamic = force-dynamic", async () => {
-    const mod = await import("./page");
-    expect(mod.dynamic).toBe("force-dynamic");
+  it("redirects to /onboarding", () => {
+    try {
+      OnboardingPreferencesPage();
+    } catch {
+      // redirect() throws in Next.js
+    }
+    expect(redirect).toHaveBeenCalledWith("/onboarding");
   });
 });

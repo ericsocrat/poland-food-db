@@ -90,7 +90,7 @@ describe("RouteGuard", () => {
       { wrapper: createWrapper() },
     );
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/onboarding/region");
+      expect(mockPush).toHaveBeenCalledWith("/onboarding");
     });
     expect(screen.queryByText("Protected")).not.toBeInTheDocument();
   });

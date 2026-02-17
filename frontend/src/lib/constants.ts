@@ -53,6 +53,34 @@ export const DIET_OPTIONS = [
   { value: "vegan", label: "Vegan" },
 ] as const;
 
+export const HEALTH_GOALS = [
+  { value: "diabetes", labelKey: "onboarding.goalDiabetes", descKey: "onboarding.goalDiabetesDesc" },
+  { value: "low_sodium", labelKey: "onboarding.goalLowSodium", descKey: "onboarding.goalLowSodiumDesc" },
+  { value: "heart_health", labelKey: "onboarding.goalHeartHealth", descKey: "onboarding.goalHeartHealthDesc" },
+  { value: "weight_management", labelKey: "onboarding.goalWeightMgmt", descKey: "onboarding.goalWeightMgmtDesc" },
+  { value: "general_wellness", labelKey: "onboarding.goalWellness", descKey: "onboarding.goalWellnessDesc" },
+] as const;
+
+export const FOOD_CATEGORIES = [
+  { slug: "bread", emoji: "🍞", labelKey: "onboarding.catBread" },
+  { slug: "breakfast-grain-based", emoji: "🥣", labelKey: "onboarding.catBreakfast" },
+  { slug: "canned-goods", emoji: "🥫", labelKey: "onboarding.catCanned" },
+  { slug: "cereals", emoji: "🥣", labelKey: "onboarding.catCereals" },
+  { slug: "chips", emoji: "🍟", labelKey: "onboarding.catChips" },
+  { slug: "condiments", emoji: "🫙", labelKey: "onboarding.catCondiments" },
+  { slug: "dairy", emoji: "🧀", labelKey: "onboarding.catDairy" },
+  { slug: "drinks", emoji: "🥤", labelKey: "onboarding.catDrinks" },
+  { slug: "frozen-prepared", emoji: "🧊", labelKey: "onboarding.catFrozen" },
+  { slug: "instant-frozen", emoji: "🍜", labelKey: "onboarding.catInstant" },
+  { slug: "meat", emoji: "🥩", labelKey: "onboarding.catMeat" },
+  { slug: "nuts-seeds-legumes", emoji: "🥜", labelKey: "onboarding.catNuts" },
+  { slug: "plant-based-alternatives", emoji: "🌱", labelKey: "onboarding.catPlantBased" },
+  { slug: "sauces", emoji: "🫗", labelKey: "onboarding.catSauces" },
+  { slug: "seafood-fish", emoji: "🐟", labelKey: "onboarding.catSeafood" },
+  { slug: "snacks", emoji: "🍿", labelKey: "onboarding.catSnacks" },
+  { slug: "sweets", emoji: "🍫", labelKey: "onboarding.catSweets" },
+] as const;
+
 // Score band display config
 export const SCORE_BANDS = {
   low: { label: "Low", color: "text-score-green", bg: "bg-score-green/10" },

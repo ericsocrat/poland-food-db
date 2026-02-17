@@ -1,6 +1,6 @@
 // ─── Protected app layout ────────────────────────────────────────────────────
 // Server component that checks onboarding_complete via api_get_user_preferences().
-// If onboarding is incomplete, redirects to /onboarding/region.
+// If onboarding is incomplete, redirects to /onboarding.
 // This is the AUTHORITATIVE onboarding gate (server-side).
 // RouteGuard provides a secondary client-side gate for UX + session expiry handling.
 
@@ -56,7 +56,7 @@ export default async function AppLayout({
   };
 
   if (!prefs.onboarding_complete) {
-    redirect("/onboarding/region");
+    redirect("/onboarding");
   }
 
   return (

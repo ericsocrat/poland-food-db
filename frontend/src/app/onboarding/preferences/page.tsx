@@ -1,9 +1,9 @@
 // Server component wrapper — opts into dynamic rendering.
 
-import { PreferencesForm } from "./PreferencesForm";
+// Legacy route — redirects to the unified onboarding wizard (Issue #42).
 
-export const dynamic = "force-dynamic";
+import { redirect } from "next/navigation";
 
 export default function OnboardingPreferencesPage() {
-  return <PreferencesForm />;
+  redirect("/onboarding");
 }

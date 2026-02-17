@@ -33,9 +33,21 @@ export interface UserPreferences {
   strict_allergen: boolean;
   strict_diet: boolean;
   treat_may_contain_as_unsafe: boolean;
+  health_goals: string[];
+  favorite_categories: string[];
   onboarding_complete: boolean;
+  onboarding_completed: boolean;
+  onboarding_skipped: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface OnboardingStatus {
+  api_version: string;
+  completed: boolean;
+  skipped: boolean;
+  completed_at: string | null;
+  error?: string;
 }
 
 // ─── Search ─────────────────────────────────────────────────────────────────

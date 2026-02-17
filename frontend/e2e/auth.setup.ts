@@ -23,20 +23,15 @@ setup("create user and authenticate via UI", async ({ page }) => {
   await page.getByLabel("Password").fill(TEST_PASSWORD);
   await page.getByRole("button", { name: "Sign In" }).click();
 
-  // After login the user has no preferences → redirected to onboarding
-  await page.waitForURL(/\/(app\/search|onboarding\/region)/, {
+  // After login the user has no preferences → redirected to onboarding wizard
+  await page.waitForURL(/\/(app\/search|onboarding)/, {
     timeout: 15_000,
   });
 
   // ── 3. Complete onboarding (if needed) ────────────────────────────────────
-  if (page.url().includes("/onboarding/region")) {
-    // Step 1 — select Poland
-    await page.getByText("Poland", { exact: false }).click();
-    await page.getByRole("button", { name: "Continue" }).click();
-
-    // Step 2 — preferences (skip)
-    await page.waitForURL(/\/onboarding\/preferences/, { timeout: 10_000 });
-    await page.getByRole("button", { name: /skip/i }).click();
+  if (page.url().includes("/onboarding")) {
+    // Click "Skip — go to app" on the Welcome step
+    await page.getByTestId("onboarding-skip-all").click();
 
     // Should land on /app/search
     await page.waitForURL(/\/app\/search/, { timeout: 10_000 });

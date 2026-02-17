@@ -59,7 +59,7 @@ export function RouteGuard({ children }: Readonly<RouteGuardProps>) {
 
   useEffect(() => {
     if (data && !data.onboarding_complete) {
-      router.push("/onboarding/region");
+      router.push("/onboarding");
     }
   }, [data, router]);
 

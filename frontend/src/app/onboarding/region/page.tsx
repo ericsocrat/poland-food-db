@@ -1,9 +1,7 @@
-// Server component wrapper — opts into dynamic rendering.
+// Legacy route — redirects to the unified onboarding wizard (Issue #42).
 
-import { RegionForm } from "./RegionForm";
-
-export const dynamic = "force-dynamic";
+import { redirect } from "next/navigation";
 
 export default function OnboardingRegionPage() {
-  return <RegionForm />;
+  redirect("/onboarding");
 }

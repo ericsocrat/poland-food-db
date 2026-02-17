@@ -53,6 +53,7 @@ import type {
   ToggleShareResponse,
   TrackEventResponse,
   UserPreferences,
+  OnboardingStatus,
 } from "./types";
 
 // ─── User Preferences ──────────────────────────────────────────────────────
@@ -80,6 +81,41 @@ export function setUserPreferences(
     "api_set_user_preferences",
     prefs,
   );
+}
+
+// ─── Onboarding ─────────────────────────────────────────────────────────────
+
+export function getOnboardingStatus(
+  supabase: SupabaseClient,
+): Promise<RpcResult<OnboardingStatus>> {
+  return callRpc<OnboardingStatus>(supabase, "api_get_onboarding_status");
+}
+
+export function completeOnboarding(
+  supabase: SupabaseClient,
+  preferences: {
+    country: string;
+    language?: string;
+    diet?: string;
+    allergens?: string[];
+    strict_allergen?: boolean;
+    strict_diet?: boolean;
+    treat_may_contain_as_unsafe?: boolean;
+    health_goals?: string[];
+    favorite_categories?: string[];
+  },
+): Promise<RpcResult<UserPreferences>> {
+  return callRpc<UserPreferences>(
+    supabase,
+    "api_complete_onboarding",
+    { p_preferences: preferences },
+  );
+}
+
+export function skipOnboarding(
+  supabase: SupabaseClient,
+): Promise<RpcResult<OnboardingStatus>> {
+  return callRpc<OnboardingStatus>(supabase, "api_skip_onboarding");
 }
 
 // ─── Search ─────────────────────────────────────────────────────────────────

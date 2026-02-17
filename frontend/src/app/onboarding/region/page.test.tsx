@@ -1,19 +1,18 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { redirect } from "next/navigation";
 import OnboardingRegionPage from "./page";
 
-vi.mock("./RegionForm", () => ({
-  RegionForm: () => <div data-testid="region-form" />,
+vi.mock("next/navigation", () => ({
+  redirect: vi.fn(),
 }));
 
 describe("OnboardingRegionPage", () => {
-  it("renders the RegionForm", () => {
-    render(<OnboardingRegionPage />);
-    expect(screen.getByTestId("region-form")).toBeInTheDocument();
-  });
-
-  it("exports dynamic = force-dynamic", async () => {
-    const mod = await import("./page");
-    expect(mod.dynamic).toBe("force-dynamic");
+  it("redirects to /onboarding", () => {
+    try {
+      OnboardingRegionPage();
+    } catch {
+      // redirect() throws in Next.js
+    }
+    expect(redirect).toHaveBeenCalledWith("/onboarding");
   });
 });
