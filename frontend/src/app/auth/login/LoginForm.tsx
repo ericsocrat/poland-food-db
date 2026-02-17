@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { sanitizeRedirect } from "@/lib/validation";
 import { useTranslation } from "@/lib/i18n";
@@ -33,7 +33,7 @@ export function LoginForm() {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message);
+      showToast({ type: "error", message: error.message });
       return;
     }
 

@@ -140,7 +140,10 @@ describe("ComparePage", () => {
       expect(
         screen.getByText("Failed to load comparison data."),
       ).toBeInTheDocument();
-      expect(screen.getByTestId("empty-state")).toHaveAttribute("data-variant", "error");
+      expect(screen.getByTestId("empty-state")).toHaveAttribute(
+        "data-variant",
+        "error",
+      );
     });
 
     it("renders ComparisonGrid when data loaded", () => {

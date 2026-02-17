@@ -30,6 +30,16 @@
     "items": "{count} element(ów)",
     "products": "{count} produkt(ów)"
   },
+  "toast": {
+    "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
+    "saved": "Zmiany zostały zapisane.",
+    "deleted": "Element usunięty.",
+    "copied": "Skopiowano do schowka.",
+    "networkError": "Błąd sieci. Sprawdź połączenie i spróbuj ponownie.",
+    "rateLimited": "Za dużo powiadomień. Poczekaj chwilę.",
+    "unauthorized": "Nie masz uprawnień do wykonania tej akcji.",
+    "submissionStatus": "Zgłoszenie {status}"
+  },
   "pwa": {
     "offline": "Jesteś offline — niektóre funkcje mogą być niedostępne",
     "installTitle": "Zainstaluj FoodDB",

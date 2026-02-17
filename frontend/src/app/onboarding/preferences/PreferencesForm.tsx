@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { setUserPreferences } from "@/lib/api";
 import { DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
@@ -41,11 +41,11 @@ export function PreferencesForm() {
     setLoading(false);
 
     if (!result.ok) {
-      toast.error(result.error.message);
+      showToast({ type: "error", message: result.error.message });
       return;
     }
 
-    toast.success(t("onboarding.preferencesSaved"));
+    showToast({ type: "success", messageKey: "onboarding.preferencesSaved" });
     track("onboarding_completed", {
       diet,
       allergen_count: allergens.length,

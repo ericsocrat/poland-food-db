@@ -16,13 +16,9 @@ vi.mock("@/lib/rpc", () => ({
   callRpc: (...args: unknown[]) => mockCallRpc(...args),
 }));
 
-const mockToastSuccess = vi.fn();
-const mockToastError = vi.fn();
-vi.mock("sonner", () => ({
-  toast: {
-    success: (...args: unknown[]) => mockToastSuccess(...args),
-    error: (...args: unknown[]) => mockToastError(...args),
-  },
+const mockShowToast = vi.fn();
+vi.mock("@/lib/toast", () => ({
+  showToast: (...args: unknown[]) => mockShowToast(...args),
 }));
 
 vi.mock("@/components/common/LoadingSpinner", () => ({
@@ -298,7 +294,7 @@ describe("AdminSubmissionsPage", () => {
     await user.click(screen.getByText("✅ Approve"));
 
     await waitFor(() => {
-      expect(mockToastSuccess).toHaveBeenCalledWith("Submission approved");
+      expect(mockShowToast).toHaveBeenCalledWith(expect.objectContaining({ type: "success", messageKey: "toast.submissionStatus", messageParams: { status: "approved" } }));
     });
   });
 

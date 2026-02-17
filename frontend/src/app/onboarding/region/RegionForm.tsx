@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { setUserPreferences } from "@/lib/api";
 import { COUNTRIES } from "@/lib/constants";
@@ -19,7 +19,7 @@ export function RegionForm() {
 
   async function handleContinue() {
     if (!selected) {
-      toast.error(t("onboarding.pleaseSelectRegion"));
+      showToast({ type: "error", messageKey: "onboarding.pleaseSelectRegion" });
       return;
     }
 
@@ -28,7 +28,7 @@ export function RegionForm() {
     setLoading(false);
 
     if (!result.ok) {
-      toast.error(result.error.message);
+      showToast({ type: "error", message: result.error.message });
       return;
     }
 

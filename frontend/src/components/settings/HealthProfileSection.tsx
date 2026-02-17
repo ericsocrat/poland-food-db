@@ -4,7 +4,7 @@
 
 import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import {
   listHealthProfiles,
@@ -61,7 +61,7 @@ function ProfileForm({
   async function handleSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     if (!name.trim()) {
-      toast.error(t("healthProfile.nameRequired"));
+      showToast({ type: "error", messageKey: "healthProfile.nameRequired" });
       return;
     }
     setSaving(true);
@@ -94,15 +94,16 @@ function ProfileForm({
     setSaving(false);
 
     if (!result.ok) {
-      toast.error(result.error.message);
+      showToast({ type: "error", message: result.error.message });
       return;
     }
 
-    toast.success(
-      initial
-        ? t("healthProfile.profileUpdated")
-        : t("healthProfile.profileCreated"),
-    );
+    showToast({
+      type: "success",
+      messageKey: initial
+        ? "healthProfile.profileUpdated"
+        : "healthProfile.profileCreated",
+    });
     onSave();
   }
 
@@ -309,10 +310,10 @@ export function HealthProfileSection() {
   async function handleDelete(profileId: string) {
     const result = await deleteHealthProfile(supabase, profileId);
     if (!result.ok) {
-      toast.error(result.error.message);
+      showToast({ type: "error", message: result.error.message });
       return;
     }
-    toast.success(t("healthProfile.profileDeleted"));
+    showToast({ type: "success", messageKey: "healthProfile.profileDeleted" });
     await queryClient.invalidateQueries({
       queryKey: queryKeys.healthProfiles,
     });
@@ -327,14 +328,15 @@ export function HealthProfileSection() {
       p_is_active: !profile.is_active,
     });
     if (!result.ok) {
-      toast.error(result.error.message);
+      showToast({ type: "error", message: result.error.message });
       return;
     }
-    toast.success(
-      profile.is_active
-        ? t("healthProfile.profileDeactivated")
-        : t("healthProfile.profileActivated"),
-    );
+    showToast({
+      type: "success",
+      messageKey: profile.is_active
+        ? "healthProfile.profileDeactivated"
+        : "healthProfile.profileActivated",
+    });
     await queryClient.invalidateQueries({
       queryKey: queryKeys.healthProfiles,
     });

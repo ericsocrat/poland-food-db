@@ -36,8 +36,9 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
         position="top-right"
         richColors
         closeButton
+        visibleToasts={3}
         toastOptions={{
-          duration: 4000,
+          duration: 5000,
         }}
       />
     </QueryClientProvider>

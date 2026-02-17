@@ -34,8 +34,8 @@ vi.mock("@/lib/supabase/client", () => ({
   }),
 }));
 
-vi.mock("sonner", () => ({
-  toast: { error: vi.fn(), success: vi.fn() },
+vi.mock("@/lib/toast", () => ({
+  showToast: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -88,7 +88,7 @@ describe("SignupForm", () => {
   });
 
   it("shows success toast and redirects on success", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     mockSignUp.mockResolvedValue({ error: null });
     const user = userEvent.setup();
 
@@ -98,15 +98,18 @@ describe("SignupForm", () => {
     await user.click(screen.getByRole("button", { name: "Sign Up" }));
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith(
-        "Check your email to confirm your account.",
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "success",
+          messageKey: "auth.checkEmail",
+        }),
       );
       expect(mockPush).toHaveBeenCalledWith("/auth/login?msg=check-email");
     });
   });
 
   it("shows error toast on failure", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     mockSignUp.mockResolvedValue({
       error: { message: "Email already in use" },
     });
@@ -118,7 +121,12 @@ describe("SignupForm", () => {
     await user.click(screen.getByRole("button", { name: "Sign Up" }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Email already in use");
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "error",
+          message: "Email already in use",
+        }),
+      );
     });
     expect(mockPush).not.toHaveBeenCalled();
   });

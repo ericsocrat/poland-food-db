@@ -8,7 +8,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { recordScan } from "@/lib/api";
@@ -97,9 +97,10 @@ export default function ScanPage() {
         if (batchMode) {
           // Batch mode: add to list, keep scanning
           setBatchResults((prev) => [found, ...prev]);
-          toast.success(
-            `✓ ${found.product_name_display ?? found.product_name}`,
-          );
+          showToast({
+            type: "success",
+            message: `✓ ${found.product_name_display ?? found.product_name}`,
+          });
           handleReset(true); // reset but stay in camera mode
         } else {
           setScanState("found");
@@ -196,7 +197,7 @@ export default function ScanPage() {
         errName === "PermissionDeniedError"
       ) {
         setCameraError(t("scan.permissionDenied"));
-        toast.error(t("scan.permissionDenied"));
+        showToast({ type: "error", messageKey: "scan.permissionDenied" });
       } else {
         setCameraError(t("scan.cameraError"));
       }
@@ -217,10 +218,10 @@ export default function ScanPage() {
         await track.applyConstraints({ advanced: [constraint] });
         setTorchOn(newState);
       } else {
-        toast.error(t("scan.torchNotSupported"));
+        showToast({ type: "error", messageKey: "scan.torchNotSupported" });
       }
     } catch {
-      toast.error(t("scan.torchError"));
+      showToast({ type: "error", messageKey: "scan.torchError" });
     }
   }
 
@@ -235,7 +236,7 @@ export default function ScanPage() {
     e.preventDefault();
     const cleaned = manualEan.trim();
     if (!isValidEan(cleaned)) {
-      toast.error(t("scan.invalidBarcode"));
+      showToast({ type: "error", messageKey: "scan.invalidBarcode" });
       return;
     }
     setScanState("looking-up");

@@ -43,8 +43,8 @@ vi.mock("@/lib/validation", () => ({
     raw?.startsWith("/") && !raw.startsWith("//") ? raw : "/app/search",
 }));
 
-vi.mock("sonner", () => ({
-  toast: { error: vi.fn(), success: vi.fn() },
+vi.mock("@/lib/toast", () => ({
+  showToast: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -119,7 +119,7 @@ describe("LoginForm", () => {
   });
 
   it("shows error toast on auth failure", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     mockSignIn.mockResolvedValue({
       error: { message: "Invalid credentials" },
     });
@@ -131,7 +131,12 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: "Sign In" }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Invalid credentials");
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "error",
+          message: "Invalid credentials",
+        }),
+      );
     });
     // Should NOT redirect
     expect(mockPush).not.toHaveBeenCalled();

@@ -20,8 +20,8 @@ vi.mock("@/lib/api", () => ({
   setUserPreferences: (...args: unknown[]) => mockSetPrefs(...args),
 }));
 
-vi.mock("sonner", () => ({
-  toast: { error: vi.fn(), success: vi.fn() },
+vi.mock("@/lib/toast", () => ({
+  showToast: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -150,7 +150,7 @@ describe("PreferencesForm", () => {
   });
 
   it("shows success toast on save", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     mockSetPrefs.mockResolvedValue({ ok: true });
     const user = userEvent.setup();
 
@@ -158,12 +158,12 @@ describe("PreferencesForm", () => {
     await user.click(screen.getByRole("button", { name: "Save & Continue" }));
 
     await waitFor(() => {
-      expect(toast.success).toHaveBeenCalledWith("Preferences saved!");
+      expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ type: "success", messageKey: "onboarding.preferencesSaved" }));
     });
   });
 
   it("shows error toast on API failure", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     mockSetPrefs.mockResolvedValue({
       ok: false,
       error: { message: "Save failed" },
@@ -174,7 +174,7 @@ describe("PreferencesForm", () => {
     await user.click(screen.getByRole("button", { name: "Save & Continue" }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Save failed");
+      expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ type: "error", message: "Save failed" }));
     });
     expect(mockPush).not.toHaveBeenCalled();
   });

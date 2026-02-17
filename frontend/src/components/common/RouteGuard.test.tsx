@@ -25,8 +25,8 @@ vi.mock("@/lib/rpc", () => ({
     ["401", "403", "PGRST301"].includes(e.code),
 }));
 
-vi.mock("sonner", () => ({
-  toast: { error: vi.fn() },
+vi.mock("@/lib/toast", () => ({
+  showToast: vi.fn(),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -114,7 +114,7 @@ describe("RouteGuard", () => {
   });
 
   it("shows toast on non-auth error", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     mockGetUserPreferences.mockResolvedValue({
       ok: false,
       error: { code: "500", message: "Server error" },
@@ -126,7 +126,12 @@ describe("RouteGuard", () => {
       { wrapper: createWrapper() },
     );
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Failed to load preferences.");
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "error",
+          messageKey: "auth.preferencesFailed",
+        }),
+      );
     });
   });
 });

@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { submitProduct } from "@/lib/api";
@@ -39,11 +39,11 @@ export default function SubmitProductPage() {
       return result.data;
     },
     onSuccess: () => {
-      toast.success(t("submit.successToast"));
+      showToast({ type: "success", messageKey: "submit.successToast" });
       router.push("/app/scan/submissions");
     },
     onError: (error: Error) => {
-      toast.error(error.message);
+      showToast({ type: "error", message: error.message });
     },
   });
 

@@ -28,11 +28,8 @@ vi.mock("@/lib/api", () => ({
   deleteHealthProfile: (...args: unknown[]) => mockDeleteHealthProfile(...args),
 }));
 
-vi.mock("sonner", () => ({
-  toast: {
-    success: vi.fn(),
-    error: vi.fn(),
-  },
+vi.mock("@/lib/toast", () => ({
+  showToast: vi.fn(),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -274,7 +271,7 @@ describe("HealthProfileSection", () => {
   // ─── Submit create with empty name ──────────────────────────────────
 
   it("shows error toast when name is empty", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
 
     mockListHealthProfiles.mockResolvedValue(
       okResult<HealthProfileListResponse>({
@@ -292,14 +289,19 @@ describe("HealthProfileSection", () => {
     await userEvent.click(screen.getByText("+ New Profile"));
     await userEvent.click(screen.getByRole("button", { name: "Create" }));
 
-    expect(toast.error).toHaveBeenCalledWith("Profile name is required");
+    expect(showToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "error",
+        messageKey: "healthProfile.nameRequired",
+      }),
+    );
     expect(mockCreateHealthProfile).not.toHaveBeenCalled();
   });
 
   // ─── Create API error ──────────────────────────────────────────────
 
   it("shows error toast on create failure", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
 
     mockListHealthProfiles.mockResolvedValue(
       okResult<HealthProfileListResponse>({
@@ -320,7 +322,9 @@ describe("HealthProfileSection", () => {
     await userEvent.click(screen.getByRole("button", { name: "Create" }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Limit reached");
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "error", message: "Limit reached" }),
+      );
     });
   });
 
@@ -490,7 +494,7 @@ describe("HealthProfileSection", () => {
   // ─── Delete error ──────────────────────────────────────────────────
 
   it("shows error toast on delete failure", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     const profile = makeProfile({ profile_id: "err-1", profile_name: "Fail" });
 
     mockListHealthProfiles.mockResolvedValue(
@@ -510,7 +514,9 @@ describe("HealthProfileSection", () => {
     await userEvent.click(screen.getByText("🗑️"));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Cannot delete");
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "error", message: "Cannot delete" }),
+      );
     });
   });
 
@@ -557,7 +563,7 @@ describe("HealthProfileSection", () => {
   // ─── Toggle active error ───────────────────────────────────────────
 
   it("shows error toast on toggle failure", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     const profile = makeProfile({
       profile_id: "terr-1",
       profile_name: "Toggle Err",
@@ -582,7 +588,9 @@ describe("HealthProfileSection", () => {
     await userEvent.click(screen.getByText("⏸"));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Toggle failed");
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "error", message: "Toggle failed" }),
+      );
     });
   });
 

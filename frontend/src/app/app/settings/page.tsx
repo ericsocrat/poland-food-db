@@ -5,7 +5,7 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences, setUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
@@ -91,7 +91,7 @@ export default function SettingsPage() {
     setSaving(false);
 
     if (!result.ok) {
-      toast.error(result.error.message);
+      showToast({ type: "error", message: result.error.message });
       return;
     }
 
@@ -113,7 +113,7 @@ export default function SettingsPage() {
       diet,
       allergen_count: allergens.length,
     });
-    toast.success(t("settings.preferencesSaved"));
+    showToast({ type: "success", messageKey: "settings.preferencesSaved" });
   }
 
   async function handleLogout() {

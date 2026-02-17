@@ -6,7 +6,7 @@
 
 import { useState, useCallback, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useTranslation } from "@/lib/i18n";
@@ -91,11 +91,15 @@ export default function AdminSubmissionsPage() {
       return result.data;
     },
     onSuccess: (data) => {
-      toast.success(`Submission ${data.status}`);
+      showToast({
+        type: "success",
+        messageKey: "toast.submissionStatus",
+        messageParams: { status: data.status },
+      });
       queryClient.invalidateQueries({ queryKey: ["admin-submissions"] });
     },
     onError: (err: Error) => {
-      toast.error(err.message);
+      showToast({ type: "error", message: err.message });
     },
   });
 

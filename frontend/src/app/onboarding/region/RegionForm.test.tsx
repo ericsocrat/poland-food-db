@@ -19,8 +19,8 @@ vi.mock("@/lib/api", () => ({
   setUserPreferences: (...args: unknown[]) => mockSetPrefs(...args),
 }));
 
-vi.mock("sonner", () => ({
-  toast: { error: vi.fn(), success: vi.fn() },
+vi.mock("@/lib/toast", () => ({
+  showToast: vi.fn(),
 }));
 
 beforeEach(() => {
@@ -91,17 +91,17 @@ describe("RegionForm", () => {
   });
 
   it("shows error toast when no country selected", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     // Force-enable the button for testing
     render(<RegionForm />);
     // Continue is disabled, so we test the guard by calling handleContinue indirectly
     // We can't click a disabled button — this is tested by the disabled state test above
     expect(screen.getByRole("button", { name: "Continue" })).toBeDisabled();
-    expect(toast.error).not.toHaveBeenCalled();
+    expect(showToast).not.toHaveBeenCalled();
   });
 
   it("shows error toast on API failure", async () => {
-    const { toast } = await import("sonner");
+    const { showToast } = await import("@/lib/toast");
     mockSetPrefs.mockResolvedValue({
       ok: false,
       error: { message: "Network error" },
@@ -113,7 +113,7 @@ describe("RegionForm", () => {
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
-      expect(toast.error).toHaveBeenCalledWith("Network error");
+      expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ type: "error", message: "Network error" }));
     });
     expect(mockPush).not.toHaveBeenCalled();
   });

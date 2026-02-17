@@ -6,8 +6,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { useTranslation } from "@/lib/i18n";
+import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences } from "@/lib/api";
 import { isAuthError } from "@/lib/rpc";
@@ -20,7 +19,6 @@ interface RouteGuardProps {
 }
 
 export function RouteGuard({ children }: Readonly<RouteGuardProps>) {
-  const { t } = useTranslation();
   const router = useRouter();
   const supabase = createClient();
 
@@ -46,7 +44,7 @@ export function RouteGuard({ children }: Readonly<RouteGuardProps>) {
       const code =
         error instanceof Error && "code" in error ? String(error.code) : "";
       if (isAuthError({ code, message: error.message })) {
-        toast.error(t("auth.sessionExpired"));
+        showToast({ type: "error", messageKey: "auth.sessionExpired" });
         // Preserve current path + querystring so login can redirect back
         const redirectTo =
           globalThis.location.pathname + globalThis.location.search;
@@ -55,7 +53,7 @@ export function RouteGuard({ children }: Readonly<RouteGuardProps>) {
         );
         return;
       }
-      toast.error(t("auth.preferencesFailed"));
+      showToast({ type: "error", messageKey: "auth.preferencesFailed" });
     }
   }, [error, router]);
 

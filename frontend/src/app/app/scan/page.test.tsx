@@ -7,10 +7,10 @@ import ScanPage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
-const { mockPush, mockRecordScan, mockToast } = vi.hoisted(() => ({
+const { mockPush, mockRecordScan, mockShowToast } = vi.hoisted(() => ({
   mockPush: vi.fn(),
   mockRecordScan: vi.fn(),
-  mockToast: { error: vi.fn(), success: vi.fn() },
+  mockShowToast: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -50,9 +50,9 @@ vi.mock("@/components/common/LoadingSpinner", () => ({
   LoadingSpinner: () => <div data-testid="loading-spinner" />,
 }));
 
-// Mock sonner toast
-vi.mock("sonner", () => ({
-  toast: mockToast,
+// Mock @/lib/toast
+vi.mock("@/lib/toast", () => ({
+  showToast: mockShowToast,
 }));
 
 // Mock ZXing library — prevent actual camera access
@@ -342,9 +342,7 @@ describe("ScanPage", () => {
     await user.type(input, "123456789");
     await user.click(screen.getByText("Look up"));
 
-    expect(mockToast.error).toHaveBeenCalledWith(
-      "Please enter a valid 8 or 13 digit barcode",
-    );
+    expect(mockShowToast).toHaveBeenCalledWith(expect.objectContaining({ type: "error", messageKey: "scan.invalidBarcode" }));
   });
 
   it("strips non-digits from manual input", async () => {
@@ -514,7 +512,7 @@ describe("ScanPage", () => {
       expect(screen.getByText("Batch Product")).toBeInTheDocument();
     });
     expect(screen.getByText("Scanned (1)")).toBeInTheDocument();
-    expect(mockToast.success).toHaveBeenCalledWith("✓ Batch Product");
+    expect(mockShowToast).toHaveBeenCalledWith(expect.objectContaining({ type: "success", message: "✓ Batch Product" }));
     // In batch mode, should NOT navigate
     expect(mockPush).not.toHaveBeenCalled();
   });

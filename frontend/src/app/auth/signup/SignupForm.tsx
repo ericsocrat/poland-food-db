@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { toast } from "sonner";
+import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslation } from "@/lib/i18n";
 import type { FormSubmitEvent } from "@/lib/types";
@@ -31,11 +31,11 @@ export function SignupForm() {
     setLoading(false);
 
     if (error) {
-      toast.error(error.message);
+      showToast({ type: "error", message: error.message });
       return;
     }
 
-    toast.success(t("auth.checkEmail"));
+    showToast({ type: "success", messageKey: "auth.checkEmail" });
     router.push("/auth/login?msg=check-email");
   }
 

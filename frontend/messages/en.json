@@ -30,6 +30,16 @@
     "items": "{count} item(s)",
     "products": "{count} product(s)"
   },
+  "toast": {
+    "genericError": "Something went wrong. Please try again.",
+    "saved": "Changes saved successfully.",
+    "deleted": "Item deleted.",
+    "copied": "Copied to clipboard.",
+    "networkError": "Network error. Check your connection and try again.",
+    "rateLimited": "Too many notifications. Please wait a moment.",
+    "unauthorized": "You are not authorized to perform this action.",
+    "submissionStatus": "Submission {status}"
+  },
   "pwa": {
     "offline": "You're offline — some features may be unavailable",
     "installTitle": "Install FoodDB",
