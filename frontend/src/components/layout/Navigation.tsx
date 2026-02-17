@@ -20,7 +20,7 @@ export function Navigation() {
 
   return (
     <nav
-      className="sticky bottom-0 z-40 border-t border-gray-200 bg-white pb-[env(safe-area-inset-bottom)]"
+      className="sticky bottom-0 z-40 border-t bg-surface pb-[env(safe-area-inset-bottom)]"
       aria-label="Main navigation"
     >
       <div className="mx-auto flex max-w-5xl">
@@ -38,7 +38,7 @@ export function Navigation() {
               className={`flex flex-1 flex-col items-center gap-0.5 py-2 text-xs transition-colors ${
                 isActive
                   ? "text-brand-700 font-semibold"
-                  : "text-gray-500 hover:text-gray-700"
+                  : "text-foreground-secondary hover:text-foreground"
               }`}
             >
               <span className="text-xl">{item.icon}</span>

@@ -79,13 +79,13 @@ export function EmptyState({
       </p>
 
       {/* Title */}
-      <h3 className="mb-1 text-sm font-semibold text-gray-600">
+      <h3 className="mb-1 text-sm font-semibold text-foreground-secondary">
         {t(titleKey, titleParams)}
       </h3>
 
       {/* Description */}
       {descriptionKey && (
-        <p className="mb-4 max-w-xs text-xs text-gray-400">
+        <p className="mb-4 max-w-xs text-xs text-foreground-muted">
           {t(descriptionKey, descriptionParams)}
         </p>
       )}
@@ -114,7 +114,7 @@ function ActionButton({
   const label = t(action.labelKey);
 
   const baseClasses = primary
-    ? "rounded-lg bg-brand-600 px-4 py-2 text-xs font-medium text-white hover:bg-brand-700 transition-colors"
+    ? "rounded-lg bg-brand px-4 py-2 text-xs font-medium text-foreground-inverse hover:bg-brand-hover transition-colors"
     : "text-xs font-medium text-brand-600 hover:text-brand-700 underline underline-offset-2 transition-colors";
 
   if (action.href) {

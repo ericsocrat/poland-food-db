@@ -22,7 +22,7 @@ export function LoadingSpinner({
       aria-label={t("common.loading")}
     >
       <div
-        className={`animate-spin rounded-full border-gray-200 border-t-brand-600 ${SIZES[size]}`}
+        className={`animate-spin rounded-full border-surface-muted border-t-brand ${SIZES[size]}`}
       />
       <span className="sr-only">{t("common.loading")}</span>
     </output>

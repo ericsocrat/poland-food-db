@@ -60,17 +60,17 @@ export function ConfirmDialog({
 
   const confirmBtnClass =
     variant === "danger"
-      ? "rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white hover:bg-red-700"
+      ? "rounded-lg bg-error px-4 py-2 text-sm font-medium text-foreground-inverse hover:bg-error/90"
       : "btn-primary px-4 py-2 text-sm";
 
   return (
     <dialog
       ref={dialogRef}
-      className="fixed inset-0 z-50 m-auto w-full max-w-sm rounded-2xl bg-white p-6 shadow-xl backdrop:bg-black/30"
+      className="fixed inset-0 z-50 m-auto w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl backdrop:bg-black/30"
     >
-      <h3 className="mb-1 text-base font-semibold text-gray-900">{title}</h3>
+      <h3 className="mb-1 text-base font-semibold text-foreground">{title}</h3>
       {description && (
-        <p className="mb-4 text-sm text-gray-500">{description}</p>
+        <p className="mb-4 text-sm text-foreground-secondary">{description}</p>
       )}
 
       <div className="flex justify-end gap-2">

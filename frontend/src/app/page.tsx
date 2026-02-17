@@ -15,10 +15,10 @@ export default function HomePage() {
 
       <main className="flex flex-1 flex-col items-center justify-center px-4 py-16">
         <div className="max-w-md text-center">
-          <h1 className="mb-4 text-4xl font-bold text-gray-900">
+          <h1 className="mb-4 text-4xl font-bold text-foreground">
             {t("landing.tagline")}
           </h1>
-          <p className="mb-8 text-lg text-gray-500">
+          <p className="mb-8 text-lg text-foreground-secondary">
             {t("landing.description")}
           </p>
 
@@ -69,8 +69,8 @@ function Feature({
   return (
     <div className="text-center">
       <span className="text-3xl">{icon}</span>
-      <h3 className="mt-2 font-semibold text-gray-900">{title}</h3>
-      <p className="mt-1 text-sm text-gray-500">{desc}</p>
+      <h3 className="mt-2 font-semibold text-foreground">{title}</h3>
+      <p className="mt-1 text-sm text-foreground-secondary">{desc}</p>
     </div>
   );
 }

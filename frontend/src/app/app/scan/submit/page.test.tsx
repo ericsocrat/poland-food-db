@@ -139,7 +139,12 @@ describe("SubmitProductPage", () => {
     await user.click(screen.getByText("Submit Product"));
 
     await waitFor(() => {
-      expect(mockShowToast).toHaveBeenCalledWith(expect.objectContaining({ type: "success", messageKey: "submit.successToast" }));
+      expect(mockShowToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "success",
+          messageKey: "submit.successToast",
+        }),
+      );
     });
     expect(mockPush).toHaveBeenCalledWith("/app/scan/submissions");
   });
@@ -157,7 +162,9 @@ describe("SubmitProductPage", () => {
     await user.click(screen.getByText("Submit Product"));
 
     await waitFor(() => {
-      expect(mockShowToast).toHaveBeenCalledWith(expect.objectContaining({ type: "error", message: "Duplicate EAN" }));
+      expect(mockShowToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "error", message: "Duplicate EAN" }),
+      );
     });
   });
 

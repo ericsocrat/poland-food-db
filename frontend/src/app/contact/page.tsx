@@ -14,12 +14,14 @@ export default function ContactPage() {
 
       <main className="flex flex-1 flex-col items-center px-4 py-16">
         <div className="max-w-md">
-          <h1 className="mb-4 text-2xl font-bold text-gray-900">
+          <h1 className="mb-4 text-2xl font-bold text-foreground">
             {t("legal.contactTitle")}
           </h1>
-          <p className="mb-6 text-gray-600">{t("legal.contactIntro")}</p>
+          <p className="mb-6 text-foreground-secondary">
+            {t("legal.contactIntro")}
+          </p>
           <div className="card space-y-3">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-foreground-secondary">
               <strong>{t("legal.emailLabel")}</strong>{" "}
               <a
                 href="mailto:hello@example.com"
@@ -28,7 +30,9 @@ export default function ContactPage() {
                 hello@example.com
               </a>
             </p>
-            <p className="text-sm text-gray-500">{t("legal.responseTime")}</p>
+            <p className="text-sm text-foreground-secondary">
+              {t("legal.responseTime")}
+            </p>
           </div>
         </div>
       </main>

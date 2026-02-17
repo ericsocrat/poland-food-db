@@ -158,7 +158,12 @@ describe("PreferencesForm", () => {
     await user.click(screen.getByRole("button", { name: "Save & Continue" }));
 
     await waitFor(() => {
-      expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ type: "success", messageKey: "onboarding.preferencesSaved" }));
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "success",
+          messageKey: "onboarding.preferencesSaved",
+        }),
+      );
     });
   });
 
@@ -174,7 +179,9 @@ describe("PreferencesForm", () => {
     await user.click(screen.getByRole("button", { name: "Save & Continue" }));
 
     await waitFor(() => {
-      expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ type: "error", message: "Save failed" }));
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "error", message: "Save failed" }),
+      );
     });
     expect(mockPush).not.toHaveBeenCalled();
   });

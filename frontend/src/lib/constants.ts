@@ -55,10 +55,10 @@ export const DIET_OPTIONS = [
 
 // Score band display config
 export const SCORE_BANDS = {
-  low: { label: "Low", color: "text-green-600", bg: "bg-green-100" },
-  moderate: { label: "Moderate", color: "text-amber-600", bg: "bg-amber-100" },
-  high: { label: "High", color: "text-orange-600", bg: "bg-orange-100" },
-  very_high: { label: "Very High", color: "text-red-600", bg: "bg-red-100" },
+  low: { label: "Low", color: "text-score-green", bg: "bg-score-green/10" },
+  moderate: { label: "Moderate", color: "text-score-yellow", bg: "bg-score-yellow/10" },
+  high: { label: "High", color: "text-score-orange", bg: "bg-score-orange/10" },
+  very_high: { label: "Very High", color: "text-score-red", bg: "bg-score-red/10" },
 } as const;
 
 /** Map a 0-100 unhealthiness score to a score band key. */
@@ -71,11 +71,11 @@ export function scoreBandFromScore(score: number): ScoreBand {
 
 // Nutri-Score display config
 export const NUTRI_COLORS: Record<string, string> = {
-  A: "bg-nutri-A text-white",
-  B: "bg-nutri-B text-white",
-  C: "bg-nutri-C text-gray-900",
-  D: "bg-nutri-D text-white",
-  E: "bg-nutri-E text-white",
+  A: "bg-nutri-A text-foreground-inverse",
+  B: "bg-nutri-B text-foreground-inverse",
+  C: "bg-nutri-C text-foreground",
+  D: "bg-nutri-D text-foreground-inverse",
+  E: "bg-nutri-E text-foreground-inverse",
 };
 
 // Health conditions for personal health profiles
@@ -93,21 +93,21 @@ export const HEALTH_CONDITIONS = [
 export const WARNING_SEVERITY = {
   critical: {
     label: "Critical",
-    color: "text-red-700",
-    bg: "bg-red-50",
-    border: "border-red-200",
+    color: "text-error",
+    bg: "bg-error/10",
+    border: "border-error/30",
   },
   high: {
     label: "High",
-    color: "text-orange-700",
-    bg: "bg-orange-50",
-    border: "border-orange-200",
+    color: "text-warning",
+    bg: "bg-warning/10",
+    border: "border-warning/30",
   },
   moderate: {
     label: "Moderate",
-    color: "text-amber-700",
-    bg: "bg-amber-50",
-    border: "border-amber-200",
+    color: "text-warning",
+    bg: "bg-warning/10",
+    border: "border-warning/30",
   },
 } as const;
 
@@ -116,8 +116,8 @@ export const CONCERN_TIER_STYLES: Record<
   number,
   { color: string; bg: string; border: string }
 > = {
-  0: { color: "text-green-700", bg: "bg-green-100", border: "border-green-300" },
-  1: { color: "text-amber-700", bg: "bg-amber-100", border: "border-amber-300" },
-  2: { color: "text-orange-700", bg: "bg-orange-100", border: "border-orange-300" },
-  3: { color: "text-red-700", bg: "bg-red-100", border: "border-red-300" },
+  0: { color: "text-confidence-high", bg: "bg-confidence-high/10", border: "border-confidence-high/30" },
+  1: { color: "text-confidence-medium", bg: "bg-confidence-medium/10", border: "border-confidence-medium/30" },
+  2: { color: "text-warning", bg: "bg-warning/10", border: "border-warning/30" },
+  3: { color: "text-error", bg: "bg-error/10", border: "border-error/30" },
 };

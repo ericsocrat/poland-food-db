@@ -4,19 +4,249 @@
 
 @layer base {
   :root {
-    /* Toast color tokens — light mode */
+    /* ── Surface & Background ── */
+    --color-surface: #ffffff;
+    --color-surface-subtle: #f9fafb; /* gray-50 */
+    --color-surface-muted: #f3f4f6; /* gray-100 */
+    --color-surface-overlay: rgba(0, 0, 0, 0.5);
+
+    /* ── Text ── */
+    --color-text-primary: #111827; /* gray-900 */
+    --color-text-secondary: #6b7280; /* gray-500 */
+    --color-text-muted: #9ca3af; /* gray-400 */
+    --color-text-inverse: #ffffff;
+
+    /* ── Border & Divider ── */
+    --color-border: #e5e7eb; /* gray-200 */
+    --color-border-strong: #d1d5db; /* gray-300 */
+
+    /* ── Brand (Primary Action) ── */
+    --color-brand: #16a34a; /* brand-600 */
+    --color-brand-hover: #15803d; /* brand-700 */
+    --color-brand-subtle: #dcfce7; /* brand-100 */
+
+    /* ── Health Score Bands ── */
+    --color-score-green: #22c55e; /* 1–20 */
+    --color-score-yellow: #eab308; /* 21–40 */
+    --color-score-orange: #f97316; /* 41–60 */
+    --color-score-red: #ef4444; /* 61–80 */
+    --color-score-darkred: #991b1b; /* 81–100 */
+
+    /* ── Nutri-Score (EU standard colors) ── */
+    --color-nutri-A: #038141;
+    --color-nutri-B: #85bb2f;
+    --color-nutri-C: #fecb02;
+    --color-nutri-D: #ee8100;
+    --color-nutri-E: #e63e11;
+
+    /* ── Nutrition Traffic Light (FSA/EFSA) ── */
+    --color-nutrient-low: #22c55e; /* green — low risk */
+    --color-nutrient-medium: #f59e0b; /* amber — moderate */
+    --color-nutrient-high: #ef4444; /* red — high risk */
+
+    /* ── NOVA Processing Groups ── */
+    --color-nova-1: #22c55e; /* Unprocessed */
+    --color-nova-2: #84cc16; /* Processed culinary */
+    --color-nova-3: #f59e0b; /* Processed */
+    --color-nova-4: #ef4444; /* Ultra-processed */
+
+    /* ── Confidence Bands ── */
+    --color-confidence-high: #22c55e;
+    --color-confidence-medium: #f59e0b;
+    --color-confidence-low: #ef4444;
+
+    /* ── Allergen Severity ── */
+    --color-allergen-present: #ef4444; /* Contains allergen */
+    --color-allergen-traces: #f59e0b; /* May contain traces */
+    --color-allergen-free: #22c55e; /* Free from */
+
+    /* ── Semantic Feedback ── */
+    --color-success: #22c55e;
+    --color-warning: #f59e0b;
+    --color-error: #ef4444;
+    --color-info: #3b82f6;
+
+    /* ── Toast (feedback overlays) ── */
     --toast-success: #16a34a;
     --toast-error: #dc2626;
     --toast-warning: #d97706;
     --toast-info: #2563eb;
+
+    /* ── Elevation (Shadows) ── */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+
+    /* ── Spacing Scale (4px base) ── */
+    --space-1: 0.25rem; /* 4px */
+    --space-2: 0.5rem; /* 8px */
+    --space-3: 0.75rem; /* 12px */
+    --space-4: 1rem; /* 16px */
+    --space-5: 1.25rem; /* 20px */
+    --space-6: 1.5rem; /* 24px */
+    --space-8: 2rem; /* 32px */
+    --space-10: 2.5rem; /* 40px */
+    --space-12: 3rem; /* 48px */
+    --space-16: 4rem; /* 64px */
+
+    /* ── Typography Scale ── */
+    --text-xs: 0.75rem; /* 12px */
+    --text-sm: 0.875rem; /* 14px */
+    --text-base: 1rem; /* 16px */
+    --text-lg: 1.125rem; /* 18px */
+    --text-xl: 1.25rem; /* 20px */
+    --text-2xl: 1.5rem; /* 24px */
+    --text-3xl: 1.875rem; /* 30px */
+
+    --font-normal: 400;
+    --font-medium: 500;
+    --font-semibold: 600;
+    --font-bold: 700;
+
+    --leading-tight: 1.25;
+    --leading-normal: 1.5;
+    --leading-relaxed: 1.625;
+
+    /* ── Border Radius ── */
+    --radius-sm: 0.375rem; /* 6px */
+    --radius-md: 0.5rem; /* 8px */
+    --radius-lg: 0.75rem; /* 12px */
+    --radius-xl: 1rem; /* 16px */
+    --radius-full: 9999px;
+
+    /* ── Transitions ── */
+    --transition-fast: 150ms ease;
+    --transition-normal: 200ms ease;
+    --transition-slow: 300ms ease;
   }
 
+  /* ── Dark mode overrides ── */
+  [data-theme="dark"] {
+    --color-surface: #111827; /* gray-900 */
+    --color-surface-subtle: #1f2937; /* gray-800 */
+    --color-surface-muted: #374151; /* gray-700 */
+    --color-surface-overlay: rgba(0, 0, 0, 0.7);
+
+    --color-text-primary: #f9fafb; /* gray-50 */
+    --color-text-secondary: #d1d5db; /* gray-300 */
+    --color-text-muted: #9ca3af; /* gray-400 */
+    --color-text-inverse: #111827;
+
+    --color-border: #374151; /* gray-700 */
+    --color-border-strong: #4b5563; /* gray-600 */
+
+    --color-brand: #22c55e; /* brand-500 — brighter on dark */
+    --color-brand-hover: #16a34a; /* brand-600 */
+    --color-brand-subtle: #14532d; /* brand-900 */
+
+    /* Score bands — same hues, adjusted lightness for dark backgrounds */
+    --color-score-green: #4ade80;
+    --color-score-yellow: #facc15;
+    --color-score-orange: #fb923c;
+    --color-score-red: #f87171;
+    --color-score-darkred: #dc2626;
+
+    /* Nutri-Score — brightened for dark mode contrast */
+    --color-nutri-A: #34d399;
+    --color-nutri-B: #a3e635;
+    --color-nutri-C: #fde047;
+    --color-nutri-D: #fb923c;
+    --color-nutri-E: #f87171;
+
+    --color-nutrient-low: #4ade80;
+    --color-nutrient-medium: #fbbf24;
+    --color-nutrient-high: #f87171;
+
+    --color-nova-1: #4ade80;
+    --color-nova-2: #a3e635;
+    --color-nova-3: #fbbf24;
+    --color-nova-4: #f87171;
+
+    --color-confidence-high: #4ade80;
+    --color-confidence-medium: #fbbf24;
+    --color-confidence-low: #f87171;
+
+    --color-allergen-present: #f87171;
+    --color-allergen-traces: #fbbf24;
+    --color-allergen-free: #4ade80;
+
+    --color-success: #4ade80;
+    --color-warning: #fbbf24;
+    --color-error: #f87171;
+    --color-info: #60a5fa;
+
+    --toast-success: #4ade80;
+    --toast-error: #f87171;
+    --toast-warning: #fbbf24;
+    --toast-info: #60a5fa;
+
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  }
+
+  /* System-preference dark mode fallback (used until data-theme is set) */
   @media (prefers-color-scheme: dark) {
-    :root {
+    :root:not([data-theme="light"]) {
+      --color-surface: #111827;
+      --color-surface-subtle: #1f2937;
+      --color-surface-muted: #374151;
+      --color-surface-overlay: rgba(0, 0, 0, 0.7);
+
+      --color-text-primary: #f9fafb;
+      --color-text-secondary: #d1d5db;
+      --color-text-muted: #9ca3af;
+      --color-text-inverse: #111827;
+
+      --color-border: #374151;
+      --color-border-strong: #4b5563;
+
+      --color-brand: #22c55e;
+      --color-brand-hover: #16a34a;
+      --color-brand-subtle: #14532d;
+
+      --color-score-green: #4ade80;
+      --color-score-yellow: #facc15;
+      --color-score-orange: #fb923c;
+      --color-score-red: #f87171;
+      --color-score-darkred: #dc2626;
+
+      --color-nutri-A: #34d399;
+      --color-nutri-B: #a3e635;
+      --color-nutri-C: #fde047;
+      --color-nutri-D: #fb923c;
+      --color-nutri-E: #f87171;
+
+      --color-nutrient-low: #4ade80;
+      --color-nutrient-medium: #fbbf24;
+      --color-nutrient-high: #f87171;
+
+      --color-nova-1: #4ade80;
+      --color-nova-2: #a3e635;
+      --color-nova-3: #fbbf24;
+      --color-nova-4: #f87171;
+
+      --color-confidence-high: #4ade80;
+      --color-confidence-medium: #fbbf24;
+      --color-confidence-low: #f87171;
+
+      --color-allergen-present: #f87171;
+      --color-allergen-traces: #fbbf24;
+      --color-allergen-free: #4ade80;
+
+      --color-success: #4ade80;
+      --color-warning: #fbbf24;
+      --color-error: #f87171;
+      --color-info: #60a5fa;
+
       --toast-success: #4ade80;
       --toast-error: #f87171;
       --toast-warning: #fbbf24;
       --toast-info: #60a5fa;
+
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
     }
   }
 
@@ -28,7 +258,7 @@
   }
 
   body {
-    @apply bg-gray-50 text-gray-900 antialiased;
+    @apply bg-surface-subtle text-foreground antialiased;
     /* Prevent text selection / callout on long-press in PWA */
     -webkit-tap-highlight-color: transparent;
   }
@@ -36,31 +266,31 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-brand-600 px-4 py-2.5
-           text-sm font-semibold text-white shadow-sm transition-colors
-           hover:bg-brand-700 focus-visible:outline-2 focus-visible:outline-offset-2
-           focus-visible:outline-brand-600 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2.5
+           text-sm font-semibold text-foreground-inverse shadow-sm transition-colors
+           hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2
+           focus-visible:outline-brand disabled:opacity-50 disabled:cursor-not-allowed;
     /* Prevent double-tap zoom on buttons in PWA */
     touch-action: manipulation;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-lg border border-gray-300
-           bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 shadow-sm
-           transition-colors hover:bg-gray-50 focus-visible:outline-2
-           focus-visible:outline-offset-2 focus-visible:outline-brand-600
+    @apply inline-flex items-center justify-center rounded-lg border border-strong
+           bg-surface px-4 py-2.5 text-sm font-semibold text-foreground-secondary shadow-sm
+           transition-colors hover:bg-surface-subtle focus-visible:outline-2
+           focus-visible:outline-offset-2 focus-visible:outline-brand
            disabled:opacity-50 disabled:cursor-not-allowed;
     touch-action: manipulation;
   }
 
   .input-field {
-    @apply block w-full rounded-lg border border-gray-300 bg-white px-3.5 py-2.5
-           text-sm text-gray-900 shadow-sm placeholder:text-gray-400
+    @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5
+           text-sm text-foreground shadow-sm placeholder:text-foreground-muted
            focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none;
   }
 
   .card {
-    @apply rounded-xl border border-gray-200 bg-white p-4 shadow-sm;
+    @apply rounded-xl border bg-surface p-4 shadow-sm;
   }
 }
 

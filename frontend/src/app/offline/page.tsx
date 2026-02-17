@@ -7,10 +7,10 @@ export default function OfflinePage() {
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
       <p className="text-5xl">📡</p>
-      <h1 className="mt-4 text-xl font-bold text-gray-900">
+      <h1 className="mt-4 text-xl font-bold text-foreground">
         {t("offline.title")}
       </h1>
-      <p className="mt-2 max-w-sm text-sm text-gray-500">
+      <p className="mt-2 max-w-sm text-sm text-foreground-secondary">
         {t("offline.offlinePage")}
       </p>
       <button

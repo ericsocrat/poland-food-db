@@ -24,10 +24,10 @@ export default function ErrorPage({
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
-      <h1 className="mb-2 text-2xl font-bold text-gray-900">
+      <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("error.somethingWrong")}
       </h1>
-      <p className="mb-6 text-gray-500">{t("error.unexpected")}</p>
+      <p className="mb-6 text-foreground-secondary">{t("error.unexpected")}</p>
       <button onClick={reset} className="btn-primary px-6 py-3">
         {t("common.tryAgain")}
       </button>

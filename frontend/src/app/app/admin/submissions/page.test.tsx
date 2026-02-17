@@ -294,7 +294,13 @@ describe("AdminSubmissionsPage", () => {
     await user.click(screen.getByText("✅ Approve"));
 
     await waitFor(() => {
-      expect(mockShowToast).toHaveBeenCalledWith(expect.objectContaining({ type: "success", messageKey: "toast.submissionStatus", messageParams: { status: "approved" } }));
+      expect(mockShowToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "success",
+          messageKey: "toast.submissionStatus",
+          messageParams: { status: "approved" },
+        }),
+      );
     });
   });
 

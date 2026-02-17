@@ -74,7 +74,7 @@ describe("ConfirmDialog", () => {
       />,
     );
     const btn = screen.getByText("Delete");
-    expect(btn.className).toContain("bg-red-600");
+    expect(btn.className).toContain("bg-error");
   });
 
   it("applies default variant styling to confirm button", () => {

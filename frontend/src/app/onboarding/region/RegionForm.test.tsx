@@ -113,7 +113,9 @@ describe("RegionForm", () => {
     await user.click(screen.getByRole("button", { name: "Continue" }));
 
     await waitFor(() => {
-      expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ type: "error", message: "Network error" }));
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "error", message: "Network error" }),
+      );
     });
     expect(mockPush).not.toHaveBeenCalled();
   });

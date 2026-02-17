@@ -237,7 +237,12 @@ describe("SettingsPage", () => {
     await user.click(screen.getByRole("button", { name: "Save changes" }));
 
     await waitFor(() => {
-      expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ type: "success", messageKey: "settings.preferencesSaved" }));
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "success",
+          messageKey: "settings.preferencesSaved",
+        }),
+      );
     });
   });
 
@@ -258,7 +263,9 @@ describe("SettingsPage", () => {
     await user.click(screen.getByRole("button", { name: "Save changes" }));
 
     await waitFor(() => {
-      expect(showToast).toHaveBeenCalledWith(expect.objectContaining({ type: "error", message: "Save failed" }));
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "error", message: "Save failed" }),
+      );
     });
   });
 

@@ -342,7 +342,12 @@ describe("ScanPage", () => {
     await user.type(input, "123456789");
     await user.click(screen.getByText("Look up"));
 
-    expect(mockShowToast).toHaveBeenCalledWith(expect.objectContaining({ type: "error", messageKey: "scan.invalidBarcode" }));
+    expect(mockShowToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "error",
+        messageKey: "scan.invalidBarcode",
+      }),
+    );
   });
 
   it("strips non-digits from manual input", async () => {
@@ -512,7 +517,9 @@ describe("ScanPage", () => {
       expect(screen.getByText("Batch Product")).toBeInTheDocument();
     });
     expect(screen.getByText("Scanned (1)")).toBeInTheDocument();
-    expect(mockShowToast).toHaveBeenCalledWith(expect.objectContaining({ type: "success", message: "✓ Batch Product" }));
+    expect(mockShowToast).toHaveBeenCalledWith(
+      expect.objectContaining({ type: "success", message: "✓ Batch Product" }),
+    );
     // In batch mode, should NOT navigate
     expect(mockPush).not.toHaveBeenCalled();
   });
