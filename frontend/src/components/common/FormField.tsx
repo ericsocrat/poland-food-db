@@ -62,16 +62,13 @@ export function FormField({
         )}
       </label>
 
-      {React.cloneElement(
-        children as ReactElement<Record<string, unknown>>,
-        {
-          id: inputId,
-          name,
-          "aria-invalid": error ? true : undefined,
-          "aria-describedby": describedBy,
-          "aria-required": required || undefined,
-        },
-      )}
+      {React.cloneElement(children as ReactElement<Record<string, unknown>>, {
+        id: inputId,
+        name,
+        "aria-invalid": error ? true : undefined,
+        "aria-describedby": describedBy,
+        "aria-required": required || undefined,
+      })}
 
       {/* Reserve min-height to prevent layout shift when error appears */}
       <div className="min-h-[1.25rem]">
