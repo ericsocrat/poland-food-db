@@ -768,5 +768,17 @@
       "rank": "Pozycja #{rank} z {total} w kategorii",
       "categoryAvg": "Średnia kategorii: {avg}/100"
     }
+  },
+  "export": {
+    "export": "Eksportuj",
+    "asCSV": "Jako CSV (arkusz)",
+    "asText": "Jako tekst",
+    "nothingToExport": "Nic do eksportu — lista jest pusta.",
+    "downloadStarted": "Pobieranie rozpoczęte",
+    "failed": "Eksport nie powiódł się. Spróbuj ponownie.",
+    "linkCopied": "Link skopiowany do schowka!",
+    "exportList": "Eksportuj listę",
+    "exportComparison": "Eksportuj porównanie",
+    "exportResults": "Eksportuj wyniki"
   }
 }

@@ -768,5 +768,17 @@
       "rank": "Ranked #{rank} of {total} in category",
       "categoryAvg": "Category average: {avg}/100"
     }
+  },
+  "export": {
+    "export": "Export",
+    "asCSV": "As CSV (spreadsheet)",
+    "asText": "As plain text",
+    "nothingToExport": "Nothing to export — the list is empty.",
+    "downloadStarted": "Download started",
+    "failed": "Export failed. Please try again.",
+    "linkCopied": "Link copied to clipboard!",
+    "exportList": "Export list",
+    "exportComparison": "Export comparison",
+    "exportResults": "Export results"
   }
 }

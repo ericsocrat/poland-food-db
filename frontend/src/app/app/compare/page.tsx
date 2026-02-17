@@ -11,12 +11,14 @@ import Link from "next/link";
 import { useCompareProducts } from "@/hooks/use-compare";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
 import { ShareComparison } from "@/components/compare/ShareComparison";
+import { ExportButton } from "@/components/export/ExportButton";
 import { ComparisonGridSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
 import { useCompareStore } from "@/stores/compare-store";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import type { ExportableProduct } from "@/lib/export";
 
 export default function ComparePage() {
   const searchParams = useSearchParams();
@@ -35,6 +37,30 @@ export default function ComparePage() {
 
   const { data, isLoading, error } = useCompareProducts(productIds);
   const { track } = useAnalytics();
+
+  const exportableProducts: ExportableProduct[] = useMemo(() => {
+    if (!data?.products) return [];
+    return data.products.map((p) => ({
+      product_name: p.product_name,
+      brand: p.brand,
+      ean: p.ean ?? undefined,
+      category: p.category,
+      unhealthiness_score: p.unhealthiness_score,
+      nutri_score_label: p.nutri_score ?? "–",
+      nova_group: p.nova_group,
+      calories_kcal: p.calories,
+      total_fat_g: p.total_fat_g,
+      saturated_fat_g: p.saturated_fat_g,
+      sugars_g: p.sugars_g,
+      salt_g: p.salt_g,
+      protein_g: p.protein_g,
+      fiber_g: p.fibre_g ?? undefined,
+      allergen_tags: p.allergen_tags
+        ? p.allergen_tags.split(",").map((s) => s.trim())
+        : undefined,
+      confidence_band: p.confidence,
+    }));
+  }, [data?.products]);
 
   useEffect(() => {
     if (productIds.length >= 2) {
@@ -106,7 +132,14 @@ export default function ComparePage() {
             <p className="text-sm text-foreground-secondary">
               {t("compare.comparing", { count: data.product_count })}
             </p>
-            <ShareComparison productIds={productIds} />
+            <div className="flex items-center gap-2">
+              <ExportButton
+                products={exportableProducts}
+                filename="comparison"
+                comparison
+              />
+              <ShareComparison productIds={productIds} />
+            </div>
           </div>
 
           <ErrorBoundary

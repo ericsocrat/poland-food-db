@@ -4,7 +4,7 @@
 // Shows all products in a list with health scores, supports removing items,
 // and has share toggle for custom/favorites lists.
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
@@ -20,7 +20,9 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useTranslation } from "@/lib/i18n";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import { ExportButton } from "@/components/export/ExportButton";
 import type { ListItem, FormSubmitEvent } from "@/lib/types";
+import type { ExportableProduct } from "@/lib/export";
 
 export default function ListDetailPage() {
   const { t } = useTranslation();
@@ -43,6 +45,21 @@ export default function ListDetailPage() {
 
   const list = listsData?.lists?.find((l) => l.id === listId);
   const items: ListItem[] = itemsData?.items ?? [];
+
+  const exportableProducts: ExportableProduct[] = useMemo(
+    () =>
+      items.map((item) => ({
+        product_name: item.product_name,
+        brand: item.brand,
+        category: item.category,
+        unhealthiness_score: item.unhealthiness_score,
+        nutri_score_label: item.nutri_score_label,
+        nova_group: item.nova_classification,
+        calories_kcal: item.calories ?? undefined,
+      })),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [itemsData?.items],
+  );
 
   function handleSaveEdit(e: FormSubmitEvent) {
     e.preventDefault();
@@ -176,6 +193,11 @@ export default function ListDetailPage() {
                     🔗
                   </button>
                 )}
+                {/* Export button */}
+                <ExportButton
+                  products={exportableProducts}
+                  filename={`list-${list.name.toLowerCase().replace(/\s+/g, "-")}`}
+                />
               </div>
             </div>
           )}
@@ -296,7 +318,8 @@ function ListItemRow({
   const band = SCORE_BANDS[bandKey];
 
   const nutriClass = item.nutri_score_label
-    ? (NUTRI_COLORS[item.nutri_score_label] ?? "bg-surface-muted text-foreground-secondary")
+    ? (NUTRI_COLORS[item.nutri_score_label] ??
+      "bg-surface-muted text-foreground-secondary")
     : "bg-surface-muted text-foreground-secondary";
 
   return (
