@@ -31,6 +31,7 @@ import { DVLegend } from "@/components/product/DVLegend";
 import { ShareButton } from "@/components/product/ShareButton";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import type { ProductProfile, ProfileAlternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
@@ -258,7 +259,9 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Personalized health warnings */}
-      <HealthWarningsCard productId={productId} />
+      <ErrorBoundary level="section" context={{ section: "health-warnings", productId }}>
+        <HealthWarningsCard productId={productId} />
+      </ErrorBoundary>
 
       {/* Tab bar */}
       <div className="flex gap-1 rounded-lg bg-gray-100 p-1" role="tablist">
@@ -280,12 +283,14 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Tab content */}
-      {activeTab === "overview" && <OverviewTab profile={profile} />}
-      {activeTab === "nutrition" && <NutritionTab profile={profile} />}
-      {activeTab === "alternatives" && (
-        <AlternativesTab alternatives={profile.alternatives} />
-      )}
-      {activeTab === "scoring" && <ScoringTab profile={profile} />}
+      <ErrorBoundary level="section" context={{ section: "tab-content", productId, tab: activeTab }}>
+        {activeTab === "overview" && <OverviewTab profile={profile} />}
+        {activeTab === "nutrition" && <NutritionTab profile={profile} />}
+        {activeTab === "alternatives" && (
+          <AlternativesTab alternatives={profile.alternatives} />
+        )}
+        {activeTab === "scoring" && <ScoringTab profile={profile} />}
+      </ErrorBoundary>
     </div>
   );
 }

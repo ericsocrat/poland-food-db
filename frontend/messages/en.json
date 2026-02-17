@@ -492,6 +492,14 @@
     "notFoundMessage": "The page you're looking for doesn't exist or has been moved.",
     "goHome": "Go home"
   },
+  "errorBoundary": {
+    "pageTitle": "Something went wrong on this page",
+    "pageDescription": "An unexpected error prevented this page from loading. You can try again or go back to the home page.",
+    "sectionTitle": "This section couldn't load",
+    "componentTooltip": "This item couldn't display",
+    "goHome": "Go home",
+    "errorId": "Error ID"
+  },
   "landing": {
     "tagline": "healthier choices, made simple",
     "description": "Search, scan, and compare food products across Poland and Germany. Get instant health scores, allergen warnings, and better alternatives.",

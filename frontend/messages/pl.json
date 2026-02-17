@@ -492,6 +492,14 @@
     "notFoundMessage": "Strona, której szukasz, nie istnieje lub została przeniesiona.",
     "goHome": "Strona główna"
   },
+  "errorBoundary": {
+    "pageTitle": "Coś poszło nie tak na tej stronie",
+    "pageDescription": "Nieoczekiwany błąd uniemożliwił załadowanie tej strony. Możesz spróbować ponownie lub wrócić na stronę główną.",
+    "sectionTitle": "Nie udało się załadować tej sekcji",
+    "componentTooltip": "Nie udało się wyświetlić tego elementu",
+    "goHome": "Strona główna",
+    "errorId": "ID błędu"
+  },
   "landing": {
     "tagline": "zdrowsze wybory, po prostu",
     "description": "Szukaj, skanuj i porównuj produkty spożywcze w Polsce i Niemczech. Uzyskaj natychmiastowe oceny zdrowotne, ostrzeżenia o alergenach i lepsze zamienniki.",

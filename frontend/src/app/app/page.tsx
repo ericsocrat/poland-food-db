@@ -10,6 +10,7 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { NUTRI_COLORS, SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { EmptyState } from "@/components/common/EmptyState";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { useAnalytics } from "@/hooks/use-analytics";
 import type {
   DashboardData,
@@ -280,14 +281,20 @@ export default function DashboardPage() {
 
       <StatsBar stats={dashboard.stats} />
 
-      <RecentlyViewedSection products={dashboard.recently_viewed} />
+      <ErrorBoundary level="section" context={{ section: "recently-viewed" }}>
+        <RecentlyViewedSection products={dashboard.recently_viewed} />
+      </ErrorBoundary>
 
-      <FavoritesSection products={dashboard.favorites_preview} />
+      <ErrorBoundary level="section" context={{ section: "favorites" }}>
+        <FavoritesSection products={dashboard.favorites_preview} />
+      </ErrorBoundary>
 
-      <NewProductsSection
-        products={dashboard.new_products}
-        category={dashboard.stats.most_viewed_category}
-      />
+      <ErrorBoundary level="section" context={{ section: "new-products" }}>
+        <NewProductsSection
+          products={dashboard.new_products}
+          category={dashboard.stats.most_viewed_category}
+        />
+      </ErrorBoundary>
     </div>
   );
 }

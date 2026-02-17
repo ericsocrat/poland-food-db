@@ -16,6 +16,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { useCompareStore } from "@/stores/compare-store";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 
 export default function ComparePage() {
   const searchParams = useSearchParams();
@@ -112,7 +113,9 @@ export default function ComparePage() {
             <ShareComparison productIds={productIds} />
           </div>
 
-          <ComparisonGrid products={data.products} showAvoidBadge />
+          <ErrorBoundary level="section" context={{ section: "comparison-grid" }}>
+            <ComparisonGrid products={data.products} showAvoidBadge />
+          </ErrorBoundary>
         </>
       )}
 
