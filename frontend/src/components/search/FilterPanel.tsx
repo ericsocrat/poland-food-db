@@ -317,7 +317,7 @@ export function FilterPanel({
     <>
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
-        <div className="sticky top-20 w-64 rounded-xl border border bg-surface p-4">
+        <div className="sticky top-20 w-64 rounded-xl border border bg-surface p-4 xl:w-72">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground">
               {t("search.filters")}

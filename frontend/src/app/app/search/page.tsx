@@ -41,7 +41,7 @@ const AVOID_TOGGLE_KEY = "fooddb:show-avoided";
 const VIEW_MODE_KEY = "fooddb:search-view";
 const PAGE_SIZE = 20;
 
-type ViewMode = "detailed" | "compact";
+type ViewMode = "grid" | "list";
 
 /* ── localStorage helpers ─────────────────────────────────────────────────── */
 
@@ -56,9 +56,11 @@ function setShowAvoidedStorage(val: boolean) {
 }
 
 function getViewMode(): ViewMode {
-  if (globalThis.localStorage === undefined) return "detailed";
+  if (globalThis.localStorage === undefined) return "grid";
   const val = globalThis.localStorage.getItem(VIEW_MODE_KEY);
-  return val === "compact" ? "compact" : "detailed";
+  // Migrate legacy values
+  if (val === "compact" || val === "list") return "list";
+  return "grid";
 }
 
 function setViewModeStorage(val: ViewMode) {
@@ -86,7 +88,7 @@ export default function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const [viewMode, setViewMode] = useState<ViewMode>("detailed");
+  const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
   // The active search query (submitted)
   const activeQuery = submittedQuery || undefined;
@@ -334,22 +336,22 @@ export default function SearchPage() {
               type="button"
               onClick={() => {
                 const next: ViewMode =
-                  viewMode === "detailed" ? "compact" : "detailed";
+                  viewMode === "grid" ? "list" : "grid";
                 setViewMode(next);
                 setViewModeStorage(next);
               }}
               className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
               aria-label={t("search.toggleViewMode")}
             >
-              {viewMode === "detailed" ? (
-                <LayoutList size={14} aria-hidden="true" className="inline" />
-              ) : (
+              {viewMode === "list" ? (
                 <LayoutGrid size={14} aria-hidden="true" className="inline" />
+              ) : (
+                <LayoutList size={14} aria-hidden="true" className="inline" />
               )}
               <span className="hidden xs:inline">
-                {viewMode === "detailed"
-                  ? t("search.compactView")
-                  : t("search.detailedView")}
+                {viewMode === "list"
+                  ? t("search.gridView")
+                  : t("search.listView")}
               </span>
             </button>
 
@@ -467,12 +469,19 @@ export default function SearchPage() {
               />
             ) : (
               <>
-                <ul className="space-y-2">
+                <ul
+                  className={
+                    viewMode === "grid"
+                      ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
+                      : "space-y-2"
+                  }
+                  data-testid="results-container"
+                >
                   {data.results.map((product) => (
                     <ProductRow
                       key={product.product_id}
                       product={product}
-                      compact={viewMode === "compact"}
+                      viewMode={viewMode}
                     />
                   ))}
                 </ul>
@@ -607,43 +616,69 @@ function ScoreTooltip({ product }: Readonly<{ product: SearchResult }>) {
 
 function ProductRow({
   product,
-  compact = false,
-}: Readonly<{ product: SearchResult; compact?: boolean }>) {
+  viewMode = "list",
+}: Readonly<{ product: SearchResult; viewMode?: ViewMode }>) {
   const band = SCORE_BANDS[product.score_band];
 
-  if (compact) {
+  // ── Grid card ────────────────────────────────────────────────────────────
+  if (viewMode === "grid") {
     return (
       <li
-        className={`hover-lift-press flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 ${
+        className={`card flex flex-col gap-3 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 ${
           product.is_avoided ? "opacity-50" : ""
         }`}
       >
         <Link
           href={`/app/product/${product.product_id}`}
-          className="flex flex-1 items-center gap-2 min-w-0"
+          className="flex flex-col gap-2 min-w-0"
         >
-          {/* Compact score badge */}
-          <span
-            className={`inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-xs font-bold ${band.bg} ${band.color}`}
-          >
-            {product.unhealthiness_score}
-          </span>
-          {/* Name + brand inline */}
-          <span className="truncate text-sm font-medium text-foreground">
+          {/* Score + Nutri-Score row */}
+          <div className="flex items-center justify-between">
+            <div
+              className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
+            >
+              {product.unhealthiness_score}
+            </div>
+            <div className="flex items-center gap-1.5">
+              <NutriScoreBadge grade={product.nutri_score} size="sm" />
+              {product.nova_group && (
+                <NovaBadge group={Number(product.nova_group)} size="sm" />
+              )}
+            </div>
+          </div>
+          {/* Product name */}
+          <p className="truncate text-sm font-medium text-foreground">
             {product.product_name_display ?? product.product_name}
-          </span>
-          <span className="hidden sm:inline truncate text-xs text-foreground-muted">
-            {product.brand}
-          </span>
+          </p>
+          {/* Brand + category */}
+          <p className="truncate text-xs text-foreground-secondary">
+            {product.brand} · {product.category_icon}{" "}
+            {product.category_display ?? product.category}
+          </p>
+          {/* Calories */}
+          {product.calories !== null && (
+            <p className="text-xs text-foreground-muted">
+              {Math.round(product.calories)} kcal
+            </p>
+          )}
         </Link>
-        <NutriScoreBadge grade={product.nutri_score} size="sm" />
+        {/* Action buttons */}
+        <div className="flex items-center gap-1 border-t border-border/50 pt-2">
+          <HealthWarningBadge productId={product.product_id} />
+          <AvoidBadge productId={product.product_id} />
+          <AddToListMenu productId={product.product_id} compact />
+          <span className="hidden sm:inline-flex">
+            <CompareCheckbox productId={product.product_id} />
+          </span>
+        </div>
       </li>
     );
   }
 
+  // ── List row (default) ────────────────────────────────────────────────────
   return (
     <li
-      className={`card hover-lift-press flex items-center gap-3 ${
+      className={`card hover-lift-press flex items-center gap-3 transition-all duration-150 hover:shadow-md ${
         product.is_avoided ? "opacity-50" : ""
       }`}
     >

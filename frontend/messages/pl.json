@@ -118,6 +118,8 @@
     "toggleViewMode": "Przełącz widok",
     "compactView": "Kompaktowy",
     "detailedView": "Szczegółowy",
+    "gridView": "Siatka",
+    "listView": "Lista",
     "recentSearches": "Ostatnie wyszukiwania",
     "emptyState": "Szukaj po nazwie, marce lub przeglądaj z filtrami",
     "searchFailed": "Wyszukiwanie nie powiodło się. Spróbuj ponownie.",
