@@ -2,10 +2,32 @@
 
 // ─── NutritionTip — cycling daily health tip card ───────────────────────────
 
+import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 
 /** Total number of tips available in i18n files (dashboard.tip.0 … tip.N-1). */
 const TIP_COUNT = 14;
+
+/**
+ * Maps each tip index to a relevant Learn page for "Learn more" links.
+ * All paths are relative to /learn/.
+ */
+const TIP_LEARN_LINKS: Record<number, string> = {
+  0: "/learn/reading-labels",
+  1: "/learn/reading-labels",
+  2: "/learn/reading-labels",
+  3: "/learn/nova-groups",
+  4: "/learn/unhealthiness-score",
+  5: "/learn/reading-labels",
+  6: "/learn/nutri-score",
+  7: "/learn/unhealthiness-score",
+  8: "/learn/reading-labels",
+  9: "/learn/additives",
+  10: "/learn/reading-labels",
+  11: "/learn/reading-labels",
+  12: "/learn/reading-labels",
+  13: "/learn/nutri-score",
+};
 
 /**
  * Deterministic tip index based on the current day of the year.
@@ -23,6 +45,7 @@ export function tipIndexForToday(): number {
 export function NutritionTip() {
   const { t } = useTranslation();
   const index = tipIndexForToday();
+  const learnHref = TIP_LEARN_LINKS[index];
 
   return (
     <section
@@ -40,6 +63,14 @@ export function NutritionTip() {
           <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
             {t(`dashboard.tip.${index}`)}
           </p>
+          {learnHref && (
+            <Link
+              href={learnHref}
+              className="mt-1.5 inline-block text-xs font-medium text-brand-600 hover:text-brand-700 transition-colors"
+            >
+              {t("dashboard.tipLearnMore")} →
+            </Link>
+          )}
         </div>
       </div>
     </section>

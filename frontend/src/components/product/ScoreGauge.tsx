@@ -149,9 +149,7 @@ export const ScoreGauge = React.memo(function ScoreGauge({
         <span className={`${fontSize} font-bold text-foreground`}>
           {hasScore ? score : "—"}
         </span>
-        <span
-          className={`${subFontSize} font-medium text-foreground-muted`}
-        >
+        <span className={`${subFontSize} font-medium text-foreground-muted`}>
           {hasScore ? t("scoreGauge.outOf") : ""}
         </span>
       </div>

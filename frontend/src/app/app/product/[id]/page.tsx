@@ -14,6 +14,7 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import {
   SCORE_BANDS,
   CONCERN_TIER_STYLES,
+  CONCERN_TIER_LABEL_KEYS,
   scoreBandFromScore,
 } from "@/lib/constants";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
@@ -418,30 +419,11 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           </div>
         )}
 
-        {/* Top ingredients — clickable links to ingredient profiles */}
+        {/* Top ingredients — pills with concern tier labels & expandable details */}
         {profile.ingredients.top_ingredients.length > 0 && (
-          <div className="mt-3 border-t border pt-3">
-            <p className="mb-2 text-xs font-medium text-foreground-secondary uppercase">
-              {t("product.topIngredients")}
-            </p>
-            <div className="flex flex-wrap gap-1.5">
-              {profile.ingredients.top_ingredients.map((ing) => {
-                const style =
-                  CONCERN_TIER_STYLES[ing.concern_tier] ??
-                  CONCERN_TIER_STYLES[0];
-                return (
-                  <Link
-                    key={ing.ingredient_id}
-                    href={`/app/ingredient/${ing.ingredient_id}`}
-                    className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors hover:opacity-80 ${style.bg} ${style.color} ${style.border}`}
-                  >
-                    {ing.is_additive ? "🧪" : "🌿"}{" "}
-                    {cleanIngredientName(ing.name)}
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
+          <TopIngredientsSection
+            ingredients={profile.ingredients.top_ingredients}
+          />
         )}
       </div>
 
@@ -749,6 +731,83 @@ const FACTOR_LABELS: Record<string, string> = {
 
 function formatFactorName(name: string): string {
   return FACTOR_LABELS[name] ?? formatSnakeCase(name);
+}
+
+/* ── Top Ingredients with concern tier labels & expandable details ────────── */
+
+interface TopIngredient {
+  ingredient_id: number;
+  name: string;
+  position: number;
+  concern_tier: number;
+  is_additive: boolean;
+  concern_reason: string | null;
+}
+
+function TopIngredientsSection({
+  ingredients,
+}: Readonly<{ ingredients: TopIngredient[] }>) {
+  const { t } = useTranslation();
+  const [expandedId, setExpandedId] = useState<number | null>(null);
+
+  return (
+    <div className="mt-3 border-t border pt-3">
+      <p className="mb-2 text-xs font-medium text-foreground-secondary uppercase">
+        {t("product.topIngredients")}
+      </p>
+      <div className="flex flex-wrap gap-1.5">
+        {ingredients.map((ing) => {
+          const style =
+            CONCERN_TIER_STYLES[ing.concern_tier] ?? CONCERN_TIER_STYLES[0];
+          const tierKey =
+            CONCERN_TIER_LABEL_KEYS[ing.concern_tier] ??
+            CONCERN_TIER_LABEL_KEYS[0];
+          const isExpanded = expandedId === ing.ingredient_id;
+          const hasConcernDetail =
+            ing.concern_tier > 0 && !!ing.concern_reason;
+
+          return (
+            <div key={ing.ingredient_id} className="inline-flex flex-col">
+              <div className="inline-flex items-center gap-0.5">
+                <Link
+                  href={`/app/ingredient/${ing.ingredient_id}`}
+                  className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors hover:opacity-80 ${style.bg} ${style.color} ${style.border}`}
+                >
+                  {ing.is_additive ? "🧪" : "🌿"}{" "}
+                  {cleanIngredientName(ing.name)}
+                  {ing.concern_tier > 0 && (
+                    <span className="ml-0.5 opacity-75">
+                      · {t(tierKey)}
+                    </span>
+                  )}
+                </Link>
+                {hasConcernDetail && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setExpandedId(isExpanded ? null : ing.ingredient_id)
+                    }
+                    className={`ml-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full text-xs transition-colors ${style.color} hover:${style.bg}`}
+                    aria-expanded={isExpanded}
+                    aria-label={t("product.toggleConcernDetail")}
+                  >
+                    {isExpanded ? "−" : "ⓘ"}
+                  </button>
+                )}
+              </div>
+              {isExpanded && ing.concern_reason && (
+                <p
+                  className={`mt-1 ml-1 max-w-xs rounded-lg border px-2 py-1.5 text-xs leading-relaxed ${style.bg} ${style.color} ${style.border}`}
+                >
+                  {ing.concern_reason}
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 /**

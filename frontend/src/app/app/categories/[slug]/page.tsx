@@ -7,7 +7,7 @@ import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
-import { getCategoryListing } from "@/lib/api";
+import { getCategoryListing, getCategoryOverview } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS } from "@/lib/constants";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -21,7 +21,7 @@ import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { formatSlug } from "@/lib/validation";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
-import type { CategoryProduct } from "@/lib/types";
+import type { CategoryProduct, CategoryOverviewItem } from "@/lib/types";
 
 const PAGE_SIZE = 20;
 
@@ -66,6 +66,21 @@ export default function CategoryListingPage() {
     staleTime: staleTimes.categoryListing,
   });
 
+  // Reuse cached category overview for summary stats
+  const { data: overviewData } = useQuery({
+    queryKey: queryKeys.categoryOverview,
+    queryFn: async () => {
+      const result = await getCategoryOverview(supabase);
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
+    staleTime: staleTimes.categoryOverview,
+  });
+
+  const categoryStats = overviewData?.find(
+    (c: CategoryOverviewItem) => c.slug === slug,
+  );
+
   const totalPages = data ? Math.ceil(data.total_count / PAGE_SIZE) : 0;
   const currentPage = Math.floor(offset / PAGE_SIZE) + 1;
 
@@ -91,6 +106,9 @@ export default function CategoryListingPage() {
           </span>
         )}
       </div>
+
+      {/* Summary stats */}
+      {categoryStats && <CategoryStatsCard stats={categoryStats} />}
 
       {/* Sort controls */}
       <div className="flex items-center gap-2">
@@ -233,5 +251,50 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
         <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
       </li>
     </Link>
+  );
+}
+
+/* ── Category Summary Stats Card ──────────────────────────────────────────── */
+
+function CategoryStatsCard({
+  stats,
+}: Readonly<{ stats: CategoryOverviewItem }>) {
+  const { t } = useTranslation();
+
+  return (
+    <div className="card grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="text-center">
+        <p className="text-lg font-bold text-foreground">
+          {Math.round(stats.avg_score)}
+        </p>
+        <p className="text-xs text-foreground-secondary">
+          {t("categories.statAvgScore")}
+        </p>
+      </div>
+      <div className="text-center">
+        <p className="text-lg font-bold text-foreground">
+          {stats.min_score}–{stats.max_score}
+        </p>
+        <p className="text-xs text-foreground-secondary">
+          {t("categories.scoreRange")}
+        </p>
+      </div>
+      <div className="text-center">
+        <p className="text-lg font-bold text-confidence-high">
+          {Math.round(stats.pct_nutri_a_b)}%
+        </p>
+        <p className="text-xs text-foreground-secondary">
+          {t("categories.nutriAB")}
+        </p>
+      </div>
+      <div className="text-center">
+        <p className="text-lg font-bold text-warning">
+          {Math.round(stats.pct_nova_4)}%
+        </p>
+        <p className="text-xs text-foreground-secondary">
+          {t("categories.nova4Pct")}
+        </p>
+      </div>
+    </div>
   );
 }

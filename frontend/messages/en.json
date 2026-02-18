@@ -98,7 +98,8 @@
       "11": "Omega-3 fatty acids (ALA, EPA, DHA) support heart and brain health. Look for them in fatty fish, flaxseed, and walnuts.",
       "12": "Staying hydrated aids digestion and concentration. Aim for 1.5–2 litres of water daily, more in warm weather.",
       "13": "Front-of-pack labels like Nutri-Score summarise nutrition, but always check the full table for a complete picture."
-    }
+    },
+    "tipLearnMore": "Learn more"
   },
   "search": {
     "title": "Search",
@@ -111,6 +112,9 @@
     "avoidedDemoted": "Avoided products demoted to bottom",
     "saveSearch": "Save search",
     "saved": "Saved",
+    "toggleViewMode": "Toggle view mode",
+    "compactView": "Compact",
+    "detailedView": "Detailed",
     "recentSearches": "Recent searches",
     "emptyState": "Search by name, brand, or browse with filters",
     "searchFailed": "Search failed. Please try again.",
@@ -280,6 +284,7 @@
     "vegetarian": "Vegetarian: {status}",
     "additives": "Additives",
     "topIngredients": "Top Ingredients",
+    "toggleConcernDetail": "Toggle concern detail",
     "allergens": "Allergens",
     "mayContain": "May contain:",
     "noKnownAllergens": "No known allergens listed",
@@ -349,7 +354,11 @@
     "healthiness": "Healthiness",
     "noProducts": "No products in this category.",
     "previous": "Previous",
-    "toggleSortDirection": "Toggle sort direction"
+    "toggleSortDirection": "Toggle sort direction",
+    "statAvgScore": "Avg. Score",
+    "scoreRange": "Score Range",
+    "nutriAB": "Nutri-Score A–B",
+    "nova4Pct": "NOVA 4"
   },
   "compare": {
     "title": "Compare Products",

@@ -145,7 +145,9 @@ describe("CategoryListingPage", () => {
   it("renders category title from slug", async () => {
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: "chips" })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: "chips" }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -169,7 +171,9 @@ describe("CategoryListingPage", () => {
       "/app/categories",
     );
     await waitFor(() => {
-      expect(screen.getByText("chips", { selector: "[aria-current='page']" })).toBeInTheDocument();
+      expect(
+        screen.getByText("chips", { selector: "[aria-current='page']" }),
+      ).toBeInTheDocument();
     });
   });
 

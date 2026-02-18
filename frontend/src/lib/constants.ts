@@ -149,3 +149,11 @@ export const CONCERN_TIER_STYLES: Record<
   2: { color: "text-warning", bg: "bg-warning/10", border: "border-warning/30" },
   3: { color: "text-error", bg: "bg-error/10", border: "border-error/30" },
 };
+
+/** Maps concern tier number to its i18n label key (ingredient.tierNone etc.). */
+export const CONCERN_TIER_LABEL_KEYS: Record<number, string> = {
+  0: "ingredient.tierNone",
+  1: "ingredient.tierLow",
+  2: "ingredient.tierModerate",
+  3: "ingredient.tierHigh",
+};

@@ -141,6 +141,15 @@ describe("NutritionTip i18n keys", () => {
     );
   });
 
+  it("has tipLearnMore key in both languages", () => {
+    expect(translate("en", "dashboard.tipLearnMore")).not.toBe(
+      "dashboard.tipLearnMore",
+    );
+    expect(translate("pl", "dashboard.tipLearnMore")).not.toBe(
+      "dashboard.tipLearnMore",
+    );
+  });
+
   for (let i = 0; i < 14; i++) {
     it(`has EN tip.${i}`, () => {
       const result = translate("en", `dashboard.tip.${i}`);

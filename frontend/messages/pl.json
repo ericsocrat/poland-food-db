@@ -98,7 +98,8 @@
       "11": "Kwasy tłuszczowe omega-3 (ALA, EPA, DHA) wspierają zdrowie serca i mózgu. Szukaj ich w tłustych rybach, siemieniu lnianym i orzechach włoskich.",
       "12": "Nawodnienie wspiera trawienie i koncentrację. Pij 1,5–2 litry wody dziennie, więcej w upalne dni.",
       "13": "Etykiety front-of-pack jak Nutri-Score podsumowują odżywienie, ale zawsze sprawdzaj pełną tabelę dla kompletnego obrazu."
-    }
+    },
+    "tipLearnMore": "Dowiedz się więcej"
   },
   "search": {
     "title": "Szukaj",
@@ -111,6 +112,9 @@
     "avoidedDemoted": "Unikane produkty przesunięte na koniec",
     "saveSearch": "Zapisz wyszukiwanie",
     "saved": "Zapisane",
+    "toggleViewMode": "Przełącz widok",
+    "compactView": "Kompaktowy",
+    "detailedView": "Szczegółowy",
     "recentSearches": "Ostatnie wyszukiwania",
     "emptyState": "Szukaj po nazwie, marce lub przeglądaj z filtrami",
     "searchFailed": "Wyszukiwanie nie powiodło się. Spróbuj ponownie.",
@@ -280,6 +284,7 @@
     "vegetarian": "Wegetariańskie: {status}",
     "additives": "Dodatki",
     "topIngredients": "Główne składniki",
+    "toggleConcernDetail": "Pokaż/ukryj szczegóły ryzyka",
     "allergens": "Alergeny",
     "mayContain": "Może zawierać:",
     "noKnownAllergens": "Brak znanych alergenów",
@@ -349,7 +354,11 @@
     "healthiness": "Zdrowotność",
     "noProducts": "Brak produktów w tej kategorii.",
     "previous": "Poprzednia",
-    "toggleSortDirection": "Przełącz kierunek sortowania"
+    "toggleSortDirection": "Przełącz kierunek sortowania",
+    "statAvgScore": "Śr. wynik",
+    "scoreRange": "Zakres wyników",
+    "nutriAB": "Nutri-Score A–B",
+    "nova4Pct": "NOVA 4"
   },
   "compare": {
     "title": "Porównaj produkty",

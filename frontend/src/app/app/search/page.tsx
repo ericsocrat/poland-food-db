@@ -25,12 +25,15 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
-import { SlidersHorizontal, Save, ClipboardList, Search } from "lucide-react";
+import { SlidersHorizontal, Save, ClipboardList, Search, LayoutList, LayoutGrid } from "lucide-react";
 import { getRecentSearches, addRecentSearch } from "@/lib/recent-searches";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
 const AVOID_TOGGLE_KEY = "fooddb:show-avoided";
+const VIEW_MODE_KEY = "fooddb:search-view";
 const PAGE_SIZE = 20;
+
+type ViewMode = "detailed" | "compact";
 
 /* ── localStorage helpers ─────────────────────────────────────────────────── */
 
@@ -42,6 +45,17 @@ function getShowAvoided(): boolean {
 function setShowAvoidedStorage(val: boolean) {
   if (globalThis.localStorage === undefined) return;
   globalThis.localStorage.setItem(AVOID_TOGGLE_KEY, String(val));
+}
+
+function getViewMode(): ViewMode {
+  if (globalThis.localStorage === undefined) return "detailed";
+  const val = globalThis.localStorage.getItem(VIEW_MODE_KEY);
+  return val === "compact" ? "compact" : "detailed";
+}
+
+function setViewModeStorage(val: ViewMode) {
+  if (globalThis.localStorage === undefined) return;
+  globalThis.localStorage.setItem(VIEW_MODE_KEY, val);
 }
 
 /* ── Page component ───────────────────────────────────────────────────────── */
@@ -64,6 +78,7 @@ export default function SearchPage() {
   const [showFilters, setShowFilters] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [viewMode, setViewMode] = useState<ViewMode>("detailed");
 
   // The active search query (submitted)
   const activeQuery = submittedQuery || undefined;
@@ -72,6 +87,7 @@ export default function SearchPage() {
   useEffect(() => {
     setRecentSearches(getRecentSearches());
     setShowAvoided(getShowAvoided());
+    setViewMode(getViewMode());
   }, []);
 
   // Reset page when filters or query change
@@ -305,6 +321,28 @@ export default function SearchPage() {
               {t("search.showAvoided")}
             </button>
 
+            {/* View mode toggle */}
+            <button
+              type="button"
+              onClick={() => {
+                const next: ViewMode =
+                  viewMode === "detailed" ? "compact" : "detailed";
+                setViewMode(next);
+                setViewModeStorage(next);
+              }}
+              className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
+              aria-label={t("search.toggleViewMode")}
+            >
+              {viewMode === "detailed" ? (
+                <LayoutList size={14} aria-hidden="true" className="inline" />
+              ) : (
+                <LayoutGrid size={14} aria-hidden="true" className="inline" />
+              )}
+              {viewMode === "detailed"
+                ? t("search.compactView")
+                : t("search.detailedView")}
+            </button>
+
             {/* Save search */}
             {isSearchActive && (
               <button
@@ -412,7 +450,7 @@ export default function SearchPage() {
               <>
                 <ul className="space-y-2">
                   {data.results.map((product) => (
-                    <ProductRow key={product.product_id} product={product} />
+                    <ProductRow key={product.product_id} product={product} compact={viewMode === "compact"} />
                   ))}
                 </ul>
 
@@ -481,8 +519,38 @@ export default function SearchPage() {
 
 /* ── ProductRow ────────────────────────────────────────────────────────────── */
 
-function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
+function ProductRow({ product, compact = false }: Readonly<{ product: SearchResult; compact?: boolean }>) {
   const band = SCORE_BANDS[product.score_band];
+
+  if (compact) {
+    return (
+      <li
+        className={`hover-lift-press flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-2 ${
+          product.is_avoided ? "opacity-50" : ""
+        }`}
+      >
+        <Link
+          href={`/app/product/${product.product_id}`}
+          className="flex flex-1 items-center gap-2 min-w-0"
+        >
+          {/* Compact score badge */}
+          <span
+            className={`inline-flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-xs font-bold ${band.bg} ${band.color}`}
+          >
+            {product.unhealthiness_score}
+          </span>
+          {/* Name + brand inline */}
+          <span className="truncate text-sm font-medium text-foreground">
+            {product.product_name_display ?? product.product_name}
+          </span>
+          <span className="hidden sm:inline truncate text-xs text-foreground-muted">
+            {product.brand}
+          </span>
+        </Link>
+        <NutriScoreBadge grade={product.nutri_score} size="sm" />
+      </li>
+    );
+  }
 
   return (
     <li

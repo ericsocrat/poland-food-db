@@ -502,6 +502,103 @@ describe("ProductDetailPage", () => {
     expect(screen.getByText("soy")).toBeInTheDocument();
   });
 
+  // ── Top ingredients — concern tier labels ───────────────────────────────
+
+  it("renders top ingredient pills with concern tier labels", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile({
+        ingredients: {
+          count: 5,
+          additive_count: 1,
+          additive_names: "E621",
+          has_palm_oil: false,
+          vegan_status: "yes",
+          vegetarian_status: "yes",
+          ingredients_text: null,
+          top_ingredients: [
+            {
+              ingredient_id: 1,
+              name: "Wheat Flour",
+              position: 1,
+              concern_tier: 0,
+              is_additive: false,
+              concern_reason: null,
+            },
+            {
+              ingredient_id: 2,
+              name: "Monosodium Glutamate",
+              position: 2,
+              concern_tier: 2,
+              is_additive: true,
+              concern_reason: "EFSA notes potential effects at high doses",
+            },
+          ],
+        },
+      }),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Wheat Flour/)).toBeInTheDocument();
+    });
+    // Tier 0 ingredient should NOT show a tier label
+    const wheatPill = screen.getByText(/Wheat Flour/);
+    expect(wheatPill.textContent).not.toContain("concern");
+
+    // Tier 2 ingredient should show "Moderate concern" label
+    expect(screen.getByText(/Moderate concern/)).toBeInTheDocument();
+  });
+
+  it("renders expandable concern detail button for tier > 0 with reason", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile({
+        ingredients: {
+          count: 3,
+          additive_count: 1,
+          additive_names: "E621",
+          has_palm_oil: false,
+          vegan_status: "yes",
+          vegetarian_status: "yes",
+          ingredients_text: null,
+          top_ingredients: [
+            {
+              ingredient_id: 2,
+              name: "Monosodium Glutamate",
+              position: 1,
+              concern_tier: 2,
+              is_additive: true,
+              concern_reason: "EFSA notes potential effects at high doses",
+            },
+          ],
+        },
+      }),
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Monosodium Glutamate/),
+      ).toBeInTheDocument();
+    });
+
+    // Concern detail should not be visible initially
+    expect(
+      screen.queryByText("EFSA notes potential effects at high doses"),
+    ).not.toBeInTheDocument();
+
+    // Click the expand button
+    const expandBtn = screen.getByLabelText("Toggle concern detail");
+    await user.click(expandBtn);
+
+    // Now detail should be visible
+    expect(
+      screen.getByText("EFSA notes potential effects at high doses"),
+    ).toBeInTheDocument();
+  });
+
   it("overview shows data quality info", async () => {
     mockGetProductProfile.mockResolvedValue({
       ok: true,

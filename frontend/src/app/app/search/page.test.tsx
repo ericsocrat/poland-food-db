@@ -658,4 +658,55 @@ describe("SearchPage", () => {
       ).toBeInTheDocument();
     });
   });
+
+  // ── View mode toggle ──────────────────────────────────────────────────
+
+  it("renders compact view toggle button", () => {
+    render(<SearchPage />, { wrapper: createWrapper() });
+    expect(
+      screen.getByLabelText("Toggle view mode"),
+    ).toBeInTheDocument();
+  });
+
+  it("toggles between compact and detailed labels", async () => {
+    render(<SearchPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    // Initially shows "Compact" (offers to switch to compact)
+    expect(screen.getByText("Compact")).toBeInTheDocument();
+
+    await user.click(screen.getByLabelText("Toggle view mode"));
+
+    // After click shows "Detailed" (offers to switch back)
+    expect(screen.getByText("Detailed")).toBeInTheDocument();
+  });
+
+  it("persists view mode in localStorage", async () => {
+    render(<SearchPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await user.click(screen.getByLabelText("Toggle view mode"));
+
+    expect(localStorage.getItem("fooddb:search-view")).toBe("compact");
+  });
+
+  it("renders compact product rows when in compact mode", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    // Switch to compact mode
+    await user.click(screen.getByLabelText("Toggle view mode"));
+
+    // Perform search
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    // In compact mode, NOVA badges should not be rendered
+    expect(screen.queryByTestId("nova-badge")).not.toBeInTheDocument();
+  });
 });
