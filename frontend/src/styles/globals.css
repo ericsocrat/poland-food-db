@@ -318,7 +318,7 @@
   }
 
   .card {
-    @apply rounded-xl border bg-surface p-4 shadow-sm;
+    @apply rounded-xl border bg-surface p-3 shadow-sm sm:p-4;
   }
 
   /* ── Motion Utility Classes (#61) ── */
@@ -334,9 +334,11 @@
                 opacity var(--duration-fast) var(--ease-standard),
                 box-shadow var(--duration-fast) var(--ease-standard);
   }
-  .hover-lift:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
+  @media (hover: hover) {
+    .hover-lift:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
+    }
   }
 
   .press-scale {
@@ -350,9 +352,11 @@
     transition: transform var(--duration-fast) var(--ease-standard),
                 box-shadow var(--duration-fast) var(--ease-standard);
   }
-  .hover-lift-press:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
+  @media (hover: hover) {
+    .hover-lift-press:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
+    }
   }
   .hover-lift-press:active {
     transform: translateY(0) scale(0.97);
@@ -381,6 +385,19 @@
     opacity: 1;
     transform: translateY(0);
   }
+}
+
+@keyframes slideUpSheet {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up-sheet {
+  animation: slideUpSheet var(--duration-slow) var(--ease-decelerate);
 }
 
 /* ── Dialog / Modal animations (#61) ── */

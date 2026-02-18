@@ -2,9 +2,18 @@
 // Provides og:title, og:description, twitter:card.  The opengraph-image.tsx
 // file in this directory automatically sets og:image.
 // Also injects Schema.org Product + NutritionInformation structured data.
+// Pre-fetches the product profile and dehydrates the TanStack Query cache
+// so the client component renders instantly without a second round-trip.
 
 import type { Metadata } from "next";
+import { cache } from "react";
+import {
+  QueryClient,
+  dehydrate,
+  HydrationBoundary,
+} from "@tanstack/react-query";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import { queryKeys } from "@/lib/query-keys";
 
 /* ---------- helpers ---------- */
 
@@ -15,17 +24,24 @@ interface ProductProfile {
   images?: { primary?: { url?: string } };
 }
 
-async function fetchProfile(productId: number): Promise<ProductProfile | null> {
-  try {
-    const supabase = await createServerSupabaseClient();
-    const { data } = await supabase.rpc("api_get_product_profile", {
-      p_product_id: productId,
-    });
-    return (data as ProductProfile) ?? null;
-  } catch {
-    return null;
-  }
-}
+/**
+ * Fetch the product profile via server-side Supabase client.
+ * Wrapped in React.cache() so generateMetadata + layout share one RPC call
+ * per request instead of two.
+ */
+const fetchProfile = cache(
+  async (productId: number): Promise<ProductProfile | null> => {
+    try {
+      const supabase = await createServerSupabaseClient();
+      const { data } = await supabase.rpc("api_get_product_profile", {
+        p_product_id: productId,
+      });
+      return (data as ProductProfile) ?? null;
+    } catch {
+      return null;
+    }
+  },
+);
 
 /* ---------- metadata ---------- */
 
@@ -135,7 +151,16 @@ export default async function ProductLayout({
 }>) {
   const { id } = await params;
   const productId = Number.parseInt(id, 10);
+
+  // Single server-side fetch — reused for metadata (above) AND client cache.
+  // The prefetchQuery populates the QueryClient; dehydrate() serializes it
+  // into the HTML so the client's useQuery() resolves instantly.
   const profile = await fetchProfile(productId);
+
+  const queryClient = new QueryClient();
+  if (profile) {
+    queryClient.setQueryData(queryKeys.productProfile(productId), profile);
+  }
 
   return (
     <>
@@ -147,7 +172,9 @@ export default async function ProductLayout({
           }}
         />
       )}
-      {children}
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        {children}
+      </HydrationBoundary>
     </>
   );
 }

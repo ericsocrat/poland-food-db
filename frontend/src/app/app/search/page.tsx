@@ -276,7 +276,7 @@ export default function SearchPage() {
           </div>
 
           {/* Action row: search button, filter toggle, avoid toggle, save */}
-          <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
             <button
               type="submit"
               disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
@@ -346,31 +346,36 @@ export default function SearchPage() {
               ) : (
                 <LayoutGrid size={14} aria-hidden="true" className="inline" />
               )}
-              {viewMode === "detailed"
-                ? t("search.compactView")
-                : t("search.detailedView")}
+              <span className="hidden xs:inline">
+                {viewMode === "detailed"
+                  ? t("search.compactView")
+                  : t("search.detailedView")}
+              </span>
             </button>
 
-            {/* Save search */}
-            {isSearchActive && (
-              <button
-                type="button"
-                onClick={() => setShowSaveDialog(true)}
-                className="touch-target ml-auto text-xs text-foreground-muted hover:text-brand-600"
-              >
-                <Save size={14} aria-hidden="true" className="inline" />{" "}
-                {t("search.saveSearch")}
-              </button>
-            )}
+            {/* Right-aligned group: save + saved searches */}
+            <span className="ml-auto flex items-center gap-2">
+              {/* Save search */}
+              {isSearchActive && (
+                <button
+                  type="button"
+                  onClick={() => setShowSaveDialog(true)}
+                  className="touch-target text-xs text-foreground-muted hover:text-brand-600"
+                >
+                  <Save size={14} aria-hidden="true" className="inline" />{" "}
+                  <span className="hidden xs:inline">{t("search.saveSearch")}</span>
+                </button>
+              )}
 
-            {/* Saved searches link */}
-            <Link
-              href="/app/search/saved"
-              className="touch-target text-xs text-foreground-muted hover:text-brand-600"
-            >
-              <ClipboardList size={14} aria-hidden="true" className="inline" />{" "}
-              {t("search.saved")}
-            </Link>
+              {/* Saved searches link */}
+              <Link
+                href="/app/search/saved"
+                className="touch-target text-xs text-foreground-muted hover:text-brand-600"
+              >
+                <ClipboardList size={14} aria-hidden="true" className="inline" />{" "}
+                <span className="hidden xs:inline">{t("search.saved")}</span>
+              </Link>
+            </span>
           </div>
         </form>
 
@@ -561,7 +566,7 @@ function ScoreTooltip({ product }: Readonly<{ product: SearchResult }>) {
       </button>
       {open && (
         <div
-          className="absolute left-6 top-0 z-50 w-52 rounded-lg border border-border bg-surface p-3 shadow-lg"
+          className="absolute right-0 top-6 z-50 w-52 rounded-lg border border-border bg-surface p-3 shadow-lg sm:left-6 sm:right-auto sm:top-0"
           data-testid="score-tooltip-content"
         >
           <p className={`text-xs font-semibold ${interpretation.color}`}>
@@ -670,15 +675,19 @@ function ProductRow({
       </Link>
 
       {/* Action buttons — grouped with tighter gap */}
-      <div className="flex flex-shrink-0 items-center gap-1.5">
+      <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
         {/* Health warning badge */}
         <HealthWarningBadge productId={product.product_id} />
 
-        {/* Avoid badge */}
-        <AvoidBadge productId={product.product_id} />
+        {/* Avoid badge — hidden on xs */}
+        <span className="hidden xs:inline-flex">
+          <AvoidBadge productId={product.product_id} />
+        </span>
 
-        {/* Favorites heart */}
-        <AddToListMenu productId={product.product_id} compact />
+        {/* Favorites heart — hidden on xs */}
+        <span className="hidden xs:inline-flex">
+          <AddToListMenu productId={product.product_id} compact />
+        </span>
 
         {/* Compare checkbox — hidden on small screens */}
         <span className="hidden sm:inline-flex">
@@ -687,7 +696,7 @@ function ProductRow({
 
         {/* NOVA processing badge — hidden on xs screens */}
         {product.nova_group && (
-          <span className="hidden xs:inline-flex">
+          <span className="hidden sm:inline-flex">
             <NovaBadge group={Number(product.nova_group)} size="sm" />
           </span>
         )}

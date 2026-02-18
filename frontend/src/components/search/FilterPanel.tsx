@@ -346,7 +346,7 @@ export function FilterPanel({
             aria-label={t("filters.closeFilters")}
           />
           {/* Sheet */}
-          <div className="absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-2xl bg-surface px-4 pb-8 pt-3 shadow-2xl">
+          <div className="animate-slide-up-sheet absolute bottom-0 left-0 right-0 max-h-[85vh] overflow-y-auto rounded-t-2xl bg-surface px-4 pb-8 pt-3 shadow-2xl">
             {/* Handle */}
             <div className="mx-auto mb-4 h-1 w-10 rounded-full bg-surface-muted" />
             <div className="mb-4 flex items-center justify-between">

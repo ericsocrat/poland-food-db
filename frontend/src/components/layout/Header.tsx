@@ -16,7 +16,10 @@ export function Header() {
   return (
     <header className="border-b bg-surface">
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-        <Link href="/" className="text-xl font-bold text-brand-700 dark:text-brand-400">
+        <Link
+          href="/"
+          className="text-xl font-bold text-brand-700 dark:text-brand-400"
+        >
           {t("layout.appNameWithEmoji")}
         </Link>
         <nav className="flex items-center gap-4">
