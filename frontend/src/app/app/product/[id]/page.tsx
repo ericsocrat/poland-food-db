@@ -31,6 +31,7 @@ import { NutritionDVBar } from "@/components/product/NutritionDVBar";
 import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
 import { DVLegend } from "@/components/product/DVLegend";
 import { ShareButton } from "@/components/product/ShareButton";
+import { ScoreGauge } from "@/components/product/ScoreGauge";
 import { ScoreRadarChart } from "@/components/product/ScoreRadarChart";
 import { getTrafficLight } from "@/components/product/TrafficLightChip";
 import { NovaIndicator } from "@/components/product/NovaIndicator";
@@ -169,15 +170,7 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="flex items-start gap-4">
-          <div
-            className={`flex h-16 w-16 flex-shrink-0 flex-col items-center justify-center rounded-xl font-bold ${band.bg} ${band.color}`}
-            aria-label={`Score: ${profile.scores.unhealthiness_score} out of 100`}
-          >
-            <span className="text-2xl leading-none">
-              {profile.scores.unhealthiness_score}
-            </span>
-            <span className="text-[10px] font-medium opacity-70">/100</span>
-          </div>
+          <ScoreGauge score={profile.scores.unhealthiness_score} />
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between">
               <div>

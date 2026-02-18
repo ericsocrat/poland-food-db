@@ -135,6 +135,7 @@ beforeEach(() => {
     data: { items: mockItems },
     isLoading: false,
     error: null,
+    refetch: vi.fn(),
   });
 });
 
@@ -151,14 +152,20 @@ describe("ListDetailPage", () => {
     expect(screen.getByTestId("spinner")).toBeInTheDocument();
   });
 
-  it("shows error state", () => {
+  it("shows error state with retry button", () => {
+    const mockRefetch = vi.fn();
     mockUseListItems.mockReturnValue({
       data: undefined,
       isLoading: false,
       error: new Error("fail"),
+      refetch: mockRefetch,
     });
     render(<ListDetailPage />);
     expect(screen.getByText("Failed to load list.")).toBeInTheDocument();
+    const retryBtn = screen.getByRole("button", { name: "Retry" });
+    expect(retryBtn).toBeInTheDocument();
+    retryBtn.click();
+    expect(mockRefetch).toHaveBeenCalledTimes(1);
   });
 
   it("shows breadcrumb link to lists", () => {

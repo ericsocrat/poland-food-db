@@ -324,7 +324,9 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("65")).toBeInTheDocument();
     });
     expect(screen.getByText("/100")).toBeInTheDocument();
-    expect(screen.getByLabelText("Score: 65 out of 100")).toBeInTheDocument();
+    expect(
+      screen.getByLabelText("Health score: 65 out of 100"),
+    ).toBeInTheDocument();
   });
 
   it("renders nutri-score badge", async () => {

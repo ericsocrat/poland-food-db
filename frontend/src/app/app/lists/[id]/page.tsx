@@ -32,7 +32,7 @@ export default function ListDetailPage() {
   const listId = String(params.id ?? "");
 
   const { data: listsData } = useLists();
-  const { data: itemsData, isLoading, error } = useListItems(listId);
+  const { data: itemsData, isLoading, error, refetch } = useListItems(listId);
   const removeMutation = useRemoveFromList();
   const updateMutation = useUpdateList();
   const toggleShareMutation = useToggleShare();
@@ -108,7 +108,11 @@ export default function ListDetailPage() {
             { labelKey: "nav.lists", href: "/app/lists" },
           ]}
         />
-        <EmptyState variant="error" titleKey="lists.loadListFailed" />
+        <EmptyState
+          variant="error"
+          titleKey="lists.loadListFailed"
+          action={{ labelKey: "common.retry", onClick: () => refetch() }}
+        />
       </div>
     );
   }

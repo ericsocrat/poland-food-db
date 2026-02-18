@@ -337,13 +337,19 @@
     "scanAnother": "Scan Another",
     "originalName": "Original name"
   },
+  "scoreGauge": {
+    "label": "Health score: {score} out of 100",
+    "outOf": "/100",
+    "noScore": "Score not available"
+  },
   "categories": {
     "title": "Categories",
     "loadFailed": "Failed to load categories.",
     "avgScore": "avg {score}",
     "healthiness": "Healthiness",
     "noProducts": "No products in this category.",
-    "previous": "Previous"
+    "previous": "Previous",
+    "toggleSortDirection": "Toggle sort direction"
   },
   "compare": {
     "title": "Compare Products",

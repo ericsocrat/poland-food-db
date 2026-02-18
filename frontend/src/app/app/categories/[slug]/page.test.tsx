@@ -145,7 +145,7 @@ describe("CategoryListingPage", () => {
   it("renders category title from slug", async () => {
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("chips")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: "chips" })).toBeInTheDocument();
     });
   });
 
@@ -156,12 +156,21 @@ describe("CategoryListingPage", () => {
     });
   });
 
-  it("links back to categories page", async () => {
+  it("renders breadcrumb navigation with Home, Categories, and slug", async () => {
     render(<CategoryListingPage />, { wrapper: createWrapper() });
+    const nav = screen.getByLabelText("Breadcrumb");
+    expect(nav).toBeInTheDocument();
+    expect(screen.getByText("Home").closest("a")).toHaveAttribute(
+      "href",
+      "/app",
+    );
     expect(screen.getByText("Categories").closest("a")).toHaveAttribute(
       "href",
       "/app/categories",
     );
+    await waitFor(() => {
+      expect(screen.getByText("chips", { selector: "[aria-current='page']" })).toBeInTheDocument();
+    });
   });
 
   it("shows skeleton loading state while fetching", () => {

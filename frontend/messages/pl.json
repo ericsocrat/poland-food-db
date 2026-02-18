@@ -337,13 +337,19 @@
     "scanAnother": "Skanuj kolejny",
     "originalName": "Oryginalna nazwa"
   },
+  "scoreGauge": {
+    "label": "Wynik zdrowotny: {score} na 100",
+    "outOf": "/100",
+    "noScore": "Wynik niedostępny"
+  },
   "categories": {
     "title": "Kategorie",
     "loadFailed": "Nie udało się załadować kategorii.",
     "avgScore": "śr. {score}",
     "healthiness": "Zdrowotność",
     "noProducts": "Brak produktów w tej kategorii.",
-    "previous": "Poprzednia"
+    "previous": "Poprzednia",
+    "toggleSortDirection": "Przełącz kierunek sortowania"
   },
   "compare": {
     "title": "Porównaj produkty",

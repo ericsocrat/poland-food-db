@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getCategoryListing } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS } from "@/lib/constants";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { CategoryListingSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
@@ -70,20 +71,14 @@ export default function CategoryListingPage() {
 
   return (
     <div className="space-y-4">
-      {/* Back link */}
-      <Link
-        href="/app/categories"
-        className="inline-flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground"
-      >
-        <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-          <path
-            fillRule="evenodd"
-            d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-            clipRule="evenodd"
-          />
-        </svg>
-        {t("categories.title")}
-      </Link>
+      {/* Breadcrumbs */}
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "categories.title", href: "/app/categories" },
+          { label: formatSlug(slug) },
+        ]}
+      />
 
       {/* Header */}
       <div className="flex items-center justify-between">
