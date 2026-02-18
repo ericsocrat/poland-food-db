@@ -129,7 +129,9 @@
     "clearRecent": "Clear",
     "removeRecent": "Remove {query} from recent searches",
     "popularSearches": "Popular Searches",
-    "suggestions": "Suggestions"
+    "suggestions": "Suggestions",
+    "whyThisScore": "Why this score?",
+    "noMajorFlags": "No major health flags detected."
   },
   "filters": {
     "sortBy": "Sort by",
@@ -361,6 +363,12 @@
   "allergen": {
     "contains": "Contains",
     "traces": "May contain (traces)"
+  },
+  "allergenPreset": {
+    "glutenFree": "Gluten-free",
+    "dairyFree": "Dairy-free",
+    "nutFree": "Nut-free",
+    "vegan": "Vegan"
   },
   "categories": {
     "title": "Categories",

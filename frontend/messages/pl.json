@@ -129,7 +129,9 @@
     "clearRecent": "Wyczyść",
     "removeRecent": "Usuń {query} z ostatnich wyszukiwań",
     "popularSearches": "Popularne wyszukiwania",
-    "suggestions": "Podpowiedzi"
+    "suggestions": "Podpowiedzi",
+    "whyThisScore": "Dlaczego taki wynik?",
+    "noMajorFlags": "Nie wykryto istotnych zagrożeń zdrowotnych."
   },
   "filters": {
     "sortBy": "Sortuj wg",
@@ -361,6 +363,12 @@
   "allergen": {
     "contains": "Zawiera",
     "traces": "Może zawierać (śladowe ilości)"
+  },
+  "allergenPreset": {
+    "glutenFree": "Bez glutenu",
+    "dairyFree": "Bez nabiału",
+    "nutFree": "Bez orzechów",
+    "vegan": "Wegańskie"
   },
   "categories": {
     "title": "Kategorie",

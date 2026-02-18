@@ -14,6 +14,7 @@ import {
   COUNTRY_DEFAULT_LANGUAGES,
   DIET_OPTIONS,
   ALLERGEN_TAGS,
+  ALLERGEN_PRESETS,
   getLanguagesForCountry,
 } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -250,6 +251,38 @@ export default function SettingsPage() {
         <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("settings.allergensToAvoid")}
         </h2>
+
+        {/* Quick presets */}
+        <div className="mb-3 flex flex-wrap gap-2" data-testid="allergen-presets">
+          {ALLERGEN_PRESETS.map((preset) => {
+            const allSelected = preset.tags.every((tag) => allergens.includes(tag));
+            return (
+              <button
+                key={preset.key}
+                onClick={() => {
+                  setAllergens((prev) => {
+                    const newSet = new Set(prev);
+                    if (allSelected) {
+                      preset.tags.forEach((tag) => newSet.delete(tag));
+                    } else {
+                      preset.tags.forEach((tag) => newSet.add(tag));
+                    }
+                    return Array.from(newSet);
+                  });
+                  markDirty();
+                }}
+                className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
+                  allSelected
+                    ? "border-brand-400 bg-brand-50 text-brand-700"
+                    : "border-dashed border-foreground-muted text-foreground-secondary hover:border-strong"
+                }`}
+              >
+                {t(preset.labelKey)}
+              </button>
+            );
+          })}
+        </div>
+
         <div className="flex flex-wrap gap-2">
           {ALLERGEN_TAGS.map((a) => (
             <button

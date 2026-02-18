@@ -707,4 +707,81 @@ describe("SearchPage", () => {
     // In compact mode, NOVA badges should not be rendered
     expect(screen.queryByTestId("nova-badge")).not.toBeInTheDocument();
   });
+
+  // ─── Score tooltips ───────────────────────────────────────────────────
+
+  it("renders score tooltip trigger on detailed product rows", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    const triggers = screen.getAllByTestId("score-tooltip-trigger");
+    expect(triggers.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("shows tooltip content with health flags when trigger is clicked", async () => {
+    // "Test Chips" has high_salt: true
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    const triggers = screen.getAllByTestId("score-tooltip-trigger");
+    await user.click(triggers[0]);
+
+    await waitFor(() => {
+      expect(screen.getByTestId("score-tooltip-content")).toBeInTheDocument();
+    });
+
+    // Should show "High salt" since the first product has high_salt: true
+    expect(screen.getByText("High salt")).toBeInTheDocument();
+  });
+
+  it("shows 'no major flags' when product has no health flags", async () => {
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({
+        results: [
+          makeSearchResult({
+            high_salt: false,
+            high_sugar: false,
+            high_sat_fat: false,
+            high_additive_load: false,
+            unhealthiness_score: 5,
+            score_band: "low",
+          }),
+        ],
+      }),
+    );
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    await user.type(screen.getByPlaceholderText("Search products…"), "test");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    const trigger = screen.getByTestId("score-tooltip-trigger");
+    await user.click(trigger);
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("No major health flags detected."),
+      ).toBeInTheDocument();
+    });
+  });
 });

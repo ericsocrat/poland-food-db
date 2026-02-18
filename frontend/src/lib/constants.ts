@@ -47,6 +47,33 @@ export const ALLERGEN_TAGS = [
   { tag: "en:molluscs", label: "Molluscs" },
 ] as const;
 
+/**
+ * Common allergen presets — each preset maps to a set of ALLERGEN_TAGS entries.
+ * Used by the settings page for quick-select allergen profiles.
+ */
+export const ALLERGEN_PRESETS = [
+  {
+    key: "glutenFree",
+    labelKey: "allergenPreset.glutenFree",
+    tags: ["en:gluten"],
+  },
+  {
+    key: "dairyFree",
+    labelKey: "allergenPreset.dairyFree",
+    tags: ["en:milk"],
+  },
+  {
+    key: "nutFree",
+    labelKey: "allergenPreset.nutFree",
+    tags: ["en:nuts", "en:peanuts"],
+  },
+  {
+    key: "vegan",
+    labelKey: "allergenPreset.vegan",
+    tags: ["en:milk", "en:eggs", "en:fish", "en:crustaceans", "en:molluscs"],
+  },
+] as const;
+
 export const DIET_OPTIONS = [
   { value: "none", label: "No restriction" },
   { value: "vegetarian", label: "Vegetarian" },

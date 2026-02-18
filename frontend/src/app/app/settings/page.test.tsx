@@ -96,7 +96,8 @@ describe("SettingsPage", () => {
       expect(screen.getByText("No restriction")).toBeInTheDocument();
     });
     expect(screen.getByText("Vegetarian")).toBeInTheDocument();
-    expect(screen.getByText("Vegan")).toBeInTheDocument();
+    // "Vegan" appears in both diet options and allergen presets — check at least one exists
+    expect(screen.getAllByText("Vegan").length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders allergen tags", async () => {
@@ -230,10 +231,10 @@ describe("SettingsPage", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(screen.getByText("Vegan")).toBeInTheDocument();
+      expect(screen.getByText("Vegetarian")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("Vegan"));
+    await user.click(screen.getByText("Vegetarian"));
     await user.click(screen.getByRole("button", { name: "Save changes" }));
 
     await waitFor(() => {
@@ -256,10 +257,10 @@ describe("SettingsPage", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(screen.getByText("Vegan")).toBeInTheDocument();
+      expect(screen.getByText("Vegetarian")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("Vegan"));
+    await user.click(screen.getByText("Vegetarian"));
     await user.click(screen.getByRole("button", { name: "Save changes" }));
 
     await waitFor(() => {
@@ -317,5 +318,71 @@ describe("SettingsPage", () => {
     });
     expect(screen.getByText("English")).toBeInTheDocument();
     expect(screen.queryByText("Polski")).not.toBeInTheDocument();
+  });
+
+  // ─── Allergen presets ───────────────────────────────────────────────────
+
+  it("renders allergen preset buttons", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("allergen-presets")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Gluten-free")).toBeInTheDocument();
+    expect(screen.getByText("Dairy-free")).toBeInTheDocument();
+    expect(screen.getByText("Nut-free")).toBeInTheDocument();
+    // "Vegan" appears in both diet options and presets — use within() for precision
+    const presetContainer = screen.getByTestId("allergen-presets");
+    expect(presetContainer).toHaveTextContent("Vegan");
+  });
+
+  it("clicking Gluten-free preset selects the gluten allergen", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Gluten-free")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Gluten-free"));
+
+    // Gluten tag should now be selected — save button should appear (dirty)
+    expect(
+      screen.getByRole("button", { name: "Save changes" }),
+    ).toBeInTheDocument();
+  });
+
+  it("clicking Nut-free preset selects both Tree Nuts and Peanuts", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Nut-free")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Nut-free"));
+
+    // Should show strictness toggles since allergens are now selected
+    await waitFor(() => {
+      expect(screen.getByText("Strict allergen matching")).toBeInTheDocument();
+    });
+  });
+
+  it("clicking a preset twice toggles the allergens off", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Dairy-free")).toBeInTheDocument();
+    });
+
+    // Select then deselect
+    await user.click(screen.getByText("Dairy-free"));
+    await user.click(screen.getByText("Dairy-free"));
+
+    // Save button should still be visible since dirty was set
+    // But no strictness toggles since allergens are now empty again
+    expect(screen.queryByText("Strict allergen matching")).not.toBeInTheDocument();
   });
 });

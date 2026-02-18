@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   COUNTRIES,
   ALLERGEN_TAGS,
+  ALLERGEN_PRESETS,
   DIET_OPTIONS,
   SCORE_BANDS,
   NUTRI_COLORS,
@@ -39,6 +40,41 @@ describe("ALLERGEN_TAGS", () => {
       expect(allergen.tag).toMatch(/^en:/);
       expect(allergen.label.length).toBeGreaterThan(0);
     }
+  });
+});
+
+describe("ALLERGEN_PRESETS", () => {
+  it("has 4 presets: glutenFree, dairyFree, nutFree, vegan", () => {
+    const keys = ALLERGEN_PRESETS.map((p) => p.key);
+    expect(keys).toEqual(["glutenFree", "dairyFree", "nutFree", "vegan"]);
+  });
+
+  it("each preset references valid ALLERGEN_TAGS entries", () => {
+    const validTags = ALLERGEN_TAGS.map((a) => a.tag);
+    for (const preset of ALLERGEN_PRESETS) {
+      for (const tag of preset.tags) {
+        expect(validTags).toContain(tag);
+      }
+    }
+  });
+
+  it("each preset has a labelKey for i18n", () => {
+    for (const preset of ALLERGEN_PRESETS) {
+      expect(preset.labelKey).toMatch(/^allergenPreset\./);
+    }
+  });
+
+  it("nutFree preset includes both nuts and peanuts", () => {
+    const nutFree = ALLERGEN_PRESETS.find((p) => p.key === "nutFree");
+    expect(nutFree?.tags).toContain("en:nuts");
+    expect(nutFree?.tags).toContain("en:peanuts");
+  });
+
+  it("vegan preset includes all animal-derived allergens", () => {
+    const vegan = ALLERGEN_PRESETS.find((p) => p.key === "vegan");
+    expect(vegan?.tags).toContain("en:milk");
+    expect(vegan?.tags).toContain("en:eggs");
+    expect(vegan?.tags).toContain("en:fish");
   });
 });
 

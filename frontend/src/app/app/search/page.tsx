@@ -8,7 +8,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { searchProducts } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS } from "@/lib/constants";
+import { SCORE_BANDS, getScoreInterpretation } from "@/lib/constants";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { NovaBadge } from "@/components/common/NovaBadge";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -32,6 +32,7 @@ import {
   Search,
   LayoutList,
   LayoutGrid,
+  HelpCircle,
 } from "lucide-react";
 import { getRecentSearches, addRecentSearch } from "@/lib/recent-searches";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
@@ -530,6 +531,59 @@ export default function SearchPage() {
 
 /* ── ProductRow ────────────────────────────────────────────────────────────── */
 
+/** Inline tooltip showing the top health-flag contributors to the score. */
+function ScoreTooltip({ product }: Readonly<{ product: SearchResult }>) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+
+  const flags: string[] = [];
+  if (product.high_sugar) flags.push(t("product.highSugar"));
+  if (product.high_salt) flags.push(t("product.highSalt"));
+  if (product.high_sat_fat) flags.push(t("product.highSatFat"));
+  if (product.high_additive_load) flags.push(t("product.manyAdditives"));
+
+  const interpretation = getScoreInterpretation(product.unhealthiness_score);
+
+  return (
+    <span className="relative inline-flex">
+      <button
+        type="button"
+        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen((v) => !v); }}
+        className="touch-target inline-flex h-5 w-5 items-center justify-center rounded-full text-foreground-muted hover:text-foreground-secondary"
+        aria-label={t("search.whyThisScore")}
+        data-testid="score-tooltip-trigger"
+      >
+        <HelpCircle size={14} aria-hidden="true" />
+      </button>
+      {open && (
+        <div
+          className="absolute left-6 top-0 z-50 w-52 rounded-lg border border-border bg-surface p-3 shadow-lg"
+          data-testid="score-tooltip-content"
+        >
+          <p className={`text-xs font-semibold ${interpretation.color}`}>
+            {t(interpretation.key)}
+          </p>
+          {flags.length > 0 && (
+            <ul className="mt-1.5 space-y-0.5">
+              {flags.map((f) => (
+                <li key={f} className="flex items-center gap-1 text-xs text-foreground-secondary">
+                  <span className="h-1.5 w-1.5 rounded-full bg-red-400" aria-hidden="true" />
+                  {f}
+                </li>
+              ))}
+            </ul>
+          )}
+          {flags.length === 0 && (
+            <p className="mt-1 text-xs text-foreground-muted">
+              {t("search.noMajorFlags")}
+            </p>
+          )}
+        </div>
+      )}
+    </span>
+  );
+}
+
 function ProductRow({
   product,
   compact = false,
@@ -577,10 +631,15 @@ function ProductRow({
         className="flex flex-1 items-center gap-3 min-w-0"
       >
         {/* Score badge */}
-        <div
-          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
-        >
-          {product.unhealthiness_score}
+        <div className="relative flex-shrink-0">
+          <div
+            className={`flex h-12 w-12 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
+          >
+            {product.unhealthiness_score}
+          </div>
+          <span className="absolute -right-1 -top-1">
+            <ScoreTooltip product={product} />
+          </span>
         </div>
 
         {/* Product info */}
