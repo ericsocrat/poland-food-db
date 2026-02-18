@@ -24,7 +24,7 @@ export function QuickActions() {
           <Link
             key={action.key}
             href={action.href}
-            className="card hover-lift-press group flex flex-col items-center gap-2 py-4 text-center"
+            className="card hover-lift-press group flex flex-col items-center gap-2 py-4 text-center transition-shadow hover:shadow-md lg:py-6"
           >
             <span
               className="flex items-center justify-center"

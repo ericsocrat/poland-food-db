@@ -85,17 +85,17 @@ function StatsBar({ stats }: { stats: DashboardStats }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
+    <div className="grid grid-cols-2 gap-3 lg:gap-4">
       {items.map((s) => (
         <Link
           key={s.label}
           href={s.href}
-          className="card flex flex-col items-center gap-1 py-3 transition-colors hover:bg-surface-subtle"
+          className="card flex flex-col items-center gap-1 py-3 transition-shadow hover:bg-surface-subtle hover:shadow-md"
         >
           <span className="flex items-center justify-center">
             <s.icon size={28} aria-hidden="true" />
           </span>
-          <span className="text-xl font-bold text-foreground lg:text-2xl">
+          <span className="text-xl font-bold tabular-nums text-foreground lg:text-2xl">
             {s.value}
           </span>
           <span className="text-xs text-foreground-secondary lg:text-sm">
@@ -301,40 +301,68 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6 lg:space-y-8">
-      {/* Personalised greeting */}
-      <DashboardGreeting />
+    <div className="space-y-6 lg:grid lg:grid-cols-12 lg:gap-6 lg:space-y-0">
+      {/* Row 1 — Greeting (full width) */}
+      <div className="lg:col-span-12">
+        <DashboardGreeting />
+      </div>
 
-      {/* Primary action buttons */}
-      <QuickActions />
+      {/* Row 2 — Quick Actions (8) + Stats Summary (4) */}
+      <div className="lg:col-span-8">
+        <QuickActions />
+      </div>
+      <div className="lg:col-span-4">
+        <StatsBar stats={dashboard.stats} />
+      </div>
 
-      {/* Horizontal category chips */}
-      <ErrorBoundary level="section" context={{ section: "categories-browse" }}>
-        <CategoriesBrowse />
-      </ErrorBoundary>
+      {/* Row 3 — Categories (6) + Daily Tip (6) */}
+      <div className="lg:col-span-6">
+        <ErrorBoundary
+          level="section"
+          context={{ section: "categories-browse" }}
+        >
+          <CategoriesBrowse />
+        </ErrorBoundary>
+      </div>
+      <div className="lg:col-span-6">
+        <ErrorBoundary level="section" context={{ section: "nutrition-tip" }}>
+          <NutritionTip />
+        </ErrorBoundary>
+      </div>
 
-      {/* Stats overview */}
-      <StatsBar stats={dashboard.stats} />
+      {/* Row 4 — Recently Viewed (8) + New Products (4) */}
+      {dashboard.recently_viewed.length > 0 && (
+        <div className="lg:col-span-8">
+          <ErrorBoundary
+            level="section"
+            context={{ section: "recently-viewed" }}
+          >
+            <RecentlyViewedSection products={dashboard.recently_viewed} />
+          </ErrorBoundary>
+        </div>
+      )}
+      {dashboard.new_products.length > 0 && (
+        <div className="lg:col-span-4">
+          <ErrorBoundary
+            level="section"
+            context={{ section: "new-products" }}
+          >
+            <NewProductsSection
+              products={dashboard.new_products}
+              category={dashboard.stats.most_viewed_category}
+            />
+          </ErrorBoundary>
+        </div>
+      )}
 
-      {/* Daily nutrition tip */}
-      <ErrorBoundary level="section" context={{ section: "nutrition-tip" }}>
-        <NutritionTip />
-      </ErrorBoundary>
-
-      <ErrorBoundary level="section" context={{ section: "recently-viewed" }}>
-        <RecentlyViewedSection products={dashboard.recently_viewed} />
-      </ErrorBoundary>
-
-      <ErrorBoundary level="section" context={{ section: "favorites" }}>
-        <FavoritesSection products={dashboard.favorites_preview} />
-      </ErrorBoundary>
-
-      <ErrorBoundary level="section" context={{ section: "new-products" }}>
-        <NewProductsSection
-          products={dashboard.new_products}
-          category={dashboard.stats.most_viewed_category}
-        />
-      </ErrorBoundary>
+      {/* Row 5 — Favorites (full width) */}
+      {dashboard.favorites_preview.length > 0 && (
+        <div className="lg:col-span-12">
+          <ErrorBoundary level="section" context={{ section: "favorites" }}>
+            <FavoritesSection products={dashboard.favorites_preview} />
+          </ErrorBoundary>
+        </div>
+      )}
     </div>
   );
 }
