@@ -76,7 +76,7 @@ export default function ScanHistoryPage() {
               setFilter(f.value);
               setPage(1);
             }}
-            className={`flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+            className={`flex-1 cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
               filter === f.value
                 ? "bg-surface text-brand-700 shadow-sm"
                 : "text-foreground-secondary hover:text-foreground"
@@ -171,7 +171,7 @@ function ScanRow({
 
   if (scan.found && scan.product_id) {
     return (
-      <li className="card">
+      <li className="card hover-lift-press">
         <button
           onClick={() => onNavigate(scan.product_id ?? 0)}
           className="flex w-full items-center gap-3 text-left"

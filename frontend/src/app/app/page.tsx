@@ -90,7 +90,7 @@ function StatsBar({ stats }: { stats: DashboardStats }) {
         <Link
           key={s.label}
           href={s.href}
-          className="card flex flex-col items-center gap-1 py-3 transition-shadow hover:bg-surface-subtle hover:shadow-md"
+          className="card hover-lift-press flex flex-col items-center gap-1 py-3"
         >
           <span className="flex items-center justify-center">
             <s.icon size={28} aria-hidden="true" />
@@ -185,7 +185,7 @@ function FavoritesSection({
         </h2>
         <Link
           href="/app/lists"
-          className="text-sm font-medium text-brand-600 hover:text-brand-700"
+          className="text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
         >
           {t("dashboard.viewAll")}
         </Link>
@@ -220,7 +220,7 @@ function NewProductsSection({
         </h2>
         <Link
           href="/app/categories"
-          className="text-sm font-medium text-brand-600 hover:text-brand-700"
+          className="text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
         >
           {t("dashboard.browse")}
         </Link>

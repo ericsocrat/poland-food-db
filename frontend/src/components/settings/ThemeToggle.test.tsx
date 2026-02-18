@@ -88,4 +88,12 @@ describe("ThemeToggle", () => {
     const { container } = render(<ThemeToggle />);
     expect(container.querySelectorAll("svg").length).toBeGreaterThanOrEqual(1);
   });
+
+  it("theme toggle buttons have cursor-pointer class", () => {
+    render(<ThemeToggle />);
+    const buttons = screen.getAllByRole("radio");
+    buttons.forEach((btn) => {
+      expect(btn.className).toContain("cursor-pointer");
+    });
+  });
 });
