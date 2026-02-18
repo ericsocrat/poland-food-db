@@ -118,10 +118,10 @@ describe("QuickActions i18n keys", () => {
 // ─── NutritionTip — tipIndexForToday() ──────────────────────────────────────
 
 describe("tipIndexForToday", () => {
-  it("returns a number between 0 and 6", () => {
+  it("returns a number between 0 and 13", () => {
     const index = tipIndexForToday();
     expect(index).toBeGreaterThanOrEqual(0);
-    expect(index).toBeLessThanOrEqual(6);
+    expect(index).toBeLessThanOrEqual(13);
   });
 
   it("is deterministic within the same day", () => {
@@ -141,7 +141,7 @@ describe("NutritionTip i18n keys", () => {
     );
   });
 
-  for (let i = 0; i < 7; i++) {
+  for (let i = 0; i < 14; i++) {
     it(`has EN tip.${i}`, () => {
       const result = translate("en", `dashboard.tip.${i}`);
       expect(result).not.toBe(`dashboard.tip.${i}`);

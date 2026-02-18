@@ -5,7 +5,7 @@
 import { useTranslation } from "@/lib/i18n";
 
 /** Total number of tips available in i18n files (dashboard.tip.0 … tip.N-1). */
-const TIP_COUNT = 7;
+const TIP_COUNT = 14;
 
 /**
  * Deterministic tip index based on the current day of the year.

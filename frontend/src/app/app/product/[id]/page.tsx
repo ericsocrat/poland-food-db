@@ -11,11 +11,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { createClient } from "@/lib/supabase/client";
 import { getProductProfile, recordProductView } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import {
-  SCORE_BANDS,
-  NUTRI_COLORS,
-  CONCERN_TIER_STYLES,
-} from "@/lib/constants";
+import { SCORE_BANDS, CONCERN_TIER_STYLES } from "@/lib/constants";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
 import {
   HealthWarningsCard,
@@ -38,7 +34,11 @@ import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { PrintButton } from "@/components/common/PrintButton";
-import type { ProductProfile, ProfileAlternative } from "@/lib/types";
+import type {
+  ProductProfile,
+  ProfileAlternative,
+  DataConfidence,
+} from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
 
@@ -381,31 +381,45 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
         <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
           {t("product.ingredients")}
         </h3>
-        <div className="space-y-1 text-sm text-foreground-secondary">
-          <p>
-            {t("product.ingredientCount", { count: profile.ingredients.count })}
-          </p>
-          <p>
-            {t("product.additiveCount", {
-              count: profile.ingredients.additive_count,
-            })}
-          </p>
-          {profile.ingredients.additive_names && (
-            <p className="text-xs text-foreground-muted">
-              {profile.ingredients.additive_names}
+        {profile.ingredients.count === 0 &&
+        !profile.ingredients.ingredients_text ? (
+          <div className="rounded-lg border border-dashed border-amber-300 bg-amber-50/50 px-3 py-4 text-center">
+            <p className="text-sm text-amber-700">
+              {t("product.noIngredientData")}
             </p>
-          )}
-          <p>
-            {t("product.vegan", {
-              status: profile.ingredients.vegan_status ?? "unknown",
-            })}
-          </p>
-          <p>
-            {t("product.vegetarian", {
-              status: profile.ingredients.vegetarian_status ?? "unknown",
-            })}
-          </p>
-        </div>
+            <p className="mt-1 text-xs text-amber-600/70">
+              {t("product.noIngredientDataHint")}
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-1 text-sm text-foreground-secondary">
+            <p>
+              {t("product.ingredientCount", {
+                count: profile.ingredients.count,
+              })}
+            </p>
+            <p>
+              {t("product.additiveCount", {
+                count: profile.ingredients.additive_count,
+              })}
+            </p>
+            {profile.ingredients.additive_names && (
+              <p className="text-xs text-foreground-muted">
+                {profile.ingredients.additive_names}
+              </p>
+            )}
+            <p>
+              {t("product.vegan", {
+                status: profile.ingredients.vegan_status ?? "unknown",
+              })}
+            </p>
+            <p>
+              {t("product.vegetarian", {
+                status: profile.ingredients.vegetarian_status ?? "unknown",
+              })}
+            </p>
+          </div>
+        )}
 
         {/* Top ingredients — clickable links to ingredient profiles */}
         {profile.ingredients.top_ingredients.length > 0 && (
@@ -435,7 +449,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       </div>
 
       {/* Allergens */}
-      {profile.allergens.contains_count > 0 && (
+      {profile.allergens.contains_count > 0 ? (
         <div className="card">
           <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
             {t("product.allergens")}
@@ -474,30 +488,19 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
             </div>
           )}
         </div>
+      ) : (
+        <div className="card">
+          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+            {t("product.allergens")}
+          </h3>
+          <p className="text-sm text-green-600">
+            ✓ {t("product.noKnownAllergens")}
+          </p>
+        </div>
       )}
 
       {/* Data quality */}
-      <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
-          {t("product.dataQuality")}
-        </h3>
-        <div className="grid grid-cols-2 gap-2 text-sm text-foreground-secondary">
-          <p>
-            {t("product.confidence", {
-              value:
-                ((profile.quality as Record<string, unknown>)
-                  .confidence_band as string) ?? "unknown",
-            })}
-          </p>
-          <p>
-            {t("product.completeness", {
-              pct:
-                ((profile.quality as Record<string, unknown>)
-                  .confidence_score as number) ?? 0,
-            })}
-          </p>
-        </div>
-      </div>
+      <DataQualityCard quality={profile.quality} />
 
       {/* Product image gallery */}
       <ProductImageTabs
@@ -518,10 +521,13 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const dv = profile.nutrition.daily_values;
   const dvPer100g = dv?.per_100g ?? null;
 
+  const energyKj = Math.round(n.calories_kcal * 4.184);
+  const sodiumMg = Math.round(n.salt_g * 400);
+
   const rows = [
     {
       label: t("product.caloriesLabel"),
-      value: `${n.calories_kcal} kcal`,
+      value: `${n.calories_kcal} kcal / ${energyKj} kJ`,
       dv: dvPer100g?.calories ?? null,
       tl: null as ReturnType<typeof getTrafficLight>,
     },
@@ -602,6 +608,64 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
         </tbody>
       </table>
       {dv && dv.reference_type !== "none" && <DVLegend />}
+
+      {/* Sodium / Salt context note */}
+      <div className="mt-3 rounded-lg bg-blue-50 px-3 py-2 text-xs text-blue-700">
+        <span className="font-medium">{t("product.sodiumNote")}</span>{" "}
+        {t("product.sodiumValue", { mg: sodiumMg })}
+      </div>
+    </div>
+  );
+}
+
+// ─── Data Quality Card ──────────────────────────────────────────────────────
+
+function DataQualityCard({ quality }: Readonly<{ quality: DataConfidence }>) {
+  const { t } = useTranslation();
+  const q = quality as Record<string, unknown>;
+  const band = (q.confidence_band as string) ?? "unknown";
+  const score = (q.confidence_score as number) ?? 0;
+
+  const bandConfig: Record<
+    string,
+    { bg: string; fill: string; label: string }
+  > = {
+    high: { bg: "bg-green-100", fill: "bg-green-500", label: "✓" },
+    medium: { bg: "bg-amber-100", fill: "bg-amber-500", label: "~" },
+    low: { bg: "bg-red-100", fill: "bg-red-400", label: "!" },
+    unknown: { bg: "bg-gray-100", fill: "bg-gray-400", label: "?" },
+  };
+
+  const cfg = bandConfig[band] ?? bandConfig.unknown;
+
+  return (
+    <div className="card">
+      <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+        {t("product.dataQuality")}
+      </h3>
+      <div className="flex items-center gap-3">
+        <span
+          className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold ${cfg.bg}`}
+        >
+          {cfg.label}
+        </span>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium capitalize text-foreground">
+              {t("product.confidence", { value: band })}
+            </span>
+            <span className="text-xs text-foreground-muted">{score}%</span>
+          </div>
+          <div
+            className={`mt-1 h-2 w-full overflow-hidden rounded-full ${cfg.bg}`}
+          >
+            <div
+              className={`h-full rounded-full transition-all ${cfg.fill}`}
+              style={{ width: `${Math.min(score, 100)}%` }}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -635,9 +699,6 @@ function AlternativesTab({
 
 function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
   const { t } = useTranslation();
-  const nutriClass = alt.nutri_score
-    ? NUTRI_COLORS[alt.nutri_score]
-    : "bg-surface-muted text-foreground-secondary";
 
   return (
     <Link href={`/app/product/${alt.product_id}`}>
@@ -655,11 +716,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
           </p>
         </div>
         <HealthWarningBadge productId={alt.product_id} />
-        <span
-          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
-        >
-          {alt.nutri_score ?? "?"}
-        </span>
+        <NutriScoreBadge grade={alt.nutri_score} size="sm" showTooltip />
       </div>
     </Link>
   );

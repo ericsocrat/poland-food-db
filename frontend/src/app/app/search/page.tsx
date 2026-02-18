@@ -8,7 +8,9 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { searchProducts } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import { SCORE_BANDS } from "@/lib/constants";
+import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
+import { NovaBadge } from "@/components/common/NovaBadge";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { LiveRegion } from "@/components/common/LiveRegion";
 import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
@@ -481,9 +483,6 @@ export default function SearchPage() {
 
 function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
   const band = SCORE_BANDS[product.score_band];
-  const nutriClass = product.nutri_score
-    ? NUTRI_COLORS[product.nutri_score]
-    : "bg-surface-muted text-foreground-secondary";
 
   return (
     <li
@@ -531,12 +530,13 @@ function ProductRow({ product }: Readonly<{ product: SearchResult }>) {
       {/* Compare checkbox */}
       <CompareCheckbox productId={product.product_id} />
 
-      {/* Nutri badge */}
-      <span
-        className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
-      >
-        {product.nutri_score ?? "?"}
-      </span>
+      {/* NOVA processing badge */}
+      {product.nova_group && (
+        <NovaBadge group={Number(product.nova_group)} size="sm" />
+      )}
+
+      {/* Nutri-Score badge — uses shared component for proper A–E display */}
+      <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
     </li>
   );
 }

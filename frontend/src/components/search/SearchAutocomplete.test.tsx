@@ -110,7 +110,9 @@ describe("SearchAutocomplete", () => {
       { wrapper: createWrapper() },
     );
     // Popular searches are shown when query is empty and there are no recent searches
-    expect(container.querySelector("[aria-label='Popular Searches']")).toBeTruthy();
+    expect(
+      container.querySelector("[aria-label='Popular Searches']"),
+    ).toBeTruthy();
   });
 
   it("shows suggestions after debounce", async () => {

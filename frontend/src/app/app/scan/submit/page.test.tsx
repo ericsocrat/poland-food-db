@@ -112,7 +112,9 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "1234");
     await user.type(screen.getByLabelText("Product Name *"), "Test Product");
-    expect(screen.getByRole("button", { name: "Submit Product" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Submit Product" }),
+    ).toBeDisabled();
   });
 
   it("disables submit when product name too short", async () => {
@@ -120,7 +122,9 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "A");
-    expect(screen.getByRole("button", { name: "Submit Product" })).toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Submit Product" }),
+    ).toBeDisabled();
   });
 
   it("enables submit when both EAN and name are valid", async () => {
@@ -128,7 +132,9 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "Test Product");
-    expect(screen.getByRole("button", { name: "Submit Product" })).not.toBeDisabled();
+    expect(
+      screen.getByRole("button", { name: "Submit Product" }),
+    ).not.toBeDisabled();
   });
 
   it("submits form and shows success toast", async () => {

@@ -74,7 +74,9 @@ describe("AddToListMenu — compact mode", () => {
     render(<AddToListMenu productId={42} compact />, {
       wrapper: createWrapper(),
     });
-    const removeBtn = screen.getByRole("button", { name: "Remove from Favorites" });
+    const removeBtn = screen.getByRole("button", {
+      name: "Remove from Favorites",
+    });
     expect(removeBtn.querySelector("svg")).toBeTruthy(); // Heart icon (filled)
   });
 

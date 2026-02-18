@@ -7,7 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 import { useTranslation } from "@/lib/i18n";
 import { getDashboardData } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { NUTRI_COLORS, SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
+import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
+import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { EmptyState } from "@/components/common/EmptyState";
 import { DashboardSkeleton } from "@/components/common/skeletons";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -49,13 +50,7 @@ function ScorePill({ score }: { score: number | null }) {
 
 function NutriBadge({ grade }: { grade: string | null }) {
   if (!grade) return null;
-  return (
-    <span
-      className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold ${NUTRI_COLORS[grade] ?? "bg-surface-muted text-foreground-secondary"}`}
-    >
-      {grade}
-    </span>
-  );
+  return <NutriScoreBadge grade={grade} size="sm" />;
 }
 
 // ─── Section Components ─────────────────────────────────────────────────────
@@ -63,33 +58,46 @@ function NutriBadge({ grade }: { grade: string | null }) {
 function StatsBar({ stats }: { stats: DashboardStats }) {
   const { t } = useTranslation();
   const items = [
-    { label: t("dashboard.scanned"), value: stats.total_scanned, icon: Camera },
-    { label: t("dashboard.viewed"), value: stats.total_viewed, icon: Eye },
+    {
+      label: t("dashboard.scanned"),
+      value: stats.total_scanned,
+      icon: Camera,
+      href: "/app/scan/history",
+    },
+    {
+      label: t("dashboard.viewed"),
+      value: stats.total_viewed,
+      icon: Eye,
+      href: "/app/search",
+    },
     {
       label: t("dashboard.lists"),
       value: stats.lists_count,
       icon: ClipboardList,
+      href: "/app/lists",
     },
     {
       label: t("dashboard.favorites"),
       value: stats.favorites_count,
       icon: Heart,
+      href: "/app/lists",
     },
   ];
 
   return (
     <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
       {items.map((s) => (
-        <div
+        <Link
           key={s.label}
-          className="card flex flex-col items-center gap-1 py-3"
+          href={s.href}
+          className="card flex flex-col items-center gap-1 py-3 transition-colors hover:bg-surface-subtle"
         >
           <span className="flex items-center justify-center">
             <s.icon size={28} aria-hidden="true" />
           </span>
           <span className="text-xl font-bold text-foreground">{s.value}</span>
           <span className="text-xs text-foreground-secondary">{s.label}</span>
-        </div>
+        </Link>
       ))}
     </div>
   );

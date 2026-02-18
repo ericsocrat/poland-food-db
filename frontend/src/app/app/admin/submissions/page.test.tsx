@@ -107,9 +107,7 @@ describe("AdminSubmissionsPage", () => {
   it("renders page title", async () => {
     render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(
-        screen.getByText("Admin: Submission Review"),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Admin: Submission Review")).toBeInTheDocument();
     });
     expect(
       screen.getByText("Review and approve user-submitted products"),

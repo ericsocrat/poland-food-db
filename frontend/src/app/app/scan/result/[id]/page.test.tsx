@@ -57,6 +57,12 @@ vi.mock("@/components/common/skeletons", () => ({
   ),
 }));
 
+vi.mock("@/components/common/NutriScoreBadge", () => ({
+  NutriScoreBadge: ({ grade }: { grade: string | null }) => (
+    <span data-testid="nutri-score-badge">{grade ?? "?"}</span>
+  ),
+}));
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -293,7 +299,7 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText("Nutri-Score D")).toBeInTheDocument();
+        expect(screen.getAllByTestId("nutri-score-badge").length).toBeGreaterThanOrEqual(1);
       });
       expect(screen.getByText("NOVA 4")).toBeInTheDocument();
     });
@@ -399,9 +405,7 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(
-          screen.getByText("Healthier Alternatives"),
-        ).toBeInTheDocument();
+        expect(screen.getByText("Healthier Alternatives")).toBeInTheDocument();
       });
     });
 

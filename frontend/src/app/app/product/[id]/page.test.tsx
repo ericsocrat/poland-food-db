@@ -64,6 +64,18 @@ vi.mock("@/components/common/skeletons", () => ({
   ),
 }));
 
+vi.mock("@/components/common/NutriScoreBadge", () => ({
+  NutriScoreBadge: ({ grade }: { grade: string | null }) => {
+    const display = grade?.toUpperCase() ?? "?";
+    const label = ["A","B","C","D","E"].includes(display) ? display : "unknown";
+    return (
+      <span data-testid="nutri-score-badge" aria-label={`Nutri-Score ${label}`}>
+        {display}
+      </span>
+    );
+  },
+}));
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -496,7 +508,7 @@ describe("ProductDetailPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Confidence: high")).toBeInTheDocument();
     });
-    expect(screen.getByText("Completeness: 92%")).toBeInTheDocument();
+    expect(screen.getByText("92%")).toBeInTheDocument();
   });
 
   it("overview shows vegan/vegetarian status", async () => {
@@ -530,7 +542,7 @@ describe("ProductDetailPage", () => {
 
     await user.click(screen.getByRole("tab", { name: "Nutrition" }));
 
-    expect(screen.getByText("530 kcal")).toBeInTheDocument();
+    expect(screen.getByText("530 kcal / 2218 kJ")).toBeInTheDocument();
     expect(screen.getByText("32 g")).toBeInTheDocument(); // total fat
     expect(screen.getByText("52 g")).toBeInTheDocument(); // carbs
     expect(screen.getByText("6 g")).toBeInTheDocument(); // protein
@@ -821,7 +833,7 @@ describe("ProductDetailPage", () => {
         screen.getAllByText("Test Chips Original").length,
       ).toBeGreaterThanOrEqual(1);
     });
-    expect(screen.queryByText("Allergens")).not.toBeInTheDocument();
+    expect(screen.getByText(/No known allergens/)).toBeInTheDocument();
   });
 
   it("handles null nutri_score with question mark", async () => {

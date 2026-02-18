@@ -12,7 +12,8 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { createClient } from "@/lib/supabase/client";
 import { getProductDetail, getBetterAlternatives } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
+import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
+import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import {
   ProductProfileSkeleton,
   ProductCardSkeleton,
@@ -100,9 +101,6 @@ export default function ScanResultPage() {
   // ─── Render ─────────────────────────────────────────────────────────────
 
   const band = SCORE_BANDS[product.scores.score_band];
-  const nutriClass = product.scores.nutri_score
-    ? NUTRI_COLORS[product.scores.nutri_score]
-    : "bg-surface-muted text-foreground-secondary";
 
   const alternatives = alternativesData?.alternatives ?? [];
   const hasAlternatives = alternatives.length > 0;
@@ -145,13 +143,11 @@ export default function ScanResultPage() {
             </p>
             <p className="text-sm text-foreground-secondary">{product.brand}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs font-bold ${nutriClass}`}
-              >
-                {t("product.nutriScore", {
-                  grade: product.scores.nutri_score ?? "?",
-                })}
-              </span>
+              <NutriScoreBadge
+                grade={product.scores.nutri_score}
+                size="sm"
+                showTooltip
+              />
               <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary">
                 {t("product.novaGroup", { group: product.scores.nova_group })}
               </span>
@@ -359,9 +355,6 @@ function ScanAlternativeCard({
 }: Readonly<{ alt: Alternative; sourceScore: number }>) {
   const { t } = useTranslation();
   const altBand = SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)];
-  const nutriClass = alt.nutri_score
-    ? NUTRI_COLORS[alt.nutri_score]
-    : "bg-surface-muted text-foreground-secondary";
 
   // Calculate improvement percentage
   const improvementPct =
@@ -399,11 +392,7 @@ function ScanAlternativeCard({
         </div>
 
         {/* Nutri-Score badge */}
-        <span
-          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
-        >
-          {alt.nutri_score ?? "?"}
-        </span>
+        <NutriScoreBadge grade={alt.nutri_score} size="sm" showTooltip />
 
         {/* Arrow */}
         <span className="flex-shrink-0 text-foreground-muted">›</span>

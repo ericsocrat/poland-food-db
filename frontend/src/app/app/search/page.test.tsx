@@ -91,6 +91,18 @@ vi.mock("@/components/common/skeletons", () => ({
   ),
 }));
 
+vi.mock("@/components/common/NutriScoreBadge", () => ({
+  NutriScoreBadge: ({ grade }: { grade: string | null }) => (
+    <span data-testid="nutri-score-badge">{grade ?? "?"}</span>
+  ),
+}));
+
+vi.mock("@/components/common/NovaBadge", () => ({
+  NovaBadge: ({ group }: { group: number }) => (
+    <span data-testid="nova-badge">{group}</span>
+  ),
+}));
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
