@@ -13,7 +13,12 @@ import { useTranslation } from "@/lib/i18n";
 export default function AdditivesPage() {
   const { t } = useTranslation();
 
-  const tiers = ["concernTier0", "concernTier1", "concernTier2", "concernTier3"] as const;
+  const tiers = [
+    "concernTier0",
+    "concernTier1",
+    "concernTier2",
+    "concernTier3",
+  ] as const;
   const tierColors = [
     "bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800",
     "bg-blue-50 border-blue-200 dark:bg-blue-950/20 dark:border-blue-800",

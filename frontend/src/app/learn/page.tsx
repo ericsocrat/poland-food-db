@@ -8,13 +8,48 @@ import { useTranslation } from "@/lib/i18n";
 
 /** Topics for the hub index page. */
 const TOPICS = [
-  { slug: "nutri-score", icon: "🅰️", titleKey: "learn.nutriScore.title", descKey: "learn.nutriScore.description" },
-  { slug: "nova-groups", icon: "🏭", titleKey: "learn.novaGroups.title", descKey: "learn.novaGroups.description" },
-  { slug: "unhealthiness-score", icon: "📊", titleKey: "learn.unhealthinessScore.title", descKey: "learn.unhealthinessScore.description" },
-  { slug: "additives", icon: "🧪", titleKey: "learn.additives.title", descKey: "learn.additives.description" },
-  { slug: "allergens", icon: "⚠️", titleKey: "learn.allergens.title", descKey: "learn.allergens.description" },
-  { slug: "reading-labels", icon: "🏷️", titleKey: "learn.readingLabels.title", descKey: "learn.readingLabels.description" },
-  { slug: "confidence", icon: "✅", titleKey: "learn.confidence.title", descKey: "learn.confidence.description" },
+  {
+    slug: "nutri-score",
+    icon: "🅰️",
+    titleKey: "learn.nutriScore.title",
+    descKey: "learn.nutriScore.description",
+  },
+  {
+    slug: "nova-groups",
+    icon: "🏭",
+    titleKey: "learn.novaGroups.title",
+    descKey: "learn.novaGroups.description",
+  },
+  {
+    slug: "unhealthiness-score",
+    icon: "📊",
+    titleKey: "learn.unhealthinessScore.title",
+    descKey: "learn.unhealthinessScore.description",
+  },
+  {
+    slug: "additives",
+    icon: "🧪",
+    titleKey: "learn.additives.title",
+    descKey: "learn.additives.description",
+  },
+  {
+    slug: "allergens",
+    icon: "⚠️",
+    titleKey: "learn.allergens.title",
+    descKey: "learn.allergens.description",
+  },
+  {
+    slug: "reading-labels",
+    icon: "🏷️",
+    titleKey: "learn.readingLabels.title",
+    descKey: "learn.readingLabels.description",
+  },
+  {
+    slug: "confidence",
+    icon: "✅",
+    titleKey: "learn.confidence.title",
+    descKey: "learn.confidence.description",
+  },
 ] as const;
 
 export default function LearnHubPage() {

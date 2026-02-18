@@ -13,7 +13,10 @@ import { useTranslation } from "@/lib/i18n";
 export default function ReadingLabelsPage() {
   const { t } = useTranslation();
 
-  const mandatoryItems = Array.from({ length: 9 }, (_, i) => `mandatoryItem${i + 1}`);
+  const mandatoryItems = Array.from(
+    { length: 9 },
+    (_, i) => `mandatoryItem${i + 1}`,
+  );
   const tips = Array.from({ length: 5 }, (_, i) => `tip${i + 1}`);
 
   return (

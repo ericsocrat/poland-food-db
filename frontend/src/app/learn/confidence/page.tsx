@@ -15,12 +15,14 @@ export default function ConfidencePage() {
   const levels = [
     {
       key: "levelVerified",
-      color: "bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800",
+      color:
+        "bg-green-50 border-green-200 dark:bg-green-950/20 dark:border-green-800",
       icon: "✅",
     },
     {
       key: "levelEstimated",
-      color: "bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800",
+      color:
+        "bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:border-amber-800",
       icon: "📐",
     },
     {
@@ -63,10 +65,7 @@ export default function ConfidencePage() {
             <h2>{t("learn.confidence.levelsTitle")}</h2>
             <div className="not-prose space-y-3">
               {levels.map(({ key, color, icon }) => (
-                <div
-                  key={key}
-                  className={`rounded-lg border p-4 ${color}`}
-                >
+                <div key={key} className={`rounded-lg border p-4 ${color}`}>
                   <p className="text-sm text-foreground">
                     <span aria-hidden="true">{icon}</span>{" "}
                     {t(`learn.confidence.${key}`)}

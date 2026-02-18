@@ -69,11 +69,21 @@ export default function NutriScorePage() {
 
             <h2>{t("learn.nutriScore.gradesTitle")}</h2>
             <ul>
-              <li><strong>{t("learn.nutriScore.gradeA")}</strong></li>
-              <li><strong>{t("learn.nutriScore.gradeB")}</strong></li>
-              <li><strong>{t("learn.nutriScore.gradeC")}</strong></li>
-              <li><strong>{t("learn.nutriScore.gradeD")}</strong></li>
-              <li><strong>{t("learn.nutriScore.gradeE")}</strong></li>
+              <li>
+                <strong>{t("learn.nutriScore.gradeA")}</strong>
+              </li>
+              <li>
+                <strong>{t("learn.nutriScore.gradeB")}</strong>
+              </li>
+              <li>
+                <strong>{t("learn.nutriScore.gradeC")}</strong>
+              </li>
+              <li>
+                <strong>{t("learn.nutriScore.gradeD")}</strong>
+              </li>
+              <li>
+                <strong>{t("learn.nutriScore.gradeE")}</strong>
+              </li>
             </ul>
 
             <h2>{t("learn.nutriScore.limitationsTitle")}</h2>
