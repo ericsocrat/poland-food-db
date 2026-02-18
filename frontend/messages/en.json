@@ -4,7 +4,10 @@
     "search": "Search",
     "scan": "Scan",
     "lists": "Lists",
-    "settings": "Settings"
+    "settings": "Settings",
+    "compare": "Compare",
+    "categories": "Categories",
+    "admin": "Admin"
   },
   "common": {
     "loading": "Loading…",
@@ -869,7 +872,9 @@
     "skipToContent": "Skip to content",
     "searchProducts": "Search products",
     "searchResultsStatus": "{count} results found",
-    "saveSearchName": "Search name"
+    "saveSearchName": "Search name",
+    "sidebarNavigation": "Sidebar navigation",
+    "headerNavigation": "Header navigation"
   },
   "print": {
     "button": "Print",

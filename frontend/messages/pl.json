@@ -4,7 +4,10 @@
     "search": "Szukaj",
     "scan": "Skanuj",
     "lists": "Listy",
-    "settings": "Ustawienia"
+    "settings": "Ustawienia",
+    "compare": "Porównaj",
+    "categories": "Kategorie",
+    "admin": "Admin"
   },
   "common": {
     "loading": "Ładowanie…",
@@ -869,7 +872,9 @@
     "skipToContent": "Przejdź do treści",
     "searchProducts": "Szukaj produktów",
     "searchResultsStatus": "Znaleziono {count} wyników",
-    "saveSearchName": "Nazwa wyszukiwania"
+    "saveSearchName": "Nazwa wyszukiwania",
+    "sidebarNavigation": "Nawigacja boczna",
+    "headerNavigation": "Nawigacja nagłówka"
   },
   "print": {
     "button": "Drukuj",

@@ -97,4 +97,10 @@ describe("Navigation", () => {
       screen.getByRole("navigation", { name: "Main navigation" }),
     ).toBeInTheDocument();
   });
+
+  it("is hidden on desktop (lg+ breakpoint)", () => {
+    render(<Navigation />);
+    const nav = screen.getByRole("navigation", { name: "Main navigation" });
+    expect(nav.className).toContain("lg:hidden");
+  });
 });
