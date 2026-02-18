@@ -246,7 +246,10 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
         <AddToListMenu productId={product.product_id} compact />
 
         {/* Compare checkbox */}
-        <CompareCheckbox productId={product.product_id} />
+        <CompareCheckbox
+          productId={product.product_id}
+          productName={product.product_name}
+        />
 
         <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
       </li>

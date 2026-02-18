@@ -40,7 +40,7 @@ describe("CompareCheckbox", () => {
   it("calls toggle on click when not disabled", () => {
     render(<CompareCheckbox productId={42} />);
     fireEvent.click(screen.getByRole("button"));
-    expect(mockToggle).toHaveBeenCalledWith(42);
+    expect(mockToggle).toHaveBeenCalledWith(42, undefined);
   });
 
   it("does not call toggle when disabled (full + not selected)", () => {

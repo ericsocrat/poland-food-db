@@ -10,9 +10,13 @@ import { Scale } from "lucide-react";
 
 interface CompareCheckboxProps {
   productId: number;
+  productName?: string;
 }
 
-export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
+export function CompareCheckbox({
+  productId,
+  productName,
+}: Readonly<CompareCheckboxProps>) {
   const { t } = useTranslation();
   const isSelected = useCompareStore((s) => s.isSelected(productId));
   const isFull = useCompareStore((s) => s.isFull());
@@ -39,7 +43,7 @@ export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        if (!disabled) toggle(productId);
+        if (!disabled) toggle(productId, productName);
       }}
       disabled={disabled}
       title={getTitle()}

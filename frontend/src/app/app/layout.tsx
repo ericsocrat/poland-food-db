@@ -16,6 +16,7 @@ import { CountryChip } from "@/components/common/CountryChip";
 import { ListsHydrator } from "@/components/product/ListsHydrator";
 import { LanguageHydrator } from "@/components/i18n/LanguageHydrator";
 import { CompareFloatingButton } from "@/components/compare/CompareFloatingButton";
+import { ComparisonTray } from "@/components/desktop/ComparisonTray";
 import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { GlobalKeyboardShortcuts } from "@/components/layout/GlobalKeyboardShortcuts";
@@ -103,6 +104,7 @@ export default async function AppLayout({
 
         <div className="no-print">
           <CompareFloatingButton />
+          <ComparisonTray />
           <InstallPrompt />
           <GlobalKeyboardShortcuts />
         </div>

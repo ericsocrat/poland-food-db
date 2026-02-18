@@ -335,8 +335,7 @@ export default function SearchPage() {
             <button
               type="button"
               onClick={() => {
-                const next: ViewMode =
-                  viewMode === "grid" ? "list" : "grid";
+                const next: ViewMode = viewMode === "grid" ? "list" : "grid";
                 setViewMode(next);
                 setViewModeStorage(next);
               }}
@@ -668,7 +667,10 @@ function ProductRow({
           <AvoidBadge productId={product.product_id} />
           <AddToListMenu productId={product.product_id} compact />
           <span className="hidden sm:inline-flex">
-            <CompareCheckbox productId={product.product_id} />
+            <CompareCheckbox
+              productId={product.product_id}
+              productName={product.product_name_display ?? product.product_name}
+            />
           </span>
         </div>
       </li>
@@ -732,7 +734,10 @@ function ProductRow({
 
         {/* Compare checkbox — hidden on small screens */}
         <span className="hidden sm:inline-flex">
-          <CompareCheckbox productId={product.product_id} />
+          <CompareCheckbox
+            productId={product.product_id}
+            productName={product.product_name_display ?? product.product_name}
+          />
         </span>
 
         {/* NOVA processing badge — hidden on xs screens */}

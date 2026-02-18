@@ -10,7 +10,10 @@ const store = () => useCompareStore.getState();
 describe("useCompareStore", () => {
   beforeEach(() => {
     // Reset to initial state before each test
-    useCompareStore.setState({ selectedIds: new Set() });
+    useCompareStore.setState({
+      selectedIds: new Set(),
+      productNames: new Map(),
+    });
   });
 
   // ─── maxItems ───────────────────────────────────────────────────────
@@ -152,5 +155,57 @@ describe("useCompareStore", () => {
 
   it("getIds returns empty array when none selected", () => {
     expect(store().getIds()).toEqual([]);
+  });
+
+  // ─── productNames ──────────────────────────────────────────────────
+
+  it("stores product name when adding with name", () => {
+    store().add(1, "Lays Classic");
+    expect(store().getName(1)).toBe("Lays Classic");
+  });
+
+  it("stores product name when toggling on with name", () => {
+    store().toggle(7, "Doritos Cool Ranch");
+    expect(store().getName(7)).toBe("Doritos Cool Ranch");
+  });
+
+  it("add without name does not overwrite existing name", () => {
+    store().add(1, "Lays Classic");
+    // add again without name (no-op since duplicate, but confirm name persists)
+    store().add(1);
+    expect(store().getName(1)).toBe("Lays Classic");
+  });
+
+  // ─── getName ────────────────────────────────────────────────────────
+
+  it("getName returns fallback for unknown product", () => {
+    expect(store().getName(999)).toBe("Product #999");
+  });
+
+  it("getName returns stored name for known product", () => {
+    store().add(42, "Pringles Original");
+    expect(store().getName(42)).toBe("Pringles Original");
+  });
+
+  // ─── name cleanup on remove ────────────────────────────────────────
+
+  it("remove cleans up product name", () => {
+    store().add(1, "Lays Classic");
+    store().remove(1);
+    expect(store().getName(1)).toBe("Product #1");
+  });
+
+  it("toggle off cleans up product name", () => {
+    store().toggle(7, "Doritos");
+    store().toggle(7);
+    expect(store().getName(7)).toBe("Product #7");
+  });
+
+  it("clear cleans up all product names", () => {
+    store().add(1, "Lays");
+    store().add(2, "Doritos");
+    store().clear();
+    expect(store().getName(1)).toBe("Product #1");
+    expect(store().getName(2)).toBe("Product #2");
   });
 });
