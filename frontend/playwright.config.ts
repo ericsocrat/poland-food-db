@@ -40,7 +40,13 @@ export default defineConfig({
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
-  reporter: process.env.CI ? [["list"], ["html", { open: "never" }]] : "html",
+  reporter: process.env.CI
+    ? [
+        ["list"],
+        ["html", { open: "never" }],
+        ["json", { outputFile: "test-results/a11y-results.json" }],
+      ]
+    : "html",
 
   /* Hard cap so the suite never hangs indefinitely */
   globalTimeout: 120_000,

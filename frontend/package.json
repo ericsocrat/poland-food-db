@@ -34,6 +34,7 @@
     "zustand": "^5.0.11"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.11.1",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/container-queries": "^0.1.1",
     "@tailwindcss/typography": "^0.5.19",
@@ -46,6 +47,7 @@
     "@vitejs/plugin-react": "^5.1.4",
     "@vitest/coverage-v8": "^4.0.18",
     "autoprefixer": "^10.4.20",
+    "axe-core": "^4.11.1",
     "eslint": "^8.57.0",
     "eslint-config-next": "15.5.12",
     "jsdom": "^28.0.0",

@@ -74,5 +74,7 @@ jobs:
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
-          path: frontend/playwright-report/
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/a11y-results.json
           retention-days: 14
