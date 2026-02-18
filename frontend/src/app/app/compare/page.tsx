@@ -19,6 +19,7 @@ import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { PrintButton } from "@/components/common/PrintButton";
+import { Scale, FolderOpen, AlertTriangle } from "lucide-react";
 import type { ExportableProduct } from "@/lib/export";
 
 export default function ComparePage() {
@@ -77,12 +78,12 @@ export default function ComparePage() {
   if (productIds.length < 2) {
     return (
       <div className="space-y-4">
-        <h1 className="text-xl font-bold text-foreground">
-          ⚖️ {t("compare.title")}
+        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground">
+          <Scale size={22} aria-hidden="true" /> {t("compare.title")}
         </h1>
         <EmptyState
           variant="no-data"
-          icon={<span>⚖️</span>}
+          icon={<Scale size={48} className="text-foreground-muted" />}
           titleKey="compare.selectPrompt"
           descriptionKey="compare.useCheckbox"
           action={{ labelKey: "compare.searchProducts", href: "/app/search" }}
@@ -99,15 +100,16 @@ export default function ComparePage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">
-          ⚖️ {t("compare.title")}
+        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground">
+          <Scale size={22} aria-hidden="true" /> {t("compare.title")}
         </h1>
         <div className="no-print flex items-center gap-2">
           <Link
             href="/app/compare/saved"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            📂 {t("compare.savedComparisons")}
+            <FolderOpen size={16} className="inline-block" aria-hidden="true" />{" "}
+            {t("compare.savedComparisons")}
           </Link>
           <button
             type="button"
@@ -156,8 +158,9 @@ export default function ComparePage() {
       {/* Partial results — some products not found */}
       {data && data.products.length < productIds.length && (
         <div className="card border-amber-200 bg-amber-50">
-          <p className="text-sm text-amber-700">
-            ⚠️ {productIds.length - data.products.length} product(s) not found.
+          <p className="flex items-center gap-1 text-sm text-amber-700">
+            <AlertTriangle size={16} aria-hidden="true" />{" "}
+            {productIds.length - data.products.length} product(s) not found.
             Only showing available products.
           </p>
         </div>

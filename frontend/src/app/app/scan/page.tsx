@@ -17,6 +17,17 @@ import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
+import {
+  AlertTriangle,
+  RefreshCw,
+  Search,
+  Clock,
+  FileText,
+  ClipboardList,
+  Camera,
+  Keyboard,
+  Flashlight,
+} from "lucide-react";
 import type {
   RecordScanResponse,
   RecordScanFoundResponse,
@@ -261,7 +272,13 @@ export default function ScanPage() {
     return (
       <div className="space-y-4">
         <div className="card border-red-200 bg-red-50 text-center">
-          <p className="mb-2 text-4xl">⚠️</p>
+          <div className="mb-2 flex justify-center">
+            <AlertTriangle
+              size={40}
+              className="text-red-500"
+              aria-hidden="true"
+            />
+          </div>
           <p className="text-lg font-semibold text-foreground">
             {t("scan.lookupFailed")}
           </p>
@@ -277,7 +294,9 @@ export default function ScanPage() {
             }}
             className="btn-secondary flex-1"
           >
-            🔄 {t("common.retry")}
+            <span className="inline-flex items-center gap-1">
+              <RefreshCw size={16} aria-hidden="true" /> {t("common.retry")}
+            </span>
           </button>
           <button onClick={() => handleReset()} className="btn-primary flex-1">
             {t("scan.scanAnother")}
@@ -294,7 +313,13 @@ export default function ScanPage() {
     return (
       <div className="space-y-4">
         <div className="card text-center">
-          <p className="mb-2 text-4xl">🔍</p>
+          <div className="mb-2 flex justify-center">
+            <Search
+              size={40}
+              className="text-foreground-muted"
+              aria-hidden="true"
+            />
+          </div>
           <p className="text-lg font-semibold text-foreground">
             {t("scan.notFound")}
           </p>
@@ -306,7 +331,10 @@ export default function ScanPage() {
         {hasPending ? (
           <div className="card border-amber-200 bg-amber-50">
             <p className="text-sm text-amber-700">
-              ⏳ {t("scan.alreadySubmitted")}
+              <span className="inline-flex items-center gap-1">
+                <Clock size={16} aria-hidden="true" />{" "}
+                {t("scan.alreadySubmitted")}
+              </span>
             </p>
           </div>
         ) : (
@@ -314,7 +342,9 @@ export default function ScanPage() {
             href={`/app/scan/submit?ean=${ean}`}
             className="btn-primary block w-full text-center"
           >
-            📝 {t("scan.helpAdd")}
+            <span className="inline-flex items-center gap-1">
+              <FileText size={16} aria-hidden="true" /> {t("scan.helpAdd")}
+            </span>
           </Link>
         )}
 
@@ -329,7 +359,9 @@ export default function ScanPage() {
             href="/app/scan/history"
             className="btn-secondary flex-1 text-center"
           >
-            📋 {t("scan.history")}
+            <span className="inline-flex items-center gap-1">
+              <ClipboardList size={16} aria-hidden="true" /> {t("scan.history")}
+            </span>
           </Link>
         </div>
       </div>
@@ -341,7 +373,9 @@ export default function ScanPage() {
     return (
       <div className="flex flex-col items-center gap-3 py-12">
         <LoadingSpinner />
-        <p className="text-sm text-foreground-secondary">{t("scan.lookingUp", { ean })}</p>
+        <p className="text-sm text-foreground-secondary">
+          {t("scan.lookingUp", { ean })}
+        </p>
       </div>
     );
   }
@@ -350,21 +384,26 @@ export default function ScanPage() {
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">
-          📷 {t("scan.title")}
+        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground">
+          <Camera size={22} aria-hidden="true" /> {t("scan.title")}
         </h1>
         <div className="flex gap-2">
           <Link
             href="/app/scan/history"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            📋 {t("scan.history")}
+            <span className="inline-flex items-center gap-1">
+              <ClipboardList size={14} aria-hidden="true" /> {t("scan.history")}
+            </span>
           </Link>
           <Link
             href="/app/scan/submissions"
             className="text-sm text-brand-600 hover:text-brand-700"
           >
-            📝 {t("scan.mySubmissions")}
+            <span className="inline-flex items-center gap-1">
+              <FileText size={16} aria-hidden="true" />{" "}
+              {t("scan.mySubmissions")}
+            </span>
           </Link>
         </div>
       </div>
@@ -393,7 +432,9 @@ export default function ScanPage() {
               : "text-foreground-secondary hover:text-foreground"
           }`}
         >
-          📷 {t("scan.camera")}
+          <span className="inline-flex items-center gap-1">
+            <Camera size={16} aria-hidden="true" /> {t("scan.camera")}
+          </span>
         </button>
         <button
           onClick={() => {
@@ -406,7 +447,9 @@ export default function ScanPage() {
               : "text-foreground-secondary hover:text-foreground"
           }`}
         >
-          ⌨️ {t("scan.manual")}
+          <span className="inline-flex items-center gap-1">
+            <Keyboard size={16} aria-hidden="true" /> {t("scan.manual")}
+          </span>
         </button>
       </div>
 
@@ -448,9 +491,23 @@ export default function ScanPage() {
               <div className="flex gap-2">
                 <button onClick={toggleTorch} className="btn-secondary flex-1">
                   {torchOn ? (
-                    <>🔦 {t("scan.off")}</>
+                    <>
+                      <Flashlight
+                        size={16}
+                        className="inline-block"
+                        aria-hidden="true"
+                      />{" "}
+                      {t("scan.off")}
+                    </>
                   ) : (
-                    <>🔦 {t("scan.torch")}</>
+                    <>
+                      <Flashlight
+                        size={16}
+                        className="inline-block"
+                        aria-hidden="true"
+                      />{" "}
+                      {t("scan.torch")}
+                    </>
                   )}
                 </button>
                 <button
@@ -460,7 +517,10 @@ export default function ScanPage() {
                   }}
                   className="btn-secondary flex-1"
                 >
-                  🔄 {t("scan.restart")}
+                  <span className="inline-flex items-center gap-1">
+                    <RefreshCw size={16} aria-hidden="true" />{" "}
+                    {t("scan.restart")}
+                  </span>
                 </button>
               </div>
             </>

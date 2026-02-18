@@ -4,6 +4,7 @@
 // URL: /app/compare/saved
 
 import Link from "next/link";
+import { Trash2, FolderOpen, Link2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useSavedComparisons, useDeleteComparison } from "@/hooks/use-compare";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -28,8 +29,8 @@ export default function SavedComparisonsPage() {
       />
 
       {/* Header */}
-      <h1 className="text-xl font-bold text-foreground">
-        {"📂 "}
+      <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5">
+        <FolderOpen size={20} aria-hidden="true" />
         {t("compare.savedComparisons")}
       </h1>
 
@@ -47,7 +48,7 @@ export default function SavedComparisonsPage() {
       {data?.comparisons.length === 0 && (
         <EmptyState
           variant="no-data"
-          icon={<span>📂</span>}
+          icon={<FolderOpen size={40} />}
           titleKey="compare.noSaved"
           descriptionKey="compare.noSavedDescription"
           action={{ labelKey: "compare.findProducts", href: "/app/search" }}
@@ -120,7 +121,7 @@ function ComparisonCard({
               className="text-sm text-foreground-muted hover:text-brand-600"
               title={t("compare.copyShareLink")}
             >
-              🔗
+              <Link2 size={16} aria-hidden="true" />
             </button>
           )}
 
@@ -134,7 +135,7 @@ function ComparisonCard({
             className="text-sm text-foreground-muted hover:text-red-500"
             title={t("compare.deleteComparison")}
           >
-            🗑️
+            <Trash2 size={16} aria-hidden="true" />
           </button>
         </div>
       </div>

@@ -17,16 +17,28 @@ import {
 } from "@/hooks/use-lists";
 import { useFavoritesStore } from "@/stores/favorites-store";
 import { useTranslation } from "@/lib/i18n";
+import {
+  Heart,
+  Ban,
+  Circle,
+  CheckCircle,
+  Plus,
+  ClipboardList,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { ProductList } from "@/lib/types";
 
-function getListIcon(listType: string, inList: boolean): string {
+function getListIcon(
+  listType: string,
+  inList: boolean,
+): { icon: LucideIcon; filled?: boolean } {
   switch (listType) {
     case "favorites":
-      return inList ? "❤️" : "🤍";
+      return { icon: Heart, filled: inList };
     case "avoid":
-      return inList ? "🚫" : "⭕";
+      return { icon: inList ? Ban : Circle };
     default:
-      return inList ? "✅" : "➕";
+      return { icon: inList ? CheckCircle : Plus };
   }
 }
 
@@ -144,7 +156,13 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
           }
         }}
       >
-        {isFavorite ? "❤️" : "🤍"}
+        <Heart
+          size={20}
+          aria-hidden="true"
+          className={
+            isFavorite ? "fill-red-500 text-red-500" : "text-foreground-muted"
+          }
+        />
       </button>
     );
   }
@@ -164,7 +182,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
           setOpen((v) => !v);
         }}
       >
-        📋
+        <ClipboardList size={20} aria-hidden="true" />
       </button>
 
       {open && (
@@ -184,7 +202,10 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
 
           {lists.map((list) => {
             const inList = isInList(list);
-            const icon = getListIcon(list.list_type, inList);
+            const { icon: ListIcon, filled } = getListIcon(
+              list.list_type,
+              inList,
+            );
 
             return (
               <button
@@ -199,7 +220,13 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
                   toggleList(list);
                 }}
               >
-                <span className="text-base">{icon}</span>
+                <span className="flex-shrink-0">
+                  <ListIcon
+                    size={16}
+                    aria-hidden="true"
+                    className={filled ? "fill-current text-red-500" : ""}
+                  />
+                </span>
                 <span className="flex-1 truncate text-foreground-secondary">
                   {list.name}
                 </span>

@@ -20,6 +20,13 @@ import {
 import { HealthWarningsCard } from "@/components/product/HealthWarningsCard";
 import type { ProductDetail, Alternative } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
+import {
+  AlertTriangle,
+  Camera,
+  ClipboardList,
+  Trophy,
+  Salad,
+} from "lucide-react";
 
 export default function ScanResultPage() {
   const params = useParams();
@@ -74,7 +81,13 @@ export default function ScanResultPage() {
           ]}
         />
         <div className="card border-red-200 bg-red-50 py-8 text-center">
-          <p className="mb-2 text-4xl">⚠️</p>
+          <div className="mb-2 flex justify-center">
+            <AlertTriangle
+              size={40}
+              className="text-red-500"
+              aria-hidden="true"
+            />
+          </div>
           <p className="text-sm text-red-600">{t("product.loadFailed")}</p>
         </div>
         <Link href="/app/scan" className="btn-primary block w-full text-center">
@@ -107,8 +120,8 @@ export default function ScanResultPage() {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-lg font-bold text-foreground">
-          📷 {t("product.scanResult")}
+        <h1 className="flex items-center gap-2 text-lg font-bold text-foreground">
+          <Camera size={20} aria-hidden="true" /> {t("product.scanResult")}
         </h1>
         <Link
           href="/app/scan"
@@ -208,8 +221,9 @@ export default function ScanResultPage() {
       {/* ── Healthier Alternatives ───────────────────────────────────────── */}
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-bold text-foreground">
-            🥗 {t("product.healthierAlternatives")}
+          <h2 className="text-base font-bold text-foreground flex items-center gap-1.5">
+            <Salad size={18} aria-hidden="true" />{" "}
+            {t("product.healthierAlternatives")}
           </h2>
           {hasAlternatives && (
             <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
@@ -233,10 +247,12 @@ export default function ScanResultPage() {
           href={`/app/product/${productId}`}
           className="btn-secondary flex-1 text-center"
         >
-          📋 {t("product.fullDetails")}
+          <ClipboardList size={16} aria-hidden="true" className="inline" />{" "}
+          {t("product.fullDetails")}
         </Link>
         <Link href="/app/scan" className="btn-primary flex-1 text-center">
-          📷 {t("product.scanAnother")}
+          <Camera size={16} aria-hidden="true" className="inline" />{" "}
+          {t("product.scanAnother")}
         </Link>
       </div>
     </div>
@@ -264,7 +280,8 @@ function AlternativesSection({
     return (
       <div className="card bg-surface-subtle py-6 text-center">
         <p className="text-sm text-foreground-secondary">
-          🏆 {t("product.bestOption")}
+          <Trophy size={16} aria-hidden="true" className="inline" />{" "}
+          {t("product.bestOption")}
         </p>
       </div>
     );

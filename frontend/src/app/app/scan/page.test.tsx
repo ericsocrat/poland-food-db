@@ -124,13 +124,13 @@ beforeEach(() => {
 describe("ScanPage", () => {
   it("renders scan barcode heading", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("📷 Scan Barcode")).toBeInTheDocument();
+    expect(screen.getByText("Scan Barcode")).toBeInTheDocument();
   });
 
   it("renders camera and manual mode toggle", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("📷 Camera")).toBeInTheDocument();
-    expect(screen.getByText("⌨️ Manual")).toBeInTheDocument();
+    expect(screen.getByText("Camera")).toBeInTheDocument();
+    expect(screen.getByText("Manual")).toBeInTheDocument();
   });
 
   it("renders batch mode checkbox", () => {
@@ -142,7 +142,7 @@ describe("ScanPage", () => {
 
   it("renders history link", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
-    const historyLinks = screen.getAllByText("📋 History");
+    const historyLinks = screen.getAllByText("History");
     expect(historyLinks.length).toBeGreaterThan(0);
     expect(historyLinks[0].closest("a")).toHaveAttribute(
       "href",
@@ -152,8 +152,8 @@ describe("ScanPage", () => {
 
   it("renders submissions link", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("📝 My Submissions")).toBeInTheDocument();
-    expect(screen.getByText("📝 My Submissions").closest("a")).toHaveAttribute(
+    expect(screen.getByText("My Submissions")).toBeInTheDocument();
+    expect(screen.getByText("My Submissions").closest("a")).toHaveAttribute(
       "href",
       "/app/scan/submissions",
     );
@@ -163,7 +163,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
 
     expect(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
@@ -175,7 +175,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
 
     const input = screen.getByPlaceholderText(
       "Enter EAN barcode (8 or 13 digits)",
@@ -189,7 +189,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
 
     const input = screen.getByPlaceholderText(
       "Enter EAN barcode (8 or 13 digits)",
@@ -205,7 +205,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     const input = screen.getByPlaceholderText(
       "Enter EAN barcode (8 or 13 digits)",
     );
@@ -223,7 +223,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     const input = screen.getByPlaceholderText(
       "Enter EAN barcode (8 or 13 digits)",
     );
@@ -234,7 +234,7 @@ describe("ScanPage", () => {
       expect(screen.getByText("Product not found")).toBeInTheDocument();
     });
     expect(screen.getByText(/5901234123457/)).toBeInTheDocument();
-    expect(screen.getByText("📝 Help us add it!")).toBeInTheDocument();
+    expect(screen.getByText("Help us add it!")).toBeInTheDocument();
   });
 
   it("shows pending submission notice when has_pending_submission", async () => {
@@ -249,7 +249,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -269,7 +269,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -288,7 +288,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -300,7 +300,7 @@ describe("ScanPage", () => {
     });
 
     mockRecordScan.mockResolvedValue(mockFoundResponse);
-    await user.click(screen.getByText("🔄 Retry"));
+    await user.click(screen.getByText("Retry"));
 
     await waitFor(() => {
       expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
@@ -313,7 +313,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -326,14 +326,14 @@ describe("ScanPage", () => {
 
     await user.click(screen.getByText("Scan another"));
 
-    expect(screen.getByText("📷 Scan Barcode")).toBeInTheDocument();
+    expect(screen.getByText("Scan Barcode")).toBeInTheDocument();
   });
 
   it("shows toast error for invalid manual EAN", async () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
 
     const input = screen.getByPlaceholderText(
       "Enter EAN barcode (8 or 13 digits)",
@@ -354,7 +354,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
 
     const input = screen.getByPlaceholderText(
       "Enter EAN barcode (8 or 13 digits)",
@@ -388,7 +388,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -396,9 +396,9 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Look up"));
 
     await waitFor(() => {
-      expect(screen.getByText("📝 Help us add it!")).toBeInTheDocument();
+      expect(screen.getByText("Help us add it!")).toBeInTheDocument();
     });
-    expect(screen.getByText("📝 Help us add it!").closest("a")).toHaveAttribute(
+    expect(screen.getByText("Help us add it!").closest("a")).toHaveAttribute(
       "href",
       "/app/scan/submit?ean=5901234123457",
     );
@@ -408,7 +408,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
 
     expect(
       screen.getByText("Enter 8 digits (EAN-8) or 13 digits (EAN-13)"),
@@ -419,7 +419,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
 
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
@@ -433,7 +433,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
 
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
@@ -457,7 +457,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -475,7 +475,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -506,7 +506,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByLabelText(/Batch mode/));
 
     // Switch to manual and scan
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -539,7 +539,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByLabelText(/Batch mode/));
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -569,7 +569,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByLabelText(/Batch mode/));
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -601,7 +601,7 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByLabelText(/Batch mode/));
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",
@@ -631,7 +631,7 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByText("⌨️ Manual"));
+    await user.click(screen.getByText("Manual"));
     await user.type(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
       "5901234123457",

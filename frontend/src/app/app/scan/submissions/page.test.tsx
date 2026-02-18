@@ -109,7 +109,7 @@ describe("MySubmissionsPage", () => {
   it("renders page title and subtitle", async () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("📝 My Submissions")).toBeInTheDocument();
+      expect(screen.getByText("My Submissions")).toBeInTheDocument();
     });
     expect(
       screen.getByText("Products you've submitted for review"),
@@ -141,7 +141,7 @@ describe("MySubmissionsPage", () => {
         screen.getByText("Failed to load submissions."),
       ).toBeInTheDocument();
     });
-    expect(screen.getByText("🔄 Retry")).toBeInTheDocument();
+    expect(screen.getByText("Retry")).toBeInTheDocument();
   });
 
   it("shows empty state", async () => {
@@ -186,10 +186,11 @@ describe("MySubmissionsPage", () => {
   it("shows status badges", async () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("⏳ Pending")).toBeInTheDocument();
+      expect(screen.getByText("Pending")).toBeInTheDocument();
     });
-    expect(screen.getByText("🔗 Merged")).toBeInTheDocument();
-    expect(screen.getByText("❌ Rejected")).toBeInTheDocument();
+    expect(screen.getByText("Merged")).toBeInTheDocument();
+    // "Rejected" appears in both the status badge and status timeline
+    expect(screen.getAllByText("Rejected").length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows View button for merged submissions", async () => {

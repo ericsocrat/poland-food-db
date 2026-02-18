@@ -3,27 +3,38 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
+import {
+  Award,
+  Factory,
+  BarChart3,
+  FlaskConical,
+  AlertTriangle,
+  Tag,
+  BadgeCheck,
+  BookOpen,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 /** Topic definition for sidebar navigation. */
 interface LearnTopic {
   readonly slug: string;
   readonly labelKey: string;
-  readonly icon: string;
+  readonly icon: LucideIcon;
 }
 
 /** All learn topics in display order. */
 const TOPICS: LearnTopic[] = [
-  { slug: "nutri-score", labelKey: "learn.nutriScore.title", icon: "🅰️" },
-  { slug: "nova-groups", labelKey: "learn.novaGroups.title", icon: "🏭" },
+  { slug: "nutri-score", labelKey: "learn.nutriScore.title", icon: Award },
+  { slug: "nova-groups", labelKey: "learn.novaGroups.title", icon: Factory },
   {
     slug: "unhealthiness-score",
     labelKey: "learn.unhealthinessScore.title",
-    icon: "📊",
+    icon: BarChart3,
   },
-  { slug: "additives", labelKey: "learn.additives.title", icon: "🧪" },
-  { slug: "allergens", labelKey: "learn.allergens.title", icon: "⚠️" },
-  { slug: "reading-labels", labelKey: "learn.readingLabels.title", icon: "🏷️" },
-  { slug: "confidence", labelKey: "learn.confidence.title", icon: "✅" },
+  { slug: "additives", labelKey: "learn.additives.title", icon: FlaskConical },
+  { slug: "allergens", labelKey: "learn.allergens.title", icon: AlertTriangle },
+  { slug: "reading-labels", labelKey: "learn.readingLabels.title", icon: Tag },
+  { slug: "confidence", labelKey: "learn.confidence.title", icon: BadgeCheck },
 ];
 
 interface LearnSidebarProps {
@@ -53,12 +64,13 @@ export function LearnSidebar({ className = "" }: LearnSidebarProps) {
               : "text-foreground-secondary hover:bg-surface-subtle hover:text-foreground"
           }`}
         >
-          📚 {t("learn.hubTitle")}
+          <BookOpen size={16} className="inline-block" aria-hidden="true" />{" "}
+          {t("learn.hubTitle")}
         </Link>
 
         <div className="my-2 border-t" />
 
-        {TOPICS.map(({ slug, labelKey, icon }) => {
+        {TOPICS.map(({ slug, labelKey, icon: TopicIcon }) => {
           const href = `/learn/${slug}`;
           const isActive = pathname === href;
           return (
@@ -72,7 +84,12 @@ export function LearnSidebar({ className = "" }: LearnSidebarProps) {
               }`}
               aria-current={isActive ? "page" : undefined}
             >
-              <span aria-hidden="true">{icon}</span> {t(labelKey)}
+              <TopicIcon
+                size={16}
+                className="inline-block"
+                aria-hidden="true"
+              />{" "}
+              {t(labelKey)}
             </Link>
           );
         })}

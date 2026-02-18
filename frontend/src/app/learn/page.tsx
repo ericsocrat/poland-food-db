@@ -5,52 +5,68 @@ import { Footer } from "@/components/layout/Footer";
 import { LearnCard } from "@/components/learn/LearnCard";
 import { Disclaimer } from "@/components/learn/Disclaimer";
 import { useTranslation } from "@/lib/i18n";
+import {
+  Award,
+  Factory,
+  BarChart3,
+  FlaskConical,
+  AlertTriangle,
+  Tag,
+  BadgeCheck,
+  BookOpen,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 /** Topics for the hub index page. */
-const TOPICS = [
+const TOPICS: readonly {
+  slug: string;
+  icon: LucideIcon;
+  titleKey: string;
+  descKey: string;
+}[] = [
   {
     slug: "nutri-score",
-    icon: "🅰️",
+    icon: Award,
     titleKey: "learn.nutriScore.title",
     descKey: "learn.nutriScore.description",
   },
   {
     slug: "nova-groups",
-    icon: "🏭",
+    icon: Factory,
     titleKey: "learn.novaGroups.title",
     descKey: "learn.novaGroups.description",
   },
   {
     slug: "unhealthiness-score",
-    icon: "📊",
+    icon: BarChart3,
     titleKey: "learn.unhealthinessScore.title",
     descKey: "learn.unhealthinessScore.description",
   },
   {
     slug: "additives",
-    icon: "🧪",
+    icon: FlaskConical,
     titleKey: "learn.additives.title",
     descKey: "learn.additives.description",
   },
   {
     slug: "allergens",
-    icon: "⚠️",
+    icon: AlertTriangle,
     titleKey: "learn.allergens.title",
     descKey: "learn.allergens.description",
   },
   {
     slug: "reading-labels",
-    icon: "🏷️",
+    icon: Tag,
     titleKey: "learn.readingLabels.title",
     descKey: "learn.readingLabels.description",
   },
   {
     slug: "confidence",
-    icon: "✅",
+    icon: BadgeCheck,
     titleKey: "learn.confidence.title",
     descKey: "learn.confidence.description",
   },
-] as const;
+];
 
 export default function LearnHubPage() {
   const { t } = useTranslation();
@@ -63,8 +79,8 @@ export default function LearnHubPage() {
         <div className="mx-auto max-w-5xl">
           {/* Hero */}
           <div className="mb-10 text-center">
-            <h1 className="mb-3 text-3xl font-bold text-foreground md:text-4xl">
-              📚 {t("learn.hubTitle")}
+            <h1 className="mb-3 flex items-center justify-center gap-3 text-3xl font-bold text-foreground md:text-4xl">
+              <BookOpen size={32} aria-hidden="true" /> {t("learn.hubTitle")}
             </h1>
             <p className="mx-auto max-w-2xl text-lg text-foreground-secondary">
               {t("learn.hubSubtitle")}

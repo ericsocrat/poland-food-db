@@ -365,7 +365,7 @@ describe("SearchPage", () => {
 
   it("renders saved searches link", () => {
     render(<SearchPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("📋 Saved")).toBeInTheDocument();
+    expect(screen.getByText("Saved")).toBeInTheDocument();
   });
 
   it("renders filter panel component", () => {

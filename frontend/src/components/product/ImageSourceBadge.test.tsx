@@ -13,8 +13,8 @@ describe("ImageSourceBadge", () => {
     expect(screen.getByText(/Manual/)).toBeTruthy();
   });
 
-  it("includes camera emoji", () => {
-    render(<ImageSourceBadge source="off_api" />);
-    expect(screen.getByText(/📷/)).toBeTruthy();
+  it("includes camera icon", () => {
+    const { container } = render(<ImageSourceBadge source="off_api" />);
+    expect(container.querySelector("svg")).toBeTruthy();
   });
 });

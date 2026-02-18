@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
 import { useTheme } from "@/hooks/use-theme";
+import { Sun, Moon } from "lucide-react";
 
 export function Header() {
   const { t } = useTranslation();
@@ -33,7 +34,11 @@ export function Header() {
             }
             title={resolved === "dark" ? t("theme.light") : t("theme.dark")}
           >
-            {resolved === "dark" ? "☀️" : "🌙"}
+            {resolved === "dark" ? (
+              <Sun size={20} aria-hidden="true" />
+            ) : (
+              <Moon size={20} aria-hidden="true" />
+            )}
           </button>
           <Link href="/auth/login" className="btn-primary text-sm">
             {t("auth.signIn")}

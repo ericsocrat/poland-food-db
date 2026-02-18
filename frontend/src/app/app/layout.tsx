@@ -5,6 +5,7 @@
 // RouteGuard provides a secondary client-side gate for UX + session expiry handling.
 
 import { redirect } from "next/navigation";
+import { AlertTriangle } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { translate } from "@/lib/i18n";
 import { Navigation } from "@/components/layout/Navigation";
@@ -38,7 +39,11 @@ export default async function AppLayout({
   if (error || !data) {
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
-        <p className="mb-2 text-4xl">⚠️</p>
+        <AlertTriangle
+          size={40}
+          aria-hidden="true"
+          className="mb-2 text-amber-500"
+        />
         <h1 className="mb-1 text-lg font-bold text-foreground">
           {translate("en", "layout.errorTitle")}
         </h1>

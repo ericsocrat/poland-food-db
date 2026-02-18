@@ -6,6 +6,7 @@
 
 import { useCompareStore } from "@/stores/compare-store";
 import { useTranslation } from "@/lib/i18n";
+import { Scale } from "lucide-react";
 
 interface CompareCheckboxProps {
   productId: number;
@@ -58,7 +59,7 @@ export function CompareCheckbox({ productId }: Readonly<CompareCheckboxProps>) {
           />
         </svg>
       ) : (
-        <span className="text-xs">⚖️</span>
+        <Scale size={14} aria-hidden="true" />
       )}
     </button>
   );

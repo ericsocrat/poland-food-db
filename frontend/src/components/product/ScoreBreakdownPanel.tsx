@@ -15,6 +15,7 @@ import { getScoreExplanation } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { useTranslation } from "@/lib/i18n";
 import { Skeleton } from "@/components/common/Skeleton";
+import { BarChart3, AlertTriangle } from "lucide-react";
 import type { ScoreExplanation } from "@/lib/types";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -77,8 +78,8 @@ export function ScoreBreakdownPanel({
         aria-controls="score-breakdown-content"
       >
         <div className="flex items-center gap-2">
-          <span className="text-base" aria-hidden="true">
-            📊
+          <span className="shrink-0" aria-hidden="true">
+            <BarChart3 size={18} />
           </span>
           <span className="text-sm font-semibold text-foreground">
             {t("tooltip.scoreBreakdown.title")}
@@ -185,8 +186,11 @@ function BreakdownContent({
       {explanation.warnings && explanation.warnings.length > 0 && (
         <div className="space-y-1">
           {explanation.warnings.map((w) => (
-            <p key={w.type} className="text-xs text-warning">
-              ⚠ {w.message}
+            <p
+              key={w.type}
+              className="flex items-center gap-1 text-xs text-warning"
+            >
+              <AlertTriangle size={14} aria-hidden="true" /> {w.message}
             </p>
           ))}
         </div>

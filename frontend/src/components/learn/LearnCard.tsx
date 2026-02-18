@@ -1,8 +1,11 @@
 import Link from "next/link";
+import type { LucideIcon } from "lucide-react";
+import React from "react";
+import type { ReactNode } from "react";
 
 interface LearnCardProps {
-  /** Icon emoji for the topic. */
-  readonly icon: string;
+  /** Lucide icon component or ReactNode for the topic. */
+  readonly icon: LucideIcon | ReactNode;
   /** Translated title. */
   readonly title: string;
   /** Translated short description. */
@@ -29,8 +32,13 @@ export function LearnCard({
       href={href}
       className={`group block rounded-xl border bg-surface p-5 shadow-sm transition-interactive hover-lift ${className}`}
     >
-      <div className="mb-3 text-3xl" aria-hidden="true">
-        {icon}
+      <div className="mb-3 flex items-center" aria-hidden="true">
+        {typeof icon === "function" ||
+        (typeof icon === "object" &&
+          icon !== null &&
+          "render" in (icon as unknown as Record<string, unknown>))
+          ? React.createElement(icon as LucideIcon, { size: 32 })
+          : icon}
       </div>
       <h2 className="mb-1.5 text-lg font-semibold text-foreground group-hover:text-brand-700 dark:group-hover:text-brand-400 transition-colors">
         {title}

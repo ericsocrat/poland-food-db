@@ -16,6 +16,14 @@ import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 import { CategoriesBrowse } from "@/components/dashboard/CategoriesBrowse";
 import { NutritionTip } from "@/components/dashboard/NutritionTip";
+import {
+  Camera,
+  Eye,
+  ClipboardList,
+  Heart,
+  Sparkles,
+  Home,
+} from "lucide-react";
 import type {
   DashboardData,
   DashboardFavoritePreview,
@@ -55,13 +63,17 @@ function NutriBadge({ grade }: { grade: string | null }) {
 function StatsBar({ stats }: { stats: DashboardStats }) {
   const { t } = useTranslation();
   const items = [
-    { label: t("dashboard.scanned"), value: stats.total_scanned, icon: "📷" },
-    { label: t("dashboard.viewed"), value: stats.total_viewed, icon: "👁️" },
-    { label: t("dashboard.lists"), value: stats.lists_count, icon: "📋" },
+    { label: t("dashboard.scanned"), value: stats.total_scanned, icon: Camera },
+    { label: t("dashboard.viewed"), value: stats.total_viewed, icon: Eye },
+    {
+      label: t("dashboard.lists"),
+      value: stats.lists_count,
+      icon: ClipboardList,
+    },
     {
       label: t("dashboard.favorites"),
       value: stats.favorites_count,
-      icon: "❤️",
+      icon: Heart,
     },
   ];
 
@@ -72,7 +84,9 @@ function StatsBar({ stats }: { stats: DashboardStats }) {
           key={s.label}
           className="card flex flex-col items-center gap-1 py-3"
         >
-          <span className="text-2xl">{s.icon}</span>
+          <span className="flex items-center justify-center">
+            <s.icon size={28} aria-hidden="true" />
+          </span>
           <span className="text-xl font-bold text-foreground">{s.value}</span>
           <span className="text-xs text-foreground-secondary">{s.label}</span>
         </div>
@@ -126,8 +140,8 @@ function RecentlyViewedSection({
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground">
-          👁️ {t("dashboard.recentlyViewed")}
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+          <Eye size={20} aria-hidden="true" /> {t("dashboard.recentlyViewed")}
         </h2>
       </div>
       <div className="space-y-2">
@@ -154,8 +168,8 @@ function FavoritesSection({
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground">
-          ❤️ {t("dashboard.favorites")}
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+          <Heart size={20} aria-hidden="true" /> {t("dashboard.favorites")}
         </h2>
         <Link
           href="/app/lists"
@@ -186,8 +200,8 @@ function NewProductsSection({
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground">
-          ✨{" "}
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+          <Sparkles size={20} aria-hidden="true" />{" "}
           {category
             ? t("dashboard.newInCategory", { category })
             : t("dashboard.newProducts")}
@@ -212,7 +226,7 @@ function EmptyDashboard() {
   return (
     <EmptyState
       variant="no-data"
-      icon={<span>🏠</span>}
+      icon={<Home size={48} className="text-foreground-muted" />}
       titleKey="dashboard.welcome"
       descriptionKey="dashboard.welcomeDescription"
       action={{ labelKey: "dashboard.scanProduct", href: "/app/scan" }}

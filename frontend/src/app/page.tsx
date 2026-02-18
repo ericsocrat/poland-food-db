@@ -3,6 +3,8 @@
 "use client";
 
 import Link from "next/link";
+import { Search, Camera, BarChart3 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useTranslation } from "@/lib/i18n";
@@ -35,17 +37,17 @@ export default function HomePage() {
         {/* Feature highlights */}
         <div className="mt-16 grid max-w-lg gap-6 sm:grid-cols-3">
           <Feature
-            icon="🔍"
+            icon={Search}
             title={t("landing.featureSearch")}
             desc={t("landing.featureSearchDesc")}
           />
           <Feature
-            icon="📷"
+            icon={Camera}
             title={t("landing.featureScan")}
             desc={t("landing.featureScanDesc")}
           />
           <Feature
-            icon="📊"
+            icon={BarChart3}
             title={t("landing.featureCompare")}
             desc={t("landing.featureCompareDesc")}
           />
@@ -58,17 +60,17 @@ export default function HomePage() {
 }
 
 function Feature({
-  icon,
+  icon: Icon,
   title,
   desc,
 }: Readonly<{
-  icon: string;
+  icon: LucideIcon;
   title: string;
   desc: string;
 }>) {
   return (
     <div className="text-center">
-      <span className="text-3xl">{icon}</span>
+      <Icon size={32} aria-hidden="true" className="mx-auto text-brand-600" />
       <h3 className="mt-2 font-semibold text-foreground">{title}</h3>
       <p className="mt-1 text-sm text-foreground-secondary">{desc}</p>
     </div>

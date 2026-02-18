@@ -30,8 +30,10 @@ describe("AllergenBadge", () => {
   });
 
   it("shows correct icon for present", () => {
-    render(<AllergenBadge status="present" allergenName="Eggs" />);
-    expect(screen.getByText("⚠️")).toBeTruthy();
+    const { container } = render(
+      <AllergenBadge status="present" allergenName="Eggs" />,
+    );
+    expect(container.querySelector("svg")).toBeTruthy();
   });
 
   it("shows correct icon for traces", () => {

@@ -3,6 +3,7 @@
 // ─── Health profile management section for Settings page ────────────────────
 
 import { useState } from "react";
+import { Pause, Play, Pencil, Trash2 } from "lucide-react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
@@ -382,7 +383,9 @@ export function HealthProfileSection() {
 
       {/* Empty state */}
       {profiles.length === 0 && !editingProfile && (
-        <p className="text-sm text-foreground-muted">{t("healthProfile.emptyState")}</p>
+        <p className="text-sm text-foreground-muted">
+          {t("healthProfile.emptyState")}
+        </p>
       )}
 
       {/* Profile list */}
@@ -392,9 +395,7 @@ export function HealthProfileSection() {
             <div
               key={profile.profile_id}
               className={`rounded-lg border p-3 ${
-                profile.is_active
-                  ? "border-brand-300 bg-brand-50"
-                  : "border"
+                profile.is_active ? "border-brand-300 bg-brand-50" : "border"
               }`}
             >
               <div className="flex items-start justify-between">
@@ -431,19 +432,25 @@ export function HealthProfileSection() {
                         : t("healthProfile.setActive")
                     }
                   >
-                    {profile.is_active ? "⏸" : "▶"}
+                    {profile.is_active ? (
+                      <Pause size={16} aria-hidden="true" />
+                    ) : (
+                      <Play size={16} aria-hidden="true" />
+                    )}
                   </button>
                   <button
                     onClick={() => setEditingProfile(profile)}
                     className="touch-target rounded px-2 py-2 text-sm text-foreground-secondary hover:bg-surface-muted"
+                    aria-label={t("common.edit")}
                   >
-                    ✏️
+                    <Pencil size={16} aria-hidden="true" />
                   </button>
                   <button
                     onClick={() => handleDelete(profile.profile_id)}
                     className="touch-target rounded px-2 py-2 text-sm text-error hover:bg-red-50"
+                    aria-label={t("common.delete")}
                   >
-                    🗑️
+                    <Trash2 size={16} aria-hidden="true" />
                   </button>
                 </div>
               </div>

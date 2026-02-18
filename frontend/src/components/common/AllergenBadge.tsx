@@ -11,6 +11,7 @@
  */
 
 import React from "react";
+import { AlertTriangle } from "lucide-react";
 import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -34,7 +35,7 @@ export interface AllergenBadgeProps {
 // ─── Status styling ─────────────────────────────────────────────────────────
 
 interface StatusConfig {
-  icon: string;
+  icon: React.ReactNode;
   bg: string;
   text: string;
   srLabel: string;
@@ -42,7 +43,7 @@ interface StatusConfig {
 
 const STATUS_CONFIGS: Record<AllergenStatus, StatusConfig> = {
   present: {
-    icon: "⚠️",
+    icon: <AlertTriangle size={12} />,
     bg: "bg-allergen-present/10",
     text: "text-allergen-present",
     srLabel: "Contains",

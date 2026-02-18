@@ -68,7 +68,9 @@ beforeEach(() => {
 describe("SubmitProductPage", () => {
   it("renders page title", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("📝 Submit Product")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /Submit Product/ }),
+    ).toBeInTheDocument();
     expect(
       screen.getByText("Help us add a missing product"),
     ).toBeInTheDocument();
@@ -110,7 +112,7 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "1234");
     await user.type(screen.getByLabelText("Product Name *"), "Test Product");
-    expect(screen.getByText("Submit Product")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Submit Product" })).toBeDisabled();
   });
 
   it("disables submit when product name too short", async () => {
@@ -118,7 +120,7 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "A");
-    expect(screen.getByText("Submit Product")).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Submit Product" })).toBeDisabled();
   });
 
   it("enables submit when both EAN and name are valid", async () => {
@@ -126,7 +128,7 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "Test Product");
-    expect(screen.getByText("Submit Product")).not.toBeDisabled();
+    expect(screen.getByRole("button", { name: "Submit Product" })).not.toBeDisabled();
   });
 
   it("submits form and shows success toast", async () => {
@@ -136,7 +138,7 @@ describe("SubmitProductPage", () => {
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "Test Product");
     await user.type(screen.getByLabelText("Brand"), "TestBrand");
-    await user.click(screen.getByText("Submit Product"));
+    await user.click(screen.getByRole("button", { name: "Submit Product" }));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(
@@ -159,7 +161,7 @@ describe("SubmitProductPage", () => {
 
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "Test Product");
-    await user.click(screen.getByText("Submit Product"));
+    await user.click(screen.getByRole("button", { name: "Submit Product" }));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(

@@ -59,7 +59,7 @@ describe("Alert", () => {
   });
 
   it("renders default variant icon", () => {
-    render(<Alert variant="success">Done</Alert>);
-    expect(screen.getByText("✅")).toBeTruthy();
+    const { container } = render(<Alert variant="success">Done</Alert>);
+    expect(container.querySelector("svg")).toBeTruthy();
   });
 });

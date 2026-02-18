@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { WifiOff } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
 export function OfflineIndicator() {
@@ -30,7 +31,8 @@ export function OfflineIndicator() {
       aria-live="polite"
       className="fixed left-0 right-0 top-0 z-50 bg-amber-500 px-4 py-1.5 text-center text-xs font-medium text-white"
     >
-      📡 {t("pwa.offline")}
+      <WifiOff size={14} aria-hidden="true" className="inline" />{" "}
+      {t("pwa.offline")}
     </div>
   );
 }

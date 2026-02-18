@@ -104,12 +104,13 @@ describe("SearchAutocomplete", () => {
     expect(container.innerHTML).toBe("");
   });
 
-  it("returns null when query is empty", () => {
+  it("shows popular searches when query is empty", () => {
     const { container } = render(
       <SearchAutocomplete {...defaultProps} query="" />,
       { wrapper: createWrapper() },
     );
-    expect(container.innerHTML).toBe("");
+    // Popular searches are shown when query is empty and there are no recent searches
+    expect(container.querySelector("[aria-label='Popular Searches']")).toBeTruthy();
   });
 
   it("shows suggestions after debounce", async () => {

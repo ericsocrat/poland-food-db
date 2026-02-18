@@ -6,6 +6,8 @@
 
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { ClipboardList, Search, AlertTriangle, WifiOff } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -41,11 +43,11 @@ export interface EmptyStateProps {
 
 // ─── Default icons per variant ──────────────────────────────────────────────
 
-const DEFAULT_ICONS: Record<EmptyStateProps["variant"], string> = {
-  "no-data": "📋",
-  "no-results": "🔍",
-  error: "⚠️",
-  offline: "📡",
+const DEFAULT_ICONS: Record<EmptyStateProps["variant"], LucideIcon> = {
+  "no-data": ClipboardList,
+  "no-results": Search,
+  error: AlertTriangle,
+  offline: WifiOff,
 };
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -73,10 +75,13 @@ export function EmptyState({
       data-testid="empty-state"
       data-variant={variant}
     >
-      {/* Icon — decorative, hidden from screen readers */}
-      <p className="mb-3 text-4xl" aria-hidden="true">
-        {icon ?? DEFAULT_ICONS[variant]}
-      </p>
+      <div className="mb-3" aria-hidden="true">
+        {icon ??
+          (() => {
+            const DefaultIcon = DEFAULT_ICONS[variant];
+            return <DefaultIcon size={48} className="text-foreground-muted" />;
+          })()}
+      </div>
 
       {/* Title */}
       <h3 className="mb-1 text-sm font-semibold text-foreground-secondary">

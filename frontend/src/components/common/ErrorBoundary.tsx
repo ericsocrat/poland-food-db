@@ -18,6 +18,7 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { reportBoundaryError, type ErrorContext } from "@/lib/error-reporter";
 import { translate } from "@/lib/i18n";
+import { AlertTriangle } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -55,9 +56,9 @@ function PageFallback({
       role="alert"
       data-testid="error-boundary-page"
     >
-      <p className="mb-3 text-4xl" aria-hidden="true">
-        ⚠️
-      </p>
+      <div className="mb-3" aria-hidden="true">
+        <AlertTriangle size={40} style={{ color: "var(--color-warning)" }} />
+      </div>
       <h2
         className="mb-2 text-xl font-bold"
         style={{ color: "var(--color-text-primary)" }}
@@ -109,9 +110,9 @@ function SectionFallback({ onReset }: { error: Error; onReset: () => void }) {
       data-testid="error-boundary-section"
       style={{ borderColor: "var(--color-border-strong)" }}
     >
-      <p className="mb-2 text-2xl" aria-hidden="true">
-        ⚠️
-      </p>
+      <div className="mb-2" aria-hidden="true">
+        <AlertTriangle size={28} style={{ color: "var(--color-warning)" }} />
+      </div>
       <p
         className="mb-3 text-sm font-medium"
         style={{ color: "var(--color-text-primary)" }}

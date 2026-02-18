@@ -5,6 +5,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { useRouter } from "next/navigation";
 
@@ -30,9 +31,11 @@ export default function AppError({
       role="alert"
       data-testid="error-boundary-page"
     >
-      <p className="mb-3 text-4xl" aria-hidden="true">
-        ⚠️
-      </p>
+      <AlertTriangle
+        size={40}
+        aria-hidden="true"
+        className="mb-3 text-amber-500"
+      />
       <h2
         className="mb-2 text-xl font-bold"
         style={{ color: "var(--color-text-primary)" }}

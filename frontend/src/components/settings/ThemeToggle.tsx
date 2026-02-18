@@ -6,11 +6,17 @@
 
 import { useTheme, type ThemeMode } from "@/hooks/use-theme";
 import { useTranslation } from "@/lib/i18n";
+import { Sun, Moon, Monitor } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
-const THEME_OPTIONS: { value: ThemeMode; icon: string; labelKey: string }[] = [
-  { value: "light", icon: "☀️", labelKey: "theme.light" },
-  { value: "dark", icon: "🌙", labelKey: "theme.dark" },
-  { value: "system", icon: "💻", labelKey: "theme.system" },
+const THEME_OPTIONS: {
+  value: ThemeMode;
+  icon: LucideIcon;
+  labelKey: string;
+}[] = [
+  { value: "light", icon: Sun, labelKey: "theme.light" },
+  { value: "dark", icon: Moon, labelKey: "theme.dark" },
+  { value: "system", icon: Monitor, labelKey: "theme.system" },
 ];
 
 export function ThemeToggle() {
@@ -35,7 +41,7 @@ export function ThemeToggle() {
               : "text-foreground-secondary hover:text-foreground"
           }`}
         >
-          <span aria-hidden="true">{option.icon}</span>
+          <option.icon size={16} aria-hidden="true" />
           {t(option.labelKey)}
         </button>
       ))}

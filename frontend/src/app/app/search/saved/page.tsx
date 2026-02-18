@@ -14,6 +14,7 @@ import { ALLERGEN_TAGS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useTranslation } from "@/lib/i18n";
+import { ClipboardList, Save, Trash2 } from "lucide-react";
 import type { SavedSearch, SearchFilters } from "@/lib/types";
 
 export default function SavedSearchesPage() {
@@ -72,8 +73,8 @@ export default function SavedSearchesPage() {
 
       {/* Header */}
       <div>
-        <h1 className="text-lg font-semibold text-foreground">
-          {"📋 "}
+        <h1 className="text-lg font-semibold text-foreground flex items-center gap-1.5">
+          <ClipboardList size={18} aria-hidden="true" />
           {t("savedSearches.title")}
         </h1>
         <p className="text-sm text-foreground-secondary">
@@ -101,7 +102,7 @@ export default function SavedSearchesPage() {
       {data?.searches.length === 0 && (
         <EmptyState
           variant="no-data"
-          icon={<span>💾</span>}
+          icon={<Save size={40} />}
           titleKey="savedSearches.emptyTitle"
           descriptionKey="savedSearches.emptyMessage"
           action={{ labelKey: "savedSearches.goToSearch", href: "/app/search" }}
@@ -150,9 +151,10 @@ export default function SavedSearchesPage() {
                     type="button"
                     onClick={() => setConfirmDeleteId(search.id)}
                     disabled={deleteMutation.isPending}
+                    aria-label={t("common.delete")}
                     className="rounded-lg px-2 py-1.5 text-xs text-foreground-muted transition-colors hover:bg-red-50 hover:text-red-500"
                   >
-                    🗑️
+                    <Trash2 size={14} aria-hidden="true" />
                   </button>
                 </div>
               </div>

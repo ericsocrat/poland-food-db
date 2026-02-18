@@ -1,12 +1,13 @@
 "use client";
 
+import { WifiOff } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
 export default function OfflinePage() {
   const { t } = useTranslation();
   return (
     <div className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center">
-      <p className="text-5xl">📡</p>
+      <WifiOff size={48} aria-hidden="true" className="text-foreground-muted" />
       <h1 className="mt-4 text-xl font-bold text-foreground">
         {t("offline.title")}
       </h1>

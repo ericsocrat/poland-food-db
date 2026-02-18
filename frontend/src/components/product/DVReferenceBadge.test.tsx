@@ -27,15 +27,17 @@ describe("DVReferenceBadge", () => {
     expect(container).toBeEmptyDOMElement();
   });
 
-  it("shows person emoji for personalized", () => {
-    render(
+  it("shows person icon for personalized", () => {
+    const { container } = render(
       <DVReferenceBadge referenceType="personalized" regulation="eu_ri" />,
     );
-    expect(screen.getByText(/👤/)).toBeInTheDocument();
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
-  it("shows chart emoji for standard", () => {
-    render(<DVReferenceBadge referenceType="standard" regulation="eu_ri" />);
-    expect(screen.getByText(/📊/)).toBeInTheDocument();
+  it("shows chart icon for standard", () => {
+    const { container } = render(
+      <DVReferenceBadge referenceType="standard" regulation="eu_ri" />,
+    );
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 });

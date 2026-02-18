@@ -77,7 +77,9 @@ beforeEach(() => {
 describe("SavedComparisonsPage", () => {
   it("renders page title", () => {
     render(<SavedComparisonsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("📂 Saved Comparisons")).toBeInTheDocument();
+    expect(
+      screen.getByRole("heading", { name: /Saved Comparisons/ }),
+    ).toBeInTheDocument();
   });
 
   it("shows loading spinner", () => {

@@ -7,6 +7,7 @@ import { LearnSidebar } from "@/components/learn/LearnSidebar";
 import { Disclaimer } from "@/components/learn/Disclaimer";
 import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
+import { Award } from "lucide-react";
 
 // ─── Nutri-Score topic page ─────────────────────────────────────────────────
 
@@ -30,7 +31,10 @@ export default function NutriScorePage() {
           </Link>
 
           <article className="prose max-w-none">
-            <h1>🅰️ {t("learn.nutriScore.title")}</h1>
+            <h1 className="flex items-center gap-2">
+              <Award size={28} aria-hidden="true" className="inline-block" />{" "}
+              {t("learn.nutriScore.title")}
+            </h1>
 
             {/* TL;DR */}
             <div className="rounded-lg bg-brand-50 p-4 not-prose dark:bg-brand-950/30">

@@ -5,6 +5,7 @@
 // and has share toggle for custom/favorites lists.
 
 import { useState, useMemo } from "react";
+import { Heart, Ban, Pencil, Link2 } from "lucide-react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -165,8 +166,24 @@ export default function ListDetailPage() {
             <div className="flex items-start justify-between">
               <div>
                 <h1 className="text-lg font-bold text-foreground">
-                  {list.list_type === "favorites" && "❤️ "}
-                  {list.list_type === "avoid" && "🚫 "}
+                  {list.list_type === "favorites" && (
+                    <>
+                      <Heart
+                        size={18}
+                        aria-hidden="true"
+                        className="inline text-red-500"
+                      />{" "}
+                    </>
+                  )}
+                  {list.list_type === "avoid" && (
+                    <>
+                      <Ban
+                        size={18}
+                        aria-hidden="true"
+                        className="inline text-red-600"
+                      />{" "}
+                    </>
+                  )}
                   {list.name}
                 </h1>
                 {list.description && (
@@ -190,7 +207,7 @@ export default function ListDetailPage() {
                     setEditing(true);
                   }}
                 >
-                  ✏️
+                  <Pencil size={14} aria-hidden="true" />
                 </button>
                 {/* Share button (not for avoid lists) */}
                 {list.list_type !== "avoid" && (
@@ -202,7 +219,7 @@ export default function ListDetailPage() {
                     }`}
                     onClick={() => setShowSharePanel((v) => !v)}
                   >
-                    🔗
+                    <Link2 size={14} aria-hidden="true" />
                   </button>
                 )}
                 {/* Export button */}

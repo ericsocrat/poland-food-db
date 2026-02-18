@@ -9,6 +9,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { useTranslation } from "@/lib/i18n";
+import { Scale, Trophy } from "lucide-react";
 import type { CompareProduct, CellValue } from "@/lib/types";
 import {
   fmtUnit,
@@ -196,7 +197,12 @@ function DesktopGrid({
                   <div className="space-y-1">
                     {i === winnerIdx && (
                       <span className="inline-block rounded-full bg-green-100 px-2 py-0.5 text-xs font-bold text-green-700">
-                        🏆 {t("compare.healthiest")}
+                        <Trophy
+                          size={12}
+                          aria-hidden="true"
+                          className="inline"
+                        />{" "}
+                        {t("compare.healthiest")}
                       </span>
                     )}
                     <div
@@ -207,7 +213,9 @@ function DesktopGrid({
                     <p className="text-sm font-semibold text-foreground line-clamp-2">
                       {p.product_name}
                     </p>
-                    <p className="text-xs text-foreground-secondary">{p.brand}</p>
+                    <p className="text-xs text-foreground-secondary">
+                      {p.brand}
+                    </p>
                     <div className="flex items-center justify-center gap-1">
                       <span
                         className={`rounded-full px-1.5 py-0.5 text-xs font-bold ${nutriClass}`}
@@ -408,7 +416,15 @@ function MobileSwipeView({
                   : "bg-surface-muted text-foreground-secondary"
               }`}
             >
-              {i === winnerIdx && "🏆 "}
+              {i === winnerIdx && (
+                <>
+                  <Trophy
+                    size={12}
+                    aria-hidden="true"
+                    className="inline"
+                  />{" "}
+                </>
+              )}
               {p.product_name.length > 12
                 ? p.product_name.slice(0, 12) + "…"
                 : p.product_name}
@@ -444,8 +460,12 @@ function MobileSwipeView({
               {product.unhealthiness_score}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="font-bold text-foreground">{product.product_name}</p>
-              <p className="text-sm text-foreground-secondary">{product.brand}</p>
+              <p className="font-bold text-foreground">
+                {product.product_name}
+              </p>
+              <p className="text-sm text-foreground-secondary">
+                {product.brand}
+              </p>
               <div className="mt-1 flex items-center gap-1.5">
                 <span
                   className={`rounded-full px-1.5 py-0.5 text-xs font-bold ${nutriClass}`}
@@ -457,7 +477,8 @@ function MobileSwipeView({
                 </span>
                 {activeIdx === winnerIdx && (
                   <span className="rounded-full bg-green-100 px-1.5 py-0.5 text-xs font-bold text-green-700">
-                    🏆 {t("compare.best")}
+                    <Trophy size={12} aria-hidden="true" className="inline" />{" "}
+                    {t("compare.best")}
                   </span>
                 )}
                 {showAvoidBadge && (
@@ -585,8 +606,16 @@ export function ComparisonGrid({
   if (products.length < 2) {
     return (
       <div className="py-12 text-center">
-        <p className="mb-2 text-4xl">⚖️</p>
-        <p className="text-sm text-foreground-secondary">{t("compare.selectAtLeast2")}</p>
+        <div className="mb-2 flex justify-center">
+          <Scale
+            size={40}
+            className="text-foreground-muted"
+            aria-hidden="true"
+          />
+        </div>
+        <p className="text-sm text-foreground-secondary">
+          {t("compare.selectAtLeast2")}
+        </p>
       </div>
     );
   }

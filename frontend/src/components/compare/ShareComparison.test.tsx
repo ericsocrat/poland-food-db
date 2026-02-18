@@ -46,13 +46,13 @@ describe("ShareComparison", () => {
 
   it("renders copy URL and save buttons when no existing token", () => {
     renderComponent();
-    expect(screen.getByText("📋 Copy URL")).toBeTruthy();
-    expect(screen.getByText("💾 Save Comparison")).toBeTruthy();
+    expect(screen.getByText("Copy URL")).toBeTruthy();
+    expect(screen.getByText("Save Comparison")).toBeTruthy();
   });
 
   it("copies URL to clipboard on copy URL click", async () => {
     renderComponent();
-    fireEvent.click(screen.getByText("📋 Copy URL"));
+    fireEvent.click(screen.getByText("Copy URL"));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       expect.stringContaining("ids=1,2,3"),
     );
@@ -60,7 +60,7 @@ describe("ShareComparison", () => {
 
   it("calls save mutation on save click", () => {
     renderComponent();
-    fireEvent.click(screen.getByText("💾 Save Comparison"));
+    fireEvent.click(screen.getByText("Save Comparison"));
     expect(mockMutate).toHaveBeenCalledWith(
       { productIds: [1, 2, 3] },
       expect.objectContaining({ onSuccess: expect.any(Function) }),
@@ -69,14 +69,14 @@ describe("ShareComparison", () => {
 
   it("renders share link button when existing token provided", () => {
     renderComponent({ existingShareToken: "tok-abc" });
-    expect(screen.getByText("🔗 Copy Share Link")).toBeTruthy();
+    expect(screen.getByText("Copy Share Link")).toBeTruthy();
     // Save button should not appear when we already have a token
-    expect(screen.queryByText("💾 Save Comparison")).toBeNull();
+    expect(screen.queryByText("Save Comparison")).toBeNull();
   });
 
   it("copies share link on share link button click", async () => {
     renderComponent({ existingShareToken: "tok-abc" });
-    fireEvent.click(screen.getByText("🔗 Copy Share Link"));
+    fireEvent.click(screen.getByText("Copy Share Link"));
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith(
       expect.stringContaining("/compare/shared/tok-abc"),
     );
@@ -84,7 +84,7 @@ describe("ShareComparison", () => {
 
   it("shows copied feedback after copy", async () => {
     renderComponent();
-    fireEvent.click(screen.getByText("📋 Copy URL"));
+    fireEvent.click(screen.getByText("Copy URL"));
     await waitFor(() => {
       expect(screen.getByText("✓ Copied!")).toBeTruthy();
     });

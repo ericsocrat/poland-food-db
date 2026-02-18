@@ -7,6 +7,7 @@ import { LearnSidebar } from "@/components/learn/LearnSidebar";
 import { Disclaimer } from "@/components/learn/Disclaimer";
 import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
+import { BarChart3 } from "lucide-react";
 
 // ─── Unhealthiness Score topic page ─────────────────────────────────────────
 
@@ -50,7 +51,14 @@ export default function UnhealthinessScorePage() {
           </Link>
 
           <article className="prose max-w-none">
-            <h1>📊 {t("learn.unhealthinessScore.title")}</h1>
+            <h1 className="flex items-center gap-2">
+              <BarChart3
+                size={28}
+                aria-hidden="true"
+                className="inline-block"
+              />{" "}
+              {t("learn.unhealthinessScore.title")}
+            </h1>
 
             <div className="rounded-lg bg-brand-50 p-4 not-prose dark:bg-brand-950/30">
               <p className="text-sm font-medium text-brand-800 dark:text-brand-300">

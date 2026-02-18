@@ -352,7 +352,7 @@ describe("HealthProfileSection", () => {
     });
 
     // Click edit button (✏️)
-    await userEvent.click(screen.getByText("✏️"));
+    await userEvent.click(screen.getByLabelText("Edit"));
 
     const nameInput = screen.getByLabelText("Profile name");
     expect(nameInput).toHaveValue("Existing Plan");
@@ -388,7 +388,7 @@ describe("HealthProfileSection", () => {
       expect(screen.getByText("Plan A")).toBeInTheDocument();
     });
 
-    await userEvent.click(screen.getByText("✏️"));
+    await userEvent.click(screen.getByLabelText("Edit"));
 
     // The button should say "Update" for editing
     expect(screen.getByRole("button", { name: "Update" })).toBeInTheDocument();
@@ -432,7 +432,7 @@ describe("HealthProfileSection", () => {
       expect(screen.getByText("Has Thresholds")).toBeInTheDocument();
     });
 
-    await userEvent.click(screen.getByText("✏️"));
+    await userEvent.click(screen.getByLabelText("Edit"));
 
     // Clear the sugar threshold
     const sugarInput = screen.getByLabelText("Max sugar (g)");
@@ -481,7 +481,7 @@ describe("HealthProfileSection", () => {
       expect(screen.getByText("To Delete")).toBeInTheDocument();
     });
 
-    await userEvent.click(screen.getByText("🗑️"));
+    await userEvent.click(screen.getByLabelText("Delete"));
 
     await waitFor(() => {
       expect(mockDeleteHealthProfile).toHaveBeenCalledWith(
@@ -511,7 +511,7 @@ describe("HealthProfileSection", () => {
       expect(screen.getByText("Fail")).toBeInTheDocument();
     });
 
-    await userEvent.click(screen.getByText("🗑️"));
+    await userEvent.click(screen.getByLabelText("Delete"));
 
     await waitFor(() => {
       expect(showToast).toHaveBeenCalledWith(
@@ -550,7 +550,7 @@ describe("HealthProfileSection", () => {
     });
 
     // Click the play button (▶) to activate
-    await userEvent.click(screen.getByText("▶"));
+    await userEvent.click(screen.getByTitle("Set as active profile"));
 
     await waitFor(() => {
       expect(mockUpdateHealthProfile).toHaveBeenCalledWith(
@@ -585,7 +585,7 @@ describe("HealthProfileSection", () => {
     });
 
     // Click pause button (⏸) since it's active
-    await userEvent.click(screen.getByText("⏸"));
+    await userEvent.click(screen.getByTitle("Deactivate"));
 
     await waitFor(() => {
       expect(showToast).toHaveBeenCalledWith(

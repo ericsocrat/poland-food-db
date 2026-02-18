@@ -23,6 +23,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
+import { SlidersHorizontal, Save, ClipboardList, Search } from "lucide-react";
 import { getRecentSearches, addRecentSearch } from "@/lib/recent-searches";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
@@ -264,7 +265,12 @@ export default function SearchPage() {
               onClick={() => setShowFilters(true)}
               className="touch-target flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted lg:hidden"
             >
-              🎛️ {t("search.filters")}
+              <SlidersHorizontal
+                size={14}
+                aria-hidden="true"
+                className="inline"
+              />{" "}
+              {t("search.filters")}
               {hasActiveFilters(filters) && (
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
                   {countActiveFilters(filters)}
@@ -304,7 +310,8 @@ export default function SearchPage() {
                 onClick={() => setShowSaveDialog(true)}
                 className="touch-target ml-auto text-xs text-foreground-muted hover:text-brand-600"
               >
-                💾 {t("search.saveSearch")}
+                <Save size={14} aria-hidden="true" className="inline" />{" "}
+                {t("search.saveSearch")}
               </button>
             )}
 
@@ -313,7 +320,8 @@ export default function SearchPage() {
               href="/app/search/saved"
               className="touch-target text-xs text-foreground-muted hover:text-brand-600"
             >
-              📋 {t("search.saved")}
+              <ClipboardList size={14} aria-hidden="true" className="inline" />{" "}
+              {t("search.saved")}
             </Link>
           </div>
         </form>
@@ -345,7 +353,7 @@ export default function SearchPage() {
         {!isSearchActive && recentSearches.length === 0 && (
           <EmptyState
             variant="no-data"
-            icon={<span>🔍</span>}
+            icon={<Search size={40} />}
             titleKey="search.emptyState"
           />
         )}

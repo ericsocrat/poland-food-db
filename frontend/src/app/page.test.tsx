@@ -87,9 +87,9 @@ describe("HomePage", () => {
   });
 
   it("renders feature icons", () => {
-    render(<HomePage />);
-    expect(screen.getByText("🔍")).toBeInTheDocument();
-    expect(screen.getByText("📷")).toBeInTheDocument();
-    expect(screen.getByText("📊")).toBeInTheDocument();
+    const { container } = render(<HomePage />);
+    // Feature icons are now Lucide SVGs (Search, Camera, BarChart3)
+    const svgs = container.querySelectorAll("svg");
+    expect(svgs.length).toBeGreaterThanOrEqual(3);
   });
 });

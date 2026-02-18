@@ -5,28 +5,36 @@
 import Link from "next/link";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
+import { Icon } from "@/components/common/Icon";
+import { Home, Search, Camera, ClipboardList, Settings } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface NavItem {
   href: string;
   labelKey: string;
-  icon: string;
+  icon: LucideIcon;
   routeKey: PrimaryRouteKey;
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { href: "/app", labelKey: "nav.home", icon: "🏠", routeKey: "home" },
+  { href: "/app", labelKey: "nav.home", icon: Home, routeKey: "home" },
   {
     href: "/app/search",
     labelKey: "nav.search",
-    icon: "🔍",
+    icon: Search,
     routeKey: "search",
   },
-  { href: "/app/scan", labelKey: "nav.scan", icon: "📷", routeKey: "scan" },
-  { href: "/app/lists", labelKey: "nav.lists", icon: "📋", routeKey: "lists" },
+  { href: "/app/scan", labelKey: "nav.scan", icon: Camera, routeKey: "scan" },
+  {
+    href: "/app/lists",
+    labelKey: "nav.lists",
+    icon: ClipboardList,
+    routeKey: "lists",
+  },
   {
     href: "/app/settings",
     labelKey: "nav.settings",
-    icon: "⚙️",
+    icon: Settings,
     routeKey: "settings",
   },
 ];
@@ -63,7 +71,7 @@ export function Navigation() {
                   aria-hidden="true"
                 />
               )}
-              <span className="text-xl">{item.icon}</span>
+              <Icon icon={item.icon} size="md" />
               <span>{label}</span>
             </Link>
           );

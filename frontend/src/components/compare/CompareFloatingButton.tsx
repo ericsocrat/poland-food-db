@@ -6,6 +6,7 @@
 import { useRouter } from "next/navigation";
 import { useCompareStore } from "@/stores/compare-store";
 import { useTranslation } from "@/lib/i18n";
+import { Scale } from "lucide-react";
 
 export function CompareFloatingButton() {
   const { t } = useTranslation();
@@ -39,7 +40,9 @@ export function CompareFloatingButton() {
         onClick={handleCompare}
         className="flex items-center gap-2 rounded-full bg-brand-600 px-5 py-3 font-medium text-white shadow-lg transition-transform hover:scale-105 hover:bg-brand-700 active:scale-95"
       >
-        <span className="text-lg">⚖️</span>
+        <span className="flex items-center justify-center">
+          <Scale size={20} aria-hidden="true" />
+        </span>
         {t("compare.compareCount", { count })}
         <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/20 text-xs font-bold">
           {count}

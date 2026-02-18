@@ -37,12 +37,12 @@ describe("ConcernBadge", () => {
 
   it("shows ✅ icon for tier 0", () => {
     render(<ConcernBadge tier={0} label="No concern" />);
-    expect(screen.getByTestId("concern-badge")).toHaveTextContent("✅");
+    expect(screen.getByTestId("concern-badge").querySelector("svg")).toBeTruthy();
   });
 
   it("shows ⚠️ icon for tier 1", () => {
     render(<ConcernBadge tier={1} label="Low concern" />);
-    expect(screen.getByTestId("concern-badge")).toHaveTextContent("⚠️");
+    expect(screen.getByTestId("concern-badge").querySelector("svg")).toBeTruthy();
   });
 
   it("shows 🔴 icon for tier 3", () => {

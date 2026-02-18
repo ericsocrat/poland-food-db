@@ -65,9 +65,8 @@ describe("AddToListMenu — compact mode", () => {
     render(<AddToListMenu productId={42} compact />, {
       wrapper: createWrapper(),
     });
-    expect(
-      screen.getByRole("button", { name: "Add to Favorites" }),
-    ).toHaveTextContent("🤍");
+    const addBtn = screen.getByRole("button", { name: "Add to Favorites" });
+    expect(addBtn.querySelector("svg")).toBeTruthy(); // Heart icon (unfilled)
   });
 
   it("renders filled heart for favorite", () => {
@@ -75,9 +74,8 @@ describe("AddToListMenu — compact mode", () => {
     render(<AddToListMenu productId={42} compact />, {
       wrapper: createWrapper(),
     });
-    expect(
-      screen.getByRole("button", { name: "Remove from Favorites" }),
-    ).toHaveTextContent("❤️");
+    const removeBtn = screen.getByRole("button", { name: "Remove from Favorites" });
+    expect(removeBtn.querySelector("svg")).toBeTruthy(); // Heart icon (filled)
   });
 
   it("calls addMutate when toggling on", () => {

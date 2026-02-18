@@ -108,7 +108,7 @@ describe("AdminSubmissionsPage", () => {
     render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
       expect(
-        screen.getByText("🛡️ Admin: Submission Review"),
+        screen.getByText("Admin: Submission Review"),
       ).toBeInTheDocument();
     });
     expect(
@@ -118,10 +118,10 @@ describe("AdminSubmissionsPage", () => {
 
   it("renders all status tabs", async () => {
     render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText(/⏳.*Pending/)).toBeInTheDocument();
-    expect(screen.getByText(/✅.*Approved/)).toBeInTheDocument();
-    expect(screen.getByText(/❌.*Rejected/)).toBeInTheDocument();
-    expect(screen.getByText(/🔗.*Merged/)).toBeInTheDocument();
+    expect(screen.getByText("Pending")).toBeInTheDocument();
+    expect(screen.getByText("Approved")).toBeInTheDocument();
+    expect(screen.getByText("Rejected")).toBeInTheDocument();
+    expect(screen.getByText("Merged")).toBeInTheDocument();
     expect(screen.getByText("All")).toBeInTheDocument();
   });
 
@@ -140,7 +140,7 @@ describe("AdminSubmissionsPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Failed to load.")).toBeInTheDocument();
     });
-    expect(screen.getByText("🔄 Retry")).toBeInTheDocument();
+    expect(screen.getByText("Retry")).toBeInTheDocument();
   });
 
   it("shows empty state", async () => {
@@ -187,7 +187,7 @@ describe("AdminSubmissionsPage", () => {
   it("shows notes when present", async () => {
     render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("📝 Looks correct")).toBeInTheDocument();
+      expect(screen.getByText("Looks correct")).toBeInTheDocument();
     });
   });
 
@@ -214,8 +214,8 @@ describe("AdminSubmissionsPage", () => {
       expect(screen.getByText("Test Chips")).toBeInTheDocument();
     });
     // Only 1 pending sub → 1 approve + 1 reject button
-    expect(screen.getAllByText("✅ Approve")).toHaveLength(1);
-    expect(screen.getAllByText("❌ Reject")).toHaveLength(1);
+    expect(screen.getAllByText("Approve")).toHaveLength(1);
+    expect(screen.getAllByText("Reject")).toHaveLength(1);
   });
 
   it("calls review mutation on approve", async () => {
@@ -223,10 +223,10 @@ describe("AdminSubmissionsPage", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(screen.getByText("✅ Approve")).toBeInTheDocument();
+      expect(screen.getByText("Approve")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("✅ Approve"));
+    await user.click(screen.getByText("Approve"));
 
     await waitFor(() => {
       expect(mockCallRpc).toHaveBeenCalledWith(
@@ -266,10 +266,10 @@ describe("AdminSubmissionsPage", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(screen.getByText("❌ Reject")).toBeInTheDocument();
+      expect(screen.getByText("Reject")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("❌ Reject"));
+    await user.click(screen.getByText("Reject"));
 
     await waitFor(() => {
       expect(mockCallRpc).toHaveBeenCalledWith(
@@ -288,10 +288,10 @@ describe("AdminSubmissionsPage", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(screen.getByText("✅ Approve")).toBeInTheDocument();
+      expect(screen.getByText("Approve")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("✅ Approve"));
+    await user.click(screen.getByText("Approve"));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(

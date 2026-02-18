@@ -47,32 +47,39 @@ describe("EmptyState", () => {
     const { container } = render(
       <EmptyState variant="no-data" titleKey="common.noResults" />,
     );
-    // Only the icon and title — no <p> description element
-    const paragraphs = container.querySelectorAll("p");
-    // 1 = icon paragraph only
-    expect(paragraphs).toHaveLength(1);
+    // Icon is an SVG inside a div, no description paragraph
+    const descriptions = container.querySelectorAll("p");
+    expect(descriptions).toHaveLength(0);
   });
 
   // ── Default icons ─────────────────────────────────────────────────────
 
-  it("renders 📋 for no-data variant", () => {
-    render(<EmptyState variant="no-data" titleKey="common.noResults" />);
-    expect(screen.getByText("📋")).toBeInTheDocument();
+  it("renders ClipboardList SVG for no-data variant", () => {
+    const { container } = render(
+      <EmptyState variant="no-data" titleKey="common.noResults" />,
+    );
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
-  it("renders 🔍 for no-results variant", () => {
-    render(<EmptyState variant="no-results" titleKey="common.noResults" />);
-    expect(screen.getByText("🔍")).toBeInTheDocument();
+  it("renders Search SVG for no-results variant", () => {
+    const { container } = render(
+      <EmptyState variant="no-results" titleKey="common.noResults" />,
+    );
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
-  it("renders ⚠️ for error variant", () => {
-    render(<EmptyState variant="error" titleKey="common.error" />);
-    expect(screen.getByText("⚠️")).toBeInTheDocument();
+  it("renders AlertTriangle SVG for error variant", () => {
+    const { container } = render(
+      <EmptyState variant="error" titleKey="common.error" />,
+    );
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
-  it("renders 📡 for offline variant", () => {
-    render(<EmptyState variant="offline" titleKey="common.offlineTitle" />);
-    expect(screen.getByText("📡")).toBeInTheDocument();
+  it("renders WifiOff SVG for offline variant", () => {
+    const { container } = render(
+      <EmptyState variant="offline" titleKey="common.offlineTitle" />,
+    );
+    expect(container.querySelector("svg")).toBeInTheDocument();
   });
 
   // ── Custom icon ───────────────────────────────────────────────────────
@@ -86,15 +93,16 @@ describe("EmptyState", () => {
       />,
     );
     expect(screen.getByTestId("custom-icon")).toBeInTheDocument();
-    expect(screen.queryByText("📋")).not.toBeInTheDocument();
   });
 
   // ── Icon accessibility ────────────────────────────────────────────────
 
   it("icon container has aria-hidden=true", () => {
-    render(<EmptyState variant="no-data" titleKey="common.noResults" />);
-    const icon = screen.getByText("📋").closest("p");
-    expect(icon).toHaveAttribute("aria-hidden", "true");
+    const { container } = render(
+      <EmptyState variant="no-data" titleKey="common.noResults" />,
+    );
+    const iconContainer = container.querySelector("[aria-hidden='true']");
+    expect(iconContainer).toBeInTheDocument();
   });
 
   // ── Primary CTA ───────────────────────────────────────────────────────

@@ -23,6 +23,7 @@ import {
   AllergenBadge,
 } from "@/components/common";
 import { useState } from "react";
+import { Pencil, Trash2, Settings, ClipboardList, Search } from "lucide-react";
 
 // Only accessible in development
 if (process.env.NODE_ENV === "production") {
@@ -107,15 +108,31 @@ export default function DevComponentsPage() {
       {/* ── IconButton ── */}
       <Section title="IconButton">
         <Row label="Variants">
-          <IconButton icon={<span>✏️</span>} label="Edit" variant="primary" />
-          <IconButton icon={<span>🗑️</span>} label="Delete" variant="danger" />
-          <IconButton icon={<span>⚙️</span>} label="Settings" variant="ghost" />
-          <IconButton icon={<span>📋</span>} label="Copy" variant="secondary" />
+          <IconButton
+            icon={<Pencil size={16} />}
+            label="Edit"
+            variant="primary"
+          />
+          <IconButton
+            icon={<Trash2 size={16} />}
+            label="Delete"
+            variant="danger"
+          />
+          <IconButton
+            icon={<Settings size={16} />}
+            label="Settings"
+            variant="ghost"
+          />
+          <IconButton
+            icon={<ClipboardList size={16} />}
+            label="Copy"
+            variant="secondary"
+          />
         </Row>
         <Row label="Sizes">
-          <IconButton icon={<span>✏️</span>} label="Small" size="sm" />
-          <IconButton icon={<span>✏️</span>} label="Medium" size="md" />
-          <IconButton icon={<span>✏️</span>} label="Large" size="lg" />
+          <IconButton icon={<Pencil size={14} />} label="Small" size="sm" />
+          <IconButton icon={<Pencil size={16} />} label="Medium" size="md" />
+          <IconButton icon={<Pencil size={18} />} label="Large" size="lg" />
         </Row>
       </Section>
 
@@ -131,7 +148,7 @@ export default function DevComponentsPage() {
           <Input label="With hint" hint="Max 100 characters" />
           <Input
             label="With icon"
-            icon={<span>🔍</span>}
+            icon={<Search size={16} />}
             placeholder="Search…"
           />
           <Input label="Disabled" disabled defaultValue="Cannot edit" />

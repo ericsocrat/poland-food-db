@@ -82,7 +82,7 @@ describe("SaveSearchDialog", () => {
 
   it("renders dialog title when show is true", () => {
     renderDialog();
-    expect(screen.getByText("💾 Save Search")).toBeTruthy();
+    expect(screen.getByText("Save Search")).toBeTruthy();
   });
 
   it("has aria-labelledby linking to title", () => {

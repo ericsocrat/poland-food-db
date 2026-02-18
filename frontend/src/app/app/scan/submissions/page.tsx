@@ -11,34 +11,43 @@ import { getMySubmissions } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useTranslation } from "@/lib/i18n";
+import {
+  Clock,
+  CheckCircle,
+  XCircle,
+  Link2,
+  FileText,
+  RefreshCw,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { Submission } from "@/lib/types";
 
 const STATUS_STYLES: Record<
   string,
-  { bg: string; text: string; emoji: string; labelKey: string }
+  { bg: string; text: string; icon: LucideIcon; labelKey: string }
 > = {
   pending: {
     bg: "bg-amber-100",
     text: "text-amber-700",
-    emoji: "⏳",
+    icon: Clock,
     labelKey: "scan.statusPending",
   },
   approved: {
     bg: "bg-green-100",
     text: "text-green-700",
-    emoji: "✅",
+    icon: CheckCircle,
     labelKey: "scan.statusApproved",
   },
   rejected: {
     bg: "bg-red-100",
     text: "text-red-700",
-    emoji: "❌",
+    icon: XCircle,
     labelKey: "scan.statusRejected",
   },
   merged: {
     bg: "bg-blue-100",
     text: "text-blue-700",
-    emoji: "🔗",
+    icon: Link2,
     labelKey: "scan.statusMerged",
   },
 };
@@ -71,8 +80,8 @@ export default function MySubmissionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-foreground">
-            {"📝 "}
+          <h1 className="text-lg font-semibold text-foreground flex items-center gap-1.5">
+            <FileText size={18} aria-hidden="true" />
             {t("scan.mySubmissions")}
           </h1>
           <p className="text-sm text-foreground-secondary">
@@ -104,7 +113,7 @@ export default function MySubmissionsPage() {
             onClick={handleRetry}
             className="text-sm font-medium text-red-700 hover:text-red-800"
           >
-            {"🔄 "}
+            <RefreshCw size={14} aria-hidden="true" className="inline" />{" "}
             {t("common.retry")}
           </button>
         </div>
@@ -113,7 +122,11 @@ export default function MySubmissionsPage() {
       {/* Empty */}
       {data?.submissions.length === 0 && (
         <div className="py-12 text-center">
-          <p className="mb-2 text-4xl">📝</p>
+          <FileText
+            size={40}
+            aria-hidden="true"
+            className="mx-auto mb-2 text-foreground-muted"
+          />
           <p className="mb-1 text-sm text-foreground-secondary">
             {t("scan.submissionsEmptyTitle")}
           </p>
@@ -190,7 +203,11 @@ function SubmissionRow({
             <span
               className={`inline-flex flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
             >
-              {style.emoji} {t(style.labelKey)}
+              {(() => {
+                const StatusIcon = style.icon;
+                return <StatusIcon size={14} aria-hidden="true" />;
+              })()}{" "}
+              {t(style.labelKey)}
             </span>
           </div>
           <p className="mt-0.5 text-xs text-foreground-secondary">
@@ -235,7 +252,9 @@ function SubmissionRow({
             <StatusDot
               active={submission.status === "merged"}
               color={
-                submission.status === "merged" ? "bg-blue-400" : "bg-surface-muted"
+                submission.status === "merged"
+                  ? "bg-blue-400"
+                  : "bg-surface-muted"
               }
             />
             <span>{t("scan.statusLive")}</span>

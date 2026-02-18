@@ -12,6 +12,7 @@ import { useSharedComparison } from "@/hooks/use-compare";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useTranslation } from "@/lib/i18n";
+import { Link2, Scale } from "lucide-react";
 
 const queryClient = new QueryClient();
 
@@ -46,7 +47,11 @@ function SharedComparisonContent() {
         {/* Error / not found */}
         {error && (
           <div className="card border-red-200 bg-red-50 py-8 text-center">
-            <p className="mb-2 text-4xl">🔗</p>
+            <Link2
+              size={40}
+              aria-hidden="true"
+              className="mx-auto mb-2 text-foreground-muted"
+            />
             <p className="mb-1 text-sm text-red-600">
               {t("shared.comparisonInvalid")}
             </p>
@@ -61,8 +66,9 @@ function SharedComparisonContent() {
           <>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-xl font-bold text-foreground">
-                  ⚖️ {data.title ?? t("shared.productComparison")}
+                <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5">
+                  <Scale size={20} aria-hidden="true" />{" "}
+                  {data.title ?? t("shared.productComparison")}
                 </h1>
                 <p className="text-sm text-foreground-secondary">
                   {data.product_count} {t("shared.productsCompared")} ·{" "}

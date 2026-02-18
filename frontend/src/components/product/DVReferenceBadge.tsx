@@ -1,4 +1,5 @@
 import { useTranslation } from "@/lib/i18n";
+import { User, BarChart3 } from "lucide-react";
 
 interface DVReferenceBadgeProps {
   readonly referenceType: "standard" | "personalized" | "none";
@@ -26,7 +27,12 @@ export function DVReferenceBadge({
           : "bg-surface-muted text-foreground-secondary"
       }`}
     >
-      {isPersonalized ? "👤" : "📊"} {label}
+      {isPersonalized ? (
+        <User size={14} aria-hidden="true" />
+      ) : (
+        <BarChart3 size={14} aria-hidden="true" />
+      )}{" "}
+      {label}
     </span>
   );
 }

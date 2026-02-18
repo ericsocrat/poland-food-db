@@ -115,7 +115,9 @@ describe("SavedSearchesPage", () => {
   it("renders page title and subtitle", async () => {
     render(<SavedSearchesPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("📋 Saved Searches")).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /Saved Searches/ }),
+      ).toBeInTheDocument();
     });
     expect(
       screen.getByText("Your saved search configurations"),
@@ -239,7 +241,7 @@ describe("SavedSearchesPage", () => {
       expect(screen.getByText("Healthy drinks")).toBeInTheDocument();
     });
 
-    const deleteButtons = screen.getAllByText("🗑️");
+    const deleteButtons = screen.getAllByLabelText("Delete");
     await user.click(deleteButtons[0]);
     expect(screen.getByTestId("confirm-dialog")).toBeInTheDocument();
     expect(screen.getByText("Delete saved search?")).toBeInTheDocument();
@@ -253,7 +255,7 @@ describe("SavedSearchesPage", () => {
       expect(screen.getByText("Healthy drinks")).toBeInTheDocument();
     });
 
-    const deleteButtons = screen.getAllByText("🗑️");
+    const deleteButtons = screen.getAllByLabelText("Delete");
     await user.click(deleteButtons[0]);
     await user.click(screen.getByText("Cancel Dialog"));
     expect(screen.queryByTestId("confirm-dialog")).not.toBeInTheDocument();

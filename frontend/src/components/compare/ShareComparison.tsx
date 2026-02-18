@@ -5,6 +5,7 @@
 import { useState } from "react";
 import { useSaveComparison } from "@/hooks/use-compare";
 import { useTranslation } from "@/lib/i18n";
+import { ClipboardCopy, Save, Link2 } from "lucide-react";
 
 interface ShareComparisonProps {
   productIds: number[];
@@ -62,7 +63,14 @@ export function ShareComparison({
         onClick={handleCopyUrl}
         className="btn-secondary text-sm"
       >
-        {copied && !shareToken ? "✓ Copied!" : `📋 ${t("compare.copyUrl")}`}
+        {copied && !shareToken ? (
+          "✓ Copied!"
+        ) : (
+          <span className="inline-flex items-center gap-1">
+            <ClipboardCopy size={14} aria-hidden="true" />{" "}
+            {t("compare.copyUrl")}
+          </span>
+        )}
       </button>
 
       {/* Save comparison */}
@@ -73,9 +81,14 @@ export function ShareComparison({
           disabled={isPending}
           className="btn-primary text-sm disabled:opacity-50"
         >
-          {isPending
-            ? `${t("common.saving")}`
-            : `💾 ${t("compare.saveComparison")}`}
+          {isPending ? (
+            `${t("common.saving")}`
+          ) : (
+            <>
+              <Save size={14} aria-hidden="true" className="inline" />{" "}
+              {t("compare.saveComparison")}
+            </>
+          )}
         </button>
       )}
 
@@ -86,7 +99,14 @@ export function ShareComparison({
           onClick={handleCopyShareLink}
           className="btn-primary text-sm"
         >
-          {copied ? "✓ Copied!" : `🔗 ${t("compare.copyShareLink")}`}
+          {copied ? (
+            "✓ Copied!"
+          ) : (
+            <>
+              <Link2 size={14} aria-hidden="true" className="inline" />{" "}
+              {t("compare.copyShareLink")}
+            </>
+          )}
         </button>
       )}
     </div>

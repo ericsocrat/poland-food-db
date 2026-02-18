@@ -7,6 +7,7 @@ import { LearnSidebar } from "@/components/learn/LearnSidebar";
 import { Disclaimer } from "@/components/learn/Disclaimer";
 import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
+import { Tag } from "lucide-react";
 
 // ─── Reading Labels topic page ─────────────────────────────────────────────
 
@@ -35,7 +36,10 @@ export default function ReadingLabelsPage() {
           </Link>
 
           <article className="prose max-w-none">
-            <h1>🏷️ {t("learn.readingLabels.title")}</h1>
+            <h1 className="flex items-center gap-2">
+              <Tag size={28} aria-hidden="true" className="inline-block" />{" "}
+              {t("learn.readingLabels.title")}
+            </h1>
 
             <div className="rounded-lg bg-brand-50 p-4 not-prose dark:bg-brand-950/30">
               <p className="text-sm font-medium text-brand-800 dark:text-brand-300">

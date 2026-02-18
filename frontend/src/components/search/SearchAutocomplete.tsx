@@ -5,6 +5,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
+import { Flame } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { searchAutocomplete } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
@@ -308,7 +309,9 @@ export function SearchAutocomplete({
                     onClose();
                   }}
                 >
-                  <span className="text-foreground-muted">🔥</span>
+                  <span className="text-foreground-muted">
+                    <Flame size={14} aria-hidden="true" />
+                  </span>
                   <span className="min-w-0 flex-1 truncate text-left text-sm text-foreground">
                     {q}
                   </span>

@@ -11,14 +11,16 @@ import { getProductHealthWarnings, getActiveHealthProfile } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { WARNING_SEVERITY, HEALTH_CONDITIONS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { Ban, AlertTriangle, Info, Shield, CheckCircle } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import type { HealthWarning, WarningSeverity } from "@/lib/types";
 
 // ─── Severity icon mapping ─────────────────────────────────────────────────
 
-const SEVERITY_ICON: Record<WarningSeverity, string> = {
-  critical: "🚫",
-  high: "⚠️",
-  moderate: "ℹ️",
+const SEVERITY_ICON: Record<WarningSeverity, LucideIcon> = {
+  critical: Ban,
+  high: AlertTriangle,
+  moderate: Info,
 };
 
 /** Sort order for warning severities (lower = more severe). */
@@ -32,7 +34,7 @@ const SEVERITY_ORDER: Record<WarningSeverity, number> = {
 
 function getConditionIcon(condition: string): string {
   const found = HEALTH_CONDITIONS.find((c) => c.value === condition);
-  return found?.icon ?? "⚕️";
+  return found?.icon ?? "";
 }
 
 // ─── Component ──────────────────────────────────────────────────────────────
@@ -86,7 +88,7 @@ export function HealthWarningsCard({
     return (
       <div className="card border bg-surface-subtle">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🛡️</span>
+          <Shield size={20} aria-hidden="true" />
           <div className="flex-1">
             <p className="text-sm font-medium text-foreground-secondary">
               {t("healthWarnings.title")}
@@ -130,7 +132,11 @@ export function HealthWarningsCard({
     return (
       <div className="card border-green-200 bg-green-50">
         <div className="flex items-center gap-2">
-          <span className="text-lg">✅</span>
+          <CheckCircle
+            size={20}
+            className="text-green-600"
+            aria-hidden="true"
+          />
           <div>
             <p className="text-sm font-medium text-green-800">
               {t("healthWarnings.withinLimits")}
@@ -161,7 +167,7 @@ export function HealthWarningsCard({
       {/* Header */}
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="text-lg">🛡️</span>
+          <Shield size={20} aria-hidden="true" />
           <p className={`text-sm font-semibold ${cardStyle.color}`}>
             {t("healthWarnings.warningCount", {
               count: warningsData.warning_count,
@@ -192,13 +198,13 @@ export function HealthWarningsCard({
 
 function WarningRow({ warning }: Readonly<{ warning: HealthWarning }>) {
   const style = WARNING_SEVERITY[warning.severity];
-  const icon = SEVERITY_ICON[warning.severity];
+  const SeverityIcon = SEVERITY_ICON[warning.severity];
   const conditionIcon = getConditionIcon(warning.condition);
 
   return (
     <li className="flex items-start gap-2">
-      <span className="mt-0.5 flex-shrink-0 text-sm" title={style.label}>
-        {icon}
+      <span className="mt-0.5 flex-shrink-0" title={style.label}>
+        <SeverityIcon size={16} aria-hidden="true" />
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex items-center gap-1.5">

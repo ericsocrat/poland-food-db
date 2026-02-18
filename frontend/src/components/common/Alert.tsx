@@ -8,6 +8,8 @@
 "use client";
 
 import { useState, type ReactNode } from "react";
+import { Info, CheckCircle, AlertTriangle, XCircle, X } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -34,7 +36,7 @@ interface VariantConfig {
   bg: string;
   border: string;
   text: string;
-  icon: string;
+  icon: LucideIcon;
 }
 
 const VARIANT_CONFIGS: Record<AlertVariant, VariantConfig> = {
@@ -42,25 +44,25 @@ const VARIANT_CONFIGS: Record<AlertVariant, VariantConfig> = {
     bg: "bg-info/10",
     border: "border-info/30",
     text: "text-info",
-    icon: "ℹ️",
+    icon: Info,
   },
   success: {
     bg: "bg-success/10",
     border: "border-success/30",
     text: "text-success",
-    icon: "✅",
+    icon: CheckCircle,
   },
   warning: {
     bg: "bg-warning/10",
     border: "border-warning/30",
     text: "text-warning",
-    icon: "⚠️",
+    icon: AlertTriangle,
   },
   error: {
     bg: "bg-error/10",
     border: "border-error/30",
     text: "text-error",
-    icon: "❌",
+    icon: XCircle,
   },
 };
 
@@ -92,8 +94,8 @@ export function Alert({
         .filter(Boolean)
         .join(" ")}
     >
-      <span className="shrink-0 text-lg" aria-hidden="true">
-        {icon ?? config.icon}
+      <span className="shrink-0" aria-hidden="true">
+        {icon ?? <config.icon size={20} />}
       </span>
       <div className="flex-1 min-w-0">
         {title && (
@@ -112,9 +114,7 @@ export function Alert({
           className="shrink-0 text-foreground-muted hover:text-foreground transition-colors"
           aria-label="Dismiss"
         >
-          <span aria-hidden="true" className="text-lg">
-            ✕
-          </span>
+          <X size={18} aria-hidden="true" />
         </button>
       )}
     </div>

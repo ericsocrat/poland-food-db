@@ -5,6 +5,15 @@
 // that bypass RLS. In production, restrict route via middleware or auth check.
 
 import { useState, useCallback, useMemo } from "react";
+import {
+  Clock,
+  CheckCircle,
+  XCircle,
+  Link2,
+  RefreshCw,
+  FileText,
+  ShieldCheck,
+} from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
@@ -27,11 +36,11 @@ const TAB_KEYS: Record<string, string> = {
 };
 
 const STATUS_TABS = [
-  { value: "pending", emoji: "⏳" },
-  { value: "approved", emoji: "✅" },
-  { value: "rejected", emoji: "❌" },
-  { value: "merged", emoji: "🔗" },
-  { value: "all", emoji: "" },
+  { value: "pending", icon: Clock },
+  { value: "approved", icon: CheckCircle },
+  { value: "rejected", icon: XCircle },
+  { value: "merged", icon: Link2 },
+  { value: "all", icon: null },
 ] as const;
 
 export default function AdminSubmissionsPage() {
@@ -110,10 +119,13 @@ export default function AdminSubmissionsPage() {
   return (
     <div className="space-y-4">
       <div>
-        <h1 className="text-lg font-semibold text-foreground">
+        <h1 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+          <ShieldCheck size={20} aria-hidden="true" />
           {t("admin.submissionReview")}
         </h1>
-        <p className="text-sm text-foreground-secondary">{t("admin.reviewSubtitle")}</p>
+        <p className="text-sm text-foreground-secondary">
+          {t("admin.reviewSubtitle")}
+        </p>
       </div>
 
       {/* Status tabs */}
@@ -131,7 +143,13 @@ export default function AdminSubmissionsPage() {
                 : "bg-surface-muted text-foreground-secondary hover:bg-surface-muted"
             }`}
           >
-            {tab.emoji ? `${tab.emoji} ` : ""}
+            {tab.icon &&
+              (() => {
+                const TabIcon = tab.icon;
+                return (
+                  <TabIcon size={14} aria-hidden="true" className="inline" />
+                );
+              })()}{" "}
             {t(TAB_KEYS[tab.value])}
           </button>
         ))}
@@ -152,7 +170,8 @@ export default function AdminSubmissionsPage() {
             onClick={handleRetry}
             className="text-sm font-medium text-red-700"
           >
-            🔄 {t("common.retry")}
+            <RefreshCw size={14} aria-hidden="true" className="inline" />{" "}
+            {t("common.retry")}
           </button>
         </div>
       )}
@@ -274,7 +293,8 @@ function AdminSubmissionCard({
 
         {submission.notes && (
           <p className="rounded-md bg-surface-subtle p-2 text-xs text-foreground-secondary">
-            📝 {submission.notes}
+            <FileText size={14} aria-hidden="true" className="inline" />{" "}
+            {submission.notes}
           </p>
         )}
 

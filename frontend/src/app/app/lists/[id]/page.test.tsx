@@ -170,10 +170,10 @@ describe("ListDetailPage", () => {
 
   it("renders list name with favorites icon", () => {
     render(<ListDetailPage />);
-    expect(screen.getByText(/❤️/)).toBeInTheDocument();
-    expect(
-      screen.getByRole("heading", { name: /My Favorites/ }),
-    ).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { name: /My Favorites/ });
+    expect(heading).toBeInTheDocument();
+    // Heart icon is now a Lucide SVG
+    expect(heading.querySelector("svg")).toBeTruthy();
   });
 
   it("renders avoid icon for avoid lists", () => {
@@ -183,7 +183,9 @@ describe("ListDetailPage", () => {
       },
     });
     render(<ListDetailPage />);
-    expect(screen.getByText(/🚫/)).toBeInTheDocument();
+    // Ban icon is now a Lucide SVG
+    const avoidHeading = screen.getByRole("heading", { level: 1 });
+    expect(avoidHeading.querySelector("svg")).toBeTruthy();
   });
 
   it("shows description", () => {

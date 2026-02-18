@@ -1,6 +1,8 @@
 "use client";
 
+import React from "react";
 import { CONCERN_TIER_STYLES } from "@/lib/constants";
+import { CheckCircle, AlertTriangle } from "lucide-react";
 import { InfoTooltip } from "@/components/common/InfoTooltip";
 
 interface ConcernBadgeProps {
@@ -38,12 +40,12 @@ export function ConcernBadge({
   return badge;
 }
 
-function tierIcon(tier: number): string {
+function tierIcon(tier: number): React.ReactNode {
   switch (tier) {
     case 0:
-      return "✅";
+      return <CheckCircle size={12} aria-hidden="true" />;
     case 1:
-      return "⚠️";
+      return <AlertTriangle size={12} aria-hidden="true" />;
     case 2:
       return "🔶";
     case 3:

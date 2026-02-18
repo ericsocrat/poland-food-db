@@ -12,6 +12,7 @@
     "cancel": "Cancel",
     "save": "Save",
     "delete": "Delete",
+    "edit": "Edit",
     "confirm": "Confirm",
     "back": "Back",
     "next": "Next →",
@@ -654,21 +655,21 @@
     "onboardingFailed": "Could not save your preferences. Please try again."
   },
   "admin": {
-    "submissionReview": "🛡️ Admin: Submission Review",
+    "submissionReview": "Admin: Submission Review",
     "reviewSubtitle": "Review and approve user-submitted products",
     "allTab": "All",
-    "pendingTab": "⏳ Pending",
-    "approvedTab": "✅ Approved",
-    "rejectedTab": "❌ Rejected",
-    "mergedTab": "🔗 Merged",
+    "pendingTab": "Pending",
+    "approvedTab": "Approved",
+    "rejectedTab": "Rejected",
+    "mergedTab": "Merged",
     "loadFailed": "Failed to load.",
     "noSubmissions": "No {status} submissions.",
     "eanLabel": "EAN:",
     "categoryLabel": "Category:",
     "submittedLabel": "Submitted:",
     "reviewedLabel": "Reviewed:",
-    "approve": "✅ Approve",
-    "reject": "❌ Reject"
+    "approve": "Approve",
+    "reject": "Reject"
   },
   "shared": {
     "sharedList": "Shared list",

@@ -112,7 +112,7 @@ describe("ScanHistoryPage", () => {
   it("renders page title and subtitle", async () => {
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("📋 Scan History")).toBeInTheDocument();
+      expect(screen.getByText("Scan History")).toBeInTheDocument();
     });
     expect(screen.getByText("Your barcode scan activity")).toBeInTheDocument();
   });

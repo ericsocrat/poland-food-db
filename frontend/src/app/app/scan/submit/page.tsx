@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
 import Link from "next/link";
+import { FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { submitProduct } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
@@ -58,10 +59,12 @@ export default function SubmitProductPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-foreground">
-            📝 {t("submit.title")}
+          <h1 className="text-lg font-semibold text-foreground flex items-center gap-1.5">
+            <FileText size={18} aria-hidden="true" /> {t("submit.title")}
           </h1>
-          <p className="text-sm text-foreground-secondary">{t("submit.subtitle")}</p>
+          <p className="text-sm text-foreground-secondary">
+            {t("submit.subtitle")}
+          </p>
         </div>
         <Link
           href="/app/scan"

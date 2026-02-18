@@ -7,6 +7,15 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useLists, useCreateList, useDeleteList } from "@/hooks/use-lists";
+import {
+  Heart,
+  Ban,
+  FileText,
+  Link2,
+  Trash2,
+  ClipboardList,
+} from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { ListViewSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
@@ -53,8 +62,8 @@ export default function ListsPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground">
-          📋 {t("lists.title")}
+        <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5">
+          <ClipboardList size={20} aria-hidden="true" /> {t("lists.title")}
         </h1>
         <button
           type="button"
@@ -143,14 +152,14 @@ export default function ListsPage() {
 
 // ─── ListCard ───────────────────────────────────────────────────────────────
 
-function listTypeIcon(type: string): string {
+function listTypeIcon(type: string): LucideIcon {
   switch (type) {
     case "favorites":
-      return "❤️";
+      return Heart;
     case "avoid":
-      return "🚫";
+      return Ban;
     default:
-      return "📝";
+      return FileText;
   }
 }
 
@@ -162,12 +171,22 @@ function ListCard({
   onDelete?: () => void;
 }>) {
   const { t } = useTranslation();
-  const typeIcon = listTypeIcon(list.list_type);
+  const TypeIcon = listTypeIcon(list.list_type);
 
   return (
     <Link href={`/app/lists/${list.id}`}>
       <div className="card hover-lift-press flex items-center gap-3">
-        <span className="text-2xl">{typeIcon}</span>
+        <TypeIcon
+          size={24}
+          aria-hidden="true"
+          className={
+            list.list_type === "favorites"
+              ? "text-red-500"
+              : list.list_type === "avoid"
+                ? "text-red-600"
+                : "text-foreground-muted"
+          }
+        />
 
         <div className="min-w-0 flex-1">
           <p className="font-medium text-foreground">{list.name}</p>
@@ -182,7 +201,8 @@ function ListCard({
             title={t("lists.shared")}
             className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600"
           >
-            🔗 {t("lists.shared")}
+            <Link2 size={12} aria-hidden="true" className="inline" />{" "}
+            {t("lists.shared")}
           </span>
         )}
 
@@ -198,7 +218,7 @@ function ListCard({
               onDelete();
             }}
           >
-            🗑️
+            <Trash2 size={16} aria-hidden="true" />
           </button>
         )}
       </div>

@@ -5,6 +5,7 @@
 // containing it, and co-occurring ingredients.
 
 import { useParams } from "next/navigation";
+import { CheckCircle, XCircle, AlertTriangle } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { createClient } from "@/lib/supabase/client";
@@ -171,10 +172,24 @@ function DietaryFlag({
   label,
   value,
 }: Readonly<{ label: string; value: string }>) {
-  const icons: Record<string, string> = {
-    yes: "✅",
-    no: "❌",
-    maybe: "⚠️",
+  const icons: Record<string, React.ReactNode> = {
+    yes: (
+      <CheckCircle
+        size={14}
+        aria-hidden="true"
+        className="inline text-green-600"
+      />
+    ),
+    no: (
+      <XCircle size={14} aria-hidden="true" className="inline text-red-600" />
+    ),
+    maybe: (
+      <AlertTriangle
+        size={14}
+        aria-hidden="true"
+        className="inline text-amber-500"
+      />
+    ),
   };
   const icon = icons[value] ?? "❓";
   return (

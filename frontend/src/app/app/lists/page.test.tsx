@@ -124,7 +124,7 @@ beforeEach(() => {
 describe("ListsPage", () => {
   it("renders page title", () => {
     render(<ListsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("📋 My Lists")).toBeInTheDocument();
+    expect(screen.getByText("My Lists")).toBeInTheDocument();
   });
 
   it("shows skeleton loading state", () => {
@@ -158,14 +158,14 @@ describe("ListsPage", () => {
   });
 
   it("renders list cards with names and icons", () => {
-    render(<ListsPage />, { wrapper: createWrapper() });
+    const { container } = render(<ListsPage />, { wrapper: createWrapper() });
     expect(screen.getByText("Favorites")).toBeInTheDocument();
     expect(screen.getByText("Avoid")).toBeInTheDocument();
     expect(screen.getByText("Healthy Snacks")).toBeInTheDocument();
     // Type icons
-    expect(screen.getByText("❤️")).toBeInTheDocument();
-    expect(screen.getByText("🚫")).toBeInTheDocument();
-    expect(screen.getByText("📝")).toBeInTheDocument();
+    // List type icons are now Lucide SVGs
+    const svgs = container.querySelectorAll("svg");
+    expect(svgs.length).toBeGreaterThanOrEqual(3);
   });
 
   it("shows correct item counts with singular/plural", () => {
@@ -177,7 +177,7 @@ describe("ListsPage", () => {
 
   it("shows shared badge for shared lists", () => {
     render(<ListsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("🔗 Shared")).toBeInTheDocument();
+    expect(screen.getByText("Shared")).toBeInTheDocument();
   });
 
   it("links cards to list detail pages", () => {

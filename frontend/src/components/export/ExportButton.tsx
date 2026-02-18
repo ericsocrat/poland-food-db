@@ -3,6 +3,7 @@
 // ─── ExportButton — dropdown button for CSV / Text export ───────────────────
 
 import { useState, useRef, useEffect, useCallback } from "react";
+import { BarChart3, FileText } from "lucide-react";
 import {
   exportProducts,
   exportComparison,
@@ -141,7 +142,8 @@ export function ExportButton({
             onClick={() => handleExport("csv")}
             className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
           >
-            📊 {t("export.asCSV")}
+            <BarChart3 size={14} aria-hidden="true" className="inline" />{" "}
+            {t("export.asCSV")}
           </button>
           <button
             type="button"
@@ -149,7 +151,8 @@ export function ExportButton({
             onClick={() => handleExport("text")}
             className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
           >
-            📝 {t("export.asText")}
+            <FileText size={14} aria-hidden="true" className="inline" />{" "}
+            {t("export.asText")}
           </button>
         </div>
       )}

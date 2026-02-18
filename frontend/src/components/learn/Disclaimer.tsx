@@ -1,6 +1,7 @@
 "use client";
 
 import { useTranslation } from "@/lib/i18n";
+import { AlertTriangle } from "lucide-react";
 
 interface DisclaimerProps {
   /** Optional additional classes */
@@ -21,9 +22,11 @@ export function Disclaimer({ className = "" }: DisclaimerProps) {
       className={`rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-900 dark:border-amber-800 dark:bg-amber-950/30 dark:text-amber-200 ${className}`}
     >
       <p className="flex items-start gap-2">
-        <span aria-hidden="true" className="mt-0.5 shrink-0">
-          ⚠️
-        </span>
+        <AlertTriangle
+          size={18}
+          className="mt-0.5 shrink-0"
+          aria-hidden="true"
+        />
         <span>{t("learn.disclaimer")}</span>
       </p>
     </aside>

@@ -13,6 +13,7 @@ import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { EmptyState } from "@/components/common/EmptyState";
 import { useTranslation } from "@/lib/i18n";
+import { ClipboardList, Camera } from "lucide-react";
 import type { ScanHistoryItem } from "@/lib/types";
 
 const FILTERS = [
@@ -50,8 +51,9 @@ export default function ScanHistoryPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-foreground">
-            📋 {t("scanHistory.title")}
+          <h1 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+            <ClipboardList size={20} aria-hidden="true" />{" "}
+            {t("scanHistory.title")}
           </h1>
           <p className="text-sm text-foreground-secondary">
             {t("scanHistory.subtitle")}
@@ -105,7 +107,7 @@ export default function ScanHistoryPage() {
       {data?.scans.length === 0 && (
         <EmptyState
           variant="no-data"
-          icon={<span>📷</span>}
+          icon={<Camera size={48} className="text-foreground-muted" />}
           titleKey="scanHistory.emptyTitle"
           descriptionKey="scanHistory.emptyMessage"
           action={{ labelKey: "scanHistory.startScanning", href: "/app/scan" }}

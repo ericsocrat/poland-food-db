@@ -4,6 +4,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Save } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { saveSearch } from "@/lib/api";
 import { queryKeys } from "@/lib/query-keys";
@@ -89,7 +90,8 @@ export function SaveSearchDialog({
         id="save-search-title"
         className="mb-1 text-base font-semibold text-foreground"
       >
-        💾 {t("saveSearchDialog.title")}
+        <Save size={16} aria-hidden="true" className="inline" />{" "}
+        {t("saveSearchDialog.title")}
       </h3>
       <p className="mb-4 text-sm text-foreground-secondary">
         {query ? `Query: "${query}"` : "Browse mode"}

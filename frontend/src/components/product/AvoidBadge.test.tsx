@@ -26,7 +26,7 @@ describe("AvoidBadge", () => {
   it("renders avoid badge when product is avoided", () => {
     mockIsAvoided.mockReturnValue(true);
     render(<AvoidBadge productId={42} />);
-    expect(screen.getByText("🚫 Avoid")).toBeTruthy();
+    expect(screen.getByText("Avoid")).toBeTruthy();
   });
 
   it("has correct title attribute", () => {
