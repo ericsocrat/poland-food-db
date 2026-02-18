@@ -97,6 +97,7 @@ export default function IngredientProfilePage() {
               <ConcernBadge
                 tier={ing.concern_tier}
                 label={ing.concern_tier_label}
+                reason={ing.concern_reason}
               />
             </div>
           </div>

@@ -696,6 +696,64 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
         <span className="font-medium">{t("product.sodiumNote")}</span>{" "}
         {t("product.sodiumValue", { mg: sodiumMg })}
       </div>
+
+      {/* Glycemic Index indicator */}
+      {profile.nutrition.gi_estimate != null && (
+        <GlycemicIndexIndicator gi={profile.nutrition.gi_estimate} />
+      )}
+    </div>
+  );
+}
+
+// ─── Glycemic Index Indicator ───────────────────────────────────────────────
+
+function GlycemicIndexIndicator({ gi }: Readonly<{ gi: number }>) {
+  const { t } = useTranslation();
+
+  const band = gi <= 55 ? "low" : gi <= 69 ? "medium" : "high";
+
+  const config = {
+    low: {
+      bg: "bg-green-50",
+      border: "border-green-200",
+      text: "text-green-700",
+      badge: "bg-green-100 text-green-800",
+      label: t("product.gi.low"),
+    },
+    medium: {
+      bg: "bg-amber-50",
+      border: "border-amber-200",
+      text: "text-amber-700",
+      badge: "bg-amber-100 text-amber-800",
+      label: t("product.gi.medium"),
+    },
+    high: {
+      bg: "bg-red-50",
+      border: "border-red-200",
+      text: "text-red-700",
+      badge: "bg-red-100 text-red-800",
+      label: t("product.gi.high"),
+    },
+  };
+
+  const c = config[band];
+
+  return (
+    <div
+      className={`mt-3 rounded-lg border ${c.border} ${c.bg} px-3 py-3`}
+      data-testid="gi-indicator"
+    >
+      <div className="flex items-center justify-between">
+        <span className={`text-sm font-medium ${c.text}`}>
+          {t("product.gi.label")}
+        </span>
+        <span
+          className={`rounded-full px-2 py-0.5 text-xs font-semibold ${c.badge}`}
+          data-testid="gi-badge"
+        >
+          {c.label} ({gi})
+        </span>
+      </div>
     </div>
   );
 }

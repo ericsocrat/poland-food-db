@@ -66,6 +66,13 @@
     "viewed": "Przeglądane",
     "lists": "Listy",
     "errorMessage": "Nie udało się załadować panelu.",
+    "weeklySummary": "Ten tydzień",
+    "weeklyViewed": "Przeglądane w tym tyg.",
+    "weeklyFavorited": "Ulubione w tym tyg.",
+    "weeklyAvgScore": "Śr. wynik",
+    "weeklyBestFind": "Najlepsze znalezisko",
+    "sparklineTitle": "Rozk\u0142ad wynik\u00f3w",
+    "sparklineAria": "Wykres s\u0142upkowy pokazuj\u0105cy rozk\u0142ad wynik\u00f3w produkt\u00f3w wed\u0142ug pasm zdrowotnych",
     "greeting": {
       "morning": "Dzień dobry",
       "afternoon": "Dzień dobry",
@@ -260,7 +267,8 @@
     "revokeSharing": "Cofnąć udostępnianie?",
     "revokeWarning": "Stare linki przestaną działać.",
     "loadFailed": "Nie udało się załadować list.",
-    "loadListFailed": "Nie udało się załadować listy."
+    "loadListFailed": "Nie udało się załadować listy.",
+    "avgScore": "Śr. {score}"
   },
   "product": {
     "back": "Wstecz",
@@ -316,6 +324,12 @@
     "salt": "Sól",
     "sodiumNote": "Ekwiwalent sodu:",
     "sodiumValue": "{mg} mg sodu (sól × 0,4)",
+    "gi": {
+      "label": "Indeks glikemiczny (szac.)",
+      "low": "Niski IG",
+      "medium": "Średni IG",
+      "high": "Wysoki IG"
+    },
     "dvBarLabel": "{nutrient}: {pct}% dziennego spożycia referencyjnego",
     "dvPersonalized": "Na podstawie Twojego profilu zdrowotnego",
     "dvStandard": "Na podstawie wartości referencyjnych {regulation} (2000 kcal)",

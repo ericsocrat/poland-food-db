@@ -19,7 +19,7 @@ describe("opengraph-image helpers", () => {
       [80, "#ef4444"],
       [81, "#991b1b"],
       [100, "#991b1b"],
-    ])("score %i → %s", (score, expected) => {
+    ])("score %i → %s", (score: number, expected: string) => {
       expect(getScoreColor(score)).toBe(expected);
     });
   });
@@ -32,7 +32,7 @@ describe("opengraph-image helpers", () => {
       ["high", "High Risk"],
       ["very_high", "Very High Risk"],
       ["unknown", ""],
-    ])("band '%s' → '%s'", (band, expected) => {
+    ])("band '%s' → '%s'", (band: string, expected: string) => {
       expect(getScoreBandLabel(band)).toBe(expected);
     });
   });

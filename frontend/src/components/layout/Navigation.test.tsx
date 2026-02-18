@@ -22,6 +22,11 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+const mockUseLists = vi.fn().mockReturnValue({ data: undefined });
+vi.mock("@/hooks/use-lists", () => ({
+  useLists: () => mockUseLists(),
+}));
+
 describe("Navigation", () => {
   it("renders all 5 nav items", () => {
     render(<Navigation />);
@@ -102,5 +107,43 @@ describe("Navigation", () => {
     render(<Navigation />);
     const nav = screen.getByRole("navigation", { name: "Main navigation" });
     expect(nav.className).toContain("lg:hidden");
+  });
+
+  // ── Badge counts (§4.6) ──────────────────────────────────────────────
+
+  it("shows badge count on Lists when user has lists", () => {
+    mockUseLists.mockReturnValue({
+      data: [
+        { list_id: "1", name: "Favorites" },
+        { list_id: "2", name: "Avoid" },
+        { list_id: "3", name: "Keto" },
+      ],
+    });
+    render(<Navigation />);
+    const badge = screen.getByTestId("nav-badge-lists");
+    expect(badge).toHaveTextContent("3");
+  });
+
+  it("hides badge on Lists when user has no lists", () => {
+    mockUseLists.mockReturnValue({ data: [] });
+    render(<Navigation />);
+    expect(screen.queryByTestId("nav-badge-lists")).not.toBeInTheDocument();
+  });
+
+  it("hides badge when lists data is undefined (loading)", () => {
+    mockUseLists.mockReturnValue({ data: undefined });
+    render(<Navigation />);
+    expect(screen.queryByTestId("nav-badge-lists")).not.toBeInTheDocument();
+  });
+
+  it("caps badge display at 99+", () => {
+    const manyLists = Array.from({ length: 150 }, (_, i) => ({
+      list_id: String(i),
+      name: `List ${i}`,
+    }));
+    mockUseLists.mockReturnValue({ data: manyLists });
+    render(<Navigation />);
+    const badge = screen.getByTestId("nav-badge-lists");
+    expect(badge).toHaveTextContent("99+");
   });
 });

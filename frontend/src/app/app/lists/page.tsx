@@ -6,7 +6,12 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { useLists, useCreateList, useDeleteList } from "@/hooks/use-lists";
+import {
+  useLists,
+  useCreateList,
+  useDeleteList,
+  useListPreview,
+} from "@/hooks/use-lists";
 import {
   Heart,
   Ban,
@@ -20,7 +25,8 @@ import { ListViewSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useTranslation } from "@/lib/i18n";
-import type { ProductList, FormSubmitEvent } from "@/lib/types";
+import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
+import type { ProductList, ListItem, FormSubmitEvent } from "@/lib/types";
 
 export default function ListsPage() {
   const { t } = useTranslation();
@@ -172,54 +178,114 @@ function ListCard({
 }>) {
   const { t } = useTranslation();
   const TypeIcon = listTypeIcon(list.list_type);
+  const { data: previewData } = useListPreview(list.id, list.item_count);
+
+  const previewItems: ListItem[] = previewData?.items ?? [];
+
+  // Compute health summary from preview items
+  const avgScore =
+    previewItems.length > 0
+      ? Math.round(
+          previewItems.reduce((sum, it) => sum + it.unhealthiness_score, 0) /
+            previewItems.length,
+        )
+      : null;
+  const avgBand =
+    avgScore !== null ? SCORE_BANDS[scoreBandFromScore(avgScore)] : null;
 
   return (
     <Link href={`/app/lists/${list.id}`}>
-      <div className="card hover-lift-press flex items-center gap-3 transition-all duration-150">
-        <TypeIcon
-          size={24}
-          aria-hidden="true"
-          className={
-            list.list_type === "favorites"
-              ? "text-red-500"
-              : list.list_type === "avoid"
-                ? "text-red-600"
-                : "text-foreground-muted"
-          }
-        />
+      <div className="card hover-lift-press flex flex-col gap-3 transition-all duration-150">
+        {/* Top row — icon, name, meta */}
+        <div className="flex items-center gap-3">
+          <TypeIcon
+            size={24}
+            aria-hidden="true"
+            className={
+              list.list_type === "favorites"
+                ? "text-red-500"
+                : list.list_type === "avoid"
+                  ? "text-red-600"
+                  : "text-foreground-muted"
+            }
+          />
 
-        <div className="min-w-0 flex-1">
-          <p className="font-medium text-foreground">{list.name}</p>
-          <p className="text-sm text-foreground-secondary">
-            {t("common.items", { count: list.item_count })}
-            {list.description && ` · ${list.description}`}
-          </p>
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-foreground">{list.name}</p>
+            <p className="text-sm text-foreground-secondary">
+              {t("common.items", { count: list.item_count })}
+              {list.description && ` · ${list.description}`}
+            </p>
+          </div>
+
+          {list.share_enabled && (
+            <span
+              title={t("lists.shared")}
+              className="rounded-full bg-info/15 px-2 py-0.5 text-xs text-info"
+            >
+              <Link2 size={12} aria-hidden="true" className="inline" />{" "}
+              {t("lists.shared")}
+            </span>
+          )}
+
+          {onDelete && (
+            <button
+              type="button"
+              title={t("common.delete")}
+              aria-label={`${t("common.delete")} ${list.name}`}
+              className="touch-target flex h-11 w-11 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-error/10 hover:text-error"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onDelete();
+              }}
+            >
+              <Trash2 size={16} aria-hidden="true" />
+            </button>
+          )}
         </div>
 
-        {list.share_enabled && (
-          <span
-            title={t("lists.shared")}
-            className="rounded-full bg-info/15 px-2 py-0.5 text-xs text-info"
+        {/* Preview thumbnails + health summary */}
+        {previewItems.length > 0 && (
+          <div
+            className="flex items-center gap-2 border-t border-border pt-2"
+            data-testid="list-preview"
           >
-            <Link2 size={12} aria-hidden="true" className="inline" />{" "}
-            {t("lists.shared")}
-          </span>
-        )}
+            {/* Mini score badges for up to 3 products */}
+            <div className="flex -space-x-1" data-testid="preview-thumbnails">
+              {previewItems.map((item) => {
+                const band =
+                  SCORE_BANDS[scoreBandFromScore(item.unhealthiness_score)];
+                return (
+                  <span
+                    key={item.item_id}
+                    title={item.product_name}
+                    className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ring-2 ring-surface ${band.bg} ${band.color}`}
+                  >
+                    {item.unhealthiness_score}
+                  </span>
+                );
+              })}
+              {list.item_count > previewItems.length && (
+                <span
+                  className="flex h-7 w-7 items-center justify-center rounded-full bg-surface-muted text-xs text-foreground-secondary ring-2 ring-surface"
+                  data-testid="preview-overflow"
+                >
+                  +{list.item_count - previewItems.length}
+                </span>
+              )}
+            </div>
 
-        {onDelete && (
-          <button
-            type="button"
-            title={t("common.delete")}
-            aria-label={`${t("common.delete")} ${list.name}`}
-            className="touch-target flex h-11 w-11 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-error/10 hover:text-error"
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              onDelete();
-            }}
-          >
-            <Trash2 size={16} aria-hidden="true" />
-          </button>
+            {/* Average score summary */}
+            {avgBand && avgScore !== null && (
+              <span
+                className={`ml-auto rounded-full px-2 py-0.5 text-xs font-medium ${avgBand.bg} ${avgBand.color}`}
+                data-testid="list-avg-score"
+              >
+                {t("lists.avgScore", { score: avgScore })}
+              </span>
+            )}
+          </div>
         )}
       </div>
     </Link>

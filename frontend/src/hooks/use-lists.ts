@@ -60,6 +60,28 @@ export function useListItems(listId: string | undefined) {
   });
 }
 
+/**
+ * Fetch a lightweight preview (first 3 items) for a list card.
+ * Skipped when item_count is 0 to avoid unnecessary requests.
+ */
+export function useListPreview(
+  listId: string | undefined,
+  itemCount: number,
+) {
+  const supabase = createClient();
+  return useQuery({
+    queryKey: queryKeys.listPreview(listId ?? ""),
+    queryFn: async () => {
+      if (!listId) throw new Error("List ID required");
+      const result = await getListItems(supabase, listId, 3, 0);
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
+    enabled: !!listId && itemCount > 0,
+    staleTime: staleTimes.listPreview,
+  });
+}
+
 /** Fetch a shared list by token (no auth required) */
 export function useSharedList(token: string | undefined) {
   const supabase = createClient();

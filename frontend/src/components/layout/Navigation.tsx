@@ -5,6 +5,7 @@
 import Link from "next/link";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
+import { useLists } from "@/hooks/use-lists";
 import { Icon } from "@/components/common/Icon";
 import { Home, Search, Camera, ClipboardList, Settings } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -42,6 +43,13 @@ const NAV_ITEMS: NavItem[] = [
 export function Navigation() {
   const activeRoute = useActiveRoute();
   const { t } = useTranslation();
+  const { data: lists } = useLists();
+
+  // Badge counts keyed by routeKey — only show when count > 0
+  const badgeCounts: Partial<Record<PrimaryRouteKey, number>> = {};
+  if (lists && lists.length > 0) {
+    badgeCounts.lists = lists.length;
+  }
 
   return (
     <nav
@@ -52,6 +60,7 @@ export function Navigation() {
         {NAV_ITEMS.map((item) => {
           const isActive = activeRoute === item.routeKey;
           const label = t(item.labelKey);
+          const badge = badgeCounts[item.routeKey];
           return (
             <Link
               key={item.href}
@@ -71,7 +80,18 @@ export function Navigation() {
                   aria-hidden="true"
                 />
               )}
-              <Icon icon={item.icon} size="md" />
+              <span className="relative">
+                <Icon icon={item.icon} size="md" />
+                {badge != null && badge > 0 && (
+                  <span
+                    className="absolute -right-2 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold leading-none text-white dark:bg-brand-400"
+                    data-testid={`nav-badge-${item.routeKey}`}
+                    aria-label={`${badge}`}
+                  >
+                    {badge > 99 ? "99+" : badge}
+                  </span>
+                )}
+              </span>
               <span>{label}</span>
             </Link>
           );

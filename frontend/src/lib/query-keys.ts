@@ -69,6 +69,9 @@ export const queryKeys = {
   /** Items in a specific list */
   listItems: (listId: string) => ["list-items", listId] as const,
 
+  /** Preview items for list cards (limited, for overview page) */
+  listPreview: (listId: string) => ["list-preview", listId] as const,
+
   /** Shared list (public, by token) */
   sharedList: (token: string) => ["shared-list", token] as const,
 
@@ -160,6 +163,9 @@ export const staleTimes = {
 
   /** List items — 2 min (changes more frequently) */
   listItems: 2 * 60 * 1000,
+
+  /** List preview — 5 min (less granular, stays fresh longer) */
+  listPreview: 5 * 60 * 1000,
 
   /** Shared list — 5 min */
   sharedList: 5 * 60 * 1000,
