@@ -9,6 +9,14 @@ describe("DVLegend", () => {
     expect(screen.getByText(/High/)).toBeInTheDocument();
   });
 
+  it("renders correct FDA/EFSA DV% thresholds", () => {
+    render(<DVLegend />);
+    // ≤5% = Low, 5–20% = Moderate, >20% = High (per FDA guidelines)
+    expect(screen.getByText(/≤5%/)).toBeInTheDocument();
+    expect(screen.getByText(/5–20%/)).toBeInTheDocument();
+    expect(screen.getByText(/>20%/)).toBeInTheDocument();
+  });
+
   it("renders colored dots", () => {
     const { container } = render(<DVLegend />);
     expect(container.querySelector(".bg-green-500")).toBeInTheDocument();

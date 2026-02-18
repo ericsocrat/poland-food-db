@@ -24,32 +24,35 @@ export function NovaIndicator({ novaGroup }: NovaIndicatorProps) {
   const { t } = useTranslation();
 
   return (
-    <div className="flex items-center gap-3">
-      {/* Vertical bar segments */}
-      <div className="flex flex-col gap-0.5" aria-hidden="true">
-        {NOVA_GROUPS.map((ng) => (
-          <div
-            key={ng.group}
-            className={`h-3 w-6 rounded-sm transition-opacity ${
-              ng.group === novaGroup ? ng.color : "bg-surface-muted"
-            } ${ng.group === novaGroup ? "opacity-100" : "opacity-40"}`}
-          />
-        ))}
+    <figure
+      className="flex items-center gap-3"
+      aria-label={`NOVA Group ${novaGroup}: ${NOVA_GROUPS.find((ng) => ng.group === novaGroup)?.label ?? "novaGroup4"}`}
+    >
+      {/* Vertical bar segments — all 4 groups always visible with their colours */}
+      <div className="flex flex-col gap-0.5">
+        {NOVA_GROUPS.map((ng) => {
+          const isActive = ng.group === novaGroup;
+          return (
+            <div
+              key={ng.group}
+              className={`h-4 w-7 rounded-sm transition-all ${ng.color} ${
+                isActive
+                  ? "opacity-100 ring-2 ring-foreground/20"
+                  : "opacity-25"
+              }`}
+            />
+          );
+        })}
       </div>
       {/* Label */}
       <div className="text-sm">
-        <p
-          className="font-semibold text-foreground"
-          aria-label={`NOVA Group ${novaGroup}`}
-        >
-          NOVA {novaGroup}
-        </p>
+        <p className="font-semibold text-foreground">NOVA {novaGroup}</p>
         <p className="text-xs text-foreground-secondary">
           {t(
             `product.${NOVA_GROUPS.find((ng) => ng.group === novaGroup)?.label ?? "novaGroup4"}`,
           )}
         </p>
       </div>
-    </div>
+    </figure>
   );
 }

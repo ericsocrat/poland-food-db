@@ -10,6 +10,16 @@
 // | Saturated fat | ≤ 1.5 g     | 1.6–5.0 g      | > 5.0 g    |
 // | Sugars        | ≤ 5.0 g     | 5.1–22.5 g     | > 22.5 g   |
 // | Salt          | ≤ 0.3 g     | 0.31–1.5 g     | > 1.5 g    |
+//
+// Beneficial nutrients (fibre, protein) use INVERTED colours:
+// high = green (good), low = red (less ideal).
+//
+// Fibre thresholds (EU Regulation 1924/2006):
+// | Level  | Threshold   | Colour (inverted) |
+// | ------ | ----------- | ----------------- |
+// | Low    | < 3.0 g     | Red (bad)         |
+// | Source | 3.0–5.9 g   | Amber             |
+// | High   | ≥ 6.0 g     | Green (good)      |
 
 export type TrafficLight = "green" | "amber" | "red";
 
@@ -23,7 +33,23 @@ const THRESHOLDS: Record<string, Threshold> = {
   saturated_fat: { greenMax: 1.5, amberMax: 5 },
   sugars: { greenMax: 5, amberMax: 22.5 },
   salt: { greenMax: 0.3, amberMax: 1.5 },
+  fibre: { greenMax: 3, amberMax: 6 },
+  fiber: { greenMax: 3, amberMax: 6 },
+  protein: { greenMax: 8, amberMax: 16 },
 };
+
+/**
+ * Beneficial nutrients where high values are positive (green).
+ * For these, the traffic light colours are inverted: high → green, low → red.
+ */
+export const BENEFICIAL_NUTRIENTS = new Set(["fibre", "fiber", "protein"]);
+
+/** Invert green ↔ red while keeping amber unchanged. */
+function invertLight(level: TrafficLight): TrafficLight {
+  if (level === "green") return "red";
+  if (level === "red") return "green";
+  return "amber";
+}
 
 /** Resolve the traffic-light level for a nutrient. */
 export function getTrafficLight(
@@ -33,9 +59,14 @@ export function getTrafficLight(
   if (valuePer100g === null || valuePer100g === undefined) return null;
   const t = THRESHOLDS[nutrient];
   if (!t) return null;
-  if (valuePer100g <= t.greenMax) return "green";
-  if (valuePer100g <= t.amberMax) return "amber";
-  return "red";
+
+  let level: TrafficLight;
+  if (valuePer100g <= t.greenMax) level = "green";
+  else if (valuePer100g <= t.amberMax) level = "amber";
+  else level = "red";
+
+  // Beneficial nutrients: high is good (green), low is bad (red)
+  return BENEFICIAL_NUTRIENTS.has(nutrient) ? invertLight(level) : level;
 }
 
 const TL_STYLES: Record<TrafficLight, string> = {
