@@ -134,7 +134,7 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6 lg:space-y-8">
+    <div className="max-w-2xl space-y-6 lg:space-y-8">
       <h1 className="text-xl font-bold text-foreground lg:text-2xl">
         {t("settings.title")}
       </h1>

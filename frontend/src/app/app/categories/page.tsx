@@ -64,7 +64,7 @@ export default function CategoriesPage() {
       <h1 className="mb-4 text-xl font-bold text-foreground lg:text-2xl">
         {t("categories.title")}
       </h1>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4">
         {data?.map((cat) => (
           <CategoryCard key={cat.category} category={cat} />
         ))}
@@ -82,7 +82,7 @@ function CategoryCard({
 
   return (
     <Link href={`/app/categories/${category.slug}`}>
-      <div className="card hover-lift-press flex flex-col items-center gap-2 p-4 text-center">
+      <div className="card hover-lift-press flex flex-col items-center gap-2 p-4 text-center transition-all duration-150">
         <span className="text-3xl">{category.icon_emoji}</span>
         <p className="text-sm font-semibold text-foreground">
           {category.display_name}

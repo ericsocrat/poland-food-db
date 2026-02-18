@@ -12,7 +12,7 @@ export function CategoryGridSkeleton() {
       <Skeleton variant="text" width="10rem" height={24} />
 
       {/* Category grid */}
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4">
         {Array.from({ length: 9 }, (_, i) => (
           <div key={i} className="card flex flex-col items-center gap-2 py-4">
             <Skeleton

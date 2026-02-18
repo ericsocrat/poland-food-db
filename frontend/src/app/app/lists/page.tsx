@@ -122,7 +122,7 @@ export default function ListsPage() {
       )}
 
       {/* List grid */}
-      <div className="space-y-2">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {lists.map((list) => (
           <ListCard
             key={list.id}
@@ -175,7 +175,7 @@ function ListCard({
 
   return (
     <Link href={`/app/lists/${list.id}`}>
-      <div className="card hover-lift-press flex items-center gap-3">
+      <div className="card hover-lift-press flex items-center gap-3 transition-all duration-150">
         <TypeIcon
           size={24}
           aria-hidden="true"

@@ -180,7 +180,7 @@ describe("Authenticated a11y spec — e2e/authenticated-a11y.spec.ts", () => {
     "/app/settings",
     "/app/categories",
     "/app/lists",
-    "/app/dashboard",
+    "/app",
   ];
 
   for (const path of requiredAuthPages) {

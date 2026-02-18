@@ -246,4 +246,21 @@ describe("ListsPage", () => {
     render(<ListsPage />, { wrapper: createWrapper() });
     expect(screen.getByText(/My healthy picks/)).toBeInTheDocument();
   });
+
+  it("renders responsive grid layout for list cards", () => {
+    render(<ListsPage />, { wrapper: createWrapper() });
+
+    const grid = screen.getByText("Favorites").closest("a")!.parentElement!;
+    expect(grid.className).toContain("grid");
+    expect(grid.className).toContain("md:grid-cols-2");
+    expect(grid.className).toContain("xl:grid-cols-3");
+  });
+
+  it("list cards have transition classes for hover states", () => {
+    render(<ListsPage />, { wrapper: createWrapper() });
+
+    const card = screen.getByText("Favorites").closest(".card")!;
+    expect(card.className).toContain("transition-all");
+    expect(card.className).toContain("duration-150");
+  });
 });
