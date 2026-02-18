@@ -8,11 +8,24 @@ const LEVEL_COLORS: Record<DVLevel, { bar: string; text: string }> = {
   high: { bar: "bg-red-500", text: "text-red-700" },
 };
 
+/**
+ * Inverted colors for beneficial nutrients (fibre, protein).
+ * High DV% of a beneficial nutrient is GOOD (green).
+ */
+const BENEFICIAL_LEVEL_COLORS: Record<DVLevel, { bar: string; text: string }> =
+  {
+    low: { bar: "bg-red-500", text: "text-red-700" },
+    moderate: { bar: "bg-amber-500", text: "text-amber-700" },
+    high: { bar: "bg-green-500", text: "text-green-700" },
+  };
+
 interface NutritionDVBarProps {
   readonly label: string;
   readonly rawValue: string;
   readonly dv: NutrientDV | null;
   readonly trafficLight?: TrafficLight | null;
+  /** If true, inverts DV bar colors (high = green, low = red). For fibre, protein. */
+  readonly beneficial?: boolean;
 }
 
 export function NutritionDVBar({
@@ -20,6 +33,7 @@ export function NutritionDVBar({
   rawValue,
   dv,
   trafficLight,
+  beneficial = false,
 }: NutritionDVBarProps) {
   const { t } = useTranslation();
 
@@ -40,7 +54,8 @@ export function NutritionDVBar({
     );
   }
 
-  const colors = LEVEL_COLORS[dv.level];
+  const colorMap = beneficial ? BENEFICIAL_LEVEL_COLORS : LEVEL_COLORS;
+  const colors = colorMap[dv.level];
   const widthPct = Math.min(dv.pct, 100);
 
   return (

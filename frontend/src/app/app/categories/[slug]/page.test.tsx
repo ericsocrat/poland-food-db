@@ -37,6 +37,20 @@ vi.mock("@/components/common/skeletons", () => ({
 }));
 
 // Stub child components
+vi.mock("@/components/common/NutriScoreBadge", () => ({
+  NutriScoreBadge: ({ grade }: { grade: string | null }) => {
+    const display = grade?.toUpperCase() ?? "?";
+    const label = ["A", "B", "C", "D", "E"].includes(display)
+      ? display
+      : "unknown";
+    return (
+      <span data-testid="nutri-score-badge" aria-label={`Nutri-Score ${label}`}>
+        {display}
+      </span>
+    );
+  },
+}));
+
 vi.mock("@/components/product/HealthWarningsCard", () => ({
   HealthWarningBadge: () => <span data-testid="health-badge" />,
 }));

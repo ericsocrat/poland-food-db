@@ -67,7 +67,9 @@ vi.mock("@/components/common/skeletons", () => ({
 vi.mock("@/components/common/NutriScoreBadge", () => ({
   NutriScoreBadge: ({ grade }: { grade: string | null }) => {
     const display = grade?.toUpperCase() ?? "?";
-    const label = ["A","B","C","D","E"].includes(display) ? display : "unknown";
+    const label = ["A", "B", "C", "D", "E"].includes(display)
+      ? display
+      : "unknown";
     return (
       <span data-testid="nutri-score-badge" aria-label={`Nutri-Score ${label}`}>
         {display}

@@ -85,6 +85,7 @@ function makeProduct(overrides: Record<string, unknown> = {}) {
     product_id: 42,
     ean: "5901234123457",
     product_name: "Test Chips Original",
+    product_name_display: "Test Chips Original",
     brand: "TestBrand",
     category: "chips",
     category_display: "Chips",
@@ -299,7 +300,9 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getAllByTestId("nutri-score-badge").length).toBeGreaterThanOrEqual(1);
+        expect(
+          screen.getAllByTestId("nutri-score-badge").length,
+        ).toBeGreaterThanOrEqual(1);
       });
       expect(screen.getByText("NOVA 4")).toBeInTheDocument();
     });

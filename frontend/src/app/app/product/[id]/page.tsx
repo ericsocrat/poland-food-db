@@ -11,7 +11,11 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { createClient } from "@/lib/supabase/client";
 import { getProductProfile, recordProductView } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS, CONCERN_TIER_STYLES } from "@/lib/constants";
+import {
+  SCORE_BANDS,
+  CONCERN_TIER_STYLES,
+  scoreBandFromScore,
+} from "@/lib/constants";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
 import {
   HealthWarningsCard,
@@ -566,12 +570,14 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       value: n.fibre_g === null ? "—" : `${n.fibre_g} g`,
       dv: dvPer100g?.fiber ?? null,
       tl: null as ReturnType<typeof getTrafficLight>,
+      beneficial: true,
     },
     {
       label: t("product.protein"),
       value: `${n.protein_g} g`,
       dv: dvPer100g?.protein ?? null,
       tl: null as ReturnType<typeof getTrafficLight>,
+      beneficial: true,
     },
     {
       label: t("product.salt"),
@@ -603,6 +609,7 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
               rawValue={row.value}
               dv={row.dv}
               trafficLight={row.tl}
+              beneficial={row.beneficial}
             />
           ))}
         </tbody>
@@ -703,7 +710,9 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
   return (
     <Link href={`/app/product/${alt.product_id}`}>
       <div className="card hover-lift-press flex items-center gap-3">
-        <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg bg-green-100 text-lg font-bold text-green-600">
+        <div
+          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].bg} ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].color}`}
+        >
           {alt.unhealthiness_score}
         </div>
         <div className="min-w-0 flex-1">

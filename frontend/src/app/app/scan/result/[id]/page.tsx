@@ -112,7 +112,7 @@ export default function ScanResultPage() {
         items={[
           { labelKey: "nav.home", href: "/app" },
           { labelKey: "nav.scan", href: "/app/scan" },
-          { label: product.product_name },
+          { label: product.product_name_display ?? product.product_name },
         ]}
       />
 
@@ -139,7 +139,7 @@ export default function ScanResultPage() {
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-lg font-bold text-foreground">
-              {product.product_name}
+              {product.product_name_display ?? product.product_name}
             </p>
             <p className="text-sm text-foreground-secondary">{product.brand}</p>
             <div className="mt-2 flex flex-wrap items-center gap-2">

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslation } from "@/lib/i18n";
 import { getDashboardData } from "@/lib/api";
@@ -250,6 +250,7 @@ function EmptyDashboard() {
 
 export default function DashboardPage() {
   const supabase = createClient();
+  const queryClient = useQueryClient();
   const { track } = useAnalytics();
 
   const { data, isLoading, isError } = useQuery({
@@ -278,7 +279,8 @@ export default function DashboardPage() {
         titleKey="dashboard.errorMessage"
         action={{
           labelKey: "common.tryAgain",
-          onClick: () => window.location.reload(),
+          onClick: () =>
+            queryClient.invalidateQueries({ queryKey: queryKeys.dashboard }),
         }}
       />
     );

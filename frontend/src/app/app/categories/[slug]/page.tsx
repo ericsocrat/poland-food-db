@@ -9,9 +9,10 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getCategoryListing } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import { SCORE_BANDS } from "@/lib/constants";
 import { CategoryListingSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
+import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
@@ -81,7 +82,7 @@ export default function CategoryListingPage() {
             clipRule="evenodd"
           />
         </svg>
-        Categories
+        {t("categories.title")}
       </Link>
 
       {/* Header */}
@@ -117,7 +118,8 @@ export default function CategoryListingPage() {
             setSortDir((d) => (d === "asc" ? "desc" : "asc"));
             setOffset(0);
           }}
-          className="rounded-lg border border px-3 py-2 text-sm text-foreground-secondary hover:bg-surface-subtle"
+          className="rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary hover:bg-surface-subtle"
+          aria-label={t("categories.toggleSortDirection")}
         >
           {sortDir === "asc" ? t("filters.asc") : t("filters.desc")}
         </button>
@@ -186,9 +188,6 @@ export default function CategoryListingPage() {
 function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
   const { t } = useTranslation();
   const band = SCORE_BANDS[product.score_band];
-  const nutriClass = product.nutri_score
-    ? NUTRI_COLORS[product.nutri_score]
-    : "bg-surface-muted text-foreground-secondary";
 
   return (
     <Link href={`/app/product/${product.product_id}`}>
@@ -236,11 +235,7 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
         {/* Compare checkbox */}
         <CompareCheckbox productId={product.product_id} />
 
-        <span
-          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
-        >
-          {product.nutri_score ?? "?"}
-        </span>
+        <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
       </li>
     </Link>
   );

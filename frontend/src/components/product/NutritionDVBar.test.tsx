@@ -121,4 +121,49 @@ describe("NutritionDVBar", () => {
     );
     expect(screen.getByText("214.3%")).toBeInTheDocument();
   });
+
+  // ── Beneficial nutrient color inversion ──────────────────────────────────
+
+  it("uses green color for high level when beneficial", () => {
+    render(
+      <table>
+        <tbody>
+          <NutritionDVBar
+            label="Fibre"
+            rawValue="12 g"
+            dv={highDV}
+            beneficial
+          />
+        </tbody>
+      </table>,
+    );
+    expect(screen.getByText("47.1%")).toHaveClass("text-green-700");
+  });
+
+  it("uses red color for low level when beneficial", () => {
+    render(
+      <table>
+        <tbody>
+          <NutritionDVBar label="Fibre" rawValue="1 g" dv={lowDV} beneficial />
+        </tbody>
+      </table>,
+    );
+    expect(screen.getByText("3.3%")).toHaveClass("text-red-700");
+  });
+
+  it("uses amber color for moderate level when beneficial", () => {
+    render(
+      <table>
+        <tbody>
+          <NutritionDVBar
+            label="Protein"
+            rawValue="10 g"
+            dv={moderateDV}
+            beneficial
+          />
+        </tbody>
+      </table>,
+    );
+    expect(screen.getByText("20%")).toHaveClass("text-amber-700");
+  });
 });
