@@ -257,7 +257,7 @@ export function HealthWarningBadge({
     if (hasProfile && warningsData?.warning_count === 0) {
       return (
         <span
-          className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-green-100 text-xs"
+          className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-success/15 text-xs text-success"
           title={t("healthWarnings.noWarnings")}
         >
           ✓

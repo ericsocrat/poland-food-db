@@ -199,7 +199,7 @@ function ListCard({
         {list.share_enabled && (
           <span
             title={t("lists.shared")}
-            className="rounded-full bg-blue-50 px-2 py-0.5 text-xs text-blue-600"
+            className="rounded-full bg-info/15 px-2 py-0.5 text-xs text-info"
           >
             <Link2 size={12} aria-hidden="true" className="inline" />{" "}
             {t("lists.shared")}
@@ -211,7 +211,7 @@ function ListCard({
             type="button"
             title={t("common.delete")}
             aria-label={`${t("common.delete")} ${list.name}`}
-            className="touch-target flex h-11 w-11 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-red-50 hover:text-red-500"
+            className="touch-target flex h-11 w-11 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-error/10 hover:text-error"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();

@@ -70,8 +70,6 @@ export function ProductHeroImage({
   // ── Determine which image to show ──────────────────────────────────────
   const url = images.primary?.url ?? offUrl;
   const source = images.primary ? images.primary.source : "off_api";
-  const width = images.primary?.width ?? 400;
-  const height = images.primary?.height ?? 400;
   const altText = images.primary?.alt_text ?? productName;
 
   // Still loading OFF fallback — show blur placeholder
@@ -101,7 +99,7 @@ export function ProductHeroImage({
 
   return (
     <div className="group relative">
-      <div className="relative flex max-h-72 w-full items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
+      <div className="relative h-72 w-full overflow-hidden rounded-xl bg-surface-muted">
         {/* Blur placeholder shown until image fully loads */}
         {!imageLoaded && (
           <div
@@ -114,9 +112,8 @@ export function ProductHeroImage({
         <Image
           src={url}
           alt={altText}
-          width={width}
-          height={height}
-          className={`h-full w-full object-contain transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          fill
+          className={`object-contain transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           sizes="(max-width: 640px) 100vw, 400px"
           priority
           onLoad={() => setImageLoaded(true)}

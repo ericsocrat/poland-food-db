@@ -669,25 +669,32 @@ function ProductRow({
         </div>
       </Link>
 
-      {/* Health warning badge */}
-      <HealthWarningBadge productId={product.product_id} />
+      {/* Action buttons — grouped with tighter gap */}
+      <div className="flex flex-shrink-0 items-center gap-1.5">
+        {/* Health warning badge */}
+        <HealthWarningBadge productId={product.product_id} />
 
-      {/* Avoid badge */}
-      <AvoidBadge productId={product.product_id} />
+        {/* Avoid badge */}
+        <AvoidBadge productId={product.product_id} />
 
-      {/* Favorites heart */}
-      <AddToListMenu productId={product.product_id} compact />
+        {/* Favorites heart */}
+        <AddToListMenu productId={product.product_id} compact />
 
-      {/* Compare checkbox */}
-      <CompareCheckbox productId={product.product_id} />
+        {/* Compare checkbox — hidden on small screens */}
+        <span className="hidden sm:inline-flex">
+          <CompareCheckbox productId={product.product_id} />
+        </span>
 
-      {/* NOVA processing badge */}
-      {product.nova_group && (
-        <NovaBadge group={Number(product.nova_group)} size="sm" />
-      )}
+        {/* NOVA processing badge — hidden on xs screens */}
+        {product.nova_group && (
+          <span className="hidden xs:inline-flex">
+            <NovaBadge group={Number(product.nova_group)} size="sm" />
+          </span>
+        )}
 
-      {/* Nutri-Score badge — uses shared component for proper A–E display */}
-      <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
+        {/* Nutri-Score badge */}
+        <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
+      </div>
     </li>
   );
 }

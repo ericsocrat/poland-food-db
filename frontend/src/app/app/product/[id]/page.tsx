@@ -35,9 +35,7 @@ import { DVLegend } from "@/components/product/DVLegend";
 import { ShareButton } from "@/components/product/ShareButton";
 import { ScoreGauge } from "@/components/product/ScoreGauge";
 import { ScoreRadarChart } from "@/components/product/ScoreRadarChart";
-import {
-  getTrafficLight,
-} from "@/components/product/TrafficLightChip";
+import { getTrafficLight } from "@/components/product/TrafficLightChip";
 import { NovaIndicator } from "@/components/product/NovaIndicator";
 import { TrafficLightStrip } from "@/components/product/TrafficLightStrip";
 import { useAnalytics } from "@/hooks/use-analytics";

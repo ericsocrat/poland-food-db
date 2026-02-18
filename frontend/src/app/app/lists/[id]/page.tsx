@@ -237,7 +237,7 @@ export default function ListDetailPage() {
 
           {/* Share panel */}
           {showSharePanel && list.list_type !== "avoid" && (
-            <div className="mt-3 rounded-lg border border bg-surface-subtle p-3">
+            <div className="mt-3 rounded-lg border border-border bg-surface-subtle p-3">
               <p className="mb-2 text-sm font-medium text-foreground-secondary">
                 {t("lists.sharing")}
               </p>
@@ -246,7 +246,7 @@ export default function ListDetailPage() {
                   type="button"
                   className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
                     list.share_enabled
-                      ? "bg-blue-100 text-blue-700"
+                      ? "bg-info/15 text-info"
                       : "bg-surface-muted text-foreground-secondary"
                   }`}
                   onClick={() => handleShare(!list.share_enabled)}
@@ -265,7 +265,7 @@ export default function ListDetailPage() {
                     </button>
                     <button
                       type="button"
-                      className="text-xs text-red-500 hover:text-red-700"
+                      className="text-xs text-error hover:text-error/80"
                       onClick={() => setShowRevokeConfirm(true)}
                     >
                       {t("lists.revoke")}
@@ -398,7 +398,7 @@ function ListItemRow({
         title={t("lists.removeFromList")}
         aria-label={`Remove ${item.product_name}`}
         disabled={isRemoving}
-        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-red-50 hover:text-red-500 disabled:opacity-50"
+        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-error/10 hover:text-error disabled:opacity-50"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();

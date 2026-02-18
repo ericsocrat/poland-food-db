@@ -21,7 +21,7 @@ export function AvoidBadge({ productId }: AvoidBadgeProps) {
   return (
     <span
       title={t("productActions.onAvoidList")}
-      className="inline-flex flex-shrink-0 items-center gap-0.5 rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-700"
+      className="inline-flex flex-shrink-0 items-center gap-0.5 rounded-full bg-error/15 px-2 py-0.5 text-xs font-medium text-error"
     >
       <Ban size={12} aria-hidden="true" /> {t("productActions.avoid")}
     </span>
