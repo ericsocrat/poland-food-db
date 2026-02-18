@@ -118,6 +118,8 @@
     "toggleViewMode": "Toggle view mode",
     "compactView": "Compact",
     "detailedView": "Detailed",
+    "gridView": "Grid",
+    "listView": "List",
     "recentSearches": "Recent searches",
     "emptyState": "Search by name, brand, or browse with filters",
     "searchFailed": "Search failed. Please try again.",

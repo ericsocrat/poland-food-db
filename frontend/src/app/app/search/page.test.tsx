@@ -661,22 +661,22 @@ describe("SearchPage", () => {
 
   // ── View mode toggle ──────────────────────────────────────────────────
 
-  it("renders compact view toggle button", () => {
+  it("renders view mode toggle button", () => {
     render(<SearchPage />, { wrapper: createWrapper() });
     expect(screen.getByLabelText("Toggle view mode")).toBeInTheDocument();
   });
 
-  it("toggles between compact and detailed labels", async () => {
+  it("toggles between grid and list labels", async () => {
     render(<SearchPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
 
-    // Initially shows "Compact" (offers to switch to compact)
-    expect(screen.getByText("Compact")).toBeInTheDocument();
+    // Initially shows "List" (offers to switch to list view)
+    expect(screen.getByText("List")).toBeInTheDocument();
 
     await user.click(screen.getByLabelText("Toggle view mode"));
 
-    // After click shows "Detailed" (offers to switch back)
-    expect(screen.getByText("Detailed")).toBeInTheDocument();
+    // After click shows "Grid" (offers to switch back)
+    expect(screen.getByText("Grid")).toBeInTheDocument();
   });
 
   it("persists view mode in localStorage", async () => {
@@ -685,15 +685,15 @@ describe("SearchPage", () => {
 
     await user.click(screen.getByLabelText("Toggle view mode"));
 
-    expect(localStorage.getItem("fooddb:search-view")).toBe("compact");
+    expect(localStorage.getItem("fooddb:search-view")).toBe("list");
   });
 
-  it("renders compact product rows when in compact mode", async () => {
+  it("renders list product rows when in list mode", async () => {
     mockSearchProducts.mockResolvedValue(makeSearchResponse());
     const user = userEvent.setup();
     render(<SearchPage />, { wrapper: createWrapper() });
 
-    // Switch to compact mode
+    // Switch to list mode
     await user.click(screen.getByLabelText("Toggle view mode"));
 
     // Perform search
@@ -704,16 +704,20 @@ describe("SearchPage", () => {
       expect(screen.getByText("Test Chips")).toBeInTheDocument();
     });
 
-    // In compact mode, NOVA badges should not be rendered
-    expect(screen.queryByTestId("nova-badge")).not.toBeInTheDocument();
+    // In list mode, score tooltip triggers should be rendered
+    const triggers = screen.getAllByTestId("score-tooltip-trigger");
+    expect(triggers.length).toBeGreaterThanOrEqual(1);
   });
 
   // ─── Score tooltips ───────────────────────────────────────────────────
 
-  it("renders score tooltip trigger on detailed product rows", async () => {
+  it("renders score tooltip trigger on list product rows", async () => {
     mockSearchProducts.mockResolvedValue(makeSearchResponse());
     const user = userEvent.setup();
     render(<SearchPage />, { wrapper: createWrapper() });
+
+    // Switch to list mode (default is grid which has no tooltip)
+    await user.click(screen.getByLabelText("Toggle view mode"));
 
     await user.type(screen.getByPlaceholderText("Search products…"), "chips");
     await user.click(screen.getByRole("button", { name: "Search" }));
@@ -731,6 +735,9 @@ describe("SearchPage", () => {
     mockSearchProducts.mockResolvedValue(makeSearchResponse());
     const user = userEvent.setup();
     render(<SearchPage />, { wrapper: createWrapper() });
+
+    // Switch to list mode to access score tooltip
+    await user.click(screen.getByLabelText("Toggle view mode"));
 
     await user.type(screen.getByPlaceholderText("Search products…"), "chips");
     await user.click(screen.getByRole("button", { name: "Search" }));
@@ -768,6 +775,9 @@ describe("SearchPage", () => {
     const user = userEvent.setup();
     render(<SearchPage />, { wrapper: createWrapper() });
 
+    // Switch to list mode to access score tooltip
+    await user.click(screen.getByLabelText("Toggle view mode"));
+
     await user.type(screen.getByPlaceholderText("Search products…"), "test");
     await user.click(screen.getByRole("button", { name: "Search" }));
 
@@ -783,5 +793,60 @@ describe("SearchPage", () => {
         screen.getByText("No major health flags detected."),
       ).toBeInTheDocument();
     });
+  });
+
+  // ── Desktop grid layout ───────────────────────────────────────────────
+
+  it("renders grid layout by default with responsive grid classes", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    const container = screen.getByTestId("results-container");
+    expect(container).toHaveClass("grid", "xl:grid-cols-3");
+  });
+
+  it("renders list layout when toggled to list mode", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    // Switch to list mode
+    await user.click(screen.getByLabelText("Toggle view mode"));
+
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    const container = screen.getByTestId("results-container");
+    expect(container).toHaveClass("space-y-2");
+    expect(container).not.toHaveClass("grid");
+  });
+
+  it("grid card shows action buttons in footer section", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    // Grid cards should show action buttons (multiple products in results)
+    expect(screen.getAllByTestId("health-warning-badge").length).toBeGreaterThan(0);
+    expect(screen.getAllByTestId("avoid-badge").length).toBeGreaterThan(0);
   });
 });
