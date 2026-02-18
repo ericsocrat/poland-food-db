@@ -79,7 +79,7 @@ export function CategoriesBrowse() {
         <CategoriesBrowseSkeleton />
       ) : data && data.length > 0 ? (
         <div
-          className="scrollbar-hide flex gap-3 overflow-x-auto pb-1"
+          className="scrollbar-hide flex gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
           role="list"
           aria-label={t("dashboard.categoriesTitle")}
         >

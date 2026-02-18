@@ -317,4 +317,56 @@ describe("DashboardPage", () => {
       .find((a) => a?.getAttribute("href") === "/app/lists");
     expect(favoritesLink).toBeUndefined();
   });
+
+  // ─── Grid layout tests (Issue #74) ─────────────────────────────────────────
+
+  it("applies 12-column grid on desktop (lg breakpoint)", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    // h1 → space-y-1 div → col-span-12 wrapper → grid container
+    const gridContainer = screen
+      .getByRole("heading", { level: 1 })
+      .closest("[class*='lg:grid-cols-12']");
+    expect(gridContainer).toBeTruthy();
+    expect(gridContainer?.className).toContain("lg:grid");
+    expect(gridContainer?.className).toContain("lg:gap-6");
+  });
+
+  it("assigns correct grid spans to Quick Actions and Stats", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("42")).toBeInTheDocument();
+    });
+    // Quick Actions section — aria-label is lowercase "Quick actions"
+    const quickActionsSection = screen.getByLabelText("Quick actions");
+    expect(quickActionsSection.parentElement?.className).toContain(
+      "lg:col-span-8",
+    );
+    // Stats — find by stat value "42" (total_scanned)
+    const statEl = screen.getByText("42").closest("[class*='lg:col-span-4']");
+    expect(statEl).toBeTruthy();
+  });
+
+  it("keeps stacked layout on mobile (space-y-6)", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    const gridContainer = screen
+      .getByRole("heading", { level: 1 })
+      .closest("[class*='lg:grid-cols-12']");
+    expect(gridContainer?.className).toContain("space-y-6");
+    expect(gridContainer?.className).toContain("lg:space-y-0");
+  });
+
+  it("uses tabular-nums on stat values", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("42")).toBeInTheDocument();
+    });
+    const statValue = screen.getByText("42");
+    expect(statValue.className).toContain("tabular-nums");
+  });
 });

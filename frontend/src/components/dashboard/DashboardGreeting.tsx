@@ -28,7 +28,7 @@ export function DashboardGreeting({
 
   return (
     <div className="space-y-1">
-      <h1 className="text-xl font-bold text-foreground sm:text-2xl lg:text-3xl">
+      <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
         {greeting}
       </h1>
       <p className="text-sm text-foreground-secondary lg:text-base">

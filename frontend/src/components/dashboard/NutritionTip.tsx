@@ -49,7 +49,7 @@ export function NutritionTip() {
 
   return (
     <section
-      className="rounded-xl border bg-surface p-4 shadow-sm"
+      className="rounded-xl border bg-surface p-4 shadow-sm lg:p-6"
       aria-label={t("dashboard.tipTitle")}
     >
       <div className="flex items-start gap-3">
