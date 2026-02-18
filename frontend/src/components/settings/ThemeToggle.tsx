@@ -35,7 +35,7 @@ export function ThemeToggle() {
           role="radio"
           aria-checked={mode === option.value}
           onClick={() => setMode(option.value)}
-          className={`flex items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
+          className={`flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
             mode === option.value
               ? "bg-surface text-foreground shadow-sm"
               : "text-foreground-secondary hover:text-foreground"

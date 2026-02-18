@@ -20,7 +20,11 @@ vi.mock("@/lib/api", () => ({
 
 vi.mock("next/link", () => ({
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  default: ({ href, children }: any) => <a href={href}>{children}</a>,
+  default: ({ href, children, className, ...rest }: any) => (
+    <a href={href} className={className} {...rest}>
+      {children}
+    </a>
+  ),
 }));
 
 // ─── Wrapper ────────────────────────────────────────────────────────────────
@@ -368,5 +372,26 @@ describe("DashboardPage", () => {
     });
     const statValue = screen.getByText("42");
     expect(statValue.className).toContain("tabular-nums");
+  });
+
+  it("stat cards have hover-lift-press interaction class", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("42")).toBeInTheDocument();
+    });
+    const statCard = screen.getByText("42").closest("a")!;
+    expect(statCard.className).toContain("hover-lift-press");
+  });
+
+  it("view-all links have transition-colors class", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getAllByText("View all →").length).toBeGreaterThan(0);
+    });
+    const viewAllLinks = screen.getAllByText("View all →");
+    for (const link of viewAllLinks) {
+      const anchor = link.closest("a")!;
+      expect(anchor.className).toContain("transition-colors");
+    }
   });
 });

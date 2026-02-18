@@ -318,7 +318,7 @@ export default function ProductDetailPage() {
             onClick={() => setActiveTab(tab.key)}
             role="tab"
             aria-selected={activeTab === tab.key}
-            className={`flex-1 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+            className={`flex-1 cursor-pointer rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
               activeTab === tab.key
                 ? "bg-surface text-brand-700 shadow-sm"
                 : "text-foreground-secondary hover:text-foreground"
