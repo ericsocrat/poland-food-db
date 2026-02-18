@@ -320,7 +320,7 @@
     "dvPersonalized": "Based on your health profile",
     "dvStandard": "Based on {regulation} reference intakes (2,000 kcal)",
     "dvLow": "Low (≤5%)",
-    "dvModerate": "Moderate (6–20%)",
+    "dvModerate": "Moderate (5–20%)",
     "dvHigh": "High (>20%)",
     "share": "Share",
     "shareProduct": "Share this product",

@@ -625,14 +625,14 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       label: t("product.fibre"),
       value: n.fibre_g === null ? "—" : `${n.fibre_g} g`,
       dv: dvPer100g?.fiber ?? null,
-      tl: null as ReturnType<typeof getTrafficLight>,
+      tl: getTrafficLight("fibre", n.fibre_g),
       beneficial: true,
     },
     {
       label: t("product.protein"),
       value: `${n.protein_g} g`,
       dv: dvPer100g?.protein ?? null,
-      tl: null as ReturnType<typeof getTrafficLight>,
+      tl: getTrafficLight("protein", n.protein_g),
       beneficial: true,
     },
     {

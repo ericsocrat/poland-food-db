@@ -158,14 +158,12 @@ export default function SettingsPage() {
               }}
               className={`rounded-lg border-2 px-3 py-3 text-center transition-colors ${
                 country === c.code
-                  ? "border-brand-500 bg-brand-50"
-                  : "border hover:border-strong"
+                  ? "border-brand-500 bg-brand-50 text-brand-700"
+                  : "border text-foreground-secondary hover:border-strong"
               }`}
             >
               <span className="text-2xl">{c.flag}</span>
-              <p className="mt-1 text-sm font-medium text-foreground">
-                {c.native}
-              </p>
+              <p className="mt-1 text-sm font-medium">{c.native}</p>
             </button>
           ))}
         </div>
@@ -186,14 +184,12 @@ export default function SettingsPage() {
               }}
               className={`rounded-lg border-2 px-3 py-3 text-center transition-colors ${
                 language === lang.code
-                  ? "border-brand-500 bg-brand-50"
-                  : "border hover:border-strong"
+                  ? "border-brand-500 bg-brand-50 text-brand-700"
+                  : "border text-foreground-secondary hover:border-strong"
               }`}
             >
               <span className="text-2xl">{lang.flag}</span>
-              <p className="mt-1 text-sm font-medium text-foreground">
-                {lang.native}
-              </p>
+              <p className="mt-1 text-sm font-medium">{lang.native}</p>
             </button>
           ))}
         </div>
