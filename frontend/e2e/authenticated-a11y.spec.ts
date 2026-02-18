@@ -19,7 +19,7 @@ const AUTH_PAGES = [
   { name: "Settings", path: "/app/settings" },
   { name: "Categories", path: "/app/categories" },
   { name: "Lists", path: "/app/lists" },
-  { name: "Dashboard", path: "/app/dashboard" },
+  { name: "Dashboard", path: "/app" },
 ];
 
 /* ── Per-page WCAG audits ────────────────────────────────────────────────── */
@@ -46,7 +46,7 @@ test.describe("A11y audit — authenticated mobile", () => {
   });
 
   test("dashboard passes a11y on mobile", async ({ page }) => {
-    await page.goto("/app/dashboard");
+    await page.goto("/app");
     await page.waitForLoadState("networkidle");
     await assertNoA11yViolations(page);
   });

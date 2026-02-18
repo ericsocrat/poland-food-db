@@ -106,7 +106,7 @@ export function LoginForm() {
           {t("auth.noAccount")}{" "}
           <Link
             href="/auth/signup"
-            className="font-medium text-brand-600 hover:text-brand-700"
+            className="font-medium text-brand-600 hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
           >
             {t("auth.signUp")}
           </Link>

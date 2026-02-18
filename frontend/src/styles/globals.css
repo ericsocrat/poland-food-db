@@ -21,8 +21,8 @@
     --color-border-strong: #d1d5db; /* gray-300 */
 
     /* ── Brand (Primary Action) ── */
-    --color-brand: #16a34a; /* brand-600 */
-    --color-brand-hover: #15803d; /* brand-700 */
+    --color-brand: #15803d; /* green-700 — 5:1 contrast on white (WCAG AA) */
+    --color-brand-hover: #166534; /* green-800 */
     --color-brand-subtle: #dcfce7; /* brand-100 */
 
     /* ── Health Score Bands ── */

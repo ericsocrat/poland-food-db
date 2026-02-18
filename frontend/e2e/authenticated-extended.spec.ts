@@ -12,8 +12,8 @@ test.describe("App navigation bar", () => {
     const nav = page.getByRole("navigation", { name: "Main navigation" });
     await expect(nav).toBeVisible();
 
+    await expect(nav.getByRole("link", { name: "Home" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Search" })).toBeVisible();
-    await expect(nav.getByRole("link", { name: "Categories" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Scan" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Lists" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Settings" })).toBeVisible();
@@ -26,11 +26,11 @@ test.describe("App navigation bar", () => {
     await expect(page).toHaveURL(/\/app\/search/);
   });
 
-  test("Categories link navigates to /app/categories", async ({ page }) => {
+  test("Home link navigates to /app", async ({ page }) => {
     await page.goto("/app/search");
     const nav = page.getByRole("navigation", { name: "Main navigation" });
-    await nav.getByRole("link", { name: "Categories" }).click();
-    await expect(page).toHaveURL(/\/app\/categories/);
+    await nav.getByRole("link", { name: "Home" }).click();
+    await expect(page).toHaveURL(/\/app$/);
   });
 
   test("Scan link navigates to /app/scan", async ({ page }) => {
