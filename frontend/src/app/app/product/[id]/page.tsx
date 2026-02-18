@@ -161,186 +161,196 @@ export default function ProductDetailPage() {
       <div className="lg:grid lg:grid-cols-12 lg:gap-6">
         {/* Left column — sticky on desktop */}
         <div className="space-y-4 lg:col-span-5 lg:space-y-6 lg:self-start lg:sticky lg:top-20">
+          {/* Header */}
+          <div className="card">
+            {/* Product Hero Image */}
+            <div className="mb-4">
+              <ProductHeroImage
+                images={profile.images}
+                productName={
+                  profile.product.product_name_display ??
+                  profile.product.product_name
+                }
+                categoryIcon={profile.product.category_icon}
+                ean={profile.product.ean}
+              />
+            </div>
 
-      {/* Header */}
-      <div className="card">
-        {/* Product Hero Image */}
-        <div className="mb-4">
-          <ProductHeroImage
-            images={profile.images}
-            productName={
-              profile.product.product_name_display ??
-              profile.product.product_name
-            }
-            categoryIcon={profile.product.category_icon}
-            ean={profile.product.ean}
-          />
-        </div>
-
-        <div className="flex items-start gap-4">
-          <ScoreGauge score={profile.scores.unhealthiness_score} size="lg" />
-          <div className="min-w-0 flex-1">
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-lg font-bold text-foreground lg:text-xl">
-                  {profile.product.product_name_display ??
-                    profile.product.product_name}
-                </p>
-                {profile.product.product_name_en &&
-                  profile.product.product_name_display !==
-                    profile.product.product_name && (
-                    <p className="text-xs text-foreground-muted">
-                      {t("product.originalName")}:{" "}
-                      {profile.product.product_name}
+            <div className="flex items-start gap-4">
+              <ScoreGauge
+                score={profile.scores.unhealthiness_score}
+                size="lg"
+              />
+              <div className="min-w-0 flex-1">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <p className="text-lg font-bold text-foreground lg:text-xl">
+                      {profile.product.product_name_display ??
+                        profile.product.product_name}
                     </p>
-                  )}
-                <p className="text-sm text-foreground-secondary lg:text-base">
-                  {profile.product.brand}
+                    {profile.product.product_name_en &&
+                      profile.product.product_name_display !==
+                        profile.product.product_name && (
+                        <p className="text-xs text-foreground-muted">
+                          {t("product.originalName")}:{" "}
+                          {profile.product.product_name}
+                        </p>
+                      )}
+                    <p className="text-sm text-foreground-secondary lg:text-base">
+                      {profile.product.brand}
+                    </p>
+                  </div>
+                  <div className="no-print flex flex-wrap items-center gap-2">
+                    <ShareButton
+                      productName={
+                        profile.product.product_name_display ??
+                        profile.product.product_name
+                      }
+                      score={profile.scores.unhealthiness_score}
+                      productId={productId}
+                    />
+                    <AvoidBadge productId={productId} />
+                    <AddToListMenu productId={productId} />
+                    <CompareCheckbox
+                      productId={productId}
+                      productName={
+                        profile.product.product_name_display ??
+                        profile.product.product_name
+                      }
+                    />
+                    <PrintButton />
+                  </div>
+                </div>
+                <div className="mt-2 flex items-center gap-2">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-xs font-bold">
+                    <NutriScoreBadge
+                      grade={profile.scores.nutri_score_label}
+                      size="sm"
+                    />
+                    <span className="text-foreground-secondary">
+                      {t("product.nutriScoreLabel")}
+                    </span>
+                  </span>
+                  <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary">
+                    {t("product.novaGroup", {
+                      group: profile.scores.nova_group,
+                    })}
+                  </span>
+                  <span
+                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${band.bg} ${band.color}`}
+                  >
+                    {band.label}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Category & EAN */}
+            <div className="mt-3 flex flex-wrap gap-2 text-xs text-foreground-secondary">
+              <span>
+                {profile.product.category_icon}{" "}
+                {profile.product.category_display}
+              </span>
+              {profile.product.ean && <span>EAN: {profile.product.ean}</span>}
+              {profile.product.store_availability && (
+                <span>Store: {profile.product.store_availability}</span>
+              )}
+            </div>
+
+            {/* Flags — with "why" explanations */}
+            {(profile.flags.high_sugar ||
+              profile.flags.high_salt ||
+              profile.flags.high_sat_fat ||
+              profile.flags.high_additive_load ||
+              profile.flags.has_palm_oil) && (
+              <div className="mt-3 space-y-1">
+                <p className="text-xs font-medium text-foreground-muted">
+                  {t("product.healthFlags")}
                 </p>
+                <div className="flex flex-wrap gap-1">
+                  {profile.flags.high_sugar && (
+                    <FlagWithExplanation
+                      label={t("product.highSugar")}
+                      explanation={t("product.highSugarExplanation")}
+                    />
+                  )}
+                  {profile.flags.high_salt && (
+                    <FlagWithExplanation
+                      label={t("product.highSalt")}
+                      explanation={t("product.highSaltExplanation")}
+                    />
+                  )}
+                  {profile.flags.high_sat_fat && (
+                    <FlagWithExplanation
+                      label={t("product.highSatFat")}
+                      explanation={t("product.highSatFatExplanation")}
+                    />
+                  )}
+                  {profile.flags.high_additive_load && (
+                    <FlagWithExplanation
+                      label={t("product.manyAdditives")}
+                      explanation={t("product.manyAdditivesExplanation")}
+                    />
+                  )}
+                  {profile.flags.has_palm_oil && (
+                    <FlagWithExplanation
+                      label={t("product.palmOil")}
+                      explanation={t("product.palmOilExplanation")}
+                    />
+                  )}
+                </div>
               </div>
-              <div className="no-print flex flex-wrap items-center gap-2">
-                <ShareButton
-                  productName={
-                    profile.product.product_name_display ??
-                    profile.product.product_name
-                  }
-                  score={profile.scores.unhealthiness_score}
-                  productId={productId}
-                />
-                <AvoidBadge productId={productId} />
-                <AddToListMenu productId={productId} />
-                <CompareCheckbox productId={productId} />
-                <PrintButton />
-              </div>
-            </div>
-            <div className="mt-2 flex items-center gap-2">
-              <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-xs font-bold">
-                <NutriScoreBadge
-                  grade={profile.scores.nutri_score_label}
-                  size="sm"
-                />
-                <span className="text-foreground-secondary">
-                  {t("product.nutriScoreLabel")}
-                </span>
-              </span>
-              <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary">
-                {t("product.novaGroup", { group: profile.scores.nova_group })}
-              </span>
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs font-medium ${band.bg} ${band.color}`}
-              >
-                {band.label}
-              </span>
-            </div>
+            )}
           </div>
-        </div>
 
-        {/* Category & EAN */}
-        <div className="mt-3 flex flex-wrap gap-2 text-xs text-foreground-secondary">
-          <span>
-            {profile.product.category_icon} {profile.product.category_display}
-          </span>
-          {profile.product.ean && <span>EAN: {profile.product.ean}</span>}
-          {profile.product.store_availability && (
-            <span>Store: {profile.product.store_availability}</span>
-          )}
-        </div>
+          {/* Score interpretation — expandable "What does this score mean?" */}
+          <ScoreInterpretationCard score={profile.scores.unhealthiness_score} />
 
-        {/* Flags — with "why" explanations */}
-        {(profile.flags.high_sugar ||
-          profile.flags.high_salt ||
-          profile.flags.high_sat_fat ||
-          profile.flags.high_additive_load ||
-          profile.flags.has_palm_oil) && (
-          <div className="mt-3 space-y-1">
-            <p className="text-xs font-medium text-foreground-muted">
-              {t("product.healthFlags")}
-            </p>
-            <div className="flex flex-wrap gap-1">
-              {profile.flags.high_sugar && (
-                <FlagWithExplanation
-                  label={t("product.highSugar")}
-                  explanation={t("product.highSugarExplanation")}
-                />
-              )}
-              {profile.flags.high_salt && (
-                <FlagWithExplanation
-                  label={t("product.highSalt")}
-                  explanation={t("product.highSaltExplanation")}
-                />
-              )}
-              {profile.flags.high_sat_fat && (
-                <FlagWithExplanation
-                  label={t("product.highSatFat")}
-                  explanation={t("product.highSatFatExplanation")}
-                />
-              )}
-              {profile.flags.high_additive_load && (
-                <FlagWithExplanation
-                  label={t("product.manyAdditives")}
-                  explanation={t("product.manyAdditivesExplanation")}
-                />
-              )}
-              {profile.flags.has_palm_oil && (
-                <FlagWithExplanation
-                  label={t("product.palmOil")}
-                  explanation={t("product.palmOilExplanation")}
-                />
-              )}
-            </div>
-          </div>
-        )}
-      </div>
-
-      {/* Score interpretation — expandable "What does this score mean?" */}
-      <ScoreInterpretationCard score={profile.scores.unhealthiness_score} />
-
-      {/* Personalized health warnings */}
-      <ErrorBoundary
-        level="section"
-        context={{ section: "health-warnings", productId }}
-      >
-        <HealthWarningsCard productId={productId} />
-      </ErrorBoundary>
+          {/* Personalized health warnings */}
+          <ErrorBoundary
+            level="section"
+            context={{ section: "health-warnings", productId }}
+          >
+            <HealthWarningsCard productId={productId} />
+          </ErrorBoundary>
         </div>
 
         {/* Right column — scrollable content */}
         <div className="mt-4 space-y-4 lg:col-span-7 lg:mt-0 lg:space-y-6">
-
-      {/* Tab bar */}
-      <div
-        className="flex gap-1 rounded-lg bg-surface-muted p-1"
-        role="tablist"
-      >
-        {tabs.map((tab) => (
-          <button
-            key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
-            role="tab"
-            aria-selected={activeTab === tab.key}
-            className={`flex-1 cursor-pointer rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
-              activeTab === tab.key
-                ? "bg-surface text-brand-700 shadow-sm"
-                : "text-foreground-secondary hover:text-foreground"
-            }`}
+          {/* Tab bar */}
+          <div
+            className="flex gap-1 rounded-lg bg-surface-muted p-1"
+            role="tablist"
           >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                onClick={() => setActiveTab(tab.key)}
+                role="tab"
+                aria-selected={activeTab === tab.key}
+                className={`flex-1 cursor-pointer rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                  activeTab === tab.key
+                    ? "bg-surface text-brand-700 shadow-sm"
+                    : "text-foreground-secondary hover:text-foreground"
+                }`}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-      {/* Tab content */}
-      <ErrorBoundary
-        level="section"
-        context={{ section: "tab-content", productId, tab: activeTab }}
-      >
-        {activeTab === "overview" && <OverviewTab profile={profile} />}
-        {activeTab === "nutrition" && <NutritionTab profile={profile} />}
-        {activeTab === "alternatives" && (
-          <AlternativesTab alternatives={profile.alternatives} />
-        )}
-        {activeTab === "scoring" && <ScoringTab profile={profile} />}
-      </ErrorBoundary>
+          {/* Tab content */}
+          <ErrorBoundary
+            level="section"
+            context={{ section: "tab-content", productId, tab: activeTab }}
+          >
+            {activeTab === "overview" && <OverviewTab profile={profile} />}
+            {activeTab === "nutrition" && <NutritionTab profile={profile} />}
+            {activeTab === "alternatives" && (
+              <AlternativesTab alternatives={profile.alternatives} />
+            )}
+            {activeTab === "scoring" && <ScoringTab profile={profile} />}
+          </ErrorBoundary>
         </div>
       </div>
     </div>
@@ -655,9 +665,15 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       <table className="w-full text-sm">
         <thead className="hidden text-xs text-foreground-muted lg:table-header-group">
           <tr className="border-b border-border">
-            <th className="pb-2 text-left font-medium">{t("product.nutrient")}</th>
-            <th className="pb-2 text-right font-medium">{t("product.per100g")}</th>
-            <th className="pb-2 pl-4 text-left font-medium">{t("product.dailyValue")}</th>
+            <th className="pb-2 text-left font-medium">
+              {t("product.nutrient")}
+            </th>
+            <th className="pb-2 text-right font-medium">
+              {t("product.per100g")}
+            </th>
+            <th className="pb-2 pl-4 text-left font-medium">
+              {t("product.dailyValue")}
+            </th>
           </tr>
         </thead>
         <tbody>

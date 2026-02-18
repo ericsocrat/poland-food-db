@@ -1058,5 +1058,40 @@
       "whatYouCanDoTitle": "Co możesz zrobić",
       "whatYouCanDoText": "Jeśli zauważysz nieprawidłowe dane dla produktu, możesz pomóc ulepszyć naszą bazę danych. Szukaj wskaźnika pewności na profilu każdego produktu — mówi ci, jak wiarygodne są obecne dane."
     }
+  },
+  "commandPalette": {
+    "placeholder": "Szukaj lub przejdź do…",
+    "navigation": "Nawigacja",
+    "recentProducts": "Ostatnie produkty",
+    "searchFor": "Szukaj '{query}'",
+    "noResults": "Brak wyników",
+    "goToDashboard": "Przejdź do pulpitu",
+    "goToSearch": "Szukaj produktów",
+    "goToScan": "Skanuj kod kreskowy",
+    "goToLists": "Moje listy",
+    "goToCategories": "Przeglądaj kategorie",
+    "goToCompare": "Porównaj produkty",
+    "goToSettings": "Ustawienia",
+    "close": "Zamknij"
+  },
+  "shortcuts": {
+    "title": "Skróty klawiszowe",
+    "navigation": "Nawigacja",
+    "general": "Ogólne",
+    "commandPalette": "Paleta poleceń",
+    "focusSearch": "Fokus na wyszukiwarkę",
+    "goHome": "Przejdź do pulpitu",
+    "goLists": "Przejdź do list",
+    "openScanner": "Otwórz skaner",
+    "showShortcuts": "Pokaż tę pomoc",
+    "closeOverlay": "Zamknij modal / nakładkę"
+  },
+  "comparisonTray": {
+    "title": "Porównaj",
+    "products": "{count} produkt(ów)",
+    "compareNow": "Porównaj teraz →",
+    "empty": "Dodaj produkty do porównania",
+    "collapse": "Zwiń panel porównania",
+    "expand": "Rozwiń panel porównania"
   }
 }

@@ -1058,5 +1058,40 @@
       "whatYouCanDoTitle": "What you can do",
       "whatYouCanDoText": "If you notice incorrect data for a product, you can help improve our database. Look for the confidence indicator on each product profile — it tells you how reliable the current data is."
     }
+  },
+  "commandPalette": {
+    "placeholder": "Search or jump to…",
+    "navigation": "Navigation",
+    "recentProducts": "Recent Products",
+    "searchFor": "Search for '{query}'",
+    "noResults": "No results found",
+    "goToDashboard": "Go to Dashboard",
+    "goToSearch": "Search Products",
+    "goToScan": "Scan Barcode",
+    "goToLists": "My Lists",
+    "goToCategories": "Browse Categories",
+    "goToCompare": "Compare Products",
+    "goToSettings": "Settings",
+    "close": "Close"
+  },
+  "shortcuts": {
+    "title": "Keyboard Shortcuts",
+    "navigation": "Navigation",
+    "general": "General",
+    "commandPalette": "Command Palette",
+    "focusSearch": "Focus Search",
+    "goHome": "Go to Dashboard",
+    "goLists": "Go to Lists",
+    "openScanner": "Open Scanner",
+    "showShortcuts": "Show this help",
+    "closeOverlay": "Close modal / overlay"
+  },
+  "comparisonTray": {
+    "title": "Compare",
+    "products": "{count} product(s)",
+    "compareNow": "Compare Now →",
+    "empty": "Add products to compare",
+    "collapse": "Collapse comparison tray",
+    "expand": "Expand comparison tray"
   }
 }
