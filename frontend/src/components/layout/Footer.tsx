@@ -10,6 +10,13 @@ export function Footer() {
       <div className="mx-auto max-w-5xl px-4 text-center text-sm text-foreground-secondary">
         <div className="mb-3 flex items-center justify-center gap-2">
           <Link
+            href="/learn"
+            className="touch-target px-2 hover:text-foreground"
+          >
+            {t("learn.hubTitle")}
+          </Link>
+          <span aria-hidden="true">·</span>
+          <Link
             href="/privacy"
             className="touch-target px-2 hover:text-foreground"
           >
