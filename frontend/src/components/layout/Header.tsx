@@ -25,7 +25,7 @@ export function Header() {
         <nav className="flex items-center gap-4">
           <Link
             href="/contact"
-            className="touch-target text-sm text-foreground-secondary hover:text-foreground"
+            className="touch-target text-sm text-foreground-secondary hover:text-foreground lg:text-base"
           >
             {t("layout.contact")}
           </Link>

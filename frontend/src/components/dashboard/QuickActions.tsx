@@ -19,7 +19,7 @@ export function QuickActions() {
 
   return (
     <section aria-label={t("dashboard.quickActions")}>
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-4 gap-3 lg:gap-4">
         {ACTIONS.map((action) => (
           <Link
             key={action.key}
@@ -32,7 +32,7 @@ export function QuickActions() {
             >
               <action.icon size={28} />
             </span>
-            <span className="text-xs font-medium text-foreground-secondary group-hover:text-foreground sm:text-sm">
+            <span className="text-xs font-medium text-foreground-secondary group-hover:text-foreground sm:text-sm lg:text-base">
               {t(`dashboard.action.${action.key}`)}
             </span>
           </Link>

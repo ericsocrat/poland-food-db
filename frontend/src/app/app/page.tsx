@@ -85,7 +85,7 @@ function StatsBar({ stats }: { stats: DashboardStats }) {
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
       {items.map((s) => (
         <Link
           key={s.label}
@@ -95,8 +95,12 @@ function StatsBar({ stats }: { stats: DashboardStats }) {
           <span className="flex items-center justify-center">
             <s.icon size={28} aria-hidden="true" />
           </span>
-          <span className="text-xl font-bold text-foreground">{s.value}</span>
-          <span className="text-xs text-foreground-secondary">{s.label}</span>
+          <span className="text-xl font-bold text-foreground lg:text-2xl">
+            {s.value}
+          </span>
+          <span className="text-xs text-foreground-secondary lg:text-sm">
+            {s.label}
+          </span>
         </Link>
       ))}
     </div>
@@ -147,12 +151,12 @@ function RecentlyViewedSection({
 
   return (
     <section>
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+      <div className="mb-2 flex items-center justify-between lg:mb-3">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground lg:text-xl">
           <Eye size={20} aria-hidden="true" /> {t("dashboard.recentlyViewed")}
         </h2>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 lg:space-y-3">
         {products.map((p) => (
           <ProductRow
             key={p.product_id}
@@ -175,8 +179,8 @@ function FavoritesSection({
 
   return (
     <section>
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+      <div className="mb-2 flex items-center justify-between lg:mb-3">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground lg:text-xl">
           <Heart size={20} aria-hidden="true" /> {t("dashboard.favorites")}
         </h2>
         <Link
@@ -186,7 +190,7 @@ function FavoritesSection({
           {t("dashboard.viewAll")}
         </Link>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 lg:space-y-3">
         {products.map((p) => (
           <ProductRow key={p.product_id} product={p} />
         ))}
@@ -207,8 +211,8 @@ function NewProductsSection({
 
   return (
     <section>
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground">
+      <div className="mb-2 flex items-center justify-between lg:mb-3">
+        <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground lg:text-xl">
           <Sparkles size={20} aria-hidden="true" />{" "}
           {category
             ? t("dashboard.newInCategory", { category })
@@ -221,7 +225,7 @@ function NewProductsSection({
           {t("dashboard.browse")}
         </Link>
       </div>
-      <div className="space-y-2">
+      <div className="space-y-2 lg:space-y-3">
         {products.map((p) => (
           <ProductRow key={p.product_id} product={p} />
         ))}
@@ -297,7 +301,7 @@ export default function DashboardPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-8">
       {/* Personalised greeting */}
       <DashboardGreeting />
 

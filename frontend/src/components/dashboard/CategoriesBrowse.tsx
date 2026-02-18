@@ -63,8 +63,8 @@ export function CategoriesBrowse() {
 
   return (
     <section>
-      <div className="mb-2 flex items-center justify-between">
-        <h2 className="text-lg font-semibold text-foreground">
+      <div className="mb-2 flex items-center justify-between lg:mb-3">
+        <h2 className="text-lg font-semibold text-foreground lg:text-xl">
           {t("dashboard.categoriesTitle")}
         </h2>
         <Link

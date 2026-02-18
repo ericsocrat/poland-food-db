@@ -318,7 +318,7 @@
   }
 
   .card {
-    @apply rounded-xl border bg-surface p-3 shadow-sm sm:p-4;
+    @apply rounded-xl border bg-surface p-3 shadow-sm sm:p-4 lg:p-5;
   }
 
   /* ── Motion Utility Classes (#61) ── */

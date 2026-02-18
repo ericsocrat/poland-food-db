@@ -61,10 +61,10 @@ export default function CategoriesPage() {
 
   return (
     <div>
-      <h1 className="mb-4 text-xl font-bold text-foreground">
+      <h1 className="mb-4 text-xl font-bold text-foreground lg:text-2xl">
         {t("categories.title")}
       </h1>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 lg:gap-4">
         {data?.map((cat) => (
           <CategoryCard key={cat.category} category={cat} />
         ))}

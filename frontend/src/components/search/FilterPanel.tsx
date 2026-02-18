@@ -203,7 +203,8 @@ export function FilterPanel({
                   const selected = (filters.nutri_score ?? []).includes(
                     ns.label,
                   );
-                  const nutriClass = NUTRI_COLORS[ns.label] ?? "bg-surface-muted";
+                  const nutriClass =
+                    NUTRI_COLORS[ns.label] ?? "bg-surface-muted";
                   return (
                     <button
                       key={ns.label}

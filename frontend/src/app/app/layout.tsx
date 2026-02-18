@@ -83,7 +83,7 @@ export default async function AppLayout({
 
       <main
         id="main-content"
-        className="mx-auto w-full max-w-5xl flex-1 px-4 py-4 md:py-6"
+        className="mx-auto w-full max-w-5xl flex-1 px-4 py-4 md:py-6 lg:py-8"
       >
         <ListsHydrator />
         <LanguageHydrator />
