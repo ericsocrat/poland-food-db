@@ -15,7 +15,6 @@ import {
   SCORE_BANDS,
   CONCERN_TIER_STYLES,
   CONCERN_TIER_LABEL_KEYS,
-  TRAFFIC_LIGHT_NUTRIENTS,
   scoreBandFromScore,
   getScoreInterpretation,
 } from "@/lib/constants";
@@ -38,7 +37,6 @@ import { ScoreGauge } from "@/components/product/ScoreGauge";
 import { ScoreRadarChart } from "@/components/product/ScoreRadarChart";
 import {
   getTrafficLight,
-  TrafficLightChip,
 } from "@/components/product/TrafficLightChip";
 import { NovaIndicator } from "@/components/product/NovaIndicator";
 import { TrafficLightStrip } from "@/components/product/TrafficLightStrip";

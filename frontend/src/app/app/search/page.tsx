@@ -548,7 +548,11 @@ function ScoreTooltip({ product }: Readonly<{ product: SearchResult }>) {
     <span className="relative inline-flex">
       <button
         type="button"
-        onClick={(e) => { e.preventDefault(); e.stopPropagation(); setOpen((v) => !v); }}
+        onClick={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          setOpen((v) => !v);
+        }}
         className="touch-target inline-flex h-5 w-5 items-center justify-center rounded-full text-foreground-muted hover:text-foreground-secondary"
         aria-label={t("search.whyThisScore")}
         data-testid="score-tooltip-trigger"
@@ -566,8 +570,14 @@ function ScoreTooltip({ product }: Readonly<{ product: SearchResult }>) {
           {flags.length > 0 && (
             <ul className="mt-1.5 space-y-0.5">
               {flags.map((f) => (
-                <li key={f} className="flex items-center gap-1 text-xs text-foreground-secondary">
-                  <span className="h-1.5 w-1.5 rounded-full bg-red-400" aria-hidden="true" />
+                <li
+                  key={f}
+                  className="flex items-center gap-1 text-xs text-foreground-secondary"
+                >
+                  <span
+                    className="h-1.5 w-1.5 rounded-full bg-red-400"
+                    aria-hidden="true"
+                  />
                   {f}
                 </li>
               ))}

@@ -383,6 +383,8 @@ describe("SettingsPage", () => {
 
     // Save button should still be visible since dirty was set
     // But no strictness toggles since allergens are now empty again
-    expect(screen.queryByText("Strict allergen matching")).not.toBeInTheDocument();
+    expect(
+      screen.queryByText("Strict allergen matching"),
+    ).not.toBeInTheDocument();
   });
 });

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { NutritionTip, tipIndexForToday } from "./NutritionTip";
+import { NutritionTip } from "./NutritionTip";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -37,7 +37,6 @@ describe("NutritionTip", () => {
 
   it("renders a tip text", () => {
     render(<NutritionTip />);
-    const index = tipIndexForToday();
     // Tip text should be visible — check for a non-empty paragraph
     const section = screen.getByRole("region", { name: "Tip of the Day" });
     const paragraphs = section.querySelectorAll("p");

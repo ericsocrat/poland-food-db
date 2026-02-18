@@ -135,7 +135,9 @@ export default function SettingsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-xl font-bold text-foreground">{t("settings.title")}</h1>
+      <h1 className="text-xl font-bold text-foreground">
+        {t("settings.title")}
+      </h1>
 
       {/* Country */}
       <section className="card">
@@ -253,9 +255,14 @@ export default function SettingsPage() {
         </h2>
 
         {/* Quick presets */}
-        <div className="mb-3 flex flex-wrap gap-2" data-testid="allergen-presets">
+        <div
+          className="mb-3 flex flex-wrap gap-2"
+          data-testid="allergen-presets"
+        >
           {ALLERGEN_PRESETS.map((preset) => {
-            const allSelected = preset.tags.every((tag) => allergens.includes(tag));
+            const allSelected = preset.tags.every((tag) =>
+              allergens.includes(tag),
+            );
             return (
               <button
                 key={preset.key}
