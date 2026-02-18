@@ -9,6 +9,8 @@ import { AlertTriangle } from "lucide-react";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { translate } from "@/lib/i18n";
 import { Navigation } from "@/components/layout/Navigation";
+import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
+import { DesktopHeaderNav } from "@/components/layout/DesktopHeaderNav";
 import { SkipLink } from "@/components/common/SkipLink";
 import { CountryChip } from "@/components/common/CountryChip";
 import { ListsHydrator } from "@/components/product/ListsHydrator";
@@ -67,35 +69,45 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col xl:flex-row">
       <SkipLink />
       <div className="no-print">
         <OfflineIndicator />
       </div>
-      <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur">
-        <div className="mx-auto flex h-12 md:h-14 max-w-5xl items-center justify-between px-4">
-          <span className="text-lg font-bold text-brand-700">
-            {translate("en", "layout.appNameWithEmoji")}
-          </span>
-          <CountryChip country={prefs.country} />
+
+      {/* Sidebar — xl+ only (hidden below xl via CSS) */}
+      <DesktopSidebar />
+
+      {/* Main column — offset by sidebar width on xl+ */}
+      <div className="flex min-h-screen flex-1 flex-col xl:pl-56">
+        {/* Header — visible below xl. Hidden at xl+ where sidebar takes over. */}
+        <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur xl:hidden">
+          <div className="mx-auto flex h-12 md:h-14 max-w-5xl items-center justify-between px-4">
+            <span className="text-lg font-bold text-brand-700">
+              {translate("en", "layout.appNameWithEmoji")}
+            </span>
+            {/* Desktop header nav — lg to xl only */}
+            <DesktopHeaderNav />
+            <CountryChip country={prefs.country} />
+          </div>
+        </header>
+
+        <main
+          id="main-content"
+          className="mx-auto w-full max-w-5xl flex-1 px-4 py-4 md:py-6 lg:py-8"
+        >
+          <ListsHydrator />
+          <LanguageHydrator />
+          {children}
+        </main>
+
+        <div className="no-print">
+          <CompareFloatingButton />
+          <InstallPrompt />
+          <GlobalKeyboardShortcuts />
         </div>
-      </header>
-
-      <main
-        id="main-content"
-        className="mx-auto w-full max-w-5xl flex-1 px-4 py-4 md:py-6 lg:py-8"
-      >
-        <ListsHydrator />
-        <LanguageHydrator />
-        {children}
-      </main>
-
-      <div className="no-print">
-        <CompareFloatingButton />
-        <InstallPrompt />
-        <GlobalKeyboardShortcuts />
+        <Navigation />
       </div>
-      <Navigation />
     </div>
   );
 }
