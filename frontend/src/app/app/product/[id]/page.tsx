@@ -157,6 +157,11 @@ export default function ProductDetailPage() {
         ]}
       />
 
+      {/* Desktop: 2-column grid; Mobile: single column */}
+      <div className="lg:grid lg:grid-cols-12 lg:gap-6">
+        {/* Left column — sticky on desktop */}
+        <div className="space-y-4 lg:col-span-5 lg:space-y-6 lg:self-start lg:sticky lg:top-20">
+
       {/* Header */}
       <div className="card">
         {/* Product Hero Image */}
@@ -173,7 +178,7 @@ export default function ProductDetailPage() {
         </div>
 
         <div className="flex items-start gap-4">
-          <ScoreGauge score={profile.scores.unhealthiness_score} />
+          <ScoreGauge score={profile.scores.unhealthiness_score} size="lg" />
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between">
               <div>
@@ -297,6 +302,10 @@ export default function ProductDetailPage() {
       >
         <HealthWarningsCard productId={productId} />
       </ErrorBoundary>
+        </div>
+
+        {/* Right column — scrollable content */}
+        <div className="mt-4 space-y-4 lg:col-span-7 lg:mt-0 lg:space-y-6">
 
       {/* Tab bar */}
       <div
@@ -332,6 +341,8 @@ export default function ProductDetailPage() {
         )}
         {activeTab === "scoring" && <ScoringTab profile={profile} />}
       </ErrorBoundary>
+        </div>
+      </div>
     </div>
   );
 }
@@ -642,6 +653,13 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       </div>
 
       <table className="w-full text-sm">
+        <thead className="hidden text-xs text-foreground-muted lg:table-header-group">
+          <tr className="border-b border-border">
+            <th className="pb-2 text-left font-medium">{t("product.nutrient")}</th>
+            <th className="pb-2 text-right font-medium">{t("product.per100g")}</th>
+            <th className="pb-2 pl-4 text-left font-medium">{t("product.dailyValue")}</th>
+          </tr>
+        </thead>
         <tbody>
           {rows.map((row) => (
             <NutritionDVBar

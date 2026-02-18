@@ -1045,4 +1045,142 @@ describe("ProductDetailPage", () => {
       .filter((el) => el.getAttribute("data-allergen-type") === "traces");
     expect(tracesBadges.length).toBeGreaterThan(0);
   });
+
+  // ── Desktop split layout ─────────────────────────────────────────────────
+
+  it("renders a 12-column grid wrapper for desktop split layout", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    // The grid wrapper should have the responsive grid classes
+    const gridEl = document.querySelector(".lg\\:grid-cols-12");
+    expect(gridEl).toBeInTheDocument();
+    expect(gridEl).toHaveClass("lg:grid", "lg:grid-cols-12", "lg:gap-6");
+  });
+
+  it("renders left column with sticky positioning classes", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    const leftCol = document.querySelector(".lg\\:col-span-5");
+    expect(leftCol).toBeInTheDocument();
+    expect(leftCol).toHaveClass("lg:sticky", "lg:top-20", "lg:self-start");
+  });
+
+  it("renders right column spanning 7 columns", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    const rightCol = document.querySelector(".lg\\:col-span-7");
+    expect(rightCol).toBeInTheDocument();
+  });
+
+  it("places tab bar inside the right column", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    const rightCol = document.querySelector(".lg\\:col-span-7");
+    const tablist = screen.getByRole("tablist");
+    expect(rightCol).toContainElement(tablist);
+  });
+
+  it("places header card inside the left column", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    const leftCol = document.querySelector(".lg\\:col-span-5");
+    // Header card contains the brand name
+    const brand = screen.getByText("TestBrand");
+    expect(leftCol).toContainElement(brand);
+  });
+
+  it("renders nutrition table with thead on desktop", async () => {
+    const user = userEvent.setup();
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    // Switch to nutrition tab
+    const nutritionTab = screen.getByRole("tab", { name: /nutrition/i });
+    await user.click(nutritionTab);
+
+    // The table should have a thead element
+    const table = document.querySelector("table");
+    expect(table).toBeInTheDocument();
+    const thead = table?.querySelector("thead");
+    expect(thead).toBeInTheDocument();
+  });
+
+  it("uses large ScoreGauge size", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("Test Chips Original").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    // The ScoreGauge wrapper div should have 80px dimensions (lg size)
+    const gaugeArc = document.querySelector("[data-testid='gauge-arc']");
+    expect(gaugeArc).toBeInTheDocument();
+    const svg = gaugeArc?.closest("svg");
+    expect(svg?.getAttribute("width")).toBe("80");
+  });
 });
