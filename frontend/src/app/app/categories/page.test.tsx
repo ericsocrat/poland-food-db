@@ -265,3 +265,30 @@ describe("scoreToBand (via CategoryCard rendering)", () => {
     });
   });
 });
+
+describe("Categories desktop grid layout", () => {
+  it("renders responsive grid with correct column classes", async () => {
+    render(<CategoriesPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Chips")).toBeInTheDocument();
+    });
+
+    const grid = screen.getByText("Chips").closest("a")!.parentElement!;
+    expect(grid.className).toContain("grid");
+    expect(grid.className).toContain("lg:grid-cols-3");
+    expect(grid.className).toContain("xl:grid-cols-4");
+  });
+
+  it("category cards have transition classes for hover states", async () => {
+    render(<CategoriesPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Chips")).toBeInTheDocument();
+    });
+
+    const card = screen.getByText("Chips").closest(".card")!;
+    expect(card.className).toContain("transition-all");
+    expect(card.className).toContain("duration-150");
+  });
+});

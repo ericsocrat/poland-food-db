@@ -387,4 +387,15 @@ describe("SettingsPage", () => {
       screen.queryByText("Strict allergen matching"),
     ).not.toBeInTheDocument();
   });
+
+  it("settings form has max-w-2xl container for desktop", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Settings")).toBeInTheDocument();
+    });
+
+    const container = screen.getByText("Settings").parentElement!;
+    expect(container.className).toContain("max-w-2xl");
+  });
 });

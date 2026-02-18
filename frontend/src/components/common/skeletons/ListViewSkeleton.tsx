@@ -20,7 +20,7 @@ export function ListViewSkeleton() {
       </div>
 
       {/* List cards */}
-      <div className="space-y-3">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {Array.from({ length: 4 }, (_, i) => (
           <div key={i} className="card flex items-center justify-between">
             <div className="space-y-2 flex-1">
