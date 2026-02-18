@@ -157,3 +157,34 @@ export const CONCERN_TIER_LABEL_KEYS: Record<number, string> = {
   2: "ingredient.tierModerate",
   3: "ingredient.tierHigh",
 };
+
+/**
+ * Score interpretation bands — maps score ranges to i18n keys and colors.
+ * Used for the expandable "What does this score mean?" section on product detail.
+ */
+export const SCORE_INTERPRETATION_BANDS = [
+  { min: 0, max: 20, key: "scoreInterpretation.green", color: "text-green-700", bg: "bg-green-50" },
+  { min: 21, max: 40, key: "scoreInterpretation.yellow", color: "text-yellow-700", bg: "bg-yellow-50" },
+  { min: 41, max: 60, key: "scoreInterpretation.orange", color: "text-orange-700", bg: "bg-orange-50" },
+  { min: 61, max: 80, key: "scoreInterpretation.red", color: "text-red-700", bg: "bg-red-50" },
+  { min: 81, max: 100, key: "scoreInterpretation.darkRed", color: "text-red-900", bg: "bg-red-100" },
+] as const;
+
+/** Get the score interpretation band for a given 0-100 score. */
+export function getScoreInterpretation(score: number) {
+  return (
+    SCORE_INTERPRETATION_BANDS.find((b) => score >= b.min && score <= b.max) ??
+    SCORE_INTERPRETATION_BANDS[SCORE_INTERPRETATION_BANDS.length - 1]
+  );
+}
+
+/**
+ * Traffic-light thresholds per nutrient (per 100g), used by TrafficLightStrip.
+ * Mirrors the thresholds in TrafficLightChip but includes fibre as beneficial.
+ */
+export const TRAFFIC_LIGHT_NUTRIENTS = [
+  { nutrient: "total_fat", labelKey: "product.totalFat" },
+  { nutrient: "saturated_fat", labelKey: "product.saturatedFat" },
+  { nutrient: "sugars", labelKey: "product.sugars" },
+  { nutrient: "salt", labelKey: "product.salt" },
+] as const;

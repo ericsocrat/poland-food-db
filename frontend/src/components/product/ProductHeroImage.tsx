@@ -50,6 +50,7 @@ export function ProductHeroImage({
   const needsFallback = !images.has_image || !images.primary;
   const [offUrl, setOffUrl] = useState<string | null>(null);
   const [offLoading, setOffLoading] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     if (!needsFallback || !ean) return;
@@ -73,12 +74,19 @@ export function ProductHeroImage({
   const height = images.primary?.height ?? 400;
   const altText = images.primary?.alt_text ?? productName;
 
-  // Still loading OFF fallback — show placeholder
+  // Still loading OFF fallback — show blur placeholder
   if (!url) {
     if (offLoading) {
       return (
-        <div className="flex h-32 w-full items-center justify-center rounded-xl bg-surface-muted">
-          <span className="text-sm text-foreground-muted">Loading image…</span>
+        <div className="flex h-32 w-full items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
+          <div
+            className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200"
+            style={{ filter: "blur(8px)" }}
+            aria-hidden="true"
+          />
+          <span className="relative text-sm text-foreground-muted">
+            Loading image…
+          </span>
         </div>
       );
     }
@@ -94,14 +102,24 @@ export function ProductHeroImage({
   return (
     <div className="group relative">
       <div className="relative flex max-h-72 w-full items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
+        {/* Blur placeholder shown until image fully loads */}
+        {!imageLoaded && (
+          <div
+            className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200"
+            style={{ filter: "blur(8px)" }}
+            aria-hidden="true"
+            data-testid="image-blur-placeholder"
+          />
+        )}
         <Image
           src={url}
           alt={altText}
           width={width}
           height={height}
-          className="h-full w-full object-contain"
+          className={`h-full w-full object-contain transition-opacity duration-300 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           sizes="(max-width: 640px) 100vw, 400px"
           priority
+          onLoad={() => setImageLoaded(true)}
         />
       </div>
       <ImageSourceBadge source={source} />

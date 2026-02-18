@@ -7,6 +7,9 @@ import {
   NUTRI_COLORS,
   HEALTH_CONDITIONS,
   WARNING_SEVERITY,
+  SCORE_INTERPRETATION_BANDS,
+  TRAFFIC_LIGHT_NUTRIENTS,
+  getScoreInterpretation,
 } from "@/lib/constants";
 
 describe("COUNTRIES", () => {
@@ -104,6 +107,54 @@ describe("WARNING_SEVERITY", () => {
       expect(level.color).toMatch(/^text-/);
       expect(level.bg).toMatch(/^bg-/);
       expect(level.border).toMatch(/^border-/);
+    }
+  });
+});
+
+describe("SCORE_INTERPRETATION_BANDS", () => {
+  it("has 5 bands covering 0-100 range", () => {
+    expect(SCORE_INTERPRETATION_BANDS).toHaveLength(5);
+    expect(SCORE_INTERPRETATION_BANDS[0].min).toBe(0);
+    expect(SCORE_INTERPRETATION_BANDS[4].max).toBe(100);
+  });
+
+  it("each band has key, color, and bg", () => {
+    for (const band of SCORE_INTERPRETATION_BANDS) {
+      expect(band.key).toMatch(/^scoreInterpretation\./);
+      expect(band.color).toMatch(/^text-/);
+      expect(band.bg).toMatch(/^bg-/);
+    }
+  });
+});
+
+describe("getScoreInterpretation", () => {
+  it("returns green band for score 15", () => {
+    expect(getScoreInterpretation(15).key).toBe("scoreInterpretation.green");
+  });
+
+  it("returns yellow band for score 35", () => {
+    expect(getScoreInterpretation(35).key).toBe("scoreInterpretation.yellow");
+  });
+
+  it("returns orange band for score 50", () => {
+    expect(getScoreInterpretation(50).key).toBe("scoreInterpretation.orange");
+  });
+
+  it("returns red band for score 70", () => {
+    expect(getScoreInterpretation(70).key).toBe("scoreInterpretation.red");
+  });
+
+  it("returns darkRed band for score 90", () => {
+    expect(getScoreInterpretation(90).key).toBe("scoreInterpretation.darkRed");
+  });
+});
+
+describe("TRAFFIC_LIGHT_NUTRIENTS", () => {
+  it("has 4 nutrients with labelKeys", () => {
+    expect(TRAFFIC_LIGHT_NUTRIENTS).toHaveLength(4);
+    for (const n of TRAFFIC_LIGHT_NUTRIENTS) {
+      expect(n.nutrient).toBeTruthy();
+      expect(n.labelKey).toMatch(/^product\./);
     }
   });
 });

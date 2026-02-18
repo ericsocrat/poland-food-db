@@ -340,12 +340,27 @@
     "found": "{count} found",
     "scanResult": "Scan Result",
     "scanAnother": "Scan Another",
-    "originalName": "Original name"
+    "originalName": "Original name",
+    "ecoScoreTitle": "Environmental Impact",
+    "ecoScoreComingSoon": "Eco-Score data coming soon. We're working on integrating environmental impact data for products.",
+    "trafficLightSummary": "Nutrient traffic light summary"
   },
   "scoreGauge": {
     "label": "Health score: {score} out of 100",
     "outOf": "/100",
     "noScore": "Score not available"
+  },
+  "scoreInterpretation": {
+    "title": "What does this score mean?",
+    "green": "This product has a favorable nutritional profile. Good for regular consumption.",
+    "yellow": "Moderate nutritional quality. Fine in a balanced diet.",
+    "orange": "Elevated concern. Consider portion size and frequency.",
+    "red": "Poor nutritional profile. Look for better alternatives in the same category.",
+    "darkRed": "Very high health concern. Reserve for occasional consumption only."
+  },
+  "allergen": {
+    "contains": "Contains",
+    "traces": "May contain (traces)"
   },
   "categories": {
     "title": "Categories",

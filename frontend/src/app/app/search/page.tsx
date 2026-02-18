@@ -25,7 +25,14 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
-import { SlidersHorizontal, Save, ClipboardList, Search, LayoutList, LayoutGrid } from "lucide-react";
+import {
+  SlidersHorizontal,
+  Save,
+  ClipboardList,
+  Search,
+  LayoutList,
+  LayoutGrid,
+} from "lucide-react";
 import { getRecentSearches, addRecentSearch } from "@/lib/recent-searches";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
@@ -450,7 +457,11 @@ export default function SearchPage() {
               <>
                 <ul className="space-y-2">
                   {data.results.map((product) => (
-                    <ProductRow key={product.product_id} product={product} compact={viewMode === "compact"} />
+                    <ProductRow
+                      key={product.product_id}
+                      product={product}
+                      compact={viewMode === "compact"}
+                    />
                   ))}
                 </ul>
 
@@ -519,7 +530,10 @@ export default function SearchPage() {
 
 /* ── ProductRow ────────────────────────────────────────────────────────────── */
 
-function ProductRow({ product, compact = false }: Readonly<{ product: SearchResult; compact?: boolean }>) {
+function ProductRow({
+  product,
+  compact = false,
+}: Readonly<{ product: SearchResult; compact?: boolean }>) {
   const band = SCORE_BANDS[product.score_band];
 
   if (compact) {

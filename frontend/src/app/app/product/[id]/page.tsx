@@ -15,7 +15,9 @@ import {
   SCORE_BANDS,
   CONCERN_TIER_STYLES,
   CONCERN_TIER_LABEL_KEYS,
+  TRAFFIC_LIGHT_NUTRIENTS,
   scoreBandFromScore,
+  getScoreInterpretation,
 } from "@/lib/constants";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
 import {
@@ -34,8 +36,12 @@ import { DVLegend } from "@/components/product/DVLegend";
 import { ShareButton } from "@/components/product/ShareButton";
 import { ScoreGauge } from "@/components/product/ScoreGauge";
 import { ScoreRadarChart } from "@/components/product/ScoreRadarChart";
-import { getTrafficLight } from "@/components/product/TrafficLightChip";
+import {
+  getTrafficLight,
+  TrafficLightChip,
+} from "@/components/product/TrafficLightChip";
 import { NovaIndicator } from "@/components/product/NovaIndicator";
+import { TrafficLightStrip } from "@/components/product/TrafficLightStrip";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
@@ -285,6 +291,9 @@ export default function ProductDetailPage() {
         )}
       </div>
 
+      {/* Score interpretation — expandable "What does this score mean?" */}
+      <ScoreInterpretationCard score={profile.scores.unhealthiness_score} />
+
       {/* Personalized health warnings */}
       <ErrorBoundary
         level="section"
@@ -368,6 +377,41 @@ function FlagWithExplanation({
   );
 }
 
+// ─── Score Interpretation Card ──────────────────────────────────────────────
+
+function ScoreInterpretationCard({ score }: Readonly<{ score: number }>) {
+  const { t } = useTranslation();
+  const [open, setOpen] = useState(false);
+  const interp = getScoreInterpretation(score);
+
+  return (
+    <div className="card">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex w-full items-center justify-between text-sm font-semibold text-foreground-secondary"
+        aria-expanded={open}
+      >
+        {t("scoreInterpretation.title")}
+        <span
+          className={`text-xs transition-transform ${open ? "rotate-180" : ""}`}
+          aria-hidden="true"
+        >
+          ▾
+        </span>
+      </button>
+      {open && (
+        <div
+          className={`mt-2 rounded-lg px-3 py-2 text-sm ${interp.bg} ${interp.color}`}
+          data-testid="score-interpretation"
+        >
+          {t(interp.key)}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Overview Tab ───────────────────────────────────────────────────────────
 
 function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
@@ -433,6 +477,9 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
             {t("product.allergens")}
           </h3>
+          <p className="mb-1 text-xs font-medium text-red-600">
+            {t("allergen.contains")}
+          </p>
           <div className="flex flex-wrap gap-1">
             {profile.allergens.contains
               .split(",")
@@ -440,16 +487,17 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
               .map((tag) => (
                 <span
                   key={tag}
-                  className="rounded bg-amber-50 px-2 py-0.5 text-xs text-amber-700"
+                  className="rounded border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700"
+                  data-allergen-type="contains"
                 >
-                  {tag.trim().replaceAll("en:", "")}
+                  ⚠ {tag.trim().replaceAll("en:", "")}
                 </span>
               ))}
           </div>
           {profile.allergens.traces_count > 0 && (
             <div className="mt-2">
-              <p className="mb-1 text-xs text-foreground-muted">
-                {t("product.mayContain")}
+              <p className="mb-1 text-xs font-medium text-amber-600">
+                {t("allergen.traces")}
               </p>
               <div className="flex flex-wrap gap-1">
                 {profile.allergens.traces
@@ -458,9 +506,10 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
                   .map((tag) => (
                     <span
                       key={tag}
-                      className="rounded bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary"
+                      className="rounded border border-dashed border-amber-300 bg-amber-50/60 px-2 py-0.5 text-xs text-amber-700"
+                      data-allergen-type="traces"
                     >
-                      {tag.trim().replaceAll("en:", "")}
+                      ~ {tag.trim().replaceAll("en:", "")}
                     </span>
                   ))}
               </div>
@@ -480,6 +529,21 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
       {/* Data quality */}
       <DataQualityCard quality={profile.quality} />
+
+      {/* Eco-Score placeholder */}
+      <div className="card">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+          🌍 {t("product.ecoScoreTitle")}
+        </h3>
+        <div className="flex items-center gap-2 rounded-lg border border-dashed border-blue-200 bg-blue-50/50 px-3 py-3">
+          <span className="text-lg" aria-hidden="true">
+            ℹ️
+          </span>
+          <p className="text-sm text-blue-700">
+            {t("product.ecoScoreComingSoon")}
+          </p>
+        </div>
+      </div>
 
       {/* Product image gallery */}
       <ProductImageTabs
@@ -575,6 +639,12 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           />
         )}
       </div>
+
+      {/* Traffic light summary strip */}
+      <div className="mb-3">
+        <TrafficLightStrip nutrition={n} />
+      </div>
+
       <table className="w-full text-sm">
         <tbody>
           {rows.map((row) => (
@@ -763,8 +833,7 @@ function TopIngredientsSection({
             CONCERN_TIER_LABEL_KEYS[ing.concern_tier] ??
             CONCERN_TIER_LABEL_KEYS[0];
           const isExpanded = expandedId === ing.ingredient_id;
-          const hasConcernDetail =
-            ing.concern_tier > 0 && !!ing.concern_reason;
+          const hasConcernDetail = ing.concern_tier > 0 && !!ing.concern_reason;
 
           return (
             <div key={ing.ingredient_id} className="inline-flex flex-col">
@@ -776,9 +845,7 @@ function TopIngredientsSection({
                   {ing.is_additive ? "🧪" : "🌿"}{" "}
                   {cleanIngredientName(ing.name)}
                   {ing.concern_tier > 0 && (
-                    <span className="ml-0.5 opacity-75">
-                      · {t(tierKey)}
-                    </span>
+                    <span className="ml-0.5 opacity-75">· {t(tierKey)}</span>
                   )}
                 </Link>
                 {hasConcernDetail && (

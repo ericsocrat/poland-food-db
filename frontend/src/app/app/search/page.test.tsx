@@ -663,9 +663,7 @@ describe("SearchPage", () => {
 
   it("renders compact view toggle button", () => {
     render(<SearchPage />, { wrapper: createWrapper() });
-    expect(
-      screen.getByLabelText("Toggle view mode"),
-    ).toBeInTheDocument();
+    expect(screen.getByLabelText("Toggle view mode")).toBeInTheDocument();
   });
 
   it("toggles between compact and detailed labels", async () => {

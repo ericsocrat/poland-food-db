@@ -484,9 +484,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("gluten")).toBeInTheDocument();
+      expect(screen.getByText(/gluten/)).toBeInTheDocument();
     });
-    expect(screen.getByText("milk")).toBeInTheDocument();
+    expect(screen.getByText(/milk/)).toBeInTheDocument();
   });
 
   it("overview shows trace allergens", async () => {
@@ -497,9 +497,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("May contain:")).toBeInTheDocument();
+      expect(screen.getByText("May contain (traces)")).toBeInTheDocument();
     });
-    expect(screen.getByText("soy")).toBeInTheDocument();
+    expect(screen.getByText(/soy/)).toBeInTheDocument();
   });
 
   // ── Top ingredients — concern tier labels ───────────────────────────────
@@ -579,9 +579,7 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(
-        screen.getByText(/Monosodium Glutamate/),
-      ).toBeInTheDocument();
+      expect(screen.getByText(/Monosodium Glutamate/)).toBeInTheDocument();
     });
 
     // Concern detail should not be visible initially
@@ -957,5 +955,94 @@ describe("ProductDetailPage", () => {
     await waitFor(() => {
       expect(screen.getByLabelText("Nutri-Score unknown")).toBeInTheDocument();
     });
+  });
+
+  // ── 4.1 Score interpretation ──────────────────────────────────────────
+
+  it("renders score interpretation toggle button", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("What does this score mean?"),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("expands score interpretation on click with correct band text", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(), // score 65 → red band
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("What does this score mean?"),
+      ).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("What does this score mean?"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("score-interpretation")).toBeInTheDocument();
+      expect(screen.getByText(/Poor nutritional profile/)).toBeInTheDocument();
+    });
+  });
+
+  // ── 4.3 Eco-Score placeholder ─────────────────────────────────────────
+
+  it("renders eco-score placeholder in overview tab", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText(/Environmental Impact/)).toBeInTheDocument();
+    });
+    expect(screen.getByText(/Eco-Score data coming soon/)).toBeInTheDocument();
+  });
+
+  // ── 4.5 Allergen distinction ──────────────────────────────────────────
+
+  it("renders allergen 'Contains' label with solid styling", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Contains")).toBeInTheDocument();
+    });
+
+    const containsBadges = screen
+      .getAllByText(/gluten|milk/i)
+      .filter((el) => el.getAttribute("data-allergen-type") === "contains");
+    expect(containsBadges.length).toBeGreaterThan(0);
+  });
+
+  it("renders allergen 'May contain' label with dashed styling", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("May contain (traces)")).toBeInTheDocument();
+    });
+
+    const tracesBadges = screen
+      .getAllByText(/soy/i)
+      .filter((el) => el.getAttribute("data-allergen-type") === "traces");
+    expect(tracesBadges.length).toBeGreaterThan(0);
   });
 });

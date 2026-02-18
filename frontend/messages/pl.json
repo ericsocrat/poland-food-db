@@ -340,12 +340,27 @@
     "found": "{count} znalezione",
     "scanResult": "Wynik skanowania",
     "scanAnother": "Skanuj kolejny",
-    "originalName": "Oryginalna nazwa"
+    "originalName": "Oryginalna nazwa",
+    "ecoScoreTitle": "Wpływ na środowisko",
+    "ecoScoreComingSoon": "Dane Eco-Score wkrótce dostępne. Pracujemy nad integracją danych o wpływie produktów na środowisko.",
+    "trafficLightSummary": "Podsumowanie sygnalizacji świetlnej składników odżywczych"
   },
   "scoreGauge": {
     "label": "Wynik zdrowotny: {score} na 100",
     "outOf": "/100",
     "noScore": "Wynik niedostępny"
+  },
+  "scoreInterpretation": {
+    "title": "Co oznacza ten wynik?",
+    "green": "Ten produkt ma korzystny profil odżywczy. Nadaje się do regularnego spożycia.",
+    "yellow": "Umiarkowana jakość odżywcza. Odpowiedni w ramach zbilansowanej diety.",
+    "orange": "Podwyższone zastrzeżenia. Rozważ wielkość porcji i częstotliwość.",
+    "red": "Niekorzystny profil odżywczy. Poszukaj lepszych zamienników w tej samej kategorii.",
+    "darkRed": "Bardzo wysoki poziom zastrzeżeń zdrowotnych. Rezerwuj do okazjonalnego spożycia."
+  },
+  "allergen": {
+    "contains": "Zawiera",
+    "traces": "Może zawierać (śladowe ilości)"
   },
   "categories": {
     "title": "Kategorie",
