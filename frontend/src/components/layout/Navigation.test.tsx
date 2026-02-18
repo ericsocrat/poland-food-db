@@ -113,11 +113,14 @@ describe("Navigation", () => {
 
   it("shows badge count on Lists when user has lists", () => {
     mockUseLists.mockReturnValue({
-      data: [
-        { list_id: "1", name: "Favorites" },
-        { list_id: "2", name: "Avoid" },
-        { list_id: "3", name: "Keto" },
-      ],
+      data: {
+        api_version: "1.0",
+        lists: [
+          { list_id: "1", name: "Favorites" },
+          { list_id: "2", name: "Avoid" },
+          { list_id: "3", name: "Keto" },
+        ],
+      },
     });
     render(<Navigation />);
     const badge = screen.getByTestId("nav-badge-lists");
@@ -125,7 +128,7 @@ describe("Navigation", () => {
   });
 
   it("hides badge on Lists when user has no lists", () => {
-    mockUseLists.mockReturnValue({ data: [] });
+    mockUseLists.mockReturnValue({ data: { api_version: "1.0", lists: [] } });
     render(<Navigation />);
     expect(screen.queryByTestId("nav-badge-lists")).not.toBeInTheDocument();
   });
@@ -141,7 +144,7 @@ describe("Navigation", () => {
       list_id: String(i),
       name: `List ${i}`,
     }));
-    mockUseLists.mockReturnValue({ data: manyLists });
+    mockUseLists.mockReturnValue({ data: { api_version: "1.0", lists: manyLists } });
     render(<Navigation />);
     const badge = screen.getByTestId("nav-badge-lists");
     expect(badge).toHaveTextContent("99+");

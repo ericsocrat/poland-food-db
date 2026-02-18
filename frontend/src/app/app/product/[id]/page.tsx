@@ -710,7 +710,12 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 function GlycemicIndexIndicator({ gi }: Readonly<{ gi: number }>) {
   const { t } = useTranslation();
 
-  const band = gi <= 55 ? "low" : gi <= 69 ? "medium" : "high";
+  function giBand(score: number): "low" | "medium" | "high" {
+    if (score <= 55) return "low";
+    if (score <= 69) return "medium";
+    return "high";
+  }
+  const band = giBand(gi);
 
   const config = {
     low: {

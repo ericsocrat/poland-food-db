@@ -46,9 +46,9 @@ export function Navigation() {
   const { data: lists } = useLists();
 
   // Badge counts keyed by routeKey — only show when count > 0
-  const badgeCounts: Partial<Record<PrimaryRouteKey, number>> = {};
-  if (lists && lists.length > 0) {
-    badgeCounts.lists = lists.length;
+  const badgeCounts: Partial<Record<NonNullable<PrimaryRouteKey>, number>> = {};
+  if (lists && lists.lists.length > 0) {
+    badgeCounts.lists = lists.lists.length;
   }
 
   return (
@@ -60,7 +60,7 @@ export function Navigation() {
         {NAV_ITEMS.map((item) => {
           const isActive = activeRoute === item.routeKey;
           const label = t(item.labelKey);
-          const badge = badgeCounts[item.routeKey];
+          const badge = item.routeKey ? badgeCounts[item.routeKey] : undefined;
           return (
             <Link
               key={item.href}
