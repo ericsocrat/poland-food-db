@@ -514,3 +514,130 @@
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
 }
+
+/* ══════════════════════════════════════════════════════════════════════════
+   Print Styles — A4-optimized for product profile + compare pages
+   All rules scoped to @media print so screen layout is unaffected.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+@media print {
+  /* ── Page setup ── */
+  @page {
+    margin: 15mm;
+  }
+
+  /* Compare page uses landscape for side-by-side columns */
+  @page compare {
+    size: A4 landscape;
+    margin: 12mm;
+  }
+
+  /* ── Reset to paper-safe styles ── */
+  html,
+  body {
+    background: white !important;
+    color: black !important;
+    font-size: 11pt !important;
+    line-height: 1.4 !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* ── Hide non-content elements ── */
+  nav,
+  footer,
+  aside,
+  [data-no-print],
+  .no-print,
+  [role="dialog"],
+  [role="tooltip"],
+  [role="tablist"],
+  .skeleton {
+    display: none !important;
+  }
+
+  /* ── Remove decorative styles ── */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+
+  /* ── Remove sticky/fixed positioning ── */
+  header,
+  [class*="sticky"],
+  [class*="fixed"] {
+    position: static !important;
+  }
+
+  /* ── Remove backdrop-blur ── */
+  [class*="backdrop-blur"] {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    background-color: transparent !important;
+  }
+
+  /* ── Prevent page breaks inside cards ── */
+  .card,
+  .print-no-break {
+    break-inside: avoid;
+    border: 1px solid #d1d5db !important;
+  }
+
+  /* ── Force page break ── */
+  .print-page-break {
+    break-before: page;
+  }
+
+  /* ── Remove transitions/animations ── */
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+
+  /* ── Show URLs for external links ── */
+  a[href^="http"]:not(.no-print-url)::after {
+    content: " (" attr(href) ")";
+    font-size: 9pt;
+    color: #666;
+    word-break: break-all;
+  }
+
+  /* ── Internal links: don't show URL ── */
+  a[href^="/"]::after {
+    content: none !important;
+  }
+
+  /* ── Surface/card transparent backgrounds ── */
+  .bg-surface,
+  .bg-surface-subtle,
+  .bg-surface-muted {
+    background-color: white !important;
+  }
+
+  /* ── Keep brand/score colors for data readability ── */
+  [class*="bg-score-"],
+  [class*="bg-nutri-"],
+  [class*="bg-nova-"],
+  [class*="bg-brand"] {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* ── Print footer attribution ── */
+  body::after {
+    content: "Poland Food DB — poland-food-db.vercel.app";
+    display: block;
+    text-align: center;
+    font-size: 8pt;
+    color: #999;
+    margin-top: 24pt;
+    padding-top: 8pt;
+    border-top: 1px solid #e5e7eb;
+  }
+
+  /* ── Responsive images for print ── */
+  img {
+    max-width: 200px !important;
+    height: auto !important;
+  }
+}

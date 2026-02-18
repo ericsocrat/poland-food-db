@@ -819,5 +819,9 @@
     "searchProducts": "Szukaj produktów",
     "searchResultsStatus": "Znaleziono {count} wyników",
     "saveSearchName": "Nazwa wyszukiwania"
+  },
+  "print": {
+    "button": "Drukuj",
+    "printPage": "Wydrukuj tę stronę"
   }
 }

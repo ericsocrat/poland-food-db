@@ -18,6 +18,7 @@ import { useCompareStore } from "@/stores/compare-store";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { PrintButton } from "@/components/common/PrintButton";
 import type { ExportableProduct } from "@/lib/export";
 
 export default function ComparePage() {
@@ -101,7 +102,7 @@ export default function ComparePage() {
         <h1 className="text-xl font-bold text-foreground">
           ⚖️ {t("compare.title")}
         </h1>
-        <div className="flex items-center gap-2">
+        <div className="no-print flex items-center gap-2">
           <Link
             href="/app/compare/saved"
             className="text-sm text-brand-600 hover:text-brand-700"
@@ -115,6 +116,7 @@ export default function ComparePage() {
           >
             {t("compare.clearSelection")}
           </button>
+          <PrintButton />
         </div>
       </div>
 
@@ -128,7 +130,7 @@ export default function ComparePage() {
       {data && data.products.length >= 2 && (
         <>
           {/* Share / Save toolbar */}
-          <div className="card flex items-center justify-between">
+          <div className="card no-print flex items-center justify-between">
             <p className="text-sm text-foreground-secondary">
               {t("compare.comparing", { count: data.product_count })}
             </p>

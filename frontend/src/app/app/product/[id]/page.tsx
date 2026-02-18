@@ -37,6 +37,7 @@ import { NovaIndicator } from "@/components/product/NovaIndicator";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { PrintButton } from "@/components/common/PrintButton";
 import type { ProductProfile, ProfileAlternative } from "@/lib/types";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
@@ -192,7 +193,7 @@ export default function ProductDetailPage() {
                   {profile.product.brand}
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-2">
+              <div className="no-print flex flex-wrap items-center gap-2">
                 <ShareButton
                   productName={
                     profile.product.product_name_display ??
@@ -204,6 +205,7 @@ export default function ProductDetailPage() {
                 <AvoidBadge productId={productId} />
                 <AddToListMenu productId={productId} />
                 <CompareCheckbox productId={productId} />
+                <PrintButton />
               </div>
             </div>
             <div className="mt-2 flex items-center gap-2">

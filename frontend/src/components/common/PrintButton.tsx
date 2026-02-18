@@ -1,0 +1,27 @@
+"use client";
+
+import { useTranslation } from "@/lib/i18n";
+
+interface PrintButtonProps {
+  /** Optional additional classes */
+  className?: string;
+}
+
+/**
+ * Subtle print button that triggers window.print().
+ * Hidden in print mode via the `no-print` class.
+ */
+export function PrintButton({ className = "" }: PrintButtonProps) {
+  const { t } = useTranslation();
+
+  return (
+    <button
+      type="button"
+      onClick={() => window.print()}
+      className={`no-print inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-surface-subtle hover:text-foreground ${className}`}
+      aria-label={t("print.printPage")}
+    >
+      🖨️ <span className="hidden sm:inline">{t("print.button")}</span>
+    </button>
+  );
+}

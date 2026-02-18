@@ -64,7 +64,9 @@ export default async function AppLayout({
   return (
     <div className="flex min-h-screen flex-col">
       <SkipLink />
-      <OfflineIndicator />
+      <div className="no-print">
+        <OfflineIndicator />
+      </div>
       <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur">
         <div className="mx-auto flex h-12 md:h-14 max-w-5xl items-center justify-between px-4">
           <span className="text-lg font-bold text-brand-700">
@@ -83,9 +85,11 @@ export default async function AppLayout({
         {children}
       </main>
 
-      <CompareFloatingButton />
-      <InstallPrompt />
-      <GlobalKeyboardShortcuts />
+      <div className="no-print">
+        <CompareFloatingButton />
+        <InstallPrompt />
+        <GlobalKeyboardShortcuts />
+      </div>
       <Navigation />
     </div>
   );
