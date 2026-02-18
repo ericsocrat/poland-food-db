@@ -134,14 +134,14 @@ export default function SettingsPage() {
   }
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl font-bold text-foreground">
+    <div className="space-y-6 lg:space-y-8">
+      <h1 className="text-xl font-bold text-foreground lg:text-2xl">
         {t("settings.title")}
       </h1>
 
       {/* Country */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("settings.country")}
         </h2>
         <div className="grid grid-cols-2 gap-2">
@@ -173,7 +173,7 @@ export default function SettingsPage() {
 
       {/* Language — filtered by selected country (native + English) */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("settings.language")}
         </h2>
         <div className="grid grid-cols-2 gap-2">
@@ -201,7 +201,7 @@ export default function SettingsPage() {
 
       {/* Theme */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("settings.theme")}
         </h2>
         <ThemeToggle />
@@ -209,7 +209,7 @@ export default function SettingsPage() {
 
       {/* Diet */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("settings.dietPreference")}
         </h2>
         <div className="grid grid-cols-3 gap-2">
@@ -250,7 +250,7 @@ export default function SettingsPage() {
 
       {/* Allergens */}
       <section className="card">
-        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("settings.allergensToAvoid")}
         </h2>
 
@@ -355,7 +355,7 @@ export default function SettingsPage() {
 
       {/* Account section */}
       <section className="card border-red-100">
-        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("settings.account")}
         </h2>
         <p className="mb-3 text-xs text-foreground-secondary">

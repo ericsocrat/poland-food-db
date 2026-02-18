@@ -144,7 +144,7 @@ export default function ProductDetailPage() {
   ];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 lg:space-y-6">
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
@@ -177,7 +177,7 @@ export default function ProductDetailPage() {
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between">
               <div>
-                <p className="text-lg font-bold text-foreground">
+                <p className="text-lg font-bold text-foreground lg:text-xl">
                   {profile.product.product_name_display ??
                     profile.product.product_name}
                 </p>
@@ -189,7 +189,7 @@ export default function ProductDetailPage() {
                       {profile.product.product_name}
                     </p>
                   )}
-                <p className="text-sm text-foreground-secondary">
+                <p className="text-sm text-foreground-secondary lg:text-base">
                   {profile.product.brand}
                 </p>
               </div>
@@ -385,7 +385,7 @@ function ScoreInterpretationCard({ score }: Readonly<{ score: number }>) {
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="flex w-full items-center justify-between text-sm font-semibold text-foreground-secondary"
+        className="flex w-full items-center justify-between text-sm font-semibold text-foreground-secondary lg:text-base"
         aria-expanded={open}
       >
         {t("scoreInterpretation.title")}
@@ -413,10 +413,10 @@ function ScoreInterpretationCard({ score }: Readonly<{ score: number }>) {
 function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const { t } = useTranslation();
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 lg:space-y-6">
       {/* Ingredients */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("product.ingredients")}
         </h3>
         {profile.ingredients.count === 0 &&
@@ -470,7 +470,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       {/* Allergens */}
       {profile.allergens.contains_count > 0 ? (
         <div className="card">
-          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
             {t("product.allergens")}
           </h3>
           <p className="mb-1 text-xs font-medium text-red-600">
@@ -514,7 +514,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
         </div>
       ) : (
         <div className="card">
-          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
             {t("product.allergens")}
           </h3>
           <p className="text-sm text-green-600">
@@ -528,7 +528,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
       {/* Eco-Score placeholder */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
           🌍 {t("product.ecoScoreTitle")}
         </h3>
         <div className="flex items-center gap-2 rounded-lg border border-dashed border-blue-200 bg-blue-50/50 px-3 py-3">
@@ -625,7 +625,7 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   return (
     <div className="card">
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-sm font-semibold text-foreground-secondary">
+        <h3 className="text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("product.nutritionPer100g")}
         </h3>
         {dv && dv.reference_type !== "none" && (
@@ -688,7 +688,7 @@ function DataQualityCard({ quality }: Readonly<{ quality: DataConfidence }>) {
 
   return (
     <div className="card">
-      <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+      <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
         {t("product.dataQuality")}
       </h3>
       <div className="flex items-center gap-3">
@@ -904,10 +904,10 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
     : [];
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 lg:space-y-6">
       {/* Summary */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("product.summary")}
         </h3>
         <p className="text-sm text-foreground-secondary">{scores.headline}</p>
@@ -917,7 +917,7 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       {Array.isArray(scores.score_breakdown) &&
         scores.score_breakdown.length > 0 && (
           <div className="card">
-            <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+            <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
               {t("product.scoreBreakdown")}
             </h3>
             <ScoreRadarChart breakdown={scores.score_breakdown} />
@@ -927,7 +927,7 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       {/* NOVA processing indicator */}
       {scores.nova_group && (
         <div className="card">
-          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
             {t("product.processingLevel")}
           </h3>
           <NovaIndicator novaGroup={scores.nova_group} />
@@ -937,7 +937,7 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       {/* Score breakdown factors */}
       {topFactors.length > 0 && (
         <div className="card">
-          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
             {t("product.topScoreFactors")}
           </h3>
           <div className="space-y-2">
@@ -961,7 +961,7 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       {/* Warnings */}
       {profile.warnings.length > 0 && (
         <div className="card border-amber-200 bg-amber-50">
-          <h3 className="mb-2 text-sm font-semibold text-amber-800">
+          <h3 className="mb-2 text-sm font-semibold text-amber-800 lg:text-base">
             {t("product.warnings")}
           </h3>
           <ul className="list-inside list-disc space-y-1 text-sm text-amber-700">
@@ -974,7 +974,7 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
       {/* Category context */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("product.categoryContext")}
         </h3>
         <div className="text-sm text-foreground-secondary">

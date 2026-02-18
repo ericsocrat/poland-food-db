@@ -191,7 +191,7 @@ export default function SearchPage() {
       />
 
       {/* Main content */}
-      <div className="min-w-0 flex-1 space-y-4">
+      <div className="min-w-0 flex-1 space-y-4 lg:space-y-6">
         {/* Search input */}
         <form
           onSubmit={handleSubmit}
@@ -363,7 +363,9 @@ export default function SearchPage() {
                   className="touch-target text-xs text-foreground-muted hover:text-brand-600"
                 >
                   <Save size={14} aria-hidden="true" className="inline" />{" "}
-                  <span className="hidden xs:inline">{t("search.saveSearch")}</span>
+                  <span className="hidden xs:inline">
+                    {t("search.saveSearch")}
+                  </span>
                 </button>
               )}
 
@@ -372,7 +374,11 @@ export default function SearchPage() {
                 href="/app/search/saved"
                 className="touch-target text-xs text-foreground-muted hover:text-brand-600"
               >
-                <ClipboardList size={14} aria-hidden="true" className="inline" />{" "}
+                <ClipboardList
+                  size={14}
+                  aria-hidden="true"
+                  className="inline"
+                />{" "}
                 <span className="hidden xs:inline">{t("search.saved")}</span>
               </Link>
             </span>
@@ -430,7 +436,7 @@ export default function SearchPage() {
               message={t("a11y.searchResultsStatus", { count: data.total })}
             />
             <div className="flex items-center justify-between">
-              <p className="text-sm text-foreground-secondary">
+              <p className="text-sm text-foreground-secondary lg:text-base">
                 {t("search.result", { count: data.total })}
                 {data.query && (
                   <> {t("search.resultsFor", { query: data.query })}</>

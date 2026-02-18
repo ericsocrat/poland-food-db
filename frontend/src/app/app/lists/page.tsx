@@ -59,10 +59,10 @@ export default function ListsPage() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 lg:space-y-8">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5">
+        <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5 lg:text-2xl">
           <ClipboardList size={20} aria-hidden="true" /> {t("lists.title")}
         </h1>
         <button

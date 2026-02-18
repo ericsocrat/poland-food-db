@@ -57,10 +57,10 @@ export function NutritionTip() {
           💡
         </span>
         <div className="min-w-0">
-          <h3 className="text-sm font-semibold text-foreground">
+          <h3 className="text-sm font-semibold text-foreground lg:text-base">
             {t("dashboard.tipTitle")}
           </h3>
-          <p className="mt-0.5 text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-0.5 text-sm leading-relaxed text-foreground-secondary">
             {t(`dashboard.tip.${index}`)}
           </p>
           {learnHref && (

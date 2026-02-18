@@ -84,13 +84,13 @@ export function EmptyState({
       </div>
 
       {/* Title */}
-      <h3 className="mb-1 text-sm font-semibold text-foreground-secondary">
+      <h3 className="mb-1 text-sm font-semibold text-foreground-secondary lg:text-base">
         {t(titleKey, titleParams)}
       </h3>
 
       {/* Description */}
       {descriptionKey && (
-        <p className="mb-4 max-w-xs text-xs text-foreground-muted">
+        <p className="mb-4 max-w-xs text-xs text-foreground-muted lg:text-sm">
           {t(descriptionKey, descriptionParams)}
         </p>
       )}
