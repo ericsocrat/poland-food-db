@@ -7,17 +7,10 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { getCategoryOverview } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS } from "@/lib/constants";
+import { SCORE_5BAND_DISPLAY, scoreColorFromScore } from "@/lib/constants";
 import { CategoryGridSkeleton } from "@/components/common/skeletons";
 import { useTranslation } from "@/lib/i18n";
-import type { CategoryOverviewItem, ScoreBand } from "@/lib/types";
-
-function scoreToBand(score: number): ScoreBand {
-  if (score <= 25) return "low";
-  if (score <= 50) return "moderate";
-  if (score <= 75) return "high";
-  return "very_high";
-}
+import type { CategoryOverviewItem } from "@/lib/types";
 
 export default function CategoriesPage() {
   const supabase = createClient();
@@ -77,8 +70,7 @@ function CategoryCard({
   category,
 }: Readonly<{ category: CategoryOverviewItem }>) {
   const { t } = useTranslation();
-  const band = scoreToBand(category.avg_score);
-  const display = SCORE_BANDS[band];
+  const display = SCORE_5BAND_DISPLAY[scoreColorFromScore(category.avg_score)];
 
   return (
     <Link href={`/app/categories/${category.slug}`}>

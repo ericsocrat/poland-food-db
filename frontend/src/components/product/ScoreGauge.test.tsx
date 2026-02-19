@@ -36,7 +36,7 @@ describe("ScoreGauge", () => {
     expect(screen.queryByTestId("gauge-arc")).not.toBeInTheDocument();
   });
 
-  // ── Score band colors ─────────────────────────────────────────────────────
+  // ── Score band colors (5-band: green/yellow/orange/red/darkred) ─────────
 
   it("uses green color for low score (10)", () => {
     render(<ScoreGauge score={10} />);
@@ -50,16 +50,22 @@ describe("ScoreGauge", () => {
     expect(arc.getAttribute("stroke")).toBe("var(--color-score-yellow)");
   });
 
-  it("uses orange color for high score (60)", () => {
-    render(<ScoreGauge score={60} />);
+  it("uses orange color for high score (50)", () => {
+    render(<ScoreGauge score={50} />);
     const arc = screen.getByTestId("gauge-arc");
     expect(arc.getAttribute("stroke")).toBe("var(--color-score-orange)");
   });
 
-  it("uses red color for very high score (85)", () => {
-    render(<ScoreGauge score={85} />);
+  it("uses red color for very high score (70)", () => {
+    render(<ScoreGauge score={70} />);
     const arc = screen.getByTestId("gauge-arc");
     expect(arc.getAttribute("stroke")).toBe("var(--color-score-red)");
+  });
+
+  it("uses dark red color for critical score (90)", () => {
+    render(<ScoreGauge score={90} />);
+    const arc = screen.getByTestId("gauge-arc");
+    expect(arc.getAttribute("stroke")).toBe("var(--color-score-darkred)");
   });
 
   // ── Sizes ─────────────────────────────────────────────────────────────────

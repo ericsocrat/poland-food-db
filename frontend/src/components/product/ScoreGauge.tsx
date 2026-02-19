@@ -2,16 +2,16 @@
  * ScoreGauge — circular SVG gauge ring for product unhealthiness scores.
  *
  * Uses `stroke-dasharray` on an SVG `<circle>` to create a fill-arc
- * proportional to the score (0–100). Color follows the SCORE_BANDS system:
- *   1–25 → green, 26–50 → yellow, 51–75 → orange, 76–100 → red.
+ * proportional to the score (0–100). Color follows the 5-band system:
+ *   1–20 → green, 21–40 → yellow, 41–60 → orange, 61–80 → red, 81–100 → dark red.
  *
  * Falls back to a gray neutral ring when score is null/undefined.
  */
 
 import React from "react";
-import { scoreBandFromScore } from "@/lib/constants";
+import { scoreColorFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import type { ScoreBand } from "@/lib/types";
+import type { ScoreColorBand } from "@/lib/constants";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -62,14 +62,15 @@ const SIZE_CONFIG: Record<
 };
 
 /**
- * Maps score bands to their CSS custom property color values.
+ * Maps 5-band color tokens to their CSS custom property color values.
  * These match the --color-score-* tokens from globals.css.
  */
-const BAND_STROKE_COLORS: Record<ScoreBand, string> = {
-  low: "var(--color-score-green)",
-  moderate: "var(--color-score-yellow)",
-  high: "var(--color-score-orange)",
-  very_high: "var(--color-score-red)",
+const BAND_STROKE_COLORS: Record<ScoreColorBand, string> = {
+  green: "var(--color-score-green)",
+  yellow: "var(--color-score-yellow)",
+  orange: "var(--color-score-orange)",
+  red: "var(--color-score-red)",
+  darkred: "var(--color-score-darkred)",
 };
 
 const NEUTRAL_STROKE = "var(--color-foreground-muted, #9ca3af)";
@@ -96,7 +97,7 @@ export const ScoreGauge = React.memo(function ScoreGauge({
 
   // Rotate -90° so the arc starts from the top (12 o'clock)
   const strokeColor = hasScore
-    ? BAND_STROKE_COLORS[scoreBandFromScore(score)]
+    ? BAND_STROKE_COLORS[scoreColorFromScore(score)]
     : NEUTRAL_STROKE;
 
   const center = svgSize / 2;

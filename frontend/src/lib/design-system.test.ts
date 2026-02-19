@@ -432,6 +432,11 @@ describe("Design System — Constants Use Semantic Tokens", () => {
     expect(constants).toContain("text-score-red");
   });
 
+  it("SCORE_5BAND_DISPLAY includes darkred token class", () => {
+    expect(constants).toContain("text-score-darkred");
+    expect(constants).toContain("bg-score-darkred/10");
+  });
+
   it("NUTRI_COLORS uses nutri token classes", () => {
     expect(constants).toContain("bg-nutri-A");
     expect(constants).toContain("bg-nutri-E");
