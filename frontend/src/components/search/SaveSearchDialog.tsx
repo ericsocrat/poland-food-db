@@ -1,6 +1,11 @@
 "use client";
 
 // ─── SaveSearchDialog — save current query + filters ────────────────────────
+//
+// ⚠️  IMPORTANT: The <dialog> element is conditionally rendered (mounted only
+// when show=true, unmounted when closed). Android Chrome resolves box dimensions
+// of closed <dialog> elements, inflating the layout viewport on mobile devices.
+// See PR #92.
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -19,10 +24,18 @@ interface SaveSearchDialogProps {
   onClose: () => void;
 }
 
-export function SaveSearchDialog({
+/**
+ * Conditionally rendered wrapper — prevents closed <dialog> elements from
+ * expanding the mobile layout viewport on Android Chrome. See PR #92.
+ */
+export function SaveSearchDialog(props: Readonly<SaveSearchDialogProps>) {
+  if (!props.show) return null;
+  return <SaveSearchDialogInner {...props} />;
+}
+
+function SaveSearchDialogInner({
   query,
   filters,
-  show,
   onClose,
 }: Readonly<SaveSearchDialogProps>) {
   const supabase = createClient();
@@ -58,15 +71,13 @@ export function SaveSearchDialog({
 
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  // Show as modal immediately on mount
   useEffect(() => {
     const el = dialogRef.current;
-    if (!el) return;
-    if (show && !el.open) {
+    if (el && !el.open) {
       el.showModal();
-    } else if (!show && el.open) {
-      el.close();
     }
-  }, [show]);
+  }, []);
 
   const handleCancel = useCallback(() => {
     onClose();
