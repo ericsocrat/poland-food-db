@@ -8,7 +8,13 @@ import type { AnalyticsEventName, DeviceType } from "@/lib/types";
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function generateSessionId(): string {
-  return `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+  // Use crypto.randomUUID() instead of Math.random() to satisfy
+  // SonarCloud rule typescript:S2245 (no weak PRNG).
+  const suffix =
+    typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+      ? crypto.randomUUID().slice(0, 8)
+      : "fallback0";
+  return `${Date.now()}-${suffix}`;
 }
 
 function detectDeviceType(): DeviceType {
