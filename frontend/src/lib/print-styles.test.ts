@@ -85,6 +85,13 @@ describe("Global Print Styles", () => {
     expect(globalsCss).toContain("margin: 15mm");
   });
 
+  it("has named @page compare with landscape and container binding", () => {
+    expect(globalsCss).toContain("@page compare");
+    expect(globalsCss).toContain("A4 landscape");
+    expect(globalsCss).toContain(".compare-print-container");
+    expect(globalsCss).toContain("page: compare");
+  });
+
   it("preserves print color adjust for score colors", () => {
     expect(globalsCss).toContain("print-color-adjust: exact");
   });
@@ -117,6 +124,11 @@ describe("No-print markers in pages", () => {
     expect(src).toContain("no-print");
     expect(src).toContain("PrintButton");
     expect(src).toContain("<PrintButton");
+  });
+
+  it("compare page container has compare-print-container class", () => {
+    const src = readFileSync(comparePagePath, "utf-8");
+    expect(src).toContain("compare-print-container");
   });
 
   it("app layout wraps interactive elements with no-print", () => {

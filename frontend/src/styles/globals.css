@@ -556,6 +556,10 @@
     margin: 12mm;
   }
 
+  .compare-print-container {
+    page: compare;
+  }
+
   /* ── Reset to paper-safe styles ── */
   html,
   body {
