@@ -5,6 +5,8 @@ import {
   ALLERGEN_PRESETS,
   DIET_OPTIONS,
   SCORE_BANDS,
+  SCORE_5BAND_DISPLAY,
+  scoreColorFromScore,
   NUTRI_COLORS,
   HEALTH_CONDITIONS,
   WARNING_SEVERITY,
@@ -100,6 +102,43 @@ describe("SCORE_BANDS", () => {
       expect(band.label).toBeTruthy();
       expect(band.color).toMatch(/^text-/);
       expect(band.bg).toMatch(/^bg-/);
+    }
+  });
+});
+
+describe("scoreColorFromScore (5-band)", () => {
+  it.each([
+    [0, "green"],
+    [10, "green"],
+    [20, "green"],
+    [21, "yellow"],
+    [40, "yellow"],
+    [41, "orange"],
+    [60, "orange"],
+    [61, "red"],
+    [80, "red"],
+    [81, "darkred"],
+    [100, "darkred"],
+  ] as const)("maps score %i to %s", (score, expected) => {
+    expect(scoreColorFromScore(score)).toBe(expected);
+  });
+});
+
+describe("SCORE_5BAND_DISPLAY", () => {
+  it("has all five bands", () => {
+    expect(Object.keys(SCORE_5BAND_DISPLAY)).toEqual([
+      "green",
+      "yellow",
+      "orange",
+      "red",
+      "darkred",
+    ]);
+  });
+
+  it("each band has color and bg using score-* tokens", () => {
+    for (const band of Object.values(SCORE_5BAND_DISPLAY)) {
+      expect(band.color).toMatch(/^text-score-/);
+      expect(band.bg).toMatch(/^bg-score-/);
     }
   });
 });

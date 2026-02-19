@@ -124,6 +124,35 @@ export function scoreBandFromScore(score: number): ScoreBand {
   return "very_high";
 }
 
+// ─── 5-band score color system ──────────────────────────────────────────────
+
+/**
+ * 5-band color token names matching CSS custom properties:
+ *   green (1–20), yellow (21–40), orange (41–60), red (61–80), darkred (81–100).
+ */
+export type ScoreColorBand = "green" | "yellow" | "orange" | "red" | "darkred";
+
+/** Map a 0-100 unhealthiness score to a 5-band color token name. */
+export function scoreColorFromScore(score: number): ScoreColorBand {
+  if (score <= 20) return "green";
+  if (score <= 40) return "yellow";
+  if (score <= 60) return "orange";
+  if (score <= 80) return "red";
+  return "darkred";
+}
+
+/**
+ * 5-band display config for visual score indicators (gauge rings, badges).
+ * Uses the score-* CSS token classes from the design system.
+ */
+export const SCORE_5BAND_DISPLAY: Record<ScoreColorBand, { color: string; bg: string }> = {
+  green: { color: "text-score-green", bg: "bg-score-green/10" },
+  yellow: { color: "text-score-yellow", bg: "bg-score-yellow/10" },
+  orange: { color: "text-score-orange", bg: "bg-score-orange/10" },
+  red: { color: "text-score-red", bg: "bg-score-red/10" },
+  darkred: { color: "text-score-darkred", bg: "bg-score-darkred/10" },
+};
+
 // Nutri-Score display config
 export const NUTRI_COLORS: Record<string, string> = {
   A: "bg-nutri-A text-foreground-inverse",
