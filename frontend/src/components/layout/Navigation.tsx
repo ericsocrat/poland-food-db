@@ -53,7 +53,7 @@ export function Navigation() {
 
   return (
     <nav
-      className="sticky bottom-0 z-40 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-40 border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] lg:hidden"
       aria-label="Main navigation"
     >
       <div className="mx-auto flex max-w-5xl">
