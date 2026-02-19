@@ -141,10 +141,12 @@ function WeeklySummaryCard({
 
     const bestFind =
       scored.length > 0
-        ? scored.reduce((best, p) =>
-            (p.unhealthiness_score ?? 100) < (best.unhealthiness_score ?? 100)
-              ? p
-              : best,
+        ? scored.reduce(
+            (best, p) =>
+              (p.unhealthiness_score ?? 100) < (best.unhealthiness_score ?? 100)
+                ? p
+                : best,
+            scored[0],
           )
         : null;
 
@@ -435,8 +437,11 @@ export default function DashboardPage() {
         titleKey="dashboard.errorMessage"
         action={{
           labelKey: "common.tryAgain",
-          onClick: () =>
-            queryClient.invalidateQueries({ queryKey: queryKeys.dashboard }),
+          onClick: () => {
+            void queryClient.invalidateQueries({
+              queryKey: queryKeys.dashboard,
+            });
+          },
         }}
       />
     );

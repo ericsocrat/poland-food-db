@@ -84,7 +84,7 @@ export function Navigation() {
                 <Icon icon={item.icon} size="md" />
                 {badge != null && badge > 0 && (
                   <span
-                    className="absolute -right-2 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold leading-none text-white dark:bg-brand-400"
+                    className="absolute -right-2 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold leading-none text-white dark:bg-brand-500 dark:text-gray-950"
                     data-testid={`nav-badge-${item.routeKey}`}
                     aria-label={`${badge}`}
                   >

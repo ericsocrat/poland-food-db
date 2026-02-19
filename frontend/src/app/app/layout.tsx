@@ -84,7 +84,7 @@ export default async function AppLayout({
         {/* Header — visible below xl. Hidden at xl+ where sidebar takes over. */}
         <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur xl:hidden">
           <div className="mx-auto flex h-12 md:h-14 max-w-5xl items-center justify-between px-4">
-            <span className="text-lg font-bold text-brand-700">
+            <span className="text-lg font-bold text-brand-700 dark:text-brand-400">
               {translate("en", "layout.appNameWithEmoji")}
             </span>
             {/* Desktop header nav — lg to xl only */}

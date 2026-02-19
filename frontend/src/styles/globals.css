@@ -13,7 +13,7 @@
     /* ── Text ── */
     --color-text-primary: #111827; /* gray-900 */
     --color-text-secondary: #6b7280; /* gray-500 */
-    --color-text-muted: #9ca3af; /* gray-400 */
+    --color-text-muted: #6b7280; /* gray-500 — WCAG AA 4.63:1 on white */
     --color-text-inverse: #ffffff;
 
     /* ── Border & Divider ── */

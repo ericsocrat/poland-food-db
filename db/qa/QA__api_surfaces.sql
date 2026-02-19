@@ -60,7 +60,7 @@ WHERE m.unhealthiness_score IS NOT NULL
 
 -- 7. api_search_products returns valid JSON for basic query
 SELECT '7. api_search_products returns valid structure' AS check_name,
-       CASE WHEN result ? 'results' AND result ? 'total_count' AND result ? 'query'
+       CASE WHEN result ? 'results' AND result ? 'total' AND result ? 'query'
             THEN 0 ELSE 1 END AS violations
 FROM api_search_products('test') AS result;
 

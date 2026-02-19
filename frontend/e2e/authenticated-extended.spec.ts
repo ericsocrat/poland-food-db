@@ -7,6 +7,9 @@ import { test, expect } from "@playwright/test";
 // ─── Bottom Navigation Bar ─────────────────────────────────────────────────
 
 test.describe("App navigation bar", () => {
+  // Bottom nav is lg:hidden — use mobile viewport so it's visible
+  test.use({ viewport: { width: 375, height: 812 } });
+
   test("renders all 5 nav items", async ({ page }) => {
     await page.goto("/app/search");
     const nav = page.getByRole("navigation", { name: "Main navigation" });
@@ -67,8 +70,12 @@ test.describe("Scan page", () => {
 
   test("has Camera and Manual mode toggles", async ({ page }) => {
     await page.goto("/app/scan");
-    await expect(page.getByText("Camera", { exact: false })).toBeVisible();
-    await expect(page.getByText("Manual", { exact: false })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Camera/i }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: /Manual/i }),
+    ).toBeVisible();
   });
 
   test("Manual mode shows EAN input", async ({ page }) => {
@@ -134,9 +141,13 @@ test.describe("Scan history page", () => {
 
   test("has filter tabs", async ({ page }) => {
     await page.goto("/app/scan/history");
-    await expect(page.getByText("All")).toBeVisible();
-    await expect(page.getByText("Found")).toBeVisible();
-    await expect(page.getByText("Not Found")).toBeVisible();
+    await expect(page.getByRole("button", { name: "All" })).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Found", exact: true }),
+    ).toBeVisible();
+    await expect(
+      page.getByRole("button", { name: "Not Found" }),
+    ).toBeVisible();
   });
 
   test("shows empty state for new user", async ({ page }) => {
@@ -229,7 +240,10 @@ test.describe("Lists page", () => {
     await page.getByRole("button", { name: /New List/i }).click();
     await expect(page.getByPlaceholder("List name")).toBeVisible();
 
-    await page.getByRole("button", { name: "Cancel" }).click();
+    await page
+      .locator("form")
+      .getByRole("button", { name: "Cancel" })
+      .click();
     await expect(page.getByPlaceholder("List name")).not.toBeVisible();
   });
 
@@ -288,7 +302,10 @@ test.describe("Saved comparisons page", () => {
 
   test("has back link to compare", async ({ page }) => {
     await page.goto("/app/compare/saved");
-    const backLink = page.getByRole("link", { name: /Compare/i });
+    const backLink = page
+      .locator("main")
+      .getByRole("link", { name: /Compare/i })
+      .first();
     await expect(backLink).toBeVisible();
   });
 });
@@ -312,9 +329,11 @@ test.describe("Settings page extended", () => {
 
   test("has country selector with Poland", async ({ page }) => {
     await page.goto("/app/settings");
+    await page.waitForLoadState("networkidle");
+    // Country buttons show native name ("Polska" for Poland)
     await expect(
-      page.getByText("Poland").or(page.getByText("Polska")),
-    ).toBeVisible();
+      page.locator("button").filter({ hasText: "Polska" }).first(),
+    ).toBeVisible({ timeout: 10_000 });
   });
 });
 
@@ -341,7 +360,8 @@ test.describe("Categories page extended", () => {
 test.describe("Search page extended", () => {
   test("search input has correct placeholder", async ({ page }) => {
     await page.goto("/app/search");
-    const input = page.locator('input[placeholder*="Search"]');
+    await page.waitForLoadState("networkidle");
+    const input = page.getByPlaceholder(/search products/i);
     await expect(input).toBeVisible();
   });
 
@@ -349,14 +369,16 @@ test.describe("Search page extended", () => {
     page,
   }) => {
     await page.goto("/app/search");
-    const input = page.locator('input[placeholder*="Search"]');
+    await page.waitForLoadState("networkidle");
+    const input = page.getByPlaceholder(/search products/i);
     await input.press("Enter");
     await expect(page).toHaveURL(/\/app\/search/);
   });
 
   test("page maintains state after typing", async ({ page }) => {
     await page.goto("/app/search");
-    const input = page.locator('input[placeholder*="Search"]');
+    await page.waitForLoadState("networkidle");
+    const input = page.getByPlaceholder(/search products/i);
     await input.fill("test query");
     await expect(input).toHaveValue("test query");
   });
@@ -374,7 +396,11 @@ test.describe("Saved searches page", () => {
 
   test("has back link to search", async ({ page }) => {
     await page.goto("/app/search/saved");
-    const backLink = page.getByRole("link", { name: /Back to Search/i });
+    // Page uses breadcrumbs — the "Search" breadcrumb link navigates back
+    const backLink = page
+      .locator("main")
+      .getByRole("link", { name: /Search/i })
+      .first();
     await expect(backLink).toBeVisible();
   });
 });
@@ -419,7 +445,10 @@ test.describe("Cross-page navigation", () => {
     await page.goto("/app/lists");
     await page.getByRole("button", { name: /New List/i }).click();
     await expect(page.getByPlaceholder("List name")).toBeVisible();
-    await page.getByRole("button", { name: "Cancel" }).click();
+    await page
+      .locator("form")
+      .getByRole("button", { name: "Cancel" })
+      .click();
     expect(page.url()).toMatch(/\/app\/lists/);
   });
 });

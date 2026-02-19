@@ -59,8 +59,9 @@ CREATE POLICY "daily_value_ref: public read"
 -- Service role: full access for maintenance
 CREATE POLICY "daily_value_ref: service_role all"
     ON public.daily_value_ref FOR ALL
-    USING (auth.role() = 'service_role')
-    WITH CHECK (auth.role() = 'service_role');
+    TO service_role
+    USING (true)
+    WITH CHECK (true);
 
 -- ─── Grants ─────────────────────────────────────────────────────────────────
 

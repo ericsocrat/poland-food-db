@@ -48,7 +48,9 @@ export default function SharedListPage() {
       {/* Header */}
       <header className="border-b border bg-white/80 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
-          <span className="text-lg font-bold text-brand-700">🥗 FoodDB</span>
+          <span className="text-lg font-bold text-brand-700 dark:text-brand-400">
+            🥗 FoodDB
+          </span>
           <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">
             {t("shared.sharedList")}
           </span>
@@ -63,7 +65,9 @@ export default function SharedListPage() {
               {data.list_name}
             </h1>
             {data.description && (
-              <p className="mt-1 text-sm text-foreground-secondary">{data.description}</p>
+              <p className="mt-1 text-sm text-foreground-secondary">
+                {data.description}
+              </p>
             )}
             <p className="mt-1 text-xs text-foreground-muted">
               {t("common.products", { count: data.total_count })}
@@ -73,7 +77,9 @@ export default function SharedListPage() {
           {/* Items */}
           {data.items.length === 0 ? (
             <div className="py-12 text-center">
-              <p className="text-sm text-foreground-muted">{t("shared.listEmpty")}</p>
+              <p className="text-sm text-foreground-muted">
+                {t("shared.listEmpty")}
+              </p>
             </div>
           ) : (
             <ul className="space-y-2">

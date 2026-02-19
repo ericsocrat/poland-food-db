@@ -144,7 +144,9 @@ describe("Navigation", () => {
       list_id: String(i),
       name: `List ${i}`,
     }));
-    mockUseLists.mockReturnValue({ data: { api_version: "1.0", lists: manyLists } });
+    mockUseLists.mockReturnValue({
+      data: { api_version: "1.0", lists: manyLists },
+    });
     render(<Navigation />);
     const badge = screen.getByTestId("nav-badge-lists");
     expect(badge).toHaveTextContent("99+");

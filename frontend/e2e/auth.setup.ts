@@ -23,7 +23,9 @@ setup("create user and authenticate via UI", async ({ page }) => {
   await page.getByLabel("Password").fill(TEST_PASSWORD);
   await page.getByRole("button", { name: "Sign In" }).click();
 
-  // After login the user has no preferences → redirected to onboarding wizard
+  // After login the user is already onboarded (ensureTestUser pre-creates
+  // preferences with onboarding_skipped=true), so we should land on /app/search.
+  // If somehow onboarding still appears, complete it.
   await page.waitForURL(/\/(app\/search|onboarding)/, {
     timeout: 15_000,
   });
@@ -37,7 +39,7 @@ setup("create user and authenticate via UI", async ({ page }) => {
     await page.waitForURL(/\/app\/search/, { timeout: 10_000 });
   }
 
-  // ── 4. Verify we're authenticated ─────────────────────────────────────────
+  // ── 4. Verify we're authenticated on the app page ────────────────────────
   await expect(page).toHaveURL(/\/app\/search/);
 
   // ── 5. Persist auth cookies for dependent test projects ───────────────────

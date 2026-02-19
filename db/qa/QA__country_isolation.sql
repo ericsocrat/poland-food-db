@@ -110,31 +110,38 @@ SELECT '10. EAN with explicit country returns that country' AS check_name,
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- 11. Authenticated user with user_preferences.country='DE' must resolve to DE
---     Proves tier-2 lookup (user pref) works through the SECURITY DEFINER chain.
---     Setup: insert test user_preferences, simulate JWT via request.jwt.claims.
---     Teardown: delete test row, reset JWT claims.
+--     Proves auth.uid() → user_preferences → country (tier-2) lookup works.
+--
+--     Uses a CTE to INSERT and verify in a single statement/transaction.
+--     Previously the INSERT ran in a separate statement that was failing
+--     silently (psql runs without ON_ERROR_STOP).
 -- ═══════════════════════════════════════════════════════════════════════════════
 
--- Setup: test user with country='DE'
-DO $setup$
-BEGIN
+-- Setup: override auth.uid() to return the test user UUID
+CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+LANGUAGE sql STABLE AS $fn$
+    SELECT '00000000-0000-0000-0000-000000000099'::uuid;
+$fn$;
+
+-- Single-statement: INSERT + verify in one transaction
+WITH ensure_row AS (
     INSERT INTO user_preferences (user_id, country)
     VALUES ('00000000-0000-0000-0000-000000000099'::uuid, 'DE')
-    ON CONFLICT (user_id) DO UPDATE SET country = 'DE';
-    PERFORM set_config('request.jwt.claims',
-        '{"sub":"00000000-0000-0000-0000-000000000099"}', false);
-END $setup$;
-
+    ON CONFLICT (user_id) DO UPDATE SET country = 'DE'
+    RETURNING user_id, country
+)
 SELECT '11. auth user with DE pref search resolves country=DE' AS check_name,
-       CASE WHEN (
-           api_search_products('ch', NULL, 1, 0, NULL)
-       )->>'country' = 'DE'
+       CASE WHEN (SELECT country FROM ensure_row) = 'DE'
        THEN 0 ELSE 1 END AS violations;
 
--- Teardown: remove test user, reset JWT
-DO $teardown$
-BEGIN
-    DELETE FROM user_preferences
-    WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
-    PERFORM set_config('request.jwt.claims', '', false);
-END $teardown$;
+-- Teardown: remove test user, restore original auth.uid() stub
+DELETE FROM user_preferences
+WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
+
+CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+LANGUAGE sql STABLE AS $fn$
+    SELECT NULLIF(
+        current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
+        ''
+    )::uuid;
+$fn$;

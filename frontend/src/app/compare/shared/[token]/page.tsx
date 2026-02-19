@@ -27,7 +27,10 @@ function SharedComparisonContent() {
       {/* Header */}
       <header className="border-b border bg-surface">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-          <Link href="/" className="text-lg font-bold text-brand-700">
+          <Link
+            href="/"
+            className="text-lg font-bold text-brand-700 dark:text-brand-400"
+          >
             🥗 FoodDB
           </Link>
           <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
