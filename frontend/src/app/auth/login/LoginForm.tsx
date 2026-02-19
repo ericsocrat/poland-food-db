@@ -7,6 +7,7 @@ import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { sanitizeRedirect } from "@/lib/validation";
 import { useTranslation } from "@/lib/i18n";
+import { SkipLink } from "@/components/common/SkipLink";
 import type { FormSubmitEvent } from "@/lib/types";
 
 export function LoginForm() {
@@ -43,7 +44,8 @@ export function LoginForm() {
 
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm">
+      <SkipLink />
+      <div id="main-content" className="w-full max-w-sm">
         <h1 className="mb-2 text-center text-2xl font-bold text-foreground">
           {t("auth.welcomeBack")}
         </h1>

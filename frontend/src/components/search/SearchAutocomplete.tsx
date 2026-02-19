@@ -42,6 +42,8 @@ interface SearchAutocompleteProps {
   onClose: () => void;
   /** Ref callback — receives the keyboard handler so the parent input can use it */
   onInputKeyDown?: (handler: (e: React.KeyboardEvent) => void) => void;
+  /** Reports the active option DOM id for aria-activedescendant binding */
+  onActiveIdChange?: (id: string | undefined) => void;
 }
 
 function useDebounce(value: string, delay: number) {
@@ -61,6 +63,7 @@ export function SearchAutocomplete({
   show,
   onClose,
   onInputKeyDown,
+  onActiveIdChange,
 }: Readonly<SearchAutocompleteProps>) {
   const { t } = useTranslation();
   const supabase = createClient();
@@ -102,10 +105,19 @@ export function SearchAutocomplete({
     return 0;
   })();
 
+  /** Stable option id for aria-activedescendant */
+  const getOptionId = (index: number) =>
+    index >= 0 ? `search-autocomplete-option-${index}` : undefined;
+
   // Reset active index when suggestions change
   useEffect(() => {
     setActiveIndex(-1);
   }, [suggestions.length, debouncedQuery, isQueryMode]);
+
+  // Report active ID to parent for aria-activedescendant
+  useEffect(() => {
+    onActiveIdChange?.(getOptionId(activeIndex));
+  }, [activeIndex, onActiveIdChange]);
 
   // Close on click outside
   useEffect(() => {
@@ -207,6 +219,8 @@ export function SearchAutocomplete({
   return (
     <div
       ref={containerRef}
+      id="search-autocomplete-listbox"
+      role="listbox"
       aria-label={dropdownLabel}
       className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-xl border bg-surface shadow-lg"
     >
@@ -232,6 +246,9 @@ export function SearchAutocomplete({
             {recentSearches.map((q, i) => (
               <li
                 key={q}
+                id={getOptionId(i)}
+                role="option"
+                aria-selected={i === activeIndex}
                 className={`flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors ${
                   i === activeIndex
                     ? "bg-brand-subtle text-foreground"
@@ -294,6 +311,9 @@ export function SearchAutocomplete({
             {POPULAR_SEARCHES.map((q, i) => (
               <li
                 key={q}
+                id={getOptionId(i)}
+                role="option"
+                aria-selected={i === activeIndex}
                 className={`flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors ${
                   i === activeIndex
                     ? "bg-brand-subtle text-foreground"
@@ -340,6 +360,9 @@ export function SearchAutocomplete({
               return (
                 <li
                   key={s.product_id}
+                  id={getOptionId(i)}
+                  role="option"
+                  aria-selected={i === activeIndex}
                   className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors ${
                     i === activeIndex
                       ? "bg-brand-subtle text-foreground"

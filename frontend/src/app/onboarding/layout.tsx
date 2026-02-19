@@ -1,6 +1,7 @@
 // ─── Onboarding layout ───────────────────────────────────────────────────────
 // Minimal chrome for the onboarding wizard.
 
+import { SkipLink } from "@/components/common/SkipLink";
 import { AppName } from "./AppName";
 
 export default function OnboardingLayout({
@@ -10,6 +11,7 @@ export default function OnboardingLayout({
 }>) {
   return (
     <div className="flex min-h-screen flex-col bg-surface-subtle">
+      <SkipLink />
       <header className="border-b border bg-surface">
         <div className="mx-auto flex h-14 max-w-lg items-center justify-center px-4">
           <span className="text-lg font-bold text-brand">
@@ -17,7 +19,7 @@ export default function OnboardingLayout({
           </span>
         </div>
       </header>
-      <main className="mx-auto w-full max-w-lg flex-1 px-4 py-8">
+      <main id="main-content" className="mx-auto w-full max-w-lg flex-1 px-4 py-8">
         {children}
       </main>
     </div>

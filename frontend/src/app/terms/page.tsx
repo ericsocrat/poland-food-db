@@ -4,15 +4,17 @@
 
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SkipLink } from "@/components/common/SkipLink";
 import { useTranslation } from "@/lib/i18n";
 
 export default function TermsPage() {
   const { t } = useTranslation();
   return (
     <div className="flex min-h-screen flex-col">
+      <SkipLink />
       <Header />
 
-      <main className="flex flex-1 flex-col items-center px-4 py-16">
+      <main id="main-content" className="flex flex-1 flex-col items-center px-4 py-16">
         <div className="prose max-w-lg">
           <h1>{t("legal.termsTitle")}</h1>
           <p className="text-sm text-foreground-secondary">{t("legal.lastUpdated")}</p>

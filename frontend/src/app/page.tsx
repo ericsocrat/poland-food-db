@@ -7,15 +7,17 @@ import { Search, Camera, BarChart3 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SkipLink } from "@/components/common/SkipLink";
 import { useTranslation } from "@/lib/i18n";
 
 export default function HomePage() {
   const { t } = useTranslation();
   return (
     <div className="flex min-h-screen flex-col">
+      <SkipLink />
       <Header />
 
-      <main className="flex flex-1 flex-col items-center justify-center px-4 py-16">
+      <main id="main-content" className="flex flex-1 flex-col items-center justify-center px-4 py-16">
         <div className="max-w-md text-center">
           <h1 className="mb-4 text-4xl font-bold text-foreground">
             {t("landing.tagline")}

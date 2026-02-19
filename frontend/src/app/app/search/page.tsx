@@ -87,6 +87,7 @@ export default function SearchPage() {
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
+  const [autocompleteActiveId, setAutocompleteActiveId] = useState<string | undefined>(undefined);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
@@ -214,6 +215,11 @@ export default function SearchPage() {
               onKeyDown={(e) => autocompleteKeyDownRef.current?.(e)}
               placeholder={t("search.placeholder")}
               aria-label={t("a11y.searchProducts")}
+              role="combobox"
+              aria-expanded={showAutocomplete}
+              aria-controls="search-autocomplete-listbox"
+              aria-autocomplete="list"
+              aria-activedescendant={showAutocomplete ? autocompleteActiveId : undefined}
               className="input-field pl-10 pr-10"
               autoFocus
             />
@@ -274,6 +280,7 @@ export default function SearchPage() {
               onInputKeyDown={(handler) => {
                 autocompleteKeyDownRef.current = handler;
               }}
+              onActiveIdChange={setAutocompleteActiveId}
             />
           </div>
 

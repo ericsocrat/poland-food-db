@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { Header } from "@/components/layout/Header";
+import { SkipLink } from "@/components/common/SkipLink";
 import { Footer } from "@/components/layout/Footer";
 import { LearnSidebar } from "@/components/learn/LearnSidebar";
 import { Disclaimer } from "@/components/learn/Disclaimer";
@@ -16,12 +17,13 @@ export default function NutriScorePage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <SkipLink />
       <Header />
 
       <div className="mx-auto flex w-full max-w-5xl flex-1 gap-8 px-4 py-8">
         <LearnSidebar className="w-56 shrink-0" />
 
-        <main className="min-w-0 flex-1">
+        <main id="main-content" className="min-w-0 flex-1">
           {/* Mobile back link */}
           <Link
             href="/learn"
