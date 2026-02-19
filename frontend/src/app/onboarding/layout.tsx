@@ -12,7 +12,7 @@ export default function OnboardingLayout({
     <div className="flex min-h-screen flex-col bg-surface-subtle">
       <header className="border-b border bg-surface">
         <div className="mx-auto flex h-14 max-w-lg items-center justify-center px-4">
-          <span className="text-lg font-bold text-brand-700 dark:text-brand-400">
+          <span className="text-lg font-bold text-brand">
             <AppName />
           </span>
         </div>

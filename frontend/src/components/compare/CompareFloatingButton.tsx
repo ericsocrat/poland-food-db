@@ -38,7 +38,7 @@ export function CompareFloatingButton() {
       <button
         type="button"
         onClick={handleCompare}
-        className="flex items-center gap-2 rounded-full bg-brand-600 px-5 py-3 font-medium text-white shadow-lg transition-transform hover:scale-105 hover:bg-brand-700 active:scale-95"
+        className="flex items-center gap-2 rounded-full bg-brand px-5 py-3 font-medium text-white shadow-lg transition-transform hover:scale-105 hover:bg-brand-subtle active:scale-95"
       >
         <span className="flex items-center justify-center">
           <Scale size={20} aria-hidden="true" />

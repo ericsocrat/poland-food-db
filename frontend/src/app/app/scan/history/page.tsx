@@ -61,7 +61,7 @@ export default function ScanHistoryPage() {
         </div>
         <Link
           href="/app/scan"
-          className="text-sm text-brand-600 hover:text-brand-700"
+          className="text-sm text-brand hover:text-brand-hover"
         >
           {t("scanHistory.backToScanner")}
         </Link>
@@ -78,7 +78,7 @@ export default function ScanHistoryPage() {
             }}
             className={`flex-1 cursor-pointer rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
               filter === f.value
-                ? "bg-surface text-brand-700 shadow-sm"
+                ? "bg-surface text-brand shadow-sm"
                 : "text-foreground-secondary hover:text-foreground"
             }`}
           >
@@ -233,7 +233,7 @@ function ScanRow({
           {!scan.submission_status && (
             <Link
               href={`/app/scan/submit?ean=${scan.ean}`}
-              className="text-xs text-brand-600 hover:text-brand-700"
+              className="text-xs text-brand hover:text-brand-hover"
             >
               {t("scanHistory.submit")}
             </Link>

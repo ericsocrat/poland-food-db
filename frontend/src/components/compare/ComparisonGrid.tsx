@@ -412,7 +412,7 @@ function MobileSwipeView({
               onClick={() => setActiveIdx(i)}
               className={`touch-target rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 i === activeIdx
-                  ? "bg-brand-600 text-white"
+                  ? "bg-brand text-white"
                   : "bg-surface-muted text-foreground-secondary"
               }`}
             >
@@ -437,7 +437,7 @@ function MobileSwipeView({
             <span
               key={`dot-${p.product_id}`}
               className={`h-1.5 w-1.5 rounded-full transition-colors ${
-                i === activeIdx ? "bg-brand-600" : "bg-surface-muted"
+                i === activeIdx ? "bg-brand" : "bg-surface-muted"
               }`}
             />
           ))}

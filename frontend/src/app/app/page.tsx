@@ -339,7 +339,7 @@ function FavoritesSection({
         </h2>
         <Link
           href="/app/lists"
-          className="text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
+          className="text-sm font-medium text-brand transition-colors hover:text-brand-hover"
         >
           {t("dashboard.viewAll")}
         </Link>
@@ -374,7 +374,7 @@ function NewProductsSection({
         </h2>
         <Link
           href="/app/categories"
-          className="text-sm font-medium text-brand-600 transition-colors hover:text-brand-700"
+          className="text-sm font-medium text-brand transition-colors hover:text-brand-hover"
         >
           {t("dashboard.browse")}
         </Link>

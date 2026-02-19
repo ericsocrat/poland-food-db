@@ -106,7 +106,7 @@ export default function ComparePage() {
         <div className="no-print flex items-center gap-2">
           <Link
             href="/app/compare/saved"
-            className="text-sm text-brand-600 hover:text-brand-700"
+            className="text-sm text-brand hover:text-brand-hover"
           >
             <FolderOpen size={16} className="inline-block" aria-hidden="true" />{" "}
             {t("compare.savedComparisons")}

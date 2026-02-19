@@ -120,7 +120,7 @@ function ActionButton({
 
   const baseClasses = primary
     ? "rounded-lg bg-brand px-4 py-2 text-xs font-medium text-foreground-inverse hover:bg-brand-hover transition-colors"
-    : "text-xs font-medium text-brand-600 hover:text-brand-700 underline underline-offset-2 transition-colors";
+    : "text-xs font-medium text-brand hover:text-brand-hover underline underline-offset-2 transition-colors";
 
   if (action.href) {
     return (

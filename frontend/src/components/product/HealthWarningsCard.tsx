@@ -101,7 +101,7 @@ export function HealthWarningsCard({
               }
               <Link
                 href="/app/settings"
-                className="text-brand-600 underline hover:text-brand-700"
+                className="text-brand underline hover:text-brand-hover"
               >
                 {t("healthWarnings.healthProfile")}
               </Link>

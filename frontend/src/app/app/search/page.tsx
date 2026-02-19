@@ -300,7 +300,7 @@ export default function SearchPage() {
               />{" "}
               {t("search.filters")}
               {hasActiveFilters(filters) && (
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand-600 text-[10px] font-bold text-white">
+                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
                   {countActiveFilters(filters)}
                 </span>
               )}
@@ -319,7 +319,7 @@ export default function SearchPage() {
             >
               <span
                 className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
-                  showAvoided ? "bg-brand-600" : "bg-surface-muted"
+                  showAvoided ? "bg-brand" : "bg-surface-muted"
                 }`}
               >
                 <span
@@ -361,7 +361,7 @@ export default function SearchPage() {
                 <button
                   type="button"
                   onClick={() => setShowSaveDialog(true)}
-                  className="touch-target text-xs text-foreground-muted hover:text-brand-600"
+                  className="touch-target text-xs text-foreground-muted hover:text-brand"
                 >
                   <Save size={14} aria-hidden="true" className="inline" />{" "}
                   <span className="hidden xs:inline">
@@ -373,7 +373,7 @@ export default function SearchPage() {
               {/* Saved searches link */}
               <Link
                 href="/app/search/saved"
-                className="touch-target text-xs text-foreground-muted hover:text-brand-600"
+                className="touch-target text-xs text-foreground-muted hover:text-brand"
               >
                 <ClipboardList
                   size={14}
@@ -511,7 +511,7 @@ export default function SearchPage() {
                           onClick={() => setPage(p)}
                           className={`h-10 w-10 rounded-lg text-sm font-medium transition-colors ${
                             p === page
-                              ? "bg-brand-600 text-white"
+                              ? "bg-brand text-white"
                               : "text-foreground-secondary hover:bg-surface-muted"
                           }`}
                         >

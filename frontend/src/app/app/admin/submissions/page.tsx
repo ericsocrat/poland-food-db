@@ -139,7 +139,7 @@ export default function AdminSubmissionsPage() {
             }}
             className={`rounded-lg px-3 py-1.5 text-sm font-medium transition-colors ${
               statusFilter === tab.value
-                ? "bg-brand-600 text-white"
+                ? "bg-brand text-white"
                 : "bg-surface-muted text-foreground-secondary hover:bg-surface-muted"
             }`}
           >

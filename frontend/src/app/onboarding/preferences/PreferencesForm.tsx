@@ -65,8 +65,8 @@ export function PreferencesForm() {
     <div>
       {/* Progress indicator */}
       <div className="mb-8 flex items-center gap-2">
-        <div className="h-2 flex-1 rounded-full bg-brand-500" />
-        <div className="h-2 flex-1 rounded-full bg-brand-500" />
+        <div className="h-2 flex-1 rounded-full bg-brand" />
+        <div className="h-2 flex-1 rounded-full bg-brand" />
       </div>
 
       <h1 className="mb-2 text-2xl font-bold text-foreground">
@@ -88,7 +88,7 @@ export function PreferencesForm() {
               onClick={() => setDiet(opt.value)}
               className={`rounded-lg border-2 px-3 py-2 text-sm transition-colors ${
                 diet === opt.value
-                  ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
+                  ? "border-brand bg-brand-subtle font-medium text-brand"
                   : "border text-foreground-secondary hover:border-strong"
               }`}
             >
@@ -105,7 +105,7 @@ export function PreferencesForm() {
             type="checkbox"
             checked={strictDiet}
             onChange={(e) => setStrictDiet(e.target.checked)}
-            className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+            className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
           />
           <span className="text-sm text-foreground-secondary">
             {t("onboarding.strictDiet")}
@@ -143,7 +143,7 @@ export function PreferencesForm() {
               type="checkbox"
               checked={strictAllergen}
               onChange={(e) => setStrictAllergen(e.target.checked)}
-              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("onboarding.strictAllergen")}
@@ -154,7 +154,7 @@ export function PreferencesForm() {
               type="checkbox"
               checked={treatMayContain}
               onChange={(e) => setTreatMayContain(e.target.checked)}
-              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("onboarding.treatMayContain")}

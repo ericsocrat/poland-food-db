@@ -25,7 +25,7 @@ export default function ContactPage() {
               <strong>{t("legal.emailLabel")}</strong>{" "}
               <a
                 href="mailto:hello@example.com"
-                className="text-brand-600 underline"
+                className="text-brand underline"
               >
                 hello@example.com
               </a>

@@ -320,7 +320,7 @@
   .input-field {
     @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5
            text-sm text-foreground shadow-sm placeholder:text-foreground-muted
-           focus:border-brand-500 focus:ring-1 focus:ring-brand-500 focus:outline-none;
+           focus:border-brand focus:ring-1 focus:ring-brand focus:outline-none;
   }
 
   .card {

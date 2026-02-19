@@ -355,7 +355,7 @@ export function CommandPalette({
                 onMouseEnter={() => setActiveIndex(index)}
                 className={`flex w-full cursor-pointer items-center gap-3 px-4 py-2.5 text-left text-sm transition-colors ${
                   isActive
-                    ? "bg-brand-50 text-brand-700"
+                    ? "bg-brand-subtle text-brand"
                     : "text-foreground hover:bg-surface-subtle"
                 }`}
               >
@@ -365,7 +365,7 @@ export function CommandPalette({
                   </span>
                 )}
                 {item.section === "search" && (
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-50 text-brand-600">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-brand-subtle text-brand">
                     <ArrowRight size={16} aria-hidden="true" />
                   </span>
                 )}

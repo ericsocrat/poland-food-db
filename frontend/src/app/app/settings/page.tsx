@@ -158,7 +158,7 @@ export default function SettingsPage() {
               }}
               className={`rounded-lg border-2 px-3 py-3 text-center transition-colors ${
                 country === c.code
-                  ? "border-brand-500 bg-brand-50 text-brand-700"
+                  ? "border-brand bg-brand-subtle text-brand"
                   : "border text-foreground-secondary hover:border-strong"
               }`}
             >
@@ -184,7 +184,7 @@ export default function SettingsPage() {
               }}
               className={`rounded-lg border-2 px-3 py-3 text-center transition-colors ${
                 language === lang.code
-                  ? "border-brand-500 bg-brand-50 text-brand-700"
+                  ? "border-brand bg-brand-subtle text-brand"
                   : "border text-foreground-secondary hover:border-strong"
               }`}
             >
@@ -218,7 +218,7 @@ export default function SettingsPage() {
               }}
               className={`rounded-lg border-2 px-3 py-2 text-sm transition-colors ${
                 diet === opt.value
-                  ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
+                  ? "border-brand bg-brand-subtle font-medium text-brand"
                   : "border text-foreground-secondary hover:border-strong"
               }`}
             >
@@ -235,7 +235,7 @@ export default function SettingsPage() {
                 setStrictDiet(e.target.checked);
                 markDirty();
               }}
-              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("settings.strictDiet")}
@@ -276,7 +276,7 @@ export default function SettingsPage() {
                 }}
                 className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                   allSelected
-                    ? "border-brand-400 bg-brand-50 text-brand-700"
+                    ? "border-brand bg-brand-subtle text-brand"
                     : "border-dashed border-foreground-muted text-foreground-secondary hover:border-strong"
                 }`}
               >
@@ -311,7 +311,7 @@ export default function SettingsPage() {
                   setStrictAllergen(e.target.checked);
                   markDirty();
                 }}
-                className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+                className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
               />
               <span className="text-sm text-foreground-secondary">
                 {t("settings.strictAllergen")}
@@ -325,7 +325,7 @@ export default function SettingsPage() {
                   setTreatMayContain(e.target.checked);
                   markDirty();
                 }}
-                className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+                className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
               />
               <span className="text-sm text-foreground-secondary">
                 {t("settings.treatMayContain")}

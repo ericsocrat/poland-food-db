@@ -33,7 +33,7 @@ export function OnboardingProgress({
           <div
             key={i}
             className={`h-2 flex-1 rounded-full transition-colors ${
-              i < currentStep ? "bg-brand-500" : "bg-surface-muted"
+              i < currentStep ? "bg-brand-subtle0" : "bg-surface-muted"
             }`}
           />
         ))}

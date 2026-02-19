@@ -69,14 +69,14 @@ export function Navigation() {
               aria-current={isActive ? "page" : undefined}
               className={`relative flex flex-1 flex-col items-center justify-center gap-0.5 min-h-[48px] min-w-[64px] py-2 landscape:py-1 text-xs transition-colors ${
                 isActive
-                  ? "text-brand-700 font-semibold dark:text-brand-400"
+                  ? "text-brand font-semibold"
                   : "text-foreground-secondary hover:text-foreground"
               }`}
             >
               {/* Active indicator pill */}
               {isActive && (
                 <span
-                  className="absolute top-1 h-1 w-6 rounded-full bg-brand-600 dark:bg-brand-400"
+                  className="absolute top-1 h-1 w-6 rounded-full bg-brand"
                   aria-hidden="true"
                 />
               )}
@@ -84,7 +84,7 @@ export function Navigation() {
                 <Icon icon={item.icon} size="md" />
                 {badge != null && badge > 0 && (
                   <span
-                    className="absolute -right-2 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand-600 px-1 text-[10px] font-bold leading-none text-white dark:bg-brand-500 dark:text-gray-950"
+                    className="absolute -right-2 -top-1.5 flex h-4 min-w-[16px] items-center justify-center rounded-full bg-brand px-1 text-[10px] font-bold leading-none text-white"
                     data-testid={`nav-badge-${item.routeKey}`}
                     aria-label={`${badge}`}
                   >

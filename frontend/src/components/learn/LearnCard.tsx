@@ -40,7 +40,7 @@ export function LearnCard({
           ? React.createElement(icon as LucideIcon, { size: 32 })
           : icon}
       </div>
-      <h2 className="mb-1.5 text-lg font-semibold text-foreground group-hover:text-brand-700 dark:group-hover:text-brand-400 transition-colors">
+      <h2 className="mb-1.5 text-lg font-semibold text-foreground group-hover:text-brand-hover transition-colors">
         {title}
       </h2>
       <p className="text-sm leading-relaxed text-foreground-secondary">

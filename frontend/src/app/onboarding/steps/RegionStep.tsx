@@ -35,7 +35,7 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
             onClick={() => handleCountrySelect(country.code)}
             className={`flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-colors ${
               data.country === country.code
-                ? "border-brand-500 bg-brand-50"
+                ? "border-brand bg-brand-subtle"
                 : "border bg-surface hover:border-strong"
             }`}
             data-testid={`country-${country.code}`}
@@ -46,7 +46,7 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
               <p className="text-sm text-foreground-secondary">{country.native}</p>
             </div>
             {data.country === country.code && (
-              <span className="ml-auto text-brand-600">✓</span>
+              <span className="ml-auto text-brand">✓</span>
             )}
           </button>
         ))}
@@ -65,7 +65,7 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
                 onClick={() => onChange({ language: lang.code })}
                 className={`flex items-center gap-2 rounded-lg border-2 px-4 py-2 text-sm transition-colors ${
                   data.language === lang.code
-                    ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
+                    ? "border-brand bg-brand-subtle font-medium text-brand"
                     : "border text-foreground-secondary hover:border-strong"
                 }`}
               >

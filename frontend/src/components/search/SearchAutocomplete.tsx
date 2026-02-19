@@ -219,7 +219,7 @@ export function SearchAutocomplete({
             </span>
             <button
               type="button"
-              className="text-xs text-brand-600 hover:text-brand-700"
+              className="text-xs text-brand hover:text-brand-hover"
               onClick={() => {
                 clearRecentSearches();
                 setRecentSearches([]);
@@ -234,7 +234,7 @@ export function SearchAutocomplete({
                 key={q}
                 className={`flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors ${
                   i === activeIndex
-                    ? "bg-brand-50 text-brand-900"
+                    ? "bg-brand-subtle text-foreground"
                     : "hover:bg-surface-subtle"
                 }`}
               >
@@ -296,7 +296,7 @@ export function SearchAutocomplete({
                 key={q}
                 className={`flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors ${
                   i === activeIndex
-                    ? "bg-brand-50 text-brand-900"
+                    ? "bg-brand-subtle text-foreground"
                     : "hover:bg-surface-subtle"
                 }`}
               >
@@ -342,7 +342,7 @@ export function SearchAutocomplete({
                   key={s.product_id}
                   className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors ${
                     i === activeIndex
-                      ? "bg-brand-50 text-brand-900"
+                      ? "bg-brand-subtle text-foreground"
                       : "hover:bg-surface-subtle"
                   }`}
                 >
@@ -390,7 +390,7 @@ export function SearchAutocomplete({
             type="button"
             className={`flex w-full items-center gap-2 border-t px-4 py-2.5 text-sm transition-colors ${
               activeIndex === suggestions.length
-                ? "bg-brand-50 text-brand-900"
+                ? "bg-brand-subtle text-foreground"
                 : "text-foreground-secondary hover:bg-surface-subtle"
             }`}
             onMouseEnter={() => setActiveIndex(suggestions.length)}
