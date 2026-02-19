@@ -115,4 +115,16 @@ describe("ComparisonTray", () => {
     render(<ComparisonTray />);
     expect(screen.getByLabelText("Compare")).toBeTruthy();
   });
+
+  // ─── Responsive visibility guard ───────────────────────────────────
+  // ComparisonTray must be hidden on mobile and visible only on lg+.
+  // If someone removes the hidden class, it could cause viewport overflow.
+
+  it("has hidden and lg:block classes for desktop-only visibility", () => {
+    mockCount.mockReturnValue(2);
+    render(<ComparisonTray />);
+    const aside = screen.getByLabelText("Compare");
+    expect(aside.className).toContain("hidden");
+    expect(aside.className).toContain("lg:block");
+  });
 });

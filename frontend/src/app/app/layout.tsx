@@ -102,6 +102,9 @@ export default async function AppLayout({
           {children}
         </main>
 
+        {/* ⚠️  No <dialog> elements should be unconditionally rendered here.
+            Android Chrome resolves their box dimensions even when closed,
+            inflating the mobile viewport. See PR #92. */}
         <div className="no-print">
           <CompareFloatingButton />
           <ComparisonTray />
