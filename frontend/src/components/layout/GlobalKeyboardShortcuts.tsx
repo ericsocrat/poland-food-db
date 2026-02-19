@@ -3,6 +3,11 @@
 // ─── Global keyboard shortcuts for the app shell ────────────────────────────
 // Handles all keyboard shortcuts and renders desktop-only overlays
 // (CommandPalette, ShortcutsHelp). Desktop features hidden on mobile via CSS.
+//
+// ⚠️  IMPORTANT: <dialog> elements MUST be conditionally rendered (mount only
+// when open, unmount when closed). Android Chrome resolves box dimensions of
+// closed <dialog> elements, inflating the layout viewport on mobile devices.
+// See PR #92. A unit test guards this — see GlobalKeyboardShortcuts.test.tsx.
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";

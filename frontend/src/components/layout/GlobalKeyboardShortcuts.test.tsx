@@ -184,4 +184,15 @@ describe("GlobalKeyboardShortcuts", () => {
     fireEvent.keyDown(document, { key: "L", altKey: true });
     expect(mockPush).not.toHaveBeenCalled();
   });
+
+  // ─── SSR safety: no hidden <dialog> in initial render ────────────
+  // Regression guard for the mobile viewport bug fixed in PR #92.
+  // Android Chrome resolves box dimensions of closed <dialog> elements,
+  // inflating the layout viewport. Dialogs must be conditionally rendered.
+
+  it("does not render any <dialog> elements in initial state", () => {
+    const { container } = renderShortcuts();
+    const dialogs = container.querySelectorAll("dialog");
+    expect(dialogs).toHaveLength(0);
+  });
 });

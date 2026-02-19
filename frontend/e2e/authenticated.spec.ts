@@ -7,6 +7,37 @@
 
 import { test, expect } from "@playwright/test";
 
+// ─── Mobile viewport overflow guard ────────────────────────────────────────
+// Regression test for the mobile "zoomed out" bug fixed in PR #92.
+// <dialog> elements with max-w-lg (512px) inflated the layout viewport on
+// Android Chrome. This ensures no authenticated page overflows on mobile.
+
+const MOBILE_VIEWPORTS = [
+  { name: "320px (iPhone SE)", width: 320, height: 568 },
+  { name: "375px (iPhone)", width: 375, height: 812 },
+] as const;
+
+const APP_PAGES = ["/app", "/app/search", "/app/settings", "/app/categories"];
+
+for (const viewport of MOBILE_VIEWPORTS) {
+  test.describe(`No horizontal overflow at ${viewport.name} (authenticated)`, () => {
+    test.use({
+      viewport: { width: viewport.width, height: viewport.height },
+    });
+
+    for (const path of APP_PAGES) {
+      test(`${path} has no horizontal scroll`, async ({ page }) => {
+        await page.goto(path, { waitUntil: "networkidle" });
+        const scrollWidth = await page.evaluate(
+          () => document.documentElement.scrollWidth,
+        );
+        const innerWidth = await page.evaluate(() => window.innerWidth);
+        expect(scrollWidth).toBeLessThanOrEqual(innerWidth);
+      });
+    }
+  });
+}
+
 // ─── Signup form (public, no auth needed) ───────────────────────────────────
 // Clear storageState so the middleware does NOT redirect /auth/signup → /app.
 
