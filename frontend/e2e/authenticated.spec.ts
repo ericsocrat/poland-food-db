@@ -12,14 +12,16 @@ import { test, expect } from "@playwright/test";
 // <dialog> elements with max-w-lg (512px) inflated the layout viewport on
 // Android Chrome. This ensures no authenticated page overflows on mobile.
 
-const MOBILE_VIEWPORTS = [
+const RESPONSIVE_VIEWPORTS = [
   { name: "320px (iPhone SE)", width: 320, height: 568 },
   { name: "375px (iPhone)", width: 375, height: 812 },
+  { name: "768px (tablet)", width: 768, height: 1024 },
+  { name: "1024px (laptop)", width: 1024, height: 768 },
 ] as const;
 
 const APP_PAGES = ["/app", "/app/search", "/app/settings", "/app/categories"];
 
-for (const viewport of MOBILE_VIEWPORTS) {
+for (const viewport of RESPONSIVE_VIEWPORTS) {
   test.describe(`No horizontal overflow at ${viewport.name} (authenticated)`, () => {
     test.use({
       viewport: { width: viewport.width, height: viewport.height },

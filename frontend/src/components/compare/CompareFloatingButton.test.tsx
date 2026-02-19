@@ -70,4 +70,15 @@ describe("CompareFloatingButton", () => {
     const badges = screen.getAllByText("4");
     expect(badges.length).toBeGreaterThanOrEqual(1);
   });
+
+  // ─── Responsive visibility guard ───────────────────────────────────
+  // CompareFloatingButton is mobile-only (lg:hidden). If someone removes
+  // the lg:hidden class, it would overlap with the ComparisonTray on desktop.
+
+  it("has lg:hidden class for mobile-only visibility", () => {
+    mockCount.mockReturnValue(2);
+    const { container } = render(<CompareFloatingButton />);
+    const wrapper = container.firstElementChild!;
+    expect(wrapper.className).toContain("lg:hidden");
+  });
 });
