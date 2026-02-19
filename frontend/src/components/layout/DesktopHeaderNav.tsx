@@ -52,7 +52,7 @@ export function DesktopHeaderNav() {
             key={item.href}
             href={item.href}
             aria-current={isActive ? "page" : undefined}
-            className={`rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors ${
+            className={`relative rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors ${
               isActive
                 ? "text-brand-700 dark:text-brand-400"
                 : "text-foreground-secondary hover:bg-surface-muted hover:text-foreground"

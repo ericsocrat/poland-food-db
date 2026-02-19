@@ -70,7 +70,7 @@ export default async function AppLayout({
   }
 
   return (
-    <div className="flex min-h-screen flex-col xl:flex-row">
+    <div className="flex min-h-screen flex-col overflow-x-hidden xl:flex-row">
       <SkipLink />
       <div className="no-print">
         <OfflineIndicator />
@@ -80,7 +80,7 @@ export default async function AppLayout({
       <DesktopSidebar />
 
       {/* Main column — offset by sidebar width on xl+ */}
-      <div className="flex min-h-screen flex-1 flex-col xl:pl-56">
+      <div className="flex min-h-screen max-w-full flex-1 flex-col overflow-x-hidden xl:pl-56">
         {/* Header — visible below xl. Hidden at xl+ where sidebar takes over. */}
         <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur xl:hidden">
           <div className="mx-auto flex h-12 md:h-14 max-w-5xl items-center justify-between px-4">

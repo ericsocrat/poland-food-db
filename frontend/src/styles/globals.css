@@ -266,6 +266,8 @@
     overscroll-behavior-y: contain;
     /* Smooth momentum scrolling on iOS */
     -webkit-overflow-scrolling: touch;
+    /* Prevent any descendant from widening the mobile layout viewport */
+    overflow-x: hidden;
   }
 
   body {
