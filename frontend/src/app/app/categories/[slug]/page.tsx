@@ -147,15 +147,16 @@ export default function CategoryListingPage() {
           titleKey="categories.loadFailed"
           action={{
             labelKey: "common.retry",
-            onClick: () =>
-              queryClient.invalidateQueries({
+            onClick: () => {
+              void queryClient.invalidateQueries({
                 queryKey: queryKeys.categoryListing(
                   slug,
                   sortBy,
                   sortDir,
                   offset,
                 ),
-              }),
+              });
+            },
           }}
         />
       )}

@@ -111,7 +111,12 @@ export default function ListDetailPage() {
         <EmptyState
           variant="error"
           titleKey="lists.loadListFailed"
-          action={{ labelKey: "common.retry", onClick: () => refetch() }}
+          action={{
+            labelKey: "common.retry",
+            onClick: () => {
+              void refetch();
+            },
+          }}
         />
       </div>
     );
