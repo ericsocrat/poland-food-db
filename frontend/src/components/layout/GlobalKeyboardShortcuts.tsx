@@ -100,8 +100,8 @@ export function GlobalKeyboardShortcuts() {
 
   return (
     <>
-      <CommandPalette open={paletteOpen} onClose={closePalette} />
-      <ShortcutsHelp open={shortcutsOpen} onClose={closeShortcuts} />
+      {paletteOpen && <CommandPalette open onClose={closePalette} />}
+      {shortcutsOpen && <ShortcutsHelp open onClose={closeShortcuts} />}
     </>
   );
 }
