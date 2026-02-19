@@ -3,6 +3,11 @@
 // ─── ConfirmDialog — accessible replacement for native confirm() ────────────
 // Renders a modal dialog with confirm/cancel buttons.
 // Uses <dialog> for native focus-trapping and Escape handling.
+//
+// ⚠️  IMPORTANT: The <dialog> element is conditionally rendered (mounted only
+// when open, unmounted when closed). Android Chrome resolves box dimensions of
+// closed <dialog> elements, inflating the layout viewport on mobile devices.
+// See PR #92.
 
 import { useRef, useEffect, useCallback } from "react";
 import { useTranslation } from "@/lib/i18n";
@@ -24,8 +29,16 @@ interface ConfirmDialogProps {
   onCancel: () => void;
 }
 
-export function ConfirmDialog({
-  open,
+/**
+ * Conditionally rendered wrapper — prevents closed <dialog> elements from
+ * expanding the mobile layout viewport on Android Chrome. See PR #92.
+ */
+export function ConfirmDialog(props: Readonly<ConfirmDialogProps>) {
+  if (!props.open) return null;
+  return <ConfirmDialogInner {...props} />;
+}
+
+function ConfirmDialogInner({
   title,
   description,
   confirmLabel,
@@ -36,15 +49,13 @@ export function ConfirmDialog({
   const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
 
+  // Show as modal immediately on mount
   useEffect(() => {
     const el = dialogRef.current;
-    if (!el) return;
-    if (open && !el.open) {
+    if (el && !el.open) {
       el.showModal();
-    } else if (!open && el.open) {
-      el.close();
     }
-  }, [open]);
+  }, []);
 
   const handleCancel = useCallback(() => {
     onCancel();

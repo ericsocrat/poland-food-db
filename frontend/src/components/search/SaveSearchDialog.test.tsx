@@ -68,10 +68,11 @@ describe("SaveSearchDialog", () => {
     });
   });
 
-  it("dialog is closed when show is false", () => {
+  it("dialog is not rendered when show is false", () => {
     renderDialog({ show: false });
-    const dialog = screen.getByRole("dialog", { hidden: true });
-    expect(dialog).not.toHaveAttribute("open");
+    // Dialog should not be in the DOM at all — Android Chrome resolves box
+    // dimensions of closed <dialog> elements, inflating mobile viewport (#92).
+    expect(screen.queryByRole("dialog", { hidden: true })).toBeNull();
   });
 
   it("dialog is open when show is true", () => {
