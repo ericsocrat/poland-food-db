@@ -97,7 +97,7 @@ export default function ComparePage() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="compare-print-container space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-xl font-bold text-foreground">
