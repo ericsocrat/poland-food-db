@@ -32,7 +32,7 @@ export function CategoriesStep({ data, onChange, onNext, onBack }: StepProps) {
             onClick={() => toggleCategory(cat.slug)}
             className={`flex items-center gap-2 rounded-lg border-2 px-3 py-2.5 text-sm transition-colors ${
               data.favoriteCategories.includes(cat.slug)
-                ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
+                ? "border-brand bg-brand-subtle font-medium text-brand"
                 : "border text-foreground-secondary hover:border-strong"
             }`}
             data-testid={`category-${cat.slug}`}

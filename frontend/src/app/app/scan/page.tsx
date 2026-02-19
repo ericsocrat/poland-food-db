@@ -390,7 +390,7 @@ export default function ScanPage() {
         <div className="flex gap-2">
           <Link
             href="/app/scan/history"
-            className="text-sm text-brand-600 hover:text-brand-700"
+            className="text-sm text-brand hover:text-brand-hover"
           >
             <span className="inline-flex items-center gap-1">
               <ClipboardList size={14} aria-hidden="true" /> {t("scan.history")}
@@ -398,7 +398,7 @@ export default function ScanPage() {
           </Link>
           <Link
             href="/app/scan/submissions"
-            className="text-sm text-brand-600 hover:text-brand-700"
+            className="text-sm text-brand hover:text-brand-hover"
           >
             <span className="inline-flex items-center gap-1">
               <FileText size={16} aria-hidden="true" />{" "}
@@ -417,7 +417,7 @@ export default function ScanPage() {
             setBatchMode(e.target.checked);
             if (!e.target.checked) setBatchResults([]);
           }}
-          className="h-5 w-5 rounded border-strong text-brand-600"
+          className="h-5 w-5 rounded border-strong text-brand"
         />
         <span className="text-sm text-foreground">{t("scan.batchMode")}</span>
       </label>
@@ -428,7 +428,7 @@ export default function ScanPage() {
           onClick={() => setMode("camera")}
           className={`flex-1 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
             mode === "camera"
-              ? "bg-surface text-brand-700 shadow-sm"
+              ? "bg-surface text-brand shadow-sm"
               : "text-foreground-secondary hover:text-foreground"
           }`}
         >
@@ -443,7 +443,7 @@ export default function ScanPage() {
           }}
           className={`flex-1 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
             mode === "manual"
-              ? "bg-surface text-brand-700 shadow-sm"
+              ? "bg-surface text-brand shadow-sm"
               : "text-foreground-secondary hover:text-foreground"
           }`}
         >
@@ -483,7 +483,7 @@ export default function ScanPage() {
                 </div>
                 {/* Batch mode indicator */}
                 {batchMode && (
-                  <div className="absolute left-3 top-3 rounded-full bg-brand-600 px-2 py-0.5 text-xs font-medium text-white">
+                  <div className="absolute left-3 top-3 rounded-full bg-brand px-2 py-0.5 text-xs font-medium text-white">
                     Batch: {batchResults.length} scanned
                   </div>
                 )}
@@ -584,7 +584,7 @@ export default function ScanPage() {
                 </span>
                 <button
                   onClick={() => router.push(`/app/product/${p.product_id}`)}
-                  className="min-w-0 flex-1 truncate text-left text-sm text-foreground hover:text-brand-600"
+                  className="min-w-0 flex-1 truncate text-left text-sm text-foreground hover:text-brand"
                 >
                   {p.product_name_display ?? p.product_name}
                 </button>

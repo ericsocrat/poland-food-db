@@ -70,7 +70,7 @@ describe("CompareCheckbox", () => {
     mockIsSelected.mockReturnValue(true);
     render(<CompareCheckbox productId={42} />);
     const btn = screen.getByRole("button");
-    expect(btn.className).toContain("bg-brand-600");
+    expect(btn.className).toContain("bg-brand");
   });
 
   it("shows disabled styling when disabled", () => {

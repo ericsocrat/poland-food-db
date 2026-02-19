@@ -53,7 +53,7 @@ export function ProductImageTabs({
             onClick={() => setActiveIdx(idx)}
             className={`cursor-pointer rounded-md px-3 py-1.5 text-xs font-medium transition-colors ${
               idx === activeIdx
-                ? "bg-brand-50 text-brand-700"
+                ? "bg-brand-subtle text-brand"
                 : "bg-surface-subtle text-foreground-secondary hover:bg-surface-muted"
             }`}
           >

@@ -29,7 +29,7 @@ function SharedComparisonContent() {
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
           <Link
             href="/"
-            className="text-lg font-bold text-brand-700 dark:text-brand-400"
+            className="text-lg font-bold text-brand"
           >
             🥗 FoodDB
           </Link>
@@ -85,7 +85,7 @@ function SharedComparisonContent() {
         )}
 
         {/* CTA */}
-        <div className="card bg-brand-50 text-center">
+        <div className="card bg-brand-subtle text-center">
           <p className="mb-2 text-sm text-foreground-secondary">
             {t("shared.wantToCompare")}
           </p>

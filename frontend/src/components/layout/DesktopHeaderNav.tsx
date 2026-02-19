@@ -54,13 +54,13 @@ export function DesktopHeaderNav() {
             aria-current={isActive ? "page" : undefined}
             className={`relative rounded-md px-2.5 py-1.5 text-sm font-medium transition-colors ${
               isActive
-                ? "text-brand-700 dark:text-brand-400"
+                ? "text-brand"
                 : "text-foreground-secondary hover:bg-surface-muted hover:text-foreground"
             }`}
           >
             {label}
             {isActive && (
-              <span className="absolute bottom-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-brand-600 dark:bg-brand-400" />
+              <span className="absolute bottom-0 left-1/2 h-0.5 w-4 -translate-x-1/2 rounded-full bg-brand" />
             )}
           </Link>
         );

@@ -39,7 +39,7 @@ export function RegionForm() {
     <div>
       {/* Progress indicator */}
       <div className="mb-8 flex items-center gap-2">
-        <div className="h-2 flex-1 rounded-full bg-brand-500" />
+        <div className="h-2 flex-1 rounded-full bg-brand-subtle0" />
         <div className="h-2 flex-1 rounded-full bg-surface-muted" />
       </div>
 
@@ -57,7 +57,7 @@ export function RegionForm() {
             onClick={() => setSelected(country.code)}
             className={`flex w-full items-center gap-4 rounded-xl border-2 p-4 text-left transition-colors ${
               selected === country.code
-                ? "border-brand-500 bg-brand-50"
+                ? "border-brand bg-brand-subtle"
                 : "border bg-surface hover:border-strong"
             }`}
           >
@@ -67,7 +67,7 @@ export function RegionForm() {
               <p className="text-sm text-foreground-secondary">{country.native}</p>
             </div>
             {selected === country.code && (
-              <span className="ml-auto text-brand-600">✓</span>
+              <span className="ml-auto text-brand">✓</span>
             )}
           </button>
         ))}

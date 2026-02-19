@@ -66,7 +66,7 @@ export function NutritionTip() {
           {learnHref && (
             <Link
               href={learnHref}
-              className="mt-1.5 inline-block text-xs font-medium text-brand-600 hover:text-brand-700 transition-colors"
+              className="mt-1.5 inline-block text-xs font-medium text-brand hover:text-brand-hover transition-colors"
             >
               {t("dashboard.tipLearnMore")} →
             </Link>

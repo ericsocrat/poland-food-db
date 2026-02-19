@@ -143,7 +143,7 @@ export default function SavedSearchesPage() {
                   <button
                     type="button"
                     onClick={() => applySearch(search)}
-                    className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 transition-colors hover:bg-brand-50"
+                    className="rounded-lg px-3 py-1.5 text-xs font-medium text-brand transition-colors hover:bg-brand-subtle"
                   >
                     {t("savedSearches.apply")}
                   </button>

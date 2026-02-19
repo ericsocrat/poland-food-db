@@ -18,7 +18,7 @@ export function Header() {
       <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
         <Link
           href="/"
-          className="text-xl font-bold text-brand-700 dark:text-brand-400"
+          className="text-xl font-bold text-brand"
         >
           {t("layout.appNameWithEmoji")}
         </Link>

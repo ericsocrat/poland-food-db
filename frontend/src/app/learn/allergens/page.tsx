@@ -26,7 +26,7 @@ export default function AllergensPage() {
         <main className="min-w-0 flex-1">
           <Link
             href="/learn"
-            className="mb-4 inline-block text-sm text-brand-600 hover:text-brand-700 dark:text-brand-400 md:hidden"
+            className="mb-4 inline-block text-sm text-brand hover:text-brand-hover md:hidden"
           >
             {t("learn.backToHub")}
           </Link>
@@ -41,11 +41,11 @@ export default function AllergensPage() {
               {t("learn.allergens.title")}
             </h1>
 
-            <div className="rounded-lg bg-brand-50 p-4 not-prose dark:bg-brand-950/30">
-              <p className="text-sm font-medium text-brand-800 dark:text-brand-300">
+            <div className="rounded-lg bg-brand-subtle p-4 not-prose">
+              <p className="text-sm font-medium text-brand">
                 {t("learn.tldr")}
               </p>
-              <p className="mt-1 text-sm text-brand-700 dark:text-brand-400">
+              <p className="mt-1 text-sm text-brand">
                 {t("learn.allergens.summary")}
               </p>
             </div>

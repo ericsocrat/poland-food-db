@@ -39,7 +39,7 @@ export function IngredientUsageStats({ usage }: IngredientUsageStatsProps) {
               </span>
               <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted">
                 <div
-                  className="h-full rounded-full bg-brand-500"
+                  className="h-full rounded-full bg-brand-subtle0"
                   style={{ width: `${(cat.count / maxCount) * 100}%` }}
                 />
               </div>

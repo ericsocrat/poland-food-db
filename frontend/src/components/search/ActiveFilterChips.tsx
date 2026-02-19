@@ -107,13 +107,13 @@ export function ActiveFilterChips({
       {chips.map((chip) => (
         <span
           key={chip.key}
-          className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-3 py-1.5 text-xs font-medium text-brand-700 dark:bg-brand-900/30 dark:text-brand-300"
+          className="inline-flex items-center gap-1 rounded-full bg-brand-subtle px-3 py-1.5 text-xs font-medium text-brand"
         >
           {chip.label}
           <button
             type="button"
             onClick={chip.onRemove}
-            className="touch-target-expanded ml-0.5 rounded-full p-1 text-brand-400 transition-colors hover:bg-brand-100 hover:text-brand-600 dark:hover:bg-brand-800/40 dark:hover:text-brand-300"
+            className="touch-target-expanded ml-0.5 rounded-full p-1 text-brand transition-colors hover:bg-brand-subtle hover:text-brand"
             aria-label={t("chips.removeFilter", { label: chip.label })}
           >
             <svg

@@ -119,7 +119,7 @@ export function FilterPanel({
                   onClick={() => setSortBy(opt.value)}
                   className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
                     (filters.sort_by ?? "relevance") === opt.value
-                      ? "bg-brand-100 text-brand-700"
+                      ? "bg-brand-subtle text-brand"
                       : "bg-surface-muted text-foreground-secondary hover:bg-surface-subtle"
                   }`}
                 >
@@ -134,7 +134,7 @@ export function FilterPanel({
                   onClick={() => setSortOrder("asc")}
                   className={`rounded-md px-3 py-2 text-xs ${
                     (filters.sort_order ?? "asc") === "asc"
-                      ? "bg-brand-100 text-brand-700"
+                      ? "bg-brand-subtle text-brand"
                       : "bg-surface-muted text-foreground-muted"
                   }`}
                 >
@@ -145,7 +145,7 @@ export function FilterPanel({
                   onClick={() => setSortOrder("desc")}
                   className={`rounded-md px-3 py-2 text-xs ${
                     filters.sort_order === "desc"
-                      ? "bg-brand-100 text-brand-700"
+                      ? "bg-brand-subtle text-brand"
                       : "bg-surface-muted text-foreground-muted"
                   }`}
                 >
@@ -177,7 +177,7 @@ export function FilterPanel({
                         onChange={() =>
                           toggleArrayFilter("category", cat.category)
                         }
-                        className="h-5 w-5 rounded border-strong text-brand-600 focus:ring-brand-500"
+                        className="h-5 w-5 rounded border-strong text-brand focus:ring-brand"
                       />
                       <span className="text-sm">
                         {cat.icon_emoji} {cat.display_name}
@@ -212,7 +212,7 @@ export function FilterPanel({
                       onClick={() => toggleArrayFilter("nutri_score", ns.label)}
                       className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-bold transition-all ${
                         selected
-                          ? `${nutriClass} ring-2 ring-offset-1 ring-brand-400`
+                          ? `${nutriClass} ring-2 ring-offset-1 ring-brand`
                           : `${nutriClass} opacity-60 hover:opacity-100`
                       }`}
                     >
@@ -255,7 +255,7 @@ export function FilterPanel({
                         onChange={() =>
                           toggleArrayFilter("allergen_free", al.tag)
                         }
-                        className="h-5 w-5 rounded border-strong text-brand-600 focus:ring-brand-500"
+                        className="h-5 w-5 rounded border-strong text-brand focus:ring-brand"
                       />
                       <span className="text-sm">{label}-free</span>
                       <span className="ml-auto text-xs text-foreground-muted">
@@ -285,7 +285,7 @@ export function FilterPanel({
                   setMaxScore(val >= 100 ? undefined : val);
                 }}
                 aria-label={t("filters.maxHealthScore")}
-                className="w-full accent-brand-600"
+                className="w-full accent-brand"
               />
               <div className="flex justify-between text-xs text-foreground-muted">
                 <span>0</span>
@@ -327,7 +327,7 @@ export function FilterPanel({
               <button
                 type="button"
                 onClick={clearAll}
-                className="text-xs text-brand-600 hover:text-brand-700"
+                className="text-xs text-brand hover:text-brand-hover"
               >
                 {t("common.clear")}
               </button>

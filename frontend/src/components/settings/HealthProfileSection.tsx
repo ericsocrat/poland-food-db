@@ -128,7 +128,7 @@ function ProfileForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder={t("healthProfile.namePlaceholder")}
-          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
           maxLength={50}
         />
       </div>
@@ -146,7 +146,7 @@ function ProfileForm({
               onClick={() => toggleCondition(c.value)}
               className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${
                 conditions.includes(c.value)
-                  ? "border-brand-300 bg-brand-50 text-brand-700"
+                  ? "border-brand bg-brand-subtle text-brand"
                   : "border text-foreground-secondary hover:border-strong"
               }`}
             >
@@ -251,7 +251,7 @@ function ProfileForm({
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           maxLength={200}
-          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500"
+          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
           placeholder={t("healthProfile.notesPlaceholder")}
         />
       </div>
@@ -262,7 +262,7 @@ function ProfileForm({
           type="checkbox"
           checked={isActive}
           onChange={(e) => setIsActive(e.target.checked)}
-          className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+          className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
         />
         <span className="text-sm text-foreground-secondary">
           {t("healthProfile.setActive")}
@@ -374,7 +374,7 @@ export function HealthProfileSection() {
         {!editingProfile && profiles.length < 5 && (
           <button
             onClick={() => setEditingProfile("new")}
-            className="touch-target rounded-lg border border-brand-200 px-3 py-2 text-sm font-medium text-brand-600 hover:bg-brand-50"
+            className="touch-target rounded-lg border border-brand px-3 py-2 text-sm font-medium text-brand hover:bg-brand-subtle"
           >
             {t("healthProfile.newProfile")}
           </button>
@@ -395,7 +395,7 @@ export function HealthProfileSection() {
             <div
               key={profile.profile_id}
               className={`rounded-lg border p-3 ${
-                profile.is_active ? "border-brand-300 bg-brand-50" : "border"
+                profile.is_active ? "border-brand bg-brand-subtle" : "border"
               }`}
             >
               <div className="flex items-start justify-between">
@@ -405,7 +405,7 @@ export function HealthProfileSection() {
                       {profile.profile_name}
                     </span>
                     {profile.is_active && (
-                      <span className="rounded-full bg-brand-100 px-2 py-0.5 text-xs font-medium text-brand-700">
+                      <span className="rounded-full bg-brand-subtle px-2 py-0.5 text-xs font-medium text-brand">
                         {t("healthProfile.active")}
                       </span>
                     )}

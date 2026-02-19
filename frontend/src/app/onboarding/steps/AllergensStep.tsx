@@ -50,7 +50,7 @@ export function AllergensStep({ data, onChange, onNext, onBack }: StepProps) {
               type="checkbox"
               checked={data.strictAllergen}
               onChange={(e) => onChange({ strictAllergen: e.target.checked })}
-              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("onboarding.strictAllergen")}
@@ -61,7 +61,7 @@ export function AllergensStep({ data, onChange, onNext, onBack }: StepProps) {
               type="checkbox"
               checked={data.treatMayContain}
               onChange={(e) => onChange({ treatMayContain: e.target.checked })}
-              className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("onboarding.treatMayContain")}

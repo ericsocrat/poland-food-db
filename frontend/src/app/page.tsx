@@ -70,7 +70,7 @@ function Feature({
 }>) {
   return (
     <div className="text-center">
-      <Icon size={32} aria-hidden="true" className="mx-auto text-brand-600" />
+      <Icon size={32} aria-hidden="true" className="mx-auto text-brand" />
       <h3 className="mt-2 font-semibold text-foreground">{title}</h3>
       <p className="mt-1 text-sm text-foreground-secondary">{desc}</p>
     </div>

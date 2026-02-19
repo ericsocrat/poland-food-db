@@ -90,7 +90,7 @@ export default function MySubmissionsPage() {
         </div>
         <Link
           href="/app/scan"
-          className="text-sm text-brand-600 hover:text-brand-700"
+          className="text-sm text-brand hover:text-brand-hover"
         >
           {t("scanHistory.backToScanner")}
         </Link>
@@ -135,7 +135,7 @@ export default function MySubmissionsPage() {
           </p>
           <Link
             href="/app/scan"
-            className="text-sm text-brand-600 hover:text-brand-700"
+            className="text-sm text-brand hover:text-brand-hover"
           >
             {t("scan.startScanning")}
           </Link>
@@ -228,7 +228,7 @@ function SubmissionRow({
         {submission.merged_product_id && (
           <button
             onClick={() => onViewProduct(submission.merged_product_id ?? 0)}
-            className="flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-brand-600 hover:bg-brand-50"
+            className="flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-brand hover:bg-brand-subtle"
           >
             {t("scan.viewProduct")}
           </button>

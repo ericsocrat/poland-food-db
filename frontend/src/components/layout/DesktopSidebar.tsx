@@ -85,7 +85,7 @@ export function DesktopSidebar() {
       <div className="flex h-14 items-center px-5">
         <Link
           href="/app"
-          className="text-lg font-bold text-brand-700 dark:text-brand-400"
+          className="text-lg font-bold text-brand"
         >
           {t("layout.appNameWithEmoji")}
         </Link>
@@ -134,7 +134,7 @@ function SidebarLink({
       aria-current={isActive ? "page" : undefined}
       className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
         isActive
-          ? "border-l-3 border-brand-600 bg-brand-50 font-semibold text-brand-700 dark:bg-brand-900/20 dark:text-brand-300"
+          ? "border-l-3 border-brand bg-brand-subtle font-semibold text-brand"
           : "text-foreground-secondary hover:bg-surface-muted hover:text-foreground"
       }`}
     >

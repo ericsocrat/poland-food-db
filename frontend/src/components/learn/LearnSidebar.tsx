@@ -60,7 +60,7 @@ export function LearnSidebar({ className = "" }: LearnSidebarProps) {
           href="/learn"
           className={`block rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
             pathname === "/learn"
-              ? "bg-brand-50 text-brand-700 dark:bg-brand-950 dark:text-brand-400"
+              ? "bg-brand-subtle text-brand"
               : "text-foreground-secondary hover:bg-surface-subtle hover:text-foreground"
           }`}
         >
@@ -79,7 +79,7 @@ export function LearnSidebar({ className = "" }: LearnSidebarProps) {
               href={href}
               className={`block rounded-lg px-3 py-2 text-sm transition-colors ${
                 isActive
-                  ? "bg-brand-50 font-medium text-brand-700 dark:bg-brand-950 dark:text-brand-400"
+                  ? "bg-brand-subtle font-medium text-brand"
                   : "text-foreground-secondary hover:bg-surface-subtle hover:text-foreground"
               }`}
               aria-current={isActive ? "page" : undefined}

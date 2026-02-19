@@ -32,7 +32,7 @@ export function HealthGoalsStep({ data, onChange, onNext, onBack }: StepProps) {
             onClick={() => toggleGoal(goal.value)}
             className={`flex w-full flex-col rounded-xl border-2 p-4 text-left transition-colors ${
               data.healthGoals.includes(goal.value)
-                ? "border-brand-500 bg-brand-50"
+                ? "border-brand bg-brand-subtle"
                 : "border bg-surface hover:border-strong"
             }`}
             data-testid={`goal-${goal.value}`}

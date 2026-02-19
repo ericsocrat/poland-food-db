@@ -25,7 +25,7 @@ export function DietStep({ data, onChange, onNext, onBack }: StepProps) {
             onClick={() => onChange({ diet: opt.value })}
             className={`rounded-lg border-2 px-3 py-3 text-sm transition-colors ${
               data.diet === opt.value
-                ? "border-brand-500 bg-brand-50 font-medium text-brand-700"
+                ? "border-brand bg-brand-subtle font-medium text-brand"
                 : "border text-foreground-secondary hover:border-strong"
             }`}
             data-testid={`diet-${opt.value}`}
@@ -42,7 +42,7 @@ export function DietStep({ data, onChange, onNext, onBack }: StepProps) {
             type="checkbox"
             checked={data.strictDiet}
             onChange={(e) => onChange({ strictDiet: e.target.checked })}
-            className="h-4 w-4 rounded border-strong text-brand-600 focus:ring-brand-500"
+            className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
           />
           <span className="text-sm text-foreground-secondary">
             {t("onboarding.strictDiet")}

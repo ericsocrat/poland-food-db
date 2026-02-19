@@ -48,7 +48,7 @@ export const typography = {
 
   /** Section "View all" link. */
   sectionLink:
-    "text-sm font-medium text-brand-600 hover:text-brand-700",
+    "text-sm font-medium text-brand hover:text-brand-hover",
 } as const;
 
 /**

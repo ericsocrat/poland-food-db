@@ -35,7 +35,7 @@ export function SourceCitation({
             href={url}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-brand-600 underline hover:text-brand-700 dark:text-brand-400 dark:hover:text-brand-300"
+            className="text-brand underline hover:text-brand-hover"
           >
             Link ↗
           </a>

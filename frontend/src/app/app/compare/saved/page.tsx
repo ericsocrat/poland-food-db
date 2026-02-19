@@ -87,7 +87,7 @@ function ComparisonCard({
       <div className="flex items-start justify-between">
         <Link
           href={`/app/compare?ids=${ids}`}
-          className="min-w-0 flex-1 hover:text-brand-600"
+          className="min-w-0 flex-1 hover:text-brand"
         >
           <p className="font-medium text-foreground">
             {comparison.title ??
@@ -118,7 +118,7 @@ function ComparisonCard({
                 const url = `${globalThis.location.origin}/compare/shared/${comparison.share_token}`;
                 navigator.clipboard.writeText(url);
               }}
-              className="text-sm text-foreground-muted hover:text-brand-600"
+              className="text-sm text-foreground-muted hover:text-brand"
               title={t("compare.copyShareLink")}
             >
               <Link2 size={16} aria-hidden="true" />

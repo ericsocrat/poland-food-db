@@ -39,11 +39,11 @@ export function ComparisonTray() {
       {/* Header */}
       <div className="flex items-center justify-between border-b border-border bg-surface-muted/50 px-4 py-2.5">
         <div className="flex items-center gap-2">
-          <Scale size={16} aria-hidden="true" className="text-brand-600" />
+          <Scale size={16} aria-hidden="true" className="text-brand" />
           <span className="text-sm font-semibold text-foreground">
             {t("comparisonTray.title")}
           </span>
-          <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand-600 px-1.5 text-xs font-bold text-white">
+          <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand px-1.5 text-xs font-bold text-white">
             {count}
           </span>
         </div>

@@ -31,10 +31,10 @@ export function CompareCheckbox({
   }
 
   function getVariantClass(): string {
-    if (isSelected) return "border-brand-600 bg-brand-600 text-white";
+    if (isSelected) return "border-brand bg-brand text-white";
     if (disabled)
       return "border bg-surface-subtle text-foreground-muted cursor-not-allowed";
-    return "border-strong bg-surface text-foreground-muted hover:border-brand-400 hover:text-brand-500";
+    return "border-strong bg-surface text-foreground-muted hover:border-brand hover:text-brand";
   }
 
   return (
