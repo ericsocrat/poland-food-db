@@ -666,6 +666,93 @@ describe("ProductDetailPage", () => {
     expect(screen.getByText("—")).toBeInTheDocument();
   });
 
+  // ── Glycemic Index indicator (§4.4) ─────────────────────────────────
+
+  it("shows low GI indicator when gi_estimate ≤ 55", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile({
+        nutrition: {
+          ...makeProfile().nutrition,
+          gi_estimate: 42,
+        },
+      }),
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Nutrition" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+    const badge = screen.getByTestId("gi-badge");
+    expect(badge).toHaveTextContent("Low GI");
+    expect(badge).toHaveTextContent("42");
+  });
+
+  it("shows medium GI indicator when gi_estimate 56-69", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile({
+        nutrition: {
+          ...makeProfile().nutrition,
+          gi_estimate: 60,
+        },
+      }),
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Nutrition" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+    const badge = screen.getByTestId("gi-badge");
+    expect(badge).toHaveTextContent("Medium GI");
+    expect(badge).toHaveTextContent("60");
+  });
+
+  it("shows high GI indicator when gi_estimate ≥ 70", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile({
+        nutrition: {
+          ...makeProfile().nutrition,
+          gi_estimate: 85,
+        },
+      }),
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Nutrition" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+    const badge = screen.getByTestId("gi-badge");
+    expect(badge).toHaveTextContent("High GI");
+    expect(badge).toHaveTextContent("85");
+  });
+
+  it("hides GI indicator when gi_estimate is null", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Nutrition" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+    expect(screen.queryByTestId("gi-indicator")).not.toBeInTheDocument();
+  });
+
   // ── Alternatives tab ──────────────────────────────────────────────────
 
   it("alternatives tab shows healthier options", async () => {

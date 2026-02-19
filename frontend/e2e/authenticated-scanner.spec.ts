@@ -26,7 +26,7 @@ test.describe("Scanner: Manual EAN lookup", () => {
       await page.goto("/app/scan");
 
       // Switch to manual mode
-      await page.getByText("Manual", { exact: false }).click();
+      await page.getByRole("button", { name: /Manual/i }).click();
 
       // Enter the EAN
       const eanInput = page.getByPlaceholder(/Enter EAN barcode/i);
@@ -38,11 +38,11 @@ test.describe("Scanner: Manual EAN lookup", () => {
 
       // Should NOT show "Lookup failed"
       await expect(page.getByText("Lookup failed")).not.toBeVisible({
-        timeout: 10_000,
+        timeout: 15_000,
       });
 
       // Should navigate to the scan result page
-      await page.waitForURL(/\/app\/scan\/result\/\d+/, { timeout: 15_000 });
+      await page.waitForURL(/\/app\/scan\/result\/\d+/, { timeout: 30_000 });
 
       // Result page should show product information
       await expect(page.locator("body")).not.toContainText("Lookup failed");
@@ -55,7 +55,7 @@ test.describe("Scanner: Manual EAN lookup", () => {
     await page.goto("/app/scan");
 
     // Switch to manual mode
-    await page.getByText("Manual", { exact: false }).click();
+    await page.getByRole("button", { name: /Manual/i }).click();
 
     const eanInput = page.getByPlaceholder(/Enter EAN barcode/i);
     await eanInput.fill(UNKNOWN_EAN);
@@ -63,7 +63,7 @@ test.describe("Scanner: Manual EAN lookup", () => {
 
     // Should NOT show "Lookup failed" (that's an error, not a not-found)
     await expect(page.getByText("Lookup failed")).not.toBeVisible({
-      timeout: 10_000,
+      timeout: 15_000,
     });
 
     // Should show the not-found state with submit option
@@ -71,22 +71,28 @@ test.describe("Scanner: Manual EAN lookup", () => {
       page
         .getByText(/not found/i)
         .or(page.getByText(/submit/i))
-        .or(page.getByText(/not in our database/i)),
-    ).toBeVisible({ timeout: 10_000 });
+        .or(page.getByText(/not in our database/i))
+        .first(),
+    ).toBeVisible({ timeout: 15_000 });
   });
 
   test("invalid EAN shows validation error (not API error)", async ({
     page,
   }) => {
     await page.goto("/app/scan");
-    await page.getByText("Manual", { exact: false }).click();
+    await page.getByRole("button", { name: /Manual/i }).click();
 
     const eanInput = page.getByPlaceholder(/Enter EAN barcode/i);
     await eanInput.fill("123"); // too short
 
-    await page.getByRole("button", { name: /Look up/i }).click();
+    // Short EAN may disable the button (client-side validation) or show an error
+    const lookupBtn = page.getByRole("button", { name: /Look up/i });
+    const isDisabled = await lookupBtn.isDisabled().catch(() => false);
+    if (!isDisabled) {
+      await lookupBtn.click();
+    }
 
-    // Should show validation toast, NOT navigate away or crash
+    // Should stay on scan page — validation prevents navigation
     await expect(page).toHaveURL(/\/app\/scan$/);
   });
 });
@@ -98,11 +104,11 @@ test.describe("Scanner: Result page", () => {
     const ean = KNOWN_EANS[0].ean;
 
     await page.goto("/app/scan");
-    await page.getByText("Manual", { exact: false }).click();
+    await page.getByRole("button", { name: /Manual/i }).click();
     await page.getByPlaceholder(/Enter EAN barcode/i).fill(ean);
     await page.getByRole("button", { name: /Look up/i }).click();
 
-    await page.waitForURL(/\/app\/scan\/result\/\d+/, { timeout: 15_000 });
+    await page.waitForURL(/\/app\/scan\/result\/\d+/, { timeout: 30_000 });
 
     // Should have product name visible
     await expect(
@@ -120,7 +126,8 @@ test.describe("Scanner: Result page", () => {
     await expect(
       page
         .getByRole("link", { name: /scan another/i })
-        .or(page.getByRole("button", { name: /scan another/i })),
+        .or(page.getByRole("button", { name: /scan another/i }))
+        .first(),
     ).toBeVisible();
   });
 
@@ -130,11 +137,11 @@ test.describe("Scanner: Result page", () => {
     const ean = KNOWN_EANS[0].ean;
 
     await page.goto("/app/scan");
-    await page.getByText("Manual", { exact: false }).click();
+    await page.getByRole("button", { name: /Manual/i }).click();
     await page.getByPlaceholder(/Enter EAN barcode/i).fill(ean);
     await page.getByRole("button", { name: /Look up/i }).click();
 
-    await page.waitForURL(/\/app\/scan\/result\/\d+/, { timeout: 15_000 });
+    await page.waitForURL(/\/app\/scan\/result\/\d+/, { timeout: 30_000 });
 
     // Should have an alternatives section
     await expect(

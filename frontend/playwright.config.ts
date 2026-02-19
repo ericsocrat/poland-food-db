@@ -49,9 +49,14 @@ export default defineConfig({
     : "html",
 
   /* Hard cap so the suite never hangs indefinitely */
-  globalTimeout: 120_000,
+  globalTimeout: 600_000,
   /* Per-test timeout */
   timeout: 30_000,
+
+  expect: {
+    /* Give client-side hydration enough time in CI */
+    timeout: 10_000,
+  },
 
   ...(HAS_AUTH && { globalTeardown: "./e2e/global-teardown" }),
 

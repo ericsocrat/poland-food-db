@@ -160,11 +160,13 @@ WHERE x.product_count <> x.actual;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 13. v_master column count matches expected (drift detection)
---     v_master should have exactly 47 columns.  If a migration adds or
+--     v_master should have exactly 52 columns.  If a migration adds or
 --     removes columns without updating the reference, this catches it.
+--     Original 47 + 5 from localization phases 2 & 4:
+--       product_name_en, product_name_en_source, created_at, updated_at, name_translations
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '13. v_master has expected column count (47)' AS check_name,
-       ABS(47 - COUNT(*)) AS violations
+SELECT '13. v_master has expected column count (52)' AS check_name,
+       ABS(52 - COUNT(*)) AS violations
 FROM information_schema.columns
 WHERE table_schema = 'public'
   AND table_name = 'v_master';

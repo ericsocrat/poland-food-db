@@ -68,7 +68,26 @@ export async function ensureTestUser(): Promise<string> {
     throw new Error(`Failed to create test user: ${error.message}`);
   }
 
-  return data.user.id;
+  const userId = data.user.id;
+
+  // Pre-create preferences: skip onboarding + force English so E2E tests
+  // see English text (api_skip_onboarding sets country=PL which triggers
+  // LanguageHydrator to switch to Polish, breaking English-only assertions).
+  const { error: prefError } = await supabase
+    .from("user_preferences")
+    .upsert({
+      user_id: userId,
+      country: "PL",
+      preferred_language: "en",
+      onboarding_completed: false,
+      onboarding_skipped: true,
+    });
+
+  if (prefError) {
+    throw new Error(`Failed to set test user preferences: ${prefError.message}`);
+  }
+
+  return userId;
 }
 
 /** Delete the test user (best-effort cleanup). */

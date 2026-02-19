@@ -596,6 +596,8 @@ export interface ProductProfile {
     per_100g: NutritionPer100g;
     per_serving: NutritionPerServing | null;
     daily_values: DailyValues;
+    /** Category-level glycemic index estimate (0-100+). Null when unavailable. */
+    gi_estimate?: number | null;
   };
   ingredients: ProfileIngredients;
   allergens: ProfileAllergens;

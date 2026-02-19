@@ -66,6 +66,13 @@
     "viewed": "Viewed",
     "lists": "Lists",
     "errorMessage": "Something went wrong loading your dashboard.",
+    "weeklySummary": "This Week",
+    "weeklyViewed": "Viewed this week",
+    "weeklyFavorited": "Favorited this week",
+    "weeklyAvgScore": "Avg. score",
+    "weeklyBestFind": "Best find",
+    "sparklineTitle": "Score distribution",
+    "sparklineAria": "Bar chart showing distribution of product scores across health bands",
     "greeting": {
       "morning": "Good morning",
       "afternoon": "Good afternoon",
@@ -260,7 +267,8 @@
     "revokeSharing": "Revoke sharing?",
     "revokeWarning": "Old links will stop working.",
     "loadFailed": "Failed to load lists.",
-    "loadListFailed": "Failed to load list."
+    "loadListFailed": "Failed to load list.",
+    "avgScore": "Avg {score}"
   },
   "product": {
     "back": "Back",
@@ -316,6 +324,12 @@
     "salt": "Salt",
     "sodiumNote": "Sodium equivalent:",
     "sodiumValue": "{mg} mg sodium (salt × 0.4)",
+    "gi": {
+      "label": "Glycemic Index (est.)",
+      "low": "Low GI",
+      "medium": "Medium GI",
+      "high": "High GI"
+    },
     "dvBarLabel": "{nutrient}: {pct}% of daily reference intake",
     "dvPersonalized": "Based on your health profile",
     "dvStandard": "Based on {regulation} reference intakes (2,000 kcal)",

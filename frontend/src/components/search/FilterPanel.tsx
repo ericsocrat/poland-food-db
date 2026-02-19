@@ -284,6 +284,7 @@ export function FilterPanel({
                   const val = Number.parseInt(e.target.value);
                   setMaxScore(val >= 100 ? undefined : val);
                 }}
+                aria-label={t("filters.maxHealthScore")}
                 className="w-full accent-brand-600"
               />
               <div className="flex justify-between text-xs text-foreground-muted">

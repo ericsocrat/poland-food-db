@@ -51,6 +51,21 @@ function createWrapper() {
 
 // ─── Mock data ──────────────────────────────────────────────────────────────
 
+// Use relative dates so weekly summary logic works regardless of when tests run
+const now = new Date();
+const oneDayAgo = new Date(
+  now.getTime() - 1 * 24 * 60 * 60 * 1000,
+).toISOString();
+const twoDaysAgo = new Date(
+  now.getTime() - 2 * 24 * 60 * 60 * 1000,
+).toISOString();
+const threeDaysAgo = new Date(
+  now.getTime() - 3 * 24 * 60 * 60 * 1000,
+).toISOString();
+const tenDaysAgo = new Date(
+  now.getTime() - 10 * 24 * 60 * 60 * 1000,
+).toISOString();
+
 const mockDashboard: DashboardData = {
   api_version: "1.0",
   recently_viewed: [
@@ -62,7 +77,7 @@ const mockDashboard: DashboardData = {
       country: "PL",
       unhealthiness_score: 65,
       nutri_score_label: "D",
-      viewed_at: "2026-02-16T10:00:00Z",
+      viewed_at: oneDayAgo,
     },
     {
       product_id: 2,
@@ -72,7 +87,7 @@ const mockDashboard: DashboardData = {
       country: "PL",
       unhealthiness_score: 30,
       nutri_score_label: "B",
-      viewed_at: "2026-02-15T09:00:00Z",
+      viewed_at: twoDaysAgo,
     },
   ],
   favorites_preview: [
@@ -84,7 +99,7 @@ const mockDashboard: DashboardData = {
       country: "PL",
       unhealthiness_score: 15,
       nutri_score_label: "A",
-      added_at: "2026-02-14T08:00:00Z",
+      added_at: threeDaysAgo,
     },
   ],
   new_products: [
@@ -167,8 +182,10 @@ describe("DashboardPage", () => {
   it("renders recently viewed products", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
-      expect(screen.getByText("Pepsi Max")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Lay's Classic").length,
+      ).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Pepsi Max").length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -215,16 +232,20 @@ describe("DashboardPage", () => {
   it("renders product links with correct hrefs", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Lay's Classic").length,
+      ).toBeGreaterThanOrEqual(1);
     });
-    const link = screen.getByText("Lay's Classic").closest("a");
+    const link = screen.getAllByText("Lay's Classic")[0].closest("a");
     expect(link).toHaveAttribute("href", "/app/product/1");
   });
 
   it("renders nutri-score badges", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Lay's Classic").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     // Should have D and B badges plus A from favorites and D from new products
     const badges = screen.getAllByText("D");
@@ -234,8 +255,8 @@ describe("DashboardPage", () => {
   it("renders score pills", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("65")).toBeInTheDocument();
-      expect(screen.getByText("30")).toBeInTheDocument();
+      expect(screen.getAllByText("65").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("30").length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -295,7 +316,9 @@ describe("DashboardPage", () => {
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Activia Natural")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Activia Natural").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     expect(screen.queryByText(/Recently Viewed/)).not.toBeInTheDocument();
   });
@@ -312,7 +335,9 @@ describe("DashboardPage", () => {
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Lay's Classic").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     // "View all →" may still appear in CategoriesBrowse, so check no link to /app/lists
     const viewAllLinks = screen.getAllByText("View all →");
@@ -327,7 +352,9 @@ describe("DashboardPage", () => {
   it("applies 12-column grid on desktop (lg breakpoint)", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Lay's Classic").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     // h1 → space-y-1 div → col-span-12 wrapper → grid container
     const gridContainer = screen
@@ -356,7 +383,9 @@ describe("DashboardPage", () => {
   it("keeps stacked layout on mobile (space-y-6)", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+      expect(
+        screen.getAllByText("Lay's Classic").length,
+      ).toBeGreaterThanOrEqual(1);
     });
     const gridContainer = screen
       .getByRole("heading", { level: 1 })
@@ -393,5 +422,84 @@ describe("DashboardPage", () => {
       const anchor = link.closest("a")!;
       expect(anchor.className).toContain("transition-colors");
     }
+  });
+
+  // ─── Weekly Summary Card (§3.5) ──────────────────────────────────────────
+
+  it("renders weekly summary card", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("weekly-summary")).toBeInTheDocument();
+    });
+    expect(screen.getByText("This Week")).toBeInTheDocument();
+  });
+
+  it("shows weekly viewed and favorited counts", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("weekly-viewed-count")).toHaveTextContent("2");
+      expect(screen.getByTestId("weekly-favorited-count")).toHaveTextContent(
+        "1",
+      );
+    });
+  });
+
+  it("shows weekly average score", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      // Avg of 65 + 30 = 95 / 2 = 48 (rounded)
+      const avgBadge = screen.getByTestId("weekly-avg-score");
+      expect(avgBadge).toHaveTextContent("48");
+    });
+  });
+
+  it("shows best find of the week", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      const bestFind = screen.getByTestId("weekly-best-find");
+      // Pepsi Max has score 30 (lowest)
+      expect(bestFind).toHaveTextContent("Pepsi Max");
+    });
+  });
+
+  it("hides weekly summary when all activity is older than 7 days", async () => {
+    mockGetDashboardData.mockResolvedValue({
+      ok: true,
+      data: {
+        ...mockDashboard,
+        recently_viewed: [
+          {
+            ...mockDashboard.recently_viewed[0],
+            viewed_at: tenDaysAgo,
+          },
+        ],
+        favorites_preview: [
+          {
+            ...mockDashboard.favorites_preview[0],
+            added_at: tenDaysAgo,
+          },
+        ],
+      },
+    });
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("weekly-summary")).not.toBeInTheDocument();
+  });
+
+  it("renders score sparkline in weekly summary", async () => {
+    mockGetDashboardData.mockResolvedValue({
+      ok: true,
+      data: mockDashboard,
+    });
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("weekly-summary")).toBeInTheDocument();
+    });
+    expect(screen.getByTestId("score-sparkline")).toBeInTheDocument();
+    // 2 recently viewed products this week have scores 65 and 30
+    expect(screen.getByTestId("sparkline-bar-low")).toBeInTheDocument();
+    expect(screen.getByTestId("sparkline-bar-high")).toBeInTheDocument();
   });
 });

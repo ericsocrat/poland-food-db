@@ -104,8 +104,10 @@ WHERE n.nspname = 'public'
   AND p.prosecdef = false;
 
 -- 9. anon CANNOT EXECUTE api_* functions except approved public endpoints
---    Allowlist: search, autocomplete, filter options, barcode scan,
---    shared lists/comparisons, and comparison data (all intentionally public).
+--    Allowlist: autocomplete, filter options, shared lists/comparisons,
+--    comparison data, telemetry, product/ingredient profiles (all public).
+--    NOTE: api_search_products and api_record_scan were revoked from anon
+--    in localization phase 4 (20260216001100) and are now auth-only.
 SELECT '9. anon blocked from non-public api_* functions' AS check_name,
        COUNT(*) AS violations
 FROM pg_proc p
@@ -114,13 +116,15 @@ WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
   AND has_function_privilege('anon', p.oid, 'EXECUTE')
   AND p.proname NOT IN (
-    'api_search_products',           -- public search (anon can browse)
     'api_search_autocomplete',       -- public autocomplete
     'api_get_filter_options',        -- public filter facets
-    'api_record_scan',              -- anonymous barcode scan
     'api_get_shared_list',          -- shared list (public link)
     'api_get_shared_comparison',    -- shared comparison (public link)
-    'api_get_products_for_compare'  -- comparison data (needed by shared links)
+    'api_get_products_for_compare', -- comparison data (needed by shared links)
+    'api_track_event',              -- fire-and-forget analytics (anon + auth)
+    'api_get_product_profile',      -- public product lookup
+    'api_get_product_profile_by_ean', -- public EAN lookup
+    'api_get_ingredient_profile'    -- public ingredient lookup
   );
 
 -- 10. anon cannot EXECUTE internal computation functions
