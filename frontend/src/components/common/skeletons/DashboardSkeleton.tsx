@@ -20,7 +20,7 @@ export function DashboardSkeleton() {
 
       {/* Row 2 — Quick Actions (8) + Stats (4) */}
       <div className="lg:col-span-8">
-        <div className="grid grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
           {Array.from({ length: 4 }, (_, i) => (
             <div
               key={i}
@@ -35,10 +35,7 @@ export function DashboardSkeleton() {
       <div className="lg:col-span-4">
         <div className="grid grid-cols-2 gap-3">
           {Array.from({ length: 4 }, (_, i) => (
-            <div
-              key={i}
-              className="card flex flex-col items-center gap-1 py-3"
-            >
+            <div key={i} className="card flex flex-col items-center gap-1 py-3">
               <Skeleton
                 variant="rect"
                 width={32}
