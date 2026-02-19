@@ -65,3 +65,4 @@ qa_*.json
 _func_dump.txt
 __api_defs.txt
 tmp-qa/
+parse_report.py

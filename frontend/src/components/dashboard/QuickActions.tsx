@@ -19,7 +19,7 @@ export function QuickActions() {
 
   return (
     <section aria-label={t("dashboard.quickActions")}>
-      <div className="grid grid-cols-4 gap-3 lg:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
         {ACTIONS.map((action) => (
           <Link
             key={action.key}

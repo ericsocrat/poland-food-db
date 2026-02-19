@@ -183,7 +183,7 @@ export default function SearchPage() {
     hasActiveFilters(filters);
 
   return (
-    <div className="flex gap-6">
+    <div className="flex lg:gap-6">
       {/* Filter sidebar (desktop) */}
       <FilterPanel
         filters={filters}
