@@ -5,7 +5,7 @@
 import { ImageResponse } from "next/og";
 
 /* ---------- route configuration ---------- */
-export const runtime = "edge";
+export const runtime = "nodejs";
 export const alt = "Product health score card";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
@@ -46,9 +46,15 @@ export function truncate(text: string, max: number): string {
 
 /* ---------- font loader ---------- */
 // Inter Bold 700 from Google Fonts CDN — fetched once & cached by the edge.
-const interBoldPromise = await fetch(
-  "https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYAZ9hiA.ttf",
-).then((r) => r.arrayBuffer());
+let interBoldPromise: Promise<ArrayBuffer> | null = null;
+function getInterBoldFont(): Promise<ArrayBuffer> {
+  if (!interBoldPromise) {
+    interBoldPromise = fetch(
+      "https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYAZ9hiA.ttf",
+    ).then((r) => r.arrayBuffer());
+  }
+  return interBoldPromise;
+}
 
 /* ---------- fallback card ---------- */
 function FallbackCard() {
@@ -92,7 +98,7 @@ export default async function OGImage({
   const { id } = await params;
   const productId = Number.parseInt(id, 10);
 
-  const fontData = interBoldPromise;
+  const fontData = await getInterBoldFont();
 
   /* ---- fetch product data (anon key — public read) ---- */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

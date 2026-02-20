@@ -109,7 +109,45 @@
       "12": "Staying hydrated aids digestion and concentration. Aim for 1.5–2 litres of water daily, more in warm weather.",
       "13": "Front-of-pack labels like Nutri-Score summarise nutrition, but always check the full table for a complete picture."
     },
-    "tipLearnMore": "Learn more"
+    "tipLearnMore": "Learn more",
+    "season": {
+      "spring": "🍓 It's strawberry season in Poland — explore fresh produce!",
+      "summer": "🫐 Berry season! Check blueberry and raspberry products.",
+      "autumn": "🍎 Apple harvest season — compare apple juice brands.",
+      "winter": "🍲 Cold season — check out warm soup and broth products."
+    },
+    "healthInsightsSection": "Health insights",
+    "healthInsightsTitle": "Your Nutrition Snapshot",
+    "avgScoreLabel": "Avg. favorites score",
+    "scoreBand": {
+      "low": "Low risk — great choices!",
+      "moderate": "Moderate — room to improve",
+      "high": "High — consider healthier swaps",
+      "very_high": "Very high — review your favorites"
+    },
+    "scoreTrend": {
+      "improving": "Trending healthier",
+      "worsening": "Trending less healthy",
+      "stable": "Stable"
+    },
+    "novaTitle": "NOVA Distribution",
+    "novaAria": "Bar chart showing NOVA group distribution of your favorite products",
+    "nova": {
+      "1": "Unprocessed",
+      "2": "Processed ingredients",
+      "3": "Processed",
+      "4": "Ultra-processed"
+    },
+    "allergenAlertTitle": "Allergen Alert",
+    "allergenAlertBody": "{count} product(s) in your Favorites contain {allergens}.",
+    "allergenAlertReview": "Review",
+    "categoryDiversityTitle": "Category Diversity",
+    "categoryDiversityAria": "{explored} of {total} categories explored",
+    "categoryDiversityBody": "You've explored {explored} of {total} categories.",
+    "categoryDiversityDiscover": "Discover more",
+    "recentComparisons": "Recent Comparisons",
+    "untitledComparison": "Untitled comparison",
+    "comparisonProducts": "{count} products"
   },
   "search": {
     "title": "Search",

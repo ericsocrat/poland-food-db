@@ -15,6 +15,7 @@ import type {
   CompareResponse,
   CreateListResponse,
   DashboardData,
+  DashboardInsights,
   DataConfidence,
   DeleteSavedSearchResponse,
   DeviceType,
@@ -755,4 +756,10 @@ export function getDashboardData(
   supabase: SupabaseClient,
 ): Promise<RpcResult<DashboardData>> {
   return callRpc<DashboardData>(supabase, "api_get_dashboard_data");
+}
+
+export function getDashboardInsights(
+  supabase: SupabaseClient,
+): Promise<RpcResult<DashboardInsights>> {
+  return callRpc<DashboardInsights>(supabase, "api_dashboard_insights");
 }

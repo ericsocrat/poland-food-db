@@ -18,6 +18,7 @@ import { QuickActions } from "@/components/dashboard/QuickActions";
 import { CategoriesBrowse } from "@/components/dashboard/CategoriesBrowse";
 import { NutritionTip } from "@/components/dashboard/NutritionTip";
 import { ScoreSparkline } from "@/components/dashboard/ScoreSparkline";
+import { HealthInsightsPanel } from "@/components/dashboard/HealthInsightsPanel";
 import {
   Camera,
   Eye,
@@ -492,6 +493,13 @@ export default function DashboardPage() {
       <div className="lg:col-span-6">
         <ErrorBoundary level="section" context={{ section: "nutrition-tip" }}>
           <NutritionTip />
+        </ErrorBoundary>
+      </div>
+
+      {/* Row 3.5 — Health Insights Panel (full width) */}
+      <div className="lg:col-span-12">
+        <ErrorBoundary level="section" context={{ section: "health-insights" }}>
+          <HealthInsightsPanel />
         </ErrorBoundary>
       </div>
 

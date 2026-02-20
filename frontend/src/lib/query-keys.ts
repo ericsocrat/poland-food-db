@@ -108,6 +108,9 @@ export const queryKeys = {
   /** Dashboard data (batched) */
   dashboard: ["dashboard"] as const,
 
+  /** Dashboard health insights (Issue #63) */
+  dashboardInsights: ["dashboard-insights"] as const,
+
   /** Recently viewed products */
   recentlyViewed: (limit?: number) =>
     ["recently-viewed", { limit }] as const,
@@ -202,6 +205,9 @@ export const staleTimes = {
 
   /** Dashboard data — 2 min (aggregated, changes frequently) */
   dashboard: 2 * 60 * 1000,
+
+  /** Dashboard insights — 5 min (aggregated health stats) */
+  dashboardInsights: 5 * 60 * 1000,
 
   /** Recently viewed — 1 min (updates on every product view) */
   recentlyViewed: 60 * 1000,

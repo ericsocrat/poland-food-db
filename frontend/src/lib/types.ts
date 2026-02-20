@@ -132,7 +132,6 @@ export interface DidYouMeanResponse {
   suggestions: DidYouMeanSuggestion[];
 }
 
-
 // ─── Filter Options ─────────────────────────────────────────────────────────
 
 export interface FilterCategoryOption {
@@ -1073,4 +1072,49 @@ export interface DashboardData {
   favorites_preview: DashboardFavoritePreview[];
   new_products: DashboardNewProduct[];
   stats: DashboardStats;
+}
+
+// ─── Dashboard Insights (Issue #63) ─────────────────────────────────────────
+
+export interface DashboardAllergenProduct {
+  product_id: number;
+  product_name: string;
+  allergen: string;
+}
+
+export interface DashboardAllergenAlerts {
+  count: number;
+  products: DashboardAllergenProduct[];
+}
+
+export interface DashboardCategoryDiversity {
+  explored: number;
+  total: number;
+}
+
+export interface DashboardRecentComparison {
+  id: string;
+  title: string | null;
+  product_count: number;
+  created_at: string;
+}
+
+export type ScoreTrend = "improving" | "worsening" | "stable";
+
+export interface NovaDistribution {
+  "1"?: number;
+  "2"?: number;
+  "3"?: number;
+  "4"?: number;
+  unknown?: number;
+}
+
+export interface DashboardInsights {
+  api_version: string;
+  avg_score: number;
+  score_trend: ScoreTrend;
+  nova_distribution: NovaDistribution;
+  category_diversity: DashboardCategoryDiversity;
+  allergen_alerts: DashboardAllergenAlerts;
+  recent_comparisons: DashboardRecentComparison[];
 }

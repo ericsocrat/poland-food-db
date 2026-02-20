@@ -10,7 +10,7 @@ const withSerwist = withSerwistInit({
 const nextConfig: NextConfig = {
   // Enable View Transitions API for smoother page navigations (#61)
   experimental: {
-    viewTransitions: true,
+    viewTransition: true,
   },
   // Allow Open Food Facts product images
   images: {
