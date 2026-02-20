@@ -492,9 +492,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText(/gluten/)).toBeInTheDocument();
+      expect(screen.getByText("Gluten")).toBeInTheDocument();
     });
-    expect(screen.getByText(/milk/)).toBeInTheDocument();
+    expect(screen.getByText("Milk")).toBeInTheDocument();
   });
 
   it("overview shows trace allergens", async () => {
@@ -505,9 +505,9 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("May contain (traces)")).toBeInTheDocument();
+      expect(screen.getByText("May contain traces")).toBeInTheDocument();
     });
-    expect(screen.getByText(/soy/)).toBeInTheDocument();
+    expect(screen.getByText("Soy")).toBeInTheDocument();
   });
 
   // ── Top ingredients — concern tier labels ───────────────────────────────
@@ -672,6 +672,107 @@ describe("ProductDetailPage", () => {
 
     await user.click(screen.getByRole("tab", { name: "Nutrition" }));
     expect(screen.getByText("—")).toBeInTheDocument();
+  });
+
+  // ── Nutrition per-serving toggle ────────────────────────────────────
+
+  it("hides per-serving toggle when per_serving is null", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(), // default has per_serving: null
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Nutrition" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+    expect(screen.queryByRole("radiogroup")).not.toBeInTheDocument();
+  });
+
+  it("shows per-serving toggle when per_serving data exists", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile({
+        nutrition: {
+          ...makeProfile().nutrition,
+          per_serving: {
+            serving_size: "30g",
+            serving_grams: 30,
+            calories_kcal: 159,
+            total_fat_g: 9.6,
+            saturated_fat_g: 4.2,
+            trans_fat_g: null,
+            carbs_g: 15.6,
+            sugars_g: 0.9,
+            fibre_g: 1.2,
+            protein_g: 1.8,
+            salt_g: 0.54,
+          },
+        },
+      }),
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Nutrition" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+
+    const toggle = screen.getByRole("radiogroup");
+    expect(toggle).toBeInTheDocument();
+
+    // Per 100g radio should be checked by default
+    const per100gRadio = screen.getByRole("radio", { name: "Per 100 g" });
+    expect(per100gRadio).toHaveAttribute("aria-checked", "true");
+
+    // Should show per 100g values initially
+    expect(screen.getByText("530 kcal / 2218 kJ")).toBeInTheDocument();
+  });
+
+  it("switches to per-serving values on toggle click", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile({
+        nutrition: {
+          ...makeProfile().nutrition,
+          per_serving: {
+            serving_size: "30g",
+            serving_grams: 30,
+            calories_kcal: 159,
+            total_fat_g: 9.6,
+            saturated_fat_g: 4.2,
+            trans_fat_g: null,
+            carbs_g: 15.6,
+            sugars_g: 0.9,
+            fibre_g: 1.2,
+            protein_g: 1.8,
+            salt_g: 0.54,
+          },
+        },
+      }),
+    });
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Nutrition" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+
+    // Click per serving radio
+    const perServingRadio = screen.getByRole("radio", { name: "Per serving" });
+    await user.click(perServingRadio);
+
+    // Should now show per-serving values
+    expect(screen.getByText("159 kcal / 665 kJ")).toBeInTheDocument();
+    expect(screen.getByText("9.6 g")).toBeInTheDocument(); // total fat
+    expect(screen.getByText("0.54 g")).toBeInTheDocument(); // salt
   });
 
   // ── Glycemic Index indicator (§4.4) ─────────────────────────────────
@@ -1107,7 +1208,7 @@ describe("ProductDetailPage", () => {
 
   // ── 4.5 Allergen distinction ──────────────────────────────────────────
 
-  it("renders allergen 'Contains' label with solid styling", async () => {
+  it("renders allergen 'Contains' label in matrix legend", async () => {
     mockGetProductProfile.mockResolvedValue({
       ok: true,
       data: makeProfile(),
@@ -1118,13 +1219,12 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("Contains")).toBeInTheDocument();
     });
 
-    const containsBadges = screen
-      .getAllByText(/gluten|milk/i)
-      .filter((el) => el.getAttribute("data-allergen-type") === "contains");
-    expect(containsBadges.length).toBeGreaterThan(0);
+    // AllergenMatrix renders contains allergens with red styling in a grid
+    const glutenCell = screen.getByText("Gluten");
+    expect(glutenCell.closest("[role='row']")).toHaveClass("bg-red-50");
   });
 
-  it("renders allergen 'May contain' label with dashed styling", async () => {
+  it("renders allergen 'May contain traces' label in matrix legend", async () => {
     mockGetProductProfile.mockResolvedValue({
       ok: true,
       data: makeProfile(),
@@ -1132,13 +1232,12 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("May contain (traces)")).toBeInTheDocument();
+      expect(screen.getByText("May contain traces")).toBeInTheDocument();
     });
 
-    const tracesBadges = screen
-      .getAllByText(/soy/i)
-      .filter((el) => el.getAttribute("data-allergen-type") === "traces");
-    expect(tracesBadges.length).toBeGreaterThan(0);
+    // AllergenMatrix renders traces allergens with amber styling in a grid
+    const soyCell = screen.getByText("Soy");
+    expect(soyCell.closest("[role='row']")).toHaveClass("bg-amber-50");
   });
 
   // ── Desktop split layout ─────────────────────────────────────────────────

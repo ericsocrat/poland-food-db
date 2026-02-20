@@ -13,8 +13,6 @@ import { getProductProfile, recordProductView } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import {
   SCORE_BANDS,
-  CONCERN_TIER_STYLES,
-  CONCERN_TIER_LABEL_KEYS,
   scoreBandFromScore,
   getScoreInterpretation,
 } from "@/lib/constants";
@@ -44,7 +42,10 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { PrintButton } from "@/components/common/PrintButton";
 import { WatchButton } from "@/components/product/WatchButton";
 import { ScoreHistoryPanel } from "@/components/product/ScoreHistoryPanel";
-import { AlertTriangle, Check, Info, Globe } from "lucide-react";
+import { ScoreBreakdownPanel } from "@/components/product/ScoreBreakdownPanel";
+import { AllergenMatrix } from "@/components/product/AllergenMatrix";
+import { IngredientList } from "@/components/product/IngredientList";
+import { Info, Globe } from "lucide-react";
 import type {
   ProductProfile,
   ProfileAlternative,
@@ -444,109 +445,16 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
         <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("product.ingredients")}
         </h3>
-        {profile.ingredients.count === 0 &&
-        !profile.ingredients.ingredients_text ? (
-          <div className="rounded-lg border border-dashed border-amber-300 bg-amber-50/50 px-3 py-4 text-center">
-            <p className="text-sm text-amber-700">
-              {t("product.noIngredientData")}
-            </p>
-            <p className="mt-1 text-xs text-amber-600/70">
-              {t("product.noIngredientDataHint")}
-            </p>
-          </div>
-        ) : (
-          <div className="space-y-1 text-sm text-foreground-secondary">
-            <p>
-              {t("product.ingredientCount", {
-                count: profile.ingredients.count,
-              })}
-            </p>
-            <p>
-              {t("product.additiveCount", {
-                count: profile.ingredients.additive_count,
-              })}
-            </p>
-            {profile.ingredients.additive_names && (
-              <p className="text-xs text-foreground-muted">
-                {profile.ingredients.additive_names}
-              </p>
-            )}
-            <p>
-              {t("product.vegan", {
-                status: profile.ingredients.vegan_status ?? "unknown",
-              })}
-            </p>
-            <p>
-              {t("product.vegetarian", {
-                status: profile.ingredients.vegetarian_status ?? "unknown",
-              })}
-            </p>
-          </div>
-        )}
-
-        {/* Top ingredients — pills with concern tier labels & expandable details */}
-        {profile.ingredients.top_ingredients.length > 0 && (
-          <TopIngredientsSection
-            ingredients={profile.ingredients.top_ingredients}
-          />
-        )}
+        <IngredientList ingredients={profile.ingredients} />
       </div>
 
       {/* Allergens */}
-      {profile.allergens.contains_count > 0 ? (
-        <div className="card">
-          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
-            {t("product.allergens")}
-          </h3>
-          <p className="mb-1 text-xs font-medium text-red-600">
-            {t("allergen.contains")}
-          </p>
-          <div className="flex flex-wrap gap-1">
-            {profile.allergens.contains
-              .split(",")
-              .filter(Boolean)
-              .map((tag) => (
-                <span
-                  key={tag}
-                  className="rounded border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700"
-                  data-allergen-type="contains"
-                >
-                  <AlertTriangle size={12} className="inline -mt-0.5" aria-hidden="true" /> {tag.trim().replaceAll("en:", "")}
-                </span>
-              ))}
-          </div>
-          {profile.allergens.traces_count > 0 && (
-            <div className="mt-2">
-              <p className="mb-1 text-xs font-medium text-amber-600">
-                {t("allergen.traces")}
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {profile.allergens.traces
-                  .split(",")
-                  .filter(Boolean)
-                  .map((tag) => (
-                    <span
-                      key={tag}
-                      className="rounded border border-dashed border-amber-300 bg-amber-50/60 px-2 py-0.5 text-xs text-amber-700"
-                      data-allergen-type="traces"
-                    >
-                      ~ {tag.trim().replaceAll("en:", "")}
-                    </span>
-                  ))}
-              </div>
-            </div>
-          )}
-        </div>
-      ) : (
-        <div className="card">
-          <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
-            {t("product.allergens")}
-          </h3>
-          <p className="flex items-center gap-1 text-sm text-green-600">
-            <Check size={14} aria-hidden="true" /> {t("product.noKnownAllergens")}
-          </p>
-        </div>
-      )}
+      <div className="card">
+        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
+          {t("product.allergens")}
+        </h3>
+        <AllergenMatrix allergens={profile.allergens} />
+      </div>
 
       {/* Data quality */}
       <DataQualityCard quality={profile.quality} />
@@ -577,11 +485,20 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
 // ─── Nutrition Tab ──────────────────────────────────────────────────────────
 
+type NutritionView = "per100g" | "perServing";
+
 function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const { t } = useTranslation();
-  const n = profile.nutrition.per_100g;
+  const hasServing = profile.nutrition.per_serving !== null;
+  const [view, setView] = useState<NutritionView>("per100g");
+
+  const n =
+    view === "perServing" && profile.nutrition.per_serving
+      ? profile.nutrition.per_serving
+      : profile.nutrition.per_100g;
   const dv = profile.nutrition.daily_values;
-  const dvPer100g = dv?.per_100g ?? null;
+  const dvData =
+    view === "perServing" ? (dv?.per_serving ?? null) : (dv?.per_100g ?? null);
 
   const energyKj = Math.round(n.calories_kcal * 4.184);
   const sodiumMg = Math.round(n.salt_g * 400);
@@ -590,57 +507,57 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
     {
       label: t("product.caloriesLabel"),
       value: `${n.calories_kcal} kcal / ${energyKj} kJ`,
-      dv: dvPer100g?.calories ?? null,
+      dv: dvData?.calories ?? null,
       tl: null as ReturnType<typeof getTrafficLight>,
     },
     {
       label: t("product.totalFat"),
       value: `${n.total_fat_g} g`,
-      dv: dvPer100g?.total_fat ?? null,
+      dv: dvData?.total_fat ?? null,
       tl: getTrafficLight("total_fat", n.total_fat_g),
     },
     {
       label: t("product.saturatedFat"),
       value: `${n.saturated_fat_g} g`,
-      dv: dvPer100g?.saturated_fat ?? null,
+      dv: dvData?.saturated_fat ?? null,
       tl: getTrafficLight("saturated_fat", n.saturated_fat_g),
     },
     {
       label: t("product.transFat"),
       value: n.trans_fat_g === null ? "—" : `${n.trans_fat_g} g`,
-      dv: dvPer100g?.trans_fat ?? null,
+      dv: dvData?.trans_fat ?? null,
       tl: null as ReturnType<typeof getTrafficLight>,
     },
     {
       label: t("product.carbs"),
       value: `${n.carbs_g} g`,
-      dv: dvPer100g?.carbs ?? null,
+      dv: dvData?.carbs ?? null,
       tl: null as ReturnType<typeof getTrafficLight>,
     },
     {
       label: t("product.sugars"),
       value: `${n.sugars_g} g`,
-      dv: dvPer100g?.sugars ?? null,
+      dv: dvData?.sugars ?? null,
       tl: getTrafficLight("sugars", n.sugars_g),
     },
     {
       label: t("product.fibre"),
       value: n.fibre_g === null ? "—" : `${n.fibre_g} g`,
-      dv: dvPer100g?.fiber ?? null,
+      dv: dvData?.fiber ?? null,
       tl: getTrafficLight("fibre", n.fibre_g),
       beneficial: true,
     },
     {
       label: t("product.protein"),
       value: `${n.protein_g} g`,
-      dv: dvPer100g?.protein ?? null,
+      dv: dvData?.protein ?? null,
       tl: getTrafficLight("protein", n.protein_g),
       beneficial: true,
     },
     {
       label: t("product.salt"),
       value: `${n.salt_g} g`,
-      dv: dvPer100g?.salt ?? null,
+      dv: dvData?.salt ?? null,
       tl: getTrafficLight("salt", n.salt_g),
     },
   ];
@@ -649,14 +566,54 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
     <div className="card">
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-sm font-semibold text-foreground-secondary lg:text-base">
-          {t("product.nutritionPer100g")}
+          {view === "perServing" && profile.nutrition.per_serving
+            ? t("product.nutritionPerServing", {
+                size: profile.nutrition.per_serving.serving_size,
+              })
+            : t("product.nutritionPer100g")}
         </h3>
-        {dv && dv.reference_type !== "none" && (
-          <DVReferenceBadge
-            referenceType={dv.reference_type}
-            regulation={dv.regulation}
-          />
-        )}
+        <div className="flex items-center gap-2">
+          {hasServing && (
+            <div
+              className="flex rounded-lg border border-border bg-surface-subtle p-0.5"
+              role="radiogroup"
+              aria-label={t("product.nutritionViewToggle")}
+            >
+              <button
+                type="button"
+                role="radio"
+                aria-checked={view === "per100g"}
+                onClick={() => setView("per100g")}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  view === "per100g"
+                    ? "bg-surface text-foreground shadow-sm"
+                    : "text-foreground-muted hover:text-foreground-secondary"
+                }`}
+              >
+                {t("product.per100g")}
+              </button>
+              <button
+                type="button"
+                role="radio"
+                aria-checked={view === "perServing"}
+                onClick={() => setView("perServing")}
+                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+                  view === "perServing"
+                    ? "bg-surface text-foreground shadow-sm"
+                    : "text-foreground-muted hover:text-foreground-secondary"
+                }`}
+              >
+                {t("product.perServing")}
+              </button>
+            </div>
+          )}
+          {dv && dv.reference_type !== "none" && (
+            <DVReferenceBadge
+              referenceType={dv.reference_type}
+              regulation={dv.regulation}
+            />
+          )}
+        </div>
       </div>
 
       {/* Traffic light summary strip */}
@@ -671,7 +628,9 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
               {t("product.nutrient")}
             </th>
             <th className="pb-2 text-right font-medium">
-              {t("product.per100g")}
+              {view === "perServing"
+                ? t("product.perServing")
+                : t("product.per100g")}
             </th>
             <th className="pb-2 pl-4 text-left font-medium">
               {t("product.dailyValue")}
@@ -899,100 +858,6 @@ function formatFactorName(name: string): string {
   return FACTOR_LABELS[name] ?? formatSnakeCase(name);
 }
 
-/* ── Top Ingredients with concern tier labels & expandable details ────────── */
-
-interface TopIngredient {
-  ingredient_id: number;
-  name: string;
-  position: number;
-  concern_tier: number;
-  is_additive: boolean;
-  concern_reason: string | null;
-}
-
-function TopIngredientsSection({
-  ingredients,
-}: Readonly<{ ingredients: TopIngredient[] }>) {
-  const { t } = useTranslation();
-  const [expandedId, setExpandedId] = useState<number | null>(null);
-
-  return (
-    <div className="mt-3 border-t border pt-3">
-      <p className="mb-2 text-xs font-medium text-foreground-secondary uppercase">
-        {t("product.topIngredients")}
-      </p>
-      <div className="flex flex-wrap gap-1.5">
-        {ingredients.map((ing) => {
-          const style =
-            CONCERN_TIER_STYLES[ing.concern_tier] ?? CONCERN_TIER_STYLES[0];
-          const tierKey =
-            CONCERN_TIER_LABEL_KEYS[ing.concern_tier] ??
-            CONCERN_TIER_LABEL_KEYS[0];
-          const isExpanded = expandedId === ing.ingredient_id;
-          const hasConcernDetail = ing.concern_tier > 0 && !!ing.concern_reason;
-
-          return (
-            <div key={ing.ingredient_id} className="inline-flex flex-col">
-              <div className="inline-flex items-center gap-0.5">
-                <Link
-                  href={`/app/ingredient/${ing.ingredient_id}`}
-                  className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium transition-colors hover:opacity-80 ${style.bg} ${style.color} ${style.border}`}
-                >
-                  {ing.is_additive ? "🧪" : "🌿"}{" "}
-                  {cleanIngredientName(ing.name)}
-                  {ing.concern_tier > 0 && (
-                    <span className="ml-0.5 opacity-75">· {t(tierKey)}</span>
-                  )}
-                </Link>
-                {hasConcernDetail && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setExpandedId(isExpanded ? null : ing.ingredient_id)
-                    }
-                    className={`ml-0.5 inline-flex h-5 w-5 items-center justify-center rounded-full text-xs transition-colors ${style.color} hover:${style.bg}`}
-                    aria-expanded={isExpanded}
-                    aria-label={t("product.toggleConcernDetail")}
-                  >
-                    {isExpanded ? "−" : "ⓘ"}
-                  </button>
-                )}
-              </div>
-              {isExpanded && ing.concern_reason && (
-                <p
-                  className={`mt-1 ml-1 max-w-xs rounded-lg border px-2 py-1.5 text-xs leading-relaxed ${style.bg} ${style.color} ${style.border}`}
-                >
-                  {ing.concern_reason}
-                </p>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Clean ingredient display name:
- * - Strip markdown-style underscores ("Mąka _Pszenna_" → "Mąka Pszenna")
- * - Normalise ALL-CAPS words to title-case ("gluten PSZENNY" → "Gluten Pszenny")
- */
-function cleanIngredientName(raw: string): string {
-  // Remove underscores used as emphasis markers
-  let name = raw.replaceAll("_", "");
-  // Normalise each word: if entirely uppercase, title-case it
-  name = name
-    .split(/\s+/)
-    .map((w) =>
-      w === w.toUpperCase() && w.length > 1
-        ? w.charAt(0) + w.slice(1).toLowerCase()
-        : w,
-    )
-    .join(" ");
-  return name.trim();
-}
-
 function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
   const { t } = useTranslation();
   const scores = profile.scores;
@@ -1023,6 +888,13 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
             <ScoreRadarChart breakdown={scores.score_breakdown} />
           </div>
         )}
+
+      {/* Detailed score breakdown (lazy-loaded) */}
+      <ScoreBreakdownPanel
+        productId={profile.product.product_id}
+        score={scores.unhealthiness_score}
+        scoreBand={SCORE_BANDS[scores.score_band]?.label ?? scores.score_band}
+      />
 
       {/* NOVA processing indicator */}
       {scores.nova_group && (
