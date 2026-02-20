@@ -46,6 +46,14 @@
     "unauthorized": "You are not authorized to perform this action.",
     "submissionStatus": "Submission {status}"
   },
+  "imageLightbox": {
+    "title": "Image viewer",
+    "zoomIn": "Zoom in",
+    "zoomOut": "Zoom out",
+    "previous": "Previous image",
+    "next": "Next image",
+    "openFullscreen": "View fullscreen"
+  },
   "pwa": {
     "offline": "You're offline — some features may be unavailable",
     "installTitle": "Install FoodDB",
@@ -347,6 +355,14 @@
     "additives": "Additives",
     "topIngredients": "Top Ingredients",
     "toggleConcernDetail": "Toggle concern detail",
+    "fullIngredientText": "Full ingredient list",
+    "concernTierLegend": "Concern tier legend",
+    "concernTier": {
+      "none": "No concern",
+      "low": "Low concern",
+      "medium": "Medium concern",
+      "high": "High concern"
+    },
     "allergens": "Allergens",
     "mayContain": "May contain:",
     "noKnownAllergens": "No known allergens listed",
@@ -357,6 +373,9 @@
     "source": "Source: {type}",
     "dataAge": "Age: {days}d",
     "nutritionPer100g": "Nutrition per 100 g",
+    "nutritionPerServing": "Nutrition per serving ({size})",
+    "nutritionViewToggle": "Nutrition view",
+    "perServing": "Per serving",
     "nutrient": "Nutrient",
     "per100g": "Per 100 g",
     "dailyValue": "% Daily Value",
@@ -432,6 +451,13 @@
   "allergen": {
     "contains": "Contains",
     "traces": "May contain (traces)"
+  },
+  "allergenMatrix": {
+    "title": "Allergen status matrix",
+    "contains": "Contains",
+    "traces": "May contain traces",
+    "free": "Free from",
+    "disclaimer": "Allergen information is sourced from product labels and may change. Always check packaging before consumption, especially if you have severe allergies."
   },
   "allergenPreset": {
     "glutenFree": "Gluten-free",

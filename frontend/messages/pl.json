@@ -46,6 +46,14 @@
     "unauthorized": "Nie masz uprawnień do wykonania tej akcji.",
     "submissionStatus": "Zgłoszenie {status}"
   },
+  "imageLightbox": {
+    "title": "Przeglądarka zdjęć",
+    "zoomIn": "Powiększ",
+    "zoomOut": "Pomniejsz",
+    "previous": "Poprzednie zdjęcie",
+    "next": "Następne zdjęcie",
+    "openFullscreen": "Wyświetl na pełnym ekranie"
+  },
   "pwa": {
     "offline": "Jesteś offline — niektóre funkcje mogą być niedostępne",
     "installTitle": "Zainstaluj FoodDB",
@@ -347,6 +355,14 @@
     "additives": "Dodatki",
     "topIngredients": "Główne składniki",
     "toggleConcernDetail": "Pokaż/ukryj szczegóły ryzyka",
+    "fullIngredientText": "Pełna lista składników",
+    "concernTierLegend": "Legenda poziomów ryzyka",
+    "concernTier": {
+      "none": "Brak ryzyka",
+      "low": "Niskie ryzyko",
+      "medium": "Średnie ryzyko",
+      "high": "Wysokie ryzyko"
+    },
     "allergens": "Alergeny",
     "mayContain": "Może zawierać:",
     "noKnownAllergens": "Brak znanych alergenów",
@@ -357,6 +373,9 @@
     "source": "Źródło: {type}",
     "dataAge": "Wiek: {days} dn.",
     "nutritionPer100g": "Wartości odżywcze na 100 g",
+    "nutritionPerServing": "Wartości odżywcze na porcję ({size})",
+    "nutritionViewToggle": "Widok wartości odżywczych",
+    "perServing": "Na porcję",
     "nutrient": "Składnik",
     "per100g": "Na 100 g",
     "dailyValue": "% Dziennej wartości",
@@ -432,6 +451,13 @@
   "allergen": {
     "contains": "Zawiera",
     "traces": "Może zawierać (śladowe ilości)"
+  },
+  "allergenMatrix": {
+    "title": "Matryca statusu alergenów",
+    "contains": "Zawiera",
+    "traces": "Może zawierać ślady",
+    "free": "Nie zawiera",
+    "disclaimer": "Informacje o alergenach pochodzą z etykiet produktów i mogą ulec zmianie. Przed spożyciem zawsze sprawdzaj opakowanie, szczególnie jeśli masz poważne alergie."
   },
   "allergenPreset": {
     "glutenFree": "Bez glutenu",
