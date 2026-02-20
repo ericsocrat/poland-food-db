@@ -267,7 +267,7 @@ describe("Design System — WCAG AA Contrast Compliance", () => {
     },
     {
       name: "secondary text on surface",
-      fg: "#6b7280",
+      fg: "#4b5563",
       bg: "#ffffff",
       darkFg: "#d1d5db",
       darkBg: "#111827",
@@ -284,7 +284,7 @@ describe("Design System — WCAG AA Contrast Compliance", () => {
       fg: "#ffffff",
       bg: "#16a34a",
       darkFg: "#111827",
-      darkBg: "#22c55e",
+      darkBg: "#4ade80",
     },
     {
       name: "error text on surface",

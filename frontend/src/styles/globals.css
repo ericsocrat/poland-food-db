@@ -12,7 +12,7 @@
 
     /* ── Text ── */
     --color-text-primary: #111827; /* gray-900 */
-    --color-text-secondary: #6b7280; /* gray-500 */
+    --color-text-secondary: #4b5563; /* gray-600 — WCAG AA 7.08:1 on white, 4.78:1 on surface-muted */
     --color-text-muted: #6b7280; /* gray-500 — WCAG AA 4.63:1 on white */
     --color-text-inverse: #ffffff;
 
@@ -146,9 +146,9 @@
     --color-border: #374151; /* gray-700 */
     --color-border-strong: #4b5563; /* gray-600 */
 
-    --color-brand: #22c55e; /* brand-500 — brighter on dark */
-    --color-brand-hover: #16a34a; /* brand-600 */
-    --color-brand-subtle: #14532d; /* brand-900 */
+    --color-brand: #4ade80; /* green-400 — WCAG AA 5.4:1 on brand-subtle */
+    --color-brand-hover: #22c55e; /* green-500 */
+    --color-brand-subtle: #14532d; /* green-900 */
 
     /* Score bands — same hues, adjusted lightness for dark backgrounds */
     --color-score-green: #4ade80;
@@ -212,8 +212,8 @@
       --color-border: #374151;
       --color-border-strong: #4b5563;
 
-      --color-brand: #22c55e;
-      --color-brand-hover: #16a34a;
+      --color-brand: #4ade80;
+      --color-brand-hover: #22c55e;
       --color-brand-subtle: #14532d;
 
       --color-score-green: #4ade80;

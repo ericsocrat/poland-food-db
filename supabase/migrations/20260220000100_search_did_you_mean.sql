@@ -75,5 +75,13 @@ $$;
 GRANT EXECUTE ON FUNCTION public.api_search_did_you_mean(text, text, integer)
   TO authenticated;
 
+-- Revoke from anon/PUBLIC — this is an auth-only endpoint (uses auth.uid()
+-- for country resolution). The ALTER DEFAULT PRIVILEGES set in
+-- 20260216000100 only covers functions created by the same role, so CI
+-- environments need an explicit REVOKE to satisfy QA check
+-- security_posture #9.
+REVOKE EXECUTE ON FUNCTION public.api_search_did_you_mean(text, text, integer)
+  FROM PUBLIC, anon;
+
 COMMENT ON FUNCTION api_search_did_you_mean IS
   'Returns up to 3 similar product names when a search query finds no exact matches. Uses pg_trgm similarity for fuzzy matching. (#62)';

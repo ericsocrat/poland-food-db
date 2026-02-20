@@ -243,8 +243,8 @@ SELECT
 -- #23 All api_* functions are SECURITY DEFINER (still, after recreation)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
-    CASE WHEN COUNT(*) = 16
-    THEN 'PASS' ELSE 'FAIL' END AS "#23 all api_* remain SECURITY DEFINER"
+    CASE WHEN COUNT(*) = 18
+    THEN 'PASS' ELSE 'FAIL' END AS "#23 all api_* remain SECURITY DEFINER (18)"
 FROM pg_proc p
 JOIN pg_namespace n ON n.oid = p.pronamespace
 WHERE n.nspname = 'public'
