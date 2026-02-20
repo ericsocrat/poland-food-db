@@ -56,7 +56,17 @@ export default defineConfig({
   expect: {
     /* Give client-side hydration enough time in CI */
     timeout: 10_000,
+    /* Visual regression screenshot comparison thresholds (Issue #70) */
+    toHaveScreenshot: {
+      maxDiffPixelRatio: 0.01, // 1% pixel tolerance
+      animations: "disabled",
+      threshold: 0.2, // Per-pixel color sensitivity
+    },
   },
+
+  /* Snapshot path template for visual regression baselines (Issue #70) */
+  snapshotPathTemplate:
+    "{testDir}/__screenshots__/{testFilePath}/{arg}{ext}",
 
   ...(HAS_AUTH && { globalTeardown: "./e2e/global-teardown" }),
 

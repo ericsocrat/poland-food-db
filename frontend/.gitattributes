@@ -1,0 +1,6 @@
+# ─── Visual regression baselines ─────────────────────────────────────────────
+# Screenshot baselines are binary PNG files. Mark them accordingly so Git
+# diffs show them as binary and merge conflicts are obvious.
+# Issue #70 — Visual Regression Baseline
+
+e2e/__screenshots__/**/*.png binary
