@@ -1,5 +1,11 @@
 import "@testing-library/jest-dom/vitest";
-import { vi } from "vitest";
+import { expect, vi } from "vitest";
+import * as vitestAxeMatchers from "vitest-axe/matchers";
+
+// ─── vitest-axe: register toHaveNoViolations matcher ────────────────────────
+// The vitest-axe/extend-expect auto-registration is broken in v0.1.0.
+// Manually extend expect with the exported matchers.
+expect.extend(vitestAxeMatchers);
 
 // ─── Global mock: matchMedia ────────────────────────────────────────────────
 // jsdom doesn't implement matchMedia. Provide a minimal stub so hooks like
