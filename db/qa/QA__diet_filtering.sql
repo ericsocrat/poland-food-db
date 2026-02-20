@@ -13,6 +13,12 @@
 SELECT set_config('request.jwt.claims',
     '{"sub":"00000000-0000-0000-0000-000000000098"}', false);
 
+-- Ensure test user exists in auth.users (required by FK on user_product_lists
+-- which is created by the trg_create_default_lists trigger on user_preferences).
+INSERT INTO auth.users (id)
+VALUES ('00000000-0000-0000-0000-000000000098'::uuid)
+ON CONFLICT DO NOTHING;
+
 INSERT INTO user_preferences (user_id, diet_preference, strict_diet, country)
 VALUES ('00000000-0000-0000-0000-000000000098'::uuid, 'vegan', false, 'PL')
 ON CONFLICT (user_id) DO UPDATE
@@ -65,8 +71,12 @@ JOIN v_master m ON m.product_id = search_results.pid::bigint
 WHERE m.vegan_status != 'yes';
 
 -- ─── Teardown auth for diet checks ─────────────────────────────────────────
+DELETE FROM user_product_lists
+WHERE user_id = '00000000-0000-0000-0000-000000000098'::uuid;
 DELETE FROM user_preferences
 WHERE user_id = '00000000-0000-0000-0000-000000000098'::uuid;
+DELETE FROM auth.users
+WHERE id = '00000000-0000-0000-0000-000000000098'::uuid;
 
 SELECT set_config('request.jwt.claims', '', false);
 

@@ -41,6 +41,12 @@ WHERE EXISTS (
 SELECT set_config('request.jwt.claims',
     '{"sub":"00000000-0000-0000-0000-000000000097"}', false);
 
+-- Ensure test user exists in auth.users (required by FK on user_product_lists
+-- which is created by the trg_create_default_lists trigger on user_preferences).
+INSERT INTO auth.users (id)
+VALUES ('00000000-0000-0000-0000-000000000097'::uuid)
+ON CONFLICT DO NOTHING;
+
 INSERT INTO user_preferences (user_id, avoid_allergens, treat_may_contain_as_unsafe)
 VALUES ('00000000-0000-0000-0000-000000000097'::uuid, ARRAY['en:gluten'], true)
 ON CONFLICT (user_id) DO UPDATE
@@ -63,8 +69,12 @@ WHERE EXISTS (
 );
 
 -- ─── Teardown auth for allergen check 3 ────────────────────────────────────
+DELETE FROM user_product_lists
+WHERE user_id = '00000000-0000-0000-0000-000000000097'::uuid;
 DELETE FROM user_preferences
 WHERE user_id = '00000000-0000-0000-0000-000000000097'::uuid;
+DELETE FROM auth.users
+WHERE id = '00000000-0000-0000-0000-000000000097'::uuid;
 
 SELECT set_config('request.jwt.claims', '', false);
 
