@@ -1,6 +1,8 @@
 "use client";
 
+import { useEffect } from "react";
 import { Header } from "@/components/layout/Header";
+import { eventBus } from "@/lib/events";
 import { Footer } from "@/components/layout/Footer";
 import { SkipLink } from "@/components/common/SkipLink";
 import { LearnCard } from "@/components/learn/LearnCard";
@@ -71,6 +73,10 @@ const TOPICS: readonly {
 
 export default function LearnHubPage() {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    void eventBus.emit({ type: "learn.page_viewed", payload: {} });
+  }, []);
 
   return (
     <div className="flex min-h-screen flex-col">

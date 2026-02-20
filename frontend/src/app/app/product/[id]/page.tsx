@@ -5,6 +5,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { eventBus } from "@/lib/events";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -84,6 +85,10 @@ export default function ProductDetailPage() {
         product_id: productId,
         product_name: profile.product.product_name,
         category: profile.product.category,
+      });
+      void eventBus.emit({
+        type: "product.viewed",
+        payload: { productId, score: profile.scores.unhealthiness_score ?? 0 },
       });
       // Record view for dashboard recently-viewed section
       recordProductView(supabase, productId);

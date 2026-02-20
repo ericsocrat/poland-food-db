@@ -7,6 +7,7 @@
 
 import { useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
+import { eventBus } from "@/lib/events";
 import Link from "next/link";
 import { useCompareProducts } from "@/hooks/use-compare";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
@@ -70,6 +71,10 @@ export default function ComparePage() {
       track("compare_opened", {
         product_ids: productIds,
         count: productIds.length,
+      });
+      void eventBus.emit({
+        type: "product.compared",
+        payload: { productIds },
       });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
