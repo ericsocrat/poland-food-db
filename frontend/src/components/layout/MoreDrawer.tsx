@@ -17,6 +17,7 @@ import {
   Eye,
   Settings,
   ShieldCheck,
+  Trophy,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -56,6 +57,12 @@ const DRAWER_ITEMS: readonly DrawerNavItem[] = [
     labelKey: "nav.settings",
     icon: Settings,
     routeKey: "settings",
+  },
+  {
+    href: "/app/achievements",
+    labelKey: "nav.achievements",
+    icon: Trophy,
+    routeKey: "achievements",
   },
   {
     href: "/app/admin/submissions",

@@ -5,6 +5,8 @@
 import { SupabaseClient } from "@supabase/supabase-js";
 import { callRpc } from "./rpc";
 import type {
+  AchievementProgressResponse,
+  AchievementsResponse,
   AddToListResponse,
   AlternativesResponse,
   AnalyticsEventName,
@@ -820,4 +822,27 @@ export function isWatchingProduct(
   return callRpc<IsWatchingResponse>(supabase, "api_is_watching", {
     p_product_id: productId,
   });
+}
+
+// ─── Achievements (#51) ────────────────────────────────────────────────────
+
+export function getAchievements(
+  supabase: SupabaseClient,
+): Promise<RpcResult<AchievementsResponse>> {
+  return callRpc<AchievementsResponse>(supabase, "api_get_achievements");
+}
+
+export function incrementAchievementProgress(
+  supabase: SupabaseClient,
+  slug: string,
+  increment?: number,
+): Promise<RpcResult<AchievementProgressResponse>> {
+  return callRpc<AchievementProgressResponse>(
+    supabase,
+    "increment_achievement_progress",
+    {
+      p_achievement_slug: slug,
+      ...(increment ? { p_increment: increment } : {}),
+    },
+  );
 }

@@ -1196,3 +1196,40 @@ export interface IsWatchingResponse {
   watching: boolean;
   threshold: number | null;
 }
+
+// ─── Achievements (#51) ─────────────────────────────────────────────────────
+
+export type AchievementCategory =
+  | "exploration"
+  | "health"
+  | "engagement"
+  | "mastery";
+
+export interface AchievementDef {
+  id: string;
+  slug: string;
+  category: AchievementCategory;
+  title_key: string;
+  desc_key: string;
+  icon: string;
+  threshold: number;
+  country: string | null;
+  sort_order: number;
+  progress: number;
+  unlocked_at: string | null;
+}
+
+export interface AchievementsResponse {
+  achievements: AchievementDef[];
+  total: number;
+  unlocked: number;
+}
+
+export interface AchievementProgressResponse {
+  slug: string;
+  progress: number;
+  threshold: number;
+  unlocked: boolean;
+  newly_unlocked: boolean;
+  error?: string;
+}
