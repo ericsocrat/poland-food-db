@@ -122,8 +122,12 @@ describe("SearchAutocomplete", () => {
 
     await waitFor(
       () => {
-        expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
-        expect(screen.getByText("Pringles Original")).toBeInTheDocument();
+        // HighlightMatch may split the product name across elements,
+        // so we match on the option role + textContent instead
+        const options = screen.getAllByRole("option");
+        const names = options.map((o) => o.textContent);
+        expect(names.some((n) => n?.includes("Lay's Classic"))).toBe(true);
+        expect(names.some((n) => n?.includes("Pringles Original"))).toBe(true);
       },
       { timeout: 1000 },
     );
@@ -149,12 +153,16 @@ describe("SearchAutocomplete", () => {
 
     await waitFor(
       () => {
-        expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+        const options = screen.getAllByRole("option");
+        expect(options.length).toBeGreaterThanOrEqual(1);
       },
       { timeout: 1000 },
     );
 
-    fireEvent.click(screen.getByText("Lay's Classic"));
+    // Click the first option's button ("Lay's Classic")
+    const firstOption = screen.getAllByRole("option")[0];
+    const btn = firstOption.querySelector("button")!;
+    fireEvent.click(btn);
     expect(defaultProps.onSelect).toHaveBeenCalledWith(SUGGESTIONS[0]);
     expect(mockPush).toHaveBeenCalledWith("/app/product/1");
     expect(defaultProps.onClose).toHaveBeenCalled();

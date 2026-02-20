@@ -18,6 +18,7 @@ import type {
   DataConfidence,
   DeleteSavedSearchResponse,
   DeviceType,
+  DidYouMeanResponse,
   EanLookupResponse,
   EanNotFoundResponse,
   FavoriteProductIdsResponse,
@@ -145,6 +146,17 @@ export function searchAutocomplete(
   limit?: number,
 ): Promise<RpcResult<AutocompleteResponse>> {
   return callRpc<AutocompleteResponse>(supabase, "api_search_autocomplete", {
+    p_query: query,
+    ...(limit === undefined ? {} : { p_limit: limit }),
+  });
+}
+
+export function searchDidYouMean(
+  supabase: SupabaseClient,
+  query: string,
+  limit?: number,
+): Promise<RpcResult<DidYouMeanResponse>> {
+  return callRpc<DidYouMeanResponse>(supabase, "api_search_did_you_mean", {
     p_query: query,
     ...(limit === undefined ? {} : { p_limit: limit }),
   });

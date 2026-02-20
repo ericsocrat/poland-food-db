@@ -116,6 +116,23 @@ export interface AutocompleteResponse {
   suggestions: AutocompleteSuggestion[];
 }
 
+// ─── Did You Mean (#62) ─────────────────────────────────────────────────────
+
+export interface DidYouMeanSuggestion {
+  product_id: number;
+  product_name: string;
+  brand: string;
+  category: string;
+  unhealthiness_score: number;
+  sim: number;
+}
+
+export interface DidYouMeanResponse {
+  query: string;
+  suggestions: DidYouMeanSuggestion[];
+}
+
+
 // ─── Filter Options ─────────────────────────────────────────────────────────
 
 export interface FilterCategoryOption {

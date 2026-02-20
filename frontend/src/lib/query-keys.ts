@@ -13,6 +13,9 @@ export const queryKeys = {
   /** Autocomplete suggestions */
   autocomplete: (query: string) => ["autocomplete", query] as const,
 
+  /** "Did you mean?" fuzzy suggestions (#62) */
+  didYouMean: (query: string) => ["did-you-mean", query] as const,
+
   /** Filter options (category/nutri/allergen counts) */
   filterOptions: ["filter-options"] as const,
 
@@ -121,6 +124,9 @@ export const staleTimes = {
 
   /** Autocomplete — 30 sec (frequently changes) */
   autocomplete: 30 * 1000,
+
+  /** Did-you-mean suggestions — 2 min (same as search) */
+  didYouMean: 2 * 60 * 1000,
 
   /** Filter options — 10 min (rarely changes) */
   filterOptions: 10 * 60 * 1000,
