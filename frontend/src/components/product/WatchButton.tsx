@@ -1,0 +1,121 @@
+"use client";
+
+/**
+ * WatchButton — toggle button on product profile for watch/unwatch.
+ * Calls api_watch_product / api_unwatch_product.
+ */
+
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
+import { Icon } from "@/components/common/Icon";
+import { useSupabase } from "@/lib/supabase/client";
+import { watchProduct, unwatchProduct, isWatchingProduct } from "@/lib/api";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+
+interface WatchButtonProps {
+  productId: number;
+  compact?: boolean;
+  className?: string;
+}
+
+export function WatchButton({
+  productId,
+  compact = false,
+  className,
+}: Readonly<WatchButtonProps>) {
+  const { t } = useTranslation();
+  const supabase = useSupabase();
+  const queryClient = useQueryClient();
+  const [optimisticWatching, setOptimisticWatching] = useState<boolean | null>(
+    null,
+  );
+
+  const { data: watchStatus, isLoading } = useQuery({
+    queryKey: queryKeys.isWatching(productId),
+    queryFn: () => isWatchingProduct(supabase, productId),
+    staleTime: staleTimes.isWatching,
+  });
+
+  const watching =
+    optimisticWatching !== null
+      ? optimisticWatching
+      : (watchStatus?.data?.watching ?? false);
+
+  const watchMutation = useMutation({
+    mutationFn: () => watchProduct(supabase, productId),
+    onMutate: () => setOptimisticWatching(true),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.isWatching(productId),
+      });
+      queryClient.invalidateQueries({ queryKey: queryKeys.watchlist() });
+    },
+    onSettled: () => setOptimisticWatching(null),
+  });
+
+  const unwatchMutation = useMutation({
+    mutationFn: () => unwatchProduct(supabase, productId),
+    onMutate: () => setOptimisticWatching(false),
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.isWatching(productId),
+      });
+      queryClient.invalidateQueries({ queryKey: queryKeys.watchlist() });
+    },
+    onSettled: () => setOptimisticWatching(null),
+  });
+
+  const isMutating = watchMutation.isPending || unwatchMutation.isPending;
+
+  function handleToggle() {
+    if (isMutating) return;
+    if (watching) {
+      unwatchMutation.mutate();
+    } else {
+      watchMutation.mutate();
+    }
+  }
+
+  const label = watching
+    ? t("watchlist.unwatchButton")
+    : t("watchlist.watchButton");
+
+  if (isLoading) {
+    return (
+      <button
+        disabled
+        className={`touch-target inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary ${className ?? ""}`}
+        data-testid="watch-button-loading"
+      >
+        <Icon icon={Loader2} size="sm" className="animate-spin" />
+        {!compact && <span>{t("watchlist.loading")}</span>}
+      </button>
+    );
+  }
+
+  return (
+    <button
+      onClick={handleToggle}
+      disabled={isMutating}
+      aria-pressed={watching}
+      aria-label={label}
+      className={`touch-target inline-flex items-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-colors ${
+        watching
+          ? "border-brand bg-brand-subtle text-brand"
+          : "border-border text-foreground-secondary hover:bg-surface-muted hover:text-foreground"
+      } ${isMutating ? "opacity-70" : ""} ${className ?? ""}`}
+      data-testid="watch-button"
+    >
+      {isMutating ? (
+        <Icon icon={Loader2} size="sm" className="animate-spin" />
+      ) : watching ? (
+        <Icon icon={Eye} size="sm" />
+      ) : (
+        <Icon icon={EyeOff} size="sm" />
+      )}
+      {!compact && <span>{label}</span>}
+    </button>
+  );
+}

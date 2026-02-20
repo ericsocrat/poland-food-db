@@ -56,6 +56,11 @@ import type {
   TrackEventResponse,
   UserPreferences,
   OnboardingStatus,
+  ScoreHistoryResponse,
+  WatchProductResponse,
+  UnwatchProductResponse,
+  WatchlistResponse,
+  IsWatchingResponse,
 } from "./types";
 
 // ─── User Preferences ──────────────────────────────────────────────────────
@@ -762,4 +767,57 @@ export function getDashboardInsights(
   supabase: SupabaseClient,
 ): Promise<RpcResult<DashboardInsights>> {
   return callRpc<DashboardInsights>(supabase, "api_dashboard_insights");
+}
+
+// ─── Score History & Watchlist (#38) ─────────────────────────────────────────
+
+export function getScoreHistory(
+  supabase: SupabaseClient,
+  productId: number,
+  limit?: number,
+): Promise<RpcResult<ScoreHistoryResponse>> {
+  return callRpc<ScoreHistoryResponse>(supabase, "api_get_score_history", {
+    p_product_id: productId,
+    ...(limit ? { p_limit: limit } : {}),
+  });
+}
+
+export function watchProduct(
+  supabase: SupabaseClient,
+  productId: number,
+  threshold?: number,
+): Promise<RpcResult<WatchProductResponse>> {
+  return callRpc<WatchProductResponse>(supabase, "api_watch_product", {
+    p_product_id: productId,
+    ...(threshold ? { p_threshold: threshold } : {}),
+  });
+}
+
+export function unwatchProduct(
+  supabase: SupabaseClient,
+  productId: number,
+): Promise<RpcResult<UnwatchProductResponse>> {
+  return callRpc<UnwatchProductResponse>(supabase, "api_unwatch_product", {
+    p_product_id: productId,
+  });
+}
+
+export function getWatchlist(
+  supabase: SupabaseClient,
+  page?: number,
+  pageSize?: number,
+): Promise<RpcResult<WatchlistResponse>> {
+  return callRpc<WatchlistResponse>(supabase, "api_get_watchlist", {
+    ...(page ? { p_page: page } : {}),
+    ...(pageSize ? { p_page_size: pageSize } : {}),
+  });
+}
+
+export function isWatchingProduct(
+  supabase: SupabaseClient,
+  productId: number,
+): Promise<RpcResult<IsWatchingResponse>> {
+  return callRpc<IsWatchingResponse>(supabase, "api_is_watching", {
+    p_product_id: productId,
+  });
 }

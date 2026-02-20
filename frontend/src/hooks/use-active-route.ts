@@ -17,6 +17,7 @@ const PRIMARY_ROUTES = [
   { key: "search", prefix: "/app/search" },
   { key: "scan", prefix: "/app/scan" },
   { key: "lists", prefix: "/app/lists" },
+  { key: "watchlist", prefix: "/app/watchlist" },
   { key: "settings", prefix: "/app/settings" },
   { key: "compare", prefix: "/app/compare" },
   { key: "categories", prefix: "/app/categories" },

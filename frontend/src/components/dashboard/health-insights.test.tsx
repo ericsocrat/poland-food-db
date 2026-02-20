@@ -304,7 +304,6 @@ describe("getSeasonKey", () => {
 // ─── i18n key coverage for new dashboard keys ───────────────────────────────
 
 describe("Dashboard Insights i18n keys", () => {
-
   const flatKeys = [
     "dashboard.healthInsightsSection",
     "dashboard.healthInsightsTitle",

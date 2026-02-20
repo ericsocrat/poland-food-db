@@ -42,6 +42,8 @@ import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { PrintButton } from "@/components/common/PrintButton";
+import { WatchButton } from "@/components/product/WatchButton";
+import { ScoreHistoryPanel } from "@/components/product/ScoreHistoryPanel";
 import type {
   ProductProfile,
   ProfileAlternative,
@@ -218,6 +220,7 @@ export default function ProductDetailPage() {
                         profile.product.product_name
                       }
                     />
+                    <WatchButton productId={productId} />
                     <PrintButton />
                   </div>
                 </div>
@@ -1095,6 +1098,9 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           </p>
         </div>
       </div>
+
+      {/* Score history */}
+      <ScoreHistoryPanel productId={profile.product.product_id} />
     </div>
   );
 }
