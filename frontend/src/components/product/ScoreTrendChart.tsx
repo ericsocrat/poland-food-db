@@ -84,11 +84,11 @@ export function ScoreTrendChart({
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}
-      role="img"
       aria-label={label}
       className={className}
       data-testid="score-trend-chart"
     >
+      <title>{label}</title>
       <polyline
         points={points.join(" ")}
         fill="none"
@@ -97,11 +97,10 @@ export function ScoreTrendChart({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
-      {/* Latest point dot */}
       {sorted.length > 0 && (
         <circle
-          cx={parseFloat(points[points.length - 1].split(",")[0])}
-          cy={parseFloat(points[points.length - 1].split(",")[1])}
+          cx={Number.parseFloat(points.at(-1)!.split(",")[0])}
+          cy={Number.parseFloat(points.at(-1)!.split(",")[1])}
           r={2.5}
           fill={strokeColor}
         />

@@ -10,7 +10,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { Icon } from "@/components/common/Icon";
-import { useSupabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { watchProduct, unwatchProduct, isWatchingProduct } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 
@@ -26,7 +26,7 @@ export function WatchButton({
   className,
 }: Readonly<WatchButtonProps>) {
   const { t } = useTranslation();
-  const supabase = useSupabase();
+  const supabase = createClient();
   const queryClient = useQueryClient();
   const [optimisticWatching, setOptimisticWatching] = useState<boolean | null>(
     null,
@@ -34,14 +34,15 @@ export function WatchButton({
 
   const { data: watchStatus, isLoading } = useQuery({
     queryKey: queryKeys.isWatching(productId),
-    queryFn: () => isWatchingProduct(supabase, productId),
+    queryFn: async () => {
+      const result = await isWatchingProduct(supabase, productId);
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
     staleTime: staleTimes.isWatching,
   });
 
-  const watching =
-    optimisticWatching !== null
-      ? optimisticWatching
-      : (watchStatus?.data?.watching ?? false);
+  const watching = optimisticWatching ?? watchStatus?.watching ?? false;
 
   const watchMutation = useMutation({
     mutationFn: () => watchProduct(supabase, productId),
@@ -108,13 +109,11 @@ export function WatchButton({
       } ${isMutating ? "opacity-70" : ""} ${className ?? ""}`}
       data-testid="watch-button"
     >
-      {isMutating ? (
+      {isMutating && (
         <Icon icon={Loader2} size="sm" className="animate-spin" />
-      ) : watching ? (
-        <Icon icon={Eye} size="sm" />
-      ) : (
-        <Icon icon={EyeOff} size="sm" />
       )}
+      {!isMutating && watching && <Icon icon={Eye} size="sm" />}
+      {!isMutating && !watching && <Icon icon={EyeOff} size="sm" />}
       {!compact && <span>{label}</span>}
     </button>
   );

@@ -12,7 +12,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { Icon } from "@/components/common/Icon";
-import { useSupabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { getWatchlist } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -29,7 +29,6 @@ const SCORE_BAND_COLORS: Record<string, string> = {
 };
 
 function WatchlistCard({ item }: Readonly<{ item: WatchlistItem }>) {
-  const { t } = useTranslation();
   const bandColor = SCORE_BAND_COLORS[item.score_band] ?? "text-foreground";
 
   return (
@@ -84,18 +83,21 @@ function WatchlistCard({ item }: Readonly<{ item: WatchlistItem }>) {
 
 export default function WatchlistPage() {
   const { t } = useTranslation();
-  const supabase = useSupabase();
+  const supabase = createClient();
   const [page, setPage] = useState(1);
 
   const { data, isLoading, error } = useQuery({
     queryKey: queryKeys.watchlist(page),
-    queryFn: () => getWatchlist(supabase, page, 20),
+    queryFn: async () => {
+      const result = await getWatchlist(supabase, page, 20);
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
     staleTime: staleTimes.watchlist,
   });
 
-  const watchlist = data?.data;
-  const items = watchlist?.items ?? [];
-  const totalPages = watchlist?.total_pages ?? 1;
+  const items = data?.items ?? [];
+  const totalPages = data?.total_pages ?? 1;
 
   return (
     <div>

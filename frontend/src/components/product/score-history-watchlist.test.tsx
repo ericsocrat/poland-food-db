@@ -12,7 +12,6 @@ import type { ReactNode } from "react";
 
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({}),
-  useSupabase: () => ({}),
 }));
 
 vi.mock("@/lib/i18n", () => ({
@@ -150,8 +149,8 @@ describe("ScoreTrendChart", () => {
 describe("WatchButton", () => {
   it("renders watch button when not watching", async () => {
     mockIsWatchingProduct.mockResolvedValue({
+      ok: true,
       data: { watching: false, threshold: null },
-      error: null,
     });
 
     render(<WatchButton productId={42} />, { wrapper: createWrapper() });
@@ -165,8 +164,8 @@ describe("WatchButton", () => {
 
   it("renders unwatch button when already watching", async () => {
     mockIsWatchingProduct.mockResolvedValue({
+      ok: true,
       data: { watching: true, threshold: 5 },
-      error: null,
     });
 
     render(<WatchButton productId={42} />, { wrapper: createWrapper() });
@@ -180,12 +179,12 @@ describe("WatchButton", () => {
 
   it("calls watchProduct on click when not watching", async () => {
     mockIsWatchingProduct.mockResolvedValue({
+      ok: true,
       data: { watching: false, threshold: null },
-      error: null,
     });
     mockWatchProduct.mockResolvedValue({
+      ok: true,
       data: { success: true, product_id: 42, threshold: 5, watching: true },
-      error: null,
     });
 
     render(<WatchButton productId={42} />, { wrapper: createWrapper() });
@@ -203,8 +202,8 @@ describe("WatchButton", () => {
 
   it("supports compact mode", async () => {
     mockIsWatchingProduct.mockResolvedValue({
+      ok: true,
       data: { watching: false, threshold: null },
-      error: null,
     });
 
     render(<WatchButton productId={42} compact />, {
@@ -264,6 +263,7 @@ describe("ScoreHistoryPanel", () => {
 
   it("shows history table when data loads successfully", async () => {
     mockGetScoreHistory.mockResolvedValue({
+      ok: true,
       data: {
         product_id: 42,
         trend: "improving",
@@ -295,7 +295,6 @@ describe("ScoreHistoryPanel", () => {
         ],
         total_snapshots: 2,
       },
-      error: null,
     });
 
     render(<ScoreHistoryPanel productId={42} />, {

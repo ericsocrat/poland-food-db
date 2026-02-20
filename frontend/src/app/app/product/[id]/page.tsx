@@ -389,7 +389,7 @@ function FlagWithExplanation({
         </svg>
       </button>
       {open && (
-        <span className="absolute bottom-full left-0 z-10 mb-1 w-56 rounded-lg border border bg-surface p-2 text-xs text-foreground-secondary shadow-lg">
+        <span className="absolute bottom-full left-0 z-10 mb-1 w-56 rounded-lg border border-border bg-surface p-2 text-xs text-foreground-secondary shadow-lg">
           {explanation}
         </span>
       )}
@@ -710,14 +710,15 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
 // ─── Glycemic Index Indicator ───────────────────────────────────────────────
 
+function giBand(score: number): "low" | "medium" | "high" {
+  if (score <= 55) return "low";
+  if (score <= 69) return "medium";
+  return "high";
+}
+
 function GlycemicIndexIndicator({ gi }: Readonly<{ gi: number }>) {
   const { t } = useTranslation();
 
-  function giBand(score: number): "low" | "medium" | "high" {
-    if (score <= 55) return "low";
-    if (score <= 69) return "medium";
-    return "high";
-  }
   const band = giBand(gi);
 
   const config = {

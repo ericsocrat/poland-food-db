@@ -27,7 +27,7 @@ export function ReformulationBadge({
       className={`inline-flex items-center gap-1 rounded-full bg-warning/10 px-2 py-0.5 text-xs font-medium text-warning ${className ?? ""}`}
       data-testid="reformulation-badge"
     >
-      <Icon icon={RefreshCw} size="xs" />
+      <Icon icon={RefreshCw} size="sm" />
       {t("watchlist.reformulated")}
     </span>
   );

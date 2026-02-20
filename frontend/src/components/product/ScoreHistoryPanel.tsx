@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import { Icon } from "@/components/common/Icon";
-import { useSupabase } from "@/lib/supabase/client";
+import { createClient } from "@/lib/supabase/client";
 import { getScoreHistory } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { ScoreTrendChart } from "./ScoreTrendChart";
@@ -48,17 +48,19 @@ export function ScoreHistoryPanel({
   className,
 }: Readonly<ScoreHistoryPanelProps>) {
   const { t } = useTranslation();
-  const supabase = useSupabase();
+  const supabase = createClient();
   const [open, setOpen] = useState(defaultOpen);
 
-  const { data, isLoading, error } = useQuery({
+  const { data: history, isLoading, error } = useQuery({
     queryKey: queryKeys.scoreHistory(productId),
-    queryFn: () => getScoreHistory(supabase, productId),
+    queryFn: async () => {
+      const result = await getScoreHistory(supabase, productId);
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
     staleTime: staleTimes.scoreHistory,
     enabled: open,
   });
-
-  const history = data?.data;
 
   return (
     <div
