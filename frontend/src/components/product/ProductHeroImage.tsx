@@ -113,7 +113,7 @@ export function ProductHeroImage({
           src={url}
           alt={altText}
           fill
-          className={`object-contain transition-all duration-300 lg:group-hover:scale-105 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
+          className={`object-contain transition-all duration-slow lg:group-hover:scale-105 ${imageLoaded ? "opacity-100" : "opacity-0"}`}
           sizes="(max-width: 640px) 100vw, 400px"
           priority
           onLoad={() => setImageLoaded(true)}

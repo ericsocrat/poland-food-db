@@ -110,7 +110,7 @@ export const ScoreBadge = React.memo(function ScoreBadge({
   const badge = (
     <span
       className={[
-        "inline-flex items-center gap-1.5 rounded-full font-semibold whitespace-nowrap",
+        "inline-flex items-center gap-1.5 rounded-full font-semibold whitespace-nowrap animate-scale-in",
         band.bg,
         band.text,
         SIZE_CLASSES[size],

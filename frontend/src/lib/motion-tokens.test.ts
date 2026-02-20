@@ -1,14 +1,17 @@
 import { describe, it, expect } from "vitest";
+import { readFileSync } from "fs";
+import { join } from "path";
 
 // ─── Motion token compliance tests (#61) ─────────────────────────────────────
 // Verify motion tokens exist in globals.css and follow design system rules.
 // These tests validate the CSS source, not runtime computed styles.
 
-import { readFileSync } from "fs";
-import { join } from "path";
-
 const cssPath = join(__dirname, "../styles/globals.css");
 const css = readFileSync(cssPath, "utf-8");
+
+// Also validate Tailwind config exposes motion tokens
+const twConfigPath = join(__dirname, "../../tailwind.config.ts");
+const twConfig = readFileSync(twConfigPath, "utf-8");
 
 describe("Motion Tokens (#61)", () => {
   describe("easing curves exist in :root", () => {
@@ -128,6 +131,49 @@ describe("Motion Tokens (#61)", () => {
       for (const match of durations) {
         const ms = parseInt(match[1], 10);
         expect(ms).toBeLessThanOrEqual(300);
+      }
+    });
+  });
+
+  describe("Tailwind config motion extensions (#61)", () => {
+    describe("transitionDuration tokens", () => {
+      const requiredDurations = [
+        "instant",
+        "fast",
+        "normal",
+        "slow",
+      ];
+      for (const name of requiredDurations) {
+        it(`maps ${name} → var(--duration-${name})`, () => {
+          expect(twConfig).toContain(`"var(--duration-${name})"`);
+        });
+      }
+    });
+
+    describe("transitionTimingFunction tokens", () => {
+      const requiredEasings = [
+        "standard",
+        "decelerate",
+        "accelerate",
+        "spring",
+      ];
+      for (const name of requiredEasings) {
+        it(`maps ${name} → var(--ease-${name})`, () => {
+          expect(twConfig).toContain(`"var(--ease-${name})"`);
+        });
+      }
+    });
+
+    describe("keyframes and animations", () => {
+      const requiredAnimations = [
+        "fade-in-up",
+        "scale-in",
+        "chip-enter",
+      ];
+      for (const name of requiredAnimations) {
+        it(`defines animation "${name}"`, () => {
+          expect(twConfig).toContain(`"${name}"`);
+        });
       }
     });
   });

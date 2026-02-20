@@ -195,7 +195,7 @@ function ListCard({
 
   return (
     <Link href={`/app/lists/${list.id}`}>
-      <div className="card hover-lift-press flex flex-col gap-3 transition-all duration-150">
+      <div className="card hover-lift-press flex flex-col gap-3 transition-all duration-fast">
         {/* Top row — icon, name, meta */}
         <div className="flex items-center gap-3">
           <TypeIcon

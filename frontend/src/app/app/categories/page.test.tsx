@@ -289,6 +289,6 @@ describe("Categories desktop grid layout", () => {
 
     const card = screen.getByText("Chips").closest(".card")!;
     expect(card.className).toContain("transition-all");
-    expect(card.className).toContain("duration-150");
+    expect(card.className).toContain("duration-fast");
   });
 });

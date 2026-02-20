@@ -121,6 +121,39 @@ const config: Config = {
         lg: "var(--radius-lg)",
         xl: "var(--radius-xl)",
       },
+
+      // ── Motion tokens (#61) ──
+      transitionDuration: {
+        instant: "var(--duration-instant)",
+        fast: "var(--duration-fast)",
+        normal: "var(--duration-normal)",
+        slow: "var(--duration-slow)",
+      },
+      transitionTimingFunction: {
+        standard: "var(--ease-standard)",
+        decelerate: "var(--ease-decelerate)",
+        accelerate: "var(--ease-accelerate)",
+        spring: "var(--ease-spring)",
+      },
+      keyframes: {
+        "fade-in-up": {
+          from: { opacity: "0", transform: "translateY(0.5rem)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "scale-in": {
+          from: { opacity: "0", transform: "scale(0.92)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
+        "chip-enter": {
+          from: { opacity: "0", transform: "scale(0.85)" },
+          to: { opacity: "1", transform: "scale(1)" },
+        },
+      },
+      animation: {
+        "fade-in-up": "fade-in-up var(--duration-normal) var(--ease-decelerate) both",
+        "scale-in": "scale-in var(--duration-fast) var(--ease-decelerate) both",
+        "chip-enter": "chip-enter var(--duration-fast) var(--ease-decelerate) both",
+      },
     },
   },
   plugins: [require("@tailwindcss/typography"), containerQueries],

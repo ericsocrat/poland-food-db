@@ -69,7 +69,7 @@ export const Chip = React.memo(function Chip({
       onKeyDown={interactive ? handleKeyDown : undefined}
       tabIndex={interactive ? 0 : undefined}
       className={[
-        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors",
+        "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-medium transition-colors animate-chip-enter",
         VARIANT_CLASSES[variant],
         interactive ? "cursor-pointer hover:opacity-80" : "",
         className,

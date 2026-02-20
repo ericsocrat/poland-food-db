@@ -90,7 +90,7 @@ export const ProgressBar = React.memo(function ProgressBar({
         ].join(" ")}
       >
         <div
-          className={`h-full rounded-full transition-[width] duration-300 ease-out ${barColor}`}
+          className={`h-full rounded-full transition-[width] duration-slow ease-decelerate ${barColor}`}
           style={{ width: `${clamped}%` }}
         />
       </div>
