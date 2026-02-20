@@ -3,6 +3,7 @@
 
 import { useState, useCallback } from "react";
 import { useTranslation } from "@/lib/i18n";
+import { eventBus } from "@/lib/events";
 
 interface ShareButtonProps {
   readonly productName: string;
@@ -30,6 +31,10 @@ export function ShareButton({
           text: shareText,
           url: shareUrl,
         });
+        void eventBus.emit({
+          type: "product.shared",
+          payload: { productId, method: "native" },
+        });
         return; // success — native dialog handled it
       } catch (err) {
         // User cancelled — still fall through to clipboard
@@ -41,6 +46,10 @@ export function ShareButton({
     try {
       await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
+      void eventBus.emit({
+        type: "product.shared",
+        payload: { productId, method: "clipboard" },
+      });
       setTimeout(() => setCopied(false), 2000);
     } catch {
       // Clipboard API unavailable (e.g. insecure context)

@@ -6,6 +6,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
+import { eventBus } from "@/lib/events";
 import {
   addToList,
   createList,
@@ -182,6 +183,7 @@ export function useCreateList() {
     }) => createList(supabase, params.name, params.description, params.listType),
     onSuccess: (_data, variables) => {
       track("list_created", { name: variables.name, list_type: variables.listType });
+      void eventBus.emit({ type: "list.created", payload: {} });
       queryClient.invalidateQueries({ queryKey: queryKeys.lists });
     },
   });
@@ -241,6 +243,10 @@ export function useAddToList() {
         queryKey: queryKeys.productListMembership(variables.productId),
       });
       track("list_item_added", { list_id: variables.listId, product_id: variables.productId, list_type: variables.listType });
+      void eventBus.emit({
+        type: "product.added_to_list",
+        payload: { productId: variables.productId, listId: variables.listId },
+      });
 
       const listType =
         variables.listType ?? (result.ok ? result.data.list_type : undefined);

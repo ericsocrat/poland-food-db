@@ -20,6 +20,7 @@ import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { formatSlug } from "@/lib/validation";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
 import type { CategoryProduct, CategoryOverviewItem } from "@/lib/types";
 
@@ -46,6 +47,10 @@ export default function CategoryListingPage() {
   useEffect(() => {
     if (slug) {
       track("category_viewed", { category: slug });
+      void eventBus.emit({
+        type: "category.viewed",
+        payload: { categorySlug: slug },
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [slug]);

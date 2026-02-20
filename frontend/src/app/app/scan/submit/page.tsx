@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
+import { eventBus } from "@/lib/events";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { FileText } from "lucide-react";
@@ -42,6 +43,7 @@ export default function SubmitProductPage() {
     },
     onSuccess: () => {
       showToast({ type: "success", messageKey: "submit.successToast" });
+      void eventBus.emit({ type: "product.submitted", payload: { ean } });
       router.push("/app/scan/submissions");
     },
     onError: (error: Error) => {

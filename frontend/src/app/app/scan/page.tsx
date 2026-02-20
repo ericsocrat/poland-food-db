@@ -18,6 +18,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
+import { eventBus } from "@/lib/events";
 import {
   AlertTriangle,
   RefreshCw,
@@ -99,6 +100,7 @@ export default function ScanPage() {
     onSuccess: (data, scanEan) => {
       setScanResult(data);
       track("scanner_used", { ean: scanEan, found: data.found, method: mode });
+      void eventBus.emit({ type: "product.scanned", payload: { ean: scanEan } });
       // Invalidate scan history
       queryClient.invalidateQueries({
         queryKey: ["scan-history"],

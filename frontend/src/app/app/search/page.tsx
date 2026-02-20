@@ -8,6 +8,7 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/client";
 import { searchProducts } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { eventBus } from "@/lib/events";
 import { SCORE_BANDS, getScoreInterpretation } from "@/lib/constants";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { NovaBadge } from "@/components/common/NovaBadge";
@@ -147,6 +148,7 @@ export default function SearchPage() {
         query: q,
         has_filters: hasActiveFilters(filters),
       });
+      void eventBus.emit({ type: "product.searched", payload: { query: q } });
     } else if (hasActiveFilters(filters)) {
       // Allow empty query with filters (browse mode)
       setSubmittedQuery("");
@@ -177,6 +179,12 @@ export default function SearchPage() {
   function handleFiltersChange(newFilters: SearchFilters) {
     setFilters(newFilters);
     track("filter_applied", { filters: newFilters });
+    if (newFilters.allergen_free?.length) {
+      void eventBus.emit({
+        type: "filter.allergen_applied",
+        payload: { allergenTags: newFilters.allergen_free },
+      });
+    }
     // If browse mode with filters, trigger search
     if (!submittedQuery && hasActiveFilters(newFilters)) {
       setSubmittedQuery("");
