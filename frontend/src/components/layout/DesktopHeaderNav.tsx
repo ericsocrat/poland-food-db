@@ -24,6 +24,7 @@ const NAV_ITEMS: readonly HeaderNavItem[] = [
   { href: "/app/search", labelKey: "nav.search", routeKey: "search" },
   { href: "/app/scan", labelKey: "nav.scan", routeKey: "scan" },
   { href: "/app/lists", labelKey: "nav.lists", routeKey: "lists" },
+  { href: "/app/watchlist", labelKey: "nav.watchlist", routeKey: "watchlist" },
   { href: "/app/compare", labelKey: "nav.compare", routeKey: "compare" },
   {
     href: "/app/categories",

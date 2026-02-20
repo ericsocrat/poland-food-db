@@ -19,7 +19,7 @@ test.describe("App navigation bar", () => {
     await expect(nav.getByRole("link", { name: "Search" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Scan" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Lists" })).toBeVisible();
-    await expect(nav.getByRole("link", { name: "Settings" })).toBeVisible();
+    await expect(nav.getByRole("button", { name: "More" })).toBeVisible();
   });
 
   test("Search link navigates to /app/search", async ({ page }) => {
@@ -50,11 +50,15 @@ test.describe("App navigation bar", () => {
     await expect(page).toHaveURL(/\/app\/lists/);
   });
 
-  test("Settings link navigates to /app/settings", async ({ page }) => {
+  test("More button opens drawer with Settings link", async ({ page }) => {
     await page.goto("/app/search");
     const nav = page.getByRole("navigation", { name: "Main navigation" });
-    await nav.getByRole("link", { name: "Settings" }).click();
-    await expect(page).toHaveURL(/\/app\/settings/);
+    await nav.getByRole("button", { name: "More" }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText("Settings")).toBeVisible();
+    await expect(dialog.getByText("Compare")).toBeVisible();
+    await expect(dialog.getByText("Watchlist")).toBeVisible();
   });
 });
 

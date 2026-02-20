@@ -109,7 +109,7 @@ describe("MySubmissionsPage", () => {
   it("renders page title and subtitle", async () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("My Submissions")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /My Submissions/i })).toBeInTheDocument();
     });
     expect(
       screen.getByText("Products you've submitted for review"),

@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
 import Link from "next/link";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { submitProduct } from "@/lib/api";
@@ -56,6 +57,13 @@ export default function SubmitProductPage() {
 
   return (
     <div className="space-y-4">
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.scan", href: "/app/scan" },
+          { labelKey: "submit.title" },
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

@@ -13,6 +13,7 @@ import { NUTRI_COLORS } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { EmptyState } from "@/components/common/EmptyState";
 import { useTranslation } from "@/lib/i18n";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ClipboardList, Camera } from "lucide-react";
 import type { ScanHistoryItem } from "@/lib/types";
 
@@ -48,6 +49,13 @@ export default function ScanHistoryPage() {
 
   return (
     <div className="space-y-4">
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.scan", href: "/app/scan" },
+          { labelKey: "scanHistory.title" },
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

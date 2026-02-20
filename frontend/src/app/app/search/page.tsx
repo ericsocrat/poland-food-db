@@ -24,6 +24,7 @@ import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
 import { DidYouMean } from "@/components/search/DidYouMean";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -187,7 +188,14 @@ export default function SearchPage() {
     hasActiveFilters(filters);
 
   return (
-    <div className="flex lg:gap-6">
+    <>
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.search" },
+        ]}
+      />
+      <div className="flex lg:gap-6">
       {/* Filter sidebar (desktop) */}
       <FilterPanel
         filters={filters}
@@ -603,6 +611,7 @@ export default function SearchPage() {
         />
       </div>
     </div>
+    </>
   );
 }
 

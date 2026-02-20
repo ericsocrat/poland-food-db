@@ -9,9 +9,9 @@ import { getCategoryOverview } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_5BAND_DISPLAY, scoreColorFromScore } from "@/lib/constants";
 import { CategoryGridSkeleton } from "@/components/common/skeletons";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useTranslation } from "@/lib/i18n";
 import type { CategoryOverviewItem } from "@/lib/types";
-
 export default function CategoriesPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
@@ -54,6 +54,12 @@ export default function CategoriesPage() {
 
   return (
     <div>
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.categories" },
+        ]}
+      />
       <h1 className="mb-4 text-xl font-bold text-foreground lg:text-2xl">
         {t("categories.title")}
       </h1>

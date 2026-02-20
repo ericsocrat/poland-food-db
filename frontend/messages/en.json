@@ -8,7 +8,8 @@
     "compare": "Compare",
     "categories": "Categories",
     "admin": "Admin",
-    "watchlist": "Watchlist"
+    "watchlist": "Watchlist",
+    "more": "More"
   },
   "common": {
     "loading": "Loading…",
@@ -938,7 +939,8 @@
     "searchResultsStatus": "{count} results found",
     "saveSearchName": "Search name",
     "sidebarNavigation": "Sidebar navigation",
-    "headerNavigation": "Header navigation"
+    "headerNavigation": "Header navigation",
+    "moreNavigation": "More navigation"
   },
   "print": {
     "button": "Print",

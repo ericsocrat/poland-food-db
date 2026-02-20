@@ -11,6 +11,7 @@ import { getMySubmissions } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useTranslation } from "@/lib/i18n";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import {
   Clock,
   CheckCircle,
@@ -77,6 +78,13 @@ export default function MySubmissionsPage() {
 
   return (
     <div className="space-y-4">
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.scan", href: "/app/scan" },
+          { labelKey: "scan.mySubmissions" },
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
