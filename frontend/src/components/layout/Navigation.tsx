@@ -21,12 +21,12 @@ interface NavItem {
 }
 
 /** Routes that live in the "More" drawer rather than the bottom bar. */
-const MORE_ROUTE_KEYS: PrimaryRouteKey[] = [
+const MORE_ROUTE_KEYS = new Set<PrimaryRouteKey>([
   "compare",
   "categories",
   "watchlist",
   "settings",
-];
+]);
 
 const NAV_ITEMS: NavItem[] = [
   { href: "/app", labelKey: "nav.home", icon: Home, routeKey: "home" },
@@ -61,7 +61,7 @@ export function Navigation() {
   }
 
   // Highlight "More" if active route lives in the drawer
-  const isMoreActive = MORE_ROUTE_KEYS.includes(activeRoute);
+  const isMoreActive = MORE_ROUTE_KEYS.has(activeRoute);
 
   return (
     <>

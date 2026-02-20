@@ -67,10 +67,11 @@ describe("MoreDrawer", () => {
     );
   });
 
-  it("has a dialog role with aria-modal", () => {
+  it("renders a dialog element", () => {
     render(<MoreDrawer open={true} onClose={onClose} />);
     const dialog = screen.getByRole("dialog");
-    expect(dialog).toHaveAttribute("aria-modal", "true");
+    expect(dialog).toBeInTheDocument();
+    expect(dialog.tagName).toBe("DIALOG");
   });
 
   it("has the More navigation landmark", () => {

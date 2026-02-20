@@ -77,7 +77,7 @@ interface MoreDrawerProps {
 export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
   const activeRoute = useActiveRoute();
   const { t } = useTranslation();
-  const drawerRef = useRef<HTMLDivElement>(null);
+  const drawerRef = useRef<HTMLDialogElement>(null);
   const [animating, setAnimating] = useState(false);
 
   // Track mount animation
@@ -110,8 +110,9 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
   }, [open]);
 
   const handleBackdropClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.target === e.currentTarget) onClose();
+    (e: React.MouseEvent | React.KeyboardEvent) => {
+      if ("key" in e && e.key !== "Enter" && e.key !== " ") return;
+      if ("target" in e && "currentTarget" in e && e.target === e.currentTarget) onClose();
     },
     [onClose],
   );
@@ -124,15 +125,16 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
       className={`fixed inset-0 z-50 transition-colors duration-200 ${
         animating ? "bg-black/40" : "bg-transparent"
       }`}
+      role="presentation"
       onClick={handleBackdropClick}
+      onKeyDown={handleBackdropClick}
     >
-      {/* Drawer panel */}
-      <div
+      {/* Drawer panel — uses native <dialog> for built-in accessibility */}
+      <dialog
         ref={drawerRef}
-        role="dialog"
-        aria-modal="true"
+        open
         aria-label={t("a11y.moreNavigation")}
-        className={`fixed bottom-0 left-0 right-0 z-50 transform rounded-t-2xl border-t border-border bg-surface pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out ${
+        className={`fixed bottom-0 left-0 right-0 z-50 m-0 w-full max-w-full transform rounded-t-2xl border-t border-border bg-surface p-0 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out ${
           animating ? "translate-y-0" : "translate-y-full"
         }`}
       >
@@ -177,7 +179,7 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
             })}
           </ul>
         </nav>
-      </div>
+      </dialog>
     </div>
   );
 }
