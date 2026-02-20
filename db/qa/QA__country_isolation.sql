@@ -5,13 +5,13 @@
 -- 11 checks.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
--- 1. api_search_products with p_country returns only that country's products
+-- 1. api_search_products with country filter returns only that country's products
 SELECT '1. search with country filter returns only PL products' AS check_name,
        COUNT(*) AS violations
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('ch', NULL, 100, 0, 'PL')->'results'
+        api_search_products('ch', '{"country":"PL"}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 JOIN products p ON p.product_id = search_results.pid::bigint
@@ -87,7 +87,7 @@ SELECT '7. resolve_effective_country(NULL) returns valid active country without 
 -- 8. search with explicit country still works (no tier-3 needed)
 SELECT '8. search with explicit country returns that country' AS check_name,
        CASE WHEN (
-           api_search_products('ch', NULL, 5, 0, 'PL')
+           api_search_products('ch', '{"country":"PL"}'::jsonb, 1, 5)
        )->>'country' = 'PL'
        THEN 0 ELSE 1 END AS violations;
 

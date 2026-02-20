@@ -91,13 +91,13 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#8  product_detail → freshness keys (3)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #9  api_search_products — top-level keys (8)
+-- #9  api_search_products — top-level keys (9)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
         SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_search_products('cola')) k
-    ) = ARRAY['api_version','category','country','limit','offset','query','results','total_count']
-    THEN 'PASS' ELSE 'FAIL' END AS "#9  search_products top-level keys (8)";
+    ) = ARRAY['api_version','country','filters_applied','page','page_size','pages','query','results','total']
+    THEN 'PASS' ELSE 'FAIL' END AS "#9  search_products top-level keys (9)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #10 api_search_products → result item keys (9)
@@ -272,7 +272,7 @@ SELECT
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
-        SELECT (api_search_products('co', NULL, 5, 0, 'PL'))->>'country'
+        SELECT (api_search_products('co', '{"country":"PL"}'::jsonb, 1, 5))->>'country'
     ) = 'PL'
     THEN 'PASS' ELSE 'FAIL' END AS "#25 search with p_country echoes country";
 
@@ -337,15 +337,9 @@ SELECT
 SELECT
     CASE WHEN api_search_products(
         p_query := 'cola',
-        p_category := NULL,
-        p_limit := 5,
-        p_offset := 0,
-        p_country := NULL,
-        p_diet_preference := NULL,
-        p_avoid_allergens := NULL,
-        p_strict_diet := false,
-        p_strict_allergen := false,
-        p_treat_may_contain := false
+        p_filters := '{}'::jsonb,
+        p_page := 1,
+        p_page_size := 5
     )->>'country' IS NOT NULL
     THEN 'PASS' ELSE 'FAIL' END AS "#31 search_products country never null";
 

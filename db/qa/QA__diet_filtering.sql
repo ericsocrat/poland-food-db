@@ -2,7 +2,21 @@
 -- QA Suite: Diet Filtering
 -- Validates that diet preference filters work correctly across API surfaces.
 -- 6 checks.
+--
+-- NOTE: api_search_products now reads diet_preference / strict_diet from
+-- user_preferences via auth.uid().  Checks 1-3 set up a test user.
 -- ═══════════════════════════════════════════════════════════════════════════════
+
+-- ─── Auth setup for diet filtering (checks 1–3) ────────────────────────────
+CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+LANGUAGE sql STABLE AS $fn$
+    SELECT '00000000-0000-0000-0000-000000000098'::uuid;
+$fn$;
+
+INSERT INTO user_preferences (user_id, diet_preference, strict_diet, country)
+VALUES ('00000000-0000-0000-0000-000000000098'::uuid, 'vegan', false, 'PL')
+ON CONFLICT (user_id) DO UPDATE
+    SET diet_preference = 'vegan', strict_diet = false, country = 'PL';
 
 -- 1. Vegan filter excludes products with vegan_status = 'no'
 SELECT '1. vegan filter excludes non-vegan from search' AS check_name,
@@ -10,11 +24,16 @@ SELECT '1. vegan filter excludes non-vegan from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-api_search_products('a', NULL, 100, 0, 'PL', 'vegan')->'results'
-               ) r(val)
-           ) search_results
-           JOIN v_master m ON m.product_id = search_results.pid::bigint
-           WHERE m.vegan_status = 'no';
+        api_search_products('a', '{"country":"PL"}'::jsonb, 1, 100)->'results'
+    ) r(val)
+) search_results
+JOIN v_master m ON m.product_id = search_results.pid::bigint
+WHERE m.vegan_status = 'no';
+
+-- Switch to vegetarian for check 2
+UPDATE user_preferences
+SET diet_preference = 'vegetarian', strict_diet = false
+WHERE user_id = '00000000-0000-0000-0000-000000000098'::uuid;
 
 -- 2. Vegetarian filter excludes products with vegetarian_status = 'no'
 SELECT '2. vegetarian filter excludes non-vegetarian from search' AS check_name,
@@ -22,11 +41,16 @@ SELECT '2. vegetarian filter excludes non-vegetarian from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, 'PL', 'vegetarian')->'results'
+        api_search_products('a', '{"country":"PL"}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 JOIN v_master m ON m.product_id = search_results.pid::bigint
 WHERE m.vegetarian_status = 'no';
+
+-- Switch to strict vegan for check 3
+UPDATE user_preferences
+SET diet_preference = 'vegan', strict_diet = true
+WHERE user_id = '00000000-0000-0000-0000-000000000098'::uuid;
 
 -- 3. Strict vegan mode excludes 'maybe' status
 SELECT '3. strict vegan excludes maybe-vegan from search' AS check_name,
@@ -34,11 +58,23 @@ SELECT '3. strict vegan excludes maybe-vegan from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, 'PL', 'vegan', NULL, true)->'results'
+        api_search_products('a', '{"country":"PL"}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 JOIN v_master m ON m.product_id = search_results.pid::bigint
 WHERE m.vegan_status != 'yes';
+
+-- ─── Teardown auth for diet checks ─────────────────────────────────────────
+DELETE FROM user_preferences
+WHERE user_id = '00000000-0000-0000-0000-000000000098'::uuid;
+
+CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+LANGUAGE sql STABLE AS $fn$
+    SELECT NULLIF(
+        current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
+        ''
+    )::uuid;
+$fn$;
 
 -- 4. Vegan filter works on category listing
 SELECT '4. vegan filter excludes non-vegan from category listing' AS check_name,
@@ -74,7 +110,7 @@ SELECT '6. no diet filter includes all diet statuses' AS check_name,
            FROM (
                SELECT r.val->>'product_id' AS pid
                FROM jsonb_array_elements(
-                   api_search_products('ch', NULL, 100, 0, 'PL')->'results'
+                   api_search_products('ch', '{"country":"PL"}'::jsonb, 1, 100)->'results'
                ) r(val)
            ) search_results
            JOIN v_master m ON m.product_id = search_results.pid::bigint

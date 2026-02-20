@@ -10,7 +10,7 @@ SELECT '1. gluten avoidance excludes gluten-containing from search' AS check_nam
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, NULL, NULL, ARRAY['en:gluten'])->'results'
+        api_search_products('a', '{"allergen_free":["en:gluten"]}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 WHERE EXISTS (
@@ -26,7 +26,7 @@ SELECT '2. milk avoidance excludes milk-containing from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, NULL, NULL, ARRAY['en:milk'])->'results'
+        api_search_products('a', '{"allergen_free":["en:milk"]}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 WHERE EXISTS (
@@ -36,13 +36,24 @@ WHERE EXISTS (
       AND ai.tag = 'en:milk'
 );
 
+-- ─── Auth setup for treat_may_contain test (check 3) ───────────────────────
+CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+LANGUAGE sql STABLE AS $fn$
+    SELECT '00000000-0000-0000-0000-000000000097'::uuid;
+$fn$;
+
+INSERT INTO user_preferences (user_id, avoid_allergens, treat_may_contain_as_unsafe)
+VALUES ('00000000-0000-0000-0000-000000000097'::uuid, ARRAY['en:gluten'], true)
+ON CONFLICT (user_id) DO UPDATE
+    SET avoid_allergens = ARRAY['en:gluten'], treat_may_contain_as_unsafe = true;
+
 -- 3. May-contain toggle excludes trace allergens when enabled
 SELECT '3. treat_may_contain excludes traces from search' AS check_name,
        COUNT(*) AS violations
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', NULL, 100, 0, NULL, NULL, ARRAY['en:gluten'], false, false, true)->'results'
+        api_search_products('a', '{"allergen_free":["en:gluten"]}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 WHERE EXISTS (
@@ -51,6 +62,18 @@ WHERE EXISTS (
       AND ai.type IN ('contains','traces')
       AND ai.tag = 'en:gluten'
 );
+
+-- ─── Teardown auth for allergen check 3 ────────────────────────────────────
+DELETE FROM user_preferences
+WHERE user_id = '00000000-0000-0000-0000-000000000097'::uuid;
+
+CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
+LANGUAGE sql STABLE AS $fn$
+    SELECT NULLIF(
+        current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
+        ''
+    )::uuid;
+$fn$;
 
 -- 4. Allergen filter works on category listing
 SELECT '4. allergen filter excludes from category listing' AS check_name,
@@ -94,7 +117,7 @@ SELECT '6. no allergen filter includes all products' AS check_name,
            FROM (
                SELECT r.val->>'product_id' AS pid
                FROM jsonb_array_elements(
-                   api_search_products('ch', NULL, 100, 0, 'PL')->'results'
+                   api_search_products('ch', '{"country":"PL"}'::jsonb, 1, 100)->'results'
                ) r(val)
            ) search_results
            WHERE EXISTS (
