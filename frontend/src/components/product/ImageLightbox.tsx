@@ -153,8 +153,12 @@ export function ImageLightbox({
       role="dialog"
       aria-modal="true"
       aria-label={t("imageLightbox.title")}
+      tabIndex={-1}
       onClick={(e) => {
         if (e.target === containerRef.current) onClose();
+      }}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
       }}
     >
       {/* Top toolbar */}
@@ -225,6 +229,7 @@ export function ImageLightbox({
 
       {/* Image area */}
       <div
+        role="presentation"
         className="flex h-full w-full items-center justify-center overflow-hidden"
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
