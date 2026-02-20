@@ -18,7 +18,7 @@ describe("assertComponentA11y", () => {
   });
 
   it("fails for an image without alt text", async () => {
-    // eslint-disable-next-line @next/next/no-img-element
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     const { container } = render(<img src="/test.png" />);
     const results = await axe(container);
 
@@ -38,7 +38,7 @@ describe("assertComponentA11y", () => {
 
 describe("auditComponentA11y", () => {
   it("returns results without asserting", async () => {
-    // eslint-disable-next-line @next/next/no-img-element
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
     const { container } = render(<img src="/test.png" />);
     const results = await auditComponentA11y(container);
 

@@ -9,6 +9,7 @@ import { render } from "@testing-library/react";
 import type { AxeResults, RunOptions } from "axe-core";
 import type { ReactElement } from "react";
 import { axe } from "vitest-axe";
+import { expect } from "vitest";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 
@@ -38,7 +39,7 @@ export async function assertComponentA11y(
   const { container } = render(ui);
   const results = await axe(container, options.axeOptions);
 
-  expect(results).toHaveNoViolations();
+  expect(results.violations).toHaveLength(0);
 
   return results;
 }
