@@ -31,6 +31,7 @@ describe("DesktopSidebar", () => {
     expect(screen.getByText("Lists")).toBeInTheDocument();
     expect(screen.getByText("Compare")).toBeInTheDocument();
     expect(screen.getByText("Categories")).toBeInTheDocument();
+    expect(screen.getByText("Achievements")).toBeInTheDocument();
   });
 
   it("renders settings in secondary section", () => {

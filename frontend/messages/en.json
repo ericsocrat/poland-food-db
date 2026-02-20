@@ -9,6 +9,7 @@
     "categories": "Categories",
     "admin": "Admin",
     "watchlist": "Watchlist",
+    "achievements": "Achievements",
     "more": "More"
   },
   "common": {
@@ -1226,6 +1227,99 @@
       "improving": "Improving",
       "worsening": "Worsening",
       "stable": "Stable"
+    }
+  },
+  "achievements": {
+    "title": "Achievements",
+    "subtitle": "Track your food discovery progress",
+    "overallProgress": "Overall Progress",
+    "earned": "Earned",
+    "locked": "Locked",
+    "unlocked": "Achievement unlocked! 🏆",
+    "progressError": "Could not update achievement progress.",
+    "errorTitle": "Something went wrong",
+    "errorDescription": "Could not load achievements. Please try again later.",
+    "emptyTitle": "No achievements yet",
+    "emptyDescription": "Start scanning and exploring products to earn achievements!",
+    "category": {
+      "exploration": "Exploration",
+      "health": "Health",
+      "engagement": "Engagement",
+      "mastery": "Mastery"
+    }
+  },
+  "achievement": {
+    "first_scan": {
+      "title": "First Scan",
+      "desc": "Scan your first product barcode"
+    },
+    "scan_10": {
+      "title": "Scanner Pro",
+      "desc": "Scan 10 different products"
+    },
+    "scan_50": {
+      "title": "Scan Master",
+      "desc": "Scan 50 different products"
+    },
+    "first_search": {
+      "title": "Curious Eater",
+      "desc": "Search for a product for the first time"
+    },
+    "explore_5_categories": {
+      "title": "Category Explorer",
+      "desc": "Browse 5 different product categories"
+    },
+    "first_low_score": {
+      "title": "Healthy Choice",
+      "desc": "View a product with a healthy score"
+    },
+    "low_score_10": {
+      "title": "Health Advocate",
+      "desc": "View 10 products with healthy scores"
+    },
+    "compare_products": {
+      "title": "Smart Shopper",
+      "desc": "Compare two products for the first time"
+    },
+    "compare_10": {
+      "title": "Comparison Expert",
+      "desc": "Compare products 10 times"
+    },
+    "allergen_filter": {
+      "title": "Safety First",
+      "desc": "Use an allergen filter in search"
+    },
+    "first_list": {
+      "title": "List Maker",
+      "desc": "Create your first product list"
+    },
+    "list_10_products": {
+      "title": "Curated Collection",
+      "desc": "Add 10 products to your lists"
+    },
+    "first_submission": {
+      "title": "Community Hero",
+      "desc": "Submit a new product to the database"
+    },
+    "share_product": {
+      "title": "Sharing is Caring",
+      "desc": "Share a product with someone"
+    },
+    "weekly_streak_4": {
+      "title": "Monthly Regular",
+      "desc": "Use the app for 4 weeks in a row"
+    },
+    "read_learn_page": {
+      "title": "Knowledge Seeker",
+      "desc": "Read a Learn article"
+    },
+    "all_exploration": {
+      "title": "Explorer Complete",
+      "desc": "Unlock all Exploration achievements"
+    },
+    "all_health": {
+      "title": "Health Champion",
+      "desc": "Unlock all Health achievements"
     }
   }
 }

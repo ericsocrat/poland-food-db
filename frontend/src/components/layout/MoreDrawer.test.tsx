@@ -34,11 +34,12 @@ describe("MoreDrawer", () => {
     expect(container.innerHTML).toBe("");
   });
 
-  it("renders all 5 drawer nav items when open", () => {
+  it("renders all 6 drawer nav items when open", () => {
     render(<MoreDrawer open={true} onClose={onClose} />);
     expect(screen.getByText("Compare")).toBeInTheDocument();
     expect(screen.getByText("Categories")).toBeInTheDocument();
     expect(screen.getByText("Watchlist")).toBeInTheDocument();
+    expect(screen.getByText("Achievements")).toBeInTheDocument();
     expect(screen.getByText("Settings")).toBeInTheDocument();
     expect(screen.getByText("Admin")).toBeInTheDocument();
   });
@@ -60,6 +61,10 @@ describe("MoreDrawer", () => {
     expect(screen.getByText("Settings").closest("a")).toHaveAttribute(
       "href",
       "/app/settings",
+    );
+    expect(screen.getByText("Achievements").closest("a")).toHaveAttribute(
+      "href",
+      "/app/achievements",
     );
     expect(screen.getByText("Admin").closest("a")).toHaveAttribute(
       "href",

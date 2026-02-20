@@ -126,6 +126,9 @@ export const queryKeys = {
   /** Is user watching a specific product (Issue #38) */
   isWatching: (productId: number) =>
     ["is-watching", productId] as const,
+
+  /** User achievements with progress (Issue #51) */
+  achievements: ["achievements"] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -232,4 +235,7 @@ export const staleTimes = {
 
   /** Is watching — 5 min (changes on user action) */
   isWatching: 5 * 60 * 1000,
+
+  /** Achievements — 5 min (changes on user action) */
+  achievements: 5 * 60 * 1000,
 } as const;

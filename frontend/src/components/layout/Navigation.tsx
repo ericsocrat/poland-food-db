@@ -26,6 +26,7 @@ const MORE_ROUTE_KEYS = new Set<PrimaryRouteKey>([
   "categories",
   "watchlist",
   "settings",
+  "achievements",
 ]);
 
 const NAV_ITEMS: NavItem[] = [

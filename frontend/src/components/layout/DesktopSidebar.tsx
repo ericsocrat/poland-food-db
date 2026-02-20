@@ -18,6 +18,7 @@ import {
   Eye,
   Scale,
   FolderOpen,
+  Trophy,
   Settings,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -65,6 +66,12 @@ const PRIMARY_ITEMS: readonly SidebarNavItem[] = [
     labelKey: "nav.categories",
     icon: FolderOpen,
     routeKey: "categories",
+  },
+  {
+    href: "/app/achievements",
+    labelKey: "nav.achievements",
+    icon: Trophy,
+    routeKey: "achievements",
   },
 ] as const;
 

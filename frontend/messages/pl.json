@@ -9,6 +9,7 @@
     "categories": "Kategorie",
     "admin": "Admin",
     "watchlist": "Obserwowane",
+    "achievements": "Osiągnięcia",
     "more": "Więcej"
   },
   "common": {
@@ -1226,6 +1227,99 @@
       "improving": "Poprawa",
       "worsening": "Pogorszenie",
       "stable": "Stabilny"
+    }
+  },
+  "achievements": {
+    "title": "Osiągnięcia",
+    "subtitle": "Śledź postępy w odkrywaniu jedzenia",
+    "overallProgress": "Ogólny postęp",
+    "earned": "Zdobyte",
+    "locked": "Zablokowane",
+    "unlocked": "Osiągnięcie odblokowane! 🏆",
+    "progressError": "Nie udało się zaktualizować postępu osiągnięcia.",
+    "errorTitle": "Coś poszło nie tak",
+    "errorDescription": "Nie udało się załadować osiągnięć. Spróbuj ponownie później.",
+    "emptyTitle": "Brak osiągnięć",
+    "emptyDescription": "Zacznij skanować i odkrywać produkty, aby zdobywać osiągnięcia!",
+    "category": {
+      "exploration": "Eksploracja",
+      "health": "Zdrowie",
+      "engagement": "Zaangażowanie",
+      "mastery": "Mistrzostwo"
+    }
+  },
+  "achievement": {
+    "first_scan": {
+      "title": "Pierwsze skanowanie",
+      "desc": "Zeskanuj swój pierwszy kod kreskowy produktu"
+    },
+    "scan_10": {
+      "title": "Pro skanowania",
+      "desc": "Zeskanuj 10 różnych produktów"
+    },
+    "scan_50": {
+      "title": "Mistrz skanowania",
+      "desc": "Zeskanuj 50 różnych produktów"
+    },
+    "first_search": {
+      "title": "Ciekawski smakosz",
+      "desc": "Wyszukaj produkt po raz pierwszy"
+    },
+    "explore_5_categories": {
+      "title": "Odkrywca kategorii",
+      "desc": "Przeglądaj 5 różnych kategorii produktów"
+    },
+    "first_low_score": {
+      "title": "Zdrowy wybór",
+      "desc": "Zobacz produkt ze zdrowym wynikiem"
+    },
+    "low_score_10": {
+      "title": "Orędownik zdrowia",
+      "desc": "Zobacz 10 produktów ze zdrowymi wynikami"
+    },
+    "compare_products": {
+      "title": "Mądry kupujący",
+      "desc": "Porównaj dwa produkty po raz pierwszy"
+    },
+    "compare_10": {
+      "title": "Ekspert porównań",
+      "desc": "Porównaj produkty 10 razy"
+    },
+    "allergen_filter": {
+      "title": "Bezpieczeństwo przede wszystkim",
+      "desc": "Użyj filtra alergenów w wyszukiwaniu"
+    },
+    "first_list": {
+      "title": "Twórca list",
+      "desc": "Utwórz swoją pierwszą listę produktów"
+    },
+    "list_10_products": {
+      "title": "Wyselekcjonowana kolekcja",
+      "desc": "Dodaj 10 produktów do swoich list"
+    },
+    "first_submission": {
+      "title": "Bohater społeczności",
+      "desc": "Zgłoś nowy produkt do bazy danych"
+    },
+    "share_product": {
+      "title": "Dzielenie się to troska",
+      "desc": "Udostępnij produkt komuś"
+    },
+    "weekly_streak_4": {
+      "title": "Stały bywalec",
+      "desc": "Korzystaj z aplikacji przez 4 tygodnie z rzędu"
+    },
+    "read_learn_page": {
+      "title": "Poszukiwacz wiedzy",
+      "desc": "Przeczytaj artykuł w sekcji Nauka"
+    },
+    "all_exploration": {
+      "title": "Eksploracja ukończona",
+      "desc": "Odblokuj wszystkie osiągnięcia Eksploracji"
+    },
+    "all_health": {
+      "title": "Mistrz zdrowia",
+      "desc": "Odblokuj wszystkie osiągnięcia Zdrowia"
     }
   }
 }
