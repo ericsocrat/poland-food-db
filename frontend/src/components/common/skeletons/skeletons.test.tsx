@@ -8,6 +8,7 @@ import { SearchResultsSkeleton } from "./SearchResultsSkeleton";
 import { CategoryListingSkeleton } from "./CategoryListingSkeleton";
 import { CategoryGridSkeleton } from "./CategoryGridSkeleton";
 import { ListViewSkeleton } from "./ListViewSkeleton";
+import { RecipeGridSkeleton } from "./RecipeGridSkeleton";
 
 // Each skeleton must:
 // 1. Render with role="status"
@@ -124,5 +125,20 @@ describe("ListViewSkeleton", () => {
     const { container } = render(<ListViewSkeleton />);
     const cards = container.querySelectorAll(".card");
     expect(cards.length).toBe(4);
+  });
+});
+
+describe("RecipeGridSkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<RecipeGridSkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe("Loading recipes");
+  });
+
+  it("renders 6 recipe card placeholders", () => {
+    const { container } = render(<RecipeGridSkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(6);
   });
 });

@@ -19,6 +19,7 @@ import {
   Scale,
   FolderOpen,
   Trophy,
+  UtensilsCrossed,
   Settings,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -72,6 +73,12 @@ const PRIMARY_ITEMS: readonly SidebarNavItem[] = [
     labelKey: "nav.achievements",
     icon: Trophy,
     routeKey: "achievements",
+  },
+  {
+    href: "/app/recipes",
+    labelKey: "nav.recipes",
+    icon: UtensilsCrossed,
+    routeKey: "recipes",
   },
 ] as const;
 

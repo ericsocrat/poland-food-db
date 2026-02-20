@@ -63,6 +63,9 @@ import type {
   UnwatchProductResponse,
   WatchlistResponse,
   IsWatchingResponse,
+  BrowseRecipesFilters,
+  RecipeDetail,
+  RecipeSummary,
 } from "./types";
 
 // ─── User Preferences ──────────────────────────────────────────────────────
@@ -845,4 +848,30 @@ export function incrementAchievementProgress(
       ...(increment ? { p_increment: increment } : {}),
     },
   );
+}
+
+// ─── Recipes (#53) ─────────────────────────────────────────────────────────
+
+export function browseRecipes(
+  supabase: SupabaseClient,
+  filters?: BrowseRecipesFilters,
+): Promise<RpcResult<RecipeSummary[]>> {
+  return callRpc<RecipeSummary[]>(supabase, "browse_recipes", {
+    ...(filters?.category ? { p_category: filters.category } : {}),
+    ...(filters?.difficulty ? { p_difficulty: filters.difficulty } : {}),
+    ...(filters?.tag ? { p_tag: filters.tag } : {}),
+    ...(filters?.maxTime ? { p_max_time: filters.maxTime } : {}),
+    ...(filters?.limit ? { p_limit: filters.limit } : {}),
+    ...(filters?.offset ? { p_offset: filters.offset } : {}),
+    p_country: null,
+  });
+}
+
+export async function getRecipeDetail(
+  supabase: SupabaseClient,
+  slug: string,
+): Promise<RpcResult<RecipeDetail | null>> {
+  return callRpc<RecipeDetail | null>(supabase, "get_recipe_detail", {
+    p_slug: slug,
+  });
 }

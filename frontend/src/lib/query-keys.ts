@@ -129,6 +129,13 @@ export const queryKeys = {
 
   /** User achievements with progress (Issue #51) */
   achievements: ["achievements"] as const,
+
+  /** Recipe browse (optionally filtered) */
+  recipes: (filters?: Record<string, unknown>) =>
+    ["recipes", filters ?? {}] as const,
+
+  /** Single recipe detail by slug */
+  recipe: (slug: string) => ["recipe", slug] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -238,4 +245,10 @@ export const staleTimes = {
 
   /** Achievements — 5 min (changes on user action) */
   achievements: 5 * 60 * 1000,
+
+  /** Recipe browse — 10 min (curated, changes rarely) */
+  recipes: 10 * 60 * 1000,
+
+  /** Recipe detail — 10 min (curated, changes rarely) */
+  recipe: 10 * 60 * 1000,
 } as const;

@@ -10,6 +10,7 @@
     "admin": "Admin",
     "watchlist": "Obserwowane",
     "achievements": "Osiągnięcia",
+    "recipes": "Przepisy",
     "more": "Więcej"
   },
   "common": {
@@ -1227,6 +1228,234 @@
       "improving": "Poprawa",
       "worsening": "Pogorszenie",
       "stable": "Stabilny"
+    }
+  },
+  "recipes": {
+    "title": "Przepisy",
+    "loadFailed": "Nie udało się załadować przepisów. Spróbuj ponownie.",
+    "filterCategory": "Filtruj według kategorii",
+    "filterDifficulty": "Filtruj według trudności",
+    "allCategories": "Wszystkie kategorie",
+    "allDifficulties": "Wszystkie poziomy trudności",
+    "emptyTitle": "Nie znaleziono przepisów",
+    "emptyDescription": "Spróbuj zmienić filtry lub wróć później po nowe przepisy.",
+    "minutes": "min",
+    "servings": "porcji",
+    "prepTime": "Przygotowanie",
+    "cookTime": "Gotowanie",
+    "totalTime": "Łącznie",
+    "optional": "opcjonalnie",
+    "ingredientsTitle": "Składniki",
+    "stepsTitle": "Kroki",
+    "category": {
+      "breakfast": "Śniadanie",
+      "lunch": "Lunch",
+      "dinner": "Obiad",
+      "snack": "Przekąska",
+      "dessert": "Deser",
+      "drink": "Napój",
+      "salad": "Sałatka",
+      "soup": "Zupa"
+    },
+    "difficulty": {
+      "easy": "Łatwy",
+      "medium": "Średni",
+      "hard": "Trudny"
+    },
+    "items": {
+      "overnight-oats": {
+        "title": "Owsianka nocna z jogurtem i owocami",
+        "description": "Kremowa owsianka z owocami leśnymi i miodem.",
+        "steps": {
+          "1": "Wymieszaj płatki owsiane, jogurt i mleko w słoiku.",
+          "2": "Przykryj i wstaw do lodówki na noc (min. 4 godziny).",
+          "3": "Podawaj z owocami i miodem."
+        },
+        "ingredients": {
+          "1": "½ szklanki płatków owsianych",
+          "2": "½ szklanki jogurtu naturalnego",
+          "3": "¼ szklanki mleka",
+          "4": "Garść owoców leśnych",
+          "5": "1 łyżeczka miodu"
+        }
+      },
+      "jajecznica": {
+        "title": "Jajecznica po polsku",
+        "description": "Klasyczna polska jajecznica na maśle ze szczypiorkiem.",
+        "steps": {
+          "1": "Rozpuść masło na patelni na małym ogniu.",
+          "2": "Wbij jajka i delikatnie mieszaj łopatką.",
+          "3": "Gotuj powoli do momentu ścięcia. Dopraw i podawaj ze szczypiorkiem."
+        },
+        "ingredients": {
+          "1": "3 duże jajka",
+          "2": "1 łyżka masła",
+          "3": "Świeży szczypiorek, posiekany",
+          "4": "Sól i pieprz do smaku"
+        }
+      },
+      "zupa-pomidorowa": {
+        "title": "Zupa pomidorowa",
+        "description": "Tradycyjna polska zupa pomidorowa z makaronem lub ryżem.",
+        "steps": {
+          "1": "Podsmaż pokrojoną cebulę na maśle.",
+          "2": "Dodaj pomidory i bulion. Gotuj 15 minut.",
+          "3": "Zblenduj, dopraw solą i cukrem.",
+          "4": "Podawaj z makaronem lub ryżem."
+        },
+        "ingredients": {
+          "1": "400g pomidorów krojonych",
+          "2": "500ml bulionu warzywnego",
+          "3": "1 średnia cebula",
+          "4": "1 łyżka masła",
+          "5": "Makaron lub ryż do podania"
+        }
+      },
+      "chicken-salad-yogurt": {
+        "title": "Sałatka z kurczakiem i sosem jogurtowym",
+        "description": "Lekka sałatka z kurczakiem i kremowym sosem ziołowym.",
+        "steps": {
+          "1": "Ugrill lub ugotuj pierś z kurczaka i pokrój w plastry.",
+          "2": "Wymieszaj sałatę, ogórek i pomidory w misce.",
+          "3": "Przygotuj sos z jogurtu, soku z cytryny, czosnku i ziół.",
+          "4": "Ułóż kurczaka na sałatce i polej sosem."
+        },
+        "ingredients": {
+          "1": "1 pierś z kurczaka",
+          "2": "Mieszanka sałat",
+          "3": "½ ogórka, pokrojonego",
+          "4": "2 łyżki jogurtu naturalnego",
+          "5": "Sok z ½ cytryny"
+        }
+      },
+      "baked-salmon-vegetables": {
+        "title": "Pieczony łosoś z warzywami",
+        "description": "Łosoś pieczony z sezonowymi warzywami.",
+        "steps": {
+          "1": "Rozgrzej piekarnik do 200°C. Dopraw łososia oliwą, cytryną i ziołami.",
+          "2": "Warzywa skrop oliwą i rozłóż na blasze.",
+          "3": "Ułóż łososia na blasze i piecz 20 minut.",
+          "4": "Podawaj z kawałkiem cytryny."
+        },
+        "ingredients": {
+          "1": "1 filet z łososia (150g)",
+          "2": "1 szklanka warzyw (cukinia, papryka, cebula)",
+          "3": "1 łyżka oliwy z oliwek",
+          "4": "½ cytryny",
+          "5": "Świeży koperek"
+        }
+      },
+      "pierogi-simplified": {
+        "title": "Proste pierogi ruskie",
+        "description": "Uproszczone pierogi z nadzieniem z ziemniaków i twarogu.",
+        "steps": {
+          "1": "Ciasto: wymieszaj mąkę, jajko, wodę i szczyptę soli. Wyrabiaj do gładkości.",
+          "2": "Nadzienie: rozgnieć ugotowane ziemniaki z twarogiem i dopraw.",
+          "3": "Rozwałkuj ciasto, wytnij kółka, nałóż nadzienie i zlepiaj brzegi.",
+          "4": "Gotuj pierogi w osolonej wodzie aż wypłyną. Podawaj z prażoną cebulką.",
+          "5": "Opcjonalnie: podsmaż ugotowane pierogi na maśle."
+        },
+        "ingredients": {
+          "1": "2 szklanki mąki",
+          "2": "1 jajko",
+          "3": "2 średnie ziemniaki, ugotowane",
+          "4": "100g twarogu",
+          "5": "1 cebula do podania"
+        }
+      },
+      "yogurt-nuts-honey": {
+        "title": "Jogurt grecki z orzechami i miodem",
+        "description": "Szybka, bogata w białko przekąska z orzechami i miodem.",
+        "steps": {
+          "1": "Nałóż jogurt do miseczki.",
+          "2": "Posyp orzechami i polej miodem."
+        },
+        "ingredients": {
+          "1": "150g jogurtu greckiego",
+          "2": "2 łyżki mieszanki orzechów",
+          "3": "1 łyżeczka miodu"
+        }
+      },
+      "hummus-vegetables": {
+        "title": "Hummus z warzywami",
+        "description": "Kremowy hummus podawany z kolorowymi warzywami.",
+        "steps": {
+          "1": "Zblenduj ciecierzycę, tahini, sok z cytryny, czosnek i oliwę.",
+          "2": "Pokrój warzywa w słupki.",
+          "3": "Podawaj hummus z warzywami do maczania."
+        },
+        "ingredients": {
+          "1": "1 puszka ciecierzycy, odsączonej",
+          "2": "2 łyżki tahini",
+          "3": "1 ząbek czosnku",
+          "4": "Marchewka, ogórek i papryka w słupkach"
+        }
+      },
+      "red-lentil-soup": {
+        "title": "Zupa z czerwonej soczewicy",
+        "description": "Sycąca zupa z soczewicy z kminkiem i cytryną.",
+        "steps": {
+          "1": "Podsmaż cebulę, marchewkę i czosnek na oliwie.",
+          "2": "Dodaj soczewicę, kminek i bulion. Doprowadź do wrzenia.",
+          "3": "Gotuj 20 minut aż soczewica będzie miękka.",
+          "4": "Częściowo zblenduj, dopraw sokiem z cytryny i solą."
+        },
+        "ingredients": {
+          "1": "1 szklanka czerwonej soczewicy",
+          "2": "1 średnia cebula",
+          "3": "1 marchewka",
+          "4": "1 litr bulionu warzywnego",
+          "5": "1 łyżeczka kminku"
+        }
+      },
+      "mediterranean-quinoa-salad": {
+        "title": "Sałatka śródziemnomorska z komosą ryżową",
+        "description": "Świeża sałatka z komosą ryżową, pomidorkami, oliwkami i fetą.",
+        "steps": {
+          "1": "Ugotuj komosę ryżową zgodnie z instrukcją i ostudź.",
+          "2": "Pokrój pomidorki, ogórek i oliwki.",
+          "3": "Wymieszaj komosę z warzywami, pokruszoną fetą, oliwą i sokiem z cytryny."
+        },
+        "ingredients": {
+          "1": "½ szklanki komosy ryżowej",
+          "2": "Pomidorki koktajlowe",
+          "3": "½ ogórka",
+          "4": "Oliwki kalamata",
+          "5": "50g sera feta"
+        }
+      },
+      "green-smoothie": {
+        "title": "Zielone smoothie",
+        "description": "Odżywcze zielone smoothie ze szpinakiem i bananem.",
+        "steps": {
+          "1": "Wrzuć wszystkie składniki do blendera.",
+          "2": "Blenduj na najwyższych obrotach. Dodaj więcej płynu w razie potrzeby.",
+          "3": "Przelej do szklanki i podawaj natychmiast."
+        },
+        "ingredients": {
+          "1": "1 banan",
+          "2": "1 szklanka świeżego szpinaku",
+          "3": "½ szklanki mleka lub zamiennika roślinnego",
+          "4": "1 łyżka masła orzechowego"
+        }
+      },
+      "baked-apples-cinnamon": {
+        "title": "Pieczone jabłka z cynamonem",
+        "description": "Ciepłe jabłka z kruszonką owsianą i cynamonem.",
+        "steps": {
+          "1": "Rozgrzej piekarnik do 180°C. Wydrąż jabłka i ułóż w naczyniu.",
+          "2": "Wymieszaj płatki, cynamon, miód i odrobinę masła.",
+          "3": "Nadziej jabłka mieszanką i piecz 25 minut.",
+          "4": "Podawaj ciepłe, opcjonalnie z łyżką jogurtu."
+        },
+        "ingredients": {
+          "1": "2 średnie jabłka",
+          "2": "2 łyżki płatków owsianych",
+          "3": "1 łyżeczka cynamonu",
+          "4": "1 łyżeczka miodu",
+          "5": "1 łyżeczka masła"
+        }
+      }
     }
   },
   "achievements": {
