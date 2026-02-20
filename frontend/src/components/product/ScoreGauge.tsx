@@ -140,7 +140,7 @@ export const ScoreGauge = React.memo(function ScoreGauge({
             strokeDasharray={dashArray}
             strokeDashoffset={circumference * 0.25}
             strokeLinecap="round"
-            className="transition-[stroke-dasharray] duration-500 ease-out"
+            className="transition-[stroke-dasharray] duration-slow ease-decelerate"
             data-testid="gauge-arc"
           />
         )}

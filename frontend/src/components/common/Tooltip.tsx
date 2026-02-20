@@ -53,7 +53,7 @@ export function Tooltip({
         className={[
           "pointer-events-none absolute z-50 whitespace-nowrap rounded-md px-2.5 py-1.5 text-xs font-medium",
           "bg-surface-overlay text-foreground shadow-md border border-strong",
-          "opacity-0 transition-opacity duration-150",
+          "opacity-0 transition-opacity duration-fast",
           "group-hover:opacity-100 group-focus-within:opacity-100",
           POSITION_CLASSES[side],
         ].join(" ")}

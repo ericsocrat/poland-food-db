@@ -39,7 +39,7 @@ export function ConcernBadge({
         <ChevronDown
           size={12}
           aria-hidden="true"
-          className={`transition-transform duration-150 ${expanded ? "rotate-180" : ""}`}
+          className={`transition-transform duration-fast ${expanded ? "rotate-180" : ""}`}
         />
       )}
     </span>

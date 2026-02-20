@@ -630,7 +630,7 @@ function ProductRow({
   if (viewMode === "grid") {
     return (
       <li
-        className={`card flex flex-col gap-3 transition-all duration-150 hover:shadow-md hover:-translate-y-0.5 ${
+        className={`card flex flex-col gap-3 transition-all duration-fast hover:shadow-md hover:-translate-y-0.5 ${
           product.is_avoided ? "opacity-50" : ""
         }`}
       >
@@ -687,7 +687,7 @@ function ProductRow({
   // ── List row (default) ────────────────────────────────────────────────────
   return (
     <li
-      className={`card hover-lift-press flex items-center gap-3 transition-all duration-150 hover:shadow-md ${
+      className={`card hover-lift-press flex items-center gap-3 transition-all duration-fast hover:shadow-md ${
         product.is_avoided ? "opacity-50" : ""
       }`}
     >

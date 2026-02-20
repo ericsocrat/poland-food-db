@@ -319,7 +319,7 @@ describe("ListsPage", () => {
 
     const card = screen.getByText("Favorites").closest(".card")!;
     expect(card.className).toContain("transition-all");
-    expect(card.className).toContain("duration-150");
+    expect(card.className).toContain("duration-fast");
   });
 
   // ── Preview thumbnails & health summary (§3.3) ───────────────────────────

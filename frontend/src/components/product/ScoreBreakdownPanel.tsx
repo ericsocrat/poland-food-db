@@ -90,7 +90,7 @@ export function ScoreBreakdownPanel({
             {score}/100 — {scoreBand}
           </span>
           <svg
-            className={`h-4 w-4 text-foreground-muted transition-transform duration-200 ${
+            className={`h-4 w-4 text-foreground-muted transition-transform duration-normal ${
               isOpen ? "rotate-180" : ""
             }`}
             viewBox="0 0 20 20"
@@ -149,7 +149,7 @@ function BreakdownContent({
               </div>
               <div className="h-1.5 w-full rounded-full bg-surface-muted">
                 <div
-                  className={`h-1.5 rounded-full transition-all duration-300 ${getFactorColor(f.raw)}`}
+                  className={`h-1.5 rounded-full transition-all duration-slow ${getFactorColor(f.raw)}`}
                   style={{ width: `${Math.min(f.raw, 100)}%` }}
                   role="progressbar"
                   aria-label={`${f.factor}: ${f.raw}/100`}
