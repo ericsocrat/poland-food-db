@@ -143,7 +143,13 @@
     "popularSearches": "Popular Searches",
     "suggestions": "Suggestions",
     "whyThisScore": "Why this score?",
-    "noMajorFlags": "No major health flags detected."
+    "noMajorFlags": "No major health flags detected.",
+    "didYouMean": "Did you mean",
+    "noResultsSuggestions": "You could also try:",
+    "tryFewerFilters": "Try fewer filters",
+    "checkSpelling": "Check spelling (including Polish diacritical marks)",
+    "browseCategories": "Browse categories instead",
+    "scanBarcode": "Scan a barcode for an exact match"
   },
   "filters": {
     "sortBy": "Sort by",

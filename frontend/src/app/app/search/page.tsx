@@ -21,6 +21,7 @@ import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
 import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
+import { DidYouMean } from "@/components/search/DidYouMean";
 import { EmptyState } from "@/components/common/EmptyState";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -87,7 +88,9 @@ export default function SearchPage() {
   const [showAutocomplete, setShowAutocomplete] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [showSaveDialog, setShowSaveDialog] = useState(false);
-  const [autocompleteActiveId, setAutocompleteActiveId] = useState<string | undefined>(undefined);
+  const [autocompleteActiveId, setAutocompleteActiveId] = useState<
+    string | undefined
+  >(undefined);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
@@ -219,7 +222,9 @@ export default function SearchPage() {
               aria-expanded={showAutocomplete}
               aria-controls="search-autocomplete-listbox"
               aria-autocomplete="list"
-              aria-activedescendant={showAutocomplete ? autocompleteActiveId : undefined}
+              aria-activedescendant={
+                showAutocomplete ? autocompleteActiveId : undefined
+              }
               className="input-field pl-10 pr-10"
               autoFocus
             />
@@ -458,21 +463,67 @@ export default function SearchPage() {
             </div>
 
             {data.results.length === 0 ? (
-              <EmptyState
-                variant="no-results"
-                titleKey={
-                  data.query ? "search.noMatchSearch" : "search.noMatchFilters"
-                }
-                descriptionKey="search.adjustFilters"
-                action={
-                  hasActiveFilters(filters)
-                    ? {
-                        labelKey: "search.clearAllFilters",
-                        onClick: () => setFilters({}),
-                      }
-                    : undefined
-                }
-              />
+              <div className="space-y-4" data-testid="zero-results">
+                <EmptyState
+                  variant="no-results"
+                  titleKey={
+                    data.query
+                      ? "search.noMatchSearch"
+                      : "search.noMatchFilters"
+                  }
+                  descriptionKey="search.adjustFilters"
+                  action={
+                    hasActiveFilters(filters)
+                      ? {
+                          labelKey: "search.clearAllFilters",
+                          onClick: () => setFilters({}),
+                        }
+                      : undefined
+                  }
+                />
+
+                {/* "Did you mean?" fuzzy suggestions (#62) */}
+                {data.query && (
+                  <DidYouMean
+                    query={data.query}
+                    onSuggestionClick={(suggestion) => {
+                      setQuery(suggestion);
+                      setSubmittedQuery(suggestion);
+                    }}
+                  />
+                )}
+
+                {/* Helpful tips for zero-results (#62) */}
+                <div className="rounded-lg border bg-surface p-4">
+                  <p className="mb-2 text-sm font-medium text-foreground-secondary">
+                    {t("search.noResultsSuggestions")}
+                  </p>
+                  <ul className="space-y-1.5 text-sm text-foreground-muted">
+                    {hasActiveFilters(filters) && (
+                      <li>• {t("search.tryFewerFilters")}</li>
+                    )}
+                    <li>• {t("search.checkSpelling")}</li>
+                    <li>
+                      •{" "}
+                      <Link
+                        href="/app/categories"
+                        className="text-brand hover:text-brand-hover hover:underline"
+                      >
+                        {t("search.browseCategories")}
+                      </Link>
+                    </li>
+                    <li>
+                      •{" "}
+                      <Link
+                        href="/app/scan"
+                        className="text-brand hover:text-brand-hover hover:underline"
+                      >
+                        {t("search.scanBarcode")}
+                      </Link>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             ) : (
               <>
                 <ul

@@ -103,6 +103,25 @@ vi.mock("@/components/common/NovaBadge", () => ({
   ),
 }));
 
+vi.mock("@/components/search/DidYouMean", () => ({
+  DidYouMean: ({
+    query,
+    onSuggestionClick,
+  }: {
+    query: string;
+    onSuggestionClick: (s: string) => void;
+  }) => (
+    <div data-testid="did-you-mean">
+      <button
+        data-testid="did-you-mean-click"
+        onClick={() => onSuggestionClick("suggested")}
+      >
+        {query}
+      </button>
+    </div>
+  ),
+}));
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -357,6 +376,29 @@ describe("SearchPage", () => {
         screen.getByText(/No products match your search/),
       ).toBeInTheDocument();
     });
+  });
+
+  it("shows DidYouMean and helpful tips on zero results", async () => {
+    mockSearchProducts.mockResolvedValue(
+      makeSearchResponse({ total: 0, results: [], query: "mlkeo" }),
+    );
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+    await user.type(screen.getByPlaceholderText("Search products…"), "mlkeo");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("zero-results")).toBeInTheDocument();
+    });
+
+    // DidYouMean component is rendered (mocked)
+    expect(screen.getByTestId("did-you-mean")).toBeInTheDocument();
+
+    // Helpful tips are rendered
+    expect(screen.getByText(/You could also try/)).toBeInTheDocument();
+    expect(screen.getByText(/Browse categories/)).toBeInTheDocument();
+    expect(screen.getByText(/Scan a barcode/)).toBeInTheDocument();
   });
 
   it("renders show avoided toggle", () => {
@@ -846,7 +888,9 @@ describe("SearchPage", () => {
     });
 
     // Grid cards should show action buttons (multiple products in results)
-    expect(screen.getAllByTestId("health-warning-badge").length).toBeGreaterThan(0);
+    expect(
+      screen.getAllByTestId("health-warning-badge").length,
+    ).toBeGreaterThan(0);
     expect(screen.getAllByTestId("avoid-badge").length).toBeGreaterThan(0);
   });
 });

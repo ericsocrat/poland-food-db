@@ -33,6 +33,76 @@ const POPULAR_SEARCHES = [
   "sok",
 ];
 
+// ─── Text highlight helper (#62) ────────────────────────────────────────────
+
+/**
+ * Highlights matching portions of `text` that match `query`.
+ * Diacritic-insensitive: "zol" highlights "żół" in "Ser Żółty".
+ * Returns JSX with <mark> tags around matched segments.
+ */
+function HighlightMatch({ text, query }: { text: string; query: string }) {
+  if (!query || query.length < 1) return <>{text}</>;
+
+  // Normalize both strings for comparison (strip diacritics, lowercase)
+  const normalize = (s: string) =>
+    s
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/ł/g, "l")
+      .replace(/Ł/g, "L")
+      .toLowerCase();
+
+  const normalizedText = normalize(text);
+  const normalizedQuery = normalize(query);
+
+  // Find all non-overlapping match positions
+  const parts: { start: number; end: number; isMatch: boolean }[] = [];
+  let searchFrom = 0;
+  let lastEnd = 0;
+
+  while (searchFrom <= normalizedText.length - normalizedQuery.length) {
+    const idx = normalizedText.indexOf(normalizedQuery, searchFrom);
+    if (idx === -1) break;
+
+    if (idx > lastEnd) {
+      parts.push({ start: lastEnd, end: idx, isMatch: false });
+    }
+    parts.push({
+      start: idx,
+      end: idx + normalizedQuery.length,
+      isMatch: true,
+    });
+    lastEnd = idx + normalizedQuery.length;
+    searchFrom = lastEnd;
+  }
+
+  if (lastEnd < text.length) {
+    parts.push({ start: lastEnd, end: text.length, isMatch: false });
+  }
+
+  // No match found — return original text
+  if (parts.length === 0 || !parts.some((p) => p.isMatch)) {
+    return <>{text}</>;
+  }
+
+  return (
+    <>
+      {parts.map((part) =>
+        part.isMatch ? (
+          <mark
+            key={part.start}
+            className="bg-brand/20 text-foreground rounded-sm"
+          >
+            {text.slice(part.start, part.end)}
+          </mark>
+        ) : (
+          <span key={part.start}>{text.slice(part.start, part.end)}</span>
+        ),
+      )}
+    </>
+  );
+}
+
 interface SearchAutocompleteProps {
   query: string;
   onSelect: (product: AutocompleteSuggestion) => void;
@@ -389,7 +459,10 @@ export function SearchAutocomplete({
                     {/* Product info */}
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium text-foreground">
-                        {s.product_name_display ?? s.product_name}
+                        <HighlightMatch
+                          text={s.product_name_display ?? s.product_name}
+                          query={query}
+                        />
                       </p>
                       <p className="truncate text-xs text-foreground-secondary">
                         {s.brand} · {s.category}
