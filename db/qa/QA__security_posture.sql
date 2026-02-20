@@ -124,7 +124,8 @@ WHERE n.nspname = 'public'
     'api_track_event',              -- fire-and-forget analytics (anon + auth)
     'api_get_product_profile',      -- public product lookup
     'api_get_product_profile_by_ean', -- public EAN lookup
-    'api_get_ingredient_profile'    -- public ingredient lookup
+    'api_get_ingredient_profile',   -- public ingredient lookup
+    'api_get_score_history'         -- public score history
   );
 
 -- 10. anon cannot EXECUTE internal computation functions

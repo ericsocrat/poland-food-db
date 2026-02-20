@@ -291,6 +291,7 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION api_watch_product(bigint, smallint) TO authenticated;
+REVOKE EXECUTE ON FUNCTION api_watch_product(bigint, smallint) FROM PUBLIC, anon;
 
 
 -- 5c) api_unwatch_product — remove product from user's watchlist
@@ -325,6 +326,7 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION api_unwatch_product(bigint) TO authenticated;
+REVOKE EXECUTE ON FUNCTION api_unwatch_product(bigint) FROM PUBLIC, anon;
 
 
 -- 5d) api_get_watchlist — paginated list of watched products with latest score + trend
@@ -463,6 +465,7 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION api_get_watchlist(int, int) TO authenticated;
+REVOKE EXECUTE ON FUNCTION api_get_watchlist(int, int) FROM PUBLIC, anon;
 
 
 -- 5e) api_is_watching — check if current user watches a specific product
@@ -496,3 +499,4 @@ END;
 $$;
 
 GRANT EXECUTE ON FUNCTION api_is_watching(bigint) TO authenticated;
+REVOKE EXECUTE ON FUNCTION api_is_watching(bigint) FROM PUBLIC, anon;

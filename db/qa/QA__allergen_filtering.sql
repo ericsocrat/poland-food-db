@@ -37,10 +37,9 @@ WHERE EXISTS (
 );
 
 -- ─── Auth setup for treat_may_contain test (check 3) ───────────────────────
-CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
-LANGUAGE sql STABLE AS $fn$
-    SELECT '00000000-0000-0000-0000-000000000097'::uuid;
-$fn$;
+-- Use set_config to inject JWT claims so auth.uid() works inside SECURITY DEFINER.
+SELECT set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-000000000097"}', false);
 
 INSERT INTO user_preferences (user_id, avoid_allergens, treat_may_contain_as_unsafe)
 VALUES ('00000000-0000-0000-0000-000000000097'::uuid, ARRAY['en:gluten'], true)
@@ -67,13 +66,7 @@ WHERE EXISTS (
 DELETE FROM user_preferences
 WHERE user_id = '00000000-0000-0000-0000-000000000097'::uuid;
 
-CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
-LANGUAGE sql STABLE AS $fn$
-    SELECT NULLIF(
-        current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
-        ''
-    )::uuid;
-$fn$;
+SELECT set_config('request.jwt.claims', '', false);
 
 -- 4. Allergen filter works on category listing
 SELECT '4. allergen filter excludes from category listing' AS check_name,

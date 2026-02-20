@@ -8,10 +8,10 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ─── Auth setup for diet filtering (checks 1–3) ────────────────────────────
-CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
-LANGUAGE sql STABLE AS $fn$
-    SELECT '00000000-0000-0000-0000-000000000098'::uuid;
-$fn$;
+-- Use set_config to inject JWT claims so that auth.uid() returns the test UUID
+-- inside SECURITY DEFINER functions (more reliable than replacing auth.uid()).
+SELECT set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-000000000098"}', false);
 
 INSERT INTO user_preferences (user_id, diet_preference, strict_diet, country)
 VALUES ('00000000-0000-0000-0000-000000000098'::uuid, 'vegan', false, 'PL')
@@ -68,13 +68,7 @@ WHERE m.vegan_status != 'yes';
 DELETE FROM user_preferences
 WHERE user_id = '00000000-0000-0000-0000-000000000098'::uuid;
 
-CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
-LANGUAGE sql STABLE AS $fn$
-    SELECT NULLIF(
-        current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
-        ''
-    )::uuid;
-$fn$;
+SELECT set_config('request.jwt.claims', '', false);
 
 -- 4. Vegan filter works on category listing
 SELECT '4. vegan filter excludes non-vegan from category listing' AS check_name,
