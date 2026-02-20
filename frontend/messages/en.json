@@ -50,6 +50,7 @@
     "offline": "You're offline — some features may be unavailable",
     "installTitle": "Install FoodDB",
     "installDescription": "Add to your home screen for quick access and offline support.",
+    "iosInstallHint": "Tap the Share button, then \"Add to Home Screen\".",
     "dismissInstall": "Dismiss install prompt"
   },
   "dashboard": {

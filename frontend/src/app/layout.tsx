@@ -26,9 +26,18 @@ export const metadata: Metadata = {
     title: "FoodDB",
   },
   icons: {
-    icon: [{ url: "/icons/icon-192.svg", type: "image/svg+xml", sizes: "any" }],
+    icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
+      { url: "/icons/icon-192.svg", type: "image/svg+xml", sizes: "any" },
+      { url: "/icons/icon-192.png", type: "image/png", sizes: "192x192" },
+      { url: "/icons/icon-512.png", type: "image/png", sizes: "512x512" },
+    ],
     apple: [
-      { url: "/icons/icon-192.svg", type: "image/svg+xml", sizes: "192x192" },
+      {
+        url: "/icons/apple-touch-icon.png",
+        type: "image/png",
+        sizes: "180x180",
+      },
     ],
   },
   openGraph: {
@@ -41,7 +50,7 @@ export const metadata: Metadata = {
     url: "https://poland-food-db.vercel.app",
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Poland Food DB",
     description:
       "Compare health scores and nutritional data for food products in Poland and Germany.",

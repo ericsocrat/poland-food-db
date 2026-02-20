@@ -74,6 +74,22 @@ describe("Icon Assets", () => {
     expect(content).toContain("<svg");
     expect(content).toContain('width="512"');
   });
+
+  it("raster PNG icons exist", () => {
+    for (const name of [
+      "icon-16.png",
+      "icon-32.png",
+      "icon-192.png",
+      "icon-512.png",
+      "apple-touch-icon.png",
+    ]) {
+      expect(existsSync(join(publicDir, "icons", name))).toBe(true);
+    }
+  });
+
+  it("favicon.ico exists in public root", () => {
+    expect(existsSync(join(publicDir, "favicon.ico"))).toBe(true);
+  });
 });
 
 /* ────────────────────── Root metadata (layout.tsx) ────────────────────── */
@@ -98,7 +114,7 @@ describe("Root Layout Metadata", () => {
 
   it("includes twitter defaults", () => {
     expect(layoutSrc).toContain("twitter:");
-    expect(layoutSrc).toContain('card: "summary"');
+    expect(layoutSrc).toContain('card: "summary_large_image"');
   });
 
   it("sets robots metadata", () => {
