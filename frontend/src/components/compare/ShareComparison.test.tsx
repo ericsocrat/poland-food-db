@@ -86,7 +86,8 @@ describe("ShareComparison", () => {
     renderComponent();
     fireEvent.click(screen.getByText("Copy URL"));
     await waitFor(() => {
-      expect(screen.getByText("✓ Copied!")).toBeTruthy();
+      // Check icon + "Copied!" text (Lucide Check replaces ✓)
+      expect(screen.getByText("Copied!")).toBeTruthy();
     });
   });
 });

@@ -29,4 +29,13 @@ describe("ErrorPage", () => {
     expect(spy).not.toHaveBeenCalled();
     spy.mockRestore();
   });
+
+  it("renders AlertTriangle icon", () => {
+    const { container } = render(
+      <ErrorPage error={new Error("test")} reset={vi.fn()} />,
+    );
+    const svg = container.querySelector("svg");
+    expect(svg).toBeTruthy();
+    expect(svg?.getAttribute("aria-hidden")).toBe("true");
+  });
 });

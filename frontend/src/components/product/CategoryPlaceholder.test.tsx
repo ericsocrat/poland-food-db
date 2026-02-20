@@ -45,4 +45,25 @@ describe("CategoryPlaceholder", () => {
     expect(el.className).toContain("h-16");
     expect(el.className).toContain("w-16");
   });
+
+  it("renders Lucide icon when categorySlug is provided", () => {
+    const { container } = render(
+      <CategoryPlaceholder icon="🧀" productName="Cheese" categorySlug="dairy" />,
+    );
+    // Lucide icon renders as SVG instead of emoji text
+    expect(container.querySelector("svg")).toBeTruthy();
+    expect(container.textContent).not.toContain("🧀");
+  });
+
+  it("falls back to emoji when categorySlug is not recognized", () => {
+    render(
+      <CategoryPlaceholder icon="🍕" productName="Pizza" categorySlug="unknown-category" />,
+    );
+    expect(screen.getByText("🍕")).toBeTruthy();
+  });
+
+  it("falls back to emoji when categorySlug is omitted", () => {
+    render(<CategoryPlaceholder icon="🍕" productName="Pizza" />);
+    expect(screen.getByText("🍕")).toBeTruthy();
+  });
 });

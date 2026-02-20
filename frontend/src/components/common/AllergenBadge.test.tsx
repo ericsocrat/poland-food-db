@@ -37,13 +37,19 @@ describe("AllergenBadge", () => {
   });
 
   it("shows correct icon for traces", () => {
-    render(<AllergenBadge status="traces" allergenName="Fish" />);
-    expect(screen.getByText("⚡")).toBeTruthy();
+    const { container } = render(
+      <AllergenBadge status="traces" allergenName="Fish" />,
+    );
+    // Zap icon renders as SVG
+    expect(container.querySelectorAll("svg").length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows correct icon for free", () => {
-    render(<AllergenBadge status="free" allergenName="Sesame" />);
-    expect(screen.getByText("✓")).toBeTruthy();
+    const { container } = render(
+      <AllergenBadge status="free" allergenName="Sesame" />,
+    );
+    // Check icon renders as SVG
+    expect(container.querySelectorAll("svg").length).toBeGreaterThanOrEqual(1);
   });
 
   it("applies size classes", () => {

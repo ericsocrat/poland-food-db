@@ -77,7 +77,9 @@ describe("RegionStep", () => {
 
   it("shows checkmark for selected country", () => {
     renderStep({ country: "PL", language: "pl" });
-    expect(screen.getByText("✓")).toBeInTheDocument();
+    // Check icon renders as SVG (Lucide)
+    const checkSpan = document.querySelector(".text-brand svg");
+    expect(checkSpan).toBeTruthy();
   });
 
   it("shows language selector after country selection", () => {

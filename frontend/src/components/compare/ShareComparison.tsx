@@ -5,7 +5,7 @@
 import { useState } from "react";
 import { useSaveComparison } from "@/hooks/use-compare";
 import { useTranslation } from "@/lib/i18n";
-import { ClipboardCopy, Save, Link2 } from "lucide-react";
+import { ClipboardCopy, Save, Link2, Check } from "lucide-react";
 
 interface ShareComparisonProps {
   productIds: number[];
@@ -64,7 +64,7 @@ export function ShareComparison({
         className="btn-secondary text-sm"
       >
         {copied && !shareToken ? (
-          "✓ Copied!"
+          <span className="inline-flex items-center gap-1"><Check size={14} aria-hidden="true" /> Copied!</span>
         ) : (
           <span className="inline-flex items-center gap-1">
             <ClipboardCopy size={14} aria-hidden="true" />{" "}
@@ -100,7 +100,7 @@ export function ShareComparison({
           className="btn-primary text-sm"
         >
           {copied ? (
-            "✓ Copied!"
+            <span className="inline-flex items-center gap-1"><Check size={14} aria-hidden="true" /> Copied!</span>
           ) : (
             <>
               <Link2 size={14} aria-hidden="true" className="inline" />{" "}

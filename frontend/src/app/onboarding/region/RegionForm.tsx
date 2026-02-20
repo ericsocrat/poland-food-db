@@ -8,6 +8,7 @@ import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { setUserPreferences } from "@/lib/api";
 import { COUNTRIES } from "@/lib/constants";
+import { Check } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
 export function RegionForm() {
@@ -67,7 +68,7 @@ export function RegionForm() {
               <p className="text-sm text-foreground-secondary">{country.native}</p>
             </div>
             {selected === country.code && (
-              <span className="ml-auto text-brand">✓</span>
+              <span className="ml-auto text-brand"><Check size={20} /></span>
             )}
           </button>
         ))}
