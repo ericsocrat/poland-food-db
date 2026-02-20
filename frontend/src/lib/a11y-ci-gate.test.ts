@@ -7,6 +7,7 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 
 const ROOT = join(__dirname, "../..");
+const SRC = join(ROOT, "src");
 const E2E = join(ROOT, "e2e");
 const HELPERS = join(E2E, "helpers");
 
@@ -23,6 +24,18 @@ describe("A11y CI Gate — file existence", () => {
     {
       name: "authenticated a11y spec",
       path: join(E2E, "authenticated-a11y.spec.ts"),
+    },
+    {
+      name: "component a11y helper",
+      path: join(SRC, "utils", "test", "a11y.ts"),
+    },
+    {
+      name: "component a11y helper tests",
+      path: join(SRC, "utils", "test", "a11y.test.tsx"),
+    },
+    {
+      name: "component a11y test suite",
+      path: join(SRC, "lib", "component-a11y.test.tsx"),
     },
   ];
 
@@ -97,6 +110,88 @@ describe("A11y helper — e2e/helpers/a11y.ts", () => {
   it("includes WCAG references in violation output", () => {
     expect(src).toContain("wcag");
     expect(src).toContain("helpUrl");
+  });
+});
+
+/* ── Component a11y helper patterns ──────────────────────────────────────── */
+
+describe("Component a11y helper — src/utils/test/a11y.ts", () => {
+  const src = readFile(join(SRC, "utils", "test", "a11y.ts"));
+
+  it("imports from vitest-axe", () => {
+    expect(src).toContain("vitest-axe");
+  });
+
+  it("imports from @testing-library/react", () => {
+    expect(src).toContain("@testing-library/react");
+  });
+
+  it("exports assertComponentA11y", () => {
+    expect(src).toContain("export async function assertComponentA11y");
+  });
+
+  it("exports auditComponentA11y", () => {
+    expect(src).toContain("export async function auditComponentA11y");
+  });
+
+  it("extends expect with toHaveNoViolations via setup file", () => {
+    const setup = readFile(join(SRC, "__tests__", "setup.ts"));
+    expect(setup).toContain("vitest-axe/extend-expect");
+    expect(src).toContain("toHaveNoViolations");
+  });
+
+  it("uses render from testing-library", () => {
+    expect(src).toContain("render");
+  });
+
+  it("accepts axe-core run options", () => {
+    expect(src).toContain("axeOptions");
+    expect(src).toContain("RunOptions");
+  });
+});
+
+/* ── Component a11y test suite patterns ──────────────────────────────────── */
+
+describe("Component a11y test suite — src/lib/component-a11y.test.tsx", () => {
+  const src = readFile(join(SRC, "lib", "component-a11y.test.tsx"));
+
+  it("imports assertComponentA11y from helper", () => {
+    expect(src).toContain("assertComponentA11y");
+    expect(src).toContain("@/utils/test/a11y");
+  });
+
+  it("tests Button component", () => {
+    expect(src).toContain("Button");
+    expect(src).toContain("primary button passes axe");
+  });
+
+  it("tests ScoreBadge component", () => {
+    expect(src).toContain("ScoreBadge");
+    expect(src).toContain("score badge");
+  });
+
+  it("tests FormField component", () => {
+    expect(src).toContain("FormField");
+    expect(src).toContain("form field");
+  });
+
+  it("tests all Button variants", () => {
+    expect(src).toContain("secondary");
+    expect(src).toContain("ghost");
+    expect(src).toContain("danger");
+  });
+
+  it("tests label-input association", () => {
+    expect(src).toContain("htmlFor");
+    expect(src).toContain("aria-describedby");
+  });
+
+  it("tests aria-invalid on error state", () => {
+    expect(src).toContain("aria-invalid");
+  });
+
+  it("tests aria-required on required state", () => {
+    expect(src).toContain("aria-required");
   });
 });
 
@@ -260,6 +355,15 @@ describe("Package.json — a11y dependencies", () => {
     const deps = pkg.dependencies ?? {};
     expect(deps).not.toHaveProperty("@axe-core/playwright");
     expect(deps).not.toHaveProperty("axe-core");
+  });
+
+  it("has vitest-axe as devDependency (Phase 4 — component-level testing)", () => {
+    expect(pkg.devDependencies).toHaveProperty("vitest-axe");
+  });
+
+  it("vitest-axe is devDependency only (not in dependencies)", () => {
+    const deps = pkg.dependencies ?? {};
+    expect(deps).not.toHaveProperty("vitest-axe");
   });
 });
 
