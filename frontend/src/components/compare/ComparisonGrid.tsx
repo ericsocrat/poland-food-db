@@ -9,7 +9,7 @@ import { useState, useRef, useCallback, useEffect } from "react";
 import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { useTranslation } from "@/lib/i18n";
-import { Scale, Trophy } from "lucide-react";
+import { Scale, Trophy, Check, X as XIcon } from "lucide-react";
 import type { CompareProduct, CellValue } from "@/lib/types";
 import {
   fmtUnit,
@@ -522,8 +522,8 @@ function MobileSwipeView({
                   </span>
                   <span className={`text-sm ${indicator || "text-foreground"}`}>
                     {formatted}
-                    {ranking?.bestIdx === activeIdx && " ✓"}
-                    {ranking?.worstIdx === activeIdx && " ✗"}
+                    {ranking?.bestIdx === activeIdx && <Check size={14} className="inline ml-1 text-green-600" aria-hidden="true" />}
+                    {ranking?.worstIdx === activeIdx && <XIcon size={14} className="inline ml-1 text-red-600" aria-hidden="true" />}
                   </span>
                 </div>
               );

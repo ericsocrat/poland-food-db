@@ -33,4 +33,11 @@ describe("NotFound (404)", () => {
     const link = screen.getByText("Go home");
     expect(link.closest("a")).toHaveAttribute("href", "/");
   });
+
+  it("renders FileQuestion icon", () => {
+    const { container } = render(<NotFound />);
+    const svg = container.querySelector("svg");
+    expect(svg).toBeTruthy();
+    expect(svg?.getAttribute("aria-hidden")).toBe("true");
+  });
 });

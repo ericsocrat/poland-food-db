@@ -215,12 +215,13 @@ describe("HealthWarningBadge", () => {
     mockGetActiveHealthProfile.mockResolvedValue(ok(activeProfile));
     mockGetProductHealthWarnings.mockResolvedValue(ok(noWarnings));
 
-    render(<HealthWarningBadge productId={42} />, {
+    const { container } = render(<HealthWarningBadge productId={42} />, {
       wrapper: createWrapper(),
     });
 
     await waitFor(() => {
-      expect(screen.getByText("✓")).toBeInTheDocument();
+      // Check icon renders as SVG (Lucide)
+      expect(container.querySelector("svg")).toBeTruthy();
     });
     expect(screen.getByTitle("No health warnings")).toBeInTheDocument();
   });

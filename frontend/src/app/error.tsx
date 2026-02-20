@@ -4,6 +4,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
 export default function ErrorPage({
@@ -24,6 +25,7 @@ export default function ErrorPage({
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
+      <AlertTriangle size={48} className="mb-4 text-error" aria-hidden="true" />
       <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("error.somethingWrong")}
       </h1>

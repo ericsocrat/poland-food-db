@@ -44,6 +44,7 @@ import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { PrintButton } from "@/components/common/PrintButton";
 import { WatchButton } from "@/components/product/WatchButton";
 import { ScoreHistoryPanel } from "@/components/product/ScoreHistoryPanel";
+import { AlertTriangle, Check, Info, Globe } from "lucide-react";
 import type {
   ProductProfile,
   ProfileAlternative,
@@ -510,7 +511,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
                   className="rounded border border-red-200 bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700"
                   data-allergen-type="contains"
                 >
-                  ⚠ {tag.trim().replaceAll("en:", "")}
+                  <AlertTriangle size={12} className="inline -mt-0.5" aria-hidden="true" /> {tag.trim().replaceAll("en:", "")}
                 </span>
               ))}
           </div>
@@ -541,8 +542,8 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
             {t("product.allergens")}
           </h3>
-          <p className="text-sm text-green-600">
-            ✓ {t("product.noKnownAllergens")}
+          <p className="flex items-center gap-1 text-sm text-green-600">
+            <Check size={14} aria-hidden="true" /> {t("product.noKnownAllergens")}
           </p>
         </div>
       )}
@@ -552,13 +553,11 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
 
       {/* Eco-Score placeholder */}
       <div className="card">
-        <h3 className="mb-2 text-sm font-semibold text-foreground-secondary lg:text-base">
-          🌍 {t("product.ecoScoreTitle")}
+        <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground-secondary lg:text-base">
+          <Globe size={16} aria-hidden="true" /> {t("product.ecoScoreTitle")}
         </h3>
         <div className="flex items-center gap-2 rounded-lg border border-dashed border-blue-200 bg-blue-50/50 px-3 py-3">
-          <span className="text-lg" aria-hidden="true">
-            ℹ️
-          </span>
+          <Info size={18} className="flex-shrink-0 text-blue-600" aria-hidden="true" />
           <p className="text-sm text-blue-700">
             {t("product.ecoScoreComingSoon")}
           </p>

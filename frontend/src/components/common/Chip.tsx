@@ -6,6 +6,7 @@
  */
 
 import React, { type KeyboardEvent, type ReactNode } from "react";
+import { X } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -88,9 +89,7 @@ export const Chip = React.memo(function Chip({
           aria-label={removeLabel}
           className="ml-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
         >
-          <span aria-hidden="true" className="text-[10px] leading-none">
-            ✕
-          </span>
+          <X size={10} aria-hidden="true" />
         </button>
       )}
     </Tag>

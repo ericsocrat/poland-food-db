@@ -11,7 +11,7 @@
  */
 
 import React from "react";
-import { AlertTriangle } from "lucide-react";
+import { AlertTriangle, Check, Zap } from "lucide-react";
 import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -49,13 +49,13 @@ const STATUS_CONFIGS: Record<AllergenStatus, StatusConfig> = {
     srLabel: "Contains",
   },
   traces: {
-    icon: "⚡",
+    icon: <Zap size={12} />,
     bg: "bg-allergen-traces/10",
     text: "text-allergen-traces",
     srLabel: "May contain traces of",
   },
   free: {
-    icon: "✓",
+    icon: <Check size={12} />,
     bg: "bg-allergen-free/10",
     text: "text-allergen-free",
     srLabel: "Free from",

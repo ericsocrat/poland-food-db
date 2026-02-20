@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
 interface BeforeInstallPromptEvent extends Event {
@@ -110,7 +111,7 @@ export function InstallPrompt() {
           className="text-foreground-muted hover:text-foreground-secondary"
           aria-label={t("pwa.dismissInstall")}
         >
-          ✕
+          <X size={16} aria-hidden="true" />
         </button>
       </div>
 

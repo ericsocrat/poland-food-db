@@ -6,7 +6,7 @@
 import { useRouter } from "next/navigation";
 import { useCompareStore } from "@/stores/compare-store";
 import { useTranslation } from "@/lib/i18n";
-import { Scale } from "lucide-react";
+import { Scale, X } from "lucide-react";
 
 export function CompareFloatingButton() {
   const { t } = useTranslation();
@@ -31,7 +31,7 @@ export function CompareFloatingButton() {
         className="touch-target flex h-11 w-11 items-center justify-center rounded-full bg-surface-muted text-foreground-secondary shadow-md transition-colors hover:bg-surface-subtle"
         title={t("compare.clearSelection")}
       >
-        ✕
+        <X size={18} aria-hidden="true" />
       </button>
 
       {/* Compare button */}

@@ -3,6 +3,7 @@
 // ─── Step 2: Region + Language ──────────────────────────────────────────────
 
 import { COUNTRIES, getLanguagesForCountry } from "@/lib/constants";
+import { Check } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import type { StepProps } from "../types";
 
@@ -46,7 +47,7 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
               <p className="text-sm text-foreground-secondary">{country.native}</p>
             </div>
             {data.country === country.code && (
-              <span className="ml-auto text-brand">✓</span>
+              <span className="ml-auto text-brand"><Check size={20} /></span>
             )}
           </button>
         ))}

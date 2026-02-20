@@ -59,7 +59,9 @@ describe("RegionForm", () => {
 
     await user.click(screen.getByText("Poland"));
 
-    expect(screen.getByText("✓")).toBeInTheDocument();
+    // Check icon renders as SVG (Lucide)
+    const checkSpan = document.querySelector(".text-brand svg");
+    expect(checkSpan).toBeTruthy();
   });
 
   it("calls setUserPreferences with selected country on continue", async () => {

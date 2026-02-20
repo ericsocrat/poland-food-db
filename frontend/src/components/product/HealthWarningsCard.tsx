@@ -11,7 +11,7 @@ import { getProductHealthWarnings, getActiveHealthProfile } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { WARNING_SEVERITY, HEALTH_CONDITIONS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import { Ban, AlertTriangle, Info, Shield, CheckCircle } from "lucide-react";
+import { Ban, AlertTriangle, Info, Shield, CheckCircle, Check } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { HealthWarning, WarningSeverity } from "@/lib/types";
 
@@ -260,7 +260,7 @@ export function HealthWarningBadge({
           className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-success/15 text-xs text-success"
           title={t("healthWarnings.noWarnings")}
         >
-          ✓
+          <Check size={12} />
         </span>
       );
     }
