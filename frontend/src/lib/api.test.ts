@@ -58,6 +58,9 @@ import {
   recordProductView,
   getRecentlyViewed,
   getDashboardData,
+  // Recipes
+  browseRecipes,
+  getRecipeDetail,
 } from "@/lib/api";
 
 // ─── Mock the RPC layer ─────────────────────────────────────────────────────
@@ -792,5 +795,110 @@ describe("Dashboard API functions", () => {
     });
     await getDashboardData(fakeSupabase);
     expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_get_dashboard_data");
+  });
+});
+
+// ─── Recipes (#53) ──────────────────────────────────────────────────────────
+
+describe("Recipe API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("browseRecipes calls browse_recipes with p_country null and no filters", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await browseRecipes(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "browse_recipes", {
+      p_country: null,
+    });
+  });
+
+  it("browseRecipes passes category filter", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await browseRecipes(fakeSupabase, { category: "breakfast" });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "browse_recipes", {
+      p_category: "breakfast",
+      p_country: null,
+    });
+  });
+
+  it("browseRecipes passes difficulty filter", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await browseRecipes(fakeSupabase, { difficulty: "easy" });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "browse_recipes", {
+      p_difficulty: "easy",
+      p_country: null,
+    });
+  });
+
+  it("browseRecipes passes tag filter", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await browseRecipes(fakeSupabase, { tag: "high-protein" });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "browse_recipes", {
+      p_tag: "high-protein",
+      p_country: null,
+    });
+  });
+
+  it("browseRecipes passes maxTime filter", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await browseRecipes(fakeSupabase, { maxTime: 30 });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "browse_recipes", {
+      p_max_time: 30,
+      p_country: null,
+    });
+  });
+
+  it("browseRecipes passes limit and offset", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await browseRecipes(fakeSupabase, { limit: 10, offset: 20 });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "browse_recipes", {
+      p_limit: 10,
+      p_offset: 20,
+      p_country: null,
+    });
+  });
+
+  it("browseRecipes passes all filters together", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await browseRecipes(fakeSupabase, {
+      category: "dinner",
+      difficulty: "hard",
+      tag: "vegan",
+      maxTime: 60,
+      limit: 5,
+      offset: 10,
+    });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "browse_recipes", {
+      p_category: "dinner",
+      p_difficulty: "hard",
+      p_tag: "vegan",
+      p_max_time: 60,
+      p_limit: 5,
+      p_offset: 10,
+      p_country: null,
+    });
+  });
+
+  it("browseRecipes omits falsy filter values", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await browseRecipes(fakeSupabase, { category: undefined, difficulty: undefined });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "browse_recipes", {
+      p_country: null,
+    });
+  });
+
+  it("getRecipeDetail calls get_recipe_detail with slug", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { slug: "test-recipe" } });
+    await getRecipeDetail(fakeSupabase, "test-recipe");
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "get_recipe_detail", {
+      p_slug: "test-recipe",
+    });
+  });
+
+  it("getRecipeDetail returns null data when recipe not found", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: null });
+    const result = await getRecipeDetail(fakeSupabase, "non-existent");
+    expect(result).toEqual({ ok: true, data: null });
   });
 });

@@ -132,6 +132,19 @@ describe("queryKeys", () => {
   it("mySubmissions key for a page number", () => {
     expect(queryKeys.mySubmissions(1)).toEqual(["my-submissions", 1]);
   });
+
+  it("recipes key with no filters defaults to empty object", () => {
+    expect(queryKeys.recipes()).toEqual(["recipes", {}]);
+  });
+
+  it("recipes key with filters passes them through", () => {
+    const filters = { p_category: "breakfast" };
+    expect(queryKeys.recipes(filters)).toEqual(["recipes", filters]);
+  });
+
+  it("recipe key for a given slug", () => {
+    expect(queryKeys.recipe("oatmeal-bowl")).toEqual(["recipe", "oatmeal-bowl"]);
+  });
 });
 
 // ─── staleTimes ─────────────────────────────────────────────────────────────
@@ -193,6 +206,14 @@ describe("staleTimes", () => {
 
   it("mySubmissions is 5 minutes", () => {
     expect(staleTimes.mySubmissions).toBe(5 * 60 * 1000);
+  });
+
+  it("recipes is 10 minutes", () => {
+    expect(staleTimes.recipes).toBe(10 * 60 * 1000);
+  });
+
+  it("recipe is 10 minutes", () => {
+    expect(staleTimes.recipe).toBe(10 * 60 * 1000);
   });
 
   it("has the same keys as queryKeys (completeness check)", () => {
