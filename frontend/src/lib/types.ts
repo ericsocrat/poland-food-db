@@ -1118,3 +1118,81 @@ export interface DashboardInsights {
   allergen_alerts: DashboardAllergenAlerts;
   recent_comparisons: DashboardRecentComparison[];
 }
+
+// ─── Score History & Watchlist (#38) ─────────────────────────────────────────
+
+export interface ScoreHistoryEntry {
+  date: string;
+  score: number;
+  nutri_score: string | null;
+  nova_group: string | null;
+  completeness_pct: number | null;
+  delta: number | null;
+  source: "pipeline" | "manual" | "backfill";
+  reason: string | null;
+}
+
+export interface ScoreHistoryResponse {
+  product_id: number;
+  trend: ScoreTrend;
+  current_score: number | null;
+  previous_score: number | null;
+  delta: number;
+  reformulation_detected: boolean;
+  history: ScoreHistoryEntry[];
+  total_snapshots: number;
+}
+
+export interface WatchProductResponse {
+  success: boolean;
+  product_id: number;
+  threshold: number;
+  watching: boolean;
+  error?: string;
+}
+
+export interface UnwatchProductResponse {
+  success: boolean;
+  product_id: number;
+  watching: boolean;
+  was_watching: boolean;
+  error?: string;
+}
+
+export interface WatchlistSparklinePoint {
+  date: string;
+  score: number;
+}
+
+export interface WatchlistItem {
+  watch_id: number;
+  product_id: number;
+  alert_threshold: number;
+  watched_since: string;
+  product_name: string;
+  brand: string | null;
+  category: string | null;
+  current_score: number | null;
+  score_band: ScoreBand;
+  nutri_score: string | null;
+  nova_group: string | null;
+  last_delta: number | null;
+  trend: ScoreTrend;
+  reformulation_detected: boolean;
+  sparkline: WatchlistSparklinePoint[];
+}
+
+export interface WatchlistResponse {
+  success: boolean;
+  items: WatchlistItem[];
+  total: number;
+  page: number;
+  page_size: number;
+  total_pages: number;
+  error?: string;
+}
+
+export interface IsWatchingResponse {
+  watching: boolean;
+  threshold: number | null;
+}

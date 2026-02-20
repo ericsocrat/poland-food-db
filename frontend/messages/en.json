@@ -7,7 +7,8 @@
     "settings": "Settings",
     "compare": "Compare",
     "categories": "Categories",
-    "admin": "Admin"
+    "admin": "Admin",
+    "watchlist": "Watchlist"
   },
   "common": {
     "loading": "Loading…",
@@ -1151,5 +1152,37 @@
     "empty": "Add products to compare",
     "collapse": "Collapse comparison tray",
     "expand": "Expand comparison tray"
+  },
+  "watchlist": {
+    "title": "Watchlist",
+    "subtitle": "Products you are monitoring for score changes",
+    "loadError": "Could not load your watchlist. Please try again.",
+    "emptyTitle": "No watched products",
+    "emptyDescription": "Start watching products from their profile page to track score changes and reformulations over time.",
+    "browseProducts": "Browse Products",
+    "prevPage": "Previous page",
+    "nextPage": "Next page",
+    "pageIndicator": "Page {page} of {total}",
+    "watchButton": "Watch",
+    "unwatchButton": "Unwatch",
+    "loading": "Loading…",
+    "scoreHistory": "Score History",
+    "historyError": "Could not load score history.",
+    "noHistory": "No history data",
+    "noHistoryYet": "No score changes recorded yet.",
+    "trendLabel": "{trend} — {count} snapshots",
+    "snapshotCount": "{count} snapshots",
+    "historyDate": "Date",
+    "historyScore": "Score",
+    "historyDelta": "Change",
+    "historySource": "Source",
+    "scoreWorsened": "↑ {delta} worse",
+    "scoreImproved": "↓ {delta} better",
+    "reformulated": "Reformulated",
+    "trend": {
+      "improving": "Improving",
+      "worsening": "Worsening",
+      "stable": "Stable"
+    }
   }
 }

@@ -165,4 +165,4 @@ $$;
 
 -- Grant
 grant execute on function public.api_dashboard_insights() to authenticated;
-revoke execute on function public.api_dashboard_insights() from anon;
+revoke execute on function public.api_dashboard_insights() from PUBLIC, anon;

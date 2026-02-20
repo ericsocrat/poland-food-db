@@ -15,6 +15,7 @@ import {
   Search,
   Camera,
   ClipboardList,
+  Eye,
   Scale,
   FolderOpen,
   Settings,
@@ -46,6 +47,12 @@ const PRIMARY_ITEMS: readonly SidebarNavItem[] = [
     labelKey: "nav.lists",
     icon: ClipboardList,
     routeKey: "lists",
+  },
+  {
+    href: "/app/watchlist",
+    labelKey: "nav.watchlist",
+    icon: Eye,
+    routeKey: "watchlist",
   },
   {
     href: "/app/compare",
@@ -83,10 +90,7 @@ export function DesktopSidebar() {
     >
       {/* Logo */}
       <div className="flex h-14 items-center px-5">
-        <Link
-          href="/app"
-          className="text-lg font-bold text-brand"
-        >
+        <Link href="/app" className="text-lg font-bold text-brand">
           {t("layout.appNameWithEmoji")}
         </Link>
       </div>

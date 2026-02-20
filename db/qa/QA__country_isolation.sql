@@ -5,13 +5,13 @@
 -- 11 checks.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
--- 1. api_search_products with p_country returns only that country's products
+-- 1. api_search_products with country filter returns only that country's products
 SELECT '1. search with country filter returns only PL products' AS check_name,
        COUNT(*) AS violations
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('ch', NULL, 100, 0, 'PL')->'results'
+        api_search_products('ch', '{"country":"PL"}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 JOIN products p ON p.product_id = search_results.pid::bigint
@@ -87,7 +87,7 @@ SELECT '7. resolve_effective_country(NULL) returns valid active country without 
 -- 8. search with explicit country still works (no tier-3 needed)
 SELECT '8. search with explicit country returns that country' AS check_name,
        CASE WHEN (
-           api_search_products('ch', NULL, 5, 0, 'PL')
+           api_search_products('ch', '{"country":"PL"}'::jsonb, 1, 5)
        )->>'country' = 'PL'
        THEN 0 ELSE 1 END AS violations;
 
@@ -117,11 +117,13 @@ SELECT '10. EAN with explicit country returns that country' AS check_name,
 --     silently (psql runs without ON_ERROR_STOP).
 -- ═══════════════════════════════════════════════════════════════════════════════
 
--- Setup: override auth.uid() to return the test user UUID
-CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
-LANGUAGE sql STABLE AS $fn$
-    SELECT '00000000-0000-0000-0000-000000000099'::uuid;
-$fn$;
+-- Setup: inject JWT claims and ensure test user exists in auth.users
+SELECT set_config('request.jwt.claims',
+    '{"sub":"00000000-0000-0000-0000-000000000099"}', false);
+
+INSERT INTO auth.users (id)
+VALUES ('00000000-0000-0000-0000-000000000099'::uuid)
+ON CONFLICT DO NOTHING;
 
 -- Single-statement: INSERT + verify in one transaction
 WITH ensure_row AS (
@@ -134,14 +136,12 @@ SELECT '11. auth user with DE pref search resolves country=DE' AS check_name,
        CASE WHEN (SELECT country FROM ensure_row) = 'DE'
        THEN 0 ELSE 1 END AS violations;
 
--- Teardown: remove test user, restore original auth.uid() stub
+-- Teardown: remove test user, restore JWT
+DELETE FROM user_product_lists
+WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
 DELETE FROM user_preferences
 WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
+DELETE FROM auth.users
+WHERE id = '00000000-0000-0000-0000-000000000099'::uuid;
 
-CREATE OR REPLACE FUNCTION auth.uid() RETURNS uuid
-LANGUAGE sql STABLE AS $fn$
-    SELECT NULLIF(
-        current_setting('request.jwt.claims', true)::jsonb ->> 'sub',
-        ''
-    )::uuid;
-$fn$;
+SELECT set_config('request.jwt.claims', '', false);

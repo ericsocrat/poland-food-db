@@ -213,14 +213,12 @@ export function FilterPanel({
                       className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-bold transition-all ${
                         selected
                           ? `${nutriClass} ring-2 ring-offset-1 ring-brand`
-                          : `${nutriClass} opacity-60 hover:opacity-100`
+                          : `${nutriClass} hover:ring-2 hover:ring-offset-1 hover:ring-brand/50`
                       }`}
                     >
                       {ns.label}
                       <span
-                        className={`text-[10px] font-normal ${
-                          selected ? "opacity-80" : "opacity-60"
-                        }`}
+                        className="text-[10px] font-normal opacity-75"
                       >
                         ({ns.count})
                       </span>

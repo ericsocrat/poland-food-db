@@ -55,6 +55,14 @@ vi.mock("@/components/compare/CompareCheckbox", () => ({
   CompareCheckbox: () => <span data-testid="compare-checkbox" />,
 }));
 
+vi.mock("@/components/product/WatchButton", () => ({
+  WatchButton: () => <span data-testid="watch-button" />,
+}));
+
+vi.mock("@/components/product/ScoreHistoryPanel", () => ({
+  ScoreHistoryPanel: () => <div data-testid="score-history-panel" />,
+}));
+
 vi.mock("@/components/common/skeletons", () => ({
   ProductProfileSkeleton: () => (
     <div data-testid="skeleton" role="status" aria-busy="true" />

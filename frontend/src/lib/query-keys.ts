@@ -114,6 +114,18 @@ export const queryKeys = {
   /** Recently viewed products */
   recentlyViewed: (limit?: number) =>
     ["recently-viewed", { limit }] as const,
+
+  /** Score history for a product (Issue #38) */
+  scoreHistory: (productId: number) =>
+    ["score-history", productId] as const,
+
+  /** Watchlist (Issue #38) */
+  watchlist: (page?: number) =>
+    ["watchlist", { page }] as const,
+
+  /** Is user watching a specific product (Issue #38) */
+  isWatching: (productId: number) =>
+    ["is-watching", productId] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -211,4 +223,13 @@ export const staleTimes = {
 
   /** Recently viewed — 1 min (updates on every product view) */
   recentlyViewed: 60 * 1000,
+
+  /** Score history — 10 min (changes only on pipeline runs) */
+  scoreHistory: 10 * 60 * 1000,
+
+  /** Watchlist — 2 min (user may add/remove frequently) */
+  watchlist: 2 * 60 * 1000,
+
+  /** Is watching — 5 min (changes on user action) */
+  isWatching: 5 * 60 * 1000,
 } as const;

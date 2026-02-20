@@ -173,7 +173,7 @@ SELECT '14. Deprecated products excluded from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('', NULL, 1000, 0)->'results'
+        api_search_products('', '{}'::jsonb, 1, 1000)->'results'
     ) r(val)
 ) search_results
 JOIN products p ON p.product_id = search_results.pid::bigint
