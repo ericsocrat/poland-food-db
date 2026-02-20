@@ -51,6 +51,7 @@ interface AddToListMenuProps {
 export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const { t } = useTranslation();
 
   const { data: listsResponse } = useLists();
@@ -80,11 +81,13 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
         !ref.current.contains(e.target)
       ) {
         setOpen(false);
+        triggerRef.current?.focus();
       }
     }
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setOpen(false);
+        triggerRef.current?.focus();
       }
     }
     document.addEventListener("mousedown", handleClick);
@@ -170,6 +173,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
   return (
     <div ref={ref} className="relative flex-shrink-0">
       <button
+        ref={triggerRef}
         type="button"
         title={t("productActions.addToList")}
         aria-label={t("productActions.addToList")}

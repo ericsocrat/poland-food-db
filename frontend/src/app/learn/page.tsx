@@ -2,6 +2,7 @@
 
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
+import { SkipLink } from "@/components/common/SkipLink";
 import { LearnCard } from "@/components/learn/LearnCard";
 import { Disclaimer } from "@/components/learn/Disclaimer";
 import { useTranslation } from "@/lib/i18n";
@@ -73,9 +74,10 @@ export default function LearnHubPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
+      <SkipLink />
       <Header />
 
-      <main className="flex-1 px-4 py-12">
+      <main id="main-content" className="flex-1 px-4 py-12">
         <div className="mx-auto max-w-5xl">
           {/* Hero */}
           <div className="mb-10 text-center">

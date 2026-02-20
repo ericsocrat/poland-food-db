@@ -10,6 +10,7 @@ import { useSharedList } from "@/hooks/use-lists";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { SkipLink } from "@/components/common/SkipLink";
 
 export default function SharedListPage() {
   const params = useParams();
@@ -45,6 +46,7 @@ export default function SharedListPage() {
 
   return (
     <div className="min-h-screen bg-surface-subtle">
+      <SkipLink />
       {/* Header */}
       <header className="border-b border bg-white/80 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
@@ -55,7 +57,7 @@ export default function SharedListPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-3xl px-4 py-6">
+      <main id="main-content" className="mx-auto max-w-3xl px-4 py-6">
         <div className="space-y-4">
           {/* List info */}
           <div className="card">
