@@ -1,11 +1,29 @@
 import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
+import { IMAGE_POLICY_CSP_DIRECTIVES } from "./src/lib/image-policy/enforcement";
 
 const withSerwist = withSerwistInit({
   swSrc: "src/app/sw.ts",
   swDest: "public/sw.js",
   disable: process.env.NODE_ENV === "development",
 });
+
+// ── Content Security Policy (#56) ───────────────────────────────────────────
+// Prevents accidental image uploads and restricts network destinations.
+// connect-src: Supabase + Tesseract CDN only
+// worker-src:  Tesseract WASM workers
+// form-action: self only (no external form submissions)
+// img-src:     self + data URIs (display) + Open Food Facts CDN
+const cspValue = [
+  `default-src 'self'`,
+  `script-src 'self' 'unsafe-eval' 'unsafe-inline'`,
+  `style-src 'self' 'unsafe-inline'`,
+  `img-src ${IMAGE_POLICY_CSP_DIRECTIVES.imgSrc}`,
+  `connect-src ${IMAGE_POLICY_CSP_DIRECTIVES.connectSrc}`,
+  `worker-src ${IMAGE_POLICY_CSP_DIRECTIVES.workerSrc}`,
+  `form-action ${IMAGE_POLICY_CSP_DIRECTIVES.formAction}`,
+  `frame-ancestors 'none'`,
+].join("; ");
 
 const nextConfig: NextConfig = {
   // Enable View Transitions API for smoother page navigations (#61)
@@ -31,6 +49,10 @@ const nextConfig: NextConfig = {
           { key: "X-Frame-Options", value: "DENY" },
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Content-Security-Policy",
+            value: cspValue,
+          },
         ],
       },
       {
