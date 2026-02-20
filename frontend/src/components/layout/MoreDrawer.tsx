@@ -18,6 +18,7 @@ import {
   Settings,
   ShieldCheck,
   Trophy,
+  UtensilsCrossed,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -63,6 +64,12 @@ const DRAWER_ITEMS: readonly DrawerNavItem[] = [
     labelKey: "nav.achievements",
     icon: Trophy,
     routeKey: "achievements",
+  },
+  {
+    href: "/app/recipes",
+    labelKey: "nav.recipes",
+    icon: UtensilsCrossed,
+    routeKey: "recipes",
   },
   {
     href: "/app/admin/submissions",

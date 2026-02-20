@@ -10,6 +10,7 @@
     "admin": "Admin",
     "watchlist": "Watchlist",
     "achievements": "Achievements",
+    "recipes": "Recipes",
     "more": "More"
   },
   "common": {
@@ -1227,6 +1228,234 @@
       "improving": "Improving",
       "worsening": "Worsening",
       "stable": "Stable"
+    }
+  },
+  "recipes": {
+    "title": "Recipes",
+    "loadFailed": "Could not load recipes. Please try again.",
+    "filterCategory": "Filter by category",
+    "filterDifficulty": "Filter by difficulty",
+    "allCategories": "All categories",
+    "allDifficulties": "All difficulties",
+    "emptyTitle": "No recipes found",
+    "emptyDescription": "Try adjusting your filters or check back later for new recipes.",
+    "minutes": "min",
+    "servings": "servings",
+    "prepTime": "Prep",
+    "cookTime": "Cook",
+    "totalTime": "Total",
+    "optional": "optional",
+    "ingredientsTitle": "Ingredients",
+    "stepsTitle": "Steps",
+    "category": {
+      "breakfast": "Breakfast",
+      "lunch": "Lunch",
+      "dinner": "Dinner",
+      "snack": "Snack",
+      "dessert": "Dessert",
+      "drink": "Drink",
+      "salad": "Salad",
+      "soup": "Soup"
+    },
+    "difficulty": {
+      "easy": "Easy",
+      "medium": "Medium",
+      "hard": "Hard"
+    },
+    "items": {
+      "overnight-oats": {
+        "title": "Overnight Oats with Yogurt & Berries",
+        "description": "Creamy overnight oats topped with fresh berries and a drizzle of honey.",
+        "steps": {
+          "1": "Combine oats, yogurt, and milk in a jar. Stir well.",
+          "2": "Cover and refrigerate overnight (or at least 4 hours).",
+          "3": "Top with fresh berries and a drizzle of honey before serving."
+        },
+        "ingredients": {
+          "1": "½ cup rolled oats",
+          "2": "½ cup plain yogurt",
+          "3": "¼ cup milk",
+          "4": "Handful of mixed berries",
+          "5": "1 tsp honey"
+        }
+      },
+      "jajecznica": {
+        "title": "Polish Scrambled Eggs (Jajecznica)",
+        "description": "Classic Polish-style scrambled eggs with butter and chives.",
+        "steps": {
+          "1": "Melt butter in a non-stick pan over low heat.",
+          "2": "Crack eggs into the pan and stir gently with a spatula.",
+          "3": "Cook slowly until just set but still creamy. Season and serve with chives."
+        },
+        "ingredients": {
+          "1": "3 large eggs",
+          "2": "1 tbsp butter",
+          "3": "Fresh chives, chopped",
+          "4": "Salt and pepper to taste"
+        }
+      },
+      "zupa-pomidorowa": {
+        "title": "Tomato Soup (Zupa Pomidorowa)",
+        "description": "Traditional Polish tomato soup served with noodles or rice.",
+        "steps": {
+          "1": "Sauté diced onion in butter until soft.",
+          "2": "Add crushed tomatoes and vegetable broth. Simmer 15 minutes.",
+          "3": "Blend until smooth, season with salt and sugar.",
+          "4": "Serve with cooked pasta or rice."
+        },
+        "ingredients": {
+          "1": "400g crushed tomatoes",
+          "2": "500ml vegetable broth",
+          "3": "1 medium onion",
+          "4": "1 tbsp butter",
+          "5": "Pasta or rice for serving"
+        }
+      },
+      "chicken-salad-yogurt": {
+        "title": "Chicken Salad with Yogurt Dressing",
+        "description": "Light chicken salad with a creamy yogurt-herb dressing.",
+        "steps": {
+          "1": "Grill or poach chicken breast and slice thinly.",
+          "2": "Toss mixed greens, cucumber, and tomatoes in a bowl.",
+          "3": "Mix yogurt with lemon juice, garlic, and herbs for dressing.",
+          "4": "Top salad with chicken slices and drizzle dressing."
+        },
+        "ingredients": {
+          "1": "1 chicken breast",
+          "2": "Mixed salad greens",
+          "3": "½ cucumber, sliced",
+          "4": "2 tbsp plain yogurt",
+          "5": "Juice of ½ lemon"
+        }
+      },
+      "baked-salmon-vegetables": {
+        "title": "Baked Salmon with Roasted Vegetables",
+        "description": "Oven-baked salmon fillet with seasonal roasted vegetables.",
+        "steps": {
+          "1": "Preheat oven to 200°C. Season salmon with olive oil, lemon, and herbs.",
+          "2": "Toss vegetables with olive oil and spread on a baking sheet.",
+          "3": "Place salmon on the sheet and bake for 20 minutes.",
+          "4": "Serve immediately with lemon wedges."
+        },
+        "ingredients": {
+          "1": "1 salmon fillet (150g)",
+          "2": "1 cup mixed vegetables (zucchini, bell pepper, onion)",
+          "3": "1 tbsp olive oil",
+          "4": "½ lemon",
+          "5": "Fresh dill"
+        }
+      },
+      "pierogi-simplified": {
+        "title": "Simple Potato & Cheese Pierogi",
+        "description": "Simplified pierogi with a potato and farmer's cheese filling.",
+        "steps": {
+          "1": "Make dough: mix flour, egg, water and a pinch of salt. Knead until smooth.",
+          "2": "Prepare filling: mash boiled potatoes with farmer's cheese and season.",
+          "3": "Roll dough, cut circles, fill and pinch edges to seal.",
+          "4": "Boil pierogi until they float. Serve with caramelized onions.",
+          "5": "Optionally pan-fry boiled pierogi in butter until golden."
+        },
+        "ingredients": {
+          "1": "2 cups flour",
+          "2": "1 egg",
+          "3": "2 medium potatoes, boiled",
+          "4": "100g farmer's cheese (twaróg)",
+          "5": "1 onion for topping"
+        }
+      },
+      "yogurt-nuts-honey": {
+        "title": "Greek Yogurt with Nuts & Honey",
+        "description": "Quick, protein-rich snack with crunchy nuts and sweet honey.",
+        "steps": {
+          "1": "Spoon yogurt into a bowl.",
+          "2": "Top with mixed nuts and a drizzle of honey."
+        },
+        "ingredients": {
+          "1": "150g Greek yogurt",
+          "2": "2 tbsp mixed nuts",
+          "3": "1 tsp honey"
+        }
+      },
+      "hummus-vegetables": {
+        "title": "Hummus with Fresh Vegetables",
+        "description": "Creamy hummus served with colorful vegetable sticks.",
+        "steps": {
+          "1": "Blend chickpeas, tahini, lemon juice, garlic, and olive oil until smooth.",
+          "2": "Cut vegetables into sticks.",
+          "3": "Serve hummus with vegetable sticks for dipping."
+        },
+        "ingredients": {
+          "1": "1 can chickpeas, drained",
+          "2": "2 tbsp tahini",
+          "3": "1 clove garlic",
+          "4": "Carrot, cucumber, and bell pepper sticks"
+        }
+      },
+      "red-lentil-soup": {
+        "title": "Red Lentil Soup",
+        "description": "Hearty and warming red lentil soup with cumin and lemon.",
+        "steps": {
+          "1": "Sauté onion, carrot, and garlic in olive oil.",
+          "2": "Add lentils, cumin, and broth. Bring to a boil.",
+          "3": "Simmer 20 minutes until lentils are soft.",
+          "4": "Blend partially, season with lemon juice and salt."
+        },
+        "ingredients": {
+          "1": "1 cup red lentils",
+          "2": "1 medium onion",
+          "3": "1 carrot",
+          "4": "1 liter vegetable broth",
+          "5": "1 tsp cumin"
+        }
+      },
+      "mediterranean-quinoa-salad": {
+        "title": "Mediterranean Quinoa Salad",
+        "description": "Fresh quinoa salad with cherry tomatoes, olives, and feta.",
+        "steps": {
+          "1": "Cook quinoa according to package directions and cool.",
+          "2": "Chop tomatoes, cucumber, and olives.",
+          "3": "Toss quinoa with vegetables, crumbled feta, olive oil, and lemon juice."
+        },
+        "ingredients": {
+          "1": "½ cup quinoa",
+          "2": "Cherry tomatoes",
+          "3": "½ cucumber",
+          "4": "Kalamata olives",
+          "5": "50g feta cheese"
+        }
+      },
+      "green-smoothie": {
+        "title": "Green Smoothie",
+        "description": "Nutrient-packed green smoothie with spinach and banana.",
+        "steps": {
+          "1": "Add all ingredients to a blender.",
+          "2": "Blend on high until smooth. Add more liquid if needed.",
+          "3": "Pour into a glass and serve immediately."
+        },
+        "ingredients": {
+          "1": "1 banana",
+          "2": "1 cup fresh spinach",
+          "3": "½ cup milk or plant-based alternative",
+          "4": "1 tbsp nut butter"
+        }
+      },
+      "baked-apples-cinnamon": {
+        "title": "Baked Apples with Cinnamon",
+        "description": "Warm baked apples with a cinnamon-oat crumble topping.",
+        "steps": {
+          "1": "Preheat oven to 180°C. Core apples and place in a baking dish.",
+          "2": "Mix oats, cinnamon, honey, and a little butter for the filling.",
+          "3": "Stuff apples with the mixture and bake 25 minutes.",
+          "4": "Serve warm, optionally with a spoonful of yogurt."
+        },
+        "ingredients": {
+          "1": "2 medium apples",
+          "2": "2 tbsp rolled oats",
+          "3": "1 tsp cinnamon",
+          "4": "1 tsp honey",
+          "5": "1 tsp butter"
+        }
+      }
     }
   },
   "achievements": {

@@ -1233,3 +1233,69 @@ export interface AchievementProgressResponse {
   newly_unlocked: boolean;
   error?: string;
 }
+
+// ─── Recipes (#53) ──────────────────────────────────────────────────────────
+
+export type RecipeCategory =
+  | "breakfast"
+  | "lunch"
+  | "dinner"
+  | "snack"
+  | "dessert"
+  | "drink"
+  | "salad"
+  | "soup";
+
+export type RecipeDifficulty = "easy" | "medium" | "hard";
+
+export interface RecipeSummary {
+  id: string;
+  slug: string;
+  title_key: string;
+  description_key: string;
+  category: RecipeCategory;
+  difficulty: RecipeDifficulty;
+  prep_time_min: number;
+  cook_time_min: number;
+  servings: number;
+  image_url: string | null;
+  country: string | null;
+  tags: string[];
+  total_time: number;
+}
+
+export interface RecipeStep {
+  step_number: number;
+  content_key: string;
+}
+
+export interface RecipeIngredient {
+  name_key: string;
+  optional: boolean;
+}
+
+export interface RecipeDetail {
+  id: string;
+  slug: string;
+  title_key: string;
+  description_key: string;
+  category: RecipeCategory;
+  difficulty: RecipeDifficulty;
+  prep_time_min: number;
+  cook_time_min: number;
+  servings: number;
+  image_url: string | null;
+  country: string | null;
+  tags: string[];
+  steps: RecipeStep[];
+  ingredients: RecipeIngredient[];
+}
+
+export interface BrowseRecipesFilters {
+  category?: RecipeCategory;
+  difficulty?: RecipeDifficulty;
+  tag?: string;
+  maxTime?: number;
+  limit?: number;
+  offset?: number;
+}

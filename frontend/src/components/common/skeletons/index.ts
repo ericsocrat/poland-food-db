@@ -5,4 +5,5 @@ export { ComparisonGridSkeleton } from "./ComparisonGridSkeleton";
 export { SearchResultsSkeleton } from "./SearchResultsSkeleton";
 export { CategoryListingSkeleton } from "./CategoryListingSkeleton";
 export { CategoryGridSkeleton } from "./CategoryGridSkeleton";
+export { RecipeGridSkeleton } from "./RecipeGridSkeleton";
 export { ListViewSkeleton } from "./ListViewSkeleton";
