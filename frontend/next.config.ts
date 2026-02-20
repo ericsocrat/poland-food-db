@@ -43,6 +43,47 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      // ── PWA asset caching ─────────────────────────────────────────────────
+      {
+        // Service worker must always be revalidated
+        source: "/sw.js",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "no-cache, no-store, must-revalidate",
+          },
+        ],
+      },
+      {
+        // Manifest — revalidate daily
+        source: "/manifest.webmanifest",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=86400, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        // Icons — long cache (content-addressed by build hash)
+        source: "/icons/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, immutable",
+          },
+        ],
+      },
+      {
+        // Favicon
+        source: "/favicon.ico",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=2592000, immutable",
+          },
+        ],
+      },
     ];
   },
 };

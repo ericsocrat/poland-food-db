@@ -50,6 +50,7 @@
     "offline": "Jesteś offline — niektóre funkcje mogą być niedostępne",
     "installTitle": "Zainstaluj FoodDB",
     "installDescription": "Dodaj do ekranu głównego, aby mieć szybki dostęp i wsparcie offline.",
+    "iosInstallHint": "Stuknij przycisk Udostępnij, a potem «Dodaj do ekranu głównego».",
     "dismissInstall": "Odrzuć komunikat instalacji"
   },
   "dashboard": {

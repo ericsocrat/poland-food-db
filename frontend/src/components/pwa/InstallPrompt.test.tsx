@@ -37,11 +37,13 @@ function createBeforeInstallPromptEvent(): Event & {
 
 describe("InstallPrompt", () => {
   beforeEach(() => {
-    sessionStorage.clear();
+    localStorage.clear();
     mockStandalone(false);
+    vi.useFakeTimers({ shouldAdvanceTime: true });
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
@@ -59,15 +61,28 @@ describe("InstallPrompt", () => {
       window.dispatchEvent(event);
     });
 
+    // Advance past the 30 s delay
+    act(() => {
+      vi.advanceTimersByTime(31_000);
+    });
+
     expect(screen.queryByText("Install FoodDB")).toBeNull();
   });
 
-  it("shows prompt when beforeinstallprompt fires", () => {
+  it("shows prompt after 30 s delay when beforeinstallprompt fires", () => {
     render(<InstallPrompt />);
 
     const event = createBeforeInstallPromptEvent();
     act(() => {
       window.dispatchEvent(event);
+    });
+
+    // Not visible immediately
+    expect(screen.queryByText("Install FoodDB")).toBeNull();
+
+    // Advance past the 30 s delay
+    act(() => {
+      vi.advanceTimersByTime(31_000);
     });
 
     expect(screen.getByText("Install FoodDB")).toBeInTheDocument();
@@ -75,7 +90,7 @@ describe("InstallPrompt", () => {
   });
 
   it("calls prompt() when Install button is clicked", async () => {
-    const user = userEvent.setup();
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
     render(<InstallPrompt />);
 
     const event = createBeforeInstallPromptEvent();
@@ -83,17 +98,27 @@ describe("InstallPrompt", () => {
       window.dispatchEvent(event);
     });
 
+    act(() => {
+      vi.advanceTimersByTime(31_000);
+    });
+
     await user.click(screen.getByText("Install"));
     expect(event.prompt).toHaveBeenCalled();
   });
 
-  it("dismisses and stores flag in sessionStorage", async () => {
-    const user = userEvent.setup();
+  it("dismisses and stores timestamp in localStorage", async () => {
+    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+    vi.setSystemTime(new Date("2026-03-01T12:00:00Z"));
+
     render(<InstallPrompt />);
 
     const event = createBeforeInstallPromptEvent();
     act(() => {
       window.dispatchEvent(event);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(31_000);
     });
 
     expect(screen.getByText("Install FoodDB")).toBeInTheDocument();
@@ -101,11 +126,16 @@ describe("InstallPrompt", () => {
     await user.click(screen.getByLabelText("Dismiss install prompt"));
 
     expect(screen.queryByText("Install FoodDB")).toBeNull();
-    expect(sessionStorage.getItem("pwa-install-dismissed")).toBe("1");
+    expect(localStorage.getItem("pwa-install-dismissed-at")).toBeTruthy();
   });
 
-  it("does not show if previously dismissed in session", () => {
-    sessionStorage.setItem("pwa-install-dismissed", "1");
+  it("does not show if dismissed less than 14 days ago", () => {
+    // Dismissed 10 days ago
+    localStorage.setItem(
+      "pwa-install-dismissed-at",
+      String(Date.now() - 10 * 24 * 60 * 60 * 1000),
+    );
+
     render(<InstallPrompt />);
 
     const event = createBeforeInstallPromptEvent();
@@ -113,7 +143,32 @@ describe("InstallPrompt", () => {
       window.dispatchEvent(event);
     });
 
+    act(() => {
+      vi.advanceTimersByTime(31_000);
+    });
+
     expect(screen.queryByText("Install FoodDB")).toBeNull();
+  });
+
+  it("shows again after 14-day cooldown expires", () => {
+    // Dismissed 15 days ago
+    localStorage.setItem(
+      "pwa-install-dismissed-at",
+      String(Date.now() - 15 * 24 * 60 * 60 * 1000),
+    );
+
+    render(<InstallPrompt />);
+
+    const event = createBeforeInstallPromptEvent();
+    act(() => {
+      window.dispatchEvent(event);
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(31_000);
+    });
+
+    expect(screen.getByText("Install FoodDB")).toBeInTheDocument();
   });
 
   it("cleans up event listener on unmount", () => {

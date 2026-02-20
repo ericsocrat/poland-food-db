@@ -8,8 +8,22 @@ export const runtime = "nodejs";
 export const alt = "Poland Food DB — Multi-Axis Food Scoring";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
+export const revalidate = 86400; // 24 h edge cache
 
-export default function OGImage() {
+/* ---------- font loader ---------- */
+let interBoldPromise: Promise<ArrayBuffer> | null = null;
+function getInterBoldFont(): Promise<ArrayBuffer> {
+  if (!interBoldPromise) {
+    interBoldPromise = fetch(
+      "https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYMZhrib2Bg-4.ttf",
+    ).then((r) => r.arrayBuffer());
+  }
+  return interBoldPromise;
+}
+
+export default async function OGImage() {
+  const interBold = await getInterBoldFont();
+
   return new ImageResponse(
     <div
       style={{
@@ -19,8 +33,8 @@ export default function OGImage() {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor: "#f9fafb",
-        fontFamily: "system-ui, sans-serif",
+        background: "linear-gradient(135deg, #f9fafb 0%, #ecfdf5 100%)",
+        fontFamily: "Inter",
       }}
     >
       {/* Brand bar */}
@@ -45,11 +59,13 @@ export default function OGImage() {
           display: "flex",
           alignItems: "center",
           justifyContent: "center",
-          fontSize: 64,
+          fontSize: 56,
+          fontWeight: 700,
+          color: "white",
           marginBottom: 32,
         }}
       >
-        🍽️
+        FD
       </div>
 
       {/* Title */}
@@ -68,6 +84,7 @@ export default function OGImage() {
       <div
         style={{
           fontSize: 24,
+          fontWeight: 700,
           color: "#6b7280",
           maxWidth: 700,
           textAlign: "center",
@@ -95,7 +112,7 @@ export default function OGImage() {
               backgroundColor: "#dcfce7",
               color: "#166534",
               fontSize: 18,
-              fontWeight: 600,
+              fontWeight: 700,
             }}
           >
             {text}
@@ -103,6 +120,9 @@ export default function OGImage() {
         ))}
       </div>
     </div>,
-    { ...size },
+    {
+      ...size,
+      fonts: [{ name: "Inter", data: interBold, style: "normal", weight: 700 }],
+    },
   );
 }
