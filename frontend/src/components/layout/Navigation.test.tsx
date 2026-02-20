@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import { Navigation } from "./Navigation";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -34,7 +34,7 @@ describe("Navigation", () => {
     expect(screen.getByText("Search")).toBeInTheDocument();
     expect(screen.getByText("Scan")).toBeInTheDocument();
     expect(screen.getByText("Lists")).toBeInTheDocument();
-    expect(screen.getByText("Settings")).toBeInTheDocument();
+    expect(screen.getByText("More")).toBeInTheDocument();
   });
 
   it("has correct hrefs", () => {
@@ -150,5 +150,30 @@ describe("Navigation", () => {
     render(<Navigation />);
     const badge = screen.getByTestId("nav-badge-lists");
     expect(badge).toHaveTextContent("99+");
+  });
+
+  // ── More button & drawer (§67) ──────────────────────────────────────────
+
+  it("More button has aria-haspopup=dialog", () => {
+    render(<Navigation />);
+    const moreBtn = screen.getByText("More").closest("button");
+    expect(moreBtn).toHaveAttribute("aria-haspopup", "dialog");
+  });
+
+  it("More button toggles drawer open/close", () => {
+    render(<Navigation />);
+    const moreBtn = screen.getByText("More").closest("button")!;
+    expect(moreBtn).toHaveAttribute("aria-expanded", "false");
+
+    fireEvent.click(moreBtn);
+    expect(moreBtn).toHaveAttribute("aria-expanded", "true");
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+  });
+
+  it("highlights More button when active route is in drawer", () => {
+    mockPathname.mockReturnValue("/app/compare");
+    render(<Navigation />);
+    const moreBtn = screen.getByText("More").closest("button");
+    expect(moreBtn?.className).toContain("text-brand");
   });
 });

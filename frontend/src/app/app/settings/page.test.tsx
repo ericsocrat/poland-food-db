@@ -76,7 +76,7 @@ describe("SettingsPage", () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Settings")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /Settings/i })).toBeInTheDocument();
     });
   });
 
@@ -139,7 +139,7 @@ describe("SettingsPage", () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Settings")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /Settings/i })).toBeInTheDocument();
     });
     expect(
       screen.queryByRole("button", { name: "Save changes" }),
@@ -292,7 +292,7 @@ describe("SettingsPage", () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Settings")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /Settings/i })).toBeInTheDocument();
     });
 
     // Poland = Polski + English (2 options, NOT Deutsch)
@@ -392,10 +392,10 @@ describe("SettingsPage", () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Settings")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /Settings/i })).toBeInTheDocument();
     });
 
-    const container = screen.getByText("Settings").parentElement!;
+    const container = screen.getByRole("heading", { name: /Settings/i }).parentElement!;
     expect(container.className).toContain("max-w-2xl");
   });
 });

@@ -98,7 +98,7 @@ describe("CategoriesPage", () => {
     render(<CategoriesPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Categories")).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /Categories/i })).toBeInTheDocument();
     });
   });
 

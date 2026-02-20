@@ -5,6 +5,7 @@
 // that bypass RLS. In production, restrict route via middleware or auth check.
 
 import { useState, useCallback, useMemo } from "react";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import {
   Clock,
   CheckCircle,
@@ -118,6 +119,13 @@ export default function AdminSubmissionsPage() {
 
   return (
     <div className="space-y-4">
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.admin", href: "/app/admin/submissions" },
+          { labelKey: "admin.submissionReview" },
+        ]}
+      />
       <div>
         <h1 className="flex items-center gap-2 text-lg font-semibold text-foreground">
           <ShieldCheck size={20} aria-hidden="true" />

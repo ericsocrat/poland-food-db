@@ -20,6 +20,7 @@ import { useTranslation } from "@/lib/i18n";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { PrintButton } from "@/components/common/PrintButton";
 import { Scale, FolderOpen, AlertTriangle } from "lucide-react";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import type { ExportableProduct } from "@/lib/export";
 
 export default function ComparePage() {
@@ -98,6 +99,12 @@ export default function ComparePage() {
 
   return (
     <div className="compare-print-container space-y-4">
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.compare" },
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="flex items-center gap-2 text-xl font-bold text-foreground">

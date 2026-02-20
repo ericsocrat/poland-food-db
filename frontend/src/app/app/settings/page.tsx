@@ -21,6 +21,7 @@ import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { HealthProfileSection } from "@/components/settings/HealthProfileSection";
 import { ThemeToggle } from "@/components/settings/ThemeToggle";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useTranslation } from "@/lib/i18n";
 import {
   useLanguageStore,
@@ -135,6 +136,12 @@ export default function SettingsPage() {
 
   return (
     <div className="max-w-2xl space-y-6 lg:space-y-8">
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.settings" },
+        ]}
+      />
       <h1 className="text-xl font-bold text-foreground lg:text-2xl">
         {t("settings.title")}
       </h1>

@@ -26,6 +26,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { useTranslation } from "@/lib/i18n";
 import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import type { ProductList, ListItem, FormSubmitEvent } from "@/lib/types";
 
 export default function ListsPage() {
@@ -66,6 +67,12 @@ export default function ListsPage() {
 
   return (
     <div className="space-y-6 lg:space-y-8">
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.lists" },
+        ]}
+      />
       {/* Header */}
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5 lg:text-2xl">

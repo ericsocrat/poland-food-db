@@ -23,12 +23,13 @@ vi.mock("next/link", () => ({
 }));
 
 describe("DesktopHeaderNav", () => {
-  it("renders all nav items", () => {
+  it("renders all nav items including Watchlist", () => {
     render(<DesktopHeaderNav />);
     expect(screen.getByText("Home")).toBeInTheDocument();
     expect(screen.getByText("Search")).toBeInTheDocument();
     expect(screen.getByText("Scan")).toBeInTheDocument();
     expect(screen.getByText("Lists")).toBeInTheDocument();
+    expect(screen.getByText("Watchlist")).toBeInTheDocument();
     expect(screen.getByText("Compare")).toBeInTheDocument();
     expect(screen.getByText("Categories")).toBeInTheDocument();
     expect(screen.getByText("Settings")).toBeInTheDocument();

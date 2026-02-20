@@ -8,7 +8,8 @@
     "compare": "Porównaj",
     "categories": "Kategorie",
     "admin": "Admin",
-    "watchlist": "Obserwowane"
+    "watchlist": "Obserwowane",
+    "more": "Więcej"
   },
   "common": {
     "loading": "Ładowanie…",
@@ -938,7 +939,8 @@
     "searchResultsStatus": "Znaleziono {count} wyników",
     "saveSearchName": "Nazwa wyszukiwania",
     "sidebarNavigation": "Nawigacja boczna",
-    "headerNavigation": "Nawigacja nagłówka"
+    "headerNavigation": "Nawigacja nagłówka",
+    "moreNavigation": "Więcej nawigacji"
   },
   "print": {
     "button": "Drukuj",
