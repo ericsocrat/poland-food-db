@@ -92,6 +92,23 @@ describe("Playwright config (visual regression)", () => {
     expect(content).toContain("snapshotPathTemplate");
     expect(content).toContain("__screenshots__");
   });
+
+  it("config gates visual projects behind VISUAL_REGRESSION env var", () => {
+    const configPath = path.resolve(__dirname, "../../playwright.config.ts");
+    const content = fs.readFileSync(configPath, "utf-8");
+
+    expect(content).toContain("VISUAL_REGRESSION");
+    expect(content).toContain("visual-smoke");
+    expect(content).toContain("visual-authenticated");
+  });
+
+  it("smoke project excludes visual specs via negative lookahead", () => {
+    const configPath = path.resolve(__dirname, "../../playwright.config.ts");
+    const content = fs.readFileSync(configPath, "utf-8");
+
+    // Smoke project uses negative lookahead to exclude visual tests
+    expect(content).toMatch(/smoke\(\?!.*visual\)/);
+  });
 });
 
 /* ── Test files ──────────────────────────────────────────────────────────── */

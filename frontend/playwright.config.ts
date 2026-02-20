@@ -4,11 +4,15 @@ import { defineConfig, devices } from "@playwright/test";
 // When the key is not set, only smoke tests run (no auth coverage).
 const HAS_AUTH = !!process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+// Visual regression tests require baselines to be generated first.
+// Run with VISUAL_REGRESSION=true to include visual snapshot tests.
+const HAS_VISUAL = !!process.env.VISUAL_REGRESSION;
+
 /* ── Project definitions ─────────────────────────────────────────────────── */
 
 const smokeProject = {
   name: "smoke",
-  testMatch: /smoke.*\.spec\.ts/,
+  testMatch: /smoke(?!.*visual).*\.spec\.ts/,
   use: { ...devices["Desktop Chrome"] },
 };
 
@@ -20,7 +24,7 @@ const authSetupProject = {
 
 const authenticatedProject = {
   name: "authenticated",
-  testMatch: /authenticated.*\.spec\.ts/,
+  testMatch: /authenticated(?!.*visual).*\.spec\.ts/,
   dependencies: ["auth-setup"],
   use: {
     ...devices["Desktop Chrome"],
@@ -28,9 +32,29 @@ const authenticatedProject = {
   },
 };
 
-const projects = HAS_AUTH
-  ? [authSetupProject, smokeProject, authenticatedProject]
-  : [smokeProject];
+const visualSmokeProject = {
+  name: "visual-smoke",
+  testMatch: /smoke-visual\.spec\.ts/,
+  use: { ...devices["Desktop Chrome"] },
+};
+
+const visualAuthenticatedProject = {
+  name: "visual-authenticated",
+  testMatch: /authenticated-visual\.spec\.ts/,
+  dependencies: ["auth-setup"],
+  use: {
+    ...devices["Desktop Chrome"],
+    storageState: "e2e/.auth/user.json",
+  },
+};
+
+const projects = [
+  ...(HAS_AUTH ? [authSetupProject] : []),
+  smokeProject,
+  ...(HAS_AUTH ? [authenticatedProject] : []),
+  ...(HAS_VISUAL ? [visualSmokeProject] : []),
+  ...(HAS_VISUAL && HAS_AUTH ? [visualAuthenticatedProject] : []),
+];
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
 
