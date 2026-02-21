@@ -7,9 +7,9 @@ import { useTranslation } from "@/lib/i18n";
 import type { OnboardingData } from "../types";
 
 interface DoneStepProps {
-  data: OnboardingData;
-  loading: boolean;
-  onComplete: () => void;
+  readonly data: OnboardingData;
+  readonly loading: boolean;
+  readonly onComplete: () => void;
 }
 
 export function DoneStep({ data, loading, onComplete }: DoneStepProps) {
@@ -43,7 +43,7 @@ export function DoneStep({ data, loading, onComplete }: DoneStepProps) {
       </p>
 
       {/* Summary card */}
-      <div className="mb-8 rounded-xl border border bg-surface p-4 text-left">
+      <div className="mb-8 rounded-xl border border-border bg-surface p-4 text-left">
         {summaryRow(t("onboarding.summaryRegion"), countryName)}
         {summaryRow(t("onboarding.summaryDiet"), dietLabel)}
         {summaryRow(

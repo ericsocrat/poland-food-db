@@ -103,10 +103,9 @@ export const ScoreGauge = React.memo(function ScoreGauge({
   const center = svgSize / 2;
 
   return (
-    <div
+    <figure
       className={`relative inline-flex flex-shrink-0 items-center justify-center ${className}`}
       style={{ width: svgSize, height: svgSize }}
-      role="img"
       aria-label={
         hasScore
           ? t("scoreGauge.label", { score: String(score) })
@@ -154,6 +153,6 @@ export const ScoreGauge = React.memo(function ScoreGauge({
           {hasScore ? t("scoreGauge.outOf") : ""}
         </span>
       </div>
-    </div>
+    </figure>
   );
 });

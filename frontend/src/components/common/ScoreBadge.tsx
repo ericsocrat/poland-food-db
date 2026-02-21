@@ -118,7 +118,9 @@ export const ScoreBadge = React.memo(function ScoreBadge({
       ]
         .filter(Boolean)
         .join(" ")}
-      aria-label={`Score: ${displayText}${showLabel ? `, ${band.label}` : ""}`}
+      aria-label={[`Score: ${displayText}`, showLabel ? band.label : ""]
+        .filter(Boolean)
+        .join(", ")}
     >
       {displayText}
       {showLabel && <span className="font-medium">{band.label}</span>}

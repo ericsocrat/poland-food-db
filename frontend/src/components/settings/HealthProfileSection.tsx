@@ -277,7 +277,7 @@ function ProfileForm({
         <button
           type="button"
           onClick={onCancel}
-          className="flex-1 rounded-lg border border px-4 py-2 text-sm text-foreground-secondary hover:bg-surface-subtle"
+          className="flex-1 rounded-lg border border-border px-4 py-2 text-sm text-foreground-secondary hover:bg-surface-subtle"
         >
           {t("common.cancel")}
         </button>

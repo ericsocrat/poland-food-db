@@ -109,7 +109,7 @@ export const productSubmissionSchema = z.object({
     .string()
     .check(
       z.minLength(1, { message: "validation.ean_required" }),
-      z.regex(/^\d{8}$|^\d{13}$/, { message: "validation.ean_format" }),
+      z.regex(/^(?:\d{8}|\d{13})$/, { message: "validation.ean_format" }),
     ),
   name: z.string().check(
     z.minLength(1, { message: "validation.product_name_required" }),

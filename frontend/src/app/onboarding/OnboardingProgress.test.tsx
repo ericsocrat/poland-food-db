@@ -8,22 +8,16 @@ describe("OnboardingProgress", () => {
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 
-  it("sets aria-valuenow to current step", () => {
+  it("sets value to current step", () => {
     render(<OnboardingProgress currentStep={3} totalSteps={5} />);
     const bar = screen.getByRole("progressbar");
-    expect(bar).toHaveAttribute("aria-valuenow", "3");
+    expect(bar).toHaveAttribute("value", "3");
   });
 
-  it("sets aria-valuemin to 1", () => {
+  it("sets max to totalSteps", () => {
     render(<OnboardingProgress currentStep={2} totalSteps={5} />);
     const bar = screen.getByRole("progressbar");
-    expect(bar).toHaveAttribute("aria-valuemin", "1");
-  });
-
-  it("sets aria-valuemax to totalSteps", () => {
-    render(<OnboardingProgress currentStep={2} totalSteps={5} />);
-    const bar = screen.getByRole("progressbar");
-    expect(bar).toHaveAttribute("aria-valuemax", "5");
+    expect(bar).toHaveAttribute("max", "5");
   });
 
   it("renders correct number of step bars", () => {

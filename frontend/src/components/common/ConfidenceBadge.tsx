@@ -87,7 +87,12 @@ export const ConfidenceBadge = React.memo(function ConfidenceBadge({
       ]
         .filter(Boolean)
         .join(" ")}
-      aria-label={`Confidence: ${config.label}${showPercentage ? ` (${percentage}%)` : ""}`}
+      aria-label={[
+        `Confidence: ${config.label}`,
+        showPercentage ? `(${percentage}%)` : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       {config.label}
       {showPercentage && <span className="opacity-75">{percentage}%</span>}

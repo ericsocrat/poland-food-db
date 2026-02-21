@@ -56,7 +56,7 @@ const activeProfile: HealthProfileActiveResponse = {
     is_active: true,
     health_conditions: ["diabetes", "hypertension"],
     max_sugar_g: 10,
-    max_salt_g: 1.0,
+    max_salt_g: 1,
     max_saturated_fat_g: null,
     max_calories_kcal: null,
     notes: null,

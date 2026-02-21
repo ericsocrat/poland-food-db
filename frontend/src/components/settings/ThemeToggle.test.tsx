@@ -48,11 +48,8 @@ describe("ThemeToggle", () => {
   it("marks the current mode as checked", () => {
     mockMode = "dark";
     render(<ThemeToggle />);
-    const darkRadio = screen.getByText("Dark").closest("[role='radio']");
-    expect(darkRadio).toHaveAttribute("aria-checked", "true");
-
-    const lightRadio = screen.getByText("Light").closest("[role='radio']");
-    expect(lightRadio).toHaveAttribute("aria-checked", "false");
+    expect(screen.getByRole("radio", { name: /dark/i })).toBeChecked();
+    expect(screen.getByRole("radio", { name: /light/i })).not.toBeChecked();
   });
 
   it("calls setMode when clicking Light", () => {
@@ -89,11 +86,12 @@ describe("ThemeToggle", () => {
     expect(container.querySelectorAll("svg").length).toBeGreaterThanOrEqual(1);
   });
 
-  it("theme toggle buttons have cursor-pointer class", () => {
+  it("theme toggle labels have cursor-pointer class", () => {
     render(<ThemeToggle />);
-    const buttons = screen.getAllByRole("radio");
-    buttons.forEach((btn) => {
-      expect(btn.className).toContain("cursor-pointer");
+    const radios = screen.getAllByRole("radio");
+    radios.forEach((radio) => {
+      const label = radio.closest("label");
+      expect(label?.className).toContain("cursor-pointer");
     });
   });
 });

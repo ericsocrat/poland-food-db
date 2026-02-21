@@ -68,8 +68,8 @@ const MOCK_EXPLANATION: ScoreExplanation = {
   },
   top_factors: [
     { factor: "Sugar", raw: 75, weighted: 22.5 },
-    { factor: "Saturated Fat", raw: 40, weighted: 12.0 },
-    { factor: "Fiber", raw: 10, weighted: 3.0 },
+    { factor: "Saturated Fat", raw: 40, weighted: 12 },
+    { factor: "Fiber", raw: 10, weighted: 3 },
   ],
   warnings: [
     { type: "additives", message: "Contains controversial additives" },
@@ -163,9 +163,9 @@ describe("ScoreBreakdownPanel", () => {
     // Progress bars with correct aria
     const bars = screen.getAllByRole("progressbar");
     expect(bars).toHaveLength(3);
-    expect(bars[0]).toHaveAttribute("aria-valuenow", "75");
-    expect(bars[1]).toHaveAttribute("aria-valuenow", "40");
-    expect(bars[2]).toHaveAttribute("aria-valuenow", "10");
+    expect(bars[0]).toHaveAttribute("value", "75");
+    expect(bars[1]).toHaveAttribute("value", "40");
+    expect(bars[2]).toHaveAttribute("value", "10");
   });
 
   it("renders category context", async () => {

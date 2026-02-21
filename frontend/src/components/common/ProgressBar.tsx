@@ -78,12 +78,16 @@ export const ProgressBar = React.memo(function ProgressBar({
 
   return (
     <div className={className}>
-      <div
-        role="progressbar"
-        aria-valuenow={clamped}
-        aria-valuemin={0}
-        aria-valuemax={100}
+      {/* Native progress for screen readers */}
+      <progress
+        className="sr-only"
+        value={clamped}
+        max={100}
         aria-label={ariaLabel ?? `Progress: ${Math.round(clamped)}%`}
+      />
+      {/* Visual bar */}
+      <div
+        aria-hidden="true"
         className={[
           "w-full overflow-hidden rounded-full bg-surface-muted",
           TRACK_SIZES[size],

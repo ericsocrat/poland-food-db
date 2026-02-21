@@ -191,7 +191,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
 
       {open && (
         <div
-          className="absolute right-0 top-full z-50 mt-1 w-56 rounded-xl border border bg-surface py-1 shadow-lg"
+          className="absolute right-0 top-full z-50 mt-1 w-56 rounded-xl border border-border bg-surface py-1 shadow-lg"
           role="menu"
         >
           <p className="px-3 py-1.5 text-xs font-medium text-foreground-muted">

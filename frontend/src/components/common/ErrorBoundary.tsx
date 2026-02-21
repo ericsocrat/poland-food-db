@@ -45,10 +45,10 @@ interface ErrorBoundaryState {
 function PageFallback({
   error,
   onReset,
-}: {
+}: Readonly<{
   error: Error;
   onReset: () => void;
-}) {
+}>) {
   const digest = (error as Error & { digest?: string }).digest;
   return (
     <div
@@ -102,7 +102,7 @@ function PageFallback({
   );
 }
 
-function SectionFallback({ onReset }: { error: Error; onReset: () => void }) {
+function SectionFallback({ onReset }: Readonly<{ onReset: () => void }>) {
   return (
     <div
       className="my-4 flex flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center"
@@ -191,7 +191,7 @@ export class ErrorBoundary extends Component<
       case "page":
         return <PageFallback error={error} onReset={this.handleReset} />;
       case "section":
-        return <SectionFallback error={error} onReset={this.handleReset} />;
+        return <SectionFallback onReset={this.handleReset} />;
       case "component":
         return <ComponentFallback />;
     }

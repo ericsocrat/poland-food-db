@@ -234,7 +234,7 @@ export default function ListDetailPage() {
                 {/* Export button */}
                 <ExportButton
                   products={exportableProducts}
-                  filename={`list-${list.name.toLowerCase().replace(/\s+/g, "-")}`}
+                  filename={`list-${list.name.toLowerCase().replaceAll(/\s+/g, "-")}`}
                 />
               </div>
             </div>

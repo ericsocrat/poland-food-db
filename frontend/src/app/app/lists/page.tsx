@@ -176,6 +176,11 @@ function listTypeIcon(type: string): LucideIcon {
   }
 }
 
+const LIST_TYPE_ICON_COLORS: Record<string, string> = {
+  favorites: "text-red-500",
+  avoid: "text-red-600",
+};
+
 function ListCard({
   list,
   onDelete,
@@ -198,7 +203,7 @@ function ListCard({
         )
       : null;
   const avgBand =
-    avgScore !== null ? SCORE_BANDS[scoreBandFromScore(avgScore)] : null;
+    avgScore === null ? null : SCORE_BANDS[scoreBandFromScore(avgScore)];
 
   return (
     <Link href={`/app/lists/${list.id}`}>
@@ -209,11 +214,7 @@ function ListCard({
             size={24}
             aria-hidden="true"
             className={
-              list.list_type === "favorites"
-                ? "text-red-500"
-                : list.list_type === "avoid"
-                  ? "text-red-600"
-                  : "text-foreground-muted"
+              LIST_TYPE_ICON_COLORS[list.list_type] ?? "text-foreground-muted"
             }
           />
 

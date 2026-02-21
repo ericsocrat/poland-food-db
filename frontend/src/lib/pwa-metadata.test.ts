@@ -1,8 +1,8 @@
 // ─── PWA & Metadata compliance tests ──────────────────────────────────────
 // Validates manifest.webmanifest, root metadata, and structured data setup.
 
-import { readFileSync, existsSync } from "fs";
-import { join } from "path";
+import { readFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
 import { describe, it, expect } from "vitest";
 
 const publicDir = join(__dirname, "../../public");

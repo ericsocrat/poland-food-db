@@ -46,7 +46,9 @@ export function FormField({
   const inputId = `${name}-${autoId}`;
   const errorId = `${name}-error`;
   const hintId = `${name}-hint`;
-  const describedBy = error ? errorId : hint ? hintId : undefined;
+  let describedBy: string | undefined;
+  if (error) describedBy = errorId;
+  else if (hint) describedBy = hintId;
 
   return (
     <div className={className}>

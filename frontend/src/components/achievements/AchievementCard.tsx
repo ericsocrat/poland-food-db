@@ -40,11 +40,7 @@ export function AchievementCard({ achievement }: AchievementCardProps) {
       data-testid={`achievement-card-${achievement.slug}`}
     >
       {/* Icon */}
-      <span
-        className="text-3xl"
-        role="img"
-        aria-label={t(achievement.title_key)}
-      >
+      <span className="text-3xl" aria-hidden="true">
         {achievement.icon}
       </span>
 

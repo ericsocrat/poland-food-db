@@ -65,7 +65,7 @@ function escapeCSVField(value: string | number | undefined | null): string {
   if (value === undefined || value === null) return "";
   const str = String(value);
   if (str.includes('"') || str.includes(",") || str.includes("\n") || str.includes("\r")) {
-    return `"${str.replace(/"/g, '""')}"`;
+    return `"${str.replaceAll('"', '""')}"`;
   }
   return str;
 }
@@ -132,10 +132,12 @@ export function generateCSV(
 export function generateComparisonCSV(products: ExportableProduct[]): string {
   const lines: string[] = [];
 
-  lines.push("\uFEFF");
-  lines.push("# Poland Food Quality Database — Comparison Export");
-  lines.push(`# Exported: ${new Date().toISOString()}`);
-  lines.push(`# Products compared: ${products.length}`);
+  lines.push(
+    "\uFEFF",
+    "# Poland Food Quality Database — Comparison Export",
+    `# Exported: ${new Date().toISOString()}`,
+    `# Products compared: ${products.length}`,
+  );
 
   const headers = ["Metric", ...products.map((_, i) => `Product ${i + 1}`)];
   lines.push(headers.join(","));
@@ -192,25 +194,23 @@ export function generateText(
         `Exported: ${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`,
       );
     }
-    lines.push("───────────────────────────────────");
-    lines.push("");
+    lines.push("───────────────────────────────────", "");
   }
 
   products.forEach((p, i) => {
-    lines.push(`${i + 1}. ${p.product_name} (${p.brand})`);
     lines.push(
+      `${i + 1}. ${p.product_name} (${p.brand})`,
       `   Health Score: ${p.unhealthiness_score}/100 · Nutri-Score: ${p.nutri_score_label} · NOVA: ${p.nova_group}`,
     );
 
     const cal = p.calories_kcal ?? "–";
-    const fat = p.total_fat_g != null ? `${p.total_fat_g}g` : "–";
-    const sugar = p.sugars_g != null ? `${p.sugars_g}g` : "–";
-    const salt = p.salt_g != null ? `${p.salt_g}g` : "–";
+    const fat = p.total_fat_g == null ? "–" : `${p.total_fat_g}g`;
+    const sugar = p.sugars_g == null ? "–" : `${p.sugars_g}g`;
+    const salt = p.salt_g == null ? "–" : `${p.salt_g}g`;
     lines.push(`   Per 100g: ${cal} kcal · Fat ${fat} · Sugar ${sugar} · Salt ${salt}`);
 
     const allergens = p.allergen_tags?.length ? p.allergen_tags.join(", ") : "none";
-    lines.push(`   Allergens: ${allergens}`);
-    lines.push("");
+    lines.push(`   Allergens: ${allergens}`, "");
   });
 
   return lines.join("\n");
@@ -235,7 +235,7 @@ export function downloadFile(content: string, filename: string, mimeType: string
 
   // Cleanup
   setTimeout(() => {
-    document.body.removeChild(a);
+    a.remove();
     URL.revokeObjectURL(url);
   }, 100);
 }

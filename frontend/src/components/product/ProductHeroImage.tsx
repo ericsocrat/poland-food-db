@@ -34,7 +34,7 @@ async function fetchOffImageUrl(ean: string): Promise<string | null> {
     if (!res.ok) return null;
     const data = await res.json();
     const url: string | undefined = data?.product?.image_front_url;
-    return url && url.startsWith("https://") ? url : null;
+    return url?.startsWith("https://") ? url : null;
   } catch {
     return null;
   }

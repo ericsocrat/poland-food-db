@@ -96,16 +96,17 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         style={{ touchAction: "manipulation" }}
         {...rest}
       >
-        {loading ? (
+        {loading && (
           <span
             className={`animate-spin rounded-full border-current border-t-transparent ${SPINNER_SIZES[size]}`}
             aria-hidden="true"
           />
-        ) : icon ? (
+        )}
+        {!loading && icon && (
           <span className="shrink-0" aria-hidden="true">
             {icon}
           </span>
-        ) : null}
+        )}
         {children}
         {iconRight && !loading ? (
           <span className="shrink-0" aria-hidden="true">

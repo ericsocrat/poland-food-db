@@ -7,7 +7,12 @@ import { Check } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 import type { StepProps } from "../types";
 
-export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
+export function RegionStep({
+  data,
+  onChange,
+  onNext,
+  onBack,
+}: Readonly<StepProps>) {
   const { t } = useTranslation();
   const availableLanguages = data.country
     ? getLanguagesForCountry(data.country)
@@ -44,10 +49,14 @@ export function RegionStep({ data, onChange, onNext, onBack }: StepProps) {
             <span className="text-3xl">{country.flag}</span>
             <div>
               <p className="font-semibold text-foreground">{country.name}</p>
-              <p className="text-sm text-foreground-secondary">{country.native}</p>
+              <p className="text-sm text-foreground-secondary">
+                {country.native}
+              </p>
             </div>
             {data.country === country.code && (
-              <span className="ml-auto text-brand"><Check size={20} /></span>
+              <span className="ml-auto text-brand">
+                <Check size={20} />
+              </span>
             )}
           </button>
         ))}

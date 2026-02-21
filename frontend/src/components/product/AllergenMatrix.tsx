@@ -43,16 +43,10 @@ interface AllergenRow {
 
 function parseAllergens(allergens: ProfileAllergens): AllergenRow[] {
   const containsSet = new Set(
-    allergens.contains
-      .split(",")
-      .filter(Boolean)
-      .map(normaliseTag),
+    allergens.contains.split(",").filter(Boolean).map(normaliseTag),
   );
   const tracesSet = new Set(
-    allergens.traces
-      .split(",")
-      .filter(Boolean)
-      .map(normaliseTag),
+    allergens.traces.split(",").filter(Boolean).map(normaliseTag),
   );
 
   // Collect all mentioned allergens + EU14 baseline
@@ -111,7 +105,9 @@ const STATUS_CONFIG: Record<
 function StatusIcon({ status }: Readonly<{ status: AllergenStatus }>) {
   switch (status) {
     case "contains":
-      return <AlertTriangle size={12} className="text-red-600" aria-hidden="true" />;
+      return (
+        <AlertTriangle size={12} className="text-red-600" aria-hidden="true" />
+      );
     case "traces":
       return <Minus size={12} className="text-amber-600" aria-hidden="true" />;
     case "free":
@@ -134,14 +130,12 @@ interface AllergenMatrixProps {
 export function AllergenMatrix({ allergens }: AllergenMatrixProps) {
   const { t } = useTranslation();
   const rows = parseAllergens(allergens);
-  const hasAny =
-    allergens.contains_count > 0 || allergens.traces_count > 0;
+  const hasAny = allergens.contains_count > 0 || allergens.traces_count > 0;
 
   if (!hasAny) {
     return (
       <p className="flex items-center gap-1 text-sm text-green-600">
-        <Check size={14} aria-hidden="true" />{" "}
-        {t("product.noKnownAllergens")}
+        <Check size={14} aria-hidden="true" /> {t("product.noKnownAllergens")}
       </p>
     );
   }
@@ -149,35 +143,37 @@ export function AllergenMatrix({ allergens }: AllergenMatrixProps) {
   return (
     <div className="space-y-3">
       {/* Compact grid */}
-      <div
-        className="grid grid-cols-2 gap-1.5 sm:grid-cols-3"
-        role="table"
+      <table
+        className="w-full border-separate border-spacing-1.5"
         aria-label={t("allergenMatrix.title")}
       >
-        {rows.map((row) => {
-          const cfg = STATUS_CONFIG[row.status];
-          return (
-            <div
-              key={row.name}
-              role="row"
-              className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 ${cfg.bg} ${cfg.border}`}
-            >
-              <StatusIcon status={row.status} />
-              <span
-                role="cell"
-                className={`text-xs font-medium ${cfg.text}`}
-              >
-                {formatAllergenName(row.name)}
-              </span>
-            </div>
-          );
-        })}
-      </div>
+        <tbody>
+          {rows.map((row) => {
+            const cfg = STATUS_CONFIG[row.status];
+            return (
+              <tr key={row.name}>
+                <td
+                  className={`flex items-center gap-1.5 rounded-lg border px-2.5 py-1.5 ${cfg.bg} ${cfg.border}`}
+                >
+                  <StatusIcon status={row.status} />
+                  <span className={`text-xs font-medium ${cfg.text}`}>
+                    {formatAllergenName(row.name)}
+                  </span>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
 
       {/* Legend */}
       <div className="flex flex-wrap gap-3 text-[10px] text-foreground-muted">
         <span className="flex items-center gap-1">
-          <AlertTriangle size={10} className="text-red-500" aria-hidden="true" />{" "}
+          <AlertTriangle
+            size={10}
+            className="text-red-500"
+            aria-hidden="true"
+          />{" "}
           {t("allergenMatrix.contains")}
         </span>
         <span className="flex items-center gap-1">

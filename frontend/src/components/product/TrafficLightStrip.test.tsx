@@ -33,7 +33,7 @@ describe("TrafficLightStrip", () => {
           total_fat_g: 10,
           saturated_fat_g: 3,
           sugars_g: 15,
-          salt_g: 1.0,
+          salt_g: 1,
         }}
       />,
     );
@@ -46,7 +46,7 @@ describe("TrafficLightStrip", () => {
   it("returns null when no traffic light data available", () => {
     // getTrafficLight returns null when nutrient is not in thresholds
     // but all 4 are in thresholds, so we test with 0 values (still yields green)
-    const { container } = render(
+    render(
       <TrafficLightStrip
         nutrition={{
           total_fat_g: 0,
@@ -57,7 +57,7 @@ describe("TrafficLightStrip", () => {
       />,
     );
 
-    // Should still render (all green)
-    expect(container.querySelector('[role="group"]')).toBeInTheDocument();
+    // Should still render (all green) — <fieldset> has implicit group role
+    expect(screen.getByRole("group")).toBeInTheDocument();
   });
 });

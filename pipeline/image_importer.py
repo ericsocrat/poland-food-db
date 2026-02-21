@@ -77,6 +77,45 @@ def fetch_product_images(ean: str) -> list[dict[str, Any]]:
         return _extract_images(product, ean)
 
 
+def _try_build_fallback_image(
+    key: str, meta: Any, ean: str, seen_urls: set[str]
+) -> dict[str, Any] | None:
+    """Try to build an image dict from an OFF images dict entry.
+
+    Returns the image dict if successful, or None if the entry is
+    not a recognized type or lacks a revision.
+    """
+    if not isinstance(meta, dict):
+        return None
+
+    for prefix, image_type in OFF_TYPE_MAP.items():
+        if not key.startswith(prefix):
+            continue
+
+        rev = meta.get("rev")
+        if rev is None:
+            return None
+
+        barcode_path = _ean_to_off_path(ean)
+        img_url = (
+            f"https://images.openfoodfacts.org/images/products/"
+            f"{barcode_path}/{key}.{rev}.400.jpg"
+        )
+
+        if img_url in seen_urls:
+            return None
+
+        seen_urls.add(img_url)
+        return {
+            "url": img_url,
+            "image_type": image_type,
+            "off_image_id": f"{key}.{rev}.400",
+            "alt_text": f"{image_type.replace('_', ' ').title()} — EAN {ean}",
+        }
+
+    return None
+
+
 def _extract_images(product: dict, ean: str) -> list[dict[str, Any]]:
     """Extract structured image metadata from an OFF product dict."""
     images: list[dict[str, Any]] = []
@@ -104,34 +143,9 @@ def _extract_images(product: dict, ean: str) -> list[dict[str, Any]]:
     raw_images = product.get("images", {})
     if isinstance(raw_images, dict):
         for key, meta in raw_images.items():
-            # Only process named keys like "front_pl", "ingredients_fr", etc.
-            for prefix, image_type in OFF_TYPE_MAP.items():
-                if key.startswith(prefix) and isinstance(meta, dict):
-                    # Build 400px URL from the image revision
-                    rev = meta.get("rev")
-                    if rev is None:
-                        continue
-
-                    # Construct the OFF CDN URL
-                    # Pattern: https://images.openfoodfacts.org/images/products/{barcode_path}/{key}.{rev}.400.jpg
-                    barcode_path = _ean_to_off_path(ean)
-                    img_url = (
-                        f"https://images.openfoodfacts.org/images/products/"
-                        f"{barcode_path}/{key}.{rev}.400.jpg"
-                    )
-
-                    if img_url not in seen_urls:
-                        seen_urls.add(img_url)
-                        off_id = f"{key}.{rev}.400"
-                        images.append(
-                            {
-                                "url": img_url,
-                                "image_type": image_type,
-                                "off_image_id": off_id,
-                                "alt_text": f"{image_type.replace('_', ' ').title()} — EAN {ean}",
-                            }
-                        )
-                    break  # Don't match multiple prefixes for the same key
+            img = _try_build_fallback_image(key, meta, ean, seen_urls)
+            if img is not None:
+                images.append(img)
 
     return images
 
@@ -174,19 +188,19 @@ def generate_image_sql(
     today = datetime.date.today().isoformat()
     lines: list[str] = []
     lines.append(f"-- PIPELINE ({category}): add product images")
-    lines.append(f"-- Source: Open Food Facts API (automated pipeline)")
+    lines.append("-- Source: Open Food Facts API (automated pipeline)")
     lines.append(f"-- Generated: {today}")
     lines.append("")
 
     # Delete existing OFF images for this category to avoid duplicates
-    lines.append(f"-- 1. Remove existing OFF images for this category")
-    lines.append(f"DELETE FROM product_images")
-    lines.append(f"WHERE source = 'off_api'")
-    lines.append(f"  AND product_id IN (")
-    lines.append(f"    SELECT p.product_id FROM products p")
+    lines.append("-- 1. Remove existing OFF images for this category")
+    lines.append("DELETE FROM product_images")
+    lines.append("WHERE source = 'off_api'")
+    lines.append("  AND product_id IN (")
+    lines.append("    SELECT p.product_id FROM products p")
     lines.append(f"    WHERE p.category = {_sql_text(category)}")
-    lines.append(f"      AND p.is_deprecated IS NOT TRUE")
-    lines.append(f"  );")
+    lines.append("      AND p.is_deprecated IS NOT TRUE")
+    lines.append("  );")
     lines.append("")
 
     # Build INSERT values
@@ -284,7 +298,7 @@ def main() -> None:
         help="Max products per category to fetch images for",
     )
 
-    args = parser.parse_args()
+    parser.parse_args()
 
     logging.basicConfig(
         level=logging.INFO,

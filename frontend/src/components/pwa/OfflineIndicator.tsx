@@ -14,25 +14,24 @@ export function OfflineIndicator() {
     const handleOffline = () => setIsOffline(true);
     const handleOnline = () => setIsOffline(false);
 
-    window.addEventListener("offline", handleOffline);
-    window.addEventListener("online", handleOnline);
+    globalThis.addEventListener("offline", handleOffline);
+    globalThis.addEventListener("online", handleOnline);
 
     return () => {
-      window.removeEventListener("offline", handleOffline);
-      window.removeEventListener("online", handleOnline);
+      globalThis.removeEventListener("offline", handleOffline);
+      globalThis.removeEventListener("online", handleOnline);
     };
   }, []);
 
   if (!isOffline) return null;
 
   return (
-    <div
-      role="status"
+    <output
       aria-live="polite"
       className="fixed left-0 right-0 top-0 z-50 bg-amber-500 px-4 py-1.5 text-center text-xs font-medium text-white"
     >
       <WifiOff size={14} aria-hidden="true" className="inline" />{" "}
       {t("pwa.offline")}
-    </div>
+    </output>
   );
 }

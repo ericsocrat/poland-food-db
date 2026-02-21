@@ -15,10 +15,15 @@ export default function PrivacyPage() {
       <SkipLink />
       <Header />
 
-      <main id="main-content" className="flex flex-1 flex-col items-center px-4 py-16">
+      <main
+        id="main-content"
+        className="flex flex-1 flex-col items-center px-4 py-16"
+      >
         <div className="prose max-w-lg">
           <h1>{t("legal.privacyTitle")}</h1>
-          <p className="text-sm text-foreground-secondary">{t("legal.lastUpdated")}</p>
+          <p className="text-sm text-foreground-secondary">
+            {t("legal.lastUpdated")}
+          </p>
 
           <h2>{t("legal.dataWeCollect")}</h2>
           <p>{t("legal.dataWeCollectText")}</p>
@@ -36,7 +41,7 @@ export default function PrivacyPage() {
           <p>{t("legal.imageWhatWeProcessText")}</p>
 
           <h3>{t("legal.imageHowWeProcess")}</h3>
-          <ul className="space-y-2" role="list">
+          <ul className="space-y-2">
             {(
               [
                 { icon: Smartphone, key: "legal.imageOnDevice" },
@@ -57,7 +62,7 @@ export default function PrivacyPage() {
           </ul>
 
           <h3>{t("legal.imageCamera")}</h3>
-          <ul className="space-y-1" role="list">
+          <ul className="space-y-1">
             <li className="flex items-start gap-2">
               <Camera
                 size={16}

@@ -10,7 +10,7 @@ expect.extend(vitestAxeMatchers);
 // ─── Global mock: matchMedia ────────────────────────────────────────────────
 // jsdom doesn't implement matchMedia. Provide a minimal stub so hooks like
 // useTheme() work in all component tests.
-Object.defineProperty(window, "matchMedia", {
+Object.defineProperty(globalThis, "matchMedia", {
   writable: true,
   value: vi.fn().mockImplementation((query: string) => ({
     matches: false,
@@ -34,9 +34,9 @@ vi.mock("@/hooks/use-analytics", () => ({
 // ─── Global mock: ResizeObserver ────────────────────────────────────────────
 // jsdom doesn't implement ResizeObserver. Required by Radix UI Tooltip/Popper.
 class ResizeObserverStub {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
 }
 globalThis.ResizeObserver = ResizeObserverStub as unknown as typeof ResizeObserver;
 

@@ -24,27 +24,32 @@ export function ThemeToggle() {
   const { t } = useTranslation();
 
   return (
-    <div
-      className="inline-flex rounded-lg border bg-surface-muted p-1"
+    <fieldset
+      className="inline-flex rounded-lg border border-border bg-surface-muted p-1 m-0"
       role="radiogroup"
       aria-label={t("theme.label")}
     >
       {THEME_OPTIONS.map((option) => (
-        <button
+        <label
           key={option.value}
-          role="radio"
-          aria-checked={mode === option.value}
-          onClick={() => setMode(option.value)}
           className={`flex cursor-pointer items-center gap-1.5 rounded-md px-3 py-1.5 text-sm font-medium transition-colors ${
             mode === option.value
               ? "bg-surface text-foreground shadow-sm"
               : "text-foreground-secondary hover:text-foreground"
           }`}
         >
+          <input
+            type="radio"
+            name="theme"
+            className="sr-only"
+            value={option.value}
+            checked={mode === option.value}
+            onChange={() => setMode(option.value)}
+          />
           <option.icon size={16} aria-hidden="true" />
           {t(option.labelKey)}
-        </button>
+        </label>
       ))}
-    </div>
+    </fieldset>
   );
 }

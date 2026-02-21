@@ -101,14 +101,9 @@ export function SkeletonContainer({
   children,
 }: Readonly<SkeletonContainerProps>) {
   return (
-    <div
-      role="status"
-      aria-busy="true"
-      aria-label={label}
-      className={className}
-    >
+    <output aria-busy="true" aria-label={label} className={className}>
       {children}
       <span className="sr-only">{label}</span>
-    </div>
+    </output>
   );
 }

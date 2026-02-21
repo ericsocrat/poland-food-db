@@ -45,7 +45,7 @@ export function ProductImageTabs({
 
   return (
     <>
-      <div className="rounded-xl border border bg-surface p-4">
+      <div className="rounded-xl border border-border bg-surface p-4">
         <h3 className="mb-3 text-sm font-semibold text-foreground-secondary">
           {t("product.productPhotos")}
         </h3>

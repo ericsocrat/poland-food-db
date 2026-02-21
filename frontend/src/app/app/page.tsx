@@ -31,7 +31,6 @@ import {
   BarChart3,
 } from "lucide-react";
 import type {
-  DashboardData,
   DashboardFavoritePreview,
   DashboardNewProduct,
   DashboardStats,
@@ -40,7 +39,7 @@ import type {
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-function ScorePill({ score }: { score: number | null }) {
+function ScorePill({ score }: Readonly<{ score: number | null }>) {
   if (score == null) return null;
   const band = scoreBandFromScore(score);
   const cfg = SCORE_BANDS[band];
@@ -53,14 +52,14 @@ function ScorePill({ score }: { score: number | null }) {
   );
 }
 
-function NutriBadge({ grade }: { grade: string | null }) {
+function NutriBadge({ grade }: Readonly<{ grade: string | null }>) {
   if (!grade) return null;
   return <NutriScoreBadge grade={grade} size="sm" />;
 }
 
 // ─── Section Components ─────────────────────────────────────────────────────
 
-function StatsBar({ stats }: { stats: DashboardStats }) {
+function StatsBar({ stats }: Readonly<{ stats: DashboardStats }>) {
   const { t } = useTranslation();
   const items = [
     {
@@ -115,10 +114,10 @@ function StatsBar({ stats }: { stats: DashboardStats }) {
 function WeeklySummaryCard({
   recentlyViewed,
   favoritesPreview,
-}: {
+}: Readonly<{
   recentlyViewed: RecentlyViewedProduct[];
   favoritesPreview: DashboardFavoritePreview[];
-}) {
+}>) {
   const { t } = useTranslation();
 
   const summary = useMemo(() => {
@@ -164,9 +163,9 @@ function WeeklySummaryCard({
   if (summary.viewedCount === 0 && summary.favoritedCount === 0) return null;
 
   const avgBand =
-    summary.avgScore != null
-      ? SCORE_BANDS[scoreBandFromScore(summary.avgScore)]
-      : null;
+    summary.avgScore == null
+      ? null
+      : SCORE_BANDS[scoreBandFromScore(summary.avgScore)];
 
   return (
     <section className="card space-y-3" data-testid="weekly-summary">
@@ -265,7 +264,7 @@ function WeeklySummaryCard({
 function ProductRow({
   product,
   subtitle,
-}: {
+}: Readonly<{
   product: {
     product_id: number;
     product_name: string;
@@ -275,7 +274,7 @@ function ProductRow({
     nutri_score_label: string | null;
   };
   subtitle?: string;
-}) {
+}>) {
   return (
     <Link
       href={`/app/product/${product.product_id}`}
@@ -298,9 +297,9 @@ function ProductRow({
 
 function RecentlyViewedSection({
   products,
-}: {
+}: Readonly<{
   products: RecentlyViewedProduct[];
-}) {
+}>) {
   const { t } = useTranslation();
   if (products.length === 0) return null;
 
@@ -326,9 +325,9 @@ function RecentlyViewedSection({
 
 function FavoritesSection({
   products,
-}: {
+}: Readonly<{
   products: DashboardFavoritePreview[];
-}) {
+}>) {
   const { t } = useTranslation();
   if (products.length === 0) return null;
 
@@ -357,10 +356,10 @@ function FavoritesSection({
 function NewProductsSection({
   products,
   category,
-}: {
+}: Readonly<{
   products: DashboardNewProduct[];
   category: string | null;
-}) {
+}>) {
   const { t } = useTranslation();
   if (products.length === 0) return null;
 
@@ -448,7 +447,7 @@ export default function DashboardPage() {
     );
   }
 
-  const dashboard = data as DashboardData;
+  const dashboard = data;
   const hasContent =
     dashboard.recently_viewed.length > 0 ||
     dashboard.favorites_preview.length > 0 ||

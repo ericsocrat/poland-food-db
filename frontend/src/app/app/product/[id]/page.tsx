@@ -584,32 +584,40 @@ function NutritionTab({ profile }: Readonly<{ profile: ProductProfile }>) {
               role="radiogroup"
               aria-label={t("product.nutritionViewToggle")}
             >
-              <button
-                type="button"
-                role="radio"
-                aria-checked={view === "per100g"}
-                onClick={() => setView("per100g")}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+              <label
+                className={`cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                   view === "per100g"
                     ? "bg-surface text-foreground shadow-sm"
                     : "text-foreground-muted hover:text-foreground-secondary"
                 }`}
               >
+                <input
+                  type="radio"
+                  name="nutritionView"
+                  className="sr-only"
+                  value="per100g"
+                  checked={view === "per100g"}
+                  onChange={() => setView("per100g")}
+                />
                 {t("product.per100g")}
-              </button>
-              <button
-                type="button"
-                role="radio"
-                aria-checked={view === "perServing"}
-                onClick={() => setView("perServing")}
-                className={`rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
+              </label>
+              <label
+                className={`cursor-pointer rounded-md px-2.5 py-1 text-xs font-medium transition-colors ${
                   view === "perServing"
                     ? "bg-surface text-foreground shadow-sm"
                     : "text-foreground-muted hover:text-foreground-secondary"
                 }`}
               >
+                <input
+                  type="radio"
+                  name="nutritionView"
+                  className="sr-only"
+                  value="perServing"
+                  checked={view === "perServing"}
+                  onChange={() => setView("perServing")}
+                />
                 {t("product.perServing")}
-              </button>
+              </label>
             </div>
           )}
           {dv && dv.reference_type !== "none" && (

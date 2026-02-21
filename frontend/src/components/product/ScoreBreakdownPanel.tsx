@@ -147,15 +147,16 @@ function BreakdownContent({
                   +{f.weighted.toFixed(1)} pts
                 </span>
               </div>
-              <div className="h-1.5 w-full rounded-full bg-surface-muted">
+              <progress
+                className="sr-only"
+                value={Math.min(f.raw, 100)}
+                max={100}
+                aria-label={`${f.factor}: ${f.raw}/100`}
+              />
+              <div className="h-1.5 w-full rounded-full bg-surface-muted" aria-hidden="true">
                 <div
                   className={`h-1.5 rounded-full transition-all duration-slow ${getFactorColor(f.raw)}`}
                   style={{ width: `${Math.min(f.raw, 100)}%` }}
-                  role="progressbar"
-                  aria-label={`${f.factor}: ${f.raw}/100`}
-                  aria-valuenow={f.raw}
-                  aria-valuemin={0}
-                  aria-valuemax={100}
                 />
               </div>
             </div>
@@ -205,8 +206,8 @@ function BreakdownSkeleton() {
   return (
     <div className="space-y-2">
       <Skeleton className="h-3 w-3/4" />
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="space-y-1">
+      {["skel-1", "skel-2", "skel-3", "skel-4", "skel-5"].map((key) => (
+        <div key={key} className="space-y-1">
           <div className="flex justify-between">
             <Skeleton className="h-3 w-24" />
             <Skeleton className="h-3 w-12" />

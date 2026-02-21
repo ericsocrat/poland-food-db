@@ -6,8 +6,8 @@
 import { useTranslation } from "@/lib/i18n";
 
 interface OnboardingProgressProps {
-  currentStep: number;
-  totalSteps: number;
+  readonly currentStep: number;
+  readonly totalSteps: number;
 }
 
 export function OnboardingProgress({
@@ -18,17 +18,18 @@ export function OnboardingProgress({
 
   return (
     <div className="mb-8">
-      <div
-        className="mb-2 flex gap-1.5"
-        role="progressbar"
-        aria-valuenow={currentStep}
-        aria-valuemin={1}
-        aria-valuemax={totalSteps}
+      {/* Native progress for screen readers */}
+      <progress
+        className="sr-only"
+        value={currentStep}
+        max={totalSteps}
         aria-label={t("onboarding.stepOf", {
           current: String(currentStep),
           total: String(totalSteps),
         })}
-      >
+      />
+      {/* Visual segmented bar */}
+      <div className="mb-2 flex gap-1.5" aria-hidden="true">
         {Array.from({ length: totalSteps }, (_, i) => (
           <div
             key={i}

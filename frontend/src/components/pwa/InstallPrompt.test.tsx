@@ -6,7 +6,7 @@ import { InstallPrompt } from "./InstallPrompt";
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function mockStandalone(isStandalone: boolean) {
-  Object.defineProperty(window, "matchMedia", {
+  Object.defineProperty(globalThis, "matchMedia", {
     writable: true,
     configurable: true,
     value: vi.fn().mockImplementation((query: string) => ({
@@ -58,7 +58,7 @@ describe("InstallPrompt", () => {
 
     const event = createBeforeInstallPromptEvent();
     act(() => {
-      window.dispatchEvent(event);
+      globalThis.dispatchEvent(event);
     });
 
     // Advance past the 30 s delay
@@ -74,7 +74,7 @@ describe("InstallPrompt", () => {
 
     const event = createBeforeInstallPromptEvent();
     act(() => {
-      window.dispatchEvent(event);
+      globalThis.dispatchEvent(event);
     });
 
     // Not visible immediately
@@ -95,7 +95,7 @@ describe("InstallPrompt", () => {
 
     const event = createBeforeInstallPromptEvent();
     act(() => {
-      window.dispatchEvent(event);
+      globalThis.dispatchEvent(event);
     });
 
     act(() => {
@@ -114,7 +114,7 @@ describe("InstallPrompt", () => {
 
     const event = createBeforeInstallPromptEvent();
     act(() => {
-      window.dispatchEvent(event);
+      globalThis.dispatchEvent(event);
     });
 
     act(() => {
@@ -140,7 +140,7 @@ describe("InstallPrompt", () => {
 
     const event = createBeforeInstallPromptEvent();
     act(() => {
-      window.dispatchEvent(event);
+      globalThis.dispatchEvent(event);
     });
 
     act(() => {
@@ -161,7 +161,7 @@ describe("InstallPrompt", () => {
 
     const event = createBeforeInstallPromptEvent();
     act(() => {
-      window.dispatchEvent(event);
+      globalThis.dispatchEvent(event);
     });
 
     act(() => {
@@ -172,8 +172,8 @@ describe("InstallPrompt", () => {
   });
 
   it("cleans up event listener on unmount", () => {
-    const addSpy = vi.spyOn(window, "addEventListener");
-    const removeSpy = vi.spyOn(window, "removeEventListener");
+    const addSpy = vi.spyOn(globalThis, "addEventListener");
+    const removeSpy = vi.spyOn(globalThis, "removeEventListener");
 
     const { unmount } = render(<InstallPrompt />);
 

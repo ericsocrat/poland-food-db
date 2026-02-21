@@ -10,7 +10,7 @@ type EventHandler = (event: AppEvent) => void | Promise<void>;
  * handler failure never blocks the emitter or other handlers.
  */
 class AppEventBus {
-  private handlers: Set<EventHandler> = new Set();
+  private readonly handlers: Set<EventHandler> = new Set();
 
   /** Subscribe a handler. Returns an unsubscribe function. */
   subscribe(handler: EventHandler): () => void {
@@ -24,13 +24,7 @@ class AppEventBus {
   async emit(event: AppEvent): Promise<void> {
     if (this.handlers.size === 0) return;
     await Promise.allSettled(
-      [...this.handlers].map((h) => {
-        try {
-          return h(event);
-        } catch {
-          return Promise.resolve();
-        }
-      }),
+      [...this.handlers].map((handler) => Promise.resolve().then(() => handler(event))),
     );
   }
 

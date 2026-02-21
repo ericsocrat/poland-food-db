@@ -20,8 +20,6 @@ export function CategoryDiversity({
 
   if (diversity.explored === 0) return null;
 
-  const pct = Math.round((diversity.explored / diversity.total) * 100);
-
   return (
     <div data-testid="category-diversity">
       <div className="flex items-center gap-2">
@@ -37,20 +35,15 @@ export function CategoryDiversity({
 
       <div className="mt-2 flex items-center gap-2">
         {/* Progress bar */}
-        <div className="h-2 flex-1 overflow-hidden rounded-full bg-surface-muted">
-          <div
-            className="h-full rounded-full bg-brand transition-all duration-500"
-            style={{ width: `${pct}%` }}
-            role="progressbar"
-            aria-valuenow={diversity.explored}
-            aria-valuemin={0}
-            aria-valuemax={diversity.total}
-            aria-label={t("dashboard.categoryDiversityAria", {
-              explored: String(diversity.explored),
-              total: String(diversity.total),
-            })}
-          />
-        </div>
+        <progress
+          className="h-2 flex-1 appearance-none overflow-hidden rounded-full bg-surface-muted [&::-webkit-progress-bar]:bg-surface-muted [&::-webkit-progress-bar]:rounded-full [&::-webkit-progress-value]:bg-brand [&::-webkit-progress-value]:rounded-full [&::-webkit-progress-value]:transition-all [&::-webkit-progress-value]:duration-500 [&::-moz-progress-bar]:bg-brand [&::-moz-progress-bar]:rounded-full"
+          value={diversity.explored}
+          max={diversity.total}
+          aria-label={t("dashboard.categoryDiversityAria", {
+            explored: String(diversity.explored),
+            total: String(diversity.total),
+          })}
+        />
         <span className="text-sm font-bold tabular-nums text-foreground">
           {diversity.explored}/{diversity.total}
         </span>

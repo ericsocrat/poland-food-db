@@ -5,7 +5,7 @@ import { AlertTriangle } from "lucide-react";
 
 interface DisclaimerProps {
   /** Optional additional classes */
-  className?: string;
+  readonly className?: string;
 }
 
 /**

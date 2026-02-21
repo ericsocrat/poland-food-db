@@ -8,23 +8,18 @@ describe("ProgressBar", () => {
     expect(screen.getByRole("progressbar")).toBeTruthy();
   });
 
-  it("sets aria-valuenow", () => {
+  it("sets value and max on native progress", () => {
     render(<ProgressBar value={75} />);
     const bar = screen.getByRole("progressbar");
-    expect(bar.getAttribute("aria-valuenow")).toBe("75");
-    expect(bar.getAttribute("aria-valuemin")).toBe("0");
-    expect(bar.getAttribute("aria-valuemax")).toBe("100");
+    expect(bar).toHaveAttribute("value", "75");
+    expect(bar).toHaveAttribute("max", "100");
   });
 
   it("clamps value to 0–100", () => {
     const { rerender } = render(<ProgressBar value={-10} />);
-    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe(
-      "0",
-    );
+    expect(screen.getByRole("progressbar")).toHaveAttribute("value", "0");
     rerender(<ProgressBar value={150} />);
-    expect(screen.getByRole("progressbar").getAttribute("aria-valuenow")).toBe(
-      "100",
-    );
+    expect(screen.getByRole("progressbar")).toHaveAttribute("value", "100");
   });
 
   it("shows label when showLabel is true", () => {
@@ -56,9 +51,9 @@ describe("ProgressBar", () => {
   });
 
   it("applies size classes", () => {
-    render(<ProgressBar value={50} size="sm" />);
-    const bar = screen.getByRole("progressbar");
-    expect(bar.className).toContain("h-1.5");
+    const { container } = render(<ProgressBar value={50} size="sm" />);
+    const track = container.querySelector("[aria-hidden='true']");
+    expect(track?.className).toContain("h-1.5");
   });
 
   it("has accessible aria-label", () => {

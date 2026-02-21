@@ -40,16 +40,19 @@ const POPULAR_SEARCHES = [
  * Diacritic-insensitive: "zol" highlights "żół" in "Ser Żółty".
  * Returns JSX with <mark> tags around matched segments.
  */
-function HighlightMatch({ text, query }: { text: string; query: string }) {
+function HighlightMatch({
+  text,
+  query,
+}: Readonly<{ text: string; query: string }>) {
   if (!query || query.length < 1) return <>{text}</>;
 
   // Normalize both strings for comparison (strip diacritics, lowercase)
   const normalize = (s: string) =>
     s
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/ł/g, "l")
-      .replace(/Ł/g, "L")
+      .replaceAll(/[\u0300-\u036f]/g, "")
+      .replaceAll("ł", "l")
+      .replaceAll("Ł", "L")
       .toLowerCase();
 
   const normalizedText = normalize(text);

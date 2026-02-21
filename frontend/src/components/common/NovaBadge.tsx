@@ -92,7 +92,9 @@ export const NovaBadge = React.memo(function NovaBadge({
       ]
         .filter(Boolean)
         .join(" ")}
-      aria-label={`NOVA ${isValid ? `Group ${group}: ${config.label}` : "unknown"}`}
+      aria-label={
+        isValid ? `NOVA Group ${group}: ${config.label}` : "NOVA unknown"
+      }
     >
       {isValid ? group : "?"}
       {showLabel && <span className="font-medium">{config.label}</span>}

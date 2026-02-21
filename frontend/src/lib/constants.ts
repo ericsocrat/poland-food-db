@@ -230,7 +230,7 @@ export const SCORE_INTERPRETATION_BANDS = [
 export function getScoreInterpretation(score: number) {
   return (
     SCORE_INTERPRETATION_BANDS.find((b) => score >= b.min && score <= b.max) ??
-    SCORE_INTERPRETATION_BANDS[SCORE_INTERPRETATION_BANDS.length - 1]
+    SCORE_INTERPRETATION_BANDS.at(-1)!
   );
 }
 

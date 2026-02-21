@@ -55,9 +55,7 @@ export function AchievementGrid({ achievements }: AchievementGridProps) {
               id={`cat-${category}`}
               className="mb-4 flex items-center gap-2 text-lg font-bold text-foreground"
             >
-              <span role="img" aria-hidden>
-                {CATEGORY_ICON[category]}
-              </span>
+              <span aria-hidden="true">{CATEGORY_ICON[category]}</span>
               {t(`achievements.category.${category}`)}
             </h2>
 

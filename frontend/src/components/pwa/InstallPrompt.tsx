@@ -43,7 +43,7 @@ export function InstallPrompt() {
 
   useEffect(() => {
     // Already installed as standalone — nothing to show
-    if (window.matchMedia("(display-mode: standalone)").matches) return;
+    if (globalThis.matchMedia("(display-mode: standalone)").matches) return;
 
     // Dismiss cooldown still active
     if (isDismissCooldownActive()) return;
@@ -52,10 +52,13 @@ export function InstallPrompt() {
     const handler = (e: Event) => {
       e.preventDefault();
       // Delay so the prompt isn't intrusive on first visit
-      setTimeout(() => setDeferredPrompt(e as BeforeInstallPromptEvent), SHOW_DELAY_MS);
+      setTimeout(
+        () => setDeferredPrompt(e as BeforeInstallPromptEvent),
+        SHOW_DELAY_MS,
+      );
     };
 
-    window.addEventListener("beforeinstallprompt", handler);
+    globalThis.addEventListener("beforeinstallprompt", handler);
 
     // ── iOS: show manual instructions after a delay ──────────────────────
     let iosTimer: ReturnType<typeof setTimeout> | undefined;
@@ -64,7 +67,7 @@ export function InstallPrompt() {
     }
 
     return () => {
-      window.removeEventListener("beforeinstallprompt", handler);
+      globalThis.removeEventListener("beforeinstallprompt", handler);
       if (iosTimer) clearTimeout(iosTimer);
     };
   }, []);
@@ -95,9 +98,11 @@ export function InstallPrompt() {
   if (!showNative && !showIOS) return null;
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-50 mx-auto max-w-sm animate-[slideUp_0.3s_ease-out] rounded-xl border border bg-surface p-4 shadow-lg sm:left-auto sm:right-4 sm:max-w-xs">
+    <div className="fixed bottom-20 left-4 right-4 z-50 mx-auto max-w-sm animate-[slideUp_0.3s_ease-out] rounded-xl border border-border bg-surface p-4 shadow-lg sm:left-auto sm:right-4 sm:max-w-xs">
       <div className="flex items-start gap-3">
-        <span className="text-2xl" aria-hidden="true">📲</span>
+        <span className="text-2xl" aria-hidden="true">
+          📲
+        </span>
         <div className="flex-1">
           <p className="text-sm font-semibold text-foreground">
             {t("pwa.installTitle")}

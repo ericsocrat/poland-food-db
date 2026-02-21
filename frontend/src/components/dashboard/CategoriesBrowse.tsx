@@ -75,21 +75,19 @@ export function CategoriesBrowse() {
         </Link>
       </div>
 
-      {isLoading ? (
-        <CategoriesBrowseSkeleton />
-      ) : data && data.length > 0 ? (
-        <div
-          className="scrollbar-hide flex gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
-          role="list"
+      {isLoading && <CategoriesBrowseSkeleton />}
+      {!isLoading && data && data.length > 0 && (
+        <ul
+          className="scrollbar-hide flex list-none gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
           aria-label={t("dashboard.categoriesTitle")}
         >
           {data.map((cat) => (
-            <div key={cat.category} role="listitem">
+            <li key={cat.category}>
               <CategoryChip category={cat} />
-            </div>
+            </li>
           ))}
-        </div>
-      ) : null}
+        </ul>
+      )}
     </section>
   );
 }

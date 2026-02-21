@@ -5,7 +5,7 @@ import { Printer } from "lucide-react";
 
 interface PrintButtonProps {
   /** Optional additional classes */
-  className?: string;
+  readonly className?: string;
 }
 
 /**

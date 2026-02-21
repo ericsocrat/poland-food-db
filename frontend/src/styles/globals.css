@@ -584,10 +584,12 @@
     display: none !important;
   }
 
-  /* ── Remove decorative styles ── */
+  /* ── Remove decorative styles & transitions/animations ── */
   * {
     box-shadow: none !important;
     text-shadow: none !important;
+    transition: none !important;
+    animation: none !important;
   }
 
   /* ── Remove sticky/fixed positioning ── */
@@ -614,12 +616,6 @@
   /* ── Force page break ── */
   .print-page-break {
     break-before: page;
-  }
-
-  /* ── Remove transitions/animations ── */
-  * {
-    transition: none !important;
-    animation: none !important;
   }
 
   /* ── Show URLs for external links ── */

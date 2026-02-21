@@ -48,11 +48,9 @@ export function truncate(text: string, max: number): string {
 // Inter Bold 700 from Google Fonts CDN — fetched once & cached by the edge.
 let interBoldPromise: Promise<ArrayBuffer> | null = null;
 function getInterBoldFont(): Promise<ArrayBuffer> {
-  if (!interBoldPromise) {
-    interBoldPromise = fetch(
-      "https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYAZ9hiA.ttf",
-    ).then((r) => r.arrayBuffer());
-  }
+  interBoldPromise ??= fetch(
+    "https://fonts.gstatic.com/s/inter/v18/UcCO3FwrK3iLTeHuS_nVMrMxCp50SjIw2boKoduKmMEVuFuYAZ9hiA.ttf",
+  ).then((r) => r.arrayBuffer());
   return interBoldPromise;
 }
 

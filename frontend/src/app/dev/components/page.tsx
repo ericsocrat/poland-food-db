@@ -33,10 +33,10 @@ if (process.env.NODE_ENV === "production") {
 function Section({
   title,
   children,
-}: {
+}: Readonly<{
   title: string;
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <section className="space-y-4">
       <h2 className="text-xl font-semibold text-foreground border-b border-border pb-2">
@@ -50,10 +50,10 @@ function Section({
 function Row({
   label,
   children,
-}: {
+}: Readonly<{
   label: string;
   children: React.ReactNode;
-}) {
+}>) {
   return (
     <div className="space-y-1">
       <p className="text-sm text-foreground-secondary font-medium">{label}</p>
@@ -397,8 +397,8 @@ export default function DevComponentsPage() {
       <Section title="NutrientTrafficLight">
         <Row label="Per 100 g">
           <NutrientTrafficLight nutrient="fat" value={2.5} />
-          <NutrientTrafficLight nutrient="saturates" value={8.0} />
-          <NutrientTrafficLight nutrient="sugars" value={15.0} />
+          <NutrientTrafficLight nutrient="saturates" value={8} />
+          <NutrientTrafficLight nutrient="sugars" value={15} />
           <NutrientTrafficLight nutrient="salt" value={0.3} />
         </Row>
       </Section>

@@ -28,9 +28,7 @@ describe("MoreDrawer", () => {
   beforeEach(() => onClose.mockClear());
 
   it("renders nothing when closed", () => {
-    const { container } = render(
-      <MoreDrawer open={false} onClose={onClose} />,
-    );
+    const { container } = render(<MoreDrawer open={false} onClose={onClose} />);
     expect(container.innerHTML).toBe("");
   });
 
@@ -95,8 +93,7 @@ describe("MoreDrawer", () => {
 
   it("calls onClose when backdrop is clicked", () => {
     render(<MoreDrawer open={true} onClose={onClose} />);
-    // The backdrop is the outermost div with aria-hidden="true"
-    const backdrop = screen.getByRole("dialog").parentElement!;
+    const backdrop = screen.getByLabelText("Close modal / overlay");
     fireEvent.click(backdrop);
     expect(onClose).toHaveBeenCalledTimes(1);
   });

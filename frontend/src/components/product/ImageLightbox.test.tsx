@@ -26,9 +26,7 @@ function makeImages(count = 3): ProductImage[] {
   return Array.from({ length: count }, (_, i) => ({
     image_id: i + 1,
     url: `https://images.example.com/img${i + 1}.jpg`,
-    image_type: (["front", "ingredients", "nutrition_label"] as const)[
-      i % 3
-    ],
+    image_type: (["front", "ingredients", "nutrition_label"] as const)[i % 3],
     source: "off_api" as const,
     width: 800,
     height: 800,
@@ -290,9 +288,7 @@ describe("ImageLightbox", () => {
     );
     // Zoom in
     await user.click(screen.getByLabelText("imageLightbox.zoomIn"));
-    expect(
-      screen.getByLabelText("imageLightbox.zoomOut"),
-    ).not.toBeDisabled();
+    expect(screen.getByLabelText("imageLightbox.zoomOut")).not.toBeDisabled();
 
     // Navigate to next
     await user.click(screen.getByLabelText("imageLightbox.next"));
@@ -311,9 +307,7 @@ describe("ImageLightbox", () => {
     );
     fireEvent.keyDown(document, { key: "+" });
     // After zoom in, zoom out should be enabled
-    expect(
-      screen.getByLabelText("imageLightbox.zoomOut"),
-    ).not.toBeDisabled();
+    expect(screen.getByLabelText("imageLightbox.zoomOut")).not.toBeDisabled();
   });
 
   it("keyboard - zooms out", async () => {
@@ -368,9 +362,7 @@ describe("ImageLightbox", () => {
         onClose={onClose}
       />,
     );
-    expect(
-      screen.getByAltText("Test Product — front"),
-    ).toBeInTheDocument();
+    expect(screen.getByAltText("Test Product — front")).toBeInTheDocument();
   });
 
   it("returns null when image at index is undefined", () => {
@@ -394,9 +386,8 @@ describe("ImageLightbox", () => {
         onClose={onClose}
       />,
     );
-    // Click the dialog backdrop (the container div itself)
-    const dialog = screen.getByRole("dialog");
-    fireEvent.click(dialog);
+    const backdrop = screen.getByLabelText("shortcuts.closeOverlay");
+    fireEvent.click(backdrop);
     expect(onClose).toHaveBeenCalledOnce();
   });
 
@@ -412,9 +403,9 @@ describe("ImageLightbox", () => {
       />,
     );
     // Find the image area (the swipe container)
-    const imageArea = screen.getByRole("dialog").querySelector(
-      "[style*='cursor']",
-    ) as HTMLElement;
+    const imageArea = screen
+      .getByRole("dialog")
+      .querySelector("[style*='cursor']") as HTMLElement;
     expect(imageArea).toBeTruthy();
 
     // Simulate touch swipe right (dx > 50)
@@ -438,9 +429,9 @@ describe("ImageLightbox", () => {
         onClose={onClose}
       />,
     );
-    const imageArea = screen.getByRole("dialog").querySelector(
-      "[style*='cursor']",
-    ) as HTMLElement;
+    const imageArea = screen
+      .getByRole("dialog")
+      .querySelector("[style*='cursor']") as HTMLElement;
 
     // Simulate touch swipe left (dx < -50)
     fireEvent.touchStart(imageArea, {
@@ -463,9 +454,9 @@ describe("ImageLightbox", () => {
         onClose={onClose}
       />,
     );
-    const imageArea = screen.getByRole("dialog").querySelector(
-      "[style*='cursor']",
-    ) as HTMLElement;
+    const imageArea = screen
+      .getByRole("dialog")
+      .querySelector("[style*='cursor']") as HTMLElement;
 
     // Small swipe (dx = 30, below 50 threshold)
     fireEvent.touchStart(imageArea, {
@@ -493,9 +484,9 @@ describe("ImageLightbox", () => {
     // Zoom in first
     await user.click(screen.getByLabelText("imageLightbox.zoomIn"));
 
-    const imageArea = screen.getByRole("dialog").querySelector(
-      "[style*='cursor']",
-    ) as HTMLElement;
+    const imageArea = screen
+      .getByRole("dialog")
+      .querySelector("[style*='cursor']") as HTMLElement;
 
     // Try swipe
     fireEvent.touchStart(imageArea, {
@@ -522,9 +513,9 @@ describe("ImageLightbox", () => {
       />,
     );
 
-    const imageArea = screen.getByRole("dialog").querySelector(
-      "[style*='cursor']",
-    ) as HTMLElement;
+    const imageArea = screen
+      .getByRole("dialog")
+      .querySelector("[style*='cursor']") as HTMLElement;
 
     // Initially cursor should be default
     expect(imageArea.style.cursor).toBe("default");
@@ -546,9 +537,9 @@ describe("ImageLightbox", () => {
       />,
     );
 
-    const imageArea = screen.getByRole("dialog").querySelector(
-      "[style*='cursor']",
-    ) as HTMLElement;
+    const imageArea = screen
+      .getByRole("dialog")
+      .querySelector("[style*='cursor']") as HTMLElement;
 
     // Try mouse down without zoom — should not set up panning
     fireEvent.mouseDown(imageArea, { clientX: 100, clientY: 100 });
@@ -573,9 +564,9 @@ describe("ImageLightbox", () => {
     // Zoom in
     await user.click(screen.getByLabelText("imageLightbox.zoomIn"));
 
-    const imageArea = screen.getByRole("dialog").querySelector(
-      "[style*='cursor']",
-    ) as HTMLElement;
+    const imageArea = screen
+      .getByRole("dialog")
+      .querySelector("[style*='cursor']") as HTMLElement;
 
     // Mouse drag to pan
     fireEvent.mouseDown(imageArea, { clientX: 100, clientY: 100 });
@@ -599,9 +590,9 @@ describe("ImageLightbox", () => {
         onClose={onClose}
       />,
     );
-    const imageArea = screen.getByRole("dialog").querySelector(
-      "[style*='cursor']",
-    ) as HTMLElement;
+    const imageArea = screen
+      .getByRole("dialog")
+      .querySelector("[style*='cursor']") as HTMLElement;
 
     // Fire touchEnd without touchStart — should not throw
     fireEvent.touchEnd(imageArea, {
@@ -640,8 +631,6 @@ describe("ImageLightbox", () => {
       />,
     );
     fireEvent.keyDown(document, { key: "=" });
-    expect(
-      screen.getByLabelText("imageLightbox.zoomOut"),
-    ).not.toBeDisabled();
+    expect(screen.getByLabelText("imageLightbox.zoomOut")).not.toBeDisabled();
   });
 });

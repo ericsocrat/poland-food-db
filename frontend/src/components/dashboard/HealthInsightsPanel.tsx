@@ -11,7 +11,6 @@ import { NovaDistributionChart } from "./NovaDistribution";
 import { AllergenAlert } from "./AllergenAlert";
 import { CategoryDiversity } from "./CategoryDiversity";
 import { RecentComparisons } from "./RecentComparisons";
-import type { DashboardInsights } from "@/lib/types";
 
 function InsightsSkeleton() {
   return (
@@ -50,7 +49,7 @@ export function HealthInsightsPanel() {
   if (isLoading) return <InsightsSkeleton />;
   if (isError || !data) return null;
 
-  const insights = data as DashboardInsights;
+  const insights = data;
 
   // If everything is zeroed out, skip rendering
   const hasData =

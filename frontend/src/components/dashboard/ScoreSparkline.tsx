@@ -63,9 +63,9 @@ export function ScoreSparkline({ scores }: Readonly<ScoreSparklineProps>) {
         width={SVG_WIDTH}
         height={SVG_HEIGHT}
         viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-        role="img"
         aria-label={t("dashboard.sparklineAria")}
       >
+        <title>{t("dashboard.sparklineAria")}</title>
         {buckets.map((band, i) => {
           const x = i * (BAR_WIDTH + BAR_GAP);
           const barH = Math.max(band.height, band.count > 0 ? 4 : 0);

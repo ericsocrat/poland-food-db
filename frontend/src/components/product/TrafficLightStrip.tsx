@@ -43,10 +43,9 @@ export function TrafficLightStrip({ nutrition }: TrafficLightStripProps) {
   if (items.length === 0) return null;
 
   return (
-    <div
-      className="flex items-center gap-3 rounded-lg bg-surface-muted px-3 py-2"
+    <fieldset
+      className="flex items-center gap-3 rounded-lg border-0 bg-surface-muted p-0 px-3 py-2"
       aria-label={t("product.trafficLightSummary")}
-      role="group"
     >
       {items.map((item) => (
         <div key={item.nutrient} className="flex items-center gap-1.5">
@@ -59,6 +58,6 @@ export function TrafficLightStrip({ nutrition }: TrafficLightStripProps) {
           </span>
         </div>
       ))}
-    </div>
+    </fieldset>
   );
 }

@@ -728,7 +728,7 @@ describe("ProductDetailPage", () => {
 
     // Per 100g radio should be checked by default
     const per100gRadio = screen.getByRole("radio", { name: "Per 100 g" });
-    expect(per100gRadio).toHaveAttribute("aria-checked", "true");
+    expect(per100gRadio).toBeChecked();
 
     // Should show per 100g values initially
     expect(screen.getByText("530 kcal / 2218 kJ")).toBeInTheDocument();
@@ -1219,9 +1219,9 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("Contains")).toBeInTheDocument();
     });
 
-    // AllergenMatrix renders contains allergens with red styling in a grid
+    // AllergenMatrix renders contains allergens with red styling in a <table>
     const glutenCell = screen.getByText("Gluten");
-    expect(glutenCell.closest("[role='row']")).toHaveClass("bg-red-50");
+    expect(glutenCell.closest("td")).toHaveClass("bg-red-50");
   });
 
   it("renders allergen 'May contain traces' label in matrix legend", async () => {
@@ -1235,9 +1235,9 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("May contain traces")).toBeInTheDocument();
     });
 
-    // AllergenMatrix renders traces allergens with amber styling in a grid
+    // AllergenMatrix renders traces allergens with amber styling in a <table>
     const soyCell = screen.getByText("Soy");
-    expect(soyCell.closest("[role='row']")).toHaveClass("bg-amber-50");
+    expect(soyCell.closest("td")).toHaveClass("bg-amber-50");
   });
 
   // ── Desktop split layout ─────────────────────────────────────────────────

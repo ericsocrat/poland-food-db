@@ -48,9 +48,9 @@ describe("ScoreSparkline", () => {
     expect(Number(vhBar.getAttribute("height"))).toBeGreaterThan(0);
   });
 
-  it("has accessible role and aria-label on SVG", () => {
+  it("has accessible aria-label on SVG", () => {
     render(<ScoreSparkline scores={[50]} />);
-    const svg = screen.getByRole("img");
+    const svg = screen.getByTestId("score-sparkline").querySelector("svg")!;
     expect(svg).toHaveAttribute("aria-label");
   });
 

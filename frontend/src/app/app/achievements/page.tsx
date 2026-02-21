@@ -18,13 +18,25 @@ import { Icon } from "@/components/common/Icon";
 import { Skeleton } from "@/components/common/Skeleton";
 import { Trophy } from "lucide-react";
 
+const LOADING_SKELETON_KEYS = [
+  "skel-1",
+  "skel-2",
+  "skel-3",
+  "skel-4",
+  "skel-5",
+  "skel-6",
+  "skel-7",
+  "skel-8",
+] as const;
+
 export default function AchievementsPage() {
   const { t } = useTranslation();
   const { data, isLoading, error } = useAchievements();
 
   const totalCount = data?.total ?? 0;
   const unlockedCount = data?.unlocked ?? 0;
-  const overallPct = totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0;
+  const overallPct =
+    totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0;
 
   return (
     <div>
@@ -54,8 +66,8 @@ export default function AchievementsPage() {
           <Skeleton className="h-6 w-48" />
           <Skeleton className="h-4 w-full" />
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4">
-            {Array.from({ length: 8 }).map((_, i) => (
-              <Skeleton key={i} className="h-36 rounded-xl" />
+            {LOADING_SKELETON_KEYS.map((key) => (
+              <Skeleton key={key} className="h-36 rounded-xl" />
             ))}
           </div>
         </div>

@@ -40,7 +40,9 @@ describe("NovaDistributionChart", () => {
   it("renders an SVG bar chart", () => {
     render(<NovaDistributionChart distribution={distribution} />);
     expect(screen.getByTestId("nova-distribution")).toBeInTheDocument();
-    expect(screen.getByRole("img")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("nova-distribution").querySelector("svg"),
+    ).toBeInTheDocument();
   });
 
   it("renders 4 bars for NOVA groups", () => {
@@ -86,7 +88,7 @@ describe("NovaDistributionChart", () => {
 
   it("has accessible aria-label on SVG", () => {
     render(<NovaDistributionChart distribution={distribution} />);
-    const svg = screen.getByRole("img");
+    const svg = screen.getByTestId("nova-distribution").querySelector("svg")!;
     expect(svg).toHaveAttribute("aria-label");
   });
 });
@@ -146,11 +148,11 @@ describe("CategoryDiversity", () => {
     expect(screen.getByText("8/20")).toBeInTheDocument();
   });
 
-  it("renders progress bar with correct aria values", () => {
+  it("renders progress bar with correct native values", () => {
     render(<CategoryDiversity diversity={diversity} />);
     const bar = screen.getByRole("progressbar");
-    expect(bar).toHaveAttribute("aria-valuenow", "8");
-    expect(bar).toHaveAttribute("aria-valuemax", "20");
+    expect(bar).toHaveAttribute("value", "8");
+    expect(bar).toHaveAttribute("max", "20");
   });
 
   it("shows 'Discover more' link when not all explored", () => {

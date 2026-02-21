@@ -25,10 +25,10 @@ export const INITIAL_ONBOARDING_DATA: OnboardingData = {
 };
 
 export interface StepProps {
-  data: OnboardingData;
-  onChange: (patch: Partial<OnboardingData>) => void;
-  onNext: () => void;
-  onBack: () => void;
+  readonly data: OnboardingData;
+  readonly onChange: (patch: Partial<OnboardingData>) => void;
+  readonly onNext: () => void;
+  readonly onBack: () => void;
 }
 
 /** Total number of wizard steps (Welcome through Done). */

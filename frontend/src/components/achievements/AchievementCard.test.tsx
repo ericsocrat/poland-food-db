@@ -65,25 +65,23 @@ describe("AchievementCard", () => {
     expect(
       screen.getByText("achievement.first_scan.title"),
     ).toBeInTheDocument();
-    expect(
-      screen.getByText("achievement.first_scan.desc"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("achievement.first_scan.desc")).toBeInTheDocument();
     expect(screen.getByText("achievements.earned")).toBeInTheDocument();
   });
 
   it("does not show progress bar for unlocked achievement", () => {
     render(<AchievementCard achievement={unlockedAchievement} />);
 
-    expect(screen.queryByTestId("achievement-progress")).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("achievement-progress"),
+    ).not.toBeInTheDocument();
   });
 
   it("renders locked achievement with progress bar", () => {
     render(<AchievementCard achievement={lockedAchievement} />);
 
     expect(screen.getByText("🏅")).toBeInTheDocument();
-    expect(
-      screen.getByText("achievement.scan_50.title"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("achievement.scan_50.title")).toBeInTheDocument();
     expect(screen.getByTestId("achievement-progress")).toHaveTextContent(
       "25 / 50",
     );
@@ -93,14 +91,14 @@ describe("AchievementCard", () => {
     render(<AchievementCard achievement={lockedAchievement} />);
 
     const progressBar = screen.getByRole("progressbar");
-    expect(progressBar).toHaveAttribute("aria-valuenow", "50");
+    expect(progressBar).toHaveAttribute("value", "50");
   });
 
   it("shows 0% progress for zero-progress achievement", () => {
     render(<AchievementCard achievement={zeroProgressAchievement} />);
 
     const progressBar = screen.getByRole("progressbar");
-    expect(progressBar).toHaveAttribute("aria-valuenow", "0");
+    expect(progressBar).toHaveAttribute("value", "0");
     expect(screen.getByTestId("achievement-progress")).toHaveTextContent(
       "0 / 1",
     );
@@ -132,12 +130,11 @@ describe("AchievementCard", () => {
     ).toBeInTheDocument();
   });
 
-  it("renders icon with accessible label", () => {
+  it("renders decorative icon as hidden from accessibility tree", () => {
     render(<AchievementCard achievement={unlockedAchievement} />);
 
-    const icon = screen.getByRole("img", {
-      name: "achievement.first_scan.title",
-    });
+    const icon = screen.getByText("🔍");
+    expect(icon).toHaveAttribute("aria-hidden", "true");
     expect(icon).toBeInTheDocument();
   });
 
@@ -150,6 +147,6 @@ describe("AchievementCard", () => {
     render(<AchievementCard achievement={overAchievement} />);
 
     const progressBar = screen.getByRole("progressbar");
-    expect(progressBar).toHaveAttribute("aria-valuenow", "100");
+    expect(progressBar).toHaveAttribute("value", "100");
   });
 });

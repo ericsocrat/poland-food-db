@@ -16,7 +16,7 @@ const STORAGE_KEY = "theme";
 
 /** Read the persisted theme mode from localStorage. */
 function getStoredTheme(): ThemeMode {
-  if (typeof window === "undefined") return "system";
+  if (typeof globalThis.window === "undefined") return "system";
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark" || stored === "system") {
@@ -32,8 +32,8 @@ function getStoredTheme(): ThemeMode {
 function resolveTheme(mode: ThemeMode): ResolvedTheme {
   if (mode === "light" || mode === "dark") return mode;
   // 'system' — check OS preference
-  if (typeof window === "undefined") return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches
+  if (typeof globalThis.window === "undefined") return "light";
+  return globalThis.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";
 }
@@ -41,7 +41,7 @@ function resolveTheme(mode: ThemeMode): ResolvedTheme {
 /** Apply the resolved theme to the document. */
 function applyTheme(resolved: ResolvedTheme) {
   if (typeof document === "undefined") return;
-  document.documentElement.setAttribute("data-theme", resolved);
+  document.documentElement.dataset.theme = resolved;
   // Update meta theme-color for mobile browsers
   const meta = document.querySelector('meta[name="theme-color"]');
   if (meta) {
@@ -64,13 +64,13 @@ function applyTheme(resolved: ResolvedTheme) {
  * ```
  */
 export function useTheme() {
-  const [mode, setModeState] = useState<ThemeMode>(getStoredTheme);
+  const [mode, setMode] = useState<ThemeMode>(getStoredTheme);
   const [resolved, setResolved] = useState<ResolvedTheme>(() =>
     resolveTheme(mode),
   );
 
-  const setMode = useCallback((newMode: ThemeMode) => {
-    setModeState(newMode);
+  const updateMode = useCallback((newMode: ThemeMode) => {
+    setMode(newMode);
     try {
       localStorage.setItem(STORAGE_KEY, newMode);
     } catch {
@@ -85,7 +85,7 @@ export function useTheme() {
   useEffect(() => {
     if (mode !== "system") return;
 
-    const mql = window.matchMedia("(prefers-color-scheme: dark)");
+    const mql = globalThis.matchMedia("(prefers-color-scheme: dark)");
     const handler = (e: MediaQueryListEvent) => {
       const newResolved = e.matches ? "dark" : "light";
       setResolved(newResolved);
@@ -101,5 +101,5 @@ export function useTheme() {
     applyTheme(resolved);
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  return useMemo(() => ({ mode, resolved, setMode }), [mode, resolved, setMode]);
+  return useMemo(() => ({ mode, resolved, setMode: updateMode }), [mode, resolved, updateMode]);
 }

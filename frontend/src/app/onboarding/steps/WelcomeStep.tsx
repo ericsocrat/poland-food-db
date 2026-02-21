@@ -5,8 +5,8 @@
 import { useTranslation } from "@/lib/i18n";
 
 interface WelcomeStepProps {
-  onNext: () => void;
-  onSkipAll: () => void;
+  readonly onNext: () => void;
+  readonly onSkipAll: () => void;
 }
 
 export function WelcomeStep({ onNext, onSkipAll }: WelcomeStepProps) {

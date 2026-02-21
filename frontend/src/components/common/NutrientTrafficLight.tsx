@@ -47,6 +47,12 @@ const NUTRIENT_LABELS: Record<NutrientType, string> = {
   salt: "Salt",
 };
 
+const NUTRIENT_DOT_COLORS: Record<TrafficLightLevel, string> = {
+  low: "bg-nutrient-low",
+  medium: "bg-nutrient-medium",
+  high: "bg-nutrient-high",
+};
+
 function classifyLevel(
   nutrient: NutrientType,
   value: number,
@@ -102,13 +108,7 @@ export const NutrientTrafficLight = React.memo(function NutrientTrafficLight({
       aria-label={`${nutrientLabel}: ${value}${unit} (${config.label})`}
     >
       <span
-        className={`inline-block h-2 w-2 rounded-full ${
-          level === "low"
-            ? "bg-nutrient-low"
-            : level === "medium"
-              ? "bg-nutrient-medium"
-              : "bg-nutrient-high"
-        }`}
+        className={`inline-block h-2 w-2 rounded-full ${NUTRIENT_DOT_COLORS[level]}`}
         aria-hidden="true"
       />
       <span className="font-semibold">{nutrientLabel}</span>

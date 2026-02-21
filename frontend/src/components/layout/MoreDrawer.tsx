@@ -6,7 +6,7 @@
 //
 // Issue #67 — Navigation & IA Polish
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
@@ -130,14 +130,6 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
     firstFocusable?.focus();
   }, [open]);
 
-  const handleBackdropClick = useCallback(
-    (e: React.MouseEvent | React.KeyboardEvent) => {
-      if ("key" in e && e.key !== "Enter" && e.key !== " ") return;
-      if ("target" in e && "currentTarget" in e && e.target === e.currentTarget) onClose();
-    },
-    [onClose],
-  );
-
   if (!open) return null;
 
   return (
@@ -146,10 +138,14 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
       className={`fixed inset-0 z-50 transition-colors duration-200 ${
         animating ? "bg-black/40" : "bg-transparent"
       }`}
-      role="presentation"
-      onClick={handleBackdropClick}
-      onKeyDown={handleBackdropClick}
     >
+      <button
+        type="button"
+        className="absolute inset-0 h-full w-full"
+        onClick={onClose}
+        aria-label={t("shortcuts.closeOverlay")}
+      />
+
       {/* Drawer panel — uses native <dialog> for built-in accessibility */}
       <dialog
         ref={drawerRef}

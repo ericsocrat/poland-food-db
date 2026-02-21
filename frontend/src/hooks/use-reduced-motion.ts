@@ -20,7 +20,7 @@ export function useReducedMotion(): boolean {
   const [prefersReduced, setPrefersReduced] = useState(false);
 
   useEffect(() => {
-    const mql = window.matchMedia(QUERY);
+    const mql = globalThis.matchMedia(QUERY);
     setPrefersReduced(mql.matches);
 
     function onChange(e: MediaQueryListEvent) {

@@ -94,13 +94,13 @@ export function cleanOCRText(raw: string): string {
 
   // Apply correction patterns
   for (const [pattern, replacement] of OCR_CORRECTIONS) {
-    text = text.replace(pattern, replacement);
+    text = text.replaceAll(pattern, replacement);
   }
 
   // Normalise whitespace and trim
   text = text
-    .replace(/[\r\n]+/g, " ") // newlines → space
-    .replace(/\s{2,}/g, " ") // collapse multiple spaces
+    .replaceAll(/[\r\n]+/g, " ") // newlines → space
+    .replaceAll(/\s{2,}/g, " ") // collapse multiple spaces
     .trim();
 
   return text;
@@ -114,7 +114,7 @@ export function tokenise(cleaned: string): string[] {
   const raw = cleaned
     .toLowerCase()
     .split(/[\s,;:]+/)
-    .map((t) => t.replace(/^[^a-ząćęłńóśźż]+|[^a-ząćęłńóśźż]+$/gi, ""))
+    .map((t) => t.replaceAll(/(?:^[^a-ząćęłńóśźż]+|[^a-ząćęłńóśźż]+$)/gi, ""))
     .filter(
       (t) => t.length >= MIN_TOKEN_LENGTH && !POLISH_STOP_WORDS.has(t),
     );

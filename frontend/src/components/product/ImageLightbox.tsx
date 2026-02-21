@@ -29,7 +29,7 @@ export function ImageLightbox({
   const [currentIndex, setCurrentIndex] = useState(initialIndex);
   const [zoomLevel, setZoomLevel] = useState(0); // index into ZOOM_LEVELS
   const [panOffset, setPanOffset] = useState({ x: 0, y: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDialogElement>(null);
   const touchStartRef = useRef<{ x: number; y: number } | null>(null);
 
   const zoom = ZOOM_LEVELS[zoomLevel];
@@ -147,20 +147,21 @@ export function ImageLightbox({
   if (!image) return null;
 
   return (
-    <div
+    <dialog
       ref={containerRef}
+      open
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/90"
-      role="dialog"
       aria-modal="true"
       aria-label={t("imageLightbox.title")}
       tabIndex={-1}
-      onClick={(e) => {
-        if (e.target === containerRef.current) onClose();
-      }}
-      onKeyDown={(e) => {
-        if (e.key === "Escape") onClose();
-      }}
     >
+      <button
+        type="button"
+        className="absolute inset-0 z-0 h-full w-full"
+        onClick={onClose}
+        aria-label={t("shortcuts.closeOverlay")}
+      />
+
       {/* Top toolbar */}
       <div className="absolute top-0 left-0 right-0 z-10 flex items-center justify-between px-4 py-3">
         <span className="text-sm font-medium text-white/80">
@@ -228,9 +229,10 @@ export function ImageLightbox({
       )}
 
       {/* Image area */}
-      <div
-        role="presentation"
-        className="flex h-full w-full items-center justify-center overflow-hidden"
+      <button
+        type="button"
+        className="relative z-10 flex h-full w-full items-center justify-center overflow-hidden border-0 bg-transparent p-0"
+        aria-label={t("imageLightbox.title")}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
         onMouseDown={handleMouseDown}
@@ -252,7 +254,7 @@ export function ImageLightbox({
             priority
           />
         </div>
-      </div>
+      </button>
 
       {/* Thumbnail strip */}
       {images.length > 1 && (
@@ -281,6 +283,6 @@ export function ImageLightbox({
           ))}
         </div>
       )}
-    </div>
+    </dialog>
   );
 }

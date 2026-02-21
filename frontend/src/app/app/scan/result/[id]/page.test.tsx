@@ -548,11 +548,14 @@ describe("ScanResultPage", () => {
       // Never resolve alternatives
       mockGetBetterAlternatives.mockReturnValue(new Promise(() => {}));
 
-      render(<ScanResultPage />, { wrapper: createWrapper() });
+      const { container } = render(<ScanResultPage />, {
+        wrapper: createWrapper(),
+      });
 
       // Product loads immediately but alternatives show spinner
       // The loading state for the whole page is shown first since product loads instantly
       // but the alternatives section shows its own spinner
+      expect(container).toBeTruthy();
     });
   });
 

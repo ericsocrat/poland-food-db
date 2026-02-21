@@ -217,9 +217,7 @@ export function FilterPanel({
                       }`}
                     >
                       {ns.label}
-                      <span
-                        className="text-[10px] font-normal opacity-75"
-                      >
+                      <span className="text-[10px] font-normal opacity-75">
                         ({ns.count})
                       </span>
                     </button>
@@ -302,7 +300,7 @@ export function FilterPanel({
             <button
               type="button"
               onClick={clearAll}
-              className="w-full rounded-lg border border py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-subtle"
+              className="w-full rounded-lg border border-border py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-subtle"
             >
               {t("filters.clearAll")}
             </button>
@@ -316,7 +314,7 @@ export function FilterPanel({
     <>
       {/* Desktop sidebar */}
       <div className="hidden lg:block">
-        <div className="sticky top-20 w-64 rounded-xl border border bg-surface p-4 xl:w-72">
+        <div className="sticky top-20 w-64 rounded-xl border border-border bg-surface p-4 xl:w-72">
           <div className="mb-3 flex items-center justify-between">
             <h2 className="text-sm font-semibold text-foreground">
               {t("search.filters")}

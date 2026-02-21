@@ -72,13 +72,13 @@ describe("ScoreGauge", () => {
 
   it("renders with small size", () => {
     render(<ScoreGauge score={50} size="sm" />);
-    const wrapper = screen.getByRole("img");
+    const wrapper = screen.getByRole("figure");
     expect(wrapper).toHaveStyle({ width: "48px", height: "48px" });
   });
 
   it("renders with large size", () => {
     render(<ScoreGauge score={50} size="lg" />);
-    const wrapper = screen.getByRole("img");
+    const wrapper = screen.getByRole("figure");
     expect(wrapper).toHaveStyle({ width: "80px", height: "80px" });
   });
 
@@ -86,7 +86,7 @@ describe("ScoreGauge", () => {
 
   it("has aria-label with score value", () => {
     render(<ScoreGauge score={65} />);
-    const wrapper = screen.getByRole("img");
+    const wrapper = screen.getByRole("figure");
     expect(wrapper).toHaveAttribute(
       "aria-label",
       expect.stringContaining("65"),
@@ -95,7 +95,7 @@ describe("ScoreGauge", () => {
 
   it("has neutral aria-label when score is null", () => {
     render(<ScoreGauge score={null} />);
-    const wrapper = screen.getByRole("img");
+    const wrapper = screen.getByRole("figure");
     expect(wrapper.getAttribute("aria-label")).toBeTruthy();
   });
 
@@ -116,7 +116,7 @@ describe("ScoreGauge", () => {
 
   it("applies custom className", () => {
     render(<ScoreGauge score={50} className="my-custom-class" />);
-    const wrapper = screen.getByRole("img");
+    const wrapper = screen.getByRole("figure");
     expect(wrapper).toHaveClass("my-custom-class");
   });
 });

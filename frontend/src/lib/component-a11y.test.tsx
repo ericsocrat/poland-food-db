@@ -26,33 +26,48 @@ describe("Button — a11y", () => {
   });
 
   it("primary button passes axe", async () => {
-    await assertComponentA11y(<Button>Save</Button>);
+    const results = await assertComponentA11y(<Button>Save</Button>);
+    expect(results.violations).toHaveLength(0);
   });
 
   it("secondary button passes axe", async () => {
-    await assertComponentA11y(<Button variant="secondary">Cancel</Button>);
+    const results = await assertComponentA11y(
+      <Button variant="secondary">Cancel</Button>,
+    );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("ghost button passes axe", async () => {
-    await assertComponentA11y(<Button variant="ghost">More</Button>);
+    const results = await assertComponentA11y(
+      <Button variant="ghost">More</Button>,
+    );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("danger button passes axe", async () => {
-    await assertComponentA11y(<Button variant="danger">Delete</Button>);
+    const results = await assertComponentA11y(
+      <Button variant="danger">Delete</Button>,
+    );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("disabled button passes axe", async () => {
-    await assertComponentA11y(<Button disabled>Disabled</Button>);
+    const results = await assertComponentA11y(
+      <Button disabled>Disabled</Button>,
+    );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("loading button passes axe", async () => {
-    await assertComponentA11y(<Button loading>Saving</Button>);
+    const results = await assertComponentA11y(<Button loading>Saving</Button>);
+    expect(results.violations).toHaveLength(0);
   });
 
   it("button with icon passes axe", async () => {
-    await assertComponentA11y(
+    const results = await assertComponentA11y(
       <Button icon={<span aria-hidden="true">✓</span>}>Confirm</Button>,
     );
+    expect(results.violations).toHaveLength(0);
   });
 });
 
@@ -67,15 +82,20 @@ describe("ScoreBadge — a11y", () => {
   });
 
   it("score badge with valid score passes axe", async () => {
-    await assertComponentA11y(<ScoreBadge score={42} />);
+    const results = await assertComponentA11y(<ScoreBadge score={42} />);
+    expect(results.violations).toHaveLength(0);
   });
 
   it("score badge with null score (N/A) passes axe", async () => {
-    await assertComponentA11y(<ScoreBadge score={null} />);
+    const results = await assertComponentA11y(<ScoreBadge score={null} />);
+    expect(results.violations).toHaveLength(0);
   });
 
   it("score badge with label passes axe", async () => {
-    await assertComponentA11y(<ScoreBadge score={75} showLabel />);
+    const results = await assertComponentA11y(
+      <ScoreBadge score={75} showLabel />,
+    );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("score badge has aria-label", async () => {
@@ -94,7 +114,10 @@ describe("ScoreBadge — a11y", () => {
 
   it("all size variants pass axe", async () => {
     for (const size of ["sm", "md", "lg"] as const) {
-      await assertComponentA11y(<ScoreBadge score={50} size={size} />);
+      const results = await assertComponentA11y(
+        <ScoreBadge score={50} size={size} />,
+      );
+      expect(results.violations).toHaveLength(0);
     }
   });
 });
@@ -110,35 +133,39 @@ describe("FormField — a11y", () => {
   });
 
   it("form field with text input passes axe", async () => {
-    await assertComponentA11y(
+    const results = await assertComponentA11y(
       <FormField label="Email" name="email">
         <input type="email" />
       </FormField>,
     );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("required form field passes axe", async () => {
-    await assertComponentA11y(
+    const results = await assertComponentA11y(
       <FormField label="Name" name="name" required>
         <input type="text" />
       </FormField>,
     );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("form field with error passes axe", async () => {
-    await assertComponentA11y(
+    const results = await assertComponentA11y(
       <FormField label="Password" name="password" error="Too short">
         <input type="password" />
       </FormField>,
     );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("form field with hint passes axe", async () => {
-    await assertComponentA11y(
+    const results = await assertComponentA11y(
       <FormField label="Username" name="username" hint="3-20 characters">
         <input type="text" />
       </FormField>,
     );
+    expect(results.violations).toHaveLength(0);
   });
 
   it("label is associated with input via htmlFor/id", async () => {

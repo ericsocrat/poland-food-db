@@ -55,9 +55,9 @@ export function NovaDistributionChart({
           width={SVG_WIDTH}
           height={SVG_HEIGHT}
           viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-          role="img"
           aria-label={t("dashboard.novaAria")}
         >
+          <title>{t("dashboard.novaAria")}</title>
           {bars.map((bar, i) => {
             const x = i * (BAR_WIDTH + BAR_GAP);
             const barH = Math.max(bar.height, bar.count > 0 ? 4 : 0);

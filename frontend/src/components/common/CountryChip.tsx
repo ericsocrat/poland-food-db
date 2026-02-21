@@ -20,7 +20,7 @@ export function CountryChip({
 
   return (
     <span
-      className={`inline-flex items-center gap-1.5 rounded-full border border bg-surface-subtle px-3 py-1 text-sm font-medium text-foreground-secondary ${className}`}
+      className={`inline-flex items-center gap-1.5 rounded-full border border-border bg-surface-subtle px-3 py-1 text-sm font-medium text-foreground-secondary ${className}`}
     >
       <span>{flag}</span>
       <span>{name}</span>

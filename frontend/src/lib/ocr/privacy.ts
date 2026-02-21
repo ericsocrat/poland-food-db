@@ -18,18 +18,18 @@ const CONSENT_KEY = "fooddb:image-search-privacy-accepted";
  * gating happens in an effect.
  */
 export function hasPrivacyConsent(): boolean {
-  if (typeof window === "undefined") return true;
+  if (globalThis.window === undefined) return true;
   return localStorage.getItem(CONSENT_KEY) === "1";
 }
 
 /** Record that the user accepted the privacy notice. */
 export function acceptPrivacyConsent(): void {
-  if (typeof window === "undefined") return;
+  if (globalThis.window === undefined) return;
   localStorage.setItem(CONSENT_KEY, "1");
 }
 
 /** Clear consent (for testing or settings reset). */
 export function revokePrivacyConsent(): void {
-  if (typeof window === "undefined") return;
+  if (globalThis.window === undefined) return;
   localStorage.removeItem(CONSENT_KEY);
 }

@@ -80,6 +80,19 @@ export default function SettingsPage() {
     markDirty();
   }
 
+  function togglePreset(tags: string[], allSelected: boolean) {
+    setAllergens((prev) => {
+      const newSet = new Set(prev);
+      if (allSelected) {
+        tags.forEach((tag) => newSet.delete(tag));
+      } else {
+        tags.forEach((tag) => newSet.add(tag));
+      }
+      return Array.from(newSet);
+    });
+    markDirty();
+  }
+
   async function handleSave() {
     setSaving(true);
     const result = await setUserPreferences(supabase, {
@@ -269,18 +282,7 @@ export default function SettingsPage() {
             return (
               <button
                 key={preset.key}
-                onClick={() => {
-                  setAllergens((prev) => {
-                    const newSet = new Set(prev);
-                    if (allSelected) {
-                      preset.tags.forEach((tag) => newSet.delete(tag));
-                    } else {
-                      preset.tags.forEach((tag) => newSet.add(tag));
-                    }
-                    return Array.from(newSet);
-                  });
-                  markDirty();
-                }}
+                onClick={() => togglePreset(preset.tags, allSelected)}
                 className={`rounded-full border px-3 py-1.5 text-xs font-medium transition-colors ${
                   allSelected
                     ? "border-brand bg-brand-subtle text-brand"
