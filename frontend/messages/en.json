@@ -1247,6 +1247,11 @@
     "optional": "optional",
     "ingredientsTitle": "Ingredients",
     "stepsTitle": "Steps",
+    "linkedProducts": {
+      "count": "{count} products available",
+      "primary": "Recommended",
+      "noProducts": "No linked products"
+    },
     "category": {
       "breakfast": "Breakfast",
       "lunch": "Lunch",

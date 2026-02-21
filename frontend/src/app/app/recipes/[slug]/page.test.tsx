@@ -43,6 +43,12 @@ vi.mock("@/components/common/skeletons", () => ({
   ),
 }));
 
+vi.mock("@/components/recipes", () => ({
+  IngredientProductList: ({ products }: { products: unknown[] }) => (
+    <div data-testid="ingredient-product-list">{products.length} products</div>
+  ),
+}));
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -92,6 +98,41 @@ const mockRecipe: RecipeDetail = {
     { name_key: "recipes.items.overnight-oats.ingredients.3", optional: false },
     { name_key: "recipes.items.overnight-oats.ingredients.4", optional: false },
     { name_key: "recipes.items.overnight-oats.ingredients.5", optional: true },
+  ],
+};
+
+const mockRecipeWithProducts: RecipeDetail = {
+  ...mockRecipe,
+  ingredients: [
+    {
+      name_key: "recipes.items.overnight-oats.ingredients.1",
+      optional: false,
+      id: "ing-1",
+      ingredient_ref_id: 42,
+      linked_products: [
+        {
+          product_id: 101,
+          product_name: "Bio Oat Flakes",
+          brand: "EcoFarm",
+          unhealthiness_score: 12,
+          image_url: null,
+          is_primary: true,
+        },
+        {
+          product_id: 102,
+          product_name: "Quick Oats",
+          brand: null,
+          unhealthiness_score: 25,
+          image_url: null,
+          is_primary: false,
+        },
+      ],
+    },
+    {
+      name_key: "recipes.items.overnight-oats.ingredients.2",
+      optional: false,
+      linked_products: [],
+    },
   ],
 };
 
@@ -305,5 +346,43 @@ describe("RecipeDetailPage", () => {
       expect(screen.getByText(/Prep: 5 min/)).toBeInTheDocument();
     });
     expect(screen.getByText(/Cook: 0 min/)).toBeInTheDocument();
+  });
+
+  it("renders IngredientProductList when ingredients have linked products", async () => {
+    mockGetRecipeDetail.mockResolvedValue({
+      ok: true,
+      data: mockRecipeWithProducts,
+    });
+
+    render(<RecipeDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("ingredient-product-list")).toBeInTheDocument();
+    });
+    expect(screen.getByText("2 products")).toBeInTheDocument();
+  });
+
+  it("does not render IngredientProductList when linked products is empty", async () => {
+    render(<RecipeDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: "Ingredients" }),
+      ).toBeInTheDocument();
+    });
+    expect(screen.queryAllByTestId("ingredient-product-list")).toHaveLength(0);
+  });
+
+  it("renders only one IngredientProductList for recipe with one linked ingredient", async () => {
+    mockGetRecipeDetail.mockResolvedValue({
+      ok: true,
+      data: mockRecipeWithProducts,
+    });
+
+    render(<RecipeDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getAllByTestId("ingredient-product-list")).toHaveLength(1);
+    });
   });
 });

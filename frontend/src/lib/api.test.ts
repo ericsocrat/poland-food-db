@@ -61,6 +61,7 @@ import {
   // Recipes
   browseRecipes,
   getRecipeDetail,
+  findProductsForIngredient,
 } from "@/lib/api";
 
 // ─── Mock the RPC layer ─────────────────────────────────────────────────────
@@ -900,5 +901,35 @@ describe("Recipe API functions", () => {
     mockCallRpc.mockResolvedValue({ ok: true, data: null });
     const result = await getRecipeDetail(fakeSupabase, "non-existent");
     expect(result).toEqual({ ok: true, data: null });
+  });
+
+  it("findProductsForIngredient calls RPC with ingredient ID only", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await findProductsForIngredient(fakeSupabase, "ing-uuid-1");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "find_products_for_recipe_ingredient",
+      { p_recipe_ingredient_id: "ing-uuid-1" },
+    );
+  });
+
+  it("findProductsForIngredient passes country when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await findProductsForIngredient(fakeSupabase, "ing-uuid-2", "DE");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "find_products_for_recipe_ingredient",
+      { p_recipe_ingredient_id: "ing-uuid-2", p_country: "DE" },
+    );
+  });
+
+  it("findProductsForIngredient omits country when undefined", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await findProductsForIngredient(fakeSupabase, "ing-uuid-3", undefined);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "find_products_for_recipe_ingredient",
+      { p_recipe_ingredient_id: "ing-uuid-3" },
+    );
   });
 });

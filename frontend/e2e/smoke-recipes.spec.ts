@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-// ─── Recipes E2E Tests (#53) — Smoke ────────────────────────────────────────
+// ─── Recipes E2E Tests (#53, #54) — Smoke ───────────────────────────────────
 // Verifies recipes page navigation structure exists and is accessible.
 
 test.describe("Recipes — Navigation", () => {

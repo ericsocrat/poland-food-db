@@ -1269,9 +1269,21 @@ export interface RecipeStep {
   content_key: string;
 }
 
+export interface LinkedProduct {
+  product_id: number;
+  product_name: string;
+  brand: string | null;
+  unhealthiness_score: number | null;
+  image_url: string | null;
+  is_primary: boolean;
+}
+
 export interface RecipeIngredient {
+  id?: string;
   name_key: string;
   optional: boolean;
+  ingredient_ref_id?: number | null;
+  linked_products?: LinkedProduct[];
 }
 
 export interface RecipeDetail {

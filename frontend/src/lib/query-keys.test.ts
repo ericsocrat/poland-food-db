@@ -145,6 +145,13 @@ describe("queryKeys", () => {
   it("recipe key for a given slug", () => {
     expect(queryKeys.recipe("oatmeal-bowl")).toEqual(["recipe", "oatmeal-bowl"]);
   });
+
+  it("ingredientProducts key for a given ingredient ID", () => {
+    expect(queryKeys.ingredientProducts("abc-123")).toEqual([
+      "ingredient-products",
+      "abc-123",
+    ]);
+  });
 });
 
 // ─── staleTimes ─────────────────────────────────────────────────────────────
@@ -214,6 +221,10 @@ describe("staleTimes", () => {
 
   it("recipe is 10 minutes", () => {
     expect(staleTimes.recipe).toBe(10 * 60 * 1000);
+  });
+
+  it("ingredientProducts is 10 minutes", () => {
+    expect(staleTimes.ingredientProducts).toBe(10 * 60 * 1000);
   });
 
   it("has the same keys as queryKeys (completeness check)", () => {

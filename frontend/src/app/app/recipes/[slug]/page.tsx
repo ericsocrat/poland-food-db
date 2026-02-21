@@ -12,6 +12,7 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Card, Chip } from "@/components/common";
 import { Icon } from "@/components/common/Icon";
 import { RecipeGridSkeleton } from "@/components/common/skeletons";
+import { IngredientProductList } from "@/components/recipes";
 import { useTranslation } from "@/lib/i18n";
 import { Clock, Users, ChefHat, Timer } from "lucide-react";
 
@@ -132,17 +133,22 @@ export default function RecipeDetailPage() {
           {recipe.ingredients.map((ing) => (
             <li
               key={ing.name_key}
-              className="flex items-start gap-2 text-sm text-foreground"
+              className="text-sm text-foreground"
             >
-              <span className="mt-0.5 h-4 w-4 shrink-0 rounded border border-border" />
-              <span>
-                {t(ing.name_key)}
-                {ing.optional && (
-                  <span className="ml-1 text-xs text-foreground-secondary">
-                    ({t("recipes.optional")})
-                  </span>
-                )}
-              </span>
+              <div className="flex items-start gap-2">
+                <span className="mt-0.5 h-4 w-4 shrink-0 rounded border border-border" />
+                <span>
+                  {t(ing.name_key)}
+                  {ing.optional && (
+                    <span className="ml-1 text-xs text-foreground-secondary">
+                      ({t("recipes.optional")})
+                    </span>
+                  )}
+                </span>
+              </div>
+              {ing.linked_products && ing.linked_products.length > 0 && (
+                <IngredientProductList products={ing.linked_products} />
+              )}
             </li>
           ))}
         </ul>
