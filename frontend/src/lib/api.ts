@@ -64,6 +64,7 @@ import type {
   WatchlistResponse,
   IsWatchingResponse,
   BrowseRecipesFilters,
+  LinkedProduct,
   RecipeDetail,
   RecipeSummary,
 } from "./types";
@@ -874,4 +875,19 @@ export async function getRecipeDetail(
   return callRpc<RecipeDetail | null>(supabase, "get_recipe_detail", {
     p_slug: slug,
   });
+}
+
+export function findProductsForIngredient(
+  supabase: SupabaseClient,
+  ingredientId: string,
+  country?: string,
+): Promise<RpcResult<LinkedProduct[]>> {
+  return callRpc<LinkedProduct[]>(
+    supabase,
+    "find_products_for_recipe_ingredient",
+    {
+      p_recipe_ingredient_id: ingredientId,
+      ...(country ? { p_country: country } : {}),
+    },
+  );
 }

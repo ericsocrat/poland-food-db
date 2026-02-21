@@ -1247,6 +1247,11 @@
     "optional": "opcjonalnie",
     "ingredientsTitle": "Składniki",
     "stepsTitle": "Kroki",
+    "linkedProducts": {
+      "count": "{count} produktów dostępnych",
+      "primary": "Polecany",
+      "noProducts": "Brak powiązanych produktów"
+    },
     "category": {
       "breakfast": "Śniadanie",
       "lunch": "Lunch",

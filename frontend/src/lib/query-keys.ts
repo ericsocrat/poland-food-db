@@ -136,6 +136,10 @@ export const queryKeys = {
 
   /** Single recipe detail by slug */
   recipe: (slug: string) => ["recipe", slug] as const,
+
+  /** Products matching a recipe ingredient (#54) */
+  ingredientProducts: (ingredientId: string) =>
+    ["ingredient-products", ingredientId] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -251,4 +255,7 @@ export const staleTimes = {
 
   /** Recipe detail — 10 min (curated, changes rarely) */
   recipe: 10 * 60 * 1000,
+
+  /** Ingredient→product matches — 10 min (curated links, changes rarely) */
+  ingredientProducts: 10 * 60 * 1000,
 } as const;
