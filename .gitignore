@@ -67,3 +67,4 @@ __api_defs.txt
 tmp-qa/
 parse_report.py
 tmp-qa-results/
+tmp-sonar-issues.json
