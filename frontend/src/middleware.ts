@@ -64,6 +64,6 @@ export const config = {
   matcher: [
     // Match all paths except static files and API routes
     // eslint-disable-next-line no-useless-escape -- Next.js requires a plain string literal for static analysis
-    String.raw`/((?!api|_next/static|_next/image|favicon.ico|.*\.(?:svg|png|jpg|jpeg|gif|webp)$).*)`,
+    "/((?!api|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

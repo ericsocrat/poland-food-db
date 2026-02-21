@@ -80,7 +80,7 @@ export default function SettingsPage() {
     markDirty();
   }
 
-  function togglePreset(tags: string[], allSelected: boolean) {
+  function togglePreset(tags: readonly string[], allSelected: boolean) {
     setAllergens((prev) => {
       const newSet = new Set(prev);
       if (allSelected) {
