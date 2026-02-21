@@ -331,6 +331,7 @@ export default function ProductDetailPage() {
           <div
             className="flex gap-1 rounded-lg bg-surface-muted p-1"
             role="tablist"
+            data-testid="tab-bar"
           >
             {tabs.map((tab) => (
               <button
@@ -412,7 +413,7 @@ function ScoreInterpretationCard({ score }: Readonly<{ score: number }>) {
   const interp = getScoreInterpretation(score);
 
   return (
-    <div className="card">
+    <div className="card" data-testid="score-interpretation">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -430,7 +431,7 @@ function ScoreInterpretationCard({ score }: Readonly<{ score: number }>) {
       {open && (
         <div
           className={`mt-2 rounded-lg px-3 py-2 text-sm ${interp.bg} ${interp.color}`}
-          data-testid="score-interpretation"
+          data-testid="score-interpretation-content"
         >
           {t(interp.key)}
         </div>
@@ -470,7 +471,11 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           <Globe size={16} aria-hidden="true" /> {t("product.ecoScoreTitle")}
         </h3>
         <div className="flex items-center gap-2 rounded-lg border border-dashed border-blue-200 bg-blue-50/50 px-3 py-3">
-          <Info size={18} className="flex-shrink-0 text-blue-600" aria-hidden="true" />
+          <Info
+            size={18}
+            className="flex-shrink-0 text-blue-600"
+            aria-hidden="true"
+          />
           <p className="text-sm text-blue-700">
             {t("product.ecoScoreComingSoon")}
           </p>
