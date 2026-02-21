@@ -19,6 +19,7 @@ import {
   ShieldCheck,
   Trophy,
   UtensilsCrossed,
+  ScanText,
   X,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -70,6 +71,12 @@ const DRAWER_ITEMS: readonly DrawerNavItem[] = [
     labelKey: "nav.recipes",
     icon: UtensilsCrossed,
     routeKey: "recipes",
+  },
+  {
+    href: "/app/image-search",
+    labelKey: "nav.imageSearch",
+    icon: ScanText,
+    routeKey: "image-search",
   },
   {
     href: "/app/admin/submissions",

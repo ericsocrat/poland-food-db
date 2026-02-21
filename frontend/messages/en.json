@@ -11,6 +11,7 @@
     "watchlist": "Watchlist",
     "achievements": "Achievements",
     "recipes": "Recipes",
+    "imageSearch": "Image Search",
     "more": "More"
   },
   "common": {
@@ -1554,6 +1555,43 @@
     "all_health": {
       "title": "Health Champion",
       "desc": "Unlock all Health achievements"
+    }
+  },
+  "imageSearch": {
+    "title": "Image Search",
+    "beta": "Beta",
+    "description": "Take a photo of a food label and we'll find matching products. All processing happens on your device — images are never uploaded.",
+    "processing": "Analysing image…",
+    "processingDetail": "Extracting text from your photo on-device",
+    "ocrFailed": "Could not read text from image",
+    "unusableTip": "Very low confidence — try a clearer photo with good lighting and hold the camera steady.",
+    "privacy": {
+      "title": "Your Privacy Matters",
+      "body": "Image Search processes photos entirely on your device. No images are ever uploaded to our servers.",
+      "bullet1": "All processing runs locally in your browser",
+      "bullet2": "Photos are deleted from memory immediately after scanning",
+      "bullet3": "No image data is stored or transmitted",
+      "bullet4": "Only the extracted text is used to search for products",
+      "accept": "I Understand — Continue"
+    },
+    "capture": {
+      "instructions": "Take a photo or upload an image of a food label",
+      "openCamera": "Open Camera",
+      "uploadPhoto": "Upload Photo",
+      "capturePhoto": "Capture Photo",
+      "closeCamera": "Close Camera",
+      "tips": "Tip: For best results, ensure good lighting and hold the camera steady.",
+      "cameraError": "Camera not available. Please upload a photo instead."
+    },
+    "results": {
+      "title": "Extracted Text",
+      "confidence": "{score}% confidence",
+      "lowConfidence": "Low confidence — review and edit the text below before searching.",
+      "noText": "No text could be extracted. Try a different image.",
+      "placeholder": "Edit extracted text…",
+      "search": "Search Products",
+      "retry": "Try Again",
+      "imageDeleted": "Image was deleted from memory — your privacy is protected."
     }
   }
 }

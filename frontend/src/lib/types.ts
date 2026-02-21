@@ -1003,7 +1003,8 @@ export type AnalyticsEventName =
   | "share_link_opened"
   | "category_viewed"
   | "preferences_updated"
-  | "onboarding_completed";
+  | "onboarding_completed"
+  | "image_search_performed";
 
 export type DeviceType = "mobile" | "tablet" | "desktop";
 

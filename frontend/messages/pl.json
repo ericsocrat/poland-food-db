@@ -11,6 +11,7 @@
     "watchlist": "Obserwowane",
     "achievements": "Osiągnięcia",
     "recipes": "Przepisy",
+    "imageSearch": "Szukaj po zdjęciu",
     "more": "Więcej"
   },
   "common": {
@@ -1554,6 +1555,43 @@
     "all_health": {
       "title": "Mistrz zdrowia",
       "desc": "Odblokuj wszystkie osiągnięcia Zdrowia"
+    }
+  },
+  "imageSearch": {
+    "title": "Szukaj po zdjęciu",
+    "beta": "Beta",
+    "description": "Zrób zdjęcie etykiety żywności, a znajdziemy pasujące produkty. Przetwarzanie odbywa się na Twoim urządzeniu — zdjęcia nigdy nie są przesyłane.",
+    "processing": "Analizowanie zdjęcia…",
+    "processingDetail": "Odczytywanie tekstu ze zdjęcia na Twoim urządzeniu",
+    "ocrFailed": "Nie udało się odczytać tekstu ze zdjęcia",
+    "unusableTip": "Bardzo niska pewność — spróbuj zrobić wyraźniejsze zdjęcie przy dobrym oświetleniu i trzymaj aparat stabilnie.",
+    "privacy": {
+      "title": "Twoja prywatność jest ważna",
+      "body": "Wyszukiwanie po zdjęciu przetwarza zdjęcia całkowicie na Twoim urządzeniu. Żadne zdjęcia nie są przesyłane na nasze serwery.",
+      "bullet1": "Przetwarzanie odbywa się lokalnie w przeglądarce",
+      "bullet2": "Zdjęcia są usuwane z pamięci natychmiast po skanowaniu",
+      "bullet3": "Żadne dane obrazu nie są przechowywane ani przesyłane",
+      "bullet4": "Tylko odczytany tekst jest używany do wyszukiwania produktów",
+      "accept": "Rozumiem — Kontynuuj"
+    },
+    "capture": {
+      "instructions": "Zrób zdjęcie lub prześlij obraz etykiety żywności",
+      "openCamera": "Otwórz aparat",
+      "uploadPhoto": "Prześlij zdjęcie",
+      "capturePhoto": "Zrób zdjęcie",
+      "closeCamera": "Zamknij aparat",
+      "tips": "Wskazówka: Aby uzyskać najlepsze wyniki, zapewnij dobre oświetlenie i trzymaj aparat stabilnie.",
+      "cameraError": "Aparat niedostępny. Zamiast tego prześlij zdjęcie."
+    },
+    "results": {
+      "title": "Odczytany tekst",
+      "confidence": "{score}% pewności",
+      "lowConfidence": "Niska pewność — przejrzyj i edytuj tekst poniżej przed wyszukiwaniem.",
+      "noText": "Nie udało się odczytać tekstu. Spróbuj innego zdjęcia.",
+      "placeholder": "Edytuj odczytany tekst…",
+      "search": "Szukaj produktów",
+      "retry": "Spróbuj ponownie",
+      "imageDeleted": "Zdjęcie zostało usunięte z pamięci — Twoja prywatność jest chroniona."
     }
   }
 }
