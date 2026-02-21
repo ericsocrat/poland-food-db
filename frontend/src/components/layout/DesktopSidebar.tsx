@@ -20,6 +20,7 @@ import {
   FolderOpen,
   Trophy,
   UtensilsCrossed,
+  ScanText,
   Settings,
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
@@ -79,6 +80,12 @@ const PRIMARY_ITEMS: readonly SidebarNavItem[] = [
     labelKey: "nav.recipes",
     icon: UtensilsCrossed,
     routeKey: "recipes",
+  },
+  {
+    href: "/app/image-search",
+    labelKey: "nav.imageSearch",
+    icon: ScanText,
+    routeKey: "image-search",
   },
 ] as const;
 

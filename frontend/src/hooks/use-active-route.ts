@@ -23,6 +23,7 @@ const PRIMARY_ROUTES = [
   { key: "categories", prefix: "/app/categories" },
   { key: "achievements", prefix: "/app/achievements" },
   { key: "recipes", prefix: "/app/recipes" },
+  { key: "image-search", prefix: "/app/image-search" },
 ] as const;
 
 export type PrimaryRouteKey =

@@ -91,4 +91,10 @@ describe("useActiveRoute", () => {
     const { result } = renderHook(() => useActiveRoute());
     expect(result.current).toBeNull();
   });
+
+  it("returns 'image-search' for /app/image-search", () => {
+    mockPathname.mockReturnValue("/app/image-search");
+    const { result } = renderHook(() => useActiveRoute());
+    expect(result.current).toBe("image-search");
+  });
 });
