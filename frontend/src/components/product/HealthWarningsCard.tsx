@@ -11,7 +11,14 @@ import { getProductHealthWarnings, getActiveHealthProfile } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { WARNING_SEVERITY, HEALTH_CONDITIONS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import { Ban, AlertTriangle, Info, Shield, CheckCircle, Check } from "lucide-react";
+import {
+  Ban,
+  AlertTriangle,
+  Info,
+  Shield,
+  CheckCircle,
+  Check,
+} from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import type { HealthWarning, WarningSeverity } from "@/lib/types";
 
@@ -74,7 +81,7 @@ export function HealthWarningsCard({
   // Loading profile — show skeleton to avoid layout jump
   if (profileLoading) {
     return (
-      <div className="card animate-pulse">
+      <div className="card animate-pulse" data-testid="health-warnings-card">
         <div className="flex items-center gap-2">
           <div className="h-5 w-5 rounded-full bg-surface-muted" />
           <div className="h-4 w-48 rounded bg-surface-muted" />
@@ -86,7 +93,10 @@ export function HealthWarningsCard({
   // No active profile — show a subtle prompt
   if (!hasProfile) {
     return (
-      <div className="card border bg-surface-subtle">
+      <div
+        className="card border bg-surface-subtle"
+        data-testid="health-warnings-card"
+      >
         <div className="flex items-center gap-2">
           <Shield size={20} aria-hidden="true" />
           <div className="flex-1">
@@ -120,7 +130,7 @@ export function HealthWarningsCard({
   // Loading warnings
   if (warningsLoading) {
     return (
-      <div className="card animate-pulse">
+      <div className="card animate-pulse" data-testid="health-warnings-card">
         <div className="h-4 w-40 rounded bg-surface-muted" />
         <div className="mt-2 h-3 w-64 rounded bg-surface-muted" />
       </div>
@@ -130,7 +140,10 @@ export function HealthWarningsCard({
   // No warnings — product is safe for this profile
   if (!warningsData || warningsData.warning_count === 0) {
     return (
-      <div className="card border-green-200 bg-green-50">
+      <div
+        className="card border-green-200 bg-green-50"
+        data-testid="health-warnings-card"
+      >
         <div className="flex items-center gap-2">
           <CheckCircle
             size={20}
@@ -163,7 +176,10 @@ export function HealthWarningsCard({
   const cardStyle = WARNING_SEVERITY[topSeverity];
 
   return (
-    <div className={`card border ${cardStyle.border} ${cardStyle.bg}`}>
+    <div
+      className={`card border ${cardStyle.border} ${cardStyle.bg}`}
+      data-testid="health-warnings-card"
+    >
       {/* Header */}
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">

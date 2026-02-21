@@ -1186,7 +1186,9 @@ describe("ProductDetailPage", () => {
     await user.click(screen.getByText("What does this score mean?"));
 
     await waitFor(() => {
-      expect(screen.getByTestId("score-interpretation")).toBeInTheDocument();
+      expect(
+        screen.getByTestId("score-interpretation-content"),
+      ).toBeInTheDocument();
       expect(screen.getByText(/Poor nutritional profile/)).toBeInTheDocument();
     });
   });
@@ -1376,5 +1378,115 @@ describe("ProductDetailPage", () => {
     expect(gaugeArc).toBeInTheDocument();
     const svg = gaugeArc?.closest("svg");
     expect(svg?.getAttribute("width")).toBe("80");
+  });
+
+  // ── #122 Single-instance rendering — no duplication on ANY tab ────────
+
+  describe("single-instance rendering (issue #122)", () => {
+    async function renderAndWait() {
+      mockGetProductProfile.mockResolvedValue({
+        ok: true,
+        data: makeProfile(),
+      });
+      const user = userEvent.setup();
+      render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(
+          screen.getAllByText("Test Chips Original").length,
+        ).toBeGreaterThanOrEqual(1);
+      });
+
+      return user;
+    }
+
+    function assertNoDuplication() {
+      // Score interpretation renders exactly once
+      const scoreInterpretation = screen.getAllByTestId("score-interpretation");
+      expect(scoreInterpretation).toHaveLength(1);
+
+      // Health warnings card renders exactly once
+      const healthWarnings = screen.getAllByTestId("health-warnings-card");
+      expect(healthWarnings).toHaveLength(1);
+
+      // Tab bar renders exactly once
+      const tabBars = screen.getAllByTestId("tab-bar");
+      expect(tabBars).toHaveLength(1);
+
+      // Tablist role renders exactly once
+      const tablists = screen.getAllByRole("tablist");
+      expect(tablists).toHaveLength(1);
+    }
+
+    it("renders each section exactly once on Overview tab (default)", async () => {
+      await renderAndWait();
+      assertNoDuplication();
+    });
+
+    it("renders each section exactly once on Nutrition tab", async () => {
+      const user = await renderAndWait();
+      await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+      assertNoDuplication();
+    });
+
+    it("renders each section exactly once on Alternatives tab", async () => {
+      const user = await renderAndWait();
+      await user.click(screen.getByRole("tab", { name: "Alternatives" }));
+      assertNoDuplication();
+    });
+
+    it("renders each section exactly once on Scoring tab", async () => {
+      const user = await renderAndWait();
+      await user.click(screen.getByRole("tab", { name: "Scoring" }));
+      assertNoDuplication();
+    });
+
+    it("maintains single instances when cycling through all tabs", async () => {
+      const user = await renderAndWait();
+
+      // Cycle: Overview → Nutrition → Alternatives → Scoring → Overview
+      for (const tabName of [
+        "Nutrition",
+        "Alternatives",
+        "Scoring",
+        "Overview",
+      ]) {
+        await user.click(screen.getByRole("tab", { name: tabName }));
+        assertNoDuplication();
+      }
+    });
+
+    it("score-interpretation is inside the left column, not tab content", async () => {
+      await renderAndWait();
+
+      const leftCol = document.querySelector(".lg\\:col-span-5");
+      const rightCol = document.querySelector(".lg\\:col-span-7");
+      const scoreInterp = screen.getByTestId("score-interpretation");
+
+      expect(leftCol).toContainElement(scoreInterp);
+      expect(rightCol).not.toContainElement(scoreInterp);
+    });
+
+    it("health-warnings-card is inside the left column, not tab content", async () => {
+      await renderAndWait();
+
+      const leftCol = document.querySelector(".lg\\:col-span-5");
+      const rightCol = document.querySelector(".lg\\:col-span-7");
+      const healthWarnings = screen.getByTestId("health-warnings-card");
+
+      expect(leftCol).toContainElement(healthWarnings);
+      expect(rightCol).not.toContainElement(healthWarnings);
+    });
+
+    it("tab-bar is inside the right column, not the left column", async () => {
+      await renderAndWait();
+
+      const leftCol = document.querySelector(".lg\\:col-span-5");
+      const rightCol = document.querySelector(".lg\\:col-span-7");
+      const tabBar = screen.getByTestId("tab-bar");
+
+      expect(rightCol).toContainElement(tabBar);
+      expect(leftCol).not.toContainElement(tabBar);
+    });
   });
 });
