@@ -506,4 +506,28 @@ describe("DashboardPage", () => {
     expect(screen.getByTestId("sparkline-bar-low")).toBeInTheDocument();
     expect(screen.getByTestId("sparkline-bar-high")).toBeInTheDocument();
   });
+
+  // ─── Favorites empty state CTA (#134) ───────────────────────────────────
+
+  it("renders favorites CTA when favorites_count is 0", async () => {
+    mockGetDashboardData.mockResolvedValue({
+      ok: true,
+      data: {
+        ...mockDashboard,
+        stats: { ...mockDashboard.stats, favorites_count: 0 },
+      },
+    });
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText(/Tap ❤️ on any product/)).toBeInTheDocument();
+    });
+  });
+
+  it("renders favorites count (not CTA) when favorites_count > 0", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("7")).toBeInTheDocument();
+    });
+    expect(screen.queryByText(/Tap ❤️ on any product/)).not.toBeInTheDocument();
+  });
 });

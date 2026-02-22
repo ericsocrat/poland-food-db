@@ -91,6 +91,7 @@ function StatsBar({ stats }: Readonly<{ stats: DashboardStats }>) {
       value: stats.favorites_count,
       icon: Heart,
       href: "/app/lists",
+      cta: stats.favorites_count === 0 ? t("dashboard.favoritesEmptyCta") : undefined,
     },
   ];
 
@@ -99,15 +100,21 @@ function StatsBar({ stats }: Readonly<{ stats: DashboardStats }>) {
       {items.map((s) => (
         <Link
           key={s.label}
-          href={s.href}
+          href={s.cta ? "/app/search" : s.href}
           className="card hover-lift-press flex flex-col items-center gap-1 py-3"
         >
           <span className="flex items-center justify-center">
             <s.icon size={28} aria-hidden="true" />
           </span>
-          <span className="text-xl font-bold tabular-nums text-foreground lg:text-2xl">
-            {s.value}
-          </span>
+          {s.cta ? (
+            <span className="text-center text-sm text-foreground-secondary animate-pulse">
+              {s.cta}
+            </span>
+          ) : (
+            <span className="text-xl font-bold tabular-nums text-foreground lg:text-2xl">
+              {s.value}
+            </span>
+          )}
           <span className="text-xs text-foreground-secondary lg:text-sm">
             {s.label}
           </span>
