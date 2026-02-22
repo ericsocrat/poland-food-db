@@ -99,7 +99,7 @@ The Jaccard similarity computation self-joins `product_ingredient` (~13 rows/pro
 - [x] Add `statement_timeout` to PostgREST config — 5s for API roles, 30s for MV refresh functions
 
 ### 🔴 Required at 50K+ Products
-- [ ] Pre-compute similarity matrix as materialized view
+- [x] Pre-compute similarity matrix as materialized view — `mv_product_similarity` (Jaccard, same-category pairs)
 - [ ] Partition `product_ingredient` by category
 - [x] Add connection pooling (PgBouncer) — enabled in `config.toml` (transaction mode, pool_size=20)
 - [ ] Consider read replicas for API traffic
@@ -110,18 +110,20 @@ The Jaccard similarity computation self-joins `product_ingredient` (~13 rows/pro
 ## 5. MV Refresh Strategy
 
 ### Current State
-| View                      | Has Unique Index              | Supports CONCURRENTLY | Refresh Frequency                      |
-| ------------------------- | ----------------------------- | --------------------- | -------------------------------------- |
-| `mv_ingredient_frequency` | ✅ `idx_mv_ingredient_freq_id` | ✅ Yes                 | After ingredient data changes          |
-| `v_product_confidence`    | ✅ `idx_product_confidence_id` | ✅ Yes                 | After scoring/nutrition/source updates |
+| View                      | Has Unique Index                    | Supports CONCURRENTLY | Refresh Frequency                      |
+| ------------------------- | ----------------------------------- | --------------------- | -------------------------------------- |
+| `mv_ingredient_frequency` | ✅ `idx_mv_ingredient_freq_id`       | ✅ Yes                 | After ingredient data changes          |
+| `v_product_confidence`    | ✅ `idx_product_confidence_id`       | ✅ Yes                 | After scoring/nutrition/source updates |
+| `mv_product_similarity`   | ✅ `mv_product_similarity_pair_uniq` | ✅ Yes                 | After product/ingredient changes       |
 
 ### Recommended Refresh Policy
 ```
 After pipeline run (RUN_LOCAL.ps1):
   1. REFRESH MATERIALIZED VIEW CONCURRENTLY mv_ingredient_frequency;
   2. REFRESH MATERIALIZED VIEW CONCURRENTLY v_product_confidence;
+  3. REFRESH MATERIALIZED VIEW CONCURRENTLY mv_product_similarity;
 
-Estimated combined refresh time at current scale: ~60ms
+Estimated combined refresh time at current scale: ~100ms
 ```
 
 ---

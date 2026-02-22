@@ -200,3 +200,40 @@ SELECT '18. api_refresh_mvs returns valid JSONB' AS check_name,
 SELECT '19. api_refresh_mvs not accessible to anon' AS check_name,
        CASE WHEN NOT has_function_privilege('anon', 'api_refresh_mvs()', 'EXECUTE')
        THEN 0 ELSE 1 END AS violations;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #20  mv_product_similarity exists and is consistent
+--      Accepts 0 rows when product_ingredient has no data (CI environment).
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '20. mv_product_similarity consistent' AS check_name,
+       CASE WHEN (
+           (SELECT COUNT(*) FROM mv_product_similarity) > 0
+           OR (SELECT COUNT(*) FROM product_ingredient) = 0
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #21  All similarity pairs have jaccard between 0 and 1
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '21. similarity jaccard values in [0,1]' AS check_name,
+       COUNT(*) AS violations
+FROM mv_product_similarity
+WHERE jaccard_similarity < 0 OR jaccard_similarity > 1;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #22  Both product IDs in similarity pairs reference active products
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '22. similarity pairs reference active products' AS check_name,
+       COUNT(*) AS violations
+FROM mv_product_similarity mv
+WHERE NOT EXISTS (SELECT 1 FROM products WHERE product_id = mv.product_id_a AND is_deprecated IS NOT TRUE)
+   OR NOT EXISTS (SELECT 1 FROM products WHERE product_id = mv.product_id_b AND is_deprecated IS NOT TRUE);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #23  mv_product_similarity has unique index for CONCURRENTLY refresh
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '23. mv_product_similarity has unique index' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_indexes
+           WHERE tablename = 'mv_product_similarity'
+             AND indexdef ILIKE '%unique%'
+       ) THEN 0 ELSE 1 END AS violations;
