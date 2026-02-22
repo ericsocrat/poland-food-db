@@ -68,6 +68,7 @@ import type {
   RecipeDetail,
   RecipeSummary,
 } from "./types";
+import type { ProductAllergenMap } from "./allergen-matching";
 
 // ─── User Preferences ──────────────────────────────────────────────────────
 
@@ -890,4 +891,15 @@ export function findProductsForIngredient(
       ...(country ? { p_country: country } : {}),
     },
   );
+}
+
+// ─── Allergen Batch Lookup (#128) ────────────────────────────────────────────
+
+export function getProductAllergens(
+  supabase: SupabaseClient,
+  productIds: number[],
+): Promise<RpcResult<ProductAllergenMap>> {
+  return callRpc<ProductAllergenMap>(supabase, "api_get_product_allergens", {
+    p_product_ids: productIds,
+  });
 }
