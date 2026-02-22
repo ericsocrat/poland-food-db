@@ -83,11 +83,27 @@ export function IngredientList({ ingredients }: IngredientListProps) {
             status: ingredients.vegan_status ?? "unknown",
           })}
         </p>
+        {ingredients.vegan_contradiction && (
+          <p
+            className="text-xs font-medium text-amber-600"
+            role="alert"
+          >
+            ⚠ {t("product.veganContradiction")}
+          </p>
+        )}
         <p>
           {t("product.vegetarian", {
             status: ingredients.vegetarian_status ?? "unknown",
           })}
         </p>
+        {ingredients.vegetarian_contradiction && (
+          <p
+            className="text-xs font-medium text-amber-600"
+            role="alert"
+          >
+            ⚠ {t("product.vegetarianContradiction")}
+          </p>
+        )}
       </div>
 
       {/* Full ingredient text (collapsible) */}
