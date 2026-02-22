@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
@@ -14,9 +14,13 @@ vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush, refresh: mockRefresh }),
 }));
 
+const mockGetUser = vi.fn();
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
-    auth: { signOut: vi.fn().mockResolvedValue({}) },
+    auth: {
+      signOut: vi.fn().mockResolvedValue({}),
+      getUser: () => mockGetUser(),
+    },
   }),
 }));
 
@@ -65,10 +69,20 @@ const mockPrefsData = {
   treat_may_contain_as_unsafe: false,
 };
 
+const mockClipboardWriteText = vi.fn().mockResolvedValue(undefined);
+
 beforeEach(() => {
   vi.clearAllMocks();
   useLanguageStore.getState().reset();
   mockGetPrefs.mockResolvedValue({ ok: true, data: mockPrefsData });
+  mockGetUser.mockResolvedValue({
+    data: { user: { email: "test@example.com" } },
+  });
+  Object.defineProperty(navigator, "clipboard", {
+    value: { writeText: mockClipboardWriteText },
+    writable: true,
+    configurable: true,
+  });
 });
 
 describe("SettingsPage", () => {
@@ -76,7 +90,9 @@ describe("SettingsPage", () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /Settings/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /Settings/i }),
+      ).toBeInTheDocument();
     });
   });
 
@@ -138,19 +154,81 @@ describe("SettingsPage", () => {
     });
   });
 
-  it("shows user ID snippet", async () => {
+  it("shows email as primary identifier, not raw UUID", async () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText(/User ID: abc12345/)).toBeInTheDocument();
+      expect(screen.getByText("test@example.com")).toBeInTheDocument();
     });
+
+    // Raw UUID must NOT be visible by default
+    expect(
+      screen.queryByText("abc12345-6789-def0-1234-567890abcdef"),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/abc1.*cdef/)).not.toBeInTheDocument();
+  });
+
+  it("reveals masked UUID and copy button when Account Details is expanded", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Account Details")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Account Details"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("account-details")).toBeInTheDocument();
+    });
+
+    // Masked UUID: first 4 + last 4
+    expect(screen.getByText(/abc1.*cdef/)).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: /Copy User ID/ }),
+    ).toBeInTheDocument();
+  });
+
+  it("copies full UUID to clipboard and shows toast", async () => {
+    const { showToast } = await import("@/lib/toast");
+
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Account Details")).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByText("Account Details"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("button", { name: /Copy User ID/ }),
+      ).toBeInTheDocument();
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: /Copy User ID/ }));
+
+    await waitFor(() => {
+      expect(mockClipboardWriteText).toHaveBeenCalledWith(
+        "abc12345-6789-def0-1234-567890abcdef",
+      );
+    });
+
+    expect(showToast).toHaveBeenCalledWith(
+      expect.objectContaining({
+        type: "success",
+        messageKey: "settings.copiedToClipboard",
+      }),
+    );
   });
 
   it("does not show save button when no changes made", async () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /Settings/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /Settings/i }),
+      ).toBeInTheDocument();
     });
     expect(
       screen.queryByRole("button", { name: "Save changes" }),
@@ -303,7 +381,9 @@ describe("SettingsPage", () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /Settings/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /Settings/i }),
+      ).toBeInTheDocument();
     });
 
     // Poland = Polski + English (2 options, NOT Deutsch)
@@ -403,10 +483,14 @@ describe("SettingsPage", () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /Settings/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { name: /Settings/i }),
+      ).toBeInTheDocument();
     });
 
-    const container = screen.getByRole("heading", { name: /Settings/i }).parentElement!;
+    const container = screen.getByRole("heading", {
+      name: /Settings/i,
+    }).parentElement!;
     expect(container.className).toContain("max-w-2xl");
   });
 });

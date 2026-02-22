@@ -540,6 +540,9 @@
     "theme": "Theme",
     "account": "Account",
     "userId": "User ID: {id}…",
+    "accountDetails": "Account Details",
+    "copyUserId": "Copy User ID",
+    "copiedToClipboard": "Copied!",
     "signOut": "Sign out",
     "preferencesSaved": "Preferences saved!"
   },

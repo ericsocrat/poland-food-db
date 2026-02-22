@@ -2,13 +2,14 @@
 
 // ─── Settings page — view/edit preferences, logout ──────────────────────────
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences, setUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { ChevronDown, Copy, Check } from "lucide-react";
 import {
   COUNTRIES,
   COUNTRY_DEFAULT_LANGUAGES,
@@ -55,6 +56,24 @@ export default function SettingsPage() {
   const [treatMayContain, setTreatMayContain] = useState(false);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [email, setEmail] = useState<string | null>(null);
+  const [showDetails, setShowDetails] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  // Fetch user email from auth session
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      setEmail(data.user?.email ?? null);
+    });
+  }, [supabase]);
+
+  const handleCopyUserId = useCallback(async () => {
+    if (!prefs?.user_id) return;
+    await navigator.clipboard.writeText(prefs.user_id);
+    setCopied(true);
+    showToast({ type: "success", messageKey: "settings.copiedToClipboard" });
+    setTimeout(() => setCopied(false), 2000);
+  }, [prefs?.user_id]);
 
   // Populate from fetched prefs
   useEffect(() => {
@@ -363,9 +382,55 @@ export default function SettingsPage() {
         <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("settings.account")}
         </h2>
-        <p className="mb-3 text-xs text-foreground-secondary">
-          {prefs?.user_id && `User ID: ${prefs.user_id.slice(0, 8)}…`}
-        </p>
+
+        {/* Primary identifier: email */}
+        {email && (
+          <p className="mb-3 text-sm text-foreground-secondary">{email}</p>
+        )}
+
+        {/* Expandable account details with masked UUID + copy */}
+        {prefs?.user_id && (
+          <div className="mb-3">
+            <button
+              type="button"
+              onClick={() => setShowDetails((prev) => !prev)}
+              className="flex items-center gap-1 text-xs text-foreground-secondary hover:text-foreground-primary transition-colors"
+              aria-expanded={showDetails}
+            >
+              <ChevronDown
+                size={14}
+                aria-hidden="true"
+                className={`transition-transform ${showDetails ? "rotate-180" : ""}`}
+              />
+              {t("settings.accountDetails")}
+            </button>
+
+            {showDetails && (
+              <div
+                className="mt-2 flex items-center gap-2"
+                data-testid="account-details"
+              >
+                <code className="text-xs text-foreground-secondary">
+                  {prefs.user_id.slice(0, 4)}…{prefs.user_id.slice(-4)}
+                </code>
+                <button
+                  type="button"
+                  onClick={handleCopyUserId}
+                  className="flex items-center gap-1 rounded border border-gray-200 px-2 py-0.5 text-xs text-foreground-secondary hover:bg-gray-50 transition-colors"
+                  aria-label={t("settings.copyUserId")}
+                >
+                  {copied ? (
+                    <Check size={12} aria-hidden="true" />
+                  ) : (
+                    <Copy size={12} aria-hidden="true" />
+                  )}
+                  {t("settings.copyUserId")}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
         <button
           onClick={handleLogout}
           className="w-full rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50"
