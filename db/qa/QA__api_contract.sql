@@ -400,3 +400,12 @@ SELECT
         )) AS kv(k, v)
     )
     THEN 'PASS' ELSE 'FAIL' END AS "#35 get_product_allergens entries have contains+traces";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #36 api_get_filter_options — response includes nova_groups key
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT api_get_filter_options('PL') ? 'nova_groups'
+    )
+    THEN 'PASS' ELSE 'FAIL' END AS "#36 get_filter_options includes nova_groups";

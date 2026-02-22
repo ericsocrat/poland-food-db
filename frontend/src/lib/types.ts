@@ -55,6 +55,7 @@ export interface OnboardingStatus {
 export interface SearchFilters {
   category?: string[];
   nutri_score?: string[];
+  nova_group?: string[];
   allergen_free?: string[];
   max_unhealthiness?: number;
   country?: string;
@@ -152,11 +153,17 @@ export interface FilterAllergenOption {
   count: number;
 }
 
+export interface FilterNovaOption {
+  group: string;
+  count: number;
+}
+
 export interface FilterOptionsResponse {
   api_version: string;
   country: string;
   categories: FilterCategoryOption[];
   nutri_scores: FilterNutriOption[];
+  nova_groups: FilterNovaOption[];
   allergens: FilterAllergenOption[];
 }
 

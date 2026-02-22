@@ -48,6 +48,21 @@ export function ActiveFilterChips({
     });
   }
 
+  // NOVA group chips
+  for (const group of filters.nova_group ?? []) {
+    chips.push({
+      key: `nova-${group}`,
+      label: t("chips.nova_group", { value: group }),
+      onRemove: () => {
+        const next = (filters.nova_group ?? []).filter((g) => g !== group);
+        onChange({
+          ...filters,
+          nova_group: next.length > 0 ? next : undefined,
+        });
+      },
+    });
+  }
+
   // Allergen-free chips
   for (const tag of filters.allergen_free ?? []) {
     const info = ALLERGEN_TAGS.find((a) => a.tag === tag);
