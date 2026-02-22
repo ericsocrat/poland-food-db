@@ -1,16 +1,15 @@
 <#
 .SYNOPSIS
-    Runs all SQL pipelines against the REMOTE Supabase database.
+    Runs all SQL pipelines against a REMOTE Supabase database (staging or production).
 
 .DESCRIPTION
     Executes every pipeline SQL file in the correct order against the
-    REMOTE Supabase project (uskvezwftkkudvksmken).
+    selected Supabase cloud project.
 
-    ⚠️  THIS MODIFIES PRODUCTION DATA. ⚠️
-
-    This is the ONLY cloud project (single-cloud mode — §8.1A).
+    ⚠️  THIS MODIFIES CLOUD DATA. ⚠️
 
     Safety features:
+        - Requires explicit -Env parameter (no default — forces conscious choice)
         - Requires explicit -Force flag OR interactive confirmation
         - Blocks execution on non-main branches (unless -Force)
         - Displays a warning banner before execution
@@ -18,23 +17,32 @@
         - All pipelines use ON CONFLICT DO UPDATE (upsert) — never drops or truncates
         - Automatically runs BACKUP.ps1 before deployment (unless -SkipBackup)
 
+.PARAMETER Env
+    Target environment: staging or production.
+
 .NOTES
     Prerequisites:
         - psql available on PATH
         - pg_dump available on PATH (for pre-deployment backup)
-        - Supabase project linked: supabase link --project-ref uskvezwftkkudvksmken
-        - Remote database password available (SUPABASE_DB_PASSWORD env var or interactive)
+        - Remote database password available via env var or interactive prompt:
+            - Production: SUPABASE_DB_PASSWORD
+            - Staging:    SUPABASE_STAGING_DB_PASSWORD + SUPABASE_STAGING_PROJECT_REF
 
     Usage:
-        .\RUN_REMOTE.ps1                          # Interactive confirmation + backup
-        .\RUN_REMOTE.ps1 -Category chips           # Run only chips pipeline
-        .\RUN_REMOTE.ps1 -DryRun                   # Preview without executing
-        .\RUN_REMOTE.ps1 -Force                    # Skip interactive prompt
-        .\RUN_REMOTE.ps1 -SkipBackup               # Skip pre-deployment backup (emergency)
+        .\RUN_REMOTE.ps1 -Env staging              # Staging — interactive confirmation + backup
+        .\RUN_REMOTE.ps1 -Env production            # Production — interactive confirmation + backup
+        .\RUN_REMOTE.ps1 -Env staging -Category chips  # Run only chips pipeline on staging
+        .\RUN_REMOTE.ps1 -Env staging -DryRun       # Preview without executing
+        .\RUN_REMOTE.ps1 -Env production -Force     # Skip interactive prompt (production)
+        .\RUN_REMOTE.ps1 -Env staging -SkipBackup   # Skip pre-deployment backup (emergency)
 #>
 
 [CmdletBinding()]
 param(
+    [Parameter(Mandatory = $true, HelpMessage = "Target environment: staging or production.")]
+    [ValidateSet("staging", "production")]
+    [string]$Env,
+
     [Parameter(HelpMessage = "Run only a specific category pipeline (e.g., 'chips', 'zabka'). If omitted, runs all.")]
     [string]$Category = "",
 
@@ -50,20 +58,61 @@ param(
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-$PROJECT_REF = "uskvezwftkkudvksmken"
-$DB_HOST = "aws-1-eu-west-1.pooler.supabase.com"
+$PRODUCTION_PROJECT_REF = "uskvezwftkkudvksmken"
+$POOLER_HOST = "aws-1-eu-west-1.pooler.supabase.com"
 $DB_PORT = "5432"
 $DB_NAME = "postgres"
-$DB_USER = "postgres.$PROJECT_REF"
 
 $PIPELINE_ROOT = Join-Path $PSScriptRoot "db" "pipelines"
+
+# ─── Load .env if present ────────────────────────────────────────────────────
+
+$dotenvPath = Join-Path $PSScriptRoot ".env"
+if (Test-Path $dotenvPath) {
+    Get-Content $dotenvPath | ForEach-Object {
+        if ($_ -match '^\s*([A-Z_][A-Z0-9_]*)\s*=\s*(.+)$') {
+            $key = $Matches[1]
+            $val = $Matches[2].Trim().Trim('"', "'")
+            if (-not [System.Environment]::GetEnvironmentVariable($key)) {
+                [System.Environment]::SetEnvironmentVariable($key, $val)
+            }
+        }
+    }
+}
+
+# ─── Environment-specific configuration ──────────────────────────────────────
+
+switch ($Env) {
+    "staging" {
+        $stagingRef = [System.Environment]::GetEnvironmentVariable("SUPABASE_STAGING_PROJECT_REF")
+        if (-not $stagingRef) {
+            Write-Host "ERROR: SUPABASE_STAGING_PROJECT_REF not set." -ForegroundColor Red
+            Write-Host "Add it to your .env file or set as an environment variable." -ForegroundColor Yellow
+            exit 1
+        }
+        $PROJECT_REF = $stagingRef
+        $DB_HOST = $POOLER_HOST
+        $DB_USER = "postgres.$stagingRef"
+        $envLabel = "STAGING ($stagingRef)"
+        $envColor = "Yellow"
+        $passwordEnvVar = "SUPABASE_STAGING_DB_PASSWORD"
+    }
+    "production" {
+        $PROJECT_REF = $PRODUCTION_PROJECT_REF
+        $DB_HOST = $POOLER_HOST
+        $DB_USER = "postgres.$PRODUCTION_PROJECT_REF"
+        $envLabel = "PRODUCTION ($PRODUCTION_PROJECT_REF)"
+        $envColor = "Red"
+        $passwordEnvVar = "SUPABASE_DB_PASSWORD"
+    }
+}
 
 # ─── Warning Banner ─────────────────────────────────────────────────────────
 
 Write-Host ""
-Write-Host "================================================================" -ForegroundColor Red
-Write-Host "  ⚠️   REMOTE DATABASE — PRODUCTION ENVIRONMENT   ⚠️" -ForegroundColor Red
-Write-Host "================================================================" -ForegroundColor Red
+Write-Host "================================================================" -ForegroundColor $envColor
+Write-Host "  ⚠️   REMOTE DATABASE — $($Env.ToUpper()) ENVIRONMENT   ⚠️" -ForegroundColor $envColor
+Write-Host "================================================================" -ForegroundColor $envColor
 Write-Host ""
 Write-Host "  Project:  $PROJECT_REF" -ForegroundColor Yellow
 Write-Host "  Host:     $DB_HOST" -ForegroundColor Yellow
@@ -163,11 +212,11 @@ if ($DryRun) {
 # ─── Confirmation Gate ──────────────────────────────────────────────────────
 
 if (-not $Force) {
-    Write-Host "─────────────────────────────────────────────────" -ForegroundColor Red
-    Write-Host "  Type 'YES' to proceed, or anything else to abort." -ForegroundColor Red
-    Write-Host "─────────────────────────────────────────────────" -ForegroundColor Red
+    Write-Host "─────────────────────────────────────────────────" -ForegroundColor $envColor
+    Write-Host "  Type 'YES' to proceed, or anything else to abort." -ForegroundColor $envColor
+    Write-Host "─────────────────────────────────────────────────" -ForegroundColor $envColor
     Write-Host ""
-    $response = Read-Host "  Execute $($allFiles.Count) files against REMOTE database?"
+    $response = Read-Host "  Execute $($allFiles.Count) files against $envLabel?"
     if ($response -ne "YES") {
         Write-Host ""
         Write-Host "ABORTED by user." -ForegroundColor Yellow
@@ -210,12 +259,12 @@ else {
 # ─── Get Database Password ──────────────────────────────────────────────────
 
 # Check for password in environment variable first
-if ($env:SUPABASE_DB_PASSWORD) {
-    $dbPassword = $env:SUPABASE_DB_PASSWORD
-    Write-Host "Using database password from SUPABASE_DB_PASSWORD environment variable." -ForegroundColor Green
+$dbPassword = [System.Environment]::GetEnvironmentVariable($passwordEnvVar)
+if ($dbPassword) {
+    Write-Host "Using database password from $passwordEnvVar environment variable." -ForegroundColor Green
 }
 else {
-    Write-Host "Enter the remote database password:" -ForegroundColor Yellow
+    Write-Host "Enter the database password for $envLabel :" -ForegroundColor Yellow
     $securePassword = Read-Host -AsSecureString
     $dbPassword = [Runtime.InteropServices.Marshal]::PtrToStringAuto(
         [Runtime.InteropServices.Marshal]::SecureStringToBSTR($securePassword)
@@ -245,7 +294,7 @@ catch {
 # ─── Execution ──────────────────────────────────────────────────────────────
 
 Write-Host ""
-Write-Host "Executing pipelines against REMOTE..." -ForegroundColor Yellow
+Write-Host "Executing pipelines against $envLabel..." -ForegroundColor Yellow
 Write-Host ""
 
 $successCount = 0
@@ -313,12 +362,12 @@ Remove-Item Env:\PGPASSWORD -ErrorAction SilentlyContinue
 
 Write-Host ""
 Write-Host "================================================================" -ForegroundColor Cyan
-Write-Host "  Remote Execution Summary" -ForegroundColor Cyan
+Write-Host "  Remote Execution Summary — $envLabel" -ForegroundColor Cyan
 Write-Host "================================================================" -ForegroundColor Cyan
 Write-Host "  Succeeded:  $successCount" -ForegroundColor Green
 Write-Host "  Failed:     $failCount" -ForegroundColor $(if ($failCount -gt 0) { "Red" } else { "Green" })
 Write-Host "  Duration:   $($stopwatch.Elapsed.TotalSeconds.ToString('F1'))s" -ForegroundColor White
-Write-Host "  Target:     REMOTE ($DB_HOST`:$DB_PORT/$DB_NAME)" -ForegroundColor Yellow
+Write-Host "  Target:     $envLabel ($DB_HOST`:$DB_PORT/$DB_NAME)" -ForegroundColor $envColor
 Write-Host ""
 
 if ($failCount -gt 0) {
