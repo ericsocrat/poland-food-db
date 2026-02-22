@@ -246,8 +246,8 @@ SELECT
 -- #23 All api_* functions are SECURITY DEFINER (still, after recreation)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
-    CASE WHEN COUNT(*) = 18
-    THEN 'PASS' ELSE 'FAIL' END AS "#23 all api_* remain SECURITY DEFINER (18)"
+    CASE WHEN COUNT(*) = 19
+    THEN 'PASS' ELSE 'FAIL' END AS "#23 all api_* remain SECURITY DEFINER (19)"
 FROM pg_proc p
 JOIN pg_namespace n ON n.oid = p.pronamespace
 WHERE n.nspname = 'public'
@@ -377,3 +377,26 @@ SELECT
         p_country := NULL
     )->>'country' IS NOT NULL
     THEN 'PASS' ELSE 'FAIL' END AS "#33 ean_lookup country never null";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #34 api_get_product_allergens — returns jsonb object (empty for missing IDs)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN api_get_product_allergens(ARRAY[-1]::bigint[]) = '{}'::jsonb
+    THEN 'PASS' ELSE 'FAIL' END AS "#34 get_product_allergens empty for missing IDs";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #35 api_get_product_allergens — product entries have contains+traces keys
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT COALESCE(bool_and(
+            v ? 'contains' AND v ? 'traces'
+        ), true)
+        FROM jsonb_each(api_get_product_allergens(
+            (SELECT array_agg(product_id) FROM (
+                SELECT product_id FROM product_allergen_info LIMIT 5
+            ) s)
+        )) AS kv(k, v)
+    )
+    THEN 'PASS' ELSE 'FAIL' END AS "#35 get_product_allergens entries have contains+traces";

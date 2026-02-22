@@ -19,8 +19,10 @@ import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { AllergenChips } from "@/components/common/AllergenChips";
 import { formatSlug } from "@/lib/validation";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useProductAllergenWarnings } from "@/hooks/use-product-allergens";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
 import type { CategoryProduct, CategoryOverviewItem } from "@/lib/types";
@@ -71,6 +73,11 @@ export default function CategoryListingPage() {
     },
     staleTime: staleTimes.categoryListing,
   });
+
+  // Batch-fetch allergen data for current page (#128)
+  const allergenMap = useProductAllergenWarnings(
+    data?.products.map((p) => p.product_id) ?? [],
+  );
 
   // Reuse cached category overview for summary stats
   const { data: overviewData } = useQuery({
@@ -174,7 +181,11 @@ export default function CategoryListingPage() {
       {!isLoading && !error && data && data.products.length > 0 && (
         <ul className="space-y-2">
           {data.products.map((p) => (
-            <ProductRow key={p.product_id} product={p} />
+            <ProductRow
+              key={p.product_id}
+              product={p}
+              allergenWarnings={allergenMap[p.product_id] ?? []}
+            />
           ))}
         </ul>
       )}
@@ -205,7 +216,13 @@ export default function CategoryListingPage() {
   );
 }
 
-function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
+function ProductRow({
+  product,
+  allergenWarnings = [],
+}: Readonly<{
+  product: CategoryProduct;
+  allergenWarnings?: import("@/lib/allergen-matching").AllergenWarning[];
+}>) {
   const { t } = useTranslation();
   const band = SCORE_BANDS[product.score_band];
 
@@ -246,6 +263,8 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
               </span>
             )}
           </div>
+          {/* Allergen warnings */}
+          <AllergenChips warnings={allergenWarnings} />
         </div>
 
         {/* Health warning badge */}

@@ -19,6 +19,7 @@ import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { AllergenChips } from "@/components/common/AllergenChips";
 import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
@@ -28,6 +29,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useProductAllergenWarnings } from "@/hooks/use-product-allergens";
 import { useTranslation } from "@/lib/i18n";
 import {
   SlidersHorizontal,
@@ -137,6 +139,11 @@ export default function SearchPage() {
     staleTime: staleTimes.search,
   });
 
+  // Batch-fetch allergen data for current page of results (#128)
+  const allergenMap = useProductAllergenWarnings(
+    data?.results.map((p) => p.product_id) ?? [],
+  );
+
   const { track } = useAnalytics();
 
   function handleSubmit(e: FormSubmitEvent) {
@@ -205,421 +212,422 @@ export default function SearchPage() {
         ]}
       />
       <div className="flex lg:gap-6">
-      {/* Filter sidebar (desktop) */}
-      <FilterPanel
-        filters={filters}
-        onChange={handleFiltersChange}
-        show={showFilters}
-        onClose={() => setShowFilters(false)}
-      />
+        {/* Filter sidebar (desktop) */}
+        <FilterPanel
+          filters={filters}
+          onChange={handleFiltersChange}
+          show={showFilters}
+          onClose={() => setShowFilters(false)}
+        />
 
-      {/* Main content */}
-      <div className="min-w-0 flex-1 space-y-4 lg:space-y-6">
-        {/* Search input */}
-        <form
-          onSubmit={handleSubmit}
-          role="search"
-          aria-label={t("a11y.searchProducts")}
-          className="space-y-2"
-        >
-          <div className="relative">
-            <input
-              ref={inputRef}
-              type="text"
-              value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setShowAutocomplete(true);
-              }}
-              onFocus={() => setShowAutocomplete(true)}
-              onKeyDown={(e) => autocompleteKeyDownRef.current?.(e)}
-              placeholder={t("search.placeholder")}
-              aria-label={t("a11y.searchProducts")}
-              role="combobox"
-              aria-expanded={showAutocomplete}
-              aria-controls="search-autocomplete-listbox"
-              aria-autocomplete="list"
-              aria-activedescendant={
-                showAutocomplete ? autocompleteActiveId : undefined
-              }
-              className="input-field pl-10 pr-10"
-              autoFocus
-            />
-            <svg
-              className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground-muted"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-              />
-            </svg>
-            {isFetching && (
-              <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                <LoadingSpinner size="sm" />
-              </div>
-            )}
-            {!isFetching && query.length > 0 && (
-              <button
-                type="button"
-                onClick={() => {
-                  setQuery("");
-                  setSubmittedQuery("");
-                  setShowAutocomplete(false);
+        {/* Main content */}
+        <div className="min-w-0 flex-1 space-y-4 lg:space-y-6">
+          {/* Search input */}
+          <form
+            onSubmit={handleSubmit}
+            role="search"
+            aria-label={t("a11y.searchProducts")}
+            className="space-y-2"
+          >
+            <div className="relative">
+              <input
+                ref={inputRef}
+                type="text"
+                value={query}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setShowAutocomplete(true);
                 }}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground-secondary"
-                aria-label={t("search.clearSearch")}
+                onFocus={() => setShowAutocomplete(true)}
+                onKeyDown={(e) => autocompleteKeyDownRef.current?.(e)}
+                placeholder={t("search.placeholder")}
+                aria-label={t("a11y.searchProducts")}
+                role="combobox"
+                aria-expanded={showAutocomplete}
+                aria-controls="search-autocomplete-listbox"
+                aria-autocomplete="list"
+                aria-activedescendant={
+                  showAutocomplete ? autocompleteActiveId : undefined
+                }
+                className="input-field pl-10 pr-10"
+                autoFocus
+              />
+              <svg
+                className="absolute left-3 top-1/2 h-5 w-5 -translate-y-1/2 text-foreground-muted"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
               >
-                <svg
-                  className="h-5 w-5"
-                  viewBox="0 0 20 20"
-                  fill="currentColor"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </button>
-            )}
-
-            {/* Autocomplete dropdown */}
-            <SearchAutocomplete
-              query={query}
-              onSelect={() => setShowAutocomplete(false)}
-              onQuerySubmit={(q) => {
-                setSubmittedQuery(q);
-                setShowAutocomplete(false);
-              }}
-              onQueryChange={setQuery}
-              show={showAutocomplete}
-              onClose={() => setShowAutocomplete(false)}
-              onInputKeyDown={(handler) => {
-                autocompleteKeyDownRef.current = handler;
-              }}
-              onActiveIdChange={setAutocompleteActiveId}
-            />
-          </div>
-
-          {/* Action row: search button, filter toggle, avoid toggle, save */}
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-            <button
-              type="submit"
-              disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
-              className="btn-primary px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-            >
-              {t("search.searchButton")}
-            </button>
-
-            {/* Mobile filter toggle */}
-            <button
-              type="button"
-              onClick={() => setShowFilters(true)}
-              className="touch-target flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted lg:hidden"
-            >
-              <SlidersHorizontal
-                size={14}
-                aria-hidden="true"
-                className="inline"
-              />{" "}
-              {t("search.filters")}
-              {hasActiveFilters(filters) && (
-                <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
-                  {countActiveFilters(filters)}
-                </span>
-              )}
-            </button>
-
-            {/* Avoid toggle */}
-            <button
-              type="button"
-              onClick={handleAvoidToggle}
-              className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
-              title={
-                showAvoided
-                  ? t("search.avoidedShown")
-                  : t("search.avoidedDemoted")
-              }
-            >
-              <span
-                className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
-                  showAvoided ? "bg-brand" : "bg-surface-muted"
-                }`}
-              >
-                <span
-                  className={`inline-block h-3 w-3 transform rounded-full bg-surface transition-transform ${
-                    showAvoided ? "translate-x-3.5" : "translate-x-0.5"
-                  }`}
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
                 />
-              </span>{" "}
-              {t("search.showAvoided")}
-            </button>
-
-            {/* View mode toggle */}
-            <button
-              type="button"
-              onClick={() => {
-                const next: ViewMode = viewMode === "grid" ? "list" : "grid";
-                setViewMode(next);
-                setViewModeStorage(next);
-              }}
-              className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
-              aria-label={t("search.toggleViewMode")}
-            >
-              {viewMode === "list" ? (
-                <LayoutGrid size={14} aria-hidden="true" className="inline" />
-              ) : (
-                <LayoutList size={14} aria-hidden="true" className="inline" />
+              </svg>
+              {isFetching && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <LoadingSpinner size="sm" />
+                </div>
               )}
-              <span className="hidden xs:inline">
-                {viewMode === "list"
-                  ? t("search.gridView")
-                  : t("search.listView")}
-              </span>
-            </button>
-
-            {/* Right-aligned group: save + saved searches */}
-            <span className="ml-auto flex items-center gap-2">
-              {/* Save search */}
-              {isSearchActive && (
+              {!isFetching && query.length > 0 && (
                 <button
                   type="button"
-                  onClick={() => setShowSaveDialog(true)}
-                  className="touch-target text-xs text-foreground-muted hover:text-brand"
+                  onClick={() => {
+                    setQuery("");
+                    setSubmittedQuery("");
+                    setShowAutocomplete(false);
+                  }}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted hover:text-foreground-secondary"
+                  aria-label={t("search.clearSearch")}
                 >
-                  <Save size={14} aria-hidden="true" className="inline" />{" "}
-                  <span className="hidden xs:inline">
-                    {t("search.saveSearch")}
-                  </span>
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
                 </button>
               )}
 
-              {/* Saved searches link */}
-              <Link
-                href="/app/search/saved"
-                className="touch-target text-xs text-foreground-muted hover:text-brand"
+              {/* Autocomplete dropdown */}
+              <SearchAutocomplete
+                query={query}
+                onSelect={() => setShowAutocomplete(false)}
+                onQuerySubmit={(q) => {
+                  setSubmittedQuery(q);
+                  setShowAutocomplete(false);
+                }}
+                onQueryChange={setQuery}
+                show={showAutocomplete}
+                onClose={() => setShowAutocomplete(false)}
+                onInputKeyDown={(handler) => {
+                  autocompleteKeyDownRef.current = handler;
+                }}
+                onActiveIdChange={setAutocompleteActiveId}
+              />
+            </div>
+
+            {/* Action row: search button, filter toggle, avoid toggle, save */}
+            <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
+              <button
+                type="submit"
+                disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
+                className="btn-primary px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
               >
-                <ClipboardList
+                {t("search.searchButton")}
+              </button>
+
+              {/* Mobile filter toggle */}
+              <button
+                type="button"
+                onClick={() => setShowFilters(true)}
+                className="touch-target flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted lg:hidden"
+              >
+                <SlidersHorizontal
                   size={14}
                   aria-hidden="true"
                   className="inline"
                 />{" "}
-                <span className="hidden xs:inline">{t("search.saved")}</span>
-              </Link>
-            </span>
-          </div>
-        </form>
-
-        {/* Active filter chips */}
-        <ActiveFilterChips filters={filters} onChange={handleFiltersChange} />
-
-        {/* Recent searches — shown when no active search */}
-        {!isSearchActive && recentSearches.length > 0 && (
-          <div>
-            <p className="mb-2 text-xs font-medium uppercase tracking-wider text-foreground-muted">
-              {t("search.recentSearches")}
-            </p>
-            <div className="flex flex-wrap gap-2">
-              {recentSearches.map((q) => (
-                <button
-                  key={q}
-                  onClick={() => selectRecent(q)}
-                  className="touch-target rounded-full border border-border px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:border-foreground-muted hover:text-foreground"
-                >
-                  {q}
-                </button>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Empty state — no search or filters active */}
-        {!isSearchActive && recentSearches.length === 0 && (
-          <EmptyState
-            variant="no-data"
-            icon={<Search size={40} />}
-            titleKey="search.emptyState"
-          />
-        )}
-
-        {/* Loading */}
-        {isLoading && isSearchActive && <SearchResultsSkeleton />}
-
-        {/* Error state */}
-        {error && (
-          <EmptyState
-            variant="error"
-            titleKey="search.searchFailed"
-            action={{ labelKey: "common.retry", onClick: handleRetry }}
-          />
-        )}
-
-        {/* Results */}
-        {data && (
-          <>
-            <LiveRegion
-              message={t("a11y.searchResultsStatus", { count: data.total })}
-            />
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-foreground-secondary lg:text-base">
-                {t("search.result", { count: data.total })}
-                {data.query && (
-                  <> {t("search.resultsFor", { query: data.query })}</>
+                {t("search.filters")}
+                {hasActiveFilters(filters) && (
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
+                    {countActiveFilters(filters)}
+                  </span>
                 )}
-              </p>
-              {data.pages > 1 && (
-                <p className="text-xs text-foreground-muted">
-                  {t("common.pageOf", { page: data.page, pages: data.pages })}
-                </p>
-              )}
-            </div>
+              </button>
 
-            {data.results.length === 0 ? (
-              <div className="space-y-4" data-testid="zero-results">
-                <EmptyState
-                  variant="no-results"
-                  titleKey={
-                    data.query
-                      ? "search.noMatchSearch"
-                      : "search.noMatchFilters"
-                  }
-                  descriptionKey="search.adjustFilters"
-                  action={
-                    hasActiveFilters(filters)
-                      ? {
-                          labelKey: "search.clearAllFilters",
-                          onClick: () => setFilters({}),
-                        }
-                      : undefined
-                  }
-                />
-
-                {/* "Did you mean?" fuzzy suggestions (#62) */}
-                {data.query && (
-                  <DidYouMean
-                    query={data.query}
-                    onSuggestionClick={(suggestion) => {
-                      setQuery(suggestion);
-                      setSubmittedQuery(suggestion);
-                    }}
+              {/* Avoid toggle */}
+              <button
+                type="button"
+                onClick={handleAvoidToggle}
+                className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
+                title={
+                  showAvoided
+                    ? t("search.avoidedShown")
+                    : t("search.avoidedDemoted")
+                }
+              >
+                <span
+                  className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
+                    showAvoided ? "bg-brand" : "bg-surface-muted"
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-3 w-3 transform rounded-full bg-surface transition-transform ${
+                      showAvoided ? "translate-x-3.5" : "translate-x-0.5"
+                    }`}
                   />
+                </span>{" "}
+                {t("search.showAvoided")}
+              </button>
+
+              {/* View mode toggle */}
+              <button
+                type="button"
+                onClick={() => {
+                  const next: ViewMode = viewMode === "grid" ? "list" : "grid";
+                  setViewMode(next);
+                  setViewModeStorage(next);
+                }}
+                className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
+                aria-label={t("search.toggleViewMode")}
+              >
+                {viewMode === "list" ? (
+                  <LayoutGrid size={14} aria-hidden="true" className="inline" />
+                ) : (
+                  <LayoutList size={14} aria-hidden="true" className="inline" />
+                )}
+                <span className="hidden xs:inline">
+                  {viewMode === "list"
+                    ? t("search.gridView")
+                    : t("search.listView")}
+                </span>
+              </button>
+
+              {/* Right-aligned group: save + saved searches */}
+              <span className="ml-auto flex items-center gap-2">
+                {/* Save search */}
+                {isSearchActive && (
+                  <button
+                    type="button"
+                    onClick={() => setShowSaveDialog(true)}
+                    className="touch-target text-xs text-foreground-muted hover:text-brand"
+                  >
+                    <Save size={14} aria-hidden="true" className="inline" />{" "}
+                    <span className="hidden xs:inline">
+                      {t("search.saveSearch")}
+                    </span>
+                  </button>
                 )}
 
-                {/* Helpful tips for zero-results (#62) */}
-                <div className="rounded-lg border bg-surface p-4">
-                  <p className="mb-2 text-sm font-medium text-foreground-secondary">
-                    {t("search.noResultsSuggestions")}
-                  </p>
-                  <ul className="space-y-1.5 text-sm text-foreground-muted">
-                    {hasActiveFilters(filters) && (
-                      <li>• {t("search.tryFewerFilters")}</li>
-                    )}
-                    <li>• {t("search.checkSpelling")}</li>
-                    <li>
-                      •{" "}
-                      <Link
-                        href="/app/categories"
-                        className="text-brand hover:text-brand-hover hover:underline"
-                      >
-                        {t("search.browseCategories")}
-                      </Link>
-                    </li>
-                    <li>
-                      •{" "}
-                      <Link
-                        href="/app/scan"
-                        className="text-brand hover:text-brand-hover hover:underline"
-                      >
-                        {t("search.scanBarcode")}
-                      </Link>
-                    </li>
-                  </ul>
-                </div>
-              </div>
-            ) : (
-              <>
-                <ul
-                  className={
-                    viewMode === "grid"
-                      ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
-                      : "space-y-2"
-                  }
-                  data-testid="results-container"
+                {/* Saved searches link */}
+                <Link
+                  href="/app/search/saved"
+                  className="touch-target text-xs text-foreground-muted hover:text-brand"
                 >
-                  {data.results.map((product) => (
-                    <ProductRow
-                      key={product.product_id}
-                      product={product}
-                      viewMode={viewMode}
-                    />
-                  ))}
-                </ul>
+                  <ClipboardList
+                    size={14}
+                    aria-hidden="true"
+                    className="inline"
+                  />{" "}
+                  <span className="hidden xs:inline">{t("search.saved")}</span>
+                </Link>
+              </span>
+            </div>
+          </form>
 
-                {/* Pagination */}
+          {/* Active filter chips */}
+          <ActiveFilterChips filters={filters} onChange={handleFiltersChange} />
+
+          {/* Recent searches — shown when no active search */}
+          {!isSearchActive && recentSearches.length > 0 && (
+            <div>
+              <p className="mb-2 text-xs font-medium uppercase tracking-wider text-foreground-muted">
+                {t("search.recentSearches")}
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {recentSearches.map((q) => (
+                  <button
+                    key={q}
+                    onClick={() => selectRecent(q)}
+                    className="touch-target rounded-full border border-border px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:border-foreground-muted hover:text-foreground"
+                  >
+                    {q}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Empty state — no search or filters active */}
+          {!isSearchActive && recentSearches.length === 0 && (
+            <EmptyState
+              variant="no-data"
+              icon={<Search size={40} />}
+              titleKey="search.emptyState"
+            />
+          )}
+
+          {/* Loading */}
+          {isLoading && isSearchActive && <SearchResultsSkeleton />}
+
+          {/* Error state */}
+          {error && (
+            <EmptyState
+              variant="error"
+              titleKey="search.searchFailed"
+              action={{ labelKey: "common.retry", onClick: handleRetry }}
+            />
+          )}
+
+          {/* Results */}
+          {data && (
+            <>
+              <LiveRegion
+                message={t("a11y.searchResultsStatus", { count: data.total })}
+              />
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-foreground-secondary lg:text-base">
+                  {t("search.result", { count: data.total })}
+                  {data.query && (
+                    <> {t("search.resultsFor", { query: data.query })}</>
+                  )}
+                </p>
                 {data.pages > 1 && (
-                  <div className="flex items-center justify-center gap-2 pt-4">
-                    <button
-                      type="button"
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
-                      disabled={page <= 1}
-                      className="touch-target rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {t("common.prev")}
-                    </button>
-                    {generatePageNumbers(data.page, data.pages).map((p, i) =>
-                      p === null ? (
-                        <span
-                          key={`ellipsis-${i > 0 ? "end" : "start"}`}
-                          className="px-1 text-foreground-muted"
-                        >
-                          …
-                        </span>
-                      ) : (
-                        <button
-                          key={p}
-                          type="button"
-                          onClick={() => setPage(p)}
-                          className={`h-10 w-10 rounded-lg text-sm font-medium transition-colors ${
-                            p === page
-                              ? "bg-brand text-white"
-                              : "text-foreground-secondary hover:bg-surface-muted"
-                          }`}
-                        >
-                          {p}
-                        </button>
-                      ),
-                    )}
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setPage((p) => Math.min(data.pages, p + 1))
-                      }
-                      disabled={page >= data.pages}
-                      className="touch-target rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
-                    >
-                      {t("common.next")}
-                    </button>
-                  </div>
+                  <p className="text-xs text-foreground-muted">
+                    {t("common.pageOf", { page: data.page, pages: data.pages })}
+                  </p>
                 )}
-              </>
-            )}
-          </>
-        )}
+              </div>
 
-        {/* Save search dialog */}
-        <SaveSearchDialog
-          query={submittedQuery || null}
-          filters={filters}
-          show={showSaveDialog}
-          onClose={() => setShowSaveDialog(false)}
-        />
+              {data.results.length === 0 ? (
+                <div className="space-y-4" data-testid="zero-results">
+                  <EmptyState
+                    variant="no-results"
+                    titleKey={
+                      data.query
+                        ? "search.noMatchSearch"
+                        : "search.noMatchFilters"
+                    }
+                    descriptionKey="search.adjustFilters"
+                    action={
+                      hasActiveFilters(filters)
+                        ? {
+                            labelKey: "search.clearAllFilters",
+                            onClick: () => setFilters({}),
+                          }
+                        : undefined
+                    }
+                  />
+
+                  {/* "Did you mean?" fuzzy suggestions (#62) */}
+                  {data.query && (
+                    <DidYouMean
+                      query={data.query}
+                      onSuggestionClick={(suggestion) => {
+                        setQuery(suggestion);
+                        setSubmittedQuery(suggestion);
+                      }}
+                    />
+                  )}
+
+                  {/* Helpful tips for zero-results (#62) */}
+                  <div className="rounded-lg border bg-surface p-4">
+                    <p className="mb-2 text-sm font-medium text-foreground-secondary">
+                      {t("search.noResultsSuggestions")}
+                    </p>
+                    <ul className="space-y-1.5 text-sm text-foreground-muted">
+                      {hasActiveFilters(filters) && (
+                        <li>• {t("search.tryFewerFilters")}</li>
+                      )}
+                      <li>• {t("search.checkSpelling")}</li>
+                      <li>
+                        •{" "}
+                        <Link
+                          href="/app/categories"
+                          className="text-brand hover:text-brand-hover hover:underline"
+                        >
+                          {t("search.browseCategories")}
+                        </Link>
+                      </li>
+                      <li>
+                        •{" "}
+                        <Link
+                          href="/app/scan"
+                          className="text-brand hover:text-brand-hover hover:underline"
+                        >
+                          {t("search.scanBarcode")}
+                        </Link>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <ul
+                    className={
+                      viewMode === "grid"
+                        ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
+                        : "space-y-2"
+                    }
+                    data-testid="results-container"
+                  >
+                    {data.results.map((product) => (
+                      <ProductRow
+                        key={product.product_id}
+                        product={product}
+                        viewMode={viewMode}
+                        allergenWarnings={allergenMap[product.product_id] ?? []}
+                      />
+                    ))}
+                  </ul>
+
+                  {/* Pagination */}
+                  {data.pages > 1 && (
+                    <div className="flex items-center justify-center gap-2 pt-4">
+                      <button
+                        type="button"
+                        onClick={() => setPage((p) => Math.max(1, p - 1))}
+                        disabled={page <= 1}
+                        className="touch-target rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {t("common.prev")}
+                      </button>
+                      {generatePageNumbers(data.page, data.pages).map((p, i) =>
+                        p === null ? (
+                          <span
+                            key={`ellipsis-${i > 0 ? "end" : "start"}`}
+                            className="px-1 text-foreground-muted"
+                          >
+                            …
+                          </span>
+                        ) : (
+                          <button
+                            key={p}
+                            type="button"
+                            onClick={() => setPage(p)}
+                            className={`h-10 w-10 rounded-lg text-sm font-medium transition-colors ${
+                              p === page
+                                ? "bg-brand text-white"
+                                : "text-foreground-secondary hover:bg-surface-muted"
+                            }`}
+                          >
+                            {p}
+                          </button>
+                        ),
+                      )}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setPage((p) => Math.min(data.pages, p + 1))
+                        }
+                        disabled={page >= data.pages}
+                        className="touch-target rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted disabled:cursor-not-allowed disabled:opacity-40"
+                      >
+                        {t("common.next")}
+                      </button>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
+          )}
+
+          {/* Save search dialog */}
+          <SaveSearchDialog
+            query={submittedQuery || null}
+            filters={filters}
+            show={showSaveDialog}
+            onClose={() => setShowSaveDialog(false)}
+          />
+        </div>
       </div>
-    </div>
     </>
   );
 }
@@ -692,7 +700,12 @@ function ScoreTooltip({ product }: Readonly<{ product: SearchResult }>) {
 function ProductRow({
   product,
   viewMode = "list",
-}: Readonly<{ product: SearchResult; viewMode?: ViewMode }>) {
+  allergenWarnings = [],
+}: Readonly<{
+  product: SearchResult;
+  viewMode?: ViewMode;
+  allergenWarnings?: import("@/lib/allergen-matching").AllergenWarning[];
+}>) {
   const band = SCORE_BANDS[product.score_band];
 
   // ── Grid card ────────────────────────────────────────────────────────────
@@ -745,6 +758,8 @@ function ProductRow({
               {Math.round(product.calories)} kcal
             </p>
           )}
+          {/* Allergen warnings */}
+          <AllergenChips warnings={allergenWarnings} />
         </Link>
         {/* Action buttons */}
         <div className="flex items-center gap-1 border-t border-border/50 pt-2">
@@ -807,6 +822,8 @@ function ProductRow({
               </span>
             )}
           </p>
+          {/* Allergen warnings */}
+          <AllergenChips warnings={allergenWarnings} />
         </div>
       </Link>
 

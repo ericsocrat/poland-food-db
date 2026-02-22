@@ -20,6 +20,7 @@ import { NutritionTip } from "@/components/dashboard/NutritionTip";
 import { ScoreSparkline } from "@/components/dashboard/ScoreSparkline";
 import { HealthInsightsPanel } from "@/components/dashboard/HealthInsightsPanel";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { AllergenChips } from "@/components/common/AllergenChips";
 import {
   Camera,
   Eye,
@@ -37,6 +38,10 @@ import type {
   DashboardStats,
   RecentlyViewedProduct,
 } from "@/lib/types";
+import {
+  useProductAllergenWarnings,
+  type AllergenWarningMap,
+} from "@/hooks/use-product-allergens";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -265,6 +270,7 @@ function WeeklySummaryCard({
 function ProductRow({
   product,
   subtitle,
+  allergenWarnings = [],
 }: Readonly<{
   product: {
     product_id: number;
@@ -276,6 +282,7 @@ function ProductRow({
     image_thumb_url?: string | null;
   };
   subtitle?: string;
+  allergenWarnings?: import("@/lib/allergen-matching").AllergenWarning[];
 }>) {
   return (
     <Link
@@ -296,6 +303,7 @@ function ProductRow({
           {product.brand ?? product.category}
           {subtitle ? ` · ${subtitle}` : ""}
         </p>
+        <AllergenChips warnings={allergenWarnings} />
       </div>
       <ScorePill score={product.unhealthiness_score} />
     </Link>
@@ -304,8 +312,10 @@ function ProductRow({
 
 function RecentlyViewedSection({
   products,
+  allergenMap = {},
 }: Readonly<{
   products: RecentlyViewedProduct[];
+  allergenMap?: AllergenWarningMap;
 }>) {
   const { t } = useTranslation();
   if (products.length === 0) return null;
@@ -323,6 +333,7 @@ function RecentlyViewedSection({
             key={p.product_id}
             product={p}
             subtitle={new Date(p.viewed_at).toLocaleDateString()}
+            allergenWarnings={allergenMap[p.product_id] ?? []}
           />
         ))}
       </div>
@@ -332,8 +343,10 @@ function RecentlyViewedSection({
 
 function FavoritesSection({
   products,
+  allergenMap = {},
 }: Readonly<{
   products: DashboardFavoritePreview[];
+  allergenMap?: AllergenWarningMap;
 }>) {
   const { t } = useTranslation();
   if (products.length === 0) return null;
@@ -353,7 +366,11 @@ function FavoritesSection({
       </div>
       <div className="space-y-2 lg:space-y-3">
         {products.map((p) => (
-          <ProductRow key={p.product_id} product={p} />
+          <ProductRow
+            key={p.product_id}
+            product={p}
+            allergenWarnings={allergenMap[p.product_id] ?? []}
+          />
         ))}
       </div>
     </section>
@@ -363,9 +380,11 @@ function FavoritesSection({
 function NewProductsSection({
   products,
   category,
+  allergenMap = {},
 }: Readonly<{
   products: DashboardNewProduct[];
   category: string | null;
+  allergenMap?: AllergenWarningMap;
 }>) {
   const { t } = useTranslation();
   if (products.length === 0) return null;
@@ -388,7 +407,11 @@ function NewProductsSection({
       </div>
       <div className="space-y-2 lg:space-y-3">
         {products.map((p) => (
-          <ProductRow key={p.product_id} product={p} />
+          <ProductRow
+            key={p.product_id}
+            product={p}
+            allergenWarnings={allergenMap[p.product_id] ?? []}
+          />
         ))}
       </div>
     </section>
@@ -433,6 +456,21 @@ export default function DashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Batch-fetch allergen data for all dashboard products (#128)
+  // Hook must be called unconditionally (before early returns).
+  const allProductIds = useMemo(
+    () =>
+      data
+        ? [
+            ...data.recently_viewed.map((p) => p.product_id),
+            ...data.favorites_preview.map((p) => p.product_id),
+            ...data.new_products.map((p) => p.product_id),
+          ]
+        : [],
+    [data],
+  );
+  const allergenMap = useProductAllergenWarnings(allProductIds);
+
   if (isLoading) {
     return <DashboardSkeleton />;
   }
@@ -455,6 +493,7 @@ export default function DashboardPage() {
   }
 
   const dashboard = data;
+
   const hasContent =
     dashboard.recently_viewed.length > 0 ||
     dashboard.favorites_preview.length > 0 ||
@@ -516,7 +555,10 @@ export default function DashboardPage() {
             level="section"
             context={{ section: "recently-viewed" }}
           >
-            <RecentlyViewedSection products={dashboard.recently_viewed} />
+            <RecentlyViewedSection
+              products={dashboard.recently_viewed}
+              allergenMap={allergenMap}
+            />
           </ErrorBoundary>
         </div>
       )}
@@ -526,6 +568,7 @@ export default function DashboardPage() {
             <NewProductsSection
               products={dashboard.new_products}
               category={dashboard.stats.most_viewed_category}
+              allergenMap={allergenMap}
             />
           </ErrorBoundary>
         </div>
@@ -535,7 +578,10 @@ export default function DashboardPage() {
       {dashboard.favorites_preview.length > 0 && (
         <div className="lg:col-span-12">
           <ErrorBoundary level="section" context={{ section: "favorites" }}>
-            <FavoritesSection products={dashboard.favorites_preview} />
+            <FavoritesSection
+              products={dashboard.favorites_preview}
+              allergenMap={allergenMap}
+            />
           </ErrorBoundary>
         </div>
       )}

@@ -77,10 +77,12 @@ const OCR_CORRECTIONS: ReadonlyArray<[RegExp, string]> = [
   [/ž/g, "ź"], // Czech ž → Polish ź
   [/ř/g, "ż"], // Czech ř → sometimes Polish ż
   // Numeric/symbol noise
-  [/\d+[.,]\d+\s*[gGmMlLkK]{1,2}\b/g, ""], // "100g", "2.5ml"
-  [/\d+\s*%/g, ""], // "45%"
+  [/\b\d+(?:[.,]\d+)?(?:kg|g|ml|l)\b/gi, ""], // "100g", "2.5ml"
+  [/\b\d+(?:[.,]\d+)?\s+(?:kg|g|ml|l)\b/gi, ""], // "2.5 ml"
+  [/\b\d+%/g, ""], // "45%"
+  [/\b\d+\s+%/g, ""], // "45 %"
   [/[<>≤≥]/g, ""], // inequality symbols
-  [/\(.*?\)/g, " "], // parenthetical notes → space
+  [/\([^()]*\)/g, " "], // parenthetical notes → space
 ];
 
 /* ── Functions ────────────────────────────────────────────────────────────── */
@@ -114,7 +116,11 @@ export function tokenise(cleaned: string): string[] {
   const raw = cleaned
     .toLowerCase()
     .split(/[\s,;:]+/)
-    .map((t) => t.replaceAll(/(?:^[^a-ząćęłńóśźż]+|[^a-ząćęłńóśźż]+$)/gi, ""))
+    .map((t) =>
+      t
+        .replace(/^[^a-ząćęłńóśźż]+/i, "")
+        .replace(/[^a-ząćęłńóśźż]+$/i, ""),
+    )
     .filter(
       (t) => t.length >= MIN_TOKEN_LENGTH && !POLISH_STOP_WORDS.has(t),
     );

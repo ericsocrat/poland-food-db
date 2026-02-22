@@ -14,20 +14,24 @@ from __future__ import annotations
 # ---------------------------------------------------------------------------
 
 #: Allergens that indicate animal-derived ingredients — contradicts vegan
-ANIMAL_ALLERGEN_TAGS: frozenset[str] = frozenset({
-    "en:milk",
-    "en:eggs",
-    "en:fish",
-    "en:crustaceans",
-    "en:molluscs",
-})
+ANIMAL_ALLERGEN_TAGS: frozenset[str] = frozenset(
+    {
+        "en:milk",
+        "en:eggs",
+        "en:fish",
+        "en:crustaceans",
+        "en:molluscs",
+    }
+)
 
 #: Allergens that indicate meat / fish / seafood — contradicts vegetarian
-MEAT_FISH_ALLERGEN_TAGS: frozenset[str] = frozenset({
-    "en:fish",
-    "en:crustaceans",
-    "en:molluscs",
-})
+MEAT_FISH_ALLERGEN_TAGS: frozenset[str] = frozenset(
+    {
+        "en:fish",
+        "en:crustaceans",
+        "en:molluscs",
+    }
+)
 
 
 # ---------------------------------------------------------------------------

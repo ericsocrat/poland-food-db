@@ -143,6 +143,10 @@ export const queryKeys = {
 
   /** Admin monitoring health check (#119) */
   adminHealth: ["admin-health"] as const,
+
+  /** Batch product allergen data (#128) */
+  productAllergens: (ids: number[]) =>
+    ["product-allergens", ids.toSorted((a, b) => a - b).join(",")] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -264,4 +268,7 @@ export const staleTimes = {
 
   /** Admin health check — 30 sec (auto-refresh every 60s, but allow re-fetch) */
   adminHealth: 30 * 1000,
+
+  /** Product allergens — 5 min (allergen data changes only on pipeline runs) */
+  productAllergens: 5 * 60 * 1000,
 } as const;

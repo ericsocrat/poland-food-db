@@ -27,6 +27,10 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+vi.mock("@/hooks/use-product-allergens", () => ({
+  useProductAllergenWarnings: () => ({}),
+}));
+
 // ─── Wrapper ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: { children: React.ReactNode }) {
