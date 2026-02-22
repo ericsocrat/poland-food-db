@@ -244,3 +244,10 @@ export const TRAFFIC_LIGHT_NUTRIENTS = [
   { nutrient: "sugars", labelKey: "product.sugars" },
   { nutrient: "salt", labelKey: "product.salt" },
 ] as const;
+
+// ─── Feature flags ──────────────────────────────────────────────────────────
+// Flip to `true` when the corresponding feature is production-ready.
+export const FEATURES = {
+  /** Show the Environmental Impact / Eco-Score section on product pages. */
+  ECO_SCORE: false,
+} as const;
