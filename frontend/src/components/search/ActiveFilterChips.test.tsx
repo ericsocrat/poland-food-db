@@ -86,6 +86,47 @@ describe("ActiveFilterChips", () => {
 
   // ─── Allergen-free chips ────────────────────────────────────────────
 
+  // ─── NOVA group chips ───────────────────────────────────────────────
+
+  it("renders NOVA group chips with label prefix", () => {
+    render(
+      <ActiveFilterChips
+        filters={{ nova_group: ["1", "4"] }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByText("NOVA 1")).toBeTruthy();
+    expect(screen.getByText("NOVA 4")).toBeTruthy();
+  });
+
+  it("removes a NOVA group chip on click", () => {
+    render(
+      <ActiveFilterChips
+        filters={{ nova_group: ["1", "4"] }}
+        onChange={onChange}
+      />,
+    );
+    fireEvent.click(screen.getByLabelText("Remove NOVA 1 filter"));
+    expect(onChange).toHaveBeenCalledWith({
+      nova_group: ["4"],
+    });
+  });
+
+  it("clears NOVA group array when last chip removed", () => {
+    render(
+      <ActiveFilterChips
+        filters={{ nova_group: ["1"] }}
+        onChange={onChange}
+      />,
+    );
+    fireEvent.click(screen.getByLabelText("Remove NOVA 1 filter"));
+    expect(onChange).toHaveBeenCalledWith({
+      nova_group: undefined,
+    });
+  });
+
+  // ─── Allergen-free chips ────────────────────────────────────────────
+
   it("renders allergen-free chips with label lookup", () => {
     render(
       <ActiveFilterChips

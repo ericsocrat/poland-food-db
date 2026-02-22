@@ -870,6 +870,7 @@ function hasActiveFilters(f: SearchFilters): boolean {
   return (
     (f.category?.length ?? 0) > 0 ||
     (f.nutri_score?.length ?? 0) > 0 ||
+    (f.nova_group?.length ?? 0) > 0 ||
     (f.allergen_free?.length ?? 0) > 0 ||
     f.max_unhealthiness !== undefined
   );
@@ -879,6 +880,7 @@ function countActiveFilters(f: SearchFilters): number {
   let count = 0;
   count += f.category?.length ?? 0;
   count += f.nutri_score?.length ?? 0;
+  count += f.nova_group?.length ?? 0;
   count += f.allergen_free?.length ?? 0;
   if (f.max_unhealthiness !== undefined) count++;
   return count;

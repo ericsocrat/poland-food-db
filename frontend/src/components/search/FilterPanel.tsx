@@ -39,7 +39,7 @@ export function FilterPanel({
   });
 
   const toggleArrayFilter = useCallback(
-    (key: "category" | "nutri_score" | "allergen_free", value: string) => {
+    (key: "category" | "nutri_score" | "nova_group" | "allergen_free", value: string) => {
       const current = filters[key] ?? [];
       const next = current.includes(value)
         ? current.filter((v) => v !== value)
@@ -81,6 +81,7 @@ export function FilterPanel({
   const hasFilters =
     (filters.category?.length ?? 0) > 0 ||
     (filters.nutri_score?.length ?? 0) > 0 ||
+    (filters.nova_group?.length ?? 0) > 0 ||
     (filters.allergen_free?.length ?? 0) > 0 ||
     filters.max_unhealthiness !== undefined ||
     (filters.sort_by !== undefined && filters.sort_by !== "relevance");
@@ -219,6 +220,40 @@ export function FilterPanel({
                       {ns.label}
                       <span className="text-[10px] font-normal opacity-75">
                         ({ns.count})
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* NOVA Group */}
+          {data && data.nova_groups.length > 0 && (
+            <div>
+              <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
+                {t("filters.novaGroup")}
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {data.nova_groups.map((ng) => {
+                  const selected = (filters.nova_group ?? []).includes(
+                    ng.group,
+                  );
+                  const novaLabel = t(`filters.nova${ng.group}`);
+                  return (
+                    <button
+                      key={ng.group}
+                      type="button"
+                      onClick={() => toggleArrayFilter("nova_group", ng.group)}
+                      className={`flex items-center gap-1.5 rounded-full px-3 py-2 text-xs font-bold transition-all ${
+                        selected
+                          ? "bg-brand-subtle ring-2 ring-offset-1 ring-brand text-brand"
+                          : "bg-surface-muted text-foreground-secondary hover:ring-2 hover:ring-offset-1 hover:ring-brand/50"
+                      }`}
+                    >
+                      {novaLabel}
+                      <span className="text-[10px] font-normal opacity-75">
+                        ({ng.count})
                       </span>
                     </button>
                   );

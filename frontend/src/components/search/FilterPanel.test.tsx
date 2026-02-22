@@ -34,6 +34,10 @@ const mockFilterOptions = {
     { label: "B", count: 10 },
     { label: "C", count: 8 },
   ],
+  nova_groups: [
+    { group: "1", count: 12 },
+    { group: "4", count: 25 },
+  ],
   allergens: [
     { tag: "en:gluten", count: 30 },
     { tag: "en:milk", count: 15 },
@@ -347,5 +351,74 @@ describe("FilterPanel", () => {
     expect(onChange).toHaveBeenCalledWith(
       expect.objectContaining({ category: undefined }),
     );
+  });
+
+  // ─── NOVA Group Filter ──────────────────────────────────────────────────
+
+  it("renders NOVA group filter buttons with counts", async () => {
+    renderPanel();
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Unprocessed/).length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+    expect(
+      screen.getAllByText(/Ultra-processed/).length,
+    ).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("(12)").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText("(25)").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("renders NOVA Group section heading", async () => {
+    renderPanel();
+    await waitFor(() => {
+      expect(
+        screen.getAllByText("NOVA Group").length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+  });
+
+  it("calls onChange when selecting a NOVA group", async () => {
+    const onChange = vi.fn();
+    renderPanel({ onChange });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Unprocessed/).length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    // Click the first NOVA "1 — Unprocessed" button
+    await user.click(screen.getAllByText(/Unprocessed/)[0]);
+
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ nova_group: ["1"] }),
+    );
+  });
+
+  it("deselects a NOVA group when toggling off", async () => {
+    const onChange = vi.fn();
+    renderPanel({ filters: { nova_group: ["1"] }, onChange });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Unprocessed/).length,
+      ).toBeGreaterThanOrEqual(1);
+    });
+
+    await user.click(screen.getAllByText(/Unprocessed/)[0]);
+
+    expect(onChange).toHaveBeenCalledWith(
+      expect.objectContaining({ nova_group: undefined }),
+    );
+  });
+
+  it("shows clear all when NOVA group filter is active", async () => {
+    renderPanel({ filters: { nova_group: ["4"] } });
+    await waitFor(() => {
+      expect(screen.getAllByText("Clear all").length).toBeGreaterThanOrEqual(1);
+    });
   });
 });
