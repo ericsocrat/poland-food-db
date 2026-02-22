@@ -3,9 +3,11 @@
 // Uses service_role client to call api_health_check() (SECURITY DEFINER).
 // Response contains ONLY health metrics — NO secrets, tokens, or infra details.
 // Returns 200 for healthy/degraded, 503 for unhealthy or connection failure.
+// Instrumented with structured logging (#183).
 
 import { NextResponse } from "next/server";
 import { createServiceRoleClient } from "@/lib/supabase/service";
+import { logger } from "@/lib/logger";
 
 /** Expected shape from api_health_check() RPC */
 export interface HealthCheckResponse {
@@ -87,11 +89,22 @@ function sanitizeResponse(data: unknown): HealthCheckResponse | null {
 }
 
 export async function GET() {
+  const start = performance.now();
+
   try {
     const supabase = createServiceRoleClient();
     const { data, error } = await supabase.rpc("api_health_check");
 
     if (error) {
+      const duration = Math.round(performance.now() - start);
+      logger.warn("Health check RPC error", {
+        route: "/api/health",
+        method: "GET",
+        status: 503,
+        duration,
+        error: { name: "RPCError", message: error.message },
+      });
+
       return NextResponse.json(
         {
           status: "unhealthy",
@@ -121,12 +134,33 @@ export async function GET() {
     }
 
     const httpStatus = sanitized.status === "unhealthy" ? 503 : 200;
+    const duration = Math.round(performance.now() - start);
+
+    logger.info("Health check completed", {
+      route: "/api/health",
+      method: "GET",
+      status: httpStatus,
+      duration,
+      meta: { dbStatus: sanitized.status },
+    });
 
     return NextResponse.json(sanitized, {
       status: httpStatus,
       headers: { "Cache-Control": "no-store" },
     });
-  } catch {
+  } catch (error) {
+    const duration = Math.round(performance.now() - start);
+    logger.error("Health check exception", {
+      route: "/api/health",
+      method: "GET",
+      status: 503,
+      duration,
+      error:
+        error instanceof Error
+          ? { name: error.name, message: error.message }
+          : { name: "Unknown", message: String(error) },
+    });
+
     return NextResponse.json(
       {
         status: "unhealthy",

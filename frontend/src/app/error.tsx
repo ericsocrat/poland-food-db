@@ -1,9 +1,11 @@
 // ─── Root error boundary ──────────────────────────────────────────────────
 // Catches errors in route segments. Renders in-place without losing the layout.
+// Reports to Sentry (#183).
 
 "use client";
 
 import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
 
@@ -17,7 +19,10 @@ export default function ErrorPage({
   const { t } = useTranslation();
 
   useEffect(() => {
-    // Log error only in development; in production use an error-reporting service
+    Sentry.captureException(error, {
+      tags: { boundary: "route-error" },
+    });
+
     if (process.env.NODE_ENV === "development") {
       console.error("[ErrorBoundary]", error);
     }

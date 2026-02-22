@@ -24,6 +24,11 @@ function isPublicPath(pathname: string): boolean {
 
 export async function middleware(request: NextRequest) {
   const response = NextResponse.next({ request });
+
+  // ── Request ID correlation (#183) ─────────────────────────────────────────
+  const requestId = request.headers.get("x-request-id") ?? crypto.randomUUID();
+  response.headers.set("x-request-id", requestId);
+
   const supabase = createMiddlewareClient(request, response);
 
   // Refresh session token (important for @supabase/ssr)

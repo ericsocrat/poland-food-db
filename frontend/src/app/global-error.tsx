@@ -1,18 +1,26 @@
 // ─── Global error boundary ────────────────────────────────────────────────
 // Catches errors in the root layout itself.
 // Must include its own <html> and <body> tags.
+// Reports to Sentry (#183).
 
 "use client";
 
+import { useEffect } from "react";
+import * as Sentry from "@sentry/nextjs";
 import { translate } from "@/lib/i18n";
 
 export default function GlobalError({
-  error: _error,
+  error,
   reset,
 }: Readonly<{
   error: Error & { digest?: string };
   reset: () => void;
 }>) {
+  useEffect(() => {
+    Sentry.captureException(error, {
+      tags: { boundary: "global-error" },
+    });
+  }, [error]);
   return (
     <html lang="en">
       <body>
