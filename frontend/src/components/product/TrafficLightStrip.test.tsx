@@ -43,10 +43,9 @@ describe("TrafficLightStrip", () => {
     expect(dots.length).toBe(4);
   });
 
-  it("returns null when no traffic light data available", () => {
-    // getTrafficLight returns null when nutrient is not in thresholds
-    // but all 4 are in thresholds, so we test with 0 values (still yields green)
-    render(
+  it("returns null when all nutrient values are 0 (no misleading bands)", () => {
+    // After #153 fix: getTrafficLight returns null for 0g → strip renders nothing
+    const { container } = render(
       <TrafficLightStrip
         nutrition={{
           total_fat_g: 0,
@@ -57,7 +56,7 @@ describe("TrafficLightStrip", () => {
       />,
     );
 
-    // Should still render (all green) — <fieldset> has implicit group role
-    expect(screen.getByRole("group")).toBeInTheDocument();
+    // Component returns null — nothing in the DOM
+    expect(container.firstChild).toBeNull();
   });
 });
