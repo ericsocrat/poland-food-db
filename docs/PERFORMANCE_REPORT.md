@@ -94,14 +94,14 @@ The Jaccard similarity computation self-joins `product_ingredient` (~13 rows/pro
 - [x] No N+1 query patterns in views
 
 ### 🟡 Recommended at 5K+ Products
-- [ ] Add `CONCURRENTLY` support to `mv_ingredient_frequency` (add unique index)
-- [ ] Set up periodic MV refresh (cron or trigger-based)
-- [ ] Add `statement_timeout` to PostgREST config (suggest 5s)
+- [x] Add `CONCURRENTLY` support to `mv_ingredient_frequency` (unique index: `idx_mv_ingredient_freq_id`)
+- [x] Set up periodic MV refresh — `api_refresh_mvs()` RPC (service_role only), recommended every 15 min or after pipeline runs
+- [x] Add `statement_timeout` to PostgREST config — 5s for API roles, 30s for MV refresh functions
 
 ### 🔴 Required at 50K+ Products
 - [ ] Pre-compute similarity matrix as materialized view
 - [ ] Partition `product_ingredient` by category
-- [ ] Add connection pooling (PgBouncer)
+- [x] Add connection pooling (PgBouncer) — enabled in `config.toml` (transaction mode, pool_size=20)
 - [ ] Consider read replicas for API traffic
 - [ ] Move `v_master` to materialized view with refresh trigger
 
