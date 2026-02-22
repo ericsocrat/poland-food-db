@@ -139,6 +139,89 @@ describe("translate", () => {
     });
   });
 
+  // ── Plural interpolation (Issue #126) ────────────────────────────────────
+
+  describe("plural interpolation", () => {
+    // English 2-form: {count|singular|plural}
+    it("selects singular form when count is 1", () => {
+      expect(translate("en", "common.items", { count: 1 })).toBe("1 item");
+    });
+
+    it("selects plural form when count > 1", () => {
+      expect(translate("en", "common.items", { count: 5 })).toBe("5 items");
+    });
+
+    it("selects plural form when count is 0", () => {
+      expect(translate("en", "common.items", { count: 0 })).toBe("0 items");
+    });
+
+    it("handles multiple plural tokens in one string", () => {
+      // compare.comparing: "Comparing {count} {count|product|products}"
+      expect(translate("en", "compare.comparing", { count: 1 })).toBe(
+        "Comparing 1 product",
+      );
+      expect(translate("en", "compare.comparing", { count: 3 })).toBe(
+        "Comparing 3 products",
+      );
+    });
+
+    it("handles mixed plural + simple interpolation", () => {
+      // dashboard.allergenAlertBody has {count} plural + {allergens} simple
+      const result = translate("en", "dashboard.allergenAlertBody", {
+        count: 2,
+        allergens: "Gluten",
+      });
+      expect(result).toBe(
+        "2 products in your Favorites contain Gluten.",
+      );
+    });
+
+    it("handles singular with mixed interpolation", () => {
+      const result = translate("en", "dashboard.allergenAlertBody", {
+        count: 1,
+        allergens: "Milk",
+      });
+      expect(result).toBe(
+        "1 product in your Favorites contains Milk.",
+      );
+    });
+
+    // Polish 3-form: {count|one|few|many}
+    it("selects Polish one-form for count 1", () => {
+      expect(translate("pl", "common.items", { count: 1 })).toBe("1 element");
+    });
+
+    it("selects Polish few-form for count 2-4", () => {
+      expect(translate("pl", "common.items", { count: 3 })).toBe(
+        "3 elementy",
+      );
+    });
+
+    it("selects Polish many-form for count 5+", () => {
+      expect(translate("pl", "common.items", { count: 5 })).toBe(
+        "5 elementów",
+      );
+    });
+
+    it("selects Polish many-form for count 0", () => {
+      expect(translate("pl", "common.items", { count: 0 })).toBe(
+        "0 elementów",
+      );
+    });
+
+    it("handles Polish teen numbers (12-14) as many-form", () => {
+      expect(translate("pl", "common.items", { count: 12 })).toBe(
+        "12 elementów",
+      );
+    });
+
+    it("handles Polish 22-24 as few-form", () => {
+      expect(translate("pl", "common.items", { count: 22 })).toBe(
+        "22 elementy",
+      );
+    });
+  });
+
   // ── useTranslation hook ─────────────────────────────────────────────────
 
   describe("useTranslation", () => {

@@ -196,7 +196,7 @@ describe("SavedSearchesPage", () => {
   it("renders filter summary chips", async () => {
     render(<SavedSearchesPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("1 categories")).toBeInTheDocument();
+      expect(screen.getByText("1 category")).toBeInTheDocument();
     });
     expect(screen.getByText("Nutri: A, B")).toBeInTheDocument();
     expect(screen.getByText(/Free:.*Gluten/)).toBeInTheDocument();

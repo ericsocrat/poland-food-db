@@ -233,7 +233,7 @@ describe("SearchPage", () => {
       expect(screen.getByText("Test Chips")).toBeInTheDocument();
     });
     expect(screen.getByText("Healthy Water")).toBeInTheDocument();
-    expect(screen.getByText(/2 result\(s\)/)).toBeInTheDocument();
+    expect(screen.getByText(/2 results/, { selector: "p" })).toBeInTheDocument();
   });
 
   it("shows error state when search fails", async () => {
@@ -509,7 +509,7 @@ describe("SearchPage", () => {
     await user.click(screen.getByRole("button", { name: "Search" }));
 
     await waitFor(() => {
-      expect(screen.getByText(/\b1 result\b/)).toBeInTheDocument();
+      expect(screen.getByText(/1 result/, { selector: "p" })).toBeInTheDocument();
     });
   });
 

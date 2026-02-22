@@ -36,8 +36,8 @@
     "offlineTitle": "You're offline",
     "offlineDescription": "Check your internet connection and try again.",
     "pageOf": "Page {page} of {pages}",
-    "items": "{count} item(s)",
-    "products": "{count} product(s)"
+    "items": "{count} {count|item|items}",
+    "products": "{count} {count|product|products}"
   },
   "toast": {
     "genericError": "Something went wrong. Please try again.",
@@ -153,7 +153,7 @@
       "4": "Ultra-processed"
     },
     "allergenAlertTitle": "Allergen Alert",
-    "allergenAlertBody": "{count} product(s) in your Favorites contain {allergens}.",
+    "allergenAlertBody": "{count} {count|product|products} in your Favorites {count|contains|contain} {allergens}.",
     "allergenAlertReview": "Review",
     "categoryDiversityTitle": "Category Diversity",
     "categoryDiversityAria": "{explored} of {total} categories explored",
@@ -161,7 +161,7 @@
     "categoryDiversityDiscover": "Discover more",
     "recentComparisons": "Recent Comparisons",
     "untitledComparison": "Untitled comparison",
-    "comparisonProducts": "{count} products"
+    "comparisonProducts": "{count} {count|product|products}"
   },
   "search": {
     "title": "Search",
@@ -183,7 +183,7 @@
     "emptyState": "Search by name, brand, or browse with filters",
     "searchFailed": "Search failed. Please try again.",
     "resultsFor": "for \"{query}\"",
-    "result": "{count} result(s)",
+    "result": "{count} {count|result|results}",
     "noMatchSearch": "No products match your search",
     "noMatchFilters": "No products match your filters",
     "adjustFilters": "Try adjusting your filters or using a different search term.",
@@ -349,8 +349,8 @@
     "alternatives": "Alternatives",
     "scoring": "Scoring",
     "ingredients": "Ingredients",
-    "ingredientCount": "{count} ingredients",
-    "additiveCount": "{count} additives",
+    "ingredientCount": "{count} {count|ingredient|ingredients}",
+    "additiveCount": "{count} {count|additive|additives}",
     "noIngredientData": "No ingredient data available",
     "noIngredientDataHint": "This product's ingredient list has not been recorded yet.",
     "vegan": "Vegan: {status}",
@@ -410,7 +410,7 @@
     "shareCopied": "Link copied!",
     "noAlternatives": "No healthier alternatives found in this category.",
     "bestOption": "This is already one of the best options in its category!",
-    "healthierOptions": "{count} healthier option(s) found",
+    "healthierOptions": "{count} healthier {count|option|options} found",
     "pointsBetter": "−{points} points better",
     "scoreBreakdownUnavailable": "Score breakdown unavailable.",
     "summary": "Summary",
@@ -489,7 +489,7 @@
     "savedComparisons": "Saved Comparisons",
     "clearSelection": "Clear selection",
     "loadFailed": "Failed to load comparison data.",
-    "comparing": "Comparing {count} products",
+    "comparing": "Comparing {count} {count|product|products}",
     "metric": "Metric",
     "healthiest": "Healthiest",
     "best": "Best",
@@ -510,8 +510,10 @@
     "noSaved": "No saved comparisons yet",
     "noSavedDescription": "Compare products and save them for later reference.",
     "findProducts": "Find Products",
-    "compareProducts": "Compare {count} products",
-    "deleteComparison": "Delete comparison"
+    "compareProducts": "Compare {count} {count|product|products}",
+    "deleteComparison": "Delete comparison",
+    "productsNotFound": "{count} {count|product|products} not found.",
+    "onlyShowingAvailable": "Only showing available products."
   },
   "settings": {
     "title": "Settings",
@@ -561,7 +563,7 @@
     "healthProfile": "health profile",
     "withinLimits": "Within your limits",
     "noWarningsFor": "No warnings for your profile \"{name}\"",
-    "warningCount": "{count} health warning(s)",
+    "warningCount": "{count} health {count|warning|warnings}",
     "profile": "Profile: {name}",
     "noWarnings": "No health warnings"
   },
@@ -588,7 +590,7 @@
     "apply": "Apply",
     "deleteConfirm": "Delete saved search?",
     "cannotUndo": "This action cannot be undone.",
-    "categories": "{count} categories",
+    "categories": "{count} {count|category|categories}",
     "nutriFilter": "Nutri: {values}",
     "allergenFreeFilter": "Free: {values}",
     "maxScoreFilter": "Score ≤ {score}",
@@ -881,7 +883,7 @@
     "byCategory": "By Category",
     "topProducts": "Top Products",
     "relatedIngredients": "Often Found Together",
-    "coOccurrence": "{count} products in common",
+    "coOccurrence": "{count} {count|product|products} in common",
     "tierNone": "No concern",
     "tierLow": "Low concern",
     "tierModerate": "Moderate concern",
@@ -905,7 +907,7 @@
     "ean_format": "Please enter a valid 8 or 13 digit barcode.",
     "product_name_required": "Product name is required.",
     "notes_too_long": "Notes must be 500 characters or fewer.",
-    "fixErrors": "Please fix {count} error(s):",
+    "fixErrors": "Please fix {count} {count|error|errors}:",
     "fixFormErrors": "Please fix form errors"
   },
   "tooltip": {
@@ -980,7 +982,7 @@
   "a11y": {
     "skipToContent": "Skip to content",
     "searchProducts": "Search products",
-    "searchResultsStatus": "{count} results found",
+    "searchResultsStatus": "{count} {count|result|results} found",
     "saveSearchName": "Search name",
     "sidebarNavigation": "Sidebar navigation",
     "headerNavigation": "Header navigation",
@@ -1193,7 +1195,7 @@
   },
   "comparisonTray": {
     "title": "Compare",
-    "products": "{count} product(s)",
+    "products": "{count} {count|product|products}",
     "compareNow": "Compare Now →",
     "empty": "Add products to compare",
     "collapse": "Collapse comparison tray",
@@ -1216,8 +1218,8 @@
     "historyError": "Could not load score history.",
     "noHistory": "No history data",
     "noHistoryYet": "No score changes recorded yet.",
-    "trendLabel": "{trend} — {count} snapshots",
-    "snapshotCount": "{count} snapshots",
+    "trendLabel": "{trend} — {count} {count|snapshot|snapshots}",
+    "snapshotCount": "{count} {count|snapshot|snapshots}",
     "historyDate": "Date",
     "historyScore": "Score",
     "historyDelta": "Change",
@@ -1249,7 +1251,7 @@
     "ingredientsTitle": "Ingredients",
     "stepsTitle": "Steps",
     "linkedProducts": {
-      "count": "{count} products available",
+      "count": "{count} {count|product|products} available",
       "primary": "Recommended",
       "noProducts": "No linked products"
     },

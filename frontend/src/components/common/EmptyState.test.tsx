@@ -191,6 +191,6 @@ describe("EmptyState", () => {
         titleParams={{ count: 0 }}
       />,
     );
-    expect(screen.getByText("0 item(s)")).toBeInTheDocument();
+    expect(screen.getByText("0 items")).toBeInTheDocument();
   });
 });

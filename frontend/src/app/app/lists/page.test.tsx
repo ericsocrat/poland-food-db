@@ -228,9 +228,9 @@ describe("ListsPage", () => {
 
   it("shows correct item counts with singular/plural", () => {
     render(<ListsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText(/5 item\(s\)/)).toBeInTheDocument();
-    expect(screen.getByText(/2 item\(s\)/)).toBeInTheDocument();
-    expect(screen.getByText(/1 item\(s\)/)).toBeInTheDocument();
+    expect(screen.getByText(/5 items/)).toBeInTheDocument();
+    expect(screen.getByText(/2 items/)).toBeInTheDocument();
+    expect(screen.getByText(/1 item/)).toBeInTheDocument();
   });
 
   it("shows shared badge for shared lists", () => {
