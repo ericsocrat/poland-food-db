@@ -220,6 +220,71 @@ describe("translate", () => {
         "22 elementy",
       );
     });
+
+    // ── New pluralized keys (Issue #126 audit) ──────────────────────────────
+
+    it("pluralizes common.allergenWarnings (en)", () => {
+      expect(translate("en", "common.allergenWarnings", { count: 1 })).toBe(
+        "1 allergen warning",
+      );
+      expect(translate("en", "common.allergenWarnings", { count: 3 })).toBe(
+        "3 allergen warnings",
+      );
+    });
+
+    it("pluralizes common.allergenWarnings (pl)", () => {
+      expect(translate("pl", "common.allergenWarnings", { count: 1 })).toBe(
+        "1 ostrzeżenie alergenowe",
+      );
+      expect(translate("pl", "common.allergenWarnings", { count: 3 })).toBe(
+        "3 ostrzeżenia alergenowe",
+      );
+      expect(translate("pl", "common.allergenWarnings", { count: 5 })).toBe(
+        "5 ostrzeżeń alergenowych",
+      );
+    });
+
+    it("pluralizes shared.productsCompared (en)", () => {
+      expect(translate("en", "shared.productsCompared", { count: 1 })).toBe(
+        "1 product compared",
+      );
+      expect(translate("en", "shared.productsCompared", { count: 3 })).toBe(
+        "3 products compared",
+      );
+    });
+
+    it("pluralizes shared.productsCompared (pl)", () => {
+      expect(translate("pl", "shared.productsCompared", { count: 1 })).toBe(
+        "1 produkt porównany",
+      );
+      expect(translate("pl", "shared.productsCompared", { count: 3 })).toBe(
+        "3 produkty porównane",
+      );
+      expect(translate("pl", "shared.productsCompared", { count: 5 })).toBe(
+        "5 produktów porównanych",
+      );
+    });
+
+    it("pluralizes ingredient.productsContaining (en)", () => {
+      expect(
+        translate("en", "ingredient.productsContaining", { count: 1 }),
+      ).toBe("product contains this ingredient");
+      expect(
+        translate("en", "ingredient.productsContaining", { count: 5 }),
+      ).toBe("products contain this ingredient");
+    });
+
+    it("pluralizes ingredient.productsContaining (pl)", () => {
+      expect(
+        translate("pl", "ingredient.productsContaining", { count: 1 }),
+      ).toBe("produkt zawiera ten składnik");
+      expect(
+        translate("pl", "ingredient.productsContaining", { count: 3 }),
+      ).toBe("produkty zawierają ten składnik");
+      expect(
+        translate("pl", "ingredient.productsContaining", { count: 5 }),
+      ).toBe("produktów zawiera ten składnik");
+    });
   });
 
   // ── useTranslation hook ─────────────────────────────────────────────────

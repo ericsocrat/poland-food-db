@@ -37,7 +37,8 @@
     "offlineDescription": "Check your internet connection and try again.",
     "pageOf": "Page {page} of {pages}",
     "items": "{count} {count|item|items}",
-    "products": "{count} {count|product|products}"
+    "products": "{count} {count|product|products}",
+    "allergenWarnings": "{count} allergen {count|warning|warnings}"
   },
   "toast": {
     "genericError": "Something went wrong. Please try again.",
@@ -864,7 +865,7 @@
     "comparisonInvalid": "This comparison link is invalid or has expired.",
     "goToFoodDB": "Go to FoodDB",
     "productComparison": "Product Comparison",
-    "productsCompared": "products compared",
+    "productsCompared": "{count} {count|product|products} compared",
     "wantToCompare": "Want to compare your own products?",
     "signUpFree": "Sign up for free"
   },
@@ -900,7 +901,7 @@
     "efsaGuidance": "EFSA Guidance",
     "scoreImpact": "Score impact",
     "usage": "Usage Statistics",
-    "productsContaining": "products contain this ingredient",
+    "productsContaining": "{count|product contains|products contain} this ingredient",
     "byCategory": "By Category",
     "topProducts": "Top Products",
     "relatedIngredients": "Often Found Together",
