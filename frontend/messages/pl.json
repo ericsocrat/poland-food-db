@@ -36,8 +36,8 @@
     "offlineTitle": "Jesteś offline",
     "offlineDescription": "Sprawdź połączenie internetowe i spróbuj ponownie.",
     "pageOf": "Strona {page} z {pages}",
-    "items": "{count} element(ów)",
-    "products": "{count} produkt(ów)"
+    "items": "{count} {count|element|elementy|elementów}",
+    "products": "{count} {count|produkt|produkty|produktów}"
   },
   "toast": {
     "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
@@ -153,7 +153,7 @@
       "4": "Ultra-przetworzone"
     },
     "allergenAlertTitle": "Alert alergenowy",
-    "allergenAlertBody": "{count} produkt(ów) w Ulubionych zawiera {allergens}.",
+    "allergenAlertBody": "{count} {count|produkt|produkty|produktów} w Ulubionych {count|zawiera|zawierają|zawiera} {allergens}.",
     "allergenAlertReview": "Przejrzyj",
     "categoryDiversityTitle": "Różnorodność kategorii",
     "categoryDiversityAria": "{explored} z {total} kategorii odkrytych",
@@ -161,7 +161,7 @@
     "categoryDiversityDiscover": "Odkryj więcej",
     "recentComparisons": "Ostatnie porównania",
     "untitledComparison": "Porównanie bez tytułu",
-    "comparisonProducts": "{count} produktów"
+    "comparisonProducts": "{count} {count|produkt|produkty|produktów}"
   },
   "search": {
     "title": "Szukaj",
@@ -183,7 +183,7 @@
     "emptyState": "Szukaj po nazwie, marce lub przeglądaj z filtrami",
     "searchFailed": "Wyszukiwanie nie powiodło się. Spróbuj ponownie.",
     "resultsFor": "dla \"{query}\"",
-    "result": "{count} wynik(ów)",
+    "result": "{count} {count|wynik|wyniki|wyników}",
     "noMatchSearch": "Brak produktów pasujących do wyszukiwania",
     "noMatchFilters": "Brak produktów pasujących do filtrów",
     "adjustFilters": "Spróbuj zmienić filtry lub użyć innego hasła.",
@@ -349,8 +349,8 @@
     "alternatives": "Zamienniki",
     "scoring": "Punktacja",
     "ingredients": "Składniki",
-    "ingredientCount": "{count} składnik(ów)",
-    "additiveCount": "{count} dodatek(ów)",
+    "ingredientCount": "{count} {count|składnik|składniki|składników}",
+    "additiveCount": "{count} {count|dodatek|dodatki|dodatków}",
     "noIngredientData": "Brak danych o składnikach",
     "noIngredientDataHint": "Lista składników tego produktu nie została jeszcze udokumentowana.",
     "vegan": "Wegańskie: {status}",
@@ -410,7 +410,7 @@
     "shareCopied": "Link skopiowany!",
     "noAlternatives": "Nie znaleziono zdrowszych zamienników w tej kategorii.",
     "bestOption": "To już jeden z najlepszych wyborów w swojej kategorii!",
-    "healthierOptions": "{count} zdrowszy(ch) zamiennik(ów)",
+    "healthierOptions": "{count} {count|zdrowszy zamiennik znaleziony|zdrowsze zamienniki znalezione|zdrowszych zamienników znalezionych}",
     "pointsBetter": "−{points} pkt lepiej",
     "scoreBreakdownUnavailable": "Rozkład punktacji niedostępny.",
     "summary": "Podsumowanie",
@@ -489,7 +489,7 @@
     "savedComparisons": "Zapisane porównania",
     "clearSelection": "Wyczyść wybór",
     "loadFailed": "Nie udało się załadować danych porównania.",
-    "comparing": "Porównujesz {count} produkty",
+    "comparing": "Porównujesz {count} {count|produkt|produkty|produktów}",
     "metric": "Metryka",
     "healthiest": "Najzdrowszy",
     "best": "Najlepszy",
@@ -510,8 +510,10 @@
     "noSaved": "Brak zapisanych porównań",
     "noSavedDescription": "Porównaj produkty i zapisz je na później.",
     "findProducts": "Znajdź produkty",
-    "compareProducts": "Porównaj {count} produktów",
-    "deleteComparison": "Usuń porównanie"
+    "compareProducts": "Porównaj {count} {count|produkt|produkty|produktów}",
+    "deleteComparison": "Usuń porównanie",
+    "productsNotFound": "{count} {count|produkt nie znaleziony|produkty nie znalezione|produktów nie znalezionych}.",
+    "onlyShowingAvailable": "Pokazano tylko dostępne produkty."
   },
   "settings": {
     "title": "Ustawienia",
@@ -561,7 +563,7 @@
     "healthProfile": "profil zdrowotny",
     "withinLimits": "W Twoich limitach",
     "noWarningsFor": "Brak ostrzeżeń dla profilu „{name}”",
-    "warningCount": "{count} ostrzeżenie(ń) zdrowotne(ych)",
+    "warningCount": "{count} {count|ostrzeżenie zdrowotne|ostrzeżenia zdrowotne|ostrzeżeń zdrowotnych}",
     "profile": "Profil: {name}",
     "noWarnings": "Brak ostrzeżeń zdrowotnych"
   },
@@ -588,7 +590,7 @@
     "apply": "Zastosuj",
     "deleteConfirm": "Usunąć zapisane wyszukiwanie?",
     "cannotUndo": "Tej operacji nie można cofnąć.",
-    "categories": "{count} kategorii",
+    "categories": "{count} {count|kategoria|kategorie|kategorii}",
     "nutriFilter": "Nutri: {values}",
     "allergenFreeFilter": "Bez: {values}",
     "maxScoreFilter": "Wynik ≤ {score}",
@@ -881,7 +883,7 @@
     "byCategory": "Według kategorii",
     "topProducts": "Najlepsze produkty",
     "relatedIngredients": "Często spotykane razem",
-    "coOccurrence": "{count} wspólnych produktów",
+    "coOccurrence": "{count} {count|wspólny produkt|wspólne produkty|wspólnych produktów}",
     "tierNone": "Brak zastrzeżeń",
     "tierLow": "Niskie ryzyko",
     "tierModerate": "Umiarkowane ryzyko",
@@ -905,7 +907,7 @@
     "ean_format": "Proszę podać prawidłowy kod kreskowy (8 lub 13 cyfr).",
     "product_name_required": "Nazwa produktu jest wymagana.",
     "notes_too_long": "Notatki nie mogą przekraczać 500 znaków.",
-    "fixErrors": "Proszę poprawić {count} błąd(ów):",
+    "fixErrors": "Proszę poprawić {count} {count|błąd|błędy|błędów}:",
     "fixFormErrors": "Proszę poprawić błędy formularza"
   },
   "tooltip": {
@@ -980,7 +982,7 @@
   "a11y": {
     "skipToContent": "Przejdź do treści",
     "searchProducts": "Szukaj produktów",
-    "searchResultsStatus": "Znaleziono {count} wyników",
+    "searchResultsStatus": "Znaleziono {count} {count|wynik|wyniki|wyników}",
     "saveSearchName": "Nazwa wyszukiwania",
     "sidebarNavigation": "Nawigacja boczna",
     "headerNavigation": "Nawigacja nagłówka",
@@ -1193,7 +1195,7 @@
   },
   "comparisonTray": {
     "title": "Porównaj",
-    "products": "{count} produkt(ów)",
+    "products": "{count} {count|produkt|produkty|produktów}",
     "compareNow": "Porównaj teraz →",
     "empty": "Dodaj produkty do porównania",
     "collapse": "Zwiń panel porównania",
@@ -1216,8 +1218,8 @@
     "historyError": "Nie udało się załadować historii wyników.",
     "noHistory": "Brak danych historycznych",
     "noHistoryYet": "Nie zarejestrowano jeszcze zmian wyników.",
-    "trendLabel": "{trend} — {count} migawek",
-    "snapshotCount": "{count} migawek",
+    "trendLabel": "{trend} — {count} {count|migawka|migawki|migawek}",
+    "snapshotCount": "{count} {count|migawka|migawki|migawek}",
     "historyDate": "Data",
     "historyScore": "Wynik",
     "historyDelta": "Zmiana",
@@ -1249,7 +1251,7 @@
     "ingredientsTitle": "Składniki",
     "stepsTitle": "Kroki",
     "linkedProducts": {
-      "count": "{count} produktów dostępnych",
+      "count": "{count} {count|produkt dostępny|produkty dostępne|produktów dostępnych}",
       "primary": "Polecany",
       "noProducts": "Brak powiązanych produktów"
     },

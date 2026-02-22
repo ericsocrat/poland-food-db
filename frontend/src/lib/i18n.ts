@@ -11,6 +11,7 @@
 
 import { useCallback, useMemo } from "react";
 import { useLanguageStore, type SupportedLanguage } from "@/stores/language-store";
+import { selectPolishForm } from "@/lib/pluralize";
 import en from "@/../messages/en.json";
 import pl from "@/../messages/pl.json";
 
@@ -50,14 +51,48 @@ function resolve(dict: MessageDictionary, key: string): string | undefined {
 }
 
 /**
- * Replace `{param}` placeholders with provided values.
+ * Replace `{param}` placeholders and `{param|form1|form2|form3?}` plural
+ * placeholders with the correct forms.
+ *
+ * Plural syntax:
+ *   - `{count|singular|plural}` — English 2-form (count === 1 → singular)
+ *   - `{count|one|few|many}`    — Polish 3-form (CLDR plural rules)
+ *
+ * The number of pipe-separated forms determines the rule:
+ *   - 2 forms → count === 1 ? form1 : form2
+ *   - 3 forms → Polish rules (1 → one, 2-4 → few, 5+ → many)
  */
 function interpolate(template: string, params?: InterpolationParams): string {
   if (!params) return template;
-  return template.replaceAll(/\{(\w+)\}/g, (_, key: string) => {
+
+  // First pass: resolve plural patterns {key|form1|form2|form3?}
+  let result = template.replaceAll(
+    /\{(\w+)\|([^}]+)\}/g,
+    (match, key: string, formsStr: string) => {
+      const count = params[key];
+      if (count === undefined) return match;
+      const n = Number(count);
+      if (Number.isNaN(n)) return match;
+      const forms = formsStr.split("|");
+      if (forms.length === 2) {
+        // English: singular | plural
+        return n === 1 ? forms[0] : forms[1];
+      }
+      if (forms.length === 3) {
+        // Polish CLDR: one | few | many
+        return selectPolishForm(n, forms[0], forms[1], forms[2]);
+      }
+      return match;
+    },
+  );
+
+  // Second pass: simple {param} interpolation
+  result = result.replaceAll(/\{(\w+)\}/g, (_, key: string) => {
     const value = params[key];
     return value === undefined ? `{${key}}` : String(value);
   });
+
+  return result;
 }
 
 // ─── Public API ─────────────────────────────────────────────────────────────

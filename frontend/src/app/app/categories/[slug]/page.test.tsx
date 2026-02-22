@@ -154,7 +154,7 @@ describe("CategoryListingPage", () => {
   it("shows total product count", async () => {
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("2 product(s)")).toBeInTheDocument();
+      expect(screen.getByText("2 products")).toBeInTheDocument();
     });
   });
 
@@ -313,7 +313,7 @@ describe("CategoryListingPage", () => {
     });
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("1 product(s)")).toBeInTheDocument();
+      expect(screen.getByText("1 product")).toBeInTheDocument();
     });
   });
 

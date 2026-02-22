@@ -177,7 +177,7 @@ describe("ComparePage", () => {
         error: null,
       });
       render(<ComparePage />, { wrapper: createWrapper() });
-      expect(screen.getByText(/1 product\(s\) not found/)).toBeInTheDocument();
+      expect(screen.getByText(/1 product not found/)).toBeInTheDocument();
     });
 
     it("does not show partial warning when all products found", () => {
@@ -188,7 +188,7 @@ describe("ComparePage", () => {
       });
       render(<ComparePage />, { wrapper: createWrapper() });
       expect(
-        screen.queryByText(/product\(s\) not found/),
+        screen.queryByText(/products? not found/),
       ).not.toBeInTheDocument();
     });
 

@@ -172,8 +172,10 @@ export default function ComparePage() {
         <div className="card border-amber-200 bg-amber-50">
           <p className="flex items-center gap-1 text-sm text-amber-700">
             <AlertTriangle size={16} aria-hidden="true" />{" "}
-            {productIds.length - data.products.length} product(s) not found.
-            Only showing available products.
+            {t("compare.productsNotFound", {
+              count: productIds.length - data.products.length,
+            })}{" "}
+            {t("compare.onlyShowingAvailable")}
           </p>
         </div>
       )}
