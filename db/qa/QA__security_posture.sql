@@ -125,7 +125,8 @@ WHERE n.nspname = 'public'
     'api_get_product_profile',      -- public product lookup
     'api_get_product_profile_by_ean', -- public EAN lookup
     'api_get_ingredient_profile',   -- public ingredient lookup
-    'api_get_score_history'         -- public score history
+    'api_get_score_history',        -- public score history
+    'api_get_product_allergens'     -- public allergen batch lookup
   );
 
 -- 10. anon cannot EXECUTE internal computation functions
@@ -233,7 +234,13 @@ FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
-  AND p.proname NOT IN ('api_refresh_mvs')  -- service_role-only admin RPCs
+  AND p.proname NOT IN (
+    'api_refresh_mvs',                  -- MV refresh (service_role cron)
+    'api_health_check',                 -- monitoring (service_role only)
+    'api_get_pending_notifications',    -- push queue (service_role only)
+    'api_mark_notifications_sent',      -- push queue (service_role only)
+    'api_cleanup_push_subscriptions'    -- push cleanup (service_role only)
+  )
   AND NOT has_function_privilege('authenticated', p.oid, 'EXECUTE');
 
 -- 19. user_preferences.country allows NULL (pre-onboarding state)
