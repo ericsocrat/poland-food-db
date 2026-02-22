@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,304 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 360 checks across 24 suites + 29 negative validation tests — all passing
+> **QA:** 421 checks across 30 suites + 29 negative validation tests — all passing
 
 ---
 
@@ -103,6 +103,11 @@ poland-food-db/
 │   │   ├── QA__barcode_lookup.sql        # 6 barcode scanner checks
 │   │   ├── QA__auth_onboarding.sql       # 8 auth & onboarding checks
 │   │   ├── QA__health_profiles.sql       # 14 health profile checks
+│   │   ├── QA__lists_comparisons.sql     # 12 lists & comparison checks
+│   │   ├── QA__scanner_submissions.sql   # 12 scanner & submission checks
+│   │   ├── QA__index_temporal.sql        # 15 index & temporal integrity checks
+│   │   ├── QA__attribute_contradiction.sql # 5 attribute contradiction checks
+│   │   ├── QA__monitoring.sql            # 7 monitoring & health checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   │   └── TEST__negative_checks.sql     # 29 negative validation tests
 │   └── views/
@@ -181,7 +186,7 @@ poland-food-db/
 │   ├── SECURITY.md                  # Security policy & practices
 │   └── SONAR.md                     # SonarCloud configuration & quality gates
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (360 checks across 24 suites)
+├── RUN_QA.ps1                       # QA test runner (421 checks across 30 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (29 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -496,7 +501,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (360 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (24 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (421 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (30 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -630,7 +635,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
 - CI workflows:
   - **`ci.yml`**: Lint → Typecheck → Build → Playwright E2E
   - **`build.yml`**: Lint → Typecheck → Build → Unit tests with coverage → Playwright → SonarCloud scan + Quality Gate
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Pipelines → QA (360 checks) → Sanity (16 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Pipelines → QA (421 checks) → Sanity (17 checks) → Confidence threshold
 
 ### 8.11 Test Plan Required (Before Coding)
 
@@ -661,7 +666,7 @@ If adding/changing DB schema or SQL functions:
 - Provide a migration plan and rollback note (comment in the migration file).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 360 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 29 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 421 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 29 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -710,7 +715,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Source Coverage         | `QA__source_coverage.sql`           |      8 | No        |
 | EAN Validation          | `validate_eans.py`                  |      1 | Yes       |
 | API Surfaces            | `QA__api_surfaces.sql`              |     18 | Yes       |
-| API Contract            | `QA__api_contract.sql`              |     30 | Yes       |
+| API Contract            | `QA__api_contract.sql`              |     33 | Yes       |
 | Confidence Scoring      | `QA__confidence_scoring.sql`        |     10 | Yes       |
 | Confidence Reporting    | `QA__confidence_reporting.sql`      |      7 | Yes       |
 | Data Quality            | `QA__data_quality.sql`              |     25 | Yes       |
@@ -719,20 +724,25 @@ At the end of every PR-like change, include a **Verification** section:
 | Naming Conventions      | `QA__naming_conventions.sql`        |     12 | Yes       |
 | Nutrition Ranges        | `QA__nutrition_ranges.sql`          |     16 | Yes       |
 | Data Consistency        | `QA__data_consistency.sql`          |     20 | Yes       |
-| Allergen Integrity      | `QA__allergen_integrity.sql`        |     14 | Yes       |
+| Allergen Integrity      | `QA__allergen_integrity.sql`        |     15 | Yes       |
 | Allergen Filtering      | `QA__allergen_filtering.sql`        |      6 | Yes       |
 | Serving & Source        | `QA__serving_source_validation.sql` |     16 | Yes       |
 | Ingredient Quality      | `QA__ingredient_quality.sql`        |     14 | Yes       |
 | Security Posture        | `QA__security_posture.sql`          |     22 | Yes       |
 | Scale Guardrails        | `QA__scale_guardrails.sql`          |     15 | Yes       |
-| Country Isolation       | `QA__country_isolation.sql`         |      6 | Yes       |
+| Country Isolation       | `QA__country_isolation.sql`         |     11 | Yes       |
 | Diet Filtering          | `QA__diet_filtering.sql`            |      6 | Yes       |
 | Barcode Lookup          | `QA__barcode_lookup.sql`            |      6 | Yes       |
 | Auth & Onboarding       | `QA__auth_onboarding.sql`           |      8 | Yes       |
 | Health Profiles         | `QA__health_profiles.sql`           |     14 | Yes       |
+| Lists & Comparisons     | `QA__lists_comparisons.sql`         |     12 | Yes       |
+| Scanner & Submissions   | `QA__scanner_submissions.sql`       |     12 | Yes       |
+| Index & Temporal        | `QA__index_temporal.sql`            |     15 | Yes       |
+| Attribute Contradictions| `QA__attribute_contradiction.sql`   |      5 | Yes       |
+| Monitoring & Health     | `QA__monitoring.sql`                |      7 | Yes       |
 | **Negative Validation** | `TEST__negative_checks.sql`         |     29 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **360/360 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **421/421 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
