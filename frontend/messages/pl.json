@@ -60,6 +60,8 @@
   },
   "pwa": {
     "offline": "Jesteś offline — niektóre funkcje mogą być niedostępne",
+    "cachedProductsAvailable": "{count} produktów dostępnych offline",
+    "cachedAgo": "Zapisano {time}",
     "installTitle": "Zainstaluj FoodDB",
     "installDescription": "Dodaj do ekranu głównego, aby mieć szybki dostęp i wsparcie offline.",
     "iosInstallHint": "Stuknij przycisk Udostępnij, a potem «Dodaj do ekranu głównego».",
@@ -544,7 +546,11 @@
     "copyUserId": "Kopiuj ID użytkownika",
     "copiedToClipboard": "Skopiowano!",
     "signOut": "Wyloguj się",
-    "preferencesSaved": "Preferencje zapisane!"
+    "preferencesSaved": "Preferencje zapisane!",
+    "offlineCache": "Pamięć podręczna offline",
+    "offlineCacheDescription": "{count} produktów zapisanych do dostępu offline.",
+    "clearCache": "Wyczyść pamięć offline",
+    "cacheCleared": "Pamięć offline wyczyszczona"
   },
   "healthProfile": {
     "title": "Profile zdrowotne",

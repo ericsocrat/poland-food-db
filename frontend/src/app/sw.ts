@@ -1,7 +1,7 @@
 /// <reference lib="webworker" />
 import { defaultCache } from "@serwist/next/worker";
 import type { PrecacheEntry, SerwistGlobalConfig } from "serwist";
-import { Serwist } from "serwist";
+import { CacheFirst, NetworkFirst, Serwist } from "serwist";
 
 // This declares the service worker's global scope
 declare global {
@@ -15,14 +15,43 @@ declare const self: ServiceWorkerGlobalScope & typeof globalThis;
 // ─── Cache version ──────────────────────────────────────────────────────────
 // Bump this whenever a new deployment must invalidate all runtime caches
 // (e.g. layout / viewport fixes that are invisible to precache hashing).
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
+
+// ─── Custom runtime caching for offline product access ──────────────────────
+const productApiCache = new NetworkFirst({
+  cacheName: `product-api-${CACHE_VERSION}`,
+  matchOptions: { ignoreSearch: false },
+  networkTimeoutSeconds: 5,
+});
+
+const imageCache = new CacheFirst({
+  cacheName: `product-images-${CACHE_VERSION}`,
+  matchOptions: { ignoreSearch: true },
+});
 
 const serwist = new Serwist({
   precacheEntries: self.__SW_MANIFEST,
   skipWaiting: true,
   clientsClaim: true,
   navigationPreload: true,
-  runtimeCaching: defaultCache,
+  runtimeCaching: [
+    // Network-first for Supabase RPC calls (product detail / search)
+    {
+      matcher: ({ url }) =>
+        url.pathname.includes("/rest/v1/rpc/api_get_product_profile") ||
+        url.pathname.includes("/rest/v1/rpc/api_search_products"),
+      handler: productApiCache,
+    },
+    // Cache-first for product images from Open Food Facts
+    {
+      matcher: ({ url }) =>
+        url.hostname === "images.openfoodfacts.org" ||
+        url.hostname.endsWith(".openfoodfacts.org"),
+      handler: imageCache,
+    },
+    // Default caching for everything else
+    ...defaultCache,
+  ],
   fallbacks: {
     entries: [
       {

@@ -1015,7 +1015,8 @@ export type AnalyticsEventName =
   | "category_viewed"
   | "preferences_updated"
   | "onboarding_completed"
-  | "image_search_performed";
+  | "image_search_performed"
+  | "offline_cache_cleared";
 
 export type DeviceType = "mobile" | "tablet" | "desktop";
 

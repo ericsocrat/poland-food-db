@@ -47,6 +47,9 @@ import { ScoreHistoryPanel } from "@/components/product/ScoreHistoryPanel";
 import { ScoreBreakdownPanel } from "@/components/product/ScoreBreakdownPanel";
 import { AllergenMatrix } from "@/components/product/AllergenMatrix";
 import { IngredientList } from "@/components/product/IngredientList";
+import { CachedTimestamp } from "@/components/pwa/CachedTimestamp";
+import { useOnlineStatus } from "@/hooks/use-online-status";
+import { cacheProduct, getCachedProduct } from "@/lib/cache-manager";
 import { Info, Globe } from "lucide-react";
 import type {
   ProductProfile,
@@ -64,6 +67,8 @@ export default function ProductDetailPage() {
   const [activeTab, setActiveTab] = useState<Tab>("overview");
   const { track } = useAnalytics();
   const { t } = useTranslation();
+  const isOnline = useOnlineStatus();
+  const [cachedAt, setCachedAt] = useState<number | null>(null);
 
   const {
     data: profile,
@@ -74,6 +79,9 @@ export default function ProductDetailPage() {
     queryFn: async () => {
       const result = await getProductProfile(supabase, productId);
       if (!result.ok) throw new Error(result.error.message);
+      // Cache the product for offline access
+      void cacheProduct(productId, result.data);
+      setCachedAt(null); // Fresh data — not from cache
       return result.data;
     },
     staleTime: staleTimes.productProfile,
@@ -96,6 +104,21 @@ export default function ProductDetailPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);
+
+  // ─── Offline fallback: load from IndexedDB cache when query fails ─────────
+  useEffect(() => {
+    if (error && !isOnline && !profile) {
+      getCachedProduct<ProductProfile>(productId).then((cached) => {
+        if (cached) {
+          queryClient.setQueryData(
+            queryKeys.productProfile(productId),
+            cached.data,
+          );
+          setCachedAt(cached.cachedAt);
+        }
+      });
+    }
+  }, [error, isOnline, productId, profile, queryClient]);
 
   if (isLoading) {
     return <ProductProfileSkeleton />;
@@ -209,6 +232,7 @@ export default function ProductDetailPage() {
                     <p className="text-sm text-foreground-secondary lg:text-base">
                       {profile.product.brand}
                     </p>
+                    {cachedAt && <CachedTimestamp cachedAt={cachedAt} />}
                   </div>
                   <div className="no-print flex flex-wrap items-center gap-2">
                     <ShareButton
