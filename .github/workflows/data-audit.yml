@@ -1,0 +1,61 @@
+name: Nightly Data Integrity Audit
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # 2:00 UTC daily
+  workflow_dispatch: {}
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run Data Integrity Audit
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python run_data_audit.py
+
+      - name: Upload Audit Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: data-audit-report
+          path: audit-reports/
+          retention-days: 90
+
+      - name: Post Summary
+        if: always()
+        run: |
+          REPORT=$(cat audit-reports/audit_*.json 2>/dev/null || echo '{}')
+          CRITICAL=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('summary',{}).get('critical',0))" 2>/dev/null || echo "?")
+          WARNINGS=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('summary',{}).get('warnings',0))" 2>/dev/null || echo "?")
+          INFO=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('summary',{}).get('info',0))" 2>/dev/null || echo "?")
+          TOTAL=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('summary',{}).get('total_findings',0))" 2>/dev/null || echo "?")
+          echo "## Data Integrity Audit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔴 Critical | $CRITICAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟠 Warning | $WARNINGS |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔵 Info | $INFO |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Total** | **$TOTAL** |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Alert on Critical Findings
+        if: failure()
+        run: |
+          if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ]; then
+            curl -X POST "${{ secrets.ALERT_WEBHOOK_URL }}" \
+              -H 'Content-Type: application/json' \
+              -d '{"text": "Data Integrity Audit found CRITICAL issues — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+          fi
