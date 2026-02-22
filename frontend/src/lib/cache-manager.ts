@@ -59,7 +59,7 @@ function openDB(): Promise<IDBDatabase> {
       }
     };
     request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
+    request.onerror = () => reject(request.error ?? new Error("IndexedDB open failed"));
   });
 }
 
@@ -115,7 +115,7 @@ export async function cacheProduct<T>(
     };
     tx.onerror = () => {
       db.close();
-      reject(tx.error);
+      reject(tx.error ?? new Error("Transaction failed"));
     };
   });
 }
@@ -145,11 +145,11 @@ export async function getCachedProduct<T>(
         resolve(null);
       }
     };
-    getReq.onerror = () => reject(getReq.error);
+    getReq.onerror = () => reject(getReq.error ?? new Error("Get request failed"));
     tx.oncomplete = () => db.close();
     tx.onerror = () => {
       db.close();
-      reject(tx.error);
+      reject(tx.error ?? new Error("Transaction failed"));
     };
   });
 }
@@ -175,7 +175,7 @@ export async function getAllCachedProducts<T>(): Promise<CachedProduct<T>[]> {
     };
     req.onerror = () => {
       db.close();
-      reject(req.error);
+      reject(req.error ?? new Error("GetAll request failed"));
     };
   });
 }
@@ -198,7 +198,7 @@ export async function getCachedProductCount(): Promise<number> {
     };
     req.onerror = () => {
       db.close();
-      reject(req.error);
+      reject(req.error ?? new Error("Count request failed"));
     };
   });
 }
@@ -253,7 +253,7 @@ export async function cacheSearch<T>(
     };
     tx.onerror = () => {
       db.close();
-      reject(tx.error);
+      reject(tx.error ?? new Error("Transaction failed"));
     };
   });
 }
@@ -282,11 +282,11 @@ export async function getCachedSearch<T>(
         resolve(null);
       }
     };
-    getReq.onerror = () => reject(getReq.error);
+    getReq.onerror = () => reject(getReq.error ?? new Error("Get request failed"));
     tx.oncomplete = () => db.close();
     tx.onerror = () => {
       db.close();
-      reject(tx.error);
+      reject(tx.error ?? new Error("Transaction failed"));
     };
   });
 }
@@ -311,7 +311,7 @@ export async function clearAllCaches(): Promise<void> {
     };
     tx.onerror = () => {
       db.close();
-      reject(tx.error);
+      reject(tx.error ?? new Error("Transaction failed"));
     };
   });
 }

@@ -10,12 +10,10 @@ import {
 
 describe("downloadJson", () => {
   let appendSpy: ReturnType<typeof vi.spyOn>;
-  let removeSpy: ReturnType<typeof vi.spyOn>;
   let revokeURLSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     appendSpy = vi.spyOn(document.body, "appendChild").mockImplementation((n) => n);
-    removeSpy = vi.spyOn(document.body, "removeChild").mockImplementation((n) => n);
     vi.spyOn(URL, "createObjectURL").mockReturnValue("blob:test");
     revokeURLSpy = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => {});
   });
@@ -26,11 +24,13 @@ describe("downloadJson", () => {
 
   it("creates an anchor element and triggers click", () => {
     const clickSpy = vi.fn();
+    const removeSpy = vi.fn();
     vi.spyOn(document, "createElement").mockReturnValue({
       href: "",
       download: "",
       style: { display: "" },
       click: clickSpy,
+      remove: removeSpy,
     } as unknown as HTMLAnchorElement);
 
     const { size } = downloadJson({ hello: "world" }, "test.json");
@@ -48,6 +48,7 @@ describe("downloadJson", () => {
       download: "",
       style: { display: "" },
       click: vi.fn(),
+      remove: vi.fn(),
     } as unknown as HTMLAnchorElement);
 
     const data = { items: Array.from({ length: 100 }, (_, i) => i) };
@@ -61,6 +62,7 @@ describe("downloadJson", () => {
       download: "",
       style: { display: "" },
       click: vi.fn(),
+      remove: vi.fn(),
     };
     vi.spyOn(document, "createElement").mockReturnValue(
       mockAnchor as unknown as HTMLAnchorElement,

@@ -159,11 +159,9 @@ function ExportDataSection() {
         data-testid="export-data-button"
       >
         <FileDown size={14} aria-hidden="true" />
-        {exporting
-          ? t("settings.exportInProgress")
-          : cooldownMin > 0
-            ? t("settings.exportCooldown", { minutes: cooldownMin })
-            : t("settings.exportData")}
+        {exporting && t("settings.exportInProgress")}
+        {!exporting && cooldownMin > 0 && t("settings.exportCooldown", { minutes: cooldownMin })}
+        {!exporting && cooldownMin <= 0 && t("settings.exportData")}
       </button>
     </section>
   );
@@ -250,66 +248,66 @@ export default function SettingsPage() {
     }
   }, [track]);
 
+  /** Unsubscribe from push — extracted to reduce cognitive complexity. */
+  const disablePush = useCallback(async () => {
+    const sub = await getCurrentPushSubscription();
+    if (sub) {
+      const subData = extractSubscriptionData(sub);
+      if (subData) {
+        await deletePushSubscription(supabase, subData.endpoint);
+      }
+      await unsubscribeFromPush();
+    }
+    setPushEnabled(false);
+    track("push_notification_disabled");
+    showToast({ type: "success", messageKey: "notifications.disabled" });
+  }, [supabase, track]);
+
+  /** Subscribe to push — extracted to reduce cognitive complexity. */
+  const enablePush = useCallback(async () => {
+    const permission = await requestNotificationPermission();
+    setPushPermission(permission);
+    if (permission !== "granted") {
+      showToast({ type: "error", messageKey: "notifications.permissionDenied" });
+      return;
+    }
+
+    const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
+    if (!vapidKey) {
+      showToast({ type: "error", messageKey: "common.error" });
+      return;
+    }
+
+    const subscription = await subscribeToPush(vapidKey);
+    if (!subscription) {
+      showToast({ type: "error", messageKey: "common.error" });
+      return;
+    }
+
+    const subData = extractSubscriptionData(subscription);
+    if (subData) {
+      await savePushSubscription(supabase, subData.endpoint, subData.p256dh, subData.auth);
+    }
+
+    setPushEnabled(true);
+    track("push_notification_enabled");
+    showToast({ type: "success", messageKey: "notifications.enabled" });
+  }, [supabase, track]);
+
   const handleTogglePush = useCallback(async () => {
     setTogglingPush(true);
     try {
       if (pushEnabled) {
-        // Unsubscribe
-        const sub = await getCurrentPushSubscription();
-        if (sub) {
-          const subData = extractSubscriptionData(sub);
-          if (subData) {
-            await deletePushSubscription(supabase, subData.endpoint);
-          }
-          await unsubscribeFromPush();
-        }
-        setPushEnabled(false);
-        track("push_notification_disabled");
-        showToast({ type: "success", messageKey: "notifications.disabled" });
+        await disablePush();
       } else {
-        // Subscribe
-        const permission = await requestNotificationPermission();
-        setPushPermission(permission);
-        if (permission !== "granted") {
-          showToast({
-            type: "error",
-            messageKey: "notifications.permissionDenied",
-          });
-          return;
-        }
-
-        const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY;
-        if (!vapidKey) {
-          showToast({ type: "error", messageKey: "common.error" });
-          return;
-        }
-
-        const subscription = await subscribeToPush(vapidKey);
-        if (!subscription) {
-          showToast({ type: "error", messageKey: "common.error" });
-          return;
-        }
-
-        const subData = extractSubscriptionData(subscription);
-        if (subData) {
-          await savePushSubscription(
-            supabase,
-            subData.endpoint,
-            subData.p256dh,
-            subData.auth,
-          );
-        }
-
-        setPushEnabled(true);
-        track("push_notification_enabled");
-        showToast({ type: "success", messageKey: "notifications.enabled" });
+        await enablePush();
       }
     } catch {
       showToast({ type: "error", messageKey: "common.error" });
     } finally {
       setTogglingPush(false);
     }
-  }, [pushEnabled, supabase, track]);
+  }, [pushEnabled, disablePush, enablePush]);
 
   const handleCopyUserId = useCallback(async () => {
     if (!prefs?.user_id) return;
@@ -674,11 +672,9 @@ export default function SettingsPage() {
               ) : (
                 <Bell size={14} aria-hidden="true" />
               )}
-              {togglingPush
-                ? t("common.loading")
-                : pushEnabled
-                  ? t("notifications.disable")
-                  : t("notifications.enable")}
+              {togglingPush && t("common.loading")}
+              {!togglingPush && pushEnabled && t("notifications.disable")}
+              {!togglingPush && !pushEnabled && t("notifications.enable")}
             </button>
           )}
         </section>

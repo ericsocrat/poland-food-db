@@ -69,7 +69,6 @@ export function ScoreSparkline({ scores }: Readonly<ScoreSparklineProps>) {
         width={SVG_WIDTH}
         height={SVG_HEIGHT}
         viewBox={`0 0 ${SVG_WIDTH} ${SVG_HEIGHT}`}
-        role="img"
         aria-label={t("dashboard.sparklineAria")}
         aria-describedby="sparkline-desc"
       >

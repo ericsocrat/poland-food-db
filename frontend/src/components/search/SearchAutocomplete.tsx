@@ -197,6 +197,41 @@ export function SearchAutocomplete({
     }
   }, [show, onClose]);
 
+  /** Handle Enter key selection — extracted to reduce cognitive complexity. */
+  const handleEnterSelection = useCallback(() => {
+    if (isQueryMode) {
+      if (activeIndex >= 0 && activeIndex < suggestions.length) {
+        const selected = suggestions[activeIndex];
+        onSelect(selected);
+        router.push(`/app/product/${selected.product_id}`);
+      } else if (query.trim().length >= 1) {
+        onQuerySubmit(query.trim());
+      }
+    } else if (activeIndex >= 0) {
+      if (showRecent && activeIndex < recentSearches.length) {
+        onQuerySubmit(recentSearches[activeIndex]);
+      } else if (showPopular) {
+        const popIdx = activeIndex - popularIndexOffset;
+        if (popIdx >= 0 && popIdx < popularSearches.length) {
+          onQuerySubmit(popularSearches[popIdx]);
+        }
+      }
+    }
+  }, [
+    isQueryMode,
+    activeIndex,
+    suggestions,
+    query,
+    showRecent,
+    recentSearches,
+    showPopular,
+    popularIndexOffset,
+    popularSearches,
+    onSelect,
+    onQuerySubmit,
+    router,
+  ]);
+
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent) => {
       if (!show || navigableCount === 0) return;
@@ -212,24 +247,7 @@ export function SearchAutocomplete({
           break;
         case "Enter":
           e.preventDefault();
-          if (isQueryMode) {
-            if (activeIndex >= 0 && activeIndex < suggestions.length) {
-              const selected = suggestions[activeIndex];
-              onSelect(selected);
-              router.push(`/app/product/${selected.product_id}`);
-            } else if (query.trim().length >= 1) {
-              onQuerySubmit(query.trim());
-            }
-          } else if (activeIndex >= 0) {
-            if (showRecent && activeIndex < recentSearches.length) {
-              onQuerySubmit(recentSearches[activeIndex]);
-            } else if (showPopular) {
-              const popIdx = activeIndex - popularIndexOffset;
-              if (popIdx >= 0 && popIdx < popularSearches.length) {
-                onQuerySubmit(popularSearches[popIdx]);
-              }
-            }
-          }
+          handleEnterSelection();
           onClose();
           break;
         case "Escape":
@@ -241,19 +259,8 @@ export function SearchAutocomplete({
     [
       show,
       navigableCount,
-      isQueryMode,
-      suggestions,
-      activeIndex,
-      query,
-      recentSearches,
-      showRecent,
-      showPopular,
-      popularIndexOffset,
-      popularSearches,
-      onSelect,
-      onQuerySubmit,
+      handleEnterSelection,
       onClose,
-      router,
     ],
   );
 

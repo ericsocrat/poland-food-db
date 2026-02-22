@@ -1,0 +1,272 @@
+{
+  "timestamp": "2026-02-22T21:22:42.6081019+00:00",
+  "inventory": {
+    "nutrition_rows": 1080,
+    "ingredient_refs": 3012,
+    "trace_rows": 4,
+    "active_products": 1080,
+    "deprecated": 30,
+    "categories": 20,
+    "allergen_rows": 16,
+    "product_ingredients": 0
+  },
+  "suites": [
+    {
+      "name": "Data Integrity",
+      "violations": [],
+      "status": "pass",
+      "checks": 29,
+      "suite_id": "integrity",
+      "runtime_ms": 100.0
+    },
+    {
+      "name": "Scoring Formula",
+      "violations": [],
+      "status": "pass",
+      "checks": 27,
+      "suite_id": "scoring",
+      "runtime_ms": 75.0
+    },
+    {
+      "flagged_rows_total": 3350,
+      "checks": 8,
+      "status": "warn",
+      "flagged_actionable": 1080,
+      "runtime_ms": 141.0,
+      "blocking": false,
+      "name": "Source Coverage",
+      "suite_id": "source_coverage"
+    },
+    {
+      "name": "EAN Checksum Validation",
+      "violations": [],
+      "status": "pass",
+      "checks": 1,
+      "suite_id": "ean",
+      "runtime_ms": 75.0
+    },
+    {
+      "name": "API Surface Validation",
+      "violations": [],
+      "status": "pass",
+      "checks": 18,
+      "suite_id": "api",
+      "runtime_ms": 3903.0
+    },
+    {
+      "name": "Confidence Scoring",
+      "violations": [],
+      "status": "pass",
+      "checks": 10,
+      "suite_id": "confidence",
+      "runtime_ms": 664.0
+    },
+    {
+      "name": "Data Quality & Plausibility",
+      "violations": [],
+      "status": "pass",
+      "checks": 25,
+      "suite_id": "data_quality",
+      "runtime_ms": 311.0
+    },
+    {
+      "name": "Referential Integrity",
+      "violations": [],
+      "status": "pass",
+      "checks": 18,
+      "suite_id": "referential",
+      "runtime_ms": 90.0
+    },
+    {
+      "name": "View & Function Consistency",
+      "violations": [
+        "13. v_master has expected column count (52) |          3"
+      ],
+      "status": "fail",
+      "checks": 13,
+      "suite_id": "views",
+      "runtime_ms": 3709.0
+    },
+    {
+      "name": "Naming Conventions",
+      "violations": [],
+      "status": "pass",
+      "checks": 12,
+      "suite_id": "naming",
+      "runtime_ms": 71.0
+    },
+    {
+      "name": "Nutrition Ranges & Plausibility",
+      "violations": [],
+      "status": "pass",
+      "checks": 16,
+      "suite_id": "nutrition_ranges",
+      "runtime_ms": 68.0
+    },
+    {
+      "name": "Data Consistency",
+      "violations": [],
+      "status": "pass",
+      "checks": 20,
+      "suite_id": "data_consistency",
+      "runtime_ms": 87.0
+    },
+    {
+      "name": "Allergen & Trace Integrity",
+      "violations": [],
+      "status": "pass",
+      "checks": 15,
+      "suite_id": "allergen_integrity",
+      "runtime_ms": 58.0
+    },
+    {
+      "name": "Serving & Source Validation",
+      "violations": [],
+      "status": "pass",
+      "checks": 16,
+      "suite_id": "serving_source",
+      "runtime_ms": 54.0
+    },
+    {
+      "name": "Ingredient Data Quality",
+      "violations": [],
+      "status": "pass",
+      "checks": 14,
+      "suite_id": "ingredient_quality",
+      "runtime_ms": 60.0
+    },
+    {
+      "name": "Security Posture",
+      "violations": [
+        "9. anon blocked from non-public api_* functions |          1",
+        "18. authenticated can execute all api_* functions |          4"
+      ],
+      "status": "fail",
+      "checks": 22,
+      "suite_id": "security_posture",
+      "runtime_ms": 64.0
+    },
+    {
+      "name": "API Contract",
+      "violations": [],
+      "status": "pass",
+      "checks": 33,
+      "suite_id": "api_contract",
+      "runtime_ms": 227.0
+    },
+    {
+      "name": "Scale Guardrails",
+      "violations": [],
+      "status": "pass",
+      "checks": 23,
+      "suite_id": "scale_guardrails",
+      "runtime_ms": 155.0
+    },
+    {
+      "name": "Country Isolation",
+      "violations": [],
+      "status": "pass",
+      "checks": 11,
+      "suite_id": "country_isolation",
+      "runtime_ms": 115.0
+    },
+    {
+      "name": "Diet Filtering",
+      "violations": [],
+      "status": "pass",
+      "checks": 6,
+      "suite_id": "diet_filtering",
+      "runtime_ms": 212.0
+    },
+    {
+      "name": "Allergen Filtering",
+      "violations": [],
+      "status": "pass",
+      "checks": 6,
+      "suite_id": "allergen_filtering",
+      "runtime_ms": 150.0
+    },
+    {
+      "name": "Barcode Lookup",
+      "violations": [],
+      "status": "pass",
+      "checks": 6,
+      "suite_id": "barcode_lookup",
+      "runtime_ms": 70.0
+    },
+    {
+      "name": "Auth & Onboarding",
+      "violations": [],
+      "status": "pass",
+      "checks": 8,
+      "suite_id": "auth_onboarding",
+      "runtime_ms": 59.0
+    },
+    {
+      "name": "Confidence Reporting",
+      "violations": [],
+      "status": "pass",
+      "checks": 7,
+      "suite_id": "confidence_reporting",
+      "runtime_ms": 65.0
+    },
+    {
+      "name": "Health Profiles",
+      "violations": [],
+      "status": "pass",
+      "checks": 14,
+      "suite_id": "health_profiles",
+      "runtime_ms": 75.0
+    },
+    {
+      "name": "Lists & Comparisons",
+      "violations": [],
+      "status": "pass",
+      "checks": 12,
+      "suite_id": "lists_comparisons",
+      "runtime_ms": 55.0
+    },
+    {
+      "name": "Scanner & Submissions",
+      "violations": [],
+      "status": "pass",
+      "checks": 12,
+      "suite_id": "scanner_submissions",
+      "runtime_ms": 55.0
+    },
+    {
+      "name": "Index & Temporal Integrity",
+      "violations": [
+        "13. FK columns referencing products are indexed |          1"
+      ],
+      "status": "fail",
+      "checks": 15,
+      "suite_id": "index_temporal",
+      "runtime_ms": 78.0
+    },
+    {
+      "name": "Attribute Contradictions",
+      "violations": [],
+      "status": "pass",
+      "checks": 5,
+      "suite_id": "attribute_contradiction",
+      "runtime_ms": 84.0
+    },
+    {
+      "name": "Monitoring & Health Check",
+      "violations": [],
+      "status": "pass",
+      "checks": 7,
+      "suite_id": "monitoring",
+      "runtime_ms": 61.0
+    }
+  ],
+  "summary": {
+    "warnings": 1080,
+    "total_checks": 421,
+    "failed": 4,
+    "passed": 417
+  },
+  "overall": "fail",
+  "version": "2.0"
+}

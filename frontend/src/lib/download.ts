@@ -20,7 +20,7 @@ export function downloadJson(
   a.click();
 
   // Cleanup
-  document.body.removeChild(a);
+  a.remove();
   URL.revokeObjectURL(url);
 
   return { size: blob.size };
