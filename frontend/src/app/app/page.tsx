@@ -19,6 +19,7 @@ import { CategoriesBrowse } from "@/components/dashboard/CategoriesBrowse";
 import { NutritionTip } from "@/components/dashboard/NutritionTip";
 import { ScoreSparkline } from "@/components/dashboard/ScoreSparkline";
 import { HealthInsightsPanel } from "@/components/dashboard/HealthInsightsPanel";
+import { ProductThumbnail } from "@/components/common/ProductThumbnail";
 import {
   Camera,
   Eye,
@@ -272,6 +273,7 @@ function ProductRow({
     category: string;
     unhealthiness_score: number | null;
     nutri_score_label: string | null;
+    image_thumb_url?: string | null;
   };
   subtitle?: string;
 }>) {
@@ -280,6 +282,11 @@ function ProductRow({
       href={`/app/product/${product.product_id}`}
       className="card hover-lift-press flex items-center gap-3"
     >
+      <ProductThumbnail
+        imageUrl={product.image_thumb_url ?? null}
+        productName={product.product_name}
+        size="sm"
+      />
       <NutriBadge grade={product.nutri_score_label} />
       <div className="min-w-0 flex-1">
         <p className="truncate text-sm font-medium text-foreground">

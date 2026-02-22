@@ -82,6 +82,7 @@ export interface SearchResult {
   high_additive_load: boolean;
   is_avoided: boolean;
   relevance: number;
+  image_thumb_url: string | null;
 }
 
 export interface SearchResponse {
@@ -209,6 +210,7 @@ export interface CategoryProduct {
   high_sat_fat_flag: boolean;
   confidence: string;
   data_completeness_pct: number;
+  image_thumb_url: string | null;
 }
 
 export interface CategoryListingResponse {
@@ -1027,6 +1029,7 @@ export interface RecentlyViewedProduct {
   unhealthiness_score: number | null;
   nutri_score_label: NutriGrade | null;
   viewed_at: string;
+  image_thumb_url: string | null;
 }
 
 export interface RecentlyViewedResponse {
@@ -1057,6 +1060,7 @@ export interface DashboardFavoritePreview {
   unhealthiness_score: number | null;
   nutri_score_label: NutriGrade | null;
   added_at: string;
+  image_thumb_url: string | null;
 }
 
 export interface DashboardNewProduct {
@@ -1067,6 +1071,7 @@ export interface DashboardNewProduct {
   country: string;
   unhealthiness_score: number | null;
   nutri_score_label: NutriGrade | null;
+  image_thumb_url: string | null;
 }
 
 export interface DashboardData {

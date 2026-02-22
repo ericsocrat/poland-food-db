@@ -18,6 +18,7 @@ import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
+import { ProductThumbnail } from "@/components/common/ProductThumbnail";
 import { formatSlug } from "@/lib/validation";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { eventBus } from "@/lib/events";
@@ -211,6 +212,11 @@ function ProductRow({ product }: Readonly<{ product: CategoryProduct }>) {
   return (
     <Link href={`/app/product/${product.product_id}`}>
       <li className="card hover-lift-press flex items-center gap-3">
+        <ProductThumbnail
+          imageUrl={product.image_thumb_url}
+          productName={product.product_name}
+          size="sm"
+        />
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
         >

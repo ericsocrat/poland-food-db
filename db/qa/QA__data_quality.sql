@@ -253,3 +253,34 @@ SELECT '30. daily_value_ref positive values' AS check_name,
 FROM daily_value_ref
 WHERE daily_value <= 0;
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 31. product_images URLs must be HTTPS
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '31. product_images HTTPS URLs' AS check_name,
+       COUNT(*) AS violations
+FROM product_images
+WHERE url IS NOT NULL
+  AND url NOT LIKE 'https://%';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 32. v_master image_thumb_url is NULL or HTTPS
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '32. v_master image_thumb_url HTTPS' AS check_name,
+       COUNT(*) AS violations
+FROM v_master
+WHERE image_thumb_url IS NOT NULL
+  AND image_thumb_url NOT LIKE 'https://%';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 33. product_images primary uniqueness (max 1 per product)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '33. product_images single primary per product' AS check_name,
+       COUNT(*) AS violations
+FROM (
+  SELECT product_id
+  FROM product_images
+  WHERE is_primary = true
+  GROUP BY product_id
+  HAVING COUNT(*) > 1
+) dups;
+

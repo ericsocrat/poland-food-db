@@ -256,6 +256,12 @@ def validate_product(product: dict, category: str) -> dict:
     contradiction_warnings = check_attribute_contradictions(product)
     warnings.extend(contradiction_warnings)
 
+    # Image URL validation
+    for img_key in ("image_front_url", "image_ingredients_url", "image_nutrition_url"):
+        url = product.get(img_key)
+        if url and not url.startswith("https://"):
+            warnings.append(f"{img_key} is not HTTPS: {url[:80]}")
+
     result["validation_warnings"] = warnings
 
     # Confidence assignment

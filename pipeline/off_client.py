@@ -494,4 +494,8 @@ def extract_product_data(off_product: dict) -> dict | None:
         # OFF metadata (used by validator)
         "_completeness": off_product.get("completeness", 0),
         "_has_image": bool(off_product.get("image_url")),
+        # Image URLs (used by sql_generator._gen_06_add_images)
+        "image_front_url": off_product.get("image_front_url") or None,
+        "image_ingredients_url": off_product.get("image_ingredients_url") or None,
+        "image_nutrition_url": off_product.get("image_nutrition_url") or None,
     }
