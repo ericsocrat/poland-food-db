@@ -1,10 +1,12 @@
 # Staging Setup Guide
 
-> **Status: DEFERRED** — We are in single-cloud mode. The sole Supabase project
-> `uskvezwftkkudvksmken` serves as production-for-now. This guide is preserved
-> for when we onboard real users or need a safe preview / E2E mutation environment.
+> **Status: READY** — All scripts (`RUN_REMOTE.ps1`, `RUN_SEED.ps1`,
+> `RUN_SANITY.ps1`) support `-Env staging`. The `sync-cloud-db.yml` workflow
+> auto-pushes migrations to staging before production when `STAGING_ENABLED=true`
+> is set as a repository variable.
 >
-> See [ENVIRONMENT_STRATEGY.md](ENVIRONMENT_STRATEGY.md) §8.1 for the deferral decision.
+> Follow the steps below to create the Supabase staging project and configure
+> secrets. See [ENVIRONMENT_STRATEGY.md](ENVIRONMENT_STRATEGY.md) §8.1 for context.
 
 ---
 
@@ -48,7 +50,7 @@ npx supabase link --project-ref <staging-ref>
 npx supabase db push
 ```
 
-Verify: All 75+ migrations should apply successfully.
+Verify: All 85+ migrations should apply successfully.
 
 ---
 
@@ -77,7 +79,7 @@ This will:
 .\RUN_SANITY.ps1 -Env staging
 ```
 
-All 16 checks should pass. Fix any failures before proceeding.
+All 17 checks should pass. Fix any failures before proceeding.
 
 ---
 
@@ -101,9 +103,18 @@ Go to **Settings → Secrets and variables → Actions** and add:
 
 | Secret                              | Value                                                      |
 | ----------------------------------- | ---------------------------------------------------------- |
+| `SUPABASE_STAGING_PROJECT_REF`      | Staging project reference (e.g., `abcdef123456`)           |
 | `SUPABASE_URL_STAGING`              | `https://<staging-ref>.supabase.co`                        |
 | `SUPABASE_ANON_KEY_STAGING`         | Staging project anon key (from Dashboard → Settings → API) |
 | `SUPABASE_SERVICE_ROLE_KEY_STAGING` | Staging project service role key                           |
+
+### GitHub Repository Variables
+
+Go to **Settings → Secrets and variables → Actions → Variables** and add:
+
+| Variable            | Value  | Purpose                                         |
+| ------------------- | ------ | ----------------------------------------------- |
+| `STAGING_ENABLED`   | `true` | Enables staging sync in `sync-cloud-db.yml`     |
 
 ### Vercel Preview Environment
 
@@ -138,9 +149,9 @@ npx playwright test
 
 ---
 
-## Step 8: Wire CI (Future)
+## Step 8: Wire CI (Issue #141)
 
-When ready, update `.github/workflows/ci.yml` to use staging secrets for Playwright E2E:
+Update `.github/workflows/ci.yml` to use staging secrets for Playwright E2E:
 
 ```yaml
 env:
@@ -156,7 +167,8 @@ This ensures CI never touches production and E2E tests run against staging.
 
 ### Applying New Migrations to Staging
 
-After merging a PR with new migrations:
+After merging a PR with new migrations, `sync-cloud-db.yml` auto-pushes to
+staging (when `STAGING_ENABLED=true`). To apply manually:
 
 ```powershell
 npx supabase link --project-ref <staging-ref>

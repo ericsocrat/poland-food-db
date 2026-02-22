@@ -1,18 +1,18 @@
 # Environment Strategy — Phase 8
 
-> **Last updated:** 2026-02-15
+> **Last updated:** 2026-02-22
 > **Status:** Active
 > **Issue:** #13
 
 ---
 
-## Decision: Single Cloud Project for Now
+## Decision: Two-Cloud Mode (Staging + Production)
 
-We confirmed `uskvezwftkkudvksmken` is currently the **only** Supabase cloud
-project and is already treated as "production" across every script, doc, and CI
-workflow. We will use this as **production-for-now** and defer creating a
-separate staging project until we are ready for real users / a true production
-launch.
+We maintain two Supabase cloud projects:
+
+- **Production:** `uskvezwftkkudvksmken` — live user-facing data.
+- **Staging:** A separate project for pre-production validation, E2E mutation
+  testing, and preview deployments.
 
 **Implication:** Phase 8 focuses on:
 
@@ -21,29 +21,33 @@ launch.
    expected dataset.
 3. Sanity checks + guardrails so CI / scripts cannot accidentally mutate or
    wipe the cloud DB.
+4. Staging receives migrations first (via `sync-cloud-db.yml`) before production.
 
-### 8.1 — Staging Supabase Project (Deferred)
+### 8.1 — Staging Supabase Project (Active)
 
-| Field   | Value                                                                                         |
-| ------- | --------------------------------------------------------------------------------------------- |
-| Status  | **Deferred** — single-cloud mode for now                                                      |
-| Trigger | Create staging when we onboard real users **OR** need safe preview / E2E mutation environment |
-| Guide   | See [STAGING_SETUP.md](STAGING_SETUP.md) when the time comes                                  |
+| Field   | Value                                                                                                  |
+| ------- | ------------------------------------------------------------------------------------------------------ |
+| Status  | **Active** — staging project created and wired into scripts + CI                                       |
+| Setup   | Follow [STAGING_SETUP.md](STAGING_SETUP.md) for the step-by-step guide                                 |
+| Scripts | `RUN_REMOTE.ps1 -Env staging`, `RUN_SEED.ps1 -Env staging`, `RUN_SANITY.ps1 -Env staging` all work     |
 
-### 8.1A — Single-Cloud Mode Guardrails (Required)
+### 8.1A — Cloud Mode Guardrails (Required)
 
 | #   | Task                                                                                                                          | Status |
 | --- | ----------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 1   | All scripts targeting the cloud require explicit `--Env production` (or equivalent) and refuse destructive actions by default | ✅      |
+| 1   | All scripts targeting the cloud require explicit `-Env` parameter and refuse destructive actions by default                    | ✅      |
 | 2   | Seed pipeline is idempotent — uses `ON CONFLICT DO UPDATE`, no accidental overwrite                                           | ✅      |
 | 3   | CI / E2E uses least-privileged keys and cannot perform destructive operations                                                 | ✅      |
 | 4   | All schema changes remain migrations-only — no dashboard drift allowed                                                        | ✅      |
+| 5   | `RUN_REMOTE.ps1` requires mandatory `-Env staging` or `-Env production` (no default)                                          | ✅      |
+| 6   | `sync-cloud-db.yml` pushes migrations to staging first, then production                                                       | ✅      |
 
 **Acceptance criteria:**
 
-- Running seed / sanity is safe and repeatable against the single cloud project.
-- No script / CI job can reset / drop / truncate production-for-now without an
+- Running seed / sanity is safe and repeatable against both cloud projects.
+- No script / CI job can reset / drop / truncate production without an
   explicit override (`-Force` + `YES` confirmation + branch check).
+- Staging receives migrations before production in automated workflows.
 
 ---
 
@@ -68,13 +72,12 @@ This document defines the three-environment strategy for `poland-food-db`:
 | Environment    | Purpose                   | Supabase                                      | Vercel                |
 | -------------- | ------------------------- | --------------------------------------------- | --------------------- |
 | **Local**      | Development & iteration   | Docker (`supabase start`)                     | `next dev`            |
-| **Staging**    | Pre-production validation | _(deferred — see §8.1)_                       | Preview deployments   |
+| **Staging**    | Pre-production validation | Cloud `<staging-ref>` (via env var)            | Preview deployments   |
 | **Production** | Live user-facing app      | Cloud `uskvezwftkkudvksmken` (single project) | Production deployment |
 
-> **Current status — single-cloud mode:** Only Local and Production exist.
-> Staging is deferred until real users are onboarded or preview deploys need a
-> safe mutation target. See the [Staging Setup Guide](STAGING_SETUP.md) for
-> when the time comes.
+> **Current status — two-cloud mode:** Local, Staging, and Production all exist.
+> Staging is used for pre-production validation and preview deployments.
+> See the [Staging Setup Guide](STAGING_SETUP.md) for initial setup instructions.
 
 **Why environments matter (even in single-cloud mode):**
 
@@ -101,13 +104,13 @@ This document defines the three-environment strategy for `poland-food-db`:
 
 **Data contents:** Full PL dataset (~1,025 products, 20 categories) + DE micro-pilot (51 products). Fresh auto-increment IDs on every `supabase db reset`.
 
-### 2.2 Staging (Cloud) — Deferred
+### 2.2 Staging (Cloud) — Active
 
-> **Status:** Deferred — single-cloud mode. See [STAGING_SETUP.md](STAGING_SETUP.md).
+> **Status:** Active. See [STAGING_SETUP.md](STAGING_SETUP.md) for setup.
 
 | Setting          | Value                                                   |
 | ---------------- | ------------------------------------------------------- |
-| Supabase project | `poland-food-db-staging` *(to be created when needed)*  |
+| Supabase project | `poland-food-db-staging` (ref via `SUPABASE_STAGING_PROJECT_REF`)  |
 | DB host          | `db.<staging-ref>.supabase.co:5432`                     |
 | API URL          | `https://<staging-ref>.supabase.co`                     |
 | Schema source    | `supabase link --project-ref <ref> && supabase db push` |
@@ -115,9 +118,9 @@ This document defines the three-environment strategy for `poland-food-db`:
 
 **Data contents:** Will mirror production — full PL dataset + DE micro-pilot.
 
-### 2.3 Production (Cloud) — Single-Cloud Mode
+### 2.3 Production (Cloud)
 
-> This is currently the **only** cloud project. All guardrails in §8.1A apply.
+> All guardrails in §8.1A apply. Migrations go to staging first, then production.
 
 | Setting          | Value                                                                  |
 | ---------------- | ---------------------------------------------------------------------- |
@@ -216,12 +219,13 @@ scripts/
 
 ### Production Guard Rails (§8.1A)
 
-The following guardrails ensure the single cloud project cannot be accidentally
+The following guardrails ensure cloud projects cannot be accidentally
 mutated or wiped:
 
 #### Script-level guards (`RUN_SEED.ps1`, `RUN_REMOTE.ps1`)
 
-- **Explicit `-Env production`** required — no script defaults to production
+- **Explicit `-Env staging` or `-Env production`** required — no script defaults to a cloud target
+- **Interactive "YES" confirmation** — skipped only with `-Force`
 - **Interactive "YES" confirmation** — skipped only with `-Force`
 - **Branch check** — warns if not on `main` (production seeds should come from main)
 - **Row count display** — shows existing product count before execution
@@ -244,13 +248,12 @@ mutated or wiped:
 
 ## 6. Vercel ↔ Supabase Mapping
 
-> **Single-cloud mode:** Both Preview and Production point to the same
-> Supabase project. This is acceptable while we are the only user.
-> When staging is created, Preview will switch to the staging project.
+> **Two-cloud mode:** Preview deployments point to the staging Supabase
+> project. Production deployments point to the production project.
 
 | Vercel Environment | Supabase Target                | `NEXT_PUBLIC_SUPABASE_URL`                 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
 | ------------------ | ------------------------------ | ------------------------------------------ | ------------------------------- |
-| Preview            | Production _(→ staging later)_ | `https://uskvezwftkkudvksmken.supabase.co` | Production anon key             |
+| Preview            | Staging                        | `https://<staging-ref>.supabase.co`        | Staging anon key                |
 | Production         | Production                     | `https://uskvezwftkkudvksmken.supabase.co` | Production anon key             |
 
 ### Vercel Configuration
@@ -306,15 +309,16 @@ SUPABASE_STAGING_DB_PASSWORD=
 
 ## 8. CI / Preview E2E Guidelines
 
-### Current CI Architecture (single-cloud mode)
+### Current CI Architecture
 
-| Workflow    | Backend                           | Purpose                                | Cloud mutation risk                    |
-| ----------- | --------------------------------- | -------------------------------------- | -------------------------------------- |
-| `qa.yml`    | Ephemeral PostgreSQL 17 container | Schema + pipeline + 362 QA + 16 sanity | **None** — container only              |
-| `ci.yml`    | Production keys (anon-level only) | Lint, build, Playwright E2E            | **Read-only** — anon key cannot mutate |
-| `build.yml` | N/A (build only) + SonarCloud     | Build, unit tests, coverage            | **None**                               |
+| Workflow           | Backend                           | Purpose                                | Cloud mutation risk                    |
+| ------------------ | --------------------------------- | -------------------------------------- | -------------------------------------- |
+| `qa.yml`           | Ephemeral PostgreSQL 17 container | Schema + pipeline + 421 QA + 17 sanity | **None** — container only              |
+| `ci.yml`           | Production keys (anon-level only) | Lint, build, Playwright E2E            | **Read-only** — anon key cannot mutate |
+| `build.yml`        | N/A (build only) + SonarCloud     | Build, unit tests, coverage            | **None**                               |
+| `sync-cloud-db.yml`| Staging then Production           | Auto-apply migrations on merge to main | **Schema only** — `supabase db push`   |
 
-### Target CI Architecture (when staging exists)
+### Target CI Architecture (§ issue #141)
 
 | Workflow    | Backend                             | Change                        |
 | ----------- | ----------------------------------- | ----------------------------- |
@@ -328,28 +332,28 @@ SUPABASE_STAGING_DB_PASSWORD=
 2. **No CI job targets cloud with DDL** — `supabase db push`, `supabase db reset`, `DROP`, `TRUNCATE` are never run from CI.
 3. **Test user cleanup** — E2E tests must clean up any users they create.
 4. **Read-only sanity checks** — Only `SELECT`-based sanity checks may run against production from CI.
-5. **When staging exists** — Playwright switches to staging keys; production keys are removed from `ci.yml`.
+5. **When staging is active** — Playwright will switch to staging keys once #141 is wired; production keys will be removed from `ci.yml`.
 
 ---
 
 ## 9. Deployment Checklists
 
-### New Migration Deployment (single-cloud mode)
+### New Migration Deployment (current workflow)
 
 ```
 1. ☐ Develop migration locally (supabase db reset to test)
-2. ☐ Run RUN_QA.ps1 locally — all 362+ checks pass
+2. ☐ Run RUN_QA.ps1 locally — all 421+ checks pass
 3. ☐ Push to branch → CI green (qa.yml + ci.yml + build.yml)
-4. ☐ Merge to main
-5. ☐ Apply to production: supabase link --project-ref uskvezwftkkudvksmken && supabase db push
+4. ☐ Merge to main → sync-cloud-db.yml applies to staging (if enabled), then production
+5. ☐ Run RUN_SANITY.ps1 -Env staging — all checks pass
 6. ☐ Run RUN_SANITY.ps1 -Env production — all checks pass
 ```
 
-### New Migration Deployment (with staging — future)
+### New Migration Deployment (with manual staging-first gate)
 
 ```
 1. ☐ Develop migration locally (supabase db reset to test)
-2. ☐ Run RUN_QA.ps1 locally — all 362+ checks pass
+2. ☐ Run RUN_QA.ps1 locally — all 421+ checks pass
 3. ☐ Push to branch → CI green (qa.yml + ci.yml + build.yml)
 4. ☐ Merge to main
 5. ☐ Apply to staging: supabase link --project-ref <staging-ref> && supabase db push
@@ -358,7 +362,7 @@ SUPABASE_STAGING_DB_PASSWORD=
 8. ☐ Run RUN_SANITY.ps1 -Env production — all checks pass
 ```
 
-### Data Pipeline Update (single-cloud mode)
+### Data Pipeline Update
 
 ```
 1. ☐ Regenerate pipeline SQL (python -m pipeline.run --category ...)
@@ -367,7 +371,7 @@ SUPABASE_STAGING_DB_PASSWORD=
 4. ☐ Push to branch → CI green
 5. ☐ Merge to main
 6. ☐ Seed production: RUN_SEED.ps1 -Env production -Category <name>
-   (or RUN_REMOTE.ps1 -Category <name>)
+   (or RUN_REMOTE.ps1 -Env production -Category <name>)
 7. ☐ Run RUN_SANITY.ps1 -Env production
 ```
 
