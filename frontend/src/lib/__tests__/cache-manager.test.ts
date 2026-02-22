@@ -194,8 +194,8 @@ describe("cache-manager", () => {
         writable: true,
         configurable: true,
       });
-      // Should not throw
-      await cacheProduct(1, { name: "Test" });
+      // Should not throw — resolves to undefined
+      await expect(cacheProduct(1, { name: "Test" })).resolves.toBeUndefined();
     });
 
     it("getCachedProduct returns null without IndexedDB", async () => {
@@ -234,7 +234,7 @@ describe("cache-manager", () => {
         writable: true,
         configurable: true,
       });
-      await cacheSearch("q", { r: 1 });
+      await expect(cacheSearch("q", { r: 1 })).resolves.toBeUndefined();
     });
 
     it("getCachedSearch returns null without IndexedDB", async () => {
@@ -253,7 +253,7 @@ describe("cache-manager", () => {
         writable: true,
         configurable: true,
       });
-      await clearAllCaches();
+      await expect(clearAllCaches()).resolves.toBeUndefined();
     });
   });
 });

@@ -203,6 +203,11 @@ export default function SearchPage() {
     (activeQuery !== undefined && activeQuery.length >= 1) ||
     hasActiveFilters(filters);
 
+  const resultsClassName =
+    viewMode === "grid"
+      ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
+      : "space-y-2";
+
   return (
     <>
       <Breadcrumbs
@@ -567,11 +572,7 @@ export default function SearchPage() {
               ) : (
                 <>
                   <ul
-                    className={
-                      viewMode === "grid"
-                        ? "grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3"
-                        : "space-y-2"
-                    }
+                    className={resultsClassName}
                     data-testid="results-container"
                   >
                     {data.results.map((product) => (

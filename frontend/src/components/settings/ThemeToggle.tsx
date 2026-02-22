@@ -24,7 +24,7 @@ export function ThemeToggle() {
   const { t } = useTranslation();
 
   return (
-    <fieldset
+    <div
       className="inline-flex rounded-lg border border-border bg-surface-muted p-1 m-0"
       role="radiogroup"
       aria-label={t("theme.label")}
@@ -50,6 +50,6 @@ export function ThemeToggle() {
           {t(option.labelKey)}
         </label>
       ))}
-    </fieldset>
+    </div>
   );
 }

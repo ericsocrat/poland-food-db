@@ -66,10 +66,9 @@ export function AllergenChips({ warnings }: AllergenChipsProps) {
   const overflow = warnings.length - MAX_VISIBLE;
 
   return (
-    <div
+    <output
       className="flex flex-wrap items-center gap-1"
       data-testid="allergen-chips"
-      role="status"
       aria-label={t("common.allergenWarnings", { count: warnings.length })}
     >
       {visible.map((w) => (
@@ -87,6 +86,6 @@ export function AllergenChips({ warnings }: AllergenChipsProps) {
           +{overflow}
         </span>
       )}
-    </div>
+    </output>
   );
 }

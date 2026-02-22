@@ -89,13 +89,13 @@ CATEGORY_RANGES: dict[str, dict[str, tuple[float, float]]] = {
 # ---------------------------------------------------------------------------
 
 
-def validate_ean_checksum(ean: str) -> bool:
+def validate_ean_checksum(ean: str | None) -> bool:
     """Validate an EAN-8 or EAN-13 barcode using the Modulo-10 algorithm.
 
     Parameters
     ----------
     ean:
-        The barcode string (should be 8 or 13 digits).
+        The barcode string (should be 8 or 13 digits), or *None*.
 
     Returns
     -------

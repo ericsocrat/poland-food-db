@@ -153,12 +153,14 @@ function RowCountCard({
   ceiling: number;
   utilizationPct: number;
 }>) {
-  const status =
-    utilizationPct > 95
-      ? "unhealthy"
-      : utilizationPct > 80
-        ? "degraded"
-        : "healthy";
+  let status: "healthy" | "degraded" | "unhealthy";
+  if (utilizationPct > 95) {
+    status = "unhealthy";
+  } else if (utilizationPct > 80) {
+    status = "degraded";
+  } else {
+    status = "healthy";
+  }
   const barWidth = Math.min(utilizationPct, 100);
 
   return (
@@ -182,11 +184,7 @@ function RowCountCard({
         <div className="relative h-3 w-full rounded-full bg-gray-200 dark:bg-gray-700">
           <div
             className={`absolute left-0 top-0 h-3 rounded-full ${
-              status === "unhealthy"
-                ? "bg-red-500"
-                : status === "degraded"
-                  ? "bg-yellow-500"
-                  : "bg-green-500"
+              { unhealthy: "bg-red-500", degraded: "bg-yellow-500", healthy: "bg-green-500" }[status]
             }`}
             style={{ width: `${barWidth}%` }}
           />

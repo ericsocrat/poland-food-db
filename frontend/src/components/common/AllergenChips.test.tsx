@@ -38,11 +38,11 @@ describe("AllergenChips", () => {
     expect(chip.textContent).toContain("🥛");
   });
 
-  it("renders the container with role=status", () => {
+  it("renders the container as an output element (implicit status role)", () => {
     render(<AllergenChips warnings={[makeWarning()]} />);
 
     const container = screen.getByTestId("allergen-chips");
-    expect(container.getAttribute("role")).toBe("status");
+    expect(container.tagName.toLowerCase()).toBe("output");
   });
 
   it("sets aria-label with count", () => {

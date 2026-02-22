@@ -48,8 +48,7 @@ class TestValidateEanChecksum:
         assert validate_ean_checksum("12345") is False
 
     def test_none_value(self) -> None:
-        # type: ignore[arg-type] — intentional bad input
-        assert validate_ean_checksum(None) is False  # type: ignore[arg-type]
+        assert validate_ean_checksum(None) is False
 
 
 # ═══════════════════════════════════════════════════════════════════════════
