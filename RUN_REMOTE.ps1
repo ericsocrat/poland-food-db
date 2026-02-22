@@ -16,18 +16,21 @@
         - Displays a warning banner before execution
         - Shows exact files that will be executed before prompting
         - All pipelines use ON CONFLICT DO UPDATE (upsert) — never drops or truncates
+        - Automatically runs BACKUP.ps1 before deployment (unless -SkipBackup)
 
 .NOTES
     Prerequisites:
         - psql available on PATH
+        - pg_dump available on PATH (for pre-deployment backup)
         - Supabase project linked: supabase link --project-ref uskvezwftkkudvksmken
-        - Remote database password available
+        - Remote database password available (SUPABASE_DB_PASSWORD env var or interactive)
 
     Usage:
-        .\RUN_REMOTE.ps1                          # Interactive confirmation
+        .\RUN_REMOTE.ps1                          # Interactive confirmation + backup
         .\RUN_REMOTE.ps1 -Category chips           # Run only chips pipeline
         .\RUN_REMOTE.ps1 -DryRun                   # Preview without executing
         .\RUN_REMOTE.ps1 -Force                    # Skip interactive prompt
+        .\RUN_REMOTE.ps1 -SkipBackup               # Skip pre-deployment backup (emergency)
 #>
 
 [CmdletBinding()]
@@ -39,7 +42,10 @@ param(
     [switch]$DryRun,
 
     [Parameter(HelpMessage = "Skip the interactive confirmation prompt. Use with caution.")]
-    [switch]$Force
+    [switch]$Force,
+
+    [Parameter(HelpMessage = "Skip the pre-deployment backup. Emergency use only.")]
+    [switch]$SkipBackup
 )
 
 # ─── Configuration ───────────────────────────────────────────────────────────
@@ -167,6 +173,37 @@ if (-not $Force) {
         Write-Host "ABORTED by user." -ForegroundColor Yellow
         exit 0
     }
+    Write-Host ""
+}
+
+# ─── Pre-Deployment Backup ───────────────────────────────────────────────────
+
+if ($SkipBackup) {
+    Write-Host "================================================================" -ForegroundColor DarkYellow
+    Write-Host "  ⚠️  BACKUP SKIPPED — -SkipBackup flag is set" -ForegroundColor DarkYellow
+    Write-Host "  Proceeding WITHOUT a pre-deployment backup." -ForegroundColor DarkYellow
+    Write-Host "  This is NOT recommended for production deployments." -ForegroundColor DarkYellow
+    Write-Host "================================================================" -ForegroundColor DarkYellow
+    Write-Host ""
+}
+else {
+    Write-Host "Creating pre-deployment backup..." -ForegroundColor Yellow
+    $backupScript = Join-Path $PSScriptRoot "BACKUP.ps1"
+    if (-not (Test-Path $backupScript)) {
+        Write-Host "ERROR: BACKUP.ps1 not found at $backupScript" -ForegroundColor Red
+        Write-Host "Cannot proceed without backup script. Use -SkipBackup to override (NOT recommended)." -ForegroundColor Yellow
+        exit 1
+    }
+    & $backupScript -Env remote
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host ""
+        Write-Host "ERROR: Pre-deployment backup FAILED (exit code $LASTEXITCODE)." -ForegroundColor Red
+        Write-Host "Deployment ABORTED — fix the backup issue or use -SkipBackup to override." -ForegroundColor Yellow
+        Write-Host ""
+        exit 1
+    }
+    Write-Host ""
+    Write-Host "Pre-deployment backup complete." -ForegroundColor Green
     Write-Host ""
 }
 
