@@ -100,16 +100,19 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#9  search_products top-level keys (9)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #10 api_search_products → result item keys (9)
+-- #10 api_search_products → result item keys (20)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
         SELECT array_agg(DISTINCT k ORDER BY k) FROM jsonb_array_elements(api_search_products('cola')->'results') r(val), jsonb_object_keys(r.val) k
     ) = ARRAY[
-        'brand','category','nova_group','nutri_score','product_id','product_name',
+        'brand','calories','category','category_display','category_icon',
+        'high_additive_load','high_salt','high_sat_fat','high_sugar',
+        'image_thumb_url','is_avoided','nova_group','nutri_score',
+        'product_id','product_name','product_name_display','product_name_en',
         'relevance','score_band','unhealthiness_score'
     ]
-    THEN 'PASS' ELSE 'FAIL' END AS "#10 search_products → item keys (9)";
+    THEN 'PASS' ELSE 'FAIL' END AS "#10 search_products → item keys (20)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #11 api_category_listing — top-level keys (9)
@@ -121,18 +124,18 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#11 category_listing top-level keys (9)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #12 api_category_listing → product item keys (19)
+-- #12 api_category_listing → product item keys (20)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
         SELECT array_agg(DISTINCT k ORDER BY k) FROM jsonb_array_elements(api_category_listing('Chips')->'products') r(val), jsonb_object_keys(r.val) k
     ) = ARRAY[
         'brand','calories','confidence','data_completeness_pct','ean',
-        'high_salt_flag','high_sat_fat_flag','high_sugar_flag','nova_group',
-        'nutri_score','processing_risk','product_id','product_name','protein_g',
-        'salt_g','score_band','sugars_g','total_fat_g','unhealthiness_score'
+        'high_salt_flag','high_sat_fat_flag','high_sugar_flag','image_thumb_url',
+        'nova_group','nutri_score','processing_risk','product_id','product_name',
+        'protein_g','salt_g','score_band','sugars_g','total_fat_g','unhealthiness_score'
     ]
-    THEN 'PASS' ELSE 'FAIL' END AS "#12 category_listing → item keys (19)";
+    THEN 'PASS' ELSE 'FAIL' END AS "#12 category_listing → item keys (20)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #13 api_score_explanation — top-level keys (10)

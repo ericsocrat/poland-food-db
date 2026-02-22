@@ -18,6 +18,7 @@ import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
+import { ProductThumbnail } from "@/components/common/ProductThumbnail";
 import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
 import { FilterPanel } from "@/components/search/FilterPanel";
 import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
@@ -706,6 +707,15 @@ function ProductRow({
           href={`/app/product/${product.product_id}`}
           className="flex flex-col gap-2 min-w-0"
         >
+          {/* Product thumbnail */}
+          <div className="mx-auto">
+            <ProductThumbnail
+              imageUrl={product.image_thumb_url}
+              productName={product.product_name_display ?? product.product_name}
+              categoryIcon={product.category_icon}
+              size="md"
+            />
+          </div>
           {/* Score + Nutri-Score row */}
           <div className="flex items-center justify-between">
             <div
@@ -763,6 +773,14 @@ function ProductRow({
         href={`/app/product/${product.product_id}`}
         className="flex flex-1 items-center gap-3 min-w-0"
       >
+        {/* Product thumbnail */}
+        <ProductThumbnail
+          imageUrl={product.image_thumb_url}
+          productName={product.product_name_display ?? product.product_name}
+          categoryIcon={product.category_icon}
+          size="sm"
+        />
+
         {/* Score badge */}
         <div className="relative flex-shrink-0">
           <div

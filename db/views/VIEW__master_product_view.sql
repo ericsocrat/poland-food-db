@@ -2,6 +2,8 @@
 -- Flat denormalized view joining products → nutrition_facts
 -- plus ingredient analytics from normalized ingredient tables.
 -- This view is already created in the schema migration (20260207000100_create_schema.sql).
+-- Updated 2026-02-22: Added image_thumb_url — primary product image URL from
+--   product_images table (correlated subquery, nullable).
 -- Updated 2026-02-22: Attribute contradiction detection — overrides vegan_status /
 --   vegetarian_status to NULL when declared allergens contradict ingredient-derived
 --   attributes. Adds vegan_contradiction / vegetarian_contradiction boolean columns.
@@ -105,6 +107,12 @@ SELECT
     p.source_type,
     p.source_url,
     p.source_ean,
+
+    -- Primary product image URL (from product_images table)
+    (SELECT img.url
+     FROM product_images img
+     WHERE img.product_id = p.product_id AND img.is_primary = true
+     LIMIT 1) AS image_thumb_url,
 
     -- Data quality indicators
     CASE
