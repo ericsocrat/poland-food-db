@@ -195,6 +195,7 @@
     "clearRecent": "Clear",
     "removeRecent": "Remove {query} from recent searches",
     "popularSearches": "Popular Searches",
+    "popularTerms": "milk,cheese,yogurt,bread,butter,sausage,ham,chocolate,chips,juice",
     "suggestions": "Suggestions",
     "whyThisScore": "Why this score?",
     "noMajorFlags": "No major health flags detected.",
