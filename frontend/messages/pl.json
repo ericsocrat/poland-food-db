@@ -38,7 +38,8 @@
     "pageOf": "Strona {page} z {pages}",
     "items": "{count} {count|element|elementy|elementów}",
     "products": "{count} {count|produkt|produkty|produktów}",
-    "allergenWarnings": "{count} {count|ostrzeżenie alergenowe|ostrzeżenia alergenowe|ostrzeżeń alergenowych}"
+    "allergenWarnings": "{count} {count|ostrzeżenie alergenowe|ostrzeżenia alergenowe|ostrzeżeń alergenowych}",
+    "dismiss": "Odrzuć"
   },
   "toast": {
     "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
@@ -66,6 +67,18 @@
     "installDescription": "Dodaj do ekranu głównego, aby mieć szybki dostęp i wsparcie offline.",
     "iosInstallHint": "Stuknij przycisk Udostępnij, a potem «Dodaj do ekranu głównego».",
     "dismissInstall": "Odrzuć komunikat instalacji"
+  },
+  "notifications": {
+    "title": "Powiadomienia push",
+    "promptTitle": "Otrzymuj powiadomienia o zmianach wyniku",
+    "promptDescription": "Włącz powiadomienia push, aby wiedzieć, kiedy wynik zdrowotny obserwowanego produktu się zmieni.",
+    "settingsDescription": "Otrzymuj powiadomienia push, gdy wynik zdrowotny obserwowanego produktu zmieni się znacząco.",
+    "enable": "Włącz powiadomienia",
+    "disable": "Wyłącz powiadomienia",
+    "enabled": "Powiadomienia push włączone",
+    "disabled": "Powiadomienia push wyłączone",
+    "permissionDenied": "Uprawnienia do powiadomień zostały odrzucone. Włącz je w ustawieniach przeglądarki.",
+    "blockedByBrowser": "Powiadomienia są zablokowane przez przeglądarkę. Zaktualizuj uprawnienia witryny, aby je włączyć."
   },
   "dashboard": {
     "title": "Panel",

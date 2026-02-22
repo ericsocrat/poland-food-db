@@ -1016,7 +1016,11 @@ export type AnalyticsEventName =
   | "preferences_updated"
   | "onboarding_completed"
   | "image_search_performed"
-  | "offline_cache_cleared";
+  | "offline_cache_cleared"
+  | "push_notification_enabled"
+  | "push_notification_disabled"
+  | "push_notification_denied"
+  | "push_notification_dismissed";
 
 export type DeviceType = "mobile" | "tablet" | "desktop";
 
@@ -1211,6 +1215,32 @@ export interface WatchlistResponse {
 export interface IsWatchingResponse {
   watching: boolean;
   threshold: number | null;
+}
+
+// ─── Push Notifications (#143) ──────────────────────────────────────────────
+
+export interface PushSubscriptionResponse {
+  success: boolean;
+  error?: string;
+}
+
+export interface PushSubscriptionDeleteResponse {
+  success: boolean;
+  deleted: boolean;
+  error?: string;
+}
+
+export interface PushSubscriptionInfo {
+  id: string;
+  endpoint: string;
+  created_at: string;
+}
+
+export interface PushSubscriptionsResponse {
+  success: boolean;
+  subscriptions: PushSubscriptionInfo[];
+  count: number;
+  error?: string;
 }
 
 // ─── Achievements (#51) ─────────────────────────────────────────────────────

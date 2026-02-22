@@ -66,6 +66,76 @@ const serwist = new Serwist({
 
 serwist.addEventListeners();
 
+// ─── Push notification handler ──────────────────────────────────────────────
+// Receives push messages from the server (via Web Push API) and shows
+// native notifications. Payload shape: { title, body, icon, badge, url, data }
+self.addEventListener("push", (event) => {
+  if (!event.data) return;
+
+  try {
+    const data = event.data.json();
+    const title = data.title ?? "Score Changed";
+    const options: NotificationOptions = {
+      body: data.body ?? "",
+      icon: data.icon ?? "/icons/icon-192x192.png",
+      badge: data.badge ?? "/icons/badge-72x72.png",
+      tag: `score-change-${data.data?.product_id ?? "unknown"}`,
+      data: { url: data.url ?? "/app/watchlist" },
+    };
+
+    event.waitUntil(self.registration.showNotification(title, options));
+  } catch (err) {
+    console.error("Push event parse error:", err);
+  }
+});
+
+// ─── Notification click handler ─────────────────────────────────────────────
+// Opens the product detail page when a push notification is tapped/clicked.
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+
+  const url = event.notification.data?.url ?? "/app/watchlist";
+
+  event.waitUntil(
+    self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((clients) => {
+      // Focus an existing tab if one matches
+      for (const client of clients) {
+        if (client.url.includes(url) && "focus" in client) {
+          return client.focus();
+        }
+      }
+      // Otherwise open a new tab
+      return self.clients.openWindow(url);
+    }),
+  );
+});
+
+// ─── Push subscription change handler ───────────────────────────────────────
+// Re-subscribes if the browser changes the push subscription.
+self.addEventListener("pushsubscriptionchange", ((event: Event) => {
+  const pushEvent = event as Event & {
+    oldSubscription?: PushSubscription;
+    newSubscription?: PushSubscription;
+    waitUntil: (promise: Promise<unknown>) => void;
+  };
+
+  pushEvent.waitUntil(
+    (async () => {
+      // If the browser provides a new subscription, post it to the main thread
+      // so the app can save it to the backend.
+      if (pushEvent.newSubscription) {
+        const allClients = await self.clients.matchAll({ type: "window" });
+        for (const client of allClients) {
+          client.postMessage({
+            type: "PUSH_SUBSCRIPTION_CHANGED",
+            subscription: pushEvent.newSubscription.toJSON(),
+          });
+        }
+      }
+    })(),
+  );
+}) as EventListener);
+
 // ─── Purge stale runtime caches on activate ─────────────────────────────────
 // Serwist's `skipWaiting` activates the new SW immediately, but does NOT clear
 // runtime-cached HTML/CSS/JS from the previous version. Without this, PWA users

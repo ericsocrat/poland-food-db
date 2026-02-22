@@ -67,6 +67,9 @@ import type {
   LinkedProduct,
   RecipeDetail,
   RecipeSummary,
+  PushSubscriptionResponse,
+  PushSubscriptionDeleteResponse,
+  PushSubscriptionsResponse,
 } from "./types";
 import type { ProductAllergenMap } from "./allergen-matching";
 
@@ -902,4 +905,45 @@ export function getProductAllergens(
   return callRpc<ProductAllergenMap>(supabase, "api_get_product_allergens", {
     p_product_ids: productIds,
   });
+}
+
+// ─── Push Notifications (#143) ──────────────────────────────────────────────
+
+export function savePushSubscription(
+  supabase: SupabaseClient,
+  endpoint: string,
+  p256dh: string,
+  auth: string,
+): Promise<RpcResult<PushSubscriptionResponse>> {
+  return callRpc<PushSubscriptionResponse>(
+    supabase,
+    "api_save_push_subscription",
+    {
+      p_endpoint: endpoint,
+      p_key_p256dh: p256dh,
+      p_key_auth: auth,
+    },
+  );
+}
+
+export function deletePushSubscription(
+  supabase: SupabaseClient,
+  endpoint: string,
+): Promise<RpcResult<PushSubscriptionDeleteResponse>> {
+  return callRpc<PushSubscriptionDeleteResponse>(
+    supabase,
+    "api_delete_push_subscription",
+    {
+      p_endpoint: endpoint,
+    },
+  );
+}
+
+export function getPushSubscriptions(
+  supabase: SupabaseClient,
+): Promise<RpcResult<PushSubscriptionsResponse>> {
+  return callRpc<PushSubscriptionsResponse>(
+    supabase,
+    "api_get_push_subscriptions",
+  );
 }
