@@ -947,3 +947,26 @@ export function getPushSubscriptions(
     "api_get_push_subscriptions",
   );
 }
+
+/* ── GDPR Data Export ──────────────────────────────────────────────────────── */
+
+export interface UserDataExport {
+  exported_at: string;
+  format_version: string;
+  user_id: string;
+  preferences: Record<string, unknown> | null;
+  health_profiles: Record<string, unknown>[];
+  product_lists: Record<string, unknown>[];
+  comparisons: Record<string, unknown>[];
+  saved_searches: Record<string, unknown>[];
+  scan_history: Record<string, unknown>[];
+  watched_products: Record<string, unknown>[];
+  product_views: Record<string, unknown>[];
+  achievements: Record<string, unknown>[];
+}
+
+export function exportUserData(
+  supabase: SupabaseClient,
+): Promise<RpcResult<UserDataExport>> {
+  return callRpc<UserDataExport>(supabase, "api_export_user_data");
+}

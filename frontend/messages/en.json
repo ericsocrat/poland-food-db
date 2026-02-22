@@ -563,7 +563,13 @@
     "offlineCache": "Offline Cache",
     "offlineCacheDescription": "{count} products cached for offline access.",
     "clearCache": "Clear offline cache",
-    "cacheCleared": "Offline cache cleared"
+    "cacheCleared": "Offline cache cleared",
+    "exportData": "Export My Data",
+    "exportDataDescription": "Download all your personal data as a JSON file (GDPR Article 20).",
+    "exportInProgress": "Preparing export…",
+    "exportSuccess": "Data exported successfully ({size})",
+    "exportCooldown": "Export available in {minutes} min",
+    "exportError": "Failed to export data. Please try again later."
   },
   "healthProfile": {
     "title": "Health Profiles",
