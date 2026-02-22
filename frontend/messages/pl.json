@@ -540,6 +540,9 @@
     "theme": "Motyw",
     "account": "Konto",
     "userId": "ID użytkownika: {id}…",
+    "accountDetails": "Szczegóły konta",
+    "copyUserId": "Kopiuj ID użytkownika",
+    "copiedToClipboard": "Skopiowano!",
     "signOut": "Wyloguj się",
     "preferencesSaved": "Preferencje zapisane!"
   },
