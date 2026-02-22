@@ -3,27 +3,23 @@
 import { useEffect, useState } from "react";
 import { WifiOff } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { useOnlineStatus } from "@/hooks/use-online-status";
+import { getCachedProductCount } from "@/lib/cache-manager";
 
 export function OfflineIndicator() {
   const { t } = useTranslation();
-  const [isOffline, setIsOffline] = useState(false);
+  const isOnline = useOnlineStatus();
+  const [cachedCount, setCachedCount] = useState(0);
 
   useEffect(() => {
-    setIsOffline(!navigator.onLine);
+    if (!isOnline) {
+      getCachedProductCount()
+        .then(setCachedCount)
+        .catch(() => setCachedCount(0));
+    }
+  }, [isOnline]);
 
-    const handleOffline = () => setIsOffline(true);
-    const handleOnline = () => setIsOffline(false);
-
-    globalThis.addEventListener("offline", handleOffline);
-    globalThis.addEventListener("online", handleOnline);
-
-    return () => {
-      globalThis.removeEventListener("offline", handleOffline);
-      globalThis.removeEventListener("online", handleOnline);
-    };
-  }, []);
-
-  if (!isOffline) return null;
+  if (isOnline) return null;
 
   return (
     <output
@@ -32,6 +28,11 @@ export function OfflineIndicator() {
     >
       <WifiOff size={14} aria-hidden="true" className="inline" />{" "}
       {t("pwa.offline")}
+      {cachedCount > 0 && (
+        <span className="ml-1">
+          — {t("pwa.cachedProductsAvailable", { count: cachedCount })}
+        </span>
+      )}
     </output>
   );
 }

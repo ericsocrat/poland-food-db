@@ -9,7 +9,7 @@ import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { getUserPreferences, setUserPreferences } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { ChevronDown, Copy, Check } from "lucide-react";
+import { ChevronDown, Copy, Check, Trash2 } from "lucide-react";
 import {
   COUNTRIES,
   COUNTRY_DEFAULT_LANGUAGES,
@@ -28,6 +28,7 @@ import {
   useLanguageStore,
   type SupportedLanguage,
 } from "@/stores/language-store";
+import { clearAllCaches, getCachedProductCount } from "@/lib/cache-manager";
 
 export default function SettingsPage() {
   const router = useRouter();
@@ -59,6 +60,8 @@ export default function SettingsPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [showDetails, setShowDetails] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [cachedCount, setCachedCount] = useState(0);
+  const [clearingCache, setClearingCache] = useState(false);
 
   // Fetch user email from auth session
   useEffect(() => {
@@ -66,6 +69,27 @@ export default function SettingsPage() {
       setEmail(data.user?.email ?? null);
     });
   }, [supabase]);
+
+  // Fetch offline cache count
+  useEffect(() => {
+    getCachedProductCount()
+      .then(setCachedCount)
+      .catch(() => setCachedCount(0));
+  }, []);
+
+  const handleClearCache = useCallback(async () => {
+    setClearingCache(true);
+    try {
+      await clearAllCaches();
+      setCachedCount(0);
+      track("offline_cache_cleared");
+      showToast({ type: "success", messageKey: "settings.cacheCleared" });
+    } catch {
+      showToast({ type: "error", messageKey: "common.error" });
+    } finally {
+      setClearingCache(false);
+    }
+  }, [track]);
 
   const handleCopyUserId = useCallback(async () => {
     if (!prefs?.user_id) return;
@@ -376,6 +400,27 @@ export default function SettingsPage() {
           {saving ? t("common.saving") : t("settings.saveChanges")}
         </button>
       )}
+
+      {/* Offline Cache */}
+      <section className="card">
+        <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
+          {t("settings.offlineCache")}
+        </h2>
+        <p className="mb-3 text-sm text-foreground-secondary">
+          {t("settings.offlineCacheDescription", { count: cachedCount })}
+        </p>
+        <button
+          type="button"
+          onClick={handleClearCache}
+          disabled={clearingCache || cachedCount === 0}
+          className="inline-flex items-center gap-2 rounded-lg border border-amber-200 px-4 py-2 text-sm font-medium text-amber-700 transition-colors hover:bg-amber-50 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <Trash2 size={14} aria-hidden="true" />
+          {clearingCache
+            ? t("common.loading")
+            : t("settings.clearCache")}
+        </button>
+      </section>
 
       {/* Account section */}
       <section className="card border-red-100">

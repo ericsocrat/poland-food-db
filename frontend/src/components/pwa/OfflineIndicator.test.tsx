@@ -2,6 +2,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import { OfflineIndicator } from "./OfflineIndicator";
 
+// Mock cache-manager to avoid IndexedDB issues in component tests
+vi.mock("@/lib/cache-manager", () => ({
+  getCachedProductCount: vi.fn().mockResolvedValue(0),
+}));
+
 describe("OfflineIndicator", () => {
   let originalOnLine: boolean;
 
@@ -58,6 +63,11 @@ describe("OfflineIndicator", () => {
     expect(screen.queryByRole("status")).toBeNull();
 
     act(() => {
+      Object.defineProperty(navigator, "onLine", {
+        value: false,
+        writable: true,
+        configurable: true,
+      });
       window.dispatchEvent(new Event("offline"));
     });
     expect(screen.getByRole("status")).toBeInTheDocument();
@@ -73,12 +83,17 @@ describe("OfflineIndicator", () => {
     expect(screen.getByRole("status")).toBeInTheDocument();
 
     act(() => {
+      Object.defineProperty(navigator, "onLine", {
+        value: true,
+        writable: true,
+        configurable: true,
+      });
       window.dispatchEvent(new Event("online"));
     });
     expect(screen.queryByRole("status")).toBeNull();
   });
 
-  it("cleans up event listeners on unmount", () => {
+  it("subscribes and unsubscribes event listeners via hook", () => {
     const addSpy = vi.spyOn(window, "addEventListener");
     const removeSpy = vi.spyOn(window, "removeEventListener");
 
@@ -90,13 +105,14 @@ describe("OfflineIndicator", () => {
 
     const { unmount } = render(<OfflineIndicator />);
 
-    expect(addSpy).toHaveBeenCalledWith("offline", expect.any(Function));
+    // useOnlineStatus subscribes to both events
     expect(addSpy).toHaveBeenCalledWith("online", expect.any(Function));
+    expect(addSpy).toHaveBeenCalledWith("offline", expect.any(Function));
 
     unmount();
 
-    expect(removeSpy).toHaveBeenCalledWith("offline", expect.any(Function));
     expect(removeSpy).toHaveBeenCalledWith("online", expect.any(Function));
+    expect(removeSpy).toHaveBeenCalledWith("offline", expect.any(Function));
 
     addSpy.mockRestore();
     removeSpy.mockRestore();
