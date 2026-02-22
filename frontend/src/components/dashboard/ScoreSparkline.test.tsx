@@ -19,9 +19,9 @@ describe("ScoreSparkline", () => {
     const modBar = screen.getByTestId("sparkline-bar-moderate");
     const highBar = screen.getByTestId("sparkline-bar-high");
 
-    // low has 3 (max) → full height (40px), moderate has 1 → 1/3 height
-    expect(Number(lowBar.getAttribute("height"))).toBe(40);
-    expect(Number(modBar.getAttribute("height"))).toBeCloseTo(40 / 3, 0);
+    // low has 3 (max) → full height (80px), moderate has 1 → 1/3 height
+    expect(Number(lowBar.getAttribute("height"))).toBe(80);
+    expect(Number(modBar.getAttribute("height"))).toBeCloseTo(80 / 3, 0);
     // high has 0 count → 0 height
     expect(Number(highBar.getAttribute("height"))).toBe(0);
   });
@@ -64,5 +64,33 @@ describe("ScoreSparkline", () => {
     render(<ScoreSparkline scores={[10]} />);
     const lowBar = screen.getByTestId("sparkline-bar-low");
     expect(lowBar).toHaveAttribute("opacity", "1");
+  });
+
+  // ─── Chart readability improvements (#135) ─────────────────────────────
+
+  it("renders count labels on bars with data", () => {
+    render(<ScoreSparkline scores={[10, 15, 30]} />);
+    // low has 2 items (10, 15), moderate has 1 (30)
+    expect(screen.getByTestId("sparkline-count-low")).toHaveTextContent("2");
+    expect(screen.getByTestId("sparkline-count-moderate")).toHaveTextContent("1");
+    // high has 0 → no count label
+    expect(screen.queryByTestId("sparkline-count-high")).not.toBeInTheDocument();
+  });
+
+  it("renders band range labels below bars", () => {
+    render(<ScoreSparkline scores={[10, 30, 55, 80]} />);
+    expect(screen.getByTestId("sparkline-label-low")).toHaveTextContent("0–25");
+    expect(screen.getByTestId("sparkline-label-moderate")).toHaveTextContent("26–50");
+    expect(screen.getByTestId("sparkline-label-high")).toHaveTextContent("51–75");
+    expect(screen.getByTestId("sparkline-label-very_high")).toHaveTextContent("76–100");
+  });
+
+  it("has aria-describedby with band counts", () => {
+    render(<ScoreSparkline scores={[10, 80]} />);
+    const svg = screen.getByTestId("score-sparkline").querySelector("svg")!;
+    expect(svg).toHaveAttribute("aria-describedby", "sparkline-desc");
+    const desc = svg.querySelector("desc")!;
+    expect(desc.textContent).toContain("0–25: 1");
+    expect(desc.textContent).toContain("76–100: 1");
   });
 });
