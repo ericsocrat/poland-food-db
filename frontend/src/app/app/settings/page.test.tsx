@@ -117,6 +117,17 @@ describe("SettingsPage", () => {
     });
   });
 
+  it("renders HealthProfileSection exactly once", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("health-profile-section")).toBeInTheDocument();
+    });
+
+    const sections = screen.getAllByTestId("health-profile-section");
+    expect(sections).toHaveLength(1);
+  });
+
   it("renders sign out button", async () => {
     render(<SettingsPage />, { wrapper: createWrapper() });
 

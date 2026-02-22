@@ -87,6 +87,26 @@ describe("HealthProfileSection", () => {
     expect(screen.getByText("Loading…")).toBeInTheDocument();
   });
 
+  it("renders exactly one health-profile-section element during loading", () => {
+    mockListHealthProfiles.mockReturnValue(new Promise(() => {}));
+    render(<HealthProfileSection />, { wrapper: createWrapper() });
+    expect(screen.getAllByTestId("health-profile-section")).toHaveLength(1);
+  });
+
+  it("renders exactly one health-profile-section element after load", async () => {
+    mockListHealthProfiles.mockResolvedValue(
+      okResult<HealthProfileListResponse>({
+        api_version: "1",
+        profiles: [],
+      }),
+    );
+    render(<HealthProfileSection />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText(/No health profiles yet/)).toBeInTheDocument();
+    });
+    expect(screen.getAllByTestId("health-profile-section")).toHaveLength(1);
+  });
+
   // ─── Empty state ────────────────────────────────────────────────────
 
   it("shows empty state when no profiles exist", async () => {
