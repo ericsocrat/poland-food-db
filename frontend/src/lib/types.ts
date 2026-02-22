@@ -445,6 +445,8 @@ export interface ProfileIngredients {
   has_palm_oil: boolean;
   vegan_status: string | null;
   vegetarian_status: string | null;
+  vegan_contradiction: boolean;
+  vegetarian_contradiction: boolean;
   ingredients_text: string | null;
   top_ingredients: {
     ingredient_id: number;

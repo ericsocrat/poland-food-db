@@ -2,6 +2,11 @@
 -- Flat denormalized view joining products → nutrition_facts
 -- plus ingredient analytics from normalized ingredient tables.
 -- This view is already created in the schema migration (20260207000100_create_schema.sql).
+-- Updated 2026-02-22: Attribute contradiction detection — overrides vegan_status /
+--   vegetarian_status to NULL when declared allergens contradict ingredient-derived
+--   attributes. Adds vegan_contradiction / vegetarian_contradiction boolean columns.
+--   Allergen lateral join gains has_animal_allergen / has_meat_fish_allergen flags.
+-- Updated 2026-02-16: Phase 4 European expansion — added name_translations column.
 -- Updated 2026-02-13: Optimized allergen/trace subqueries — moved 4 correlated subqueries
 --   into a single LEFT JOIN LATERAL on product_allergen_info with conditional aggregation.
 -- Updated 2026-02-12: Schema consolidation — servings, scores, product_sources removed as
@@ -68,8 +73,27 @@ SELECT
     ingr.ingredient_count,
     ingr.additive_names,
     ingr.has_palm_oil,
-    ingr.vegan_status,
-    ingr.vegetarian_status,
+
+    -- Vegan / vegetarian — override to NULL when allergens contradict
+    CASE
+        WHEN ingr.vegan_status = 'yes'
+             AND COALESCE(agg_ai.has_animal_allergen, false)
+        THEN NULL
+        ELSE ingr.vegan_status
+    END AS vegan_status,
+
+    CASE
+        WHEN ingr.vegetarian_status = 'yes'
+             AND COALESCE(agg_ai.has_meat_fish_allergen, false)
+        THEN NULL
+        ELSE ingr.vegetarian_status
+    END AS vegetarian_status,
+
+    -- Contradiction flags (for frontend warnings)
+    (ingr.vegan_status = 'yes'
+        AND COALESCE(agg_ai.has_animal_allergen, false)) AS vegan_contradiction,
+    (ingr.vegetarian_status = 'yes'
+        AND COALESCE(agg_ai.has_meat_fish_allergen, false)) AS vegetarian_contradiction,
 
     -- Allergen/trace (from unified product_allergen_info table — single-scan aggregation)
     COALESCE(agg_ai.allergen_count, 0) AS allergen_count,
@@ -130,7 +154,14 @@ LEFT JOIN LATERAL (
         COUNT(*) FILTER (WHERE ai.type = 'contains')::integer AS allergen_count,
         STRING_AGG(ai.tag, ', ' ORDER BY ai.tag) FILTER (WHERE ai.type = 'contains') AS allergen_tags,
         COUNT(*) FILTER (WHERE ai.type = 'traces')::integer AS trace_count,
-        STRING_AGG(ai.tag, ', ' ORDER BY ai.tag) FILTER (WHERE ai.type = 'traces') AS trace_tags
+        STRING_AGG(ai.tag, ', ' ORDER BY ai.tag) FILTER (WHERE ai.type = 'traces') AS trace_tags,
+        -- Contradiction detection flags
+        BOOL_OR(ai.type = 'contains' AND ai.tag IN (
+            'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans', 'en:molluscs'
+        )) AS has_animal_allergen,
+        BOOL_OR(ai.type = 'contains' AND ai.tag IN (
+            'en:fish', 'en:crustaceans', 'en:molluscs'
+        )) AS has_meat_fish_allergen
     FROM public.product_allergen_info ai
     WHERE ai.product_id = p.product_id
 ) agg_ai ON true

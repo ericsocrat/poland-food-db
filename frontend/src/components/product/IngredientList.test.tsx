@@ -48,6 +48,8 @@ function makeIngredients(
     has_palm_oil: false,
     vegan_status: "yes",
     vegetarian_status: "yes",
+    vegan_contradiction: false,
+    vegetarian_contradiction: false,
     ingredients_text: "water, sugar, citric acid (E330), salt, flavouring",
     top_ingredients: [
       {
@@ -87,6 +89,8 @@ function emptyIngredients(): ProfileIngredients {
     has_palm_oil: false,
     vegan_status: null,
     vegetarian_status: null,
+    vegan_contradiction: false,
+    vegetarian_contradiction: false,
     ingredients_text: null,
     top_ingredients: [],
   };
@@ -293,5 +297,64 @@ describe("IngredientList", () => {
     expect(
       screen.queryByText("product.noIngredientData"),
     ).not.toBeInTheDocument();
+  });
+
+  // ── Contradiction warnings ──────────────────────────────────────────────
+
+  it("shows vegan contradiction warning when vegan_contradiction is true", () => {
+    render(
+      <IngredientList
+        ingredients={makeIngredients({
+          vegan_status: null,
+          vegan_contradiction: true,
+        })}
+      />,
+    );
+    const alert = screen.getAllByRole("alert")[0];
+    expect(alert).toBeInTheDocument();
+    expect(alert.textContent).toContain("product.veganContradiction");
+  });
+
+  it("shows vegetarian contradiction warning when vegetarian_contradiction is true", () => {
+    render(
+      <IngredientList
+        ingredients={makeIngredients({
+          vegetarian_status: null,
+          vegetarian_contradiction: true,
+        })}
+      />,
+    );
+    const alerts = screen.getAllByRole("alert");
+    const vegAlert = alerts.find((a) =>
+      a.textContent?.includes("product.vegetarianContradiction"),
+    );
+    expect(vegAlert).toBeDefined();
+  });
+
+  it("shows both contradiction warnings simultaneously", () => {
+    render(
+      <IngredientList
+        ingredients={makeIngredients({
+          vegan_status: null,
+          vegetarian_status: null,
+          vegan_contradiction: true,
+          vegetarian_contradiction: true,
+        })}
+      />,
+    );
+    const alerts = screen.getAllByRole("alert");
+    expect(alerts).toHaveLength(2);
+  });
+
+  it("does not show contradiction warnings when flags are false", () => {
+    render(
+      <IngredientList
+        ingredients={makeIngredients({
+          vegan_contradiction: false,
+          vegetarian_contradiction: false,
+        })}
+      />,
+    );
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
   });
 });

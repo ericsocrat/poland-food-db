@@ -1,11 +1,33 @@
 """Cross-validation layer for Open Food Facts product data.
 
 Validates fetched products against category reference ranges derived from
-Polish government nutritional data (IŻŻ / NCEZ) and performs EAN-13
-checksum verification.
+Polish government nutritional data (IŻŻ / NCEZ), performs EAN-13
+checksum verification, and detects attribute contradictions between
+ingredient-derived flags and declared allergens.
 """
 
 from __future__ import annotations
+
+
+# ---------------------------------------------------------------------------
+# Allergen tag sets used for contradiction detection
+# ---------------------------------------------------------------------------
+
+#: Allergens that indicate animal-derived ingredients — contradicts vegan
+ANIMAL_ALLERGEN_TAGS: frozenset[str] = frozenset({
+    "en:milk",
+    "en:eggs",
+    "en:fish",
+    "en:crustaceans",
+    "en:molluscs",
+})
+
+#: Allergens that indicate meat / fish / seafood — contradicts vegetarian
+MEAT_FISH_ALLERGEN_TAGS: frozenset[str] = frozenset({
+    "en:fish",
+    "en:crustaceans",
+    "en:molluscs",
+})
 
 
 # ---------------------------------------------------------------------------
@@ -127,6 +149,72 @@ def check_nutrition_ranges(product: dict, category: str) -> list[str]:
 
 
 # ---------------------------------------------------------------------------
+# Attribute contradiction checks
+# ---------------------------------------------------------------------------
+
+
+def check_attribute_contradictions(product: dict) -> list[str]:
+    """Detect contradictions between ingredient-derived attributes and allergens.
+
+    Checks for logical inconsistencies such as a product claiming to be
+    vegan while declaring animal-derived allergens (milk, eggs, etc.).
+
+    Parameters
+    ----------
+    product:
+        A normalised product dict.  Expected keys:
+
+        * ``allergen_tags`` — comma-separated allergen tag string
+          (e.g. ``"en:milk, en:eggs"``) or list of tag strings.
+        * ``vegan_status`` — ``'yes'``, ``'no'``, ``'maybe'``, or *None*.
+        * ``vegetarian_status`` — same values.
+
+    Returns
+    -------
+    list[str]
+        Human-readable warning messages for each detected contradiction.
+    """
+    warnings: list[str] = []
+
+    # Parse allergen tags into a set
+    raw_tags = product.get("allergen_tags", "")
+    if isinstance(raw_tags, list):
+        allergen_set = {t.strip() for t in raw_tags if t}
+    elif isinstance(raw_tags, str) and raw_tags.strip():
+        allergen_set = {t.strip() for t in raw_tags.split(",")}
+    else:
+        allergen_set = set()
+
+    vegan = product.get("vegan_status")
+    vegetarian = product.get("vegetarian_status")
+
+    # 1. Vegan + animal allergens
+    animal_hits = allergen_set & ANIMAL_ALLERGEN_TAGS
+    if vegan == "yes" and animal_hits:
+        warnings.append(
+            f"vegan_status is 'yes' but product declares animal allergens: "
+            f"{', '.join(sorted(animal_hits))}"
+        )
+
+    # 2. Vegetarian + meat/fish allergens
+    meat_hits = allergen_set & MEAT_FISH_ALLERGEN_TAGS
+    if vegetarian == "yes" and meat_hits:
+        warnings.append(
+            f"vegetarian_status is 'yes' but product declares meat/fish allergens: "
+            f"{', '.join(sorted(meat_hits))}"
+        )
+
+    # 3. Logical impossibility: vegan but not vegetarian
+    if vegan == "yes" and vegetarian == "no":
+        warnings.append(
+            "vegan_status is 'yes' but vegetarian_status is 'no' — "
+            "all vegan products must also be vegetarian"
+        )
+
+    return warnings
+
+
+# ---------------------------------------------------------------------------
 # Main validation entry point
 # ---------------------------------------------------------------------------
 
@@ -163,6 +251,10 @@ def validate_product(product: dict, category: str) -> dict:
     # Nutrition range check
     range_warnings = check_nutrition_ranges(product, category)
     warnings.extend(range_warnings)
+
+    # Attribute contradiction check
+    contradiction_warnings = check_attribute_contradictions(product)
+    warnings.extend(contradiction_warnings)
 
     result["validation_warnings"] = warnings
 
