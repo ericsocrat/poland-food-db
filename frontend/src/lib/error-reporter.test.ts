@@ -2,6 +2,14 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { buildErrorReport, reportBoundaryError } from "./error-reporter";
 import type { ErrorInfo } from "react";
 
+// ─── Mocks ──────────────────────────────────────────────────────────────────
+
+vi.mock("@sentry/nextjs", () => ({
+  captureException: vi.fn(),
+}));
+
+import * as Sentry from "@sentry/nextjs";
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function makeError(message: string): Error {
@@ -124,5 +132,30 @@ describe("reportBoundaryError", () => {
     const report = reportBoundaryError(error, makeErrorInfo());
     expect(report.message).toBe("No stack");
     expect(report.stack).toBeUndefined();
+  });
+
+  it("calls Sentry.captureException with error and context", () => {
+    const error = makeError("Sentry report test");
+    const errorInfo = makeErrorInfo("\n  at BrokenWidget");
+    reportBoundaryError(error, errorInfo, { level: "section", ean: "123" });
+
+    expect(Sentry.captureException).toHaveBeenCalledWith(error, {
+      contexts: {
+        react: { componentStack: "\n  at BrokenWidget" },
+        app: { level: "section", ean: "123" },
+      },
+    });
+  });
+
+  it("calls Sentry.captureException even without context", () => {
+    const error = makeError("No context");
+    reportBoundaryError(error, makeErrorInfo());
+
+    expect(Sentry.captureException).toHaveBeenCalledWith(error, {
+      contexts: {
+        react: { componentStack: "\n  at TestComponent" },
+        app: {},
+      },
+    });
   });
 });

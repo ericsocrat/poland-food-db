@@ -1,3 +1,4 @@
+import { withSentryConfig } from "@sentry/nextjs";
 import withSerwistInit from "@serwist/next";
 import type { NextConfig } from "next";
 import { IMAGE_POLICY_CSP_DIRECTIVES } from "./src/lib/image-policy/enforcement";
@@ -19,7 +20,7 @@ const cspValue = [
   `script-src 'self' 'unsafe-eval' 'unsafe-inline'`,
   `style-src 'self' 'unsafe-inline'`,
   `img-src ${IMAGE_POLICY_CSP_DIRECTIVES.imgSrc}`,
-  `connect-src ${IMAGE_POLICY_CSP_DIRECTIVES.connectSrc}`,
+  `connect-src ${IMAGE_POLICY_CSP_DIRECTIVES.connectSrc} https://*.ingest.sentry.io`,
   `worker-src ${IMAGE_POLICY_CSP_DIRECTIVES.workerSrc}`,
   `form-action ${IMAGE_POLICY_CSP_DIRECTIVES.formAction}`,
   `frame-ancestors 'none'`,
@@ -110,4 +111,25 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default withSerwist(nextConfig);
+// Wrap with Serwist (PWA service worker) then Sentry (error telemetry #183)
+export default withSentryConfig(withSerwist(nextConfig), {
+  // Sentry build-time options
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  authToken: process.env.SENTRY_AUTH_TOKEN,
+
+  // Upload source maps to Sentry, then delete from build output
+  sourcemaps: {
+    deleteSourcemapsAfterUpload: true,
+  },
+
+  silent: !process.env.CI,
+
+  // Disable Sentry telemetry about its own SDK usage
+  telemetry: false,
+
+  // Tree-shake Sentry debug logging in production
+  bundleSizeOptimizations: {
+    excludeDebugStatements: true,
+  },
+});

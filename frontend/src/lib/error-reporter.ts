@@ -1,11 +1,12 @@
 // ─── Error Reporter — Structured error logging for Error Boundaries ────────
 // Captures component errors with context (component stack, URL, product data)
-// and logs them in development. Production: ready for telemetry integration (#25).
+// and logs them in development. Production: reports to Sentry (#183).
 //
 // Usage:
 //   import { reportBoundaryError } from "@/lib/error-reporter";
 //   reportBoundaryError(error, errorInfo, { ean: "5900617043375" });
 
+import * as Sentry from "@sentry/nextjs";
 import type { ErrorInfo } from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -66,8 +67,13 @@ export function reportBoundaryError(
     console.error("[ErrorBoundary]", report);
   }
 
-  // Production: send to telemetry when #25 is implemented.
-  // Example: analytics.trackError(report);
+  // Production: send to Sentry telemetry (#183)
+  Sentry.captureException(error, {
+    contexts: {
+      react: { componentStack: errorInfo.componentStack },
+      app: context,
+    },
+  });
 
   return report;
 }
