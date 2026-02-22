@@ -132,7 +132,16 @@ SELECT
                   OR nf.sugars_g <= nf.carbs_g)
         THEN 'clean'
         ELSE 'suspect'
-    END AS nutrition_data_quality
+    END AS nutrition_data_quality,
+
+    -- Phase 2: Product English name + provenance + timestamps
+    p.product_name_en,
+    p.product_name_en_source,
+    p.created_at,
+    p.updated_at,
+
+    -- Phase 4: Cross-border translations
+    p.name_translations
 
 FROM public.products p
 LEFT JOIN public.nutrition_facts nf ON nf.product_id = p.product_id

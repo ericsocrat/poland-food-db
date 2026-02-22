@@ -25,8 +25,13 @@ BEGIN;
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- 1. v_master — add contradiction detection
 -- ═══════════════════════════════════════════════════════════════════════════════
+-- NOTE: DROP + CREATE (not CREATE OR REPLACE) because new columns
+-- (vegan_contradiction, vegetarian_contradiction) are inserted before
+-- allergen_count, changing existing column positions. PostgreSQL's
+-- CREATE OR REPLACE VIEW cannot rename columns at existing positions.
 
-CREATE OR REPLACE VIEW public.v_master AS
+DROP VIEW IF EXISTS public.v_master;
+CREATE VIEW public.v_master AS
 SELECT
     p.product_id,
     p.country,
