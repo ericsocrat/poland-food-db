@@ -1020,7 +1020,10 @@ export type AnalyticsEventName =
   | "push_notification_enabled"
   | "push_notification_disabled"
   | "push_notification_denied"
-  | "push_notification_dismissed";
+  | "push_notification_dismissed"
+  | "pwa_install_prompted"
+  | "pwa_install_accepted"
+  | "pwa_install_dismissed";
 
 export type DeviceType = "mobile" | "tablet" | "desktop";
 
