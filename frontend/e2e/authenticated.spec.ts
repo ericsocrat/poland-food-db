@@ -133,6 +133,9 @@ test.describe("Search page", () => {
     await page.reload({ waitUntil: "networkidle" });
 
     const input = page.getByPlaceholder(/search products/i);
+    // autoFocus may have focused the input before React hydrates,
+    // so blur first to guarantee the subsequent focus fires the event.
+    await input.blur();
     await input.focus();
 
     // Recent searches section should appear
