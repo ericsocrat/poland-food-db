@@ -19,21 +19,6 @@ import {
 import type { AutocompleteSuggestion } from "@/lib/types";
 import { useTranslation } from "@/lib/i18n";
 
-// ─── Curated popular searches (Phase 4 of #62) ─────────────────────────────
-
-const POPULAR_SEARCHES = [
-  "mleko",
-  "ser",
-  "jogurt",
-  "chleb",
-  "masło",
-  "kiełbasa",
-  "szynka",
-  "czekolada",
-  "chipsy",
-  "sok",
-];
-
 // ─── Text highlight helper (#62) ────────────────────────────────────────────
 
 /**
@@ -140,6 +125,7 @@ export function SearchAutocomplete({
   onActiveIdChange,
 }: Readonly<SearchAutocompleteProps>) {
   const { t } = useTranslation();
+  const popularSearches = useMemo(() => t("search.popularTerms").split(","), [t]);
   const supabase = createClient();
   const router = useRouter();
   const debouncedQuery = useDebounce(query, 200);
@@ -176,7 +162,7 @@ export function SearchAutocomplete({
     if (isQueryMode) return suggestions.length + 1; // +1 for "Search for…" footer
     let count = 0;
     if (showRecent) count += recentSearches.length;
-    if (showPopular) count += POPULAR_SEARCHES.length;
+    if (showPopular) count += popularSearches.length;
     return count;
   })();
 
@@ -239,8 +225,8 @@ export function SearchAutocomplete({
               onQuerySubmit(recentSearches[activeIndex]);
             } else if (showPopular) {
               const popIdx = activeIndex - popularIndexOffset;
-              if (popIdx >= 0 && popIdx < POPULAR_SEARCHES.length) {
-                onQuerySubmit(POPULAR_SEARCHES[popIdx]);
+              if (popIdx >= 0 && popIdx < popularSearches.length) {
+                onQuerySubmit(popularSearches[popIdx]);
               }
             }
           }
@@ -263,6 +249,7 @@ export function SearchAutocomplete({
       showRecent,
       showPopular,
       popularIndexOffset,
+      popularSearches,
       onSelect,
       onQuerySubmit,
       onClose,
@@ -390,7 +377,7 @@ export function SearchAutocomplete({
             </span>
           </div>
           <ul>
-            {POPULAR_SEARCHES.map((q, i) => {
+            {popularSearches.map((q, i) => {
               const idx = popularIndexOffset + i;
               return (
                 <li

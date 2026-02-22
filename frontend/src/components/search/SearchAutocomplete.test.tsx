@@ -10,6 +10,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { SearchAutocomplete } from "./SearchAutocomplete";
 import { RECENT_SEARCHES_KEY } from "@/lib/recent-searches";
+import { useLanguageStore } from "@/stores/language-store";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -95,6 +96,8 @@ const defaultProps = {
 beforeEach(() => {
   vi.clearAllMocks();
   localStorage.clear();
+  // Reset language to default (en)
+  useLanguageStore.getState().reset();
   // jsdom doesn't implement scrollIntoView — polyfill for keyboard nav tests
   Element.prototype.scrollIntoView = vi.fn();
   mockSearchAutocomplete.mockResolvedValue({
@@ -241,7 +244,7 @@ describe("SearchAutocomplete", () => {
   // ─── Recent searches section tests ──────────────────────────────────────
 
   it("shows recent searches section when localStorage has data", () => {
-    // Use terms NOT in POPULAR_SEARCHES to avoid duplicate text nodes
+    // Use terms NOT in popular searches to avoid duplicate text nodes
     localStorage.setItem(
       RECENT_SEARCHES_KEY,
       JSON.stringify(["piwo", "kawa", "herbata"]),
@@ -266,8 +269,8 @@ describe("SearchAutocomplete", () => {
     expect(screen.getByText("Popular Searches")).toBeInTheDocument();
     // Recent items present
     expect(screen.getByText("piwo")).toBeInTheDocument();
-    // Popular items present — "chleb" is a popular search not in recents
-    expect(screen.getByText("chleb")).toBeInTheDocument();
+    // Popular items present — "bread" is a popular search not in recents
+    expect(screen.getByText("bread")).toBeInTheDocument();
     // Separator border between sections
     const popularHeader = screen.getByText("Popular Searches").closest("div");
     expect(popularHeader?.className).toContain("border-t");
@@ -463,7 +466,7 @@ describe("SearchAutocomplete", () => {
       latestHandler(onInputKeyDown)(fakeKey("Enter") as React.KeyboardEvent);
     });
 
-    expect(onQuerySubmit).toHaveBeenCalledWith("mleko");
+    expect(onQuerySubmit).toHaveBeenCalledWith("milk");
     expect(onClose).toHaveBeenCalled();
   });
 
@@ -585,5 +588,51 @@ describe("SearchAutocomplete", () => {
 
     expect(onQuerySubmit).toHaveBeenCalledWith("lay");
     expect(onClose).toHaveBeenCalled();
+  });
+
+  // ─── Language-specific popular searches (#133) ────────────────────────────
+
+  describe("popular search term translation", () => {
+    it("renders English popular searches when language is EN", () => {
+      useLanguageStore.getState().reset(); // default: en
+      render(
+        <SearchAutocomplete {...defaultProps} query="" />,
+        { wrapper: createWrapper() },
+      );
+      expect(screen.getByText("milk")).toBeInTheDocument();
+      expect(screen.getByText("cheese")).toBeInTheDocument();
+      expect(screen.getByText("yogurt")).toBeInTheDocument();
+      expect(screen.getByText("bread")).toBeInTheDocument();
+      expect(screen.getByText("juice")).toBeInTheDocument();
+    });
+
+    it("renders Polish popular searches when language is PL", () => {
+      useLanguageStore.getState().setLanguage("pl");
+      render(
+        <SearchAutocomplete {...defaultProps} query="" />,
+        { wrapper: createWrapper() },
+      );
+      expect(screen.getByText("mleko")).toBeInTheDocument();
+      expect(screen.getByText("ser")).toBeInTheDocument();
+      expect(screen.getByText("jogurt")).toBeInTheDocument();
+      expect(screen.getByText("chleb")).toBeInTheDocument();
+      expect(screen.getByText("sok")).toBeInTheDocument();
+    });
+
+    it("updates popular searches when language changes", () => {
+      const { rerender } = render(
+        <SearchAutocomplete {...defaultProps} query="" />,
+        { wrapper: createWrapper() },
+      );
+      // Initially English
+      expect(screen.getByText("milk")).toBeInTheDocument();
+
+      // Switch to Polish
+      act(() => { useLanguageStore.getState().setLanguage("pl"); });
+      rerender(
+        <SearchAutocomplete {...defaultProps} query="" />,
+      );
+      expect(screen.getByText("mleko")).toBeInTheDocument();
+    });
   });
 });
