@@ -12,6 +12,7 @@ import {
   WARNING_SEVERITY,
   SCORE_INTERPRETATION_BANDS,
   TRAFFIC_LIGHT_NUTRIENTS,
+  FEATURES,
   getScoreInterpretation,
 } from "@/lib/constants";
 
@@ -231,5 +232,11 @@ describe("TRAFFIC_LIGHT_NUTRIENTS", () => {
       expect(n.nutrient).toBeTruthy();
       expect(n.labelKey).toMatch(/^product\./);
     }
+  });
+});
+
+describe("FEATURES", () => {
+  it("has ECO_SCORE set to false by default", () => {
+    expect(FEATURES.ECO_SCORE).toBe(false);
   });
 });

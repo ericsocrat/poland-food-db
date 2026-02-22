@@ -5,7 +5,17 @@ import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import ProductDetailPage from "./page";
 
+// ─── Feature-flag control (hoisted so vi.mock factory can reference it) ─────
+const { features } = vi.hoisted(() => ({
+  features: { ECO_SCORE: false },
+}));
+
 // ─── Mocks ──────────────────────────────────────────────────────────────────
+
+vi.mock("@/lib/constants", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/constants")>();
+  return { ...actual, FEATURES: features };
+});
 
 vi.mock("next/navigation", () => ({
   useParams: () => ({ id: "42" }),
@@ -247,6 +257,7 @@ function makeProfile(overrides: Record<string, unknown> = {}) {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  features.ECO_SCORE = false; // reset to default before each test
 });
 
 describe("ProductDetailPage", () => {
@@ -1193,9 +1204,30 @@ describe("ProductDetailPage", () => {
     });
   });
 
-  // ── 4.3 Eco-Score placeholder ─────────────────────────────────────────
+  // ── 4.3 Eco-Score placeholder (feature-flagged) ────────────────────────
 
-  it("renders eco-score placeholder in overview tab", async () => {
+  it("hides eco-score placeholder when FEATURES.ECO_SCORE is false", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    // Wait for the page to fully render (allergens prove overview tab loaded)
+    await waitFor(() => {
+      expect(screen.getByText("Allergens")).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByText(/Environmental Impact/),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.queryByText(/Eco-Score data coming soon/),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows eco-score placeholder when FEATURES.ECO_SCORE is true", async () => {
+    features.ECO_SCORE = true;
     mockGetProductProfile.mockResolvedValue({
       ok: true,
       data: makeProfile(),

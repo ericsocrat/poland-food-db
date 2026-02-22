@@ -14,6 +14,7 @@ import { getProductProfile, recordProductView } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import {
   SCORE_BANDS,
+  FEATURES,
   scoreBandFromScore,
   getScoreInterpretation,
 } from "@/lib/constants";
@@ -465,22 +466,24 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       {/* Data quality */}
       <DataQualityCard quality={profile.quality} />
 
-      {/* Eco-Score placeholder */}
-      <div className="card">
-        <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground-secondary lg:text-base">
-          <Globe size={16} aria-hidden="true" /> {t("product.ecoScoreTitle")}
-        </h3>
-        <div className="flex items-center gap-2 rounded-lg border border-dashed border-blue-200 bg-blue-50/50 px-3 py-3">
-          <Info
-            size={18}
-            className="flex-shrink-0 text-blue-600"
-            aria-hidden="true"
-          />
-          <p className="text-sm text-blue-700">
-            {t("product.ecoScoreComingSoon")}
-          </p>
+      {/* Eco-Score placeholder – hidden until FEATURES.ECO_SCORE is enabled */}
+      {FEATURES.ECO_SCORE && (
+        <div className="card">
+          <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-foreground-secondary lg:text-base">
+            <Globe size={16} aria-hidden="true" /> {t("product.ecoScoreTitle")}
+          </h3>
+          <div className="flex items-center gap-2 rounded-lg border border-dashed border-blue-200 bg-blue-50/50 px-3 py-3">
+            <Info
+              size={18}
+              className="flex-shrink-0 text-blue-600"
+              aria-hidden="true"
+            />
+            <p className="text-sm text-blue-700">
+              {t("product.ecoScoreComingSoon")}
+            </p>
+          </div>
         </div>
-      </div>
+      )}
 
       {/* Product image gallery */}
       <ProductImageTabs
