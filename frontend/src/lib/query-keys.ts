@@ -140,6 +140,9 @@ export const queryKeys = {
   /** Products matching a recipe ingredient (#54) */
   ingredientProducts: (ingredientId: string) =>
     ["ingredient-products", ingredientId] as const,
+
+  /** Admin monitoring health check (#119) */
+  adminHealth: ["admin-health"] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -258,4 +261,7 @@ export const staleTimes = {
 
   /** Ingredient→product matches — 10 min (curated links, changes rarely) */
   ingredientProducts: 10 * 60 * 1000,
+
+  /** Admin health check — 30 sec (auto-refresh every 60s, but allow re-fetch) */
+  adminHealth: 30 * 1000,
 } as const;

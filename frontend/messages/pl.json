@@ -837,6 +837,17 @@
     "approve": "✅ Zatwierdź",
     "reject": "❌ Odrzuć"
   },
+  "monitoring": {
+    "title": "Monitoring systemu",
+    "subtitle": "Stan bazy danych, aktualność widoków zmaterializowanych i metryki pojemności",
+    "overallStatus": "Status ogólny",
+    "lastChecked": "Ostatnie sprawdzenie",
+    "mvStaleness": "Aktualność widoków zmaterializowanych",
+    "rowCounts": "Pojemność wierszy",
+    "loadFailed": "Nie udało się załadować metryk. Sprawdź połączenie.",
+    "autoRefresh": "Automatyczne odświeżanie co 60 sekund",
+    "lastUpdated": "Ostatnia aktualizacja"
+  },
   "shared": {
     "sharedList": "Udostępniona lista",
     "listNotFound": "Nie znaleziono listy",

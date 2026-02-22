@@ -837,6 +837,17 @@
     "approve": "Approve",
     "reject": "Reject"
   },
+  "monitoring": {
+    "title": "System Monitoring",
+    "subtitle": "Database health, materialized view staleness, and capacity metrics",
+    "overallStatus": "Overall Status",
+    "lastChecked": "Last checked",
+    "mvStaleness": "Materialized View Staleness",
+    "rowCounts": "Row Count Capacity",
+    "loadFailed": "Failed to load health metrics. Check your connection.",
+    "autoRefresh": "Auto-refreshes every 60 seconds",
+    "lastUpdated": "Last updated"
+  },
   "shared": {
     "sharedList": "Shared list",
     "listNotFound": "List not found",
