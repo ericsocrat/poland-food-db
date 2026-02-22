@@ -4,6 +4,7 @@
 
 import { ALLERGEN_TAGS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { nutriScoreLabel } from "@/lib/nutri-label";
 import type { SearchFilters } from "@/lib/types";
 
 interface ActiveFilterChipsProps {
@@ -37,7 +38,9 @@ export function ActiveFilterChips({
   for (const ns of filters.nutri_score ?? []) {
     chips.push({
       key: `ns-${ns}`,
-      label: t("chips.nutri", { value: ns }),
+      label: t("chips.nutri", {
+        value: nutriScoreLabel(ns, t("filters.notRated")),
+      }),
       onRemove: () => {
         const next = (filters.nutri_score ?? []).filter((n) => n !== ns);
         onChange({

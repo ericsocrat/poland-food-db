@@ -209,6 +209,7 @@
     "name": "Nazwa",
     "healthScore": "Wynik zdrowotny",
     "nutriScore": "Nutri-Score",
+    "notRated": "Brak oceny",
     "calories": "Kalorie",
     "asc": "↑ Rosnąco",
     "desc": "↓ Malejąco",

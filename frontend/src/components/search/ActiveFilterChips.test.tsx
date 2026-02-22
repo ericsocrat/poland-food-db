@@ -84,6 +84,17 @@ describe("ActiveFilterChips", () => {
     });
   });
 
+  it('renders "Nutri Not Rated" chip for NOT-APPLICABLE value', () => {
+    render(
+      <ActiveFilterChips
+        filters={{ nutri_score: ["NOT-APPLICABLE"] }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByText("Nutri Not Rated")).toBeTruthy();
+    expect(screen.queryByText(/NOT.APPLICABLE/i)).toBeNull();
+  });
+
   // ─── Allergen-free chips ────────────────────────────────────────────
 
   // ─── NOVA group chips ───────────────────────────────────────────────
@@ -114,10 +125,7 @@ describe("ActiveFilterChips", () => {
 
   it("clears NOVA group array when last chip removed", () => {
     render(
-      <ActiveFilterChips
-        filters={{ nova_group: ["1"] }}
-        onChange={onChange}
-      />,
+      <ActiveFilterChips filters={{ nova_group: ["1"] }} onChange={onChange} />,
     );
     fireEvent.click(screen.getByLabelText("Remove NOVA 1 filter"));
     expect(onChange).toHaveBeenCalledWith({

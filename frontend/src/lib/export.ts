@@ -6,6 +6,8 @@
  * correctly displays Polish characters (ą, ę, ó, ś, ź, ż, ć, ł, ń).
  */
 
+import { nutriScoreLabel } from "@/lib/nutri-label";
+
 // ---------------------------------------------------------------------------
 // Types
 // ---------------------------------------------------------------------------
@@ -77,7 +79,7 @@ function productToCSVRow(p: ExportableProduct): string {
     p.ean,
     p.category,
     p.unhealthiness_score,
-    p.nutri_score_label,
+    nutriScoreLabel(p.nutri_score_label),
     p.nova_group,
     p.calories_kcal,
     p.total_fat_g,
@@ -148,7 +150,7 @@ export function generateComparisonCSV(products: ExportableProduct[]): string {
     ["EAN", (p) => p.ean],
     ["Category", (p) => p.category],
     ["Health Score", (p) => p.unhealthiness_score],
-    ["Nutri-Score", (p) => p.nutri_score_label],
+    ["Nutri-Score", (p) => nutriScoreLabel(p.nutri_score_label)],
     ["NOVA", (p) => p.nova_group],
     ["Calories (kcal)", (p) => p.calories_kcal],
     ["Fat (g)", (p) => p.total_fat_g],
@@ -200,7 +202,7 @@ export function generateText(
   products.forEach((p, i) => {
     lines.push(
       `${i + 1}. ${p.product_name} (${p.brand})`,
-      `   Health Score: ${p.unhealthiness_score}/100 · Nutri-Score: ${p.nutri_score_label} · NOVA: ${p.nova_group}`,
+      `   Health Score: ${p.unhealthiness_score}/100 · Nutri-Score: ${nutriScoreLabel(p.nutri_score_label)} · NOVA: ${p.nova_group}`,
     );
 
     const cal = p.calories_kcal ?? "–";

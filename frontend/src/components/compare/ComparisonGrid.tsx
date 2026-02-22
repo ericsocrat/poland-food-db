@@ -7,6 +7,7 @@
 
 import { useState, useRef, useCallback, useEffect } from "react";
 import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
+import { nutriScoreLabel } from "@/lib/nutri-label";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { useTranslation } from "@/lib/i18n";
 import { Scale, Trophy, Check, X as XIcon } from "lucide-react";
@@ -68,7 +69,7 @@ const COMPARE_ROWS: CompareRow[] = [
     label: "Nutri-Score",
     key: "nutri_score",
     getValue: (p) => p.nutri_score,
-    format: (v) => (v ? String(v) : "?"),
+    format: (v) => nutriScoreLabel(v as string | null, "?"),
     betterDirection: "none",
   },
   {
@@ -220,7 +221,7 @@ function DesktopGrid({
                       <span
                         className={`rounded-full px-1.5 py-0.5 text-xs font-bold ${nutriClass}`}
                       >
-                        {p.nutri_score ?? "?"}
+                        {nutriScoreLabel(p.nutri_score, "?")}
                       </span>
                       <span className="rounded-full bg-surface-muted px-1.5 py-0.5 text-xs text-foreground-secondary">
                         N{p.nova_group ?? "?"}
@@ -522,8 +523,20 @@ function MobileSwipeView({
                   </span>
                   <span className={`text-sm ${indicator || "text-foreground"}`}>
                     {formatted}
-                    {ranking?.bestIdx === activeIdx && <Check size={14} className="inline ml-1 text-green-600" aria-hidden="true" />}
-                    {ranking?.worstIdx === activeIdx && <XIcon size={14} className="inline ml-1 text-red-600" aria-hidden="true" />}
+                    {ranking?.bestIdx === activeIdx && (
+                      <Check
+                        size={14}
+                        className="inline ml-1 text-green-600"
+                        aria-hidden="true"
+                      />
+                    )}
+                    {ranking?.worstIdx === activeIdx && (
+                      <XIcon
+                        size={14}
+                        className="inline ml-1 text-red-600"
+                        aria-hidden="true"
+                      />
+                    )}
                   </span>
                 </div>
               );

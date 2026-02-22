@@ -209,6 +209,7 @@
     "name": "Name",
     "healthScore": "Health Score",
     "nutriScore": "Nutri-Score",
+    "notRated": "Not Rated",
     "calories": "Calories",
     "asc": "↑ Asc",
     "desc": "↓ Desc",

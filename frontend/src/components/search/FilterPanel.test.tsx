@@ -33,6 +33,7 @@ const mockFilterOptions = {
     { label: "A", count: 5 },
     { label: "B", count: 10 },
     { label: "C", count: 8 },
+    { label: "NOT-APPLICABLE", count: 3 },
   ],
   nova_groups: [
     { group: "1", count: 12 },
@@ -144,6 +145,15 @@ describe("FilterPanel", () => {
     });
     expect(screen.getAllByText("B").length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText("C").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders "Not Rated" instead of "NOT-APPLICABLE"', async () => {
+    renderPanel();
+    await waitFor(() => {
+      expect(screen.getAllByText("Not Rated").length).toBeGreaterThanOrEqual(1);
+    });
+    // Raw DB value must NOT appear
+    expect(screen.queryAllByText(/NOT.APPLICABLE/i)).toHaveLength(0);
   });
 
   it("renders allergen-free filter checkboxes", async () => {
@@ -358,9 +368,9 @@ describe("FilterPanel", () => {
   it("renders NOVA group filter buttons with counts", async () => {
     renderPanel();
     await waitFor(() => {
-      expect(
-        screen.getAllByText(/Unprocessed/).length,
-      ).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/Unprocessed/).length).toBeGreaterThanOrEqual(
+        1,
+      );
     });
     expect(
       screen.getAllByText(/Ultra-processed/).length,
@@ -372,9 +382,9 @@ describe("FilterPanel", () => {
   it("renders NOVA Group section heading", async () => {
     renderPanel();
     await waitFor(() => {
-      expect(
-        screen.getAllByText("NOVA Group").length,
-      ).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("NOVA Group").length).toBeGreaterThanOrEqual(
+        1,
+      );
     });
   });
 
@@ -384,9 +394,9 @@ describe("FilterPanel", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(
-        screen.getAllByText(/Unprocessed/).length,
-      ).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/Unprocessed/).length).toBeGreaterThanOrEqual(
+        1,
+      );
     });
 
     // Click the first NOVA "1 — Unprocessed" button
@@ -403,9 +413,9 @@ describe("FilterPanel", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(
-        screen.getAllByText(/Unprocessed/).length,
-      ).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText(/Unprocessed/).length).toBeGreaterThanOrEqual(
+        1,
+      );
     });
 
     await user.click(screen.getAllByText(/Unprocessed/)[0]);

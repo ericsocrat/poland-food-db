@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { getFilterOptions } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { ALLERGEN_TAGS, NUTRI_COLORS } from "@/lib/constants";
+import { nutriScoreLabel } from "@/lib/nutri-label";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { useTranslation } from "@/lib/i18n";
 import type { SearchFilters } from "@/lib/types";
@@ -39,7 +40,10 @@ export function FilterPanel({
   });
 
   const toggleArrayFilter = useCallback(
-    (key: "category" | "nutri_score" | "nova_group" | "allergen_free", value: string) => {
+    (
+      key: "category" | "nutri_score" | "nova_group" | "allergen_free",
+      value: string,
+    ) => {
       const current = filters[key] ?? [];
       const next = current.includes(value)
         ? current.filter((v) => v !== value)
@@ -217,7 +221,7 @@ export function FilterPanel({
                           : `${nutriClass} hover:ring-2 hover:ring-offset-1 hover:ring-brand/50`
                       }`}
                     >
-                      {ns.label}
+                      {nutriScoreLabel(ns.label, t("filters.notRated"))}
                       <span className="text-[10px] font-normal opacity-75">
                         ({ns.count})
                       </span>
