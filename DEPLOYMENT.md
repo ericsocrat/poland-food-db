@@ -74,6 +74,87 @@ Post-login redirect validation happens in the **login form** (`LoginForm.tsx`): 
 
 ---
 
+## Automated Deployment (CI)
+
+### Overview
+
+Database deployments are automated via **GitHub Actions** using `.github/workflows/deploy.yml`. The workflow is triggered manually from the GitHub Actions UI with an environment selector (production/staging).
+
+### Architecture
+
+```
+Developer triggers via GitHub UI
+  → Pre-flight: Schema diff + dry-run option
+  → Approval gate (production only — GitHub Environment protection)
+  → Pre-deploy backup (supabase db dump → artifact)
+  → Push migrations (supabase db push)
+  → Post-deploy sanity checks (16 SQL checks)
+  → Summary in GitHub Actions step summary
+```
+
+### How to Trigger a Deployment
+
+1. Go to **GitHub → Actions → Deploy Database**
+2. Click **Run workflow**
+3. Select the target **environment** (production or staging)
+4. Optionally check **Dry run** to only see the schema diff without deploying
+5. Click **Run workflow**
+
+For **production** deployments, a reviewer must approve the deployment in the GitHub Environment approval UI before the deploy job starts.
+
+### Workflow Steps
+
+| Step | Description | On Failure |
+| ---- | ----------- | ---------- |
+| Pre-flight: Schema diff | Shows pending migrations and drift between Git and remote | Informational — does not block |
+| Dry run gate | If dry run is checked, stops after showing diff | N/A |
+| Approval gate | Production requires reviewer approval via GitHub Environments | Deploy waits indefinitely |
+| Pre-deploy backup | `supabase db dump --data-only` saved as artifact (30-day retention) | **Aborts deployment** |
+| Push migrations | `supabase db push` applies pending migrations | Workflow fails, backup available |
+| Post-deploy sanity | Runs all 16 SQL sanity checks against remote | Workflow fails with check details |
+
+### GitHub Environment Protection Rules
+
+| Environment | Approval Required | Wait Timer | Secrets |
+| ----------- | ----------------- | ---------- | ------- |
+| `production` | Yes (1+ reviewer) | 5 minutes | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `SUPABASE_DB_PASSWORD` |
+| `staging` | No | None | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_STAGING_PROJECT_REF`, `SUPABASE_DB_PASSWORD` |
+
+### Required Secrets
+
+| Secret | Purpose | Scope |
+| ------ | ------- | ----- |
+| `SUPABASE_ACCESS_TOKEN` | CLI authentication | Repository |
+| `SUPABASE_PROJECT_REF` | Production project reference | Environment: production |
+| `SUPABASE_STAGING_PROJECT_REF` | Staging project reference | Environment: staging |
+| `SUPABASE_DB_PASSWORD` | Direct DB access (backup + sanity) | Repository |
+
+> **Security:** All secrets are accessed via `${{ secrets.* }}` — never echoed in logs or step outputs. Rotate access tokens quarterly.
+
+### Concurrency Protection
+
+The workflow uses `concurrency: deploy-<environment>` to prevent parallel deployments to the same environment. A new deployment to the same environment will wait for the current one to finish.
+
+### Existing Auto-Sync
+
+`sync-cloud-db.yml` automatically pushes migrations to production on merge to `main`. The manual `deploy.yml` workflow is intended for:
+- Controlled deployments with approval gates
+- Staging deployments (once #140 is implemented)
+- Re-deployments after failed syncs
+- Dry-run schema diff checks
+
+### Recovery from Failed Deployment
+
+If `deploy.yml` fails mid-push:
+1. Download the backup artifact from the workflow run
+2. Follow [Restore Procedures](#restore-from-dump-file) below
+3. Investigate the failing migration
+4. Fix and re-trigger the deployment
+
+See also: Issue #121 (Rollback Documentation) for detailed procedures.
+
+---
+
 ## Custom Domain
 
 1. Go to **Vercel > Project Settings > Domains**

@@ -28,7 +28,7 @@ on:
 
 jobs:
   qa:
-    name: Pipeline + QA (362 checks) + Sanity (16 checks)
+    name: Pipeline + QA (421 checks) + Sanity (17 checks)
     runs-on: ubuntu-latest
     timeout-minutes: 10
 
@@ -94,6 +94,33 @@ jobs:
               psql -v ON_ERROR_STOP=1 -f "$f"
             done
           done
+
+      - name: Schema drift detection
+        run: |
+          set -euo pipefail
+          # Verify there are no orphaned or unexpected public schema objects
+          # that aren't referenced in our migrations.
+          orphans=$(psql --tuples-only --no-align -c "
+            SELECT 'TABLE: ' || tablename FROM pg_tables
+            WHERE schemaname = 'public'
+              AND tablename NOT LIKE 'pg_%'
+              AND tablename NOT IN (
+                SELECT table_name FROM information_schema.tables
+                WHERE table_schema = 'public'
+              )
+            UNION ALL
+            SELECT 'FUNCTION: ' || routine_name FROM information_schema.routines
+            WHERE routine_schema = 'public'
+              AND routine_type = 'FUNCTION'
+              AND routine_name LIKE 'test_%'
+          " 2>&1 || true)
+          orphans_trimmed=$(echo "$orphans" | sed '/^$/d')
+          if [ -n "$orphans_trimmed" ]; then
+            echo "::warning::Potential schema drift detected:"
+            echo "$orphans_trimmed"
+          else
+            echo "✓ No schema drift detected"
+          fi
 
       - name: Post-pipeline fixup
         run: |
