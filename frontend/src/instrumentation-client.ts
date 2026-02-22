@@ -1,5 +1,7 @@
 // ─── Sentry Client-Side Configuration (#183) ───────────────────────────────
-// Initializes Sentry in the browser for frontend error capture.
+// Turbopack-compatible client instrumentation.
+// Replaces deprecated sentry.client.config.ts (root-level convention).
+// Next.js 15+ loads this file automatically for client-side initialization.
 // PII scrubbing: no emails, IPs, or health data in error reports.
 
 import * as Sentry from "@sentry/nextjs";
@@ -51,3 +53,8 @@ Sentry.init({
     "AbortError",
   ],
 });
+
+// ── Navigation instrumentation ───────────────────────────────────────────────
+// Required by @sentry/nextjs to capture client-side router transitions.
+export const onRouterTransitionStart =
+  Sentry.captureRouterTransitionStart;

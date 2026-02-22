@@ -1,0 +1,118 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Main Gate — Strict quality gate for pushes to main
+# CI Architecture Redesign — replaces build.yml + ci.yml on push-to-main
+# ═══════════════════════════════════════════════════════════════════════════════
+# Single comprehensive job: build → unit tests w/ coverage → full Playwright E2E
+# → SonarCloud scan (BLOCKING quality gate) → Sentry sourcemap upload.
+#
+# Target runtime: < 8 minutes
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Main Gate
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: main-gate
+  cancel-in-progress: false # Never cancel main builds
+
+jobs:
+  gate:
+    name: Build, Test, Scan & Deploy Sourcemaps
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Full history for SonarCloud new-code detection
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      # ── Static analysis ────────────────────────────────────────────────
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
+
+      - name: ESLint
+        run: npx next lint
+
+      # ── Build ──────────────────────────────────────────────────────────
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: frontend/.next/cache
+          key: next-cache-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}-${{ hashFiles('frontend/src/**') }}
+          restore-keys: |
+            next-cache-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}-
+            next-cache-${{ runner.os }}-
+
+      - name: Build
+        run: npx next build
+
+      # ── Unit tests with coverage ───────────────────────────────────────
+      - name: Unit tests with coverage
+        run: npx vitest run --coverage
+
+      # ── Playwright full E2E ────────────────────────────────────────────
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-browsers-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Playwright full E2E
+        run: npx playwright test
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: playwright-report
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/a11y-results.json
+          retention-days: 14
+
+      # ── SonarCloud — BLOCKING quality gate ─────────────────────────────
+      - name: SonarCloud Scan
+        if: env.SONAR_TOKEN != ''
+        uses: SonarSource/sonarqube-scan-action@v6
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+
+      - name: SonarCloud Quality Gate
+        if: env.SONAR_TOKEN != ''
+        uses: SonarSource/sonarqube-quality-gate-action@v1
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: https://sonarcloud.io
+        # NO continue-on-error — quality gate BLOCKS the build
+
+      # ── Sentry sourcemap upload (main only, fork-safe) ─────────────────
+      - name: Upload Sentry sourcemaps
+        if: env.SENTRY_AUTH_TOKEN != ''
+        run: npx @sentry/cli sourcemaps upload --org "$SENTRY_ORG" --project "$SENTRY_PROJECT" .next
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}

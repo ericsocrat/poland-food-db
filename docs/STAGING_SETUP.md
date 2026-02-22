@@ -151,7 +151,7 @@ npx playwright test
 
 ## Step 8: Wire CI (Issue #141)
 
-Update `.github/workflows/ci.yml` to use staging secrets for Playwright E2E:
+Update `.github/workflows/pr-gate.yml` and `main-gate.yml` to use staging secrets for Playwright E2E:
 
 ```yaml
 env:

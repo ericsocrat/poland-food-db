@@ -1,0 +1,159 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# PR Gate — Fast feedback for pull requests
+# CI Architecture Redesign — replaces build.yml + ci.yml on PR events
+# ═══════════════════════════════════════════════════════════════════════════════
+# Parallel job graph:
+#   static-checks ──┬── unit-tests
+#                    └── build ── e2e-smoke
+#
+# Target runtime: < 5 minutes
+# Fork-safe: all secret-dependent steps are explicitly guarded.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: PR Gate
+
+on:
+  pull_request:
+    branches: [main]
+
+concurrency:
+  group: pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 1: Static analysis (typecheck + lint) — runs first, fails fast
+  # ─────────────────────────────────────────────────────────────────────────
+  static-checks:
+    name: Typecheck & Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: TypeScript type-check
+        run: npx tsc --noEmit
+
+      - name: ESLint
+        run: npx next lint
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 2: Unit tests — runs in parallel with build after static-checks
+  # ─────────────────────────────────────────────────────────────────────────
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: static-checks
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Run unit tests
+        run: npx vitest run
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 3: Build — runs in parallel with unit-tests after static-checks
+  # ─────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    needs: static-checks
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: frontend/.next/cache
+          key: next-cache-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}-${{ hashFiles('frontend/src/**') }}
+          restore-keys: |
+            next-cache-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}-
+            next-cache-${{ runner.os }}-
+
+      - name: Build
+        run: npx next build
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 4: Playwright smoke E2E — runs after build
+  # Fork-safe: uses staging secrets only for non-fork PRs; smoke tests
+  # that don't require a live backend still pass without secrets.
+  # ─────────────────────────────────────────────────────────────────────────
+  e2e-smoke:
+    name: Playwright Smoke
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-browsers-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Run smoke E2E tests
+        run: npx playwright test --project=smoke
+        env:
+          # Use staging keys for non-fork PRs; smoke tests that don't hit
+          # Supabase will pass even without these env vars.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ github.event.pull_request.head.repo.fork == false && (secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL) || '' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ github.event.pull_request.head.repo.fork == false && (secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY) || '' }}
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: pw-smoke-report
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+          retention-days: 7

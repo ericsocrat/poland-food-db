@@ -187,11 +187,11 @@ Add these in **GitHub > Settings > Secrets and variables > Actions > Repository 
 
 ### CI Pipeline
 
-The CI workflow (`.github/workflows/ci.yml`) runs on every push to `main` and on pull requests:
+The CI workflows use a tiered architecture:
 
-1. **Lint, Typecheck & Build** — `tsc --noEmit` + `next lint` + `next build`
-2. **Playwright E2E (local)** — Starts a dev server and runs smoke + auth tests against `localhost:3000`
-3. **Playwright E2E (Preview)** — On PRs when `STAGING_ENABLED=true`: waits for Vercel preview deployment, runs smoke tests against the preview URL backed by staging Supabase
+- **PR Gate** (`.github/workflows/pr-gate.yml`): Typecheck + Lint → Unit tests + Build (parallel) → Playwright smoke E2E
+- **Main Gate** (`.github/workflows/main-gate.yml`): Full build + tests + coverage → Full Playwright E2E → SonarCloud (blocking) → Sentry sourcemaps
+- **Nightly** (`.github/workflows/nightly.yml`): Full Playwright (all projects incl. visual) + Data Integrity Audit
 
 ### Preview → Staging Wiring
 

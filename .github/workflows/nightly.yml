@@ -1,0 +1,146 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Nightly Suite — Comprehensive test coverage + data integrity
+# CI Architecture Redesign — absorbs data-audit.yml into nightly schedule
+# ═══════════════════════════════════════════════════════════════════════════════
+# Runs all Playwright projects (including visual regression + authenticated),
+# full unit test coverage, and data integrity audit against live Supabase.
+#
+# Target runtime: < 15 minutes (jobs run in parallel)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Nightly Suite
+
+on:
+  schedule:
+    - cron: "0 2 * * *" # 2:00 UTC daily
+  workflow_dispatch: {}
+
+concurrency:
+  group: nightly
+  cancel-in-progress: true # Only latest nightly matters
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 1: Full frontend test suite (unit + all Playwright projects)
+  # ─────────────────────────────────────────────────────────────────────────
+  comprehensive:
+    name: Full Test Suite
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Cache Next.js build
+        uses: actions/cache@v4
+        with:
+          path: frontend/.next/cache
+          key: next-cache-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}-${{ hashFiles('frontend/src/**') }}
+          restore-keys: |
+            next-cache-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}-
+            next-cache-${{ runner.os }}-
+
+      - name: Build
+        run: npx next build
+
+      - name: Unit tests with coverage
+        run: npx vitest run --coverage
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-browsers-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Full Playwright (all projects including visual)
+        run: npx playwright test
+        env:
+          VISUAL_REGRESSION: "true"
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
+      - name: Upload Playwright report
+        uses: actions/upload-artifact@v4
+        if: ${{ !cancelled() }}
+        with:
+          name: nightly-playwright-report
+          path: |
+            frontend/playwright-report/
+            frontend/test-results/
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 2: Data Integrity Audit (runs in parallel with comprehensive)
+  # Absorbed from the former data-audit.yml
+  # ─────────────────────────────────────────────────────────────────────────
+  data-audit:
+    name: Data Integrity Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Run Data Integrity Audit
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_KEY: ${{ secrets.SUPABASE_SERVICE_KEY }}
+        run: python run_data_audit.py
+
+      - name: Upload Audit Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: data-audit-report
+          path: audit-reports/
+          retention-days: 90
+
+      - name: Post Summary
+        if: always()
+        run: |
+          REPORT=$(cat audit-reports/audit_*.json 2>/dev/null || echo '{}')
+          CRITICAL=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('summary',{}).get('critical',0))" 2>/dev/null || echo "?")
+          WARNINGS=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('summary',{}).get('warnings',0))" 2>/dev/null || echo "?")
+          INFO=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('summary',{}).get('info',0))" 2>/dev/null || echo "?")
+          TOTAL=$(echo "$REPORT" | python3 -c "import sys,json; print(json.load(sys.stdin).get('summary',{}).get('total_findings',0))" 2>/dev/null || echo "?")
+          echo "## Data Integrity Audit" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Severity | Count |" >> $GITHUB_STEP_SUMMARY
+          echo "|----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔴 Critical | $CRITICAL |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🟠 Warning | $WARNINGS |" >> $GITHUB_STEP_SUMMARY
+          echo "| 🔵 Info | $INFO |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Total** | **$TOTAL** |" >> $GITHUB_STEP_SUMMARY
+
+      - name: Alert on Critical Findings
+        if: failure()
+        run: |
+          if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ]; then
+            curl -X POST "${{ secrets.ALERT_WEBHOOK_URL }}" \
+              -H 'Content-Type: application/json' \
+              -d '{"text": "Nightly audit: CRITICAL issues — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+          fi

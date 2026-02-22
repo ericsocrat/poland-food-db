@@ -69,15 +69,17 @@ connected to a live database, but we don't configure that. Our approach:
 
 ## CI Integration
 
-The GitHub Actions workflow (`.github/workflows/build.yml`) runs:
+The GitHub Actions workflow (`.github/workflows/main-gate.yml`) runs:
 
 1. `npm ci` — install dependencies
-2. `npm run type-check` — TypeScript strict check
-3. `npm run lint` — ESLint
-4. `npm run build` — Next.js production build
-5. `npm run test:coverage` — Vitest with v8 coverage → lcov
-6. SonarCloud scan (reads `sonar-project.properties` + lcov)
-7. Quality Gate check (blocks merge if gate fails)
+2. `tsc --noEmit` — TypeScript strict check
+3. `next lint` — ESLint
+4. `next build` — Next.js production build
+5. `vitest run --coverage` — Vitest with v8 coverage → lcov
+6. `playwright test` — Full E2E suite
+7. SonarCloud scan (reads `sonar-project.properties` + lcov)
+8. Quality Gate check (**BLOCKING** — no `continue-on-error`)
+9. Sentry sourcemap upload (when `SENTRY_AUTH_TOKEN` is set)
 
 ## Known Accepted Issues
 
