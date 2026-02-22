@@ -1,104 +1,38 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { X } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
-
-interface BeforeInstallPromptEvent extends Event {
-  prompt(): Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-}
-
-/* ── Constants ─────────────────────────────────────────────────────────────── */
-const STORAGE_KEY = "pwa-install-dismissed-at";
-const DISMISS_COOLDOWN_MS = 14 * 24 * 60 * 60 * 1000; // 14 days
-const SHOW_DELAY_MS = 30_000; // 30 seconds after page load
-
-/** Returns true if the dismiss cooldown has NOT yet expired. */
-function isDismissCooldownActive(): boolean {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return false;
-    return Date.now() - Number(raw) < DISMISS_COOLDOWN_MS;
-  } catch {
-    return false;
-  }
-}
-
-/** Detect iOS Safari (no `beforeinstallprompt`, manual instructions needed). */
-function isIOS(): boolean {
-  if (typeof navigator === "undefined") return false;
-  return (
-    /iPad|iPhone|iPod/.test(navigator.userAgent) ||
-    (navigator.userAgent.includes("Mac") && "ontouchend" in document)
-  );
-}
+import { useAnalytics } from "@/hooks/use-analytics";
+import { useInstallPrompt } from "@/hooks/use-install-prompt";
 
 export function InstallPrompt() {
   const { t } = useTranslation();
-  const [deferredPrompt, setDeferredPrompt] =
-    useState<BeforeInstallPromptEvent | null>(null);
-  const [showIOSTip, setShowIOSTip] = useState(false);
-  const [dismissed, setDismissed] = useState(false);
+  const { track } = useAnalytics();
+  const { canShowBanner, isIOS, triggerInstall, dismiss } =
+    useInstallPrompt();
 
-  useEffect(() => {
-    // Already installed as standalone — nothing to show
-    if (globalThis.matchMedia("(display-mode: standalone)").matches) return;
-
-    // Dismiss cooldown still active
-    if (isDismissCooldownActive()) return;
-
-    // ── Android / Desktop: listen for the native prompt ──────────────────
-    const handler = (e: Event) => {
-      e.preventDefault();
-      // Delay so the prompt isn't intrusive on first visit
-      setTimeout(
-        () => setDeferredPrompt(e as BeforeInstallPromptEvent),
-        SHOW_DELAY_MS,
-      );
-    };
-
-    globalThis.addEventListener("beforeinstallprompt", handler);
-
-    // ── iOS: show manual instructions after a delay ──────────────────────
-    let iosTimer: ReturnType<typeof setTimeout> | undefined;
-    if (isIOS()) {
-      iosTimer = setTimeout(() => setShowIOSTip(true), SHOW_DELAY_MS);
-    }
-
-    return () => {
-      globalThis.removeEventListener("beforeinstallprompt", handler);
-      if (iosTimer) clearTimeout(iosTimer);
-    };
-  }, []);
+  if (!canShowBanner) return null;
 
   const handleInstall = async () => {
-    if (!deferredPrompt) return;
-    await deferredPrompt.prompt();
-    const { outcome } = await deferredPrompt.userChoice;
+    track("pwa_install_prompted");
+    const outcome = await triggerInstall();
     if (outcome === "accepted") {
-      setDeferredPrompt(null);
+      track("pwa_install_accepted");
+    } else if (outcome === "dismissed") {
+      track("pwa_install_dismissed");
     }
   };
 
   const handleDismiss = () => {
-    setDismissed(true);
-    setDeferredPrompt(null);
-    setShowIOSTip(false);
-    try {
-      localStorage.setItem(STORAGE_KEY, String(Date.now()));
-    } catch {
-      /* storage full — ignore */
-    }
+    track("pwa_install_dismissed");
+    dismiss();
   };
 
-  // Nothing to show
-  const showNative = !!deferredPrompt && !dismissed;
-  const showIOS = showIOSTip && !dismissed;
-  if (!showNative && !showIOS) return null;
-
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-50 mx-auto max-w-sm animate-[slideUp_0.3s_ease-out] rounded-xl border border-border bg-surface p-4 shadow-lg sm:left-auto sm:right-4 sm:max-w-xs">
+    <div
+      className="fixed bottom-20 left-4 right-4 z-50 mx-auto max-w-sm animate-[slideUp_0.3s_ease-out] rounded-xl border border-border bg-surface p-4 shadow-lg sm:left-auto sm:right-4 sm:max-w-xs"
+      data-testid="install-prompt"
+    >
       <div className="flex items-start gap-3">
         <span className="text-2xl" aria-hidden="true">
           📲
@@ -108,23 +42,25 @@ export function InstallPrompt() {
             {t("pwa.installTitle")}
           </p>
           <p className="mt-0.5 text-xs text-foreground-secondary">
-            {showIOS ? t("pwa.iosInstallHint") : t("pwa.installDescription")}
+            {isIOS ? t("pwa.iosInstallHint") : t("pwa.installDescription")}
           </p>
         </div>
         <button
           onClick={handleDismiss}
           className="text-foreground-muted hover:text-foreground-secondary"
           aria-label={t("pwa.dismissInstall")}
+          data-testid="dismiss-install-prompt"
         >
           <X size={16} aria-hidden="true" />
         </button>
       </div>
 
       {/* Native install button (Android / Desktop) */}
-      {showNative && (
+      {!isIOS && (
         <button
           onClick={handleInstall}
           className="btn-primary mt-3 w-full text-sm"
+          data-testid="install-button"
         >
           {t("common.install")}
         </button>

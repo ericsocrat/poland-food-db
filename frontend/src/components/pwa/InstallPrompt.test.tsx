@@ -2,6 +2,18 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, act } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { InstallPrompt } from "./InstallPrompt";
+import {
+  STORAGE_KEY_DISMISSED,
+  STORAGE_KEY_VISITS,
+  type BeforeInstallPromptEvent,
+} from "@/hooks/use-install-prompt";
+
+// ─── Mocks ──────────────────────────────────────────────────────────────────
+
+const mockTrack = vi.fn();
+vi.mock("@/hooks/use-analytics", () => ({
+  useAnalytics: () => ({ track: mockTrack }),
+}));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -18,19 +30,26 @@ function mockStandalone(isStandalone: boolean) {
   });
 }
 
-function createBeforeInstallPromptEvent(): Event & {
-  prompt: ReturnType<typeof vi.fn>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-} {
+function createBIP(
+  outcome: "accepted" | "dismissed" = "dismissed",
+): BeforeInstallPromptEvent {
   const event = new Event("beforeinstallprompt", {
     cancelable: true,
-  }) as Event & {
-    prompt: ReturnType<typeof vi.fn>;
-    userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-  };
-  event.prompt = vi.fn().mockResolvedValue(undefined);
-  event.userChoice = Promise.resolve({ outcome: "dismissed" as const });
+  }) as unknown as BeforeInstallPromptEvent;
+  (event as { prompt: () => Promise<void> }).prompt = vi
+    .fn()
+    .mockResolvedValue(undefined);
+  (
+    event as {
+      userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+    }
+  ).userChoice = Promise.resolve({ outcome });
   return event;
+}
+
+/** Preset visits so mount increments to ≥ 2. */
+function presetVisits(count = 1) {
+  localStorage.setItem(STORAGE_KEY_VISITS, String(count));
 }
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -39,139 +58,111 @@ describe("InstallPrompt", () => {
   beforeEach(() => {
     localStorage.clear();
     mockStandalone(false);
-    vi.useFakeTimers({ shouldAdvanceTime: true });
+    mockTrack.mockClear();
   });
 
   afterEach(() => {
-    vi.useRealTimers();
     vi.restoreAllMocks();
   });
 
-  it("renders nothing initially (no beforeinstallprompt event)", () => {
+  it("renders nothing on first visit (not enough visits)", () => {
     const { container } = render(<InstallPrompt />);
     expect(container.firstChild).toBeNull();
   });
 
   it("renders nothing when running in standalone mode", () => {
     mockStandalone(true);
+    presetVisits(5);
     render(<InstallPrompt />);
 
-    const event = createBeforeInstallPromptEvent();
     act(() => {
-      globalThis.dispatchEvent(event);
+      globalThis.dispatchEvent(createBIP());
     });
 
-    // Advance past the 30 s delay
-    act(() => {
-      vi.advanceTimersByTime(31_000);
-    });
-
-    expect(screen.queryByText("Install FoodDB")).toBeNull();
+    expect(screen.queryByTestId("install-prompt")).toBeNull();
   });
 
-  it("shows prompt after 30 s delay when beforeinstallprompt fires", () => {
+  it("shows prompt when ≥ 2 visits and beforeinstallprompt fires", () => {
+    presetVisits();
     render(<InstallPrompt />);
 
-    const event = createBeforeInstallPromptEvent();
     act(() => {
-      globalThis.dispatchEvent(event);
+      globalThis.dispatchEvent(createBIP());
     });
 
-    // Not visible immediately
-    expect(screen.queryByText("Install FoodDB")).toBeNull();
-
-    // Advance past the 30 s delay
-    act(() => {
-      vi.advanceTimersByTime(31_000);
-    });
-
+    expect(screen.getByTestId("install-prompt")).toBeInTheDocument();
     expect(screen.getByText("Install FoodDB")).toBeInTheDocument();
-    expect(screen.getByText("Install")).toBeInTheDocument();
+    expect(screen.getByTestId("install-button")).toBeInTheDocument();
   });
 
-  it("calls prompt() when Install button is clicked", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
+  it("calls prompt() and tracks analytics when Install is clicked", async () => {
+    presetVisits();
+    const user = userEvent.setup();
     render(<InstallPrompt />);
 
-    const event = createBeforeInstallPromptEvent();
+    const bip = createBIP("accepted");
     act(() => {
-      globalThis.dispatchEvent(event);
+      globalThis.dispatchEvent(bip);
     });
 
-    act(() => {
-      vi.advanceTimersByTime(31_000);
-    });
-
-    await user.click(screen.getByText("Install"));
-    expect(event.prompt).toHaveBeenCalled();
+    await user.click(screen.getByTestId("install-button"));
+    expect(bip.prompt).toHaveBeenCalled();
+    expect(mockTrack).toHaveBeenCalledWith("pwa_install_prompted");
+    expect(mockTrack).toHaveBeenCalledWith("pwa_install_accepted");
   });
 
-  it("dismisses and stores timestamp in localStorage", async () => {
-    const user = userEvent.setup({ advanceTimers: vi.advanceTimersByTime });
-    vi.setSystemTime(new Date("2026-03-01T12:00:00Z"));
-
+  it("dismisses banner and stores cooldown timestamp", async () => {
+    presetVisits();
+    const user = userEvent.setup();
     render(<InstallPrompt />);
 
-    const event = createBeforeInstallPromptEvent();
     act(() => {
-      globalThis.dispatchEvent(event);
+      globalThis.dispatchEvent(createBIP());
     });
 
-    act(() => {
-      vi.advanceTimersByTime(31_000);
-    });
+    expect(screen.getByTestId("install-prompt")).toBeInTheDocument();
 
-    expect(screen.getByText("Install FoodDB")).toBeInTheDocument();
+    await user.click(screen.getByTestId("dismiss-install-prompt"));
 
-    await user.click(screen.getByLabelText("Dismiss install prompt"));
-
-    expect(screen.queryByText("Install FoodDB")).toBeNull();
-    expect(localStorage.getItem("pwa-install-dismissed-at")).toBeTruthy();
+    expect(screen.queryByTestId("install-prompt")).toBeNull();
+    expect(localStorage.getItem(STORAGE_KEY_DISMISSED)).toBeTruthy();
+    expect(mockTrack).toHaveBeenCalledWith("pwa_install_dismissed");
   });
 
-  it("does not show if dismissed less than 14 days ago", () => {
-    // Dismissed 10 days ago
+  it("does not show if dismissed less than 30 days ago", () => {
+    presetVisits(5);
     localStorage.setItem(
-      "pwa-install-dismissed-at",
+      STORAGE_KEY_DISMISSED,
       String(Date.now() - 10 * 24 * 60 * 60 * 1000),
     );
 
     render(<InstallPrompt />);
 
-    const event = createBeforeInstallPromptEvent();
     act(() => {
-      globalThis.dispatchEvent(event);
+      globalThis.dispatchEvent(createBIP());
     });
 
-    act(() => {
-      vi.advanceTimersByTime(31_000);
-    });
-
-    expect(screen.queryByText("Install FoodDB")).toBeNull();
+    expect(screen.queryByTestId("install-prompt")).toBeNull();
   });
 
-  it("shows again after 14-day cooldown expires", () => {
-    // Dismissed 15 days ago
+  it("shows again after 30-day cooldown expires", () => {
+    presetVisits(5);
     localStorage.setItem(
-      "pwa-install-dismissed-at",
-      String(Date.now() - 15 * 24 * 60 * 60 * 1000),
+      STORAGE_KEY_DISMISSED,
+      String(Date.now() - 31 * 24 * 60 * 60 * 1000),
     );
 
     render(<InstallPrompt />);
 
-    const event = createBeforeInstallPromptEvent();
     act(() => {
-      globalThis.dispatchEvent(event);
+      globalThis.dispatchEvent(createBIP());
     });
 
-    act(() => {
-      vi.advanceTimersByTime(31_000);
-    });
-
-    expect(screen.getByText("Install FoodDB")).toBeInTheDocument();
+    expect(screen.getByTestId("install-prompt")).toBeInTheDocument();
   });
 
-  it("cleans up event listener on unmount", () => {
+  it("cleans up event listeners on unmount", () => {
+    presetVisits();
     const addSpy = vi.spyOn(globalThis, "addEventListener");
     const removeSpy = vi.spyOn(globalThis, "removeEventListener");
 
