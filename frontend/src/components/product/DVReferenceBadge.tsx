@@ -1,6 +1,22 @@
 import { useTranslation } from "@/lib/i18n";
 import { User, BarChart3 } from "lucide-react";
 
+/**
+ * Human-readable labels for regulation constants stored in the DB.
+ * Keys match the `daily_value_references.regulation` column values.
+ * - `eu_ri` = EU Reference Intakes, Regulation (EU) No 1169/2011
+ */
+const REGULATION_LABELS: Readonly<Record<string, string>> = {
+  eu_ri: "EU Reference Intakes",
+  fda_dv: "FDA Daily Values",
+};
+
+/** Resolve a raw regulation constant to its display label. */
+export function resolveRegulationLabel(regulation: string | undefined): string {
+  if (!regulation) return "EU RI";
+  return REGULATION_LABELS[regulation] ?? regulation;
+}
+
 interface DVReferenceBadgeProps {
   readonly referenceType: "standard" | "personalized" | "none";
   readonly regulation?: string;
@@ -17,7 +33,9 @@ export function DVReferenceBadge({
   const isPersonalized = referenceType === "personalized";
   const label = isPersonalized
     ? t("product.dvPersonalized")
-    : t("product.dvStandard", { regulation: regulation ?? "EU RI" });
+    : t("product.dvStandard", {
+        regulation: resolveRegulationLabel(regulation),
+      });
 
   return (
     <span
