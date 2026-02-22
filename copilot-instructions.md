@@ -635,7 +635,9 @@ E2E tests are the **only** exception — they run against a live dev server but 
 - CI workflows:
   - **`ci.yml`**: Lint → Typecheck → Build → Playwright E2E
   - **`build.yml`**: Lint → Typecheck → Build → Unit tests with coverage → Playwright → SonarCloud scan + Quality Gate
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Pipelines → QA (421 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (421 checks) → Sanity (17 checks) → Confidence threshold
+  - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
+  - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
 ### 8.11 Test Plan Required (Before Coding)
 
