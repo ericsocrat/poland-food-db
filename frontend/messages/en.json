@@ -73,6 +73,7 @@
     "browseCategories": "Browse Categories",
     "recentlyViewed": "Recently Viewed",
     "favorites": "Favorites",
+    "favoritesEmptyCta": "Tap \u2764\uFE0F on any product",
     "newProducts": "New Products",
     "newInCategory": "New {category}",
     "viewAll": "View all →",

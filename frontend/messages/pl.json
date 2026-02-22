@@ -73,6 +73,7 @@
     "browseCategories": "Przeglądaj kategorie",
     "recentlyViewed": "Ostatnio przeglądane",
     "favorites": "Ulubione",
+    "favoritesEmptyCta": "Kliknij \u2764\uFE0F przy produkcie",
     "newProducts": "Nowe produkty",
     "newInCategory": "Nowe {category}",
     "viewAll": "Pokaż wszystko →",
