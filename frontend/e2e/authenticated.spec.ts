@@ -119,6 +119,28 @@ test.describe("Search page", () => {
     // Should stay on search page (results or empty state)
     await expect(page).toHaveURL(/\/app\/search/);
   });
+
+  test("shows recent searches in autocomplete dropdown", async ({ page }) => {
+    // Seed localStorage with recent searches before navigating
+    await page.goto("/app/search");
+    await page.evaluate(() => {
+      localStorage.setItem(
+        "fooddb:recent-searches",
+        JSON.stringify(["mleko", "jogurt"]),
+      );
+    });
+    // Reload to pick up seeded data
+    await page.reload({ waitUntil: "networkidle" });
+
+    const input = page.getByPlaceholder(/search products/i);
+    await input.focus();
+
+    // Recent searches section should appear
+    const dropdown = page.locator("#search-autocomplete-listbox");
+    await expect(dropdown).toBeVisible({ timeout: 5000 });
+    await expect(dropdown.getByText("mleko").first()).toBeVisible();
+    await expect(dropdown.getByText("jogurt").first()).toBeVisible();
+  });
 });
 
 // ─── Authenticated: Categories ──────────────────────────────────────────────

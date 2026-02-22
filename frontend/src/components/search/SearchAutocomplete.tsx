@@ -144,7 +144,6 @@ export function SearchAutocomplete({
   const router = useRouter();
   const debouncedQuery = useDebounce(query, 200);
   const [activeIndex, setActiveIndex] = useState(-1);
-  const listRef = useRef<HTMLUListElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
 
@@ -169,14 +168,16 @@ export function SearchAutocomplete({
   // Determine what to show: suggestions when there's a query, recent/popular otherwise
   const isQueryMode = query.trim().length >= 1;
   const showRecent = !isQueryMode && recentSearches.length > 0;
-  const showPopular = !isQueryMode && recentSearches.length === 0;
+  const showPopular = !isQueryMode;
+  const popularIndexOffset = showRecent ? recentSearches.length : 0;
 
   // Total navigable items count for keyboard nav
   const navigableCount = (() => {
     if (isQueryMode) return suggestions.length + 1; // +1 for "Search for…" footer
-    if (showRecent) return recentSearches.length;
-    if (showPopular) return POPULAR_SEARCHES.length;
-    return 0;
+    let count = 0;
+    if (showRecent) count += recentSearches.length;
+    if (showPopular) count += POPULAR_SEARCHES.length;
+    return count;
   })();
 
   /** Stable option id for aria-activedescendant */
@@ -233,10 +234,15 @@ export function SearchAutocomplete({
             } else if (query.trim().length >= 1) {
               onQuerySubmit(query.trim());
             }
-          } else if (showRecent && activeIndex >= 0) {
-            onQuerySubmit(recentSearches[activeIndex]);
-          } else if (showPopular && activeIndex >= 0) {
-            onQuerySubmit(POPULAR_SEARCHES[activeIndex]);
+          } else if (activeIndex >= 0) {
+            if (showRecent && activeIndex < recentSearches.length) {
+              onQuerySubmit(recentSearches[activeIndex]);
+            } else if (showPopular) {
+              const popIdx = activeIndex - popularIndexOffset;
+              if (popIdx >= 0 && popIdx < POPULAR_SEARCHES.length) {
+                onQuerySubmit(POPULAR_SEARCHES[popIdx]);
+              }
+            }
           }
           onClose();
           break;
@@ -256,6 +262,7 @@ export function SearchAutocomplete({
       recentSearches,
       showRecent,
       showPopular,
+      popularIndexOffset,
       onSelect,
       onQuerySubmit,
       onClose,
@@ -268,12 +275,13 @@ export function SearchAutocomplete({
     onInputKeyDown?.(handleKeyDown);
   }, [handleKeyDown, onInputKeyDown]);
 
-  // Scroll active item into view
+  // Scroll active item into view (ID-based for multi-section support)
   useEffect(() => {
-    if (activeIndex >= 0 && listRef.current) {
-      const item = listRef.current.children[activeIndex];
-      if (item instanceof HTMLElement) {
-        item.scrollIntoView({ block: "nearest" });
+    if (activeIndex >= 0 && containerRef.current) {
+      const id = getOptionId(activeIndex);
+      if (id) {
+        const el = containerRef.current.querySelector(`#${id}`);
+        if (el instanceof HTMLElement) el.scrollIntoView({ block: "nearest" });
       }
     }
   }, [activeIndex]);
@@ -316,7 +324,7 @@ export function SearchAutocomplete({
               {t("search.clearRecent")}
             </button>
           </div>
-          <ul ref={listRef}>
+          <ul>
             {recentSearches.map((q, i) => (
               <li
                 key={q}
@@ -373,45 +381,48 @@ export function SearchAutocomplete({
         </>
       )}
 
-      {/* ── Popular searches (empty-query mode, no recents) ───────── */}
+      {/* ── Popular searches (empty-query mode) ─────────────────── */}
       {showPopular && (
         <>
-          <div className="px-4 pb-1 pt-3">
+          <div className={`px-4 pb-1 pt-3${showRecent ? " border-t" : ""}`}>
             <span className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
               {t("search.popularSearches")}
             </span>
           </div>
-          <ul ref={listRef}>
-            {POPULAR_SEARCHES.map((q, i) => (
-              <li
-                key={q}
-                id={getOptionId(i)}
-                role="option"
-                aria-selected={i === activeIndex}
-                className={`flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors ${
-                  i === activeIndex
-                    ? "bg-brand-subtle text-foreground"
-                    : "hover:bg-surface-subtle"
-                }`}
-              >
-                <button
-                  type="button"
-                  className="flex min-w-0 flex-1 items-center gap-3"
-                  onMouseEnter={() => setActiveIndex(i)}
-                  onClick={() => {
-                    onQuerySubmit(q);
-                    onClose();
-                  }}
+          <ul>
+            {POPULAR_SEARCHES.map((q, i) => {
+              const idx = popularIndexOffset + i;
+              return (
+                <li
+                  key={q}
+                  id={getOptionId(idx)}
+                  role="option"
+                  aria-selected={idx === activeIndex}
+                  className={`flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors ${
+                    idx === activeIndex
+                      ? "bg-brand-subtle text-foreground"
+                      : "hover:bg-surface-subtle"
+                  }`}
                 >
-                  <span className="text-foreground-muted">
-                    <Flame size={14} aria-hidden="true" />
-                  </span>
-                  <span className="min-w-0 flex-1 truncate text-left text-sm text-foreground">
-                    {q}
-                  </span>
-                </button>
-              </li>
-            ))}
+                  <button
+                    type="button"
+                    className="flex min-w-0 flex-1 items-center gap-3"
+                    onMouseEnter={() => setActiveIndex(idx)}
+                    onClick={() => {
+                      onQuerySubmit(q);
+                      onClose();
+                    }}
+                  >
+                    <span className="text-foreground-muted">
+                      <Flame size={14} aria-hidden="true" />
+                    </span>
+                    <span className="min-w-0 flex-1 truncate text-left text-sm text-foreground">
+                      {q}
+                    </span>
+                  </button>
+                </li>
+              );
+            })}
           </ul>
         </>
       )}
@@ -424,7 +435,7 @@ export function SearchAutocomplete({
               {t("search.searching")}
             </div>
           )}
-          <ul ref={listRef}>
+          <ul>
             {suggestions.map((s, i) => {
               const band = SCORE_BANDS[s.score_band];
               const nutriClass = s.nutri_score
