@@ -569,7 +569,15 @@
     "exportInProgress": "Przygotowywanie eksportu…",
     "exportSuccess": "Dane wyeksportowane pomyślnie ({size})",
     "exportCooldown": "Eksport dostępny za {minutes} min",
-    "exportError": "Nie udało się wyeksportować danych. Spróbuj ponownie później."
+    "exportError": "Nie udało się wyeksportować danych. Spróbuj ponownie później.",
+    "deleteAccount": "Usuń moje konto",
+    "deleteAccountWarning": "Spowoduje to trwałe usunięcie wszystkich Twoich danych, w tym preferencji, profili zdrowotnych, list produktów, porównań, zapisanych wyszukiwań, historii skanowania i listy obserwowanych. Tej operacji nie można cofnąć.",
+    "deleteAccountExportFirst": "Zalecamy najpierw wyeksportowanie danych.",
+    "deleteAccountConfirmLabel": "Wpisz DELETE, aby potwierdzić",
+    "deleteAccountConfirmPlaceholder": "Wpisz tutaj DELETE",
+    "deleteAccountProcessing": "Usuwanie konta…",
+    "deleteAccountSuccess": "Twoje konto zostało usunięte.",
+    "deleteAccountError": "Nie udało się usunąć konta. Spróbuj ponownie później."
   },
   "healthProfile": {
     "title": "Profile zdrowotne",

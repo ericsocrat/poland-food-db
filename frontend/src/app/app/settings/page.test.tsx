@@ -27,10 +27,12 @@ vi.mock("@/lib/supabase/client", () => ({
 const mockGetPrefs = vi.fn();
 const mockSetPrefs = vi.fn();
 const mockExportUserData = vi.fn();
+const mockDeleteUserData = vi.fn();
 vi.mock("@/lib/api", () => ({
   getUserPreferences: (...args: unknown[]) => mockGetPrefs(...args),
   setUserPreferences: (...args: unknown[]) => mockSetPrefs(...args),
   exportUserData: (...args: unknown[]) => mockExportUserData(...args),
+  deleteUserData: (...args: unknown[]) => mockDeleteUserData(...args),
 }));
 
 vi.mock("@/lib/toast", () => ({
@@ -86,6 +88,17 @@ beforeEach(() => {
     writable: true,
     configurable: true,
   });
+  // Mock HTMLDialogElement methods (jsdom doesn't implement them)
+  HTMLDialogElement.prototype.showModal =
+    HTMLDialogElement.prototype.showModal ||
+    vi.fn(function (this: HTMLDialogElement) {
+      this.open = true;
+    });
+  HTMLDialogElement.prototype.close =
+    HTMLDialogElement.prototype.close ||
+    vi.fn(function (this: HTMLDialogElement) {
+      this.open = false;
+    });
 });
 
 describe("SettingsPage", () => {
@@ -576,5 +589,79 @@ describe("SettingsPage", () => {
     });
 
     // showToast is mocked so we just confirm export was attempted
+  });
+
+  /* ── Delete Account section ──────────────────────────────────────────── */
+
+  it("renders delete account button", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("delete-account-button")).toBeInTheDocument();
+    });
+  });
+
+  it("opens delete dialog when delete button clicked", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("delete-account-button")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId("delete-account-button"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("delete-account-dialog")).toBeInTheDocument();
+    });
+  });
+
+  it("calls deleteUserData when deletion is confirmed", async () => {
+    mockDeleteUserData.mockResolvedValue({
+      ok: true,
+      data: { status: "deleted", timestamp: new Date().toISOString() },
+    });
+
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("delete-account-button")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId("delete-account-button"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("delete-confirm-input")).toBeInTheDocument();
+    });
+
+    await user.type(screen.getByTestId("delete-confirm-input"), "DELETE");
+    await user.click(screen.getByTestId("delete-account-confirm-button"));
+
+    await waitFor(() => {
+      expect(mockDeleteUserData).toHaveBeenCalled();
+    });
+  });
+
+  it("redirects after successful deletion", async () => {
+    mockDeleteUserData.mockResolvedValue({
+      ok: true,
+      data: { status: "deleted", timestamp: new Date().toISOString() },
+    });
+
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("delete-account-button")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByTestId("delete-account-button"));
+    await user.type(screen.getByTestId("delete-confirm-input"), "DELETE");
+    await user.click(screen.getByTestId("delete-account-confirm-button"));
+
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/");
+    });
   });
 });

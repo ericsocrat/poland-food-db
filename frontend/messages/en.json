@@ -569,7 +569,15 @@
     "exportInProgress": "Preparing export…",
     "exportSuccess": "Data exported successfully ({size})",
     "exportCooldown": "Export available in {minutes} min",
-    "exportError": "Failed to export data. Please try again later."
+    "exportError": "Failed to export data. Please try again later.",
+    "deleteAccount": "Delete My Account",
+    "deleteAccountWarning": "This will permanently delete all your data including preferences, health profiles, product lists, comparisons, saved searches, scan history, and watchlist. This action cannot be undone.",
+    "deleteAccountExportFirst": "We recommend exporting your data first.",
+    "deleteAccountConfirmLabel": "Type DELETE to confirm",
+    "deleteAccountConfirmPlaceholder": "Type DELETE here",
+    "deleteAccountProcessing": "Deleting account…",
+    "deleteAccountSuccess": "Your account has been deleted.",
+    "deleteAccountError": "Failed to delete account. Please try again later."
   },
   "healthProfile": {
     "title": "Health Profiles",
