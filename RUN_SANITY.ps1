@@ -3,8 +3,10 @@
     Runs the sanity check pack against any environment (local, staging, production).
 
 .DESCRIPTION
-    Executes 16 cross-environment validation checks from supabase/sanity/sanity_checks.sql.
-    All checks are READ-ONLY SELECT queries — safe to run against production at any time
+    Executes 17 cross-environment validation checks.
+    Checks 1–16 are SQL queries from supabase/sanity/sanity_checks.sql.
+    Check 17 is a filesystem check verifying BACKUP.ps1 exists and is syntactically valid.
+    All SQL checks are READ-ONLY SELECT queries — safe to run against production at any time
     (§8.1A single-cloud guardrail compliance).
         1.  Required tables exist
         2.  Required views exist
@@ -22,6 +24,7 @@
         14. RLS enabled on core tables
         15. Materialized views populated
         16. Foreign key constraints validated
+        17. BACKUP.ps1 exists and is syntactically valid
 
     Each check returns 0 rows on success. Any rows indicate failures.
 
@@ -254,6 +257,47 @@ foreach ($check in $checks) {
     }
 }
 
+# ─── Check 17: BACKUP.ps1 exists and is syntactically valid (filesystem) ────
+
+$check17Timer = [System.Diagnostics.Stopwatch]::StartNew()
+$backupScript = Join-Path $PSScriptRoot "BACKUP.ps1"
+$check17Violations = @()
+
+if (-not (Test-Path $backupScript)) {
+    $check17Violations += "BACKUP.ps1 not found at $backupScript"
+}
+else {
+    # Validate PowerShell syntax by parsing the script
+    $parseErrors = $null
+    [System.Management.Automation.Language.Parser]::ParseFile($backupScript, [ref]$null, [ref]$parseErrors) | Out-Null
+    if ($parseErrors.Count -gt 0) {
+        foreach ($err in $parseErrors) {
+            $check17Violations += "Syntax error: $($err.Message) (line $($err.Extent.StartLineNumber))"
+        }
+    }
+}
+
+$check17Timer.Stop()
+$check17Status = if ($check17Violations.Count -gt 0) { "FAIL" } else { "PASS" }
+if ($check17Violations.Count -gt 0) { $failCount++ } else { $passCount++ }
+
+if (-not $Json) {
+    $icon = if ($check17Violations.Count -gt 0) { "✗" } else { "✓" }
+    $color = if ($check17Violations.Count -gt 0) { "Red" } else { "Green" }
+    Write-Host "  $icon  Check 17: BACKUP.ps1 exists and is syntactically valid ($($check17Timer.ElapsedMilliseconds)ms)" -ForegroundColor $color
+    if ($check17Violations.Count -gt 0) {
+        $check17Violations | ForEach-Object { Write-Host "       $_" -ForegroundColor DarkRed }
+    }
+}
+
+$results += @{
+    check      = 17
+    name       = "BACKUP.ps1 exists and is syntactically valid"
+    status     = $check17Status
+    runtime_ms = $check17Timer.ElapsedMilliseconds
+    violations = $check17Violations
+}
+
 $stopwatch.Stop()
 
 # ─── Cleanup ─────────────────────────────────────────────────────────────────
@@ -273,7 +317,7 @@ if ($Json) {
         target      = $envLabel
         checks      = $results
         summary     = @{
-            total  = $checks.Count
+            total  = $checks.Count + 1
             passed = $passCount
             failed = $failCount
         }
@@ -295,7 +339,7 @@ else {
     Write-Host "  Sanity Check Summary" -ForegroundColor Cyan
     Write-Host "================================================" -ForegroundColor Cyan
     Write-Host "  Environment: $envLabel" -ForegroundColor $envColor
-    Write-Host "  Checks:      $($checks.Count)" -ForegroundColor White
+    Write-Host "  Checks:      $($checks.Count + 1)" -ForegroundColor White
     Write-Host "  Passed:      $passCount" -ForegroundColor Green
     Write-Host "  Failed:      $failCount" -ForegroundColor $(if ($failCount -gt 0) { "Red" } else { "Green" })
     Write-Host "  Duration:    $($stopwatch.Elapsed.TotalSeconds.ToString('F1'))s" -ForegroundColor White

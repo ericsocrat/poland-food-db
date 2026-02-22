@@ -51,6 +51,7 @@ supabase/.branches/
 
 # ─── Database backups (pre-push safety dumps) ───────────────────────────────
 backups/
+backups/*.dump
 
 # ─── Pipeline output / scratch ──────────────────────────────────────────────
 pipeline_output/
