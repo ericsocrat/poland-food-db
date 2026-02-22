@@ -51,6 +51,10 @@ vi.mock("@/components/search/FilterPanel", () => ({
         onClick={() => onChange({ category: ["chips"] })}
       />
       <button data-testid="mock-clear-filters" onClick={() => onChange({})} />
+      <button
+        data-testid="mock-set-sort"
+        onClick={() => onChange({ sort_by: "calories", sort_order: "desc" })}
+      />
     </div>
   ),
 }));
@@ -892,5 +896,45 @@ describe("SearchPage", () => {
       screen.getAllByTestId("health-warning-badge").length,
     ).toBeGreaterThan(0);
     expect(screen.getAllByTestId("avoid-badge").length).toBeGreaterThan(0);
+  });
+
+  // ─── Sort indicator ───────────────────────────────────────────────────
+
+  it("shows sort indicator when non-relevance sort is active", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    // Perform search first
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    // Set sort filter
+    await user.click(screen.getByTestId("mock-set-sort"));
+
+    await waitFor(() => {
+      expect(screen.getByTestId("sort-indicator")).toBeInTheDocument();
+    });
+
+    expect(screen.getByTestId("sort-indicator").textContent).toContain("↓");
+  });
+
+  it("does not show sort indicator for default relevance sort", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+    await user.click(screen.getByRole("button", { name: "Search" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId("sort-indicator")).not.toBeInTheDocument();
   });
 });

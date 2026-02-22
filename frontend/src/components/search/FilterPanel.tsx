@@ -117,20 +117,27 @@ export function FilterPanel({
                   label: t("filters.nutriScore"),
                 },
                 { value: "calories" as const, label: t("filters.calories") },
-              ].map((opt) => (
-                <button
-                  key={opt.value}
-                  type="button"
-                  onClick={() => setSortBy(opt.value)}
-                  className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
-                    (filters.sort_by ?? "relevance") === opt.value
-                      ? "bg-brand-subtle text-brand"
-                      : "bg-surface-muted text-foreground-secondary hover:bg-surface-subtle"
-                  }`}
-                >
-                  {opt.label}
-                </button>
-              ))}
+              ].map((opt) => {
+                const isActive =
+                  (filters.sort_by ?? "relevance") === opt.value;
+                return (
+                  <button
+                    key={opt.value}
+                    type="button"
+                    onClick={() => setSortBy(opt.value)}
+                    className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                      isActive
+                        ? "bg-brand-subtle text-brand ring-2 ring-brand/30"
+                        : "bg-surface-muted text-foreground-secondary hover:bg-surface-subtle"
+                    }`}
+                  >
+                    {opt.label}
+                    {isActive &&
+                      opt.value !== "relevance" &&
+                      (filters.sort_order === "desc" ? " ↓" : " ↑")}
+                  </button>
+                );
+              })}
             </div>
             {filters.sort_by && filters.sort_by !== "relevance" && (
               <div className="mt-2 flex gap-1.5">

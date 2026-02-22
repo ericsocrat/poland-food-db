@@ -183,6 +183,7 @@
     "emptyState": "Szukaj po nazwie, marce lub przeglądaj z filtrami",
     "searchFailed": "Wyszukiwanie nie powiodło się. Spróbuj ponownie.",
     "resultsFor": "dla \"{query}\"",
+    "sortedBy": "{field} {direction}",
     "result": "{count} {count|wynik|wyniki|wyników}",
     "noMatchSearch": "Brak produktów pasujących do wyszukiwania",
     "noMatchFilters": "Brak produktów pasujących do filtrów",

@@ -478,6 +478,22 @@ export default function SearchPage() {
                   {data.query && (
                     <> {t("search.resultsFor", { query: data.query })}</>
                   )}
+                  {filters.sort_by && filters.sort_by !== "relevance" && (
+                    <span
+                      className="ml-2 inline-flex items-center gap-1 rounded-full bg-brand-subtle px-2 py-0.5 text-xs font-medium text-brand"
+                      data-testid="sort-indicator"
+                    >
+                      {t("search.sortedBy", {
+                        field: {
+                          name: t("filters.name"),
+                          unhealthiness: t("filters.healthScore"),
+                          nutri_score: t("filters.nutriScore"),
+                          calories: t("filters.calories"),
+                        }[filters.sort_by] ?? filters.sort_by,
+                        direction: filters.sort_order === "desc" ? "↓" : "↑",
+                      })}
+                    </span>
+                  )}
                 </p>
                 {data.pages > 1 && (
                   <p className="text-xs text-foreground-muted">

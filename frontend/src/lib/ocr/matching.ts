@@ -65,6 +65,8 @@ const MIN_TOKEN_LENGTH = 3;
 /** Max tokens to include in a search query */
 const MAX_QUERY_TOKENS = 8;
 
+const POLISH_CHARS = "ąćęłńóśźż";
+
 /* ── Common OCR error corrections for Polish text ─────────────────────────── */
 
 const OCR_CORRECTIONS: ReadonlyArray<[RegExp, string]> = [
@@ -116,11 +118,7 @@ export function tokenise(cleaned: string): string[] {
   const raw = cleaned
     .toLowerCase()
     .split(/[\s,;:]+/)
-    .map((t) =>
-      t
-        .replace(/^[^a-ząćęłńóśźż]+/i, "")
-        .replace(/[^a-ząćęłńóśźż]+$/i, ""),
-    )
+    .map((t) => trimTokenEdges(t))
     .filter(
       (t) => t.length >= MIN_TOKEN_LENGTH && !POLISH_STOP_WORDS.has(t),
     );
@@ -138,4 +136,27 @@ export function buildSearchQuery(rawText: string): TokenisedText {
   const query = tokens.slice(0, MAX_QUERY_TOKENS).join(" ");
 
   return { cleaned, tokens, query };
+}
+
+function isTokenChar(char: string): boolean {
+  if (!char) return false;
+  return (
+    (char >= "a" && char <= "z") ||
+    POLISH_CHARS.includes(char)
+  );
+}
+
+function trimTokenEdges(token: string): string {
+  let start = 0;
+  let end = token.length;
+
+  while (start < end && !isTokenChar(token[start])) {
+    start += 1;
+  }
+
+  while (end > start && !isTokenChar(token[end - 1])) {
+    end -= 1;
+  }
+
+  return token.slice(start, end);
 }

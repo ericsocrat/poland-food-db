@@ -236,6 +236,43 @@ describe("FilterPanel", () => {
     expect(screen.queryAllByText("↑ Asc")).toHaveLength(0);
   });
 
+  it("shows direction arrow on active sort button", async () => {
+    renderPanel({ filters: { sort_by: "name", sort_order: "asc" } });
+    await waitFor(() => {
+      const nameButtons = screen.getAllByText(/^Name/);
+      expect(nameButtons.length).toBeGreaterThanOrEqual(1);
+      expect(nameButtons[0].textContent).toContain("↑");
+    });
+  });
+
+  it("shows descending arrow on active sort button", async () => {
+    renderPanel({ filters: { sort_by: "calories", sort_order: "desc" } });
+    await waitFor(() => {
+      const calButtons = screen.getAllByText(/^Calories/);
+      expect(calButtons.length).toBeGreaterThanOrEqual(1);
+      expect(calButtons[0].textContent).toContain("↓");
+    });
+  });
+
+  it("does not show direction arrow on relevance sort button", async () => {
+    renderPanel({ filters: { sort_by: "relevance" } });
+    await waitFor(() => {
+      const relButtons = screen.getAllByText("Relevance");
+      expect(relButtons.length).toBeGreaterThanOrEqual(1);
+      expect(relButtons[0].textContent).not.toContain("↑");
+      expect(relButtons[0].textContent).not.toContain("↓");
+    });
+  });
+
+  it("applies ring styling to active sort button", async () => {
+    renderPanel({ filters: { sort_by: "name" } });
+    await waitFor(() => {
+      const nameButtons = screen.getAllByText(/^Name/);
+      expect(nameButtons.length).toBeGreaterThanOrEqual(1);
+      expect(nameButtons[0].className).toContain("ring-2");
+    });
+  });
+
   it("calls onChange with sort order", async () => {
     const onChange = vi.fn();
     renderPanel({ filters: { sort_by: "name" }, onChange });
