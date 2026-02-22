@@ -10,6 +10,7 @@ import { createClient } from "@/lib/supabase/client";
 import { searchAutocomplete } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
+import { nutriScoreLabel } from "@/lib/nutri-label";
 import {
   getRecentSearches,
   removeRecentSearch,
@@ -476,7 +477,7 @@ export function SearchAutocomplete({
                     <span
                       className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${nutriClass}`}
                     >
-                      {s.nutri_score ?? "?"}
+                      {nutriScoreLabel(s.nutri_score, "?")}
                     </span>
                   </button>
                 </li>
