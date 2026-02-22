@@ -38,7 +38,8 @@ import {
   getCurrentPushSubscription,
   extractSubscriptionData,
 } from "@/lib/push-manager";
-import { savePushSubscription, deletePushSubscription, exportUserData } from "@/lib/api";
+import { savePushSubscription, deletePushSubscription, exportUserData, deleteUserData } from "@/lib/api";
+import { DeleteAccountDialog } from "@/components/settings/DeleteAccountDialog";
 import {
   useInstallPrompt,
 } from "@/hooks/use-install-prompt";
@@ -206,6 +207,8 @@ export default function SettingsPage() {
     NotificationPermission | "unsupported"
   >("unsupported");
   const [togglingPush, setTogglingPush] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   // Fetch user email from auth session
   useEffect(() => {
@@ -397,6 +400,26 @@ export default function SettingsPage() {
     queryClient.clear();
     router.push("/auth/login");
     router.refresh();
+  }
+
+  async function handleDeleteAccount() {
+    setDeleting(true);
+    try {
+      const result = await deleteUserData(supabase);
+      if (!result.ok) {
+        showToast({ type: "error", messageKey: "settings.deleteAccountError" });
+        setDeleting(false);
+        return;
+      }
+      track("account_deleted");
+      showToast({ type: "success", messageKey: "settings.deleteAccountSuccess" });
+      queryClient.clear();
+      router.push("/");
+      router.refresh();
+    } catch {
+      showToast({ type: "error", messageKey: "settings.deleteAccountError" });
+      setDeleting(false);
+    }
   }
 
   if (isLoading) {
@@ -746,6 +769,22 @@ export default function SettingsPage() {
         >
           {t("settings.signOut")}
         </button>
+
+        <button
+          type="button"
+          onClick={() => setDeleteDialogOpen(true)}
+          className="mt-3 w-full rounded-lg bg-error px-4 py-2 text-sm font-medium text-foreground-inverse transition-colors hover:bg-error/90"
+          data-testid="delete-account-button"
+        >
+          {t("settings.deleteAccount")}
+        </button>
+
+        <DeleteAccountDialog
+          open={deleteDialogOpen}
+          loading={deleting}
+          onConfirm={handleDeleteAccount}
+          onCancel={() => setDeleteDialogOpen(false)}
+        />
       </section>
     </div>
   );

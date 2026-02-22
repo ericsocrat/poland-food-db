@@ -1024,7 +1024,8 @@ export type AnalyticsEventName =
   | "pwa_install_prompted"
   | "pwa_install_accepted"
   | "pwa_install_dismissed"
-  | "user_data_exported";
+  | "user_data_exported"
+  | "account_deleted";
 
 export type DeviceType = "mobile" | "tablet" | "desktop";
 

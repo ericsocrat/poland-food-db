@@ -970,3 +970,16 @@ export function exportUserData(
 ): Promise<RpcResult<UserDataExport>> {
   return callRpc<UserDataExport>(supabase, "api_export_user_data");
 }
+
+// ─── GDPR Art.17 — Account Deletion ────────────────────────────────────────
+
+export interface DeleteUserDataResponse {
+  status: "deleted";
+  timestamp: string;
+}
+
+export function deleteUserData(
+  supabase: SupabaseClient,
+): Promise<RpcResult<DeleteUserDataResponse>> {
+  return callRpc<DeleteUserDataResponse>(supabase, "api_delete_user_data");
+}
