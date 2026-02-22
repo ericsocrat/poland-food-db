@@ -98,7 +98,32 @@ export function translate(
   if (process.env.NODE_ENV === "development") {
     console.warn(`[i18n] Missing translation key: "${key}"`);
   }
-  return key;
+  return humanizeKey(key);
+}
+
+/**
+ * Convert a dot-separated i18n key into a human-readable fallback.
+ *
+ * Instead of showing raw keys like "recipes.items.overnight_oats.title"
+ * to end users, extract the last meaningful segment and title-case it.
+ * E.g. "recipes.items.overnight_oats.title" → "Overnight Oats"
+ *      "nav.home" → "Home"
+ *      "common.retry" → "Retry"
+ *
+ * @internal Exported for testing only.
+ */
+export function humanizeKey(key: string): string {
+  const segments = key.split(".");
+  // Use the second-to-last segment if the last is a generic word like "title"/"description"
+  const GENERIC_SUFFIXES = new Set(["title", "description", "label", "placeholder", "name"]);
+  let raw = segments.at(-1) ?? key;
+  if (GENERIC_SUFFIXES.has(raw) && segments.length >= 2) {
+    raw = segments.at(-2) ?? raw;
+  }
+  // Convert snake_case / kebab-case to Title Case
+  return raw
+    .replaceAll(/[-_]/g, " ")
+    .replaceAll(/\b\w/g, (c) => c.toUpperCase());
 }
 
 /**
