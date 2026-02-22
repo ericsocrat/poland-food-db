@@ -33,6 +33,19 @@ describe("recent-searches", () => {
       expect(getRecentSearches()).toEqual([]);
     });
 
+    it("returns empty array when stored value is not an array", () => {
+      localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(42));
+      expect(getRecentSearches()).toEqual([]);
+    });
+
+    it("filters out non-string values from stored array", () => {
+      localStorage.setItem(
+        RECENT_SEARCHES_KEY,
+        JSON.stringify(["mleko", 42, null, "ser", true]),
+      );
+      expect(getRecentSearches()).toEqual(["mleko", "ser"]);
+    });
+
     it("handles localStorage unavailable gracefully", () => {
       const origGetItem = Storage.prototype.getItem;
       Storage.prototype.getItem = () => {
