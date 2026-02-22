@@ -95,7 +95,7 @@ export default defineConfig({
   ...(HAS_AUTH && { globalTeardown: "./e2e/global-teardown" }),
 
   use: {
-    baseURL: "http://localhost:3000",
+    baseURL: process.env.BASE_URL || "http://localhost:3000",
     trace: "on-first-retry",
     screenshot: "only-on-failure",
     actionTimeout: 10_000,
@@ -106,8 +106,9 @@ export default defineConfig({
 
   /* CI starts its own dev server; locally you must run `npm run dev` first.
      The webServer block caused hangs when a stale Node process held port 3000
-     without actually serving — Playwright's "plugin setup" waited forever. */
-  ...(process.env.CI && {
+     without actually serving — Playwright's "plugin setup" waited forever.
+     When BASE_URL is set (e.g., Vercel preview), skip the local dev server. */
+  ...(process.env.CI && !process.env.BASE_URL && {
     webServer: {
       command: "npm run dev -- --port 3000",
       url: "http://localhost:3000",

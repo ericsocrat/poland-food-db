@@ -137,9 +137,9 @@ The workflow uses `concurrency: deploy-<environment>` to prevent parallel deploy
 
 ### Existing Auto-Sync
 
-`sync-cloud-db.yml` automatically pushes migrations to production on merge to `main`. The manual `deploy.yml` workflow is intended for:
+`sync-cloud-db.yml` automatically pushes migrations to **staging first** (when `STAGING_ENABLED=true`), then to production on merge to `main`. The manual `deploy.yml` workflow is intended for:
 - Controlled deployments with approval gates
-- Staging deployments (once #140 is implemented)
+- Staging deployments
 - Re-deployments after failed syncs
 - Dry-run schema diff checks
 
@@ -173,20 +173,47 @@ See also: Issue #121 (Rollback Documentation) for detailed procedures.
 
 Add these in **GitHub > Settings > Secrets and variables > Actions > Repository secrets**:
 
-| Secret                          | Value                              |
-| ------------------------------- | ---------------------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`      | `https://your-project.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key             |
+| Secret                               | Value                                    | Used by             |
+| ------------------------------------ | ---------------------------------------- | ------------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`           | Production Supabase URL                  | CI (fallback)       |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`      | Production Supabase anon key             | CI (fallback)       |
+| `SUPABASE_URL_STAGING`               | Staging Supabase URL                     | CI + preview E2E    |
+| `SUPABASE_ANON_KEY_STAGING`          | Staging Supabase anon key                | CI + preview E2E    |
+| `SUPABASE_SERVICE_ROLE_KEY_STAGING`  | Staging service role key                 | CI auth E2E         |
+| `SUPABASE_SERVICE_ROLE_KEY`          | Production service role key (fallback)   | CI auth E2E         |
+
+> **Note:** When staging secrets are configured, CI automatically uses them
+> over the production fallbacks. This ensures CI never touches production.
 
 ### CI Pipeline
 
 The CI workflow (`.github/workflows/ci.yml`) runs on every push to `main` and on pull requests:
 
-1. **Install** — `npm ci` (uses lockfile for reproducible builds)
-2. **Type check** — `npm run type-check` (TypeScript `tsc --noEmit`)
-3. **Lint** — `npm run lint` (ESLint with Next.js rules)
-4. **Build** — `npm run build` (Next.js production build)
-5. **E2E Tests** — Playwright smoke tests (14 tests)
+1. **Lint, Typecheck & Build** — `tsc --noEmit` + `next lint` + `next build`
+2. **Playwright E2E (local)** — Starts a dev server and runs smoke + auth tests against `localhost:3000`
+3. **Playwright E2E (Preview)** — On PRs when `STAGING_ENABLED=true`: waits for Vercel preview deployment, runs smoke tests against the preview URL backed by staging Supabase
+
+### Preview → Staging Wiring
+
+Vercel preview deployments are wired to the **staging** Supabase project:
+
+| Vercel Environment | Supabase Target | `NEXT_PUBLIC_SUPABASE_URL` | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| ------------------ | --------------- | -------------------------- | ------------------------------- |
+| Preview            | Staging         | Staging URL                | Staging anon key                |
+| Production         | Production      | Production URL             | Production anon key             |
+
+**How it works:**
+
+1. Developer opens a PR → Vercel creates a preview deployment using **Preview** env vars (staging Supabase)
+2. CI `playwright-preview` job waits for the Vercel deployment to be ready
+3. Playwright runs smoke tests against the preview URL (no local dev server needed)
+4. Preview E2E uses `BASE_URL` env var to override `playwright.config.ts` `baseURL`
+5. The `webServer` block in Playwright config is automatically skipped when `BASE_URL` is set
+
+**Activation:** Set `STAGING_ENABLED=true` as a GitHub repository variable and configure the staging secrets listed above.
+
+> **Tip:** The preview E2E job is non-blocking during initial rollout — it runs
+> as a separate check and does not prevent merging.
 
 ### Running CI Locally
 
