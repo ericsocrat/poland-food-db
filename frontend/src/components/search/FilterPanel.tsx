@@ -168,7 +168,7 @@ export function FilterPanel({
           </div>
 
           {/* Categories */}
-          {data && data.categories.length > 0 && (
+          {data && (data.categories?.length ?? 0) > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
                 {t("filters.category")}
@@ -205,7 +205,7 @@ export function FilterPanel({
           )}
 
           {/* Nutri-Score */}
-          {data && data.nutri_scores.length > 0 && (
+          {data && (data.nutri_scores?.length ?? 0) > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
                 {t("filters.nutriScore")}
@@ -240,7 +240,7 @@ export function FilterPanel({
           )}
 
           {/* NOVA Group */}
-          {data && data.nova_groups.length > 0 && (
+          {data && (data.nova_groups?.length ?? 0) > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
                 {t("filters.novaGroup")}
@@ -274,7 +274,7 @@ export function FilterPanel({
           )}
 
           {/* Allergen-Free */}
-          {data && data.allergens.length > 0 && (
+          {data && (data.allergens?.length ?? 0) > 0 && (
             <div>
               <h3 className="mb-2 text-xs font-semibold uppercase tracking-wider text-foreground-secondary">
                 {t("filters.allergenFree")}

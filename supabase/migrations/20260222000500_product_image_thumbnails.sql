@@ -6,8 +6,12 @@
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ─── 1. Update v_master view to include primary image URL ────────────────
+-- NOTE: DROP + CREATE (not CREATE OR REPLACE) because image_thumb_url is
+-- inserted before existing columns, changing their positions. PostgreSQL's
+-- CREATE OR REPLACE VIEW cannot rename columns at existing positions.
 
-CREATE OR REPLACE VIEW public.v_master AS
+DROP VIEW IF EXISTS public.v_master;
+CREATE VIEW public.v_master AS
 SELECT
     p.product_id,
     p.country,
@@ -118,7 +122,16 @@ SELECT
                   OR nf.sugars_g <= nf.carbs_g)
         THEN 'clean'
         ELSE 'suspect'
-    END AS nutrition_data_quality
+    END AS nutrition_data_quality,
+
+    -- Phase 2: Product English name + provenance + timestamps
+    p.product_name_en,
+    p.product_name_en_source,
+    p.created_at,
+    p.updated_at,
+
+    -- Phase 4: Cross-border translations
+    p.name_translations
 
 FROM public.products p
 LEFT JOIN public.nutrition_facts nf ON nf.product_id = p.product_id
