@@ -6,6 +6,7 @@ on:
     paths:
       - "db/**"
       - "supabase/**"
+      - "pipeline/**"
       - "RUN_QA.ps1"
       - "RUN_LOCAL.ps1"
       - "RUN_SEED.ps1"
@@ -15,9 +16,19 @@ on:
       - "check_enrichment_identity.py"
       - "check_pipeline_structure.py"
       - "fetch_off_category.py"
-      - ".github/workflows/**"
+      - ".github/workflows/qa.yml"
   pull_request:
     branches: [main]
+    paths:
+      - "db/**"
+      - "supabase/**"
+      - "pipeline/**"
+      - "*.py"
+      - "RUN_QA.ps1"
+      - "RUN_LOCAL.ps1"
+      - "RUN_SEED.ps1"
+      - "RUN_SANITY.ps1"
+      - ".github/workflows/qa.yml"
   workflow_dispatch:
     inputs:
       fail_on_warn:
@@ -25,6 +36,10 @@ on:
         required: false
         type: boolean
         default: false
+
+concurrency:
+  group: qa-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   qa:

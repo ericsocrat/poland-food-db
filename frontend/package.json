@@ -13,6 +13,8 @@
     "test:coverage": "vitest run --coverage",
     "test:integration": "INTEGRATION=1 vitest run --testPathPattern=rpc-contract",
     "test:e2e": "npx playwright test",
+    "test:e2e:smoke": "npx playwright test --project=smoke",
+    "test:e2e:visual": "VISUAL_REGRESSION=true npx playwright test",
     "test:e2e:scanner": "npx playwright test authenticated-scanner"
   },
   "dependencies": {

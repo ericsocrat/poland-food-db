@@ -629,12 +629,13 @@ E2E tests are the **only** exception — they run against a live dev server but 
 
 ### 8.10 CI Parity (Don't "Green Locally, Red in CI")
 
-- Use the **same entrypoints** CI uses (`.github/workflows/ci.yml`, `build.yml`, `qa.yml`).
+- Use the **same entrypoints** CI uses (`.github/workflows/pr-gate.yml`, `main-gate.yml`, `qa.yml`).
 - If a test needs env vars, provide defaults in test setup (not in CI-only secrets).
 - If you add a new dependency/tool, ensure it's installed in CI (`package.json` or `requirements.txt`).
-- CI workflows:
-  - **`ci.yml`**: Lint → Typecheck → Build → Playwright E2E
-  - **`build.yml`**: Lint → Typecheck → Build → Unit tests with coverage → Playwright → SonarCloud scan + Quality Gate
+- CI workflows (tiered architecture):
+  - **`pr-gate.yml`**: Static checks (typecheck + lint) → Unit tests + Build (parallel) → Playwright smoke E2E
+  - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Full Playwright E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
+  - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
   - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (421 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`

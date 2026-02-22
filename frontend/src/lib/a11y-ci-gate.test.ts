@@ -327,14 +327,16 @@ describe("Playwright config — a11y integration", () => {
 /* ── CI workflow integration ─────────────────────────────────────────────── */
 
 describe("CI workflow — a11y integration", () => {
-  const ci = readFile(join(ROOT, "..", ".github", "workflows", "ci.yml"));
+  const mainGate = readFile(
+    join(ROOT, "..", ".github", "workflows", "main-gate.yml"),
+  );
 
   it("uploads a11y results JSON as artifact", () => {
-    expect(ci).toContain("a11y-results.json");
+    expect(mainGate).toContain("a11y-results.json");
   });
 
   it("runs Playwright tests (which now include a11y)", () => {
-    expect(ci).toContain("playwright test");
+    expect(mainGate).toContain("playwright test");
   });
 });
 
