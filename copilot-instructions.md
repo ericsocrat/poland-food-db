@@ -253,7 +253,7 @@ poland-food-db/
 │   ├── qa.yml                       # Schema → Pipelines → QA (360) → Sanity (16)
 │   └── sync-cloud-db.yml            # Remote DB sync
 ├── sonar-project.properties         # SonarCloud configuration
-├── DEPLOYMENT.md                    # Deployment procedures
+├── DEPLOYMENT.md                    # Deployment procedures, rollback playbook, emergency checklist
 ├── SECURITY.md                      # Security policy
 ├── .env.example
 └── README.md
@@ -666,6 +666,7 @@ If adding/changing DB schema or SQL functions:
 
 - **Append-only migrations.** Never modify an existing `supabase/migrations/` file.
 - Provide a migration plan and rollback note (comment in the migration file).
+- For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
 - Run `.\RUN_QA.ps1` to verify all 421 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 29 injection tests.

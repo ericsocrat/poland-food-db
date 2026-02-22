@@ -322,3 +322,342 @@ Before running `RUN_REMOTE.ps1` against production:
 4. **Backup runs successfully** — automatic via `RUN_REMOTE.ps1`, or manual `.\BACKUP.ps1 -Env remote`
 5. **Review the execution plan** — `.\RUN_REMOTE.ps1 -DryRun` to see which files will execute
 6. **Confirm interactively** — type `YES` when prompted (or use `-Force` for CI)
+
+---
+
+## Rollback Procedures
+
+> **Golden rule:** Always take a backup before attempting any fix. If the database is accessible, run `.\BACKUP.ps1 -Env remote` *first*.
+
+### Scenario 1: Bad Migration Applied (DDL error)
+
+A migration was successfully applied but introduced a schema error — e.g., dropped a column, altered a constraint incorrectly, or created a conflicting index.
+
+**Steps:**
+
+1. **Identify the bad migration:**
+   ```sql
+   SELECT version, name, statements FROM supabase_migrations.schema_migrations
+   ORDER BY version DESC LIMIT 5;
+   ```
+
+2. **Take a current backup** (if DB is still accessible):
+   ```powershell
+   .\BACKUP.ps1 -Env remote
+   ```
+
+3. **Write a compensating migration** — a new migration that undoes the damage. Example:
+   ```sql
+   -- ═══════════════════════════════════════════════════════════════════════════
+   -- Migration: Fix accidental column drop from migration YYYYMMDD_HHMMSS
+   -- Rollback: This migration itself is forward-only; manual DROP if needed
+   -- ═══════════════════════════════════════════════════════════════════════════
+   BEGIN;
+
+   -- Re-create the accidentally dropped column
+   ALTER TABLE products ADD COLUMN IF NOT EXISTS product_name text;
+
+   -- Restore data from backup if needed (backfill from last known-good dump)
+   -- UPDATE products SET product_name = b.product_name
+   -- FROM backup_products b WHERE products.id = b.id;
+
+   -- Restore any constraints
+   -- ALTER TABLE products ALTER COLUMN product_name SET NOT NULL;
+
+   COMMIT;
+   ```
+
+4. **Save the compensating migration** to `supabase/migrations/` with the next timestamp.
+
+5. **Apply:**
+   ```powershell
+   # Local test first
+   supabase db push --local
+   .\RUN_QA.ps1
+
+   # Then production
+   supabase db push --linked
+   # Or via deploy.yml workflow with approval gate
+   ```
+
+6. **Verify:**
+   ```powershell
+   .\RUN_SANITY.ps1 -Env production   # 17 checks pass
+   .\RUN_QA.ps1                        # 421 checks pass
+   ```
+
+7. **Document the incident** — write a post-mortem within 24 hours.
+
+### Scenario 2: Full Database Restore from Backup
+
+The database is corrupted or data integrity is compromised beyond compensating migration repair. Requires full restore from the latest `.dump` file.
+
+**Steps:**
+
+1. **Locate latest backup:**
+   ```powershell
+   Get-ChildItem backups/*.dump | Sort-Object LastWriteTime -Descending | Select-Object -First 5
+   ```
+   Also check GitHub Actions artifacts from `deploy.yml` runs (30-day retention).
+
+2. **Verify backup integrity:**
+   ```bash
+   pg_restore --list backups/cloud_backup_YYYYMMDD_HHmmss.dump | head -20
+   ```
+   If this prints a table of contents, the file is valid. If it errors, the dump is corrupt — try an older backup.
+
+3. **Take a snapshot of the current (broken) state** (if accessible):
+   ```powershell
+   .\BACKUP.ps1 -Env remote   # Save as evidence for post-mortem
+   ```
+
+4. **Restore the backup:**
+   ```powershell
+   $env:PGPASSWORD = "your-password"
+   pg_restore --no-owner --no-privileges --clean --if-exists `
+     -h aws-1-eu-west-1.pooler.supabase.com `
+     -p 5432 `
+     -U "postgres.uskvezwftkkudvksmken" `
+     -d postgres `
+     backups/cloud_backup_YYYYMMDD_HHmmss.dump
+   ```
+
+   **Flags explained:**
+   - `--clean --if-exists` — drops objects before recreating (safe even if objects don't exist)
+   - `--no-owner --no-privileges` — avoids permission errors on Supabase managed roles
+
+5. **Re-apply migrations newer than the backup** (if any):
+   ```bash
+   # Check which migrations are recorded in the restored DB
+   psql -c "SELECT version FROM supabase_migrations.schema_migrations ORDER BY version DESC LIMIT 10;"
+   # Manually apply any missing migrations after the backup timestamp
+   ```
+
+6. **Verify:**
+   ```powershell
+   .\RUN_SANITY.ps1 -Env production   # 17 checks pass
+   .\RUN_QA.ps1                        # 421 checks pass
+   ```
+
+7. **Verify product count:**
+   ```sql
+   SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE;
+   -- Expected: ≥ 1,076
+   ```
+
+8. **Spot-check the frontend** — load a product detail page and verify data displays correctly.
+
+### Scenario 3: User Data Restore Only
+
+User-facing data (preferences, lists, scan history) was lost or corrupted, but the schema and product data are intact.
+
+**Steps:**
+
+1. **Locate the user data export:**
+   ```powershell
+   Get-ChildItem backups/user_data_*.json | Sort-Object LastWriteTime -Descending | Select-Object -First 5
+   ```
+   If no export exists, create one from the backup dump manually.
+
+2. **Import user data:**
+   ```powershell
+   .\scripts\import_user_data.ps1 -Env remote -File backups\user_data_YYYYMMDD_HHmmss.json
+   ```
+   Uses `ON CONFLICT DO UPDATE` (upsert) — safe to run multiple times. FK dependency order is handled automatically.
+
+3. **Verify user table row counts:**
+   ```sql
+   SELECT 'user_preferences' AS tbl, COUNT(*) FROM user_preferences
+   UNION ALL SELECT 'user_health_profiles', COUNT(*) FROM user_health_profiles
+   UNION ALL SELECT 'user_product_lists', COUNT(*) FROM user_product_lists
+   UNION ALL SELECT 'user_product_list_items', COUNT(*) FROM user_product_list_items
+   UNION ALL SELECT 'user_comparisons', COUNT(*) FROM user_comparisons
+   UNION ALL SELECT 'user_saved_searches', COUNT(*) FROM user_saved_searches
+   UNION ALL SELECT 'scan_history', COUNT(*) FROM scan_history
+   UNION ALL SELECT 'product_submissions', COUNT(*) FROM product_submissions;
+   ```
+
+4. **Verify auth still works** — log in with a test account, view preferences, check saved lists.
+
+### Scenario 4: Vercel Frontend Rollback
+
+A bad frontend deployment was pushed — the site is broken, shows errors, or has a critical UX regression.
+
+**Steps:**
+
+1. Go to **Vercel Dashboard → Project → Deployments**
+2. Find the last known-good deployment (green checkmark before the bad one)
+3. Click **"..."** → **"Promote to Production"**
+4. Wait ~30 seconds for the rollback to propagate
+5. **Verify:**
+   - Home page loads (`/`)
+   - Search works (`/app/search`)
+   - Product detail page renders data (`/app/product/[id]`)
+   - Auth callback works (`/auth/callback`)
+   - Health endpoint returns 200 (`/api/health`)
+6. If the rollback needs to stay in place, revert the bad commit on `main` to prevent the next push from re-deploying the broken code.
+
+### Scenario 5: Partial Failure (Migration Succeeded, Data Corrupt)
+
+A migration applied successfully but introduced data corruption — e.g., an UPDATE with incorrect WHERE clause, a bad DEFAULT value, or a trigger that modified existing rows.
+
+**Steps:**
+
+1. **Assess the damage:**
+   ```powershell
+   .\RUN_QA.ps1   # Check which suites fail — this identifies affected data
+   ```
+
+2. **If damage is limited** (a few rows affected):
+   - Write a compensating SQL script to fix the data
+   - Apply and verify with QA
+
+3. **If damage is widespread** (many tables/rows affected):
+   - Follow **Scenario 2** (full restore from backup)
+
+4. **If data was deleted irreversibly:**
+   - Restore from backup (Scenario 2)
+   - Accept data loss between backup time and incident time
+   - Document the gap in the post-mortem
+
+---
+
+## Emergency Checklist
+
+> Copy-paste this into your incident channel (Slack/Discord/Teams) when a production incident occurs.
+
+```markdown
+## 🚨 Production Incident — [DATE] [TIME UTC]
+
+**Reported by:** @name
+**Severity:** P1 / P2 / P3
+**Impact:** [Describe what users are experiencing]
+
+### Immediate Actions
+- [ ] Stop any in-progress deployments (cancel GitHub Actions run on deploy.yml)
+- [ ] Stop `sync-cloud-db.yml` if running (cancel workflow)
+- [ ] Take a current backup if DB is accessible: `.\BACKUP.ps1 -Env remote`
+- [ ] Export user data if schema is intact: `.\scripts\export_user_data.ps1 -Env remote`
+
+### Investigation
+- [ ] Identify root cause (check: migration logs, Supabase dashboard logs, Vercel deployment logs)
+- [ ] Identify scope — which tables/data/features are affected
+- [ ] Check `supabase_migrations.schema_migrations` for recently applied migrations
+
+### Recovery
+- [ ] Choose restore scenario (1–5 from DEPLOYMENT.md Rollback Procedures)
+- [ ] Execute restore with a second person verifying each step
+- [ ] Run `.\RUN_SANITY.ps1 -Env production` — all 17 checks pass
+- [ ] Run `.\RUN_QA.ps1` against production data — all 421 checks pass
+- [ ] Verify frontend loads correctly (home, search, product detail, auth)
+- [ ] Verify `/api/health` returns 200
+
+### Communication
+- [ ] Notify stakeholders of impact and ETA
+- [ ] Update status page (if applicable)
+- [ ] Write post-mortem within 24 hours
+
+### Post-mortem Template
+- **Timeline:** When was the incident detected? When was it resolved?
+- **Root cause:** What exactly went wrong?
+- **Impact:** How many users were affected? For how long?
+- **Recovery:** What steps were taken? How long did recovery take?
+- **Prevention:** What changes will prevent recurrence?
+```
+
+---
+
+## Break-Glass: Emergency Database Access
+
+If normal tooling fails (Supabase CLI, scripts), use direct `psql` access:
+
+```powershell
+# Set credentials
+$env:PGPASSWORD = "your-db-password"
+
+# Direct connection (bypasses CLI, bypasses pooler)
+psql -h db.uskvezwftkkudvksmken.supabase.co `
+     -p 5432 `
+     -U postgres `
+     -d postgres
+```
+
+**When to use break-glass:**
+- Supabase CLI is down or unresponsive
+- GitHub Actions is not available
+- `RUN_REMOTE.ps1` or `BACKUP.ps1` are failing for script-level reasons
+- You need to run a manual SQL fix immediately
+
+**Security note:** Direct database access bypasses all application-level security. Use only during incidents. Log all manual SQL commands for the post-mortem.
+
+---
+
+## Rollback Drill Procedure
+
+> **Frequency:** Run this drill at least once per quarter, and after every time the backup or restore scripts change.
+
+### Drill: Local Full Restore
+
+**Prerequisites:** Docker Desktop running, `supabase start` active.
+
+**Steps:**
+
+```powershell
+# 1. Create backup of healthy local DB
+.\BACKUP.ps1 -Env local
+
+# 2. Verify backup exists
+Get-ChildItem backups/local_backup*.dump | Sort-Object LastWriteTime -Descending | Select-Object -First 1
+
+# 3. Apply destructive migration to simulate disaster
+psql -h 127.0.0.1 -p 54322 -U postgres -d postgres -c "ALTER TABLE products DROP COLUMN product_name;"
+
+# 4. Confirm QA detects the breakage
+.\RUN_QA.ps1
+# Expected: multiple suite failures (product_name referenced in views, queries, API contract)
+
+# 5. Restore from backup
+pg_restore --clean --if-exists --no-owner --no-privileges `
+  -h 127.0.0.1 -p 54322 -U postgres -d postgres `
+  backups/local_backup_YYYYMMDD_HHmmss.dump
+
+# Alternative: full reset (reapplies all migrations from scratch)
+supabase db reset
+
+# 6. Verify recovery
+.\RUN_SANITY.ps1          # 17 checks pass
+.\RUN_QA.ps1              # 421 checks pass
+```
+
+**Expected Results:**
+| Step | Expected Duration |
+|---|---|
+| Backup creation (local) | ~5 seconds |
+| Destructive change | < 1 second |
+| QA detection of breakage | Immediate (first suite referencing `product_name`) |
+| Restore from dump (local) | ~10 seconds |
+| Full QA pass after restore | ~30 seconds |
+| **Total drill time** | **< 2 minutes (local)** |
+
+**For production drills**, add ~30 seconds network latency for backup and ~60 seconds for restore.
+
+**Record your results:**
+
+```markdown
+### Drill #N — [Date]
+- **Operator:** @name
+- **Environment:** local / staging
+- **Backup creation time:** ___
+- **Breakage detection time:** ___
+- **Restore time:** ___
+- **Full recovery time:** ___
+- **All QA checks passed after restore:** yes / no
+- **Issues encountered:** ___
+- **Lessons learned:** ___
+```
+
+**Key lessons from procedure design:**
+- `pg_restore --clean` on a running DB with active connections requires `--if-exists` to avoid errors on missing objects
+- Always verify backup integrity (`pg_restore --list`) before relying on it for restore
+- QA suite catches column drops immediately — sanity + QA provides comprehensive post-restore validation
+- The compensating migration approach (Scenario 1) is preferred over full restore when the issue is isolated to schema changes
