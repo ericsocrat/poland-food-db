@@ -21,15 +21,19 @@ describe("getTrafficLight", () => {
     expect(getTrafficLight("total_fat", 3)).toBe("green");
   });
 
-  it("total_fat: amber when 3.1–17.5g", () => {
+  it("total_fat: amber when 3.1–17.4g", () => {
     expect(getTrafficLight("total_fat", 3.1)).toBe("amber");
     expect(getTrafficLight("total_fat", 10)).toBe("amber");
-    expect(getTrafficLight("total_fat", 17.5)).toBe("amber");
   });
 
-  it("total_fat: red when > 17.5g", () => {
+  it("total_fat: red when ≥ 17.5g (exact high threshold)", () => {
+    expect(getTrafficLight("total_fat", 17.5)).toBe("red");
     expect(getTrafficLight("total_fat", 17.6)).toBe("red");
     expect(getTrafficLight("total_fat", 30)).toBe("red");
+  });
+
+  it("total_fat: null for 0g (no band)", () => {
+    expect(getTrafficLight("total_fat", 0)).toBeNull();
   });
 
   // ── Saturated fat thresholds ──────────────────────────────────────────
@@ -38,13 +42,18 @@ describe("getTrafficLight", () => {
     expect(getTrafficLight("saturated_fat", 1.5)).toBe("green");
   });
 
-  it("saturated_fat: amber when 1.6–5g", () => {
+  it("saturated_fat: amber when 1.6–4.9g", () => {
     expect(getTrafficLight("saturated_fat", 2)).toBe("amber");
-    expect(getTrafficLight("saturated_fat", 5)).toBe("amber");
+    expect(getTrafficLight("saturated_fat", 4.9)).toBe("amber");
   });
 
-  it("saturated_fat: red when > 5g", () => {
+  it("saturated_fat: red when ≥ 5g (exact high threshold)", () => {
+    expect(getTrafficLight("saturated_fat", 5)).toBe("red");
     expect(getTrafficLight("saturated_fat", 5.1)).toBe("red");
+  });
+
+  it("saturated_fat: null for 0g (no band)", () => {
+    expect(getTrafficLight("saturated_fat", 0)).toBeNull();
   });
 
   // ── Sugars thresholds ─────────────────────────────────────────────────
@@ -77,16 +86,21 @@ describe("getTrafficLight", () => {
   it("fibre: green when high (≥ 6g) — beneficial inversion", () => {
     expect(getTrafficLight("fibre", 8)).toBe("green");
     expect(getTrafficLight("fibre", 6.1)).toBe("green");
+    expect(getTrafficLight("fibre", 6)).toBe("green"); // exact high threshold
   });
 
-  it("fibre: amber when moderate (3–6g)", () => {
+  it("fibre: amber when moderate (3.1–5.9g)", () => {
     expect(getTrafficLight("fibre", 4)).toBe("amber");
-    expect(getTrafficLight("fibre", 6)).toBe("amber");
+    expect(getTrafficLight("fibre", 5.9)).toBe("amber");
   });
 
-  it("fibre: red when low (< 3g) — beneficial inversion", () => {
+  it("fibre: red when low (≤ 3g) — beneficial inversion", () => {
     expect(getTrafficLight("fibre", 1)).toBe("red");
     expect(getTrafficLight("fibre", 3)).toBe("red");
+  });
+
+  it("fibre: null for 0g — the original bug (was showing 'High')", () => {
+    expect(getTrafficLight("fibre", 0)).toBeNull();
   });
 
   it("fiber (US spelling) follows same inversion as fibre", () => {
@@ -116,6 +130,14 @@ describe("getTrafficLight", () => {
   it("sugar low → green (harmful), fibre low → red (beneficial)", () => {
     expect(getTrafficLight("sugars", 2)).toBe("green");
     expect(getTrafficLight("fibre", 1)).toBe("red");
+  });
+
+  // ── Zero-value edge cases (core bug fix for #153) ─────────────────────
+  it("returns null for 0g of any nutrient (never shows a band label)", () => {
+    expect(getTrafficLight("sugars", 0)).toBeNull();
+    expect(getTrafficLight("salt", 0)).toBeNull();
+    expect(getTrafficLight("fibre", 0)).toBeNull();
+    expect(getTrafficLight("protein", 0)).toBeNull();
   });
 });
 
