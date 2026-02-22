@@ -23,7 +23,7 @@ export function IngredientUsageStats({ usage }: IngredientUsageStatsProps) {
       <p className="mb-3 text-2xl font-bold text-foreground">
         {usage.product_count.toLocaleString()}{" "}
         <span className="text-sm font-normal text-foreground-secondary">
-          {t("ingredient.productsContaining")}
+          {t("ingredient.productsContaining", { count: usage.product_count })}
         </span>
       </p>
 

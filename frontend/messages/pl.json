@@ -37,7 +37,8 @@
     "offlineDescription": "Sprawdź połączenie internetowe i spróbuj ponownie.",
     "pageOf": "Strona {page} z {pages}",
     "items": "{count} {count|element|elementy|elementów}",
-    "products": "{count} {count|produkt|produkty|produktów}"
+    "products": "{count} {count|produkt|produkty|produktów}",
+    "allergenWarnings": "{count} {count|ostrzeżenie alergenowe|ostrzeżenia alergenowe|ostrzeżeń alergenowych}"
   },
   "toast": {
     "genericError": "Coś poszło nie tak. Spróbuj ponownie.",
@@ -864,7 +865,7 @@
     "comparisonInvalid": "Ten link porównania jest nieprawidłowy lub wygasł.",
     "goToFoodDB": "Przejdź do FoodDB",
     "productComparison": "Porównanie produktów",
-    "productsCompared": "porównane produkty",
+    "productsCompared": "{count} {count|produkt porównany|produkty porównane|produktów porównanych}",
     "wantToCompare": "Chcesz porównać własne produkty?",
     "signUpFree": "Zarejestruj się za darmo"
   },
@@ -900,7 +901,7 @@
     "efsaGuidance": "Wytyczne EFSA",
     "scoreImpact": "Wpływ na wynik",
     "usage": "Statystyki użycia",
-    "productsContaining": "produktów zawiera ten składnik",
+    "productsContaining": "{count|produkt zawiera|produkty zawierają|produktów zawiera} ten składnik",
     "byCategory": "Według kategorii",
     "topProducts": "Najlepsze produkty",
     "relatedIngredients": "Często spotykane razem",

@@ -74,7 +74,7 @@ function SharedComparisonContent() {
                   {data.title ?? t("shared.productComparison")}
                 </h1>
                 <p className="text-sm text-foreground-secondary">
-                  {data.product_count} {t("shared.productsCompared")} ·{" "}
+                  {t("shared.productsCompared", { count: data.product_count })} ·{" "}
                   {new Date(data.created_at).toLocaleDateString()}
                 </p>
               </div>

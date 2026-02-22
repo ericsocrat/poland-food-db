@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslation } from "@/lib/i18n";
 import type { AllergenWarning } from "@/lib/allergen-matching";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
@@ -57,6 +58,8 @@ interface AllergenChipsProps {
  * - Returns null when no warnings
  */
 export function AllergenChips({ warnings }: AllergenChipsProps) {
+  const { t } = useTranslation();
+
   if (warnings.length === 0) return null;
 
   const visible = warnings.slice(0, MAX_VISIBLE);
@@ -67,7 +70,7 @@ export function AllergenChips({ warnings }: AllergenChipsProps) {
       className="flex flex-wrap items-center gap-1"
       data-testid="allergen-chips"
       role="status"
-      aria-label={`${warnings.length} allergen warning${warnings.length !== 1 ? "s" : ""}`}
+      aria-label={t("common.allergenWarnings", { count: warnings.length })}
     >
       {visible.map((w) => (
         <AllergenChip key={`${w.tag}-${w.type}`} warning={w} />
