@@ -183,6 +183,7 @@
     "emptyState": "Search by name, brand, or browse with filters",
     "searchFailed": "Search failed. Please try again.",
     "resultsFor": "for \"{query}\"",
+    "sortedBy": "{field} {direction}",
     "result": "{count} {count|result|results}",
     "noMatchSearch": "No products match your search",
     "noMatchFilters": "No products match your filters",
