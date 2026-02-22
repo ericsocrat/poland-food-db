@@ -226,12 +226,14 @@ SELECT '17. user_preferences has SIUD policies' AS check_name,
        THEN 0 ELSE 1 END AS violations;
 
 -- 18. authenticated CAN EXECUTE all api_* functions
+--     Excludes admin-only functions that are restricted to service_role.
 SELECT '18. authenticated can execute all api_* functions' AS check_name,
        COUNT(*) AS violations
 FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE n.nspname = 'public'
   AND p.proname LIKE 'api_%'
+  AND p.proname NOT IN ('api_refresh_mvs')  -- service_role-only admin RPCs
   AND NOT has_function_privilege('authenticated', p.oid, 'EXECUTE');
 
 -- 19. user_preferences.country allows NULL (pre-onboarding state)

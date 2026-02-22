@@ -163,3 +163,40 @@ SELECT '14. authenticator has statement_timeout' AS check_name,
 SELECT '15. check_table_ceilings returns all tables' AS check_name,
        CASE WHEN (SELECT COUNT(*) FROM check_table_ceilings()) >= 7
        THEN 0 ELSE 1 END AS violations;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #16  mv_ingredient_frequency has a unique index on ingredient_id
+--      Required for REFRESH MATERIALIZED VIEW CONCURRENTLY
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '16. mv_ingredient_frequency has unique index' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_indexes
+           WHERE tablename = 'mv_ingredient_frequency'
+             AND indexdef ILIKE '%unique%'
+             AND indexdef ILIKE '%ingredient_id%'
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #17  refresh_all_materialized_views() completes without error
+--      Validates CONCURRENTLY refresh works end-to-end
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '17. refresh_all_materialized_views() succeeds' AS check_name,
+       CASE WHEN (refresh_all_materialized_views() IS NOT NULL)
+       THEN 0 ELSE 1 END AS violations;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #18  api_refresh_mvs() returns valid JSONB with status='refreshed'
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '18. api_refresh_mvs returns valid JSONB' AS check_name,
+       CASE WHEN (
+           SELECT api_refresh_mvs()->>'status' = 'refreshed'
+              AND api_refresh_mvs()->'timestamp' IS NOT NULL
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #19  api_refresh_mvs() is NOT accessible to anon role
+--      Verifies service_role-only restriction via pg_proc grant check
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '19. api_refresh_mvs not accessible to anon' AS check_name,
+       CASE WHEN NOT has_function_privilege('anon', 'api_refresh_mvs()', 'EXECUTE')
+       THEN 0 ELSE 1 END AS violations;
