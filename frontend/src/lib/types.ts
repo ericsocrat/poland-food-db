@@ -1023,7 +1023,8 @@ export type AnalyticsEventName =
   | "push_notification_dismissed"
   | "pwa_install_prompted"
   | "pwa_install_accepted"
-  | "pwa_install_dismissed";
+  | "pwa_install_dismissed"
+  | "user_data_exported";
 
 export type DeviceType = "mobile" | "tablet" | "desktop";
 

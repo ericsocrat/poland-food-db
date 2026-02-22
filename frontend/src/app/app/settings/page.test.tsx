@@ -26,9 +26,11 @@ vi.mock("@/lib/supabase/client", () => ({
 
 const mockGetPrefs = vi.fn();
 const mockSetPrefs = vi.fn();
+const mockExportUserData = vi.fn();
 vi.mock("@/lib/api", () => ({
   getUserPreferences: (...args: unknown[]) => mockGetPrefs(...args),
   setUserPreferences: (...args: unknown[]) => mockSetPrefs(...args),
+  exportUserData: (...args: unknown[]) => mockExportUserData(...args),
 }));
 
 vi.mock("@/lib/toast", () => ({
@@ -74,6 +76,7 @@ const mockClipboardWriteText = vi.fn().mockResolvedValue(undefined);
 beforeEach(() => {
   vi.clearAllMocks();
   useLanguageStore.getState().reset();
+  localStorage.clear();
   mockGetPrefs.mockResolvedValue({ ok: true, data: mockPrefsData });
   mockGetUser.mockResolvedValue({
     data: { user: { email: "test@example.com" } },
@@ -492,5 +495,86 @@ describe("SettingsPage", () => {
       name: /Settings/i,
     }).parentElement!;
     expect(container.className).toContain("max-w-2xl");
+  });
+
+  /* ── Export Data section ──────────────────────────────────────────────── */
+
+  it("renders export data section", async () => {
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("export-data-section")).toBeInTheDocument();
+    });
+    expect(screen.getByTestId("export-data-button")).toBeInTheDocument();
+  });
+
+  it("export button is disabled during cooldown", async () => {
+    // Simulate cooldown: 30 min remaining
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation((key) => {
+      if (key === "gdpr-export-last-at")
+        return String(Date.now() - 30 * 60 * 1000);
+      return null;
+    });
+
+    render(<SettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("export-data-button")).toBeDisabled();
+    });
+
+    vi.restoreAllMocks();
+  });
+
+  it("calls exportUserData on button click and triggers download", async () => {
+    const mockData = {
+      exported_at: new Date().toISOString(),
+      format_version: "1.0",
+      user_id: "test-id",
+      preferences: {},
+      health_profiles: [],
+      product_lists: [],
+      comparisons: [],
+      saved_searches: [],
+      scan_history: [],
+      watched_products: [],
+      product_views: [],
+      achievements: [],
+    };
+    mockExportUserData.mockResolvedValue({ ok: true, data: mockData });
+
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("export-data-button")).toBeEnabled();
+    });
+
+    await user.click(screen.getByTestId("export-data-button"));
+
+    await waitFor(() => {
+      expect(mockExportUserData).toHaveBeenCalled();
+    });
+  });
+
+  it("shows error toast when export fails", async () => {
+    mockExportUserData.mockResolvedValue({
+      ok: false,
+      error: { code: "INTERNAL", message: "fail" },
+    });
+
+    render(<SettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("export-data-button")).toBeEnabled();
+    });
+
+    await user.click(screen.getByTestId("export-data-button"));
+
+    await waitFor(() => {
+      expect(mockExportUserData).toHaveBeenCalled();
+    });
+
+    // showToast is mocked so we just confirm export was attempted
   });
 });

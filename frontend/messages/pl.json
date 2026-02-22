@@ -563,7 +563,13 @@
     "offlineCache": "Pamięć podręczna offline",
     "offlineCacheDescription": "{count} produktów zapisanych do dostępu offline.",
     "clearCache": "Wyczyść pamięć offline",
-    "cacheCleared": "Pamięć offline wyczyszczona"
+    "cacheCleared": "Pamięć offline wyczyszczona",
+    "exportData": "Eksportuj moje dane",
+    "exportDataDescription": "Pobierz wszystkie swoje dane osobowe jako plik JSON (RODO art. 20).",
+    "exportInProgress": "Przygotowywanie eksportu…",
+    "exportSuccess": "Dane wyeksportowane pomyślnie ({size})",
+    "exportCooldown": "Eksport dostępny za {minutes} min",
+    "exportError": "Nie udało się wyeksportować danych. Spróbuj ponownie później."
   },
   "healthProfile": {
     "title": "Profile zdrowotne",
