@@ -38,7 +38,8 @@
     "pageOf": "Page {page} of {pages}",
     "items": "{count} {count|item|items}",
     "products": "{count} {count|product|products}",
-    "allergenWarnings": "{count} allergen {count|warning|warnings}"
+    "allergenWarnings": "{count} allergen {count|warning|warnings}",
+    "dismiss": "Dismiss"
   },
   "toast": {
     "genericError": "Something went wrong. Please try again.",
@@ -66,6 +67,18 @@
     "installDescription": "Add to your home screen for quick access and offline support.",
     "iosInstallHint": "Tap the Share button, then \"Add to Home Screen\".",
     "dismissInstall": "Dismiss install prompt"
+  },
+  "notifications": {
+    "title": "Push Notifications",
+    "promptTitle": "Get notified about score changes",
+    "promptDescription": "Enable push notifications to know when a watched product's health score changes.",
+    "settingsDescription": "Receive push notifications when a watched product's health score changes significantly.",
+    "enable": "Enable notifications",
+    "disable": "Disable notifications",
+    "enabled": "Push notifications enabled",
+    "disabled": "Push notifications disabled",
+    "permissionDenied": "Notification permission was denied. Please enable it in your browser settings.",
+    "blockedByBrowser": "Notifications are blocked by your browser. Update your site permissions to enable them."
   },
   "dashboard": {
     "title": "Dashboard",

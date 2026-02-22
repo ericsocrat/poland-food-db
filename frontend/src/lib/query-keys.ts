@@ -147,6 +147,9 @@ export const queryKeys = {
   /** Batch product allergen data (#128) */
   productAllergens: (ids: number[]) =>
     ["product-allergens", ids.toSorted((a, b) => a - b).join(",")] as const,
+
+  /** Push subscriptions (#143) */
+  pushSubscriptions: ["push-subscriptions"] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -271,4 +274,7 @@ export const staleTimes = {
 
   /** Product allergens — 5 min (allergen data changes only on pipeline runs) */
   productAllergens: 5 * 60 * 1000,
+
+  /** Push subscriptions — 10 min (changes on user action) */
+  pushSubscriptions: 10 * 60 * 1000,
 } as const;
