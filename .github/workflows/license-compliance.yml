@@ -97,6 +97,50 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "✅ All production dependencies use permissive licenses." >> "$GITHUB_STEP_SUMMARY"
 
+      # ── SPDX compound expression check ──────────────────────────────────
+      # license-checker --failOn does exact matching. A dual-licensed package
+      # such as "(MIT OR GPL-2.0)" won't be caught because the full SPDX
+      # expression doesn't match "GPL-2.0" exactly. This step parses the
+      # JSON output and flags any license field containing a forbidden
+      # identifier, even within compound OR/AND expressions.
+      - name: Check SPDX compound expressions
+        run: |
+          npx license-checker --production --excludePrivatePackages --json > /tmp/licenses.json 2>/dev/null || true
+
+          # Forbidden license identifiers (grep-safe, pipe-separated)
+          FORBIDDEN_RE="GPL-2\.0|GPL-3\.0|AGPL|SSPL|EUPL|OSL-3\.0|CPAL|CPL-1\.0|Sleepycat|Watcom"
+
+          # Known-safe overrides: packages manually audited as safe despite
+          # ambiguous license metadata. Add "package@version" entries here.
+          # Example: ALLOWLIST=("caniuse-lite@1.0.0" "some-pkg@2.3.4")
+          ALLOWLIST=()
+
+          node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('/tmp/licenses.json', 'utf8'));
+            const forbiddenRe = /${FORBIDDEN_RE}/i;
+            const allowlist = new Set($(printf '%s\n' "${ALLOWLIST[@]}" | jq -R . | jq -s . 2>/dev/null || echo '[]'));
+            const violations = [];
+
+            for (const [pkg, info] of Object.entries(data)) {
+              if (allowlist.has(pkg)) continue;
+              const lic = String(info.licenses || '');
+              // Only flag compound expressions (contain OR/AND/parens) that
+              // include a forbidden identifier — simple exact matches are
+              // already caught by the --failOn step above.
+              if ((lic.includes(' OR ') || lic.includes(' AND ') || lic.includes('(')) && forbiddenRe.test(lic)) {
+                violations.push({ pkg, license: lic });
+              }
+            }
+
+            if (violations.length > 0) {
+              console.error('SPDX compound expressions contain forbidden licenses:');
+              violations.forEach(v => console.error('  ' + v.pkg + ': ' + v.license));
+              process.exit(1);
+            }
+            console.log('No forbidden SPDX compound expressions found.');
+          "
+
       - name: Generate full license report
         if: ${{ !cancelled() }}
         run: |

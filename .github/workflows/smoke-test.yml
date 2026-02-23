@@ -2,11 +2,14 @@
 # Post-Deploy Smoke Test — Verify production health after deployment
 # ═══════════════════════════════════════════════════════════════════════════════
 # Triggered automatically after a successful Vercel deployment.
-# Hits the /api/health endpoint and validates the response shape.
-# Also checks critical page routes return 200.
+# Hits the /api/health endpoint (with retry logic) and validates the response.
+# Also checks critical page routes return 200, and measures response times.
 #
-# If the smoke test fails, the deployment is marked as failed and an alert
-# is generated. This catches:
+# Behaviour by environment:
+#   • Production — failures are BLOCKING (exit 1), surfaces via CI status.
+#   • Preview    — failures are NON-BLOCKING (warning annotation only).
+#
+# This catches:
 #   • Broken builds that somehow passed CI
 #   • Environment variable misconfiguration
 #   • Supabase connectivity issues post-deploy
