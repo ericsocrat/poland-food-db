@@ -83,15 +83,24 @@ jobs:
           node -e "
             const fs = require('fs');
             const manifest = JSON.parse(fs.readFileSync('.next/build-manifest.json', 'utf8'));
-            const appPaths = JSON.parse(fs.readFileSync('.next/app-paths-manifest.json', 'utf8'));
 
-            // Collect all unique JS chunks
+            // Collect all unique JS chunks from Pages Router
             const chunks = new Set();
-            for (const [route, files] of Object.entries(manifest.pages)) {
+            for (const [route, files] of Object.entries(manifest.pages || {})) {
               for (const file of files) {
                 if (file.endsWith('.js')) chunks.add(file);
               }
             }
+
+            // Also collect App Router chunks (Next.js 13+/15)
+            try {
+              const appManifest = JSON.parse(fs.readFileSync('.next/app-build-manifest.json', 'utf8'));
+              for (const [route, entry] of Object.entries(appManifest.pages || {})) {
+                for (const file of entry) {
+                  if (typeof file === 'string' && file.endsWith('.js')) chunks.add(file);
+                }
+              }
+            } catch {}
 
             // Measure total size of unique JS files
             let totalBytes = 0;
@@ -108,7 +117,7 @@ jobs:
               totalBytes,
               totalKB: Math.round(totalBytes / 1024),
               chunkCount: chunks.size,
-              routeCount: Object.keys(manifest.pages).length,
+              routeCount: Object.keys(manifest.pages || {}).length,
             };
 
             fs.writeFileSync('../baseline-sizes.json', JSON.stringify(report, null, 2));
@@ -175,11 +184,22 @@ jobs:
             // Parse PR sizes
             const manifest = JSON.parse(fs.readFileSync('.next/build-manifest.json', 'utf8'));
             const chunks = new Set();
-            for (const [route, files] of Object.entries(manifest.pages)) {
+            for (const [route, files] of Object.entries(manifest.pages || {})) {
               for (const file of files) {
                 if (file.endsWith('.js')) chunks.add(file);
               }
             }
+
+            // Also collect App Router chunks (Next.js 13+/15)
+            try {
+              const appManifest = JSON.parse(fs.readFileSync('.next/app-build-manifest.json', 'utf8'));
+              for (const [route, entry] of Object.entries(appManifest.pages || {})) {
+                for (const file of entry) {
+                  if (typeof file === 'string' && file.endsWith('.js')) chunks.add(file);
+                }
+              }
+            } catch {}
+
             let totalBytes = 0;
             for (const chunk of chunks) {
               try {
