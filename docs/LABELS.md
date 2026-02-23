@@ -3,7 +3,7 @@
 Canonical label set for issue and PR triage. Managed via the GitHub UI —
 this document is the source of truth for naming, colors, and intended usage.
 
-> **Rule of thumb:** every issue gets exactly **one** Priority + **one** Type/Domain label.
+> **Rule of thumb:** every issue gets exactly **one** Priority, **one** Type, and **one** Domain label.
 > Effort and Status labels are optional but encouraged during sprint planning.
 
 ---

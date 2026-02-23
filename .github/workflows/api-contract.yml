@@ -48,7 +48,7 @@ jobs:
     name: RPC Contract Validation
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Only run if staging secrets are available (skip for forks)
+    # Skip forks — they never have staging secrets
     if: github.event.pull_request.head.repo.fork != true
 
     defaults:
@@ -57,6 +57,28 @@ jobs:
 
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      # ── Fail-fast: validate required secrets before wasting CI minutes ──
+      - name: Validate required secrets
+        working-directory: .
+        env:
+          _URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          _KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          missing=0
+          if [ -z "$_URL" ]; then
+            echo "::error::Neither SUPABASE_URL_STAGING nor NEXT_PUBLIC_SUPABASE_URL is set"
+            missing=1
+          fi
+          if [ -z "$_KEY" ]; then
+            echo "::error::Neither SUPABASE_ANON_KEY_STAGING nor NEXT_PUBLIC_SUPABASE_ANON_KEY is set"
+            missing=1
+          fi
+          if [ "$missing" -ne 0 ]; then
+            echo "::error::Contract tests require live Supabase connectivity — set the secrets above"
+            exit 1
+          fi
+          echo "All required secrets present."
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
