@@ -2,9 +2,17 @@
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
 #
 # Ecosystems tracked:
-#   1. npm    — /frontend  (~40 packages)
-#   2. pip    — /           (requests, tqdm)
-#   3. actions — /          (6 workflow files)
+#   1. npm     — /frontend  (~40 packages)
+#   2. pip     — /           (requests, tqdm)
+#   3. actions — /          (6+ workflow files)
+#
+# Security strategy:
+#   • Version updates:  weekly (below) — keeps deps current
+#   • Security updates: automatic via GitHub Dependabot Security Alerts
+#     (enabled in repo Settings → Code security → Dependabot alerts)
+#   • CI gate:          dependency-audit.yml — blocks PRs with HIGH+ CVEs
+#   • Auto-merge:       dependabot-auto-merge.yml — patch+minor only
+#   • License check:    license-compliance.yml — blocks copyleft deps
 #
 # Design: weekly cadence for active ecosystems, grouped PRs to reduce
 # noise, patch+minor auto-mergeable via dependabot-auto-merge.yml.

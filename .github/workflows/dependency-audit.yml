@@ -1,0 +1,138 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Dependency Audit — Block PRs with known CVEs in production dependencies
+# ═══════════════════════════════════════════════════════════════════════════════
+# Runs `npm audit` against production dependencies at HIGH severity threshold.
+# Also runs `pip audit` for the Python pipeline (if pip-audit is available).
+#
+# This is the CI GATE counterpart to Dependabot (which creates fix PRs).
+# Dependabot alerts + auto-merge handle remediation.
+# This workflow PREVENTS merging code that introduces new vulnerabilities.
+#
+# Severity levels: critical, high, moderate, low
+# Gate: fails on HIGH+ (production deps only — devDependencies are not shipped)
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Dependency Audit
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/package-lock.json"
+      - "frontend/package.json"
+      - "requirements.txt"
+  pull_request:
+    branches: [main]
+    paths:
+      - "frontend/package-lock.json"
+      - "frontend/package.json"
+      - "requirements.txt"
+  # Weekly scan catches newly disclosed CVEs against existing lockfile
+  schedule:
+    - cron: "0 7 * * 1"  # Monday 07:00 UTC
+
+permissions:
+  contents: read
+
+concurrency:
+  group: dep-audit-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # npm audit — frontend production dependencies
+  # ─────────────────────────────────────────────────────────────────────────
+  npm-audit:
+    name: npm Audit (frontend)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      # --omit=dev → only audit production dependencies (what ships to users)
+      # --audit-level=high → fail on HIGH and CRITICAL only (moderate = warn)
+      - name: Audit production dependencies
+        run: |
+          echo "## npm Audit Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          # Run audit and capture output
+          set +e
+          audit_output=$(npm audit --omit=dev --audit-level=high 2>&1)
+          audit_exit=$?
+          set -e
+
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "$audit_output" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$audit_exit" -ne 0 ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "❌ **HIGH or CRITICAL vulnerabilities found in production dependencies.**" >> "$GITHUB_STEP_SUMMARY"
+            echo "Run \`npm audit\` locally and apply fixes before merging." >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ No HIGH/CRITICAL vulnerabilities in production dependencies." >> "$GITHUB_STEP_SUMMARY"
+
+      # Informational: also show moderate/low for awareness (non-blocking)
+      - name: Full audit report (informational)
+        if: ${{ !cancelled() }}
+        run: npm audit --omit=dev || true
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # pip audit — Python pipeline dependencies
+  # ─────────────────────────────────────────────────────────────────────────
+  pip-audit:
+    name: pip Audit (Python pipeline)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+
+      - run: pip install -r requirements.txt
+
+      - name: Install pip-audit
+        run: pip install pip-audit
+
+      - name: Audit Python dependencies
+        run: |
+          echo "## pip Audit Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          set +e
+          audit_output=$(pip-audit -r requirements.txt --desc 2>&1)
+          audit_exit=$?
+          set -e
+
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "$audit_output" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$audit_exit" -ne 0 ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "❌ **Vulnerabilities found in Python dependencies.**" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ No known vulnerabilities in Python dependencies." >> "$GITHUB_STEP_SUMMARY"

@@ -1,0 +1,91 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CodeQL Security Analysis — Static Application Security Testing (SAST)
+# ═══════════════════════════════════════════════════════════════════════════════
+# Scans JavaScript/TypeScript for vulnerability patterns:
+#   • SQL / NoSQL injection               • Unsafe deserialization
+#   • Server-side request forgery (SSRF)  • Dangerous eval / code injection
+#   • Path traversal                      • Cryptographic misuse
+#   • Incomplete URL validation           • Regex denial of service (ReDoS)
+#
+# Triggers: every push to main, every PR to main, weekly Monday 06:00 UTC.
+# Weekly scheduled scan catches vulnerabilities introduced by dependency
+# updates that land outside normal PR flow (e.g. Dependabot auto-merge).
+#
+# Results appear in GitHub Security → Code scanning alerts.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: CodeQL Security Analysis
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    # Weekly Monday 06:00 UTC — catches drift from auto-merged deps
+    - cron: "0 6 * * 1"
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write    # Required to upload SARIF results
+
+concurrency:
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: Analyze (${{ matrix.language }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ["javascript-typescript"]
+        # Python analysis is available but our Python code is pipeline-only
+        # (not deployed). Add "python" here if pipeline code becomes critical.
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v3
+        with:
+          languages: ${{ matrix.language }}
+          # Extended queries catch more issues at cost of some false positives.
+          # security-extended is the sweet spot for production codebases.
+          queries: security-extended
+          # Trap directory for build tracing
+          config: |
+            paths-ignore:
+              - "node_modules"
+              - ".next"
+              - "coverage"
+              - "playwright-report"
+              - "test-results"
+              - "**/*.test.ts"
+              - "**/*.test.tsx"
+              - "**/*.spec.ts"
+
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v3
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v3
+        with:
+          category: "/language:${{ matrix.language }}"
+          # Upload results to GitHub Security tab
+          upload: always
+
+      - name: Summary
+        if: ${{ !cancelled() }}
+        run: |
+          echo "## CodeQL Security Analysis" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Language: **${{ matrix.language }}**" >> "$GITHUB_STEP_SUMMARY"
+          echo "Query suite: **security-extended**" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "Results: [Security → Code scanning](https://github.com/${{ github.repository }}/security/code-scanning)" >> "$GITHUB_STEP_SUMMARY"

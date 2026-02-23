@@ -94,6 +94,11 @@ jobs:
         run: npx next lint
         timeout-minutes: 3
 
+      # ── Dependency audit (informational — dedicated workflow is the gate) ──
+      - name: npm audit (warn only)
+        run: npm audit --omit=dev --audit-level=high 2>&1 || echo "::warning::npm audit found vulnerabilities — see dependency-audit workflow for details"
+        continue-on-error: true
+
       - name: CI runtime summary
         if: ${{ !cancelled() }}
         working-directory: .
