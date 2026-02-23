@@ -1,11 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
   isAuthError,
+  isRateLimitError,
   callRpc,
   normalizeRpcError,
   extractBusinessError,
   AUTH_CODES,
   AUTH_MESSAGES,
+  RATE_LIMIT_CODE,
+  RATE_LIMIT_MESSAGES,
 } from "@/lib/rpc";
 
 // ─── AUTH constants ─────────────────────────────────────────────────────────
@@ -336,5 +339,117 @@ describe("isAuthError", () => {
     expect(
       isAuthError({ code: "BUSINESS_ERROR", message: "Product not found" }),
     ).toBe(false);
+  });
+});
+
+// ─── Rate limit constants (#182) ────────────────────────────────────────────
+
+describe("RATE_LIMIT_CODE", () => {
+  it("is 'RATE_LIMITED'", () => {
+    expect(RATE_LIMIT_CODE).toBe("RATE_LIMITED");
+  });
+});
+
+describe("RATE_LIMIT_MESSAGES", () => {
+  it("contains known rate limit substrings", () => {
+    expect(RATE_LIMIT_MESSAGES).toContain("rate limit");
+    expect(RATE_LIMIT_MESSAGES).toContain("too many requests");
+    expect(RATE_LIMIT_MESSAGES).toContain("429");
+    expect(RATE_LIMIT_MESSAGES.length).toBe(3);
+  });
+});
+
+// ─── isRateLimitError (#182) ────────────────────────────────────────────────
+
+describe("isRateLimitError", () => {
+  it("recognises RATE_LIMITED code", () => {
+    expect(isRateLimitError({ code: "RATE_LIMITED", message: "" })).toBe(true);
+  });
+
+  it("recognises 429 code", () => {
+    expect(isRateLimitError({ code: "429", message: "error" })).toBe(true);
+  });
+
+  it("recognises 'rate limit' in message (case-insensitive)", () => {
+    expect(
+      isRateLimitError({ code: "UNKNOWN", message: "Rate Limit exceeded" }),
+    ).toBe(true);
+  });
+
+  it("recognises 'too many requests' in message", () => {
+    expect(
+      isRateLimitError({ code: "ERR", message: "Too Many Requests" }),
+    ).toBe(true);
+  });
+
+  it("recognises '429' in message", () => {
+    expect(
+      isRateLimitError({ code: "ERR", message: "HTTP 429 response" }),
+    ).toBe(true);
+  });
+
+  it("returns false for a non-rate-limit error", () => {
+    expect(
+      isRateLimitError({ code: "PGRST116", message: "not found" }),
+    ).toBe(false);
+  });
+
+  it("returns false for a business error", () => {
+    expect(
+      isRateLimitError({ code: "BUSINESS_ERROR", message: "Product missing" }),
+    ).toBe(false);
+  });
+
+  it("returns false for an auth error", () => {
+    expect(
+      isRateLimitError({ code: "401", message: "Unauthorized" }),
+    ).toBe(false);
+  });
+});
+
+// ─── callRpc — rate limit detection (#182) ──────────────────────────────────
+
+describe("callRpc — rate limit errors", () => {
+  const mockRpc = vi.fn();
+  const supabase = { rpc: mockRpc } as unknown as Parameters<typeof callRpc>[0];
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("returns RATE_LIMITED code when Supabase returns 429 code", async () => {
+    mockRpc.mockResolvedValue({
+      data: null,
+      error: { code: "429", message: "Too Many Requests" },
+    });
+    const result = await callRpc(supabase, "test_fn");
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.code).toBe("RATE_LIMITED");
+    }
+  });
+
+  it("returns RATE_LIMITED code when message contains 'too many requests'", async () => {
+    mockRpc.mockResolvedValue({
+      data: null,
+      error: { code: "UNKNOWN", message: "too many requests from client" },
+    });
+    const result = await callRpc(supabase, "test_fn");
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.code).toBe("RATE_LIMITED");
+    }
+  });
+
+  it("returns RATE_LIMITED code when message contains 'rate limit'", async () => {
+    mockRpc.mockResolvedValue({
+      data: null,
+      error: { code: "ERR", message: "Rate limit exceeded" },
+    });
+    const result = await callRpc(supabase, "test_fn");
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error.code).toBe("RATE_LIMITED");
+    }
   });
 });
