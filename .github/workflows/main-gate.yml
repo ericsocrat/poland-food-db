@@ -95,7 +95,7 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-        timeout-minutes: 3
+        timeout-minutes: 8
 
       - name: Playwright full E2E
         id: playwright
