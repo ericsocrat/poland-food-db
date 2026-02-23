@@ -82,6 +82,8 @@ updates:
           - "@vitejs/*"
       # Everything else — catch-all for remaining deps
       npm-rest:
+        patterns:
+          - "*"
         exclude-patterns:
           - "next"
           - "react"
