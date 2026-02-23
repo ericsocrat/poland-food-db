@@ -619,15 +619,53 @@ psql -h db.uskvezwftkkudvksmken.supabase.co `
 
 ---
 
-## Rollback Drill Procedure
+## Disaster Recovery Drill
 
 > **Frequency:** Run this drill at least once per quarter, and after every time the backup or restore scripts change.
+> **Last drill:** 2026-02-23 | **Next scheduled:** 2026-05-23
+> **Full report:** [`docs/DISASTER_DRILL_REPORT.md`](docs/DISASTER_DRILL_REPORT.md)
 
-### Drill: Local Full Restore
+### Automated Drill (recommended)
 
-**Prerequisites:** Docker Desktop running, `supabase start` active.
+The DR drill is fully automated via `RUN_DR_DRILL.ps1`, which runs 6 scenarios:
 
-**Steps:**
+| Scenario | Description | TTR Target | Recovery Method |
+|---|---|---|---|
+| A | Bad Migration (column drop) | < 5 min | SAVEPOINT/ROLLBACK |
+| B | Table Truncation (data loss) | < 5 min | SAVEPOINT/ROLLBACK |
+| C | Full Backup Restore | < 30 min | pg_restore / supabase db reset |
+| D | User Data Restore | < 5 min | SAVEPOINT/ROLLBACK or import script |
+| E | Frontend Deployment Rollback | < 5 min | Vercel "Promote to Production" |
+| F | API Endpoint Failure | < 10 min | Compensating migration |
+
+```powershell
+# Run all scenarios against local Supabase
+.\RUN_DR_DRILL.ps1 -Env local
+
+# Run a specific scenario
+.\RUN_DR_DRILL.ps1 -Env local -Scenario A
+
+# Skip full restore (quick validation)
+.\RUN_DR_DRILL.ps1 -Env local -SkipRestore
+
+# JSON output for CI integration
+.\RUN_DR_DRILL.ps1 -Env local -Json -OutFile dr-results.json
+
+# Run against staging
+.\RUN_DR_DRILL.ps1 -Env staging
+```
+
+**Prerequisites:**
+- Docker Desktop running + `supabase start` (local mode)
+- `psql`, `pg_dump`, `pg_restore` on PATH
+- At least one backup file in `backups/`
+- For staging: `SUPABASE_STAGING_DB_PASSWORD` environment variable
+
+**Drill scripts:** `supabase/dr-drill/` directory contains per-scenario SQL files and post-drill verification queries.
+
+### Manual Drill: Local Full Restore
+
+For a manual walkthrough (useful for training or when automation cannot run):
 
 ```powershell
 # 1. Create backup of healthy local DB
@@ -656,35 +694,36 @@ supabase db reset
 .\RUN_QA.ps1              # 421 checks pass
 ```
 
-**Expected Results:**
-| Step | Expected Duration |
-|---|---|
-| Backup creation (local) | ~5 seconds |
-| Destructive change | < 1 second |
-| QA detection of breakage | Immediate (first suite referencing `product_name`) |
-| Restore from dump (local) | ~10 seconds |
-| Full QA pass after restore | ~30 seconds |
-| **Total drill time** | **< 2 minutes (local)** |
+### Expected TTR by Recovery Method
 
-**For production drills**, add ~30 seconds network latency for backup and ~60 seconds for restore.
+| Recovery Method | TTR | Data Loss | When to Use |
+|---|---|---|---|
+| **SAVEPOINT/ROLLBACK** | < 100 ms | Zero | Failure caught within active transaction |
+| **Compensating migration** | 5–30 min | Varies | Schema error committed, data intact |
+| **User data import (JSON)** | < 2 min | Since last export | User data loss, schema intact |
+| **Full backup restore** | 10–30 min | Since last backup | Widespread corruption |
+| **supabase db reset** | < 30 sec | All user data | Local dev only |
+| **Vercel Promote** | ~30 sec | Zero | Frontend deployment broken |
 
-**Record your results:**
+### Record Your Results
 
 ```markdown
 ### Drill #N — [Date]
 - **Operator:** @name
 - **Environment:** local / staging
-- **Backup creation time:** ___
-- **Breakage detection time:** ___
-- **Restore time:** ___
-- **Full recovery time:** ___
+- **Scenario(s) run:** A, B, C, D, E, F
+- **All scenarios passed:** yes / no
+- **Total TTR (worst scenario):** ___
 - **All QA checks passed after restore:** yes / no
 - **Issues encountered:** ___
 - **Lessons learned:** ___
 ```
 
-**Key lessons from procedure design:**
+### Key Lessons from Drill Design
+
 - `pg_restore --clean` on a running DB with active connections requires `--if-exists` to avoid errors on missing objects
 - Always verify backup integrity (`pg_restore --list`) before relying on it for restore
+- `TRUNCATE CASCADE` cascades to 3+ dependent tables — verify ALL dependent tables after recovery
 - QA suite catches column drops immediately — sanity + QA provides comprehensive post-restore validation
 - The compensating migration approach (Scenario 1) is preferred over full restore when the issue is isolated to schema changes
+- SAVEPOINT/ROLLBACK provides near-instant recovery (< 100 ms) but requires the failure to be caught within a transaction
