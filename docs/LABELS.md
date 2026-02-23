@@ -84,6 +84,8 @@ this document is the source of truth for naming, colors, and intended usage.
 | `invalid`          | `#e4e669` | This doesn't seem right                   |
 | `wontfix`          | `#ffffff` | This will not be worked on                |
 | `epic-child`       | `#c5def5` | Child issue of an epic                    |
+| `dependencies`     | `#0366d6` | Dependency updates (Dependabot)           |
+| `python`           | `#3572A5` | Python pipeline / pip ecosystem           |
 
 ---
 
