@@ -15,13 +15,14 @@ name: Main Gate
 on:
   push:
     branches: [main]
+  workflow_dispatch: {}
 
 permissions:
   contents: read
 
 concurrency:
-  group: main-gate
-  cancel-in-progress: false # Never cancel main builds
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 env:
   NODE_VERSION: "20"
@@ -362,3 +363,24 @@ jobs:
           name: ci-timings-mg-sonar
           path: ci-timings/
           retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 6: Failure alert — single consolidated notification
+  # ─────────────────────────────────────────────────────────────────────────
+  alert-on-failure:
+    name: Failure Alert
+    runs-on: ubuntu-latest
+    needs: [static-checks, unit-tests, build, e2e, sonar]
+    if: ${{ failure() && github.ref == 'refs/heads/main' }}
+    permissions:
+      contents: read
+    steps:
+      - name: Send failure alert
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: |
+          if [ -n "$ALERT_WEBHOOK_URL" ]; then
+            curl -sf -X POST "$ALERT_WEBHOOK_URL" \
+              -H 'Content-Type: application/json' \
+              -d '{"text": "Main Gate FAILED — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+          fi

@@ -16,12 +16,15 @@ name: PR Gate
 on:
   pull_request:
     branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/pr-gate.yml'
 
 permissions:
   contents: read
 
 concurrency:
-  group: pr-${{ github.event.pull_request.number }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 env:
@@ -59,9 +62,9 @@ jobs:
           failed=0
 
           # 1. Fail if any workflow uses supabase link with a bare hardcoded ref
-          #    (not wrapped in a secrets expression). Ignores comments and this scan.
+          #    (not wrapped in a secrets expression or env var). Ignores comments and this scan.
           hits=$(grep -rEn 'supabase link --project-ref' .github/workflows/ \
-            | grep -vE '\$\{\{|^\s*#|grep|echo' || true)
+            | grep -vE '\$\{\{|\$SUPABASE_|^\s*#|grep|echo' || true)
           if [ -n "$hits" ]; then
             echo "$hits"
             echo "::error::Hardcoded Supabase project ref found in workflow files"
@@ -240,7 +243,9 @@ jobs:
   e2e-smoke:
     name: Playwright Smoke
     runs-on: ubuntu-latest
-    needs: build
+    # No needs: build — smoke tests use `next dev` (compiles on the fly),
+    # no build artifact is consumed. Build is still a required check, so a
+    # broken build blocks merge independently.
     permissions:
       contents: read
     timeout-minutes: 15

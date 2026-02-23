@@ -60,8 +60,10 @@ jobs:
           version: latest
 
       - name: Validate staging ref is configured
+        env:
+          SUPABASE_STAGING_PROJECT_REF: ${{ secrets.SUPABASE_STAGING_PROJECT_REF }}
         run: |
-          if [ -z "${{ secrets.SUPABASE_STAGING_PROJECT_REF }}" ]; then
+          if [ -z "$SUPABASE_STAGING_PROJECT_REF" ]; then
             echo "::error::SUPABASE_STAGING_PROJECT_REF secret is not set — cannot sync staging"
             exit 1
           fi
@@ -69,7 +71,8 @@ jobs:
       - name: Link to staging project
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase link --project-ref "${{ secrets.SUPABASE_STAGING_PROJECT_REF }}"
+          SUPABASE_STAGING_PROJECT_REF: ${{ secrets.SUPABASE_STAGING_PROJECT_REF }}
+        run: supabase link --project-ref "$SUPABASE_STAGING_PROJECT_REF"
 
       - name: Pre-sync backup (staging)
         env:
@@ -98,6 +101,17 @@ jobs:
           echo "Migrations applied to **staging** at $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_STEP_SUMMARY"
           echo "Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
 
+      - name: Alert on staging sync failure
+        if: failure()
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: |
+          if [ -n "$ALERT_WEBHOOK_URL" ]; then
+            curl -sf -X POST "$ALERT_WEBHOOK_URL" \
+              -H 'Content-Type: application/json' \
+              -d '{"text": "Staging DB sync FAILED — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+          fi
+
   # ─────────────────────────────────────────────────────────────────────────
   # Job 2: Sync Production — MANUAL ONLY via workflow_dispatch
   # Requires GitHub Environment approval gate (environment: production)
@@ -119,8 +133,10 @@ jobs:
           version: latest
 
       - name: Validate production ref is configured
+        env:
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
         run: |
-          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
+          if [ -z "$SUPABASE_PROJECT_REF" ]; then
             echo "::error::SUPABASE_PROJECT_REF secret is not set — cannot sync production"
             exit 1
           fi
@@ -128,7 +144,8 @@ jobs:
       - name: Link to production project
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}"
+          SUPABASE_PROJECT_REF: ${{ secrets.SUPABASE_PROJECT_REF }}
+        run: supabase link --project-ref "$SUPABASE_PROJECT_REF"
 
       - name: Pre-sync backup (production, data-only)
         id: backup
@@ -171,3 +188,14 @@ jobs:
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "> **Note:** Backup is data-only. Schema is managed by migrations." >> "$GITHUB_STEP_SUMMARY"
           echo "> To restore: apply migrations first, then \`psql -f <backup>.sql\`" >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Alert on production sync failure
+        if: failure()
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: |
+          if [ -n "$ALERT_WEBHOOK_URL" ]; then
+            curl -sf -X POST "$ALERT_WEBHOOK_URL" \
+              -H 'Content-Type: application/json' \
+              -d '{"text": "Production DB sync FAILED — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+          fi

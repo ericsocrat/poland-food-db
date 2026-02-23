@@ -114,6 +114,18 @@ jobs:
             playwright-stdout.log
           retention-days: 30
 
+      - name: Alert on comprehensive failure
+        if: failure()
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
+        run: |
+          if [ -n "$ALERT_WEBHOOK_URL" ]; then
+            curl -sf -X POST "$ALERT_WEBHOOK_URL" \
+              -H 'Content-Type: application/json' \
+              -d '{"text": "Nightly comprehensive tests FAILED \u2014 https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
+          fi
+        working-directory: .
+
       - name: CI runtime summary
         if: ${{ !cancelled() }}
         working-directory: .
@@ -191,9 +203,11 @@ jobs:
 
       - name: Alert on Critical Findings
         if: failure()
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
         run: |
-          if [ -n "${{ secrets.ALERT_WEBHOOK_URL }}" ]; then
-            curl -X POST "${{ secrets.ALERT_WEBHOOK_URL }}" \
+          if [ -n "$ALERT_WEBHOOK_URL" ]; then
+            curl -sf -X POST "$ALERT_WEBHOOK_URL" \
               -H 'Content-Type: application/json' \
               -d '{"text": "Nightly audit: CRITICAL issues — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
           fi
