@@ -104,6 +104,7 @@ jobs:
           name: playwright-report
           path: |
             frontend/playwright-report/
+            frontend/test-results/a11y-results.json
             frontend/test-results/
             playwright-stdout.log
           retention-days: 14
