@@ -50,10 +50,10 @@ jobs:
       (github.event_name == 'push') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'staging')
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
+        uses: supabase/setup-cli@b60b5899c73b63a2d2d651b1e90db8d4c9392f51 # v1
         with:
           version: latest
 
@@ -80,7 +80,7 @@ jobs:
           echo "Staging backup: $backup_file ($(du -h "$backup_file" | cut -f1))"
 
       - name: Upload staging backup
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: staging-data-backup-${{ github.sha }}
           path: backups/
@@ -107,10 +107,10 @@ jobs:
     environment: production # ← requires reviewer approval
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup Supabase CLI
-        uses: supabase/setup-cli@v1
+        uses: supabase/setup-cli@b60b5899c73b63a2d2d651b1e90db8d4c9392f51 # v1
         with:
           version: latest
 
@@ -147,7 +147,7 @@ jobs:
           echo "Production backup: $backup_file ($backup_size)"
 
       - name: Upload production backup
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: production-data-backup-${{ github.sha }}
           path: backups/

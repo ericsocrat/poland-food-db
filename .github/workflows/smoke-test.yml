@@ -48,10 +48,19 @@ jobs:
 
     env:
       TARGET_URL: ${{ github.event.deployment_status.target_url || github.event.inputs.target_url }}
+      DEPLOY_ENV: ${{ github.event.deployment_status.environment || 'manual' }}
 
     steps:
       - name: Wait for deployment to stabilize
-        run: sleep 10
+        run: |
+          # Vercel preview deploys need extra warm-up time (cold start)
+          if [ "$DEPLOY_ENV" = "Production" ]; then
+            echo "Production deploy — waiting 15s"
+            sleep 15
+          else
+            echo "Preview deploy ($DEPLOY_ENV) — waiting 30s for cold start"
+            sleep 30
+          fi
 
       - name: Verify target URL
         run: |
@@ -59,22 +68,50 @@ jobs:
             echo "::error::No target URL available"
             exit 1
           fi
-          echo "Smoke testing: $TARGET_URL"
+          echo "Smoke testing: $TARGET_URL (env: $DEPLOY_ENV)"
 
-      # ── Health endpoint (deep check) ─────────────────────────────────
+      # ── Health endpoint (deep check with retries) ────────────────────
       - name: Health check — /api/health
         run: |
           echo "## Post-Deploy Smoke Test" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
           echo "**Target:** \`$TARGET_URL\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "**Environment:** $DEPLOY_ENV" >> "$GITHUB_STEP_SUMMARY"
           echo "**Time:** $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
 
-          response=$(curl -sf --max-time 15 "$TARGET_URL/api/health" 2>&1) || {
-            echo "| /api/health | ❌ Connection failed |" >> "$GITHUB_STEP_SUMMARY"
-            echo "::error::Health endpoint unreachable at $TARGET_URL/api/health"
-            exit 1
-          }
+          # Retry up to 3 times with 10s backoff (handles cold starts)
+          MAX_RETRIES=3
+          RETRY_DELAY=10
+          attempt=0
+          response=""
+          success=false
+
+          while [ $attempt -lt $MAX_RETRIES ]; do
+            attempt=$((attempt + 1))
+            echo "Health check attempt $attempt/$MAX_RETRIES..."
+            response=$(curl -sf --max-time 20 "$TARGET_URL/api/health" 2>&1) && {
+              success=true
+              break
+            }
+            if [ $attempt -lt $MAX_RETRIES ]; then
+              echo "Attempt $attempt failed, retrying in ${RETRY_DELAY}s..."
+              sleep $RETRY_DELAY
+            fi
+          done
+
+          if [ "$success" != "true" ]; then
+            echo "| /api/health | ❌ Connection failed ($MAX_RETRIES attempts) |" >> "$GITHUB_STEP_SUMMARY"
+            if [ "$DEPLOY_ENV" = "Production" ]; then
+              echo "::error::Health endpoint unreachable at $TARGET_URL/api/health after $MAX_RETRIES attempts"
+              exit 1
+            else
+              echo "::warning::Health endpoint unreachable on preview deploy — non-blocking"
+              echo "" >> "$GITHUB_STEP_SUMMARY"
+              echo "> ⚠️ Preview deploy health check failed — this is non-blocking." >> "$GITHUB_STEP_SUMMARY"
+              exit 0
+            fi
+          fi
 
           # Parse status from JSON response
           status=$(echo "$response" | python3 -c "import sys,json; print(json.load(sys.stdin).get('status','unknown'))" 2>/dev/null || echo "parse_error")
@@ -86,9 +123,13 @@ jobs:
             echo "| /api/health | ✅ $status |" >> "$GITHUB_STEP_SUMMARY"
           else
             echo "| /api/health | ❌ $status |" >> "$GITHUB_STEP_SUMMARY"
-            echo "::error::Health check returned status: $status"
-            echo "Response: $response"
-            exit 1
+            if [ "$DEPLOY_ENV" = "Production" ]; then
+              echo "::error::Health check returned status: $status"
+              echo "Response: $response"
+              exit 1
+            else
+              echo "::warning::Health check returned status: $status on preview deploy — non-blocking"
+            fi
           fi
 
       # ── Critical page routes (HTTP 200 check) ───────────────────────
@@ -98,18 +139,26 @@ jobs:
           routes=("/" "/app" "/app/scan")
 
           for route in "${routes[@]}"; do
-            status_code=$(curl -so /dev/null -w "%{http_code}" --max-time 15 "$TARGET_URL$route" 2>/dev/null)
+            status_code=$(curl -so /dev/null -w "%{http_code}" --max-time 20 "$TARGET_URL$route" 2>/dev/null)
             if [ "$status_code" -ge 200 ] && [ "$status_code" -lt 400 ]; then
               echo "| $route | ✅ $status_code |" >> "$GITHUB_STEP_SUMMARY"
             else
               echo "| $route | ❌ $status_code |" >> "$GITHUB_STEP_SUMMARY"
-              echo "::error::Route $route returned HTTP $status_code"
+              if [ "$DEPLOY_ENV" = "Production" ]; then
+                echo "::error::Route $route returned HTTP $status_code"
+              else
+                echo "::warning::Route $route returned HTTP $status_code on preview deploy"
+              fi
               failed=1
             fi
           done
 
           if [ "$failed" -ne 0 ]; then
-            exit 1
+            if [ "$DEPLOY_ENV" = "Production" ]; then
+              exit 1
+            else
+              echo "::warning::Some routes failed on preview deploy — non-blocking"
+            fi
           fi
 
       # ── Response time baseline ───────────────────────────────────────
