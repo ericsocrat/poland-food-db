@@ -16,7 +16,7 @@ const STORAGE_KEY = "theme";
 
 /** Read the persisted theme mode from localStorage. */
 function getStoredTheme(): ThemeMode {
-  if (typeof globalThis.window === "undefined") return "system";
+  if (globalThis.window === undefined) return "system";
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark" || stored === "system") {
@@ -32,7 +32,7 @@ function getStoredTheme(): ThemeMode {
 function resolveTheme(mode: ThemeMode): ResolvedTheme {
   if (mode === "light" || mode === "dark") return mode;
   // 'system' — check OS preference
-  if (typeof globalThis.window === "undefined") return "light";
+  if (globalThis.window === undefined) return "light";
   return globalThis.matchMedia("(prefers-color-scheme: dark)").matches
     ? "dark"
     : "light";

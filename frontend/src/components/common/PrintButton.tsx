@@ -18,7 +18,7 @@ export function PrintButton({ className = "" }: PrintButtonProps) {
   return (
     <button
       type="button"
-      onClick={() => window.print()}
+      onClick={() => globalThis.print()}
       className={`no-print inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:bg-surface-subtle hover:text-foreground ${className}`}
       aria-label={t("print.printPage")}
     >

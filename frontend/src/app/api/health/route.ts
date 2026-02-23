@@ -76,15 +76,15 @@ function sanitizeResponse(data: unknown): HealthCheckResponse | null {
   return {
     status: d.status as HealthCheckResponse["status"],
     checks: {
-      connectivity: checks.connectivity as boolean,
+      connectivity: checks.connectivity,
       mv_staleness: checks.mv_staleness as HealthCheckResponse["checks"]["mv_staleness"],
       row_counts: {
-        products: rowCounts.products as number,
-        ceiling: rowCounts.ceiling as number,
-        utilization_pct: rowCounts.utilization_pct as number,
+        products: rowCounts.products,
+        ceiling: rowCounts.ceiling,
+        utilization_pct: rowCounts.utilization_pct,
       },
     },
-    timestamp: d.timestamp as string,
+    timestamp: d.timestamp,
   };
 }
 

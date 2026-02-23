@@ -61,7 +61,7 @@ export function useAchievementProgress() {
     },
     onSuccess: (data) => {
       // Invalidate achievements cache to reflect new progress
-      void queryClient.invalidateQueries({
+      queryClient.invalidateQueries({
         queryKey: queryKeys.achievements,
       });
 

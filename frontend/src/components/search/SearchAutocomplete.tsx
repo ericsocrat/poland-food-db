@@ -125,7 +125,10 @@ export function SearchAutocomplete({
   onActiveIdChange,
 }: Readonly<SearchAutocompleteProps>) {
   const { t } = useTranslation();
-  const popularSearches = useMemo(() => t("search.popularTerms").split(","), [t]);
+  const popularSearches = useMemo(
+    () => t("search.popularTerms").split(","),
+    [t],
+  );
   const supabase = createClient();
   const router = useRouter();
   const debouncedQuery = useDebounce(query, 200);
@@ -256,12 +259,7 @@ export function SearchAutocomplete({
           break;
       }
     },
-    [
-      show,
-      navigableCount,
-      handleEnterSelection,
-      onClose,
-    ],
+    [show, navigableCount, handleEnterSelection, onClose],
   );
 
   // Expose keyboard handler to parent input
@@ -322,9 +320,6 @@ export function SearchAutocomplete({
             {recentSearches.map((q, i) => (
               <li
                 key={q}
-                id={getOptionId(i)}
-                role="option"
-                aria-selected={i === activeIndex}
                 className={`flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors ${
                   i === activeIndex
                     ? "bg-brand-subtle text-foreground"
@@ -332,6 +327,9 @@ export function SearchAutocomplete({
                 }`}
               >
                 <button
+                  id={getOptionId(i)}
+                  role="option"
+                  aria-selected={i === activeIndex}
                   type="button"
                   className="flex min-w-0 flex-1 items-center gap-3"
                   onMouseEnter={() => setActiveIndex(i)}
@@ -389,9 +387,6 @@ export function SearchAutocomplete({
               return (
                 <li
                   key={q}
-                  id={getOptionId(idx)}
-                  role="option"
-                  aria-selected={idx === activeIndex}
                   className={`flex cursor-pointer items-center gap-3 px-4 py-2 transition-colors ${
                     idx === activeIndex
                       ? "bg-brand-subtle text-foreground"
@@ -399,6 +394,9 @@ export function SearchAutocomplete({
                   }`}
                 >
                   <button
+                    id={getOptionId(idx)}
+                    role="option"
+                    aria-selected={idx === activeIndex}
                     type="button"
                     className="flex min-w-0 flex-1 items-center gap-3"
                     onMouseEnter={() => setActiveIndex(idx)}
@@ -439,9 +437,6 @@ export function SearchAutocomplete({
               return (
                 <li
                   key={s.product_id}
-                  id={getOptionId(i)}
-                  role="option"
-                  aria-selected={i === activeIndex}
                   className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 transition-colors ${
                     i === activeIndex
                       ? "bg-brand-subtle text-foreground"
@@ -449,6 +444,9 @@ export function SearchAutocomplete({
                   }`}
                 >
                   <button
+                    id={getOptionId(i)}
+                    role="option"
+                    aria-selected={i === activeIndex}
                     type="button"
                     className="flex w-full items-center gap-3"
                     onMouseEnter={() => setActiveIndex(i)}

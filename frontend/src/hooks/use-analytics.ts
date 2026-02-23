@@ -18,7 +18,7 @@ function generateSessionId(): string {
 }
 
 function detectDeviceType(): DeviceType {
-  if (typeof window === "undefined") return "desktop";
+  if (globalThis.window === undefined) return "desktop";
   const w = globalThis.innerWidth;
   if (w < 768) return "mobile";
   if (w < 1024) return "tablet";
@@ -30,7 +30,7 @@ function detectDeviceType(): DeviceType {
 const SESSION_KEY = "analytics_session_id";
 
 function getOrCreateSessionId(): string {
-  if (typeof window === "undefined") return generateSessionId();
+  if (globalThis.window === undefined) return generateSessionId();
   const existing = sessionStorage.getItem(SESSION_KEY);
   if (existing) return existing;
   const id = generateSessionId();

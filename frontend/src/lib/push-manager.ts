@@ -7,11 +7,11 @@
  * Check if the Push API is supported in this browser.
  */
 export function isPushSupported(): boolean {
-  if (typeof window === "undefined") return false;
+  if (globalThis.window === undefined) return false;
   return (
     "serviceWorker" in navigator &&
-    typeof window.PushManager !== "undefined" &&
-    typeof window.Notification !== "undefined"
+    globalThis.PushManager !== undefined &&
+    globalThis.Notification !== undefined
   );
 }
 
@@ -20,7 +20,7 @@ export function isPushSupported(): boolean {
  * Returns "default" | "granted" | "denied" or "unsupported".
  */
 export function getNotificationPermission(): NotificationPermission | "unsupported" {
-  if (typeof window === "undefined" || typeof window.Notification === "undefined") {
+  if (globalThis.window === undefined || globalThis.Notification === undefined) {
     return "unsupported";
   }
   return Notification.permission;
@@ -44,12 +44,12 @@ export async function requestNotificationPermission(): Promise<NotificationPermi
 export function urlBase64ToUint8Array(base64String: string): Uint8Array {
   const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
   const base64 = (base64String + padding)
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
+    .replaceAll("-", "+")
+    .replaceAll("_", "/");
   const rawData = atob(base64);
   const outputArray = new Uint8Array(rawData.length);
   for (let i = 0; i < rawData.length; i++) {
-    outputArray[i] = rawData.charCodeAt(i);
+    outputArray[i] = rawData.codePointAt(i)!;
   }
   return outputArray;
 }
@@ -146,7 +146,7 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   const bytes = new Uint8Array(buffer);
   let binary = "";
   for (const byte of bytes) {
-    binary += String.fromCharCode(byte);
+    binary += String.fromCodePoint(byte);
   }
-  return btoa(binary).replace(/\+/g, "-").replace(/\//g, "_").replaceAll("=", "");
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replaceAll("=", "");
 }
