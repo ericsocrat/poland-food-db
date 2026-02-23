@@ -72,9 +72,22 @@ RETURNS TABLE(
     rows_returned  BIGINT,
     category       TEXT
 )
-LANGUAGE sql STABLE SECURITY DEFINER
+LANGUAGE plpgsql STABLE SECURITY DEFINER
 SET search_path = public, pg_catalog
 AS $$
+BEGIN
+    -- pg_stat_statements view only exists when shared_preload_libraries
+    -- includes it (always on Supabase, may be absent in bare CI PostgreSQL).
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_catalog.pg_class c
+        JOIN pg_catalog.pg_namespace n ON c.relnamespace = n.oid
+        WHERE n.nspname = 'pg_catalog' AND c.relname = 'pg_stat_statements'
+    ) THEN
+        RAISE NOTICE 'pg_stat_statements view not available — returning empty result';
+        RETURN;
+    END IF;
+
+    RETURN QUERY
     SELECT
         LEFT(s.query, 200)                                     AS query_preview,
         s.calls                                                AS calls,
@@ -94,6 +107,7 @@ AS $$
       AND s.query NOT LIKE '%pg_catalog%'
     ORDER BY s.mean_exec_time DESC
     LIMIT 50;
+END;
 $$;
 
 COMMENT ON FUNCTION report_slow_queries IS
