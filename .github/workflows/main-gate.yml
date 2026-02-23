@@ -1,11 +1,13 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 # Main Gate — Strict quality gate for pushes to main
-# CI Architecture Redesign — replaces build.yml + ci.yml on push-to-main
+# CI Architecture Redesign — parallel job graph for fast feedback
 # ═══════════════════════════════════════════════════════════════════════════════
-# Single comprehensive job: build → unit tests w/ coverage → full Playwright E2E
-# → SonarCloud scan (BLOCKING quality gate) → Sentry sourcemap upload.
+# Parallel job graph:
+#   static-checks ─────────────────────┐
+#   unit-tests ── sonar                ├── (all complete)
+#   build ──────── e2e                 │
 #
-# Target runtime: < 15 minutes (hard cap: 20 minutes)
+# Target runtime: < 10 minutes wall-clock
 # ═══════════════════════════════════════════════════════════════════════════════
 
 name: Main Gate
@@ -22,20 +24,27 @@ concurrency:
   cancel-in-progress: false # Never cancel main builds
 
 env:
+  NODE_VERSION: "20"
   # ── CI runtime observability baselines (seconds) ─────────────────────────
-  BASELINE_GATE: 900 # 15 min expected wall-clock
+  BASELINE_STATIC: 90
+  BASELINE_UNIT: 180
+  BASELINE_BUILD: 120
+  BASELINE_E2E: 600
+  BASELINE_SONAR: 300
 
 jobs:
-  gate:
-    name: Full Gate
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 1: Static analysis — typecheck + lint (parallel, no dependencies)
+  # ─────────────────────────────────────────────────────────────────────────
+  static-checks:
+    name: Typecheck & Lint
     runs-on: ubuntu-latest
     permissions:
       contents: read
-    timeout-minutes: 20
+    timeout-minutes: 5
     defaults:
       run:
         working-directory: frontend
-
     steps:
       - name: Record job start
         id: timer
@@ -43,18 +52,15 @@ jobs:
         working-directory: .
 
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          fetch-depth: 0 # Full history for SonarCloud new-code detection
 
       - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
-          node-version: 20
+          node-version: ${{ env.NODE_VERSION }}
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
       - run: npm ci
 
-      # ── Static analysis ────────────────────────────────────────────────
       - name: TypeScript type-check
         run: npx tsc --noEmit
         timeout-minutes: 3
@@ -63,7 +69,111 @@ jobs:
         run: npx next lint
         timeout-minutes: 3
 
-      # ── Build ──────────────────────────────────────────────────────────
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Typecheck & Lint: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_STATIC" -gt 0 ] && pct=$(( (d-BASELINE_STATIC)*100/BASELINE_STATIC ))
+          [ "$pct" -gt 30 ] && echo "::warning::Static checks regression: ${d}s (+${pct}% vs ${BASELINE_STATIC}s)"
+          mkdir -p ci-timings
+          echo '{"job":"static-checks","duration_seconds":'$d',"baseline_seconds":'$BASELINE_STATIC',"delta_pct":'$pct'}' > ci-timings/static-checks.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: ci-timings-mg-static-checks
+          path: ci-timings/
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 2: Unit tests with coverage (parallel, no dependencies)
+  # ─────────────────────────────────────────────────────────────────────────
+  unit-tests:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Unit tests with coverage
+        run: npx vitest run --coverage
+        timeout-minutes: 5
+
+      - name: Upload coverage for SonarCloud
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: coverage-report
+          path: frontend/coverage/lcov.info
+          retention-days: 1
+
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Unit Tests: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_UNIT" -gt 0 ] && pct=$(( (d-BASELINE_UNIT)*100/BASELINE_UNIT ))
+          [ "$pct" -gt 30 ] && echo "::warning::Unit tests regression: ${d}s (+${pct}% vs ${BASELINE_UNIT}s)"
+          mkdir -p ci-timings
+          echo '{"job":"unit-tests","duration_seconds":'$d',"baseline_seconds":'$BASELINE_UNIT',"delta_pct":'$pct'}' > ci-timings/unit-tests.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: ci-timings-mg-unit-tests
+          path: ci-timings/
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 3: Build + Sentry sourcemap upload (parallel, no dependencies)
+  # ─────────────────────────────────────────────────────────────────────────
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    timeout-minutes: 8
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
       - name: Cache Next.js build
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
@@ -81,24 +191,80 @@ jobs:
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
 
-      # ── Unit tests with coverage ───────────────────────────────────────
-      - name: Unit tests with coverage
-        run: npx vitest run --coverage
-        timeout-minutes: 5
+      # Sourcemaps are uploaded automatically by @sentry/nextjs during
+      # `next build` via withSentryConfig() when SENTRY_AUTH_TOKEN,
+      # SENTRY_ORG, and SENTRY_PROJECT env vars are present.
 
-      # ── Playwright full E2E ────────────────────────────────────────────
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Build: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_BUILD" -gt 0 ] && pct=$(( (d-BASELINE_BUILD)*100/BASELINE_BUILD ))
+          [ "$pct" -gt 30 ] && echo "::warning::Build regression: ${d}s (+${pct}% vs ${BASELINE_BUILD}s)"
+          mkdir -p ci-timings
+          echo '{"job":"build","duration_seconds":'$d',"baseline_seconds":'$BASELINE_BUILD',"delta_pct":'$pct'}' > ci-timings/build.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: ci-timings-mg-build
+          path: ci-timings/
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 4: Playwright full E2E — runs after build
+  # ─────────────────────────────────────────────────────────────────────────
+  e2e:
+    name: Playwright E2E
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: read
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Get Playwright version
+        id: pw-version
+        run: echo "version=$(node -e "console.log(require('@playwright/test/package.json').version)")" >> "$GITHUB_OUTPUT"
+
       - name: Cache Playwright browsers
+        id: pw-cache
         uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ~/.cache/ms-playwright
-          key: pw-browsers-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
+          key: pw-${{ runner.os }}-${{ steps.pw-version.outputs.version }}
 
       - name: Install Playwright browsers
+        if: steps.pw-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
         timeout-minutes: 8
 
+      - name: Install Playwright system deps
+        if: steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+        timeout-minutes: 5
+
       - name: Playwright full E2E
-        id: playwright
         run: npx playwright test 2>&1 | tee ../playwright-stdout.log
         timeout-minutes: 12
         env:
@@ -118,13 +284,57 @@ jobs:
             playwright-stdout.log
           retention-days: 14
 
-      # ── SonarCloud — BLOCKING quality gate ─────────────────────────────
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Playwright E2E: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_E2E" -gt 0 ] && pct=$(( (d-BASELINE_E2E)*100/BASELINE_E2E ))
+          [ "$pct" -gt 30 ] && echo "::warning::E2E regression: ${d}s (+${pct}% vs ${BASELINE_E2E}s)"
+          mkdir -p ci-timings
+          echo '{"job":"e2e","duration_seconds":'$d',"baseline_seconds":'$BASELINE_E2E',"delta_pct":'$pct'}' > ci-timings/e2e.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: ci-timings-mg-e2e
+          path: ci-timings/
+          retention-days: 30
+
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 5: SonarCloud — BLOCKING quality gate (after unit-tests for coverage)
+  # ─────────────────────────────────────────────────────────────────────────
+  sonar:
+    name: SonarCloud
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    permissions:
+      contents: read
+    timeout-minutes: 10
+    env:
+      SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+    steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0 # Full history for SonarCloud new-code detection
+
+      - name: Download coverage report
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          name: coverage-report
+          path: frontend/coverage/
+
       - name: SonarCloud Scan
         if: env.SONAR_TOKEN != ''
         uses: SonarSource/sonarqube-scan-action@a31c9398be7ace6bbfaf30c0bd5d415f843d45e9 # v7.0.0
         timeout-minutes: 5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
 
       - name: SonarCloud Quality Gate
@@ -132,67 +342,23 @@ jobs:
         uses: SonarSource/sonarqube-quality-gate-action@cf038b0e0cdecfa9e56c198bbb7d21d751d62c3b # v1.2.0
         timeout-minutes: 5
         env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
         # NO continue-on-error — quality gate BLOCKS the build
 
-      # ── Sentry sourcemap upload ────────────────────────────────────────
-      # Sourcemaps are uploaded automatically by @sentry/nextjs during
-      # `next build` via withSentryConfig() when SENTRY_AUTH_TOKEN,
-      # SENTRY_ORG, and SENTRY_PROJECT env vars are present (passed to
-      # the Build step above). If secrets are missing, the plugin silently
-      # skips upload. No separate sentry-cli step required.
-
-      # ── CI runtime observability ───────────────────────────────────────
       - name: CI runtime summary
         if: ${{ !cancelled() }}
-        working-directory: .
         run: |
-          end=$(date +%s)
-          start=${{ steps.timer.outputs.start }}
-          duration=$((end - start))
-          minutes=$((duration / 60))
-          seconds=$((duration % 60))
-
-          echo "## Main Gate Runtime" >> "$GITHUB_STEP_SUMMARY"
-          echo "" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Total duration | ${minutes}m ${seconds}s |" >> "$GITHUB_STEP_SUMMARY"
-          echo "| Baseline | $((BASELINE_GATE / 60))m |" >> "$GITHUB_STEP_SUMMARY"
-
-          pct=0
-          if [ "$BASELINE_GATE" -gt 0 ]; then
-            pct=$(( (duration - BASELINE_GATE) * 100 / BASELINE_GATE ))
-          fi
-          if [ "$pct" -gt 30 ]; then
-            echo "| :warning: Regression | +${pct}% vs baseline |" >> "$GITHUB_STEP_SUMMARY"
-            echo "::warning::CI runtime regression: ${minutes}m ${seconds}s (+${pct}% vs ${BASELINE_GATE}s baseline)"
-          elif [ "$pct" -lt -10 ]; then
-            echo "| :zap: Improvement | ${pct}% vs baseline |" >> "$GITHUB_STEP_SUMMARY"
-          else
-            echo "| Delta | ${pct}% vs baseline |" >> "$GITHUB_STEP_SUMMARY"
-          fi
-
-          # Write JSON artifact
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## SonarCloud: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_SONAR" -gt 0 ] && pct=$(( (d-BASELINE_SONAR)*100/BASELINE_SONAR ))
+          [ "$pct" -gt 30 ] && echo "::warning::SonarCloud regression: ${d}s (+${pct}% vs ${BASELINE_SONAR}s)"
           mkdir -p ci-timings
-          cat > ci-timings/main-gate.json <<EOF
-          {
-            "workflow": "main-gate",
-            "job": "gate",
-            "commit": "${{ github.sha }}",
-            "ref": "${{ github.ref }}",
-            "duration_seconds": $duration,
-            "baseline_seconds": $BASELINE_GATE,
-            "delta_pct": $pct,
-            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          }
-          EOF
+          echo '{"job":"sonar","duration_seconds":'$d',"baseline_seconds":'$BASELINE_SONAR',"delta_pct":'$pct'}' > ci-timings/sonar.json
 
       - name: Upload CI timings
         if: ${{ !cancelled() }}
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
-          name: ci-timings-main-gate
+          name: ci-timings-mg-sonar
           path: ci-timings/
           retention-days: 30
