@@ -24,6 +24,18 @@ export const AUTH_MESSAGES = [
   "Invalid JWT",
 ] as const;
 
+// ─── Rate limit constants (#182) ────────────────────────────────────────────
+
+/** Error code returned when a 429 is detected. */
+export const RATE_LIMIT_CODE = "RATE_LIMITED" as const;
+
+/** Substrings in error messages that indicate rate limiting. */
+export const RATE_LIMIT_MESSAGES = [
+  "rate limit",
+  "too many requests",
+  "429",
+] as const;
+
 // ─── Error normalisation helpers ────────────────────────────────────────────
 
 export interface NormalizedError {
@@ -80,8 +92,23 @@ export async function callRpc<T>(
   try {
     const { data, error } = await supabase.rpc(fnName, params);
 
-    // Supabase-level error (network, auth, permission)
+    // Supabase-level error (network, auth, permission, rate limit)
     if (error) {
+      // Detect rate limiting (429) from Supabase or upstream
+      if (
+        error.code === "429" ||
+        error.message?.toLowerCase().includes("too many requests") ||
+        error.message?.toLowerCase().includes("rate limit")
+      ) {
+        if (process.env.NODE_ENV === "development") {
+          console.warn(`[RPC] ${fnName} rate limited`);
+        }
+        return {
+          ok: false,
+          error: { code: RATE_LIMIT_CODE, message: error.message ?? "Rate limit exceeded" },
+        };
+      }
+
       const normalized = normalizeRpcError(error);
 
       if (process.env.NODE_ENV === "development") {
@@ -124,5 +151,21 @@ export function isAuthError(error: { code: string; message: string }): boolean {
     AUTH_MESSAGES.some((m) =>
       error.message.toLowerCase().includes(m.toLowerCase()),
     )
+  );
+}
+
+// ─── Rate limit error detection (#182) ──────────────────────────────────────
+
+/**
+ * Checks if an RPC error indicates the caller was rate-limited (429).
+ * Consumers can use this to show a "slow down" message or schedule a retry.
+ */
+export function isRateLimitError(error: {
+  code: string;
+  message: string;
+}): boolean {
+  if (error.code === RATE_LIMIT_CODE || error.code === "429") return true;
+  return RATE_LIMIT_MESSAGES.some((m) =>
+    error.message.toLowerCase().includes(m.toLowerCase()),
   );
 }
