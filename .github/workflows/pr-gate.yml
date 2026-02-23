@@ -287,7 +287,7 @@ jobs:
       - name: Install Playwright system deps
         if: steps.pw-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
-        timeout-minutes: 5
+        timeout-minutes: 8
 
       - name: Run smoke E2E tests
         run: npx playwright test --project=smoke 2>&1 | tee ../playwright-stdout.log

@@ -143,7 +143,7 @@ Failed Playwright runs upload screenshots and traces as artifacts for debugging.
 - 6 barcode lookup checks (EAN resolution, scan metadata, error handling)
 - 1 EAN checksum validation (all barcodes verified)
 - 8 source coverage reports (informational, non-blocking)
-- 23 negative tests (constraint violation detection)
+- 29 negative tests (constraint violation detection)
 
 **All tests passing**: ✅ 421/421 + 29/29 negative
 

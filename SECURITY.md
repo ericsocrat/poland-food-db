@@ -2,7 +2,7 @@
 
 ## Known Vulnerabilities
 
-Last audited: 2026-02-14 (vulnerability table below may be stale — re-run `cd frontend && npm audit` to refresh)
+Last audited: 2026-02-14 (vulnerability table below may be stale — re-run `cd frontend && npm audit --omit=dev` to refresh)
 
 ### Summary
 
@@ -44,8 +44,8 @@ Last audited: 2026-02-14 (vulnerability table below may be stale — re-run `cd 
 ### Remediation Plan
 
 The project is now on **Next.js 15.5.12**. The advisories listed above were filed
-against v14.x and may no longer apply. Re-run `npm audit` and refresh this table
-when vulnerabilities change.
+against v14.x and may no longer apply. Re-run `npm audit --omit=dev` and refresh
+this table when vulnerabilities change.
 
 ### Application Security Measures
 
