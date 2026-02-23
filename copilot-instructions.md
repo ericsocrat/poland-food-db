@@ -170,8 +170,7 @@ poland-food-db/
 │   ├── API_CONTRACTS.md             # API surface contracts (6 endpoints) — response shapes, hidden columns
 │   ├── PERFORMANCE_REPORT.md        # Performance audit, scale projections, query patterns
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
-│   ├── DATA_ACQUISITION_WORKFLOW.md # Data collection pipeline
-│   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle
+│   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle (manual + automated OFF pipeline)
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
 │   ├── COUNTRY_EXPANSION_GUIDE.md   # Multi-country protocol (PL active, DE micro-pilot)
 │   ├── UX_UI_DESIGN.md              # UI/UX guidelines
@@ -179,11 +178,12 @@ poland-food-db/
 │   ├── ENVIRONMENT_STRATEGY.md      # Local/staging/production environment strategy
 │   ├── STAGING_SETUP.md             # Staging environment setup
 │   ├── PRODUCTION_DATA.md           # Production data management
-│   ├── FULL_PROJECT_AUDIT.md        # Comprehensive project audit
-│   ├── TABLE_AUDIT_2026-02-12.md    # Table-level audit snapshot
+│   ├── DATA_INTEGRITY_AUDITS.md     # Ongoing data integrity audit framework
 │   ├── EAN_VALIDATION_STATUS.md     # 997/1,025 coverage (97.3%)
-│   ├── EAN_EXPANSION_PLAN.md        # Completed
-│   ├── SECURITY.md                  # Security policy & practices
+│   ├── CI_ARCHITECTURE_PROPOSAL.md  # CI pipeline design
+│   ├── LABELS.md                    # Labeling conventions
+│   ├── MONITORING.md                # Runtime monitoring
+│   ├── OBSERVABILITY.md             # Observability strategy
 │   └── SONAR.md                     # SonarCloud configuration & quality gates
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (421 checks across 30 suites)
@@ -1203,18 +1203,18 @@ Include **estimated effort** (hours/days) for each step.
 
 Before a feature is considered complete, verify against all CI gates:
 
-| Gate                | Command                               | Expected                         |
-| ------------------- | ------------------------------------- | -------------------------------- |
-| Pipeline structure  | `python check_pipeline_structure.py`  | 0 errors                         |
-| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 421)  |
-| Negative tests      | `.\RUN_NEGATIVE_TESTS.ps1`            | All caught (currently 29)        |
-| pgTAP tests         | `supabase test db`                    | All pass                         |
-| TypeScript          | `cd frontend && npx tsc --noEmit`     | 0 errors                         |
-| Unit tests          | `cd frontend && npx vitest run`       | All pass                         |
-| E2E smoke           | `cd frontend && npx playwright test`  | All pass                         |
-| EAN validation      | `python validate_eans.py`             | 0 failures                       |
-| Enrichment identity | `python check_enrichment_identity.py` | 0 violations                     |
-| SonarCloud          | CI pipeline (`main-gate.yml`)         | Quality Gate pass                |
+| Gate                | Command                               | Expected                        |
+| ------------------- | ------------------------------------- | ------------------------------- |
+| Pipeline structure  | `python check_pipeline_structure.py`  | 0 errors                        |
+| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 421) |
+| Negative tests      | `.\RUN_NEGATIVE_TESTS.ps1`            | All caught (currently 29)       |
+| pgTAP tests         | `supabase test db`                    | All pass                        |
+| TypeScript          | `cd frontend && npx tsc --noEmit`     | 0 errors                        |
+| Unit tests          | `cd frontend && npx vitest run`       | All pass                        |
+| E2E smoke           | `cd frontend && npx playwright test`  | All pass                        |
+| EAN validation      | `python validate_eans.py`             | 0 failures                      |
+| Enrichment identity | `python check_enrichment_identity.py` | 0 violations                    |
+| SonarCloud          | CI pipeline (`main-gate.yml`)         | Quality Gate pass               |
 
 ### 15.17 Enforcement Rule
 
@@ -1238,7 +1238,7 @@ Use this structure when creating GitHub issues. **Every section is required** fo
 
 > **Reference implementation:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184)
 
-````markdown
+```markdown
 # [PREFIX] Title — Crisp Noun-Phrase Subtitle
 
 > **Priority:** P0 / P1 / P2 / P3
@@ -1306,7 +1306,7 @@ Each step should include runnable code (SQL, TypeScript, Python, YAML, etc.) —
 
 `sql / `typescript / `python / `yaml
 -- Actual implementation code
-````
+```
 
 ### Step 2 — [Title]
 

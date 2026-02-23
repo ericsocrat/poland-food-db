@@ -50,7 +50,7 @@ npx supabase link --project-ref <staging-ref>
 npx supabase db push
 ```
 
-Verify: All 85+ migrations should apply successfully.
+Verify: All 124 migrations should apply successfully.
 
 ---
 
@@ -112,9 +112,9 @@ Go to **Settings → Secrets and variables → Actions** and add:
 
 Go to **Settings → Secrets and variables → Actions → Variables** and add:
 
-| Variable            | Value  | Purpose                                         |
-| ------------------- | ------ | ----------------------------------------------- |
-| `STAGING_ENABLED`   | `true` | Enables staging sync in `sync-cloud-db.yml`     |
+| Variable          | Value  | Purpose                                     |
+| ----------------- | ------ | ------------------------------------------- |
+| `STAGING_ENABLED` | `true` | Enables staging sync in `sync-cloud-db.yml` |
 
 ### Vercel Preview Environment
 
