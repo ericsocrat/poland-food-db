@@ -33,6 +33,8 @@ jobs:
   comprehensive:
     name: Full Test Suite
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 20
     defaults:
       run:
@@ -45,8 +47,6 @@ jobs:
         working-directory: .
 
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
-        with:
-          fetch-depth: 0
 
       - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
@@ -129,6 +129,8 @@ jobs:
   data-audit:
     name: Data Integrity Audit
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 15
 
     steps:

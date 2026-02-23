@@ -37,6 +37,8 @@ jobs:
   static-checks:
     name: Typecheck & Lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 5
     defaults:
       run:
@@ -125,6 +127,8 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     needs: static-checks
+    permissions:
+      contents: read
     timeout-minutes: 5
     defaults:
       run:
@@ -175,6 +179,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: static-checks
+    permissions:
+      contents: read
     timeout-minutes: 5
     defaults:
       run:
@@ -236,6 +242,8 @@ jobs:
     name: Playwright Smoke
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
     timeout-minutes: 8
     defaults:
       run:

@@ -29,6 +29,8 @@ jobs:
   gate:
     name: Full Gate
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 20
     defaults:
       run:

@@ -56,9 +56,6 @@ jobs:
 
       - run: npm ci
 
-      - name: Install license-checker
-        run: npm install -g license-checker
-
       - name: Scan production licenses
         run: |
           echo "## License Compliance Report" >> "$GITHUB_STEP_SUMMARY"
@@ -70,7 +67,7 @@ jobs:
 
           # ── Run license check (production deps only) ───────────────────
           set +e
-          output=$(license-checker --production --excludePrivatePackages --failOn "$FORBIDDEN" --summary 2>&1)
+          output=$(npx license-checker --production --excludePrivatePackages --failOn "$FORBIDDEN" --summary 2>&1)
           exit_code=$?
           set -e
 
@@ -91,7 +88,7 @@ jobs:
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "### Offending packages:" >> "$GITHUB_STEP_SUMMARY"
             echo '```' >> "$GITHUB_STEP_SUMMARY"
-            license-checker --production --excludePrivatePackages --onlyAllow "MIT;ISC;BSD-2-Clause;BSD-3-Clause;Apache-2.0;0BSD;CC0-1.0;CC-BY-4.0;CC-BY-3.0;Unlicense;BlueOak-1.0.0;Python-2.0;Artistic-2.0;Zlib;OFL-1.1" 2>&1 | head -50 >> "$GITHUB_STEP_SUMMARY" || true
+            npx license-checker --production --excludePrivatePackages --onlyAllow "MIT;ISC;BSD-2-Clause;BSD-3-Clause;Apache-2.0;0BSD;CC0-1.0;CC-BY-4.0;CC-BY-3.0;Unlicense;BlueOak-1.0.0;Python-2.0;Artistic-2.0;Zlib;OFL-1.1" 2>&1 | head -50 >> "$GITHUB_STEP_SUMMARY" || true
             echo '```' >> "$GITHUB_STEP_SUMMARY"
 
             exit 1
@@ -103,7 +100,7 @@ jobs:
       - name: Generate full license report
         if: ${{ !cancelled() }}
         run: |
-          license-checker --production --excludePrivatePackages --csv --out ../license-report.csv 2>/dev/null || true
+          npx license-checker --production --excludePrivatePackages --csv --out ../license-report.csv 2>/dev/null || true
 
       - name: Upload license report
         if: ${{ !cancelled() }}

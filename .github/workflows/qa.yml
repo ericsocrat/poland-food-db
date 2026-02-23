@@ -23,7 +23,11 @@ on:
       - "db/**"
       - "supabase/**"
       - "pipeline/**"
-      - "*.py"
+      - "validate_eans.py"
+      - "enrich_ingredients.py"
+      - "check_enrichment_identity.py"
+      - "check_pipeline_structure.py"
+      - "fetch_off_category.py"
       - "RUN_QA.ps1"
       - "RUN_LOCAL.ps1"
       - "RUN_SEED.ps1"
@@ -48,6 +52,8 @@ jobs:
   qa:
     name: DB Integrity
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 10
 
     services:
@@ -116,17 +122,11 @@ jobs:
       - name: Schema drift detection
         run: |
           set -euo pipefail
-          # Verify there are no orphaned or unexpected public schema objects
-          # that aren't referenced in our migrations.
+          # Verify there are no unexpected test functions left in public schema.
+          # (The table subquery comparing pg_tables vs information_schema was a
+          #  no-op: both catalog views show the same rows. Removed in CI noise
+          #  reduction pass.)
           orphans=$(psql --tuples-only --no-align -c "
-            SELECT 'TABLE: ' || tablename FROM pg_tables
-            WHERE schemaname = 'public'
-              AND tablename NOT LIKE 'pg_%'
-              AND tablename NOT IN (
-                SELECT table_name FROM information_schema.tables
-                WHERE table_schema = 'public'
-              )
-            UNION ALL
             SELECT 'FUNCTION: ' || routine_name FROM information_schema.routines
             WHERE routine_schema = 'public'
               AND routine_type = 'FUNCTION'

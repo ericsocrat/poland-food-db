@@ -59,8 +59,6 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
-      - run: npm ci
-
       # --omit=dev → only audit production dependencies (what ships to users)
       # --audit-level=high → fail on HIGH and CRITICAL only (moderate = warn)
       - name: Audit production dependencies
@@ -108,8 +106,6 @@ jobs:
         with:
           python-version: "3.12"
           cache: "pip"
-
-      - run: pip install -r requirements.txt
 
       - name: Install pip-audit
         run: pip install pip-audit

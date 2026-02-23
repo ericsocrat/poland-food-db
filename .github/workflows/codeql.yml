@@ -19,8 +19,18 @@ name: CodeQL Security Analysis
 on:
   push:
     branches: [main]
+    paths:
+      - "frontend/**"
+      - "**.js"
+      - "**.ts"
+      - "**.tsx"
   pull_request:
     branches: [main]
+    paths:
+      - "frontend/**"
+      - "**.js"
+      - "**.ts"
+      - "**.tsx"
   schedule:
     # Weekly Monday 06:00 UTC — catches drift from auto-merged deps
     - cron: "0 6 * * 1"

@@ -46,6 +46,8 @@ jobs:
   sync-staging:
     name: Sync Staging DB
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: >-
       (github.event_name == 'push') ||
       (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'staging')
@@ -103,6 +105,8 @@ jobs:
   sync-production:
     name: Sync Production DB
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'production'
     environment: production # ← requires reviewer approval
 
