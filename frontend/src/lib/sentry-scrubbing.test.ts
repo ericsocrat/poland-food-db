@@ -5,7 +5,7 @@ import { describe, it, expect } from "vitest";
 // We extract and test the scrubbing logic directly rather than importing
 // the config files (which call Sentry.init as a side effect).
 
-// Replicate the beforeSend logic from sentry.client.config.ts
+// Replicate the beforeSend logic from instrumentation-client.ts
 type SentryEvent = {
   user?: {
     id?: string;

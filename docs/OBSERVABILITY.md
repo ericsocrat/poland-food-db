@@ -88,7 +88,7 @@ Configure minimum level via `LOG_LEVEL` env var (default: `info`).
 
 | Config                     | Client                     | Server                     | Edge                       |
 | -------------------------- | -------------------------- | -------------------------- | -------------------------- |
-| Config file                | `sentry.client.config.ts`  | `sentry.server.config.ts`  | `sentry.edge.config.ts`    |
+| Config file                | `src/instrumentation-client.ts` | `sentry.server.config.ts`  | `sentry.edge.config.ts`    |
 | DSN                        | `NEXT_PUBLIC_SENTRY_DSN`   | `NEXT_PUBLIC_SENTRY_DSN`   | `NEXT_PUBLIC_SENTRY_DSN`   |
 | Sample rate (errors)       | 100%                       | 100%                       | 100%                       |
 | Sample rate (transactions) | Configurable (default 10%) | Configurable (default 10%) | Configurable (default 10%) |
@@ -239,7 +239,7 @@ Each component is independently removable:
 | -------------------------------- | -------- | ------------------------------ |
 | `src/lib/logger.ts`              | New      | Structured JSON logger         |
 | `src/lib/api-instrumentation.ts` | New      | API route wrapper (HOF)        |
-| `sentry.client.config.ts`        | New      | Client-side Sentry init        |
+| `src/instrumentation-client.ts`   | New      | Client-side Sentry init (Turbopack) |
 | `sentry.server.config.ts`        | New      | Server-side Sentry init        |
 | `sentry.edge.config.ts`          | New      | Edge runtime Sentry init       |
 | `src/instrumentation.ts`         | New      | Next.js instrumentation hook   |

@@ -19,6 +19,10 @@ concurrency:
   group: nightly
   cancel-in-progress: true # Only latest nightly matters
 
+env:
+  BASELINE_COMPREHENSIVE: 900
+  BASELINE_DATA_AUDIT: 300
+
 jobs:
   # ─────────────────────────────────────────────────────────────────────────
   # Job 1: Full frontend test suite (unit + all Playwright projects)
@@ -32,6 +36,11 @@ jobs:
         working-directory: frontend
 
     steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -55,9 +64,11 @@ jobs:
 
       - name: Build
         run: npx next build
+        timeout-minutes: 5
 
       - name: Unit tests with coverage
         run: npx vitest run --coverage
+        timeout-minutes: 5
 
       - name: Cache Playwright browsers
         uses: actions/cache@v4
@@ -67,9 +78,11 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+        timeout-minutes: 3
 
       - name: Full Playwright (all projects including visual)
-        run: npx playwright test
+        run: npx playwright test 2>&1 | tee ../playwright-stdout.log
+        timeout-minutes: 10
         env:
           VISUAL_REGRESSION: "true"
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
@@ -84,6 +97,26 @@ jobs:
           path: |
             frontend/playwright-report/
             frontend/test-results/
+            playwright-stdout.log
+          retention-days: 30
+
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Nightly Comprehensive: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_COMPREHENSIVE" -gt 0 ] && pct=$(( (d-BASELINE_COMPREHENSIVE)*100/BASELINE_COMPREHENSIVE ))
+          [ "$pct" -gt 30 ] && echo "::warning::Nightly comprehensive regression: ${d}s (+${pct}% vs ${BASELINE_COMPREHENSIVE}s)"
+          mkdir -p ci-timings
+          echo '{"job":"comprehensive","duration_seconds":'$d',"baseline_seconds":'$BASELINE_COMPREHENSIVE',"delta_pct":'$pct'}' > ci-timings/comprehensive.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-timings-comprehensive
+          path: ci-timings/
           retention-days: 30
 
   # ─────────────────────────────────────────────────────────────────────────
@@ -96,6 +129,10 @@ jobs:
     timeout-minutes: 15
 
     steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-python@v5
@@ -144,3 +181,21 @@ jobs:
               -H 'Content-Type: application/json' \
               -d '{"text": "Nightly audit: CRITICAL issues — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}"}'
           fi
+
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Data Audit: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_DATA_AUDIT" -gt 0 ] && pct=$(( (d-BASELINE_DATA_AUDIT)*100/BASELINE_DATA_AUDIT ))
+          [ "$pct" -gt 30 ] && echo "::warning::Data audit regression: ${d}s (+${pct}% vs ${BASELINE_DATA_AUDIT}s)"
+          mkdir -p ci-timings
+          echo '{"job":"data-audit","duration_seconds":'$d',"baseline_seconds":'$BASELINE_DATA_AUDIT',"delta_pct":'$pct'}' > ci-timings/data-audit.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-timings-data-audit
+          path: ci-timings/
+          retention-days: 30

@@ -5,7 +5,7 @@
 # Single comprehensive job: build → unit tests w/ coverage → full Playwright E2E
 # → SonarCloud scan (BLOCKING quality gate) → Sentry sourcemap upload.
 #
-# Target runtime: < 12 minutes
+# Target runtime: < 15 minutes (hard cap: 20 minutes)
 # ═══════════════════════════════════════════════════════════════════════════════
 
 name: Main Gate
@@ -18,6 +18,10 @@ concurrency:
   group: main-gate
   cancel-in-progress: false # Never cancel main builds
 
+env:
+  # ── CI runtime observability baselines (seconds) ─────────────────────────
+  BASELINE_GATE: 900 # 15 min expected wall-clock
+
 jobs:
   gate:
     name: Build, Test, Scan & Deploy Sourcemaps
@@ -28,6 +32,11 @@ jobs:
         working-directory: frontend
 
     steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Full history for SonarCloud new-code detection
@@ -43,9 +52,11 @@ jobs:
       # ── Static analysis ────────────────────────────────────────────────
       - name: TypeScript type-check
         run: npx tsc --noEmit
+        timeout-minutes: 3
 
       - name: ESLint
         run: npx next lint
+        timeout-minutes: 3
 
       # ── Build ──────────────────────────────────────────────────────────
       - name: Cache Next.js build
@@ -59,10 +70,12 @@ jobs:
 
       - name: Build
         run: npx next build
+        timeout-minutes: 5
 
       # ── Unit tests with coverage ───────────────────────────────────────
       - name: Unit tests with coverage
         run: npx vitest run --coverage
+        timeout-minutes: 5
 
       # ── Playwright full E2E ────────────────────────────────────────────
       - name: Cache Playwright browsers
@@ -73,28 +86,33 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+        timeout-minutes: 3
 
       - name: Playwright full E2E
-        run: npx playwright test
+        id: playwright
+        run: npx playwright test 2>&1 | tee ../playwright-stdout.log
+        timeout-minutes: 8
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
-      - name: Upload Playwright report
+      - name: Upload Playwright report + traces
         uses: actions/upload-artifact@v4
         if: ${{ !cancelled() }}
         with:
           name: playwright-report
           path: |
             frontend/playwright-report/
-            frontend/test-results/a11y-results.json
+            frontend/test-results/
+            playwright-stdout.log
           retention-days: 14
 
       # ── SonarCloud — BLOCKING quality gate ─────────────────────────────
       - name: SonarCloud Scan
         if: env.SONAR_TOKEN != ''
         uses: SonarSource/sonarqube-scan-action@v6
+        timeout-minutes: 5
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: https://sonarcloud.io
@@ -108,11 +126,88 @@ jobs:
           SONAR_HOST_URL: https://sonarcloud.io
         # NO continue-on-error — quality gate BLOCKS the build
 
-      # ── Sentry sourcemap upload (main only, fork-safe) ─────────────────
-      - name: Upload Sentry sourcemaps
-        if: env.SENTRY_AUTH_TOKEN != ''
-        run: npx @sentry/cli sourcemaps upload --org "$SENTRY_ORG" --project "$SENTRY_PROJECT" .next
+      # ── Sentry sourcemap upload ────────────────────────────────────────
+      # STRICT on push-to-main: warns if secrets are missing (sourcemaps
+      # won't be uploaded), but does NOT fail the build so CI stays green
+      # until the secrets are first configured.
+      - name: Verify Sentry secrets
+        id: sentry_check
+        working-directory: .
+        run: |
+          missing=""
+          [ -z "$SENTRY_AUTH_TOKEN" ] && missing="$missing SENTRY_AUTH_TOKEN"
+          [ -z "$SENTRY_ORG" ]        && missing="$missing SENTRY_ORG"
+          [ -z "$SENTRY_PROJECT" ]     && missing="$missing SENTRY_PROJECT"
+          if [ -n "$missing" ]; then
+            echo "::warning::Sentry secrets not configured:$missing — sourcemap upload skipped"
+            echo "sentry_ready=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "sentry_ready=true" >> "$GITHUB_OUTPUT"
+          fi
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
           SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+
+      - name: Upload Sentry sourcemaps
+        if: steps.sentry_check.outputs.sentry_ready == 'true'
+        run: npx @sentry/cli sourcemaps upload --org "$SENTRY_ORG" --project "$SENTRY_PROJECT" .next
+        timeout-minutes: 3
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          SENTRY_ORG: ${{ secrets.SENTRY_ORG }}
+          SENTRY_PROJECT: ${{ secrets.SENTRY_PROJECT }}
+
+      # ── CI runtime observability ───────────────────────────────────────
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s)
+          start=${{ steps.timer.outputs.start }}
+          duration=$((end - start))
+          minutes=$((duration / 60))
+          seconds=$((duration % 60))
+
+          echo "## Main Gate Runtime" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Metric | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|--------|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Total duration | ${minutes}m ${seconds}s |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Baseline | $((BASELINE_GATE / 60))m |" >> "$GITHUB_STEP_SUMMARY"
+
+          pct=0
+          if [ "$BASELINE_GATE" -gt 0 ]; then
+            pct=$(( (duration - BASELINE_GATE) * 100 / BASELINE_GATE ))
+          fi
+          if [ "$pct" -gt 30 ]; then
+            echo "| :warning: Regression | +${pct}% vs baseline |" >> "$GITHUB_STEP_SUMMARY"
+            echo "::warning::CI runtime regression: ${minutes}m ${seconds}s (+${pct}% vs ${BASELINE_GATE}s baseline)"
+          elif [ "$pct" -lt -10 ]; then
+            echo "| :zap: Improvement | ${pct}% vs baseline |" >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo "| Delta | ${pct}% vs baseline |" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+          # Write JSON artifact
+          mkdir -p ci-timings
+          cat > ci-timings/main-gate.json <<EOF
+          {
+            "workflow": "main-gate",
+            "job": "gate",
+            "commit": "${{ github.sha }}",
+            "ref": "${{ github.ref }}",
+            "duration_seconds": $duration,
+            "baseline_seconds": $BASELINE_GATE,
+            "delta_pct": $pct,
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-timings-main-gate
+          path: ci-timings/
+          retention-days: 30

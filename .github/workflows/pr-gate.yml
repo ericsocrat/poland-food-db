@@ -20,6 +20,13 @@ concurrency:
   group: pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 
+env:
+  # ── CI runtime observability baselines (seconds) ─────────────────────────
+  BASELINE_STATIC: 90
+  BASELINE_UNIT: 180
+  BASELINE_BUILD: 120
+  BASELINE_SMOKE: 300
+
 jobs:
   # ─────────────────────────────────────────────────────────────────────────
   # Job 1: Static analysis (typecheck + lint) — runs first, fails fast
@@ -32,6 +39,11 @@ jobs:
       run:
         working-directory: frontend
     steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -44,9 +56,30 @@ jobs:
 
       - name: TypeScript type-check
         run: npx tsc --noEmit
+        timeout-minutes: 3
 
       - name: ESLint
         run: npx next lint
+        timeout-minutes: 3
+
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Typecheck & Lint: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_STATIC" -gt 0 ] && pct=$(( (d-BASELINE_STATIC)*100/BASELINE_STATIC ))
+          [ "$pct" -gt 30 ] && echo "::warning::Static checks regression: ${d}s (+${pct}% vs ${BASELINE_STATIC}s)"
+          mkdir -p ci-timings
+          echo '{"job":"static-checks","duration_seconds":'$d',"baseline_seconds":'$BASELINE_STATIC',"delta_pct":'$pct'}' > ci-timings/static-checks.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-timings-static-checks
+          path: ci-timings/
+          retention-days: 7
 
   # ─────────────────────────────────────────────────────────────────────────
   # Job 2: Unit tests — runs in parallel with build after static-checks
@@ -60,6 +93,11 @@ jobs:
       run:
         working-directory: frontend
     steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -72,6 +110,26 @@ jobs:
 
       - name: Run unit tests
         run: npx vitest run
+        timeout-minutes: 4
+
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Unit Tests: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_UNIT" -gt 0 ] && pct=$(( (d-BASELINE_UNIT)*100/BASELINE_UNIT ))
+          [ "$pct" -gt 30 ] && echo "::warning::Unit tests regression: ${d}s (+${pct}% vs ${BASELINE_UNIT}s)"
+          mkdir -p ci-timings
+          echo '{"job":"unit-tests","duration_seconds":'$d',"baseline_seconds":'$BASELINE_UNIT',"delta_pct":'$pct'}' > ci-timings/unit-tests.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-timings-unit-tests
+          path: ci-timings/
+          retention-days: 7
 
   # ─────────────────────────────────────────────────────────────────────────
   # Job 3: Build — runs in parallel with unit-tests after static-checks
@@ -85,6 +143,11 @@ jobs:
       run:
         working-directory: frontend
     steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -106,6 +169,26 @@ jobs:
 
       - name: Build
         run: npx next build
+        timeout-minutes: 5
+
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Build: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_BUILD" -gt 0 ] && pct=$(( (d-BASELINE_BUILD)*100/BASELINE_BUILD ))
+          [ "$pct" -gt 30 ] && echo "::warning::Build regression: ${d}s (+${pct}% vs ${BASELINE_BUILD}s)"
+          mkdir -p ci-timings
+          echo '{"job":"build","duration_seconds":'$d',"baseline_seconds":'$BASELINE_BUILD',"delta_pct":'$pct'}' > ci-timings/build.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-timings-build
+          path: ci-timings/
+          retention-days: 7
 
   # ─────────────────────────────────────────────────────────────────────────
   # Job 4: Playwright smoke E2E — runs after build
@@ -116,11 +199,16 @@ jobs:
     name: Playwright Smoke
     runs-on: ubuntu-latest
     needs: build
-    timeout-minutes: 5
+    timeout-minutes: 8
     defaults:
       run:
         working-directory: frontend
     steps:
+      - name: Record job start
+        id: timer
+        run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
+        working-directory: .
+
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
@@ -139,21 +227,43 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
+        timeout-minutes: 3
 
       - name: Run smoke E2E tests
-        run: npx playwright test --project=smoke
+        run: npx playwright test --project=smoke 2>&1 | tee ../playwright-stdout.log
+        timeout-minutes: 5
         env:
           # Use staging keys for non-fork PRs; smoke tests that don't hit
           # Supabase will pass even without these env vars.
           NEXT_PUBLIC_SUPABASE_URL: ${{ github.event.pull_request.head.repo.fork == false && (secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL) || '' }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ github.event.pull_request.head.repo.fork == false && (secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY) || '' }}
 
-      - name: Upload Playwright report
+      - name: Upload Playwright report + traces
         uses: actions/upload-artifact@v4
-        if: failure()
+        if: ${{ !cancelled() }}
         with:
           name: pw-smoke-report
           path: |
             frontend/playwright-report/
             frontend/test-results/
+            playwright-stdout.log
+          retention-days: 7
+
+      - name: CI runtime summary
+        if: ${{ !cancelled() }}
+        working-directory: .
+        run: |
+          end=$(date +%s); start=${{ steps.timer.outputs.start }}; d=$((end-start))
+          echo "## Playwright Smoke: $((d/60))m $((d%60))s" >> "$GITHUB_STEP_SUMMARY"
+          pct=0; [ "$BASELINE_SMOKE" -gt 0 ] && pct=$(( (d-BASELINE_SMOKE)*100/BASELINE_SMOKE ))
+          [ "$pct" -gt 30 ] && echo "::warning::E2E smoke regression: ${d}s (+${pct}% vs ${BASELINE_SMOKE}s)"
+          mkdir -p ci-timings
+          echo '{"job":"e2e-smoke","duration_seconds":'$d',"baseline_seconds":'$BASELINE_SMOKE',"delta_pct":'$pct'}' > ci-timings/e2e-smoke.json
+
+      - name: Upload CI timings
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: ci-timings-e2e-smoke
+          path: ci-timings/
           retention-days: 7
