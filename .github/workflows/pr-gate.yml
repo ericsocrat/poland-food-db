@@ -58,7 +58,7 @@ jobs:
           failed=0
 
           # 1. Fail if any workflow uses supabase link with a bare hardcoded ref
-          #    (not wrapped in ${{ ... }} expression). Ignores comments and this scan.
+          #    (not wrapped in a secrets expression). Ignores comments and this scan.
           hits=$(grep -rEn 'supabase link --project-ref' .github/workflows/ \
             | grep -vE '\$\{\{|^\s*#|grep|echo' || true)
           if [ -n "$hits" ]; then
