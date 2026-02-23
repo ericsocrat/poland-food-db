@@ -114,3 +114,10 @@ After deploying or starting the dev server, verify these flows:
 ## PWA Status
 
 This is a **standard web app**, not a PWA. No service worker, manifest, or offline support is configured. The mobile-first responsive design works well when added to home screen, but there is no offline capability.
+
+## Operations
+
+- **Deployment guide**: [`../DEPLOYMENT.md`](../DEPLOYMENT.md)
+- **DR drill runner**: [`../RUN_DR_DRILL.ps1`](../RUN_DR_DRILL.ps1) — automated disaster recovery drill (6 scenarios)
+- **DR drill report**: [`../docs/DISASTER_DRILL_REPORT.md`](../docs/DISASTER_DRILL_REPORT.md)
+- **Security audit**: [`../docs/SECURITY_AUDIT.md`](../docs/SECURITY_AUDIT.md)
