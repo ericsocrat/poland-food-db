@@ -4,6 +4,7 @@
 
 import { SupabaseClient } from "@supabase/supabase-js";
 import type { RpcResult } from "./types";
+import { observeQuery } from "./query-observer";
 
 // ─── Auth error detection constants ─────────────────────────────────────────
 
@@ -73,6 +74,9 @@ export async function callRpc<T>(
   fnName: string,
   params?: Record<string, unknown>,
 ): Promise<RpcResult<T>> {
+  // N+1 query pattern detection (dev/QA only — no-op in production)
+  observeQuery(fnName);
+
   try {
     const { data, error } = await supabase.rpc(fnName, params);
 

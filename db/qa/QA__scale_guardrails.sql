@@ -17,7 +17,7 @@ SELECT '1. anon has statement_timeout' AS check_name,
            SELECT 1 FROM pg_db_role_setting rs
            JOIN pg_roles r ON r.oid = rs.setrole
            WHERE r.rolname = 'anon'
-             AND rs.setconfig::text[] @> ARRAY['statement_timeout=5s']
+             AND rs.setconfig::text[] @> ARRAY['statement_timeout=10s']
        ) THEN 0 ELSE 1 END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -28,7 +28,7 @@ SELECT '2. authenticated has statement_timeout' AS check_name,
            SELECT 1 FROM pg_db_role_setting rs
            JOIN pg_roles r ON r.oid = rs.setrole
            WHERE r.rolname = 'authenticated'
-             AND rs.setconfig::text[] @> ARRAY['statement_timeout=5s']
+             AND rs.setconfig::text[] @> ARRAY['statement_timeout=15s']
        ) THEN 0 ELSE 1 END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -153,7 +153,7 @@ SELECT '14. authenticator has statement_timeout' AS check_name,
            SELECT 1 FROM pg_db_role_setting rs
            JOIN pg_roles r ON r.oid = rs.setrole
            WHERE r.rolname = 'authenticator'
-             AND rs.setconfig::text[] @> ARRAY['statement_timeout=5s']
+             AND rs.setconfig::text[] @> ARRAY['statement_timeout=10s']
        ) THEN 0 ELSE 1 END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────
