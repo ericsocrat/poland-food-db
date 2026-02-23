@@ -25,6 +25,21 @@ function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.has(pathname) || pathname.startsWith("/auth/");
 }
 
+/**
+ * Admin route guard (#186). Comma-separated list of admin email addresses.
+ * If unset, admin routes are closed to all users (deny-by-default).
+ */
+function isAdminPath(pathname: string): boolean {
+  return pathname.startsWith("/app/admin");
+}
+
+function isAdminUser(email: string | undefined): boolean {
+  const allowlist = process.env.ADMIN_EMAILS;
+  if (!allowlist || !email) return false;
+  const emails = allowlist.split(",").map((e) => e.trim().toLowerCase());
+  return emails.includes(email.toLowerCase());
+}
+
 // ─── Rate Limit Helpers ─────────────────────────────────────────────────────
 
 function isBypassToken(request: NextRequest): boolean {
@@ -149,6 +164,14 @@ export async function middleware(request: NextRequest) {
     const redirectTo = request.nextUrl.pathname + request.nextUrl.search;
     loginUrl.searchParams.set("redirect", redirectTo);
     return NextResponse.redirect(loginUrl);
+  }
+
+  // ── Admin routes: require admin email allowlist (#186) ────────────────────
+  if (isAdminPath(pathname) && !isAdminUser(user.email)) {
+    return NextResponse.json(
+      { error: "Forbidden", message: "Admin access required." },
+      { status: 403, headers: { "x-request-id": requestId } },
+    );
   }
 
   return response;
