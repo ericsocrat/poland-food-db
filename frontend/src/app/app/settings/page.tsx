@@ -7,9 +7,26 @@ import { useRouter } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
-import { getUserPreferences, setUserPreferences } from "@/lib/api";
+import {
+  getUserPreferences,
+  setUserPreferences,
+  savePushSubscription,
+  deletePushSubscription,
+  exportUserData,
+  deleteUserData,
+} from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { ChevronDown, Copy, Check, Trash2, Bell, BellOff } from "lucide-react";
+import {
+  ChevronDown,
+  Copy,
+  Check,
+  Trash2,
+  Bell,
+  BellOff,
+  Download,
+  Share,
+  FileDown,
+} from "lucide-react";
 import {
   COUNTRIES,
   COUNTRY_DEFAULT_LANGUAGES,
@@ -38,12 +55,8 @@ import {
   getCurrentPushSubscription,
   extractSubscriptionData,
 } from "@/lib/push-manager";
-import { savePushSubscription, deletePushSubscription, exportUserData, deleteUserData } from "@/lib/api";
 import { DeleteAccountDialog } from "@/components/settings/DeleteAccountDialog";
-import {
-  useInstallPrompt,
-} from "@/hooks/use-install-prompt";
-import { Download, Share, FileDown } from "lucide-react";
+import { useInstallPrompt } from "@/hooks/use-install-prompt";
 
 /* ── Install App section (extracted to avoid hook-ordering issues) ────────── */
 function InstallAppSection() {
@@ -75,7 +88,11 @@ function InstallAppSection() {
       </p>
       {isIOS ? (
         <div className="flex items-start gap-2 rounded-lg bg-amber-50 p-3 text-sm text-amber-800">
-          <Share size={16} className="mt-0.5 flex-shrink-0" aria-hidden="true" />
+          <Share
+            size={16}
+            className="mt-0.5 flex-shrink-0"
+            aria-hidden="true"
+          />
           <p>{t("pwa.iosInstallHint")}</p>
         </div>
       ) : (
@@ -119,10 +136,12 @@ function ExportDataSection() {
         return;
       }
 
-      const { downloadJson, setExportTimestamp } = await import(
-        "@/lib/download"
+      const { downloadJson, setExportTimestamp } =
+        await import("@/lib/download");
+      const { size } = downloadJson(
+        result.data,
+        `fooddb-export-${Date.now()}.json`,
       );
-      const { size } = downloadJson(result.data, `fooddb-export-${Date.now()}.json`);
       setExportTimestamp();
       setCooldownMin(60);
 
@@ -160,7 +179,9 @@ function ExportDataSection() {
       >
         <FileDown size={14} aria-hidden="true" />
         {exporting && t("settings.exportInProgress")}
-        {!exporting && cooldownMin > 0 && t("settings.exportCooldown", { minutes: cooldownMin })}
+        {!exporting &&
+          cooldownMin > 0 &&
+          t("settings.exportCooldown", { minutes: cooldownMin })}
         {!exporting && cooldownMin <= 0 && t("settings.exportData")}
       </button>
     </section>
@@ -268,7 +289,10 @@ export default function SettingsPage() {
     const permission = await requestNotificationPermission();
     setPushPermission(permission);
     if (permission !== "granted") {
-      showToast({ type: "error", messageKey: "notifications.permissionDenied" });
+      showToast({
+        type: "error",
+        messageKey: "notifications.permissionDenied",
+      });
       return;
     }
 
@@ -286,7 +310,12 @@ export default function SettingsPage() {
 
     const subData = extractSubscriptionData(subscription);
     if (subData) {
-      await savePushSubscription(supabase, subData.endpoint, subData.p256dh, subData.auth);
+      await savePushSubscription(
+        supabase,
+        subData.endpoint,
+        subData.p256dh,
+        subData.auth,
+      );
     }
 
     setPushEnabled(true);
@@ -410,7 +439,10 @@ export default function SettingsPage() {
         return;
       }
       track("account_deleted");
-      showToast({ type: "success", messageKey: "settings.deleteAccountSuccess" });
+      showToast({
+        type: "success",
+        messageKey: "settings.deleteAccountSuccess",
+      });
       queryClient.clear();
       router.push("/");
       router.refresh();

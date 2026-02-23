@@ -16,7 +16,7 @@ export default function OfflinePage() {
       </p>
       <button
         className="btn-primary mt-6"
-        onClick={() => window.location.reload()}
+        onClick={() => globalThis.location.reload()}
       >
         {t("offline.tryAgain")}
       </button>

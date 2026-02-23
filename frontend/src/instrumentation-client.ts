@@ -14,13 +14,13 @@ Sentry.init({
 
   // ── Sampling ────────────────────────────────────────────────────────────
   // 100% of errors, 10% of transactions (adjustable via env)
-  tracesSampleRate: parseFloat(
+  tracesSampleRate: Number.parseFloat(
     process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE ?? "0.1",
   ),
 
   // ── Session replay (disabled by default for PII safety) ───────────────
-  replaysSessionSampleRate: 0.0,
-  replaysOnErrorSampleRate: 0.0,
+  replaysSessionSampleRate: 0,
+  replaysOnErrorSampleRate: 0,
 
   // ── PII Scrubbing ────────────────────────────────────────────────────────
   beforeSend(event) {

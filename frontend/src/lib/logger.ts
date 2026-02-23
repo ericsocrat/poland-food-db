@@ -47,9 +47,9 @@ const VALID_LEVELS = new Set<LogLevel>(["debug", "info", "warn", "error", "fatal
 
 function getMinLevel(): LogLevel {
   const env =
-    typeof process !== "undefined"
-      ? (process.env?.LOG_LEVEL as string | undefined)
-      : undefined;
+    typeof process === "undefined"
+      ? undefined
+      : (process.env?.LOG_LEVEL as string | undefined);
   return env && VALID_LEVELS.has(env as LogLevel) ? (env as LogLevel) : "info";
 }
 

@@ -91,7 +91,10 @@ function StatsBar({ stats }: Readonly<{ stats: DashboardStats }>) {
       value: stats.favorites_count,
       icon: Heart,
       href: "/app/lists",
-      cta: stats.favorites_count === 0 ? t("dashboard.favoritesEmptyCta") : undefined,
+      cta:
+        stats.favorites_count === 0
+          ? t("dashboard.favoritesEmptyCta")
+          : undefined,
     },
   ];
 
@@ -490,7 +493,7 @@ export default function DashboardPage() {
         action={{
           labelKey: "common.tryAgain",
           onClick: () => {
-            void queryClient.invalidateQueries({
+            queryClient.invalidateQueries({
               queryKey: queryKeys.dashboard,
             });
           },

@@ -161,7 +161,7 @@ export default function CategoryListingPage() {
           action={{
             labelKey: "common.retry",
             onClick: () => {
-              void queryClient.invalidateQueries({
+              queryClient.invalidateQueries({
                 queryKey: queryKeys.categoryListing(
                   slug,
                   sortBy,

@@ -46,7 +46,7 @@ export function buildErrorReport(
     componentStack: errorInfo.componentStack ?? undefined,
     context,
     timestamp: new Date().toISOString(),
-    url: typeof window === "undefined" ? "SSR" : globalThis.location.href,
+    url: globalThis.window === undefined ? "SSR" : globalThis.location.href,
   };
 }
 

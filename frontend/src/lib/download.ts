@@ -31,7 +31,7 @@ export function downloadJson(
  * Keeps alphanumeric, hyphens, underscores, dots, spaces.
  */
 export function sanitizeFilename(name: string): string {
-  return name.replace(/[^a-zA-Z0-9._\- ]/g, "_").slice(0, 200);
+  return name.replaceAll(/[^a-zA-Z0-9._\- ]/g, "_").slice(0, 200);
 }
 
 /* ── Rate limiting (localStorage) ──────────────────────────────────────────── */

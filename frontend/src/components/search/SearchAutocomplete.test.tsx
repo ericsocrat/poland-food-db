@@ -174,8 +174,7 @@ describe("SearchAutocomplete", () => {
 
     // Click the first option's button ("Lay's Classic")
     const firstOption = screen.getAllByRole("option")[0];
-    const btn = firstOption.querySelector("button")!;
-    fireEvent.click(btn);
+    fireEvent.click(firstOption);
     expect(defaultProps.onSelect).toHaveBeenCalledWith(SUGGESTIONS[0]);
     expect(mockPush).toHaveBeenCalledWith("/app/product/1");
     expect(defaultProps.onClose).toHaveBeenCalled();
@@ -259,10 +258,9 @@ describe("SearchAutocomplete", () => {
 
   it("shows both recent and popular sections together", () => {
     localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(["piwo", "kawa"]));
-    render(
-      <SearchAutocomplete {...defaultProps} query="" />,
-      { wrapper: createWrapper() },
-    );
+    render(<SearchAutocomplete {...defaultProps} query="" />, {
+      wrapper: createWrapper(),
+    });
     // Recent header
     expect(screen.getByText("Recent searches")).toBeInTheDocument();
     // Popular header
@@ -596,10 +594,9 @@ describe("SearchAutocomplete", () => {
   describe("popular search term translation", () => {
     it("renders English popular searches when language is EN", () => {
       useLanguageStore.getState().reset(); // default: en
-      render(
-        <SearchAutocomplete {...defaultProps} query="" />,
-        { wrapper: createWrapper() },
-      );
+      render(<SearchAutocomplete {...defaultProps} query="" />, {
+        wrapper: createWrapper(),
+      });
       expect(screen.getByText("milk")).toBeInTheDocument();
       expect(screen.getByText("cheese")).toBeInTheDocument();
       expect(screen.getByText("yogurt")).toBeInTheDocument();
@@ -609,10 +606,9 @@ describe("SearchAutocomplete", () => {
 
     it("renders Polish popular searches when language is PL", () => {
       useLanguageStore.getState().setLanguage("pl");
-      render(
-        <SearchAutocomplete {...defaultProps} query="" />,
-        { wrapper: createWrapper() },
-      );
+      render(<SearchAutocomplete {...defaultProps} query="" />, {
+        wrapper: createWrapper(),
+      });
       expect(screen.getByText("mleko")).toBeInTheDocument();
       expect(screen.getByText("ser")).toBeInTheDocument();
       expect(screen.getByText("jogurt")).toBeInTheDocument();
@@ -629,10 +625,10 @@ describe("SearchAutocomplete", () => {
       expect(screen.getByText("milk")).toBeInTheDocument();
 
       // Switch to Polish
-      act(() => { useLanguageStore.getState().setLanguage("pl"); });
-      rerender(
-        <SearchAutocomplete {...defaultProps} query="" />,
-      );
+      act(() => {
+        useLanguageStore.getState().setLanguage("pl");
+      });
+      rerender(<SearchAutocomplete {...defaultProps} query="" />);
       expect(screen.getByText("mleko")).toBeInTheDocument();
     });
   });

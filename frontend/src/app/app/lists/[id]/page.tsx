@@ -114,7 +114,7 @@ export default function ListDetailPage() {
           action={{
             labelKey: "common.retry",
             onClick: () => {
-              void refetch();
+              refetch();
             },
           }}
         />

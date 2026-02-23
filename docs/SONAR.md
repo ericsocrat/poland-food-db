@@ -69,22 +69,22 @@ connected to a live database, but we don't configure that. Our approach:
 
 ## CI Integration
 
-The GitHub Actions workflow (`.github/workflows/main-gate.yml`) runs:
+The GitHub Actions workflow (`.github/workflows/main-gate.yml`) runs
+five parallel jobs after each push to `main`:
 
-1. `npm ci` — install dependencies
-2. `tsc --noEmit` — TypeScript strict check
-3. `next lint` — ESLint
-4. `next build` — Next.js production build
-5. `vitest run --coverage` — Vitest with v8 coverage → lcov
-6. `playwright test` — Full E2E suite
-7. SonarCloud scan (reads `sonar-project.properties` + lcov)
-8. Quality Gate check (**BLOCKING** — no `continue-on-error`)
-9. Sentry sourcemap upload (when `SENTRY_AUTH_TOKEN` is set)
+- **static-checks** — TypeScript strict check (`tsc --noEmit`) + ESLint
+- **unit-tests** — Vitest with v8 coverage → lcov
+- **build** — Next.js production build
+- **e2e** — Playwright Chromium E2E smoke tests (needs build)
+- **sonar** — SonarCloud scan + Quality Gate check (**BLOCKING**, needs unit-tests for coverage artifact)
+
+An `alert-on-failure` job fires a webhook if any job fails on `main`.
 
 ## Known Accepted Issues
 
-| Issue                                                                          | Reason                                                                                                                              | Resolution                                            |
-| ------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
-| `@supabase/ssr` deprecated overload warning (TS6387)                           | Library keeps the old overload for backward compat. Our code uses the correct `getAll`/`setAll` API.                                | Will resolve when `@supabase/ssr` v1.0 ships.         |
-| Middleware matcher uses escaped `\\.` in a string (Sonar prefers `String.raw`) | Next.js requires a **plain string literal** in `config.matcher` for static analysis. `String.raw` tagged templates break the build. | Accepted with `eslint-disable` comment.               |
-| ~117 legacy maintainability issues                                             | Inherited from initial rapid development.                                                                                           | Paid down gradually in touched files; not bulk-fixed. |
+| Issue                                                                                            | Reason                                                                                                                                  | Resolution                                                         |
+| ------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ |
+| `@supabase/ssr` deprecated overload warning (TS6387)                                             | Library keeps the old overload for backward compat. Our code uses the correct `getAll`/`setAll` API.                                    | Will resolve when `@supabase/ssr` v1.0 ships.                      |
+| Middleware matcher uses escaped `\\.` in a string (Sonar S7770 prefers `String.raw`)             | Next.js requires a **plain string literal** in `config.matcher` for static analysis. `String.raw` tagged templates break the build.     | Suppressed via `sonar.issue.ignore` in `sonar-project.properties`. |
+| SearchAutocomplete uses `role="listbox"` / `role="option"` (Sonar S6819 prefers native elements) | WAI-ARIA 1.2 combobox pattern requires these ARIA roles on custom elements — native `<select>`/`<option>` cannot be styled for this UX. | Suppressed via `sonar.issue.ignore` in `sonar-project.properties`. |
+| ~117 legacy maintainability issues                                                               | Inherited from initial rapid development.                                                                                               | Paid down gradually in touched files; not bulk-fixed.              |
