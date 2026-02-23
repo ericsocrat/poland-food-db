@@ -1,0 +1,69 @@
+# Dependabot configuration — keeps dependencies secure and current
+# https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+
+version: 2
+
+updates:
+  # ── npm (frontend) ────────────────────────────────────────────
+  # ~40 packages — weekly keeps security patches timely without noise
+  - package-ecosystem: "npm"
+    directory: "/frontend"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    # Batch minor + patch together → fewer PRs
+    groups:
+      npm-minor-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    # Major bumps stay as individual PRs (may have breaking changes)
+    open-pull-requests-limit: 10
+    reviewers:
+      - "ericsocrat"
+    labels:
+      - "dependencies"
+      - "frontend"
+    commit-message:
+      prefix: "deps(frontend)"
+
+  # ── pip (Python pipeline) ─────────────────────────────────────
+  # Only 2 packages (requests, tqdm) — monthly is sufficient
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "ericsocrat"
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "deps(python)"
+
+  # ── GitHub Actions ────────────────────────────────────────────
+  # Supply-chain critical — weekly to stay on latest secure versions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+      time: "06:00"
+      timezone: "Europe/Warsaw"
+    groups:
+      actions-all:
+        patterns:
+          - "*"
+    open-pull-requests-limit: 5
+    reviewers:
+      - "ericsocrat"
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "deps(actions)"
