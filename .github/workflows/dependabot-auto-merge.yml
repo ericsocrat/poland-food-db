@@ -35,7 +35,11 @@ jobs:
 
       - name: Label major updates for manual review
         if: steps.metadata.outputs.update-type == 'version-update:semver-major'
-        run: gh pr edit "$PR_URL" --add-label "major-update,needs-review"
+        run: |
+          # Ensure labels exist (idempotent — ignores "already exists" errors)
+          gh label create "major-update" --color "D93F0B" --description "Major version bump requiring manual review" 2>/dev/null || true
+          gh label create "needs-review" --color "FBCA04" --description "Requires human review before merge" 2>/dev/null || true
+          gh pr edit "$PR_URL" --add-label "major-update,needs-review"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -56,10 +56,11 @@ jobs:
     steps:
       - name: Wait for deployment to stabilize
         run: |
-          # Vercel preview deploys need extra warm-up time (cold start)
+          # Both production and preview deploys need warm-up for Vercel cold starts.
+          # Production uses a unique deployment URL that may take time to resolve.
           if [ "$DEPLOY_ENV" = "Production" ]; then
-            echo "Production deploy — waiting 15s"
-            sleep 15
+            echo "Production deploy — waiting 30s for DNS + cold start"
+            sleep 30
           else
             echo "Preview deploy ($DEPLOY_ENV) — waiting 30s for cold start"
             sleep 30
@@ -83,9 +84,9 @@ jobs:
           echo "**Time:** $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
 
-          # Retry up to 3 times with 10s backoff (handles cold starts)
-          MAX_RETRIES=3
-          RETRY_DELAY=10
+          # Retry up to 5 times with 15s backoff (handles Vercel cold starts + DNS)
+          MAX_RETRIES=5
+          RETRY_DELAY=15
           attempt=0
           response=""
           success=false
