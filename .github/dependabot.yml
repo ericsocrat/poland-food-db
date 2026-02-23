@@ -50,9 +50,6 @@ updates:
           - "react"
           - "react-dom"
           - "eslint-config-next"
-        update-types:
-          - "minor"
-          - "patch"
       # Sentry SDKs — tightly coupled, upgrade together
       sentry:
         patterns:
@@ -73,9 +70,6 @@ updates:
           - "jsdom"
           - "fake-indexeddb"
           - "vitest-axe"
-        update-types:
-          - "minor"
-          - "patch"
       # Build toolchain
       build-tooling:
         patterns:
@@ -86,27 +80,33 @@ updates:
           - "@tailwindcss/*"
           - "sharp"
           - "@vitejs/*"
-        update-types:
-          - "minor"
-          - "patch"
-      # Everything else — minor + patch only
-      npm-minor-patch:
+      # Everything else — catch-all for remaining deps
+      npm-rest:
+        patterns:
+          - "*"
         exclude-patterns:
           - "next"
           - "react"
           - "react-dom"
+          - "eslint-config-next"
           - "@sentry/*"
           - "@supabase/*"
           - "vitest"
           - "@vitest/*"
           - "@testing-library/*"
           - "@playwright/test"
+          - "@axe-core/*"
+          - "axe-core"
+          - "jsdom"
+          - "fake-indexeddb"
+          - "vitest-axe"
           - "typescript"
           - "postcss"
+          - "autoprefixer"
           - "tailwindcss"
-        update-types:
-          - "minor"
-          - "patch"
+          - "@tailwindcss/*"
+          - "sharp"
+          - "@vitejs/*"
     # Ignore noisy / pinned major bumps
     ignore:
       - dependency-name: "eslint"
@@ -147,6 +147,7 @@ updates:
       github-official:
         patterns:
           - "actions/*"
+          - "github/*"
       # Third-party actions (Supabase, Sonar, etc.)
       third-party:
         patterns:

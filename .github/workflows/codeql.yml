@@ -26,11 +26,9 @@ on:
       - "**.tsx"
   pull_request:
     branches: [main]
-    paths:
-      - "frontend/**"
-      - "**.js"
-      - "**.ts"
-      - "**.tsx"
+    # No paths filter — the code_scanning ruleset rule requires CodeQL to
+    # report results for every PR commit.  On non-code PRs the analysis
+    # completes in seconds (nothing to scan) and uploads an empty SARIF.
   schedule:
     # Weekly Monday 06:00 UTC — catches drift from auto-merged deps
     - cron: "0 6 * * 1"
