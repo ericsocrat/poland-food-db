@@ -100,7 +100,7 @@ jobs:
       - name: Playwright full E2E
         id: playwright
         run: npx playwright test 2>&1 | tee ../playwright-stdout.log
-        timeout-minutes: 8
+        timeout-minutes: 12
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

@@ -86,6 +86,8 @@ this document is the source of truth for naming, colors, and intended usage.
 | `epic-child`       | `#c5def5` | Child issue of an epic                    |
 | `dependencies`     | `#0366d6` | Dependency updates (Dependabot)           |
 | `python`           | `#3572A5` | Python pipeline / pip ecosystem           |
+| `major-update`     | `#D93F0B` | Major version bump requiring manual review|
+| `needs-review`     | `#FBCA04` | Requires human review before merge        |
 
 ---
 
