@@ -88,47 +88,64 @@ jobs:
           MAX_RETRIES=5
           RETRY_DELAY=15
           attempt=0
+          http_code=""
           response=""
-          success=false
+          reached=false
 
           while [ $attempt -lt $MAX_RETRIES ]; do
             attempt=$((attempt + 1))
             echo "Health check attempt $attempt/$MAX_RETRIES..."
-            response=$(curl -sf --max-time 20 "$TARGET_URL/api/health" 2>&1) && {
-              success=true
+
+            # Capture body AND HTTP status separately (no -f flag)
+            http_code=$(curl -s -o /tmp/health_body.txt -w "%{http_code}" \
+              --max-time 20 "$TARGET_URL/api/health" 2>/dev/null) || true
+            response=$(cat /tmp/health_body.txt 2>/dev/null || echo "")
+
+            # Got an HTTP response (any status code) — endpoint is reachable
+            if [ -n "$http_code" ] && [ "$http_code" != "000" ]; then
+              reached=true
               break
-            }
+            fi
+
+            # Connection-level failure (DNS, timeout, refused) — retry
             if [ $attempt -lt $MAX_RETRIES ]; then
-              echo "Attempt $attempt failed, retrying in ${RETRY_DELAY}s..."
+              echo "Attempt $attempt failed (no HTTP response), retrying in ${RETRY_DELAY}s..."
               sleep $RETRY_DELAY
             fi
           done
 
-          if [ "$success" != "true" ]; then
+          echo "| Route | Status |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
+
+          # ── No HTTP response at all (connection failure) ──
+          if [ "$reached" != "true" ]; then
             echo "| /api/health | ❌ Connection failed ($MAX_RETRIES attempts) |" >> "$GITHUB_STEP_SUMMARY"
             if [ "$DEPLOY_ENV" = "Production" ]; then
               echo "::error::Health endpoint unreachable at $TARGET_URL/api/health after $MAX_RETRIES attempts"
               exit 1
             else
               echo "::warning::Health endpoint unreachable on preview deploy — non-blocking"
-              echo "" >> "$GITHUB_STEP_SUMMARY"
               echo "> ⚠️ Preview deploy health check failed — this is non-blocking." >> "$GITHUB_STEP_SUMMARY"
               exit 0
             fi
           fi
 
-          # Parse status from JSON response
+          # ── Vercel Deployment Protection (401/403) ──
+          if [ "$http_code" = "401" ] || [ "$http_code" = "403" ]; then
+            echo "| /api/health | ⏭️ HTTP $http_code — Vercel deployment protection (skipped) |" >> "$GITHUB_STEP_SUMMARY"
+            echo "::notice::Health check skipped — Vercel deployment protection returned HTTP $http_code on deployment-specific URL"
+            exit 0
+          fi
+
+          # ── Got a response — parse the health status ──
           status=$(echo "$response" | python3 -c "import sys,json; print(json.load(sys.stdin).get('status','unknown'))" 2>/dev/null || echo "parse_error")
 
-          echo "| Route | Status |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|-------|--------|" >> "$GITHUB_STEP_SUMMARY"
-
           if [ "$status" = "healthy" ] || [ "$status" = "degraded" ]; then
-            echo "| /api/health | ✅ $status |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| /api/health | ✅ $status (HTTP $http_code) |" >> "$GITHUB_STEP_SUMMARY"
           else
-            echo "| /api/health | ❌ $status |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| /api/health | ❌ $status (HTTP $http_code) |" >> "$GITHUB_STEP_SUMMARY"
             if [ "$DEPLOY_ENV" = "Production" ]; then
-              echo "::error::Health check returned status: $status"
+              echo "::error::Health check returned status: $status (HTTP $http_code)"
               echo "Response: $response"
               exit 1
             else
@@ -144,6 +161,13 @@ jobs:
 
           for route in "${routes[@]}"; do
             status_code=$(curl -so /dev/null -w "%{http_code}" --max-time 20 "$TARGET_URL$route" 2>/dev/null)
+
+            # Vercel deployment protection — skip gracefully
+            if [ "$status_code" = "401" ] || [ "$status_code" = "403" ]; then
+              echo "| $route | ⏭️ $status_code (Vercel protection) |" >> "$GITHUB_STEP_SUMMARY"
+              continue
+            fi
+
             if [ "$status_code" -ge 200 ] && [ "$status_code" -lt 400 ]; then
               echo "| $route | ✅ $status_code |" >> "$GITHUB_STEP_SUMMARY"
             else

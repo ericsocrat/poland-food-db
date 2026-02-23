@@ -272,7 +272,7 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-        timeout-minutes: 3
+        timeout-minutes: 5
 
       - name: Run smoke E2E tests
         run: npx playwright test --project=smoke 2>&1 | tee ../playwright-stdout.log
