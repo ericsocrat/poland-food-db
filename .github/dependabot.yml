@@ -1,69 +1,157 @@
 # Dependabot configuration — keeps dependencies secure and current
 # https://docs.github.com/en/code-security/dependabot/dependabot-version-updates/configuration-options-for-the-dependabot.yml-file
+#
+# Ecosystems tracked:
+#   1. npm    — /frontend  (~40 packages)
+#   2. pip    — /           (requests, tqdm)
+#   3. actions — /          (6 workflow files)
+#
+# Design: weekly cadence for active ecosystems, grouped PRs to reduce
+# noise, patch+minor auto-mergeable via dependabot-auto-merge.yml.
 
 version: 2
 
 updates:
   # ── npm (frontend) ────────────────────────────────────────────
-  # ~40 packages — weekly keeps security patches timely without noise
   - package-ecosystem: "npm"
     directory: "/frontend"
+    target-branch: "main"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:00"
       timezone: "Europe/Warsaw"
-    # Batch minor + patch together → fewer PRs
-    groups:
-      npm-minor-patch:
-        update-types:
-          - "minor"
-          - "patch"
-    # Major bumps stay as individual PRs (may have breaking changes)
+    versioning-strategy: increase          # conservative — bumps lockfile, won't widen ranges
     open-pull-requests-limit: 10
     reviewers:
+      - "ericsocrat"
+    assignees:
       - "ericsocrat"
     labels:
       - "dependencies"
       - "frontend"
     commit-message:
       prefix: "deps(frontend)"
+      include: "scope"
+    # ── Grouped updates to minimise PR flood ──
+    groups:
+      # Framework core — next + react should upgrade together
+      framework:
+        patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "eslint-config-next"
+        update-types:
+          - "minor"
+          - "patch"
+      # Sentry SDKs — tightly coupled, upgrade together
+      sentry:
+        patterns:
+          - "@sentry/*"
+      # Supabase client libs
+      supabase:
+        patterns:
+          - "@supabase/*"
+      # Testing toolchain
+      testing:
+        patterns:
+          - "vitest"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "@playwright/test"
+          - "@axe-core/*"
+          - "axe-core"
+          - "jsdom"
+          - "fake-indexeddb"
+          - "vitest-axe"
+        update-types:
+          - "minor"
+          - "patch"
+      # Build toolchain
+      build-tooling:
+        patterns:
+          - "typescript"
+          - "postcss"
+          - "autoprefixer"
+          - "tailwindcss"
+          - "@tailwindcss/*"
+          - "sharp"
+          - "@vitejs/*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Everything else — minor + patch only
+      npm-minor-patch:
+        exclude-patterns:
+          - "next"
+          - "react"
+          - "react-dom"
+          - "@sentry/*"
+          - "@supabase/*"
+          - "vitest"
+          - "@vitest/*"
+          - "@testing-library/*"
+          - "@playwright/test"
+          - "typescript"
+          - "postcss"
+          - "tailwindcss"
+        update-types:
+          - "minor"
+          - "patch"
+    # Ignore noisy / pinned major bumps
+    ignore:
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]   # ESLint 9 flat-config migration is large
 
   # ── pip (Python pipeline) ─────────────────────────────────────
-  # Only 2 packages (requests, tqdm) — monthly is sufficient
   - package-ecosystem: "pip"
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "monthly"
       time: "06:00"
       timezone: "Europe/Warsaw"
+    insecure-external-code-execution: deny  # don't run setup.py during updates
     open-pull-requests-limit: 5
     reviewers:
+      - "ericsocrat"
+    assignees:
       - "ericsocrat"
     labels:
       - "dependencies"
       - "python"
     commit-message:
       prefix: "deps(python)"
+      include: "scope"
 
   # ── GitHub Actions ────────────────────────────────────────────
-  # Supply-chain critical — weekly to stay on latest secure versions
   - package-ecosystem: "github-actions"
     directory: "/"
+    target-branch: "main"
     schedule:
       interval: "weekly"
       day: "monday"
       time: "06:00"
       timezone: "Europe/Warsaw"
     groups:
-      actions-all:
+      # Official GitHub actions — upgrade together
+      github-official:
         patterns:
-          - "*"
+          - "actions/*"
+      # Third-party actions (Supabase, Sonar, etc.)
+      third-party:
+        patterns:
+          - "supabase/*"
+          - "SonarSource/*"
     open-pull-requests-limit: 5
     reviewers:
+      - "ericsocrat"
+    assignees:
       - "ericsocrat"
     labels:
       - "dependencies"
       - "ci"
     commit-message:
       prefix: "deps(actions)"
+      include: "scope"
