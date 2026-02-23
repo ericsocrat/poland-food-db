@@ -255,6 +255,116 @@ describe("middleware", () => {
     });
   });
 
+  // ─── Admin route protection (#186) ────────────────────────────────────────
+
+  describe("admin route protection", () => {
+    it("returns 403 for authenticated non-admin user on /app/admin/submissions", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "u1", email: "user@example.com" } },
+      });
+      const response = await middleware(
+        createRequest("/app/admin/submissions"),
+      );
+      expect(response.status).toBe(403);
+      const body = await response.json();
+      expect(body.error).toBe("Forbidden");
+    });
+
+    it("returns 403 for authenticated non-admin user on /app/admin/monitoring", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "u1", email: "user@example.com" } },
+      });
+      const response = await middleware(
+        createRequest("/app/admin/monitoring"),
+      );
+      expect(response.status).toBe(403);
+      const body = await response.json();
+      expect(body.error).toBe("Forbidden");
+    });
+
+    it("returns 403 when ADMIN_EMAILS is unset (deny-by-default)", async () => {
+      const originalEnv = process.env.ADMIN_EMAILS;
+      delete process.env.ADMIN_EMAILS;
+
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "u1", email: "admin@example.com" } },
+      });
+      const response = await middleware(
+        createRequest("/app/admin/submissions"),
+      );
+      expect(response.status).toBe(403);
+
+      process.env.ADMIN_EMAILS = originalEnv;
+    });
+
+    it("allows admin user when email matches ADMIN_EMAILS", async () => {
+      const originalEnv = process.env.ADMIN_EMAILS;
+      process.env.ADMIN_EMAILS = "admin@example.com, admin2@example.com";
+
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "u1", email: "admin@example.com" } },
+      });
+      const response = await middleware(
+        createRequest("/app/admin/submissions"),
+      );
+      expect(response.status).not.toBe(403);
+      expect(response.status).not.toBe(307);
+
+      process.env.ADMIN_EMAILS = originalEnv;
+    });
+
+    it("admin email check is case-insensitive", async () => {
+      const originalEnv = process.env.ADMIN_EMAILS;
+      process.env.ADMIN_EMAILS = "Admin@Example.com";
+
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "u1", email: "admin@example.com" } },
+      });
+      const response = await middleware(
+        createRequest("/app/admin/monitoring"),
+      );
+      expect(response.status).not.toBe(403);
+
+      process.env.ADMIN_EMAILS = originalEnv;
+    });
+
+    it("returns 403 when user has no email", async () => {
+      const originalEnv = process.env.ADMIN_EMAILS;
+      process.env.ADMIN_EMAILS = "admin@example.com";
+
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "u1" } },
+      });
+      const response = await middleware(
+        createRequest("/app/admin/submissions"),
+      );
+      expect(response.status).toBe(403);
+
+      process.env.ADMIN_EMAILS = originalEnv;
+    });
+
+    it("redirects unauthenticated user from admin route to login", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: null } });
+      const response = await middleware(
+        createRequest("/app/admin/submissions"),
+      );
+      expect(response.status).toBe(307);
+      const location = response.headers.get("location") ?? "";
+      expect(location).toContain("/auth/login");
+    });
+
+    it("attaches x-request-id to 403 response", async () => {
+      mockGetUser.mockResolvedValue({
+        data: { user: { id: "u1", email: "user@example.com" } },
+      });
+      const response = await middleware(
+        createRequest("/app/admin/submissions"),
+      );
+      expect(response.status).toBe(403);
+      expect(response.headers.get("x-request-id")).toBeTruthy();
+    });
+  });
+
   // ─── Request ID correlation ─────────────────────────────────────────────
 
   describe("request ID", () => {

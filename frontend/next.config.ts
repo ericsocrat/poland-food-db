@@ -24,6 +24,8 @@ const cspValue = [
   `worker-src ${IMAGE_POLICY_CSP_DIRECTIVES.workerSrc}`,
   `form-action ${IMAGE_POLICY_CSP_DIRECTIVES.formAction}`,
   `frame-ancestors 'none'`,
+  `object-src 'none'`,
+  `base-uri 'self'`,
 ].join("; ");
 
 const nextConfig: NextConfig = {
@@ -54,6 +56,11 @@ const nextConfig: NextConfig = {
             key: "Content-Security-Policy",
             value: cspValue,
           },
+          {
+            key: "Permissions-Policy",
+            value:
+              "camera=(), microphone=(), geolocation=(), payment=(), usb=()",
+          },
         ],
       },
       {
@@ -62,7 +69,8 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Permissions-Policy",
-            value: "camera=(self)",
+            value:
+              "camera=(self), microphone=(), geolocation=(), payment=(), usb=()",
           },
         ],
       },
