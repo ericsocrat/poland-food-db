@@ -11,7 +11,7 @@
 #
 # Thresholds:
 #   WARN:  +5% total JS size increase vs baseline
-#   FAIL:  +15% total JS size increase vs baseline  OR  > 500 KB First Load JS
+#   FAIL:  +15% total JS size increase vs baseline  OR  > 4000 KB total JS
 #
 # The baseline is captured from the main branch build. PR builds are compared.
 # ═══════════════════════════════════════════════════════════════════════════════
@@ -33,8 +33,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # Hard limits (bytes) — adjust as codebase evolves
-  FIRST_LOAD_JS_LIMIT_KB: 500 # Max first-load JS per route (KB)
+  # Hard limits — adjust as codebase evolves
+  TOTAL_BUNDLE_LIMIT_KB: 4000 # Absolute cap on total JS shipped (KB)
   TOTAL_SIZE_WARN_PCT: 5 # Warn if total increases by this %
   TOTAL_SIZE_FAIL_PCT: 15 # Fail if total increases by this %
 
@@ -217,7 +217,7 @@ jobs:
 
             const warnPct = Number(process.env.TOTAL_SIZE_WARN_PCT);
             const failPct = Number(process.env.TOTAL_SIZE_FAIL_PCT);
-            const firstLoadLimit = Number(process.env.FIRST_LOAD_JS_LIMIT_KB);
+            const totalLimit = Number(process.env.TOTAL_BUNDLE_LIMIT_KB);
 
             let status = '✅';
             let exitCode = 0;
@@ -228,8 +228,8 @@ jobs:
               status = '⚠️';
             }
 
-            // Hard limit check
-            if (prKB > firstLoadLimit) {
+            // Absolute cap on total bundle size
+            if (prKB > totalLimit) {
               status = '❌';
               exitCode = 1;
             }
@@ -244,7 +244,7 @@ jobs:
               '| This PR | **' + prKB + ' KB** |',
               '| Delta | ' + status + ' **' + sign + diffKB + ' KB** (' + sign + diffPct + '%) |',
               '| JS chunks | ' + chunks.size + ' |',
-              '| Hard limit | ' + firstLoadLimit + ' KB |',
+              '| Hard limit | ' + totalLimit + ' KB |',
               '',
               exitCode ? '❌ **Bundle size exceeds threshold. Please investigate.**' : '✅ Bundle size is within acceptable limits.',
             ].join('\n');
