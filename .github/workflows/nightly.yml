@@ -15,6 +15,9 @@ on:
     - cron: "0 2 * * *" # 2:00 UTC daily
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 concurrency:
   group: nightly
   cancel-in-progress: true # Only latest nightly matters
@@ -30,6 +33,8 @@ jobs:
   comprehensive:
     name: Full Test Suite
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 20
     defaults:
       run:
@@ -41,11 +46,9 @@ jobs:
         run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
         working-directory: .
 
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
@@ -54,7 +57,7 @@ jobs:
       - run: npm ci
 
       - name: Cache Next.js build
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: frontend/.next/cache
           key: next-cache-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}-${{ hashFiles('frontend/src/**') }}
@@ -71,7 +74,7 @@ jobs:
         timeout-minutes: 5
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/ms-playwright
           key: pw-browsers-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
@@ -90,7 +93,7 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       - name: Upload Playwright report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: ${{ !cancelled() }}
         with:
           name: nightly-playwright-report
@@ -113,7 +116,7 @@ jobs:
 
       - name: Upload CI timings
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ci-timings-comprehensive
           path: ci-timings/
@@ -126,6 +129,8 @@ jobs:
   data-audit:
     name: Data Integrity Audit
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 15
 
     steps:
@@ -133,9 +138,9 @@ jobs:
         id: timer
         run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: actions/setup-python@v5
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
           cache: "pip"
@@ -149,7 +154,7 @@ jobs:
         run: python run_data_audit.py
 
       - name: Upload Audit Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: data-audit-report
@@ -194,7 +199,7 @@ jobs:
 
       - name: Upload CI timings
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ci-timings-data-audit
           path: ci-timings/

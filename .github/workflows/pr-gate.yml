@@ -16,6 +16,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -34,6 +37,8 @@ jobs:
   static-checks:
     name: Typecheck & Lint
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 5
     defaults:
       run:
@@ -44,9 +49,38 @@ jobs:
         run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
         working-directory: .
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: actions/setup-node@v4
+      # ── Enhancement D: lightweight security hygiene scan ───────────────
+      - name: Security hygiene scan
+        working-directory: .
+        run: |
+          failed=0
+
+          # 1. Fail if any workflow uses supabase link with a bare hardcoded ref
+          #    (not wrapped in a secrets expression). Ignores comments and this scan.
+          hits=$(grep -rEn 'supabase link --project-ref' .github/workflows/ \
+            | grep -vE '\$\{\{|^\s*#|grep|echo' || true)
+          if [ -n "$hits" ]; then
+            echo "$hits"
+            echo "::error::Hardcoded Supabase project ref found in workflow files"
+            failed=1
+          fi
+
+          # 2. Check for obvious secret/token patterns in committed source files
+          hits=$(grep -rEn --include='*.ts' --include='*.tsx' --include='*.js' --include='*.json' \
+            'sk_live_|sk_test_|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.' \
+            . 2>/dev/null | grep -vE 'node_modules|\.next' | head -5 || true)
+          if [ -n "$hits" ]; then
+            echo "$hits"
+            echo "::error::Potential secret/token pattern found in source files"
+            failed=1
+          fi
+
+          if [ "$failed" -ne 0 ]; then exit 1; fi
+          echo "✓ Security hygiene scan passed"
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
@@ -62,6 +96,11 @@ jobs:
         run: npx next lint
         timeout-minutes: 3
 
+      # ── Dependency audit (informational — dedicated workflow is the gate) ──
+      - name: npm audit (warn only)
+        run: npm audit --omit=dev --audit-level=high 2>&1 || echo "::warning::npm audit found vulnerabilities — see dependency-audit workflow for details"
+        continue-on-error: true
+
       - name: CI runtime summary
         if: ${{ !cancelled() }}
         working-directory: .
@@ -75,7 +114,7 @@ jobs:
 
       - name: Upload CI timings
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ci-timings-static-checks
           path: ci-timings/
@@ -88,6 +127,8 @@ jobs:
     name: Unit Tests
     runs-on: ubuntu-latest
     needs: static-checks
+    permissions:
+      contents: read
     timeout-minutes: 5
     defaults:
       run:
@@ -98,9 +139,9 @@ jobs:
         run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
         working-directory: .
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
@@ -125,7 +166,7 @@ jobs:
 
       - name: Upload CI timings
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ci-timings-unit-tests
           path: ci-timings/
@@ -138,6 +179,8 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     needs: static-checks
+    permissions:
+      contents: read
     timeout-minutes: 5
     defaults:
       run:
@@ -148,9 +191,9 @@ jobs:
         run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
         working-directory: .
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
@@ -159,7 +202,7 @@ jobs:
       - run: npm ci
 
       - name: Cache Next.js build
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: frontend/.next/cache
           key: next-cache-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}-${{ hashFiles('frontend/src/**') }}
@@ -184,7 +227,7 @@ jobs:
 
       - name: Upload CI timings
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ci-timings-build
           path: ci-timings/
@@ -199,6 +242,8 @@ jobs:
     name: Playwright Smoke
     runs-on: ubuntu-latest
     needs: build
+    permissions:
+      contents: read
     timeout-minutes: 8
     defaults:
       run:
@@ -209,9 +254,9 @@ jobs:
         run: echo "start=$(date +%s)" >> "$GITHUB_OUTPUT"
         working-directory: .
 
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 20
           cache: npm
@@ -220,7 +265,7 @@ jobs:
       - run: npm ci
 
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
         with:
           path: ~/.cache/ms-playwright
           key: pw-browsers-${{ runner.os }}-${{ hashFiles('frontend/package-lock.json') }}
@@ -239,7 +284,7 @@ jobs:
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ github.event.pull_request.head.repo.fork == false && (secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY) || '' }}
 
       - name: Upload Playwright report + traces
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: ${{ !cancelled() }}
         with:
           name: pw-smoke-report
@@ -262,7 +307,7 @@ jobs:
 
       - name: Upload CI timings
         if: ${{ !cancelled() }}
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ci-timings-e2e-smoke
           path: ci-timings/

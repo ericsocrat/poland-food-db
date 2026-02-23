@@ -1,0 +1,155 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# License Compliance — Prevent GPL/AGPL contamination in production bundle
+# ═══════════════════════════════════════════════════════════════════════════════
+# Scans npm production dependencies for license compatibility.
+# FAILS if any production dependency uses a copyleft license (GPL, AGPL, SSPL)
+# which would require open-sourcing the entire application.
+#
+# Allowed licenses: MIT, ISC, BSD-2-Clause, BSD-3-Clause, Apache-2.0, 0BSD,
+#                   CC0-1.0, CC-BY-4.0, Unlicense, BlueOak-1.0.0
+#
+# This is a LEGAL compliance gate. Enterprise SaaS companies enforce this to
+# prevent accidental copyleft infection through transitive dependencies.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: License Compliance
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "frontend/package-lock.json"
+      - "frontend/package.json"
+  pull_request:
+    branches: [main]
+    paths:
+      - "frontend/package-lock.json"
+      - "frontend/package.json"
+  # Monthly scan — catch license changes in existing packages
+  schedule:
+    - cron: "0 8 1 * *" # 1st of month, 08:00 UTC
+
+permissions:
+  contents: read
+
+concurrency:
+  group: license-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check-licenses:
+    name: Check Dependency Licenses
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Scan production licenses
+        run: |
+          echo "## License Compliance Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          # ── Define forbidden licenses (copyleft / viral) ───────────────
+          # These would legally require open-sourcing the entire application
+          FORBIDDEN="GPL-2.0;GPL-2.0-only;GPL-2.0-or-later;GPL-3.0;GPL-3.0-only;GPL-3.0-or-later;AGPL-1.0;AGPL-3.0;AGPL-3.0-only;AGPL-3.0-or-later;SSPL-1.0;EUPL-1.1;EUPL-1.2;OSL-3.0;CPAL-1.0;CPL-1.0;Sleepycat;Watcom-1.0"
+
+          # ── Run license check (production deps only) ───────────────────
+          set +e
+          output=$(npx license-checker --production --excludePrivatePackages --failOn "$FORBIDDEN" --summary 2>&1)
+          exit_code=$?
+          set -e
+
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "$output" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$exit_code" -ne 0 ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "❌ **Copyleft/viral license detected in production dependencies!**" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "A production dependency uses a license (GPL, AGPL, SSPL, etc.)" >> "$GITHUB_STEP_SUMMARY"
+            echo "that would require open-sourcing this application." >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Action required:** Remove or replace the offending package." >> "$GITHUB_STEP_SUMMARY"
+
+            # Show the specific offenders
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "### Offending packages:" >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+            npx license-checker --production --excludePrivatePackages --onlyAllow "MIT;ISC;BSD-2-Clause;BSD-3-Clause;Apache-2.0;0BSD;CC0-1.0;CC-BY-4.0;CC-BY-3.0;Unlicense;BlueOak-1.0.0;Python-2.0;Artistic-2.0;Zlib;OFL-1.1" 2>&1 | head -50 >> "$GITHUB_STEP_SUMMARY" || true
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+            exit 1
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ All production dependencies use permissive licenses." >> "$GITHUB_STEP_SUMMARY"
+
+      # ── SPDX compound expression check ──────────────────────────────────
+      # license-checker --failOn does exact matching. A dual-licensed package
+      # such as "(MIT OR GPL-2.0)" won't be caught because the full SPDX
+      # expression doesn't match "GPL-2.0" exactly. This step parses the
+      # JSON output and flags any license field containing a forbidden
+      # identifier, even within compound OR/AND expressions.
+      - name: Check SPDX compound expressions
+        run: |
+          npx license-checker --production --excludePrivatePackages --json > /tmp/licenses.json 2>/dev/null || true
+
+          # Forbidden license identifiers (grep-safe, pipe-separated)
+          FORBIDDEN_RE="GPL-2\.0|GPL-3\.0|AGPL|SSPL|EUPL|OSL-3\.0|CPAL|CPL-1\.0|Sleepycat|Watcom"
+
+          # Known-safe overrides: packages manually audited as safe despite
+          # ambiguous license metadata. Add "package@version" entries here.
+          # Example: ALLOWLIST=("caniuse-lite@1.0.0" "some-pkg@2.3.4")
+          ALLOWLIST=()
+
+          node -e "
+            const fs = require('fs');
+            const data = JSON.parse(fs.readFileSync('/tmp/licenses.json', 'utf8'));
+            const forbiddenRe = /${FORBIDDEN_RE}/i;
+            const allowlist = new Set($(printf '%s\n' "${ALLOWLIST[@]}" | jq -R . | jq -s . 2>/dev/null || echo '[]'));
+            const violations = [];
+
+            for (const [pkg, info] of Object.entries(data)) {
+              if (allowlist.has(pkg)) continue;
+              const lic = String(info.licenses || '');
+              // Only flag compound expressions (contain OR/AND/parens) that
+              // include a forbidden identifier — simple exact matches are
+              // already caught by the --failOn step above.
+              if ((lic.includes(' OR ') || lic.includes(' AND ') || lic.includes('(')) && forbiddenRe.test(lic)) {
+                violations.push({ pkg, license: lic });
+              }
+            }
+
+            if (violations.length > 0) {
+              console.error('SPDX compound expressions contain forbidden licenses:');
+              violations.forEach(v => console.error('  ' + v.pkg + ': ' + v.license));
+              process.exit(1);
+            }
+            console.log('No forbidden SPDX compound expressions found.');
+          "
+
+      - name: Generate full license report
+        if: ${{ !cancelled() }}
+        run: |
+          npx license-checker --production --excludePrivatePackages --csv --out ../license-report.csv 2>/dev/null || true
+
+      - name: Upload license report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: license-report
+          path: license-report.csv
+          retention-days: 90

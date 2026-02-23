@@ -1,0 +1,133 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# API Contract Guard — Prevent silent API shape breakage
+# ═══════════════════════════════════════════════════════════════════════════════
+# Runs the RPC contract integration tests that validate the shape of every
+# Supabase RPC function called by the frontend. If a migration changes a
+# column name, removes a field, or alters a return type, these tests FAIL
+# before the frontend silently breaks.
+#
+# These tests require live Supabase connectivity (staging environment).
+# Triggered on:
+#   • Every push to main (post-merge validation)
+#   • PRs that touch SQL migrations (pre-merge prevention)
+#   • Nightly (drift detection)
+#
+# Critical for multi-country expansion — ensures contract stability across
+# parallel schema evolution in PL, DE, UK pipelines.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: API Contract Guard
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "db/**"
+      - "frontend/src/lib/rpc-contract*"
+  pull_request:
+    branches: [main]
+    paths:
+      - "supabase/migrations/**"
+      - "db/**"
+      - "frontend/src/lib/rpc-contract*"
+  schedule:
+    # Nightly 03:00 UTC — detect drift from manual DB changes
+    - cron: "0 3 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+concurrency:
+  group: api-contract-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract-tests:
+    name: RPC Contract Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # Skip forks — they never have staging secrets
+    if: github.event.pull_request.head.repo.fork != true
+
+    defaults:
+      run:
+        working-directory: frontend
+
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+
+      # ── Fail-fast: validate required secrets before wasting CI minutes ──
+      - name: Validate required secrets
+        working-directory: .
+        env:
+          _URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          _KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          missing=0
+          if [ -z "$_URL" ]; then
+            echo "::error::Neither SUPABASE_URL_STAGING nor NEXT_PUBLIC_SUPABASE_URL is set"
+            missing=1
+          fi
+          if [ -z "$_KEY" ]; then
+            echo "::error::Neither SUPABASE_ANON_KEY_STAGING nor NEXT_PUBLIC_SUPABASE_ANON_KEY is set"
+            missing=1
+          fi
+          if [ "$missing" -ne 0 ]; then
+            echo "::error::Contract tests require live Supabase connectivity — set the secrets above"
+            exit 1
+          fi
+          echo "All required secrets present."
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - run: npm ci
+
+      - name: Run RPC contract tests
+        env:
+          INTEGRATION: "1"
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+        run: |
+          echo "## API Contract Test Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+
+          set +e
+          output=$(npx vitest run --testPathPattern=rpc-contract 2>&1)
+          exit_code=$?
+          set -e
+
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+          echo "$output" >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+          if [ "$exit_code" -ne 0 ]; then
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "❌ **API contract violation detected!**" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "One or more RPC functions returned unexpected shapes." >> "$GITHUB_STEP_SUMMARY"
+            echo "This means a migration likely changed the API contract." >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**Fix options:**" >> "$GITHUB_STEP_SUMMARY"
+            echo "1. Fix the migration to preserve the existing contract" >> "$GITHUB_STEP_SUMMARY"
+            echo "2. Update the frontend to handle the new shape" >> "$GITHUB_STEP_SUMMARY"
+            echo "3. Update the contract tests if the change is intentional" >> "$GITHUB_STEP_SUMMARY"
+            exit 1
+          fi
+
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "✅ All API contracts validated successfully." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify health endpoint contract
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # Also run the health route unit test which validates response shape
+          npx vitest run --testPathPattern=api/health

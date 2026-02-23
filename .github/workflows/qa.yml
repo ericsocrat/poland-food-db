@@ -23,7 +23,11 @@ on:
       - "db/**"
       - "supabase/**"
       - "pipeline/**"
-      - "*.py"
+      - "validate_eans.py"
+      - "enrich_ingredients.py"
+      - "check_enrichment_identity.py"
+      - "check_pipeline_structure.py"
+      - "fetch_off_category.py"
       - "RUN_QA.ps1"
       - "RUN_LOCAL.ps1"
       - "RUN_SEED.ps1"
@@ -37,14 +41,19 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+
 concurrency:
   group: qa-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   qa:
-    name: Pipeline + QA (421 checks) + Sanity (17 checks)
+    name: DB Integrity
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
     timeout-minutes: 10
 
     services:
@@ -71,10 +80,10 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
         with:
           python-version: "3.12"
 
@@ -113,17 +122,11 @@ jobs:
       - name: Schema drift detection
         run: |
           set -euo pipefail
-          # Verify there are no orphaned or unexpected public schema objects
-          # that aren't referenced in our migrations.
+          # Verify there are no unexpected test functions left in public schema.
+          # (The table subquery comparing pg_tables vs information_schema was a
+          #  no-op: both catalog views show the same rows. Removed in CI noise
+          #  reduction pass.)
           orphans=$(psql --tuples-only --no-align -c "
-            SELECT 'TABLE: ' || tablename FROM pg_tables
-            WHERE schemaname = 'public'
-              AND tablename NOT LIKE 'pg_%'
-              AND tablename NOT IN (
-                SELECT table_name FROM information_schema.tables
-                WHERE table_schema = 'public'
-              )
-            UNION ALL
             SELECT 'FUNCTION: ' || routine_name FROM information_schema.routines
             WHERE routine_schema = 'public'
               AND routine_type = 'FUNCTION'
@@ -164,7 +167,7 @@ jobs:
 
       - name: Upload QA results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: qa-results
           path: qa.json
@@ -181,7 +184,7 @@ jobs:
 
       - name: Upload sanity results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: sanity-results
           path: sanity.json

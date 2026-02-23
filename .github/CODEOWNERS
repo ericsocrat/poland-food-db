@@ -1,0 +1,48 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# CODEOWNERS — Enforce review on critical paths
+# ═══════════════════════════════════════════════════════════════════════════════
+# GitHub automatically requests reviews from these owners when a PR touches
+# matching paths. Combined with branch protection rules requiring CODEOWNERS
+# approval, this prevents unreviewed changes to infrastructure, security
+# config, and database schemas.
+#
+# Syntax: <pattern> <owner> [<owner>...]
+# Docs:   https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# ═══════════════════════════════════════════════════════════════════════════════
+
+# ── Default owner for everything ─────────────────────────────────────────────
+*                                   @ericsocrat
+
+# ── CI / GitHub Actions (highest sensitivity) ────────────────────────────────
+.github/                            @ericsocrat
+.github/workflows/                  @ericsocrat
+.github/dependabot.yml              @ericsocrat
+.github/CODEOWNERS                  @ericsocrat
+
+# ── Database & migrations (data integrity) ───────────────────────────────────
+supabase/                           @ericsocrat
+supabase/migrations/                @ericsocrat
+db/                                 @ericsocrat
+
+# ── Security-sensitive configuration ─────────────────────────────────────────
+SECURITY.md                         @ericsocrat
+sonar-project.properties            @ericsocrat
+frontend/sentry.*.config.ts         @ericsocrat
+
+# ── Infrastructure & deployment ──────────────────────────────────────────────
+frontend/next.config.ts             @ericsocrat
+frontend/vercel.json                @ericsocrat
+frontend/package.json               @ericsocrat
+frontend/package-lock.json          @ericsocrat
+requirements.txt                    @ericsocrat
+DEPLOYMENT.md                       @ericsocrat
+
+# ── API contracts (frontend-backend boundary) ────────────────────────────────
+frontend/src/app/api/               @ericsocrat
+frontend/src/lib/rpc-contract*      @ericsocrat
+frontend/src/lib/supabase/          @ericsocrat
+docs/API_CONTRACTS.md               @ericsocrat
+
+# ── Pipeline (data acquisition) ──────────────────────────────────────────────
+pipeline/                           @ericsocrat
+scripts/                            @ericsocrat
