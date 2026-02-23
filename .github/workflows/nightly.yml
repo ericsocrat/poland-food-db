@@ -15,6 +15,9 @@ on:
     - cron: "0 2 * * *" # 2:00 UTC daily
   workflow_dispatch: {}
 
+permissions:
+  contents: read
+
 concurrency:
   group: nightly
   cancel-in-progress: true # Only latest nightly matters

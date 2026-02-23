@@ -37,13 +37,16 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+
 concurrency:
   group: qa-${{ github.event.pull_request.number || github.sha }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   qa:
-    name: Pipeline + QA (421 checks) + Sanity (17 checks)
+    name: DB Integrity
     runs-on: ubuntu-latest
     timeout-minutes: 10
 

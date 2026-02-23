@@ -1,3 +1,19 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Sync Cloud DB — Migration sync for staging (auto) and production (manual)
+# CI Hardening — Enterprise-grade safety redesign
+# ═══════════════════════════════════════════════════════════════════════════════
+# Staging: auto-syncs when migration files land on main.
+# Production: manual-only via workflow_dispatch with environment approval gate.
+#
+# Secrets required (all via repository secrets — NO hardcoded refs):
+#   SUPABASE_ACCESS_TOKEN         — CLI authentication
+#   SUPABASE_PROJECT_REF          — production project ref
+#   SUPABASE_STAGING_PROJECT_REF  — staging project ref
+#
+# Repository variables:
+#   STAGING_ENABLED               — set to 'true' to enable staging sync
+# ═══════════════════════════════════════════════════════════════════════════════
+
 name: Sync Cloud DB
 
 on:
@@ -5,17 +21,34 @@ on:
     branches: [main]
     paths:
       - "supabase/migrations/**"
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Target environment"
+        required: true
+        type: choice
+        options:
+          - staging
+          - production
+        default: staging
+
+permissions:
+  contents: read
 
 concurrency:
-  group: sync-db
+  group: sync-db-${{ github.event.inputs.target || 'staging' }}
   cancel-in-progress: false # Migration order matters
 
 jobs:
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 1: Sync Staging — auto on push to main, or manual when target=staging
+  # ─────────────────────────────────────────────────────────────────────────
   sync-staging:
     name: Sync Staging DB
     runs-on: ubuntu-latest
-    # Only run if the staging project ref secret is configured
-    if: ${{ vars.STAGING_ENABLED == 'true' }}
+    if: >-
+      (github.event_name == 'push') ||
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'staging')
     steps:
       - uses: actions/checkout@v4
 
@@ -23,24 +56,56 @@ jobs:
         uses: supabase/setup-cli@v1
         with:
           version: latest
+
+      - name: Validate staging ref is configured
+        run: |
+          if [ -z "${{ secrets.SUPABASE_STAGING_PROJECT_REF }}" ]; then
+            echo "::error::SUPABASE_STAGING_PROJECT_REF secret is not set — cannot sync staging"
+            exit 1
+          fi
 
       - name: Link to staging project
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: supabase link --project-ref "${{ secrets.SUPABASE_STAGING_PROJECT_REF }}"
+
+      - name: Pre-sync backup (staging)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
-          supabase link --project-ref "${{ secrets.SUPABASE_STAGING_PROJECT_REF }}"
+          mkdir -p backups
+          ts=$(date +%Y%m%d_%H%M%S)
+          backup_file="backups/staging_data-only_${ts}.sql"
+          supabase db dump --linked --data-only -f "$backup_file"
+          echo "Staging backup: $backup_file ($(du -h "$backup_file" | cut -f1))"
+
+      - name: Upload staging backup
+        uses: actions/upload-artifact@v4
+        with:
+          name: staging-data-backup-${{ github.sha }}
+          path: backups/
+          retention-days: 14
 
       - name: Push migrations to staging
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase db push --yes
+        run: |
+          echo "Pushing migrations to staging..."
+          supabase db push --linked
+          echo "## Staging Sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "Migrations applied to **staging** at $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
 
+  # ─────────────────────────────────────────────────────────────────────────
+  # Job 2: Sync Production — MANUAL ONLY via workflow_dispatch
+  # Requires GitHub Environment approval gate (environment: production)
+  # ─────────────────────────────────────────────────────────────────────────
   sync-production:
     name: Sync Production DB
     runs-on: ubuntu-latest
-    needs: [sync-staging]
-    # Run even if sync-staging was skipped (staging not enabled)
-    if: ${{ !failure() }}
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.target == 'production'
+    environment: production # ← requires reviewer approval
+
     steps:
       - uses: actions/checkout@v4
 
@@ -49,27 +114,56 @@ jobs:
         with:
           version: latest
 
+      - name: Validate production ref is configured
+        run: |
+          if [ -z "${{ secrets.SUPABASE_PROJECT_REF }}" ]; then
+            echo "::error::SUPABASE_PROJECT_REF secret is not set — cannot sync production"
+            exit 1
+          fi
+
       - name: Link to production project
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: |
-          supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}"
+        run: supabase link --project-ref "${{ secrets.SUPABASE_PROJECT_REF }}"
 
-      - name: Backup cloud DB
+      - name: Pre-sync backup (production, data-only)
+        id: backup
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
+          set -euo pipefail
           mkdir -p backups
-          supabase db dump --linked --data-only -f backups/cloud_backup_$(date +%Y%m%d_%H%M%S).sql
+          ts=$(date +%Y%m%d_%H%M%S)
+          backup_file="backups/production_data-only_${ts}.sql"
+          supabase db dump --linked --data-only -f "$backup_file"
 
-      - name: Push migrations
-        env:
-          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-        run: supabase db push --yes
+          if [ ! -s "$backup_file" ]; then
+            echo "::error::Production backup is empty — aborting"
+            exit 1
+          fi
 
-      - name: Upload backup artifact
+          backup_size=$(du -h "$backup_file" | cut -f1)
+          echo "backup_file=$backup_file" >> "$GITHUB_OUTPUT"
+          echo "Production backup: $backup_file ($backup_size)"
+
+      - name: Upload production backup
         uses: actions/upload-artifact@v4
         with:
-          name: cloud-backup-${{ github.sha }}
+          name: production-data-backup-${{ github.sha }}
           path: backups/
-          retention-days: 30
+          retention-days: 90
+
+      - name: Push migrations to production
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          echo "Pushing migrations to PRODUCTION..."
+          supabase db push --linked
+          echo "## Production Sync" >> "$GITHUB_STEP_SUMMARY"
+          echo "Migrations applied to **production** at $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_STEP_SUMMARY"
+          echo "Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "Backup artifact: \`production-data-backup-${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "> **Note:** Backup is data-only. Schema is managed by migrations." >> "$GITHUB_STEP_SUMMARY"
+          echo "> To restore: apply migrations first, then \`psql -f <backup>.sql\`" >> "$GITHUB_STEP_SUMMARY"

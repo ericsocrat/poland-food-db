@@ -14,6 +14,9 @@ on:
   push:
     branches: [main]
 
+permissions:
+  contents: read
+
 concurrency:
   group: main-gate
   cancel-in-progress: false # Never cancel main builds
@@ -24,7 +27,7 @@ env:
 
 jobs:
   gate:
-    name: Build, Test, Scan & Deploy Sourcemaps
+    name: Full Gate
     runs-on: ubuntu-latest
     timeout-minutes: 20
     defaults:

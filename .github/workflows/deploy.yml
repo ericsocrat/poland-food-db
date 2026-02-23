@@ -31,6 +31,9 @@ on:
         type: boolean
         default: false
 
+permissions:
+  contents: read
+
 # ── Concurrency: prevent parallel deploys to the same environment ───────────
 concurrency:
   group: deploy-${{ github.event.inputs.environment }}

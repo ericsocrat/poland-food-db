@@ -16,6 +16,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: read
+
 concurrency:
   group: pr-${{ github.event.pull_request.number }}
   cancel-in-progress: true
@@ -45,6 +48,30 @@ jobs:
         working-directory: .
 
       - uses: actions/checkout@v4
+
+      # ── Enhancement D: lightweight security hygiene scan ───────────────
+      - name: Security hygiene scan
+        working-directory: .
+        run: |
+          failed=0
+
+          # 1. Check for hardcoded Supabase project refs in workflow files
+          #    Pattern: bare alphanumeric strings where secrets expressions should be
+          if grep -rEn 'project.ref|link.*--project-ref' .github/workflows/ | grep -vE '\$\{\{|^\s*#|description|echo|secret'; then
+            echo "::error::Potential hardcoded project ref in workflow files"
+            failed=1
+          fi
+
+          # 2. Check for obvious secret/token patterns in committed source files
+          if grep -rEn --include='*.ts' --include='*.tsx' --include='*.js' --include='*.json' \
+            'sk_live_|sk_test_|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.' \
+            . 2>/dev/null | grep -vE 'node_modules|\.next' | head -5; then
+            echo "::error::Potential secret/token pattern found in source files"
+            failed=1
+          fi
+
+          if [ "$failed" -ne 0 ]; then exit 1; fi
+          echo "✓ Security hygiene scan passed"
 
       - uses: actions/setup-node@v4
         with:
