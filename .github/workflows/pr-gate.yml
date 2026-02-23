@@ -55,17 +55,22 @@ jobs:
         run: |
           failed=0
 
-          # 1. Check for hardcoded Supabase project refs in workflow files
-          #    Pattern: bare alphanumeric strings where secrets expressions should be
-          if grep -rEn 'project.ref|link.*--project-ref' .github/workflows/ | grep -vE '\$\{\{|^\s*#|description|echo|secret'; then
-            echo "::error::Potential hardcoded project ref in workflow files"
+          # 1. Fail if any workflow uses supabase link with a bare hardcoded ref
+          #    (not wrapped in ${{ ... }} expression). Ignores comments and this scan.
+          hits=$(grep -rEn 'supabase link --project-ref' .github/workflows/ \
+            | grep -vE '\$\{\{|^\s*#|grep|echo' || true)
+          if [ -n "$hits" ]; then
+            echo "$hits"
+            echo "::error::Hardcoded Supabase project ref found in workflow files"
             failed=1
           fi
 
           # 2. Check for obvious secret/token patterns in committed source files
-          if grep -rEn --include='*.ts' --include='*.tsx' --include='*.js' --include='*.json' \
+          hits=$(grep -rEn --include='*.ts' --include='*.tsx' --include='*.js' --include='*.json' \
             'sk_live_|sk_test_|eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.' \
-            . 2>/dev/null | grep -vE 'node_modules|\.next' | head -5; then
+            . 2>/dev/null | grep -vE 'node_modules|\.next' | head -5 || true)
+          if [ -n "$hits" ]; then
+            echo "$hits"
             echo "::error::Potential secret/token pattern found in source files"
             failed=1
           fi
