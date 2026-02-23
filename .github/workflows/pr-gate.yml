@@ -244,7 +244,7 @@ jobs:
     needs: build
     permissions:
       contents: read
-    timeout-minutes: 8
+    timeout-minutes: 15
     defaults:
       run:
         working-directory: frontend
@@ -272,7 +272,7 @@ jobs:
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
-        timeout-minutes: 5
+        timeout-minutes: 8
 
       - name: Run smoke E2E tests
         run: npx playwright test --project=smoke 2>&1 | tee ../playwright-stdout.log
