@@ -86,14 +86,14 @@ Configure minimum level via `LOG_LEVEL` env var (default: `info`).
 
 ### SDK Configuration
 
-| Config                     | Client                     | Server                     | Edge                       |
-| -------------------------- | -------------------------- | -------------------------- | -------------------------- |
-| Config file                | `sentry.client.config.ts`  | `sentry.server.config.ts`  | `sentry.edge.config.ts`    |
-| DSN                        | `NEXT_PUBLIC_SENTRY_DSN`   | `NEXT_PUBLIC_SENTRY_DSN`   | `NEXT_PUBLIC_SENTRY_DSN`   |
-| Sample rate (errors)       | 100%                       | 100%                       | 100%                       |
-| Sample rate (transactions) | Configurable (default 10%) | Configurable (default 10%) | Configurable (default 10%) |
-| Session replay             | Disabled                   | N/A                        | N/A                        |
-| Source maps                | Uploaded during build      | Uploaded during build      | Uploaded during build      |
+| Config                     | Client                          | Server                     | Edge                       |
+| -------------------------- | ------------------------------- | -------------------------- | -------------------------- |
+| Config file                | `src/instrumentation-client.ts` | `sentry.server.config.ts`  | `sentry.edge.config.ts`    |
+| DSN                        | `NEXT_PUBLIC_SENTRY_DSN`        | `NEXT_PUBLIC_SENTRY_DSN`   | `NEXT_PUBLIC_SENTRY_DSN`   |
+| Sample rate (errors)       | 100%                            | 100%                       | 100%                       |
+| Sample rate (transactions) | Configurable (default 10%)      | Configurable (default 10%) | Configurable (default 10%) |
+| Session replay             | Disabled                        | N/A                        | N/A                        |
+| Source maps                | Uploaded during build           | Uploaded during build      | Uploaded during build      |
 
 ### Environment Variables
 
@@ -235,21 +235,21 @@ Each component is independently removable:
 
 ## Files Modified / Created
 
-| File                             | Type     | Description                    |
-| -------------------------------- | -------- | ------------------------------ |
-| `src/lib/logger.ts`              | New      | Structured JSON logger         |
-| `src/lib/api-instrumentation.ts` | New      | API route wrapper (HOF)        |
-| `sentry.client.config.ts`        | New      | Client-side Sentry init        |
-| `sentry.server.config.ts`        | New      | Server-side Sentry init        |
-| `sentry.edge.config.ts`          | New      | Edge runtime Sentry init       |
-| `src/instrumentation.ts`         | New      | Next.js instrumentation hook   |
-| `src/middleware.ts`              | Modified | Added X-Request-Id             |
-| `src/lib/error-reporter.ts`      | Modified | Added Sentry reporting         |
-| `src/app/error.tsx`              | Modified | Added Sentry capture           |
-| `src/app/global-error.tsx`       | Modified | Added Sentry capture           |
-| `src/app/api/health/route.ts`    | Modified | Added structured logging       |
-| `src/app/auth/callback/route.ts` | Modified | Added logging + error handling |
-| `next.config.ts`                 | Modified | Added `withSentryConfig`, CSP  |
-| `.env.local.example`             | Modified | Added Sentry DSN vars          |
-| `.env.example`                   | Modified | Added Sentry build vars        |
-| `docs/OBSERVABILITY.md`          | New      | This document                  |
+| File                             | Type     | Description                         |
+| -------------------------------- | -------- | ----------------------------------- |
+| `src/lib/logger.ts`              | New      | Structured JSON logger              |
+| `src/lib/api-instrumentation.ts` | New      | API route wrapper (HOF)             |
+| `src/instrumentation-client.ts`  | New      | Client-side Sentry init (Turbopack) |
+| `sentry.server.config.ts`        | New      | Server-side Sentry init             |
+| `sentry.edge.config.ts`          | New      | Edge runtime Sentry init            |
+| `src/instrumentation.ts`         | New      | Next.js instrumentation hook        |
+| `src/middleware.ts`              | Modified | Added X-Request-Id                  |
+| `src/lib/error-reporter.ts`      | Modified | Added Sentry reporting              |
+| `src/app/error.tsx`              | Modified | Added Sentry capture                |
+| `src/app/global-error.tsx`       | Modified | Added Sentry capture                |
+| `src/app/api/health/route.ts`    | Modified | Added structured logging            |
+| `src/app/auth/callback/route.ts` | Modified | Added logging + error handling      |
+| `next.config.ts`                 | Modified | Added `withSentryConfig`, CSP       |
+| `.env.local.example`             | Modified | Added Sentry DSN vars               |
+| `.env.example`                   | Modified | Added Sentry build vars             |
+| `docs/OBSERVABILITY.md`          | New      | This document                       |
