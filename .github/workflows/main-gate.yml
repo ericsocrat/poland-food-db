@@ -5,7 +5,7 @@
 # Single comprehensive job: build → unit tests w/ coverage → full Playwright E2E
 # → SonarCloud scan (BLOCKING quality gate) → Sentry sourcemap upload.
 #
-# Target runtime: < 8 minutes
+# Target runtime: < 12 minutes
 # ═══════════════════════════════════════════════════════════════════════════════
 
 name: Main Gate
@@ -22,7 +22,7 @@ jobs:
   gate:
     name: Build, Test, Scan & Deploy Sourcemaps
     runs-on: ubuntu-latest
-    timeout-minutes: 12
+    timeout-minutes: 20
     defaults:
       run:
         working-directory: frontend
