@@ -2,9 +2,13 @@
 
 ## Known Vulnerabilities
 
-Last audited: 2026-02-14
+Last audited: 2026-02-14 (vulnerability table below may be stale — re-run `cd frontend && npm audit` to refresh)
 
 ### Summary
+
+> **Note:** The project upgraded to **Next.js 15.5.12**. The advisories below were
+> originally filed against Next.js 14.x. Run `npm audit --omit=dev` to verify
+> which, if any, still apply to the current version.
 
 | Package               | Severity | Advisory                                       | Status        |
 | --------------------- | -------- | ---------------------------------------------- | ------------- |
@@ -39,10 +43,9 @@ Last audited: 2026-02-14
 
 ### Remediation Plan
 
-All vulnerabilities require upgrading to Next.js 16.x (a major breaking change). Plan:
-1. **Current (v14.2.35):** Accept risk — vulnerabilities are not practically exploitable in our deployment model.
-2. **Next milestone:** Evaluate Next.js 15.x upgrade when the app's feature set stabilizes.
-3. **Long-term:** Upgrade to Next.js 16.x when the ecosystem (React 19, testing tools) is mature.
+The project is now on **Next.js 15.5.12**. The advisories listed above were filed
+against v14.x and may no longer apply. Re-run `npm audit` and refresh this table
+when vulnerabilities change.
 
 ### Application Security Measures
 

@@ -52,10 +52,10 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (333 checks across 22 suites)
+# All tests (421 checks across 30 suites)
 .\RUN_QA.ps1
 
-# Negative validation (23 constraint tests)
+# Negative validation (29 constraint tests)
 .\RUN_NEGATIVE_TESTS.ps1
 
 # Or via pipeline runner
@@ -120,7 +120,7 @@ Failed Playwright runs upload screenshots and traces as artifacts for debugging.
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 333 automated checks across 22 QA suites + 23 negative validation tests
+**Test Coverage**: 421 automated checks across 30 QA suites + 29 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 14 API surface checks (contract validation, JSON structure, listing consistency)
@@ -145,7 +145,7 @@ Failed Playwright runs upload screenshots and traces as artifacts for debugging.
 - 8 source coverage reports (informational, non-blocking)
 - 23 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 333/333 + 23/23 negative
+**All tests passing**: ✅ 421/421 + 29/29 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
@@ -198,7 +198,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (63 files)
+    └── migrations/          # Schema migrations (124 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
@@ -214,7 +214,7 @@ poland-food-db/
 │   └── STAGING_SETUP.md     # Step-by-step staging setup guide
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (362 checks)
+├── RUN_QA.ps1               # Standalone test runner (421 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
 ├── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ├── RUN_SEED.ps1             # Unified seed runner (any environment)
@@ -230,7 +230,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **322 automated checks** across 22 QA suites + 25 negative validation tests:
+Every change is validated against **421 automated checks** across 30 QA suites + 29 negative validation tests:
 
 ### Data Integrity (29 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -307,7 +307,7 @@ Constraint violation tests that verify the database correctly rejects invalid da
 
 **Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
 
-**CI**: All 322 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 421 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -422,7 +422,7 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 322/322 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 421/421 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---
@@ -485,10 +485,10 @@ All API functions return `api_version` in every response (currently `"1.0"`).
 
 ## 🖥️ Frontend (Next.js)
 
-The `frontend/` directory contains a Next.js 14 (App Router) web application for browsing and searching products.
+The `frontend/` directory contains a Next.js 15 (App Router) web application for browsing and searching products.
 
 ### Stack
-- **Next.js 14** (App Router, TypeScript, Tailwind CSS)
+- **Next.js 15** (App Router, TypeScript, Tailwind CSS)
 - **@supabase/ssr** for auth (replaces deprecated auth-helpers)
 - **TanStack Query v5** for data fetching with defined cache keys and stale times
 - **@zxing/browser + @zxing/library** for barcode scanning (EAN-13, EAN-8, UPC)

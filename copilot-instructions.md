@@ -248,9 +248,9 @@ poland-food-db/
 │   ├── playwright.config.ts         # Playwright configuration (Chromium)
 │   └── package.json                 # Dependencies + scripts (test, test:coverage, etc.)
 ├── .github/workflows/
-│   ├── ci.yml                       # Lint → Typecheck → Build → Playwright E2E
-│   ├── build.yml                    # Build → Unit tests + coverage → SonarCloud
-│   ├── qa.yml                       # Schema → Pipelines → QA (360) → Sanity (16)
+│   ├── pr-gate.yml                  # Lint → Typecheck → Build → Playwright E2E
+│   ├── main-gate.yml                # Build → Unit tests + coverage → SonarCloud
+│   ├── qa.yml                       # Schema → Pipelines → QA (421) → Sanity
 │   └── sync-cloud-db.yml            # Remote DB sync
 ├── sonar-project.properties         # SonarCloud configuration
 ├── DEPLOYMENT.md                    # Deployment procedures, rollback playbook, emergency checklist
@@ -430,7 +430,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **83 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **124 migrations**.
 
 **Rules:**
 
@@ -506,7 +506,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
 | EAN checksum        | Python validator                                  | `validate_eans.py`                           | `python validate_eans.py`            |
-| Code quality        | **SonarCloud**                                    | `sonar-project.properties`                   | CI only (build.yml)                  |
+| Code quality        | **SonarCloud**                                    | `sonar-project.properties`                   | CI only (main-gate.yml)              |
 
 **Coverage** is collected via `npm run test:coverage` (v8 provider, LCOV output at `frontend/coverage/lcov.info`), fed to SonarCloud. Coverage exclusions are declared in both `vitest.config.ts` and `sonar-project.properties`.
 
@@ -565,6 +565,8 @@ For **any** functional change:
 ### 8.5 Coverage & Quality Gates Must Not Regress
 
 - **Never reduce** overall coverage or weaken assertions.
+- **Enforced metric**: **Lines coverage** is the primary governance metric (baseline ≥ 88 %). Statements, branches, and functions are tracked in CI output but are not individually gated.
+- SonarCloud Quality Gate enforces **coverage on new code ≥ 80 %** (lines). This is the merge-blocking gate; the repo-wide 88 % baseline is a ratchet — it must not decrease but is not a hard gate today.
 - Prefer strong assertions (specific outputs, types, error codes, DB row counts) over snapshot-only tests.
 - If coverage tooling exists (`npm run test:coverage`), ensure new code paths are covered.
 - If a change makes coverage impossible, **refactor to make it testable** (pure functions, dependency injection, smaller modules).
@@ -712,39 +714,39 @@ At the end of every PR-like change, include a **Verification** section:
 
 ### 8.18 DB QA Suites Reference
 
-| Suite                   | File                                | Checks | Blocking? |
-| ----------------------- | ----------------------------------- | -----: | --------- |
-| Data Integrity          | `QA__null_checks.sql`               |     29 | Yes       |
-| Scoring Formula         | `QA__scoring_formula_tests.sql`     |     27 | Yes       |
-| Source Coverage         | `QA__source_coverage.sql`           |      8 | No        |
-| EAN Validation          | `validate_eans.py`                  |      1 | Yes       |
-| API Surfaces            | `QA__api_surfaces.sql`              |     18 | Yes       |
-| API Contract            | `QA__api_contract.sql`              |     33 | Yes       |
-| Confidence Scoring      | `QA__confidence_scoring.sql`        |     10 | Yes       |
-| Confidence Reporting    | `QA__confidence_reporting.sql`      |      7 | Yes       |
-| Data Quality            | `QA__data_quality.sql`              |     25 | Yes       |
-| Ref. Integrity          | `QA__referential_integrity.sql`     |     18 | Yes       |
-| View Consistency        | `QA__view_consistency.sql`          |     13 | Yes       |
-| Naming Conventions      | `QA__naming_conventions.sql`        |     12 | Yes       |
-| Nutrition Ranges        | `QA__nutrition_ranges.sql`          |     16 | Yes       |
-| Data Consistency        | `QA__data_consistency.sql`          |     20 | Yes       |
-| Allergen Integrity      | `QA__allergen_integrity.sql`        |     15 | Yes       |
-| Allergen Filtering      | `QA__allergen_filtering.sql`        |      6 | Yes       |
-| Serving & Source        | `QA__serving_source_validation.sql` |     16 | Yes       |
-| Ingredient Quality      | `QA__ingredient_quality.sql`        |     14 | Yes       |
-| Security Posture        | `QA__security_posture.sql`          |     22 | Yes       |
-| Scale Guardrails        | `QA__scale_guardrails.sql`          |     15 | Yes       |
-| Country Isolation       | `QA__country_isolation.sql`         |     11 | Yes       |
-| Diet Filtering          | `QA__diet_filtering.sql`            |      6 | Yes       |
-| Barcode Lookup          | `QA__barcode_lookup.sql`            |      6 | Yes       |
-| Auth & Onboarding       | `QA__auth_onboarding.sql`           |      8 | Yes       |
-| Health Profiles         | `QA__health_profiles.sql`           |     14 | Yes       |
-| Lists & Comparisons     | `QA__lists_comparisons.sql`         |     12 | Yes       |
-| Scanner & Submissions   | `QA__scanner_submissions.sql`       |     12 | Yes       |
-| Index & Temporal        | `QA__index_temporal.sql`            |     15 | Yes       |
-| Attribute Contradictions| `QA__attribute_contradiction.sql`   |      5 | Yes       |
-| Monitoring & Health     | `QA__monitoring.sql`                |      7 | Yes       |
-| **Negative Validation** | `TEST__negative_checks.sql`         |     29 | Yes       |
+| Suite                    | File                                | Checks | Blocking? |
+| ------------------------ | ----------------------------------- | -----: | --------- |
+| Data Integrity           | `QA__null_checks.sql`               |     29 | Yes       |
+| Scoring Formula          | `QA__scoring_formula_tests.sql`     |     27 | Yes       |
+| Source Coverage          | `QA__source_coverage.sql`           |      8 | No        |
+| EAN Validation           | `validate_eans.py`                  |      1 | Yes       |
+| API Surfaces             | `QA__api_surfaces.sql`              |     18 | Yes       |
+| API Contract             | `QA__api_contract.sql`              |     33 | Yes       |
+| Confidence Scoring       | `QA__confidence_scoring.sql`        |     10 | Yes       |
+| Confidence Reporting     | `QA__confidence_reporting.sql`      |      7 | Yes       |
+| Data Quality             | `QA__data_quality.sql`              |     25 | Yes       |
+| Ref. Integrity           | `QA__referential_integrity.sql`     |     18 | Yes       |
+| View Consistency         | `QA__view_consistency.sql`          |     13 | Yes       |
+| Naming Conventions       | `QA__naming_conventions.sql`        |     12 | Yes       |
+| Nutrition Ranges         | `QA__nutrition_ranges.sql`          |     16 | Yes       |
+| Data Consistency         | `QA__data_consistency.sql`          |     20 | Yes       |
+| Allergen Integrity       | `QA__allergen_integrity.sql`        |     15 | Yes       |
+| Allergen Filtering       | `QA__allergen_filtering.sql`        |      6 | Yes       |
+| Serving & Source         | `QA__serving_source_validation.sql` |     16 | Yes       |
+| Ingredient Quality       | `QA__ingredient_quality.sql`        |     14 | Yes       |
+| Security Posture         | `QA__security_posture.sql`          |     22 | Yes       |
+| Scale Guardrails         | `QA__scale_guardrails.sql`          |     15 | Yes       |
+| Country Isolation        | `QA__country_isolation.sql`         |     11 | Yes       |
+| Diet Filtering           | `QA__diet_filtering.sql`            |      6 | Yes       |
+| Barcode Lookup           | `QA__barcode_lookup.sql`            |      6 | Yes       |
+| Auth & Onboarding        | `QA__auth_onboarding.sql`           |      8 | Yes       |
+| Health Profiles          | `QA__health_profiles.sql`           |     14 | Yes       |
+| Lists & Comparisons      | `QA__lists_comparisons.sql`         |     12 | Yes       |
+| Scanner & Submissions    | `QA__scanner_submissions.sql`       |     12 | Yes       |
+| Index & Temporal         | `QA__index_temporal.sql`            |     15 | Yes       |
+| Attribute Contradictions | `QA__attribute_contradiction.sql`   |      5 | Yes       |
+| Monitoring & Health      | `QA__monitoring.sql`                |      7 | Yes       |
+| **Negative Validation**  | `TEST__negative_checks.sql`         |     29 | Yes       |
 
 **Run:** `.\RUN_QA.ps1` — expects **421/421 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
@@ -870,7 +872,7 @@ chore: normalize categories to 28 products
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 360/360 pass
+1. `.\RUN_QA.ps1` — 421/421 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed
@@ -902,10 +904,19 @@ Full documentation: `docs/SCORING_METHODOLOGY.md`
 
 ## 15. Feature Implementation Standard (Mandatory for All Major Features)
 
-> **Gold standard:** [Issue #32 — Localization & Multi-Language Support](https://github.com/ericsocrat/poland-food-db/issues/32)
+> **Gold standard:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184)
 >
-> Every significant feature must follow this structure. **No exceptions.**
-> A "significant feature" is any change that introduces new tables, modifies API contracts, adds scoring dimensions, expands to new countries/languages, or touches more than ~5 files.
+> Every significant issue must follow this structure. **No exceptions.**
+> A "significant issue" is any change that introduces new tables, modifies API contracts, adds scoring dimensions, expands to new countries/languages, touches more than ~5 files, or introduces new CI/infrastructure workflows.
+>
+> Issue #184 was selected as the exemplar across all 89+ issues in this repo because it:
+>
+> - Covers **every required section** with specific, actionable content (not boilerplate)
+> - Spans **multiple layers** (SQL + Python + CI + docs) demonstrating the template works for cross-cutting work
+> - Was **implemented and closed** — proving the template is practical, not aspirational
+> - Represents a **common issue shape** (infra + data quality) that is easily adapted to features, bugs, or governance work
+>
+> **When creating any new issue, start from the template in §15.18 and adapt it to your scope.**
 
 ### 15.1 Problem Statement
 
@@ -915,7 +926,7 @@ Every feature issue must open with:
 - **What current limitation exists?** (link to specific code/schema gaps)
 - **What measurable improvement does this introduce?** (quantifiable: new rows, faster queries, fewer clicks, new coverage %)
 
-> Example (from #32): "No way for an English-speaking user to search or understand Polish product names."
+> Example (from #184): "No automated system to detect data quality issues — contradictions, impossible values, and orphans accumulate silently and erode trust in health recommendations."
 
 ### 15.2 Architectural Evaluation
 
@@ -1047,18 +1058,18 @@ If the feature touches searchable fields:
 
 Define **explicit** fallback chains. Never rely on implicit behavior.
 
-**Standard pattern (from Issue #32):**
+**Standard pattern (from Issue #184):**
 
 ```
+audit_severity_exit_code:
+  If any critical findings exist → exit(1) → CI fails → alert triggers
+  Else if warnings exist → exit(0) → CI passes → logged for review
+  Else → exit(0) → clean run
+
 resolve_language(p_language):
   If p_language is valid and enabled in language_ref → use it
   Else if user has preferred_language set → use that
   Else → 'en' (universal fallback)
-
-product_name_display:
-  If user_language = country default_language → product_name (native label)
-  Else if user_language = 'en' → COALESCE(product_name_en, product_name)
-  Else → COALESCE(name_translations->>lang, product_name_en, product_name)
 ```
 
 Every feature with conditional logic must document its fallback chain in this format:
@@ -1195,7 +1206,7 @@ Before a feature is considered complete, verify against all CI gates:
 | Gate                | Command                               | Expected                         |
 | ------------------- | ------------------------------------- | -------------------------------- |
 | Pipeline structure  | `python check_pipeline_structure.py`  | 0 errors                         |
-| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 360+) |
+| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 421)  |
 | Negative tests      | `.\RUN_NEGATIVE_TESTS.ps1`            | All caught (currently 29)        |
 | pgTAP tests         | `supabase test db`                    | All pass                         |
 | TypeScript          | `cd frontend && npx tsc --noEmit`     | 0 errors                         |
@@ -1203,7 +1214,7 @@ Before a feature is considered complete, verify against all CI gates:
 | E2E smoke           | `cd frontend && npx playwright test`  | All pass                         |
 | EAN validation      | `python validate_eans.py`             | 0 failures                       |
 | Enrichment identity | `python check_enrichment_identity.py` | 0 violations                     |
-| SonarCloud          | CI pipeline (`build.yml`)             | Quality Gate pass                |
+| SonarCloud          | CI pipeline (`main-gate.yml`)         | Quality Gate pass                |
 
 ### 15.17 Enforcement Rule
 
@@ -1223,80 +1234,239 @@ Before a feature is considered complete, verify against all CI gates:
 
 ### 15.18 Issue Template
 
-Use this structure when creating GitHub issues for major features:
+Use this structure when creating GitHub issues. **Every section is required** for significant issues; mark a section `N/A — [reason]` if genuinely not applicable (e.g., "Search & Indexing Impact" for a CI-only change). Never silently omit a section.
 
-```markdown
-# Feature Title
+> **Reference implementation:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184)
 
-## Problem
+````markdown
+# [PREFIX] Title — Crisp Noun-Phrase Subtitle
 
-- User problem: ...
-- Current limitation: ...
-- Measurable improvement: ...
+> **Priority:** P0 / P1 / P2 / P3
+> **Workstream:** Frontend / Backend / Data / CI / Security / Governance
+> **Estimated effort:** X–Y days
+> **Depends on:** #NNN (title), #NNN (title)
 
-## Architecture Evaluation
+---
 
-| Approach | Verdict | Reason |
-| -------- | ------- | ------ |
+## Parent Epic (if applicable)
 
-## Core Principles (Invariants)
+#NNN — Epic Title
 
-- ...
+---
 
-## Implementation Plan
+## Problem Statement
 
-### Phase 1 — ...
+- **What user/developer/system problem does this solve?** (concrete scenario)
+- **What current limitation exists?** (link to specific code, schema, or workflow gaps)
+- **What measurable improvement does this introduce?** (new coverage, fewer errors, faster pipeline, etc.)
+- Quantify current state (e.g., "2,500+ products with no automated integrity check")
 
-### Phase 2 — ...
+## Why This Matters
 
-## Database Changes
+Bullet list of consequences if this is NOT done:
+
+- **User safety / data trust**: ...
+- **Scale / reliability**: ...
+- **Regulatory / compliance**: ...
+
+---
+
+## Scope
+
+### In-Scope
+
+1. Specific deliverable A
+2. Specific deliverable B
+3. ...
+
+### Out-of-Scope
+
+- Explicit exclusion X (reason or "separate issue")
+- Explicit exclusion Y
+
+---
+
+## Architecture Evaluation (if applicable)
+
+Evaluate **at least 2–3 approaches** when there is a meaningful design choice:
+
+| Approach | Verdict     | Reason |
+| -------- | ----------- | ------ |
+| A. ...   | ❌ Rejected | ...    |
+| B. ...   | ✅ Chosen   | ...    |
+
+---
+
+## Technical Implementation Plan
+
+Break into **sequential, independently-shippable steps**.
+Each step should include runnable code (SQL, TypeScript, Python, YAML, etc.) — not hand-wavy pseudocode.
+
+### Step 1 — [Title]
+
+`sql / `typescript / `python / `yaml
+-- Actual implementation code
+````
+
+### Step 2 — [Title]
+
+...
+
+### Step N — [Title]
+
+...
+
+---
+
+## Architecture Notes
+
+ASCII or Mermaid diagram showing how the pieces connect:
+
+```
+┌──────────────┐     ┌──────────────┐
+│  Component A │────▶│  Component B │
+└──────────────┘     └──────────────┘
+```
+
+**Key design decisions:**
+
+- Why this approach (1-liner per decision)
+
+---
+
+## Database Changes (if applicable)
 
 - Migration: `YYYYMMDDHHMMSS_description.sql`
-- Tables: ...
-- Functions: ...
+- Tables created / altered: ...
+- Functions created / altered: ...
+- Indexes added: ... (justify each)
+- Rollback note: `DROP TABLE IF EXISTS ...`
 
-## API Contract Impact
+## API Contract Impact (if applicable)
 
 | Function | Changes | Backward Compatible? |
+| -------- | ------- | -------------------- |
 
-## Search & Indexing Impact
+## Search & Indexing Impact (if applicable)
 
-- ...
+- `search_vector` trigger updated?
+- New GIN/GiST indexes?
+- Synonym entries needed?
 
-## Fallback Logic
+## Fallback Logic (if applicable)
 
-- If A → X, Else if B → Y, Else → Z
-
-## Test Requirements
-
-### pgTAP: ...
-
-### Schema Contracts: ...
-
-### Frontend: ...
-
-## Performance & Safety
-
-- ...
-
-## Decision Log
-
-| Decision | Choice | Rationale |
-
-## Constraints
-
-- ...
-
-## File Impact
-
-- N files, +X / -Y lines
-
-## Expansion Checklist (if applicable)
-
-| Step | Action | Effort |
+```
+If A → use X
+Else if B → use Y
+Else → fallback Z (always safe, always returns a value)
 ```
 
 ---
 
-> **This standard transforms feature shipping into platform engineering discipline.**
-> Reference implementation: [Issue #32](https://github.com/ericsocrat/poland-food-db/issues/32).
+## Security Considerations
+
+- **Secrets**: Which secrets does this touch? How are they protected?
+- **Access control**: RLS impact? Role restrictions? `SECURITY DEFINER` usage?
+- **Data exposure**: Does any report/artifact contain PII or sensitive tokens?
+
+## Performance Considerations
+
+- Estimated runtime on current data volume
+- Index utilization
+- Read-only vs. write-locking behavior
+- Scale projection (at 2×, 10× current data)
+
+---
+
+## Acceptance Criteria
+
+Specific, checkbox-style items. Each must be independently verifiable:
+
+- [ ] Deliverable A exists and works as described
+- [ ] Deliverable B passes [specific test]
+- [ ] CI gate / workflow runs green
+- [ ] Documentation updated
+- [ ] No false positives on clean data
+- [ ] Edge cases handled (empty input, NULL, Unicode, etc.)
+
+## Test Requirements
+
+Group by layer:
+
+- **SQL / pgTAP**: ...
+- **Python**: ...
+- **Frontend (Vitest)**: ...
+- **E2E (Playwright)**: ...
+- **Edge cases**: empty tables, NULL values, Unicode, concurrent access
+- **CI integration**: manual dispatch → verify workflow completes
+
+## Monitoring Requirements (if applicable)
+
+- What to track over time (trend metrics)
+- Alert conditions (threshold → notification channel)
+- Execution time budget
+
+---
+
+## Decision Log
+
+| Decision | Choice | Rationale |
+| -------- | ------ | --------- |
+| ...      | ...    | ...       |
+
+## Rollback Plan
+
+Numbered steps to fully reverse the change:
+
+1. Revert migration: `DROP FUNCTION / DROP TABLE IF EXISTS ...`
+2. Remove workflow file / script
+3. Revert config changes
+4. **Total rollback time:** < N minutes
+5. **Data impact:** none / describe
+
+## Risks
+
+| Risk | Likelihood | Impact     | Mitigation |
+| ---- | ---------- | ---------- | ---------- |
+| ...  | Low/Med/Hi | Low/Med/Hi | ...        |
+
+## Dependencies
+
+| Issue | Relationship                  |
+| ----- | ----------------------------- |
+| #NNN  | Depends on / Blocks / Related |
+
+## Estimated Effort
+
+- **Complexity:** Small / Medium / Large
+- **Duration:** X–Y working days
+- **Breakdown:**
+  - Sub-task A: X day(s)
+  - Sub-task B: X day(s)
+  - Testing: X day(s)
+  - Documentation: X day(s)
+
+---
+
+## File Impact
+
+**N files changed, +X / -Y lines** across all phases:
+
+- N new DB migrations (X lines)
+- N new/modified test files (X lines)
+- N new/modified frontend files (X lines)
+- N CI/workflow files (X lines)
+- N documentation files (X lines)
+
+## Expansion Checklist (if applicable)
+
+| Step | Action | Effort |
+| ---- | ------ | ------ |
+
+```
+
+---
+
+> **This standard transforms issue creation into platform engineering discipline.**
+> Reference implementation: [Issue #184](https://github.com/ericsocrat/poland-food-db/issues/184) — selected as the gold standard across all 89+ repo issues for structural completeness, actionable depth, and proven implementation.
+```
