@@ -126,7 +126,8 @@ WHERE n.nspname = 'public'
     'api_get_product_profile_by_ean', -- public EAN lookup
     'api_get_ingredient_profile',   -- public ingredient lookup
     'api_get_score_history',        -- public score history
-    'api_get_product_allergens'     -- public allergen batch lookup
+    'api_get_product_allergens',     -- public allergen batch lookup
+    'api_product_provenance'         -- public product provenance/trust score (#193)
   );
 
 -- 10. anon cannot EXECUTE internal computation functions
