@@ -42,6 +42,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
   versioning convention, breaking/non-breaking classification, deprecation window tiers,
   response shape stability contract (v1), sunset checklist, and frontend migration template
 - Cross-reference API_CONTRACTS.md to versioning policy
+- Add data access pattern audit (`docs/ACCESS_AUDIT.md`) with table-by-role access
+  matrix (51 tables), RPC function access analysis, 5 audit SQL templates, quarterly
+  audit checklist, and initial audit results
 
 ### CI/CD & Infrastructure
 
