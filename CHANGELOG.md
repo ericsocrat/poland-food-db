@@ -38,6 +38,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 - Add domain boundary enforcement and ownership mapping (`docs/DOMAIN_BOUNDARIES.md`) with
   13 domain definitions, shared `products` table column governance, 6 interface contracts,
   cross-domain coupling audit, verification SQL, and naming convention guide
+- Add API deprecation and versioning policy (`docs/API_VERSIONING.md`) with function-name
+  versioning convention, breaking/non-breaking classification, deprecation window tiers,
+  response shape stability contract (v1), sunset checklist, and frontend migration template
+- Cross-reference API_CONTRACTS.md to versioning policy
 
 ### CI/CD & Infrastructure
 

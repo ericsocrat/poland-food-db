@@ -187,6 +187,7 @@ poland-food-db/
 │   ├── OBSERVABILITY.md             # Observability strategy
 │   ├── INCIDENT_RESPONSE.md         # Incident response playbook (severity, escalation, runbooks)
 │   ├── DOMAIN_BOUNDARIES.md         # Domain boundary enforcement & ownership mapping
+│   ├── API_VERSIONING.md            # API deprecation & versioning policy
 │   └── SONAR.md                     # SonarCloud configuration & quality gates
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (429 checks across 30 suites)
