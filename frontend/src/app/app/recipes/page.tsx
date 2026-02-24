@@ -86,7 +86,7 @@ export default function RecipesBrowsePage() {
       </h1>
 
       {/* ── Filters ──────────────────────────────────────────────────── */}
-      <div className="mb-4 flex flex-wrap gap-2">
+      <div className="mb-4 flex flex-wrap gap-2" data-testid="recipe-filter">
         <select
           value={category}
           onChange={(e) => setCategory(e.target.value as RecipeCategory | "")}
