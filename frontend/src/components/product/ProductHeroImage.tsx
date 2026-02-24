@@ -98,7 +98,7 @@ export function ProductHeroImage({
   }
 
   return (
-    <div className="group relative">
+    <div className="group relative" data-testid="product-image">
       <div className="relative h-72 w-full overflow-hidden rounded-xl bg-surface-muted">
         {/* Blur placeholder shown until image fully loads */}
         {!imageLoaded && (
