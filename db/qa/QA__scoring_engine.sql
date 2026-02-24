@@ -1,6 +1,7 @@
 -- ══════════════════════════════════════════════════════════════════════════
 -- QA: Canonical Scoring Engine — Integrity & Regression Tests
--- Issue: #189
+-- Issue: #189, #198
+-- 25 checks (T01-T17 scoring engine, T18-T25 formula registry)
 -- ══════════════════════════════════════════════════════════════════════════
 
 -- ─── T01: Version Registry — v3.2 is active ────────────────────────────
@@ -210,7 +211,97 @@ SELECT CASE
 END AS "T17_compute_score_grants";
 
 -- ═══════════════════════════════════════════════════════════════════════════
+-- Formula Registry Checks (Issue #198)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- ─── T18: v_formula_registry view exists ─────────────────────────────────
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1 FROM information_schema.views
+        WHERE table_schema = 'public'
+          AND table_name = 'v_formula_registry'
+    )
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T18_v_formula_registry_exists";
+
+-- ─── T19: v_formula_registry has active scoring formula ──────────────────
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1 FROM v_formula_registry
+        WHERE domain = 'scoring' AND is_active = true
+    )
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T19_registry_has_active_scoring";
+
+-- ─── T20: v_formula_registry has active search formula ───────────────────
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1 FROM v_formula_registry
+        WHERE domain = 'search' AND is_active = true
+    )
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T20_registry_has_active_search";
+
+-- ─── T21: All active formulas have fingerprints ──────────────────────────
+
+SELECT CASE
+    WHEN (
+        SELECT COUNT(*)
+        FROM v_formula_registry
+        WHERE is_active = true
+          AND fingerprint IS NULL
+    ) = 0
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T21_active_formulas_have_fingerprints";
+
+-- ─── T22: check_formula_drift() — no drift on active formulas ───────────
+
+SELECT CASE
+    WHEN (
+        SELECT COUNT(*)
+        FROM check_formula_drift()
+        WHERE status = 'drift_detected'
+    ) = 0
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T22_no_formula_drift";
+
+-- ─── T23: check_function_source_drift() — no drift on registered functions
+
+SELECT CASE
+    WHEN (
+        SELECT COUNT(*)
+        FROM check_function_source_drift()
+        WHERE status = 'drift_detected'
+    ) = 0
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T23_no_function_source_drift";
+
+-- ─── T24: formula_source_hashes has entries ──────────────────────────────
+
+SELECT CASE
+    WHEN (
+        SELECT COUNT(*)
+        FROM formula_source_hashes
+    ) >= 1
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T24_source_hashes_populated";
+
+-- ─── T25: Auto-fingerprint trigger installed on scoring_model_versions ──
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1 FROM pg_trigger
+        WHERE tgname = 'auto_fingerprint_smv'
+          AND tgrelid = 'scoring_model_versions'::regclass
+    )
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T25_auto_fingerprint_trigger_smv";
+
+-- ═══════════════════════════════════════════════════════════════════════════
 -- Summary
 -- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT 'Scoring Engine QA: 17 tests complete' AS summary;
+SELECT 'Scoring Engine QA: 25 tests complete' AS summary;

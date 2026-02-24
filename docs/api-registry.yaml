@@ -1086,6 +1086,22 @@ detect_score_drift:
   returns: table
   deprecated: false
 
+check_formula_drift:
+  domain: scoring
+  visibility: internal
+  auth: authenticated, service_role
+  returns: table(domain, formula_name, version, registered_fp, recomputed_fp, status)
+  deprecated: false
+  notes: "Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas. Returns 'match' or 'drift_detected'. Issue #198."
+
+check_function_source_drift:
+  domain: scoring
+  visibility: internal
+  auth: authenticated, service_role
+  returns: table(function_name, expected_hash, actual_hash, status)
+  deprecated: false
+  notes: "Compares registered pg_proc source hashes against actual function bodies for critical functions. Issue #198."
+
 expand_search_query:
   domain: search
   visibility: internal

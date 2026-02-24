@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(95);
+SELECT plan(101);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -149,6 +149,14 @@ SELECT has_function('public', 'compute_daily_value_pct',         'function compu
 -- ─── Ingredient Profile API (#36) ───────────────────────────────────────────
 SELECT has_function('public', 'api_get_ingredient_profile',      'function api_get_ingredient_profile exists');
 SELECT volatility_is('public', 'api_get_ingredient_profile', ARRAY['bigint','text'], 'stable', 'api_get_ingredient_profile is STABLE');
+
+-- ─── Formula Registry (#198) ─────────────────────────────────────────────
+SELECT has_table('public', 'formula_source_hashes',               'table formula_source_hashes exists');
+SELECT has_view('public', 'v_formula_registry',                   'view v_formula_registry exists');
+SELECT has_function('public', 'check_formula_drift',              'function check_formula_drift exists');
+SELECT has_function('public', 'check_function_source_drift',      'function check_function_source_drift exists');
+SELECT has_column('public', 'scoring_model_versions', 'weights_fingerprint', 'scoring_model_versions.weights_fingerprint exists');
+SELECT has_column('public', 'search_ranking_config', 'weights_fingerprint', 'search_ranking_config.weights_fingerprint exists');
 
 SELECT * FROM finish();
 ROLLBACK;
