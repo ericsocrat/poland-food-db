@@ -179,7 +179,9 @@ poland-food-db/
 │   ├── DATA_PROVENANCE.md           # Data provenance & freshness governance
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
 │   ├── DISASTER_DRILL_REPORT.md     # Disaster recovery drill report & findings
+│   ├── DOCUMENTATION_GOVERNANCE.md  # Documentation ownership, versioning, deprecation, drift prevention
 │   ├── DOMAIN_BOUNDARIES.md         # Domain boundary enforcement & ownership mapping
+│   ├── DRIFT_DETECTION.md           # 8-check drift detection catalog, severity levels, CI plan
 │   ├── EAN_VALIDATION_STATUS.md     # 997/1,025 coverage (97.3%)
 │   ├── ENVIRONMENT_STRATEGY.md      # Local/staging/production environment strategy
 │   ├── FEATURE_FLAGS.md             # Feature flag architecture & toggle registry
@@ -208,7 +210,7 @@ poland-food-db/
 │   ├── UX_IMPACT_METRICS.md         # UX measurement standard, metric catalog, SQL templates
 │   ├── UX_UI_DESIGN.md              # UI/UX guidelines
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
-│   └── api-registry.yaml            # Structured registry of all 107 functions (YAML)
+│   └── api-registry.yaml            # Structured registry of all 109 functions (YAML)
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (429 checks across 30 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
