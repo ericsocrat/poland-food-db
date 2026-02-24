@@ -1164,7 +1164,20 @@ GRANT USAGE ON SEQUENCE public.score_audit_log_id_seq             TO service_rol
 GRANT USAGE ON SEQUENCE public.score_shadow_results_id_seq        TO service_role;
 GRANT USAGE ON SEQUENCE public.score_distribution_snapshots_id_seq TO service_role;
 
--- Functions
+-- Functions: revoke default PUBLIC access, then grant explicitly
+REVOKE EXECUTE ON FUNCTION public.compute_score                    FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.rescore_batch                    FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.validate_country_profile         FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.capture_score_distribution       FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.detect_score_drift               FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.admin_scoring_versions           FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.admin_activate_scoring_version   FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.admin_rescore_batch              FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.admin_score_drift_report         FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public.api_score_history                FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public._compute_from_config             FROM PUBLIC, anon;
+REVOKE EXECUTE ON FUNCTION public._explain_from_config             FROM PUBLIC, anon;
+
 GRANT EXECUTE ON FUNCTION public.compute_score                    TO authenticated, service_role;
 GRANT EXECUTE ON FUNCTION public.rescore_batch                    TO service_role;
 GRANT EXECUTE ON FUNCTION public.validate_country_profile         TO authenticated, service_role;
