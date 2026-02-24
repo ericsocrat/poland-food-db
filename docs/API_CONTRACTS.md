@@ -2,6 +2,7 @@
 
 > **Version:** 1.0 · **Date:** 2026-02-13
 > **Stability:** Stable — these surfaces are safe for frontend consumption.
+> **Versioning & Deprecation:** See [docs/API_VERSIONING.md](API_VERSIONING.md) for breaking change protocol, sunset windows, and version strategy.
 
 ---
 
