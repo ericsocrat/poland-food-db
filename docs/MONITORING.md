@@ -106,20 +106,127 @@ Tracks active products (non-deprecated) against a ceiling of 15,000. Designed fo
 
 ## External Monitoring Setup
 
-### UptimeRobot (Free Tier)
+### UptimeRobot (Free Tier — Recommended)
 
-1. Create a new HTTP(s) monitor
-2. URL: `https://your-domain.vercel.app/api/health`
-3. Monitoring interval: 5 minutes
-4. Alert contacts: Configure email/Slack/webhook
-5. Keyword monitoring: Look for `"status":"unhealthy"` as a down condition, OR monitor for non-200 status code
+UptimeRobot provides 50 free HTTP monitors with 5-minute intervals.
 
-### cURL Smoke Test
+#### Step-by-step setup
+
+1. Create an account at <https://uptimerobot.com> (no credit card required)
+2. Go to **Dashboard → Add New Monitor**
+3. Configure the monitor:
+
+| Setting | Value |
+| ------- | ----- |
+| Monitor Type | HTTP(s) |
+| Friendly Name | `Poland Food DB — Production` |
+| URL | `https://your-domain.vercel.app/api/health` |
+| Monitoring Interval | 5 minutes |
+| Monitor Timeout | 10 seconds |
+
+4. Under **Alert Contacts**, add your preferred notification method:
+   - Email (included free)
+   - Slack webhook (included free)
+   - Discord webhook (included free)
+5. Under **Advanced Settings**:
+   - HTTP Method: `GET`
+   - Alert after: **2 consecutive failures** (avoids false-positives from transient Vercel cold-starts)
+   - HTTP status: Alert when status ≠ `200`
+6. Click **Create Monitor**
+
+#### Optional keyword monitoring
+
+Add a keyword monitor alongside the HTTP monitor:
+
+| Setting | Value |
+| ------- | ----- |
+| Monitor Type | Keyword |
+| URL | Same as above |
+| Keyword Value | `"status":"unhealthy"` |
+| Alert When | Keyword **exists** |
+
+This catches degraded-but-200 responses that the HTTP status check alone would miss.
+
+### BetterStack (Alternative)
+
+BetterStack offers a generous free tier with more granular alerting.
+
+#### Setup
+
+1. Create an account at <https://betterstack.com>
+2. Go to **Uptime → Monitors → Create Monitor**
+3. Configure:
+
+| Setting | Value |
+| ------- | ----- |
+| URL | `https://your-domain.vercel.app/api/health` |
+| Check period | 3 minutes |
+| Request timeout | 10 seconds |
+| Regions | EU West + US East (at minimum) |
+| Expected status | 200 |
+
+4. Under **On-call → Escalation Policies**, configure the escalation chain (see below)
+5. Create an incident when HTTP status ≠ 200 for 2 consecutive checks
+
+### Alert Thresholds
+
+| Condition | Threshold | Action |
+| --------- | --------- | ------ |
+| HTTP status ≠ 200 | 2 consecutive failures | Trigger alert |
+| Response time | > 5000 ms | Trigger warning |
+| Response time | > 10000 ms | Trigger critical alert |
+| Downtime duration | > 2 minutes | Escalate (see below) |
+| SSL certificate expiry | < 14 days | Email warning |
+
+### Escalation Path
+
+| Time after alert | Channel | Contact |
+| ---------------- | ------- | ------- |
+| 0 min | Email | `your-email@example.com` |
+| 5 min | Slack / Discord | `#alerts` channel webhook |
+| 15 min | Phone / SMS | `+1-XXX-XXX-XXXX` (on-call) |
+
+> **Note:** Replace placeholder contacts with actual values when configuring.
+> Phone escalation is optional — only configure if you have a paid plan that supports it.
+
+### SLA Target
+
+| Metric | Target | Budget |
+| ------ | ------ | ------ |
+| Uptime | **99.5%** | ~3.6 hours downtime / month |
+| Health endpoint response time | < 2 seconds | p95 |
+| Incident acknowledgment | < 15 minutes | During business hours |
+| Incident resolution | < 2 hours | For `unhealthy` status |
+
+> The 99.5% SLA is a **documented target**, not an enforced SLO.
+> It serves as a planning guide for monitoring frequency and escalation urgency.
+
+### Post-Deploy Verification
+
+After every deployment, the CI pipeline automatically verifies health:
+
+1. `deploy.yml` pushes migrations to Supabase
+2. Waits 30 seconds for edge functions to stabilize
+3. Curls `/api/health` and asserts HTTP 200
+4. If health check fails → deployment is marked as failed in GitHub Actions
+5. Inspect the step summary for response body details
+
+#### Manual verification
 
 ```bash
+# Quick check
 curl -s https://your-domain.vercel.app/api/health | jq '.status'
 # Expected: "healthy"
+
+# Full response
+curl -s https://your-domain.vercel.app/api/health | jq .
+
+# With timing
+curl -o /dev/null -s -w "HTTP %{http_code} in %{time_total}s\n" \
+  https://your-domain.vercel.app/api/health
 ```
+
+If unhealthy after deploy, see [Rollback Procedures](../DEPLOYMENT.md#rollback-procedures) (Issue #121).
 
 ## QA Suite
 
@@ -156,11 +263,14 @@ Both are already configured in Vercel for production.
 
 ## Escalation
 
-| Condition | Who | Action |
-| --------- | --- | ------ |
-| Status `degraded` for > 1 hour | Developer | Check MV refresh schedule, run pipeline |
-| Status `unhealthy` | Developer | Check DB connectivity, verify product count |
-| Utilization > 90% | Project lead | Plan capacity: cleanup deprecated products or upgrade Supabase tier |
+| Condition | Who | Action | SLA |
+| --------- | --- | ------ | --- |
+| Status `degraded` for > 1 hour | Developer | Check MV refresh schedule, run pipeline | Acknowledge < 15 min |
+| Status `unhealthy` | Developer | Check DB connectivity, verify product count | Resolve < 2 hours |
+| Utilization > 90% | Project lead | Plan capacity: cleanup deprecated products or upgrade Supabase tier | Plan within 24 hours |
+| Post-deploy health check fails | Developer | Inspect step summary, consider rollback | Immediate |
+
+> See [Alert Thresholds](#alert-thresholds) and [SLA Target](#sla-target) above for numeric targets.
 
 ## Files
 
@@ -168,6 +278,9 @@ Both are already configured in Vercel for production.
 | ---- | ------- |
 | `supabase/migrations/20260222000400_health_check_monitoring.sql` | RPC function |
 | `frontend/src/app/api/health/route.ts` | Next.js API route |
+| `frontend/src/app/api/health/route.test.ts` | Unit tests (15 tests) |
+| `frontend/src/app/api/health/health-contract.test.ts` | Zod contract test (16 tests) |
 | `frontend/src/app/app/admin/monitoring/page.tsx` | Admin dashboard |
 | `frontend/src/lib/supabase/service.ts` | Service-role client |
+| `.github/workflows/deploy.yml` | Deploy workflow with post-deploy health check |
 | `db/qa/QA__monitoring.sql` | QA suite (7 checks) |
