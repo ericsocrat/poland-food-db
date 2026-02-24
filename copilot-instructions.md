@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,304 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 444 checks across 31 suites + 23 negative validation tests — all passing
+> **QA:** 460 checks across 33 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -213,7 +213,7 @@ poland-food-db/
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
 │   └── api-registry.yaml            # Structured registry of all 109 functions (YAML)
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (444 checks across 31 suites)
+├── RUN_QA.ps1                       # QA test runner (460 checks across 33 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -278,7 +278,7 @@ poland-food-db/
 │   ├── pr-gate.yml                  # Lint → Typecheck → Build → Playwright E2E
 │   ├── pr-title-lint.yml            # PR title conventional-commit validation (all PRs)
 │   ├── main-gate.yml                # Build → Unit tests + coverage → SonarCloud
-│   ├── qa.yml                       # Schema → Pipelines → QA (436) → Sanity
+│   ├── qa.yml                       # Schema → Pipelines → QA (446) → Sanity
 │   └── sync-cloud-db.yml            # Remote DB sync
 ├── .commitlintrc.json               # Conventional Commits config (12 types, 24 scopes)
 ├── sonar-project.properties         # SonarCloud configuration
@@ -314,7 +314,7 @@ poland-food-db/
 | `user_saved_searches`     | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                          |
 | `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                            |
 | `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, status ('pending'/'approved'/'rejected'). Admin-reviewable                                           |
-| `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read              |
+| `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read               |
 
 ### Products Columns (key)
 
@@ -538,7 +538,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (436 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (31 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (446 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (33 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -676,7 +676,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Full Playwright E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (436 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (446 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
@@ -710,7 +710,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 436 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 29 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 446 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 29 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -786,9 +786,11 @@ At the end of every PR-like change, include a **Verification** section:
 | Monitoring & Health      | `QA__monitoring.sql`                |      7 | Yes       |
 | Governance Drift         | `QA__governance_drift.sql`          |      8 | Yes       |
 | Scoring Determinism      | `QA__scoring_determinism.sql`       |     15 | Yes       |
+| Multi-Country Consistency| `QA__multi_country_consistency.sql` |     10 | Yes       |
+| Performance Regression   | `QA__performance_regression.sql`    |      6 | No        |
 | **Negative Validation**  | `TEST__negative_checks.sql`         |     29 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **444/444 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **460/460 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
@@ -925,7 +927,7 @@ security(rls): lock down product_submissions to authenticated users
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 444/444 pass
+1. `.\RUN_QA.ps1` — 460/460 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed
@@ -1272,7 +1274,7 @@ Before a feature is considered complete, verify against all CI gates:
 | Gate                | Command                               | Expected                        |
 | ------------------- | ------------------------------------- | ------------------------------- |
 | Pipeline structure  | `python check_pipeline_structure.py`  | 0 errors                        |
-| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 436) |
+| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 446) |
 | Negative tests      | `.\RUN_NEGATIVE_TESTS.ps1`            | All caught (currently 29)       |
 | pgTAP tests         | `supabase test db`                    | All pass                        |
 | TypeScript          | `cd frontend && npx tsc --noEmit`     | 0 errors                        |

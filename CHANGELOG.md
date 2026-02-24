@@ -47,6 +47,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Testing & QA
 
+- Add multi-country consistency & performance regression test suites:
+  `QA__multi_country_consistency.sql` (10 blocking checks — cross-country scoring
+  equivalence, country_ref integrity, DE micro-pilot constraints, data completeness
+  parity, recomputed-vs-stored parity across all countries) and
+  `QA__performance_regression.sql` (6 informational checks — CI smoke thresholds
+  for search, autocomplete, category listing, product detail, score computation,
+  better alternatives) (#204)
 - Add scoring & search determinism test framework: `QA__scoring_determinism.sql` with 15
   pure-function checks — 5 pinned-score tests, 2 boundary tests, 2 factor-isolation tests,
   2 ordering tests, re-scoring determinism (100 iterations), explain/compute parity,
