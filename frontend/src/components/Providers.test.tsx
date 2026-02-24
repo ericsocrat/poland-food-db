@@ -7,6 +7,16 @@ vi.mock("sonner", () => ({
   Toaster: () => <div data-testid="toaster" />,
 }));
 
+// Mock Supabase client used by FlagProvider
+vi.mock("@/lib/supabase/client", () => ({
+  createClient: () => ({
+    channel: () => ({
+      on: () => ({ subscribe: () => ({ unsubscribe: vi.fn() }) }),
+    }),
+    removeChannel: vi.fn(),
+  }),
+}));
+
 describe("Providers", () => {
   it("renders children", () => {
     render(
