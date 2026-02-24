@@ -204,14 +204,21 @@ poland-food-db/
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
 │   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
 │   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
-│   ├── RESEARCH_WORKFLOW.md # Step-by-step data collection process
+│   ├── RESEARCH_WORKFLOW.md # Data collection lifecycle (manual + automated OFF pipeline)
 │   ├── VIEWING_AND_TESTING.md # Full viewing & testing guide
-│   ├── COUNTRY_EXPANSION_GUIDE.md # Future multi-country rules
-│   ├── EAN_EXPANSION_PLAN.md  # EAN coverage strategy
+│   ├── COUNTRY_EXPANSION_GUIDE.md # Multi-country rules (PL active, DE micro-pilot)
 │   ├── EAN_VALIDATION_STATUS.md # Current EAN validation status
 │   ├── UX_UI_DESIGN.md      # Production-ready UX specification
 │   ├── ENVIRONMENT_STRATEGY.md # Local / Staging / Production env strategy
-│   └── STAGING_SETUP.md     # Step-by-step staging setup guide
+│   ├── STAGING_SETUP.md     # Step-by-step staging setup guide
+│   ├── PRODUCTION_DATA.md   # Production data infrastructure audit
+│   ├── DATA_INTEGRITY_AUDITS.md # Ongoing data integrity audit framework
+│   ├── CI_ARCHITECTURE_PROPOSAL.md # CI pipeline design
+│   ├── FRONTEND_API_MAP.md  # Frontend ↔ API mapping reference
+│   ├── LABELS.md            # Labeling conventions
+│   ├── MONITORING.md        # Runtime monitoring
+│   ├── OBSERVABILITY.md     # Observability strategy
+│   └── SONAR.md             # SonarCloud configuration & quality gates
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
 ├── RUN_QA.ps1               # Standalone test runner (421 checks)
@@ -449,16 +456,40 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 
 ## 📚 Documentation
 
-- [API_CONTRACTS.md](docs/API_CONTRACTS.md) — API surface contracts (6 RPC endpoints + 3 views)
-- [SECURITY.md](docs/SECURITY.md) — Threat model, access control architecture, RPC-only model
-- [UX_UI_DESIGN.md](docs/UX_UI_DESIGN.md) — Production-ready UX spec (score disambiguation, API mapping, misinterpretation defense)
-- [PERFORMANCE_REPORT.md](docs/PERFORMANCE_REPORT.md) — Performance audit & scale projections to 50K products
-- [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
+### Core
+
 - [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md) — Complete v3.2 algorithm specification
+- [API_CONTRACTS.md](docs/API_CONTRACTS.md) — API surface contracts (9 RPC endpoints)
 - [DATA_SOURCES.md](docs/DATA_SOURCES.md) — Multi-source data hierarchy & validation workflow
-- [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) — Step-by-step data collection process
-- [COUNTRY_EXPANSION_GUIDE.md](docs/COUNTRY_EXPANSION_GUIDE.md) — Future multi-country rules
-- [FULL_PROJECT_AUDIT.md](docs/FULL_PROJECT_AUDIT.md) — Comprehensive project audit & checklist
+- [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) — Data collection lifecycle (manual + automated OFF pipeline)
+- [UX_UI_DESIGN.md](docs/UX_UI_DESIGN.md) — Production-ready UX spec (score disambiguation, API mapping)
+- [FRONTEND_API_MAP.md](docs/FRONTEND_API_MAP.md) — Frontend ↔ API mapping reference
+
+### Operations
+
+- [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
+- [PRODUCTION_DATA.md](docs/PRODUCTION_DATA.md) — Production data infrastructure audit
+- [STAGING_SETUP.md](docs/STAGING_SETUP.md) — Step-by-step staging environment setup
+- [ENVIRONMENT_STRATEGY.md](docs/ENVIRONMENT_STRATEGY.md) — Local / Staging / Production environment strategy
+- [COUNTRY_EXPANSION_GUIDE.md](docs/COUNTRY_EXPANSION_GUIDE.md) — Multi-country rules (PL active, DE micro-pilot)
+- [EAN_VALIDATION_STATUS.md](docs/EAN_VALIDATION_STATUS.md) — EAN coverage by category (97.3%)
+
+### Quality & Security
+
+- [SECURITY.md](SECURITY.md) — Threat model, access control, RPC-only model, vulnerability tracking
+- [DATA_INTEGRITY_AUDITS.md](docs/DATA_INTEGRITY_AUDITS.md) — Ongoing data integrity audit framework
+- [PERFORMANCE_REPORT.md](docs/PERFORMANCE_REPORT.md) — Performance audit & scale projections to 50K products
+
+### CI / DevOps
+
+- [CI_ARCHITECTURE_PROPOSAL.md](docs/CI_ARCHITECTURE_PROPOSAL.md) — CI pipeline design
+- [MONITORING.md](docs/MONITORING.md) — Runtime monitoring
+- [OBSERVABILITY.md](docs/OBSERVABILITY.md) — Observability strategy
+- [SONAR.md](docs/SONAR.md) — SonarCloud configuration & quality gates
+- [LABELS.md](docs/LABELS.md) — GitHub label conventions
+
+### Internal
+
 - `copilot-instructions.md` — AI agent context & project rules
 
 ---

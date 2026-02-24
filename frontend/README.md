@@ -1,12 +1,12 @@
 # FoodDB Frontend
 
-Next.js 14 (App Router) + TypeScript + Tailwind CSS frontend for the Poland Food Database.
+Next.js 15 (App Router) + TypeScript + Tailwind CSS frontend for the Poland Food Database.
 
 ## Tech Stack
 
 | Layer         | Choice                                          |
 | ------------- | ----------------------------------------------- |
-| Framework     | Next.js 14 (App Router)                         |
+| Framework     | Next.js 15 (App Router)                         |
 | Language      | TypeScript (strict)                             |
 | Styling       | Tailwind CSS (custom `brand` palette)           |
 | Auth          | `@supabase/ssr` (browser + server + middleware) |

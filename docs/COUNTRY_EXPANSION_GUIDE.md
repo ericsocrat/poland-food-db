@@ -1,7 +1,7 @@
 # Country Expansion Guide
 
-> **Last updated:** 2026-02-13
-> **Current status:** Poland (`PL`) is the only active country.
+> **Last updated:** 2026-02-22
+> **Current status:** Poland (`PL`) is fully active (1,025 products, 20 categories). Germany (`DE`) is active as a micro-pilot (51 chips products).
 > **Technical blockers resolved.** See Section 2.5 for go/no-go checklist.
 
 ---
@@ -221,14 +221,14 @@ These changes are **not needed now** but may be required during expansion:
 
 This is a **suggested** order based on data availability, market size, and Nutri-Score adoption:
 
-| Phase | Country | Code | Rationale                                          | Status     |
-| ----- | ------- | ---- | -------------------------------------------------- | ---------- |
-| 1     | Poland  | PL   | Founder's market; full access to labels            | **Active** |
-| 2     | Germany | DE   | Largest EU market; strong Open Food Facts coverage | Planned    |
-| 3     | France  | FR   | Nutri-Score origin country; best data quality      | Planned    |
-| 4     | Spain   | ES   | Large market; growing Nutri-Score adoption         | Future     |
-| 5     | Italy   | IT   | Complex food landscape; controversial with NS      | Future     |
-| 6     | Czechia | CZ   | Regional neighbor; similar retail landscape to PL  | Future     |
+| Phase | Country | Code | Rationale                                          | Status                             |
+| ----- | ------- | ---- | -------------------------------------------------- | ---------------------------------- |
+| 1     | Poland  | PL   | Founder's market; full access to labels            | **Active**                         |
+| 2     | Germany | DE   | Largest EU market; strong Open Food Facts coverage | **Active** (micro-pilot: 51 chips) |
+| 3     | France  | FR   | Nutri-Score origin country; best data quality      | Planned                            |
+| 4     | Spain   | ES   | Large market; growing Nutri-Score adoption         | Future                             |
+| 5     | Italy   | IT   | Complex food landscape; controversial with NS      | Future                             |
+| 6     | Czechia | CZ   | Regional neighbor; similar retail landscape to PL  | Future                             |
 
 **This roadmap is non-binding.** Expansion happens only when prerequisites in Section 2 are fully met.
 

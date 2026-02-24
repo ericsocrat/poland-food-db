@@ -1,8 +1,9 @@
 # Research Workflow
 
-> **Last updated:** 2026-02-10
-> **Purpose:** Defines exactly how product data is researched, collected, validated, and entered into the database.
+> **Last updated:** 2026-02-22
+> **Purpose:** Defines how product data is researched, collected, validated, and entered — both manually and via the automated OFF pipeline.
 > **Audience:** AI agent (Copilot) and human contributors.
+> **Related:** [DATA_SOURCES.md](DATA_SOURCES.md) (source hierarchy), [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md) (multi-country rules)
 
 ---
 
@@ -211,7 +212,7 @@ When using retailer websites:
 | 2    | Verify the product name matches what's on shelves                 |
 | 3    | Extract nutrition table (per 100g — NOT per serving unless noted) |
 | 4    | Check if ingredient list is provided                              |
-| 5    | Record `source_url` / `source_ean` on the `products` row         |
+| 5    | Record `source_url` / `source_ean` on the `products` row          |
 | 6    | Flag any discrepancy with label data in a SQL comment             |
 
 **Warning:** Retailer websites sometimes show per-serving values without clearly labeling them. Always confirm the basis is per 100g.
@@ -310,11 +311,11 @@ Always store as **salt**. If converting, add a SQL comment.
 
 For each product batch, create or update these pipeline files:
 
-| Step | File                                      | What it does                          |
-| ---- | ----------------------------------------- | ------------------------------------- |
-| 01   | `PIPELINE__<cat>__01_insert_products.sql` | Upsert product identity rows          |
-| 03   | `PIPELINE__<cat>__03_add_nutrition.sql`   | Insert nutrition facts                |
-| 04   | `PIPELINE__<cat>__04_scoring.sql`         | Compute all scores, flags, confidence |
+| Step | File                                        | What it does                            |
+| ---- | ------------------------------------------- | --------------------------------------- |
+| 01   | `PIPELINE__<cat>__01_insert_products.sql`   | Upsert product identity rows            |
+| 03   | `PIPELINE__<cat>__03_add_nutrition.sql`     | Insert nutrition facts                  |
+| 04   | `PIPELINE__<cat>__04_scoring.sql`           | Compute all scores, flags, confidence   |
 | 05   | `PIPELINE__<cat>__05_source_provenance.sql` | Set source_type, source_url, source_ean |
 
 ### 6.2 SQL Comment Standards
@@ -448,7 +449,73 @@ Scoring version: v3.2
 
 ---
 
-## 9. Edge Cases & Decision Rules
+## 9. Automated Pipeline (OFF Fetcher)
+
+> **For batch acquisition** use the `fetch_off_category.py` automated pipeline
+> instead of the manual phases above. The manual workflow (Phases 1–8) is still
+> the reference for individual products or when physical-label data is needed.
+
+### Quick Reference
+
+```
+┌─────────────┐    ┌──────────────┐    ┌──────────────┐    ┌───────────┐
+│ Discover    │───>│ Fetch from   │───>│ Generate     │───>│ Run       │
+│ EANs        │    │ OFF API      │    │ pipeline SQL │    │ pipeline  │
+└─────────────┘    └──────────────┘    └──────────────┘    └───────────┘
+        │                                                       │
+        │   ┌──────────────┐    ┌──────────────┐                │
+        └──>│ Enrich       │───>│ Validate     │<───────────────┘
+            │ ingredients  │    │ (QA checks)  │
+            └──────────────┘    └──────────────┘
+```
+
+**Two acquisition modes:**
+
+| Mode       | Flag                    | Best for                  | Reliability                     |
+| ---------- | ----------------------- | ------------------------- | ------------------------------- |
+| EAN list   | `--eans` / `--ean-file` | Known products            | High — per-product API lookup   |
+| OFF search | `--off-search`          | Discovery of new products | Medium — sparse country tagging |
+
+### Step-by-Step
+
+1. **Collect EANs** — store visits, retailer websites, or OFF browse
+2. **Dry run** — `python fetch_off_category.py --country PL --category Chips --ean-file eans/chips.txt --dry-run`
+3. **Generate SQL** — remove `--dry-run` to create the 4-step pipeline in `db/pipelines/<category>/`
+4. **Run pipeline** — `.\RUN_LOCAL.ps1 -Category <folder>`
+5. **Enrich** — `python enrich_ingredients.py` (ingredients + allergens)
+6. **Validate** — `.\RUN_QA.ps1` (421 checks across 30 suites must pass)
+
+### Generated Pipeline Files
+
+| File                                        | Purpose                                 |
+| ------------------------------------------- | --------------------------------------- |
+| `PIPELINE__<cat>__01_insert_products.sql`   | Product upsert with deprecation         |
+| `PIPELINE__<cat>__03_add_nutrition.sql`     | Nutrition facts insert                  |
+| `PIPELINE__<cat>__04_scoring.sql`           | Nutri-Score + NOVA + `score_category()` |
+| `PIPELINE__<cat>__05_source_provenance.sql` | Source tracking (OFF API)               |
+
+### Adding a New Category
+
+1. Register in `category_ref` via migration
+2. Collect EANs → run fetcher → review SQL → run pipeline → validate
+3. Run `python check_pipeline_structure.py` to verify folder structure
+
+### Adding a New Country
+
+Use `--country XX` flag. See [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md) for full prerequisites.
+
+### Troubleshooting
+
+| Problem                  | Solution                                                              |
+| ------------------------ | --------------------------------------------------------------------- |
+| EAN not found on OFF     | Add manually via the manual workflow (Phases 1–8)                     |
+| Wrong brand name         | OFF splits by comma — first brand used. Edit SQL manually             |
+| Missing Nutri-Score      | Scored as `UNKNOWN` — `score_category()` computes from nutrition      |
+| `--off-search` returns 0 | Try different tags (e.g., `en:crisps` vs `en:chips`), or use EAN mode |
+
+---
+
+## 10. Edge Cases & Decision Rules
 
 ### 9.1 Product Variants
 
@@ -481,7 +548,7 @@ When no physical label or verified image is available:
 
 ---
 
-## 10. Research Checklist Template
+## 11. Research Checklist Template
 
 Use this checklist for every product batch:
 

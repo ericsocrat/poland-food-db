@@ -25,58 +25,58 @@
 
 ### 1.1 Project Configuration
 
-| Setting             | Value                          |
-| ------------------- | ------------------------------ |
-| Project ID (local)  | `poland-food-db`               |
-| Project Ref (remote)| `uskvezwftkkudvksmken`         |
-| DB Host (remote)    | `db.uskvezwftkkudvksmken.supabase.co` |
-| DB Port (remote)    | `5432`                         |
-| DB Port (local)     | `54322`                        |
-| DB Name             | `postgres`                     |
-| DB User             | `postgres`                     |
-| PostgreSQL Version  | `17`                           |
-| Pooler              | Enabled, `transaction` mode, pool size 20, max 100 clients |
-| Docker Container    | `supabase_db_poland-food-db`   |
+| Setting              | Value                                                      |
+| -------------------- | ---------------------------------------------------------- |
+| Project ID (local)   | `poland-food-db`                                           |
+| Project Ref (remote) | `uskvezwftkkudvksmken`                                     |
+| DB Host (remote)     | `db.uskvezwftkkudvksmken.supabase.co`                      |
+| DB Port (remote)     | `5432`                                                     |
+| DB Port (local)      | `54322`                                                    |
+| DB Name              | `postgres`                                                 |
+| DB User              | `postgres`                                                 |
+| PostgreSQL Version   | `17`                                                       |
+| Pooler               | Enabled, `transaction` mode, pool size 20, max 100 clients |
+| Docker Container     | `supabase_db_poland-food-db`                               |
 
 ### 1.2 Migration Inventory
 
-**Location:** `supabase/migrations/` — **74 migration files**, append-only.
+**Location:** `supabase/migrations/` — **124 migration files**, append-only.
 
 **Naming convention:** `YYYYMMDDHHMMSS_description.sql` (Supabase CLI timestamps). Files are applied in lexicographic sort order.
 
 **Migration timeline:**
 
-| Date Range                | Migrations | Theme                                 |
-| ------------------------- | ---------- | ------------------------------------- |
-| 2026-02-07 (000100–000501)| 6          | Schema creation, baseline, chip metadata, uniformity, scoring function |
-| 2026-02-08 (000100)       | 1          | EAN column + view update              |
-| 2026-02-09 (000100)       | 1          | Seed functions & metadata             |
-| 2026-02-10 (000100–003100)| 22         | Major phase: dedupe, normalization, ingredients, nutrition, API surfaces, confidence, performance |
-| 2026-02-11 (000100–000700)| 7          | Cleanup: concern reasons, secondary sources, synthetic cleanup, ingredient ref, drop columns |
-| 2026-02-12 (000100–000200)| 2          | Schema consolidation (merge 5 tables into fewer), scoring procedure |
-| 2026-02-13 (000100–200500)| 25         | Allergens, brands, security hardening, API versioning, scale guardrails, country expansion, DE pilot, auth, category overview |
-| 2026-02-14 (000100–000200)| 2          | Data confidence reporting, health profiles |
+| Date Range                 | Migrations | Theme                                                                                                                         |
+| -------------------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| 2026-02-07 (000100–000501) | 6          | Schema creation, baseline, chip metadata, uniformity, scoring function                                                        |
+| 2026-02-08 (000100)        | 1          | EAN column + view update                                                                                                      |
+| 2026-02-09 (000100)        | 1          | Seed functions & metadata                                                                                                     |
+| 2026-02-10 (000100–003100) | 22         | Major phase: dedupe, normalization, ingredients, nutrition, API surfaces, confidence, performance                             |
+| 2026-02-11 (000100–000700) | 7          | Cleanup: concern reasons, secondary sources, synthetic cleanup, ingredient ref, drop columns                                  |
+| 2026-02-12 (000100–000200) | 2          | Schema consolidation (merge 5 tables into fewer), scoring procedure                                                           |
+| 2026-02-13 (000100–200500) | 25         | Allergens, brands, security hardening, API versioning, scale guardrails, country expansion, DE pilot, auth, category overview |
+| 2026-02-14 (000100–000200) | 2          | Data confidence reporting, health profiles                                                                                    |
 
 **Key migrations by purpose:**
 
-| Migration | Purpose |
-| --------- | ------- |
-| `20260207000100_create_schema.sql` | Schema setup, `auth.uid()` function, extensions |
-| `20260207000200_baseline.sql` | Identity columns, unique constraints, indexes |
-| `20260210000600_add_check_constraints.sql` | 24 CHECK constraints for domain enforcement |
-| `20260210001300_ingredient_normalization.sql` | 4 new tables: `ingredient_ref`, `product_ingredient`, etc. |
-| `20260210002800_api_surfaces.sql` | All API views + RPC functions + `pg_trgm` search |
-| `20260210002900_confidence_scoring.sql` | Composite confidence score (0–100) + materialized view |
-| `20260210003000_performance_guardrails.sql` | `refresh_all_materialized_views()`, staleness check |
-| `20260212000100_consolidate_schema.sql` | Major consolidation: eliminated `servings`, `product_sources`, merged allergens, inlined scores |
-| `20260213001000_security_hardening.sql` | RLS on all 9 tables, grant lockdown, `SECURITY DEFINER` on API functions |
-| `20260213001100_api_contract_versioning.sql` | `api_version: "1.0"` in all API responses |
-| `20260213001200_scale_guardrails.sql` | Statement timeouts (5s for API roles), limit clamping, country CHECK relaxation |
-| `20260213001400_country_expansion_readiness.sql` | Multi-country API filtering, country-isolated alternatives/scoring |
-| `20260213200100_add_de_country_ref.sql` | Germany added to `country_ref` (initially inactive) |
-| `20260213200300_activate_de.sql` | Germany activated after micro-pilot validation (51 chips products) |
-| `20260213200400_auth_only_platform.sql` | Auth-only platform configuration |
-| `20260214000200_health_profiles.sql` | `user_health_profiles` table + CRUD RPCs + `compute_health_warnings()` |
+| Migration                                        | Purpose                                                                                         |
+| ------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `20260207000100_create_schema.sql`               | Schema setup, `auth.uid()` function, extensions                                                 |
+| `20260207000200_baseline.sql`                    | Identity columns, unique constraints, indexes                                                   |
+| `20260210000600_add_check_constraints.sql`       | 24 CHECK constraints for domain enforcement                                                     |
+| `20260210001300_ingredient_normalization.sql`    | 4 new tables: `ingredient_ref`, `product_ingredient`, etc.                                      |
+| `20260210002800_api_surfaces.sql`                | All API views + RPC functions + `pg_trgm` search                                                |
+| `20260210002900_confidence_scoring.sql`          | Composite confidence score (0–100) + materialized view                                          |
+| `20260210003000_performance_guardrails.sql`      | `refresh_all_materialized_views()`, staleness check                                             |
+| `20260212000100_consolidate_schema.sql`          | Major consolidation: eliminated `servings`, `product_sources`, merged allergens, inlined scores |
+| `20260213001000_security_hardening.sql`          | RLS on all 9 tables, grant lockdown, `SECURITY DEFINER` on API functions                        |
+| `20260213001100_api_contract_versioning.sql`     | `api_version: "1.0"` in all API responses                                                       |
+| `20260213001200_scale_guardrails.sql`            | Statement timeouts (5s for API roles), limit clamping, country CHECK relaxation                 |
+| `20260213001400_country_expansion_readiness.sql` | Multi-country API filtering, country-isolated alternatives/scoring                              |
+| `20260213200100_add_de_country_ref.sql`          | Germany added to `country_ref` (initially inactive)                                             |
+| `20260213200300_activate_de.sql`                 | Germany activated after micro-pilot validation (51 chips products)                              |
+| `20260213200400_auth_only_platform.sql`          | Auth-only platform configuration                                                                |
+| `20260214000200_health_profiles.sql`             | `user_health_profiles` table + CRUD RPCs + `compute_health_warnings()`                          |
 
 ### 1.3 Seed File
 
@@ -84,46 +84,46 @@
 
 ### 1.4 Database Tables (10 base tables)
 
-| Table                   | Primary Key                         | Rows (audit) | Purpose                          |
-| ----------------------- | ----------------------------------- | ------------ | -------------------------------- |
-| `products`              | `product_id` (identity)             | 1,063 (1,025 active) | Product identity, scores, flags |
-| `nutrition_facts`       | `product_id`                        | 1,032        | Per-100g nutrition data           |
-| `ingredient_ref`        | `ingredient_id` (identity)          | 2,740        | Canonical ingredient dictionary   |
-| `product_ingredient`    | `(product_id, ingredient_id, pos)`  | 12,892       | Product ↔ ingredient junction     |
-| `product_allergen_info` | `(product_id, tag, type)`           | 2,527        | Allergens + traces                |
-| `country_ref`           | `country_code` (text)               | 2            | PL (active), DE (active)         |
-| `category_ref`          | `category` (text)                   | 20           | Category master list              |
-| `nutri_score_ref`       | `label` (text)                      | 7            | Nutri-Score definitions           |
-| `concern_tier_ref`      | `tier` (integer)                    | 4            | EFSA ingredient concern tiers     |
-| `user_preferences`      | per-user                            | per-user     | RLS-scoped preferences            |
-| `user_health_profiles`  | `profile_id` (uuid)                 | per-user     | Health profiles (Phase 5)         |
+| Table                   | Primary Key                        | Rows (audit)         | Purpose                         |
+| ----------------------- | ---------------------------------- | -------------------- | ------------------------------- |
+| `products`              | `product_id` (identity)            | 1,063 (1,025 active) | Product identity, scores, flags |
+| `nutrition_facts`       | `product_id`                       | 1,032                | Per-100g nutrition data         |
+| `ingredient_ref`        | `ingredient_id` (identity)         | 2,740                | Canonical ingredient dictionary |
+| `product_ingredient`    | `(product_id, ingredient_id, pos)` | 12,892               | Product ↔ ingredient junction   |
+| `product_allergen_info` | `(product_id, tag, type)`          | 2,527                | Allergens + traces              |
+| `country_ref`           | `country_code` (text)              | 2                    | PL (active), DE (active)        |
+| `category_ref`          | `category` (text)                  | 20                   | Category master list            |
+| `nutri_score_ref`       | `label` (text)                     | 7                    | Nutri-Score definitions         |
+| `concern_tier_ref`      | `tier` (integer)                   | 4                    | EFSA ingredient concern tiers   |
+| `user_preferences`      | per-user                           | per-user             | RLS-scoped preferences          |
+| `user_health_profiles`  | `profile_id` (uuid)                | per-user             | Health profiles (Phase 5)       |
 
 ### 1.5 Views & Materialized Views
 
-| View/MV | Type | Purpose |
-| ------- | ---- | ------- |
-| `v_master` | View | Flat denormalized join: products → nutrition → ingredients → allergens. Primary internal query surface |
-| `v_api_category_overview` | View | Dashboard stats per category (product_count, score stats, display metadata) |
-| `v_product_confidence` | Materialized View | Confidence scores for all active products (unique index on `product_id`) |
-| `mv_ingredient_frequency` | Materialized View | Ingredient frequency analytics |
+| View/MV                   | Type              | Purpose                                                                                                |
+| ------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------ |
+| `v_master`                | View              | Flat denormalized join: products → nutrition → ingredients → allergens. Primary internal query surface |
+| `v_api_category_overview` | View              | Dashboard stats per category (product_count, score stats, display metadata)                            |
+| `v_product_confidence`    | Materialized View | Confidence scores for all active products (unique index on `product_id`)                               |
+| `mv_ingredient_frequency` | Materialized View | Ingredient frequency analytics                                                                         |
 
 ### 1.6 Key Functions & Procedures
 
-| Function | Purpose |
-| -------- | ------- |
-| `compute_unhealthiness_v32()` | 9-factor weighted scoring formula (1–100) |
-| `explain_score_v32()` | JSONB score breakdown |
-| `score_category()` | Consolidated scoring procedure (concern defaults → unhealthiness → flags → confidence) |
-| `compute_data_confidence()` | Composite confidence score (0-100) with 6 components |
-| `compute_data_completeness()` | 15-checkpoint field-coverage function |
-| `api_product_detail()` | Single product structured JSONB |
-| `api_category_listing()` | Paged category browse with sort + pagination |
-| `api_search_products()` | Full-text + trigram search (pg_trgm) |
-| `api_score_explanation()` | Human-readable score breakdown + category context |
-| `api_better_alternatives()` | Healthier substitutes wrapper |
-| `refresh_all_materialized_views()` | Concurrent MV refresh with timing report |
-| `mv_staleness_check()` | MV freshness reporting |
-| `compute_health_warnings()` | Per-product health warnings based on user profile |
+| Function                           | Purpose                                                                                |
+| ---------------------------------- | -------------------------------------------------------------------------------------- |
+| `compute_unhealthiness_v32()`      | 9-factor weighted scoring formula (1–100)                                              |
+| `explain_score_v32()`              | JSONB score breakdown                                                                  |
+| `score_category()`                 | Consolidated scoring procedure (concern defaults → unhealthiness → flags → confidence) |
+| `compute_data_confidence()`        | Composite confidence score (0-100) with 6 components                                   |
+| `compute_data_completeness()`      | 15-checkpoint field-coverage function                                                  |
+| `api_product_detail()`             | Single product structured JSONB                                                        |
+| `api_category_listing()`           | Paged category browse with sort + pagination                                           |
+| `api_search_products()`            | Full-text + trigram search (pg_trgm)                                                   |
+| `api_score_explanation()`          | Human-readable score breakdown + category context                                      |
+| `api_better_alternatives()`        | Healthier substitutes wrapper                                                          |
+| `refresh_all_materialized_views()` | Concurrent MV refresh with timing report                                               |
+| `mv_staleness_check()`             | MV freshness reporting                                                                 |
+| `compute_health_warnings()`        | Per-product health warnings based on user profile                                      |
 
 ---
 
@@ -133,29 +133,29 @@
 
 **21 pipeline folders** under `db/pipelines/`, covering **20 logical food categories** + 1 country-variant:
 
-| # | Folder | Country | Category |
-|---|--------|---------|----------|
-| 1 | `alcohol/` | PL | Alcohol |
-| 2 | `baby/` | PL | Baby |
-| 3 | `bread/` | PL | Bread |
-| 4 | `breakfast-grain-based/` | PL | Breakfast & Grain-Based |
-| 5 | `canned-goods/` | PL | Canned Goods |
-| 6 | `cereals/` | PL | Cereals |
-| 7 | `chips-de/` | DE | Chips (Germany) |
-| 8 | `chips-pl/` | PL | Chips (Poland) |
-| 9 | `condiments/` | PL | Condiments |
-| 10 | `dairy/` | PL | Dairy |
-| 11 | `drinks/` | PL | Drinks |
-| 12 | `frozen-prepared/` | PL | Frozen & Prepared |
-| 13 | `instant-frozen/` | PL | Instant & Frozen |
-| 14 | `meat/` | PL | Meat |
-| 15 | `nuts-seeds-legumes/` | PL | Nuts, Seeds & Legumes |
-| 16 | `plant-based-alternatives/` | PL | Plant-Based & Alternatives |
-| 17 | `sauces/` | PL | Sauces |
-| 18 | `seafood-fish/` | PL | Seafood & Fish |
-| 19 | `snacks/` | PL | Snacks |
-| 20 | `sweets/` | PL | Sweets |
-| 21 | `zabka/` | PL | Żabka (store-specific) |
+| #   | Folder                      | Country | Category                   |
+| --- | --------------------------- | ------- | -------------------------- |
+| 1   | `alcohol/`                  | PL      | Alcohol                    |
+| 2   | `baby/`                     | PL      | Baby                       |
+| 3   | `bread/`                    | PL      | Bread                      |
+| 4   | `breakfast-grain-based/`    | PL      | Breakfast & Grain-Based    |
+| 5   | `canned-goods/`             | PL      | Canned Goods               |
+| 6   | `cereals/`                  | PL      | Cereals                    |
+| 7   | `chips-de/`                 | DE      | Chips (Germany)            |
+| 8   | `chips-pl/`                 | PL      | Chips (Poland)             |
+| 9   | `condiments/`               | PL      | Condiments                 |
+| 10  | `dairy/`                    | PL      | Dairy                      |
+| 11  | `drinks/`                   | PL      | Drinks                     |
+| 12  | `frozen-prepared/`          | PL      | Frozen & Prepared          |
+| 13  | `instant-frozen/`           | PL      | Instant & Frozen           |
+| 14  | `meat/`                     | PL      | Meat                       |
+| 15  | `nuts-seeds-legumes/`       | PL      | Nuts, Seeds & Legumes      |
+| 16  | `plant-based-alternatives/` | PL      | Plant-Based & Alternatives |
+| 17  | `sauces/`                   | PL      | Sauces                     |
+| 18  | `seafood-fish/`             | PL      | Seafood & Fish             |
+| 19  | `snacks/`                   | PL      | Snacks                     |
+| 20  | `sweets/`                   | PL      | Sweets                     |
+| 21  | `zabka/`                    | PL      | Żabka (store-specific)     |
 
 **Countries:**
 - **Poland (PL):** 20 categories, fully active, ~1,025 products
@@ -287,12 +287,12 @@ Three workflow files exist in `.github/workflows/`:
 
 ### 3.2 Secrets Referenced
 
-| Secret | Used In | Purpose |
-| ------ | ------- | ------- |
-| `NEXT_PUBLIC_SUPABASE_URL` | ci.yml | Frontend Supabase URL |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ci.yml | Frontend anon key |
-| `SUPABASE_SERVICE_ROLE_KEY` | ci.yml | Service role key |
-| `SONAR_TOKEN` | build.yml | SonarQube authentication |
+| Secret                          | Used In   | Purpose                  |
+| ------------------------------- | --------- | ------------------------ |
+| `NEXT_PUBLIC_SUPABASE_URL`      | ci.yml    | Frontend Supabase URL    |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | ci.yml    | Frontend anon key        |
+| `SUPABASE_SERVICE_ROLE_KEY`     | ci.yml    | Service role key         |
+| `SONAR_TOKEN`                   | build.yml | SonarQube authentication |
 
 ### 3.3 No Dedicated Deployment Workflow
 
@@ -304,19 +304,19 @@ There is **no automated deployment workflow** to push schema changes or data to 
 
 ### 4.1 Script Inventory
 
-| Script | Purpose | Target |
-| ------ | ------- | ------ |
-| `RUN_LOCAL.ps1` | Execute all pipeline SQL files against local Supabase | Local (docker exec) |
-| `RUN_REMOTE.ps1` | Execute all pipeline SQL files against remote Supabase | Remote (psql) |
-| `RUN_SEED.ps1` | Unified seed runner — reference data + pipelines for any environment | Local / Staging / Production |
-| `RUN_SANITY.ps1` | Cross-environment sanity checks (16 checks) | Any environment |
-| `RUN_QA.ps1` | Run 25 QA test suites (362 checks) | Local or CI |
-| `RUN_NEGATIVE_TESTS.ps1` | Run 29 negative injection tests (rollback) | Local |
-| `validate_eans.py` | EAN-8/EAN-13 checksum validation | Called by RUN_QA |
-| `check_enrichment_identity.py` | Block migrations using raw `product_id` anchors | CI guard |
-| `check_pipeline_structure.py` | Validate pipeline folder structure and SQL patterns | CI guard |
-| `enrich_ingredients.py` | Ingredient enrichment utility | Manual |
-| `fetch_off_category.py` | Fetch OFF data for a category | Manual |
+| Script                         | Purpose                                                              | Target                       |
+| ------------------------------ | -------------------------------------------------------------------- | ---------------------------- |
+| `RUN_LOCAL.ps1`                | Execute all pipeline SQL files against local Supabase                | Local (docker exec)          |
+| `RUN_REMOTE.ps1`               | Execute all pipeline SQL files against remote Supabase               | Remote (psql)                |
+| `RUN_SEED.ps1`                 | Unified seed runner — reference data + pipelines for any environment | Local / Staging / Production |
+| `RUN_SANITY.ps1`               | Cross-environment sanity checks (16 checks)                          | Any environment              |
+| `RUN_QA.ps1`                   | Run 25 QA test suites (362 checks)                                   | Local or CI                  |
+| `RUN_NEGATIVE_TESTS.ps1`       | Run 29 negative injection tests (rollback)                           | Local                        |
+| `validate_eans.py`             | EAN-8/EAN-13 checksum validation                                     | Called by RUN_QA             |
+| `check_enrichment_identity.py` | Block migrations using raw `product_id` anchors                      | CI guard                     |
+| `check_pipeline_structure.py`  | Validate pipeline folder structure and SQL patterns                  | CI guard                     |
+| `enrich_ingredients.py`        | Ingredient enrichment utility                                        | Manual                       |
+| `fetch_off_category.py`        | Fetch OFF data for a category                                        | Manual                       |
 
 ### 4.2 Database Initialization Workflow
 
@@ -324,7 +324,7 @@ There is no standalone `init_db_structure.py` script. Database initialization fo
 
 ```
 supabase db reset
-  → Applies all 74 migrations in order (supabase/migrations/*.sql)
+  → Applies all 124 migrations in order (supabase/migrations/*.sql)
   → Runs seed.sql (empty — no-op)
   → Schema is ready
 
@@ -432,29 +432,29 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 
 ### 6.1 Product Inventory (from Table Audit 2026-02-12)
 
-| Metric | Count |
-| ------ | ----- |
-| Total products | 1,063 |
-| Active products | 1,025 |
-| Deprecated products | 38 |
-| Active categories | 20 |
-| Active countries | 2 (PL, DE) |
-| Country PL products | ~974 (20 categories) |
-| Country DE products | 51 (chips-de micro-pilot) |
-| Products per category | 9–98 (variable) |
+| Metric                | Count                     |
+| --------------------- | ------------------------- |
+| Total products        | 1,063                     |
+| Active products       | 1,025                     |
+| Deprecated products   | 38                        |
+| Active categories     | 20                        |
+| Active countries      | 2 (PL, DE)                |
+| Country PL products   | ~974 (20 categories)      |
+| Country DE products   | 51 (chips-de micro-pilot) |
+| Products per category | 9–98 (variable)           |
 
 ### 6.2 Related Data
 
-| Table | Rows |
-| ----- | ---- |
-| `nutrition_facts` | 1,032 |
-| `ingredient_ref` | 2,740 unique ingredients |
-| `product_ingredient` | 12,892 associations |
-| `product_allergen_info` | 2,527 (1,218 allergens + 1,309 traces) |
-| `category_ref` | 20 categories |
-| `country_ref` | 2 entries (PL active, DE active) |
-| `nutri_score_ref` | 7 labels (A–E, UNKNOWN, NOT-APPLICABLE) |
-| `concern_tier_ref` | 4 tiers (0–3 EFSA classification) |
+| Table                   | Rows                                    |
+| ----------------------- | --------------------------------------- |
+| `nutrition_facts`       | 1,032                                   |
+| `ingredient_ref`        | 2,740 unique ingredients                |
+| `product_ingredient`    | 12,892 associations                     |
+| `product_allergen_info` | 2,527 (1,218 allergens + 1,309 traces)  |
+| `category_ref`          | 20 categories                           |
+| `country_ref`           | 2 entries (PL active, DE active)        |
+| `nutri_score_ref`       | 7 labels (A–E, UNKNOWN, NOT-APPLICABLE) |
+| `concern_tier_ref`      | 4 tiers (0–3 EFSA classification)       |
 
 ### 6.3 Data Quality Metrics
 
@@ -506,7 +506,7 @@ Backup = supabase/migrations/*.sql + db/pipelines/*.sql
 ```
 
 Since the database can be fully reconstructed from:
-1. 74 migration files (schema + functions + views)
+1. 124 migration files (schema + functions + views)
 2. 21 × 4 pipeline SQL files (all product data)
 3. `ci_post_pipeline.sql` (data fixups)
 
@@ -539,12 +539,12 @@ These are platform-managed and not controlled by this repository.
 
 **Frontend:** Deployed to Vercel from `frontend/` directory.
 
-| Setting | Value |
-| ------- | ----- |
-| Root Directory | `frontend` |
-| Framework | Next.js |
-| Build Command | Auto |
-| Install Command | `npm ci` |
+| Setting         | Value      |
+| --------------- | ---------- |
+| Root Directory  | `frontend` |
+| Framework       | Next.js    |
+| Build Command   | Auto       |
+| Install Command | `npm ci`   |
 
 **Required Vercel env vars:**
 - `NEXT_PUBLIC_SUPABASE_URL` (e.g., `https://uskvezwftkkudvksmken.supabase.co`)
@@ -629,17 +629,17 @@ Supabase Auth URL configuration required:
 
 ### 10.2 Risks & Gaps
 
-| Risk | Severity | Mitigation |
-| ---- | -------- | ---------- |
-| No automated remote deployment | Medium | `RUN_REMOTE.ps1` is manual; add CI deployment workflow |
-| No backup scripts | High | Add `pg_dump` pre-deployment; document Supabase backup tier |
-| User data not reproducible | Medium | `user_preferences` and `user_health_profiles` lost on rebuild |
-| No schema diff validation | Medium | CI applies migrations to ephemeral PG, but doesn't validate against remote |
-| `product_id` instability across environments | Low | CI post-pipeline fixup handles this; consider EAN-based canonical IDs |
-| Manual Supabase auth URL config | Low | Document and verify after each domain change |
-| No monitoring/alerting | Medium | Add MV staleness monitoring, row count ceiling alerts |
-| Country CHECK constraint removed | Low | FK to `country_ref` enforces validity; activation gating via `is_active` |
-| 5% CI confidence threshold vs 1% prod target | Low | CI threshold is higher due to artificial data gaps; document target |
+| Risk                                         | Severity | Mitigation                                                                 |
+| -------------------------------------------- | -------- | -------------------------------------------------------------------------- |
+| No automated remote deployment               | Medium   | `RUN_REMOTE.ps1` is manual; add CI deployment workflow                     |
+| No backup scripts                            | High     | Add `pg_dump` pre-deployment; document Supabase backup tier                |
+| User data not reproducible                   | Medium   | `user_preferences` and `user_health_profiles` lost on rebuild              |
+| No schema diff validation                    | Medium   | CI applies migrations to ephemeral PG, but doesn't validate against remote |
+| `product_id` instability across environments | Low      | CI post-pipeline fixup handles this; consider EAN-based canonical IDs      |
+| Manual Supabase auth URL config              | Low      | Document and verify after each domain change                               |
+| No monitoring/alerting                       | Medium   | Add MV staleness monitoring, row count ceiling alerts                      |
+| Country CHECK constraint removed             | Low      | FK to `country_ref` enforces validity; activation gating via `is_active`   |
+| 5% CI confidence threshold vs 1% prod target | Low      | CI threshold is higher due to artificial data gaps; document target        |
 
 ### 10.3 Recommended Next Steps
 

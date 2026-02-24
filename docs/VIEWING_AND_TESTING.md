@@ -90,7 +90,7 @@ Run all pipelines + QA suites automatically:
 ================================================
   Running QA Checks
 ================================================
-  All QA checks passed (333/333 — zero violation rows).
+  All QA checks passed (421/421 — zero violation rows).
 
   Database inventory:
   active_products | deprecated | nutrition | categories
@@ -101,7 +101,7 @@ Run all pipelines + QA suites automatically:
 ---
 
 ### 4. **Standalone QA Runner** (Recommended)
-Runs all 22 test suites with color-coded output:
+Runs all 30 test suites with color-coded output:
 
 ```powershell
 .\RUN_QA.ps1
@@ -109,42 +109,19 @@ Runs all 22 test suites with color-coded output:
 
 **Expected output**:
 ```
-Suite  1 — Data Integrity:          ✓ PASS (29/29)
-Suite  2 — Scoring Formula:         ✓ PASS (27/27)
-Suite  3 — Source Coverage:         ℹ INFO (8 reports)
-Suite  4 — EAN Validation:          ✓ PASS (1/1)
-Suite  5 — API Surfaces:            ✓ PASS (18/18)
-Suite  6 — Confidence Scoring:      ✓ PASS (10/10)
-Suite  7 — Data Quality:            ✓ PASS (25/25)
-Suite  8 — Referential Integrity:   ✓ PASS (18/18)
-Suite  9 — View Consistency:        ✓ PASS (13/13)
-Suite 10 — Naming Conventions:      ✓ PASS (12/12)
-Suite 11 — Nutrition Ranges:        ✓ PASS (16/16)
-Suite 12 — Data Consistency:        ✓ PASS (20/20)
-Suite 13 — Allergen Integrity:      ✓ PASS (15/15)
-Suite 14 — Serving & Source:        ✓ PASS (16/16)
-Suite 15 — Ingredient Quality:      ✓ PASS (14/14)
-Suite 16 — Security Posture:        ✓ PASS (22/22)
-Suite 17 — API Contract:            ✓ PASS (33/33)
-Suite 18 — Scale Guardrails:        ✓ PASS (15/15)
-Suite 19 — Country Isolation:       ✓ PASS (11/11)
-Suite 20 — Diet Filtering:          ✓ PASS (6/6)
-Suite 21 — Allergen Filtering:      ✓ PASS (6/6)
-Suite 22 — Barcode Lookup:          ✓ PASS (6/6)
-
-ALL TESTS PASSED (333/333 checks across 22 suites)
+ALL TESTS PASSED (421/421 checks across 30 suites)
 ```
 
 ---
 
-### 5. **Negative Validation Tests** (23 constraint tests)
+### 5. **Negative Validation Tests** (29 constraint tests)
 Verifies the database correctly rejects invalid data:
 
 ```powershell
 .\RUN_NEGATIVE_TESTS.ps1
 ```
 
-**Expected output**: `23/23 CAUGHT, 0 MISSED`
+**Expected output**: `29/29 CAUGHT, 0 MISSED`
 
 ---
 
