@@ -48,12 +48,27 @@ const visualAuthenticatedProject = {
   },
 };
 
+// ── Quality gate audit toggle ───────────────────────────────────────────────
+const HAS_QUALITY = !!process.env.QA_MODE_LEVEL;
+
+const qualityMobileProject = {
+  name: "quality-mobile",
+  testDir: "../tests/quality",
+  testMatch: /mobile\.audit\.spec\.ts/,
+  dependencies: HAS_AUTH ? ["auth-setup"] : [],
+  use: {
+    ...devices["iPhone 14"],
+    storageState: HAS_AUTH ? "e2e/.auth/user.json" : undefined,
+  },
+};
+
 const projects = [
   ...(HAS_AUTH ? [authSetupProject] : []),
   smokeProject,
   ...(HAS_AUTH ? [authenticatedProject] : []),
   ...(HAS_VISUAL ? [visualSmokeProject] : []),
   ...(HAS_VISUAL && HAS_AUTH ? [visualAuthenticatedProject] : []),
+  ...(HAS_QUALITY ? [qualityMobileProject] : []),
 ];
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
