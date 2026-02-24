@@ -11,6 +11,7 @@ import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { createClient } from "@/lib/supabase/client";
 import { getProductProfile, recordProductView } from "@/lib/api";
+import { IS_QA_MODE } from "@/lib/qa-mode";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import {
   SCORE_BANDS,
@@ -100,7 +101,9 @@ export default function ProductDetailPage() {
         payload: { productId, score: profile.scores.unhealthiness_score ?? 0 },
       });
       // Record view for dashboard recently-viewed section
-      recordProductView(supabase, productId);
+      if (!IS_QA_MODE) {
+        recordProductView(supabase, productId);
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [productId]);

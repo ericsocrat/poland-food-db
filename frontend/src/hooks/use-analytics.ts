@@ -3,6 +3,7 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { trackEvent } from "@/lib/api";
+import { IS_QA_MODE } from "@/lib/qa-mode";
 import type { AnalyticsEventName, DeviceType } from "@/lib/types";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -52,6 +53,8 @@ export function useAnalytics() {
 
   const track = useCallback(
     (eventName: AnalyticsEventName, eventData?: Record<string, unknown>) => {
+      // Suppress all analytics in QA mode for deterministic audits (#173)
+      if (IS_QA_MODE) return;
       // Fire-and-forget — never block UI on analytics
       trackEvent(supabaseRef.current, {
         eventName,

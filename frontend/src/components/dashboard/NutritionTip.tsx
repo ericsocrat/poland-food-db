@@ -4,6 +4,7 @@
 
 import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
+import { qaStable } from "@/lib/qa-mode";
 
 /** Total number of tips available in i18n files (dashboard.tip.0 … tip.N-1). */
 const TIP_COUNT = 14;
@@ -44,7 +45,7 @@ export function tipIndexForToday(): number {
 
 export function NutritionTip() {
   const { t } = useTranslation();
-  const index = tipIndexForToday();
+  const index = qaStable(tipIndexForToday(), 0);
   const learnHref = TIP_LEARN_LINKS[index];
 
   return (

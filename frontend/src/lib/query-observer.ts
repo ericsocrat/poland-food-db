@@ -30,6 +30,7 @@ let warnings: string[] = [];
 export function isObserverActive(): boolean {
   return (
     process.env.NODE_ENV === "development" ||
+    process.env.NEXT_PUBLIC_QA_MODE === "1" ||
     process.env.NEXT_PUBLIC_QA_MODE === "true"
   );
 }
