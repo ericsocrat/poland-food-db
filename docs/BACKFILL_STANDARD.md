@@ -268,4 +268,70 @@ CREATE INDEX CONCURRENTLY idx_foo ON products (bar);
 
 ---
 
-*Last updated: 2026-02-24 — Created as part of #229*
+*Last updated: 2026-03-03 — Extended for #208 (backfill registry + monitoring view)*
+
+---
+
+## 8. Backfill Registry
+
+All backfills **must** register in the `backfill_registry` table before execution.
+This provides audit trail, progress monitoring, and resumability.
+
+**Migration:** `20260303000000_backfill_registry.sql`
+
+### Table Schema
+
+| Column | Type | Notes |
+|--------|------|-------|
+| `backfill_id` | `uuid` (PK) | Auto-generated |
+| `name` | `text` (UNIQUE) | e.g., `provenance_field_backfill_v1` |
+| `description` | `text` | Human-readable purpose |
+| `source_issue` | `text` | e.g., `#193` |
+| `status` | `text` | `pending` / `running` / `completed` / `failed` / `rolled_back` |
+| `started_at` | `timestamptz` | Set by `start_backfill()` |
+| `completed_at` | `timestamptz` | Set by `complete_backfill()` or `fail_backfill()` |
+| `rows_processed` | `integer` | Updated during execution |
+| `rows_expected` | `integer` | From pre-count |
+| `batch_size` | `integer` | Default: 1000 |
+| `error_message` | `text` | On failure |
+| `executed_by` | `text` | github username or `automation` |
+| `rollback_sql` | `text` | SQL to undo this backfill |
+| `validation_passed` | `boolean` | Post-validation result |
+
+### Helper Functions
+
+| Function | Purpose |
+|----------|---------|
+| `register_backfill(...)` | Register (upsert) a new backfill; returns `backfill_id` |
+| `start_backfill(id)` | Mark as `running`, set `started_at` |
+| `update_backfill_progress(id, rows)` | Update `rows_processed` during execution |
+| `complete_backfill(id, rows, passed)` | Mark as `completed`, set `completed_at` |
+| `fail_backfill(id, error_msg)` | Mark as `failed`, record error |
+
+### Monitoring View
+
+`v_backfill_status` provides a real-time dashboard:
+
+```sql
+SELECT name, status, rows_processed, rows_expected,
+       pct_complete, elapsed_seconds, validation_passed
+FROM v_backfill_status
+WHERE status = 'running';
+```
+
+### RLS
+
+- `service_role`: full access (read + write)
+- `authenticated`: read-only
+- `anon`: no access
+
+### Script Template
+
+Copy `scripts/backfill_template.py` for each backfill. It handles:
+registration, pre-validation, batched execution, progress updates,
+post-validation, and status finalization.
+
+```bash
+python scripts/backfill_{name}.py --dry-run        # estimate only
+python scripts/backfill_{name}.py --batch-size 500  # execute
+```
