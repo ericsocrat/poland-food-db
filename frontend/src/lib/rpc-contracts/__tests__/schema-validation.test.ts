@@ -34,6 +34,11 @@ import {
   SavedSearchesContract,
   SearchQualityReportContract,
 } from "../index";
+import {
+  ProductProvenanceContract,
+  CountryValidationContract,
+  ProvenanceDashboardContract,
+} from "../provenance.contracts";
 
 // ─── Mock data factories ────────────────────────────────────────────────────
 
@@ -678,5 +683,145 @@ describe("Schema validation: SearchQualityReportContract", () => {
   it("rejects report with wrong type for status", () => {
     const data = { ...validStubReport, status: 123 };
     expect(SearchQualityReportContract.safeParse(data).success).toBe(false);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 7. Data Provenance contracts (Issue #193)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+describe("ProductProvenanceContract", () => {
+  const validProvenance = {
+    api_version: "2026-02-27",
+    product_id: 42,
+    product_name: "Jogurt naturalny",
+    overall_trust_score: 0.72,
+    freshness_status: "fresh",
+    source_count: 3,
+    data_completeness_pct: 86.7,
+    field_sources: {
+      product_name: {
+        source: "Open Food Facts API",
+        last_updated: "2026-02-20T10:00:00Z",
+        confidence: 0.6,
+      },
+      calories_100g: {
+        source: "Package / Label Scan",
+        last_updated: "2026-02-22T14:00:00Z",
+        confidence: 0.95,
+      },
+    },
+    trust_explanation:
+      "Data from multiple sources with moderate confidence",
+    weakest_area: { field: "allergens", confidence: 0.4 },
+  };
+
+  it("accepts valid provenance response", () => {
+    expect(ProductProvenanceContract.safeParse(validProvenance).success).toBe(
+      true
+    );
+  });
+
+  it("accepts response with null trust_score (no provenance data)", () => {
+    const data = { ...validProvenance, overall_trust_score: null };
+    expect(ProductProvenanceContract.safeParse(data).success).toBe(true);
+  });
+
+  it("accepts extra keys (passthrough)", () => {
+    const data = { ...validProvenance, future_field: "v2" };
+    expect(ProductProvenanceContract.safeParse(data).success).toBe(true);
+  });
+
+  it("rejects missing product_name", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { product_name: _pn, ...data } = validProvenance;
+    expect(ProductProvenanceContract.safeParse(data).success).toBe(false);
+  });
+
+  it("rejects missing trust_explanation", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { trust_explanation: _te, ...data } = validProvenance;
+    expect(ProductProvenanceContract.safeParse(data).success).toBe(false);
+  });
+});
+
+describe("CountryValidationContract", () => {
+  const validValidation = {
+    product_id: 42,
+    country: "PL",
+    ready_for_publish: true,
+    overall_confidence: 0.72,
+    staleness_risk: "fresh",
+    source_diversity: 3,
+    issues: [],
+    validated_at: "2026-02-27T10:00:00Z",
+  };
+
+  it("accepts valid country validation", () => {
+    expect(CountryValidationContract.safeParse(validValidation).success).toBe(
+      true
+    );
+  });
+
+  it("accepts validation with issues", () => {
+    const data = {
+      ...validValidation,
+      ready_for_publish: false,
+      issues: [
+        {
+          check: "minimum_confidence",
+          status: "fail" as const,
+          detail: "Confidence 0.30 below minimum 0.50",
+        },
+      ],
+    };
+    expect(CountryValidationContract.safeParse(data).success).toBe(true);
+  });
+
+  it("rejects invalid issue status", () => {
+    const data = {
+      ...validValidation,
+      issues: [{ check: "test", status: "invalid", detail: "d" }],
+    };
+    expect(CountryValidationContract.safeParse(data).success).toBe(false);
+  });
+});
+
+describe("ProvenanceDashboardContract", () => {
+  const validDashboard = {
+    api_version: "2026-02-27",
+    country: "PL",
+    generated_at: "2026-02-27T12:00:00Z",
+    total_products: 500,
+    with_provenance: 450,
+    without_provenance: 50,
+    open_conflicts: 3,
+    critical_conflicts: 0,
+    source_distribution: { off_api: 400, manual: 50 },
+    policies: [
+      {
+        field_group: "nutrition",
+        max_age_days: 180,
+        warning_age_days: 120,
+        refresh_strategy: "auto_api",
+      },
+    ],
+  };
+
+  it("accepts valid dashboard response", () => {
+    expect(ProvenanceDashboardContract.safeParse(validDashboard).success).toBe(
+      true
+    );
+  });
+
+  it("accepts null source_distribution", () => {
+    const data = { ...validDashboard, source_distribution: null };
+    expect(ProvenanceDashboardContract.safeParse(data).success).toBe(true);
+  });
+
+  it("rejects missing policies array", () => {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { policies: _p, ...data } = validDashboard;
+    expect(ProvenanceDashboardContract.safeParse(data).success).toBe(false);
   });
 });

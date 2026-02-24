@@ -218,6 +218,69 @@ export interface SearchQualityReport {
   planned_metrics: SearchQualityPlannedMetrics;
 }
 
+// ─── Data Provenance (#193) ─────────────────────────────────────────────────
+
+export interface FieldSource {
+  source: string;
+  last_updated: string;
+  confidence: number;
+}
+
+export interface ProvenanceWeakestArea {
+  field: string | null;
+  confidence: number | null;
+}
+
+export interface ProductProvenance {
+  api_version: string;
+  product_id: number;
+  product_name: string;
+  overall_trust_score: number | null;
+  freshness_status: string;
+  source_count: number | null;
+  data_completeness_pct: number | null;
+  field_sources: Record<string, FieldSource> | null;
+  trust_explanation: string;
+  weakest_area: ProvenanceWeakestArea;
+}
+
+export interface ValidationIssue {
+  check: string;
+  status: "fail" | "warning";
+  detail: string;
+}
+
+export interface CountryValidation {
+  product_id: number;
+  country: string;
+  ready_for_publish: boolean;
+  overall_confidence: number | null;
+  staleness_risk: string | null;
+  source_diversity: number | null;
+  issues: ValidationIssue[];
+  validated_at: string;
+}
+
+export interface FreshnessPolicy {
+  field_group: string;
+  max_age_days: number;
+  warning_age_days: number;
+  refresh_strategy: string;
+}
+
+export interface ProvenanceDashboard {
+  api_version: string;
+  country: string;
+  generated_at: string;
+  total_products: number;
+  with_provenance: number;
+  without_provenance: number;
+  open_conflicts: number;
+  critical_conflicts: number;
+  source_distribution: Record<string, number> | null;
+  policies: FreshnessPolicy[];
+}
+
 // ─── Category Listing ───────────────────────────────────────────────────────
 
 export interface CategoryProduct {

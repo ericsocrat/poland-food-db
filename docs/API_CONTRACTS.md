@@ -720,3 +720,63 @@ UPDATE feature_flags SET enabled = true WHERE key = 'new_search_ranking';
 ```
 
 See [docs/SEARCH_ARCHITECTURE.md](SEARCH_ARCHITECTURE.md) for full details.
+
+## 12. Data Provenance (#193)
+
+### Public RPCs
+
+| RPC                                    | Purpose                                       | Auth   |
+| -------------------------------------- | --------------------------------------------- | ------ |
+| `api_product_provenance(p_product_id)` | Trust score, sources, freshness, weakest area | Public |
+
+**Response shape:**
+
+```json
+{
+  "api_version": "2026-02-27",
+  "product_id": 42,
+  "product_name": "...",
+  "overall_trust_score": 0.82,
+  "freshness_status": "fresh",
+  "source_count": 3,
+  "data_completeness_pct": 73.3,
+  "field_sources": { "calories_100g": { "source": "Label Scan", "last_updated": "...", "confidence": 0.95 } },
+  "trust_explanation": "...",
+  "weakest_area": { "field": "allergens", "confidence": 0.55 }
+}
+```
+
+### Admin / Service RPCs
+
+| RPC                                                 | Purpose                     | Auth    |
+| --------------------------------------------------- | --------------------------- | ------- |
+| `admin_provenance_dashboard(p_country)`             | Health overview per country | Service |
+| `detect_stale_products(p_country, p_severity, ...)` | Products needing refresh    | Service |
+| `resolve_conflicts_auto(p_country, p_max_severity)` | Auto-resolve data conflicts | Service |
+| `validate_product_for_country(p_product_id, ...)`   | Country readiness check     | Service |
+| `record_field_provenance(...)`                      | Record single provenance    | Service |
+| `record_bulk_provenance(...)`                       | Record batch provenance     | Service |
+| `compute_provenance_confidence(p_product_id)`       | Composite confidence score  | Service |
+| `detect_conflict(...)`                              | Check for data conflicts    | Service |
+
+### New Tables
+
+| Table                       | Purpose                          | Write Access      |
+| --------------------------- | -------------------------------- | ----------------- |
+| `data_sources`              | Source registry (11 sources)     | service_role only |
+| `product_change_log`        | Full field-level audit trail     | service_role only |
+| `freshness_policies`        | Per-country staleness thresholds | service_role only |
+| `conflict_resolution_rules` | Auto-resolve priority rules      | service_role only |
+| `data_conflicts`            | Conflict queue                   | service_role only |
+| `country_data_policies`     | Per-country regulatory policies  | service_role only |
+
+### Feature Flag Gate
+
+The `data_provenance_ui` feature flag (default: disabled) controls trust badge
+and field source attribution in the frontend. Toggle via:
+
+```sql
+UPDATE feature_flags SET enabled = true WHERE key = 'data_provenance_ui';
+```
+
+See [docs/DATA_PROVENANCE.md](DATA_PROVENANCE.md) for full architecture.
