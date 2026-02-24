@@ -3,7 +3,7 @@
 // matches the TypeScript interfaces the frontend expects.
 //
 // They are SKIPPED when Supabase env vars are not set (normal `npm test`).
-// Run with: INTEGRATION=1 npm test -- --testPathPattern=rpc-contract
+// Run with: cd frontend && npm run test:integration
 //
 // These tests would have caught the nutri_score column mismatch bug because
 // the actual SQL function would have thrown a "column does not exist" error.
@@ -14,7 +14,11 @@ import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
 const INTEGRATION = process.env.INTEGRATION === "1";
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
-const SUPABASE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "";
+// Use service_role key when available (CI) — bypasses RLS so we can test
+// response shapes without needing a signed-in user.
+const SUPABASE_KEY =
+  process.env.SUPABASE_SERVICE_ROLE_KEY || SUPABASE_ANON_KEY;
 
 // ─── Skip guard ─────────────────────────────────────────────────────────────
 
@@ -137,7 +141,7 @@ describeIntegration("RPC Contract: api_category_listing", () => {
 
     expect(error).toBeNull();
     expect(data).toBeTruthy();
-    expectJsonbKeys(data, ["api_version", "products", "total"]);
+    expectJsonbKeys(data, ["api_version", "products", "total_count"]);
     expect(Array.isArray(data.products)).toBe(true);
   });
 });
@@ -150,8 +154,8 @@ describeIntegration("RPC Contract: api_search_products", () => {
 
     expect(error).toBeNull();
     expect(data).toBeTruthy();
-    expectJsonbKeys(data, ["api_version", "products", "total", "page", "pages"]);
-    expect(Array.isArray(data.products)).toBe(true);
+    expectJsonbKeys(data, ["api_version", "results", "total", "page", "pages"]);
+    expect(Array.isArray(data.results)).toBe(true);
   });
 });
 
@@ -208,14 +212,17 @@ describeIntegration("RPC Contract: api_product_detail_by_ean", () => {
 
     expect(error).toBeNull();
     expect(data).toBeTruthy();
-    expectJsonbKeys(data, ["api_version", "product"]);
-
-    const product = data.product;
-    expect(product).toBeTruthy();
-    expectJsonbKeys(product, [
+    expectJsonbKeys(data, [
+      "api_version",
       "product_id",
       "product_name",
-      "unhealthiness_score",
+      "ean",
+      "scores",
+      "scan",
     ]);
+
+    // Scores are nested, not flat
+    expect(data.scores).toBeTruthy();
+    expectJsonbKeys(data.scores, ["unhealthiness_score"]);
   });
 });
