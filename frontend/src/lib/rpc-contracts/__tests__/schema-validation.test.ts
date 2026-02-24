@@ -192,6 +192,44 @@ describe("Schema validation: valid data accepted", () => {
     expect(CategoryOverviewContract.safeParse(data).success).toBe(true);
   });
 
+  it("CategoryListingContract accepts valid listing", () => {
+    const data = {
+      api_version: "1.0",
+      category: "dairy",
+      country: "PL",
+      total_count: 42,
+      limit: 20,
+      offset: 0,
+      sort_by: "score",
+      sort_dir: "desc",
+      products: [
+        {
+          product_id: 1,
+          ean: "5900320001303",
+          product_name: "Test Milk",
+          brand: "TestBrand",
+          unhealthiness_score: 72,
+          score_band: "low",
+          nutri_score: "A",
+          nova_group: "1",
+          processing_risk: "low",
+          calories: 42,
+          total_fat_g: 1.5,
+          protein_g: 3.4,
+          sugars_g: 4.8,
+          salt_g: 0.1,
+          high_salt_flag: false,
+          high_sugar_flag: false,
+          high_sat_fat_flag: false,
+          confidence: "high",
+          data_completeness_pct: 95,
+          image_thumb_url: null,
+        },
+      ],
+    };
+    expect(CategoryListingContract.safeParse(data).success).toBe(true);
+  });
+
   it("DashboardDataContract accepts valid dashboard", () => {
     const data = {
       api_version: "1.0",

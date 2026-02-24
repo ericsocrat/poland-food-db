@@ -54,28 +54,28 @@ src/lib/rpc-contracts/
 
 ## RPC Coverage Matrix
 
-| Priority | RPC | Schema File | Contract |
-|----------|-----|-------------|----------|
-| P0 | `api_product_detail` | `product.contracts.ts` | `ProductDetailContract` |
-| P0 | `api_better_alternatives` | `product.contracts.ts` | `BetterAlternativesContract` |
-| P0 | `api_score_explanation` | `product.contracts.ts` | `ScoreExplanationContract` |
-| P0 | `api_data_confidence` | `product.contracts.ts` | `DataConfidenceContract` |
-| P0 | `api_search_products` | `search.contracts.ts` | `SearchProductsContract` |
-| P0 | `api_search_autocomplete` | `search.contracts.ts` | `SearchAutocompleteContract` |
-| P0 | `api_category_overview` | `category.contracts.ts` | `CategoryOverviewContract` |
-| P0 | `api_category_listing` | `category.contracts.ts` | `CategoryListingContract` |
-| P0 | `api_get_dashboard_data` | `dashboard.contracts.ts` | `DashboardDataContract` |
-| P0 | `api_product_health_warnings` | `health-profile.contracts.ts` | `HealthWarningsContract` |
-| P1 | `api_get_filter_options` | `search.contracts.ts` | `FilterOptionsContract` |
-| P1 | `api_get_saved_searches` | `search.contracts.ts` | `SavedSearchesContract` |
-| P1 | `api_get_lists` | `lists.contracts.ts` | `ListsContract` |
-| P1 | `api_get_list_items` | `lists.contracts.ts` | `ListItemsContract` |
-| P1 | `api_get_products_for_compare` | `compare.contracts.ts` | `CompareContract` |
-| P1 | `api_list_health_profiles` | `health-profile.contracts.ts` | `HealthProfileListContract` |
-| P1 | `api_get_active_health_profile` | `health-profile.contracts.ts` | `HealthProfileActiveContract` |
-| P1 | `api_get_user_preferences` | `user.contracts.ts` | `UserPreferencesContract` |
-| P1 | `api_get_scan_history` | `scan.contracts.ts` | `ScanHistoryContract` |
-| P1 | `api_get_recently_viewed` | `dashboard.contracts.ts` | `RecentlyViewedContract` |
+| Priority | RPC                             | Schema File                   | Contract                      |
+| -------- | ------------------------------- | ----------------------------- | ----------------------------- |
+| P0       | `api_product_detail`            | `product.contracts.ts`        | `ProductDetailContract`       |
+| P0       | `api_better_alternatives`       | `product.contracts.ts`        | `BetterAlternativesContract`  |
+| P0       | `api_score_explanation`         | `product.contracts.ts`        | `ScoreExplanationContract`    |
+| P0       | `api_data_confidence`           | `product.contracts.ts`        | `DataConfidenceContract`      |
+| P0       | `api_search_products`           | `search.contracts.ts`         | `SearchProductsContract`      |
+| P0       | `api_search_autocomplete`       | `search.contracts.ts`         | `SearchAutocompleteContract`  |
+| P0       | `api_category_overview`         | `category.contracts.ts`       | `CategoryOverviewContract`    |
+| P0       | `api_category_listing`          | `category.contracts.ts`       | `CategoryListingContract`     |
+| P0       | `api_get_dashboard_data`        | `dashboard.contracts.ts`      | `DashboardDataContract`       |
+| P0       | `api_product_health_warnings`   | `health-profile.contracts.ts` | `HealthWarningsContract`      |
+| P1       | `api_get_filter_options`        | `search.contracts.ts`         | `FilterOptionsContract`       |
+| P1       | `api_get_saved_searches`        | `search.contracts.ts`         | `SavedSearchesContract`       |
+| P1       | `api_get_lists`                 | `lists.contracts.ts`          | `ListsContract`               |
+| P1       | `api_get_list_items`            | `lists.contracts.ts`          | `ListItemsContract`           |
+| P1       | `api_get_products_for_compare`  | `compare.contracts.ts`        | `CompareContract`             |
+| P1       | `api_list_health_profiles`      | `health-profile.contracts.ts` | `HealthProfileListContract`   |
+| P1       | `api_get_active_health_profile` | `health-profile.contracts.ts` | `HealthProfileActiveContract` |
+| P1       | `api_get_user_preferences`      | `user.contracts.ts`           | `UserPreferencesContract`     |
+| P1       | `api_get_scan_history`          | `scan.contracts.ts`           | `ScanHistoryContract`         |
+| P1       | `api_get_recently_viewed`       | `dashboard.contracts.ts`      | `RecentlyViewedContract`      |
 
 **Total: 20 RPCs** (10 P0 + 10 P1) — exceeds the 19-endpoint minimum.
 
@@ -159,11 +159,11 @@ cd frontend && INTEGRATION=1 npx vitest run rpc-contract
 
 ## Schema Strategy
 
-| Phase | Approach | When |
-|-------|----------|------|
-| **Initial** | `.passthrough()` on all objects | Now (Issue #179) |
-| **Tighten** | Remove `.passthrough()` → `.strict()` per domain | When domain stabilizes |
-| **Lock** | Remove `.nullable()` where data is always present | After production data audit |
+| Phase       | Approach                                          | When                        |
+| ----------- | ------------------------------------------------- | --------------------------- |
+| **Initial** | `.passthrough()` on all objects                   | Now (Issue #179)            |
+| **Tighten** | Remove `.passthrough()` → `.strict()` per domain  | When domain stabilizes      |
+| **Lock**    | Remove `.nullable()` where data is always present | After production data audit |
 
 ### Rules
 
