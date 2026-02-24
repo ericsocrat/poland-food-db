@@ -62,13 +62,25 @@ const qualityMobileProject = {
   },
 };
 
+const qualityDesktopProject = {
+  name: "quality-desktop",
+  testDir: "../tests/quality",
+  testMatch: /desktop\.audit\.spec\.ts/,
+  dependencies: HAS_AUTH ? ["auth-setup"] : [],
+  use: {
+    ...devices["Desktop Chrome"],
+    viewport: { width: 1280, height: 800 },
+    storageState: HAS_AUTH ? "e2e/.auth/user.json" : undefined,
+  },
+};
+
 const projects = [
   ...(HAS_AUTH ? [authSetupProject] : []),
   smokeProject,
   ...(HAS_AUTH ? [authenticatedProject] : []),
   ...(HAS_VISUAL ? [visualSmokeProject] : []),
   ...(HAS_VISUAL && HAS_AUTH ? [visualAuthenticatedProject] : []),
-  ...(HAS_QUALITY ? [qualityMobileProject] : []),
+  ...(HAS_QUALITY ? [qualityMobileProject, qualityDesktopProject] : []),
 ];
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
