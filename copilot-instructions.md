@@ -168,6 +168,7 @@ poland-food-db/
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── API_CONTRACTS.md             # API surface contracts (6 endpoints) — response shapes, hidden columns
+│   ├── API_CONVENTIONS.md           # RPC naming convention, breaking change definition, security standards
 │   ├── API_VERSIONING.md            # API deprecation & versioning policy
 │   ├── ACCESS_AUDIT.md              # Data access pattern audit & quarterly review
 │   ├── BACKFILL_STANDARD.md         # Backfill orchestration standard & migration templates
@@ -206,7 +207,8 @@ poland-food-db/
 │   ├── STAGING_SETUP.md             # Staging environment setup
 │   ├── UX_IMPACT_METRICS.md         # UX measurement standard, metric catalog, SQL templates
 │   ├── UX_UI_DESIGN.md              # UI/UX guidelines
-│   └── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
+│   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
+│   └── api-registry.yaml            # Structured registry of all 107 functions (YAML)
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (429 checks across 30 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)

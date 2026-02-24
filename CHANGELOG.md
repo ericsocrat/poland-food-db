@@ -61,6 +61,14 @@ Adheres to [Semantic Versioning](https://semver.org/).
   and documentation standards (frontmatter, update triggers, add/archive procedures)
 - Restructure `copilot-instructions.md` project layout: alphabetically sort docs
   listing, expand from 25 to 41 entries with 14 previously-unlisted documents
+- Add RPC naming convention and security standards (`docs/API_CONVENTIONS.md`) with
+  visibility prefix system (api/admin/metric/trg/internal), 16 domain classifications,
+  parameter conventions, breaking change definition (6 breaking + 6 non-breaking rules),
+  breaking change protocol, and naming compliance audit of all 107 functions
+- Add structured API registry (`docs/api-registry.yaml`) with all 107 public-schema
+  functions classified by domain, visibility, auth requirement, parameters, return type,
+  and P95 latency targets (63 api_*, 7 admin_*, 10 metric_*, 7 trigger, 20 internal)
+- Cross-reference API_CONTRACTS.md and FRONTEND_API_MAP.md to conventions and registry
 
 ### CI/CD & Infrastructure
 

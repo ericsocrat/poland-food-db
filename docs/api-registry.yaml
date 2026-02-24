@@ -1,0 +1,1256 @@
+# API Registry — Poland Food DB
+#
+# Canonical registry of all 107 public-schema functions.
+# Last updated: 2026-02-28
+# Naming convention: docs/API_CONVENTIONS.md
+# Contract details: docs/API_CONTRACTS.md
+# Frontend mapping: docs/FRONTEND_API_MAP.md
+#
+# Structure per endpoint:
+#   domain:      Logical domain (products, scoring, search, etc.)
+#   visibility:  public | admin | metric | trigger | internal
+#   auth:        anon | authenticated | service_role | n/a
+#   params:      Parameter name → { type, required, default }
+#   returns:     Return type
+#   p95_target:  Latency target in ms (null = no SLA)
+#   deprecated:  true/false
+#   notes:       Additional context
+
+# ═══════════════════════════════════════════════════════════════════
+# PRODUCTS DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_product_detail:
+  domain: products
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Full product detail for Product Detail screen.
+    Returns identity, scores, flags, nutrition (per-100g + per-serving),
+    ingredients, allergens, and trust metadata.
+
+api_product_detail_by_ean:
+  domain: products
+  visibility: public
+  auth: authenticated
+  params:
+    p_ean: { type: text, required: true }
+    p_country: { type: text, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Barcode scanner lookup. Uses resolve_effective_country() for p_country.
+
+api_better_alternatives:
+  domain: products
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_same_category: { type: boolean, required: false, default: true }
+    p_limit: { type: integer, required: false, default: 5 }
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+  notes: >
+    Healthier substitutes ranked by score improvement and ingredient overlap.
+    Uses Jaccard similarity via find_better_alternatives().
+
+api_get_product_profile:
+  domain: products
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_language: { type: text, required: false, default: "'en'" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Extended product profile with language support.
+
+api_get_product_profile_by_ean:
+  domain: products
+  visibility: public
+  auth: authenticated
+  params:
+    p_ean: { type: text, required: true }
+    p_language: { type: text, required: false, default: "'en'" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: EAN-based product profile lookup.
+
+api_get_product_allergens:
+  domain: products
+  visibility: public
+  auth: anon
+  params:
+    p_product_ids: { type: "bigint[]", required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Batch allergen lookup for multiple products. Open to anon.
+
+api_get_ingredient_profile:
+  domain: products
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_language: { type: text, required: false, default: "'en'" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Detailed ingredient breakdown for a product.
+
+api_product_health_warnings:
+  domain: products
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_profile_id: { type: uuid, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Health warnings based on user's active health profile.
+
+# ═══════════════════════════════════════════════════════════════════
+# CATEGORY DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_category_overview:
+  domain: category
+  visibility: public
+  auth: authenticated
+  params:
+    p_country: { type: text, required: false, default: "NULL" }
+    p_language: { type: text, required: false, default: "'en'" }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: >
+    Dashboard — category statistics with product counts and score distribution.
+    Also available as v_api_category_overview view.
+
+api_category_listing:
+  domain: category
+  visibility: public
+  auth: authenticated
+  params:
+    p_category: { type: text, required: true }
+    p_sort_by: { type: text, required: false, default: "'score'" }
+    p_sort_dir: { type: text, required: false, default: "'asc'" }
+    p_limit: { type: integer, required: false, default: 20 }
+    p_offset: { type: integer, required: false, default: 0 }
+    p_country: { type: text, required: false, default: "NULL" }
+    p_diet_preference: { type: text, required: false, default: "NULL" }
+    p_avoid_allergens: { type: "text[]", required: false, default: "NULL" }
+    p_strict_diet: { type: boolean, required: false, default: false }
+    p_strict_allergen: { type: boolean, required: false, default: false }
+    p_treat_may_contain: { type: boolean, required: false, default: false }
+    p_language: { type: text, required: false, default: "'en'" }
+  returns: jsonb
+  p95_target: 150
+  deprecated: false
+  notes: Paged category listing with sort, diet, and allergen filters.
+
+# ═══════════════════════════════════════════════════════════════════
+# SCORING DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_score_explanation:
+  domain: scoring
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Score breakdown with 9 factors, human-readable headline,
+    contextual warnings, and category context (rank, avg, relative position).
+
+api_score_history:
+  domain: scoring
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Historical score changes for a product.
+
+api_data_confidence:
+  domain: scoring
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Composite data confidence score (0-100) with 6 components
+    (nutrition, ingredients, source, EAN, allergens, serving).
+
+# ═══════════════════════════════════════════════════════════════════
+# SEARCH DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_search_products:
+  domain: search
+  visibility: public
+  auth: authenticated
+  params:
+    p_query: { type: text, required: true }
+    p_filters: { type: jsonb, required: false, default: "NULL" }
+    p_limit: { type: integer, required: false, default: 20 }
+    p_offset: { type: integer, required: false, default: 0 }
+    p_explain: { type: boolean, required: false, default: false }
+  returns: jsonb
+  p95_target: 150
+  deprecated: false
+  notes: >
+    Full-text + trigram search across products.
+    Uses pg_trgm GIN indexes. Min query length: 2 chars.
+    Limit clamped to 1-100.
+
+api_search_autocomplete:
+  domain: search
+  visibility: public
+  auth: authenticated
+  params:
+    p_query: { type: text, required: true }
+    p_limit: { type: integer, required: false, default: 8 }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Fast typeahead suggestions for search input.
+
+api_get_filter_options:
+  domain: search
+  visibility: public
+  auth: authenticated
+  params:
+    p_country: { type: text, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Available filter options (categories, brands, diet types) for search UI.
+
+api_save_search:
+  domain: search
+  visibility: public
+  auth: authenticated
+  params:
+    p_name: { type: text, required: true }
+    p_query: { type: text, required: true }
+    p_filters: { type: jsonb, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Save a search query with filters for later recall.
+
+api_get_saved_searches:
+  domain: search
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: List user's saved searches.
+
+api_delete_saved_search:
+  domain: search
+  visibility: public
+  auth: authenticated
+  params:
+    p_search_id: { type: uuid, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Delete a saved search by ID.
+
+# ═══════════════════════════════════════════════════════════════════
+# HEALTH DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_create_health_profile:
+  domain: health
+  visibility: public
+  auth: authenticated
+  params:
+    p_profile_name: { type: text, required: true }
+    p_conditions: { type: "text[]", required: false, default: "'{}'" }
+    p_is_active: { type: boolean, required: false, default: true }
+    p_max_sodium_mg: { type: numeric, required: false, default: "NULL" }
+    p_max_sugar_g: { type: numeric, required: false, default: "NULL" }
+    p_max_sat_fat_g: { type: numeric, required: false, default: "NULL" }
+    p_max_calories: { type: numeric, required: false, default: "NULL" }
+    p_notes: { type: text, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_update_health_profile:
+  domain: health
+  visibility: public
+  auth: authenticated
+  params:
+    p_profile_id: { type: uuid, required: true }
+    p_profile_name: { type: text, required: false }
+    p_conditions: { type: "text[]", required: false }
+    p_is_active: { type: boolean, required: false }
+    p_max_sodium_mg: { type: numeric, required: false }
+    p_max_sugar_g: { type: numeric, required: false }
+    p_max_sat_fat_g: { type: numeric, required: false }
+    p_max_calories: { type: numeric, required: false }
+    p_notes: { type: text, required: false }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_delete_health_profile:
+  domain: health
+  visibility: public
+  auth: authenticated
+  params:
+    p_profile_id: { type: uuid, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_active_health_profile:
+  domain: health
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_list_health_profiles:
+  domain: health
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# LISTS DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_create_list:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_name: { type: text, required: true }
+    p_description: { type: text, required: false, default: "NULL" }
+    p_icon: { type: text, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_update_list:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_list_id: { type: uuid, required: true }
+    p_name: { type: text, required: false }
+    p_description: { type: text, required: false }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_delete_list:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_list_id: { type: uuid, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_lists:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_list_items:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_list_id: { type: uuid, required: true }
+    p_limit: { type: integer, required: false, default: 50 }
+    p_offset: { type: integer, required: false, default: 0 }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_add_to_list:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_list_id: { type: uuid, required: true }
+    p_product_id: { type: bigint, required: true }
+    p_notes: { type: text, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_remove_from_list:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_list_id: { type: uuid, required: true }
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_reorder_list:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_list_id: { type: uuid, required: true }
+    p_product_ids: { type: "bigint[]", required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_toggle_share:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_list_id: { type: uuid, required: true }
+    p_is_public: { type: boolean, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_revoke_share:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_list_id: { type: uuid, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_shared_list:
+  domain: lists
+  visibility: public
+  auth: anon
+  params:
+    p_share_token: { type: text, required: true }
+    p_limit: { type: integer, required: false, default: 50 }
+    p_offset: { type: integer, required: false, default: 0 }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Public access — no auth required for shared lists.
+
+api_get_product_list_membership:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_favorite_product_ids:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_avoid_product_ids:
+  domain: lists
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# COMPARE DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_get_products_for_compare:
+  domain: compare
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_ids: { type: "bigint[]", required: true }
+  returns: jsonb
+  p95_target: 150
+  deprecated: false
+  notes: Returns comparison data for 2-4 products.
+
+api_save_comparison:
+  domain: compare
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_ids: { type: "bigint[]", required: true }
+    p_title: { type: text, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_get_saved_comparisons:
+  domain: compare
+  visibility: public
+  auth: authenticated
+  params:
+    p_limit: { type: integer, required: false, default: 20 }
+    p_offset: { type: integer, required: false, default: 0 }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_delete_comparison:
+  domain: compare
+  visibility: public
+  auth: authenticated
+  params:
+    p_comparison_id: { type: uuid, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_shared_comparison:
+  domain: compare
+  visibility: public
+  auth: anon
+  params:
+    p_share_token: { type: text, required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Public access — no auth required for shared comparisons.
+
+# ═══════════════════════════════════════════════════════════════════
+# SCANNER DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_record_scan:
+  domain: scanner
+  visibility: public
+  auth: authenticated
+  params:
+    p_ean: { type: text, required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Records a barcode scan and returns matched product (if any).
+
+api_get_scan_history:
+  domain: scanner
+  visibility: public
+  auth: authenticated
+  params:
+    p_limit: { type: integer, required: false, default: 20 }
+    p_offset: { type: integer, required: false, default: 0 }
+    p_sort: { type: text, required: false, default: "'recent'" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# PREFERENCES & ONBOARDING DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_get_user_preferences:
+  domain: preferences
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_set_user_preferences:
+  domain: preferences
+  visibility: public
+  auth: authenticated
+  params:
+    p_country: { type: text, required: false }
+    p_diet: { type: text, required: false }
+    p_allergens: { type: "text[]", required: false }
+    p_strict_diet: { type: boolean, required: false }
+    p_strict_allergen: { type: boolean, required: false }
+    p_treat_may_contain: { type: boolean, required: false }
+    p_language: { type: text, required: false }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_get_onboarding_status:
+  domain: preferences
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_complete_onboarding:
+  domain: preferences
+  visibility: public
+  auth: authenticated
+  params:
+    p_data: { type: jsonb, required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_skip_onboarding:
+  domain: preferences
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# SUBMISSIONS DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_submit_product:
+  domain: submissions
+  visibility: public
+  auth: authenticated
+  params:
+    p_ean: { type: text, required: true }
+    p_product_name: { type: text, required: true }
+    p_brand: { type: text, required: false }
+    p_category: { type: text, required: false }
+    p_photo_url: { type: text, required: false }
+    p_notes: { type: text, required: false }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_get_my_submissions:
+  domain: submissions
+  visibility: public
+  auth: authenticated
+  params:
+    p_limit: { type: integer, required: false, default: 20 }
+    p_offset: { type: integer, required: false, default: 0 }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# TELEMETRY & DASHBOARD DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_track_event:
+  domain: telemetry
+  visibility: public
+  auth: authenticated
+  params:
+    p_event_name: { type: text, required: true }
+    p_properties: { type: jsonb, required: false, default: "NULL" }
+    p_page: { type: text, required: false, default: "NULL" }
+    p_component: { type: text, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_record_product_view:
+  domain: telemetry
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_recently_viewed:
+  domain: dashboard
+  visibility: public
+  auth: authenticated
+  params:
+    p_limit: { type: integer, required: false, default: 10 }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+
+api_get_dashboard_data:
+  domain: dashboard
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+  notes: Aggregated dashboard data including recent activity and recommendations.
+
+api_dashboard_insights:
+  domain: dashboard
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+  notes: Dashboard insights and trends.
+
+# ═══════════════════════════════════════════════════════════════════
+# USER DATA DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_delete_user_data:
+  domain: preferences
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 500
+  deprecated: false
+  notes: GDPR Art. 17 — right to erasure. Deletes all user data.
+
+# ═══════════════════════════════════════════════════════════════════
+# ADMIN — TELEMETRY
+# ═══════════════════════════════════════════════════════════════════
+
+api_admin_get_event_summary:
+  domain: telemetry
+  visibility: admin
+  auth: authenticated
+  params:
+    p_period: { type: text, required: false, default: "'7d'" }
+    p_limit: { type: integer, required: false, default: 50 }
+    p_group_by: { type: text, required: false, default: "'event'" }
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+
+api_admin_get_top_events:
+  domain: telemetry
+  visibility: admin
+  auth: authenticated
+  params:
+    p_days: { type: integer, required: false, default: 7 }
+    p_limit: { type: integer, required: false, default: 20 }
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+
+api_admin_get_funnel:
+  domain: telemetry
+  visibility: admin
+  auth: authenticated
+  params:
+    p_steps: { type: "text[]", required: true }
+    p_days: { type: integer, required: false, default: 30 }
+  returns: jsonb
+  p95_target: 500
+  deprecated: false
+
+api_admin_get_business_metrics:
+  domain: telemetry
+  visibility: admin
+  auth: authenticated
+  params:
+    p_since: { type: date, required: false }
+    p_days: { type: integer, required: false, default: 30 }
+  returns: jsonb
+  p95_target: 500
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# ADMIN — SUBMISSIONS
+# ═══════════════════════════════════════════════════════════════════
+
+api_admin_get_submissions:
+  domain: submissions
+  visibility: admin
+  auth: service_role
+  params:
+    p_status: { type: text, required: false, default: "'pending'" }
+    p_limit: { type: integer, required: false, default: 20 }
+    p_offset: { type: integer, required: false, default: 0 }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+
+api_admin_review_submission:
+  domain: submissions
+  visibility: admin
+  auth: service_role
+  params:
+    p_submission_id: { type: uuid, required: true }
+    p_decision: { type: text, required: true }
+    p_product_id: { type: bigint, required: false, default: "NULL" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: "Decision must be 'approved' or 'rejected'."
+
+# ═══════════════════════════════════════════════════════════════════
+# ADMIN — OPS TOOLING (not exposed via PostgREST)
+# ═══════════════════════════════════════════════════════════════════
+
+admin_activate_scoring_version:
+  domain: scoring
+  visibility: admin
+  auth: direct_db
+  returns: void
+  p95_target: null
+  deprecated: false
+  notes: Activate a scoring version for rollout.
+
+admin_flag_overview:
+  domain: flags
+  visibility: admin
+  auth: direct_db
+  returns: jsonb
+  p95_target: null
+  deprecated: false
+
+admin_rescore_batch:
+  domain: scoring
+  visibility: admin
+  auth: direct_db
+  returns: void
+  p95_target: null
+  deprecated: false
+  notes: Re-score a batch of products using current scoring config.
+
+admin_score_drift_report:
+  domain: scoring
+  visibility: admin
+  auth: direct_db
+  returns: jsonb
+  p95_target: null
+  deprecated: false
+
+admin_scoring_versions:
+  domain: scoring
+  visibility: admin
+  auth: direct_db
+  returns: jsonb
+  p95_target: null
+  deprecated: false
+
+admin_set_rollout:
+  domain: flags
+  visibility: admin
+  auth: direct_db
+  returns: void
+  p95_target: null
+  deprecated: false
+
+admin_toggle_flag:
+  domain: flags
+  visibility: admin
+  auth: direct_db
+  returns: void
+  p95_target: null
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# METRIC FUNCTIONS (direct DB access — analytics queries)
+# ═══════════════════════════════════════════════════════════════════
+
+metric_allergen_distribution:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+metric_category_popularity:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+metric_dau:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: numeric
+  p95_target: null
+  deprecated: false
+
+metric_failed_searches:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+metric_feature_usage:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+metric_onboarding_funnel:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+metric_scan_vs_search:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+metric_searches_per_day:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+metric_top_products:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+metric_top_queries:
+  domain: metrics
+  visibility: metric
+  auth: direct_db
+  returns: table
+  p95_target: null
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# INTERNAL HELPERS (not exposed as RPC)
+# ═══════════════════════════════════════════════════════════════════
+
+_compute_from_config:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: numeric
+  deprecated: false
+  notes: Config-driven scoring helper.
+
+_explain_from_config:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: jsonb
+  deprecated: false
+  notes: Config-driven score explanation helper.
+
+aggregate_daily_metrics:
+  domain: metrics
+  visibility: internal
+  auth: n/a
+  returns: void
+  deprecated: false
+  notes: Aggregates daily metrics into summary table.
+
+assign_confidence:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  params:
+    p_data_completeness_pct: { type: numeric, required: true }
+    p_source_type: { type: text, required: true }
+  returns: text
+  deprecated: false
+  notes: "Returns 'verified'/'estimated'/'low' from data completeness."
+
+build_search_vector:
+  domain: search
+  visibility: internal
+  auth: n/a
+  returns: tsvector
+  deprecated: false
+  notes: Builds tsvector for product search indexing.
+
+capture_score_distribution:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: void
+  deprecated: false
+
+check_product_preferences:
+  domain: preferences
+  visibility: internal
+  auth: n/a
+  returns: jsonb
+  deprecated: false
+  notes: Checks product against user preference/allergen filters.
+
+compute_daily_value_pct:
+  domain: health
+  visibility: internal
+  auth: n/a
+  returns: numeric
+  deprecated: false
+
+compute_health_warnings:
+  domain: health
+  visibility: internal
+  auth: n/a
+  returns: jsonb
+  deprecated: false
+
+compute_score:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: integer
+  deprecated: false
+  notes: Config-driven scoring function.
+
+compute_unhealthiness_v31:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: integer
+  deprecated: true
+  notes: Legacy v3.1 scoring — superseded by v3.2. Kept for audit trail.
+
+compute_unhealthiness_v32:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: integer
+  deprecated: false
+  notes: Active v3.2 scoring — 9-factor weighted formula.
+
+compute_data_confidence:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  deprecated: false
+  notes: "Composite confidence score (0-100). Called by api_data_confidence()."
+
+detect_score_drift:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: table
+  deprecated: false
+
+expand_search_query:
+  domain: search
+  visibility: internal
+  auth: n/a
+  returns: text
+  deprecated: false
+
+expire_stale_flags:
+  domain: flags
+  visibility: internal
+  auth: n/a
+  returns: void
+  deprecated: false
+
+find_better_alternatives:
+  domain: products
+  visibility: internal
+  auth: n/a
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_same_category: { type: boolean, required: false, default: true }
+    p_limit: { type: integer, required: false, default: 5 }
+  returns: table
+  deprecated: false
+  notes: Called by api_better_alternatives(). Jaccard similarity.
+
+find_similar_products:
+  domain: products
+  visibility: internal
+  auth: n/a
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_limit: { type: integer, required: false, default: 5 }
+  returns: table
+  deprecated: false
+
+flag_health_report:
+  domain: health
+  visibility: internal
+  auth: n/a
+  returns: jsonb
+  deprecated: false
+
+mv_staleness_check:
+  domain: infrastructure
+  visibility: internal
+  auth: n/a
+  returns: jsonb
+  deprecated: false
+  notes: Checks if materialized views are stale.
+
+refresh_all_materialized_views:
+  domain: infrastructure
+  visibility: internal
+  auth: n/a
+  returns: jsonb
+  deprecated: false
+  notes: Refreshes all MVs concurrently with timing report.
+
+rescore_batch:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: void
+  deprecated: false
+
+resolve_effective_country:
+  domain: preferences
+  visibility: internal
+  auth: n/a
+  returns: text
+  deprecated: false
+  notes: "2-tier resolution: explicit param → user_preferences.country."
+
+resolve_language:
+  domain: preferences
+  visibility: internal
+  auth: n/a
+  returns: text
+  deprecated: false
+  notes: "Language resolution with fallback to 'en'."
+
+score_category:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  returns: void
+  deprecated: false
+  notes: >
+    PROCEDURE. Batch scoring orchestrator — Steps 0/1/4/5
+    (concern defaults, unhealthiness, flags + completeness, confidence).
+
+search_quality_report:
+  domain: search
+  visibility: internal
+  auth: n/a
+  returns: jsonb
+  deprecated: false
+
+search_rank:
+  domain: search
+  visibility: internal
+  auth: n/a
+  returns: numeric
+  deprecated: false
+
+validate_country_profile:
+  domain: preferences
+  visibility: internal
+  auth: n/a
+  returns: boolean
+  deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# TRIGGER FUNCTIONS
+# ═══════════════════════════════════════════════════════════════════
+
+trg_create_default_lists:
+  domain: lists
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: Creates Favorites + Avoid lists for new users.
+
+trg_flag_audit:
+  domain: flags
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+
+trg_limit_comparisons:
+  domain: compare
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: Enforces max comparison count per user.
+
+trg_products_search_vector:
+  domain: search
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: Updates search_vector on product INSERT/UPDATE.
+
+trg_score_audit:
+  domain: scoring
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+
+trg_set_updated_at:
+  domain: infrastructure
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+
+trg_update_list_timestamp:
+  domain: lists
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
