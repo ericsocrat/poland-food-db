@@ -15,6 +15,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Schema & Migrations
 
+- Add governance drift detection automation: `governance_drift_check()` master runner (8 checks),
+  `log_drift_check()` with `drift_check_results` persistence table, severity levels, and
+  trigger naming convention validation (#199)
 - Add unified formula registry: `v_formula_registry` view, `formula_source_hashes` table,
   fingerprint columns on `scoring_model_versions` and `search_ranking_config`, auto-fingerprint
   triggers, `check_formula_drift()` and `check_function_source_drift()` sentinel functions (#198)
@@ -36,9 +39,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 - Extend `QA__scoring_engine.sql` from 17 to 25 checks: add T18-T25 for formula registry view,
   active scoring/search formulas, fingerprint population, drift detection, source hash verification,
   and auto-fingerprint trigger validation (#198)
+- Add `QA__governance_drift.sql` with 8 checks: function existence, 8-check return count,
+  all-pass clean state, valid severities, non-empty details, results table, logging function,
+  unique check names (#199)
 
 ### Documentation
 
+- Add drift detection automation guide (`docs/DRIFT_DETECTION.md`): 8-check catalog, severity
+  levels, CI integration plan, documentation freshness script, migration ordering validator,
+  monthly cadence, historical results schema (#199)
 - Add formula registry governance to `docs/SCORING_ENGINE.md`: unified registry view documentation,
   fingerprint-based drift detection guide, 7-step weight change protocol, weight change checklist
   template, and registered function source hashes reference (#198)

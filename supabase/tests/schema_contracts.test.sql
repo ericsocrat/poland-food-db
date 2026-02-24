@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(101);
+SELECT plan(105);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -157,6 +157,12 @@ SELECT has_function('public', 'check_formula_drift',              'function chec
 SELECT has_function('public', 'check_function_source_drift',      'function check_function_source_drift exists');
 SELECT has_column('public', 'scoring_model_versions', 'weights_fingerprint', 'scoring_model_versions.weights_fingerprint exists');
 SELECT has_column('public', 'search_ranking_config', 'weights_fingerprint', 'search_ranking_config.weights_fingerprint exists');
+
+-- ─── Drift Detection Automation (#199) ───────────────────────────────────────
+SELECT has_table('public', 'drift_check_results',                 'table drift_check_results exists');
+SELECT has_column('public', 'drift_check_results', 'run_id',     'column drift_check_results.run_id exists');
+SELECT has_function('public', 'governance_drift_check',           'function governance_drift_check exists');
+SELECT has_function('public', 'log_drift_check',                  'function log_drift_check exists');
 
 SELECT * FROM finish();
 ROLLBACK;

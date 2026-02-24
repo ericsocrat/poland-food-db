@@ -143,7 +143,8 @@ WHERE n.nspname = 'public'
     'refresh_all_materialized_views','mv_staleness_check',
     'check_product_preferences','resolve_effective_country',
     'compute_health_warnings',
-    'check_formula_drift','check_function_source_drift'
+    'check_formula_drift','check_function_source_drift',
+    'governance_drift_check','log_drift_check'
   )
   AND has_function_privilege('anon', p.oid, 'EXECUTE');
 
