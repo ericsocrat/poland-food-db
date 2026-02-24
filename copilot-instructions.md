@@ -190,6 +190,7 @@ poland-food-db/
 │   ├── API_VERSIONING.md            # API deprecation & versioning policy
 │   ├── ACCESS_AUDIT.md              # Data access pattern audit & quarterly review
 │   ├── PRIVACY_CHECKLIST.md         # GDPR/RODO compliance checklist & data lifecycle
+│   ├── FEATURE_SUNSETTING.md        # Feature retirement criteria & cleanup policy
 │   └── SONAR.md                     # SonarCloud configuration & quality gates
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (429 checks across 30 suites)
