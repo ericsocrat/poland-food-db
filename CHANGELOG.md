@@ -50,6 +50,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   Art. 9 health data special category assessment, data retention policy, cross-border
   transfer analysis, privacy policy content requirements, user data export/deletion
   SQL procedures, and country expansion privacy prerequisites
+- Add feature sunsetting and cleanup policy (`docs/FEATURE_SUNSETTING.md`) with
+  retirement criteria (6 quantitative + 5 qualitative triggers), 4-phase deprecation
+  lifecycle, database object cleanup procedure, tech debt classification (4 tiers),
+  feature flag expiration policy, quarterly hygiene review checklist template, and
+  initial candidate audit
 
 ### CI/CD & Infrastructure
 
