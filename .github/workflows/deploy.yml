@@ -232,6 +232,46 @@ jobs:
             echo "✅ **All $check_num sanity checks passed**" >> "$GITHUB_STEP_SUMMARY"
           fi
 
+      # ── Post-deploy health verification ─────────────────────────────────
+      # Issue #180 — Verify the health endpoint responds 200 after deploy.
+      # Waits 30 s for Vercel/edge functions to stabilize after migration push.
+      - name: Verify health endpoint
+        env:
+          PRODUCTION_URL: ${{ secrets.PRODUCTION_URL }}
+          STAGING_URL: ${{ secrets.STAGING_URL }}
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event.inputs.environment }}" = "production" ]; then
+            BASE_URL="${PRODUCTION_URL:?PRODUCTION_URL secret is not set}"
+          else
+            BASE_URL="${STAGING_URL:?STAGING_URL secret is not set}"
+          fi
+
+          HEALTH_URL="${BASE_URL}/api/health"
+          echo "Waiting 30 s for deployment to stabilize..."
+          sleep 30
+
+          echo "Checking health endpoint: $HEALTH_URL"
+          HTTP_CODE=$(curl -s -o /tmp/health_response.json -w "%{http_code}" "$HEALTH_URL" --max-time 10 || echo "000")
+
+          if [ "$HTTP_CODE" -ne 200 ]; then
+            echo "::error::Health check failed! HTTP $HTTP_CODE"
+            echo "❌ **Health check failed** — HTTP $HTTP_CODE" >> "$GITHUB_STEP_SUMMARY"
+            if [ -s /tmp/health_response.json ]; then
+              echo '```json' >> "$GITHUB_STEP_SUMMARY"
+              cat /tmp/health_response.json >> "$GITHUB_STEP_SUMMARY"
+              echo '```' >> "$GITHUB_STEP_SUMMARY"
+            fi
+            exit 1
+          fi
+
+          echo "✅ Health check passed (HTTP 200)"
+          echo "✅ **Health check passed** (HTTP 200)" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          jq . /tmp/health_response.json >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || cat /tmp/health_response.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
       # ── Deploy summary ─────────────────────────────────────────────────
       - name: Deploy summary
         if: success()
