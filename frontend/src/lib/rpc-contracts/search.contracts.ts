@@ -136,3 +136,29 @@ export const SavedSearchesContract = z
     ),
   })
   .passthrough();
+
+// ─── search_quality_report ──────────────────────────────────────────────────
+
+const PlannedMetricsSchema = z
+  .object({
+    total_searches: z.number().nullable(),
+    unique_queries: z.number().nullable(),
+    zero_result_rate: z.number().nullable(),
+    click_through_rate: z.number().nullable(),
+    mean_reciprocal_rank: z.number().nullable(),
+    avg_results_per_query: z.number().nullable(),
+    top_zero_result_queries: z.array(z.unknown()),
+    top_queries: z.array(z.unknown()),
+  })
+  .passthrough();
+
+export const SearchQualityReportContract = z
+  .object({
+    api_version: z.string(),
+    status: z.string(),
+    period_days: z.number(),
+    country: z.string(),
+    planned_metrics: PlannedMetricsSchema,
+  })
+  .passthrough();
+

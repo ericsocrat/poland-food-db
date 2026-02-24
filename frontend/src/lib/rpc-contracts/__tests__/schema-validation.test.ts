@@ -32,6 +32,7 @@ import {
   ScanHistoryContract,
   UserPreferencesContract,
   SavedSearchesContract,
+  SearchQualityReportContract,
 } from "../index";
 
 // ─── Mock data factories ────────────────────────────────────────────────────
@@ -623,5 +624,57 @@ describe("Schema validation: nullable fields", () => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (data as any).product_name = null;
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
+  });
+});
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// 6. Search Quality Report contract (Issue #192)
+// ═══════════════════════════════════════════════════════════════════════════════
+
+describe("Schema validation: SearchQualityReportContract", () => {
+  const validStubReport = {
+    api_version: "1.0",
+    status: "pending_dependency",
+    dependency: "issue_190_event_analytics",
+    period_days: 7,
+    country: "all",
+    message:
+      "Search quality metrics will be activated when Event Analytics (#190) is deployed.",
+    planned_metrics: {
+      total_searches: null,
+      unique_queries: null,
+      zero_result_rate: null,
+      click_through_rate: null,
+      mean_reciprocal_rank: null,
+      avg_results_per_query: null,
+      top_zero_result_queries: [],
+      top_queries: [],
+    },
+  };
+
+  it("accepts valid stub report", () => {
+    expect(SearchQualityReportContract.safeParse(validStubReport).success).toBe(
+      true,
+    );
+  });
+
+  it("accepts report with extra keys (passthrough)", () => {
+    const data = { ...validStubReport, extra_field: "future" };
+    expect(SearchQualityReportContract.safeParse(data).success).toBe(true);
+  });
+
+  it("rejects report missing planned_metrics", () => {
+    const { planned_metrics: _, ...data } = validStubReport;
+    expect(SearchQualityReportContract.safeParse(data).success).toBe(false);
+  });
+
+  it("rejects report missing period_days", () => {
+    const { period_days: _, ...data } = validStubReport;
+    expect(SearchQualityReportContract.safeParse(data).success).toBe(false);
+  });
+
+  it("rejects report with wrong type for status", () => {
+    const data = { ...validStubReport, status: 123 };
+    expect(SearchQualityReportContract.safeParse(data).success).toBe(false);
   });
 });

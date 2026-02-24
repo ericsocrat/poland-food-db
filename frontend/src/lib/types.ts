@@ -195,6 +195,29 @@ export interface DeleteSavedSearchResponse {
   deleted: boolean;
 }
 
+// ─── Search Quality Report (stub — Phase 3, requires #190) ─────────────────
+
+export interface SearchQualityPlannedMetrics {
+  total_searches: number | null;
+  unique_queries: number | null;
+  zero_result_rate: number | null;
+  click_through_rate: number | null;
+  mean_reciprocal_rank: number | null;
+  avg_results_per_query: number | null;
+  top_zero_result_queries: unknown[];
+  top_queries: unknown[];
+}
+
+export interface SearchQualityReport {
+  api_version: string;
+  status: string;
+  dependency?: string;
+  period_days: number;
+  country: string;
+  message?: string;
+  planned_metrics: SearchQualityPlannedMetrics;
+}
+
 // ─── Category Listing ───────────────────────────────────────────────────────
 
 export interface CategoryProduct {

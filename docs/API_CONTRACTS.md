@@ -691,3 +691,32 @@ All country-scoped API functions (`api_search_products`, `api_category_listing`,
 
 All tags in `product_allergen_info` must start with `en:` (e.g., `en:gluten`, `en:milk`). This is enforced at the schema level by the `chk_allergen_tag_en_prefix` CHECK constraint. Tags that don't match the `en:` prefix are rejected by the database on INSERT/UPDATE.
 
+---
+
+## 11. Search Architecture (#192)
+
+### New RPCs
+
+| RPC                                    | Purpose                              | Auth                        | Status              |
+| -------------------------------------- | ------------------------------------ | --------------------------- | ------------------- |
+| `search_rank(...)`                     | Formalized 5-signal ranking function | authenticated, service_role | Active              |
+| `build_search_vector(...)`             | Language-aware tsvector builder      | authenticated, service_role | Active              |
+| `search_quality_report(days, country)` | Search quality metrics dashboard     | authenticated, service_role | Stub (pending #190) |
+
+### New Tables
+
+| Table                   | Purpose                      | Write Access      |
+| ----------------------- | ---------------------------- | ----------------- |
+| `search_ranking_config` | Configurable ranking weights | service_role only |
+
+### Feature Flag Gate
+
+The `new_search_ranking` feature flag (default: disabled) controls whether
+`api_search_products()` uses the new `search_rank()` function or the legacy
+inline ranking. Toggle via:
+
+```sql
+UPDATE feature_flags SET enabled = true WHERE key = 'new_search_ranking';
+```
+
+See [docs/SEARCH_ARCHITECTURE.md](SEARCH_ARCHITECTURE.md) for full details.
