@@ -192,7 +192,7 @@ END AS "T15_drift_detection_callable";
 SELECT CASE
     WHEN EXISTS (
         SELECT 1 FROM pg_trigger
-        WHERE tgname = 'score_change_audit'
+        WHERE tgname = 'trg_products_score_audit'
           AND tgrelid = 'products'::regclass
     )
     THEN 'PASS' ELSE 'FAIL'
