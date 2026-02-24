@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach } from "vitest";
 
 // ─── QA Mode utility tests ──────────────────────────────────────────────────
 // Issue: #173 — [Quality Gate 2/9] QA Mode Flag for Deterministic UI
