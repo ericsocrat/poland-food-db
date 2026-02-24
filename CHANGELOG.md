@@ -45,6 +45,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Add documentation governance policy (`docs/DOCUMENTATION_GOVERNANCE.md`): ownership model with
+  11 domains, 14 update trigger rules, versioning policy with frontmatter requirements,
+  deprecation & archival process, drift prevention cadence, 4 health metrics (#201)
+- Add PR documentation checklist template (`.github/PULL_REQUEST_TEMPLATE.md`) with
+  6-item documentation compliance checklist (#201)
+- Enrich `docs/INDEX.md` with owner issue assignments for all 40+ documents and add
+  DOCUMENTATION_GOVERNANCE.md entry (#201)
 - Add drift detection automation guide (`docs/DRIFT_DETECTION.md`): 8-check catalog, severity
   levels, CI integration plan, documentation freshness script, migration ordering validator,
   monthly cadence, historical results schema (#199)
