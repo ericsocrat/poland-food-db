@@ -554,6 +554,7 @@ A migration applied successfully but introduced data corruption — e.g., an UPD
 ## Emergency Checklist
 
 > Copy-paste this into your incident channel (Slack/Discord/Teams) when a production incident occurs.
+> For the full incident response process (severity classification, escalation ladder, runbooks, post-mortem template), see [docs/INCIDENT_RESPONSE.md](docs/INCIDENT_RESPONSE.md).
 
 ```markdown
 ## 🚨 Production Incident — [DATE] [TIME UTC]
