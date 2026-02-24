@@ -158,6 +158,8 @@ export const ScoreExplanationContract = z
     brand: z.string(),
     category: z.string(),
     score_breakdown: z.record(z.string(), z.unknown()),
+    model_version: z.string().nullable().optional(),
+    scored_at: z.string().nullable().optional(),
     summary: z
       .object({
         score: z.number(),

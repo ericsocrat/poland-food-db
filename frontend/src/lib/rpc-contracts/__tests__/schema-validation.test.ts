@@ -430,6 +430,8 @@ describe("Schema validation: valid data accepted", () => {
       brand: "Brand",
       category: "dairy",
       score_breakdown: { fat: 10, sugar: 5 },
+      model_version: "v3.2",
+      scored_at: "2026-02-25T12:00:00Z",
       summary: {
         score: 35,
         score_band: "moderate",
