@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/Providers";
 import { ThemeScript } from "@/components/ThemeScript";
+import { IS_QA_MODE } from "@/lib/qa-mode";
 import "@/styles/globals.css";
 
 export const viewport: Viewport = {
@@ -87,9 +88,16 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning {...(IS_QA_MODE ? { "data-qa-mode": "true" } : {})}>
       <head>
         <ThemeScript />
+        {IS_QA_MODE && (
+          <style
+            dangerouslySetInnerHTML={{
+              __html: "*, *::before, *::after { transition: none !important; animation: none !important; }",
+            }}
+          />
+        )}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
@@ -97,7 +105,7 @@ export default function RootLayout({
       </head>
       <body>
         <Providers>{children}</Providers>
-        <SpeedInsights />
+        {!IS_QA_MODE && <SpeedInsights />}
       </body>
     </html>
   );
