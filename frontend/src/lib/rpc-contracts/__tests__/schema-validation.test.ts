@@ -664,12 +664,14 @@ describe("Schema validation: SearchQualityReportContract", () => {
   });
 
   it("rejects report missing planned_metrics", () => {
-    const { planned_metrics: _, ...data } = validStubReport;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { planned_metrics: _pm, ...data } = validStubReport;
     expect(SearchQualityReportContract.safeParse(data).success).toBe(false);
   });
 
   it("rejects report missing period_days", () => {
-    const { period_days: _, ...data } = validStubReport;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { period_days: _pd, ...data } = validStubReport;
     expect(SearchQualityReportContract.safeParse(data).success).toBe(false);
   });
 
