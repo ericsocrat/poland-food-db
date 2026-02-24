@@ -894,6 +894,25 @@
     "autoRefresh": "Auto-refreshes every 60 seconds",
     "lastUpdated": "Last updated"
   },
+  "metrics": {
+    "title": "Business Metrics",
+    "subtitle": "Platform usage analytics and engagement data",
+    "loadFailed": "Failed to load metrics. Check your connection and admin access.",
+    "noData": "No data yet",
+    "exportJson": "Export JSON",
+    "dau": "Daily Active Users",
+    "searches": "Searches Today",
+    "failedSearches": "Failed Searches",
+    "zeroResults": "Zero-result queries",
+    "scanVsSearch": "Scan vs Search",
+    "topQueries": "Top Search Queries",
+    "topProducts": "Top Products",
+    "featureUsage": "Feature Usage",
+    "allergenDist": "Allergen Profile Distribution",
+    "onboardingFunnel": "Onboarding Funnel",
+    "categoryPopularity": "Category Popularity",
+    "lastUpdated": "Last updated"
+  },
   "shared": {
     "sharedList": "Shared list",
     "listNotFound": "List not found",
