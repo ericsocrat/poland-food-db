@@ -22,6 +22,16 @@ import { DoneStep } from "./steps/DoneStep";
 import { INITIAL_ONBOARDING_DATA, TOTAL_STEPS } from "./types";
 import type { OnboardingData } from "./types";
 
+const STEP_NAMES = [
+  "welcome",
+  "region",
+  "diet",
+  "allergens",
+  "health_goals",
+  "categories",
+  "done",
+] as const;
+
 export function OnboardingWizard() {
   const router = useRouter();
   const supabase = createClient();
@@ -36,12 +46,24 @@ export function OnboardingWizard() {
   }, []);
 
   const goNext = useCallback(() => {
-    setStep((s) => Math.min(s + 1, TOTAL_STEPS - 1));
-  }, []);
+    setStep((s) => {
+      const next = Math.min(s + 1, TOTAL_STEPS - 1);
+      track("onboarding_step", { step: STEP_NAMES[next], step_index: next });
+      return next;
+    });
+  }, [track]);
 
   const goBack = useCallback(() => {
-    setStep((s) => Math.max(s - 1, 0));
-  }, []);
+    setStep((s) => {
+      const prev = Math.max(s - 1, 0);
+      track("onboarding_step", {
+        step: STEP_NAMES[prev],
+        step_index: prev,
+        direction: "back",
+      });
+      return prev;
+    });
+  }, [track]);
 
   async function handleSkipAll() {
     setLoading(true);

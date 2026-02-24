@@ -12,6 +12,7 @@ import type {
   AnalyticsEventName,
   AutocompleteResponse,
   AvoidProductIdsResponse,
+  BusinessMetricsResponse,
   CategoryListingResponse,
   CategoryOverviewItem,
   CompareResponse,
@@ -982,4 +983,20 @@ export function deleteUserData(
   supabase: SupabaseClient,
 ): Promise<RpcResult<DeleteUserDataResponse>> {
   return callRpc<DeleteUserDataResponse>(supabase, "api_delete_user_data");
+}
+
+// ─── Business Metrics Dashboard (#188) ──────────────────────────────────────
+
+export function getBusinessMetrics(
+  supabase: SupabaseClient,
+  params?: { date?: string; days?: number },
+): Promise<RpcResult<BusinessMetricsResponse>> {
+  return callRpc<BusinessMetricsResponse>(
+    supabase,
+    "api_admin_get_business_metrics",
+    {
+      p_date: params?.date ?? null,
+      p_days: params?.days ?? 7,
+    },
+  );
 }

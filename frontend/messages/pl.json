@@ -894,6 +894,25 @@
     "autoRefresh": "Automatyczne odświeżanie co 60 sekund",
     "lastUpdated": "Ostatnia aktualizacja"
   },
+  "metrics": {
+    "title": "Metryki biznesowe",
+    "subtitle": "Analityka użytkowania platformy i dane o zaangażowaniu",
+    "loadFailed": "Nie udało się załadować metryk. Sprawdź połączenie i uprawnienia administratora.",
+    "noData": "Brak danych",
+    "exportJson": "Eksportuj JSON",
+    "dau": "Aktywni użytkownicy (dziennie)",
+    "searches": "Wyszukiwania dzisiaj",
+    "failedSearches": "Nieudane wyszukiwania",
+    "zeroResults": "Zapytania bez wyników",
+    "scanVsSearch": "Skan vs wyszukiwanie",
+    "topQueries": "Najczęstsze zapytania",
+    "topProducts": "Najpopularniejsze produkty",
+    "featureUsage": "Użycie funkcji",
+    "allergenDist": "Rozkład profili alergenów",
+    "onboardingFunnel": "Lejek wdrażania",
+    "categoryPopularity": "Popularność kategorii",
+    "lastUpdated": "Ostatnia aktualizacja"
+  },
   "shared": {
     "sharedList": "Udostępniona lista",
     "listNotFound": "Nie znaleziono listy",

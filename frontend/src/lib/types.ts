@@ -1025,7 +1025,9 @@ export type AnalyticsEventName =
   | "pwa_install_accepted"
   | "pwa_install_dismissed"
   | "user_data_exported"
-  | "account_deleted";
+  | "account_deleted"
+  | "onboarding_step"
+  | "recipe_view";
 
 export type DeviceType = "mobile" | "tablet" | "desktop";
 
@@ -1033,6 +1035,41 @@ export interface TrackEventResponse {
   api_version: string;
   tracked: boolean;
   error?: string;
+}
+
+// ─── Business Metrics Dashboard (#188) ──────────────────────────────────────
+
+export interface BusinessMetricsResponse {
+  api_version: string;
+  date: string;
+  days: number;
+  dau: number;
+  searches: number;
+  top_queries: { query: string; count: number }[];
+  failed_searches: { query: string; count: number }[];
+  top_products: { product_id: string; product_name: string; views: number }[];
+  allergen_distribution: {
+    allergen: string;
+    user_count: number;
+    percentage: number;
+  }[];
+  feature_usage: {
+    feature: string;
+    usage_count: number;
+    unique_users: number;
+  }[];
+  scan_vs_search: { method: string; count: number; percentage: number }[];
+  onboarding_funnel: {
+    step: string;
+    user_count: number;
+    completion_rate: number;
+  }[];
+  category_popularity: {
+    category: string;
+    views: number;
+    unique_users: number;
+  }[];
+  trend: { date: string; metric: string; value: number }[];
 }
 
 // ─── Dashboard / Recently Viewed ────────────────────────────────────────────
