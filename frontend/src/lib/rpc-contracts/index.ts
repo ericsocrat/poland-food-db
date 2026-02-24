@@ -31,6 +31,7 @@ export {
   SearchAutocompleteContract,
   FilterOptionsContract,
   SavedSearchesContract,
+  SearchQualityReportContract,
 } from "./search.contracts";
 
 // ─── Category domain ────────────────────────────────────────────────────────

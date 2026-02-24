@@ -243,3 +243,55 @@ This is a **suggested** order based on data availability, market size, and Nutri
 - ❌ Do NOT modify Polish pipelines to accommodate another country's needs
 - ❌ Do NOT use non-EU data sources (USDA, etc.) for EU country products
 - ❌ Do NOT add a country if Open Food Facts has < 100 verified products for it
+
+---
+
+## 10. Search Configuration for New Countries (#192)
+
+When adding a new country, configure search infrastructure:
+
+### Step 1: Add Language (if not present)
+
+```sql
+INSERT INTO language_ref (code, name_en, name_native, sort_order)
+VALUES ('xx', 'Language', 'Native Name', 10)
+ON CONFLICT (code) DO NOTHING;
+```
+
+### Step 2: Update `build_search_vector()`
+
+Add a WHEN clause to the country CASE in `build_search_vector()`:
+
+```sql
+WHEN 'XX' THEN 'config_name'::regconfig
+```
+
+Available built-in configs: `simple`, `english`, `german`, `french`, `italian`,
+`spanish`, `dutch`, `danish`, `swedish`, `norwegian`, `finnish`, `russian`.
+
+### Step 3: Add Synonym Pairs
+
+Insert bidirectional synonym pairs for common food terms:
+
+```sql
+INSERT INTO search_synonyms (term_original, term_target, language_from, language_to)
+VALUES
+    ('local_term', 'english_term', 'xx', 'en'),
+    ('english_term', 'local_term', 'en', 'xx');
+```
+
+Aim for 40–50 bidirectional pairs covering common food categories.
+
+### Step 4: Backfill Search Vectors
+
+```sql
+UPDATE products
+SET search_vector = build_search_vector(
+    product_name, product_name_en, brand, category, country
+)
+WHERE country = 'XX';
+```
+
+### Step 5: Verify
+
+Run `db/qa/QA__search_architecture.sql` to confirm all tests pass.
