@@ -1,5 +1,7 @@
 # Deployment Guide
 
+> **Last updated:** 2026-02-28
+
 ## Vercel Deployment
 
 The frontend is deployed on Vercel from the `frontend/` directory.
@@ -104,30 +106,30 @@ For **production** deployments, a reviewer must approve the deployment in the Gi
 
 ### Workflow Steps
 
-| Step | Description | On Failure |
-| ---- | ----------- | ---------- |
-| Pre-flight: Schema diff | Shows pending migrations and drift between Git and remote | Informational — does not block |
-| Dry run gate | If dry run is checked, stops after showing diff | N/A |
-| Approval gate | Production requires reviewer approval via GitHub Environments | Deploy waits indefinitely |
-| Pre-deploy backup | `supabase db dump --data-only` saved as artifact (30-day retention) | **Aborts deployment** |
-| Push migrations | `supabase db push` applies pending migrations | Workflow fails, backup available |
-| Post-deploy sanity | Runs all 16 SQL sanity checks against remote | Workflow fails with check details |
+| Step                    | Description                                                         | On Failure                        |
+| ----------------------- | ------------------------------------------------------------------- | --------------------------------- |
+| Pre-flight: Schema diff | Shows pending migrations and drift between Git and remote           | Informational — does not block    |
+| Dry run gate            | If dry run is checked, stops after showing diff                     | N/A                               |
+| Approval gate           | Production requires reviewer approval via GitHub Environments       | Deploy waits indefinitely         |
+| Pre-deploy backup       | `supabase db dump --data-only` saved as artifact (30-day retention) | **Aborts deployment**             |
+| Push migrations         | `supabase db push` applies pending migrations                       | Workflow fails, backup available  |
+| Post-deploy sanity      | Runs all 16 SQL sanity checks against remote                        | Workflow fails with check details |
 
 ### GitHub Environment Protection Rules
 
-| Environment | Approval Required | Wait Timer | Secrets |
-| ----------- | ----------------- | ---------- | ------- |
-| `production` | Yes (1+ reviewer) | 5 minutes | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `SUPABASE_DB_PASSWORD` |
-| `staging` | No | None | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_STAGING_PROJECT_REF`, `SUPABASE_DB_PASSWORD` |
+| Environment  | Approval Required | Wait Timer | Secrets                                                                         |
+| ------------ | ----------------- | ---------- | ------------------------------------------------------------------------------- |
+| `production` | Yes (1+ reviewer) | 5 minutes  | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_PROJECT_REF`, `SUPABASE_DB_PASSWORD`         |
+| `staging`    | No                | None       | `SUPABASE_ACCESS_TOKEN`, `SUPABASE_STAGING_PROJECT_REF`, `SUPABASE_DB_PASSWORD` |
 
 ### Required Secrets
 
-| Secret | Purpose | Scope |
-| ------ | ------- | ----- |
-| `SUPABASE_ACCESS_TOKEN` | CLI authentication | Repository |
-| `SUPABASE_PROJECT_REF` | Production project reference | Environment: production |
-| `SUPABASE_STAGING_PROJECT_REF` | Staging project reference | Environment: staging |
-| `SUPABASE_DB_PASSWORD` | Direct DB access (backup + sanity) | Repository |
+| Secret                         | Purpose                            | Scope                   |
+| ------------------------------ | ---------------------------------- | ----------------------- |
+| `SUPABASE_ACCESS_TOKEN`        | CLI authentication                 | Repository              |
+| `SUPABASE_PROJECT_REF`         | Production project reference       | Environment: production |
+| `SUPABASE_STAGING_PROJECT_REF` | Staging project reference          | Environment: staging    |
+| `SUPABASE_DB_PASSWORD`         | Direct DB access (backup + sanity) | Repository              |
 
 > **Security:** All secrets are accessed via `${{ secrets.* }}` — never echoed in logs or step outputs. Rotate access tokens quarterly.
 
@@ -173,14 +175,14 @@ See also: Issue #121 (Rollback Documentation) for detailed procedures.
 
 Add these in **GitHub > Settings > Secrets and variables > Actions > Repository secrets**:
 
-| Secret                               | Value                                    | Used by             |
-| ------------------------------------ | ---------------------------------------- | ------------------- |
-| `NEXT_PUBLIC_SUPABASE_URL`           | Production Supabase URL                  | CI (fallback)       |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY`      | Production Supabase anon key             | CI (fallback)       |
-| `SUPABASE_URL_STAGING`               | Staging Supabase URL                     | CI + preview E2E    |
-| `SUPABASE_ANON_KEY_STAGING`          | Staging Supabase anon key                | CI + preview E2E    |
-| `SUPABASE_SERVICE_ROLE_KEY_STAGING`  | Staging service role key                 | CI auth E2E         |
-| `SUPABASE_SERVICE_ROLE_KEY`          | Production service role key (fallback)   | CI auth E2E         |
+| Secret                              | Value                                  | Used by          |
+| ----------------------------------- | -------------------------------------- | ---------------- |
+| `NEXT_PUBLIC_SUPABASE_URL`          | Production Supabase URL                | CI (fallback)    |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY`     | Production Supabase anon key           | CI (fallback)    |
+| `SUPABASE_URL_STAGING`              | Staging Supabase URL                   | CI + preview E2E |
+| `SUPABASE_ANON_KEY_STAGING`         | Staging Supabase anon key              | CI + preview E2E |
+| `SUPABASE_SERVICE_ROLE_KEY_STAGING` | Staging service role key               | CI auth E2E      |
+| `SUPABASE_SERVICE_ROLE_KEY`         | Production service role key (fallback) | CI auth E2E      |
 
 > **Note:** When staging secrets are configured, CI automatically uses them
 > over the production fallbacks. This ensures CI never touches production.
@@ -318,7 +320,7 @@ Import uses `ON CONFLICT DO UPDATE` (upsert) — safe to run multiple times.
 
 After any restore, run the full validation suite:
 
-1. **Sanity checks** — `.\RUN_SANITY.ps1 -Env production` (17 checks pass)
+1. **Sanity checks** — `.\RUN_SANITY.ps1 -Env production` (16 checks pass)
 2. **QA checks** — `.\RUN_QA.ps1` (all suites pass)
 3. **Row counts** — verify user table row counts match pre-backup values
 4. **Frontend smoke** — load a product detail page and verify data displays correctly
@@ -629,14 +631,14 @@ psql -h db.uskvezwftkkudvksmken.supabase.co `
 
 The DR drill is fully automated via `RUN_DR_DRILL.ps1`, which runs 6 scenarios:
 
-| Scenario | Description | TTR Target | Recovery Method |
-|---|---|---|---|
-| A | Bad Migration (column drop) | < 5 min | SAVEPOINT/ROLLBACK |
-| B | Table Truncation (data loss) | < 5 min | SAVEPOINT/ROLLBACK |
-| C | Full Backup Restore | < 30 min | pg_restore / supabase db reset |
-| D | User Data Restore | < 5 min | SAVEPOINT/ROLLBACK or import script |
-| E | Frontend Deployment Rollback | < 5 min | Vercel "Promote to Production" |
-| F | API Endpoint Failure | < 10 min | Compensating migration |
+| Scenario | Description                  | TTR Target | Recovery Method                     |
+| -------- | ---------------------------- | ---------- | ----------------------------------- |
+| A        | Bad Migration (column drop)  | < 5 min    | SAVEPOINT/ROLLBACK                  |
+| B        | Table Truncation (data loss) | < 5 min    | SAVEPOINT/ROLLBACK                  |
+| C        | Full Backup Restore          | < 30 min   | pg_restore / supabase db reset      |
+| D        | User Data Restore            | < 5 min    | SAVEPOINT/ROLLBACK or import script |
+| E        | Frontend Deployment Rollback | < 5 min    | Vercel "Promote to Production"      |
+| F        | API Endpoint Failure         | < 10 min   | Compensating migration              |
 
 ```powershell
 # Run all scenarios against local Supabase
@@ -696,14 +698,14 @@ supabase db reset
 
 ### Expected TTR by Recovery Method
 
-| Recovery Method | TTR | Data Loss | When to Use |
-|---|---|---|---|
-| **SAVEPOINT/ROLLBACK** | < 100 ms | Zero | Failure caught within active transaction |
-| **Compensating migration** | 5–30 min | Varies | Schema error committed, data intact |
-| **User data import (JSON)** | < 2 min | Since last export | User data loss, schema intact |
-| **Full backup restore** | 10–30 min | Since last backup | Widespread corruption |
-| **supabase db reset** | < 30 sec | All user data | Local dev only |
-| **Vercel Promote** | ~30 sec | Zero | Frontend deployment broken |
+| Recovery Method             | TTR       | Data Loss         | When to Use                              |
+| --------------------------- | --------- | ----------------- | ---------------------------------------- |
+| **SAVEPOINT/ROLLBACK**      | < 100 ms  | Zero              | Failure caught within active transaction |
+| **Compensating migration**  | 5–30 min  | Varies            | Schema error committed, data intact      |
+| **User data import (JSON)** | < 2 min   | Since last export | User data loss, schema intact            |
+| **Full backup restore**     | 10–30 min | Since last backup | Widespread corruption                    |
+| **supabase db reset**       | < 30 sec  | All user data     | Local dev only                           |
+| **Vercel Promote**          | ~30 sec   | Zero              | Frontend deployment broken               |
 
 ### Record Your Results
 
