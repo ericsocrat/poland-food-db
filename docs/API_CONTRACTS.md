@@ -2,7 +2,9 @@
 
 > **Version:** 1.0 · **Date:** 2026-02-13
 > **Stability:** Stable — these surfaces are safe for frontend consumption.
-> **Versioning & Deprecation:** See [docs/API_VERSIONING.md](API_VERSIONING.md) for breaking change protocol, sunset windows, and version strategy.
+> **Versioning & Deprecation:** See [API_VERSIONING.md](API_VERSIONING.md) for breaking change protocol, sunset windows, and version strategy.
+> **Naming Conventions:** See [API_CONVENTIONS.md](API_CONVENTIONS.md) for RPC naming patterns, parameter standards, and security requirements.
+> **Canonical Registry:** See [api-registry.yaml](api-registry.yaml) for structured, machine-readable registry of all 107 functions.
 
 ---
 

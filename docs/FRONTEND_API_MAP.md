@@ -4,8 +4,15 @@
 > All functions are called via Supabase RPC: `supabase.rpc('function_name', { params })`.
 > All return `jsonb` with `api_version: '1.0'`.
 >
-> **Auth-only platform:** All 9 API functions require authentication.
-> Anonymous (unauthenticated) access is blocked for all endpoints.
+> **Auth-only platform:** All 9 core API functions require authentication.
+> Anonymous (unauthenticated) access is blocked for all endpoints except shared views.
+>
+> **Canonical registry:** See [api-registry.yaml](api-registry.yaml) for the structured,
+> machine-readable registry of all 107 functions with parameters, return types,
+> auth requirements, domain classification, and P95 targets.
+>
+> **Naming conventions:** See [API_CONVENTIONS.md](API_CONVENTIONS.md) for the RPC naming
+> convention, breaking change definition, and security standards.
 
 ---
 
