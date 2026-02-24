@@ -47,6 +47,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Testing & QA
 
+- Add scoring & search determinism test framework: `QA__scoring_determinism.sql` with 15
+  pure-function checks — 5 pinned-score tests, 2 boundary tests, 2 factor-isolation tests,
+  2 ordering tests, re-scoring determinism (100 iterations), explain/compute parity,
+  stored-vs-recomputed parity, weight-sum verification; search stubs for #204 (#202)
 - Extend `QA__scoring_engine.sql` from 17 to 25 checks: add T18-T25 for formula registry view,
   active scoring/search formulas, fingerprint population, drift detection, source hash verification,
   and auto-fingerprint trigger validation (#198)
