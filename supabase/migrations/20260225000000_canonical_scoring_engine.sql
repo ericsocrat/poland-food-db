@@ -209,11 +209,11 @@ CREATE TABLE IF NOT EXISTS public.score_distribution_snapshots (
     p75_score         integer,
     p90_score         integer,
     band_distribution jsonb,
-    created_at        timestamptz  NOT NULL DEFAULT now(),
-
-    CONSTRAINT sds_unique_snapshot
-        UNIQUE (snapshot_date, country, COALESCE(category, ''), model_version)
+    created_at        timestamptz  NOT NULL DEFAULT now()
 );
+
+CREATE UNIQUE INDEX sds_unique_snapshot
+    ON public.score_distribution_snapshots (snapshot_date, country, COALESCE(category, ''), model_version);
 
 CREATE INDEX idx_sds_date ON public.score_distribution_snapshots (snapshot_date DESC);
 
