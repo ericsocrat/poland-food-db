@@ -63,5 +63,12 @@ export { CompareContract } from "./compare.contracts";
 // ─── Scan domain ────────────────────────────────────────────────────────────
 export { ScanHistoryContract } from "./scan.contracts";
 
+// ─── Provenance domain ──────────────────────────────────────────────────────
+export {
+  ProductProvenanceContract,
+  CountryValidationContract,
+  ProvenanceDashboardContract,
+} from "./provenance.contracts";
+
 // ─── User preferences domain ────────────────────────────────────────────────
 export { UserPreferencesContract } from "./user.contracts";

@@ -295,3 +295,83 @@ WHERE country = 'XX';
 ### Step 5: Verify
 
 Run `db/qa/QA__search_architecture.sql` to confirm all tests pass.
+
+## 11. Data Provenance Setup for New Countries (#193)
+
+When adding a new country, configure data provenance and governance:
+
+### Step 1: Add Country Data Policy
+
+```sql
+INSERT INTO country_data_policies (
+    country, is_active, allergen_strictness,
+    min_confidence_for_publish, regulatory_framework, notes
+) VALUES (
+    'XX', false, 'standard',
+    0.60, 'EU FIC 1169/2011', 'Initial setup'
+);
+```
+
+Set `allergen_strictness` to `'strict'` for countries with enhanced allergen
+regulations (e.g., DE, UK).
+
+### Step 2: Add Freshness Policies
+
+Insert 6 rows per country (one per field group):
+
+```sql
+INSERT INTO freshness_policies
+    (country, field_group, warning_age_days, critical_age_days,
+     max_age_days, refresh_strategy)
+VALUES
+    ('XX', 'nutrition',   90, 120, 150, 'auto_api'),
+    ('XX', 'allergens',   45,  60,  75, 'manual_review'),
+    ('XX', 'ingredients', 90, 120, 150, 'auto_api'),
+    ('XX', 'identity',   150, 200, 365, 'auto_api'),
+    ('XX', 'images',     150, 200, 365, 'auto_api'),
+    ('XX', 'scoring',     15,  20,  30, 'auto_api');
+```
+
+Adjust thresholds based on local regulatory refresh requirements.
+
+### Step 3: Add Conflict Resolution Rules
+
+Insert rules for field groups that should auto-resolve vs. require manual review:
+
+```sql
+INSERT INTO conflict_resolution_rules
+    (country, field_group, max_auto_resolve_severity, resolution_strategy)
+VALUES
+    ('XX', 'nutrition',   'high',     'highest_confidence'),
+    ('XX', 'allergens',   'low',      'manual_always'),
+    ('XX', 'ingredients', 'medium',   'highest_confidence'),
+    ('XX', 'identity',    'high',     'most_recent'),
+    ('XX', 'images',      'high',     'most_recent'),
+    ('XX', 'scoring',     'high',     'highest_confidence');
+```
+
+### Step 4: Register Country-Specific Sources
+
+Add retailer or local data sources:
+
+```sql
+INSERT INTO data_sources
+    (source_key, display_name, source_type, base_confidence,
+     country_coverage, is_active)
+VALUES
+    ('retailer_local', 'Local Retailer', 'retailer', 0.80,
+     ARRAY['XX'], true);
+```
+
+### Step 5: Activate Country
+
+Once fully configured and validated:
+
+```sql
+UPDATE country_data_policies SET is_active = true WHERE country = 'XX';
+```
+
+### Step 6: Verify
+
+Run `db/qa/QA__data_provenance.sql` — tests T15–T16 validate country policies.
+Also run `validate_product_for_country(product_id, 'XX')` on sample products.
