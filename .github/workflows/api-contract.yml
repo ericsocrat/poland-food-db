@@ -25,12 +25,14 @@ on:
       - "supabase/migrations/**"
       - "db/**"
       - "frontend/src/lib/rpc-contract*"
+      - ".github/workflows/api-contract.yml"
   pull_request:
     branches: [main]
     paths:
       - "supabase/migrations/**"
       - "db/**"
       - "frontend/src/lib/rpc-contract*"
+      - ".github/workflows/api-contract.yml"
   schedule:
     # Nightly 03:00 UTC — detect drift from manual DB changes
     - cron: "0 3 * * *"
@@ -93,17 +95,18 @@ jobs:
           INTEGRATION: "1"
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           echo "## API Contract Test Results" >> "$GITHUB_STEP_SUMMARY"
           echo "" >> "$GITHUB_STEP_SUMMARY"
 
           set +e
-          output=$(npx vitest run --testPathPattern=rpc-contract 2>&1)
-          exit_code=$?
+          npx vitest run rpc-contract 2>&1 | tee /tmp/contract-output.txt
+          exit_code=${PIPESTATUS[0]}
           set -e
 
           echo '```' >> "$GITHUB_STEP_SUMMARY"
-          echo "$output" >> "$GITHUB_STEP_SUMMARY"
+          cat /tmp/contract-output.txt >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
 
           if [ "$exit_code" -ne 0 ]; then
@@ -112,6 +115,11 @@ jobs:
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "One or more RPC functions returned unexpected shapes." >> "$GITHUB_STEP_SUMMARY"
             echo "This means a migration likely changed the API contract." >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "**To reproduce locally:**" >> "$GITHUB_STEP_SUMMARY"
+            echo '```bash' >> "$GITHUB_STEP_SUMMARY"
+            echo 'cd frontend && npm run test:integration' >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "**Fix options:**" >> "$GITHUB_STEP_SUMMARY"
             echo "1. Fix the migration to preserve the existing contract" >> "$GITHUB_STEP_SUMMARY"
@@ -130,4 +138,4 @@ jobs:
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
         run: |
           # Also run the health route unit test which validates response shape
-          npx vitest run --testPathPattern=api/health
+          npx vitest run api/health
