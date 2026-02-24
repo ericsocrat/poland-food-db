@@ -349,6 +349,8 @@ poland-food-db/
 | `api_search_products()`            | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                        |
 | `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                                                               |
 | `mv_staleness_check()`             | Checks if MVs are stale by comparing row counts to source tables                                                                                          |
+| `check_formula_drift()`            | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                         |
+| `check_function_source_drift()`    | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                            |
 
 ### Views
 
@@ -357,6 +359,8 @@ poland-food-db/
 **`v_api_category_overview`** — Dashboard-ready category statistics. One row per active category (20 total). Includes product_count, avg/min/max/median score, pct_nutri_a_b, pct_nova_4, display metadata from category_ref.
 
 **`v_product_confidence`** — Materialized view of data confidence scores for all active products. Columns: product_id, product_name, brand, category, nutrition_pts(0-30), ingredient_pts(0-25), source_pts(0-20), ean_pts(0-10), allergen_pts(0-10), serving_pts(0-5), confidence_score(0-100), confidence_band(high/medium/low). Unique index on product_id.
+
+**`v_formula_registry`** — Unified view across `scoring_model_versions` and `search_ranking_config`. Columns: domain, version, formula_name, status, weights_config (JSONB), fingerprint (SHA-256), change_reason, is_active. Both scoring and search formulas in one query surface.
 
 ---
 

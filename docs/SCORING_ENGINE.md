@@ -279,3 +279,114 @@ The v3.2 fast path ensures zero performance regression for pipeline scoring.
 | T15 | `detect_score_drift` is callable |
 | T16 | Audit trigger is installed |
 | T17 | Grants are correct |
+
+---
+
+## 14. Unified Formula Registry (#198)
+
+Both scoring and search ranking formulas are governed under a single **formula registry** system — the `v_formula_registry` view unifies `scoring_model_versions` and `search_ranking_config` into one read-only surface.
+
+### Registry View — `v_formula_registry`
+
+| Column | Type | Source (scoring) | Source (search) |
+|--------|------|-----------------|-----------------|
+| `domain` | text | `'scoring'` | `'search'` |
+| `version` | text | `smv.version` | `src.version` |
+| `formula_name` | text | `'compute_unhealthiness'` | `src.config_name` |
+| `status` | text | `smv.status` | `active`/`inactive` |
+| `weights_config` | jsonb | `smv.config` | `src.weights` |
+| `fingerprint` | text | SHA-256 of config | SHA-256 of weights |
+| `change_reason` | text | `smv.description` | `src.change_reason` |
+| `is_active` | boolean | `status = 'active'` | `src.active` |
+
+Query:
+```sql
+SELECT * FROM v_formula_registry WHERE is_active;
+```
+
+### Fingerprint-Based Drift Detection
+
+Every formula's JSONB config is SHA-256 hashed on INSERT/UPDATE via auto-fingerprint triggers. Two drift detection functions exist:
+
+| Function | Checks | Use Case |
+|----------|--------|----------|
+| `check_formula_drift()` | JSONB fingerprint vs recomputed hash | Config-level drift (someone edited weights without trigger) |
+| `check_function_source_drift()` | pg_proc source hash vs registered hash | Code-level drift (someone edited function body without updating registry) |
+
+Run both as CI/QA checks:
+```sql
+-- Should return 0 rows with status = 'drift_detected'
+SELECT * FROM check_formula_drift() WHERE status != 'match';
+SELECT * FROM check_function_source_drift() WHERE status != 'match';
+```
+
+### Registered Function Source Hashes
+
+The `formula_source_hashes` table stores expected `pg_proc.prosrc` SHA-256 hashes for:
+- `compute_unhealthiness_v32` — core scoring function
+- `explain_score_v32` — score breakdown
+- `compute_score` — canonical entry point
+- `_compute_from_config` — config-driven engine
+- `_explain_from_config` — config-driven breakdown
+- `search_rank` — search ranking function
+
+After any intentional function modification, update the hash:
+```sql
+UPDATE formula_source_hashes
+SET    expected_hash = encode(sha256(p.prosrc::bytea), 'hex'),
+       updated_at    = now()
+FROM   pg_proc p
+JOIN   pg_namespace n ON n.oid = p.pronamespace
+WHERE  n.nspname = 'public'
+  AND  p.proname = formula_source_hashes.function_name
+  AND  formula_source_hashes.function_name = 'compute_unhealthiness_v32';
+```
+
+---
+
+## 15. Weight Change Governance
+
+Changing scoring or search weights is a **controlled operation** with mandatory documentation. This process applies to any modification of factor weights, ceilings, categorical maps, or ranking signals.
+
+### When to Use This Process
+
+- Changing any weight in `compute_unhealthiness_v32()` or `scoring_model_versions.config`
+- Changing any weight in `search_ranking_config.weights`
+- Adding or removing a scoring factor
+- Modifying a ceiling value or categorical map entry
+- Adding a new search ranking signal
+
+### 7-Step Weight Change Protocol
+
+| Step | Action | Tool |
+|------|--------|------|
+| 1. **Propose** | Create GitHub issue with new weights, scientific rationale, and expected impact | GitHub Issue |
+| 2. **Simulate** | Run `compute_score(product_id, 'vX.Y', NULL, 'dry_run')` on 100 anchor products | SQL |
+| 3. **Compare** | Generate distribution comparison between current and proposed weights | `detect_score_drift()` |
+| 4. **Review** | Weight change must be recorded (even if self-approved — the audit trail matters) | GitHub PR review |
+| 5. **Register** | Insert new version in `scoring_model_versions` / `search_ranking_config` | Migration SQL |
+| 6. **Activate** | Set new version as active: `admin_activate_scoring_version('vX.Y')` | Admin RPC |
+| 7. **Monitor** | Run `check_formula_drift()` + watch score distribution for 48h | QA + Dashboard |
+
+### Weight Change Checklist (for PR description)
+
+```markdown
+## Weight Change Checklist
+- [ ] Scientific rationale documented (EFSA/WHO citation)
+- [ ] New version registered in formula_registry
+- [ ] 100-product dry-run comparison completed
+- [ ] Mean score shift within +/-5 points (or justified if larger)
+- [ ] Anchor product scores verified (+/-2 tolerance)
+- [ ] check_formula_drift() returns 'match' for all formulas
+- [ ] check_function_source_drift() returns 'match' for all functions
+- [ ] formula_source_hashes updated if function body changed
+- [ ] SCORING_METHODOLOGY.md updated with new weights
+- [ ] CHANGELOG.md updated
+```
+
+### Current Active Formulas
+
+| Domain | Formula | Version | Weights Sum | Status |
+|--------|---------|---------|-------------|--------|
+| Scoring | `compute_unhealthiness` | v3.2 | 1.00 (9 factors) | Active |
+| Search | `default` | v1.0.0 | 1.00 (5 signals) | Active |

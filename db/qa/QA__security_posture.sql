@@ -142,7 +142,8 @@ WHERE n.nspname = 'public'
     'assign_confidence','find_similar_products','find_better_alternatives',
     'refresh_all_materialized_views','mv_staleness_check',
     'check_product_preferences','resolve_effective_country',
-    'compute_health_warnings'
+    'compute_health_warnings',
+    'check_formula_drift','check_function_source_drift'
   )
   AND has_function_privilege('anon', p.oid, 'EXECUTE');
 

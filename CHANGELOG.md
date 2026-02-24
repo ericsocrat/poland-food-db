@@ -15,6 +15,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Schema & Migrations
 
+- Add unified formula registry: `v_formula_registry` view, `formula_source_hashes` table,
+  fingerprint columns on `scoring_model_versions` and `search_ranking_config`, auto-fingerprint
+  triggers, `check_formula_drift()` and `check_function_source_drift()` sentinel functions (#198)
+
 ### Scoring & Methodology
 
 ### Data & Pipeline
@@ -29,7 +33,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Testing & QA
 
+- Extend `QA__scoring_engine.sql` from 17 to 25 checks: add T18-T25 for formula registry view,
+  active scoring/search formulas, fingerprint population, drift detection, source hash verification,
+  and auto-fingerprint trigger validation (#198)
+
 ### Documentation
+
+- Add formula registry governance to `docs/SCORING_ENGINE.md`: unified registry view documentation,
+  fingerprint-based drift detection guide, 7-step weight change protocol, weight change checklist
+  template, and registered function source hashes reference (#198)
 
 - Add incident response playbook (`docs/INCIDENT_RESPONSE.md`) with severity definitions (SEV-1–4),
   escalation ladder, communication templates, blameless post-mortem format, 6 scenario-specific

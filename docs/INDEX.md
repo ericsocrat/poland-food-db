@@ -31,7 +31,7 @@
 | [GOVERNANCE_BLUEPRINT.md](GOVERNANCE_BLUEPRINT.md) | Execution governance blueprint — master plan for all GOV-* issues | [#195](https://github.com/ericsocrat/poland-food-db/issues/195) | 2026-02-24 |
 | [DOMAIN_BOUNDARIES.md](DOMAIN_BOUNDARIES.md) | Domain boundary enforcement, 13 domains, ownership mapping, interface contracts | [#196](https://github.com/ericsocrat/poland-food-db/issues/196) | 2026-02-24 |
 | [FEATURE_FLAGS.md](FEATURE_FLAGS.md) | Feature flag architecture — toggle registry, rollout strategy | [#191](https://github.com/ericsocrat/poland-food-db/issues/191) | 2026-02-24 |
-| [SCORING_ENGINE.md](SCORING_ENGINE.md) | Scoring engine architecture — versioned function design, regression anchor products | [#189](https://github.com/ericsocrat/poland-food-db/issues/189) | 2026-02-24 |
+| [SCORING_ENGINE.md](SCORING_ENGINE.md) | Scoring engine architecture — versioned function design, formula registry, weight governance, drift detection | [#189](https://github.com/ericsocrat/poland-food-db/issues/189), [#198](https://github.com/ericsocrat/poland-food-db/issues/198) | 2026-02-28 |
 | [SEARCH_ARCHITECTURE.md](SEARCH_ARCHITECTURE.md) | Search architecture — pg_trgm, tsvector, ranking, synonym management | [#192](https://github.com/ericsocrat/poland-food-db/issues/192) | 2026-02-24 |
 | [CI_ARCHITECTURE_PROPOSAL.md](CI_ARCHITECTURE_PROPOSAL.md) | CI pipeline design proposal | — | 2026-02-23 |
 
