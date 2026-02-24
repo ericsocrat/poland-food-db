@@ -1,19 +1,21 @@
 # ═══════════════════════════════════════════════════════════════════════════════
 # API Contract Guard — Prevent silent API shape breakage
+# Issue #179 — Schema-to-UI Contract Validation (Quality Gate 9/9)
 # ═══════════════════════════════════════════════════════════════════════════════
 # Runs the RPC contract integration tests that validate the shape of every
-# Supabase RPC function called by the frontend. If a migration changes a
-# column name, removes a field, or alters a return type, these tests FAIL
-# before the frontend silently breaks.
+# Supabase RPC function called by the frontend using Zod schemas.
+# If a migration changes a column name, removes a field, or alters a return
+# type, these tests FAIL before the frontend silently breaks.
+#
+# Contract schemas: frontend/src/lib/rpc-contracts/
+# Integration tests: frontend/src/lib/rpc-contracts/__tests__/
+# Unit tests:        frontend/src/lib/rpc-contracts/__tests__/schema-validation.test.ts
 #
 # These tests require live Supabase connectivity (staging environment).
 # Triggered on:
 #   • Every push to main (post-merge validation)
-#   • PRs that touch SQL migrations (pre-merge prevention)
+#   • PRs that touch SQL migrations or contract schemas (pre-merge prevention)
 #   • Nightly (drift detection)
-#
-# Critical for multi-country expansion — ensures contract stability across
-# parallel schema evolution in PL, DE, UK pipelines.
 # ═══════════════════════════════════════════════════════════════════════════════
 
 name: API Contract Guard
@@ -25,6 +27,7 @@ on:
       - "supabase/migrations/**"
       - "db/**"
       - "frontend/src/lib/rpc-contract*"
+      - "frontend/src/lib/rpc-contracts/**"
       - ".github/workflows/api-contract.yml"
   pull_request:
     branches: [main]
@@ -32,6 +35,7 @@ on:
       - "supabase/migrations/**"
       - "db/**"
       - "frontend/src/lib/rpc-contract*"
+      - "frontend/src/lib/rpc-contracts/**"
       - ".github/workflows/api-contract.yml"
   schedule:
     # Nightly 03:00 UTC — detect drift from manual DB changes

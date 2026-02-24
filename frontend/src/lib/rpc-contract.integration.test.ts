@@ -1,12 +1,14 @@
-// ─── RPC Contract Tests ─────────────────────────────────────────────────────
-// These tests call REAL Supabase RPC functions and validate the response shape
-// matches the TypeScript interfaces the frontend expects.
+// ─── RPC Contract Tests (LEGACY) ────────────────────────────────────────────
+// ⚠️ MIGRATED: These tests have been superseded by the comprehensive
+// Zod-validated contract suite in src/lib/rpc-contracts/__tests__/.
 //
-// They are SKIPPED when Supabase env vars are not set (normal `npm test`).
-// Run with: cd frontend && npm run test:integration
+// See: src/lib/rpc-contracts/__tests__/contracts.integration.test.ts
+// See: src/lib/rpc-contracts/__tests__/schema-validation.test.ts
+// See: Issue #179 — Schema-to-UI Contract Validation
 //
-// These tests would have caught the nutri_score column mismatch bug because
-// the actual SQL function would have thrown a "column does not exist" error.
+// This file is retained for backward compatibility with api-contract.yml
+// which pattern-matches "rpc-contract". It will be removed in a future
+// cleanup pass once the new suite has run successfully in CI.
 // ─────────────────────────────────────────────────────────────────────────────
 
 import { describe, it, expect, beforeAll } from "vitest";
