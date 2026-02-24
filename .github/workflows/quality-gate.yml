@@ -1,0 +1,190 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Quality Gate — Automated Mobile + Desktop Audit
+# ═══════════════════════════════════════════════════════════════════════════════
+#
+# Runs the quality-gate audit runners on every PR (smoke mode) and nightly
+# (full mode). Uploads screenshots, Playwright HTML report, and produces
+# a GitHub Step Summary.
+#
+# Smoke (PR):   ~9 routes × 2 viewports  → < 5 min
+# Full (nightly / manual):  ~40 routes × 2 viewports  → ~18 min
+#
+# @see https://github.com/ericsocrat/poland-food-db/issues/178
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Quality Gate
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/quality-gate.yml'
+  schedule:
+    - cron: '0 3 * * *'      # Nightly at 03:00 UTC
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: 'Run mode'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - smoke
+          - full
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NEXT_PUBLIC_QA_MODE: '1'
+  # Fixture overrides (optional — fall back to defaults in fixtures.ts)
+  QA_PRODUCT_ID: ${{ secrets.QA_PRODUCT_ID }}
+  QA_CATEGORY_SLUG: ${{ secrets.QA_CATEGORY_SLUG }}
+  QA_PRODUCT_WITH_ALT: ${{ secrets.QA_PRODUCT_WITH_ALT }}
+  QA_PRODUCT_NO_ALT: ${{ secrets.QA_PRODUCT_NO_ALT }}
+  QA_PRODUCT_WITH_ALLERGENS: ${{ secrets.QA_PRODUCT_WITH_ALLERGENS }}
+  QA_PRODUCT_MISSING_NS: ${{ secrets.QA_PRODUCT_MISSING_NS }}
+
+jobs:
+  quality_gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # ── Checkout ─────────────────────────────────────────────────────────
+      - uses: actions/checkout@v4
+
+      # ── Node.js ──────────────────────────────────────────────────────────
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # ── Playwright browsers (cached) ─────────────────────────────────────
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        id: playwright-cache
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('frontend/package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        working-directory: frontend
+        run: npx playwright install --with-deps chromium
+
+      - name: Install Playwright OS deps (cached browsers)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        working-directory: frontend
+        run: npx playwright install-deps chromium
+
+      # ── Build ────────────────────────────────────────────────────────────
+      - name: Build application
+        working-directory: frontend
+        run: npm run build
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+
+      # ── Start application ────────────────────────────────────────────────
+      - name: Start application
+        working-directory: frontend
+        run: npm run start &
+        env:
+          PORT: 3000
+
+      - name: Wait for app ready
+        run: npx wait-on http://localhost:3000 --timeout 60000
+
+      # ── Determine mode ───────────────────────────────────────────────────
+      - name: Determine mode
+        id: mode
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            echo "mode=smoke" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event.inputs.mode }}" != "" ]; then
+            echo "mode=${{ github.event.inputs.mode }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "mode=full" >> "$GITHUB_OUTPUT"
+          fi
+          echo "Quality gate mode: $(cat "$GITHUB_OUTPUT" | grep mode | cut -d= -f2)"
+
+      # ── Mobile Audit ─────────────────────────────────────────────────────
+      - name: Run Mobile Audit
+        working-directory: frontend
+        run: npx playwright test tests/quality/mobile.audit.spec.ts --reporter=html,list
+        env:
+          QA_MODE_LEVEL: ${{ steps.mode.outputs.mode }}
+          BASE_URL: http://localhost:3000
+
+      # ── Desktop Audit ────────────────────────────────────────────────────
+      - name: Run Desktop Audit
+        working-directory: frontend
+        run: npx playwright test tests/quality/desktop.audit.spec.ts --reporter=html,list
+        env:
+          QA_MODE_LEVEL: ${{ steps.mode.outputs.mode }}
+          BASE_URL: http://localhost:3000
+
+      # ── Lighthouse CI (placeholder — enable when #177 is merged) ─────────
+      # - name: Run Lighthouse CI (Mobile)
+      #   working-directory: frontend
+      #   run: npm run lighthouse:mobile
+      #   if: always()
+      #
+      # - name: Run Lighthouse CI (Desktop)
+      #   working-directory: frontend
+      #   run: npm run lighthouse:desktop
+      #   if: always()
+
+      # ── Upload Artifacts ─────────────────────────────────────────────────
+      - name: Upload Screenshots
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: qa-screenshots-${{ steps.mode.outputs.mode }}
+          path: frontend/qa_screenshots/latest/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Upload Playwright Report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-quality-report
+          path: frontend/playwright-report/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      # ── Step Summary ─────────────────────────────────────────────────────
+      - name: Quality Gate Summary
+        if: always()
+        run: |
+          echo "## Quality Gate Results" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "| Key | Value |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|-----|-------|" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Mode** | \`${{ steps.mode.outputs.mode }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Trigger** | \`${{ github.event_name }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "| **Commit** | \`${{ github.sha }}\` |" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Artifacts" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Screenshots, Playwright Report uploaded (14-day retention)" >> "$GITHUB_STEP_SUMMARY"
+
+      # ── Optional: Nightly failure notification ───────────────────────────
+      - name: Notify on nightly failure
+        if: failure() && github.event_name == 'schedule' && secrets.ALERT_WEBHOOK_URL != ''
+        run: |
+          curl -sS -X POST "${{ secrets.ALERT_WEBHOOK_URL }}" \
+            -H 'Content-Type: application/json' \
+            -d "{\"text\": \"Quality Gate nightly FAILED — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+            || true
