@@ -174,6 +174,7 @@ poland-food-db/
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
 │   ├── COUNTRY_EXPANSION_GUIDE.md   # Multi-country protocol (PL active, DE micro-pilot)
 │   ├── UX_UI_DESIGN.md              # UI/UX guidelines
+│   ├── UX_IMPACT_METRICS.md         # UX measurement standard, metric catalog, SQL templates
 │   ├── FRONTEND_API_MAP.md          # Frontend ↔ API mapping reference
 │   ├── ENVIRONMENT_STRATEGY.md      # Local/staging/production environment strategy
 │   ├── STAGING_SETUP.md             # Staging environment setup
@@ -1054,7 +1055,19 @@ If the feature touches searchable fields:
 | Index type appropriate?          | GIN for tsvector/JSONB, GiST for trigram similarity                                     |
 | Performance tested?              | EXPLAIN ANALYZE on representative queries, especially with new indexes                  |
 
-### 15.8 Fallback Logic Definition
+### 15.8 UX Impact Metrics
+
+PRs touching UX-visible frontend code must include:
+
+| Check                                          | Reference                                    |
+| ---------------------------------------------- | -------------------------------------------- |
+| UX issues have **Impact Metric** section        | `docs/UX_IMPACT_METRICS.md` §2 template      |
+| New event types documented in metric catalog    | `docs/UX_IMPACT_METRICS.md` §4               |
+| Event names follow `{domain}_{object}_{action}` | `docs/UX_IMPACT_METRICS.md` §3               |
+| Measurement SQL template provided               | `docs/UX_IMPACT_METRICS.md` §5               |
+| UI Performance Budget completed (new components) | `docs/UX_IMPACT_METRICS.md` §6               |
+
+### 15.9 Fallback Logic Definition
 
 Define **explicit** fallback chains. Never rely on implicit behavior.
 
@@ -1080,7 +1093,7 @@ Else if B → use Y
 Else → fallback Z (always safe, always returns a value)
 ```
 
-### 15.9 Test Requirements (Mandatory)
+### 15.10 Test Requirements (Mandatory)
 
 No feature is complete without **all** of these:
 
@@ -1121,7 +1134,7 @@ Add for **every** new schema object:
 | Component rendering       | Testing Library | New UI components have co-located `.test.tsx`                          |
 | E2E flows                 | Playwright      | If new pages/routes, add to `smoke.spec.ts` or `authenticated.spec.ts` |
 
-### 15.10 Performance & Safety
+### 15.11 Performance & Safety
 
 Every feature must pass these checks:
 
@@ -1135,7 +1148,7 @@ Every feature must pass these checks:
 | MV refresh considered      | If new MV added, include in `refresh_all_materialized_views()` and `mv_staleness_check()` |
 | No expensive triggers      | Triggers must be O(1) per row; bulk operations must not cascade pathologically            |
 
-### 15.11 Decision Log
+### 15.12 Decision Log
 
 Every feature must include an **Architectural Decisions Log** table:
 
@@ -1147,7 +1160,7 @@ Every feature must include an **Architectural Decisions Log** table:
 
 Log **all** non-trivial choices. If you debated between two approaches for more than 30 seconds, it belongs in the decision log.
 
-### 15.12 Constraints (Restated)
+### 15.13 Constraints (Restated)
 
 Every feature must explicitly restate:
 
@@ -1156,7 +1169,7 @@ Every feature must explicitly restate:
 - **What must remain backward compatible** — existing callers, existing response shapes
 - **What URLs must remain stable** — no slug/route changes without redirect migration
 
-### 15.13 File Impact Summary
+### 15.14 File Impact Summary
 
 At the end of every feature issue, include:
 
@@ -1173,7 +1186,7 @@ At the end of every feature issue, include:
 
 This enables quick impact assessment during code review.
 
-### 15.14 i18n & Localization Impact
+### 15.15 i18n & Localization Impact
 
 If the feature adds user-visible strings or data:
 
@@ -1185,7 +1198,7 @@ If the feature adds user-visible strings or data:
 | New searchable text?             | Update `search_vector` trigger + add `search_synonyms` entries                                              |
 | Structured data vs display text? | SQL returns structured flags/keys; frontend localizes via dictionary (never embed English in SQL responses) |
 
-### 15.15 Expansion Checklist (If Applicable)
+### 15.16 Expansion Checklist (If Applicable)
 
 If the feature scales across countries, languages, or markets, provide a step-by-step addition checklist:
 
@@ -1199,7 +1212,7 @@ If the feature scales across countries, languages, or markets, provide a step-by
 
 Include **estimated effort** (hours/days) for each step.
 
-### 15.16 CI & Deployment Verification
+### 15.17 CI & Deployment Verification
 
 Before a feature is considered complete, verify against all CI gates:
 
@@ -1216,7 +1229,7 @@ Before a feature is considered complete, verify against all CI gates:
 | Enrichment identity | `python check_enrichment_identity.py` | 0 violations                    |
 | SonarCloud          | CI pipeline (`main-gate.yml`)         | Quality Gate pass               |
 
-### 15.17 Enforcement Rule
+### 15.18 Enforcement Rule
 
 **No feature is considered complete unless ALL of the following are true:**
 
@@ -1232,7 +1245,7 @@ Before a feature is considered complete, verify against all CI gates:
 - [ ] File impact summary included
 - [ ] `copilot-instructions.md` updated (counts, tables, function list) if schema changed
 
-### 15.18 Issue Template
+### 15.19 Issue Template
 
 Use this structure when creating GitHub issues. **Every section is required** for significant issues; mark a section `N/A — [reason]` if genuinely not applicable (e.g., "Search & Indexing Impact" for a CI-only change). Never silently omit a section.
 
