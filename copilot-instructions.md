@@ -350,7 +350,9 @@ poland-food-db/
 | `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                                                               |
 | `mv_staleness_check()`             | Checks if MVs are stale by comparing row counts to source tables                                                                                          |
 | `check_formula_drift()`            | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                         |
-| `check_function_source_drift()`    | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                            |
+| `check_function_source_drift()`    | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                           |
+| `governance_drift_check()`         | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                    |
+| `log_drift_check()`                | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                      |
 
 ### Views
 
@@ -778,9 +780,10 @@ At the end of every PR-like change, include a **Verification** section:
 | Index & Temporal         | `QA__index_temporal.sql`            |     15 | Yes       |
 | Attribute Contradictions | `QA__attribute_contradiction.sql`   |      5 | Yes       |
 | Monitoring & Health      | `QA__monitoring.sql`                |      7 | Yes       |
+| Governance Drift         | `QA__governance_drift.sql`          |      8 | Yes       |
 | **Negative Validation**  | `TEST__negative_checks.sql`         |     29 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **421/421 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **429/429 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)

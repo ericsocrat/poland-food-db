@@ -1,7 +1,7 @@
 # API Registry — Poland Food DB
 #
-# Canonical registry of all 107 public-schema functions.
-# Last updated: 2026-02-28
+# Canonical registry of all 109 public-schema functions.
+# Last updated: 2026-03-01
 # Naming convention: docs/API_CONVENTIONS.md
 # Contract details: docs/API_CONTRACTS.md
 # Frontend mapping: docs/FRONTEND_API_MAP.md
@@ -1101,6 +1101,22 @@ check_function_source_drift:
   returns: table(function_name, expected_hash, actual_hash, status)
   deprecated: false
   notes: "Compares registered pg_proc source hashes against actual function bodies for critical functions. Issue #198."
+
+governance_drift_check:
+  domain: governance
+  visibility: internal
+  auth: authenticated, service_role
+  returns: table(check_name, severity, status, detail)
+  deprecated: false
+  notes: "Master drift detection runner — 8 checks across scoring, search, naming, and flags. Issue #199."
+
+log_drift_check:
+  domain: governance
+  visibility: internal
+  auth: service_role
+  returns: uuid
+  deprecated: false
+  notes: "Executes governance_drift_check() and persists results into drift_check_results. Returns run_id. Issue #199."
 
 expand_search_query:
   domain: search
