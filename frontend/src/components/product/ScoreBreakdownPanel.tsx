@@ -15,7 +15,7 @@ import { getScoreExplanation } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { useTranslation } from "@/lib/i18n";
 import { Skeleton } from "@/components/common/Skeleton";
-import { BarChart3, AlertTriangle } from "lucide-react";
+import { BarChart3, AlertTriangle, Clock } from "lucide-react";
 import type { ScoreExplanation } from "@/lib/types";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -153,7 +153,10 @@ function BreakdownContent({
                 max={100}
                 aria-label={`${f.factor}: ${f.raw}/100`}
               />
-              <div className="h-1.5 w-full rounded-full bg-surface-muted" aria-hidden="true">
+              <div
+                className="h-1.5 w-full rounded-full bg-surface-muted"
+                aria-hidden="true"
+              >
                 <div
                   className={`h-1.5 rounded-full transition-all duration-slow ${getFactorColor(f.raw)}`}
                   style={{ width: `${Math.min(f.raw, 100)}%` }}
@@ -194,6 +197,26 @@ function BreakdownContent({
               <AlertTriangle size={14} aria-hidden="true" /> {w.message}
             </p>
           ))}
+        </div>
+      )}
+
+      {/* Scoring model provenance */}
+      {(explanation.model_version || explanation.scored_at) && (
+        <div
+          className="flex items-center gap-2 pt-1 text-[10px] text-foreground-muted"
+          data-testid="score-provenance"
+        >
+          {explanation.model_version && (
+            <span className="rounded bg-surface-muted px-1.5 py-0.5 font-mono">
+              {explanation.model_version}
+            </span>
+          )}
+          {explanation.scored_at && (
+            <span className="flex items-center gap-0.5">
+              <Clock size={10} aria-hidden="true" />
+              {new Date(explanation.scored_at).toLocaleDateString()}
+            </span>
+          )}
         </div>
       )}
     </div>

@@ -379,6 +379,10 @@ export interface ScoreExplanation {
   brand: string;
   category: string;
   score_breakdown: Record<string, unknown>;
+  /** Scoring model version that produced this score (e.g. "v3.2"). */
+  model_version?: string;
+  /** When the score was last computed (ISO 8601). */
+  scored_at?: string;
   summary: {
     score: number;
     score_band: ScoreBand;
