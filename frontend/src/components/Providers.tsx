@@ -7,6 +7,7 @@ import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { useState, useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 import { initAchievementMiddleware } from "@/lib/events";
+import { FlagProvider } from "@/lib/flags";
 
 /** Don't retry on 4xx auth or PostgREST JWT errors; retry up to 2× otherwise */
 export function shouldRetry(failureCount: number, error: Error): boolean {
@@ -39,9 +40,11 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipPrimitive.Provider delayDuration={300} skipDelayDuration={100}>
-        {children}
-      </TooltipPrimitive.Provider>
+      <FlagProvider>
+        <TooltipPrimitive.Provider delayDuration={300} skipDelayDuration={100}>
+          {children}
+        </TooltipPrimitive.Provider>
+      </FlagProvider>
       <Toaster
         position="top-right"
         richColors
