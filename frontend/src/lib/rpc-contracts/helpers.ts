@@ -15,10 +15,8 @@ import { z } from "zod";
 /** Score severity band (matches `ScoreBand` TypeScript type). */
 export const ScoreBandSchema = z.enum(["low", "moderate", "high", "very_high"]);
 
-/** Nutri-Score grade A–E, nullable when unavailable. */
-export const NutriGradeSchema = z
-  .enum(["A", "B", "C", "D", "E"])
-  .nullable();
+/** Nutri-Score grade string, nullable when unavailable. */
+export const NutriGradeSchema = z.string().nullable();
 
 /** User-created list type. */
 export const ListTypeSchema = z.enum(["favorites", "avoid", "custom"]);

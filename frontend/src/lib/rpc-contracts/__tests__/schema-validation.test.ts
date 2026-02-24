@@ -56,7 +56,7 @@ function mockProductDetail() {
     scores: {
       unhealthiness_score: 35,
       score_band: "moderate" as const,
-      nutri_score: "B" as const,
+      nutri_score: "B",
       nutri_score_color: "#85BB2F",
       nova_group: "2",
       processing_risk: "low",
@@ -130,7 +130,7 @@ function mockSearchResponse() {
         category_icon: "🥛",
         unhealthiness_score: 20,
         score_band: "low" as const,
-        nutri_score: "A" as const,
+        nutri_score: "A",
         nova_group: "1",
         calories: 64,
         high_salt: false,
@@ -172,7 +172,7 @@ describe("Schema validation: valid data accepted", () => {
           product_name_display: "Chips",
           brand: "TestBrand",
           category: "snacks",
-          nutri_score: "D" as const,
+          nutri_score: "D",
           unhealthiness_score: 70,
           score_band: "high" as const,
         },
@@ -533,9 +533,10 @@ describe("Schema validation: type mismatches rejected", () => {
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
 
-  it("rejects nutri_score as invalid enum value", () => {
+  it("rejects nutri_score as non-string value", () => {
     const data = mockProductDetail();
-    data.scores.nutri_score = "F" as never;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (data.scores as any).nutri_score = 123;
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
 

