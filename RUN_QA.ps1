@@ -35,9 +35,11 @@
        29. QA__attribute_contradiction.sql (5 attribute contradiction checks — blocking)
        30. QA__monitoring.sql (7 monitoring & health checks — blocking)
        31. QA__scoring_determinism.sql (15 scoring determinism checks — blocking)
+       32. QA__multi_country_consistency.sql (10 multi-country consistency checks — blocking)
+       33. QA__performance_regression.sql (6 performance regression checks — informational)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
-    Test Suite 3 is informational and does not affect the exit code.
+    Test Suites 3 and 33 are informational and do not affect the exit code.
 
 .PARAMETER Json
     Output results as machine-readable JSON instead of colored text.
@@ -146,7 +148,9 @@ $suiteCatalog = @(
     @{ Num = 28; Name = "Index & Temporal Integrity"; Short = "IdxTemporal"; Id = "index_temporal"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__index_temporal.sql" },
     @{ Num = 29; Name = "Attribute Contradictions"; Short = "AttrContra"; Id = "attribute_contradiction"; Checks = 5; Blocking = $true; Kind = "sql"; File = "QA__attribute_contradiction.sql" },
     @{ Num = 30; Name = "Monitoring & Health Check"; Short = "Monitoring"; Id = "monitoring"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__monitoring.sql" },
-    @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" }
+    @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" },
+    @{ Num = 32; Name = "Multi-Country Consistency"; Short = "MultiCountry"; Id = "multi_country_consistency"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__multi_country_consistency.sql" },
+    @{ Num = 33; Name = "Performance Regression"; Short = "PerfRegress"; Id = "performance_regression"; Checks = 6; Blocking = $false; Kind = "sql"; File = "QA__performance_regression.sql" }
 )
 
 $suiteByNum = @{}
