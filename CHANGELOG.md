@@ -15,6 +15,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Schema & Migrations
 
+- Add structured log schema & error taxonomy: `log_level_ref` table (5 severity levels with
+  retention/escalation policy), `error_code_registry` table (13 starter error codes across 8
+  domains), `validate_log_entry()` validation function (SECURITY DEFINER), RLS Pattern B
+  (service-write / auth-read) (#210)
 - Add backfill orchestration framework: `backfill_registry` table with RLS, 5 lifecycle
   functions (`register_backfill`, `start_backfill`, `update_backfill_progress`,
   `complete_backfill`, `fail_backfill`), `v_backfill_status` monitoring view,
@@ -67,6 +71,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Add `docs/LOG_SCHEMA.md`: structured log schema specification, error code format
+  (`{DOMAIN}_{CATEGORY}_{NNN}`), 8 registered domains, severity/escalation matrix,
+  retention policy (0d–indefinite), domain-specific logging conventions (#210)
 - Extend `docs/BACKFILL_STANDARD.md` with backfill registry reference (table schema,
   helper functions, monitoring view, RLS, script template usage) (#208)
 - Extend `docs/MIGRATION_CONVENTIONS.md` with index naming convention, trigger domain range
