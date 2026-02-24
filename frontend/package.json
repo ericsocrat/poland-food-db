@@ -15,7 +15,9 @@
     "test:e2e": "npx playwright test",
     "test:e2e:smoke": "npx playwright test --project=smoke",
     "test:e2e:visual": "VISUAL_REGRESSION=true npx playwright test",
-    "test:e2e:scanner": "npx playwright test authenticated-scanner"
+    "test:e2e:scanner": "npx playwright test authenticated-scanner",
+    "quality:smoke": "QA_MODE_LEVEL=smoke npx playwright test tests/quality/ --reporter=html,list",
+    "quality:full": "QA_MODE_LEVEL=full npx playwright test tests/quality/ --reporter=html,list"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
