@@ -1,5 +1,7 @@
 # Poland Food Quality Database
 
+> **Last updated:** 2026-02-28
+
 [![QA Tests](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml)
 [![Quality Gate](https://github.com/ericsocrat/poland-food-db/actions/workflows/quality-gate.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/quality-gate.yml)
 
@@ -53,10 +55,10 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (421 checks across 30 suites)
+# All tests (429 checks across 30 suites)
 .\RUN_QA.ps1
 
-# Negative validation (29 constraint tests)
+# Negative validation (23 constraint tests)
 .\RUN_NEGATIVE_TESTS.ps1
 
 # Or via pipeline runner
@@ -121,10 +123,10 @@ Failed Playwright runs upload screenshots and traces as artifacts for debugging.
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 421 automated checks across 30 QA suites + 29 negative validation tests
+**Test Coverage**: 429 automated checks across 30 QA suites + 23 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
-- 14 API surface checks (contract validation, JSON structure, listing consistency)
+- 18 API surface checks (contract validation, JSON structure, listing consistency)
 - 13 view consistency checks (v_master, v_api_category_overview, materialized views)
 - 25 data quality checks (completeness, constraints, domains)
 - 18 referential integrity checks (FK validation, domain constraints)
@@ -137,16 +139,16 @@ Failed Playwright runs upload screenshots and traces as artifacts for debugging.
 - 10 confidence scoring checks (range, distribution, components, bands)
 - 22 security posture checks (RLS, grants, SECURITY DEFINER, user_preferences isolation, resolve_effective_country)
 - 33 API contract checks (key sets, api_version, SECURITY DEFINER, EAN lookup, preferences, country-echo contract)
-- 15 scale guardrail checks (index presence, query plan validation)
+- 23 scale guardrail checks (index presence, query plan validation)
 - 11 country isolation checks (no mixed-country results, auto-country resolution)
 - 6 diet filtering checks (vegan/vegetarian exclusion, strict mode)
 - 6 allergen filtering checks (contains/traces exclusion, may-contain toggle)
 - 6 barcode lookup checks (EAN resolution, scan metadata, error handling)
 - 1 EAN checksum validation (all barcodes verified)
 - 8 source coverage reports (informational, non-blocking)
-- 29 negative tests (constraint violation detection)
+- 23 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 421/421 + 29/29 negative
+**All tests passing**: ✅ 429/429 + 23/23 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
@@ -194,12 +196,12 @@ poland-food-db/
 │   │   ├── QA__serving_source_validation.sql # 16 serving & source checks
 │   │   ├── QA__ingredient_quality.sql    # 14 ingredient quality checks
 │   │   ├── QA__source_coverage.sql       # 8 data quality reports
-    │   └── TEST__negative_checks.sql     # 25 negative validation tests
+    │   └── TEST__negative_checks.sql     # 23 negative validation tests
 │   └── views/               # Denormalized reporting views
 │       └── VIEW__master_product_view.sql # Flat API view with provenance
 ├── supabase/
 │   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (124 files)
+    └── migrations/          # Schema migrations (130 files)
 ├── docs/                    # Project documentation
 │   ├── API_CONTRACTS.md     # API surface contract documentation
 │   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
@@ -222,8 +224,8 @@ poland-food-db/
 │   └── SONAR.md             # SonarCloud configuration & quality gates
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (421 checks)
-├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (29 tests)
+├── RUN_QA.ps1               # Standalone test runner (429 checks)
+├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (23 tests)
 ├── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ├── RUN_SEED.ps1             # Unified seed runner (any environment)
 ├── RUN_SANITY.ps1           # Cross-environment sanity checks (16 checks)
@@ -238,7 +240,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **421 automated checks** across 30 QA suites + 29 negative validation tests:
+Every change is validated against **429 automated checks** across 30 QA suites + 23 negative validation tests:
 
 ### Data Integrity (29 checks)
 - No missing required fields (product_name, brand, country, category)

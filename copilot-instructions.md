@@ -1,6 +1,6 @@
 # Copilot Instructions — Poland Food Quality Database
 
-> **Last updated:** 2026-02-16
+> **Last updated:** 2026-02-28
 > **Scope:** Poland (`PL`) primary + Germany (`DE`) micro-pilot (51 Chips products)
 > **Products:** ~1,076 active (20 PL categories + 1 DE category), 38 deprecated
 > **EAN coverage:** 997/1,025 (97.3%)
@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,304 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 421 checks across 30 suites + 29 negative validation tests — all passing
+> **QA:** 429 checks across 30 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -83,7 +83,7 @@ poland-food-db/
 │   │   ├── QA__null_checks.sql      # 29 data integrity checks
 │   │   ├── QA__scoring_formula_tests.sql  # 27 scoring validation checks
 │   │   ├── QA__api_surfaces.sql     # 18 API surface validation checks
-│   │   ├── QA__api_contract.sql     # 30 API contract checks
+│   │   ├── QA__api_contract.sql     # 33 API contract checks
 │   │   ├── QA__confidence_scoring.sql  # 10 confidence scoring checks
 │   │   ├── QA__confidence_reporting.sql # 7 confidence reporting checks
 │   │   ├── QA__data_quality.sql          # 25 data quality checks
@@ -92,13 +92,13 @@ poland-food-db/
 │   │   ├── QA__view_consistency.sql      # 13 view consistency checks
 │   │   ├── QA__naming_conventions.sql    # 12 naming convention checks
 │   │   ├── QA__nutrition_ranges.sql      # 16 nutrition range checks
-│   │   ├── QA__allergen_integrity.sql    # 14 allergen integrity checks
+│   │   ├── QA__allergen_integrity.sql    # 15 allergen integrity checks
 │   │   ├── QA__allergen_filtering.sql    # 6 allergen filtering checks
 │   │   ├── QA__serving_source_validation.sql # 16 serving & source checks
 │   │   ├── QA__ingredient_quality.sql    # 14 ingredient quality checks
 │   │   ├── QA__security_posture.sql      # 22 security posture checks
-│   │   ├── QA__scale_guardrails.sql      # 15 scale guardrails checks
-│   │   ├── QA__country_isolation.sql     # 6 country isolation checks
+│   │   ├── QA__scale_guardrails.sql      # 23 scale guardrails checks
+│   │   ├── QA__country_isolation.sql     # 11 country isolation checks
 │   │   ├── QA__diet_filtering.sql        # 6 diet filtering checks
 │   │   ├── QA__barcode_lookup.sql        # 6 barcode scanner checks
 │   │   ├── QA__auth_onboarding.sql       # 8 auth & onboarding checks
@@ -109,12 +109,12 @@ poland-food-db/
 │   │   ├── QA__attribute_contradiction.sql # 5 attribute contradiction checks
 │   │   ├── QA__monitoring.sql            # 7 monitoring & health checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
-│   │   └── TEST__negative_checks.sql     # 29 negative validation tests
+│   │   └── TEST__negative_checks.sql     # 23 negative validation tests
 │   └── views/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 83 append-only schema migrations
+│   └── migrations/                  # 130 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -186,8 +186,8 @@ poland-food-db/
 │   ├── OBSERVABILITY.md             # Observability strategy
 │   └── SONAR.md                     # SonarCloud configuration & quality gates
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (421 checks across 30 suites)
-├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (29 injection tests)
+├── RUN_QA.ps1                       # QA test runner (429 checks across 30 suites)
+├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
 ├── RUN_SEED.ps1                     # Seed data runner
@@ -430,7 +430,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **124 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **130 migrations**.
 
 **Rules:**
 
