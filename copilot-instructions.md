@@ -114,7 +114,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 134 append-only schema migrations
+│   └── migrations/                  # 135 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -189,8 +189,9 @@ poland-food-db/
 │   ├── FRONTEND_API_MAP.md          # Frontend ↔ API mapping reference
 │   ├── GOVERNANCE_BLUEPRINT.md      # Execution governance blueprint (master GOV plan)
 │   ├── INCIDENT_RESPONSE.md         # Incident response playbook (severity, escalation, runbooks)
-│   ├── INDEX.md                     # Canonical documentation map (40 docs, domain-classified)
+│   ├── INDEX.md                     # Canonical documentation map (42 docs, domain-classified)
 │   ├── LABELS.md                    # Labeling conventions
+│   ├── LOG_SCHEMA.md                # Structured log schema & error taxonomy
 │   ├── METRICS.md                   # Application, infrastructure & business metrics catalog
 │   ├── MIGRATION_CONVENTIONS.md     # Migration safety, trigger naming, lock risk, idempotency
 │   ├── MONITORING.md                # Runtime monitoring
@@ -315,6 +316,8 @@ poland-food-db/
 | `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                            |
 | `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, status ('pending'/'approved'/'rejected'). Admin-reviewable                                           |
 | `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read               |
+| `log_level_ref`           | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                 |
+| `error_code_registry`     | Known error codes with domain/category/severity | `error_code` (text PK)                  | {DOMAIN}_{CATEGORY}_{NNN} format; FK to log_level_ref(level); 13 starter codes. RLS: service-write / auth-read                            |
 
 ### Products Columns (key)
 
@@ -357,6 +360,7 @@ poland-food-db/
 | `check_function_source_drift()`    | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                           |
 | `governance_drift_check()`         | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                    |
 | `log_drift_check()`                | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                      |
+| `validate_log_entry()`             | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                              |
 
 ### Views
 

@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(114);
+SELECT plan(117);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -174,6 +174,11 @@ SELECT has_view('public', 'v_backfill_status',                   'view v_backfil
 SELECT has_function('public', 'register_backfill',               'function register_backfill exists');
 SELECT has_function('public', 'start_backfill',                  'function start_backfill exists');
 SELECT has_function('public', 'complete_backfill',               'function complete_backfill exists');
+
+-- ─── Log Schema & Error Taxonomy (#210) ───────────────────────────────────────
+SELECT has_table('public', 'log_level_ref',                      'table log_level_ref exists');
+SELECT has_table('public', 'error_code_registry',                'table error_code_registry exists');
+SELECT has_function('public', 'validate_log_entry',              'function validate_log_entry exists');
 
 SELECT * FROM finish();
 ROLLBACK;

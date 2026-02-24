@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 41 in `docs/` + 5 elsewhere in repo
+> **Total documents:** 42 in `docs/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -16,7 +16,7 @@
 | [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                             |
 | [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                   |
 | [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                |
-| [Observability & Operations](#observability--operations) | 6     | Monitoring, observability, SLOs, metrics, incident response, disaster drill                              |
+| [Observability & Operations](#observability--operations) | 7     | Monitoring, observability, log schema, SLOs, metrics, incident response, disaster drill                  |
 | [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                        |
 | [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                          |
 | [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion |
@@ -87,6 +87,7 @@
 | [SLO.md](SLO.md)                                     | Service Level Objectives — availability, latency, error rate targets            | Observability domain                                            | 2026-02-24   |
 | [METRICS.md](METRICS.md)                             | Metrics catalog — application metrics, infrastructure metrics, business metrics | Observability domain                                            | 2026-02-24   |
 | [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md)         | Incident response playbook — severity, escalation, runbooks, post-mortem        | [#231](https://github.com/ericsocrat/poland-food-db/issues/231) | 2026-02-24   |
+| [LOG_SCHEMA.md](LOG_SCHEMA.md)                       | Structured log schema & error taxonomy — error codes, severity, retention, validation | [#210](https://github.com/ericsocrat/poland-food-db/issues/210) | 2026-03-04   |
 | [DISASTER_DRILL_REPORT.md](DISASTER_DRILL_REPORT.md) | Disaster recovery drill report — test results, findings, remediation            | Observability domain                                            | 2026-02-23   |
 
 ## DevOps & Environment
@@ -152,6 +153,7 @@ Pairs investigated for overlap during the 2026-02-28 audit:
 | SCORING_METHODOLOGY.md ↔ SCORING_ENGINE.md        | Methodology = formula; Engine = architecture                                     | **No redundancy** — what vs how                        |
 | ENVIRONMENT_STRATEGY.md ↔ STAGING_SETUP.md        | Strategy = overall design; Setup = operational steps                             | **No redundancy** — complements                        |
 | MONITORING.md ↔ OBSERVABILITY.md                  | Monitoring = alerts/dashboards; Observability = logging/tracing/metrics pipeline | **No redundancy** — overlapping domain, distinct focus |
+| OBSERVABILITY.md ↔ LOG_SCHEMA.md                  | Observability = strategy/format; Log Schema = error codes/taxonomy/DB registry  | **No redundancy** — format vs taxonomy                 |
 | METRICS.md ↔ UX_IMPACT_METRICS.md                 | Metrics = infra/app metrics; UX Impact = UX-specific measurement                 | **No redundancy** — different audiences                |
 | PERFORMANCE_REPORT.md ↔ PERFORMANCE_GUARDRAILS.md | Report = audit findings; Guardrails = policy/budgets                             | **No redundancy** — snapshot vs policy                 |
 
