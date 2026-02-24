@@ -18,6 +18,7 @@ on:
     branches: [main]
     paths:
       - 'frontend/**'
+      - 'docs/**'
       - '.github/workflows/pr-gate.yml'
 
 permissions:
