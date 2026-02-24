@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(105);
+SELECT plan(114);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -163,6 +163,17 @@ SELECT has_table('public', 'drift_check_results',                 'table drift_c
 SELECT has_column('public', 'drift_check_results', 'run_id',     'column drift_check_results.run_id exists');
 SELECT has_function('public', 'governance_drift_check',           'function governance_drift_check exists');
 SELECT has_function('public', 'log_drift_check',                  'function log_drift_check exists');
+
+-- ─── Backfill Orchestration (#208) ────────────────────────────────────────────
+SELECT has_table('public', 'backfill_registry',                   'table backfill_registry exists');
+SELECT has_column('public', 'backfill_registry', 'backfill_id',  'column backfill_registry.backfill_id exists');
+SELECT has_column('public', 'backfill_registry', 'name',         'column backfill_registry.name exists');
+SELECT has_column('public', 'backfill_registry', 'status',       'column backfill_registry.status exists');
+SELECT has_column('public', 'backfill_registry', 'rows_processed','column backfill_registry.rows_processed exists');
+SELECT has_view('public', 'v_backfill_status',                   'view v_backfill_status exists');
+SELECT has_function('public', 'register_backfill',               'function register_backfill exists');
+SELECT has_function('public', 'start_backfill',                  'function start_backfill exists');
+SELECT has_function('public', 'complete_backfill',               'function complete_backfill exists');
 
 SELECT * FROM finish();
 ROLLBACK;

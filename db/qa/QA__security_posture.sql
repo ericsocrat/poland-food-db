@@ -144,7 +144,9 @@ WHERE n.nspname = 'public'
     'check_product_preferences','resolve_effective_country',
     'compute_health_warnings',
     'check_formula_drift','check_function_source_drift',
-    'governance_drift_check','log_drift_check'
+    'governance_drift_check','log_drift_check',
+    'register_backfill','start_backfill','update_backfill_progress',
+    'complete_backfill','fail_backfill'
   )
   AND has_function_privilege('anon', p.oid, 'EXECUTE');
 
@@ -154,7 +156,8 @@ SELECT '11. service_role has full table privileges' AS check_name,
 FROM (
     SELECT unnest(ARRAY[
         'products','nutrition_facts','product_allergen_info','product_ingredient',
-        'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref'
+        'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref',
+        'backfill_registry'
     ]) AS tbl
 ) t
 WHERE NOT (

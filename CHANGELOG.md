@@ -15,6 +15,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Schema & Migrations
 
+- Add backfill orchestration framework: `backfill_registry` table with RLS, 5 lifecycle
+  functions (`register_backfill`, `start_backfill`, `update_backfill_progress`,
+  `complete_backfill`, `fail_backfill`), `v_backfill_status` monitoring view,
+  `scripts/backfill_template.py` Python template (#208)
 - Add migration convention standard: index naming convention `idx_{table}_{columns}[_{type}]`,
   trigger domain range assignments (10–99 by domain), migration file naming format with header
   block standard, `_TEMPLATE.sql` reference template, `check_migration_conventions.py` validation
@@ -52,6 +56,8 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Extend `docs/BACKFILL_STANDARD.md` with backfill registry reference (table schema,
+  helper functions, monitoring view, RLS, script template usage) (#208)
 - Extend `docs/MIGRATION_CONVENTIONS.md` with index naming convention, trigger domain range
   assignments, migration file naming format, header block standard, and link to `_TEMPLATE.sql`;
   add `scripts/check_migration_conventions.py` validation script (#207)
