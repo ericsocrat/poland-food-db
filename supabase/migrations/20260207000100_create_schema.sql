@@ -47,6 +47,21 @@ BEGIN
             )::uuid;
         $fn$;
     END IF;
+    -- Stub auth.role() for bare Postgres (CI).
+    -- On Supabase this resolves via PostgREST JWT; here we fall back to
+    -- the Postgres session role so RLS policies can reference it.
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_proc p
+        JOIN pg_namespace n ON n.oid = p.pronamespace
+        WHERE n.nspname = 'auth' AND p.proname = 'role'
+    ) THEN
+        CREATE FUNCTION auth.role() RETURNS text LANGUAGE sql STABLE AS $fn$
+            SELECT COALESCE(
+                current_setting('request.jwt.claim_role', true),
+                current_setting('role', true)
+            );
+        $fn$;
+    END IF;
 END
 $$;
 
