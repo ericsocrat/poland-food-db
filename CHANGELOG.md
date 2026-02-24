@@ -15,6 +15,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Schema & Migrations
 
+- Add migration convention standard: index naming convention `idx_{table}_{columns}[_{type}]`,
+  trigger domain range assignments (10–99 by domain), migration file naming format with header
+  block standard, `_TEMPLATE.sql` reference template, `check_migration_conventions.py` validation
+  script (133/133 naming compliant) (#207)
 - Rename non-conforming triggers on `products` table: `score_change_audit` →
   `trg_products_score_audit`, `trg_record_score_change` → `trg_products_score_history`;
   all 5 products triggers now pass `governance_drift_check()` naming validation (#203)
@@ -48,6 +52,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Extend `docs/MIGRATION_CONVENTIONS.md` with index naming convention, trigger domain range
+  assignments, migration file naming format, header block standard, and link to `_TEMPLATE.sql`;
+  add `scripts/check_migration_conventions.py` validation script (#207)
 - Add documentation governance policy (`docs/DOCUMENTATION_GOVERNANCE.md`): ownership model with
   11 domains, 14 update trigger rules, versioning policy with frontmatter requirements,
   deprecation & archival process, drift prevention cadence, 4 health metrics (#201)

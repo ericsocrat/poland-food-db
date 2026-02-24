@@ -115,7 +115,7 @@
 | [RESEARCH_WORKFLOW.md](RESEARCH_WORKFLOW.md)             | Data collection lifecycle — manual + automated OFF pipeline                | Process domain | 2026-02-24   |
 | [VIEWING_AND_TESTING.md](VIEWING_AND_TESTING.md)         | Queries, Studio UI, test runner guide                                      | Process domain | 2026-02-24   |
 | [BACKFILL_STANDARD.md](BACKFILL_STANDARD.md)             | Backfill orchestration standard — migration templates, validation patterns | Process domain | 2026-02-24   |
-| [MIGRATION_CONVENTIONS.md](MIGRATION_CONVENTIONS.md)     | Migration safety, trigger naming, lock risk, idempotency standards         | [#203](https://github.com/ericsocrat/poland-food-db/issues/203) | 2026-03-01   |
+| [MIGRATION_CONVENTIONS.md](MIGRATION_CONVENTIONS.md)     | Migration safety, trigger naming, lock risk, idempotency standards         | [#203](https://github.com/ericsocrat/poland-food-db/issues/203), [#207](https://github.com/ericsocrat/poland-food-db/issues/207) | 2026-03-02   |
 | [LABELS.md](LABELS.md)                                   | GitHub labeling conventions — issue/PR label taxonomy                      | Process domain | 2026-02-23   |
 | [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md) | Multi-country expansion protocol — PL active, DE micro-pilot               | [#148](https://github.com/ericsocrat/poland-food-db/issues/148) | 2026-02-24   |
 
