@@ -250,10 +250,13 @@ poland-food-db/
 │   └── package.json                 # Dependencies + scripts (test, test:coverage, etc.)
 ├── .github/workflows/
 │   ├── pr-gate.yml                  # Lint → Typecheck → Build → Playwright E2E
+│   ├── pr-title-lint.yml            # PR title conventional-commit validation (all PRs)
 │   ├── main-gate.yml                # Build → Unit tests + coverage → SonarCloud
 │   ├── qa.yml                       # Schema → Pipelines → QA (421) → Sanity
 │   └── sync-cloud-db.yml            # Remote DB sync
+├── .commitlintrc.json               # Conventional Commits config (12 types, 24 scopes)
 ├── sonar-project.properties         # SonarCloud configuration
+├── CHANGELOG.md                     # Structured changelog (Keep a Changelog + Conventional Commits)
 ├── DEPLOYMENT.md                    # Deployment procedures, rollback playbook, emergency checklist
 ├── SECURITY.md                      # Security policy
 ├── .env.example
@@ -637,6 +640,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
 - If you add a new dependency/tool, ensure it's installed in CI (`package.json` or `requirements.txt`).
 - CI workflows (tiered architecture):
   - **`pr-gate.yml`**: Static checks (typecheck + lint) → Unit tests + Build (parallel) → Playwright smoke E2E
+  - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Full Playwright E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
   - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (421 checks) → Sanity (17 checks) → Confidence threshold
@@ -860,23 +864,37 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-
 
 **Branch strategy:** `main` = stable. Feature branches: `feat/`, `fix/`, `docs/`, `chore/`.
 
-**Commit format:**
+**Commit convention:** [Conventional Commits](https://www.conventionalcommits.org/) — **enforced on PR titles** via `pr-title-lint.yml`. Full convention documented in `CHANGELOG.md`.
 
 ```
 <type>(<scope>): <description>
+```
 
+**Types** (12, enforced at error level):
+`feat` · `fix` · `schema` · `data` · `score` · `docs` · `test` · `ci` · `refactor` · `perf` · `security` · `chore`
+
+**Scopes** (24, enforced at warning level):
+`frontend` · `api` · `scoring` · `search` · `pipeline` · `qa` · `migration` · `products` · `nutrition` · `rls` · `auth` · `config` · `deps` · `v32` · `confidence` · `provenance` · `docs` · `ci` · `build` · `e2e` · `vitest` · `playwright` · `security` · `cleanup`
+
+**Examples:**
+
+```
 feat(dairy): add Piątnica product line
 fix(scoring): correct salt ceiling from 1.5 to 3.0
-schema: add ean column to products
-chore: normalize categories to 28 products
+schema(migration): add ean column to products
+data(pipeline): normalize categories to 28 products
+security(rls): lock down product_submissions to authenticated users
 ```
+
+**Breaking changes:** Append `!` after type/scope — `schema(migration)!: rename products.source to source_type`
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 421/421 pass
+1. `.\RUN_QA.ps1` — 429/429 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed
+5. `CHANGELOG.md` updated (add entry under `[Unreleased]`)
 
 ---
 
