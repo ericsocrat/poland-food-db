@@ -55,6 +55,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
   lifecycle, database object cleanup procedure, tech debt classification (4 tiers),
   feature flag expiration policy, quarterly hygiene review checklist template, and
   initial candidate audit
+- Add canonical documentation index (`docs/INDEX.md`) with domain-classified map of
+  all 44 markdown files across 10 domains, redundancy assessment (7 pairs investigated,
+  no actual redundancy found), obsolete reference audit, removed documents tracking,
+  and documentation standards (frontmatter, update triggers, add/archive procedures)
+- Restructure `copilot-instructions.md` project layout: alphabetically sort docs
+  listing, expand from 25 to 41 entries with 14 previously-unlisted documents
 
 ### CI/CD & Infrastructure
 

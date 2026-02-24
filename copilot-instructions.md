@@ -168,30 +168,45 @@ poland-food-db/
 ├── docs/
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
 │   ├── API_CONTRACTS.md             # API surface contracts (6 endpoints) — response shapes, hidden columns
-│   ├── PERFORMANCE_REPORT.md        # Performance audit, scale projections, query patterns
-│   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
-│   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle (manual + automated OFF pipeline)
-│   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
-│   ├── COUNTRY_EXPANSION_GUIDE.md   # Multi-country protocol (PL active, DE micro-pilot)
-│   ├── UX_UI_DESIGN.md              # UI/UX guidelines
-│   ├── UX_IMPACT_METRICS.md         # UX measurement standard, metric catalog, SQL templates
-│   ├── FRONTEND_API_MAP.md          # Frontend ↔ API mapping reference
-│   ├── ENVIRONMENT_STRATEGY.md      # Local/staging/production environment strategy
-│   ├── STAGING_SETUP.md             # Staging environment setup
-│   ├── PRODUCTION_DATA.md           # Production data management
-│   ├── DATA_INTEGRITY_AUDITS.md     # Ongoing data integrity audit framework
-│   ├── EAN_VALIDATION_STATUS.md     # 997/1,025 coverage (97.3%)
-│   ├── CI_ARCHITECTURE_PROPOSAL.md  # CI pipeline design
-│   ├── LABELS.md                    # Labeling conventions
-│   ├── MONITORING.md                # Runtime monitoring
-│   ├── OBSERVABILITY.md             # Observability strategy
-│   ├── INCIDENT_RESPONSE.md         # Incident response playbook (severity, escalation, runbooks)
-│   ├── DOMAIN_BOUNDARIES.md         # Domain boundary enforcement & ownership mapping
 │   ├── API_VERSIONING.md            # API deprecation & versioning policy
 │   ├── ACCESS_AUDIT.md              # Data access pattern audit & quarterly review
-│   ├── PRIVACY_CHECKLIST.md         # GDPR/RODO compliance checklist & data lifecycle
+│   ├── BACKFILL_STANDARD.md         # Backfill orchestration standard & migration templates
+│   ├── CI_ARCHITECTURE_PROPOSAL.md  # CI pipeline design
+│   ├── CONTRACT_TESTING.md          # API contract testing strategy & pgTAP patterns
+│   ├── COUNTRY_EXPANSION_GUIDE.md   # Multi-country protocol (PL active, DE micro-pilot)
+│   ├── DATA_INTEGRITY_AUDITS.md     # Ongoing data integrity audit framework
+│   ├── DATA_PROVENANCE.md           # Data provenance & freshness governance
+│   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
+│   ├── DISASTER_DRILL_REPORT.md     # Disaster recovery drill report & findings
+│   ├── DOMAIN_BOUNDARIES.md         # Domain boundary enforcement & ownership mapping
+│   ├── EAN_VALIDATION_STATUS.md     # 997/1,025 coverage (97.3%)
+│   ├── ENVIRONMENT_STRATEGY.md      # Local/staging/production environment strategy
+│   ├── FEATURE_FLAGS.md             # Feature flag architecture & toggle registry
 │   ├── FEATURE_SUNSETTING.md        # Feature retirement criteria & cleanup policy
-│   └── SONAR.md                     # SonarCloud configuration & quality gates
+│   ├── FRONTEND_API_MAP.md          # Frontend ↔ API mapping reference
+│   ├── GOVERNANCE_BLUEPRINT.md      # Execution governance blueprint (master GOV plan)
+│   ├── INCIDENT_RESPONSE.md         # Incident response playbook (severity, escalation, runbooks)
+│   ├── INDEX.md                     # Canonical documentation map (40 docs, domain-classified)
+│   ├── LABELS.md                    # Labeling conventions
+│   ├── METRICS.md                   # Application, infrastructure & business metrics catalog
+│   ├── MONITORING.md                # Runtime monitoring
+│   ├── OBSERVABILITY.md             # Observability strategy
+│   ├── PERFORMANCE_GUARDRAILS.md    # Performance guardrails, query budgets & scale projections
+│   ├── PERFORMANCE_REPORT.md        # Performance audit, scale projections, query patterns
+│   ├── PRIVACY_CHECKLIST.md         # GDPR/RODO compliance checklist & data lifecycle
+│   ├── PRODUCTION_DATA.md           # Production data management
+│   ├── RATE_LIMITING.md             # Rate limiting strategy & API abuse prevention
+│   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle (manual + automated OFF pipeline)
+│   ├── SCORING_ENGINE.md            # Scoring engine architecture & version management
+│   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
+│   ├── SEARCH_ARCHITECTURE.md       # Search architecture (pg_trgm, tsvector, ranking)
+│   ├── SECURITY_AUDIT.md            # Full security audit report
+│   ├── SLO.md                       # Service Level Objectives (availability, latency, error rate)
+│   ├── SONAR.md                     # SonarCloud configuration & quality gates
+│   ├── STAGING_SETUP.md             # Staging environment setup
+│   ├── UX_IMPACT_METRICS.md         # UX measurement standard, metric catalog, SQL templates
+│   ├── UX_UI_DESIGN.md              # UI/UX guidelines
+│   └── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (429 checks across 30 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
