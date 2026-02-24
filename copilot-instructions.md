@@ -189,6 +189,7 @@ poland-food-db/
 │   ├── DOMAIN_BOUNDARIES.md         # Domain boundary enforcement & ownership mapping
 │   ├── API_VERSIONING.md            # API deprecation & versioning policy
 │   ├── ACCESS_AUDIT.md              # Data access pattern audit & quarterly review
+│   ├── PRIVACY_CHECKLIST.md         # GDPR/RODO compliance checklist & data lifecycle
 │   └── SONAR.md                     # SonarCloud configuration & quality gates
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (429 checks across 30 suites)
@@ -1081,13 +1082,13 @@ If the feature touches searchable fields:
 
 PRs touching UX-visible frontend code must include:
 
-| Check                                          | Reference                                    |
-| ---------------------------------------------- | -------------------------------------------- |
-| UX issues have **Impact Metric** section        | `docs/UX_IMPACT_METRICS.md` §2 template      |
-| New event types documented in metric catalog    | `docs/UX_IMPACT_METRICS.md` §4               |
-| Event names follow `{domain}_{object}_{action}` | `docs/UX_IMPACT_METRICS.md` §3               |
-| Measurement SQL template provided               | `docs/UX_IMPACT_METRICS.md` §5               |
-| UI Performance Budget completed (new components) | `docs/UX_IMPACT_METRICS.md` §6               |
+| Check                                            | Reference                               |
+| ------------------------------------------------ | --------------------------------------- |
+| UX issues have **Impact Metric** section         | `docs/UX_IMPACT_METRICS.md` §2 template |
+| New event types documented in metric catalog     | `docs/UX_IMPACT_METRICS.md` §4          |
+| Event names follow `{domain}_{object}_{action}`  | `docs/UX_IMPACT_METRICS.md` §3          |
+| Measurement SQL template provided                | `docs/UX_IMPACT_METRICS.md` §5          |
+| UI Performance Budget completed (new components) | `docs/UX_IMPACT_METRICS.md` §6          |
 
 ### 15.9 Fallback Logic Definition
 

@@ -45,6 +45,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
 - Add data access pattern audit (`docs/ACCESS_AUDIT.md`) with table-by-role access
   matrix (51 tables), RPC function access analysis, 5 audit SQL templates, quarterly
   audit checklist, and initial audit results
+- Add GDPR/RODO privacy compliance checklist (`docs/PRIVACY_CHECKLIST.md`) with
+  personal data inventory (10 data categories), data subject rights gap analysis,
+  Art. 9 health data special category assessment, data retention policy, cross-border
+  transfer analysis, privacy policy content requirements, user data export/deletion
+  SQL procedures, and country expansion privacy prerequisites
 
 ### CI/CD & Infrastructure
 
