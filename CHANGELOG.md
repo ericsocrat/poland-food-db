@@ -31,6 +31,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Add incident response playbook (`docs/INCIDENT_RESPONSE.md`) with severity definitions (SEV-1–4),
+  escalation ladder, communication templates, blameless post-mortem format, 6 scenario-specific
+  runbooks, and SLO breach response procedures
+- Cross-reference DEPLOYMENT.md emergency checklist to incident response playbook
+
 ### CI/CD & Infrastructure
 
 ---
