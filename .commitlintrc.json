@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json.schemastore.org/commitlintrc.json",
+  "extends": ["@commitlint/config-conventional"],
+  "rules": {
+    "type-enum": [
+      2,
+      "always",
+      [
+        "feat",
+        "fix",
+        "schema",
+        "data",
+        "score",
+        "docs",
+        "test",
+        "ci",
+        "refactor",
+        "perf",
+        "security",
+        "chore"
+      ]
+    ],
+    "scope-enum": [
+      1,
+      "always",
+      [
+        "frontend",
+        "api",
+        "scoring",
+        "search",
+        "pipeline",
+        "qa",
+        "migration",
+        "products",
+        "nutrition",
+        "rls",
+        "auth",
+        "config",
+        "deps",
+        "v32",
+        "confidence",
+        "provenance",
+        "docs",
+        "ci",
+        "build",
+        "e2e",
+        "vitest",
+        "playwright",
+        "security",
+        "cleanup"
+      ]
+    ],
+    "subject-case": [0],
+    "body-max-line-length": [0]
+  }
+}

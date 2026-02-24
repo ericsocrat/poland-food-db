@@ -1,0 +1,63 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# PR Title Lint — Conventional Commits enforcement via PR title
+# ═══════════════════════════════════════════════════════════════════════════════
+# Since the project uses squash merges, the PR title becomes the final commit
+# message. This workflow validates the PR title against Conventional Commits.
+#
+# Runs on ALL PRs regardless of path (no path filter).
+# Lightweight: no npm install, no Node.js tooling — pure regex validation.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: PR Title Lint
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize, reopened]
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-pr-title:
+    name: Conventional Commit Title
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+    steps:
+      - name: Validate PR title format
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+        run: |
+          echo "Checking PR title: '$PR_TITLE'"
+          echo ""
+
+          # ── Conventional Commits pattern ──────────────────────────────
+          # type(scope): description   OR   type: description
+          # Optional ! for breaking changes: type!(scope): description
+          #
+          # Allowed types (from .commitlintrc.json):
+          #   feat, fix, schema, data, score, docs, test, ci,
+          #   refactor, perf, security, chore
+          PATTERN='^(feat|fix|schema|data|score|docs|test|ci|refactor|perf|security|chore)(!)?(\([a-zA-Z0-9_#, -]+\))?!?: .{1,}'
+
+          if echo "$PR_TITLE" | grep -qP "$PATTERN"; then
+            echo "✅ PR title follows Conventional Commits format"
+          else
+            echo "❌ PR title does NOT follow Conventional Commits format"
+            echo ""
+            echo "Expected: <type>(<scope>): <description>"
+            echo ""
+            echo "Allowed types:"
+            echo "  feat, fix, schema, data, score, docs, test, ci,"
+            echo "  refactor, perf, security, chore"
+            echo ""
+            echo "Examples:"
+            echo "  feat(frontend): add health profile settings page"
+            echo "  fix(scoring): correct prep_method weight"
+            echo "  schema(migration): add user_comparisons table"
+            echo "  docs: update API contracts"
+            echo "  ci(build): add SonarCloud coverage upload"
+            echo ""
+            echo "See CHANGELOG.md for the full convention."
+            exit 1
+          fi

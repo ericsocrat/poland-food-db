@@ -16,10 +16,6 @@ name: PR Gate
 on:
   pull_request:
     branches: [main]
-    paths:
-      - 'frontend/**'
-      - 'docs/**'
-      - '.github/workflows/pr-gate.yml'
 
 permissions:
   contents: read
