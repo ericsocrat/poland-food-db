@@ -114,7 +114,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 130 append-only schema migrations
+│   └── migrations/                  # 133 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -192,6 +192,7 @@ poland-food-db/
 │   ├── INDEX.md                     # Canonical documentation map (40 docs, domain-classified)
 │   ├── LABELS.md                    # Labeling conventions
 │   ├── METRICS.md                   # Application, infrastructure & business metrics catalog
+│   ├── MIGRATION_CONVENTIONS.md     # Migration safety, trigger naming, lock risk, idempotency
 │   ├── MONITORING.md                # Runtime monitoring
 │   ├── OBSERVABILITY.md             # Observability strategy
 │   ├── PERFORMANCE_GUARDRAILS.md    # Performance guardrails, query budgets & scale projections

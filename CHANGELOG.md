@@ -15,6 +15,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Schema & Migrations
 
+- Rename non-conforming triggers on `products` table: `score_change_audit` →
+  `trg_products_score_audit`, `trg_record_score_change` → `trg_products_score_history`;
+  all 5 products triggers now pass `governance_drift_check()` naming validation (#203)
 - Add governance drift detection automation: `governance_drift_check()` master runner (8 checks),
   `log_drift_check()` with `drift_check_results` persistence table, severity levels, and
   trigger naming convention validation (#199)
@@ -48,6 +51,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 - Add documentation governance policy (`docs/DOCUMENTATION_GOVERNANCE.md`): ownership model with
   11 domains, 14 update trigger rules, versioning policy with frontmatter requirements,
   deprecation & archival process, drift prevention cadence, 4 health metrics (#201)
+- Add migration safety & trigger conventions (`docs/MIGRATION_CONVENTIONS.md`): trigger naming
+  standard, 16-trigger inventory, migration safety checklist, file template, idempotency patterns,
+  lock risk analysis, rollback procedures (#203)
 - Add PR documentation checklist template (`.github/PULL_REQUEST_TEMPLATE.md`) with
   6-item documentation compliance checklist (#201)
 - Enrich `docs/INDEX.md` with owner issue assignments for all 40+ documents and add

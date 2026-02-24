@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 40 in `docs/` + 5 elsewhere in repo
+> **Total documents:** 41 in `docs/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -19,7 +19,7 @@
 | [Observability & Operations](#observability--operations) | 6     | Monitoring, observability, SLOs, metrics, incident response, disaster drill                              |
 | [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                        |
 | [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                          |
-| [Process & Workflow](#process--workflow)                 | 5     | Research workflow, viewing & testing, backfill standard, labels, country expansion                       |
+| [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion |
 | [Governance & Policy](#governance--policy)               | 5     | Feature sunsetting, performance guardrails, doc governance, this index, governance blueprint             |
 
 ---
@@ -115,6 +115,7 @@
 | [RESEARCH_WORKFLOW.md](RESEARCH_WORKFLOW.md)             | Data collection lifecycle — manual + automated OFF pipeline                | Process domain | 2026-02-24   |
 | [VIEWING_AND_TESTING.md](VIEWING_AND_TESTING.md)         | Queries, Studio UI, test runner guide                                      | Process domain | 2026-02-24   |
 | [BACKFILL_STANDARD.md](BACKFILL_STANDARD.md)             | Backfill orchestration standard — migration templates, validation patterns | Process domain | 2026-02-24   |
+| [MIGRATION_CONVENTIONS.md](MIGRATION_CONVENTIONS.md)     | Migration safety, trigger naming, lock risk, idempotency standards         | [#203](https://github.com/ericsocrat/poland-food-db/issues/203) | 2026-03-01   |
 | [LABELS.md](LABELS.md)                                   | GitHub labeling conventions — issue/PR label taxonomy                      | Process domain | 2026-02-23   |
 | [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md) | Multi-country expansion protocol — PL active, DE micro-pilot               | [#148](https://github.com/ericsocrat/poland-food-db/issues/148) | 2026-02-24   |
 
