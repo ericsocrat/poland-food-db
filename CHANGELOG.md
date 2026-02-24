@@ -35,6 +35,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
   escalation ladder, communication templates, blameless post-mortem format, 6 scenario-specific
   runbooks, and SLO breach response procedures
 - Cross-reference DEPLOYMENT.md emergency checklist to incident response playbook
+- Add domain boundary enforcement and ownership mapping (`docs/DOMAIN_BOUNDARIES.md`) with
+  13 domain definitions, shared `products` table column governance, 6 interface contracts,
+  cross-domain coupling audit, verification SQL, and naming convention guide
 
 ### CI/CD & Infrastructure
 
