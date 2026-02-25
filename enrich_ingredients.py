@@ -8,7 +8,6 @@ Usage:
     python enrich_ingredients.py
 """
 
-import json
 import os
 import re
 import subprocess

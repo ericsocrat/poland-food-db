@@ -507,7 +507,10 @@ where ean in ({ean_list})
   and ean is not null;
 
 -- 1. INSERT products
-insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
+insert into products (
+  country, brand, product_type, category, product_name,
+  prep_method, store_availability, controversies, ean
+)
 values
 {",\n".join(values)}
 on conflict (country, brand, product_name) do update set

@@ -23,6 +23,7 @@ See docs/BACKFILL_STANDARD.md for full governance standard.
 from __future__ import annotations
 
 import argparse
+import contextlib
 import os
 import sys
 import time
@@ -144,7 +145,7 @@ def run_backfill(batch_size: int, dry_run: bool) -> None:
         cur.execute(PRE_VALIDATION_SQL)
         cols = [desc[0] for desc in cur.description]
         row = cur.fetchone()
-        for col, val in zip(cols, row):
+        for col, val in zip(cols, row, strict=False):
             print(f"  {col}: {val}")
 
         # 4. Start backfill
@@ -187,7 +188,7 @@ def run_backfill(batch_size: int, dry_run: bool) -> None:
         cols = [desc[0] for desc in cur.description]
         row = cur.fetchone()
         validation_ok = True
-        for col, val in zip(cols, row):
+        for col, val in zip(cols, row, strict=False):
             print(f"  {col}: {val}")
             if col == "still_needs_backfill" and val > 0:
                 validation_ok = False
@@ -204,13 +205,11 @@ def run_backfill(batch_size: int, dry_run: bool) -> None:
     except Exception as exc:
         print(f"\nERROR: {exc}")
         # Try to mark as failed
-        try:
+        with contextlib.suppress(Exception):
             cur.execute(
                 "SELECT fail_backfill(%s, %s)",
                 (backfill_id, str(exc)[:500]),
             )
-        except Exception:
-            pass
         sys.exit(1)
     finally:
         conn.close()
