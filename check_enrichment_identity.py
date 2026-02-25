@@ -17,7 +17,6 @@ All enrichment migrations must use the portable (country, ean) JOIN pattern.
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).parent

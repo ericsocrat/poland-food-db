@@ -1,0 +1,45 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Python Lint — ruff for pipeline & scripts
+# ═══════════════════════════════════════════════════════════════════════════════
+# Runs ruff check on all Python files. Triggered on PRs and pushes that touch
+# Python source or the ruff configuration.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Python Lint
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "pipeline/**/*.py"
+      - "scripts/**/*.py"
+      - "*.py"
+      - "ruff.toml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "pipeline/**/*.py"
+      - "scripts/**/*.py"
+      - "*.py"
+      - "ruff.toml"
+
+permissions:
+  contents: read
+
+jobs:
+  ruff:
+    name: Ruff Lint
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Install ruff
+        run: pip install ruff
+
+      - name: Run ruff
+        run: ruff check . --output-format=github
