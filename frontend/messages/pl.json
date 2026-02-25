@@ -1674,5 +1674,44 @@
       "retry": "Spróbuj ponownie",
       "imageDeleted": "Zdjęcie zostało usunięte z pamięci — Twoja prywatność jest chroniona."
     }
+  },
+  "trust": {
+    "badge": {
+      "high": "Wysoka wiarygodność",
+      "moderate": "Średnia wiarygodność",
+      "low": "Niska wiarygodność",
+      "highTooltip": "Dane są kompletne i zweryfikowane z wielu źródeł.",
+      "moderateTooltip": "Kluczowe dane są dostępne, ale niektóre pola mogą być szacunkowe lub niekompletne.",
+      "lowTooltip": "Znaczne braki w danych — traktuj wyniki jako szacunkowe.",
+      "ariaLabel": "Poziom wiarygodności danych: {level}"
+    },
+    "freshness": {
+      "fresh": "Zweryfikowano {days} dni temu",
+      "aging": "Dane mogą być nieaktualne ({days} dni)",
+      "stale": "Nieaktualne — ostatnio zweryfikowano {days} dni temu",
+      "tooltipDate": "Ostatnio zweryfikowano: {date}",
+      "ariaLabel": "Aktualność danych: {status}"
+    },
+    "scoringVersion": {
+      "label": "Wynik v{version}",
+      "tooltip": "Ten produkt został oceniony za pomocą formuły v{version} (model {factors}-czynnikowy).",
+      "ariaLabel": "Wersja formuły oceny {version}"
+    },
+    "searchRelevance": {
+      "matchedName": "Dopasowanie: nazwa produktu",
+      "matchedBrand": "Dopasowanie: marka",
+      "matchedCategory": "Dopasowanie: kategoria",
+      "matchedIngredient": "Dopasowanie: składnik",
+      "matchedBarcode": "Dopasowanie: kod kreskowy",
+      "ariaLabel": "Powód dopasowania: {reason}"
+    },
+    "sourceAttribution": {
+      "title": "Źródła danych",
+      "fieldLabel": "{field}",
+      "sourceLabel": "{source}",
+      "updatedAgo": "Zaktualizowano {days} dni temu",
+      "noSourceData": "Dane o źródłach nie są jeszcze dostępne dla tego produktu.",
+      "ariaLabel": "Informacje o źródłach danych"
+    }
   }
 }

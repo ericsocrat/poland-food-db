@@ -49,6 +49,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Frontend & UI
 
+- Add trust & transparency components: `TrustBadge` (data confidence level),
+  `FreshnessIndicator` (data age with fresh/aging/stale thresholds),
+  `ScoringVersionBadge` (formula version display), `SearchRelevanceHint`
+  (match type indicator), `SourceAttribution` (expandable per-field source
+  panel). All components degrade gracefully when backend data is unavailable.
+  Includes i18n (en + pl), barrel export, and 70+ co-located Vitest tests (#205)
+
 ### Search & Discovery
 
 ### Security & Auth
