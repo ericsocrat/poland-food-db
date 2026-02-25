@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
     Runs all QA test suites against the LOCAL Supabase database.
 
