@@ -1,0 +1,102 @@
+name: Data / Schema Change
+description: Propose a database schema change, data backfill, or scoring modification.
+title: "[Schema]: "
+labels: ["schema"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Database changes require special care. Please follow the project's [Migration Conventions](https://github.com/ericsocrat/poland-food-db/blob/main/docs/MIGRATION_CONVENTIONS.md) and [Database Safety Rules](https://github.com/ericsocrat/poland-food-db/blob/main/copilot-instructions.md#813-database-safety-rules).
+
+  - type: dropdown
+    id: change_type
+    attributes:
+      label: Change Type
+      description: What kind of database change is this?
+      options:
+        - New table
+        - Alter table (add/modify column)
+        - New SQL function
+        - Modify SQL function
+        - New view / materialized view
+        - Scoring formula change
+        - Data backfill
+        - Data migration (move/transform existing data)
+        - Index change
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe the change and why it's needed.
+    validations:
+      required: true
+
+  - type: textarea
+    id: migration_plan
+    attributes:
+      label: Migration Plan
+      description: |
+        Outline the migration file(s) needed. Include proposed filename(s) following `YYYYMMDDHHMMSS_description.sql` convention.
+      placeholder: |
+        Migration: `20260225000100_add_xyz_column.sql`
+        - ALTER TABLE products ADD COLUMN IF NOT EXISTS xyz text;
+        - CREATE INDEX IF NOT EXISTS idx_products_xyz ON products(xyz);
+    validations:
+      required: true
+
+  - type: textarea
+    id: rollback
+    attributes:
+      label: Rollback Plan
+      description: How to reverse this change if something goes wrong.
+      placeholder: |
+        -- To roll back:
+        -- ALTER TABLE products DROP COLUMN IF EXISTS xyz;
+        -- DROP INDEX IF EXISTS idx_products_xyz;
+    validations:
+      required: true
+
+  - type: textarea
+    id: api_impact
+    attributes:
+      label: API Impact
+      description: Which `api_*` functions, views, or materialized views are affected? Are changes backward-compatible?
+      placeholder: |
+        - `api_product_detail()` — adds new key `xyz` to response (additive, backward-compatible)
+        - `v_master` — adds new column (no breaking change)
+    validations:
+      required: false
+
+  - type: textarea
+    id: qa_impact
+    attributes:
+      label: QA Impact
+      description: Which QA suites need new/updated checks? What's the expected check count change?
+      placeholder: |
+        - `QA__null_checks.sql` — add 1 check for xyz NOT NULL
+        - `QA__data_quality.sql` — add 1 check for xyz valid range
+    validations:
+      required: false
+
+  - type: textarea
+    id: test_plan
+    attributes:
+      label: Test Plan
+      description: What tests will be added? (pgTAP, QA SQL, Vitest, etc.)
+      placeholder: |
+        - pgTAP: `has_column('products', 'xyz')` in schema_contracts.test.sql
+        - QA: check xyz is populated for all active products
+        - Vitest: update RPC mock to include new response key
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Performance implications, scale considerations, related issues.
+    validations:
+      required: false
