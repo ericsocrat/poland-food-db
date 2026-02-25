@@ -13,6 +13,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### CI & Infrastructure
+
+- Add branch protection as code: `.github/branch-protection.md` documents canonical
+  `main` branch protection rules (required reviews, status checks, merge strategy,
+  push restrictions) with step-by-step restoration procedure (#325)
+
 ### Schema & Migrations
 
 - Add alert escalation & query regression detection: `query_performance_snapshots` table,
