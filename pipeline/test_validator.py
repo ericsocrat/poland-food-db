@@ -6,8 +6,6 @@ and the main validate_product entry point.
 
 from __future__ import annotations
 
-import pytest
-
 from pipeline.validator import (
     ANIMAL_ALLERGEN_TAGS,
     MEAT_FISH_ALLERGEN_TAGS,
@@ -16,7 +14,6 @@ from pipeline.validator import (
     validate_ean_checksum,
     validate_product,
 )
-
 
 # ═══════════════════════════════════════════════════════════════════════════
 # EAN checksum

@@ -19,7 +19,7 @@ import json
 import os
 import sys
 import uuid
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import requests
 
@@ -50,7 +50,7 @@ def run_audit() -> None:
     headers = supabase_headers(key)
 
     run_id = str(uuid.uuid4())
-    timestamp = datetime.now(timezone.utc).isoformat()
+    timestamp = datetime.now(UTC).isoformat()
 
     # ── Execute master audit via RPC ──────────────────────────────────────
     print(f"Connecting to {url.split('//')[1].split('.')[0]}...")

@@ -19,6 +19,16 @@ Adheres to [Semantic Versioning](https://semver.org/).
   (root cleanliness, docs index coverage, ADR naming, migration ordering,
   no tracked artifacts, no temp files) with CI workflow `repo-verify.yml`
   on push/PR/weekly cron (#334)
+- Add automated DR drill CI workflow (`.github/workflows/dr-drill.yml`): monthly
+  cron + manual dispatch, ephemeral PostgreSQL 17 container, applies all migrations
+  + seed + representative pipeline SQL + QA smoke subset, produces JSON report
+  artifact (#333)
+- Codify monitoring alerts as `monitoring/alerts.yml` (17 alerts extracted from
+  ALERT_POLICY.md); add `validate-alerts.yml` CI workflow + `scripts/validate_alerts.py`
+  validation script; update ALERT_POLICY.md to reference YAML as source of truth (#332)
+- Add Python linter (ruff) with `ruff.toml` config and `python-lint.yml` CI
+  workflow; auto-fix 22 violations, resolve remaining 7 manually; enforce on
+  PRs touching Python files (#331)
 
 ### Documentation
 
