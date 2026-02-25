@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 45 in `docs/` + 8 in `docs/decisions/` + 5 elsewhere in repo
+> **Total documents:** 48 in `docs/` + 8 in `docs/decisions/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -12,7 +12,7 @@
 | Domain                                                   | Count | Documents                                                                                                       |
 | -------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
 | [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal        |
-| [API](#api)                                              | 4     | Contracts, versioning, frontend mapping, contract testing                                                       |
+| [API](#api)                                              | 6     | Contracts, conventions, versioning, frontend mapping, contract testing, registry                                 |
 | [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                                    |
 | [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                          |
 | [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                       |
@@ -20,7 +20,7 @@
 | [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                               |
 | [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                                 |
 | [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion       |
-| [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance guardrails, doc governance, repo governance, this index, governance blueprint   |
+| [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance report, performance guardrails, doc governance, repo governance, this index     |
 | [Architecture Decisions](#architecture-decisions-adrs)   | 8     | MADR template + 7 retroactive ADRs (stack, scoring, country isolation, pipeline, API versioning, migrations, ingredients) |
 
 ---
@@ -46,6 +46,7 @@
 | [API_VERSIONING.md](API_VERSIONING.md)     | API deprecation & versioning policy — function-name versioning, sunset timelines | [#234](https://github.com/ericsocrat/poland-food-db/issues/234) | 2026-02-24   |
 | [FRONTEND_API_MAP.md](FRONTEND_API_MAP.md) | Frontend-to-API mapping reference — which pages call which RPCs                  | [#197](https://github.com/ericsocrat/poland-food-db/issues/197) | 2026-02-13   |
 | [CONTRACT_TESTING.md](CONTRACT_TESTING.md) | API contract testing strategy — pgTAP patterns, response shape validation        | [#197](https://github.com/ericsocrat/poland-food-db/issues/197) | 2026-02-24   |
+| [api-registry.yaml](api-registry.yaml)     | Structured registry of all 109 API functions (YAML machine-readable)             | [#197](https://github.com/ericsocrat/poland-food-db/issues/197) | 2026-02-24   |
 
 ## Scoring
 
@@ -131,6 +132,7 @@
 | Document                                                   | Purpose                                                                    | Owner Issue                                                     | Last Updated |
 | ---------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
 | [FEATURE_SUNSETTING.md](FEATURE_SUNSETTING.md)             | Feature retirement criteria, cleanup policy, quarterly hygiene review      | [#237](https://github.com/ericsocrat/poland-food-db/issues/237) | 2026-02-24   |
+| [PERFORMANCE_REPORT.md](PERFORMANCE_REPORT.md)             | Performance audit — query patterns, scale projections, benchmark findings  | Governance domain                                               | 2026-02-24   |
 | [PERFORMANCE_GUARDRAILS.md](PERFORMANCE_GUARDRAILS.md)     | Performance guardrails — query budgets, index policy, scale projections    | Governance domain                                               | 2026-02-23   |
 | [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md)                   | Repo structure rules, root cleanliness, change checklists, CI alignment    | Governance domain                                               | 2026-02-25   |
 | [DOCUMENTATION_GOVERNANCE.md](DOCUMENTATION_GOVERNANCE.md) | Documentation ownership, versioning, deprecation, drift prevention cadence | [#201](https://github.com/ericsocrat/poland-food-db/issues/201) | 2026-03-01   |
