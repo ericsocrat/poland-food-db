@@ -13,6 +13,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### CI & Infrastructure
+
+- Pin Python dependencies exactly with SHA-256 hashes via pip-compile; add
+  `requirements.in` as human-editable source constraints (#323)
+
 ### Schema & Migrations
 
 - Add alert escalation & query regression detection: `query_performance_snapshots` table,
