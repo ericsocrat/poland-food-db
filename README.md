@@ -170,15 +170,15 @@ Failed Playwright runs upload screenshots and traces as artifacts for debugging.
 ```
 poland-food-db/
 ├── db/
-│   ├── migrations/          # (empty — consolidated into supabase/migrations)
-│   ├── pipelines/           # Category-specific data pipelines
+│   ├── pipelines/           # 21 category folders (20 PL + 1 DE)
 │   │   ├── alcohol/         # 30 alcohol products (3 SQL files)
 │   │   ├── baby/            # 9 baby products (3 SQL files)
 │   │   ├── bread/           # 60 bread products (3 SQL files)
 │   │   ├── breakfast-grain-based/ # 94 breakfast products (3 SQL files)
 │   │   ├── canned-goods/    # 49 canned goods products (4 SQL files)
 │   │   ├── cereals/         # 42 cereal products (3 SQL files)
-│   │   ├── chips/           # 50 chip products (4 SQL files)
+│   │   ├── chips-de/        # Germany micro-pilot (51 products)
+│   │   ├── chips-pl/        # Poland chips (50 products)
 │   │   ├── condiments/      # 55 condiment products (4 SQL files)
 │   │   ├── dairy/           # 50 dairy products (4 SQL files)
 │   │   ├── drinks/          # 61 beverage products (3 SQL files)
@@ -192,57 +192,136 @@ poland-food-db/
 │   │   ├── snacks/          # 56 snack products (3 SQL files)
 │   │   ├── sweets/          # 50 sweets & chocolate products (4 SQL files)
 │   │   └── zabka/           # 27 convenience store products (3 SQL files)
-│   ├── qa/                  # Quality assurance test suites
-│   │   ├── QA__null_checks.sql           # 29 integrity checks
-│   │   ├── QA__scoring_formula_tests.sql # 27 algorithm tests
-│   │   ├── QA__api_surfaces.sql          # 14 API contract checks
-│   │   ├── QA__confidence_scoring.sql    # 10 confidence scoring checks
-│   │   ├── QA__data_quality.sql          # 25 data quality checks
-│   │   ├── QA__referential_integrity.sql # 18 referential integrity checks
-│   │   ├── QA__view_consistency.sql      # 13 view consistency checks
-│   │   ├── QA__naming_conventions.sql    # 12 naming convention checks
-│   │   ├── QA__nutrition_ranges.sql      # 16 nutrition range checks
-│   │   ├── QA__data_consistency.sql      # 20 data consistency checks
-│   │   ├── QA__allergen_integrity.sql    # 14 allergen integrity checks
-│   │   ├── QA__serving_source_validation.sql # 16 serving & source checks
-│   │   ├── QA__ingredient_quality.sql    # 14 ingredient quality checks
-│   │   ├── QA__source_coverage.sql       # 8 data quality reports
-    │   └── TEST__negative_checks.sql     # 23 negative validation tests
-│   └── views/               # Denormalized reporting views
-│       └── VIEW__master_product_view.sql # Flat API view with provenance
+│   ├── qa/                  # 45 quality assurance files (460 checks)
+│   │   ├── QA__allergen_filtering.sql
+│   │   ├── QA__allergen_integrity.sql
+│   │   ├── QA__api_contract.sql
+│   │   ├── QA__api_surfaces.sql
+│   │   ├── QA__attribute_contradiction.sql
+│   │   ├── QA__auth_onboarding.sql
+│   │   ├── QA__barcode_lookup.sql
+│   │   ├── QA__confidence_reporting.sql
+│   │   ├── QA__confidence_scoring.sql
+│   │   ├── QA__country_isolation.sql
+│   │   ├── QA__data_consistency.sql
+│   │   ├── QA__data_provenance.sql
+│   │   ├── QA__data_quality.sql
+│   │   ├── QA__diet_filtering.sql
+│   │   ├── QA__explain_analysis.sql
+│   │   ├── QA__function_security_audit.sql
+│   │   ├── QA__gdpr_compliance.sql
+│   │   ├── QA__governance_drift.sql
+│   │   ├── QA__health_profiles.sql
+│   │   ├── QA__index_temporal.sql
+│   │   ├── QA__index_verification.sql
+│   │   ├── QA__ingredient_quality.sql
+│   │   ├── QA__lists_comparisons.sql
+│   │   ├── QA__monitoring.sql
+│   │   ├── QA__multi_country_consistency.sql
+│   │   ├── QA__mv_refresh_cost.sql
+│   │   ├── QA__naming_conventions.sql
+│   │   ├── QA__null_checks.sql
+│   │   ├── QA__nutrition_ranges.sql
+│   │   ├── QA__performance_regression.sql
+│   │   ├── QA__push_notifications.sql
+│   │   ├── QA__referential_integrity.sql
+│   │   ├── QA__rls_audit.sql
+│   │   ├── QA__scale_guardrails.sql
+│   │   ├── QA__scanner_submissions.sql
+│   │   ├── QA__scoring_determinism.sql
+│   │   ├── QA__scoring_engine.sql
+│   │   ├── QA__scoring_formula_tests.sql
+│   │   ├── QA__search_architecture.sql
+│   │   ├── QA__security_posture.sql
+│   │   ├── QA__serving_source_validation.sql
+│   │   ├── QA__slow_queries.sql
+│   │   ├── QA__source_coverage.sql
+│   │   ├── QA__view_consistency.sql
+│   │   └── TEST__negative_checks.sql
+│   ├── ci_post_pipeline.sql
+│   └── views/
+│       └── VIEW__master_product_view.sql
 ├── supabase/
-│   ├── config.toml          # Local Supabase configuration
-    └── migrations/          # Schema migrations (130 files)
-├── docs/                    # Project documentation
-│   ├── API_CONTRACTS.md     # API surface contract documentation
-│   ├── PERFORMANCE_REPORT.md # Performance audit & scale readiness
-│   ├── DATA_SOURCES.md      # Multi-source data hierarchy & validation workflow
-│   ├── SCORING_METHODOLOGY.md # v3.2 algorithm documentation
-│   ├── RESEARCH_WORKFLOW.md # Data collection lifecycle (manual + automated OFF pipeline)
-│   ├── VIEWING_AND_TESTING.md # Full viewing & testing guide
-│   ├── COUNTRY_EXPANSION_GUIDE.md # Multi-country rules (PL active, DE micro-pilot)
-│   ├── EAN_VALIDATION_STATUS.md # Current EAN validation status
-│   ├── UX_UI_DESIGN.md      # Production-ready UX specification
-│   ├── ENVIRONMENT_STRATEGY.md # Local / Staging / Production env strategy
-│   ├── STAGING_SETUP.md     # Step-by-step staging setup guide
-│   ├── PRODUCTION_DATA.md   # Production data infrastructure audit
-│   ├── DATA_INTEGRITY_AUDITS.md # Ongoing data integrity audit framework
-│   ├── CI_ARCHITECTURE_PROPOSAL.md # CI pipeline design
-│   ├── FRONTEND_API_MAP.md  # Frontend ↔ API mapping reference
-│   ├── LABELS.md            # Labeling conventions
-│   ├── MONITORING.md        # Runtime monitoring
-│   ├── OBSERVABILITY.md     # Observability strategy
-│   └── SONAR.md             # SonarCloud configuration & quality gates
-├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
+│   ├── config.toml
+│   ├── seed.sql
+│   ├── migrations/          # 137 append-only schema migrations
+│   ├── seed/                # Reference data seeds
+│   ├── sanity/              # Sanity check SQL
+│   └── tests/               # pgTAP tests (13 files)
+├── docs/                    # 49 project documents (see docs/INDEX.md)
+│   ├── ACCESS_AUDIT.md
+│   ├── ALERT_POLICY.md
+│   ├── API_CONTRACTS.md
+│   ├── API_CONVENTIONS.md
+│   ├── API_VERSIONING.md
+│   ├── api-registry.yaml
+│   ├── BACKFILL_STANDARD.md
+│   ├── CI_ARCHITECTURE_PROPOSAL.md
+│   ├── CONTRACT_TESTING.md
+│   ├── COUNTRY_EXPANSION_GUIDE.md
+│   ├── DATA_INTEGRITY_AUDITS.md
+│   ├── DATA_PROVENANCE.md
+│   ├── DATA_SOURCES.md
+│   ├── DISASTER_DRILL_REPORT.md
+│   ├── DOCUMENTATION_GOVERNANCE.md
+│   ├── DOMAIN_BOUNDARIES.md
+│   ├── DRIFT_DETECTION.md
+│   ├── EAN_VALIDATION_STATUS.md
+│   ├── ENVIRONMENT_STRATEGY.md
+│   ├── FEATURE_FLAGS.md
+│   ├── FEATURE_SUNSETTING.md
+│   ├── FRONTEND_API_MAP.md
+│   ├── GOVERNANCE_BLUEPRINT.md
+│   ├── INCIDENT_RESPONSE.md
+│   ├── INDEX.md
+│   ├── LABELS.md
+│   ├── LOG_SCHEMA.md
+│   ├── METRICS.md
+│   ├── MIGRATION_CONVENTIONS.md
+│   ├── MONITORING.md
+│   ├── OBSERVABILITY.md
+│   ├── ON_CALL_POLICY.md
+│   ├── PERFORMANCE_GUARDRAILS.md
+│   ├── PERFORMANCE_REPORT.md
+│   ├── PRIVACY_CHECKLIST.md
+│   ├── PRODUCTION_DATA.md
+│   ├── RATE_LIMITING.md
+│   ├── REPO_GOVERNANCE.md
+│   ├── RESEARCH_WORKFLOW.md
+│   ├── SCORING_ENGINE.md
+│   ├── SCORING_METHODOLOGY.md
+│   ├── SEARCH_ARCHITECTURE.md
+│   ├── SECURITY_AUDIT.md
+│   ├── SLO.md
+│   ├── SONAR.md
+│   ├── STAGING_SETUP.md
+│   ├── UX_IMPACT_METRICS.md
+│   ├── UX_UI_DESIGN.md
+│   └── VIEWING_AND_TESTING.md
+├── pipeline/                # Python OFF API → SQL generator
+│   ├── run.py               # CLI: --category, --max-products, --dry-run
+│   ├── off_client.py        # OFF API v2 client with retry logic
+│   ├── sql_generator.py     # Generates 4-5 SQL files per category
+│   ├── validator.py         # Data validation before SQL generation
+│   ├── categories.py        # 21 category definitions + OFF tag mappings
+│   └── image_importer.py    # Product image import utilities
+├── scripts/                 # Maintenance & utility scripts
+├── frontend/                # Next.js 15 App Router
+├── .github/workflows/       # 15 CI/CD workflow files
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (460 checks)
-├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (23 tests)
+├── RUN_QA.ps1               # QA test runner (460 checks)
+├── RUN_NEGATIVE_TESTS.ps1   # Negative validation (29 tests)
 ├── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
-├── RUN_SEED.ps1             # Unified seed runner (any environment)
-├── RUN_SANITY.ps1           # Cross-environment sanity checks (16 checks)
-└── supabase/
-    ├── seed/                # Reference data seeds
-    └── sanity/              # Sanity check SQL
+├── RUN_SEED.ps1             # Seed data runner
+├── RUN_SANITY.ps1           # Sanity checks (16 checks)
+├── validate_eans.py         # EAN-8/EAN-13 checksum validator
+├── check_pipeline_structure.py # Pipeline structure validator
+├── enrich_ingredients.py    # OFF → ingredient/allergen SQL generator
+├── copilot-instructions.md  # AI agent context & project rules
+├── CHANGELOG.md             # Structured changelog
+├── DEPLOYMENT.md            # Deployment procedures & rollback playbook
+├── SECURITY.md              # Security policy
+└── sonar-project.properties # SonarCloud configuration
 ```
 
 ---
