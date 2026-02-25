@@ -1,0 +1,123 @@
+-- PIPELINE (Sweets): scoring
+-- Generated: 2026-02-25
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Ferrero', 'Ferrero Yogurette 40084060 Gefüllte Vollmilchschokolade mit Magermilchjoghurt-Erdbeer-Creme', 'E'),
+    ('Ritter Sport', 'Kakao-Klasse Die Kräftige 74%', 'E'),
+    ('Kinder', 'Überraschung', 'E'),
+    ('J. D. Gross', 'Edelbitter Mild 90%', 'D'),
+    ('Moser Roth', 'Edelbitter-Schokolade 85 % Cacao', 'D'),
+    ('Ritter Sport', 'Kakao Klasse die Starke - 81%', 'E'),
+    ('Moser Roth', 'Edelbitter 90 % Cacao', 'D'),
+    ('Lidl', 'Lidl Organic Dark Chocolate', 'E'),
+    ('Aldi', 'Edelbitter-Schokolade 70% Cacao', 'E'),
+    ('Ritter Sport', 'Schokolade Halbbitter', 'E'),
+    ('Ritter Sport', 'Marzipan', 'E'),
+    ('Aldi', 'Edelbitter- Schokolade', 'E'),
+    ('Ritter Sport', 'Alpenmilch', 'E'),
+    ('Ritter Sport', 'Ritter Sport Nugat', 'E'),
+    ('Lindt', 'Lindt Dubai Style Chocolade', 'E'),
+    ('Ritter Sport', 'Ritter Sport Voll-Nuss', 'E'),
+    ('Schogetten', 'Schogetten originals: Edel-Zartbitter', 'E'),
+    ('Choceur', 'Aldi-Gipfel', 'E'),
+    ('Ritter Sport', 'Edel-Vollmilch', 'E'),
+    ('Müller & Müller GmbH', 'Blockschokolade', 'E'),
+    ('Sarotti', 'Mild 85%', 'E'),
+    ('Aldi', 'Nussknacker - Vollmilchschokolade', 'E'),
+    ('Aldi', 'Nussknacker - Zartbitterschokolade', 'E'),
+    ('Back Family', 'Schoko-Chunks - Zartbitter', 'E'),
+    ('Ritter Sport', 'Pistachio', 'E'),
+    ('Lindt', 'Excellence Mild 70%', 'E'),
+    ('Fairglobe', 'Bio Vollmilch-Schokolade', 'E'),
+    ('Ritter Sport', 'Kakao-Mousse', 'E'),
+    ('Ritter Sport', 'Kakao Klasse 61 die feine aus Nicaragua', 'E'),
+    ('Ritter Sport', 'Ritter Sport Honig Salz Mandel', 'E'),
+    ('Lindt', 'Gold Bunny', 'E'),
+    ('Schogetten', 'Schogetten - Edel-Alpenvollmilchschokolade', 'E'),
+    ('Ferrero', 'Kinder Osterhase - Harry Hase', 'E'),
+    ('Ritter Sport', 'Joghurt', 'E'),
+    ('Ritter Sport', 'Trauben Nuss', 'E'),
+    ('Ritter Sport', 'Knusperkeks', 'E'),
+    ('Milka', 'Schokolade Joghurt', 'E'),
+    ('Ritter Sport', 'Rum Trauben Nuss Schokolade', 'E'),
+    ('Aldi', 'Schokolade (Alpen-Sahne-)', 'E'),
+    ('Aldi', 'Erdbeer-Joghurt', 'E'),
+    ('Rapunzel', 'Nirwana Vegan', 'E'),
+    ('Ritter Sport', 'Haselnuss', 'E'),
+    ('Ritter SPORT', 'Ritter Sport Erdbeer', 'E'),
+    ('Schogetten', 'Schogetten Edel-Zartbitter-Haselnuss', 'E'),
+    ('Ritter Sport', 'Amicelli', 'E'),
+    ('Ferrero', 'Kinder Weihnachtsmann', 'E'),
+    ('Merci', 'Finest Selection Mandel Knusper Vielfalt', 'E'),
+    ('Aldi', 'Rahm Mandel', 'E'),
+    ('Ritter Sport', 'Vegan Roasted Peanut', 'E'),
+    ('Ritter Sport', 'Nussklasse Ganze Mandel', 'E'),
+    ('Ritter Sport', 'Ritter Sport Lemon', 'E')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Ferrero', 'Ferrero Yogurette 40084060 Gefüllte Vollmilchschokolade mit Magermilchjoghurt-Erdbeer-Creme', '4'),
+    ('Ritter Sport', 'Kakao-Klasse Die Kräftige 74%', '3'),
+    ('Kinder', 'Überraschung', '4'),
+    ('J. D. Gross', 'Edelbitter Mild 90%', '4'),
+    ('Moser Roth', 'Edelbitter-Schokolade 85 % Cacao', '4'),
+    ('Ritter Sport', 'Kakao Klasse die Starke - 81%', '4'),
+    ('Moser Roth', 'Edelbitter 90 % Cacao', '4'),
+    ('Lidl', 'Lidl Organic Dark Chocolate', '4'),
+    ('Aldi', 'Edelbitter-Schokolade 70% Cacao', '4'),
+    ('Ritter Sport', 'Schokolade Halbbitter', '4'),
+    ('Ritter Sport', 'Marzipan', '4'),
+    ('Aldi', 'Edelbitter- Schokolade', '3'),
+    ('Ritter Sport', 'Alpenmilch', '4'),
+    ('Ritter Sport', 'Ritter Sport Nugat', '4'),
+    ('Lindt', 'Lindt Dubai Style Chocolade', '4'),
+    ('Ritter Sport', 'Ritter Sport Voll-Nuss', '4'),
+    ('Schogetten', 'Schogetten originals: Edel-Zartbitter', '4'),
+    ('Choceur', 'Aldi-Gipfel', '4'),
+    ('Ritter Sport', 'Edel-Vollmilch', '4'),
+    ('Müller & Müller GmbH', 'Blockschokolade', '4'),
+    ('Sarotti', 'Mild 85%', '4'),
+    ('Aldi', 'Nussknacker - Vollmilchschokolade', '4'),
+    ('Aldi', 'Nussknacker - Zartbitterschokolade', '4'),
+    ('Back Family', 'Schoko-Chunks - Zartbitter', '4'),
+    ('Ritter Sport', 'Pistachio', '4'),
+    ('Lindt', 'Excellence Mild 70%', '4'),
+    ('Fairglobe', 'Bio Vollmilch-Schokolade', '4'),
+    ('Ritter Sport', 'Kakao-Mousse', '4'),
+    ('Ritter Sport', 'Kakao Klasse 61 die feine aus Nicaragua', '3'),
+    ('Ritter Sport', 'Ritter Sport Honig Salz Mandel', '4'),
+    ('Lindt', 'Gold Bunny', '4'),
+    ('Schogetten', 'Schogetten - Edel-Alpenvollmilchschokolade', '4'),
+    ('Ferrero', 'Kinder Osterhase - Harry Hase', '4'),
+    ('Ritter Sport', 'Joghurt', '4'),
+    ('Ritter Sport', 'Trauben Nuss', '4'),
+    ('Ritter Sport', 'Knusperkeks', '4'),
+    ('Milka', 'Schokolade Joghurt', '4'),
+    ('Ritter Sport', 'Rum Trauben Nuss Schokolade', '4'),
+    ('Aldi', 'Schokolade (Alpen-Sahne-)', '4'),
+    ('Aldi', 'Erdbeer-Joghurt', '4'),
+    ('Rapunzel', 'Nirwana Vegan', '4'),
+    ('Ritter Sport', 'Haselnuss', '4'),
+    ('Ritter SPORT', 'Ritter Sport Erdbeer', '4'),
+    ('Schogetten', 'Schogetten Edel-Zartbitter-Haselnuss', '4'),
+    ('Ritter Sport', 'Amicelli', '4'),
+    ('Ferrero', 'Kinder Weihnachtsmann', '4'),
+    ('Merci', 'Finest Selection Mandel Knusper Vielfalt', '4'),
+    ('Aldi', 'Rahm Mandel', '4'),
+    ('Ritter Sport', 'Vegan Roasted Peanut', '4'),
+    ('Ritter Sport', 'Nussklasse Ganze Mandel', '4'),
+    ('Ritter Sport', 'Ritter Sport Lemon', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Sweets', 100, 'DE');

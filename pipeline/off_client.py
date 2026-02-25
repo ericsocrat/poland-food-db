@@ -84,6 +84,7 @@ def _search_by_tags(
     seen_codes: set[str],
     results: list[dict],
     max_results: int,
+    country: str = "poland",
 ) -> None:
     """Phase 1: search OFF by category tags (mutates *results* and *seen_codes*)."""
     for tag in off_tags:
@@ -93,7 +94,7 @@ def _search_by_tags(
         while len(results) < max_results:
             params: dict[str, Any] = {
                 "categories_tags_en": tag,
-                "countries_tags_en": "poland",
+                "countries_tags_en": country,
                 "page": page,
                 "page_size": PAGE_SIZE,
             }
@@ -117,6 +118,7 @@ def _search_by_terms(
     seen_codes: set[str],
     results: list[dict],
     max_results: int,
+    country: str = "poland",
 ) -> None:
     """Phase 2: fall back to keyword search (mutates *results* and *seen_codes*)."""
     for term in search_terms:
@@ -126,7 +128,7 @@ def _search_by_terms(
         while len(results) < max_results:
             params: dict[str, Any] = {
                 "search_terms": term,
-                "countries_tags_en": "poland",
+                "countries_tags_en": country,
                 "page": page,
                 "page_size": PAGE_SIZE,
             }
@@ -160,11 +162,12 @@ def _collect_products(
                 return
 
 
-def search_polish_products(
+def search_products(
     category: str,
     max_results: int = 50,
+    country: str = "poland",
 ) -> list[dict]:
-    """Search Open Food Facts for Polish products in *category*.
+    """Search Open Food Facts for products in *category* sold in *country*.
 
     Uses a two-phase strategy:
 
@@ -172,8 +175,8 @@ def search_polish_products(
     2. **Term search** — fall back to keyword search terms if tag search
        didn't find enough results.
 
-    Both phases filter by ``countries_tags=en:poland`` and rate-limit to
-    one request per second.
+    Both phases filter by ``countries_tags_en=<country>`` and rate-limit
+    to one request per second.
 
     Parameters
     ----------
@@ -181,6 +184,9 @@ def search_polish_products(
         Database category name (e.g. ``"Dairy"``, ``"Chips"``).
     max_results:
         Maximum number of raw product dicts to return.
+    country:
+        OFF country name for ``countries_tags_en`` filter
+        (e.g. ``"poland"``, ``"germany"``).
 
     Returns
     -------
@@ -194,13 +200,26 @@ def search_polish_products(
 
     with _session() as session:
         # Phase 1: Search by OFF category tags
-        _search_by_tags(session, off_tags, seen_codes, results, max_results)
+        _search_by_tags(session, off_tags, seen_codes, results, max_results, country)
 
         # Phase 2: Fall back to keyword search if needed
         if len(results) < max_results:
-            _search_by_terms(session, search_terms, seen_codes, results, max_results)
+            _search_by_terms(
+                session, search_terms, seen_codes, results, max_results, country
+            )
 
     return results[:max_results]
+
+
+def search_polish_products(
+    category: str,
+    max_results: int = 50,
+) -> list[dict]:
+    """Search OFF for Polish products — backward-compatible wrapper.
+
+    Delegates to :func:`search_products` with ``country="poland"``.
+    """
+    return search_products(category, max_results=max_results, country="poland")
 
 
 def fetch_product_by_ean(ean: str) -> dict | None:
@@ -280,6 +299,36 @@ POLISH_RETAILERS: set[str] = {
     "e.leclerc",
 }
 
+# Known German retailers (for DE market-relevance scoring)
+GERMAN_RETAILERS: set[str] = {
+    "aldi",
+    "lidl",
+    "edeka",
+    "rewe",
+    "penny",
+    "netto",
+    "kaufland",
+    "dm",
+    "rossmann",
+    "real",
+    "metro",
+    "tegut",
+    "globus",
+    "norma",
+    "müller",
+    "hit",
+    "famila",
+    "combi",
+    "marktkauf",
+}
+
+# Country code → (GS1 prefixes, retailers, diacritic regex)
+_COUNTRY_MARKET_DATA: dict[str, tuple[list[str], set[str], str]] = {
+    "PL": (["590"], POLISH_RETAILERS, r"[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]"),
+    "DE": (["400", "401", "402", "403", "404", "405", "406", "407", "408", "409", "440"],
+           GERMAN_RETAILERS, r"[äöüÄÖÜß]"),
+}
+
 # Common brand normalisations
 _BRAND_LAYS = "Lay's"
 _BRAND_NESTLE = "Nestlé"
@@ -306,9 +355,15 @@ def _is_latin_name(name: str) -> bool:
 
 
 def _normalise_brand(brand: str) -> str:
-    """Normalise common brand name variants."""
+    """Normalise common brand name variants.
+
+    Also converts ALL-CAPS brands (longer than 3 chars) to Title Case
+    and ensures the first character is uppercase to satisfy naming
+    convention QA checks.
+    """
     key = brand.lower().strip()
-    return _BRAND_NORMALISE.get(key, brand.strip())
+    result = _BRAND_NORMALISE.get(key, brand.strip())
+    return _normalise_name_casing(result)
 
 
 def polish_market_score(product: dict) -> int:
@@ -331,6 +386,52 @@ def polish_market_score(product: dict) -> int:
 
     stores = (product.get("store_availability") or "").lower()
     if any(r in stores for r in POLISH_RETAILERS):
+        score += 1
+
+    try:
+        completeness = float(product.get("_completeness", 0))
+    except (ValueError, TypeError):
+        completeness = 0.0
+    if completeness >= 0.5:
+        score += 1
+
+    return score
+
+
+def market_score(product: dict, country_code: str = "PL") -> int:
+    """Score how likely a product is genuinely sold in the given country.
+
+    Falls back to :func:`polish_market_score` semantics when the country
+    is not explicitly configured.
+
+    Higher scores indicate stronger market presence:
+      +3  EAN starts with the country's GS1 prefix
+      +2  Product name contains country-specific diacritics
+      +1  Store availability mentions a known retailer
+      +1  OFF completeness >= 0.5
+    """
+    data = _COUNTRY_MARKET_DATA.get(country_code)
+    if data is None:
+        # Fallback: only completeness matters
+        try:
+            completeness = float(product.get("_completeness", 0))
+        except (ValueError, TypeError):
+            completeness = 0.0
+        return 1 if completeness >= 0.5 else 0
+
+    gs1_prefixes, retailers, diacritic_re = data
+    score = 0
+
+    ean = product.get("ean", "")
+    if any(ean.startswith(prefix) for prefix in gs1_prefixes):
+        score += 3
+
+    name = product.get("product_name", "")
+    if re.search(diacritic_re, name):
+        score += 2
+
+    stores = (product.get("store_availability") or "").lower()
+    if any(r in stores for r in retailers):
         score += 1
 
     try:
@@ -392,6 +493,24 @@ def _parse_nova(off_product: dict) -> str | None:
     return digit if digit in ("1", "2", "3", "4") else None
 
 
+def _normalise_name_casing(name: str) -> str:
+    """Ensure a product/brand name satisfies QA naming conventions.
+
+    Rules applied:
+      - ALL-CAPS names (len > 3) are title-cased.
+      - First character is uppercased if lowercase.
+    """
+    if not name:
+        return name
+    # Convert ALL CAPS to Title Case (skip short abbreviations)
+    if len(name) > 3 and name == name.upper() and any(c.isalpha() for c in name):
+        name = name.title()
+    # Ensure first character is uppercase
+    if name[0].islower():
+        name = name[0].upper() + name[1:]
+    return name
+
+
 def _resolve_product_name(off_product: dict) -> str | None:
     """Extract and validate a Latin product name from an OFF product dict."""
     product_name = (
@@ -399,9 +518,13 @@ def _resolve_product_name(off_product: dict) -> str | None:
         or off_product.get("abbreviated_product_name")
         or ""
     ).strip()
+    # Strip pipe characters (OFF data artifacts that break CSV validators)
+    product_name = product_name.replace("|", " ").strip()
+    # Collapse multiple spaces
+    product_name = " ".join(product_name.split())
     if not product_name or not _is_latin_name(product_name):
         return None
-    return product_name
+    return _normalise_name_casing(product_name)
 
 
 def _resolve_brand(off_product: dict) -> str:

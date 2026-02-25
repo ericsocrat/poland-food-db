@@ -102,14 +102,14 @@ WHERE p.is_deprecated IS NOT TRUE
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- 8. DE micro-pilot only in allowed category (Chips)
+-- 8. DE micro-pilot only in allowed categories
 -- ═══════════════════════════════════════════════════════════════════════════════
-SELECT '8. DE products only in Chips category' AS check_name,
+SELECT '8. DE products only in allowed categories' AS check_name,
        COUNT(*) AS violations
 FROM products p
 WHERE p.country = 'DE'
   AND p.is_deprecated IS NOT TRUE
-  AND p.category != 'Chips';
+  AND p.category NOT IN ('Chips', 'Bread', 'Dairy', 'Drinks', 'Sweets');
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- 9. Data completeness parity: DE avg completeness within 30pts of PL

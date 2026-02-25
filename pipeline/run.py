@@ -18,7 +18,9 @@ from tqdm import tqdm
 from pipeline.categories import CATEGORY_SEARCH_TERMS, resolve_category
 from pipeline.off_client import (
     extract_product_data,
+    market_score,
     polish_market_score,
+    search_products,
     search_polish_products,
 )
 from pipeline.sql_generator import generate_pipeline
@@ -95,6 +97,13 @@ def _validate_products(
     return validated, warn_count
 
 
+# Country code → OFF country name for API queries
+_COUNTRY_OFF_NAME: dict[str, str] = {
+    "PL": "poland",
+    "DE": "germany",
+}
+
+
 def run_pipeline(
     category: str,
     max_products: int = 30,
@@ -102,6 +111,7 @@ def run_pipeline(
     dry_run: bool = False,
     min_completeness: float = 0.0,
     max_warnings: int = 3,
+    country: str = "PL",
 ) -> None:
     """Execute the full pipeline for a single category.
 
@@ -119,6 +129,8 @@ def run_pipeline(
         Minimum OFF completeness score (0–1) to keep a product.
     max_warnings:
         Products with more than this many validation warnings are dropped.
+    country:
+        ISO 3166-1 alpha-2 country code (default ``"PL"``).
     """
     if category not in CATEGORY_SEARCH_TERMS:
         valid = ", ".join(sorted(CATEGORY_SEARCH_TERMS))
@@ -126,19 +138,27 @@ def run_pipeline(
         print(f"Valid categories: {valid}")
         sys.exit(1)
 
+    off_country = _COUNTRY_OFF_NAME.get(country, country.lower())
+
     project_root = Path(__file__).resolve().parent.parent
     if output_dir is None:
-        output_dir = str(project_root / "db" / "pipelines" / _slug(category))
+        slug_base = _slug(category)
+        # Non-PL categories get a country suffix on the folder name
+        dir_slug = f"{slug_base}-{country.lower()}" if country != "PL" else slug_base
+        output_dir = str(project_root / "db" / "pipelines" / dir_slug)
 
     print("Poland Food DB — Open Food Facts Pipeline")
     print("=" * 42)
     print(f"Category: {category}")
+    print(f"Country:  {country} ({off_country})")
     print()
 
     # 1. Search OFF
-    print("Searching Open Food Facts for Polish products...")
+    print(f"Searching Open Food Facts for {off_country.title()} products...")
     try:
-        raw_products = search_polish_products(category, max_results=max_products * 3)
+        raw_products = search_products(
+            category, max_results=max_products * 3, country=off_country
+        )
     except Exception as exc:
         logger.error("Search failed with unexpected error: %s", exc)
         raw_products = []
@@ -170,8 +190,8 @@ def run_pipeline(
         print("  category terms need expanding.  Try increasing --max-products.")
         sys.exit(0)
 
-    # Sort by Polish market relevance (highest score first)
-    unique.sort(key=lambda p: polish_market_score(p), reverse=True)
+    # Sort by market relevance (highest score first)
+    unique.sort(key=lambda p: market_score(p, country), reverse=True)
     unique = unique[:max_products]
 
     if len(unique) < max_products:
@@ -182,7 +202,7 @@ def run_pipeline(
     print()
 
     # 5. Generate SQL
-    _generate_sql_output(category, unique, output_dir, dry_run)
+    _generate_sql_output(category, unique, output_dir, dry_run, country)
 
 
 def _generate_sql_output(
@@ -190,6 +210,7 @@ def _generate_sql_output(
     products: list[dict],
     output_dir: str,
     dry_run: bool,
+    country: str = "PL",
 ) -> None:
     """Phase 5: generate SQL files or print dry-run summary."""
     slug = _slug(category)
@@ -205,7 +226,7 @@ def _generate_sql_output(
         return
 
     print("Generating SQL files...")
-    files = generate_pipeline(category, products, output_dir)
+    files = generate_pipeline(category, products, output_dir, country=country)
     for f in files:
         size_label = ""
         if "01_insert" in f.name:
@@ -262,6 +283,11 @@ def main() -> None:
         default=3,
         help="Drop products with more than N validation warnings (default: 3)",
     )
+    parser.add_argument(
+        "--country",
+        default="PL",
+        help="ISO 3166-1 alpha-2 country code (default: PL). Supported: PL, DE",
+    )
 
     args = parser.parse_args()
 
@@ -277,6 +303,7 @@ def main() -> None:
         dry_run=args.dry_run,
         min_completeness=args.min_completeness,
         max_warnings=args.max_warnings,
+        country=args.country.upper(),
     )
 
 
