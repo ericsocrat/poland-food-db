@@ -160,6 +160,8 @@
 | Document                                                 | Purpose                                                                   | Last Updated |
 | -------------------------------------------------------- | ------------------------------------------------------------------------- | ------------ |
 | [../README.md](../README.md)                             | Project overview                                                          | 2026-02-24   |
+| [../LICENSE](../LICENSE)                                 | Source code license (AGPL-3.0)                                            | 2026-02-25   |
+| [../DATA_LICENSE.md](../DATA_LICENSE.md)                 | Curated data license (CC BY-NC-SA 4.0)                                    | 2026-02-25   |
 | [../SECURITY.md](../SECURITY.md)                         | Security policy (root — GitHub-required location)                         | 2026-02-24   |
 | [../DEPLOYMENT.md](../DEPLOYMENT.md)                     | Deployment procedures, rollback playbook                                  | 2026-02-24   |
 | [../CHANGELOG.md](../CHANGELOG.md)                       | Structured changelog (Keep a Changelog + Conventional Commits)            | 2026-02-24   |
