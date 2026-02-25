@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(136);
+SELECT plan(137);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -203,6 +203,9 @@ SELECT has_column('public', 'analytics_events', 'anonymous_id',        'column a
 SELECT has_column('public', 'analytics_events', 'route',               'column analytics_events.route exists');
 SELECT has_function('public', 'api_validate_event_schema',        'function api_validate_event_schema exists');
 SELECT has_function('public', 'api_get_event_schemas',            'function api_get_event_schemas exists');
+
+-- ─── Completeness Gap Analysis (#376) ─────────────────────────────────────────
+SELECT has_function('public', 'api_completeness_gap_analysis',    'function api_completeness_gap_analysis exists');
 
 SELECT * FROM finish();
 ROLLBACK;
