@@ -779,7 +779,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Serving & Source          | `QA__serving_source_validation.sql` |     16 | Yes       |
 | Ingredient Quality        | `QA__ingredient_quality.sql`        |     14 | Yes       |
 | Security Posture          | `QA__security_posture.sql`          |     22 | Yes       |
-| Scale Guardrails          | `QA__scale_guardrails.sql`          |     15 | Yes       |
+| Scale Guardrails          | `QA__scale_guardrails.sql`          |     23 | Yes       |
 | Country Isolation         | `QA__country_isolation.sql`         |     11 | Yes       |
 | Diet Filtering            | `QA__diet_filtering.sql`            |      6 | Yes       |
 | Barcode Lookup            | `QA__barcode_lookup.sql`            |      6 | Yes       |
@@ -790,7 +790,6 @@ At the end of every PR-like change, include a **Verification** section:
 | Index & Temporal          | `QA__index_temporal.sql`            |     15 | Yes       |
 | Attribute Contradictions  | `QA__attribute_contradiction.sql`   |      5 | Yes       |
 | Monitoring & Health       | `QA__monitoring.sql`                |      7 | Yes       |
-| Governance Drift          | `QA__governance_drift.sql`          |      8 | Yes       |
 | Scoring Determinism       | `QA__scoring_determinism.sql`       |     15 | Yes       |
 | Multi-Country Consistency | `QA__multi_country_consistency.sql` |     10 | Yes       |
 | Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |
