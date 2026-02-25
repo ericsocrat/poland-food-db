@@ -1544,3 +1544,66 @@ Numbered steps to fully reverse the change:
 > **This standard transforms issue creation into platform engineering discipline.**
 > Reference implementation: [Issue #184](https://github.com/ericsocrat/poland-food-db/issues/184) — selected as the gold standard across all 89+ repo issues for structural completeness, actionable depth, and proven implementation.
 ```
+
+---
+
+## 16. Repo Hygiene Checklist (Enforcement)
+
+> **Policy document:** `docs/REPO_GOVERNANCE.md`
+> This section is the **enforcement layer** — rules that Copilot must follow after every change.
+
+### 16.1 After Every Structural Change
+
+A "structural change" is any addition, removal, rename, or move of files/directories.
+
+- [ ] `docs/INDEX.md` updated (if any doc added/removed/renamed)
+- [ ] `copilot-instructions.md` §3 project layout updated (if directory structure changed)
+- [ ] `CHANGELOG.md` updated under `[Unreleased]` (if user-visible)
+- [ ] `.gitignore` reviewed (if new artifact type introduced)
+- [ ] `CODEOWNERS` reviewed (if new directory added)
+- [ ] CI workflow glob patterns verified (if paths changed)
+
+### 16.2 After Every API Change
+
+- [ ] `docs/API_CONTRACTS.md` updated (new/modified function documented)
+- [ ] `docs/FRONTEND_API_MAP.md` updated (if frontend wiring changed)
+- [ ] `docs/api-registry.yaml` updated (if function added/removed/renamed)
+- [ ] pgTAP contract test added/updated in `supabase/tests/`
+- [ ] No response keys removed (additive only)
+- [ ] New parameters have defaults (backward compatible)
+
+### 16.3 Root Cleanliness (MANDATORY)
+
+**Never commit:**
+
+- `tmp-*` files (any extension)
+- `tmp-*/` directories
+- `qa_*.json`, `qa-test.json`
+- `_func_dump.txt`, `__api_defs.txt`
+- `test-results/`, `coverage/`, `playwright-report/`
+- `.next/`, `node_modules/`, `__pycache__/`, `.pytest_cache/`
+- `audit-reports/`, `backups/`
+- `*.log`
+
+**Before any commit**, verify:
+
+```powershell
+git status  # No unintended files staged
+git diff --cached --name-only  # Only intentional changes
+```
+
+**Allowed root files:** See `docs/REPO_GOVERNANCE.md` §1.3 for the exhaustive list.
+
+### 16.4 CI Must Remain Green
+
+- Run the impacted test suite before declaring a task complete (see §8.7)
+- Never bypass failing checks by deleting tests or lowering thresholds
+- If CI breaks, fix it before moving to the next task
+
+### 16.5 PR Discipline
+
+- One concern per PR (single responsibility)
+- Separate structural moves from logic edits
+- Separate data changes from schema changes
+- Include verification output (§8.17)
+- Use conventional commit format (§13)
