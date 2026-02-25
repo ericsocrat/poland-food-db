@@ -55,6 +55,24 @@ this table when vulnerabilities change.
 - **Open redirect prevention:** Login redirect param validated (relative paths only, no `//` prefix).
 - **No hardcoded secrets:** All credentials via environment variables.
 
+## Public Repository Licensing & IP Guardrails
+
+This is a public repository by design. Source visibility is expected.
+
+- **Code license:** AGPL-3.0 in `LICENSE`.
+- **Data license:** CC BY-NC-SA 4.0 in `DATA_LICENSE.md`.
+- **Operational security model:** Secrets are never committed; production secrets are
+	managed via environment variables and CI/provider secret stores.
+- **Abuse resistance:** RLS + RPC-only data access + rate limits and query guardrails.
+
+### What Public Visibility Means
+
+- Schema, migrations, and implementation details are intentionally visible.
+- Competitive protection comes from licensing terms and operational execution,
+	not code secrecy.
+- Any accidental secret disclosure must be treated as an incident: rotate keys,
+	purge from history, and document remediation.
+
 ---
 
 ## Threat Model
