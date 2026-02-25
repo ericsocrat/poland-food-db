@@ -1,8 +1,8 @@
 # Copilot Instructions — Poland Food Quality Database
 
 > **Last updated:** 2026-02-28
-> **Scope:** Poland (`PL`) primary + Germany (`DE`) micro-pilot (51 Chips products)
-> **Products:** ~1,076 active (20 PL categories + 1 DE category), 38 deprecated
+> **Scope:** Poland (`PL`) primary + Germany (`DE`) micro-pilot (252 products across 5 categories)
+> **Products:** ~1,281 active (20 PL categories + 5 DE categories), 51 deprecated
 > **EAN coverage:** 997/1,025 (97.3%)
 > **Scoring:** v3.2 — 9-factor weighted formula via `compute_unhealthiness_v32()` (added ingredient concern scoring)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
@@ -43,6 +43,7 @@ countries_tags_en=poland) sql_generator.py 03_add_nutrition ingredient_ref
 $env:PYTHONIOENCODING="utf-8"
 .\.venv\Scripts\python.exe -m pipeline.run --category "Dairy" --max-products 28
 .\.venv\Scripts\python.exe -m pipeline.run --category "Chips" --dry-run
+.\.venv\Scripts\python.exe -m pipeline.run --category "Dairy" --country DE --max-products 51
 ````
 
 **Execute generated SQL:**
@@ -77,9 +78,13 @@ poland-food-db/
 │   ├── image_importer.py            # Product image import utility
 │   └── categories.py               # 20 category definitions + OFF tag mappings
 ├── db/
-│   ├── pipelines/                   # 21 category folders (20 PL + 1 DE), 4-5 SQL files each
+│   ├── pipelines/                   # 25 category folders (20 PL + 5 DE), 4-5 SQL files each
 │   │   ├── chips-pl/                # Reference PL implementation (copy for new categories)
 │   │   ├── chips-de/                # Germany micro-pilot (51 products)
+│   │   ├── bread-de/                # DE Bread (51 products)
+│   │   ├── dairy-de/                # DE Dairy (51 products)
+│   │   ├── drinks-de/               # DE Drinks (51 products)
+│   │   ├── sweets-de/               # DE Sweets (51 products)
 │   │   └── ... (19 more PL)         # Variable product counts per category
 │   ├── qa/                          # Test suites
 │   │   ├── QA__null_checks.sql      # 29 data integrity checks
@@ -435,9 +440,9 @@ poland-food-db/
 
 ---
 
-## 5. Categories (20)
+## 5. Categories (20 PL + 5 DE)
 
-All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`.
+All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each.
 
 | Category                   | Folder slug                 |
 | -------------------------- | --------------------------- |
@@ -447,11 +452,17 @@ All categories have **variable product counts** (28–95 active products). Categ
 | Breakfast & Grain-Based    | `breakfast-grain-based/`    |
 | Canned Goods               | `canned-goods/`             |
 | Cereals                    | `cereals/`                  |
+| Bread (DE)                 | `bread-de/`                 |
+| Breakfast & Grain-Based    | `breakfast-grain-based/`    |
+| Canned Goods               | `canned-goods/`             |
+| Cereals                    | `cereals/`                  |
 | Chips (PL)                 | `chips-pl/`                 |
 | Chips (DE)                 | `chips-de/`                 |
 | Condiments                 | `condiments/`               |
 | Dairy                      | `dairy/`                    |
+| Dairy (DE)                 | `dairy-de/`                 |
 | Drinks                     | `drinks/`                   |
+| Drinks (DE)                | `drinks-de/`                |
 | Frozen & Prepared          | `frozen-prepared/`          |
 | Instant & Frozen           | `instant-frozen/`           |
 | Meat                       | `meat/`                     |
@@ -461,9 +472,10 @@ All categories have **variable product counts** (28–95 active products). Categ
 | Seafood & Fish             | `seafood-fish/`             |
 | Snacks                     | `snacks/`                   |
 | Sweets                     | `sweets/`                   |
+| Sweets (DE)                | `sweets-de/`                |
 | Żabka                      | `zabka/`                    |
 
-**21 pipeline folders** (20 PL + 1 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
+**25 pipeline folders** (20 PL + 5 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
 
 ---
 

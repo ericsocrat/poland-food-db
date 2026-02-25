@@ -1,0 +1,123 @@
+-- PIPELINE (Bread): scoring
+-- Generated: 2026-02-25
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Gräfschafter', 'Eiweißreiches Weizenvollkornbrot', 'A'),
+    ('Harry', 'Körner Balance Sandwich', 'A'),
+    ('Golden Toast', 'Sandwich Körner-Harmonie', 'B'),
+    ('Lieken Urkorn', 'Fitnessbrot mit 5 % Ölsaaten', 'B'),
+    ('Harry', 'Eiweißbrot', 'A'),
+    ('Harry', 'Harry Dinkel Krüstchen 4071800057637', 'D'),
+    ('Aldi', 'Das Pure - Bio-Haferbrot mit 29% Ölsaaten', 'B'),
+    ('Conditorei Coppenrath & Wiese', 'Weizenbrötchen', 'C'),
+    ('Lieken', 'Roggenbäcker', 'B'),
+    ('Goldähren', 'Französisches Steinofen-Baguette', 'C'),
+    ('Goldähren', 'Laugen-Brioche vorgeschnitten, 6 Stück', 'D'),
+    ('Mestemacher', 'Westfälischen Pumpernickel', 'B'),
+    ('Goldähren', 'Toast-Brötchen Protein', 'A'),
+    ('GutBio', 'Das Pure - Haferbrot mit 27% Ölsaaten', 'A'),
+    ('Coppenrath & Wiese', 'Dinkelbrötchen', 'C'),
+    ('Aldi', 'Bio-Landbrötchen - Kernig', 'B'),
+    ('Sinnack', 'Brot Protein Brötchen', 'A'),
+    ('Harry', 'Körner Balance Toastbrötchen', 'B'),
+    ('Gut bio', 'Finnkorn Toastbrötchen', 'C'),
+    ('Grafschafter', 'Pure Kornkraft Haferbrot', 'A'),
+    ('Goldähren', 'Vollkorn-Sandwich', 'A'),
+    ('Golden Toast', 'Vollkorn-Toast', 'B'),
+    ('Harry', 'Harry Brot Vital + Fit', 'A'),
+    ('Goldähren', 'Vollkorntoast', 'B'),
+    ('Goldähren', 'Eiweiss Brot', 'C'),
+    ('Meierbaer & Albro', 'Das Pure - Bio-Haferbrot', 'B'),
+    ('Goldähren', 'Mehrkorn Wraps', 'B'),
+    ('Goldähren', 'Protein-Wraps', 'A'),
+    ('Nur Nur Natur', 'Bio-Roggenvollkornbrot', 'A'),
+    ('DmBio', 'Das Pure Hafer - und Saatenbrot', 'A'),
+    ('Goldähren', 'American Sandwich - Weizen', 'C'),
+    ('Harry', 'Vollkorn Toast', 'B'),
+    ('Brandt', 'Brandt Markenzwieback', 'C'),
+    ('Harry', 'Unser Mildes (Weizenmischbrot)', 'C'),
+    ('Lieken', 'Bauernmild Brot', 'C'),
+    ('Lieken Urkorn', 'Vollkornsaftiges fein', 'A'),
+    ('Goldähren', 'Mehrkornschnitten', 'C'),
+    ('Mestemacher', 'Dinkel Wraps', 'C'),
+    ('Harry', 'Toastbrot', 'B'),
+    ('Harry', 'Vollkorn Urtyp', 'A'),
+    ('Golden Toast', 'Vollkorn Toast', 'B'),
+    ('Harry', 'Harry 1688 Korn an Korn', 'A'),
+    ('Golden Toast', 'Buttertoast', 'D'),
+    ('Brandt', 'Der Markenzwieback', 'C'),
+    ('Gutes aus der Bäckerei', 'Weissbrot', 'C'),
+    ('Harry', 'Mischbrot Anno 1688 Klassisch, Harry', 'C'),
+    ('Goldähren', 'Dreisaatbrot - Roggenvollkornbrot', 'A'),
+    ('Golden Toast', 'Dinkel-Harmonie Sandwich', 'C'),
+    ('Filinchen', 'Das Knusperbrot Original', 'C'),
+    ('Goldähren', 'Saaten-Sandwich', 'B'),
+    ('Cucina', 'Pinsa', 'D')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Gräfschafter', 'Eiweißreiches Weizenvollkornbrot', '4'),
+    ('Harry', 'Körner Balance Sandwich', '4'),
+    ('Golden Toast', 'Sandwich Körner-Harmonie', '3'),
+    ('Lieken Urkorn', 'Fitnessbrot mit 5 % Ölsaaten', '3'),
+    ('Harry', 'Eiweißbrot', '4'),
+    ('Harry', 'Harry Dinkel Krüstchen 4071800057637', '4'),
+    ('Aldi', 'Das Pure - Bio-Haferbrot mit 29% Ölsaaten', '4'),
+    ('Conditorei Coppenrath & Wiese', 'Weizenbrötchen', '3'),
+    ('Lieken', 'Roggenbäcker', '4'),
+    ('Goldähren', 'Französisches Steinofen-Baguette', '4'),
+    ('Goldähren', 'Laugen-Brioche vorgeschnitten, 6 Stück', '4'),
+    ('Mestemacher', 'Westfälischen Pumpernickel', '3'),
+    ('Goldähren', 'Toast-Brötchen Protein', '3'),
+    ('GutBio', 'Das Pure - Haferbrot mit 27% Ölsaaten', '4'),
+    ('Coppenrath & Wiese', 'Dinkelbrötchen', '3'),
+    ('Aldi', 'Bio-Landbrötchen - Kernig', '4'),
+    ('Sinnack', 'Brot Protein Brötchen', '4'),
+    ('Harry', 'Körner Balance Toastbrötchen', '4'),
+    ('Gut bio', 'Finnkorn Toastbrötchen', '4'),
+    ('Grafschafter', 'Pure Kornkraft Haferbrot', '4'),
+    ('Goldähren', 'Vollkorn-Sandwich', '3'),
+    ('Golden Toast', 'Vollkorn-Toast', '3'),
+    ('Harry', 'Harry Brot Vital + Fit', '4'),
+    ('Goldähren', 'Vollkorntoast', '3'),
+    ('Goldähren', 'Eiweiss Brot', '3'),
+    ('Meierbaer & Albro', 'Das Pure - Bio-Haferbrot', '4'),
+    ('Goldähren', 'Mehrkorn Wraps', '4'),
+    ('Goldähren', 'Protein-Wraps', '4'),
+    ('Nur Nur Natur', 'Bio-Roggenvollkornbrot', '3'),
+    ('DmBio', 'Das Pure Hafer - und Saatenbrot', '4'),
+    ('Goldähren', 'American Sandwich - Weizen', '3'),
+    ('Harry', 'Vollkorn Toast', '4'),
+    ('Brandt', 'Brandt Markenzwieback', '4'),
+    ('Harry', 'Unser Mildes (Weizenmischbrot)', '4'),
+    ('Lieken', 'Bauernmild Brot', '3'),
+    ('Lieken Urkorn', 'Vollkornsaftiges fein', '3'),
+    ('Goldähren', 'Mehrkornschnitten', '3'),
+    ('Mestemacher', 'Dinkel Wraps', '4'),
+    ('Harry', 'Toastbrot', '4'),
+    ('Harry', 'Vollkorn Urtyp', '4'),
+    ('Golden Toast', 'Vollkorn Toast', '3'),
+    ('Harry', 'Harry 1688 Korn an Korn', '4'),
+    ('Golden Toast', 'Buttertoast', '3'),
+    ('Brandt', 'Der Markenzwieback', '4'),
+    ('Gutes aus der Bäckerei', 'Weissbrot', '4'),
+    ('Harry', 'Mischbrot Anno 1688 Klassisch, Harry', '4'),
+    ('Goldähren', 'Dreisaatbrot - Roggenvollkornbrot', '3'),
+    ('Golden Toast', 'Dinkel-Harmonie Sandwich', '3'),
+    ('Filinchen', 'Das Knusperbrot Original', '4'),
+    ('Goldähren', 'Saaten-Sandwich', '3'),
+    ('Cucina', 'Pinsa', '3')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Bread', 100, 'DE');

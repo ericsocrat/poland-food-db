@@ -154,7 +154,7 @@ where ean in ({ean_literals})
 
 -- 0a. DEPRECATE old products in this category & release their EANs
 update products
-set is_deprecated = true, ean = null
+set is_deprecated = true, deprecated_reason = 'Replaced by pipeline refresh', ean = null
 where country = {_sql_text(country)}
   and category = {_sql_text(category)}
   and is_deprecated is not true;
@@ -470,7 +470,10 @@ def generate_pipeline(
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
 
-    slug = _slug(category)
+    # Use the directory name as the file slug so that files inside
+    # ``dairy-de/`` are named ``PIPELINE__dairy-de__*`` (matches
+    # check_pipeline_structure.py expectations).
+    slug = out.name
     today = datetime.date.today().isoformat()
 
     files: list[Path] = []

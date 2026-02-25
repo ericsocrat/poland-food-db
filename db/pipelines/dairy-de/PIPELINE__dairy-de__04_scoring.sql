@@ -1,0 +1,123 @@
+-- PIPELINE (Dairy): scoring
+-- Generated: 2026-02-25
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Milsani', 'Frischkäse natur', 'D'),
+    ('Gervais', 'Hüttenkäse Original', 'B'),
+    ('Milsani', 'Körniger Frischkäse, Halbfettstufe', 'A'),
+    ('Almette', 'Almette Kräuter', 'D'),
+    ('Bergader', 'Bergbauern mild nussig Käse', 'D'),
+    ('DOVGAN Family', 'Körniger Frischkäse 33 % Fett', 'B'),
+    ('BMI Biobauern', 'Bio-Landkäse mild-nussig', 'E'),
+    ('Dr. Oetker', 'High Protein Pudding Grieß', 'A'),
+    ('Milsan', 'Grießpudding High-Protein - Zimt', 'A'),
+    ('Milram', 'Frühlingsquark Original', 'D'),
+    ('DMK', 'Müritzer original', 'D'),
+    ('Milsani', 'Körniger Frischkäse - Magerstufe', 'A'),
+    ('AF Deutschland', 'Hirtenkäse', 'D'),
+    ('Grünländer', 'Grünländer Mild & Nussig', 'C'),
+    ('Grünländer', 'Grünländer Leicht', 'C'),
+    ('Gazi', 'Grill- und Pfannenkäse', 'D'),
+    ('Bio', 'ALDI GUT BIO Milch Frische Bio-Milch 1.5 % Fett Aus der Kühlung 1l 1.15€ Fettarme Milch', 'B'),
+    ('Milsani', 'ALDI MILSANI Skyr Nach isländischer Art mit viel Eiweiß und wenig Fett Aus der Kühlung 1.49€ 500g Becher 1kg 2.98€', 'A'),
+    ('Karwendel', 'Exquisa Balance Frischkäse', 'B'),
+    ('Weihenstephan', 'H-Milch 3,5%', 'C'),
+    ('Milbona', 'Skyr', 'A'),
+    ('Arla', 'Skyr Natur', 'A'),
+    ('Milsani', 'H-Vollmilch 3,5 % Fett', 'C'),
+    ('Elinas', 'Joghurt Griechischer Art', 'C'),
+    ('Alpenhain', 'Obazda klassisch', 'D'),
+    ('Ehrmann', 'High Protein Chocolate Pudding', 'A'),
+    ('Bio', 'Frische Bio-Vollmilch 3,8 % Fett', 'C'),
+    ('Milsani', 'Haltbare Fettarme Milch', 'B'),
+    ('Arla', 'Skyr Bourbon Vanille', 'A'),
+    ('Milbona', 'High Protein Chocolate Flavour Pudding', 'A'),
+    ('Milsani', 'Joghurt mild 3,5 % Fett', 'B'),
+    ('Schwarzwaldmilch', 'Protein Milch', 'B'),
+    ('Bresso', 'Bresso', 'D'),
+    ('Milsani', 'Milch', 'B'),
+    ('Bergader', 'Bavaria Blu', 'D'),
+    ('Aldi', 'Milch, haltbar, 1,5 %, Bio', 'B'),
+    ('Aldi', 'A/Joghurt mild 3,5% Fett', 'B'),
+    ('Patros', 'Patros Natur', 'E'),
+    ('Ehrmann', 'High-Protein-Pudding - Vanilla', 'A'),
+    ('Patros', 'Feta (Schaf- & Ziegenmilch)', 'D'),
+    ('Milsani', 'Frische Vollmilch 3,5%', 'C'),
+    ('Milram', 'Benjamin', 'D'),
+    ('Milbona', 'Bio Fettarmer Joghurt mild', 'B'),
+    ('Bauer', 'Kirsche', 'C'),
+    ('Milbona', 'Skyr Vanilla', 'A'),
+    ('Weihenstephan', 'Joghurt Natur 3,5 % Fett', 'B'),
+    ('Cucina Nobile', 'Mozzarella', 'C'),
+    ('Bio', 'Bio-Feta', 'E'),
+    ('Ein gutes Stück Bayern', 'Haltbare Bio Vollmilch', 'C'),
+    ('Lyttos', 'Griechischer Joghurt', 'C'),
+    ('AF Deutschland', 'Fettarme Milch (laktosefrei; 1,5% Fett)', 'B')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Milsani', 'Frischkäse natur', '3'),
+    ('Gervais', 'Hüttenkäse Original', '4'),
+    ('Milsani', 'Körniger Frischkäse, Halbfettstufe', '3'),
+    ('Almette', 'Almette Kräuter', '4'),
+    ('Bergader', 'Bergbauern mild nussig Käse', '3'),
+    ('DOVGAN Family', 'Körniger Frischkäse 33 % Fett', '3'),
+    ('BMI Biobauern', 'Bio-Landkäse mild-nussig', '3'),
+    ('Dr. Oetker', 'High Protein Pudding Grieß', '4'),
+    ('Milsan', 'Grießpudding High-Protein - Zimt', '4'),
+    ('Milram', 'Frühlingsquark Original', '3'),
+    ('DMK', 'Müritzer original', '4'),
+    ('Milsani', 'Körniger Frischkäse - Magerstufe', '3'),
+    ('AF Deutschland', 'Hirtenkäse', '3'),
+    ('Grünländer', 'Grünländer Mild & Nussig', '3'),
+    ('Grünländer', 'Grünländer Leicht', '3'),
+    ('Gazi', 'Grill- und Pfannenkäse', '3'),
+    ('Bio', 'ALDI GUT BIO Milch Frische Bio-Milch 1.5 % Fett Aus der Kühlung 1l 1.15€ Fettarme Milch', '1'),
+    ('Milsani', 'ALDI MILSANI Skyr Nach isländischer Art mit viel Eiweiß und wenig Fett Aus der Kühlung 1.49€ 500g Becher 1kg 2.98€', '1'),
+    ('Karwendel', 'Exquisa Balance Frischkäse', '4'),
+    ('Weihenstephan', 'H-Milch 3,5%', '1'),
+    ('Milbona', 'Skyr', '3'),
+    ('Arla', 'Skyr Natur', '3'),
+    ('Milsani', 'H-Vollmilch 3,5 % Fett', '4'),
+    ('Elinas', 'Joghurt Griechischer Art', '1'),
+    ('Alpenhain', 'Obazda klassisch', '3'),
+    ('Ehrmann', 'High Protein Chocolate Pudding', '4'),
+    ('Bio', 'Frische Bio-Vollmilch 3,8 % Fett', '1'),
+    ('Milsani', 'Haltbare Fettarme Milch', '4'),
+    ('Arla', 'Skyr Bourbon Vanille', '4'),
+    ('Milbona', 'High Protein Chocolate Flavour Pudding', '4'),
+    ('Milsani', 'Joghurt mild 3,5 % Fett', '1'),
+    ('Schwarzwaldmilch', 'Protein Milch', '4'),
+    ('Bresso', 'Bresso', '4'),
+    ('Milsani', 'Milch', '1'),
+    ('Bergader', 'Bavaria Blu', '3'),
+    ('Aldi', 'Milch, haltbar, 1,5 %, Bio', '1'),
+    ('Aldi', 'A/Joghurt mild 3,5% Fett', '1'),
+    ('Patros', 'Patros Natur', '3'),
+    ('Ehrmann', 'High-Protein-Pudding - Vanilla', '4'),
+    ('Patros', 'Feta (Schaf- & Ziegenmilch)', '3'),
+    ('Milsani', 'Frische Vollmilch 3,5%', '1'),
+    ('Milram', 'Benjamin', '4'),
+    ('Milbona', 'Bio Fettarmer Joghurt mild', '1'),
+    ('Bauer', 'Kirsche', '4'),
+    ('Milbona', 'Skyr Vanilla', '4'),
+    ('Weihenstephan', 'Joghurt Natur 3,5 % Fett', '1'),
+    ('Cucina Nobile', 'Mozzarella', '3'),
+    ('Bio', 'Bio-Feta', '3'),
+    ('Ein gutes Stück Bayern', 'Haltbare Bio Vollmilch', '1'),
+    ('Lyttos', 'Griechischer Joghurt', '1'),
+    ('AF Deutschland', 'Fettarme Milch (laktosefrei; 1,5% Fett)', '1')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Dairy', 100, 'DE');

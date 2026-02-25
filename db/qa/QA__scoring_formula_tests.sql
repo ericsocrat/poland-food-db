@@ -214,6 +214,7 @@ SELECT p.product_id, p.brand, p.product_name,
        CONCAT('Expected 6-10, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Coca-Cola Zero'
+  AND p.country = 'PL'
   AND p.is_deprecated IS NOT TRUE
   AND p.unhealthiness_score::int NOT BETWEEN 6 AND 10;
 

@@ -1,0 +1,123 @@
+-- PIPELINE (Drinks): scoring
+-- Generated: 2026-02-25
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('My Vay', 'Bio-Haferdrink ungesüßt', 'C'),
+    ('Rio d''Oro', 'Apfel-Direktsaft Naturtrüb', 'C'),
+    ('Club Mate', 'Club-Mate Original', 'C'),
+    ('Paulaner', 'Paulaner Spezi', 'E'),
+    ('Lidl', 'Milch Mandel ohne Zucker', 'B'),
+    ('Vemondo', 'Barista Oat Drink', 'C'),
+    ('Gerolsteiner', 'Gerolsteiner Medium 1,5 Liter', 'A'),
+    ('Aldi', 'Bio-Haferdrink Natur', 'C'),
+    ('Lidl', 'No Milk Hafer 3,5% Fett', 'C'),
+    ('Gut & Günstig', 'Mineralwasser', 'A'),
+    ('Asia Green Garden', 'Kokosnussmilch Klassik', 'UNKNOWN'),
+    ('Vemondo', 'No Milk Hafer 1,8% Fett', 'C'),
+    ('Berief', 'BiO HAFER NATUR', 'D'),
+    ('Paulaner', 'Spezi Zero', 'C'),
+    ('Vemondo', 'Bio Hafer', 'C'),
+    ('Berief', 'Bio Hafer ohne Zucker', 'C'),
+    ('DmBio', 'Sojadrink natur', 'B'),
+    ('Bensdorp', 'Bensdorp Kakao', 'UNKNOWN'),
+    ('Choco', 'Kakao Choco', 'UNKNOWN'),
+    ('Vemondo', 'High Protein Sojadrink', 'B'),
+    ('Drinks & More GmbH & Co. KG', 'Knabe Malz', 'D'),
+    ('Rio d''Oro', 'Trauben-Direktsaft', 'E'),
+    ('Alpro', 'Geröstete Mandel Ohne Zucker', 'B'),
+    ('Vemondo', 'Bio Hafer ohne Zucker', 'B'),
+    ('Pepsi', 'Pepsi Zero Zucker', 'C'),
+    ('Jever', 'Jever fun 4008948194016 Pilsener alkoholfrei', 'B'),
+    ('Valensia', 'Orange ohne Fruchtfleisch', 'E'),
+    ('DmBio', 'Oat Drink - Sugarfree', 'C'),
+    ('Red Bull', 'Kokos Blaubeere (Weiß)', 'E'),
+    ('VEMondo', 'High protein soy with chocolate taste', 'B'),
+    ('Naturalis', 'Getränke - Mineralwasser - Classic', 'A'),
+    ('Vly', 'Erbsenproteindrink Ungesüsst aus Erbsenprotein', 'B'),
+    ('Teekanne', 'Teebeutel Italienische Limone', 'UNKNOWN'),
+    ('Hohes C', 'Saft Plus Eisen', 'C'),
+    ('Pepsi', 'Pepsi', 'D'),
+    ('Quellbrunn', 'Mineralwasser Naturell', 'A'),
+    ('Granini', 'Multivitaminsaft', 'D'),
+    ('Schwip schwap', 'Schwip Schwap Zero', 'C'),
+    ('Quellbrunn', 'Naturell Mierbachquelle ohne Kohlensäure', 'A'),
+    ('Müller', 'Müllermilch - Bananen-Geschmack', 'D'),
+    ('Volvic', 'Wasser Volvic naturelle', 'A'),
+    ('Coca-Cola', 'Coca-Cola Original', 'E'),
+    ('Oatly', 'Haferdrink Barista', 'D'),
+    ('Coca-Cola', 'Coca-Cola 1 Liter', 'E'),
+    ('Red Bull', 'Red Bull Energydrink Classic', 'E'),
+    ('Monster Energy', 'Monster Energy Ultra', 'C'),
+    ('Coca-Cola', 'Coca-Cola Zero', 'C'),
+    ('Alpro', 'Alpro Not Milk', 'C'),
+    ('Saskia', 'Mineralwasser still 6 x 1,5 L', 'A'),
+    ('Cola', 'Coca-Cola Zero', 'C'),
+    ('Coca-Cola', 'Cola Zero', 'B')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('My Vay', 'Bio-Haferdrink ungesüßt', '3'),
+    ('Rio d''Oro', 'Apfel-Direktsaft Naturtrüb', '1'),
+    ('Club Mate', 'Club-Mate Original', '4'),
+    ('Paulaner', 'Paulaner Spezi', '4'),
+    ('Lidl', 'Milch Mandel ohne Zucker', '4'),
+    ('Vemondo', 'Barista Oat Drink', '4'),
+    ('Gerolsteiner', 'Gerolsteiner Medium 1,5 Liter', '1'),
+    ('Aldi', 'Bio-Haferdrink Natur', '3'),
+    ('Lidl', 'No Milk Hafer 3,5% Fett', '4'),
+    ('Gut & Günstig', 'Mineralwasser', '4'),
+    ('Asia Green Garden', 'Kokosnussmilch Klassik', '4'),
+    ('Vemondo', 'No Milk Hafer 1,8% Fett', '4'),
+    ('Berief', 'BiO HAFER NATUR', '3'),
+    ('Paulaner', 'Spezi Zero', '4'),
+    ('Vemondo', 'Bio Hafer', '4'),
+    ('Berief', 'Bio Hafer ohne Zucker', '3'),
+    ('DmBio', 'Sojadrink natur', '1'),
+    ('Bensdorp', 'Bensdorp Kakao', '1'),
+    ('Choco', 'Kakao Choco', '4'),
+    ('Vemondo', 'High Protein Sojadrink', '4'),
+    ('Drinks & More GmbH & Co. KG', 'Knabe Malz', '4'),
+    ('Rio d''Oro', 'Trauben-Direktsaft', '1'),
+    ('Alpro', 'Geröstete Mandel Ohne Zucker', '4'),
+    ('Vemondo', 'Bio Hafer ohne Zucker', '4'),
+    ('Pepsi', 'Pepsi Zero Zucker', '4'),
+    ('Jever', 'Jever fun 4008948194016 Pilsener alkoholfrei', '4'),
+    ('Valensia', 'Orange ohne Fruchtfleisch', '4'),
+    ('DmBio', 'Oat Drink - Sugarfree', '3'),
+    ('Red Bull', 'Kokos Blaubeere (Weiß)', '4'),
+    ('VEMondo', 'High protein soy with chocolate taste', '4'),
+    ('Naturalis', 'Getränke - Mineralwasser - Classic', '1'),
+    ('Vly', 'Erbsenproteindrink Ungesüsst aus Erbsenprotein', '4'),
+    ('Teekanne', 'Teebeutel Italienische Limone', '4'),
+    ('Hohes C', 'Saft Plus Eisen', '1'),
+    ('Pepsi', 'Pepsi', '4'),
+    ('Quellbrunn', 'Mineralwasser Naturell', '4'),
+    ('Granini', 'Multivitaminsaft', '3'),
+    ('Schwip schwap', 'Schwip Schwap Zero', '4'),
+    ('Quellbrunn', 'Naturell Mierbachquelle ohne Kohlensäure', '1'),
+    ('Müller', 'Müllermilch - Bananen-Geschmack', '4'),
+    ('Volvic', 'Wasser Volvic naturelle', '1'),
+    ('Coca-Cola', 'Coca-Cola Original', '4'),
+    ('Oatly', 'Haferdrink Barista', '3'),
+    ('Coca-Cola', 'Coca-Cola 1 Liter', '4'),
+    ('Red Bull', 'Red Bull Energydrink Classic', '4'),
+    ('Monster Energy', 'Monster Energy Ultra', '4'),
+    ('Coca-Cola', 'Coca-Cola Zero', '4'),
+    ('Alpro', 'Alpro Not Milk', '4'),
+    ('Saskia', 'Mineralwasser still 6 x 1,5 L', '1'),
+    ('Cola', 'Coca-Cola Zero', '4'),
+    ('Coca-Cola', 'Cola Zero', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Drinks', 100, 'DE');

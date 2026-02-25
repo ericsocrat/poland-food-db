@@ -148,6 +148,24 @@ def check_nutrition_ranges(product: dict, category: str) -> list[str]:
             warnings.append(
                 f"{field}={val} outside expected range [{lo}–{hi}] for {category}"
             )
+
+    # Calorie back-calculation: protein×4 + carbs×4 + fat×9 should be
+    # within 35% of stated calories (excludes alcohol calories, fibre, etc.)
+    if category not in ("Alcohol", "Drinks", "Condiments", "Sauces"):
+        try:
+            cal = float(product.get("calories") or 0)
+            fat = float(product.get("total_fat_g") or 0)
+            carb = float(product.get("carbs_g") or 0)
+            prot = float(product.get("protein_g") or 0)
+            calc = prot * 4 + carb * 4 + fat * 9
+            if cal > 50 and abs(cal - calc) > cal * 0.35:
+                warnings.append(
+                    f"calorie back-calculation mismatch: stated={cal}, "
+                    f"calculated={calc:.0f} (>{35}% deviation)"
+                )
+        except (ValueError, TypeError):
+            pass
+
     return warnings
 
 
