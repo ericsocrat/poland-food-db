@@ -22,20 +22,13 @@ from __future__ import annotations
 import argparse
 import datetime
 import logging
-import time
-from pathlib import Path
 from typing import Any
-
-import requests
 
 from pipeline.off_client import (
     OFF_PRODUCT_URL,
-    REQUEST_DELAY,
-    USER_AGENT,
     _get_json,
     _session,
 )
-from pipeline.utils import slug as _slug
 
 logger = logging.getLogger(__name__)
 

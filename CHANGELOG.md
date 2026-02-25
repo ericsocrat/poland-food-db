@@ -15,6 +15,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### CI & Infrastructure
 
+- Add Python linter (ruff) with `ruff.toml` config and `python-lint.yml` CI
+  workflow; auto-fix 22 violations, resolve remaining 7 manually; enforce on
+  PRs touching Python files (#331)
 - Add branch protection as code: `.github/branch-protection.md` documents canonical
   `main` branch protection rules (required reviews, status checks, merge strategy,
   push restrictions) with step-by-step restoration procedure (#325)

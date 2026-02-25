@@ -6,3 +6,6 @@
 
 requests>=2.31,<3
 tqdm>=4.66,<5
+
+# Development / CI tools
+ruff>=0.11,<1

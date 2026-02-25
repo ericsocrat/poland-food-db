@@ -172,7 +172,6 @@ def main() -> None:
     header_missing_issue = 0
 
     for path in sql_files:
-        name = path.name
         violations = check_migration(path, strict=strict)
 
         # Categorize — use specific markers from _check_filename messages

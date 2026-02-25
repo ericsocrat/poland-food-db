@@ -21,7 +21,7 @@ import argparse
 import os
 import subprocess
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 
 def get_last_commit_date(filepath: str) -> datetime | None:
@@ -51,7 +51,7 @@ def check_docs_freshness(
     Returns a list of (filepath, age_days) tuples for stale files.
     """
     stale: list[tuple[str, int]] = []
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     if not os.path.isdir(docs_dir):
         print(f"Warning: docs directory '{docs_dir}' not found", file=sys.stderr)

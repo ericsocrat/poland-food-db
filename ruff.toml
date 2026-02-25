@@ -1,0 +1,45 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Ruff configuration — Python linter for pipeline & scripts
+# ═══════════════════════════════════════════════════════════════════════════════
+# Scope: pipeline/, scripts/, root-level *.py files
+# Docs:  https://docs.astral.sh/ruff/configuration/
+# ═══════════════════════════════════════════════════════════════════════════════
+
+target-version = "py312"
+line-length = 120
+
+# Only lint Python source directories (excludes __pycache__, .venv, etc.)
+include = [
+    "pipeline/**/*.py",
+    "scripts/**/*.py",
+    "*.py",
+]
+
+[lint]
+# Start strict but pragmatic — expand over time
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort (import ordering)
+    "UP",  # pyupgrade (modern Python idioms)
+    "B",   # flake8-bugbear (common bugs)
+    "SIM", # flake8-simplify
+    "S",   # flake8-bandit (security)
+]
+ignore = [
+    "S603", # subprocess-without-shell-check — false positives on controlled invocations
+    "S607", # start-process-with-partial-path — acceptable for pipeline scripts
+    "S608", # hardcoded-sql-expression — expected: this project generates SQL
+]
+
+[lint.per-file-ignores]
+# Test files may use assert statements and broader exception handling
+"**/test_*.py" = ["S101"]
+"pipeline/test_validator.py" = ["S101"]
+# SQL generator and enrichment scripts construct SQL strings by design
+"pipeline/sql_generator.py" = ["E501"]
+"enrich_ingredients.py" = ["E501"]
+
+[lint.isort]
+known-first-party = ["pipeline"]
