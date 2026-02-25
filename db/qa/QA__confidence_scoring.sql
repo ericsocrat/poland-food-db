@@ -1,8 +1,9 @@
 -- ============================================================
--- QA: Confidence & Completeness Scoring
+-- QA: Confidence & Completeness Scoring — 13 checks
 -- Validates the composite data confidence score (0-100),
 -- band assignments (high/medium/low), and data completeness
 -- profiles for all active products.
+-- Checks 11-13: regression guards against mono-modal confidence
 -- ============================================================
 
 -- 1. MV row count matches active products
@@ -92,3 +93,31 @@ SELECT '10. no null confidence_band' AS check_name,
        COUNT(*) AS violations
 FROM v_product_confidence
 WHERE confidence_band IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Confidence distribution regression guards (#344)
+-- After ingredient enrichment, confidence must never be mono-modal again.
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 11. Confidence distribution is multi-modal (at least 2 distinct levels)
+SELECT '11. confidence is not mono-modal' AS check_name,
+       CASE WHEN (
+           SELECT COUNT(DISTINCT confidence)
+           FROM products
+           WHERE is_deprecated IS NOT TRUE AND confidence IS NOT NULL
+       ) >= 2 THEN 0 ELSE 1 END AS violations;
+
+-- 12. Verified products exist (regression guard)
+SELECT '12. verified products exist' AS check_name,
+       CASE WHEN (
+           SELECT COUNT(*)
+           FROM products
+           WHERE is_deprecated IS NOT TRUE AND confidence = 'verified'
+       ) > 0 THEN 0 ELSE 1 END AS violations;
+
+-- 13. MV confidence bands are multi-modal (at least 2 distinct bands)
+SELECT '13. MV confidence bands are multi-modal' AS check_name,
+       CASE WHEN (
+           SELECT COUNT(DISTINCT confidence_band)
+           FROM v_product_confidence
+       ) >= 2 THEN 0 ELSE 1 END AS violations;
