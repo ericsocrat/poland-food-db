@@ -9,7 +9,7 @@
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-8/EAN-13 checksum validation — blocking)
         5. QA__api_surfaces.sql (18 API contract validation checks — blocking)
-        6. QA__confidence_scoring.sql (10 confidence scoring checks — blocking)
+        6. QA__confidence_scoring.sql (13 confidence scoring checks — blocking)
         7. QA__data_quality.sql (25 data quality & plausibility checks — blocking)
         8. QA__referential_integrity.sql (18 referential integrity checks — blocking)
         9. QA__view_consistency.sql (13 view & function consistency checks — blocking)
@@ -124,7 +124,7 @@ $suiteCatalog = @(
     @{ Num = 3; Name = "Source Coverage"; Short = "Source"; Id = "source_coverage"; Checks = 8; Blocking = $false; Kind = "sql-special"; File = "QA__source_coverage.sql" },
     @{ Num = 4; Name = "EAN Checksum Validation"; Short = "EAN"; Id = "ean"; Checks = 1; Blocking = $true; Kind = "python"; File = "validate_eans.py" },
     @{ Num = 5; Name = "API Surface Validation"; Short = "API"; Id = "api"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__api_surfaces.sql" },
-    @{ Num = 6; Name = "Confidence Scoring"; Short = "Confidence"; Id = "confidence"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__confidence_scoring.sql" },
+    @{ Num = 6; Name = "Confidence Scoring"; Short = "Confidence"; Id = "confidence"; Checks = 13; Blocking = $true; Kind = "sql"; File = "QA__confidence_scoring.sql" },
     @{ Num = 7; Name = "Data Quality & Plausibility"; Short = "DataQuality"; Id = "data_quality"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__data_quality.sql" },
     @{ Num = 8; Name = "Referential Integrity"; Short = "RefInteg"; Id = "referential"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__referential_integrity.sql" },
     @{ Num = 9; Name = "View & Function Consistency"; Short = "Views"; Id = "views"; Checks = 13; Blocking = $true; Kind = "sql"; File = "QA__view_consistency.sql" },

@@ -82,3 +82,11 @@ CALL score_category('Drinks',   p_country := 'DE');
 CALL score_category('Sweets',   p_country := 'DE');
 
 COMMIT;
+
+-- ═══════════════════════════════════════════════════════════════
+-- Step 4: Refresh materialized views
+-- ═══════════════════════════════════════════════════════════════
+-- Must run AFTER COMMIT because some MVs use CONCURRENTLY refresh.
+-- Ensures v_product_confidence, mv_product_similarity, and
+-- mv_ingredient_frequency reflect the updated scores.
+SELECT refresh_all_materialized_views();
