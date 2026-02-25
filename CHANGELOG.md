@@ -15,6 +15,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### CI & Infrastructure
 
+- Add branch protection as code: `.github/branch-protection.md` documents canonical
+  `main` branch protection rules (required reviews, status checks, merge strategy,
+  push restrictions) with step-by-step restoration procedure (#325)
 - Add structured YAML issue templates: bug report, feature request, and
   data/schema change forms with dropdowns, validation, and template chooser
   config (#324)
