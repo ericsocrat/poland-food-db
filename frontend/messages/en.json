@@ -1674,5 +1674,44 @@
       "retry": "Try Again",
       "imageDeleted": "Image was deleted from memory — your privacy is protected."
     }
+  },
+  "trust": {
+    "badge": {
+      "high": "High Trust",
+      "moderate": "Moderate Trust",
+      "low": "Low Trust",
+      "highTooltip": "Data is complete and cross-validated from multiple sources.",
+      "moderateTooltip": "Key data is present but some fields are estimated or incomplete.",
+      "lowTooltip": "Significant data gaps — treat scores as estimates.",
+      "ariaLabel": "Data trust level: {level}"
+    },
+    "freshness": {
+      "fresh": "Verified {days}d ago",
+      "aging": "Data may be outdated ({days}d)",
+      "stale": "Stale — last verified {days}d ago",
+      "tooltipDate": "Last verified: {date}",
+      "ariaLabel": "Data freshness: {status}"
+    },
+    "scoringVersion": {
+      "label": "Score v{version}",
+      "tooltip": "This product was scored using formula v{version} ({factors}-factor model).",
+      "ariaLabel": "Scoring formula version {version}"
+    },
+    "searchRelevance": {
+      "matchedName": "Matched: product name",
+      "matchedBrand": "Matched: brand",
+      "matchedCategory": "Matched: category",
+      "matchedIngredient": "Matched: ingredient",
+      "matchedBarcode": "Matched: barcode",
+      "ariaLabel": "Search match reason: {reason}"
+    },
+    "sourceAttribution": {
+      "title": "Data Sources",
+      "fieldLabel": "{field}",
+      "sourceLabel": "{source}",
+      "updatedAgo": "Updated {days}d ago",
+      "noSourceData": "Source attribution data is not yet available for this product.",
+      "ariaLabel": "Data source information"
+    }
   }
 }

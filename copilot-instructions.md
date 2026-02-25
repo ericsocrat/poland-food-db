@@ -758,43 +758,43 @@ At the end of every PR-like change, include a **Verification** section:
 
 ### 8.18 DB QA Suites Reference
 
-| Suite                    | File                                | Checks | Blocking? |
-| ------------------------ | ----------------------------------- | -----: | --------- |
-| Data Integrity           | `QA__null_checks.sql`               |     29 | Yes       |
-| Scoring Formula          | `QA__scoring_formula_tests.sql`     |     27 | Yes       |
-| Source Coverage          | `QA__source_coverage.sql`           |      8 | No        |
-| EAN Validation           | `validate_eans.py`                  |      1 | Yes       |
-| API Surfaces             | `QA__api_surfaces.sql`              |     18 | Yes       |
-| API Contract             | `QA__api_contract.sql`              |     33 | Yes       |
-| Confidence Scoring       | `QA__confidence_scoring.sql`        |     10 | Yes       |
-| Confidence Reporting     | `QA__confidence_reporting.sql`      |      7 | Yes       |
-| Data Quality             | `QA__data_quality.sql`              |     25 | Yes       |
-| Ref. Integrity           | `QA__referential_integrity.sql`     |     18 | Yes       |
-| View Consistency         | `QA__view_consistency.sql`          |     13 | Yes       |
-| Naming Conventions       | `QA__naming_conventions.sql`        |     12 | Yes       |
-| Nutrition Ranges         | `QA__nutrition_ranges.sql`          |     16 | Yes       |
-| Data Consistency         | `QA__data_consistency.sql`          |     20 | Yes       |
-| Allergen Integrity       | `QA__allergen_integrity.sql`        |     15 | Yes       |
-| Allergen Filtering       | `QA__allergen_filtering.sql`        |      6 | Yes       |
-| Serving & Source         | `QA__serving_source_validation.sql` |     16 | Yes       |
-| Ingredient Quality       | `QA__ingredient_quality.sql`        |     14 | Yes       |
-| Security Posture         | `QA__security_posture.sql`          |     22 | Yes       |
-| Scale Guardrails         | `QA__scale_guardrails.sql`          |     15 | Yes       |
-| Country Isolation        | `QA__country_isolation.sql`         |     11 | Yes       |
-| Diet Filtering           | `QA__diet_filtering.sql`            |      6 | Yes       |
-| Barcode Lookup           | `QA__barcode_lookup.sql`            |      6 | Yes       |
-| Auth & Onboarding        | `QA__auth_onboarding.sql`           |      8 | Yes       |
-| Health Profiles          | `QA__health_profiles.sql`           |     14 | Yes       |
-| Lists & Comparisons      | `QA__lists_comparisons.sql`         |     12 | Yes       |
-| Scanner & Submissions    | `QA__scanner_submissions.sql`       |     12 | Yes       |
-| Index & Temporal         | `QA__index_temporal.sql`            |     15 | Yes       |
-| Attribute Contradictions | `QA__attribute_contradiction.sql`   |      5 | Yes       |
-| Monitoring & Health      | `QA__monitoring.sql`                |      7 | Yes       |
-| Governance Drift         | `QA__governance_drift.sql`          |      8 | Yes       |
-| Scoring Determinism      | `QA__scoring_determinism.sql`       |     15 | Yes       |
-| Multi-Country Consistency| `QA__multi_country_consistency.sql` |     10 | Yes       |
-| Performance Regression   | `QA__performance_regression.sql`    |      6 | No        |
-| **Negative Validation**  | `TEST__negative_checks.sql`         |     29 | Yes       |
+| Suite                     | File                                | Checks | Blocking? |
+| ------------------------- | ----------------------------------- | -----: | --------- |
+| Data Integrity            | `QA__null_checks.sql`               |     29 | Yes       |
+| Scoring Formula           | `QA__scoring_formula_tests.sql`     |     27 | Yes       |
+| Source Coverage           | `QA__source_coverage.sql`           |      8 | No        |
+| EAN Validation            | `validate_eans.py`                  |      1 | Yes       |
+| API Surfaces              | `QA__api_surfaces.sql`              |     18 | Yes       |
+| API Contract              | `QA__api_contract.sql`              |     33 | Yes       |
+| Confidence Scoring        | `QA__confidence_scoring.sql`        |     10 | Yes       |
+| Confidence Reporting      | `QA__confidence_reporting.sql`      |      7 | Yes       |
+| Data Quality              | `QA__data_quality.sql`              |     25 | Yes       |
+| Ref. Integrity            | `QA__referential_integrity.sql`     |     18 | Yes       |
+| View Consistency          | `QA__view_consistency.sql`          |     13 | Yes       |
+| Naming Conventions        | `QA__naming_conventions.sql`        |     12 | Yes       |
+| Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     16 | Yes       |
+| Data Consistency          | `QA__data_consistency.sql`          |     20 | Yes       |
+| Allergen Integrity        | `QA__allergen_integrity.sql`        |     15 | Yes       |
+| Allergen Filtering        | `QA__allergen_filtering.sql`        |      6 | Yes       |
+| Serving & Source          | `QA__serving_source_validation.sql` |     16 | Yes       |
+| Ingredient Quality        | `QA__ingredient_quality.sql`        |     14 | Yes       |
+| Security Posture          | `QA__security_posture.sql`          |     22 | Yes       |
+| Scale Guardrails          | `QA__scale_guardrails.sql`          |     15 | Yes       |
+| Country Isolation         | `QA__country_isolation.sql`         |     11 | Yes       |
+| Diet Filtering            | `QA__diet_filtering.sql`            |      6 | Yes       |
+| Barcode Lookup            | `QA__barcode_lookup.sql`            |      6 | Yes       |
+| Auth & Onboarding         | `QA__auth_onboarding.sql`           |      8 | Yes       |
+| Health Profiles           | `QA__health_profiles.sql`           |     14 | Yes       |
+| Lists & Comparisons       | `QA__lists_comparisons.sql`         |     12 | Yes       |
+| Scanner & Submissions     | `QA__scanner_submissions.sql`       |     12 | Yes       |
+| Index & Temporal          | `QA__index_temporal.sql`            |     15 | Yes       |
+| Attribute Contradictions  | `QA__attribute_contradiction.sql`   |      5 | Yes       |
+| Monitoring & Health       | `QA__monitoring.sql`                |      7 | Yes       |
+| Governance Drift          | `QA__governance_drift.sql`          |      8 | Yes       |
+| Scoring Determinism       | `QA__scoring_determinism.sql`       |     15 | Yes       |
+| Multi-Country Consistency | `QA__multi_country_consistency.sql` |     10 | Yes       |
+| Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |
+| **Negative Validation**   | `TEST__negative_checks.sql`         |     29 | Yes       |
 
 **Run:** `.\RUN_QA.ps1` — expects **460/460 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.

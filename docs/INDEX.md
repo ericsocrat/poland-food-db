@@ -9,18 +9,18 @@
 
 ## Quick Navigation
 
-| Domain                                                   | Count | Documents                                                                                                |
-| -------------------------------------------------------- | ----- | -------------------------------------------------------------------------------------------------------- |
-| [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal |
-| [API](#api)                                              | 4     | Contracts, versioning, frontend mapping, contract testing                                                |
-| [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                             |
-| [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                   |
-| [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                |
+| Domain                                                   | Count | Documents                                                                                                       |
+| -------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
+| [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal        |
+| [API](#api)                                              | 4     | Contracts, versioning, frontend mapping, contract testing                                                       |
+| [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                                    |
+| [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                          |
+| [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                       |
 | [Observability & Operations](#observability--operations) | 9     | Monitoring, observability, log schema, alerts, on-call policy, SLOs, metrics, incident response, disaster drill |
-| [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                        |
-| [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                          |
-| [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion |
-| [Governance & Policy](#governance--policy)               | 5     | Feature sunsetting, performance guardrails, doc governance, this index, governance blueprint             |
+| [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                               |
+| [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                                 |
+| [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion       |
+| [Governance & Policy](#governance--policy)               | 5     | Feature sunsetting, performance guardrails, doc governance, this index, governance blueprint                    |
 
 ---
 
@@ -80,22 +80,22 @@
 
 ## Observability & Operations
 
-| Document                                             | Purpose                                                                         | Owner Issue                                                     | Last Updated |
-| ---------------------------------------------------- | ------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
-| [MONITORING.md](MONITORING.md)                       | Runtime monitoring — alerts, dashboards, health checks                          | Observability domain                                            | 2026-02-24   |
-| [OBSERVABILITY.md](OBSERVABILITY.md)                 | Observability strategy — structured logging, tracing, metrics pipeline          | Observability domain                                            | 2026-02-23   |
-| [SLO.md](SLO.md)                                     | Service Level Objectives — availability, latency, error rate targets            | Observability domain                                            | 2026-02-24   |
-| [METRICS.md](METRICS.md)                             | Metrics catalog — application metrics, infrastructure metrics, business metrics | Observability domain                                            | 2026-02-24   |
-| [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md)         | Incident response playbook — severity, escalation, runbooks, post-mortem        | [#231](https://github.com/ericsocrat/poland-food-db/issues/231) | 2026-02-24   |
+| Document                                             | Purpose                                                                               | Owner Issue                                                     | Last Updated |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
+| [MONITORING.md](MONITORING.md)                       | Runtime monitoring — alerts, dashboards, health checks                                | Observability domain                                            | 2026-02-24   |
+| [OBSERVABILITY.md](OBSERVABILITY.md)                 | Observability strategy — structured logging, tracing, metrics pipeline                | Observability domain                                            | 2026-02-23   |
+| [SLO.md](SLO.md)                                     | Service Level Objectives — availability, latency, error rate targets                  | Observability domain                                            | 2026-02-24   |
+| [METRICS.md](METRICS.md)                             | Metrics catalog — application metrics, infrastructure metrics, business metrics       | Observability domain                                            | 2026-02-24   |
+| [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md)         | Incident response playbook — severity, escalation, runbooks, post-mortem              | [#231](https://github.com/ericsocrat/poland-food-db/issues/231) | 2026-02-24   |
 | [LOG_SCHEMA.md](LOG_SCHEMA.md)                       | Structured log schema & error taxonomy — error codes, severity, retention, validation | [#210](https://github.com/ericsocrat/poland-food-db/issues/210) | 2026-03-04   |
-| [ALERT_POLICY.md](ALERT_POLICY.md)                   | Alert escalation policy, query regression detection, index drift monitoring      | [#211](https://github.com/ericsocrat/poland-food-db/issues/211) | 2026-03-04   |
-| [ON_CALL_POLICY.md](ON_CALL_POLICY.md)               | On-call & alert ownership — routing, ack targets, triage labels, quiet hours     | [#233](https://github.com/ericsocrat/poland-food-db/issues/233) | 2026-03-04   |
-| [DISASTER_DRILL_REPORT.md](DISASTER_DRILL_REPORT.md) | Disaster recovery drill report — test results, findings, remediation            | Observability domain                                            | 2026-02-23   |
+| [ALERT_POLICY.md](ALERT_POLICY.md)                   | Alert escalation policy, query regression detection, index drift monitoring           | [#211](https://github.com/ericsocrat/poland-food-db/issues/211) | 2026-03-04   |
+| [ON_CALL_POLICY.md](ON_CALL_POLICY.md)               | On-call & alert ownership — routing, ack targets, triage labels, quiet hours          | [#233](https://github.com/ericsocrat/poland-food-db/issues/233) | 2026-03-04   |
+| [DISASTER_DRILL_REPORT.md](DISASTER_DRILL_REPORT.md) | Disaster recovery drill report — test results, findings, remediation                  | Observability domain                                            | 2026-02-23   |
 
 ## DevOps & Environment
 
-| Document                                           | Purpose                                                                 | Owner Issue | Last Updated |
-| -------------------------------------------------- | ----------------------------------------------------------------------- | ----------- | ------------ |
+| Document                                           | Purpose                                                                 | Owner Issue   | Last Updated |
+| -------------------------------------------------- | ----------------------------------------------------------------------- | ------------- | ------------ |
 | [ENVIRONMENT_STRATEGY.md](ENVIRONMENT_STRATEGY.md) | Local/staging/production environment strategy                           | DevOps domain | 2026-02-22   |
 | [STAGING_SETUP.md](STAGING_SETUP.md)               | Staging environment setup guide — scripts, sync workflow, configuration | DevOps domain | 2026-02-24   |
 | [SONAR.md](SONAR.md)                               | SonarCloud configuration & quality gates                                | DevOps domain | 2026-02-23   |
@@ -104,8 +104,8 @@
 
 ## Frontend & UX
 
-| Document                                                               | Purpose                                                                       | Owner Issue | Last Updated |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- | ----------- | ------------ |
+| Document                                                               | Purpose                                                                       | Owner Issue     | Last Updated |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------- | ------------ |
 | [UX_UI_DESIGN.md](UX_UI_DESIGN.md)                                     | UI/UX design guidelines — color system, components, layouts                   | Frontend domain | 2026-02-24   |
 | [UX_IMPACT_METRICS.md](UX_IMPACT_METRICS.md)                           | UX measurement standard — event catalog, metric templates, performance budget | Frontend domain | 2026-02-24   |
 | [../frontend/docs/DESIGN_SYSTEM.md](../frontend/docs/DESIGN_SYSTEM.md) | Frontend design system — Tailwind tokens, component patterns                  | Frontend domain | 2026-02-17   |
@@ -113,23 +113,23 @@
 
 ## Process & Workflow
 
-| Document                                                 | Purpose                                                                    | Owner Issue | Last Updated |
-| -------------------------------------------------------- | -------------------------------------------------------------------------- | ----------- | ------------ |
-| [RESEARCH_WORKFLOW.md](RESEARCH_WORKFLOW.md)             | Data collection lifecycle — manual + automated OFF pipeline                | Process domain | 2026-02-24   |
-| [VIEWING_AND_TESTING.md](VIEWING_AND_TESTING.md)         | Queries, Studio UI, test runner guide                                      | Process domain | 2026-02-24   |
-| [BACKFILL_STANDARD.md](BACKFILL_STANDARD.md)             | Backfill orchestration standard — migration templates, validation patterns | [#208](https://github.com/ericsocrat/poland-food-db/issues/208) | 2026-03-03   |
+| Document                                                 | Purpose                                                                    | Owner Issue                                                                                                                      | Last Updated |
+| -------------------------------------------------------- | -------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- | ------------ |
+| [RESEARCH_WORKFLOW.md](RESEARCH_WORKFLOW.md)             | Data collection lifecycle — manual + automated OFF pipeline                | Process domain                                                                                                                   | 2026-02-24   |
+| [VIEWING_AND_TESTING.md](VIEWING_AND_TESTING.md)         | Queries, Studio UI, test runner guide                                      | Process domain                                                                                                                   | 2026-02-24   |
+| [BACKFILL_STANDARD.md](BACKFILL_STANDARD.md)             | Backfill orchestration standard — migration templates, validation patterns | [#208](https://github.com/ericsocrat/poland-food-db/issues/208)                                                                  | 2026-03-03   |
 | [MIGRATION_CONVENTIONS.md](MIGRATION_CONVENTIONS.md)     | Migration safety, trigger naming, lock risk, idempotency standards         | [#203](https://github.com/ericsocrat/poland-food-db/issues/203), [#207](https://github.com/ericsocrat/poland-food-db/issues/207) | 2026-03-02   |
-| [LABELS.md](LABELS.md)                                   | GitHub labeling conventions — issue/PR label taxonomy                      | Process domain | 2026-02-23   |
-| [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md) | Multi-country expansion protocol — PL active, DE micro-pilot               | [#148](https://github.com/ericsocrat/poland-food-db/issues/148) | 2026-02-24   |
+| [LABELS.md](LABELS.md)                                   | GitHub labeling conventions — issue/PR label taxonomy                      | Process domain                                                                                                                   | 2026-02-23   |
+| [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md) | Multi-country expansion protocol — PL active, DE micro-pilot               | [#148](https://github.com/ericsocrat/poland-food-db/issues/148)                                                                  | 2026-02-24   |
 
 ## Governance & Policy
 
-| Document                                               | Purpose                                                                 | Owner Issue                                                     | Last Updated |
-| ------------------------------------------------------ | ----------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
-| [FEATURE_SUNSETTING.md](FEATURE_SUNSETTING.md)         | Feature retirement criteria, cleanup policy, quarterly hygiene review   | [#237](https://github.com/ericsocrat/poland-food-db/issues/237) | 2026-02-24   |
-| [PERFORMANCE_GUARDRAILS.md](PERFORMANCE_GUARDRAILS.md)                     | Performance guardrails — query budgets, index policy, scale projections    | Governance domain                                                | 2026-02-23   |
-| [DOCUMENTATION_GOVERNANCE.md](DOCUMENTATION_GOVERNANCE.md)                 | Documentation ownership, versioning, deprecation, drift prevention cadence | [#201](https://github.com/ericsocrat/poland-food-db/issues/201) | 2026-03-01   |
-| INDEX.md                                                                   | This file — canonical documentation map                                    | [#200](https://github.com/ericsocrat/poland-food-db/issues/200) | 2026-03-01   |
+| Document                                                   | Purpose                                                                    | Owner Issue                                                     | Last Updated |
+| ---------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
+| [FEATURE_SUNSETTING.md](FEATURE_SUNSETTING.md)             | Feature retirement criteria, cleanup policy, quarterly hygiene review      | [#237](https://github.com/ericsocrat/poland-food-db/issues/237) | 2026-02-24   |
+| [PERFORMANCE_GUARDRAILS.md](PERFORMANCE_GUARDRAILS.md)     | Performance guardrails — query budgets, index policy, scale projections    | Governance domain                                               | 2026-02-23   |
+| [DOCUMENTATION_GOVERNANCE.md](DOCUMENTATION_GOVERNANCE.md) | Documentation ownership, versioning, deprecation, drift prevention cadence | [#201](https://github.com/ericsocrat/poland-food-db/issues/201) | 2026-03-01   |
+| INDEX.md                                                   | This file — canonical documentation map                                    | [#200](https://github.com/ericsocrat/poland-food-db/issues/200) | 2026-03-01   |
 
 ## Other Repository Documents
 
@@ -148,16 +148,16 @@
 
 Pairs investigated for overlap during the 2026-02-28 audit:
 
-| Pair                                              | Assessment                                                                       | Verdict                                                |
-| ------------------------------------------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| SECURITY.md (root) ↔ SECURITY_AUDIT.md            | Root = policy overview; Audit = detailed report                                  | **No redundancy** — distinct scope                     |
-| DATA_SOURCES.md ↔ DATA_PROVENANCE.md              | Sources = where data comes from; Provenance = freshness governance               | **No redundancy** — complements                        |
-| SCORING_METHODOLOGY.md ↔ SCORING_ENGINE.md        | Methodology = formula; Engine = architecture                                     | **No redundancy** — what vs how                        |
-| ENVIRONMENT_STRATEGY.md ↔ STAGING_SETUP.md        | Strategy = overall design; Setup = operational steps                             | **No redundancy** — complements                        |
-| MONITORING.md ↔ OBSERVABILITY.md                  | Monitoring = alerts/dashboards; Observability = logging/tracing/metrics pipeline | **No redundancy** — overlapping domain, distinct focus |
-| OBSERVABILITY.md ↔ LOG_SCHEMA.md                  | Observability = strategy/format; Log Schema = error codes/taxonomy/DB registry  | **No redundancy** — format vs taxonomy                 |
-| METRICS.md ↔ UX_IMPACT_METRICS.md                 | Metrics = infra/app metrics; UX Impact = UX-specific measurement                 | **No redundancy** — different audiences                |
-| PERFORMANCE_REPORT.md ↔ PERFORMANCE_GUARDRAILS.md | Report = audit findings; Guardrails = policy/budgets                             | **No redundancy** — snapshot vs policy                 |
+| Pair                                              | Assessment                                                                          | Verdict                                                |
+| ------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| SECURITY.md (root) ↔ SECURITY_AUDIT.md            | Root = policy overview; Audit = detailed report                                     | **No redundancy** — distinct scope                     |
+| DATA_SOURCES.md ↔ DATA_PROVENANCE.md              | Sources = where data comes from; Provenance = freshness governance                  | **No redundancy** — complements                        |
+| SCORING_METHODOLOGY.md ↔ SCORING_ENGINE.md        | Methodology = formula; Engine = architecture                                        | **No redundancy** — what vs how                        |
+| ENVIRONMENT_STRATEGY.md ↔ STAGING_SETUP.md        | Strategy = overall design; Setup = operational steps                                | **No redundancy** — complements                        |
+| MONITORING.md ↔ OBSERVABILITY.md                  | Monitoring = alerts/dashboards; Observability = logging/tracing/metrics pipeline    | **No redundancy** — overlapping domain, distinct focus |
+| OBSERVABILITY.md ↔ LOG_SCHEMA.md                  | Observability = strategy/format; Log Schema = error codes/taxonomy/DB registry      | **No redundancy** — format vs taxonomy                 |
+| METRICS.md ↔ UX_IMPACT_METRICS.md                 | Metrics = infra/app metrics; UX Impact = UX-specific measurement                    | **No redundancy** — different audiences                |
+| PERFORMANCE_REPORT.md ↔ PERFORMANCE_GUARDRAILS.md | Report = audit findings; Guardrails = policy/budgets                                | **No redundancy** — snapshot vs policy                 |
 | ALERT_POLICY.md ↔ ON_CALL_POLICY.md               | Alert Policy = escalation matrix/thresholds; On-Call = ownership/ack targets/labels | **No redundancy** — what triggers vs who responds      |
 
 ## Obsolete Reference Check
