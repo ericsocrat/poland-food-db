@@ -15,6 +15,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### CI & Infrastructure
 
+- Add automated DR drill CI workflow (`.github/workflows/dr-drill.yml`): monthly
+  cron + manual dispatch, ephemeral PostgreSQL 17 container, applies all migrations
+  + seed + representative pipeline SQL + QA smoke subset, produces JSON report
+  artifact (#333)
 - Codify monitoring alerts as `monitoring/alerts.yml` (17 alerts extracted from
   ALERT_POLICY.md); add `validate-alerts.yml` CI workflow + `scripts/validate_alerts.py`
   validation script; update ALERT_POLICY.md to reference YAML as source of truth (#332)

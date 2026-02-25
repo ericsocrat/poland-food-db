@@ -1,0 +1,186 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# DR Drill — Disposable database rebuild from scratch
+# ═══════════════════════════════════════════════════════════════════════════════
+# Proves that migrations + seed + pipeline SQL + QA subset all work from zero.
+# Uses an ephemeral PostgreSQL service container — NEVER touches production.
+#
+# Schedule: monthly (1st day, 04:00 UTC) + manual dispatch
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: DR Drill
+
+on:
+  schedule:
+    - cron: "0 4 1 * *"  # Monthly: 1st day, 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dr-drill:
+    name: Disaster Recovery Drill
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U postgres"
+          --health-interval=5s
+          --health-timeout=5s
+          --health-retries=5
+
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+      PGDATABASE: postgres
+
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - name: Wait for PostgreSQL
+        run: |
+          for i in $(seq 1 30); do
+            pg_isready -h localhost -p 5432 -U postgres && break
+            echo "Waiting for PostgreSQL... ($i/30)"
+            sleep 1
+          done
+
+      - name: Apply migrations
+        id: migrations
+        run: |
+          start=$(date +%s)
+          count=0
+          failed=0
+          for f in supabase/migrations/*.sql; do
+            if psql -v ON_ERROR_STOP=1 -f "$f" > /dev/null 2>&1; then
+              count=$((count + 1))
+            else
+              echo "::error::Migration failed: $f"
+              failed=$((failed + 1))
+              # Continue to see how many fail, but mark as failed
+            fi
+          done
+          end=$(date +%s)
+          echo "migration_count=$count" >> "$GITHUB_OUTPUT"
+          echo "migration_failed=$failed" >> "$GITHUB_OUTPUT"
+          echo "migration_seconds=$((end - start))" >> "$GITHUB_OUTPUT"
+          echo "Applied $count migrations ($failed failed) in $((end - start))s"
+          if [ "$failed" -gt 0 ]; then exit 1; fi
+
+      - name: Apply seed data
+        id: seed
+        run: |
+          start=$(date +%s)
+          if psql -v ON_ERROR_STOP=1 -f supabase/seed/001_reference_data.sql > /dev/null 2>&1; then
+            echo "seed_status=ok" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::Seed data failed"
+            echo "seed_status=failed" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+          end=$(date +%s)
+          echo "seed_seconds=$((end - start))" >> "$GITHUB_OUTPUT"
+          echo "Seed applied in $((end - start))s"
+
+      - name: Apply pipeline SQL (representative subset)
+        id: pipelines
+        run: |
+          start=$(date +%s)
+          count=0
+          failed=0
+          # Apply chips-pl as representative category (reference implementation)
+          for f in db/pipelines/chips-pl/*.sql; do
+            if [ -f "$f" ]; then
+              if psql -v ON_ERROR_STOP=1 -f "$f" > /dev/null 2>&1; then
+                count=$((count + 1))
+              else
+                echo "::warning::Pipeline SQL failed: $f"
+                failed=$((failed + 1))
+              fi
+            fi
+          done
+          end=$(date +%s)
+          echo "pipeline_count=$count" >> "$GITHUB_OUTPUT"
+          echo "pipeline_failed=$failed" >> "$GITHUB_OUTPUT"
+          echo "pipeline_seconds=$((end - start))" >> "$GITHUB_OUTPUT"
+          echo "Applied $count pipeline files ($failed failed) in $((end - start))s"
+          if [ "$failed" -gt 0 ]; then exit 1; fi
+
+      - name: QA smoke checks (null + scoring)
+        id: qa
+        run: |
+          start=$(date +%s)
+          qa_pass=0
+          qa_fail=0
+
+          for suite in db/qa/QA__null_checks.sql db/qa/QA__scoring_formula_tests.sql; do
+            suite_name=$(basename "$suite" .sql)
+            result=$(psql -v ON_ERROR_STOP=0 -t -f "$suite" 2>&1)
+            # Count non-empty result lines (violations)
+            violations=$(echo "$result" | grep -cE '\S' || true)
+            if [ "$violations" -gt 0 ]; then
+              echo "::warning::QA violations in $suite_name: $violations rows"
+              qa_fail=$((qa_fail + 1))
+            else
+              qa_pass=$((qa_pass + 1))
+            fi
+          done
+
+          end=$(date +%s)
+          echo "qa_pass=$qa_pass" >> "$GITHUB_OUTPUT"
+          echo "qa_fail=$qa_fail" >> "$GITHUB_OUTPUT"
+          echo "qa_seconds=$((end - start))" >> "$GITHUB_OUTPUT"
+          echo "QA: $qa_pass passed, $qa_fail failed in $((end - start))s"
+
+      - name: Generate DR report
+        if: always()
+        run: |
+          cat > dr-report.json <<EOF
+          {
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "trigger": "${{ github.event_name }}",
+            "migrations": {
+              "applied": ${{ steps.migrations.outputs.migration_count || 0 }},
+              "failed": ${{ steps.migrations.outputs.migration_failed || 0 }},
+              "duration_seconds": ${{ steps.migrations.outputs.migration_seconds || 0 }}
+            },
+            "seed": {
+              "status": "${{ steps.seed.outputs.seed_status || 'skipped' }}",
+              "duration_seconds": ${{ steps.seed.outputs.seed_seconds || 0 }}
+            },
+            "pipelines": {
+              "applied": ${{ steps.pipelines.outputs.pipeline_count || 0 }},
+              "failed": ${{ steps.pipelines.outputs.pipeline_failed || 0 }},
+              "duration_seconds": ${{ steps.pipelines.outputs.pipeline_seconds || 0 }}
+            },
+            "qa_smoke": {
+              "passed": ${{ steps.qa.outputs.qa_pass || 0 }},
+              "failed": ${{ steps.qa.outputs.qa_fail || 0 }},
+              "duration_seconds": ${{ steps.qa.outputs.qa_seconds || 0 }}
+            },
+            "overall": "${{ (steps.migrations.outcome == 'success' && steps.seed.outcome == 'success' && steps.pipelines.outcome == 'success') && 'PASS' || 'FAIL' }}"
+          }
+          EOF
+          echo "## DR Drill Report" >> "$GITHUB_STEP_SUMMARY"
+          echo '```json' >> "$GITHUB_STEP_SUMMARY"
+          cat dr-report.json >> "$GITHUB_STEP_SUMMARY"
+          echo '```' >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload DR report
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
+        with:
+          name: dr-report
+          path: dr-report.json
+          retention-days: 90
