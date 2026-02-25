@@ -13,6 +13,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### CI & Infrastructure
+
+- Add structured YAML issue templates: bug report, feature request, and
+  data/schema change forms with dropdowns, validation, and template chooser
+  config (#324)
+
 ### Schema & Migrations
 
 - Add alert escalation & query regression detection: `query_performance_snapshots` table,
