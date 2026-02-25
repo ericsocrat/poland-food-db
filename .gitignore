@@ -74,7 +74,13 @@ qa-test.json
 qa_*.json
 _func_dump.txt
 __api_defs.txt
-tmp-qa/
 parse_report.py
-tmp-qa-results/
 tmp-sonar-issues.json
+
+# ─── Temporary / scratch files (NEVER commit) ──────────────────────────────
+tmp-*/
+tmp-qa/
+tmp-qa-results/
+tmp-qa-*/
+tmp-*.txt
+tmp-*.json
