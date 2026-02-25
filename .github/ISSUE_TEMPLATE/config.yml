@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Documentation Index
+    url: https://github.com/ericsocrat/poland-food-db/blob/main/docs/INDEX.md
+    about: Browse the full documentation index (45+ docs) before filing an issue.
+  - name: Scoring Methodology
+    url: https://github.com/ericsocrat/poland-food-db/blob/main/docs/SCORING_METHODOLOGY.md
+    about: Review the v3.2 scoring algorithm before reporting scoring issues.

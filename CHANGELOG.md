@@ -15,6 +15,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### CI & Infrastructure
 
+- Add structured YAML issue templates: bug report, feature request, and
+  data/schema change forms with dropdowns, validation, and template chooser
+  config (#324)
 - Pin Python dependencies exactly with SHA-256 hashes via pip-compile; add
   `requirements.in` as human-editable source constraints (#323)
 
