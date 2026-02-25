@@ -78,6 +78,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 - Add `docs/ALERT_POLICY.md`: alert escalation policy with P0–P3 severity tiers,
   escalation chain, on-call rules, slow query thresholds, query regression detection
   architecture, index drift monitoring cadence and action matrix (#211)
+- Add `docs/ON_CALL_POLICY.md`: on-call & alert ownership policy — alert source inventory
+  (8 sources), alert-to-severity mapping matrix, acknowledgment time targets (SEV-1 through
+  SEV-4 with business/off-hours/holiday rules), GitHub issue label taxonomy (severity, source,
+  domain labels), quiet hours & deferral policy, ownership transfer protocol (#233)
 - Add `docs/LOG_SCHEMA.md`: structured log schema specification, error code format
   (`{DOMAIN}_{CATEGORY}_{NNN}`), 8 registered domains, severity/escalation matrix,
   retention policy (0d–indefinite), domain-specific logging conventions (#210)
