@@ -15,6 +15,20 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### CI & Infrastructure
 
+- Add deterministic repo hygiene enforcer: `scripts/repo_verify.ps1` — 6 checks
+  (root cleanliness, docs index coverage, ADR naming, migration ordering,
+  no tracked artifacts, no temp files) with CI workflow `repo-verify.yml`
+  on push/PR/weekly cron (#334)
+
+### Documentation
+
+- Harden copilot-instructions.md: rewrite §16 as discovery-driven (script-first),
+  extract 240-line issue template to `.github/ISSUE_TEMPLATE/feature.md`,
+  reduce from 1,668 to 1,418 lines (under 1,500 cap) (#334)
+- Add `API_CONVENTIONS.md` to `docs/INDEX.md` (#334)
+
+### CI & Infrastructure
+
 - Add branch protection as code: `.github/branch-protection.md` documents canonical
   `main` branch protection rules (required reviews, status checks, merge strategy,
   push restrictions) with step-by-step restoration procedure (#325)

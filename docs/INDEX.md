@@ -42,6 +42,7 @@
 | Document                                   | Purpose                                                                          | Owner Issue                                                     | Last Updated |
 | ------------------------------------------ | -------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
 | [API_CONTRACTS.md](API_CONTRACTS.md)       | API surface contracts — response shapes, hidden columns, 20+ RPC functions       | [#197](https://github.com/ericsocrat/poland-food-db/issues/197) | 2026-02-24   |
+| [API_CONVENTIONS.md](API_CONVENTIONS.md)   | RPC naming convention, breaking change definition, security standards            | [#234](https://github.com/ericsocrat/poland-food-db/issues/234) | 2026-02-24   |
 | [API_VERSIONING.md](API_VERSIONING.md)     | API deprecation & versioning policy — function-name versioning, sunset timelines | [#234](https://github.com/ericsocrat/poland-food-db/issues/234) | 2026-02-24   |
 | [FRONTEND_API_MAP.md](FRONTEND_API_MAP.md) | Frontend-to-API mapping reference — which pages call which RPCs                  | [#197](https://github.com/ericsocrat/poland-food-db/issues/197) | 2026-02-13   |
 | [CONTRACT_TESTING.md](CONTRACT_TESTING.md) | API contract testing strategy — pgTAP patterns, response shape validation        | [#197](https://github.com/ericsocrat/poland-food-db/issues/197) | 2026-02-24   |
