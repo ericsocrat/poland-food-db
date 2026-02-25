@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(123);
+SELECT plan(136);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -187,6 +187,22 @@ SELECT has_view('public', 'v_query_regressions',                 'view v_query_r
 SELECT has_view('public', 'v_unused_indexes',                    'view v_unused_indexes exists');
 SELECT has_view('public', 'v_missing_indexes',                   'view v_missing_indexes exists');
 SELECT has_view('public', 'v_index_bloat_estimate',              'view v_index_bloat_estimate exists');
+
+-- ─── Event Intelligence (#190) ───────────────────────────────────────────────
+SELECT has_table('public', 'event_schema_registry',               'table event_schema_registry exists');
+SELECT has_column('public', 'event_schema_registry', 'event_type',     'column event_schema_registry.event_type exists');
+SELECT has_column('public', 'event_schema_registry', 'schema_version', 'column event_schema_registry.schema_version exists');
+SELECT has_column('public', 'event_schema_registry', 'json_schema',    'column event_schema_registry.json_schema exists');
+SELECT has_column('public', 'event_schema_registry', 'status',         'column event_schema_registry.status exists');
+SELECT has_column('public', 'event_schema_registry', 'pii_fields',     'column event_schema_registry.pii_fields exists');
+SELECT has_column('public', 'event_schema_registry', 'retention_days', 'column event_schema_registry.retention_days exists');
+SELECT has_column('public', 'analytics_events', 'schema_version',      'column analytics_events.schema_version exists');
+SELECT has_column('public', 'analytics_events', 'country',             'column analytics_events.country exists');
+SELECT has_column('public', 'analytics_events', 'consent_level',       'column analytics_events.consent_level exists');
+SELECT has_column('public', 'analytics_events', 'anonymous_id',        'column analytics_events.anonymous_id exists');
+SELECT has_column('public', 'analytics_events', 'route',               'column analytics_events.route exists');
+SELECT has_function('public', 'api_validate_event_schema',        'function api_validate_event_schema exists');
+SELECT has_function('public', 'api_get_event_schemas',            'function api_get_event_schemas exists');
 
 SELECT * FROM finish();
 ROLLBACK;
