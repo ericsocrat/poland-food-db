@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 45 in `docs/` + 5 elsewhere in repo
+> **Total documents:** 45 in `docs/` + 8 in `docs/decisions/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -21,6 +21,7 @@
 | [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                                 |
 | [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion       |
 | [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance guardrails, doc governance, repo governance, this index, governance blueprint   |
+| [Architecture Decisions](#architecture-decisions-adrs)   | 8     | MADR template + 7 retroactive ADRs (stack, scoring, country isolation, pipeline, API versioning, migrations, ingredients) |
 
 ---
 
@@ -131,6 +132,25 @@
 | [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md)                   | Repo structure rules, root cleanliness, change checklists, CI alignment    | Governance domain                                               | 2026-02-25   |
 | [DOCUMENTATION_GOVERNANCE.md](DOCUMENTATION_GOVERNANCE.md) | Documentation ownership, versioning, deprecation, drift prevention cadence | [#201](https://github.com/ericsocrat/poland-food-db/issues/201) | 2026-03-01   |
 | INDEX.md                                                   | This file — canonical documentation map                                    | [#200](https://github.com/ericsocrat/poland-food-db/issues/200) | 2026-03-01   |
+
+## Architecture Decisions (ADRs)
+
+> **Location:** `docs/decisions/`
+> **Template:** [MADR 3.0](https://adr.github.io/madr/) (Markdown Any Decision Records)
+> **Convention:** Files named `NNN-short-title.md` with sequential numbering
+
+| Document | Decision | Status | Date |
+|----------|----------|--------|------|
+| [000-template.md](decisions/000-template.md) | MADR 3.0 template for new ADRs | — | 2026-02-25 |
+| [001-postgresql-only-stack.md](decisions/001-postgresql-only-stack.md) | Use PostgreSQL as sole backend via Supabase — no ORM, no API server | accepted | 2026-02-07 |
+| [002-weighted-scoring-formula.md](decisions/002-weighted-scoring-formula.md) | 9-factor weighted unhealthiness score (v3.2) with EFSA-based ingredient concerns | accepted | 2026-02-10 |
+| [003-country-scoped-isolation.md](decisions/003-country-scoped-isolation.md) | Single-table country isolation with FK + CHECK + QA enforcement | accepted | 2026-02-13 |
+| [004-pipeline-generates-sql.md](decisions/004-pipeline-generates-sql.md) | Python pipeline generates SQL files; never writes to DB directly | accepted | 2026-02-07 |
+| [005-api-function-name-versioning.md](decisions/005-api-function-name-versioning.md) | API versioning via function-name suffixes, not URL paths | accepted | 2026-02-13 |
+| [006-append-only-migrations.md](decisions/006-append-only-migrations.md) | Strict append-only migration strategy — never modify existing files | accepted | 2026-02-07 |
+| [007-english-canonical-ingredients.md](decisions/007-english-canonical-ingredients.md) | All 2,740 ingredients stored as clean ASCII English canonical names | accepted | 2026-02-10 |
+
+---
 
 ## Other Repository Documents
 

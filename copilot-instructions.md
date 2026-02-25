@@ -239,7 +239,16 @@ poland-food-db/
 │   ├── UX_IMPACT_METRICS.md         # UX measurement standard, metric catalog, SQL templates
 │   ├── UX_UI_DESIGN.md              # UI/UX guidelines
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
-│   └── api-registry.yaml            # Structured registry of all 109 functions (YAML)
+│   ├── api-registry.yaml            # Structured registry of all 109 functions (YAML)
+│   └── decisions/                   # Architecture Decision Records (MADR 3.0)
+│       ├── 000-template.md          # ADR template
+│       ├── 001-postgresql-only-stack.md
+│       ├── 002-weighted-scoring-formula.md
+│       ├── 003-country-scoped-isolation.md
+│       ├── 004-pipeline-generates-sql.md
+│       ├── 005-api-function-name-versioning.md
+│       ├── 006-append-only-migrations.md
+│       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
 ├── RUN_QA.ps1                       # QA test runner (460 checks across 33 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)

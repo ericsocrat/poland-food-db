@@ -13,6 +13,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Documentation
+
+- Add ADR framework: `docs/decisions/` with MADR 3.0 template + 7 retroactive
+  Architecture Decision Records covering PostgreSQL-only stack, scoring formula,
+  country isolation, pipeline architecture, API versioning, append-only migrations,
+  and English canonical ingredients (#322)
+
 ### Schema & Migrations
 
 - Add alert escalation & query regression detection: `query_performance_snapshots` table,
