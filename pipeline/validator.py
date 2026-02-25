@@ -8,7 +8,6 @@ ingredient-derived flags and declared allergens.
 
 from __future__ import annotations
 
-
 # ---------------------------------------------------------------------------
 # Allergen tag sets used for contradiction detection
 # ---------------------------------------------------------------------------

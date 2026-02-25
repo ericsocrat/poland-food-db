@@ -28,7 +28,7 @@ def ean_check_digit(digits: str, length: int) -> str:
         weights = [1 if i % 2 == 0 else 3 for i in range(prefix_len)]
     else:  # EAN-8
         weights = [3 if i % 2 == 0 else 1 for i in range(prefix_len)]
-    total = sum(int(d) * w for d, w in zip(digits[:prefix_len], weights))
+    total = sum(int(d) * w for d, w in zip(digits[:prefix_len], weights, strict=False))
     return str((10 - total % 10) % 10)
 
 
