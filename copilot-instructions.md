@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,304 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 460 checks across 33 suites + 23 negative validation tests — all passing
+> **QA:** 478 checks across 34 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -115,6 +115,7 @@ poland-food-db/
 │   │   ├── QA__index_temporal.sql        # 15 index & temporal integrity checks
 │   │   ├── QA__attribute_contradiction.sql # 5 attribute contradiction checks
 │   │   ├── QA__monitoring.sql            # 7 monitoring & health checks
+│   │   ├── QA__event_intelligence.sql    # 18 event intelligence checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   │   └── TEST__negative_checks.sql     # 23 negative validation tests
 │   └── views/
@@ -255,7 +256,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (460 checks across 33 suites)
+├── RUN_QA.ps1                       # QA test runner (478 checks across 34 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -381,6 +382,7 @@ poland-food-db/
 | `user_saved_searches`     | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                          |
 | `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                            |
 | `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, status ('pending'/'approved'/'rejected'). Admin-reviewable                                           |
+| `event_schema_registry`   | Schema-versioned event definitions              | `id` (identity)                         | event_type + schema_version UNIQUE; json_schema, status(active/deprecated/retired), pii_fields, retention_days. RLS: anon-read            |
 | `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read               |
 | `log_level_ref`           | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                 |
 | `error_code_registry`     | Known error codes with domain/category/severity | `error_code` (text PK)                  | {DOMAIN}_{CATEGORY}_{NNN} format; FK to log_level_ref(level); 13 starter codes. RLS: service-write / auth-read                            |
@@ -864,9 +866,10 @@ At the end of every PR-like change, include a **Verification** section:
 | Scoring Determinism       | `QA__scoring_determinism.sql`       |     15 | Yes       |
 | Multi-Country Consistency | `QA__multi_country_consistency.sql` |     10 | Yes       |
 | Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |
+| Event Intelligence        | `QA__event_intelligence.sql`        |     18 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     29 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **460/460 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **478/478 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)

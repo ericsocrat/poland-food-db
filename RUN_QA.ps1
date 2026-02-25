@@ -37,6 +37,7 @@
        31. QA__scoring_determinism.sql (15 scoring determinism checks — blocking)
        32. QA__multi_country_consistency.sql (10 multi-country consistency checks — blocking)
        33. QA__performance_regression.sql (6 performance regression checks — informational)
+       34. QA__event_intelligence.sql (18 event intelligence checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suites 3 and 33 are informational and do not affect the exit code.
@@ -150,7 +151,8 @@ $suiteCatalog = @(
     @{ Num = 30; Name = "Monitoring & Health Check"; Short = "Monitoring"; Id = "monitoring"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__monitoring.sql" },
     @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" },
     @{ Num = 32; Name = "Multi-Country Consistency"; Short = "MultiCountry"; Id = "multi_country_consistency"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__multi_country_consistency.sql" },
-    @{ Num = 33; Name = "Performance Regression"; Short = "PerfRegress"; Id = "performance_regression"; Checks = 6; Blocking = $false; Kind = "sql"; File = "QA__performance_regression.sql" }
+    @{ Num = 33; Name = "Performance Regression"; Short = "PerfRegress"; Id = "performance_regression"; Checks = 6; Blocking = $false; Kind = "sql"; File = "QA__performance_regression.sql" },
+    @{ Num = 34; Name = "Event Intelligence"; Short = "EventIntel"; Id = "event_intelligence"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__event_intelligence.sql" }
 )
 
 $suiteByNum = @{}
