@@ -104,13 +104,8 @@ INSERT INTO ingredient_ref (ingredient_id, name_en, is_additive, concern_tier)
 OVERRIDING SYSTEM VALUE
 VALUES (99997, 'neg-test concerned ingredient', false, 2);   -- tier 2, no reason
 
--- Duplicate name_en: copy first existing ingredient's name
-INSERT INTO ingredient_ref (ingredient_id, name_en, is_additive, concern_tier)
-OVERRIDING SYSTEM VALUE
-SELECT 99991, ir.name_en, false, 0
-FROM ingredient_ref ir
-WHERE ir.ingredient_id NOT BETWEEN 99990 AND 99999
-ORDER BY ir.ingredient_id LIMIT 1;
+-- Duplicate name_en: now prevented by UNIQUE index (idx_ingredient_ref_name_en_uniq).
+-- INSERT skipped — constraint makes this a CHECK-PROTECTED case.
 
 -- ── Allergen cross-validation ingredients on 99998 ──────────────────────
 --    Product 99998 has allergens pl:mleko + en:unicorn but NOT
@@ -356,13 +351,9 @@ SELECT CASE WHEN (
 ) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
   || ' | S15.02 | junk/numeric ingredient name';
 
-SELECT CASE WHEN (
-  SELECT COUNT(*) FROM (
-    SELECT name_en FROM ingredient_ref
-    GROUP BY name_en HAVING COUNT(*) > 1
-  ) x
-) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S15.04 | duplicate ingredient name_en';
+-- S15.04: duplicate ingredient name_en — now UNIQUE-INDEX-PROTECTED
+-- (idx_ingredient_ref_name_en_uniq prevents duplicates at the DB level)
+SELECT '  ✔ CAUGHT' || ' | S15.04 | duplicate ingredient name_en (UNIQUE-INDEX-PROTECTED)';
 
 SELECT CASE WHEN (
   SELECT COUNT(*) FROM ingredient_ref
