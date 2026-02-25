@@ -1,0 +1,8 @@
+# Human-editable dependency constraints for Poland Food DB pipeline.
+# To regenerate requirements.txt with exact pins and hashes:
+#   pip-compile --generate-hashes --output-file=requirements.txt requirements.in
+#
+# Do NOT edit requirements.txt directly — it is auto-generated from this file.
+
+requests>=2.31,<3
+tqdm>=4.66,<5
