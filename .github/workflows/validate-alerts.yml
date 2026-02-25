@@ -1,0 +1,36 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Validate Alerts — YAML lint + schema validation for monitoring/alerts.yml
+# ═══════════════════════════════════════════════════════════════════════════════
+# Triggered on changes to monitoring/ directory. Validates that alerts.yml
+# is well-formed and every alert has required fields with valid values.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: Validate Alerts
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "monitoring/**"
+  pull_request:
+    branches: [main]
+    paths:
+      - "monitoring/**"
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Alert Config Validation
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+
+      - uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+
+      - name: Validate alerts.yml
+        run: python scripts/validate_alerts.py

@@ -1,0 +1,159 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# Monitoring Alert Definitions — Machine-readable source of truth
+# ═══════════════════════════════════════════════════════════════════════════════
+# Policy governance:  docs/ALERT_POLICY.md
+# Validated by:       .github/workflows/validate-alerts.yml
+#
+# Severity: critical | warning | info
+# Each alert defines: name, severity, condition, threshold, channel,
+#                      ack_target_minutes, escalation_policy
+# ═══════════════════════════════════════════════════════════════════════════════
+
+alerts:
+  # ── P0 — Critical ──────────────────────────────────────────────────────────
+
+  - name: critical_error_code
+    severity: critical
+    condition: "Any CRITICAL error code from LOG_SCHEMA.md"
+    threshold: "1 occurrence"
+    channel: page
+    ack_target_minutes: 5
+    escalation_policy: "Automatic incident declaration"
+
+  - name: migration_lock_timeout
+    severity: critical
+    condition: "Migration lock held > 30 seconds"
+    threshold: "1 occurrence"
+    channel: page
+    ack_target_minutes: 5
+    escalation_policy: "Prepare rollback per DEPLOYMENT.md"
+
+  # ── P1 — High ──────────────────────────────────────────────────────────────
+
+  - name: api_p95_critical
+    severity: critical
+    condition: "API P95 latency > 2000ms"
+    threshold: "1 min sustained"
+    channel: page
+    ack_target_minutes: 5
+    escalation_policy: "Treat as incident"
+
+  - name: db_connection_pool_high
+    severity: warning
+    condition: "Database connections > 80% of pool"
+    threshold: "5 min sustained"
+    channel: slack
+    ack_target_minutes: 15
+    escalation_policy: "Investigate connection leaks"
+
+  # ── P2 — Medium ────────────────────────────────────────────────────────────
+
+  - name: api_p95_elevated
+    severity: warning
+    condition: "API P95 latency > 1000ms"
+    threshold: "3 min sustained"
+    channel: slack
+    ack_target_minutes: 30
+    escalation_policy: "Page if no ack in 30 min"
+
+  - name: search_zero_result_rate
+    severity: warning
+    condition: "Search zero-result rate > 20%"
+    threshold: "1 hour sustained"
+    channel: slack
+    ack_target_minutes: 240
+    escalation_policy: "Investigate query patterns"
+
+  - name: provenance_conflicts
+    severity: warning
+    condition: "Provenance conflicts > 50 unresolved"
+    threshold: "daily check"
+    channel: slack
+    ack_target_minutes: 1440
+    escalation_policy: "Assign to data team"
+
+  # ── P3 — Low ───────────────────────────────────────────────────────────────
+
+  - name: api_p95_amber
+    severity: info
+    condition: "API P95 latency > 500ms"
+    threshold: "5 min sustained"
+    channel: dashboard
+    ack_target_minutes: 60
+    escalation_policy: "Slack if still amber after 1h"
+
+  - name: scoring_version_drift
+    severity: info
+    condition: "Scoring version drift > 5% of products"
+    threshold: "daily check"
+    channel: dashboard
+    ack_target_minutes: 1440
+    escalation_policy: "Schedule re-score batch"
+
+  - name: disk_usage_high
+    severity: info
+    condition: "Disk usage > 80%"
+    threshold: "daily check"
+    channel: slack
+    ack_target_minutes: 1440
+    escalation_policy: "Plan cleanup or expansion"
+
+  # ── Query Regression ────────────────────────────────────────────────────────
+
+  - name: query_regression_critical
+    severity: critical
+    condition: "Query mean execution time > 2x previous snapshot"
+    threshold: "weekly snapshot comparison"
+    channel: slack
+    ack_target_minutes: 60
+    escalation_policy: "Investigate immediately via EXPLAIN ANALYZE"
+
+  - name: query_regression_warning
+    severity: warning
+    condition: "Query mean execution time > 1.5x previous snapshot"
+    threshold: "weekly snapshot comparison"
+    channel: dashboard
+    ack_target_minutes: 1440
+    escalation_policy: "Review in weekly performance meeting"
+
+  - name: slow_query_critical
+    severity: critical
+    condition: "Query mean execution time > 1 second"
+    threshold: "per report_slow_queries() run"
+    channel: page
+    ack_target_minutes: 15
+    escalation_policy: "Investigate immediately"
+
+  - name: slow_query_warning
+    severity: warning
+    condition: "Query mean execution time 500ms–1s"
+    threshold: "per report_slow_queries() run"
+    channel: slack
+    ack_target_minutes: 1440
+    escalation_policy: "Investigate within 24h"
+
+  # ── Index Drift ─────────────────────────────────────────────────────────────
+
+  - name: unused_index_large
+    severity: info
+    condition: "Index with zero scans and size > 10MB"
+    threshold: "weekly review"
+    channel: dashboard
+    ack_target_minutes: 10080
+    escalation_policy: "Consider DROP INDEX after 4 weeks of inactivity"
+
+  - name: missing_index
+    severity: warning
+    condition: "Table with excessive sequential scans (NEEDS_INDEX status)"
+    threshold: "weekly review"
+    channel: dashboard
+    ack_target_minutes: 10080
+    escalation_policy: "Create index, verify with EXPLAIN ANALYZE"
+
+  - name: index_bloat
+    severity: info
+    condition: "Index size > 2x table size"
+    threshold: "monthly review"
+    channel: dashboard
+    ack_target_minutes: 43200
+    escalation_policy: "REINDEX or DROP + CREATE"

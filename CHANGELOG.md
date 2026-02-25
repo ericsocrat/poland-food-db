@@ -15,6 +15,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### CI & Infrastructure
 
+- Codify monitoring alerts as `monitoring/alerts.yml` (17 alerts extracted from
+  ALERT_POLICY.md); add `validate-alerts.yml` CI workflow + `scripts/validate_alerts.py`
+  validation script; update ALERT_POLICY.md to reference YAML as source of truth (#332)
 - Add Python linter (ruff) with `ruff.toml` config and `python-lint.yml` CI
   workflow; auto-fix 22 violations, resolve remaining 7 manually; enforce on
   PRs touching Python files (#331)
