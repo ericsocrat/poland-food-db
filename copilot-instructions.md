@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 475 checks across 34 suites + 23 negative validation tests — all passing
+> **QA:** 479 checks across 34 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -88,7 +88,7 @@ poland-food-db/
 │   │   └── ... (19 more PL)         # Variable product counts per category
 │   ├── qa/                          # Test suites
 │   │   ├── QA__null_checks.sql      # 29 data integrity checks
-│   │   ├── QA__scoring_formula_tests.sql  # 27 scoring validation checks
+│   │   ├── QA__scoring_formula_tests.sql  # 29 scoring validation checks
 │   │   ├── QA__api_surfaces.sql     # 18 API surface validation checks
 │   │   ├── QA__api_contract.sql     # 33 API contract checks
 │   │   ├── QA__confidence_scoring.sql  # 13 confidence scoring checks
@@ -256,7 +256,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (475 checks across 34 suites)
+├── RUN_QA.ps1                       # QA test runner (479 checks across 34 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -789,7 +789,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 475 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 479 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -834,7 +834,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Suite                     | File                                | Checks | Blocking? |
 | ------------------------- | ----------------------------------- | -----: | --------- |
 | Data Integrity            | `QA__null_checks.sql`               |     29 | Yes       |
-| Scoring Formula           | `QA__scoring_formula_tests.sql`     |     27 | Yes       |
+| Scoring Formula           | `QA__scoring_formula_tests.sql`     |     29 | Yes       |
 | Source Coverage           | `QA__source_coverage.sql`           |      8 | No        |
 | EAN Validation            | `validate_eans.py`                  |      1 | Yes       |
 | API Surfaces              | `QA__api_surfaces.sql`              |     18 | Yes       |
@@ -863,13 +863,13 @@ At the end of every PR-like change, include a **Verification** section:
 | Index & Temporal          | `QA__index_temporal.sql`            |     15 | Yes       |
 | Attribute Contradictions  | `QA__attribute_contradiction.sql`   |      5 | Yes       |
 | Monitoring & Health       | `QA__monitoring.sql`                |      7 | Yes       |
-| Scoring Determinism       | `QA__scoring_determinism.sql`       |     15 | Yes       |
+| Scoring Determinism       | `QA__scoring_determinism.sql`       |     17 | Yes       |
 | Multi-Country Consistency | `QA__multi_country_consistency.sql` |     10 | Yes       |
 | Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |
 | Event Intelligence        | `QA__event_intelligence.sql`        |     18 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **475/475 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **479/479 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)

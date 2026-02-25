@@ -57,10 +57,10 @@ jobs:
 
     steps:
       # ── Checkout ─────────────────────────────────────────────────────────
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
 
       # ── Node.js ──────────────────────────────────────────────────────────
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: 20
           cache: 'npm'
@@ -72,7 +72,7 @@ jobs:
 
       # ── Playwright browsers (cached) ─────────────────────────────────────
       - name: Cache Playwright browsers
-        uses: actions/cache@v4
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         id: playwright-cache
         with:
           path: ~/.cache/ms-playwright
@@ -157,7 +157,7 @@ jobs:
 
       # ── Upload Artifacts ─────────────────────────────────────────────────
       - name: Upload Screenshots
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: qa-screenshots-${{ steps.mode.outputs.mode }}
@@ -166,7 +166,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Playwright Report
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: playwright-quality-report
@@ -175,7 +175,7 @@ jobs:
           if-no-files-found: ignore
 
       - name: Upload Lighthouse Reports
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
         with:
           name: lighthouse-reports-${{ steps.mode.outputs.mode }}

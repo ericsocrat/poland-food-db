@@ -1,4 +1,4 @@
--- QA: Scoring & Search Determinism (15 checks)
+-- QA: Scoring & Search Determinism (17 checks)
 -- Validates deterministic scoring via direct function calls with pinned expected outputs.
 -- No dependency on product data — tests computations in isolation.
 -- Catches unintended formula changes, rounding drift, and factor-weight misconfiguration.
@@ -209,3 +209,30 @@ SELECT '15. factor weights sum to 1.00' AS check_name,
 -- Stub: search("chips") twice → same product_id ordering
 -- Stub: search(exact_name) → that product ranks #1
 -- Stub: search(brand) → brand products in top results
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 16. Pinned Red band input → expected score 68 (±2)
+--     Red profile: sat=8, sug=20, salt=2.0, cal=450, trans=1.0,
+--     add=6, prep=deep-fried, contr=palm oil, concern=50
+--     Previously untested band (0 real products score 61-80). Issue #373.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '16. pinned red band input score' AS check_name,
+       CASE WHEN compute_unhealthiness_v32(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50)
+                 BETWEEN 66 AND 70
+            THEN 0 ELSE 1
+       END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 17. Band coverage matrix — all 5 bands produce scores in expected ranges
+--     Synthetic inputs calibrated to land in each band.
+--     Violation = any band's representative score falls outside its range.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '17. band coverage matrix' AS check_name,
+       (SELECT COUNT(*) FROM (VALUES
+           ('Green',    1,  20, compute_unhealthiness_v32(1.0, 3.0, 0.3, 100, 0, 0, 'not-applicable', 'none', 0)),
+           ('Yellow',  21,  40, compute_unhealthiness_v32(5.0, 12.0, 1.0, 300, 0.5, 3, 'baked', 'none', 20)),
+           ('Orange',  41,  60, compute_unhealthiness_v32(6.0, 15.0, 1.5, 350, 0.5, 4, 'fried', 'none', 30)),
+           ('Red',     61,  80, compute_unhealthiness_v32(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50)),
+           ('DarkRed', 81, 100, compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100))
+       ) AS t(band, lo, hi, actual)
+       WHERE actual NOT BETWEEN lo AND hi) AS violations;
