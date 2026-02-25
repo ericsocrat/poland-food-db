@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 473 checks across 34 suites + 23 negative validation tests — all passing
+> **QA:** 475 checks across 34 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -256,7 +256,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (473 checks across 34 suites)
+├── RUN_QA.ps1                       # QA test runner (475 checks across 34 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -789,7 +789,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 473 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 475 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -845,7 +845,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Ref. Integrity            | `QA__referential_integrity.sql`     |     18 | Yes       |
 | View Consistency          | `QA__view_consistency.sql`          |     13 | Yes       |
 | Naming Conventions        | `QA__naming_conventions.sql`        |     12 | Yes       |
-| Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     16 | Yes       |
+| Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     18 | Yes       |
 | Data Consistency          | `QA__data_consistency.sql`          |     20 | Yes       |
 | Allergen Integrity        | `QA__allergen_integrity.sql`        |     15 | Yes       |
 | Allergen Filtering        | `QA__allergen_filtering.sql`        |      6 | Yes       |
@@ -869,7 +869,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Event Intelligence        | `QA__event_intelligence.sql`        |     18 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **473/473 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **475/475 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)

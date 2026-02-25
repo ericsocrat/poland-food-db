@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Nutrition Ranges & Plausibility
+-- QA: Nutrition Ranges & Plausibility — 18 checks
 -- Validates that nutrition values fall within physiologically
 -- plausible ranges and detects likely decimal point errors.
 -- Checks per-100g values only.
@@ -229,4 +229,39 @@ WHERE p.is_deprecated IS NOT TRUE
       nf.calories::numeric
       - (nf.protein_g::numeric * 4 + nf.carbs_g::numeric * 4 + nf.total_fat_g::numeric * 9) * 4.184
   ) < (nf.protein_g::numeric * 4 + nf.carbs_g::numeric * 4 + nf.total_fat_g::numeric * 9) * 4.184 * 0.15;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 17. Extreme salt (>10g/100g) outside expected high-salt categories
+--     Sauces, Condiments, Seafood & Fish can legitimately have very high salt
+--     (soy sauce, seasoning powders, dried seaweed). Other categories should
+--     not exceed 10g/100g. Instant noodles include seasoning packets and can
+--     reach 13-14g/100g per OFF data.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '17. extreme salt (>10g) outside expected categories' AS check_name,
+       COUNT(*) AS violations
+FROM nutrition_facts nf
+JOIN products p ON p.product_id = nf.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND nf.salt_g IS NOT NULL
+  AND nf.salt_g::numeric > 10
+  AND p.category NOT IN ('Sauces', 'Condiments', 'Seafood & Fish', 'Instant & Frozen');
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 18. Extreme calories (>700 kcal/100g) outside expected high-calorie categories
+--     Oils (900 kcal), nuts (700-750 kcal), and some plant-based oils
+--     legitimately have very high calorie density. Other categories should not.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '18. extreme calories (>700) outside expected categories' AS check_name,
+       COUNT(*) AS violations
+FROM nutrition_facts nf
+JOIN products p ON p.product_id = nf.product_id
+WHERE p.is_deprecated IS NOT TRUE
+  AND nf.calories IS NOT NULL
+  AND nf.calories::numeric > 700
+  AND p.category NOT IN (
+    'Nuts, Seeds & Legumes',
+    'Plant-Based & Alternatives',
+    'Condiments',
+    'Dairy'
+  );
 
