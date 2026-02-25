@@ -90,6 +90,10 @@ WHERE  product_id = (
        )
   AND  salt_g = 13.0;
 
+-- Re-score the Bread category so the salt fix produces correct
+-- unhealthiness_score, high_salt_flag, completeness, and confidence.
+CALL score_category('Bread');
+
 -- ─── 4. Populate allergen data ──────────────────────────────────────────
 -- The allergen population migration (20260213000500) runs BEFORE pipelines
 -- in CI, so its EAN-based JOINs match zero products.  Re-run a subset of
