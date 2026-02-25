@@ -87,6 +87,19 @@ Adheres to [Semantic Versioning](https://semver.org/).
   expand docs listing from 19 → 49 entries, update migration count 130 → 137, add supabase
   sub-dirs (seed/, sanity/, tests/), add pipeline/, scripts/, .github/workflows/ entries,
   consolidate duplicate supabase/ section, add missing root files (#318)
+- Sync `copilot-instructions.md` §3 project layout with actual file tree: add `scripts/` directory
+  (7 utility scripts), `trust/` component directory, 6 missing root files (`BACKUP.ps1`,
+  `RUN_DR_DRILL.ps1`, `run_data_audit.py`, `test_data_audit.py`, `requirements.txt`,
+  `.editorconfig`), 10 missing workflow files, 2 missing pipeline files (`image_importer.py`,
+  `test_validator.py`), `REPO_GOVERNANCE.md` to docs listing, supabase sub-directories
+  (`seed/`, `sanity/`, `tests/`, `functions/`, `dr-drill/`, `seed.sql`) (#318)
+- Add `docs/REPO_GOVERNANCE.md`: 6-section governance standard covering structure rules,
+  doc update checklists, root cleanliness, CI integrity, Copilot enforcement, maintenance
+  cadence (#316)
+- Add `copilot-instructions.md` §16 Repo Hygiene Checklist: 5 enforcement subsections
+  (structural changes, API changes, root cleanliness, CI green, PR discipline) (#316)
+- Fix stale QA check counts in README: 429/421 → 460 across 33 suites, add 11 missing
+  suite listings to Additional Suites section (#316)
 - Add `docs/ALERT_POLICY.md`: alert escalation policy with P0–P3 severity tiers,
   escalation chain, on-call rules, slow query thresholds, query regression detection
   architecture, index drift monitoring cadence and action matrix (#211)
