@@ -114,7 +114,7 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
-│   └── migrations/                  # 135 append-only schema migrations
+│   └── migrations/                  # 136 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -171,6 +171,7 @@ poland-food-db/
 │   ├── API_CONVENTIONS.md           # RPC naming convention, breaking change definition, security standards
 │   ├── API_VERSIONING.md            # API deprecation & versioning policy
 │   ├── ACCESS_AUDIT.md              # Data access pattern audit & quarterly review
+│   ├── ALERT_POLICY.md              # Alert escalation, query regression, index drift monitoring
 │   ├── BACKFILL_STANDARD.md         # Backfill orchestration standard & migration templates
 │   ├── CI_ARCHITECTURE_PROPOSAL.md  # CI pipeline design
 │   ├── CONTRACT_TESTING.md          # API contract testing strategy & pgTAP patterns
@@ -189,7 +190,7 @@ poland-food-db/
 │   ├── FRONTEND_API_MAP.md          # Frontend ↔ API mapping reference
 │   ├── GOVERNANCE_BLUEPRINT.md      # Execution governance blueprint (master GOV plan)
 │   ├── INCIDENT_RESPONSE.md         # Incident response playbook (severity, escalation, runbooks)
-│   ├── INDEX.md                     # Canonical documentation map (42 docs, domain-classified)
+│   ├── INDEX.md                     # Canonical documentation map (43 docs, domain-classified)
 │   ├── LABELS.md                    # Labeling conventions
 │   ├── LOG_SCHEMA.md                # Structured log schema & error taxonomy
 │   ├── METRICS.md                   # Application, infrastructure & business metrics catalog
