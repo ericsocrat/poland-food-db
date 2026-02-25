@@ -15,6 +15,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### CI & Infrastructure
 
+- Add automated DR drill CI workflow (`.github/workflows/dr-drill.yml`): monthly
+  cron + manual dispatch, ephemeral PostgreSQL 17 container, applies all migrations
+  + seed + representative pipeline SQL + QA smoke subset, produces JSON report
+  artifact (#333)
 - Add branch protection as code: `.github/branch-protection.md` documents canonical
   `main` branch protection rules (required reviews, status checks, merge strategy,
   push restrictions) with step-by-step restoration procedure (#325)

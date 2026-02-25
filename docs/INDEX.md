@@ -92,6 +92,7 @@
 | [ALERT_POLICY.md](ALERT_POLICY.md)                   | Alert escalation policy, query regression detection, index drift monitoring           | [#211](https://github.com/ericsocrat/poland-food-db/issues/211) | 2026-03-04   |
 | [ON_CALL_POLICY.md](ON_CALL_POLICY.md)               | On-call & alert ownership — routing, ack targets, triage labels, quiet hours          | [#233](https://github.com/ericsocrat/poland-food-db/issues/233) | 2026-03-04   |
 | [DISASTER_DRILL_REPORT.md](DISASTER_DRILL_REPORT.md) | Disaster recovery drill report — test results, findings, remediation                  | Observability domain                                            | 2026-02-23   |
+| [`.github/workflows/dr-drill.yml`](../.github/workflows/dr-drill.yml) | Automated DR drill — monthly cron + manual, disposable PostgreSQL rebuild    | [#333](https://github.com/ericsocrat/poland-food-db/issues/333) | 2026-03-05   |
 
 ## DevOps & Environment
 
