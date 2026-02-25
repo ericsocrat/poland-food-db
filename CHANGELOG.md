@@ -15,6 +15,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### CI & Infrastructure
 
+- Codify monitoring alerts as `monitoring/alerts.yml` (17 alerts extracted from
+  ALERT_POLICY.md); add `validate-alerts.yml` CI workflow + `scripts/validate_alerts.py`
+  validation script; update ALERT_POLICY.md to reference YAML as source of truth (#332)
 - Add branch protection as code: `.github/branch-protection.md` documents canonical
   `main` branch protection rules (required reviews, status checks, merge strategy,
   push restrictions) with step-by-step restoration procedure (#325)
