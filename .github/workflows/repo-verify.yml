@@ -1,0 +1,21 @@
+name: Repo Hygiene Verify
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '30 5 * * 1'   # Weekly Monday 05:30 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run repo_verify.ps1
+        shell: pwsh
+        run: ./scripts/repo_verify.ps1

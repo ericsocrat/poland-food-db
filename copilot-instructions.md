@@ -1366,302 +1366,53 @@ Before a feature is considered complete, verify against all CI gates:
 
 ### 15.19 Issue Template
 
-Use this structure when creating GitHub issues. **Every section is required** for significant issues; mark a section `N/A — [reason]` if genuinely not applicable (e.g., "Search & Indexing Impact" for a CI-only change). Never silently omit a section.
+Use `.github/ISSUE_TEMPLATE/feature.md` for all significant issues. **Every section is required**; mark a section `N/A — [reason]` if genuinely not applicable. Never silently omit a section.
 
-> **Reference implementation:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184)
-
-```markdown
-# [PREFIX] Title — Crisp Noun-Phrase Subtitle
-
-> **Priority:** P0 / P1 / P2 / P3
-> **Workstream:** Frontend / Backend / Data / CI / Security / Governance
-> **Estimated effort:** X–Y days
-> **Depends on:** #NNN (title), #NNN (title)
+> **Reference implementation:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184) — gold standard across all repo issues for structural completeness, actionable depth, and proven implementation.
 
 ---
 
-## Parent Epic (if applicable)
+## 16. Repo Hygiene (Enforcement)
 
-#NNN — Epic Title
+> **Policy:** `docs/REPO_GOVERNANCE.md` — full rules and allowed-files list.
+> **Automated enforcer:** `scripts/repo_verify.ps1` — 6 deterministic checks, exit 0/1.
+> **CI workflow:** `.github/workflows/repo-verify.yml` — runs on push, PRs, and weekly cron.
 
----
+### When to Run
 
-## Problem Statement
+| Trigger                                 | Action                                |
+| --------------------------------------- | ------------------------------------- |
+| File/directory added, removed, renamed  | `pwsh scripts/repo_verify.ps1`        |
+| Doc added or removed in `docs/`         | Script verifies `docs/INDEX.md` parity |
+| New migration added                     | Script verifies timestamp ordering    |
+| Before any commit                       | `git status` + `git diff --cached --name-only` |
 
-- **What user/developer/system problem does this solve?** (concrete scenario)
-- **What current limitation exists?** (link to specific code, schema, or workflow gaps)
-- **What measurable improvement does this introduce?** (new coverage, fewer errors, faster pipeline, etc.)
-- Quantify current state (e.g., "2,500+ products with no automated integrity check")
+### What the Script Checks
 
-## Why This Matters
+1. **Root cleanliness** — no `tmp-*`, `qa_*.json`, `_func_dump.txt`, `__api_defs.txt`, `*.log`
+2. **Docs index coverage** — every `docs/*.md` listed in `docs/INDEX.md`
+3. **ADR naming** — files in `docs/decisions/` match `NNN-*.md`
+4. **Migration ordering** — timestamps in `supabase/migrations/` are monotonic
+5. **No tracked artifacts** — `coverage/`, `test-results/`, `playwright-report/`, `node_modules/`, `__pycache__/`, `.next/` not in git
+6. **No tracked temp files** — no `tmp-*` or `qa_*.json` committed
 
-Bullet list of consequences if this is NOT done:
+### Additional Manual Checks (Not Automated)
 
-- **User safety / data trust**: ...
-- **Scale / reliability**: ...
-- **Regulatory / compliance**: ...
+After **structural changes:**
 
----
+- `copilot-instructions.md` §3 project layout updated (if directory structure changed)
+- `CHANGELOG.md` updated under `[Unreleased]` (if user-visible)
+- CI workflow glob patterns verified (if paths changed)
 
-## Scope
+After **API changes:**
 
-### In-Scope
+- `docs/API_CONTRACTS.md` + `docs/FRONTEND_API_MAP.md` + `docs/api-registry.yaml` updated
+- pgTAP contract test added/updated in `supabase/tests/`
+- No response keys removed (additive only); new parameters have defaults
 
-1. Specific deliverable A
-2. Specific deliverable B
-3. ...
-
-### Out-of-Scope
-
-- Explicit exclusion X (reason or "separate issue")
-- Explicit exclusion Y
-
----
-
-## Architecture Evaluation (if applicable)
-
-Evaluate **at least 2–3 approaches** when there is a meaningful design choice:
-
-| Approach | Verdict     | Reason |
-| -------- | ----------- | ------ |
-| A. ...   | ❌ Rejected | ...    |
-| B. ...   | ✅ Chosen   | ...    |
-
----
-
-## Technical Implementation Plan
-
-Break into **sequential, independently-shippable steps**.
-Each step should include runnable code (SQL, TypeScript, Python, YAML, etc.) — not hand-wavy pseudocode.
-
-### Step 1 — [Title]
-
-`sql / `typescript / `python / `yaml
--- Actual implementation code
-```
-
-### Step 2 — [Title]
-
-...
-
-### Step N — [Title]
-
-...
-
----
-
-## Architecture Notes
-
-ASCII or Mermaid diagram showing how the pieces connect:
-
-```
-┌──────────────┐     ┌──────────────┐
-│  Component A │────▶│  Component B │
-└──────────────┘     └──────────────┘
-```
-
-**Key design decisions:**
-
-- Why this approach (1-liner per decision)
-
----
-
-## Database Changes (if applicable)
-
-- Migration: `YYYYMMDDHHMMSS_description.sql`
-- Tables created / altered: ...
-- Functions created / altered: ...
-- Indexes added: ... (justify each)
-- Rollback note: `DROP TABLE IF EXISTS ...`
-
-## API Contract Impact (if applicable)
-
-| Function | Changes | Backward Compatible? |
-| -------- | ------- | -------------------- |
-
-## Search & Indexing Impact (if applicable)
-
-- `search_vector` trigger updated?
-- New GIN/GiST indexes?
-- Synonym entries needed?
-
-## Fallback Logic (if applicable)
-
-```
-If A → use X
-Else if B → use Y
-Else → fallback Z (always safe, always returns a value)
-```
-
----
-
-## Security Considerations
-
-- **Secrets**: Which secrets does this touch? How are they protected?
-- **Access control**: RLS impact? Role restrictions? `SECURITY DEFINER` usage?
-- **Data exposure**: Does any report/artifact contain PII or sensitive tokens?
-
-## Performance Considerations
-
-- Estimated runtime on current data volume
-- Index utilization
-- Read-only vs. write-locking behavior
-- Scale projection (at 2×, 10× current data)
-
----
-
-## Acceptance Criteria
-
-Specific, checkbox-style items. Each must be independently verifiable:
-
-- [ ] Deliverable A exists and works as described
-- [ ] Deliverable B passes [specific test]
-- [ ] CI gate / workflow runs green
-- [ ] Documentation updated
-- [ ] No false positives on clean data
-- [ ] Edge cases handled (empty input, NULL, Unicode, etc.)
-
-## Test Requirements
-
-Group by layer:
-
-- **SQL / pgTAP**: ...
-- **Python**: ...
-- **Frontend (Vitest)**: ...
-- **E2E (Playwright)**: ...
-- **Edge cases**: empty tables, NULL values, Unicode, concurrent access
-- **CI integration**: manual dispatch → verify workflow completes
-
-## Monitoring Requirements (if applicable)
-
-- What to track over time (trend metrics)
-- Alert conditions (threshold → notification channel)
-- Execution time budget
-
----
-
-## Decision Log
-
-| Decision | Choice | Rationale |
-| -------- | ------ | --------- |
-| ...      | ...    | ...       |
-
-## Rollback Plan
-
-Numbered steps to fully reverse the change:
-
-1. Revert migration: `DROP FUNCTION / DROP TABLE IF EXISTS ...`
-2. Remove workflow file / script
-3. Revert config changes
-4. **Total rollback time:** < N minutes
-5. **Data impact:** none / describe
-
-## Risks
-
-| Risk | Likelihood | Impact     | Mitigation |
-| ---- | ---------- | ---------- | ---------- |
-| ...  | Low/Med/Hi | Low/Med/Hi | ...        |
-
-## Dependencies
-
-| Issue | Relationship                  |
-| ----- | ----------------------------- |
-| #NNN  | Depends on / Blocks / Related |
-
-## Estimated Effort
-
-- **Complexity:** Small / Medium / Large
-- **Duration:** X–Y working days
-- **Breakdown:**
-  - Sub-task A: X day(s)
-  - Sub-task B: X day(s)
-  - Testing: X day(s)
-  - Documentation: X day(s)
-
----
-
-## File Impact
-
-**N files changed, +X / -Y lines** across all phases:
-
-- N new DB migrations (X lines)
-- N new/modified test files (X lines)
-- N new/modified frontend files (X lines)
-- N CI/workflow files (X lines)
-- N documentation files (X lines)
-
-## Expansion Checklist (if applicable)
-
-| Step | Action | Effort |
-| ---- | ------ | ------ |
-
-```
-
----
-
-> **This standard transforms issue creation into platform engineering discipline.**
-> Reference implementation: [Issue #184](https://github.com/ericsocrat/poland-food-db/issues/184) — selected as the gold standard across all 89+ repo issues for structural completeness, actionable depth, and proven implementation.
-```
-
----
-
-## 16. Repo Hygiene Checklist (Enforcement)
-
-> **Policy document:** `docs/REPO_GOVERNANCE.md`
-> This section is the **enforcement layer** — rules that Copilot must follow after every change.
-
-### 16.1 After Every Structural Change
-
-A "structural change" is any addition, removal, rename, or move of files/directories.
-
-- [ ] `docs/INDEX.md` updated (if any doc added/removed/renamed)
-- [ ] `copilot-instructions.md` §3 project layout updated (if directory structure changed)
-- [ ] `CHANGELOG.md` updated under `[Unreleased]` (if user-visible)
-- [ ] `.gitignore` reviewed (if new artifact type introduced)
-- [ ] `CODEOWNERS` reviewed (if new directory added)
-- [ ] CI workflow glob patterns verified (if paths changed)
-
-### 16.2 After Every API Change
-
-- [ ] `docs/API_CONTRACTS.md` updated (new/modified function documented)
-- [ ] `docs/FRONTEND_API_MAP.md` updated (if frontend wiring changed)
-- [ ] `docs/api-registry.yaml` updated (if function added/removed/renamed)
-- [ ] pgTAP contract test added/updated in `supabase/tests/`
-- [ ] No response keys removed (additive only)
-- [ ] New parameters have defaults (backward compatible)
-
-### 16.3 Root Cleanliness (MANDATORY)
-
-**Never commit:**
-
-- `tmp-*` files (any extension)
-- `tmp-*/` directories
-- `qa_*.json`, `qa-test.json`
-- `_func_dump.txt`, `__api_defs.txt`
-- `test-results/`, `coverage/`, `playwright-report/`
-- `.next/`, `node_modules/`, `__pycache__/`, `.pytest_cache/`
-- `audit-reports/`, `backups/`
-- `*.log`
-
-**Before any commit**, verify:
-
-```powershell
-git status  # No unintended files staged
-git diff --cached --name-only  # Only intentional changes
-```
-
-**Allowed root files:** See `docs/REPO_GOVERNANCE.md` §1.3 for the exhaustive list.
-
-### 16.4 CI Must Remain Green
-
-- Run the impacted test suite before declaring a task complete (see §8.7)
-- Never bypass failing checks by deleting tests or lowering thresholds
-- If CI breaks, fix it before moving to the next task
-
-### 16.5 PR Discipline
+### PR Discipline
 
 - One concern per PR (single responsibility)
-- Separate structural moves from logic edits
-- Separate data changes from schema changes
-- Include verification output (§8.17)
-- Use conventional commit format (§13)
+- Separate structural moves from logic edits; separate data from schema changes
+- Include verification output (§8.17) and use conventional commit format (§13)
+- CI must be green before merge — never bypass by deleting tests or lowering thresholds
