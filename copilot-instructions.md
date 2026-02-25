@@ -190,13 +190,14 @@ poland-food-db/
 │   ├── FRONTEND_API_MAP.md          # Frontend ↔ API mapping reference
 │   ├── GOVERNANCE_BLUEPRINT.md      # Execution governance blueprint (master GOV plan)
 │   ├── INCIDENT_RESPONSE.md         # Incident response playbook (severity, escalation, runbooks)
-│   ├── INDEX.md                     # Canonical documentation map (43 docs, domain-classified)
+│   ├── INDEX.md                     # Canonical documentation map (44 docs, domain-classified)
 │   ├── LABELS.md                    # Labeling conventions
 │   ├── LOG_SCHEMA.md                # Structured log schema & error taxonomy
 │   ├── METRICS.md                   # Application, infrastructure & business metrics catalog
 │   ├── MIGRATION_CONVENTIONS.md     # Migration safety, trigger naming, lock risk, idempotency
 │   ├── MONITORING.md                # Runtime monitoring
 │   ├── OBSERVABILITY.md             # Observability strategy
+│   ├── ON_CALL_POLICY.md            # On-call & alert ownership, ack targets, triage labels
 │   ├── PERFORMANCE_GUARDRAILS.md    # Performance guardrails, query budgets & scale projections
 │   ├── PERFORMANCE_REPORT.md        # Performance audit, scale projections, query patterns
 │   ├── PRIVACY_CHECKLIST.md         # GDPR/RODO compliance checklist & data lifecycle

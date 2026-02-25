@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 43 in `docs/` + 5 elsewhere in repo
+> **Total documents:** 44 in `docs/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -16,7 +16,7 @@
 | [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                             |
 | [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                   |
 | [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                |
-| [Observability & Operations](#observability--operations) | 8     | Monitoring, observability, log schema, alerts, SLOs, metrics, incident response, disaster drill          |
+| [Observability & Operations](#observability--operations) | 9     | Monitoring, observability, log schema, alerts, on-call policy, SLOs, metrics, incident response, disaster drill |
 | [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                        |
 | [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                          |
 | [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion |
@@ -89,6 +89,7 @@
 | [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md)         | Incident response playbook — severity, escalation, runbooks, post-mortem        | [#231](https://github.com/ericsocrat/poland-food-db/issues/231) | 2026-02-24   |
 | [LOG_SCHEMA.md](LOG_SCHEMA.md)                       | Structured log schema & error taxonomy — error codes, severity, retention, validation | [#210](https://github.com/ericsocrat/poland-food-db/issues/210) | 2026-03-04   |
 | [ALERT_POLICY.md](ALERT_POLICY.md)                   | Alert escalation policy, query regression detection, index drift monitoring      | [#211](https://github.com/ericsocrat/poland-food-db/issues/211) | 2026-03-04   |
+| [ON_CALL_POLICY.md](ON_CALL_POLICY.md)               | On-call & alert ownership — routing, ack targets, triage labels, quiet hours     | [#233](https://github.com/ericsocrat/poland-food-db/issues/233) | 2026-03-04   |
 | [DISASTER_DRILL_REPORT.md](DISASTER_DRILL_REPORT.md) | Disaster recovery drill report — test results, findings, remediation            | Observability domain                                            | 2026-02-23   |
 
 ## DevOps & Environment
@@ -157,6 +158,7 @@ Pairs investigated for overlap during the 2026-02-28 audit:
 | OBSERVABILITY.md ↔ LOG_SCHEMA.md                  | Observability = strategy/format; Log Schema = error codes/taxonomy/DB registry  | **No redundancy** — format vs taxonomy                 |
 | METRICS.md ↔ UX_IMPACT_METRICS.md                 | Metrics = infra/app metrics; UX Impact = UX-specific measurement                 | **No redundancy** — different audiences                |
 | PERFORMANCE_REPORT.md ↔ PERFORMANCE_GUARDRAILS.md | Report = audit findings; Guardrails = policy/budgets                             | **No redundancy** — snapshot vs policy                 |
+| ALERT_POLICY.md ↔ ON_CALL_POLICY.md               | Alert Policy = escalation matrix/thresholds; On-Call = ownership/ack targets/labels | **No redundancy** — what triggers vs who responds      |
 
 ## Obsolete Reference Check
 
