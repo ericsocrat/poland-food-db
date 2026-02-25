@@ -55,7 +55,7 @@ supabase start
 
 ### 4. Run Tests
 ```powershell
-# All tests (429 checks across 30 suites)
+# All tests (460 checks across 33 suites)
 .\RUN_QA.ps1
 
 # Negative validation (23 constraint tests)
@@ -123,7 +123,7 @@ Failed Playwright runs upload screenshots and traces as artifacts for debugging.
 | **Snacks**                     |       56 |     37 | 7–49        |
 | **Sweets**                     |       50 |     19 | 30–51       |
 | **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 429 automated checks across 30 QA suites + 23 negative validation tests
+**Test Coverage**: 460 automated checks across 33 QA suites + 23 negative validation tests
 - 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
 - 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
 - 18 API surface checks (contract validation, JSON structure, listing consistency)
@@ -144,11 +144,22 @@ Failed Playwright runs upload screenshots and traces as artifacts for debugging.
 - 6 diet filtering checks (vegan/vegetarian exclusion, strict mode)
 - 6 allergen filtering checks (contains/traces exclusion, may-contain toggle)
 - 6 barcode lookup checks (EAN resolution, scan metadata, error handling)
+- 8 auth & onboarding checks (user_preferences, RLS, session flow)
+- 7 confidence reporting checks (band thresholds, distribution)
+- 14 health profile checks (conditions, nutrient thresholds, RLS)
+- 12 lists & comparison checks (CRUD, sharing, reorder)
+- 12 scanner & submission checks (scan history, product submissions)
+- 15 index & temporal integrity checks (index presence, created_at)
+- 5 attribute contradiction checks (flag vs nutrition consistency)
+- 7 monitoring & health checks (MV staleness, drift detection)
+- 15 scoring determinism checks (idempotency, reproducibility)
+- 10 multi-country consistency checks (PL/DE isolation, category parity)
+- 6 performance regression checks (query plan validation, informational)
 - 1 EAN checksum validation (all barcodes verified)
 - 8 source coverage reports (informational, non-blocking)
 - 23 negative tests (constraint violation detection)
 
-**All tests passing**: ✅ 429/429 + 23/23 negative
+**All tests passing**: ✅ 460/460 + 23/23 negative
 
 **EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
 
@@ -224,7 +235,7 @@ poland-food-db/
 │   └── SONAR.md             # SonarCloud configuration & quality gates
 ├── pipeline/                # Python data pipeline (OFF API v2 → SQL)
 ├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # Standalone test runner (429 checks)
+├── RUN_QA.ps1               # Standalone test runner (460 checks)
 ├── RUN_NEGATIVE_TESTS.ps1   # Constraint violation tests (23 tests)
 ├── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
 ├── RUN_SEED.ps1             # Unified seed runner (any environment)
@@ -240,7 +251,7 @@ poland-food-db/
 
 **Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
 
-Every change is validated against **429 automated checks** across 30 QA suites + 23 negative validation tests:
+Every change is validated against **460 automated checks** across 33 QA suites + 23 negative validation tests:
 
 ### Data Integrity (29 checks)
 - No missing required fields (product_name, brand, country, category)
@@ -281,7 +292,7 @@ Every change is validated against **429 automated checks** across 30 QA suites +
 - Confidence level distribution
 - Ingredient data coverage
 
-### API Surface Validation (14 checks)
+### API Surface Validation (18 checks)
 - Category overview row count matches reference table
 - Product count sums match v_master
 - All products return valid API JSON
@@ -301,23 +312,34 @@ Every change is validated against **429 automated checks** across 30 QA suites +
 - **Naming Conventions** (12 checks): Product name format, brand consistency, slug validation
 - **Nutrition Ranges** (16 checks): Physiological bounds, cross-field validation
 - **Data Consistency** (20 checks): Cross-table relationships, formula verification
-- **Allergen Integrity** (14 checks): FK validation, duplicate detection, valid values
+- **Allergen Integrity** (15 checks): FK validation, duplicate detection, valid values
 - **Serving & Source Validation** (16 checks): Basis rules, source completeness
 - **Ingredient Quality** (14 checks): Naming, frequency, concern tier distribution
-- **Security Posture** (20 checks): RLS, grants, SECURITY DEFINER, user_preferences isolation
-- **API Contract** (30 checks): Key sets, api_version, EAN lookup, preferences endpoints
-- **Scale Guardrails** (15 checks): Index presence, query plan validation
-- **Country Isolation** (6 checks): No mixed-country results across all API surfaces
+- **Security Posture** (22 checks): RLS, grants, SECURITY DEFINER, user_preferences isolation
+- **API Contract** (33 checks): Key sets, api_version, EAN lookup, preferences endpoints
+- **Scale Guardrails** (23 checks): Index presence, query plan validation
+- **Country Isolation** (11 checks): No mixed-country results across all API surfaces
 - **Diet Filtering** (6 checks): Vegan/vegetarian exclusion, strict mode
 - **Allergen Filtering** (6 checks): Contains/traces exclusion, may-contain toggle
 - **Barcode Lookup** (6 checks): EAN resolution, scan metadata, error handling
+- **Auth & Onboarding** (8 checks): user_preferences, session flow, RLS
+- **Confidence Reporting** (7 checks): Band thresholds, distribution
+- **Health Profiles** (14 checks): Conditions, nutrient thresholds, RLS
+- **Lists & Comparisons** (12 checks): CRUD, sharing, reorder
+- **Scanner & Submissions** (12 checks): Scan history, product submissions
+- **Index & Temporal** (15 checks): Index presence, created_at
+- **Attribute Contradictions** (5 checks): Flag vs nutrition consistency
+- **Monitoring** (7 checks): MV staleness, drift detection
+- **Scoring Determinism** (15 checks): Idempotency, reproducibility
+- **Multi-Country Consistency** (10 checks): PL/DE isolation, category parity
+- **Performance Regression** (6 checks): Query plan validation (non-blocking)
 
 ### Negative Validation (29 tests)
 Constraint violation tests that verify the database correctly rejects invalid data (bad EANs, out-of-range scores, invalid domains, FK violations).
 
 **Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
 
-**CI**: All 421 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
+**CI**: All 460 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
 
 Run tests after **every** schema change or data update.
 
@@ -432,7 +454,7 @@ All 1,025 active products are sourced from the **Open Food Facts API** (`off_api
 2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
 3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
 4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 421/421 pass)
+5. **Test** → `.\RUN_QA.ps1` (should be 460/460 pass)
 6. **Commit** → All pipelines are idempotent & version-controlled
 
 ---

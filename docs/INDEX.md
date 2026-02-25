@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 44 in `docs/` + 5 elsewhere in repo
+> **Total documents:** 45 in `docs/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -20,7 +20,7 @@
 | [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                               |
 | [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                                 |
 | [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion       |
-| [Governance & Policy](#governance--policy)               | 5     | Feature sunsetting, performance guardrails, doc governance, this index, governance blueprint                    |
+| [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance guardrails, doc governance, repo governance, this index, governance blueprint   |
 
 ---
 
@@ -128,6 +128,7 @@
 | ---------------------------------------------------------- | -------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
 | [FEATURE_SUNSETTING.md](FEATURE_SUNSETTING.md)             | Feature retirement criteria, cleanup policy, quarterly hygiene review      | [#237](https://github.com/ericsocrat/poland-food-db/issues/237) | 2026-02-24   |
 | [PERFORMANCE_GUARDRAILS.md](PERFORMANCE_GUARDRAILS.md)     | Performance guardrails — query budgets, index policy, scale projections    | Governance domain                                               | 2026-02-23   |
+| [REPO_GOVERNANCE.md](REPO_GOVERNANCE.md)                   | Repo structure rules, root cleanliness, change checklists, CI alignment    | Governance domain                                               | 2026-02-25   |
 | [DOCUMENTATION_GOVERNANCE.md](DOCUMENTATION_GOVERNANCE.md) | Documentation ownership, versioning, deprecation, drift prevention cadence | [#201](https://github.com/ericsocrat/poland-food-db/issues/201) | 2026-03-01   |
 | INDEX.md                                                   | This file — canonical documentation map                                    | [#200](https://github.com/ericsocrat/poland-food-db/issues/200) | 2026-03-01   |
 
@@ -148,17 +149,19 @@
 
 Pairs investigated for overlap during the 2026-02-28 audit:
 
-| Pair                                              | Assessment                                                                          | Verdict                                                |
-| ------------------------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------------------------ |
-| SECURITY.md (root) ↔ SECURITY_AUDIT.md            | Root = policy overview; Audit = detailed report                                     | **No redundancy** — distinct scope                     |
-| DATA_SOURCES.md ↔ DATA_PROVENANCE.md              | Sources = where data comes from; Provenance = freshness governance                  | **No redundancy** — complements                        |
-| SCORING_METHODOLOGY.md ↔ SCORING_ENGINE.md        | Methodology = formula; Engine = architecture                                        | **No redundancy** — what vs how                        |
-| ENVIRONMENT_STRATEGY.md ↔ STAGING_SETUP.md        | Strategy = overall design; Setup = operational steps                                | **No redundancy** — complements                        |
-| MONITORING.md ↔ OBSERVABILITY.md                  | Monitoring = alerts/dashboards; Observability = logging/tracing/metrics pipeline    | **No redundancy** — overlapping domain, distinct focus |
-| OBSERVABILITY.md ↔ LOG_SCHEMA.md                  | Observability = strategy/format; Log Schema = error codes/taxonomy/DB registry      | **No redundancy** — format vs taxonomy                 |
-| METRICS.md ↔ UX_IMPACT_METRICS.md                 | Metrics = infra/app metrics; UX Impact = UX-specific measurement                    | **No redundancy** — different audiences                |
-| PERFORMANCE_REPORT.md ↔ PERFORMANCE_GUARDRAILS.md | Report = audit findings; Guardrails = policy/budgets                                | **No redundancy** — snapshot vs policy                 |
-| ALERT_POLICY.md ↔ ON_CALL_POLICY.md               | Alert Policy = escalation matrix/thresholds; On-Call = ownership/ack targets/labels | **No redundancy** — what triggers vs who responds      |
+| Pair                                              | Assessment                                                                           | Verdict                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| SECURITY.md (root) ↔ SECURITY_AUDIT.md            | Root = policy overview; Audit = detailed report                                      | **No redundancy** — distinct scope                     |
+| DATA_SOURCES.md ↔ DATA_PROVENANCE.md              | Sources = where data comes from; Provenance = freshness governance                   | **No redundancy** — complements                        |
+| SCORING_METHODOLOGY.md ↔ SCORING_ENGINE.md        | Methodology = formula; Engine = architecture                                         | **No redundancy** — what vs how                        |
+| ENVIRONMENT_STRATEGY.md ↔ STAGING_SETUP.md        | Strategy = overall design; Setup = operational steps                                 | **No redundancy** — complements                        |
+| MONITORING.md ↔ OBSERVABILITY.md                  | Monitoring = alerts/dashboards; Observability = logging/tracing/metrics pipeline     | **No redundancy** — overlapping domain, distinct focus |
+| OBSERVABILITY.md ↔ LOG_SCHEMA.md                  | Observability = strategy/format; Log Schema = error codes/taxonomy/DB registry       | **No redundancy** — format vs taxonomy                 |
+| METRICS.md ↔ UX_IMPACT_METRICS.md                 | Metrics = infra/app metrics; UX Impact = UX-specific measurement                     | **No redundancy** — different audiences                |
+| PERFORMANCE_REPORT.md ↔ PERFORMANCE_GUARDRAILS.md | Report = audit findings; Guardrails = policy/budgets                                 | **No redundancy** — snapshot vs policy                 |
+| ALERT_POLICY.md ↔ ON_CALL_POLICY.md               | Alert Policy = escalation matrix/thresholds; On-Call = ownership/ack targets/labels  | **No redundancy** — what triggers vs who responds      |
+| REPO_GOVERNANCE.md ↔ GOVERNANCE_BLUEPRINT.md      | Repo Governance = structure/hygiene/checklists; Blueprint = execution governance     | **No redundancy** — repo rules vs project management   |
+| REPO_GOVERNANCE.md ↔ DOCUMENTATION_GOVERNANCE.md  | Repo Governance = structure/root/CI; Doc Governance = doc ownership/drift/versioning | **No redundancy** — repo-wide vs doc-specific          |
 
 ## Obsolete Reference Check
 
