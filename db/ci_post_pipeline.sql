@@ -38,6 +38,58 @@ SET    ingredient_concern_score = 0
 WHERE  is_deprecated IS NOT TRUE
   AND  ingredient_concern_score IS NULL;
 
+-- ─── 3a. Deprecate products with wrong data or miscategorization ────────
+-- These products have data quality issues from the OFF API that cause
+-- QA nutrition range checks to fail.  They are already deprecated in the
+-- local environment but are active in CI (fresh DB from pipeline SQL).
+
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: kJ stored as kcal'
+WHERE  country = 'DE'
+  AND  brand   = 'Goldähren'
+  AND  product_name IN ('Eiweiss Brot', 'Mehrkornschnitten')
+  AND  is_deprecated IS NOT TRUE;
+
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: calorie/macro mismatch'
+WHERE  country = 'DE'
+  AND  brand   = 'Milram'
+  AND  product_name = 'Benjamin'
+  AND  is_deprecated IS NOT TRUE;
+
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'Miscategorized: seasoning in Alcohol/Baby pipeline'
+WHERE  brand        = 'Nestlé'
+  AND  product_name = 'Przyprawa Maggi'
+  AND  category IN ('Alcohol', 'Baby')
+  AND  is_deprecated IS NOT TRUE;
+
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'Miscategorized: dairy product in Baby pipeline'
+WHERE  brand        = 'Mlekovita'
+  AND  product_name LIKE 'Bezwodny tłuszcz mleczny%'
+  AND  category = 'Baby'
+  AND  is_deprecated IS NOT TRUE;
+
+-- ─── 3b. Fix data errors in nutrition_facts ─────────────────────────────
+-- Pano "Chleb wieloziarnisty Złoty Łan" has salt=13.0 in pipeline SQL
+-- (OFF API decimal error).  The sibling product has salt=1.3.
+
+UPDATE nutrition_facts
+SET    salt_g = 1.3
+WHERE  product_id = (
+         SELECT product_id FROM products
+         WHERE  brand = 'Pano'
+           AND  product_name = 'Chleb wieloziarnisty Złoty Łan'
+           AND  category = 'Bread'
+           AND  country = 'PL'
+       )
+  AND  salt_g = 13.0;
+
 -- ─── 4. Populate allergen data ──────────────────────────────────────────
 -- The allergen population migration (20260213000500) runs BEFORE pipelines
 -- in CI, so its EAN-based JOINs match zero products.  Re-run a subset of
