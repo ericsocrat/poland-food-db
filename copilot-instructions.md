@@ -753,7 +753,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
 - CI workflows (tiered architecture):
   - **`pr-gate.yml`**: Static checks (typecheck + lint) → Unit tests + Build (parallel) → Playwright smoke E2E
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
-  - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Full Playwright E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
+  - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
   - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (446 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
