@@ -72,7 +72,9 @@ poland-food-db/
 │   ├── off_client.py                # OFF API v2 client with retry logic
 │   ├── sql_generator.py             # Generates 4-5 SQL files per category
 │   ├── validator.py                 # Data validation before SQL generation
+│   ├── test_validator.py            # Validator unit tests
 │   ├── utils.py                     # Shared utility helpers
+│   ├── image_importer.py            # Product image import utility
 │   └── categories.py               # 20 category definitions + OFF tag mappings
 ├── db/
 │   ├── pipelines/                   # 21 category folders (20 PL + 1 DE), 4-5 SQL files each
@@ -114,6 +116,28 @@ poland-food-db/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
 │   ├── config.toml
+│   ├── seed.sql                     # Supabase seed entry point
+│   ├── seed/                        # Reference data seeds
+│   │   └── 001_reference_data.sql   # Category, country, nutri-score ref data
+│   ├── sanity/                      # Sanity check SQL
+│   │   └── sanity_checks.sql        # Row-count + schema assertions
+│   ├── tests/                       # pgTAP integration tests
+│   │   ├── schema_contracts.test.sql     # Table/view/function existence checks
+│   │   ├── product_functions.test.sql    # Product detail, alternatives, score explanation
+│   │   ├── category_functions.test.sql   # Category overview, listing
+│   │   ├── search_functions.test.sql     # Search, autocomplete, filter options
+│   │   ├── scanner_functions.test.sql    # Scan recording, history
+│   │   ├── comparison_functions.test.sql # Compare, save, share comparisons
+│   │   ├── dashboard_functions.test.sql  # Recently viewed, dashboard data
+│   │   ├── telemetry_functions.test.sql  # Event tracking, admin summaries
+│   │   ├── user_functions.test.sql       # Auth-error branches
+│   │   ├── achievement_functions.test.sql    # Achievement/gamification tests
+│   │   ├── business_metrics_functions.test.sql # Business metrics tests
+│   │   ├── localization_functions.test.sql    # Localization/i18n tests
+│   │   └── push_notification_functions.test.sql # Push notification tests
+│   ├── functions/                   # Supabase Edge Functions
+│   │   └── send-push-notification/  # Push notification handler
+│   ├── dr-drill/                    # Disaster recovery drill artifacts
 │   └── migrations/                  # 136 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
@@ -190,7 +214,7 @@ poland-food-db/
 │   ├── FRONTEND_API_MAP.md          # Frontend ↔ API mapping reference
 │   ├── GOVERNANCE_BLUEPRINT.md      # Execution governance blueprint (master GOV plan)
 │   ├── INCIDENT_RESPONSE.md         # Incident response playbook (severity, escalation, runbooks)
-│   ├── INDEX.md                     # Canonical documentation map (44 docs, domain-classified)
+│   ├── INDEX.md                     # Canonical documentation map (45 docs, domain-classified)
 │   ├── LABELS.md                    # Labeling conventions
 │   ├── LOG_SCHEMA.md                # Structured log schema & error taxonomy
 │   ├── METRICS.md                   # Application, infrastructure & business metrics catalog
@@ -203,6 +227,7 @@ poland-food-db/
 │   ├── PRIVACY_CHECKLIST.md         # GDPR/RODO compliance checklist & data lifecycle
 │   ├── PRODUCTION_DATA.md           # Production data management
 │   ├── RATE_LIMITING.md             # Rate limiting strategy & API abuse prevention
+│   ├── REPO_GOVERNANCE.md           # Repo structure rules, root cleanliness, CI integrity
 │   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle (manual + automated OFF pipeline)
 │   ├── SCORING_ENGINE.md            # Scoring engine architecture & version management
 │   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
@@ -246,6 +271,7 @@ poland-food-db/
 │   │   │   ├── product/             # Product detail (AddToListMenu, AvoidBadge, HealthWarningsCard, ListsHydrator)
 │   │   │   ├── search/              # Search UI (SearchAutocomplete, FilterPanel, ActiveFilterChips, SaveSearchDialog)
 │   │   │   ├── settings/            # Settings UI (HealthProfileSection)
+│   │   │   ├── trust/               # Trust & transparency (TrustBadge, FreshnessIndicator, SourceAttribution)
 │   │   │   ├── layout/              # Layout components
 │   │   │   ├── Providers.tsx         # Root providers (QueryClient, Supabase, Zustand)
 │   │   │   └── **/*.test.tsx        # Co-located component tests (Vitest + Testing Library)
@@ -277,18 +303,42 @@ poland-food-db/
 │   ├── vitest.config.ts             # Vitest configuration (jsdom, v8 coverage)
 │   ├── playwright.config.ts         # Playwright configuration (Chromium)
 │   └── package.json                 # Dependencies + scripts (test, test:coverage, etc.)
+├── scripts/                         # Utility & governance scripts
+│   ├── backfill_template.py         # Template for backfill operations
+│   ├── check_doc_counts.py          # Doc count consistency checker
+│   ├── check_doc_drift.py           # Doc staleness detector
+│   ├── check_migration_conventions.py # Migration naming validator
+│   ├── check_migration_order.py     # Migration ordering validator
+│   ├── export_user_data.ps1         # User data export utility
+│   └── import_user_data.ps1         # User data import utility
 ├── .github/workflows/
 │   ├── pr-gate.yml                  # Lint → Typecheck → Build → Playwright E2E
 │   ├── pr-title-lint.yml            # PR title conventional-commit validation (all PRs)
 │   ├── main-gate.yml                # Build → Unit tests + coverage → SonarCloud
-│   ├── qa.yml                       # Schema → Pipelines → QA (446) → Sanity
-│   └── sync-cloud-db.yml            # Remote DB sync
+│   ├── qa.yml                       # Schema → Pipelines → QA (460) → Sanity
+│   ├── nightly.yml                  # Full Playwright (all projects) + Data Integrity Audit
+│   ├── deploy.yml                   # Manual trigger → Schema diff → Approval → db push
+│   ├── sync-cloud-db.yml            # Remote DB sync
+│   ├── api-contract.yml             # API contract validation
+│   ├── bundle-size.yml              # Frontend bundle size guard
+│   ├── codeql.yml                   # CodeQL security analysis
+│   ├── dependabot-auto-merge.yml    # Auto-merge Dependabot PRs
+│   ├── dependency-audit.yml         # Dependency vulnerability audit
+│   ├── license-compliance.yml       # License compliance checks
+│   ├── quality-gate.yml             # SonarCloud quality gate
+│   └── smoke-test.yml               # Post-deploy smoke test
 ├── .commitlintrc.json               # Conventional Commits config (12 types, 24 scopes)
+├── .editorconfig                    # Editor configuration (indent styles per language)
 ├── sonar-project.properties         # SonarCloud configuration
+├── requirements.txt                 # Python dependencies
 ├── CHANGELOG.md                     # Structured changelog (Keep a Changelog + Conventional Commits)
 ├── DEPLOYMENT.md                    # Deployment procedures, rollback playbook, emergency checklist
 ├── SECURITY.md                      # Security policy
 ├── .env.example
+├── BACKUP.ps1                       # Pre-push database backup script
+├── RUN_DR_DRILL.ps1                 # Disaster recovery drill runner
+├── run_data_audit.py                # Nightly data integrity audit (used by nightly.yml)
+├── test_data_audit.py               # Unit tests for data audit module
 └── README.md
 ```
 
