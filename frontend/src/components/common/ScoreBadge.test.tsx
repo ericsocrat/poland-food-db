@@ -91,4 +91,88 @@ describe("ScoreBadge", () => {
     render(<ScoreBadge score={15} />);
     expect(screen.queryByRole("tooltip")).toBeNull();
   });
+
+  // ─── Band boundary tests (Issue #373) ─────────────────────────────────
+
+  it("maps boundary score 20 to green (upper green boundary)", () => {
+    render(<ScoreBadge score={20} />);
+    const badge = screen.getByText("20");
+    expect(badge.className).toContain("text-score-green");
+  });
+
+  it("maps boundary score 21 to yellow (lower yellow boundary)", () => {
+    render(<ScoreBadge score={21} />);
+    const badge = screen.getByText("21");
+    expect(badge.className).toContain("text-score-yellow");
+  });
+
+  it("maps boundary score 40 to yellow (upper yellow boundary)", () => {
+    render(<ScoreBadge score={40} />);
+    const badge = screen.getByText("40");
+    expect(badge.className).toContain("text-score-yellow");
+  });
+
+  it("maps boundary score 41 to orange (lower orange boundary)", () => {
+    render(<ScoreBadge score={41} />);
+    const badge = screen.getByText("41");
+    expect(badge.className).toContain("text-score-orange");
+  });
+
+  it("maps boundary score 60 to orange (upper orange boundary)", () => {
+    render(<ScoreBadge score={60} />);
+    const badge = screen.getByText("60");
+    expect(badge.className).toContain("text-score-orange");
+  });
+
+  it("maps boundary score 61 to red (lower red boundary)", () => {
+    render(<ScoreBadge score={61} />);
+    const badge = screen.getByText("61");
+    expect(badge.className).toContain("text-score-red");
+  });
+
+  it("maps boundary score 80 to red (upper red boundary)", () => {
+    render(<ScoreBadge score={80} />);
+    const badge = screen.getByText("80");
+    expect(badge.className).toContain("text-score-red");
+  });
+
+  it("maps boundary score 81 to darkred (lower darkred boundary)", () => {
+    render(<ScoreBadge score={81} />);
+    const badge = screen.getByText("81");
+    expect(badge.className).toContain("text-score-darkred");
+  });
+
+  it("maps boundary score 100 to darkred (upper darkred boundary)", () => {
+    render(<ScoreBadge score={100} />);
+    const badge = screen.getByText("100");
+    expect(badge.className).toContain("text-score-darkred");
+  });
+
+  it("maps minimum valid score 1 to green", () => {
+    render(<ScoreBadge score={1} />);
+    const badge = screen.getByText("1");
+    expect(badge.className).toContain("text-score-green");
+  });
+
+  // ─── Red & Dark Red label and aria tests (Issue #373) ─────────────────
+
+  it("shows 'Very High' label for Red band scores", () => {
+    render(<ScoreBadge score={70} showLabel />);
+    expect(screen.getByText("Very High")).toBeTruthy();
+  });
+
+  it("shows 'Extreme' label for Dark Red band scores", () => {
+    render(<ScoreBadge score={90} showLabel />);
+    expect(screen.getByText("Extreme")).toBeTruthy();
+  });
+
+  it("has correct aria-label for Red band with label", () => {
+    render(<ScoreBadge score={70} showLabel />);
+    expect(screen.getByLabelText("Score: 70, Very High")).toBeTruthy();
+  });
+
+  it("has correct aria-label for Dark Red band with label", () => {
+    render(<ScoreBadge score={90} showLabel />);
+    expect(screen.getByLabelText("Score: 90, Extreme")).toBeTruthy();
+  });
 });

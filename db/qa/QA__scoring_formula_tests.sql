@@ -1,4 +1,4 @@
--- QA: Scoring Formula Tests (v3.2)
+-- QA: Scoring Formula Tests (v3.2) — 31 checks
 -- Validates that the scoring formula produces expected results for known test cases.
 -- Each test includes a product with controlled nutrition values and expected score.
 -- Run after pipelines to verify scoring algorithm correctness.
@@ -416,3 +416,27 @@ WHERE p.product_name = 'Paluszki extra cienkie'
   AND p.brand = 'Lajkonik'
   AND p.is_deprecated IS NOT TRUE
   AND p.unhealthiness_score::int NOT BETWEEN 29 AND 34;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 30: Synthetic band coverage — Red band (61-80)
+--          No real products score 61-80. Verify formula produces correct output
+--          for synthetic high-risk inputs. Issue #373.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT 'Red band synthetic test' AS issue,
+       compute_unhealthiness_v32(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50) AS actual_score,
+       CONCAT('Expected 61-80, got ',
+              compute_unhealthiness_v32(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50)) AS detail
+WHERE compute_unhealthiness_v32(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50)
+      NOT BETWEEN 61 AND 80;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 31: Synthetic band coverage — Dark Red band (81-100)
+--          No real products score 81-100. Verify formula produces correct output
+--          for synthetic extreme inputs. Issue #373.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT 'Dark Red band synthetic test' AS issue,
+       compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100) AS actual_score,
+       CONCAT('Expected 81-100, got ',
+              compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100)) AS detail
+WHERE compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100)
+      NOT BETWEEN 81 AND 100;

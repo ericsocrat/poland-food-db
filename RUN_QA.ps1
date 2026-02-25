@@ -5,7 +5,7 @@
 .DESCRIPTION
     Executes:
         1. QA__null_checks.sql (29 data integrity checks)
-        2. QA__scoring_formula_tests.sql (27 algorithm validation checks)
+        2. QA__scoring_formula_tests.sql (29 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-8/EAN-13 checksum validation — blocking)
         5. QA__api_surfaces.sql (18 API contract validation checks — blocking)
@@ -34,7 +34,7 @@
        28. QA__index_temporal.sql (15 index coverage & temporal checks — blocking)
        29. QA__attribute_contradiction.sql (5 attribute contradiction checks — blocking)
        30. QA__monitoring.sql (7 monitoring & health checks — blocking)
-       31. QA__scoring_determinism.sql (15 scoring determinism checks — blocking)
+       31. QA__scoring_determinism.sql (17 scoring determinism checks — blocking)
        32. QA__multi_country_consistency.sql (10 multi-country consistency checks — blocking)
        33. QA__performance_regression.sql (6 performance regression checks — informational)
        34. QA__event_intelligence.sql (18 event intelligence checks — blocking)
@@ -120,7 +120,7 @@ $QA_DIR = Join-Path (Join-Path $SCRIPT_ROOT "db") "qa"
 # Single source of truth for suite metadata (names, counts, blocking behavior)
 $suiteCatalog = @(
     @{ Num = 1; Name = "Data Integrity"; Short = "Integrity"; Id = "integrity"; Checks = 29; Blocking = $true; Kind = "sql-special"; File = "QA__null_checks.sql" },
-    @{ Num = 2; Name = "Scoring Formula"; Short = "Scoring"; Id = "scoring"; Checks = 27; Blocking = $true; Kind = "sql-special"; File = "QA__scoring_formula_tests.sql" },
+    @{ Num = 2; Name = "Scoring Formula"; Short = "Scoring"; Id = "scoring"; Checks = 29; Blocking = $true; Kind = "sql-special"; File = "QA__scoring_formula_tests.sql" },
     @{ Num = 3; Name = "Source Coverage"; Short = "Source"; Id = "source_coverage"; Checks = 8; Blocking = $false; Kind = "sql-special"; File = "QA__source_coverage.sql" },
     @{ Num = 4; Name = "EAN Checksum Validation"; Short = "EAN"; Id = "ean"; Checks = 1; Blocking = $true; Kind = "python"; File = "validate_eans.py" },
     @{ Num = 5; Name = "API Surface Validation"; Short = "API"; Id = "api"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__api_surfaces.sql" },
@@ -149,7 +149,7 @@ $suiteCatalog = @(
     @{ Num = 28; Name = "Index & Temporal Integrity"; Short = "IdxTemporal"; Id = "index_temporal"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__index_temporal.sql" },
     @{ Num = 29; Name = "Attribute Contradictions"; Short = "AttrContra"; Id = "attribute_contradiction"; Checks = 5; Blocking = $true; Kind = "sql"; File = "QA__attribute_contradiction.sql" },
     @{ Num = 30; Name = "Monitoring & Health Check"; Short = "Monitoring"; Id = "monitoring"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__monitoring.sql" },
-    @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" },
+    @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 17; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" },
     @{ Num = 32; Name = "Multi-Country Consistency"; Short = "MultiCountry"; Id = "multi_country_consistency"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__multi_country_consistency.sql" },
     @{ Num = 33; Name = "Performance Regression"; Short = "PerfRegress"; Id = "performance_regression"; Checks = 6; Blocking = $false; Kind = "sql"; File = "QA__performance_regression.sql" },
     @{ Num = 34; Name = "Event Intelligence"; Short = "EventIntel"; Id = "event_intelligence"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__event_intelligence.sql" }
