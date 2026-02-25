@@ -82,6 +82,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Sync `README.md` project structure with actual repo layout: remove phantom `db/migrations/`,
+  fix `chips/` → `chips-pl/` + add `chips-de/`, expand QA listing from 15 → 45 files,
+  expand docs listing from 19 → 49 entries, update migration count 130 → 137, add supabase
+  sub-dirs (seed/, sanity/, tests/), add pipeline/, scripts/, .github/workflows/ entries,
+  consolidate duplicate supabase/ section, add missing root files (#318)
 - Add `docs/ALERT_POLICY.md`: alert escalation policy with P0–P3 severity tiers,
   escalation chain, on-call rules, slow query thresholds, query regression detection
   architecture, index drift monitoring cadence and action matrix (#211)
