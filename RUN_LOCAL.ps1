@@ -21,6 +21,8 @@
         .\RUN_LOCAL.ps1 -DryRun
         .\RUN_LOCAL.ps1 -RunQA
         .\RUN_LOCAL.ps1 -Category chips -RunQA
+        .\RUN_LOCAL.ps1 -Enrich
+        .\RUN_LOCAL.ps1 -Enrich -RunQA
 #>
 
 [CmdletBinding()]
@@ -32,7 +34,10 @@ param(
     [switch]$DryRun,
 
     [Parameter(HelpMessage = "Run the full QA suite (via RUN_QA.ps1) after pipeline execution.")]
-    [switch]$RunQA
+    [switch]$RunQA,
+
+    [Parameter(HelpMessage = "Run ingredient/allergen enrichment via enrich_ingredients.py after pipeline execution. Requires internet (OFF API).")]
+    [switch]$Enrich
 )
 
 # ─── Configuration ───────────────────────────────────────────────────────────
@@ -196,6 +201,84 @@ if ($LASTEXITCODE -eq 0) {
 }
 else {
     Write-Host "  ⚠ MV refresh failed (non-blocking): $mvOutput" -ForegroundColor DarkYellow
+}
+
+# ─── Ingredient/Allergen Enrichment (optional) ─────────────────────────────────────
+
+if ($Enrich) {
+    Write-Host ""
+    Write-Host "================================================" -ForegroundColor Cyan
+    Write-Host "  Ingredient & Allergen Enrichment" -ForegroundColor Cyan
+    Write-Host "================================================" -ForegroundColor Cyan
+    Write-Host ""
+
+    $enrichScript = Join-Path $PSScriptRoot "enrich_ingredients.py"
+    $postEnrichSql = Join-Path $PSScriptRoot "db" "ci_post_enrichment.sql"
+    $pythonExe = Join-Path $PSScriptRoot ".venv" "Scripts" "python.exe"
+
+    if (-not (Test-Path $enrichScript)) {
+        Write-Host "ERROR: enrich_ingredients.py not found: $enrichScript" -ForegroundColor Red
+        exit 1
+    }
+    if (-not (Test-Path $pythonExe)) {
+        Write-Host "ERROR: Python venv not found: $pythonExe" -ForegroundColor Red
+        Write-Host "Create it with: python -m venv .venv && .\.venv\Scripts\pip install -r requirements.txt" -ForegroundColor Yellow
+        exit 1
+    }
+
+    # Step 1: Run enrichment script (fetches from OFF API, generates migration SQL)
+    Write-Host "Step 1: Fetching ingredient data from OFF API..." -ForegroundColor Yellow
+    $env:PYTHONIOENCODING = "utf-8"
+    & $pythonExe $enrichScript
+    if ($LASTEXITCODE -ne 0) {
+        Write-Host "WARNING: Enrichment script exited with errors (some products may not have been enriched)." -ForegroundColor DarkYellow
+        Write-Host "  This is expected — not all products are on Open Food Facts." -ForegroundColor DarkGray
+    }
+
+    # Step 2: Apply the generated migration
+    $enrichMigrations = Get-ChildItem -Path (Join-Path $PSScriptRoot "supabase" "migrations") -Filter "*populate_ingredients_allergens*" | Sort-Object Name | Select-Object -Last 1
+    if ($enrichMigrations) {
+        Write-Host "Step 2: Applying enrichment migration: $($enrichMigrations.Name)..." -ForegroundColor Yellow
+        $output = Get-Content $enrichMigrations.FullName -Raw | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME -v ON_ERROR_STOP=1 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  ✓ Enrichment migration applied" -ForegroundColor Green
+        }
+        else {
+            Write-Host "  ✗ Enrichment migration FAILED" -ForegroundColor Red
+            Write-Host "    $($output | Select-Object -Last 5)" -ForegroundColor DarkRed
+            exit 1
+        }
+    }
+    else {
+        Write-Host "  ⚠ No enrichment migration found — skipping apply step." -ForegroundColor DarkYellow
+    }
+
+    # Step 3: Compute concern scores and re-score all categories
+    if (Test-Path $postEnrichSql) {
+        Write-Host "Step 3: Computing concern scores and re-scoring all categories..." -ForegroundColor Yellow
+        $output = Get-Content $postEnrichSql -Raw | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME -v ON_ERROR_STOP=1 2>&1
+        if ($LASTEXITCODE -eq 0) {
+            Write-Host "  ✓ Post-enrichment scoring complete" -ForegroundColor Green
+        }
+        else {
+            Write-Host "  ✗ Post-enrichment scoring FAILED" -ForegroundColor Red
+            Write-Host "    $($output | Select-Object -Last 5)" -ForegroundColor DarkRed
+            exit 1
+        }
+    }
+
+    # Step 4: Refresh materialized views
+    Write-Host "Step 4: Refreshing materialized views..." -ForegroundColor Yellow
+    $mvOutput = "SELECT refresh_all_materialized_views();" | docker exec -i $CONTAINER psql -U $DB_USER -d $DB_NAME 2>&1
+    if ($LASTEXITCODE -eq 0) {
+        Write-Host "  ✓ All materialized views refreshed" -ForegroundColor Green
+    }
+    else {
+        Write-Host "  ⚠ MV refresh failed (non-blocking): $mvOutput" -ForegroundColor DarkYellow
+    }
+
+    Write-Host ""
+    Write-Host "Enrichment complete." -ForegroundColor Green
 }
 
 # ─── QA Checks (optional) ──────────────────────────────────────────────────────────

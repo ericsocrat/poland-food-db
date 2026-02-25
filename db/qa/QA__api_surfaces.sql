@@ -71,13 +71,13 @@ SELECT '8. api_category_listing returns valid structure' AS check_name,
             THEN 0 ELSE 1 END AS violations
 FROM api_category_listing('Chips', 'score', 'asc', 5, 0) AS result;
 
--- 9. find_similar_products returns results for products with ingredients
+-- 9. find_similar_products returns results for products with shared ingredients
 SELECT '9. find_similar_products returns results' AS check_name,
        COUNT(*) AS violations
 FROM (
-    SELECT DISTINCT pi.product_id
-    FROM product_ingredient pi
-    JOIN products p ON p.product_id = pi.product_id
+    SELECT DISTINCT ms.product_id_a AS product_id
+    FROM mv_product_similarity ms
+    JOIN products p ON p.product_id = ms.product_id_a
     WHERE p.is_deprecated IS NOT TRUE
     LIMIT 5
 ) sample

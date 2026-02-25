@@ -37,10 +37,17 @@ SELECT '3. allergen tags in recognized domain' AS check_name,
 FROM product_allergen_info
 WHERE type = 'contains'
   AND tag NOT IN (
+  -- EU-14 groups
   'en:gluten', 'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans',
   'en:molluscs', 'en:peanuts', 'en:nuts', 'en:soybeans', 'en:celery',
   'en:mustard', 'en:sesame-seeds', 'en:lupin',
   'en:sulphur-dioxide-and-sulphites',
+  -- Specific gluten cereals (EU sub-allergens of 'en:gluten')
+  'en:wheat', 'en:barley', 'en:rye', 'en:oats', 'en:spelt', 'en:kamut',
+  -- Specific tree nuts (EU sub-allergens of 'en:nuts')
+  'en:tree-nuts', 'en:almonds', 'en:hazelnuts', 'en:walnuts',
+  'en:cashew-nuts', 'en:pistachio-nuts', 'en:pecan-nuts',
+  'en:brazil-nuts', 'en:macadamia-nuts',
   -- Accepted extras beyond EU-14
   'en:kiwi', 'en:pork', 'en:peach'
 );
@@ -53,10 +60,18 @@ SELECT '4. trace tags in recognized domain' AS check_name,
 FROM product_allergen_info
 WHERE type = 'traces'
   AND tag NOT IN (
+  -- EU-14 groups
   'en:gluten', 'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans',
   'en:molluscs', 'en:peanuts', 'en:nuts', 'en:soybeans', 'en:celery',
   'en:mustard', 'en:sesame-seeds', 'en:lupin',
   'en:sulphur-dioxide-and-sulphites',
+  -- Specific gluten cereals
+  'en:wheat', 'en:barley', 'en:rye', 'en:oats', 'en:spelt', 'en:kamut',
+  -- Specific tree nuts
+  'en:tree-nuts', 'en:almonds', 'en:hazelnuts', 'en:walnuts',
+  'en:cashew-nuts', 'en:pistachio-nuts', 'en:pecan-nuts',
+  'en:brazil-nuts', 'en:macadamia-nuts',
+  -- Accepted extras
   'en:kiwi', 'en:pork'
 );
 
@@ -124,13 +139,14 @@ FROM (
   WHERE ir.name_en ILIKE ANY(ARRAY[
     '%milk%','%cream%','%butter%','%cheese%','%whey%','%lactose%','%casein%'
   ])
-  -- Exclude non-dairy false positives
-  AND ir.name_en NOT ILIKE ANY(ARRAY[
+  -- Exclude non-dairy false positives (use NOT + ILIKE ANY to correctly exclude ALL matches)
+  AND NOT (ir.name_en ILIKE ANY(ARRAY[
     '%cocoa butter%','%shea butter%','%peanut butter%','%nut butter%',
     '%coconut milk%','%coconut cream%','%almond milk%','%oat milk%',
     '%soy milk%','%rice milk%','%cashew milk%','%cream of tartar%',
-    '%ice cream plant%','%buttercup%'
-  ])
+    '%ice cream plant%','%buttercup%','%lactic acid%','%cream soda%',
+    '%factory%handles%','%produced%facility%'
+  ]))
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
     WHERE pai.product_id = pi.product_id AND pai.tag = 'en:milk' AND pai.type = 'contains'
@@ -170,7 +186,7 @@ FROM (
   JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
   JOIN products p ON p.product_id = pi.product_id AND p.is_deprecated IS NOT TRUE
   WHERE ir.name_en ILIKE ANY(ARRAY['%egg%'])
-  AND ir.name_en NOT ILIKE ANY(ARRAY['%eggplant%','%reggiano%'])
+  AND NOT (ir.name_en ILIKE ANY(ARRAY['%eggplant%','%reggiano%','%egg noodle%']))
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
     WHERE pai.product_id = pi.product_id AND pai.tag = 'en:eggs' AND pai.type = 'contains'

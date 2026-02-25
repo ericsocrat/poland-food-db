@@ -6,9 +6,9 @@
 > **EAN coverage:** 997/1,025 (97.3%)
 > **Scoring:** v3.2 — 9-factor weighted formula via `compute_unhealthiness_v32()` (added ingredient concern scoring)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
-> **Ingredient analytics:** 2,740 unique ingredients (all clean ASCII English), 1,218 allergen declarations, 1,304 trace declarations
+> **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 478 checks across 34 suites + 23 negative validation tests — all passing
+> **QA:** 470 checks across 34 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -144,7 +144,7 @@ poland-food-db/
 │   ├── functions/                   # Supabase Edge Functions
 │   │   └── send-push-notification/  # Push notification handler
 │   ├── dr-drill/                    # Disaster recovery drill artifacts
-│   └── migrations/                  # 136 append-only schema migrations
+│   └── migrations/                  # 140 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -256,7 +256,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (478 checks across 34 suites)
+├── RUN_QA.ps1                       # QA test runner (470 checks across 34 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -367,9 +367,9 @@ poland-food-db/
 | ------------------------- | ----------------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
 | `products`                | Product identity, scores, flags, provenance     | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.                                                   |
 | `nutrition_facts`         | Nutrition per product (per 100g)                | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                                                                   |
-| `ingredient_ref`          | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,740 unique ingredients; name_en, vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                               |
-| `product_ingredient`      | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~12,892 rows across 859 products; tracks percent, percent_estimate, sub-ingredients, position order                                       |
-| `product_allergen_info`   | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,527 rows (1,218 allergens + 1,309 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags |
+| `ingredient_ref`          | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,995 unique ingredients; name_en (UNIQUE), vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                      |
+| `product_ingredient`      | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                       |
+| `product_allergen_info`   | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags |
 | `country_ref`             | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag; FK from products.country                                                                                 |
 | `category_ref`            | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                     |
 | `nutri_score_ref`         | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                         |
@@ -546,7 +546,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **130 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **140 migrations**.
 
 **Rules:**
 
@@ -789,7 +789,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 446 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 29 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 470 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -867,10 +867,10 @@ At the end of every PR-like change, include a **Verification** section:
 | Multi-Country Consistency | `QA__multi_country_consistency.sql` |     10 | Yes       |
 | Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |
 | Event Intelligence        | `QA__event_intelligence.sql`        |     18 | Yes       |
-| **Negative Validation**   | `TEST__negative_checks.sql`         |     29 | Yes       |
+| **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **478/478 checks passing** (+ EAN validation).
-**Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **29/29 caught**.
+**Run:** `.\RUN_QA.ps1` — expects **470/470 checks passing** (+ EAN validation).
+**Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
 

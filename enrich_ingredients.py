@@ -132,16 +132,34 @@ def get_ingredient_ref() -> dict[str, int]:
 # ---------------------------------------------------------------------------
 
 
+# Shared session for connection pooling (reduces RemoteDisconnected errors)
+_session: requests.Session | None = None
+
+
+def _get_session() -> requests.Session:
+    """Return a shared session with connection pooling."""
+    global _session
+    if _session is None:
+        _session = requests.Session()
+        _session.headers.update({"User-Agent": USER_AGENT})
+        adapter = requests.adapters.HTTPAdapter(
+            max_retries=0,  # we handle retries ourselves
+            pool_connections=5,
+            pool_maxsize=5,
+        )
+        _session.mount("https://", adapter)
+        _session.mount("http://", adapter)
+    return _session
+
+
 def fetch_off_product(ean: str) -> dict | None:
     """Fetch a single product from OFF API."""
     url = OFF_PRODUCT_URL.format(ean=ean)
-    headers = {"User-Agent": USER_AGENT}
+    session = _get_session()
 
     for attempt in range(MAX_RETRIES + 1):
         try:
-            resp = requests.get(
-                url, params={"fields": FIELDS}, headers=headers, timeout=TIMEOUT
-            )
+            resp = session.get(url, params={"fields": FIELDS}, timeout=TIMEOUT)
             if resp.status_code == 404:
                 return None
             resp.raise_for_status()
@@ -149,6 +167,8 @@ def fetch_off_product(ean: str) -> dict | None:
             if data.get("status") == 0:
                 return None
             return data.get("product", {})
+        except KeyboardInterrupt:
+            raise  # re-raise to allow graceful shutdown
         except Exception as exc:
             if attempt < MAX_RETRIES:
                 time.sleep(DELAY * (attempt + 1) * 2)
@@ -612,42 +632,47 @@ def main():
         "api_errors": 0,
     }
 
-    for i, product in enumerate(products):
-        if (i + 1) % 50 == 0 or i == 0:
-            print(
-                f"  Processing {i+1}/{len(products)} "
-                f"(ingredients: {stats['with_ingredients']}, "
-                f"allergens: {stats['with_allergens']}, "
-                f"not found: {stats['not_found']})..."
+    try:
+        for i, product in enumerate(products):
+            if (i + 1) % 50 == 0 or i == 0:
+                print(
+                    f"  Processing {i+1}/{len(products)} "
+                    f"(ingredients: {stats['with_ingredients']}, "
+                    f"allergens: {stats['with_allergens']}, "
+                    f"not found: {stats['not_found']})..."
+                )
+
+            off_data = fetch_off_product(product["ean"])
+            stats["processed"] += 1
+
+            if off_data is None:
+                stats["not_found"] += 1
+                time.sleep(DELAY)
+                continue
+
+            # Process ingredients
+            ing_rows = process_ingredients(
+                off_data,
+                product["country"],
+                product["ean"],
+                ingredient_lookup,
+                new_ingredients,
             )
+            if ing_rows:
+                stats["with_ingredients"] += 1
+                all_ingredient_rows.extend(ing_rows)
 
-        off_data = fetch_off_product(product["ean"])
-        stats["processed"] += 1
+            # Process allergens/traces
+            alg_rows = process_allergens(off_data, product["country"], product["ean"])
+            if alg_rows:
+                stats["with_allergens"] += 1
+                all_allergen_rows.extend(alg_rows)
 
-        if off_data is None:
-            stats["not_found"] += 1
             time.sleep(DELAY)
-            continue
-
-        # Process ingredients
-        ing_rows = process_ingredients(
-            off_data,
-            product["country"],
-            product["ean"],
-            ingredient_lookup,
-            new_ingredients,
+    except KeyboardInterrupt:
+        print(
+            f"\n  Interrupted at {stats['processed']}/{len(products)} — generating migration with collected data..."
         )
-        if ing_rows:
-            stats["with_ingredients"] += 1
-            all_ingredient_rows.extend(ing_rows)
-
-        # Process allergens/traces
-        alg_rows = process_allergens(off_data, product["country"], product["ean"])
-        if alg_rows:
-            stats["with_allergens"] += 1
-            all_allergen_rows.extend(alg_rows)
-
-        time.sleep(DELAY)
 
     # 3. Generate migration
     print("\n[4/4] Generating migration SQL...")
