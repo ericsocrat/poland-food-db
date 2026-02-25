@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(117);
+SELECT plan(123);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -179,6 +179,14 @@ SELECT has_function('public', 'complete_backfill',               'function compl
 SELECT has_table('public', 'log_level_ref',                      'table log_level_ref exists');
 SELECT has_table('public', 'error_code_registry',                'table error_code_registry exists');
 SELECT has_function('public', 'validate_log_entry',              'function validate_log_entry exists');
+
+-- ─── Alert Escalation & Query Regression (#211) ─────────────────────────────────
+SELECT has_table('public', 'query_performance_snapshots',        'table query_performance_snapshots exists');
+SELECT has_function('public', 'snapshot_query_performance',      'function snapshot_query_performance exists');
+SELECT has_view('public', 'v_query_regressions',                 'view v_query_regressions exists');
+SELECT has_view('public', 'v_unused_indexes',                    'view v_unused_indexes exists');
+SELECT has_view('public', 'v_missing_indexes',                   'view v_missing_indexes exists');
+SELECT has_view('public', 'v_index_bloat_estimate',              'view v_index_bloat_estimate exists');
 
 SELECT * FROM finish();
 ROLLBACK;

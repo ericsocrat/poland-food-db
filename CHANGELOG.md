@@ -15,6 +15,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Schema & Migrations
 
+- Add alert escalation & query regression detection: `query_performance_snapshots` table,
+  `snapshot_query_performance()` function (SECURITY DEFINER), `v_query_regressions` view,
+  `v_unused_indexes` / `v_missing_indexes` / `v_index_bloat_estimate` index drift monitoring
+  views, RLS Pattern B on snapshot table (#211)
 - Add structured log schema & error taxonomy: `log_level_ref` table (5 severity levels with
   retention/escalation policy), `error_code_registry` table (13 starter error codes across 8
   domains), `validate_log_entry()` validation function (SECURITY DEFINER), RLS Pattern B
@@ -71,6 +75,9 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Add `docs/ALERT_POLICY.md`: alert escalation policy with P0–P3 severity tiers,
+  escalation chain, on-call rules, slow query thresholds, query regression detection
+  architecture, index drift monitoring cadence and action matrix (#211)
 - Add `docs/LOG_SCHEMA.md`: structured log schema specification, error code format
   (`{DOMAIN}_{CATEGORY}_{NNN}`), 8 registered domains, severity/escalation matrix,
   retention policy (0d–indefinite), domain-specific logging conventions (#210)

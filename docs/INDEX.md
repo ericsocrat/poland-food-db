@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 42 in `docs/` + 5 elsewhere in repo
+> **Total documents:** 43 in `docs/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -16,7 +16,7 @@
 | [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                             |
 | [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                   |
 | [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                |
-| [Observability & Operations](#observability--operations) | 7     | Monitoring, observability, log schema, SLOs, metrics, incident response, disaster drill                  |
+| [Observability & Operations](#observability--operations) | 8     | Monitoring, observability, log schema, alerts, SLOs, metrics, incident response, disaster drill          |
 | [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                        |
 | [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                          |
 | [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion |
@@ -88,6 +88,7 @@
 | [METRICS.md](METRICS.md)                             | Metrics catalog — application metrics, infrastructure metrics, business metrics | Observability domain                                            | 2026-02-24   |
 | [INCIDENT_RESPONSE.md](INCIDENT_RESPONSE.md)         | Incident response playbook — severity, escalation, runbooks, post-mortem        | [#231](https://github.com/ericsocrat/poland-food-db/issues/231) | 2026-02-24   |
 | [LOG_SCHEMA.md](LOG_SCHEMA.md)                       | Structured log schema & error taxonomy — error codes, severity, retention, validation | [#210](https://github.com/ericsocrat/poland-food-db/issues/210) | 2026-03-04   |
+| [ALERT_POLICY.md](ALERT_POLICY.md)                   | Alert escalation policy, query regression detection, index drift monitoring      | [#211](https://github.com/ericsocrat/poland-food-db/issues/211) | 2026-03-04   |
 | [DISASTER_DRILL_REPORT.md](DISASTER_DRILL_REPORT.md) | Disaster recovery drill report — test results, findings, remediation            | Observability domain                                            | 2026-02-23   |
 
 ## DevOps & Environment
