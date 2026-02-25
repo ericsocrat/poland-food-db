@@ -156,7 +156,8 @@ FROM (
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 10. Gluten-ingredient products should declare en:gluten allergen
 --     Products with wheat/barley/rye/oat/spelt ingredients should have
---     an en:gluten allergen tag.
+--     an en:gluten allergen tag. Includes Polish (owsiane) and German
+--     (hafer) oat names per EU allergen regulation.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '10. gluten ingredients declare gluten allergen' AS check_name,
        COUNT(*) AS violations
@@ -166,9 +167,15 @@ FROM (
   JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
   JOIN products p ON p.product_id = pi.product_id AND p.is_deprecated IS NOT TRUE
   WHERE ir.name_en ILIKE ANY(ARRAY[
-    '%wheat%','%barley%','%rye%','%spelt%'
+    '%wheat%','%barley%','%rye%','%spelt%',
+    '%oats%','%oatmeal%','%oat flake%','%oat bran%','%oat fibre%',
+    '%oat fiber%','%rolled oat%',
+    '%owsian%','%owies%',
+    '%haferfloc%','%haferkl%'
   ])
   AND ir.name_en NOT ILIKE '%buckwheat%'
+  AND ir.name_en NOT ILIKE '%benzoate%'
+  AND ir.name_en NOT ILIKE '%coat%'
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
     WHERE pai.product_id = pi.product_id AND pai.tag = 'en:gluten' AND pai.type = 'contains'
