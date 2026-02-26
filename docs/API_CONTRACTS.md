@@ -169,6 +169,15 @@ Body: {"p_product_id": 32}
     "trace_tags": "en:soybeans"   // text, nullable
   },
 
+  // Stores (added in #350 — Store Architecture)
+  "stores": [                     // array, may be empty
+    {
+      "store_name": "Biedronka",  // text
+      "store_slug": "biedronka",  // text (URL-safe)
+      "store_type": "discounter"  // text (convenience|supermarket|hypermarket|discounter|specialty|online|drugstore)
+    }
+  ],
+
   // Data trust
   "trust": {
     "confidence": "verified",               // "verified" | "estimated" | "low"
@@ -783,3 +792,110 @@ UPDATE feature_flags SET enabled = true WHERE key = 'data_provenance_ui';
 ```
 
 See [docs/DATA_PROVENANCE.md](DATA_PROVENANCE.md) for full architecture.
+
+---
+
+## 13. Store Architecture (#350)
+
+**Purpose:** Structured M:N relationship between products and retail stores, replacing the free-text `products.store_availability` column.
+
+### New Tables
+
+| Table                        | Purpose                    | Write Access      |
+| ---------------------------- | -------------------------- | ----------------- |
+| `store_ref`                  | Store registry (33 stores) | service_role only |
+| `product_store_availability` | Product ↔ store junction   | service_role only |
+
+### `api_product_stores(p_product_id bigint)` (RPC Function)
+
+**Auth:** authenticated only.
+
+**Returns:** JSONB with stores array for a single product.
+
+```jsonc
+{
+  "api_version": "1.0",
+  "product_id": 32,
+  "stores": [
+    {
+      "store_id": 1,
+      "store_name": "Biedronka",
+      "store_slug": "biedronka",
+      "store_type": "discounter",
+      "country": "PL",
+      "website_url": "https://www.biedronka.pl",
+      "verified_at": null,
+      "source": "pipeline"
+    }
+  ]
+}
+```
+
+### `api_store_products(p_store_slug text, p_country text DEFAULT 'PL', p_limit int DEFAULT 50, p_offset int DEFAULT 0)` (RPC Function)
+
+**Auth:** authenticated only.
+
+**Returns:** JSONB with paginated products available at a given store, sorted by healthiest first.
+
+```jsonc
+{
+  "api_version": "1.0",
+  "store": {
+    "store_id": 1,
+    "store_name": "Biedronka",
+    "store_slug": "biedronka",
+    "store_type": "discounter",
+    "country": "PL"
+  },
+  "total_count": 145,
+  "limit": 50,
+  "offset": 0,
+  "products": [
+    {
+      "product_id": 42,
+      "product_name": "...",
+      "brand": "...",
+      "category": "Dairy",
+      "unhealthiness_score": 12,
+      "nutri_score_label": "A",
+      "ean": "5901234567890"
+    }
+  ]
+}
+```
+
+### `api_list_stores(p_country text DEFAULT 'PL')` (RPC Function)
+
+**Auth:** authenticated only.
+
+**Returns:** JSONB array of all active stores for a country with product counts.
+
+```jsonc
+{
+  "api_version": "1.0",
+  "country": "PL",
+  "stores": [
+    {
+      "store_id": 1,
+      "store_name": "Biedronka",
+      "store_slug": "biedronka",
+      "store_type": "discounter",
+      "product_count": 145,
+      "website_url": "https://www.biedronka.pl"
+    }
+  ]
+}
+```
+
+### `v_master` Changes
+
+Two new columns appended to `v_master`:
+
+| Column        | Type    | Description                                        |
+| ------------- | ------- | -------------------------------------------------- |
+| `store_count` | integer | Number of active stores linked to this product     |
+| `store_names` | text    | Comma-separated store names (sorted by sort_order) |
+
+### Migration Note
+
+The `products.store_availability` column is **deprecated** but retained for backward compatibility. New code should use `product_store_availability` junction table. The Żabka category has been deactivated and its 28 products reclassified to "Frozen & Prepared".

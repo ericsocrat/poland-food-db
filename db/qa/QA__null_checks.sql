@@ -416,7 +416,7 @@ FROM (
     AND n.salt_g = 0
     AND p2.category IN ('Chips','Instant & Frozen','Meat','Snacks',
                          'Sauces','Condiments','Canned Goods','Bread',
-                         'Frozen & Prepared','Zabka')
+                         'Frozen & Prepared')
 
   UNION ALL
 

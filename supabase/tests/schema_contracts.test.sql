@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(137);
+SELECT plan(155);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -206,6 +206,37 @@ SELECT has_function('public', 'api_get_event_schemas',            'function api_
 
 -- ─── Completeness Gap Analysis (#376) ─────────────────────────────────────────
 SELECT has_function('public', 'api_completeness_gap_analysis',    'function api_completeness_gap_analysis exists');
+
+-- ─── Store Architecture (#350) ────────────────────────────────────────────────
+SELECT has_table('public', 'store_ref',                           'table store_ref exists');
+SELECT has_column('public', 'store_ref', 'store_id',              'column store_ref.store_id exists');
+SELECT has_column('public', 'store_ref', 'country',               'column store_ref.country exists');
+SELECT has_column('public', 'store_ref', 'store_name',            'column store_ref.store_name exists');
+SELECT has_column('public', 'store_ref', 'store_slug',            'column store_ref.store_slug exists');
+SELECT has_column('public', 'store_ref', 'store_type',            'column store_ref.store_type exists');
+SELECT has_column('public', 'store_ref', 'is_active',             'column store_ref.is_active exists');
+SELECT has_table('public', 'product_store_availability',          'table product_store_availability exists');
+SELECT has_column('public', 'product_store_availability', 'product_id', 'column product_store_availability.product_id exists');
+SELECT has_column('public', 'product_store_availability', 'store_id',   'column product_store_availability.store_id exists');
+SELECT has_column('public', 'product_store_availability', 'source',     'column product_store_availability.source exists');
+SELECT has_function('public', 'api_product_stores',               'function api_product_stores exists');
+SELECT has_function('public', 'api_store_products',               'function api_store_products exists');
+SELECT has_function('public', 'api_list_stores',                  'function api_list_stores exists');
+
+-- v_master store columns
+SELECT has_column('public', 'v_master', 'store_count',            'v_master.store_count exists');
+SELECT has_column('public', 'v_master', 'store_names',            'v_master.store_names exists');
+
+-- Żabka deactivated
+SELECT ok(
+    NOT (SELECT is_active FROM category_ref WHERE category = 'Żabka'),
+    'Żabka category is deactivated'
+);
+SELECT is(
+    (SELECT COUNT(*)::int FROM products WHERE category = 'Żabka' AND is_deprecated = false),
+    0,
+    'no active products in Żabka category'
+);
 
 SELECT * FROM finish();
 ROLLBACK;
