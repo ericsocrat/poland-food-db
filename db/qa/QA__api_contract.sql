@@ -22,16 +22,17 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#1  product_detail top-level keys (19)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #2  api_product_detail → scores keys (6)
+-- #2  api_product_detail → scores keys (8)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
         SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_product_detail(2)->'scores') k
     ) = ARRAY[
-        'nova_group','nutri_score','nutri_score_color','processing_risk',
-        'score_band','unhealthiness_score'
+        'nova_group','nutri_score','nutri_score_color',
+        'nutri_score_official_in_country','nutri_score_source',
+        'processing_risk','score_band','unhealthiness_score'
     ]
-    THEN 'PASS' ELSE 'FAIL' END AS "#2  product_detail → scores keys (6)";
+    THEN 'PASS' ELSE 'FAIL' END AS "#2  product_detail → scores keys (8)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #3  api_product_detail → flags keys (5)
@@ -124,7 +125,7 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#11 category_listing top-level keys (9)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #12 api_category_listing → product item keys (20)
+-- #12 api_category_listing → product item keys (21)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
@@ -132,10 +133,10 @@ SELECT
     ) = ARRAY[
         'brand','calories','confidence','data_completeness_pct','ean',
         'high_salt_flag','high_sat_fat_flag','high_sugar_flag','image_thumb_url',
-        'nova_group','nutri_score','processing_risk','product_id','product_name',
+        'nova_group','nutri_score','nutri_score_source','processing_risk','product_id','product_name',
         'protein_g','salt_g','score_band','sugars_g','total_fat_g','unhealthiness_score'
     ]
-    THEN 'PASS' ELSE 'FAIL' END AS "#12 category_listing → item keys (20)";
+    THEN 'PASS' ELSE 'FAIL' END AS "#12 category_listing → item keys (21)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #13 api_score_explanation — top-level keys (10)
@@ -150,13 +151,17 @@ SELECT
     THEN 'PASS' ELSE 'FAIL' END AS "#13 score_explanation top-level keys (10)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #14 api_score_explanation → summary keys (6)
+-- #14 api_score_explanation → summary keys (9)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT
     CASE WHEN (
         SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(api_score_explanation(2)->'summary') k
-    ) = ARRAY['headline','nova_group','nutri_score','processing_risk','score','score_band']
-    THEN 'PASS' ELSE 'FAIL' END AS "#14 score_explanation → summary keys (6)";
+    ) = ARRAY[
+        'headline','nova_group','nutri_score','nutri_score_note',
+        'nutri_score_official_in_country','nutri_score_source',
+        'processing_risk','score','score_band'
+    ]
+    THEN 'PASS' ELSE 'FAIL' END AS "#14 score_explanation → summary keys (9)";
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #15 api_score_explanation → category_context keys (4)

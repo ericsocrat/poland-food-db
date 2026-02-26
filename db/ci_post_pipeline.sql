@@ -182,7 +182,23 @@ WHERE p.store_availability IS NOT NULL
   AND p.is_deprecated = false
 ON CONFLICT (product_id, store_id) DO NOTHING;
 
--- ─── 6. Refresh materialized views ──────────────────────────────────────
+-- ─── 6. Backfill nutri_score_source for pipeline products ────────────────
+-- The nutri_score_provenance migration (#353) runs BEFORE pipelines in CI,
+-- so its backfill UPDATE matches 0 products. Re-run the same logic here
+-- after products exist, so QA check 22 (scored products must have source) passes.
+
+UPDATE products
+SET nutri_score_source = CASE
+  WHEN nutri_score_label IS NULL            THEN NULL
+  WHEN nutri_score_label = 'NOT-APPLICABLE' THEN NULL
+  WHEN nutri_score_label = 'UNKNOWN'        THEN 'unknown'
+  ELSE 'off_computed'
+END
+WHERE is_deprecated IS NOT TRUE
+  AND nutri_score_source IS NULL
+  AND nutri_score_label IS NOT NULL;
+
+-- ─── 7. Refresh materialized views ──────────────────────────────────────
 -- mv_ingredient_frequency and v_product_confidence were created WITH DATA
 -- during migrations (when 0 products existed).  Refresh now that products
 -- are populated and cleaned up.

@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(178);
+SELECT plan(181);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -61,8 +61,10 @@ SELECT has_column('public', 'products', 'product_name_en',        'products.prod
 SELECT has_column('public', 'products', 'product_name_en_source', 'products.product_name_en_source exists');
 SELECT has_column('public', 'products', 'product_name_en_reviewed_at', 'products.product_name_en_reviewed_at exists');
 SELECT has_column('public', 'products', 'name_translations',             'products.name_translations exists');
+SELECT has_column('public', 'products', 'nutri_score_source',             'products.nutri_score_source exists');
 SELECT has_column('public', 'user_preferences', 'preferred_language', 'user_preferences.preferred_language exists');
 SELECT has_column('public', 'country_ref', 'default_language',             'country_ref.default_language exists');
+SELECT has_column('public', 'country_ref', 'nutri_score_official',          'country_ref.nutri_score_official exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 4. Key columns on nutrition_facts table
@@ -246,6 +248,7 @@ SELECT has_function('public', 'api_store_products',               'function api_
 SELECT has_function('public', 'api_list_stores',                  'function api_list_stores exists');
 
 -- v_master store columns
+SELECT has_column('public', 'v_master', 'nutri_score_source',     'v_master.nutri_score_source exists');
 SELECT has_column('public', 'v_master', 'store_count',            'v_master.store_count exists');
 SELECT has_column('public', 'v_master', 'store_names',            'v_master.store_names exists');
 
