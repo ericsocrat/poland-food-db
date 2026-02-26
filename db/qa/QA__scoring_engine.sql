@@ -185,14 +185,13 @@ SELECT CASE
     THEN 'PASS' ELSE 'FAIL'
 END AS "T15_drift_detection_callable";
 
--- ─── T16: Score trigger fires and creates audit entry ────────────────────
--- Note: This test creates a temp entry and rolls it back if possible.
--- In CI, we verify the trigger function exists.
+-- ─── T16: Unified score trigger installed on products ────────────────────
+-- Merged trg_score_audit + record_score_change into single trigger (#374)
 
 SELECT CASE
     WHEN EXISTS (
         SELECT 1 FROM pg_trigger
-        WHERE tgname = 'trg_products_score_audit'
+        WHERE tgname = 'trg_products_score_unified'
           AND tgrelid = 'products'::regclass
     )
     THEN 'PASS' ELSE 'FAIL'
