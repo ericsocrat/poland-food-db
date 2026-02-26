@@ -3,7 +3,7 @@
 -- Validates that performance-critical indexes exist on all high-traffic
 -- tables, that timestamp columns are consistent and non-future, and that
 -- updated_at triggers fire correctly.
--- 15 checks — all BLOCKING.
+-- 18 checks — all BLOCKING.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -178,6 +178,62 @@ FROM (
 ) search_results
 JOIN products p ON p.product_id = search_results.pid::bigint
 WHERE p.is_deprecated = true;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #16 Core tables have updated_at triggers
+--     (6 data tables + products + user_product_lists = 8 expected)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '16. updated_at triggers exist on core tables' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT unnest(ARRAY[
+        'nutrition_facts',
+        'product_ingredient',
+        'product_allergen_info',
+        'ingredient_ref',
+        'category_ref',
+        'country_ref'
+    ]) AS tbl
+) expected
+WHERE NOT EXISTS (
+    SELECT 1 FROM pg_trigger t
+    JOIN pg_class c ON t.tgrelid = c.oid
+    JOIN pg_namespace n ON c.relnamespace = n.oid
+    WHERE n.nspname = 'public'
+      AND c.relname = expected.tbl
+      AND t.tgname = 'trg_' || expected.tbl || '_updated_at'
+      AND NOT t.tgisinternal
+);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #17 No NULL updated_at on core tables with data
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '17. no NULL updated_at on core tables' AS check_name,
+       COALESCE(SUM(violations), 0)::bigint AS violations
+FROM (
+    SELECT COUNT(*) AS violations FROM nutrition_facts       WHERE updated_at IS NULL
+    UNION ALL
+    SELECT COUNT(*) FROM ingredient_ref                      WHERE updated_at IS NULL
+    UNION ALL
+    SELECT COUNT(*) FROM category_ref                        WHERE updated_at IS NULL
+    UNION ALL
+    SELECT COUNT(*) FROM country_ref                         WHERE updated_at IS NULL
+) sub;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #18 No future timestamps on core table updated_at columns
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '18. no future updated_at on core tables' AS check_name,
+       COALESCE(SUM(violations), 0)::bigint AS violations
+FROM (
+    SELECT COUNT(*) AS violations FROM nutrition_facts       WHERE updated_at > now() + interval '1 minute'
+    UNION ALL
+    SELECT COUNT(*) FROM ingredient_ref                      WHERE updated_at > now() + interval '1 minute'
+    UNION ALL
+    SELECT COUNT(*) FROM category_ref                        WHERE updated_at > now() + interval '1 minute'
+    UNION ALL
+    SELECT COUNT(*) FROM country_ref                         WHERE updated_at > now() + interval '1 minute'
+) sub;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #15 Deprecated products excluded from category listing
