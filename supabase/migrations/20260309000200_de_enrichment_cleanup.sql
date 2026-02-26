@@ -238,24 +238,28 @@ DELETE FROM product_allergen_info WHERE tag = 'en:en-eggs-en-peanuts';
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- Product 1176 (Eiweißbrot): has Soja ingredient, soybeans only as traces → add contains
+-- Uses SELECT guard so migration succeeds during clean db reset (products may not exist yet)
 INSERT INTO product_allergen_info (product_id, tag, type)
-VALUES (1176, 'en:soybeans', 'contains')
+SELECT p.product_id, 'en:soybeans', 'contains'
+FROM products p WHERE p.product_id = 1176
 ON CONFLICT (product_id, tag, type) DO NOTHING;
 
 -- Product 1639 (Grießpudding High-Protein): has Soja ingredient, soybeans only as traces → add contains
 INSERT INTO product_allergen_info (product_id, tag, type)
-VALUES (1639, 'en:soybeans', 'contains')
+SELECT p.product_id, 'en:soybeans', 'contains'
+FROM products p WHERE p.product_id = 1639
 ON CONFLICT (product_id, tag, type) DO NOTHING;
 
 -- Product 1687 (Barista Oat Drink): has Oats ingredient, no allergen declarations at all → add gluten
 INSERT INTO product_allergen_info (product_id, tag, type)
-VALUES (1687, 'en:gluten', 'contains')
+SELECT p.product_id, 'en:gluten', 'contains'
+FROM products p WHERE p.product_id = 1687
 ON CONFLICT (product_id, tag, type) DO NOTHING;
 
 -- Products 1178, 1197 (Haferbrot): have Haferflocken ingredient, missing en:gluten declaration
 INSERT INTO product_allergen_info (product_id, tag, type)
-VALUES (1178, 'en:gluten', 'contains'),
-       (1197, 'en:gluten', 'contains')
+SELECT p.product_id, 'en:gluten', 'contains'
+FROM products p WHERE p.product_id IN (1178, 1197)
 ON CONFLICT (product_id, tag, type) DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════════════════

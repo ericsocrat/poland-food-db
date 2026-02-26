@@ -44,7 +44,7 @@ describe("DoneStep", () => {
   });
 
   it("shows allergen labels in summary", () => {
-    renderStep({ allergens: ["en:gluten", "en:milk"] });
+    renderStep({ allergens: ["gluten", "milk"] });
     expect(screen.getByText("Gluten, Milk / Dairy")).toBeInTheDocument();
   });
 

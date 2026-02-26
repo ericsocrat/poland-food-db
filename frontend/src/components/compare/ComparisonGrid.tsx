@@ -285,6 +285,7 @@ function DesktopGrid({
                 key={p.product_id}
                 className="px-3 py-2 text-center text-xs text-foreground-secondary"
               >
+                {/* Tags are bare canonical IDs; strip legacy en: prefix as fallback */}
                 {p.allergen_tags
                   ? p.allergen_tags
                       .split(", ")
@@ -549,6 +550,7 @@ function MobileSwipeView({
               {t("product.allergens")}
             </p>
             <p className="text-sm text-foreground-secondary">
+              {/* Tags are bare canonical IDs; strip legacy en: prefix as fallback */}
               {product.allergen_tags
                 ? product.allergen_tags
                     .split(", ")

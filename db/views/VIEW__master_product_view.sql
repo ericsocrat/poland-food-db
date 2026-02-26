@@ -174,10 +174,10 @@ LEFT JOIN LATERAL (
         STRING_AGG(ai.tag, ', ' ORDER BY ai.tag) FILTER (WHERE ai.type = 'traces') AS trace_tags,
         -- Contradiction detection flags
         BOOL_OR(ai.type = 'contains' AND ai.tag IN (
-            'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans', 'en:molluscs'
+            'milk', 'eggs', 'fish', 'crustaceans', 'molluscs'
         )) AS has_animal_allergen,
         BOOL_OR(ai.type = 'contains' AND ai.tag IN (
-            'en:fish', 'en:crustaceans', 'en:molluscs'
+            'fish', 'crustaceans', 'molluscs'
         )) AS has_meat_fish_allergen
     FROM public.product_allergen_info ai
     WHERE ai.product_id = p.product_id

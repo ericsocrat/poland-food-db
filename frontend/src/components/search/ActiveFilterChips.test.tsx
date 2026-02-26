@@ -138,7 +138,7 @@ describe("ActiveFilterChips", () => {
   it("renders allergen-free chips with label lookup", () => {
     render(
       <ActiveFilterChips
-        filters={{ allergen_free: ["en:gluten"] }}
+        filters={{ allergen_free: ["gluten"] }}
         onChange={onChange}
       />,
     );
@@ -150,7 +150,7 @@ describe("ActiveFilterChips", () => {
   it("renders fallback label for unknown allergen tag", () => {
     render(
       <ActiveFilterChips
-        filters={{ allergen_free: ["en:mystery"] }}
+        filters={{ allergen_free: ["mystery"] }}
         onChange={onChange}
       />,
     );

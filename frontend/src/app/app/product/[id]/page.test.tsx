@@ -188,8 +188,8 @@ function makeProfile(overrides: Record<string, unknown> = {}) {
       top_ingredients: [],
     },
     allergens: {
-      contains: "en:gluten,en:milk",
-      traces: "en:soy",
+      contains: "gluten,milk",
+      traces: "soybeans",
       contains_count: 2,
       traces_count: 1,
     },
@@ -1218,9 +1218,7 @@ describe("ProductDetailPage", () => {
       expect(screen.getByText("Allergens")).toBeInTheDocument();
     });
 
-    expect(
-      screen.queryByText(/Environmental Impact/),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByText(/Environmental Impact/)).not.toBeInTheDocument();
     expect(
       screen.queryByText(/Eco-Score data coming soon/),
     ).not.toBeInTheDocument();

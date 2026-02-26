@@ -297,7 +297,7 @@ describe("SettingsPage", () => {
   it("shows allergen strictness toggles when allergens selected", async () => {
     mockGetPrefs.mockResolvedValue({
       ok: true,
-      data: { ...mockPrefsData, avoid_allergens: ["en:gluten"] },
+      data: { ...mockPrefsData, avoid_allergens: ["gluten"] },
     });
 
     render(<SettingsPage />, { wrapper: createWrapper() });

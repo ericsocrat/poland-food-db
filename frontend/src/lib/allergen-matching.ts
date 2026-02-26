@@ -19,7 +19,7 @@ export type ProductAllergenMap = Readonly<
 
 /** A single allergen warning to display on a product card */
 export interface AllergenWarning {
-  /** Tag identifier, e.g. "en:milk" */
+  /** Tag identifier, e.g. "milk" */
   readonly tag: string;
   /** Human-readable short label, e.g. "Milk / Dairy" */
   readonly label: string;
@@ -33,20 +33,20 @@ export interface AllergenWarning {
 
 /** Emoji icons for the EU-14 mandatory allergens + common aliases */
 export const ALLERGEN_ICONS: Readonly<Record<string, string>> = {
-  "en:gluten": "🌾",
-  "en:milk": "🥛",
-  "en:eggs": "🥚",
-  "en:nuts": "🌰",
-  "en:peanuts": "🥜",
-  "en:soybeans": "🫘",
-  "en:fish": "🐟",
-  "en:crustaceans": "🦐",
-  "en:celery": "🌿",
-  "en:mustard": "🟡",
-  "en:sesame-seeds": "🫘",
-  "en:sulphur-dioxide-and-sulphites": "🧪",
-  "en:lupin": "🌸",
-  "en:molluscs": "🐚",
+  "gluten": "🌾",
+  "milk": "🥛",
+  "eggs": "🥚",
+  "tree-nuts": "🌰",
+  "peanuts": "🥜",
+  "soybeans": "🫘",
+  "fish": "🐟",
+  "crustaceans": "🦐",
+  "celery": "🌿",
+  "mustard": "🟡",
+  "sesame": "🫘",
+  "sulphites": "🧪",
+  "lupin": "🌸",
+  "molluscs": "🐚",
 };
 
 /** Build a label lookup from ALLERGEN_TAGS constant */
@@ -60,7 +60,7 @@ const LABEL_MAP = new Map<string, string>(
  * Match a product's allergens against user preferences and return warnings.
  *
  * @param productAllergens - Raw allergen data for a single product
- * @param userAvoidAllergens - User's avoid_allergens preference (e.g. ["en:milk", "en:gluten"])
+ * @param userAvoidAllergens - User's avoid_allergens preference (e.g. ["milk", "gluten"])
  * @param treatMayContainAsUnsafe - Whether to include "traces" matches (user preference)
  * @returns Array of AllergenWarning sorted: contains first, then traces, alphabetical within each group
  */
@@ -110,10 +110,9 @@ export function matchProductAllergens(
 
 // ─── Utility ────────────────────────────────────────────────────────────────
 
-/** Convert an "en:some-tag" to "Some Tag" as a fallback label */
+/** Convert a "some-tag" to "Some Tag" as a fallback label */
 function formatTagFallback(tag: string): string {
   return tag
-    .replace(/^en:/, "")
     .split("-")
     .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
     .join(" ");

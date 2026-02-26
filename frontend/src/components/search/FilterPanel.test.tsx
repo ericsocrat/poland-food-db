@@ -40,8 +40,8 @@ const mockFilterOptions = {
     { group: "4", count: 25 },
   ],
   allergens: [
-    { tag: "en:gluten", count: 30 },
-    { tag: "en:milk", count: 15 },
+    { tag: "gluten", count: 30 },
+    { tag: "milk", count: 15 },
   ],
 };
 

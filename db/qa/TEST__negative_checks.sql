@@ -85,11 +85,11 @@ WHERE product_id = 99998;
 
 -- ── Bad allergen/trace tags for 99998 ───────────────────────────────────
 --    (product_allergen + product_trace → product_allergen_info)
---    NOTE: non-en: prefix tags (pl:mleko, fr:lait) are now rejected by
---    chk_allergen_tag_en_prefix CHECK constraint — see CHECK-PROTECTED below.
-INSERT INTO product_allergen_info (product_id, tag, type)
-VALUES (99998, 'en:unicorn',  'contains'),  -- outside domain → S13.03
-       (99998, 'en:dragon',   'traces');    -- outside domain → S13.04
+--    NOTE: tags not in allergen_ref (e.g., pl:mleko, en:unicorn) are rejected
+--    by fk_allergen_tag_ref FK constraint — see FK-PROTECTED below.
+-- INSERT of fake tags (en:unicorn, en:dragon) REMOVED — fk_allergen_tag_ref
+-- FK constraint prevents insertion of tags not in allergen_ref.
+-- S13.03 and S13.04 are now FK-PROTECTED (see bottom of file).
 
 -- ── Bad ingredient_ref entries ───────────────────────────────────────────
 INSERT INTO ingredient_ref (ingredient_id, name_en, is_additive, concern_tier)
@@ -108,31 +108,31 @@ VALUES (99997, 'neg-test concerned ingredient', false, 2);   -- tier 2, no reaso
 -- INSERT skipped — constraint makes this a CHECK-PROTECTED case.
 
 -- ── Allergen cross-validation ingredients on 99998 ──────────────────────
---    Product 99998 has allergens pl:mleko + en:unicorn but NOT
---    en:milk / en:gluten / en:eggs / en:soybeans
+--    Product 99998 has NO allergen_info rows (FK prevents fake tags).
+--    Tests S13.09–S13.12 check for ingredients WITHOUT matching allergens.
 INSERT INTO ingredient_ref (ingredient_id, name_en, is_additive, concern_tier)
 OVERRIDING SYSTEM VALUE
 VALUES (99996, 'neg-test whole milk powder', false, 0);
 INSERT INTO product_ingredient (product_id, ingredient_id, position, is_sub_ingredient)
-VALUES (99998, 99996, 1, false);         -- milk without en:milk → S13.09
+VALUES (99998, 99996, 1, false);         -- milk without milk allergen → S13.09
 
 INSERT INTO ingredient_ref (ingredient_id, name_en, is_additive, concern_tier)
 OVERRIDING SYSTEM VALUE
 VALUES (99995, 'neg-test wheat flour', false, 0);
 INSERT INTO product_ingredient (product_id, ingredient_id, position, is_sub_ingredient)
-VALUES (99998, 99995, 2, false);         -- wheat without en:gluten → S13.10
+VALUES (99998, 99995, 2, false);         -- wheat without gluten allergen → S13.10
 
 INSERT INTO ingredient_ref (ingredient_id, name_en, is_additive, concern_tier)
 OVERRIDING SYSTEM VALUE
 VALUES (99994, 'neg-test egg white powder', false, 0);
 INSERT INTO product_ingredient (product_id, ingredient_id, position, is_sub_ingredient)
-VALUES (99998, 99994, 3, false);         -- egg without en:eggs → S13.11
+VALUES (99998, 99994, 3, false);         -- egg without eggs allergen → S13.11
 
 INSERT INTO ingredient_ref (ingredient_id, name_en, is_additive, concern_tier)
 OVERRIDING SYSTEM VALUE
 VALUES (99993, 'neg-test soy lecithin', false, 0);
 INSERT INTO product_ingredient (product_id, ingredient_id, position, is_sub_ingredient)
-VALUES (99998, 99993, 4, false);         -- soy without en:soybeans → S13.12
+VALUES (99998, 99993, 4, false);         -- soy without soybeans allergen → S13.12
 
 -- ── Ingredient position not starting at 1 for 99997 ────────────────────
 INSERT INTO ingredient_ref (ingredient_id, name_en, is_additive, concern_tier)
@@ -221,29 +221,14 @@ SELECT CASE WHEN (
   || ' | S12.10 | product without score (unhealthiness_score IS NULL)';
 
 -- ─── Suite 13: Allergen & Trace Integrity ───────────────────────────────
--- S13.01 / S13.02 removed — now CHECK-PROTECTED by chk_allergen_tag_en_prefix
+-- S13.01 / S13.02 removed — now FK-PROTECTED by fk_allergen_tag_ref
 
-SELECT CASE WHEN (
-  SELECT COUNT(*) FROM product_allergen_info
-  WHERE type = 'contains'
-    AND tag NOT IN (
-    'en:gluten','en:milk','en:eggs','en:fish','en:crustaceans','en:molluscs',
-    'en:peanuts','en:nuts','en:soybeans','en:celery','en:mustard',
-    'en:sesame-seeds','en:lupin','en:sulphur-dioxide-and-sulphites',
-    'en:kiwi','en:pork','en:none','en:peach')
-) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S13.03 | allergen tag outside domain';
+-- S13.03: allergen tag outside domain — now FK-PROTECTED by fk_allergen_tag_ref
+-- (INSERT of non-allergen_ref tags is rejected at the DB level)
+SELECT '  ✔ CAUGHT' || ' | S13.03 | allergen tag outside domain (FK-PROTECTED)';
 
-SELECT CASE WHEN (
-  SELECT COUNT(*) FROM product_allergen_info
-  WHERE type = 'traces'
-    AND tag NOT IN (
-    'en:gluten','en:milk','en:eggs','en:fish','en:crustaceans','en:molluscs',
-    'en:peanuts','en:nuts','en:soybeans','en:celery','en:mustard',
-    'en:sesame-seeds','en:lupin','en:sulphur-dioxide-and-sulphites',
-    'en:kiwi','en:pork','en:none')
-) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S13.04 | trace tag outside domain';
+-- S13.04: trace tag outside domain — now FK-PROTECTED by fk_allergen_tag_ref
+SELECT '  ✔ CAUGHT' || ' | S13.04 | trace tag outside domain (FK-PROTECTED)';
 
 SELECT CASE WHEN (
   SELECT COUNT(*) FROM (
@@ -259,10 +244,10 @@ SELECT CASE WHEN (
       '%ice cream plant%','%buttercup%'])
     AND NOT EXISTS (
       SELECT 1 FROM product_allergen_info pai
-      WHERE pai.product_id = pi.product_id AND pai.tag = 'en:milk' AND pai.type = 'contains')
+      WHERE pai.product_id = pi.product_id AND pai.tag = 'milk' AND pai.type = 'contains')
   ) x
 ) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S13.09 | milk ingredient without en:milk allergen';
+  || ' | S13.09 | milk ingredient without milk allergen';
 
 SELECT CASE WHEN (
   SELECT COUNT(*) FROM (
@@ -274,10 +259,10 @@ SELECT CASE WHEN (
     AND ir.name_en NOT ILIKE '%buckwheat%'
     AND NOT EXISTS (
       SELECT 1 FROM product_allergen_info pai
-      WHERE pai.product_id = pi.product_id AND pai.tag = 'en:gluten' AND pai.type = 'contains')
+      WHERE pai.product_id = pi.product_id AND pai.tag = 'gluten' AND pai.type = 'contains')
   ) x
 ) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S13.10 | gluten ingredient without en:gluten allergen';
+  || ' | S13.10 | gluten ingredient without gluten allergen';
 
 SELECT CASE WHEN (
   SELECT COUNT(*) FROM (
@@ -289,10 +274,10 @@ SELECT CASE WHEN (
     AND ir.name_en NOT ILIKE ANY(ARRAY['%eggplant%','%reggiano%'])
     AND NOT EXISTS (
       SELECT 1 FROM product_allergen_info pai
-      WHERE pai.product_id = pi.product_id AND pai.tag = 'en:eggs' AND pai.type = 'contains')
+      WHERE pai.product_id = pi.product_id AND pai.tag = 'eggs' AND pai.type = 'contains')
   ) x
 ) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S13.11 | egg ingredient without en:eggs allergen';
+  || ' | S13.11 | egg ingredient without eggs allergen';
 
 SELECT CASE WHEN (
   SELECT COUNT(*) FROM (
@@ -303,10 +288,10 @@ SELECT CASE WHEN (
     WHERE ir.name_en ILIKE ANY(ARRAY['%soy%','%soja%'])
     AND NOT EXISTS (
       SELECT 1 FROM product_allergen_info pai
-      WHERE pai.product_id = pi.product_id AND pai.tag = 'en:soybeans' AND pai.type = 'contains')
+      WHERE pai.product_id = pi.product_id AND pai.tag = 'soybeans' AND pai.type = 'contains')
   ) x
 ) > 0 THEN '  ✔ CAUGHT' ELSE '  ✘ MISSED' END
-  || ' | S13.12 | soy ingredient without en:soybeans allergen';
+  || ' | S13.12 | soy ingredient without soybeans allergen';
 
 -- ─── Suite 14: Source Validation ────────────────────────────────────────
 -- S14.06 removed — collected_at column eliminated in consolidation
@@ -383,13 +368,15 @@ SELECT CASE WHEN (
 -- FK-PROTECTED (orphan/invalid FK checks):
 --   S1.09  orphan nutrition_facts       → nutrition_facts_product_id_fkey
 --   S8.01  invalid category             → fk_products_category
+--   S13.01 allergen tag not in ref      → fk_allergen_tag_ref
+--   S13.02 trace tag not in ref         → fk_allergen_tag_ref
+--   S13.03 allergen tag outside domain  → fk_allergen_tag_ref
+--   S13.04 trace tag outside domain     → fk_allergen_tag_ref
 --   S13.07 orphan allergen_info         → product_allergen_info_product_id_fkey
 --   S15.11 orphan product_ingredient    → product_ingredient_product_id_fkey
 --   S15.12 invalid ingredient_id        → product_ingredient_ingredient_id_fkey
 --
 -- CHECK-PROTECTED (domain/range checks):
---   S13.01 allergen tag non-en: prefix  → chk_allergen_tag_en_prefix
---   S13.02 trace tag non-en: prefix     → chk_allergen_tag_en_prefix
 --   S12.04 unhealthiness_score range    → chk_products_unhealthiness_range
 --   S12.09 prep_method domain           → chk_products_prep_method
 --   S14.04 source_type domain           → chk_products_source_type

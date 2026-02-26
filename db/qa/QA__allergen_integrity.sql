@@ -6,74 +6,49 @@
 -- All checks are BLOCKING.
 -- Updated: product_allergen and product_trace merged into
 -- product_allergen_info (product_id, tag, type).
+-- Tags now use canonical bare IDs (e.g. 'gluten', 'milk')
+-- validated against allergen_ref via FK fk_allergen_tag_ref.
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 1. Allergen tags must use the 'en:' taxonomy prefix
---    Tags like 'pl:sojowego' or 'sr:soja-lecitin' are locale junk
---    from unprocessed OFF imports and should be mapped or removed.
+-- 1. Allergen tags must exist in allergen_ref
+--    Every tag must map to a valid canonical allergen_id in allergen_ref.
+--    Unmapped tags indicate unprocessed OFF imports or stale data.
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '1. allergen tags use en: prefix' AS check_name,
+SELECT '1. allergen tags exist in allergen_ref' AS check_name,
        COUNT(*) AS violations
-FROM product_allergen_info
-WHERE type = 'contains'
-  AND tag NOT LIKE 'en:%';
+FROM product_allergen_info pai
+WHERE pai.type = 'contains'
+  AND NOT EXISTS (SELECT 1 FROM allergen_ref ar WHERE ar.allergen_id = pai.tag);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 2. Trace tags must use the 'en:' taxonomy prefix
+-- 2. Trace tags must exist in allergen_ref
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '2. trace tags use en: prefix' AS check_name,
+SELECT '2. trace tags exist in allergen_ref' AS check_name,
        COUNT(*) AS violations
-FROM product_allergen_info
-WHERE type = 'traces'
-  AND tag NOT LIKE 'en:%';
+FROM product_allergen_info pai
+WHERE pai.type = 'traces'
+  AND NOT EXISTS (SELECT 1 FROM allergen_ref ar WHERE ar.allergen_id = pai.tag);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 3. Allergen tags must be in the EU-14 major allergens + accepted extras
---    EU regulation 1169/2011 defines 14 allergen groups.
+-- 3. No legacy en: prefix tags remain in product_allergen_info
+--    After migration to bare canonical IDs, no tag should still
+--    carry the old 'en:' taxonomy prefix.
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '3. allergen tags in recognized domain' AS check_name,
+SELECT '3. no legacy en: prefix tags' AS check_name,
        COUNT(*) AS violations
 FROM product_allergen_info
-WHERE type = 'contains'
-  AND tag NOT IN (
-  -- EU-14 groups
-  'en:gluten', 'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans',
-  'en:molluscs', 'en:peanuts', 'en:nuts', 'en:soybeans', 'en:celery',
-  'en:mustard', 'en:sesame-seeds', 'en:lupin',
-  'en:sulphur-dioxide-and-sulphites',
-  -- Specific gluten cereals (EU sub-allergens of 'en:gluten')
-  'en:wheat', 'en:barley', 'en:rye', 'en:oats', 'en:spelt', 'en:kamut',
-  -- Specific tree nuts (EU sub-allergens of 'en:nuts')
-  'en:tree-nuts', 'en:almonds', 'en:hazelnuts', 'en:walnuts',
-  'en:cashew-nuts', 'en:pistachio-nuts', 'en:pecan-nuts',
-  'en:brazil-nuts', 'en:macadamia-nuts',
-  -- Accepted extras beyond EU-14
-  'en:kiwi', 'en:pork', 'en:peach'
-);
+WHERE tag LIKE 'en:%';
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 4. Trace tags must be in recognized domain
+-- 4. allergen_ref has all EU-14 mandatory allergens
+--    EU regulation 1169/2011 defines 14 mandatory allergen groups.
+--    allergen_ref must contain all 14 with eu_mandatory = true.
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '4. trace tags in recognized domain' AS check_name,
-       COUNT(*) AS violations
-FROM product_allergen_info
-WHERE type = 'traces'
-  AND tag NOT IN (
-  -- EU-14 groups
-  'en:gluten', 'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans',
-  'en:molluscs', 'en:peanuts', 'en:nuts', 'en:soybeans', 'en:celery',
-  'en:mustard', 'en:sesame-seeds', 'en:lupin',
-  'en:sulphur-dioxide-and-sulphites',
-  -- Specific gluten cereals
-  'en:wheat', 'en:barley', 'en:rye', 'en:oats', 'en:spelt', 'en:kamut',
-  -- Specific tree nuts
-  'en:tree-nuts', 'en:almonds', 'en:hazelnuts', 'en:walnuts',
-  'en:cashew-nuts', 'en:pistachio-nuts', 'en:pecan-nuts',
-  'en:brazil-nuts', 'en:macadamia-nuts',
-  -- Accepted extras
-  'en:kiwi', 'en:pork'
-);
+SELECT '4. allergen_ref has all EU-14 mandatory allergens' AS check_name,
+       14 - COUNT(*) AS violations
+FROM allergen_ref
+WHERE eu_mandatory = true;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 5. No duplicate allergen declarations per product
@@ -149,7 +124,7 @@ FROM (
   ]))
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
-    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:milk' AND pai.type = 'contains'
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'milk' AND pai.type = 'contains'
   )
 ) x;
 
@@ -178,7 +153,7 @@ FROM (
   AND ir.name_en NOT ILIKE '%coat%'
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
-    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:gluten' AND pai.type = 'contains'
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'gluten' AND pai.type = 'contains'
   )
 ) x;
 
@@ -196,7 +171,7 @@ FROM (
   AND NOT (ir.name_en ILIKE ANY(ARRAY['%eggplant%','%reggiano%','%egg noodle%']))
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
-    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:eggs' AND pai.type = 'contains'
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'eggs' AND pai.type = 'contains'
   )
 ) x;
 
@@ -213,7 +188,7 @@ FROM (
   WHERE ir.name_en ILIKE ANY(ARRAY['%soy%','%soja%'])
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
-    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:soybeans' AND pai.type = 'contains'
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'soybeans' AND pai.type = 'contains'
   )
 ) x;
 
@@ -230,7 +205,7 @@ FROM (
   WHERE ir.name_en ILIKE '%peanut%'
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
-    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:peanuts' AND pai.type = 'contains'
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'peanuts' AND pai.type = 'contains'
   )
 ) x;
 
@@ -247,17 +222,17 @@ FROM (
   WHERE ir.name_en ILIKE ANY(ARRAY['%fish%','%salmon%','%tuna%','%herring%','%mackerel%','%anchov%','%cod %','%trout%'])
   AND NOT EXISTS (
     SELECT 1 FROM product_allergen_info pai
-    WHERE pai.product_id = pi.product_id AND pai.tag = 'en:fish' AND pai.type = 'contains'
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'fish' AND pai.type = 'contains'
   )
 ) x;
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- 15. product_allergen_info has CHECK constraint enforcing en: prefix
+-- 15. product_allergen_info has FK constraint referencing allergen_ref
 -- ═══════════════════════════════════════════════════════════════════════════════
-SELECT '15. allergen tag en: prefix enforced at schema level' AS check_name,
+SELECT '15. allergen tag FK to allergen_ref enforced at schema level' AS check_name,
        CASE WHEN EXISTS (
            SELECT 1 FROM pg_constraint
            WHERE conrelid = 'product_allergen_info'::regclass
-             AND conname = 'chk_allergen_tag_en_prefix'
+             AND conname = 'fk_allergen_tag_ref'
        ) THEN 0 ELSE 1 END AS violations;
 

@@ -130,9 +130,9 @@ function makeProduct(overrides: Record<string, unknown> = {}) {
     },
     allergens: {
       count: 2,
-      tags: ["en:gluten", "en:milk"],
+      tags: ["gluten", "milk"],
       trace_count: 1,
-      trace_tags: ["en:soy"],
+      trace_tags: ["soybeans"],
     },
     trust: {
       confidence: "high",
