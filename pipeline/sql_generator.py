@@ -489,9 +489,7 @@ def _gen_07_store_availability(
         brand = _sql_text(p["brand"])
         name = _sql_text(p["product_name"])
         for store_name in stores:
-            rows.append(
-                f"    ({brand}, {name}, {_sql_text(store_name)})"
-            )
+            rows.append(f"    ({brand}, {name}, {_sql_text(store_name)})")
 
     if not rows:
         return f"""\

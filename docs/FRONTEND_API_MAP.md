@@ -533,11 +533,11 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 
 **Returns:** `jsonb` — `{ api_version, product_id, stores: [...] }`
 
-| Property      | Details                                        |
-| ------------- | ---------------------------------------------- |
-| Auth required | **Yes** (`authenticated` only)                 |
-| Security      | `SECURITY DEFINER`                             |
-| Roles         | `authenticated`, `service_role` (NOT `anon`)   |
+| Property      | Details                                      |
+| ------------- | -------------------------------------------- |
+| Auth required | **Yes** (`authenticated` only)               |
+| Security      | `SECURITY DEFINER`                           |
+| Roles         | `authenticated`, `service_role` (NOT `anon`) |
 
 ---
 
@@ -558,11 +558,11 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 
 Limit is capped at 100. If store not found, returns `{ api_version, error: "Store not found" }`.
 
-| Property      | Details                                        |
-| ------------- | ---------------------------------------------- |
-| Auth required | **Yes** (`authenticated` only)                 |
-| Security      | `SECURITY DEFINER`                             |
-| Roles         | `authenticated`, `service_role` (NOT `anon`)   |
+| Property      | Details                                      |
+| ------------- | -------------------------------------------- |
+| Auth required | **Yes** (`authenticated` only)               |
+| Security      | `SECURITY DEFINER`                           |
+| Roles         | `authenticated`, `service_role` (NOT `anon`) |
 
 ---
 
@@ -578,11 +578,11 @@ Limit is capped at 100. If store not found, returns `{ api_version, error: "Stor
 
 **Returns:** `jsonb` — `{ api_version, country, stores: [{store_id, store_name, store_slug, store_type, product_count, website_url}] }`
 
-| Property      | Details                                        |
-| ------------- | ---------------------------------------------- |
-| Auth required | **Yes** (`authenticated` only)                 |
-| Security      | `SECURITY DEFINER`                             |
-| Roles         | `authenticated`, `service_role` (NOT `anon`)   |
+| Property      | Details                                      |
+| ------------- | -------------------------------------------- |
+| Auth required | **Yes** (`authenticated` only)               |
+| Security      | `SECURITY DEFINER`                           |
+| Roles         | `authenticated`, `service_role` (NOT `anon`) |
 
 ---
 

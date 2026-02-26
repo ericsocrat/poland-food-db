@@ -146,7 +146,43 @@ SET    confidence = assign_confidence(p.data_completeness_pct, p.source_type)
 WHERE  p.is_deprecated IS NOT TRUE
   AND  p.confidence != assign_confidence(p.data_completeness_pct, p.source_type);
 
--- ─── 5. Refresh materialized views ──────────────────────────────────────
+-- ─── 5. Store architecture: reclassify Żabka + backfill junction ────────
+-- Migration 000300 reclassifies Żabka products and 000200 backfills the
+-- product_store_availability junction, but both run on an empty DB in CI.
+-- Re-run the logic here after pipelines have populated products.
+
+-- 5a. Link Żabka-brand products to Żabka store
+INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
+SELECT p.product_id, sr.store_id, NOW(), 'pipeline'
+FROM products p
+CROSS JOIN store_ref sr
+WHERE p.category = 'Żabka'
+  AND p.is_deprecated = false
+  AND sr.country = 'PL'
+  AND sr.store_slug = 'zabka'
+ON CONFLICT (product_id, store_id) DO NOTHING;
+
+-- 5b. Reclassify Żabka products → Frozen & Prepared
+UPDATE products
+SET    category = 'Frozen & Prepared'
+WHERE  category = 'Żabka'
+  AND  is_deprecated = false;
+
+-- 5c. Re-score affected category
+CALL score_category('Frozen & Prepared');
+
+-- 5d. Backfill junction for all products with store_availability set
+INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
+SELECT p.product_id, sr.store_id, NOW(), 'pipeline'
+FROM products p
+JOIN store_ref sr
+  ON sr.country = p.country
+ AND sr.store_name = p.store_availability
+WHERE p.store_availability IS NOT NULL
+  AND p.is_deprecated = false
+ON CONFLICT (product_id, store_id) DO NOTHING;
+
+-- ─── 6. Refresh materialized views ──────────────────────────────────────
 -- mv_ingredient_frequency and v_product_confidence were created WITH DATA
 -- during migrations (when 0 products existed).  Refresh now that products
 -- are populated and cleaned up.

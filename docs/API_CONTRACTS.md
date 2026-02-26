@@ -801,10 +801,10 @@ See [docs/DATA_PROVENANCE.md](DATA_PROVENANCE.md) for full architecture.
 
 ### New Tables
 
-| Table                        | Purpose                        | Write Access      |
-| ---------------------------- | ------------------------------ | ----------------- |
-| `store_ref`                  | Store registry (33 stores)     | service_role only |
-| `product_store_availability` | Product ↔ store junction       | service_role only |
+| Table                        | Purpose                    | Write Access      |
+| ---------------------------- | -------------------------- | ----------------- |
+| `store_ref`                  | Store registry (33 stores) | service_role only |
+| `product_store_availability` | Product ↔ store junction   | service_role only |
 
 ### `api_product_stores(p_product_id bigint)` (RPC Function)
 
@@ -891,9 +891,9 @@ See [docs/DATA_PROVENANCE.md](DATA_PROVENANCE.md) for full architecture.
 
 Two new columns appended to `v_master`:
 
-| Column        | Type    | Description                                      |
-| ------------- | ------- | ------------------------------------------------ |
-| `store_count` | integer | Number of active stores linked to this product   |
+| Column        | Type    | Description                                        |
+| ------------- | ------- | -------------------------------------------------- |
+| `store_count` | integer | Number of active stores linked to this product     |
 | `store_names` | text    | Comma-separated store names (sorted by sort_order) |
 
 ### Migration Note
