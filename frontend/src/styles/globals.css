@@ -32,6 +32,13 @@
     --color-score-red: #ef4444; /* 61–80 */
     --color-score-darkred: #991b1b; /* 81–100 */
 
+    /* ── Score text (WCAG AA ≥ 4.5:1 on white) ── */
+    --color-score-green-text: #15803d; /* green-700, 5.1:1 */
+    --color-score-yellow-text: #854d0e; /* yellow-800, 5.9:1 */
+    --color-score-orange-text: #c2410c; /* orange-700, 5.2:1 */
+    --color-score-red-text: #b91c1c; /* red-700, 5.9:1 */
+    --color-score-darkred-text: #991b1b; /* 8.3:1 */
+
     /* ── Nutri-Score (EU standard colors) ── */
     --color-nutri-A: #038141;
     --color-nutri-B: #85bb2f;
@@ -157,6 +164,13 @@
     --color-score-red: #f87171;
     --color-score-darkred: #dc2626;
 
+    /* Score text — bright for dark mode (already WCAG AA on dark bg) */
+    --color-score-green-text: #4ade80;
+    --color-score-yellow-text: #facc15;
+    --color-score-orange-text: #fb923c;
+    --color-score-red-text: #f87171;
+    --color-score-darkred-text: #dc2626;
+
     /* Nutri-Score — brightened for dark mode contrast */
     --color-nutri-A: #34d399;
     --color-nutri-B: #a3e635;
@@ -221,6 +235,12 @@
       --color-score-orange: #fb923c;
       --color-score-red: #f87171;
       --color-score-darkred: #dc2626;
+
+      --color-score-green-text: #4ade80;
+      --color-score-yellow-text: #facc15;
+      --color-score-orange-text: #fb923c;
+      --color-score-red-text: #f87171;
+      --color-score-darkred-text: #dc2626;
 
       --color-nutri-A: #34d399;
       --color-nutri-B: #a3e635;

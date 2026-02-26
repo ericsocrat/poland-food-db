@@ -14,8 +14,6 @@ from __future__ import annotations
 import datetime
 from pathlib import Path
 
-from pipeline.utils import slug as _slug
-
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------

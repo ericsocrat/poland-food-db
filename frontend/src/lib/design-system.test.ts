@@ -362,6 +362,34 @@ describe("Design System — Score Band Distinguishability", () => {
   });
 });
 
+describe("Design System — Score Text WCAG AA Compliance", () => {
+  // Score text colors (--color-score-*-text) must meet WCAG AA 4.5:1 on white
+  const LIGHT_SCORE_TEXT_COLORS = [
+    { name: "green-text", hex: "#15803d" },
+    { name: "yellow-text", hex: "#854d0e" },
+    { name: "orange-text", hex: "#c2410c" },
+    { name: "red-text", hex: "#b91c1c" },
+    { name: "darkred-text", hex: "#991b1b" },
+  ];
+
+  it.each(LIGHT_SCORE_TEXT_COLORS)(
+    "$name meets WCAG AA 4.5:1 against white",
+    ({ hex }) => {
+      const ratio = contrastRatio(hex, "#ffffff");
+      expect(ratio).toBeGreaterThanOrEqual(4.5);
+    }
+  );
+
+  it("CSS defines --color-score-*-text variables", () => {
+    const css = readSource("src/styles/globals.css");
+    expect(css).toContain("--color-score-green-text:");
+    expect(css).toContain("--color-score-yellow-text:");
+    expect(css).toContain("--color-score-orange-text:");
+    expect(css).toContain("--color-score-red-text:");
+    expect(css).toContain("--color-score-darkred-text:");
+  });
+});
+
 describe("Design System — Nutrition Traffic Light Tokens", () => {
   const css = readSource("src/styles/globals.css");
 
@@ -425,15 +453,15 @@ describe("Design System — Component Classes Use Tokens", () => {
 describe("Design System — Constants Use Semantic Tokens", () => {
   const constants = readSource("src/lib/constants.ts");
 
-  it("SCORE_BANDS uses score-* token classes", () => {
-    expect(constants).toContain("text-score-green");
-    expect(constants).toContain("text-score-yellow");
-    expect(constants).toContain("text-score-orange");
-    expect(constants).toContain("text-score-red");
+  it("SCORE_BANDS uses score-*-text token classes", () => {
+    expect(constants).toContain("text-score-green-text");
+    expect(constants).toContain("text-score-yellow-text");
+    expect(constants).toContain("text-score-orange-text");
+    expect(constants).toContain("text-score-red-text");
   });
 
-  it("SCORE_5BAND_DISPLAY includes darkred token class", () => {
-    expect(constants).toContain("text-score-darkred");
+  it("SCORE_5BAND_DISPLAY includes darkred-text token class", () => {
+    expect(constants).toContain("text-score-darkred-text");
     expect(constants).toContain("bg-score-darkred/10");
   });
 

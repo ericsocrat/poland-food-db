@@ -63,6 +63,11 @@ const config: Config = {
           orange: "var(--color-score-orange)",
           red: "var(--color-score-red)",
           darkred: "var(--color-score-darkred)",
+          "green-text": "var(--color-score-green-text)",
+          "yellow-text": "var(--color-score-yellow-text)",
+          "orange-text": "var(--color-score-orange-text)",
+          "red-text": "var(--color-score-red-text)",
+          "darkred-text": "var(--color-score-darkred-text)",
         },
 
         // ── Nutrition Traffic Light (FSA/EFSA) ──
