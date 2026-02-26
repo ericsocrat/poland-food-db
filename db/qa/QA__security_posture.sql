@@ -13,7 +13,8 @@ WHERE n.nspname = 'public'
   AND c.relkind = 'r'
   AND c.relname IN (
     'products','nutrition_facts','product_allergen_info','product_ingredient',
-    'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref'
+    'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref',
+    'store_ref','product_store_availability'
   )
   AND c.relrowsecurity = false;
 
@@ -26,7 +27,8 @@ WHERE n.nspname = 'public'
   AND c.relkind = 'r'
   AND c.relname IN (
     'products','nutrition_facts','product_allergen_info','product_ingredient',
-    'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref'
+    'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref',
+    'store_ref','product_store_availability'
   )
   AND c.relforcerowsecurity = false;
 
