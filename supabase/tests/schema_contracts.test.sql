@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(155);
+SELECT plan(167);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -203,6 +203,20 @@ SELECT has_column('public', 'analytics_events', 'anonymous_id',        'column a
 SELECT has_column('public', 'analytics_events', 'route',               'column analytics_events.route exists');
 SELECT has_function('public', 'api_validate_event_schema',        'function api_validate_event_schema exists');
 SELECT has_function('public', 'api_get_event_schemas',            'function api_get_event_schemas exists');
+
+-- ─── Core Table Timestamps (#362) ─────────────────────────────────────────────
+SELECT has_column('public', 'nutrition_facts',      'created_at',  'nutrition_facts.created_at exists');
+SELECT has_column('public', 'nutrition_facts',      'updated_at',  'nutrition_facts.updated_at exists');
+SELECT has_column('public', 'product_ingredient',   'created_at',  'product_ingredient.created_at exists');
+SELECT has_column('public', 'product_ingredient',   'updated_at',  'product_ingredient.updated_at exists');
+SELECT has_column('public', 'product_allergen_info', 'created_at', 'product_allergen_info.created_at exists');
+SELECT has_column('public', 'product_allergen_info', 'updated_at', 'product_allergen_info.updated_at exists');
+SELECT has_column('public', 'ingredient_ref',       'created_at',  'ingredient_ref.created_at exists');
+SELECT has_column('public', 'ingredient_ref',       'updated_at',  'ingredient_ref.updated_at exists');
+SELECT has_column('public', 'category_ref',         'created_at',  'category_ref.created_at exists');
+SELECT has_column('public', 'category_ref',         'updated_at',  'category_ref.updated_at exists');
+SELECT has_column('public', 'country_ref',          'created_at',  'country_ref.created_at exists');
+SELECT has_column('public', 'country_ref',          'updated_at',  'country_ref.updated_at exists');
 
 -- ─── Completeness Gap Analysis (#376) ─────────────────────────────────────────
 SELECT has_function('public', 'api_completeness_gap_analysis',    'function api_completeness_gap_analysis exists');
