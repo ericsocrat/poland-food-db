@@ -40,11 +40,11 @@ interface BandConfig {
 }
 
 const BANDS: BandConfig[] = [
-  { label: "Low", bg: "bg-score-green/10", text: "text-score-green" },
-  { label: "Moderate", bg: "bg-score-yellow/10", text: "text-score-yellow" },
-  { label: "High", bg: "bg-score-orange/10", text: "text-score-orange" },
-  { label: "Very High", bg: "bg-score-red/10", text: "text-score-red" },
-  { label: "Extreme", bg: "bg-score-darkred/10", text: "text-score-darkred" },
+  { label: "Low", bg: "bg-score-green/10", text: "text-score-green-text" },
+  { label: "Moderate", bg: "bg-score-yellow/10", text: "text-score-yellow-text" },
+  { label: "High", bg: "bg-score-orange/10", text: "text-score-orange-text" },
+  { label: "Very High", bg: "bg-score-red/10", text: "text-score-red-text" },
+  { label: "Extreme", bg: "bg-score-darkred/10", text: "text-score-darkred-text" },
 ];
 
 type ScoreBandKey = "green" | "yellow" | "orange" | "red" | "darkred";

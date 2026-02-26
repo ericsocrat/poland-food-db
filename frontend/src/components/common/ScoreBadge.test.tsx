@@ -13,32 +13,32 @@ describe("ScoreBadge", () => {
   it("maps score 1–20 to green band", () => {
     render(<ScoreBadge score={15} />);
     const badge = screen.getByText("15");
-    expect(badge.className).toContain("text-score-green");
+    expect(badge.className).toContain("text-score-green-text");
     expect(badge.className).toContain("bg-score-green/10");
   });
 
   it("maps score 21–40 to yellow band", () => {
     render(<ScoreBadge score={30} />);
     const badge = screen.getByText("30");
-    expect(badge.className).toContain("text-score-yellow");
+    expect(badge.className).toContain("text-score-yellow-text");
   });
 
   it("maps score 41–60 to orange band", () => {
     render(<ScoreBadge score={50} />);
     const badge = screen.getByText("50");
-    expect(badge.className).toContain("text-score-orange");
+    expect(badge.className).toContain("text-score-orange-text");
   });
 
   it("maps score 61–80 to red band", () => {
     render(<ScoreBadge score={75} />);
     const badge = screen.getByText("75");
-    expect(badge.className).toContain("text-score-red");
+    expect(badge.className).toContain("text-score-red-text");
   });
 
   it("maps score 81–100 to darkred band", () => {
     render(<ScoreBadge score={95} />);
     const badge = screen.getByText("95");
-    expect(badge.className).toContain("text-score-darkred");
+    expect(badge.className).toContain("text-score-darkred-text");
   });
 
   it("renders N/A for null score", () => {

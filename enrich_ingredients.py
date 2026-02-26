@@ -148,7 +148,6 @@ def _get_session() -> requests.Session:
             pool_maxsize=5,
         )
         _session.mount("https://", adapter)
-        _session.mount("http://", adapter)
     return _session
 
 
