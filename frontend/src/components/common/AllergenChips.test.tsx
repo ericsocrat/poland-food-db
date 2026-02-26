@@ -9,7 +9,7 @@ function makeWarning(
   overrides: Partial<AllergenWarning> = {},
 ): AllergenWarning {
   return {
-    tag: "en:milk",
+    tag: "milk",
     label: "Milk / Dairy",
     icon: "🥛",
     type: "contains",
@@ -49,8 +49,8 @@ describe("AllergenChips", () => {
     render(
       <AllergenChips
         warnings={[
-          makeWarning({ tag: "en:milk" }),
-          makeWarning({ tag: "en:eggs", label: "Eggs", icon: "🥚" }),
+          makeWarning({ tag: "milk" }),
+          makeWarning({ tag: "eggs", label: "Eggs", icon: "🥚" }),
         ]}
       />,
     );
@@ -104,9 +104,9 @@ describe("AllergenChips", () => {
 
   it("renders up to 3 visible chips without overflow", () => {
     const warnings = [
-      makeWarning({ tag: "en:milk" }),
-      makeWarning({ tag: "en:eggs", label: "Eggs", icon: "🥚" }),
-      makeWarning({ tag: "en:gluten", label: "Gluten", icon: "🌾" }),
+      makeWarning({ tag: "milk" }),
+      makeWarning({ tag: "eggs", label: "Eggs", icon: "🥚" }),
+      makeWarning({ tag: "gluten", label: "Gluten", icon: "🌾" }),
     ];
     render(<AllergenChips warnings={warnings} />);
 
@@ -117,10 +117,10 @@ describe("AllergenChips", () => {
 
   it("renders overflow badge when more than 3 warnings", () => {
     const warnings = [
-      makeWarning({ tag: "en:milk" }),
-      makeWarning({ tag: "en:eggs", label: "Eggs", icon: "🥚" }),
-      makeWarning({ tag: "en:gluten", label: "Gluten", icon: "🌾" }),
-      makeWarning({ tag: "en:peanuts", label: "Peanuts", icon: "🥜" }),
+      makeWarning({ tag: "milk" }),
+      makeWarning({ tag: "eggs", label: "Eggs", icon: "🥚" }),
+      makeWarning({ tag: "gluten", label: "Gluten", icon: "🌾" }),
+      makeWarning({ tag: "peanuts", label: "Peanuts", icon: "🥜" }),
     ];
     render(<AllergenChips warnings={warnings} />);
 
@@ -134,12 +134,12 @@ describe("AllergenChips", () => {
 
   it("overflow badge shows correct count for many extras", () => {
     const warnings = [
-      makeWarning({ tag: "en:milk" }),
-      makeWarning({ tag: "en:eggs", label: "Eggs" }),
-      makeWarning({ tag: "en:gluten", label: "Gluten" }),
-      makeWarning({ tag: "en:peanuts", label: "Peanuts" }),
-      makeWarning({ tag: "en:fish", label: "Fish" }),
-      makeWarning({ tag: "en:celery", label: "Celery" }),
+      makeWarning({ tag: "milk" }),
+      makeWarning({ tag: "eggs", label: "Eggs" }),
+      makeWarning({ tag: "gluten", label: "Gluten" }),
+      makeWarning({ tag: "peanuts", label: "Peanuts" }),
+      makeWarning({ tag: "fish", label: "Fish" }),
+      makeWarning({ tag: "celery", label: "Celery" }),
     ];
     render(<AllergenChips warnings={warnings} />);
 
@@ -149,10 +149,10 @@ describe("AllergenChips", () => {
 
   it("overflow badge has tooltip listing hidden allergens", () => {
     const warnings = [
-      makeWarning({ tag: "en:milk", label: "Milk / Dairy" }),
-      makeWarning({ tag: "en:eggs", label: "Eggs" }),
-      makeWarning({ tag: "en:gluten", label: "Gluten" }),
-      makeWarning({ tag: "en:peanuts", label: "Peanuts" }),
+      makeWarning({ tag: "milk", label: "Milk / Dairy" }),
+      makeWarning({ tag: "eggs", label: "Eggs" }),
+      makeWarning({ tag: "gluten", label: "Gluten" }),
+      makeWarning({ tag: "peanuts", label: "Peanuts" }),
     ];
     render(<AllergenChips warnings={warnings} />);
 

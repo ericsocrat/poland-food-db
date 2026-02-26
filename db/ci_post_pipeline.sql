@@ -104,29 +104,29 @@ INSERT INTO product_allergen_info (product_id, tag, type)
 SELECT p.product_id, v.tag, v.type
 FROM (VALUES
   -- Chips (contain milk / gluten from flavoring ingredients)
-  ('PL', '5900073020118', 'en:gluten', 'contains'),
-  ('PL', '5900073020118', 'en:milk', 'traces'),
-  ('PL', '5905187114760', 'en:milk', 'contains'),
-  ('PL', '5905187114760', 'en:gluten', 'contains'),
-  ('PL', '5900073020187', 'en:gluten', 'contains'),
-  ('PL', '5900073020187', 'en:milk', 'traces'),
+  ('PL', '5900073020118', 'gluten', 'contains'),
+  ('PL', '5900073020118', 'milk', 'traces'),
+  ('PL', '5905187114760', 'milk', 'contains'),
+  ('PL', '5905187114760', 'gluten', 'contains'),
+  ('PL', '5900073020187', 'gluten', 'contains'),
+  ('PL', '5900073020187', 'milk', 'traces'),
   -- Bread (contain gluten)
-  ('PL', '5900014005716', 'en:gluten', 'contains'),
-  ('PL', '5900535013986', 'en:gluten', 'contains'),
-  ('PL', '5900535013986', 'en:milk', 'traces'),
+  ('PL', '5900014005716', 'gluten', 'contains'),
+  ('PL', '5900535013986', 'gluten', 'contains'),
+  ('PL', '5900535013986', 'milk', 'traces'),
   -- Dairy (contain milk)
-  ('PL', '5900014004245', 'en:milk', 'contains'),
-  ('PL', '5900699106388', 'en:milk', 'contains'),
+  ('PL', '5900014004245', 'milk', 'contains'),
+  ('PL', '5900699106388', 'milk', 'contains'),
   -- Sweets / Snacks (contain milk, gluten, eggs, soybeans)
-  ('PL', '5901359074290', 'en:gluten', 'contains'),
-  ('PL', '5901359074290', 'en:milk', 'contains'),
-  ('PL', '5901359074290', 'en:soybeans', 'traces'),
-  ('PL', '5902709615323', 'en:gluten', 'contains'),
-  ('PL', '5901359062013', 'en:gluten', 'contains'),
-  ('PL', '5901359062013', 'en:eggs', 'contains'),
-  ('PL', '5900490000182', 'en:gluten', 'contains'),
-  ('PL', '5901359122021', 'en:milk', 'contains'),
-  ('PL', '5901359122021', 'en:gluten', 'contains')
+  ('PL', '5901359074290', 'gluten', 'contains'),
+  ('PL', '5901359074290', 'milk', 'contains'),
+  ('PL', '5901359074290', 'soybeans', 'traces'),
+  ('PL', '5902709615323', 'gluten', 'contains'),
+  ('PL', '5901359062013', 'gluten', 'contains'),
+  ('PL', '5901359062013', 'eggs', 'contains'),
+  ('PL', '5900490000182', 'gluten', 'contains'),
+  ('PL', '5901359122021', 'milk', 'contains'),
+  ('PL', '5901359122021', 'gluten', 'contains')
 ) AS v(country, ean, tag, type)
 JOIN products p ON p.country = v.country AND p.ean = v.ean
 WHERE p.is_deprecated IS NOT TRUE

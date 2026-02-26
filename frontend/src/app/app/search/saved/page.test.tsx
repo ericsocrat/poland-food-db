@@ -82,7 +82,7 @@ const mockSearches = [
     filters: {
       category: ["drinks"],
       nutri_score: ["A", "B"],
-      allergen_free: ["en:gluten"],
+      allergen_free: ["gluten"],
       max_unhealthiness: 40,
       sort_by: "unhealthiness" as const,
     },

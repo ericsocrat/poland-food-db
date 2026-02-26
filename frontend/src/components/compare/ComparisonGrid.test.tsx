@@ -44,7 +44,7 @@ const makeProduct = (
   additives_count: 3,
   ingredient_count: 12,
   allergen_count: 2,
-  allergen_tags: "en:gluten, en:milk",
+  allergen_tags: "gluten, milk",
   trace_tags: null,
   confidence: "high",
   data_completeness_pct: 85,
@@ -165,7 +165,7 @@ describe("ComparisonGrid", () => {
 
   it("renders allergen tags row", () => {
     render(<ComparisonGrid products={products} />);
-    // Product A has "en:gluten, en:milk" → stripped to "gluten, milk"
+    // Product A has "gluten, milk"
     const tags = screen.getAllByText("gluten, milk");
     expect(tags.length).toBeGreaterThanOrEqual(1);
     // Product B has no allergens

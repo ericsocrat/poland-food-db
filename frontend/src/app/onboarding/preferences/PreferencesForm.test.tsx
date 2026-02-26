@@ -128,7 +128,7 @@ describe("PreferencesForm", () => {
     await waitFor(() => {
       expect(mockSetPrefs).toHaveBeenCalledWith(expect.anything(), {
         p_diet_preference: "vegan",
-        p_avoid_allergens: ["en:gluten"],
+        p_avoid_allergens: ["gluten"],
         p_strict_diet: false,
         p_strict_allergen: false,
         p_treat_may_contain_as_unsafe: false,
@@ -217,7 +217,7 @@ describe("PreferencesForm", () => {
     await waitFor(() => {
       expect(mockSetPrefs).toHaveBeenCalledWith(expect.anything(), {
         p_diet_preference: "vegetarian",
-        p_avoid_allergens: ["en:milk"],
+        p_avoid_allergens: ["milk"],
         p_strict_diet: true,
         p_strict_allergen: true,
         p_treat_may_contain_as_unsafe: true,

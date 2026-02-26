@@ -18,7 +18,7 @@ FROM v_master m
 JOIN product_allergen_info ai ON ai.product_id = m.product_id
 WHERE m.vegan_status = 'yes'
   AND ai.type = 'contains'
-  AND ai.tag IN ('en:milk', 'en:eggs', 'en:fish', 'en:crustaceans', 'en:molluscs');
+  AND ai.tag IN ('milk', 'eggs', 'fish', 'crustaceans', 'molluscs');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. No products with vegetarian_status='yes' AND meat/fish allergens
@@ -31,7 +31,7 @@ FROM v_master m
 JOIN product_allergen_info ai ON ai.product_id = m.product_id
 WHERE m.vegetarian_status = 'yes'
   AND ai.type = 'contains'
-  AND ai.tag IN ('en:fish', 'en:crustaceans', 'en:molluscs');
+  AND ai.tag IN ('fish', 'crustaceans', 'molluscs');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. No products where vegan_status='yes' but vegetarian_status='no'

@@ -11,12 +11,12 @@ describe("matchProductAllergens", () => {
   // ── Empty / undefined inputs ────────────────────────────────────────────
 
   it("returns empty array when productAllergens is undefined", () => {
-    expect(matchProductAllergens(undefined, ["en:milk"], true)).toEqual([]);
+    expect(matchProductAllergens(undefined, ["milk"], true)).toEqual([]);
   });
 
   it("returns empty array when userAvoidAllergens is empty", () => {
     const data: ProductAllergenData = {
-      contains: ["en:milk"],
+      contains: ["milk"],
       traces: [],
     };
     expect(matchProductAllergens(data, [], true)).toEqual([]);
@@ -24,24 +24,24 @@ describe("matchProductAllergens", () => {
 
   it("returns empty array when there are no matching allergens", () => {
     const data: ProductAllergenData = {
-      contains: ["en:gluten"],
-      traces: ["en:eggs"],
+      contains: ["gluten"],
+      traces: ["eggs"],
     };
-    expect(matchProductAllergens(data, ["en:milk"], true)).toEqual([]);
+    expect(matchProductAllergens(data, ["milk"], true)).toEqual([]);
   });
 
   // ── Contains matching ─────────────────────────────────────────────────
 
   it("returns 'contains' warnings for matching allergens", () => {
     const data: ProductAllergenData = {
-      contains: ["en:milk", "en:gluten"],
+      contains: ["milk", "gluten"],
       traces: [],
     };
-    const result = matchProductAllergens(data, ["en:milk"], false);
+    const result = matchProductAllergens(data, ["milk"], false);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      tag: "en:milk",
+      tag: "milk",
       label: "Milk / Dairy",
       icon: "🥛",
       type: "contains",
@@ -50,17 +50,17 @@ describe("matchProductAllergens", () => {
 
   it("matches multiple contains allergens", () => {
     const data: ProductAllergenData = {
-      contains: ["en:milk", "en:gluten", "en:eggs"],
+      contains: ["milk", "gluten", "eggs"],
       traces: [],
     };
     const result = matchProductAllergens(
       data,
-      ["en:milk", "en:eggs"],
+      ["milk", "eggs"],
       false,
     );
 
     expect(result).toHaveLength(2);
-    expect(result.map((w) => w.tag)).toEqual(["en:eggs", "en:milk"]);
+    expect(result.map((w) => w.tag)).toEqual(["eggs", "milk"]);
     expect(result.every((w) => w.type === "contains")).toBe(true);
   });
 
@@ -69,9 +69,9 @@ describe("matchProductAllergens", () => {
   it("ignores traces when treatMayContainAsUnsafe is false", () => {
     const data: ProductAllergenData = {
       contains: [],
-      traces: ["en:milk"],
+      traces: ["milk"],
     };
-    const result = matchProductAllergens(data, ["en:milk"], false);
+    const result = matchProductAllergens(data, ["milk"], false);
 
     expect(result).toEqual([]);
   });
@@ -79,13 +79,13 @@ describe("matchProductAllergens", () => {
   it("returns 'traces' warnings when treatMayContainAsUnsafe is true", () => {
     const data: ProductAllergenData = {
       contains: [],
-      traces: ["en:milk"],
+      traces: ["milk"],
     };
-    const result = matchProductAllergens(data, ["en:milk"], true);
+    const result = matchProductAllergens(data, ["milk"], true);
 
     expect(result).toHaveLength(1);
     expect(result[0]).toEqual({
-      tag: "en:milk",
+      tag: "milk",
       label: "Milk / Dairy",
       icon: "🥛",
       type: "traces",
@@ -96,10 +96,10 @@ describe("matchProductAllergens", () => {
 
   it("avoids duplicates when tag appears in both contains and traces", () => {
     const data: ProductAllergenData = {
-      contains: ["en:milk"],
-      traces: ["en:milk"],
+      contains: ["milk"],
+      traces: ["milk"],
     };
-    const result = matchProductAllergens(data, ["en:milk"], true);
+    const result = matchProductAllergens(data, ["milk"], true);
 
     expect(result).toHaveLength(1);
     expect(result[0].type).toBe("contains");
@@ -109,12 +109,12 @@ describe("matchProductAllergens", () => {
 
   it("sorts contains before traces", () => {
     const data: ProductAllergenData = {
-      contains: ["en:gluten"],
-      traces: ["en:eggs"],
+      contains: ["gluten"],
+      traces: ["eggs"],
     };
     const result = matchProductAllergens(
       data,
-      ["en:gluten", "en:eggs"],
+      ["gluten", "eggs"],
       true,
     );
 
@@ -125,19 +125,19 @@ describe("matchProductAllergens", () => {
 
   it("sorts alphabetically within same type", () => {
     const data: ProductAllergenData = {
-      contains: ["en:milk", "en:eggs", "en:gluten"],
+      contains: ["milk", "eggs", "gluten"],
       traces: [],
     };
     const result = matchProductAllergens(
       data,
-      ["en:milk", "en:eggs", "en:gluten"],
+      ["milk", "eggs", "gluten"],
       false,
     );
 
     expect(result.map((w) => w.tag)).toEqual([
-      "en:eggs",
-      "en:gluten",
-      "en:milk",
+      "eggs",
+      "gluten",
+      "milk",
     ]);
   });
 
@@ -145,12 +145,12 @@ describe("matchProductAllergens", () => {
 
   it("uses fallback label and icon for unknown allergen tags", () => {
     const data: ProductAllergenData = {
-      contains: ["en:some-unknown-allergen"],
+      contains: ["some-unknown-allergen"],
       traces: [],
     };
     const result = matchProductAllergens(
       data,
-      ["en:some-unknown-allergen"],
+      ["some-unknown-allergen"],
       false,
     );
 
@@ -163,20 +163,20 @@ describe("matchProductAllergens", () => {
 
   it("provides icons for all 14 EU allergens", () => {
     const expected = [
-      "en:gluten",
-      "en:milk",
-      "en:eggs",
-      "en:nuts",
-      "en:peanuts",
-      "en:soybeans",
-      "en:fish",
-      "en:crustaceans",
-      "en:celery",
-      "en:mustard",
-      "en:sesame-seeds",
-      "en:sulphur-dioxide-and-sulphites",
-      "en:lupin",
-      "en:molluscs",
+      "gluten",
+      "milk",
+      "eggs",
+      "tree-nuts",
+      "peanuts",
+      "soybeans",
+      "fish",
+      "crustaceans",
+      "celery",
+      "mustard",
+      "sesame",
+      "sulphites",
+      "lupin",
+      "molluscs",
     ];
 
     for (const tag of expected) {

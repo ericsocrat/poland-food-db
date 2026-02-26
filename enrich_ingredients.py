@@ -68,7 +68,7 @@ def _psql_cmd(query: str) -> list[str]:
 
 def get_products(country_filter: str | None = None) -> list[dict]:
     """Get active products with EANs that are MISSING ingredient or allergen data.
-    
+
     Args:
         country_filter: If set, only return products for this country code (e.g. 'DE').
     """
@@ -209,12 +209,10 @@ def _is_garbage_name(name: str) -> bool:
     if alpha_count < 2:
         return True
     # Reject names containing HTML/barcode fragments
-    if any(frag in name.lower() for frag in ['<', '>', 'http', 'www.', 'infolinka']):
+    if any(frag in name.lower() for frag in ["<", ">", "http", "www.", "infolinka"]):
         return True
     # Reject single letters
-    if len(name.strip()) <= 1:
-        return True
-    return False
+    return len(name.strip()) <= 1
 
 
 def normalize_ingredient_name(name: str) -> str:
@@ -342,16 +340,58 @@ def process_ingredients(
     return rows
 
 
-def canonical_taxonomy_tag(tag: str) -> str:
-    """Normalize OFF taxonomy tags to canonical en:* namespace."""
+# Mapping from OFF API allergen tags (after stripping prefix) to canonical allergen_ref IDs.
+# Sub-allergens are mapped to their parent EU-14 category.
+_OFF_TO_CANONICAL_ALLERGEN: dict[str, str] = {
+    # EU-14 mandatory allergens (direct matches)
+    "gluten": "gluten",
+    "milk": "milk",
+    "eggs": "eggs",
+    "peanuts": "peanuts",
+    "soybeans": "soybeans",
+    "fish": "fish",
+    "crustaceans": "crustaceans",
+    "celery": "celery",
+    "mustard": "mustard",
+    "lupin": "lupin",
+    "molluscs": "molluscs",
+    # Renamed tags
+    "nuts": "tree-nuts",
+    "sesame-seeds": "sesame",
+    "sulphur-dioxide-and-sulphites": "sulphites",
+    # Common aliases
+    "soy": "soybeans",
+    # Sub-allergens → parent
+    "wheat": "gluten",
+    "oats": "gluten",
+    "barley": "gluten",
+    "rye": "gluten",
+    "spelt": "gluten",
+    "kamut": "gluten",
+    "almonds": "tree-nuts",
+    "hazelnuts": "tree-nuts",
+    "walnuts": "tree-nuts",
+    "cashews": "tree-nuts",
+    "pecans": "tree-nuts",
+    "pistachios": "tree-nuts",
+    "macadamia-nuts": "tree-nuts",
+    "brazil-nuts": "tree-nuts",
+}
+
+
+def canonical_allergen_tag(tag: str) -> str:
+    """Normalize OFF allergen/trace taxonomy tag to a bare canonical allergen_ref ID.
+
+    Strips language prefix (en:, fr:, etc.), maps sub-allergens to parent
+    EU-14 categories, and returns '' for unknown tags.
+    """
     t = (tag or "").strip().lower()
     if not t:
         return ""
-    if t.startswith("en:"):
-        return t
+    # Strip any language prefix (en:xxx, fr:xxx, pl:xxx, etc.)
     if ":" in t:
         t = t.split(":", 1)[1].strip()
-    return f"en:{t}" if t else ""
+    return _OFF_TO_CANONICAL_ALLERGEN.get(t, t)
 
 
 def process_allergens(off_product: dict, country: str, ean: str) -> list[dict]:
@@ -360,7 +400,7 @@ def process_allergens(off_product: dict, country: str, ean: str) -> list[dict]:
 
     allergens = off_product.get("allergens_tags", [])
     for tag in allergens:
-        clean_tag = canonical_taxonomy_tag(tag)
+        clean_tag = canonical_allergen_tag(tag)
         if clean_tag:
             rows.append(
                 {
@@ -373,7 +413,7 @@ def process_allergens(off_product: dict, country: str, ean: str) -> list[dict]:
 
     traces = off_product.get("traces_tags", [])
     for tag in traces:
-        clean_tag = canonical_taxonomy_tag(tag)
+        clean_tag = canonical_allergen_tag(tag)
         if clean_tag:
             rows.append(
                 {
@@ -632,8 +672,12 @@ def generate_migration(
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Enrich ingredient & allergen data from OFF API")
-    parser.add_argument("--country", type=str, default=None, help="Country code filter (e.g. DE, PL)")
+    parser = argparse.ArgumentParser(
+        description="Enrich ingredient & allergen data from OFF API"
+    )
+    parser.add_argument(
+        "--country", type=str, default=None, help="Country code filter (e.g. DE, PL)"
+    )
     args = parser.parse_args()
 
     print("=" * 60)
@@ -649,7 +693,9 @@ def main():
 
     # 1. Load products and ingredient_ref
     print("\n[1/4] Loading products from database...")
-    products = get_products(country_filter=args.country.upper() if args.country else None)
+    products = get_products(
+        country_filter=args.country.upper() if args.country else None
+    )
     print(f"  Found {len(products)} active products with EANs")
 
     print("\n[2/4] Loading ingredient_ref...")

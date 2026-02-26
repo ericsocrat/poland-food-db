@@ -99,9 +99,9 @@ describe("AllergenAlert", () => {
   const alertData: DashboardAllergenAlerts = {
     count: 3,
     products: [
-      { product_id: 1, product_name: "Product A", allergen: "en:milk" },
-      { product_id: 2, product_name: "Product B", allergen: "en:gluten" },
-      { product_id: 3, product_name: "Product C", allergen: "en:milk" },
+      { product_id: 1, product_name: "Product A", allergen: "milk" },
+      { product_id: 2, product_name: "Product B", allergen: "gluten" },
+      { product_id: 3, product_name: "Product C", allergen: "milk" },
     ],
   };
 

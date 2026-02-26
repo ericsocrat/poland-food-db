@@ -27,22 +27,20 @@ describe("AllergensStep", () => {
 
   it("renders all 14 EU allergen buttons", () => {
     renderStep();
-    expect(screen.getByTestId("allergen-en:gluten")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:milk")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:eggs")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:nuts")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:peanuts")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:soybeans")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:fish")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:crustaceans")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:celery")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:mustard")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:sesame-seeds")).toBeInTheDocument();
-    expect(
-      screen.getByTestId("allergen-en:sulphur-dioxide-and-sulphites"),
-    ).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:lupin")).toBeInTheDocument();
-    expect(screen.getByTestId("allergen-en:molluscs")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-gluten")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-milk")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-eggs")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-tree-nuts")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-peanuts")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-soybeans")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-fish")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-crustaceans")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-celery")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-mustard")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-sesame")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-sulphites")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-lupin")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-molluscs")).toBeInTheDocument();
   });
 
   it("renders allergen labels", () => {
@@ -55,15 +53,15 @@ describe("AllergensStep", () => {
   it("toggles allergen on when clicked", async () => {
     const user = userEvent.setup();
     renderStep();
-    await user.click(screen.getByTestId("allergen-en:gluten"));
-    expect(onChange).toHaveBeenCalledWith({ allergens: ["en:gluten"] });
+    await user.click(screen.getByTestId("allergen-gluten"));
+    expect(onChange).toHaveBeenCalledWith({ allergens: ["gluten"] });
   });
 
   it("toggles allergen off when already selected", async () => {
     const user = userEvent.setup();
-    renderStep({ allergens: ["en:gluten", "en:milk"] });
-    await user.click(screen.getByTestId("allergen-en:gluten"));
-    expect(onChange).toHaveBeenCalledWith({ allergens: ["en:milk"] });
+    renderStep({ allergens: ["gluten", "milk"] });
+    await user.click(screen.getByTestId("allergen-gluten"));
+    expect(onChange).toHaveBeenCalledWith({ allergens: ["milk"] });
   });
 
   it("does not show strictness toggles when no allergens selected", () => {
@@ -72,14 +70,14 @@ describe("AllergensStep", () => {
   });
 
   it("shows strict allergen and may-contain toggles when allergens selected", () => {
-    renderStep({ allergens: ["en:gluten"] });
+    renderStep({ allergens: ["gluten"] });
     const checkboxes = screen.getAllByRole("checkbox");
     expect(checkboxes).toHaveLength(2);
   });
 
   it("calls onChange with strictAllergen when toggling strict checkbox", async () => {
     const user = userEvent.setup();
-    renderStep({ allergens: ["en:gluten"] });
+    renderStep({ allergens: ["gluten"] });
     const checkboxes = screen.getAllByRole("checkbox");
     await user.click(checkboxes[0]);
     expect(onChange).toHaveBeenCalledWith({ strictAllergen: true });
@@ -87,7 +85,7 @@ describe("AllergensStep", () => {
 
   it("calls onChange with treatMayContain when toggling may-contain checkbox", async () => {
     const user = userEvent.setup();
-    renderStep({ allergens: ["en:gluten"] });
+    renderStep({ allergens: ["gluten"] });
     const checkboxes = screen.getAllByRole("checkbox");
     await user.click(checkboxes[1]);
     expect(onChange).toHaveBeenCalledWith({ treatMayContain: true });

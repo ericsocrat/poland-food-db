@@ -31,20 +31,20 @@ export function getLanguagesForCountry(countryCode: string) {
 }
 
 export const ALLERGEN_TAGS = [
-  { tag: "en:gluten", label: "Gluten" },
-  { tag: "en:milk", label: "Milk / Dairy" },
-  { tag: "en:eggs", label: "Eggs" },
-  { tag: "en:nuts", label: "Tree Nuts" },
-  { tag: "en:peanuts", label: "Peanuts" },
-  { tag: "en:soybeans", label: "Soy" },
-  { tag: "en:fish", label: "Fish" },
-  { tag: "en:crustaceans", label: "Crustaceans" },
-  { tag: "en:celery", label: "Celery" },
-  { tag: "en:mustard", label: "Mustard" },
-  { tag: "en:sesame-seeds", label: "Sesame" },
-  { tag: "en:sulphur-dioxide-and-sulphites", label: "Sulphites" },
-  { tag: "en:lupin", label: "Lupin" },
-  { tag: "en:molluscs", label: "Molluscs" },
+  { tag: "gluten", label: "Gluten" },
+  { tag: "milk", label: "Milk / Dairy" },
+  { tag: "eggs", label: "Eggs" },
+  { tag: "tree-nuts", label: "Tree Nuts" },
+  { tag: "peanuts", label: "Peanuts" },
+  { tag: "soybeans", label: "Soy" },
+  { tag: "fish", label: "Fish" },
+  { tag: "crustaceans", label: "Crustaceans" },
+  { tag: "celery", label: "Celery" },
+  { tag: "mustard", label: "Mustard" },
+  { tag: "sesame", label: "Sesame" },
+  { tag: "sulphites", label: "Sulphites" },
+  { tag: "lupin", label: "Lupin" },
+  { tag: "molluscs", label: "Molluscs" },
 ] as const;
 
 /**
@@ -55,22 +55,22 @@ export const ALLERGEN_PRESETS = [
   {
     key: "glutenFree",
     labelKey: "allergenPreset.glutenFree",
-    tags: ["en:gluten"],
+    tags: ["gluten"],
   },
   {
     key: "dairyFree",
     labelKey: "allergenPreset.dairyFree",
-    tags: ["en:milk"],
+    tags: ["milk"],
   },
   {
     key: "nutFree",
     labelKey: "allergenPreset.nutFree",
-    tags: ["en:nuts", "en:peanuts"],
+    tags: ["tree-nuts", "peanuts"],
   },
   {
     key: "vegan",
     labelKey: "allergenPreset.vegan",
-    tags: ["en:milk", "en:eggs", "en:fish", "en:crustaceans", "en:molluscs"],
+    tags: ["milk", "eggs", "fish", "crustaceans", "molluscs"],
   },
 ] as const;
 

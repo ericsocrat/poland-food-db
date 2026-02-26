@@ -118,8 +118,7 @@ export function FilterPanel({
                 },
                 { value: "calories" as const, label: t("filters.calories") },
               ].map((opt) => {
-                const isActive =
-                  (filters.sort_by ?? "relevance") === opt.value;
+                const isActive = (filters.sort_by ?? "relevance") === opt.value;
                 return (
                   <button
                     key={opt.value}
@@ -282,6 +281,7 @@ export function FilterPanel({
               <div className="space-y-1 max-h-40 overflow-y-auto">
                 {data.allergens.map((al) => {
                   const labelInfo = ALLERGEN_TAGS.find((a) => a.tag === al.tag);
+                  // Tags are bare canonical IDs; strip legacy en: prefix as fallback
                   const label = labelInfo?.label ?? al.tag.replace("en:", "");
                   const selected = (filters.allergen_free ?? []).includes(
                     al.tag,
