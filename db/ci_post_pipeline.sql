@@ -29,9 +29,9 @@ WHERE  is_deprecated IS NOT TRUE
   AND  source_type IS NULL;
 
 -- ─── 3. Default ingredient_concern_score to 0 where missing ─────────────
--- The ingredient data migration (20260210001400) uses hardcoded product_ids
--- that don't exist in CI, so product_ingredient is empty and concern scores
--- are never computed.  Default to 0 (= no additive concerns detected).
+-- After the enrichment replay step (qa.yml), most products have real
+-- concern scores computed from product_ingredient data.  This fallback
+-- covers any products that were not enriched (no EAN match, no OFF data).
 
 UPDATE products
 SET    ingredient_concern_score = 0
@@ -75,6 +75,21 @@ WHERE  brand        = 'Mlekovita'
   AND  category = 'Baby'
   AND  is_deprecated IS NOT TRUE;
 
+-- Remove junction-table data for deprecated products so MV row counts
+-- stay consistent (mv_ingredient_frequency JOINs on active products only).
+DELETE FROM product_ingredient
+WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true);
+
+DELETE FROM product_allergen_info
+WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true);
+
+-- Remove orphan ingredient_ref entries left behind
+DELETE FROM ingredient_ref
+WHERE NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi WHERE pi.ingredient_id = ingredient_ref.ingredient_id
+)
+AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
+
 -- ─── 3b. Fix data errors in nutrition_facts ─────────────────────────────
 -- Pano "Chleb wieloziarnisty Złoty Łan" has salt=13.0 in pipeline SQL
 -- (OFF API decimal error).  The sibling product has salt=1.3.
@@ -90,9 +105,7 @@ WHERE  product_id = (
        )
   AND  salt_g = 13.0;
 
--- Re-score the Bread category so the salt fix produces correct
--- unhealthiness_score, high_salt_flag, completeness, and confidence.
-CALL score_category('Bread');
+-- (Bread re-scoring deferred to step 7 — full re-score pass)
 
 -- ─── 4. Populate allergen data ──────────────────────────────────────────
 -- The allergen population migration (20260213000500) runs BEFORE pipelines
@@ -168,8 +181,7 @@ SET    category = 'Frozen & Prepared'
 WHERE  category = 'Żabka'
   AND  is_deprecated = false;
 
--- 5c. Re-score affected category
-CALL score_category('Frozen & Prepared');
+-- 5c. (F&P re-scoring deferred to step 7 — full re-score pass)
 
 -- 5d. Backfill junction for all products with store_availability set
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
@@ -198,11 +210,47 @@ WHERE is_deprecated IS NOT TRUE
   AND nutri_score_source IS NULL
   AND nutri_score_label IS NOT NULL;
 
--- ─── 7. Refresh materialized views ──────────────────────────────────────
--- mv_ingredient_frequency and v_product_confidence were created WITH DATA
--- during migrations (when 0 products existed).  Refresh now that products
--- are populated and cleaned up.
+-- ─── 7. Final re-scoring pass ─────────────────────────────────────────────
+-- Earlier steps deprecate products, fix nutrition data, reclassify Żabka,
+-- and backfill source columns.  These changes affect scoring inputs
+-- (ingredient_concern_score, controversies, data_completeness_pct).
+-- Rather than tracking which categories are affected, re-score ALL
+-- categories to ensure scores are consistent after all fixups.
+-- This also guarantees ingredient data from the enrichment replay is
+-- fully factored into scores (additives count, concern score, palm oil).
 
-SELECT refresh_all_materialized_views();
+CALL score_category('Alcohol');
+CALL score_category('Baby');
+CALL score_category('Bread');
+CALL score_category('Breakfast & Grain-Based');
+CALL score_category('Canned Goods');
+CALL score_category('Cereals');
+CALL score_category('Chips');
+CALL score_category('Condiments');
+CALL score_category('Dairy');
+CALL score_category('Drinks');
+CALL score_category('Frozen & Prepared');
+CALL score_category('Instant & Frozen');
+CALL score_category('Meat');
+CALL score_category('Nuts, Seeds & Legumes');
+CALL score_category('Plant-Based & Alternatives');
+CALL score_category('Sauces');
+CALL score_category('Seafood & Fish');
+CALL score_category('Snacks');
+CALL score_category('Sweets');
+
+-- DE categories (micro-pilot)
+CALL score_category('Chips',    p_country := 'DE');
+CALL score_category('Bread',    p_country := 'DE');
+CALL score_category('Dairy',    p_country := 'DE');
+CALL score_category('Drinks',   p_country := 'DE');
+CALL score_category('Sweets',   p_country := 'DE');
 
 COMMIT;
+
+-- ─── 8. Refresh materialized views ──────────────────────────────────────
+-- mv_ingredient_frequency and v_product_confidence were created WITH DATA
+-- during migrations (when 0 products existed).  Refresh now that products
+-- are populated, cleaned up, and scored.
+
+SELECT refresh_all_materialized_views();

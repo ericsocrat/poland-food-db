@@ -120,6 +120,47 @@ jobs:
             done
           done
 
+      - name: Replay enrichment data
+        run: |
+          set -euo pipefail
+          # Enrichment migrations run BEFORE pipelines, so their JOINs on
+          # products(country, ean) match zero rows.  Re-run them now that
+          # pipelines have populated the products table.
+          #
+          # PL enrichment: safe — resolves product_id + ingredient_id via JOINs
+          # DE enrichment: ingredient_ids are hardcoded but deterministic (same
+          #   serial values from identical migration ordering)
+          # Both use ON CONFLICT DO NOTHING — fully idempotent.
+          #
+          # The allergen FK constraint (fk_allergen_tag_ref) must be dropped
+          # before replay because the enrichment files use raw en:-prefixed tags.
+          # ci_normalize_allergens.sql re-normalizes and re-adds the FK.
+
+          echo "Dropping allergen FK for enrichment replay..."
+          psql -v ON_ERROR_STOP=1 -c \
+            "ALTER TABLE product_allergen_info DROP CONSTRAINT IF EXISTS fk_allergen_tag_ref;"
+
+          echo "Replaying PL enrichment (20260215141000)..."
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20260215141000_populate_ingredients_allergens.sql
+
+          echo "Replaying DE enrichment (20260309000100)..."
+          psql -v ON_ERROR_STOP=1 -f supabase/migrations/20260309000100_de_enrichment_ingredients_allergens.sql
+
+          echo "Normalizing allergen tags and re-adding FK..."
+          psql -v ON_ERROR_STOP=1 -f db/ci_normalize_allergens.sql
+
+          echo "Computing concern scores and re-scoring all categories..."
+          psql -v ON_ERROR_STOP=1 -f db/ci_post_enrichment.sql
+
+          echo "Enrichment replay complete."
+          # Verify data arrived
+          counts=$(psql --tuples-only --no-align -c "
+            SELECT 'product_ingredient=' || (SELECT count(*) FROM product_ingredient)
+                || ' product_allergen_info=' || (SELECT count(*) FROM product_allergen_info)
+                || ' ingredient_ref=' || (SELECT count(*) FROM ingredient_ref);
+          ")
+          echo "Enrichment row counts: $counts"
+
       - name: Schema drift detection
         run: |
           set -euo pipefail
@@ -147,6 +188,27 @@ jobs:
           echo "Applying CI post-pipeline fixup..."
           psql -v ON_ERROR_STOP=1 -f db/ci_post_pipeline.sql
           echo "Post-pipeline fixup complete."
+
+      - name: Scoring diagnostic
+        if: always()
+        run: |
+          echo "=== Anchor product scores ==="
+          psql --tuples-only -c "
+            SELECT p.product_id, p.brand, p.product_name, p.category, p.country,
+                   p.unhealthiness_score, p.ingredient_concern_score, p.controversies,
+                   (SELECT COUNT(*) FROM product_ingredient pi WHERE pi.product_id = p.product_id) AS pi_count,
+                   (SELECT COUNT(*) FILTER (WHERE ir2.is_additive)
+                    FROM product_ingredient pi2
+                    JOIN ingredient_ref ir2 ON ir2.ingredient_id = pi2.ingredient_id
+                    WHERE pi2.product_id = p.product_id) AS additive_count
+            FROM products p
+            WHERE (p.product_name = 'Doriros Sweet Chili Flavoured 100g' AND p.brand = 'Doritos')
+               OR (p.product_name = 'Coca-Cola Zero' AND p.country = 'DE')
+               OR (p.product_name = 'Tortilla Pszenno-Żytnia' AND p.brand = 'Auchan')
+               OR (p.product_name = 'Czekolada Tiramisu' AND p.brand = 'E. Wedel')
+               OR (p.product_name = 'Noodles Chicken Flavour' AND p.brand = 'Indomie')
+            ORDER BY p.product_name;
+          "
 
       - name: Run QA via RUN_QA.ps1
         id: qa
