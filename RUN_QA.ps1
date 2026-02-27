@@ -39,9 +39,21 @@
        33. QA__performance_regression.sql (6 performance regression checks — informational)
        34. QA__event_intelligence.sql (18 event intelligence checks — blocking)
        35. QA__store_integrity.sql (12 store architecture checks — blocking)
+       36. QA__data_provenance.sql (25 data provenance checks — blocking)
+       37. QA__scoring_engine.sql (25 scoring engine checks — blocking)
+       38. QA__search_architecture.sql (23 search architecture checks — blocking)
+       39. QA__gdpr_compliance.sql (15 GDPR compliance checks — blocking)
+       40. QA__push_notifications.sql (14 push notification checks — blocking)
+       41. QA__index_verification.sql (13 index verification checks — informational)
+       42. QA__slow_queries.sql (12 slow query detection checks — informational)
+       43. QA__explain_analysis.sql (10 explain analysis checks — informational)
+       44. QA__mv_refresh_cost.sql (10 MV refresh cost checks — informational)
+       45. QA__governance_drift.sql (8 governance drift checks — blocking)
+       46. QA__rls_audit.sql (7 RLS audit checks — blocking)
+       47. QA__function_security_audit.sql (6 function security audit checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
-    Test Suites 3 and 33 are informational and do not affect the exit code.
+    Test Suites 3, 33, 41, 42, 43, and 44 are informational and do not affect the exit code.
 
 .PARAMETER Json
     Output results as machine-readable JSON instead of colored text.
@@ -154,7 +166,19 @@ $suiteCatalog = @(
     @{ Num = 32; Name = "Multi-Country Consistency"; Short = "MultiCountry"; Id = "multi_country_consistency"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__multi_country_consistency.sql" },
     @{ Num = 33; Name = "Performance Regression"; Short = "PerfRegress"; Id = "performance_regression"; Checks = 6; Blocking = $false; Kind = "sql"; File = "QA__performance_regression.sql" },
     @{ Num = 34; Name = "Event Intelligence"; Short = "EventIntel"; Id = "event_intelligence"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__event_intelligence.sql" },
-    @{ Num = 35; Name = "Store Architecture"; Short = "StoreArch"; Id = "store_integrity"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__store_integrity.sql" }
+    @{ Num = 35; Name = "Store Architecture"; Short = "StoreArch"; Id = "store_integrity"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__store_integrity.sql" },
+    @{ Num = 36; Name = "Data Provenance"; Short = "Provenance"; Id = "data_provenance"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__data_provenance.sql" },
+    @{ Num = 37; Name = "Scoring Engine"; Short = "ScoreEngine"; Id = "scoring_engine"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__scoring_engine.sql" },
+    @{ Num = 38; Name = "Search Architecture"; Short = "SearchArch"; Id = "search_architecture"; Checks = 23; Blocking = $true; Kind = "sql"; File = "QA__search_architecture.sql" },
+    @{ Num = 39; Name = "GDPR Compliance"; Short = "GDPR"; Id = "gdpr_compliance"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__gdpr_compliance.sql" },
+    @{ Num = 40; Name = "Push Notifications"; Short = "PushNotif"; Id = "push_notifications"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__push_notifications.sql" },
+    @{ Num = 41; Name = "Index Verification"; Short = "IdxVerify"; Id = "index_verification"; Checks = 13; Blocking = $false; Kind = "sql"; File = "QA__index_verification.sql" },
+    @{ Num = 42; Name = "Slow Query Detection"; Short = "SlowQuery"; Id = "slow_queries"; Checks = 12; Blocking = $false; Kind = "sql"; File = "QA__slow_queries.sql" },
+    @{ Num = 43; Name = "Explain Analysis"; Short = "Explain"; Id = "explain_analysis"; Checks = 10; Blocking = $false; Kind = "sql"; File = "QA__explain_analysis.sql" },
+    @{ Num = 44; Name = "MV Refresh Cost"; Short = "MVRefresh"; Id = "mv_refresh_cost"; Checks = 10; Blocking = $false; Kind = "sql"; File = "QA__mv_refresh_cost.sql" },
+    @{ Num = 45; Name = "Governance Drift"; Short = "GovDrift"; Id = "governance_drift"; Checks = 8; Blocking = $true; Kind = "sql"; File = "QA__governance_drift.sql" },
+    @{ Num = 46; Name = "RLS Audit"; Short = "RLSAudit"; Id = "rls_audit"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__rls_audit.sql" },
+    @{ Num = 47; Name = "Function Security Audit"; Short = "FuncSecAudit"; Id = "function_security_audit"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__function_security_audit.sql" }
 )
 
 $suiteByNum = @{}
