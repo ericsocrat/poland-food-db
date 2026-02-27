@@ -166,17 +166,18 @@ WHERE p.is_deprecated IS NOT TRUE
 -- ═══════════════════════════════════════════════════════════════════════════
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Test 11: Known product regression test (Top Chips Faliste)
---          This product has palm oil (16g sat fat) and should score 51±2
+-- Test 11: Known product regression test (Doritos Sweet Chili)
+--          Chips with 7 additives + high concern score (55) → score 43-47
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
-       'REGRESSION: Top Chips Faliste score changed unexpectedly' AS issue,
-       CONCAT('Expected 49-53, got ', p.unhealthiness_score) AS detail
+       'REGRESSION: Doritos Sweet Chili score changed unexpectedly' AS issue,
+       CONCAT('Expected 43-47, got ', p.unhealthiness_score) AS detail
 FROM products p
-WHERE p.product_name = 'Top Chips Faliste'
+WHERE p.product_name = 'Doriros Sweet Chili Flavoured 100g'
+  AND p.brand = 'Doritos'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 49 AND 53;
+  AND p.unhealthiness_score::int NOT BETWEEN 43 AND 47;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 12: Known product regression test (Naleśniki z jabłkami)
@@ -192,119 +193,127 @@ WHERE p.product_name = 'Naleśniki z jabłkami i cynamonem'
   AND p.unhealthiness_score::int NOT BETWEEN 15 AND 19;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Test 13: Known product regression test (Melvit Płatki Owsiane Górskie)
---          Unprocessed whole oats (NOVA 1), near-zero bad nutrients → score 9-13
+-- Test 13: Known product regression test (Melvit Płatki owsiane górskie)
+--          Unprocessed whole oats (NOVA 1), near-zero bad nutrients → score 11-15
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Melvit Owsiane score changed unexpectedly' AS issue,
-       CONCAT('Expected 9-13, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 11-15, got ', p.unhealthiness_score) AS detail
 FROM products p
-WHERE p.product_name = 'Melvit Płatki Owsiane Górskie'
+WHERE p.product_name = 'Płatki owsiane górskie'
+  AND p.brand = 'Melvit'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 9 AND 13;
+  AND p.unhealthiness_score::int NOT BETWEEN 11 AND 15;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 14: Known product regression test (Coca-Cola Zero)
---          Zero sugar/fat but 5 additives → score 6-10
+--          Zero sugar/fat but 8 additives + concern 2.0 (enriched) → score 11-15
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Coca-Cola Zero score changed unexpectedly' AS issue,
-       CONCAT('Expected 6-10, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 11-15, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Coca-Cola Zero'
-  AND p.country = 'PL'
+  AND p.country = 'DE'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 6 AND 10;
+  AND p.unhealthiness_score::int NOT BETWEEN 11 AND 15;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 15: Known product regression test (Piątnica Skyr Naturalny)
---          Fat-free high-protein dairy (NOVA 1), zero additives → score 7-11
+--          Fat-free high-protein dairy, fermented, zero additives → score 6-10
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Skyr Naturalny score changed unexpectedly' AS issue,
-       CONCAT('Expected 7-11, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 6-10, got ', p.unhealthiness_score) AS detail
 FROM products p
-WHERE p.product_name = 'Piątnica Skyr Naturalny'
+WHERE p.product_name = 'Skyr Naturalny'
+  AND p.brand = 'Piątnica'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 7 AND 11;
+  AND p.unhealthiness_score::int NOT BETWEEN 6 AND 10;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Test 16: Known product regression test (Mestemacher Pumpernikiel)
---          Traditional German pumpernickel — low fat, low sugar, baked → score 15-19
+-- Test 16: Known product regression test (Auchan Tortilla Pszenno-Żytnia)
+--          Bread with 9 additives + concern 25, baked → score 28-32
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
-       'REGRESSION: Mestemacher Pumpernikiel score changed unexpectedly' AS issue,
-       CONCAT('Expected 15-19, got ', p.unhealthiness_score) AS detail
+       'REGRESSION: Auchan Tortilla score changed unexpectedly' AS issue,
+       CONCAT('Expected 28-32, got ', p.unhealthiness_score) AS detail
 FROM products p
-WHERE p.product_name = 'Mestemacher Pumpernikiel'
+WHERE p.product_name = 'Tortilla Pszenno-Żytnia'
+  AND p.brand = 'Auchan'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 15 AND 19;
+  AND p.unhealthiness_score::int NOT BETWEEN 28 AND 32;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- Test 17: Known product regression test (Tarczyński Kabanosy Klasyczne)
---          High-fat, high-salt cured meat (IARC moderate) → score 53-57
+-- Test 17: Known product regression test (Tarczyński Kabanosy wieprzowe)
+--          High-fat cured meat, sat fat dominant → score 29-33
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
-       'REGRESSION: Kabanosy Klasyczne score changed unexpectedly' AS issue,
+       'REGRESSION: Kabanosy wieprzowe score changed unexpectedly' AS issue,
+       CONCAT('Expected 29-33, got ', p.unhealthiness_score) AS detail
+FROM products p
+WHERE p.product_name = 'Kabanosy wieprzowe'
+  AND p.brand = 'Tarczyński'
+  AND p.is_deprecated IS NOT TRUE
+  AND p.unhealthiness_score::int NOT BETWEEN 29 AND 33;
+
+-- Test 18: Known product regression test (E. Wedel Czekolada Tiramisu)
+--          Sweets: palm oil + 15g sat fat + 57g sugars + 6 additives → score 55-59
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       p.unhealthiness_score,
+       'REGRESSION: Wedel Czekolada Tiramisu score changed unexpectedly' AS issue,
+       CONCAT('Expected 55-59, got ', p.unhealthiness_score) AS detail
+FROM products p
+WHERE p.product_name = 'Czekolada Tiramisu'
+  AND p.brand = 'E. Wedel'
+  AND p.is_deprecated IS NOT TRUE
+  AND p.unhealthiness_score::int NOT BETWEEN 55 AND 59;
+
+-- Test 19: Known product regression test (Indomie Noodles Chicken Flavour)
+--          Instant noodles: palm oil + 10 additives + concern 75, dried → score 53-57
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       p.unhealthiness_score,
+       'REGRESSION: Indomie Noodles score changed unexpectedly' AS issue,
        CONCAT('Expected 53-57, got ', p.unhealthiness_score) AS detail
 FROM products p
-WHERE p.product_name = 'Tarczyński Kabanosy Klasyczne'
+WHERE p.product_name = 'Noodles Chicken Flavour'
+  AND p.brand = 'Indomie'
   AND p.is_deprecated IS NOT TRUE
   AND p.unhealthiness_score::int NOT BETWEEN 53 AND 57;
 
--- Test 18: Known product regression test (Prince Polo XXL Classic)
---          Iconic Polish wafer bar: palm oil controversy + 4 additives → score 52-56
+-- Test 20: Known product regression test (Pudliszki Ketchup łagodny)
+--          Popular Polish ketchup: sugar 20g + salt 2.7g, 6 ingredients → score 16-20
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
-       'REGRESSION: Prince Polo XXL Classic score changed unexpectedly' AS issue,
-       CONCAT('Expected 52-56, got ', p.unhealthiness_score) AS detail
+       'REGRESSION: Pudliszki Ketchup score changed unexpectedly' AS issue,
+       CONCAT('Expected 16-20, got ', p.unhealthiness_score) AS detail
 FROM products p
-WHERE p.product_name = 'Prince Polo XXL Classic'
+WHERE p.product_name = 'Ketchup łagodny - Najsmaczniejszy'
+  AND p.brand = 'Pudliszki'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 52 AND 56;
-
--- Test 19: Known product regression test (Knorr Nudle Pomidorowe Pikantne)
---          Instant noodle with 6 additives + palm oil → score 19-23
--- ═══════════════════════════════════════════════════════════════════════════
-SELECT p.product_id, p.brand, p.product_name,
-       p.unhealthiness_score,
-       'REGRESSION: Knorr Nudle Pomidorowe score changed unexpectedly' AS issue,
-       CONCAT('Expected 19-23, got ', p.unhealthiness_score) AS detail
-FROM products p
-WHERE p.product_name = 'Knorr Nudle Pomidorowe Pikantne'
-  AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 19 AND 23;
-
--- Test 20: Known product regression test (Pudliszki Ketchup Łagodny)
---          Popular Polish ketchup: high sugar + high salt → score 33-37
--- ═══════════════════════════════════════════════════════════════════════════
-SELECT p.product_id, p.brand, p.product_name,
-       p.unhealthiness_score,
-       'REGRESSION: Pudliszki Ketchup Łagodny score changed unexpectedly' AS issue,
-       CONCAT('Expected 33-37, got ', p.unhealthiness_score) AS detail
-FROM products p
-WHERE p.product_name = 'Pudliszki Ketchup Łagodny'
-  AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 33 AND 37;
+  AND p.unhealthiness_score::int NOT BETWEEN 16 AND 20;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 21: Known product regression test (BoboVita Kaszka Mleczna 7 Zbóż)
---          Baby cereal: high sugars 31g + moderate sat-fat → score 34-38
+--          Baby cereal: high sugars 31g + moderate sat-fat → score 32-36
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: BoboVita Kaszka Mleczna 7 Zbóż score changed unexpectedly' AS issue,
-       CONCAT('Expected 34-38, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 32-36, got ', p.unhealthiness_score) AS detail
 FROM products p
-WHERE p.product_name = 'BoboVita Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa'
+WHERE p.product_name = 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa'
+  AND p.brand = 'BoboVita'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 34 AND 38;
+  AND p.unhealthiness_score::int NOT BETWEEN 32 AND 36;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 22: Known product regression test (Somersby Blueberry Cider)
