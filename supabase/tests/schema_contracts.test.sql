@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(187);
+SELECT plan(191);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -230,6 +230,12 @@ SELECT has_index('public', 'product_submissions',  'idx_product_submissions_revi
 
 -- ─── Completeness Gap Analysis (#376) ─────────────────────────────────────────
 SELECT has_function('public', 'api_completeness_gap_analysis',    'function api_completeness_gap_analysis exists');
+
+-- ─── Feature Flag Activation Roadmap (#372) ──────────────────────────────────
+SELECT has_column('public', 'feature_flags', 'activation_criteria',  'feature_flags.activation_criteria exists');
+SELECT has_column('public', 'feature_flags', 'activation_order',     'feature_flags.activation_order exists');
+SELECT has_column('public', 'feature_flags', 'depends_on',           'feature_flags.depends_on exists');
+SELECT has_function('public', 'check_flag_readiness',                'function check_flag_readiness exists');
 
 -- ─── Store Architecture (#350) ────────────────────────────────────────────────
 SELECT has_table('public', 'store_ref',                           'table store_ref exists');
