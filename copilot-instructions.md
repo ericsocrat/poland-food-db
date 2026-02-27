@@ -3,7 +3,7 @@
 > **Last updated:** 2026-02-28
 > **Scope:** Poland (`PL`) primary + Germany (`DE`) micro-pilot (252 products across 5 categories)
 > **Products:** ~1,281 active (20 PL categories + 5 DE categories), 51 deprecated
-> **EAN coverage:** 997/1,025 (97.3%)
+> **EAN coverage:** 1,024/1,026 (99.8%)
 > **Scoring:** v3.2 — 9-factor weighted formula via `compute_unhealthiness_v32()` (added ingredient concern scoring)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
@@ -213,7 +213,7 @@ poland-food-db/
 │   ├── DOCUMENTATION_GOVERNANCE.md  # Documentation ownership, versioning, deprecation, drift prevention
 │   ├── DOMAIN_BOUNDARIES.md         # Domain boundary enforcement & ownership mapping
 │   ├── DRIFT_DETECTION.md           # 8-check drift detection catalog, severity levels, CI plan
-│   ├── EAN_VALIDATION_STATUS.md     # 997/1,025 coverage (97.3%)
+│   ├── EAN_VALIDATION_STATUS.md     # 1,024/1,026 coverage (99.8%)
 │   ├── ENVIRONMENT_STRATEGY.md      # Local/staging/production environment strategy
 │   ├── FEATURE_FLAGS.md             # Feature flag architecture & toggle registry
 │   ├── FEATURE_SUNSETTING.md        # Feature retirement criteria & cleanup policy
