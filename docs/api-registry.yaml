@@ -1,7 +1,7 @@
 # API Registry — Poland Food DB
 #
-# Canonical registry of all 109 public-schema functions.
-# Last updated: 2026-03-01
+# Canonical registry of all 192 public-schema functions.
+# Last updated: 2026-03-14
 # Naming convention: docs/API_CONVENTIONS.md
 # Contract details: docs/API_CONTRACTS.md
 # Frontend mapping: docs/FRONTEND_API_MAP.md
@@ -1053,22 +1053,6 @@ compute_score:
   deprecated: false
   notes: Config-driven scoring function.
 
-compute_unhealthiness_v31:
-  domain: scoring
-  visibility: internal
-  auth: n/a
-  returns: integer
-  deprecated: true
-  notes: Legacy v3.1 scoring — superseded by v3.2. Kept for audit trail.
-
-compute_unhealthiness_v32:
-  domain: scoring
-  visibility: internal
-  auth: n/a
-  returns: integer
-  deprecated: false
-  notes: Active v3.2 scoring — 9-factor weighted formula.
-
 compute_data_confidence:
   domain: scoring
   visibility: internal
@@ -1286,3 +1270,1086 @@ trg_update_list_timestamp:
   auth: n/a
   returns: trigger
   deprecated: false
+
+# ═══════════════════════════════════════════════════════════════════
+# PUSH NOTIFICATIONS & WATCHLIST DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_save_push_subscription:
+  domain: notifications
+  visibility: public
+  auth: authenticated
+  params:
+    p_endpoint: { type: text, required: true }
+    p_key_p256dh: { type: text, required: true }
+    p_key_auth: { type: text, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: >
+    Saves a Web Push subscription for the current user.
+    SECURITY DEFINER. Validates endpoint URL format and key presence.
+
+api_delete_push_subscription:
+  domain: notifications
+  visibility: public
+  auth: authenticated
+  params:
+    p_endpoint: { type: text, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Removes a push subscription by endpoint for the current user. SECURITY DEFINER.
+
+api_get_push_subscriptions:
+  domain: notifications
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Returns all push subscriptions for the current user. SECURITY DEFINER.
+
+api_get_pending_notifications:
+  domain: notifications
+  visibility: public
+  auth: service_role
+  params:
+    p_limit: { type: int, required: false, default: "50" }
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+  notes: >
+    Returns pending notifications with subscriber endpoints.
+    Called by Edge Function (service_role only). SECURITY DEFINER.
+
+api_mark_notifications_sent:
+  domain: notifications
+  visibility: public
+  auth: service_role
+  params:
+    p_notification_ids: { type: "bigint[]", required: true }
+    p_status: { type: text, required: false, default: "'sent'" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Marks queued notifications as sent/failed. Called by Edge Function.
+    SECURITY DEFINER, service_role only.
+
+api_cleanup_push_subscriptions:
+  domain: notifications
+  visibility: public
+  auth: service_role
+  params:
+    p_endpoint: { type: text, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Removes expired push subscription by endpoint. SECURITY DEFINER, service_role only.
+
+queue_score_change_notifications:
+  domain: notifications
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    Trigger function on product_score_history INSERT. Queues notifications for
+    users watching the product when score_delta meets their alert_threshold.
+    SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# SCORE HISTORY & WATCHLIST DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_get_score_history:
+  domain: scoring
+  visibility: public
+  auth: anon
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_limit: { type: int, required: false, default: "20" }
+  returns: jsonb
+  p95_target: 150
+  deprecated: false
+  notes: >
+    Returns score history for a product including trend analysis,
+    reformulation detection, and sparkline data. SECURITY DEFINER.
+
+api_watch_product:
+  domain: watchlist
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_threshold: { type: smallint, required: false, default: "5" }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Adds a product to the user's watchlist with alert threshold. SECURITY DEFINER.
+
+api_unwatch_product:
+  domain: watchlist
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Removes a product from the user's watchlist. SECURITY DEFINER.
+
+api_get_watchlist:
+  domain: watchlist
+  visibility: public
+  auth: authenticated
+  params:
+    p_page: { type: int, required: false, default: "1" }
+    p_page_size: { type: int, required: false, default: "20" }
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+  notes: >
+    Paginated watchlist with product details, trend, reformulation detection,
+    and score sparkline. SECURITY DEFINER.
+
+api_is_watching:
+  domain: watchlist
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 30
+  deprecated: false
+  notes: Check whether the current user is watching a specific product. SECURITY DEFINER.
+
+record_score_change:
+  domain: scoring
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    Trigger on products.unhealthiness_score UPDATE. Inserts into
+    product_score_history with delta tracking. SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# SEARCH DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_search_did_you_mean:
+  domain: search
+  visibility: public
+  auth: authenticated
+  params:
+    p_query: { type: text, required: true }
+    p_country: { type: text, required: false, default: "NULL" }
+    p_limit: { type: integer, required: false, default: "3" }
+  returns: jsonb
+  p95_target: 150
+  deprecated: false
+  notes: >
+    Fuzzy "did you mean?" suggestions using pg_trgm similarity.
+    Falls back to user_preferences.country for country resolution. SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# GDPR / COMPLIANCE DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_export_user_data:
+  domain: compliance
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 2000
+  deprecated: false
+  notes: >
+    GDPR Article 20 data export. Assembles all personal data (preferences,
+    health profiles, lists, comparisons, saved searches, scan history,
+    watched products, product views, achievements) into a single JSONB payload.
+    SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# ACHIEVEMENTS DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_get_achievements:
+  domain: achievements
+  visibility: public
+  auth: authenticated
+  params: {}
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Returns all achievement definitions with current user progress.
+    Includes total/unlocked counts. SECURITY DEFINER.
+
+increment_achievement_progress:
+  domain: achievements
+  visibility: internal
+  auth: authenticated
+  params:
+    p_achievement_slug: { type: text, required: true }
+    p_increment: { type: integer, required: false, default: "1" }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: >
+    Atomic upsert of achievement progress with threshold-based unlock.
+    SECURITY DEFINER. Idempotent unlock (won't re-set unlocked_at).
+
+# ═══════════════════════════════════════════════════════════════════
+# EVENT INTELLIGENCE DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_validate_event_schema:
+  domain: analytics
+  visibility: public
+  auth: anon
+  params:
+    p_event_type: { type: text, required: true }
+    p_schema_version: { type: integer, required: false, default: "NULL" }
+    p_event_data: { type: jsonb, required: false, default: "'{}'::jsonb" }
+  returns: jsonb
+  p95_target: 30
+  deprecated: false
+  notes: >
+    Validates event_data against the registered JSON Schema for an event type.
+    Checks required fields. Returns {valid: true/false, errors: [...]}.
+    SECURITY DEFINER. STABLE.
+
+api_get_event_schemas:
+  domain: analytics
+  visibility: public
+  auth: authenticated
+  params:
+    p_event_type: { type: text, required: false, default: "NULL" }
+    p_status: { type: text, required: false, default: "'active'" }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: >
+    Returns registered event schemas, optionally filtered by event_type and status.
+    SECURITY DEFINER. STABLE.
+
+# ═══════════════════════════════════════════════════════════════════
+# HEALTH CHECK / MONITORING DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_health_check:
+  domain: monitoring
+  visibility: admin
+  auth: service_role
+  params: {}
+  returns: jsonb
+  p95_target: 500
+  deprecated: false
+  notes: >
+    Returns connectivity, MV staleness, row counts, and overall status
+    (healthy/degraded/unhealthy). No secrets in response.
+    SECURITY DEFINER. STABLE. service_role only.
+
+# ═══════════════════════════════════════════════════════════════════
+# STORE DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_product_stores:
+  domain: stores
+  visibility: public
+  auth: authenticated
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: Returns all active stores where a product is available. SECURITY DEFINER. STABLE.
+
+api_store_products:
+  domain: stores
+  visibility: public
+  auth: authenticated
+  params:
+    p_store_slug: { type: text, required: true }
+    p_country: { type: text, required: false, default: "'PL'" }
+    p_limit: { type: integer, required: false, default: "50" }
+    p_offset: { type: integer, required: false, default: "0" }
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+  notes: >
+    Paginated products available at a given store.
+    Default sort: healthiest first. SECURITY DEFINER. STABLE.
+
+api_list_stores:
+  domain: stores
+  visibility: public
+  auth: authenticated
+  params:
+    p_country: { type: text, required: false, default: "'PL'" }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: Returns all active stores for a country with product counts. SECURITY DEFINER. STABLE.
+
+# ═══════════════════════════════════════════════════════════════════
+# MATERIALIZED VIEW REFRESH DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_refresh_mvs:
+  domain: infrastructure
+  visibility: admin
+  auth: service_role
+  params: {}
+  returns: jsonb
+  p95_target: null
+  deprecated: false
+  notes: >
+    Triggers refresh_all_materialized_views('api') and returns status.
+    SECURITY DEFINER. 30s statement_timeout.
+
+mv_last_refresh:
+  domain: infrastructure
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(mv_name text, refreshed_at timestamptz, duration_ms integer, row_count bigint, triggered_by text, age_minutes double precision)"
+  p95_target: 30
+  deprecated: false
+  notes: >
+    Returns the most recent refresh entry per materialized view.
+    Used by staleness checks and monitoring dashboards. SECURITY DEFINER. STABLE.
+
+# ═══════════════════════════════════════════════════════════════════
+# DATA COMPLETENESS DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_completeness_gap_analysis:
+  domain: data_quality
+  visibility: public
+  auth: anon
+  params:
+    p_country: { type: text, required: false, default: "NULL" }
+    p_category: { type: text, required: false, default: "NULL" }
+  returns: "TABLE(checkpoint text, total_products bigint, products_passing bigint, products_failing bigint, coverage_pct numeric, backfill_path text)"
+  p95_target: 500
+  deprecated: false
+  notes: >
+    Per-checkpoint coverage analysis across active products.
+    Optional country/category filters. SECURITY DEFINER. STABLE.
+
+# ═══════════════════════════════════════════════════════════════════
+# DATA PROVENANCE DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+api_product_provenance:
+  domain: provenance
+  visibility: public
+  auth: anon
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+  notes: >
+    Public provenance summary with trust score, freshness status,
+    per-field source attribution, and trust explanation.
+    SECURITY DEFINER.
+
+admin_provenance_dashboard:
+  domain: provenance
+  visibility: admin
+  auth: authenticated
+  params:
+    p_country: { type: text, required: false, default: "'PL'" }
+  returns: jsonb
+  p95_target: 500
+  deprecated: false
+  notes: >
+    Admin provenance health overview per country. Includes total/with/without
+    provenance counts, open conflicts, source distribution, and policies.
+    SECURITY DEFINER.
+
+field_to_group:
+  domain: provenance
+  visibility: internal
+  auth: authenticated
+  params:
+    p_field_name: { type: text, required: true }
+  returns: text
+  p95_target: 1
+  deprecated: false
+  notes: >
+    Maps a field name to its governance group (nutrition, allergens,
+    ingredients, identity, images, scoring). IMMUTABLE.
+
+record_field_provenance:
+  domain: provenance
+  visibility: internal
+  auth: service_role
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_field_name: { type: text, required: true }
+    p_source_key: { type: text, required: true }
+    p_confidence: { type: numeric, required: false, default: "NULL" }
+    p_verified_by: { type: uuid, required: false, default: "NULL" }
+    p_notes: { type: text, required: false, default: "NULL" }
+    p_source_url: { type: text, required: false, default: "NULL" }
+  returns: void
+  p95_target: 10
+  deprecated: false
+  notes: >
+    Records provenance for a single product field. Auto-resolves confidence
+    from data_sources.base_confidence when not provided. SECURITY DEFINER.
+
+record_bulk_provenance:
+  domain: provenance
+  visibility: internal
+  auth: service_role
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_source_key: { type: text, required: true }
+    p_fields: { type: "text[]", required: true }
+    p_verified_by: { type: uuid, required: false, default: "NULL" }
+    p_notes: { type: text, required: false, default: "NULL" }
+  returns: void
+  p95_target: 50
+  deprecated: false
+  notes: >
+    Records provenance for multiple fields at once. Resolves confidence
+    from data_sources.base_confidence. SECURITY DEFINER.
+
+detect_stale_products:
+  domain: provenance
+  visibility: internal
+  auth: service_role
+  params:
+    p_country: { type: text, required: false, default: "'PL'" }
+    p_severity: { type: text, required: false, default: "'warning'" }
+    p_limit: { type: int, required: false, default: "100" }
+  returns: "TABLE(product_id bigint, product_name text, stale_fields jsonb, max_staleness_days int, staleness_severity text, recommended_action text)"
+  p95_target: 500
+  deprecated: false
+  notes: >
+    Identifies products with stale fields based on freshness_policies.
+    Returns per-product aggregated staleness info. SECURITY DEFINER.
+
+detect_conflict:
+  domain: provenance
+  visibility: internal
+  auth: service_role
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_field_name: { type: text, required: true }
+    p_new_source: { type: text, required: true }
+    p_new_value: { type: jsonb, required: true }
+  returns: boolean
+  p95_target: 50
+  deprecated: false
+  notes: >
+    Checks if a new value conflicts with existing data beyond tolerance.
+    Inserts into data_conflicts if conflict detected. SECURITY DEFINER.
+
+resolve_conflicts_auto:
+  domain: provenance
+  visibility: internal
+  auth: service_role
+  params:
+    p_country: { type: text, required: false, default: "'PL'" }
+    p_max_severity: { type: text, required: false, default: "'medium'" }
+  returns: int
+  p95_target: 1000
+  deprecated: false
+  notes: >
+    Auto-resolves open conflicts using source priority rules from
+    conflict_resolution_rules. Returns count of resolved conflicts.
+    SECURITY DEFINER.
+
+compute_provenance_confidence:
+  domain: provenance
+  visibility: internal
+  auth: service_role
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: "TABLE(overall_confidence numeric, confidence_breakdown jsonb, staleness_risk text, data_completeness numeric, source_diversity int, weakest_field text, weakest_field_confidence numeric)"
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Computes composite confidence with freshness decay from provenance data.
+    Uses freshness_policies for per-field-group penalty. SECURITY DEFINER.
+
+validate_product_for_country:
+  domain: provenance
+  visibility: internal
+  auth: service_role
+  params:
+    p_product_id: { type: bigint, required: true }
+    p_country: { type: text, required: true }
+  returns: jsonb
+  p95_target: 200
+  deprecated: false
+  notes: >
+    Validates a product against country_data_policies (confidence threshold,
+    local language, allergen strictness, freshness). SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# DATA INTEGRITY AUDITS DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+audit_score_band_contradictions:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 500
+  deprecated: false
+  notes: >
+    Detects products where Nutri-Score label (A-E) wildly contradicts the
+    unhealthiness_score. STABLE SECURITY DEFINER.
+
+audit_impossible_values:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 500
+  deprecated: false
+  notes: >
+    Detects physiologically impossible nutritional values: negatives,
+    macro overflow, score out of range. STABLE SECURITY DEFINER.
+
+audit_missing_required_fields:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 500
+  deprecated: false
+  notes: >
+    Detects products missing required fields: name, valid EAN, or
+    ingredients when scores exist. STABLE SECURITY DEFINER.
+
+audit_orphan_records:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 300
+  deprecated: false
+  notes: >
+    Detects orphan records in junction tables (allergens, ingredients)
+    with no matching product. STABLE SECURITY DEFINER.
+
+audit_mv_staleness:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Detects materialized views not analyzed in the last 24 hours.
+    STABLE SECURITY DEFINER.
+
+audit_duplicate_eans:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 300
+  deprecated: false
+  notes: Detects active products sharing the same EAN barcode. STABLE SECURITY DEFINER.
+
+audit_band_consistency:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 300
+  deprecated: false
+  notes: >
+    Flags products where Nutri-Score label and unhealthiness_score disagree
+    by 2+ bands. STABLE SECURITY DEFINER.
+
+audit_category_consistency:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 300
+  deprecated: false
+  notes: >
+    Detects products without categories and categories with suspiciously
+    few products. STABLE SECURITY DEFINER.
+
+run_full_data_audit:
+  domain: audit
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(check_name text, severity text, product_id bigint, product_name text, ean text, details jsonb)"
+  p95_target: 3000
+  deprecated: false
+  notes: >
+    Master audit runner. Calls all 8 audit category functions and returns
+    unified results. STABLE SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# SCORING INTERNALS DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+compute_unhealthiness_v31:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  params:
+    p_saturated_fat_g: { type: numeric, required: true }
+    p_sugars_g: { type: numeric, required: true }
+    p_salt_g: { type: numeric, required: true }
+    p_calories: { type: numeric, required: true }
+    p_trans_fat_g: { type: numeric, required: true }
+    p_additives_count: { type: numeric, required: true }
+    p_prep_method: { type: text, required: true }
+    p_controversies: { type: text, required: true }
+  returns: integer
+  p95_target: 1
+  deprecated: false
+  notes: >
+    Unhealthiness v3.1b scoring formula: 8 factors with weighted sum.
+    Differentiates smoked/steamed/grilled prep methods. IMMUTABLE.
+
+compute_unhealthiness_v32:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  params:
+    p_saturated_fat_g: { type: numeric, required: true }
+    p_sugars_g: { type: numeric, required: true }
+    p_salt_g: { type: numeric, required: true }
+    p_calories: { type: numeric, required: true }
+    p_trans_fat_g: { type: numeric, required: true }
+    p_additives_count: { type: numeric, required: true }
+    p_prep_method: { type: text, required: true }
+    p_controversies: { type: text, required: true }
+    p_concern_score: { type: numeric, required: true }
+  returns: integer
+  p95_target: 1
+  deprecated: false
+  notes: >
+    Unhealthiness v3.2 scoring formula: 9 factors including ingredient
+    concern score and palm oil controversy handling. IMMUTABLE.
+
+explain_score_v32:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  params:
+    p_saturated_fat_g: { type: numeric, required: true }
+    p_sugars_g: { type: numeric, required: true }
+    p_salt_g: { type: numeric, required: true }
+    p_calories: { type: numeric, required: true }
+    p_trans_fat_g: { type: numeric, required: true }
+    p_additives_count: { type: numeric, required: true }
+    p_prep_method: { type: text, required: true }
+    p_controversies: { type: text, required: true }
+    p_concern_score: { type: numeric, required: true }
+  returns: jsonb
+  p95_target: 1
+  deprecated: false
+  notes: >
+    Returns JSONB breakdown of v3.2 score computation: final_score
+    plus array of 9 factors with name, weight, raw/weighted values,
+    input, and ceiling. IMMUTABLE.
+
+compute_nutri_score_label:
+  domain: scoring
+  visibility: internal
+  auth: n/a
+  params:
+    p_calories: { type: numeric, required: true }
+    p_sugars_g: { type: numeric, required: true }
+    p_sat_fat_g: { type: numeric, required: true }
+    p_salt_g: { type: numeric, required: true }
+    p_fibre_g: { type: numeric, required: true }
+    p_protein_g: { type: numeric, required: true }
+    p_is_beverage: { type: boolean, required: false, default: "false" }
+  returns: text
+  p95_target: 1
+  deprecated: false
+  notes: >
+    Computes Nutri-Score v1 grade (A-E) from nutrition facts per 100g.
+    Assumes fruit/vegetable/nut % = 0 (conservative). IMMUTABLE.
+
+compute_data_completeness:
+  domain: data_quality
+  visibility: internal
+  auth: n/a
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: numeric
+  p95_target: 10
+  deprecated: false
+  notes: >
+    Computes data_completeness_pct based on 15 field-coverage checkpoints
+    (EAN, 9 nutrition fields, Nutri-Score, NOVA, ingredients, allergens,
+    source provenance). Returns 0-100. STABLE.
+
+# ═══════════════════════════════════════════════════════════════════
+# CROSS-VALIDATION & SCALE GUARDRAILS
+# ═══════════════════════════════════════════════════════════════════
+
+cross_validate_product:
+  domain: data_quality
+  visibility: internal
+  auth: service_role
+  params:
+    p_product_id: { type: bigint, required: true }
+  returns: jsonb
+  p95_target: 50
+  deprecated: false
+  notes: >
+    Compares nutrition data across multiple sources for a single product.
+    Returns source_count, validation_status, and field_divergence metrics.
+    SECURITY DEFINER. STABLE.
+
+check_table_ceilings:
+  domain: infrastructure
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: "TABLE(table_name text, current_rows bigint, ceiling bigint, pct_of_ceiling numeric, status text)"
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Returns row counts vs capacity ceilings for 7 core tables.
+    Status: OK / WARNING (>80%) / EXCEEDED. SECURITY DEFINER. STABLE.
+
+# ═══════════════════════════════════════════════════════════════════
+# BACKFILL REGISTRY DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+register_backfill:
+  domain: backfill
+  visibility: internal
+  auth: service_role
+  params:
+    p_name: { type: text, required: true }
+    p_description: { type: text, required: false, default: "NULL" }
+    p_source_issue: { type: text, required: false, default: "NULL" }
+    p_rows_expected: { type: integer, required: false, default: "NULL" }
+    p_batch_size: { type: integer, required: false, default: "1000" }
+    p_rollback_sql: { type: text, required: false, default: "NULL" }
+    p_executed_by: { type: text, required: false, default: "'automation'" }
+  returns: uuid
+  p95_target: 10
+  deprecated: false
+  notes: >
+    Registers a new backfill operation. Upserts by name. Returns backfill_id.
+    SECURITY DEFINER.
+
+start_backfill:
+  domain: backfill
+  visibility: internal
+  auth: service_role
+  params:
+    p_backfill_id: { type: uuid, required: true }
+  returns: void
+  p95_target: 10
+  deprecated: false
+  notes: Marks a pending backfill as running with started_at timestamp. SECURITY DEFINER.
+
+update_backfill_progress:
+  domain: backfill
+  visibility: internal
+  auth: service_role
+  params:
+    p_backfill_id: { type: uuid, required: true }
+    p_rows_processed: { type: integer, required: true }
+  returns: void
+  p95_target: 10
+  deprecated: false
+  notes: Updates rows_processed counter for a running backfill. SECURITY DEFINER.
+
+complete_backfill:
+  domain: backfill
+  visibility: internal
+  auth: service_role
+  params:
+    p_backfill_id: { type: uuid, required: true }
+    p_rows_processed: { type: integer, required: false, default: "NULL" }
+    p_validation_passed: { type: boolean, required: false, default: "NULL" }
+  returns: void
+  p95_target: 10
+  deprecated: false
+  notes: >
+    Marks a running backfill as completed with optional final row count
+    and validation result. SECURITY DEFINER.
+
+fail_backfill:
+  domain: backfill
+  visibility: internal
+  auth: service_role
+  params:
+    p_backfill_id: { type: uuid, required: true }
+    p_error_message: { type: text, required: false, default: "NULL" }
+  returns: void
+  p95_target: 10
+  deprecated: false
+  notes: Marks a running backfill as failed with optional error message. SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# PERFORMANCE / MONITORING DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+report_slow_queries:
+  domain: monitoring
+  visibility: admin
+  auth: service_role
+  params:
+    p_threshold_ms: { type: float, required: false, default: "100" }
+  returns: "TABLE(query_preview text, calls bigint, avg_ms float, max_ms float, total_ms float, rows_returned bigint, category text)"
+  p95_target: 500
+  deprecated: false
+  notes: >
+    Surfaces queries from pg_stat_statements above threshold.
+    Categories: ok, warning, slow, critical. SECURITY DEFINER.
+
+check_plan_quality:
+  domain: monitoring
+  visibility: admin
+  auth: service_role
+  params:
+    p_query_text: { type: text, required: true }
+  returns: "TABLE(plan_node text, node_type text, estimated_rows float, actual_rows float, loops float, warning text)"
+  p95_target: null
+  deprecated: false
+  notes: >
+    Runs EXPLAIN ANALYZE and flags problematic plan nodes (seq scans
+    on large tables, nested loops >50 iterations, 10x row estimate errors).
+    WARNING: Executes arbitrary SQL. SECURITY DEFINER.
+
+snapshot_query_performance:
+  domain: monitoring
+  visibility: internal
+  auth: service_role
+  params: {}
+  returns: jsonb
+  p95_target: 5000
+  deprecated: false
+  notes: >
+    Captures pg_stat_statements data into query_performance_snapshots.
+    Deletes snapshots older than 12 weeks. Run weekly. SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# LOG VALIDATION DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+validate_log_entry:
+  domain: logging
+  visibility: internal
+  auth: service_role
+  params:
+    p_entry: { type: jsonb, required: true }
+  returns: jsonb
+  p95_target: 1
+  deprecated: false
+  notes: >
+    Validates a structured log entry against LOG_SCHEMA.md specification.
+    Checks required fields (timestamp, level, domain, action, message),
+    error_code requirement for ERROR/CRITICAL, and type checks.
+    IMMUTABLE. SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# FEATURE FLAGS DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+check_flag_readiness:
+  domain: feature_flags
+  visibility: internal
+  auth: authenticated
+  params: {}
+  returns: "TABLE(flag_key text, is_enabled boolean, activation_order integer, depends_on text[], dependencies_met boolean, expires_at timestamptz, days_until_expiry integer, status text)"
+  p95_target: 30
+  deprecated: false
+  notes: >
+    Returns activation readiness status for all feature flags including
+    dependency resolution and expiry tracking. SECURITY INVOKER. STABLE.
+
+# ═══════════════════════════════════════════════════════════════════
+# TRIGGER FUNCTIONS
+# ═══════════════════════════════════════════════════════════════════
+
+trg_auto_fingerprint_smv:
+  domain: scoring
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    Before INSERT/UPDATE on scoring_model_versions: computes SHA-256
+    fingerprint of config column. SET search_path = public.
+
+trg_auto_fingerprint_src:
+  domain: search
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    Before INSERT/UPDATE on search_ranking_config: computes SHA-256
+    fingerprint of weights column. SET search_path = public.
+
+trg_enforce_single_active_profile:
+  domain: health_profiles
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    Before INSERT/UPDATE on user_health_profiles: deactivates all other
+    profiles for the user when is_active=true. SECURITY DEFINER.
+
+trg_limit_saved_searches:
+  domain: search
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    Before INSERT on user_saved_searches: enforces max 50 saved searches
+    per user. Raises exception if limit exceeded.
+
+trg_product_change_log:
+  domain: audit
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    After UPDATE on products: logs tracked field changes (13 fields) to
+    product_change_log with actor_type, actor_id, and country.
+    SECURITY DEFINER.
+
+trg_unified_score_change:
+  domain: scoring
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    After UPDATE OF unhealthiness_score on products: writes to both
+    score_audit_log and product_score_history in a single trigger
+    invocation. Replaces trg_score_audit + record_score_change.
+    SECURITY DEFINER.
+
+trg_validate_favorite_categories:
+  domain: onboarding
+  visibility: trigger
+  auth: n/a
+  returns: trigger
+  deprecated: false
+  notes: >
+    Before INSERT/UPDATE OF favorite_categories on user_preferences:
+    validates array values against category_ref.slug. Raises exception
+    for invalid categories.
+
+# ═══════════════════════════════════════════════════════════════════
+# RECIPES DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+browse_recipes:
+  domain: recipes
+  visibility: public
+  auth: authenticated
+  params:
+    p_category: { type: text, required: false, default: "NULL" }
+    p_country: { type: text, required: false, default: "NULL" }
+    p_tag: { type: text, required: false, default: "NULL" }
+    p_difficulty: { type: text, required: false, default: "NULL" }
+    p_max_time: { type: integer, required: false, default: "NULL" }
+    p_limit: { type: integer, required: false, default: "20" }
+    p_offset: { type: integer, required: false, default: "0" }
+  returns: "TABLE(id uuid, slug text, title_key text, description_key text, category text, difficulty text, prep_time_min integer, cook_time_min integer, servings integer, image_url text, country text, tags text[], total_time integer)"
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Browse published recipes with optional category/country/tag/difficulty/max_time
+    filters. SECURITY DEFINER. STABLE.
+
+find_products_for_recipe_ingredient:
+  domain: recipes
+  visibility: internal
+  auth: authenticated
+  params:
+    p_recipe_ingredient_id: { type: uuid, required: true }
+    p_country: { type: text, required: false, default: "NULL" }
+    p_limit: { type: integer, required: false, default: "10" }
+  returns: "TABLE(product_id bigint, product_name text, brand text, ean text, unhealthiness_score numeric, image_url text, is_linked boolean, is_primary boolean)"
+  p95_target: 150
+  deprecated: false
+  notes: >
+    Returns admin-curated linked products first, then auto-suggested products
+    via ingredient_ref matching. Sorted: primary -> linked -> healthiest.
+    SECURITY DEFINER. STABLE.
+
+get_recipe_detail:
+  domain: recipes
+  visibility: public
+  auth: authenticated
+  params:
+    p_slug: { type: text, required: true }
+  returns: jsonb
+  p95_target: 100
+  deprecated: false
+  notes: >
+    Full recipe detail with steps and ingredients including linked products
+    per ingredient. SECURITY DEFINER. STABLE.
+
+# ═══════════════════════════════════════════════════════════════════
+# AUDIT RETENTION DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+execute_retention_cleanup:
+  domain: infrastructure
+  visibility: internal
+  auth: service_role
+  params:
+    p_dry_run: { type: boolean, required: false, default: "true" }
+    p_batch_size: { type: integer, required: false, default: "5000" }
+  returns: jsonb
+  p95_target: 10000
+  deprecated: false
+  notes: >
+    Cleans up audit/history tables based on retention_policies.
+    Default: dry_run=true (preview only). Batch-deletes to avoid long locks.
+    SECURITY DEFINER.
+
+# ═══════════════════════════════════════════════════════════════════
+# ALLERGEN DOMAIN
+# ═══════════════════════════════════════════════════════════════════
+
+resolve_allergen_display:
+  domain: allergens
+  visibility: internal
+  auth: anon
+  params:
+    p_allergen_id: { type: text, required: true }
+    p_language: { type: text, required: false, default: "'en'" }
+  returns: text
+  p95_target: 5
+  deprecated: false
+  notes: >
+    Returns localized allergen display name. Fallback chain:
+    requested lang -> en -> display_name_en -> raw allergen_id. STABLE.

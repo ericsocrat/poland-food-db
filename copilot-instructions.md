@@ -245,7 +245,7 @@ poland-food-db/
 │   ├── UX_IMPACT_METRICS.md         # UX measurement standard, metric catalog, SQL templates
 │   ├── UX_UI_DESIGN.md              # UI/UX guidelines
 │   ├── VIEWING_AND_TESTING.md       # Queries, Studio UI, test runner
-│   ├── api-registry.yaml            # Structured registry of all 109 functions (YAML)
+│   ├── api-registry.yaml            # Structured registry of all 192 functions (YAML)
 │   └── decisions/                   # Architecture Decision Records (MADR 3.0)
 │       ├── 000-template.md          # ADR template
 │       ├── 001-postgresql-only-stack.md
