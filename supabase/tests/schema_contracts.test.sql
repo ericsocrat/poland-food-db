@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(181);
+SELECT plan(184);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -269,6 +269,11 @@ SELECT is(
     0,
     'no active products in Żabka category'
 );
+
+-- ─── Audit Log Retention (#371) ────────────────────────────────────────────
+SELECT has_table('public', 'retention_policies',            'table retention_policies exists');
+SELECT has_function('public', 'execute_retention_cleanup',  'function execute_retention_cleanup exists');
+SELECT has_column('public', 'retention_policies', 'table_name', 'column retention_policies.table_name exists');
 
 SELECT * FROM finish();
 ROLLBACK;
