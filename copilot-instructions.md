@@ -114,7 +114,7 @@ poland-food-db/
 │   │   ├── QA__scanner_submissions.sql   # 12 scanner & submission checks
 │   │   ├── QA__index_temporal.sql        # 15 index & temporal integrity checks
 │   │   ├── QA__attribute_contradiction.sql # 5 attribute contradiction checks
-│   │   ├── QA__monitoring.sql            # 7 monitoring & health checks
+│   │   ├── QA__monitoring.sql            # 9 monitoring & health checks
 │   │   ├── QA__event_intelligence.sql    # 18 event intelligence checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   │   └── TEST__negative_checks.sql     # 23 negative validation tests
@@ -386,6 +386,7 @@ poland-food-db/
 | `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read               |
 | `log_level_ref`           | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                 |
 | `error_code_registry`     | Known error codes with domain/category/severity | `error_code` (text PK)                  | {DOMAIN}_{CATEGORY}_{NNN} format; FK to log_level_ref(level); 13 starter codes. RLS: service-write / auth-read                            |
+| `retention_policies`      | Audit log retention configuration               | `policy_id` (identity)                  | table_name (unique), timestamp_column, retention_days (30–3650), is_enabled. RLS: service_role only                                       |
 
 ### Products Columns (key)
 
@@ -430,6 +431,7 @@ poland-food-db/
 | `governance_drift_check()`         | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                    |
 | `log_drift_check()`                | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                      |
 | `validate_log_entry()`             | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                              |
+| `execute_retention_cleanup()`      | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary              |
 
 ### Views
 
@@ -864,7 +866,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Scanner & Submissions     | `QA__scanner_submissions.sql`       |     12 | Yes       |
 | Index & Temporal          | `QA__index_temporal.sql`            |     15 | Yes       |
 | Attribute Contradictions  | `QA__attribute_contradiction.sql`   |      5 | Yes       |
-| Monitoring & Health       | `QA__monitoring.sql`                |      7 | Yes       |
+| Monitoring & Health       | `QA__monitoring.sql`                |      9 | Yes       |
 | Scoring Determinism       | `QA__scoring_determinism.sql`       |     17 | Yes       |
 | Multi-Country Consistency | `QA__multi_country_consistency.sql` |     10 | Yes       |
 | Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |

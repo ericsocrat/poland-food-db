@@ -76,3 +76,21 @@ SELECT
         SELECT (api_health_check()->>'timestamp')::timestamptz IS NOT NULL
     )
     THEN 'PASS' ELSE 'FAIL' END AS "#7  timestamp is valid ISO-8601";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #8  retention_policies table has at least one enabled policy
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT COUNT(*) FROM retention_policies WHERE is_enabled = true
+    ) > 0
+    THEN 'PASS' ELSE 'FAIL' END AS "#8  retention_policies has enabled policies";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #9  execute_retention_cleanup() returns valid JSONB on dry-run
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT (execute_retention_cleanup(true))->>'dry_run' = 'true'
+    )
+    THEN 'PASS' ELSE 'FAIL' END AS "#9  execute_retention_cleanup dry-run returns valid JSONB";
