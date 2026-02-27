@@ -270,7 +270,6 @@ so renaming is unnecessary:
 
 | Function                        | Domain         | Notes                              |
 | ------------------------------- | -------------- | ---------------------------------- |
-| `compute_unhealthiness_v31`     | scoring        | Superseded by v32, kept for audit  |
 | `compute_unhealthiness_v32`     | scoring        | Active scoring function            |
 | `assign_confidence`             | confidence     | Called by `score_category()`       |
 | `find_better_alternatives`      | products       | Called by `api_better_alternatives` |

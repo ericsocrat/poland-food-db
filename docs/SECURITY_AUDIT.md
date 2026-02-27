@@ -145,7 +145,6 @@ All remaining `api_*` functions require `authenticated` role. Each function that
 
 | Function                         | Purpose                    | Callable by External Roles |
 | -------------------------------- | -------------------------- | -------------------------- |
-| `compute_unhealthiness_v31`      | Score computation          | ❌                          |
 | `compute_unhealthiness_v32`      | Score computation v3.2     | ❌                          |
 | `explain_score_v32`              | Score explanation          | ❌                          |
 | `compute_data_confidence`        | Data quality scoring       | ❌                          |
