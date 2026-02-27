@@ -14,6 +14,7 @@ import { useLanguageStore, type SupportedLanguage } from "@/stores/language-stor
 import { selectPolishForm } from "@/lib/pluralize";
 import en from "@/../messages/en.json";
 import pl from "@/../messages/pl.json";
+import de from "@/../messages/de.json";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -28,6 +29,7 @@ type InterpolationParams = Record<string, string | number>;
 const DICTIONARIES: Record<string, MessageDictionary> = {
   en: en as MessageDictionary,
   pl: pl as MessageDictionary,
+  de: de as MessageDictionary,
 };
 
 // ─── Internal helpers ───────────────────────────────────────────────────────
