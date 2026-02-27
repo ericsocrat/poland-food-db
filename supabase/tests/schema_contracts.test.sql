@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(167);
+SELECT plan(172);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -240,6 +240,13 @@ SELECT has_function('public', 'api_list_stores',                  'function api_
 -- v_master store columns
 SELECT has_column('public', 'v_master', 'store_count',            'v_master.store_count exists');
 SELECT has_column('public', 'v_master', 'store_names',            'v_master.store_names exists');
+
+-- ─── Trigger Optimization (#374) ──────────────────────────────────────────────
+SELECT has_trigger('products', 'trg_products_score_unified',      'unified score trigger exists on products');
+SELECT has_trigger('products', 'products_30_change_audit',        'change audit trigger exists on products');
+SELECT has_trigger('products', 'trg_products_search_vector_update', 'search vector trigger exists on products');
+SELECT has_trigger('products', 'trg_products_updated_at',         'updated_at trigger exists on products');
+SELECT has_function('public', 'trg_unified_score_change',         'function trg_unified_score_change exists');
 
 -- Żabka deactivated
 SELECT ok(
