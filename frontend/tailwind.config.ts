@@ -19,6 +19,11 @@ const config: Config = {
           DEFAULT: "var(--color-brand)",
           hover: "var(--color-brand-hover)",
           subtle: "var(--color-brand-subtle)",
+          // Brand Identity (#406) — additive, does not replace existing keys
+          primary: "var(--color-brand-primary)",
+          "primary-dark": "var(--color-brand-primary-dark)",
+          secondary: "var(--color-brand-secondary)",
+          accent: "var(--color-brand-accent)",
           50: "#f0fdf4",
           100: "#dcfce7",
           200: "#bbf7d0",
@@ -54,6 +59,15 @@ const config: Config = {
           secondary: "var(--color-text-secondary)",
           muted: "var(--color-text-muted)",
           inverse: "var(--color-text-inverse)",
+        },
+
+        // ── Neutral Scale (#406) ──
+        neutral: {
+          50: "var(--color-neutral-50)",
+          200: "var(--color-neutral-200)",
+          400: "var(--color-neutral-400)",
+          600: "var(--color-neutral-600)",
+          900: "var(--color-neutral-900)",
         },
 
         // ── Health Score Bands ──

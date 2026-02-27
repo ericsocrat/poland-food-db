@@ -56,6 +56,27 @@ This document defines the design token vocabulary for the poland-food-db fronten
 
 > **Note**: The full `brand-50` through `brand-900` palette is preserved for backward compatibility.
 
+### Brand Identity (#406)
+
+| Token                       | Light     | Dark      | Tailwind Class          | WCAG on White |
+| --------------------------- | --------- | --------- | ----------------------- | ------------- |
+| `--color-brand-primary`     | `#0d7377` | `#2dd4bf` | `bg-brand-primary`      | 5.6:1 (AA)    |
+| `--color-brand-primary-dark`| `#095456` | `#0d7377` | `bg-brand-primary-dark` | 8.5:1 (AAA)   |
+| `--color-brand-secondary`   | `#f8fafc` | `#1e293b` | `bg-brand-secondary`    | Background    |
+| `--color-brand-accent`      | `#d4a844` | `#fbbf24` | `bg-brand-accent`       | 2.2:1 (decorative) |
+
+> **Warning**: `brand-accent` (gold) does NOT meet WCAG AA as text on white backgrounds. Use only for decorative elements, badges, or on dark surfaces where it achieves 7.8:1 contrast.
+
+### Neutral Scale (#406)
+
+| Token                | Light     | Dark      | Tailwind Class  |
+| -------------------- | --------- | --------- | --------------- |
+| `--color-neutral-50` | `#f8fafc` | `#0f172a` | `bg-neutral-50` |
+| `--color-neutral-200`| `#e2e8f0` | `#334155` | `bg-neutral-200`|
+| `--color-neutral-400`| `#94a3b8` | `#94a3b8` | `bg-neutral-400`|
+| `--color-neutral-600`| `#475569` | `#cbd5e1` | `bg-neutral-600`|
+| `--color-neutral-900`| `#0f172a` | `#f8fafc` | `bg-neutral-900`|
+
 ### Health Score Bands
 
 | Token                   | Light     | Dark      | Tailwind Class                           | Score Range |
@@ -597,9 +618,10 @@ Use the token mapping from this document when migrating these files.
 
 ## Files
 
-| File                     | Purpose                                                                                         |
-| ------------------------ | ----------------------------------------------------------------------------------------------- |
-| `src/styles/globals.css` | CSS custom property definitions (`:root`, `[data-theme="dark"]`, `@media prefers-color-scheme`) |
-| `tailwind.config.ts`     | Tailwind theme extension mapping CSS vars to utility classes                                    |
-| `src/lib/constants.ts`   | Score band, Nutri-Score, warning severity, concern tier color maps                              |
-| `docs/DESIGN_SYSTEM.md`  | This document                                                                                   |
+| File                              | Purpose                                                                                         |
+| --------------------------------- | ----------------------------------------------------------------------------------------------- |
+| `src/styles/globals.css`          | CSS custom property definitions (`:root`, `[data-theme="dark"]`, `@media prefers-color-scheme`) |
+| `tailwind.config.ts`              | Tailwind theme extension mapping CSS vars to utility classes                                    |
+| `src/lib/constants.ts`            | Score band, Nutri-Score, warning severity, concern tier color maps                              |
+| `docs/assets/design-tokens.json`  | Structured JSON export for design tools and documentation (#406)                                |
+| `docs/DESIGN_SYSTEM.md`           | This document                                                                                   |

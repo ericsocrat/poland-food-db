@@ -1,0 +1,171 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$version": "1.0.0",
+  "$description": "Poland Food DB — Design tokens for brand identity, scoring, and UI surfaces. Source of truth: frontend/src/styles/globals.css + frontend/tailwind.config.ts",
+
+  "brand": {
+    "primary": {
+      "value": "#0d7377",
+      "usage": "Headers, CTAs, primary actions, navigation accents",
+      "wcag": { "onWhite": "5.6:1 (AA)", "onDark": "4.8:1 (AA)" }
+    },
+    "primaryDark": {
+      "value": "#095456",
+      "usage": "Dark mode primary, strong emphasis on light backgrounds",
+      "wcag": { "onWhite": "8.5:1 (AAA)" }
+    },
+    "secondary": {
+      "value": "#f8fafc",
+      "usage": "Clean background variant, secondary surfaces",
+      "wcag": { "note": "Background color — not used for text" }
+    },
+    "accent": {
+      "value": "#d4a844",
+      "usage": "Decorative badges, awards, premium highlights — NOT for text on white (2.2:1)",
+      "wcag": { "onDark": "7.8:1 (AAA)", "onWhite": "2.2:1 (FAIL — decorative only)" }
+    },
+    "action": {
+      "value": "#15803d",
+      "usage": "Existing action/CTA green (backward-compatible brand.DEFAULT)",
+      "wcag": { "onWhite": "5.0:1 (AA)" }
+    },
+    "actionHover": {
+      "value": "#166534",
+      "usage": "Hover state for action green",
+      "wcag": { "onWhite": "7.1:1 (AAA)" }
+    },
+    "actionSubtle": {
+      "value": "#dcfce7",
+      "usage": "Subtle background tint for action areas",
+      "wcag": { "note": "Background color — not used for text" }
+    },
+    "darkMode": {
+      "primary": { "value": "#2dd4bf", "usage": "Teal-400 for dark surfaces", "wcag": { "onDark": "8.6:1 (AAA)" } },
+      "accent": { "value": "#fbbf24", "usage": "Amber-400 for dark surfaces", "wcag": { "onDark": "12.3:1 (AAA)" } }
+    }
+  },
+
+  "scoring": {
+    "green": {
+      "value": "#22c55e",
+      "range": "1–20",
+      "label": "Low Risk",
+      "textValue": "#15803d",
+      "textWcag": "5.1:1 (AA)"
+    },
+    "yellow": {
+      "value": "#eab308",
+      "range": "21–40",
+      "label": "Moderate",
+      "textValue": "#854d0e",
+      "textWcag": "5.9:1 (AA)"
+    },
+    "orange": {
+      "value": "#f97316",
+      "range": "41–60",
+      "label": "Elevated",
+      "textValue": "#c2410c",
+      "textWcag": "5.2:1 (AA)"
+    },
+    "red": {
+      "value": "#ef4444",
+      "range": "61–80",
+      "label": "High Risk",
+      "textValue": "#b91c1c",
+      "textWcag": "5.9:1 (AA)"
+    },
+    "darkred": {
+      "value": "#991b1b",
+      "range": "81–100",
+      "label": "Very High Risk",
+      "textValue": "#991b1b",
+      "textWcag": "8.3:1 (AAA)"
+    }
+  },
+
+  "nutriScore": {
+    "A": { "value": "#038141", "label": "Best nutritional quality" },
+    "B": { "value": "#85bb2f", "label": "Good nutritional quality" },
+    "C": { "value": "#fecb02", "label": "Average nutritional quality" },
+    "D": { "value": "#ee8100", "label": "Poor nutritional quality" },
+    "E": { "value": "#e63e11", "label": "Worst nutritional quality" }
+  },
+
+  "nova": {
+    "1": { "value": "#22c55e", "label": "Unprocessed or minimally processed" },
+    "2": { "value": "#84cc16", "label": "Processed culinary ingredients" },
+    "3": { "value": "#f59e0b", "label": "Processed foods" },
+    "4": { "value": "#ef4444", "label": "Ultra-processed products" }
+  },
+
+  "semantic": {
+    "success": { "value": "#22c55e", "usage": "Positive outcomes, confirmations" },
+    "warning": { "value": "#f59e0b", "usage": "Caution states, approaching limits" },
+    "error": { "value": "#ef4444", "usage": "Errors, destructive actions, alerts" },
+    "info": { "value": "#3b82f6", "usage": "Informational messages, neutral highlights" }
+  },
+
+  "surfaces": {
+    "light": {
+      "default": { "value": "#ffffff" },
+      "subtle": { "value": "#f9fafb", "note": "gray-50" },
+      "muted": { "value": "#f3f4f6", "note": "gray-100" },
+      "overlay": { "value": "rgba(0, 0, 0, 0.5)" }
+    },
+    "dark": {
+      "default": { "value": "#111827", "note": "gray-900" },
+      "subtle": { "value": "#1f2937", "note": "gray-800" },
+      "muted": { "value": "#374151", "note": "gray-700" },
+      "overlay": { "value": "rgba(0, 0, 0, 0.7)" }
+    }
+  },
+
+  "neutral": {
+    "light": {
+      "50": "#f8fafc",
+      "200": "#e2e8f0",
+      "400": "#94a3b8",
+      "600": "#475569",
+      "900": "#0f172a"
+    },
+    "dark": {
+      "50": "#0f172a",
+      "200": "#334155",
+      "400": "#94a3b8",
+      "600": "#cbd5e1",
+      "900": "#f8fafc"
+    }
+  },
+
+  "text": {
+    "light": {
+      "primary": { "value": "#111827", "wcag": "17.4:1 on white" },
+      "secondary": { "value": "#4b5563", "wcag": "7.1:1 on white (AA)" },
+      "muted": { "value": "#6b7280", "wcag": "4.6:1 on white (AA)" },
+      "inverse": { "value": "#ffffff" }
+    },
+    "dark": {
+      "primary": { "value": "#f9fafb" },
+      "secondary": { "value": "#d1d5db" },
+      "muted": { "value": "#9ca3af" },
+      "inverse": { "value": "#111827" }
+    }
+  },
+
+  "confidence": {
+    "high": { "value": "#22c55e", "label": "High data confidence" },
+    "medium": { "value": "#f59e0b", "label": "Medium data confidence" },
+    "low": { "value": "#ef4444", "label": "Low data confidence" }
+  },
+
+  "allergen": {
+    "present": { "value": "#ef4444", "label": "Contains allergen" },
+    "traces": { "value": "#f59e0b", "label": "May contain traces" },
+    "free": { "value": "#22c55e", "label": "Free from allergen" }
+  },
+
+  "border": {
+    "default": { "value": "#e5e7eb", "note": "gray-200" },
+    "strong": { "value": "#d1d5db", "note": "gray-300" }
+  }
+}
