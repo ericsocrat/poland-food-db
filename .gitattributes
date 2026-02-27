@@ -1,0 +1,25 @@
+# ═══════════════════════════════════════════════════════════════════
+# .gitattributes — Binary/text handling for poland-food-db
+# ═══════════════════════════════════════════════════════════════════
+
+# Binary image assets — mark as binary for correct diff behavior
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.ico binary
+*.webp binary
+
+# SVG — treat as text for diffs (they're XML)
+*.svg text
+
+# Font files
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+
+# Design source files (if ever added)
+*.fig binary
+*.sketch binary
+*.psd binary
+*.ai binary
