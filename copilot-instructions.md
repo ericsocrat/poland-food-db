@@ -896,17 +896,22 @@ At the end of every PR-like change, include a **Verification** section:
 
 These are **anchor products** whose scores must remain stable. If a scoring change causes drift beyond ±2 points, investigate before committing:
 
-- Top Chips Faliste ≈ 51 (palm oil penalty)
-- Coca-Cola Zero ≈ 8 (lowest-scoring drink)
-- Piątnica Skyr Naturalny ≈ 9 (healthiest dairy)
-- Tarczyński Kabanosy ≈ 55 (high-fat cured meat)
-- Melvit Płatki Owsiane ≈ 11 (healthiest cereal)
-- BoboVita Kaszka Mleczna ≈ varies (baby food regression)
-- Somersby Blueberry Cider ≈ varies (alcohol regression)
-- Mestemacher Chleb wielozbożowy ≈ 19 (bread regression, baked)
-- Marinero Łosoś wędzony ≈ 30 (smoked salmon regression)
-- Dr. Oetker Pizza 4 sery ≈ 31 (frozen pizza regression, baked)
-- Lajkonik Paluszki extra cienkie ≈ 32 (snacks regression, baked)
+- Doritos Sweet Chili ≈ 45 (chips, 7 additives + high concern)
+- Coca-Cola Zero (DE) ≈ 13 (zero nutrition, 8 additives + concern)
+- Piątnica Skyr Naturalny ≈ 8 (healthiest dairy, fermented)
+- Melvit Płatki owsiane górskie ≈ 13 (healthiest cereal)
+- Auchan Tortilla Pszenno-Żytnia ≈ 30 (bread, 9 additives + concern)
+- Tarczyński Kabanosy wieprzowe ≈ 31 (high-fat cured meat)
+- BoboVita Kaszka Mleczna ≈ 34 (baby food, high sugars)
+- Somersby Blueberry Cider ≈ 10 (alcohol regression)
+- Mestemacher Chleb wielozbożowy ≈ 18 (bread regression, baked)
+- Marinero Łosoś wędzony ≈ 29 (smoked salmon regression)
+- Dr. Oetker Pizza 4 sery ≈ 32 (frozen pizza, palm oil)
+- Lajkonik Paluszki extra cienkie ≈ 31 (snacks regression, baked)
+- Naleśniki z jabłkami ≈ 16 (żabka, low score)
+- Pudliszki Ketchup łagodny ≈ 18 (condiments, sugar + salt)
+- E. Wedel Czekolada Tiramisu ≈ 57 (sweets, palm oil + additives)
+- Indomie Noodles Chicken ≈ 55 (instant, palm oil + 10 additives)
 
 Run QA after **every** schema change, data update, or scoring formula adjustment.
 
