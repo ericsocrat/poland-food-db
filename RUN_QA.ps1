@@ -5,7 +5,7 @@
 .DESCRIPTION
     Executes:
         1. QA__null_checks.sql (29 data integrity checks)
-        2. QA__scoring_formula_tests.sql (29 algorithm validation checks)
+        2. QA__scoring_formula_tests.sql (31 algorithm validation checks)
         3. QA__source_coverage.sql (8 source provenance checks — informational)
         4. validate_eans.py (EAN-8/EAN-13 checksum validation — blocking)
         5. QA__api_surfaces.sql (18 API contract validation checks — blocking)
@@ -133,7 +133,7 @@ $QA_DIR = Join-Path (Join-Path $SCRIPT_ROOT "db") "qa"
 # Single source of truth for suite metadata (names, counts, blocking behavior)
 $suiteCatalog = @(
     @{ Num = 1; Name = "Data Integrity"; Short = "Integrity"; Id = "integrity"; Checks = 29; Blocking = $true; Kind = "sql-special"; File = "QA__null_checks.sql" },
-    @{ Num = 2; Name = "Scoring Formula"; Short = "Scoring"; Id = "scoring"; Checks = 29; Blocking = $true; Kind = "sql-special"; File = "QA__scoring_formula_tests.sql" },
+    @{ Num = 2; Name = "Scoring Formula"; Short = "Scoring"; Id = "scoring"; Checks = 31; Blocking = $true; Kind = "sql-special"; File = "QA__scoring_formula_tests.sql" },
     @{ Num = 3; Name = "Source Coverage"; Short = "Source"; Id = "source_coverage"; Checks = 8; Blocking = $false; Kind = "sql-special"; File = "QA__source_coverage.sql" },
     @{ Num = 4; Name = "EAN Checksum Validation"; Short = "EAN"; Id = "ean"; Checks = 1; Blocking = $true; Kind = "python"; File = "validate_eans.py" },
     @{ Num = 5; Name = "API Surface Validation"; Short = "API"; Id = "api"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__api_surfaces.sql" },

@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 680 checks across 47 suites + 23 negative validation tests — all passing
+> **QA:** 690 checks across 47 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -256,7 +256,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (680 checks across 47 suites)
+├── RUN_QA.ps1                       # QA test runner (690 checks across 47 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -330,7 +330,7 @@ poland-food-db/
 │   ├── pr-gate.yml                  # Lint → Typecheck → Build → Playwright E2E
 │   ├── pr-title-lint.yml            # PR title conventional-commit validation (all PRs)
 │   ├── main-gate.yml                # Build → Unit tests + coverage → SonarCloud
-│   ├── qa.yml                       # Schema → Pipelines → QA (460) → Sanity
+│   ├── qa.yml                       # Schema → Pipelines → QA (690) → Sanity
 │   ├── nightly.yml                  # Full Playwright (all projects) + Data Integrity Audit
 │   ├── deploy.yml                   # Manual trigger → Schema diff → Approval → db push
 │   ├── sync-cloud-db.yml            # Remote DB sync
@@ -340,8 +340,12 @@ poland-food-db/
 │   ├── dependabot-auto-merge.yml    # Auto-merge Dependabot PRs
 │   ├── dependency-audit.yml         # Dependency vulnerability audit
 │   ├── license-compliance.yml       # License compliance checks
+│   ├── python-lint.yml               # Python linting (Ruff)
 │   ├── quality-gate.yml             # SonarCloud quality gate
-│   └── smoke-test.yml               # Post-deploy smoke test
+│   ├── repo-verify.yml              # Repo hygiene verification
+│   ├── smoke-test.yml               # Post-deploy smoke test
+│   ├── validate-alerts.yml          # Alert configuration validation
+│   └── dr-drill.yml                 # Disaster recovery drill
 ├── .commitlintrc.json               # Conventional Commits config (12 types, 24 scopes)
 ├── .editorconfig                    # Editor configuration (indent styles per language)
 ├── sonar-project.properties         # SonarCloud configuration
@@ -552,7 +556,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **140 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **167 migrations**.
 
 **Rules:**
 
@@ -624,7 +628,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (680 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (690 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -762,7 +766,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (680 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (690 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
@@ -796,7 +800,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 680 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 690 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -841,7 +845,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Suite                     | File                                | Checks | Blocking? |
 | ------------------------- | ----------------------------------- | -----: | --------- |
 | Data Integrity            | `QA__null_checks.sql`               |     29 | Yes       |
-| Scoring Formula           | `QA__scoring_formula_tests.sql`     |     29 | Yes       |
+| Scoring Formula           | `QA__scoring_formula_tests.sql`     |     31 | Yes       |
 | Source Coverage           | `QA__source_coverage.sql`           |      8 | No        |
 | EAN Validation            | `validate_eans.py`                  |      1 | Yes       |
 | API Surfaces              | `QA__api_surfaces.sql`              |     18 | Yes       |
@@ -858,7 +862,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Allergen Filtering        | `QA__allergen_filtering.sql`        |      6 | Yes       |
 | Serving & Source          | `QA__serving_source_validation.sql` |     16 | Yes       |
 | Ingredient Quality        | `QA__ingredient_quality.sql`        |     14 | Yes       |
-| Security Posture          | `QA__security_posture.sql`          |     22 | Yes       |
+| Security Posture          | `QA__security_posture.sql`          |     29 | Yes       |
 | Scale Guardrails          | `QA__scale_guardrails.sql`          |     23 | Yes       |
 | Country Isolation         | `QA__country_isolation.sql`         |     11 | Yes       |
 | Diet Filtering            | `QA__diet_filtering.sql`            |      6 | Yes       |
@@ -867,7 +871,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Health Profiles           | `QA__health_profiles.sql`           |     14 | Yes       |
 | Lists & Comparisons       | `QA__lists_comparisons.sql`         |     12 | Yes       |
 | Scanner & Submissions     | `QA__scanner_submissions.sql`       |     12 | Yes       |
-| Index & Temporal          | `QA__index_temporal.sql`            |     15 | Yes       |
+| Index & Temporal          | `QA__index_temporal.sql`            |     19 | Yes       |
 | Attribute Contradictions  | `QA__attribute_contradiction.sql`   |      5 | Yes       |
 | Monitoring & Health       | `QA__monitoring.sql`                |     14 | Yes       |
 | Scoring Determinism       | `QA__scoring_determinism.sql`       |     17 | Yes       |
@@ -889,7 +893,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Function Security Audit   | `QA__function_security_audit.sql`   |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **680/680 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **690/690 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
@@ -1378,7 +1382,7 @@ Before a feature is considered complete, verify against all CI gates:
 | Gate                | Command                               | Expected                        |
 | ------------------- | ------------------------------------- | ------------------------------- |
 | Pipeline structure  | `python check_pipeline_structure.py`  | 0 errors                        |
-| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 680) |
+| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 690) |
 | Negative tests      | `.\RUN_NEGATIVE_TESTS.ps1`            | All caught (currently 29)       |
 | pgTAP tests         | `supabase test db`                    | All pass                        |
 | TypeScript          | `cd frontend && npx tsc --noEmit`     | 0 errors                        |
