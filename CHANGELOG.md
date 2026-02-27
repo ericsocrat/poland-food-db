@@ -13,6 +13,16 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Schema & Migrations
+
+- Add Nutri-Score country applicability: `country_ref.nutri_score_official` boolean
+  (DE=true, PL=false) + `products.nutri_score_source` provenance column with CHECK
+  constraint (`official_label`, `off_computed`, `manual`, `unknown`); backfill 1,128
+  scored products as `off_computed`, 102 UNKNOWN as `unknown`; expose in
+  `api_product_detail`, `api_category_listing`, `api_score_explanation`; add
+  contextual `nutri_score_note` to score explanation; +2 QA data-consistency
+  checks, +3 schema-contract tests, +8 pgTAP functional tests (#353)
+
 ### CI & Infrastructure
 
 - Add deterministic repo hygiene enforcer: `scripts/repo_verify.ps1` — 6 checks

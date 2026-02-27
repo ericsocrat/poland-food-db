@@ -200,3 +200,25 @@ FROM products p
 WHERE p.is_deprecated IS NOT TRUE
   AND p.confidence != assign_confidence(p.data_completeness_pct, p.source_type);
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 21. nutri_score_source in valid domain (#353)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '21. nutri_score_source in valid domain' AS check_name,
+       COUNT(*) AS violations
+FROM products p
+WHERE p.is_deprecated IS NOT TRUE
+  AND p.nutri_score_source IS NOT NULL
+  AND p.nutri_score_source NOT IN ('official_label', 'off_computed', 'manual', 'unknown');
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 22. nutri_score_source consistency: scored products must have source (#353)
+--     Products with an actual Nutri-Score grade (A-E) must have a source set.
+--     NOT-APPLICABLE and UNKNOWN/NULL are excluded.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '22. scored products have nutri_score_source' AS check_name,
+       COUNT(*) AS violations
+FROM products p
+WHERE p.is_deprecated IS NOT TRUE
+  AND p.nutri_score_label IN ('A', 'B', 'C', 'D', 'E')
+  AND p.nutri_score_source IS NULL;
+

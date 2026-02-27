@@ -166,9 +166,10 @@ WHERE x.product_count <> x.actual;
 --       product_name_en, product_name_en_source, created_at, updated_at, name_translations
 --     + 3 from 2026-02-22 migrations:
 --       image_thumb_url, vegan_contradiction, vegetarian_contradiction
+--     + 1 from #353: nutri_score_source
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '13. v_master has expected column count (57)' AS check_name,
-       ABS(57 - COUNT(*)) AS violations
+SELECT '13. v_master has expected column count (58)' AS check_name,
+       ABS(58 - COUNT(*)) AS violations
 FROM information_schema.columns
 WHERE table_schema = 'public'
   AND table_name = 'v_master';

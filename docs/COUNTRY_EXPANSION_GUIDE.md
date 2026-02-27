@@ -51,6 +51,7 @@ Before any data for country `XX` enters the database, **all** of the following m
 - [x] Verify that the `products(country, brand, product_name)` unique constraint handles the new country
 - [x] Confirm that all schemas support the new country's data without migration changes
 - [ ] Create `RUN_LOCAL.ps1` / `RUN_REMOTE.ps1` entries for the new pipelines
+- [ ] Set `country_ref.nutri_score_official` for the new country (`true` if officially adopted, `false` otherwise)
 - [ ] Update `copilot-instructions.md` to list the new country as active
 
 ### 2.5 Country Expansion Readiness (Go/No-Go Bar)

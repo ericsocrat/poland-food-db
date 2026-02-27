@@ -111,6 +111,8 @@ Body: {"p_product_id": 32}
     "score_band": "moderate",     // "low" | "moderate" | "high" | "very_high"
     "nutri_score": "D",           // "A"-"E" | "UNKNOWN" | "NOT-APPLICABLE"
     "nutri_score_color": "#EE8100", // hex color from nutri_score_ref
+    "nutri_score_source": "off_computed", // "official_label" | "off_computed" | "manual" | "unknown" | null
+    "nutri_score_official_in_country": false, // boolean — from country_ref.nutri_score_official
     "nova_group": "4",            // "1"-"4" (text)
     "processing_risk": "High"     // "Low" | "Moderate" | "High"
   },
@@ -239,6 +241,7 @@ Body: {
       "unhealthiness_score": 17,
       "score_band": "low",           // "low" | "moderate" | "high" | "very_high"
       "nutri_score": "C",
+      "nutri_score_source": "off_computed", // "official_label" | "off_computed" | "manual" | "unknown" | null
       "nova_group": "4",
       "processing_risk": "High",
       "calories": 441.0,
@@ -301,6 +304,9 @@ Body: {"p_product_id": 32}
     "score_band": "moderate",
     "headline": "This product has several areas of nutritional concern.",
     "nutri_score": "D",
+    "nutri_score_source": "off_computed",           // provenance of Nutri-Score value
+    "nutri_score_official_in_country": false,        // whether Nutri-Score is officially adopted
+    "nutri_score_note": "Nutri-Score is not officially adopted in this country. Value is computed by Open Food Facts.",
     "nova_group": "4",
     "processing_risk": "High"
   },

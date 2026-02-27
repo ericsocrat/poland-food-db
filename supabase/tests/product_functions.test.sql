@@ -8,7 +8,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(112);
+SELECT plan(120);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -18,16 +18,16 @@ ON CONFLICT (category) DO UPDATE SET slug = 'pgtap-prod-cat';
 
 INSERT INTO public.country_ref (country_code, country_name, is_active)
 VALUES ('XX', 'Test Country', true)
-ON CONFLICT (country_code) DO NOTHING;
+ON CONFLICT (country_code) DO UPDATE SET nutri_score_official = false;
 
 -- Main test product (moderate score)
 INSERT INTO public.products (
   product_id, ean, product_name, brand, category, country,
-  unhealthiness_score, nutri_score_label, nova_classification,
+  unhealthiness_score, nutri_score_label, nutri_score_source, nova_classification,
   high_salt_flag, high_sugar_flag, high_sat_fat_flag
 ) VALUES (
   999997, '5901234123459', 'pgTAP Detail Product', 'Test Brand',
-  'pgtap-prod-cat', 'XX', 55, 'C', '3',
+  'pgtap-prod-cat', 'XX', 55, 'C', 'off_computed', '3',
   'NO', 'YES', 'NO'
 ) ON CONFLICT (product_id) DO NOTHING;
 
@@ -161,6 +161,29 @@ SELECT is(
   ((public.api_product_detail_by_ean('5901234123459', 'XX'))->'scores'->>'nutri_score'),
   'C',
   'scores.nutri_score value matches fixture nutri_score_label'
+);
+
+-- Nutri-Score provenance keys (#353)
+SELECT ok(
+  ((public.api_product_detail_by_ean('5901234123459', 'XX'))->'scores') ? 'nutri_score_source',
+  'scores has nutri_score_source (#353)'
+);
+
+SELECT is(
+  ((public.api_product_detail_by_ean('5901234123459', 'XX'))->'scores'->>'nutri_score_source'),
+  'off_computed',
+  'scores.nutri_score_source matches fixture value (#353)'
+);
+
+SELECT ok(
+  ((public.api_product_detail_by_ean('5901234123459', 'XX'))->'scores') ? 'nutri_score_official_in_country',
+  'scores has nutri_score_official_in_country (#353)'
+);
+
+SELECT is(
+  ((public.api_product_detail_by_ean('5901234123459', 'XX'))->'scores'->>'nutri_score_official_in_country'),
+  'false',
+  'scores.nutri_score_official_in_country is false for XX (#353)'
 );
 
 -- Flags sub-object keys
@@ -311,6 +334,28 @@ SELECT ok(
 SELECT ok(
   (public.api_score_explanation(999997)) ? 'summary',
   'score explanation has summary'
+);
+
+-- Score explanation Nutri-Score provenance keys (#353)
+SELECT ok(
+  ((public.api_score_explanation(999997))->'summary') ? 'nutri_score_source',
+  'score explanation summary has nutri_score_source (#353)'
+);
+
+SELECT ok(
+  ((public.api_score_explanation(999997))->'summary') ? 'nutri_score_official_in_country',
+  'score explanation summary has nutri_score_official_in_country (#353)'
+);
+
+SELECT ok(
+  ((public.api_score_explanation(999997))->'summary') ? 'nutri_score_note',
+  'score explanation summary has nutri_score_note (#353)'
+);
+
+SELECT is(
+  ((public.api_score_explanation(999997))->'summary'->>'nutri_score_official_in_country'),
+  'false',
+  'score explanation: nutri_score_official_in_country is false for XX (#353)'
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
