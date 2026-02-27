@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(172);
+SELECT plan(178);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -217,6 +217,14 @@ SELECT has_column('public', 'category_ref',         'created_at',  'category_ref
 SELECT has_column('public', 'category_ref',         'updated_at',  'category_ref.updated_at exists');
 SELECT has_column('public', 'country_ref',          'created_at',  'country_ref.created_at exists');
 SELECT has_column('public', 'country_ref',          'updated_at',  'country_ref.updated_at exists');
+
+-- ─── FK Column Indexes (#363) ──────────────────────────────────────────────
+SELECT has_index('public', 'products',            'idx_products_nutri_score_label',    'index idx_products_nutri_score_label exists');
+SELECT has_index('public', 'user_preferences',    'idx_user_preferences_language',     'index idx_user_preferences_language exists');
+SELECT has_index('public', 'country_ref',         'idx_country_ref_default_language',  'index idx_country_ref_default_language exists');
+SELECT has_index('public', 'error_code_registry', 'idx_error_code_registry_severity',  'index idx_error_code_registry_severity exists');
+SELECT has_index('public', 'products',            'idx_products_name_reviewed_by',     'index idx_products_name_reviewed_by exists');
+SELECT has_index('public', 'product_submissions',  'idx_product_submissions_reviewed_by','index idx_product_submissions_reviewed_by exists');
 
 -- ─── Completeness Gap Analysis (#376) ─────────────────────────────────────────
 SELECT has_function('public', 'api_completeness_gap_analysis',    'function api_completeness_gap_analysis exists');

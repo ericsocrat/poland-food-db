@@ -3,7 +3,7 @@
 -- Validates that performance-critical indexes exist on all high-traffic
 -- tables, that timestamp columns are consistent and non-future, and that
 -- updated_at triggers fire correctly.
--- 18 checks — all BLOCKING.
+-- 19 checks — all BLOCKING.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -179,6 +179,27 @@ FROM (
 JOIN products p ON p.product_id = search_results.pid::bigint
 WHERE p.is_deprecated = true;
 
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #19 All FK columns on all public tables are indexed
+--     (nutri_score_label, preferred_language, default_language, severity, etc.)
+--     Excludes parent_ingredient_id — intentionally unindexed (PR #394 audit).
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '19. All FK columns have supporting indexes' AS check_name,
+       COUNT(*) AS violations
+FROM pg_constraint con
+JOIN pg_class c ON con.conrelid = c.oid
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND con.contype = 'f'
+  AND con.conname <> 'product_ingredient_parent_ingredient_id_fkey'
+  AND NOT EXISTS (
+      SELECT 1
+      FROM pg_index idx
+      JOIN pg_attribute a ON a.attrelid = idx.indrelid
+                         AND a.attnum = ANY(idx.indkey)
+      WHERE idx.indrelid = con.conrelid
+        AND a.attnum = con.conkey[1]
+  );
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #16 Core tables have updated_at triggers
 --     (6 data tables + products + user_product_lists = 8 expected)
