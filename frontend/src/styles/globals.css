@@ -25,6 +25,19 @@
     --color-brand-hover: #166534; /* green-800 */
     --color-brand-subtle: #dcfce7; /* brand-100 */
 
+    /* ── Brand Identity (#406) ── */
+    --color-brand-primary: #0d7377; /* Deep emerald teal — 5.6:1 on white (WCAG AA) */
+    --color-brand-primary-dark: #095456; /* Darker variant — 8.5:1 on white (WCAG AAA) */
+    --color-brand-secondary: #f8fafc; /* Clean white/slate — background variant */
+    --color-brand-accent: #d4a844; /* Warm gold — 7.8:1 on dark bg; decorative only on white (2.2:1) */
+
+    /* ── Neutral Scale ── */
+    --color-neutral-50: #f8fafc;
+    --color-neutral-200: #e2e8f0;
+    --color-neutral-400: #94a3b8;
+    --color-neutral-600: #475569;
+    --color-neutral-900: #0f172a;
+
     /* ── Health Score Bands ── */
     --color-score-green: #22c55e; /* 1–20 */
     --color-score-yellow: #eab308; /* 21–40 */
@@ -157,6 +170,19 @@
     --color-brand-hover: #22c55e; /* green-500 */
     --color-brand-subtle: #14532d; /* green-900 */
 
+    /* ── Brand Identity (dark mode) ── */
+    --color-brand-primary: #2dd4bf; /* Teal-400 — 8.6:1 on dark surface */
+    --color-brand-primary-dark: #0d7377; /* Uses light-mode primary as dark-mode variant */
+    --color-brand-secondary: #1e293b; /* Slate-800 — dark surface variant */
+    --color-brand-accent: #fbbf24; /* Amber-400 — 12.3:1 on dark surface */
+
+    /* ── Neutral Scale (dark mode — inverted) ── */
+    --color-neutral-50: #0f172a;
+    --color-neutral-200: #334155;
+    --color-neutral-400: #94a3b8;
+    --color-neutral-600: #cbd5e1;
+    --color-neutral-900: #f8fafc;
+
     /* Score bands — same hues, adjusted lightness for dark backgrounds */
     --color-score-green: #4ade80;
     --color-score-yellow: #facc15;
@@ -229,6 +255,18 @@
       --color-brand: #4ade80;
       --color-brand-hover: #22c55e;
       --color-brand-subtle: #14532d;
+
+      /* ── Brand Identity (dark mode — system preference fallback) ── */
+      --color-brand-primary: #2dd4bf;
+      --color-brand-primary-dark: #0d7377;
+      --color-brand-secondary: #1e293b;
+      --color-brand-accent: #fbbf24;
+
+      --color-neutral-50: #0f172a;
+      --color-neutral-200: #334155;
+      --color-neutral-400: #94a3b8;
+      --color-neutral-600: #cbd5e1;
+      --color-neutral-900: #f8fafc;
 
       --color-score-green: #4ade80;
       --color-score-yellow: #facc15;
