@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(184);
+SELECT plan(187);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -274,6 +274,11 @@ SELECT is(
 SELECT has_table('public', 'retention_policies',            'table retention_policies exists');
 SELECT has_function('public', 'execute_retention_cleanup',  'function execute_retention_cleanup exists');
 SELECT has_column('public', 'retention_policies', 'table_name', 'column retention_policies.table_name exists');
+
+-- ─── MV Refresh Log (#377) ─────────────────────────────────────────────────
+SELECT has_table('public', 'mv_refresh_log',                'table mv_refresh_log exists');
+SELECT has_function('public', 'mv_last_refresh',            'function mv_last_refresh exists');
+SELECT has_column('public', 'mv_refresh_log', 'mv_name',   'column mv_refresh_log.mv_name exists');
 
 SELECT * FROM finish();
 ROLLBACK;

@@ -94,3 +94,21 @@ SELECT
         SELECT (execute_retention_cleanup(true))->>'dry_run' = 'true'
     )
     THEN 'PASS' ELSE 'FAIL' END AS "#9  execute_retention_cleanup dry-run returns valid JSONB";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #10 mv_refresh_log has at least one entry per MV
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT COUNT(DISTINCT mv_name) FROM mv_refresh_log
+    ) = 3
+    THEN 'PASS' ELSE 'FAIL' END AS "#10 mv_refresh_log covers all 3 MVs";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #11 mv_last_refresh() returns rows with valid age
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT COUNT(*) FROM mv_last_refresh() WHERE age_minutes >= 0
+    ) = 3
+    THEN 'PASS' ELSE 'FAIL' END AS "#11 mv_last_refresh() returns 3 rows with valid age";
