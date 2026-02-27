@@ -69,6 +69,7 @@ export function ActiveFilterChips({
   // Allergen-free chips
   for (const tag of filters.allergen_free ?? []) {
     const info = ALLERGEN_TAGS.find((a) => a.tag === tag);
+    // Tags are bare canonical IDs; strip legacy en: prefix as fallback
     const label = info
       ? t("chips.allergenFree", { label: info.label })
       : t("chips.allergenFree", { label: tag.replace("en:", "") });

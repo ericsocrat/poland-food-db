@@ -225,6 +225,9 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
     "trace_count": 1,
     "trace_tags": ["en:nuts"]
   },
+  "stores": [                          // NEW in #350
+    { "store_name": "Biedronka", "store_slug": "biedronka", "store_type": "discounter" }
+  ],
   "trust": {
     "confidence": "high",
     "data_completeness_pct": 92,
@@ -518,6 +521,71 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 
 ---
 
+## 10. `api_product_stores`
+
+**Description:** Returns all active stores where a product is available.
+
+**Source:** `20260311000400_store_api_functions.sql` (#350)
+
+| Parameter      | Type     | Default | Required |
+| -------------- | -------- | ------- | -------- |
+| `p_product_id` | `bigint` | —       | Yes      |
+
+**Returns:** `jsonb` — `{ api_version, product_id, stores: [...] }`
+
+| Property      | Details                                      |
+| ------------- | -------------------------------------------- |
+| Auth required | **Yes** (`authenticated` only)               |
+| Security      | `SECURITY DEFINER`                           |
+| Roles         | `authenticated`, `service_role` (NOT `anon`) |
+
+---
+
+## 11. `api_store_products`
+
+**Description:** Paginated product listing for a given store, sorted healthiest first.
+
+**Source:** `20260311000400_store_api_functions.sql` (#350)
+
+| Parameter      | Type      | Default | Required |
+| -------------- | --------- | ------- | -------- |
+| `p_store_slug` | `text`    | —       | Yes      |
+| `p_country`    | `text`    | `'PL'`  | No       |
+| `p_limit`      | `integer` | `50`    | No       |
+| `p_offset`     | `integer` | `0`     | No       |
+
+**Returns:** `jsonb` — `{ api_version, store: {...}, total_count, limit, offset, products: [...] }`
+
+Limit is capped at 100. If store not found, returns `{ api_version, error: "Store not found" }`.
+
+| Property      | Details                                      |
+| ------------- | -------------------------------------------- |
+| Auth required | **Yes** (`authenticated` only)               |
+| Security      | `SECURITY DEFINER`                           |
+| Roles         | `authenticated`, `service_role` (NOT `anon`) |
+
+---
+
+## 12. `api_list_stores`
+
+**Description:** All active stores for a country with product counts.
+
+**Source:** `20260311000400_store_api_functions.sql` (#350)
+
+| Parameter   | Type   | Default | Required |
+| ----------- | ------ | ------- | -------- |
+| `p_country` | `text` | `'PL'`  | No       |
+
+**Returns:** `jsonb` — `{ api_version, country, stores: [{store_id, store_name, store_slug, store_type, product_count, website_url}] }`
+
+| Property      | Details                                      |
+| ------------- | -------------------------------------------- |
+| Auth required | **Yes** (`authenticated` only)               |
+| Security      | `SECURITY DEFINER`                           |
+| Roles         | `authenticated`, `service_role` (NOT `anon`) |
+
+---
+
 ## Views
 
 ### `v_api_category_overview`
@@ -622,6 +690,9 @@ If neither tier provides a country, resolution returns `NULL` — the frontend m
 - Better alternatives (`api_better_alternatives`)
 - Score explanation (`api_score_explanation`)
 - Data confidence (`api_data_confidence`)
+- Store listing (`api_list_stores`)
+- Store products (`api_store_products`)
+- Product stores (`api_product_stores`)
 
 ### Route guard logic
 ```

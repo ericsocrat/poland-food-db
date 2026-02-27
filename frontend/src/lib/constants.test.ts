@@ -40,7 +40,8 @@ describe("ALLERGEN_TAGS", () => {
 
   it("each allergen has tag and label", () => {
     for (const allergen of ALLERGEN_TAGS) {
-      expect(allergen.tag).toMatch(/^en:/);
+      expect(allergen.tag).toBeTruthy();
+      expect(allergen.tag).not.toMatch(/^en:/);
       expect(allergen.label.length).toBeGreaterThan(0);
     }
   });
@@ -69,15 +70,15 @@ describe("ALLERGEN_PRESETS", () => {
 
   it("nutFree preset includes both nuts and peanuts", () => {
     const nutFree = ALLERGEN_PRESETS.find((p) => p.key === "nutFree");
-    expect(nutFree?.tags).toContain("en:nuts");
-    expect(nutFree?.tags).toContain("en:peanuts");
+    expect(nutFree?.tags).toContain("tree-nuts");
+    expect(nutFree?.tags).toContain("peanuts");
   });
 
   it("vegan preset includes all animal-derived allergens", () => {
     const vegan = ALLERGEN_PRESETS.find((p) => p.key === "vegan");
-    expect(vegan?.tags).toContain("en:milk");
-    expect(vegan?.tags).toContain("en:eggs");
-    expect(vegan?.tags).toContain("en:fish");
+    expect(vegan?.tags).toContain("milk");
+    expect(vegan?.tags).toContain("eggs");
+    expect(vegan?.tags).toContain("fish");
   });
 });
 

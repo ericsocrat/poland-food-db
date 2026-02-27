@@ -18,8 +18,8 @@ function makeAllergens(
   overrides?: Partial<ProfileAllergens>,
 ): ProfileAllergens {
   return {
-    contains: "en:gluten,en:milk",
-    traces: "en:eggs,en:soybeans",
+    contains: "gluten,milk",
+    traces: "eggs,soybeans",
     contains_count: 2,
     traces_count: 2,
     ...overrides,
@@ -40,9 +40,7 @@ describe("AllergenMatrix", () => {
         }}
       />,
     );
-    expect(
-      screen.getByText("product.noKnownAllergens"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("product.noKnownAllergens")).toBeInTheDocument();
     // Should NOT render the grid
     expect(screen.queryByRole("table")).not.toBeInTheDocument();
   });
@@ -63,7 +61,7 @@ describe("AllergenMatrix", () => {
     const glutenIdx = cells.findIndex((c) => c.includes("Gluten"));
     const milkIdx = cells.findIndex((c) => c.includes("Milk"));
     const eggsIdx = cells.findIndex((c) => c.includes("Eggs"));
-    const soybeansIdx = cells.findIndex((c) => c.includes("Soybeans"));
+    const soyIdx = cells.findIndex((c) => c.includes("Soy"));
     // The first "free" EU allergen (e.g., Crustaceans or Peanuts)
     const freeIdx = cells.findIndex((c) => c.includes("Peanuts"));
 
@@ -71,21 +69,21 @@ describe("AllergenMatrix", () => {
     expect(glutenIdx).toBeLessThan(eggsIdx);
     expect(milkIdx).toBeLessThan(eggsIdx);
     // traces before free
-    expect(soybeansIdx).toBeLessThan(freeIdx);
+    expect(soyIdx).toBeLessThan(freeIdx);
   });
 
-  it("normalises en: prefix from allergen tags", () => {
+  it("normalises tags via lowercase/trim (legacy en: prefix fallback)", () => {
     render(
       <AllergenMatrix
         allergens={makeAllergens({
-          contains: "en:gluten",
+          contains: "gluten",
           traces: "",
           contains_count: 1,
           traces_count: 0,
         })}
       />,
     );
-    // Should show "Gluten" (title-cased), not "en:Gluten"
+    // Should show "Gluten" (title-cased via normaliser)
     const table = screen.getByRole("table");
     const cells = within(table).getAllByRole("cell");
     const textValues = cells.map((c) => c.textContent);
@@ -96,7 +94,7 @@ describe("AllergenMatrix", () => {
     render(
       <AllergenMatrix
         allergens={makeAllergens({
-          contains: "en:gluten",
+          contains: "gluten",
           traces: "",
           contains_count: 1,
           traces_count: 0,
@@ -108,43 +106,39 @@ describe("AllergenMatrix", () => {
     expect(rows.length).toBeGreaterThanOrEqual(14);
   });
 
-  it("formats allergen names: hyphen-separated to Title Case", () => {
+  it("formats allergen names using DISPLAY_NAMES map", () => {
     render(
       <AllergenMatrix
         allergens={makeAllergens({
-          contains: "sesame-seeds",
-          traces: "sulphur-dioxide",
+          contains: "sesame",
+          traces: "sulphites",
           contains_count: 1,
           traces_count: 1,
         })}
       />,
     );
     const table = screen.getByRole("table");
-    expect(within(table).getByText("Sesame Seeds")).toBeInTheDocument();
-    expect(within(table).getByText("Sulphur Dioxide")).toBeInTheDocument();
+    expect(within(table).getByText("Sesame")).toBeInTheDocument();
+    expect(within(table).getByText("Sulphites")).toBeInTheDocument();
   });
 
   it("renders the legend with all three statuses", () => {
     render(<AllergenMatrix allergens={makeAllergens()} />);
-    expect(
-      screen.getByText("allergenMatrix.contains"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("allergenMatrix.contains")).toBeInTheDocument();
     expect(screen.getByText("allergenMatrix.traces")).toBeInTheDocument();
     expect(screen.getByText("allergenMatrix.free")).toBeInTheDocument();
   });
 
   it("renders the disclaimer text", () => {
     render(<AllergenMatrix allergens={makeAllergens()} />);
-    expect(
-      screen.getByText("allergenMatrix.disclaimer"),
-    ).toBeInTheDocument();
+    expect(screen.getByText("allergenMatrix.disclaimer")).toBeInTheDocument();
   });
 
   it("adds extra allergens not in the EU14 baseline", () => {
     render(
       <AllergenMatrix
         allergens={makeAllergens({
-          contains: "en:gluten,en:buckwheat",
+          contains: "gluten,buckwheat",
           traces: "",
           contains_count: 2,
           traces_count: 0,

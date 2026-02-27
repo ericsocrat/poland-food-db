@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Security Posture Validation
+-- QA: Security Posture Validation — 29 checks
 -- Ensures RLS, grant restrictions, SECURITY DEFINER attributes,
 -- and function access controls are in place.
 -- ============================================================
@@ -13,7 +13,8 @@ WHERE n.nspname = 'public'
   AND c.relkind = 'r'
   AND c.relname IN (
     'products','nutrition_facts','product_allergen_info','product_ingredient',
-    'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref'
+    'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref',
+    'store_ref','product_store_availability'
   )
   AND c.relrowsecurity = false;
 
@@ -26,7 +27,8 @@ WHERE n.nspname = 'public'
   AND c.relkind = 'r'
   AND c.relname IN (
     'products','nutrition_facts','product_allergen_info','product_ingredient',
-    'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref'
+    'ingredient_ref','category_ref','country_ref','nutri_score_ref','concern_tier_ref',
+    'store_ref','product_store_availability'
   )
   AND c.relforcerowsecurity = false;
 
@@ -290,3 +292,91 @@ SELECT '22. resolve_effective_country EXECUTE revoked from authenticated' AS che
            'public.resolve_effective_country(text)',
            'EXECUTE'
        ) THEN 1 ELSE 0 END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- RLS HARDENING CHECKS (Issue #359)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 23. No user_* MUTATION policies grant to {public} role
+--     (all user table mutations must require {authenticated})
+SELECT '23. No user_* mutation policies use {public}' AS check_name,
+       COUNT(*) AS violations
+FROM pg_policy pol
+JOIN pg_class c ON pol.polrelid = c.oid
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relname LIKE 'user_%'
+  AND pol.polcmd != 'r'  -- not SELECT
+  AND pol.polroles @> ARRAY[(SELECT oid FROM pg_roles WHERE rolname = 'anon')]::oid[];
+
+-- 24. feature_flags write policies restricted to service_role only
+SELECT '24. feature_flags writes restricted to service_role' AS check_name,
+       COUNT(*) AS violations
+FROM pg_policy pol
+JOIN pg_class c ON pol.polrelid = c.oid
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relname = 'feature_flags'
+  AND pol.polcmd != 'r'  -- not SELECT
+  AND NOT (pol.polroles @> ARRAY[(SELECT oid FROM pg_roles WHERE rolname = 'service_role')]::oid[]
+      AND NOT pol.polroles @> ARRAY[(SELECT oid FROM pg_roles WHERE rolname = 'anon')]::oid[]);
+
+-- 25. flag_overrides write policies restricted to service_role only
+SELECT '25. flag_overrides writes restricted to service_role' AS check_name,
+       COUNT(*) AS violations
+FROM pg_policy pol
+JOIN pg_class c ON pol.polrelid = c.oid
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relname = 'flag_overrides'
+  AND pol.polcmd != 'r'  -- not SELECT
+  AND NOT (pol.polroles @> ARRAY[(SELECT oid FROM pg_roles WHERE rolname = 'service_role')]::oid[]
+      AND NOT pol.polroles @> ARRAY[(SELECT oid FROM pg_roles WHERE rolname = 'anon')]::oid[]);
+
+-- 26. All admin/service tables have service_role-only write policies
+--     (no {public} write access on operational tables)
+SELECT '26. Admin tables have service_role-only writes' AS check_name,
+       COUNT(*) AS violations
+FROM pg_policy pol
+JOIN pg_class c ON pol.polrelid = c.oid
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relname IN (
+    'score_audit_log', 'score_distribution_snapshots', 'score_shadow_results',
+    'data_conflicts', 'product_change_log', 'flag_audit_log',
+    'analytics_daily', 'audit_results', 'deletion_audit_log'
+  )
+  AND pol.polcmd != 'r'  -- not SELECT
+  AND pol.polroles @> ARRAY[(SELECT oid FROM pg_roles WHERE rolname = 'anon')]::oid[];
+
+-- 27. All tables with RLS enabled have at least one policy
+SELECT '27. All RLS-enabled tables have >=1 policy' AS check_name,
+       COUNT(*) AS violations
+FROM pg_class c
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relkind = 'r'
+  AND c.relrowsecurity = true
+  AND NOT EXISTS (
+    SELECT 1 FROM pg_policy pol
+    WHERE pol.polrelid = c.oid
+  );
+
+-- 28. No public tables have RLS disabled (all must be enabled)
+SELECT '28. No tables have RLS disabled' AS check_name,
+       COUNT(*) AS violations
+FROM pg_class c
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relkind = 'r'
+  AND c.relrowsecurity = false;
+
+-- 29. scan_history and product_submissions use {authenticated} role
+SELECT '29. scan/submission policies use {authenticated}' AS check_name,
+       COUNT(*) AS violations
+FROM pg_policy pol
+JOIN pg_class c ON pol.polrelid = c.oid
+JOIN pg_namespace n ON c.relnamespace = n.oid
+WHERE n.nspname = 'public'
+  AND c.relname IN ('scan_history', 'product_submissions')
+  AND pol.polroles @> ARRAY[(SELECT oid FROM pg_roles WHERE rolname = 'anon')]::oid[];

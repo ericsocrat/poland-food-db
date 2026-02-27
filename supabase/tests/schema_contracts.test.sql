@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(137);
+SELECT plan(191);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -61,8 +61,10 @@ SELECT has_column('public', 'products', 'product_name_en',        'products.prod
 SELECT has_column('public', 'products', 'product_name_en_source', 'products.product_name_en_source exists');
 SELECT has_column('public', 'products', 'product_name_en_reviewed_at', 'products.product_name_en_reviewed_at exists');
 SELECT has_column('public', 'products', 'name_translations',             'products.name_translations exists');
+SELECT has_column('public', 'products', 'nutri_score_source',             'products.nutri_score_source exists');
 SELECT has_column('public', 'user_preferences', 'preferred_language', 'user_preferences.preferred_language exists');
 SELECT has_column('public', 'country_ref', 'default_language',             'country_ref.default_language exists');
+SELECT has_column('public', 'country_ref', 'nutri_score_official',          'country_ref.nutri_score_official exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 4. Key columns on nutrition_facts table
@@ -204,8 +206,85 @@ SELECT has_column('public', 'analytics_events', 'route',               'column a
 SELECT has_function('public', 'api_validate_event_schema',        'function api_validate_event_schema exists');
 SELECT has_function('public', 'api_get_event_schemas',            'function api_get_event_schemas exists');
 
+-- ─── Core Table Timestamps (#362) ─────────────────────────────────────────────
+SELECT has_column('public', 'nutrition_facts',      'created_at',  'nutrition_facts.created_at exists');
+SELECT has_column('public', 'nutrition_facts',      'updated_at',  'nutrition_facts.updated_at exists');
+SELECT has_column('public', 'product_ingredient',   'created_at',  'product_ingredient.created_at exists');
+SELECT has_column('public', 'product_ingredient',   'updated_at',  'product_ingredient.updated_at exists');
+SELECT has_column('public', 'product_allergen_info', 'created_at', 'product_allergen_info.created_at exists');
+SELECT has_column('public', 'product_allergen_info', 'updated_at', 'product_allergen_info.updated_at exists');
+SELECT has_column('public', 'ingredient_ref',       'created_at',  'ingredient_ref.created_at exists');
+SELECT has_column('public', 'ingredient_ref',       'updated_at',  'ingredient_ref.updated_at exists');
+SELECT has_column('public', 'category_ref',         'created_at',  'category_ref.created_at exists');
+SELECT has_column('public', 'category_ref',         'updated_at',  'category_ref.updated_at exists');
+SELECT has_column('public', 'country_ref',          'created_at',  'country_ref.created_at exists');
+SELECT has_column('public', 'country_ref',          'updated_at',  'country_ref.updated_at exists');
+
+-- ─── FK Column Indexes (#363) ──────────────────────────────────────────────
+SELECT has_index('public', 'products',            'idx_products_nutri_score_label',    'index idx_products_nutri_score_label exists');
+SELECT has_index('public', 'user_preferences',    'idx_user_preferences_language',     'index idx_user_preferences_language exists');
+SELECT has_index('public', 'country_ref',         'idx_country_ref_default_language',  'index idx_country_ref_default_language exists');
+SELECT has_index('public', 'error_code_registry', 'idx_error_code_registry_severity',  'index idx_error_code_registry_severity exists');
+SELECT has_index('public', 'products',            'idx_products_name_reviewed_by',     'index idx_products_name_reviewed_by exists');
+SELECT has_index('public', 'product_submissions',  'idx_product_submissions_reviewed_by','index idx_product_submissions_reviewed_by exists');
+
 -- ─── Completeness Gap Analysis (#376) ─────────────────────────────────────────
 SELECT has_function('public', 'api_completeness_gap_analysis',    'function api_completeness_gap_analysis exists');
+
+-- ─── Feature Flag Activation Roadmap (#372) ──────────────────────────────────
+SELECT has_column('public', 'feature_flags', 'activation_criteria',  'feature_flags.activation_criteria exists');
+SELECT has_column('public', 'feature_flags', 'activation_order',     'feature_flags.activation_order exists');
+SELECT has_column('public', 'feature_flags', 'depends_on',           'feature_flags.depends_on exists');
+SELECT has_function('public', 'check_flag_readiness',                'function check_flag_readiness exists');
+
+-- ─── Store Architecture (#350) ────────────────────────────────────────────────
+SELECT has_table('public', 'store_ref',                           'table store_ref exists');
+SELECT has_column('public', 'store_ref', 'store_id',              'column store_ref.store_id exists');
+SELECT has_column('public', 'store_ref', 'country',               'column store_ref.country exists');
+SELECT has_column('public', 'store_ref', 'store_name',            'column store_ref.store_name exists');
+SELECT has_column('public', 'store_ref', 'store_slug',            'column store_ref.store_slug exists');
+SELECT has_column('public', 'store_ref', 'store_type',            'column store_ref.store_type exists');
+SELECT has_column('public', 'store_ref', 'is_active',             'column store_ref.is_active exists');
+SELECT has_table('public', 'product_store_availability',          'table product_store_availability exists');
+SELECT has_column('public', 'product_store_availability', 'product_id', 'column product_store_availability.product_id exists');
+SELECT has_column('public', 'product_store_availability', 'store_id',   'column product_store_availability.store_id exists');
+SELECT has_column('public', 'product_store_availability', 'source',     'column product_store_availability.source exists');
+SELECT has_function('public', 'api_product_stores',               'function api_product_stores exists');
+SELECT has_function('public', 'api_store_products',               'function api_store_products exists');
+SELECT has_function('public', 'api_list_stores',                  'function api_list_stores exists');
+
+-- v_master store columns
+SELECT has_column('public', 'v_master', 'nutri_score_source',     'v_master.nutri_score_source exists');
+SELECT has_column('public', 'v_master', 'store_count',            'v_master.store_count exists');
+SELECT has_column('public', 'v_master', 'store_names',            'v_master.store_names exists');
+
+-- ─── Trigger Optimization (#374) ──────────────────────────────────────────────
+SELECT has_trigger('products', 'trg_products_score_unified',      'unified score trigger exists on products');
+SELECT has_trigger('products', 'products_30_change_audit',        'change audit trigger exists on products');
+SELECT has_trigger('products', 'trg_products_search_vector_update', 'search vector trigger exists on products');
+SELECT has_trigger('products', 'trg_products_updated_at',         'updated_at trigger exists on products');
+SELECT has_function('public', 'trg_unified_score_change',         'function trg_unified_score_change exists');
+
+-- Żabka deactivated
+SELECT ok(
+    NOT (SELECT is_active FROM category_ref WHERE category = 'Żabka'),
+    'Żabka category is deactivated'
+);
+SELECT is(
+    (SELECT COUNT(*)::int FROM products WHERE category = 'Żabka' AND is_deprecated = false),
+    0,
+    'no active products in Żabka category'
+);
+
+-- ─── Audit Log Retention (#371) ────────────────────────────────────────────
+SELECT has_table('public', 'retention_policies',            'table retention_policies exists');
+SELECT has_function('public', 'execute_retention_cleanup',  'function execute_retention_cleanup exists');
+SELECT has_column('public', 'retention_policies', 'table_name', 'column retention_policies.table_name exists');
+
+-- ─── MV Refresh Log (#377) ─────────────────────────────────────────────────
+SELECT has_table('public', 'mv_refresh_log',                'table mv_refresh_log exists');
+SELECT has_function('public', 'mv_last_refresh',            'function mv_last_refresh exists');
+SELECT has_column('public', 'mv_refresh_log', 'mv_name',   'column mv_refresh_log.mv_name exists');
 
 SELECT * FROM finish();
 ROLLBACK;

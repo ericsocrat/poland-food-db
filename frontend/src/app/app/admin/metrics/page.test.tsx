@@ -61,8 +61,8 @@ const sampleMetrics: BusinessMetricsResponse = {
     { product_id: "2", product_name: "Coca-Cola", views: 35 },
   ],
   allergen_distribution: [
-    { allergen: "en:gluten", user_count: 15, percentage: 60 },
-    { allergen: "en:milk", user_count: 10, percentage: 40 },
+    { allergen: "gluten", user_count: 15, percentage: 60 },
+    { allergen: "milk", user_count: 10, percentage: 40 },
   ],
   feature_usage: [
     { feature: "search_performed", usage_count: 200, unique_users: 35 },
@@ -147,9 +147,7 @@ describe("AdminMetricsPage", () => {
   });
 
   it("shows loading spinner while fetching", () => {
-    mockGetBusinessMetrics.mockImplementation(
-      () => new Promise(() => {}),
-    );
+    mockGetBusinessMetrics.mockImplementation(() => new Promise(() => {}));
 
     render(<AdminMetricsPage />, { wrapper: createWrapper() });
     expect(screen.getByTestId("loading")).toBeInTheDocument();
@@ -193,7 +191,9 @@ describe("AdminMetricsPage", () => {
       expect(screen.getByTestId("top-products")).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("top-products")).toHaveTextContent("Lay's Classic");
+    expect(screen.getByTestId("top-products")).toHaveTextContent(
+      "Lay's Classic",
+    );
     expect(screen.getByTestId("top-products")).toHaveTextContent("Coca-Cola");
   });
 
@@ -235,7 +235,9 @@ describe("AdminMetricsPage", () => {
       expect(screen.getByTestId("onboarding-funnel")).toBeInTheDocument();
     });
 
-    expect(screen.getByTestId("onboarding-funnel")).toHaveTextContent("welcome");
+    expect(screen.getByTestId("onboarding-funnel")).toHaveTextContent(
+      "welcome",
+    );
     expect(screen.getByTestId("onboarding-funnel")).toHaveTextContent("100%");
   });
 

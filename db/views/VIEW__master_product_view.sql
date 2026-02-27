@@ -8,6 +8,7 @@
 --   vegetarian_status to NULL when declared allergens contradict ingredient-derived
 --   attributes. Adds vegan_contradiction / vegetarian_contradiction boolean columns.
 --   Allergen lateral join gains has_animal_allergen / has_meat_fish_allergen flags.
+-- Updated 2026-03-12: Added nutri_score_source column from products (#353).
 -- Updated 2026-02-16: Phase 4 European expansion — added name_translations column.
 -- Updated 2026-02-13: Optimized allergen/trace subqueries — moved 4 correlated subqueries
 --   into a single LEFT JOIN LATERAL on product_allergen_info with conditional aggregation.
@@ -141,7 +142,10 @@ SELECT
     p.updated_at,
 
     -- Phase 4: Cross-border translations
-    p.name_translations
+    p.name_translations,
+
+    -- Nutri-Score provenance (#353)
+    p.nutri_score_source
 
 FROM public.products p
 LEFT JOIN public.nutrition_facts nf ON nf.product_id = p.product_id
@@ -174,10 +178,10 @@ LEFT JOIN LATERAL (
         STRING_AGG(ai.tag, ', ' ORDER BY ai.tag) FILTER (WHERE ai.type = 'traces') AS trace_tags,
         -- Contradiction detection flags
         BOOL_OR(ai.type = 'contains' AND ai.tag IN (
-            'en:milk', 'en:eggs', 'en:fish', 'en:crustaceans', 'en:molluscs'
+            'milk', 'eggs', 'fish', 'crustaceans', 'molluscs'
         )) AS has_animal_allergen,
         BOOL_OR(ai.type = 'contains' AND ai.tag IN (
-            'en:fish', 'en:crustaceans', 'en:molluscs'
+            'fish', 'crustaceans', 'molluscs'
         )) AS has_meat_fish_allergen
     FROM public.product_allergen_info ai
     WHERE ai.product_id = p.product_id

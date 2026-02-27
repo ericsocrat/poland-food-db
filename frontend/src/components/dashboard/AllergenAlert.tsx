@@ -19,6 +19,7 @@ export function AllergenAlert({ alerts }: Readonly<AllergenAlertProps>) {
   if (alerts.count === 0) return null;
 
   // Deduplicate allergen tags for the summary
+  // Tags are bare canonical IDs; strip legacy en: prefix as fallback
   const uniqueAllergens = [
     ...new Set(alerts.products.map((p) => p.allergen.replace("en:", ""))),
   ];

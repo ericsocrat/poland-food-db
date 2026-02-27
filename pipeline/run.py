@@ -19,9 +19,7 @@ from pipeline.categories import CATEGORY_SEARCH_TERMS, resolve_category
 from pipeline.off_client import (
     extract_product_data,
     market_score,
-    polish_market_score,
     search_products,
-    search_polish_products,
 )
 from pipeline.sql_generator import generate_pipeline
 from pipeline.utils import slug as _slug

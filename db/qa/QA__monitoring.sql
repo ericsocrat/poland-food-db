@@ -76,3 +76,72 @@ SELECT
         SELECT (api_health_check()->>'timestamp')::timestamptz IS NOT NULL
     )
     THEN 'PASS' ELSE 'FAIL' END AS "#7  timestamp is valid ISO-8601";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #8  retention_policies table has at least one enabled policy
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT COUNT(*) FROM retention_policies WHERE is_enabled = true
+    ) > 0
+    THEN 'PASS' ELSE 'FAIL' END AS "#8  retention_policies has enabled policies";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #9  execute_retention_cleanup() returns valid JSONB on dry-run
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT (execute_retention_cleanup(true))->>'dry_run' = 'true'
+    )
+    THEN 'PASS' ELSE 'FAIL' END AS "#9  execute_retention_cleanup dry-run returns valid JSONB";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #10 mv_refresh_log has at least one entry per MV
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT COUNT(DISTINCT mv_name) FROM mv_refresh_log
+    ) = 3
+    THEN 'PASS' ELSE 'FAIL' END AS "#10 mv_refresh_log covers all 3 MVs";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #11 mv_last_refresh() returns rows with valid age
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT COUNT(*) FROM mv_last_refresh() WHERE age_minutes >= 0
+    ) = 3
+    THEN 'PASS' ELSE 'FAIL' END AS "#11 mv_last_refresh() returns 3 rows with valid age";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #12 check_flag_readiness() returns exactly 8 rows (one per flag)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT count(*) = 8 FROM check_flag_readiness()
+    )
+    THEN 'PASS' ELSE 'FAIL' END AS "#12 check_flag_readiness returns 8 rows";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #13 All flags have activation_criteria populated
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT count(*) = 0
+        FROM feature_flags
+        WHERE activation_criteria IS NULL
+    )
+    THEN 'PASS' ELSE 'FAIL' END AS "#13 all flags have activation_criteria";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #14 No disabled flags expiring within 30 days
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN (
+        SELECT count(*) = 0
+        FROM feature_flags
+        WHERE enabled = false
+          AND expires_at IS NOT NULL
+          AND expires_at < now() + interval '30 days'
+    )
+    THEN 'PASS' ELSE 'FAIL' END AS "#14 no disabled flags expiring within 30 days";

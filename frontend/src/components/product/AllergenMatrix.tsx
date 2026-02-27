@@ -10,7 +10,8 @@ import type { ProfileAllergens } from "@/lib/types";
 
 /**
  * EU FIC Regulation 1169/2011 mandates declaration of these 14 allergens.
- * Tags may appear with or without "en:" prefix in the data.
+ * Tags are now bare canonical IDs (e.g. "milk", "gluten").
+ * Legacy data may still carry the "en:" prefix; normaliseTag() strips it as a fallback.
  */
 const EU_14_ALLERGENS = [
   "gluten",
@@ -20,16 +21,34 @@ const EU_14_ALLERGENS = [
   "peanuts",
   "soybeans",
   "milk",
-  "nuts",
+  "tree-nuts",
   "celery",
   "mustard",
-  "sesame-seeds",
-  "sulphur-dioxide",
+  "sesame",
+  "sulphites",
   "lupin",
   "molluscs",
 ] as const;
 
-/** Normalise an allergen tag: strip "en:" prefix, trim, lowercase */
+/** Friendly display names matching ALLERGEN_TAGS labels in constants.ts */
+const DISPLAY_NAMES: Record<string, string> = {
+  gluten: "Gluten",
+  crustaceans: "Crustaceans",
+  eggs: "Eggs",
+  fish: "Fish",
+  peanuts: "Peanuts",
+  soybeans: "Soy",
+  milk: "Milk",
+  "tree-nuts": "Tree Nuts",
+  celery: "Celery",
+  mustard: "Mustard",
+  sesame: "Sesame",
+  sulphites: "Sulphites",
+  lupin: "Lupin",
+  molluscs: "Molluscs",
+};
+
+/** Normalise an allergen tag: trim, lowercase, and strip legacy "en:" prefix if present. */
 function normaliseTag(tag: string): string {
   return tag.trim().replace(/^en:/, "").toLowerCase();
 }
@@ -115,12 +134,15 @@ function StatusIcon({ status }: Readonly<{ status: AllergenStatus }>) {
   }
 }
 
-/** Pretty-print allergen name: "sesame-seeds" → "Sesame Seeds" */
+/** Pretty-print allergen name using DISPLAY_NAMES map, with Title Case fallback. */
 function formatAllergenName(name: string): string {
-  return name
-    .split("-")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
+  return (
+    DISPLAY_NAMES[name] ??
+    name
+      .split("-")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ")
+  );
 }
 
 interface AllergenMatrixProps {

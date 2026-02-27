@@ -15,11 +15,11 @@
         9. QA__view_consistency.sql (13 view & function consistency checks — blocking)
        10. QA__naming_conventions.sql (12 naming/formatting convention checks — blocking)
        11. QA__nutrition_ranges.sql (18 nutrition range & plausibility checks — blocking)
-       12. QA__data_consistency.sql (20 data consistency & domain checks — blocking)
+       12. QA__data_consistency.sql (22 data consistency & domain checks — blocking)
        13. QA__allergen_integrity.sql (14 allergen & trace integrity checks — blocking)
        14. QA__serving_source_validation.sql (16 serving & source checks — blocking)
        15. QA__ingredient_quality.sql (14 ingredient quality checks — blocking)
-       16. QA__security_posture.sql (22 security posture checks — blocking)
+       16. QA__security_posture.sql (29 security posture checks — blocking)
        17. QA__api_contract.sql (30 API contract checks — blocking)
        18. QA__scale_guardrails.sql (23 scale guardrails checks — blocking)
        19. QA__country_isolation.sql (6 country isolation checks — blocking)
@@ -31,13 +31,14 @@
        25. QA__health_profiles.sql (14 health profile checks — blocking)
        26. QA__lists_comparisons.sql (12 lists & comparisons checks — blocking)
        27. QA__scanner_submissions.sql (12 scanner & submissions checks — blocking)
-       28. QA__index_temporal.sql (15 index coverage & temporal checks — blocking)
+       28. QA__index_temporal.sql (19 index coverage & temporal checks — blocking)
        29. QA__attribute_contradiction.sql (5 attribute contradiction checks — blocking)
-       30. QA__monitoring.sql (7 monitoring & health checks — blocking)
+       30. QA__monitoring.sql (14 monitoring & health checks — blocking)
        31. QA__scoring_determinism.sql (17 scoring determinism checks — blocking)
        32. QA__multi_country_consistency.sql (10 multi-country consistency checks — blocking)
        33. QA__performance_regression.sql (6 performance regression checks — informational)
        34. QA__event_intelligence.sql (18 event intelligence checks — blocking)
+       35. QA__store_integrity.sql (12 store architecture checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suites 3 and 33 are informational and do not affect the exit code.
@@ -130,11 +131,11 @@ $suiteCatalog = @(
     @{ Num = 9; Name = "View & Function Consistency"; Short = "Views"; Id = "views"; Checks = 13; Blocking = $true; Kind = "sql"; File = "QA__view_consistency.sql" },
     @{ Num = 10; Name = "Naming Conventions"; Short = "Naming"; Id = "naming"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__naming_conventions.sql" },
     @{ Num = 11; Name = "Nutrition Ranges & Plausibility"; Short = "NutriRange"; Id = "nutrition_ranges"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__nutrition_ranges.sql" },
-    @{ Num = 12; Name = "Data Consistency"; Short = "DataConsist"; Id = "data_consistency"; Checks = 20; Blocking = $true; Kind = "sql"; File = "QA__data_consistency.sql" },
+    @{ Num = 12; Name = "Data Consistency"; Short = "DataConsist"; Id = "data_consistency"; Checks = 22; Blocking = $true; Kind = "sql"; File = "QA__data_consistency.sql" },
     @{ Num = 13; Name = "Allergen & Trace Integrity"; Short = "Allergen"; Id = "allergen_integrity"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__allergen_integrity.sql" },
     @{ Num = 14; Name = "Serving & Source Validation"; Short = "ServSource"; Id = "serving_source"; Checks = 16; Blocking = $true; Kind = "sql"; File = "QA__serving_source_validation.sql" },
     @{ Num = 15; Name = "Ingredient Data Quality"; Short = "IngredQual"; Id = "ingredient_quality"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__ingredient_quality.sql" },
-    @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 22; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
+    @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 29; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
     @{ Num = 17; Name = "API Contract"; Short = "Contract"; Id = "api_contract"; Checks = 33; Blocking = $true; Kind = "sql"; File = "QA__api_contract.sql" },
     @{ Num = 18; Name = "Scale Guardrails"; Short = "Scale"; Id = "scale_guardrails"; Checks = 23; Blocking = $true; Kind = "sql"; File = "QA__scale_guardrails.sql" },
     @{ Num = 19; Name = "Country Isolation"; Short = "Country"; Id = "country_isolation"; Checks = 11; Blocking = $true; Kind = "sql"; File = "QA__country_isolation.sql" },
@@ -146,13 +147,14 @@ $suiteCatalog = @(
     @{ Num = 25; Name = "Health Profiles"; Short = "Health"; Id = "health_profiles"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__health_profiles.sql" },
     @{ Num = 26; Name = "Lists & Comparisons"; Short = "ListsComp"; Id = "lists_comparisons"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__lists_comparisons.sql" },
     @{ Num = 27; Name = "Scanner & Submissions"; Short = "Scanner"; Id = "scanner_submissions"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__scanner_submissions.sql" },
-    @{ Num = 28; Name = "Index & Temporal Integrity"; Short = "IdxTemporal"; Id = "index_temporal"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__index_temporal.sql" },
+    @{ Num = 28; Name = "Index & Temporal Integrity"; Short = "IdxTemporal"; Id = "index_temporal"; Checks = 19; Blocking = $true; Kind = "sql"; File = "QA__index_temporal.sql" },
     @{ Num = 29; Name = "Attribute Contradictions"; Short = "AttrContra"; Id = "attribute_contradiction"; Checks = 5; Blocking = $true; Kind = "sql"; File = "QA__attribute_contradiction.sql" },
-    @{ Num = 30; Name = "Monitoring & Health Check"; Short = "Monitoring"; Id = "monitoring"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__monitoring.sql" },
+    @{ Num = 30; Name = "Monitoring & Health Check"; Short = "Monitoring"; Id = "monitoring"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__monitoring.sql" },
     @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 17; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" },
     @{ Num = 32; Name = "Multi-Country Consistency"; Short = "MultiCountry"; Id = "multi_country_consistency"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__multi_country_consistency.sql" },
     @{ Num = 33; Name = "Performance Regression"; Short = "PerfRegress"; Id = "performance_regression"; Checks = 6; Blocking = $false; Kind = "sql"; File = "QA__performance_regression.sql" },
-    @{ Num = 34; Name = "Event Intelligence"; Short = "EventIntel"; Id = "event_intelligence"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__event_intelligence.sql" }
+    @{ Num = 34; Name = "Event Intelligence"; Short = "EventIntel"; Id = "event_intelligence"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__event_intelligence.sql" },
+    @{ Num = 35; Name = "Store Architecture"; Short = "StoreArch"; Id = "store_integrity"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__store_integrity.sql" }
 )
 
 $suiteByNum = @{}

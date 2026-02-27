@@ -84,3 +84,5 @@ tmp-qa-results/
 tmp-qa-*/
 tmp-*.txt
 tmp-*.json
+qa-results.json
+tmp-*.sql

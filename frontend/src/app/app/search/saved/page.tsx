@@ -198,6 +198,7 @@ function FilterSummaryChips({ filters }: Readonly<{ filters: SearchFilters }>) {
   if (filters.allergen_free?.length) {
     const labels = filters.allergen_free.map((tag) => {
       const info = ALLERGEN_TAGS.find((a) => a.tag === tag);
+      // Tags are bare canonical IDs; strip legacy en: prefix as fallback
       return info?.label ?? tag.replace("en:", "");
     });
     chips.push(

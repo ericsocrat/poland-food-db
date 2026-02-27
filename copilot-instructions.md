@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 479 checks across 34 suites + 23 negative validation tests — all passing
+> **QA:** 510 checks across 35 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -94,7 +94,7 @@ poland-food-db/
 │   │   ├── QA__confidence_scoring.sql  # 13 confidence scoring checks
 │   │   ├── QA__confidence_reporting.sql # 7 confidence reporting checks
 │   │   ├── QA__data_quality.sql          # 25 data quality checks
-│   │   ├── QA__data_consistency.sql      # 20 data consistency checks
+│   │   ├── QA__data_consistency.sql      # 22 data consistency checks
 │   │   ├── QA__referential_integrity.sql # 18 referential integrity checks
 │   │   ├── QA__view_consistency.sql      # 13 view consistency checks
 │   │   ├── QA__naming_conventions.sql    # 12 naming convention checks
@@ -114,7 +114,7 @@ poland-food-db/
 │   │   ├── QA__scanner_submissions.sql   # 12 scanner & submission checks
 │   │   ├── QA__index_temporal.sql        # 15 index & temporal integrity checks
 │   │   ├── QA__attribute_contradiction.sql # 5 attribute contradiction checks
-│   │   ├── QA__monitoring.sql            # 7 monitoring & health checks
+│   │   ├── QA__monitoring.sql            # 14 monitoring & health checks
 │   │   ├── QA__event_intelligence.sql    # 18 event intelligence checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   │   └── TEST__negative_checks.sql     # 23 negative validation tests
@@ -256,7 +256,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (479 checks across 34 suites)
+├── RUN_QA.ps1                       # QA test runner (510 checks across 35 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -370,7 +370,7 @@ poland-food-db/
 | `ingredient_ref`          | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,995 unique ingredients; name_en (UNIQUE), vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                      |
 | `product_ingredient`      | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                       |
 | `product_allergen_info`   | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags |
-| `country_ref`             | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag; FK from products.country                                                                                 |
+| `country_ref`             | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag, nutri_score_official boolean; FK from products.country                                                   |
 | `category_ref`            | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                     |
 | `nutri_score_ref`         | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                         |
 | `concern_tier_ref`        | EFSA ingredient concern tiers                   | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                  |
@@ -386,6 +386,8 @@ poland-food-db/
 | `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read               |
 | `log_level_ref`           | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                 |
 | `error_code_registry`     | Known error codes with domain/category/severity | `error_code` (text PK)                  | {DOMAIN}_{CATEGORY}_{NNN} format; FK to log_level_ref(level); 13 starter codes. RLS: service-write / auth-read                            |
+| `retention_policies`      | Audit log retention configuration               | `policy_id` (identity)                  | table_name (unique), timestamp_column, retention_days (30–3650), is_enabled. RLS: service_role only                                       |
+| `mv_refresh_log`          | Audit trail for MV refreshes                    | `refresh_id` (identity)                 | mv_name, refreshed_at, duration_ms, row_count, triggered_by. Index on (mv_name, refreshed_at DESC). RLS: service-write / auth-read        |
 
 ### Products Columns (key)
 
@@ -401,6 +403,7 @@ poland-food-db/
 | `prep_method`        | `text`    | Preparation method (affects scoring). NOT NULL, default `'not-applicable'` |
 | `store_availability` | `text`    | Normalized Polish chain name (Biedronka, Lidl, Żabka, etc.) or NULL        |
 | `controversies`      | `text`    | `'none'` or `'palm oil'` etc.                                              |
+| `nutri_score_source` | `text`    | Provenance: `'official_label'`, `'off_computed'`, `'manual'`, `'unknown'`  |
 | `is_deprecated`      | `boolean` | Soft-delete flag                                                           |
 | `deprecated_reason`  | `text`    | Why deprecated                                                             |
 
@@ -429,6 +432,9 @@ poland-food-db/
 | `governance_drift_check()`         | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                    |
 | `log_drift_check()`                | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                      |
 | `validate_log_entry()`             | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                              |
+| `execute_retention_cleanup()`      | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary              |
+| `mv_last_refresh()`                | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                 |
+| `check_flag_readiness()`           | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                |
 
 ### Views
 
@@ -566,6 +572,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 | `products`              | `chk_products_controversies`       | `IN ('none','minor','moderate','serious','palm oil')`                                                                                                                                               |
 | `products`              | `chk_products_unhealthiness_range` | 1–100 (unhealthiness_score)                                                                                                                                                                         |
 | `products`              | `chk_products_nutri_score_label`   | NULL or `IN ('A','B','C','D','E','UNKNOWN','NOT-APPLICABLE')`                                                                                                                                       |
+| `products`              | `chk_products_nutri_score_source`  | NULL or `IN ('official_label','off_computed','manual','unknown')`                                                                                                                                   |
 | `products`              | `chk_products_confidence`          | NULL or `IN ('verified','estimated','low')`                                                                                                                                                         |
 | `products`              | `chk_products_nova`                | NULL or `IN ('1','2','3','4')`                                                                                                                                                                      |
 | `products`              | 4 × `chk_products_high_*_flag`     | NULL or `IN ('YES','NO')`                                                                                                                                                                           |
@@ -789,7 +796,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 479 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 510 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -846,7 +853,7 @@ At the end of every PR-like change, include a **Verification** section:
 | View Consistency          | `QA__view_consistency.sql`          |     13 | Yes       |
 | Naming Conventions        | `QA__naming_conventions.sql`        |     12 | Yes       |
 | Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     18 | Yes       |
-| Data Consistency          | `QA__data_consistency.sql`          |     20 | Yes       |
+| Data Consistency          | `QA__data_consistency.sql`          |     22 | Yes       |
 | Allergen Integrity        | `QA__allergen_integrity.sql`        |     15 | Yes       |
 | Allergen Filtering        | `QA__allergen_filtering.sql`        |      6 | Yes       |
 | Serving & Source          | `QA__serving_source_validation.sql` |     16 | Yes       |
@@ -862,14 +869,14 @@ At the end of every PR-like change, include a **Verification** section:
 | Scanner & Submissions     | `QA__scanner_submissions.sql`       |     12 | Yes       |
 | Index & Temporal          | `QA__index_temporal.sql`            |     15 | Yes       |
 | Attribute Contradictions  | `QA__attribute_contradiction.sql`   |      5 | Yes       |
-| Monitoring & Health       | `QA__monitoring.sql`                |      7 | Yes       |
+| Monitoring & Health       | `QA__monitoring.sql`                |     14 | Yes       |
 | Scoring Determinism       | `QA__scoring_determinism.sql`       |     17 | Yes       |
 | Multi-Country Consistency | `QA__multi_country_consistency.sql` |     10 | Yes       |
 | Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |
 | Event Intelligence        | `QA__event_intelligence.sql`        |     18 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **479/479 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **510/510 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)

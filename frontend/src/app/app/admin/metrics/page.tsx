@@ -64,7 +64,9 @@ function MetricCard({
         {icon}
         <span>{label}</span>
       </div>
-      <p className="mt-2 text-2xl font-bold">{typeof value === "number" ? value.toLocaleString() : value}</p>
+      <p className="mt-2 text-2xl font-bold">
+        {typeof value === "number" ? value.toLocaleString() : value}
+      </p>
       {subtitle && (
         <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
           {subtitle}
@@ -173,7 +175,9 @@ function FeatureUsageChart({
   data,
 }: Readonly<{ data: BusinessMetricsResponse["feature_usage"] }>) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-500 dark:text-gray-400">No data yet</p>;
+    return (
+      <p className="text-sm text-gray-500 dark:text-gray-400">No data yet</p>
+    );
   }
   const maxVal = Math.max(...data.map((d) => d.usage_count));
   return (
@@ -195,7 +199,9 @@ function ScanSearchRatio({
   data,
 }: Readonly<{ data: BusinessMetricsResponse["scan_vs_search"] }>) {
   if (data.length === 0) {
-    return <p className="text-sm text-gray-500 dark:text-gray-400">No data yet</p>;
+    return (
+      <p className="text-sm text-gray-500 dark:text-gray-400">No data yet</p>
+    );
   }
   const total = data.reduce((s, d) => s + d.count, 0);
   return (
@@ -255,7 +261,13 @@ function TrendSparkline({
 
   return (
     <svg width={w} height={h} className="inline-block" aria-hidden="true">
-      <path d={pathD} fill="none" stroke="currentColor" strokeWidth="1.5" className="text-blue-500" />
+      <path
+        d={pathD}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        className="text-blue-500"
+      />
     </svg>
   );
 }
@@ -408,7 +420,10 @@ export default function AdminMetricsPage() {
               value={
                 data.scan_vs_search.length > 0
                   ? data.scan_vs_search
-                      .map((s) => `${s.percentage}% ${s.method.includes("scan") ? "scan" : "search"}`)
+                      .map(
+                        (s) =>
+                          `${s.percentage}% ${s.method.includes("scan") ? "scan" : "search"}`,
+                      )
                       .join(" / ")
                   : "No data"
               }
@@ -438,7 +453,10 @@ export default function AdminMetricsPage() {
           </div>
 
           {/* Row 3: Feature usage */}
-          <div className="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800" data-testid="feature-usage">
+          <div
+            className="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+            data-testid="feature-usage"
+          >
             <h3 className="mb-3 flex items-center gap-2 font-semibold">
               <Layers className="h-4 w-4" />
               Feature Usage ({days} days)
@@ -465,6 +483,7 @@ export default function AdminMetricsPage() {
                   {data.allergen_distribution.slice(0, 10).map((item) => (
                     <BarRow
                       key={item.allergen}
+                      // Tags are bare canonical IDs; strip legacy en: prefix as fallback
                       label={item.allergen.replace("en:", "")}
                       value={item.user_count}
                       maxValue={data.allergen_distribution[0].user_count}

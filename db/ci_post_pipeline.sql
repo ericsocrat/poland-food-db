@@ -104,29 +104,29 @@ INSERT INTO product_allergen_info (product_id, tag, type)
 SELECT p.product_id, v.tag, v.type
 FROM (VALUES
   -- Chips (contain milk / gluten from flavoring ingredients)
-  ('PL', '5900073020118', 'en:gluten', 'contains'),
-  ('PL', '5900073020118', 'en:milk', 'traces'),
-  ('PL', '5905187114760', 'en:milk', 'contains'),
-  ('PL', '5905187114760', 'en:gluten', 'contains'),
-  ('PL', '5900073020187', 'en:gluten', 'contains'),
-  ('PL', '5900073020187', 'en:milk', 'traces'),
+  ('PL', '5900073020118', 'gluten', 'contains'),
+  ('PL', '5900073020118', 'milk', 'traces'),
+  ('PL', '5905187114760', 'milk', 'contains'),
+  ('PL', '5905187114760', 'gluten', 'contains'),
+  ('PL', '5900073020187', 'gluten', 'contains'),
+  ('PL', '5900073020187', 'milk', 'traces'),
   -- Bread (contain gluten)
-  ('PL', '5900014005716', 'en:gluten', 'contains'),
-  ('PL', '5900535013986', 'en:gluten', 'contains'),
-  ('PL', '5900535013986', 'en:milk', 'traces'),
+  ('PL', '5900014005716', 'gluten', 'contains'),
+  ('PL', '5900535013986', 'gluten', 'contains'),
+  ('PL', '5900535013986', 'milk', 'traces'),
   -- Dairy (contain milk)
-  ('PL', '5900014004245', 'en:milk', 'contains'),
-  ('PL', '5900699106388', 'en:milk', 'contains'),
+  ('PL', '5900014004245', 'milk', 'contains'),
+  ('PL', '5900699106388', 'milk', 'contains'),
   -- Sweets / Snacks (contain milk, gluten, eggs, soybeans)
-  ('PL', '5901359074290', 'en:gluten', 'contains'),
-  ('PL', '5901359074290', 'en:milk', 'contains'),
-  ('PL', '5901359074290', 'en:soybeans', 'traces'),
-  ('PL', '5902709615323', 'en:gluten', 'contains'),
-  ('PL', '5901359062013', 'en:gluten', 'contains'),
-  ('PL', '5901359062013', 'en:eggs', 'contains'),
-  ('PL', '5900490000182', 'en:gluten', 'contains'),
-  ('PL', '5901359122021', 'en:milk', 'contains'),
-  ('PL', '5901359122021', 'en:gluten', 'contains')
+  ('PL', '5901359074290', 'gluten', 'contains'),
+  ('PL', '5901359074290', 'milk', 'contains'),
+  ('PL', '5901359074290', 'soybeans', 'traces'),
+  ('PL', '5902709615323', 'gluten', 'contains'),
+  ('PL', '5901359062013', 'gluten', 'contains'),
+  ('PL', '5901359062013', 'eggs', 'contains'),
+  ('PL', '5900490000182', 'gluten', 'contains'),
+  ('PL', '5901359122021', 'milk', 'contains'),
+  ('PL', '5901359122021', 'gluten', 'contains')
 ) AS v(country, ean, tag, type)
 JOIN products p ON p.country = v.country AND p.ean = v.ean
 WHERE p.is_deprecated IS NOT TRUE
@@ -146,7 +146,59 @@ SET    confidence = assign_confidence(p.data_completeness_pct, p.source_type)
 WHERE  p.is_deprecated IS NOT TRUE
   AND  p.confidence != assign_confidence(p.data_completeness_pct, p.source_type);
 
--- ─── 5. Refresh materialized views ──────────────────────────────────────
+-- ─── 5. Store architecture: reclassify Żabka + backfill junction ────────
+-- Migration 000300 reclassifies Żabka products and 000200 backfills the
+-- product_store_availability junction, but both run on an empty DB in CI.
+-- Re-run the logic here after pipelines have populated products.
+
+-- 5a. Link Żabka-brand products to Żabka store
+INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
+SELECT p.product_id, sr.store_id, NOW(), 'pipeline'
+FROM products p
+CROSS JOIN store_ref sr
+WHERE p.category = 'Żabka'
+  AND p.is_deprecated = false
+  AND sr.country = 'PL'
+  AND sr.store_slug = 'zabka'
+ON CONFLICT (product_id, store_id) DO NOTHING;
+
+-- 5b. Reclassify Żabka products → Frozen & Prepared
+UPDATE products
+SET    category = 'Frozen & Prepared'
+WHERE  category = 'Żabka'
+  AND  is_deprecated = false;
+
+-- 5c. Re-score affected category
+CALL score_category('Frozen & Prepared');
+
+-- 5d. Backfill junction for all products with store_availability set
+INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
+SELECT p.product_id, sr.store_id, NOW(), 'pipeline'
+FROM products p
+JOIN store_ref sr
+  ON sr.country = p.country
+ AND sr.store_name = p.store_availability
+WHERE p.store_availability IS NOT NULL
+  AND p.is_deprecated = false
+ON CONFLICT (product_id, store_id) DO NOTHING;
+
+-- ─── 6. Backfill nutri_score_source for pipeline products ────────────────
+-- The nutri_score_provenance migration (#353) runs BEFORE pipelines in CI,
+-- so its backfill UPDATE matches 0 products. Re-run the same logic here
+-- after products exist, so QA check 22 (scored products must have source) passes.
+
+UPDATE products
+SET nutri_score_source = CASE
+  WHEN nutri_score_label IS NULL            THEN NULL
+  WHEN nutri_score_label = 'NOT-APPLICABLE' THEN NULL
+  WHEN nutri_score_label = 'UNKNOWN'        THEN 'unknown'
+  ELSE 'off_computed'
+END
+WHERE is_deprecated IS NOT TRUE
+  AND nutri_score_source IS NULL
+  AND nutri_score_label IS NOT NULL;
+
+-- ─── 7. Refresh materialized views ──────────────────────────────────────
 -- mv_ingredient_frequency and v_product_confidence were created WITH DATA
 -- during migrations (when 0 products existed).  Refresh now that products
 -- are populated and cleaned up.

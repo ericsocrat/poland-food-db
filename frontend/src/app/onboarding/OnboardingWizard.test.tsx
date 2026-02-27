@@ -88,7 +88,7 @@ describe("OnboardingWizard", () => {
     await user.click(screen.getByText("Next"));
 
     // Step 3: Allergens
-    expect(screen.getByTestId("allergen-en:gluten")).toBeInTheDocument();
+    expect(screen.getByTestId("allergen-gluten")).toBeInTheDocument();
     await user.click(screen.getByText("Next"));
 
     // Step 4: Health Goals
@@ -172,7 +172,7 @@ describe("OnboardingWizard", () => {
     await user.click(screen.getByText("Next"));
     await user.click(screen.getByTestId("diet-vegetarian"));
     await user.click(screen.getByText("Next"));
-    await user.click(screen.getByTestId("allergen-en:gluten"));
+    await user.click(screen.getByTestId("allergen-gluten"));
     await user.click(screen.getByText("Next"));
     await user.click(screen.getByTestId("goal-diabetes"));
     await user.click(screen.getByText("Next"));
@@ -188,7 +188,7 @@ describe("OnboardingWizard", () => {
         expect.objectContaining({
           country: "PL",
           diet: "vegetarian",
-          allergens: ["en:gluten"],
+          allergens: ["gluten"],
           health_goals: ["diabetes"],
           favorite_categories: ["chips"],
         }),
@@ -241,8 +241,8 @@ describe("OnboardingWizard", () => {
     await user.click(screen.getByText("Next"));
 
     // Allergens: select gluten + milk
-    await user.click(screen.getByTestId("allergen-en:gluten"));
-    await user.click(screen.getByTestId("allergen-en:milk"));
+    await user.click(screen.getByTestId("allergen-gluten"));
+    await user.click(screen.getByTestId("allergen-milk"));
     await user.click(screen.getByText("Next"));
 
     // Health goals: skip (click next)

@@ -31,20 +31,20 @@ export function getLanguagesForCountry(countryCode: string) {
 }
 
 export const ALLERGEN_TAGS = [
-  { tag: "en:gluten", label: "Gluten" },
-  { tag: "en:milk", label: "Milk / Dairy" },
-  { tag: "en:eggs", label: "Eggs" },
-  { tag: "en:nuts", label: "Tree Nuts" },
-  { tag: "en:peanuts", label: "Peanuts" },
-  { tag: "en:soybeans", label: "Soy" },
-  { tag: "en:fish", label: "Fish" },
-  { tag: "en:crustaceans", label: "Crustaceans" },
-  { tag: "en:celery", label: "Celery" },
-  { tag: "en:mustard", label: "Mustard" },
-  { tag: "en:sesame-seeds", label: "Sesame" },
-  { tag: "en:sulphur-dioxide-and-sulphites", label: "Sulphites" },
-  { tag: "en:lupin", label: "Lupin" },
-  { tag: "en:molluscs", label: "Molluscs" },
+  { tag: "gluten", label: "Gluten" },
+  { tag: "milk", label: "Milk / Dairy" },
+  { tag: "eggs", label: "Eggs" },
+  { tag: "tree-nuts", label: "Tree Nuts" },
+  { tag: "peanuts", label: "Peanuts" },
+  { tag: "soybeans", label: "Soy" },
+  { tag: "fish", label: "Fish" },
+  { tag: "crustaceans", label: "Crustaceans" },
+  { tag: "celery", label: "Celery" },
+  { tag: "mustard", label: "Mustard" },
+  { tag: "sesame", label: "Sesame" },
+  { tag: "sulphites", label: "Sulphites" },
+  { tag: "lupin", label: "Lupin" },
+  { tag: "molluscs", label: "Molluscs" },
 ] as const;
 
 /**
@@ -55,22 +55,22 @@ export const ALLERGEN_PRESETS = [
   {
     key: "glutenFree",
     labelKey: "allergenPreset.glutenFree",
-    tags: ["en:gluten"],
+    tags: ["gluten"],
   },
   {
     key: "dairyFree",
     labelKey: "allergenPreset.dairyFree",
-    tags: ["en:milk"],
+    tags: ["milk"],
   },
   {
     key: "nutFree",
     labelKey: "allergenPreset.nutFree",
-    tags: ["en:nuts", "en:peanuts"],
+    tags: ["tree-nuts", "peanuts"],
   },
   {
     key: "vegan",
     labelKey: "allergenPreset.vegan",
-    tags: ["en:milk", "en:eggs", "en:fish", "en:crustaceans", "en:molluscs"],
+    tags: ["milk", "eggs", "fish", "crustaceans", "molluscs"],
   },
 ] as const;
 
@@ -110,10 +110,10 @@ export const FOOD_CATEGORIES = [
 
 // Score band display config
 export const SCORE_BANDS = {
-  low: { label: "Low", color: "text-score-green", bg: "bg-score-green/10" },
-  moderate: { label: "Moderate", color: "text-score-yellow", bg: "bg-score-yellow/10" },
-  high: { label: "High", color: "text-score-orange", bg: "bg-score-orange/10" },
-  very_high: { label: "Very High", color: "text-score-red", bg: "bg-score-red/10" },
+  low: { label: "Low", color: "text-score-green-text", bg: "bg-score-green/10" },
+  moderate: { label: "Moderate", color: "text-score-yellow-text", bg: "bg-score-yellow/10" },
+  high: { label: "High", color: "text-score-orange-text", bg: "bg-score-orange/10" },
+  very_high: { label: "Very High", color: "text-score-red-text", bg: "bg-score-red/10" },
 } as const;
 
 /** Map a 0-100 unhealthiness score to a score band key. */
@@ -146,11 +146,11 @@ export function scoreColorFromScore(score: number): ScoreColorBand {
  * Uses the score-* CSS token classes from the design system.
  */
 export const SCORE_5BAND_DISPLAY: Record<ScoreColorBand, { color: string; bg: string }> = {
-  green: { color: "text-score-green", bg: "bg-score-green/10" },
-  yellow: { color: "text-score-yellow", bg: "bg-score-yellow/10" },
-  orange: { color: "text-score-orange", bg: "bg-score-orange/10" },
-  red: { color: "text-score-red", bg: "bg-score-red/10" },
-  darkred: { color: "text-score-darkred", bg: "bg-score-darkred/10" },
+  green: { color: "text-score-green-text", bg: "bg-score-green/10" },
+  yellow: { color: "text-score-yellow-text", bg: "bg-score-yellow/10" },
+  orange: { color: "text-score-orange-text", bg: "bg-score-orange/10" },
+  red: { color: "text-score-red-text", bg: "bg-score-red/10" },
+  darkred: { color: "text-score-darkred-text", bg: "bg-score-darkred/10" },
 };
 
 // Nutri-Score display config

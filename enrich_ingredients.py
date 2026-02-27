@@ -5,9 +5,11 @@ Generates a migration SQL file that populates:
   - product_allergen_info (allergen/trace tags per product)
 
 Usage:
-    python enrich_ingredients.py
+    python enrich_ingredients.py                    # all countries
+    python enrich_ingredients.py --country DE       # DE only
 """
 
+import argparse
 import os
 import re
 import subprocess
@@ -24,9 +26,9 @@ import requests
 OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
 USER_AGENT = "poland-food-db/1.0 (https://github.com/ericsocrat/poland-food-db)"
 FIELDS = "ingredients,allergens_tags,traces_tags,ingredients_analysis_tags"
-DELAY = 0.35  # seconds between requests (OFF rate limit: ~100/min)
+DELAY = 1.0  # seconds between requests (conservative to avoid RemoteDisconnected)
 TIMEOUT = 30
-MAX_RETRIES = 2
+MAX_RETRIES = 3
 
 OUTPUT_DIR = Path(__file__).parent / "supabase" / "migrations"
 # Migration filename is generated dynamically at runtime to avoid overwrites
@@ -64,14 +66,20 @@ def _psql_cmd(query: str) -> list[str]:
     ]
 
 
-def get_products() -> list[dict]:
-    """Get active products with EANs that are MISSING ingredient or allergen data."""
+def get_products(country_filter: str | None = None) -> list[dict]:
+    """Get active products with EANs that are MISSING ingredient or allergen data.
+
+    Args:
+        country_filter: If set, only return products for this country code (e.g. 'DE').
+    """
+    country_clause = f"AND p.country = '{country_filter}'" if country_filter else ""
     cmd = _psql_cmd(
-        """
+        f"""
         SELECT p.product_id, p.country, p.ean, p.brand, p.product_name, p.category
         FROM products p
         WHERE p.is_deprecated = FALSE
           AND p.ean IS NOT NULL
+          {country_clause}
           AND (
             NOT EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id)
             OR NOT EXISTS (SELECT 1 FROM product_allergen_info pai WHERE pai.product_id = p.product_id)
@@ -148,12 +156,12 @@ def _get_session() -> requests.Session:
             pool_maxsize=5,
         )
         _session.mount("https://", adapter)
-        _session.mount("http://", adapter)
     return _session
 
 
 def fetch_off_product(ean: str) -> dict | None:
     """Fetch a single product from OFF API."""
+    global _session
     url = OFF_PRODUCT_URL.format(ean=ean)
     session = _get_session()
 
@@ -169,6 +177,16 @@ def fetch_off_product(ean: str) -> dict | None:
             return data.get("product", {})
         except KeyboardInterrupt:
             raise  # re-raise to allow graceful shutdown
+        except (requests.exceptions.ConnectionError, ConnectionError) as exc:
+            # Reset session on connection errors to avoid stale pool
+            _session = None
+            session = _get_session()
+            if attempt < MAX_RETRIES:
+                backoff = DELAY * (attempt + 1) * 3
+                time.sleep(backoff)
+                continue
+            print(f"  Failed for EAN {ean}: {exc}", file=sys.stderr)
+            return None
         except Exception as exc:
             if attempt < MAX_RETRIES:
                 time.sleep(DELAY * (attempt + 1) * 2)
@@ -180,6 +198,21 @@ def fetch_off_product(ean: str) -> dict | None:
 # ---------------------------------------------------------------------------
 # Ingredient normalization
 # ---------------------------------------------------------------------------
+
+
+def _is_garbage_name(name: str) -> bool:
+    """Reject OCR artifacts and non-meaningful ingredient names."""
+    if len(name) < 2:
+        return True
+    # Reject names that are mostly digits/punctuation (OCR artifacts)
+    alpha_count = sum(1 for c in name if c.isalpha())
+    if alpha_count < 2:
+        return True
+    # Reject names containing HTML/barcode fragments
+    if any(frag in name.lower() for frag in ["<", ">", "http", "www.", "infolinka"]):
+        return True
+    # Reject single letters
+    return len(name.strip()) <= 1
 
 
 def normalize_ingredient_name(name: str) -> str:
@@ -273,7 +306,7 @@ def process_ingredients(
 
         name = text or off_id
         name_lower = normalize_ingredient_name(name)
-        if not name_lower:
+        if not name_lower or _is_garbage_name(name_lower):
             return pos
 
         ing_id = _resolve_ingredient(
@@ -307,16 +340,58 @@ def process_ingredients(
     return rows
 
 
-def canonical_taxonomy_tag(tag: str) -> str:
-    """Normalize OFF taxonomy tags to canonical en:* namespace."""
+# Mapping from OFF API allergen tags (after stripping prefix) to canonical allergen_ref IDs.
+# Sub-allergens are mapped to their parent EU-14 category.
+_OFF_TO_CANONICAL_ALLERGEN: dict[str, str] = {
+    # EU-14 mandatory allergens (direct matches)
+    "gluten": "gluten",
+    "milk": "milk",
+    "eggs": "eggs",
+    "peanuts": "peanuts",
+    "soybeans": "soybeans",
+    "fish": "fish",
+    "crustaceans": "crustaceans",
+    "celery": "celery",
+    "mustard": "mustard",
+    "lupin": "lupin",
+    "molluscs": "molluscs",
+    # Renamed tags
+    "nuts": "tree-nuts",
+    "sesame-seeds": "sesame",
+    "sulphur-dioxide-and-sulphites": "sulphites",
+    # Common aliases
+    "soy": "soybeans",
+    # Sub-allergens → parent
+    "wheat": "gluten",
+    "oats": "gluten",
+    "barley": "gluten",
+    "rye": "gluten",
+    "spelt": "gluten",
+    "kamut": "gluten",
+    "almonds": "tree-nuts",
+    "hazelnuts": "tree-nuts",
+    "walnuts": "tree-nuts",
+    "cashews": "tree-nuts",
+    "pecans": "tree-nuts",
+    "pistachios": "tree-nuts",
+    "macadamia-nuts": "tree-nuts",
+    "brazil-nuts": "tree-nuts",
+}
+
+
+def canonical_allergen_tag(tag: str) -> str:
+    """Normalize OFF allergen/trace taxonomy tag to a bare canonical allergen_ref ID.
+
+    Strips language prefix (en:, fr:, etc.), maps sub-allergens to parent
+    EU-14 categories, and returns '' for unknown tags.
+    """
     t = (tag or "").strip().lower()
     if not t:
         return ""
-    if t.startswith("en:"):
-        return t
+    # Strip any language prefix (en:xxx, fr:xxx, pl:xxx, etc.)
     if ":" in t:
         t = t.split(":", 1)[1].strip()
-    return f"en:{t}" if t else ""
+    return _OFF_TO_CANONICAL_ALLERGEN.get(t, t)
 
 
 def process_allergens(off_product: dict, country: str, ean: str) -> list[dict]:
@@ -325,7 +400,7 @@ def process_allergens(off_product: dict, country: str, ean: str) -> list[dict]:
 
     allergens = off_product.get("allergens_tags", [])
     for tag in allergens:
-        clean_tag = canonical_taxonomy_tag(tag)
+        clean_tag = canonical_allergen_tag(tag)
         if clean_tag:
             rows.append(
                 {
@@ -338,7 +413,7 @@ def process_allergens(off_product: dict, country: str, ean: str) -> list[dict]:
 
     traces = off_product.get("traces_tags", [])
     for tag in traces:
-        clean_tag = canonical_taxonomy_tag(tag)
+        clean_tag = canonical_allergen_tag(tag)
         if clean_tag:
             rows.append(
                 {
@@ -597,8 +672,18 @@ def generate_migration(
 
 
 def main():
+    parser = argparse.ArgumentParser(
+        description="Enrich ingredient & allergen data from OFF API"
+    )
+    parser.add_argument(
+        "--country", type=str, default=None, help="Country code filter (e.g. DE, PL)"
+    )
+    args = parser.parse_args()
+
     print("=" * 60)
     print("Ingredient & Allergen Enrichment")
+    if args.country:
+        print(f"  Country filter: {args.country.upper()}")
     print("=" * 60)
 
     # Set migration filename dynamically to avoid overwrites
@@ -608,7 +693,9 @@ def main():
 
     # 1. Load products and ingredient_ref
     print("\n[1/4] Loading products from database...")
-    products = get_products()
+    products = get_products(
+        country_filter=args.country.upper() if args.country else None
+    )
     print(f"  Found {len(products)} active products with EANs")
 
     print("\n[2/4] Loading ingredient_ref...")

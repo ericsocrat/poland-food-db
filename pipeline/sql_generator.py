@@ -1,20 +1,19 @@
 """SQL file generator for the poland-food-db pipeline.
 
-Generates the 5-file SQL pattern used by every category pipeline:
+Generates the 6-file SQL pattern used by every category pipeline:
 
 1. ``PIPELINE__{cat}__01_insert_products.sql``
 2. ``PIPELINE__{cat}__03_add_nutrition.sql``
 3. ``PIPELINE__{cat}__04_scoring.sql``
 4. ``PIPELINE__{cat}__05_source_provenance.sql``
 5. ``PIPELINE__{cat}__06_add_images.sql``
+6. ``PIPELINE__{cat}__07_store_availability.sql``
 """
 
 from __future__ import annotations
 
 import datetime
 from pathlib import Path
-
-from pipeline.utils import slug as _slug
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -93,6 +92,10 @@ def _normalize_store(raw: str | None) -> str | None:
     """Extract the primary Polish chain from a raw OFF store string.
 
     Returns ``None`` when no recognised Polish chain is found.
+
+    .. deprecated::
+        Use :func:`_extract_stores` for multi-store extraction feeding
+        the ``product_store_availability`` junction table.
     """
     if not raw:
         return None
@@ -101,6 +104,42 @@ def _normalize_store(raw: str | None) -> str | None:
         if chain.lower() in low:
             return chain
     return None
+
+
+# German retail chains, ordered by market presence.
+_GERMAN_CHAINS = [
+    "Aldi",
+    "Lidl",
+    "Edeka",
+    "REWE",
+    "Penny",
+    "Netto",
+    "Kaufland",
+    "dm",
+    "Rossmann",
+    "Real",
+    "Norma",
+    "Tegut",
+]
+
+# Country → chain list mapping for multi-store extraction
+_CHAINS_BY_COUNTRY: dict[str, list[str]] = {
+    "PL": _POLISH_CHAINS,
+    "DE": _GERMAN_CHAINS,
+}
+
+
+def _extract_stores(raw: str | None, country: str = "PL") -> list[str]:
+    """Extract ALL recognised chains from a raw OFF store string.
+
+    Returns a list of matching chain names (may be empty).
+    Used to populate ``product_store_availability`` junction table.
+    """
+    if not raw:
+        return []
+    low = raw.lower()
+    chains = _CHAINS_BY_COUNTRY.get(country, _POLISH_CHAINS)
+    return [chain for chain in chains if chain.lower() in low]
 
 
 # ---------------------------------------------------------------------------
@@ -438,6 +477,52 @@ ON CONFLICT (off_image_id) WHERE off_image_id IS NOT NULL DO UPDATE SET
 """
 
 
+def _gen_07_store_availability(
+    category: str, products: list[dict], today: str, country: str = "PL"
+) -> str:
+    """Generate file 07 — store availability junction inserts."""
+    rows: list[str] = []
+    for p in products:
+        stores = _extract_stores(p.get("store_availability"), country)
+        if not stores:
+            continue
+        brand = _sql_text(p["brand"])
+        name = _sql_text(p["product_name"])
+        for store_name in stores:
+            rows.append(f"    ({brand}, {name}, {_sql_text(store_name)})")
+
+    if not rows:
+        return f"""\
+-- PIPELINE ({category}): store availability
+-- Generated: {today}
+
+-- No store availability data found for this category.
+"""
+
+    values_block = ",\n".join(rows)
+
+    return f"""\
+-- PIPELINE ({category}): store availability
+-- Source: Open Food Facts API store field
+-- Generated: {today}
+
+INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
+SELECT
+  p.product_id,
+  sr.store_id,
+  NOW(),
+  'pipeline'
+FROM (
+  VALUES
+{values_block}
+) AS d(brand, product_name, store_name)
+JOIN products p ON p.country = {_sql_text(country)} AND p.brand = d.brand AND p.product_name = d.product_name
+  AND p.category = {_sql_text(category)} AND p.is_deprecated IS NOT TRUE
+JOIN store_ref sr ON sr.country = {_sql_text(country)} AND sr.store_name = d.store_name AND sr.is_active = true
+ON CONFLICT (product_id, store_id) DO NOTHING;
+"""
+
+
 # ---------------------------------------------------------------------------
 # Public entry point
 # ---------------------------------------------------------------------------
@@ -449,7 +534,7 @@ def generate_pipeline(
     output_dir: str,
     country: str = "PL",
 ) -> list[Path]:
-    """Generate 4 SQL pipeline files for *category* in *country*.
+    """Generate 6 SQL pipeline files for *category* in *country*.
 
     Parameters
     ----------
@@ -465,7 +550,7 @@ def generate_pipeline(
     Returns
     -------
     list[Path]
-        Paths of the four generated files.
+        Paths of the six generated files.
     """
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -512,5 +597,12 @@ def generate_pipeline(
         _gen_06_add_images(category, products, today, country), encoding="utf-8"
     )
     files.append(path06)
+
+    # 07 — store availability
+    path07 = out / f"PIPELINE__{slug}__07_store_availability.sql"
+    path07.write_text(
+        _gen_07_store_availability(category, products, today, country), encoding="utf-8"
+    )
+    files.append(path07)
 
     return files

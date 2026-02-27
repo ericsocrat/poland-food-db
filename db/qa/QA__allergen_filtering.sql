@@ -10,14 +10,14 @@ SELECT '1. gluten avoidance excludes gluten-containing from search' AS check_nam
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', '{"allergen_free":["en:gluten"]}'::jsonb, 1, 100)->'results'
+        api_search_products('a', '{"allergen_free":["gluten"]}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 WHERE EXISTS (
     SELECT 1 FROM product_allergen_info ai
     WHERE ai.product_id = search_results.pid::bigint
       AND ai.type = 'contains'
-      AND ai.tag = 'en:gluten'
+      AND ai.tag = 'gluten'
 );
 
 -- 2. Avoiding milk excludes products that contain milk
@@ -26,14 +26,14 @@ SELECT '2. milk avoidance excludes milk-containing from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', '{"allergen_free":["en:milk"]}'::jsonb, 1, 100)->'results'
+        api_search_products('a', '{"allergen_free":["milk"]}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 WHERE EXISTS (
     SELECT 1 FROM product_allergen_info ai
     WHERE ai.product_id = search_results.pid::bigint
       AND ai.type = 'contains'
-      AND ai.tag = 'en:milk'
+      AND ai.tag = 'milk'
 );
 
 -- ─── Auth setup for treat_may_contain test (check 3) ───────────────────────
@@ -48,9 +48,9 @@ VALUES ('00000000-0000-0000-0000-000000000097'::uuid)
 ON CONFLICT DO NOTHING;
 
 INSERT INTO user_preferences (user_id, avoid_allergens, treat_may_contain_as_unsafe)
-VALUES ('00000000-0000-0000-0000-000000000097'::uuid, ARRAY['en:gluten'], true)
+VALUES ('00000000-0000-0000-0000-000000000097'::uuid, ARRAY['gluten'], true)
 ON CONFLICT (user_id) DO UPDATE
-    SET avoid_allergens = ARRAY['en:gluten'], treat_may_contain_as_unsafe = true;
+    SET avoid_allergens = ARRAY['gluten'], treat_may_contain_as_unsafe = true;
 
 -- 3. May-contain toggle excludes trace allergens when enabled
 SELECT '3. treat_may_contain excludes traces from search' AS check_name,
@@ -58,14 +58,14 @@ SELECT '3. treat_may_contain excludes traces from search' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_search_products('a', '{"allergen_free":["en:gluten"]}'::jsonb, 1, 100)->'results'
+        api_search_products('a', '{"allergen_free":["gluten"]}'::jsonb, 1, 100)->'results'
     ) r(val)
 ) search_results
 WHERE EXISTS (
     SELECT 1 FROM product_allergen_info ai
     WHERE ai.product_id = search_results.pid::bigint
       AND ai.type IN ('contains','traces')
-      AND ai.tag = 'en:gluten'
+      AND ai.tag = 'gluten'
 );
 
 -- ─── Teardown auth for allergen check 3 ────────────────────────────────────
@@ -84,14 +84,14 @@ SELECT '4. allergen filter excludes from category listing' AS check_name,
 FROM (
     SELECT r.val->>'product_id' AS pid
     FROM jsonb_array_elements(
-        api_category_listing('Chips', 'score', 'asc', 100, 0, NULL, NULL, ARRAY['en:milk'])->'products'
+        api_category_listing('Chips', 'score', 'asc', 100, 0, NULL, NULL, ARRAY['milk'])->'products'
     ) r(val)
 ) listing_results
 WHERE EXISTS (
     SELECT 1 FROM product_allergen_info ai
     WHERE ai.product_id = listing_results.pid::bigint
       AND ai.type = 'contains'
-      AND ai.tag = 'en:milk'
+      AND ai.tag = 'milk'
 );
 
 -- 5. Allergen filter works on better alternatives
@@ -104,13 +104,13 @@ FROM (
     LIMIT 3
 ) sample
 CROSS JOIN LATERAL find_better_alternatives(
-    sample.product_id, true, 5, NULL, ARRAY['en:milk']
+    sample.product_id, true, 5, NULL, ARRAY['milk']
 ) AS alt
 WHERE EXISTS (
     SELECT 1 FROM product_allergen_info ai
     WHERE ai.product_id = alt.alt_product_id
       AND ai.type = 'contains'
-      AND ai.tag = 'en:milk'
+      AND ai.tag = 'milk'
 );
 
 -- 6. Without allergen filter, products with allergens appear normally
