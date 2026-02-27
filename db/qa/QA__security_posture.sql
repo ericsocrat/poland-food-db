@@ -141,7 +141,7 @@ FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE n.nspname = 'public'
   AND p.proname IN (
-    'compute_unhealthiness_v31','compute_unhealthiness_v32',
+    'compute_unhealthiness_v32',
     'explain_score_v32','compute_data_confidence','compute_data_completeness',
     'assign_confidence','find_similar_products','find_better_alternatives',
     'refresh_all_materialized_views','mv_staleness_check',

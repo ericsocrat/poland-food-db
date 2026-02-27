@@ -192,14 +192,14 @@ Pairs investigated for overlap during the 2026-02-28 audit:
 
 ## Obsolete Reference Check
 
-Files checked for references to deprecated elements (`compute_unhealthiness_v31`, `scored_at`, `column_metadata`):
+Files checked for references to deprecated elements (`scored_at`, `column_metadata`). Note: `compute_unhealthiness_v31` was dropped in migration `20260314000100_remove_legacy_v31_scoring.sql`.
 
 | File                   | Hits | Assessment                                                                      |
 | ---------------------- | ---- | ------------------------------------------------------------------------------- |
 | FEATURE_SUNSETTING.md  | 2    | `column_metadata` referenced as **already-cleaned-up example** — intentional    |
 | SCORING_ENGINE.md      | 5    | References to v3.1 as **historical context** in version evolution — intentional |
 | SCORING_METHODOLOGY.md | 4    | References to v3.1 as **previous version** in changelog section — intentional   |
-| SECURITY_AUDIT.md      | 2    | References to scoring version history — intentional                             |
+| SECURITY_AUDIT.md      | 1    | v31 row removed (function dropped); remaining v3.2 reference — valid        |
 | UX_UI_DESIGN.md        | 1    | Minor v3.1 reference in historical context — intentional                        |
 
 **Result:** No stale or misleading obsolete references found. All hits are intentional historical context.

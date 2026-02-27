@@ -1,6 +1,6 @@
 # API Registry — Poland Food DB
 #
-# Canonical registry of all 192 public-schema functions.
+# Canonical registry of all 191 public-schema functions.
 # Last updated: 2026-03-14
 # Naming convention: docs/API_CONVENTIONS.md
 # Contract details: docs/API_CONTRACTS.md
@@ -1909,26 +1909,6 @@ run_full_data_audit:
 # ═══════════════════════════════════════════════════════════════════
 # SCORING INTERNALS DOMAIN
 # ═══════════════════════════════════════════════════════════════════
-
-compute_unhealthiness_v31:
-  domain: scoring
-  visibility: internal
-  auth: n/a
-  params:
-    p_saturated_fat_g: { type: numeric, required: true }
-    p_sugars_g: { type: numeric, required: true }
-    p_salt_g: { type: numeric, required: true }
-    p_calories: { type: numeric, required: true }
-    p_trans_fat_g: { type: numeric, required: true }
-    p_additives_count: { type: numeric, required: true }
-    p_prep_method: { type: text, required: true }
-    p_controversies: { type: text, required: true }
-  returns: integer
-  p95_target: 1
-  deprecated: false
-  notes: >
-    Unhealthiness v3.1b scoring formula: 8 factors with weighted sum.
-    Differentiates smoked/steamed/grilled prep methods. IMMUTABLE.
 
 compute_unhealthiness_v32:
   domain: scoring
