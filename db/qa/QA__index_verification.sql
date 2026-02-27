@@ -56,14 +56,23 @@ SELECT '5. product_ingredient has ingredient FK index' AS check_name,
        ) THEN 0 ELSE 1 END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #6  ingredient_ref has taxonomy_id index
+-- #6  ingredient_ref has taxonomy_id index (conditional — column may not exist)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT '6. ingredient_ref.taxonomy_id has index' AS check_name,
-       CASE WHEN EXISTS (
-           SELECT 1 FROM pg_indexes
-           WHERE tablename = 'ingredient_ref'
-             AND indexdef ILIKE '%taxonomy_id%'
-       ) THEN 0 ELSE 1 END AS violations;
+       CASE
+           WHEN NOT EXISTS (
+               SELECT 1 FROM information_schema.columns
+               WHERE table_schema = 'public'
+                 AND table_name = 'ingredient_ref'
+                 AND column_name = 'taxonomy_id'
+           ) THEN 0  -- column not yet created, skip
+           WHEN EXISTS (
+               SELECT 1 FROM pg_indexes
+               WHERE tablename = 'ingredient_ref'
+                 AND indexdef ILIKE '%taxonomy_id%'
+           ) THEN 0
+           ELSE 1
+       END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #7  product_allergen_info has product + type index
@@ -76,14 +85,22 @@ SELECT '7. product_allergen_info has product+type index' AS check_name,
        ) THEN 0 ELSE 1 END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #8  servings has partial index for per-100g lookups
+-- #8  servings has partial index for per-100g lookups (conditional — table removed)
 -- ─────────────────────────────────────────────────────────────────────────────
 SELECT '8. servings has per-100g partial index' AS check_name,
-       CASE WHEN EXISTS (
-           SELECT 1 FROM pg_indexes
-           WHERE tablename = 'servings'
-             AND indexdef ILIKE '%per 100 g%'
-       ) THEN 0 ELSE 1 END AS violations;
+       CASE
+           WHEN NOT EXISTS (
+               SELECT 1 FROM information_schema.tables
+               WHERE table_schema = 'public'
+                 AND table_name = 'servings'
+           ) THEN 0  -- table removed, skip
+           WHEN EXISTS (
+               SELECT 1 FROM pg_indexes
+               WHERE tablename = 'servings'
+                 AND indexdef ILIKE '%per 100 g%'
+           ) THEN 0
+           ELSE 1
+       END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #9  No table > 1MB without any index
@@ -94,7 +111,9 @@ FROM pg_tables t
 LEFT JOIN pg_indexes i ON t.tablename = i.tablename AND t.schemaname = i.schemaname
 WHERE t.schemaname = 'public'
   AND i.indexname IS NULL
-  AND pg_total_relation_size(quote_ident(t.tablename)) > 1048576;
+  AND pg_total_relation_size(
+      (quote_ident(t.schemaname) || '.' || quote_ident(t.tablename))::regclass
+  ) > 1048576;
 
 -- ─────────────────────────────────────────────────────────────────────────────
 -- #10  mv_ingredient_frequency has unique index (for CONCURRENTLY)
