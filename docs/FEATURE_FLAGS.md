@@ -130,6 +130,9 @@ export async function GET() {
 | `variants`     | `JSONB`       | `[{"name": "control", "weight": 50}, ...]` |
 | `expires_at`   | `TIMESTAMPTZ` | Auto-disable after this date               |
 | `tags`         | `TEXT[]`      | Grouping tags for organization             |
+| `activation_criteria` | `JSONB` | Prerequisites to satisfy before enabling  |
+| `activation_order`    | `INTEGER` | Recommended sequential activation order  |
+| `depends_on`          | `TEXT[]` | Flag keys that must be enabled first      |
 
 ### `flag_overrides`
 
@@ -271,6 +274,43 @@ Changes propagate via Supabase Realtime within ~2 seconds.
 - **Server**: 5s TTL in-memory cache (1 query fetches all flags)
 - **Client**: React state via FlagProvider, refreshed via Supabase Realtime
 - **API route**: 5s `Cache-Control: private, max-age=5`
+
+---
+
+## Activation Roadmap
+
+> **Issue:** [#372 — Feature Flag Activation Roadmap](https://github.com/ericsocrat/poland-food-db/issues/372)
+> **Migration:** `20260312000500_flag_activation_roadmap.sql`
+
+All 8 flags shipped disabled. Each has documented activation criteria, a recommended order, and dependency tracking via `check_flag_readiness()`.
+
+### Recommended Activation Order
+
+| Order | Flag | Status | Criteria | Dependencies |
+|-------|------|--------|----------|--------------|
+| 1 | `qa_mode` | Ready | No prerequisites. Testing utility. | None |
+| 2 | `de_country_launch` | Ready | DE enrichment ≥ 80%, 252 products available | None |
+| 3 | `data_provenance_ui` | Ready | Source coverage ≥ 95% (currently ~96%) | None |
+| 4 | `new_search_ranking` | Ready | Search synonyms ≥ 250 rows, DE synonyms ≥ 50 | None |
+| 5 | `allergen_v2` | Ready | Allergen normalization complete (#351) | None |
+| 6 | `new_search_ui` | Blocked | Validate new ranking for ≥ 14 days | `new_search_ranking` |
+| 7 | `scoring_v4` | Ready | Shadow mode <5% drift, regression suite passes | None |
+| — | `maintenance_mode` | Ready | Emergency only. Never scheduled. | None |
+
+### Readiness Check
+
+```sql
+SELECT flag_key, status, days_until_expiry, dependencies_met
+FROM check_flag_readiness();
+```
+
+Returns one row per flag with status: `ready`, `blocked`, `expired`, or `enabled`.
+
+### Expiry Policy
+
+- **30 days before expiry**: QA check warns if flag is still disabled
+- **At expiry**: Consciously extend or remove flag + clean up dead code
+- **Never**: Allow silent expiry with unreachable code paths
 
 ---
 
