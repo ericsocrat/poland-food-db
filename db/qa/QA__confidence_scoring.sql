@@ -1,9 +1,10 @@
 -- ============================================================
--- QA: Confidence & Completeness Scoring — 13 checks
+-- QA: Confidence & Completeness Scoring — 14 checks
 -- Validates the composite data confidence score (0-100),
 -- band assignments (high/medium/low), and data completeness
 -- profiles for all active products.
 -- Checks 11-13: regression guards against mono-modal confidence
+-- Check 14: high-band population threshold (#445)
 -- ============================================================
 
 -- 1. MV row count matches active products
@@ -121,3 +122,18 @@ SELECT '13. MV confidence bands are multi-modal' AS check_name,
            SELECT COUNT(DISTINCT confidence_band)
            FROM v_product_confidence
        ) >= 2 THEN 0 ELSE 1 END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- High-band population threshold (#445)
+-- After ingredient/allergen enrichment, at least 100 products must
+-- reach the "high" confidence band (80+).  Prevents regression to
+-- the pre-enrichment state where 0% of products were "high".
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 14. At least 100 products in "high" confidence band
+SELECT '14. at least 100 products in high confidence band' AS check_name,
+       CASE WHEN (
+           SELECT COUNT(*)
+           FROM v_product_confidence
+           WHERE confidence_band = 'high'
+       ) >= 100 THEN 0 ELSE 1 END AS violations;

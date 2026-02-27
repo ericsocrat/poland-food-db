@@ -210,6 +210,38 @@ jobs:
             ORDER BY p.product_name;
           "
 
+      - name: Confidence distribution diagnostic
+        if: always()
+        run: |
+          echo "=== Confidence band distribution ==="
+          psql -c "
+            SELECT confidence_band, COUNT(*) AS products,
+                   ROUND(100.0 * COUNT(*) / SUM(COUNT(*)) OVER (), 1) AS pct
+            FROM v_product_confidence
+            GROUP BY confidence_band
+            ORDER BY MIN(total_confidence) DESC;
+          "
+          echo ""
+          echo "=== Confidence component averages ==="
+          psql -c "
+            SELECT ROUND(AVG(nutrition_pts), 1)  AS avg_nutrition,
+                   ROUND(AVG(ingredient_pts), 1)  AS avg_ingredient,
+                   ROUND(AVG(source_pts), 1)       AS avg_source,
+                   ROUND(AVG(ean_pts), 1)          AS avg_ean,
+                   ROUND(AVG(allergen_pts), 1)     AS avg_allergen,
+                   ROUND(AVG(total_confidence), 1) AS avg_total
+            FROM v_product_confidence;
+          "
+          echo ""
+          echo "=== products.confidence text enum distribution ==="
+          psql -c "
+            SELECT confidence, COUNT(*) AS products
+            FROM products
+            WHERE is_deprecated IS NOT TRUE
+            GROUP BY confidence
+            ORDER BY confidence;
+          "
+
       - name: Run QA via RUN_QA.ps1
         id: qa
         shell: pwsh
