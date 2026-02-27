@@ -4,87 +4,67 @@
 -- Brands: Żabka (own-label), Szamamm (ready-meal sub-brand),
 --         Tomcio Paluch (sandwich supplier exclusive to Żabka).
 -- Data sourced from Open Food Facts (openfoodfacts.org) — EANs verified.
--- Last updated: 2026-02-08
+-- Note: After pipeline load, migration 20260311000300 reclassifies these
+-- products to 'Frozen & Prepared' and links them to the Żabka store.
+-- Last updated: 2026-02-28
 
-insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies)
+-- 0a. Release EANs across ALL categories to prevent unique constraint conflicts
+UPDATE products SET ean = NULL
+WHERE ean IN ('2050000645372','2050000554995','5908308910043','5908308910791','5903738866274','5903111184766','5908308908729','2040100470387','5903548012045','8586020103553','8586020104505','5903111184339','5901398082379','04998358','5908308902093','06638993','2050000557415','5908308911019','5908308911637','8586020100064','8586015136382','8586015136399','8586020103768','8586020105540','00719063','5908308911309','5900757067941')
+  AND ean IS NOT NULL;
+
+insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
 -- ── Żabka own-brand burgers ─────────────────────────────────────────────
--- EAN 2050000645372 — Meksykaner (hamburger with jalapeño, 11 additives, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Meksykaner','fried','Żabka','none'),
--- EAN 2050000554995 — Kurczaker (chicken burger, 12 additives incl. E223 metabisulfite, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Kurczaker','fried','Żabka','none'),
--- EAN 5908308910043 — Wołowiner Ser Kozi (beef + goat cheese, E250 sodium nitrite, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Wołowiner Ser Kozi','fried','Żabka','minor'),
--- EAN 5908308910791 — Burger Kibica (pulled pork BBQ + cheddar, 7 additives, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Burger Kibica','fried','Żabka','none'),
+('PL','Żabka','Ready-to-eat','Żabka','Meksykaner','fried','Żabka','none','2050000645372'),
+('PL','Żabka','Ready-to-eat','Żabka','Kurczaker','fried','Żabka','none','2050000554995'),
+('PL','Żabka','Ready-to-eat','Żabka','Wołowiner Ser Kozi','fried','Żabka','minor','5908308910043'),
+('PL','Żabka','Ready-to-eat','Żabka','Burger Kibica','fried','Żabka','none','5908308910791'),
 
 -- ── Żabka wraps & kebabs ───────────────────────────────────────────────
--- EAN 5903738866274 — Falafel Rollo (vegetarian wrap with falafel, 6 additives, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Falafel Rollo','fried','Żabka','none'),
--- EAN 5903111184766 — Kajzerka Kebab (kebab in kaiser roll, Nutri-Score D)
-('PL','Żabka','Ready-to-eat','Żabka','Kajzerka Kebab','fried','Żabka','none'),
+('PL','Żabka','Ready-to-eat','Żabka','Falafel Rollo','fried','Żabka','none','5903738866274'),
+('PL','Żabka','Ready-to-eat','Żabka','Kajzerka Kebab','fried','Żabka','none','5903111184766'),
 
 -- ── Żabka paninis ───────────────────────────────────────────────────────
--- EAN 5908308908729 — Panini z serem cheddar (cheddar panini, 10 additives, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Panini z serem cheddar','baked','Żabka','none'),
--- EAN 2040100470387 — Panini z kurczakiem (chicken panini, 10 additives, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Panini z kurczakiem','baked','Żabka','none'),
+('PL','Żabka','Ready-to-eat','Żabka','Panini z serem cheddar','baked','Żabka','none','5908308908729'),
+('PL','Żabka','Ready-to-eat','Żabka','Panini z kurczakiem','baked','Żabka','none','2040100470387'),
 
 -- ── Żabka snacks ────────────────────────────────────────────────────────
--- EAN 5903548012045 — Kulki owsiane z czekoladą (oat balls with chocolate, 1 additive, NOVA 4)
-('PL','Żabka','Ready-to-eat','Żabka','Kulki owsiane z czekoladą','baked','Żabka','none'),
+('PL','Żabka','Ready-to-eat','Żabka','Kulki owsiane z czekoladą','baked','Żabka','none','5903548012045'),
 
 -- ── Tomcio Paluch sandwiches (Żabka-exclusive supplier) ─────────────────
--- EAN 8586020103553 — Szynka & Jajko (ham & egg, E250 sodium nitrite, NOVA 4)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','Szynka & Jajko','baked','Żabka','minor'),
--- EAN 8586020104505 — Pieczony bekon, sałata, jajko (BLT, E250 nitrite, NOVA 4)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','Pieczony bekon, sałata, jajko','baked','Żabka','minor'),
--- EAN 5903111184339 — Bajgiel z salami (salami bagel, cured meat, Nutri-Score D)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','Bajgiel z salami','baked','Żabka','none'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Szynka & Jajko','baked','Żabka','minor','8586020103553'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Pieczony bekon, sałata, jajko','baked','Żabka','minor','8586020104505'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Bajgiel z salami','baked','Żabka','none','5903111184339'),
 
 -- ── Szamamm ready meals (Żabka's food-service brand) ────────────────────
--- EAN 5901398082379 — Naleśniki z jabłkami i cynamonem (apple cinnamon crepes, 0 additives, NOVA 4)
-('PL','Szamamm','Ready-to-eat','Żabka','Naleśniki z jabłkami i cynamonem','baked','Żabka','none'),
--- EAN 04998358 — Placki ziemniaczane (potato pancakes, 0 additives, NOVA 3)
-('PL','Szamamm','Ready-to-eat','Żabka','Placki ziemniaczane','fried','Żabka','none'),
--- EAN 5908308902093 — Penne z kurczakiem (chicken penne with basil & cheddar, Nutri-Score C)
-('PL','Szamamm','Ready-to-eat','Żabka','Penne z kurczakiem','baked','Żabka','none'),
--- EAN 06638993 — Kotlet de Volaille (chicken cordon bleu, 0 additives, NOVA 4)
-('PL','Szamamm','Ready-to-eat','Żabka','Kotlet de Volaille','fried','Żabka','none'),
+('PL','Szamamm','Ready-to-eat','Żabka','Naleśniki z jabłkami i cynamonem','baked','Żabka','none','5901398082379'),
+('PL','Szamamm','Ready-to-eat','Żabka','Placki ziemniaczane','fried','Żabka','none','04998358'),
+('PL','Szamamm','Ready-to-eat','Żabka','Penne z kurczakiem','baked','Żabka','none','5908308902093'),
+('PL','Szamamm','Ready-to-eat','Żabka','Kotlet de Volaille','fried','Żabka','none','06638993'),
 
 -- ══════════════════════════════════════════════════════════════════════════
--- NEW PRODUCTS (batch 2 — 2026-02-08, 12 products)
+-- BATCH 2 (2026-02-08, 12 products)
 -- ══════════════════════════════════════════════════════════════════════════
 
 -- ── Żabka own-brand (new) ────────────────────────────────────────────────
--- EAN 2050000557415 — Wegger (vegan burger, Nutri-Score C est., NOVA 4 est.)
-('PL','Żabka','Ready-to-eat','Żabka','Wegger','baked','Żabka','none'),
--- EAN 5908308911019 — Bao Burger (bao bun burger, very high salt 2.75g, NOVA 4 est.)
-('PL','Żabka','Ready-to-eat','Żabka','Bao Burger','baked','Żabka','none'),
--- EAN 5908308911637 — Wieprzowiner (pork hot snack, Nutri-Score D est., NOVA 4 est.)
-('PL','Żabka','Ready-to-eat','Żabka','Wieprzowiner','fried','Żabka','none'),
+('PL','Żabka','Ready-to-eat','Żabka','Wegger','baked','Żabka','none','2050000557415'),
+('PL','Żabka','Ready-to-eat','Żabka','Bao Burger','baked','Żabka','none','5908308911019'),
+('PL','Żabka','Ready-to-eat','Żabka','Wieprzowiner','fried','Żabka','none','5908308911637'),
 
 -- ── Tomcio Paluch sandwiches (new) ──────────────────────────────────────
--- EAN 8586020100064 — Kanapka Cezar (caesar sandwich, Nutri-Score C, NOVA 4 est.)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','Kanapka Cezar','none','Żabka','none'),
--- EAN 8586015136382 — Kebab z kurczaka (chicken kebab bread, Nutri-Score D)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','Kebab z kurczaka','baked','Żabka','none'),
--- EAN 8586015136399 — BBQ Strips (chicken strips baguette, 14 additives, NOVA 4)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','BBQ Strips','baked','Żabka','none'),
--- EAN 8586020103768 — Pasta jajeczna, por, jajko gotowane (egg paste sandwich, Nutri-Score C)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','Pasta jajeczna, por, jajko gotowane','none','Żabka','none'),
--- EAN 8586020105540 — High 24g protein (protein bread sandwich, E250 nitrite, NOVA 4)
-('PL','Tomcio Paluch','Ready-to-eat','Żabka','High 24g protein','none','Żabka','minor'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Kanapka Cezar','none','Żabka','none','8586020100064'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Kebab z kurczaka','baked','Żabka','none','8586015136382'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','BBQ Strips','baked','Żabka','none','8586015136399'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','Pasta jajeczna, por, jajko gotowane','none','Żabka','none','8586020103768'),
+('PL','Tomcio Paluch','Ready-to-eat','Żabka','High 24g protein','none','Żabka','minor','8586020105540'),
 
 -- ── Szamamm ready meals (new) ───────────────────────────────────────────
--- EAN 00719063 — Pierogi ruskie ze smażoną cebulką (fried pierogi, NOVA 3 est.)
-('PL','Szamamm','Ready-to-eat','Żabka','Pierogi ruskie ze smażoną cebulką','fried','Żabka','none'),
--- EAN 5908308911309 — Gnocchi z kurczakiem (chicken gnocchi, Nutri-Score B est.)
-('PL','Szamamm','Ready-to-eat','Żabka','Gnocchi z kurczakiem','baked','Żabka','none'),
--- EAN 5900757067941 — Panierowane skrzydełka z kurczaka (breaded chicken wings, fried)
-('PL','Szamamm','Ready-to-eat','Żabka','Panierowane skrzydełka z kurczaka','fried','Żabka','none'),
--- EAN n/a — Kotlet Drobiowy (chicken cutlet, Nutri-Score B est.) — OFF code 10471346 fails EAN-8 checksum
-('PL','Szamamm','Ready-to-eat','Żabka','Kotlet Drobiowy','fried','Żabka','none')
+('PL','Szamamm','Ready-to-eat','Żabka','Pierogi ruskie ze smażoną cebulką','fried','Żabka','none','00719063'),
+('PL','Szamamm','Ready-to-eat','Żabka','Gnocchi z kurczakiem','baked','Żabka','none','5908308911309'),
+('PL','Szamamm','Ready-to-eat','Żabka','Panierowane skrzydełka z kurczaka','fried','Żabka','none','5900757067941'),
+-- Kotlet Drobiowy — OFF code 10471346 fails EAN-8 checksum, no valid EAN
+('PL','Szamamm','Ready-to-eat','Żabka','Kotlet Drobiowy','fried','Żabka','none',NULL)
 
 on conflict (country, brand, product_name)
 do update set
@@ -92,7 +72,8 @@ do update set
   category            = excluded.category,
   prep_method         = excluded.prep_method,
   store_availability  = excluded.store_availability,
-  controversies       = excluded.controversies;
+  controversies       = excluded.controversies,
+  ean                 = excluded.ean;
 
 -- Deprecate old placeholder products that are no longer in the pipeline
 update products
