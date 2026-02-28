@@ -1,0 +1,111 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0d7377", "primaryTextColor": "#fff", "primaryBorderColor": "#095456", "lineColor": "#475569", "textColor": "#0f172a", "background": "#ffffff", "clusterBkg": "#f1f5f9", "clusterBorder": "#cbd5e1", "edgeLabelBackground": "#fff", "fontSize": "13px"}}}%%
+graph TB
+    %% ─── Data Sources ─────────────────────────────────────────
+    subgraph sources["DATA SOURCES"]
+        OFF["Open Food Facts API v2"]
+        MANUAL["Manual Research"]
+    end
+
+    %% ─── Python Pipeline ──────────────────────────────────────
+    subgraph pipeline["PYTHON PIPELINE · 25 categories"]
+        CLI["CLI Runner"]
+        CLIENT["OFF Client"]
+        VALID["Validator"]
+        SQLGEN["SQL Generator"]
+    end
+
+    %% ─── PostgreSQL / Supabase ────────────────────────────────
+    subgraph db["POSTGRESQL · SUPABASE"]
+        subgraph core["Core Data · 1,281 products"]
+            PROD["products · nutrition_facts"]
+            INGR["ingredient_ref · 2,995 unique"]
+            ALLRG["product_allergen_info · 2,630"]
+        end
+        subgraph engine["Scoring Engine v3.2"]
+            SCORE["compute_unhealthiness_v32 · 9 factors"]
+            CONF["compute_data_confidence · 0-100"]
+        end
+        subgraph apilayer["API Layer · 191 RPC functions"]
+            APIFN["product_detail · search · listing · alternatives · recipes"]
+        end
+        VIEWS["v_master · v_product_confidence"]
+        META["182 migrations · RLS · 20 ref tables"]
+    end
+
+    %% ─── Supabase Platform ────────────────────────────────────
+    subgraph platform["SUPABASE PLATFORM"]
+        AUTH["Auth · JWT"]
+        EDGE["Edge Functions · Rate Limiting"]
+    end
+
+    %% ─── Frontend ─────────────────────────────────────────────
+    subgraph fe["NEXT.JS FRONTEND"]
+        APP["App Router · SSR + CSR"]
+        TQ["TanStack Query · Zustand"]
+        I18N["i18n · EN + PL"]
+    end
+
+    %% ─── Quality Assurance ────────────────────────────────────
+    subgraph qa["QUALITY ASSURANCE"]
+        DBQA["DB QA · 733 checks · 47 suites"]
+        TESTS["Vitest 241 · Playwright 16 · pgTAP 14"]
+    end
+
+    %% ─── CI/CD ────────────────────────────────────────────────
+    subgraph ci["CI/CD · 19 WORKFLOWS"]
+        GATES["PR Gate · Main Gate · QA Pipeline"]
+        DEPLOY["Deploy · Nightly Audit"]
+    end
+
+    %% ─── Monitoring ───────────────────────────────────────────
+    subgraph mon["MONITORING"]
+        OBS["Sentry · SonarCloud · Drift Detection"]
+    end
+
+    %% ─── Data Flow ────────────────────────────────────────────
+    OFF -->|"REST API"| CLIENT
+    MANUAL -->|"Label data"| SQLGEN
+    CLI --> CLIENT --> VALID --> SQLGEN
+
+    SQLGEN -->|"Idempotent SQL"| PROD
+    SQLGEN -->|"score_category"| SCORE
+
+    PROD --> VIEWS
+    INGR --> VIEWS
+    ALLRG --> VIEWS
+    SCORE --> PROD
+    CONF --> VIEWS
+
+    VIEWS --> APIFN
+
+    AUTH -->|"JWT"| EDGE
+    EDGE -->|"Validated requests"| APIFN
+
+    APIFN -->|"PostgREST"| TQ
+    TQ --> APP
+    I18N --> APP
+
+    %% ─── Validation flows ─────────────────────────────────────
+    DBQA -.->|"validates"| db
+    TESTS -.->|"validates"| fe
+    GATES -.->|"enforces"| qa
+    OBS -.->|"monitors"| fe
+
+    %% ─── Styling ──────────────────────────────────────────────
+    classDef src fill:#0d7377,stroke:#095456,color:#fff,stroke-width:2px
+    classDef pipe fill:#f0fdf4,stroke:#16a34a,color:#0f172a
+    classDef data fill:#eff6ff,stroke:#3b82f6,color:#0f172a
+    classDef plat fill:#f5f3ff,stroke:#7c3aed,color:#0f172a
+    classDef front fill:#ecfdf5,stroke:#10b981,color:#0f172a
+    classDef qas fill:#fef2f2,stroke:#ef4444,color:#0f172a
+    classDef cis fill:#fff7ed,stroke:#f97316,color:#0f172a
+    classDef mons fill:#f8fafc,stroke:#64748b,color:#0f172a
+
+    class OFF,MANUAL src
+    class CLI,CLIENT,VALID,SQLGEN pipe
+    class PROD,INGR,ALLRG,SCORE,CONF,APIFN,VIEWS,META data
+    class AUTH,EDGE plat
+    class APP,TQ,I18N front
+    class DBQA,TESTS qas
+    class GATES,DEPLOY cis
+    class OBS mons
