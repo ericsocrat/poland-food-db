@@ -1,0 +1,40 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .es-board { fill: #e2e8f0; }
+    .es-board-edge { fill: #cbd5e1; }
+    .es-clip { fill: #0d7377; }
+    .es-check { stroke: #0d7377; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .es-line { stroke: #cbd5e1; stroke-width: 2; stroke-linecap: round; }
+    .es-shadow { fill: #94a3b8; opacity: 0.18; }
+    .es-star { fill: #d4a844; }
+    @media (prefers-color-scheme: dark) {
+      .es-board { fill: #334155; }
+      .es-board-edge { fill: #475569; }
+      .es-clip { fill: #2dd4bf; }
+      .es-check { stroke: #2dd4bf; }
+      .es-line { stroke: #475569; }
+      .es-shadow { fill: #1e293b; opacity: 0.3; }
+      .es-star { fill: #fbbf24; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="es-shadow" cx="120" cy="176" rx="52" ry="8"/>
+  <!-- Clipboard body -->
+  <rect class="es-board-edge" x="72" y="46" width="96" height="126" rx="6"/>
+  <rect class="es-board" x="76" y="50" width="88" height="118" rx="4"/>
+  <!-- Clip at top -->
+  <rect class="es-clip" x="104" y="38" width="32" height="16" rx="4"/>
+  <rect class="es-board" x="108" y="42" width="24" height="8" rx="2"/>
+  <!-- Checked list items -->
+  <polyline class="es-check" points="90,78 96,84 108,72"/>
+  <line class="es-line" x1="116" y1="78" x2="152" y2="78"/>
+  <polyline class="es-check" points="90,100 96,106 108,94"/>
+  <line class="es-line" x1="116" y1="100" x2="148" y2="100"/>
+  <polyline class="es-check" points="90,122 96,128 108,116"/>
+  <line class="es-line" x1="116" y1="122" x2="144" y2="122"/>
+  <polyline class="es-check" points="90,144 96,150 108,138"/>
+  <line class="es-line" x1="116" y1="144" x2="150" y2="144"/>
+  <!-- Star accent -->
+  <path class="es-star" d="M178 56 L181 50 L184 56 L190 58 L184 60 L181 66 L178 60 L172 58Z"/>
+  <path class="es-star" d="M56 88 L58 84 L60 88 L64 89.5 L60 91 L58 95 L56 91 L52 89.5Z"/>
+</svg>

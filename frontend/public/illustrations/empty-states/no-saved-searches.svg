@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .es-bookmark { fill: #e2e8f0; }
+    .es-bookmark-fold { fill: #cbd5e1; }
+    .es-glass { fill: #0d7377; opacity: 0.15; }
+    .es-glass-rim { stroke: #0d7377; stroke-width: 2.5; fill: none; }
+    .es-handle { stroke: #0d7377; stroke-width: 3; stroke-linecap: round; fill: none; }
+    .es-shadow { fill: #94a3b8; opacity: 0.18; }
+    .es-line { stroke: #cbd5e1; stroke-width: 2; stroke-linecap: round; }
+    .es-accent { fill: #d4a844; }
+    @media (prefers-color-scheme: dark) {
+      .es-bookmark { fill: #334155; }
+      .es-bookmark-fold { fill: #475569; }
+      .es-glass { fill: #2dd4bf; opacity: 0.18; }
+      .es-glass-rim { stroke: #2dd4bf; }
+      .es-handle { stroke: #2dd4bf; }
+      .es-shadow { fill: #1e293b; opacity: 0.3; }
+      .es-line { stroke: #475569; }
+      .es-accent { fill: #fbbf24; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="es-shadow" cx="120" cy="176" rx="56" ry="8"/>
+  <!-- Bookmark shape -->
+  <path class="es-bookmark" d="M82 36 L82 168 L120 148 L158 168 L158 36 Q158 30 152 30 L88 30 Q82 30 82 36Z"/>
+  <path class="es-bookmark-fold" d="M82 168 L120 148 L120 140 L82 158Z"/>
+  <path class="es-bookmark-fold" d="M158 168 L120 148 L120 140 L158 158Z"/>
+  <!-- Text lines on bookmark -->
+  <line class="es-line" x1="96" y1="52" x2="144" y2="52"/>
+  <line class="es-line" x1="96" y1="66" x2="138" y2="66"/>
+  <line class="es-line" x1="96" y1="80" x2="142" y2="80"/>
+  <!-- Magnifying glass overlapping bookmark -->
+  <circle class="es-glass" cx="140" cy="112" r="22"/>
+  <circle class="es-glass-rim" cx="140" cy="112" r="22"/>
+  <line class="es-handle" x1="156" y1="128" x2="172" y2="144"/>
+  <!-- Bell/notification accent -->
+  <path class="es-accent" d="M60 56 L62 50 L64 56 L70 58 L64 60 L62 66 L60 60 L54 58Z"/>
+  <circle class="es-accent" cx="180" cy="48" r="3"/>
+</svg>

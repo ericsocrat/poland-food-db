@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .es-plate { fill: #e2e8f0; }
+    .es-plate-rim { fill: #cbd5e1; }
+    .es-glass { fill: #0d7377; opacity: 0.15; }
+    .es-glass-rim { stroke: #0d7377; stroke-width: 2.5; fill: none; }
+    .es-handle { stroke: #0d7377; stroke-width: 3; stroke-linecap: round; fill: none; }
+    .es-shadow { fill: #94a3b8; opacity: 0.18; }
+    .es-accent { fill: #d4a844; }
+    @media (prefers-color-scheme: dark) {
+      .es-plate { fill: #334155; }
+      .es-plate-rim { fill: #475569; }
+      .es-glass { fill: #2dd4bf; opacity: 0.18; }
+      .es-glass-rim { stroke: #2dd4bf; }
+      .es-handle { stroke: #2dd4bf; }
+      .es-shadow { fill: #1e293b; opacity: 0.3; }
+      .es-accent { fill: #fbbf24; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="es-shadow" cx="120" cy="170" rx="70" ry="10"/>
+  <!-- Plate -->
+  <ellipse class="es-plate-rim" cx="120" cy="138" rx="58" ry="28"/>
+  <ellipse class="es-plate" cx="120" cy="134" rx="52" ry="24"/>
+  <!-- Magnifying glass -->
+  <circle class="es-glass" cx="110" cy="90" r="32"/>
+  <circle class="es-glass-rim" cx="110" cy="90" r="32"/>
+  <!-- Handle -->
+  <line class="es-handle" x1="134" y1="114" x2="158" y2="138"/>
+  <!-- Question mark accent -->
+  <text class="es-accent" x="104" y="98" font-family="Arial, sans-serif" font-size="28" font-weight="700">?</text>
+</svg>

@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .es-basket { fill: #e2e8f0; }
+    .es-basket-rim { stroke: #cbd5e1; stroke-width: 3; fill: none; }
+    .es-handle { stroke: #0d7377; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .es-weave { stroke: #cbd5e1; stroke-width: 1.5; }
+    .es-shadow { fill: #94a3b8; opacity: 0.18; }
+    .es-sparkle { fill: #d4a844; }
+    @media (prefers-color-scheme: dark) {
+      .es-basket { fill: #334155; }
+      .es-basket-rim { stroke: #475569; }
+      .es-handle { stroke: #2dd4bf; }
+      .es-weave { stroke: #475569; }
+      .es-shadow { fill: #1e293b; opacity: 0.3; }
+      .es-sparkle { fill: #fbbf24; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="es-shadow" cx="120" cy="172" rx="58" ry="9"/>
+  <!-- Basket body -->
+  <path class="es-basket" d="M68 100 L76 160 L164 160 L172 100Z"/>
+  <line class="es-basket-rim" x1="64" y1="100" x2="176" y2="100"/>
+  <!-- Basket weave lines -->
+  <line class="es-weave" x1="72" y1="115" x2="168" y2="115"/>
+  <line class="es-weave" x1="74" y1="130" x2="166" y2="130"/>
+  <line class="es-weave" x1="76" y1="145" x2="164" y2="145"/>
+  <!-- Handle -->
+  <path class="es-handle" d="M92 100 Q92 58 120 58 Q148 58 148 100"/>
+  <!-- Sparkles around basket -->
+  <path class="es-sparkle" d="M58 72 L60 66 L62 72 L68 74 L62 76 L60 82 L58 76 L52 74Z"/>
+  <path class="es-sparkle" d="M174 62 L175.5 57.5 L177 62 L181.5 63.5 L177 65 L175.5 69.5 L174 65 L169.5 63.5Z"/>
+  <path class="es-sparkle" d="M182 90 L183 86.5 L184 90 L187.5 91 L184 92 L183 95.5 L182 92 L178.5 91Z"/>
+  <!-- Plus sign inside basket -->
+  <line class="es-handle" x1="120" y1="118" x2="120" y2="142"/>
+  <line class="es-handle" x1="108" y1="130" x2="132" y2="130"/>
+</svg>

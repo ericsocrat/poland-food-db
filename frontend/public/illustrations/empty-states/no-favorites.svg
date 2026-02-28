@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .es-plate { fill: #e2e8f0; }
+    .es-plate-rim { fill: #cbd5e1; }
+    .es-heart { fill: #0d7377; opacity: 0.2; }
+    .es-heart-outline { stroke: #0d7377; stroke-width: 2; fill: none; }
+    .es-shadow { fill: #94a3b8; opacity: 0.18; }
+    .es-dash { stroke: #d4a844; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 4 6; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .es-plate { fill: #334155; }
+      .es-plate-rim { fill: #475569; }
+      .es-heart { fill: #2dd4bf; opacity: 0.22; }
+      .es-heart-outline { stroke: #2dd4bf; }
+      .es-shadow { fill: #1e293b; opacity: 0.3; }
+      .es-dash { stroke: #fbbf24; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="es-shadow" cx="120" cy="170" rx="65" ry="10"/>
+  <!-- Heart-shaped plate rim -->
+  <path class="es-plate-rim" d="M120 162 C60 162 50 130 50 118 C50 90 80 72 120 100 C160 72 190 90 190 118 C190 130 180 162 120 162Z"/>
+  <!-- Heart-shaped plate surface -->
+  <path class="es-plate" d="M120 155 C68 155 58 128 58 118 C58 94 84 80 120 104 C156 80 182 94 182 118 C182 128 172 155 120 155Z"/>
+  <!-- Dashed circle inside (empty indicator) -->
+  <circle class="es-dash" cx="120" cy="118" r="22"/>
+  <!-- Small hearts floating above -->
+  <path class="es-heart-outline" d="M80 60 C76 54 66 54 66 62 C66 68 80 78 80 78 C80 78 94 68 94 62 C94 54 84 54 80 60Z" transform="scale(0.5) translate(100 60)"/>
+  <path class="es-heart-outline" d="M80 60 C76 54 66 54 66 62 C66 68 80 78 80 78 C80 78 94 68 94 62 C94 54 84 54 80 60Z" transform="scale(0.4) translate(340 80)"/>
+</svg>
