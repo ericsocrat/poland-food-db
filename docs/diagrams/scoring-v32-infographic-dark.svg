@@ -1,0 +1,182 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1400" width="800" height="1400">
+  <defs>
+    <linearGradient id="headerGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#134e4a"/>
+      <stop offset="100%" stop-color="#0f766e"/>
+    </linearGradient>
+    <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="20%" stop-color="#22c55e"/>
+      <stop offset="20%" stop-color="#eab308"/>
+      <stop offset="40%" stop-color="#eab308"/>
+      <stop offset="40%" stop-color="#f97316"/>
+      <stop offset="60%" stop-color="#f97316"/>
+      <stop offset="60%" stop-color="#ef4444"/>
+      <stop offset="80%" stop-color="#ef4444"/>
+      <stop offset="80%" stop-color="#991b1b"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="800" height="1400" rx="12" fill="#0f172a"/>
+
+  <!-- Header -->
+  <rect width="800" height="120" rx="12" fill="url(#headerGrad)"/>
+  <rect y="110" width="800" height="12" fill="url(#headerGrad)"/>
+  <text x="400" y="52" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="28" font-weight="700" fill="#ffffff">Unhealthiness Score v3.2</text>
+  <text x="400" y="80" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="16" fill="#2dd4bf">9-Factor Weighted Formula · Scale 1–100</text>
+  <text x="400" y="106" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#5eead4">Final = Σ(factor × weight), clamped to [1, 100]</text>
+
+  <!-- Section: Factor Grid -->
+  <text x="40" y="160" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="700" fill="#e2e8f0">Scoring Factors</text>
+  <line x1="40" y1="170" x2="760" y2="170" stroke="#334155" stroke-width="1"/>
+
+  <!-- Column headers -->
+  <text x="40" y="195" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#94a3b8">FACTOR</text>
+  <text x="280" y="195" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#94a3b8">WEIGHT</text>
+  <text x="380" y="195" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#94a3b8">CEILING</text>
+  <text x="530" y="195" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#94a3b8">WEIGHT BAR</text>
+  <line x1="40" y1="202" x2="760" y2="202" stroke="#334155" stroke-width="0.5"/>
+
+  <!-- Factor 1: Saturated Fat (17%) -->
+  <rect x="40" y="210" width="720" height="40" rx="4" fill="#1e293b"/>
+  <text x="55" y="235" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Saturated Fat</text>
+  <text x="280" y="235" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">17%</text>
+  <text x="380" y="235" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">10 g / 100g</text>
+  <rect x="530" y="222" width="204" height="16" rx="3" fill="#2dd4bf" opacity="0.85"/>
+
+  <!-- Factor 2: Sugars (17%) -->
+  <rect x="40" y="255" width="720" height="40" rx="4" fill="#0f172a"/>
+  <text x="55" y="280" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Sugars</text>
+  <text x="280" y="280" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">17%</text>
+  <text x="380" y="280" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">27 g / 100g</text>
+  <rect x="530" y="267" width="204" height="16" rx="3" fill="#2dd4bf" opacity="0.85"/>
+
+  <!-- Factor 3: Salt (17%) -->
+  <rect x="40" y="300" width="720" height="40" rx="4" fill="#1e293b"/>
+  <text x="55" y="325" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Salt</text>
+  <text x="280" y="325" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">17%</text>
+  <text x="380" y="325" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">3 g / 100g</text>
+  <rect x="530" y="312" width="204" height="16" rx="3" fill="#2dd4bf" opacity="0.85"/>
+
+  <!-- Factor 4: Trans Fat (11%) -->
+  <rect x="40" y="345" width="720" height="40" rx="4" fill="#0f172a"/>
+  <text x="55" y="370" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Trans Fat</text>
+  <text x="280" y="370" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">11%</text>
+  <text x="380" y="370" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">2 g / 100g</text>
+  <rect x="530" y="357" width="132" height="16" rx="3" fill="#2dd4bf" opacity="0.75"/>
+
+  <!-- Factor 5: Calories (10%) -->
+  <rect x="40" y="390" width="720" height="40" rx="4" fill="#1e293b"/>
+  <text x="55" y="415" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Calories</text>
+  <text x="280" y="415" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">10%</text>
+  <text x="380" y="415" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">600 kcal / 100g</text>
+  <rect x="530" y="402" width="120" height="16" rx="3" fill="#2dd4bf" opacity="0.7"/>
+
+  <!-- Factor 6: Controversies (8%) -->
+  <rect x="40" y="435" width="720" height="40" rx="4" fill="#0f172a"/>
+  <text x="55" y="460" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Controversies</text>
+  <text x="280" y="460" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">8%</text>
+  <text x="380" y="460" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">serious</text>
+  <rect x="530" y="447" width="96" height="16" rx="3" fill="#2dd4bf" opacity="0.6"/>
+
+  <!-- Factor 7: Prep Method (8%) -->
+  <rect x="40" y="480" width="720" height="40" rx="4" fill="#1e293b"/>
+  <text x="55" y="505" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Prep Method</text>
+  <text x="280" y="505" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">8%</text>
+  <text x="380" y="505" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">deep-fried (100)</text>
+  <rect x="530" y="492" width="96" height="16" rx="3" fill="#2dd4bf" opacity="0.6"/>
+
+  <!-- Factor 8: Additives (7%) -->
+  <rect x="40" y="525" width="720" height="40" rx="4" fill="#0f172a"/>
+  <text x="55" y="550" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Additives</text>
+  <text x="280" y="550" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">7%</text>
+  <text x="380" y="550" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">10 count</text>
+  <rect x="530" y="537" width="84" height="16" rx="3" fill="#2dd4bf" opacity="0.55"/>
+
+  <!-- Factor 9: Ingredient Concern (5%) -->
+  <rect x="40" y="570" width="720" height="40" rx="4" fill="#1e293b"/>
+  <text x="55" y="595" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="600" fill="#e2e8f0">Ingredient Concern</text>
+  <text x="280" y="595" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">5%</text>
+  <text x="380" y="595" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#94a3b8">100 pts (EFSA)</text>
+  <rect x="530" y="582" width="60" height="16" rx="3" fill="#2dd4bf" opacity="0.45"/>
+
+  <!-- Weight total -->
+  <line x1="40" y1="620" x2="760" y2="620" stroke="#2dd4bf" stroke-width="1.5"/>
+  <text x="55" y="642" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#e2e8f0">Total</text>
+  <text x="280" y="642" font-family="system-ui,-apple-system,sans-serif" font-size="14" font-weight="700" fill="#2dd4bf">100%</text>
+  <text x="380" y="642" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#94a3b8">Σ weights = 1.00</text>
+
+  <!-- Section: Score Bands -->
+  <text x="40" y="690" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="700" fill="#e2e8f0">Score Bands</text>
+  <line x1="40" y1="700" x2="760" y2="700" stroke="#334155" stroke-width="1"/>
+
+  <!-- Band gradient bar -->
+  <rect x="40" y="715" width="720" height="30" rx="6" fill="url(#bandGrad)"/>
+
+  <!-- Band labels on bar -->
+  <text x="112" y="735" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#fff">1–20</text>
+  <text x="256" y="735" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#fff">21–40</text>
+  <text x="400" y="735" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#fff">41–60</text>
+  <text x="544" y="735" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#fff">61–80</text>
+  <text x="688" y="735" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="700" fill="#fff">81–100</text>
+
+  <!-- Band legend -->
+  <rect x="40" y="760" width="16" height="16" rx="3" fill="#22c55e"/>
+  <text x="62" y="773" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#e2e8f0">Green — Low risk</text>
+
+  <rect x="220" y="760" width="16" height="16" rx="3" fill="#eab308"/>
+  <text x="242" y="773" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#e2e8f0">Yellow — Moderate</text>
+
+  <rect x="420" y="760" width="16" height="16" rx="3" fill="#f97316"/>
+  <text x="442" y="773" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#e2e8f0">Orange — Elevated</text>
+
+  <rect x="40" y="785" width="16" height="16" rx="3" fill="#ef4444"/>
+  <text x="62" y="798" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#e2e8f0">Red — High risk</text>
+
+  <rect x="220" y="785" width="16" height="16" rx="3" fill="#991b1b"/>
+  <text x="242" y="798" font-family="system-ui,-apple-system,sans-serif" font-size="13" fill="#e2e8f0">Dark Red — Very high</text>
+
+  <!-- Section: Example Products -->
+  <text x="40" y="845" font-family="system-ui,-apple-system,sans-serif" font-size="18" font-weight="700" fill="#e2e8f0">Anchor Product Examples</text>
+  <line x1="40" y1="855" x2="760" y2="855" stroke="#334155" stroke-width="1"/>
+
+  <!-- Example 1: Piątnica Skyr (score ≈ 8) -->
+  <rect x="40" y="870" width="720" height="130" rx="8" fill="#14532d" stroke="#22c55e" stroke-width="1.5"/>
+  <circle cx="80" cy="920" r="28" fill="#22c55e"/>
+  <text x="80" y="926" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="700" fill="#fff">8</text>
+  <text x="120" y="898" font-family="system-ui,-apple-system,sans-serif" font-size="15" font-weight="700" fill="#86efac">Piątnica Skyr Naturalny</text>
+  <text x="120" y="916" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#94a3b8">Category: Dairy · Prep: fermented · Band: Green</text>
+  <text x="120" y="940" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Sat fat: 0.1g (1%) · Sugars: 3.6g (13%) · Salt: 0.1g (3%) · Cal: 59 (10%)</text>
+  <text x="120" y="958" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Trans: 0g · Additives: 0 · Controversies: none · Concern: 0</text>
+  <text x="120" y="980" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#86efac">→ Healthiest dairy product in database</text>
+
+  <!-- Example 2: Doritos Sweet Chili (score ≈ 45) -->
+  <rect x="40" y="1010" width="720" height="130" rx="8" fill="#431407" stroke="#f97316" stroke-width="1.5"/>
+  <circle cx="80" cy="1060" r="28" fill="#f97316"/>
+  <text x="80" y="1066" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="700" fill="#fff">45</text>
+  <text x="120" y="1038" font-family="system-ui,-apple-system,sans-serif" font-size="15" font-weight="700" fill="#fdba74">Doritos Sweet Chili Pepper</text>
+  <text x="120" y="1056" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#94a3b8">Category: Chips · Prep: fried · Band: Orange</text>
+  <text x="120" y="1080" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Sat fat: 3.2g (32%) · Sugars: 8g (30%) · Salt: 1.8g (60%) · Cal: 490 (82%)</text>
+  <text x="120" y="1098" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Trans: 0g · Additives: 7 (70%) · Controversies: palm oil · Concern: high</text>
+  <text x="120" y="1120" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#fdba74">→ Multiple additive + concern factors compound the score</text>
+
+  <!-- Example 3: E. Wedel Czekolada (score ≈ 57) -->
+  <rect x="40" y="1150" width="720" height="130" rx="8" fill="#450a0a" stroke="#ef4444" stroke-width="1.5"/>
+  <circle cx="80" cy="1200" r="28" fill="#ef4444"/>
+  <text x="80" y="1206" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="20" font-weight="700" fill="#fff">57</text>
+  <text x="120" y="1178" font-family="system-ui,-apple-system,sans-serif" font-size="15" font-weight="700" fill="#fca5a5">E. Wedel Czekolada Tiramisu</text>
+  <text x="120" y="1196" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#94a3b8">Category: Sweets · Prep: not-applicable · Band: Orange</text>
+  <text x="120" y="1220" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Sat fat: high · Sugars: very high · Salt: moderate · Cal: 510+ (85%)</text>
+  <text x="120" y="1238" font-family="system-ui,-apple-system,sans-serif" font-size="11" fill="#94a3b8">Additives present · Controversies: palm oil · EFSA concern additives</text>
+  <text x="120" y="1260" font-family="system-ui,-apple-system,sans-serif" font-size="11" font-weight="600" fill="#fca5a5">→ High sugar + sat fat + palm oil drive score into orange band</text>
+
+  <!-- Footer -->
+  <line x1="40" y1="1310" x2="760" y2="1310" stroke="#334155" stroke-width="1"/>
+  <text x="400" y="1340" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#64748b">Source: docs/SCORING_METHODOLOGY.md · compute_unhealthiness_v32()</text>
+  <text x="400" y="1360" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#64748b">Poland Food Quality Database — v3.2 Scoring</text>
+
+  <!-- Subtle border -->
+  <rect width="800" height="1400" rx="12" fill="none" stroke="#334155" stroke-width="1"/>
+</svg>
