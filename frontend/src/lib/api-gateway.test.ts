@@ -8,6 +8,8 @@ import {
   isGatewayRateLimited,
   isGatewayAuthError,
   isGatewayValidationError,
+  isGatewayCaptchaRequired,
+  isGatewayCaptchaFailed,
   GATEWAY_FUNCTION_NAME,
 } from "@/lib/api-gateway";
 import type {
@@ -133,6 +135,61 @@ describe("isGatewayValidationError", () => {
   it("should return false for success results", () => {
     const result: GatewayResult = { ok: true, data: {} };
     expect(isGatewayValidationError(result)).toBe(false);
+  });
+});
+
+// ─── isGatewayCaptchaRequired ───────────────────────────────────────────────
+
+describe("isGatewayCaptchaRequired", () => {
+  it("should return true for captcha_required error", () => {
+    const result: GatewayError & { reason: string } = {
+      ok: false,
+      error: "captcha_required",
+      message: "CAPTCHA required",
+      reason: "low_trust_score",
+    };
+    expect(isGatewayCaptchaRequired(result)).toBe(true);
+  });
+
+  it("should return false for other errors", () => {
+    const result: GatewayError = {
+      ok: false,
+      error: "rate_limit_exceeded",
+      message: "Too many",
+    };
+    expect(isGatewayCaptchaRequired(result)).toBe(false);
+  });
+
+  it("should return false for success results", () => {
+    const result: GatewayResult = { ok: true, data: {} };
+    expect(isGatewayCaptchaRequired(result)).toBe(false);
+  });
+});
+
+// ─── isGatewayCaptchaFailed ─────────────────────────────────────────────────
+
+describe("isGatewayCaptchaFailed", () => {
+  it("should return true for captcha_failed error", () => {
+    const result: GatewayError = {
+      ok: false,
+      error: "captcha_failed",
+      message: "CAPTCHA verification failed",
+    };
+    expect(isGatewayCaptchaFailed(result)).toBe(true);
+  });
+
+  it("should return false for other errors", () => {
+    const result: GatewayError = {
+      ok: false,
+      error: "unauthorized",
+      message: "Not logged in",
+    };
+    expect(isGatewayCaptchaFailed(result)).toBe(false);
+  });
+
+  it("should return false for success results", () => {
+    const result: GatewayResult = { ok: true, data: null };
+    expect(isGatewayCaptchaFailed(result)).toBe(false);
   });
 });
 
@@ -445,6 +502,90 @@ describe("submitProductViaGateway", () => {
         product_name: "Minimal Product",
       },
     });
+    expect(result.ok).toBe(true);
+  });
+
+  // ── CAPTCHA integration (Phase 3) ─────────────────────────────────────
+
+  it("should return captcha_required error when trust is low", async () => {
+    const captchaError = {
+      ok: false,
+      error: "captcha_required",
+      message: "CAPTCHA verification is required for this action.",
+      reason: "low_trust_score",
+    };
+    mockInvoke.mockResolvedValue({ data: captchaError, error: null });
+
+    const result = await submitProductViaGateway(fakeSupabase, validParams);
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe("captcha_required");
+    }
+    expect(isGatewayCaptchaRequired(result)).toBe(true);
+  });
+
+  it("should return captcha_required error when velocity is high", async () => {
+    const captchaError = {
+      ok: false,
+      error: "captcha_required",
+      message: "CAPTCHA verification is required for this action.",
+      reason: "high_velocity",
+    };
+    mockInvoke.mockResolvedValue({ data: captchaError, error: null });
+
+    const result = await submitProductViaGateway(fakeSupabase, validParams);
+    expect(result.ok).toBe(false);
+    expect(isGatewayCaptchaRequired(result)).toBe(true);
+  });
+
+  it("should return captcha_failed error when token is invalid", async () => {
+    const captchaFailed = {
+      ok: false,
+      error: "captcha_failed",
+      message: "CAPTCHA verification failed. Please try again.",
+    };
+    mockInvoke.mockResolvedValue({ data: captchaFailed, error: null });
+
+    const result = await submitProductViaGateway(fakeSupabase, {
+      ...validParams,
+      turnstile_token: "invalid-token",
+    });
+    expect(result.ok).toBe(false);
+    expect(isGatewayCaptchaFailed(result)).toBe(true);
+  });
+
+  it("should pass turnstile_token to gateway when provided", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { submission_id: "10" } },
+      error: null,
+    });
+
+    const result = await submitProductViaGateway(fakeSupabase, {
+      ...validParams,
+      turnstile_token: "valid-captcha-token",
+    });
+
+    expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
+      body: {
+        action: "submit-product",
+        ean: "5901234123457",
+        product_name: "Test Product",
+        brand: "TestBrand",
+        category: "Chips",
+        turnstile_token: "valid-captcha-token",
+      },
+    });
+    expect(result.ok).toBe(true);
+  });
+
+  it("should succeed without turnstile_token for high-trust users", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { submission_id: "11" } },
+      error: null,
+    });
+
+    // High-trust users bypass CAPTCHA — no turnstile_token needed
+    const result = await submitProductViaGateway(fakeSupabase, validParams);
     expect(result.ok).toBe(true);
   });
 });

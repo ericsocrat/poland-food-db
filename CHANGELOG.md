@@ -15,6 +15,14 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Security
 
+- Add CAPTCHA + trust integration to API gateway (Phase 3): Turnstile token
+  verification for `submit-product` when trust < 50 or velocity > 3/hour;
+  trust score lookup via service-role client against `user_trust_scores`;
+  high-trust users (score > 80) bypass CAPTCHA entirely; graceful degradation on
+  missing secret key, Turnstile API failure, or missing service-role key;
+  frontend `isGatewayCaptchaRequired` + `isGatewayCaptchaFailed` type guards;
+  `SubmitProductParams.turnstile_token` optional field; 11 new Vitest tests
+  (60 total) (#478)
 - Add Cloudflare Turnstile CAPTCHA integration for signup bot protection:
   `verify-turnstile` Edge Function (server-side token verification with graceful
   degradation), `TurnstileWidget` React component wrapper, `turnstile.ts` client
