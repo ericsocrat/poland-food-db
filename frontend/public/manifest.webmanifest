@@ -8,7 +8,7 @@
   "display": "standalone",
   "display_override": ["window-controls-overlay", "standalone"],
   "orientation": "portrait",
-  "theme_color": "#16a34a",
+  "theme_color": "#0d7377",
   "background_color": "#f9fafb",
   "categories": ["food", "health", "lifestyle"],
   "icons": [
@@ -22,7 +22,7 @@
       "src": "/icons/icon-512.svg",
       "sizes": "any",
       "type": "image/svg+xml",
-      "purpose": "maskable"
+      "purpose": "any"
     },
     {
       "src": "/icons/icon-192.png",
@@ -37,13 +37,13 @@
       "purpose": "any"
     },
     {
-      "src": "/icons/icon-192.png",
+      "src": "/icons/icon-192-maskable.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "maskable"
     },
     {
-      "src": "/icons/icon-512.png",
+      "src": "/icons/icon-512-maskable.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
