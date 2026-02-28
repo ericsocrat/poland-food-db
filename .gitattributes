@@ -18,6 +18,11 @@
 *.ttf binary
 *.otf binary
 
+# SQL files — force Unix LF line endings to prevent \r in PostgreSQL
+# function bodies (core.autocrlf=true on Windows causes CRLF which
+# breaks dynamic patching via pg_get_functiondef + regexp_replace)
+*.sql text eol=lf
+
 # Design source files (if ever added)
 *.fig binary
 *.sketch binary
