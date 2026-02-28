@@ -1,8 +1,9 @@
 -- ============================================================
 -- QA: Ingredient Data Quality
 -- Validates ingredient_ref cleanliness, product_ingredient
--- coherence, and taxonomy coverage.
--- All checks are BLOCKING.
+-- coherence, taxonomy coverage, and ingredient_translations
+-- integrity.
+-- 17 checks — All checks are BLOCKING.
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -164,4 +165,36 @@ SELECT '14. no orphaned junk ingredient_ref' AS check_name,
                 )
             )
        END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 15. ingredient_translations FK integrity — all ingredient_ids reference
+--     existing ingredient_ref rows (ON DELETE CASCADE handles cleanup, but
+--     verify no orphans exist).
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '15. ingredient_translations FK integrity' AS check_name,
+       COUNT(*) AS violations
+FROM ingredient_translations it
+WHERE NOT EXISTS (
+    SELECT 1 FROM ingredient_ref ir WHERE ir.ingredient_id = it.ingredient_id
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 16. ingredient_translations language_code FK — all language_codes
+--     reference enabled entries in language_ref.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '16. ingredient_translations language_code valid' AS check_name,
+       COUNT(*) AS violations
+FROM ingredient_translations it
+WHERE NOT EXISTS (
+    SELECT 1 FROM language_ref lr
+    WHERE lr.code = it.language_code AND lr.is_enabled = true
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 17. ingredient_translations source column uses valid enum values.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '17. ingredient_translations source valid' AS check_name,
+       COUNT(*) AS violations
+FROM ingredient_translations
+WHERE source NOT IN ('curated', 'off_api', 'auto_translated', 'user_submitted');
 
