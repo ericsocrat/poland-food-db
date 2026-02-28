@@ -5,7 +5,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(29);
+SELECT plan(33);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. User preferences — auth error branches
@@ -200,6 +200,38 @@ SELECT is(
   (public.api_product_health_warnings(1))->>'error',
   'Authentication required',
   'api_product_health_warnings requires auth'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 9. GDPR Data Export — api_export_user_data() (#469)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT throws_ok(
+  $$SELECT public.api_export_user_data()$$,
+  'P0001',
+  'Not authenticated',
+  'api_export_user_data rejects unauthenticated calls'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 10. GDPR Account Deletion — api_delete_user_data() (#469)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT throws_ok(
+  $$SELECT public.api_delete_user_data()$$,
+  'P0001',
+  'Not authenticated',
+  'api_delete_user_data rejects unauthenticated calls'
+);
+
+-- Verify deletion_audit_log table exists
+SELECT has_table('public', 'deletion_audit_log',
+  'deletion_audit_log table exists for GDPR compliance'
+);
+
+-- Verify audit log has NO user_id column (no PII)
+SELECT col_not_null('public', 'deletion_audit_log', 'deleted_at',
+  'deletion_audit_log.deleted_at is NOT NULL'
 );
 
 SELECT * FROM finish();

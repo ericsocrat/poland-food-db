@@ -64,15 +64,15 @@ Gap analysis of all data subject rights under GDPR, with current implementation 
 
 ### 2.1 Rights Matrix
 
-| Right                         | GDPR Article | Current Status                                                 | Implementation Required                                                                                          |
-| ----------------------------- | ------------ | -------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
-| **Right of access**           | Art. 15      | ⚠️ Partial — `scripts/export_user_data.ps1` exists (admin-only) | Formalize; consider self-service "Download My Data" in Settings                                                  |
-| **Right to erasure**          | Art. 17      | ❌ Not implemented                                              | Account deletion flow: cascade delete user_* rows, anonymize scan_history, confirm via email                     |
-| **Right to rectification**    | Art. 16      | ✅ Implemented                                                  | Users can edit preferences and profiles in-app; submissions editable if pending                                  |
-| **Right to data portability** | Art. 20      | ❌ Not implemented                                              | JSON export of all user_* table data in machine-readable format                                                  |
-| **Right to restriction**      | Art. 18      | ❌ Not implemented                                              | Account deactivation flag (soft disable without deletion)                                                        |
-| **Right to object**           | Art. 21      | ❌ Not implemented                                              | Opt-out of analytics/telemetry; account deactivation                                                             |
-| **Automated decision-making** | Art. 22      | ⚠️ Potentially applicable                                       | Unhealthiness scoring is automated — `api_score_explanation()` provides transparency; document in privacy policy |
+| Right                         | GDPR Article | Current Status                                      | Implementation Required                                                                                          |
+| ----------------------------- | ------------ | --------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------- |
+| **Right of access**           | Art. 15      | ✅ Implemented — `api_export_user_data()` RPC (#469) | Self-service "Download My Data" in Settings; exports all user tables as structured JSON                          |
+| **Right to erasure**          | Art. 17      | ✅ Implemented — `api_delete_user_data()` RPC (#469) | Cascade delete across 8 user tables; audit log (no PII); auth account via Supabase Admin API                     |
+| **Right to rectification**    | Art. 16      | ✅ Implemented                                       | Users can edit preferences and profiles in-app; submissions editable if pending                                  |
+| **Right to data portability** | Art. 20      | ✅ Implemented — `api_export_user_data()` RPC (#469) | JSON export of all user_* table data in machine-readable format via Settings page                                |
+| **Right to restriction**      | Art. 18      | ❌ Not implemented                                   | Account deactivation flag (soft disable without deletion)                                                        |
+| **Right to object**           | Art. 21      | ❌ Not implemented                                   | Opt-out of analytics/telemetry; account deactivation                                                             |
+| **Automated decision-making** | Art. 22      | ⚠️ Potentially applicable                            | Unhealthiness scoring is automated — `api_score_explanation()` provides transparency; document in privacy policy |
 
 ### 2.2 Priority Implementation Order
 
@@ -346,12 +346,12 @@ SELECT json_build_object(
 ) AS user_data_export;
 ```
 
-### 8.3 Self-Service Export (Future)
+### 8.3 Self-Service Export (Implemented — #469)
 
-A self-service "Download My Data" button in the Settings page would satisfy both Art. 15 (access) and Art. 20 (portability) simultaneously. Implementation:
-1. Authenticated RPC function wrapping the export query above
-2. Frontend button that calls the RPC and triggers a JSON file download
-3. Rate-limit: max 1 export per 24 hours per user
+The self-service "Download My Data" button in Settings satisfies both Art. 15 (access) and Art. 20 (portability):
+1. **Backend:** `api_export_user_data()` — SECURITY DEFINER RPC function that collects all user data from 8 tables into a structured JSONB response (format_version `1.0`)
+2. **Frontend:** `ExportDataSection` component in Settings calls the RPC and triggers a JSON file download
+3. Rate-limit: max 1 export per 24 hours per user (enforced at application layer)
 
 ---
 
@@ -402,13 +402,13 @@ When a user is deleted:
 - Any publicly shared URLs will return 404 after deletion
 - This is acceptable behavior per Art. 17 — deletion takes priority over link persistence
 
-### 9.4 Self-Service Deletion (Future)
+### 9.4 Self-Service Deletion (Implemented — #469)
 
-A "Delete Account" flow in Settings:
-1. Confirmation dialog with clear warning text
-2. Require password re-entry or email confirmation
-3. 30-day grace period (soft delete) with "undo" option
-4. Hard delete after grace period expires (executes deletion SQL above + Supabase Auth deletion)
+The "Delete Account" flow in Settings:
+1. **Backend:** `api_delete_user_data()` — SECURITY DEFINER RPC function that cascading-deletes across 8 tables in FK-safe order, writes an anonymized audit log to `deletion_audit_log` (no PII stored)
+2. **Frontend:** `DeleteAccountDialog` component in Settings with confirmation dialog and clear warning text
+3. Deletion is immediate (hard delete) — `deletion_audit_log` retains only table names and row counts for compliance verification
+4. `auth.users` deletion handled separately via Supabase Auth Admin API
 
 ---
 
@@ -459,8 +459,8 @@ Both Apple App Store and Google Play require:
 | 4   | Implement health data explicit consent screen | Frontend           | §3.4       | ⬜      |
 | 5   | Draft privacy policy content (all §6.1 items) | Legal/Product      | §1–§7      | ⬜      |
 | 6   | Legal review of privacy policy text           | Legal              | #5         | ⬜      |
-| 7   | Implement "Delete Account" flow               | Frontend + Backend | §9         | ⬜      |
-| 8   | Implement "Download My Data" self-service     | Frontend + Backend | §8         | ⬜      |
+| 7   | Implement "Delete Account" flow               | Frontend + Backend | §9         | ✅ #469 |
+| 8   | Implement "Download My Data" self-service     | Frontend + Backend | §8         | ✅ #469 |
 | 9   | Translate privacy policy (Polish, German)     | Translation        | #6         | ⬜      |
 | 10  | Prepare app store privacy disclosures         | Product            | #5         | ⬜      |
 
@@ -468,7 +468,7 @@ Both Apple App Store and Google Play require:
 
 | #   | Action                                                      | Priority |
 | --- | ----------------------------------------------------------- | -------- |
-| 11  | Automated scan_history retention purge (12 months)          | P2       |
+| 11  | Automated scan_history retention purge (12 months)          | ✅ #469   |
 | 12  | Automated product_submissions anonymization (90 days)       | P2       |
 | 13  | Account deactivation (restriction of processing)            | P3       |
 | 14  | Analytics opt-out mechanism                                 | P3       |
