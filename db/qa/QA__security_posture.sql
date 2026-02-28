@@ -132,7 +132,10 @@ WHERE n.nspname = 'public'
     'api_product_provenance',         -- public product provenance/trust score (#193)
     'api_validate_event_schema',       -- public schema validation (#190)
     'api_completeness_gap_analysis',   -- public completeness diagnostic (#376)
-    'api_get_cross_country_links'      -- public cross-country links (#352)
+    'api_get_cross_country_links',     -- public cross-country links (#352)
+    'api_get_recipes',                 -- public recipe browsing (#364)
+    'api_get_recipe_detail',           -- public recipe detail (#364)
+    'api_get_recipe_nutrition'         -- public recipe nutrition (#364)
   );
 
 -- 10. anon cannot EXECUTE internal computation functions
