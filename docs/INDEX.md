@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-14
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 49 in `docs/` + 8 in `docs/decisions/` + 17 in `docs/assets/logo/` + 2 in `docs/assets/banners/` + 5 elsewhere in repo
+> **Total documents:** 49 in `docs/` + 8 in `docs/decisions/` + 17 in `docs/assets/logo/` + 5 in `docs/assets/banners/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -14,7 +14,7 @@
 | [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal                           |
 | [Diagrams](#diagrams)                                    | 13    | Architecture, ERDs, pipeline flow, QA overview, CI/CD, confidence, concern tiers, country expansion, scoring infographic + headers |
 | [Brand Assets](#brand-assets)                            | 17    | Logomark SVG variants + PNG exports, wordmark, lockup variants (horizontal + stacked, light + dark) |
-| [Banners](#banners)                                      | 2     | Social preview image (1280×640 OpenGraph) — SVG source + PNG export                                |
+| [Banners](#banners)                                      | 5     | Social preview, README hero banner (SVG + PNG), badges reference             |
 | [API](#api)                                              | 6     | Contracts, conventions, versioning, frontend mapping, contract testing, registry                                                   |
 | [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                                                       |
 | [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                                             |
@@ -115,6 +115,9 @@
 | -------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
 | [social-preview.svg](assets/banners/social-preview.svg)        | GitHub social preview source — 1280×640 OpenGraph image (SVG)               | [#411](https://github.com/ericsocrat/poland-food-db/issues/411) | 2026-03-14   |
 | [social-preview.png](assets/banners/social-preview.png)        | GitHub social preview — 1280×640 PNG (53 KB, optimized)                     | [#411](https://github.com/ericsocrat/poland-food-db/issues/411) | 2026-03-14   |
+| [readme-banner.svg](assets/banners/readme-banner.svg)          | README hero banner source — 1200×340 with logo, tagline, data motif         | [#412](https://github.com/ericsocrat/poland-food-db/issues/412) | 2026-03-14   |
+| [readme-banner.png](assets/banners/readme-banner.png)          | README hero banner — 1200×340 PNG (94 KB, optimized)                        | [#412](https://github.com/ericsocrat/poland-food-db/issues/412) | 2026-03-14   |
+| [README_BANNER_REFERENCE.md](assets/banners/README_BANNER_REFERENCE.md) | Ready-to-paste banner + badges markdown for README.md            | [#412](https://github.com/ericsocrat/poland-food-db/issues/412) | 2026-03-14   |
 
 ## API
 

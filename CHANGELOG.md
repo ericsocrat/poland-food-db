@@ -89,6 +89,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   categories, PL+DE, v3.2 engine, 733 QA checks), tech stack pills, on dark teal
   gradient; SVG source + optimized PNG (53 KB); root copy for easy GitHub upload
   (#411)
+- Create README hero banner (`docs/assets/banners/`): 1200×340 banner with
+  logomark, project name, tagline, abstract data-visualization motif (scattered
+  dots + connecting lines), tech stack footer; SVG source + optimized PNG (94 KB);
+  shields.io badges row reference markdown (9 badges: build, QA, coverage,
+  products, countries, scoring, license, TypeScript, PostgreSQL) (#412)
 - Harden copilot-instructions.md: rewrite §16 as discovery-driven (script-first),
   extract 240-line issue template to `.github/ISSUE_TEMPLATE/feature.md`,
   reduce from 1,668 to 1,418 lines (under 1,500 cap) (#334)
