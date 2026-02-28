@@ -14,6 +14,9 @@ import {
   RefreshCw,
   FileText,
   ShieldCheck,
+  ShieldAlert,
+  Activity,
+  Ban,
 } from "lucide-react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
@@ -26,6 +29,8 @@ import type {
   RpcResult,
   AdminSubmissionsResponse,
   AdminReviewResponse,
+  AdminVelocityResponse,
+  AdminBatchRejectResponse,
 } from "@/lib/types";
 
 const TAB_KEYS: Record<string, string> = {
@@ -113,6 +118,54 @@ export default function AdminSubmissionsPage() {
     },
   });
 
+  const { data: velocityData } = useQuery({
+    queryKey: ["admin-velocity"],
+    queryFn: async () => {
+      const result: RpcResult<AdminVelocityResponse> =
+        await callRpc<AdminVelocityResponse>(
+          supabase,
+          "api_admin_submission_velocity",
+          {},
+        );
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
+    staleTime: 60_000,
+  });
+
+  const batchRejectMutation = useMutation({
+    mutationFn: async ({
+      userId,
+      reason,
+    }: {
+      userId: string;
+      reason?: string;
+    }) => {
+      const result: RpcResult<AdminBatchRejectResponse> =
+        await callRpc<AdminBatchRejectResponse>(
+          supabase,
+          "api_admin_batch_reject_user",
+          {
+            p_user_id: userId,
+            ...(reason ? { p_reason: reason } : {}),
+          },
+        );
+      if (!result.ok) throw new Error(result.error.message);
+      return result.data;
+    },
+    onSuccess: (data) => {
+      showToast({
+        type: "success",
+        message: `Rejected ${data.rejected_count} submissions, user flagged`,
+      });
+      queryClient.invalidateQueries({ queryKey: ["admin-submissions"] });
+      queryClient.invalidateQueries({ queryKey: ["admin-velocity"] });
+    },
+    onError: (err: Error) => {
+      showToast({ type: "error", message: err.message });
+    },
+  });
+
   const handleRetry = useCallback(() => {
     queryClient.invalidateQueries({ queryKey });
   }, [queryClient, queryKey]);
@@ -135,6 +188,48 @@ export default function AdminSubmissionsPage() {
           {t("admin.reviewSubtitle")}
         </p>
       </div>
+
+      {/* Velocity widget (#474) */}
+      {velocityData && (
+        <div
+          className="grid grid-cols-2 gap-2 sm:grid-cols-4"
+          data-testid="velocity-widget"
+        >
+          <div className="card p-3 text-center">
+            <p className="text-2xl font-bold text-foreground">
+              {velocityData.pending_count}
+            </p>
+            <p className="text-xs text-foreground-secondary">
+              <Clock size={12} aria-hidden="true" className="mr-1 inline" />
+              Pending
+            </p>
+          </div>
+          <div className="card p-3 text-center">
+            <p className="text-2xl font-bold text-foreground">
+              {velocityData.last_24h}
+            </p>
+            <p className="text-xs text-foreground-secondary">
+              <Activity size={12} aria-hidden="true" className="mr-1 inline" />
+              Last 24h
+            </p>
+          </div>
+          <div className="card p-3 text-center">
+            <p className="text-2xl font-bold text-foreground">
+              {velocityData.last_7d}
+            </p>
+            <p className="text-xs text-foreground-secondary">Last 7d</p>
+          </div>
+          <div className="card p-3 text-center">
+            <p className="text-2xl font-bold text-red-600">
+              {velocityData.auto_rejected_24h}
+            </p>
+            <p className="text-xs text-foreground-secondary">
+              <Ban size={12} aria-hidden="true" className="mr-1 inline" />
+              Auto-rejected 24h
+            </p>
+          </div>
+        </div>
+      )}
 
       {/* Status tabs */}
       <div className="flex flex-wrap gap-1">
@@ -212,7 +307,12 @@ export default function AdminSubmissionsPage() {
                   action: "reject",
                 })
               }
-              isPending={reviewMutation.isPending}
+              onBatchReject={() =>
+                batchRejectMutation.mutate({ userId: sub.user_id })
+              }
+              isPending={
+                reviewMutation.isPending || batchRejectMutation.isPending
+              }
             />
           ))}
         </ul>
@@ -257,15 +357,25 @@ function statusBadgeClass(status: string): string {
   }
 }
 
+function trustBadgeClass(score: number | null): string {
+  if (score === null) return "bg-gray-100 text-gray-600";
+  if (score >= 80) return "bg-green-100 text-green-700";
+  if (score < 20) return "bg-red-100 text-red-700";
+  if (score < 40) return "bg-amber-100 text-amber-700";
+  return "bg-gray-100 text-gray-600";
+}
+
 function AdminSubmissionCard({
   submission,
   onApprove,
   onReject,
+  onBatchReject,
   isPending,
 }: Readonly<{
   submission: AdminSubmission;
   onApprove: () => void;
   onReject: () => void;
+  onBatchReject: () => void;
   isPending: boolean;
 }>) {
   const { t } = useTranslation();
@@ -279,6 +389,13 @@ function AdminSubmissionCard({
           <div>
             <p className="font-medium text-foreground">
               {submission.product_name}
+              {submission.user_flagged && (
+                <ShieldAlert
+                  size={14}
+                  aria-label="Flagged user"
+                  className="ml-1 inline text-red-500"
+                />
+              )}
             </p>
             <p className="text-sm text-foreground-secondary">
               {submission.brand && `${submission.brand} · `}
@@ -286,16 +403,40 @@ function AdminSubmissionCard({
               <span className="font-mono">{submission.ean}</span>
             </p>
           </div>
-          <span
-            className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(submission.status)}`}
-          >
-            {submission.status}
-          </span>
+          <div className="flex items-center gap-2">
+            {submission.user_trust_score !== null &&
+              submission.user_trust_score !== undefined && (
+                <span
+                  className={`rounded-full px-2 py-0.5 text-xs font-medium ${trustBadgeClass(submission.user_trust_score)}`}
+                >
+                  Trust {submission.user_trust_score}
+                </span>
+              )}
+            <span
+              className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusBadgeClass(submission.status)}`}
+            >
+              {submission.status}
+            </span>
+          </div>
         </div>
 
         {submission.category && (
           <p className="text-xs text-foreground-secondary">
             {t("admin.categoryLabel")} {submission.category}
+          </p>
+        )}
+
+        {submission.existing_product_match && (
+          <p className="text-xs text-amber-700">
+            ⚠ Possible duplicate — existing product #{submission.existing_product_match.product_id}{" "}
+            ({submission.existing_product_match.product_name})
+          </p>
+        )}
+
+        {submission.review_notes && (
+          <p className="rounded-md bg-amber-50 p-2 text-xs text-amber-800">
+            <ShieldAlert size={14} aria-hidden="true" className="mr-1 inline" />
+            {submission.review_notes}
           </p>
         )}
 
@@ -309,6 +450,12 @@ function AdminSubmissionCard({
         <div className="flex items-center justify-between text-xs text-foreground-muted">
           <span>
             {t("admin.submittedLabel")} {date}
+            {submission.user_total_submissions != null && (
+              <span className="ml-2">
+                ({submission.user_total_submissions} total,{" "}
+                {submission.user_approved_pct ?? 0}% approved)
+              </span>
+            )}
           </span>
           <span className="font-mono">
             user: {submission.user_id.slice(0, 8)}…
@@ -330,6 +477,15 @@ function AdminSubmissionCard({
               className="flex-1 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
             >
               {t("admin.reject")}
+            </button>
+            <button
+              onClick={onBatchReject}
+              disabled={isPending}
+              className="rounded-lg bg-red-100 px-3 py-2 text-sm font-medium text-red-800 hover:bg-red-200 disabled:opacity-50"
+              title="Reject all pending submissions from this user and flag account"
+            >
+              <Ban size={14} aria-hidden="true" className="mr-1 inline" />
+              Reject All
             </button>
           </div>
         )}

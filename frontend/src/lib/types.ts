@@ -1064,6 +1064,16 @@ export interface AdminSubmission extends Submission {
   notes: string | null;
   user_id: string;
   reviewed_at: string | null;
+  // Trust enrichment (#474)
+  user_trust_score: number;
+  user_total_submissions: number;
+  user_approved_pct: number | null;
+  user_flagged: boolean;
+  review_notes: string | null;
+  existing_product_match: {
+    product_id: number;
+    product_name: string;
+  } | null;
 }
 
 export interface AdminSubmissionsResponse {
@@ -1081,6 +1091,33 @@ export interface AdminReviewResponse {
   submission_id: string;
   status: string;
   merged_product_id?: number;
+  error?: string;
+}
+
+// ─── Admin Dashboard (#474) ─────────────────────────────────────────────────
+
+export interface AdminVelocityResponse {
+  api_version: string;
+  last_24h: number;
+  last_7d: number;
+  pending_count: number;
+  auto_rejected_24h: number;
+  status_breakdown: Record<string, number>;
+  top_submitters: {
+    user_id: string;
+    submission_count: number;
+    trust_score: number;
+    flagged: boolean;
+  }[];
+  error?: string;
+}
+
+export interface AdminBatchRejectResponse {
+  api_version: string;
+  rejected_count: number;
+  user_id: string;
+  user_flagged: boolean;
+  flag_reason: string;
   error?: string;
 }
 

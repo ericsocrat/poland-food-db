@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(210);
+SELECT plan(212);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -316,6 +316,10 @@ SELECT has_function('public', 'check_api_rate_limit',      'function check_api_r
 SELECT has_table('public', 'user_trust_scores',            'table user_trust_scores exists');
 SELECT has_column('public', 'user_trust_scores', 'trust_score', 'user_trust_scores has trust_score column');
 SELECT has_function('public', 'trig_adjust_trust_score',   'function trig_adjust_trust_score exists');
+
+-- ─── Admin Submission Dashboard (#474) ────────────────────────────────────────
+SELECT has_function('public', 'api_admin_batch_reject_user',     'function api_admin_batch_reject_user exists');
+SELECT has_function('public', 'api_admin_submission_velocity',   'function api_admin_submission_velocity exists');
 
 SELECT * FROM finish();
 ROLLBACK;

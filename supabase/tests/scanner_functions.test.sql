@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(59);
+SELECT plan(64);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -402,6 +402,39 @@ SELECT has_trigger(
 
 
 -- ─── 13. User trust scoring (#471) ──────────────────────────────────────────
+
+-- Admin dashboard functions (#474)
+SELECT has_function(
+  'api_admin_batch_reject_user',
+  'api_admin_batch_reject_user function exists'
+);
+
+SELECT has_function(
+  'api_admin_submission_velocity',
+  'api_admin_submission_velocity function exists'
+);
+
+-- api_admin_get_submissions returns trust enrichment keys
+SELECT lives_ok(
+  $$SELECT public.api_admin_get_submissions('all', 1, 5)$$,
+  'api_admin_get_submissions lives_ok with trust enrichment'
+);
+
+-- api_admin_submission_velocity returns expected keys
+SELECT ok(
+  public.api_admin_submission_velocity() ?& ARRAY['api_version', 'last_24h', 'last_7d', 'pending_count', 'status_breakdown', 'top_submitters'],
+  'api_admin_submission_velocity returns all expected keys'
+);
+
+-- api_admin_batch_reject_user returns auth error for anon
+SELECT is(
+  (public.api_admin_batch_reject_user('00000000-0000-0000-0000-000000000099'::uuid))->>'error',
+  'authentication_required',
+  'api_admin_batch_reject_user requires authentication'
+);
+
+
+-- ─── 14. User trust scoring (#471) ──────────────────────────────────────────
 
 -- Trust score adjustment trigger exists
 SELECT has_trigger(
