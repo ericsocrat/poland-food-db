@@ -105,6 +105,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   categories, 733 QA checks), tech stack pills, domain URL; dark teal gradient
   matching social-preview visual language; SVG source in `docs/assets/banners/`
   (#417)
+- Complete brand meta tag integration in `layout.tsx`: add dual theme-color
+  with `prefers-color-scheme` media queries (light=#0d7377, dark=#095456);
+  add OpenGraph image reference (og:image, og:image:width/height/alt) pointing
+  to `/og-image.png`; add Twitter card image; add `msapplication-TileColor` for
+  Windows tile branding (#416)
 - Redesign README.md as 15-section showcase-quality layout: hero banner, 9
   shields.io badges, elevator pitch, 4 feature highlight cards (HTML table),
   comparison table, 3-column quick start with collapsible command reference,
