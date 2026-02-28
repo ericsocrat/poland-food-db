@@ -39,7 +39,8 @@
     "items": "{count} {count|Element|Elemente}",
     "products": "{count} {count|Produkt|Produkte}",
     "allergenWarnings": "{count} Allergen-{count|Warnung|Warnungen}",
-    "dismiss": "Schließen"
+    "dismiss": "Schließen",
+    "productFrom": "Produkt aus {country}"
   },
   "toast": {
     "genericError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",

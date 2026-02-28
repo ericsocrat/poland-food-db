@@ -108,7 +108,8 @@ export function SourceAttribution({ sources }: SourceAttributionProps) {
                         aria-hidden="true"
                         data-testid={`source-icon-${sf.field}`}
                       />
-                      {sf.url ? (
+                      {sf.url &&
+                      /^https?:\/\//i.test(sf.url) ? (
                         <a
                           href={sf.url}
                           target="_blank"

@@ -2,7 +2,10 @@
 // Shows SVG flag + country code (or full name with showLabel).
 // Reflects reality from API responses, not local state.
 
+"use client";
+
 import { COUNTRIES } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -94,6 +97,8 @@ export function CountryChip({
   size = "md",
   className = "",
 }: Readonly<CountryChipProps>) {
+  const { t } = useTranslation();
+
   if (!country) return null;
 
   const meta = COUNTRIES.find((c) => c.code === country);
@@ -105,7 +110,7 @@ export function CountryChip({
   return (
     <span
       role="img"
-      aria-label={`Product from ${name}`}
+      aria-label={t("common.productFrom", { country: name })}
       className={`inline-flex items-center ${cfg.gap} rounded-full border border-border bg-surface-subtle ${cfg.px} ${cfg.text} font-medium text-foreground-secondary ${className}`}
     >
       <FlagIcon size={cfg.flag} />

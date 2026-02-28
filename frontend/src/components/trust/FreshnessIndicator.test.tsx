@@ -122,6 +122,23 @@ describe("FreshnessIndicator", () => {
     expect(screen.getByText(/Data may be outdated \(5d\)/)).toBeTruthy();
   });
 
+  it("falls back to defaults when thresholds are invalid (zero)", () => {
+    // agingDays=0 should fallback to default 30, so 10 days → fresh
+    render(
+      <FreshnessIndicator lastVerifiedAt={daysAgo(10)} agingDays={0} />,
+    );
+    // With default thresholds (7/30), 10 days → aging
+    expect(screen.getByText(/Data may be outdated \(10d\)/)).toBeTruthy();
+  });
+
+  it("falls back to defaults when freshDays is negative", () => {
+    render(
+      <FreshnessIndicator lastVerifiedAt={daysAgo(3)} freshDays={-5} />,
+    );
+    // With default freshDays=7, 3 days → fresh
+    expect(screen.getByText(/Verified 3d ago/)).toBeTruthy();
+  });
+
   // ─── Freshness ring ───────────────────────────────────────────────────
 
   it("renders freshness ring SVG", () => {

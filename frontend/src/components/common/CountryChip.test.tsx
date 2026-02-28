@@ -1,6 +1,18 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
 import { CountryChip } from "./CountryChip";
+
+// ─── Mocks ────────────────────────────────────────────────────────────────────
+
+vi.mock("@/lib/i18n", () => ({
+  useTranslation: () => ({
+    t: (key: string, params?: Record<string, string | number>) => {
+      if (key === "common.productFrom") return `Product from ${params?.country ?? ""}`;
+      return key;
+    },
+    language: "en",
+  }),
+}));
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
 

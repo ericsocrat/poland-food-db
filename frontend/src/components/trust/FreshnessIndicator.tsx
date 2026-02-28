@@ -139,8 +139,15 @@ export function FreshnessIndicator({
 
   if (!lastVerifiedAt) return null;
 
+  // Validate thresholds — fall back to defaults on invalid input.
+  const safeFresh = Number.isFinite(freshDays) && freshDays > 0 ? freshDays : 7;
+  const safeAging =
+    Number.isFinite(agingDays) && agingDays > 0
+      ? Math.max(agingDays, safeFresh)
+      : 30;
+
   const days = getDaysSince(lastVerifiedAt);
-  const status = getFreshnessStatus(days, freshDays, agingDays);
+  const status = getFreshnessStatus(days, safeFresh, safeAging);
   const config = FRESHNESS_CONFIG[status];
   const Icon = config.icon;
   const label = t(config.labelKey, { days });
@@ -150,7 +157,7 @@ export function FreshnessIndicator({
 
   // Progress decays from 1.0 (today) to 0.0 (at agingDays*2 or beyond).
   // Clamped to [0, 1].
-  const maxDays = agingDays * 2;
+  const maxDays = safeAging * 2;
   const progress = Math.max(0, Math.min(1, 1 - days / maxDays));
 
   return (

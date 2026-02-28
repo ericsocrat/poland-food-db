@@ -180,6 +180,25 @@ describe("SourceAttribution", () => {
         "Manual entry",
       );
     });
+
+    it("rejects javascript: URLs and renders plain text instead", () => {
+      const malicious: SourceField[] = [
+        {
+          field: "Nutrition",
+          source: "Evil",
+          daysSinceUpdate: 1,
+          url: "javascript:alert(1)",
+        },
+      ];
+      render(<SourceAttribution sources={malicious} />);
+      fireEvent.click(screen.getByText("Data Sources"));
+      // Must NOT render as a link
+      expect(screen.queryByTestId("source-link-Nutrition")).toBeNull();
+      // Should fall back to plain text
+      expect(screen.getByTestId("source-name-Nutrition").textContent).toBe(
+        "Evil",
+      );
+    });
   });
 
   // ─── Single source ───

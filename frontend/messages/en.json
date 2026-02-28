@@ -39,7 +39,8 @@
     "items": "{count} {count|item|items}",
     "products": "{count} {count|product|products}",
     "allergenWarnings": "{count} allergen {count|warning|warnings}",
-    "dismiss": "Dismiss"
+    "dismiss": "Dismiss",
+    "productFrom": "Product from {country}"
   },
   "toast": {
     "genericError": "Something went wrong. Please try again.",
