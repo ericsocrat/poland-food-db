@@ -1,0 +1,113 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 480" fill="none">
+  <style>
+    .bg { fill: #0d7377; }
+    .title { font-family: system-ui, -apple-system, sans-serif; font-size: 28px; font-weight: 800; fill: #ffffff; text-anchor: middle; letter-spacing: 2px; }
+    .subtitle { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; fill: #99f6e4; text-anchor: middle; letter-spacing: 1px; }
+    .card { fill: #ffffff; opacity: 0.12; }
+    .metric { font-family: system-ui, -apple-system, sans-serif; font-size: 32px; font-weight: 800; fill: #ffffff; text-anchor: middle; }
+    .label { font-family: system-ui, -apple-system, sans-serif; font-size: 12px; fill: #99f6e4; text-anchor: middle; font-weight: 500; }
+    .divider { stroke: #ffffff; stroke-width: 0.5; opacity: 0.2; }
+    .icon-circle { fill: #ffffff; opacity: 0.15; }
+    .footer { font-family: system-ui, -apple-system, sans-serif; font-size: 10px; fill: #5eead4; text-anchor: middle; letter-spacing: 0.5px; }
+    .accent { fill: #d4a844; }
+    .accent-text { font-family: system-ui, -apple-system, sans-serif; font-size: 32px; font-weight: 800; fill: #fbbf24; text-anchor: middle; }
+  </style>
+  <!-- Background -->
+  <defs>
+    <linearGradient id="bg-grad" x1="0" y1="0" x2="900" y2="480" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#0d7377"/>
+      <stop offset="100%" stop-color="#064e52"/>
+    </linearGradient>
+  </defs>
+  <rect width="900" height="480" rx="20" fill="url(#bg-grad)"/>
+  <!-- Decorative circles -->
+  <circle cx="50" cy="50" r="120" fill="#ffffff" opacity="0.03"/>
+  <circle cx="850" cy="430" r="150" fill="#ffffff" opacity="0.03"/>
+  <!-- Title -->
+  <text class="title" x="450" y="52">PROJECT BY THE NUMBERS</text>
+  <text class="subtitle" x="450" y="74">Poland Food Quality Database — Real-time metrics</text>
+  <line class="divider" x1="150" y1="88" x2="750" y2="88"/>
+  <!-- Row 1: Primary metrics (4 cards) -->
+  <g transform="translate(32, 104)">
+    <!-- Card 1: Products -->
+    <rect class="card" x="0" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="97" cy="28" r="14"/>
+    <path d="M91 24h12v2H91v-2zm0 4h12v2H91v-2zm0 4h8v2h-8v-2z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="97" y="68">1,281</text>
+    <text class="label" x="97" y="88">Active Products</text>
+    <!-- Card 2: Ingredients -->
+    <rect class="card" x="215" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="312" cy="28" r="14"/>
+    <path d="M308 20v16l4-4 4 4V20h-8z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="312" y="68">2,995</text>
+    <text class="label" x="312" y="88">Unique Ingredients</text>
+    <!-- Card 3: QA Checks -->
+    <rect class="card" x="430" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="527" cy="28" r="14"/>
+    <path d="M522 28l3 3 7-7" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.8"/>
+    <text class="accent-text" x="527" y="68">733</text>
+    <text class="label" x="527" y="88">QA Checks</text>
+    <!-- Card 4: Migrations -->
+    <rect class="card" x="645" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="742" cy="28" r="14"/>
+    <path d="M737 22v12h10v-12h-10zm2 2h6v8h-6v-8z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="742" y="68">182</text>
+    <text class="label" x="742" y="88">DB Migrations</text>
+  </g>
+  <!-- Row 2: Secondary metrics (4 cards) -->
+  <g transform="translate(32, 222)">
+    <!-- Card 5: EANs -->
+    <rect class="card" x="0" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="97" cy="28" r="14"/>
+    <path d="M89 22v12h2v-12h-2zm4 0v12h1v-12h-1zm3 0v12h2v-12h-2zm4 0v12h1v-12h-1zm3 0v12h2v-12h-2z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="97" y="68">1,024</text>
+    <text class="label" x="97" y="88">EAN Barcodes (99.8%)</text>
+    <!-- Card 6: API Functions -->
+    <rect class="card" x="215" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="312" cy="28" r="14"/>
+    <path d="M306 26l-4 4 4 4m12-8l4 4-4 4" stroke="#ffffff" stroke-width="1.5" fill="none" opacity="0.8"/>
+    <text class="metric" x="312" y="68">191</text>
+    <text class="label" x="312" y="88">API Functions</text>
+    <!-- Card 7: Categories -->
+    <rect class="card" x="430" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="527" cy="28" r="14"/>
+    <path d="M521 24h4v4h-4v-4zm6 0h4v4h-4v-4zm-6 6h4v4h-4v-4zm6 0h4v4h-4v-4z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="527" y="68">25</text>
+    <text class="label" x="527" y="88">Categories</text>
+    <!-- Card 8: Countries -->
+    <rect class="card" x="645" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="742" cy="28" r="14"/>
+    <path d="M742 20a8 8 0 100 16 8 8 0 000-16zm0 2a6 6 0 110 12 6 6 0 010-12z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="742" y="68">2</text>
+    <text class="label" x="742" y="88">Countries (PL + DE)</text>
+  </g>
+  <!-- Row 3: Tertiary metrics (4 cards) -->
+  <g transform="translate(32, 340)">
+    <!-- Card 9: Tables -->
+    <rect class="card" x="0" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="97" cy="28" r="14"/>
+    <path d="M89 24h16v2H89v-2zm0 4h16v2H89v-2zm0 4h16v2H89v-2z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="97" y="68">35+</text>
+    <text class="label" x="97" y="88">Database Tables</text>
+    <!-- Card 10: ADRs -->
+    <rect class="card" x="215" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="312" cy="28" r="14"/>
+    <path d="M307 22h10l-3 3v9h-7v-12z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="312" y="68">7</text>
+    <text class="label" x="312" y="88">Architecture Decisions</text>
+    <!-- Card 11: Docs -->
+    <rect class="card" x="430" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="527" cy="28" r="14"/>
+    <path d="M521 22h6l4 4v8h-10v-12zm6 0v4h4" stroke="#ffffff" stroke-width="1" fill="none" opacity="0.8"/>
+    <text class="metric" x="527" y="68">45+</text>
+    <text class="label" x="527" y="88">Documentation Files</text>
+    <!-- Card 12: Allergens -->
+    <rect class="card" x="645" y="0" width="195" height="100" rx="12"/>
+    <circle class="icon-circle" cx="742" cy="28" r="14"/>
+    <path d="M742 22l5 6h-10l5-6zm-3 8h6v2h-6v-2z" fill="#ffffff" opacity="0.8"/>
+    <text class="metric" x="742" y="68">2,630</text>
+    <text class="label" x="742" y="88">Allergen Declarations</text>
+  </g>
+  <!-- Footer -->
+  <text class="footer" x="450" y="468">Scoring v3.2 · 9-factor weighted formula · EFSA-based concern tiers · Open Food Facts API v2</text>
+</svg>

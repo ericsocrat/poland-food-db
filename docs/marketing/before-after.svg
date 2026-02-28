@@ -1,0 +1,137 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 440" fill="none">
+  <style>
+    .bg-left { fill: #fef2f2; }
+    .bg-right { fill: #f0fdf4; }
+    .border { stroke: #e2e8f0; stroke-width: 1; fill: none; }
+    .title { font-family: system-ui, -apple-system, sans-serif; font-size: 24px; font-weight: 800; text-anchor: middle; letter-spacing: 1px; }
+    .title-before { fill: #991b1b; }
+    .title-after { fill: #166534; }
+    .divider-line { stroke: #cbd5e1; stroke-width: 2; }
+    .vs-bg { fill: #0f172a; }
+    .vs-text { font-family: system-ui, -apple-system, sans-serif; font-size: 14px; font-weight: 800; fill: #ffffff; text-anchor: middle; }
+    .row-bg-left { fill: #ffffff; stroke: #fecaca; stroke-width: 1; }
+    .row-bg-right { fill: #ffffff; stroke: #bbf7d0; stroke-width: 1; }
+    .icon-circle-bad { fill: #fecaca; }
+    .icon-circle-good { fill: #bbf7d0; }
+    .row-title { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 700; }
+    .row-title-bad { fill: #991b1b; }
+    .row-title-good { fill: #166534; }
+    .row-desc { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; }
+    .row-desc-bad { fill: #7f1d1d; opacity: 0.7; }
+    .row-desc-good { fill: #14532d; opacity: 0.7; }
+    .icon-bad { fill: #dc2626; }
+    .icon-good { fill: #16a34a; }
+    .header-subtitle { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; fill: #64748b; text-anchor: middle; }
+    .footer { font-family: system-ui, -apple-system, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle; }
+    .stat-badge { font-family: system-ui, -apple-system, sans-serif; font-size: 9px; font-weight: 700; }
+    .stat-badge-good { fill: #16a34a; }
+  </style>
+  <rect width="900" height="440" rx="16" fill="#ffffff"/>
+  <rect x="0.5" y="0.5" width="899" height="439" rx="16" class="border"/>
+  <!-- Left panel background -->
+  <rect x="1" y="1" width="448" height="438" rx="16" class="bg-left"/>
+  <!-- Right panel background -->
+  <rect x="451" y="1" width="448" height="438" rx="16" class="bg-right"/>
+  <!-- Center divider -->
+  <line class="divider-line" x1="450" y1="0" x2="450" y2="440"/>
+  <!-- VS badge -->
+  <circle class="vs-bg" cx="450" cy="48" r="20"/>
+  <text class="vs-text" x="450" y="53">VS</text>
+  <!-- Left header: Before -->
+  <text class="title title-before" x="225" y="44">WITHOUT</text>
+  <text class="header-subtitle" x="225" y="60">Manual approach</text>
+  <!-- Right header: After -->
+  <text class="title title-after" x="675" y="44">WITH PROJECT</text>
+  <text class="header-subtitle" x="675" y="60">Poland Food Quality Database</text>
+  <!-- Row 1: Data Organization -->
+  <g transform="translate(20, 78)">
+    <rect class="row-bg-left" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-bad" cx="24" cy="24" r="14"/>
+    <path d="M18 20h4v4h-4v-4zm6 2h4v4h-4v-4zm-3 5h4v4h-4v-4z" class="icon-bad"/>
+    <text class="row-title row-title-bad" x="46" y="20">Scattered nutrition data</text>
+    <text class="row-desc row-desc-bad" x="46" y="36">Checking labels on every product manually</text>
+  </g>
+  <g transform="translate(470, 78)">
+    <rect class="row-bg-right" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-good" cx="24" cy="24" r="14"/>
+    <path d="M19 24l4 4 8-8" stroke="#16a34a" stroke-width="2.5" fill="none"/>
+    <text class="row-title row-title-good" x="46" y="20">Unified 1,281-product database</text>
+    <text class="row-desc row-desc-good" x="46" y="36">Structured, searchable, country-scoped data</text>
+  </g>
+  <!-- Row 2: Scoring -->
+  <g transform="translate(20, 138)">
+    <rect class="row-bg-left" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-bad" cx="24" cy="24" r="14"/>
+    <text class="icon-bad" x="20" y="29" style="font-size:16px">?</text>
+    <text class="row-title row-title-bad" x="46" y="20">No health scoring</text>
+    <text class="row-desc row-desc-bad" x="46" y="36">No way to compare healthiness objectively</text>
+  </g>
+  <g transform="translate(470, 138)">
+    <rect class="row-bg-right" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-good" cx="24" cy="24" r="14"/>
+    <path d="M18 28a8 8 0 010-8" stroke="#16a34a" stroke-width="2" fill="none"/>
+    <circle cx="18" cy="20" r="2" class="icon-good"/>
+    <text class="row-title row-title-good" x="46" y="20">9-factor weighted scientific scoring</text>
+    <text class="row-desc row-desc-good" x="46" y="36">v3.2 engine with EFSA-based concern tiers</text>
+  </g>
+  <!-- Row 3: Barcode -->
+  <g transform="translate(20, 198)">
+    <rect class="row-bg-left" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-bad" cx="24" cy="24" r="14"/>
+    <path d="M18 18v12m4-12v12m4-12v12m4-12v12" stroke="#dc2626" stroke-width="1.5" opacity="0.5"/>
+    <text class="row-title row-title-bad" x="46" y="20">Manual label reading</text>
+    <text class="row-desc row-desc-bad" x="46" y="36">Tiny print, inconsistent formats, time-consuming</text>
+  </g>
+  <g transform="translate(470, 198)">
+    <rect class="row-bg-right" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-good" cx="24" cy="24" r="14"/>
+    <path d="M18 18v12m3-12v12m3-12v12m3-12v12" stroke="#16a34a" stroke-width="1.5"/>
+    <text class="row-title row-title-good" x="46" y="20">Instant barcode scan → full report</text>
+    <text class="row-desc row-desc-good" x="46" y="36">1,024 EANs with 99.8% coverage</text>
+  </g>
+  <!-- Row 4: Ingredients -->
+  <g transform="translate(20, 258)">
+    <rect class="row-bg-left" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-bad" cx="24" cy="24" r="14"/>
+    <path d="M17 20h14v8H17v-8z" class="icon-bad" opacity="0.4"/>
+    <text class="row-title row-title-bad" x="46" y="20">No ingredient transparency</text>
+    <text class="row-desc row-desc-bad" x="46" y="36">E-numbers without context or safety info</text>
+  </g>
+  <g transform="translate(470, 258)">
+    <rect class="row-bg-right" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-good" cx="24" cy="24" r="14"/>
+    <path d="M19 24l3 3 6-6" stroke="#16a34a" stroke-width="2" fill="none"/>
+    <text class="row-title row-title-good" x="46" y="20">2,995 ingredients with EFSA concern tiers</text>
+    <text class="row-desc row-desc-good" x="46" y="36">4-tier classification: none → low → moderate → high</text>
+  </g>
+  <!-- Row 5: Allergens -->
+  <g transform="translate(20, 318)">
+    <rect class="row-bg-left" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-bad" cx="24" cy="24" r="14"/>
+    <path d="M19 19l10 10m0-10l-10 10" stroke="#dc2626" stroke-width="2"/>
+    <text class="row-title row-title-bad" x="46" y="20">Guessing allergens</text>
+    <text class="row-desc row-desc-bad" x="46" y="36">Risk of missing hidden allergens in products</text>
+  </g>
+  <g transform="translate(470, 318)">
+    <rect class="row-bg-right" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-good" cx="24" cy="24" r="14"/>
+    <path d="M24 16v6l-4 2v8l4 2 4-2v-8l-4-2v-6z" class="icon-good" opacity="0.7"/>
+    <text class="row-title row-title-good" x="46" y="20">2,630 allergen declarations, auto-warnings</text>
+    <text class="row-desc row-desc-good" x="46" y="36">1,269 allergens + 1,361 traces with personal profiles</text>
+  </g>
+  <!-- Row 6: Comparison -->
+  <g transform="translate(20, 378)">
+    <rect class="row-bg-left" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-bad" cx="24" cy="24" r="14"/>
+    <path d="M18 20h5v8h-5v-8zm7 2h5v6h-5v-6z" class="icon-bad" opacity="0.4"/>
+    <text class="row-title row-title-bad" x="46" y="20">No product comparison</text>
+    <text class="row-desc row-desc-bad" x="46" y="36">Mentally comparing nutrition labels side by side</text>
+  </g>
+  <g transform="translate(470, 378)">
+    <rect class="row-bg-right" x="0" y="0" width="410" height="48" rx="8"/>
+    <circle class="icon-circle-good" cx="24" cy="24" r="14"/>
+    <path d="M17 20h5v8h-5v-8zm3 0h1v8h-1v-8zm5 0h5v8h-5v-8zm3 0h1v8h-1v-8z" class="icon-good"/>
+    <text class="row-title row-title-good" x="46" y="20">Side-by-side comparison with sharing</text>
+    <text class="row-desc row-desc-good" x="46" y="36">Compare up to 4 products, save and share results</text>
+  </g>
+</svg>
