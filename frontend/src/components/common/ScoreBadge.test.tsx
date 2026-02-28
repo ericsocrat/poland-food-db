@@ -65,8 +65,8 @@ describe("ScoreBadge", () => {
   });
 
   it("applies size classes", () => {
-    render(<ScoreBadge score={50} size="lg" />);
-    expect(screen.getByText("50").className).toContain("text-base");
+    render(<ScoreBadge score={50} size="md" />);
+    expect(screen.getByText("50").className).toContain("text-sm");
   });
 
   it("has accessible aria-label", () => {
@@ -174,5 +174,67 @@ describe("ScoreBadge", () => {
   it("has correct aria-label for Dark Red band with label", () => {
     render(<ScoreBadge score={90} showLabel />);
     expect(screen.getByLabelText("Score: 90, Extreme")).toBeTruthy();
+  });
+
+  // ─── Large (lg) ring variant tests ────────────────────────────────────
+
+  it("renders SVG ring for lg size with valid score", () => {
+    const { container } = render(<ScoreBadge score={42} size="lg" />);
+    expect(container.querySelector("svg")).toBeTruthy();
+    expect(container.querySelector("[data-testid='score-ring']")).toBeTruthy();
+  });
+
+  it("renders score text inside SVG for lg size", () => {
+    const { container } = render(<ScoreBadge score={42} size="lg" />);
+    const textEl = container.querySelector("svg text");
+    expect(textEl?.textContent).toBe("42");
+  });
+
+  it("renders label below ring when showLabel is true for lg", () => {
+    render(<ScoreBadge score={42} size="lg" showLabel />);
+    expect(screen.getByText("High")).toBeTruthy();
+  });
+
+  it("uses correct stroke color for green band on lg ring", () => {
+    const { container } = render(<ScoreBadge score={15} size="lg" />);
+    const ring = container.querySelector("[data-testid='score-ring']");
+    expect(ring?.getAttribute("stroke")).toBe("var(--color-score-green)");
+  });
+
+  it("uses correct stroke color for darkred band on lg ring", () => {
+    const { container } = render(<ScoreBadge score={90} size="lg" />);
+    const ring = container.querySelector("[data-testid='score-ring']");
+    expect(ring?.getAttribute("stroke")).toBe("var(--color-score-darkred)");
+  });
+
+  it("applies animation class when animated is true (default)", () => {
+    const { container } = render(<ScoreBadge score={50} size="lg" />);
+    const ring = container.querySelector("[data-testid='score-ring']");
+    expect(ring?.className.baseVal).toContain("transition-");
+  });
+
+  it("omits animation class when animated is false", () => {
+    const { container } = render(
+      <ScoreBadge score={50} size="lg" animated={false} />,
+    );
+    const ring = container.querySelector("[data-testid='score-ring']");
+    expect(ring?.className.baseVal || "").not.toContain("transition-");
+  });
+
+  it("falls back to pill badge for lg with null score", () => {
+    const { container } = render(<ScoreBadge score={null} size="lg" />);
+    // Null score does not render SVG ring — falls through to pill
+    expect(container.querySelector("svg")).toBeNull();
+    expect(screen.getByText("N/A")).toBeTruthy();
+  });
+
+  it("has role=img on lg ring container", () => {
+    render(<ScoreBadge score={42} size="lg" />);
+    expect(screen.getByRole("img")).toBeTruthy();
+  });
+
+  it("has accessible aria-label on lg ring", () => {
+    render(<ScoreBadge score={42} size="lg" />);
+    expect(screen.getByLabelText("Score: 42")).toBeTruthy();
   });
 });
