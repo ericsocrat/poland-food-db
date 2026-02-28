@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(196);
+SELECT plan(199);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -292,6 +292,11 @@ SELECT has_function('public', 'api_delete_user_data',       'function api_delete
 SELECT has_table('public', 'deletion_audit_log',            'table deletion_audit_log exists');
 SELECT has_column('public', 'deletion_audit_log', 'id',            'column deletion_audit_log.id exists');
 SELECT has_column('public', 'deletion_audit_log', 'deleted_at',   'column deletion_audit_log.deleted_at exists');
+
+-- ─── EAN Checksum Validation (#465) ──────────────────────────────────────────
+SELECT has_function('public', 'is_valid_ean',                   'function is_valid_ean exists');
+SELECT has_column('public', 'product_submissions', 'review_notes', 'column product_submissions.review_notes exists');
+SELECT has_trigger('product_submissions', 'trg_submission_ean_check', 'EAN checksum trigger exists on product_submissions');
 
 SELECT * FROM finish();
 ROLLBACK;

@@ -25,7 +25,7 @@
        19. QA__country_isolation.sql (6 country isolation checks — blocking)
        20. QA__diet_filtering.sql (6 diet filtering checks — blocking)
        21. QA__allergen_filtering.sql (6 allergen filtering checks — blocking)
-       22. QA__barcode_lookup.sql (6 barcode scanner checks — blocking)
+       22. QA__barcode_lookup.sql (9 barcode scanner checks — blocking)
        23. QA__auth_onboarding.sql (8 auth & onboarding checks — blocking)
        24. QA__confidence_reporting.sql (7 confidence reporting checks — blocking)
        25. QA__health_profiles.sql (14 health profile checks — blocking)
@@ -153,7 +153,7 @@ $suiteCatalog = @(
     @{ Num = 19; Name = "Country Isolation"; Short = "Country"; Id = "country_isolation"; Checks = 11; Blocking = $true; Kind = "sql"; File = "QA__country_isolation.sql" },
     @{ Num = 20; Name = "Diet Filtering"; Short = "Diet"; Id = "diet_filtering"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__diet_filtering.sql" },
     @{ Num = 21; Name = "Allergen Filtering"; Short = "Allergen"; Id = "allergen_filtering"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__allergen_filtering.sql" },
-    @{ Num = 22; Name = "Barcode Lookup"; Short = "Barcode"; Id = "barcode_lookup"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__barcode_lookup.sql" },
+    @{ Num = 22; Name = "Barcode Lookup"; Short = "Barcode"; Id = "barcode_lookup"; Checks = 9; Blocking = $true; Kind = "sql"; File = "QA__barcode_lookup.sql" },
     @{ Num = 23; Name = "Auth & Onboarding"; Short = "AuthOnboard"; Id = "auth_onboarding"; Checks = 8; Blocking = $true; Kind = "sql"; File = "QA__auth_onboarding.sql" },
     @{ Num = 24; Name = "Confidence Reporting"; Short = "ConfReport"; Id = "confidence_reporting"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__confidence_reporting.sql" },
     @{ Num = 25; Name = "Health Profiles"; Short = "Health"; Id = "health_profiles"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__health_profiles.sql" },
