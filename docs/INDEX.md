@@ -12,7 +12,7 @@
 | Domain                                                   | Count | Documents                                                                                                       |
 | -------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
 | [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal        |
-| [Diagrams](#diagrams)                                    | 4     | Architecture overview, full ERD (30+ tables), core ERD (7 tables) — light + dark SVGs                           |
+| [Diagrams](#diagrams)                                    | 10    | Architecture, ERDs, pipeline flow, QA overview, CI/CD, confidence, concern tiers, country expansion + headers |
 | [API](#api)                                              | 6     | Contracts, conventions, versioning, frontend mapping, contract testing, registry                                 |
 | [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                                    |
 | [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                          |
@@ -58,6 +58,23 @@
 | [erd-full-dark.mmd](diagrams/erd-full-dark.mmd)                                       | Mermaid source for full ERD (dark mode)                              | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
 | [erd-core.mmd](diagrams/erd-core.mmd)                                                 | Mermaid source for core ERD (light mode)                             | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
 | [erd-core-dark.mmd](diagrams/erd-core-dark.mmd)                                       | Mermaid source for core ERD (dark mode)                              | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [pipeline-flow.svg](diagrams/pipeline-flow.svg)                                       | Pipeline flow — OFF API to SQL generation to DB execution            | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [ci-cd-pipeline.svg](diagrams/ci-cd-pipeline.svg)                                     | CI/CD pipeline — 19 workflows, gates, triggers, artifact flow        | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [qa-overview.svg](diagrams/qa-overview.svg)                                            | QA overview — 47 suites, 733 checks organized by domain             | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [confidence-model.svg](diagrams/confidence-model.svg)                                  | Confidence scoring — 6 components, composite 0-100, band assignment  | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [concern-tiers.svg](diagrams/concern-tiers.svg)                                        | EFSA concern tiers — 4-tier additive classification with examples    | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [country-expansion.svg](diagrams/country-expansion.svg)                                | Country expansion — PL primary + DE micro-pilot architecture         | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [pipeline-flow.mmd](diagrams/pipeline-flow.mmd)                                       | Mermaid source for pipeline flow                                     | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [ci-cd-pipeline.mmd](diagrams/ci-cd-pipeline.mmd)                                     | Mermaid source for CI/CD pipeline                                    | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [qa-overview.mmd](diagrams/qa-overview.mmd)                                            | Mermaid source for QA overview                                       | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [confidence-model.mmd](diagrams/confidence-model.mmd)                                  | Mermaid source for confidence model                                  | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [concern-tiers.mmd](diagrams/concern-tiers.mmd)                                        | Mermaid source for concern tiers                                     | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [country-expansion.mmd](diagrams/country-expansion.mmd)                                | Mermaid source for country expansion                                 | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-architecture.svg](diagrams/headers/header-architecture.svg)            | Section banner — Architecture (800x120px, brand gradient)            | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-scoring.svg](diagrams/headers/header-scoring.svg)                      | Section banner — Scoring                                             | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-api.svg](diagrams/headers/header-api.svg)                              | Section banner — API Reference                                       | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-qa.svg](diagrams/headers/header-qa.svg)                                | Section banner — Quality Assurance                                   | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-deployment.svg](diagrams/headers/header-deployment.svg)                | Section banner — Deployment                                          | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
 
 ## API
 

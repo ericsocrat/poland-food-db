@@ -1,0 +1,58 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0d7377", "primaryTextColor": "#fff", "primaryBorderColor": "#095456", "lineColor": "#475569", "secondaryColor": "#f1f5f9", "tertiaryColor": "#e2e8f0", "textColor": "#0f172a", "fontSize": "14px"}}}%%
+flowchart TD
+    subgraph SYSTEM["Country-Scoped Food Database"]
+        direction TB
+        CR["country_ref\n2 active countries"]
+        ISO["ISO 3166-1 alpha-2\ncountry codes"]
+        CR --- ISO
+    end
+
+    subgraph PL["Poland (PL) — Primary Market"]
+        direction TB
+        PL_STATS["20 categories\n~1,029 products\n99.8% EAN coverage"]
+        PL_CAT["Chips, Dairy, Bread, Drinks\nSweets, Snacks, Meat, Cereals\nCondiments, Sauces, Alcohol\nFrozen, Canned, Baby, Seafood\nPlant-Based, Nuts, Instant, Breakfast\nZabka"]
+        PL_NS["Nutri-Score: Official\n(FR/BE/NL model)"]
+        PL_STATS --- PL_CAT --- PL_NS
+    end
+
+    subgraph DE["Germany (DE) — Micro-Pilot"]
+        direction TB
+        DE_STATS["5 categories\n252 products\nPilot validation"]
+        DE_CAT["Chips, Dairy, Bread\nDrinks, Sweets"]
+        DE_NS["Nutri-Score: Official\n(DE adopted 2020)"]
+        DE_STATS --- DE_CAT --- DE_NS
+    end
+
+    subgraph ISOLATION["Country Isolation Architecture"]
+        direction TB
+        RLS["Row-Level Security\nper country"]
+        FK["FK to country_ref\non products table"]
+        PIPE["Separate pipeline\nfolders per country"]
+        QA["11 country isolation\nQA checks"]
+        RLS --- FK --- PIPE --- QA
+    end
+
+    subgraph EXPAND["Expansion Protocol"]
+        direction TB
+        STEP1["1. INSERT INTO country_ref"]
+        STEP2["2. Pipeline category mapping"]
+        STEP3["3. Run pipeline with --country"]
+        STEP4["4. Verify QA isolation"]
+        STEP1 --> STEP2 --> STEP3 --> STEP4
+    end
+
+    SYSTEM --> PL & DE
+    PL & DE --> ISOLATION
+    ISOLATION --> EXPAND
+
+    classDef system fill:#0d7377,stroke:#095456,color:#fff
+    classDef pl fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    classDef de fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef isolation fill:#f1f5f9,stroke:#94a3b8,color:#334155
+    classDef expand fill:#dcfce7,stroke:#16a34a,color:#14532d
+
+    class SYSTEM system
+    class PL pl
+    class DE de
+    class ISOLATION isolation
+    class EXPAND expand

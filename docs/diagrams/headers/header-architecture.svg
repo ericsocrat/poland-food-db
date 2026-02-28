@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 120" width="800" height="120">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0d7377"/>
+      <stop offset="100%" stop-color="#095456"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="120" rx="8" fill="url(#bg)"/>
+  <text x="80" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="32" font-weight="700" fill="#fff" dominant-baseline="middle">Architecture</text>
+  <text x="80" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="14" fill="#94d5d7" dominant-baseline="middle">System design, data flow &amp; component overview</text>
+  <circle cx="40" cy="60" r="18" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+  <path d="M32 52 L40 60 L48 52 M40 60 L40 68 M32 68 L48 68" stroke="#2dd4bf" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
