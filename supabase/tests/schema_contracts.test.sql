@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(191);
+SELECT plan(196);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -285,6 +285,13 @@ SELECT has_column('public', 'retention_policies', 'table_name', 'column retentio
 SELECT has_table('public', 'mv_refresh_log',                'table mv_refresh_log exists');
 SELECT has_function('public', 'mv_last_refresh',            'function mv_last_refresh exists');
 SELECT has_column('public', 'mv_refresh_log', 'mv_name',   'column mv_refresh_log.mv_name exists');
+
+-- ─── GDPR Data Export & Deletion (#469) ────────────────────────────────────
+SELECT has_function('public', 'api_export_user_data',       'function api_export_user_data exists');
+SELECT has_function('public', 'api_delete_user_data',       'function api_delete_user_data exists');
+SELECT has_table('public', 'deletion_audit_log',            'table deletion_audit_log exists');
+SELECT has_column('public', 'deletion_audit_log', 'id',            'column deletion_audit_log.id exists');
+SELECT has_column('public', 'deletion_audit_log', 'deleted_at',   'column deletion_audit_log.deleted_at exists');
 
 SELECT * FROM finish();
 ROLLBACK;
