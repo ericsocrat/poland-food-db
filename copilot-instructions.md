@@ -144,6 +144,7 @@ poland-food-db/
 │   │   ├── push_notification_functions.test.sql # Push notification tests
 │   │   └── recipe_functions.test.sql            # Recipe API function tests
 │   ├── functions/                   # Supabase Edge Functions
+│   │   ├── api-gateway/             # Write-path gateway (rate limiting, validation) (#478)
 │   │   └── send-push-notification/  # Push notification handler
 │   ├── dr-drill/                    # Disaster recovery drill artifacts
 │   └── migrations/                  # 140 append-only schema migrations
