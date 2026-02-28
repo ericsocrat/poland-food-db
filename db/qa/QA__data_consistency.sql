@@ -82,13 +82,17 @@ WHERE p.is_deprecated IS NOT TRUE
     OR p.high_additive_load IS NULL);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 8. product_type must be in allowed domain
+-- 8. product_type must exist in product_type_ref
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '8. product_type in valid domain' AS check_name,
+SELECT '8. product_type in product_type_ref' AS check_name,
        COUNT(*) AS violations
 FROM products p
 WHERE p.is_deprecated IS NOT TRUE
-  AND p.product_type NOT IN ('Grocery', 'Ready-to-eat');
+  AND p.product_type IS NOT NULL
+  AND NOT EXISTS (
+    SELECT 1 FROM product_type_ref ptr
+    WHERE ptr.product_type = p.product_type
+  );
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 9. prep_method must be in allowed domain (matches DB CHECK chk_products_prep_method)
@@ -221,4 +225,31 @@ FROM products p
 WHERE p.is_deprecated IS NOT TRUE
   AND p.nutri_score_label IN ('A', 'B', 'C', 'D', 'E')
   AND p.nutri_score_source IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 23. product_type_ref: every category has at least one type (#354)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '23. every category has product types' AS check_name,
+       COUNT(*) AS violations
+FROM category_ref cr
+WHERE cr.is_active = true
+  AND NOT EXISTS (
+    SELECT 1 FROM product_type_ref ptr
+    WHERE ptr.category = cr.category
+  );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 24. product_type_ref: every category has an 'other' fallback (#354)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '24. every category has other fallback type' AS check_name,
+       COUNT(*) AS violations
+FROM category_ref cr
+WHERE cr.is_active = true
+  AND NOT EXISTS (
+    SELECT 1 FROM product_type_ref ptr
+    WHERE ptr.category = cr.category
+      AND ptr.product_type LIKE 'other-%'
+  )
+  AND cr.category NOT IN ('Chips', 'Żabka');
+  -- Chips has legacy 'Grocery', Żabka has legacy 'Ready-to-eat' + 'other-zabka'
 
