@@ -1,683 +1,515 @@
-# Poland Food Quality Database
+<!-- ╔══════════════════════════════════════════════════════════════════╗ -->
+<!-- ║  Poland Food DB — README.md                                     ║ -->
+<!-- ║  Redesigned 2026-02-28 · Issue #413                             ║ -->
+<!-- ╚══════════════════════════════════════════════════════════════════╝ -->
 
-> **Last updated:** 2026-02-28
+<!-- ═══════════════════════════ 1. HERO BANNER ═══════════════════════════ -->
 
-[![QA Tests](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/qa.yml)
-[![Quality Gate](https://github.com/ericsocrat/poland-food-db/actions/workflows/quality-gate.yml/badge.svg)](https://github.com/ericsocrat/poland-food-db/actions/workflows/quality-gate.yml)
+<p align="center">
+  <img src="docs/assets/banners/readme-banner.png" alt="Poland Food DB — Science-driven food quality intelligence" width="100%" />
+</p>
 
-A multi-axis food quality database scoring **1,025 products** sold in Poland using a 9-factor weighted algorithm (v3.2) based on nutritional science and EU regulatory guidelines.
+<!-- ═══════════════════════════ 2. BADGES ROW ════════════════════════════ -->
 
-## What This Project Is
+<p align="center">
+  <a href="https://github.com/ericsocrat/poland-food-db/actions/workflows/pr-gate.yml"><img src="https://img.shields.io/github/actions/workflow/status/ericsocrat/poland-food-db/pr-gate.yml?style=flat-square&label=build" alt="Build Status" /></a>
+  <img src="https://img.shields.io/badge/QA%20checks-733%20passing-brightgreen?style=flat-square" alt="QA Checks" />
+  <img src="https://img.shields.io/badge/coverage-%E2%89%A588%25-brightgreen?style=flat-square" alt="Coverage" />
+  <img src="https://img.shields.io/badge/products-1%2C281-0d7377?style=flat-square" alt="Products" />
+  <img src="https://img.shields.io/badge/countries-PL%20%2B%20DE-0d7377?style=flat-square" alt="Countries" />
+  <img src="https://img.shields.io/badge/scoring-v3.2-7c3aed?style=flat-square" alt="Scoring Version" />
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/ericsocrat/poland-food-db?style=flat-square" alt="License" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+</p>
 
-A **nutritional risk database** that scores packaged food products on multiple independent axes:
-- **Unhealthiness Score (1-100):** 9-factor weighted penalty score — higher = more nutritional risk factors
-- **Nutri-Score (A-E):** EU-style front-of-pack nutrition grade
-- **NOVA (1-4):** Processing level classification
-- **Data Confidence (0-100):** How complete and verified the underlying data is
+<!-- ═══════════════════════════ 3. ELEVATOR PITCH ════════════════════════ -->
 
-This is **not** a Nutri-Score app, a calorie counter, or a "healthy/unhealthy" binary classifier. It is a transparent, multi-dimensional scoring system where every number links back to the data and methodology that produced it.
+<p align="center">
+  <strong>A transparent, multi-axis food quality database for Poland and Germany.</strong><br />
+  Every product scored on 9 independent factors. Every number traceable to its source.<br />
+  Not a calorie counter. Not a Nutri-Score app. A research-grade scoring engine.
+</p>
 
-## How It Differs From Nutri-Score Apps
+---
 
-| Dimension               | Nutri-Score Apps | This Project                                                      |
-| ----------------------- | ---------------- | ----------------------------------------------------------------- |
-| Scoring axes            | 1 (A-E letter)   | 4 independent axes (unhealthiness, nutri-score, NOVA, confidence) |
-| Additive analysis       | No               | Yes — EFSA concern tiers, additive count                          |
-| Processing level        | No               | Yes — NOVA 1-4 integrated into score                              |
-| Trans fat tracking      | No               | Yes — separate weighted factor                                    |
-| Controversy tracking    | No               | Yes — palm oil, artificial sweeteners flagged                     |
-| Data quality visibility | Hidden           | Explicit — confidence score per product                           |
-| Score explainability    | None             | Full factor breakdown with category context                       |
-| Source provenance       | Opaque           | Tracked — every product links to its data source                  |
+<!-- ═══════════════════════════ 4. FEATURE HIGHLIGHTS ════════════════════ -->
 
-## 🎯 Quick Start
+## ✨ Feature Highlights
 
-### 1. Start Local Database
+<table>
+  <tr>
+    <td align="center" width="25%">
+      <h3>🧬 9-Factor Scoring</h3>
+      <p>Saturated fat, sugars, salt, calories, trans fat, additives, prep method, controversies, and ingredient concerns — weighted and combined into a single 1–100 score.</p>
+    </td>
+    <td align="center" width="25%">
+      <h3>🔬 Ingredient Intelligence</h3>
+      <p>2,995 canonical ingredients with EFSA concern tiers, additive classification, palm oil detection, and vegan/vegetarian flags.</p>
+    </td>
+    <td align="center" width="25%">
+      <h3>📊 Data Confidence</h3>
+      <p>Every product has a 0–100 confidence score showing data completeness — so you know how much to trust each number.</p>
+    </td>
+    <td align="center" width="25%">
+      <h3>📱 Barcode Scanner</h3>
+      <p>EAN-13 barcode lookup with 99.8% coverage. Scan any product to see its full scoring breakdown instantly.</p>
+    </td>
+  </tr>
+</table>
+
+---
+
+<!-- ═══════════════════════════ 5. HOW IT DIFFERS ════════════════════════ -->
+
+## 🔍 How It Differs
+
+| Dimension | Nutri-Score Apps | Poland Food DB |
+| --- | :---: | :---: |
+| **Scoring axes** | 1 (A–E letter) | 4 independent (unhealthiness, Nutri-Score, NOVA, confidence) |
+| **Additive analysis** | ❌ | ✅ EFSA concern tiers + additive count |
+| **Processing level** | ❌ | ✅ NOVA 1–4 integrated |
+| **Trans fat tracking** | ❌ | ✅ Separate weighted factor |
+| **Controversy tracking** | ❌ | ✅ Palm oil, artificial sweeteners |
+| **Data quality visibility** | Hidden | ✅ Confidence score per product |
+| **Score explainability** | None | ✅ Full factor breakdown with context |
+| **Source provenance** | Opaque | ✅ Every product linked to source |
+| **Multi-country** | Varies | ✅ PL primary + DE micro-pilot |
+
+---
+
+<!-- ═══════════════════════════ 6. QUICK START ═══════════════════════════ -->
+
+## 🚀 Quick Start
+
+<table>
+  <tr>
+    <td width="33%">
+
+**1. Clone & Start DB**
+
 ```powershell
+git clone https://github.com/ericsocrat/poland-food-db.git
+cd poland-food-db
 supabase start
 ```
 
-### 2. Run Pipelines
+</td>
+    <td width="33%">
+
+**2. Run Pipelines**
+
 ```powershell
-# Run all categories
+# All categories + QA
 .\RUN_LOCAL.ps1 -RunQA
 
-# Run specific category
-.\RUN_LOCAL.ps1 -Category chips -RunQA
-.\RUN_LOCAL.ps1 -Category zabka -RunQA
-.\RUN_LOCAL.ps1 -Category cereals -RunQA
-.\RUN_LOCAL.ps1 -Category drinks -RunQA
+# Single category
+.\RUN_LOCAL.ps1 -Category chips
 ```
 
-### 3. View Data
-- **Web UI**: Open http://127.0.0.1:54323 → **Table Editor** or **SQL Editor**
-- **Command-line**: See [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) for queries
+</td>
+    <td width="34%">
 
-### 4. Run Tests
+**3. Start Frontend**
+
+```bash
+cd frontend
+npm ci
+npm run dev
+# → http://localhost:3000
+```
+
+</td>
+  </tr>
+</table>
+
+<details>
+<summary><strong>📋 Full Command Reference</strong></summary>
+
 ```powershell
-# All tests (460 checks across 33 suites)
-.\RUN_QA.ps1
+# ── Database ──
+supabase start                           # Start local Supabase
+supabase db reset                        # Full rebuild (migrations + seed)
 
-# Negative validation (23 constraint tests)
-.\RUN_NEGATIVE_TESTS.ps1
+# ── Pipelines ──
+.\RUN_LOCAL.ps1 -RunQA                   # All categories + QA validation
+.\RUN_LOCAL.ps1 -Category dairy          # Single category
+.\RUN_SEED.ps1                           # Seed reference data only
 
-# Or via pipeline runner
-.\RUN_LOCAL.ps1 -RunQA
-```
+# ── Testing ──
+.\RUN_QA.ps1                             # 733 QA checks across 48 suites
+.\RUN_NEGATIVE_TESTS.ps1                 # 23 constraint violation tests
+.\RUN_SANITY.ps1 -Env local              # Row-count + schema assertions
+python validate_eans.py                  # EAN checksum validation
+python check_pipeline_structure.py       # Pipeline folder/file structure
 
-### 5. Frontend Development
-```bash
+# ── Frontend ──
 cd frontend
-npm ci               # Install dependencies (uses lockfile)
-npm run dev          # Start dev server on http://localhost:3000
-npm run type-check   # TypeScript check (tsc --noEmit)
-npm run lint         # ESLint
-npm run build        # Production build
-npm test             # Unit tests (Vitest, 56 tests)
-npm run test:coverage # Unit tests + v8 coverage (lcov)
-npx playwright test  # E2E smoke tests (14 tests)
+npm run dev                              # Dev server (localhost:3000)
+npm run build                            # Production build
+npx tsc --noEmit                         # TypeScript check
+npm run lint                             # ESLint
+npx vitest run                           # Unit tests (Vitest)
+npm run test:coverage                    # Unit tests + v8 coverage
+npx playwright test                      # E2E smoke tests (Playwright)
+
+# ── Data Access ──
+echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
 ```
 
-#### Running Playwright Locally
-```bash
-cd frontend
-npx playwright install --with-deps chromium   # first time only
-npx playwright test                           # runs against local dev server
-npx playwright test --ui                      # interactive UI mode
-npx playwright show-report                    # open last HTML report
-```
-
-### CI Pipeline
-
-The GitHub Actions CI workflow runs automatically on pushes to `main` and pull requests:
-
-**install → type-check → lint → build → unit tests (coverage) → Playwright e2e → SonarCloud scan → Quality Gate**
-
-Failed Playwright runs upload screenshots and traces as artifacts for debugging. See [DEPLOYMENT.md](DEPLOYMENT.md) for full deployment configuration details.
+</details>
 
 ---
 
-## 📊 Current Status
+<!-- ═══════════════════════════ 7. ARCHITECTURE ══════════════════════════ -->
 
-**Database**: 1,025 active products across 20 categories (variable size, 38 deprecated products excluded)
+## 🏗️ Architecture
 
-| Category                       | Products | Brands | Score Range |
-| ------------------------------ | -------: | -----: | ----------- |
-| **Alcohol**                    |       30 |     25 | 4–17        |
-| **Baby**                       |        9 |      4 | 8–34        |
-| **Bread**                      |       60 |     33 | 9–40        |
-| **Breakfast & Grain-Based**    |       94 |     34 | 6–44        |
-| **Canned Goods**               |       49 |     27 | 5–30        |
-| **Cereals**                    |       42 |     16 | 12–45       |
-| **Chips**                      |       50 |     21 | 11–37       |
-| **Condiments**                 |       55 |     28 | 9–40        |
-| **Dairy**                      |       50 |     20 | 8–44        |
-| **Drinks**                     |       61 |     28 | 4–30        |
-| **Frozen & Prepared**          |       50 |     23 | 5–46        |
-| **Instant & Frozen**           |       52 |     21 | 6–49        |
-| **Meat**                       |       49 |     26 | 9–46        |
-| **Nuts, Seeds & Legumes**      |       44 |     21 | 23–46       |
-| **Plant-Based & Alternatives** |       48 |     33 | 6–39        |
-| **Sauces**                     |       98 |     46 | 6–41        |
-| **Seafood & Fish**             |       51 |     25 | 8–34        |
-| **Snacks**                     |       56 |     37 | 7–49        |
-| **Sweets**                     |       50 |     19 | 30–51       |
-| **Żabka**                      |       27 |      3 | 13–34       |
-**Test Coverage**: 460 automated checks across 33 QA suites + 23 negative validation tests
-- 29 data integrity checks (nulls, orphans, FKs, duplicates, nutrition sanity, view consistency, provenance)
-- 27 scoring formula checks (ranges, flags, NOVA, domains, confidence, 8 regression tests)
-- 18 API surface checks (contract validation, JSON structure, listing consistency)
-- 13 view consistency checks (v_master, v_api_category_overview, materialized views)
-- 25 data quality checks (completeness, constraints, domains)
-- 18 referential integrity checks (FK validation, domain constraints)
-- 20 data consistency checks (cross-table relationships, formula verification)
-- 16 nutrition range checks (physiological bounds, cross-field validation)
-- 15 allergen integrity checks (FK validation, duplicate detection, coverage, schema constraint)
-- 16 serving & source validation checks (basis rules, source completeness)
-- 14 ingredient quality checks (naming, frequency, concern tier distribution)
-- 12 naming convention checks (product names, brands, slugs)
-- 10 confidence scoring checks (range, distribution, components, bands)
-- 22 security posture checks (RLS, grants, SECURITY DEFINER, user_preferences isolation, resolve_effective_country)
-- 33 API contract checks (key sets, api_version, SECURITY DEFINER, EAN lookup, preferences, country-echo contract)
-- 23 scale guardrail checks (index presence, query plan validation)
-- 11 country isolation checks (no mixed-country results, auto-country resolution)
-- 6 diet filtering checks (vegan/vegetarian exclusion, strict mode)
-- 6 allergen filtering checks (contains/traces exclusion, may-contain toggle)
-- 6 barcode lookup checks (EAN resolution, scan metadata, error handling)
-- 8 auth & onboarding checks (user_preferences, RLS, session flow)
-- 7 confidence reporting checks (band thresholds, distribution)
-- 14 health profile checks (conditions, nutrient thresholds, RLS)
-- 12 lists & comparison checks (CRUD, sharing, reorder)
-- 12 scanner & submission checks (scan history, product submissions)
-- 15 index & temporal integrity checks (index presence, created_at)
-- 5 attribute contradiction checks (flag vs nutrition consistency)
-- 7 monitoring & health checks (MV staleness, drift detection)
-- 15 scoring determinism checks (idempotency, reproducibility)
-- 10 multi-country consistency checks (PL/DE isolation, category parity)
-- 6 performance regression checks (query plan validation, informational)
-- 1 EAN checksum validation (all barcodes verified)
-- 8 source coverage reports (informational, non-blocking)
-- 23 negative tests (constraint violation detection)
+```
+┌─────────────────┐     ┌──────────────────┐     ┌─────────────────────────┐
+│  Open Food Facts │────▶│  Python Pipeline │────▶│  PostgreSQL (Supabase)  │
+│  API v2          │     │  sql_generator   │     │  182 migrations         │
+│  (category tags, │     │  validator       │     │  25 pipeline folders    │
+│   countries=PL)  │     │  off_client      │     │  products + nutrition   │
+└─────────────────┘     └──────────────────┘     │  + ingredients + scores │
+                                                  └───────────┬─────────────┘
+                                                              │
+                                                  ┌───────────▼─────────────┐
+                                                  │  API Layer              │
+                                                  │  30+ RPC functions      │
+                                                  │  RLS + SECURITY DEFINER │
+                                                  │  pg_trgm search         │
+                                                  └───────────┬─────────────┘
+                                                              │
+                                                  ┌───────────▼─────────────┐
+                                                  │  Next.js 15 Frontend    │
+                                                  │  App Router + SSR       │
+                                                  │  TanStack Query v5      │
+                                                  │  Supabase Auth          │
+                                                  └─────────────────────────┘
+```
 
-**All tests passing**: ✅ 460/460 + 23/23 negative
-
-**EAN Coverage**: 997/1,025 active products (97.3%) have valid EAN-8/EAN-13 barcodes
+**Data flow:** OFF API → Python pipeline generates idempotent SQL → PostgreSQL stores products, nutrition, ingredients, allergens → Scoring function `compute_unhealthiness_v32()` computes scores → API functions expose structured JSONB → Next.js frontend renders.
 
 ---
 
-## 🏗️ Project Structure
+<!-- ═══════════════════════════ 8. SCORING SUMMARY ═══════════════════════ -->
+
+## 📈 Scoring Engine (v3.2)
 
 ```
-poland-food-db/
-├── db/
-│   ├── pipelines/           # 21 category folders (20 PL + 1 DE)
-│   │   ├── alcohol/         # 30 alcohol products (3 SQL files)
-│   │   ├── baby/            # 9 baby products (3 SQL files)
-│   │   ├── bread/           # 60 bread products (3 SQL files)
-│   │   ├── breakfast-grain-based/ # 94 breakfast products (3 SQL files)
-│   │   ├── canned-goods/    # 49 canned goods products (4 SQL files)
-│   │   ├── cereals/         # 42 cereal products (3 SQL files)
-│   │   ├── chips-de/        # Germany micro-pilot (51 products)
-│   │   ├── chips-pl/        # Poland chips (50 products)
-│   │   ├── condiments/      # 55 condiment products (4 SQL files)
-│   │   ├── dairy/           # 50 dairy products (4 SQL files)
-│   │   ├── drinks/          # 61 beverage products (3 SQL files)
-│   │   ├── frozen-prepared/ # 50 frozen & prepared products (4 SQL files)
-│   │   ├── instant-frozen/  # 52 instant & frozen products (4 SQL files)
-│   │   ├── meat/            # 49 meat & deli products (4 SQL files)
-│   │   ├── nuts-seeds-legumes/ # 44 nuts, seeds & legumes products (4 SQL files)
-│   │   ├── plant-based-alternatives/ # 48 plant-based products (3 SQL files)
-│   │   ├── sauces/          # 98 sauce products (3 SQL files)
-│   │   ├── seafood-fish/    # 51 seafood & fish products (4 SQL files)
-│   │   ├── snacks/          # 56 snack products (3 SQL files)
-│   │   ├── sweets/          # 50 sweets & chocolate products (4 SQL files)
-│   │   └── zabka/           # 27 convenience store products (3 SQL files)
-│   ├── qa/                  # 45 quality assurance files (460 checks)
-│   │   ├── QA__allergen_filtering.sql
-│   │   ├── QA__allergen_integrity.sql
-│   │   ├── QA__api_contract.sql
-│   │   ├── QA__api_surfaces.sql
-│   │   ├── QA__attribute_contradiction.sql
-│   │   ├── QA__auth_onboarding.sql
-│   │   ├── QA__barcode_lookup.sql
-│   │   ├── QA__confidence_reporting.sql
-│   │   ├── QA__confidence_scoring.sql
-│   │   ├── QA__country_isolation.sql
-│   │   ├── QA__data_consistency.sql
-│   │   ├── QA__data_provenance.sql
-│   │   ├── QA__data_quality.sql
-│   │   ├── QA__diet_filtering.sql
-│   │   ├── QA__explain_analysis.sql
-│   │   ├── QA__function_security_audit.sql
-│   │   ├── QA__gdpr_compliance.sql
-│   │   ├── QA__governance_drift.sql
-│   │   ├── QA__health_profiles.sql
-│   │   ├── QA__index_temporal.sql
-│   │   ├── QA__index_verification.sql
-│   │   ├── QA__ingredient_quality.sql
-│   │   ├── QA__lists_comparisons.sql
-│   │   ├── QA__monitoring.sql
-│   │   ├── QA__multi_country_consistency.sql
-│   │   ├── QA__mv_refresh_cost.sql
-│   │   ├── QA__naming_conventions.sql
-│   │   ├── QA__null_checks.sql
-│   │   ├── QA__nutrition_ranges.sql
-│   │   ├── QA__performance_regression.sql
-│   │   ├── QA__push_notifications.sql
-│   │   ├── QA__referential_integrity.sql
-│   │   ├── QA__rls_audit.sql
-│   │   ├── QA__scale_guardrails.sql
-│   │   ├── QA__scanner_submissions.sql
-│   │   ├── QA__scoring_determinism.sql
-│   │   ├── QA__scoring_engine.sql
-│   │   ├── QA__scoring_formula_tests.sql
-│   │   ├── QA__search_architecture.sql
-│   │   ├── QA__security_posture.sql
-│   │   ├── QA__serving_source_validation.sql
-│   │   ├── QA__slow_queries.sql
-│   │   ├── QA__source_coverage.sql
-│   │   ├── QA__view_consistency.sql
-│   │   └── TEST__negative_checks.sql
-│   ├── ci_post_pipeline.sql
-│   └── views/
-│       └── VIEW__master_product_view.sql
-├── supabase/
-│   ├── config.toml
-│   ├── seed.sql
-│   ├── migrations/          # 137 append-only schema migrations
-│   ├── seed/                # Reference data seeds
-│   ├── sanity/              # Sanity check SQL
-│   └── tests/               # pgTAP tests (13 files)
-├── docs/                    # 49 project documents (see docs/INDEX.md)
-│   ├── ACCESS_AUDIT.md
-│   ├── ALERT_POLICY.md
-│   ├── API_CONTRACTS.md
-│   ├── API_CONVENTIONS.md
-│   ├── API_VERSIONING.md
-│   ├── api-registry.yaml
-│   ├── BACKFILL_STANDARD.md
-│   ├── CI_ARCHITECTURE_PROPOSAL.md
-│   ├── CONTRACT_TESTING.md
-│   ├── COUNTRY_EXPANSION_GUIDE.md
-│   ├── DATA_INTEGRITY_AUDITS.md
-│   ├── DATA_PROVENANCE.md
-│   ├── DATA_SOURCES.md
-│   ├── DISASTER_DRILL_REPORT.md
-│   ├── DOCUMENTATION_GOVERNANCE.md
-│   ├── DOMAIN_BOUNDARIES.md
-│   ├── DRIFT_DETECTION.md
-│   ├── EAN_VALIDATION_STATUS.md
-│   ├── ENVIRONMENT_STRATEGY.md
-│   ├── FEATURE_FLAGS.md
-│   ├── FEATURE_SUNSETTING.md
-│   ├── FRONTEND_API_MAP.md
-│   ├── GOVERNANCE_BLUEPRINT.md
-│   ├── INCIDENT_RESPONSE.md
-│   ├── INDEX.md
-│   ├── LABELS.md
-│   ├── LOG_SCHEMA.md
-│   ├── METRICS.md
-│   ├── MIGRATION_CONVENTIONS.md
-│   ├── MONITORING.md
-│   ├── OBSERVABILITY.md
-│   ├── ON_CALL_POLICY.md
-│   ├── PERFORMANCE_GUARDRAILS.md
-│   ├── PERFORMANCE_REPORT.md
-│   ├── PRIVACY_CHECKLIST.md
-│   ├── PRODUCTION_DATA.md
-│   ├── RATE_LIMITING.md
-│   ├── REPO_GOVERNANCE.md
-│   ├── RESEARCH_WORKFLOW.md
-│   ├── SCORING_ENGINE.md
-│   ├── SCORING_METHODOLOGY.md
-│   ├── SEARCH_ARCHITECTURE.md
-│   ├── SECURITY_AUDIT.md
-│   ├── SLO.md
-│   ├── SONAR.md
-│   ├── STAGING_SETUP.md
-│   ├── UX_IMPACT_METRICS.md
-│   ├── UX_UI_DESIGN.md
-│   └── VIEWING_AND_TESTING.md
-├── pipeline/                # Python OFF API → SQL generator
-│   ├── run.py               # CLI: --category, --max-products, --dry-run
-│   ├── off_client.py        # OFF API v2 client with retry logic
-│   ├── sql_generator.py     # Generates 4-5 SQL files per category
-│   ├── validator.py         # Data validation before SQL generation
-│   ├── categories.py        # 21 category definitions + OFF tag mappings
-│   └── image_importer.py    # Product image import utilities
-├── scripts/                 # Maintenance & utility scripts
-├── frontend/                # Next.js 15 App Router
-├── .github/workflows/       # 15 CI/CD workflow files
-├── RUN_LOCAL.ps1            # Pipeline runner (idempotent)
-├── RUN_QA.ps1               # QA test runner (460 checks)
-├── RUN_NEGATIVE_TESTS.ps1   # Negative validation (29 tests)
-├── RUN_REMOTE.ps1           # Remote deployment (with confirmation)
-├── RUN_SEED.ps1             # Seed data runner
-├── RUN_SANITY.ps1           # Sanity checks (16 checks)
-├── validate_eans.py         # EAN-8/EAN-13 checksum validator
-├── check_pipeline_structure.py # Pipeline structure validator
-├── enrich_ingredients.py    # OFF → ingredient/allergen SQL generator
-├── copilot-instructions.md  # AI agent context & project rules
-├── CHANGELOG.md             # Structured changelog
-├── DEPLOYMENT.md            # Deployment procedures & rollback playbook
-├── SECURITY.md              # Security policy
-└── sonar-project.properties # SonarCloud configuration
-```
-
----
-
-## 🧪 Testing Philosophy
-
-**Principle:** No data enters the database without automated verification. No scoring change ships without regression tests proving existing products are unaffected.
-
-Every change is validated against **460 automated checks** across 33 QA suites + 23 negative validation tests:
-
-### Data Integrity (29 checks)
-- No missing required fields (product_name, brand, country, category)
-- No orphaned foreign keys (nutrition)
-- No duplicate products
-- All active products have nutrition rows and scoring data
-- Nutrition sanity (no negative values, sat_fat ≤ total_fat, sugars ≤ carbs, calories ≤ 900)
-- Score fields not null for active products
-- View consistency (v_master row count matches products)
-- Source provenance (every product has source_type, no orphaned data)
-
-### Scoring Formula (27 checks)
-- Scores in valid range [1, 100]
-- Clean products score ≤ 20
-- Maximum unhealthy products score high
-- Identical nutrition → identical scores
-- Flag logic (salt ≥1.5g, sugar ≥5g, sat fat ≥5g)
-- High additive load flag consistency
-- NOVA classification valid (1–4)
-- Processing risk alignment with NOVA
-- Scoring version = v3.2
-- Nutri-Score label domain (A–E or UNKNOWN)
-- Confidence domain (verified, estimated, low)
-- **Regression**: Top Chips Faliste = 51±2 (palm oil)
-- **Regression**: Naleśniki = 17±2 (healthiest Żabka)
-- **Regression**: Melvit Płatki Owsiane = 11±2 (healthiest cereal)
-- **Regression**: Coca-Cola Zero = 8±2 (lowest-scoring drink)
-- **Regression**: Piątnica Skyr Naturalny = 9±2 (healthiest dairy)
-- **Regression**: Mestemacher Pumpernikiel = 17±2 (traditional rye)
-- **Regression**: Tarczyński Kabanosy Klasyczne = 55±2 (high-fat cured meat)
-- **Regression**: Knorr Nudle Pomidorowe Pikantne = 21±2 (instant noodle, palm oil)
-
-### Source Coverage (8 informational reports)
-- Products without source metadata
-- Single-source products needing cross-validation
-- High-impact products (score >40, single-source)
-- EAN coverage by category
-- Confidence level distribution
-- Ingredient data coverage
-
-### API Surface Validation (18 checks)
-- Category overview row count matches reference table
-- Product count sums match v_master
-- All products return valid API JSON
-- Required JSON keys present in product detail
-- Score explanation covers all scored products
-- Search and listing return valid structures
-
-### Confidence Scoring (10 checks)
-- Confidence scores in valid range (0-100)
-- Band assignment matches score thresholds (high ≥80, medium 50-79, low <50)
-- All 6 components sum to total score
-- No products missing confidence data
-- Distribution sanity (no impossible band values; monitor shifts after data resets)
-- Component weights match formula specification
-
-### Additional Suites
-- **Naming Conventions** (12 checks): Product name format, brand consistency, slug validation
-- **Nutrition Ranges** (16 checks): Physiological bounds, cross-field validation
-- **Data Consistency** (20 checks): Cross-table relationships, formula verification
-- **Allergen Integrity** (15 checks): FK validation, duplicate detection, valid values
-- **Serving & Source Validation** (16 checks): Basis rules, source completeness
-- **Ingredient Quality** (14 checks): Naming, frequency, concern tier distribution
-- **Security Posture** (22 checks): RLS, grants, SECURITY DEFINER, user_preferences isolation
-- **API Contract** (33 checks): Key sets, api_version, EAN lookup, preferences endpoints
-- **Scale Guardrails** (23 checks): Index presence, query plan validation
-- **Country Isolation** (11 checks): No mixed-country results across all API surfaces
-- **Diet Filtering** (6 checks): Vegan/vegetarian exclusion, strict mode
-- **Allergen Filtering** (6 checks): Contains/traces exclusion, may-contain toggle
-- **Barcode Lookup** (6 checks): EAN resolution, scan metadata, error handling
-- **Auth & Onboarding** (8 checks): user_preferences, session flow, RLS
-- **Confidence Reporting** (7 checks): Band thresholds, distribution
-- **Health Profiles** (14 checks): Conditions, nutrient thresholds, RLS
-- **Lists & Comparisons** (12 checks): CRUD, sharing, reorder
-- **Scanner & Submissions** (12 checks): Scan history, product submissions
-- **Index & Temporal** (15 checks): Index presence, created_at
-- **Attribute Contradictions** (5 checks): Flag vs nutrition consistency
-- **Monitoring** (7 checks): MV staleness, drift detection
-- **Scoring Determinism** (15 checks): Idempotency, reproducibility
-- **Multi-Country Consistency** (10 checks): PL/DE isolation, category parity
-- **Performance Regression** (6 checks): Query plan validation (non-blocking)
-
-### Negative Validation (29 tests)
-Constraint violation tests that verify the database correctly rejects invalid data (bad EANs, out-of-range scores, invalid domains, FK violations).
-
-**Test files**: `db/qa/QA__*.sql` + `db/qa/TEST__negative_checks.sql` — Run via `.\RUN_QA.ps1` and `.\RUN_NEGATIVE_TESTS.ps1`
-
-**CI**: All 460 checks run on every push to `main` via GitHub Actions. Confidence coverage threshold enforced (max 5% low-confidence products).
-
-Run tests after **every** schema change or data update.
-
-### Database Constraints
-
-26 CHECK constraints enforce domain rules at the database level, plus 4 FK-backed reference tables:
-
-**Reference Tables** (FK constraints):
-
-| FK Constraint                | Table → Reference Table           | Purpose                             |
-| ---------------------------- | --------------------------------- | ----------------------------------- |
-| `fk_products_country`        | products → country_ref            | ISO 3166-1 country validation       |
-| `fk_products_category`       | products → category_ref           | Category master list (20 active)    |
-| `fk_products_nutri_score`    | products → nutri_score_ref        | Nutri-Score label definitions (A–E) |
-| `fk_ingredient_concern_tier` | ingredient_ref → concern_tier_ref | EFSA concern tiers (0–3)            |
-
-**CHECK Constraints** (26):
-
-| Table           | Constraint                         | Rule                                                              |
-| --------------- | ---------------------------------- | ----------------------------------------------------------------- |
-| products        | `chk_products_prep_method`         | Valid prep method or null                                         |
-| products        | `chk_products_controversies`       | controversies IN ('none','minor','moderate','serious','palm oil') |
-| products        | `chk_products_unhealthiness_range` | 0–100                                                             |
-| products        | `chk_products_nutri_label`         | A–E, UNKNOWN, or NOT-APPLICABLE                                   |
-| products        | `chk_products_confidence`          | verified / estimated / low                                        |
-| products        | `chk_products_nova`                | 1–4                                                               |
-| products        | `chk_products_*_flag`              | Y / N (4 flags)                                                   |
-| products        | `chk_products_completeness`        | 0–100                                                             |
-| nutrition_facts | `chk_nf_non_negative` (7 cols)     | ≥ 0                                                               |
-| nutrition_facts | `chk_nf_sat_fat_le_total`          | saturated_fat ≤ total_fat                                         |
-| nutrition_facts | `chk_nf_sugars_le_carbs`           | sugars ≤ carbs                                                    |
-
----
-
-## 📈 Scoring Methodology
-
-### v3.2 Formula (9 factors)
-
-Implemented as a reusable PostgreSQL function `compute_unhealthiness_v32()` — all category pipelines call this single function.
-
-```
-unhealthiness_score =
+unhealthiness_score (1–100) =
   sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +
   trans_fat(0.11) + additives(0.07) + prep_method(0.08) +
   controversies(0.08) + ingredient_concern(0.05)
 ```
 
-**Score Bands**:
-- **1–20**: Low risk
-- **21–40**: Moderate risk
-- **41–60**: Elevated risk
-- **61–80**: High risk
-- **81–100**: Very high risk
+<table>
+  <tr>
+    <td align="center" width="20%"><strong>🟢 1–20</strong><br />Low risk</td>
+    <td align="center" width="20%"><strong>🟡 21–40</strong><br />Moderate</td>
+    <td align="center" width="20%"><strong>🟠 41–60</strong><br />Elevated</td>
+    <td align="center" width="20%"><strong>🔴 61–80</strong><br />High risk</td>
+    <td align="center" width="20%"><strong>⬛ 81–100</strong><br />Very high</td>
+  </tr>
+</table>
 
-**Ceilings** (per 100g): sat fat 10g, sugars 27g, salt 3g, trans fat 2g, calories 600 kcal, additives 10
+**Ceilings** (per 100 g): sat fat 10 g · sugars 27 g · salt 3 g · trans fat 2 g · calories 600 kcal · additives 10
 
-Full documentation: [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)
+Every score is fully explainable via `api_score_explanation()` — returns the 9 factors with raw values, weights, and category context (rank, average, percentile).
 
----
-
-## 🔍 Data Quality & Provenance
-
-### Confidence Levels
-
-Every product receives an automated **data confidence** score (0-100) measuring how complete and verified the underlying data is. This is NOT a quality or healthiness score — it tells you how much to trust the displayed numbers.
-
-| Confidence | Score | Criteria                              | Meaning                          |
-| ---------- | ----- | ------------------------------------- | -------------------------------- |
-| **High**   | ≥80   | Comprehensive nutrition + ingredients | Data is reliable for scoring     |
-| **Medium** | 50-79 | Some gaps (allergens, serving data)   | Score may shift as data improves |
-| **Low**    | <50   | Major data gaps                       | Use with caution                 |
-
-**Current distribution**: 858 high · 139 medium · 28 low
-
-The 6 components of confidence: nutrition data (0-30), ingredient data (0-25), source quality (0-20), EAN coverage (0-10), allergen info (0-10), serving data (0-5). Computed by `compute_data_confidence()`.
-
-### EAN Barcode Tracking
-
-Products include EAN-8/EAN-13 barcodes (where available) for cross-source product matching:
-
-**Coverage**: 997/1,025 active products (97.3%)
-
-EAN codes enable validation against:
-- Manufacturer product pages
-- Government nutrition databases (IŻŻ/NCEZ)
-- Retailer catalogs (Biedronka, Lidl, Żabka)
-- Physical product packaging
-
-### Source Provenance
-
-All 1,025 active products are sourced from the **Open Food Facts API** (`off_api`). Each product has `source_type`, `source_url`, and `source_ean` columns on the `products` table, providing full provenance tracking.
-
-**Research workflow**: See [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) for step-by-step data collection process.
+📄 [Full methodology →](docs/SCORING_METHODOLOGY.md)
 
 ---
 
-## 🔗 Useful Links
+<!-- ═══════════════════════════ 9. STATS DASHBOARD ═══════════════════════ -->
 
-| Resource                          | URL / Command                                               |
-| --------------------------------- | ----------------------------------------------------------- |
-| **Supabase Studio** (Database UI) | http://127.0.0.1:54323                                      |
-| **Master View** (all data)        | `SELECT * FROM v_master ORDER BY unhealthiness_score DESC;` |
-| **Top 10 unhealthiest**           | See [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)   |
-| **Scoring reference**             | [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md)       |
-| **All queries & tests**           | [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md)       |
+## 📊 By the Numbers
+
+<table>
+  <tr>
+    <td align="center" width="16%"><strong>1,281</strong><br />Active Products</td>
+    <td align="center" width="16%"><strong>25</strong><br />Categories</td>
+    <td align="center" width="16%"><strong>PL + DE</strong><br />Countries</td>
+    <td align="center" width="16%"><strong>2,995</strong><br />Ingredients</td>
+    <td align="center" width="16%"><strong>99.8%</strong><br />EAN Coverage</td>
+    <td align="center" width="16%"><strong>182</strong><br />Migrations</td>
+  </tr>
+</table>
+
+<table>
+  <tr>
+    <td align="center" width="16%"><strong>733</strong><br />QA Checks</td>
+    <td align="center" width="16%"><strong>48</strong><br />Test Suites</td>
+    <td align="center" width="16%"><strong>23</strong><br />Negative Tests</td>
+    <td align="center" width="16%"><strong>≥88%</strong><br />Line Coverage</td>
+    <td align="center" width="16%"><strong>30+</strong><br />API Functions</td>
+    <td align="center" width="16%"><strong>v3.2</strong><br />Scoring Engine</td>
+  </tr>
+</table>
+
+---
+
+<!-- ═══════════════════════════ 10. TECH STACK ═══════════════════════════ -->
+
+## 🛠️ Tech Stack
+
+<p align="center">
+  <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL" />
+  <img src="https://img.shields.io/badge/Supabase-Database%20%2B%20Auth-3FCF8E?style=for-the-badge&logo=supabase&logoColor=white" alt="Supabase" />
+  <img src="https://img.shields.io/badge/Next.js-15-000000?style=for-the-badge&logo=next.js&logoColor=white" alt="Next.js" />
+  <img src="https://img.shields.io/badge/TypeScript-Strict-3178c6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Tailwind%20CSS-4-06B6D4?style=for-the-badge&logo=tailwindcss&logoColor=white" alt="Tailwind CSS" />
+  <img src="https://img.shields.io/badge/TanStack%20Query-v5-FF4154?style=for-the-badge&logo=react-query&logoColor=white" alt="TanStack Query" />
+  <img src="https://img.shields.io/badge/Python-Pipeline-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
+  <img src="https://img.shields.io/badge/Playwright-E2E-2EAD33?style=for-the-badge&logo=playwright&logoColor=white" alt="Playwright" />
+  <img src="https://img.shields.io/badge/Vitest-Unit%20Tests-6E9F18?style=for-the-badge&logo=vitest&logoColor=white" alt="Vitest" />
+  <img src="https://img.shields.io/badge/GitHub%20Actions-CI%2FCD-2088FF?style=for-the-badge&logo=github-actions&logoColor=white" alt="GitHub Actions" />
+  <img src="https://img.shields.io/badge/SonarCloud-Quality-F3702A?style=for-the-badge&logo=sonarcloud&logoColor=white" alt="SonarCloud" />
+  <img src="https://img.shields.io/badge/Sentry-Monitoring-362D59?style=for-the-badge&logo=sentry&logoColor=white" alt="Sentry" />
+</p>
 
 ---
 
-## 🚀 Development Workflow
+<!-- ═══════════════════════════ 11. PROJECT STRUCTURE ════════════════════ -->
 
-1. **Add products** → Edit `db/pipelines/{category}/PIPELINE__{category}__01_insert_products.sql`
-2. **Add nutrition** → Edit `db/pipelines/{category}/PIPELINE__{category}__03_add_nutrition.sql`
-3. **Run pipelines** → `.\RUN_LOCAL.ps1 -Category {category} -RunQA`
-4. **Verify** → Open Studio UI → Query `v_master`
-5. **Test** → `.\RUN_QA.ps1` (should be 460/460 pass)
-6. **Commit** → All pipelines are idempotent & version-controlled
+## 📁 Project Structure
+
+<details>
+<summary><strong>Click to expand full directory tree</strong></summary>
+
+```
+poland-food-db/
+├── pipeline/                        # Python OFF API → SQL generator
+│   ├── run.py                       # CLI: --category, --max-products, --dry-run, --country
+│   ├── off_client.py                # OFF API v2 client with retry logic
+│   ├── sql_generator.py             # Generates 4–5 SQL files per category
+│   ├── validator.py                 # Data validation before SQL generation
+│   ├── categories.py                # 25 category definitions + OFF tag mappings
+│   └── image_importer.py            # Product image import utility
+│
+├── db/
+│   ├── pipelines/                   # 25 category folders (20 PL + 5 DE)
+│   │   ├── chips-pl/                # Reference PL implementation
+│   │   ├── chips-de/                # Germany micro-pilot (51 products)
+│   │   ├── bread-de/                # DE Bread
+│   │   ├── dairy-de/                # DE Dairy
+│   │   ├── drinks-de/               # DE Drinks
+│   │   ├── sweets-de/               # DE Sweets
+│   │   └── ... (19 more PL)         # Variable product counts per category
+│   ├── qa/                          # 48 test suites (733 checks)
+│   └── views/                       # Reference view definitions
+│
+├── supabase/
+│   ├── migrations/                  # 182 append-only schema migrations
+│   ├── seed/                        # Reference data seeds
+│   ├── tests/                       # pgTAP integration tests
+│   └── functions/                   # Edge Functions (API gateway, push notifications)
+│
+├── frontend/                        # Next.js 15 App Router
+│   ├── src/
+│   │   ├── app/                     # Pages (App Router)
+│   │   ├── components/              # React components
+│   │   ├── hooks/                   # TanStack Query hooks
+│   │   ├── stores/                  # Zustand stores
+│   │   └── lib/                     # API clients, types, utilities
+│   ├── e2e/                         # Playwright E2E tests
+│   └── messages/                    # i18n dictionaries (en, pl)
+│
+├── docs/                            # 45+ project documents
+│   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm specification
+│   ├── API_CONTRACTS.md             # API surface contracts
+│   ├── ARCHITECTURE.md              # System architecture overview
+│   ├── decisions/                   # Architecture Decision Records (MADR 3.0)
+│   └── assets/                      # Brand assets (logo, banners)
+│
+├── .github/workflows/               # 18 CI/CD workflows
+├── scripts/                         # Utility & governance scripts
+├── monitoring/                      # Alert definitions
+│
+├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
+├── RUN_QA.ps1                       # QA test runner (733 checks)
+├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 tests)
+├── RUN_SANITY.ps1                   # Sanity checks
+├── CHANGELOG.md                     # Structured changelog
+├── DEPLOYMENT.md                    # Deployment procedures & rollback
+└── SECURITY.md                      # Security policy
+```
+
+</details>
 
 ---
 
-## 📝 Ethical Positioning
+<!-- ═══════════════════════════ 12. TESTING ══════════════════════════════ -->
 
-- **Education over judgment** — Scores inform, they don't prescribe. "Lower concern" not "healthy."
-- **Transparency over gamification** — Every number links to its source data and computation method.
-- **Multi-axis over single-number** — No single score captures nutritional reality. We show 4 independent axes.
-- **Confidence over certainty** — We tell you how reliable each score is. Incomplete data gets flagged, not hidden.
-- **Category context over absolutes** — A score of 25 means different things in Candy vs. Water. We always show context.
+## 🧪 Testing
 
-## 📝 Notes
+Every change is validated against **733 automated checks** across 48 QA suites plus 23 negative validation tests. No data enters the database without verification.
 
-- **All data is local** — nothing is uploaded to remote Supabase (yet)
-- **Pipelines are idempotent** — safe to run repeatedly
-- **Data quality tracking** — All products have confidence levels (`estimated`, `verified`, or `low`)
-- **EAN barcodes** — 997/1,025 active products (97.3%) have validated EAN-8/EAN-13 codes for cross-source matching
-- **Primary source**: Open Food Facts — all products pending cross-validation
-- **Scoring version**: v3.2 (2026-02-10)
-- **1,025 active products** across 20 categories (variable size), 38 deprecated products excluded
+<table>
+  <tr>
+    <th>Layer</th>
+    <th>Tool</th>
+    <th>Checks</th>
+    <th>Location</th>
+  </tr>
+  <tr>
+    <td>Database QA</td>
+    <td>Raw SQL (zero rows = pass)</td>
+    <td>733</td>
+    <td><code>db/qa/QA__*.sql</code></td>
+  </tr>
+  <tr>
+    <td>Negative Tests</td>
+    <td>SQL constraint validation</td>
+    <td>23</td>
+    <td><code>db/qa/TEST__*.sql</code></td>
+  </tr>
+  <tr>
+    <td>Unit Tests</td>
+    <td>Vitest (jsdom, v8 coverage)</td>
+    <td>—</td>
+    <td><code>frontend/src/**/*.test.{ts,tsx}</code></td>
+  </tr>
+  <tr>
+    <td>E2E Tests</td>
+    <td>Playwright (Chromium)</td>
+    <td>—</td>
+    <td><code>frontend/e2e/*.spec.ts</code></td>
+  </tr>
+  <tr>
+    <td>pgTAP</td>
+    <td>PostgreSQL TAP testing</td>
+    <td>—</td>
+    <td><code>supabase/tests/*.test.sql</code></td>
+  </tr>
+  <tr>
+    <td>EAN Validation</td>
+    <td>GS1 checksum verifier</td>
+    <td>1</td>
+    <td><code>validate_eans.py</code></td>
+  </tr>
+  <tr>
+    <td>Code Quality</td>
+    <td>SonarCloud</td>
+    <td>—</td>
+    <td>CI (main-gate.yml)</td>
+  </tr>
+</table>
+
+**CI Pipeline** (GitHub Actions, tiered):
+
+1. **PR Gate** — Typecheck → Lint → Build → Unit tests → Playwright smoke E2E
+2. **Main Gate** — Above + Coverage → SonarCloud Quality Gate
+3. **QA Gate** — Schema → Pipelines → 733 QA checks → Sanity → Confidence threshold
+4. **Nightly** — Full Playwright (all projects) + Data Integrity Audit
 
 ---
+
+<!-- ═══════════════════════════ 13. CONTRIBUTING ═════════════════════════ -->
+
+## 🤝 Contributing
+
+Contributions are welcome! Please follow the project conventions:
+
+1. **Branch naming:** `feat/`, `fix/`, `docs/`, `chore/`, `schema/`, `data/`
+2. **Commit messages:** [Conventional Commits](https://www.conventionalcommits.org/) — enforced on PR titles
+3. **Testing:** Every change must include tests. See [copilot-instructions.md](copilot-instructions.md) §8
+4. **Migrations:** Append-only. Never modify existing `supabase/migrations/` files
+5. **QA:** `.\RUN_QA.ps1` must pass (733/733) before merging
+
+---
+
+<!-- ═══════════════════════════ 14. DOCUMENTATION ═══════════════════════ -->
 
 ## 📚 Documentation
 
-### Core
+<details>
+<summary><strong>Core</strong></summary>
 
-- [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md) — Complete v3.2 algorithm specification
-- [API_CONTRACTS.md](docs/API_CONTRACTS.md) — API surface contracts (9 RPC endpoints)
-- [DATA_SOURCES.md](docs/DATA_SOURCES.md) — Multi-source data hierarchy & validation workflow
-- [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) — Data collection lifecycle (manual + automated OFF pipeline)
-- [UX_UI_DESIGN.md](docs/UX_UI_DESIGN.md) — Production-ready UX spec (score disambiguation, API mapping)
-- [FRONTEND_API_MAP.md](docs/FRONTEND_API_MAP.md) — Frontend ↔ API mapping reference
+- [SCORING_METHODOLOGY.md](docs/SCORING_METHODOLOGY.md) — v3.2 algorithm (9 factors, ceilings, bands)
+- [API_CONTRACTS.md](docs/API_CONTRACTS.md) — API surface contracts and response shapes
+- [API_CONVENTIONS.md](docs/API_CONVENTIONS.md) — RPC naming, breaking changes, security standards
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md) — System architecture overview
+- [DATA_SOURCES.md](docs/DATA_SOURCES.md) — Multi-source data hierarchy & validation
+- [RESEARCH_WORKFLOW.md](docs/RESEARCH_WORKFLOW.md) — Data collection lifecycle
+- [FRONTEND_API_MAP.md](docs/FRONTEND_API_MAP.md) — Frontend ↔ API mapping
+- [SCORING_ENGINE.md](docs/SCORING_ENGINE.md) — Scoring engine architecture & versioning
 
-### Operations
+</details>
 
-- [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — How to view data, run tests, query the DB
-- [PRODUCTION_DATA.md](docs/PRODUCTION_DATA.md) — Production data infrastructure audit
-- [STAGING_SETUP.md](docs/STAGING_SETUP.md) — Step-by-step staging environment setup
-- [ENVIRONMENT_STRATEGY.md](docs/ENVIRONMENT_STRATEGY.md) — Local / Staging / Production environment strategy
-- [COUNTRY_EXPANSION_GUIDE.md](docs/COUNTRY_EXPANSION_GUIDE.md) — Multi-country rules (PL active, DE micro-pilot)
-- [EAN_VALIDATION_STATUS.md](docs/EAN_VALIDATION_STATUS.md) — EAN coverage by category (97.3%)
+<details>
+<summary><strong>Operations</strong></summary>
 
-### Quality & Security
+- [VIEWING_AND_TESTING.md](docs/VIEWING_AND_TESTING.md) — Queries, Studio UI, test runner
+- [DEPLOYMENT.md](DEPLOYMENT.md) — Deployment procedures & rollback playbook
+- [ENVIRONMENT_STRATEGY.md](docs/ENVIRONMENT_STRATEGY.md) — Local / Staging / Production
+- [COUNTRY_EXPANSION_GUIDE.md](docs/COUNTRY_EXPANSION_GUIDE.md) — Multi-country protocol
+- [MIGRATION_CONVENTIONS.md](docs/MIGRATION_CONVENTIONS.md) — Migration safety & idempotency
+- [BACKFILL_STANDARD.md](docs/BACKFILL_STANDARD.md) — Backfill orchestration
+- [EAN_VALIDATION_STATUS.md](docs/EAN_VALIDATION_STATUS.md) — EAN coverage (99.8%)
 
-- [SECURITY.md](SECURITY.md) — Threat model, access control, RPC-only model, vulnerability tracking
-- [DATA_INTEGRITY_AUDITS.md](docs/DATA_INTEGRITY_AUDITS.md) — Ongoing data integrity audit framework
-- [PERFORMANCE_REPORT.md](docs/PERFORMANCE_REPORT.md) — Performance audit & scale projections to 50K products
+</details>
 
-### CI / DevOps
+<details>
+<summary><strong>Quality & Security</strong></summary>
 
+- [SECURITY.md](SECURITY.md) — Security policy & threat model
+- [SECURITY_AUDIT.md](docs/SECURITY_AUDIT.md) — Full security audit report
+- [DATA_INTEGRITY_AUDITS.md](docs/DATA_INTEGRITY_AUDITS.md) — Data integrity framework
+- [PRIVACY_CHECKLIST.md](docs/PRIVACY_CHECKLIST.md) — GDPR/RODO compliance
+- [PERFORMANCE_REPORT.md](docs/PERFORMANCE_REPORT.md) — Performance audit & projections
+- [SLO.md](docs/SLO.md) — Service Level Objectives
+- [RATE_LIMITING.md](docs/RATE_LIMITING.md) — Rate limiting & abuse prevention
+
+</details>
+
+<details>
+<summary><strong>Governance & CI</strong></summary>
+
+- [GOVERNANCE_BLUEPRINT.md](docs/GOVERNANCE_BLUEPRINT.md) — Execution governance plan
 - [CI_ARCHITECTURE_PROPOSAL.md](docs/CI_ARCHITECTURE_PROPOSAL.md) — CI pipeline design
+- [CONTRACT_TESTING.md](docs/CONTRACT_TESTING.md) — API contract testing strategy
+- [DRIFT_DETECTION.md](docs/DRIFT_DETECTION.md) — 8-check drift detection catalog
+- [INCIDENT_RESPONSE.md](docs/INCIDENT_RESPONSE.md) — Incident playbook
 - [MONITORING.md](docs/MONITORING.md) — Runtime monitoring
 - [OBSERVABILITY.md](docs/OBSERVABILITY.md) — Observability strategy
-- [SONAR.md](docs/SONAR.md) — SonarCloud configuration & quality gates
-- [LABELS.md](docs/LABELS.md) — GitHub label conventions
+- [SONAR.md](docs/SONAR.md) — SonarCloud configuration
 
-### Internal
+</details>
 
-- `copilot-instructions.md` — AI agent context & project rules
+<details>
+<summary><strong>Design & UX</strong></summary>
 
----
+- [UX_UI_DESIGN.md](docs/UX_UI_DESIGN.md) — Production-ready UX spec
+- [UX_IMPACT_METRICS.md](docs/UX_IMPACT_METRICS.md) — UX measurement standard
+- [BRAND_GUIDELINES.md](docs/BRAND_GUIDELINES.md) — Visual identity reference
+- [SEARCH_ARCHITECTURE.md](docs/SEARCH_ARCHITECTURE.md) — pg_trgm + tsvector search
 
-## 📋 API Deprecation Policy
+</details>
 
-All API functions return `api_version` in every response (currently `"1.0"`).
-
-| Change type                        | Version bump | Migration window |
-| ---------------------------------- | ------------ | ---------------- |
-| New keys added to response         | Minor (1.x)  | None — additive  |
-| Key renamed or removed             | Major (x.0)  | 2 pipeline runs  |
-| Response structure change          | Major (x.0)  | 2 pipeline runs  |
-| New optional parameter added       | Minor (1.x)  | None — optional  |
-| Required parameter changed/removed | Major (x.0)  | 2 pipeline runs  |
-
-**Process:**
-1. Bump `api_version` in the affected function
-2. Update `QA__api_contract.sql` expected key arrays (23 checks enforce exact structure)
-3. Document the change in the migration file header
-4. Old version is never served alongside new — no multi-version routing
+📄 Full index: [docs/INDEX.md](docs/INDEX.md)
 
 ---
 
-## 🖥️ Frontend (Next.js)
+<!-- ═══════════════════════════ 15. LICENSE & ACKNOWLEDGMENTS ════════════ -->
 
-The `frontend/` directory contains a Next.js 15 (App Router) web application for browsing and searching products.
+## 📜 License
 
-### Stack
-- **Next.js 15** (App Router, TypeScript, Tailwind CSS)
-- **@supabase/ssr** for auth (replaces deprecated auth-helpers)
-- **TanStack Query v5** for data fetching with defined cache keys and stale times
-- **@zxing/browser + @zxing/library** for barcode scanning (EAN-13, EAN-8, UPC)
-- **sonner** for toast notifications
+This project is licensed under the terms in the [LICENSE](LICENSE) file.
 
-### Setup
-```powershell
-cd frontend
-npm install
-cp .env.local.example .env.local
-# Edit .env.local with your Supabase URL + anon key
-npm run dev
-```
-App starts at http://localhost:3000
+**Data acknowledgments:**
 
-### Architecture Rules
-- **Frontend never passes `p_country`** — always `null`, backend resolves from `user_preferences.country`
-- **Middleware is auth-only** — no onboarding logic (Edge runtime limitation)
-- **Server-side onboarding gate** in `/app/layout.tsx` checks `onboarding_complete` via RPC
-- **All RPCs go through `callRpc<T>()`** for normalized error handling
-- **Session expiry** detected via `isAuthError()` → toast + redirect to `/auth/login?reason=expired`
-
-### Smoke Test Checklist
-1. Sign up → check email → confirm
-2. Log in → redirected to `/onboarding/region`
-3. Select country → Continue → `/onboarding/preferences`
-4. Set diet/allergens (or skip) → redirected to `/app/search`
-5. Search a product → see results with score badges
-6. Click product → see detail tabs (Overview, Nutrition, Alternatives, Scoring)
-7. Navigate to Categories → see category grid with avg scores
-8. Click category → see paginated product listing with sort controls
-9. Navigate to Scan → camera or manual EAN entry → product lookup
-10. Navigate to Settings → change preferences → Save → verify cache invalidation
-11. Sign out → redirected to login
-
-### Page Map
-| Route                     | Description                             |
-| ------------------------- | --------------------------------------- |
-| `/`                       | Public landing page                     |
-| `/auth/login`             | Email/password login                    |
-| `/auth/signup`            | Registration                            |
-| `/auth/callback`          | OAuth code exchange                     |
-| `/onboarding/region`      | Step 1: country selection               |
-| `/onboarding/preferences` | Step 2: diet + allergens (optional)     |
-| `/app/search`             | Debounced product search                |
-| `/app/categories`         | Category overview grid                  |
-| `/app/categories/[slug]`  | Category product listing (paginated)    |
-| `/app/product/[id]`       | Product detail (4 tabs)                 |
-| `/app/scan`               | Barcode scanner (ZXing camera + manual) |
-| `/app/settings`           | Preferences + logout                    |
-| `/contact`                | Contact page                            |
-| `/privacy`                | Privacy policy                          |
-| `/terms`                  | Terms of service                        |
+- [Open Food Facts](https://world.openfoodfacts.org/) — Product data source (ODbL license)
+- [Supabase](https://supabase.com/) — Database platform
+- [EFSA](https://www.efsa.europa.eu/) — Food additive concern tier classifications
 
 ---
 
-**Built with**: Supabase (PostgreSQL), Open Food Facts API, PowerShell automation, Next.js
+<!-- ═══════════════════════════ FOOTER ═══════════════════════════════════ -->
+
+<p align="center">
+  <img src="docs/assets/logo/logomark-64.png" alt="Poland Food DB" width="32" />
+  <br />
+  <em>Built with science and care.</em>
+</p>
