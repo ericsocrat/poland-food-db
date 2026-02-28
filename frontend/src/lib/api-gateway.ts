@@ -7,7 +7,7 @@
 //   const gateway = createApiGateway(supabase);
 //   const result = await gateway.recordScan("5901234123457");
 //
-// Issue: #478 — Phase 1 + Phase 2
+// Issue: #478 — Phase 1 + Phase 2 + Phase 4
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -183,11 +183,100 @@ export async function submitProductViaGateway(
   return result;
 }
 
+// ─── Track Event Types ──────────────────────────────────────────────────────
+
+export interface TrackEventParams {
+  event_name: string;
+  event_data?: Record<string, unknown>;
+  session_id?: string | null;
+  device_type?: "mobile" | "tablet" | "desktop" | null;
+}
+
+/**
+ * Track an analytics event via the gateway (rate limited: 10,000/day).
+ * Falls back to direct RPC if the gateway is unreachable.
+ */
+export async function trackEventViaGateway(
+  supabase: SupabaseClient,
+  params: TrackEventParams,
+): Promise<GatewayResult> {
+  const result = await invokeGateway(supabase, "track-event", params);
+
+  // Graceful degradation: if gateway is unreachable, fall back to direct RPC
+  if (!result.ok && result.error === "gateway_unreachable") {
+    try {
+      const { data, error } = await supabase.rpc("api_track_event", {
+        p_event_name: params.event_name,
+        p_event_data: params.event_data ?? {},
+        p_session_id: params.session_id ?? null,
+        p_device_type: params.device_type ?? null,
+      });
+      if (error) {
+        return {
+          ok: false,
+          error: "rpc_error",
+          message: error.message ?? "Failed to track event",
+        };
+      }
+      return { ok: true, data };
+    } catch {
+      return result;
+    }
+  }
+
+  return result;
+}
+
+// ─── Save Search Types ──────────────────────────────────────────────────────
+
+export interface SaveSearchParams {
+  name: string;
+  query?: string | null;
+  filters?: Record<string, unknown>;
+}
+
+/**
+ * Save a search via the gateway (rate limited: 50/day).
+ * Sanitizes inputs before forwarding.
+ * Falls back to direct RPC if the gateway is unreachable.
+ */
+export async function saveSearchViaGateway(
+  supabase: SupabaseClient,
+  params: SaveSearchParams,
+): Promise<GatewayResult> {
+  const result = await invokeGateway(supabase, "save-search", params);
+
+  // Graceful degradation: if gateway is unreachable, fall back to direct RPC
+  if (!result.ok && result.error === "gateway_unreachable") {
+    try {
+      const { data, error } = await supabase.rpc("api_save_search", {
+        p_name: params.name,
+        p_query: params.query ?? null,
+        p_filters: params.filters ?? {},
+      });
+      if (error) {
+        return {
+          ok: false,
+          error: "rpc_error",
+          message: error.message ?? "Failed to save search",
+        };
+      }
+      return { ok: true, data };
+    } catch {
+      return result;
+    }
+  }
+
+  return result;
+}
+
 // ─── Gateway Factory ────────────────────────────────────────────────────────
 
 export interface ApiGateway {
   recordScan: (ean: string) => Promise<GatewayResult>;
   submitProduct: (params: SubmitProductParams) => Promise<GatewayResult>;
+  trackEvent: (params: TrackEventParams) => Promise<GatewayResult>;
+  saveSearch: (params: SaveSearchParams) => Promise<GatewayResult>;
 }
 
 /**
@@ -209,5 +298,9 @@ export function createApiGateway(supabase: SupabaseClient): ApiGateway {
     recordScan: (ean: string) => recordScanViaGateway(supabase, ean),
     submitProduct: (params: SubmitProductParams) =>
       submitProductViaGateway(supabase, params),
+    trackEvent: (params: TrackEventParams) =>
+      trackEventViaGateway(supabase, params),
+    saveSearch: (params: SaveSearchParams) =>
+      saveSearchViaGateway(supabase, params),
   };
 }

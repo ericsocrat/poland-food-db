@@ -4,6 +4,7 @@
 //
 // Phase 1: record-scan rate limiting (100/day/user)
 // Phase 2: submit-product protection (EAN checksum, sanitization, 10/day)
+// Phase 4: track-event (10K/day) + save-search (50/day) rate limiting
 //
 // Auth: Requires authenticated user JWT (Authorization: Bearer <jwt>)
 // Issue: #478
@@ -109,6 +110,8 @@ function checkRateLimit(
 const RATE_LIMITS: Record<string, RateLimitConfig> = {
   "record-scan": { max_requests: 100, window_seconds: 86400 }, // 100/day
   "submit-product": { max_requests: 10, window_seconds: 86400 }, // 10/day
+  "track-event": { max_requests: 10000, window_seconds: 86400 }, // 10K/day
+  "save-search": { max_requests: 50, window_seconds: 86400 }, // 50/day
 };
 
 // ─── EAN Checksum Validation (GS1 Algorithm) ────────────────────────────────
@@ -343,6 +346,164 @@ async function handleSubmitProduct(
   return { ok: true, data };
 }
 
+// ─── Track Event Handler ────────────────────────────────────────────────────
+
+const VALID_DEVICE_TYPES = ["mobile", "tablet", "desktop"] as const;
+
+async function handleTrackEvent(
+  supabase: ReturnType<typeof createClient>,
+  body: GatewayRequest,
+): Promise<GatewayResponse> {
+  // Validate event_name (required, non-empty string)
+  const eventName = body.event_name;
+  if (!eventName || typeof eventName !== "string" || eventName.trim() === "") {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: "Missing or empty 'event_name' parameter.",
+    };
+  }
+
+  // Validate event_name length
+  const trimmedName = eventName.trim();
+  if (trimmedName.length > 100) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: "Event name exceeds maximum length of 100 characters.",
+    };
+  }
+
+  // Validate event_data (optional, must be object if provided)
+  const eventData = body.event_data ?? {};
+  if (typeof eventData !== "object" || Array.isArray(eventData) || eventData === null) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: "'event_data' must be a JSON object.",
+    };
+  }
+
+  // Validate event_data size (prevent oversized payloads)
+  const dataStr = JSON.stringify(eventData);
+  if (dataStr.length > 10000) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: "'event_data' exceeds maximum size of 10KB.",
+    };
+  }
+
+  // Validate device_type (optional, must be valid enum)
+  const deviceType = body.device_type;
+  if (
+    deviceType !== undefined &&
+    deviceType !== null &&
+    (typeof deviceType !== "string" ||
+      !VALID_DEVICE_TYPES.includes(deviceType as typeof VALID_DEVICE_TYPES[number]))
+  ) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message:
+        "Invalid 'device_type'. Must be one of: mobile, tablet, desktop.",
+    };
+  }
+
+  // Validate session_id (optional, string, max 100 chars)
+  const sessionId = body.session_id;
+  if (sessionId !== undefined && sessionId !== null) {
+    if (typeof sessionId !== "string" || sessionId.length > 100) {
+      return {
+        ok: false,
+        error: "invalid_input",
+        message: "'session_id' must be a string with at most 100 characters.",
+      };
+    }
+  }
+
+  // Forward to RPC
+  const { data, error } = await supabase.rpc("api_track_event", {
+    p_event_name: trimmedName,
+    p_event_data: eventData,
+    p_session_id: (sessionId as string) ?? null,
+    p_device_type: (deviceType as string) ?? null,
+  });
+
+  if (error) {
+    return {
+      ok: false,
+      error: "rpc_error",
+      message: error.message ?? "Failed to track event",
+    };
+  }
+
+  return { ok: true, data };
+}
+
+// ─── Save Search Handler ─────────────────────────────────────────────────────
+
+async function handleSaveSearch(
+  supabase: ReturnType<typeof createClient>,
+  body: GatewayRequest,
+): Promise<GatewayResponse> {
+  // Validate name (required)
+  const name = body.name;
+  if (!name || typeof name !== "string" || name.trim() === "") {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: "Missing or empty 'name' parameter.",
+    };
+  }
+
+  const nameResult = sanitizeField(name, 100);
+  if (!nameResult.valid) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: `Search name ${nameResult.reason}.`,
+    };
+  }
+
+  // Validate query (optional string, max 200 chars)
+  const queryResult = sanitizeField(body.query, 200);
+  if (!queryResult.valid) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: `Search query ${queryResult.reason}.`,
+    };
+  }
+
+  // Validate filters (optional, must be object if provided)
+  const filters = body.filters ?? {};
+  if (typeof filters !== "object" || Array.isArray(filters) || filters === null) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: "'filters' must be a JSON object.",
+    };
+  }
+
+  // Forward to RPC
+  const { data, error } = await supabase.rpc("api_save_search", {
+    p_name: nameResult.value,
+    p_query: queryResult.value,
+    p_filters: filters,
+  });
+
+  if (error) {
+    return {
+      ok: false,
+      error: "rpc_error",
+      message: error.message ?? "Failed to save search",
+    };
+  }
+
+  return { ok: true, data };
+}
+
 // ─── Action Router ──────────────────────────────────────────────────────────
 
 const ACTION_HANDLERS: Record<
@@ -354,6 +515,8 @@ const ACTION_HANDLERS: Record<
 > = {
   "record-scan": handleRecordScan,
   "submit-product": handleSubmitProduct,
+  "track-event": handleTrackEvent,
+  "save-search": handleSaveSearch,
 };
 
 // ─── JWT User ID Extraction ─────────────────────────────────────────────────

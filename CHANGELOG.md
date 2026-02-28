@@ -25,6 +25,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   forbidden character rejection), 10/day rate limiting; frontend
   `submitProductViaGateway()` with graceful degradation fallback; 14 new Vitest
   tests (32 total) (#478)
+- Add telemetry and search gateway protection (Phase 4): `track-event` action
+  (10K/day rate limit, event_name/device_type/event_data validation, payload size
+  cap) + `save-search` action (50/day rate limit, name/query sanitization, filters
+  validation); frontend `trackEventViaGateway()` and `saveSearchViaGateway()` with
+  graceful degradation fallback; 17 new Vitest tests (49 total) (#478)
 
 ### Schema & Migrations
 

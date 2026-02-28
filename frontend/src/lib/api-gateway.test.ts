@@ -2,6 +2,8 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
   recordScanViaGateway,
   submitProductViaGateway,
+  trackEventViaGateway,
+  saveSearchViaGateway,
   createApiGateway,
   isGatewayRateLimited,
   isGatewayAuthError,
@@ -12,6 +14,8 @@ import type {
   GatewayResult,
   GatewayError,
   SubmitProductParams,
+  TrackEventParams,
+  SaveSearchParams,
 } from "@/lib/api-gateway";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -491,5 +495,344 @@ describe("createApiGateway", () => {
       },
     });
     expect(result).toEqual({ ok: true, data: { submission_id: "5" } });
+  });
+
+  it("should forward trackEvent calls to trackEventViaGateway", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { event_id: 42 } },
+      error: null,
+    });
+
+    const gateway = createApiGateway(fakeSupabase);
+    const result = await gateway.trackEvent({ event_name: "page_view" });
+
+    expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
+      body: { action: "track-event", event_name: "page_view" },
+    });
+    expect(result).toEqual({ ok: true, data: { event_id: 42 } });
+  });
+
+  it("should forward saveSearch calls to saveSearchViaGateway", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { search_id: 7 } },
+      error: null,
+    });
+
+    const gateway = createApiGateway(fakeSupabase);
+    const result = await gateway.saveSearch({ name: "My search" });
+
+    expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
+      body: { action: "save-search", name: "My search" },
+    });
+    expect(result).toEqual({ ok: true, data: { search_id: 7 } });
+  });
+});
+
+// ─── trackEventViaGateway ───────────────────────────────────────────────────
+
+describe("trackEventViaGateway", () => {
+  it("should invoke gateway with track-event action", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { event_id: 99 } },
+      error: null,
+    });
+
+    const result = await trackEventViaGateway(fakeSupabase, {
+      event_name: "product_view",
+    });
+
+    expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
+      body: { action: "track-event", event_name: "product_view" },
+    });
+    expect(result).toEqual({ ok: true, data: { event_id: 99 } });
+  });
+
+  it("should pass optional event_data, session_id, device_type", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { event_id: 100 } },
+      error: null,
+    });
+
+    const params: TrackEventParams = {
+      event_name: "scan_complete",
+      event_data: { product_id: 42 },
+      session_id: "sess-123",
+      device_type: "mobile",
+    };
+    const result = await trackEventViaGateway(fakeSupabase, params);
+
+    expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
+      body: {
+        action: "track-event",
+        event_name: "scan_complete",
+        event_data: { product_id: 42 },
+        session_id: "sess-123",
+        device_type: "mobile",
+      },
+    });
+    expect(result).toEqual({ ok: true, data: { event_id: 100 } });
+  });
+
+  it("should return rate limit error when rate limited", async () => {
+    mockInvoke.mockResolvedValue({
+      data: {
+        ok: false,
+        error: "rate_limit_exceeded",
+        message: "Too many events",
+        retry_after: 60,
+      },
+      error: null,
+    });
+
+    const result = await trackEventViaGateway(fakeSupabase, {
+      event_name: "spam",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(isGatewayRateLimited(result)).toBe(true);
+  });
+
+  it("should fall back to direct RPC when gateway is unreachable", async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: "Network error" },
+    });
+    mockRpc.mockResolvedValue({
+      data: { event_id: 101 },
+      error: null,
+    });
+
+    const result = await trackEventViaGateway(fakeSupabase, {
+      event_name: "fallback_event",
+      event_data: { key: "val" },
+      session_id: "s1",
+      device_type: "desktop",
+    });
+
+    expect(mockRpc).toHaveBeenCalledWith("api_track_event", {
+      p_event_name: "fallback_event",
+      p_event_data: { key: "val" },
+      p_session_id: "s1",
+      p_device_type: "desktop",
+    });
+    expect(result).toEqual({ ok: true, data: { event_id: 101 } });
+  });
+
+  it("should use defaults for optional params in fallback", async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: "Down" },
+    });
+    mockRpc.mockResolvedValue({
+      data: { event_id: 102 },
+      error: null,
+    });
+
+    await trackEventViaGateway(fakeSupabase, { event_name: "minimal" });
+
+    expect(mockRpc).toHaveBeenCalledWith("api_track_event", {
+      p_event_name: "minimal",
+      p_event_data: {},
+      p_session_id: null,
+      p_device_type: null,
+    });
+  });
+
+  it("should return rpc_error when fallback RPC fails", async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: "Down" },
+    });
+    mockRpc.mockResolvedValue({
+      data: null,
+      error: { message: "RPC failed" },
+    });
+
+    const result = await trackEventViaGateway(fakeSupabase, {
+      event_name: "fail",
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe("rpc_error");
+    }
+  });
+
+  it("should return gateway error when fallback throws", async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: "Down" },
+    });
+    mockRpc.mockRejectedValue(new Error("Crash"));
+
+    const result = await trackEventViaGateway(fakeSupabase, {
+      event_name: "crash",
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe("gateway_unreachable");
+    }
+  });
+});
+
+// ─── saveSearchViaGateway ───────────────────────────────────────────────────
+
+describe("saveSearchViaGateway", () => {
+  it("should invoke gateway with save-search action", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { search_id: 1 } },
+      error: null,
+    });
+
+    const result = await saveSearchViaGateway(fakeSupabase, {
+      name: "Healthy chips",
+    });
+
+    expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
+      body: { action: "save-search", name: "Healthy chips" },
+    });
+    expect(result).toEqual({ ok: true, data: { search_id: 1 } });
+  });
+
+  it("should pass optional query and filters", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { search_id: 2 } },
+      error: null,
+    });
+
+    const params: SaveSearchParams = {
+      name: "Low sugar dairy",
+      query: "yogurt",
+      filters: { category: "Dairy", max_sugar: 5 },
+    };
+    const result = await saveSearchViaGateway(fakeSupabase, params);
+
+    expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
+      body: {
+        action: "save-search",
+        name: "Low sugar dairy",
+        query: "yogurt",
+        filters: { category: "Dairy", max_sugar: 5 },
+      },
+    });
+    expect(result).toEqual({ ok: true, data: { search_id: 2 } });
+  });
+
+  it("should return rate limit error when rate limited", async () => {
+    mockInvoke.mockResolvedValue({
+      data: {
+        ok: false,
+        error: "rate_limit_exceeded",
+        message: "Too many saves",
+        retry_after: 300,
+      },
+      error: null,
+    });
+
+    const result = await saveSearchViaGateway(fakeSupabase, {
+      name: "Spam",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(isGatewayRateLimited(result)).toBe(true);
+  });
+
+  it("should return validation error for invalid input", async () => {
+    mockInvoke.mockResolvedValue({
+      data: {
+        ok: false,
+        error: "invalid_input",
+        message: "Missing or empty 'name' parameter.",
+      },
+      error: null,
+    });
+
+    const result = await saveSearchViaGateway(fakeSupabase, {
+      name: "",
+    });
+
+    expect(result.ok).toBe(false);
+    expect(isGatewayValidationError(result)).toBe(true);
+  });
+
+  it("should fall back to direct RPC when gateway is unreachable", async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: "Unreachable" },
+    });
+    mockRpc.mockResolvedValue({
+      data: { search_id: 3 },
+      error: null,
+    });
+
+    const result = await saveSearchViaGateway(fakeSupabase, {
+      name: "Fallback search",
+      query: "chips",
+      filters: { category: "Chips" },
+    });
+
+    expect(mockRpc).toHaveBeenCalledWith("api_save_search", {
+      p_name: "Fallback search",
+      p_query: "chips",
+      p_filters: { category: "Chips" },
+    });
+    expect(result).toEqual({ ok: true, data: { search_id: 3 } });
+  });
+
+  it("should use defaults for optional params in fallback", async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: "Down" },
+    });
+    mockRpc.mockResolvedValue({
+      data: { search_id: 4 },
+      error: null,
+    });
+
+    await saveSearchViaGateway(fakeSupabase, { name: "Basic" });
+
+    expect(mockRpc).toHaveBeenCalledWith("api_save_search", {
+      p_name: "Basic",
+      p_query: null,
+      p_filters: {},
+    });
+  });
+
+  it("should return rpc_error when fallback RPC fails", async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: "Down" },
+    });
+    mockRpc.mockResolvedValue({
+      data: null,
+      error: { message: "Save failed" },
+    });
+
+    const result = await saveSearchViaGateway(fakeSupabase, {
+      name: "Broken",
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe("rpc_error");
+    }
+  });
+
+  it("should return gateway error when fallback throws", async () => {
+    mockInvoke.mockResolvedValue({
+      data: null,
+      error: { message: "Down" },
+    });
+    mockRpc.mockRejectedValue(new Error("Crash"));
+
+    const result = await saveSearchViaGateway(fakeSupabase, {
+      name: "Crash",
+    });
+
+    expect(result.ok).toBe(false);
+    if (!result.ok) {
+      expect(result.error).toBe("gateway_unreachable");
+    }
   });
 });
