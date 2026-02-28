@@ -1,28 +1,29 @@
 # Documentation Index
 
-> **Last updated:** 2026-03-01
+> **Last updated:** 2026-03-14
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 49 in `docs/` + 8 in `docs/decisions/` + 5 elsewhere in repo
+> **Total documents:** 49 in `docs/` + 8 in `docs/decisions/` + 11 in `docs/assets/logo/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
 
 ## Quick Navigation
 
-| Domain                                                   | Count | Documents                                                                                                                 |
-| -------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------- |
-| [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal                  |
+| Domain                                                   | Count | Documents                                                                                                                          |
+| -------------------------------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal                           |
 | [Diagrams](#diagrams)                                    | 13    | Architecture, ERDs, pipeline flow, QA overview, CI/CD, confidence, concern tiers, country expansion, scoring infographic + headers |
-| [API](#api)                                              | 6     | Contracts, conventions, versioning, frontend mapping, contract testing, registry                                          |
-| [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                                              |
-| [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                                    |
-| [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                                 |
-| [Observability & Operations](#observability--operations) | 9     | Monitoring, observability, log schema, alerts, on-call policy, SLOs, metrics, incident response, disaster drill           |
-| [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                                         |
-| [Frontend & UX](#frontend--ux)                           | 5     | UX/UI design, UX impact metrics, brand guidelines, design system, frontend README                                          |
-| [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion                 |
-| [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance report, performance guardrails, doc governance, repo governance, this index               |
-| [Architecture Decisions](#architecture-decisions-adrs)   | 8     | MADR template + 7 retroactive ADRs (stack, scoring, country isolation, pipeline, API versioning, migrations, ingredients) |
+| [Brand Assets](#brand-assets)                            | 11    | Logomark SVG variants (full color, dark, mono) + 8 PNG exports (16–512px)                                                         |
+| [API](#api)                                              | 6     | Contracts, conventions, versioning, frontend mapping, contract testing, registry                                                   |
+| [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                                                       |
+| [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                                             |
+| [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                                          |
+| [Observability & Operations](#observability--operations) | 9     | Monitoring, observability, log schema, alerts, on-call policy, SLOs, metrics, incident response, disaster drill                    |
+| [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                                                  |
+| [Frontend & UX](#frontend--ux)                           | 5     | UX/UI design, UX impact metrics, brand guidelines, design system, frontend README                                                  |
+| [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion                          |
+| [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance report, performance guardrails, doc governance, repo governance, this index                        |
+| [Architecture Decisions](#architecture-decisions-adrs)   | 8     | MADR template + 7 retroactive ADRs (stack, scoring, country isolation, pipeline, API versioning, migrations, ingredients)          |
 
 ---
 
@@ -44,40 +45,59 @@
 > **Toolchain:** Mermaid CLI (`@mermaid-js/mermaid-cli`) → SVGO optimization
 > **Source files:** `.mmd` (Mermaid markup) — regenerate SVGs via `npx @mermaid-js/mermaid-cli -i <file>.mmd -o <file>.svg`
 
-| File                                                                        | Purpose                                                               | Owner Issue                                                     | Last Updated |
-| --------------------------------------------------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
-| [architecture-overview.svg](diagrams/architecture-overview.svg)             | Architecture overview — data flow, components, key stats (light mode) | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
-| [architecture-overview-dark.svg](diagrams/architecture-overview-dark.svg)   | Architecture overview — dark mode variant for GitHub dark theme       | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
-| [architecture-overview.mmd](diagrams/architecture-overview.mmd)             | Mermaid source for architecture overview (light mode)                 | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
-| [architecture-overview-dark.mmd](diagrams/architecture-overview-dark.mmd)   | Mermaid source for architecture overview (dark mode)                  | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
-| [erd-full.svg](diagrams/erd-full.svg)                                       | Full ERD — 30+ tables across 5 domains, Crow's foot notation (light)  | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
-| [erd-full-dark.svg](diagrams/erd-full-dark.svg)                             | Full ERD — dark mode variant for GitHub dark theme                    | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
-| [erd-core.svg](diagrams/erd-core.svg)                                       | Core ERD — 7 product-domain tables, simplified view (light)           | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
-| [erd-core-dark.svg](diagrams/erd-core-dark.svg)                             | Core ERD — dark mode variant for GitHub dark theme                    | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
-| [erd-full.mmd](diagrams/erd-full.mmd)                                       | Mermaid source for full ERD (light mode)                              | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
-| [erd-full-dark.mmd](diagrams/erd-full-dark.mmd)                             | Mermaid source for full ERD (dark mode)                               | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
-| [erd-core.mmd](diagrams/erd-core.mmd)                                       | Mermaid source for core ERD (light mode)                              | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
-| [erd-core-dark.mmd](diagrams/erd-core-dark.mmd)                             | Mermaid source for core ERD (dark mode)                               | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
-| [pipeline-flow.svg](diagrams/pipeline-flow.svg)                             | Pipeline flow — OFF API to SQL generation to DB execution             | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [ci-cd-pipeline.svg](diagrams/ci-cd-pipeline.svg)                           | CI/CD pipeline — 19 workflows, gates, triggers, artifact flow         | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [qa-overview.svg](diagrams/qa-overview.svg)                                 | QA overview — 47 suites, 733 checks organized by domain               | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [confidence-model.svg](diagrams/confidence-model.svg)                       | Confidence scoring — 6 components, composite 0-100, band assignment   | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [concern-tiers.svg](diagrams/concern-tiers.svg)                             | EFSA concern tiers — 4-tier additive classification with examples     | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [country-expansion.svg](diagrams/country-expansion.svg)                     | Country expansion — PL primary + DE micro-pilot architecture          | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [pipeline-flow.mmd](diagrams/pipeline-flow.mmd)                             | Mermaid source for pipeline flow                                      | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [ci-cd-pipeline.mmd](diagrams/ci-cd-pipeline.mmd)                           | Mermaid source for CI/CD pipeline                                     | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [qa-overview.mmd](diagrams/qa-overview.mmd)                                 | Mermaid source for QA overview                                        | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [confidence-model.mmd](diagrams/confidence-model.mmd)                       | Mermaid source for confidence model                                   | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [concern-tiers.mmd](diagrams/concern-tiers.mmd)                             | Mermaid source for concern tiers                                      | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [country-expansion.mmd](diagrams/country-expansion.mmd)                     | Mermaid source for country expansion                                  | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [headers/header-architecture.svg](diagrams/headers/header-architecture.svg) | Section banner — Architecture (800x120px, brand gradient)             | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [headers/header-scoring.svg](diagrams/headers/header-scoring.svg)           | Section banner — Scoring                                              | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [headers/header-api.svg](diagrams/headers/header-api.svg)                   | Section banner — API Reference                                        | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [headers/header-qa.svg](diagrams/headers/header-qa.svg)                     | Section banner — Quality Assurance                                    | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [headers/header-deployment.svg](diagrams/headers/header-deployment.svg)     | Section banner — Deployment                                           | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
-| [scoring-v32-infographic.svg](diagrams/scoring-v32-infographic.svg)         | Scoring v3.2 infographic — 9 factors, weights, bands, examples (light)| [#427](https://github.com/ericsocrat/poland-food-db/issues/427) | 2026-03-13   |
-| [scoring-v32-infographic-dark.svg](diagrams/scoring-v32-infographic-dark.svg) | Scoring v3.2 infographic — dark mode variant                       | [#427](https://github.com/ericsocrat/poland-food-db/issues/427) | 2026-03-13   |
-| [scoring-v32-breakdown.svg](diagrams/scoring-v32-breakdown.svg)             | Scoring v3.2 breakdown — factor weights stacked bar + detail table    | [#427](https://github.com/ericsocrat/poland-food-db/issues/427) | 2026-03-13   |
+| File                                                                          | Purpose                                                                | Owner Issue                                                     | Last Updated |
+| ----------------------------------------------------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
+| [architecture-overview.svg](diagrams/architecture-overview.svg)               | Architecture overview — data flow, components, key stats (light mode)  | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
+| [architecture-overview-dark.svg](diagrams/architecture-overview-dark.svg)     | Architecture overview — dark mode variant for GitHub dark theme        | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
+| [architecture-overview.mmd](diagrams/architecture-overview.mmd)               | Mermaid source for architecture overview (light mode)                  | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
+| [architecture-overview-dark.mmd](diagrams/architecture-overview-dark.mmd)     | Mermaid source for architecture overview (dark mode)                   | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
+| [erd-full.svg](diagrams/erd-full.svg)                                         | Full ERD — 30+ tables across 5 domains, Crow's foot notation (light)   | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-full-dark.svg](diagrams/erd-full-dark.svg)                               | Full ERD — dark mode variant for GitHub dark theme                     | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-core.svg](diagrams/erd-core.svg)                                         | Core ERD — 7 product-domain tables, simplified view (light)            | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-core-dark.svg](diagrams/erd-core-dark.svg)                               | Core ERD — dark mode variant for GitHub dark theme                     | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-full.mmd](diagrams/erd-full.mmd)                                         | Mermaid source for full ERD (light mode)                               | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-full-dark.mmd](diagrams/erd-full-dark.mmd)                               | Mermaid source for full ERD (dark mode)                                | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-core.mmd](diagrams/erd-core.mmd)                                         | Mermaid source for core ERD (light mode)                               | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-core-dark.mmd](diagrams/erd-core-dark.mmd)                               | Mermaid source for core ERD (dark mode)                                | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [pipeline-flow.svg](diagrams/pipeline-flow.svg)                               | Pipeline flow — OFF API to SQL generation to DB execution              | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [ci-cd-pipeline.svg](diagrams/ci-cd-pipeline.svg)                             | CI/CD pipeline — 19 workflows, gates, triggers, artifact flow          | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [qa-overview.svg](diagrams/qa-overview.svg)                                   | QA overview — 47 suites, 733 checks organized by domain                | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [confidence-model.svg](diagrams/confidence-model.svg)                         | Confidence scoring — 6 components, composite 0-100, band assignment    | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [concern-tiers.svg](diagrams/concern-tiers.svg)                               | EFSA concern tiers — 4-tier additive classification with examples      | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [country-expansion.svg](diagrams/country-expansion.svg)                       | Country expansion — PL primary + DE micro-pilot architecture           | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [pipeline-flow.mmd](diagrams/pipeline-flow.mmd)                               | Mermaid source for pipeline flow                                       | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [ci-cd-pipeline.mmd](diagrams/ci-cd-pipeline.mmd)                             | Mermaid source for CI/CD pipeline                                      | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [qa-overview.mmd](diagrams/qa-overview.mmd)                                   | Mermaid source for QA overview                                         | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [confidence-model.mmd](diagrams/confidence-model.mmd)                         | Mermaid source for confidence model                                    | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [concern-tiers.mmd](diagrams/concern-tiers.mmd)                               | Mermaid source for concern tiers                                       | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [country-expansion.mmd](diagrams/country-expansion.mmd)                       | Mermaid source for country expansion                                   | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-architecture.svg](diagrams/headers/header-architecture.svg)   | Section banner — Architecture (800x120px, brand gradient)              | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-scoring.svg](diagrams/headers/header-scoring.svg)             | Section banner — Scoring                                               | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-api.svg](diagrams/headers/header-api.svg)                     | Section banner — API Reference                                         | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-qa.svg](diagrams/headers/header-qa.svg)                       | Section banner — Quality Assurance                                     | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [headers/header-deployment.svg](diagrams/headers/header-deployment.svg)       | Section banner — Deployment                                            | [#429](https://github.com/ericsocrat/poland-food-db/issues/429) | 2026-03-13   |
+| [scoring-v32-infographic.svg](diagrams/scoring-v32-infographic.svg)           | Scoring v3.2 infographic — 9 factors, weights, bands, examples (light) | [#427](https://github.com/ericsocrat/poland-food-db/issues/427) | 2026-03-13   |
+| [scoring-v32-infographic-dark.svg](diagrams/scoring-v32-infographic-dark.svg) | Scoring v3.2 infographic — dark mode variant                           | [#427](https://github.com/ericsocrat/poland-food-db/issues/427) | 2026-03-13   |
+| [scoring-v32-breakdown.svg](diagrams/scoring-v32-breakdown.svg)               | Scoring v3.2 breakdown — factor weights stacked bar + detail table     | [#427](https://github.com/ericsocrat/poland-food-db/issues/427) | 2026-03-13   |
+
+## Brand Assets
+
+> **Location:** `docs/assets/logo/`
+> **Source:** SVG vector originals — PNG rasters generated via `sharp`
+
+| File                                                           | Purpose                                                                     | Owner Issue                                                     | Last Updated |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
+| [logomark.svg](assets/logo/logomark.svg)                       | Primary logomark — shield-leaf hybrid, brand gradient, vein structure        | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-dark.svg](assets/logo/logomark-dark.svg)             | Dark-mode logomark variant — lighter teal gradient, dark interior veins     | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-mono.svg](assets/logo/logomark-mono.svg)             | Monochrome logomark — `currentColor` silhouette, no interior detail         | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-512.png](assets/logo/logomark-512.png)               | PNG export 512×512 (full color)                                             | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-256.png](assets/logo/logomark-256.png)               | PNG export 256×256                                                          | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-192.png](assets/logo/logomark-192.png)               | PNG export 192×192 (Android launcher)                                       | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-180.png](assets/logo/logomark-180.png)               | PNG export 180×180 (Apple touch icon)                                       | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-128.png](assets/logo/logomark-128.png)               | PNG export 128×128                                                          | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-64.png](assets/logo/logomark-64.png)                 | PNG export 64×64                                                            | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-32.png](assets/logo/logomark-32.png)                 | PNG export 32×32 (favicon candidate)                                        | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
+| [logomark-16.png](assets/logo/logomark-16.png)                 | PNG export 16×16 (smallest favicon)                                         | [#407](https://github.com/ericsocrat/poland-food-db/issues/407) | 2026-03-14   |
 
 ## API
 
@@ -151,13 +171,13 @@
 
 ## Frontend & UX
 
-| Document                                                               | Purpose                                                                       | Owner Issue     | Last Updated |
-| ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------- | ------------ |
-| [UX_UI_DESIGN.md](UX_UI_DESIGN.md)                                     | UI/UX design guidelines — color system, components, layouts                   | Frontend domain | 2026-02-24   |
-| [UX_IMPACT_METRICS.md](UX_IMPACT_METRICS.md)                           | UX measurement standard — event catalog, metric templates, performance budget | Frontend domain | 2026-02-24   |
+| Document                                                               | Purpose                                                                                                                | Owner Issue                                                     | Last Updated |
+| ---------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
+| [UX_UI_DESIGN.md](UX_UI_DESIGN.md)                                     | UI/UX design guidelines — color system, components, layouts                                                            | Frontend domain                                                 | 2026-02-24   |
+| [UX_IMPACT_METRICS.md](UX_IMPACT_METRICS.md)                           | UX measurement standard — event catalog, metric templates, performance budget                                          | Frontend domain                                                 | 2026-02-24   |
 | [BRAND_GUIDELINES.md](BRAND_GUIDELINES.md)                             | Brand guidelines — 14-section visual identity reference (colors, typography, motion, accessibility, dark mode, assets) | [#410](https://github.com/ericsocrat/poland-food-db/issues/410) | 2026-03-14   |
-| [../frontend/docs/DESIGN_SYSTEM.md](../frontend/docs/DESIGN_SYSTEM.md) | Frontend design system — Tailwind tokens, component patterns                  | Frontend domain | 2026-02-17   |
-| [../frontend/README.md](../frontend/README.md)                         | Frontend project overview — setup, scripts, architecture                      | Frontend domain | 2026-02-24   |
+| [../frontend/docs/DESIGN_SYSTEM.md](../frontend/docs/DESIGN_SYSTEM.md) | Frontend design system — Tailwind tokens, component patterns                                                           | Frontend domain                                                 | 2026-02-17   |
+| [../frontend/README.md](../frontend/README.md)                         | Frontend project overview — setup, scripts, architecture                                                               | Frontend domain                                                 | 2026-02-24   |
 
 ## Process & Workflow
 
