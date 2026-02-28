@@ -39,7 +39,8 @@
     "items": "{count} {count|element|elementy|elementów}",
     "products": "{count} {count|produkt|produkty|produktów}",
     "allergenWarnings": "{count} {count|ostrzeżenie alergenowe|ostrzeżenia alergenowe|ostrzeżeń alergenowych}",
-    "dismiss": "Odrzuć"
+    "dismiss": "Odrzuć",
+    "productFrom": "Produkt z {country}"
   },
   "toast": {
     "genericError": "Coś poszło nie tak. Spróbuj ponownie.",

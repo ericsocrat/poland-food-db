@@ -167,11 +167,17 @@ const config: Config = {
           from: { opacity: "0", transform: "scale(0.85)" },
           to: { opacity: "1", transform: "scale(1)" },
         },
+        "trust-verified": {
+          "0%": { transform: "scale(1)" },
+          "50%": { transform: "scale(1.15)" },
+          "100%": { transform: "scale(1)" },
+        },
       },
       animation: {
         "fade-in-up": "fade-in-up var(--duration-normal) var(--ease-decelerate) both",
         "scale-in": "scale-in var(--duration-fast) var(--ease-decelerate) both",
         "chip-enter": "chip-enter var(--duration-fast) var(--ease-decelerate) both",
+        "trust-verified": "trust-verified 0.6s var(--ease-decelerate) 0.3s both",
       },
     },
   },
