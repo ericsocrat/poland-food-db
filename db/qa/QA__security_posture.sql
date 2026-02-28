@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Security Posture Validation — 35 checks
+-- QA: Security Posture Validation — 38 checks
 -- Ensures RLS, grant restrictions, SECURITY DEFINER attributes,
 -- and function access controls are in place.
 -- ============================================================
@@ -430,4 +430,30 @@ SELECT '35. api_rate_limit_log has retention policy' AS check_name,
            SELECT 1 FROM retention_policies
            WHERE table_name = 'api_rate_limit_log'
              AND is_enabled = true
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- User Trust Scoring (#471)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 36. user_trust_scores table has RLS enabled
+SELECT '36. user_trust_scores has RLS enabled' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_class
+           WHERE relname = 'user_trust_scores' AND relrowsecurity = true
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 37. trig_adjust_trust_score is SECURITY DEFINER
+SELECT '37. trig_adjust_trust_score is SECURITY DEFINER' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc
+           WHERE proname = 'trig_adjust_trust_score'
+             AND prosecdef = true
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 38. user_trust_scores has CHECK constraint on trust_score range
+SELECT '38. user_trust_scores has trust_score range CHECK' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM information_schema.check_constraints
+           WHERE constraint_name = 'chk_trust_score_range'
        ) THEN 0 ELSE 1 END AS violations;
