@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(216);
+SELECT plan(219);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -326,6 +326,11 @@ SELECT has_column('public', 'products', 'last_fetched_at',       'products.last_
 SELECT has_column('public', 'products', 'off_revision',          'products.off_revision exists');
 SELECT has_view('public', 'v_data_freshness_summary',            'view v_data_freshness_summary exists');
 SELECT has_index('public', 'products', 'idx_products_last_fetched', 'index idx_products_last_fetched exists');
+
+-- ─── Product Type Taxonomy (#354) ────────────────────────────────────────────
+SELECT has_table('public', 'product_type_ref',                   'table product_type_ref exists');
+SELECT has_column('public', 'product_type_ref', 'category',      'product_type_ref has category column');
+SELECT has_column('public', 'product_type_ref', 'display_name',  'product_type_ref has display_name column');
 
 SELECT * FROM finish();
 ROLLBACK;
