@@ -1,0 +1,63 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0d7377", "primaryTextColor": "#fff", "primaryBorderColor": "#095456", "lineColor": "#475569", "secondaryColor": "#f1f5f9", "tertiaryColor": "#e2e8f0", "textColor": "#0f172a", "fontSize": "14px"}}}%%
+flowchart LR
+    subgraph SRC["1. Data Source"]
+        direction TB
+        OFF["Open Food Facts\nAPI v2"]
+        TAGS["categories_tags_en\ncountries_tags_en"]
+        OFF --- TAGS
+    end
+
+    subgraph PY["2. Python Pipeline"]
+        direction TB
+        CLI["run.py\n--category --max-products"]
+        CAT["categories.py\n25 category definitions"]
+        CLIENT["off_client.py\nHTTP + retry"]
+        VALID["validator.py\nData validation"]
+        GEN["sql_generator.py\n4-5 SQL files"]
+        CLI --> CAT --> CLIENT --> VALID --> GEN
+    end
+
+    subgraph SQL["3. Generated SQL"]
+        direction TB
+        S1["01_insert_products\nUpsert products"]
+        S3["03_add_nutrition\nNutrition facts"]
+        S4["04_scoring\nNutri-Score + NOVA\n+ score_category()"]
+        S5["05_source_provenance\nSource URLs + EANs"]
+        S1 --> S3 --> S4 --> S5
+    end
+
+    subgraph DB["4. PostgreSQL"]
+        direction TB
+        EXEC["psql execution\nvia Docker"]
+        TABLES["products\nnutrition_facts\ningredient_ref\nproduct_ingredient"]
+        SCORE["compute_\nunhealthiness_v32()"]
+        VIEWS["v_master\nv_product_confidence"]
+        EXEC --> TABLES --> SCORE --> VIEWS
+    end
+
+    subgraph QA["5. Quality Assurance"]
+        direction TB
+        CHECKS["47 QA suites\n733 checks"]
+        NEG["23 negative\nvalidation tests"]
+        EAN["EAN-13\nchecksum validator"]
+        STRUCT["Pipeline\nstructure guard"]
+        CHECKS --- NEG
+        EAN --- STRUCT
+    end
+
+    SRC -->|"HTTP GET\njson response"| PY
+    PY -->|".sql files\nper category"| SQL
+    SQL -->|"piped to\npsql"| DB
+    DB -->|"validates\nagainst"| QA
+
+    classDef source fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    classDef python fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef sql fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef database fill:#e0e7ff,stroke:#6366f1,color:#312e81
+    classDef qa fill:#fce7f3,stroke:#db2777,color:#831843
+
+    class SRC source
+    class PY python
+    class SQL sql
+    class DB database
+    class QA qa

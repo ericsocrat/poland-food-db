@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 120" width="800" height="120">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0d7377"/>
+      <stop offset="100%" stop-color="#095456"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="120" rx="8" fill="url(#bg)"/>
+  <text x="80" y="72" font-family="system-ui,-apple-system,sans-serif" font-size="32" font-weight="700" fill="#fff" dominant-baseline="middle">API Reference</text>
+  <text x="80" y="96" font-family="system-ui,-apple-system,sans-serif" font-size="14" fill="#94d5d7" dominant-baseline="middle">RPC functions, contracts, versioning &amp; search</text>
+  <circle cx="40" cy="60" r="18" fill="none" stroke="#2dd4bf" stroke-width="2"/>
+  <path d="M32 55 L38 55 L38 50 L48 60 L38 70 L38 65 L32 65 Z" stroke="#2dd4bf" stroke-width="1.5" fill="#2dd4bf" fill-opacity="0.3"/>
+</svg>

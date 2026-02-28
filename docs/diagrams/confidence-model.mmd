@@ -1,0 +1,51 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0d7377", "primaryTextColor": "#fff", "primaryBorderColor": "#095456", "lineColor": "#475569", "secondaryColor": "#f1f5f9", "tertiaryColor": "#e2e8f0", "textColor": "#0f172a", "fontSize": "14px"}}}%%
+flowchart LR
+    subgraph COMPONENTS["6 Confidence Components"]
+        direction TB
+        N["Nutrition\n0-30 pts\n9 fields checked"]
+        I["Ingredients\n0-25 pts\nraw + parsed"]
+        S["Source\n0-20 pts\nprovenance trail"]
+        E["EAN\n0-10 pts\nbarcode present"]
+        A["Allergens\n0-10 pts\nallergen + trace"]
+        V["Serving\n0-5 pts\nserving data"]
+    end
+
+    subgraph CALC["Composite Score"]
+        direction TB
+        SUM["Sum Components\n0-100 points"]
+        NORM["Normalize\nto percentage"]
+    end
+
+    subgraph BANDS["Confidence Bands"]
+        direction TB
+        HIGH["HIGH\n70-100 pts\nVerified data"]
+        MED["MEDIUM\n40-69 pts\nEstimated data"]
+        LOW["LOW\n0-39 pts\nLow confidence"]
+    end
+
+    subgraph OUTPUT["Outputs"]
+        direction TB
+        MV["v_product_confidence\nMaterialized View"]
+        API["api_data_confidence()\nRPC function"]
+        RPT["Confidence\nReporting"]
+    end
+
+    N & I & S --> SUM
+    E & A & V --> SUM
+    SUM --> NORM
+    NORM --> HIGH & MED & LOW
+    HIGH & MED & LOW --> MV --> API --> RPT
+
+    classDef component fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    classDef calc fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef high fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef med fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef low fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    classDef output fill:#e0e7ff,stroke:#6366f1,color:#312e81
+
+    class N,I,S,E,A,V component
+    class SUM,NORM,CALC calc
+    class HIGH high
+    class MED med
+    class LOW low
+    class MV,API,RPT,OUTPUT output

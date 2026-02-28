@@ -1,0 +1,90 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0d7377", "primaryTextColor": "#fff", "primaryBorderColor": "#095456", "lineColor": "#475569", "secondaryColor": "#f1f5f9", "tertiaryColor": "#e2e8f0", "textColor": "#0f172a", "fontSize": "13px"}}}%%
+flowchart TD
+    subgraph PR["PR Gate (pr-gate.yml)"]
+        direction LR
+        TC["Typecheck\n& Lint"]
+        UT1["Unit Tests"]
+        BLD1["Build"]
+        PW1["Playwright\nSmoke"]
+        TC --> UT1 & BLD1
+        UT1 & BLD1 --> PW1
+    end
+
+    subgraph TITLE["PR Title (pr-title-lint.yml)"]
+        CONV["Conventional\nCommit\nValidation"]
+    end
+
+    subgraph MAIN["Main Gate (main-gate.yml)"]
+        direction LR
+        TC2["Typecheck"]
+        LN2["Lint"]
+        BLD2["Build"]
+        UT2["Unit Tests\n+ Coverage"]
+        PW2["Playwright\nSmoke"]
+        SQ["SonarCloud\nQuality Gate"]
+        TC2 --> LN2 --> BLD2 --> UT2 --> PW2 --> SQ
+    end
+
+    subgraph QAG["DB QA (qa.yml)"]
+        direction LR
+        STRUCT["Pipeline\nStructure"]
+        MIG["Schema\nMigrations"]
+        DRIFT["Schema\nDrift"]
+        PIPE["Pipelines"]
+        QAC["QA Checks\n733"]
+        SAN["Sanity\n17 checks"]
+        STRUCT --> MIG --> DRIFT --> PIPE --> QAC --> SAN
+    end
+
+    subgraph NIGHT["Nightly (nightly.yml)"]
+        direction LR
+        PWFULL["Full Playwright\nAll Projects"]
+        AUDIT["Data Integrity\nAudit"]
+        PWFULL --- AUDIT
+    end
+
+    subgraph DEP["Deploy (deploy.yml)"]
+        direction LR
+        DIFF["Schema\nDiff"]
+        APPROVE["Manual\nApproval"]
+        BACKUP["Pre-deploy\nBackup"]
+        PUSH["db push"]
+        SMOKE["Post-deploy\nSanity"]
+        DIFF --> APPROVE --> BACKUP --> PUSH --> SMOKE
+    end
+
+    subgraph AUX["Auxiliary Workflows"]
+        direction LR
+        CQL["CodeQL\nSecurity"]
+        DEPBOT["Dependabot\nAuto-merge"]
+        LIC["License\nCompliance"]
+        BUND["Bundle\nSize Guard"]
+        CQL --- DEPBOT --- LIC --- BUND
+    end
+
+    TRIGGER_PR(["Pull Request"])
+    TRIGGER_MERGE(["Merge to main"])
+    TRIGGER_CRON(["Nightly Cron"])
+    TRIGGER_MANUAL(["Manual Trigger"])
+
+    TRIGGER_PR --> PR & TITLE
+    TRIGGER_MERGE --> MAIN & QAG
+    TRIGGER_CRON --> NIGHT
+    TRIGGER_MANUAL --> DEP
+    TRIGGER_PR --> AUX
+
+    classDef trigger fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef prgate fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    classDef maingate fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef qagate fill:#fce7f3,stroke:#db2777,color:#831843
+    classDef nightly fill:#e0e7ff,stroke:#6366f1,color:#312e81
+    classDef deploy fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    classDef aux fill:#f1f5f9,stroke:#94a3b8,color:#334155
+
+    class TRIGGER_PR,TRIGGER_MERGE,TRIGGER_CRON,TRIGGER_MANUAL trigger
+    class PR,TITLE prgate
+    class MAIN maingate
+    class QAG qagate
+    class NIGHT nightly
+    class DEP deploy
+    class AUX aux

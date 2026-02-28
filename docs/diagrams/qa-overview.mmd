@@ -1,0 +1,126 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0d7377", "primaryTextColor": "#fff", "primaryBorderColor": "#095456", "lineColor": "#475569", "secondaryColor": "#f1f5f9", "tertiaryColor": "#e2e8f0", "textColor": "#0f172a", "fontSize": "13px"}}}%%
+flowchart TD
+    ROOT(["QA Framework\n733 Checks + 23 Neg"])
+
+    subgraph DI["Data Integrity (6 suites)"]
+        direction TB
+        NULL["Null Checks\n29"]
+        DQ["Data Quality\n25"]
+        DC["Data Consistency\n26"]
+        RI["Ref. Integrity\n18"]
+        NR["Nutrition Ranges\n18"]
+        DP["Data Provenance\n28"]
+    end
+
+    subgraph SCORE["Scoring (4 suites)"]
+        direction TB
+        SF["Scoring Formula\n31"]
+        SD["Scoring Determ.\n17"]
+        SE["Scoring Engine\n25"]
+        AC["Attr. Contradict.\n5"]
+    end
+
+    subgraph API["API & Search (4 suites)"]
+        direction TB
+        AS["API Surfaces\n18"]
+        ACT["API Contract\n33"]
+        SA["Search Arch.\n26"]
+        BL["Barcode Lookup\n9"]
+    end
+
+    subgraph SEC["Security (4 suites)"]
+        direction TB
+        SP["Security Posture\n41"]
+        RA["RLS Audit\n7"]
+        FSA["Function Sec.\n6"]
+        GD["GDPR Compliance\n15"]
+    end
+
+    subgraph USER["User Features (5 suites)"]
+        direction TB
+        AO["Auth & Onboard\n8"]
+        HP["Health Profiles\n14"]
+        LC["Lists & Compare\n15"]
+        SS["Scanner & Sub.\n15"]
+        DF["Diet Filtering\n6"]
+    end
+
+    subgraph INFRA["Infrastructure (6 suites)"]
+        direction TB
+        SG["Scale Guardrails\n23"]
+        IT["Index & Temporal\n19"]
+        VC["View Consistency\n13"]
+        NC["Naming Conv.\n12"]
+        MON["Monitoring\n14"]
+        GDR["Governance Drift\n8"]
+    end
+
+    subgraph MULTI["Multi-Market (3 suites)"]
+        direction TB
+        CI["Country Isolation\n11"]
+        MCC["Multi-Country\n13"]
+        SSV["Serving & Source\n16"]
+    end
+
+    subgraph PERF["Performance (4 suites, non-blocking)"]
+        direction TB
+        PR["Perf. Regression\n6"]
+        IV["Index Verification\n13"]
+        SQ["Slow Queries\n12"]
+        MV["MV Refresh Cost\n10"]
+    end
+
+    subgraph OTHER["Specialized (5 suites)"]
+        direction TB
+        CS["Confidence Score\n14"]
+        CR["Confidence Report\n7"]
+        EI["Event Intelligence\n18"]
+        PN["Push Notifications\n14"]
+        RE["Recipe Integrity\n6"]
+    end
+
+    subgraph META["Quality Gates"]
+        direction TB
+        SC["Source Coverage\n8 (non-blocking)"]
+        IQ["Ingredient Quality\n17"]
+        AI["Allergen Integrity\n15"]
+        AF["Allergen Filtering\n6"]
+        SI["Store Integrity\n12"]
+        EA["Explain Analysis\n10"]
+    end
+
+    subgraph NEG["Negative Validation"]
+        direction TB
+        NT["SQL Injection\n& Constraint\n23 tests"]
+    end
+
+    ROOT --> DI & SCORE & API & SEC
+    ROOT --> USER & INFRA & MULTI
+    ROOT --> PERF & OTHER & META
+    ROOT --> NEG
+
+    classDef root fill:#0d7377,stroke:#095456,color:#fff
+    classDef integrity fill:#dbeafe,stroke:#3b82f6,color:#1e3a5f
+    classDef scoring fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef api fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef security fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    classDef user fill:#fce7f3,stroke:#db2777,color:#831843
+    classDef infra fill:#f1f5f9,stroke:#94a3b8,color:#334155
+    classDef multi fill:#e0e7ff,stroke:#6366f1,color:#312e81
+    classDef perf fill:#fff7ed,stroke:#ea580c,color:#7c2d12
+    classDef other fill:#f0fdf4,stroke:#22c55e,color:#14532d
+    classDef meta fill:#faf5ff,stroke:#a855f7,color:#581c87
+    classDef neg fill:#fef2f2,stroke:#b91c1c,color:#991b1b
+
+    class ROOT root
+    class DI integrity
+    class SCORE scoring
+    class API api
+    class SEC security
+    class USER user
+    class INFRA infra
+    class MULTI multi
+    class PERF perf
+    class OTHER other
+    class META meta
+    class NEG neg

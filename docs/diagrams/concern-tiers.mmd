@@ -1,0 +1,54 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0d7377", "primaryTextColor": "#fff", "primaryBorderColor": "#095456", "lineColor": "#475569", "secondaryColor": "#f1f5f9", "tertiaryColor": "#e2e8f0", "textColor": "#0f172a", "fontSize": "14px"}}}%%
+flowchart TD
+    TITLE(["EFSA Ingredient Concern Classification"])
+
+    subgraph T0["Tier 0 — No Concern"]
+        direction LR
+        T0D["Score Impact: 0\nMost natural ingredients"]
+        T0E["Examples:\nSalt, Sugar, Flour\nWater, Milk, Eggs"]
+    end
+
+    subgraph T1["Tier 1 — Low Concern"]
+        direction LR
+        T1D["Score Impact: +1\nGenerally safe additives"]
+        T1E["Examples:\nLecithin (E322)\nCitric acid (E330)\nAscorbic acid (E300)"]
+    end
+
+    subgraph T2["Tier 2 — Moderate Concern"]
+        direction LR
+        T2D["Score Impact: +2\nSome EFSA advisories"]
+        T2E["Examples:\nCarrageenan (E407)\nSodium nitrite (E250)\nBHA (E320)"]
+    end
+
+    subgraph T3["Tier 3 — High Concern"]
+        direction LR
+        T3D["Score Impact: +3\nActive EFSA warnings"]
+        T3E["Examples:\nTitanium dioxide (E171)\nPotassium bromate\nAzodicarbonamide"]
+    end
+
+    TITLE --> T0
+    T0 --> T1
+    T1 --> T2
+    T2 --> T3
+
+    subgraph SCORING["Impact on Unhealthiness Score"]
+        direction LR
+        FORMULA["ingredient_concern factor\nWeight: 0.05 (5%)\nCeiling: 100\nSum of concern tiers\nper product"]
+        EXAMPLE["Product with 3 Tier-1\n+ 2 Tier-2 additives:\nconcern = 3x1 + 2x2 = 7\nraw = 7/100 x 100 = 7\nweighted = 7 x 0.05 = 0.35"]
+    end
+
+    T3 --> SCORING
+
+    classDef title fill:#0d7377,stroke:#095456,color:#fff
+    classDef safe fill:#dcfce7,stroke:#16a34a,color:#14532d
+    classDef low fill:#fef3c7,stroke:#d97706,color:#78350f
+    classDef moderate fill:#fed7aa,stroke:#ea580c,color:#7c2d12
+    classDef high fill:#fee2e2,stroke:#dc2626,color:#7f1d1d
+    classDef scoring fill:#e0e7ff,stroke:#6366f1,color:#312e81
+
+    class TITLE title
+    class T0 safe
+    class T1 low
+    class T2 moderate
+    class T3 high
+    class SCORING scoring
