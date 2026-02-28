@@ -66,6 +66,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   style, photography direction, component patterns, spacing/layout, motion/animation,
   accessibility (WCAG contrast ratios), full dark mode mapping table, co-branding
   rules, and complete asset inventory; add to `docs/INDEX.md` (#410)
+- Design shield-leaf logomark (`docs/assets/logo/`): 3 SVG variants — full-color
+  (brand teal gradient + white vein structure + gold accent), dark-mode (lighter
+  teal gradient, dark veins, brighter gold), monochrome (`currentColor` silhouette);
+  8 PNG exports (16–512px) for favicons, app icons, and social media; add Brand
+  Assets section to `docs/INDEX.md` (#407)
 - Harden copilot-instructions.md: rewrite §16 as discovery-driven (script-first),
   extract 240-line issue template to `.github/ISSUE_TEMPLATE/feature.md`,
   reduce from 1,668 to 1,418 lines (under 1,500 cap) (#334)

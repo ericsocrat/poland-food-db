@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Food quality intelligence logomark — monochrome">
+  <title>Food Quality Intelligence (Monochrome)</title>
+  <desc>Single-color shield-leaf logomark silhouette. Uses currentColor to inherit from parent CSS. Works at all sizes from 16x16 to 512x512.</desc>
+
+  <!-- Pure silhouette — no internal detail, maximum legibility at small sizes -->
+  <path d="
+    M 256 28
+    C 364 64, 444 168, 444 272
+    C 444 376, 336 456, 256 488
+    C 176 456, 68 376, 68 272
+    C 68 168, 148 64, 256 28
+    Z
+  " fill="currentColor"/>
+</svg>
