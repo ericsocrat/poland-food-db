@@ -84,6 +84,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   on white background); replace placeholder emoji icons in `/icons/` with
   proper branded PNGs + SVGs (192, 512px); update `layout.tsx` icon metadata
   with favicon.svg reference and standard PNG sizes (#409)
+- Create GitHub social preview image (`docs/assets/banners/`): 1280×640 OpenGraph
+  image with logomark, project name, tagline, 5 key stats (1,281 products, 25
+  categories, PL+DE, v3.2 engine, 733 QA checks), tech stack pills, on dark teal
+  gradient; SVG source + optimized PNG (53 KB); root copy for easy GitHub upload
+  (#411)
 - Harden copilot-instructions.md: rewrite §16 as discovery-driven (script-first),
   extract 240-line issue template to `.github/ISSUE_TEMPLATE/feature.md`,
   reduce from 1,668 to 1,418 lines (under 1,500 cap) (#334)
