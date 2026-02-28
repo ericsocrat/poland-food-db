@@ -1,0 +1,92 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <style>
+    .card-bg { fill: #ffffff; }
+    .card-border { stroke: #0d7377; stroke-width: 1.5; fill: none; }
+    .icon-bg { fill: #0d7377; opacity: 0.1; }
+    .icon-fill { fill: #0d7377; }
+    .title { font-family: system-ui, -apple-system, sans-serif; font-size: 18px; font-weight: 700; fill: #0f172a; }
+    .desc { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; fill: #475569; }
+    .stat { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; fill: #0d7377; }
+    .shield-bg { fill: #f0fdfa; stroke: #0d7377; stroke-width: 1.5; }
+    .check-icon { fill: #16a34a; }
+    .warn-icon { fill: #dc2626; }
+    .maybe-icon { fill: #d4a844; }
+    .allergen-name { font-family: system-ui, sans-serif; font-size: 11px; fill: #334155; }
+    .allergen-type { font-family: system-ui, sans-serif; font-size: 8px; fill: #94a3b8; }
+    .safe-bg { fill: #dcfce7; rx: 4; }
+    .warn-bg { fill: #fee2e2; rx: 4; }
+    .trace-bg { fill: #fef9c3; rx: 4; }
+    .safe-text { font-family: system-ui, sans-serif; font-size: 9px; font-weight: 600; fill: #166534; }
+    .warn-text { font-family: system-ui, sans-serif; font-size: 9px; font-weight: 600; fill: #991b1b; }
+    .trace-text { font-family: system-ui, sans-serif; font-size: 9px; font-weight: 600; fill: #854d0e; }
+    @media (prefers-color-scheme: dark) {
+      .card-bg { fill: #1e293b; }
+      .card-border { stroke: #2dd4bf; }
+      .icon-bg { fill: #2dd4bf; opacity: 0.15; }
+      .icon-fill { fill: #2dd4bf; }
+      .title { fill: #f1f5f9; }
+      .desc { fill: #94a3b8; }
+      .stat { fill: #2dd4bf; }
+      .shield-bg { fill: #134e4a; stroke: #2dd4bf; }
+      .allergen-name { fill: #e2e8f0; }
+      .allergen-type { fill: #64748b; }
+      .safe-bg { fill: #052e16; }
+      .warn-bg { fill: #450a0a; }
+      .trace-bg { fill: #422006; }
+      .safe-text { fill: #4ade80; }
+      .warn-text { fill: #fca5a5; }
+      .trace-text { fill: #fbbf24; }
+    }
+  </style>
+  <rect class="card-bg" x="0.75" y="0.75" width="398.5" height="298.5" rx="16"/>
+  <rect class="card-border" x="0.75" y="0.75" width="398.5" height="298.5" rx="16"/>
+  <!-- Icon: shield -->
+  <circle class="icon-bg" cx="40" cy="40" r="24"/>
+  <path class="icon-fill" d="M40 22 l12 5v8c0 7-5 13-12 16-7-3-12-9-12-16v-8z"/>
+  <path d="M36 37l3 3 6-6" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Title -->
+  <text class="title" x="72" y="44">Allergen Safety</text>
+  <!-- Description -->
+  <text class="desc" x="24" y="76">2,630 allergen &amp; trace declarations. Personal filters</text>
+  <text class="desc" x="24" y="92">flag unsafe products automatically for your profile.</text>
+  <!-- Mini visual: allergen status list -->
+  <g transform="translate(24,110)">
+    <!-- Shield mini -->
+    <path class="shield-bg" d="M22 0 l20 6v12c0 10-8 18-20 22C10 36 2 28 2 18V6z"/>
+    <text style="font-size:18px;text-anchor:middle" x="22" y="24">🛡️</text>
+    <!-- Allergen rows -->
+    <g transform="translate(60,0)">
+      <text class="allergen-name" x="0" y="14">🌾 Gluten</text>
+      <rect class="safe-bg" x="130" y="3" width="56" height="16" rx="8"/>
+      <text class="safe-text" x="142" y="15">✓ Safe</text>
+      <text class="allergen-name" x="210" y="14">🥛 Milk</text>
+      <rect class="warn-bg" x="260" y="3" width="72" height="16" rx="8"/>
+      <text class="warn-text" x="269" y="15">✗ Contains</text>
+    </g>
+    <g transform="translate(60,28)">
+      <text class="allergen-name" x="0" y="14">🥜 Peanuts</text>
+      <rect class="trace-bg" x="130" y="3" width="56" height="16" rx="8"/>
+      <text class="trace-text" x="139" y="15">⚠ Traces</text>
+      <text class="allergen-name" x="210" y="14">🥚 Eggs</text>
+      <rect class="safe-bg" x="260" y="3" width="56" height="16" rx="8"/>
+      <text class="safe-text" x="272" y="15">✓ Safe</text>
+    </g>
+    <g transform="translate(60,56)">
+      <text class="allergen-name" x="0" y="14">🐟 Fish</text>
+      <rect class="safe-bg" x="130" y="3" width="56" height="16" rx="8"/>
+      <text class="safe-text" x="142" y="15">✓ Safe</text>
+      <text class="allergen-name" x="210" y="14">🫘 Soy</text>
+      <rect class="warn-bg" x="260" y="3" width="72" height="16" rx="8"/>
+      <text class="warn-text" x="269" y="15">✗ Contains</text>
+    </g>
+    <g transform="translate(60,84)">
+      <text class="allergen-name" x="0" y="14">🌰 Nuts</text>
+      <rect class="trace-bg" x="130" y="3" width="56" height="16" rx="8"/>
+      <text class="trace-text" x="139" y="15">⚠ Traces</text>
+      <text class="allergen-name" x="210" y="14">🌱 Celery</text>
+      <rect class="safe-bg" x="260" y="3" width="56" height="16" rx="8"/>
+      <text class="safe-text" x="272" y="15">✓ Safe</text>
+    </g>
+  </g>
+  <text class="stat" x="24" y="282">1,269 allergens · 1,361 traces · personal profiles</text>
+</svg>

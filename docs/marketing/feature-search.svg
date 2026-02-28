@@ -1,0 +1,99 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <style>
+    .card-bg { fill: #ffffff; }
+    .card-border { stroke: #0d7377; stroke-width: 1.5; fill: none; }
+    .icon-bg { fill: #0d7377; opacity: 0.1; }
+    .icon-fill { fill: #0d7377; }
+    .title { font-family: system-ui, -apple-system, sans-serif; font-size: 18px; font-weight: 700; fill: #0f172a; }
+    .desc { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; fill: #475569; }
+    .stat { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; fill: #0d7377; }
+    .search-bg { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 1.5; }
+    .search-text { font-family: system-ui, sans-serif; font-size: 12px; fill: #94a3b8; }
+    .search-query { font-family: system-ui, sans-serif; font-size: 12px; fill: #0f172a; }
+    .result-bg { fill: #f0fdfa; stroke: #0d7377; stroke-width: 0.8; }
+    .result-name { font-family: system-ui, sans-serif; font-size: 10px; font-weight: 600; fill: #0f172a; }
+    .result-meta { font-family: system-ui, sans-serif; font-size: 8px; fill: #64748b; }
+    .highlight { fill: #d4a844; opacity: 0.3; }
+    .filter-bg { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 0.8; }
+    .filter-text { font-family: system-ui, sans-serif; font-size: 8px; fill: #475569; }
+    .filter-active { fill: #0d7377; }
+    .filter-active-text { font-family: system-ui, sans-serif; font-size: 8px; font-weight: 600; fill: #ffffff; }
+    .trgm-badge { fill: #e0f2fe; stroke: #0284c7; stroke-width: 0.6; }
+    .trgm-text { font-family: system-ui, sans-serif; font-size: 7px; fill: #0369a1; }
+    .score-dot { r: 6; }
+    .score-dot-good { fill: #16a34a; }
+    .score-dot-mid { fill: #d4a844; }
+    .score-dot-bad { fill: #ea580c; }
+    .score-text { font-family: system-ui, sans-serif; font-size: 8px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+    @media (prefers-color-scheme: dark) {
+      .card-bg { fill: #1e293b; }
+      .card-border { stroke: #2dd4bf; }
+      .icon-bg { fill: #2dd4bf; opacity: 0.15; }
+      .icon-fill { fill: #2dd4bf; }
+      .title { fill: #f1f5f9; }
+      .desc { fill: #94a3b8; }
+      .stat { fill: #2dd4bf; }
+      .search-bg { fill: #0f172a; stroke: #475569; }
+      .search-text { fill: #64748b; }
+      .search-query { fill: #f1f5f9; }
+      .result-bg { fill: #134e4a; stroke: #2dd4bf; }
+      .result-name { fill: #e2e8f0; }
+      .result-meta { fill: #94a3b8; }
+      .highlight { fill: #fbbf24; opacity: 0.2; }
+      .filter-bg { fill: #334155; stroke: #475569; }
+      .filter-text { fill: #94a3b8; }
+      .filter-active { fill: #2dd4bf; }
+      .filter-active-text { fill: #0f172a; }
+      .trgm-badge { fill: #0c4a6e; stroke: #38bdf8; }
+      .trgm-text { fill: #7dd3fc; }
+    }
+  </style>
+  <rect class="card-bg" x="0.75" y="0.75" width="398.5" height="298.5" rx="16"/>
+  <rect class="card-border" x="0.75" y="0.75" width="398.5" height="298.5" rx="16"/>
+  <!-- Icon: magnifying glass -->
+  <circle class="icon-bg" cx="40" cy="40" r="24"/>
+  <circle cx="37" cy="37" r="8" stroke="#0d7377" stroke-width="2.5" fill="none"/>
+  <line x1="43" y1="43" x2="50" y2="50" stroke="#0d7377" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Title -->
+  <text class="title" x="72" y="44">Smart Search</text>
+  <!-- Description -->
+  <text class="desc" x="24" y="76">Find products by name, brand, or category. Fuzzy</text>
+  <text class="desc" x="24" y="92">matching, autocomplete, and saved search filters.</text>
+  <!-- Mini visual: search box + filters + results -->
+  <g transform="translate(24,108)">
+    <!-- Search bar -->
+    <rect class="search-bg" x="0" y="0" width="350" height="32" rx="8"/>
+    <circle cx="18" cy="16" r="6" stroke="#94a3b8" stroke-width="1.5" fill="none"/>
+    <line x1="22" y1="20" x2="26" y2="24" stroke="#94a3b8" stroke-width="1.5" stroke-linecap="round"/>
+    <text class="search-query" x="34" y="20">piatni</text>
+    <text class="search-text" x="76" y="20">ca skyr…</text>
+    <rect class="trgm-badge" x="280" y="8" width="55" height="14" rx="7"/>
+    <text class="trgm-text" x="290" y="18">pg_trgm</text>
+    <!-- Filter chips -->
+    <rect class="filter-active" x="0" y="40" width="48" height="18" rx="9"/>
+    <text class="filter-active-text" x="10" y="52">Dairy</text>
+    <rect class="filter-bg" x="54" y="40" width="62" height="18" rx="9"/>
+    <text class="filter-text" x="63" y="52">Score ≤ 20</text>
+    <rect class="filter-bg" x="122" y="40" width="55" height="18" rx="9"/>
+    <text class="filter-text" x="130" y="52">Vegan ✓</text>
+    <rect class="filter-bg" x="183" y="40" width="72" height="18" rx="9"/>
+    <text class="filter-text" x="191" y="52">Nutri A or B</text>
+    <!-- Results -->
+    <rect class="result-bg" x="0" y="68" width="350" height="26" rx="6"/>
+    <circle class="score-dot score-dot-good" cx="16" cy="81" r="8"/>
+    <text class="score-text" x="16" y="84">8</text>
+    <text class="result-name" x="30" y="78">Piątnica Skyr Naturalny</text>
+    <text class="result-meta" x="30" y="89">Dairy · 57 kcal · Score 8 · Nutri-Score A</text>
+    <rect class="result-bg" x="0" y="100" width="350" height="26" rx="6"/>
+    <circle class="score-dot score-dot-mid" cx="16" cy="113" r="8"/>
+    <text class="score-text" x="16" y="116">22</text>
+    <text class="result-name" x="30" y="110">Piątnica Twaróg Półtłusty</text>
+    <text class="result-meta" x="30" y="121">Dairy · 135 kcal · Score 22 · Nutri-Score B</text>
+    <rect class="result-bg" x="0" y="132" width="350" height="26" rx="6"/>
+    <circle class="score-dot score-dot-bad" cx="16" cy="145" r="8"/>
+    <text class="score-text" x="16" y="148">38</text>
+    <text class="result-name" x="30" y="142">Piątnica Maślanka Truskawk.</text>
+    <text class="result-meta" x="30" y="153">Dairy · 54 kcal · Score 38 · Nutri-Score C</text>
+  </g>
+  <text class="stat" x="24" y="282">pg_trgm + tsvector · autocomplete · saved filters</text>
+</svg>
