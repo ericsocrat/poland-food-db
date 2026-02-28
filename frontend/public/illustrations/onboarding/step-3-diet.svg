@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" fill="none">
+  <style>
+    .ob-primary { fill: #0d7377; }
+    .ob-primary-light { fill: #0d7377; opacity: 0.12; }
+    .ob-accent { fill: #d4a844; }
+    .ob-neutral { fill: #e2e8f0; }
+    .ob-neutral-dark { fill: #cbd5e1; }
+    .ob-green { fill: #15803d; }
+    .ob-red { fill: #dc2626; opacity: 0.7; }
+    @media (prefers-color-scheme: dark) {
+      .ob-primary { fill: #2dd4bf; }
+      .ob-primary-light { fill: #2dd4bf; opacity: 0.12; }
+      .ob-accent { fill: #fbbf24; }
+      .ob-neutral { fill: #334155; }
+      .ob-neutral-dark { fill: #475569; }
+      .ob-green { fill: #22c55e; }
+      .ob-red { fill: #f87171; opacity: 0.7; }
+    }
+  </style>
+  <!-- Background circle -->
+  <circle class="ob-primary-light" cx="140" cy="140" r="120"/>
+  <!-- Plate -->
+  <ellipse class="ob-neutral-dark" cx="140" cy="155" rx="85" ry="40"/>
+  <ellipse class="ob-neutral" cx="140" cy="150" rx="78" ry="36"/>
+  <!-- Food group sections (pie-chart style on plate) -->
+  <!-- Vegetables (green) -->
+  <path class="ob-green" d="M140 118 L140 150 L105 130Z" opacity="0.7"/>
+  <path class="ob-green" d="M140 150 L105 130 L95 155Z" opacity="0.5"/>
+  <!-- Protein (primary teal) -->
+  <path class="ob-primary" d="M140 118 L140 150 L175 130Z" opacity="0.7"/>
+  <path class="ob-primary" d="M140 150 L175 130 L185 155Z" opacity="0.5"/>
+  <!-- Grains (accent gold) -->
+  <path class="ob-accent" d="M140 150 L95 155 L105 172Z" opacity="0.7"/>
+  <path class="ob-accent" d="M140 150 L105 172 L140 178Z" opacity="0.5"/>
+  <!-- Dairy (lighter) -->
+  <path class="ob-neutral-dark" d="M140 150 L185 155 L175 172Z"/>
+  <path class="ob-neutral-dark" d="M140 150 L175 172 L140 178Z" opacity="0.7"/>
+  <!-- Divider lines on plate -->
+  <line stroke="white" stroke-width="1.5" x1="140" y1="118" x2="140" y2="178" opacity="0.5"/>
+  <line stroke="white" stroke-width="1.5" x1="95" y1="155" x2="185" y2="155" opacity="0.5"/>
+  <!-- Fork (left) -->
+  <rect class="ob-primary" x="42" y="100" width="4" height="80" rx="2"/>
+  <rect class="ob-primary" x="38" y="90" width="3" height="18" rx="1"/>
+  <rect class="ob-primary" x="44" y="90" width="3" height="18" rx="1"/>
+  <rect class="ob-primary" x="50" y="90" width="3" height="18" rx="1"/>
+  <!-- Knife (right) -->
+  <rect class="ob-primary" x="228" y="100" width="5" height="80" rx="2"/>
+  <path class="ob-primary" d="M228 90 L228 108 L238 102 L238 90Z" rx="1"/>
+  <!-- Toggle/checkmark indicators above plate -->
+  <circle class="ob-green" cx="100" cy="70" r="10" opacity="0.8"/>
+  <polyline stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="95,70 99,74 106,66" fill="none"/>
+  <circle class="ob-green" cx="140" cy="65" r="10" opacity="0.8"/>
+  <polyline stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points="135,65 139,69 146,61" fill="none"/>
+  <circle class="ob-red" cx="180" cy="70" r="10"/>
+  <line stroke="white" stroke-width="2.5" stroke-linecap="round" x1="175" y1="70" x2="185" y2="70"/>
+</svg>

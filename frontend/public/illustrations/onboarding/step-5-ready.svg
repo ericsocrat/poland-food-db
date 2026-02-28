@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" fill="none">
+  <style>
+    .ob-primary { fill: #0d7377; }
+    .ob-primary-light { fill: #0d7377; opacity: 0.12; }
+    .ob-accent { fill: #d4a844; }
+    .ob-green { fill: #15803d; }
+    .ob-neutral { fill: #e2e8f0; }
+    @media (prefers-color-scheme: dark) {
+      .ob-primary { fill: #2dd4bf; }
+      .ob-primary-light { fill: #2dd4bf; opacity: 0.12; }
+      .ob-accent { fill: #fbbf24; }
+      .ob-green { fill: #22c55e; }
+      .ob-neutral { fill: #334155; }
+    }
+  </style>
+  <!-- Background circle -->
+  <circle class="ob-primary-light" cx="140" cy="140" r="120"/>
+  <!-- Large checkmark circle -->
+  <circle class="ob-green" cx="140" cy="130" r="52"/>
+  <polyline stroke="white" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" fill="none" points="115,130 133,148 168,113"/>
+  <!-- Confetti particles -->
+  <rect class="ob-accent" x="62" y="68" width="8" height="4" rx="2" transform="rotate(-30 66 70)"/>
+  <rect class="ob-primary" x="202" y="72" width="8" height="4" rx="2" transform="rotate(25 206 74)"/>
+  <rect class="ob-accent" x="55" y="170" width="6" height="3" rx="1.5" transform="rotate(15 58 171)"/>
+  <rect class="ob-primary" x="215" y="165" width="7" height="3.5" rx="1.5" transform="rotate(-20 218 167)"/>
+  <rect class="ob-accent" x="90" y="50" width="7" height="3.5" rx="1.5" transform="rotate(45 93 52)"/>
+  <rect class="ob-primary" x="185" y="48" width="6" height="3" rx="1.5" transform="rotate(-45 188 50)"/>
+  <!-- Confetti circles -->
+  <circle class="ob-accent" cx="72" cy="120" r="4"/>
+  <circle class="ob-primary" cx="210" cy="125" r="3.5" opacity="0.6"/>
+  <circle class="ob-accent" cx="80" cy="200" r="3" opacity="0.7"/>
+  <circle class="ob-primary" cx="195" cy="205" r="4" opacity="0.5"/>
+  <circle class="ob-accent" cx="140" cy="50" r="3.5"/>
+  <!-- Star bursts -->
+  <path class="ob-accent" d="M230 90 L232 84 L234 90 L240 92 L234 94 L232 100 L230 94 L224 92Z"/>
+  <path class="ob-accent" d="M50 140 L51.5 135.5 L53 140 L57.5 141.5 L53 143 L51.5 147.5 L50 143 L45.5 141.5Z" opacity="0.7"/>
+  <!-- Celebration rays -->
+  <line stroke="#d4a844" stroke-width="1.5" stroke-linecap="round" x1="140" y1="60" x2="140" y2="45" opacity="0.5"/>
+  <line stroke="#d4a844" stroke-width="1.5" stroke-linecap="round" x1="100" y1="80" x2="88" y2="68" opacity="0.4"/>
+  <line stroke="#d4a844" stroke-width="1.5" stroke-linecap="round" x1="180" y1="80" x2="192" y2="68" opacity="0.4"/>
+  <!-- Bottom tagline area (text rendered by React, just subtle accent line) -->
+  <line stroke="#0d7377" stroke-width="2" stroke-linecap="round" x1="100" y1="210" x2="180" y2="210" opacity="0.3"/>
+</svg>
