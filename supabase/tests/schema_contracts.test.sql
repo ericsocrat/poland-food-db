@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(204);
+SELECT plan(207);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -306,6 +306,11 @@ SELECT has_function('public', 'check_scan_rate_limit',        'function check_sc
 SELECT has_function('public', 'score_submission_quality',         'function score_submission_quality exists');
 SELECT has_function('public', '_score_submission_quality',        'function _score_submission_quality exists');
 SELECT has_trigger('product_submissions', 'trg_submission_quality_triage', 'auto-triage trigger exists on product_submissions');
+
+-- ─── API Rate Limiting (#472) ────────────────────────────────────────────────
+SELECT has_table('public', 'api_rate_limits',              'table api_rate_limits exists');
+SELECT has_table('public', 'api_rate_limit_log',           'table api_rate_limit_log exists');
+SELECT has_function('public', 'check_api_rate_limit',      'function check_api_rate_limit exists');
 
 SELECT * FROM finish();
 ROLLBACK;

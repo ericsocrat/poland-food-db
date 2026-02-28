@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Security Posture Validation — 32 checks
+-- QA: Security Posture Validation — 35 checks
 -- Ensures RLS, grant restrictions, SECURITY DEFINER attributes,
 -- and function access controls are in place.
 -- ============================================================
@@ -407,4 +407,27 @@ SELECT '32. api_record_scan includes rate limit check' AS check_name,
            WHERE n.nspname = 'public'
              AND p.proname = 'api_record_scan'
              AND p.prosrc LIKE '%check_scan_rate_limit%'
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 33. check_api_rate_limit is SECURITY DEFINER
+SELECT '33. check_api_rate_limit is SECURITY DEFINER' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc p
+           JOIN pg_namespace n ON p.pronamespace = n.oid
+           WHERE n.nspname = 'public'
+             AND p.proname = 'check_api_rate_limit'
+             AND p.prosecdef = true
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 34. api_rate_limits has 6 configured endpoints
+SELECT '34. api_rate_limits has >= 6 endpoints' AS check_name,
+       CASE WHEN (SELECT COUNT(*) FROM api_rate_limits) >= 6
+       THEN 0 ELSE 1 END AS violations;
+
+-- 35. api_rate_limit_log has retention policy
+SELECT '35. api_rate_limit_log has retention policy' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM retention_policies
+           WHERE table_name = 'api_rate_limit_log'
+             AND is_enabled = true
        ) THEN 0 ELSE 1 END AS violations;

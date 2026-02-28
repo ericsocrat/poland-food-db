@@ -6,7 +6,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(30);
+SELECT plan(37);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -215,6 +215,60 @@ SELECT ok(
 SELECT ok(
   jsonb_array_length((public.api_get_filter_options('XX'))->'categories') >= 1,
   'filter options returns at least 1 category for XX'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 8. check_api_rate_limit — generic rate limiter (#472)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- NULL user → always allowed
+SELECT ok(
+  (public.check_api_rate_limit(NULL, 'api_search_products'))->>'allowed' = 'true',
+  'rate limit allows NULL user (anon bypass)'
+);
+
+-- Unconfigured endpoint → always allowed
+SELECT ok(
+  (public.check_api_rate_limit('00000000-0000-0000-0000-000000000001'::uuid, 'nonexistent_endpoint'))->>'allowed' = 'true',
+  'rate limit allows unconfigured endpoint'
+);
+
+-- Under limit → allowed with remaining
+SELECT ok(
+  (public.check_api_rate_limit('00000000-0000-0000-0000-000000000002'::uuid, 'api_get_filter_options'))->>'allowed' = 'true',
+  'rate limit allows request under limit'
+);
+
+SELECT ok(
+  (public.check_api_rate_limit('00000000-0000-0000-0000-000000000002'::uuid, 'api_get_filter_options')) ? 'remaining',
+  'rate limit response includes remaining count'
+);
+
+-- Over limit → blocked (flood 10 requests for api_get_filter_options which allows 10/min)
+DO $$
+DECLARE i int;
+BEGIN
+  FOR i IN 1..15 LOOP
+    INSERT INTO public.api_rate_limit_log (user_id, endpoint, called_at)
+    VALUES ('00000000-0000-0000-0000-000000000003'::uuid, 'api_get_filter_options', now());
+  END LOOP;
+END;
+$$;
+
+SELECT ok(
+  (public.check_api_rate_limit('00000000-0000-0000-0000-000000000003'::uuid, 'api_get_filter_options'))->>'allowed' = 'false',
+  'rate limit blocks request over limit'
+);
+
+SELECT ok(
+  (public.check_api_rate_limit('00000000-0000-0000-0000-000000000003'::uuid, 'api_get_filter_options')) ? 'retry_after_seconds',
+  'rate limit blocked response includes retry_after_seconds'
+);
+
+-- api_rate_limits has 6 configured endpoints
+SELECT ok(
+  (SELECT COUNT(*) FROM api_rate_limits) >= 6,
+  'api_rate_limits has at least 6 configured endpoints'
 );
 
 SELECT * FROM finish();
