@@ -116,6 +116,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
   add `variant` prop (`'outline' | 'filled'`); add slug aliasing for country
   variants (chips-pl/chips-de → chips); expand test suite from 22 to 65 tests
   covering variants, aliases, viewBox, and accessibility (#419)
+- Design 5 achievement badge illustrations (first-scan, list-builder,
+  health-explorer, comparison-pro, profile-complete) in
+  `frontend/public/illustrations/achievements/`; circular medal/badge style with
+  gold ring, ribbon, and brand-colored thematic center icons; CSS-driven
+  locked/unlocked states (grayscale + opacity); `AchievementBadge` React component
+  with `unlocked` prop, 3 size presets (32/48/96px), optional label,
+  `data-achievement` and `data-unlocked` attributes; 29 Vitest tests covering
+  all 5 types × 2 states, accessibility, sizing, label display, and
+  utilities (#425)
 - Redesign README.md as 15-section showcase-quality layout: hero banner, 9
   shields.io badges, elevator pitch, 4 feature highlight cards (HTML table),
   comparison table, 3-column quick start with collapsible command reference,
