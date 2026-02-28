@@ -387,9 +387,7 @@ def validate_product(product: dict, category: str) -> dict:
         completeness = 0.0
     has_image = product.get("_has_image", False)
 
-    if anomaly_errors:
-        confidence = "estimated"
-    elif len(warnings) >= 2:
+    if anomaly_errors or len(warnings) >= 2:
         confidence = "estimated"
     elif completeness >= 0.5 and ean_valid:
         confidence = "verified"
