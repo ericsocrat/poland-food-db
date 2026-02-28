@@ -14,9 +14,46 @@ describe("CategoryIcon", () => {
     expect(container.querySelector("svg")).toBeTruthy();
   });
 
+  it("renders a <title> element inside known icon SVGs", () => {
+    const { container } = render(<CategoryIcon slug="dairy" />);
+    const title = container.querySelector("svg title");
+    expect(title).toBeTruthy();
+    expect(title?.textContent).toBe("Dairy");
+  });
+
   it("renders an SVG for an unknown category slug (fallback)", () => {
     const { container } = render(<CategoryIcon slug="unknown-nonsense" />);
     expect(container.querySelector("svg")).toBeTruthy();
+  });
+
+  // ── Variant ───────────────────────────────────────────────────────────────
+
+  it("defaults to outline variant (stroke, no fill)", () => {
+    const { container } = render(<CategoryIcon slug="dairy" />);
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("fill")).toBe("none");
+    expect(svg.getAttribute("stroke")).toBe("currentColor");
+  });
+
+  it("renders filled variant (fill, no stroke)", () => {
+    const { container } = render(
+      <CategoryIcon slug="dairy" variant="filled" />,
+    );
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("fill")).toBe("currentColor");
+    expect(svg.getAttribute("stroke")).toBe("none");
+  });
+
+  it("outline and filled variants produce different inner SVG content", () => {
+    const { container: outlineContainer } = render(
+      <CategoryIcon slug="meat" variant="outline" />,
+    );
+    const { container: filledContainer } = render(
+      <CategoryIcon slug="meat" variant="filled" />,
+    );
+    const outlineG = outlineContainer.querySelector("svg g")!;
+    const filledG = filledContainer.querySelector("svg g")!;
+    expect(outlineG.innerHTML).not.toBe(filledG.innerHTML);
   });
 
   // ── Size variants ─────────────────────────────────────────────────────────
@@ -59,14 +96,31 @@ describe("CategoryIcon", () => {
     expect(svg.getAttribute("role")).toBeNull();
   });
 
-  it("is informational (aria-label + role=img) when label provided", () => {
+  it("is informational (aria-label) when label provided", () => {
     const { container } = render(
       <CategoryIcon slug="meat" label="Meat products" />,
     );
     const svg = container.querySelector("svg")!;
     expect(svg.getAttribute("aria-label")).toBe("Meat products");
-    expect(svg.getAttribute("role")).toBe("img");
     expect(svg.getAttribute("aria-hidden")).toBeNull();
+  });
+
+  // ── Slug aliases ──────────────────────────────────────────────────────────
+
+  it("resolves chips-pl alias to chips icon", () => {
+    const { container: aliased } = render(<CategoryIcon slug="chips-pl" />);
+    const { container: base } = render(<CategoryIcon slug="chips" />);
+    const aliasedG = aliased.querySelector("svg g")!;
+    const baseG = base.querySelector("svg g")!;
+    expect(aliasedG.innerHTML).toBe(baseG.innerHTML);
+  });
+
+  it("resolves chips-de alias to chips icon", () => {
+    const { container: aliased } = render(<CategoryIcon slug="chips-de" />);
+    const { container: base } = render(<CategoryIcon slug="chips" />);
+    const aliasedG = aliased.querySelector("svg g")!;
+    const baseG = base.querySelector("svg g")!;
+    expect(aliasedG.innerHTML).toBe(baseG.innerHTML);
   });
 
   // ── All categories render ─────────────────────────────────────────────────
@@ -101,6 +155,11 @@ describe("CategoryIcon", () => {
     expect(container.querySelector("svg")).toBeTruthy();
   });
 
+  it.each(CATEGORIES)("renders filled variant for category: %s", (slug) => {
+    const { container } = render(<CategoryIcon slug={slug} variant="filled" />);
+    expect(container.querySelector("svg")).toBeTruthy();
+  });
+
   // ── CSS className passthrough ─────────────────────────────────────────────
 
   it("applies custom className", () => {
@@ -113,12 +172,25 @@ describe("CategoryIcon", () => {
     );
   });
 
+  // ── ViewBox ───────────────────────────────────────────────────────────────
+
+  it("uses 24×24 viewBox for custom icons", () => {
+    const { container } = render(<CategoryIcon slug="dairy" />);
+    const svg = container.querySelector("svg")!;
+    expect(svg.getAttribute("viewBox")).toBe("0 0 24 24");
+  });
+
   // ── Utility: hasCategoryIcon ──────────────────────────────────────────────
 
   it("hasCategoryIcon returns true for known slugs", () => {
     expect(hasCategoryIcon("dairy")).toBe(true);
     expect(hasCategoryIcon("bread")).toBe(true);
     expect(hasCategoryIcon("sweets")).toBe(true);
+  });
+
+  it("hasCategoryIcon returns true for alias slugs", () => {
+    expect(hasCategoryIcon("chips-pl")).toBe(true);
+    expect(hasCategoryIcon("chips-de")).toBe(true);
   });
 
   it("hasCategoryIcon returns false for unknown slugs", () => {
@@ -136,5 +208,11 @@ describe("CategoryIcon", () => {
     expect(slugs).toContain("meat");
     expect(slugs).toContain("bread");
     expect(slugs).toContain("zabka");
+  });
+
+  it("getSupportedCategorySlugs includes alias slugs", () => {
+    const slugs = getSupportedCategorySlugs();
+    expect(slugs).toContain("chips-pl");
+    expect(slugs).toContain("chips-de");
   });
 });

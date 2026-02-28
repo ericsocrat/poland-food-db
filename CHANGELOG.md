@@ -110,6 +110,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
   add OpenGraph image reference (og:image, og:image:width/height/alt) pointing
   to `/og-image.png`; add Twitter card image; add `msapplication-TileColor` for
   Windows tile branding (#416)
+- Create 20 custom food category icons with outline and filled variants (40 SVGs
+  total) in `frontend/public/icons/categories/`; rewrite `CategoryIcon` component
+  to use inline SVG path data with `currentColor` support instead of Lucide icons;
+  add `variant` prop (`'outline' | 'filled'`); add slug aliasing for country
+  variants (chips-pl/chips-de → chips); expand test suite from 22 to 65 tests
+  covering variants, aliases, viewBox, and accessibility (#419)
 - Redesign README.md as 15-section showcase-quality layout: hero banner, 9
   shields.io badges, elevator pitch, 4 feature highlight cards (HTML table),
   comparison table, 3-column quick start with collapsible command reference,
