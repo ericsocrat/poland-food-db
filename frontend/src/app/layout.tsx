@@ -6,7 +6,10 @@ import { IS_QA_MODE } from "@/lib/qa-mode";
 import "@/styles/globals.css";
 
 export const viewport: Viewport = {
-  themeColor: "#0d7377",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#0d7377" },
+    { media: "(prefers-color-scheme: dark)", color: "#095456" },
+  ],
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
@@ -50,16 +53,28 @@ export const metadata: Metadata = {
     description:
       "Compare health scores and nutritional data for food products in Poland and Germany.",
     url: "https://poland-food-db.vercel.app",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Poland Food DB — Science-driven food quality intelligence for Poland and Germany",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Poland Food DB",
     description:
       "Compare health scores and nutritional data for food products in Poland and Germany.",
+    images: ["/og-image.png"],
   },
   robots: {
     index: true,
     follow: true,
+  },
+  other: {
+    "msapplication-TileColor": "#0d7377",
   },
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_APP_URL ?? "https://poland-food-db.vercel.app",
