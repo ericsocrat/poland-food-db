@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 48 in `docs/` + 8 in `docs/decisions/` + 5 elsewhere in repo
+> **Total documents:** 49 in `docs/` + 8 in `docs/decisions/` + 5 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -19,7 +19,7 @@
 | [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                                 |
 | [Observability & Operations](#observability--operations) | 9     | Monitoring, observability, log schema, alerts, on-call policy, SLOs, metrics, incident response, disaster drill           |
 | [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                                         |
-| [Frontend & UX](#frontend--ux)                           | 4     | UX/UI design, UX impact metrics, design system, frontend README                                                           |
+| [Frontend & UX](#frontend--ux)                           | 5     | UX/UI design, UX impact metrics, brand guidelines, design system, frontend README                                          |
 | [Process & Workflow](#process--workflow)                 | 6     | Research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion                 |
 | [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance report, performance guardrails, doc governance, repo governance, this index               |
 | [Architecture Decisions](#architecture-decisions-adrs)   | 8     | MADR template + 7 retroactive ADRs (stack, scoring, country isolation, pipeline, API versioning, migrations, ingredients) |
@@ -155,6 +155,7 @@
 | ---------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------- | ------------ |
 | [UX_UI_DESIGN.md](UX_UI_DESIGN.md)                                     | UI/UX design guidelines — color system, components, layouts                   | Frontend domain | 2026-02-24   |
 | [UX_IMPACT_METRICS.md](UX_IMPACT_METRICS.md)                           | UX measurement standard — event catalog, metric templates, performance budget | Frontend domain | 2026-02-24   |
+| [BRAND_GUIDELINES.md](BRAND_GUIDELINES.md)                             | Brand guidelines — 14-section visual identity reference (colors, typography, motion, accessibility, dark mode, assets) | [#410](https://github.com/ericsocrat/poland-food-db/issues/410) | 2026-03-14   |
 | [../frontend/docs/DESIGN_SYSTEM.md](../frontend/docs/DESIGN_SYSTEM.md) | Frontend design system — Tailwind tokens, component patterns                  | Frontend domain | 2026-02-17   |
 | [../frontend/README.md](../frontend/README.md)                         | Frontend project overview — setup, scripts, architecture                      | Frontend domain | 2026-02-24   |
 

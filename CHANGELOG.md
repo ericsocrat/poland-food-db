@@ -60,6 +60,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Add comprehensive brand guidelines (`docs/BRAND_GUIDELINES.md`): 14-section
+  visual identity reference covering brand personality, color system (complete
+  hex values matching design tokens), typography scale, iconography, illustration
+  style, photography direction, component patterns, spacing/layout, motion/animation,
+  accessibility (WCAG contrast ratios), full dark mode mapping table, co-branding
+  rules, and complete asset inventory; add to `docs/INDEX.md` (#410)
 - Harden copilot-instructions.md: rewrite §16 as discovery-driven (script-first),
   extract 240-line issue template to `.github/ISSUE_TEMPLATE/feature.md`,
   reduce from 1,668 to 1,418 lines (under 1,500 cap) (#334)
