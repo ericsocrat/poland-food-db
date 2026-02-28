@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 690 checks across 47 suites + 23 negative validation tests — all passing
+> **QA:** 693 checks across 47 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -107,7 +107,7 @@ poland-food-db/
 │   │   ├── QA__scale_guardrails.sql      # 23 scale guardrails checks
 │   │   ├── QA__country_isolation.sql     # 11 country isolation checks
 │   │   ├── QA__diet_filtering.sql        # 6 diet filtering checks
-│   │   ├── QA__barcode_lookup.sql        # 6 barcode scanner checks
+│   │   ├── QA__barcode_lookup.sql        # 9 barcode scanner checks
 │   │   ├── QA__auth_onboarding.sql       # 8 auth & onboarding checks
 │   │   ├── QA__health_profiles.sql       # 14 health profile checks
 │   │   ├── QA__lists_comparisons.sql     # 12 lists & comparison checks
@@ -257,7 +257,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (690 checks across 47 suites)
+├── RUN_QA.ps1                       # QA test runner (693 checks across 47 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -331,7 +331,7 @@ poland-food-db/
 │   ├── pr-gate.yml                  # Lint → Typecheck → Build → Playwright E2E
 │   ├── pr-title-lint.yml            # PR title conventional-commit validation (all PRs)
 │   ├── main-gate.yml                # Build → Unit tests + coverage → SonarCloud
-│   ├── qa.yml                       # Schema → Pipelines → QA (690) → Sanity
+│   ├── qa.yml                       # Schema → Pipelines → QA (693) → Sanity
 │   ├── nightly.yml                  # Full Playwright (all projects) + Data Integrity Audit
 │   ├── deploy.yml                   # Manual trigger → Schema diff → Approval → db push
 │   ├── sync-cloud-db.yml            # Remote DB sync
@@ -368,31 +368,31 @@ poland-food-db/
 
 ### Tables
 
-| Table                     | Purpose                                         | Primary Key                             | Notes                                                                                                                                         |
-| ------------------------- | ----------------------------------------------- | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `products`                | Product identity, scores, flags, provenance     | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.                                                       |
-| `nutrition_facts`         | Nutrition per product (per 100g)                | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                                                                       |
-| `ingredient_ref`          | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,995 unique ingredients; name_en (UNIQUE), vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                          |
-| `product_ingredient`      | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                           |
-| `product_allergen_info`   | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags     |
-| `country_ref`             | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag, nutri_score_official boolean; FK from products.country                                                       |
-| `category_ref`            | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                         |
-| `nutri_score_ref`         | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                             |
-| `concern_tier_ref`        | EFSA ingredient concern tiers                   | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                      |
-| `user_preferences`        | User personalization (country, diet, allergens) | `user_id` (FK → auth.users)             | One row per user; diet enum, allergen arrays, strict_mode flags; RLS by user                                                                  |
-| `user_health_profiles`    | Health condition profiles                       | `profile_id` (identity)                 | Conditions + nutrient thresholds (sodium, sugar, sat fat limits). One active profile per user. RLS by user                                    |
-| `user_product_lists`      | User-created product lists                      | `list_id` (identity)                    | Name, description, share_token, is_public. Default lists: Favorites, Avoid. RLS by user                                                       |
-| `user_product_list_items` | Items in product lists                          | `(list_id, product_id)`                 | sort_order, notes. FK to user_product_lists + products. RLS by user                                                                           |
-| `user_comparisons`        | Saved product comparisons                       | `comparison_id` (identity)              | product_ids array (2-4), share_token, title. RLS by user                                                                                      |
-| `user_saved_searches`     | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                              |
-| `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                                |
-| `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, status ('pending'/'approved'/'rejected'). Admin-reviewable                                               |
-| `event_schema_registry`   | Schema-versioned event definitions              | `id` (identity)                         | event_type + schema_version UNIQUE; json_schema, status(active/deprecated/retired), pii_fields, retention_days. RLS: anon-read                |
-| `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read                   |
-| `log_level_ref`           | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                     |
-| `error_code_registry`     | Known error codes with domain/category/severity | `error_code` (text PK)                  | {DOMAIN}_{CATEGORY}_{NNN} format; FK to log_level_ref(level); 13 starter codes. RLS: service-write / auth-read                                |
-| `retention_policies`      | Audit log retention configuration               | `policy_id` (identity)                  | table_name (unique), timestamp_column, retention_days (30–3650), is_enabled. RLS: service_role only                                           |
-| `mv_refresh_log`          | Audit trail for MV refreshes                    | `refresh_id` (identity)                 | mv_name, refreshed_at, duration_ms, row_count, triggered_by. Index on (mv_name, refreshed_at DESC). RLS: service-write / auth-read            |
+| Table                     | Purpose                                         | Primary Key                             | Notes                                                                                                                                     |
+| ------------------------- | ----------------------------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `products`                | Product identity, scores, flags, provenance     | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.                                                   |
+| `nutrition_facts`         | Nutrition per product (per 100g)                | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                                                                   |
+| `ingredient_ref`          | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,995 unique ingredients; name_en (UNIQUE), vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                      |
+| `product_ingredient`      | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                       |
+| `product_allergen_info`   | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags |
+| `country_ref`             | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag, nutri_score_official boolean; FK from products.country                                                   |
+| `category_ref`            | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                     |
+| `nutri_score_ref`         | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                         |
+| `concern_tier_ref`        | EFSA ingredient concern tiers                   | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                  |
+| `user_preferences`        | User personalization (country, diet, allergens) | `user_id` (FK → auth.users)             | One row per user; diet enum, allergen arrays, strict_mode flags; RLS by user                                                              |
+| `user_health_profiles`    | Health condition profiles                       | `profile_id` (identity)                 | Conditions + nutrient thresholds (sodium, sugar, sat fat limits). One active profile per user. RLS by user                                |
+| `user_product_lists`      | User-created product lists                      | `list_id` (identity)                    | Name, description, share_token, is_public. Default lists: Favorites, Avoid. RLS by user                                                   |
+| `user_product_list_items` | Items in product lists                          | `(list_id, product_id)`                 | sort_order, notes. FK to user_product_lists + products. RLS by user                                                                       |
+| `user_comparisons`        | Saved product comparisons                       | `comparison_id` (identity)              | product_ids array (2-4), share_token, title. RLS by user                                                                                  |
+| `user_saved_searches`     | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                          |
+| `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                            |
+| `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, review_notes, status ('pending'/'approved'/'rejected'/'merged'). EAN checksum trigger auto-rejects invalid barcodes |
+| `event_schema_registry`   | Schema-versioned event definitions              | `id` (identity)                         | event_type + schema_version UNIQUE; json_schema, status(active/deprecated/retired), pii_fields, retention_days. RLS: anon-read            |
+| `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read               |
+| `log_level_ref`           | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                 |
+| `error_code_registry`     | Known error codes with domain/category/severity | `error_code` (text PK)                  | {DOMAIN}_{CATEGORY}_{NNN} format; FK to log_level_ref(level); 13 starter codes. RLS: service-write / auth-read                            |
+| `retention_policies`      | Audit log retention configuration               | `policy_id` (identity)                  | table_name (unique), timestamp_column, retention_days (30–3650), is_enabled. RLS: service_role only                                       |
+| `mv_refresh_log`          | Audit trail for MV refreshes                    | `refresh_id` (identity)                 | mv_name, refreshed_at, duration_ms, row_count, triggered_by. Index on (mv_name, refreshed_at DESC). RLS: service-write / auth-read        |
 | `deletion_audit_log`      | GDPR Art.17 deletion audit trail (no PII)       | `id` (uuid)                             | deleted_at (timestamptz), tables_affected (text[]). NO user_id column. RLS enabled, service-role only                                     |
 
 ### Products Columns (key)
@@ -443,6 +443,7 @@ poland-food-db/
 | `check_flag_readiness()`           | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                |
 | `api_export_user_data()`           | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER          |
 | `api_delete_user_data()`           | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                        |
+| `is_valid_ean()`                   | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                            |
 
 ### Views
 
@@ -560,7 +561,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **168 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **169 migrations**.
 
 **Rules:**
 
@@ -632,7 +633,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (690 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (693 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -770,7 +771,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (690 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (693 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
@@ -804,7 +805,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 690 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 693 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -870,7 +871,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Scale Guardrails          | `QA__scale_guardrails.sql`          |     23 | Yes       |
 | Country Isolation         | `QA__country_isolation.sql`         |     11 | Yes       |
 | Diet Filtering            | `QA__diet_filtering.sql`            |      6 | Yes       |
-| Barcode Lookup            | `QA__barcode_lookup.sql`            |      6 | Yes       |
+| Barcode Lookup            | `QA__barcode_lookup.sql`            |      9 | Yes       |
 | Auth & Onboarding         | `QA__auth_onboarding.sql`           |      8 | Yes       |
 | Health Profiles           | `QA__health_profiles.sql`           |     14 | Yes       |
 | Lists & Comparisons       | `QA__lists_comparisons.sql`         |     12 | Yes       |
@@ -897,7 +898,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Function Security Audit   | `QA__function_security_audit.sql`   |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **690/690 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **693/693 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
@@ -1386,7 +1387,7 @@ Before a feature is considered complete, verify against all CI gates:
 | Gate                | Command                               | Expected                        |
 | ------------------- | ------------------------------------- | ------------------------------- |
 | Pipeline structure  | `python check_pipeline_structure.py`  | 0 errors                        |
-| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 690) |
+| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 693) |
 | Negative tests      | `.\RUN_NEGATIVE_TESTS.ps1`            | All caught (currently 29)       |
 | pgTAP tests         | `supabase test db`                    | All pass                        |
 | TypeScript          | `cd frontend && npx tsc --noEmit`     | 0 errors                        |

@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(28);
+SELECT plan(38);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -202,6 +202,77 @@ SELECT is(
   (public.api_get_scan_history())->>'api_version',
   '1.0',
   'api_get_scan_history error includes api_version'
+);
+
+-- ─── 9. is_valid_ean — pure function tests ──────────────────────────────────
+
+SELECT is(
+  public.is_valid_ean('5901234123457'),
+  true,
+  'is_valid_ean returns true for valid EAN-13'
+);
+
+SELECT is(
+  public.is_valid_ean('96385074'),
+  true,
+  'is_valid_ean returns true for valid EAN-8'
+);
+
+SELECT is(
+  public.is_valid_ean('5901234123456'),
+  false,
+  'is_valid_ean returns false for bad checksum EAN-13'
+);
+
+SELECT is(
+  public.is_valid_ean('abcdefghijklm'),
+  false,
+  'is_valid_ean returns false for non-numeric input'
+);
+
+SELECT is(
+  public.is_valid_ean('12345'),
+  false,
+  'is_valid_ean returns false for wrong length (5 digits)'
+);
+
+SELECT is(
+  public.is_valid_ean(''),
+  false,
+  'is_valid_ean returns false for empty string'
+);
+
+SELECT is(
+  public.is_valid_ean(NULL),
+  NULL::boolean,
+  'is_valid_ean returns NULL for NULL input (STRICT)'
+);
+
+-- ─── 10. Trigger: auto-reject invalid EAN on product_submissions ────────────
+
+-- Valid EAN → stays pending
+INSERT INTO public.product_submissions (ean, product_name, status)
+VALUES ('4006381333931', 'pgTAP Trigger Valid EAN', 'pending');
+
+SELECT is(
+  (SELECT status FROM public.product_submissions WHERE product_name = 'pgTAP Trigger Valid EAN'),
+  'pending',
+  'Submission with valid EAN-13 stays pending'
+);
+
+-- Invalid EAN → auto-rejected by trigger
+INSERT INTO public.product_submissions (ean, product_name, status)
+VALUES ('4006381333932', 'pgTAP Trigger Invalid EAN', 'pending');
+
+SELECT is(
+  (SELECT status FROM public.product_submissions WHERE product_name = 'pgTAP Trigger Invalid EAN'),
+  'rejected',
+  'Submission with invalid EAN is auto-rejected by trigger'
+);
+
+SELECT ok(
+  (SELECT review_notes FROM public.product_submissions WHERE product_name = 'pgTAP Trigger Invalid EAN') LIKE 'Auto-rejected%',
+  'Auto-rejected submission has review_notes explaining reason'
 );
 
 SELECT * FROM finish();

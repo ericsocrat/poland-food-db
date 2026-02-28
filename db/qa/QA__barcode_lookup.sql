@@ -1,7 +1,7 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- QA Suite: Barcode Lookup
--- Validates the api_product_detail_by_ean scanner endpoint.
--- 6 checks.  All product-dependent checks are guarded for empty-DB safety.
+-- Validates the api_product_detail_by_ean scanner endpoint and EAN checksum.
+-- 9 checks.  All product-dependent checks are guarded for empty-DB safety.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- 1. Known EAN resolves to correct product
@@ -66,3 +66,29 @@ SELECT '6. EAN response includes api_version' AS check_name,
            WHERE p.ean IS NOT NULL AND p.is_deprecated IS NOT TRUE
            LIMIT 1
        ), 0) AS violations;
+
+-- 7. is_valid_ean() function exists and is IMMUTABLE
+SELECT '7. is_valid_ean function exists and is immutable' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc p
+           JOIN pg_namespace n ON p.pronamespace = n.oid
+           WHERE n.nspname = 'public'
+             AND p.proname = 'is_valid_ean'
+             AND p.provolatile = 'i'  -- IMMUTABLE
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 8. All products.ean pass is_valid_ean checksum
+SELECT '8. all products.ean pass checksum validation' AS check_name,
+       COUNT(*)::int AS violations
+FROM products
+WHERE ean IS NOT NULL
+  AND is_deprecated IS NOT TRUE
+  AND NOT is_valid_ean(ean);
+
+-- 9. EAN checksum trigger exists on product_submissions
+SELECT '9. EAN checksum trigger exists on product_submissions' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM information_schema.triggers
+           WHERE trigger_name = 'trg_submission_ean_check'
+             AND event_object_table = 'product_submissions'
+       ) THEN 0 ELSE 1 END AS violations;
