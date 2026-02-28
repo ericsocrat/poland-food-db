@@ -35,7 +35,7 @@
        29. QA__attribute_contradiction.sql (5 attribute contradiction checks — blocking)
        30. QA__monitoring.sql (14 monitoring & health checks — blocking)
        31. QA__scoring_determinism.sql (17 scoring determinism checks — blocking)
-       32. QA__multi_country_consistency.sql (10 multi-country consistency checks — blocking)
+       32. QA__multi_country_consistency.sql (13 multi-country consistency checks — blocking)
        33. QA__performance_regression.sql (6 performance regression checks — informational)
        34. QA__event_intelligence.sql (18 event intelligence checks — blocking)
        35. QA__store_integrity.sql (12 store architecture checks — blocking)
@@ -163,7 +163,7 @@ $suiteCatalog = @(
     @{ Num = 29; Name = "Attribute Contradictions"; Short = "AttrContra"; Id = "attribute_contradiction"; Checks = 5; Blocking = $true; Kind = "sql"; File = "QA__attribute_contradiction.sql" },
     @{ Num = 30; Name = "Monitoring & Health Check"; Short = "Monitoring"; Id = "monitoring"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__monitoring.sql" },
     @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 17; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" },
-    @{ Num = 32; Name = "Multi-Country Consistency"; Short = "MultiCountry"; Id = "multi_country_consistency"; Checks = 10; Blocking = $true; Kind = "sql"; File = "QA__multi_country_consistency.sql" },
+    @{ Num = 32; Name = "Multi-Country Consistency"; Short = "MultiCountry"; Id = "multi_country_consistency"; Checks = 13; Blocking = $true; Kind = "sql"; File = "QA__multi_country_consistency.sql" },
     @{ Num = 33; Name = "Performance Regression"; Short = "PerfRegress"; Id = "performance_regression"; Checks = 6; Blocking = $false; Kind = "sql"; File = "QA__performance_regression.sql" },
     @{ Num = 34; Name = "Event Intelligence"; Short = "EventIntel"; Id = "event_intelligence"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__event_intelligence.sql" },
     @{ Num = 35; Name = "Store Architecture"; Short = "StoreArch"; Id = "store_integrity"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__store_integrity.sql" },

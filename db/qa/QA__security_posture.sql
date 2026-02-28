@@ -131,7 +131,8 @@ WHERE n.nspname = 'public'
     'api_get_product_allergens',     -- public allergen batch lookup
     'api_product_provenance',         -- public product provenance/trust score (#193)
     'api_validate_event_schema',       -- public schema validation (#190)
-    'api_completeness_gap_analysis'    -- public completeness diagnostic (#376)
+    'api_completeness_gap_analysis',   -- public completeness diagnostic (#376)
+    'api_get_cross_country_links'      -- public cross-country links (#352)
   );
 
 -- 10. anon cannot EXECUTE internal computation functions

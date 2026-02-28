@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(219);
+SELECT plan(225);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -331,6 +331,14 @@ SELECT has_index('public', 'products', 'idx_products_last_fetched', 'index idx_p
 SELECT has_table('public', 'product_type_ref',                   'table product_type_ref exists');
 SELECT has_column('public', 'product_type_ref', 'category',      'product_type_ref has category column');
 SELECT has_column('public', 'product_type_ref', 'display_name',  'product_type_ref has display_name column');
+
+-- ─── Cross-Country Product Links (#352) ──────────────────────────────────────
+SELECT has_table('public', 'product_links',                      'table product_links exists');
+SELECT has_column('public', 'product_links', 'product_id_a',     'product_links has product_id_a column');
+SELECT has_column('public', 'product_links', 'product_id_b',     'product_links has product_id_b column');
+SELECT has_column('public', 'product_links', 'link_type',        'product_links has link_type column');
+SELECT has_column('public', 'product_links', 'confidence',       'product_links has confidence column');
+SELECT has_function('public', 'api_get_cross_country_links',     'function api_get_cross_country_links exists');
 
 SELECT * FROM finish();
 ROLLBACK;

@@ -4,7 +4,7 @@
 -- between PL (primary) and DE (micro-pilot) datasets.
 -- Complements QA__country_isolation (API boundary checks) with data-level
 -- consistency checks.
--- 10 checks.
+-- 13 checks.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -145,3 +145,30 @@ WHERE p.is_deprecated IS NOT TRUE
       p_controversies      := p.controversies,
       p_ingredient_concern := COALESCE(p.ingredient_concern_score, 0)
   );
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 11. product_links: no links reference deprecated products (#352)
+-- ═══════════════════════════════════════════════════════════════════════════════
+SELECT '11. product_links: no deprecated product references' AS check_name,
+       COUNT(*) AS violations
+FROM product_links pl
+LEFT JOIN products pa ON pa.product_id = pl.product_id_a
+LEFT JOIN products pb ON pb.product_id = pl.product_id_b
+WHERE pa.is_deprecated = true OR pb.is_deprecated = true
+   OR pa.product_id IS NULL OR pb.product_id IS NULL;
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 12. product_links: all link_type values are valid (#352)
+-- ═══════════════════════════════════════════════════════════════════════════════
+SELECT '12. product_links: all link_type values valid' AS check_name,
+       COUNT(*) AS violations
+FROM product_links pl
+WHERE pl.link_type NOT IN ('identical', 'equivalent', 'variant', 'related');
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 13. product_links: ordering constraint (product_id_a < product_id_b) (#352)
+-- ═══════════════════════════════════════════════════════════════════════════════
+SELECT '13. product_links: ordering constraint valid' AS check_name,
+       COUNT(*) AS violations
+FROM product_links pl
+WHERE pl.product_id_a >= pl.product_id_b;
