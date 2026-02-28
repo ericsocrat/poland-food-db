@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 719 checks across 47 suites + 23 negative validation tests — all passing
+> **QA:** 722 checks across 47 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -257,7 +257,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (719 checks across 47 suites)
+├── RUN_QA.ps1                       # QA test runner (722 checks across 47 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -388,6 +388,7 @@ poland-food-db/
 | `user_saved_searches`     | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                                         |
 | `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                                           |
 | `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, review_notes, status ('pending'/'approved'/'rejected'/'merged'). EAN checksum trigger auto-rejects invalid barcodes |
+| `product_links`           | Cross-country product links                     | `link_id` (identity)                    | product_id_a < product_id_b (ordered pair). link_type: identical/equivalent/variant/related. confidence: manual/ean_match/brand_match/verified. Issue #352 |
 | `user_trust_scores`       | Per-user submission reputation tracking         | `user_id` (FK → auth.users)             | trust_score 0-100 (default 50). Auto-adjusts: +5 approved, -15 rejected, -5 auto-reject. Counters, flag fields. RLS: service_role only                   |
 | `event_schema_registry`   | Schema-versioned event definitions              | `id` (identity)                         | event_type + schema_version UNIQUE; json_schema, status(active/deprecated/retired), pii_fields, retention_days. RLS: anon-read                           |
 | `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read                              |
@@ -437,6 +438,7 @@ poland-food-db/
 | `api_score_explanation()`          | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                              |
 | `api_better_alternatives()`        | Healthier substitutes wrapper with source product context and structured JSON                                                                                       |
 | `api_search_products()`            | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                  |
+| `api_get_cross_country_links()`    | Returns linked products for a given product_id; bidirectional query across product_links; returns JSONB array                                                       |
 | `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                         |
 | `mv_staleness_check()`             | Checks if MVs are stale by comparing row counts to source tables                                                                                                    |
 | `check_formula_drift()`            | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                   |
@@ -576,7 +578,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **178 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **179 migrations**.
 
 **Rules:**
 
@@ -648,7 +650,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (719 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (722 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -786,7 +788,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (719 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (722 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
@@ -820,7 +822,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 719 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 722 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -895,7 +897,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Attribute Contradictions  | `QA__attribute_contradiction.sql`   |      5 | Yes       |
 | Monitoring & Health       | `QA__monitoring.sql`                |     14 | Yes       |
 | Scoring Determinism       | `QA__scoring_determinism.sql`       |     17 | Yes       |
-| Multi-Country Consistency | `QA__multi_country_consistency.sql` |     10 | Yes       |
+| Multi-Country Consistency | `QA__multi_country_consistency.sql` |     13 | Yes       |
 | Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |
 | Event Intelligence        | `QA__event_intelligence.sql`        |     18 | Yes       |
 | Store Architecture        | `QA__store_integrity.sql`           |     12 | Yes       |
@@ -913,7 +915,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Function Security Audit   | `QA__function_security_audit.sql`   |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **719/719 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **722/722 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
