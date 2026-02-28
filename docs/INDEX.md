@@ -12,6 +12,7 @@
 | Domain                                                   | Count | Documents                                                                                                       |
 | -------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
 | [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal        |
+| [Diagrams](#diagrams)                                    | 2     | Architecture overview (light + dark SVGs, Mermaid source)                                                       |
 | [API](#api)                                              | 6     | Contracts, conventions, versioning, frontend mapping, contract testing, registry                                 |
 | [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                                    |
 | [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                          |
@@ -36,6 +37,19 @@
 | [DRIFT_DETECTION.md](DRIFT_DETECTION.md)                   | Automated drift detection — 8-check catalog, severity levels, CI integration plan, doc freshness, migration ordering | [#199](https://github.com/ericsocrat/poland-food-db/issues/199)                                                                  | 2026-03-01   |
 | [SEARCH_ARCHITECTURE.md](SEARCH_ARCHITECTURE.md)           | Search architecture — pg_trgm, tsvector, ranking, synonym management                                                 | [#192](https://github.com/ericsocrat/poland-food-db/issues/192)                                                                  | 2026-02-24   |
 | [CI_ARCHITECTURE_PROPOSAL.md](CI_ARCHITECTURE_PROPOSAL.md) | CI pipeline design proposal                                                                                          | —                                                                                                                                | 2026-02-23   |
+
+## Diagrams
+
+> **Location:** `docs/diagrams/`
+> **Toolchain:** Mermaid CLI (`@mermaid-js/mermaid-cli`) → SVGO optimization
+> **Source files:** `.mmd` (Mermaid markup) — regenerate SVGs via `npx @mermaid-js/mermaid-cli -i <file>.mmd -o <file>.svg`
+
+| File                                                                                 | Purpose                                                    | Owner Issue                                                     | Last Updated |
+| ------------------------------------------------------------------------------------ | ---------------------------------------------------------- | --------------------------------------------------------------- | ------------ |
+| [architecture-overview.svg](diagrams/architecture-overview.svg)                       | Architecture overview — data flow, components, key stats (light mode) | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
+| [architecture-overview-dark.svg](diagrams/architecture-overview-dark.svg)             | Architecture overview — dark mode variant for GitHub dark theme       | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
+| [architecture-overview.mmd](diagrams/architecture-overview.mmd)                       | Mermaid source for architecture overview (light mode)                 | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
+| [architecture-overview-dark.mmd](diagrams/architecture-overview-dark.mmd)             | Mermaid source for architecture overview (dark mode)                  | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
 
 ## API
 
