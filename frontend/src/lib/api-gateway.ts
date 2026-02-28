@@ -7,7 +7,7 @@
 //   const gateway = createApiGateway(supabase);
 //   const result = await gateway.recordScan("5901234123457");
 //
-// Issue: #478 — Phase 1 + Phase 2 + Phase 4
+// Issue: #478 — Phase 1 + Phase 2 + Phase 3 + Phase 4
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -53,6 +53,18 @@ export function isGatewayValidationError(
       result.error === "invalid_ean" ||
       result.error === "invalid_ean_checksum")
   );
+}
+
+export function isGatewayCaptchaRequired(
+  result: GatewayResult,
+): result is GatewayError & { error: "captcha_required"; reason: string } {
+  return !result.ok && result.error === "captcha_required";
+}
+
+export function isGatewayCaptchaFailed(
+  result: GatewayResult,
+): result is GatewayError & { error: "captcha_failed" } {
+  return !result.ok && result.error === "captcha_failed";
 }
 
 // ─── Core invoke ────────────────────────────────────────────────────────────
@@ -143,6 +155,8 @@ export interface SubmitProductParams {
   category?: string | null;
   photo_url?: string | null;
   notes?: string | null;
+  /** Turnstile CAPTCHA token. Required when trust is low or velocity is high. */
+  turnstile_token?: string | null;
 }
 
 /**

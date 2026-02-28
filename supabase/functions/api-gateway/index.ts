@@ -1,9 +1,11 @@
 // ─── Supabase Edge Function: api-gateway ────────────────────────────────────
-// Centralized write-path gateway for rate limiting, input validation, and
-// request forwarding. Read operations bypass this gateway entirely.
+// Centralized write-path gateway for rate limiting, input validation,
+// CAPTCHA verification, trust evaluation, and request forwarding.
+// Read operations bypass this gateway entirely.
 //
 // Phase 1: record-scan rate limiting (100/day/user)
 // Phase 2: submit-product protection (EAN checksum, sanitization, 10/day)
+// Phase 3: CAPTCHA + trust integration for submit-product
 // Phase 4: track-event (10K/day) + save-search (50/day) rate limiting
 //
 // Auth: Requires authenticated user JWT (Authorization: Bearer <jwt>)
@@ -113,6 +115,169 @@ const RATE_LIMITS: Record<string, RateLimitConfig> = {
   "track-event": { max_requests: 10000, window_seconds: 86400 }, // 10K/day
   "save-search": { max_requests: 50, window_seconds: 86400 }, // 50/day
 };
+
+// ─── CAPTCHA + Trust Configuration (Phase 3) ───────────────────────────────
+
+const TURNSTILE_VERIFY_URL =
+  "https://challenges.cloudflare.com/turnstile/v0/siteverify";
+
+/** Actions that may require CAPTCHA verification based on trust/velocity. */
+const CAPTCHA_PROTECTED_ACTIONS = new Set(["submit-product"]);
+
+/** Trust score thresholds. */
+const TRUST_THRESHOLDS = {
+  /** Users with trust score above this bypass CAPTCHA entirely. */
+  HIGH_TRUST_BYPASS: 80,
+  /** Users with trust score below this always require CAPTCHA. */
+  LOW_TRUST_REQUIRED: 50,
+} as const;
+
+/** Max submissions within velocity window before CAPTCHA is required. */
+const VELOCITY_MAX = 3;
+/** Velocity window in seconds (1 hour). */
+const VELOCITY_WINDOW_SECONDS = 3600;
+
+interface TurnstileVerifyResponse {
+  success: boolean;
+  "error-codes"?: string[];
+  challenge_ts?: string;
+  hostname?: string;
+}
+
+/**
+ * Check submission velocity from the in-memory rate limit store.
+ * Returns the count of requests in the last hour for a given user+action.
+ */
+function getSubmissionVelocity(userId: string, action: string): number {
+  const key = `${userId}:${action}`;
+  const entry = rateLimitStore.get(key);
+  if (!entry) return 0;
+
+  const cutoff = Date.now() - VELOCITY_WINDOW_SECONDS * 1000;
+  return entry.timestamps.filter((t) => t > cutoff).length;
+}
+
+/**
+ * Determine whether CAPTCHA is required for this user and action.
+ * Returns { required: false } for bypass, or { required: true, reason } to challenge.
+ */
+function isCaptchaRequired(
+  trustScore: number | null,
+  velocity: number,
+): { required: false } | { required: true; reason: string } {
+  // High-trust users bypass CAPTCHA entirely
+  if (trustScore !== null && trustScore > TRUST_THRESHOLDS.HIGH_TRUST_BYPASS) {
+    return { required: false };
+  }
+
+  // Low-trust users always require CAPTCHA
+  if (trustScore !== null && trustScore < TRUST_THRESHOLDS.LOW_TRUST_REQUIRED) {
+    return { required: true, reason: "low_trust_score" };
+  }
+
+  // New users (no trust record) — check velocity only
+  if (trustScore === null && velocity > VELOCITY_MAX) {
+    return { required: true, reason: "high_velocity" };
+  }
+
+  // Medium-trust users: require CAPTCHA if velocity is high
+  if (velocity > VELOCITY_MAX) {
+    return { required: true, reason: "high_velocity" };
+  }
+
+  return { required: false };
+}
+
+/**
+ * Look up the user's trust score from user_trust_scores via service-role client.
+ * Returns null if no record exists (new user).
+ */
+async function lookupTrustScore(userId: string): Promise<number | null> {
+  const supabaseUrl = Deno.env.get("SUPABASE_URL");
+  const serviceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+  if (!supabaseUrl || !serviceRoleKey) {
+    // Graceful degradation: if service role not available, treat as new user
+    console.warn(
+      "SUPABASE_SERVICE_ROLE_KEY not set — skipping trust score lookup",
+    );
+    return null;
+  }
+
+  try {
+    const serviceClient = createClient(supabaseUrl, serviceRoleKey);
+    const { data, error } = await serviceClient
+      .from("user_trust_scores")
+      .select("trust_score")
+      .eq("user_id", userId)
+      .maybeSingle();
+
+    if (error) {
+      console.error("Trust score lookup failed:", error.message);
+      return null;
+    }
+
+    return data?.trust_score ?? null;
+  } catch (err) {
+    console.error("Trust score lookup exception:", err);
+    return null;
+  }
+}
+
+/**
+ * Verify a Turnstile token directly with the Cloudflare API.
+ * Returns { valid: true } on success, { valid: false, error } on failure.
+ * Gracefully degrades if the API is unreachable or no secret key is set.
+ */
+async function verifyTurnstileToken(
+  token: string,
+  ip: string,
+): Promise<{ valid: true } | { valid: false; error: string }> {
+  const secretKey = Deno.env.get("TURNSTILE_SECRET_KEY");
+
+  if (!secretKey) {
+    // Graceful degradation: no secret key → allow through
+    console.warn(
+      "TURNSTILE_SECRET_KEY not set — allowing request (graceful degradation)",
+    );
+    return { valid: true };
+  }
+
+  try {
+    const response = await fetch(TURNSTILE_VERIFY_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        secret: secretKey,
+        response: token,
+        remoteip: ip,
+      }),
+    });
+
+    if (!response.ok) {
+      console.error(
+        `Turnstile API returned ${response.status}: ${response.statusText}`,
+      );
+      // Graceful degradation on API failure
+      return { valid: true };
+    }
+
+    const data: TurnstileVerifyResponse = await response.json();
+
+    if (data.success) {
+      return { valid: true };
+    }
+
+    return {
+      valid: false,
+      error: `Turnstile verification failed: ${(data["error-codes"] ?? []).join(", ")}`,
+    };
+  } catch (err) {
+    console.error("Turnstile verification error:", err);
+    // Graceful degradation on network failure
+    return { valid: true };
+  }
+}
 
 // ─── EAN Checksum Validation (GS1 Algorithm) ────────────────────────────────
 
@@ -682,7 +847,57 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  // ── Step 5: Create authenticated Supabase client ──────────────────────
+  // ── Step 5: CAPTCHA + Trust check (Phase 3) ───────────────────────────
+  if (CAPTCHA_PROTECTED_ACTIONS.has(action)) {
+    const velocity = getSubmissionVelocity(userId, action);
+    const trustScore = await lookupTrustScore(userId);
+    const captchaCheck = isCaptchaRequired(trustScore, velocity);
+
+    if (captchaCheck.required) {
+      const turnstileToken = body.turnstile_token;
+
+      if (!turnstileToken || typeof turnstileToken !== "string") {
+        return new Response(
+          JSON.stringify({
+            ok: false,
+            error: "captcha_required",
+            message:
+              "CAPTCHA verification is required for this action. Please complete the security challenge and include the 'turnstile_token' in your request.",
+            reason: captchaCheck.reason,
+          } satisfies GatewayError & { reason: string }),
+          {
+            status: 403,
+            headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+          },
+        );
+      }
+
+      // Extract client IP for Turnstile verification
+      const ip =
+        req.headers.get("cf-connecting-ip") ??
+        req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+        "";
+
+      const turnstileResult = await verifyTurnstileToken(turnstileToken, ip);
+
+      if (!turnstileResult.valid) {
+        return new Response(
+          JSON.stringify({
+            ok: false,
+            error: "captcha_failed",
+            message:
+              "CAPTCHA verification failed. Please try again with a new challenge.",
+          } satisfies GatewayError),
+          {
+            status: 403,
+            headers: { ...CORS_HEADERS, "Content-Type": "application/json" },
+          },
+        );
+      }
+    }
+  }
+
+  // ── Step 6: Create authenticated Supabase client ──────────────────────
   const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
   const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
@@ -692,7 +907,7 @@ Deno.serve(async (req: Request) => {
     },
   });
 
-  // ── Step 6: Execute action handler ────────────────────────────────────
+  // ── Step 7: Execute action handler ────────────────────────────────────
   try {
     const response = await handler(supabase, body);
     const status = response.ok ? 200 : 400;
