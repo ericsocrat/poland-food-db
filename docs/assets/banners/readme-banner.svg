@@ -1,0 +1,122 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 340" width="1200" height="340">
+  <defs>
+    <!-- Background gradient — dual-tone teal-to-dark, works on both light and dark GitHub -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="0.3">
+      <stop offset="0%" stop-color="#094a4c"/>
+      <stop offset="40%" stop-color="#0a5558"/>
+      <stop offset="100%" stop-color="#062d2e"/>
+    </linearGradient>
+    <!-- Decorative dot glow -->
+    <radialGradient id="dot-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Logomark gradient (dark mode variant) -->
+    <linearGradient id="logo-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3ee0d0"/>
+      <stop offset="100%" stop-color="#1aafab"/>
+    </linearGradient>
+    <!-- Subtle edge vignette -->
+    <radialGradient id="vignette" cx="0.5" cy="0.5" r="0.7">
+      <stop offset="0%" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.3"/>
+    </radialGradient>
+  </defs>
+
+  <!-- ═══ Background ═══ -->
+  <rect width="1200" height="340" fill="url(#bg)"/>
+  <rect width="1200" height="340" fill="url(#vignette)"/>
+
+  <!-- ═══ Abstract data visualization motif ═══ -->
+  <!-- Scattered dots (data points) — left side -->
+  <g opacity="0.12">
+    <circle cx="50" cy="60" r="3" fill="#2dd4bf"/>
+    <circle cx="90" cy="120" r="2" fill="#2dd4bf"/>
+    <circle cx="140" cy="45" r="2.5" fill="#2dd4bf"/>
+    <circle cx="30" cy="180" r="2" fill="#2dd4bf"/>
+    <circle cx="110" cy="200" r="3.5" fill="#2dd4bf"/>
+    <circle cx="75" cy="280" r="2" fill="#2dd4bf"/>
+    <circle cx="160" cy="160" r="2" fill="#2dd4bf"/>
+    <circle cx="45" cy="300" r="3" fill="#2dd4bf"/>
+    <circle cx="180" cy="90" r="2.5" fill="#2dd4bf"/>
+    <circle cx="130" cy="260" r="2" fill="#2dd4bf"/>
+  </g>
+
+  <!-- Connecting lines (data relationships) — left side -->
+  <g opacity="0.06" stroke="#2dd4bf" stroke-width="1">
+    <line x1="50" y1="60" x2="140" y2="45"/>
+    <line x1="90" y1="120" x2="160" y2="160"/>
+    <line x1="140" y1="45" x2="180" y2="90"/>
+    <line x1="30" y1="180" x2="110" y2="200"/>
+    <line x1="75" y1="280" x2="130" y2="260"/>
+    <line x1="110" y1="200" x2="160" y2="160"/>
+  </g>
+
+  <!-- Scattered dots — right side -->
+  <g opacity="0.12">
+    <circle cx="1050" cy="70" r="2.5" fill="#2dd4bf"/>
+    <circle cx="1100" cy="140" r="3" fill="#2dd4bf"/>
+    <circle cx="1150" cy="50" r="2" fill="#2dd4bf"/>
+    <circle cx="1030" cy="200" r="2" fill="#2dd4bf"/>
+    <circle cx="1170" cy="180" r="3.5" fill="#2dd4bf"/>
+    <circle cx="1080" cy="270" r="2" fill="#2dd4bf"/>
+    <circle cx="1140" cy="240" r="2.5" fill="#2dd4bf"/>
+    <circle cx="1060" cy="310" r="2" fill="#2dd4bf"/>
+    <circle cx="1120" cy="90" r="3" fill="#2dd4bf"/>
+    <circle cx="1160" cy="300" r="2" fill="#2dd4bf"/>
+  </g>
+
+  <!-- Connecting lines — right side -->
+  <g opacity="0.06" stroke="#2dd4bf" stroke-width="1">
+    <line x1="1050" y1="70" x2="1150" y2="50"/>
+    <line x1="1100" y1="140" x2="1170" y2="180"/>
+    <line x1="1150" y1="50" x2="1120" y2="90"/>
+    <line x1="1080" y1="270" x2="1140" y2="240"/>
+    <line x1="1030" y1="200" x2="1100" y2="140"/>
+  </g>
+
+  <!-- Grid pattern (abstract data structure) — subtle center/background -->
+  <g opacity="0.03">
+    <line x1="200" y1="0" x2="200" y2="340" stroke="#ffffff" stroke-width="1"/>
+    <line x1="400" y1="0" x2="400" y2="340" stroke="#ffffff" stroke-width="1"/>
+    <line x1="600" y1="0" x2="600" y2="340" stroke="#ffffff" stroke-width="1"/>
+    <line x1="800" y1="0" x2="800" y2="340" stroke="#ffffff" stroke-width="1"/>
+    <line x1="1000" y1="0" x2="1000" y2="340" stroke="#ffffff" stroke-width="1"/>
+    <line x1="0" y1="85" x2="1200" y2="85" stroke="#ffffff" stroke-width="1"/>
+    <line x1="0" y1="170" x2="1200" y2="170" stroke="#ffffff" stroke-width="1"/>
+    <line x1="0" y1="255" x2="1200" y2="255" stroke="#ffffff" stroke-width="1"/>
+  </g>
+
+  <!-- Accent glow behind center content -->
+  <ellipse cx="600" cy="150" rx="300" ry="120" fill="url(#dot-glow)" opacity="0.15"/>
+
+  <!-- ═══ Center content ═══ -->
+
+  <!-- Logomark (shield-leaf, ~80px) -->
+  <g transform="translate(520, 50) scale(0.156)">
+    <path d="M 256 28 C 364 64, 444 168, 444 272 C 444 376, 336 456, 256 488 C 176 456, 68 376, 68 272 C 68 168, 148 64, 256 28 Z" fill="url(#logo-fill)"/>
+    <line x1="256" y1="84" x2="256" y2="440" stroke="#0f172a" stroke-width="3.5" opacity="0.25" stroke-linecap="round"/>
+    <line x1="256" y1="176" x2="172" y2="236" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="176" x2="340" y2="236" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="256" x2="180" y2="312" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="256" x2="332" y2="312" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="336" x2="200" y2="380" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="336" x2="312" y2="380" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <circle cx="256" cy="64" r="10" fill="#fbbf24" opacity="0.85"/>
+  </g>
+
+  <!-- Project name — large centered -->
+  <text x="600" y="195" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="42" font-weight="700" letter-spacing="-0.01em">Poland Food DB</text>
+
+  <!-- Tagline — smaller, teal accent -->
+  <text x="600" y="235" text-anchor="middle" fill="#2dd4bf" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="500" letter-spacing="0.04em">Science-driven food quality intelligence</text>
+
+  <!-- Sub-description — muted -->
+  <text x="600" y="268" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="400">Multi-axis scoring · 1,281 products · 25 categories · Poland + Germany</text>
+
+  <!-- Accent line (bottom separator) -->
+  <rect x="300" y="290" width="600" height="2" rx="1" fill="#2dd4bf" opacity="0.2"/>
+
+  <!-- Tech stack — bottom center -->
+  <text x="600" y="318" text-anchor="middle" fill="#64748b" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="11" font-weight="400" letter-spacing="0.06em">PostgreSQL · Supabase · Next.js · TypeScript · Python</text>
+</svg>
