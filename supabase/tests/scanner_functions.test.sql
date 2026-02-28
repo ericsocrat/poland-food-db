@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(38);
+SELECT plan(45);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -273,6 +273,55 @@ SELECT is(
 SELECT ok(
   (SELECT review_notes FROM public.product_submissions WHERE product_name = 'pgTAP Trigger Invalid EAN') LIKE 'Auto-rejected%',
   'Auto-rejected submission has review_notes explaining reason'
+);
+
+-- ─── 11. Rate limiting functions ───────────────────────────────────────────────
+
+-- check_submission_rate_limit returns allowed=true for a random UUID (no submissions)
+SELECT is(
+  (check_submission_rate_limit('00000000-0000-0000-0000-000000000099'::uuid))->>'allowed',
+  'true',
+  'check_submission_rate_limit returns allowed=true for user with 0 submissions'
+);
+
+-- check_scan_rate_limit returns allowed=true for a random UUID (no scans)
+SELECT is(
+  (check_scan_rate_limit('00000000-0000-0000-0000-000000000099'::uuid))->>'allowed',
+  'true',
+  'check_scan_rate_limit returns allowed=true for user with 0 scans'
+);
+
+-- Submission rate limit returns all expected JSONB keys
+SELECT ok(
+  (check_submission_rate_limit('00000000-0000-0000-0000-000000000099'::uuid)) ?& ARRAY['allowed','current_count','max_allowed','window','retry_after_seconds'],
+  'check_submission_rate_limit response has all required keys'
+);
+
+-- Scan rate limit returns all expected JSONB keys
+SELECT ok(
+  (check_scan_rate_limit('00000000-0000-0000-0000-000000000099'::uuid)) ?& ARRAY['allowed','current_count','max_allowed','window','retry_after_seconds'],
+  'check_scan_rate_limit response has all required keys'
+);
+
+-- Submission rate limit max_allowed = 10
+SELECT is(
+  ((check_submission_rate_limit('00000000-0000-0000-0000-000000000099'::uuid))->>'max_allowed')::int,
+  10,
+  'check_submission_rate_limit max_allowed is 10'
+);
+
+-- Scan rate limit max_allowed = 100
+SELECT is(
+  ((check_scan_rate_limit('00000000-0000-0000-0000-000000000099'::uuid))->>'max_allowed')::int,
+  100,
+  'check_scan_rate_limit max_allowed is 100'
+);
+
+-- retry_after_seconds is 0 when not rate limited
+SELECT is(
+  ((check_submission_rate_limit('00000000-0000-0000-0000-000000000099'::uuid))->>'retry_after_seconds')::int,
+  0,
+  'retry_after_seconds is 0 when not rate limited'
 );
 
 SELECT * FROM finish();

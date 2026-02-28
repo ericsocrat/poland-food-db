@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(199);
+SELECT plan(201);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -297,6 +297,10 @@ SELECT has_column('public', 'deletion_audit_log', 'deleted_at',   'column deleti
 SELECT has_function('public', 'is_valid_ean',                   'function is_valid_ean exists');
 SELECT has_column('public', 'product_submissions', 'review_notes', 'column product_submissions.review_notes exists');
 SELECT has_trigger('product_submissions', 'trg_submission_ean_check', 'EAN checksum trigger exists on product_submissions');
+
+-- ─── Rate Limiting (#466) ────────────────────────────────────────────────────
+SELECT has_function('public', 'check_submission_rate_limit',  'function check_submission_rate_limit exists');
+SELECT has_function('public', 'check_scan_rate_limit',        'function check_scan_rate_limit exists');
 
 SELECT * FROM finish();
 ROLLBACK;

@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Security Posture Validation — 29 checks
+-- QA: Security Posture Validation — 32 checks
 -- Ensures RLS, grant restrictions, SECURITY DEFINER attributes,
 -- and function access controls are in place.
 -- ============================================================
@@ -380,3 +380,31 @@ JOIN pg_namespace n ON c.relnamespace = n.oid
 WHERE n.nspname = 'public'
   AND c.relname IN ('scan_history', 'product_submissions')
   AND pol.polroles @> ARRAY[(SELECT oid FROM pg_roles WHERE rolname = 'anon')]::oid[];
+
+-- 30. Rate limiting functions exist and are SECURITY DEFINER
+SELECT '30. rate limit functions are SECURITY DEFINER' AS check_name,
+       2 - COUNT(*)::int AS violations
+FROM pg_proc p
+JOIN pg_namespace n ON p.pronamespace = n.oid
+WHERE n.nspname = 'public'
+  AND p.proname IN ('check_submission_rate_limit', 'check_scan_rate_limit')
+  AND p.prosecdef = true;
+
+-- 31. Rate limit index exists on product_submissions (user_id, created_at)
+SELECT '31. rate limit index exists (idx_ps_user_created)' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_indexes
+           WHERE schemaname = 'public'
+             AND tablename = 'product_submissions'
+             AND indexname = 'idx_ps_user_created'
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 32. api_record_scan source contains rate limit check
+SELECT '32. api_record_scan includes rate limit check' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc p
+           JOIN pg_namespace n ON p.pronamespace = n.oid
+           WHERE n.nspname = 'public'
+             AND p.proname = 'api_record_scan'
+             AND p.prosrc LIKE '%check_scan_rate_limit%'
+       ) THEN 0 ELSE 1 END AS violations;
