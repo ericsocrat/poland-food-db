@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(230);
+SELECT plan(237);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -346,6 +346,15 @@ SELECT has_column('public', 'brand_ref', 'brand_name',           'brand_ref has 
 SELECT has_column('public', 'brand_ref', 'display_name',         'brand_ref has display_name column');
 SELECT has_column('public', 'brand_ref', 'parent_company',       'brand_ref has parent_company column');
 SELECT has_column('public', 'brand_ref', 'is_store_brand',       'brand_ref has is_store_brand column');
+
+-- ─── Ingredient Translations (#355) ─────────────────────────────────────────
+SELECT has_table('public', 'ingredient_translations',                       'table ingredient_translations exists');
+SELECT has_column('public', 'ingredient_translations', 'ingredient_id',     'ingredient_translations has ingredient_id column');
+SELECT has_column('public', 'ingredient_translations', 'language_code',     'ingredient_translations has language_code column');
+SELECT has_column('public', 'ingredient_translations', 'name',              'ingredient_translations has name column');
+SELECT has_column('public', 'ingredient_translations', 'source',            'ingredient_translations has source column');
+SELECT has_column('public', 'ingredient_translations', 'reviewed_at',       'ingredient_translations has reviewed_at column');
+SELECT has_function('public', 'resolve_ingredient_name',                    'function resolve_ingredient_name exists');
 
 SELECT * FROM finish();
 ROLLBACK;
