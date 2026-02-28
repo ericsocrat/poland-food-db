@@ -1,0 +1,136 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <!-- Background gradient — deep teal to near-black -->
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0a3d3f"/>
+      <stop offset="50%" stop-color="#072e30"/>
+      <stop offset="100%" stop-color="#051e1f"/>
+    </linearGradient>
+    <!-- Accent line gradient -->
+    <linearGradient id="accent-line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#0d7377" stop-opacity="0"/>
+      <stop offset="20%" stop-color="#0d7377"/>
+      <stop offset="80%" stop-color="#2dd4bf"/>
+      <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0"/>
+    </linearGradient>
+    <!-- Logomark gradient -->
+    <linearGradient id="logo-fill" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3ee0d0"/>
+      <stop offset="100%" stop-color="#1aafab"/>
+    </linearGradient>
+    <!-- Subtle glow behind logo -->
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0%" stop-color="#0d7377" stop-opacity="0.25"/>
+      <stop offset="100%" stop-color="#0d7377" stop-opacity="0"/>
+    </radialGradient>
+    <!-- Stat card background -->
+    <linearGradient id="card-bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0.03"/>
+    </linearGradient>
+  </defs>
+
+  <!-- ═══ Background ═══ -->
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern overlay -->
+  <g opacity="0.03">
+    <line x1="0" y1="158" x2="1200" y2="158" stroke="#ffffff" stroke-width="1"/>
+    <line x1="0" y1="315" x2="1200" y2="315" stroke="#ffffff" stroke-width="1"/>
+    <line x1="0" y1="473" x2="1200" y2="473" stroke="#ffffff" stroke-width="1"/>
+    <line x1="300" y1="0" x2="300" y2="630" stroke="#ffffff" stroke-width="1"/>
+    <line x1="600" y1="0" x2="600" y2="630" stroke="#ffffff" stroke-width="1"/>
+    <line x1="900" y1="0" x2="900" y2="630" stroke="#ffffff" stroke-width="1"/>
+  </g>
+
+  <!-- Decorative accent line (horizontal divider) -->
+  <rect x="100" y="350" width="1000" height="2" fill="url(#accent-line)" rx="1"/>
+
+  <!-- ═══ Top Section: Logo + Title + Tagline ═══ -->
+
+  <!-- Glow behind logo -->
+  <circle cx="600" cy="130" r="140" fill="url(#glow)"/>
+
+  <!-- Logomark (shield-leaf, centered, ~120px tall) -->
+  <g transform="translate(540, 64) scale(0.24)">
+    <path d="M 256 28 C 364 64, 444 168, 444 272 C 444 376, 336 456, 256 488 C 176 456, 68 376, 68 272 C 68 168, 148 64, 256 28 Z" fill="url(#logo-fill)"/>
+    <path d="M 256 28 C 364 64, 444 168, 444 272 C 444 376, 336 456, 256 488 C 176 456, 68 376, 68 272 C 68 168, 148 64, 256 28 Z" fill="url(#logo-fill)" opacity="0.3"/>
+    <line x1="256" y1="84" x2="256" y2="440" stroke="#0f172a" stroke-width="3" opacity="0.25" stroke-linecap="round"/>
+    <line x1="256" y1="176" x2="172" y2="236" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="176" x2="340" y2="236" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="256" x2="180" y2="312" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="256" x2="332" y2="312" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="336" x2="200" y2="380" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <line x1="256" y1="336" x2="312" y2="380" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
+    <circle cx="256" cy="64" r="10" fill="#fbbf24" opacity="0.85"/>
+  </g>
+
+  <!-- Project name (centered) -->
+  <text x="600" y="240" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="52" font-weight="700" letter-spacing="-0.02em">Poland Food DB</text>
+
+  <!-- Tagline -->
+  <text x="600" y="285" text-anchor="middle" fill="#2dd4bf" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="22" font-weight="500" letter-spacing="0.02em">Science-driven food quality intelligence for Poland &amp; Germany</text>
+
+  <!-- Brief description -->
+  <text x="600" y="325" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="16" font-weight="400">Multi-axis scoring engine analyzing nutrition, ingredients, additives, and food processing</text>
+
+  <!-- ═══ Bottom Section: Stat Cards ═══ -->
+
+  <!-- Card 1: Products -->
+  <g transform="translate(100, 385)">
+    <rect width="220" height="100" rx="10" fill="url(#card-bg)" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    <text x="110" y="42" text-anchor="middle" fill="#2dd4bf" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="34" font-weight="700">1,281</text>
+    <text x="110" y="70" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="500" letter-spacing="0.05em">PRODUCTS</text>
+  </g>
+
+  <!-- Card 2: Ingredients -->
+  <g transform="translate(350, 385)">
+    <rect width="220" height="100" rx="10" fill="url(#card-bg)" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    <text x="110" y="42" text-anchor="middle" fill="#2dd4bf" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="34" font-weight="700">2,995</text>
+    <text x="110" y="70" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="500" letter-spacing="0.05em">INGREDIENTS</text>
+  </g>
+
+  <!-- Card 3: Categories -->
+  <g transform="translate(600, 385)">
+    <rect width="220" height="100" rx="10" fill="url(#card-bg)" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    <text x="110" y="42" text-anchor="middle" fill="#fbbf24" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="34" font-weight="700">20</text>
+    <text x="110" y="70" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="500" letter-spacing="0.05em">CATEGORIES</text>
+  </g>
+
+  <!-- Card 4: QA Checks -->
+  <g transform="translate(850, 385)">
+    <rect width="220" height="100" rx="10" fill="url(#card-bg)" stroke="#ffffff" stroke-opacity="0.06" stroke-width="1"/>
+    <text x="110" y="42" text-anchor="middle" fill="#2dd4bf" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="34" font-weight="700">733</text>
+    <text x="110" y="70" text-anchor="middle" fill="#94a3b8" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="14" font-weight="500" letter-spacing="0.05em">QA CHECKS</text>
+  </g>
+
+  <!-- Tech stack pills row -->
+  <g transform="translate(100, 520)">
+    <rect x="0" y="0" width="120" height="30" rx="6" fill="#ffffff" fill-opacity="0.06"/>
+    <text x="60" y="20" text-anchor="middle" fill="#cbd5e1" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="12" font-weight="500">PostgreSQL</text>
+
+    <rect x="132" y="0" width="100" height="30" rx="6" fill="#ffffff" fill-opacity="0.06"/>
+    <text x="182" y="20" text-anchor="middle" fill="#cbd5e1" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="12" font-weight="500">Supabase</text>
+
+    <rect x="244" y="0" width="88" height="30" rx="6" fill="#ffffff" fill-opacity="0.06"/>
+    <text x="288" y="20" text-anchor="middle" fill="#cbd5e1" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="12" font-weight="500">Next.js</text>
+
+    <rect x="344" y="0" width="110" height="30" rx="6" fill="#ffffff" fill-opacity="0.06"/>
+    <text x="399" y="20" text-anchor="middle" fill="#cbd5e1" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="12" font-weight="500">TypeScript</text>
+
+    <rect x="466" y="0" width="88" height="30" rx="6" fill="#ffffff" fill-opacity="0.06"/>
+    <text x="510" y="20" text-anchor="middle" fill="#cbd5e1" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="12" font-weight="500">Python</text>
+
+    <rect x="566" y="0" width="76" height="30" rx="6" fill="#ffffff" fill-opacity="0.06"/>
+    <text x="604" y="20" text-anchor="middle" fill="#cbd5e1" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="12" font-weight="500">pgTAP</text>
+  </g>
+
+  <!-- Domain URL (bottom right) -->
+  <text x="1100" y="590" text-anchor="end" fill="#64748b" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="13" font-weight="400">poland-food-db.vercel.app</text>
+
+  <!-- Version badge (top right) -->
+  <g transform="translate(1010, 45)">
+    <rect width="120" height="30" rx="15" fill="#ffffff" fill-opacity="0.08" stroke="#2dd4bf" stroke-opacity="0.3" stroke-width="1"/>
+    <text x="60" y="20" text-anchor="middle" fill="#2dd4bf" font-family="ui-monospace, 'SF Mono', 'Cascadia Code', monospace" font-size="12" font-weight="600">Open Source</text>
+  </g>
+</svg>
