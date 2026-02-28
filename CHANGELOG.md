@@ -99,6 +99,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
   maskable icons (192×192, 512×512) with 40% safe-zone padding on brand teal
   background; separate "any" vs "maskable" icon entries; update `layout.tsx`
   viewport `themeColor` to match (#415)
+- Create OpenGraph image (`frontend/public/og-image.png`): 1200×630 PNG (43 KB)
+  for social sharing previews (Facebook, LinkedIn, Slack, Discord); centered
+  logomark, tagline, 4 stat cards (1,281 products, 2,995 ingredients, 20
+  categories, 733 QA checks), tech stack pills, domain URL; dark teal gradient
+  matching social-preview visual language; SVG source in `docs/assets/banners/`
+  (#417)
 - Redesign README.md as 15-section showcase-quality layout: hero banner, 9
   shields.io badges, elevator pitch, 4 feature highlight cards (HTML table),
   comparison table, 3-column quick start with collapsible command reference,
