@@ -9,9 +9,15 @@
  *   81–100 → dark red (extreme)
  *
  * Uses `--color-score-*` design tokens. Falls back gracefully for null/invalid.
+ *
+ * Size variants:
+ *   sm  → 32×32 compact pill (number only)
+ *   md  → 48-height pill (number + optional label)
+ *   lg  → 80×80 circular SVG ring with animated fill arc
  */
 
 import React from "react";
+import { getScoreBand } from "@/lib/score-utils";
 import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -27,57 +33,11 @@ export interface ScoreBadgeProps {
   readonly showLabel?: boolean;
   /** Show explanatory tooltip on hover. @default false */
   readonly showTooltip?: boolean;
+  /** Enable progress ring animation (lg only). @default true */
+  readonly animated?: boolean;
   /** Additional CSS classes. */
   readonly className?: string;
 }
-
-// ─── Score band mapping ─────────────────────────────────────────────────────
-
-interface BandConfig {
-  label: string;
-  bg: string;
-  text: string;
-}
-
-const BANDS: BandConfig[] = [
-  { label: "Low", bg: "bg-score-green/10", text: "text-score-green-text" },
-  { label: "Moderate", bg: "bg-score-yellow/10", text: "text-score-yellow-text" },
-  { label: "High", bg: "bg-score-orange/10", text: "text-score-orange-text" },
-  { label: "Very High", bg: "bg-score-red/10", text: "text-score-red-text" },
-  { label: "Extreme", bg: "bg-score-darkred/10", text: "text-score-darkred-text" },
-];
-
-type ScoreBandKey = "green" | "yellow" | "orange" | "red" | "darkred";
-
-const BAND_KEYS: ScoreBandKey[] = [
-  "green",
-  "yellow",
-  "orange",
-  "red",
-  "darkred",
-];
-
-function getBand(score: number): BandConfig {
-  if (score <= 20) return BANDS[0];
-  if (score <= 40) return BANDS[1];
-  if (score <= 60) return BANDS[2];
-  if (score <= 80) return BANDS[3];
-  return BANDS[4];
-}
-
-function getBandKey(score: number): ScoreBandKey {
-  if (score <= 20) return BAND_KEYS[0];
-  if (score <= 40) return BAND_KEYS[1];
-  if (score <= 60) return BAND_KEYS[2];
-  if (score <= 80) return BAND_KEYS[3];
-  return BAND_KEYS[4];
-}
-
-const NA_BAND: BandConfig = {
-  label: "N/A",
-  bg: "bg-surface-muted",
-  text: "text-foreground-muted",
-};
 
 // ─── Size maps ──────────────────────────────────────────────────────────────
 
@@ -87,6 +47,13 @@ const SIZE_CLASSES: Record<ScoreBadgeSize, string> = {
   lg: "px-3 py-1.5 text-base",
 };
 
+// ─── Ring constants (lg size) ───────────────────────────────────────────────
+
+const RING_SIZE = 80;
+const RING_RADIUS = 30;
+const RING_STROKE = 6;
+const RING_CIRCUMFERENCE = 2 * Math.PI * RING_RADIUS;
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export const ScoreBadge = React.memo(function ScoreBadge({
@@ -94,12 +61,16 @@ export const ScoreBadge = React.memo(function ScoreBadge({
   size = "md",
   showLabel = false,
   showTooltip = false,
+  animated = true,
   className = "",
 }: Readonly<ScoreBadgeProps>) {
-  const isValid = score != null && score >= 1 && score <= 100;
-  const band = isValid ? getBand(score) : NA_BAND;
+  const band = getScoreBand(score);
+  const isValid = band !== null;
   const displayText = isValid ? String(score) : "N/A";
-  const tooltipKey = isValid ? `tooltip.score.${getBandKey(score)}` : undefined;
+  const tooltipKey = isValid ? `tooltip.score.${band.band}` : undefined;
+  const bandLabel = isValid ? band.label : "N/A";
+  const bgClass = isValid ? band.bgColor : "bg-surface-muted";
+  const textClass = isValid ? band.textColor : "text-foreground-muted";
 
   if (!isValid && score != null) {
     if (process.env.NODE_ENV === "development") {
@@ -107,23 +78,102 @@ export const ScoreBadge = React.memo(function ScoreBadge({
     }
   }
 
+  // ─── Large: circular SVG ring ───────────────────────────────────────────
+
+  if (size === "lg" && isValid) {
+    const fillFraction = (score as number) / 100;
+    const dashArray = `${RING_CIRCUMFERENCE * fillFraction} ${RING_CIRCUMFERENCE * (1 - fillFraction)}`;
+
+    const ring = (
+      <div
+        className={["inline-flex flex-col items-center gap-1", className]
+          .filter(Boolean)
+          .join(" ")}
+        aria-label={[`Score: ${displayText}`, showLabel ? bandLabel : ""]
+          .filter(Boolean)
+          .join(", ")}
+        role="img"
+      >
+        <svg
+          width={RING_SIZE}
+          height={RING_SIZE}
+          viewBox={`0 0 ${RING_SIZE} ${RING_SIZE}`}
+          className="block"
+        >
+          {/* Track ring */}
+          <circle
+            cx={RING_SIZE / 2}
+            cy={RING_SIZE / 2}
+            r={RING_RADIUS}
+            fill="none"
+            stroke="var(--color-surface-muted, #e5e7eb)"
+            strokeWidth={RING_STROKE}
+          />
+          {/* Fill arc */}
+          <circle
+            cx={RING_SIZE / 2}
+            cy={RING_SIZE / 2}
+            r={RING_RADIUS}
+            fill="none"
+            stroke={band.color}
+            strokeWidth={RING_STROKE}
+            strokeLinecap="round"
+            strokeDasharray={dashArray}
+            strokeDashoffset={0}
+            transform={`rotate(-90 ${RING_SIZE / 2} ${RING_SIZE / 2})`}
+            className={
+              animated
+                ? "transition-[stroke-dasharray] duration-700 ease-out"
+                : ""
+            }
+            data-testid="score-ring"
+          />
+          {/* Score text */}
+          <text
+            x="50%"
+            y="50%"
+            textAnchor="middle"
+            dominantBaseline="central"
+            className={`fill-current ${textClass} text-2xl font-bold`}
+            style={{ fontSize: "1.5rem" }}
+          >
+            {displayText}
+          </text>
+        </svg>
+        {showLabel && (
+          <span className={`text-sm font-medium ${textClass}`}>
+            {bandLabel}
+          </span>
+        )}
+      </div>
+    );
+
+    if (showTooltip && tooltipKey) {
+      return <InfoTooltip messageKey={tooltipKey}>{ring}</InfoTooltip>;
+    }
+
+    return ring;
+  }
+
+  // ─── Small / Medium: pill badge ─────────────────────────────────────────
+
   const badge = (
     <span
       className={[
         "inline-flex items-center gap-1.5 rounded-full font-semibold whitespace-nowrap animate-scale-in",
-        band.bg,
-        band.text,
+        bgClass,
+        textClass,
         SIZE_CLASSES[size],
         className,
       ]
         .filter(Boolean)
         .join(" ")}
-      aria-label={[`Score: ${displayText}`, showLabel ? band.label : ""]
+      aria-label={[`Score: ${displayText}`, showLabel ? bandLabel : ""]
         .filter(Boolean)
         .join(", ")}
     >
       {displayText}
-      {showLabel && <span className="font-medium">{band.label}</span>}
+      {showLabel && <span className="font-medium">{bandLabel}</span>}
     </span>
   );
 
