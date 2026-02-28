@@ -13,6 +13,14 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Security
+
+- Add API gateway Edge Function (`supabase/functions/api-gateway/`) for write-path
+  defense: JWT validation, action-based routing, in-memory sliding-window rate
+  limiting (100 scans/day/user), EAN format validation, structured error responses
+  with graceful degradation fallback; frontend wrapper `api-gateway.ts` with
+  18 Vitest tests (#478)
+
 ### Schema & Migrations
 
 - Add Nutri-Score country applicability: `country_ref.nutri_score_official` boolean
