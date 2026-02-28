@@ -668,7 +668,9 @@
     "signUpSubtitle": "Registrieren Sie sich, um auf Lebensmittelqualitätsdaten für Polen und Deutschland zuzugreifen.",
     "creatingAccount": "Konto wird erstellt…",
     "hasAccount": "Bereits ein Konto?",
-    "checkEmail": "Überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen."
+    "checkEmail": "Überprüfen Sie Ihre E-Mail, um Ihr Konto zu bestätigen.",
+    "captchaRequired": "Bitte schließen Sie die Sicherheitsüberprüfung vor der Registrierung ab.",
+    "captchaFailed": "Sicherheitsüberprüfung fehlgeschlagen. Bitte versuchen Sie es erneut."
   },
   "layout": {
     "appName": "FoodDB",

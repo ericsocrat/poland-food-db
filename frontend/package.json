@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.2",
+    "@marsidev/react-turnstile": "^1.4.2",
     "@radix-ui/react-tooltip": "^1.2.8",
     "@sentry/nextjs": "^10.39.0",
     "@serwist/next": "^9.5.6",

@@ -668,7 +668,9 @@
     "signUpSubtitle": "Zarejestruj się, aby uzyskać dostęp do danych o jakości żywności w Polsce i Niemczech.",
     "creatingAccount": "Tworzenie konta…",
     "hasAccount": "Masz już konto?",
-    "checkEmail": "Sprawdź e-mail, aby potwierdzić konto."
+    "checkEmail": "Sprawdź e-mail, aby potwierdzić konto.",
+    "captchaRequired": "Proszę przejść weryfikację bezpieczeństwa przed rejestracją.",
+    "captchaFailed": "Weryfikacja bezpieczeństwa nie powiodła się. Spróbuj ponownie."
   },
   "layout": {
     "appName": "FoodDB",

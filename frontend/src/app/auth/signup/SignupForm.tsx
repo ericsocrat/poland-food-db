@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { showToast } from "@/lib/toast";
 import { createClient } from "@/lib/supabase/client";
 import { useTranslation } from "@/lib/i18n";
 import { SkipLink } from "@/components/common/SkipLink";
+import { TurnstileWidget } from "@/components/common/TurnstileWidget";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 import type { FormSubmitEvent } from "@/lib/types";
 
 export function SignupForm() {
@@ -15,17 +17,45 @@ export function SignupForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const { t } = useTranslation();
+
+  const handleTurnstileSuccess = useCallback((token: string) => {
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileError = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
+
+  const handleTurnstileExpire = useCallback(() => {
+    setTurnstileToken(null);
+  }, []);
 
   async function handleSignup(e: FormSubmitEvent) {
     e.preventDefault();
+
+    if (!turnstileToken) {
+      showToast({ type: "error", messageKey: "auth.captchaRequired" });
+      return;
+    }
+
     setLoading(true);
+
+    // Server-side Turnstile verification
+    const verification = await verifyTurnstileToken(supabase, turnstileToken);
+    if (!verification.valid) {
+      setLoading(false);
+      showToast({ type: "error", messageKey: "auth.captchaFailed" });
+      return;
+    }
 
     const { error } = await supabase.auth.signUp({
       email,
       password,
       options: {
         emailRedirectTo: `${globalThis.location.origin}/auth/callback`,
+        captchaToken: turnstileToken,
       },
     });
 
@@ -89,9 +119,17 @@ export function SignupForm() {
             />
           </div>
 
+          <TurnstileWidget
+            onSuccess={handleTurnstileSuccess}
+            onError={handleTurnstileError}
+            onExpire={handleTurnstileExpire}
+            action="signup"
+            className="flex justify-center"
+          />
+
           <button
             type="submit"
-            disabled={loading}
+            disabled={loading || !turnstileToken}
             className="btn-primary w-full"
           >
             {loading ? t("auth.creatingAccount") : t("auth.signUp")}
