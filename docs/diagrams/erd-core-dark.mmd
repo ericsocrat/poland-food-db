@@ -1,0 +1,60 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#2dd4bf", "primaryTextColor": "#0f172a", "lineColor": "#94a3b8", "textColor": "#e2e8f0", "background": "#0f172a", "fontSize": "13px"}}}%%
+erDiagram
+    products {
+        bigint product_id PK
+        text country FK "FK country_ref"
+        text brand
+        text product_name
+        text category FK "FK category_ref"
+        text ean UK
+        numeric unhealthiness_score "1-100"
+        text nutri_score_label FK
+        text nova_group
+        text confidence
+    }
+
+    nutrition_facts {
+        bigint product_id PK "FK products"
+        numeric calories_kcal
+        numeric total_fat_g
+        numeric saturated_fat_g
+        numeric sugars_g
+        numeric protein_g
+        numeric salt_g
+    }
+
+    ingredient_ref {
+        bigint ingredient_id PK
+        text name_en UK
+        boolean is_additive
+        integer concern_tier "0-3"
+    }
+
+    product_ingredient {
+        bigint product_id PK "FK products"
+        bigint ingredient_id PK "FK ingredient_ref"
+        integer position PK
+    }
+
+    product_allergen_info {
+        bigint product_id PK "FK products"
+        text tag PK
+        text type PK "contains/traces"
+    }
+
+    category_ref {
+        text category PK
+        text display_name
+    }
+
+    country_ref {
+        text country_code PK
+        boolean is_active
+    }
+
+    products ||--|| nutrition_facts : "has nutrition"
+    products ||--o{ product_ingredient : "contains"
+    product_ingredient }o--|| ingredient_ref : "references"
+    products ||--o{ product_allergen_info : "has allergens"
+    products }o--|| category_ref : "belongs to"
+    products }o--|| country_ref : "sold in"

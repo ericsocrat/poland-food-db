@@ -1,0 +1,314 @@
+%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#0d7377", "primaryTextColor": "#fff", "lineColor": "#475569", "textColor": "#0f172a", "background": "#ffffff", "fontSize": "12px"}}}%%
+erDiagram
+    %% ═══ PRODUCT DOMAIN (blue) ═══════════════════════════════
+    products {
+        bigint product_id PK
+        text country FK "FK country_ref"
+        text brand
+        text product_name
+        text category FK "FK category_ref"
+        text product_type FK "FK product_type_ref"
+        text ean UK "UNIQUE"
+        text prep_method "NOT NULL"
+        text nutri_score_label FK "FK nutri_score_ref"
+        text nova_group
+        numeric unhealthiness_score "1-100"
+        text confidence
+        boolean is_deprecated
+    }
+
+    nutrition_facts {
+        bigint product_id PK "FK products"
+        numeric calories_kcal
+        numeric total_fat_g
+        numeric saturated_fat_g
+        numeric carbs_g
+        numeric sugars_g
+        numeric protein_g
+        numeric fiber_g
+        numeric salt_g
+        numeric trans_fat_g
+    }
+
+    product_ingredient {
+        bigint product_id PK "FK products"
+        bigint ingredient_id PK "FK ingredient_ref"
+        integer position PK
+        numeric percent
+        numeric percent_estimate
+        boolean is_sub
+        bigint parent_ingredient_id
+    }
+
+    ingredient_ref {
+        bigint ingredient_id PK
+        text name_en UK "UNIQUE"
+        text vegan "yes/no/maybe"
+        text vegetarian "yes/no/maybe"
+        boolean is_additive
+        integer concern_tier FK "FK concern_tier_ref 0-3"
+        text contains_palm_oil
+    }
+
+    product_allergen_info {
+        bigint product_id PK "FK products"
+        text tag PK
+        text type PK "contains/traces"
+    }
+
+    product_links {
+        bigint link_id PK
+        bigint product_id_a FK "FK products"
+        bigint product_id_b FK "FK products"
+        text link_type "identical/equivalent/variant/related"
+        text confidence
+    }
+
+    %% ═══ REFERENCE DOMAIN (purple) ═══════════════════════════
+    category_ref {
+        text category PK
+        text display_name
+        text icon_emoji
+        integer sort_order
+    }
+
+    country_ref {
+        text country_code PK
+        text name_en
+        boolean is_active
+    }
+
+    nutri_score_ref {
+        text label PK "A-E/UNKNOWN/NOT-APPLICABLE"
+        text color_hex
+        text description
+    }
+
+    concern_tier_ref {
+        integer tier PK "0-3"
+        numeric score_impact
+        text examples
+    }
+
+    product_type_ref {
+        text product_type PK
+        text category FK "FK category_ref"
+        text display_name
+        integer sort_order
+    }
+
+    brand_ref {
+        text brand_name PK
+        text parent_company
+        text country_origin
+        boolean is_store_brand
+    }
+
+    ingredient_translations {
+        bigint ingredient_id PK "FK ingredient_ref"
+        text language_code PK
+        text name
+        text source
+    }
+
+    %% ═══ USER DOMAIN (green) ═════════════════════════════════
+    user_preferences {
+        uuid user_id PK "FK auth.users"
+        text diet
+        text preferred_country FK "FK country_ref"
+        boolean strict_mode
+    }
+
+    user_health_profiles {
+        bigint profile_id PK
+        uuid user_id FK "FK auth.users"
+        jsonb conditions
+        numeric sodium_limit
+        numeric sugar_limit
+        numeric sat_fat_limit
+    }
+
+    user_product_lists {
+        bigint list_id PK
+        uuid user_id FK "FK auth.users"
+        text name
+        text share_token UK
+        boolean is_public
+    }
+
+    user_product_list_items {
+        bigint list_id PK "FK user_product_lists"
+        bigint product_id PK "FK products"
+        integer sort_order
+        text notes
+    }
+
+    user_comparisons {
+        bigint comparison_id PK
+        uuid user_id FK "FK auth.users"
+        bigint[] product_ids "2-4 products"
+        text share_token UK
+        text title
+    }
+
+    user_saved_searches {
+        bigint search_id PK
+        uuid user_id FK "FK auth.users"
+        text query_text
+        jsonb filters
+    }
+
+    scan_history {
+        bigint scan_id PK
+        uuid user_id FK "FK auth.users"
+        text ean
+        bigint product_id FK "FK products"
+        timestamptz scanned_at
+    }
+
+    product_submissions {
+        bigint submission_id PK
+        uuid user_id FK "FK auth.users"
+        text ean
+        text product_name
+        text brand
+        text status "pending/approved/rejected/merged"
+    }
+
+    user_trust_scores {
+        uuid user_id PK "FK auth.users"
+        integer trust_score "0-100 default 50"
+        integer approved_count
+        integer rejected_count
+    }
+
+    %% ═══ SYSTEM DOMAIN (gray) ════════════════════════════════
+    event_schema_registry {
+        bigint id PK
+        text event_type UK
+        text schema_version
+        jsonb json_schema
+        text status "active/deprecated/retired"
+    }
+
+    backfill_registry {
+        uuid backfill_id PK
+        text name UK
+        text status
+        integer rows_processed
+        integer rows_expected
+    }
+
+    log_level_ref {
+        text level PK "DEBUG-CRITICAL"
+        integer numeric_level
+        integer retention_days
+    }
+
+    error_code_registry {
+        text error_code PK
+        text level FK "FK log_level_ref"
+        text domain
+        text category
+    }
+
+    mv_refresh_log {
+        bigint refresh_id PK
+        text mv_name
+        timestamptz refreshed_at
+        integer duration_ms
+        integer row_count
+    }
+
+    api_rate_limits {
+        text endpoint PK
+        integer max_requests
+        integer window_seconds
+    }
+
+    retention_policies {
+        bigint policy_id PK
+        text table_name UK
+        text timestamp_column
+        integer retention_days
+        boolean is_enabled
+    }
+
+    deletion_audit_log {
+        uuid id PK
+        timestamptz deleted_at
+        text[] tables_affected
+    }
+
+    %% ═══ RECIPE DOMAIN ═══════════════════════════════════════
+    recipe {
+        uuid id PK
+        text slug UK
+        text title_key
+        text category "breakfast/lunch/dinner/etc"
+        text difficulty
+        integer prep_time_min
+        integer cook_time_min
+        text country FK "FK country_ref"
+        boolean is_published
+    }
+
+    recipe_step {
+        uuid id PK
+        uuid recipe_id FK "FK recipe"
+        integer step_number
+        text content_key
+    }
+
+    recipe_ingredient {
+        uuid id PK
+        uuid recipe_id FK "FK recipe"
+        text name_key
+        integer sort_order
+        boolean optional
+        bigint ingredient_ref_id FK "FK ingredient_ref"
+    }
+
+    recipe_ingredient_product {
+        uuid id PK
+        uuid recipe_ingredient_id FK "FK recipe_ingredient"
+        bigint product_id FK "FK products"
+        boolean is_primary
+        numeric match_confidence "0-1"
+    }
+
+    %% ═══ RELATIONSHIPS ═══════════════════════════════════════
+
+    %% Product core
+    products ||--|| nutrition_facts : "has nutrition"
+    products ||--o{ product_ingredient : "contains"
+    product_ingredient }o--|| ingredient_ref : "references"
+    products ||--o{ product_allergen_info : "has allergens"
+    products ||--o{ product_links : "linked (a)"
+    products ||--o{ product_links : "linked (b)"
+
+    %% Product → Reference
+    products }o--|| category_ref : "belongs to"
+    products }o--|| country_ref : "sold in"
+    products }o--o| nutri_score_ref : "scored as"
+    products }o--o| product_type_ref : "typed as"
+    ingredient_ref }o--|| concern_tier_ref : "concern level"
+    ingredient_ref ||--o{ ingredient_translations : "translated"
+    product_type_ref }o--|| category_ref : "in category"
+
+    %% User → Products
+    user_product_lists ||--o{ user_product_list_items : "contains"
+    user_product_list_items }o--|| products : "references"
+    scan_history }o--o| products : "matched to"
+    product_submissions }o--o| products : "creates"
+    recipe_ingredient_product }o--|| products : "links to"
+
+    %% Recipe relationships
+    recipe ||--o{ recipe_step : "has steps"
+    recipe ||--o{ recipe_ingredient : "needs"
+    recipe_ingredient ||--o{ recipe_ingredient_product : "linked to"
+    recipe_ingredient }o--o| ingredient_ref : "canonical ref"
+    recipe }o--o| country_ref : "origin"
+
+    %% System
+    error_code_registry }o--|| log_level_ref : "severity"
