@@ -668,7 +668,9 @@
     "signUpSubtitle": "Sign up to access food quality data for Poland and Germany.",
     "creatingAccount": "Creating account…",
     "hasAccount": "Already have an account?",
-    "checkEmail": "Check your email to confirm your account."
+    "checkEmail": "Check your email to confirm your account.",
+    "captchaRequired": "Please complete the security check before signing up.",
+    "captchaFailed": "Security verification failed. Please try again."
   },
   "layout": {
     "appName": "FoodDB",

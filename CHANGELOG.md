@@ -15,6 +15,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Security
 
+- Add Cloudflare Turnstile CAPTCHA integration for signup bot protection:
+  `verify-turnstile` Edge Function (server-side token verification with graceful
+  degradation), `TurnstileWidget` React component wrapper, `turnstile.ts` client
+  helper lib; SignupForm now requires Turnstile challenge before submission with
+  `captchaToken` passed to Supabase Auth; i18n keys for EN/PL/DE; `.env.example`
+  updated with Turnstile site/secret key config; 45 Vitest tests (19 lib +
+  12 component + 14 signup form) (#470)
 - Add API gateway Edge Function (`supabase/functions/api-gateway/`) for write-path
   defense: JWT validation, action-based routing, in-memory sliding-window rate
   limiting (100 scans/day/user), EAN format validation, structured error responses
