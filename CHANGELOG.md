@@ -78,6 +78,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
   `docs/BRAND_GUIDELINES.md` with variant table, clear space rules, minimum
   size rules, and do's/don'ts; add Logo & Brand Mark subsection to asset
   inventory (#408)
+- Generate complete favicon set (`frontend/public/`): SVG favicon with CSS
+  `prefers-color-scheme` dark-mode media query, multi-size ICO (16+32+48px),
+  PNG favicons (16×16, 32×32), Apple touch icon (180×180 with brand logomark
+  on white background); replace placeholder emoji icons in `/icons/` with
+  proper branded PNGs + SVGs (192, 512px); update `layout.tsx` icon metadata
+  with favicon.svg reference and standard PNG sizes (#409)
 - Harden copilot-instructions.md: rewrite §16 as discovery-driven (script-first),
   extract 240-line issue template to `.github/ISSUE_TEMPLATE/feature.md`,
   reduce from 1,668 to 1,418 lines (under 1,500 cap) (#334)

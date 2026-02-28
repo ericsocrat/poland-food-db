@@ -1,0 +1,38 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <style>
+    .fill-light { fill: url(#g-light); }
+    .stroke-light { stroke: #ffffff; }
+    .accent-light { fill: #d4a844; }
+    @media (prefers-color-scheme: dark) {
+      .fill-light { fill: url(#g-dark); }
+      .stroke-light { stroke: #0f172a; }
+      .accent-light { fill: #fbbf24; }
+    }
+  </style>
+  <defs>
+    <linearGradient id="g-light" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0e8a8e"/>
+      <stop offset="100%" stop-color="#074a4c"/>
+    </linearGradient>
+    <linearGradient id="g-dark" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#3ee0d0"/>
+      <stop offset="100%" stop-color="#1aafab"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Shield-leaf silhouette -->
+  <path class="fill-light" d="M 256 28 C 364 64, 444 168, 444 272 C 444 376, 336 456, 256 488 C 176 456, 68 376, 68 272 C 68 168, 148 64, 256 28 Z"/>
+
+  <!-- Central vein -->
+  <line class="stroke-light" x1="256" y1="84" x2="256" y2="440" stroke-width="3.5" opacity="0.28" stroke-linecap="round"/>
+  <!-- Side veins -->
+  <line class="stroke-light" x1="256" y1="176" x2="172" y2="236" stroke-width="2.5" opacity="0.20" stroke-linecap="round"/>
+  <line class="stroke-light" x1="256" y1="176" x2="340" y2="236" stroke-width="2.5" opacity="0.20" stroke-linecap="round"/>
+  <line class="stroke-light" x1="256" y1="256" x2="180" y2="312" stroke-width="2.5" opacity="0.20" stroke-linecap="round"/>
+  <line class="stroke-light" x1="256" y1="256" x2="332" y2="312" stroke-width="2.5" opacity="0.20" stroke-linecap="round"/>
+  <line class="stroke-light" x1="256" y1="336" x2="200" y2="380" stroke-width="2.5" opacity="0.20" stroke-linecap="round"/>
+  <line class="stroke-light" x1="256" y1="336" x2="312" y2="380" stroke-width="2.5" opacity="0.20" stroke-linecap="round"/>
+
+  <!-- Gold accent dot -->
+  <circle class="accent-light" cx="256" cy="64" r="10" opacity="0.85"/>
+</svg>
