@@ -159,14 +159,14 @@ END AS "T10_completeness_boost_effective";
 -- ─── T11: German synonyms exist (DE→EN direction) ─────────────────────
 
 SELECT CASE
-    WHEN (SELECT COUNT(*) FROM search_synonyms WHERE language_from = 'de' AND language_to = 'en') >= 45
+    WHEN (SELECT COUNT(*) FROM search_synonyms WHERE language_from = 'de' AND language_to = 'en') >= 70
     THEN 'PASS' ELSE 'FAIL'
 END AS "T11_german_to_english_synonyms";
 
 -- ─── T12: German synonyms exist (EN→DE direction) ─────────────────────
 
 SELECT CASE
-    WHEN (SELECT COUNT(*) FROM search_synonyms WHERE language_from = 'en' AND language_to = 'de') >= 45
+    WHEN (SELECT COUNT(*) FROM search_synonyms WHERE language_from = 'en' AND language_to = 'de') >= 70
     THEN 'PASS' ELSE 'FAIL'
 END AS "T12_english_to_german_synonyms";
 
@@ -273,3 +273,24 @@ SELECT CASE
     )
     THEN 'PASS' ELSE 'FAIL'
 END AS "T23_search_vector_trigger_exists";
+
+-- ─── T24: Polish synonyms exist (PL→EN direction) ─────────────────────
+
+SELECT CASE
+    WHEN (SELECT COUNT(*) FROM search_synonyms WHERE language_from = 'pl' AND language_to = 'en') >= 90
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T24_polish_to_english_synonyms";
+
+-- ─── T25: Polish synonyms exist (EN→PL direction) ─────────────────────
+
+SELECT CASE
+    WHEN (SELECT COUNT(*) FROM search_synonyms WHERE language_from = 'en' AND language_to = 'pl') >= 90
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T25_english_to_polish_synonyms";
+
+-- ─── T26: expand_search_query returns PL synonyms ─────────────────────
+
+SELECT CASE
+    WHEN 'salmon' = ANY(expand_search_query('łosoś'))
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T26_expand_query_pl_to_en";

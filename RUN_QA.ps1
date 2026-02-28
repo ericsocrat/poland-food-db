@@ -41,7 +41,7 @@
        35. QA__store_integrity.sql (12 store architecture checks — blocking)
        36. QA__data_provenance.sql (25 data provenance checks — blocking)
        37. QA__scoring_engine.sql (25 scoring engine checks — blocking)
-       38. QA__search_architecture.sql (23 search architecture checks — blocking)
+       38. QA__search_architecture.sql (26 search architecture checks — blocking)
        39. QA__gdpr_compliance.sql (15 GDPR compliance checks — blocking)
        40. QA__push_notifications.sql (14 push notification checks — blocking)
        41. QA__index_verification.sql (13 index verification checks — informational)
@@ -169,7 +169,7 @@ $suiteCatalog = @(
     @{ Num = 35; Name = "Store Architecture"; Short = "StoreArch"; Id = "store_integrity"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__store_integrity.sql" },
     @{ Num = 36; Name = "Data Provenance"; Short = "Provenance"; Id = "data_provenance"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__data_provenance.sql" },
     @{ Num = 37; Name = "Scoring Engine"; Short = "ScoreEngine"; Id = "scoring_engine"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__scoring_engine.sql" },
-    @{ Num = 38; Name = "Search Architecture"; Short = "SearchArch"; Id = "search_architecture"; Checks = 23; Blocking = $true; Kind = "sql"; File = "QA__search_architecture.sql" },
+    @{ Num = 38; Name = "Search Architecture"; Short = "SearchArch"; Id = "search_architecture"; Checks = 26; Blocking = $true; Kind = "sql"; File = "QA__search_architecture.sql" },
     @{ Num = 39; Name = "GDPR Compliance"; Short = "GDPR"; Id = "gdpr_compliance"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__gdpr_compliance.sql" },
     @{ Num = 40; Name = "Push Notifications"; Short = "PushNotif"; Id = "push_notifications"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__push_notifications.sql" },
     @{ Num = 41; Name = "Index Verification"; Short = "IdxVerify"; Id = "index_verification"; Checks = 13; Blocking = $false; Kind = "sql"; File = "QA__index_verification.sql" },
