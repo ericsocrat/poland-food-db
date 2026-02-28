@@ -149,6 +149,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
   product result card), smart search (search bar with pg_trgm + filter chips
   + fuzzy results); white card style with brand-colored border, dark mode
   via `prefers-color-scheme` media queries, all under 6 KB (#432)
+- Create 3 marketing infographics in `docs/marketing/`: stats infographic
+  (900×480, 12 key metrics in 3×4 grid on brand gradient — products, ingredients,
+  QA checks, migrations, EANs, API functions, categories, countries, tables,
+  ADRs, docs, allergen declarations); tech stack visual (900×520, 6-layer
+  horizontal architecture — Frontend, Backend/Database, Pipeline, Testing,
+  CI/CD, Governance — with technology pills); before/after comparison
+  (900×440, split-panel red/green with 6 value proposition rows — data
+  organization, health scoring, barcode scanning, ingredient transparency,
+  allergen safety, product comparison); all under 9 KB (#433)
 - Redesign README.md as 15-section showcase-quality layout: hero banner, 9
   shields.io badges, elevator pitch, 4 feature highlight cards (HTML table),
   comparison table, 3-column quick start with collapsible command reference,

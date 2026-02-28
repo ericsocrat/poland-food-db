@@ -1,0 +1,143 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 520" fill="none">
+  <style>
+    .bg { fill: #f8fafc; }
+    .title { font-family: system-ui, -apple-system, sans-serif; font-size: 24px; font-weight: 800; fill: #0f172a; text-anchor: middle; letter-spacing: 1px; }
+    .subtitle { font-family: system-ui, -apple-system, sans-serif; font-size: 12px; fill: #64748b; text-anchor: middle; }
+    .layer-bg { rx: 10; }
+    .layer-label { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 700; fill: #ffffff; }
+    .layer-label-dark { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; font-weight: 700; fill: #0f172a; }
+    .tech-name { font-family: system-ui, -apple-system, sans-serif; font-size: 12px; font-weight: 600; fill: #0f172a; }
+    .tech-pill { rx: 10; fill: #ffffff; stroke: #e2e8f0; stroke-width: 1; }
+    .tech-pill-text { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; fill: #334155; text-anchor: middle; }
+    .connector { stroke: #cbd5e1; stroke-width: 1; stroke-dasharray: 4 3; }
+    .badge { font-family: system-ui, -apple-system, sans-serif; font-size: 9px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+    .footer { font-family: system-ui, -apple-system, sans-serif; font-size: 10px; fill: #94a3b8; text-anchor: middle; }
+  </style>
+  <rect width="900" height="520" rx="16" class="bg"/>
+  <rect x="0.5" y="0.5" width="899" height="519" rx="16" stroke="#e2e8f0" stroke-width="1" fill="none"/>
+  <!-- Title -->
+  <text class="title" x="450" y="40">TECHNOLOGY STACK</text>
+  <text class="subtitle" x="450" y="58">Full-stack architecture — 6 layers, 20+ technologies</text>
+  <!-- Layer 1: Frontend (teal) -->
+  <g transform="translate(32, 76)">
+    <rect class="layer-bg" width="836" height="60" fill="#0d7377"/>
+    <text class="layer-label" x="16" y="20">FRONTEND</text>
+    <!-- Pills -->
+    <rect class="tech-pill" x="16" y="28" width="90" height="24"/>
+    <text class="tech-pill-text" x="61" y="44">Next.js 15</text>
+    <rect class="tech-pill" x="116" y="28" width="80" height="24"/>
+    <text class="tech-pill-text" x="156" y="44">React 19</text>
+    <rect class="tech-pill" x="206" y="28" width="96" height="24"/>
+    <text class="tech-pill-text" x="254" y="44">TypeScript</text>
+    <rect class="tech-pill" x="312" y="28" width="100" height="24"/>
+    <text class="tech-pill-text" x="362" y="44">Tailwind CSS</text>
+    <rect class="tech-pill" x="422" y="28" width="120" height="24"/>
+    <text class="tech-pill-text" x="482" y="44">TanStack Query</text>
+    <rect class="tech-pill" x="552" y="28" width="76" height="24"/>
+    <text class="tech-pill-text" x="590" y="44">Zustand</text>
+    <rect class="tech-pill" x="638" y="28" width="80" height="24"/>
+    <text class="tech-pill-text" x="678" y="44">next-intl</text>
+  </g>
+  <!-- Connector -->
+  <line class="connector" x1="450" y1="136" x2="450" y2="148"/>
+  <!-- Layer 2: Backend / Database (dark teal) -->
+  <g transform="translate(32, 148)">
+    <rect class="layer-bg" width="836" height="60" fill="#095456"/>
+    <text class="layer-label" x="16" y="20">BACKEND / DATABASE</text>
+    <rect class="tech-pill" x="16" y="28" width="110" height="24"/>
+    <text class="tech-pill-text" x="71" y="44">PostgreSQL 15</text>
+    <rect class="tech-pill" x="136" y="28" width="86" height="24"/>
+    <text class="tech-pill-text" x="179" y="44">Supabase</text>
+    <rect class="tech-pill" x="232" y="28" width="134" height="24"/>
+    <text class="tech-pill-text" x="299" y="44">Row-Level Security</text>
+    <rect class="tech-pill" x="376" y="28" width="76" height="24"/>
+    <text class="tech-pill-text" x="414" y="44">pg_trgm</text>
+    <rect class="tech-pill" x="462" y="28" width="78" height="24"/>
+    <text class="tech-pill-text" x="501" y="44">tsvector</text>
+    <rect class="tech-pill" x="550" y="28" width="140" height="24"/>
+    <text class="tech-pill-text" x="620" y="44">Materialized Views</text>
+    <rect class="tech-pill" x="700" y="28" width="120" height="24"/>
+    <text class="tech-pill-text" x="760" y="44">Edge Functions</text>
+  </g>
+  <!-- Connector -->
+  <line class="connector" x1="450" y1="208" x2="450" y2="220"/>
+  <!-- Layer 3: Pipeline (gold/accent) -->
+  <g transform="translate(32, 220)">
+    <rect class="layer-bg" width="836" height="60" fill="#d4a844"/>
+    <text class="layer-label-dark" x="16" y="20">DATA PIPELINE</text>
+    <rect class="tech-pill" x="16" y="28" width="96" height="24"/>
+    <text class="tech-pill-text" x="64" y="44">Python 3.12</text>
+    <rect class="tech-pill" x="122" y="28" width="166" height="24"/>
+    <text class="tech-pill-text" x="205" y="44">Open Food Facts API v2</text>
+    <rect class="tech-pill" x="298" y="28" width="116" height="24"/>
+    <text class="tech-pill-text" x="356" y="44">SQL Generator</text>
+    <rect class="tech-pill" x="424" y="28" width="100" height="24"/>
+    <text class="tech-pill-text" x="474" y="44">Data Validator</text>
+    <rect class="tech-pill" x="534" y="28" width="130" height="24"/>
+    <text class="tech-pill-text" x="599" y="44">Ingredient Enricher</text>
+  </g>
+  <!-- Connector -->
+  <line class="connector" x1="450" y1="280" x2="450" y2="292"/>
+  <!-- Layer 4: Testing (green) -->
+  <g transform="translate(32, 292)">
+    <rect class="layer-bg" width="836" height="60" fill="#15803d"/>
+    <text class="layer-label" x="16" y="20">TESTING</text>
+    <rect class="tech-pill" x="16" y="28" width="60" height="24"/>
+    <text class="tech-pill-text" x="46" y="44">Vitest</text>
+    <rect class="tech-pill" x="86" y="28" width="86" height="24"/>
+    <text class="tech-pill-text" x="129" y="44">Playwright</text>
+    <rect class="tech-pill" x="182" y="28" width="64" height="24"/>
+    <text class="tech-pill-text" x="214" y="44">pgTAP</text>
+    <rect class="tech-pill" x="256" y="28" width="110" height="24"/>
+    <text class="tech-pill-text" x="311" y="44">733 QA Checks</text>
+    <!-- Badge -->
+    <rect x="289" y="28" width="46" height="12" rx="6" fill="#fbbf24"/>
+    <text class="badge" x="312" y="37">PASS</text>
+    <rect class="tech-pill" x="376" y="28" width="120" height="24"/>
+    <text class="tech-pill-text" x="436" y="44">Testing Library</text>
+    <rect class="tech-pill" x="506" y="28" width="120" height="24"/>
+    <text class="tech-pill-text" x="566" y="44">23 Negative Tests</text>
+  </g>
+  <!-- Connector -->
+  <line class="connector" x1="450" y1="352" x2="450" y2="364"/>
+  <!-- Layer 5: CI/CD (slate) -->
+  <g transform="translate(32, 364)">
+    <rect class="layer-bg" width="836" height="60" fill="#334155"/>
+    <text class="layer-label" x="16" y="20">CI / CD</text>
+    <rect class="tech-pill" x="16" y="28" width="116" height="24"/>
+    <text class="tech-pill-text" x="74" y="44">GitHub Actions</text>
+    <rect class="tech-pill" x="142" y="28" width="96" height="24"/>
+    <text class="tech-pill-text" x="190" y="44">SonarCloud</text>
+    <rect class="tech-pill" x="248" y="28" width="68" height="24"/>
+    <text class="tech-pill-text" x="282" y="44">Sentry</text>
+    <rect class="tech-pill" x="326" y="28" width="66" height="24"/>
+    <text class="tech-pill-text" x="359" y="44">Vercel</text>
+    <rect class="tech-pill" x="402" y="28" width="54" height="24"/>
+    <text class="tech-pill-text" x="429" y="44">Ruff</text>
+    <rect class="tech-pill" x="466" y="28" width="80" height="24"/>
+    <text class="tech-pill-text" x="506" y="44">CodeQL</text>
+    <rect class="tech-pill" x="556" y="28" width="96" height="24"/>
+    <text class="tech-pill-text" x="604" y="44">Dependabot</text>
+  </g>
+  <!-- Connector -->
+  <line class="connector" x1="450" y1="424" x2="450" y2="436"/>
+  <!-- Layer 6: Governance (light) -->
+  <g transform="translate(32, 436)">
+    <rect class="layer-bg" width="836" height="52" fill="#e2e8f0" stroke="#cbd5e1" stroke-width="1"/>
+    <text class="layer-label-dark" x="16" y="18">GOVERNANCE</text>
+    <rect class="tech-pill" x="16" y="26" width="70" height="20" style="stroke:#94a3b8"/>
+    <text class="tech-pill-text" x="51" y="40">45+ Docs</text>
+    <rect class="tech-pill" x="96" y="26" width="64" height="20" style="stroke:#94a3b8"/>
+    <text class="tech-pill-text" x="128" y="40">7 ADRs</text>
+    <rect class="tech-pill" x="170" y="26" width="140" height="20" style="stroke:#94a3b8"/>
+    <text class="tech-pill-text" x="240" y="40">Conventional Commits</text>
+    <rect class="tech-pill" x="320" y="26" width="86" height="20" style="stroke:#94a3b8"/>
+    <text class="tech-pill-text" x="363" y="40">MADR 3.0</text>
+    <rect class="tech-pill" x="416" y="26" width="100" height="20" style="stroke:#94a3b8"/>
+    <text class="tech-pill-text" x="466" y="40">DR Drills</text>
+    <rect class="tech-pill" x="526" y="26" width="114" height="20" style="stroke:#94a3b8"/>
+    <text class="tech-pill-text" x="583" y="40">GDPR / RODO</text>
+  </g>
+  <!-- Footer -->
+  <text class="footer" x="450" y="510">poland-food-db · Science-driven food quality database for Poland + Germany</text>
+</svg>
