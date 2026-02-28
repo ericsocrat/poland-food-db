@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 72" role="img" aria-label="Poland Food DB wordmark">
+  <title>Poland Food DB</title>
+  <desc>Placeholder wordmark — styled project name in brand typography. This text will be regenerated when the project name changes. The lockup architecture is designed to make this swap trivial.</desc>
+
+  <!-- ═══ Wordmark text ═══ -->
+  <!-- Font: system sans-serif stack matching brand guidelines §4 -->
+  <!-- Weight: 700 (bold) — Display level per type scale -->
+  <!-- Color: brand primary teal #0d7377 -->
+  <!-- Letter spacing: 0.02em for refined tracking -->
+  <text
+    x="0" y="52"
+    font-family="'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+    font-size="44"
+    font-weight="700"
+    fill="#0d7377"
+    letter-spacing="0.02em"
+  >Poland Food DB</text>
+</svg>

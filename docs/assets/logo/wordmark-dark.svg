@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 480 72" role="img" aria-label="Poland Food DB wordmark">
+  <title>Poland Food DB</title>
+  <desc>Dark-mode wordmark — white text for dark backgrounds. Placeholder that will be regenerated when the project name changes.</desc>
+
+  <!-- ═══ Wordmark text (dark mode) ═══ -->
+  <!-- Fill: white for dark backgrounds (#0f172a / slate-900) -->
+  <text
+    x="0" y="52"
+    font-family="'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
+    font-size="44"
+    font-weight="700"
+    fill="#ffffff"
+    letter-spacing="0.02em"
+  >Poland Food DB</text>
+</svg>

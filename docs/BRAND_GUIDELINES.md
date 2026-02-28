@@ -66,32 +66,51 @@ Empower consumers in Poland (and expanding to Europe) to make healthier food cho
 
 ## 2. Logo Usage
 
-> **Status:** Pending — depends on [#407](https://github.com/ericsocrat/poland-food-db/issues/407) (logomark design) and [#408](https://github.com/ericsocrat/poland-food-db/issues/408) (lockup variations). This section will be completed when those assets are finalized.
+> **Status:** Active — logomark (#407) and lockups (#408) finalized.
 
-### Planned Variants
+### Logo Variants
 
-| Variant          | Use Case                                   | Issue |
-| ---------------- | ------------------------------------------ | ----- |
-| Icon-only        | Favicons, app icons, small badges          | #407  |
-| Horizontal lockup | Navigation bar, email headers             | #408  |
-| Stacked lockup   | Marketing materials, splash screens        | #408  |
-| Monochrome       | Single-color contexts (print, watermarks)  | #408  |
+| Variant                | File                         | Use Case                                  |
+| ---------------------- | ---------------------------- | ----------------------------------------- |
+| Icon-only (full color) | `logomark.svg`               | App icons, favicons (32px+), badges       |
+| Icon-only (dark mode)  | `logomark-dark.svg`          | App icons on dark backgrounds             |
+| Icon-only (mono)       | `logomark-mono.svg`          | Single-color contexts, watermarks, print  |
+| Horizontal lockup      | `lockup-horizontal.svg`      | Navigation bar, email headers, banners    |
+| Horizontal lockup (dark) | `lockup-horizontal-dark.svg` | Nav bar on dark backgrounds            |
+| Stacked lockup         | `lockup-stacked.svg`         | Marketing materials, splash screens       |
+| Stacked lockup (dark)  | `lockup-stacked-dark.svg`    | Splash screens on dark backgrounds        |
+| Wordmark               | `wordmark.svg`               | Text-only contexts (placeholder name)     |
+| Wordmark (dark)        | `wordmark-dark.svg`          | Text-only on dark backgrounds             |
 
-### Clear Space Rules (to be defined with #408)
+> **Wordmark note:** The wordmark is a deliberate placeholder. When the project name changes, regenerate `wordmark.svg` and `wordmark-dark.svg`. The lockup architecture makes this swap trivial — only the `<text>` element changes.
 
-- Minimum clear space: 1× the icon height on all sides.
-- Minimum icon size: 24×24px (digital), 10mm (print).
-- Never rotate, skew, distort, or apply effects to the logo.
-- Never place the logo on busy backgrounds without a container.
+### Clear Space Rules
 
-### Do's and Don'ts (Preliminary)
+- **Minimum clear space around logomark:** icon height × 0.5 on all sides.
+- **Minimum clear space in horizontal lockup:** icon height × 0.5 between icon and wordmark.
+- **Minimum clear space in stacked lockup:** icon height × 0.3 between icon and wordmark.
+- **Minimum padding around entire lockup:** icon height × 0.25 on all sides.
 
-| Do                                              | Don't                                           |
-| ------------------------------------------------ | ------------------------------------------------ |
-| Use the correct variant for the theme (light/dark) | Stretch or distort the logo                     |
-| Maintain minimum clear space                      | Change logo colors outside approved palette      |
-| Use the monochrome variant on photos              | Add drop shadows or outlines to the logo         |
-| Center-align when used as a standalone mark       | Place logo smaller than minimum size             |
+### Minimum Size Rules
+
+| Context                | Minimum Size | Action                            |
+| ---------------------- | ------------ | --------------------------------- |
+| Digital icon-only      | 16×16px      | Use monochrome variant (`logomark-mono.svg`) |
+| Digital icon-only      | 32×32px+     | Use full-color variant            |
+| Horizontal lockup      | 120px width  | Below this, switch to icon-only   |
+| Stacked lockup         | 80px width   | Below this, switch to icon-only   |
+| Print icon-only        | 10mm         | Use monochrome variant            |
+
+### Do's and Don'ts
+
+| Do                                                  | Don't                                            |
+| --------------------------------------------------- | ------------------------------------------------ |
+| Use the correct variant for the theme (light/dark)  | Stretch or distort the logo                      |
+| Maintain minimum clear space                        | Change logo colors outside approved palette      |
+| Use the monochrome variant on photos                | Add drop shadows or outlines to the logo         |
+| Center-align when used as a standalone mark         | Place logo smaller than minimum size             |
+| Use lockup SVGs as-is (they embed the logomark)     | Recompose icon + text manually                   |
+| Switch to icon-only below lockup minimum width      | Crop or partially obscure the logomark           |
 
 ---
 
@@ -834,6 +853,21 @@ As per the [Open Food Facts Terms of Use](https://world.openfoodfacts.org/terms-
 | `data-schema-header.svg`    | 800×100    | SVG    | Data/schema template     | 2026-03-13   | #414  |
 | `pr-header.svg`             | 800×100    | SVG    | Pull request template    | 2026-03-13   | #414  |
 
+### Logo & Brand Mark (`docs/assets/logo/`)
+
+| File                         | Dimensions | Format | Dark Variant            | Last Updated | Issue |
+| ---------------------------- | ---------- | ------ | ----------------------- | ------------ | ----- |
+| `logomark.svg`               | 512×512    | SVG    | `logomark-dark.svg`     | 2026-03-14   | #407  |
+| `logomark-dark.svg`          | 512×512    | SVG    | (is dark)               | 2026-03-14   | #407  |
+| `logomark-mono.svg`          | 512×512    | SVG    | N/A (currentColor)      | 2026-03-14   | #407  |
+| `logomark-{16–512}.png`      | 16–512px   | PNG    | N/A                     | 2026-03-14   | #407  |
+| `wordmark.svg`               | 480×72     | SVG    | `wordmark-dark.svg`     | 2026-03-14   | #408  |
+| `wordmark-dark.svg`          | 480×72     | SVG    | (is dark)               | 2026-03-14   | #408  |
+| `lockup-horizontal.svg`      | 660×120    | SVG    | `lockup-horizontal-dark.svg` | 2026-03-14 | #408 |
+| `lockup-horizontal-dark.svg` | 660×120    | SVG    | (is dark)               | 2026-03-14   | #408  |
+| `lockup-stacked.svg`         | 320×380    | SVG    | `lockup-stacked-dark.svg` | 2026-03-14 | #408  |
+| `lockup-stacked-dark.svg`    | 320×380    | SVG    | (is dark)               | 2026-03-14   | #408  |
+
 ### Banners (`docs/assets/banners/`)
 
 | File                    | Dimensions | Format | Purpose                     | Last Updated | Issue |
@@ -850,8 +884,6 @@ As per the [Open Food Facts Terms of Use](https://world.openfoodfacts.org/terms-
 
 | Asset              | Issue | Status                     |
 | ------------------ | ----- | -------------------------- |
-| Logomark (icon)    | #407  | Open — design pending      |
-| Lockup variations  | #408  | Open — blocked by #407     |
 | Social preview     | #409  | Open — blocked by #407     |
 | Favicon set        | #413  | Open — blocked by #407     |
 | OG images          | #416  | Open — blocked by #407     |
