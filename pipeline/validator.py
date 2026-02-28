@@ -2,8 +2,10 @@
 
 Validates fetched products against category reference ranges derived from
 Polish government nutritional data (IŻŻ / NCEZ), performs EAN-13
-checksum verification, and detects attribute contradictions between
-ingredient-derived flags and declared allergens.
+checksum verification, detects attribute contradictions between
+ingredient-derived flags and declared allergens, and flags nutrition
+values that violate absolute physical caps or per-category plausibility
+ranges.
 """
 
 from __future__ import annotations
@@ -84,6 +86,25 @@ CATEGORY_RANGES: dict[str, dict[str, tuple[float, float]]] = {
 
 
 # ---------------------------------------------------------------------------
+# Absolute nutrition caps (per 100 g) — no food can exceed these
+# ---------------------------------------------------------------------------
+
+#: Hard upper limits based on physical constraints.  A value above any of
+#: these is certainly wrong data (e.g. vandalism on Open Food Facts).
+ABSOLUTE_CAPS: dict[str, float] = {
+    "calories": 900,           # Pure fat ≈ 900 kcal
+    "total_fat_g": 100,        # Can't exceed 100 g per 100 g
+    "saturated_fat_g": 100,
+    "carbs_g": 100,
+    "sugars_g": 100,
+    "protein_g": 100,
+    "fibre_g": 100,
+    "salt_g": 50,              # Pure salt is extreme
+    "trans_fat_g": 100,
+}
+
+
+# ---------------------------------------------------------------------------
 # EAN checksum (EAN-8 / EAN-13)
 # ---------------------------------------------------------------------------
 
@@ -109,6 +130,72 @@ def validate_ean_checksum(ean: str | None) -> bool:
     total = sum(d * (3 if i % 2 == 0 else 1) for i, d in enumerate(reversed(payload)))
     check = (10 - (total % 10)) % 10
     return check == digits[-1]
+
+
+# ---------------------------------------------------------------------------
+# Nutrition anomaly detection (absolute caps + category ranges)
+# ---------------------------------------------------------------------------
+
+
+def check_nutrition_anomalies(
+    product: dict,
+    category: str,
+) -> tuple[list[str], list[str]]:
+    """Validate nutrition values against absolute caps and category ranges.
+
+    Absolute cap violations are **errors** (block import).  Category
+    range violations are **warnings** (log but allow import).
+
+    Parameters
+    ----------
+    product:
+        A normalised product dict (nutrition values as strings).
+    category:
+        The database category name.
+
+    Returns
+    -------
+    tuple[list[str], list[str]]
+        ``(errors, warnings)`` — errors block import, warnings are logged.
+    """
+    errors: list[str] = []
+    warnings: list[str] = []
+    name = product.get("product_name", "unknown")
+
+    # 1. Absolute caps — hard block
+    for field, cap in ABSOLUTE_CAPS.items():
+        raw = product.get(field)
+        if raw is None:
+            continue
+        try:
+            val = float(raw)
+        except (ValueError, TypeError):
+            continue
+        if val > cap:
+            errors.append(
+                f"BLOCKED: {field}={val} exceeds absolute cap of {cap} "
+                f"for '{name}'"
+            )
+
+    # 2. Category-specific ranges — soft warning
+    cat_ranges = CATEGORY_RANGES.get(category, {})
+    for field, (lo, hi) in cat_ranges.items():
+        raw = product.get(field)
+        if raw is None:
+            continue
+        try:
+            val = float(raw)
+        except (ValueError, TypeError):
+            continue
+        # Flag if value is more than 50% below low or 50% above high
+        if val < lo * 0.5 or val > hi * 1.5:
+            warnings.append(
+                f"ANOMALY: {field}={val} outside expected range "
+                f"({lo}–{hi}) for category '{category}', "
+                f"product '{name}'"
+            )
+
+    return errors, warnings
 
 
 # ---------------------------------------------------------------------------
@@ -243,9 +330,11 @@ def check_attribute_contradictions(product: dict) -> list[str]:
 def validate_product(product: dict, category: str) -> dict:
     """Validate a normalised product and annotate it with confidence + warnings.
 
-    The returned dict is a **copy** of *product* with two extra keys:
+    The returned dict is a **copy** of *product* with these extra keys:
 
     * ``validation_warnings`` — list of warning strings
+    * ``anomaly_errors`` — list of blocking error strings (absolute cap violations)
+    * ``anomaly_warnings`` — list of anomaly warning strings (category range)
     * ``confidence`` — ``'verified'`` or ``'estimated'``
 
     Parameters
@@ -269,7 +358,13 @@ def validate_product(product: dict, category: str) -> dict:
     if ean and not ean_valid:
         warnings.append(f"EAN {ean} fails checksum validation")
 
-    # Nutrition range check
+    # Nutrition anomaly detection (absolute caps + category ranges)
+    anomaly_errors, anomaly_warnings = check_nutrition_anomalies(product, category)
+    result["anomaly_errors"] = anomaly_errors
+    result["anomaly_warnings"] = anomaly_warnings
+    warnings.extend(anomaly_warnings)
+
+    # Nutrition range check (existing soft range checks)
     range_warnings = check_nutrition_ranges(product, category)
     warnings.extend(range_warnings)
 
@@ -292,7 +387,7 @@ def validate_product(product: dict, category: str) -> dict:
         completeness = 0.0
     has_image = product.get("_has_image", False)
 
-    if len(warnings) >= 2:
+    if anomaly_errors or len(warnings) >= 2:
         confidence = "estimated"
     elif completeness >= 0.5 and ean_valid:
         confidence = "verified"

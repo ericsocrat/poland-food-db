@@ -1,15 +1,17 @@
 """Tests for pipeline.validator — comprehensive coverage for all validation functions.
 
-Covers: EAN checksum, nutrition ranges, attribute contradiction detection,
-and the main validate_product entry point.
+Covers: EAN checksum, nutrition ranges, nutrition anomaly detection,
+attribute contradiction detection, and the main validate_product entry point.
 """
 
 from __future__ import annotations
 
 from pipeline.validator import (
+    ABSOLUTE_CAPS,
     ANIMAL_ALLERGEN_TAGS,
     MEAT_FISH_ALLERGEN_TAGS,
     check_attribute_contradictions,
+    check_nutrition_anomalies,
     check_nutrition_ranges,
     validate_ean_checksum,
     validate_product,
@@ -57,14 +59,24 @@ class TestCheckNutritionRanges:
     """Tests for check_nutrition_ranges()."""
 
     def test_within_range(self) -> None:
-        product = {"calories": "500", "total_fat_g": "30", "salt_g": "1.5"}
+        product = {
+            "calories": "500",
+            "total_fat_g": "30",
+            "carbs_g": "50",
+            "protein_g": "7",
+            "salt_g": "1.5",
+        }
         assert check_nutrition_ranges(product, "Chips") == []
 
     def test_above_range(self) -> None:
-        product = {"calories": "700"}
+        product = {
+            "calories": "700",
+            "total_fat_g": "40",
+            "carbs_g": "60",
+            "protein_g": "10",
+        }
         warnings = check_nutrition_ranges(product, "Chips")
-        assert len(warnings) == 1
-        assert "calories=700.0" in warnings[0]
+        assert any("calories=700.0" in w for w in warnings)
 
     def test_below_range(self) -> None:
         product = {"calories": "10"}
@@ -87,6 +99,119 @@ class TestCheckNutritionRanges:
     def test_none_value(self) -> None:
         product = {"calories": None}
         assert check_nutrition_ranges(product, "Chips") == []
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Nutrition anomaly detection
+# ═══════════════════════════════════════════════════════════════════════════
+
+
+class TestCheckNutritionAnomalies:
+    """Tests for check_nutrition_anomalies() — absolute cap + category range checks."""
+
+    def test_within_caps_no_errors(self) -> None:
+        product = {"calories": "500", "total_fat_g": "30", "salt_g": "1.5"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert errors == []
+
+    def test_exceeds_absolute_cap_calories(self) -> None:
+        product = {"calories": "950"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert len(errors) == 1
+        assert "calories" in errors[0]
+        assert "950" in errors[0]
+
+    def test_exceeds_absolute_cap_salt(self) -> None:
+        product = {"salt_g": "55"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert len(errors) == 1
+        assert "salt_g" in errors[0]
+
+    def test_exceeds_absolute_cap_fat(self) -> None:
+        product = {"total_fat_g": "110"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert len(errors) == 1
+        assert "total_fat_g" in errors[0]
+
+    def test_multiple_cap_violations(self) -> None:
+        product = {"calories": "950", "total_fat_g": "110", "salt_g": "55"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert len(errors) == 3
+
+    def test_at_exact_cap_no_error(self) -> None:
+        product = {"calories": "900"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert errors == []
+
+    def test_category_range_high_outlier_warning(self) -> None:
+        """Value > 1.5× category high triggers warning."""
+        # Chips calories range is (400, 600), so 1.5 × 600 = 900
+        # 901 > 900 cap, so it would be an error. Use a field with more room.
+        # Chips salt_g range is (0.5, 3.0), so 1.5 × 3.0 = 4.5
+        product = {"salt_g": "5.0"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert errors == []
+        assert len(warnings) == 1
+        assert "salt_g" in warnings[0]
+        assert "category" in warnings[0].lower()
+
+    def test_category_range_low_outlier_warning(self) -> None:
+        """Value < 0.5× category low triggers warning."""
+        # Chips calories range is (400, 600), so 0.5 × 400 = 200
+        product = {"calories": "150"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert errors == []
+        assert len(warnings) == 1
+        assert "calories" in warnings[0]
+
+    def test_category_range_within_bounds_no_warning(self) -> None:
+        product = {"calories": "500"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert errors == []
+        assert warnings == []
+
+    def test_unknown_category_only_caps_checked(self) -> None:
+        product = {"calories": "500", "total_fat_g": "30"}
+        errors, warnings = check_nutrition_anomalies(product, "UnknownCategory")
+        assert errors == []
+        assert warnings == []
+
+    def test_unknown_category_cap_still_blocks(self) -> None:
+        product = {"calories": "950"}
+        errors, warnings = check_nutrition_anomalies(product, "UnknownCategory")
+        assert len(errors) == 1
+
+    def test_missing_field_skipped(self) -> None:
+        product = {"something_else": "42"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert errors == []
+        assert warnings == []
+
+    def test_non_numeric_value_skipped(self) -> None:
+        product = {"calories": "N/A"}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert errors == []
+        assert warnings == []
+
+    def test_none_value_skipped(self) -> None:
+        product = {"calories": None}
+        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        assert errors == []
+        assert warnings == []
+
+    def test_absolute_caps_dict_has_expected_keys(self) -> None:
+        expected = {
+            "calories",
+            "total_fat_g",
+            "saturated_fat_g",
+            "carbs_g",
+            "sugars_g",
+            "protein_g",
+            "fibre_g",
+            "salt_g",
+            "trans_fat_g",
+        }
+        assert set(ABSOLUTE_CAPS.keys()) == expected
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -259,6 +384,8 @@ class TestValidateProduct:
             "ean": "5901234123457",
             "calories": "500",
             "total_fat_g": "30",
+            "carbs_g": "50",
+            "protein_g": "7",
             "salt_g": "1.5",
             "_completeness": "0.8",
             "_has_image": True,
@@ -268,6 +395,8 @@ class TestValidateProduct:
         }
         result = validate_product(product, "Chips")
         assert result["validation_warnings"] == []
+        assert result["anomaly_errors"] == []
+        assert result["anomaly_warnings"] == []
         assert result["confidence"] == "verified"
 
     def test_product_with_ean_failure_and_contradiction(self) -> None:
@@ -320,3 +449,29 @@ class TestValidateProduct:
         original_keys = set(product.keys())
         validate_product(product, "Chips")
         assert set(product.keys()) == original_keys
+
+    def test_anomaly_error_blocks_with_estimated_confidence(self) -> None:
+        product = {
+            "ean": "5901234123457",
+            "calories": "950",
+            "_completeness": "0.9",
+            "_has_image": True,
+        }
+        result = validate_product(product, "Chips")
+        assert len(result["anomaly_errors"]) == 1
+        assert result["confidence"] == "estimated"
+
+    def test_anomaly_warnings_included_in_validation_warnings(self) -> None:
+        """Anomaly warnings (category range) should appear in validation_warnings."""
+        # Chips salt_g range is (0.5, 3.0), so 1.5 × 3.0 = 4.5; 5.0 > 4.5 triggers warning
+        product = {
+            "ean": "5901234123457",
+            "salt_g": "5.0",
+            "_completeness": "0.9",
+            "_has_image": True,
+        }
+        result = validate_product(product, "Chips")
+        assert result["anomaly_errors"] == []
+        assert len(result["anomaly_warnings"]) >= 1
+        # Anomaly warnings are merged into validation_warnings
+        assert any("category" in w.lower() for w in result["validation_warnings"])

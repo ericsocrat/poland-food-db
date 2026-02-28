@@ -79,12 +79,26 @@ def _validate_products(
     extracted: list[dict],
     category: str,
     max_warnings: int,
-) -> tuple[list[dict], int]:
-    """Phase 3: validate products and count warnings."""
+) -> tuple[list[dict], int, list[dict]]:
+    """Phase 3: validate products and count warnings.
+
+    Returns
+    -------
+    tuple
+        (validated_products, warning_count, blocked_products)
+        ``blocked_products`` contains products blocked by anomaly errors
+        (absolute cap violations).
+    """
     validated: list[dict] = []
+    blocked: list[dict] = []
     warn_count = 0
     for product in tqdm(extracted, desc="Validating", leave=False):
         result = validate_product(product, category)
+        anomaly_errors = result.get("anomaly_errors", [])
+        if anomaly_errors:
+            blocked.append(result)
+            warn_count += 1
+            continue
         n_warnings = len(result.get("validation_warnings", []))
         if n_warnings > max_warnings:
             warn_count += 1
@@ -92,7 +106,7 @@ def _validate_products(
         if n_warnings > 0:
             warn_count += 1
         validated.append(result)
-    return validated, warn_count
+    return validated, warn_count, blocked
 
 
 # Country code → OFF country name for API queries
@@ -173,7 +187,9 @@ def run_pipeline(
     extracted = _extract_products(raw_products, category, min_completeness)
 
     # 3. Validate
-    validated, warn_count = _validate_products(extracted, category, max_warnings)
+    validated, warn_count, blocked = _validate_products(
+        extracted, category, max_warnings
+    )
     print(f"  After validation: {len(validated)} products")
 
     # 4. De-duplicate
@@ -181,6 +197,18 @@ def run_pipeline(
     print(f"  After dedup: {len(unique)} unique products")
     if warn_count:
         print(f"  Warnings: {warn_count} products outside expected ranges")
+
+    # Anomaly report — blocked products with absolute cap violations
+    if blocked:
+        print()
+        print(f"  ANOMALY REPORT — {len(blocked)} product(s) blocked:")
+        for bp in blocked:
+            name = bp.get("product_name", "unknown")
+            brand = bp.get("brand", "unknown")
+            errors = bp.get("anomaly_errors", [])
+            for err in errors:
+                print(f"    ✗ {brand} / {name}: {err}")
+        print()
 
     if not unique:
         print("\nNo valid products found after extraction/validation/dedup.")
