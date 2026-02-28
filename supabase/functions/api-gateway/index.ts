@@ -3,6 +3,7 @@
 // request forwarding. Read operations bypass this gateway entirely.
 //
 // Phase 1: record-scan rate limiting (100/day/user)
+// Phase 2: submit-product protection (EAN checksum, sanitization, 10/day)
 //
 // Auth: Requires authenticated user JWT (Authorization: Bearer <jwt>)
 // Issue: #478
@@ -107,7 +108,80 @@ function checkRateLimit(
 
 const RATE_LIMITS: Record<string, RateLimitConfig> = {
   "record-scan": { max_requests: 100, window_seconds: 86400 }, // 100/day
+  "submit-product": { max_requests: 10, window_seconds: 86400 }, // 10/day
 };
+
+// ─── EAN Checksum Validation (GS1 Algorithm) ────────────────────────────────
+
+/**
+ * Validate EAN-8 or EAN-13 barcode using GS1 checksum algorithm.
+ * Port of the PostgreSQL is_valid_ean() function.
+ */
+function isValidEan(ean: string): boolean {
+  if (!/^\d{8}$|^\d{13}$/.test(ean)) return false;
+
+  let sum = 0;
+  for (let i = 0; i < ean.length; i++) {
+    const digit = parseInt(ean[i], 10);
+    let weight: number;
+    if (ean.length === 13) {
+      weight = (i + 1) % 2 === 1 ? 1 : 3;
+    } else {
+      // EAN-8: weights 3, 1, 3, 1, ...
+      weight = (i + 1) % 2 === 1 ? 3 : 1;
+    }
+    sum += digit * weight;
+  }
+
+  return sum % 10 === 0;
+}
+
+// ─── Input Sanitization ─────────────────────────────────────────────────────
+
+/** Max allowed length for text fields in product submissions. */
+const FIELD_LIMITS = {
+  product_name: 200,
+  brand: 100,
+  category: 50,
+  photo_url: 500,
+  notes: 1000,
+} as const;
+
+/** Characters that are never valid in product submission fields. */
+const FORBIDDEN_PATTERN = /[<>{}\\]/;
+
+/**
+ * Sanitize a text input: trim, reject forbidden characters, enforce length cap.
+ * Returns null for empty/null inputs or the sanitized string.
+ */
+function sanitizeField(
+  value: unknown,
+  maxLength: number,
+): { valid: true; value: string | null } | { valid: false; reason: string } {
+  if (value === null || value === undefined || value === "") {
+    return { valid: true, value: null };
+  }
+  if (typeof value !== "string") {
+    return { valid: false, reason: "must be a string" };
+  }
+  const trimmed = value.trim();
+  if (trimmed === "") {
+    return { valid: true, value: null };
+  }
+  if (trimmed.length > maxLength) {
+    return {
+      valid: false,
+      reason: `exceeds maximum length of ${maxLength} characters`,
+    };
+  }
+  if (FORBIDDEN_PATTERN.test(trimmed)) {
+    return {
+      valid: false,
+      reason: "contains forbidden characters (< > { } \\)",
+    };
+  }
+  return { valid: true, value: trimmed };
+}
 
 // ─── Action Handlers ────────────────────────────────────────────────────────
 
@@ -154,6 +228,121 @@ async function handleRecordScan(
   return { ok: true, data };
 }
 
+// ─── Submit Product Handler ─────────────────────────────────────────────────
+
+async function handleSubmitProduct(
+  supabase: ReturnType<typeof createClient>,
+  body: GatewayRequest,
+): Promise<GatewayResponse> {
+  // ── EAN validation ────────────────────────────────────────────────────
+  const ean = body.ean;
+  if (!ean || typeof ean !== "string") {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: "Missing or invalid 'ean' parameter. Must be a non-empty string.",
+    };
+  }
+
+  const trimmedEan = ean.trim();
+  if (!/^\d{8}$|^\d{13}$/.test(trimmedEan)) {
+    return {
+      ok: false,
+      error: "invalid_ean",
+      message:
+        "EAN must be exactly 8 or 13 digits. Received: " +
+        trimmedEan.length +
+        " characters.",
+    };
+  }
+
+  // GS1 checksum validation (before hitting the database)
+  if (!isValidEan(trimmedEan)) {
+    return {
+      ok: false,
+      error: "invalid_ean_checksum",
+      message:
+        "EAN checksum is invalid. Please verify the barcode and try again.",
+    };
+  }
+
+  // ── Product name validation ───────────────────────────────────────────
+  const productName = body.product_name;
+  if (!productName || typeof productName !== "string" || productName.trim() === "") {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: "Missing or empty 'product_name' parameter.",
+    };
+  }
+
+  const nameResult = sanitizeField(productName, FIELD_LIMITS.product_name);
+  if (!nameResult.valid) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: `Product name ${nameResult.reason}.`,
+    };
+  }
+
+  // ── Optional field sanitization ───────────────────────────────────────
+  const brandResult = sanitizeField(body.brand, FIELD_LIMITS.brand);
+  if (!brandResult.valid) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: `Brand ${brandResult.reason}.`,
+    };
+  }
+
+  const categoryResult = sanitizeField(body.category, FIELD_LIMITS.category);
+  if (!categoryResult.valid) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: `Category ${categoryResult.reason}.`,
+    };
+  }
+
+  const photoResult = sanitizeField(body.photo_url, FIELD_LIMITS.photo_url);
+  if (!photoResult.valid) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: `Photo URL ${photoResult.reason}.`,
+    };
+  }
+
+  const notesResult = sanitizeField(body.notes, FIELD_LIMITS.notes);
+  if (!notesResult.valid) {
+    return {
+      ok: false,
+      error: "invalid_input",
+      message: `Notes ${notesResult.reason}.`,
+    };
+  }
+
+  // ── Forward to RPC ────────────────────────────────────────────────────
+  const { data, error } = await supabase.rpc("api_submit_product", {
+    p_ean: trimmedEan,
+    p_product_name: nameResult.value,
+    p_brand: brandResult.value,
+    p_category: categoryResult.value,
+    p_photo_url: photoResult.value,
+    p_notes: notesResult.value,
+  });
+
+  if (error) {
+    return {
+      ok: false,
+      error: "rpc_error",
+      message: error.message ?? "Failed to submit product",
+    };
+  }
+
+  return { ok: true, data };
+}
+
 // ─── Action Router ──────────────────────────────────────────────────────────
 
 const ACTION_HANDLERS: Record<
@@ -164,6 +353,7 @@ const ACTION_HANDLERS: Record<
   ) => Promise<GatewayResponse>
 > = {
   "record-scan": handleRecordScan,
+  "submit-product": handleSubmitProduct,
 };
 
 // ─── JWT User ID Extraction ─────────────────────────────────────────────────
