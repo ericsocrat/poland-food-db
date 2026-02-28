@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 727 checks across 47 suites + 23 negative validation tests — all passing
+> **QA:** 733 checks across 48 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -117,6 +117,7 @@ poland-food-db/
 │   │   ├── QA__monitoring.sql            # 14 monitoring & health checks
 │   │   ├── QA__event_intelligence.sql    # 18 event intelligence checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
+│   │   ├── QA__recipe_integrity.sql      # 6 recipe data integrity checks
 │   │   └── TEST__negative_checks.sql     # 23 negative validation tests
 │   └── views/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
@@ -140,7 +141,8 @@ poland-food-db/
 │   │   ├── achievement_functions.test.sql    # Achievement/gamification tests
 │   │   ├── business_metrics_functions.test.sql # Business metrics tests
 │   │   ├── localization_functions.test.sql    # Localization/i18n tests
-│   │   └── push_notification_functions.test.sql # Push notification tests
+│   │   ├── push_notification_functions.test.sql # Push notification tests
+│   │   └── recipe_functions.test.sql            # Recipe API function tests
 │   ├── functions/                   # Supabase Edge Functions
 │   │   └── send-push-notification/  # Push notification handler
 │   ├── dr-drill/                    # Disaster recovery drill artifacts
@@ -257,7 +259,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (727 checks across 47 suites)
+├── RUN_QA.ps1                       # QA test runner (733 checks across 48 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -401,6 +403,10 @@ poland-food-db/
 | `deletion_audit_log`      | GDPR Art.17 deletion audit trail (no PII)       | `id` (uuid)                             | deleted_at (timestamptz), tables_affected (text[]). NO user_id column. RLS enabled, service-role only                                                    |
 | `api_rate_limits`         | Per-endpoint rate limit configuration           | `endpoint` (text PK)                    | max_requests, window_seconds, description. 6 seeded endpoints. RLS: auth-read / service-write                                                            |
 | `api_rate_limit_log`      | Ephemeral request tracking for rate limiting    | `id` (identity)                         | user_id, endpoint, called_at. Retention: 2 days. Index on (user_id, endpoint, called_at DESC). RLS: service-role only                                    |
+| `recipe`                  | Recipe metadata (curated editorial content)     | `id` (uuid)                             | slug (unique), title_key/description_key (i18n), category (breakfast/lunch/dinner/snack/dessert/drink/salad/soup), difficulty, prep/cook time, servings, country (nullable), is_published, tags[]. RLS: public SELECT on published |
+| `recipe_step`             | Ordered cooking instructions per recipe         | `id` (uuid)                             | recipe_id FK, step_number (unique per recipe), content_key (i18n). RLS: public SELECT if recipe published |
+| `recipe_ingredient`       | Recipe ingredients with sort order              | `id` (uuid)                             | recipe_id FK, name_key (i18n), sort_order, optional flag, ingredient_ref_id FK (nullable link to ingredient_ref). RLS: public SELECT if recipe published |
+| `recipe_ingredient_product` | Links recipe ingredients to DB products       | `id` (uuid)                             | recipe_ingredient_id FK, product_id FK, is_primary, match_confidence (0-1). UNIQUE (ingredient, product). RLS: public SELECT if recipe published |
 
 ### Products Columns (key)
 
@@ -442,6 +448,12 @@ poland-food-db/
 | `api_better_alternatives()`        | Healthier substitutes wrapper with source product context and structured JSON                                                                                       |
 | `api_search_products()`            | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                  |
 | `api_get_cross_country_links()`    | Returns linked products for a given product_id; bidirectional query across product_links; returns JSONB array                                                       |
+| `api_get_recipes()`                | Browse published recipes with filters (country, category, tag, difficulty, max_time); paginated JSONB with total_count + recipes array                              |
+| `api_get_recipe_detail()`          | Full recipe detail by slug: recipe metadata + ingredients (with linked products) + steps; returns structured JSONB                                                  |
+| `api_get_recipe_nutrition()`       | Aggregate nutrition summary from linked products; picks primary product per ingredient; returns per-100g averages + coverage_pct                                    |
+| `browse_recipes()`                 | Browse published recipes with filters (category, country, tag, difficulty, max_time); returns TABLE rows                                                            |
+| `get_recipe_detail()`              | Recipe detail by slug: returns JSONB with metadata, steps, ingredients (with linked_products array)                                                                 |
+| `find_products_for_recipe_ingredient()` | Finds products for a recipe ingredient: admin-curated links first, then auto-suggested via ingredient_ref matching                                             |
 | `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                         |
 | `mv_staleness_check()`             | Checks if MVs are stale by comparing row counts to source tables                                                                                                    |
 | `check_formula_drift()`            | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                   |
@@ -581,7 +593,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **181 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **182 migrations**.
 
 **Rules:**
 
@@ -653,7 +665,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (727 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (733 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -791,7 +803,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (727 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (733 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
@@ -825,7 +837,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 727 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 733 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -916,9 +928,10 @@ At the end of every PR-like change, include a **Verification** section:
 | Governance Drift          | `QA__governance_drift.sql`          |      8 | Yes       |
 | RLS Audit                 | `QA__rls_audit.sql`                 |      7 | Yes       |
 | Function Security Audit   | `QA__function_security_audit.sql`   |      6 | Yes       |
+| Recipe Integrity          | `QA__recipe_integrity.sql`          |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **727/727 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **733/733 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
@@ -961,6 +974,7 @@ If you **modify, rename, or add** any SQL function or view used by the app API (
 | `dashboard_functions.test.sql`  | `api_record_product_view`, `api_get_recently_viewed`, `api_get_dashboard_data`                                               |
 | `user_functions.test.sql`       | Auth-error branches for all `authenticated`-only functions                                                                   |
 | `schema_contracts.test.sql`     | Table/view/function existence checks                                                                                         |
+| `recipe_functions.test.sql`     | `api_get_recipes`, `api_get_recipe_detail`, `api_get_recipe_nutrition`                                                       |
 
 **Rules:**
 

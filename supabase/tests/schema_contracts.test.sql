@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(237);
+SELECT plan(247);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -355,6 +355,18 @@ SELECT has_column('public', 'ingredient_translations', 'name',              'ing
 SELECT has_column('public', 'ingredient_translations', 'source',            'ingredient_translations has source column');
 SELECT has_column('public', 'ingredient_translations', 'reviewed_at',       'ingredient_translations has reviewed_at column');
 SELECT has_function('public', 'resolve_ingredient_name',                    'function resolve_ingredient_name exists');
+
+-- ─── Recipe System (#364) ────────────────────────────────────────────────────
+SELECT has_table('public', 'recipe',                             'table recipe exists');
+SELECT has_table('public', 'recipe_step',                        'table recipe_step exists');
+SELECT has_table('public', 'recipe_ingredient',                  'table recipe_ingredient exists');
+SELECT has_table('public', 'recipe_ingredient_product',          'table recipe_ingredient_product exists');
+SELECT has_function('public', 'browse_recipes',                  'function browse_recipes exists');
+SELECT has_function('public', 'get_recipe_detail',               'function get_recipe_detail exists');
+SELECT has_function('public', 'find_products_for_recipe_ingredient', 'function find_products_for_recipe_ingredient exists');
+SELECT has_function('public', 'api_get_recipes',                 'function api_get_recipes exists');
+SELECT has_function('public', 'api_get_recipe_detail',           'function api_get_recipe_detail exists');
+SELECT has_function('public', 'api_get_recipe_nutrition',        'function api_get_recipe_nutrition exists');
 
 SELECT * FROM finish();
 ROLLBACK;
