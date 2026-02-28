@@ -142,6 +142,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
   component (5 steps, custom dimensions, priority loading) with 32 Vitest tests;
   `ErrorIllustration` component (3 error types, HTTP status metadata) with
   30 Vitest tests; LoadingSpinner and Skeleton components already exist (#424)
+- Create 6 feature showcase card SVGs in `docs/marketing/` (400×300 viewBox):
+  scoring engine (gauge + 5 factor bars), ingredient analysis (concern tier
+  badges), product comparison (side-by-side grid with VS badge), allergen
+  filtering (8-allergen status matrix), barcode scanner (phone mockup with
+  product result card), smart search (search bar with pg_trgm + filter chips
+  + fuzzy results); white card style with brand-colored border, dark mode
+  via `prefers-color-scheme` media queries, all under 6 KB (#432)
 - Redesign README.md as 15-section showcase-quality layout: hero banner, 9
   shields.io badges, elevator pitch, 4 feature highlight cards (HTML table),
   comparison table, 3-column quick start with collapsible command reference,

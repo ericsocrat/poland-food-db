@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" fill="none">
+  <style>
+    .card-bg { fill: #ffffff; }
+    .card-border { stroke: #0d7377; stroke-width: 1.5; fill: none; }
+    .icon-bg { fill: #0d7377; opacity: 0.1; }
+    .icon-fill { fill: #0d7377; }
+    .title { font-family: system-ui, -apple-system, sans-serif; font-size: 18px; font-weight: 700; fill: #0f172a; }
+    .desc { font-family: system-ui, -apple-system, sans-serif; font-size: 13px; fill: #475569; }
+    .stat { font-family: system-ui, -apple-system, sans-serif; font-size: 11px; font-weight: 600; fill: #0d7377; }
+    .phone-shell { fill: #f8fafc; stroke: #cbd5e1; stroke-width: 2; }
+    .phone-screen { fill: #ffffff; }
+    .phone-notch { fill: #e2e8f0; }
+    .barcode-line { stroke: #0f172a; stroke-width: 1.5; }
+    .barcode-thin { stroke: #0f172a; stroke-width: 0.8; }
+    .scan-line { stroke: #0d7377; stroke-width: 2; opacity: 0.7; }
+    .product-card { fill: #f0fdfa; stroke: #0d7377; stroke-width: 1; }
+    .product-name { font-family: system-ui, sans-serif; font-size: 9px; font-weight: 600; fill: #0f172a; }
+    .product-brand { font-family: system-ui, sans-serif; font-size: 8px; fill: #64748b; }
+    .score-circle { fill: #16a34a; }
+    .score-num { font-family: system-ui, sans-serif; font-size: 10px; font-weight: 700; fill: #ffffff; text-anchor: middle; }
+    .ean-text { font-family: 'Courier New', monospace; font-size: 8px; fill: #94a3b8; text-anchor: middle; }
+    .arrow { fill: #0d7377; }
+    .flash { fill: #d4a844; opacity: 0.4; }
+    @media (prefers-color-scheme: dark) {
+      .card-bg { fill: #1e293b; }
+      .card-border { stroke: #2dd4bf; }
+      .icon-bg { fill: #2dd4bf; opacity: 0.15; }
+      .icon-fill { fill: #2dd4bf; }
+      .title { fill: #f1f5f9; }
+      .desc { fill: #94a3b8; }
+      .stat { fill: #2dd4bf; }
+      .phone-shell { fill: #0f172a; stroke: #475569; }
+      .phone-screen { fill: #1e293b; }
+      .phone-notch { fill: #334155; }
+      .barcode-line { stroke: #e2e8f0; }
+      .barcode-thin { stroke: #e2e8f0; }
+      .scan-line { stroke: #2dd4bf; }
+      .product-card { fill: #134e4a; stroke: #2dd4bf; }
+      .product-name { fill: #f1f5f9; }
+      .product-brand { fill: #94a3b8; }
+      .score-circle { fill: #22c55e; }
+      .ean-text { fill: #64748b; }
+      .arrow { fill: #2dd4bf; }
+      .flash { fill: #fbbf24; opacity: 0.3; }
+    }
+  </style>
+  <rect class="card-bg" x="0.75" y="0.75" width="398.5" height="298.5" rx="16"/>
+  <rect class="card-border" x="0.75" y="0.75" width="398.5" height="298.5" rx="16"/>
+  <!-- Icon: barcode -->
+  <circle class="icon-bg" cx="40" cy="40" r="24"/>
+  <g transform="translate(28,28)">
+    <rect class="icon-fill" x="0" y="0" width="2.5" height="20"/>
+    <rect class="icon-fill" x="4" y="0" width="1.5" height="20"/>
+    <rect class="icon-fill" x="7" y="0" width="3" height="20"/>
+    <rect class="icon-fill" x="12" y="0" width="1.5" height="20"/>
+    <rect class="icon-fill" x="15" y="0" width="2.5" height="20"/>
+    <rect class="icon-fill" x="19" y="0" width="1" height="20"/>
+    <rect class="icon-fill" x="22" y="0" width="2" height="20"/>
+  </g>
+  <!-- Title -->
+  <text class="title" x="72" y="44">Instant Barcode Scan</text>
+  <!-- Description -->
+  <text class="desc" x="24" y="76">Scan any barcode in store for instant product details,</text>
+  <text class="desc" x="24" y="92">health score, and better alternatives. 99.8% EAN coverage.</text>
+  <!-- Mini visual: phone with barcode scan -->
+  <g transform="translate(50,108)">
+    <!-- Phone outline -->
+    <rect class="phone-shell" x="0" y="0" width="100" height="155" rx="14"/>
+    <rect class="phone-screen" x="6" y="18" width="88" height="120" rx="2"/>
+    <rect class="phone-notch" x="32" y="4" width="36" height="8" rx="4"/>
+    <!-- Barcode on screen -->
+    <g transform="translate(20,40)">
+      <rect class="barcode-line" x="0" y="0" width="3" height="45" rx="0" fill="#0f172a" stroke="none"/>
+      <rect fill="#0f172a" x="5" y="0" width="2" height="45"/>
+      <rect fill="#0f172a" x="9" y="0" width="4" height="45"/>
+      <rect fill="#0f172a" x="15" y="0" width="2" height="45"/>
+      <rect fill="#0f172a" x="19" y="0" width="3" height="45"/>
+      <rect fill="#0f172a" x="24" y="0" width="1.5" height="45"/>
+      <rect fill="#0f172a" x="28" y="0" width="3" height="45"/>
+      <rect fill="#0f172a" x="33" y="0" width="2" height="45"/>
+      <rect fill="#0f172a" x="37" y="0" width="4" height="45"/>
+      <rect fill="#0f172a" x="43" y="0" width="2" height="45"/>
+      <rect fill="#0f172a" x="47" y="0" width="3" height="45"/>
+      <rect fill="#0f172a" x="52" y="0" width="1.5" height="45"/>
+      <rect fill="#0f172a" x="56" y="0" width="3" height="45"/>
+    </g>
+    <!-- Scan line -->
+    <line class="scan-line" x1="12" y1="62" x2="88" y2="62"/>
+    <!-- EAN text -->
+    <text class="ean-text" x="50" y="100">5900617002478</text>
+    <!-- Flash burst -->
+    <circle class="flash" cx="50" cy="62" r="30"/>
+  </g>
+  <!-- Arrow -->
+  <polygon class="arrow" points="170,180 185,174 185,186"/>
+  <!-- Product result card -->
+  <g transform="translate(200,140)">
+    <rect class="product-card" x="0" y="0" width="160" height="80" rx="10"/>
+    <circle class="score-circle" cx="28" cy="26" r="16"/>
+    <text class="score-num" x="28" y="30">8</text>
+    <text class="product-name" x="52" y="20">Piątnica Skyr</text>
+    <text class="product-brand" x="52" y="32">Naturalny · Dairy</text>
+    <text class="product-brand" x="12" y="55">Sugars: 3.6g · Sat Fat: 0.1g</text>
+    <text class="product-brand" x="12" y="67">Nutri-Score: A · NOVA: 1</text>
+  </g>
+  <text class="stat" x="24" y="282">1,024 EANs · scan history · instant lookup</text>
+</svg>
