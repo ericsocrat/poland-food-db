@@ -55,40 +55,87 @@ describe("FreshnessIndicator", () => {
     expect(container.innerHTML).toBe("");
   });
 
-  // ─── Fresh (≤30 days) ──────────────────────────────────────────────────
+  // ─── Fresh (≤7 days by default) ────────────────────────────────────────
 
-  it("renders fresh status for date 5 days ago", () => {
-    render(<FreshnessIndicator lastVerifiedAt={daysAgo(5)} />);
-    expect(screen.getByText(/Verified 5d ago/)).toBeTruthy();
+  it("renders fresh status for date 3 days ago", () => {
+    render(<FreshnessIndicator lastVerifiedAt={daysAgo(3)} />);
+    expect(screen.getByText(/Verified 3d ago/)).toBeTruthy();
   });
 
-  it("renders fresh status for date 30 days ago (boundary)", () => {
+  it("renders fresh status for date 7 days ago (boundary)", () => {
+    render(<FreshnessIndicator lastVerifiedAt={daysAgo(7)} />);
+    expect(screen.getByText(/Verified 7d ago/)).toBeTruthy();
+  });
+
+  // ─── Aging (8–30 days by default) ──────────────────────────────────────
+
+  it("renders aging status for date 15 days ago", () => {
+    render(<FreshnessIndicator lastVerifiedAt={daysAgo(15)} />);
+    expect(screen.getByText(/Data may be outdated \(15d\)/)).toBeTruthy();
+  });
+
+  it("renders aging status for date 8 days ago (boundary)", () => {
+    render(<FreshnessIndicator lastVerifiedAt={daysAgo(8)} />);
+    expect(screen.getByText(/Data may be outdated \(8d\)/)).toBeTruthy();
+  });
+
+  it("renders aging status for date 30 days ago (boundary)", () => {
     render(<FreshnessIndicator lastVerifiedAt={daysAgo(30)} />);
-    expect(screen.getByText(/Verified 30d ago/)).toBeTruthy();
+    expect(screen.getByText(/Data may be outdated \(30d\)/)).toBeTruthy();
   });
 
-  // ─── Aging (31–90 days) ────────────────────────────────────────────────
+  // ─── Stale (>30 days by default) ───────────────────────────────────────
 
-  it("renders aging status for date 60 days ago", () => {
+  it("renders stale status for date 60 days ago", () => {
     render(<FreshnessIndicator lastVerifiedAt={daysAgo(60)} />);
-    expect(screen.getByText(/Data may be outdated \(60d\)/)).toBeTruthy();
+    expect(screen.getByText(/Stale — last verified 60d ago/)).toBeTruthy();
   });
 
-  it("renders aging status for date 31 days ago (boundary)", () => {
+  it("renders stale status for date 31 days ago (boundary)", () => {
     render(<FreshnessIndicator lastVerifiedAt={daysAgo(31)} />);
-    expect(screen.getByText(/Data may be outdated \(31d\)/)).toBeTruthy();
+    expect(screen.getByText(/Stale — last verified 31d ago/)).toBeTruthy();
   });
 
-  // ─── Stale (>90 days) ─────────────────────────────────────────────────
+  // ─── Custom thresholds ─────────────────────────────────────────────────
 
-  it("renders stale status for date 120 days ago", () => {
-    render(<FreshnessIndicator lastVerifiedAt={daysAgo(120)} />);
-    expect(screen.getByText(/Stale — last verified 120d ago/)).toBeTruthy();
+  it("respects custom freshDays threshold", () => {
+    // 15 days ago with freshDays=20 → still fresh
+    render(<FreshnessIndicator lastVerifiedAt={daysAgo(15)} freshDays={20} />);
+    expect(screen.getByText(/Verified 15d ago/)).toBeTruthy();
   });
 
-  it("renders stale status for date 91 days ago (boundary)", () => {
-    render(<FreshnessIndicator lastVerifiedAt={daysAgo(91)} />);
-    expect(screen.getByText(/Stale — last verified 91d ago/)).toBeTruthy();
+  it("respects custom agingDays threshold", () => {
+    // 50 days ago with agingDays=60 → aging (not stale)
+    render(<FreshnessIndicator lastVerifiedAt={daysAgo(50)} agingDays={60} />);
+    expect(screen.getByText(/Data may be outdated \(50d\)/)).toBeTruthy();
+  });
+
+  it("applies both custom thresholds together", () => {
+    // 5 days ago with freshDays=3, agingDays=10 → aging
+    render(
+      <FreshnessIndicator
+        lastVerifiedAt={daysAgo(5)}
+        freshDays={3}
+        agingDays={10}
+      />,
+    );
+    expect(screen.getByText(/Data may be outdated \(5d\)/)).toBeTruthy();
+  });
+
+  // ─── Freshness ring ───────────────────────────────────────────────────
+
+  it("renders freshness ring SVG", () => {
+    render(<FreshnessIndicator lastVerifiedAt={daysAgo(3)} />);
+    expect(screen.getByTestId("freshness-ring")).toBeTruthy();
+  });
+
+  it("ring has two circle elements (track + progress)", () => {
+    const { container } = render(
+      <FreshnessIndicator lastVerifiedAt={daysAgo(3)} />,
+    );
+    const ring = screen.getByTestId("freshness-ring");
+    const circles = ring.querySelectorAll("circle");
+    expect(circles.length).toBe(2);
   });
 
   // ─── Accessibility ──────────────────────────────────────────────────────
@@ -108,6 +155,12 @@ describe("FreshnessIndicator", () => {
     render(<FreshnessIndicator lastVerifiedAt={daysAgo(10)} />);
     const el = screen.getByRole("status");
     expect(el.getAttribute("title")).toContain("Last verified:");
+  });
+
+  it("ring SVG is aria-hidden", () => {
+    render(<FreshnessIndicator lastVerifiedAt={daysAgo(3)} />);
+    const ring = screen.getByTestId("freshness-ring");
+    expect(ring.getAttribute("aria-hidden")).toBe("true");
   });
 
   // ─── Mode variants ────────────────────────────────────────────────────
@@ -138,23 +191,31 @@ describe("getDaysSince", () => {
 });
 
 describe("getFreshnessStatus", () => {
+  // Default thresholds (7/30)
   it("returns fresh for 0 days", () => {
-    expect(getFreshnessStatus(0)).toBe("fresh");
+    expect(getFreshnessStatus(0, 7, 30)).toBe("fresh");
   });
 
-  it("returns fresh for 30 days", () => {
-    expect(getFreshnessStatus(30)).toBe("fresh");
+  it("returns fresh for 7 days (default boundary)", () => {
+    expect(getFreshnessStatus(7, 7, 30)).toBe("fresh");
   });
 
-  it("returns aging for 31 days", () => {
-    expect(getFreshnessStatus(31)).toBe("aging");
+  it("returns aging for 8 days (default boundary)", () => {
+    expect(getFreshnessStatus(8, 7, 30)).toBe("aging");
   });
 
-  it("returns aging for 90 days", () => {
-    expect(getFreshnessStatus(90)).toBe("aging");
+  it("returns aging for 30 days (default boundary)", () => {
+    expect(getFreshnessStatus(30, 7, 30)).toBe("aging");
   });
 
-  it("returns stale for 91 days", () => {
-    expect(getFreshnessStatus(91)).toBe("stale");
+  it("returns stale for 31 days (default boundary)", () => {
+    expect(getFreshnessStatus(31, 7, 30)).toBe("stale");
+  });
+
+  // Custom thresholds
+  it("respects custom thresholds", () => {
+    expect(getFreshnessStatus(5, 3, 10)).toBe("aging");
+    expect(getFreshnessStatus(2, 3, 10)).toBe("fresh");
+    expect(getFreshnessStatus(15, 3, 10)).toBe("stale");
   });
 });

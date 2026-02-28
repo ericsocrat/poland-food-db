@@ -5,9 +5,9 @@
 // Based on: trust score (0–1) derived from data confidence.
 //
 // Thresholds:
-//   ≥0.8 → "High Trust" (green)
+//   ≥0.8 → "High Trust" (green, animated shield checkmark)
 //   ≥0.5 → "Moderate Trust" (amber)
-//   <0.5 → "Low Trust" (red)
+//   <0.5 → "Low Trust" (gray — unverified, not alarming)
 //
 // Degrades gracefully: returns null when trustScore is undefined/null.
 // Backend dependency: api_product_provenance() (#193) — not yet implemented.
@@ -44,6 +44,8 @@ const TRUST_CONFIG: Record<
     bgClass: string;
     labelKey: string;
     tooltipKey: string;
+    /** CSS class for icon animation (high trust only). */
+    iconAnimation?: string;
   }
 > = {
   high: {
@@ -52,6 +54,7 @@ const TRUST_CONFIG: Record<
     bgClass: "bg-green-100 dark:bg-green-900/30",
     labelKey: "trust.badge.high",
     tooltipKey: "trust.badge.highTooltip",
+    iconAnimation: "animate-trust-verified",
   },
   moderate: {
     icon: ShieldAlert,
@@ -62,8 +65,8 @@ const TRUST_CONFIG: Record<
   },
   low: {
     icon: ShieldQuestion,
-    colorClass: "text-red-700 dark:text-red-400",
-    bgClass: "bg-red-100 dark:bg-red-900/30",
+    colorClass: "text-gray-500 dark:text-gray-400",
+    bgClass: "bg-gray-100 dark:bg-gray-800/40",
     labelKey: "trust.badge.low",
     tooltipKey: "trust.badge.lowTooltip",
   },
@@ -92,7 +95,12 @@ export function TrustBadge({ trustScore, size = "md" }: TrustBadgeProps) {
       aria-label={t("trust.badge.ariaLabel", { level: label })}
       className={`inline-flex items-center rounded-full font-medium ${config.colorClass} ${config.bgClass} ${sizeClasses}`}
     >
-      <Icon size={size === "sm" ? 12 : 14} aria-hidden="true" />
+      <Icon
+        size={size === "sm" ? 12 : 14}
+        aria-hidden="true"
+        className={config.iconAnimation}
+        data-testid="trust-icon"
+      />
       {label}
     </span>
   );

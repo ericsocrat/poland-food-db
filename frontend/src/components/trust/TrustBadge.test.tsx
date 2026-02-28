@@ -71,6 +71,54 @@ describe("TrustBadge", () => {
     expect(screen.getByText("Low Trust")).toBeTruthy();
   });
 
+  // ─── Color classes ─────────────────────────────────────────────────────
+
+  it("uses green classes for high trust", () => {
+    render(<TrustBadge trustScore={0.9} />);
+    const badge = screen.getByRole("status");
+    expect(badge.className).toContain("text-green-700");
+    expect(badge.className).toContain("bg-green-100");
+  });
+
+  it("uses amber classes for moderate trust", () => {
+    render(<TrustBadge trustScore={0.6} />);
+    const badge = screen.getByRole("status");
+    expect(badge.className).toContain("text-amber-700");
+    expect(badge.className).toContain("bg-amber-100");
+  });
+
+  it("uses gray classes for low trust (not red)", () => {
+    render(<TrustBadge trustScore={0.2} />);
+    const badge = screen.getByRole("status");
+    expect(badge.className).toContain("text-gray-500");
+    expect(badge.className).toContain("bg-gray-100");
+    // Must NOT use red (unverified is uncertain, not alarming)
+    expect(badge.className).not.toContain("text-red");
+    expect(badge.className).not.toContain("bg-red");
+  });
+
+  // ─── Icon animation ───────────────────────────────────────────────────
+
+  it("adds animation class to high trust icon", () => {
+    render(<TrustBadge trustScore={0.9} />);
+    const icon = screen.getByTestId("trust-icon");
+    expect(icon.getAttribute("class")).toContain("animate-trust-verified");
+  });
+
+  it("does not animate moderate trust icon", () => {
+    render(<TrustBadge trustScore={0.6} />);
+    const icon = screen.getByTestId("trust-icon");
+    const cls = icon.getAttribute("class") ?? "";
+    expect(cls).not.toContain("animate-trust-verified");
+  });
+
+  it("does not animate low trust icon", () => {
+    render(<TrustBadge trustScore={0.2} />);
+    const icon = screen.getByTestId("trust-icon");
+    const cls = icon.getAttribute("class") ?? "";
+    expect(cls).not.toContain("animate-trust-verified");
+  });
+
   // ─── Accessibility ──────────────────────────────────────────────────────
 
   it("has role=status for screen readers", () => {
@@ -90,6 +138,12 @@ describe("TrustBadge", () => {
     expect(
       screen.getByTitle("Key data is present but some fields are estimated."),
     ).toBeTruthy();
+  });
+
+  it("has aria-hidden on icon", () => {
+    render(<TrustBadge trustScore={0.9} />);
+    const icon = screen.getByTestId("trust-icon");
+    expect(icon.getAttribute("aria-hidden")).toBe("true");
   });
 
   // ─── Size variants ─────────────────────────────────────────────────────

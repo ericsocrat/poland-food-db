@@ -28,7 +28,12 @@ vi.mock("@/lib/i18n", () => ({
 // ─── Fixtures ───────────────────────────────────────────────────────────────
 
 const sampleSources: SourceField[] = [
-  { field: "Nutrition", source: "Open Food Facts", daysSinceUpdate: 5 },
+  {
+    field: "Nutrition",
+    source: "Open Food Facts",
+    daysSinceUpdate: 5,
+    url: "https://world.openfoodfacts.org/product/123",
+  },
   { field: "Allergens", source: "Manual entry", daysSinceUpdate: 12 },
   { field: "Brand", source: "Open Food Facts", daysSinceUpdate: 30 },
 ];
@@ -99,12 +104,13 @@ describe("SourceAttribution", () => {
     it("renders source name and days since update", () => {
       render(<SourceAttribution sources={sampleSources} />);
       fireEvent.click(screen.getByText("Data Sources"));
-      expect(
-        screen.getByText(/Open Food Facts.*Updated 5 days ago/),
-      ).toBeTruthy();
-      expect(
-        screen.getByText(/Manual entry.*Updated 12 days ago/),
-      ).toBeTruthy();
+      // Source names visible (via link or span)
+      expect(screen.getByTestId("source-link-Nutrition").textContent).toBe(
+        "Open Food Facts",
+      );
+      expect(screen.getByTestId("source-name-Allergens").textContent).toBe(
+        "Manual entry",
+      );
     });
 
     it("renders correct count of field rows", () => {
@@ -112,6 +118,67 @@ describe("SourceAttribution", () => {
       fireEvent.click(screen.getByText("Data Sources"));
       const items = screen.getAllByRole("listitem");
       expect(items).toHaveLength(3);
+    });
+  });
+
+  // ─── Source icons ───
+
+  describe("source icons", () => {
+    it("renders icon for each source field", () => {
+      render(<SourceAttribution sources={sampleSources} />);
+      fireEvent.click(screen.getByText("Data Sources"));
+      expect(screen.getByTestId("source-icon-Nutrition")).toBeTruthy();
+      expect(screen.getByTestId("source-icon-Allergens")).toBeTruthy();
+      expect(screen.getByTestId("source-icon-Brand")).toBeTruthy();
+    });
+
+    it("renders icon for unknown source types", () => {
+      const unknownSource: SourceField[] = [
+        { field: "Weight", source: "Unknown Source", daysSinceUpdate: 1 },
+      ];
+      render(<SourceAttribution sources={unknownSource} />);
+      fireEvent.click(screen.getByText("Data Sources"));
+      expect(screen.getByTestId("source-icon-Weight")).toBeTruthy();
+    });
+
+    it("icons have aria-hidden", () => {
+      render(<SourceAttribution sources={sampleSources} />);
+      fireEvent.click(screen.getByText("Data Sources"));
+      const icon = screen.getByTestId("source-icon-Nutrition");
+      expect(icon.getAttribute("aria-hidden")).toBe("true");
+    });
+  });
+
+  // ─── Source links ───
+
+  describe("source links", () => {
+    it("renders linked source name when url is provided", () => {
+      render(<SourceAttribution sources={sampleSources} />);
+      fireEvent.click(screen.getByText("Data Sources"));
+      const link = screen.getByTestId("source-link-Nutrition");
+      expect(link.tagName).toBe("A");
+      expect(link.getAttribute("href")).toBe(
+        "https://world.openfoodfacts.org/product/123",
+      );
+    });
+
+    it("link opens in new tab", () => {
+      render(<SourceAttribution sources={sampleSources} />);
+      fireEvent.click(screen.getByText("Data Sources"));
+      const link = screen.getByTestId("source-link-Nutrition");
+      expect(link.getAttribute("target")).toBe("_blank");
+      expect(link.getAttribute("rel")).toBe("noopener noreferrer");
+    });
+
+    it("renders plain text when no url is provided", () => {
+      render(<SourceAttribution sources={sampleSources} />);
+      fireEvent.click(screen.getByText("Data Sources"));
+      // Allergens has no URL → should not have a link
+      expect(screen.queryByTestId("source-link-Allergens")).toBeNull();
+      // But the source name should still be visible as a span
+      expect(screen.getByTestId("source-name-Allergens").textContent).toBe(
+        "Manual entry",
+      );
     });
   });
 
@@ -125,7 +192,9 @@ describe("SourceAttribution", () => {
       render(<SourceAttribution sources={single} />);
       fireEvent.click(screen.getByText("Data Sources"));
       expect(screen.getByText("EAN")).toBeTruthy();
-      expect(screen.getByText(/Barcode scan.*Updated 0 days ago/)).toBeTruthy();
+      expect(screen.getByTestId("source-name-EAN").textContent).toBe(
+        "Barcode scan",
+      );
     });
   });
 
