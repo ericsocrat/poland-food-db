@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Security Posture Validation — 38 checks
+-- QA: Security Posture Validation — 40 checks
 -- Ensures RLS, grant restrictions, SECURITY DEFINER attributes,
 -- and function access controls are in place.
 -- ============================================================
@@ -456,4 +456,20 @@ SELECT '38. user_trust_scores has trust_score range CHECK' AS check_name,
        CASE WHEN EXISTS (
            SELECT 1 FROM information_schema.check_constraints
            WHERE constraint_name = 'chk_trust_score_range'
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 39. api_admin_batch_reject_user is SECURITY DEFINER
+SELECT '39. api_admin_batch_reject_user is SECURITY DEFINER' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc
+           WHERE proname = 'api_admin_batch_reject_user'
+             AND prosecdef = true
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 40. api_admin_submission_velocity is SECURITY DEFINER
+SELECT '40. api_admin_submission_velocity is SECURITY DEFINER' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc
+           WHERE proname = 'api_admin_submission_velocity'
+             AND prosecdef = true
        ) THEN 0 ELSE 1 END AS violations;

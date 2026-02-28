@@ -55,6 +55,12 @@ const makeSubmission = (overrides: Record<string, unknown> = {}) => ({
   reviewed_at: null,
   created_at: "2025-02-01T10:00:00Z",
   updated_at: "2025-02-01T10:00:00Z",
+  user_trust_score: 50,
+  user_total_submissions: 5,
+  user_approved_pct: 60,
+  user_flagged: false,
+  review_notes: null,
+  existing_product_match: null,
   ...overrides,
 });
 
@@ -95,6 +101,26 @@ beforeEach(() => {
       return Promise.resolve({
         ok: true,
         data: { status: "approved" },
+      });
+    }
+    if (fnName === "api_admin_submission_velocity") {
+      return Promise.resolve({
+        ok: true,
+        data: {
+          api_version: "1.0",
+          pending_count: 12,
+          last_24h: 5,
+          last_7d: 30,
+          auto_rejected_24h: 2,
+          status_breakdown: { pending: 12, approved: 50, rejected: 8 },
+          top_submitters: [],
+        },
+      });
+    }
+    if (fnName === "api_admin_batch_reject_user") {
+      return Promise.resolve({
+        ok: true,
+        data: { api_version: "1.0", rejected_count: 3, user_id: "user-abcd-1234-5678-xxxx", user_flagged: true, flag_reason: "batch_reject_admin" },
       });
     }
     return Promise.resolve({ ok: true, data: {} });
@@ -341,5 +367,166 @@ describe("AdminSubmissionsPage", () => {
       expect(screen.getByText("Test Chips")).toBeInTheDocument();
     });
     expect(screen.queryByText("← Prev")).not.toBeInTheDocument();
+  });
+
+  // ─── Trust Enrichment Tests ─────────────────────────────────────────────
+
+  it("shows trust score badge on submission cards", async () => {
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+    // All 3 subs have trust_score 50
+    const badges = screen.getAllByText("Trust 50");
+    expect(badges.length).toBe(3);
+  });
+
+  it("shows flagged user indicator", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({ user_flagged: true, product_name: "Flagged Item" }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Flagged Item")).toBeInTheDocument();
+    });
+    expect(screen.getByLabelText("Flagged user")).toBeInTheDocument();
+  });
+
+  it("shows review_notes from auto-triage", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({ review_notes: "Low quality: 15/100" }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Low quality: 15/100")).toBeInTheDocument();
+    });
+  });
+
+  it("shows existing product match warning", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({ existing_product_match: { product_id: 42, product_name: "Existing Chips" } }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText(/Possible duplicate.*#42/)).toBeInTheDocument();
+      expect(screen.getByText(/Existing Chips/)).toBeInTheDocument();
+    });
+  });
+
+  it("shows user submission stats", async () => {
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+    // pending sub has 5 total, 60% approved
+    const stats = screen.getAllByText(/5 total.*60% approved/);
+    expect(stats.length).toBeGreaterThan(0);
+  });
+
+  // ─── Velocity Widget Tests ─────────────────────────────────────────────
+
+  it("renders velocity widget with counts", async () => {
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Pending")).toBeInTheDocument();
+    });
+    // Velocity widget shows counts from the mock
+    await waitFor(() => {
+      expect(screen.getByText("12")).toBeInTheDocument(); // pending_count
+    });
+    expect(screen.getByText("5")).toBeInTheDocument(); // last_24h
+    expect(screen.getByText("30")).toBeInTheDocument(); // last_7d
+    expect(screen.getByText("2")).toBeInTheDocument(); // auto_rejected_24h
+  });
+
+  // ─── Batch Reject Tests ────────────────────────────────────────────────
+
+  it("shows Reject All button only for pending submissions", async () => {
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+    // Only 1 pending sub → 1 Reject All button
+    expect(screen.getAllByText("Reject All")).toHaveLength(1);
+  });
+
+  it("calls batch reject mutation when Reject All clicked", async () => {
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Reject All")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Reject All"));
+
+    await waitFor(() => {
+      expect(mockCallRpc).toHaveBeenCalledWith(
+        expect.anything(),
+        "api_admin_batch_reject_user",
+        expect.objectContaining({
+          p_user_id: "user-abcd-1234-5678-xxxx",
+        }),
+      );
+    });
+  });
+
+  it("shows toast on successful batch reject", async () => {
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Reject All")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Reject All"));
+
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith(
+        expect.objectContaining({
+          type: "success",
+          message: expect.stringContaining("3"),
+        }),
+      );
+    });
   });
 });
