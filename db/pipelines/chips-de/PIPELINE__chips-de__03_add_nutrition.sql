@@ -67,7 +67,7 @@ from (
     ('Asia Green Garden', 'Prawn Crackers', 542.0, 32.0, 2.6, 0.0, 61.5, 6.4, 0.8, 1.5, 1.5),
     ('Tyrrell’s', 'Furrows Sea Salt & Vinegar', 508.0, 28.8, 3.1, 0, 54.1, 1.4, 0, 6.1, 1.8),
     ('Pringles', 'Hot Kickin'' Sour Cream Flavour', 523.0, 30.0, 3.0, 0, 55.0, 2.2, 3.9, 6.4, 0.6),
-    ('Funny-Frisch', 'Chipsfrisch Oriental', 532.0, 33.0, 2.9, 0, 50.0, 2.8, 4.2, 5.6, 1.3),
+    ('Funny-frisch', 'Chipsfrisch Oriental', 532.0, 33.0, 2.9, 0, 50.0, 2.8, 4.2, 5.6, 1.3),
     ('Elephant', 'Baked squeezed pretzels with tomatoes and herbs', 430.0, 12.0, 0.8, 0, 70.0, 8.1, 0, 9.9, 2.0),
     ('Finn Crisp', 'Finn Crisp Snacks', 399.0, 12.0, 1.1, 0, 55.0, 3.4, 17.0, 9.2, 1.4),
     ('Funny-frisch', 'Chipsfrisch gesalzen', 539.0, 34.0, 3.0, 0, 49.0, 0.6, 4.2, 5.6, 1.4),

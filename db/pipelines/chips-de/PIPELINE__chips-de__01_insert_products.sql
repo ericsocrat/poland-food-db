@@ -63,7 +63,7 @@ values
   ('DE', 'Asia Green Garden', 'Grocery', 'Chips', 'Prawn Crackers', 'not-applicable', null, 'none', '4088600004167'),
   ('DE', 'Tyrrell’s', 'Grocery', 'Chips', 'Furrows Sea Salt & Vinegar', 'not-applicable', null, 'none', '5060042643509'),
   ('DE', 'Pringles', 'Grocery', 'Chips', 'Hot Kickin'' Sour Cream Flavour', 'not-applicable', null, 'none', '5053990175826'),
-  ('DE', 'Funny-Frisch', 'Grocery', 'Chips', 'Chipsfrisch Oriental', 'not-applicable', null, 'none', '4003586100399'),
+  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch Oriental', 'not-applicable', null, 'none', '4003586100399'),
   ('DE', 'Elephant', 'Grocery', 'Chips', 'Baked squeezed pretzels with tomatoes and herbs', 'not-applicable', null, 'none', '5949040203000'),
   ('DE', 'Finn Crisp', 'Grocery', 'Chips', 'Finn Crisp Snacks', 'not-applicable', null, 'none', '7310130010354'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch gesalzen', 'not-applicable', null, 'none', '4003586101389'),

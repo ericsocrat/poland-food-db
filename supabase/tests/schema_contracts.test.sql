@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(225);
+SELECT plan(230);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -339,6 +339,13 @@ SELECT has_column('public', 'product_links', 'product_id_b',     'product_links 
 SELECT has_column('public', 'product_links', 'link_type',        'product_links has link_type column');
 SELECT has_column('public', 'product_links', 'confidence',       'product_links has confidence column');
 SELECT has_function('public', 'api_get_cross_country_links',     'function api_get_cross_country_links exists');
+
+-- ─── Brand Normalization (#356) ──────────────────────────────────────────────
+SELECT has_table('public', 'brand_ref',                          'table brand_ref exists');
+SELECT has_column('public', 'brand_ref', 'brand_name',           'brand_ref has brand_name column');
+SELECT has_column('public', 'brand_ref', 'display_name',         'brand_ref has display_name column');
+SELECT has_column('public', 'brand_ref', 'parent_company',       'brand_ref has parent_company column');
+SELECT has_column('public', 'brand_ref', 'is_store_brand',       'brand_ref has is_store_brand column');
 
 SELECT * FROM finish();
 ROLLBACK;

@@ -60,7 +60,7 @@ FROM (
     ('Aldi', 'Erdbeer-Joghurt', 'https://images.openfoodfacts.org/images/products/406/145/802/1883/front_de.16.400.jpg', 'off_api', 'front', true, 'Front — EAN 4061458021883', 'front_4061458021883'),
     ('Rapunzel', 'Nirwana Vegan', 'https://images.openfoodfacts.org/images/products/400/604/048/8897/front_de.106.400.jpg', 'off_api', 'front', true, 'Front — EAN 4006040488897', 'front_4006040488897'),
     ('Ritter Sport', 'Haselnuss', 'https://images.openfoodfacts.org/images/products/400/041/762/2211/front_de.64.400.jpg', 'off_api', 'front', true, 'Front — EAN 4000417622211', 'front_4000417622211'),
-    ('Ritter SPORT', 'Ritter Sport Erdbeer', 'https://images.openfoodfacts.org/images/products/400/041/762/3713/front_de.29.400.jpg', 'off_api', 'front', true, 'Front — EAN 4000417623713', 'front_4000417623713'),
+    ('Ritter Sport', 'Ritter Sport Erdbeer', 'https://images.openfoodfacts.org/images/products/400/041/762/3713/front_de.29.400.jpg', 'off_api', 'front', true, 'Front — EAN 4000417623713', 'front_4000417623713'),
     ('Schogetten', 'Schogetten Edel-Zartbitter-Haselnuss', 'https://images.openfoodfacts.org/images/products/400/060/773/0900/front_de.25.400.jpg', 'off_api', 'front', true, 'Front — EAN 4000607730900', 'front_4000607730900'),
     ('Ritter Sport', 'Amicelli', 'https://images.openfoodfacts.org/images/products/400/041/760/1513/front_de.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 4000417601513', 'front_4000417601513'),
     ('Ferrero', 'Kinder Weihnachtsmann', 'https://images.openfoodfacts.org/images/products/400/840/051/1825/front_de.32.400.jpg', 'off_api', 'front', true, 'Front — EAN 4008400511825', 'front_4008400511825'),

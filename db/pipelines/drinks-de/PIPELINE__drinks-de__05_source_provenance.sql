@@ -37,7 +37,7 @@ FROM (
     ('Valensia', 'Orange ohne Fruchtfleisch', 'https://world.openfoodfacts.org/product/4009491021354', '4009491021354'),
     ('DmBio', 'Oat Drink - Sugarfree', 'https://world.openfoodfacts.org/product/4067796000207', '4067796000207'),
     ('Red Bull', 'Kokos Blaubeere (Weiß)', 'https://world.openfoodfacts.org/product/90433627', '90433627'),
-    ('VEMondo', 'High protein soy with chocolate taste', 'https://world.openfoodfacts.org/product/4056489749455', '4056489749455'),
+    ('Vemondo', 'High protein soy with chocolate taste', 'https://world.openfoodfacts.org/product/4056489749455', '4056489749455'),
     ('Naturalis', 'Getränke - Mineralwasser - Classic', 'https://world.openfoodfacts.org/product/42287995', '42287995'),
     ('Vly', 'Erbsenproteindrink Ungesüsst aus Erbsenprotein', 'https://world.openfoodfacts.org/product/4280001939042', '4280001939042'),
     ('Teekanne', 'Teebeutel Italienische Limone', 'https://world.openfoodfacts.org/product/4009300014492', '4009300014492'),

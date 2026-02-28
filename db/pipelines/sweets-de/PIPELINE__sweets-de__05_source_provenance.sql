@@ -50,7 +50,7 @@ FROM (
     ('Aldi', 'Erdbeer-Joghurt', 'https://world.openfoodfacts.org/product/4061458021883', '4061458021883'),
     ('Rapunzel', 'Nirwana Vegan', 'https://world.openfoodfacts.org/product/4006040488897', '4006040488897'),
     ('Ritter Sport', 'Haselnuss', 'https://world.openfoodfacts.org/product/4000417622211', '4000417622211'),
-    ('Ritter SPORT', 'Ritter Sport Erdbeer', 'https://world.openfoodfacts.org/product/4000417623713', '4000417623713'),
+    ('Ritter Sport', 'Ritter Sport Erdbeer', 'https://world.openfoodfacts.org/product/4000417623713', '4000417623713'),
     ('Schogetten', 'Schogetten Edel-Zartbitter-Haselnuss', 'https://world.openfoodfacts.org/product/4000607730900', '4000607730900'),
     ('Ritter Sport', 'Amicelli', 'https://world.openfoodfacts.org/product/4000417601513', '4000417601513'),
     ('Ferrero', 'Kinder Weihnachtsmann', 'https://world.openfoodfacts.org/product/4008400511825', '4008400511825'),

@@ -46,7 +46,7 @@ values
   ('DE', 'Valensia', 'Grocery', 'Drinks', 'Orange ohne Fruchtfleisch', 'not-applicable', null, 'none', '4009491021354'),
   ('DE', 'DmBio', 'Grocery', 'Drinks', 'Oat Drink - Sugarfree', 'not-applicable', null, 'none', '4067796000207'),
   ('DE', 'Red Bull', 'Grocery', 'Drinks', 'Kokos Blaubeere (Weiß)', 'not-applicable', 'Lidl', 'none', '90433627'),
-  ('DE', 'VEMondo', 'Grocery', 'Drinks', 'High protein soy with chocolate taste', 'not-applicable', null, 'none', '4056489749455'),
+  ('DE', 'Vemondo', 'Grocery', 'Drinks', 'High protein soy with chocolate taste', 'not-applicable', null, 'none', '4056489749455'),
   ('DE', 'Naturalis', 'Grocery', 'Drinks', 'Getränke - Mineralwasser - Classic', 'not-applicable', 'Netto', 'none', '42287995'),
   ('DE', 'Vly', 'Grocery', 'Drinks', 'Erbsenproteindrink Ungesüsst aus Erbsenprotein', 'not-applicable', null, 'none', '4280001939042'),
   ('DE', 'Teekanne', 'Grocery', 'Drinks', 'Teebeutel Italienische Limone', 'not-applicable', null, 'none', '4009300014492'),
