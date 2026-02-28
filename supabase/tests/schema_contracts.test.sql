@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(212);
+SELECT plan(216);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -320,6 +320,12 @@ SELECT has_function('public', 'trig_adjust_trust_score',   'function trig_adjust
 -- ─── Admin Submission Dashboard (#474) ────────────────────────────────────────
 SELECT has_function('public', 'api_admin_batch_reject_user',     'function api_admin_batch_reject_user exists');
 SELECT has_function('public', 'api_admin_submission_velocity',   'function api_admin_submission_velocity exists');
+
+-- ─── Data Freshness Tracking (#357) ──────────────────────────────────────────
+SELECT has_column('public', 'products', 'last_fetched_at',       'products.last_fetched_at exists');
+SELECT has_column('public', 'products', 'off_revision',          'products.off_revision exists');
+SELECT has_view('public', 'v_data_freshness_summary',            'view v_data_freshness_summary exists');
+SELECT has_index('public', 'products', 'idx_products_last_fetched', 'index idx_products_last_fetched exists');
 
 SELECT * FROM finish();
 ROLLBACK;

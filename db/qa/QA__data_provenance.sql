@@ -1,5 +1,5 @@
--- QA: Data Provenance & Freshness Governance (Issue #193)
--- 25 tests covering all layers of the provenance framework.
+-- QA: Data Provenance & Freshness Governance (Issue #193, #357)
+-- 28 tests covering all layers of the provenance framework.
 
 -- ============================================================================
 -- T01: data_sources table has expected seed rows
@@ -378,4 +378,45 @@ BEGIN
     PERFORM 1 FROM pg_proc WHERE proname = 'detect_stale_products';
     ASSERT FOUND, 'T25 FAIL: detect_stale_products function missing';
     RAISE NOTICE 'T25 PASS — detect_stale_products exists';
+END $$;
+
+-- ============================================================================
+-- T26: products.last_fetched_at backfilled for all active products
+-- ============================================================================
+DO $$
+DECLARE v INT;
+BEGIN
+    SELECT COUNT(*) INTO v
+    FROM products
+    WHERE is_deprecated IS NOT TRUE
+      AND last_fetched_at IS NULL;
+    ASSERT v = 0, 'T26 FAIL: ' || v || ' active products have NULL last_fetched_at';
+    RAISE NOTICE 'T26 PASS — all active products have last_fetched_at';
+END $$;
+
+-- ============================================================================
+-- T27: no last_fetched_at values in the future
+-- ============================================================================
+DO $$
+DECLARE v INT;
+BEGIN
+    SELECT COUNT(*) INTO v
+    FROM products
+    WHERE last_fetched_at > now() + interval '1 hour';
+    ASSERT v = 0, 'T27 FAIL: ' || v || ' products have future last_fetched_at';
+    RAISE NOTICE 'T27 PASS — no future last_fetched_at values';
+END $$;
+
+-- ============================================================================
+-- T28: v_data_freshness_summary view returns rows for all active categories
+-- ============================================================================
+DO $$
+DECLARE v INT; v_cats INT;
+BEGIN
+    SELECT COUNT(*) INTO v FROM v_data_freshness_summary;
+    SELECT COUNT(DISTINCT category) INTO v_cats
+    FROM products WHERE is_deprecated IS NOT TRUE;
+    ASSERT v >= v_cats, 'T28 FAIL: freshness summary has ' || v ||
+        ' rows but ' || v_cats || ' active categories exist';
+    RAISE NOTICE 'T28 PASS — v_data_freshness_summary covers % categories', v;
 END $$;
