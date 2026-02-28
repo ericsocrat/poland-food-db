@@ -20,6 +20,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   limiting (100 scans/day/user), EAN format validation, structured error responses
   with graceful degradation fallback; frontend wrapper `api-gateway.ts` with
   18 Vitest tests (#478)
+- Add product submission protection to API gateway (Phase 2): `submit-product`
+  action with GS1 EAN checksum validation, input sanitization (field length caps,
+  forbidden character rejection), 10/day rate limiting; frontend
+  `submitProductViaGateway()` with graceful degradation fallback; 14 new Vitest
+  tests (32 total) (#478)
 
 ### Schema & Migrations
 

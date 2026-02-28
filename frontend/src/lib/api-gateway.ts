@@ -7,7 +7,7 @@
 //   const gateway = createApiGateway(supabase);
 //   const result = await gateway.recordScan("5901234123457");
 //
-// Issue: #478 — Phase 1
+// Issue: #478 — Phase 1 + Phase 2
 // ─────────────────────────────────────────────────────────────────────────────
 
 import type { SupabaseClient } from "@supabase/supabase-js";
@@ -44,12 +44,23 @@ export function isGatewayAuthError(
   return !result.ok && result.error === "unauthorized";
 }
 
+export function isGatewayValidationError(
+  result: GatewayResult,
+): result is GatewayError {
+  return (
+    !result.ok &&
+    (result.error === "invalid_input" ||
+      result.error === "invalid_ean" ||
+      result.error === "invalid_ean_checksum")
+  );
+}
+
 // ─── Core invoke ────────────────────────────────────────────────────────────
 
 async function invokeGateway<T = unknown>(
   supabase: SupabaseClient,
   action: string,
-  params: Record<string, unknown> = {},
+  params: Record<string, unknown> | object = {},
 ): Promise<GatewayResult<T>> {
   try {
     const { data, error } = await supabase.functions.invoke(
@@ -123,10 +134,60 @@ export async function recordScanViaGateway(
   return result;
 }
 
+// ─── Submit Product Types ───────────────────────────────────────────────────
+
+export interface SubmitProductParams {
+  ean: string;
+  product_name: string;
+  brand?: string | null;
+  category?: string | null;
+  photo_url?: string | null;
+  notes?: string | null;
+}
+
+/**
+ * Submit a new product via the gateway (rate limited: 10/day).
+ * Validates EAN checksum and sanitizes inputs before forwarding.
+ * Falls back to direct RPC if the gateway is unreachable.
+ */
+export async function submitProductViaGateway(
+  supabase: SupabaseClient,
+  params: SubmitProductParams,
+): Promise<GatewayResult> {
+  const result = await invokeGateway(supabase, "submit-product", params);
+
+  // Graceful degradation: if gateway is unreachable, fall back to direct RPC
+  if (!result.ok && result.error === "gateway_unreachable") {
+    try {
+      const { data, error } = await supabase.rpc("api_submit_product", {
+        p_ean: params.ean,
+        p_product_name: params.product_name,
+        p_brand: params.brand ?? null,
+        p_category: params.category ?? null,
+        p_photo_url: params.photo_url ?? null,
+        p_notes: params.notes ?? null,
+      });
+      if (error) {
+        return {
+          ok: false,
+          error: "rpc_error",
+          message: error.message ?? "Failed to submit product",
+        };
+      }
+      return { ok: true, data };
+    } catch {
+      return result;
+    }
+  }
+
+  return result;
+}
+
 // ─── Gateway Factory ────────────────────────────────────────────────────────
 
 export interface ApiGateway {
   recordScan: (ean: string) => Promise<GatewayResult>;
+  submitProduct: (params: SubmitProductParams) => Promise<GatewayResult>;
 }
 
 /**
@@ -146,5 +207,7 @@ export interface ApiGateway {
 export function createApiGateway(supabase: SupabaseClient): ApiGateway {
   return {
     recordScan: (ean: string) => recordScanViaGateway(supabase, ean),
+    submitProduct: (params: SubmitProductParams) =>
+      submitProductViaGateway(supabase, params),
   };
 }
