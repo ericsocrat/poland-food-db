@@ -125,6 +125,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
   `data-achievement` and `data-unlocked` attributes; 29 Vitest tests covering
   all 5 types × 2 states, accessibility, sizing, label display, and
   utilities (#425)
+- Create 8 empty-state SVG illustrations in
+  `frontend/public/illustrations/empty-states/` (no-results, no-favorites,
+  no-scan-history, no-comparisons, no-lists, no-products-category,
+  no-submissions, no-saved-searches); flat/semi-flat style with brand palette,
+  dark mode via `prefers-color-scheme` media queries, all under 2.1 KB;
+  `EmptyStateIllustration` React component wrapping existing `EmptyState`
+  with context-specific SVG illustrations, typed to 8 states, i18n-ready;
+  39 Vitest tests covering all 8 types, alt text, actions, image dimensions,
+  className passthrough, and utility functions (#423)
 - Redesign README.md as 15-section showcase-quality layout: hero banner, 9
   shields.io badges, elevator pitch, 4 feature highlight cards (HTML table),
   comparison table, 3-column quick start with collapsible command reference,

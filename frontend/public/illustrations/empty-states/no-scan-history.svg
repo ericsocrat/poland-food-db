@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .es-shelf { fill: #cbd5e1; }
+    .es-shelf-edge { fill: #94a3b8; }
+    .es-scanner { fill: #0d7377; }
+    .es-scanner-light { fill: #d4a844; opacity: 0.35; }
+    .es-beam { stroke: #d4a844; stroke-width: 2; stroke-dasharray: 6 4; }
+    .es-shadow { fill: #94a3b8; opacity: 0.18; }
+    .es-barcode { stroke: #64748b; stroke-width: 2; stroke-linecap: round; }
+    @media (prefers-color-scheme: dark) {
+      .es-shelf { fill: #475569; }
+      .es-shelf-edge { fill: #334155; }
+      .es-scanner { fill: #2dd4bf; }
+      .es-scanner-light { fill: #fbbf24; opacity: 0.3; }
+      .es-beam { stroke: #fbbf24; }
+      .es-shadow { fill: #1e293b; opacity: 0.3; }
+      .es-barcode { stroke: #94a3b8; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="es-shadow" cx="120" cy="172" rx="75" ry="9"/>
+  <!-- Empty shelf -->
+  <rect class="es-shelf" x="40" y="130" width="160" height="10" rx="2"/>
+  <rect class="es-shelf-edge" x="40" y="138" width="160" height="6" rx="1"/>
+  <!-- Shelf supports -->
+  <rect class="es-shelf" x="52" y="144" width="6" height="24" rx="1"/>
+  <rect class="es-shelf" x="182" y="144" width="6" height="24" rx="1"/>
+  <!-- Scanner device -->
+  <rect class="es-scanner" x="96" y="50" width="48" height="32" rx="6"/>
+  <rect class="es-scanner" x="112" y="82" width="16" height="20" rx="2"/>
+  <!-- Scanner beam (dashed line pointing at shelf) -->
+  <line class="es-beam" x1="120" y1="102" x2="120" y2="128"/>
+  <!-- Scan light glow -->
+  <path class="es-scanner-light" d="M110 102 L120 128 L130 102Z"/>
+  <!-- Small barcode lines on scanner screen -->
+  <line class="es-barcode" x1="106" y1="60" x2="106" y2="72"/>
+  <line class="es-barcode" x1="112" y1="58" x2="112" y2="72"/>
+  <line class="es-barcode" x1="117" y1="60" x2="117" y2="72"/>
+  <line class="es-barcode" x1="123" y1="58" x2="123" y2="72"/>
+  <line class="es-barcode" x1="128" y1="60" x2="128" y2="72"/>
+  <line class="es-barcode" x1="134" y1="58" x2="134" y2="72"/>
+</svg>

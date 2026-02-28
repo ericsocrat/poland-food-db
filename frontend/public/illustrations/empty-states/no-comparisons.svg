@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .es-plate { fill: #e2e8f0; }
+    .es-plate-rim { fill: #cbd5e1; }
+    .es-shadow { fill: #94a3b8; opacity: 0.18; }
+    .es-arrows { stroke: #0d7377; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .es-dash { stroke: #d4a844; stroke-width: 1.5; stroke-dasharray: 3 5; fill: none; }
+    @media (prefers-color-scheme: dark) {
+      .es-plate { fill: #334155; }
+      .es-plate-rim { fill: #475569; }
+      .es-shadow { fill: #1e293b; opacity: 0.3; }
+      .es-arrows { stroke: #2dd4bf; }
+      .es-dash { stroke: #fbbf24; }
+    }
+  </style>
+  <!-- Shadows -->
+  <ellipse class="es-shadow" cx="76" cy="168" rx="46" ry="8"/>
+  <ellipse class="es-shadow" cx="164" cy="168" rx="46" ry="8"/>
+  <!-- Left plate -->
+  <ellipse class="es-plate-rim" cx="76" cy="136" rx="46" ry="22"/>
+  <ellipse class="es-plate" cx="76" cy="132" rx="40" ry="18"/>
+  <!-- Right plate -->
+  <ellipse class="es-plate-rim" cx="164" cy="136" rx="46" ry="22"/>
+  <ellipse class="es-plate" cx="164" cy="132" rx="40" ry="18"/>
+  <!-- Dashed circles inside plates (empty indicator) -->
+  <circle class="es-dash" cx="76" cy="130" r="16"/>
+  <circle class="es-dash" cx="164" cy="130" r="16"/>
+  <!-- Double-headed arrows between plates -->
+  <polyline class="es-arrows" points="108,98 120,88 132,98"/>
+  <line class="es-arrows" x1="120" y1="88" x2="120" y2="112"/>
+  <polyline class="es-arrows" points="108,112 120,122 132,112"/>
+  <!-- Small compare dots above -->
+  <circle fill="#0d7377" cx="96" cy="60" r="4" opacity="0.25"/>
+  <circle fill="#0d7377" cx="120" cy="50" r="5" opacity="0.15"/>
+  <circle fill="#0d7377" cx="144" cy="58" r="3.5" opacity="0.2"/>
+</svg>

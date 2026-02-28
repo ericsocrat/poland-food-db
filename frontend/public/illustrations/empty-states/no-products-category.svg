@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .es-shelf { fill: #cbd5e1; }
+    .es-shelf-edge { fill: #94a3b8; }
+    .es-bracket { stroke: #0d7377; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .es-shadow { fill: #94a3b8; opacity: 0.18; }
+    .es-dash { stroke: #d4a844; stroke-width: 1.5; stroke-dasharray: 5 5; fill: none; }
+    .es-dot { fill: #e2e8f0; }
+    @media (prefers-color-scheme: dark) {
+      .es-shelf { fill: #475569; }
+      .es-shelf-edge { fill: #334155; }
+      .es-bracket { stroke: #2dd4bf; }
+      .es-shadow { fill: #1e293b; opacity: 0.3; }
+      .es-dash { stroke: #fbbf24; }
+      .es-dot { fill: #334155; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="es-shadow" cx="120" cy="176" rx="80" ry="8"/>
+  <!-- Top shelf -->
+  <rect class="es-shelf" x="36" y="68" width="168" height="8" rx="2"/>
+  <rect class="es-shelf-edge" x="36" y="74" width="168" height="4" rx="1"/>
+  <!-- Middle shelf -->
+  <rect class="es-shelf" x="36" y="110" width="168" height="8" rx="2"/>
+  <rect class="es-shelf-edge" x="36" y="116" width="168" height="4" rx="1"/>
+  <!-- Bottom shelf -->
+  <rect class="es-shelf" x="36" y="152" width="168" height="8" rx="2"/>
+  <rect class="es-shelf-edge" x="36" y="158" width="168" height="4" rx="1"/>
+  <!-- Shelf supports -->
+  <rect class="es-shelf" x="38" y="68" width="5" height="100" rx="1"/>
+  <rect class="es-shelf" x="197" y="68" width="5" height="100" rx="1"/>
+  <!-- Ghost product outlines (dashed rectangles) -->
+  <rect class="es-dash" x="60" y="80" width="24" height="28" rx="3"/>
+  <rect class="es-dash" x="108" y="80" width="24" height="28" rx="3"/>
+  <rect class="es-dash" x="156" y="80" width="24" height="28" rx="3"/>
+  <!-- Ghost products row 2 -->
+  <rect class="es-dash" x="84" y="122" width="24" height="28" rx="3"/>
+  <rect class="es-dash" x="132" y="122" width="24" height="28" rx="3"/>
+  <!-- Filter bracket icon -->
+  <path class="es-bracket" d="M102 40 L120 32 L138 40"/>
+  <line class="es-bracket" x1="120" y1="32" x2="120" y2="50"/>
+  <line class="es-bracket" x1="110" y1="50" x2="130" y2="50"/>
+</svg>
