@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Security Posture Validation — 40 checks
+-- QA: Security Posture Validation — 41 checks
 -- Ensures RLS, grant restrictions, SECURITY DEFINER attributes,
 -- and function access controls are in place.
 -- ============================================================
@@ -471,5 +471,13 @@ SELECT '40. api_admin_submission_velocity is SECURITY DEFINER' AS check_name,
        CASE WHEN EXISTS (
            SELECT 1 FROM pg_proc
            WHERE proname = 'api_admin_submission_velocity'
+             AND prosecdef = true
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- 41. check_share_limit is SECURITY DEFINER
+SELECT '41. check_share_limit is SECURITY DEFINER' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc
+           WHERE proname = 'check_share_limit'
              AND prosecdef = true
        ) THEN 0 ELSE 1 END AS violations;
