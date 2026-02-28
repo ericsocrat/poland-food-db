@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" width="96" height="96" aria-hidden="true">
+  <title>Comparison Pro</title>
+  <!-- Ribbon -->
+  <path d="M38 78l-8 16v-20h8z" fill="#d4a844" opacity=".8"/>
+  <path d="M58 78l8 16v-20h-8z" fill="#c09030" opacity=".8"/>
+  <!-- Medal ring -->
+  <circle cx="48" cy="44" r="32" fill="#FFD700"/>
+  <circle cx="48" cy="44" r="28" fill="#FFF8DC"/>
+  <circle cx="48" cy="44" r="26" fill="#FFFBF0"/>
+  <circle cx="48" cy="44" r="26" fill="url(#cp-g)" opacity=".15"/>
+  <!-- Scale / balance icon -->
+  <rect x="46.5" y="30" width="3" height="20" rx="1" fill="#0d7377"/>
+  <circle cx="48" cy="30" r="3" fill="#0d7377"/>
+  <!-- Balance beam -->
+  <line x1="33" y1="38" x2="63" y2="38" stroke="#0d7377" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Left pan -->
+  <path d="M30 38l-2 10h10l-2-10" fill="none" stroke="#0d7377" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M28 48q3 3 10 0" fill="none" stroke="#0d7377" stroke-width="2" stroke-linecap="round"/>
+  <!-- Right pan -->
+  <path d="M56 38l-2 10h10l-2-10" fill="none" stroke="#0d7377" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M54 48q3 3 10 0" fill="none" stroke="#0d7377" stroke-width="2" stroke-linecap="round"/>
+  <!-- Base -->
+  <rect x="42" y="50" width="12" height="3" rx="1.5" fill="#0d7377"/>
+  <defs><radialGradient id="cp-g"><stop offset="0" stop-color="#FFD700" stop-opacity=".3"/><stop offset="1" stop-color="#FFD700" stop-opacity="0"/></radialGradient></defs>
+</svg>
