@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#0d7377"/>
+      <stop offset="50%" stop-color="#095456"/>
+      <stop offset="100%" stop-color="#042f2e"/>
+    </linearGradient>
+    <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#22c55e"/>
+      <stop offset="20%" stop-color="#22c55e"/>
+      <stop offset="20%" stop-color="#eab308"/>
+      <stop offset="40%" stop-color="#eab308"/>
+      <stop offset="40%" stop-color="#f97316"/>
+      <stop offset="60%" stop-color="#f97316"/>
+      <stop offset="60%" stop-color="#ef4444"/>
+      <stop offset="80%" stop-color="#ef4444"/>
+      <stop offset="80%" stop-color="#991b1b"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1280" height="640" fill="url(#bg)"/>
+
+  <!-- Subtle grid pattern -->
+  <g opacity="0.04">
+    <line x1="0" y1="80" x2="1280" y2="80" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="160" x2="1280" y2="160" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="240" x2="1280" y2="240" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="320" x2="1280" y2="320" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="400" x2="1280" y2="400" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="480" x2="1280" y2="480" stroke="#fff" stroke-width="1"/>
+    <line x1="0" y1="560" x2="1280" y2="560" stroke="#fff" stroke-width="1"/>
+    <line x1="160" y1="0" x2="160" y2="640" stroke="#fff" stroke-width="1"/>
+    <line x1="320" y1="0" x2="320" y2="640" stroke="#fff" stroke-width="1"/>
+    <line x1="480" y1="0" x2="480" y2="640" stroke="#fff" stroke-width="1"/>
+    <line x1="640" y1="0" x2="640" y2="640" stroke="#fff" stroke-width="1"/>
+    <line x1="800" y1="0" x2="800" y2="640" stroke="#fff" stroke-width="1"/>
+    <line x1="960" y1="0" x2="960" y2="640" stroke="#fff" stroke-width="1"/>
+    <line x1="1120" y1="0" x2="1120" y2="640" stroke="#fff" stroke-width="1"/>
+  </g>
+
+  <!-- Score band accent bar -->
+  <rect x="80" y="60" width="1120" height="6" rx="3" fill="url(#bandGrad)" opacity="0.8"/>
+
+  <!-- Project name -->
+  <text x="640" y="140" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="500" fill="#5eead4" letter-spacing="4">POLAND FOOD QUALITY DATABASE</text>
+
+  <!-- Version placeholder (EDIT THIS) -->
+  <text x="640" y="220" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="72" font-weight="800" fill="#ffffff">v0.0.0</text>
+
+  <!-- Release title placeholder (EDIT THIS) -->
+  <text x="640" y="280" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="500" fill="#d4a844">Release Title Goes Here</text>
+
+  <!-- Divider -->
+  <line x1="440" y1="310" x2="840" y2="310" stroke="#2dd4bf" stroke-width="2" opacity="0.5"/>
+
+  <!-- Highlights placeholders (EDIT THESE) -->
+  <text x="640" y="360" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#e2e8f0">✦ Highlight 1 — brief description</text>
+  <text x="640" y="400" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#e2e8f0">✦ Highlight 2 — brief description</text>
+  <text x="640" y="440" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#e2e8f0">✦ Highlight 3 — brief description</text>
+  <text x="640" y="480" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#e2e8f0">✦ Highlight 4 — brief description</text>
+  <text x="640" y="520" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#e2e8f0">✦ Highlight 5 — brief description</text>
+
+  <!-- Score band accent bar (bottom) -->
+  <rect x="80" y="574" width="1120" height="6" rx="3" fill="url(#bandGrad)" opacity="0.8"/>
+
+  <!-- Footer -->
+  <text x="640" y="610" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="14" fill="#64748b">PostgreSQL · Supabase · Next.js · TypeScript</text>
+</svg>

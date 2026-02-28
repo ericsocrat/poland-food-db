@@ -1,3 +1,5 @@
+![Pull Request](https://raw.githubusercontent.com/ericsocrat/poland-food-db/main/.github/assets/pr-header.svg)
+
 ## Summary
 
 <!-- Brief description of what this PR does -->
