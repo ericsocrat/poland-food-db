@@ -54,7 +54,7 @@ FROM (
     ('Asia Green Garden', 'Prawn Crackers', 'https://world.openfoodfacts.org/product/4088600004167', '4088600004167'),
     ('Tyrrell’s', 'Furrows Sea Salt & Vinegar', 'https://world.openfoodfacts.org/product/5060042643509', '5060042643509'),
     ('Pringles', 'Hot Kickin'' Sour Cream Flavour', 'https://world.openfoodfacts.org/product/5053990175826', '5053990175826'),
-    ('Funny-Frisch', 'Chipsfrisch Oriental', 'https://world.openfoodfacts.org/product/4003586100399', '4003586100399'),
+    ('Funny-frisch', 'Chipsfrisch Oriental', 'https://world.openfoodfacts.org/product/4003586100399', '4003586100399'),
     ('Elephant', 'Baked squeezed pretzels with tomatoes and herbs', 'https://world.openfoodfacts.org/product/5949040203000', '5949040203000'),
     ('Finn Crisp', 'Finn Crisp Snacks', 'https://world.openfoodfacts.org/product/7310130010354', '7310130010354'),
     ('Funny-frisch', 'Chipsfrisch gesalzen', 'https://world.openfoodfacts.org/product/4003586101389', '4003586101389'),

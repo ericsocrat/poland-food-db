@@ -62,7 +62,7 @@ from (
     ('Aldi', 'Erdbeer-Joghurt', 577.0, 38.0, 23.0, 0, 52.0, 51.0, 0, 6.3, 0.2),
     ('Rapunzel', 'Nirwana Vegan', 573.0, 38.0, 16.0, 0, 52.0, 43.0, 3.9, 4.6, 0.2),
     ('Ritter Sport', 'Haselnuss', 554.0, 34.0, 17.0, 0, 53.0, 50.0, 0, 7.3, 0.2),
-    ('Ritter SPORT', 'Ritter Sport Erdbeer', 572.0, 38.0, 22.0, 0, 49.0, 48.0, 0, 6.6, 0.2),
+    ('Ritter Sport', 'Ritter Sport Erdbeer', 572.0, 38.0, 22.0, 0, 49.0, 48.0, 0, 6.6, 0.2),
     ('Schogetten', 'Schogetten Edel-Zartbitter-Haselnuss', 565.0, 38.0, 20.0, 0, 45.0, 41.0, 0, 7.1, 0.0),
     ('Ritter Sport', 'Amicelli', 563.0, 35.0, 17.0, 0, 53.0, 50.0, 0, 6.5, 0.2),
     ('Ferrero', 'Kinder Weihnachtsmann', 577.0, 36.2, 24.1, 0, 53.9, 53.6, 0, 8.8, 0.3),

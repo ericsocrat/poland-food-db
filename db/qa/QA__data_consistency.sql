@@ -253,3 +253,30 @@ WHERE cr.is_active = true
   AND cr.category NOT IN ('Chips', 'Żabka');
   -- Chips has legacy 'Grocery', Żabka has legacy 'Ready-to-eat' + 'other-zabka'
 
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 25. brand_ref: all active product brands exist in brand_ref (#356)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '25. all product brands in brand_ref' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT DISTINCT p.brand
+    FROM products p
+    WHERE p.is_deprecated IS NOT TRUE
+      AND p.brand IS NOT NULL
+      AND NOT EXISTS (
+        SELECT 1 FROM brand_ref br
+        WHERE br.brand_name = p.brand
+      )
+) orphan_brands;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 26. brand_ref: no duplicate brand_name with different casing (#356)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '26. no case-duplicate brand names' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT LOWER(brand_name) AS lower_name
+    FROM brand_ref
+    GROUP BY LOWER(brand_name)
+    HAVING COUNT(*) > 1
+) case_dupes;

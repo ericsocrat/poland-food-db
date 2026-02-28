@@ -47,7 +47,7 @@ FROM (
     ('Valensia', 'Orange ohne Fruchtfleisch', 'https://images.openfoodfacts.org/images/products/400/949/102/1354/front_de.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 4009491021354', 'front_4009491021354'),
     ('DmBio', 'Oat Drink - Sugarfree', 'https://images.openfoodfacts.org/images/products/406/779/600/0207/front_en.7.400.jpg', 'off_api', 'front', true, 'Front — EAN 4067796000207', 'front_4067796000207'),
     ('Red Bull', 'Kokos Blaubeere (Weiß)', 'https://images.openfoodfacts.org/images/products/000/009/043/3627/front_de.72.400.jpg', 'off_api', 'front', true, 'Front — EAN 90433627', 'front_90433627'),
-    ('VEMondo', 'High protein soy with chocolate taste', 'https://images.openfoodfacts.org/images/products/405/648/974/9455/front_en.32.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489749455', 'front_4056489749455'),
+    ('Vemondo', 'High protein soy with chocolate taste', 'https://images.openfoodfacts.org/images/products/405/648/974/9455/front_en.32.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489749455', 'front_4056489749455'),
     ('Naturalis', 'Getränke - Mineralwasser - Classic', 'https://images.openfoodfacts.org/images/products/000/004/228/7995/front_de.62.400.jpg', 'off_api', 'front', true, 'Front — EAN 42287995', 'front_42287995'),
     ('Vly', 'Erbsenproteindrink Ungesüsst aus Erbsenprotein', 'https://images.openfoodfacts.org/images/products/428/000/193/9042/front_de.84.400.jpg', 'off_api', 'front', true, 'Front — EAN 4280001939042', 'front_4280001939042'),
     ('Teekanne', 'Teebeutel Italienische Limone', 'https://images.openfoodfacts.org/images/products/400/930/001/4492/front_de.59.400.jpg', 'off_api', 'front', true, 'Front — EAN 4009300014492', 'front_4009300014492'),

@@ -59,7 +59,7 @@ values
   ('DE', 'Aldi', 'Grocery', 'Sweets', 'Erdbeer-Joghurt', 'not-applicable', 'Aldi', 'none', '4061458021883'),
   ('DE', 'Rapunzel', 'Grocery', 'Sweets', 'Nirwana Vegan', 'not-applicable', null, 'none', '4006040488897'),
   ('DE', 'Ritter Sport', 'Grocery', 'Sweets', 'Haselnuss', 'not-applicable', null, 'none', '4000417622211'),
-  ('DE', 'Ritter SPORT', 'Grocery', 'Sweets', 'Ritter Sport Erdbeer', 'not-applicable', null, 'none', '4000417623713'),
+  ('DE', 'Ritter Sport', 'Grocery', 'Sweets', 'Ritter Sport Erdbeer', 'not-applicable', null, 'none', '4000417623713'),
   ('DE', 'Schogetten', 'Grocery', 'Sweets', 'Schogetten Edel-Zartbitter-Haselnuss', 'not-applicable', 'Kaufland', 'none', '4000607730900'),
   ('DE', 'Ritter Sport', 'Grocery', 'Sweets', 'Amicelli', 'not-applicable', null, 'none', '4000417601513'),
   ('DE', 'Ferrero', 'Grocery', 'Sweets', 'Kinder Weihnachtsmann', 'not-applicable', null, 'none', '4008400511825'),
