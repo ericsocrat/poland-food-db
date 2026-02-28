@@ -134,6 +134,14 @@ Adheres to [Semantic Versioning](https://semver.org/).
   with context-specific SVG illustrations, typed to 8 states, i18n-ready;
   39 Vitest tests covering all 8 types, alt text, actions, image dimensions,
   className passthrough, and utility functions (#423)
+- Create 5 onboarding step SVG illustrations (280×280) in
+  `frontend/public/illustrations/onboarding/` (welcome, country, diet,
+  allergens, ready) and 3 error page SVG illustrations (240×200) in
+  `frontend/public/illustrations/errors/` (404, 500, offline); brand palette
+  with `prefers-color-scheme` dark mode, all under 3 KB; `OnboardingIllustration`
+  component (5 steps, custom dimensions, priority loading) with 32 Vitest tests;
+  `ErrorIllustration` component (3 error types, HTTP status metadata) with
+  30 Vitest tests; LoadingSpinner and Skeleton components already exist (#424)
 - Redesign README.md as 15-section showcase-quality layout: hero banner, 9
   shields.io badges, elevator pitch, 4 feature highlight cards (HTML table),
   comparison table, 3-column quick start with collapsible command reference,

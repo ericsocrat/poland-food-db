@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .er-primary { fill: #0d7377; }
+    .er-primary-stroke { stroke: #0d7377; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .er-accent { fill: #d4a844; }
+    .er-neutral { fill: #e2e8f0; }
+    .er-neutral-dark { fill: #cbd5e1; }
+    .er-shadow { fill: #94a3b8; opacity: 0.18; }
+    .er-x { stroke: #dc2626; stroke-width: 3; stroke-linecap: round; }
+    @media (prefers-color-scheme: dark) {
+      .er-primary { fill: #2dd4bf; }
+      .er-primary-stroke { stroke: #2dd4bf; }
+      .er-accent { fill: #fbbf24; }
+      .er-neutral { fill: #334155; }
+      .er-neutral-dark { fill: #475569; }
+      .er-shadow { fill: #1e293b; opacity: 0.3; }
+      .er-x { stroke: #f87171; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="er-shadow" cx="120" cy="172" rx="50" ry="7"/>
+  <!-- Cloud shape -->
+  <circle class="er-neutral" cx="100" cy="95" r="35"/>
+  <circle class="er-neutral" cx="140" cy="85" r="40"/>
+  <circle class="er-neutral" cx="170" cy="100" r="30"/>
+  <rect class="er-neutral" x="72" y="95" width="128" height="40" rx="0"/>
+  <ellipse class="er-neutral" cx="120" cy="135" rx="55" ry="8"/>
+  <!-- Cloud outline highlights -->
+  <path class="er-primary-stroke" d="M72 120 Q65 95 100 80 Q100 55 140 60 Q165 55 175 78 Q202 82 200 110 Q200 130 170 135" opacity="0.5"/>
+  <!-- X mark on cloud -->
+  <line class="er-x" x1="108" y1="90" x2="132" y2="114"/>
+  <line class="er-x" x1="132" y1="90" x2="108" y2="114"/>
+  <!-- Disconnected signal waves below -->
+  <path class="er-primary-stroke" d="M90 155 Q95 148 100 155" opacity="0.4"/>
+  <path class="er-primary-stroke" d="M82 160 Q95 145 108 160" opacity="0.3"/>
+  <path class="er-primary-stroke" d="M130 155 Q135 148 140 155" opacity="0.4"/>
+  <path class="er-primary-stroke" d="M122 160 Q135 145 148 160" opacity="0.3"/>
+  <!-- Broken connection dots -->
+  <circle class="er-accent" cx="115" cy="158" r="3"/>
+  <line stroke="#d4a844" stroke-width="1.5" stroke-dasharray="3 4" stroke-linecap="round" x1="105" y1="155" x2="125" y2="155"/>
+</svg>

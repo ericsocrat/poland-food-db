@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .er-primary { fill: #0d7377; }
+    .er-primary-light { fill: #0d7377; opacity: 0.15; }
+    .er-accent { fill: #d4a844; }
+    .er-neutral { fill: #e2e8f0; }
+    .er-neutral-dark { fill: #cbd5e1; }
+    .er-shadow { fill: #94a3b8; opacity: 0.18; }
+    .er-spill { fill: #0d7377; opacity: 0.12; }
+    @media (prefers-color-scheme: dark) {
+      .er-primary { fill: #2dd4bf; }
+      .er-primary-light { fill: #2dd4bf; opacity: 0.15; }
+      .er-accent { fill: #fbbf24; }
+      .er-neutral { fill: #334155; }
+      .er-neutral-dark { fill: #475569; }
+      .er-shadow { fill: #1e293b; opacity: 0.3; }
+      .er-spill { fill: #2dd4bf; opacity: 0.12; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="er-shadow" cx="120" cy="175" rx="80" ry="8"/>
+  <!-- Spill puddle -->
+  <ellipse class="er-spill" cx="130" cy="168" rx="55" ry="12"/>
+  <!-- Tipped-over bowl -->
+  <ellipse class="er-neutral-dark" cx="100" cy="140" rx="45" ry="20" transform="rotate(18 100 140)"/>
+  <ellipse class="er-neutral" cx="100" cy="137" rx="39" ry="16" transform="rotate(18 100 137)"/>
+  <!-- Scattered ingredients -->
+  <!-- Tomato -->
+  <circle class="er-accent" cx="160" cy="150" r="10"/>
+  <path stroke="#d4a844" stroke-width="1.5" fill="none" d="M156 146 Q160 140 164 146"/>
+  <!-- Carrot piece -->
+  <path class="er-accent" d="M175 160 L172 175 L180 175Z" opacity="0.7"/>
+  <!-- Leaf -->
+  <path class="er-primary" d="M145 170 C145 170 155 165 158 172 C158 172 148 178 145 170Z" opacity="0.5"/>
+  <!-- Small dots (crumbs) -->
+  <circle class="er-neutral-dark" cx="130" cy="162" r="3"/>
+  <circle class="er-neutral-dark" cx="140" cy="155" r="2"/>
+  <circle class="er-neutral-dark" cx="185" cy="165" r="2.5"/>
+  <!-- Alert triangle above -->
+  <path class="er-accent" d="M120 38 L136 68 L104 68Z"/>
+  <text fill="white" x="116" y="64" font-family="Arial" font-size="20" font-weight="700">!</text>
+  <!-- Steam/error wisps -->
+  <path stroke="#cbd5e1" stroke-width="1.5" fill="none" stroke-linecap="round" d="M85 100 Q80 88 88 78"/>
+  <path stroke="#cbd5e1" stroke-width="1.5" fill="none" stroke-linecap="round" d="M95 95 Q92 84 98 74"/>
+  <path stroke="#cbd5e1" stroke-width="1.5" fill="none" stroke-linecap="round" d="M105 98 Q100 86 108 76" opacity="0.6"/>
+</svg>

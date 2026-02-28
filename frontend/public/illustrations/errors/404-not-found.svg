@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
+  <style>
+    .er-plate { fill: #e2e8f0; }
+    .er-plate-rim { fill: #cbd5e1; }
+    .er-primary { fill: #0d7377; }
+    .er-primary-stroke { stroke: #0d7377; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .er-accent { fill: #d4a844; }
+    .er-shadow { fill: #94a3b8; opacity: 0.18; }
+    .er-text { fill: #64748b; font-family: Arial, sans-serif; font-weight: 700; }
+    @media (prefers-color-scheme: dark) {
+      .er-plate { fill: #334155; }
+      .er-plate-rim { fill: #475569; }
+      .er-primary { fill: #2dd4bf; }
+      .er-primary-stroke { stroke: #2dd4bf; }
+      .er-accent { fill: #fbbf24; }
+      .er-shadow { fill: #1e293b; opacity: 0.3; }
+      .er-text { fill: #94a3b8; }
+    }
+  </style>
+  <!-- Shadow -->
+  <ellipse class="er-shadow" cx="120" cy="172" rx="68" ry="9"/>
+  <!-- Plate -->
+  <ellipse class="er-plate-rim" cx="120" cy="140" rx="60" ry="28"/>
+  <ellipse class="er-plate" cx="120" cy="136" rx="54" ry="24"/>
+  <!-- 404 text on plate -->
+  <text class="er-text" x="90" y="144" font-size="28" opacity="0.35">404</text>
+  <!-- Fork pointing off-screen left -->
+  <rect class="er-primary" x="18" y="85" width="5" height="65" rx="2.5" transform="rotate(-20 20 85)"/>
+  <rect class="er-primary" x="12" y="72" width="3" height="18" rx="1.5" transform="rotate(-20 13 72)"/>
+  <rect class="er-primary" x="18" y="72" width="3" height="18" rx="1.5" transform="rotate(-20 19 72)"/>
+  <rect class="er-primary" x="24" y="72" width="3" height="18" rx="1.5" transform="rotate(-20 25 72)"/>
+  <!-- Knife pointing off-screen right -->
+  <rect class="er-primary" x="210" y="80" width="5" height="65" rx="2.5" transform="rotate(18 212 80)"/>
+  <path class="er-primary" d="M210 68 L210 86 L220 80 L220 68Z" transform="rotate(18 215 77)"/>
+  <!-- Question marks floating -->
+  <text class="er-accent" x="80" y="50" font-family="Arial" font-size="20" font-weight="700" opacity="0.6">?</text>
+  <text class="er-accent" x="155" y="42" font-family="Arial" font-size="16" font-weight="700" opacity="0.4">?</text>
+  <text class="er-accent" x="168" y="68" font-family="Arial" font-size="12" font-weight="700" opacity="0.3">?</text>
+</svg>
