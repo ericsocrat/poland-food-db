@@ -19,7 +19,7 @@
        13. QA__allergen_integrity.sql (14 allergen & trace integrity checks — blocking)
        14. QA__serving_source_validation.sql (16 serving & source checks — blocking)
        15. QA__ingredient_quality.sql (14 ingredient quality checks — blocking)
-       16. QA__security_posture.sql (40 security posture checks — blocking)
+       16. QA__security_posture.sql (41 security posture checks — blocking)
        17. QA__api_contract.sql (30 API contract checks — blocking)
        18. QA__scale_guardrails.sql (23 scale guardrails checks — blocking)
        19. QA__country_isolation.sql (6 country isolation checks — blocking)
@@ -29,7 +29,7 @@
        23. QA__auth_onboarding.sql (8 auth & onboarding checks — blocking)
        24. QA__confidence_reporting.sql (7 confidence reporting checks — blocking)
        25. QA__health_profiles.sql (14 health profile checks — blocking)
-       26. QA__lists_comparisons.sql (12 lists & comparisons checks — blocking)
+       26. QA__lists_comparisons.sql (15 lists & comparisons checks — blocking)
        27. QA__scanner_submissions.sql (15 scanner & submissions checks — blocking)
        28. QA__index_temporal.sql (19 index coverage & temporal checks — blocking)
        29. QA__attribute_contradiction.sql (5 attribute contradiction checks — blocking)
@@ -147,7 +147,7 @@ $suiteCatalog = @(
     @{ Num = 13; Name = "Allergen & Trace Integrity"; Short = "Allergen"; Id = "allergen_integrity"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__allergen_integrity.sql" },
     @{ Num = 14; Name = "Serving & Source Validation"; Short = "ServSource"; Id = "serving_source"; Checks = 16; Blocking = $true; Kind = "sql"; File = "QA__serving_source_validation.sql" },
     @{ Num = 15; Name = "Ingredient Data Quality"; Short = "IngredQual"; Id = "ingredient_quality"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__ingredient_quality.sql" },
-    @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 40; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
+    @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 41; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
     @{ Num = 17; Name = "API Contract"; Short = "Contract"; Id = "api_contract"; Checks = 33; Blocking = $true; Kind = "sql"; File = "QA__api_contract.sql" },
     @{ Num = 18; Name = "Scale Guardrails"; Short = "Scale"; Id = "scale_guardrails"; Checks = 23; Blocking = $true; Kind = "sql"; File = "QA__scale_guardrails.sql" },
     @{ Num = 19; Name = "Country Isolation"; Short = "Country"; Id = "country_isolation"; Checks = 11; Blocking = $true; Kind = "sql"; File = "QA__country_isolation.sql" },
@@ -157,7 +157,7 @@ $suiteCatalog = @(
     @{ Num = 23; Name = "Auth & Onboarding"; Short = "AuthOnboard"; Id = "auth_onboarding"; Checks = 8; Blocking = $true; Kind = "sql"; File = "QA__auth_onboarding.sql" },
     @{ Num = 24; Name = "Confidence Reporting"; Short = "ConfReport"; Id = "confidence_reporting"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__confidence_reporting.sql" },
     @{ Num = 25; Name = "Health Profiles"; Short = "Health"; Id = "health_profiles"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__health_profiles.sql" },
-    @{ Num = 26; Name = "Lists & Comparisons"; Short = "ListsComp"; Id = "lists_comparisons"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__lists_comparisons.sql" },
+    @{ Num = 26; Name = "Lists & Comparisons"; Short = "ListsComp"; Id = "lists_comparisons"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__lists_comparisons.sql" },
     @{ Num = 27; Name = "Scanner & Submissions"; Short = "Scanner"; Id = "scanner_submissions"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scanner_submissions.sql" },
     @{ Num = 28; Name = "Index & Temporal Integrity"; Short = "IdxTemporal"; Id = "index_temporal"; Checks = 19; Blocking = $true; Kind = "sql"; File = "QA__index_temporal.sql" },
     @{ Num = 29; Name = "Attribute Contradictions"; Short = "AttrContra"; Id = "attribute_contradiction"; Checks = 5; Blocking = $true; Kind = "sql"; File = "QA__attribute_contradiction.sql" },

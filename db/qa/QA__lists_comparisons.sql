@@ -4,6 +4,7 @@
 -- and API function signatures for user_product_lists, user_product_list_items,
 -- and user_comparisons tables introduced in Issues #20 and #21.
 -- 12 checks — all BLOCKING.
+-- +3 share abuse prevention (Issue #475) = 15 checks total.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -184,3 +185,37 @@ FROM (
     SELECT unnest(ARRAY['INSERT', 'UPDATE', 'DELETE']) AS priv
 ) p
 WHERE has_table_privilege('anon', 'public.user_product_lists', p.priv);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #13  check_share_limit function exists and is SECURITY DEFINER
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '13. check_share_limit function exists (SECURITY DEFINER)' AS check_name,
+       CASE WHEN EXISTS (
+           SELECT 1 FROM pg_proc p
+           JOIN pg_namespace n ON p.pronamespace = n.oid
+           WHERE n.nspname = 'public'
+             AND p.proname = 'check_share_limit'
+             AND p.prosecdef = true
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #14  Rate limit entries exist for share-related endpoints
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '14. Rate limit entries for share endpoints' AS check_name,
+       COUNT(*) AS violations
+FROM (
+    SELECT unnest(ARRAY['api_save_comparison', 'api_toggle_share']) AS ep
+) expected
+WHERE NOT EXISTS (
+    SELECT 1 FROM api_rate_limits
+    WHERE endpoint = expected.ep
+);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #15  Share rate limits have reasonable window (1 hour)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '15. Share rate limits ≤ 20 per hour' AS check_name,
+       COUNT(*) AS violations
+FROM api_rate_limits
+WHERE endpoint IN ('api_save_comparison', 'api_toggle_share')
+  AND (max_requests > 20 OR window_seconds > 3600);
