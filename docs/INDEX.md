@@ -12,7 +12,7 @@
 | Domain                                                   | Count | Documents                                                                                                       |
 | -------------------------------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------- |
 | [Architecture & Design](#architecture--design)           | 6     | Governance blueprint, domain boundaries, feature flags, scoring engine, search architecture, CI proposal        |
-| [Diagrams](#diagrams)                                    | 2     | Architecture overview (light + dark SVGs, Mermaid source)                                                       |
+| [Diagrams](#diagrams)                                    | 4     | Architecture overview, full ERD (30+ tables), core ERD (7 tables) — light + dark SVGs                           |
 | [API](#api)                                              | 6     | Contracts, conventions, versioning, frontend mapping, contract testing, registry                                 |
 | [Scoring](#scoring)                                      | 2     | Methodology (formula), engine (architecture)                                                                    |
 | [Data & Provenance](#data--provenance)                   | 5     | Sources, provenance, integrity audits, EAN validation, production data                                          |
@@ -50,6 +50,14 @@
 | [architecture-overview-dark.svg](diagrams/architecture-overview-dark.svg)             | Architecture overview — dark mode variant for GitHub dark theme       | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
 | [architecture-overview.mmd](diagrams/architecture-overview.mmd)                       | Mermaid source for architecture overview (light mode)                 | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
 | [architecture-overview-dark.mmd](diagrams/architecture-overview-dark.mmd)             | Mermaid source for architecture overview (dark mode)                  | [#426](https://github.com/ericsocrat/poland-food-db/issues/426) | 2026-03-13   |
+| [erd-full.svg](diagrams/erd-full.svg)                                                 | Full ERD — 30+ tables across 5 domains, Crow's foot notation (light) | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-full-dark.svg](diagrams/erd-full-dark.svg)                                       | Full ERD — dark mode variant for GitHub dark theme                   | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-core.svg](diagrams/erd-core.svg)                                                 | Core ERD — 7 product-domain tables, simplified view (light)          | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-core-dark.svg](diagrams/erd-core-dark.svg)                                       | Core ERD — dark mode variant for GitHub dark theme                   | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-full.mmd](diagrams/erd-full.mmd)                                                 | Mermaid source for full ERD (light mode)                             | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-full-dark.mmd](diagrams/erd-full-dark.mmd)                                       | Mermaid source for full ERD (dark mode)                              | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-core.mmd](diagrams/erd-core.mmd)                                                 | Mermaid source for core ERD (light mode)                             | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
+| [erd-core-dark.mmd](diagrams/erd-core-dark.mmd)                                       | Mermaid source for core ERD (dark mode)                              | [#428](https://github.com/ericsocrat/poland-food-db/issues/428) | 2026-03-13   |
 
 ## API
 
