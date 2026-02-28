@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(53);
+SELECT plan(59);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -399,6 +399,88 @@ SELECT has_trigger(
   'trg_submission_quality_triage',
   'Auto-triage trigger exists on product_submissions'
 );
+
+
+-- ─── 13. User trust scoring (#471) ──────────────────────────────────────────
+
+-- Trust score adjustment trigger exists
+SELECT has_trigger(
+  'product_submissions',
+  'trg_trust_score_adjustment',
+  'Trust score adjustment trigger exists on product_submissions'
+);
+
+-- Trust score adjustment function exists
+SELECT has_function(
+  'trig_adjust_trust_score',
+  'trig_adjust_trust_score function exists'
+);
+
+-- Insert trust record for test user (bypass FK to auth.users)
+SET LOCAL session_replication_role = 'replica';
+INSERT INTO user_trust_scores (user_id, trust_score)
+VALUES ('00000000-0000-0000-0000-000000000099'::uuid, 85)
+ON CONFLICT (user_id) DO UPDATE SET trust_score = 85;
+SET LOCAL session_replication_role = 'DEFAULT';
+
+-- High trust (85) gives +15 bonus → score = 65
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    NULL, 'Test Brand', 'Test Product Name', NULL
+  ))->>'quality_score')::int,
+  65,
+  '_score_submission_quality gives +15 for trusted contributor (trust=85)'
+);
+
+-- Low trust (15) gives -30 penalty → score = 20
+SET LOCAL session_replication_role = 'replica';
+UPDATE user_trust_scores SET trust_score = 15
+WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
+SET LOCAL session_replication_role = 'DEFAULT';
+
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    NULL, 'Test Brand', 'Test Product Name', NULL
+  ))->>'quality_score')::int,
+  20,
+  '_score_submission_quality gives -30 for low trust (trust=15)'
+);
+
+-- Below-average trust (35) gives -15 penalty → score = 35
+SET LOCAL session_replication_role = 'replica';
+UPDATE user_trust_scores SET trust_score = 35
+WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
+SET LOCAL session_replication_role = 'DEFAULT';
+
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    NULL, 'Test Brand', 'Test Product Name', NULL
+  ))->>'quality_score')::int,
+  35,
+  '_score_submission_quality gives -15 for below-avg trust (trust=35)'
+);
+
+-- Trust signal appears in signals array
+SET LOCAL session_replication_role = 'replica';
+UPDATE user_trust_scores SET trust_score = 10
+WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
+SET LOCAL session_replication_role = 'DEFAULT';
+
+SELECT ok(
+  (_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    NULL, 'Test Brand', 'Test Product Name', NULL
+  ))->'signals' @> '[{"signal": "low_trust"}]'::jsonb,
+  '_score_submission_quality includes low_trust signal'
+);
+
+-- Clean up trust record
+DELETE FROM user_trust_scores
+WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
+
 
 SELECT * FROM finish();
 ROLLBACK;

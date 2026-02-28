@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(207);
+SELECT plan(210);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -311,6 +311,11 @@ SELECT has_trigger('product_submissions', 'trg_submission_quality_triage', 'auto
 SELECT has_table('public', 'api_rate_limits',              'table api_rate_limits exists');
 SELECT has_table('public', 'api_rate_limit_log',           'table api_rate_limit_log exists');
 SELECT has_function('public', 'check_api_rate_limit',      'function check_api_rate_limit exists');
+
+-- ─── User Trust Scoring (#471) ───────────────────────────────────────────────
+SELECT has_table('public', 'user_trust_scores',            'table user_trust_scores exists');
+SELECT has_column('public', 'user_trust_scores', 'trust_score', 'user_trust_scores has trust_score column');
+SELECT has_function('public', 'trig_adjust_trust_score',   'function trig_adjust_trust_score exists');
 
 SELECT * FROM finish();
 ROLLBACK;

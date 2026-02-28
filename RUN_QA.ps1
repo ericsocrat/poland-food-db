@@ -19,7 +19,7 @@
        13. QA__allergen_integrity.sql (14 allergen & trace integrity checks — blocking)
        14. QA__serving_source_validation.sql (16 serving & source checks — blocking)
        15. QA__ingredient_quality.sql (14 ingredient quality checks — blocking)
-       16. QA__security_posture.sql (35 security posture checks — blocking)
+       16. QA__security_posture.sql (38 security posture checks — blocking)
        17. QA__api_contract.sql (30 API contract checks — blocking)
        18. QA__scale_guardrails.sql (23 scale guardrails checks — blocking)
        19. QA__country_isolation.sql (6 country isolation checks — blocking)
@@ -147,7 +147,7 @@ $suiteCatalog = @(
     @{ Num = 13; Name = "Allergen & Trace Integrity"; Short = "Allergen"; Id = "allergen_integrity"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__allergen_integrity.sql" },
     @{ Num = 14; Name = "Serving & Source Validation"; Short = "ServSource"; Id = "serving_source"; Checks = 16; Blocking = $true; Kind = "sql"; File = "QA__serving_source_validation.sql" },
     @{ Num = 15; Name = "Ingredient Data Quality"; Short = "IngredQual"; Id = "ingredient_quality"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__ingredient_quality.sql" },
-    @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 35; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
+    @{ Num = 16; Name = "Security Posture"; Short = "Security"; Id = "security_posture"; Checks = 38; Blocking = $true; Kind = "sql"; File = "QA__security_posture.sql" },
     @{ Num = 17; Name = "API Contract"; Short = "Contract"; Id = "api_contract"; Checks = 33; Blocking = $true; Kind = "sql"; File = "QA__api_contract.sql" },
     @{ Num = 18; Name = "Scale Guardrails"; Short = "Scale"; Id = "scale_guardrails"; Checks = 23; Blocking = $true; Kind = "sql"; File = "QA__scale_guardrails.sql" },
     @{ Num = 19; Name = "Country Isolation"; Short = "Country"; Id = "country_isolation"; Checks = 11; Blocking = $true; Kind = "sql"; File = "QA__country_isolation.sql" },

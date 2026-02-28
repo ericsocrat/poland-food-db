@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 702 checks across 47 suites + 23 negative validation tests — all passing
+> **QA:** 705 checks across 47 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -257,7 +257,7 @@ poland-food-db/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (702 checks across 47 suites)
+├── RUN_QA.ps1                       # QA test runner (705 checks across 47 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -387,6 +387,7 @@ poland-food-db/
 | `user_saved_searches`     | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                                         |
 | `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                                           |
 | `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, review_notes, status ('pending'/'approved'/'rejected'/'merged'). EAN checksum trigger auto-rejects invalid barcodes |
+| `user_trust_scores`       | Per-user submission reputation tracking         | `user_id` (FK → auth.users)             | trust_score 0-100 (default 50). Auto-adjusts: +5 approved, -15 rejected, -5 auto-reject. Counters, flag fields. RLS: service_role only                   |
 | `event_schema_registry`   | Schema-versioned event definitions              | `id` (identity)                         | event_type + schema_version UNIQUE; json_schema, status(active/deprecated/retired), pii_fields, retention_days. RLS: anon-read                           |
 | `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read                              |
 | `log_level_ref`           | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                                |
@@ -394,7 +395,7 @@ poland-food-db/
 | `retention_policies`      | Audit log retention configuration               | `policy_id` (identity)                  | table_name (unique), timestamp_column, retention_days (30–3650), is_enabled. RLS: service_role only                                                      |
 | `mv_refresh_log`          | Audit trail for MV refreshes                    | `refresh_id` (identity)                 | mv_name, refreshed_at, duration_ms, row_count, triggered_by. Index on (mv_name, refreshed_at DESC). RLS: service-write / auth-read                       |
 | `deletion_audit_log`      | GDPR Art.17 deletion audit trail (no PII)       | `id` (uuid)                             | deleted_at (timestamptz), tables_affected (text[]). NO user_id column. RLS enabled, service-role only                                                    |
-| `api_rate_limits`         | Per-endpoint rate limit configuration           | `endpoint` (text PK)                    | max_requests, window_seconds, description. 6 seeded endpoints. RLS: auth-read / service-write                                                           |
+| `api_rate_limits`         | Per-endpoint rate limit configuration           | `endpoint` (text PK)                    | max_requests, window_seconds, description. 6 seeded endpoints. RLS: auth-read / service-write                                                            |
 | `api_rate_limit_log`      | Ephemeral request tracking for rate limiting    | `id` (identity)                         | user_id, endpoint, called_at. Retention: 2 days. Index on (user_id, endpoint, called_at DESC). RLS: service-role only                                    |
 
 ### Products Columns (key)
@@ -417,39 +418,39 @@ poland-food-db/
 
 ### Key Functions
 
-| Function                           | Purpose                                                                                                                                                   |
-| ---------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `compute_unhealthiness_v32()`      | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern                               |
-| `explain_score_v32()`              | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling                                        |
-| `find_similar_products()`          | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                        |
-| `find_better_alternatives()`       | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                            |
-| `assign_confidence()`              | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                                                         |
-| `score_category()`                 | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category |
-| `compute_data_confidence()`        | Composite confidence score (0-100) with 6 components; band, completeness profile                                                                          |
-| `compute_data_completeness()`      | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source)           |
-| `api_data_confidence()`            | API wrapper for compute_data_confidence(); returns structured JSONB                                                                                       |
-| `api_product_detail()`             | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                                                    |
-| `api_category_listing()`           | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                                               |
-| `api_score_explanation()`          | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                    |
-| `api_better_alternatives()`        | Healthier substitutes wrapper with source product context and structured JSON                                                                             |
-| `api_search_products()`            | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                        |
-| `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                                                               |
-| `mv_staleness_check()`             | Checks if MVs are stale by comparing row counts to source tables                                                                                          |
-| `check_formula_drift()`            | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                         |
-| `check_function_source_drift()`    | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                           |
-| `governance_drift_check()`         | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                    |
-| `log_drift_check()`                | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                      |
-| `validate_log_entry()`             | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                              |
-| `execute_retention_cleanup()`      | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary             |
-| `mv_last_refresh()`                | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                 |
-| `check_flag_readiness()`           | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                |
-| `api_export_user_data()`           | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER          |
-| `api_delete_user_data()`           | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                        |
-| `is_valid_ean()`                   | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                            |
-| `check_submission_rate_limit()`    | Returns rate limit status for product submissions: 10 per 24h rolling window per user. SECURITY DEFINER                                                   |
-| `check_scan_rate_limit()`          | Returns rate limit status for barcode scans: 100 per 24h rolling window per user. SECURITY DEFINER                                                        |
+| Function                           | Purpose                                                                                                                                                             |
+| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `compute_unhealthiness_v32()`      | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern                                         |
+| `explain_score_v32()`              | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling                                                  |
+| `find_similar_products()`          | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                                  |
+| `find_better_alternatives()`       | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                                      |
+| `assign_confidence()`              | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                                                                   |
+| `score_category()`                 | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category           |
+| `compute_data_confidence()`        | Composite confidence score (0-100) with 6 components; band, completeness profile                                                                                    |
+| `compute_data_completeness()`      | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source)                     |
+| `api_data_confidence()`            | API wrapper for compute_data_confidence(); returns structured JSONB                                                                                                 |
+| `api_product_detail()`             | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                                                              |
+| `api_category_listing()`           | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                                                         |
+| `api_score_explanation()`          | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                              |
+| `api_better_alternatives()`        | Healthier substitutes wrapper with source product context and structured JSON                                                                                       |
+| `api_search_products()`            | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                  |
+| `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                         |
+| `mv_staleness_check()`             | Checks if MVs are stale by comparing row counts to source tables                                                                                                    |
+| `check_formula_drift()`            | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                   |
+| `check_function_source_drift()`    | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                                     |
+| `governance_drift_check()`         | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                              |
+| `log_drift_check()`                | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                                |
+| `validate_log_entry()`             | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                                        |
+| `execute_retention_cleanup()`      | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary                       |
+| `mv_last_refresh()`                | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                           |
+| `check_flag_readiness()`           | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                          |
+| `api_export_user_data()`           | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER                    |
+| `api_delete_user_data()`           | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                                  |
+| `is_valid_ean()`                   | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                                      |
+| `check_submission_rate_limit()`    | Returns rate limit status for product submissions: 10 per 24h rolling window per user. SECURITY DEFINER                                                             |
+| `check_scan_rate_limit()`          | Returns rate limit status for barcode scans: 100 per 24h rolling window per user. SECURITY DEFINER                                                                  |
 | `check_api_rate_limit()`           | Generic per-endpoint rate limiter: checks `api_rate_limits` config, logs to `api_rate_limit_log`. Returns `{allowed, remaining}` or blocked JSONB. SECURITY DEFINER |
-| `score_submission_quality()`       | Scores a submission's quality (0-100) from 6 signals: account age, velocity, EAN match, photo, brand/name quality. SECURITY DEFINER                       |
+| `score_submission_quality()`       | Scores a submission's quality (0-100) from 7 signals: account age, velocity, EAN match, photo, brand/name quality, user trust score. SECURITY DEFINER              |
 
 ### Views
 
@@ -567,7 +568,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **172 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **173 migrations**.
 
 **Rules:**
 
@@ -639,7 +640,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (702 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (705 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (47 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -777,7 +778,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (702 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (705 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
@@ -811,7 +812,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 702 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 705 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -873,7 +874,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Allergen Filtering        | `QA__allergen_filtering.sql`        |      6 | Yes       |
 | Serving & Source          | `QA__serving_source_validation.sql` |     16 | Yes       |
 | Ingredient Quality        | `QA__ingredient_quality.sql`        |     14 | Yes       |
-| Security Posture          | `QA__security_posture.sql`          |     35 | Yes       |
+| Security Posture          | `QA__security_posture.sql`          |     38 | Yes       |
 | Scale Guardrails          | `QA__scale_guardrails.sql`          |     23 | Yes       |
 | Country Isolation         | `QA__country_isolation.sql`         |     11 | Yes       |
 | Diet Filtering            | `QA__diet_filtering.sql`            |      6 | Yes       |
@@ -904,7 +905,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Function Security Audit   | `QA__function_security_audit.sql`   |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **702/702 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **705/705 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
