@@ -6,6 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
+        ![Feature Request](https://raw.githubusercontent.com/ericsocrat/poland-food-db/main/.github/assets/feature-request-header.svg)
+
         Thanks for suggesting an improvement! Please follow the project's [Feature Implementation Standard](https://github.com/ericsocrat/poland-food-db/blob/main/copilot-instructions.md#15-feature-implementation-standard) for significant features.
 
   - type: textarea

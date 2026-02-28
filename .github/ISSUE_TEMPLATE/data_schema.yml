@@ -6,6 +6,8 @@ body:
   - type: markdown
     attributes:
       value: |
+        ![Data / Schema Change](https://raw.githubusercontent.com/ericsocrat/poland-food-db/main/.github/assets/data-schema-header.svg)
+
         Database changes require special care. Please follow the project's [Migration Conventions](https://github.com/ericsocrat/poland-food-db/blob/main/docs/MIGRATION_CONVENTIONS.md) and [Database Safety Rules](https://github.com/ericsocrat/poland-food-db/blob/main/copilot-instructions.md#813-database-safety-rules).
 
   - type: dropdown
