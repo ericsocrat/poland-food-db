@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(45);
+SELECT plan(53);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -322,6 +322,82 @@ SELECT is(
   ((check_submission_rate_limit('00000000-0000-0000-0000-000000000099'::uuid))->>'retry_after_seconds')::int,
   0,
   'retry_after_seconds is 0 when not rate limited'
+);
+
+
+-- ─── 12. Auto-triage quality scoring ────────────────────────────────────────
+
+-- _score_submission_quality returns JSONB with all expected keys
+SELECT ok(
+  _score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', 'Test Brand', 'Test Product Name', NULL
+  ) ?& ARRAY['quality_score', 'signals', 'recommended_action'],
+  '_score_submission_quality returns all expected JSONB keys'
+);
+
+-- Normal submission (no account in auth.users, no prior submissions) gets baseline score = 50
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', 'Test Brand', 'Test Product Name', NULL
+  ))->>'quality_score')::int,
+  50,
+  '_score_submission_quality returns 50 for normal clean submission'
+);
+
+-- Normal submission recommended_action is manual_review
+SELECT is(
+  (_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', 'Test Brand', 'Test Product Name', NULL
+  ))->>'recommended_action',
+  'manual_review',
+  '_score_submission_quality recommends manual_review for normal submission'
+);
+
+-- Submission with photo gets +10 bonus (score = 60)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', 'Test Brand', 'Test Product Name', 'https://example.com/photo.jpg'
+  ))->>'quality_score')::int,
+  60,
+  '_score_submission_quality gives +10 bonus for photo'
+);
+
+-- Suspicious brand (too short) gets -25 penalty (score = 25)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', 'X', 'Test Product Name', NULL
+  ))->>'quality_score')::int,
+  25,
+  '_score_submission_quality penalizes suspicious brand name'
+);
+
+-- Suspicious brand + suspicious product name → auto_reject (score = 0)
+SELECT is(
+  (_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', 'X', 'ab', NULL
+  ))->>'recommended_action',
+  'auto_reject',
+  '_score_submission_quality auto-rejects low quality submissions'
+);
+
+-- score_submission_quality returns error for non-existent submission
+SELECT is(
+  score_submission_quality('00000000-0000-0000-0000-000000000099'::uuid)->>'error',
+  'submission_not_found',
+  'score_submission_quality returns error for non-existent submission'
+);
+
+-- Auto-triage trigger exists on product_submissions
+SELECT has_trigger(
+  'product_submissions',
+  'trg_submission_quality_triage',
+  'Auto-triage trigger exists on product_submissions'
 );
 
 SELECT * FROM finish();

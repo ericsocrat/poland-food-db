@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(201);
+SELECT plan(204);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -301,6 +301,11 @@ SELECT has_trigger('product_submissions', 'trg_submission_ean_check', 'EAN check
 -- ─── Rate Limiting (#466) ────────────────────────────────────────────────────
 SELECT has_function('public', 'check_submission_rate_limit',  'function check_submission_rate_limit exists');
 SELECT has_function('public', 'check_scan_rate_limit',        'function check_scan_rate_limit exists');
+
+-- ─── Submission Auto-Triage (#468) ───────────────────────────────────────────
+SELECT has_function('public', 'score_submission_quality',         'function score_submission_quality exists');
+SELECT has_function('public', '_score_submission_quality',        'function _score_submission_quality exists');
+SELECT has_trigger('product_submissions', 'trg_submission_quality_triage', 'auto-triage trigger exists on product_submissions');
 
 SELECT * FROM finish();
 ROLLBACK;

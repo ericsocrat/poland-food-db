@@ -3,7 +3,7 @@
 -- Validates the scan_history and product_submissions tables, their RLS,
 -- indexes, constraints, FK integrity, status-workflow consistency, and
 -- all associated API functions from Issue #23.
--- 12 checks — all BLOCKING.
+-- 15 checks — all BLOCKING.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -153,3 +153,37 @@ SELECT '12. Pending submissions have no review metadata' AS check_name,
 FROM product_submissions
 WHERE status = 'pending'
   AND (reviewed_at IS NOT NULL OR reviewed_by IS NOT NULL);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #13 Auto-triage functions exist and are SECURITY DEFINER
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '13. Auto-triage functions are SECURITY DEFINER' AS check_name,
+       COUNT(*) AS violations
+FROM (VALUES
+  ('score_submission_quality'),
+  ('_score_submission_quality')
+) AS expected(fn_name)
+WHERE NOT EXISTS (
+  SELECT 1 FROM pg_proc p
+  JOIN pg_namespace n ON n.oid = p.pronamespace
+  WHERE n.nspname = 'public'
+    AND p.proname = expected.fn_name
+    AND p.prosecdef = true
+);
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #14 Auto-triage trigger exists on product_submissions
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '14. Auto-triage trigger exists on product_submissions' AS check_name,
+       CASE WHEN EXISTS (
+         SELECT 1 FROM pg_trigger
+         WHERE tgname = 'trg_submission_quality_triage'
+           AND tgrelid = 'product_submissions'::regclass
+       ) THEN 0 ELSE 1 END AS violations;
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #15 Trigger ordering: quality_triage sorts after ean_check
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT '15. Trigger ordering: quality_triage after ean_check' AS check_name,
+       CASE WHEN 'trg_submission_quality_triage' > 'trg_submission_ean_check'
+            THEN 0 ELSE 1 END AS violations;

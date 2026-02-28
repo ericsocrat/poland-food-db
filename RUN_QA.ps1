@@ -30,7 +30,7 @@
        24. QA__confidence_reporting.sql (7 confidence reporting checks — blocking)
        25. QA__health_profiles.sql (14 health profile checks — blocking)
        26. QA__lists_comparisons.sql (12 lists & comparisons checks — blocking)
-       27. QA__scanner_submissions.sql (12 scanner & submissions checks — blocking)
+       27. QA__scanner_submissions.sql (15 scanner & submissions checks — blocking)
        28. QA__index_temporal.sql (19 index coverage & temporal checks — blocking)
        29. QA__attribute_contradiction.sql (5 attribute contradiction checks — blocking)
        30. QA__monitoring.sql (14 monitoring & health checks — blocking)
@@ -158,7 +158,7 @@ $suiteCatalog = @(
     @{ Num = 24; Name = "Confidence Reporting"; Short = "ConfReport"; Id = "confidence_reporting"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__confidence_reporting.sql" },
     @{ Num = 25; Name = "Health Profiles"; Short = "Health"; Id = "health_profiles"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__health_profiles.sql" },
     @{ Num = 26; Name = "Lists & Comparisons"; Short = "ListsComp"; Id = "lists_comparisons"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__lists_comparisons.sql" },
-    @{ Num = 27; Name = "Scanner & Submissions"; Short = "Scanner"; Id = "scanner_submissions"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__scanner_submissions.sql" },
+    @{ Num = 27; Name = "Scanner & Submissions"; Short = "Scanner"; Id = "scanner_submissions"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__scanner_submissions.sql" },
     @{ Num = 28; Name = "Index & Temporal Integrity"; Short = "IdxTemporal"; Id = "index_temporal"; Checks = 19; Blocking = $true; Kind = "sql"; File = "QA__index_temporal.sql" },
     @{ Num = 29; Name = "Attribute Contradictions"; Short = "AttrContra"; Id = "attribute_contradiction"; Checks = 5; Blocking = $true; Kind = "sql"; File = "QA__attribute_contradiction.sql" },
     @{ Num = 30; Name = "Monitoring & Health Check"; Short = "Monitoring"; Id = "monitoring"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__monitoring.sql" },
