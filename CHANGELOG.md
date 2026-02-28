@@ -94,6 +94,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   dots + connecting lines), tech stack footer; SVG source + optimized PNG (94 KB);
   shields.io badges row reference markdown (9 badges: build, QA, coverage,
   products, countries, scoring, license, TypeScript, PostgreSQL) (#412)
+- Update PWA manifest (`manifest.webmanifest`): correct `theme_color` from
+  placeholder green (#16a34a) to brand teal (#0d7377); generate dedicated
+  maskable icons (192×192, 512×512) with 40% safe-zone padding on brand teal
+  background; separate "any" vs "maskable" icon entries; update `layout.tsx`
+  viewport `themeColor` to match (#415)
 - Harden copilot-instructions.md: rewrite §16 as discovery-driven (script-first),
   extract 240-line issue template to `.github/ISSUE_TEMPLATE/feature.md`,
   reduce from 1,668 to 1,418 lines (under 1,500 cap) (#334)
