@@ -57,7 +57,11 @@ const qualityMobileProject = {
   testMatch: /mobile\.audit\.spec\.ts/,
   dependencies: HAS_AUTH ? ["auth-setup"] : [],
   use: {
+    // Use Chromium (installed in CI) with iPhone 14 viewport/touch settings.
+    // CI only installs Chromium; quality audits care about mobile viewport
+    // behaviour, not WebKit-specific rendering.
     ...devices["iPhone 14"],
+    browserName: "chromium" as const,
     storageState: HAS_AUTH ? "e2e/.auth/user.json" : undefined,
   },
 };
