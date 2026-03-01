@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(247);
+SELECT plan(262);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -367,6 +367,21 @@ SELECT has_function('public', 'find_products_for_recipe_ingredient', 'function f
 SELECT has_function('public', 'api_get_recipes',                 'function api_get_recipes exists');
 SELECT has_function('public', 'api_get_recipe_detail',           'function api_get_recipe_detail exists');
 SELECT has_function('public', 'api_get_recipe_nutrition',        'function api_get_recipe_nutrition exists');
+
+-- ─── Admin Governance Dashboard (#206) ────────────────────────────────────────
+SELECT has_view('public', 'v_provenance_health',            'view v_provenance_health exists');
+SELECT has_view('public', 'v_scoring_drift',                'view v_scoring_drift exists');
+SELECT has_view('public', 'v_search_quality',               'view v_search_quality exists');
+SELECT has_view('public', 'v_data_freshness_sla',           'view v_data_freshness_sla exists');
+SELECT has_view('public', 'v_migration_audit',              'view v_migration_audit exists');
+SELECT has_view('public', 'v_event_analytics_summary',      'view v_event_analytics_summary exists');
+SELECT has_function('public', 'api_admin_provenance_health', 'function api_admin_provenance_health exists');
+SELECT has_function('public', 'api_admin_scoring_drift',     'function api_admin_scoring_drift exists');
+SELECT has_function('public', 'api_admin_search_quality',    'function api_admin_search_quality exists');
+SELECT has_function('public', 'api_admin_freshness_sla',     'function api_admin_freshness_sla exists');
+SELECT has_function('public', 'api_admin_migration_audit',   'function api_admin_migration_audit exists');
+SELECT has_function('public', 'api_admin_event_summary',     'function api_admin_event_summary exists');
+SELECT has_function('public', 'api_admin_health_overview',   'function api_admin_health_overview exists');
 
 SELECT * FROM finish();
 ROLLBACK;
