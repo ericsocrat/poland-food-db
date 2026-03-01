@@ -29,6 +29,9 @@ import {
   setupErrorCollectors,
   assertNoErrors,
   runInvariantsForRoute,
+  CONSOLE_ERROR_ALLOWLIST,
+  NETWORK_ALLOWLIST,
+  NETWORK_4XX_ALLOWLIST,
 } from "./invariants";
 
 /* ── Page mock factory ───────────────────────────────────────────────────── */
@@ -518,6 +521,78 @@ describe("setupErrorCollectors", () => {
     });
 
     expect(collectors.networkErrors).toHaveLength(0);
+  });
+
+  it("does not collect allowlisted console errors", () => {
+    const page = createPageMock();
+    const collectors = setupErrorCollectors(page as never);
+
+    // Emit allowlisted Supabase auth errors
+    page._emit("console", {
+      type: () => "error",
+      text: () => "AuthSessionMissingError: No session found",
+    });
+    page._emit("console", {
+      type: () => "error",
+      text: () => "Auth session missing",
+    });
+
+    expect(collectors.consoleErrors).toHaveLength(0);
+  });
+
+  it("collects non-allowlisted console errors", () => {
+    const page = createPageMock();
+    const collectors = setupErrorCollectors(page as never);
+
+    page._emit("console", {
+      type: () => "error",
+      text: () => "TypeError: Cannot read property 'foo' of undefined",
+    });
+
+    expect(collectors.consoleErrors).toHaveLength(1);
+    expect(collectors.consoleErrors[0]).toContain("TypeError");
+  });
+
+  it("ignores 4xx from supabase.co/rest but catches 5xx", () => {
+    const page = createPageMock();
+    const collectors = setupErrorCollectors(page as never);
+
+    // 401 from Supabase REST — should be ignored
+    page._emit("response", {
+      status: () => 401,
+      url: () => "https://xyz.supabase.co/rest/v1/products",
+    });
+    // 403 from Supabase REST — should be ignored
+    page._emit("response", {
+      status: () => 403,
+      url: () => "https://xyz.supabase.co/rest/v1/users",
+    });
+
+    expect(collectors.networkErrors).toHaveLength(0);
+
+    // 500 from Supabase REST — should be collected (genuine failure)
+    page._emit("response", {
+      status: () => 500,
+      url: () => "https://xyz.supabase.co/rest/v1/products",
+    });
+
+    expect(collectors.networkErrors).toHaveLength(1);
+    expect(collectors.networkErrors[0].status).toBe(500);
+  });
+
+  it("CONSOLE_ERROR_ALLOWLIST contains expected patterns", () => {
+    expect(CONSOLE_ERROR_ALLOWLIST).toContain("AuthSessionMissingError");
+    expect(CONSOLE_ERROR_ALLOWLIST).toContain("Hydration failed");
+    expect(CONSOLE_ERROR_ALLOWLIST).toContain("viewport meta tag");
+    expect(CONSOLE_ERROR_ALLOWLIST).toContain("chrome-extension://");
+  });
+
+  it("NETWORK_4XX_ALLOWLIST contains supabase.co/rest", () => {
+    expect(NETWORK_4XX_ALLOWLIST).toContain("supabase.co/rest");
+  });
+
+  it("NETWORK_ALLOWLIST does not include supabase.co/rest", () => {
+    expect(NETWORK_ALLOWLIST).not.toContain("supabase.co/rest");
   });
 });
 

@@ -93,15 +93,20 @@ jobs:
         working-directory: frontend
         run: npm run build
         env:
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
-          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
-      # ── Start application ────────────────────────────────────────────────
+      # ── Start application ──────────────────────────────────────────────────────
       - name: Start application
         working-directory: frontend
         run: npm run start &
         env:
           PORT: 3000
+          # Server-side code (middleware, server components) needs these at
+          # runtime; NEXT_PUBLIC_* are baked into the client bundle at build
+          # time but process.env reads in Node.js require the actual values.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
 
       - name: Wait for app ready
         run: npx wait-on http://localhost:3000 --timeout 60000

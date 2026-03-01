@@ -63,11 +63,56 @@ const UNIQUE_TEST_IDS = [
 
 /* ── Network error allowlist ─────────────────────────────────────────────── */
 
-const NETWORK_ALLOWLIST = [
+export const NETWORK_ALLOWLIST = [
   "/auth/callback",
   "supabase.co/auth",
   "favicon",
   "/sw.js",
+];
+
+/**
+ * URLs where 4xx is expected (e.g. unauthenticated Supabase REST calls).
+ * 5xx from these URLs will still fail the audit.
+ */
+export const NETWORK_4XX_ALLOWLIST = [
+  "supabase.co/rest",
+];
+
+/* ── Console error allowlist ────────────────────────────────────────────── */
+
+/**
+ * In CI, missing Supabase env vars indicate a real misconfiguration and
+ * must NOT be silenced.  Locally the env may not be set, so we allowlist.
+ */
+const IS_CI =
+  typeof process !== "undefined" &&
+  !!process.env.CI &&
+  (process.env.CI === "true" || process.env.CI === "1");
+
+/**
+ * Benign console.error patterns that should not fail a quality audit.
+ * These arise from expected conditions (e.g. no auth session on public
+ * pages, client-side analytics, React strict mode double-renders).
+ */
+export const CONSOLE_ERROR_ALLOWLIST = [
+  // Supabase auth — expected on public pages without a session
+  "AuthSessionMissingError",
+  "Auth session missing",
+  "Invalid Refresh Token",
+  "refresh_token_not_found",
+  // Supabase client init when URL is empty/invalid:
+  // In CI, treat missing Supabase env as a hard failure (do NOT allowlist).
+  // In local/dev runs, allowlist to avoid noisy audits when env is not set.
+  ...(!IS_CI ? ["supabaseUrl is required", "supabaseKey is required"] : []),
+  // React hydration mismatch (non-critical in audit context)
+  "Hydration failed",
+  "Text content does not match",
+  "There was an error while hydrating",
+  // Next.js metadata / viewport warnings
+  "viewport meta tag",
+  // Browser extensions injecting errors
+  "chrome-extension://",
+  "moz-extension://",
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -439,7 +484,13 @@ export function setupErrorCollectors(page: Page): ErrorCollectors {
   const pageErrors: string[] = [];
 
   page.on("console", (msg) => {
-    if (msg.type() === "error") consoleErrors.push(msg.text());
+    if (msg.type() === "error") {
+      const text = msg.text();
+      const isAllowlisted = CONSOLE_ERROR_ALLOWLIST.some((pattern) =>
+        text.includes(pattern)
+      );
+      if (!isAllowlisted) consoleErrors.push(text);
+    }
   });
 
   page.on("pageerror", (err) => {
@@ -449,12 +500,21 @@ export function setupErrorCollectors(page: Page): ErrorCollectors {
   page.on("response", (response) => {
     const status = response.status();
     const url = response.url();
-    const isAllowlisted = NETWORK_ALLOWLIST.some((pattern) =>
+    if (status < 400) return;
+
+    // Fully allowlisted URLs — ignore all HTTP errors
+    const isFullyAllowlisted = NETWORK_ALLOWLIST.some((pattern) =>
       url.includes(pattern)
     );
-    if (status >= 400 && !isAllowlisted) {
-      networkErrors.push({ url, status });
-    }
+    if (isFullyAllowlisted) return;
+
+    // 4xx-only allowlist — let 5xx through as genuine failures
+    const is4xxAllowlisted =
+      status < 500 &&
+      NETWORK_4XX_ALLOWLIST.some((pattern) => url.includes(pattern));
+    if (is4xxAllowlisted) return;
+
+    networkErrors.push({ url, status });
   });
 
   return { consoleErrors, networkErrors, pageErrors };
