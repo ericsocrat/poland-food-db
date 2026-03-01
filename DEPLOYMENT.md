@@ -320,7 +320,7 @@ Import uses `ON CONFLICT DO UPDATE` (upsert) — safe to run multiple times.
 
 After any restore, run the full validation suite:
 
-1. **Sanity checks** — `.\RUN_SANITY.ps1 -Env production` (16 checks pass)
+1. **Sanity checks** — `.\RUN_SANITY.ps1 -Env production` (17 checks pass)
 2. **QA checks** — `.\RUN_QA.ps1` (all suites pass)
 3. **Row counts** — verify user table row counts match pre-backup values
 4. **Frontend smoke** — load a product detail page and verify data displays correctly
@@ -331,7 +331,7 @@ After any restore, run the full validation suite:
 
 | Metric          | Approximate Value |
 | --------------- | ----------------- |
-| Total products  | ~1,076            |
+| Total products  | ~1,279            |
 | Database size   | ~50–100 MB        |
 | Dump file size  | ~10–30 MB         |
 | Backup duration | ~10–30 seconds    |
@@ -412,7 +412,7 @@ A migration was successfully applied but introduced a schema error — e.g., dro
 6. **Verify:**
    ```powershell
    .\RUN_SANITY.ps1 -Env production   # 17 checks pass
-   .\RUN_QA.ps1                        # 421 checks pass
+   .\RUN_QA.ps1                        # 724 checks pass
    ```
 
 7. **Document the incident** — write a post-mortem within 24 hours.
@@ -465,13 +465,13 @@ The database is corrupted or data integrity is compromised beyond compensating m
 6. **Verify:**
    ```powershell
    .\RUN_SANITY.ps1 -Env production   # 17 checks pass
-   .\RUN_QA.ps1                        # 421 checks pass
+   .\RUN_QA.ps1                        # 724 checks pass
    ```
 
 7. **Verify product count:**
    ```sql
    SELECT COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE;
-   -- Expected: ≥ 1,076
+   -- Expected: ≥ 1,279
    ```
 
 8. **Spot-check the frontend** — load a product detail page and verify data displays correctly.
@@ -578,7 +578,7 @@ A migration applied successfully but introduced data corruption — e.g., an UPD
 - [ ] Choose restore scenario (1–5 from DEPLOYMENT.md Rollback Procedures)
 - [ ] Execute restore with a second person verifying each step
 - [ ] Run `.\RUN_SANITY.ps1 -Env production` — all 17 checks pass
-- [ ] Run `.\RUN_QA.ps1` against production data — all 421 checks pass
+- [ ] Run `.\RUN_QA.ps1` against production data — all 724 checks pass
 - [ ] Verify frontend loads correctly (home, search, product detail, auth)
 - [ ] Verify `/api/health` returns 200
 
@@ -694,7 +694,7 @@ supabase db reset
 
 # 6. Verify recovery
 .\RUN_SANITY.ps1          # 17 checks pass
-.\RUN_QA.ps1              # 421 checks pass
+.\RUN_QA.ps1              # 724 checks pass
 ```
 
 ### Expected TTR by Recovery Method
@@ -730,3 +730,4 @@ supabase db reset
 - QA suite catches column drops immediately — sanity + QA provides comprehensive post-restore validation
 - The compensating migration approach (Scenario 1) is preferred over full restore when the issue is isolated to schema changes
 - SAVEPOINT/ROLLBACK provides near-instant recovery (< 100 ms) but requires the failure to be caught within a transaction
+
