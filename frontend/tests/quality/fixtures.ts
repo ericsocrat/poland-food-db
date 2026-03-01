@@ -18,27 +18,27 @@ import type { APIRequestContext } from "@playwright/test";
 export const FIXTURES = {
   // ── Products ──────────────────────────────────────────────────────────
   /** Product with full data (nutrition, scores, alternatives, allergens) */
-  productId: process.env.QA_PRODUCT_ID ?? "1",
+  productId: process.env.QA_PRODUCT_ID || "1",
 
   /** Product that has at least one alternative */
-  productWithAlternatives: process.env.QA_PRODUCT_WITH_ALT ?? "1",
+  productWithAlternatives: process.env.QA_PRODUCT_WITH_ALT || "1",
 
   /** Product with zero alternatives */
-  productNoAlternatives: process.env.QA_PRODUCT_NO_ALT ?? "2",
+  productNoAlternatives: process.env.QA_PRODUCT_NO_ALT || "2",
 
   /** Product with allergen warnings */
-  productWithAllergens: process.env.QA_PRODUCT_WITH_ALLERGENS ?? "3",
+  productWithAllergens: process.env.QA_PRODUCT_WITH_ALLERGENS || "3",
 
   /** Product where Nutri-Score is null / missing */
-  productMissingNutriscore: process.env.QA_PRODUCT_MISSING_NS ?? "4",
+  productMissingNutriscore: process.env.QA_PRODUCT_MISSING_NS || "4",
 
   // ── Categories ────────────────────────────────────────────────────────
   /** Category with ≥ 3 products, stable slug */
-  categorySlug: process.env.QA_CATEGORY_SLUG ?? "dairy",
+  categorySlug: process.env.QA_CATEGORY_SLUG || "dairy",
 
   // ── Ingredients ───────────────────────────────────────────────────────
   /** Ingredient that exists and has linked products */
-  ingredientId: process.env.QA_INGREDIENT_ID ?? "1",
+  ingredientId: process.env.QA_INGREDIENT_ID || "1",
 
   // ── Search ────────────────────────────────────────────────────────────
   /** Query that returns results */

@@ -1,14 +1,14 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-01 14:10 UTC by GitHub Copilot
+> **Last updated:** 2026-03-01 17:15 UTC by GitHub Copilot
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
 
 ## Active Branch & PR
 
-- **Branch:** `main` (no feature branch active)
-- **Latest SHA:** `578664d`
+- **Branch:** `fix/quality-gate-rsc-undefined` (from `main` @ `0ee5a87`)
+- **Latest SHA:** `0ee5a87` (main)
 - **Open PRs:**
   - #527 — chore: Configure Renovate (open, bot)
   - #483 — chore(deps): bump minimatch 10.2.2→10.2.4 (open, Dependabot)
@@ -17,6 +17,8 @@
 
 | Date       | PR   | Summary                                                                 |
 | ---------- | ---- | ----------------------------------------------------------------------- |
+| 2026-03-01 | #536 | fix(ci): add 5xx network-error allowlist for quality-gate audits        |
+| 2026-03-01 | #535 | fix(ci): fix quality-gate browser overrides for mobile/desktop projects |
 | 2026-03-01 | #534 | fix(ci): fix quality-gate testDir and auth-route filtering              |
 | 2026-03-01 | #533 | docs: add CURRENT_STATE.md live project status tracker (closes #529)    |
 | 2026-03-01 | #532 | fix(ci): move secrets out of quality-gate.yml step if condition         |
@@ -31,7 +33,7 @@
 
 ## Known Issues & Broken Items
 
-- [ ] Quality Gate workflow: Infrastructure fixed (#532 YAML + #534 testDir/auth), but invariant checks still fail on public pages (console errors, accessibility). Non-blocking check.
+- [ ] Quality Gate workflow: Infrastructure fixed (#532–#536). Root cause of invariant failures: `page.textContent("body")` included Next.js RSC `$undefined` markers from `<script>` tags. Fix in progress on `fix/quality-gate-rsc-undefined` — uses `getVisibleBodyText()` helper to exclude script/style/noscript. Non-blocking check.
 - [ ] Nightly Suite: Intermittent failures (Playwright timeout + data audit exit code 1). Infrastructure/env issue, not code bug.
 
 ## CI Gate Status (main branch)
@@ -41,7 +43,7 @@
 | pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke                             |
 | main-gate    | ✅      | Last runs all success                                                            |
 | qa.yml       | ✅      | 733/733 checks passing                                                           |
-| quality-gate | ⚠️      | YAML fixed (#532), testDir+auth fixed (#534); page invariant violations remain   |
+| quality-gate | ⚠️      | YAML fixed (#532), infra fixed (#534–#536); RSC $undefined false positive fix in PR   |
 | nightly      | ⚠️      | Intermittent timeout failures                                                    |
 
 ## Open Issues (6 total)

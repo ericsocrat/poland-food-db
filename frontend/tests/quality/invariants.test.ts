@@ -89,7 +89,12 @@ function createPageMock(options: PageMockOptions = {}) {
 
   const page = {
     textContent: vi.fn(async () => bodyText),
-    evaluate: vi.fn(async () => {
+    evaluate: vi.fn(async (fn: unknown) => {
+      // getVisibleBodyText() clones body and strips script/style/noscript —
+      // detect its callback by fingerprint and return the mock bodyText.
+      if (typeof fn === "function" && fn.toString().includes("cloneNode")) {
+        return bodyText;
+      }
       const result = evaluateResults[evalCallIndex] ?? 0;
       evalCallIndex++;
       return result;
@@ -223,6 +228,53 @@ describe("checkGlobalInvariants", () => {
 
     await expect(
       checkGlobalInvariants(page as never, "/test")
+    ).rejects.toThrow();
+  });
+
+  it("ignores RSC $undefined in script tags (regression: quality-gate false positive)", async () => {
+    // Next.js RSC flight data contains "$undefined" markers inside <script> tags.
+    // getVisibleBodyText strips scripts, so this must NOT trigger the forbidden literal check.
+    const page = createPageMock({
+      bodyText: "Clean visible page content",
+      evaluateResults: [0, 0],
+      locatorOverrides: {
+        'meta[name="viewport"]': { count: 1 },
+        "html[lang]": { count: 1 },
+      },
+    });
+
+    await expect(
+      checkGlobalInvariants(page as never, "/test")
+    ).resolves.toBeUndefined();
+  });
+
+  it("allows NOT-APPLICABLE on /learn/* routes (intentional educational content)", async () => {
+    const page = createPageMock({
+      bodyText: "Nutri-Score labels: A, B, C, D, E, UNKNOWN, NOT-APPLICABLE",
+      evaluateResults: [0, 0],
+      locatorOverrides: {
+        'meta[name="viewport"]': { count: 1 },
+        "html[lang]": { count: 1 },
+      },
+    });
+
+    await expect(
+      checkGlobalInvariants(page as never, "/learn/nutri-score")
+    ).resolves.toBeUndefined();
+  });
+
+  it("still catches NOT-APPLICABLE on non-learn routes", async () => {
+    const page = createPageMock({
+      bodyText: "Product score: NOT-APPLICABLE",
+      evaluateResults: [0, 0],
+      locatorOverrides: {
+        'meta[name="viewport"]': { count: 1 },
+        "html[lang]": { count: 1 },
+      },
+    });
+
+    await expect(
+      checkGlobalInvariants(page as never, "/app/product/1")
     ).rejects.toThrow();
   });
 });
@@ -494,6 +546,19 @@ describe("setupErrorCollectors", () => {
     expect(collectors.pageErrors[0]).toBe("Unhandled rejection");
   });
 
+  it("does not collect allowlisted page errors (e.g. SW redirect)", () => {
+    const page = createPageMock();
+    const collectors = setupErrorCollectors(page as never);
+
+    // Service worker redirect — should be filtered
+    page._emit("pageerror", {
+      message:
+        "Failed to register a ServiceWorker: The script resource is behind a redirect, which is disallowed.",
+    });
+
+    expect(collectors.pageErrors).toHaveLength(0);
+  });
+
   it("collects network errors above 400", () => {
     const page = createPageMock();
     const collectors = setupErrorCollectors(page as never);
@@ -535,6 +600,18 @@ describe("setupErrorCollectors", () => {
     page._emit("console", {
       type: () => "error",
       text: () => "Auth session missing",
+    });
+    // CSP violation from Supabase Realtime WebSocket
+    page._emit("console", {
+      type: () => "error",
+      text: () =>
+        "Connecting to 'wss://xyz.supabase.co/realtime/v1/websocket' violates the following Content Security Policy directive",
+    });
+    // Cloudflare Turnstile script loading
+    page._emit("console", {
+      type: () => "error",
+      text: () =>
+        "Loading the script 'https://challenges.cloudflare.com/turnstile/v0/api.js' was blocked",
     });
 
     expect(collectors.consoleErrors).toHaveLength(0);
@@ -585,6 +662,15 @@ describe("setupErrorCollectors", () => {
     expect(CONSOLE_ERROR_ALLOWLIST).toContain("Hydration failed");
     expect(CONSOLE_ERROR_ALLOWLIST).toContain("viewport meta tag");
     expect(CONSOLE_ERROR_ALLOWLIST).toContain("chrome-extension://");
+    expect(CONSOLE_ERROR_ALLOWLIST).toContain(
+      "violates the following Content Security Policy"
+    );
+    expect(CONSOLE_ERROR_ALLOWLIST).toContain(
+      "challenges.cloudflare.com/turnstile"
+    );
+    expect(CONSOLE_ERROR_ALLOWLIST).toContain(
+      "script resource is behind a redirect"
+    );
   });
 
   it("NETWORK_4XX_ALLOWLIST contains supabase.co/rest", () => {
