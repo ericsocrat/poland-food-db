@@ -655,6 +655,9 @@ describe("setupErrorCollectors", () => {
     expect(CONSOLE_ERROR_ALLOWLIST).toContain(
       "challenges.cloudflare.com/turnstile"
     );
+    expect(CONSOLE_ERROR_ALLOWLIST).toContain(
+      "script resource is behind a redirect"
+    );
   });
 
   it("NETWORK_4XX_ALLOWLIST contains supabase.co/rest", () => {

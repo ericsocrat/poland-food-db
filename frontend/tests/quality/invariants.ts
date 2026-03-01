@@ -143,6 +143,8 @@ export const CONSOLE_ERROR_ALLOWLIST = [
   "violates the following Content Security Policy",
   // Cloudflare Turnstile script loading blocked by CSP
   "challenges.cloudflare.com/turnstile",
+  // Service worker / script redirect errors in CI (CDN redirect artifact)
+  "script resource is behind a redirect",
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -276,6 +278,20 @@ export async function checkGlobalInvariants(
       'input:not([type="hidden"]):not([aria-label]):not([aria-labelledby])'
     );
     return Array.from(inputs).filter((input) => {
+      // Skip inputs that are not in the visual layout
+      const style = window.getComputedStyle(input);
+      if (
+        style.display === "none" ||
+        style.visibility === "hidden" ||
+        (input as HTMLElement).offsetParent === null
+      )
+        return false;
+      // Skip inputs inside hidden containers
+      if (
+        input.closest('[aria-hidden="true"]') ||
+        input.closest("[hidden]")
+      )
+        return false;
       const id = input.getAttribute("id");
       if (!id) return true;
       return !document.querySelector(`label[for="${id}"]`);
