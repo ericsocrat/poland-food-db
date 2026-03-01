@@ -37,6 +37,23 @@ export interface RunInvariantsOptions {
   isAdminPage: boolean;
 }
 
+/* ── Helpers ──────────────────────────────────────────────────────────────── */
+
+/**
+ * Returns visible text content from the page body, excluding script,
+ * style, and noscript elements.  This prevents false positives from
+ * Next.js RSC flight data ("$undefined" markers) and inline JSON-LD.
+ */
+async function getVisibleBodyText(page: Page): Promise<string> {
+  return page.evaluate(() => {
+    const clone = document.body.cloneNode(true) as HTMLElement;
+    clone
+      .querySelectorAll("script, style, noscript")
+      .forEach((el) => el.remove());
+    return clone.textContent ?? "";
+  });
+}
+
 /* ── i18n namespace pattern ──────────────────────────────────────────────── */
 
 const I18N_KEY_PATTERN =
@@ -123,7 +140,7 @@ export async function checkGlobalInvariants(
   page: Page,
   route: string
 ): Promise<void> {
-  const bodyText = (await page.textContent("body")) ?? "";
+  const bodyText = await getVisibleBodyText(page);
 
   // 1 — No raw i18n keys
   const rawKeys = bodyText.match(I18N_KEY_PATTERN) ?? [];
@@ -356,7 +373,7 @@ export async function checkProductInvariants(
   ).toBeLessThanOrEqual(1);
 
   // 24 — No pluralization bugs ("1 ingredients", "1 alternatives")
-  const bodyText = (await page.textContent("body")) ?? "";
+  const bodyText = await getVisibleBodyText(page);
   const pluralBugs =
     /\b1\s+(ingredients|alternatives|products|categories|items|results)\b/gi;
   const matches = bodyText.match(pluralBugs) ?? [];
@@ -440,7 +457,7 @@ export async function checkAdminInvariants(
   page: Page,
   route: string
 ): Promise<void> {
-  const bodyText = (await page.textContent("body")) ?? "";
+  const bodyText = await getVisibleBodyText(page);
 
   // 30 — No exposed service_role references
   expect(

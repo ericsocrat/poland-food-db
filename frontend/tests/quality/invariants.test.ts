@@ -89,7 +89,12 @@ function createPageMock(options: PageMockOptions = {}) {
 
   const page = {
     textContent: vi.fn(async () => bodyText),
-    evaluate: vi.fn(async () => {
+    evaluate: vi.fn(async (fn: unknown) => {
+      // getVisibleBodyText() clones body and strips script/style/noscript —
+      // detect its callback by fingerprint and return the mock bodyText.
+      if (typeof fn === "function" && fn.toString().includes("cloneNode")) {
+        return bodyText;
+      }
       const result = evaluateResults[evalCallIndex] ?? 0;
       evalCallIndex++;
       return result;
@@ -224,6 +229,23 @@ describe("checkGlobalInvariants", () => {
     await expect(
       checkGlobalInvariants(page as never, "/test")
     ).rejects.toThrow();
+  });
+
+  it("ignores RSC $undefined in script tags (regression: quality-gate false positive)", async () => {
+    // Next.js RSC flight data contains "$undefined" markers inside <script> tags.
+    // getVisibleBodyText strips scripts, so this must NOT trigger the forbidden literal check.
+    const page = createPageMock({
+      bodyText: "Clean visible page content",
+      evaluateResults: [0, 0],
+      locatorOverrides: {
+        'meta[name="viewport"]': { count: 1 },
+        "html[lang]": { count: 1 },
+      },
+    });
+
+    await expect(
+      checkGlobalInvariants(page as never, "/test")
+    ).resolves.toBeUndefined();
   });
 });
 
