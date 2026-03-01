@@ -200,9 +200,13 @@ jobs:
 
       # ── Optional: Nightly failure notification ───────────────────────────
       - name: Notify on nightly failure
-        if: failure() && github.event_name == 'schedule' && secrets.ALERT_WEBHOOK_URL != ''
+        if: failure() && github.event_name == 'schedule'
+        env:
+          ALERT_WEBHOOK_URL: ${{ secrets.ALERT_WEBHOOK_URL }}
         run: |
-          curl -sS -X POST "${{ secrets.ALERT_WEBHOOK_URL }}" \
-            -H 'Content-Type: application/json' \
-            -d "{\"text\": \"Quality Gate nightly FAILED — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
-            || true
+          if [ -n "$ALERT_WEBHOOK_URL" ]; then
+            curl -sS -X POST "$ALERT_WEBHOOK_URL" \
+              -H 'Content-Type: application/json' \
+              -d "{\"text\": \"Quality Gate nightly FAILED — https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}\"}" \
+              || true
+          fi
