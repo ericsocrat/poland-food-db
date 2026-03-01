@@ -119,27 +119,46 @@ jobs:
           fi
           echo "Quality gate mode: $(cat "$GITHUB_OUTPUT" | grep mode | cut -d= -f2)"
 
+      # ── Check auth credentials ──────────────────────────────────────────
+      - name: Check auth credentials
+        id: auth
+        run: |
+          if [ -n "$QA_TEST_EMAIL" ] && [ -n "$QA_TEST_PASSWORD" ]; then
+            echo "has_auth=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_auth=false" >> "$GITHUB_OUTPUT"
+            echo "⚠️  Missing QA_TEST_EMAIL and/or QA_TEST_PASSWORD — Lighthouse audits will be skipped"
+          fi
+        env:
+          QA_TEST_EMAIL: ${{ secrets.QA_TEST_EMAIL }}
+          QA_TEST_PASSWORD: ${{ secrets.QA_TEST_PASSWORD }}
+
       # ── Mobile Audit ─────────────────────────────────────────────────────
       - name: Run Mobile Audit
         working-directory: frontend
-        run: npx playwright test tests/quality/mobile.audit.spec.ts --reporter=html,list
+        run: npx playwright test --project=quality-mobile --reporter=html,list
         env:
           QA_MODE_LEVEL: ${{ steps.mode.outputs.mode }}
           BASE_URL: http://localhost:3000
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
 
       # ── Desktop Audit ────────────────────────────────────────────────────
       - name: Run Desktop Audit
+        if: always()
         working-directory: frontend
-        run: npx playwright test tests/quality/desktop.audit.spec.ts --reporter=html,list
+        run: npx playwright test --project=quality-desktop --reporter=html,list
         env:
           QA_MODE_LEVEL: ${{ steps.mode.outputs.mode }}
           BASE_URL: http://localhost:3000
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
 
       # ── Lighthouse CI (Mobile) ─────────────────────────────────────────
       - name: Run Lighthouse CI (Mobile)
         working-directory: frontend
+        if: always() && steps.auth.outputs.has_auth == 'true'
         run: npx lhci autorun --config=lighthouserc.mobile.js
-        if: always()
         env:
           QA_TEST_EMAIL: ${{ secrets.QA_TEST_EMAIL }}
           QA_TEST_PASSWORD: ${{ secrets.QA_TEST_PASSWORD }}
@@ -148,8 +167,8 @@ jobs:
       # ── Lighthouse CI (Desktop) ────────────────────────────────────────
       - name: Run Lighthouse CI (Desktop)
         working-directory: frontend
+        if: always() && steps.auth.outputs.has_auth == 'true'
         run: npx lhci autorun --config=lighthouserc.desktop.js
-        if: always()
         env:
           QA_TEST_EMAIL: ${{ secrets.QA_TEST_EMAIL }}
           QA_TEST_PASSWORD: ${{ secrets.QA_TEST_PASSWORD }}

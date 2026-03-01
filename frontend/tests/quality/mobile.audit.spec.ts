@@ -29,6 +29,14 @@ import { waitForStable } from "./helpers/network";
 /** Audit mode: `smoke` visits ~9 routes, `full` visits all ~40. */
 const MODE = (process.env.QA_MODE_LEVEL ?? "smoke") as "smoke" | "full";
 
+/**
+ * Auth-protected routes require both SUPABASE_SERVICE_ROLE_KEY (for test user
+ * provisioning) and NEXT_PUBLIC_SUPABASE_URL (for Supabase client setup).
+ */
+const HAS_AUTH =
+  !!process.env.SUPABASE_SERVICE_ROLE_KEY &&
+  !!process.env.NEXT_PUBLIC_SUPABASE_URL;
+
 /* ── Setup ───────────────────────────────────────────────────────────────── */
 
 test.beforeAll(async () => {
@@ -37,7 +45,9 @@ test.beforeAll(async () => {
 
 /* ── Route tests ─────────────────────────────────────────────────────────── */
 
-const routes = getRoutes(MODE).filter((r) => !r.desktopOnly);
+const routes = getRoutes(MODE)
+  .filter((r) => !r.desktopOnly)
+  .filter((r) => HAS_AUTH || !r.requiresAuth);
 
 for (const route of routes) {
   test(`mobile audit — ${route.label}`, async ({ page }) => {

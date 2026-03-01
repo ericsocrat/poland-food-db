@@ -53,7 +53,7 @@ const HAS_QUALITY = !!process.env.QA_MODE_LEVEL;
 
 const qualityMobileProject = {
   name: "quality-mobile",
-  testDir: "../tests/quality",
+  testDir: "./tests/quality",
   testMatch: /mobile\.audit\.spec\.ts/,
   dependencies: HAS_AUTH ? ["auth-setup"] : [],
   use: {
@@ -64,7 +64,7 @@ const qualityMobileProject = {
 
 const qualityDesktopProject = {
   name: "quality-desktop",
-  testDir: "../tests/quality",
+  testDir: "./tests/quality",
   testMatch: /desktop\.audit\.spec\.ts/,
   dependencies: HAS_AUTH ? ["auth-setup"] : [],
   use: {
