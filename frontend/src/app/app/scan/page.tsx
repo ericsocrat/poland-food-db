@@ -548,6 +548,7 @@ export default function ScanPage() {
             value={manualEan}
             onChange={(e) => setManualEan(stripNonDigits(e.target.value))}
             placeholder={t("scan.manualPlaceholder")}
+            aria-label={t("scan.manualPlaceholder")}
             className="input-field text-center text-lg tracking-widest"
             maxLength={13}
             inputMode="numeric"
