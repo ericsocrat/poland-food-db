@@ -355,6 +355,7 @@ poland-food-db/
 ├── sonar-project.properties         # SonarCloud configuration
 ├── requirements.txt                 # Python dependencies
 ├── CHANGELOG.md                     # Structured changelog (Keep a Changelog + Conventional Commits)
+├── CURRENT_STATE.md                 # Volatile project status for AI agent context recovery (read FIRST)
 ├── DEPLOYMENT.md                    # Deployment procedures, rollback playbook, emergency checklist
 ├── SECURITY.md                      # Security policy
 ├── .env.example

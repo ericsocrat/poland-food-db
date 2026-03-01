@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-14
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 49 in `docs/` + 8 in `docs/decisions/` + 17 in `docs/assets/logo/` + 5 in `docs/assets/banners/` + 5 elsewhere in repo
+> **Total documents:** 49 in `docs/` + 8 in `docs/decisions/` + 17 in `docs/assets/logo/` + 5 in `docs/assets/banners/` + 6 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/poland-food-db/issues/200), [#201](https://github.com/ericsocrat/poland-food-db/issues/201)
 
 ---
@@ -250,6 +250,7 @@
 | [../SECURITY.md](../SECURITY.md)                         | Security policy (root — GitHub-required location)                         | 2026-02-24   |
 | [../DEPLOYMENT.md](../DEPLOYMENT.md)                     | Deployment procedures, rollback playbook                                  | 2026-02-24   |
 | [../CHANGELOG.md](../CHANGELOG.md)                       | Structured changelog (Keep a Changelog + Conventional Commits)            | 2026-02-24   |
+| [../CURRENT_STATE.md](../CURRENT_STATE.md)               | Volatile project status for AI agent context recovery (read FIRST)        | 2026-03-01   |
 | [../copilot-instructions.md](../copilot-instructions.md) | AI agent instructions — schema, conventions, testing rules (~1,510 lines) | 2026-02-24   |
 | [../supabase/seed/README.md](../supabase/seed/README.md) | Seed data documentation                                                   | 2026-02-15   |
 
