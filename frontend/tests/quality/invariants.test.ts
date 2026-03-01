@@ -546,6 +546,19 @@ describe("setupErrorCollectors", () => {
     expect(collectors.pageErrors[0]).toBe("Unhandled rejection");
   });
 
+  it("does not collect allowlisted page errors (e.g. SW redirect)", () => {
+    const page = createPageMock();
+    const collectors = setupErrorCollectors(page as never);
+
+    // Service worker redirect — should be filtered
+    page._emit("pageerror", {
+      message:
+        "Failed to register a ServiceWorker: The script resource is behind a redirect, which is disallowed.",
+    });
+
+    expect(collectors.pageErrors).toHaveLength(0);
+  });
+
   it("collects network errors above 400", () => {
     const page = createPageMock();
     const collectors = setupErrorCollectors(page as never);

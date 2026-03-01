@@ -275,23 +275,31 @@ export async function checkGlobalInvariants(
   // 15 — No form inputs without accessible labels
   const unlabeledInputs = await page.evaluate(() => {
     const inputs = document.querySelectorAll(
-      'input:not([type="hidden"]):not([aria-label]):not([aria-labelledby])'
+      'input:not([type="hidden"]):not([aria-label]):not([aria-labelledby]):not([title])'
     );
     return Array.from(inputs).filter((input) => {
+      const el = input as HTMLElement;
       // Skip inputs that are not in the visual layout
       const style = window.getComputedStyle(input);
       if (
         style.display === "none" ||
         style.visibility === "hidden" ||
-        (input as HTMLElement).offsetParent === null
+        style.opacity === "0" ||
+        el.offsetParent === null
       )
         return false;
+      // Skip "visually hidden" inputs (1×1px trick used by Radix UI / shadcn)
+      const rect = el.getBoundingClientRect();
+      if (rect.width < 4 || rect.height < 4) return false;
       // Skip inputs inside hidden containers
       if (
         input.closest('[aria-hidden="true"]') ||
         input.closest("[hidden]")
       )
         return false;
+      // Skip inputs wrapped inside a <label> element (implicit labeling)
+      if (input.closest("label")) return false;
+      // Check for explicit label[for="id"] association
       const id = input.getAttribute("id");
       if (!id) return true;
       return !document.querySelector(`label[for="${id}"]`);
@@ -561,7 +569,11 @@ export function setupErrorCollectors(page: Page): ErrorCollectors {
   });
 
   page.on("pageerror", (err) => {
-    pageErrors.push(err.message);
+    const msg = err.message;
+    const isAllowlisted = CONSOLE_ERROR_ALLOWLIST.some((pattern) =>
+      msg.includes(pattern)
+    );
+    if (!isAllowlisted) pageErrors.push(msg);
   });
 
   page.on("response", (response) => {
