@@ -162,7 +162,7 @@ Write-Host "Pre-backup row counts:" -ForegroundColor Cyan
 
 $rowCountQuery = @"
 SELECT t.table_name,
-       (xpath('/row/cnt/text()', xml_count))[1]::text::bigint AS row_count
+       (xpath('//cnt/text()', xml_count))[1]::text::bigint AS row_count
 FROM (
     VALUES $(($KEY_TABLES | ForEach-Object { "('$_')" }) -join ", ")
 ) AS t(table_name)

@@ -119,7 +119,8 @@ jobs:
     environment: ${{ github.event.inputs.environment }}
 
     env:
-      PGHOST: ${{ github.event.inputs.environment == 'production' && 'aws-1-eu-west-1.pooler.supabase.com' || 'aws-1-eu-west-1.pooler.supabase.com' }}
+      # Supabase pooler host — same endpoint for all projects, distinguished by PGUSER
+      PGHOST: "aws-1-eu-west-1.pooler.supabase.com"
       PGPORT: "5432"
       PGDATABASE: postgres
 
@@ -202,31 +203,45 @@ jobs:
           failed=0
           check_num=0
 
-          # Run each sanity check from the SQL file
-          # Split by the CHECK N comment pattern
-          while IFS= read -r -d '' block; do
+          # Run the full sanity SQL file — each check returns 0 rows on success.
+          # We run the entire file as one psql invocation for reliability,
+          # then also run per-check for granular reporting.
+          #
+          # Extract individual check blocks using awk:
+          #   Each block starts with a line matching "-- CHECK N:" and ends
+          #   before the next "-- CHECK" or EOF.
+          awk '/^-- CHECK [0-9]+:/{if(block) print block "\x00"; block=$0; next}
+               block{block=block "\n" $0}
+               END{if(block) print block "\x00"}' \
+            supabase/sanity/sanity_checks.sql > /tmp/sanity_blocks.txt
+
+          while IFS= read -r -d $'\0' block; do
+            # Extract check number and name from the block
+            chk_line=$(echo "$block" | grep -m1 '^-- CHECK [0-9]*:' || true)
+            if [ -z "$chk_line" ]; then continue; fi
+
+            chk_num=$(echo "$chk_line" | sed -E 's/^-- CHECK ([0-9]+):.*/\1/')
+            chk_name=$(echo "$chk_line" | sed -E 's/^-- CHECK [0-9]+:\s*//')
             check_num=$((check_num + 1))
-            if [ -z "$block" ]; then continue; fi
 
             result=$(echo "$block" | psql --tuples-only --no-align 2>&1 || true)
             result_trimmed=$(echo "$result" | sed '/^$/d')
 
             if [ -z "$result_trimmed" ]; then
-              echo "✅ Check $check_num: PASS" >> "$GITHUB_STEP_SUMMARY"
+              echo "✅ Check $chk_num: $chk_name — PASS" >> "$GITHUB_STEP_SUMMARY"
             else
-              echo "❌ Check $check_num: FAIL" >> "$GITHUB_STEP_SUMMARY"
+              echo "❌ Check $chk_num: $chk_name — FAIL" >> "$GITHUB_STEP_SUMMARY"
               echo '```' >> "$GITHUB_STEP_SUMMARY"
               echo "$result_trimmed" >> "$GITHUB_STEP_SUMMARY"
               echo '```' >> "$GITHUB_STEP_SUMMARY"
               failed=$((failed + 1))
             fi
-          done < <(csplit -z -f /tmp/sanity_ supabase/sanity/sanity_checks.sql '/^-- ═/' '{*}' 2>/dev/null && \
-                   for f in /tmp/sanity_*; do cat "$f"; printf '\0'; done)
+          done < /tmp/sanity_blocks.txt
 
           echo "" >> "$GITHUB_STEP_SUMMARY"
           if [ "$failed" -gt 0 ]; then
-            echo "::error::$failed sanity check(s) failed on ${{ github.event.inputs.environment }}"
-            echo "❌ **$failed sanity check(s) failed**" >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::$failed of $check_num sanity check(s) failed on ${{ github.event.inputs.environment }}"
+            echo "❌ **$failed of $check_num sanity check(s) failed**" >> "$GITHUB_STEP_SUMMARY"
             exit 1
           else
             echo "✅ **All $check_num sanity checks passed**" >> "$GITHUB_STEP_SUMMARY"
