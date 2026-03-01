@@ -1,0 +1,140 @@
+-- PIPELINE (Alcohol): add product images
+-- Source: Open Food Facts API (image_importer.py)
+-- Generated: 2026-02-28
+-- Products with images: 30
+
+-- 1. Remove existing OFF images for this category
+DELETE FROM product_images
+WHERE source = 'off_api'
+  AND product_id IN (
+    SELECT p.product_id FROM products p
+    WHERE p.country = 'PL' AND p.category = 'Alcohol'
+      AND p.is_deprecated IS NOT TRUE
+  );
+
+-- 2. Insert images
+INSERT INTO product_images
+  (product_id, url, source, image_type, is_primary, alt_text, off_image_id)
+SELECT
+  p.product_id, d.url, d.source, d.image_type, d.is_primary, d.alt_text, d.off_image_id
+FROM (
+  VALUES
+    ('Seth & Riley''S Garage Euphoriq', 'Bezalkoholowy napój piwny o smaku jagód i marakui', 'https://images.openfoodfacts.org/images/products/590/001/400/5716/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900014005716', 'front_5900014005716'),
+    ('Seth & Riley''S Garage Euphoriq', 'Bezalkoholowy napój piwny o smaku jagód i marakui', 'https://images.openfoodfacts.org/images/products/590/001/400/5716/ingredients_pl.5.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900014005716', 'ingredients_5900014005716'),
+    ('Seth & Riley''S Garage Euphoriq', 'Bezalkoholowy napój piwny o smaku jagód i marakui', 'https://images.openfoodfacts.org/images/products/590/001/400/5716/nutrition_pl.7.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900014005716', 'nutrition_label_5900014005716'),
+    ('Seth & Riley''S Garage Euphoriq', 'Bezalkoholowy napój piwny o smaku jagód i marakui', 'https://images.openfoodfacts.org/images/products/590/001/400/5716/packaging_pl.9.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 5900014005716', 'packaging_pl.9.400_5900014005716'),
+    ('Harnaś', 'Harnaś jasne pełne', 'https://images.openfoodfacts.org/images/products/590/001/400/4245/front_pl.22.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900014004245', 'front_5900014004245'),
+    ('Harnaś', 'Harnaś jasne pełne', 'https://images.openfoodfacts.org/images/products/590/001/400/4245/ingredients_pl.12.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900014004245', 'ingredients_5900014004245'),
+    ('Harnaś', 'Harnaś jasne pełne', 'https://images.openfoodfacts.org/images/products/590/001/400/4245/nutrition_pl.24.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900014004245', 'nutrition_label_5900014004245'),
+    ('Van Pur S.A', 'Łomża piwo jasne bezalkoholowe', 'https://images.openfoodfacts.org/images/products/590/053/501/3986/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900535013986', 'front_5900535013986'),
+    ('Van Pur S.A', 'Łomża piwo jasne bezalkoholowe', 'https://images.openfoodfacts.org/images/products/590/053/501/3986/ingredients_pl.7.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900535013986', 'ingredients_5900535013986'),
+    ('Van Pur S.A', 'Łomża piwo jasne bezalkoholowe', 'https://images.openfoodfacts.org/images/products/590/053/501/3986/nutrition_pl.5.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900535013986', 'nutrition_label_5900535013986'),
+    ('Karmi', 'Karmi o smaku żurawina', 'https://images.openfoodfacts.org/images/products/590/001/400/2562/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900014002562', 'front_5900014002562'),
+    ('Karmi', 'Karmi o smaku żurawina', 'https://images.openfoodfacts.org/images/products/590/001/400/2562/ingredients_pl.12.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900014002562', 'ingredients_5900014002562'),
+    ('Karmi', 'Karmi o smaku żurawina', 'https://images.openfoodfacts.org/images/products/590/001/400/2562/nutrition_pl.13.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900014002562', 'nutrition_label_5900014002562'),
+    ('Żywiec', 'Limonż 0%', 'https://images.openfoodfacts.org/images/products/590/069/910/6388/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900699106388', 'front_5900699106388'),
+    ('Żywiec', 'Limonż 0%', 'https://images.openfoodfacts.org/images/products/590/069/910/6388/ingredients_pl.7.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900699106388', 'ingredients_5900699106388'),
+    ('Żywiec', 'Limonż 0%', 'https://images.openfoodfacts.org/images/products/590/069/910/6388/nutrition_pl.9.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900699106388', 'nutrition_label_5900699106388'),
+    ('Łomża', 'Łomża jasne', 'https://images.openfoodfacts.org/images/products/590/353/890/0628/front_pl.11.400.jpg', 'off_api', 'front', true, 'Front — EAN 5903538900628', 'front_5903538900628'),
+    ('Łomża', 'Łomża jasne', 'https://images.openfoodfacts.org/images/products/590/353/890/0628/front_de.10.400.jpg', 'off_api', 'front', false, 'Front — EAN 5903538900628', 'front_de.10.400_5903538900628'),
+    ('Kompania Piwowarska', 'Kozel cerny', 'https://images.openfoodfacts.org/images/products/590/135/907/4290/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901359074290', 'front_5901359074290'),
+    ('Browar Fortuna', 'Piwo Pilzner, dolnej fermentacji', 'https://images.openfoodfacts.org/images/products/590/270/961/5323/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5902709615323', 'front_5902709615323'),
+    ('Browar Fortuna', 'Piwo Pilzner, dolnej fermentacji', 'https://images.openfoodfacts.org/images/products/590/270/961/5323/ingredients_pl.7.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5902709615323', 'ingredients_5902709615323'),
+    ('Browar Fortuna', 'Piwo Pilzner, dolnej fermentacji', 'https://images.openfoodfacts.org/images/products/590/270/961/5323/nutrition_pl.10.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5902709615323', 'nutrition_label_5902709615323'),
+    ('Tyskie', 'Bier "Tyskie Gronie"', 'https://images.openfoodfacts.org/images/products/590/135/906/2013/front_de.30.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901359062013', 'front_5901359062013'),
+    ('Tyskie', 'Bier "Tyskie Gronie"', 'https://images.openfoodfacts.org/images/products/590/135/906/2013/ingredients_de.20.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5901359062013', 'ingredients_5901359062013'),
+    ('Tyskie', 'Bier "Tyskie Gronie"', 'https://images.openfoodfacts.org/images/products/590/135/906/2013/nutrition_de.21.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5901359062013', 'nutrition_label_5901359062013'),
+    ('Tyskie', 'Bier "Tyskie Gronie"', 'https://images.openfoodfacts.org/images/products/590/135/906/2013/packaging_de.22.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 5901359062013', 'packaging_de.22.400_5901359062013'),
+    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 'https://images.openfoodfacts.org/images/products/590/135/907/4269/front_de.20.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901359074269', 'front_5901359074269'),
+    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 'https://images.openfoodfacts.org/images/products/590/135/907/4269/ingredients_pl.16.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5901359074269', 'ingredients_5901359074269'),
+    ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 'https://images.openfoodfacts.org/images/products/590/135/907/4269/front_pl.15.400.jpg', 'off_api', 'front', false, 'Front — EAN 5901359074269', 'front_pl.15.400_5901359074269'),
+    ('Książęce', 'Książęce czerwony lager', 'https://images.openfoodfacts.org/images/products/590/135/901/4784/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901359014784', 'front_5901359014784'),
+    ('Lech', 'Lech Premium', 'https://images.openfoodfacts.org/images/products/590/049/000/0182/front_en.6.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900490000182', 'front_5900490000182'),
+    ('Lech', 'Lech Premium', 'https://images.openfoodfacts.org/images/products/590/049/000/0182/ingredients_pl.12.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900490000182', 'ingredients_5900490000182'),
+    ('Lech', 'Lech Premium', 'https://images.openfoodfacts.org/images/products/590/049/000/0182/nutrition_pl.15.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900490000182', 'nutrition_label_5900490000182'),
+    ('Lech', 'Lech Premium', 'https://images.openfoodfacts.org/images/products/590/049/000/0182/front_pl.14.400.jpg', 'off_api', 'front', false, 'Front — EAN 5900490000182', 'front_pl.14.400_5900490000182'),
+    ('Zatecky', 'Zatecky 0%', 'https://images.openfoodfacts.org/images/products/590/001/400/5105/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900014005105', 'front_5900014005105'),
+    ('Kompania Piwowarska', 'Lech free', 'https://images.openfoodfacts.org/images/products/590/135/912/2021/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901359122021', 'front_5901359122021'),
+    ('Kompania Piwowarska', 'Lech free', 'https://images.openfoodfacts.org/images/products/590/135/912/2021/ingredients_pl.6.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5901359122021', 'ingredients_5901359122021'),
+    ('Kompania Piwowarska', 'Lech free', 'https://images.openfoodfacts.org/images/products/590/135/912/2021/nutrition_pl.9.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5901359122021', 'nutrition_label_5901359122021'),
+    ('Kompania Piwowarska', 'Lech free', 'https://images.openfoodfacts.org/images/products/590/135/912/2021/front_fr.13.400.jpg', 'off_api', 'front', false, 'Front — EAN 5901359122021', 'front_fr.13.400_5901359122021'),
+    ('Kompania Piwowarska', 'Lech free', 'https://images.openfoodfacts.org/images/products/590/135/912/2021/ingredients_fr.15.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5901359122021', 'ingredients_fr.15.400_5901359122021'),
+    ('Łomża', 'Radler 0,0%', 'https://images.openfoodfacts.org/images/products/590/053/501/9209/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900535019209', 'front_5900535019209'),
+    ('Łomża', 'Radler 0,0%', 'https://images.openfoodfacts.org/images/products/590/053/501/9209/ingredients_pl.17.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900535019209', 'ingredients_5900535019209'),
+    ('Łomża', 'Radler 0,0%', 'https://images.openfoodfacts.org/images/products/590/053/501/9209/nutrition_pl.9.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900535019209', 'nutrition_label_5900535019209'),
+    ('Łomża', 'Radler 0,0%', 'https://images.openfoodfacts.org/images/products/590/053/501/9209/packaging_pl.5.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 5900535019209', 'packaging_pl.5.400_5900535019209'),
+    ('Łomża', 'Bière sans alcool', 'https://images.openfoodfacts.org/images/products/590/053/501/5171/front_it.23.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900535015171', 'front_5900535015171'),
+    ('Łomża', 'Bière sans alcool', 'https://images.openfoodfacts.org/images/products/590/053/501/5171/ingredients_it.18.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900535015171', 'ingredients_5900535015171'),
+    ('Łomża', 'Bière sans alcool', 'https://images.openfoodfacts.org/images/products/590/053/501/5171/nutrition_it.19.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900535015171', 'nutrition_label_5900535015171'),
+    ('Łomża', 'Bière sans alcool', 'https://images.openfoodfacts.org/images/products/590/053/501/5171/front_pl.4.400.jpg', 'off_api', 'front', false, 'Front — EAN 5900535015171', 'front_pl.4.400_5900535015171'),
+    ('Łomża', 'Bière sans alcool', 'https://images.openfoodfacts.org/images/products/590/053/501/5171/ingredients_pl.7.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900535015171', 'ingredients_pl.7.400_5900535015171'),
+    ('Łomża', 'Bière sans alcool', 'https://images.openfoodfacts.org/images/products/590/053/501/5171/nutrition_pl.10.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 5900535015171', 'nutrition_pl.10.400_5900535015171'),
+    ('Warka', 'Piwo Warka Radler', 'https://images.openfoodfacts.org/images/products/590/069/910/6463/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900699106463', 'front_5900699106463'),
+    ('Warka', 'Piwo Warka Radler', 'https://images.openfoodfacts.org/images/products/590/069/910/6463/ingredients_pl.10.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900699106463', 'ingredients_5900699106463'),
+    ('Warka', 'Piwo Warka Radler', 'https://images.openfoodfacts.org/images/products/590/069/910/6463/ingredients_de.6.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 5900699106463', 'ingredients_de.6.400_5900699106463'),
+    ('Carlsberg', 'Pilsner 0.0%', 'https://images.openfoodfacts.org/images/products/590/001/400/3569/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900014003569', 'front_5900014003569'),
+    ('Lech', 'Lech Free Lime Mint', 'https://images.openfoodfacts.org/images/products/590/135/914/4917/front_pl.8.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901359144917', 'front_5901359144917'),
+    ('Amber', 'Amber IPA zero', 'https://images.openfoodfacts.org/images/products/590/659/100/2520/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5906591002520', 'front_5906591002520'),
+    ('Shroom', 'Shroom power', 'https://images.openfoodfacts.org/images/products/590/571/898/3308/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5905718983308', 'front_5905718983308'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/front_en.28.400.jpg', 'off_api', 'front', true, 'Front — EAN 4304493261709', 'front_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/ingredients_en.39.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4304493261709', 'ingredients_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/nutrition_de.54.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4304493261709', 'nutrition_label_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/front_de.29.400.jpg', 'off_api', 'front', false, 'Front — EAN 4304493261709', 'front_de.29.400_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/front_fr.5.400.jpg', 'off_api', 'front', false, 'Front — EAN 4304493261709', 'front_fr.5.400_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/front_pl.27.400.jpg', 'off_api', 'front', false, 'Front — EAN 4304493261709', 'front_pl.27.400_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/ingredients_de.55.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4304493261709', 'ingredients_de.55.400_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/ingredients_el.37.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4304493261709', 'ingredients_el.37.400_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/ingredients_fr.7.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4304493261709', 'ingredients_fr.7.400_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/ingredients_pl.30.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4304493261709', 'ingredients_pl.30.400_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/nutrition_pl.32.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4304493261709', 'nutrition_pl.32.400_4304493261709'),
+    ('Christkindl', 'Christkindl Glühwein', 'https://images.openfoodfacts.org/images/products/430/449/326/1709/packaging_pl.23.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 4304493261709', 'packaging_pl.23.400_4304493261709'),
+    ('Heineken', 'Heineken Beer', 'https://images.openfoodfacts.org/images/products/871/200/090/0045/front_fr.6.400.jpg', 'off_api', 'front', true, 'Front — EAN 8712000900045', 'front_8712000900045'),
+    ('Heineken', 'Heineken Beer', 'https://images.openfoodfacts.org/images/products/871/200/090/0045/ingredients_fr.4.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 8712000900045', 'ingredients_8712000900045'),
+    ('Heineken', 'Heineken Beer', 'https://images.openfoodfacts.org/images/products/871/200/090/0045/nutrition_en.23.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 8712000900045', 'nutrition_label_8712000900045'),
+    ('Heineken', 'Heineken Beer', 'https://images.openfoodfacts.org/images/products/871/200/090/0045/ingredients_pl.12.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 8712000900045', 'ingredients_pl.12.400_8712000900045'),
+    ('Heineken', 'Heineken Beer', 'https://images.openfoodfacts.org/images/products/871/200/090/0045/nutrition_fr.25.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 8712000900045', 'nutrition_fr.25.400_8712000900045'),
+    ('Heineken', 'Heineken Beer', 'https://images.openfoodfacts.org/images/products/871/200/090/0045/nutrition_pl.15.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 8712000900045', 'nutrition_pl.15.400_8712000900045'),
+    ('Heineken', 'Heineken Beer', 'https://images.openfoodfacts.org/images/products/871/200/090/0045/packaging_fr.27.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 8712000900045', 'packaging_fr.27.400_8712000900045'),
+    ('Just 0', 'Just 0 White alcoholfree', 'https://images.openfoodfacts.org/images/products/400/330/106/9086/front_en.12.400.jpg', 'off_api', 'front', true, 'Front — EAN 4003301069086', 'front_4003301069086'),
+    ('Just 0', 'Just 0 White alcoholfree', 'https://images.openfoodfacts.org/images/products/400/330/106/9086/ingredients_en.5.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4003301069086', 'ingredients_4003301069086'),
+    ('Just 0', 'Just 0 White alcoholfree', 'https://images.openfoodfacts.org/images/products/400/330/106/9086/nutrition_en.14.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4003301069086', 'nutrition_label_4003301069086'),
+    ('Just 0', 'Just 0 White alcoholfree', 'https://images.openfoodfacts.org/images/products/400/330/106/9086/front_pl.10.400.jpg', 'off_api', 'front', false, 'Front — EAN 4003301069086', 'front_pl.10.400_4003301069086'),
+    ('Just 0', 'Just 0 White alcoholfree', 'https://images.openfoodfacts.org/images/products/400/330/106/9086/ingredients_pl.4.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4003301069086', 'ingredients_pl.4.400_4003301069086'),
+    ('Just 0', 'Just 0 White alcoholfree', 'https://images.openfoodfacts.org/images/products/400/330/106/9086/nutrition_pl.3.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4003301069086', 'nutrition_pl.3.400_4003301069086'),
+    ('Just 0', 'Just 0. Red', 'https://images.openfoodfacts.org/images/products/400/330/106/9048/front_pl.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 4003301069048', 'front_4003301069048'),
+    ('Just 0', 'Just 0. Red', 'https://images.openfoodfacts.org/images/products/400/330/106/9048/ingredients_en.15.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4003301069048', 'ingredients_4003301069048'),
+    ('Just 0', 'Just 0. Red', 'https://images.openfoodfacts.org/images/products/400/330/106/9048/nutrition_pl.17.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4003301069048', 'nutrition_label_4003301069048'),
+    ('Just 0', 'Just 0. Red', 'https://images.openfoodfacts.org/images/products/400/330/106/9048/ingredients_nl.16.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4003301069048', 'ingredients_nl.16.400_4003301069048'),
+    ('Just 0', 'Just 0. Red', 'https://images.openfoodfacts.org/images/products/400/330/106/9048/ingredients_pl.14.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4003301069048', 'ingredients_pl.14.400_4003301069048'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 'https://images.openfoodfacts.org/images/products/460/072/102/1566/front_en.19.400.jpg', 'off_api', 'front', true, 'Front — EAN 4600721021566', 'front_4600721021566'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 'https://images.openfoodfacts.org/images/products/460/072/102/1566/nutrition_en.20.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4600721021566', 'nutrition_label_4600721021566'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 'https://images.openfoodfacts.org/images/products/460/072/102/1566/front_nb.3.400.jpg', 'off_api', 'front', false, 'Front — EAN 4600721021566', 'front_nb.3.400_4600721021566'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 'https://images.openfoodfacts.org/images/products/460/072/102/1566/nutrition_nb.10.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4600721021566', 'nutrition_nb.10.400_4600721021566'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 'https://images.openfoodfacts.org/images/products/460/072/102/1566/packaging_en.21.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 4600721021566', 'packaging_en.21.400_4600721021566'),
+    ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 'https://images.openfoodfacts.org/images/products/460/072/102/1566/packaging_nb.7.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 4600721021566', 'packaging_nb.7.400_4600721021566'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/front_en.42.400.jpg', 'off_api', 'front', true, 'Front — EAN 1704314830009', 'front_1704314830009'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/ingredients_es.30.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 1704314830009', 'ingredients_1704314830009'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/nutrition_es.32.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 1704314830009', 'nutrition_label_1704314830009'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/front_es.28.400.jpg', 'off_api', 'front', false, 'Front — EAN 1704314830009', 'front_es.28.400_1704314830009'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/front_fr.16.400.jpg', 'off_api', 'front', false, 'Front — EAN 1704314830009', 'front_fr.16.400_1704314830009'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/ingredients_fr.7.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 1704314830009', 'ingredients_fr.7.400_1704314830009'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/ingredients_pl.22.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 1704314830009', 'ingredients_pl.22.400_1704314830009'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/nutrition_fr.18.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 1704314830009', 'nutrition_fr.18.400_1704314830009'),
+    ('Ikea', 'Glühwein', 'https://images.openfoodfacts.org/images/products/170/431/483/0009/packaging_es.34.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 1704314830009', 'packaging_es.34.400_1704314830009'),
+    ('Choya', 'Silver', 'https://images.openfoodfacts.org/images/products/490/584/696/0050/front_en.7.400.jpg', 'off_api', 'front', true, 'Front — EAN 4905846960050', 'front_4905846960050'),
+    ('Choya', 'Silver', 'https://images.openfoodfacts.org/images/products/490/584/696/0050/ingredients_en.12.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4905846960050', 'ingredients_4905846960050'),
+    ('Choya', 'Silver', 'https://images.openfoodfacts.org/images/products/490/584/696/0050/nutrition_en.8.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4905846960050', 'nutrition_label_4905846960050'),
+    ('Choya', 'Silver', 'https://images.openfoodfacts.org/images/products/490/584/696/0050/front_de.6.400.jpg', 'off_api', 'front', false, 'Front — EAN 4905846960050', 'front_de.6.400_4905846960050'),
+    ('Choya', 'Silver', 'https://images.openfoodfacts.org/images/products/490/584/696/0050/ingredients_de.13.400.jpg', 'off_api', 'ingredients', false, 'Ingredients — EAN 4905846960050', 'ingredients_de.13.400_4905846960050'),
+    ('Choya', 'Silver', 'https://images.openfoodfacts.org/images/products/490/584/696/0050/nutrition_de.10.400.jpg', 'off_api', 'nutrition_label', false, 'Nutrition Label — EAN 4905846960050', 'nutrition_de.10.400_4905846960050'),
+    ('Carlo Rossi', 'Vin carlo rossi', 'https://images.openfoodfacts.org/images/products/008/500/002/4683/front_fr.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 0085000024683', 'front_0085000024683'),
+    ('Somersby', 'Somersby Blueberry Flavoured Cider', 'https://images.openfoodfacts.org/images/products/385/677/758/4161/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 3856777584161', 'front_3856777584161'),
+    ('Somersby', 'Somersby Blueberry Flavoured Cider', 'https://images.openfoodfacts.org/images/products/385/677/758/4161/packaging_en.7.400.jpg', 'off_api', 'packaging', false, 'Packaging — EAN 3856777584161', 'packaging_en.7.400_3856777584161')
+) AS d(brand, product_name, url, source, image_type, is_primary, alt_text, off_image_id)
+JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
+  AND p.category = 'Alcohol' AND p.is_deprecated IS NOT TRUE
+ON CONFLICT (off_image_id) WHERE off_image_id IS NOT NULL DO UPDATE SET
+  url = EXCLUDED.url,
+  image_type = EXCLUDED.image_type,
+  is_primary = EXCLUDED.is_primary,
+  alt_text = EXCLUDED.alt_text;
