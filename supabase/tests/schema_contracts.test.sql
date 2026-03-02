@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(262);
+SELECT plan(271);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -382,6 +382,17 @@ SELECT has_function('public', 'api_admin_freshness_sla',     'function api_admin
 SELECT has_function('public', 'api_admin_migration_audit',   'function api_admin_migration_audit exists');
 SELECT has_function('public', 'api_admin_event_summary',     'function api_admin_event_summary exists');
 SELECT has_function('public', 'api_admin_health_overview',   'function api_admin_health_overview exists');
+
+-- ─── Infrastructure Cost Attribution (#212) ──────────────────────────────────
+SELECT has_table('public', 'ci_runtime_log',                     'table ci_runtime_log exists');
+SELECT has_column('public', 'ci_runtime_log', 'workflow_name',   'ci_runtime_log.workflow_name exists');
+SELECT has_column('public', 'ci_runtime_log', 'job_name',        'ci_runtime_log.job_name exists');
+SELECT has_column('public', 'ci_runtime_log', 'duration_seconds','ci_runtime_log.duration_seconds exists');
+SELECT has_column('public', 'ci_runtime_log', 'status',          'ci_runtime_log.status exists');
+SELECT has_view('public', 'v_query_cost_by_domain',              'view v_query_cost_by_domain exists');
+SELECT has_view('public', 'v_event_volume',                      'view v_event_volume exists');
+SELECT has_view('public', 'v_event_cost_projection',             'view v_event_cost_projection exists');
+SELECT has_view('public', 'v_ci_runtime_summary',                'view v_ci_runtime_summary exists');
 
 SELECT * FROM finish();
 ROLLBACK;

@@ -52,6 +52,7 @@
        46. QA__rls_audit.sql (7 RLS audit checks — blocking)
        47. QA__function_security_audit.sql (6 function security audit checks — blocking)
        48. QA__recipe_integrity.sql (6 recipe data integrity checks — blocking)
+       49. QA__cost_attribution.sql (12 cost attribution checks — blocking)
 
     Returns exit code 0 if all tests pass, 1 if any violations found.
     Test Suites 3, 33, 41, 42, 43, and 44 are informational and do not affect the exit code.
@@ -180,7 +181,8 @@ $suiteCatalog = @(
     @{ Num = 45; Name = "Governance Drift"; Short = "GovDrift"; Id = "governance_drift"; Checks = 8; Blocking = $true; Kind = "sql"; File = "QA__governance_drift.sql" },
     @{ Num = 46; Name = "RLS Audit"; Short = "RLSAudit"; Id = "rls_audit"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__rls_audit.sql" },
     @{ Num = 47; Name = "Function Security Audit"; Short = "FuncSecAudit"; Id = "function_security_audit"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__function_security_audit.sql" },
-    @{ Num = 48; Name = "Recipe Integrity"; Short = "RecipeInteg"; Id = "recipe_integrity"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__recipe_integrity.sql" }
+    @{ Num = 48; Name = "Recipe Integrity"; Short = "RecipeInteg"; Id = "recipe_integrity"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__recipe_integrity.sql" },
+    @{ Num = 49; Name = "Cost Attribution"; Short = "CostAttrib"; Id = "cost_attribution"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__cost_attribution.sql" }
 )
 
 $suiteByNum = @{}

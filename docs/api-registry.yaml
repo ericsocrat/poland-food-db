@@ -896,6 +896,15 @@ api_admin_health_overview:
   deprecated: false
   notes: "Combined single-call governance health summary with per-domain status."
 
+api_admin_cost_attribution:
+  domain: governance
+  visibility: admin
+  auth: authenticated
+  returns: jsonb
+  p95_target: 2000
+  deprecated: false
+  notes: "Infrastructure cost attribution across query compute, event ingestion, and CI runtime. Returns per-domain breakdown, projections, and activation thresholds. Issue #212."
+
 admin_activate_scoring_version:
   domain: scoring
   visibility: admin
