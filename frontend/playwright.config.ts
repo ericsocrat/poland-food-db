@@ -65,7 +65,7 @@ const HAS_SCREENSHOTS = !!process.env.CAPTURE_SCREENSHOTS;
 
 const screenshotsProject = {
   name: "screenshots",
-  testMatch: /screenshot-capture\.spec\.ts/,
+  testMatch: /screenshot-capture\.spec\.ts|visual-audit\.spec\.ts/,
   // Self-contained: handles its own auth (no dependency on auth-setup).
   // CSP bypass needed because local Supabase (127.0.0.1) is blocked by
   // connect-src in production CSP headers.
