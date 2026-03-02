@@ -1,48 +1,57 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$version": "1.0.0",
-  "$description": "TryVit DB — Design tokens for brand identity, scoring, and UI surfaces. Source of truth: frontend/src/styles/globals.css + frontend/tailwind.config.ts",
+  "$version": "2.0.0",
+  "$brand": "TryVit",
+  "$description": "TryVit — Design tokens for brand identity, scoring, and UI surfaces. Source of truth: frontend/src/styles/globals.css + frontend/tailwind.config.ts",
 
   "brand": {
-    "primary": {
-      "value": "#0d7377",
-      "usage": "Headers, CTAs, primary actions, navigation accents",
-      "wcag": { "onWhite": "5.6:1 (AA)", "onDark": "4.8:1 (AA)" }
+    "vitGreen": {
+      "value": "#1DB954",
+      "usage": "Primary CTA, score indicator (healthy), themeColor, TileColor",
+      "wcag": { "onVitDark": "7.4:1 (AAA)" }
     },
-    "primaryDark": {
-      "value": "#095456",
-      "usage": "Dark mode primary, strong emphasis on light backgrounds",
-      "wcag": { "onWhite": "8.5:1 (AAA)" }
+    "vitDark": {
+      "value": "#0A2E1A",
+      "usage": "Logo wordmark, text on light, dark themeColor, app bg on dark",
+      "wcag": { "onVitLight": "14.9:1 (AAA)" }
     },
-    "secondary": {
-      "value": "#f8fafc",
-      "usage": "Clean background variant, secondary surfaces",
-      "wcag": { "note": "Background color — not used for text" }
+    "vitLight": {
+      "value": "#F0FAF4",
+      "usage": "App background, card fill, light surface",
+      "wcag": { "note": "Background — not used for text on its own" }
     },
-    "accent": {
-      "value": "#d4a844",
-      "usage": "Decorative badges, awards, premium highlights — NOT for text on white (2.2:1)",
-      "wcag": { "onDark": "7.8:1 (AAA)", "onWhite": "2.2:1 (FAIL — decorative only)" }
+    "vitAccent": {
+      "value": "#00E676",
+      "usage": "Glow, highlight, active state — NOT for text on white (4.4:1 borderline)",
+      "wcag": { "onVitDark": "8.2:1 (AAA)" }
     },
-    "action": {
-      "value": "#15803d",
-      "usage": "Existing action/CTA green (backward-compatible brand.DEFAULT)",
-      "wcag": { "onWhite": "5.0:1 (AA)" }
+    "vitNeutral": {
+      "value": "#6B7280",
+      "usage": "Secondary text, borders, icon strokes",
+      "wcag": { "onWhite": "4.6:1 (AA)" }
     },
-    "actionHover": {
-      "value": "#166534",
-      "usage": "Hover state for action green",
-      "wcag": { "onWhite": "7.1:1 (AAA)" }
+    "vitWarning": {
+      "value": "#F59E0B",
+      "usage": "Moderate risk score band (41–60)",
+      "wcag": { "onWhite": "2.8:1 (decorative only)" }
     },
-    "actionSubtle": {
-      "value": "#dcfce7",
-      "usage": "Subtle background tint for action areas",
-      "wcag": { "note": "Background color — not used for text" }
-    },
-    "darkMode": {
-      "primary": { "value": "#2dd4bf", "usage": "Teal-400 for dark surfaces", "wcag": { "onDark": "8.6:1 (AAA)" } },
-      "accent": { "value": "#fbbf24", "usage": "Amber-400 for dark surfaces", "wcag": { "onDark": "12.3:1 (AAA)" } }
+    "vitDanger": {
+      "value": "#EF4444",
+      "usage": "High / very-high risk score band (61–100)",
+      "wcag": { "onWhite": "3.7:1 (decorative only)" }
     }
+  },
+
+  "colorsDark": {
+    "surface100": { "value": "#0A2E1A", "usage": "Primary dark background" },
+    "surface200": { "value": "#0F3D22", "usage": "Raised card on dark bg" },
+    "surface300": { "value": "#1A5C32", "usage": "Elevated panel on dark bg" },
+    "inkPrimary": { "value": "#F0FAF4", "usage": "Primary text on dark surfaces" },
+    "inkSecondary": { "value": "#9DCFB0", "usage": "Secondary / muted text on dark" },
+    "accent": { "value": "#00E676", "usage": "Glow / active state on dark" },
+    "accentOnDark": { "value": "#1DB954", "usage": "Primary brand green on dark" },
+    "danger": { "value": "#FF6B6B", "usage": "Error state on dark surface" },
+    "warning": { "value": "#FFD166", "usage": "Warning state on dark surface" }
   },
 
   "scoring": {

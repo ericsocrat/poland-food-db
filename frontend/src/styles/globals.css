@@ -707,7 +707,7 @@
 
   /* ── Print footer attribution ── */
   body::after {
-    content: "TryVit DB — tryvit.vercel.app";
+    content: "TryVit — tryvit.vercel.app";
     display: block;
     text-align: center;
     font-size: 8pt;

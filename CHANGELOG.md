@@ -13,6 +13,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Rename project from `poland-food-db` to `TryVit` across all source files:
+  package names, app metadata, CI/CD config, documentation, i18n values, and
+  test fixtures (#539); new brand identity: vitGreen `#1DB954` / vitDark
+  `#0A2E1A`; PWA manifest name → `TryVit`; SonarCloud project key →
+  `ericsocrat_tryvit`; GitHub repo → `ericsocrat/tryvit`; design-tokens v2.0.0
+  with full TryVit colour palette replacing legacy teal `#0d7377` tokens
+
 ### Security
 
 - Add CAPTCHA + trust integration to API gateway (Phase 3): Turnstile token
