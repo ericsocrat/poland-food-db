@@ -15,6 +15,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Remove 11 ESLint `@typescript-eslint/no-non-null-assertion` warnings across 8
+  frontend files: replace `!` assertions with optional chaining (`?.`), nullish
+  coalescing (`??`), type-safe index access, or defensive type guards — no
+  behavioral changes, same error paths, same happy paths (#555)
+
 - Fix nightly data integrity audit false-positive criticals: tighten
   `audit_score_band_contradictions()` thresholds to only flag truly extreme
   Nutri-Score vs unhealthiness contradictions (≥4 band gap) as critical;

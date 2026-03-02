@@ -99,8 +99,8 @@ export function ScoreTrendChart({
       />
       {sorted.length > 0 && (
         <circle
-          cx={Number.parseFloat(points.at(-1)!.split(",")[0])}
-          cy={Number.parseFloat(points.at(-1)!.split(",")[1])}
+          cx={Number.parseFloat(points.at(-1)?.split(",")[0] ?? "0")}
+          cy={Number.parseFloat(points.at(-1)?.split(",")[1] ?? "0")}
           r={2.5}
           fill={strokeColor}
         />

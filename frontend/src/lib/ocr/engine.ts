@@ -74,7 +74,8 @@ export async function extractText(
 ): Promise<OCRResult> {
   if (!worker) await initOCR();
 
-  const result = await worker!.recognize(imageData);
+  if (!worker) throw new Error("OCR worker not initialised");
+  const result = await worker.recognize(imageData);
 
   return {
     text: result.data.text.trim(),

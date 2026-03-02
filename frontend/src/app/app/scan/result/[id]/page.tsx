@@ -224,7 +224,7 @@ export default function ScanResultPage() {
           {hasAlternatives && (
             <span className="rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-700">
               {t("product.found", {
-                count: alternativesData!.alternatives_count,
+                count: alternativesData?.alternatives_count ?? 0,
               })}
             </span>
           )}

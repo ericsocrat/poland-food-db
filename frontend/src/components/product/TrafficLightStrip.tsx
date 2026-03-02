@@ -50,7 +50,7 @@ export function TrafficLightStrip({ nutrition }: TrafficLightStripProps) {
       {items.map((item) => (
         <div key={item.nutrient} className="flex items-center gap-1.5">
           <span
-            className={`inline-block h-3 w-3 rounded-full ${TL_DOT_STYLES[item.level!]}`}
+            className={`inline-block h-3 w-3 rounded-full ${TL_DOT_STYLES[item.level as keyof typeof TL_DOT_STYLES]}`}
             aria-hidden="true"
           />
           <span className="text-xs text-foreground-secondary">

@@ -50,8 +50,8 @@ export async function shareProduct(product: ShareableProduct): Promise<void> {
   if (typeof navigator.share === "function") {
     try {
       if (typeof navigator.canShare === "function" && !navigator.canShare(shareData)) {
-        await copyToClipboard(shareData.url!);
-        return;
+      await copyToClipboard(shareData.url ?? "");
+      return;
       }
       await navigator.share(shareData);
       return;
@@ -62,7 +62,7 @@ export async function shareProduct(product: ShareableProduct): Promise<void> {
     }
   }
 
-  await copyToClipboard(shareData.url!);
+  await copyToClipboard(shareData.url ?? "");
 }
 
 /**
