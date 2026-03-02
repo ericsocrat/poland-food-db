@@ -18,16 +18,16 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'frontend/**'
-      - '.github/workflows/quality-gate.yml'
+      - "frontend/**"
+      - ".github/workflows/quality-gate.yml"
   schedule:
-    - cron: '0 3 * * *'      # Nightly at 03:00 UTC
+    - cron: "0 3 * * *" # Nightly at 03:00 UTC
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Run mode'
+        description: "Run mode"
         required: true
-        default: 'full'
+        default: "full"
         type: choice
         options:
           - smoke
@@ -41,14 +41,9 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  NEXT_PUBLIC_QA_MODE: '1'
-  # Fixture overrides (optional — fall back to defaults in fixtures.ts)
-  QA_PRODUCT_ID: ${{ secrets.QA_PRODUCT_ID }}
-  QA_CATEGORY_SLUG: ${{ secrets.QA_CATEGORY_SLUG }}
-  QA_PRODUCT_WITH_ALT: ${{ secrets.QA_PRODUCT_WITH_ALT }}
-  QA_PRODUCT_NO_ALT: ${{ secrets.QA_PRODUCT_NO_ALT }}
-  QA_PRODUCT_WITH_ALLERGENS: ${{ secrets.QA_PRODUCT_WITH_ALLERGENS }}
-  QA_PRODUCT_MISSING_NS: ${{ secrets.QA_PRODUCT_MISSING_NS }}
+  NEXT_PUBLIC_QA_MODE: "1"
+  # Fixture IDs are seeded dynamically by the "Seed QA fixture data" step.
+  # Override via QA_PRODUCT_ID, QA_CATEGORY_SLUG secrets if needed.
 
 jobs:
   quality_gate:
@@ -63,7 +58,7 @@ jobs:
       - uses: actions/setup-node@6044e13b5dc448c55e2357c09f80417699197238 # v6.2.0
         with:
           node-version: 20
-          cache: 'npm'
+          cache: "npm"
           cache-dependency-path: frontend/package-lock.json
 
       - name: Install dependencies
@@ -110,6 +105,25 @@ jobs:
 
       - name: Wait for app ready
         run: npx wait-on http://localhost:3000 --timeout 60000
+
+      # ── Seed QA fixture data ──────────────────────────────────────────────
+      - name: Seed QA fixture data
+        id: seed
+        working-directory: frontend
+        run: |
+          # Seed deterministic test products; capture IDs into $GITHUB_ENV
+          OUTPUT=$(node tests/quality/seed-fixtures.mjs 2>&1 1>/tmp/qa-ids.txt || true)
+          echo "$OUTPUT"
+          if [ -f /tmp/qa-ids.txt ] && [ -s /tmp/qa-ids.txt ]; then
+            cat /tmp/qa-ids.txt >> "$GITHUB_ENV"
+            echo "seeded=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "seeded=false" >> "$GITHUB_OUTPUT"
+            echo "::warning::QA fixture seeding skipped or failed — tests may use fallback IDs"
+          fi
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
 
       # ── Determine mode ───────────────────────────────────────────────────
       - name: Determine mode
