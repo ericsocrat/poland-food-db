@@ -435,7 +435,7 @@
   "ruff.enable": true,
   "ruff.fixAll": true,
   "ruff.organizeImports": true,
-  "ruff.configuration": "${workspaceFolder}/ruff.toml",
+  "ruff.configuration": "C:/Users/ericsocrat/Desktop/tryvit/ruff.toml",
   "[python]": {
     "editor.tabSize": 4,
     "editor.defaultFormatter": "charliermarsh.ruff",
@@ -445,7 +445,7 @@
       "source.organizeImports": "explicit"
     }
   },
-  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+  "python.defaultInterpreterPath": "C:/Users/ericsocrat/Desktop/tryvit/.venv/Scripts/python.exe",
   "python.terminal.activateEnvironment": true,
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.autoImportCompletions": true,
