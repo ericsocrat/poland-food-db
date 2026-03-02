@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-15 by GitHub Copilot (session 14)
+> **Last updated:** 2026-03-16 by GitHub Copilot (session 15)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,41 +8,30 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (clean)
-- **Latest SHA:** `d062b4e` (chore(docs): fix doc count drift — migration 184→185 (#562) (#564))
+- **Latest SHA:** `282f5db` (docs(screenshots): add visual audit screenshots)
 - **Open PRs:** 0
 
 ## Recently Shipped (This Session)
 
-| SHA       | Summary                                                                          |
-| --------- | -------------------------------------------------------------------------------- |
-| `d062b4e` | chore(docs): fix doc count drift — migration 184→185 (#564, closes #562)         |
-| `5bd6841` | fix(frontend): resolve 11 ESLint non-null assertion warnings (#561, closes #555) |
-| `cdcf528` | fix(ci): resolve nightly data audit false-positive criticals (#560, closes #554) |
+| SHA       | Summary                                                                    |
+| --------- | -------------------------------------------------------------------------- |
+| `282f5db` | docs(screenshots): add visual audit screenshots (41 desktop + 13 mobile)   |
+| `2c60cf6` | test(e2e): add comprehensive visual audit spec (55 tests, all pages)       |
+| `70f50bd` | fix(frontend): replace require() with ESM import in tailwind.config.ts     |
 
 ## Recently Shipped (Last 7 Days)
 
-| Date       | PR   | Summary                                                                                  |
-| ---------- | ---- | ---------------------------------------------------------------------------------------- |
-| 2026-03-15 | #564 | **MERGED** — fix doc count drift — migration 184→185 (closes #562)                       |
-| 2026-03-15 | #561 | **MERGED** — fix 11 ESLint non-null assertion warnings across 8 files (closes #555)      |
-| 2026-03-15 | #560 | **MERGED** — fix nightly data audit false-positive criticals (closes #554)               |
-| 2026-03-02 | #556 | **MERGED** — GitHub Actions bumps (upload-artifact v7, download-artifact, codeql-action) |
-| 2026-03-04 | #558 | **MERGED** — QA fixture seeding for quality gate + nightly CI (closes #553)              |
-| 2026-03-04 | #546 | **MERGED** — rename poland-food-db → TryVit + 59 ruff fixes + ESLint cleanup + doc fixes |
-
-## Closed PRs (This Session)
-
-| PR   | Action | Reason                                                              |
-| ---- | ------ | ------------------------------------------------------------------- |
-| #564 | Merged | chore(docs): fix doc count drift — migration 184→185 (#562)         |
-| #561 | Merged | fix(frontend): resolve 11 ESLint non-null assertion warnings (#555) |
-| #560 | Merged | fix(ci): nightly data audit false-positive criticals (#554)         |
+| Date       | PR/SHA    | Summary                                                                             |
+| ---------- | --------- | ----------------------------------------------------------------------------------- |
+| 2026-03-16 | `282f5db` | Visual audit screenshots (54 PNGs) — direct to main                                |
+| 2026-03-16 | `2c60cf6` | Visual audit Playwright spec (55 tests) — direct to main                            |
+| 2026-03-16 | `70f50bd` | Tailwind ESM fix (require → import) — direct to main                                |
+| 2026-03-15 | #564      | **MERGED** — fix doc count drift — migration 184→185 (closes #562)                  |
+| 2026-03-15 | #561      | **MERGED** — fix 11 ESLint non-null assertion warnings across 8 files (closes #555) |
+| 2026-03-15 | #560      | **MERGED** — fix nightly data audit false-positive criticals (closes #554)          |
 
 ## Known Issues & Broken Items
 
-- [x] **#553** (P1): ~~Quality Gate workflow fails~~ — CLOSED, fixed in PR #558
-- [x] **#554** (P2): ~~Nightly data integrity audit exits with critical findings~~ — CLOSED, fixed in PR #560
-- [x] **#555** (P3): ~~11 ESLint non-null assertion warnings across 8 frontend files~~ — CLOSED, fixed in PR #561
 - [ ] Quality Gate dashboard test still fails — staging DB missing API functions (schema sync needed)
 
 ## CI Gate Status (main branch)
@@ -53,23 +42,44 @@
 | main-gate    | ✅      | Last runs all success                                               |
 | qa.yml       | ✅      | 733/733 checks passing                                              |
 | dep-audit    | ✅      | 0 high/critical vulnerabilities                                     |
-| python-lint  | ✅      | 0 ruff errors (59 fixed in #546)                                    |
+| python-lint  | ✅      | 0 ruff errors                                                       |
 | quality-gate | ⚠️      | 18/20 pass; dashboard 400s from staging DB schema gap               |
-| nightly      | ⚠️      | Data audit fix shipped (#560); awaiting next nightly run to confirm |
+| nightly      | ✅      | Data audit fix shipped (#560)                                       |
 
-## Open Issues (2 total)
+## Open Issues (19 total)
+
+### Pre-existing
 
 | Issue | Priority | Effort | Summary                                   |
 | ----- | -------- | ------ | ----------------------------------------- |
 | #212  | Deferred | —      | Infrastructure Cost Attribution Framework |
 | #563  | P2       | S      | Sync staging DB schema for quality-gate   |
 
+### Milestone #17 — Elite World-Class UX v1.0 (17 issues)
+
+| Issue | Priority | Summary                                                           |
+| ----- | -------- | ----------------------------------------------------------------- |
+| #566  | P0       | Add real logomark SVG throughout the app                          |
+| #567  | P0       | Add admin links to desktop navigation                             |
+| #568  | P0       | Add branding and illustration to auth pages                       |
+| #569  | P1       | Simplify dashboard to 3-4 focused sections                       |
+| #570  | P1       | Make /learn/* pages public (remove auth gate)                     |
+| #571  | P1       | Break settings into grouped sub-pages                             |
+| #572  | P1       | Simplify product listing rows in category pages                   |
+| #573  | P2       | Redesign landing page with hero, features, social proof           |
+| #574  | P2       | Improve product image fallback with styled placeholder            |
+| #575  | P2       | Align navigation items across desktop breakpoints                 |
+| #576  | P2       | Progressive disclosure on product detail page                     |
+| #577  | P3       | Rename Home to Dashboard in navigation labels                     |
+| #578  | P3       | Add admin sub-navigation between admin pages                      |
+| #579  | P3       | Friendly 403 page for non-admin users                             |
+| #580  | P3       | Replace hardcoded colors in admin with design tokens              |
+| #581  | P3       | Replace category emoji icons with SVG icons                       |
+| #582  | P3       | Add social login (Google, Apple) via Supabase Auth                |
+
 ## Next Planned Work
 
-- [x] Implement #553 — QA fixture data for CI (P1, merged in #558)
-- [x] Implement #554 — nightly data audit false-positive criticals (P2, merged in #560)
-- [x] Implement #555 — ESLint non-null assertions (P3, merged in #561)
-- [x] Implement #562 — doc count drift fix (P3, merged in #564)
+- [ ] Implement UX issues from milestone #17, starting with P0s (#566, #567, #568)
 - [ ] Implement #563 — sync staging DB schema (P2, requires staging access)
 
 ## Key Metrics Snapshot
@@ -78,12 +88,12 @@
 - **QA checks:** 733/733 passing
 - **EAN coverage:** 1,277/1,279 with EAN (99.8%)
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
-- **ESLint warnings:** 0 (down from 11, fixed in #561)
-- **Open issues:** 2 (1 deferred, 1 P2) | **Open PRs:** 0
+- **ESLint warnings:** 0
+- **Open issues:** 19 (17 UX milestone + 1 P2 + 1 deferred) | **Open PRs:** 0
 - **Vitest:** 4,420 tests passing (29 skipped), 259 test files
 - **DB migrations:** 185 append-only
 - **Ruff lint:** 0 errors
-- **Local branches:** 1 (main only)
+- **Visual audit:** 55/55 Playwright tests passed, 54 screenshots captured
 
 ---
 
