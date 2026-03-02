@@ -15,6 +15,14 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Fix nightly data integrity audit false-positive criticals: tighten
+  `audit_score_band_contradictions()` thresholds to only flag truly extreme
+  Nutri-Score vs unhealthiness contradictions (≥4 band gap) as critical;
+  downgrade moderate disagreements (2-3 band gap) to warnings — these are
+  expected for single-factor products (fruit juice, sugar, condiments) where
+  Nutri-Score and our 9-factor formula legitimately disagree; eliminates all 18
+  false criticals that caused persistent nightly CI exit(1) (#554)
+
 - Provision deterministic QA fixture data for quality-gate and nightly CI
   workflows: new `seed-fixtures.mjs` script seeds 4 synthetic dairy products
   (with nutrition, allergens, ingredients) into staging Supabase via service-role
