@@ -8,7 +8,7 @@
 ## Active Branch & PR
 
 - **Branch:** `chore/rename-to-tryvit-clean` (rename PR — open, awaiting CI)
-- **Latest SHA:** `4232c30` (chore(tooling): elite copilot-instructions §17-§20 rewrite + full dev tooling upgrade)
+- **Latest SHA:** `a98010e` (feat(brand): complete TryVit brand identity — Phase 2-5 of #539)
 - **Open PRs:** [#546](https://github.com/ericsocrat/tryvit/pull/546) — chore(cleanup): rename poland-food-db → TryVit across all source files
 - **main SHA:** `3bd6fb3` (origin/main — stable, unmodified)
 
@@ -18,9 +18,9 @@
 
 | SHA       | Summary                                                                                          |
 | --------- | ------------------------------------------------------------------------------------------------ |
+| `a98010e` | feat(brand): complete TryVit brand identity — Phase 2-5 of #539 (6 files)                       |
+| `a2aa076` | fix(ruff): remove duplicate [lint.isort] + duplicate per-file-ignores key                        |
 | `4232c30` | chore(tooling): elite copilot-instructions §17-§20 rewrite + full dev tooling upgrade (10 files) |
-| `d0a2e0f` | docs(workflow): add agent workflow reference, setup-env.ps1, and §17-§20                         |
-| `b0d6e8f` | chore(brand): complete TryVit rename across all assets and strings (99 files)                    |
 
 
 ## Recently Shipped (Last 7 Days)
