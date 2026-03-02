@@ -549,16 +549,25 @@
   // ═══════════════════════════════════════════════════════════════════════
   "mssql.enabled": false,
   "mssql.intelliSense.enableIntelliSense": false,
-  // ═══════════════════════════════════════════════════════════════════════
-  // Search — exclude noise
-  // ═══════════════════════════════════════════════════════════════════════
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/.supabase": true,
-    "**/__pycache__": true
-  },
   "sonarlint.connectedMode.project": {
     "connectionId": "ericsocrat",
     "projectKey": "ericsocrat_tryvit"
-  }
+  },
+  // ═══════════════════════════════════════════════════════════════════════
+  // GitHub Copilot — context instruction files
+  // ═══════════════════════════════════════════════════════════════════════
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": "copilot-instructions.md"
+    },
+    {
+      "file": "CURRENT_STATE.md"
+    },
+    {
+      "file": "docs/INDEX.md"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md"
+    }
+  ]
 }
