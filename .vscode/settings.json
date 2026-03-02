@@ -427,8 +427,13 @@
     "typescript": "javascript",
     "typescriptreact": "javascript"
   },
+  "tailwindCSS.configPath": "frontend/tailwind.config.ts",
   "css.customData": [],
   "scss.validate": false,
+  // ═══════════════════════════════════════════════════════════════════════
+  // isort — DISABLED (Ruff handles import sorting via ruff.organizeImports)
+  // ═══════════════════════════════════════════════════════════════════════
+  "isort.check": false,
   // ═══════════════════════════════════════════════════════════════════════
   // Ruff (Python linter / formatter)
   // ═══════════════════════════════════════════════════════════════════════
