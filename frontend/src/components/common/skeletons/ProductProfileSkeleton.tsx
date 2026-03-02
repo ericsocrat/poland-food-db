@@ -3,7 +3,7 @@
  * Mirrors: back button, hero area, product name, tabs, content blocks.
  */
 
-import { Skeleton, SkeletonContainer } from "../Skeleton";
+import { Skeleton, SkeletonContainer } from "@/components/common/Skeleton";
 
 export function ProductProfileSkeleton() {
   return (

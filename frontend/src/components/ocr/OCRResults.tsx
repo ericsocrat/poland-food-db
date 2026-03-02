@@ -11,12 +11,11 @@
 
 "use client";
 
-import { useState } from "react";
-import { Search, RefreshCw, Lock } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
 import { Icon } from "@/components/common/Icon";
-import { CONFIDENCE } from "@/lib/ocr";
-import type { OCRResult } from "@/lib/ocr";
+import { useTranslation } from "@/lib/i18n";
+import { CONFIDENCE, type OCRResult } from "@/lib/ocr";
+import { Lock, RefreshCw, Search } from "lucide-react";
+import { useState } from "react";
 
 interface OCRResultsProps {
   /** The OCR extraction result. */

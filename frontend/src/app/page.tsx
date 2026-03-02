@@ -2,13 +2,12 @@
 
 "use client";
 
-import Link from "next/link";
-import { Search, Camera, BarChart3 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
 import { SkipLink } from "@/components/common/SkipLink";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
 import { useTranslation } from "@/lib/i18n";
+import { BarChart3, Camera, Search, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 export default function HomePage() {
   const { t } = useTranslation();

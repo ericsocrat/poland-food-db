@@ -3,7 +3,7 @@
  * Mirrors: title + grid of recipe cards (1-col mobile, 2-col tablet, 3-col desktop).
  */
 
-import { Skeleton, SkeletonContainer } from "../Skeleton";
+import { Skeleton, SkeletonContainer } from "@/components/common/Skeleton";
 
 export function RecipeGridSkeleton() {
   return (

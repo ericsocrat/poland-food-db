@@ -1,14 +1,14 @@
-import { describe, it, expect, beforeEach } from "vitest";
 import {
-  cacheProduct,
-  getCachedProduct,
-  getAllCachedProducts,
-  getCachedProductCount,
-  cacheSearch,
-  getCachedSearch,
-  clearAllCaches,
-  timeAgo,
-} from "../cache-manager";
+    cacheProduct,
+    cacheSearch,
+    clearAllCaches,
+    getAllCachedProducts,
+    getCachedProduct,
+    getCachedProductCount,
+    getCachedSearch,
+    timeAgo,
+} from "@/lib/cache-manager";
+import { beforeEach, describe, expect, it } from "vitest";
 
 // ─── fake-indexeddb ─────────────────────────────────────────────────────────
 // Vitest runs in Node, which has no IndexedDB. We use fake-indexeddb shim.

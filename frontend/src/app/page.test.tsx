@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import HomePage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -33,8 +33,9 @@ vi.mock("@/components/layout/Footer", () => ({
 describe("HomePage", () => {
   it("renders the main heading", () => {
     render(<HomePage />);
-    expect(screen.getByText(/healthier/)).toBeInTheDocument();
-    expect(screen.getByText(/made simple/)).toBeInTheDocument();
+    const heading = screen.getByRole("heading", { level: 1 });
+    expect(heading).toHaveTextContent(/healthier/);
+    expect(heading).toHaveTextContent(/made simple/);
   });
 
   it("renders the tagline", () => {

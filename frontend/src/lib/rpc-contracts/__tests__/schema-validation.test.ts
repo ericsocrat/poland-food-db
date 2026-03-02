@@ -9,36 +9,36 @@
 // Run: cd frontend && npx vitest run schema-validation
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 import {
-  ProductDetailContract,
-  BetterAlternativesContract,
-  ScoreExplanationContract,
-  DataConfidenceContract,
-  SearchProductsContract,
-  SearchAutocompleteContract,
-  FilterOptionsContract,
-  CategoryOverviewContract,
-  CategoryListingContract,
-  DashboardDataContract,
-  RecentlyViewedContract,
-  HealthProfileListContract,
-  HealthProfileActiveContract,
-  HealthWarningsContract,
-  ListsContract,
-  ListItemsContract,
-  CompareContract,
-  ScanHistoryContract,
-  UserPreferencesContract,
-  SavedSearchesContract,
-  SearchQualityReportContract,
-} from "../index";
+    BetterAlternativesContract,
+    CategoryListingContract,
+    CategoryOverviewContract,
+    CompareContract,
+    DashboardDataContract,
+    DataConfidenceContract,
+    FilterOptionsContract,
+    HealthProfileActiveContract,
+    HealthProfileListContract,
+    HealthWarningsContract,
+    ListItemsContract,
+    ListsContract,
+    ProductDetailContract,
+    RecentlyViewedContract,
+    SavedSearchesContract,
+    ScanHistoryContract,
+    ScoreExplanationContract,
+    SearchAutocompleteContract,
+    SearchProductsContract,
+    SearchQualityReportContract,
+    UserPreferencesContract,
+} from "@/lib/rpc-contracts/index";
 import {
-  ProductProvenanceContract,
-  CountryValidationContract,
-  ProvenanceDashboardContract,
-} from "../provenance.contracts";
+    CountryValidationContract,
+    ProductProvenanceContract,
+    ProvenanceDashboardContract,
+} from "@/lib/rpc-contracts/provenance.contracts";
 
 // ─── Mock data factories ────────────────────────────────────────────────────
 

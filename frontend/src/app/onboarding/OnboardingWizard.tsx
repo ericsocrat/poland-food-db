@@ -4,23 +4,22 @@
 // Manages step state, accumulates preferences, submits atomically on completion.
 // Issue #42: 7-step wizard (Welcome → Region → Diet → Allergens → Health Goals → Categories → Done).
 
-import { useState, useCallback } from "react";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { completeOnboarding, skipOnboarding } from "@/lib/api";
-import { showToast } from "@/lib/toast";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { completeOnboarding, skipOnboarding } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
+import { createClient } from "@/lib/supabase/client";
+import { showToast } from "@/lib/toast";
+import { useRouter } from "next/navigation";
+import { useCallback, useState } from "react";
 import { OnboardingProgress } from "./OnboardingProgress";
-import { WelcomeStep } from "./steps/WelcomeStep";
-import { RegionStep } from "./steps/RegionStep";
-import { DietStep } from "./steps/DietStep";
 import { AllergensStep } from "./steps/AllergensStep";
-import { HealthGoalsStep } from "./steps/HealthGoalsStep";
 import { CategoriesStep } from "./steps/CategoriesStep";
+import { DietStep } from "./steps/DietStep";
 import { DoneStep } from "./steps/DoneStep";
-import { INITIAL_ONBOARDING_DATA, TOTAL_STEPS } from "./types";
-import type { OnboardingData } from "./types";
+import { HealthGoalsStep } from "./steps/HealthGoalsStep";
+import { RegionStep } from "./steps/RegionStep";
+import { WelcomeStep } from "./steps/WelcomeStep";
+import { INITIAL_ONBOARDING_DATA, TOTAL_STEPS, type OnboardingData } from "./types";
 
 const STEP_NAMES = [
   "welcome",

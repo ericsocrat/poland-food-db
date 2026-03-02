@@ -1,21 +1,21 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { renderHook, act } from "@testing-library/react";
 import {
-  useInstallPrompt,
-  isDismissCooldownActive,
-  incrementVisitCount,
-  getVisitCount,
-  isIOSDevice,
-  isStandalone,
-  markInstalled,
-  markDismissed,
-  STORAGE_KEY_DISMISSED,
-  STORAGE_KEY_VISITS,
-  STORAGE_KEY_INSTALLED,
-  DISMISS_COOLDOWN_MS,
-  MIN_VISITS_FOR_BANNER,
-  type BeforeInstallPromptEvent,
-} from "../use-install-prompt";
+    DISMISS_COOLDOWN_MS,
+    getVisitCount,
+    incrementVisitCount,
+    isDismissCooldownActive,
+    isIOSDevice,
+    isStandalone,
+    markDismissed,
+    markInstalled,
+    MIN_VISITS_FOR_BANNER,
+    STORAGE_KEY_DISMISSED,
+    STORAGE_KEY_INSTALLED,
+    STORAGE_KEY_VISITS,
+    useInstallPrompt,
+    type BeforeInstallPromptEvent,
+} from "@/hooks/use-install-prompt";
+import { act, renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /* ── Helpers ─────────────────────────────────────────────────────────────── */
 

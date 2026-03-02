@@ -1,10 +1,10 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
-  downloadJson,
-  sanitizeFilename,
-  getExportCooldownRemaining,
-  setExportTimestamp,
-} from "../download";
+    downloadJson,
+    getExportCooldownRemaining,
+    sanitizeFilename,
+    setExportTimestamp,
+} from "@/lib/download";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 /* ── downloadJson ────────────────────────────────────────────────────────── */
 

@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+// eslint-disable-next-line no-restricted-imports -- tailwind.config lives outside src/, no @/ alias available
 import tailwindConfig from "../../tailwind.config";
 
 // ─── Responsive Layout Tests ────────────────────────────────────────────────

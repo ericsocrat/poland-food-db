@@ -4,10 +4,9 @@
 // Reusable empty-state component with four preset variants. Provides consistent
 // layout, i18n, and accessibility across all collection/list/search pages.
 
-import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
-import { ClipboardList, Search, AlertTriangle, WifiOff } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { AlertTriangle, ClipboardList, Search, WifiOff, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 

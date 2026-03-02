@@ -2,7 +2,7 @@
 // All product functions pass p_country: null — backend resolves from user_preferences.
 // Frontend NEVER passes a country explicitly.
 
-import { SupabaseClient } from "@supabase/supabase-js";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { callRpc } from "./rpc";
 import type {
   AchievementProgressResponse,

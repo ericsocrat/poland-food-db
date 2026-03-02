@@ -8,14 +8,14 @@
 //       5 tiers: standard (60/min), auth (10/min), search (30/min),
 //       health (120/min), authenticated (120/min). Sliding window.
 
-import { NextRequest, NextResponse } from "next/server";
-import { createMiddlewareClient } from "@/lib/supabase/middleware";
 import {
-  getLimiter,
-  resolveRateLimitTier,
-  extractUserIdFromJWT,
-  rateLimitEnabled,
+    extractUserIdFromJWT,
+    getLimiter,
+    rateLimitEnabled,
+    resolveRateLimitTier,
 } from "@/lib/rate-limiter";
+import { createMiddlewareClient } from "@/lib/supabase/middleware";
+import { type NextRequest, NextResponse } from "next/server";
 
 // ─── Auth Helpers ───────────────────────────────────────────────────────────
 

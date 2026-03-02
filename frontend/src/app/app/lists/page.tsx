@@ -4,30 +4,30 @@
 // Shows all user lists with item counts, create-new-list form, and links to
 // individual list detail pages. Default lists (Favorites, Avoid) show first.
 
-import { useState } from "react";
-import Link from "next/link";
-import {
-  useLists,
-  useCreateList,
-  useDeleteList,
-  useListPreview,
-} from "@/hooks/use-lists";
-import {
-  Heart,
-  Ban,
-  FileText,
-  Link2,
-  Trash2,
-  ClipboardList,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import { ListViewSkeleton } from "@/components/common/skeletons";
-import { EmptyState } from "@/components/common/EmptyState";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
-import { useTranslation } from "@/lib/i18n";
-import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ListViewSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import type { ProductList, ListItem, FormSubmitEvent } from "@/lib/types";
+import {
+    useCreateList,
+    useDeleteList,
+    useListPreview,
+    useLists,
+} from "@/hooks/use-lists";
+import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
+import type { FormSubmitEvent, ListItem, ProductList } from "@/lib/types";
+import {
+    Ban,
+    ClipboardList,
+    FileText,
+    Heart,
+    Link2,
+    Trash2,
+    type LucideIcon,
+} from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function ListsPage() {
   const { t } = useTranslation();

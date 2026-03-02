@@ -1,14 +1,14 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import {
-  isPushSupported,
-  getNotificationPermission,
-  requestNotificationPermission,
-  urlBase64ToUint8Array,
-  getCurrentPushSubscription,
-  subscribeToPush,
-  unsubscribeFromPush,
-  extractSubscriptionData,
-} from "../push-manager";
+    extractSubscriptionData,
+    getCurrentPushSubscription,
+    getNotificationPermission,
+    isPushSupported,
+    requestNotificationPermission,
+    subscribeToPush,
+    unsubscribeFromPush,
+    urlBase64ToUint8Array,
+} from "@/lib/push-manager";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mock service worker registration ───────────────────────────────────────
 

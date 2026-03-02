@@ -1,7 +1,7 @@
 // ─── Supabase middleware client (for token refresh in middleware) ─────────────
 
 import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
 
 export function createMiddlewareClient(
   request: NextRequest,

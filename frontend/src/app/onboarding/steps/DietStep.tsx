@@ -2,9 +2,9 @@
 
 // ─── Step 3: Diet preference ────────────────────────────────────────────────
 
+import type { StepProps } from "@/app/onboarding/types";
 import { DIET_OPTIONS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import type { StepProps } from "../types";
 
 export function DietStep({ data, onChange, onNext, onBack }: StepProps) {
   const { t } = useTranslation();

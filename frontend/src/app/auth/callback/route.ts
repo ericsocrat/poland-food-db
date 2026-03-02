@@ -3,10 +3,10 @@
 // Exchanges the auth code for a session, then redirects to the app.
 // Instrumented with structured logging (#183).
 
-import { NextRequest, NextResponse } from "next/server";
-import * as Sentry from "@sentry/nextjs";
-import { createServerSupabaseClient } from "@/lib/supabase/server";
 import { logger } from "@/lib/logger";
+import { createServerSupabaseClient } from "@/lib/supabase/server";
+import * as Sentry from "@sentry/nextjs";
+import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);

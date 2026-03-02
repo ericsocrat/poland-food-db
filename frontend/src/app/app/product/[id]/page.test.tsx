@@ -1,8 +1,8 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import ProductDetailPage from "./page";
 
 // ─── Feature-flag control (hoisted so vi.mock factory can reference it) ─────
@@ -13,6 +13,7 @@ const { features } = vi.hoisted(() => ({
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
 vi.mock("@/lib/constants", async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const actual = await importOriginal<typeof import("@/lib/constants")>();
   return { ...actual, FEATURES: features };
 });

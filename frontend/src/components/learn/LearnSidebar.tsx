@@ -1,19 +1,19 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useTranslation } from "@/lib/i18n";
 import {
-  Award,
-  Factory,
-  BarChart3,
-  FlaskConical,
-  AlertTriangle,
-  Tag,
-  BadgeCheck,
-  BookOpen,
+    AlertTriangle,
+    Award,
+    BadgeCheck,
+    BarChart3,
+    BookOpen,
+    Factory,
+    FlaskConical,
+    Tag,
+    type LucideIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 /** Topic definition for sidebar navigation. */
 interface LearnTopic {
@@ -100,3 +100,4 @@ export function LearnSidebar({ className = "" }: LearnSidebarProps) {
 
 /** Re-export TOPICS for use in the hub page. */
 export { TOPICS };
+

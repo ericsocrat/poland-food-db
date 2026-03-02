@@ -34,7 +34,7 @@
     "no-var": "error",
     "eqeqeq": [
       "error",
-      "always"
+      "smart"
     ],
     "no-duplicate-imports": "error",
     "no-unreachable": "error",

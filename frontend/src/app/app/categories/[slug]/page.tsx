@@ -2,30 +2,31 @@
 
 // ─── Category listing — paginated product list for a single category ────────
 
-import { useState, useEffect } from "react";
-import { useParams } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { getCategoryListing, getCategoryOverview } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS } from "@/lib/constants";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { CategoryListingSkeleton } from "@/components/common/skeletons";
+import { AllergenChips } from "@/components/common/AllergenChips";
 import { EmptyState } from "@/components/common/EmptyState";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
-import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
-import { AvoidBadge } from "@/components/product/AvoidBadge";
-import { AddToListMenu } from "@/components/product/AddToListMenu";
-import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
-import { AllergenChips } from "@/components/common/AllergenChips";
-import { formatSlug } from "@/lib/validation";
+import { CategoryListingSkeleton } from "@/components/common/skeletons";
+import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { AddToListMenu } from "@/components/product/AddToListMenu";
+import { AvoidBadge } from "@/components/product/AvoidBadge";
+import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useProductAllergenWarnings } from "@/hooks/use-product-allergens";
+import type { AllergenWarning } from "@/lib/allergen-matching";
+import { getCategoryListing, getCategoryOverview } from "@/lib/api";
+import { SCORE_BANDS } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
-import type { CategoryProduct, CategoryOverviewItem } from "@/lib/types";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import type { CategoryOverviewItem, CategoryProduct } from "@/lib/types";
+import { formatSlug } from "@/lib/validation";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const PAGE_SIZE = 20;
 
@@ -221,7 +222,7 @@ function ProductRow({
   allergenWarnings = [],
 }: Readonly<{
   product: CategoryProduct;
-  allergenWarnings?: import("@/lib/allergen-matching").AllergenWarning[];
+  allergenWarnings?: AllergenWarning[];
 }>) {
   const { t } = useTranslation();
   const band = SCORE_BANDS[product.score_band];

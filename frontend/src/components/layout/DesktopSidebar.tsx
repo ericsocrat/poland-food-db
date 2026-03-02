@@ -6,24 +6,24 @@
 //
 // Issue #72 — Desktop Navigation Architecture
 
-import Link from "next/link";
+import { Icon } from "@/components/common/Icon";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
-import { Icon } from "@/components/common/Icon";
 import {
-  Home,
-  Search,
-  Camera,
-  ClipboardList,
-  Eye,
-  Scale,
-  FolderOpen,
-  Trophy,
-  UtensilsCrossed,
-  ScanText,
-  Settings,
+    Camera,
+    ClipboardList,
+    Eye,
+    FolderOpen,
+    Home,
+    Scale,
+    ScanText,
+    Search,
+    Settings,
+    Trophy,
+    UtensilsCrossed,
+    type LucideIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 /* ── Nav item type ────────────────────────────────────────────────────────── */
 

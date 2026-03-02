@@ -1,10 +1,9 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { INITIAL_ONBOARDING_DATA, type OnboardingData } from "@/app/onboarding/types";
+import { FOOD_CATEGORIES } from "@/lib/constants";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { CategoriesStep } from "./CategoriesStep";
-import { FOOD_CATEGORIES } from "@/lib/constants";
-import { INITIAL_ONBOARDING_DATA } from "../types";
-import type { OnboardingData } from "../types";
 
 describe("CategoriesStep", () => {
   const onChange = vi.fn();

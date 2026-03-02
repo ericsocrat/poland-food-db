@@ -4,31 +4,31 @@
 // VS Code / Spotlight-style command palette for power users.
 // Desktop only (lg+). Uses native <dialog> following the SaveSearchDialog pattern.
 
-import {
-  useState,
-  useRef,
-  useEffect,
-  useCallback,
-  useMemo,
-  type KeyboardEvent,
-} from "react";
-import { useRouter } from "next/navigation";
+import { getRecentlyViewed } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n";
+import { queryKeys } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
 import { useQuery } from "@tanstack/react-query";
 import {
-  Search,
-  Home,
-  Camera,
-  ClipboardList,
-  Scale,
-  FolderOpen,
-  Settings,
-  ArrowRight,
+    ArrowRight,
+    Camera,
+    ClipboardList,
+    FolderOpen,
+    Home,
+    Scale,
+    Search,
+    Settings,
+    type LucideIcon,
 } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import { getRecentlyViewed } from "@/lib/api";
-import { queryKeys } from "@/lib/query-keys";
-import { useTranslation } from "@/lib/i18n";
-import type { LucideIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
+import {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+    type KeyboardEvent,
+} from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 

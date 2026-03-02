@@ -8,7 +8,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { Maximize2 } from "lucide-react";
-import { ProductImage, ProductImages } from "@/lib/types";
+import type { ProductImage, ProductImages } from "@/lib/types";
 import { ImageSourceBadge } from "./ImageSourceBadge";
 import { ImageLightbox } from "./ImageLightbox";
 import { useTranslation } from "@/lib/i18n";

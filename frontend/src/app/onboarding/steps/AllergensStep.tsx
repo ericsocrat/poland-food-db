@@ -2,9 +2,9 @@
 
 // ─── Step 4: Allergen selection ─────────────────────────────────────────────
 
+import type { StepProps } from "@/app/onboarding/types";
 import { ALLERGEN_TAGS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import type { StepProps } from "../types";
 
 export function AllergensStep({ data, onChange, onNext, onBack }: StepProps) {
   const { t } = useTranslation();

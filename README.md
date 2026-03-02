@@ -64,17 +64,17 @@
 
 ## 🔍 How It Differs
 
-| Dimension | Nutri-Score Apps | TryVit |
-| --- | :---: | :---: |
-| **Scoring axes** | 1 (A–E letter) | 4 independent (unhealthiness, Nutri-Score, NOVA, confidence) |
-| **Additive analysis** | ❌ | ✅ EFSA concern tiers + additive count |
-| **Processing level** | ❌ | ✅ NOVA 1–4 integrated |
-| **Trans fat tracking** | ❌ | ✅ Separate weighted factor |
-| **Controversy tracking** | ❌ | ✅ Palm oil, artificial sweeteners |
-| **Data quality visibility** | Hidden | ✅ Confidence score per product |
-| **Score explainability** | None | ✅ Full factor breakdown with context |
-| **Source provenance** | Opaque | ✅ Every product linked to source |
-| **Multi-country** | Varies | ✅ PL primary + DE micro-pilot |
+| Dimension                   | Nutri-Score Apps |                            TryVit                            |
+| --------------------------- | :--------------: | :----------------------------------------------------------: |
+| **Scoring axes**            |  1 (A–E letter)  | 4 independent (unhealthiness, Nutri-Score, NOVA, confidence) |
+| **Additive analysis**       |        ❌         |            ✅ EFSA concern tiers + additive count             |
+| **Processing level**        |        ❌         |                    ✅ NOVA 1–4 integrated                     |
+| **Trans fat tracking**      |        ❌         |                  ✅ Separate weighted factor                  |
+| **Controversy tracking**    |        ❌         |              ✅ Palm oil, artificial sweeteners               |
+| **Data quality visibility** |      Hidden      |                ✅ Confidence score per product                |
+| **Score explainability**    |       None       |             ✅ Full factor breakdown with context             |
+| **Source provenance**       |      Opaque      |               ✅ Every product linked to source               |
+| **Multi-country**           |      Varies      |                ✅ PL primary + DE micro-pilot                 |
 
 ---
 

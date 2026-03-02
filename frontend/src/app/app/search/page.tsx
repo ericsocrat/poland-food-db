@@ -2,46 +2,47 @@
 
 // ─── Enhanced Search page — autocomplete, multi-faceted filters, pagination ─
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { searchProducts } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { eventBus } from "@/lib/events";
-import { SCORE_BANDS, getScoreInterpretation } from "@/lib/constants";
-import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
-import { NovaBadge } from "@/components/common/NovaBadge";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { LiveRegion } from "@/components/common/LiveRegion";
-import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
-import { AvoidBadge } from "@/components/product/AvoidBadge";
-import { AddToListMenu } from "@/components/product/AddToListMenu";
-import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
-import { ProductThumbnail } from "@/components/common/ProductThumbnail";
 import { AllergenChips } from "@/components/common/AllergenChips";
-import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
-import { FilterPanel } from "@/components/search/FilterPanel";
-import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
-import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
-import { DidYouMean } from "@/components/search/DidYouMean";
 import { EmptyState } from "@/components/common/EmptyState";
+import { LiveRegion } from "@/components/common/LiveRegion";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { NovaBadge } from "@/components/common/NovaBadge";
+import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
+import { ProductThumbnail } from "@/components/common/ProductThumbnail";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
+import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { AddToListMenu } from "@/components/product/AddToListMenu";
+import { AvoidBadge } from "@/components/product/AvoidBadge";
+import { HealthWarningBadge } from "@/components/product/HealthWarningsCard";
+import { ActiveFilterChips } from "@/components/search/ActiveFilterChips";
+import { DidYouMean } from "@/components/search/DidYouMean";
+import { FilterPanel } from "@/components/search/FilterPanel";
+import { SaveSearchDialog } from "@/components/search/SaveSearchDialog";
+import { SearchAutocomplete } from "@/components/search/SearchAutocomplete";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useProductAllergenWarnings } from "@/hooks/use-product-allergens";
+import type { AllergenWarning } from "@/lib/allergen-matching";
+import { searchProducts } from "@/lib/api";
+import { SCORE_BANDS, getScoreInterpretation } from "@/lib/constants";
+import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { addRecentSearch, getRecentSearches } from "@/lib/recent-searches";
+import { createClient } from "@/lib/supabase/client";
+import type { FormSubmitEvent, SearchFilters, SearchResult } from "@/lib/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  SlidersHorizontal,
-  Save,
-  ClipboardList,
-  Search,
-  LayoutList,
-  LayoutGrid,
-  HelpCircle,
+    ClipboardList,
+    HelpCircle,
+    LayoutGrid,
+    LayoutList,
+    Save,
+    Search,
+    SlidersHorizontal,
 } from "lucide-react";
-import { getRecentSearches, addRecentSearch } from "@/lib/recent-searches";
-import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
+import Link from "next/link";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 const AVOID_TOGGLE_KEY = "tryvit:show-avoided";
 const VIEW_MODE_KEY = "tryvit:search-view";
@@ -721,7 +722,7 @@ function ProductRow({
 }: Readonly<{
   product: SearchResult;
   viewMode?: ViewMode;
-  allergenWarnings?: import("@/lib/allergen-matching").AllergenWarning[];
+  allergenWarnings?: AllergenWarning[];
 }>) {
   const band = SCORE_BANDS[product.score_band];
 

@@ -1,11 +1,11 @@
-import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import {
-  AchievementBadge,
-  getAchievementTypes,
-  getAchievementMeta,
+    AchievementBadge,
+    getAchievementMeta,
+    getAchievementTypes,
+    type AchievementType,
 } from "./AchievementBadge";
-import type { AchievementType } from "./AchievementBadge";
 
 describe("AchievementBadge", () => {
   // ── Rendering ─────────────────────────────────────────────────────────────

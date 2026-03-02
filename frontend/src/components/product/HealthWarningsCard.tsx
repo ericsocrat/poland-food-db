@@ -4,23 +4,23 @@
 // Displays personalized health warnings for a product based on the user's
 // active health profile. Only renders when the user has an active profile.
 
-import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
-import { createClient } from "@/lib/supabase/client";
-import { getProductHealthWarnings, getActiveHealthProfile } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { WARNING_SEVERITY, HEALTH_CONDITIONS } from "@/lib/constants";
+import { getActiveHealthProfile, getProductHealthWarnings } from "@/lib/api";
+import { HEALTH_CONDITIONS, WARNING_SEVERITY } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import {
-  Ban,
-  AlertTriangle,
-  Info,
-  Shield,
-  CheckCircle,
-  Check,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
 import type { HealthWarning, WarningSeverity } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import {
+    AlertTriangle,
+    Ban,
+    Check,
+    CheckCircle,
+    Info,
+    Shield,
+    type LucideIcon,
+} from "lucide-react";
+import Link from "next/link";
 
 // ─── Severity icon mapping ─────────────────────────────────────────────────
 

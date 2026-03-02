@@ -1,24 +1,24 @@
 "use client";
 
-import { useEffect } from "react";
-import { Header } from "@/components/layout/Header";
-import { eventBus } from "@/lib/events";
-import { Footer } from "@/components/layout/Footer";
 import { SkipLink } from "@/components/common/SkipLink";
-import { LearnCard } from "@/components/learn/LearnCard";
+import { Footer } from "@/components/layout/Footer";
+import { Header } from "@/components/layout/Header";
 import { Disclaimer } from "@/components/learn/Disclaimer";
+import { LearnCard } from "@/components/learn/LearnCard";
+import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
 import {
-  Award,
-  Factory,
-  BarChart3,
-  FlaskConical,
-  AlertTriangle,
-  Tag,
-  BadgeCheck,
-  BookOpen,
+    AlertTriangle,
+    Award,
+    BadgeCheck,
+    BarChart3,
+    BookOpen,
+    Factory,
+    FlaskConical,
+    Tag,
+    type LucideIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { useEffect } from "react";
 
 /** Topics for the hub index page. */
 const TOPICS: readonly {

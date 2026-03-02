@@ -3,7 +3,7 @@
  * Mirrors: back link, header with count, sort controls, product list.
  */
 
-import { Skeleton, SkeletonContainer } from "../Skeleton";
+import { Skeleton, SkeletonContainer } from "@/components/common/Skeleton";
 import { ProductCardSkeleton } from "./ProductCardSkeleton";
 
 export function CategoryListingSkeleton() {

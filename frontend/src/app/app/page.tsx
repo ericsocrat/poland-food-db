@@ -1,47 +1,48 @@
 "use client";
 
+import { AllergenChips } from "@/components/common/AllergenChips";
+import { EmptyState } from "@/components/common/EmptyState";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
+import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { DashboardSkeleton } from "@/components/common/skeletons";
+import { CategoriesBrowse } from "@/components/dashboard/CategoriesBrowse";
+import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
+import { HealthInsightsPanel } from "@/components/dashboard/HealthInsightsPanel";
+import { NutritionTip } from "@/components/dashboard/NutritionTip";
+import { QuickActions } from "@/components/dashboard/QuickActions";
+import { ScoreSparkline } from "@/components/dashboard/ScoreSparkline";
+import { useAnalytics } from "@/hooks/use-analytics";
+import {
+    useProductAllergenWarnings,
+    type AllergenWarningMap,
+} from "@/hooks/use-product-allergens";
+import type { AllergenWarning } from "@/lib/allergen-matching";
+import { getDashboardData } from "@/lib/api";
+import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import type {
+    DashboardFavoritePreview,
+    DashboardNewProduct,
+    DashboardStats,
+    RecentlyViewedProduct,
+} from "@/lib/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    BarChart3,
+    Camera,
+    ClipboardList,
+    Eye,
+    Heart,
+    Home,
+    Sparkles,
+    Star,
+    TrendingUp,
+} from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
-import { useTranslation } from "@/lib/i18n";
-import { getDashboardData } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
-import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
-import { EmptyState } from "@/components/common/EmptyState";
-import { DashboardSkeleton } from "@/components/common/skeletons";
-import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-import { useAnalytics } from "@/hooks/use-analytics";
-import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
-import { QuickActions } from "@/components/dashboard/QuickActions";
-import { CategoriesBrowse } from "@/components/dashboard/CategoriesBrowse";
-import { NutritionTip } from "@/components/dashboard/NutritionTip";
-import { ScoreSparkline } from "@/components/dashboard/ScoreSparkline";
-import { HealthInsightsPanel } from "@/components/dashboard/HealthInsightsPanel";
-import { ProductThumbnail } from "@/components/common/ProductThumbnail";
-import { AllergenChips } from "@/components/common/AllergenChips";
-import {
-  Camera,
-  Eye,
-  ClipboardList,
-  Heart,
-  Sparkles,
-  Home,
-  TrendingUp,
-  Star,
-  BarChart3,
-} from "lucide-react";
-import type {
-  DashboardFavoritePreview,
-  DashboardNewProduct,
-  DashboardStats,
-  RecentlyViewedProduct,
-} from "@/lib/types";
-import {
-  useProductAllergenWarnings,
-  type AllergenWarningMap,
-} from "@/hooks/use-product-allergens";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -292,7 +293,7 @@ function ProductRow({
     image_thumb_url?: string | null;
   };
   subtitle?: string;
-  allergenWarnings?: import("@/lib/allergen-matching").AllergenWarning[];
+  allergenWarnings?: AllergenWarning[];
 }>) {
   return (
     <Link

@@ -1,7 +1,6 @@
-import Link from "next/link";
 import type { LucideIcon } from "lucide-react";
-import React from "react";
-import type { ReactNode } from "react";
+import Link from "next/link";
+import React, { type ReactNode } from "react";
 
 interface LearnCardProps {
   /** Lucide icon component or ReactNode for the topic. */

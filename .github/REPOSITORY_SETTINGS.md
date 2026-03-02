@@ -74,11 +74,11 @@ docs/assets/banners/release-template.svg
 
 Issue and PR templates now include branded SVG headers from `.github/assets/`:
 
-| Template | Header File | Preview Text |
-|----------|-------------|-------------|
-| Bug Report | `bug-report-header.svg` | 🐛 Bug Report |
-| Feature Request | `feature-request-header.svg` | ✨ Feature Request |
-| Data / Schema Change | `data-schema-header.svg` | 🗄️ Data / Schema Change |
-| Pull Request | `pr-header.svg` | 🔀 Pull Request |
+| Template             | Header File                  | Preview Text           |
+| -------------------- | ---------------------------- | ---------------------- |
+| Bug Report           | `bug-report-header.svg`      | 🐛 Bug Report           |
+| Feature Request      | `feature-request-header.svg` | ✨ Feature Request      |
+| Data / Schema Change | `data-schema-header.svg`     | 🗄️ Data / Schema Change |
+| Pull Request         | `pr-header.svg`              | 🔀 Pull Request         |
 
 Headers are referenced via `raw.githubusercontent.com` URLs so they render in GitHub's issue/PR creation UI.

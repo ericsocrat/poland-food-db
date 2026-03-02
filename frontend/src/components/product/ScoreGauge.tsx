@@ -8,10 +8,9 @@
  * Falls back to a gray neutral ring when score is null/undefined.
  */
 
-import React from "react";
-import { scoreColorFromScore } from "@/lib/constants";
+import { scoreColorFromScore, type ScoreColorBand } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import type { ScoreColorBand } from "@/lib/constants";
+import React from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 

@@ -2,9 +2,9 @@
 
 // ─── Step 7: Done — Summary + CTA ──────────────────────────────────────────
 
-import { COUNTRIES, DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
+import type { OnboardingData } from "@/app/onboarding/types";
+import { ALLERGEN_TAGS, COUNTRIES, DIET_OPTIONS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import type { OnboardingData } from "../types";
 
 interface DoneStepProps {
   readonly data: OnboardingData;

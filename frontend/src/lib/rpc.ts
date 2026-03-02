@@ -2,9 +2,9 @@
 // Every Supabase RPC call goes through callRpc<T>().
 // Returns { ok, data?, error? } — never throws.
 
-import { SupabaseClient } from "@supabase/supabase-js";
-import type { RpcResult } from "./types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import { observeQuery } from "./query-observer";
+import type { RpcResult } from "./types";
 
 // ─── Auth error detection constants ─────────────────────────────────────────
 

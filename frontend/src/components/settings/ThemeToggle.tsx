@@ -6,8 +6,7 @@
 
 import { useTheme, type ThemeMode } from "@/hooks/use-theme";
 import { useTranslation } from "@/lib/i18n";
-import { Sun, Moon, Monitor } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Monitor, Moon, Sun, type LucideIcon } from "lucide-react";
 
 const THEME_OPTIONS: {
   value: ThemeMode;

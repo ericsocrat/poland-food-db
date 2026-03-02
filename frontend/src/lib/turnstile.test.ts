@@ -1,17 +1,15 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
-  getTurnstileSiteKey,
-  isTurnstileConfigured,
-  verifyTurnstileToken,
-  isTurnstileSuccess,
-  isTurnstileFailure,
-  TURNSTILE_TEST_SITE_KEY,
-  VERIFY_FUNCTION_NAME,
+    getTurnstileSiteKey,
+    isTurnstileConfigured,
+    isTurnstileFailure,
+    isTurnstileSuccess,
+    TURNSTILE_TEST_SITE_KEY,
+    VERIFY_FUNCTION_NAME,
+    verifyTurnstileToken,
+    type TurnstileVerifyFailure,
+    type TurnstileVerifySuccess,
 } from "@/lib/turnstile";
-import type {
-  TurnstileVerifySuccess,
-  TurnstileVerifyFailure,
-} from "@/lib/turnstile";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 

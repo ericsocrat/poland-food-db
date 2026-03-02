@@ -29,6 +29,9 @@ const cspValue = [
 ].join("; ");
 
 const nextConfig: NextConfig = {
+  // ESLint runs as a separate CI step (npx next lint) — skip during build to
+  // avoid double-linting and faster builds. See pr-gate.yml static-checks job.
+  eslint: { ignoreDuringBuilds: true },
   // Enable View Transitions API for smoother page navigations (#61)
   experimental: {
     viewTransition: true,

@@ -1,11 +1,11 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ExportButton } from "./ExportButton";
-import type { ExportableProduct } from "@/lib/export";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
 vi.mock("@/lib/export", async (importOriginal) => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   const actual = await importOriginal<typeof import("@/lib/export")>();
   return {
     ...actual,
@@ -19,7 +19,7 @@ vi.mock("@/lib/toast", () => ({
   showToast: vi.fn(),
 }));
 
-import { exportProducts, exportComparison } from "@/lib/export";
+import { exportComparison, exportProducts, type ExportableProduct } from "@/lib/export";
 import { showToast } from "@/lib/toast";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

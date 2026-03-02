@@ -8,23 +8,23 @@
 //
 // All image processing is client-side. No images are ever uploaded.
 
-import { useState, useCallback, useEffect, useRef } from "react";
-import { useRouter } from "next/navigation";
-import { useTranslation } from "@/lib/i18n";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { PrivacyNotice, ImageCapture, OCRResults } from "@/components/ocr";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { ImageCapture, OCRResults, PrivacyNotice } from "@/components/ocr";
+import { useTranslation } from "@/lib/i18n";
 import {
-  extractText,
-  buildSearchQuery,
-  initOCR,
-  terminateOCR,
-  hasPrivacyConsent,
-  acceptPrivacyConsent,
-  releaseImageData,
-  CONFIDENCE,
+    acceptPrivacyConsent,
+    buildSearchQuery,
+    CONFIDENCE,
+    extractText,
+    hasPrivacyConsent,
+    initOCR,
+    releaseImageData,
+    terminateOCR,
+    type OCRResult,
 } from "@/lib/ocr";
-import type { OCRResult } from "@/lib/ocr";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /* ── Step union ───────────────────────────────────────────────────────────── */
 
