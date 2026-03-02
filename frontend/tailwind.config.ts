@@ -1,5 +1,6 @@
-import type { Config } from "tailwindcss";
 import containerQueries from "@tailwindcss/container-queries";
+import typography from "@tailwindcss/typography";
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: ["./src/**/*.{js,ts,jsx,tsx,mdx}"],
@@ -181,7 +182,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [require("@tailwindcss/typography"), containerQueries],
+  plugins: [typography, containerQueries],
 };
 
 export default config;
