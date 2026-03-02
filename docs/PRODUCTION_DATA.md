@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-02-28
 > **Status:** Comprehensive audit of production data infrastructure
-> **Project:** poland-food-db (Supabase project `uskvezwftkkudvksmken`)
+> **Project:** tryvit (Supabase project `uskvezwftkkudvksmken`)
 
 ---
 
@@ -27,7 +27,7 @@
 
 | Setting              | Value                                                      |
 | -------------------- | ---------------------------------------------------------- |
-| Project ID (local)   | `poland-food-db`                                           |
+| Project ID (local)   | `tryvit`                                           |
 | Project Ref (remote) | `uskvezwftkkudvksmken`                                     |
 | DB Host (remote)     | `db.uskvezwftkkudvksmken.supabase.co`                      |
 | DB Port (remote)     | `5432`                                                     |
@@ -36,7 +36,7 @@
 | DB User              | `postgres`                                                 |
 | PostgreSQL Version   | `17`                                                       |
 | Pooler               | Enabled, `transaction` mode, pool size 20, max 100 clients |
-| Docker Container     | `supabase_db_poland-food-db`                               |
+| Docker Container     | `supabase_db_tryvit`                               |
 
 ### 1.2 Migration Inventory
 
@@ -338,7 +338,7 @@ RUN_LOCAL.ps1
 
 ### 4.3 RUN_LOCAL.ps1 Details
 
-- **Target:** Local Supabase via `docker exec supabase_db_poland-food-db`
+- **Target:** Local Supabase via `docker exec supabase_db_tryvit`
 - **Parameters:** `-Category <name>` (single category), `-DryRun`, `-RunQA`
 - **Safety:** No psql installation required (uses Docker), idempotent, safe to run repeatedly
 - **Error handling:** Stops on first error to prevent cascading failures

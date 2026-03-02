@@ -1,4 +1,4 @@
-"""Open Food Facts API client for the poland-food-db pipeline.
+"""Open Food Facts API client for the tryvit pipeline.
 
 Searches and fetches Polish product data, normalises it into the project
 schema, and respects the OFF API rate-limit guidelines.
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 OFF_SEARCH_URL = "https://world.openfoodfacts.org/api/v2/search"
 OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
-USER_AGENT = "poland-food-db/1.0 (https://github.com/ericsocrat/poland-food-db)"
+USER_AGENT = "tryvit/1.0 (https://github.com/ericsocrat/tryvit)"
 PAGE_SIZE = 50
 REQUEST_DELAY = 1.0  # seconds between requests
 REQUEST_TIMEOUT = 90  # seconds (OFF API can be slow)
@@ -535,7 +535,7 @@ def _resolve_brand(off_product: dict) -> str:
 
 
 def extract_product_data(off_product: dict) -> dict | None:
-    """Normalise a raw OFF product dict into the poland-food-db schema.
+    """Normalise a raw OFF product dict into the tryvit schema.
 
     Returns *None* when the product is missing essential nutrition data
     (calories, fat, or protein).

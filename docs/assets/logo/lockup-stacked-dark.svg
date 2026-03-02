@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" role="img" aria-label="Poland Food DB">
-  <title>Poland Food DB — Stacked Lockup (Dark Mode)</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" role="img" aria-label="TryVit DB">
+  <title>TryVit DB — Stacked Lockup (Dark Mode)</title>
   <desc>Dark-mode stacked lockup for dark backgrounds (#0f172a). Lighter teal logomark, white wordmark.</desc>
 
   <defs>
@@ -31,5 +31,5 @@
     font-weight="700"
     fill="#ffffff"
     letter-spacing="0.02em"
-  >Poland Food DB</text>
+  >TryVit DB</text>
 </svg>

@@ -4,7 +4,7 @@
 
 ## Overview
 
-Poland Food DB tracks **10 core business metrics** via database-native analytics.
+TryVit DB tracks **10 core business metrics** via database-native analytics.
 All events flow through the existing `analytics_events` table (created in #25)
 and are surfaced on the admin dashboard at `/admin/metrics`.
 

@@ -67,7 +67,7 @@ We maintain two Supabase cloud projects:
 
 ## 1. Overview
 
-This document defines the three-environment strategy for `poland-food-db`:
+This document defines the three-environment strategy for `tryvit`:
 
 | Environment    | Purpose                   | Supabase                                      | Vercel                |
 | -------------- | ------------------------- | --------------------------------------------- | --------------------- |
@@ -97,8 +97,8 @@ This document defines the three-environment strategy for `poland-food-db`:
 | Supabase CLI     | `supabase start`                      |
 | DB host          | `127.0.0.1:54322`                     |
 | API URL          | `http://127.0.0.1:54321`              |
-| Project ID       | `poland-food-db`                      |
-| Docker container | `supabase_db_poland-food-db`          |
+| Project ID       | `tryvit`                      |
+| Docker container | `supabase_db_tryvit`          |
 | Data load        | `supabase db reset` → `RUN_LOCAL.ps1` |
 | QA               | `RUN_QA.ps1`                          |
 
@@ -110,7 +110,7 @@ This document defines the three-environment strategy for `poland-food-db`:
 
 | Setting          | Value                                                   |
 | ---------------- | ------------------------------------------------------- |
-| Supabase project | `poland-food-db-staging` (ref via `SUPABASE_STAGING_PROJECT_REF`)  |
+| Supabase project | `tryvit-staging` (ref via `SUPABASE_STAGING_PROJECT_REF`)  |
 | DB host          | `db.<staging-ref>.supabase.co:5432`                     |
 | API URL          | `https://<staging-ref>.supabase.co`                     |
 | Schema source    | `supabase link --project-ref <ref> && supabase db push` |

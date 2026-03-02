@@ -64,7 +64,7 @@
     "offline": "Jesteś offline — niektóre funkcje mogą być niedostępne",
     "cachedProductsAvailable": "{count} produktów dostępnych offline",
     "cachedAgo": "Zapisano {time}",
-    "installTitle": "Zainstaluj FoodDB",
+    "installTitle": "Zainstaluj TryVit",
     "installDescription": "Dodaj do ekranu głównego, aby mieć szybki dostęp i wsparcie offline.",
     "iosInstallHint": "Stuknij przycisk Udostępnij, a potem «Dodaj do ekranu głównego».",
     "dismissInstall": "Odrzuć komunikat instalacji"
@@ -655,7 +655,7 @@
     "preferencesFailed": "Nie udało się załadować preferencji.",
     "signIn": "Zaloguj się",
     "welcomeBack": "Witaj ponownie",
-    "signInSubtitle": "Zaloguj się do konta FoodDB.",
+    "signInSubtitle": "Zaloguj się do konta TryVit.",
     "sessionExpiredBanner": "Twoja sesja wygasła. Zaloguj się ponownie.",
     "email": "E-mail",
     "emailPlaceholder": "ty@example.com",
@@ -673,14 +673,14 @@
     "captchaFailed": "Weryfikacja bezpieczeństwa nie powiodła się. Spróbuj ponownie."
   },
   "layout": {
-    "appName": "FoodDB",
-    "appNameWithEmoji": "🥗 FoodDB",
+    "appName": "TryVit",
+    "appNameWithEmoji": "🥗 TryVit",
     "errorTitle": "Coś poszło nie tak",
     "errorMessage": "Nie udało się załadować Twoich preferencji. To zwykle tymczasowy problem.",
     "contact": "Kontakt",
     "privacy": "Polityka prywatności",
     "terms": "Regulamin",
-    "copyright": "© {year} Poland Food DB. Dane pochodzą z Open Food Facts."
+    "copyright": "© {year} TryVit DB. Dane pochodzą z Open Food Facts."
   },
   "theme": {
     "label": "Preferencja motywu",
@@ -772,15 +772,15 @@
     "yourRights": "Twoje prawa",
     "yourRightsText": "Na mocy RODO masz prawo do dostępu, poprawiania lub usuwania swoich danych osobowych. Skontaktuj się z nami pod poniższym adresem e-mail, aby skorzystać z tych praw.",
     "acceptance": "Akceptacja",
-    "acceptanceText": "Korzystając z Poland Food DB, akceptujesz niniejszy regulamin. Jeśli się nie zgadzasz, prosimy o niekorzystanie z usługi.",
+    "acceptanceText": "Korzystając z TryVit DB, akceptujesz niniejszy regulamin. Jeśli się nie zgadzasz, prosimy o niekorzystanie z usługi.",
     "serviceDescription": "Opis usługi",
-    "serviceDescText": "Poland Food DB dostarcza informacje o produktach spożywczych, oceny zdrowotne i dane żywieniowe pozyskane z Open Food Facts i naszych własnych analiz. Służy to wyłącznie celom informacyjnym i nie stanowi porady medycznej ani dietetycznej.",
+    "serviceDescText": "TryVit DB dostarcza informacje o produktach spożywczych, oceny zdrowotne i dane żywieniowe pozyskane z Open Food Facts i naszych własnych analiz. Służy to wyłącznie celom informacyjnym i nie stanowi porady medycznej ani dietetycznej.",
     "dataAccuracy": "Dokładność danych",
     "dataAccuracyText": "Choć dążymy do dokładności, dane o żywności mogą zawierać błędy. Zawsze sprawdzaj etykiety produktów pod kątem alergenów i informacji żywieniowych. Nie ponosimy odpowiedzialności za decyzje podjęte na podstawie naszych danych.",
     "userAccounts": "Konta użytkowników",
     "userAccountsText": "Odpowiadasz za bezpieczeństwo swojego konta. Nie udostępniaj swoich danych logowania. Zastrzegamy sobie prawo do zawieszenia kont naruszających niniejszy regulamin.",
     "liability": "Ograniczenie odpowiedzialności",
-    "liabilityText": "Poland Food DB jest dostarczany w stanie „takim, jakim jest” bez gwarancji. Nie ponosimy odpowiedzialności za jakiekolwiek szkody wynikające z korzystania z tej usługi.",
+    "liabilityText": "TryVit DB jest dostarczany w stanie „takim, jakim jest” bez gwarancji. Nie ponosimy odpowiedzialności za jakiekolwiek szkody wynikające z korzystania z tej usługi.",
     "imageProcessing": "Przetwarzanie obrazów",
     "imageWhatWeProcess": "Co przetwarzamy",
     "imageWhatWeProcessText": "Obrazy kodów kreskowych (skanowanie aparatem) oraz zdjęcia etykiet produktów (ekstrakcja tekstu OCR — funkcja Beta, wkrótce dostępna).",
@@ -923,7 +923,7 @@
     "listEmpty": "Ta lista jest pusta.",
     "sharedComparison": "Udostępnione porównanie",
     "comparisonInvalid": "Ten link porównania jest nieprawidłowy lub wygasł.",
-    "goToFoodDB": "Przejdź do FoodDB",
+    "goToTryVit": "Przejdź do TryVit",
     "productComparison": "Porównanie produktów",
     "productsCompared": "{count} {count|produkt porównany|produkty porównane|produktów porównanych}",
     "wantToCompare": "Chcesz porównać własne produkty?",
@@ -1077,7 +1077,7 @@
   "learn": {
     "hubTitle": "Wiedza",
     "hubSubtitle": "Zrozum, jak oceniamy produkty spożywcze",
-    "hubDescription": "Poznaj nasze zasoby edukacyjne, aby zrozumieć systemy punktacji, etykiety i klasyfikacje stosowane w FoodDB.",
+    "hubDescription": "Poznaj nasze zasoby edukacyjne, aby zrozumieć systemy punktacji, etykiety i klasyfikacje stosowane w TryVit.",
     "disclaimer": "Te informacje mają charakter wyłącznie edukacyjny. Nie stanowią porady medycznej ani dietetycznej. W sprawach dotyczących żywienia skonsultuj się z lekarzem lub dietetykiem.",
     "disclaimerLabel": "Zastrzeżenie edukacyjne",
     "sidebarLabel": "Nawigacja po tematach",
@@ -1131,7 +1131,7 @@
       "polishContextTitle": "Kontekst polski",
       "polishContextText": "Wiele popularnych produktów w polskich supermarketach jak Żabka, Biedronka i Lidl to NOVA 4. To nie znaczy, że nigdy nie powinieneś ich jeść — oznacza to bycie świadomym, ile twojej diety pochodzi z ultra-przetworzonych źródeł.",
       "processingRiskTitle": "Jak tego używamy: Ryzyko Przetworzenia",
-      "processingRiskText": "W FoodDB grupy NOVA są mapowane na trzy poziomy Ryzyka Przetworzenia: Niskie (NOVA 1–2), Umiarkowane (NOVA 3) i Wysokie (NOVA 4). Daje to szybki odczyt poziomu przetworzenia obok naszego Wyniku Niezdrowowści i Nutri-Score."
+      "processingRiskText": "In TryVit grupy NOVA są mapowane na trzy poziomy Ryzyka Przetworzenia: Niskie (NOVA 1–2), Umiarkowane (NOVA 3) i Wysokie (NOVA 4). Daje to szybki odczyt poziomu przetworzenia obok naszego Wyniku Niezdrowowści i Nutri-Score."
     },
     "unhealthinessScore": {
       "title": "Nasz Wynik Zdrowotny",
@@ -1174,7 +1174,7 @@
       "concernTier2": "Klasa 2 — Umiarkowane ryzyko: Niektóre sztuczne słodziki i barwniki. Bezpieczne w zatwierdzonych dawkach, ale podlegające dalszym badaniom.",
       "concernTier3": "Klasa 3 — Wysokie ryzyko: Azotyny (E250), BHA (E320), niektóre barwniki azowe. EFSA zgłosiła obawy; niektóre mają obniżone ADI.",
       "howWeUseTitle": "Jak tego używamy",
-      "howWeUseText": "W FoodDB każdy składnik ma przypisaną klasę ryzyka na podstawie ocen EFSA. Wynik obaw o składniki produktu (0–100) stanowi 5% ogólnego Wyniku Niezdrowowści. Produkty bez problematycznych dodatków uzyskują 0 w tym czynniku.",
+      "howWeUseText": "In TryVit każdy składnik ma przypisaną klasę ryzyka na podstawie ocen EFSA. Wynik obaw o składniki produktu (0–100) stanowi 5% ogólnego Wyniku Niezdrowowści. Produkty bez problematycznych dodatków uzyskują 0 w tym czynniku.",
       "polishContextTitle": "Kontekst polski",
       "polishContextText": "Polskie etykiety żywności są zgodne z rozporządzeniem UE 1169/2011. Wszystkie dodatki muszą być wymienione według ich numeru E lub pełnej nazwy na liście składników. Robiąc zakupy w Żabce lub Biedronce, sprawdź listę składników — krótsze listy z rozpoznawalnymi składnikami zazwyczaj oznaczają mniejsze przetworzenie."
     },
@@ -1202,8 +1202,8 @@
       "containsVsTracesText": "'Zawiera' oznacza, że alergen jest składnikiem produktu. 'Może zawierać śladowe ilości' (lub 'wyprodukowano w zakładzie, który przetwarza również...') to dobrowolne ostrzeżenie o potencjalnym zanieczyszczeniu krzyżowym podczas produkcji. Nie jest prawnie wymagane, ale jest szeroko stosowane.",
       "polishLabelsTitle": "Czytanie polskich etykiet alergenów",
       "polishLabelsText": "Na polskich opakowaniach alergeny na liście składników są wyróżnione pogrubioną czcionką lub WIELKIMI LITERAMI. Szukaj sekcji 'Alergeny:' lub 'Zawiera:'. Polskie nazwy powszechnych alergenów: mleko, jaja, pszenica, soja, orzechy, sezam, seler, gorczyca.",
-      "inFoodDBTitle": "Alergeny w FoodDB",
-      "inFoodDBText": "Śledzimy dane o alergenach z etykiet produktów i weryfikujemy je z listami składników. Gdy informacje o alergenach są dostępne, są wyświetlane na stronie profilu produktu."
+      "inTryVitTitle": "Alergeny w TryVit",
+      "inTryVitText": "Śledzimy dane o alergenach z etykiet produktów i weryfikujemy je z listami składników. Gdy informacje o alergenach są dostępne, są wyświetlane na stronie profilu produktu."
     },
     "readingLabels": {
       "title": "Czytanie Polskich Etykiet",

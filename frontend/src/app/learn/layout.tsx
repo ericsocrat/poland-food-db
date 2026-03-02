@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export const metadata: Metadata = {
   title: "Learn",
   description:
-    "Educational resources about Nutri-Score, NOVA classification, food additives, allergens, and how we evaluate food products in FoodDB.",
+    "Educational resources about Nutri-Score, NOVA classification, food additives, allergens, and how we evaluate food products in TryVit.",
 };
 
 export default function LearnRootLayout({

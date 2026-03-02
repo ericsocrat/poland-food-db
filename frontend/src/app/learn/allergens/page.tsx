@@ -67,8 +67,8 @@ export default function AllergensPage() {
             <h2>{t("learn.allergens.polishLabelsTitle")}</h2>
             <p>{t("learn.allergens.polishLabelsText")}</p>
 
-            <h2>{t("learn.allergens.inFoodDBTitle")}</h2>
-            <p>{t("learn.allergens.inFoodDBText")}</p>
+            <h2>{t("learn.allergens.inTryVitTitle")}</h2>
+            <p>{t("learn.allergens.inTryVitText")}</p>
 
             <Disclaimer className="mt-8" />
 

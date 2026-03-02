@@ -1,6 +1,6 @@
 # Monitoring & Health Check
 
-> Issue #119 — Automated health monitoring for the Poland Food DB.
+> Issue #119 — Automated health monitoring for the TryVit DB.
 
 ## Architecture
 
@@ -119,7 +119,7 @@ UptimeRobot provides 50 free HTTP monitors with 5-minute intervals.
 | Setting | Value |
 | ------- | ----- |
 | Monitor Type | HTTP(s) |
-| Friendly Name | `Poland Food DB — Production` |
+| Friendly Name | `TryVit DB — Production` |
 | URL | `https://your-domain.vercel.app/api/health` |
 | Monitoring Interval | 5 minutes |
 | Monitor Timeout | 10 seconds |

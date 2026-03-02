@@ -2,7 +2,7 @@
 
 > **Governance:** Mandatory subsection for any issue whose acceptance criteria, technical plan, or scope mentions "backfill".
 >
-> **Parent:** [#195 — Execution Governance Blueprint](https://github.com/ericsocrat/poland-food-db/issues/195)
+> **Parent:** [#195 — Execution Governance Blueprint](https://github.com/ericsocrat/tryvit/issues/195)
 >
 > **Extends:** #208 — Backfill Orchestration & Validation Framework
 

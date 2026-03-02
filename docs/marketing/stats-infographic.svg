@@ -25,7 +25,7 @@
   <circle cx="850" cy="430" r="150" fill="#ffffff" opacity="0.03"/>
   <!-- Title -->
   <text class="title" x="450" y="52">PROJECT BY THE NUMBERS</text>
-  <text class="subtitle" x="450" y="74">Poland Food Quality Database — Real-time metrics</text>
+  <text class="subtitle" x="450" y="74">TryVit — Real-time metrics</text>
   <line class="divider" x1="150" y1="88" x2="750" y2="88"/>
   <!-- Row 1: Primary metrics (4 cards) -->
   <g transform="translate(32, 104)">

@@ -1,6 +1,6 @@
-# FoodDB Frontend
+# TryVit Frontend
 
-Next.js 15 (App Router) + TypeScript + Tailwind CSS frontend for the Poland Food Database.
+Next.js 15 (App Router) + TypeScript + Tailwind CSS frontend for the TryVit.
 
 ## Tech Stack
 

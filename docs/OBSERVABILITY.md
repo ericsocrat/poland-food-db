@@ -1,6 +1,6 @@
 # Observability & Error Telemetry
 
-> Issue: [#183 — Production Observability + Error Telemetry](https://github.com/ericsocrat/poland-food-db/issues/183)
+> Issue: [#183 — Production Observability + Error Telemetry](https://github.com/ericsocrat/tryvit/issues/183)
 
 ## Architecture Overview
 

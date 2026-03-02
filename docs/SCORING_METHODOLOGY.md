@@ -2,7 +2,7 @@
 
 > **Version:** 3.2
 > **Last updated:** 2026-02-10
-> **Scope:** Poland food quality database
+> **Scope:** TryVit
 
 ---
 

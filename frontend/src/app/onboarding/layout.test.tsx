@@ -3,13 +3,13 @@ import { render, screen } from "@testing-library/react";
 import OnboardingLayout from "./layout";
 
 describe("OnboardingLayout", () => {
-  it("renders FoodDB brand text in header", () => {
+  it("renders TryVit brand text in header", () => {
     render(
       <OnboardingLayout>
         <p>child</p>
       </OnboardingLayout>,
     );
-    expect(screen.getByText("🥗 FoodDB")).toBeInTheDocument();
+    expect(screen.getByText("🥗 TryVit")).toBeInTheDocument();
   });
 
   it("renders children in main area", () => {
@@ -27,7 +27,7 @@ describe("OnboardingLayout", () => {
         <span />
       </OnboardingLayout>,
     );
-    const header = screen.getByText("🥗 FoodDB").closest("header");
+    const header = screen.getByText("🥗 TryVit").closest("header");
     expect(header?.className).toContain("border-b");
   });
 });

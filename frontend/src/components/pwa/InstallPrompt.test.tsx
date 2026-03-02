@@ -91,7 +91,7 @@ describe("InstallPrompt", () => {
     });
 
     expect(screen.getByTestId("install-prompt")).toBeInTheDocument();
-    expect(screen.getByText("Install FoodDB")).toBeInTheDocument();
+    expect(screen.getByText("Install TryVit")).toBeInTheDocument();
     expect(screen.getByTestId("install-button")).toBeInTheDocument();
   });
 

@@ -4,7 +4,7 @@
  * Shared utility for taking and organising full-page screenshots
  * produced by the mobile and desktop audit runners.
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/175
+ * @see https://github.com/ericsocrat/tryvit/issues/175
  */
 
 import type { Page } from "@playwright/test";

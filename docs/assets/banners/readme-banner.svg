@@ -106,7 +106,7 @@
   </g>
 
   <!-- Project name — large centered -->
-  <text x="600" y="195" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="42" font-weight="700" letter-spacing="-0.01em">Poland Food DB</text>
+  <text x="600" y="195" text-anchor="middle" fill="#ffffff" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="42" font-weight="700" letter-spacing="-0.01em">TryVit DB</text>
 
   <!-- Tagline — smaller, teal accent -->
   <text x="600" y="235" text-anchor="middle" fill="#2dd4bf" font-family="system-ui, -apple-system, 'Segoe UI', sans-serif" font-size="18" font-weight="500" letter-spacing="0.04em">Science-driven food quality intelligence</text>

@@ -1,6 +1,6 @@
 # Rate Limiting & Abuse Protection
 
-> Issue: [#182](https://github.com/user/poland-food-db/issues/182) — Hardening 3/7
+> Issue: [#182](https://github.com/user/tryvit/issues/182) — Hardening 3/7
 
 ## Overview
 

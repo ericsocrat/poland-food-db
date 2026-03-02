@@ -12,7 +12,7 @@
     Usage:   .\RUN_NEGATIVE_TESTS.ps1
 #>
 
-$CONTAINER = "supabase_db_poland-food-db"
+$CONTAINER = "supabase_db_tryvit"
 $DB_USER = "postgres"
 $DB_NAME = "postgres"
 $SCRIPT_ROOT = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }

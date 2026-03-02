@@ -1,4 +1,4 @@
-"""Category mapping between Open Food Facts tags and poland-food-db categories."""
+"""Category mapping between Open Food Facts tags and tryvit categories."""
 
 from __future__ import annotations
 

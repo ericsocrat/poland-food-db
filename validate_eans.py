@@ -1,5 +1,5 @@
 """
-EAN-13 Checksum Validator for Poland Food DB.
+EAN-13 Checksum Validator for TryVit DB.
 
 Queries all non-deprecated products with EAN codes and validates
 that each has a correct EAN-13 check digit.
@@ -52,7 +52,7 @@ def validate_ean(ean: str) -> tuple[bool, str]:
     return True, ""
 
 
-DB_CONTAINER = "supabase_db_poland-food-db"
+DB_CONTAINER = "supabase_db_tryvit"
 DB_USER = "postgres"
 DB_NAME = "postgres"
 

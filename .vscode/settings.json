@@ -229,6 +229,6 @@
   },
   "sonarlint.connectedMode.project": {
     "connectionId": "ericsocrat",
-    "projectKey": "ericsocrat_poland-food-db"
+    "projectKey": "ericsocrat_tryvit"
   }
 }

@@ -125,7 +125,7 @@ test.describe("Search page", () => {
     await page.goto("/app/search");
     await page.evaluate(() => {
       localStorage.setItem(
-        "fooddb:recent-searches",
+        "tryvit:recent-searches",
         JSON.stringify(["mleko", "jogurt"]),
       );
     });

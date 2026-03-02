@@ -65,7 +65,7 @@ export async function generateMetadata({
   const score = (profile.scores?.unhealthiness_score as number) ?? 0;
 
   const brandSuffix = brand ? ` by ${brand}` : "";
-  const description = `${name}${brandSuffix} — Health Score: ${score}/100. View detailed nutrition analysis on FoodDB.`;
+  const description = `${name}${brandSuffix} — Health Score: ${score}/100. View detailed nutrition analysis on TryVit.`;
 
   return {
     title: name,
@@ -99,7 +99,7 @@ function buildProductJsonLd(
 
   const nutrition = profile.nutrition ?? {};
   const baseUrl =
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://poland-food-db.vercel.app";
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://tryvit.vercel.app";
 
   // Schema.org NutritionInformation (per 100 g)
   const nutritionInfo: Record<string, unknown> = {

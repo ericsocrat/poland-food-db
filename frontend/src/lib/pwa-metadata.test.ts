@@ -152,9 +152,9 @@ describe("Product Layout", () => {
   });
 
   it("uses title template (no hardcoded suffix)", () => {
-    // Should NOT contain "— FoodDB" in title (template handles it)
-    expect(productLayoutSrc).not.toContain('title: `${name} — FoodDB`');
-    expect(productLayoutSrc).not.toContain('title: "Product — FoodDB"');
+    // Should NOT contain "— TryVit" in title (template handles it)
+    expect(productLayoutSrc).not.toContain('title: `${name} — TryVit`');
+    expect(productLayoutSrc).not.toContain('title: "Product — TryVit"');
   });
 });
 

@@ -1,4 +1,4 @@
-﻿<#
+<#
 .SYNOPSIS
     Runs all QA test suites against the LOCAL Supabase database.
 
@@ -125,7 +125,7 @@ $jsonResult = @{
 # Track warning state for -FailOnWarn
 $hasWarnings = $false
 
-$CONTAINER = "supabase_db_poland-food-db"
+$CONTAINER = "supabase_db_tryvit"
 $DB_USER = "postgres"
 $DB_NAME = "postgres"
 $SCRIPT_ROOT = if ($PSScriptRoot) { $PSScriptRoot } else { Split-Path -Parent $MyInvocation.MyCommand.Path }
@@ -240,7 +240,7 @@ function Write-TrimmedViolationOutput {
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  Poland Food DB — QA Test Suite" -ForegroundColor Cyan
+Write-Host "  TryVit DB — QA Test Suite" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 

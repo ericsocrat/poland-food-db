@@ -5,7 +5,7 @@
  * violations by mocking the Playwright Page interface.  The actual
  * integration tests run in Playwright against the real app.
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/174
+ * @see https://github.com/ericsocrat/tryvit/issues/174
  */
 
 import { describe, it, expect, vi } from "vitest";

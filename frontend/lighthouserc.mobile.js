@@ -8,7 +8,7 @@
  *   Performance ≥ 85, Accessibility ≥ 95, Best Practices ≥ 90,
  *   PWA ≥ 90, CLS < 0.1
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/177
+ * @see https://github.com/ericsocrat/tryvit/issues/177
  */
 
 const QA_PRODUCT_ID = process.env.QA_PRODUCT_ID ?? "1";

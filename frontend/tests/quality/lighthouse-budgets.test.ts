@@ -5,7 +5,7 @@
  * are structurally correct, have matching URLs, enforce the
  * required budget thresholds, and align with the route manifest.
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/177
+ * @see https://github.com/ericsocrat/tryvit/issues/177
  */
 
 import { describe, it, expect } from "vitest";

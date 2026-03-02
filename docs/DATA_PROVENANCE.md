@@ -8,7 +8,7 @@ Complete data provenance and freshness governance framework providing field-leve
 source tracking, staleness detection, conflict resolution, audit trail, and
 country-specific data policies.
 
-**Purpose:** Transform Poland Food DB from a "food database" into a "trusted
+**Purpose:** Transform TryVit DB from a "food database" into a "trusted
 health intelligence platform" where every data point is traceable, auditable,
 and governed by freshness policies.
 

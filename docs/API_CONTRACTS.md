@@ -1,4 +1,4 @@
-# Poland Food DB — API Contract Documentation
+# TryVit DB — API Contract Documentation
 
 > **Version:** 1.0 · **Date:** 2026-02-13
 > **Stability:** Stable — these surfaces are safe for frontend consumption.

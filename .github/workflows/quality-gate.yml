@@ -9,7 +9,7 @@
 # Smoke (PR):   ~9 routes × 2 viewports  → < 5 min
 # Full (nightly / manual):  ~40 routes × 2 viewports  → ~18 min
 #
-# @see https://github.com/ericsocrat/poland-food-db/issues/178
+# @see https://github.com/ericsocrat/tryvit/issues/178
 # ═══════════════════════════════════════════════════════════════════════════════
 
 name: Quality Gate

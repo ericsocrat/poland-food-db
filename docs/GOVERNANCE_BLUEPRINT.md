@@ -480,7 +480,7 @@ Execute ONLY:
 The combined architecture issues (#183, #185, #189–#193) plus this governance layer could generate 50+ issues. For a platform with 2,500 products, 1 country, and likely 1–2 engineers, this is **governance overhead exceeding product complexity**. The governance layer must remain a lightweight coordination mechanism, not a bureaucratic framework.
 
 ### ⚠️ WARNING 2: Complexity Exceeding Product Maturity
-Full provenance (6 tables), full event analytics (partitioned table, schema registry), full feature flags (evaluation engine, targeting rules) — these are patterns from platforms serving millions of users. Poland Food DB serves hundreds. **Ship the simplest version that solves the immediate problem, then iterate.**
+Full provenance (6 tables), full event analytics (partitioned table, schema registry), full feature flags (evaluation engine, targeting rules) — these are patterns from platforms serving millions of users. TryVit DB serves hundreds. **Ship the simplest version that solves the immediate problem, then iterate.**
 
 ### ⚠️ WARNING 3: Workstreams That Should Be Delayed
 

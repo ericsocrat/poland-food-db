@@ -43,8 +43,8 @@ import {
 import { getRecentSearches, addRecentSearch } from "@/lib/recent-searches";
 import type { SearchResult, SearchFilters, FormSubmitEvent } from "@/lib/types";
 
-const AVOID_TOGGLE_KEY = "fooddb:show-avoided";
-const VIEW_MODE_KEY = "fooddb:search-view";
+const AVOID_TOGGLE_KEY = "tryvit:show-avoided";
+const VIEW_MODE_KEY = "tryvit:search-view";
 const PAGE_SIZE = 20;
 
 type ViewMode = "grid" | "list";

@@ -3,7 +3,7 @@
  *
  * Shared utilities for reliable page-load waits used by audit runners.
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/175
+ * @see https://github.com/ericsocrat/tryvit/issues/175
  */
 
 import type { Page } from "@playwright/test";

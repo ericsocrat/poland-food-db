@@ -1,4 +1,4 @@
-# Poland Food DB — Performance Guardrails
+# TryVit DB — Performance Guardrails
 
 > **Issue:** #185 — [Hardening 5/7] Query-Level Performance Guardrails
 > **Last updated:** 2026-02-23

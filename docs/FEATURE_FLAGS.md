@@ -1,6 +1,6 @@
 # Feature Flag Framework
 
-> **Issue:** [#191 — Feature Flag Framework](https://github.com/ericsocrat/poland-food-db/issues/191)
+> **Issue:** [#191 — Feature Flag Framework](https://github.com/ericsocrat/tryvit/issues/191)
 > **Status:** Implemented
 > **Migration:** `20260224000000_feature_flags.sql`
 
@@ -279,7 +279,7 @@ Changes propagate via Supabase Realtime within ~2 seconds.
 
 ## Activation Roadmap
 
-> **Issue:** [#372 — Feature Flag Activation Roadmap](https://github.com/ericsocrat/poland-food-db/issues/372)
+> **Issue:** [#372 — Feature Flag Activation Roadmap](https://github.com/ericsocrat/tryvit/issues/372)
 > **Migration:** `20260312000500_flag_activation_roadmap.sql`
 
 All 8 flags shipped disabled. Each has documented activation criteria, a recommended order, and dependency tracking via `check_flag_readiness()`.

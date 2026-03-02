@@ -1,4 +1,4 @@
-"""CLI entry point for the poland-food-db Open Food Facts pipeline.
+"""CLI entry point for the tryvit Open Food Facts pipeline.
 
 Usage::
 
@@ -159,7 +159,7 @@ def run_pipeline(
         dir_slug = f"{slug_base}-{country.lower()}" if country != "PL" else slug_base
         output_dir = str(project_root / "db" / "pipelines" / dir_slug)
 
-    print("Poland Food DB — Open Food Facts Pipeline")
+    print("TryVit DB — Open Food Facts Pipeline")
     print("=" * 42)
     print(f"Category: {category}")
     print(f"Country:  {country} ({off_country})")

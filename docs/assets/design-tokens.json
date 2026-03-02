@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$version": "1.0.0",
-  "$description": "Poland Food DB — Design tokens for brand identity, scoring, and UI surfaces. Source of truth: frontend/src/styles/globals.css + frontend/tailwind.config.ts",
+  "$description": "TryVit DB — Design tokens for brand identity, scoring, and UI surfaces. Source of truth: frontend/src/styles/globals.css + frontend/tailwind.config.ts",
 
   "brand": {
     "primary": {

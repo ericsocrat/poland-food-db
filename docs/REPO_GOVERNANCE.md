@@ -31,7 +31,7 @@ No duplication — each governs a distinct domain.
 ### 1.1 Canonical Directory Layout
 
 ```
-poland-food-db/
+tryvit/
 ├── frontend/          # Next.js app (src/, e2e/, vitest, playwright)
 ├── pipeline/          # Python OFF API → SQL generator
 ├── scripts/           # Standalone utility scripts (validators, backfill tools)

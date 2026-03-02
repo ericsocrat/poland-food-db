@@ -13,7 +13,7 @@ test.describe("Public pages", () => {
 
   test("landing page has correct title", async ({ page }) => {
     await page.goto("/");
-    await expect(page).toHaveTitle(/Poland Food DB/);
+    await expect(page).toHaveTitle(/TryVit DB/);
   });
 
   test("login page renders form", async ({ page }) => {
@@ -31,17 +31,17 @@ test.describe("Public pages", () => {
 
   test("contact page renders", async ({ page }) => {
     await page.goto("/contact");
-    await expect(page).toHaveTitle(/Poland Food DB/);
+    await expect(page).toHaveTitle(/TryVit DB/);
   });
 
   test("privacy page renders", async ({ page }) => {
     await page.goto("/privacy");
-    await expect(page).toHaveTitle(/Poland Food DB/);
+    await expect(page).toHaveTitle(/TryVit DB/);
   });
 
   test("terms page renders", async ({ page }) => {
     await page.goto("/terms");
-    await expect(page).toHaveTitle(/Poland Food DB/);
+    await expect(page).toHaveTitle(/TryVit DB/);
   });
 });
 

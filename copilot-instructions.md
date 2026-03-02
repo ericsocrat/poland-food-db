@@ -1,4 +1,4 @@
-# Copilot Instructions — Poland Food Quality Database
+# Copilot Instructions — TryVit
 
 > **Last updated:** 2026-02-28
 > **Scope:** Poland (`PL`) primary + Germany (`DE`) micro-pilot (252 products across 5 categories)
@@ -49,7 +49,7 @@ $env:PYTHONIOENCODING="utf-8"
 **Execute generated SQL:**
 
 ```powershell
-Get-Content db/pipelines/dairy/*.sql | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
+Get-Content db/pipelines/dairy/*.sql | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
 ```
 
 **Run everything:**
@@ -65,7 +65,7 @@ Get-Content db/pipelines/dairy/*.sql | docker exec -i supabase_db_poland-food-db
 ## 3. Project Layout
 
 ```
-poland-food-db/
+tryvit/
 ├── pipeline/                        # Python OFF API → SQL generator
 │   ├── __init__.py                  # Package init
 │   ├── __main__.py                  # `python -m pipeline` entry point
@@ -998,7 +998,7 @@ If you **modify, rename, or add** any SQL function or view used by the app API (
 **Database access** (no local psql install needed):
 
 ```powershell
-echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
+echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
 ```
 
 **Python environment:**
@@ -1109,7 +1109,7 @@ Full documentation: `docs/SCORING_METHODOLOGY.md`
 
 ## 15. Feature Implementation Standard (Mandatory for All Major Features)
 
-> **Gold standard:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184)
+> **Gold standard:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/tryvit/issues/184)
 >
 > Every significant issue must follow this structure. **No exceptions.**
 > A "significant issue" is any change that introduces new tables, modifies API contracts, adds scoring dimensions, expands to new countries/languages, touches more than ~5 files, or introduces new CI/infrastructure workflows.
@@ -1453,7 +1453,7 @@ Before a feature is considered complete, verify against all CI gates:
 
 Use `.github/ISSUE_TEMPLATE/feature.md` for all significant issues. **Every section is required**; mark a section `N/A — [reason]` if genuinely not applicable. Never silently omit a section.
 
-> **Reference implementation:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184) — gold standard across all repo issues for structural completeness, actionable depth, and proven implementation.
+> **Reference implementation:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/tryvit/issues/184) — gold standard across all repo issues for structural completeness, actionable depth, and proven implementation.
 
 ---
 

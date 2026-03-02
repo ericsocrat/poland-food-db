@@ -6,8 +6,8 @@ This project uses [SonarCloud](https://sonarcloud.io/) for static analysis.
 The project is configured in `sonar-project.properties` at the repo root.
 
 - **Organization:** `ericsocrat`
-- **Project key:** `ericsocrat_poland-food-db`
-- **Dashboard:** <https://sonarcloud.io/project/overview?id=ericsocrat_poland-food-db>
+- **Project key:** `ericsocrat_tryvit`
+- **Dashboard:** <https://sonarcloud.io/project/overview?id=ericsocrat_tryvit>
 
 ## Quality Gate Strategy
 

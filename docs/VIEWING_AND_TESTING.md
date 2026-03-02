@@ -1,4 +1,4 @@
-# Poland Food DB — Viewing & Testing Guide
+# TryVit DB — Viewing & Testing Guide
 
 ## 🔍 How to View Your Data
 
@@ -24,25 +24,25 @@ For quick terminal queries, use:
 
 ```powershell
 # View top 10 unhealthiest products
-echo "SELECT product_name, brand, unhealthiness_score, nutri_score_label FROM v_master ORDER BY unhealthiness_score::int DESC LIMIT 10;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
+echo "SELECT product_name, brand, unhealthiness_score, nutri_score_label FROM v_master ORDER BY unhealthiness_score::int DESC LIMIT 10;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
 
 # View all chips
-echo "SELECT * FROM v_master WHERE category='Chips' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres -x
+echo "SELECT * FROM v_master WHERE category='Chips' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres -x
 
 # View all żabka products
-echo "SELECT * FROM v_master WHERE category='Żabka' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres -x
+echo "SELECT * FROM v_master WHERE category='Żabka' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres -x
 
 # View all cereals
-echo "SELECT * FROM v_master WHERE category='Cereals' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres -x
+echo "SELECT * FROM v_master WHERE category='Cereals' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres -x
 
 # View all drinks
-echo "SELECT * FROM v_master WHERE category='Drinks' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres -x
+echo "SELECT * FROM v_master WHERE category='Drinks' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres -x
 
 # View all dairy
-echo "SELECT * FROM v_master WHERE category='Dairy' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres -x
+echo "SELECT * FROM v_master WHERE category='Dairy' ORDER BY unhealthiness_score::int DESC;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres -x
 
 # Count by category
-echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GROUP BY category;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
+echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GROUP BY category;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
 ```
 
 ---
@@ -53,7 +53,7 @@ echo "SELECT category, COUNT(*) FROM products WHERE is_deprecated IS NOT TRUE GR
 Validates foreign keys, nulls, duplicates, orphaned rows, nutrition sanity, provenance:
 
 ```powershell
-Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres --tuples-only
+Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres --tuples-only
 ```
 
 **Expected output**: Empty (zero violation rows) = ✅ PASS
@@ -64,7 +64,7 @@ Get-Content "db\qa\QA__null_checks.sql" | docker exec -i supabase_db_poland-food
 Validates v3.2 algorithm correctness, flag logic, NOVA consistency, regression checks:
 
 ```powershell
-Get-Content "db\qa\QA__scoring_formula_tests.sql" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres --tuples-only
+Get-Content "db\qa\QA__scoring_formula_tests.sql" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres --tuples-only
 ```
 
 **Expected output**: Empty (zero violation rows) = ✅ PASS

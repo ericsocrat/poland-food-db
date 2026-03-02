@@ -44,7 +44,7 @@ describe("SharedComparisonPage", () => {
 
     render(<SharedComparisonPage />);
     // Should render without crashing
-    expect(screen.getByText("FoodDB", { exact: false })).toBeInTheDocument();
+    expect(screen.getByText("TryVit", { exact: false })).toBeInTheDocument();
   });
 
   it("shows error message on error", () => {
@@ -58,7 +58,7 @@ describe("SharedComparisonPage", () => {
     expect(screen.getByText(/invalid or has expired/i)).toBeInTheDocument();
   });
 
-  it("shows go to FoodDB link on error", () => {
+  it("shows go to TryVit link on error", () => {
     mockUseSharedComparison.mockReturnValue({
       data: undefined,
       isLoading: false,
@@ -66,7 +66,7 @@ describe("SharedComparisonPage", () => {
     });
 
     render(<SharedComparisonPage />);
-    expect(screen.getByText("Go to FoodDB").closest("a")).toHaveAttribute(
+    expect(screen.getByText("Go to TryVit").closest("a")).toHaveAttribute(
       "href",
       "/",
     );

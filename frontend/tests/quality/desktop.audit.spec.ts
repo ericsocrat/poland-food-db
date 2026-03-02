@@ -12,7 +12,7 @@
  *
  *   QA_MODE_LEVEL=smoke npx playwright test --project quality-desktop
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/176
+ * @see https://github.com/ericsocrat/tryvit/issues/176
  */
 
 import { test, expect } from "@playwright/test";

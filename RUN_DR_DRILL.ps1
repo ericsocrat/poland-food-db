@@ -89,7 +89,7 @@ if ($script:JsonMode) {
 
 $PROJECT_REF       = "uskvezwftkkudvksmken"
 $POOLER_HOST       = "aws-1-eu-west-1.pooler.supabase.com"
-$DOCKER_CONTAINER  = "supabase_db_poland-food-db"
+$DOCKER_CONTAINER  = "supabase_db_tryvit"
 $DB_NAME           = "postgres"
 $DB_USER           = "postgres"
 $DB_PORT           = "5432"
@@ -188,7 +188,7 @@ function Add-ScenarioResult {
 
 Write-Host ""
 Write-Host "╔══════════════════════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║           DISASTER RECOVERY DRILL — Poland Food DB         ║" -ForegroundColor Cyan
+Write-Host "║           DISASTER RECOVERY DRILL — TryVit DB         ║" -ForegroundColor Cyan
 Write-Host "╚══════════════════════════════════════════════════════════════╝" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  Environment : $Env" -ForegroundColor White

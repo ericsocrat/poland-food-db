@@ -47,7 +47,7 @@ import requests
 
 OFF_SEARCH_URL = "https://world.openfoodfacts.org/api/v2/search"
 OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
-USER_AGENT = "poland-food-db/1.0 (https://github.com/ericsocrat/poland-food-db)"
+USER_AGENT = "tryvit/1.0 (https://github.com/ericsocrat/tryvit)"
 
 # Fields to retrieve from the per-product endpoint
 PRODUCT_FIELDS = (
@@ -79,7 +79,7 @@ NUTRITION_MAP = {
 
 PIPELINE_DIR = Path(__file__).parent / "db" / "pipelines"
 
-DB_CONTAINER = "supabase_db_poland-food-db"
+DB_CONTAINER = "supabase_db_tryvit"
 DB_USER = "postgres"
 DB_NAME = "postgres"
 
@@ -874,7 +874,7 @@ def main() -> None:
     output_dir = PIPELINE_DIR / folder_name
 
     print("=" * 60)
-    print("  Poland Food DB — OFF Category Fetcher")
+    print("  TryVit DB — OFF Category Fetcher")
     print("=" * 60)
     print(f"  Country:      {country} (en:{COUNTRY_TAGS[country]})")
     print(f"  Category:     {category}")

@@ -1,4 +1,4 @@
-# Poland Food DB — UX/UI Design Document
+# TryVit DB — UX/UI Design Document
 
 > **Status:** Production-ready specification — architecture, data contracts, and UX rules locked.
 > **Last updated:** 2026-02-13 (docs sync: scanner/preferences/country/diet-allergen features now implemented)
@@ -59,7 +59,7 @@ Home (Dashboard)
 **Layout:**
 ```
 ┌─────────────────────────────────────────────────────────┐
-│  🇵🇱  Poland Food DB                    [Search bar]    │
+│  🇵🇱  TryVit DB                    [Search bar]    │
 ├─────────────────────────────────────────────────────────┤
 │                                                         │
 │  Category Grid (5 × 4)                                  │

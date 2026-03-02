@@ -1,12 +1,12 @@
 name: Bug Report
-description: Report a bug or unexpected behavior in the Poland Food DB.
+description: Report a bug or unexpected behavior in the TryVit.
 title: "[Bug]: "
 labels: ["bug"]
 body:
   - type: markdown
     attributes:
       value: |
-        ![Bug Report](https://raw.githubusercontent.com/ericsocrat/poland-food-db/main/.github/assets/bug-report-header.svg)
+        ![Bug Report](https://raw.githubusercontent.com/ericsocrat/tryvit/main/.github/assets/bug-report-header.svg)
 
         Thanks for reporting a bug! Please fill out the sections below so we can reproduce and fix it quickly.
 

@@ -2,14 +2,14 @@
 
 > **Last updated:** 2026-02-28
 > **Owner:** Eric (sole maintainer)
-> **Scope:** Poland Food Quality Database — production & staging environments
+> **Scope:** TryVit — production & staging environments
 > **Complements:** [DEPLOYMENT.md](../DEPLOYMENT.md) § Emergency Checklist, § Rollback Procedures
 
 ---
 
 ## 1. Purpose
 
-This playbook defines the incident response process for the Poland Food Quality Database.
+This playbook defines the incident response process for the TryVit.
 It provides severity definitions, an escalation ladder, communication templates,
 a blameless post-mortem format, and scenario-specific runbooks for common failure modes.
 
@@ -267,7 +267,7 @@ This section should answer: "What broke?" and "Why did it break?"]
 | Step | Action                                            | Command / Reference                                                      |
 |------|---------------------------------------------------|--------------------------------------------------------------------------|
 | 1    | Check Supabase dashboard status                   | Supabase Dashboard → Project → Database                                  |
-| 2    | Verify DB connection from local                    | `echo "SELECT 1;" \| docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres` |
+| 2    | Verify DB connection from local                    | `echo "SELECT 1;" \| docker exec -i supabase_db_tryvit psql -U postgres -d postgres` |
 | 3    | Check if a migration caused the issue              | `supabase migration list` — compare to last known good state             |
 | 4    | If migration broke it: identify the bad migration  | Check `supabase/migrations/` — last modified timestamp                   |
 | 5    | Restore from backup if needed                      | See DEPLOYMENT.md § Rollback Procedures (Scenarios 1-5)                  |

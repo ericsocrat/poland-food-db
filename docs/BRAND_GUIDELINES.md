@@ -1,9 +1,9 @@
-# Brand Guidelines — Poland Food Quality Database
+# Brand Guidelines — TryVit
 
 > **Last updated:** 2026-03-14
 > **Status:** Active (incremental — updates as #407/#408 complete)
-> **Owner issue:** [#410](https://github.com/ericsocrat/poland-food-db/issues/410)
-> **Parent epic:** [#397](https://github.com/ericsocrat/poland-food-db/issues/397) — Brand Identity Foundation
+> **Owner issue:** [#410](https://github.com/ericsocrat/tryvit/issues/410)
+> **Parent epic:** [#397](https://github.com/ericsocrat/tryvit/issues/397) — Brand Identity Foundation
 
 This document is the single source of truth for the project's visual identity. It enables any contributor or designer to produce on-brand assets without guessing. All color values are sourced from `docs/assets/design-tokens.json` and `frontend/src/styles/globals.css`.
 
@@ -295,7 +295,7 @@ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
 
 ## 5. Iconography
 
-> **Status:** Guidelines established; detailed icon library depends on [#407](https://github.com/ericsocrat/poland-food-db/issues/407) for the brand icon system.
+> **Status:** Guidelines established; detailed icon library depends on [#407](https://github.com/ericsocrat/tryvit/issues/407) for the brand icon system.
 
 ### Icon Style
 

@@ -36,7 +36,7 @@ describe("opengraph-image root", () => {
 
   it("exports alt text with brand name", async () => {
     const mod = await import("./opengraph-image");
-    expect(mod.alt).toContain("Poland Food DB");
+    expect(mod.alt).toContain("TryVit DB");
   });
 
   it("exports a revalidate value", async () => {

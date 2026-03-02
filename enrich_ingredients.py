@@ -24,7 +24,7 @@ import requests
 # Config
 # ---------------------------------------------------------------------------
 OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
-USER_AGENT = "poland-food-db/1.0 (https://github.com/ericsocrat/poland-food-db)"
+USER_AGENT = "tryvit/1.0 (https://github.com/ericsocrat/tryvit)"
 FIELDS = "ingredients,allergens_tags,traces_tags,ingredients_analysis_tags"
 DELAY = 1.0  # seconds between requests (conservative to avoid RemoteDisconnected)
 TIMEOUT = 30
@@ -34,7 +34,7 @@ OUTPUT_DIR = Path(__file__).parent / "supabase" / "migrations"
 # Migration filename is generated dynamically at runtime to avoid overwrites
 MIGRATION_FILE: Path | None = None  # set in main()
 
-DB_CONTAINER = "supabase_db_poland-food-db"
+DB_CONTAINER = "supabase_db_tryvit"
 DB_USER = "postgres"
 DB_NAME = "postgres"
 
@@ -877,10 +877,10 @@ def main():
     print(f"  File size: {MIGRATION_FILE.stat().st_size / 1024:.1f} KB")
     print("\nDone! Run the migration with:")
     print(
-        "  docker exec supabase_db_poland-food-db psql -U postgres -d postgres -f ..."
+        "  docker exec supabase_db_tryvit psql -U postgres -d postgres -f ..."
     )
     print(
-        f"  or: Get-Content '{MIGRATION_FILE}' -Raw | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres"
+        f"  or: Get-Content '{MIGRATION_FILE}' -Raw | docker exec -i supabase_db_tryvit psql -U postgres -d postgres"
     )
 
 

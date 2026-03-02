@@ -10,7 +10,7 @@
  *   Global (16) · Mobile (3) · Desktop (1) · Product (7) ·
  *   Recipes (1) · Settings (1) · Admin (3)
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/174
+ * @see https://github.com/ericsocrat/tryvit/issues/174
  */
 
 import { type Page, expect } from "@playwright/test";

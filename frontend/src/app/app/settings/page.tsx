@@ -140,7 +140,7 @@ function ExportDataSection() {
         await import("@/lib/download");
       const { size } = downloadJson(
         result.data,
-        `fooddb-export-${Date.now()}.json`,
+        `tryvit-export-${Date.now()}.json`,
       );
       setExportTimestamp();
       setCooldownMin(60);

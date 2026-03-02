@@ -44,7 +44,7 @@
   <rect x="80" y="60" width="1120" height="6" rx="3" fill="url(#bandGrad)" opacity="0.8"/>
 
   <!-- Project name -->
-  <text x="640" y="140" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="500" fill="#5eead4" letter-spacing="4">POLAND FOOD QUALITY DATABASE</text>
+  <text x="640" y="140" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="500" fill="#5eead4" letter-spacing="4">TryVit</text>
 
   <!-- Version placeholder (EDIT THIS) -->
   <text x="640" y="220" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="72" font-weight="800" fill="#ffffff">v0.0.0</text>

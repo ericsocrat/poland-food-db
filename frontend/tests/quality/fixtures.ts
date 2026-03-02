@@ -8,7 +8,7 @@
  * All values support env-var overrides so CI can point to its own
  * seed data without code changes.
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/172
+ * @see https://github.com/ericsocrat/tryvit/issues/172
  */
 
 import type { APIRequestContext } from "@playwright/test";

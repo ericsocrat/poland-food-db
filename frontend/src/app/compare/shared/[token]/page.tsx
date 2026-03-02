@@ -31,7 +31,7 @@ function SharedComparisonContent() {
             href="/"
             className="text-lg font-bold text-brand"
           >
-            🥗 FoodDB
+            🥗 TryVit
           </Link>
           <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-medium text-blue-700">
             {t("shared.sharedComparison")}
@@ -59,7 +59,7 @@ function SharedComparisonContent() {
               {t("shared.comparisonInvalid")}
             </p>
             <Link href="/" className="mt-3 btn-primary inline-block text-sm">
-              {t("shared.goToFoodDB")}
+              {t("shared.goToTryVit")}
             </Link>
           </div>
         )}

@@ -1,4 +1,4 @@
-import type { Metadata, Viewport } from "next";
+﻿import type { Metadata, Viewport } from "next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Providers } from "@/components/Providers";
 import { ThemeScript } from "@/components/ThemeScript";
@@ -7,8 +7,8 @@ import "@/styles/globals.css";
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0d7377" },
-    { media: "(prefers-color-scheme: dark)", color: "#095456" },
+    { media: "(prefers-color-scheme: light)", color: "#1DB954" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A2E1A" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -17,16 +17,16 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Poland Food DB — Multi-Axis Food Scoring",
-    template: "%s | FoodDB",
+    default: "TryVit — Food Health Scanner",
+    template: "%s | TryVit",
   },
   description:
-    "Multi-axis food quality scoring — find healthier alternatives in Poland and Germany.",
+    "Science-driven food health scoring — find healthier alternatives in Poland and Germany.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "FoodDB",
+    title: "TryVit",
   },
   icons: {
     icon: [
@@ -47,24 +47,24 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "Poland Food DB",
+    siteName: "TryVit",
     locale: "en_US",
-    title: "Poland Food DB — Multi-Axis Food Scoring",
+    title: "TryVit — Food Health Scanner",
     description:
       "Compare health scores and nutritional data for food products in Poland and Germany.",
-    url: "https://poland-food-db.vercel.app",
+    url: "https://tryvit.vercel.app",
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Poland Food DB — Science-driven food quality intelligence for Poland and Germany",
+        alt: "TryVit — Science-driven food quality intelligence for Poland and Germany",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Poland Food DB",
+    title: "TryVit",
     description:
       "Compare health scores and nutritional data for food products in Poland and Germany.",
     images: ["/og-image.png"],
@@ -74,10 +74,10 @@ export const metadata: Metadata = {
     follow: true,
   },
   other: {
-    "msapplication-TileColor": "#0d7377",
+    "msapplication-TileColor": "#1DB954",
   },
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://poland-food-db.vercel.app",
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://tryvit.vercel.app",
   ),
 };
 
@@ -89,11 +89,10 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Poland Food DB",
-    alternateName: "FoodDB",
-    url: "https://poland-food-db.vercel.app",
+    name: "TryVit",
+    url: "https://tryvit.vercel.app",
     description:
-      "Multi-axis food quality scoring — compare health scores and nutritional data for food products in Poland and Germany.",
+      "Science-driven food health scoring — find healthier alternatives and understand nutrition for products in Poland and Germany.",
     applicationCategory: "HealthApplication",
     operatingSystem: "Any",
     browserRequirements: "Requires a modern web browser",
@@ -105,13 +104,18 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning {...(IS_QA_MODE ? { "data-qa-mode": "true" } : {})}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      {...(IS_QA_MODE ? { "data-qa-mode": "true" } : {})}
+    >
       <head>
         <ThemeScript />
         {IS_QA_MODE && (
           <style
             dangerouslySetInnerHTML={{
-              __html: "*, *::before, *::after { transition: none !important; animation: none !important; }",
+              __html:
+                "*, *::before, *::after { transition: none !important; animation: none !important; }",
             }}
           />
         )}

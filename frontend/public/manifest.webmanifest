@@ -1,7 +1,7 @@
 {
   "id": "/app",
-  "name": "Poland Food DB",
-  "short_name": "FoodDB",
+  "name": "TryVit DB",
+  "short_name": "TryVit",
   "description": "Multi-axis food quality scoring — compare health scores and nutritional data for food products in Poland and Germany.",
   "start_url": "/app",
   "scope": "/",

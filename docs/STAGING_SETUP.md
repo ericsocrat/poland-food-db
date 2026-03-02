@@ -29,7 +29,7 @@
 1. Go to [Supabase Dashboard](https://supabase.com/dashboard)
 2. Click **New project**
 3. Settings:
-   - **Name:** `poland-food-db-staging`
+   - **Name:** `tryvit-staging`
    - **Database Password:** Generate a strong password — save it securely
    - **Region:** Same as production (to minimize latency differences)
    - **Plan:** Free tier is sufficient for staging
@@ -41,7 +41,7 @@
 
 ```powershell
 # From the repository root
-cd c:\Users\ericsocrat\Desktop\poland-food-db
+cd c:\Users\ericsocrat\Desktop\tryvit
 
 # Link to the staging project
 npx supabase link --project-ref <staging-ref>

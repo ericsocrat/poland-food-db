@@ -110,7 +110,7 @@ export function generateCSV(
   lines.push("\uFEFF");
 
   if (includeHeader) {
-    lines.push("# Poland Food Quality Database — Export");
+    lines.push("# TryVit — Export");
     if (includeTimestamp) {
       lines.push(`# Exported: ${new Date().toISOString()}`);
     }
@@ -136,7 +136,7 @@ export function generateComparisonCSV(products: ExportableProduct[]): string {
 
   lines.push(
     "\uFEFF",
-    "# Poland Food Quality Database — Comparison Export",
+    "# TryVit — Comparison Export",
     `# Exported: ${new Date().toISOString()}`,
     `# Products compared: ${products.length}`,
   );
@@ -188,7 +188,7 @@ export function generateText(
   const lines: string[] = [];
 
   if (includeHeader) {
-    lines.push("Poland Food Quality Database — Export");
+    lines.push("TryVit — Export");
     if (includeTimestamp) {
       const d = new Date();
       const pad = (n: number) => String(n).padStart(2, "0");

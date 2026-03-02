@@ -19,7 +19,7 @@ describe("cache-manager", () => {
     // Clear DB between tests
     await clearAllCaches().catch(() => {});
     // Delete the DB entirely to avoid version conflicts
-    const req = indexedDB.deleteDatabase("fooddb-offline");
+    const req = indexedDB.deleteDatabase("tryvit-offline");
     await new Promise<void>((resolve) => {
       req.onsuccess = () => resolve();
       req.onerror = () => resolve();

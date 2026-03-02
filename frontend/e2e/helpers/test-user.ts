@@ -4,7 +4,7 @@
 
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
 
-export const TEST_EMAIL = "e2e-playwright@test.fooddb.local";
+export const TEST_EMAIL = "e2e-playwright@test.tryvit.local";
 export const TEST_PASSWORD = "PlaywrightTest123!";
 
 function getAdminClient(): SupabaseClient {

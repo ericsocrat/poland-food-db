@@ -73,7 +73,7 @@ $USER_TABLES = @(
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  Poland Food DB — User Data Export" -ForegroundColor Cyan
+Write-Host "  TryVit DB — User Data Export" -ForegroundColor Cyan
 Write-Host "  Environment: $($Env.ToUpper())" -ForegroundColor $(if ($Env -eq "remote") { "Red" } else { "Green" })
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
