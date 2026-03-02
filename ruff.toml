@@ -45,6 +45,7 @@ ignore = [
 [lint.isort]
 combine-as-imports = true
 force-wrap-aliases = true
+known-first-party = ["pipeline"]
 
 [lint.per-file-ignores]
 # Test files: assert statements + broader exception handling
@@ -53,20 +54,16 @@ force-wrap-aliases = true
 # Pipeline fetch/utility scripts: print() calls are intentional progress indicators
 "pipeline/run.py" = ["T20"]
 "fetch_off_category.py" = ["T20"]
-"enrich_ingredients.py" = ["T20"]
+"enrich_ingredients.py" = ["T20", "E501"]
 "validate_eans.py" = ["T20"]
 "run_data_audit.py" = ["T20"]
 # Setup scripts
 "scripts/*.py" = ["T20", "S603", "S607"]
+# SQL generator constructs long SQL strings by design
+"pipeline/sql_generator.py" = ["E501"]
 
 [format]
 quote-style = "double"
 indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "lf"
-# SQL generator and enrichment scripts construct SQL strings by design
-"pipeline/sql_generator.py" = ["E501"]
-"enrich_ingredients.py" = ["E501"]
-
-[lint.isort]
-known-first-party = ["pipeline"]
