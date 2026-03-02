@@ -28,7 +28,7 @@ Step-by-step guide for configuring GitHub repository settings for `ericsocrat/tr
 1. Go to **Settings → General**
 2. Scroll to **Social preview**
 3. Click **Edit → Upload an image**
-4. Upload `docs/assets/github-social-preview.png` (1280×640px) — _created in #411_
+4. Upload `docs/assets/banners/social-preview.png` (1280×640px) — _created in #411_
 5. Click **Save**
 
 > **Note:** Social preview image (#411) is not yet created. This step will be completed when #411 is done.
