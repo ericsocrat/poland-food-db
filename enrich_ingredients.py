@@ -193,6 +193,7 @@ def fetch_off_product(ean: str) -> dict | None:
                 continue
             print(f"  Failed for EAN {ean}: {exc}", file=sys.stderr)
             return None
+    return None
 
 
 # ---------------------------------------------------------------------------

@@ -40,7 +40,7 @@
 
 ### 1.2 Migration Inventory
 
-**Location:** `supabase/migrations/` — **130 migration files**, append-only.
+**Location:** `supabase/migrations/` — **184 migration files**, append-only.
 
 **Naming convention:** `YYYYMMDDHHMMSS_description.sql` (Supabase CLI timestamps). Files are applied in lexicographic sort order.
 
@@ -310,8 +310,8 @@ There is **no automated deployment workflow** to push schema changes or data to 
 | `RUN_REMOTE.ps1`               | Execute all pipeline SQL files against remote Supabase               | Remote (psql)                |
 | `RUN_SEED.ps1`                 | Unified seed runner — reference data + pipelines for any environment | Local / Staging / Production |
 | `RUN_SANITY.ps1`               | Cross-environment sanity checks (16 checks)                          | Any environment              |
-| `RUN_QA.ps1`                   | Run 30 QA test suites (429 checks)                                   | Local or CI                  |
-| `RUN_NEGATIVE_TESTS.ps1`       | Run 23 negative injection tests (rollback)                           | Local                        |
+| `RUN_QA.ps1`                   | Run 48 QA test suites (733 checks)                                   | Local or CI                  |
+| `RUN_NEGATIVE_TESTS.ps1`       | Run 20 negative injection tests (rollback)                           | Local                        |
 | `validate_eans.py`             | EAN-8/EAN-13 checksum validation                                     | Called by RUN_QA             |
 | `check_enrichment_identity.py` | Block migrations using raw `product_id` anchors                      | CI guard                     |
 | `check_pipeline_structure.py`  | Validate pipeline folder structure and SQL patterns                  | CI guard                     |
@@ -324,12 +324,12 @@ There is no standalone `init_db_structure.py` script. Database initialization fo
 
 ```
 supabase db reset
-  → Applies all 130 migrations in order (supabase/migrations/*.sql)
+  → Applies all 184 migrations in order (supabase/migrations/*.sql)
   → Runs seed.sql (empty — no-op)
   → Schema is ready
 
 RUN_LOCAL.ps1
-  → Executes all PIPELINE__*.sql files across 21 category folders
+  → Executes all PIPELINE__*.sql files across 25 category folders
   → Refreshes materialized views
   → Optionally runs QA (-RunQA flag)
 ```
@@ -460,8 +460,8 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key-here
 
 - **EAN coverage:** 997/1,025 (97.3%)
 - **Scoring version:** v3.2 — 9-factor weighted formula
-- **QA checks:** 429 checks across 30 suites — all passing
-- **Negative tests:** 23 injection tests — all caught
+- **QA checks:** 733 checks across 48 suites — all passing
+- **Negative tests:** 20 injection tests — all caught
 - **Confidence threshold (CI):** ≤5% low-confidence products allowed
 - **CHECK constraints:** 24 domain constraints enforced at DB level
 - **42 named constraints** all validated (`convalidated = true`)
@@ -506,8 +506,8 @@ Backup = supabase/migrations/*.sql + db/pipelines/*.sql
 ```
 
 Since the database can be fully reconstructed from:
-1. 130 migration files (schema + functions + views)
-2. 21 × 4 pipeline SQL files (all product data)
+1. 184 migration files (schema + functions + views)
+2. 25 × 4 pipeline SQL files (all product data)
 3. `ci_post_pipeline.sql` (data fixups)
 
 This means the **Git repository itself is the backup**. However, this does NOT cover:
@@ -619,7 +619,7 @@ Supabase Auth URL configuration required:
 ### 10.1 Strengths
 
 1. **Fully reproducible database** from Git repository (migrations + pipelines)
-2. **Comprehensive QA** (429 checks, 23 negative tests, CI-enforced)
+2. **Comprehensive QA** (733 checks, 20 negative tests, CI-enforced)
 3. **Idempotent pipelines** — safe to re-run any number of times
 4. **Strong security hardening** — RLS, grant lockdown, SECURITY DEFINER
 5. **Multi-country architecture** ready (PL active, DE micro-pilot)

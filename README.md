@@ -168,7 +168,7 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_tryvit psql 
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────────────┐
 │  Open Food Facts │────▶│  Python Pipeline │────▶│  PostgreSQL (Supabase)  │
-│  API v2          │     │  sql_generator   │     │  182 migrations         │
+│  API v2          │     │  sql_generator   │     │  184 migrations         │
 │  (category tags, │     │  validator       │     │  25 pipeline folders    │
 │   countries=PL)  │     │  off_client      │     │  products + nutrition   │
 └─────────────────┘     └──────────────────┘     │  + ingredients + scores │
@@ -301,7 +301,7 @@ tryvit/
 │   └── views/                       # Reference view definitions
 │
 ├── supabase/
-│   ├── migrations/                  # 182 append-only schema migrations
+│   ├── migrations/                  # 184 append-only schema migrations
 │   ├── seed/                        # Reference data seeds
 │   ├── tests/                       # pgTAP integration tests
 │   └── functions/                   # Edge Functions (API gateway, push notifications)
@@ -344,7 +344,7 @@ tryvit/
 
 ## 🧪 Testing
 
-Every change is validated against **733 automated checks** across 48 QA suites plus 23 negative validation tests. No data enters the database without verification.
+Every change is validated against **733 automated checks** across 48 QA suites plus 20 negative validation tests. No data enters the database without verification.
 
 <table>
   <tr>

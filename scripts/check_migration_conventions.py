@@ -75,15 +75,15 @@ def _check_filename(name: str) -> list[str]:
     if date_part < _MIN_DATE or date_part > _MAX_DATE:
         violations.append(
             f"[{name}] Date portion {date_part} out of expected range "
-            f"({_MIN_DATE}–{_MAX_DATE})"
+            f"({_MIN_DATE}-{_MAX_DATE})"
         )
 
-    # Month 01–12
+    # Month 01-12
     month = int(timestamp_str[4:6])
     if month < 1 or month > 12:
         violations.append(f"[{name}] Invalid month: {month:02d}")
 
-    # Day 01–31
+    # Day 01-31
     day = int(timestamp_str[6:8])
     if day < 1 or day > 31:
         violations.append(f"[{name}] Invalid day: {day:02d}")

@@ -74,7 +74,7 @@ def draw_v_leaf(draw: ImageDraw.ImageDraw, cx: int, cy: int, size: int, color: t
 
 
 def make_icon_image(size: int, bg_color: tuple, icon_color: tuple) -> Image.Image:
-    """Create a square icon PNG at `size` × `size` with the V-leaf mark."""
+    """Create a square icon PNG at `size` x `size` with the V-leaf mark."""
     img = Image.new("RGBA", (size, size), (*bg_color, 255))
     draw = ImageDraw.Draw(img)
     icon_size = int(size * 0.6)
@@ -96,7 +96,7 @@ def make_splash_image(width: int, height: int) -> Image.Image:
         try:
             logo = Image.open(logo_source).convert("RGBA")
             # Tint: replace non-transparent pixels with white
-            r, g, b, a = logo.split()
+            _r, _g, _b, a = logo.split()
             white_logo = Image.merge(
                 "RGBA",
                 (
@@ -148,7 +148,7 @@ def generate_icons() -> None:
                 bg = Image.new("RGBA", (px, px), (*VIT_GREEN, 255))
                 bg.paste(img, (0, 0), img)
                 bg.convert("RGB").save(dest, "PNG", optimize=True)
-                print(f"  MADE  {dest.name}  ({px}×{px}) from 512 source")
+                print(f"  MADE  {dest.name}  ({px}x{px}) from 512 source")
                 continue
             except Exception as exc:
                 print(f"  WARNING: resize failed ({exc}) — falling back to drawn mark")
@@ -156,7 +156,7 @@ def generate_icons() -> None:
         # Fallback: draw mark programmatically
         img = make_icon_image(px, VIT_GREEN, WHITE)
         img.convert("RGB").save(dest, "PNG", optimize=True)
-        print(f"  MADE  {dest.name}  ({px}×{px}) drawn mark")
+        print(f"  MADE  {dest.name}  ({px}x{px}) drawn mark")
 
     print(f"  Icons written to: {ICONS_DIR}")
 
@@ -185,7 +185,7 @@ def generate_splash() -> None:
         img = make_splash_image(width, height)
         img.save(dest, "PNG", optimize=True)
         kb = round(dest.stat().st_size / 1024, 1)
-        print(f"  MADE  {filename}  ({width}×{height})  {kb} KB  — {device}")
+        print(f"  MADE  {filename}  ({width}x{height})  {kb} KB  -- {device}")
 
     print(f"  Splash PNGs written to: {SPLASH_DIR}")
 

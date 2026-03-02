@@ -138,7 +138,7 @@ def run_pipeline(
     dry_run:
         If *True*, display what would be generated without writing files.
     min_completeness:
-        Minimum OFF completeness score (0–1) to keep a product.
+        Minimum OFF completeness score (0-1) to keep a product.
     max_warnings:
         Products with more than this many validation warnings are dropped.
     country:
@@ -301,7 +301,7 @@ def main() -> None:
         "--min-completeness",
         type=float,
         default=0.0,
-        help="Minimum OFF completeness score 0–1 (default: 0.0)",
+        help="Minimum OFF completeness score 0-1 (default: 0.0)",
     )
     parser.add_argument(
         "--max-warnings",

@@ -191,7 +191,7 @@ def check_nutrition_anomalies(
         if val < lo * 0.5 or val > hi * 1.5:
             warnings.append(
                 f"ANOMALY: {field}={val} outside expected range "
-                f"({lo}–{hi}) for category '{category}', "
+                f"({lo}-{hi}) for category '{category}', "
                 f"product '{name}'"
             )
 
@@ -233,10 +233,10 @@ def check_nutrition_ranges(product: dict, category: str) -> list[str]:
             continue
         if val < lo or val > hi:
             warnings.append(
-                f"{field}={val} outside expected range [{lo}–{hi}] for {category}"
+                f"{field}={val} outside expected range [{lo}-{hi}] for {category}"
             )
 
-    # Calorie back-calculation: protein×4 + carbs×4 + fat×9 should be
+    # Calorie back-calculation: protein*4 + carbs*4 + fat*9 should be
     # within 35% of stated calories (excludes alcohol calories, fibre, etc.)
     if category not in ("Alcohol", "Drinks", "Condiments", "Sauces"):
         try:

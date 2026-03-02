@@ -56,6 +56,7 @@ def _get_json(session: requests.Session, url: str, params: dict) -> dict | None:
                 continue
             logger.warning("Request failed after %d retries: %s", MAX_RETRIES, exc)
             return None
+    return None
 
 
 def _session() -> requests.Session:

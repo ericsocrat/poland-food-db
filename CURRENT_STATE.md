@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-03 by GitHub Copilot (session 6)
+> **Last updated:** 2026-03-04 by GitHub Copilot (session 8)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,48 +8,37 @@
 ## Active Branch & PR
 
 - **Branch:** `chore/rename-to-tryvit-clean` (rename PR — open, awaiting CI)
-- **Latest SHA:** `89a3552` (fix(frontend): resolve all ESLint import errors and fix page test)
-- **Open PRs:** [#546](https://github.com/ericsocrat/tryvit/pull/546) — chore(cleanup): rename poland-food-db → TryVit across all source files
+- **Latest SHA:** `550d35f` (chore(cleanup): fix workspace debris, dup assets, stale docs)
+- **Open PRs:** [#546](https://github.com/ericsocrat/tryvit/pull/546) — chore(cleanup): rename poland-food-db → TryVit across all source files + 4 dependabot PRs (#547, #549, #551, #552)
 - **main SHA:** `3bd6fb3` (origin/main — stable, unmodified)
 
 > ⚠️ **GitHub repo already renamed** — remote is now `https://github.com/ericsocrat/tryvit.git`
 
 ## Recently Shipped (This Session)
 
-| SHA       | Summary                                                                                                   |
-| --------- | --------------------------------------------------------------------------------------------------------- |
-| `89a3552` | fix(frontend): resolve all ESLint import errors and fix page test (~80 files)                              |
-| `f08f80a` | chore(config): add copilot workspace context and .github/copilot-instructions.md                          |
+| SHA       | Summary                                                                                         |
+| --------- | ----------------------------------------------------------------------------------------------- |
+| `pending` | fix(lint): resolve 59 ruff errors + fix 17 stale doc counts across 4 files                     |
+| `550d35f` | chore(cleanup): fix workspace debris, dup assets, stale docs                                   |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR   | Summary                                                                                         |
 | ---------- | ---- | ----------------------------------------------------------------------------------------------- |
-| 2026-03-03 | #546 | fix(frontend): resolve all ESLint import errors and fix page test (89a3552)                      |
+| 2026-03-04 | #546 | fix(lint): resolve 59 ruff errors + fix 17 stale doc counts (pending commit)                   |
+| 2026-03-03 | #546 | chore(cleanup): fix workspace debris, dup assets, stale docs (550d35f)                         |
+| 2026-03-03 | #546 | fix(frontend): resolve all ESLint import errors and fix page test (89a3552)                     |
 | 2026-03-03 | #546 | chore(config): add copilot workspace context and .github/copilot-instructions.md (f08f80a)      |
 | 2026-03-02 | #546 | chore(tooling): elite copilot-instructions §17-§20 rewrite + full dev tooling upgrade (4232c30) |
 | 2026-03-02 | #546 | docs(workflow): add agent workflow reference, setup-env.ps1, §17-§20 (d0a2e0f)                  |
 | 2026-03-02 | #546 | chore(cleanup): rename poland-food-db → TryVit across all source files (open PR, awaiting CI)   |
 | 2026-03-01 | #540 | fix(deps): resolve 6 high-severity npm audit vulnerabilities                                    |
-| 2026-03-01 | #537 | fix(ci): exclude script tags from quality-gate body text checks                                 |
-| 2026-03-01 | #536 | fix(ci): add 5xx network-error allowlist for quality-gate audits                                |
-| 2026-03-01 | #535 | fix(ci): fix quality-gate browser overrides for mobile/desktop projects                         |
-| 2026-03-01 | #534 | fix(ci): fix quality-gate testDir and auth-route filtering                                      |
-| 2026-03-01 | #533 | docs: add CURRENT_STATE.md live project status tracker (closes #529)                            |
-| 2026-03-01 | #532 | fix(ci): move secrets out of quality-gate.yml step if condition                                 |
-| 2026-03-01 | #531 | test(coverage): add tests for download, dashboard, product comps                                |
-| 2026-03-01 | #528 | test(vitest): add tests for LearnCard, SourceCitation, typography                               |
-| 2026-03-01 | #526 | deps(python): bump ruff from 0.15.2 to 0.15.4                                                   |
-| 2026-03-01 | #525 | fix(ci): add secret validation step to deploy.yml preflight                                     |
-| 2026-03-01 | #524 | test(vitest): fix flaky test timeouts (testTimeout → 15s)                                       |
-| 2026-03-01 | #523 | ci(deploy): fix deploy.yml sanity parser, BACKUP.ps1 xpath                                      |
-| 2026-03-01 | #522 | data(pipeline): import product images from OFF API                                              |
-| 2026-03-01 | #521 | ci(config): enforce Unix LF line endings for SQL files                                          |
 
 ## Known Issues & Broken Items
 
-- [ ] Quality Gate workflow: False positives eliminated (#537). Remaining 7 failures are CI environment/data gaps (admin auth, seed data, test user provisioning). Non-blocking check.
+- [ ] Quality Gate workflow: 7 remaining failures are CI environment/data gaps (admin auth, seed data, test user provisioning). Non-blocking check.
 - [ ] Nightly Suite: Intermittent failures (Playwright timeout + data audit exit code 1). Infrastructure/env issue, not code bug.
+- [ ] 4 dependabot PRs with **major version bumps** need review: #547, #549, #551, #552 (sonner 2.0, tesseract.js 7.0, @types/node 25)
 
 ## CI Gate Status (main branch)
 
@@ -58,28 +47,23 @@
 | pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke                       |
 | main-gate    | ✅      | Last runs all success                                                      |
 | qa.yml       | ✅      | 733/733 checks passing                                                     |
-| dep-audit    | ✅      | 0 high/critical vulnerabilities (fixed in #540)                            |
-| quality-gate | ⚠️      | Code fixes complete (#532–#537); 7 remaining failures are CI env data gaps |
+| dep-audit    | ✅      | 0 high/critical vulnerabilities                                            |
+| python-lint  | ⚠️      | Was failing (59 ruff errors) — fixed this session, pending push            |
+| quality-gate | ⚠️      | 7 remaining failures are CI env data gaps                                  |
 | nightly      | ⚠️      | Intermittent timeout failures                                              |
 
-## Open Issues (7 total)
+## Open Issues (1 total)
 
-| Issue | Priority | Effort | Summary                                               |
-| ----- | -------- | ------ | ----------------------------------------------------- |
-| #539  | —        | High   | Full project rename — PR #546 open, awaiting CI merge |
-| #530  | P2       | High   | Comprehensive Playwright Functional E2E Suite         |
-| #431  | P3       | Medium | Mobile/dark mode/device-framed screenshots            |
-| #430  | P3       | High   | 12 polished desktop screenshots                       |
-| #404  | P3       | High   | Epic: App Screenshot Mockups                          |
-| #212  | Deferred | —      | Infrastructure Cost Attribution Framework             |
-| #206  | Deferred | —      | Admin Governance Dashboard Suite                      |
+| Issue | Priority | Effort | Summary                                   |
+| ----- | -------- | ------ | ----------------------------------------- |
+| #212  | Deferred | —      | Infrastructure Cost Attribution Framework |
 
 ## Next Planned Work
 
-- [ ] Merge #546 — rename PR (awaiting CI); then close #539
-- [ ] After merge: update remote URL refs in `.git/config` (local repo) → `https://github.com/ericsocrat/tryvit.git`
+- [ ] Push ruff + doc-count fixes → verify Python Lint CI goes green
+- [ ] Merge #546 — rename PR (awaiting CI green)
 - [ ] After merge: manual external service display names (Vercel, SonarCloud, Sentry, Supabase)
-- [ ] #530 — Comprehensive Playwright Functional E2E Suite (largely obsolete — ~276 E2E tests already exist; needs triage/update)
+- [ ] Review 4 dependabot major-bump PRs (#547, #549, #551, #552)
 
 ## Key Metrics Snapshot
 
@@ -87,9 +71,10 @@
 - **QA checks:** 733/733 passing
 - **EAN coverage:** 1,277/1,279 with EAN (99.8%)
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
-- **Open issues:** 7 | **Open PRs:** 1 (#546 rename)
-- **Vitest:** 259 tests passing (2 skipped), co-located unit/component tests
-- **DB migrations:** 182 append-only
+- **Open issues:** 1 | **Open PRs:** 5 (#546 rename + 4 dependabot)
+- **Vitest:** 4,420 tests passing (29 skipped), 259 test files
+- **DB migrations:** 184 append-only
+- **Ruff lint:** 0 errors (59 fixed this session)
 
 ---
 

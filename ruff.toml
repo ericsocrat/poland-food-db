@@ -53,10 +53,13 @@ known-first-party = ["pipeline"]
 "pipeline/test_validator.py" = ["S101"]
 # Pipeline fetch/utility scripts: print() calls are intentional progress indicators
 "pipeline/run.py" = ["T20"]
+"pipeline/image_importer.py" = ["T20"]
 "fetch_off_category.py" = ["T20"]
 "enrich_ingredients.py" = ["T20", "E501"]
 "validate_eans.py" = ["T20"]
 "run_data_audit.py" = ["T20"]
+"check_pipeline_structure.py" = ["T20"]
+"check_enrichment_identity.py" = ["T20"]
 # Setup scripts
 "scripts/*.py" = ["T20", "S603", "S607"]
 # SQL generator constructs long SQL strings by design

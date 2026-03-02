@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 733 checks across 48 suites + 23 negative validation tests — all passing
+> **QA:** 733 checks across 48 suites + 20 negative validation tests — all passing
 
 ---
 
@@ -118,7 +118,7 @@ tryvit/
 │   │   ├── QA__event_intelligence.sql    # 18 event intelligence checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   │   ├── QA__recipe_integrity.sql      # 6 recipe data integrity checks
-│   │   └── TEST__negative_checks.sql     # 23 negative validation tests
+│   │   └── TEST__negative_checks.sql     # 20 negative validation tests
 │   └── views/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
@@ -147,7 +147,7 @@ tryvit/
 │   │   ├── api-gateway/             # Write-path gateway (rate limiting, validation) (#478)
 │   │   └── send-push-notification/  # Push notification handler
 │   ├── dr-drill/                    # Disaster recovery drill artifacts
-│   └── migrations/                  # 140 append-only schema migrations
+│   └── migrations/                  # 184 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -609,7 +609,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **182 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **184 migrations**.
 
 **Rules:**
 
@@ -2345,7 +2345,7 @@ Execute every command. Record output. Do not skip.
 # ── Database layer ───────────────────────────────────────────────────
 supabase test db                               # All pgTAP tests pass
 .\RUN_QA.ps1                                   # All 733+ QA checks pass
-.\RUN_NEGATIVE_TESTS.ps1                       # All 23 negative tests caught
+.\RUN_NEGATIVE_TESTS.ps1                       # All 20 negative tests caught
 python check_pipeline_structure.py            # 0 errors
 python validate_eans.py                       # 0 EAN failures
 python check_enrichment_identity.py           # 0 violations
