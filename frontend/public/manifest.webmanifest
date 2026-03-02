@@ -1,16 +1,23 @@
 {
   "id": "/app",
-  "name": "Poland Food DB",
-  "short_name": "FoodDB",
-  "description": "Multi-axis food quality scoring — compare health scores and nutritional data for food products in Poland and Germany.",
+  "name": "TryVit",
+  "short_name": "TryVit",
+  "description": "Scan food barcodes and see a health score from 1–100. Find healthier alternatives instantly.",
   "start_url": "/app",
   "scope": "/",
   "display": "standalone",
-  "display_override": ["window-controls-overlay", "standalone"],
+  "display_override": [
+    "window-controls-overlay",
+    "standalone"
+  ],
   "orientation": "portrait",
-  "theme_color": "#0d7377",
-  "background_color": "#f9fafb",
-  "categories": ["food", "health", "lifestyle"],
+  "theme_color": "#1DB954",
+  "background_color": "#F0FAF4",
+  "categories": [
+    "food",
+    "health",
+    "lifestyle"
+  ],
   "icons": [
     {
       "src": "/icons/icon-192.svg",
@@ -25,8 +32,44 @@
       "purpose": "any"
     },
     {
+      "src": "/icons/icon-72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
       "src": "/icons/icon-192.png",
       "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/icon-384.png",
+      "sizes": "384x384",
       "type": "image/png",
       "purpose": "any"
     },

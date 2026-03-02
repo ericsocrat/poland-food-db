@@ -1,5 +1,5 @@
 # ═══════════════════════════════════════════════════════════════════
-# .gitattributes — Binary/text handling for poland-food-db
+# .gitattributes — Binary/text handling for tryvit
 # ═══════════════════════════════════════════════════════════════════
 
 # Binary image assets — mark as binary for correct diff behavior

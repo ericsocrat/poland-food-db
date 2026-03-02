@@ -50,7 +50,7 @@ test.describe("Footer links", () => {
   test("footer shows copyright text", async ({ page }) => {
     await page.goto("/");
     await expect(
-      page.locator("footer").getByText("Poland Food DB", { exact: false }),
+      page.locator("footer").getByText("TryVit", { exact: false }),
     ).toBeVisible();
   });
 
@@ -70,9 +70,9 @@ test.describe("Footer links", () => {
 });
 
 test.describe("Header", () => {
-  test("shows FoodDB logo linking to home", async ({ page }) => {
+  test("shows TryVit logo linking to home", async ({ page }) => {
     await page.goto("/contact");
-    const logo = page.getByRole("link", { name: /FoodDB/ });
+    const logo = page.getByRole("link", { name: /TryVit/ });
     await expect(logo).toBeVisible();
     await expect(logo).toHaveAttribute("href", "/");
   });
@@ -97,7 +97,7 @@ test.describe("Header", () => {
 
   test("logo navigates to landing from contact page", async ({ page }) => {
     await page.goto("/contact");
-    await page.getByRole("link", { name: /FoodDB/ }).click();
+    await page.getByRole("link", { name: /TryVit/ }).click();
     await expect(page).toHaveURL("/");
   });
 });
@@ -163,7 +163,7 @@ test.describe("Login page details", () => {
   test("shows subtitle text", async ({ page }) => {
     await page.goto("/auth/login");
     await expect(
-      page.getByText("Sign in to your FoodDB account"),
+      page.getByText("Sign in to your TryVit account"),
     ).toBeVisible();
   });
 
@@ -243,16 +243,16 @@ test.describe("Page meta and SEO basics", () => {
 
   test("contact page has correct title", async ({ page }) => {
     await page.goto("/contact");
-    await expect(page).toHaveTitle(/Poland Food DB/);
+    await expect(page).toHaveTitle(/TryVit/);
   });
 
   test("privacy page has correct title", async ({ page }) => {
     await page.goto("/privacy");
-    await expect(page).toHaveTitle(/Poland Food DB/);
+    await expect(page).toHaveTitle(/TryVit/);
   });
 
   test("login page has correct title", async ({ page }) => {
     await page.goto("/auth/login");
-    await expect(page).toHaveTitle(/Poland Food DB/);
+    await expect(page).toHaveTitle(/TryVit/);
   });
 });

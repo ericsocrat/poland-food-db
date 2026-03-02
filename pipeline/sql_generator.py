@@ -1,4 +1,4 @@
-"""SQL file generator for the poland-food-db pipeline.
+"""SQL file generator for the tryvit pipeline.
 
 Generates the 6-file SQL pattern used by every category pipeline:
 

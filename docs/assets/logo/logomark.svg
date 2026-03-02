@@ -1,17 +1,17 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Food quality intelligence logomark">
-  <title>Food Quality Intelligence</title>
-  <desc>Shield-leaf logomark representing food quality analysis, data science, and consumer trust. The shape combines a protective shield (trust) with a leaf (food/health), with interior vein lines suggesting data structure (science).</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TryVit logomark">
+  <title>TryVit</title>
+  <desc>TryVit shield-leaf logomark. Protective shield (trust) combined with a leaf (food/health), interior vein lines suggest data science. Brand colours: vitGreen #1DB954, vitDark #0A2E1A.</desc>
 
   <defs>
-    <!-- Primary brand gradient — deeper teal at base for grounded feel -->
+    <!-- Primary brand gradient — vitGreen to vitDark -->
     <linearGradient id="brand-fill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0e8a8e"/>
-      <stop offset="100%" stop-color="#074a4c"/>
+      <stop offset="0%" stop-color="#1DB954"/>
+      <stop offset="100%" stop-color="#0A2E1A"/>
     </linearGradient>
-    <!-- Subtle inner shadow for depth -->
+    <!-- Subtle inner highlight -->
     <linearGradient id="inner-shadow" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>
-      <stop offset="100%" stop-color="#000000" stop-opacity="0.08"/>
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.15"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0.05"/>
     </linearGradient>
   </defs>
 
@@ -51,7 +51,7 @@
   <line x1="256" y1="336" x2="200" y2="380" stroke="#ffffff" stroke-width="2.5" opacity="0.22" stroke-linecap="round"/>
   <line x1="256" y1="336" x2="312" y2="380" stroke="#ffffff" stroke-width="2.5" opacity="0.22" stroke-linecap="round"/>
 
-  <!-- ═══ Gold accent — score indicator dot ═══ -->
+  <!-- ═══ Accent dot — score indicator ═══ -->
   <!-- Small circle at the leaf tip, evoking a data point / quality score marker -->
-  <circle cx="256" cy="64" r="10" fill="#d4a844" opacity="0.85"/>
+  <circle cx="256" cy="64" r="10" fill="#00E676" opacity="0.90"/>
 </svg>

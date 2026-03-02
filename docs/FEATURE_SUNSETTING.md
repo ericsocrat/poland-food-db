@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-02-28
 > **Status:** Active policy — quarterly reviews starting Q2 2026
-> **Reference:** Issue [#237](https://github.com/ericsocrat/poland-food-db/issues/237)
+> **Reference:** Issue [#237](https://github.com/ericsocrat/tryvit/issues/237)
 > **Related:** [API Versioning](API_VERSIONING.md) (deprecation windows), [Domain Boundaries](DOMAIN_BOUNDARIES.md) (ownership), [Changelog](../CHANGELOG.md) (sunset entries)
 
 ---
@@ -314,5 +314,5 @@ Initial audit as of 2026-02-28:
 - [DOMAIN_BOUNDARIES.md](DOMAIN_BOUNDARIES.md) — Domain ownership for retirement decision authority
 - [PRIVACY_CHECKLIST.md](PRIVACY_CHECKLIST.md) — Compliance triggers for feature sunsetting
 - [CHANGELOG.md](../CHANGELOG.md) — Sunset entries follow Conventional Commits convention
-- Issue [#191](https://github.com/ericsocrat/poland-food-db/issues/191) — Feature Flag Architecture (complementary)
-- Issue [#234](https://github.com/ericsocrat/poland-food-db/issues/234) — API Versioning Policy (deprecation alignment)
+- Issue [#191](https://github.com/ericsocrat/tryvit/issues/191) — Feature Flag Architecture (complementary)
+- Issue [#234](https://github.com/ericsocrat/tryvit/issues/234) — API Versioning Policy (deprecation alignment)

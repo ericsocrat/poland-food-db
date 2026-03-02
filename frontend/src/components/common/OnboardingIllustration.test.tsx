@@ -1,11 +1,11 @@
-import { describe, it, expect, vi } from "vitest";
 import { render } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import {
-  OnboardingIllustration,
-  getOnboardingSteps,
-  getOnboardingStepMeta,
+    OnboardingIllustration,
+    getOnboardingStepMeta,
+    getOnboardingSteps,
+    type OnboardingStep,
 } from "./OnboardingIllustration";
-import type { OnboardingStep } from "./OnboardingIllustration";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 

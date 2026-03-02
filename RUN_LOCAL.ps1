@@ -42,7 +42,7 @@ param(
 
 # ─── Configuration ───────────────────────────────────────────────────────────
 
-$CONTAINER = "supabase_db_poland-food-db"
+$CONTAINER = "supabase_db_tryvit"
 $DB_NAME = "postgres"
 $DB_USER = "postgres"
 
@@ -52,7 +52,7 @@ $PIPELINE_ROOT = Join-Path $PSScriptRoot "db" "pipelines"
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  Poland Food DB — Local Pipeline Runner" -ForegroundColor Cyan
+Write-Host "  TryVit — Local Pipeline Runner" -ForegroundColor Cyan
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "  Target: LOCAL (docker exec $CONTAINER)" -ForegroundColor Green

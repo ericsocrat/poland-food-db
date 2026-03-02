@@ -13,7 +13,7 @@
  * If credentials are not set, the script skips login gracefully.
  * Non-auth routes (e.g., /auth/login) will still be audited.
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/177
+ * @see https://github.com/ericsocrat/tryvit/issues/177
  */
 
 /* eslint-disable @typescript-eslint/no-require-imports */

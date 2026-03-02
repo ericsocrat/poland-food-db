@@ -2,12 +2,12 @@
   <style>
     .es-bookmark { fill: #e2e8f0; }
     .es-bookmark-fold { fill: #cbd5e1; }
-    .es-glass { fill: #0d7377; opacity: 0.15; }
-    .es-glass-rim { stroke: #0d7377; stroke-width: 2.5; fill: none; }
-    .es-handle { stroke: #0d7377; stroke-width: 3; stroke-linecap: round; fill: none; }
+    .es-glass { fill: #1DB954; opacity: 0.15; }
+    .es-glass-rim { stroke: #1DB954; stroke-width: 2.5; fill: none; }
+    .es-handle { stroke: #1DB954; stroke-width: 3; stroke-linecap: round; fill: none; }
     .es-shadow { fill: #94a3b8; opacity: 0.18; }
     .es-line { stroke: #cbd5e1; stroke-width: 2; stroke-linecap: round; }
-    .es-accent { fill: #d4a844; }
+    .es-accent { fill: #F59E0B; }
     @media (prefers-color-scheme: dark) {
       .es-bookmark { fill: #334155; }
       .es-bookmark-fold { fill: #475569; }

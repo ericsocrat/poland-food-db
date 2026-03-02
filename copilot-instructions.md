@@ -1,6 +1,6 @@
-# Copilot Instructions — Poland Food Quality Database
+# Copilot Instructions — TryVit
 
-> **Last updated:** 2026-02-28
+> **Last updated:** 2026-03-02
 > **Scope:** Poland (`PL`) primary + Germany (`DE`) micro-pilot (252 products across 5 categories)
 > **Products:** ~1,281 active (20 PL categories + 5 DE categories), 51 deprecated
 > **EAN coverage:** 1,024/1,026 (99.8%)
@@ -8,13 +8,13 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 733 checks across 48 suites + 23 negative validation tests — all passing
+> **QA:** 733 checks across 48 suites + 20 negative validation tests — all passing
 
 ---
 
 ## 1. Role & Principles
 
-You are a **food scientist, nutrition researcher, and senior data engineer** maintaining a science-driven food quality database for products sold in Poland.
+You are a **food scientist, nutrition researcher, and senior data engineer** maintaining **TryVit** — a multi-axis food health scoring platform.
 
 **Core principles:**
 
@@ -49,7 +49,7 @@ $env:PYTHONIOENCODING="utf-8"
 **Execute generated SQL:**
 
 ```powershell
-Get-Content db/pipelines/dairy/*.sql | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
+Get-Content db/pipelines/dairy/*.sql | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
 ```
 
 **Run everything:**
@@ -65,7 +65,7 @@ Get-Content db/pipelines/dairy/*.sql | docker exec -i supabase_db_poland-food-db
 ## 3. Project Layout
 
 ```
-poland-food-db/
+tryvit/
 ├── pipeline/                        # Python OFF API → SQL generator
 │   ├── __init__.py                  # Package init
 │   ├── __main__.py                  # `python -m pipeline` entry point
@@ -118,7 +118,7 @@ poland-food-db/
 │   │   ├── QA__event_intelligence.sql    # 18 event intelligence checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   │   ├── QA__recipe_integrity.sql      # 6 recipe data integrity checks
-│   │   └── TEST__negative_checks.sql     # 23 negative validation tests
+│   │   └── TEST__negative_checks.sql     # 20 negative validation tests
 │   └── views/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
@@ -147,7 +147,7 @@ poland-food-db/
 │   │   ├── api-gateway/             # Write-path gateway (rate limiting, validation) (#478)
 │   │   └── send-push-notification/  # Push notification handler
 │   ├── dr-drill/                    # Disaster recovery drill artifacts
-│   └── migrations/                  # 140 append-only schema migrations
+│   └── migrations/                  # 184 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -372,110 +372,110 @@ poland-food-db/
 
 ### Tables
 
-| Table                     | Purpose                                         | Primary Key                             | Notes                                                                                                                                                    |
-| ------------------------- | ----------------------------------------------- | --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `products`                | Product identity, scores, flags, provenance     | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.                                                                  |
-| `nutrition_facts`         | Nutrition per product (per 100g)                | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                                                                                  |
-| `ingredient_ref`          | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,995 unique ingredients; name_en (UNIQUE), vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                                     |
-| `product_ingredient`      | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                                      |
-| `product_allergen_info`   | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags                |
-| `country_ref`             | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag, nutri_score_official boolean; FK from products.country                                                                  |
-| `category_ref`            | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                                    |
-| `nutri_score_ref`         | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                                        |
-| `concern_tier_ref`        | EFSA ingredient concern tiers                   | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                                 |
-| `product_type_ref`        | Product sub-type taxonomy per category          | `product_type` (text PK)                | ~100 rows across 20 categories; FK from products.product_type; display_name, icon_emoji, sort_order. Issue #354.                                         |
-| `brand_ref`               | Canonical brand dictionary                      | `brand_name` (text PK)                  | Auto-seeded from products.brand (~478 rows); parent_company, country_origin, is_store_brand, display_name. Issue #356.                                   |
-| `ingredient_translations` | Localized ingredient display names              | `(ingredient_id, language_code)`        | FK to ingredient_ref + language_ref; name, source (curated/off_api/auto_translated/user_submitted), reviewed_at. Issue #355.                             |
-| `user_preferences`        | User personalization (country, diet, allergens) | `user_id` (FK → auth.users)             | One row per user; diet enum, allergen arrays, strict_mode flags; RLS by user                                                                             |
-| `user_health_profiles`    | Health condition profiles                       | `profile_id` (identity)                 | Conditions + nutrient thresholds (sodium, sugar, sat fat limits). One active profile per user. RLS by user                                               |
-| `user_product_lists`      | User-created product lists                      | `list_id` (identity)                    | Name, description, share_token, is_public. Default lists: Favorites, Avoid. RLS by user                                                                  |
-| `user_product_list_items` | Items in product lists                          | `(list_id, product_id)`                 | sort_order, notes. FK to user_product_lists + products. RLS by user                                                                                      |
-| `user_comparisons`        | Saved product comparisons                       | `comparison_id` (identity)              | product_ids array (2-4), share_token, title. RLS by user                                                                                                 |
-| `user_saved_searches`     | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                                         |
-| `scan_history`            | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                                           |
-| `product_submissions`     | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, review_notes, status ('pending'/'approved'/'rejected'/'merged'). EAN checksum trigger auto-rejects invalid barcodes |
-| `product_links`           | Cross-country product links                     | `link_id` (identity)                    | product_id_a < product_id_b (ordered pair). link_type: identical/equivalent/variant/related. confidence: manual/ean_match/brand_match/verified. Issue #352 |
-| `user_trust_scores`       | Per-user submission reputation tracking         | `user_id` (FK → auth.users)             | trust_score 0-100 (default 50). Auto-adjusts: +5 approved, -15 rejected, -5 auto-reject. Counters, flag fields. RLS: service_role only                   |
-| `event_schema_registry`   | Schema-versioned event definitions              | `id` (identity)                         | event_type + schema_version UNIQUE; json_schema, status(active/deprecated/retired), pii_fields, retention_days. RLS: anon-read                           |
-| `backfill_registry`       | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read                              |
-| `log_level_ref`           | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                                |
-| `error_code_registry`     | Known error codes with domain/category/severity | `error_code` (text PK)                  | {DOMAIN}_{CATEGORY}_{NNN} format; FK to log_level_ref(level); 13 starter codes. RLS: service-write / auth-read                                           |
-| `retention_policies`      | Audit log retention configuration               | `policy_id` (identity)                  | table_name (unique), timestamp_column, retention_days (30–3650), is_enabled. RLS: service_role only                                                      |
-| `mv_refresh_log`          | Audit trail for MV refreshes                    | `refresh_id` (identity)                 | mv_name, refreshed_at, duration_ms, row_count, triggered_by. Index on (mv_name, refreshed_at DESC). RLS: service-write / auth-read                       |
-| `deletion_audit_log`      | GDPR Art.17 deletion audit trail (no PII)       | `id` (uuid)                             | deleted_at (timestamptz), tables_affected (text[]). NO user_id column. RLS enabled, service-role only                                                    |
-| `api_rate_limits`         | Per-endpoint rate limit configuration           | `endpoint` (text PK)                    | max_requests, window_seconds, description. 6 seeded endpoints. RLS: auth-read / service-write                                                            |
-| `api_rate_limit_log`      | Ephemeral request tracking for rate limiting    | `id` (identity)                         | user_id, endpoint, called_at. Retention: 2 days. Index on (user_id, endpoint, called_at DESC). RLS: service-role only                                    |
-| `recipe`                  | Recipe metadata (curated editorial content)     | `id` (uuid)                             | slug (unique), title_key/description_key (i18n), category (breakfast/lunch/dinner/snack/dessert/drink/salad/soup), difficulty, prep/cook time, servings, country (nullable), is_published, tags[]. RLS: public SELECT on published |
-| `recipe_step`             | Ordered cooking instructions per recipe         | `id` (uuid)                             | recipe_id FK, step_number (unique per recipe), content_key (i18n). RLS: public SELECT if recipe published |
-| `recipe_ingredient`       | Recipe ingredients with sort order              | `id` (uuid)                             | recipe_id FK, name_key (i18n), sort_order, optional flag, ingredient_ref_id FK (nullable link to ingredient_ref). RLS: public SELECT if recipe published |
-| `recipe_ingredient_product` | Links recipe ingredients to DB products       | `id` (uuid)                             | recipe_ingredient_id FK, product_id FK, is_primary, match_confidence (0-1). UNIQUE (ingredient, product). RLS: public SELECT if recipe published |
+| Table                       | Purpose                                         | Primary Key                             | Notes                                                                                                                                                                                                                              |
+| --------------------------- | ----------------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `products`                  | Product identity, scores, flags, provenance     | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.                                                                                                                                            |
+| `nutrition_facts`           | Nutrition per product (per 100g)                | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                                                                                                                                                            |
+| `ingredient_ref`            | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,995 unique ingredients; name_en (UNIQUE), vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                                                                                                               |
+| `product_ingredient`        | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                                                                                                                |
+| `product_allergen_info`     | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags                                                                                          |
+| `country_ref`               | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag, nutri_score_official boolean; FK from products.country                                                                                                                                            |
+| `category_ref`              | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                                                                                                              |
+| `nutri_score_ref`           | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                                                                                                                  |
+| `concern_tier_ref`          | EFSA ingredient concern tiers                   | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                                                                                                           |
+| `product_type_ref`          | Product sub-type taxonomy per category          | `product_type` (text PK)                | ~100 rows across 20 categories; FK from products.product_type; display_name, icon_emoji, sort_order. Issue #354.                                                                                                                   |
+| `brand_ref`                 | Canonical brand dictionary                      | `brand_name` (text PK)                  | Auto-seeded from products.brand (~478 rows); parent_company, country_origin, is_store_brand, display_name. Issue #356.                                                                                                             |
+| `ingredient_translations`   | Localized ingredient display names              | `(ingredient_id, language_code)`        | FK to ingredient_ref + language_ref; name, source (curated/off_api/auto_translated/user_submitted), reviewed_at. Issue #355.                                                                                                       |
+| `user_preferences`          | User personalization (country, diet, allergens) | `user_id` (FK → auth.users)             | One row per user; diet enum, allergen arrays, strict_mode flags; RLS by user                                                                                                                                                       |
+| `user_health_profiles`      | Health condition profiles                       | `profile_id` (identity)                 | Conditions + nutrient thresholds (sodium, sugar, sat fat limits). One active profile per user. RLS by user                                                                                                                         |
+| `user_product_lists`        | User-created product lists                      | `list_id` (identity)                    | Name, description, share_token, is_public. Default lists: Favorites, Avoid. RLS by user                                                                                                                                            |
+| `user_product_list_items`   | Items in product lists                          | `(list_id, product_id)`                 | sort_order, notes. FK to user_product_lists + products. RLS by user                                                                                                                                                                |
+| `user_comparisons`          | Saved product comparisons                       | `comparison_id` (identity)              | product_ids array (2-4), share_token, title. RLS by user                                                                                                                                                                           |
+| `user_saved_searches`       | Saved search queries                            | `search_id` (identity)                  | Query text, filters JSONB, notification preferences. RLS by user                                                                                                                                                                   |
+| `scan_history`              | Barcode scan history                            | `scan_id` (identity)                    | user_id, ean, scanned_at, product_id (if matched). RLS by user                                                                                                                                                                     |
+| `product_submissions`       | User-submitted products                         | `submission_id` (identity)              | ean, product_name, brand, photo_url, review_notes, status ('pending'/'approved'/'rejected'/'merged'). EAN checksum trigger auto-rejects invalid barcodes                                                                           |
+| `product_links`             | Cross-country product links                     | `link_id` (identity)                    | product_id_a < product_id_b (ordered pair). link_type: identical/equivalent/variant/related. confidence: manual/ean_match/brand_match/verified. Issue #352                                                                         |
+| `user_trust_scores`         | Per-user submission reputation tracking         | `user_id` (FK → auth.users)             | trust_score 0-100 (default 50). Auto-adjusts: +5 approved, -15 rejected, -5 auto-reject. Counters, flag fields. RLS: service_role only                                                                                             |
+| `event_schema_registry`     | Schema-versioned event definitions              | `id` (identity)                         | event_type + schema_version UNIQUE; json_schema, status(active/deprecated/retired), pii_fields, retention_days. RLS: anon-read                                                                                                     |
+| `backfill_registry`         | Batch data operation tracking                   | `backfill_id` (uuid PK)                 | name (unique), status, rows_processed/expected, batch_size, rollback_sql, validation_passed. RLS: service-write / auth-read                                                                                                        |
+| `log_level_ref`             | Severity level definitions for structured logs  | `level` (text PK)                       | 5 rows (DEBUG–CRITICAL); numeric_level, retention_days, escalation_target. RLS: service-write / auth-read                                                                                                                          |
+| `error_code_registry`       | Known error codes with domain/category/severity | `error_code` (text PK)                  | {DOMAIN}_{CATEGORY}_{NNN} format; FK to log_level_ref(level); 13 starter codes. RLS: service-write / auth-read                                                                                                                     |
+| `retention_policies`        | Audit log retention configuration               | `policy_id` (identity)                  | table_name (unique), timestamp_column, retention_days (30–3650), is_enabled. RLS: service_role only                                                                                                                                |
+| `mv_refresh_log`            | Audit trail for MV refreshes                    | `refresh_id` (identity)                 | mv_name, refreshed_at, duration_ms, row_count, triggered_by. Index on (mv_name, refreshed_at DESC). RLS: service-write / auth-read                                                                                                 |
+| `deletion_audit_log`        | GDPR Art.17 deletion audit trail (no PII)       | `id` (uuid)                             | deleted_at (timestamptz), tables_affected (text[]). NO user_id column. RLS enabled, service-role only                                                                                                                              |
+| `api_rate_limits`           | Per-endpoint rate limit configuration           | `endpoint` (text PK)                    | max_requests, window_seconds, description. 6 seeded endpoints. RLS: auth-read / service-write                                                                                                                                      |
+| `api_rate_limit_log`        | Ephemeral request tracking for rate limiting    | `id` (identity)                         | user_id, endpoint, called_at. Retention: 2 days. Index on (user_id, endpoint, called_at DESC). RLS: service-role only                                                                                                              |
+| `recipe`                    | Recipe metadata (curated editorial content)     | `id` (uuid)                             | slug (unique), title_key/description_key (i18n), category (breakfast/lunch/dinner/snack/dessert/drink/salad/soup), difficulty, prep/cook time, servings, country (nullable), is_published, tags[]. RLS: public SELECT on published |
+| `recipe_step`               | Ordered cooking instructions per recipe         | `id` (uuid)                             | recipe_id FK, step_number (unique per recipe), content_key (i18n). RLS: public SELECT if recipe published                                                                                                                          |
+| `recipe_ingredient`         | Recipe ingredients with sort order              | `id` (uuid)                             | recipe_id FK, name_key (i18n), sort_order, optional flag, ingredient_ref_id FK (nullable link to ingredient_ref). RLS: public SELECT if recipe published                                                                           |
+| `recipe_ingredient_product` | Links recipe ingredients to DB products         | `id` (uuid)                             | recipe_ingredient_id FK, product_id FK, is_primary, match_confidence (0-1). UNIQUE (ingredient, product). RLS: public SELECT if recipe published                                                                                   |
 
 ### Products Columns (key)
 
-| Column               | Type      | Notes                                                                      |
-| -------------------- | --------- | -------------------------------------------------------------------------- |
-| `product_id`         | `bigint`  | Auto-incrementing identity                                                 |
-| `country`            | `text`    | `'PL'` or `'DE'` — FK to country_ref                                       |
-| `brand`              | `text`    | Manufacturer or brand name                                                 |
-| `product_name`       | `text`    | Full product name including variant                                        |
-| `category`           | `text`    | One of 20 food categories                                                  |
-| `product_type`       | `text`    | Subtype (e.g., `'yogurt'`, `'beer'`)                                       |
-| `ean`                | `text`    | EAN-13 barcode (unique index)                                              |
-| `prep_method`        | `text`    | Preparation method (affects scoring). NOT NULL, default `'not-applicable'` |
-| `store_availability` | `text`    | Normalized Polish chain name (Biedronka, Lidl, Żabka, etc.) or NULL        |
-| `controversies`      | `text`    | `'none'` or `'palm oil'` etc.                                              |
-| `nutri_score_source` | `text`    | Provenance: `'official_label'`, `'off_computed'`, `'manual'`, `'unknown'`  |
-| `last_fetched_at`    | `timestamptz` | When data was last fetched/refreshed from source API                   |
-| `off_revision`       | `integer` | Open Food Facts internal revision number at time of last fetch             |
-| `is_deprecated`      | `boolean` | Soft-delete flag                                                           |
-| `deprecated_reason`  | `text`    | Why deprecated                                                             |
+| Column               | Type          | Notes                                                                      |
+| -------------------- | ------------- | -------------------------------------------------------------------------- |
+| `product_id`         | `bigint`      | Auto-incrementing identity                                                 |
+| `country`            | `text`        | `'PL'` or `'DE'` — FK to country_ref                                       |
+| `brand`              | `text`        | Manufacturer or brand name                                                 |
+| `product_name`       | `text`        | Full product name including variant                                        |
+| `category`           | `text`        | One of 20 food categories                                                  |
+| `product_type`       | `text`        | Subtype (e.g., `'yogurt'`, `'beer'`)                                       |
+| `ean`                | `text`        | EAN-13 barcode (unique index)                                              |
+| `prep_method`        | `text`        | Preparation method (affects scoring). NOT NULL, default `'not-applicable'` |
+| `store_availability` | `text`        | Normalized Polish chain name (Biedronka, Lidl, Żabka, etc.) or NULL        |
+| `controversies`      | `text`        | `'none'` or `'palm oil'` etc.                                              |
+| `nutri_score_source` | `text`        | Provenance: `'official_label'`, `'off_computed'`, `'manual'`, `'unknown'`  |
+| `last_fetched_at`    | `timestamptz` | When data was last fetched/refreshed from source API                       |
+| `off_revision`       | `integer`     | Open Food Facts internal revision number at time of last fetch             |
+| `is_deprecated`      | `boolean`     | Soft-delete flag                                                           |
+| `deprecated_reason`  | `text`        | Why deprecated                                                             |
 
 ### Key Functions
 
-| Function                           | Purpose                                                                                                                                                             |
-| ---------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `compute_unhealthiness_v32()`      | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern                                         |
-| `explain_score_v32()`              | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling                                                  |
-| `find_similar_products()`          | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                                  |
-| `find_better_alternatives()`       | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                                      |
-| `resolve_ingredient_name()`        | Returns localized ingredient name. Fallback: requested lang → en translation → name_en → NULL                                                                      |
-| `assign_confidence()`              | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                                                                   |
-| `score_category()`                 | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category           |
-| `compute_data_confidence()`        | Composite confidence score (0-100) with 6 components; band, completeness profile                                                                                    |
-| `compute_data_completeness()`      | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source)                     |
-| `api_data_confidence()`            | API wrapper for compute_data_confidence(); returns structured JSONB                                                                                                 |
-| `api_product_detail()`             | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                                                              |
-| `api_category_listing()`           | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                                                         |
-| `api_score_explanation()`          | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                              |
-| `api_better_alternatives()`        | Healthier substitutes wrapper with source product context and structured JSON                                                                                       |
-| `api_search_products()`            | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                  |
-| `api_get_cross_country_links()`    | Returns linked products for a given product_id; bidirectional query across product_links; returns JSONB array                                                       |
-| `api_get_recipes()`                | Browse published recipes with filters (country, category, tag, difficulty, max_time); paginated JSONB with total_count + recipes array                              |
-| `api_get_recipe_detail()`          | Full recipe detail by slug: recipe metadata + ingredients (with linked products) + steps; returns structured JSONB                                                  |
-| `api_get_recipe_nutrition()`       | Aggregate nutrition summary from linked products; picks primary product per ingredient; returns per-100g averages + coverage_pct                                    |
-| `browse_recipes()`                 | Browse published recipes with filters (category, country, tag, difficulty, max_time); returns TABLE rows                                                            |
-| `get_recipe_detail()`              | Recipe detail by slug: returns JSONB with metadata, steps, ingredients (with linked_products array)                                                                 |
-| `find_products_for_recipe_ingredient()` | Finds products for a recipe ingredient: admin-curated links first, then auto-suggested via ingredient_ref matching                                             |
-| `refresh_all_materialized_views()` | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                         |
-| `mv_staleness_check()`             | Checks if MVs are stale by comparing row counts to source tables                                                                                                    |
-| `check_formula_drift()`            | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                   |
-| `check_function_source_drift()`    | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                                     |
-| `governance_drift_check()`         | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                              |
-| `log_drift_check()`                | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                                |
-| `validate_log_entry()`             | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                                        |
-| `execute_retention_cleanup()`      | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary                       |
-| `mv_last_refresh()`                | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                           |
-| `check_flag_readiness()`           | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                          |
-| `api_export_user_data()`           | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER                    |
-| `api_delete_user_data()`           | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                                  |
-| `is_valid_ean()`                   | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                                      |
-| `check_submission_rate_limit()`    | Returns rate limit status for product submissions: 10 per 24h rolling window per user. SECURITY DEFINER                                                             |
-| `check_scan_rate_limit()`          | Returns rate limit status for barcode scans: 100 per 24h rolling window per user. SECURITY DEFINER                                                                  |
-| `check_api_rate_limit()`           | Generic per-endpoint rate limiter: checks `api_rate_limits` config, logs to `api_rate_limit_log`. Returns `{allowed, remaining}` or blocked JSONB. SECURITY DEFINER |
-| `check_share_limit()`              | Per-user share count limiter: max 50 shared items per type (comparisons/lists). Returns `{allowed, type, limit}` JSONB. SECURITY DEFINER                           |
-| `score_submission_quality()`       | Scores a submission's quality (0-100) from 7 signals: account age, velocity, EAN match, photo, brand/name quality, user trust score. SECURITY DEFINER              |
-| `api_admin_batch_reject_user()`    | Rejects all pending/manual_review/flag_for_review submissions from a user, flags trust score (cap at 10). SECURITY DEFINER                                         |
-| `api_admin_submission_velocity()`  | Returns submission velocity stats: last_24h, last_7d, pending_count, auto_rejected_24h, status_breakdown, top_submitters with trust. SECURITY DEFINER              |
+| Function                                | Purpose                                                                                                                                                             |
+| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `compute_unhealthiness_v32()`           | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern                                         |
+| `explain_score_v32()`                   | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling                                                  |
+| `find_similar_products()`               | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                                  |
+| `find_better_alternatives()`            | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                                      |
+| `resolve_ingredient_name()`             | Returns localized ingredient name. Fallback: requested lang → en translation → name_en → NULL                                                                       |
+| `assign_confidence()`                   | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                                                                   |
+| `score_category()`                      | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category           |
+| `compute_data_confidence()`             | Composite confidence score (0-100) with 6 components; band, completeness profile                                                                                    |
+| `compute_data_completeness()`           | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source)                     |
+| `api_data_confidence()`                 | API wrapper for compute_data_confidence(); returns structured JSONB                                                                                                 |
+| `api_product_detail()`                  | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                                                              |
+| `api_category_listing()`                | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                                                         |
+| `api_score_explanation()`               | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                              |
+| `api_better_alternatives()`             | Healthier substitutes wrapper with source product context and structured JSON                                                                                       |
+| `api_search_products()`                 | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                  |
+| `api_get_cross_country_links()`         | Returns linked products for a given product_id; bidirectional query across product_links; returns JSONB array                                                       |
+| `api_get_recipes()`                     | Browse published recipes with filters (country, category, tag, difficulty, max_time); paginated JSONB with total_count + recipes array                              |
+| `api_get_recipe_detail()`               | Full recipe detail by slug: recipe metadata + ingredients (with linked products) + steps; returns structured JSONB                                                  |
+| `api_get_recipe_nutrition()`            | Aggregate nutrition summary from linked products; picks primary product per ingredient; returns per-100g averages + coverage_pct                                    |
+| `browse_recipes()`                      | Browse published recipes with filters (category, country, tag, difficulty, max_time); returns TABLE rows                                                            |
+| `get_recipe_detail()`                   | Recipe detail by slug: returns JSONB with metadata, steps, ingredients (with linked_products array)                                                                 |
+| `find_products_for_recipe_ingredient()` | Finds products for a recipe ingredient: admin-curated links first, then auto-suggested via ingredient_ref matching                                                  |
+| `refresh_all_materialized_views()`      | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                         |
+| `mv_staleness_check()`                  | Checks if MVs are stale by comparing row counts to source tables                                                                                                    |
+| `check_formula_drift()`                 | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                   |
+| `check_function_source_drift()`         | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                                     |
+| `governance_drift_check()`              | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                              |
+| `log_drift_check()`                     | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                                |
+| `validate_log_entry()`                  | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                                        |
+| `execute_retention_cleanup()`           | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary                       |
+| `mv_last_refresh()`                     | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                           |
+| `check_flag_readiness()`                | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                          |
+| `api_export_user_data()`                | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER                    |
+| `api_delete_user_data()`                | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                                  |
+| `is_valid_ean()`                        | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                                      |
+| `check_submission_rate_limit()`         | Returns rate limit status for product submissions: 10 per 24h rolling window per user. SECURITY DEFINER                                                             |
+| `check_scan_rate_limit()`               | Returns rate limit status for barcode scans: 100 per 24h rolling window per user. SECURITY DEFINER                                                                  |
+| `check_api_rate_limit()`                | Generic per-endpoint rate limiter: checks `api_rate_limits` config, logs to `api_rate_limit_log`. Returns `{allowed, remaining}` or blocked JSONB. SECURITY DEFINER |
+| `check_share_limit()`                   | Per-user share count limiter: max 50 shared items per type (comparisons/lists). Returns `{allowed, type, limit}` JSONB. SECURITY DEFINER                            |
+| `score_submission_quality()`            | Scores a submission's quality (0-100) from 7 signals: account age, velocity, EAN match, photo, brand/name quality, user trust score. SECURITY DEFINER               |
+| `api_admin_batch_reject_user()`         | Rejects all pending/manual_review/flag_for_review submissions from a user, flags trust score (cap at 10). SECURITY DEFINER                                          |
+| `api_admin_submission_velocity()`       | Returns submission velocity stats: last_24h, last_7d, pending_count, auto_rejected_24h, status_breakdown, top_submitters with trust. SECURITY DEFINER               |
 
 ### Views
 
@@ -488,6 +488,20 @@ poland-food-db/
 **`v_formula_registry`** — Unified view across `scoring_model_versions` and `search_ranking_config`. Columns: domain, version, formula_name, status, weights_config (JSONB), fingerprint (SHA-256), change_reason, is_active. Both scoring and search formulas in one query surface.
 
 **`v_data_freshness_summary`** — Per-country, per-category freshness breakdown. Columns: country, category, total_products, has_fetch_date, fresh_30d, aging_30_90d, stale_90d, never_fetched, oldest_fetch, newest_fetch, pct_fresh. Used for monitoring data staleness.
+
+### Edge Functions
+
+> **Location:** `supabase/functions/`
+> **Runtime:** Deno + TypeScript
+> **Deploy:** `supabase functions deploy <name> --no-verify-jwt`
+> **Secrets:** `supabase secrets set KEY=value` — never committed to git
+> **Local test:** `supabase start && supabase functions serve`
+
+| Function                 | Trigger       | Purpose                                                                                                                                                                                                                                                                                            |
+| ------------------------ | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `api-gateway`            | HTTP          | Write-path API gateway — rate limiting, auth validation, submission scoring, trust score enforcement. All user write operations (submit, scan, share) route through here. Calls `check_submission_rate_limit()`, `score_submission_quality()`, and `api_admin_batch_reject_user()` RPC internally. |
+| `send-push-notification` | HTTP (RPC)    | Web Push delivery via VAPID. Accepts `{user_id, title, body, url}`. Validates subscription records, applies Upstash Redis deduplication, delivers via Web Push Protocol. VAPID keys injected as secrets.                                                                                           |
+| `verify-turnstile`       | HTTP (public) | Cloudflare Turnstile CAPTCHA server-side verification. Validates challenge token before allowing signup and product submission flows. TURNSTILE_SECRET_KEY injected as secret.                                                                                                                     |
 
 ---
 
@@ -595,7 +609,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **182 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **184 migrations**.
 
 **Rules:**
 
@@ -998,7 +1012,7 @@ If you **modify, rename, or add** any SQL function or view used by the app API (
 **Database access** (no local psql install needed):
 
 ```powershell
-echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
+echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
 ```
 
 **Python environment:**
@@ -1109,7 +1123,7 @@ Full documentation: `docs/SCORING_METHODOLOGY.md`
 
 ## 15. Feature Implementation Standard (Mandatory for All Major Features)
 
-> **Gold standard:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184)
+> **Gold standard:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/tryvit/issues/184)
 >
 > Every significant issue must follow this structure. **No exceptions.**
 > A "significant issue" is any change that introduces new tables, modifies API contracts, adds scoring dimensions, expands to new countries/languages, touches more than ~5 files, or introduces new CI/infrastructure workflows.
@@ -1453,7 +1467,7 @@ Before a feature is considered complete, verify against all CI gates:
 
 Use `.github/ISSUE_TEMPLATE/feature.md` for all significant issues. **Every section is required**; mark a section `N/A — [reason]` if genuinely not applicable. Never silently omit a section.
 
-> **Reference implementation:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/poland-food-db/issues/184) — gold standard across all repo issues for structural completeness, actionable depth, and proven implementation.
+> **Reference implementation:** [Issue #184 — Automated Data Integrity Audits (Nightly)](https://github.com/ericsocrat/tryvit/issues/184) — gold standard across all repo issues for structural completeness, actionable depth, and proven implementation.
 
 ---
 
@@ -1501,3 +1515,1051 @@ After **API changes:**
 - Separate structural moves from logic edits; separate data from schema changes
 - Include verification output (§8.17) and use conventional commit format (§13)
 - CI must be green before merge — never bypass by deleting tests or lowering thresholds
+
+---
+
+## 17. Agent Workflow Command System
+
+> **Three keyword commands trigger fully-structured workflows.**
+> When the user types exactly `audit`, `create issues`, or `next` (case-insensitive), execute the corresponding protocol in full — do not abbreviate, summarize, or skip steps.
+>
+> **Authority chain:** `CURRENT_STATE.md` → `copilot-instructions.md §17–§20` → domain docs (§20.4)
+
+---
+
+### 17.1 `audit` — Full Project Audit Protocol
+
+> **Trigger word:** `audit`
+> **Purpose:** Orient fully. Produce a structured, evidence-backed analysis of the entire project state before any implementation begins. This is the foundation for `create issues` and `next`.
+
+#### 17.1.1 Mandatory Reads Before Auditing
+
+Execute in order — no skipping:
+
+1. `CURRENT_STATE.md` — last SHA, open PRs, branch, active work
+2. `git status && git log --oneline -15` — confirm clean tree, understand recent history
+3. `docs/INDEX.md` — navigation map for all 50+ docs
+4. `docs/REPO_GOVERNANCE.md` — structural and governance rules
+5. `docs/GOVERNANCE_BLUEPRINT.md` — master execution governance plan
+6. `docs/DRIFT_DETECTION.md` — 8-check automated drift catalog
+7. `docs/CHANGELOG.md` or `CHANGELOG.md` — recent releases and unreleased items
+8. `docs/ARCHITECTURE.md` — system architecture overview
+9. Open GitHub issues (use `gh issue list --state open --limit 50`)
+
+#### 17.1.2 Audit Execution Steps
+
+| Step | Action                         | Commands                                                                                                                       |
+| ---- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------ |
+| A1   | Git health & branch state      | `git status`, `git log --oneline -15`, `git branch -a`, `git diff --stat HEAD~1`                                               |
+| A2   | Open GitHub issues inventory   | `gh issue list --state open --limit 50 --json number,title,labels,milestone,assignees`                                         |
+| A3   | Open PRs inventory             | `gh pr list --state open --json number,title,headRefName,isDraft,statusCheckRollup`                                            |
+| A4   | CI health check                | Read `.github/workflows/pr-gate.yml`, `main-gate.yml`, `qa.yml` status from last run                                           |
+| A5   | QA suite health                | `.\RUN_QA.ps1` (or inspect last CI output) — report total checks, any failures                                                 |
+| A6   | Database schema drift          | `supabase db diff --linked` (if linked) or inspect `supabase/migrations/` count vs `copilot-instructions.md §7`                |
+| A7   | Test coverage health           | Inspect last `main-gate.yml` coverage run or `cd frontend && npx vitest run --coverage --reporter=json 2>/dev/null \| tail -5` |
+| A8   | Dependency health              | `cd frontend && npm audit --audit-level=high 2>&1 \| tail -10`                                                                 |
+| A9   | SonarCloud quality gate        | Check `sonar-project.properties` thresholds; inspect last CI run quality gate result                                           |
+| A10  | Documentation drift            | `python scripts/check_doc_counts.py && python scripts/check_doc_drift.py`                                                      |
+| A11  | Repo hygiene                   | `pwsh scripts/repo_verify.ps1`                                                                                                 |
+| A12  | Pipeline & structure integrity | `python check_pipeline_structure.py`                                                                                           |
+| A13  | Scoring formula drift          | `SELECT * FROM governance_drift_check();` via psql or Supabase Studio                                                          |
+| A14  | EAN coverage                   | `python validate_eans.py 2>&1 \| tail -3`                                                                                      |
+| A15  | MV staleness                   | `SELECT * FROM mv_staleness_check();` — check if MVs are fresh                                                                 |
+
+#### 17.1.3 Mandatory Audit Output Template
+
+Produce **exactly this structure** — fill every section with real data:
+
+```markdown
+# Project Audit — TryVit
+
+> **Audit date:** YYYY-MM-DD HH:MM UTC
+> **Branch:** <branch-name> | **HEAD:** <sha-7> | **Auditor:** GitHub Copilot
+
+---
+
+## 1. Project Health Metrics
+
+| Metric                    | Current Value   | Target / Baseline       | Status   |
+| ------------------------- | --------------- | ----------------------- | -------- |
+| Active products (PL+DE)   | ~X,XXX          | ≥1,281                  | ✅/⚠️/❌ |
+| QA checks passing         | XXX/733         | 733/733                 | ✅/⚠️/❌ |
+| Negative tests passing    | 23/23           | 23/23                   | ✅/⚠️/❌ |
+| Migrations committed      | XXX             | ≥182                    | ✅/⚠️/❌ |
+| Vitest coverage (lines)   | XX%             | ≥88%                    | ✅/⚠️/❌ |
+| SonarCloud quality gate   | PASS/FAIL       | PASS                    | ✅/⚠️/❌ |
+| EAN coverage              | XXXX/XXXX (XX%) | ≥99.8%                  | ✅/⚠️/❌ |
+| Open PRs                  | X               | ≤2 active               | ✅/⚠️/❌ |
+| Open issues               | XX              | tracked (no hard limit) | ✅       |
+| npm audit (high+critical) | X vulns         | 0                       | ✅/⚠️/❌ |
+| Docs count (docs/)        | XX              | 50                      | ✅/⚠️/❌ |
+
+---
+
+## 2. CI Pipeline Status
+
+| Workflow      | Last Run Status | Triggered By | Notes                    |
+| ------------- | --------------- | ------------ | ------------------------ |
+| pr-gate.yml   | ✅/❌/⚠️        | PR #XXX      | <any failures>           |
+| main-gate.yml | ✅/❌/⚠️        | SHA XXXXXXX  | <coverage, sonar result> |
+| qa.yml        | ✅/❌/⚠️        | SHA XXXXXXX  | <QA count, any failures> |
+| nightly.yml   | ✅/❌/⚠️        | Scheduled    | <playwright result>      |
+
+---
+
+## 3. Open GitHub Issues — Prioritized Inventory
+
+| #   | Title | Priority             | Milestone | Labels       | Status |
+| --- | ----- | -------------------- | --------- | ------------ | ------ |
+| XX  | ...   | P0/P1/P2/P3/Deferred | M-X       | feat/fix/... | open   |
+
+**Priority matrix applied:**
+
+- P0 (Blocking): Security vulnerability, data corruption, CI broken
+- P1 (Critical): Feature gap blocking user value, QA regression, major bug
+- P2 (High): Significant feature, technical debt with user impact
+- P3 (Low): Enhancement, docs, tooling, minor improvement
+- Deferred: Valid but not current milestone
+
+---
+
+## 4. Gap Analysis
+
+### 4a. Documentation Gaps
+
+| Gap | File/Section | Impact | Priority |
+| --- | ------------ | ------ | -------- |
+
+### 4b. Schema / Function Gaps
+
+| Gap | Evidence | Impact | Priority |
+| --- | -------- | ------ | -------- |
+
+### 4c. Test Coverage Gaps
+
+| Gap | File/Function | Coverage% | Priority |
+| --- | ------------- | --------- | -------- |
+
+### 4d. CI / Infrastructure Gaps
+
+| Gap | Workflow | Impact | Priority |
+| --- | -------- | ------ | -------- |
+
+### 4e. Technical Debt
+
+| Item | Location | Severity | Effort | Priority |
+| ---- | -------- | -------- | ------ | -------- |
+
+---
+
+## 5. Milestone Progress
+
+| Milestone | Total Issues | Closed | Open | % Complete | Notes |
+| --------- | ------------ | ------ | ---- | ---------- | ----- |
+
+---
+
+## 6. Recently Shipped (Last 10 Commits)
+
+| SHA     | Type         | Summary       | Issue |
+| ------- | ------------ | ------------- | ----- |
+| XXXXXXX | feat/fix/... | <description> | #XXX  |
+
+---
+
+## 7. Drift & Staleness Alerts
+
+| Check                 | Status | Detail                          |
+| --------------------- | ------ | ------------------------------- |
+| Scoring formula drift | ✅/❌  | <governance_drift_check result> |
+| MV staleness          | ✅/❌  | <mv_staleness_check result>     |
+| Doc drift             | ✅/❌  | <check_doc_drift.py result>     |
+| Repo hygiene          | ✅/❌  | <repo_verify.ps1 result>        |
+
+---
+
+## 8. Recommendations (Ranked by Priority)
+
+### P0 — Fix Immediately (Blocking)
+
+1. **[Issue title]** — [Why P0, what breaks, what file/function, recommended fix]
+
+### P1 — Critical (Next Sprint)
+
+1. **[Issue title]** — [Impact, effort estimate, recommended approach]
+
+### P2 — High Value (Current Milestone)
+
+1. **[Issue title]** — [Impact, effort, file(s) affected]
+
+### P3 — Nice-to-Have (Backlog)
+
+1. **[Issue title]** — [Rational, trade-off]
+
+---
+
+## 9. Next Steps
+
+**Immediate action:** <specific next step — issue number to implement or P0 to fix>
+
+To create GitHub issues from this audit: type `create issues`
+To begin implementing the highest-priority item: type `next`
+```
+
+---
+
+### 17.2 `create issues` — Audit-to-Issue Conversion Protocol
+
+> **Trigger word:** `create issues`
+> **Pre-condition:** A `audit` output (§17.1.3) must exist in the current session, or the most recent `gh issue list` output is available.
+> **Purpose:** Transform every gap, recommendation, and debt item from the audit into fully-structured, §15-compliant GitHub issues — ready to implement with zero ambiguity.
+
+#### 17.2.1 Issue Triage Rules
+
+Before creating issues, apply the following triage:
+
+| Condition                                       | Action                                              |
+| ----------------------------------------------- | --------------------------------------------------- |
+| Issue already exists with same scope            | Do not duplicate — add a comment with new findings  |
+| Multiple small items in same domain (< 2h each) | Bundle into one issue with sub-tasks checklist      |
+| P0 item without existing issue                  | Create immediately before P1/P2/P3 items            |
+| Item is a documentation update only             | Use `docs(scope):` commit type, may skip full issue |
+| Item requires architectural decision            | Add `decision-required` label; include ADR template |
+| Uncertainty about scope/approach                | Include **at minimum 3 approaches** in §15.2 table  |
+| Item touches >5 files or >3 domains             | Mark as "significant" — use full §15 template       |
+
+#### 17.2.2 Issue Title Convention
+
+Follow `copilot-instructions.md §13` type/scope convention:
+
+```
+feat(domain): short imperative description (#issue-ref or close #XXX if known)
+fix(domain): what is being corrected
+schema(migration): what schema operation
+test(qa): what test coverage is being added
+docs(domain): what documentation is being created/updated
+perf(domain): what performance improvement
+security(rls): what security hardening
+chore(scope): what housekeeping
+```
+
+**Title rules:**
+
+- ≤72 characters
+- Present tense, imperative mood ("add", "fix", "implement" — not "added", "fixed")
+- Include scope in parentheses
+- No trailing period
+
+#### 17.2.3 Full Issue Body Template
+
+Every significant issue (as defined in §15) must use this exact structure:
+
+````markdown
+## Problem Statement
+
+<!-- What user or system problem does this solve? Be concrete — cite specific data, file, or behavior. -->
+<!-- What current limitation exists? Link to the code/schema gap. -->
+<!-- What measurable improvement does this introduce? (rows, faster queries, test coverage %, error rate) -->
+
+---
+
+## Architectural Evaluation
+
+| Approach | Verdict     | Rationale |
+| -------- | ----------- | --------- |
+| A. ...   | ❌ Rejected | ...       |
+| B. ...   | ❌ Rejected | ...       |
+| C. ...   | ✅ Chosen   | ...       |
+
+**Prior art considered:** [Yuka / Open Food Facts / MyFitnessPal / comparable product]
+
+---
+
+## Core Principles (Invariants)
+
+<!-- Which invariants from §15.3 apply? Explicitly confirm each. -->
+
+- [ ] Data integrity — no invented nutrition values
+- [ ] Backward compatibility — additive API changes only
+- [ ] Idempotency — all migrations safe to run 1× or 100×
+- [ ] Test coverage — pgTAP for every new function/table/view
+- [ ] Append-only migrations — never modify existing migration files
+- [ ] Additional invariants specific to this issue: ...
+
+---
+
+## Phased Implementation Plan
+
+### Phase 1 — [Title] (Foundation)
+
+**Migration:** `YYYYMMDDHHMMSS_description.sql`
+**Rationale:** [Why this first? What does it unlock?]
+**DB changes:** [Tables, columns, functions, triggers, indexes]
+**API changes:** [Modified api_* functions, new/changed params]
+**Frontend changes:** [Components, hooks, stores, pages affected]
+**Performance:** [New indexes, MVs, query plan impact]
+**Tests:** [pgTAP file, QA suite, schema contract changes]
+
+### Phase 2 — [Title] (Surface)
+
+[same sub-structure]
+
+### Phase N — [Title] (Polish / Docs)
+
+[same sub-structure]
+
+---
+
+## Database Changes
+
+**Migration filename:** `YYYYMMDDHHMMSS_description.sql`
+
+```sql
+-- Migration: describe goal
+-- Rollback: DROP TABLE/COLUMN IF EXISTS ...
+-- Idempotency: all DDL guarded with IF NOT EXISTS
+
+<SQL template here — not placeholder>
+```
+
+**Constraints defined:** [List all CHECK, FK, UNIQUE constraints]
+**Indexes:** [Justify each — type, columns, partial condition]
+**RLS policies:** [Which roles can read/write/delete?]
+
+---
+
+## API Contract Impact
+
+| Function  | Change                                | Backward Compatible? | New Params (with defaults) |
+| --------- | ------------------------------------- | -------------------- | -------------------------- |
+| `api_*()` | Added `p_new_param text DEFAULT NULL` | ✅ Yes               | `p_new_param`: ...         |
+
+**What happens if p_new_param is omitted:** [fallback behavior]
+
+---
+
+## Test Requirements
+
+### pgTAP (supabase/tests/)
+
+- [ ] `has_table('new_table')` in `schema_contracts.test.sql`
+- [ ] Happy path: correct inputs → expected outputs
+- [ ] Edge cases: NULL inputs, empty strings, invalid codes
+- [ ] Auth branch: unauthenticated call returns `{error}` JSONB
+- [ ] Fallback: resolve_language('xx') → 'en'
+
+### DB QA (db/qa/)
+
+- [ ] Suite: `QA__[domain].sql` — add N checks (total: before → after)
+- [ ] Checks added: [list them]
+
+### Frontend (frontend/src/)
+
+- [ ] `cd frontend && npx tsc --noEmit` — 0 errors
+- [ ] Vitest unit tests: [describe what is tested]
+- [ ] Playwright E2E: [smoke or authenticated spec, what flow]
+
+---
+
+## Fallback Logic
+
+```
+If A → use X
+Else if B → use Y
+Else → fallback Z (always safe, always returns a value)
+```
+
+---
+
+## Performance & Safety
+
+- [ ] No N+1 queries (EXPLAIN ANALYZE provided)
+- [ ] No unbounded loops (LIMIT caps applied)
+- [ ] No unindexed JSONB lookups (GIN index added)
+- [ ] Scale guardrails pass (`QA__scale_guardrails.sql`)
+- [ ] MV refresh considered (added to `refresh_all_materialized_views()` if applicable)
+
+---
+
+## Architectural Decisions Log
+
+| Decision        | Choice            | Rationale |
+| --------------- | ----------------- | --------- |
+| Storage pattern | `_ref` table + FK | [Reason]  |
+| ...             | ...               | ...       |
+
+---
+
+## File Impact Summary
+
+**Estimated: N files, +X / -Y lines**
+
+- X new DB migrations (Y lines)
+- X new/modified pgTAP test files (Y lines)
+- X new/modified QA suites (checks: N → M)
+- X new/modified frontend files (Y lines)
+
+---
+
+## Verification Checklist (Definition of Done)
+
+- [ ] `python check_pipeline_structure.py` — 0 errors
+- [ ] `.\RUN_QA.ps1` — all XXX checks pass
+- [ ] `.\RUN_NEGATIVE_TESTS.ps1` — 23/23 caught
+- [ ] `supabase test db` — all pgTAP pass
+- [ ] `cd frontend && npx tsc --noEmit` — 0 errors
+- [ ] `cd frontend && npx vitest run` — all pass, coverage ≥ baseline
+- [ ] `cd frontend && npx playwright test --project=smoke` — all pass
+- [ ] `python validate_eans.py` — 0 failures
+- [ ] `copilot-instructions.md §4` updated (if DB objects changed)
+- [ ] `docs/API_CONTRACTS.md` updated (if API changed)
+- [ ] `docs/INDEX.md` updated (if new docs created)
+- [ ] `CHANGELOG.md` updated under `[Unreleased]`
+````
+
+#### 17.2.4 Batch Creation Rules
+
+When creating multiple issues from an audit:
+
+1. Create **P0 issues first**, tag `priority:critical`
+2. Group related issues into the same milestone where possible
+3. For cascading dependencies: use `Depends on #XXX` in the body
+4. Label every issue with: type + domain + priority + milestone
+5. After creating all issues, output a summary table:
+
+```markdown
+## Issues Created
+
+| #    | Title             | Priority | Milestone | Labels         |
+| ---- | ----------------- | -------- | --------- | -------------- |
+| #XXX | feat(domain): ... | P1       | M-X       | feat, data, P1 |
+```
+
+6. Conclude with: "Type `next` to begin implementing the highest-priority issue."
+
+---
+
+### 17.3 `next` — Canonical Execution Protocol v2
+
+> **Trigger word:** `next`
+> **Purpose:** Select the highest-priority open issue and implement it completely using
+> the Canonical Execution Discipline Protocol v2 (§19). Full audit readiness is assumed
+> (or execute §17.1 Steps A1–A3 as a fast-track check before proceeding).
+
+#### 17.3.1 Issue Selection Algorithm
+
+```
+Priority queue (highest first):
+  1. P0 — Any blocking issue (CI broken, data corruption, security CVE)
+  2. P1 — Critical issues in the current milestone
+  3. P1 — Critical issues without milestone (unblocked)
+  4. P2 — High-value issues in the current milestone
+  5. P2 — High-value issues without milestone
+  6. P3 — Low-priority backlog items
+  7. Deferred — Only if all higher priorities are clear
+
+Tie-breaking (within same priority):
+  - Smallest estimated effort that still delivers user value
+  - Has the most dependencies waiting on it (unblocks the most items)
+  - Oldest creation date
+
+Skip if:
+  - Issue is assigned to another person and in-progress
+  - Issue has `blocked` or `waiting-on-design` label
+  - Issue requires external API/service access not yet configured
+```
+
+#### 17.3.2 Pre-Implementation Announcement
+
+Before writing any code, output **exactly** this block:
+
+```markdown
+## Implementing Issue #XXX — [Issue Title]
+
+**Priority:** P0/P1/P2/P3
+**Domain(s):** [database/api/frontend/security/etc]
+**Estimated effort:** [S=<2h / M=2-8h / L=8-24h / XL=>24h]
+
+### Docs loading (per §20.4)
+
+- ✅ CURRENT_STATE.md — read
+- ✅ [Domain doc 1] — read
+- ✅ [Domain doc 2] — read
+- [any gaps noted]
+
+### Test plan
+
+1. [Test case 1 — what, where, which level]
+2. [Test case 2]
+   ...
+
+### Implementation order
+
+1. [Step 1 — e.g., write migration]
+2. [Step 2 — e.g., add pgTAP tests]
+3. [Step 3 — e.g., update API function]
+4. [Step 4 — e.g., update frontend hook]
+5. [Step 5 — docs update, CHANGELOG]
+```
+
+Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
+
+---
+
+### 17.4 Priority Definitions
+
+| Label        | Meaning                                                      | Response Time            | Examples                                                     |
+| ------------ | ------------------------------------------------------------ | ------------------------ | ------------------------------------------------------------ |
+| **P0**       | Blocking — system broken or data corrupted                   | Immediate                | CI red, security CVE, data integrity failure, scoring broken |
+| **P1**       | Critical — core user value blocked or significant regression | Current sprint           | Missing QA suite, broken auth flow, API contract violation   |
+| **P2**       | High value — significant improvement, no emergency           | Next sprint or milestone | New feature, performance improvement, major coverage gap     |
+| **P3**       | Enhancement — nice-to-have                                   | Backlog                  | Minor UX polish, doc updates, tooling improvements           |
+| **Deferred** | Valid but not current scope                                  | Future milestone         | Post-MVP features, experimental ideas                        |
+
+---
+
+## 18. Documentation Reference Catalog
+
+> **Authority:** `docs/INDEX.md` is the canonical navigation index.
+> The table below is a quick-load reference organized by domain for use with §20.4.
+> When in doubt about a doc's purpose, read `docs/INDEX.md` first.
+
+### 18.1 Architecture & System Design
+
+| Document                        | Purpose                                                                                                | Load When                                      |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
+| `docs/ARCHITECTURE.md`          | Full system architecture — data flow, schema topology, scoring pipeline, API layer, security perimeter | Any schema, API, or infra work                 |
+| `docs/DOMAIN_BOUNDARIES.md`     | Domain ownership map — who owns what, cross-domain coupling rules                                      | Adding new domains, touching multiple services |
+| `docs/ENVIRONMENT_STRATEGY.md`  | Local / staging / production environment strategy, secret management                                   | Env config, deployment, secrets changes        |
+| `docs/STAGING_SETUP.md`         | Staging environment setup guide                                                                        | Setting up staging, CI config                  |
+| `docs/DEPLOYMENT.md`            | Deployment procedures, rollback playbook, emergency checklist                                          | Any production deployment                      |
+| `docs/DISASTER_DRILL_REPORT.md` | DR drill findings and follow-up actions                                                                | Incident prep, DR automation                   |
+| `docs/PRODUCTION_DATA.md`       | Production data management rules — no PII, retention policies                                          | Any migration touching prod                    |
+
+### 18.2 API & Frontend
+
+| Document                      | Purpose                                                                                          | Load When                            |
+| ----------------------------- | ------------------------------------------------------------------------------------------------ | ------------------------------------ |
+| `docs/API_CONTRACTS.md`       | Full API surface contracts — response shapes, hidden columns, auth requirements, error envelopes | Any API function change              |
+| `docs/API_CONVENTIONS.md`     | RPC naming convention, breaking change definition, security standards                            | Adding/renaming API functions        |
+| `docs/API_VERSIONING.md`      | API deprecation policy, version lifecycle                                                        | Deprecating or versioning endpoints  |
+| `docs/FRONTEND_API_MAP.md`    | Frontend component ↔ API function mapping                                                        | Frontend work touching API calls     |
+| `docs/api-registry.yaml`      | Structured registry of all 191 functions (YAML)                                                  | Auditing API coverage, documentation |
+| `docs/CONTRACT_TESTING.md`    | API contract testing strategy and pgTAP patterns                                                 | Adding pgTAP contract tests          |
+| `docs/UX_UI_DESIGN.md`        | UI/UX guidelines, component standards, accessibility                                             | Frontend component development       |
+| `docs/UX_IMPACT_METRICS.md`   | UX measurement standard, metric catalog, SQL event templates                                     | Any UX-visible frontend change       |
+| `docs/BRAND_GUIDELINES.md`    | TryVit brand standards — color palette, typography, voice, usage rules                           | Brand-related UI work                |
+| `docs/SEARCH_ARCHITECTURE.md` | pg_trgm, tsvector, ranking algorithm, synonym table                                              | Search functionality changes         |
+
+### 18.3 Data Governance & Quality
+
+| Document                        | Purpose                                                              | Load When                                  |
+| ------------------------------- | -------------------------------------------------------------------- | ------------------------------------------ |
+| `docs/DATA_SOURCES.md`          | Source hierarchy, OFF API reliability tiers, validation workflow     | Pipeline changes, sourcing decisions       |
+| `docs/DATA_PROVENANCE.md`       | Data freshness governance, update cycles, source provenance tracking | Adding provenance columns, staleness logic |
+| `docs/DATA_INTEGRITY_AUDITS.md` | Nightly audit framework, check catalog, alert thresholds             | Adding data quality checks                 |
+| `docs/EAN_VALIDATION_STATUS.md` | 1,024/1,026 (99.8%) EAN coverage, known gaps, validation rules       | EAN changes, barcode work                  |
+| `docs/RESEARCH_WORKFLOW.md`     | Data collection lifecycle — manual curation + automated OFF pipeline | Adding new products, categories, countries |
+
+### 18.4 Security & Privacy
+
+| Document                    | Purpose                                                                      | Load When                          |
+| --------------------------- | ---------------------------------------------------------------------------- | ---------------------------------- |
+| `docs/SECURITY_AUDIT.md`    | Full security audit — RLS gaps, SSRF vectors, injection risks, trust scoring | Any table, function, or RLS change |
+| `docs/PRIVACY_CHECKLIST.md` | GDPR/RODO compliance checklist — data lifecycle, consent, deletion           | User data, PII, consent flows      |
+| `docs/ACCESS_AUDIT.md`      | Data access pattern audit — who reads what, quarterly review cadence         | Access control design              |
+| `docs/RATE_LIMITING.md`     | Rate limiting strategy, per-endpoint config, abuse prevention                | Adding rate limits, API abuse      |
+
+### 18.5 Performance & Observability
+
+| Document                         | Purpose                                                                             | Load When                             |
+| -------------------------------- | ----------------------------------------------------------------------------------- | ------------------------------------- |
+| `docs/PERFORMANCE_GUARDRAILS.md` | Query budgets, index requirements, MV refresh policies, scale projections           | Any query, index, or MV change        |
+| `docs/PERFORMANCE_REPORT.md`     | Baseline performance audit, slow query catalog, query patterns                      | Performance investigation             |
+| `docs/SLO.md`                    | Service Level Objectives — availability 99.5%, latency p95 <400ms, error rate <0.1% | Reliability engineering, alert design |
+| `docs/MONITORING.md`             | Runtime monitoring strategy, Supabase metrics, alert channels                       | Adding monitoring, alerts             |
+| `docs/OBSERVABILITY.md`          | Full observability strategy — logs, metrics, traces                                 | Instrumentation work                  |
+| `docs/METRICS.md`                | Application, infrastructure, and business metrics catalog                           | Adding metrics, dashboards            |
+| `docs/LOG_SCHEMA.md`             | Structured log format, error taxonomy, field definitions                            | Logging changes, error handling       |
+| `docs/ALERT_POLICY.md`           | Alert escalation rules, SLA targets, on-call routing                                | Alert and notification work           |
+| `docs/ON_CALL_POLICY.md`         | On-call schedule, ack targets, triage labels, escalation chain                      | Incident response, on-call setup      |
+
+### 18.6 CI/CD & Governance
+
+| Document                           | Purpose                                                                     | Load When                          |
+| ---------------------------------- | --------------------------------------------------------------------------- | ---------------------------------- |
+| `docs/REPO_GOVERNANCE.md`          | Root structure rules, allowed-files list, PR checklist, hygiene enforcement | Any structural change              |
+| `docs/GOVERNANCE_BLUEPRINT.md`     | Master execution governance — development lifecycle, decision authority     | Strategic planning, major features |
+| `docs/DOCUMENTATION_GOVERNANCE.md` | Doc lifecycle — creation, ownership, review cadence, deprecation            | Creating or retiring docs          |
+| `docs/DRIFT_DETECTION.md`          | 8-check automated drift catalog — scoring, search, naming, flags            | Any scoring/search formula change  |
+| `docs/MIGRATION_CONVENTIONS.md`    | Migration safety rules, trigger naming, lock risk, idempotency patterns     | Any DB migration work              |
+| `docs/BACKFILL_STANDARD.md`        | Backfill orchestration standard, batch templates, rollback patterns         | Any bulk data operation            |
+| `docs/FEATURE_FLAGS.md`            | Feature flag registry, activation criteria, toggle patterns                 | Feature flag work                  |
+| `docs/FEATURE_SUNSETTING.md`       | Feature retirement criteria, cleanup protocol                               | Deprecating features               |
+| `docs/LABELS.md`                   | GitHub label taxonomy — type, domain, priority, status                      | Issue and PR labeling              |
+
+### 18.7 Scoring & Nutrition Science
+
+| Document                        | Purpose                                                                              | Load When                                |
+| ------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- |
+| `docs/SCORING_METHODOLOGY.md`   | v3.2 algorithm — 9 factors, weights, ceilings, band thresholds, scientific rationale | Any scoring change                       |
+| `docs/SCORING_ENGINE.md`        | Scoring engine architecture — versioning, drift detection, formula registry          | Scoring formula work, version management |
+| `copilot-instructions.md §14`   | Scoring quick reference — formula, ceilings, band table                              | Quick coding reference                   |
+| `copilot-instructions.md §8.19` | Regression anchors — 16 products with expected scores ±2                             | Regression testing after scoring changes |
+
+### 18.8 Country Expansion & Localization
+
+| Document                          | Purpose                                                                   | Load When                        |
+| --------------------------------- | ------------------------------------------------------------------------- | -------------------------------- |
+| `docs/COUNTRY_EXPANSION_GUIDE.md` | Multi-country protocol — adding countries, activating DE, language matrix | Country/language expansion       |
+| `copilot-instructions.md §5`      | Active categories — 20 PL + 5 DE, pipeline folder mappings                | Category additions, DE expansion |
+| `copilot-instructions.md §15.15`  | i18n impact checklist — dictionary keys, translations, search synonyms    | Any translated string change     |
+
+### 18.9 Architecture Decision Records
+
+| Decision                                              | Status   | Summary                                                                  |
+| ----------------------------------------------------- | -------- | ------------------------------------------------------------------------ |
+| `docs/decisions/001-postgresql-only-stack.md`         | Accepted | No ORM, no Redis cluster, PostgreSQL as sole data store                  |
+| `docs/decisions/002-weighted-scoring-formula.md`      | Accepted | 9-factor weighted model, science-backed, EFSA-aligned                    |
+| `docs/decisions/003-country-scoped-isolation.md`      | Accepted | All queries country-filtered, no cross-contamination                     |
+| `docs/decisions/004-pipeline-generates-sql.md`        | Accepted | Python pipeline generates idempotent SQL, no runtime inserts             |
+| `docs/decisions/005-api-function-name-versioning.md`  | Accepted | Additive versioning via suffix (`_v2`), never rename                     |
+| `docs/decisions/006-append-only-migrations.md`        | Accepted | Never modify committed migrations; forward-only schema evolution         |
+| `docs/decisions/007-english-canonical-ingredients.md` | Accepted | `name_en` is canonical; translations stored in `ingredient_translations` |
+
+---
+
+## 19. Canonical Execution Discipline Protocol v2
+
+> **This is the mandatory implementation protocol.** Execute it for every non-trivial change.
+> "Non-trivial" = any change that modifies DB schema, API contracts, scoring logic,
+> frontend state, test coverage, or CI workflows. One-line typo fixes may skip to §19.3.
+>
+> **Reference gold standard:** [Issue #184 — Automated Data Integrity Audits](https://github.com/ericsocrat/tryvit/issues/184)
+> Every section below has an implementation example in that issue.
+
+---
+
+### Phase 1 — Pre-Implementation (must complete before writing any code)
+
+#### 19.1 Context Recovery
+
+Execute in order:
+
+```powershell
+# 1. Confirm branch state — never commit to main
+git status
+git log --oneline -10
+git branch --show-current  # must NOT be 'main'
+
+# 2. Load volatile status
+cat CURRENT_STATE.md  # last SHA, open PRs, in-flight work
+
+# 3. Identify the issue being implemented
+gh issue view XXX  # read acceptance criteria, notes, constraints
+
+# 4. Repo hygiene baseline
+pwsh scripts/repo_verify.ps1  # must exit 0 before starting
+
+# 5. Coverage baseline (for frontend work)
+cd frontend && npx vitest run --coverage --reporter=json 2>/dev/null | tail -3
+```
+
+#### 19.2 Impact Analysis (10-minute upfront investment that saves hours)
+
+Answer each question explicitly before coding:
+
+| Question                                 | Answer                                               |
+| ---------------------------------------- | ---------------------------------------------------- |
+| What DB tables are affected?             | <list or "none">                                     |
+| What API functions are affected?         | <list or "none">                                     |
+| What frontend components are affected?   | <list or "none">                                     |
+| Does this require a migration?           | Yes/No — if yes, what's the filename?                |
+| Does this touch RLS policies?            | Yes/No — if yes, read `docs/SECURITY_AUDIT.md` §X    |
+| Does this touch scoring logic?           | Yes/No — if yes, run regression anchors §8.19 after  |
+| Does this change any API response shape? | Yes/No — if yes, confirm additive-only               |
+| Does this add user-visible strings?      | Yes/No — if yes, update both `en.json` and `pl.json` |
+| What QA suites are affected?             | <list or "none">                                     |
+| What pgTAP tests are affected?           | <list or "none">                                     |
+
+Load domain docs from §20.4 for every "Yes" answer.
+
+#### 19.3 Test Plan (written before any code)
+
+Write this explicitly. Do not skip.
+
+```markdown
+### Test Plan — Issue #XXX
+
+| #   | Test Case     | Level                       | File   | What It Verifies    |
+| --- | ------------- | --------------------------- | ------ | ------------------- |
+| 1   | [description] | unit/component/e2e/pgTAP/QA | [path] | [specific behavior] |
+| 2   | ...           | ...                         | ...    | ...                 |
+
+**Edge cases to cover:**
+
+- NULL inputs to new functions
+- Empty arrays, zero counts
+- Unicode/diacritics (Polish characters: ą, ę, ó, ł, ź, ż, ń, ć, ś)
+- Unauthenticated calls to authenticated-only functions
+- Cross-country data contamination (PL ≠ DE)
+
+**Regression tests to preserve:**
+
+- QA suite N: [suite name] — [how many checks affected]
+- Scoring anchor: [product name] ≈ [score] (from §8.19)
+```
+
+#### 19.4 Implementation Plan (sequential, one concern per step)
+
+Map out every file that will change:
+
+```markdown
+### Implementation Plan — Issue #XXX
+
+**Estimated effort:** S / M / L / XL
+
+| Step | File                                         | Change Type                | Dependencies |
+| ---- | -------------------------------------------- | -------------------------- | ------------ |
+| 1    | `supabase/migrations/YYYYMMDDHHMMSS_*.sql`   | New migration              | None         |
+| 2    | `supabase/tests/schema_contracts.test.sql`   | Add has_table/has_function | Step 1       |
+| 3    | `supabase/tests/[domain]_functions.test.sql` | Add pgTAP function tests   | Step 1       |
+| 4    | `db/qa/QA__[domain].sql`                     | Add QA checks              | Step 1       |
+| 5    | `frontend/src/lib/api.ts`                    | New/modified RPC wrapper   | Step 1       |
+| 6    | `frontend/src/hooks/use-[domain].ts`         | New TanStack Query hook    | Step 5       |
+| 7    | `frontend/src/components/[domain]/*.tsx`     | UI component               | Step 6       |
+| 8    | `frontend/src/app/app/[route]/page.tsx`      | Page integration           | Step 7       |
+| 9    | `docs/API_CONTRACTS.md`                      | Document new endpoint      | Step 5       |
+| 10   | `copilot-instructions.md §4`                 | Update function/table list | Step 1       |
+| 11   | `CHANGELOG.md`                               | Add [Unreleased] entry     | Final        |
+```
+
+---
+
+### Phase 2 — Implementation (discipline during coding)
+
+#### 19.5 Implementation Rules (non-negotiable)
+
+**Rule 1 — One concern per commit.** Each commit addresses exactly one logical change:
+
+```
+schema(migration): add ingredient_translations table and FK
+
+Not: schema(migration): add table + api function + frontend component + docs
+```
+
+**Rule 2 — Tests alongside code, not after.** For every DB function written, write the pgTAP test in the same commit. For every React component, write the `.test.tsx` in the same commit. Never leave tests as `// TODO`.
+
+**Rule 3 — Verify before proceeding.** After each step in the implementation plan, run the relevant validation:
+
+```powershell
+# After DB migration:
+supabase db reset --local  # confirm migration applies cleanly
+.\RUN_QA.ps1               # confirm QA passes
+
+# After TypeScript changes:
+cd frontend && npx tsc --noEmit  # 0 errors before moving on
+
+# After React component changes:
+cd frontend && npx vitest run --reporter=verbose  # confirm tests pass
+
+# After pgTAP test addition:
+supabase test db  # confirm tests pass
+```
+
+**Rule 4 — Track progress.** After each step, mark it complete in the implementation plan. Do not batch multiple steps into a single commit unless completely trivial (e.g., updating two doc counts).
+
+**Rule 5 — Never weaken gates.** If a test fails, fix the code — not the test. If coverage drops, add tests — do not exclude files. See §8.16.
+
+#### 19.6 SQL Code Standards (enforce rigorously)
+
+```sql
+-- ✅ Required patterns for all new functions
+CREATE OR REPLACE FUNCTION public.api_example_function(
+  p_param1  text,
+  p_param2  integer DEFAULT NULL  -- always default new params for backward compat
+)
+RETURNS jsonb
+LANGUAGE sql
+STABLE              -- or VOLATILE if writes; never claim IMMUTABLE unless truly pure
+SECURITY DEFINER    -- for authenticated functions; SECURITY INVOKER for anon-safe
+SET search_path = public
+AS $$
+  -- Always fully-qualify table names in SECURITY DEFINER functions
+  SELECT jsonb_build_object(
+    'api_version', 'v1',  -- always include api_version in response
+    'data', (
+      SELECT jsonb_agg(row_to_json(t))
+      FROM (...) AS t
+    )
+  );
+$$;
+
+-- Comment block: purpose, auth requirement, params, fallback chain
+COMMENT ON FUNCTION public.api_example_function IS
+  'Purpose: ...
+   Auth: authenticated only (RLS enforced)
+   Params: p_param1 (required), p_param2 (optional, defaults to NULL → behavior)
+   Returns: JSONB {api_version, data: [...]}
+   Fallback: if no data found → returns {api_version, data: []}';
+```
+
+#### 19.7 TypeScript/React Code Standards (enforce rigorously)
+
+```typescript
+// ✅ RPC wrapper pattern (frontend/src/lib/rpc.ts style)
+export async function exampleFeature(params: ExampleParams): Promise<ExampleResult> {
+  const { data, error } = await supabase.rpc("api_example_function", {
+    p_param1: params.param1,
+    p_param2: params.param2 ?? null,
+  });
+
+  if (error) throw new RpcError("api_example_function", error);
+  return data as ExampleResult;
+}
+
+// ✅ TanStack Query hook pattern (frontend/src/hooks/)
+export function useExampleFeature(param1: string) {
+  return useQuery({
+    queryKey: queryKeys.example(param1),
+    queryFn: () => exampleFeature({ param1 }),
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: (count, err) => !(err instanceof RpcError && err.isAuth),
+  });
+}
+
+// ✅ Component error boundary pattern
+// Wrap all data-dependent components in <Suspense> + error boundary
+// Never use unguarded `data!` non-null assertions
+```
+
+---
+
+### Phase 3 — Post-Implementation (verification discipline)
+
+#### 19.8 Full Verification Protocol
+
+Execute every command. Record output. Do not skip.
+
+```powershell
+# ── Database layer ───────────────────────────────────────────────────
+supabase test db                               # All pgTAP tests pass
+.\RUN_QA.ps1                                   # All 733+ QA checks pass
+.\RUN_NEGATIVE_TESTS.ps1                       # All 20 negative tests caught
+python check_pipeline_structure.py            # 0 errors
+python validate_eans.py                       # 0 EAN failures
+python check_enrichment_identity.py           # 0 violations
+
+# ── Frontend layer ────────────────────────────────────────────────────
+cd frontend
+npx tsc --noEmit                              # 0 TypeScript errors
+npx vitest run                               # All tests pass
+npx vitest run --coverage                    # Coverage ≥ baseline (§8.5)
+npx playwright test --project=smoke          # E2E smoke passes
+
+# ── Governance ────────────────────────────────────────────────────────
+pwsh scripts/repo_verify.ps1                 # 6 checks pass
+python scripts/check_doc_counts.py           # Doc count consistent
+python scripts/check_doc_drift.py            # No stale docs
+
+# ── Scoring regression (if scoring touched) ───────────────────────────
+# Run QA scoring suite — all 31 checks + §8.19 anchor products must pass
+```
+
+#### 19.9 Documentation Update Requirements
+
+After implementation, update ALL of these that apply (per §18.1):
+
+| Artifact                        | Update Required When                                  | What to Update                      |
+| ------------------------------- | ----------------------------------------------------- | ----------------------------------- |
+| `copilot-instructions.md §4`    | Table, view, function, or Edge Function added/changed | Add row to appropriate table        |
+| `copilot-instructions.md §3`    | Directory structure changed                           | Update project layout tree          |
+| `copilot-instructions.md §5`    | New category added                                    | Add row to category table           |
+| `copilot-instructions.md §8.18` | New QA suite added                                    | Add row + update check count        |
+| `docs/API_CONTRACTS.md`         | Any `api_*` function changed                          | Update contract definition          |
+| `docs/FRONTEND_API_MAP.md`      | Frontend-API wiring changed                           | Update mapping row                  |
+| `docs/api-registry.yaml`        | Any function added/removed                            | Add/update YAML entry               |
+| `docs/SCORING_METHODOLOGY.md`   | Scoring formula changed                               | Update formula, weights, bands      |
+| `docs/ARCHITECTURE.md`          | Major structural change                               | Update architecture diagram/prose   |
+| `.env.example`                  | New env variable needed                               | Add entry with description + source |
+| `docs/INDEX.md`                 | New `docs/*.md` file created                          | Add entry, increment count          |
+| `CHANGELOG.md`                  | Any user-visible change                               | Add entry under `[Unreleased]`      |
+
+#### 19.10 Verification Report (output in every PR description)
+
+````markdown
+## Verification
+
+### Commands Run
+
+```powershell
+supabase test db                  → XX/XX pgTAP tests pass
+.\RUN_QA.ps1                      → 733/733 checks pass (0 failures)
+.\RUN_NEGATIVE_TESTS.ps1          → 23/23 caught
+npx tsc --noEmit                  → 0 errors
+npx vitest run                    → XXX/XXX tests pass
+npx vitest run --coverage         → Lines: XX% (baseline: 88%, delta: +X.X%)
+npx playwright test --project=smoke → XX/XX pass
+pwsh scripts/repo_verify.ps1      → 6/6 checks pass
+```
+````
+
+### New/Updated Tests
+
+- `supabase/tests/[file].test.sql` — N new pgTAP tests
+- `db/qa/QA__[suite].sql` — N checks added (total: XX → YY)
+- `frontend/src/[file].test.ts` — N new Vitest tests
+
+### Documentation Updated
+
+- `copilot-instructions.md §4` — [what was updated]
+- `docs/API_CONTRACTS.md` — [what was updated]
+- `CHANGELOG.md` — added entry under [Unreleased]
+
+````
+
+---
+
+### 19.11 Decision Framework — 10 Ambiguity Scenarios
+
+When encountering ambiguity, apply the default action without pausing to ask unless the situation is genuinely novel:
+
+| Scenario | Default Action |
+| -------- | -------------- |
+| **New domain value** (e.g., new prep method) | Use `_ref` table + FK (never a CHECK on the column itself) |
+| **New API parameter** | Add with `DEFAULT NULL`; document fallback behavior; no breaking change |
+| **Unclear test scope** | Test more rather than less — add edge cases, NULL paths, auth branches |
+| **Migration or function?** | If it's a schema definition → migration. If it's business logic → function. Never mix. |
+| **New env variable needed** | Add to `.env.example` with description; document in `CURRENT_STATE.md` |
+| **Type or runtime assertion?** | TypeScript type check (compile-time) + runtime Zod/pgTAP (runtime) — do both |
+| **Extend existing QA suite or new suite?** | Extend existing unless genuinely new domain. Never create a suite < 5 checks. |
+| **Slug change needed** | Add redirect before removing old slug. Update `docs/API_CONTRACTS.md`. |
+| **Coverage gap discovered** | Add characterization tests immediately, before touching the code |
+| **Conflicting doc sources** | `copilot-instructions.md` is authoritative. Flag the conflict in the PR description. |
+
+### 19.12 Anti-Patterns — 10 Forbidden Approaches
+
+| ❌ Forbidden | ✅ Correct Approach |
+| ------------ | ------------------- |
+| Modifying an existing `supabase/migrations/` file | Write a new migration with next timestamp |
+| Inventing nutrition data or Nutri-Score values | Fetch from OFF API or mark `nutri_score_source = 'unknown'` |
+| Inlining the scoring formula | Always call `compute_unhealthiness_v32()` |
+| Removing an API response key | Add a deprecation notice; keep the key returning `null` for 2 versions |
+| Using `DELETE` in pipeline SQL | Set `is_deprecated = true` with deprecation reason |
+| Writing tests after submitting PR | Tests are part of the same commit as the feature code |
+| Lowering coverage/quality thresholds to fix failures | Fix the code or add the missing tests |
+| Skipping `IF NOT EXISTS` in migrations | All DDL must be pre-guarded — no exceptions |
+| Using `SELECT *` in production functions | Always enumerate columns explicitly |
+| Running pipeline against remote without confirmation | Always use `--dry-run` first; remote requires explicit user opt-in |
+
+---
+
+## 20. Context Recovery Protocol
+
+> **Every session begins here.** No exceptions. Do not write a single line of code
+> until steps 20.1 and 20.2 are complete.
+
+### 20.1 Mandatory Session Bootstrap (execute in order, every time)
+
+```powershell
+# Step 1 — Read volatile project state (30 seconds)
+cat CURRENT_STATE.md
+
+# Step 2 — Confirm git state
+git status && git log --oneline -5 && git branch --show-current
+
+# Step 3 — Confirm no untracked important files
+git diff --stat HEAD
+
+# Step 4 — Quick health check
+pwsh scripts/repo_verify.ps1
+````
+
+### 20.2 Invariant Documents (load every session, regardless of domain)
+
+| Priority | Document                        | Purpose                                           | Where     |
+| -------- | ------------------------------- | ------------------------------------------------- | --------- |
+| 1        | `CURRENT_STATE.md`              | Live status — SHA, open PRs, in-flight work       | repo root |
+| 2        | `copilot-instructions.md §1–§4` | Role, architecture, project layout, schema        | repo root |
+| 3        | `copilot-instructions.md §8`    | Testing requirements — NON-NEGOTIABLE             | repo root |
+| 4        | `copilot-instructions.md §13`   | Git workflow, branch naming, conventional commits | repo root |
+| 5        | `docs/INDEX.md`                 | Navigation — find the right doc fast              | docs/     |
+
+### 20.3 Domain Docs (load when that domain is touched)
+
+→ See full matrix in **§20.4** below.
+
+### 20.4 Domain Reading Matrix
+
+| Domain                         | Load First                                                          | Also Relevant                                                                         |
+| ------------------------------ | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **Database schema**            | `docs/ARCHITECTURE.md`, `docs/MIGRATION_CONVENTIONS.md`             | `copilot-instructions.md §4`, `docs/DATA_PROVENANCE.md`                               |
+| **Migrations**                 | `docs/MIGRATION_CONVENTIONS.md`, `docs/BACKFILL_STANDARD.md`        | `copilot-instructions.md §7`                                                          |
+| **Scoring formula**            | `docs/SCORING_METHODOLOGY.md`, `docs/SCORING_ENGINE.md`             | `copilot-instructions.md §14`, `docs/DRIFT_DETECTION.md`                              |
+| **API / RPC functions**        | `docs/API_CONTRACTS.md`, `docs/API_CONVENTIONS.md`                  | `docs/API_VERSIONING.md`, `docs/FRONTEND_API_MAP.md`, `docs/api-registry.yaml`        |
+| **Search / indexing**          | `docs/SEARCH_ARCHITECTURE.md`                                       | `docs/PERFORMANCE_GUARDRAILS.md`                                                      |
+| **Frontend components**        | `docs/UX_UI_DESIGN.md`, `docs/BRAND_GUIDELINES.md`                  | `docs/UX_IMPACT_METRICS.md`                                                           |
+| **Security / RLS**             | `docs/SECURITY_AUDIT.md`, `docs/PRIVACY_CHECKLIST.md`               | `docs/ACCESS_AUDIT.md`, `docs/RATE_LIMITING.md`                                       |
+| **Performance**                | `docs/PERFORMANCE_GUARDRAILS.md`, `docs/PERFORMANCE_REPORT.md`      | `docs/SEARCH_ARCHITECTURE.md`, `docs/SLO.md`                                          |
+| **Multi-market expansion**     | `docs/COUNTRY_EXPANSION_GUIDE.md`                                   | `copilot-instructions.md §5`, `docs/DATA_SOURCES.md`                                  |
+| **Observability / monitoring** | `docs/MONITORING.md`, `docs/LOG_SCHEMA.md`                          | `docs/OBSERVABILITY.md`, `docs/ALERT_POLICY.md`, `docs/METRICS.md`                    |
+| **CI / CD**                    | `copilot-instructions.md §13`, `copilot-instructions.md §8.10`      | `docs/ENVIRONMENT_STRATEGY.md`, `docs/DEPLOYMENT.md`                                  |
+| **Feature flags**              | `docs/FEATURE_FLAGS.md`                                             | `docs/FEATURE_SUNSETTING.md`, `docs/GOVERNANCE_BLUEPRINT.md`                          |
+| **Pipeline / ETL**             | `docs/DATA_SOURCES.md`, `docs/DATA_PROVENANCE.md`                   | `copilot-instructions.md §6`                                                          |
+| **EAN / barcode**              | `docs/EAN_VALIDATION_STATUS.md`                                     | `copilot-instructions.md §4 Tables (product_submissions)`                             |
+| **i18n / localization**        | `copilot-instructions.md §15.15`, `docs/COUNTRY_EXPANSION_GUIDE.md` | `docs/DATA_SOURCES.md`                                                                |
+| **Brand / assets**             | `docs/BRAND_GUIDELINES.md`                                          | `docs/assets/design-tokens.json`, `docs/UX_UI_DESIGN.md`                              |
+| **Governance / policy**        | `docs/GOVERNANCE_BLUEPRINT.md`, `docs/REPO_GOVERNANCE.md`           | `docs/DOCUMENTATION_GOVERNANCE.md`, `docs/DOMAIN_BOUNDARIES.md`                       |
+| **SLOs / alerting**            | `docs/SLO.md`, `docs/ALERT_POLICY.md`                               | `docs/MONITORING.md`, `docs/INCIDENT_RESPONSE.md`, `docs/ON_CALL_POLICY.md`           |
+| **Contract testing**           | `docs/CONTRACT_TESTING.md`, `docs/API_CONTRACTS.md`                 | `docs/API_VERSIONING.md`, `copilot-instructions.md §8.12`                             |
+| **Data integrity**             | `docs/DATA_INTEGRITY_AUDITS.md`                                     | `docs/EAN_VALIDATION_STATUS.md`, `docs/PRODUCTION_DATA.md`, `docs/DATA_PROVENANCE.md` |
+
+### 20.5 Quick Health Commands
+
+```powershell
+# Git state
+git status && git log --oneline -5
+
+# DB QA (fastest signal of schema health)
+.\RUN_QA.ps1
+
+# TypeScript (fastest signal of frontend health)
+cd frontend && npx tsc --noEmit 2>&1 | tail -5
+
+# Repo hygiene
+pwsh scripts/repo_verify.ps1
+
+# Open issues (current sprint)
+gh issue list --state open --limit 20 --json number,title,labels
+
+# Scoring drift
+echo "SELECT * FROM governance_drift_check();" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
+
+# MV staleness
+echo "SELECT * FROM mv_staleness_check();" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
+```
+
+### 20.6 Session Handoff Protocol
+
+At the end of every significant work session, before closing:
+
+1. **Commit or stash everything** — no uncommitted changes left behind
+2. **Update `CURRENT_STATE.md`** — new SHA, what was done, what's next
+3. **Update `CHANGELOG.md`** — add entry under `[Unreleased]`
+4. **Push to remote branch** — so the next session starts from a known state
+5. **Write a session summary comment** on the active GitHub issue(s)
+
+```powershell
+# Final pre-close checklist
+git add -A
+git commit -m "chore(state): update CURRENT_STATE.md — <brief description>"
+git push origin <branch-name>
+gh issue comment XXX --body "Session complete — <what was done, what's next>"
+```
+
+### 20.7 Using This Instruction File
+
+- This file is automatically loaded by GitHub Copilot in VS Code via `.github/copilot-instructions.md` (symlink or copy).
+- Sections are numbered sequentially so any agent can say "per §X.Y" unambiguously.
+- When this file is updated, the commit message should include the sections changed (e.g., `chore(docs): copilot-instructions §4 — add ingredient_translations table`).
+- When the instructions conflict with a specific issue's acceptance criteria, the issue wins for that specific change — but document the divergence in the PR description.

@@ -1,6 +1,6 @@
 # Disaster Recovery Drill Report
 
-> **Owner:** Poland Food DB Team
+> **Owner:** TryVit Team
 > **Last drill:** 2026-02-23
 > **Next scheduled drill:** 2026-05-23 (quarterly)
 > **Environment:** Local (Docker Supabase)
@@ -9,7 +9,7 @@
 
 ## Executive Summary
 
-This report documents the results of the first disaster recovery drill for Poland Food DB. Six scenarios were designed and automated to validate backup integrity, recovery procedures, and time-to-recovery (TTR) across the full failure spectrum — from column drops to full database restore to frontend rollback.
+This report documents the results of the first disaster recovery drill for TryVit. Six scenarios were designed and automated to validate backup integrity, recovery procedures, and time-to-recovery (TTR) across the full failure spectrum — from column drops to full database restore to frontend rollback.
 
 **Key finding:** All database recovery scenarios (A–D) are automated via `RUN_DR_DRILL.ps1` with SAVEPOINT/ROLLBACK and complete in **< 1 second** for transactional recovery. Full backup restore (Scenario C) completes in **< 30 seconds** for local environments. Frontend and API recovery procedures (E, F) are documented and verified.
 

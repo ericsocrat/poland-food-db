@@ -31,7 +31,7 @@ const DARK_MODE_DIR = path.join(SCREENSHOT_ROOT, "dark-mode");
 const DESKTOP_VIEWPORT = { width: 1440, height: 900 };
 const MOBILE_VIEWPORT = { width: 390, height: 844 };
 
-const TEST_EMAIL = "screenshots@test.fooddb.local";
+const TEST_EMAIL = "screenshots@test.tryvit.local";
 const TEST_PASSWORD = "ScreenshotTest123!";
 
 /* ── Helper functions ────────────────────────────────────────────────────── */

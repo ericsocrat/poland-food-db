@@ -2,11 +2,11 @@
   <style>
     .es-board { fill: #e2e8f0; }
     .es-board-edge { fill: #cbd5e1; }
-    .es-clip { fill: #0d7377; }
-    .es-check { stroke: #0d7377; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .es-clip { fill: #1DB954; }
+    .es-check { stroke: #1DB954; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; fill: none; }
     .es-line { stroke: #cbd5e1; stroke-width: 2; stroke-linecap: round; }
     .es-shadow { fill: #94a3b8; opacity: 0.18; }
-    .es-star { fill: #d4a844; }
+    .es-star { fill: #F59E0B; }
     @media (prefers-color-scheme: dark) {
       .es-board { fill: #334155; }
       .es-board-edge { fill: #475569; }

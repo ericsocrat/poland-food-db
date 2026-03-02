@@ -2,10 +2,10 @@
   <style>
     .es-basket { fill: #e2e8f0; }
     .es-basket-rim { stroke: #cbd5e1; stroke-width: 3; fill: none; }
-    .es-handle { stroke: #0d7377; stroke-width: 3; fill: none; stroke-linecap: round; }
+    .es-handle { stroke: #1DB954; stroke-width: 3; fill: none; stroke-linecap: round; }
     .es-weave { stroke: #cbd5e1; stroke-width: 1.5; }
     .es-shadow { fill: #94a3b8; opacity: 0.18; }
-    .es-sparkle { fill: #d4a844; }
+    .es-sparkle { fill: #F59E0B; }
     @media (prefers-color-scheme: dark) {
       .es-basket { fill: #334155; }
       .es-basket-rim { stroke: #475569; }

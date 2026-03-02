@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Creates a pg_dump backup of the Poland Food DB (local or remote).
+    Creates a pg_dump backup of the TryVit (local or remote).
 
 .DESCRIPTION
     Produces a compressed custom-format backup (.dump) using pg_dump.
@@ -71,7 +71,7 @@ $KEY_TABLES = @(
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  Poland Food DB — Backup" -ForegroundColor Cyan
+Write-Host "  TryVit — Backup" -ForegroundColor Cyan
 Write-Host "  Environment: $($Env.ToUpper())" -ForegroundColor $(if ($Env -eq "remote") { "Red" } else { "Green" })
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""

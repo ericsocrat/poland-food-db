@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-04
 > **Status:** Active
-> **Owner issue:** [#211](https://github.com/ericsocrat/poland-food-db/issues/211)
+> **Owner issue:** [#211](https://github.com/ericsocrat/tryvit/issues/211)
 > **Dependencies:** OBSERVABILITY.md (logging), LOG_SCHEMA.md (error codes), PERFORMANCE_GUARDRAILS.md (budgets)
 > **Machine-readable source of truth:** [`monitoring/alerts.yml`](../monitoring/alerts.yml) — validated by CI (`.github/workflows/validate-alerts.yml`)
 

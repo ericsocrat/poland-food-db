@@ -76,7 +76,7 @@ describe("Global Print Styles", () => {
   });
 
   it("has page attribution footer", () => {
-    expect(globalsCss).toContain("Poland Food DB");
+    expect(globalsCss).toContain("TryVit");
     expect(globalsCss).toContain("body::after");
   });
 

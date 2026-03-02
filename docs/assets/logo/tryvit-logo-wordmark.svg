@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 40" role="img" aria-label="TryVit wordmark">
+  <title>TryVit Wordmark</title>
+  <desc>TryVit wordmark only — no icon mark. "Try" in vitDark (#0A2E1A), "Vit" in vitGreen (#1DB954). Inter ExtraBold 800, tracking -0.03em. Use in narrow horizontal contexts where the full lockup is too wide.</desc>
+  <text
+    x="4" y="30"
+    font-family="'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif"
+    font-size="30"
+    font-weight="800"
+    letter-spacing="-0.03em"
+    dominant-baseline="auto"
+  >
+    <tspan fill="#0A2E1A">Try</tspan><tspan fill="#1DB954">Vit</tspan>
+  </text>
+</svg>

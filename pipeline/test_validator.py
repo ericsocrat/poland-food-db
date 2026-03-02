@@ -111,43 +111,43 @@ class TestCheckNutritionAnomalies:
 
     def test_within_caps_no_errors(self) -> None:
         product = {"calories": "500", "total_fat_g": "30", "salt_g": "1.5"}
-        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        errors, _warnings = check_nutrition_anomalies(product, "Chips")
         assert errors == []
 
     def test_exceeds_absolute_cap_calories(self) -> None:
         product = {"calories": "950"}
-        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        errors, _warnings = check_nutrition_anomalies(product, "Chips")
         assert len(errors) == 1
         assert "calories" in errors[0]
         assert "950" in errors[0]
 
     def test_exceeds_absolute_cap_salt(self) -> None:
         product = {"salt_g": "55"}
-        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        errors, _warnings = check_nutrition_anomalies(product, "Chips")
         assert len(errors) == 1
         assert "salt_g" in errors[0]
 
     def test_exceeds_absolute_cap_fat(self) -> None:
         product = {"total_fat_g": "110"}
-        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        errors, _warnings = check_nutrition_anomalies(product, "Chips")
         assert len(errors) == 1
         assert "total_fat_g" in errors[0]
 
     def test_multiple_cap_violations(self) -> None:
         product = {"calories": "950", "total_fat_g": "110", "salt_g": "55"}
-        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        errors, _warnings = check_nutrition_anomalies(product, "Chips")
         assert len(errors) == 3
 
     def test_at_exact_cap_no_error(self) -> None:
         product = {"calories": "900"}
-        errors, warnings = check_nutrition_anomalies(product, "Chips")
+        errors, _warnings = check_nutrition_anomalies(product, "Chips")
         assert errors == []
 
     def test_category_range_high_outlier_warning(self) -> None:
-        """Value > 1.5× category high triggers warning."""
-        # Chips calories range is (400, 600), so 1.5 × 600 = 900
+        """Value > 1.5x category high triggers warning."""
+        # Chips calories range is (400, 600), so 1.5 x 600 = 900
         # 901 > 900 cap, so it would be an error. Use a field with more room.
-        # Chips salt_g range is (0.5, 3.0), so 1.5 × 3.0 = 4.5
+        # Chips salt_g range is (0.5, 3.0), so 1.5 x 3.0 = 4.5
         product = {"salt_g": "5.0"}
         errors, warnings = check_nutrition_anomalies(product, "Chips")
         assert errors == []
@@ -156,8 +156,8 @@ class TestCheckNutritionAnomalies:
         assert "category" in warnings[0].lower()
 
     def test_category_range_low_outlier_warning(self) -> None:
-        """Value < 0.5× category low triggers warning."""
-        # Chips calories range is (400, 600), so 0.5 × 400 = 200
+        """Value < 0.5x category low triggers warning."""
+        # Chips calories range is (400, 600), so 0.5 x 400 = 200
         product = {"calories": "150"}
         errors, warnings = check_nutrition_anomalies(product, "Chips")
         assert errors == []
@@ -178,7 +178,7 @@ class TestCheckNutritionAnomalies:
 
     def test_unknown_category_cap_still_blocks(self) -> None:
         product = {"calories": "950"}
-        errors, warnings = check_nutrition_anomalies(product, "UnknownCategory")
+        errors, _warnings = check_nutrition_anomalies(product, "UnknownCategory")
         assert len(errors) == 1
 
     def test_missing_field_skipped(self) -> None:
@@ -463,7 +463,7 @@ class TestValidateProduct:
 
     def test_anomaly_warnings_included_in_validation_warnings(self) -> None:
         """Anomaly warnings (category range) should appear in validation_warnings."""
-        # Chips salt_g range is (0.5, 3.0), so 1.5 × 3.0 = 4.5; 5.0 > 4.5 triggers warning
+        # Chips salt_g range is (0.5, 3.0), so 1.5 x 3.0 = 4.5; 5.0 > 4.5 triggers warning
         product = {
             "ean": "5901234123457",
             "salt_g": "5.0",

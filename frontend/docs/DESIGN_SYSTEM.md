@@ -2,7 +2,7 @@
 
 > **Issue**: #57 · **Status**: Active · **Last updated**: 2026-02-17
 
-This document defines the design token vocabulary for the poland-food-db frontend. All visual properties (colors, spacing, typography, elevation, radii, transitions) are codified as CSS custom properties in `src/styles/globals.css` and mapped to Tailwind CSS utility classes via `tailwind.config.ts`.
+This document defines the design token vocabulary for the tryvit frontend. All visual properties (colors, spacing, typography, elevation, radii, transitions) are codified as CSS custom properties in `src/styles/globals.css` and mapped to Tailwind CSS utility classes via `tailwind.config.ts`.
 
 ---
 

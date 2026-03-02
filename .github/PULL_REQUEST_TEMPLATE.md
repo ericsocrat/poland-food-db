@@ -1,4 +1,4 @@
-![Pull Request](https://raw.githubusercontent.com/ericsocrat/poland-food-db/main/.github/assets/pr-header.svg)
+![Pull Request](https://raw.githubusercontent.com/ericsocrat/tryvit/main/.github/assets/pr-header.svg)
 
 ## Summary
 

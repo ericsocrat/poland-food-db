@@ -4,12 +4,11 @@
 //
 // Issue #50 — A11y CI Gate, Phase 4
 
-import type { RenderResult } from "@testing-library/react";
-import { render } from "@testing-library/react";
+import { type RenderResult, render } from "@testing-library/react";
 import type { AxeResults, RunOptions } from "axe-core";
 import type { ReactElement } from "react";
-import { axe } from "vitest-axe";
 import { expect } from "vitest";
+import { axe } from "vitest-axe";
 
 /* ── Types ───────────────────────────────────────────────────────────────── */
 

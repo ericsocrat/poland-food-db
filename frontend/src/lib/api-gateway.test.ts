@@ -1,24 +1,22 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
-  recordScanViaGateway,
-  submitProductViaGateway,
-  trackEventViaGateway,
-  saveSearchViaGateway,
-  createApiGateway,
-  isGatewayRateLimited,
-  isGatewayAuthError,
-  isGatewayValidationError,
-  isGatewayCaptchaRequired,
-  isGatewayCaptchaFailed,
-  GATEWAY_FUNCTION_NAME,
+    createApiGateway,
+    GATEWAY_FUNCTION_NAME,
+    isGatewayAuthError,
+    isGatewayCaptchaFailed,
+    isGatewayCaptchaRequired,
+    isGatewayRateLimited,
+    isGatewayValidationError,
+    recordScanViaGateway,
+    saveSearchViaGateway,
+    submitProductViaGateway,
+    trackEventViaGateway,
+    type GatewayError,
+    type GatewayResult,
+    type SaveSearchParams,
+    type SubmitProductParams,
+    type TrackEventParams,
 } from "@/lib/api-gateway";
-import type {
-  GatewayResult,
-  GatewayError,
-  SubmitProductParams,
-  TrackEventParams,
-  SaveSearchParams,
-} from "@/lib/api-gateway";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 

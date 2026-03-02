@@ -2,9 +2,9 @@
   <style>
     .es-shelf { fill: #cbd5e1; }
     .es-shelf-edge { fill: #94a3b8; }
-    .es-scanner { fill: #0d7377; }
-    .es-scanner-light { fill: #d4a844; opacity: 0.35; }
-    .es-beam { stroke: #d4a844; stroke-width: 2; stroke-dasharray: 6 4; }
+    .es-scanner { fill: #1DB954; }
+    .es-scanner-light { fill: #F59E0B; opacity: 0.35; }
+    .es-beam { stroke: #F59E0B; stroke-width: 2; stroke-dasharray: 6 4; }
     .es-shadow { fill: #94a3b8; opacity: 0.18; }
     .es-barcode { stroke: #64748b; stroke-width: 2; stroke-linecap: round; }
     @media (prefers-color-scheme: dark) {

@@ -64,7 +64,7 @@
     "offline": "You're offline — some features may be unavailable",
     "cachedProductsAvailable": "{count} cached products available",
     "cachedAgo": "Cached {time}",
-    "installTitle": "Install FoodDB",
+    "installTitle": "Install TryVit",
     "installDescription": "Add to your home screen for quick access and offline support.",
     "iosInstallHint": "Tap the Share button, then \"Add to Home Screen\".",
     "dismissInstall": "Dismiss install prompt"
@@ -655,7 +655,7 @@
     "preferencesFailed": "Failed to load preferences.",
     "signIn": "Sign In",
     "welcomeBack": "Welcome back",
-    "signInSubtitle": "Sign in to your FoodDB account.",
+    "signInSubtitle": "Sign in to your TryVit account.",
     "sessionExpiredBanner": "Your session has expired. Please sign in again.",
     "email": "Email",
     "emailPlaceholder": "you@example.com",
@@ -665,7 +665,7 @@
     "noAccount": "Don't have an account?",
     "signUp": "Sign Up",
     "createAccount": "Create your account",
-    "signUpSubtitle": "Sign up to access food quality data for Poland and Germany.",
+    "signUpSubtitle": "Sign up to get instant health scores for food products sold in Poland and Germany.",
     "creatingAccount": "Creating account…",
     "hasAccount": "Already have an account?",
     "checkEmail": "Check your email to confirm your account.",
@@ -673,14 +673,14 @@
     "captchaFailed": "Security verification failed. Please try again."
   },
   "layout": {
-    "appName": "FoodDB",
-    "appNameWithEmoji": "🥗 FoodDB",
+    "appName": "TryVit",
+    "appNameWithEmoji": "🥗 TryVit",
     "errorTitle": "Something went wrong",
     "errorMessage": "We couldn't load your preferences. This is usually a temporary issue.",
     "contact": "Contact",
     "privacy": "Privacy Policy",
     "terms": "Terms of Service",
-    "copyright": "© {year} Poland Food DB. Data sourced from Open Food Facts."
+    "copyright": "© {year} TryVit. Data sourced from Open Food Facts."
   },
   "theme": {
     "label": "Theme preference",
@@ -745,7 +745,7 @@
   },
   "landing": {
     "tagline": "healthier choices, made simple",
-    "description": "Search, scan, and compare food products across Poland and Germany. Get instant health scores, allergen warnings, and better alternatives.",
+    "description": "Search, scan, and compare food products. Get instant TryVit health scores, allergen warnings, and find healthier alternatives.",
     "getStarted": "Get started",
     "signIn": "Sign in",
     "featureSearch": "Search",
@@ -772,15 +772,15 @@
     "yourRights": "Your Rights",
     "yourRightsText": "Under GDPR, you have the right to access, correct, or delete your personal data. Contact us at the email below to exercise these rights.",
     "acceptance": "Acceptance",
-    "acceptanceText": "By using Poland Food DB, you agree to these terms. If you do not agree, please do not use the service.",
+    "acceptanceText": "By using TryVit, you agree to these terms. If you do not agree, please do not use the service.",
     "serviceDescription": "Service Description",
-    "serviceDescText": "Poland Food DB provides food product information, health scores, and nutritional data sourced from Open Food Facts and our own analysis. This is for informational purposes only and does not constitute medical or dietary advice.",
+    "serviceDescText": "TryVit provides food product information, health scores, and nutritional data sourced from Open Food Facts and our own analysis. This is for informational purposes only and does not constitute medical or dietary advice.",
     "dataAccuracy": "Data Accuracy",
     "dataAccuracyText": "While we strive for accuracy, food data may contain errors. Always check product labels for allergen and nutritional information. We are not liable for decisions made based on our data.",
     "userAccounts": "User Accounts",
     "userAccountsText": "You are responsible for maintaining the security of your account. Do not share your credentials. We reserve the right to suspend accounts that violate these terms.",
     "liability": "Limitation of Liability",
-    "liabilityText": "Poland Food DB is provided \"as is\" without warranties. We are not liable for any damages arising from the use of this service.",
+    "liabilityText": "TryVit is provided \"as is\" without warranties. We are not liable for any damages arising from the use of this service.",
     "imageProcessing": "Image Processing",
     "imageWhatWeProcess": "What We Process",
     "imageWhatWeProcessText": "Barcode images (camera-based barcode scanning) and product label images (OCR text extraction — Beta feature, coming soon).",
@@ -923,7 +923,7 @@
     "listEmpty": "This list is empty.",
     "sharedComparison": "Shared comparison",
     "comparisonInvalid": "This comparison link is invalid or has expired.",
-    "goToFoodDB": "Go to FoodDB",
+    "goToTryVit": "Go to TryVit",
     "productComparison": "Product Comparison",
     "productsCompared": "{count} {count|product|products} compared",
     "wantToCompare": "Want to compare your own products?",
@@ -1077,7 +1077,7 @@
   "learn": {
     "hubTitle": "Learn",
     "hubSubtitle": "Understand how we evaluate food products",
-    "hubDescription": "Explore our educational resources to understand the scoring systems, labels, and classifications used in FoodDB.",
+    "hubDescription": "Explore our educational resources to understand the scoring systems, labels, and classifications used in TryVit.",
     "disclaimer": "This information is for educational purposes only. It does not constitute medical or dietary advice. Consult a healthcare professional for personalized nutrition guidance.",
     "disclaimerLabel": "Educational disclaimer",
     "sidebarLabel": "Learn topics navigation",
@@ -1131,7 +1131,7 @@
       "polishContextTitle": "Polish context",
       "polishContextText": "Many popular products in Polish supermarkets like Żabka, Biedronka, and Lidl fall into NOVA 4. This doesn't mean you should never eat them — it means being aware of how much of your diet comes from ultra-processed sources.",
       "processingRiskTitle": "How we use it: Processing Risk",
-      "processingRiskText": "In FoodDB, NOVA groups are mapped to three Processing Risk levels: Low (NOVA 1–2), Moderate (NOVA 3), and High (NOVA 4). This gives you a quick read on processing alongside our Unhealthiness Score and Nutri-Score."
+      "processingRiskText": "in TryVit, NOVA groups are mapped to three Processing Risk levels: Low (NOVA 1–2), Moderate (NOVA 3), and High (NOVA 4). This gives you a quick read on processing alongside our Unhealthiness Score and Nutri-Score."
     },
     "unhealthinessScore": {
       "title": "Our Health Score",
@@ -1174,7 +1174,7 @@
       "concernTier2": "Tier 2 — Moderate concern: Some artificial sweeteners and colorants. Safe at approved levels but subject to ongoing research.",
       "concernTier3": "Tier 3 — High concern: Nitrites (E250), BHA (E320), certain azo dyes. EFSA has flagged concerns; some have reduced ADIs.",
       "howWeUseTitle": "How we use this",
-      "howWeUseText": "In FoodDB, each ingredient is assigned a concern tier based on EFSA evaluations. The product's ingredient concern score (0–100) contributes 5% to the overall Unhealthiness Score. Products with no concerning additives score 0 on this factor.",
+      "howWeUseText": "in TryVit, each ingredient is assigned a concern tier based on EFSA evaluations. The product's ingredient concern score (0–100) contributes 5% to the overall Unhealthiness Score. Products with no concerning additives score 0 on this factor.",
       "polishContextTitle": "Polish context",
       "polishContextText": "Polish food labeling follows EU Regulation 1169/2011. All additives must be listed by their E-number or full name in the ingredients list. When shopping at Żabka or Biedronka, check the ingredient list — shorter lists with recognizable ingredients generally indicate less processing."
     },
@@ -1202,8 +1202,8 @@
       "containsVsTracesText": "'Contains' means the allergen is an ingredient in the product. 'May contain traces of' (or 'produced in a facility that also processes...') is a voluntary warning about potential cross-contamination during manufacturing. It is not legally required but is widely used.",
       "polishLabelsTitle": "Reading Polish allergen labels",
       "polishLabelsText": "On Polish packaging, allergens in the ingredients list are highlighted in bold or UPPERCASE. Look for 'Alergeny:' or 'Zawiera:' (Contains:) sections. The Polish terms for common allergens: mleko (milk), jaja (eggs), pszenica (wheat), soja (soybeans), orzechy (nuts), sezam (sesame), seler (celery), gorczyca (mustard).",
-      "inFoodDBTitle": "Allergens in FoodDB",
-      "inFoodDBText": "We track allergen data from product labels and cross-reference it with ingredient lists. When allergen information is available, it's shown on the product profile page."
+      "inTryVitTitle": "Allergens in TryVit",
+      "inTryVitText": "We track allergen data from product labels and cross-reference it with ingredient lists. When allergen information is available, it's shown on the product profile page."
     },
     "readingLabels": {
       "title": "Reading Polish Food Labels",

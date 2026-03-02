@@ -1,4 +1,4 @@
-"""OFF image importer for the poland-food-db pipeline.
+"""OFF image importer for the tryvit pipeline.
 
 Fetches product image URLs from the Open Food Facts API for products
 that already exist in the database, and generates SQL INSERT statements
@@ -50,7 +50,7 @@ IMAGE_FIELDS = "images,image_front_url,image_ingredients_url,image_nutrition_url
 REQUEST_DELAY = 0.5  # seconds
 
 # DB connection constants (matching enrich_ingredients.py)
-DB_CONTAINER = "supabase_db_poland-food-db"
+DB_CONTAINER = "supabase_db_tryvit"
 DB_USER = "postgres"
 DB_NAME = "postgres"
 

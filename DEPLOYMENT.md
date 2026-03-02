@@ -160,11 +160,11 @@ See also: Issue #121 (Rollback Documentation) for detailed procedures.
 ## Custom Domain
 
 1. Go to **Vercel > Project Settings > Domains**
-2. Add your custom domain (e.g., `fooddb.example.com`)
+2. Add your custom domain (e.g., `TryVit.example.com`)
 3. Configure DNS per Vercel's instructions (CNAME or A record)
 4. **Update Supabase Auth URLs** to match:
-   - Site URL: `https://fooddb.example.com`
-   - Redirect URL: `https://fooddb.example.com/auth/callback`
+   - Site URL: `https://TryVit.example.com`
+   - Redirect URL: `https://TryVit.example.com/auth/callback`
 5. Keep the Vercel `.vercel.app` domain in Supabase redirect URLs as a fallback
 
 ---

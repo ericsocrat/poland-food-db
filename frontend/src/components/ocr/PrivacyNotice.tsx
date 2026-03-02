@@ -6,11 +6,10 @@
 
 "use client";
 
-import { useRef, useEffect, useCallback } from "react";
-import { useTranslation } from "@/lib/i18n";
-import { Shield, Smartphone, EyeOff, Lock, CheckCircle } from "lucide-react";
 import { Icon } from "@/components/common/Icon";
-import type { LucideIcon } from "lucide-react";
+import { useTranslation } from "@/lib/i18n";
+import { CheckCircle, EyeOff, Lock, Shield, Smartphone, type LucideIcon } from "lucide-react";
+import { useCallback, useEffect, useRef } from "react";
 
 interface PrivacyNoticeProps {
   readonly open: boolean;

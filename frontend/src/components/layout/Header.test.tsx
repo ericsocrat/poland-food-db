@@ -20,7 +20,7 @@ vi.mock("next/link", () => ({
 describe("Header", () => {
   it("renders logo linking to home", () => {
     render(<Header />);
-    const logo = screen.getByText(/FoodDB/);
+    const logo = screen.getByText(/TryVit/);
     expect(logo.closest("a")).toHaveAttribute("href", "/");
   });
 

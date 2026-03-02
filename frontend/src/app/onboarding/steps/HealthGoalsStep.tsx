@@ -2,9 +2,9 @@
 
 // ─── Step 5: Health Goals ───────────────────────────────────────────────────
 
+import type { StepProps } from "@/app/onboarding/types";
 import { HEALTH_GOALS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import type { StepProps } from "../types";
 
 export function HealthGoalsStep({ data, onChange, onNext, onBack }: StepProps) {
   const { t } = useTranslation();

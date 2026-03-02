@@ -3,7 +3,7 @@
  * Mirrors: header row + 2–3 product columns side by side.
  */
 
-import { Skeleton, SkeletonContainer } from "../Skeleton";
+import { Skeleton, SkeletonContainer } from "@/components/common/Skeleton";
 
 export function ComparisonGridSkeleton() {
   const columns = 3;

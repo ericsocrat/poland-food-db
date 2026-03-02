@@ -3,7 +3,7 @@
  * Mirrors: title + grid of category cards (2-col mobile, 3-col desktop).
  */
 
-import { Skeleton, SkeletonContainer } from "../Skeleton";
+import { Skeleton, SkeletonContainer } from "@/components/common/Skeleton";
 
 export function CategoryGridSkeleton() {
   return (

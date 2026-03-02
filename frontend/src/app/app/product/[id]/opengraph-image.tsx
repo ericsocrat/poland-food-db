@@ -1,4 +1,4 @@
-// ─── Dynamic OpenGraph image for product share cards ──────────────────────────
+﻿// ─── Dynamic OpenGraph image for product share cards ──────────────────────────
 // Generates a 1200×630 PNG with product name, score ring, hero image, and
 // warnings.  Edge-cached for 1 hour.  Uses Next.js  ImageResponse (Satori).
 
@@ -77,7 +77,7 @@ function FallbackCard() {
       >
         <div style={{ fontSize: 64, marginBottom: 16 }}>🍽️</div>
         <div style={{ fontSize: 32, fontWeight: 700, color: "#111827" }}>
-          FoodDB
+          TryVit
         </div>
         <div style={{ fontSize: 18, color: "#6b7280", marginTop: 8 }}>
           Product not found
@@ -298,7 +298,7 @@ export default async function OGImage({
             color: "#9ca3af",
           }}
         >
-          FoodDB — Know What You Eat
+          TryVit — Know What You Eat
         </div>
       </div>
     </div>,

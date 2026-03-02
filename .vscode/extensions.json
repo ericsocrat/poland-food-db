@@ -1,21 +1,44 @@
 {
   "recommendations": [
+    // ── Python ──────────────────────────────────────────────────────────────
     "ms-python.python",
     "ms-python.vscode-pylance",
     "ms-python.black-formatter",
+    "charliermarsh.ruff",
+    // ── PowerShell ──────────────────────────────────────────────────────────
     "ms-vscode.powershell",
+    // ── Database / SQL ──────────────────────────────────────────────────────
     "mtxr.sqltools",
     "mtxr.sqltools-driver-pg",
     "ms-ossdata.vscode-pgsql",
+    // ── Frontend ────────────────────────────────────────────────────────────
+    "dbaeumer.vscode-eslint",
+    "bradlc.vscode-tailwindcss",
+    "ms-playwright.playwright",
+    "vitest.explorer",
+    // ── YAML / TOML / Config ────────────────────────────────────────────────
+    "redhat.vscode-yaml",
     "tamasfe.even-better-toml",
+    "GitHub.vscode-github-actions",
+    // ── Containers / Infra ──────────────────────────────────────────────────
+    "ms-azuretools.vscode-docker",
+    // ── Git ─────────────────────────────────────────────────────────────────
     "eamodio.gitlens",
     "mhutchie.git-graph",
+    // ── Documentation ───────────────────────────────────────────────────────
     "yzhang.markdown-all-in-one",
+    "bierner.markdown-mermaid",
+    // ── Environment & Dotfiles ──────────────────────────────────────────────
     "dotenv.dotenv-vscode",
+    // ── Developer Experience ────────────────────────────────────────────────
     "gruntfuggly.todo-tree",
     "usernamehw.errorlens",
     "streetsidesoftware.code-spell-checker",
     "editorconfig.editorconfig",
+    "christian-kohler.path-intellisense",
+    "naumovs.color-highlight",
+    "mechatroner.rainbow-csv",
+    // ── Code Quality ────────────────────────────────────────────────────────
     "sonarsource.sonarlint-vscode"
   ]
 }

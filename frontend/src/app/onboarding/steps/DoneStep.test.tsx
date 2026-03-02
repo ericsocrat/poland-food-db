@@ -1,9 +1,8 @@
-import { describe, expect, it, vi } from "vitest";
+import { INITIAL_ONBOARDING_DATA, type OnboardingData } from "@/app/onboarding/types";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
 import { DoneStep } from "./DoneStep";
-import { INITIAL_ONBOARDING_DATA } from "../types";
-import type { OnboardingData } from "../types";
 
 describe("DoneStep", () => {
   const onComplete = vi.fn();

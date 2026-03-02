@@ -1,12 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Food quality intelligence logomark — dark mode">
-  <title>Food Quality Intelligence (Dark Mode)</title>
-  <desc>Dark-mode shield-leaf logomark using lighter teal tones for visibility on dark backgrounds.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="TryVit logomark — dark mode">
+  <title>TryVit (Dark Mode)</title>
+  <desc>Dark-mode shield-leaf logomark. Uses vitAccent #00E676 top to vitGreen #1DB954 base for vibrant contrast on dark surfaces (vitDark #0A2E1A).</desc>
 
   <defs>
-    <!-- Dark-mode gradient — lighter, more vibrant teal for contrast on dark surfaces -->
+    <!-- Dark-mode gradient — vitAccent to vitGreen for contrast on dark surfaces -->
     <linearGradient id="brand-fill-dark" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#3ee0d0"/>
-      <stop offset="100%" stop-color="#1aafab"/>
+      <stop offset="0%" stop-color="#00E676"/>
+      <stop offset="100%" stop-color="#1DB954"/>
     </linearGradient>
   </defs>
 
@@ -32,6 +32,6 @@
   <line x1="256" y1="336" x2="200" y2="380" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
   <line x1="256" y1="336" x2="312" y2="380" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
 
-  <!-- Gold accent dot -->
-  <circle cx="256" cy="64" r="10" fill="#fbbf24" opacity="0.9"/>
+  <!-- Accent dot — score indicator -->
+  <circle cx="256" cy="64" r="10" fill="#F0FAF4" opacity="0.90"/>
 </svg>

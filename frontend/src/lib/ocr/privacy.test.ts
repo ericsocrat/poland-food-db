@@ -27,7 +27,7 @@ Object.defineProperty(globalThis, "localStorage", {
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 describe("privacy", () => {
-  const CONSENT_KEY = "fooddb:image-search-privacy-accepted";
+  const CONSENT_KEY = "tryvit:image-search-privacy-accepted";
 
   beforeEach(() => {
     vi.clearAllMocks();

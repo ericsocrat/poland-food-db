@@ -8,25 +8,25 @@
 // Uses useProductListMembership to lazily fetch which lists contain this
 // product when the dropdown opens, and Zustand stores for compact badges.
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
-  useLists,
-  useAddToList,
-  useRemoveFromList,
-  useProductListMembership,
+    useAddToList,
+    useLists,
+    useProductListMembership,
+    useRemoveFromList,
 } from "@/hooks/use-lists";
-import { useFavoritesStore } from "@/stores/favorites-store";
 import { useTranslation } from "@/lib/i18n";
-import {
-  Heart,
-  Ban,
-  Circle,
-  CheckCircle,
-  Plus,
-  ClipboardList,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 import type { ProductList } from "@/lib/types";
+import { useFavoritesStore } from "@/stores/favorites-store";
+import {
+    Ban,
+    CheckCircle,
+    Circle,
+    ClipboardList,
+    Heart,
+    Plus,
+    type LucideIcon,
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 function getListIcon(
   listType: string,

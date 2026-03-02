@@ -2,10 +2,10 @@
 
 // ─── Step 2: Region + Language ──────────────────────────────────────────────
 
+import type { StepProps } from "@/app/onboarding/types";
 import { COUNTRIES, getLanguagesForCountry } from "@/lib/constants";
-import { Check } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
-import type { StepProps } from "../types";
+import { Check } from "lucide-react";
 
 export function RegionStep({
   data,

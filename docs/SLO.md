@@ -1,7 +1,7 @@
 # Platform Service Level Objectives
 
 > **Status:** Active — all issues MUST reference this document for performance targets.  
-> **Parent:** [#195 — Execution Governance Blueprint](https://github.com/ericsocrat/poland-food-db/issues/195)  
+> **Parent:** [#195 — Execution Governance Blueprint](https://github.com/ericsocrat/tryvit/issues/195)  
 > **Last updated:** 2026-02-24
 
 ---

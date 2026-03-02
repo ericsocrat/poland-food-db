@@ -3,7 +3,7 @@
  * Mirrors: title + "new list" button, list cards with item counts.
  */
 
-import { Skeleton, SkeletonContainer } from "../Skeleton";
+import { Skeleton, SkeletonContainer } from "@/components/common/Skeleton";
 
 export function ListViewSkeleton() {
   return (

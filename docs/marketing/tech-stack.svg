@@ -20,7 +20,7 @@
   <text class="subtitle" x="450" y="58">Full-stack architecture — 6 layers, 20+ technologies</text>
   <!-- Layer 1: Frontend (teal) -->
   <g transform="translate(32, 76)">
-    <rect class="layer-bg" width="836" height="60" fill="#0d7377"/>
+    <rect class="layer-bg" width="836" height="60" fill="#1DB954"/>
     <text class="layer-label" x="16" y="20">FRONTEND</text>
     <!-- Pills -->
     <rect class="tech-pill" x="16" y="28" width="90" height="24"/>
@@ -42,7 +42,7 @@
   <line class="connector" x1="450" y1="136" x2="450" y2="148"/>
   <!-- Layer 2: Backend / Database (dark teal) -->
   <g transform="translate(32, 148)">
-    <rect class="layer-bg" width="836" height="60" fill="#095456"/>
+    <rect class="layer-bg" width="836" height="60" fill="#0A2E1A"/>
     <text class="layer-label" x="16" y="20">BACKEND / DATABASE</text>
     <rect class="tech-pill" x="16" y="28" width="110" height="24"/>
     <text class="tech-pill-text" x="71" y="44">PostgreSQL 15</text>
@@ -63,7 +63,7 @@
   <line class="connector" x1="450" y1="208" x2="450" y2="220"/>
   <!-- Layer 3: Pipeline (gold/accent) -->
   <g transform="translate(32, 220)">
-    <rect class="layer-bg" width="836" height="60" fill="#d4a844"/>
+    <rect class="layer-bg" width="836" height="60" fill="#F59E0B"/>
     <text class="layer-label-dark" x="16" y="20">DATA PIPELINE</text>
     <rect class="tech-pill" x="16" y="28" width="96" height="24"/>
     <text class="tech-pill-text" x="64" y="44">Python 3.12</text>
@@ -139,5 +139,5 @@
     <text class="tech-pill-text" x="583" y="40">GDPR / RODO</text>
   </g>
   <!-- Footer -->
-  <text class="footer" x="450" y="510">poland-food-db · Science-driven food quality database for Poland + Germany</text>
+  <text class="footer" x="450" y="510">tryvit · Food Health Scanner</text>
 </svg>

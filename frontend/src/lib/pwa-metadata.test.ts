@@ -15,8 +15,8 @@ describe("PWA Manifest", () => {
   const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
 
   it("has required PWA fields", () => {
-    expect(manifest.name).toBeTruthy();
-    expect(manifest.short_name).toBeTruthy();
+    expect(manifest.name).toBe("TryVit");
+    expect(manifest.short_name).toBe("TryVit");
     expect(manifest.start_url).toBe("/app");
     expect(manifest.display).toBe("standalone");
     expect(manifest.theme_color).toBeTruthy();
@@ -27,9 +27,9 @@ describe("PWA Manifest", () => {
     expect(manifest.id).toBeTruthy();
   });
 
-  it("has description matching root metadata", () => {
-    expect(manifest.description).toContain("Poland");
-    expect(manifest.description).toContain("Germany");
+  it("has description for food products", () => {
+    expect(manifest.description).toBeTruthy();
+    expect(manifest.description.length).toBeGreaterThan(20);
   });
 
   it("has separate icon purposes (not combined 'any maskable')", () => {
@@ -152,9 +152,9 @@ describe("Product Layout", () => {
   });
 
   it("uses title template (no hardcoded suffix)", () => {
-    // Should NOT contain "— FoodDB" in title (template handles it)
-    expect(productLayoutSrc).not.toContain('title: `${name} — FoodDB`');
-    expect(productLayoutSrc).not.toContain('title: "Product — FoodDB"');
+    // Should NOT contain "— TryVit" in title (template handles it)
+    expect(productLayoutSrc).not.toContain('title: `${name} — TryVit`');
+    expect(productLayoutSrc).not.toContain('title: "Product — TryVit"');
   });
 });
 

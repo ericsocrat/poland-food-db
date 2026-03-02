@@ -22,7 +22,7 @@ export function ShareButton({
   const handleShare = useCallback(async () => {
     const shareUrl = `${globalThis.location.origin}/app/product/${productId}`;
     const shareTitle = `${productName} — Health Score: ${score}/100`;
-    const shareText = `Check out ${productName} on FoodDB — Health Score: ${score}/100`;
+    const shareText = `Check out ${productName} on TryVit — Health Score: ${score}/100`;
 
     if (typeof navigator.share === "function") {
       try {

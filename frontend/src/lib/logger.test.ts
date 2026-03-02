@@ -1,6 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { log, logger } from "./logger";
-import type { LogLevel } from "./logger";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { log, logger, type LogLevel } from "./logger";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 

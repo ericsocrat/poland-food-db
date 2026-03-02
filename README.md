@@ -1,24 +1,24 @@
 <!-- ╔══════════════════════════════════════════════════════════════════╗ -->
-<!-- ║  Poland Food DB — README.md                                     ║ -->
+<!-- ║  TryVit — README.md                                     ║ -->
 <!-- ║  Redesigned 2026-02-28 · Issue #413                             ║ -->
 <!-- ╚══════════════════════════════════════════════════════════════════╝ -->
 
 <!-- ═══════════════════════════ 1. HERO BANNER ═══════════════════════════ -->
 
 <p align="center">
-  <img src="docs/assets/banners/readme-banner.png" alt="Poland Food DB — Science-driven food quality intelligence" width="100%" />
+  <img src="docs/assets/banners/readme-banner.png" alt="TryVit — Food Health Scanner" width="100%" />
 </p>
 
 <!-- ═══════════════════════════ 2. BADGES ROW ════════════════════════════ -->
 
 <p align="center">
-  <a href="https://github.com/ericsocrat/poland-food-db/actions/workflows/pr-gate.yml"><img src="https://img.shields.io/github/actions/workflow/status/ericsocrat/poland-food-db/pr-gate.yml?style=flat-square&label=build" alt="Build Status" /></a>
+  <a href="https://github.com/ericsocrat/tryvit/actions/workflows/pr-gate.yml"><img src="https://img.shields.io/github/actions/workflow/status/ericsocrat/tryvit/pr-gate.yml?style=flat-square&label=build" alt="Build Status" /></a>
   <img src="https://img.shields.io/badge/QA%20checks-733%20passing-brightgreen?style=flat-square" alt="QA Checks" />
   <img src="https://img.shields.io/badge/coverage-%E2%89%A588%25-brightgreen?style=flat-square" alt="Coverage" />
-  <img src="https://img.shields.io/badge/products-1%2C281-0d7377?style=flat-square" alt="Products" />
-  <img src="https://img.shields.io/badge/countries-PL%20%2B%20DE-0d7377?style=flat-square" alt="Countries" />
+  <img src="https://img.shields.io/badge/products-1%2C281-1DB954?style=flat-square" alt="Products" />
+  <img src="https://img.shields.io/badge/market-Poland-1DB954?style=flat-square" alt="Market" />
   <img src="https://img.shields.io/badge/scoring-v3.2-7c3aed?style=flat-square" alt="Scoring Version" />
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/ericsocrat/poland-food-db?style=flat-square" alt="License" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/ericsocrat/tryvit?style=flat-square" alt="License" /></a>
   <img src="https://img.shields.io/badge/TypeScript-strict-3178c6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/PostgreSQL-16-336791?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL" />
 </p>
@@ -26,7 +26,7 @@
 <!-- ═══════════════════════════ 3. ELEVATOR PITCH ════════════════════════ -->
 
 <p align="center">
-  <strong>A transparent, multi-axis food quality database for Poland and Germany.</strong><br />
+  <strong>Scan, score &amp; compare food products with multi-axis health scoring.</strong><br />
   Every product scored on 9 independent factors. Every number traceable to its source.<br />
   Not a calorie counter. Not a Nutri-Score app. A research-grade scoring engine.
 </p>
@@ -64,17 +64,17 @@
 
 ## 🔍 How It Differs
 
-| Dimension | Nutri-Score Apps | Poland Food DB |
-| --- | :---: | :---: |
-| **Scoring axes** | 1 (A–E letter) | 4 independent (unhealthiness, Nutri-Score, NOVA, confidence) |
-| **Additive analysis** | ❌ | ✅ EFSA concern tiers + additive count |
-| **Processing level** | ❌ | ✅ NOVA 1–4 integrated |
-| **Trans fat tracking** | ❌ | ✅ Separate weighted factor |
-| **Controversy tracking** | ❌ | ✅ Palm oil, artificial sweeteners |
-| **Data quality visibility** | Hidden | ✅ Confidence score per product |
-| **Score explainability** | None | ✅ Full factor breakdown with context |
-| **Source provenance** | Opaque | ✅ Every product linked to source |
-| **Multi-country** | Varies | ✅ PL primary + DE micro-pilot |
+| Dimension                   | Nutri-Score Apps |                            TryVit                            |
+| --------------------------- | :--------------: | :----------------------------------------------------------: |
+| **Scoring axes**            |  1 (A–E letter)  | 4 independent (unhealthiness, Nutri-Score, NOVA, confidence) |
+| **Additive analysis**       |        ❌         |            ✅ EFSA concern tiers + additive count             |
+| **Processing level**        |        ❌         |                    ✅ NOVA 1–4 integrated                     |
+| **Trans fat tracking**      |        ❌         |                  ✅ Separate weighted factor                  |
+| **Controversy tracking**    |        ❌         |              ✅ Palm oil, artificial sweeteners               |
+| **Data quality visibility** |      Hidden      |                ✅ Confidence score per product                |
+| **Score explainability**    |       None       |             ✅ Full factor breakdown with context             |
+| **Source provenance**       |      Opaque      |               ✅ Every product linked to source               |
+| **Multi-country**           |      Varies      |                ✅ PL primary + DE micro-pilot                 |
 
 ---
 
@@ -89,8 +89,8 @@
 **1. Clone & Start DB**
 
 ```powershell
-git clone https://github.com/ericsocrat/poland-food-db.git
-cd poland-food-db
+git clone https://github.com/ericsocrat/tryvit.git
+cd tryvit
 supabase start
 ```
 
@@ -154,7 +154,7 @@ npm run test:coverage                    # Unit tests + v8 coverage
 npx playwright test                      # E2E smoke tests (Playwright)
 
 # ── Data Access ──
-echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres
+echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_tryvit psql -U postgres -d postgres
 ```
 
 </details>
@@ -168,7 +168,7 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_poland-food-
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────────────┐
 │  Open Food Facts │────▶│  Python Pipeline │────▶│  PostgreSQL (Supabase)  │
-│  API v2          │     │  sql_generator   │     │  182 migrations         │
+│  API v2          │     │  sql_generator   │     │  184 migrations         │
 │  (category tags, │     │  validator       │     │  25 pipeline folders    │
 │   countries=PL)  │     │  off_client      │     │  products + nutrition   │
 └─────────────────┘     └──────────────────┘     │  + ingredients + scores │
@@ -230,7 +230,7 @@ Every score is fully explainable via `api_score_explanation()` — returns the 9
   <tr>
     <td align="center" width="16%"><strong>1,281</strong><br />Active Products</td>
     <td align="center" width="16%"><strong>25</strong><br />Categories</td>
-    <td align="center" width="16%"><strong>PL + DE</strong><br />Countries</td>
+    <td align="center" width="16%"><strong>PL</strong><br />Primary Market</td>
     <td align="center" width="16%"><strong>2,995</strong><br />Ingredients</td>
     <td align="center" width="16%"><strong>99.8%</strong><br />EAN Coverage</td>
     <td align="center" width="16%"><strong>182</strong><br />Migrations</td>
@@ -279,7 +279,7 @@ Every score is fully explainable via `api_score_explanation()` — returns the 9
 <summary><strong>Click to expand full directory tree</strong></summary>
 
 ```
-poland-food-db/
+tryvit/
 ├── pipeline/                        # Python OFF API → SQL generator
 │   ├── run.py                       # CLI: --category, --max-products, --dry-run, --country
 │   ├── off_client.py                # OFF API v2 client with retry logic
@@ -301,7 +301,7 @@ poland-food-db/
 │   └── views/                       # Reference view definitions
 │
 ├── supabase/
-│   ├── migrations/                  # 182 append-only schema migrations
+│   ├── migrations/                  # 184 append-only schema migrations
 │   ├── seed/                        # Reference data seeds
 │   ├── tests/                       # pgTAP integration tests
 │   └── functions/                   # Edge Functions (API gateway, push notifications)
@@ -344,7 +344,7 @@ poland-food-db/
 
 ## 🧪 Testing
 
-Every change is validated against **733 automated checks** across 48 QA suites plus 23 negative validation tests. No data enters the database without verification.
+Every change is validated against **733 automated checks** across 48 QA suites plus 20 negative validation tests. No data enters the database without verification.
 
 <table>
   <tr>
@@ -509,7 +509,7 @@ This project is licensed under the terms in the [LICENSE](LICENSE) file.
 <!-- ═══════════════════════════ FOOTER ═══════════════════════════════════ -->
 
 <p align="center">
-  <img src="docs/assets/logo/logomark-64.png" alt="Poland Food DB" width="32" />
+  <img src="docs/assets/logo/logomark-64.png" alt="TryVit" width="32" />
   <br />
   <em>Built with science and care.</em>
 </p>

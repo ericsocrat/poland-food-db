@@ -10,7 +10,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { ProductImages } from "@/lib/types";
+import type { ProductImages } from "@/lib/types";
 import { CategoryPlaceholder } from "./CategoryPlaceholder";
 import { ImageSourceBadge } from "./ImageSourceBadge";
 

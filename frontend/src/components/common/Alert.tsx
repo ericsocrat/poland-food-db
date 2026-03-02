@@ -7,9 +7,8 @@
 
 "use client";
 
+import { AlertTriangle, CheckCircle, Info, X, XCircle, type LucideIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
-import { Info, CheckCircle, AlertTriangle, XCircle, X } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 

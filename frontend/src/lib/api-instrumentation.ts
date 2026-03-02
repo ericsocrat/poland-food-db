@@ -9,7 +9,7 @@
 //   import { withInstrumentation } from "@/lib/api-instrumentation";
 //   export const GET = withInstrumentation(async (req) => { ... });
 
-import { NextRequest, NextResponse } from "next/server";
+import type { NextRequest, NextResponse } from "next/server";
 import * as Sentry from "@sentry/nextjs";
 import { logger } from "./logger";
 

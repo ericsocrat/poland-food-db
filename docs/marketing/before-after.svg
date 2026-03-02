@@ -42,7 +42,7 @@
   <text class="header-subtitle" x="225" y="60">Manual approach</text>
   <!-- Right header: After -->
   <text class="title title-after" x="675" y="44">WITH PROJECT</text>
-  <text class="header-subtitle" x="675" y="60">Poland Food Quality Database</text>
+  <text class="header-subtitle" x="675" y="60">TryVit</text>
   <!-- Row 1: Data Organization -->
   <g transform="translate(20, 78)">
     <rect class="row-bg-left" x="0" y="0" width="410" height="48" rx="8"/>

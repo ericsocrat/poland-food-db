@@ -23,7 +23,7 @@ These seed files are **already embedded in migrations** (`20260210002500_referen
 ### Local (via Docker)
 
 ```powershell
-docker exec -i supabase_db_poland-food-db psql -U postgres -d postgres -f /dev/stdin < supabase/seed/001_reference_data.sql
+docker exec -i supabase_db_tryvit psql -U postgres -d postgres -f /dev/stdin < supabase/seed/001_reference_data.sql
 ```
 
 ### Remote (via psql)

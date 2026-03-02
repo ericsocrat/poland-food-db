@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" fill="none">
   <style>
-    .ob-primary { fill: #0d7377; }
-    .ob-primary-light { fill: #0d7377; opacity: 0.12; }
-    .ob-accent { fill: #d4a844; }
+    .ob-primary { fill: #1DB954; }
+    .ob-primary-light { fill: #1DB954; opacity: 0.12; }
+    .ob-accent { fill: #F59E0B; }
     .ob-green { fill: #15803d; }
     .ob-neutral { fill: #e2e8f0; }
     @media (prefers-color-scheme: dark) {
@@ -35,9 +35,9 @@
   <path class="ob-accent" d="M230 90 L232 84 L234 90 L240 92 L234 94 L232 100 L230 94 L224 92Z"/>
   <path class="ob-accent" d="M50 140 L51.5 135.5 L53 140 L57.5 141.5 L53 143 L51.5 147.5 L50 143 L45.5 141.5Z" opacity="0.7"/>
   <!-- Celebration rays -->
-  <line stroke="#d4a844" stroke-width="1.5" stroke-linecap="round" x1="140" y1="60" x2="140" y2="45" opacity="0.5"/>
-  <line stroke="#d4a844" stroke-width="1.5" stroke-linecap="round" x1="100" y1="80" x2="88" y2="68" opacity="0.4"/>
-  <line stroke="#d4a844" stroke-width="1.5" stroke-linecap="round" x1="180" y1="80" x2="192" y2="68" opacity="0.4"/>
+  <line stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" x1="140" y1="60" x2="140" y2="45" opacity="0.5"/>
+  <line stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" x1="100" y1="80" x2="88" y2="68" opacity="0.4"/>
+  <line stroke="#F59E0B" stroke-width="1.5" stroke-linecap="round" x1="180" y1="80" x2="192" y2="68" opacity="0.4"/>
   <!-- Bottom tagline area (text rendered by React, just subtle accent line) -->
-  <line stroke="#0d7377" stroke-width="2" stroke-linecap="round" x1="100" y1="210" x2="180" y2="210" opacity="0.3"/>
+  <line stroke="#1DB954" stroke-width="2" stroke-linecap="round" x1="100" y1="210" x2="180" y2="210" opacity="0.3"/>
 </svg>

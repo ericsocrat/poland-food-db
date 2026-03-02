@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
   <style>
-    .er-primary { fill: #0d7377; }
-    .er-primary-stroke { stroke: #0d7377; stroke-width: 2.5; fill: none; stroke-linecap: round; }
-    .er-accent { fill: #d4a844; }
+    .er-primary { fill: #1DB954; }
+    .er-primary-stroke { stroke: #1DB954; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .er-accent { fill: #F59E0B; }
     .er-neutral { fill: #e2e8f0; }
     .er-neutral-dark { fill: #cbd5e1; }
     .er-shadow { fill: #94a3b8; opacity: 0.18; }
@@ -37,5 +37,5 @@
   <path class="er-primary-stroke" d="M122 160 Q135 145 148 160" opacity="0.3"/>
   <!-- Broken connection dots -->
   <circle class="er-accent" cx="115" cy="158" r="3"/>
-  <line stroke="#d4a844" stroke-width="1.5" stroke-dasharray="3 4" stroke-linecap="round" x1="105" y1="155" x2="125" y2="155"/>
+  <line stroke="#F59E0B" stroke-width="1.5" stroke-dasharray="3 4" stroke-linecap="round" x1="105" y1="155" x2="125" y2="155"/>
 </svg>

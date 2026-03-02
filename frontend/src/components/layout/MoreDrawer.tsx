@@ -6,23 +6,23 @@
 //
 // Issue #67 — Navigation & IA Polish
 
-import { useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { Icon } from "@/components/common/Icon";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
-import { Icon } from "@/components/common/Icon";
 import {
-  Scale,
-  FolderOpen,
-  Eye,
-  Settings,
-  ShieldCheck,
-  Trophy,
-  UtensilsCrossed,
-  ScanText,
-  X,
+    Eye,
+    FolderOpen,
+    Scale,
+    ScanText,
+    Settings,
+    ShieldCheck,
+    Trophy,
+    UtensilsCrossed,
+    X,
+    type LucideIcon,
 } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useRef, useState } from "react";
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
 

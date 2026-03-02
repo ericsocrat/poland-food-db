@@ -2,9 +2,9 @@
   <style>
     .es-shelf { fill: #cbd5e1; }
     .es-shelf-edge { fill: #94a3b8; }
-    .es-bracket { stroke: #0d7377; stroke-width: 2.5; fill: none; stroke-linecap: round; }
+    .es-bracket { stroke: #1DB954; stroke-width: 2.5; fill: none; stroke-linecap: round; }
     .es-shadow { fill: #94a3b8; opacity: 0.18; }
-    .es-dash { stroke: #d4a844; stroke-width: 1.5; stroke-dasharray: 5 5; fill: none; }
+    .es-dash { stroke: #F59E0B; stroke-width: 1.5; stroke-dasharray: 5 5; fill: none; }
     .es-dot { fill: #e2e8f0; }
     @media (prefers-color-scheme: dark) {
       .es-shelf { fill: #475569; }

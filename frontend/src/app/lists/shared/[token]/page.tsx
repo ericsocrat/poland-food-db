@@ -50,7 +50,7 @@ export default function SharedListPage() {
       {/* Header */}
       <header className="border-b border bg-white/80 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
-          <span className="text-lg font-bold text-brand">🥗 FoodDB</span>
+          <span className="text-lg font-bold text-brand">🥗 TryVit</span>
           <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">
             {t("shared.sharedList")}
           </span>

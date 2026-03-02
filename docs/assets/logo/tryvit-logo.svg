@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 48" role="img" aria-label="TryVit — horizontal lockup">
+  <title>TryVit — Horizontal Lockup</title>
+  <desc>Primary horizontal brand lockup: shield-leaf icon at left, two-tone wordmark at right. "Try" in vitDark, "Vit" in vitGreen. Clear space = icon height × 0.5. Switch to icon-only below 120px total width.</desc>
+  <!-- Icon area: 48×48 (scaled from 64×64 master ×0.75) -->
+  <g transform="translate(0,0) scale(0.75)">
+    <!-- Shield silhouette (64×64 coords) -->
+    <path
+      d="M 32 3.5
+         C 45.5 8,   55.5 21, 55.5 34
+         C 55.5 47,  42   57, 32   61
+         C 22   57,  8.5  47, 8.5  34
+         C 8.5  21,  18.5 8,  32   3.5
+         Z"
+      fill="#1DB954"
+    />
+    <circle cx="32" cy="9" r="2.5" fill="#00E676" opacity="0.90"/>
+  </g>
+  <!-- Wordmark — "Try" in vitDark, "Vit" in vitGreen; Inter ExtraBold 800 -->
+  <text
+    x="58" y="33"
+    font-family="'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif"
+    font-size="28"
+    font-weight="800"
+    letter-spacing="-0.03em"
+    dominant-baseline="auto"
+  >
+    <tspan fill="#0A2E1A">Try</tspan><tspan fill="#1DB954">Vit</tspan>
+  </text>
+</svg>

@@ -1,7 +1,6 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { SearchRelevanceHint } from "./SearchRelevanceHint";
-import type { SearchMatchType } from "./SearchRelevanceHint";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { SearchRelevanceHint, type SearchMatchType } from "./SearchRelevanceHint";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 

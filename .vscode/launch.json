@@ -1,0 +1,150 @@
+{
+  // ═══════════════════════════════════════════════════════════════════════
+  // Debug configurations — TryVit DB
+  // ═══════════════════════════════════════════════════════════════════════
+  "version": "0.2.0",
+  "configurations": [
+    // ── Next.js ─────────────────────────────────────────────────────────
+    {
+      "name": "Next.js: Full Stack (Server + Chrome)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/frontend",
+      "serverReadyAction": {
+        "pattern": "- Local:.+(https?://.+)",
+        "uriFormat": "%s",
+        "action": "debugWithChrome"
+      }
+    },
+    {
+      "name": "Next.js: Server Only",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npm run dev",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    // ── Vitest ──────────────────────────────────────────────────────────
+    {
+      "name": "Vitest: Debug Current File",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npx vitest run ${relativeFile} --reporter=verbose",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "Vitest: Run All Tests",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npx vitest run",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "Vitest: Coverage Report",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npx vitest run --coverage",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    // ── Playwright ──────────────────────────────────────────────────────
+    {
+      "name": "Playwright: Debug Current Spec (Headed)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npx playwright test ${relativeFile} --headed --debug",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "Playwright: Smoke Tests",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npx playwright test --project=smoke",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    {
+      "name": "Playwright: All Tests (UI Mode)",
+      "type": "node-terminal",
+      "request": "launch",
+      "command": "npx playwright test --ui",
+      "cwd": "${workspaceFolder}/frontend"
+    },
+    // ── Python Pipeline ─────────────────────────────────────────────────
+    {
+      "name": "Pipeline: Run Category (Dry Run)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pipeline.run",
+      "args": [
+        "--category",
+        "${input:pipelineCategory}",
+        "--dry-run"
+      ],
+      "cwd": "${workspaceFolder}",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Pipeline: Run Category (Live)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pipeline.run",
+      "args": [
+        "--category",
+        "${input:pipelineCategory}",
+        "--max-products",
+        "28"
+      ],
+      "cwd": "${workspaceFolder}",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Python: Debug Current File",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${file}",
+      "cwd": "${workspaceFolder}",
+      "python": "${workspaceFolder}/.venv/Scripts/python.exe",
+      "env": {
+        "PYTHONIOENCODING": "utf-8"
+      },
+      "console": "integratedTerminal"
+    }
+  ],
+  "inputs": [
+    {
+      "id": "pipelineCategory",
+      "type": "pickString",
+      "description": "Select the pipeline category to run",
+      "options": [
+        "Alcohol",
+        "Baby",
+        "Bread",
+        "Breakfast & Grain-Based",
+        "Canned Goods",
+        "Cereals",
+        "Chips",
+        "Condiments",
+        "Dairy",
+        "Drinks",
+        "Frozen & Prepared",
+        "Instant & Frozen",
+        "Meat",
+        "Nuts, Seeds & Legumes",
+        "Plant-Based & Alternatives",
+        "Sauces",
+        "Seafood & Fish",
+        "Snacks",
+        "Sweets",
+        "Żabka"
+      ],
+      "default": "Chips"
+    }
+  ]
+}

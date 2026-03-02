@@ -1,4 +1,4 @@
-# Poland Food DB — Performance & Scale Readiness Report
+# TryVit — Performance & Scale Readiness Report
 
 > **Generated:** 2026-02-10
 > **Database:** PostgreSQL 17 (Supabase Docker)

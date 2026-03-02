@@ -2,10 +2,10 @@
   <style>
     .es-plate { fill: #e2e8f0; }
     .es-plate-rim { fill: #cbd5e1; }
-    .es-heart { fill: #0d7377; opacity: 0.2; }
-    .es-heart-outline { stroke: #0d7377; stroke-width: 2; fill: none; }
+    .es-heart { fill: #1DB954; opacity: 0.2; }
+    .es-heart-outline { stroke: #1DB954; stroke-width: 2; fill: none; }
     .es-shadow { fill: #94a3b8; opacity: 0.18; }
-    .es-dash { stroke: #d4a844; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 4 6; fill: none; }
+    .es-dash { stroke: #F59E0B; stroke-width: 2; stroke-linecap: round; stroke-dasharray: 4 6; fill: none; }
     @media (prefers-color-scheme: dark) {
       .es-plate { fill: #334155; }
       .es-plate-rim { fill: #475569; }

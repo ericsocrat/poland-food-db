@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800" height="400">
   <defs>
     <linearGradient id="hGrad" x1="0" y1="0" x2="1" y2="0">
-      <stop offset="0%" stop-color="#0d7377"/>
-      <stop offset="100%" stop-color="#095456"/>
+      <stop offset="0%" stop-color="#1DB954"/>
+      <stop offset="100%" stop-color="#0A2E1A"/>
     </linearGradient>
   </defs>
 
@@ -19,7 +19,7 @@
   <text x="50" y="85" font-family="system-ui,-apple-system,sans-serif" font-size="13" font-weight="600" fill="#374151">Factor contribution (bar proportional to weight)</text>
 
   <!-- Sat Fat 17% = 119px -->
-  <rect x="50" y="95" width="119" height="32" fill="#0d7377"/>
+  <rect x="50" y="95" width="119" height="32" fill="#1DB954"/>
   <text x="109" y="116" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#fff">Sat Fat 17%</text>
 
   <!-- Sugars 17% = 119px -->
@@ -31,7 +31,7 @@
   <text x="347" y="116" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#fff">Salt 17%</text>
 
   <!-- Trans Fat 11% = 77px -->
-  <rect x="407" y="95" width="77" height="32" fill="#d4a844"/>
+  <rect x="407" y="95" width="77" height="32" fill="#F59E0B"/>
   <text x="445" y="116" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="10" font-weight="600" fill="#fff">Trans 11%</text>
 
   <!-- Calories 10% = 70px -->
@@ -68,33 +68,33 @@
   <!-- Rows -->
   <rect x="50" y="200" width="700" height="22" fill="#f0fdfa"/>
   <text x="50" y="216" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#1e293b">Saturated Fat</text>
-  <text x="240" y="216" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#0d7377">0.17</text>
+  <text x="240" y="216" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#1DB954">0.17</text>
   <text x="330" y="216" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">10 g</text>
   <text x="480" y="216" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">Nutrition</text>
   <text x="620" y="216" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#6b7280">min(sat_fat/10, 1) × 100</text>
 
   <text x="50" y="238" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#1e293b">Sugars</text>
-  <text x="240" y="238" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#0d7377">0.17</text>
+  <text x="240" y="238" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#1DB954">0.17</text>
   <text x="330" y="238" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">27 g</text>
   <text x="480" y="238" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">Nutrition</text>
   <text x="620" y="238" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#6b7280">min(sugars/27, 1) × 100</text>
 
   <rect x="50" y="244" width="700" height="22" fill="#f0fdfa"/>
   <text x="50" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#1e293b">Salt</text>
-  <text x="240" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#0d7377">0.17</text>
+  <text x="240" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#1DB954">0.17</text>
   <text x="330" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">3 g</text>
   <text x="480" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">Nutrition</text>
   <text x="620" y="260" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#6b7280">min(salt/3, 1) × 100</text>
 
   <text x="50" y="282" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#1e293b">Trans Fat</text>
-  <text x="240" y="282" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#d4a844">0.11</text>
+  <text x="240" y="282" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#F59E0B">0.11</text>
   <text x="330" y="282" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">2 g</text>
   <text x="480" y="282" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">Nutrition</text>
   <text x="620" y="282" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#6b7280">min(trans/2, 1) × 100</text>
 
   <rect x="50" y="288" width="700" height="22" fill="#f0fdfa"/>
   <text x="50" y="304" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#1e293b">Calories</text>
-  <text x="240" y="304" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#d4a844">0.10</text>
+  <text x="240" y="304" font-family="system-ui,-apple-system,sans-serif" font-size="12" font-weight="600" fill="#F59E0B">0.10</text>
   <text x="330" y="304" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">600 kcal</text>
   <text x="480" y="304" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#374151">Nutrition</text>
   <text x="620" y="304" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#6b7280">min(cal/600, 1) × 100</text>

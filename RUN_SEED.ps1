@@ -69,7 +69,7 @@ param(
 
 $PRODUCTION_PROJECT_REF = "uskvezwftkkudvksmken"
 $POOLER_HOST = "aws-1-eu-west-1.pooler.supabase.com"
-$DOCKER_CONTAINER = "supabase_db_poland-food-db"
+$DOCKER_CONTAINER = "supabase_db_tryvit"
 $DB_NAME = "postgres"
 $DB_USER = "postgres"
 $DB_PORT = "5432"
@@ -129,7 +129,7 @@ switch ($Env) {
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor $envColor
-Write-Host "  Poland Food DB — Seed Runner" -ForegroundColor Cyan
+Write-Host "  TryVit — Seed Runner" -ForegroundColor Cyan
 Write-Host "  Target: $envLabel" -ForegroundColor $envColor
 Write-Host "================================================" -ForegroundColor $envColor
 Write-Host ""

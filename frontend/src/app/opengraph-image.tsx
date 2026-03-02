@@ -5,7 +5,7 @@
 import { ImageResponse } from "next/og";
 
 export const runtime = "nodejs";
-export const alt = "Poland Food DB — Multi-Axis Food Scoring";
+export const alt = "TryVit — Multi-Axis Food Scoring";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const revalidate = 86400; // 24 h edge cache
@@ -75,7 +75,7 @@ export default async function OGImage() {
           marginBottom: 16,
         }}
       >
-        Poland Food DB
+        TryVit
       </div>
 
       {/* Tagline */}
@@ -89,8 +89,7 @@ export default async function OGImage() {
           lineHeight: 1.4,
         }}
       >
-        Multi-axis food quality scoring — find healthier alternatives in Poland
-        and Germany
+        Scan, score & compare food products with multi-axis health scoring
       </div>
 
       {/* Feature pills */}

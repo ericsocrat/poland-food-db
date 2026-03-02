@@ -67,7 +67,7 @@ $TABLE_PK = @{
 
 Write-Host ""
 Write-Host "================================================" -ForegroundColor Cyan
-Write-Host "  Poland Food DB — User Data Import" -ForegroundColor Cyan
+Write-Host "  TryVit — User Data Import" -ForegroundColor Cyan
 Write-Host "  Environment: $($Env.ToUpper())" -ForegroundColor $(if ($Env -eq "remote") { "Red" } else { "Green" })
 Write-Host "================================================" -ForegroundColor Cyan
 Write-Host ""

@@ -9,14 +9,11 @@ target-version = "py312"
 line-length = 120
 
 # Only lint Python source directories (excludes __pycache__, .venv, etc.)
-include = [
-    "pipeline/**/*.py",
-    "scripts/**/*.py",
-    "*.py",
-]
+include = ["pipeline/**/*.py", "scripts/**/*.py", "*.py"]
 
 [lint]
 # Start strict but pragmatic — expand over time
+# See https://docs.astral.sh/ruff/rules/ for full rule catalog
 select = [
     "E",   # pycodestyle errors
     "W",   # pycodestyle warnings
@@ -26,20 +23,50 @@ select = [
     "B",   # flake8-bugbear (common bugs)
     "SIM", # flake8-simplify
     "S",   # flake8-bandit (security)
+    "N",   # pep8-naming conventions
+    "C4",  # flake8-comprehensions (list/dict/set comprehension style)
+    "RET", # flake8-return (explicit return patterns)
+    "PIE", # flake8-pie (misc lints: no-unnecessary-pass, etc.)
+    "PT",  # flake8-pytest-style (pytest idioms)
+    "RUF", # Ruff-specific rules
+    "T20", # flake8-print (catch forgotten print() statements)
+    "ERA", # eradicate (commented-out code detector)
 ]
 ignore = [
-    "S603", # subprocess-without-shell-check — false positives on controlled invocations
-    "S607", # start-process-with-partial-path — acceptable for pipeline scripts
-    "S608", # hardcoded-sql-expression — expected: this project generates SQL
+    "S603",   # subprocess-without-shell-check — false positives on controlled invocations
+    "S607",   # start-process-with-partial-path — acceptable for pipeline scripts
+    "S608",   # hardcoded-sql-expression — expected: this project generates SQL
+    "RET504", # unnecessary-assign before return — sometimes clarifies debugging
+    "ERA001", # commented-out-code — too aggressive for migration comments
+    "N803",   # argument-name-mixed-case — SQL-origin names (p_category etc.)
+    "N806",   # variable-in-function-mixed-case — same reason as N803
 ]
 
-[lint.per-file-ignores]
-# Test files may use assert statements and broader exception handling
-"**/test_*.py" = ["S101"]
-"pipeline/test_validator.py" = ["S101"]
-# SQL generator and enrichment scripts construct SQL strings by design
-"pipeline/sql_generator.py" = ["E501"]
-"enrich_ingredients.py" = ["E501"]
-
 [lint.isort]
+combine-as-imports = true
+force-wrap-aliases = true
 known-first-party = ["pipeline"]
+
+[lint.per-file-ignores]
+# Test files: assert statements + broader exception handling
+"**/test_*.py" = ["S101", "T20", "PT"]
+"pipeline/test_validator.py" = ["S101"]
+# Pipeline fetch/utility scripts: print() calls are intentional progress indicators
+"pipeline/run.py" = ["T20"]
+"pipeline/image_importer.py" = ["T20"]
+"fetch_off_category.py" = ["T20"]
+"enrich_ingredients.py" = ["T20", "E501"]
+"validate_eans.py" = ["T20"]
+"run_data_audit.py" = ["T20"]
+"check_pipeline_structure.py" = ["T20"]
+"check_enrichment_identity.py" = ["T20"]
+# Setup scripts
+"scripts/*.py" = ["T20", "S603", "S607"]
+# SQL generator constructs long SQL strings by design
+"pipeline/sql_generator.py" = ["E501"]
+
+[format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "lf"

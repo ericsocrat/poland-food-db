@@ -1,14 +1,14 @@
-import type { Metadata, Viewport } from "next";
-import { SpeedInsights } from "@vercel/speed-insights/next";
-import { Providers } from "@/components/Providers";
+﻿import { Providers } from "@/components/Providers";
 import { ThemeScript } from "@/components/ThemeScript";
 import { IS_QA_MODE } from "@/lib/qa-mode";
 import "@/styles/globals.css";
+import { SpeedInsights } from "@vercel/speed-insights/next";
+import type { Metadata, Viewport } from "next";
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#0d7377" },
-    { media: "(prefers-color-scheme: dark)", color: "#095456" },
+    { media: "(prefers-color-scheme: light)", color: "#1DB954" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A2E1A" },
   ],
   width: "device-width",
   initialScale: 1,
@@ -17,16 +17,49 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   title: {
-    default: "Poland Food DB — Multi-Axis Food Scoring",
-    template: "%s | FoodDB",
+    default: "TryVit — Food Health Scanner",
+    template: "%s | TryVit",
   },
   description:
-    "Multi-axis food quality scoring — find healthier alternatives in Poland and Germany.",
+    "Scan barcodes and instantly see a science-driven health score for food products sold in Poland.",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "FoodDB",
+    title: "TryVit",
+    // Apple iOS splash screens — required for proper PWA launch screen on iOS
+    startupImage: [
+      {
+        url: "/splash/apple-splash-2796-1290.png",
+        media:
+          "(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
+      },
+      {
+        url: "/splash/apple-splash-2532-1170.png",
+        media:
+          "(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
+      },
+      {
+        url: "/splash/apple-splash-2436-1125.png",
+        media:
+          "(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
+      },
+      {
+        url: "/splash/apple-splash-2208-1242.png",
+        media:
+          "(device-width: 414px) and (device-height: 736px) and (-webkit-device-pixel-ratio: 3) and (orientation: portrait)",
+      },
+      {
+        url: "/splash/apple-splash-1334-750.png",
+        media:
+          "(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)",
+      },
+      {
+        url: "/splash/apple-splash-1136-640.png",
+        media:
+          "(device-width: 320px) and (device-height: 568px) and (-webkit-device-pixel-ratio: 2) and (orientation: portrait)",
+      },
+    ],
   },
   icons: {
     icon: [
@@ -47,37 +80,37 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    siteName: "Poland Food DB",
+    siteName: "TryVit",
     locale: "en_US",
-    title: "Poland Food DB — Multi-Axis Food Scoring",
+    title: "TryVit — Food Health Scanner",
     description:
-      "Compare health scores and nutritional data for food products in Poland and Germany.",
-    url: "https://poland-food-db.vercel.app",
+      "Scan barcodes and see a health score for food products sold in Poland.",
+    url: "https://tryvit.vercel.app",
     images: [
       {
-        url: "/og-image.png",
+        url: "/opengraph-image",
         width: 1200,
         height: 630,
-        alt: "Poland Food DB — Science-driven food quality intelligence for Poland and Germany",
+        alt: "TryVit — Scan. Score. Choose better.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Poland Food DB",
+    title: "TryVit",
     description:
-      "Compare health scores and nutritional data for food products in Poland and Germany.",
-    images: ["/og-image.png"],
+      "Scan barcodes and see a health score for food products sold in Poland.",
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,
     follow: true,
   },
   other: {
-    "msapplication-TileColor": "#0d7377",
+    "msapplication-TileColor": "#1DB954",
   },
   metadataBase: new URL(
-    process.env.NEXT_PUBLIC_APP_URL ?? "https://poland-food-db.vercel.app",
+    process.env.NEXT_PUBLIC_APP_URL ?? "https://tryvit.vercel.app",
   ),
 };
 
@@ -89,11 +122,10 @@ export default function RootLayout({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "WebApplication",
-    name: "Poland Food DB",
-    alternateName: "FoodDB",
-    url: "https://poland-food-db.vercel.app",
+    name: "TryVit",
+    url: "https://tryvit.vercel.app",
     description:
-      "Multi-axis food quality scoring — compare health scores and nutritional data for food products in Poland and Germany.",
+      "Scan barcodes and instantly see a science-driven health score for food products sold in Poland.",
     applicationCategory: "HealthApplication",
     operatingSystem: "Any",
     browserRequirements: "Requires a modern web browser",
@@ -105,13 +137,18 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" suppressHydrationWarning {...(IS_QA_MODE ? { "data-qa-mode": "true" } : {})}>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      {...(IS_QA_MODE ? { "data-qa-mode": "true" } : {})}
+    >
       <head>
         <ThemeScript />
         {IS_QA_MODE && (
           <style
             dangerouslySetInnerHTML={{
-              __html: "*, *::before, *::after { transition: none !important; animation: none !important; }",
+              __html:
+                "*, *::before, *::after { transition: none !important; animation: none !important; }",
             }}
           />
         )}

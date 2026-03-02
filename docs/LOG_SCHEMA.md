@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-04
 > **Status:** Active
-> **Owner issue:** [#210](https://github.com/ericsocrat/poland-food-db/issues/210)
+> **Owner issue:** [#210](https://github.com/ericsocrat/tryvit/issues/210)
 
 ---
 

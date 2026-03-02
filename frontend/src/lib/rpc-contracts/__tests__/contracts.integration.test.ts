@@ -10,31 +10,31 @@
 // errors gracefully (skip if no user context, validate if data returns).
 // ═══════════════════════════════════════════════════════════════════════════════
 
-import { describe, it, expect, beforeAll } from "vitest";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { beforeAll, describe, expect, it } from "vitest";
 import type { z } from "zod";
 
 import {
-  ProductDetailContract,
-  BetterAlternativesContract,
-  ScoreExplanationContract,
-  DataConfidenceContract,
-  SearchProductsContract,
-  SearchAutocompleteContract,
-  FilterOptionsContract,
-  SavedSearchesContract,
-  CategoryOverviewContract,
-  CategoryListingContract,
-  DashboardDataContract,
-  RecentlyViewedContract,
-  HealthProfileListContract,
-  HealthProfileActiveContract,
-  HealthWarningsContract,
-  ListsContract,
-  CompareContract,
-  ScanHistoryContract,
-  UserPreferencesContract,
-} from "../index";
+    BetterAlternativesContract,
+    CategoryListingContract,
+    CategoryOverviewContract,
+    CompareContract,
+    DashboardDataContract,
+    DataConfidenceContract,
+    FilterOptionsContract,
+    HealthProfileActiveContract,
+    HealthProfileListContract,
+    HealthWarningsContract,
+    ListsContract,
+    ProductDetailContract,
+    RecentlyViewedContract,
+    SavedSearchesContract,
+    ScanHistoryContract,
+    ScoreExplanationContract,
+    SearchAutocompleteContract,
+    SearchProductsContract,
+    UserPreferencesContract,
+} from "@/lib/rpc-contracts/index";
 
 // ─── Environment & guards ───────────────────────────────────────────────────
 

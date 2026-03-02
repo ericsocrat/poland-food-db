@@ -3,8 +3,8 @@
     .es-plate { fill: #e2e8f0; }
     .es-plate-rim { fill: #cbd5e1; }
     .es-shadow { fill: #94a3b8; opacity: 0.18; }
-    .es-arrows { stroke: #0d7377; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
-    .es-dash { stroke: #d4a844; stroke-width: 1.5; stroke-dasharray: 3 5; fill: none; }
+    .es-arrows { stroke: #1DB954; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; fill: none; }
+    .es-dash { stroke: #F59E0B; stroke-width: 1.5; stroke-dasharray: 3 5; fill: none; }
     @media (prefers-color-scheme: dark) {
       .es-plate { fill: #334155; }
       .es-plate-rim { fill: #475569; }
@@ -30,7 +30,7 @@
   <line class="es-arrows" x1="120" y1="88" x2="120" y2="112"/>
   <polyline class="es-arrows" points="108,112 120,122 132,112"/>
   <!-- Small compare dots above -->
-  <circle fill="#0d7377" cx="96" cy="60" r="4" opacity="0.25"/>
-  <circle fill="#0d7377" cx="120" cy="50" r="5" opacity="0.15"/>
-  <circle fill="#0d7377" cx="144" cy="58" r="3.5" opacity="0.2"/>
+  <circle fill="#1DB954" cx="96" cy="60" r="4" opacity="0.25"/>
+  <circle fill="#1DB954" cx="120" cy="50" r="5" opacity="0.15"/>
+  <circle fill="#1DB954" cx="144" cy="58" r="3.5" opacity="0.2"/>
 </svg>

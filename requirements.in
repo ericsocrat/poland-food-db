@@ -1,4 +1,4 @@
-# Human-editable dependency constraints for Poland Food DB pipeline.
+# Human-editable dependency constraints for TryVit pipeline.
 # To regenerate requirements.txt with exact pins and hashes:
 #   pip-compile --generate-hashes --output-file=requirements.txt requirements.in
 #

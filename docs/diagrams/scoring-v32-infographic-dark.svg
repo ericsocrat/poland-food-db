@@ -175,7 +175,7 @@
   <!-- Footer -->
   <line x1="40" y1="1310" x2="760" y2="1310" stroke="#334155" stroke-width="1"/>
   <text x="400" y="1340" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#64748b">Source: docs/SCORING_METHODOLOGY.md · compute_unhealthiness_v32()</text>
-  <text x="400" y="1360" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#64748b">Poland Food Quality Database — v3.2 Scoring</text>
+  <text x="400" y="1360" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="12" fill="#64748b">TryVit — v3.2 Scoring</text>
 
   <!-- Subtle border -->
   <rect width="800" height="1400" rx="12" fill="none" stroke="#334155" stroke-width="1"/>

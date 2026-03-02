@@ -7,7 +7,7 @@
 
 ## Overview
 
-Product search is the primary user interaction in Poland Food DB. This document
+Product search is the primary user interaction in TryVit. This document
 formalizes the search ranking model, multi-language strategy, synonym
 infrastructure, quality metrics plan, and scale roadmap.
 

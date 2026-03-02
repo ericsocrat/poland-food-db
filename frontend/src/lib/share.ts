@@ -43,7 +43,7 @@ export interface ShareableProduct {
 export async function shareProduct(product: ShareableProduct): Promise<void> {
   const shareData: ShareData = {
     title: `${product.product_name} — Health Score ${product.unhealthiness_score}/100`,
-    text: `Check out ${product.product_name} by ${product.brand} on Poland Food DB`,
+    text: `Check out ${product.product_name} by ${product.brand} on TryVit`,
     url: `${globalThis.location.origin}/app/product/${product.product_id}`,
   };
 

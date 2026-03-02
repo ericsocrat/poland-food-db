@@ -1,9 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 640" width="1280" height="640">
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
-      <stop offset="0%" stop-color="#0d7377"/>
-      <stop offset="50%" stop-color="#095456"/>
-      <stop offset="100%" stop-color="#042f2e"/>
+      <stop offset="0%" stop-color="#0A2E1A"/>
+      <stop offset="50%" stop-color="#0D3A21"/>
+      <stop offset="100%" stop-color="#071D11"/>
     </linearGradient>
     <linearGradient id="bandGrad" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#22c55e"/>
@@ -44,16 +44,16 @@
   <rect x="80" y="60" width="1120" height="6" rx="3" fill="url(#bandGrad)" opacity="0.8"/>
 
   <!-- Project name -->
-  <text x="640" y="140" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="500" fill="#5eead4" letter-spacing="4">POLAND FOOD QUALITY DATABASE</text>
+  <text x="640" y="140" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="16" font-weight="500" fill="#1DB954" letter-spacing="4">TryVit</text>
 
   <!-- Version placeholder (EDIT THIS) -->
   <text x="640" y="220" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="72" font-weight="800" fill="#ffffff">v0.0.0</text>
 
   <!-- Release title placeholder (EDIT THIS) -->
-  <text x="640" y="280" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="500" fill="#d4a844">Release Title Goes Here</text>
+  <text x="640" y="280" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="24" font-weight="500" fill="#9DCFB0">Release Title Goes Here</text>
 
   <!-- Divider -->
-  <line x1="440" y1="310" x2="840" y2="310" stroke="#2dd4bf" stroke-width="2" opacity="0.5"/>
+  <line x1="440" y1="310" x2="840" y2="310" stroke="#1DB954" stroke-width="2" opacity="0.5"/>
 
   <!-- Highlights placeholders (EDIT THESE) -->
   <text x="640" y="360" text-anchor="middle" font-family="system-ui,-apple-system,sans-serif" font-size="18" fill="#e2e8f0">✦ Highlight 1 — brief description</text>

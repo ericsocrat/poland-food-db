@@ -6,7 +6,7 @@
 // - Max 5 cached search results
 // - Each entry stores a timestamp for "Last updated" display.
 
-const DB_NAME = "fooddb-offline";
+const DB_NAME = "tryvit-offline";
 const DB_VERSION = 1;
 const PRODUCT_STORE = "products";
 const SEARCH_STORE = "searches";

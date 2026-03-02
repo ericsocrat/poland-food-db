@@ -1,7 +1,7 @@
 # Branch Protection Policy — `main`
 
 > **Last updated:** 2026-02-25
-> **Applies to:** `ericsocrat/poland-food-db` → `main` branch
+> **Applies to:** `ericsocrat/tryvit` → `main` branch
 > **Canonical source:** This file is the source of truth for branch protection settings.
 > If the GitHub UI diverges from this document, restore from here.
 

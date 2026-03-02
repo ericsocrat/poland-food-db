@@ -64,7 +64,7 @@ describe("generateCSV", () => {
     const csv = generateCSV([POLISH_PRODUCT, MINIMAL_PRODUCT], {
       includeTimestamp: false,
     });
-    expect(csv).toContain("# Poland Food Quality Database — Export");
+    expect(csv).toContain("# TryVit — Export");
     expect(csv).toContain("# Items: 2");
   });
 
@@ -120,7 +120,7 @@ describe("generateCSV", () => {
 
   it("can skip the header block", () => {
     const csv = generateCSV([MINIMAL_PRODUCT], { includeHeader: false });
-    expect(csv).not.toContain("# Poland Food Quality Database");
+    expect(csv).not.toContain("# TryVit");
     // Should still have column headers
     expect(csv).toContain("Product Name,Brand,");
   });
@@ -154,7 +154,7 @@ describe("generateComparisonCSV", () => {
 
   it("includes comparison header", () => {
     const csv = generateComparisonCSV([POLISH_PRODUCT]);
-    expect(csv).toContain("# Poland Food Quality Database — Comparison Export");
+    expect(csv).toContain("# TryVit — Comparison Export");
     expect(csv).toContain("# Products compared: 1");
   });
 });
@@ -164,7 +164,7 @@ describe("generateComparisonCSV", () => {
 describe("generateText", () => {
   it("includes the header with separator line", () => {
     const text = generateText([POLISH_PRODUCT], { includeTimestamp: false });
-    expect(text).toContain("Poland Food Quality Database — Export");
+    expect(text).toContain("TryVit — Export");
     expect(text).toContain("───────────────────────────────────");
   });
 
@@ -208,7 +208,7 @@ describe("generateText", () => {
 
   it("can skip the header block", () => {
     const text = generateText([MINIMAL_PRODUCT], { includeHeader: false });
-    expect(text).not.toContain("Poland Food Quality Database");
+    expect(text).not.toContain("TryVit");
     expect(text).toContain("1. Simple Item (TestBrand)");
   });
 });

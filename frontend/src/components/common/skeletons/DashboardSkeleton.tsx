@@ -3,7 +3,7 @@
  * Mirrors: greeting, quick actions, categories, stats bar, sections + product rows.
  */
 
-import { Skeleton, SkeletonContainer } from "../Skeleton";
+import { Skeleton, SkeletonContainer } from "@/components/common/Skeleton";
 import { ProductCardSkeleton } from "./ProductCardSkeleton";
 
 export function DashboardSkeleton() {

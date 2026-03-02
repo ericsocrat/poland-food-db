@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 280" fill="none">
   <style>
-    .ob-primary { fill: #0d7377; }
-    .ob-primary-light { fill: #0d7377; opacity: 0.12; }
-    .ob-accent { fill: #d4a844; }
+    .ob-primary { fill: #1DB954; }
+    .ob-primary-light { fill: #1DB954; opacity: 0.12; }
+    .ob-accent { fill: #F59E0B; }
     .ob-neutral { fill: #e2e8f0; }
     .ob-neutral-dark { fill: #cbd5e1; }
     .ob-shadow { fill: #94a3b8; opacity: 0.15; }
@@ -25,7 +25,7 @@
   <!-- Food motifs around shield -->
   <!-- Apple -->
   <circle class="ob-neutral" cx="60" cy="90" r="14"/>
-  <path class="ob-primary" d="M60 76 Q64 68 68 76" fill="none" stroke="#0d7377" stroke-width="2"/>
+  <path class="ob-primary" d="M60 76 Q64 68 68 76" fill="none" stroke="#1DB954" stroke-width="2"/>
   <!-- Carrot -->
   <path class="ob-neutral" d="M220 160 L210 200 L230 200Z"/>
   <line stroke="#cbd5e1" stroke-width="1.5" x1="218" y1="175" x2="222" y2="172"/>

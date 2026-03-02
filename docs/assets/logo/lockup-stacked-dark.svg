@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" role="img" aria-label="Poland Food DB">
-  <title>Poland Food DB — Stacked Lockup (Dark Mode)</title>
-  <desc>Dark-mode stacked lockup for dark backgrounds (#0f172a). Lighter teal logomark, white wordmark.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 380" role="img" aria-label="TryVit">
+  <title>TryVit — Stacked Lockup (Dark Mode)</title>
+  <desc>Dark-mode stacked lockup for vitDark (#0A2E1A) backgrounds. vitAccent-to-vitGreen logomark, vitLight wordmark.</desc>
 
   <defs>
     <linearGradient id="brand-fill-dark" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#3ee0d0"/>
-      <stop offset="100%" stop-color="#1aafab"/>
+      <stop offset="0%" stop-color="#00E676"/>
+      <stop offset="100%" stop-color="#1DB954"/>
     </linearGradient>
   </defs>
 
@@ -19,17 +19,17 @@
     <line x1="256" y1="256" x2="332" y2="312" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
     <line x1="256" y1="336" x2="200" y2="380" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
     <line x1="256" y1="336" x2="312" y2="380" stroke="#0f172a" stroke-width="2.5" opacity="0.18" stroke-linecap="round"/>
-    <circle cx="256" cy="64" r="10" fill="#fbbf24" opacity="0.90"/>
+    <circle cx="256" cy="64" r="10" fill="#F0FAF4" opacity="0.90"/>
   </svg>
 
-  <!-- ═══ Wordmark (white, centered below) ═══ -->
+  <!-- ═══ Wordmark (vitLight, centered below) ═══ -->
   <text
     x="160" y="310"
     text-anchor="middle"
     font-family="'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
     font-size="34"
     font-weight="700"
-    fill="#ffffff"
+    fill="#F0FAF4"
     letter-spacing="0.02em"
-  >Poland Food DB</text>
+  >TryVit</text>
 </svg>

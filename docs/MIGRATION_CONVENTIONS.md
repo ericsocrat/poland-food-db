@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-01
 > **Status:** Active
-> **Reference:** Issues [#203](https://github.com/ericsocrat/poland-food-db/issues/203), [#207](https://github.com/ericsocrat/poland-food-db/issues/207)
+> **Reference:** Issues [#203](https://github.com/ericsocrat/tryvit/issues/203), [#207](https://github.com/ericsocrat/tryvit/issues/207)
 
 ---
 

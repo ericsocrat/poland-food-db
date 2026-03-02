@@ -4,7 +4,7 @@
 > **Status:** Pre-launch assessment (documentation-only — no automated enforcement yet)
 > **Scope:** Poland (PL) primary market + Germany (DE) micro-pilot
 > **Regulation:** GDPR (EU 2016/679) / RODO (Polish GDPR implementation — Rozporządzenie o Ochronie Danych Osobowych)
-> **Reference:** Issue [#236](https://github.com/ericsocrat/poland-food-db/issues/236)
+> **Reference:** Issue [#236](https://github.com/ericsocrat/tryvit/issues/236)
 
 ---
 
@@ -494,5 +494,5 @@ Both Apple App Store and Google Play require:
 - **Art. 9 — Special Categories:** https://gdpr-info.eu/art-9-gdpr/
 - **Art. 13 — Information to be Provided:** https://gdpr-info.eu/art-13-gdpr/
 - **Art. 17 — Right to Erasure:** https://gdpr-info.eu/art-17-gdpr/
-- Related issues: [#198](https://github.com/ericsocrat/poland-food-db/issues/198) (Security & Secrets Governance), [#235](https://github.com/ericsocrat/poland-food-db/issues/235) (Data Access Pattern Audit)
+- Related issues: [#198](https://github.com/ericsocrat/tryvit/issues/198) (Security & Secrets Governance), [#235](https://github.com/ericsocrat/tryvit/issues/235) (Data Access Pattern Audit)
 - Related docs: [ACCESS_AUDIT.md](ACCESS_AUDIT.md), [SECURITY.md](../SECURITY.md), [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUIDE.md)

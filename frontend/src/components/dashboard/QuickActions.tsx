@@ -2,10 +2,9 @@
 
 // ─── QuickActions — primary action buttons for dashboard ────────────────────
 
-import Link from "next/link";
 import { useTranslation } from "@/lib/i18n";
-import { Camera, Search, Scale, ClipboardList } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { Camera, ClipboardList, Scale, Search, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 const ACTIONS: readonly { key: string; icon: LucideIcon; href: string }[] = [
   { key: "scan", icon: Camera, href: "/app/scan" },

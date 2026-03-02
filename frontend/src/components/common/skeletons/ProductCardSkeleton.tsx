@@ -3,7 +3,7 @@
  * Used in search results, category listings, and dashboard sections.
  */
 
-import { Skeleton, SkeletonContainer } from "../Skeleton";
+import { Skeleton, SkeletonContainer } from "@/components/common/Skeleton";
 
 interface ProductCardSkeletonProps {
   /** Number of card skeletons to render. @default 3 */

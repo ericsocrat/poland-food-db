@@ -1,7 +1,7 @@
 /**
  * Unit tests for the quality-gate deterministic fixtures.
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/172
+ * @see https://github.com/ericsocrat/tryvit/issues/172
  */
 
 import { describe, it, expect, vi } from "vitest";

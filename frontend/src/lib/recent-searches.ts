@@ -7,7 +7,7 @@
  * - Clearing/corruption → silent reset.
  */
 
-const STORAGE_KEY = "fooddb:recent-searches";
+const STORAGE_KEY = "tryvit:recent-searches";
 const MAX_ENTRIES = 10;
 
 // ─── Public API ─────────────────────────────────────────────────────────────

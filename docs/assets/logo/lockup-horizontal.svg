@@ -1,11 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 660 120" role="img" aria-label="Poland Food DB">
-  <title>Poland Food DB — Horizontal Lockup</title>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 560 120" role="img" aria-label="TryVit">
+  <title>TryVit — Horizontal Lockup</title>
   <desc>Horizontal brand lockup: logomark left, wordmark right. Clear space between icon and text equals icon height × 0.5. Switch to icon-only below 120px total width.</desc>
 
   <defs>
     <linearGradient id="brand-fill" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0e8a8e"/>
-      <stop offset="100%" stop-color="#074a4c"/>
+      <stop offset="0%" stop-color="#1DB954"/>
+      <stop offset="100%" stop-color="#0A2E1A"/>
     </linearGradient>
   </defs>
 
@@ -22,8 +22,8 @@
     <line x1="256" y1="256" x2="332" y2="312" stroke="#ffffff" stroke-width="2.5" opacity="0.22" stroke-linecap="round"/>
     <line x1="256" y1="336" x2="200" y2="380" stroke="#ffffff" stroke-width="2.5" opacity="0.22" stroke-linecap="round"/>
     <line x1="256" y1="336" x2="312" y2="380" stroke="#ffffff" stroke-width="2.5" opacity="0.22" stroke-linecap="round"/>
-    <!-- Gold accent dot -->
-    <circle cx="256" cy="64" r="10" fill="#d4a844" opacity="0.85"/>
+    <!-- Accent dot -->
+    <circle cx="256" cy="64" r="10" fill="#00E676" opacity="0.90"/>
   </svg>
 
   <!-- ═══ Wordmark (clear space = icon height × 0.5 = 50px from icon edge) ═══ -->
@@ -32,8 +32,8 @@
     font-family="'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, 'Helvetica Neue', Arial, sans-serif"
     font-size="40"
     font-weight="700"
-    fill="#0d7377"
+    fill="#0A2E1A"
     letter-spacing="0.02em"
     dominant-baseline="middle"
-  >Poland Food DB</text>
+  >TryVit</text>
 </svg>

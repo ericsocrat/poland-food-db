@@ -5,11 +5,12 @@
   "editor.tabSize": 2,
   "editor.insertSpaces": true,
   "editor.formatOnSave": true,
-  "editor.rulers": [100],
+  "editor.rulers": [
+    100
+  ],
   "files.eol": "\n",
   "files.trimTrailingWhitespace": true,
   "files.insertFinalNewline": true,
-
   // ═══════════════════════════════════════════════════════════════════════
   // File associations
   // ═══════════════════════════════════════════════════════════════════════
@@ -18,7 +19,6 @@
     ".env.*": "dotenv",
     ".env.example": "dotenv"
   },
-
   // ═══════════════════════════════════════════════════════════════════════
   // SQLTools — local Supabase connection
   // ═══════════════════════════════════════════════════════════════════════
@@ -37,12 +37,10 @@
   "sqltools.autoOpenSessionFiles": false,
   "sqltools.results.reuseTabs": "connection",
   "sqltools.format.indentSize": 2,
-
   // ═══════════════════════════════════════════════════════════════════════
   // PostgreSQL (ms-ossdata.vscode-pgsql)
   // ═══════════════════════════════════════════════════════════════════════
   "pgsql.defaultDatabase": "postgres",
-
   // ═══════════════════════════════════════════════════════════════════════
   // SQL formatting
   // ═══════════════════════════════════════════════════════════════════════
@@ -51,7 +49,6 @@
     "editor.formatOnSave": false,
     "editor.defaultFormatter": "mtxr.sqltools"
   },
-
   // ═══════════════════════════════════════════════════════════════════════
   // PowerShell
   // ═══════════════════════════════════════════════════════════════════════
@@ -61,15 +58,6 @@
   },
   "powershell.codeFormatting.preset": "Stroustrup",
   "powershell.integratedConsole.showOnStartup": false,
-
-  // ═══════════════════════════════════════════════════════════════════════
-  // Python
-  // ═══════════════════════════════════════════════════════════════════════
-  "[python]": {
-    "editor.tabSize": 4,
-    "editor.defaultFormatter": "ms-python.black-formatter"
-  },
-
   // ═══════════════════════════════════════════════════════════════════════
   // Markdown
   // ═══════════════════════════════════════════════════════════════════════
@@ -79,7 +67,6 @@
     "editor.defaultFormatter": "yzhang.markdown-all-in-one"
   },
   "markdown.extension.toc.levels": "2..4",
-
   // ═══════════════════════════════════════════════════════════════════════
   // TOML
   // ═══════════════════════════════════════════════════════════════════════
@@ -88,7 +75,6 @@
   },
   "evenBetterToml.formatter.alignEntries": false,
   "evenBetterToml.formatter.compactArrays": true,
-
   // ═══════════════════════════════════════════════════════════════════════
   // Todo Tree — custom tags used in SQL & docs
   // ═══════════════════════════════════════════════════════════════════════
@@ -101,29 +87,43 @@
     "REVIEW"
   ],
   "todo-tree.highlights.customHighlight": {
-    "TODO": { "icon": "checklist", "foreground": "#FFA500" },
-    "FIXME": { "icon": "alert", "foreground": "#FF4500" },
-    "HACK": { "icon": "flame", "foreground": "#FF6347" },
-    "LEGACY": { "icon": "archive", "foreground": "#A0A0A0" },
-    "PLACEHOLDER": { "icon": "pencil", "foreground": "#87CEEB" },
-    "REVIEW": { "icon": "eye", "foreground": "#9370DB" }
+    "TODO": {
+      "icon": "checklist",
+      "foreground": "#FFA500"
+    },
+    "FIXME": {
+      "icon": "alert",
+      "foreground": "#FF4500"
+    },
+    "HACK": {
+      "icon": "flame",
+      "foreground": "#FF6347"
+    },
+    "LEGACY": {
+      "icon": "archive",
+      "foreground": "#A0A0A0"
+    },
+    "PLACEHOLDER": {
+      "icon": "pencil",
+      "foreground": "#87CEEB"
+    },
+    "REVIEW": {
+      "icon": "eye",
+      "foreground": "#9370DB"
+    }
   },
-  "todo-tree.filtering.includeGlobs": [
-    "**/*.sql",
-    "**/*.md",
-    "**/*.ps1",
-    "**/*.py",
-    "**/*.toml"
-  ],
   "todo-tree.filtering.excludeGlobs": [
     "**/node_modules/**",
-    "**/.supabase/**"
+    "**/.supabase/**",
+    "**/.next/**",
+    "**/coverage/**",
+    "**/.venv/**"
   ],
-
   // ═══════════════════════════════════════════════════════════════════════
   // Code Spell Checker — project dictionary
   // ═══════════════════════════════════════════════════════════════════════
   "cSpell.words": [
+    // ── Polish retail brands & stores ───────────────────────────────────
     "supabase",
     "psql",
     "postgres",
@@ -141,38 +141,137 @@
     "Rossmann",
     "Auchan",
     "Carrefour",
+    "Makro",
+    "Netto",
+    "Leclerc",
+    "Selgros",
+    "HoReCa",
+    // ── Food & snack brands ──────────────────────────────────────────────
     "Pringles",
     "Doritos",
     "Cheetos",
     "Crunchips",
     "Lorenz",
     "Chio",
+    "Piątnica",
+    "Melvit",
+    "Tarczyński",
+    "Somersby",
+    "Mestemacher",
+    "Marinero",
+    "Lajkonik",
+    "Naleśniki",
+    "Pudliszki",
+    "Wedel",
+    "Indomie",
+    // ── Nutrition & food science ─────────────────────────────────────────
     "saturated",
     "unhealthiness",
     "healthiness",
     "additives",
+    "diacritics",
+    "reformulates",
+    "allergen",
+    "allergens",
+    "provenance",
+    "idempotency",
+    "EFSA",
+    "GDPR",
+    "RODO",
+    "Nutri",
+    "nutriscore",
+    "NOVA",
+    "tsvector",
+    "trgm",
+    "MADR",
+    "VAIO",
+    "VAPID",
+    // ── Project architecture ──────────────────────────────────────────────
+    "supabase",
+    "pgTAP",
+    "psql",
+    "postgresql",
+    "pgcrypto",
+    "plpgsql",
+    "pgrst",
+    "jsonb",
+    "jsonc",
+    "upserted",
+    "upserting",
+    "backfill",
+    "backfills",
+    "idempotent",
+    "materialized",
+    "denormalized",
+    "subscore",
+    "prepend",
     "pipelines",
     "servings",
-    "denormalized",
-    "Makro",
-    "Selgros",
+    "SKU",
+    // ── Frontend / JS ecosystem ───────────────────────────────────────────
+    "vitest",
+    "playwright",
+    "tanstack",
+    "zustand",
+    "serwist",
+    "workbox",
+    "tailwindcss",
+    "clsx",
+    "cva",
+    "classnames",
+    "prettier",
+    "eslint",
+    "turborepo",
+    "monorepo",
+    "nextjs",
+    "supabase",
+    "tryvit",
+    "TryVit",
+    "Tryvit",
+    "vitGreen",
+    "vitDark",
+    "vitLight",
+    "vitAccent",
+    // ── Database / SQL types ──────────────────────────────────────────────
+    "timestamptz",
+    "bigint",
+    "smallint",
+    "bytea",
+    "uuid",
+    "jsonb",
+    "tsvector",
+    "tsquery",
+    "pgvector",
+    "pgcrypto",
+    "plpgsql",
+    "pgrst",
+    "rls",
+    // ── Open Food Facts / data sources ───────────────────────────────────
+    "OpenFoodFacts",
     "barcode",
     "barcodes",
-    "reformulates",
-    "diacritics",
-    "SKU",
-    "HoReCa",
-    "subscore",
-    "Netto",
-    "Leclerc",
-    "nutriscore"
+    "EAN",
+    "GS1",
+    "nutriments",
+    "additifs",
+    "conservateurs",
+    // ── Misc ─────────────────────────────────────────────────────────────
+    "scannable",
+    "deduplicate",
+    "deduplication",
+    "dedup",
+    "backoffice",
+    "healthcheck",
+    "healthchecks",
+    "automerge",
+    "autorun",
+    "teardown"
   ],
   "cSpell.enableFiletypes": [
     "sql",
     "powershell",
     "toml"
   ],
-
   // ═══════════════════════════════════════════════════════════════════════
   // Error Lens
   // ═══════════════════════════════════════════════════════════════════════
@@ -183,13 +282,11 @@
   "errorLens.excludeBySource": [
     "cSpell"
   ],
-
   // ═══════════════════════════════════════════════════════════════════════
   // GitLens
   // ═══════════════════════════════════════════════════════════════════════
   "gitlens.codeLens.enabled": true,
   "gitlens.currentLine.enabled": true,
-
   // ═══════════════════════════════════════════════════════════════════════
   // SonarLint / SonarQube for IDE
   // ═══════════════════════════════════════════════════════════════════════
@@ -205,30 +302,272 @@
     "**/.github/workflows/**"
   ],
   "sonarlint.rules": {
-    "plsql:S1192": { "level": "off" },
-    "plsql:S1138": { "level": "off" },
-    "plsql:NullComparison": { "level": "off" },
-    "plsql:JoinConditionNumberCheck": { "level": "off" },
-    "typescript:S7780": { "level": "off" },
-    "yaml:S2068": { "level": "off" }
+    "plsql:S1192": {
+      "level": "off"
+    },
+    "plsql:S1138": {
+      "level": "off"
+    },
+    "plsql:NullComparison": {
+      "level": "off"
+    },
+    "plsql:JoinConditionNumberCheck": {
+      "level": "off"
+    },
+    "typescript:S7780": {
+      "level": "off"
+    },
+    "yaml:S2068": {
+      "level": "off"
+    }
   },
-
   // ═══════════════════════════════════════════════════════════════════════
-  // MSSQL — disable for this PostgreSQL workspace
+  // TypeScript / JavaScript
   // ═══════════════════════════════════════════════════════════════════════
-  "mssql.enabled": false,
-  "mssql.intelliSense.enableIntelliSense": false,
-
+  "[typescript]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[typescriptreact]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "[javascript]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint",
+    "editor.formatOnSave": true
+  },
+  "[javascriptreact]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+  },
+  "typescript.tsdk": "frontend/node_modules/typescript/lib",
+  "typescript.enablePromptUseWorkspaceTsdk": true,
+  "javascript.updateImportsOnFileMove.enabled": "always",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  // ═══════════════════════════════════════════════════════════════════════
+  // ESLint
+  // ═══════════════════════════════════════════════════════════════════════
+  "eslint.workingDirectories": [
+    {
+      "directory": "frontend",
+      "changeProcessCWD": true
+    }
+  ],
+  "eslint.validate": [
+    "typescript",
+    "typescriptreact",
+    "javascript",
+    "javascriptreact"
+  ],
+  "eslint.format.enable": true,
+  // ═══════════════════════════════════════════════════════════════════════
+  // JSON / JSONC
+  // ═══════════════════════════════════════════════════════════════════════
+  "[json]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  "[jsonc]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "vscode.json-language-features"
+  },
+  // ═══════════════════════════════════════════════════════════════════════
+  // YAML — Red Hat formatter + GitHub Actions schema
+  // ═══════════════════════════════════════════════════════════════════════
+  "[yaml]": {
+    "editor.tabSize": 2,
+    "editor.defaultFormatter": "redhat.vscode-yaml",
+    "editor.formatOnSave": true
+  },
+  "yaml.schemas": {
+    "https://json.schemastore.org/github-workflow.json": ".github/workflows/*.yml",
+    "https://json.schemastore.org/github-action.json": "action.yml"
+  },
+  "yaml.format.enable": true,
+  "yaml.validate": true,
+  "yaml.completion": true,
+  // ═══════════════════════════════════════════════════════════════════════
+  // CSS / Tailwind
+  // ═══════════════════════════════════════════════════════════════════════
+  "[css]": {
+    "editor.defaultFormatter": "vscode.css-language-features",
+    "editor.formatOnSave": true
+  },
+  "css.validate": true,
+  "tailwindCSS.experimental.classRegex": [
+    [
+      "clsx\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "cn\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "cva\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ],
+    [
+      "twMerge\\(([^)]*)\\)",
+      "(?:'|\"|`)([^']*)(?:'|\"|`)"
+    ]
+  ],
+  "tailwindCSS.includeLanguages": {
+    "typescript": "javascript",
+    "typescriptreact": "javascript"
+  },
+  "css.customData": [],
+  "scss.validate": false,
+  // ═══════════════════════════════════════════════════════════════════════
+  // Ruff (Python linter / formatter)
+  // ═══════════════════════════════════════════════════════════════════════
+  "ruff.enable": true,
+  "ruff.fixAll": true,
+  "ruff.organizeImports": true,
+  "ruff.configuration": "C:/Users/ericsocrat/Desktop/tryvit/ruff.toml",
+  "[python]": {
+    "editor.tabSize": 4,
+    "editor.defaultFormatter": "charliermarsh.ruff",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.fixAll": "explicit",
+      "source.organizeImports": "explicit"
+    }
+  },
+  "python.defaultInterpreterPath": "C:/Users/ericsocrat/Desktop/tryvit/.venv/Scripts/python.exe",
+  "python.terminal.activateEnvironment": true,
+  "python.analysis.typeCheckingMode": "basic",
+  "python.analysis.autoImportCompletions": true,
+  // ═══════════════════════════════════════════════════════════════════════
+  // Docker
+  // ═══════════════════════════════════════════════════════════════════════
+  "docker.showStartPage": false,
+  // ═══════════════════════════════════════════════════════════════════════
+  // Terminal — default PowerShell + Polish character encoding
+  // ═══════════════════════════════════════════════════════════════════════
+  "terminal.integrated.defaultProfile.windows": "PowerShell",
+  "terminal.integrated.env.windows": {
+    "PYTHONIOENCODING": "utf-8"
+  },
+  "terminal.integrated.scrollback": 5000,
+  // ═══════════════════════════════════════════════════════════════════════
+  // File Watcher — exclude heavy directories from watching
+  // ═══════════════════════════════════════════════════════════════════════
+  "files.watcherExclude": {
+    "**/node_modules/**": true,
+    "**/.supabase/**": true,
+    "**/.next/**": true,
+    "**/coverage/**": true,
+    "**/test-results/**": true,
+    "**/playwright-report/**": true,
+    "**/tmp-ci-qa*/**": true,
+    "**/backups/**": true,
+    "**/audit-reports/**": true,
+    "**/lighthouse-reports/**": true,
+    "**/__pycache__/**": true,
+    "**/.pytest_cache/**": true,
+    "**/.venv/**": true,
+    "**/dist/**": true
+  },
+  // ═══════════════════════════════════════════════════════════════════════
+  // Explorer — file nesting rules
+  // ═══════════════════════════════════════════════════════════════════════
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.expand": false,
+  "explorer.fileNesting.patterns": {
+    "*.ts": "${capture}.test.ts, ${capture}.test.tsx, ${capture}.spec.ts",
+    "*.tsx": "${capture}.test.tsx, ${capture}.stories.tsx",
+    "package.json": "package-lock.json, .npmrc, .nvmrc",
+    "tsconfig.json": "tsconfig.*.json",
+    "next.config.ts": "next-env.d.ts, postcss.config.js, tailwind.config.ts",
+    ".env.example": ".env, .env.*",
+    "vitest.config.ts": "vitest.setup.ts",
+    "playwright.config.ts": "playwright.config.*.ts",
+    "sonar-project.properties": ".sonarcloud.properties",
+    ".eslintrc.json": ".eslintignore",
+    "ruff.toml": ".ruff_cache",
+    "requirements.in": "requirements.txt",
+    "CHANGELOG.md": "CURRENT_STATE.md",
+    "copilot-instructions.md": "docs/AGENT_WORKFLOW.md"
+  },
+  // ═══════════════════════════════════════════════════════════════════════
+  // Editor refinements
+  // ═══════════════════════════════════════════════════════════════════════
+  "editor.bracketPairColorization.enabled": true,
+  "editor.guides.bracketPairs": "active",
+  "editor.linkedEditing": true,
+  "editor.stickyScroll.enabled": true,
+  "editor.minimap.enabled": false,
+  "editor.unicodeHighlight.nonBasicASCII": false,
+  "editor.unicodeHighlight.ambiguousCharacters": false,
+  "editor.suggest.showStatusBar": true,
+  "editor.inlineSuggest.enabled": true,
   // ═══════════════════════════════════════════════════════════════════════
   // Search — exclude noise
   // ═══════════════════════════════════════════════════════════════════════
   "search.exclude": {
     "**/node_modules": true,
     "**/.supabase": true,
-    "**/__pycache__": true
+    "**/.next": true,
+    "**/coverage": true,
+    "**/test-results": true,
+    "**/playwright-report": true,
+    "**/tmp-ci-qa*": true,
+    "**/backups": true,
+    "**/audit-reports": true,
+    "**/lighthouse-reports": true,
+    "**/__pycache__": true,
+    "**/.venv": true
   },
+  // ═══════════════════════════════════════════════════════════════════════
+  // Todo Tree — scans TS/TSX/YAML in addition to SQL/MD/PS1/PY/TOML
+  // ═══════════════════════════════════════════════════════════════════════
+  "todo-tree.filtering.includeGlobs": [
+    "**/*.sql",
+    "**/*.md",
+    "**/*.ps1",
+    "**/*.py",
+    "**/*.toml",
+    "**/*.ts",
+    "**/*.tsx",
+    "**/*.yaml",
+    "**/*.yml"
+  ],
+  // ═══════════════════════════════════════════════════════════════════════
+  // MSSQL — disable for this PostgreSQL workspace
+  // ═══════════════════════════════════════════════════════════════════════
+  "mssql.enabled": false,
+  "mssql.intelliSense.enableIntelliSense": false,
   "sonarlint.connectedMode.project": {
     "connectionId": "ericsocrat",
-    "projectKey": "ericsocrat_poland-food-db"
-  }
+    "projectKey": "ericsocrat_tryvit"
+  },
+  // ═══════════════════════════════════════════════════════════════════════
+  // GitHub Copilot — context instruction files
+  // ═══════════════════════════════════════════════════════════════════════
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "file": "copilot-instructions.md"
+    },
+    {
+      "file": "CURRENT_STATE.md"
+    },
+    {
+      "file": "docs/INDEX.md"
+    },
+    {
+      "file": "docs/ARCHITECTURE.md"
+    }
+  ]
 }

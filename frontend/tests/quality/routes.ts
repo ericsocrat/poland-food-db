@@ -6,7 +6,7 @@
  * invariant engine.  All quality-gate tests import routes from here
  * instead of hardcoding paths.
  *
- * @see https://github.com/ericsocrat/poland-food-db/issues/172
+ * @see https://github.com/ericsocrat/tryvit/issues/172
  */
 
 import { FIXTURES } from "./fixtures";

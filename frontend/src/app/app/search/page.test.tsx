@@ -278,7 +278,7 @@ describe("SearchPage", () => {
 
   it("shows recent searches from localStorage", () => {
     localStorage.setItem(
-      "fooddb:recent-searches",
+      "tryvit:recent-searches",
       JSON.stringify(["chips", "water"]),
     );
 
@@ -290,7 +290,7 @@ describe("SearchPage", () => {
 
   it("clicking a recent search populates and submits query", async () => {
     mockSearchProducts.mockResolvedValue(makeSearchResponse());
-    localStorage.setItem("fooddb:recent-searches", JSON.stringify(["chips"]));
+    localStorage.setItem("tryvit:recent-searches", JSON.stringify(["chips"]));
     const user = userEvent.setup();
 
     render(<SearchPage />, { wrapper: createWrapper() });
@@ -415,10 +415,10 @@ describe("SearchPage", () => {
     render(<SearchPage />, { wrapper: createWrapper() });
 
     await user.click(screen.getByText("Show avoided"));
-    expect(localStorage.getItem("fooddb:show-avoided")).toBe("true");
+    expect(localStorage.getItem("tryvit:show-avoided")).toBe("true");
 
     await user.click(screen.getByText("Show avoided"));
-    expect(localStorage.getItem("fooddb:show-avoided")).toBe("false");
+    expect(localStorage.getItem("tryvit:show-avoided")).toBe("false");
   });
 
   it("renders saved searches link", () => {
@@ -494,7 +494,7 @@ describe("SearchPage", () => {
     });
 
     const recent = JSON.parse(
-      localStorage.getItem("fooddb:recent-searches") ?? "[]",
+      localStorage.getItem("tryvit:recent-searches") ?? "[]",
     );
     expect(recent).toContain("chips");
   });
@@ -731,7 +731,7 @@ describe("SearchPage", () => {
 
     await user.click(screen.getByLabelText("Toggle view mode"));
 
-    expect(localStorage.getItem("fooddb:search-view")).toBe("list");
+    expect(localStorage.getItem("tryvit:search-view")).toBe("list");
   });
 
   it("renders list product rows when in list mode", async () => {

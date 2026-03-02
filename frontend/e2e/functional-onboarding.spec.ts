@@ -10,7 +10,7 @@
 import { test, expect } from "@playwright/test";
 import { createClient } from "@supabase/supabase-js";
 
-const ONBOARDING_EMAIL = "e2e-onboarding@test.fooddb.local";
+const ONBOARDING_EMAIL = "e2e-onboarding@test.tryvit.local";
 const ONBOARDING_PASSWORD = "OnboardingTest123!";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

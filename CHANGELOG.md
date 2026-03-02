@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the **Poland Food Quality Database** are documented here.
+All notable changes to **TryVit** are documented here.
 
 Format based on [Keep a Changelog](https://keepachangelog.com/).
 This project uses domain-specific categories aligned with the food database domain.
@@ -12,6 +12,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 ---
 
 ## [Unreleased]
+
+### Changed
+
+- Rename project from `poland-food-db` to `TryVit` across all source files:
+  package names, app metadata, CI/CD config, documentation, i18n values, and
+  test fixtures (#539); new brand identity: vitGreen `#1DB954` / vitDark
+  `#0A2E1A`; PWA manifest name → `TryVit`; SonarCloud project key →
+  `ericsocrat_tryvit`; GitHub repo → `ericsocrat/tryvit`; design-tokens v2.0.0
+  with full TryVit colour palette replacing legacy teal `#0d7377` tokens
 
 ### Security
 
@@ -527,5 +536,5 @@ Changes that **MUST** be flagged as breaking in commits and changelog:
 
 ---
 
-[Unreleased]: https://github.com/ericsocrat/poland-food-db/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/ericsocrat/poland-food-db/releases/tag/v0.1.0
+[Unreleased]: https://github.com/ericsocrat/tryvit/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/ericsocrat/tryvit/releases/tag/v0.1.0

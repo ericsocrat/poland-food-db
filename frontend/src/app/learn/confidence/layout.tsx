@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 export const metadata: Metadata = {
   title: "Data Confidence",
   description:
-    "Understand what verified, estimated, and low confidence levels mean for product data in FoodDB.",
+    "Understand what verified, estimated, and low confidence levels mean for product data in TryVit.",
 };
 
 export default function ConfidenceLayout({

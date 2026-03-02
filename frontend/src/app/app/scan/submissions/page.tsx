@@ -2,26 +2,26 @@
 
 // ─── My Submissions page — user's product submissions with status ───────────
 
-import { useState, useCallback } from "react";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { getMySubmissions } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import type { Submission } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import {
+    CheckCircle,
+    Clock,
+    FileText,
+    Link2,
+    RefreshCw,
+    XCircle,
+    type LucideIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { getMySubmissions } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { useTranslation } from "@/lib/i18n";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import {
-  Clock,
-  CheckCircle,
-  XCircle,
-  Link2,
-  FileText,
-  RefreshCw,
-} from "lucide-react";
-import type { LucideIcon } from "lucide-react";
-import type { Submission } from "@/lib/types";
+import { useCallback, useState } from "react";
 
 const STATUS_STYLES: Record<
   string,

@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-13
 
-Step-by-step guide for configuring GitHub repository settings for `ericsocrat/poland-food-db`.
+Step-by-step guide for configuring GitHub repository settings for `ericsocrat/tryvit`.
 
 ---
 
@@ -10,8 +10,8 @@ Step-by-step guide for configuring GitHub repository settings for `ericsocrat/po
 
 **Already applied** (via `gh repo edit`):
 
-- **Description:** `Science-driven food quality database for Poland & Germany. 9-factor scoring (v3.2), 1,281 products, 2,995 ingredients, EFSA concern analysis, allergen tracking, barcode scanning. PostgreSQL + Supabase + Next.js + TypeScript.`
-- **Topics (20):** `food-database`, `food-quality`, `nutrition`, `health`, `nutri-score`, `nova-score`, `food-safety`, `allergens`, `ingredients`, `barcode-scanner`, `poland`, `germany`, `postgresql`, `supabase`, `nextjs`, `typescript`, `open-food-facts`, `efsa`, `food-science`, `health-tech`
+- **Description:** `TryVit — Food Health Scanner. Scan, score & compare food products with multi-axis health scoring (v3.2). 1,281 products, 2,995 ingredients, EFSA concern analysis, allergen tracking, barcode scanning. PostgreSQL + Supabase + Next.js + TypeScript.`
+- **Topics (20):** `tryvit`, `food-health`, `nutrition`, `health`, `nutri-score`, `nova-score`, `food-safety`, `allergens`, `ingredients`, `barcode-scanner`, `poland`, `food-scoring`, `postgresql`, `supabase`, `nextjs`, `typescript`, `open-food-facts`, `efsa`, `food-science`, `health-tech`
 
 **To update manually:**
 
@@ -28,7 +28,7 @@ Step-by-step guide for configuring GitHub repository settings for `ericsocrat/po
 1. Go to **Settings → General**
 2. Scroll to **Social preview**
 3. Click **Edit → Upload an image**
-4. Upload `docs/assets/github-social-preview.png` (1280×640px) — _created in #411_
+4. Upload `docs/assets/banners/social-preview.png` (1280×640px) — _created in #411_
 5. Click **Save**
 
 > **Note:** Social preview image (#411) is not yet created. This step will be completed when #411 is done.
@@ -74,11 +74,11 @@ docs/assets/banners/release-template.svg
 
 Issue and PR templates now include branded SVG headers from `.github/assets/`:
 
-| Template | Header File | Preview Text |
-|----------|-------------|-------------|
-| Bug Report | `bug-report-header.svg` | 🐛 Bug Report |
-| Feature Request | `feature-request-header.svg` | ✨ Feature Request |
-| Data / Schema Change | `data-schema-header.svg` | 🗄️ Data / Schema Change |
-| Pull Request | `pr-header.svg` | 🔀 Pull Request |
+| Template             | Header File                  | Preview Text           |
+| -------------------- | ---------------------------- | ---------------------- |
+| Bug Report           | `bug-report-header.svg`      | 🐛 Bug Report           |
+| Feature Request      | `feature-request-header.svg` | ✨ Feature Request      |
+| Data / Schema Change | `data-schema-header.svg`     | 🗄️ Data / Schema Change |
+| Pull Request         | `pr-header.svg`              | 🔀 Pull Request         |
 
 Headers are referenced via `raw.githubusercontent.com` URLs so they render in GitHub's issue/PR creation UI.

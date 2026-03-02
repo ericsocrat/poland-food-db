@@ -3,7 +3,7 @@
 > **Last updated:** 2026-03-04
 > **Status:** Active
 > **Owner:** Eric (sole maintainer)
-> **Reference:** [#233](https://github.com/ericsocrat/poland-food-db/issues/233)
+> **Reference:** [#233](https://github.com/ericsocrat/tryvit/issues/233)
 
 ---
 

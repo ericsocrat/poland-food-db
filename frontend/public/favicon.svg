@@ -2,7 +2,7 @@
   <style>
     .fill-light { fill: url(#g-light); }
     .stroke-light { stroke: #ffffff; }
-    .accent-light { fill: #d4a844; }
+    .accent-light { fill: #00E676; }
     @media (prefers-color-scheme: dark) {
       .fill-light { fill: url(#g-dark); }
       .stroke-light { stroke: #0f172a; }
@@ -11,12 +11,12 @@
   </style>
   <defs>
     <linearGradient id="g-light" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#0e8a8e"/>
-      <stop offset="100%" stop-color="#074a4c"/>
+      <stop offset="0%" stop-color="#1DB954"/>
+      <stop offset="100%" stop-color="#0A2E1A"/>
     </linearGradient>
     <linearGradient id="g-dark" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#3ee0d0"/>
-      <stop offset="100%" stop-color="#1aafab"/>
+      <stop offset="0%" stop-color="#00E676"/>
+      <stop offset="100%" stop-color="#1DB954"/>
     </linearGradient>
   </defs>
 

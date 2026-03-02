@@ -18,7 +18,7 @@ const defaultProps = {
 // globalThis.location.origin is read-only in JSDOM — override via defineProperty
 beforeAll(() => {
   Object.defineProperty(globalThis, "location", {
-    value: { ...globalThis.location, origin: "https://fooddb.app" },
+    value: { ...globalThis.location, origin: "https://tryvit.app" },
     writable: true,
   });
 });
@@ -55,7 +55,7 @@ describe("ShareButton", () => {
 
     expect(shareMock).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: "https://fooddb.app/app/product/123",
+        url: "https://tryvit.app/app/product/123",
         title: expect.stringContaining("Lay's Classic Chips"),
         text: expect.stringContaining("58/100"),
       }),
@@ -90,7 +90,7 @@ describe("ShareButton", () => {
     });
 
     expect(writeTextMock).toHaveBeenCalledWith(
-      "https://fooddb.app/app/product/123",
+      "https://tryvit.app/app/product/123",
     );
   });
 

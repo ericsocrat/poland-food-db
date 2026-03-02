@@ -9,15 +9,15 @@
 //   - ScoreBadge (score display with aria-label)
 //   - FormField (label-input association, error/hint binding)
 
-import { describe, it, expect } from "vitest";
-import React from "react";
-import { render } from "@testing-library/react";
 import { assertComponentA11y } from "@/utils/test/a11y";
+import { render } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 
 /* ── Button ──────────────────────────────────────────────────────────────── */
 
 describe("Button — a11y", () => {
   // Dynamic import to avoid module-level React errors with client components
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   let Button: typeof import("@/components/common/Button").Button;
 
   beforeAll(async () => {
@@ -74,6 +74,7 @@ describe("Button — a11y", () => {
 /* ── ScoreBadge ──────────────────────────────────────────────────────────── */
 
 describe("ScoreBadge — a11y", () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   let ScoreBadge: typeof import("@/components/common/ScoreBadge").ScoreBadge;
 
   beforeAll(async () => {
@@ -125,6 +126,7 @@ describe("ScoreBadge — a11y", () => {
 /* ── FormField ───────────────────────────────────────────────────────────── */
 
 describe("FormField — a11y", () => {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-imports
   let FormField: typeof import("@/components/common/FormField").FormField;
 
   beforeAll(async () => {

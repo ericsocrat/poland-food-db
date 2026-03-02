@@ -77,7 +77,7 @@ This is a public repository by design. Source visibility is expected.
 
 ## Threat Model
 
-This project is a **public food quality database** — there is no user-generated content, no PII, and no authentication-gated data. The primary security concerns are:
+TryVit is a **public food health scoring platform** — there is no user-generated content, no PII, and no authentication-gated data. The primary security concerns are:
 
 | Threat                            | Mitigation                                                                                                                                                |
 | --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- |

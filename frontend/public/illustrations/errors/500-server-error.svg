@@ -1,12 +1,12 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 200" fill="none">
   <style>
-    .er-primary { fill: #0d7377; }
-    .er-primary-light { fill: #0d7377; opacity: 0.15; }
-    .er-accent { fill: #d4a844; }
+    .er-primary { fill: #1DB954; }
+    .er-primary-light { fill: #1DB954; opacity: 0.15; }
+    .er-accent { fill: #F59E0B; }
     .er-neutral { fill: #e2e8f0; }
     .er-neutral-dark { fill: #cbd5e1; }
     .er-shadow { fill: #94a3b8; opacity: 0.18; }
-    .er-spill { fill: #0d7377; opacity: 0.12; }
+    .er-spill { fill: #1DB954; opacity: 0.12; }
     @media (prefers-color-scheme: dark) {
       .er-primary { fill: #2dd4bf; }
       .er-primary-light { fill: #2dd4bf; opacity: 0.15; }
@@ -27,7 +27,7 @@
   <!-- Scattered ingredients -->
   <!-- Tomato -->
   <circle class="er-accent" cx="160" cy="150" r="10"/>
-  <path stroke="#d4a844" stroke-width="1.5" fill="none" d="M156 146 Q160 140 164 146"/>
+  <path stroke="#F59E0B" stroke-width="1.5" fill="none" d="M156 146 Q160 140 164 146"/>
   <!-- Carrot piece -->
   <path class="er-accent" d="M175 160 L172 175 L180 175Z" opacity="0.7"/>
   <!-- Leaf -->

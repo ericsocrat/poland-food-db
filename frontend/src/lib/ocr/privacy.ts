@@ -10,7 +10,7 @@ export { releaseImageData } from "@/lib/image-policy/enforcement";
 
 /* ── Consent persistence ──────────────────────────────────────────────────── */
 
-const CONSENT_KEY = "fooddb:image-search-privacy-accepted";
+const CONSENT_KEY = "tryvit:image-search-privacy-accepted";
 
 /**
  * Check if the user has previously accepted the image search privacy notice.

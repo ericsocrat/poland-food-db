@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="TryVit icon — dark background variant">
+  <title>TryVit (Dark)</title>
+  <desc>TryVit icon mark on vitDark (#0A2E1A) background with vitGreen icon. Used for dark mode home screen and OLED contexts.</desc>
+  <!-- Background -->
+  <rect width="64" height="64" fill="#0A2E1A"/>
+  <!-- vitGreen shield silhouette -->
+  <path
+    d="M 32 3.5
+       C 45.5 8,   55.5 21, 55.5 34
+       C 55.5 47,  42   57, 32   61
+       C 22   57,  8.5  47, 8.5  34
+       C 8.5  21,  18.5 8,  32   3.5
+       Z"
+    fill="#1DB954"
+  />
+  <!-- Accent dot -->
+  <circle cx="32" cy="9" r="2.5" fill="#00E676" opacity="0.90"/>
+</svg>

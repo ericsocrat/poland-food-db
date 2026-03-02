@@ -1,4 +1,4 @@
-"""Open Food Facts API client for the poland-food-db pipeline.
+"""Open Food Facts API client for the tryvit pipeline.
 
 Searches and fetches Polish product data, normalises it into the project
 schema, and respects the OFF API rate-limit guidelines.
@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 OFF_SEARCH_URL = "https://world.openfoodfacts.org/api/v2/search"
 OFF_PRODUCT_URL = "https://world.openfoodfacts.org/api/v2/product/{ean}.json"
-USER_AGENT = "poland-food-db/1.0 (https://github.com/ericsocrat/poland-food-db)"
+USER_AGENT = "tryvit/1.0 (https://github.com/ericsocrat/tryvit)"
 PAGE_SIZE = 50
 REQUEST_DELAY = 1.0  # seconds between requests
 REQUEST_TIMEOUT = 90  # seconds (OFF API can be slow)
@@ -49,13 +49,12 @@ def _get_json(session: requests.Session, url: str, params: dict) -> dict | None:
         except (requests.RequestException, TimeoutError, ConnectionError) as exc:
             if attempt < MAX_RETRIES:
                 wait = REQUEST_DELAY * (attempt + 1) * 2
-                logger.debug(
-                    "Retry %d for %s: %s (wait %.0fs)", attempt + 1, url, exc, wait
-                )
+                logger.debug("Retry %d for %s: %s (wait %.0fs)", attempt + 1, url, exc, wait)
                 time.sleep(wait)
                 continue
             logger.warning("Request failed after %d retries: %s", MAX_RETRIES, exc)
             return None
+    return None
 
 
 def _session() -> requests.Session:
@@ -204,9 +203,7 @@ def search_products(
 
         # Phase 2: Fall back to keyword search if needed
         if len(results) < max_results:
-            _search_by_terms(
-                session, search_terms, seen_codes, results, max_results, country
-            )
+            _search_by_terms(session, search_terms, seen_codes, results, max_results, country)
 
     return results[:max_results]
 
@@ -267,9 +264,7 @@ def _round1(value: Any, default: str = "0") -> str:
 # ---------------------------------------------------------------------------
 
 # Require that ≥50% of product_name characters are Latin/Polish/digit/punctuation.
-_LATIN_RE = re.compile(
-    r"[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻäöüÄÖÜéèêëàâîôùûçÉ0-9\s\-'.,&/!()#+%]"
-)
+_LATIN_RE = re.compile(r"[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻäöüÄÖÜéèêëàâîôùûçÉ0-9\s\-'.,&/!()#+%]")
 
 # Known Polish retailers (for market-relevance scoring)
 POLISH_RETAILERS: set[str] = {
@@ -325,8 +320,11 @@ GERMAN_RETAILERS: set[str] = {
 # Country code → (GS1 prefixes, retailers, diacritic regex)
 _COUNTRY_MARKET_DATA: dict[str, tuple[list[str], set[str], str]] = {
     "PL": (["590"], POLISH_RETAILERS, r"[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]"),
-    "DE": (["400", "401", "402", "403", "404", "405", "406", "407", "408", "409", "440"],
-           GERMAN_RETAILERS, r"[äöüÄÖÜß]"),
+    "DE": (
+        ["400", "401", "402", "403", "404", "405", "406", "407", "408", "409", "440"],
+        GERMAN_RETAILERS,
+        r"[äöüÄÖÜß]",
+    ),
 }
 
 # Common brand normalisations
@@ -513,11 +511,7 @@ def _normalise_name_casing(name: str) -> str:
 
 def _resolve_product_name(off_product: dict) -> str | None:
     """Extract and validate a Latin product name from an OFF product dict."""
-    product_name = (
-        off_product.get("product_name")
-        or off_product.get("abbreviated_product_name")
-        or ""
-    ).strip()
+    product_name = (off_product.get("product_name") or off_product.get("abbreviated_product_name") or "").strip()
     # Strip pipe characters (OFF data artifacts that break CSV validators)
     product_name = product_name.replace("|", " ").strip()
     # Collapse multiple spaces
@@ -535,7 +529,7 @@ def _resolve_brand(off_product: dict) -> str:
 
 
 def extract_product_data(off_product: dict) -> dict | None:
-    """Normalise a raw OFF product dict into the poland-food-db schema.
+    """Normalise a raw OFF product dict into the tryvit schema.
 
     Returns *None* when the product is missing essential nutrition data
     (calories, fat, or protein).

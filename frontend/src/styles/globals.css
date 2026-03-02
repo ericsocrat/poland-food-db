@@ -6,30 +6,44 @@
   :root {
     /* ── Surface & Background ── */
     --color-surface: #ffffff;
-    --color-surface-subtle: #f9fafb; /* gray-50 */
-    --color-surface-muted: #f3f4f6; /* gray-100 */
+    --color-surface-subtle: #f9fafb;
+    /* gray-50 */
+    --color-surface-muted: #f3f4f6;
+    /* gray-100 */
     --color-surface-overlay: rgba(0, 0, 0, 0.5);
 
     /* ── Text ── */
-    --color-text-primary: #111827; /* gray-900 */
-    --color-text-secondary: #4b5563; /* gray-600 — WCAG AA 7.08:1 on white, 4.78:1 on surface-muted */
-    --color-text-muted: #6b7280; /* gray-500 — WCAG AA 4.63:1 on white */
+    --color-text-primary: #111827;
+    /* gray-900 */
+    --color-text-secondary: #4b5563;
+    /* gray-600 — WCAG AA 7.08:1 on white, 4.78:1 on surface-muted */
+    --color-text-muted: #6b7280;
+    /* gray-500 — WCAG AA 4.63:1 on white */
     --color-text-inverse: #ffffff;
 
     /* ── Border & Divider ── */
-    --color-border: #e5e7eb; /* gray-200 */
-    --color-border-strong: #d1d5db; /* gray-300 */
+    --color-border: #e5e7eb;
+    /* gray-200 */
+    --color-border-strong: #d1d5db;
+    /* gray-300 */
 
     /* ── Brand (Primary Action) ── */
-    --color-brand: #15803d; /* green-700 — 5:1 contrast on white (WCAG AA) */
-    --color-brand-hover: #166534; /* green-800 */
-    --color-brand-subtle: #dcfce7; /* brand-100 */
+    --color-brand: #15803d;
+    /* green-700 — 5:1 contrast on white (WCAG AA) */
+    --color-brand-hover: #166534;
+    /* green-800 */
+    --color-brand-subtle: #dcfce7;
+    /* brand-100 */
 
-    /* ── Brand Identity (#406) ── */
-    --color-brand-primary: #0d7377; /* Deep emerald teal — 5.6:1 on white (WCAG AA) */
-    --color-brand-primary-dark: #095456; /* Darker variant — 8.5:1 on white (WCAG AAA) */
-    --color-brand-secondary: #f8fafc; /* Clean white/slate — background variant */
-    --color-brand-accent: #d4a844; /* Warm gold — 7.8:1 on dark bg; decorative only on white (2.2:1) */
+    /* ── Brand Identity (TryVit) ── */
+    --color-brand-primary: #1DB954;
+    /* vitGreen — 4.7:1 on white (WCAG AA); 7.4:1 on vitDark (AAA) */
+    --color-brand-primary-dark: #0A2E1A;
+    /* vitDark — 14.9:1 on vitLight (AAA) */
+    --color-brand-secondary: #F0FAF4;
+    /* vitLight — app background */
+    --color-brand-accent: #00E676;
+    /* vitAccent — glow/highlight on dark backgrounds */
 
     /* ── Neutral Scale ── */
     --color-neutral-50: #f8fafc;
@@ -39,18 +53,28 @@
     --color-neutral-900: #0f172a;
 
     /* ── Health Score Bands ── */
-    --color-score-green: #22c55e; /* 1–20 */
-    --color-score-yellow: #eab308; /* 21–40 */
-    --color-score-orange: #f97316; /* 41–60 */
-    --color-score-red: #ef4444; /* 61–80 */
-    --color-score-darkred: #991b1b; /* 81–100 */
+    --color-score-green: #22c55e;
+    /* 1–20 */
+    --color-score-yellow: #eab308;
+    /* 21–40 */
+    --color-score-orange: #f97316;
+    /* 41–60 */
+    --color-score-red: #ef4444;
+    /* 61–80 */
+    --color-score-darkred: #991b1b;
+    /* 81–100 */
 
     /* ── Score text (WCAG AA ≥ 4.5:1 on white) ── */
-    --color-score-green-text: #15803d; /* green-700, 5.1:1 */
-    --color-score-yellow-text: #854d0e; /* yellow-800, 5.9:1 */
-    --color-score-orange-text: #c2410c; /* orange-700, 5.2:1 */
-    --color-score-red-text: #b91c1c; /* red-700, 5.9:1 */
-    --color-score-darkred-text: #991b1b; /* 8.3:1 */
+    --color-score-green-text: #15803d;
+    /* green-700, 5.1:1 */
+    --color-score-yellow-text: #854d0e;
+    /* yellow-800, 5.9:1 */
+    --color-score-orange-text: #c2410c;
+    /* orange-700, 5.2:1 */
+    --color-score-red-text: #b91c1c;
+    /* red-700, 5.9:1 */
+    --color-score-darkred-text: #991b1b;
+    /* 8.3:1 */
 
     /* ── Nutri-Score (EU standard colors) ── */
     --color-nutri-A: #038141;
@@ -60,15 +84,22 @@
     --color-nutri-E: #e63e11;
 
     /* ── Nutrition Traffic Light (FSA/EFSA) ── */
-    --color-nutrient-low: #22c55e; /* green — low risk */
-    --color-nutrient-medium: #f59e0b; /* amber — moderate */
-    --color-nutrient-high: #ef4444; /* red — high risk */
+    --color-nutrient-low: #22c55e;
+    /* green — low risk */
+    --color-nutrient-medium: #f59e0b;
+    /* amber — moderate */
+    --color-nutrient-high: #ef4444;
+    /* red — high risk */
 
     /* ── NOVA Processing Groups ── */
-    --color-nova-1: #22c55e; /* Unprocessed */
-    --color-nova-2: #84cc16; /* Processed culinary */
-    --color-nova-3: #f59e0b; /* Processed */
-    --color-nova-4: #ef4444; /* Ultra-processed */
+    --color-nova-1: #22c55e;
+    /* Unprocessed */
+    --color-nova-2: #84cc16;
+    /* Processed culinary */
+    --color-nova-3: #f59e0b;
+    /* Processed */
+    --color-nova-4: #ef4444;
+    /* Ultra-processed */
 
     /* ── Confidence Bands ── */
     --color-confidence-high: #22c55e;
@@ -76,9 +107,12 @@
     --color-confidence-low: #ef4444;
 
     /* ── Allergen Severity ── */
-    --color-allergen-present: #ef4444; /* Contains allergen */
-    --color-allergen-traces: #f59e0b; /* May contain traces */
-    --color-allergen-free: #22c55e; /* Free from */
+    --color-allergen-present: #ef4444;
+    /* Contains allergen */
+    --color-allergen-traces: #f59e0b;
+    /* May contain traces */
+    --color-allergen-free: #22c55e;
+    /* Free from */
 
     /* ── Semantic Feedback ── */
     --color-success: #22c55e;
@@ -98,25 +132,42 @@
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 
     /* ── Spacing Scale (4px base) ── */
-    --space-1: 0.25rem; /* 4px */
-    --space-2: 0.5rem; /* 8px */
-    --space-3: 0.75rem; /* 12px */
-    --space-4: 1rem; /* 16px */
-    --space-5: 1.25rem; /* 20px */
-    --space-6: 1.5rem; /* 24px */
-    --space-8: 2rem; /* 32px */
-    --space-10: 2.5rem; /* 40px */
-    --space-12: 3rem; /* 48px */
-    --space-16: 4rem; /* 64px */
+    --space-1: 0.25rem;
+    /* 4px */
+    --space-2: 0.5rem;
+    /* 8px */
+    --space-3: 0.75rem;
+    /* 12px */
+    --space-4: 1rem;
+    /* 16px */
+    --space-5: 1.25rem;
+    /* 20px */
+    --space-6: 1.5rem;
+    /* 24px */
+    --space-8: 2rem;
+    /* 32px */
+    --space-10: 2.5rem;
+    /* 40px */
+    --space-12: 3rem;
+    /* 48px */
+    --space-16: 4rem;
+    /* 64px */
 
     /* ── Typography Scale ── */
-    --text-xs: 0.75rem; /* 12px */
-    --text-sm: 0.875rem; /* 14px */
-    --text-base: 1rem; /* 16px */
-    --text-lg: 1.125rem; /* 18px */
-    --text-xl: 1.25rem; /* 20px */
-    --text-2xl: 1.5rem; /* 24px */
-    --text-3xl: 1.875rem; /* 30px */
+    --text-xs: 0.75rem;
+    /* 12px */
+    --text-sm: 0.875rem;
+    /* 14px */
+    --text-base: 1rem;
+    /* 16px */
+    --text-lg: 1.125rem;
+    /* 18px */
+    --text-xl: 1.25rem;
+    /* 20px */
+    --text-2xl: 1.5rem;
+    /* 24px */
+    --text-3xl: 1.875rem;
+    /* 30px */
 
     --font-normal: 400;
     --font-medium: 500;
@@ -128,10 +179,14 @@
     --leading-relaxed: 1.625;
 
     /* ── Border Radius ── */
-    --radius-sm: 0.375rem; /* 6px */
-    --radius-md: 0.5rem; /* 8px */
-    --radius-lg: 0.75rem; /* 12px */
-    --radius-xl: 1rem; /* 16px */
+    --radius-sm: 0.375rem;
+    /* 6px */
+    --radius-md: 0.5rem;
+    /* 8px */
+    --radius-lg: 0.75rem;
+    /* 12px */
+    --radius-xl: 1rem;
+    /* 16px */
     --radius-full: 9999px;
 
     /* ── Transitions ── */
@@ -153,28 +208,43 @@
 
   /* ── Dark mode overrides ── */
   [data-theme="dark"] {
-    --color-surface: #111827; /* gray-900 */
-    --color-surface-subtle: #1f2937; /* gray-800 */
-    --color-surface-muted: #374151; /* gray-700 */
+    --color-surface: #111827;
+    /* gray-900 */
+    --color-surface-subtle: #1f2937;
+    /* gray-800 */
+    --color-surface-muted: #374151;
+    /* gray-700 */
     --color-surface-overlay: rgba(0, 0, 0, 0.7);
 
-    --color-text-primary: #f9fafb; /* gray-50 */
-    --color-text-secondary: #d1d5db; /* gray-300 */
-    --color-text-muted: #9ca3af; /* gray-400 */
+    --color-text-primary: #f9fafb;
+    /* gray-50 */
+    --color-text-secondary: #d1d5db;
+    /* gray-300 */
+    --color-text-muted: #9ca3af;
+    /* gray-400 */
     --color-text-inverse: #111827;
 
-    --color-border: #374151; /* gray-700 */
-    --color-border-strong: #4b5563; /* gray-600 */
+    --color-border: #374151;
+    /* gray-700 */
+    --color-border-strong: #4b5563;
+    /* gray-600 */
 
-    --color-brand: #4ade80; /* green-400 — WCAG AA 5.4:1 on brand-subtle */
-    --color-brand-hover: #22c55e; /* green-500 */
-    --color-brand-subtle: #14532d; /* green-900 */
+    --color-brand: #4ade80;
+    /* green-400 — WCAG AA 5.4:1 on brand-subtle */
+    --color-brand-hover: #22c55e;
+    /* green-500 */
+    --color-brand-subtle: #14532d;
+    /* green-900 */
 
-    /* ── Brand Identity (dark mode) ── */
-    --color-brand-primary: #2dd4bf; /* Teal-400 — 8.6:1 on dark surface */
-    --color-brand-primary-dark: #0d7377; /* Uses light-mode primary as dark-mode variant */
-    --color-brand-secondary: #1e293b; /* Slate-800 — dark surface variant */
-    --color-brand-accent: #fbbf24; /* Amber-400 — 12.3:1 on dark surface */
+    /* ── Brand Identity (TryVit dark mode) ── */
+    --color-brand-primary: #1DB954;
+    /* vitGreen — 7.4:1 on vitDark (AAA) */
+    --color-brand-primary-dark: #F0FAF4;
+    /* vitLight — inverted for text on dark bg */
+    --color-brand-secondary: #0A2E1A;
+    /* vitDark — dark surface */
+    --color-brand-accent: #00E676;
+    /* vitAccent — 8.2:1 on vitDark (AAA) */
 
     /* ── Neutral Scale (dark mode — inverted) ── */
     --color-neutral-50: #0f172a;
@@ -257,10 +327,14 @@
       --color-brand-subtle: #14532d;
 
       /* ── Brand Identity (dark mode — system preference fallback) ── */
-      --color-brand-primary: #2dd4bf;
-      --color-brand-primary-dark: #0d7377;
-      --color-brand-secondary: #1e293b;
-      --color-brand-accent: #fbbf24;
+      --color-brand-primary: #1DB954;
+      /* vitGreen — 7.4:1 on vitDark (AAA) */
+      --color-brand-primary-dark: #F0FAF4;
+      /* vitLight — inverted for text on dark bg */
+      --color-brand-secondary: #0A2E1A;
+      /* vitDark — dark surface */
+      --color-brand-accent: #00E676;
+      /* vitAccent — 8.2:1 on vitDark (AAA) */
 
       --color-neutral-50: #0f172a;
       --color-neutral-200: #334155;
@@ -345,6 +419,7 @@
     body {
       transition: none;
     }
+
     :root {
       --duration-instant: 0ms;
       --duration-fast: 0ms;
@@ -356,29 +431,18 @@
 
 @layer components {
   .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2.5
-           text-sm font-semibold text-foreground-inverse shadow-sm transition-colors
-           cursor-pointer hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2
-           focus-visible:outline-brand disabled:opacity-50 disabled:cursor-not-allowed
-           press-scale;
+    @apply inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-foreground-inverse shadow-sm transition-colors cursor-pointer hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 disabled:cursor-not-allowed press-scale;
     /* Prevent double-tap zoom on buttons in PWA */
     touch-action: manipulation;
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-lg border border-strong
-           bg-surface px-4 py-2.5 text-sm font-semibold text-foreground-secondary shadow-sm
-           transition-colors cursor-pointer hover:bg-surface-subtle focus-visible:outline-2
-           focus-visible:outline-offset-2 focus-visible:outline-brand
-           disabled:opacity-50 disabled:cursor-not-allowed
-           press-scale;
+    @apply inline-flex items-center justify-center rounded-lg border border-strong bg-surface px-4 py-2.5 text-sm font-semibold text-foreground-secondary shadow-sm transition-colors cursor-pointer hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 disabled:cursor-not-allowed press-scale;
     touch-action: manipulation;
   }
 
   .input-field {
-    @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5
-           text-sm text-foreground shadow-sm placeholder:text-foreground-muted
-           focus:border-brand focus:ring-1 focus:ring-brand focus:outline-none;
+    @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5 text-sm text-foreground shadow-sm placeholder:text-foreground-muted focus:border-brand focus:ring-1 focus:ring-brand focus:outline-none;
   }
 
   .card {
@@ -388,16 +452,17 @@
   /* ── Motion Utility Classes (#61) ── */
   .transition-interactive {
     transition: transform var(--duration-fast) var(--ease-standard),
-                opacity var(--duration-fast) var(--ease-standard),
-                box-shadow var(--duration-fast) var(--ease-standard);
+      opacity var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard);
     will-change: transform;
   }
 
   .hover-lift {
     transition: transform var(--duration-fast) var(--ease-standard),
-                opacity var(--duration-fast) var(--ease-standard),
-                box-shadow var(--duration-fast) var(--ease-standard);
+      opacity var(--duration-fast) var(--ease-standard),
+      box-shadow var(--duration-fast) var(--ease-standard);
   }
+
   @media (hover: hover) {
     .hover-lift:hover {
       transform: translateY(-2px);
@@ -408,21 +473,24 @@
   .press-scale {
     transition: transform var(--duration-instant) var(--ease-standard);
   }
+
   .press-scale:active {
     transform: scale(0.97);
   }
 
   .hover-lift-press {
     transition: transform var(--duration-fast) var(--ease-standard),
-                box-shadow var(--duration-fast) var(--ease-standard);
+      box-shadow var(--duration-fast) var(--ease-standard);
     cursor: pointer;
   }
+
   @media (hover: hover) {
     .hover-lift-press:hover {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
     }
   }
+
   .hover-lift-press:active {
     transform: translateY(0) scale(0.97);
     box-shadow: none;
@@ -446,6 +514,7 @@
     opacity: 0;
     transform: translateY(1rem);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -456,6 +525,7 @@
   from {
     transform: translateY(100%);
   }
+
   to {
     transform: translateY(0);
   }
@@ -471,6 +541,7 @@
     opacity: 0;
     transform: scale(0.95);
   }
+
   to {
     opacity: 1;
     transform: scale(1);
@@ -478,8 +549,13 @@
 }
 
 @keyframes backdropIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes slideInRight {
@@ -487,6 +563,7 @@
     opacity: 0;
     transform: translateX(0.5rem);
   }
+
   to {
     opacity: 1;
     transform: translateX(0);
@@ -499,6 +576,7 @@
     opacity: 0;
     transform: translateY(0.5rem);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -510,18 +588,17 @@
   0% {
     background-position: -200% 0;
   }
+
   100% {
     background-position: 200% 0;
   }
 }
 
 .skeleton {
-  background: linear-gradient(
-    90deg,
-    var(--color-surface-muted) 25%,
-    var(--color-surface-subtle) 50%,
-    var(--color-surface-muted) 75%
-  );
+  background: linear-gradient(90deg,
+      var(--color-surface-muted) 25%,
+      var(--color-surface-subtle) 50%,
+      var(--color-surface-muted) 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
   border-radius: var(--radius-md);
@@ -557,6 +634,7 @@
 .touch-target-expanded {
   position: relative;
 }
+
 .touch-target-expanded::after {
   content: "";
   position: absolute;
@@ -603,6 +681,7 @@
    ══════════════════════════════════════════════════════════════════════════ */
 
 @media print {
+
   /* ── Page setup ── */
   @page {
     margin: 15mm;
@@ -707,7 +786,7 @@
 
   /* ── Print footer attribution ── */
   body::after {
-    content: "Poland Food DB — poland-food-db.vercel.app";
+    content: "TryVit — tryvit.vercel.app";
     display: block;
     text-align: center;
     font-size: 8pt;

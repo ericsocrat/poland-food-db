@@ -1,14 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { Header } from "@/components/layout/Header";
 import { SkipLink } from "@/components/common/SkipLink";
 import { Footer } from "@/components/layout/Footer";
-import { LearnSidebar } from "@/components/learn/LearnSidebar";
+import { Header } from "@/components/layout/Header";
 import { Disclaimer } from "@/components/learn/Disclaimer";
+import { LearnSidebar } from "@/components/learn/LearnSidebar";
 import { useTranslation } from "@/lib/i18n";
-import { BadgeCheck, Ruler, AlertTriangle } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { AlertTriangle, BadgeCheck, Ruler, type LucideIcon } from "lucide-react";
+import Link from "next/link";
 
 // ─── Data Confidence topic page ────────────────────────────────────────────
 
