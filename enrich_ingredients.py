@@ -87,9 +87,7 @@ def get_products(country_filter: str | None = None) -> list[dict]:
         ORDER BY p.product_id;
     """
     )
-    result = subprocess.run(
-        cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace"
-    )
+    result = subprocess.run(cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace")
     if result.returncode != 0:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
         sys.exit(1)
@@ -115,12 +113,8 @@ def get_products(country_filter: str | None = None) -> list[dict]:
 
 def get_ingredient_ref() -> dict[str, int]:
     """Get ingredient_ref lookup: name_en → ingredient_id."""
-    cmd = _psql_cmd(
-        "SELECT ingredient_id, lower(name_en) FROM ingredient_ref ORDER BY ingredient_id;"
-    )
-    result = subprocess.run(
-        cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace"
-    )
+    cmd = _psql_cmd("SELECT ingredient_id, lower(name_en) FROM ingredient_ref ORDER BY ingredient_id;")
+    result = subprocess.run(cmd, capture_output=True, timeout=30, encoding="utf-8", errors="replace")
     if result.returncode != 0:
         print(f"DB query failed: {result.stderr}", file=sys.stderr)
         sys.exit(1)
@@ -310,9 +304,7 @@ def process_ingredients(
         if not name_lower or _is_garbage_name(name_lower):
             return pos
 
-        ing_id = _resolve_ingredient(
-            item, off_id, name_lower, name, ingredient_lookup, new_ingredients
-        )
+        ing_id = _resolve_ingredient(item, off_id, name_lower, name, ingredient_lookup, new_ingredients)
 
         rows.append(
             {
@@ -321,9 +313,7 @@ def process_ingredients(
                 "ingredient_id": ing_id,
                 "position": pos,
                 "percent": item.get("percent"),
-                "percent_estimate": _clamp_percent_estimate(
-                    item.get("percent_estimate")
-                ),
+                "percent_estimate": _clamp_percent_estimate(item.get("percent_estimate")),
                 "is_sub_ingredient": is_sub,
                 "parent_ingredient_id": parent_id if is_sub else None,
             }
@@ -545,9 +535,7 @@ def sql_escape(val: str | None) -> str:
 # SQL generation constants (avoid duplication flagged by SonarCloud)
 # ---------------------------------------------------------------------------
 
-SQL_SECTION_SEPARATOR = (
-    "-- ═══════════════════════════════════════════════════════════════"
-)
+SQL_SECTION_SEPARATOR = "-- ═══════════════════════════════════════════════════════════════"
 SQL_FROM_VALUES = "FROM (VALUES"
 SQL_JOIN_PRODUCTS = "JOIN products p ON p.country = v.country AND p.ean = v.ean"
 SQL_WHERE_ACTIVE = "WHERE p.is_deprecated IS NOT TRUE"
@@ -568,11 +556,7 @@ def _format_ingredient_row(r: dict) -> tuple[str, str, str, bool]:
     pct = _format_nullable(r["percent"])
     pct_est = _format_nullable(r["percent_estimate"])
     parent_id = r["parent_ingredient_id"]
-    parent = (
-        str(parent_id)
-        if parent_id is not None and not isinstance(parent_id, str)
-        else "NULL"
-    )
+    parent = str(parent_id) if parent_id is not None and not isinstance(parent_id, str) else "NULL"
     # If parent can't be resolved, force is_sub=false to satisfy chk_sub_has_parent
     is_sub = r["is_sub_ingredient"] and parent != "NULL"
     return pct, pct_est, parent, is_sub
@@ -611,8 +595,7 @@ def _gen_allergen_batch(batch: list[dict]) -> list[str]:
     vals = []
     for r in batch:
         vals.append(
-            f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
-            f"{sql_escape(r['tag'])}, {sql_escape(r['type'])})"
+            f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, {sql_escape(r['tag'])}, {sql_escape(r['type'])})"
         )
     lines.append(",\n".join(vals))
     lines.append(") AS v(country, ean, tag, type)")
@@ -664,9 +647,7 @@ def _gen_resolved_ingredient_batch(batch: list[dict]) -> list[str]:
     return lines
 
 
-def _gen_unresolved_ingredient_batch(
-    batch: list[dict], new_ingredients: dict[str, dict]
-) -> list[str]:
+def _gen_unresolved_ingredient_batch(batch: list[dict], new_ingredients: dict[str, dict]) -> list[str]:
     """Generate SQL for a batch of unresolved ingredient inserts (need name lookup)."""
     lines = [
         "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)",
@@ -688,18 +669,14 @@ def _gen_unresolved_ingredient_batch(
         ") AS v(country, ean, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
     )
     lines.append(SQL_JOIN_PRODUCTS)
-    lines.append(
-        "JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)"
-    )
+    lines.append("JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)")
     lines.append(SQL_WHERE_ACTIVE)
     lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
     lines.append("")
     return lines
 
 
-def _gen_ingredient_section(
-    ingredient_rows: list[dict], new_ingredients: dict[str, dict]
-) -> list[str]:
+def _gen_ingredient_section(ingredient_rows: list[dict], new_ingredients: dict[str, dict]) -> list[str]:
     """Generate SQL for populating product_ingredient."""
     lines = [
         SQL_SECTION_SEPARATOR,
@@ -718,11 +695,7 @@ def _gen_ingredient_section(
         lines.extend(_gen_resolved_ingredient_batch(resolved[i : i + batch_size]))
 
     for i in range(0, len(unresolved), batch_size):
-        lines.extend(
-            _gen_unresolved_ingredient_batch(
-                unresolved[i : i + batch_size], new_ingredients
-            )
-        )
+        lines.extend(_gen_unresolved_ingredient_batch(unresolved[i : i + batch_size], new_ingredients))
 
     return lines
 
@@ -770,12 +743,8 @@ def generate_migration(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Enrich ingredient & allergen data from OFF API"
-    )
-    parser.add_argument(
-        "--country", type=str, default=None, help="Country code filter (e.g. DE, PL)"
-    )
+    parser = argparse.ArgumentParser(description="Enrich ingredient & allergen data from OFF API")
+    parser.add_argument("--country", type=str, default=None, help="Country code filter (e.g. DE, PL)")
     args = parser.parse_args()
 
     print("=" * 60)
@@ -791,9 +760,7 @@ def main():
 
     # 1. Load products and ingredient_ref
     print("\n[1/4] Loading products from database...")
-    products = get_products(
-        country_filter=args.country.upper() if args.country else None
-    )
+    products = get_products(country_filter=args.country.upper() if args.country else None)
     print(f"  Found {len(products)} active products with EANs")
 
     print("\n[2/4] Loading ingredient_ref...")
@@ -821,7 +788,7 @@ def main():
         for i, product in enumerate(products):
             if (i + 1) % 50 == 0 or i == 0:
                 print(
-                    f"  Processing {i+1}/{len(products)} "
+                    f"  Processing {i + 1}/{len(products)} "
                     f"(ingredients: {stats['with_ingredients']}, "
                     f"allergens: {stats['with_allergens']}, "
                     f"not found: {stats['not_found']})..."
@@ -855,9 +822,7 @@ def main():
 
             time.sleep(DELAY)
     except KeyboardInterrupt:
-        print(
-            f"\n  Interrupted at {stats['processed']}/{len(products)} — generating migration with collected data..."
-        )
+        print(f"\n  Interrupted at {stats['processed']}/{len(products)} — generating migration with collected data...")
 
     # 3. Generate migration
     print("\n[4/4] Generating migration SQL...")
@@ -869,20 +834,14 @@ def main():
     print(f"  Total ingredient rows: {len(all_ingredient_rows)}")
     print(f"  Total allergen rows: {len(all_allergen_rows)}")
 
-    sql = generate_migration(
-        all_ingredient_rows, all_allergen_rows, new_ingredients, stats
-    )
+    sql = generate_migration(all_ingredient_rows, all_allergen_rows, new_ingredients, stats)
 
     MIGRATION_FILE.write_text(sql, encoding="utf-8")
     print(f"\n  Migration written to: {MIGRATION_FILE}")
     print(f"  File size: {MIGRATION_FILE.stat().st_size / 1024:.1f} KB")
     print("\nDone! Run the migration with:")
-    print(
-        "  docker exec supabase_db_tryvit psql -U postgres -d postgres -f ..."
-    )
-    print(
-        f"  or: Get-Content '{MIGRATION_FILE}' -Raw | docker exec -i supabase_db_tryvit psql -U postgres -d postgres"
-    )
+    print("  docker exec supabase_db_tryvit psql -U postgres -d postgres -f ...")
+    print(f"  or: Get-Content '{MIGRATION_FILE}' -Raw | docker exec -i supabase_db_tryvit psql -U postgres -d postgres")
 
 
 if __name__ == "__main__":

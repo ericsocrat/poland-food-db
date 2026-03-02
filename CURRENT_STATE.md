@@ -16,17 +16,17 @@
 
 ## Recently Shipped (This Session)
 
-| SHA       | Summary                                                                                         |
-| --------- | ----------------------------------------------------------------------------------------------- |
-| `4d83c13` | fix(lint): resolve 59 ruff errors + fix 17 stale doc counts across 4 files                     |
-| `550d35f` | chore(cleanup): fix workspace debris, dup assets, stale docs                                   |
+| SHA       | Summary                                                                    |
+| --------- | -------------------------------------------------------------------------- |
+| `4d83c13` | fix(lint): resolve 59 ruff errors + fix 17 stale doc counts across 4 files |
+| `550d35f` | chore(cleanup): fix workspace debris, dup assets, stale docs               |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR   | Summary                                                                                         |
 | ---------- | ---- | ----------------------------------------------------------------------------------------------- |
-| 2026-03-04 | #546 | fix(lint): resolve 59 ruff errors + fix 17 stale doc counts (pending commit)                   |
-| 2026-03-03 | #546 | chore(cleanup): fix workspace debris, dup assets, stale docs (550d35f)                         |
+| 2026-03-04 | #546 | fix(lint): resolve 59 ruff errors + fix 17 stale doc counts (pending commit)                    |
+| 2026-03-03 | #546 | chore(cleanup): fix workspace debris, dup assets, stale docs (550d35f)                          |
 | 2026-03-03 | #546 | fix(frontend): resolve all ESLint import errors and fix page test (89a3552)                     |
 | 2026-03-03 | #546 | chore(config): add copilot workspace context and .github/copilot-instructions.md (f08f80a)      |
 | 2026-03-02 | #546 | chore(tooling): elite copilot-instructions §17-§20 rewrite + full dev tooling upgrade (4232c30) |
@@ -42,15 +42,15 @@
 
 ## CI Gate Status (main branch)
 
-| Gate         | Status | Notes                                                                      |
-| ------------ | ------ | -------------------------------------------------------------------------- |
-| pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke                       |
-| main-gate    | ✅      | Last runs all success                                                      |
-| qa.yml       | ✅      | 733/733 checks passing                                                     |
-| dep-audit    | ✅      | 0 high/critical vulnerabilities                                            |
-| python-lint  | ⚠️      | Was failing (59 ruff errors) — fixed this session, pending push            |
-| quality-gate | ⚠️      | 7 remaining failures are CI env data gaps                                  |
-| nightly      | ⚠️      | Intermittent timeout failures                                              |
+| Gate         | Status | Notes                                                           |
+| ------------ | ------ | --------------------------------------------------------------- |
+| pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke            |
+| main-gate    | ✅      | Last runs all success                                           |
+| qa.yml       | ✅      | 733/733 checks passing                                          |
+| dep-audit    | ✅      | 0 high/critical vulnerabilities                                 |
+| python-lint  | ⚠️      | Was failing (59 ruff errors) — fixed this session, pending push |
+| quality-gate | ⚠️      | 7 remaining failures are CI env data gaps                       |
+| nightly      | ⚠️      | Intermittent timeout failures                                   |
 
 ## Open Issues (1 total)
 

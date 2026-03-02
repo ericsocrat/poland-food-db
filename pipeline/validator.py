@@ -92,14 +92,14 @@ CATEGORY_RANGES: dict[str, dict[str, tuple[float, float]]] = {
 #: Hard upper limits based on physical constraints.  A value above any of
 #: these is certainly wrong data (e.g. vandalism on Open Food Facts).
 ABSOLUTE_CAPS: dict[str, float] = {
-    "calories": 900,           # Pure fat ≈ 900 kcal
-    "total_fat_g": 100,        # Can't exceed 100 g per 100 g
+    "calories": 900,  # Pure fat ≈ 900 kcal
+    "total_fat_g": 100,  # Can't exceed 100 g per 100 g
     "saturated_fat_g": 100,
     "carbs_g": 100,
     "sugars_g": 100,
     "protein_g": 100,
     "fibre_g": 100,
-    "salt_g": 50,              # Pure salt is extreme
+    "salt_g": 50,  # Pure salt is extreme
     "trans_fat_g": 100,
 }
 
@@ -172,10 +172,7 @@ def check_nutrition_anomalies(
         except (ValueError, TypeError):
             continue
         if val > cap:
-            errors.append(
-                f"BLOCKED: {field}={val} exceeds absolute cap of {cap} "
-                f"for '{name}'"
-            )
+            errors.append(f"BLOCKED: {field}={val} exceeds absolute cap of {cap} for '{name}'")
 
     # 2. Category-specific ranges — soft warning
     cat_ranges = CATEGORY_RANGES.get(category, {})
@@ -190,9 +187,7 @@ def check_nutrition_anomalies(
         # Flag if value is more than 50% below low or 50% above high
         if val < lo * 0.5 or val > hi * 1.5:
             warnings.append(
-                f"ANOMALY: {field}={val} outside expected range "
-                f"({lo}-{hi}) for category '{category}', "
-                f"product '{name}'"
+                f"ANOMALY: {field}={val} outside expected range ({lo}-{hi}) for category '{category}', product '{name}'"
             )
 
     return errors, warnings
@@ -232,9 +227,7 @@ def check_nutrition_ranges(product: dict, category: str) -> list[str]:
         except (ValueError, TypeError):
             continue
         if val < lo or val > hi:
-            warnings.append(
-                f"{field}={val} outside expected range [{lo}-{hi}] for {category}"
-            )
+            warnings.append(f"{field}={val} outside expected range [{lo}-{hi}] for {category}")
 
     # Calorie back-calculation: protein*4 + carbs*4 + fat*9 should be
     # within 35% of stated calories (excludes alcohol calories, fibre, etc.)
@@ -247,8 +240,7 @@ def check_nutrition_ranges(product: dict, category: str) -> list[str]:
             calc = prot * 4 + carb * 4 + fat * 9
             if cal > 50 and abs(cal - calc) > cal * 0.35:
                 warnings.append(
-                    f"calorie back-calculation mismatch: stated={cal}, "
-                    f"calculated={calc:.0f} (>{35}% deviation)"
+                    f"calorie back-calculation mismatch: stated={cal}, calculated={calc:.0f} (>{35}% deviation)"
                 )
         except (ValueError, TypeError):
             pass
@@ -300,23 +292,20 @@ def check_attribute_contradictions(product: dict) -> list[str]:
     animal_hits = allergen_set & ANIMAL_ALLERGEN_TAGS
     if vegan == "yes" and animal_hits:
         warnings.append(
-            f"vegan_status is 'yes' but product declares animal allergens: "
-            f"{', '.join(sorted(animal_hits))}"
+            f"vegan_status is 'yes' but product declares animal allergens: {', '.join(sorted(animal_hits))}"
         )
 
     # 2. Vegetarian + meat/fish allergens
     meat_hits = allergen_set & MEAT_FISH_ALLERGEN_TAGS
     if vegetarian == "yes" and meat_hits:
         warnings.append(
-            f"vegetarian_status is 'yes' but product declares meat/fish allergens: "
-            f"{', '.join(sorted(meat_hits))}"
+            f"vegetarian_status is 'yes' but product declares meat/fish allergens: {', '.join(sorted(meat_hits))}"
         )
 
     # 3. Logical impossibility: vegan but not vegetarian
     if vegan == "yes" and vegetarian == "no":
         warnings.append(
-            "vegan_status is 'yes' but vegetarian_status is 'no' — "
-            "all vegan products must also be vegetarian"
+            "vegan_status is 'yes' but vegetarian_status is 'no' — all vegan products must also be vegetarian"
         )
 
     return warnings

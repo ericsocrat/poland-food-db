@@ -63,9 +63,7 @@ def _check_filename(name: str) -> list[str]:
 
     m = _FILENAME_RE.match(name)
     if not m:
-        violations.append(
-            f"[{name}] Filename does not match YYYYMMDDHHMMSS_description.sql pattern"
-        )
+        violations.append(f"[{name}] Filename does not match YYYYMMDDHHMMSS_description.sql pattern")
         return violations  # can't check further
 
     timestamp_str, description = m.group(1), m.group(2)
@@ -73,10 +71,7 @@ def _check_filename(name: str) -> list[str]:
     # Basic date sanity
     date_part = int(timestamp_str[:8])
     if date_part < _MIN_DATE or date_part > _MAX_DATE:
-        violations.append(
-            f"[{name}] Date portion {date_part} out of expected range "
-            f"({_MIN_DATE}-{_MAX_DATE})"
-        )
+        violations.append(f"[{name}] Date portion {date_part} out of expected range ({_MIN_DATE}-{_MAX_DATE})")
 
     # Month 01-12
     month = int(timestamp_str[4:6])
@@ -90,9 +85,7 @@ def _check_filename(name: str) -> list[str]:
 
     # Description quality
     if _BAD_DESC_RE.search(description):
-        violations.append(
-            f"[{name}] Description contains double underscores or trailing underscore"
-        )
+        violations.append(f"[{name}] Description contains double underscores or trailing underscore")
 
     if len(description) < 3:
         violations.append(f"[{name}] Description too short (min 3 chars)")
@@ -110,14 +103,10 @@ def _check_header(name: str, content: str, *, strict: bool = False) -> list[str]
     has_issue = any(_ISSUE_LINE.search(line) for line in lines)
 
     if not has_migration:
-        violations.append(
-            f"[{name}] Missing 'Migration:' in header (first {HEADER_SCAN_LINES} lines)"
-        )
+        violations.append(f"[{name}] Missing 'Migration:' in header (first {HEADER_SCAN_LINES} lines)")
 
     if not has_rollback:
-        violations.append(
-            f"[{name}] Missing 'Rollback:' in header (first {HEADER_SCAN_LINES} lines)"
-        )
+        violations.append(f"[{name}] Missing 'Rollback:' in header (first {HEADER_SCAN_LINES} lines)")
 
     if strict and not has_issue:
         violations.append(f"[{name}] Missing 'Issue:' in header (strict mode)")
@@ -199,9 +188,7 @@ def main() -> None:
             elif "Issue:" in v:
                 header_missing_issue += 1
 
-        if not any(
-            "Migration:" in v or "Rollback:" in v or "Issue:" in v for v in violations
-        ):
+        if not any("Migration:" in v or "Rollback:" in v or "Issue:" in v for v in violations):
             header_ok += 1
 
         all_violations.extend(violations)
@@ -219,9 +206,7 @@ def main() -> None:
         sys.exit(0)
 
     if all_violations:
-        print(
-            f"Migration convention check — {len(all_violations)} violations in {total} files:"
-        )
+        print(f"Migration convention check — {len(all_violations)} violations in {total} files:")
         for v in all_violations:
             print(f"  x {v}")
         print(f"\nSummary: {name_ok}/{total} naming OK, {header_ok}/{total} header OK")

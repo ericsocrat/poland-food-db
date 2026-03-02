@@ -16,11 +16,7 @@ from pathlib import Path
 from tqdm import tqdm
 
 from pipeline.categories import CATEGORY_SEARCH_TERMS, resolve_category
-from pipeline.off_client import (
-    extract_product_data,
-    market_score,
-    search_products,
-)
+from pipeline.off_client import extract_product_data, market_score, search_products
 from pipeline.sql_generator import generate_pipeline
 from pipeline.utils import slug as _slug
 from pipeline.validator import validate_product
@@ -168,28 +164,21 @@ def run_pipeline(
     # 1. Search OFF
     print(f"Searching Open Food Facts for {off_country.title()} products...")
     try:
-        raw_products = search_products(
-            category, max_results=max_products * 3, country=off_country
-        )
+        raw_products = search_products(category, max_results=max_products * 3, country=off_country)
     except Exception as exc:
         logger.error("Search failed with unexpected error: %s", exc)
         raw_products = []
     print(f"  Found {len(raw_products)} raw products")
 
     if not raw_products:
-        print(
-            "\nNo products found. The OFF API may be unavailable."
-            "\nTry again later or increase --max-products."
-        )
+        print("\nNo products found. The OFF API may be unavailable.\nTry again later or increase --max-products.")
         sys.exit(0)
 
     # 2. Extract & normalise
     extracted = _extract_products(raw_products, category, min_completeness)
 
     # 3. Validate
-    validated, warn_count, blocked = _validate_products(
-        extracted, category, max_warnings
-    )
+    validated, warn_count, blocked = _validate_products(extracted, category, max_warnings)
     print(f"  After validation: {len(validated)} products")
 
     # 4. De-duplicate
@@ -243,9 +232,7 @@ def _generate_sql_output(
     if dry_run:
         print("[DRY RUN] Would generate SQL files in:", output_dir)
         print(f"  PIPELINE__{slug}__01_insert_products.sql ({len(products)} products)")
-        print(
-            f"  PIPELINE__{slug}__03_add_nutrition.sql ({len(products)} nutrition rows)"
-        )
+        print(f"  PIPELINE__{slug}__03_add_nutrition.sql ({len(products)} nutrition rows)")
         print(f"  PIPELINE__{slug}__04_scoring.sql")
         print(f"  PIPELINE__{slug}__05_source_provenance.sql")
         print(f"  PIPELINE__{slug}__06_add_images.sql")

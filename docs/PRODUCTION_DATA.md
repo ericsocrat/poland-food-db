@@ -27,7 +27,7 @@
 
 | Setting              | Value                                                      |
 | -------------------- | ---------------------------------------------------------- |
-| Project ID (local)   | `tryvit`                                           |
+| Project ID (local)   | `tryvit`                                                   |
 | Project Ref (remote) | `uskvezwftkkudvksmken`                                     |
 | DB Host (remote)     | `db.uskvezwftkkudvksmken.supabase.co`                      |
 | DB Port (remote)     | `5432`                                                     |
@@ -36,7 +36,7 @@
 | DB User              | `postgres`                                                 |
 | PostgreSQL Version   | `17`                                                       |
 | Pooler               | Enabled, `transaction` mode, pool size 20, max 100 clients |
-| Docker Container     | `supabase_db_tryvit`                               |
+| Docker Container     | `supabase_db_tryvit`                                       |
 
 ### 1.2 Migration Inventory
 
