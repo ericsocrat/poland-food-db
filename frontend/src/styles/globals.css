@@ -327,10 +327,14 @@
       --color-brand-subtle: #14532d;
 
       /* ── Brand Identity (dark mode — system preference fallback) ── */
-      --color-brand-primary: #1DB954; /* vitGreen — 7.4:1 on vitDark (AAA) */
-      --color-brand-primary-dark: #F0FAF4; /* vitLight — inverted for text on dark bg */
-      --color-brand-secondary: #0A2E1A; /* vitDark — dark surface */
-      --color-brand-accent: #00E676; /* vitAccent — 8.2:1 on vitDark (AAA) */
+      --color-brand-primary: #1DB954;
+      /* vitGreen — 7.4:1 on vitDark (AAA) */
+      --color-brand-primary-dark: #F0FAF4;
+      /* vitLight — inverted for text on dark bg */
+      --color-brand-secondary: #0A2E1A;
+      /* vitDark — dark surface */
+      --color-brand-accent: #00E676;
+      /* vitAccent — 8.2:1 on vitDark (AAA) */
 
       --color-neutral-50: #0f172a;
       --color-neutral-200: #334155;

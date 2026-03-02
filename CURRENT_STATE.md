@@ -18,7 +18,7 @@
 
 | SHA       | Summary                                                                                          |
 | --------- | ------------------------------------------------------------------------------------------------ |
-| `a98010e` | feat(brand): complete TryVit brand identity — Phase 2-5 of #539 (6 files)                       |
+| `a98010e` | feat(brand): complete TryVit brand identity — Phase 2-5 of #539 (6 files)                        |
 | `a2aa076` | fix(ruff): remove duplicate [lint.isort] + duplicate per-file-ignores key                        |
 | `4232c30` | chore(tooling): elite copilot-instructions §17-§20 rewrite + full dev tooling upgrade (10 files) |
 
