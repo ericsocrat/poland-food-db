@@ -3,9 +3,9 @@
 // Shows at-a-glance green/amber/red status for Fat, Saturated Fat, Sugars, Salt
 // based on EFSA/FSA reference thresholds.
 
-import { getTrafficLight, type TrafficLight } from "./TrafficLightChip";
 import { TRAFFIC_LIGHT_NUTRIENTS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { getTrafficLight, type TrafficLight } from "./TrafficLightChip";
 
 interface NutritionValues {
   readonly total_fat_g: number;

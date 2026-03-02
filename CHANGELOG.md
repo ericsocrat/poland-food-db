@@ -37,6 +37,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Fix documentation count drift: update 9 migration count references from 184 to
+  185 across `copilot-instructions.md`, `README.md`, and
+  `docs/PRODUCTION_DATA.md`; update `CURRENT_STATE.md` for session 14 (open
+  issues, metrics); reorder imports in `TrafficLightStrip.tsx` (formatter, no
+  functional change) (#562)
+
 - Rename project from `poland-food-db` to `TryVit` across all source files:
   package names, app metadata, CI/CD config, documentation, i18n values, and
   test fixtures (#539); new brand identity: vitGreen `#1DB954` / vitDark
