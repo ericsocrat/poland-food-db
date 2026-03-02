@@ -13,6 +13,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Provision deterministic QA fixture data for quality-gate and nightly CI
+  workflows: new `seed-fixtures.mjs` script seeds 4 synthetic dairy products
+  (with nutrition, allergens, ingredients) into staging Supabase via service-role
+  key; `quality-gate.yml` and `nightly.yml` run the seeder before Playwright,
+  capturing product IDs into `$GITHUB_ENV` for `fixtures.ts` to consume;
+  removes hardcoded `QA_PRODUCT_ID` secret dependency (#553)
+
 ### Changed
 
 - Rename project from `poland-food-db` to `TryVit` across all source files:

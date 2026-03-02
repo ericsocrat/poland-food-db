@@ -94,6 +94,19 @@ jobs:
         run: npx playwright install-deps chromium
         timeout-minutes: 8
 
+      - name: Seed QA fixture data
+        run: |
+          OUTPUT=$(node tests/quality/seed-fixtures.mjs 2>&1 1>/tmp/qa-ids.txt || true)
+          echo "$OUTPUT"
+          if [ -f /tmp/qa-ids.txt ] && [ -s /tmp/qa-ids.txt ]; then
+            cat /tmp/qa-ids.txt >> "$GITHUB_ENV"
+          else
+            echo "::warning::QA fixture seeding skipped or failed — tests may use fallback IDs"
+          fi
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+
       - name: Full Playwright (all projects including visual)
         run: npx playwright test 2>&1 | tee ../playwright-stdout.log
         timeout-minutes: 10
