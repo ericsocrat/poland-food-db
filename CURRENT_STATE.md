@@ -8,7 +8,7 @@
 ## Active Branch & PR
 
 - **Branch:** `chore/rename-to-tryvit-clean` (rename PR — open, awaiting CI)
-- **Latest SHA:** `b0d6e8f` (complete TryVit brand rename — 99 files, all assets + strings)
+- **Latest SHA:** `4232c30` (chore(tooling): elite copilot-instructions §17-§20 rewrite + full dev tooling upgrade)
 - **Open PRs:** [#546](https://github.com/ericsocrat/tryvit/pull/546) — chore(cleanup): rename poland-food-db → TryVit across all source files
 - **main SHA:** `3bd6fb3` (origin/main — stable, unmodified)
 
@@ -16,31 +16,20 @@
 
 ## Recently Shipped (This Session)
 
-| SHA       | Summary                                                                                         |
-| --------- | ----------------------------------------------------------------------------------------------- |
-| `b0d6e8f` | chore(brand): complete TryVit rename across all assets and strings (99 files)                   |
-| `64af278` | chore: fix remaining poland-food-db refs and set SENTRY_PROJECT default in .env.example         |
-| `88e6019` | chore: update CURRENT_STATE.md — SHA 5e7cd6a, brand commit complete                            |
-| `5e7cd6a` | chore(brand): fix TryVit display name in sonar, manifest, design-tokens, css                   |
-
-## Uncommitted Session Work (2026-03-02)
-
-The following were created/modified this session and need to be committed:
-
-| File | Change |
-| ---- | ------ |
-| `setup-env.ps1` | **Created** — `.env` → PowerShell session loader. `-Verify` connectivity checks, `-ShowValues` masked display. Dot-source: `. .\setup-env.ps1` |
-| `docs/AGENT_WORKFLOW.md` | **Created** — Agent workflow pointer doc. Execution protocol, command quick-reference, domain matrix, priority definitions. |
-| `copilot-instructions.md` | **Modified** — Added §4 Edge Functions subsection (api-gateway, send-push-notification, verify-turnstile). Added §17 Audit Protocol, §18 Doc Freshness, §19 Pre-Implementation Checklist, §20 Domain-Aware Doc Loading (20-domain matrix + 4 invariants). 1,503 → 1,672 lines. |
-| `docs/INDEX.md` | **Modified** — Total docs 49→50. Process & Workflow 6→7. Added AGENT_WORKFLOW.md entry + setup-env.ps1 note. |
-
+| SHA       | Summary                                                                                                                              |
+| --------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `4232c30` | chore(tooling): elite copilot-instructions §17-§20 rewrite + full dev tooling upgrade (10 files)                                    |
+| `d0a2e0f` | docs(workflow): add agent workflow reference, setup-env.ps1, and §17-§20                                                             |
+| `b0d6e8f` | chore(brand): complete TryVit rename across all assets and strings (99 files)                                                        |
 
 
 ## Recently Shipped (Last 7 Days)
 
-| Date       | PR   | Summary                                                                                       |
-| ---------- | ---- | --------------------------------------------------------------------------------------------- |
-| 2026-03-02 | #546 | chore(cleanup): rename poland-food-db → TryVit across all source files (open PR, awaiting CI) |
+| Date       | PR   | Summary                                                                                                    |
+| ---------- | ---- | ---------------------------------------------------------------------------------------------------------- |
+| 2026-03-02 | #546 | chore(tooling): elite copilot-instructions §17-§20 rewrite + full dev tooling upgrade (4232c30)           |
+| 2026-03-02 | #546 | docs(workflow): add agent workflow reference, setup-env.ps1, §17-§20 (d0a2e0f)                            |
+| 2026-03-02 | #546 | chore(cleanup): rename poland-food-db → TryVit across all source files (open PR, awaiting CI)             |
 | 2026-03-01 | #540 | fix(deps): resolve 6 high-severity npm audit vulnerabilities                                  |
 | 2026-03-01 | #537 | fix(ci): exclude script tags from quality-gate body text checks                               |
 | 2026-03-01 | #536 | fix(ci): add 5xx network-error allowlist for quality-gate audits                              |
