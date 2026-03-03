@@ -12,6 +12,7 @@ import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
 import {
     Activity,
+    BookOpen,
     Camera,
     ClipboardList,
     Eye,
@@ -96,6 +97,12 @@ const PRIMARY_ITEMS: readonly SidebarNavItem[] = [
 ] as const;
 
 const SECONDARY_ITEMS: readonly SidebarNavItem[] = [
+  {
+    href: "/learn",
+    labelKey: "nav.learn",
+    icon: BookOpen,
+    routeKey: null,
+  },
   {
     href: "/app/settings",
     labelKey: "nav.settings",

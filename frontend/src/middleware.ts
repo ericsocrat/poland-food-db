@@ -22,7 +22,7 @@ import { type NextRequest, NextResponse } from "next/server";
 const PUBLIC_PATHS = new Set(["/", "/contact", "/privacy", "/terms"]);
 
 function isPublicPath(pathname: string): boolean {
-  return PUBLIC_PATHS.has(pathname) || pathname.startsWith("/auth/");
+  return PUBLIC_PATHS.has(pathname) || pathname.startsWith("/auth/") || pathname.startsWith("/learn");
 }
 
 /**

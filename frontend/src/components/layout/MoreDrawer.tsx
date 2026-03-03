@@ -10,6 +10,7 @@ import { Icon } from "@/components/common/Icon";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
 import {
+    BookOpen,
     Eye,
     FolderOpen,
     Scale,
@@ -77,6 +78,12 @@ const DRAWER_ITEMS: readonly DrawerNavItem[] = [
     labelKey: "nav.imageSearch",
     icon: ScanText,
     routeKey: "image-search",
+  },
+  {
+    href: "/learn",
+    labelKey: "nav.learn",
+    icon: BookOpen,
+    routeKey: null,
   },
   {
     href: "/app/admin/submissions",

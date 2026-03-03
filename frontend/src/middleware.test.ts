@@ -80,6 +80,18 @@ describe("middleware", () => {
       const response = await middleware(createRequest("/auth/signup"));
       expect(response.status).not.toBe(307);
     });
+
+    it("allows unauthenticated access to /learn", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: null } });
+      const response = await middleware(createRequest("/learn"));
+      expect(response.status).not.toBe(307);
+    });
+
+    it("allows unauthenticated access to /learn/nutri-score", async () => {
+      mockGetUser.mockResolvedValue({ data: { user: null } });
+      const response = await middleware(createRequest("/learn/nutri-score"));
+      expect(response.status).not.toBe(307);
+    });
   });
 
   describe("authenticated user on auth pages", () => {
