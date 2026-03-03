@@ -281,6 +281,7 @@ function ProductRow({
       <ProductThumbnail
         imageUrl={product.image_thumb_url ?? null}
         productName={product.product_name}
+        categorySlug={product.category}
         size="sm"
       />
       <NutriBadge grade={product.nutri_score_label} />

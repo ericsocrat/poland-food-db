@@ -229,6 +229,7 @@ export default function CategoryListingPage() {
               product={p}
               allergenWarnings={allergenMap[p.product_id] ?? []}
               viewMode={viewMode}
+              categorySlug={slug}
             />
           ))}
         </ul>
@@ -264,10 +265,12 @@ function ProductRow({
   product,
   allergenWarnings = [],
   viewMode = "compact",
+  categorySlug,
 }: Readonly<{
   product: CategoryProduct;
   allergenWarnings?: AllergenWarning[];
   viewMode?: ViewMode;
+  categorySlug?: string;
 }>) {
   const { t } = useTranslation();
   const band = SCORE_BANDS[product.score_band];
@@ -279,6 +282,7 @@ function ProductRow({
           <ProductThumbnail
             imageUrl={product.image_thumb_url}
             productName={product.product_name}
+            categorySlug={categorySlug}
             size="md"
           />
           <div className="min-w-0 flex-1">
@@ -307,6 +311,7 @@ function ProductRow({
         <ProductThumbnail
           imageUrl={product.image_thumb_url}
           productName={product.product_name}
+          categorySlug={categorySlug}
           size="sm"
         />
         <div

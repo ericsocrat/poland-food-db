@@ -743,6 +743,7 @@ function ProductRow({
             <ProductThumbnail
               imageUrl={product.image_thumb_url}
               productName={product.product_name_display ?? product.product_name}
+              categorySlug={product.category}
               categoryIcon={product.category_icon}
               size="md"
             />
@@ -810,6 +811,7 @@ function ProductRow({
         <ProductThumbnail
           imageUrl={product.image_thumb_url}
           productName={product.product_name_display ?? product.product_name}
+          categorySlug={product.category}
           categoryIcon={product.category_icon}
           size="sm"
         />
