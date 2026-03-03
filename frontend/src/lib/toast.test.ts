@@ -1,7 +1,7 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { toast } from "sonner";
-import { showToast, isRateLimited, resetRateLimiter } from "./toast";
 import { useLanguageStore } from "@/stores/language-store";
+import { toast } from "sonner";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { isRateLimited, resetRateLimiter, showToast } from "./toast";
 
 // ─── Mock Sonner ────────────────────────────────────────────────────────────
 
@@ -56,13 +56,13 @@ describe("showToast", () => {
 
   it("resolves messageKey via i18n", () => {
     showToast({ type: "success", messageKey: "nav.home" });
-    expect(toast.success).toHaveBeenCalledWith("Home", expect.any(Object));
+    expect(toast.success).toHaveBeenCalledWith("Dashboard", expect.any(Object));
   });
 
   it("resolves messageKey in Polish", () => {
     useLanguageStore.getState().setLanguage("pl");
     showToast({ type: "success", messageKey: "nav.home" });
-    expect(toast.success).toHaveBeenCalledWith("Główna", expect.any(Object));
+    expect(toast.success).toHaveBeenCalledWith("Pulpit", expect.any(Object));
   });
 
   it("interpolates messageParams", () => {

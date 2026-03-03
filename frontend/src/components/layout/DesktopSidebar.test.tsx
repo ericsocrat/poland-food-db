@@ -25,7 +25,7 @@ vi.mock("next/link", () => ({
 describe("DesktopSidebar", () => {
   it("renders all primary nav items", () => {
     render(<DesktopSidebar />);
-    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Search")).toBeInTheDocument();
     expect(screen.getByText("Scan")).toBeInTheDocument();
     expect(screen.getByText("Lists")).toBeInTheDocument();
@@ -92,10 +92,10 @@ describe("DesktopSidebar", () => {
     expect(logoImg.closest("a")).toHaveAttribute("href", "/app");
   });
 
-  it("marks Home as active on /app", () => {
+  it("marks Dashboard as active on /app", () => {
     mockPathname.mockReturnValue("/app");
     render(<DesktopSidebar />);
-    const homeLink = screen.getByText("Home").closest("a");
+    const homeLink = screen.getByText("Dashboard").closest("a");
     expect(homeLink).toHaveAttribute("aria-current", "page");
   });
 
@@ -113,17 +113,17 @@ describe("DesktopSidebar", () => {
     expect(searchLink).toHaveAttribute("aria-current", "page");
   });
 
-  it("does not mark Home active on /app/search", () => {
+  it("does not mark Dashboard active on /app/search", () => {
     mockPathname.mockReturnValue("/app/search");
     render(<DesktopSidebar />);
-    const homeLink = screen.getByText("Home").closest("a");
+    const homeLink = screen.getByText("Dashboard").closest("a");
     expect(homeLink).not.toHaveAttribute("aria-current");
   });
 
   it("has correct hrefs for all primary items", () => {
     render(<DesktopSidebar />);
     const expectedHrefs = [
-      { label: "Home", href: "/app" },
+      { label: "Dashboard", href: "/app" },
       { label: "Search", href: "/app/search" },
       { label: "Scan", href: "/app/scan" },
       { label: "Lists", href: "/app/lists" },

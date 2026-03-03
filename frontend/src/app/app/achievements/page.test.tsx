@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { useState } from "react";
 import type { AchievementsResponse } from "@/lib/types";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, screen } from "@testing-library/react";
+import { useState } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -30,7 +30,7 @@ vi.mock("@/lib/i18n", () => ({
         "achievements.emptyDescription": "Start scanning!",
         "achievements.category.exploration": "Exploration",
         "achievements.category.health": "Health",
-        "nav.home": "Home",
+        "nav.home": "Dashboard",
       };
       return msgs[key] ?? key;
     },
@@ -216,7 +216,7 @@ describe("AchievementsPage", () => {
     );
 
     // Breadcrumbs should have home link
-    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(screen.getByText("Dashboard")).toBeInTheDocument();
   });
 
   it("shows category sections for achievements", async () => {

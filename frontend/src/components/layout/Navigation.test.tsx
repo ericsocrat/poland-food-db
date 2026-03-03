@@ -1,5 +1,5 @@
+import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
 import { Navigation } from "./Navigation";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -30,7 +30,7 @@ vi.mock("@/hooks/use-lists", () => ({
 describe("Navigation", () => {
   it("renders all 5 nav items", () => {
     render(<Navigation />);
-    expect(screen.getByText("Home")).toBeInTheDocument();
+    expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Search")).toBeInTheDocument();
     expect(screen.getByText("Scan")).toBeInTheDocument();
     expect(screen.getByText("Lists")).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("Navigation", () => {
 
   it("has correct hrefs", () => {
     render(<Navigation />);
-    expect(screen.getByLabelText("Home").closest("a")).toHaveAttribute(
+    expect(screen.getByLabelText("Dashboard").closest("a")).toHaveAttribute(
       "href",
       "/app",
     );
@@ -60,7 +60,7 @@ describe("Navigation", () => {
       "aria-current",
       "page",
     );
-    expect(screen.getByLabelText("Home")).not.toHaveAttribute("aria-current");
+    expect(screen.getByLabelText("Dashboard")).not.toHaveAttribute("aria-current");
   });
 
   it("matches nested route as active", () => {
@@ -72,19 +72,19 @@ describe("Navigation", () => {
     );
   });
 
-  it("marks Home active only on exact /app path", () => {
+  it("marks Dashboard active only on exact /app path", () => {
     mockPathname.mockReturnValue("/app");
     render(<Navigation />);
-    expect(screen.getByLabelText("Home")).toHaveAttribute(
+    expect(screen.getByLabelText("Dashboard")).toHaveAttribute(
       "aria-current",
       "page",
     );
   });
 
-  it("does not mark Home active for nested paths", () => {
+  it("does not mark Dashboard active for nested paths", () => {
     mockPathname.mockReturnValue("/app/search");
     render(<Navigation />);
-    expect(screen.getByLabelText("Home")).not.toHaveAttribute("aria-current");
+    expect(screen.getByLabelText("Dashboard")).not.toHaveAttribute("aria-current");
   });
 
   it("no item active for unmatched path", () => {

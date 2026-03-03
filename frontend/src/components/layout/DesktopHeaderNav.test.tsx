@@ -28,7 +28,7 @@ describe("DesktopHeaderNav", () => {
   describe("primary inline links", () => {
     it("renders all primary nav items", () => {
       render(<DesktopHeaderNav />);
-      expect(screen.getByText("Home")).toBeInTheDocument();
+      expect(screen.getByText("Dashboard")).toBeInTheDocument();
       expect(screen.getByText("Search")).toBeInTheDocument();
       expect(screen.getByText("Scan")).toBeInTheDocument();
       expect(screen.getByText("Lists")).toBeInTheDocument();
@@ -39,7 +39,7 @@ describe("DesktopHeaderNav", () => {
 
     it("has correct hrefs for primary items", () => {
       render(<DesktopHeaderNav />);
-      expect(screen.getByText("Home").closest("a")).toHaveAttribute(
+      expect(screen.getByText("Dashboard").closest("a")).toHaveAttribute(
         "href",
         "/app",
       );
@@ -63,7 +63,7 @@ describe("DesktopHeaderNav", () => {
     it("does not mark inactive items", () => {
       mockPathname.mockReturnValue("/app/search");
       render(<DesktopHeaderNav />);
-      const homeLink = screen.getByText("Home").closest("a");
+      const homeLink = screen.getByText("Dashboard").closest("a");
       expect(homeLink).not.toHaveAttribute("aria-current");
     });
   });

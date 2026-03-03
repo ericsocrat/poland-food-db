@@ -1,10 +1,10 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import type { RecipeSummary } from "@/lib/types";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import RecipesBrowsePage from "./page";
-import type { RecipeSummary } from "@/lib/types";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -292,10 +292,10 @@ describe("RecipesBrowsePage", () => {
     render(<RecipesBrowsePage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Home")).toBeInTheDocument();
+      expect(screen.getByText("Dashboard")).toBeInTheDocument();
     });
 
-    const homeLink = screen.getByText("Home").closest("a");
+    const homeLink = screen.getByText("Dashboard").closest("a");
     expect(homeLink).toHaveAttribute("href", "/app");
   });
 });

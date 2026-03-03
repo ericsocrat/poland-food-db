@@ -159,11 +159,11 @@ describe("CategoryListingPage", () => {
     });
   });
 
-  it("renders breadcrumb navigation with Home, Categories, and slug", async () => {
+  it("renders breadcrumb navigation with Dashboard, Categories, and slug", async () => {
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     const nav = screen.getByLabelText("Breadcrumb");
     expect(nav).toBeInTheDocument();
-    expect(screen.getByText("Home").closest("a")).toHaveAttribute(
+    expect(screen.getByText("Dashboard").closest("a")).toHaveAttribute(
       "href",
       "/app",
     );

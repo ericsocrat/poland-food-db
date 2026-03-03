@@ -1,13 +1,13 @@
-import { describe, expect, it } from "vitest";
 import { renderHook } from "@testing-library/react";
-import { translate, humanizeKey, useTranslation } from "./i18n";
+import { describe, expect, it } from "vitest";
+import { humanizeKey, translate, useTranslation } from "./i18n";
 
 // ─── translate() — pure function tests (no React needed) ───────────────────
 
 describe("translate", () => {
   describe("English (default)", () => {
     it("resolves a top-level key", () => {
-      expect(translate("en", "nav.home")).toBe("Home");
+      expect(translate("en", "nav.home")).toBe("Dashboard");
     });
 
     it("resolves a nested key", () => {
@@ -39,7 +39,7 @@ describe("translate", () => {
 
   describe("Polish", () => {
     it("resolves a Polish translation", () => {
-      expect(translate("pl", "nav.home")).toBe("Główna");
+      expect(translate("pl", "nav.home")).toBe("Pulpit");
     });
 
     it("resolves nested Polish keys", () => {
@@ -56,7 +56,7 @@ describe("translate", () => {
   describe("fallback chain", () => {
     it("falls back to English for unsupported language code", () => {
       // "fr" has no dictionary — should fall through to English
-      expect(translate("fr" as "en", "nav.home")).toBe("Home");
+      expect(translate("fr" as "en", "nav.home")).toBe("Dashboard");
     });
 
     it("falls back to English when key missing in Polish", () => {
@@ -298,7 +298,7 @@ describe("translate", () => {
 
     it("t() resolves known keys", () => {
       const { result } = renderHook(() => useTranslation());
-      expect(result.current.t("nav.home")).toBe("Home");
+      expect(result.current.t("nav.home")).toBe("Dashboard");
     });
 
     it("t() returns humanized fallback for missing keys", () => {

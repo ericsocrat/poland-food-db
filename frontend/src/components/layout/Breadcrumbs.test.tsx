@@ -1,5 +1,5 @@
-import { describe, expect, it, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { Breadcrumbs } from "./Breadcrumbs";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -108,8 +108,8 @@ describe("Breadcrumbs", () => {
         ]}
       />,
     );
-    // `t("nav.home")` returns "Home" from messages/en.json
-    expect(screen.getByText("Home")).toBeInTheDocument();
+    // `t("nav.home")` returns "Dashboard" from messages/en.json
+    expect(screen.getByText("Dashboard")).toBeInTheDocument();
     expect(screen.getByText("Search")).toBeInTheDocument();
   });
 

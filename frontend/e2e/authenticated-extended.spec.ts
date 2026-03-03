@@ -2,7 +2,7 @@
 // These tests run with pre-authenticated storageState produced by auth.setup.ts.
 // Covers: navigation bar, scan pages, lists, compare, search features, settings.
 
-import { test, expect } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 // ─── Bottom Navigation Bar ─────────────────────────────────────────────────
 
@@ -15,7 +15,7 @@ test.describe("App navigation bar", () => {
     const nav = page.getByRole("navigation", { name: "Main navigation" });
     await expect(nav).toBeVisible();
 
-    await expect(nav.getByRole("link", { name: "Home" })).toBeVisible();
+    await expect(nav.getByRole("link", { name: "Dashboard" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Search" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Scan" })).toBeVisible();
     await expect(nav.getByRole("link", { name: "Lists" })).toBeVisible();
@@ -29,10 +29,10 @@ test.describe("App navigation bar", () => {
     await expect(page).toHaveURL(/\/app\/search/);
   });
 
-  test("Home link navigates to /app", async ({ page }) => {
+  test("Dashboard link navigates to /app", async ({ page }) => {
     await page.goto("/app/search");
     const nav = page.getByRole("navigation", { name: "Main navigation" });
-    await nav.getByRole("link", { name: "Home" }).click();
+    await nav.getByRole("link", { name: "Dashboard" }).click();
     await expect(page).toHaveURL(/\/app$/);
   });
 
