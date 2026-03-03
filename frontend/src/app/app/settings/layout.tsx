@@ -1,3 +1,4 @@
+import { SettingsNav } from "@/components/settings/SettingsNav";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -9,5 +10,10 @@ export const metadata: Metadata = {
 export default function SettingsLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
-  return children;
+  return (
+    <div className="max-w-2xl space-y-6 lg:space-y-8">
+      <SettingsNav />
+      {children}
+    </div>
+  );
 }

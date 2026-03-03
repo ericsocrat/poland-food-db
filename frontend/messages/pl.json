@@ -549,6 +549,10 @@
   },
   "settings": {
     "title": "Ustawienia",
+    "tabProfile": "Profil i preferencje",
+    "tabNutrition": "Żywienie i dieta",
+    "tabPrivacy": "Prywatność i dane",
+    "tabAccount": "Konto",
     "country": "Kraj",
     "language": "Język",
     "dietPreference": "Preferencje dietetyczne",
