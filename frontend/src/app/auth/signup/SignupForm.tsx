@@ -72,12 +72,15 @@ export function SignupForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center px-4">
+    <>
       <SkipLink />
       <div id="main-content" className="w-full max-w-sm">
-        <div className="mb-6 flex justify-center">
-          <Logo variant="icon" size={48} />
+        <div className="mb-2 flex justify-center lg:hidden">
+          <Logo variant="lockup" size={36} />
         </div>
+        <p className="mb-6 text-center text-xs font-medium uppercase tracking-widest text-brand lg:hidden">
+          {t("landing.tagline")}
+        </p>
         <h1 className="mb-2 text-center text-2xl font-bold text-foreground">
           {t("auth.createAccount")}
         </h1>
@@ -150,6 +153,6 @@ export function SignupForm() {
           </Link>
         </p>
       </div>
-    </div>
+    </>
   );
 }
