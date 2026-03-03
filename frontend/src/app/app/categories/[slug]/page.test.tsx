@@ -1,8 +1,8 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import CategoryListingPage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -130,6 +130,7 @@ const mockProducts = [
 
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
   mockGetCategoryListing.mockResolvedValue({
     ok: true,
     data: {
@@ -228,8 +229,14 @@ describe("CategoryListingPage", () => {
     expect(screen.getByText("Pringles Original")).toBeInTheDocument();
   });
 
-  it("shows health warning flags", async () => {
+  it("shows health warning flags in detailed view", async () => {
+    const user = userEvent.setup();
     render(<CategoryListingPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    // Switch to detailed view to see health flags
+    await user.click(screen.getByText("Detailed"));
     await waitFor(() => {
       // Both products have high_salt_flag so multiple elements
       expect(screen.getAllByText("High salt")).toHaveLength(2);
@@ -317,13 +324,85 @@ describe("CategoryListingPage", () => {
     });
   });
 
-  it("renders child component badges per row", async () => {
+  it("renders child component badges per row in detailed view", async () => {
+    const user = userEvent.setup();
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
       expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
     });
-    expect(screen.getAllByTestId("health-badge")).toHaveLength(2);
+    // Switch to detailed view to see all badges
+    await user.click(screen.getByText("Detailed"));
+    await waitFor(() => {
+      expect(screen.getAllByTestId("health-badge")).toHaveLength(2);
+    });
     expect(screen.getAllByTestId("avoid-badge")).toHaveLength(2);
     expect(screen.getAllByTestId("compare-checkbox")).toHaveLength(2);
+  });
+
+  // ─── View Mode Tests ──────────────────────────────────────────────────────
+
+  it("defaults to compact view", async () => {
+    render(<CategoryListingPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    // Compact view: names shown, but no health flags
+    expect(screen.queryByText("High salt")).not.toBeInTheDocument();
+    // Toggle button should offer switching to "Detailed"
+    expect(screen.getByText("Detailed")).toBeInTheDocument();
+  });
+
+  it("shows compact rows without health flags or action buttons", async () => {
+    render(<CategoryListingPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    // In compact mode, child badges are not rendered
+    expect(screen.queryByTestId("health-badge")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("avoid-badge")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("compare-checkbox")).not.toBeInTheDocument();
+    // But score and NutriScore are still visible
+    expect(screen.getByText("72")).toBeInTheDocument();
+    expect(screen.getByText("D")).toBeInTheDocument();
+  });
+
+  it("toggles from compact to detailed view", async () => {
+    const user = userEvent.setup();
+    render(<CategoryListingPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    // Click toggle button
+    await user.click(screen.getByText("Detailed"));
+    // Now detailed elements should appear
+    await waitFor(() => {
+      expect(screen.getAllByText("High salt")).toHaveLength(2);
+    });
+    // Button should now offer switching back to "Compact"
+    expect(screen.getByText("Compact")).toBeInTheDocument();
+  });
+
+  it("persists view mode preference in localStorage", async () => {
+    const user = userEvent.setup();
+    render(<CategoryListingPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    await user.click(screen.getByText("Detailed"));
+    expect(localStorage.getItem("tryvit:category-view-mode")).toBe("detailed");
+  });
+
+  it("restores detailed view from localStorage", async () => {
+    localStorage.setItem("tryvit:category-view-mode", "detailed");
+    render(<CategoryListingPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+    });
+    // Detailed view restored — health flags visible
+    await waitFor(() => {
+      expect(screen.getAllByText("High salt")).toHaveLength(2);
+    });
+    // Toggle shows "Compact" option
+    expect(screen.getByText("Compact")).toBeInTheDocument();
   });
 });

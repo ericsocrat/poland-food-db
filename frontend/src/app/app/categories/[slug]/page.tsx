@@ -26,7 +26,23 @@ import { formatSlug } from "@/lib/validation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+
+// ─── View mode ──────────────────────────────────────────────────────────────
+
+type ViewMode = "compact" | "detailed";
+
+const VIEW_MODE_KEY = "tryvit:category-view-mode";
+
+function getStoredViewMode(): ViewMode {
+  if (typeof window === "undefined") return "compact";
+  const val = localStorage.getItem(VIEW_MODE_KEY);
+  return val === "detailed" ? "detailed" : "compact";
+}
+
+function setStoredViewMode(mode: ViewMode) {
+  localStorage.setItem(VIEW_MODE_KEY, mode);
+}
 
 const PAGE_SIZE = 20;
 
@@ -46,7 +62,21 @@ export default function CategoryListingPage() {
   const [sortBy, setSortBy] = useState("score");
   const [sortDir, setSortDir] = useState("asc");
   const [offset, setOffset] = useState(0);
+  const [viewMode, setViewMode] = useState<ViewMode>("compact");
   const { track } = useAnalytics();
+
+  // Hydrate view mode from localStorage on mount
+  useEffect(() => {
+    setViewMode(getStoredViewMode());
+  }, []);
+
+  const toggleViewMode = useCallback(() => {
+    setViewMode((prev) => {
+      const next: ViewMode = prev === "compact" ? "detailed" : "compact";
+      setStoredViewMode(next);
+      return next;
+    });
+  }, []);
 
   useEffect(() => {
     if (slug) {
@@ -124,7 +154,7 @@ export default function CategoryListingPage() {
       {/* Summary stats */}
       {categoryStats && <CategoryStatsCard stats={categoryStats} />}
 
-      {/* Sort controls */}
+      {/* Sort & view controls */}
       <div className="flex items-center gap-2">
         <select
           value={sortBy}
@@ -150,6 +180,18 @@ export default function CategoryListingPage() {
         >
           {sortDir === "asc" ? t("filters.asc") : t("filters.desc")}
         </button>
+
+        <div className="ml-auto">
+          <button
+            onClick={toggleViewMode}
+            className="rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary hover:bg-surface-subtle"
+            aria-label={t("categories.toggleViewMode")}
+          >
+            {viewMode === "compact"
+              ? t("categories.detailedView")
+              : t("categories.compactView")}
+          </button>
+        </div>
       </div>
 
       {/* Product list */}
@@ -186,6 +228,7 @@ export default function CategoryListingPage() {
               key={p.product_id}
               product={p}
               allergenWarnings={allergenMap[p.product_id] ?? []}
+              viewMode={viewMode}
             />
           ))}
         </ul>
@@ -220,13 +263,44 @@ export default function CategoryListingPage() {
 function ProductRow({
   product,
   allergenWarnings = [],
+  viewMode = "compact",
 }: Readonly<{
   product: CategoryProduct;
   allergenWarnings?: AllergenWarning[];
+  viewMode?: ViewMode;
 }>) {
   const { t } = useTranslation();
   const band = SCORE_BANDS[product.score_band];
 
+  if (viewMode === "compact") {
+    return (
+      <Link href={`/app/product/${product.product_id}`}>
+        <li className="card hover-lift-press flex items-center gap-3 py-3">
+          <ProductThumbnail
+            imageUrl={product.image_thumb_url}
+            productName={product.product_name}
+            size="md"
+          />
+          <div className="min-w-0 flex-1">
+            <p className="truncate font-medium text-foreground">
+              {product.product_name}
+            </p>
+            <p className="truncate text-sm text-foreground-secondary">
+              {product.brand}
+            </p>
+          </div>
+          <div
+            className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
+          >
+            {product.unhealthiness_score}
+          </div>
+          <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
+        </li>
+      </Link>
+    );
+  }
+
+  // Detailed view — full data per row (power-user mode)
   return (
     <Link href={`/app/product/${product.product_id}`}>
       <li className="card hover-lift-press flex items-center gap-3">
