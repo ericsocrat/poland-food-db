@@ -358,11 +358,11 @@ function statusBadgeClass(status: string): string {
 }
 
 function trustBadgeClass(score: number | null): string {
-  if (score === null) return "bg-gray-100 text-gray-600";
+  if (score === null) return "bg-surface-muted text-foreground-secondary";
   if (score >= 80) return "bg-green-100 text-green-700";
   if (score < 20) return "bg-red-100 text-red-700";
   if (score < 40) return "bg-amber-100 text-amber-700";
-  return "bg-gray-100 text-gray-600";
+  return "bg-surface-muted text-foreground-secondary";
 }
 
 function AdminSubmissionCard({

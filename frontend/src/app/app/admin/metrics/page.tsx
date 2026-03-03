@@ -57,10 +57,10 @@ function MetricCard({
 }>) {
   return (
     <div
-      className="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+      className="rounded-lg border bg-surface p-4"
       data-testid={testId}
     >
-      <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+      <div className="flex items-center gap-2 text-sm text-foreground-secondary">
         {icon}
         <span>{label}</span>
       </div>
@@ -68,7 +68,7 @@ function MetricCard({
         {typeof value === "number" ? value.toLocaleString() : value}
       </p>
       {subtitle && (
-        <div className="mt-1 text-xs text-gray-500 dark:text-gray-400">
+        <div className="mt-1 text-xs text-foreground-muted">
           {subtitle}
         </div>
       )}
@@ -91,7 +91,7 @@ function RankingTable({
 }>) {
   return (
     <div
-      className="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+      className="rounded-lg border bg-surface p-4"
       data-testid={testId}
     >
       <h3 className="mb-3 flex items-center gap-2 font-semibold">
@@ -99,12 +99,12 @@ function RankingTable({
         {title}
       </h3>
       {rows.length === 0 ? (
-        <p className="text-sm text-gray-500 dark:text-gray-400">No data yet</p>
+        <p className="text-sm text-foreground-muted">No data yet</p>
       ) : (
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b text-left text-gray-500 dark:border-gray-700 dark:text-gray-400">
+              <tr className="border-b text-left text-foreground-muted">
                 <th className="pb-2 pr-2">#</th>
                 {columns.map((col) => (
                   <th key={col} className="pb-2 pr-2">
@@ -117,9 +117,9 @@ function RankingTable({
               {rows.map((row, i) => (
                 <tr
                   key={i}
-                  className="border-b last:border-0 dark:border-gray-700"
+                  className="border-b last:border-0"
                 >
-                  <td className="py-1.5 pr-2 text-gray-400">{i + 1}</td>
+                  <td className="py-1.5 pr-2 text-foreground-muted">{i + 1}</td>
                   {row.map((cell, j) => (
                     <td
                       key={j}
@@ -152,10 +152,10 @@ function BarRow({
   const pct = maxValue > 0 ? Math.round((value / maxValue) * 100) : 0;
   return (
     <div className="flex items-center gap-2 text-sm">
-      <span className="w-28 truncate text-gray-600 dark:text-gray-400">
+      <span className="w-28 truncate text-foreground-secondary">
         {label}
       </span>
-      <div className="relative h-5 flex-1 rounded bg-gray-100 dark:bg-gray-700">
+      <div className="relative h-5 flex-1 rounded bg-surface-muted">
         <div
           className={`absolute left-0 top-0 h-5 rounded ${color}`}
           style={{ width: `${pct}%` }}
@@ -164,7 +164,7 @@ function BarRow({
           {value.toLocaleString()}
         </span>
       </div>
-      <span className="w-10 text-right font-mono text-xs text-gray-500">
+      <span className="w-10 text-right font-mono text-xs text-foreground-muted">
         {pct}%
       </span>
     </div>
@@ -176,7 +176,7 @@ function FeatureUsageChart({
 }: Readonly<{ data: BusinessMetricsResponse["feature_usage"] }>) {
   if (data.length === 0) {
     return (
-      <p className="text-sm text-gray-500 dark:text-gray-400">No data yet</p>
+      <p className="text-sm text-foreground-muted">No data yet</p>
     );
   }
   const maxVal = Math.max(...data.map((d) => d.usage_count));
@@ -200,7 +200,7 @@ function ScanSearchRatio({
 }: Readonly<{ data: BusinessMetricsResponse["scan_vs_search"] }>) {
   if (data.length === 0) {
     return (
-      <p className="text-sm text-gray-500 dark:text-gray-400">No data yet</p>
+      <p className="text-sm text-foreground-muted">No data yet</p>
     );
   }
   const total = data.reduce((s, d) => s + d.count, 0);
@@ -266,7 +266,7 @@ function TrendSparkline({
         fill="none"
         stroke="currentColor"
         strokeWidth="1.5"
-        className="text-blue-500"
+        className="text-info"
       />
     </svg>
   );
@@ -314,10 +314,10 @@ export default function AdminMetricsPage() {
       {/* Header */}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <BarChart3 className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+          <BarChart3 className="h-6 w-6 text-info" />
           <div>
             <h1 className="text-2xl font-bold">Business Metrics</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-foreground-secondary">
               Platform usage analytics and engagement data
             </p>
           </div>
@@ -328,7 +328,7 @@ export default function AdminMetricsPage() {
           <select
             value={days}
             onChange={(e) => setDays(Number(e.target.value))}
-            className="rounded-md border bg-white px-3 py-1.5 text-sm dark:border-gray-700 dark:bg-gray-800"
+            className="rounded-md border bg-surface px-3 py-1.5 text-sm"
             data-testid="date-range-select"
           >
             {DATE_RANGE_OPTIONS.map((opt) => (
@@ -341,7 +341,7 @@ export default function AdminMetricsPage() {
           {/* Refresh */}
           <button
             onClick={() => refetch()}
-            className="rounded-md border p-1.5 text-gray-600 hover:bg-gray-100 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
+            className="rounded-md border p-1.5 text-foreground-secondary hover:bg-surface-muted"
             title="Refresh"
             data-testid="refresh-btn"
           >
@@ -352,7 +352,7 @@ export default function AdminMetricsPage() {
           <button
             onClick={handleExport}
             disabled={!data}
-            className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm text-gray-600 hover:bg-gray-100 disabled:opacity-50 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700"
+            className="flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-sm text-foreground-secondary hover:bg-surface-muted disabled:opacity-50"
             data-testid="export-btn"
           >
             <Download className="h-4 w-4" />
@@ -454,7 +454,7 @@ export default function AdminMetricsPage() {
 
           {/* Row 3: Feature usage */}
           <div
-            className="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+            className="rounded-lg border bg-surface p-4"
             data-testid="feature-usage"
           >
             <h3 className="mb-3 flex items-center gap-2 font-semibold">
@@ -467,7 +467,7 @@ export default function AdminMetricsPage() {
           {/* Row 4: Allergen distribution + Scan vs search */}
           <div className="grid gap-4 lg:grid-cols-2">
             <div
-              className="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+              className="rounded-lg border bg-surface p-4"
               data-testid="allergen-dist"
             >
               <h3 className="mb-3 flex items-center gap-2 font-semibold">
@@ -475,7 +475,7 @@ export default function AdminMetricsPage() {
                 Allergen Profile Distribution
               </h3>
               {data.allergen_distribution.length === 0 ? (
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-foreground-muted">
                   No allergen profiles configured yet
                 </p>
               ) : (
@@ -495,7 +495,7 @@ export default function AdminMetricsPage() {
             </div>
 
             <div
-              className="rounded-lg border bg-white p-4 dark:border-gray-700 dark:bg-gray-800"
+              className="rounded-lg border bg-surface p-4"
               data-testid="scan-vs-search"
             >
               <h3 className="mb-3 flex items-center gap-2 font-semibold">
@@ -533,7 +533,7 @@ export default function AdminMetricsPage() {
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-500">
+          <div className="flex items-center justify-between text-xs text-foreground-muted">
             <span>
               <RefreshCw className="mr-1 inline-block h-3 w-3" />
               Last updated:{" "}

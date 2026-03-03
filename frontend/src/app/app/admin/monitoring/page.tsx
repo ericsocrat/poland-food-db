@@ -36,7 +36,7 @@ function statusColor(status: string): string {
     case "unhealthy":
       return "text-red-600 dark:text-red-400";
     default:
-      return "text-gray-600 dark:text-gray-400";
+      return "text-foreground-secondary";
   }
 }
 
@@ -49,7 +49,7 @@ function statusBg(status: string): string {
     case "unhealthy":
       return "bg-red-100 dark:bg-red-900/30";
     default:
-      return "bg-gray-100 dark:bg-gray-900/30";
+      return "bg-surface-muted";
   }
 }
 
@@ -62,7 +62,7 @@ function StatusIcon({ status }: Readonly<{ status: string }>) {
     case "unhealthy":
       return <XCircle className="h-5 w-5 text-red-600 dark:text-red-400" />;
     default:
-      return <Clock className="h-5 w-5 text-gray-600 dark:text-gray-400" />;
+      return <Clock className="h-5 w-5 text-foreground-secondary" />;
   }
 }
 
@@ -96,7 +96,7 @@ function OverallStatus({ data }: Readonly<{ data: HealthCheckResponse }>) {
           </p>
         </div>
       </div>
-      <p className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+      <p className="mt-2 text-sm text-foreground-secondary">
         {t("monitoring.lastChecked")}: {data.timestamp}
       </p>
     </div>
@@ -126,15 +126,15 @@ function MvStalenessCard({
       </div>
       <div className="mt-3 space-y-1 text-sm">
         <div className="flex justify-between">
-          <span className="text-gray-600 dark:text-gray-400">MV rows</span>
+          <span className="text-foreground-secondary">MV rows</span>
           <span className="font-mono">{mvRows.toLocaleString()}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-600 dark:text-gray-400">Source rows</span>
+          <span className="text-foreground-secondary">Source rows</span>
           <span className="font-mono">{sourceRows.toLocaleString()}</span>
         </div>
         <div className="flex justify-between">
-          <span className="text-gray-600 dark:text-gray-400">Stale</span>
+          <span className="text-foreground-secondary">Stale</span>
           <span className={stale ? "text-yellow-600 font-bold" : "text-green-600"}>
             {stale ? "Yes" : "No"}
           </span>
@@ -169,19 +169,19 @@ function RowCountCard({
       data-testid="row-counts"
     >
       <div className="flex items-center gap-2">
-        <Database className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+        <Database className="h-5 w-5 text-info" />
         <h3 className="font-medium">Product Row Count</h3>
       </div>
       <div className="mt-3 space-y-2">
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Active products</span>
+          <span className="text-foreground-secondary">Active products</span>
           <span className="font-mono">{products.toLocaleString()}</span>
         </div>
         <div className="flex justify-between text-sm">
-          <span className="text-gray-600 dark:text-gray-400">Ceiling</span>
+          <span className="text-foreground-secondary">Ceiling</span>
           <span className="font-mono">{ceiling.toLocaleString()}</span>
         </div>
-        <div className="relative h-3 w-full rounded-full bg-gray-200 dark:bg-gray-700">
+        <div className="relative h-3 w-full rounded-full bg-surface-muted">
           <div
             className={`absolute left-0 top-0 h-3 rounded-full ${
               { unhealthy: "bg-red-500", degraded: "bg-yellow-500", healthy: "bg-green-500" }[status]
@@ -222,10 +222,10 @@ export default function AdminMonitoringPage() {
       <Breadcrumbs items={breadcrumbs} />
 
       <div className="mt-4 flex items-center gap-3">
-        <Activity className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+        <Activity className="h-6 w-6 text-info" />
         <h1 className="text-2xl font-bold">{t("monitoring.title")}</h1>
       </div>
-      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
+      <p className="mt-1 text-sm text-foreground-secondary">
         {t("monitoring.subtitle")}
       </p>
 
@@ -293,7 +293,7 @@ export default function AdminMonitoringPage() {
           </div>
 
           {/* Auto-refresh indicator */}
-          <div className="text-center text-xs text-gray-500 dark:text-gray-500">
+          <div className="text-center text-xs text-foreground-muted">
             <RefreshCw className="mr-1 inline-block h-3 w-3" />
             {t("monitoring.autoRefresh")}
             {dataUpdatedAt > 0 && (
