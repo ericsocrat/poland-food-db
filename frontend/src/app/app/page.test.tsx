@@ -160,25 +160,25 @@ describe("DashboardPage", () => {
     });
   });
 
-  it("renders stats bar with correct values", async () => {
+  it("renders stats in summary card", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
+      const grid = screen.getByTestId("stats-grid");
+      expect(grid).toBeInTheDocument();
       expect(screen.getByText("42")).toBeInTheDocument();
-      // "15" appears twice (stats + score pill), so use getAllByText
-      expect(screen.getAllByText("15").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByText("15")).toBeInTheDocument();
       expect(screen.getByText("3")).toBeInTheDocument();
       expect(screen.getByText("7")).toBeInTheDocument();
     });
   });
 
-  it("renders stats labels", async () => {
+  it("renders stats labels in summary card", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
       expect(screen.getByText("Scanned")).toBeInTheDocument();
       expect(screen.getByText("Viewed")).toBeInTheDocument();
-      // "Lists" appears in both StatsBar and QuickActions, so use getAllByText
+      // "Lists" may also appear in QuickActions
       expect(screen.getAllByText("Lists").length).toBeGreaterThanOrEqual(1);
-      // "Favorites" appears in both StatsBar section header
       expect(screen.getAllByText("Favorites").length).toBeGreaterThanOrEqual(1);
     });
   });
@@ -200,39 +200,6 @@ describe("DashboardPage", () => {
     });
   });
 
-  it("renders favorites preview", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText("Activia Natural")).toBeInTheDocument();
-    });
-  });
-
-  it("renders favorites section with view all link", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      const viewAllLinks = screen.getAllByText("View all →");
-      // Find the one linking to /app/lists (favorites)
-      const favoritesLink = viewAllLinks
-        .map((el) => el.closest("a"))
-        .find((a) => a?.getAttribute("href") === "/app/lists");
-      expect(favoritesLink).toBeTruthy();
-    });
-  });
-
-  it("renders new products section", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText("New Crunchy Chips")).toBeInTheDocument();
-    });
-  });
-
-  it("renders new products with category context", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText(/New chips/)).toBeInTheDocument();
-    });
-  });
-
   it("renders product links with correct hrefs", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
@@ -251,7 +218,7 @@ describe("DashboardPage", () => {
         screen.getAllByText("Lay's Classic").length,
       ).toBeGreaterThanOrEqual(1);
     });
-    // Should have D and B badges plus A from favorites and D from new products
+    // Should have D and B badges from recently viewed products
     const badges = screen.getAllByText("D");
     expect(badges.length).toBeGreaterThanOrEqual(1);
   });
@@ -283,6 +250,7 @@ describe("DashboardPage", () => {
         recently_viewed: [],
         favorites_preview: [],
         new_products: [],
+        stats: { total_scanned: 0, total_viewed: 0, lists_count: 0, favorites_count: 0, most_viewed_category: null },
       },
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
@@ -299,6 +267,7 @@ describe("DashboardPage", () => {
         recently_viewed: [],
         favorites_preview: [],
         new_products: [],
+        stats: { total_scanned: 0, total_viewed: 0, lists_count: 0, favorites_count: 0, most_viewed_category: null },
       },
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
@@ -314,89 +283,17 @@ describe("DashboardPage", () => {
       data: {
         ...mockDashboard,
         recently_viewed: [],
-        // Keep favorites so dashboard is not empty
-        favorites_preview: mockDashboard.favorites_preview,
       },
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(
-        screen.getAllByText("Activia Natural").length,
-      ).toBeGreaterThanOrEqual(1);
+      // Stats values ensure dashboard is not empty
+      expect(screen.getByText("42")).toBeInTheDocument();
     });
     expect(screen.queryByText(/Recently Viewed/)).not.toBeInTheDocument();
   });
 
-  it("hides favorites section when empty", async () => {
-    mockGetDashboardData.mockResolvedValue({
-      ok: true,
-      data: {
-        ...mockDashboard,
-        favorites_preview: [],
-        // Keep recently viewed so dashboard is not empty
-        recently_viewed: mockDashboard.recently_viewed,
-      },
-    });
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(
-        screen.getAllByText("Lay's Classic").length,
-      ).toBeGreaterThanOrEqual(1);
-    });
-    // "View all →" may still appear in CategoriesBrowse, so check no link to /app/lists
-    const viewAllLinks = screen.getAllByText("View all →");
-    const favoritesLink = viewAllLinks
-      .map((el) => el.closest("a"))
-      .find((a) => a?.getAttribute("href") === "/app/lists");
-    expect(favoritesLink).toBeUndefined();
-  });
-
-  // ─── Grid layout tests (Issue #74) ─────────────────────────────────────────
-
-  it("applies 12-column grid on desktop (lg breakpoint)", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(
-        screen.getAllByText("Lay's Classic").length,
-      ).toBeGreaterThanOrEqual(1);
-    });
-    // h1 → space-y-1 div → col-span-12 wrapper → grid container
-    const gridContainer = screen
-      .getByRole("heading", { level: 1 })
-      .closest("[class*='lg:grid-cols-12']");
-    expect(gridContainer).toBeTruthy();
-    expect(gridContainer?.className).toContain("lg:grid");
-    expect(gridContainer?.className).toContain("lg:gap-6");
-  });
-
-  it("assigns correct grid spans to Quick Actions and Stats", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText("42")).toBeInTheDocument();
-    });
-    // Quick Actions section — aria-label is lowercase "Quick actions"
-    const quickActionsSection = screen.getByLabelText("Quick actions");
-    expect(quickActionsSection.parentElement?.className).toContain(
-      "lg:col-span-8",
-    );
-    // Stats — find by stat value "42" (total_scanned)
-    const statEl = screen.getByText("42").closest("[class*='lg:col-span-4']");
-    expect(statEl).toBeTruthy();
-  });
-
-  it("keeps stacked layout on mobile (space-y-6)", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(
-        screen.getAllByText("Lay's Classic").length,
-      ).toBeGreaterThanOrEqual(1);
-    });
-    const gridContainer = screen
-      .getByRole("heading", { level: 1 })
-      .closest("[class*='lg:grid-cols-12']");
-    expect(gridContainer?.className).toContain("space-y-6");
-    expect(gridContainer?.className).toContain("lg:space-y-0");
-  });
+  // ─── Summary Card & Layout ────────────────────────────────────────────────
 
   it("uses tabular-nums on stat values", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
@@ -405,27 +302,6 @@ describe("DashboardPage", () => {
     });
     const statValue = screen.getByText("42");
     expect(statValue.className).toContain("tabular-nums");
-  });
-
-  it("stat cards have hover-lift-press interaction class", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText("42")).toBeInTheDocument();
-    });
-    const statCard = screen.getByText("42").closest("a")!;
-    expect(statCard.className).toContain("hover-lift-press");
-  });
-
-  it("view-all links have transition-colors class", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getAllByText("View all →").length).toBeGreaterThan(0);
-    });
-    const viewAllLinks = screen.getAllByText("View all →");
-    for (const link of viewAllLinks) {
-      const anchor = link.closest("a")!;
-      expect(anchor.className).toContain("transition-colors");
-    }
   });
 
   // ─── Weekly Summary Card (§3.5) ──────────────────────────────────────────
@@ -466,7 +342,7 @@ describe("DashboardPage", () => {
     });
   });
 
-  it("hides weekly summary when all activity is older than 7 days", async () => {
+  it("hides weekly activity when all activity is older than 7 days", async () => {
     mockGetDashboardData.mockResolvedValue({
       ok: true,
       data: {
@@ -487,9 +363,11 @@ describe("DashboardPage", () => {
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
+      // Stats grid always renders
+      expect(screen.getByTestId("stats-grid")).toBeInTheDocument();
     });
-    expect(screen.queryByTestId("weekly-summary")).not.toBeInTheDocument();
+    // Weekly activity section hidden — heading not present
+    expect(screen.queryByText("This Week")).not.toBeInTheDocument();
   });
 
   it("renders score sparkline in weekly summary", async () => {
@@ -507,27 +385,4 @@ describe("DashboardPage", () => {
     expect(screen.getByTestId("sparkline-bar-high")).toBeInTheDocument();
   });
 
-  // ─── Favorites empty state CTA (#134) ───────────────────────────────────
-
-  it("renders favorites CTA when favorites_count is 0", async () => {
-    mockGetDashboardData.mockResolvedValue({
-      ok: true,
-      data: {
-        ...mockDashboard,
-        stats: { ...mockDashboard.stats, favorites_count: 0 },
-      },
-    });
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText(/Tap ❤️ on any product/)).toBeInTheDocument();
-    });
-  });
-
-  it("renders favorites count (not CTA) when favorites_count > 0", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText("7")).toBeInTheDocument();
-    });
-    expect(screen.queryByText(/Tap ❤️ on any product/)).not.toBeInTheDocument();
-  });
 });
