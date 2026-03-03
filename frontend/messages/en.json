@@ -452,6 +452,8 @@
     "rank": "Rank: {rank} of {total}",
     "categoryAvg": "Category avg: {avg}",
     "position": "Position: {position}",
+    "betterThan": "Better than {pct}%",
+    "percentileTooltip": "#{rank} of {total}",
     "novaGroup1": "Unprocessed",
     "novaGroup2": "Processed ingredient",
     "novaGroup3": "Processed food",

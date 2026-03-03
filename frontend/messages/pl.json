@@ -452,6 +452,8 @@
     "rank": "Pozycja: {rank} z {total}",
     "categoryAvg": "Średnia kategorii: {avg}",
     "position": "Pozycja: {position}",
+    "betterThan": "Lepszy niż {pct}%",
+    "percentileTooltip": "#{rank} z {total}",
     "novaGroup1": "Nieprzetworzone",
     "novaGroup2": "Składnik kulinarny",
     "novaGroup3": "Żywność przetworzona",

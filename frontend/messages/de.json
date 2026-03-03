@@ -452,6 +452,8 @@
     "rank": "Rang: {rank} von {total}",
     "categoryAvg": "Kategorie-Durchschn.: {avg}",
     "position": "Position: {position}",
+    "betterThan": "Besser als {pct}%",
+    "percentileTooltip": "#{rank} von {total}",
     "novaGroup1": "Unverarbeitet",
     "novaGroup2": "Verarbeitete Zutat",
     "novaGroup3": "Verarbeitetes Lebensmittel",
