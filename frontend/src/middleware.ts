@@ -19,7 +19,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 // ─── Auth Helpers ───────────────────────────────────────────────────────────
 
-const PUBLIC_PATHS = new Set(["/", "/contact", "/privacy", "/terms"]);
+const PUBLIC_PATHS = new Set(["/", "/contact", "/privacy", "/terms", "/forbidden"]);
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.has(pathname) || pathname.startsWith("/auth/") || pathname.startsWith("/learn");
@@ -166,12 +166,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl);
   }
 
-  // ── Admin routes: require admin email allowlist (#186) ────────────────────
+  // ── Admin routes: require admin email allowlist (#186, #579) ────────────────
   if (isAdminPath(pathname) && !isAdminUser(user.email)) {
-    return NextResponse.json(
-      { error: "Forbidden", message: "Admin access required." },
-      { status: 403, headers: { "x-request-id": requestId } },
-    );
+    const forbiddenUrl = new URL("/forbidden", request.url);
+    return NextResponse.redirect(forbiddenUrl, { status: 303 });
   }
 
   return response;

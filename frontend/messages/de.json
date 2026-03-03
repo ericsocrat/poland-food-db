@@ -749,7 +749,11 @@
     "notFoundCode": "404",
     "notFoundTitle": "Seite nicht gefunden",
     "notFoundMessage": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
-    "goHome": "Zur Startseite"
+    "goHome": "Zur Startseite",
+    "forbiddenCode": "403",
+    "forbiddenTitle": "Zugriff verweigert",
+    "forbiddenMessage": "Sie haben keine Berechtigung, diese Seite anzuzeigen.",
+    "goToDashboard": "Zum Dashboard"
   },
   "errorBoundary": {
     "pageTitle": "Auf dieser Seite ist etwas schiefgelaufen",

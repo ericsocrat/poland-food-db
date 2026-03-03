@@ -749,7 +749,11 @@
     "notFoundCode": "404",
     "notFoundTitle": "Nie znaleziono strony",
     "notFoundMessage": "Strona, której szukasz, nie istnieje lub została przeniesiona.",
-    "goHome": "Strona główna"
+    "goHome": "Strona główna",
+    "forbiddenCode": "403",
+    "forbiddenTitle": "Brak dostępu",
+    "forbiddenMessage": "Nie masz uprawnień do wyświetlenia tej strony.",
+    "goToDashboard": "Przejdź do Pulpitu"
   },
   "errorBoundary": {
     "pageTitle": "Coś poszło nie tak na tej stronie",

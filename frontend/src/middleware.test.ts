@@ -267,34 +267,34 @@ describe("middleware", () => {
     });
   });
 
-  // ─── Admin route protection (#186) ────────────────────────────────────────
+  // ─── Admin route protection (#186, #579) ──────────────────────────────────
 
   describe("admin route protection", () => {
-    it("returns 403 for authenticated non-admin user on /app/admin/submissions", async () => {
+    it("redirects non-admin user to /forbidden on /app/admin/submissions", async () => {
       mockGetUser.mockResolvedValue({
         data: { user: { id: "u1", email: "user@example.com" } },
       });
       const response = await middleware(
         createRequest("/app/admin/submissions"),
       );
-      expect(response.status).toBe(403);
-      const body = await response.json();
-      expect(body.error).toBe("Forbidden");
+      expect(response.status).toBe(303);
+      const location = response.headers.get("location") ?? "";
+      expect(location).toContain("/forbidden");
     });
 
-    it("returns 403 for authenticated non-admin user on /app/admin/monitoring", async () => {
+    it("redirects non-admin user to /forbidden on /app/admin/monitoring", async () => {
       mockGetUser.mockResolvedValue({
         data: { user: { id: "u1", email: "user@example.com" } },
       });
       const response = await middleware(
         createRequest("/app/admin/monitoring"),
       );
-      expect(response.status).toBe(403);
-      const body = await response.json();
-      expect(body.error).toBe("Forbidden");
+      expect(response.status).toBe(303);
+      const location = response.headers.get("location") ?? "";
+      expect(location).toContain("/forbidden");
     });
 
-    it("returns 403 when ADMIN_EMAILS is unset (deny-by-default)", async () => {
+    it("redirects to /forbidden when ADMIN_EMAILS is unset (deny-by-default)", async () => {
       const originalEnv = process.env.ADMIN_EMAILS;
       delete process.env.ADMIN_EMAILS;
 
@@ -304,7 +304,9 @@ describe("middleware", () => {
       const response = await middleware(
         createRequest("/app/admin/submissions"),
       );
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(303);
+      const location = response.headers.get("location") ?? "";
+      expect(location).toContain("/forbidden");
 
       process.env.ADMIN_EMAILS = originalEnv;
     });
@@ -319,7 +321,7 @@ describe("middleware", () => {
       const response = await middleware(
         createRequest("/app/admin/submissions"),
       );
-      expect(response.status).not.toBe(403);
+      expect(response.status).not.toBe(303);
       expect(response.status).not.toBe(307);
 
       process.env.ADMIN_EMAILS = originalEnv;
@@ -335,12 +337,12 @@ describe("middleware", () => {
       const response = await middleware(
         createRequest("/app/admin/monitoring"),
       );
-      expect(response.status).not.toBe(403);
+      expect(response.status).not.toBe(303);
 
       process.env.ADMIN_EMAILS = originalEnv;
     });
 
-    it("returns 403 when user has no email", async () => {
+    it("redirects to /forbidden when user has no email", async () => {
       const originalEnv = process.env.ADMIN_EMAILS;
       process.env.ADMIN_EMAILS = "admin@example.com";
 
@@ -350,7 +352,9 @@ describe("middleware", () => {
       const response = await middleware(
         createRequest("/app/admin/submissions"),
       );
-      expect(response.status).toBe(403);
+      expect(response.status).toBe(303);
+      const location = response.headers.get("location") ?? "";
+      expect(location).toContain("/forbidden");
 
       process.env.ADMIN_EMAILS = originalEnv;
     });
@@ -365,15 +369,16 @@ describe("middleware", () => {
       expect(location).toContain("/auth/login");
     });
 
-    it("attaches x-request-id to 403 response", async () => {
+    it("does not expose x-request-id on redirect to /forbidden", async () => {
       mockGetUser.mockResolvedValue({
         data: { user: { id: "u1", email: "user@example.com" } },
       });
       const response = await middleware(
         createRequest("/app/admin/submissions"),
       );
-      expect(response.status).toBe(403);
-      expect(response.headers.get("x-request-id")).toBeTruthy();
+      expect(response.status).toBe(303);
+      const location = response.headers.get("location") ?? "";
+      expect(location).toContain("/forbidden");
     });
   });
 
