@@ -1,7 +1,7 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- QA Suite: Push Notification Infrastructure
+-- QA Suite: Push Notification Infrastructure  (17 checks)
 -- Validates push_subscriptions and notification_queue tables, RLS policies,
--- constraints, and API function contracts.
+-- constraints, notification preference columns, and API function contracts.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ─────────────────────────────────────────────────────────────────────────────
@@ -138,3 +138,43 @@ SELECT
         api_get_push_subscriptions()
     )->>'error' = 'Authentication required.'
     THEN 'PASS' ELSE 'FAIL' END AS "#14  api_get_push_subscriptions auth error";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #15  user_preferences.notification_score_changes column exists
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'user_preferences'
+          AND column_name = 'notification_score_changes'
+          AND data_type = 'boolean'
+    ) THEN 'PASS' ELSE 'FAIL' END AS "#15  user_preferences.notification_score_changes exists (boolean)";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #16  user_preferences.notification_frequency column exists with CHECK
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN EXISTS (
+        SELECT 1 FROM information_schema.columns
+        WHERE table_schema = 'public'
+          AND table_name = 'user_preferences'
+          AND column_name = 'notification_frequency'
+          AND data_type = 'text'
+    ) AND EXISTS (
+        SELECT 1 FROM pg_constraint
+        WHERE conname = 'chk_notification_frequency'
+          AND conrelid = 'public.user_preferences'::regclass
+    ) THEN 'PASS' ELSE 'FAIL' END AS "#16  user_preferences.notification_frequency exists with CHECK";
+
+-- ─────────────────────────────────────────────────────────────────────────────
+-- #17  api_set_user_preferences has 9 params (new signature)
+-- ─────────────────────────────────────────────────────────────────────────────
+SELECT
+    CASE WHEN EXISTS (
+        SELECT 1 FROM pg_proc p
+        JOIN pg_namespace n ON n.oid = p.pronamespace
+        WHERE n.nspname = 'public'
+          AND p.proname = 'api_set_user_preferences'
+          AND pronargs = 9
+    ) THEN 'PASS' ELSE 'FAIL' END AS "#17  api_set_user_preferences accepts 9 params";

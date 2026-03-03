@@ -36,7 +36,7 @@
 | ------------ | ------ | ----------------------------------------------------- |
 | pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke  |
 | main-gate    | ✅      | Last runs all success                                 |
-| qa.yml       | ✅      | 733/733 checks passing                                |
+| qa.yml       | ✅      | 736/736 checks passing                                |
 | dep-audit    | ✅      | 0 high/critical vulnerabilities                       |
 | python-lint  | ✅      | 0 ruff errors                                         |
 | quality-gate | ⚠️      | 18/20 pass; dashboard 400s from staging DB schema gap |
@@ -61,7 +61,7 @@
 ## Key Metrics Snapshot
 
 - **Products:** 1,279 active (20 PL + 5 DE categories)
-- **QA checks:** 733/733 passing
+- **QA checks:** 736/736 passing
 - **EAN coverage:** 1,277/1,279 with EAN (99.8%)
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
