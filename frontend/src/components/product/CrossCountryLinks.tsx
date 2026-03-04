@@ -5,10 +5,10 @@
 
 import { CountryChip } from "@/components/common/CountryChip";
 import { useCrossCountryLinks } from "@/hooks/use-cross-country-links";
-import { scoreColorFromScore, SCORE_5BAND_DISPLAY } from "@/lib/constants";
+import { SCORE_5BAND_DISPLAY, scoreColorFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
 import type { CrossCountryLink } from "@/lib/types";
-import { Globe, ArrowRight } from "lucide-react";
+import { ArrowRight, Globe } from "lucide-react";
 import Link from "next/link";
 
 // ─── Link type label mapping ────────────────────────────────────────────────

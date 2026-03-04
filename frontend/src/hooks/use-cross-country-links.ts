@@ -3,10 +3,10 @@
 // ─── useCrossCountryLinks — fetch linked products from other countries ──────
 // Issue #605: Cross-country product linking via EAN matching
 
-import { useQuery } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
 import { getCrossCountryLinks } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 /**
  * Fetch cross-country product links for a given product.

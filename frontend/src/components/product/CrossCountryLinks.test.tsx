@@ -1,7 +1,7 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, within } from "@testing-library/react";
+import type { CrossCountryLink, RpcResult } from "@/lib/types";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { RpcResult, CrossCountryLink } from "@/lib/types";
+import { render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 

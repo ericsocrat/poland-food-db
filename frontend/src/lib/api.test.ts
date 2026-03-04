@@ -1,69 +1,69 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
-  // User Preferences
-  getUserPreferences,
-  setUserPreferences,
-  // Search
-  searchProducts,
-  searchAutocomplete,
-  getFilterOptions,
-  saveSearch,
-  getSavedSearches,
-  deleteSavedSearch,
-  // Category
-  getCategoryListing,
-  getCategoryOverview,
-  // Product Detail
-  getProductDetail,
-  lookupByEan,
-  getBetterAlternatives,
-  getScoreExplanation,
-  getDataConfidence,
-  getCrossCountryLinks,
-  // Health Profiles
-  listHealthProfiles,
-  getActiveHealthProfile,
-  createHealthProfile,
-  updateHealthProfile,
-  deleteHealthProfile,
-  getProductHealthWarnings,
-  // Lists
-  getLists,
-  getListItems,
-  createList,
-  updateList,
-  deleteList,
-  addToList,
-  removeFromList,
-  reorderList,
-  toggleShare,
-  revokeShare,
-  getSharedList,
-  getAvoidProductIds,
-  getProductListMembership,
-  getFavoriteProductIds,
-  // Comparisons
-  getProductsForCompare,
-  saveComparison,
-  getSavedComparisons,
-  getSharedComparison,
-  deleteComparison,
-  // Scanner & Submissions
-  recordScan,
-  getScanHistory,
-  submitProduct,
-  getMySubmissions,
-  // Analytics
-  trackEvent,
-  // Dashboard
-  recordProductView,
-  getRecentlyViewed,
-  getDashboardData,
-  // Recipes
-  browseRecipes,
-  getRecipeDetail,
-  findProductsForIngredient,
+    addToList,
+    // Recipes
+    browseRecipes,
+    createHealthProfile,
+    createList,
+    deleteComparison,
+    deleteHealthProfile,
+    deleteList,
+    deleteSavedSearch,
+    findProductsForIngredient,
+    getActiveHealthProfile,
+    getAvoidProductIds,
+    getBetterAlternatives,
+    // Category
+    getCategoryListing,
+    getCategoryOverview,
+    getCrossCountryLinks,
+    getDashboardData,
+    getDataConfidence,
+    getFavoriteProductIds,
+    getFilterOptions,
+    getListItems,
+    // Lists
+    getLists,
+    getMySubmissions,
+    // Product Detail
+    getProductDetail,
+    getProductHealthWarnings,
+    getProductListMembership,
+    // Comparisons
+    getProductsForCompare,
+    getRecentlyViewed,
+    getRecipeDetail,
+    getSavedComparisons,
+    getSavedSearches,
+    getScanHistory,
+    getScoreExplanation,
+    getSharedComparison,
+    getSharedList,
+    // User Preferences
+    getUserPreferences,
+    // Health Profiles
+    listHealthProfiles,
+    lookupByEan,
+    // Dashboard
+    recordProductView,
+    // Scanner & Submissions
+    recordScan,
+    removeFromList,
+    reorderList,
+    revokeShare,
+    saveComparison,
+    saveSearch,
+    searchAutocomplete,
+    // Search
+    searchProducts,
+    setUserPreferences,
+    submitProduct,
+    toggleShare,
+    // Analytics
+    trackEvent,
+    updateHealthProfile,
+    updateList,
 } from "@/lib/api";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mock the RPC layer ─────────────────────────────────────────────────────
 
