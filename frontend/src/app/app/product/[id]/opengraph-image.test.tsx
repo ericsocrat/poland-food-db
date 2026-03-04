@@ -2,7 +2,7 @@
 // Tests the pure functions exported from opengraph-image.tsx.
 // The full image generation is an integration concern (needs edge runtime).
 
-import { getScoreColor, getScoreBandLabel, truncate } from "./opengraph-image";
+import { getScoreBandLabel, getScoreColor, truncate } from "./opengraph-image";
 
 describe("opengraph-image helpers", () => {
   /* ── getScoreColor ─────────────────────────────────────────────────────── */
@@ -27,10 +27,10 @@ describe("opengraph-image helpers", () => {
   /* ── getScoreBandLabel ─────────────────────────────────────────────────── */
   describe("getScoreBandLabel", () => {
     it.each([
-      ["low", "Low Risk"],
-      ["moderate", "Moderate Risk"],
-      ["high", "High Risk"],
-      ["very_high", "Very High Risk"],
+      ["low", "Excellent"],
+      ["moderate", "Good"],
+      ["high", "Poor"],
+      ["very_high", "Bad"],
       ["unknown", ""],
     ])("band '%s' → '%s'", (band: string, expected: string) => {
       expect(getScoreBandLabel(band)).toBe(expected);

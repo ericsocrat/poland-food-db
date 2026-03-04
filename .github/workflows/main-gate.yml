@@ -121,6 +121,23 @@ jobs:
         run: npx vitest run --coverage
         timeout-minutes: 5
 
+      - name: Coverage summary
+        if: ${{ !cancelled() }}
+        run: |
+          if [ -f coverage/coverage-summary.json ]; then
+            echo "## 📊 Coverage Summary" >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Metric | Coverage |" >> "$GITHUB_STEP_SUMMARY"
+            echo "|--------|----------|" >> "$GITHUB_STEP_SUMMARY"
+            node -e "
+              const s = require('./coverage/coverage-summary.json').total;
+              const fmt = (k) => '| ' + k.charAt(0).toUpperCase() + k.slice(1) + ' | ' + s[k].pct + '% |';
+              ['lines','branches','functions','statements'].forEach(k => console.log(fmt(k)));
+            " >> "$GITHUB_STEP_SUMMARY"
+            echo "" >> "$GITHUB_STEP_SUMMARY"
+            echo "Thresholds: lines ≥ 87%, branches ≥ 82%, functions ≥ 84%, statements ≥ 86%" >> "$GITHUB_STEP_SUMMARY"
+          fi
+
       - name: Upload coverage for SonarCloud
         uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
         with:

@@ -110,10 +110,10 @@ export const FOOD_CATEGORIES = [
 
 // Score band display config
 export const SCORE_BANDS = {
-  low: { label: "Low", color: "text-score-green-text", bg: "bg-score-green/10" },
-  moderate: { label: "Moderate", color: "text-score-yellow-text", bg: "bg-score-yellow/10" },
-  high: { label: "High", color: "text-score-orange-text", bg: "bg-score-orange/10" },
-  very_high: { label: "Very High", color: "text-score-red-text", bg: "bg-score-red/10" },
+  low: { label: "Excellent", color: "text-score-green-text", bg: "bg-score-green/10" },
+  moderate: { label: "Good", color: "text-score-yellow-text", bg: "bg-score-yellow/10" },
+  high: { label: "Moderate", color: "text-score-orange-text", bg: "bg-score-orange/10" },
+  very_high: { label: "Poor", color: "text-score-red-text", bg: "bg-score-red/10" },
 } as const;
 
 /** Map a 0-100 unhealthiness score to a score band key. */
@@ -215,21 +215,22 @@ export const CONCERN_TIER_LABEL_KEYS: Record<number, string> = {
 };
 
 /**
- * Score interpretation bands — maps score ranges to i18n keys and colors.
+ * Score interpretation bands — maps TryVit Score ranges to i18n keys and colors.
+ * TryVit Score = 100 − unhealthiness. Higher = healthier.
  * Used for the expandable "What does this score mean?" section on product detail.
  */
 export const SCORE_INTERPRETATION_BANDS = [
-  { min: 0, max: 20, key: "scoreInterpretation.green", color: "text-green-700", bg: "bg-green-50" },
-  { min: 21, max: 40, key: "scoreInterpretation.yellow", color: "text-yellow-700", bg: "bg-yellow-50" },
-  { min: 41, max: 60, key: "scoreInterpretation.orange", color: "text-orange-700", bg: "bg-orange-50" },
-  { min: 61, max: 80, key: "scoreInterpretation.red", color: "text-red-700", bg: "bg-red-50" },
-  { min: 81, max: 100, key: "scoreInterpretation.darkRed", color: "text-red-900", bg: "bg-red-100" },
+  { min: 80, max: 100, key: "scoreInterpretation.green", color: "text-green-700", bg: "bg-green-50" },
+  { min: 60, max: 79, key: "scoreInterpretation.yellow", color: "text-yellow-700", bg: "bg-yellow-50" },
+  { min: 40, max: 59, key: "scoreInterpretation.orange", color: "text-orange-700", bg: "bg-orange-50" },
+  { min: 20, max: 39, key: "scoreInterpretation.red", color: "text-red-700", bg: "bg-red-50" },
+  { min: 0, max: 19, key: "scoreInterpretation.darkRed", color: "text-red-900", bg: "bg-red-100" },
 ] as const;
 
-/** Get the score interpretation band for a given 0-100 score. */
-export function getScoreInterpretation(score: number) {
+/** Get the score interpretation band for a given TryVit Score (0-100, higher = healthier). */
+export function getScoreInterpretation(tryVitScore: number) {
   return (
-    SCORE_INTERPRETATION_BANDS.find((b) => score >= b.min && score <= b.max) ??
+    SCORE_INTERPRETATION_BANDS.find((b) => tryVitScore >= b.min && tryVitScore <= b.max) ??
     SCORE_INTERPRETATION_BANDS[SCORE_INTERPRETATION_BANDS.length - 1]
   );
 }
