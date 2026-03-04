@@ -297,9 +297,9 @@ describe("CategoryListingPage", () => {
   it("renders product score badges", async () => {
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("72")).toBeInTheDocument();
+      expect(screen.getByText("28")).toBeInTheDocument();
     });
-    expect(screen.getByText("65")).toBeInTheDocument();
+    expect(screen.getByText("35")).toBeInTheDocument();
   });
 
   it("renders nutri-score badges", async () => {
@@ -362,7 +362,7 @@ describe("CategoryListingPage", () => {
     expect(screen.queryByTestId("avoid-badge")).not.toBeInTheDocument();
     expect(screen.queryByTestId("compare-checkbox")).not.toBeInTheDocument();
     // But score and NutriScore are still visible
-    expect(screen.getByText("72")).toBeInTheDocument();
+    expect(screen.getByText("28")).toBeInTheDocument();
     expect(screen.getByText("D")).toBeInTheDocument();
   });
 

@@ -2,7 +2,7 @@
 
 > **Issue:** #189 — Canonical Scoring Engine  
 > **Status:** Active  
-> **Last updated:** 2026-02-25
+> **Last updated:** 2026-03-15
 
 ---
 
@@ -234,6 +234,20 @@ The score explanation API (`api_score_explanation`) now includes:
 
 The `ScoreBreakdownPanel` displays a model version badge and freshness timestamp when available.
 
+### 10.1 TryVit Score (Consumer Display Layer)
+
+The frontend presents the **TryVit Score** — an inverted view of the internal unhealthiness score:
+
+```
+TryVit Score = 100 − unhealthiness_score
+```
+
+This is a **display-only transformation**. The scoring engine, database columns, audit trail, drift detection, and all regression anchors continue to operate on the unhealthiness scale (1–100, lower = better). The TryVit Score (1–100, higher = healthier) is computed at render time by `toTryVitScore()` in the frontend.
+
+**Key invariant:** A scoring engine change (new weights, new factor, new version) affects `unhealthiness_score` directly. The TryVit Score changes are an automatic consequence of the inversion — no separate calibration or version tracking is needed for the display layer.
+
+See `SCORING_METHODOLOGY.md` §2.8 for the full consumer band table and scientific rationale.
+
 ---
 
 ## 11. Performance
@@ -279,6 +293,12 @@ The v3.2 fast path ensures zero performance regression for pipeline scoring.
 | T15 | `detect_score_drift` is callable |
 | T16 | Audit trigger is installed |
 | T17 | Grants are correct |
+
+### Regression Anchors
+
+All regression anchor products in `copilot-instructions.md` §8.19 use **unhealthiness scores** (1–100, lower = better). These anchors validate the scoring formula and must remain stable (±2 tolerance) across scoring engine changes.
+
+Consumer display tests (TryVit Score bands, percentile badges) are **separate** from formula regression tests. Frontend tests in `frontend/src/lib/score-utils.test.ts` validate the band mapping and inversion logic independently.
 
 ---
 
