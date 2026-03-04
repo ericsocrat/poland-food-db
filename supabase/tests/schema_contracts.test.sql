@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(262);
+SELECT plan(264);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -382,6 +382,10 @@ SELECT has_function('public', 'api_admin_freshness_sla',     'function api_admin
 SELECT has_function('public', 'api_admin_migration_audit',   'function api_admin_migration_audit exists');
 SELECT has_function('public', 'api_admin_event_summary',     'function api_admin_event_summary exists');
 SELECT has_function('public', 'api_admin_health_overview',   'function api_admin_health_overview exists');
+
+-- === Scoring v3.3 — Nutrient Density Bonus (#608) ===
+SELECT has_function('public', 'compute_unhealthiness_v33',   'function compute_unhealthiness_v33 exists');
+SELECT has_function('public', 'explain_score_v33',           'function explain_score_v33 exists');
 
 SELECT * FROM finish();
 ROLLBACK;

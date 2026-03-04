@@ -75,13 +75,13 @@ WHERE m.calories IS NOT NULL
   AND (detail->'nutrition_per_100g'->>'calories')::numeric != m.calories;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 7. v_master score_breakdown factors count = 9 (all scoring factors present)
+-- 7. v_master score_breakdown factors count = 10 (9 penalties + 1 bonus, v3.3)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '7. score_breakdown has 9 factors' AS check_name,
+SELECT '7. score_breakdown has 10 factors' AS check_name,
        COUNT(*) AS violations
 FROM v_master
 WHERE score_breakdown IS NOT NULL
-  AND jsonb_array_length(score_breakdown->'factors') != 9;
+  AND jsonb_array_length(score_breakdown->'factors') != 10;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 8. v_master ingredient_count matches product_ingredient junction table
