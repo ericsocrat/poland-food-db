@@ -42,23 +42,23 @@ The bonus uses tiered thresholds rather than linear scaling:
 
 **Protein tiers (per 100 g):**
 
-| Protein (g) | Tier Score | Scientific Basis |
-|-------------|-----------|------------------|
-| ≥ 20        | 50        | EFSA DRV: excellent source |
-| ≥ 15        | 40        | High protein (EU claim threshold) |
-| ≥ 10        | 30        | Source of protein |
-| ≥ 5         | 15        | Moderate contribution |
-| < 5         | 0         | Negligible |
+| Protein (g) | Tier Score | Scientific Basis                  |
+| ----------- | ---------- | --------------------------------- |
+| ≥ 20        | 50         | EFSA DRV: excellent source        |
+| ≥ 15        | 40         | High protein (EU claim threshold) |
+| ≥ 10        | 30         | Source of protein                 |
+| ≥ 5         | 15         | Moderate contribution             |
+| < 5         | 0          | Negligible                        |
 
 **Fibre tiers (per 100 g):**
 
-| Fibre (g) | Tier Score | Scientific Basis |
-|-----------|-----------|------------------|
-| ≥ 8       | 50        | WHO: excellent source |
-| ≥ 5       | 35        | High fibre (EU claim threshold) |
-| ≥ 3       | 20        | Source of fibre |
-| ≥ 1       | 10        | Minimal contribution |
-| < 1       | 0         | Negligible |
+| Fibre (g) | Tier Score | Scientific Basis                |
+| --------- | ---------- | ------------------------------- |
+| ≥ 8       | 50         | WHO: excellent source           |
+| ≥ 5       | 35         | High fibre (EU claim threshold) |
+| ≥ 3       | 20         | Source of fibre                 |
+| ≥ 1       | 10         | Minimal contribution            |
+| < 1       | 0          | Negligible                      |
 
 **Combined bonus:**
 ```

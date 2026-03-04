@@ -432,50 +432,50 @@ tryvit/
 
 ### Key Functions
 
-| Function                                | Purpose                                                                                                                                                             |
-| --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Function                                | Purpose                                                                                                                                                                     |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `compute_unhealthiness_v33()`           | Scores 1–100 from 9 penalty factors minus 1 bonus factor: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern − nutrient density |
-| `explain_score_v33()`                   | Returns JSONB breakdown of score: final_score + 9 penalty factors + 1 bonus factor with name, weight, raw (0–100), weighted, input, ceiling                          |
-| `find_similar_products()`               | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                                  |
-| `find_better_alternatives()`            | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                                      |
-| `resolve_ingredient_name()`             | Returns localized ingredient name. Fallback: requested lang → en translation → name_en → NULL                                                                       |
-| `assign_confidence()`                   | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                                                                   |
-| `score_category()`                      | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category           |
-| `compute_data_confidence()`             | Composite confidence score (0-100) with 6 components; band, completeness profile                                                                                    |
-| `compute_data_completeness()`           | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source)                     |
-| `api_data_confidence()`                 | API wrapper for compute_data_confidence(); returns structured JSONB                                                                                                 |
-| `api_product_detail()`                  | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                                                              |
-| `api_category_listing()`                | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                                                         |
-| `api_score_explanation()`               | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                              |
-| `api_better_alternatives()`             | Healthier substitutes wrapper with source product context and structured JSON                                                                                       |
-| `api_search_products()`                 | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                  |
-| `api_get_cross_country_links()`         | Returns linked products for a given product_id; bidirectional query across product_links; returns JSONB array                                                       |
-| `api_get_recipes()`                     | Browse published recipes with filters (country, category, tag, difficulty, max_time); paginated JSONB with total_count + recipes array                              |
-| `api_get_recipe_detail()`               | Full recipe detail by slug: recipe metadata + ingredients (with linked products) + steps; returns structured JSONB                                                  |
-| `api_get_recipe_nutrition()`            | Aggregate nutrition summary from linked products; picks primary product per ingredient; returns per-100g averages + coverage_pct                                    |
-| `browse_recipes()`                      | Browse published recipes with filters (category, country, tag, difficulty, max_time); returns TABLE rows                                                            |
-| `get_recipe_detail()`                   | Recipe detail by slug: returns JSONB with metadata, steps, ingredients (with linked_products array)                                                                 |
-| `find_products_for_recipe_ingredient()` | Finds products for a recipe ingredient: admin-curated links first, then auto-suggested via ingredient_ref matching                                                  |
-| `refresh_all_materialized_views()`      | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                         |
-| `mv_staleness_check()`                  | Checks if MVs are stale by comparing row counts to source tables                                                                                                    |
-| `check_formula_drift()`                 | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                   |
-| `check_function_source_drift()`         | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                                     |
-| `governance_drift_check()`              | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                              |
-| `log_drift_check()`                     | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                                |
-| `validate_log_entry()`                  | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                                        |
-| `execute_retention_cleanup()`           | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary                       |
-| `mv_last_refresh()`                     | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                           |
-| `check_flag_readiness()`                | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                          |
-| `api_export_user_data()`                | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER                    |
-| `api_delete_user_data()`                | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                                  |
-| `is_valid_ean()`                        | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                                      |
-| `check_submission_rate_limit()`         | Returns rate limit status for product submissions: 10 per 24h rolling window per user. SECURITY DEFINER                                                             |
-| `check_scan_rate_limit()`               | Returns rate limit status for barcode scans: 100 per 24h rolling window per user. SECURITY DEFINER                                                                  |
-| `check_api_rate_limit()`                | Generic per-endpoint rate limiter: checks `api_rate_limits` config, logs to `api_rate_limit_log`. Returns `{allowed, remaining}` or blocked JSONB. SECURITY DEFINER |
-| `check_share_limit()`                   | Per-user share count limiter: max 50 shared items per type (comparisons/lists). Returns `{allowed, type, limit}` JSONB. SECURITY DEFINER                            |
-| `score_submission_quality()`            | Scores a submission's quality (0-100) from 7 signals: account age, velocity, EAN match, photo, brand/name quality, user trust score. SECURITY DEFINER               |
-| `api_admin_batch_reject_user()`         | Rejects all pending/manual_review/flag_for_review submissions from a user, flags trust score (cap at 10). SECURITY DEFINER                                          |
-| `api_admin_submission_velocity()`       | Returns submission velocity stats: last_24h, last_7d, pending_count, auto_rejected_24h, status_breakdown, top_submitters with trust. SECURITY DEFINER               |
+| `explain_score_v33()`                   | Returns JSONB breakdown of score: final_score + 9 penalty factors + 1 bonus factor with name, weight, raw (0–100), weighted, input, ceiling                                 |
+| `find_similar_products()`               | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                                          |
+| `find_better_alternatives()`            | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                                              |
+| `resolve_ingredient_name()`             | Returns localized ingredient name. Fallback: requested lang → en translation → name_en → NULL                                                                               |
+| `assign_confidence()`                   | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                                                                           |
+| `score_category()`                      | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category                   |
+| `compute_data_confidence()`             | Composite confidence score (0-100) with 6 components; band, completeness profile                                                                                            |
+| `compute_data_completeness()`           | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source)                             |
+| `api_data_confidence()`                 | API wrapper for compute_data_confidence(); returns structured JSONB                                                                                                         |
+| `api_product_detail()`                  | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                                                                      |
+| `api_category_listing()`                | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                                                                 |
+| `api_score_explanation()`               | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                                      |
+| `api_better_alternatives()`             | Healthier substitutes wrapper with source product context and structured JSON                                                                                               |
+| `api_search_products()`                 | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                          |
+| `api_get_cross_country_links()`         | Returns linked products for a given product_id; bidirectional query across product_links; returns JSONB array                                                               |
+| `api_get_recipes()`                     | Browse published recipes with filters (country, category, tag, difficulty, max_time); paginated JSONB with total_count + recipes array                                      |
+| `api_get_recipe_detail()`               | Full recipe detail by slug: recipe metadata + ingredients (with linked products) + steps; returns structured JSONB                                                          |
+| `api_get_recipe_nutrition()`            | Aggregate nutrition summary from linked products; picks primary product per ingredient; returns per-100g averages + coverage_pct                                            |
+| `browse_recipes()`                      | Browse published recipes with filters (category, country, tag, difficulty, max_time); returns TABLE rows                                                                    |
+| `get_recipe_detail()`                   | Recipe detail by slug: returns JSONB with metadata, steps, ingredients (with linked_products array)                                                                         |
+| `find_products_for_recipe_ingredient()` | Finds products for a recipe ingredient: admin-curated links first, then auto-suggested via ingredient_ref matching                                                          |
+| `refresh_all_materialized_views()`      | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                                 |
+| `mv_staleness_check()`                  | Checks if MVs are stale by comparing row counts to source tables                                                                                                            |
+| `check_formula_drift()`                 | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                           |
+| `check_function_source_drift()`         | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                                             |
+| `governance_drift_check()`              | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                                      |
+| `log_drift_check()`                     | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                                        |
+| `validate_log_entry()`                  | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                                                |
+| `execute_retention_cleanup()`           | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary                               |
+| `mv_last_refresh()`                     | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                                   |
+| `check_flag_readiness()`                | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                                  |
+| `api_export_user_data()`                | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER                            |
+| `api_delete_user_data()`                | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                                          |
+| `is_valid_ean()`                        | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                                              |
+| `check_submission_rate_limit()`         | Returns rate limit status for product submissions: 10 per 24h rolling window per user. SECURITY DEFINER                                                                     |
+| `check_scan_rate_limit()`               | Returns rate limit status for barcode scans: 100 per 24h rolling window per user. SECURITY DEFINER                                                                          |
+| `check_api_rate_limit()`                | Generic per-endpoint rate limiter: checks `api_rate_limits` config, logs to `api_rate_limit_log`. Returns `{allowed, remaining}` or blocked JSONB. SECURITY DEFINER         |
+| `check_share_limit()`                   | Per-user share count limiter: max 50 shared items per type (comparisons/lists). Returns `{allowed, type, limit}` JSONB. SECURITY DEFINER                                    |
+| `score_submission_quality()`            | Scores a submission's quality (0-100) from 7 signals: account age, velocity, EAN match, photo, brand/name quality, user trust score. SECURITY DEFINER                       |
+| `api_admin_batch_reject_user()`         | Rejects all pending/manual_review/flag_for_review submissions from a user, flags trust score (cap at 10). SECURITY DEFINER                                                  |
+| `api_admin_submission_velocity()`       | Returns submission velocity stats: last_24h, last_7d, pending_count, auto_rejected_24h, status_breakdown, top_submitters with trust. SECURITY DEFINER                       |
 
 ### Views
 
