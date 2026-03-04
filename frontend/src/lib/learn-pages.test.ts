@@ -268,7 +268,7 @@ describe("i18n: German learn keys", () => {
   for (const topic of [
     "nutriScore",
     "novaGroups",
-    "unhealthinessScore",
+    "tryvitScore",
     "additives",
     "allergens",
     "readingLabels",
