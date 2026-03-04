@@ -231,7 +231,7 @@
     "sortBy": "Sortuj wg",
     "relevance": "Trafność",
     "name": "Nazwa",
-    "healthScore": "Wynik zdrowotny",
+    "healthScore": "Wynik TryVit",
     "nutriScore": "Nutri-Score",
     "notRated": "Brak oceny",
     "calories": "Kalorie",
@@ -244,7 +244,7 @@
     "nova2": "2 — Przetworzone składniki",
     "nova3": "3 — Przetworzone",
     "nova4": "4 — Ultraprzetworzone",
-    "maxHealthScore": "Maks. wynik zdrowotny",
+    "maxHealthScore": "Maks. wynik TryVit",
     "any": "Dowolny",
     "clearAll": "Wyczyść wszystko",
     "closeFilters": "Zamknij filtry",
@@ -452,6 +452,8 @@
     "rank": "Pozycja: {rank} z {total}",
     "categoryAvg": "Średnia kategorii: {avg}",
     "position": "Pozycja: {position}",
+    "betterThan": "Lepszy niż {pct}%",
+    "percentileTooltip": "#{rank} z {total}",
     "novaGroup1": "Nieprzetworzone",
     "novaGroup2": "Składnik kulinarny",
     "novaGroup3": "Żywność przetworzona",
@@ -476,7 +478,7 @@
     "viewAllAlternatives": "Zobacz wszystkie alternatywy"
   },
   "scoreGauge": {
-    "label": "Wynik zdrowotny: {score} na 100",
+    "label": "Wynik TryVit: {score} na 100",
     "outOf": "/100",
     "noScore": "Wynik niedostępny"
   },
@@ -533,7 +535,7 @@
     "metric": "Metryka",
     "healthiest": "Najzdrowszy",
     "best": "Najlepszy",
-    "unhealthinessScore": "Wynik niezdrowego odżywiania",
+    "tryvitScore": "Wynik TryVit",
     "novaGroupLabel": "Grupa NOVA",
     "none": "Brak",
     "noneDeclared": "Nie zadeklarowano",
@@ -1148,7 +1150,7 @@
       "unknownTitle": "Dlaczego niektóre produkty pokazują 'NIEZNANY'",
       "unknownText": "Gdy nie mamy wystarczających danych odżywczych do obliczenia Nutri-Score lub gdy kategoria produktu nie ma zastosowania (np. alkohol), wynik jest pokazywany jako NIEZNANY lub NIE DOTYCZY. To uczciwsze niż zgadywanie.",
       "ourApproachTitle": "Nasze podejście",
-      "ourApproachText": "Używamy Nutri-Score jako jednego z trzech niezależnych wymiarów. Nigdy nie polegamy na nim samym do oceny produktu. Nasz Wynik Niezdrowowści i Ryzyko Przetworzenia uzupełniają luki, które Nutri-Score pozostawia."
+      "ourApproachText": "Używamy Nutri-Score jako jednego z trzech niezależnych wymiarów. Nigdy nie polegamy na nim samym do oceny produktu. Nasz Wynik TryVit i Ryzyko Przetworzenia uzupełniają luki, które Nutri-Score pozostawia."
     },
     "novaGroups": {
       "title": "Klasyfikacja NOVA",
@@ -1170,14 +1172,14 @@
       "polishContextTitle": "Kontekst polski",
       "polishContextText": "Wiele popularnych produktów w polskich supermarketach jak Żabka, Biedronka i Lidl to NOVA 4. To nie znaczy, że nigdy nie powinieneś ich jeść — oznacza to bycie świadomym, ile twojej diety pochodzi z ultra-przetworzonych źródeł.",
       "processingRiskTitle": "Jak tego używamy: Ryzyko Przetworzenia",
-      "processingRiskText": "In TryVit grupy NOVA są mapowane na trzy poziomy Ryzyka Przetworzenia: Niskie (NOVA 1–2), Umiarkowane (NOVA 3) i Wysokie (NOVA 4). Daje to szybki odczyt poziomu przetworzenia obok naszego Wyniku Niezdrowowści i Nutri-Score."
+      "processingRiskText": "In TryVit grupy NOVA są mapowane na trzy poziomy Ryzyka Przetworzenia: Niskie (NOVA 1–2), Umiarkowane (NOVA 3) i Wysokie (NOVA 4). Daje to szybki odczyt poziomu przetworzenia obok naszego Wyniku TryVit i Nutri-Score."
     },
-    "unhealthinessScore": {
-      "title": "Nasz Wynik Zdrowotny",
-      "description": "Jak działa 9-czynnikowy Wynik Niezdrowowści i co oznaczają zakresy.",
-      "summary": "Wynik Niezdrowowści (1–100) to nasz główny wskaźnik złożony. Szacuje potencjał kumulatywnej szkodliwości, ważąc 9 czynników: tłuszcze nasycone, cukry, sól, kalorie, tłuszcze trans, dodatki, metoda przygotowania, kontrowersje i obawy dotyczące składników.",
-      "whatIsTitle": "Czym jest Wynik Niezdrowowści?",
-      "whatIsText": "Wynik Niezdrowowści odpowiada na proste pytanie: jeśli ktoś regularnie jadłby ten produkt, jaki potencjał kumulatywnej szkodliwości niesie? Skala biegnie od 1 (niskie ryzyko) do 100 (bardzo wysokie ryzyko). Celowo nazywamy to 'Niezdrowowścią' a nie 'zdrowością' — wynik 30 nie oznacza, że produkt jest zdrowy, oznacza że jest mniej niezdrowy niż produkt z wynikiem 70.",
+    "tryvitScore": {
+      "title": "Wynik TryVit",
+      "description": "Jak działa 9-czynnikowy Wynik TryVit i co oznaczają zakresy.",
+      "summary": "Wynik TryVit (1–100) to nasz główny wskaźnik złożony. Im wyższy, tym lepiej. Ocenia 9 czynników: tłuszcze nasycone, cukry, sól, kalorie, tłuszcze trans, dodatki, metoda przygotowania, kontrowersje i obawy dotyczące składników.",
+      "whatIsTitle": "Czym jest Wynik TryVit?",
+      "whatIsText": "Wynik TryVit odpowiada na proste pytanie: jak dobrze ten produkt wypada pod względem odżywczym? Skala biegnie od 1 (bardzo wysokie ryzyko) do 100 (doskonały). Wynik 70 oznacza, że produkt jest lepszy niż ten z wynikiem 30. Łączymy dziewięć czynników opartych na dowodach w jeden numer, abyś mógł porównywać produkty na pierwszy rzut oka.",
       "factorsTitle": "9 czynników",
       "factorSatFat": "Tłuszcze nasycone (waga: 17%) — pułap: 10g na 100g. Oparte na wartościach referencyjnych EFSA.",
       "factorSugars": "Cukry (waga: 17%) — pułap: 27g na 100g. Oparte na wytycznych WHO dot. wolnych cukrów.",
@@ -1189,15 +1191,15 @@
       "factorControversies": "Kontrowersje (waga: 8%) — uwzględnia problemy produktowe jak olej palmowy lub zakazane substancje.",
       "factorConcern": "Obawy o składniki (waga: 5%) — oparte na klasach ryzyka EFSA (poziomy 0–3).",
       "bandsTitle": "Zakresy wyników",
-      "band1": "1–20: Niskie ryzyko — płatki owsiane, surowe warzywa",
-      "band2": "21–40: Umiarkowane — chleb pełnoziarnisty, zwykły jogurt",
-      "band3": "41–60: Podwyższone — chipsy pieczone, słodzone płatki",
-      "band4": "61–80: Wysokie — chipsy smażone, słodkie napoje",
-      "band5": "81–100: Bardzo wysokie — smażone na głębokim tłuszczu + dużo soli + dodatki",
+      "band1": "80–100: Doskonały — płatki owsiane, surowe warzywa",
+      "band2": "60–79: Dobry — chleb pełnoziarnisty, zwykły jogurt",
+      "band3": "40–59: Umiarkowany — chipsy pieczone, słodzone płatki",
+      "band4": "20–39: Słaby — chipsy smażone, słodkie napoje",
+      "band5": "1–19: Zły — smażone na głębokim tłuszczu + dużo soli + dodatki",
       "formulaTitle": "Jak jest obliczany",
       "formulaText": "Każdy czynnik jest normalizowany do 0–100 (przy użyciu naukowo uzasadnionych pułapów), mnożony przez swoją wagę i sumowany. Wynik jest ograniczony do 1–100. Gdy brakuje danych, ten czynnik przyjmuje wartość 0, a kompletność danych jest obniżana.",
       "whyDifferentTitle": "Dlaczego nie wystarczy sam Nutri-Score?",
-      "whyDifferentText": "Nutri-Score ignoruje stopień przetworzenia, dodatki do żywności, metody przygotowania i kontrowersje. Nasz Wynik Niezdrowowści wypełnia te luki, włączając wszystkie dziewięć czynników w jedną liczbę opartą na progach WHO, EFSA i regulacjach UE."
+      "whyDifferentText": "Nutri-Score ignoruje stopień przetworzenia, dodatki do żywności, metody przygotowania i kontrowersje. Nasz Wynik TryVit wypełnia te luki, włączając wszystkie dziewięć czynników w jedną liczbę opartą na progach WHO, EFSA i regulacjach UE."
     },
     "additives": {
       "title": "Zrozumienie Dodatków",
@@ -1213,7 +1215,7 @@
       "concernTier2": "Klasa 2 — Umiarkowane ryzyko: Niektóre sztuczne słodziki i barwniki. Bezpieczne w zatwierdzonych dawkach, ale podlegające dalszym badaniom.",
       "concernTier3": "Klasa 3 — Wysokie ryzyko: Azotyny (E250), BHA (E320), niektóre barwniki azowe. EFSA zgłosiła obawy; niektóre mają obniżone ADI.",
       "howWeUseTitle": "Jak tego używamy",
-      "howWeUseText": "In TryVit każdy składnik ma przypisaną klasę ryzyka na podstawie ocen EFSA. Wynik obaw o składniki produktu (0–100) stanowi 5% ogólnego Wyniku Niezdrowowści. Produkty bez problematycznych dodatków uzyskują 0 w tym czynniku.",
+      "howWeUseText": "In TryVit każdy składnik ma przypisaną klasę ryzyka na podstawie ocen EFSA. Wynik obaw o składniki produktu (0–100) stanowi 5% ogólnego Wyniku TryVit. Produkty bez problematycznych dodatków uzyskują 0 w tym czynniku.",
       "polishContextTitle": "Kontekst polski",
       "polishContextText": "Polskie etykiety żywności są zgodne z rozporządzeniem UE 1169/2011. Wszystkie dodatki muszą być wymienione według ich numeru E lub pełnej nazwy na liście składników. Robiąc zakupy w Żabce lub Biedronce, sprawdź listę składników — krótsze listy z rozpoznawalnymi składnikami zazwyczaj oznaczają mniejsze przetworzenie."
     },
@@ -1251,7 +1253,7 @@
       "nutritionTableTitle": "Tabela wartości odżywczych",
       "nutritionTableText": "Prawo UE wymaga, aby wszystkie pakowane produkty spożywcze zawierały deklarację wartości odżywczej. Tabela musi zawierać: energię (kJ/kcal), tłuszcz, tłuszcze nasycone, węglowodany, cukry, białko i sól. Wszystkie wartości są podane na 100g (lub na 100ml dla płynów).",
       "per100gTitle": "Na 100g vs na porcję",
-      "per100gText": "Kolumna na 100g pozwala na uczciwe porównanie produktów — jest standardem używanym przez Nutri-Score i nasz Wynik Niezdrowowści. Kolumna na porcję jest opcjonalna i zależy od zdefiniowanej przez producenta wielkości porcji, która może się znacznie różnić. Zawsze sprawdzaj wielkość porcji przy korzystaniu z wartości na porcję.",
+      "per100gText": "Kolumna na 100g pozwala na uczciwe porównanie produktów — jest standardem używanym przez Nutri-Score i nasz Wynik TryVit. Kolumna na porcję jest opcjonalna i zależy od zdefiniowanej przez producenta wielkości porcji, która może się znacznie różnić. Zawsze sprawdzaj wielkość porcji przy korzystaniu z wartości na porcję.",
       "mandatoryTitle": "Obowiązkowe elementy etykiety w Polsce",
       "mandatoryItem1": "Nazwa produktu (nazwa produktu)",
       "mandatoryItem2": "Lista składników (skład) — w kolejności malejącej wagi",
@@ -1274,7 +1276,7 @@
       "description": "Co oznaczają poziomy zweryfikowany, szacunkowy i niski dla naszych danych produktów.",
       "summary": "Nie wszystkie dane produktów są jednakowo wiarygodne. Używamy trzech poziomów pewności — Zweryfikowany, Szacunkowy i Niski — abyś zawsze wiedział, jak bardzo ufać wynikom, które widzisz.",
       "whyTitle": "Dlaczego pewność danych ma znaczenie",
-      "whyText": "Nasz Wynik Niezdrowowści jest tak dobry, jak dane za nim stojące. Niektóre produkty mają kompletne, zweryfikowane z etykiety dane odżywcze. Inne mają luki, które wypełniliśmy szacunkami. Wierzymy w przejrzystość w tej kwestii.",
+      "whyText": "Nasz Wynik TryVit jest tak dobry, jak dane za nim stojące. Niektóre produkty mają kompletne, zweryfikowane z etykiety dane odżywcze. Inne mają luki, które wypełniliśmy szacunkami. Wierzymy w przejrzystość w tej kwestii.",
       "levelsTitle": "Poziomy pewności",
       "levelVerified": "Zweryfikowany — Wszystkie dane pochodzą z pierwotnego źródła etykiety. Każde pole odżywcze zostało potwierdzone z rzeczywistym opakowaniem produktu. To najwyższy poziom pewności.",
       "levelEstimated": "Szacunkowy — Niektóre wartości zostały oszacowane na podstawie średnich kategorii lub podobnych produktów. Wynik jest wiarygodny, ale może nie odpowiadać dokładnym wartościom z etykiety.",

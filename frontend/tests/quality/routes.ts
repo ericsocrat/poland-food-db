@@ -284,7 +284,7 @@ export const ROUTES: RouteEntry[] = [
     tags: ["full"],
   },
   {
-    path: "/learn/unhealthiness-score",
+    path: "/learn/tryvit-score",
     label: "learn-score",
     requiresAuth: false,
     tags: ["full"],

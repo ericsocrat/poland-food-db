@@ -4,27 +4,28 @@
 // Shows all products in a list with health scores, supports removing items,
 // and has share toggle for custom/favorites lists.
 
-import { useState, useMemo } from "react";
-import { Heart, Ban, Pencil, Link2 } from "lucide-react";
-import { useParams } from "next/navigation";
-import Link from "next/link";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { EmptyState } from "@/components/common/EmptyState";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ExportButton } from "@/components/export/ExportButton";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import {
-  useLists,
-  useListItems,
-  useRemoveFromList,
-  useUpdateList,
-  useToggleShare,
-  useRevokeShare,
+    useListItems,
+    useLists,
+    useRemoveFromList,
+    useRevokeShare,
+    useToggleShare,
+    useUpdateList,
 } from "@/hooks/use-lists";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { EmptyState } from "@/components/common/EmptyState";
-import { ConfirmDialog } from "@/components/common/ConfirmDialog";
-import { useTranslation } from "@/lib/i18n";
-import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
-import { ExportButton } from "@/components/export/ExportButton";
-import type { ListItem, FormSubmitEvent } from "@/lib/types";
+import { NUTRI_COLORS, SCORE_BANDS } from "@/lib/constants";
 import type { ExportableProduct } from "@/lib/export";
+import { useTranslation } from "@/lib/i18n";
+import { toTryVitScore } from "@/lib/score-utils";
+import type { FormSubmitEvent, ListItem } from "@/lib/types";
+import { Ban, Heart, Link2, Pencil } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useMemo, useState } from "react";
 
 export default function ListDetailPage() {
   const { t } = useTranslation();
@@ -370,7 +371,7 @@ function ListItemRow({
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
         >
-          {item.unhealthiness_score}
+          {toTryVitScore(item.unhealthiness_score)}
         </div>
 
         {/* Product info */}

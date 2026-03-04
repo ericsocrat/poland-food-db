@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import { ScoreGauge } from "./ScoreGauge";
 
 describe("ScoreGauge", () => {
@@ -7,7 +7,7 @@ describe("ScoreGauge", () => {
 
   it("renders score text and /100 label", () => {
     render(<ScoreGauge score={42} />);
-    expect(screen.getByText("42")).toBeInTheDocument();
+    expect(screen.getByText("58")).toBeInTheDocument();
     expect(screen.getByText("/100")).toBeInTheDocument();
   });
 
@@ -89,7 +89,7 @@ describe("ScoreGauge", () => {
     const wrapper = screen.getByRole("figure");
     expect(wrapper).toHaveAttribute(
       "aria-label",
-      expect.stringContaining("65"),
+      expect.stringContaining("35"),
     );
   });
 
@@ -103,14 +103,14 @@ describe("ScoreGauge", () => {
 
   it("clamps score at 100 for arc calculation", () => {
     render(<ScoreGauge score={150} />);
-    expect(screen.getByText("150")).toBeInTheDocument();
+    expect(screen.getByText("0")).toBeInTheDocument();
     // Arc should still render (clamped internally)
     expect(screen.getByTestId("gauge-arc")).toBeInTheDocument();
   });
 
   it("clamps score at 0 for arc calculation", () => {
     render(<ScoreGauge score={0} />);
-    expect(screen.getByText("0")).toBeInTheDocument();
+    expect(screen.getByText("100")).toBeInTheDocument();
     expect(screen.getByTestId("gauge-arc")).toBeInTheDocument();
   });
 

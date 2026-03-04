@@ -244,10 +244,10 @@ test.describe("PUBLIC pages — Desktop", () => {
     await capture(page, DESKTOP_DIR, "P08-learn-hub.png");
   });
 
-  test("Learn — Unhealthiness Score", async ({ page }) => {
-    await page.goto("/learn/unhealthiness-score");
+  test("Learn — TryVit Score", async ({ page }) => {
+    await page.goto("/learn/tryvit-score");
     await stabilizePage(page);
-    await capture(page, DESKTOP_DIR, "P09-learn-unhealthiness.png");
+    await capture(page, DESKTOP_DIR, "P09-learn-tryvit-score.png");
   });
 
   test("Learn — Nutri-Score", async ({ page }) => {

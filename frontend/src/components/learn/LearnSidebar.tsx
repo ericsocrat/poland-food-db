@@ -27,8 +27,8 @@ const TOPICS: LearnTopic[] = [
   { slug: "nutri-score", labelKey: "learn.nutriScore.title", icon: Award },
   { slug: "nova-groups", labelKey: "learn.novaGroups.title", icon: Factory },
   {
-    slug: "unhealthiness-score",
-    labelKey: "learn.unhealthinessScore.title",
+    slug: "tryvit-score",
+    labelKey: "learn.tryvitScore.title",
     icon: BarChart3,
   },
   { slug: "additives", labelKey: "learn.additives.title", icon: FlaskConical },

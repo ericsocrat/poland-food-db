@@ -1,9 +1,9 @@
 import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
+    act,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
 } from "@testing-library/react";
 import { ShareButton } from "./ShareButton";
 
@@ -57,7 +57,7 @@ describe("ShareButton", () => {
       expect.objectContaining({
         url: "https://tryvit.app/app/product/123",
         title: expect.stringContaining("Lay's Classic Chips"),
-        text: expect.stringContaining("58/100"),
+        text: expect.stringContaining("42/100"),
       }),
     );
 

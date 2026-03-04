@@ -1,10 +1,10 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import type { SearchFilters } from "@/lib/types";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { FilterPanel } from "./FilterPanel";
-import type { SearchFilters } from "@/lib/types";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -116,7 +116,7 @@ describe("FilterPanel", () => {
       expect(screen.getAllByText("Relevance").length).toBeGreaterThanOrEqual(1);
     });
     expect(screen.getAllByText("Name").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("Health Score").length).toBeGreaterThanOrEqual(
+    expect(screen.getAllByText("TryVit Score").length).toBeGreaterThanOrEqual(
       1,
     );
     expect(screen.getAllByText("Calories").length).toBeGreaterThanOrEqual(1);
@@ -322,7 +322,7 @@ describe("FilterPanel", () => {
     renderPanel();
     await waitFor(() => {
       expect(
-        screen.getAllByText("Max Health Score").length,
+        screen.getAllByText("Max TryVit Score").length,
       ).toBeGreaterThanOrEqual(1);
     });
     expect(screen.getAllByText("Any").length).toBeGreaterThanOrEqual(1);

@@ -1,9 +1,10 @@
 // ─── ShareButton — native share / clipboard fallback ──────────────────────
 "use client";
 
-import { useState, useCallback } from "react";
-import { useTranslation } from "@/lib/i18n";
 import { eventBus } from "@/lib/events";
+import { useTranslation } from "@/lib/i18n";
+import { toTryVitScore } from "@/lib/score-utils";
+import { useCallback, useState } from "react";
 
 interface ShareButtonProps {
   readonly productName: string;
@@ -21,8 +22,8 @@ export function ShareButton({
 
   const handleShare = useCallback(async () => {
     const shareUrl = `${globalThis.location.origin}/app/product/${productId}`;
-    const shareTitle = `${productName} — Health Score: ${score}/100`;
-    const shareText = `Check out ${productName} on TryVit — Health Score: ${score}/100`;
+    const shareTitle = `${productName} — TryVit Score: ${toTryVitScore(score)}/100`;
+    const shareText = `Check out ${productName} on TryVit — TryVit Score: ${toTryVitScore(score)}/100`;
 
     if (typeof navigator.share === "function") {
       try {

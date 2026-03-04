@@ -19,6 +19,7 @@ import { getDashboardData } from "@/lib/api";
 import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { toTryVitScore } from "@/lib/score-utils";
 import { createClient } from "@/lib/supabase/client";
 import type {
     DashboardFavoritePreview,
@@ -49,7 +50,7 @@ function ScorePill({ score }: Readonly<{ score: number | null }>) {
     <span
       className={`rounded-full px-2 py-0.5 text-xs font-semibold ${cfg.bg} ${cfg.color}`}
     >
-      {score}
+      {toTryVitScore(score)}
     </span>
   );
 }
@@ -224,7 +225,7 @@ function SummaryCard({
               <span
                 className={`rounded-full px-2 py-0.5 text-sm font-bold ${avgBand.bg} ${avgBand.color}`}
               >
-                {summary.avgScore}
+                {toTryVitScore(summary.avgScore)}
               </span>
             </div>
           )}
