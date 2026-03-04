@@ -1172,7 +1172,7 @@
       "processingRiskTitle": "Jak tego używamy: Ryzyko Przetworzenia",
       "processingRiskText": "In TryVit grupy NOVA są mapowane na trzy poziomy Ryzyka Przetworzenia: Niskie (NOVA 1–2), Umiarkowane (NOVA 3) i Wysokie (NOVA 4). Daje to szybki odczyt poziomu przetworzenia obok naszego Wyniku TryVit i Nutri-Score."
     },
-    "unhealthinessScore": {
+    "tryvitScore": {
       "title": "Wynik TryVit",
       "description": "Jak działa 9-czynnikowy Wynik TryVit i co oznaczają zakresy.",
       "summary": "Wynik TryVit (1–100) to nasz główny wskaźnik złożony. Im wyższy, tym lepiej. Ocenia 9 czynników: tłuszcze nasycone, cukry, sól, kalorie, tłuszcze trans, dodatki, metoda przygotowania, kontrowersje i obawy dotyczące składników.",

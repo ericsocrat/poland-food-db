@@ -1172,7 +1172,7 @@
       "processingRiskTitle": "How we use it: Processing Risk",
       "processingRiskText": "in TryVit, NOVA groups are mapped to three Processing Risk levels: Low (NOVA 1–2), Moderate (NOVA 3), and High (NOVA 4). This gives you a quick read on processing alongside our TryVit Score and Nutri-Score."
     },
-    "unhealthinessScore": {
+    "tryvitScore": {
       "title": "TryVit Score",
       "description": "How the 9-factor TryVit Score works and what the bands mean.",
       "summary": "The TryVit Score (1–100) is our primary composite metric. Higher is better. It evaluates 9 factors: saturated fat, sugars, salt, calories, trans fat, additives, preparation method, controversies, and ingredient concern.",
