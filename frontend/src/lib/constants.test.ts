@@ -1,20 +1,20 @@
-import { describe, it, expect } from "vitest";
 import {
-  COUNTRIES,
-  ALLERGEN_TAGS,
-  ALLERGEN_PRESETS,
-  DIET_OPTIONS,
-  SCORE_BANDS,
-  SCORE_5BAND_DISPLAY,
-  scoreColorFromScore,
-  NUTRI_COLORS,
-  HEALTH_CONDITIONS,
-  WARNING_SEVERITY,
-  SCORE_INTERPRETATION_BANDS,
-  TRAFFIC_LIGHT_NUTRIENTS,
-  FEATURES,
-  getScoreInterpretation,
+    ALLERGEN_PRESETS,
+    ALLERGEN_TAGS,
+    COUNTRIES,
+    DIET_OPTIONS,
+    FEATURES,
+    getScoreInterpretation,
+    HEALTH_CONDITIONS,
+    NUTRI_COLORS,
+    SCORE_5BAND_DISPLAY,
+    SCORE_BANDS,
+    SCORE_INTERPRETATION_BANDS,
+    scoreColorFromScore,
+    TRAFFIC_LIGHT_NUTRIENTS,
+    WARNING_SEVERITY,
 } from "@/lib/constants";
+import { describe, expect, it } from "vitest";
 
 describe("COUNTRIES", () => {
   it("contains at least Poland and Germany", () => {
@@ -191,8 +191,8 @@ describe("WARNING_SEVERITY", () => {
 describe("SCORE_INTERPRETATION_BANDS", () => {
   it("has 5 bands covering 0-100 range", () => {
     expect(SCORE_INTERPRETATION_BANDS).toHaveLength(5);
-    expect(SCORE_INTERPRETATION_BANDS[0].min).toBe(0);
-    expect(SCORE_INTERPRETATION_BANDS[4].max).toBe(100);
+    expect(SCORE_INTERPRETATION_BANDS[0].min).toBe(80);
+    expect(SCORE_INTERPRETATION_BANDS[4].max).toBe(19);
   });
 
   it("each band has key, color, and bg", () => {
@@ -205,24 +205,24 @@ describe("SCORE_INTERPRETATION_BANDS", () => {
 });
 
 describe("getScoreInterpretation", () => {
-  it("returns green band for score 15", () => {
-    expect(getScoreInterpretation(15).key).toBe("scoreInterpretation.green");
+  it("returns green band for score 85", () => {
+    expect(getScoreInterpretation(85).key).toBe("scoreInterpretation.green");
   });
 
-  it("returns yellow band for score 35", () => {
-    expect(getScoreInterpretation(35).key).toBe("scoreInterpretation.yellow");
+  it("returns yellow band for score 65", () => {
+    expect(getScoreInterpretation(65).key).toBe("scoreInterpretation.yellow");
   });
 
   it("returns orange band for score 50", () => {
     expect(getScoreInterpretation(50).key).toBe("scoreInterpretation.orange");
   });
 
-  it("returns red band for score 70", () => {
-    expect(getScoreInterpretation(70).key).toBe("scoreInterpretation.red");
+  it("returns red band for score 30", () => {
+    expect(getScoreInterpretation(30).key).toBe("scoreInterpretation.red");
   });
 
-  it("returns darkRed band for score 90", () => {
-    expect(getScoreInterpretation(90).key).toBe("scoreInterpretation.darkRed");
+  it("returns darkRed band for score 10", () => {
+    expect(getScoreInterpretation(10).key).toBe("scoreInterpretation.darkRed");
   });
 });
 

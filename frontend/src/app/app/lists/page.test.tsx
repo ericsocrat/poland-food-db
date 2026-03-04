@@ -1,8 +1,8 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import ListsPage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -334,9 +334,9 @@ describe("ListsPage", () => {
 
     // Check the first preview has 3 score badges (matching mock data)
     const favPreview = previews[0];
-    expect(favPreview).toHaveTextContent("65");
-    expect(favPreview).toHaveTextContent("25");
-    expect(favPreview).toHaveTextContent("30");
+    expect(favPreview).toHaveTextContent("35");
+    expect(favPreview).toHaveTextContent("75");
+    expect(favPreview).toHaveTextContent("70");
   });
 
   it("shows overflow count when list has more items than previewed", () => {
@@ -348,9 +348,9 @@ describe("ListsPage", () => {
 
   it("shows average score badge for lists with preview items", () => {
     render(<ListsPage />, { wrapper: createWrapper() });
-    // Avg of 65 + 25 + 30 = 120 / 3 = 40
+    // Avg of 65 + 25 + 30 = 120 / 3 = 40, displayed as toTryVitScore(40) = 60
     const avgBadge = screen.getByTestId("list-avg-score");
-    expect(avgBadge).toHaveTextContent("Avg 40");
+    expect(avgBadge).toHaveTextContent("Avg 60");
   });
 
   it("does not show preview for empty lists", () => {

@@ -16,6 +16,7 @@ import {
 } from "@/hooks/use-lists";
 import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { toTryVitScore } from "@/lib/score-utils";
 import type { FormSubmitEvent, ListItem, ProductList } from "@/lib/types";
 import {
     Ban,
@@ -270,7 +271,7 @@ function ListCard({
                     title={item.product_name}
                     className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold ring-2 ring-surface ${band.bg} ${band.color}`}
                   >
-                    {item.unhealthiness_score}
+                    {toTryVitScore(item.unhealthiness_score)}
                   </span>
                 );
               })}
@@ -290,7 +291,7 @@ function ListCard({
                 className={`ml-auto rounded-full px-2 py-0.5 text-xs font-medium ${avgBand.bg} ${avgBand.color}`}
                 data-testid="list-avg-score"
               >
-                {t("lists.avgScore", { score: avgScore })}
+                {t("lists.avgScore", { score: toTryVitScore(avgScore) })}
               </span>
             )}
           </div>

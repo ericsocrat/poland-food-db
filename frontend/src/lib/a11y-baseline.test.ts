@@ -24,7 +24,7 @@ describe("SkipLink coverage — all pages", () => {
     ["Learn hub", "app/learn/page.tsx"],
     ["Learn nutri-score", "app/learn/nutri-score/page.tsx"],
     ["Learn nova-groups", "app/learn/nova-groups/page.tsx"],
-    ["Learn unhealthiness-score", "app/learn/unhealthiness-score/page.tsx"],
+    ["Learn tryvit-score", "app/learn/tryvit-score/page.tsx"],
     ["Learn additives", "app/learn/additives/page.tsx"],
     ["Learn allergens", "app/learn/allergens/page.tsx"],
     ["Learn reading-labels", "app/learn/reading-labels/page.tsx"],

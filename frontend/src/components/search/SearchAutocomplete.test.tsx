@@ -1,16 +1,16 @@
-import { useState } from "react";
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { SearchAutocomplete } from "./SearchAutocomplete";
 import { RECENT_SEARCHES_KEY } from "@/lib/recent-searches";
 import { useLanguageStore } from "@/stores/language-store";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+    act,
+    fireEvent,
+    render,
+    screen,
+    waitFor,
+} from "@testing-library/react";
+import { useState } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { SearchAutocomplete } from "./SearchAutocomplete";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -187,8 +187,8 @@ describe("SearchAutocomplete", () => {
 
     await waitFor(
       () => {
-        expect(screen.getByText("65")).toBeInTheDocument();
-        expect(screen.getByText("72")).toBeInTheDocument();
+        expect(screen.getByText("35")).toBeInTheDocument();
+        expect(screen.getByText("28")).toBeInTheDocument();
       },
       { timeout: 1000 },
     );
