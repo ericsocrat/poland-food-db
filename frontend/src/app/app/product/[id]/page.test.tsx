@@ -343,11 +343,11 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("65")).toBeInTheDocument();
+      expect(screen.getByText("35")).toBeInTheDocument();
     });
     expect(screen.getByText("/100")).toBeInTheDocument();
     expect(
-      screen.getByLabelText("Health score: 65 out of 100"),
+      screen.getByLabelText("TryVit Score: 35 out of 100"),
     ).toBeInTheDocument();
   });
 

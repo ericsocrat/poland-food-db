@@ -231,7 +231,7 @@
     "sortBy": "Sort by",
     "relevance": "Relevance",
     "name": "Name",
-    "healthScore": "Health Score",
+    "healthScore": "TryVit Score",
     "nutriScore": "Nutri-Score",
     "notRated": "Not Rated",
     "calories": "Calories",
@@ -244,7 +244,7 @@
     "nova2": "2 — Processed ingredients",
     "nova3": "3 — Processed",
     "nova4": "4 — Ultra-processed",
-    "maxHealthScore": "Max Health Score",
+    "maxHealthScore": "Max TryVit Score",
     "any": "Any",
     "clearAll": "Clear all",
     "closeFilters": "Close filters",
@@ -476,7 +476,7 @@
     "viewAllAlternatives": "View all alternatives"
   },
   "scoreGauge": {
-    "label": "Health score: {score} out of 100",
+    "label": "TryVit Score: {score} out of 100",
     "outOf": "/100",
     "noScore": "Score not available"
   },
@@ -533,7 +533,7 @@
     "metric": "Metric",
     "healthiest": "Healthiest",
     "best": "Best",
-    "unhealthinessScore": "Unhealthiness Score",
+    "tryvitScore": "TryVit Score",
     "novaGroupLabel": "NOVA Group",
     "none": "None",
     "noneDeclared": "None declared",
@@ -1148,7 +1148,7 @@
       "unknownTitle": "Why some products show 'UNKNOWN'",
       "unknownText": "When we don't have enough nutritional data to calculate a Nutri-Score, or when the product category isn't applicable (e.g., alcohol), the score is shown as UNKNOWN or NOT-APPLICABLE. This is more honest than guessing.",
       "ourApproachTitle": "Our approach",
-      "ourApproachText": "We use Nutri-Score as one of three independent dimensions. We never rely on it alone to judge a product. Our Unhealthiness Score and Processing Risk fill the gaps that Nutri-Score leaves."
+      "ourApproachText": "We use Nutri-Score as one of three independent dimensions. We never rely on it alone to judge a product. Our TryVit Score and Processing Risk fill the gaps that Nutri-Score leaves."
     },
     "novaGroups": {
       "title": "NOVA Food Classification",
@@ -1170,14 +1170,14 @@
       "polishContextTitle": "Polish context",
       "polishContextText": "Many popular products in Polish supermarkets like Żabka, Biedronka, and Lidl fall into NOVA 4. This doesn't mean you should never eat them — it means being aware of how much of your diet comes from ultra-processed sources.",
       "processingRiskTitle": "How we use it: Processing Risk",
-      "processingRiskText": "in TryVit, NOVA groups are mapped to three Processing Risk levels: Low (NOVA 1–2), Moderate (NOVA 3), and High (NOVA 4). This gives you a quick read on processing alongside our Unhealthiness Score and Nutri-Score."
+      "processingRiskText": "in TryVit, NOVA groups are mapped to three Processing Risk levels: Low (NOVA 1–2), Moderate (NOVA 3), and High (NOVA 4). This gives you a quick read on processing alongside our TryVit Score and Nutri-Score."
     },
-    "unhealthinessScore": {
-      "title": "Our Health Score",
-      "description": "How the 9-factor Unhealthiness Score works and what the bands mean.",
-      "summary": "The Unhealthiness Score (1–100) is our primary composite metric. It estimates cumulative harm potential by weighting 9 factors: saturated fat, sugars, salt, calories, trans fat, additives, preparation method, controversies, and ingredient concern.",
-      "whatIsTitle": "What is the Unhealthiness Score?",
-      "whatIsText": "The Unhealthiness Score answers a simple question: if someone ate this product regularly, how much cumulative harm potential does it carry? The scale runs from 1 (low concern) to 100 (very high concern). We deliberately call it 'Unhealthiness' rather than 'healthiness' — a score of 30 doesn't mean a product is healthy, it means it's less unhealthy than one scoring 70.",
+    "tryvitScore": {
+      "title": "TryVit Score",
+      "description": "How the 9-factor TryVit Score works and what the bands mean.",
+      "summary": "The TryVit Score (1–100) is our primary composite metric. Higher is better. It evaluates 9 factors: saturated fat, sugars, salt, calories, trans fat, additives, preparation method, controversies, and ingredient concern.",
+      "whatIsTitle": "What is the TryVit Score?",
+      "whatIsText": "The TryVit Score answers a simple question: how well does this product perform nutritionally? The scale runs from 1 (very high concern) to 100 (excellent). A score of 70 means the product is better than one scoring 30. We combine nine evidence-based factors into a single number so you can compare products at a glance.",
       "factorsTitle": "The 9 factors",
       "factorSatFat": "Saturated fat (weight: 17%) — ceiling: 10g per 100g. Based on EFSA daily reference values.",
       "factorSugars": "Sugars (weight: 17%) — ceiling: 27g per 100g. Based on WHO guideline for free sugars.",
@@ -1189,15 +1189,15 @@
       "factorControversies": "Controversies (weight: 8%) — captures product-level issues like palm oil or banned substances.",
       "factorConcern": "Ingredient concern (weight: 5%) — based on EFSA additive risk tiers (concern levels 0–3).",
       "bandsTitle": "Score bands",
-      "band1": "1–20: Low concern — plain oats, raw vegetables",
-      "band2": "21–40: Moderate — whole-grain bread, basic yogurt",
-      "band3": "41–60: Elevated — baked chips, sweetened cereal",
-      "band4": "61–80: High — fried chips, sugary drinks",
-      "band5": "81–100: Very high — deep-fried + high-salt + additives",
+      "band1": "80–100: Excellent — plain oats, raw vegetables",
+      "band2": "60–79: Good — whole-grain bread, basic yogurt",
+      "band3": "40–59: Moderate — baked chips, sweetened cereal",
+      "band4": "20–39: Poor — fried chips, sugary drinks",
+      "band5": "1–19: Bad — deep-fried + high-salt + additives",
       "formulaTitle": "How it's calculated",
       "formulaText": "Each factor is normalized to 0–100 (using scientifically-justified ceilings), multiplied by its weight, and summed. The result is clamped to 1–100. When data is missing, that factor defaults to 0 and the data completeness score is reduced.",
       "whyDifferentTitle": "Why not just use Nutri-Score?",
-      "whyDifferentText": "Nutri-Score ignores processing degree, food additives, preparation methods, and controversies. Our Unhealthiness Score fills those gaps by incorporating all nine factors into a single number backed by WHO, EFSA, and EU regulatory thresholds."
+      "whyDifferentText": "Nutri-Score ignores processing degree, food additives, preparation methods, and controversies. Our TryVit Score fills those gaps by incorporating all nine factors into a single number backed by WHO, EFSA, and EU regulatory thresholds."
     },
     "additives": {
       "title": "Understanding Additives",
@@ -1213,7 +1213,7 @@
       "concernTier2": "Tier 2 — Moderate concern: Some artificial sweeteners and colorants. Safe at approved levels but subject to ongoing research.",
       "concernTier3": "Tier 3 — High concern: Nitrites (E250), BHA (E320), certain azo dyes. EFSA has flagged concerns; some have reduced ADIs.",
       "howWeUseTitle": "How we use this",
-      "howWeUseText": "in TryVit, each ingredient is assigned a concern tier based on EFSA evaluations. The product's ingredient concern score (0–100) contributes 5% to the overall Unhealthiness Score. Products with no concerning additives score 0 on this factor.",
+      "howWeUseText": "in TryVit, each ingredient is assigned a concern tier based on EFSA evaluations. The product's ingredient concern score (0–100) contributes 5% to the overall TryVit Score. Products with no concerning additives score 0 on this factor.",
       "polishContextTitle": "Polish context",
       "polishContextText": "Polish food labeling follows EU Regulation 1169/2011. All additives must be listed by their E-number or full name in the ingredients list. When shopping at Żabka or Biedronka, check the ingredient list — shorter lists with recognizable ingredients generally indicate less processing."
     },
@@ -1251,7 +1251,7 @@
       "nutritionTableTitle": "The nutrition table",
       "nutritionTableText": "EU law requires all pre-packaged food to display a nutritional declaration. The table must include: energy (kJ/kcal), fat, saturated fat, carbohydrates, sugars, protein, and salt. All values are given per 100g (or per 100ml for liquids).",
       "per100gTitle": "Per 100g vs per serving",
-      "per100gText": "The per-100g column allows fair comparison between products — it's the standard used by Nutri-Score and our Unhealthiness Score. The per-serving column is optional and depends on the manufacturer's defined serving size, which can vary widely. Always check the serving size when using per-serving values.",
+      "per100gText": "The per-100g column allows fair comparison between products — it's the standard used by Nutri-Score and our TryVit Score. The per-serving column is optional and depends on the manufacturer's defined serving size, which can vary widely. Always check the serving size when using per-serving values.",
       "mandatoryTitle": "Mandatory label elements in Poland",
       "mandatoryItem1": "Product name (nazwa produktu)",
       "mandatoryItem2": "Ingredients list (skład) — in descending order by weight",
@@ -1274,7 +1274,7 @@
       "description": "What verified, estimated, and low confidence mean for our product data.",
       "summary": "Not all product data is equally reliable. We use three confidence levels — Verified, Estimated, and Low — so you always know how much to trust the scores you see.",
       "whyTitle": "Why confidence matters",
-      "whyText": "Our Unhealthiness Score is only as good as the data behind it. Some products have complete, label-verified nutritional data. Others have gaps we've filled with estimates. We believe in being transparent about this.",
+      "whyText": "Our TryVit Score is only as good as the data behind it. Some products have complete, label-verified nutritional data. Others have gaps we've filled with estimates. We believe in being transparent about this.",
       "levelsTitle": "Confidence levels",
       "levelVerified": "Verified — All data comes from the primary label source. Every nutrition field has been confirmed against the actual product packaging. This is the highest confidence level.",
       "levelEstimated": "Estimated — Some values have been estimated from category averages or similar products. The score is reliable but may not match the exact label values.",

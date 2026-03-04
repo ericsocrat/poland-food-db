@@ -10,6 +10,7 @@ import { SkipLink } from "@/components/common/SkipLink";
 import { useSharedList } from "@/hooks/use-lists";
 import { NUTRI_COLORS, SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { toTryVitScore } from "@/lib/score-utils";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 
@@ -102,7 +103,7 @@ export default function SharedListPage() {
                     <div
                       className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
                     >
-                      {item.unhealthiness_score}
+                      {toTryVitScore(item.unhealthiness_score)}
                     </div>
 
                     {/* Product info */}

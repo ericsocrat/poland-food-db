@@ -1,8 +1,17 @@
 /**
- * Score band utilities — maps unhealthiness scores (1–100) to visual bands.
+ * TryVit Score utilities — consumer-friendly score inversion and band mapping.
  *
- * Canonical band definitions for the 5-band scoring system.
- * Used by ScoreBadge, ScoreGauge, and comparison/search UI.
+ * The API returns `unhealthiness_score` (1–100, lower = healthier).
+ * The frontend displays the **TryVit Score** (1–100, higher = healthier):
+ *
+ *   TryVit Score = 100 − unhealthiness_score
+ *
+ * Band mapping (by unhealthiness input):
+ *   1–20  → green  (Excellent)
+ *   21–40 → yellow (Good)
+ *   41–60 → orange (Moderate)
+ *   61–80 → red    (Poor)
+ *   81–100 → dark red (Bad)
  *
  * @see docs/SCORING_METHODOLOGY.md
  */
@@ -14,7 +23,7 @@ import type { ScoreColorBand } from "@/lib/constants";
 export interface ScoreBand {
   /** Band key: "green" | "yellow" | "orange" | "red" | "darkred". */
   readonly band: ScoreColorBand;
-  /** Human-readable label: "Low", "Moderate", "High", "Very High", "Extreme". */
+  /** Consumer-facing label: "Excellent", "Good", "Moderate", "Poor", "Bad". */
   readonly label: string;
   /** CSS variable reference for the band's primary color. */
   readonly color: string;
@@ -28,31 +37,31 @@ export interface ScoreBand {
 
 const BAND_CONFIG: Record<ScoreColorBand, Omit<ScoreBand, "band">> = {
   green: {
-    label: "Low",
+    label: "Excellent",
     color: "var(--color-score-green)",
     bgColor: "bg-score-green/10",
     textColor: "text-score-green-text",
   },
   yellow: {
-    label: "Moderate",
+    label: "Good",
     color: "var(--color-score-yellow)",
     bgColor: "bg-score-yellow/10",
     textColor: "text-score-yellow-text",
   },
   orange: {
-    label: "High",
+    label: "Moderate",
     color: "var(--color-score-orange)",
     bgColor: "bg-score-orange/10",
     textColor: "text-score-orange-text",
   },
   red: {
-    label: "Very High",
+    label: "Poor",
     color: "var(--color-score-red)",
     bgColor: "bg-score-red/10",
     textColor: "text-score-red-text",
   },
   darkred: {
-    label: "Extreme",
+    label: "Bad",
     color: "var(--color-score-darkred)",
     bgColor: "bg-score-darkred/10",
     textColor: "text-score-darkred-text",
@@ -62,14 +71,35 @@ const BAND_CONFIG: Record<ScoreColorBand, Omit<ScoreBand, "band">> = {
 // ─── Public API ─────────────────────────────────────────────────────────────
 
 /**
- * Resolve a score (1–100) to its full band configuration.
+ * Convert an API unhealthiness score (1–100, lower = healthier) to a
+ * consumer-friendly TryVit Score (0–100, higher = healthier).
+ *
+ * Formula: `TryVit Score = 100 − unhealthiness_score`, clamped to [0, 100].
+ *
+ * @example
+ * ```ts
+ * toTryVitScore(8);   // → 92  (excellent)
+ * toTryVitScore(57);  // → 43  (moderate)
+ * toTryVitScore(100); // → 0   (worst)
+ * toTryVitScore(0);   // → 100 (best, edge case)
+ * ```
+ */
+export function toTryVitScore(unhealthinessScore: number): number {
+  return Math.max(0, Math.min(100, 100 - unhealthinessScore));
+}
+
+/**
+ * Resolve an unhealthiness score (1–100) to its full band configuration.
+ *
+ * The score input is the raw **unhealthiness** value from the API.
+ * Band color assignment: low unhealthiness → green, high → darkred.
  *
  * Returns `null` for invalid inputs (null, undefined, NaN, out of range).
  *
  * @example
  * ```ts
- * getScoreBand(23);
- * // → { band: "yellow", label: "Moderate", color: "var(--color-score-yellow)", … }
+ * getScoreBand(8);
+ * // → { band: "green", label: "Excellent", color: "var(--color-score-green)", … }
  *
  * getScoreBand(null);  // → null
  * getScoreBand(0);     // → null (out of range)

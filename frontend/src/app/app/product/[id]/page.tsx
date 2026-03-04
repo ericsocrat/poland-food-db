@@ -3,60 +3,61 @@
 // ─── Product detail page ────────────────────────────────────────────────────
 // Uses the composite api_get_product_profile() endpoint for a single round-trip.
 
-import { useState, useEffect, useCallback } from "react";
-import { useParams } from "next/navigation";
-import { eventBus } from "@/lib/events";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import Link from "next/link";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { createClient } from "@/lib/supabase/client";
-import { getProductProfile, recordProductView } from "@/lib/api";
-import { IS_QA_MODE } from "@/lib/qa-mode";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import {
-  SCORE_BANDS,
-  FEATURES,
-  scoreBandFromScore,
-  getScoreInterpretation,
-} from "@/lib/constants";
+import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
+import { PrintButton } from "@/components/common/PrintButton";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
-import {
-  HealthWarningsCard,
-  HealthWarningBadge,
-} from "@/components/product/HealthWarningsCard";
-import { AvoidBadge } from "@/components/product/AvoidBadge";
-import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { AddToListMenu } from "@/components/product/AddToListMenu";
+import { AllergenMatrix } from "@/components/product/AllergenMatrix";
+import { AvoidBadge } from "@/components/product/AvoidBadge";
+import { DVLegend } from "@/components/product/DVLegend";
+import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
+import {
+    HealthWarningBadge,
+    HealthWarningsCard,
+} from "@/components/product/HealthWarningsCard";
+import { IngredientList } from "@/components/product/IngredientList";
+import { NovaIndicator } from "@/components/product/NovaIndicator";
+import { NutritionDVBar } from "@/components/product/NutritionDVBar";
 import { ProductHeroImage } from "@/components/product/ProductHeroImage";
 import { ProductImageTabs } from "@/components/product/ProductImageTabs";
-import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
-import { NutritionDVBar } from "@/components/product/NutritionDVBar";
-import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
-import { DVLegend } from "@/components/product/DVLegend";
-import { ShareButton } from "@/components/product/ShareButton";
-import { ScoreGauge } from "@/components/product/ScoreGauge";
-import { ScoreRadarChart } from "@/components/product/ScoreRadarChart";
-import { getTrafficLight } from "@/components/product/TrafficLightChip";
-import { NovaIndicator } from "@/components/product/NovaIndicator";
-import { TrafficLightStrip } from "@/components/product/TrafficLightStrip";
-import { useAnalytics } from "@/hooks/use-analytics";
-import { useTranslation } from "@/lib/i18n";
-import { ErrorBoundary } from "@/components/common/ErrorBoundary";
-import { PrintButton } from "@/components/common/PrintButton";
-import { WatchButton } from "@/components/product/WatchButton";
-import { ScoreHistoryPanel } from "@/components/product/ScoreHistoryPanel";
 import { ScoreBreakdownPanel } from "@/components/product/ScoreBreakdownPanel";
-import { AllergenMatrix } from "@/components/product/AllergenMatrix";
-import { IngredientList } from "@/components/product/IngredientList";
+import { ScoreGauge } from "@/components/product/ScoreGauge";
+import { ScoreHistoryPanel } from "@/components/product/ScoreHistoryPanel";
+import { ScoreRadarChart } from "@/components/product/ScoreRadarChart";
+import { ShareButton } from "@/components/product/ShareButton";
+import { getTrafficLight } from "@/components/product/TrafficLightChip";
+import { TrafficLightStrip } from "@/components/product/TrafficLightStrip";
+import { WatchButton } from "@/components/product/WatchButton";
 import { CachedTimestamp } from "@/components/pwa/CachedTimestamp";
+import { useAnalytics } from "@/hooks/use-analytics";
 import { useOnlineStatus } from "@/hooks/use-online-status";
+import { getProductProfile, recordProductView } from "@/lib/api";
 import { cacheProduct, getCachedProduct } from "@/lib/cache-manager";
-import { Info, Globe, ChevronDown, ChevronUp } from "lucide-react";
+import {
+    FEATURES,
+    getScoreInterpretation,
+    SCORE_BANDS,
+    scoreBandFromScore,
+} from "@/lib/constants";
+import { eventBus } from "@/lib/events";
+import { useTranslation } from "@/lib/i18n";
+import { IS_QA_MODE } from "@/lib/qa-mode";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { toTryVitScore } from "@/lib/score-utils";
+import { createClient } from "@/lib/supabase/client";
 import type {
-  ProductProfile,
-  ProfileAlternative,
-  DataConfidence,
+    DataConfidence,
+    ProductProfile,
+    ProfileAlternative,
 } from "@/lib/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChevronDown, ChevronUp, Globe, Info } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
 
@@ -368,7 +369,7 @@ export default function ProductDetailPage() {
           </div>
 
           {/* Score interpretation — expandable "What does this score mean?" */}
-          <ScoreInterpretationCard score={profile.scores.unhealthiness_score} />
+          <ScoreInterpretationCard score={toTryVitScore(profile.scores.unhealthiness_score)} />
 
           {/* Personalized health warnings */}
           <ErrorBoundary
@@ -454,7 +455,7 @@ function QuickSummary({
   onExpand: () => void;
 }>) {
   const { t } = useTranslation();
-  const interp = getScoreInterpretation(profile.scores.unhealthiness_score);
+  const interp = getScoreInterpretation(toTryVitScore(profile.scores.unhealthiness_score));
   const topAlts = profile.alternatives.slice(0, 2);
 
   return (
@@ -975,7 +976,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].bg} ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].color}`}
         >
-          {alt.unhealthiness_score}
+          {toTryVitScore(alt.unhealthiness_score)}
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-foreground">
@@ -1054,7 +1055,7 @@ function ScoringTab({ profile }: Readonly<{ profile: ProductProfile }>) {
       {/* Detailed score breakdown (lazy-loaded) */}
       <ScoreBreakdownPanel
         productId={profile.product.product_id}
-        score={scores.unhealthiness_score}
+        score={toTryVitScore(scores.unhealthiness_score)}
         scoreBand={SCORE_BANDS[scores.score_band]?.label ?? scores.score_band}
       />
 

@@ -18,7 +18,7 @@ const plJson = JSON.parse(readFileSync(join(messagesDir, "pl.json"), "utf-8"));
 const TOPICS = [
   "nutri-score",
   "nova-groups",
-  "unhealthiness-score",
+  "tryvit-score",
   "additives",
   "allergens",
   "reading-labels",
@@ -206,7 +206,7 @@ describe("i18n: English learn keys", () => {
   for (const topic of [
     "nutriScore",
     "novaGroups",
-    "unhealthinessScore",
+    "tryvitScore",
     "additives",
     "allergens",
     "readingLabels",
@@ -240,7 +240,7 @@ describe("i18n: Polish learn keys", () => {
   for (const topic of [
     "nutriScore",
     "novaGroups",
-    "unhealthinessScore",
+    "tryvitScore",
     "additives",
     "allergens",
     "readingLabels",
@@ -273,8 +273,8 @@ describe("Content accuracy checks", () => {
     expect(enJson.learn.additives.whatAreText).toContain("EFSA");
   });
 
-  it("mentions WHO in unhealthiness score content", () => {
-    expect(enJson.learn.unhealthinessScore.factorSalt).toContain("WHO");
+  it("mentions WHO in TryVit Score content", () => {
+    expect(enJson.learn.tryvitScore.factorSalt).toContain("WHO");
   });
 
   it("lists all 14 EU allergens", () => {

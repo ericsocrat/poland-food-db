@@ -1,7 +1,7 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import ScanResultPage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -286,7 +286,7 @@ describe("ScanResultPage", () => {
       render(<ScanResultPage />, { wrapper: createWrapper() });
 
       await waitFor(() => {
-        expect(screen.getByText("65")).toBeInTheDocument();
+        expect(screen.getByText("35")).toBeInTheDocument();
       });
     });
 
@@ -654,8 +654,8 @@ describe("ScanResultPage", () => {
       await waitFor(() => {
         expect(screen.getByText("Green Snack")).toBeInTheDocument();
       });
-      // Score 10 and nutri-score A should be shown
-      expect(screen.getByText("10")).toBeInTheDocument();
+      // Score 10 (unhealthiness) → TryVit Score 90, and nutri-score A should be shown
+      expect(screen.getByText("90")).toBeInTheDocument();
     });
   });
 });

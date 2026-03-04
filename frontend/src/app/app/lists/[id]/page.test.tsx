@@ -213,8 +213,8 @@ describe("ListDetailPage", () => {
 
   it("shows scores on list items", () => {
     render(<ListDetailPage />);
-    expect(screen.getByText("18")).toBeInTheDocument();
-    expect(screen.getByText("62")).toBeInTheDocument();
+    expect(screen.getByText("82")).toBeInTheDocument();
+    expect(screen.getByText("38")).toBeInTheDocument();
   });
 
   it("shows nutri-score labels", () => {
