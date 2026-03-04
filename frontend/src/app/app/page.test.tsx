@@ -226,8 +226,8 @@ describe("DashboardPage", () => {
   it("renders score pills", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getAllByText("65").length).toBeGreaterThanOrEqual(1);
-      expect(screen.getAllByText("30").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("35").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("70").length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -327,9 +327,9 @@ describe("DashboardPage", () => {
   it("shows weekly average score", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      // Avg of 65 + 30 = 95 / 2 = 48 (rounded)
+      // Avg of 65 + 30 = 95 / 2 = 48 (rounded), displayed as toTryVitScore(48) = 52
       const avgBadge = screen.getByTestId("weekly-avg-score");
-      expect(avgBadge).toHaveTextContent("48");
+      expect(avgBadge).toHaveTextContent("52");
     });
   });
 

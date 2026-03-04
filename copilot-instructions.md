@@ -1109,13 +1109,15 @@ unhealthiness_score (1-100) =
 
 **Ceilings** (per 100g): sat fat 10g, sugars 27g, salt 3g, trans fat 2g, calories 600 kcal, additives 10, ingredient concern 100.
 
-| Band     | Score  | Meaning        |
-| -------- | ------ | -------------- |
-| Green    | 1–20   | Low risk       |
-| Yellow   | 21–40  | Moderate risk  |
-| Orange   | 41–60  | Elevated risk  |
-| Red      | 61–80  | High risk      |
-| Dark red | 81–100 | Very high risk |
+**Consumer display (TryVit Score):** `TryVit Score = 100 − unhealthiness_score` (higher = healthier). This is a presentation-layer inversion only — the database, formula, and regression anchors (§8.19) all use unhealthiness values.
+
+| Band     | Unhealthiness | TryVit Score | Consumer Label | Meaning        |
+| -------- | ------------- | ------------ | -------------- | -------------- |
+| Green    | 1–20          | 80–100       | Excellent      | Low risk       |
+| Yellow   | 21–40         | 60–79        | Good           | Moderate risk  |
+| Orange   | 41–60         | 40–59        | Moderate       | Elevated risk  |
+| Red      | 61–80         | 20–39        | Poor           | High risk      |
+| Dark red | 81–100        | 1–19         | Bad            | Very high risk |
 
 Full documentation: `docs/SCORING_METHODOLOGY.md`
 

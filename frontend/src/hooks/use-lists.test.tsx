@@ -1,22 +1,23 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  useLists,
-  useListItems,
-  useSharedList,
-  useAvoidProductIds,
-  useFavoriteProductIds,
-  useProductListMembership,
-  useCreateList,
-  useUpdateList,
-  useDeleteList,
-  useAddToList,
-  useRemoveFromList,
-  useReorderList,
-  useToggleShare,
-  useRevokeShare,
+    useAddToList,
+    useAvoidProductIds,
+    useCreateList,
+    useDeleteList,
+    useFavoriteProductIds,
+    useListItems,
+    useListPreview,
+    useLists,
+    useProductListMembership,
+    useRemoveFromList,
+    useReorderList,
+    useRevokeShare,
+    useSharedList,
+    useToggleShare,
+    useUpdateList,
 } from "@/hooks/use-lists";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { renderHook, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -82,6 +83,16 @@ vi.mock("@/stores/favorites-store", () => ({
       addFavorite: mockAddFavorite,
       removeFavorite: mockRemoveFavorite,
     }),
+}));
+
+const mockTrack = vi.fn();
+vi.mock("@/hooks/use-analytics", () => ({
+  useAnalytics: () => ({ track: mockTrack }),
+}));
+
+const mockEventBusEmit = vi.fn().mockResolvedValue(undefined);
+vi.mock("@/lib/events", () => ({
+  eventBus: { emit: (...args: unknown[]) => mockEventBusEmit(...args) },
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -230,6 +241,56 @@ describe("useProductListMembership", () => {
   });
 });
 
+describe("useListPreview", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it("fetches first 3 items for a list preview", async () => {
+    const data = { items: [{ product_id: 1 }, { product_id: 2 }] };
+    mockGetListItems.mockResolvedValue({ ok: true, data });
+
+    const { result } = renderHook(() => useListPreview("list-1", 5), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(data);
+    expect(mockGetListItems).toHaveBeenCalledWith(
+      expect.anything(),
+      "list-1",
+      3,
+      0,
+    );
+  });
+
+  it("does not fetch when listId is undefined", () => {
+    const { result } = renderHook(() => useListPreview(undefined, 5), {
+      wrapper: createWrapper(),
+    });
+    expect(result.current.fetchStatus).toBe("idle");
+  });
+
+  it("does not fetch when itemCount is 0", () => {
+    const { result } = renderHook(() => useListPreview("list-1", 0), {
+      wrapper: createWrapper(),
+    });
+    expect(result.current.fetchStatus).toBe("idle");
+  });
+
+  it("handles error from API", async () => {
+    mockGetListItems.mockResolvedValue({
+      ok: false,
+      error: { code: "ERR", message: "access denied" },
+    });
+
+    const { result } = renderHook(() => useListPreview("list-1", 3), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("access denied");
+  });
+});
+
 // ─── Mutation tests ─────────────────────────────────────────────────────────
 
 describe("useCreateList", () => {
@@ -249,6 +310,42 @@ describe("useCreateList", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockCreateList).toHaveBeenCalled();
+  });
+
+  it("tracks analytics and emits event on success", async () => {
+    mockCreateList.mockResolvedValue({
+      ok: true,
+      data: { list_id: "new-2" },
+    });
+
+    const { result } = renderHook(() => useCreateList(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ name: "Tracked List", listType: "custom" });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockTrack).toHaveBeenCalledWith("list_created", {
+      name: "Tracked List",
+      list_type: "custom",
+    });
+    expect(mockEventBusEmit).toHaveBeenCalledWith({
+      type: "list.created",
+      payload: {},
+    });
+  });
+
+  it("handles API rejection", async () => {
+    mockCreateList.mockRejectedValue(new Error("network error"));
+
+    const { result } = renderHook(() => useCreateList(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ name: "Fail" });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("network error");
   });
 });
 
@@ -270,6 +367,19 @@ describe("useUpdateList", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockUpdateList).toHaveBeenCalled();
   });
+
+  it("handles API rejection", async () => {
+    mockUpdateList.mockRejectedValue(new Error("update failed"));
+
+    const { result } = renderHook(() => useUpdateList(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ listId: "l1", name: "Fail" });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("update failed");
+  });
 });
 
 describe("useDeleteList", () => {
@@ -289,6 +399,19 @@ describe("useDeleteList", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockDeleteList).toHaveBeenCalled();
+  });
+
+  it("handles API rejection", async () => {
+    mockDeleteList.mockRejectedValue(new Error("delete failed"));
+
+    const { result } = renderHook(() => useDeleteList(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate("l1");
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("delete failed");
   });
 });
 
@@ -345,6 +468,43 @@ describe("useAddToList", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockAddFavorite).toHaveBeenCalledWith(42);
+  });
+
+  it("tracks analytics and emits event on success", async () => {
+    mockAddToList.mockResolvedValue({
+      ok: true,
+      data: { added: true, list_type: "custom" },
+    });
+
+    const { result } = renderHook(() => useAddToList(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ listId: "l1", productId: 99, listType: "custom" });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockTrack).toHaveBeenCalledWith("list_item_added", {
+      list_id: "l1",
+      product_id: 99,
+      list_type: "custom",
+    });
+    expect(mockEventBusEmit).toHaveBeenCalledWith({
+      type: "product.added_to_list",
+      payload: { productId: 99, listId: "l1" },
+    });
+  });
+
+  it("handles API rejection", async () => {
+    mockAddToList.mockRejectedValue(new Error("add failed"));
+
+    const { result } = renderHook(() => useAddToList(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ listId: "l1", productId: 42 });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("add failed");
   });
 });
 
@@ -405,6 +565,19 @@ describe("useRemoveFromList", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockRemoveFavorite).toHaveBeenCalledWith(42);
   });
+
+  it("handles API rejection", async () => {
+    mockRemoveFromList.mockRejectedValue(new Error("remove failed"));
+
+    const { result } = renderHook(() => useRemoveFromList(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ listId: "l1", productId: 42 });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("remove failed");
+  });
 });
 
 describe("useReorderList", () => {
@@ -424,6 +597,19 @@ describe("useReorderList", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockReorderList).toHaveBeenCalled();
+  });
+
+  it("handles API rejection", async () => {
+    mockReorderList.mockRejectedValue(new Error("reorder failed"));
+
+    const { result } = renderHook(() => useReorderList(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ listId: "l1", productIds: [1, 2] });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("reorder failed");
   });
 });
 
@@ -445,6 +631,19 @@ describe("useToggleShare", () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockToggleShare).toHaveBeenCalled();
   });
+
+  it("handles API rejection", async () => {
+    mockToggleShare.mockRejectedValue(new Error("share failed"));
+
+    const { result } = renderHook(() => useToggleShare(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ listId: "l1", enabled: true });
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("share failed");
+  });
 });
 
 describe("useRevokeShare", () => {
@@ -464,5 +663,18 @@ describe("useRevokeShare", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(mockRevokeShare).toHaveBeenCalled();
+  });
+
+  it("handles API rejection", async () => {
+    mockRevokeShare.mockRejectedValue(new Error("revoke failed"));
+
+    const { result } = renderHook(() => useRevokeShare(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate("l1");
+
+    await waitFor(() => expect(result.current.isError).toBe(true));
+    expect(result.current.error?.message).toBe("revoke failed");
   });
 });

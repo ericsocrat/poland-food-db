@@ -1,7 +1,7 @@
 # Scoring Methodology
 
 > **Version:** 3.2
-> **Last updated:** 2026-02-10
+> **Last updated:** 2026-03-15
 > **Scope:** TryVit
 
 ---
@@ -169,17 +169,59 @@ The `score_category()` procedure handles: ingredient concern defaults,
 
 ### 2.6 Score Bands
 
-| Range  | Interpretation                              | Typical products                   |
-| ------ | ------------------------------------------- | ---------------------------------- |
-| 1–20   | Low concern                                 | Plain oats, raw vegetables         |
-| 21–40  | Moderate — acceptable for regular use       | Whole-grain bread, basic yogurt    |
-| 41–60  | Elevated — occasional consumption advised   | Baked chips, sweetened cereal      |
-| 61–80  | High — frequent use is a health risk        | Fried chips, sugary drinks         |
-| 81–100 | Very high — minimal consumption recommended | Deep-fried + high-salt + additives |
+| Unhealthiness | Interpretation                              | TryVit Score | Consumer Band | Typical products                   |
+| ------------- | ------------------------------------------- | ------------ | ------------- | ---------------------------------- |
+| 1–20          | Low concern                                 | 80–100       | Excellent     | Plain oats, raw vegetables         |
+| 21–40         | Moderate — acceptable for regular use       | 60–79        | Good          | Whole-grain bread, basic yogurt    |
+| 41–60         | Elevated — occasional consumption advised   | 40–59        | Moderate      | Baked chips, sweetened cereal      |
+| 61–80         | High — frequent use is a health risk        | 20–39        | Poor          | Fried chips, sugary drinks         |
+| 81–100        | Very high — minimal consumption recommended | 1–19         | Bad           | Deep-fried + high-salt + additives |
 
 ### ~~2.7 Scoring Version~~ (removed — column dropped in migration 20260211000500)
 
 > The `scoring_version` column was dropped because all rows were `'v3.2'`. The version is now tracked only in `score_breakdown->>'version'` (JSONB). When methodology changes, update the function and this document.
+
+### 2.8 Consumer Display Layer (TryVit Score)
+
+The user-facing app presents health scores as the **TryVit Score** — a simple inversion of the internal unhealthiness score so that **higher values mean healthier products**.
+
+```
+TryVit Score = 100 − unhealthiness_score
+```
+
+Clamped to `[0, 100]`. A product with `unhealthiness_score = 25` displays as **TryVit Score 75**.
+
+**Rationale:** Consumer research consistently shows that "higher = better" scales are easier to understand and act on. The internal unhealthiness scale (lower = better) is retained in the database and scoring formula because it directly models harm accumulation — "how much risk does this product carry?" The display inversion is a **presentation-layer transformation only**; no formula, weight, or ceiling values change.
+
+**Important:** The underlying `compute_unhealthiness_v32()` function, all database columns (`unhealthiness_score`), and all regression anchors (§8.19 in `copilot-instructions.md`) continue to use the unhealthiness scale. The TryVit Score is computed at display time in the frontend.
+
+#### Consumer Band Table
+
+| TryVit Score | Consumer Label | Color   | Internal Unhealthiness | Internal Band |
+| ------------ | -------------- | ------- | ---------------------- | ------------- |
+| 80–100       | Excellent      | Green   | 1–20                   | Low concern   |
+| 60–79        | Good           | Yellow  | 21–40                  | Moderate      |
+| 40–59        | Moderate       | Orange  | 41–60                  | Elevated      |
+| 20–39        | Poor           | Red     | 61–80                  | High          |
+| 1–19         | Bad            | Darkred | 81–100                 | Very high     |
+
+#### Frontend Implementation
+
+The TryVit Score is computed by `toTryVitScore(unhealthinessScore)` in `frontend/src/lib/score-utils.ts`. Band resolution uses `getScoreBand()` which maps the **unhealthiness** value to its color/label configuration. The consumer-facing labels (Excellent, Good, Moderate, Poor, Bad) are resolved via i18n dictionary keys.
+
+### 2.9 Category Percentile
+
+Each product receives a **category percentile** indicating its relative ranking within its category. The percentile answers: *"This product is healthier than X% of products in its category."*
+
+```
+percentile = ((total_in_category − rank) / total_in_category) × 100
+```
+
+Where `rank` is the product's position when sorted by `unhealthiness_score` ascending (healthiest first). A product ranked 3rd out of 50 in its category has percentile = `((50 − 3) / 50) × 100 = 94%`.
+
+**Data source:** The `api_score_explanation()` function returns `category_rank`, `category_total`, and `category_avg_score` in its response, enabling the frontend to compute and display the percentile badge.
+
+**Display:** The frontend shows a "Top X%" badge when the product is in the top 25% of its category (percentile ≥ 75).
 
 ---
 

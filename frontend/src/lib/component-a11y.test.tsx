@@ -103,7 +103,7 @@ describe("ScoreBadge — a11y", () => {
     const { container } = render(<ScoreBadge score={42} />);
     const badge = container.querySelector("[aria-label]");
     expect(badge).toBeTruthy();
-    expect(badge?.getAttribute("aria-label")).toContain("42");
+    expect(badge?.getAttribute("aria-label")).toContain("58");
   });
 
   it("N/A badge has aria-label", async () => {

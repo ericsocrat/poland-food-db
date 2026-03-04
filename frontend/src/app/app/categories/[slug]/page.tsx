@@ -20,6 +20,7 @@ import { SCORE_BANDS } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { toTryVitScore } from "@/lib/score-utils";
 import { createClient } from "@/lib/supabase/client";
 import type { CategoryOverviewItem, CategoryProduct } from "@/lib/types";
 import { formatSlug } from "@/lib/validation";
@@ -296,7 +297,7 @@ function ProductRow({
           <div
             className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
           >
-            {product.unhealthiness_score}
+            {toTryVitScore(product.unhealthiness_score)}
           </div>
           <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
         </li>
@@ -317,7 +318,7 @@ function ProductRow({
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
         >
-          {product.unhealthiness_score}
+          {toTryVitScore(product.unhealthiness_score)}
         </div>
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-foreground">

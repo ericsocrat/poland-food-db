@@ -1,25 +1,25 @@
-import { describe, it, expect } from "vitest";
+import * as TooltipPrimitive from "@radix-ui/react-tooltip";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import * as TooltipPrimitive from "@radix-ui/react-tooltip";
+import { describe, expect, it } from "vitest";
 import { ScoreBadge } from "./ScoreBadge";
 
 describe("ScoreBadge", () => {
   it("renders score value", () => {
     render(<ScoreBadge score={42} />);
-    expect(screen.getByText("42")).toBeTruthy();
+    expect(screen.getByText("58")).toBeTruthy();
   });
 
   it("maps score 1–20 to green band", () => {
     render(<ScoreBadge score={15} />);
-    const badge = screen.getByText("15");
+    const badge = screen.getByText("85");
     expect(badge.className).toContain("text-score-green-text");
     expect(badge.className).toContain("bg-score-green/10");
   });
 
   it("maps score 21–40 to yellow band", () => {
     render(<ScoreBadge score={30} />);
-    const badge = screen.getByText("30");
+    const badge = screen.getByText("70");
     expect(badge.className).toContain("text-score-yellow-text");
   });
 
@@ -31,13 +31,13 @@ describe("ScoreBadge", () => {
 
   it("maps score 61–80 to red band", () => {
     render(<ScoreBadge score={75} />);
-    const badge = screen.getByText("75");
+    const badge = screen.getByText("25");
     expect(badge.className).toContain("text-score-red-text");
   });
 
   it("maps score 81–100 to darkred band", () => {
     render(<ScoreBadge score={95} />);
-    const badge = screen.getByText("95");
+    const badge = screen.getByText("5");
     expect(badge.className).toContain("text-score-darkred-text");
   });
 
@@ -61,7 +61,7 @@ describe("ScoreBadge", () => {
 
   it("shows label when showLabel is true", () => {
     render(<ScoreBadge score={15} showLabel />);
-    expect(screen.getByText("Low")).toBeTruthy();
+    expect(screen.getByText("Excellent")).toBeTruthy();
   });
 
   it("applies size classes", () => {
@@ -71,7 +71,7 @@ describe("ScoreBadge", () => {
 
   it("has accessible aria-label", () => {
     render(<ScoreBadge score={42} />);
-    expect(screen.getByLabelText("Score: 42")).toBeTruthy();
+    expect(screen.getByLabelText("Score: 58")).toBeTruthy();
   });
 
   it("shows tooltip on hover when showTooltip is true", async () => {
@@ -82,7 +82,7 @@ describe("ScoreBadge", () => {
       </TooltipPrimitive.Provider>,
     );
 
-    await user.hover(screen.getByText("15"));
+    await user.hover(screen.getByText("85"));
     const tooltip = await screen.findByRole("tooltip");
     expect(tooltip.textContent).toContain("Score 1–20");
   });
@@ -96,84 +96,84 @@ describe("ScoreBadge", () => {
 
   it("maps boundary score 20 to green (upper green boundary)", () => {
     render(<ScoreBadge score={20} />);
-    const badge = screen.getByText("20");
+    const badge = screen.getByText("80");
     expect(badge.className).toContain("text-score-green");
   });
 
   it("maps boundary score 21 to yellow (lower yellow boundary)", () => {
     render(<ScoreBadge score={21} />);
-    const badge = screen.getByText("21");
+    const badge = screen.getByText("79");
     expect(badge.className).toContain("text-score-yellow");
   });
 
   it("maps boundary score 40 to yellow (upper yellow boundary)", () => {
     render(<ScoreBadge score={40} />);
-    const badge = screen.getByText("40");
+    const badge = screen.getByText("60");
     expect(badge.className).toContain("text-score-yellow");
   });
 
   it("maps boundary score 41 to orange (lower orange boundary)", () => {
     render(<ScoreBadge score={41} />);
-    const badge = screen.getByText("41");
+    const badge = screen.getByText("59");
     expect(badge.className).toContain("text-score-orange");
   });
 
   it("maps boundary score 60 to orange (upper orange boundary)", () => {
     render(<ScoreBadge score={60} />);
-    const badge = screen.getByText("60");
+    const badge = screen.getByText("40");
     expect(badge.className).toContain("text-score-orange");
   });
 
   it("maps boundary score 61 to red (lower red boundary)", () => {
     render(<ScoreBadge score={61} />);
-    const badge = screen.getByText("61");
+    const badge = screen.getByText("39");
     expect(badge.className).toContain("text-score-red");
   });
 
   it("maps boundary score 80 to red (upper red boundary)", () => {
     render(<ScoreBadge score={80} />);
-    const badge = screen.getByText("80");
+    const badge = screen.getByText("20");
     expect(badge.className).toContain("text-score-red");
   });
 
   it("maps boundary score 81 to darkred (lower darkred boundary)", () => {
     render(<ScoreBadge score={81} />);
-    const badge = screen.getByText("81");
+    const badge = screen.getByText("19");
     expect(badge.className).toContain("text-score-darkred");
   });
 
   it("maps boundary score 100 to darkred (upper darkred boundary)", () => {
     render(<ScoreBadge score={100} />);
-    const badge = screen.getByText("100");
+    const badge = screen.getByText("0");
     expect(badge.className).toContain("text-score-darkred");
   });
 
   it("maps minimum valid score 1 to green", () => {
     render(<ScoreBadge score={1} />);
-    const badge = screen.getByText("1");
+    const badge = screen.getByText("99");
     expect(badge.className).toContain("text-score-green");
   });
 
   // ─── Red & Dark Red label and aria tests (Issue #373) ─────────────────
 
-  it("shows 'Very High' label for Red band scores", () => {
+  it("shows 'Poor' label for Red band scores", () => {
     render(<ScoreBadge score={70} showLabel />);
-    expect(screen.getByText("Very High")).toBeTruthy();
+    expect(screen.getByText("Poor")).toBeTruthy();
   });
 
-  it("shows 'Extreme' label for Dark Red band scores", () => {
+  it("shows 'Bad' label for Dark Red band scores", () => {
     render(<ScoreBadge score={90} showLabel />);
-    expect(screen.getByText("Extreme")).toBeTruthy();
+    expect(screen.getByText("Bad")).toBeTruthy();
   });
 
   it("has correct aria-label for Red band with label", () => {
     render(<ScoreBadge score={70} showLabel />);
-    expect(screen.getByLabelText("Score: 70, Very High")).toBeTruthy();
+    expect(screen.getByLabelText("Score: 30, Poor")).toBeTruthy();
   });
 
   it("has correct aria-label for Dark Red band with label", () => {
     render(<ScoreBadge score={90} showLabel />);
-    expect(screen.getByLabelText("Score: 90, Extreme")).toBeTruthy();
+    expect(screen.getByLabelText("Score: 10, Bad")).toBeTruthy();
   });
 
   // ─── Large (lg) ring variant tests ────────────────────────────────────
@@ -187,12 +187,12 @@ describe("ScoreBadge", () => {
   it("renders score text inside SVG for lg size", () => {
     const { container } = render(<ScoreBadge score={42} size="lg" />);
     const textEl = container.querySelector("svg text");
-    expect(textEl?.textContent).toBe("42");
+    expect(textEl?.textContent).toBe("58");
   });
 
   it("renders label below ring when showLabel is true for lg", () => {
     render(<ScoreBadge score={42} size="lg" showLabel />);
-    expect(screen.getByText("High")).toBeTruthy();
+    expect(screen.getByText("Moderate")).toBeTruthy();
   });
 
   it("uses correct stroke color for green band on lg ring", () => {
@@ -235,6 +235,6 @@ describe("ScoreBadge", () => {
 
   it("has accessible aria-label on lg ring", () => {
     render(<ScoreBadge score={42} size="lg" />);
-    expect(screen.getByLabelText("Score: 42")).toBeTruthy();
+    expect(screen.getByLabelText("Score: 58")).toBeTruthy();
   });
 });
