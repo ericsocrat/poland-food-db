@@ -19,6 +19,7 @@ import {
   getBetterAlternatives,
   getScoreExplanation,
   getDataConfidence,
+  getCrossCountryLinks,
   // Health Profiles
   listHealthProfiles,
   getActiveHealthProfile,
@@ -407,6 +408,14 @@ describe("Product Detail API functions", () => {
     mockCallRpc.mockResolvedValue({ ok: true, data: {} });
     await getDataConfidence(fakeSupabase, 42);
     expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_data_confidence", {
+      p_product_id: 42,
+    });
+  });
+
+  it("getCrossCountryLinks passes product_id", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await getCrossCountryLinks(fakeSupabase, 42);
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_get_cross_country_links", {
       p_product_id: 42,
     });
   });

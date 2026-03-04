@@ -23,6 +23,7 @@ export {
   BetterAlternativesContract,
   ScoreExplanationContract,
   DataConfidenceContract,
+  CrossCountryLinksContract,
 } from "./product.contracts";
 
 // ─── Search domain ──────────────────────────────────────────────────────────
