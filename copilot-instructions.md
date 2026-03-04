@@ -8,7 +8,7 @@
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 733 checks across 48 suites + 20 negative validation tests — all passing
+> **QA:** 741 checks across 48 suites + 20 negative validation tests — all passing
 
 ---
 
@@ -260,7 +260,7 @@ tryvit/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (733 checks across 48 suites)
+├── RUN_QA.ps1                       # QA test runner (741 checks across 48 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -681,7 +681,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (733 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (741 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -819,7 +819,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (733 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (741 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
@@ -853,7 +853,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 733 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 741 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -898,7 +898,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Suite                     | File                                | Checks | Blocking? |
 | ------------------------- | ----------------------------------- | -----: | --------- |
 | Data Integrity            | `QA__null_checks.sql`               |     29 | Yes       |
-| Scoring Formula           | `QA__scoring_formula_tests.sql`     |     31 | Yes       |
+| Scoring Formula           | `QA__scoring_formula_tests.sql`     |     35 | Yes       |
 | Source Coverage           | `QA__source_coverage.sql`           |      8 | No        |
 | EAN Validation            | `validate_eans.py`                  |      1 | Yes       |
 | API Surfaces              | `QA__api_surfaces.sql`              |     18 | Yes       |
@@ -927,7 +927,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Index & Temporal          | `QA__index_temporal.sql`            |     19 | Yes       |
 | Attribute Contradictions  | `QA__attribute_contradiction.sql`   |      5 | Yes       |
 | Monitoring & Health       | `QA__monitoring.sql`                |     14 | Yes       |
-| Scoring Determinism       | `QA__scoring_determinism.sql`       |     17 | Yes       |
+| Scoring Determinism       | `QA__scoring_determinism.sql`       |     21 | Yes       |
 | Multi-Country Consistency | `QA__multi_country_consistency.sql` |     13 | Yes       |
 | Performance Regression    | `QA__performance_regression.sql`    |      6 | No        |
 | Event Intelligence        | `QA__event_intelligence.sql`        |     18 | Yes       |
@@ -947,7 +947,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Recipe Integrity          | `QA__recipe_integrity.sql`          |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **733/733 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **741/741 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
@@ -955,20 +955,20 @@ At the end of every PR-like change, include a **Verification** section:
 These are **anchor products** whose scores must remain stable. If a scoring change causes drift beyond ±2 points, investigate before committing:
 
 - Doritos Sweet Chili ≈ 45 (chips, 7 additives + high concern)
-- Coca-Cola Zero (DE) ≈ 13 (zero nutrition, 8 additives + concern)
-- Piątnica Skyr Naturalny ≈ 8 (healthiest dairy, fermented)
-- Melvit Płatki owsiane górskie ≈ 13 (healthiest cereal)
-- Auchan Tortilla Pszenno-Żytnia ≈ 30 (bread, 9 additives + concern)
-- Tarczyński Kabanosy wieprzowe ≈ 31 (high-fat cured meat)
-- BoboVita Kaszka Mleczna ≈ 34 (baby food, high sugars)
+- Coca-Cola Zero (DE) ≈ 4 (zero nutrition, 0 ingredients loaded)
+- Piątnica Skyr Naturalny ≈ 5 (healthiest dairy, fermented, protein=12g)
+- Melvit Płatki owsiane górskie ≈ 7 (healthiest cereal, protein=13g, fibre=9g)
+- Auchan Tortilla Pszenno-Żytnia ≈ 21 (bread, 9 additives + concern, protein=8.4g)
+- Tarczyński Kabanosy wieprzowe ≈ 27 (high-fat cured meat, protein=26g)
+- BoboVita Kaszka Mleczna ≈ 28 (baby food, high sugars, protein=16g, fibre=5.9g)
 - Somersby Blueberry Cider ≈ 10 (alcohol regression)
-- Mestemacher Chleb wielozbożowy ≈ 18 (bread regression, baked)
-- Marinero Łosoś wędzony ≈ 29 (smoked salmon regression)
-- Dr. Oetker Pizza 4 sery ≈ 32 (frozen pizza, palm oil)
+- Mestemacher Chleb wielozbożowy ≈ 12 (bread regression, baked, protein=8.2g, fibre=7.5g)
+- Marinero Łosoś wędzony ≈ 25 (smoked salmon, protein=20g)
+- Dr. Oetker Pizza 4 sery ≈ 24 (frozen pizza, palm oil, protein=10.2g)
 - Lajkonik Paluszki extra cienkie ≈ 31 (snacks regression, baked)
 - Naleśniki z jabłkami ≈ 16 (żabka, low score)
 - Pudliszki Ketchup łagodny ≈ 18 (condiments, sugar + salt)
-- E. Wedel Czekolada Tiramisu ≈ 57 (sweets, palm oil + additives)
+- E. Wedel Czekolada Tiramisu ≈ 46 (sweets, palm oil + additives, protein=5.5g, fibre=1.3g)
 - Indomie Noodles Chicken ≈ 55 (instant, palm oil + 10 additives)
 
 Run QA after **every** schema change, data update, or scoring formula adjustment.
@@ -1583,7 +1583,7 @@ Produce **exactly this structure** — fill every section with real data:
 | Metric                    | Current Value   | Target / Baseline       | Status   |
 | ------------------------- | --------------- | ----------------------- | -------- |
 | Active products (PL+DE)   | ~X,XXX          | ≥1,281                  | ✅/⚠️/❌ |
-| QA checks passing         | XXX/733         | 733/733                 | ✅/⚠️/❌ |
+| QA checks passing         | XXX/741         | 741/741                 | ✅/⚠️/❌ |
 | Negative tests passing    | 23/23           | 23/23                   | ✅/⚠️/❌ |
 | Migrations committed      | XXX             | ≥182                    | ✅/⚠️/❌ |
 | Vitest coverage (lines)   | XX%             | ≥88%                    | ✅/⚠️/❌ |
@@ -2344,7 +2344,7 @@ Execute every command. Record output. Do not skip.
 ```powershell
 # ── Database layer ───────────────────────────────────────────────────
 supabase test db                               # All pgTAP tests pass
-.\RUN_QA.ps1                                   # All 733+ QA checks pass
+.\RUN_QA.ps1                                   # All 741+ QA checks pass
 .\RUN_NEGATIVE_TESTS.ps1                       # All 20 negative tests caught
 python check_pipeline_structure.py            # 0 errors
 python validate_eans.py                       # 0 EAN failures
@@ -2363,7 +2363,7 @@ python scripts/check_doc_counts.py           # Doc count consistent
 python scripts/check_doc_drift.py            # No stale docs
 
 # ── Scoring regression (if scoring touched) ───────────────────────────
-# Run QA scoring suite — all 31 checks + §8.19 anchor products must pass
+# Run QA scoring suite — all 35 checks + §8.19 anchor products must pass
 ```
 
 #### 19.9 Documentation Update Requirements
@@ -2394,7 +2394,7 @@ After implementation, update ALL of these that apply (per §18.1):
 
 ```powershell
 supabase test db                  → XX/XX pgTAP tests pass
-.\RUN_QA.ps1                      → 733/733 checks pass (0 failures)
+.\RUN_QA.ps1                      → 741/741 checks pass (0 failures)
 .\RUN_NEGATIVE_TESTS.ps1          → 23/23 caught
 npx tsc --noEmit                  → 0 errors
 npx vitest run                    → XXX/XXX tests pass

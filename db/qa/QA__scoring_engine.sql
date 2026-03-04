@@ -4,15 +4,15 @@
 -- 25 checks (T01-T17 scoring engine, T18-T25 formula registry)
 -- ══════════════════════════════════════════════════════════════════════════
 
--- ─── T01: Version Registry — v3.2 is active ────────────────────────────
+-- ─── T01: Version Registry — v3.3 is active ────────────────────────────
 
 SELECT CASE
     WHEN EXISTS (
         SELECT 1 FROM scoring_model_versions
-        WHERE version = 'v3.2' AND status = 'active'
+        WHERE version = 'v3.3' AND status = 'active'
     )
     THEN 'PASS' ELSE 'FAIL'
-END AS "T01_v3.2_is_active";
+END AS "T01_v3.3_is_active";
 
 -- ─── T02: Exactly one active version ────────────────────────────────────
 
@@ -21,23 +21,23 @@ SELECT CASE
     THEN 'PASS' ELSE 'FAIL'
 END AS "T02_single_active_version";
 
--- ─── T03: v3.2 has 9 factors summing to 1.0 ─────────────────────────────
+-- ─── T03: v3.3 has 10 factors summing to 0.92 ────────────────────────────
 
 SELECT CASE
     WHEN (
         SELECT COUNT(*)
         FROM scoring_model_versions smv,
              jsonb_array_elements(smv.config->'factors') f
-        WHERE smv.version = 'v3.2'
-    ) = 9
+        WHERE smv.version = 'v3.3'
+    ) = 10
     AND ABS((
         SELECT SUM((f->>'weight')::numeric)
         FROM scoring_model_versions smv,
              jsonb_array_elements(smv.config->'factors') f
-        WHERE smv.version = 'v3.2'
-    ) - 1.0) < 0.01
+        WHERE smv.version = 'v3.3'
+    ) - 0.92) < 0.01
     THEN 'PASS' ELSE 'FAIL'
-END AS "T03_v3.2_factor_config_valid";
+END AS "T03_v3.3_factor_config_valid";
 
 -- ─── T04: score_model_version populated ──────────────────────────────────
 
@@ -98,12 +98,12 @@ SELECT CASE
     THEN 'PASS' ELSE 'FAIL'
 END AS "T08_rescore_batch_exists";
 
--- ─── T09: validate_country_profile for v3.2 PL returns valid ─────────────
+-- ─── T09: validate_country_profile for v3.3 PL returns valid ─────────────
 
 SELECT CASE
-    WHEN (validate_country_profile('v3.2', 'PL')->>'valid')::boolean
+    WHEN (validate_country_profile('v3.3', 'PL')->>'valid')::boolean
     THEN 'PASS' ELSE 'FAIL'
-END AS "T09_pl_profile_valid";
+END AS "T09_v3.3_pl_profile_valid";
 
 -- ─── T10: score_shadow_results table exists ──────────────────────────────
 

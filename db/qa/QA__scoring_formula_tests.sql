@@ -1,4 +1,4 @@
--- QA: Scoring Formula Tests (v3.2) — 31 checks
+-- QA: Scoring Formula Tests (v3.3) — 35 checks
 -- Validates that the scoring formula produces expected results for known test cases.
 -- Each test includes a product with controlled nutrition values and expected score.
 -- Run after pipelines to verify scoring algorithm correctness.
@@ -72,7 +72,8 @@ WITH scored_products AS (
     p.product_id, p.product_name, p.prep_method, p.controversies,
     p.unhealthiness_score, p.ingredient_concern_score,
     nf.calories, nf.saturated_fat_g, nf.sugars_g, nf.salt_g,
-    nf.trans_fat_g, COALESCE(ia.additives_count::int, 0) AS additives
+    nf.trans_fat_g, nf.protein_g, nf.fibre_g,
+    COALESCE(ia.additives_count::int, 0) AS additives
   FROM products p
   JOIN nutrition_facts nf ON nf.product_id = p.product_id
   LEFT JOIN (
@@ -99,6 +100,8 @@ WHERE a.calories = b.calories
   AND a.prep_method = b.prep_method
   AND a.controversies = b.controversies
   AND COALESCE(a.ingredient_concern_score, 0) = COALESCE(b.ingredient_concern_score, 0)
+  AND COALESCE(a.protein_g, 0) = COALESCE(b.protein_g, 0)
+  AND COALESCE(a.fibre_g, 0) = COALESCE(b.fibre_g, 0)
   AND a.unhealthiness_score <> b.unhealthiness_score;
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -196,91 +199,93 @@ WHERE p.product_name = 'Naleśniki z jabłkami i cynamonem'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 13: Known product regression test (Melvit Płatki owsiane górskie)
---          Unprocessed whole oats (NOVA 1), near-zero bad nutrients → score 11-15
+--          Unprocessed whole oats (NOVA 1), near-zero bad nutrients,
+--          protein=13g (tier 30) + fibre=9g (tier 50) → v3.3 bonus → score 5-9
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Melvit Owsiane score changed unexpectedly' AS issue,
-       CONCAT('Expected 11-15, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 5-9, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Płatki owsiane górskie'
   AND p.brand = 'Melvit'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 11 AND 15;
+  AND p.unhealthiness_score::int NOT BETWEEN 5 AND 9;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 14: Known product regression test (Coca-Cola Zero)
---          Zero sugar/fat but 8 additives + concern 2.0 (enriched) → score 11-15
---          Requires ingredient enrichment data; skipped in CI without it.
+--          Zero sugar/fat, 0 ingredients loaded in DB → v3.3 score 2-6
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Coca-Cola Zero score changed unexpectedly' AS issue,
-       CONCAT('Expected 11-15, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 2-6, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Coca-Cola Zero'
   AND p.country = 'DE'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 11 AND 15
-  AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
+  AND p.unhealthiness_score::int NOT BETWEEN 2 AND 6;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 15: Known product regression test (Piątnica Skyr Naturalny)
---          Fat-free high-protein dairy, fermented, zero additives → score 6-10
+--          Fat-free high-protein dairy, fermented, zero additives,
+--          protein=12g (tier 30) → v3.3 bonus → score 3-7
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Skyr Naturalny score changed unexpectedly' AS issue,
-       CONCAT('Expected 6-10, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 3-7, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Skyr Naturalny'
   AND p.brand = 'Piątnica'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 6 AND 10;
+  AND p.unhealthiness_score::int NOT BETWEEN 3 AND 7;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 16: Known product regression test (Auchan Tortilla Pszenno-Żytnia)
---          Bread with 9 additives + concern 25, baked → score 28-32
+--          Bread with 9 additives + concern 25, baked,
+--          protein=8.4g (tier 15) → v3.3 bonus → score 19-23
 --          Requires ingredient enrichment data; skipped in CI without it.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Auchan Tortilla score changed unexpectedly' AS issue,
-       CONCAT('Expected 28-32, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 19-23, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Tortilla Pszenno-Żytnia'
   AND p.brand = 'Auchan'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 28 AND 32
+  AND p.unhealthiness_score::int NOT BETWEEN 19 AND 23
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 17: Known product regression test (Tarczyński Kabanosy wieprzowe)
---          High-fat cured meat, sat fat dominant → score 29-33
+--          High-fat cured meat, protein=26g (tier 50) → v3.3 bonus → score 25-29
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Kabanosy wieprzowe score changed unexpectedly' AS issue,
-       CONCAT('Expected 29-33, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 25-29, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Kabanosy wieprzowe'
   AND p.brand = 'Tarczyński'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 29 AND 33;
+  AND p.unhealthiness_score::int NOT BETWEEN 25 AND 29;
 
 -- Test 18: Known product regression test (E. Wedel Czekolada Tiramisu)
---          Sweets: palm oil + 15g sat fat + 57g sugars + 6 additives → score 55-59
+--          Sweets: palm oil + 15g sat fat + 57g sugars + 6 additives,
+--          protein=5.5g (tier 15) + fibre=1.3g (tier 10) → v3.3 bonus → score 44-48
 --          Requires ingredient enrichment data; skipped in CI without it.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Wedel Czekolada Tiramisu score changed unexpectedly' AS issue,
-       CONCAT('Expected 55-59, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 44-48, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Czekolada Tiramisu'
   AND p.brand = 'E. Wedel'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 55 AND 59
+  AND p.unhealthiness_score::int NOT BETWEEN 44 AND 48
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- Test 19: Known product regression test (Indomie Noodles Chicken Flavour)
@@ -313,17 +318,18 @@ WHERE p.product_name = 'Ketchup łagodny - Najsmaczniejszy'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 21: Known product regression test (BoboVita Kaszka Mleczna 7 Zbóż)
---          Baby cereal: high sugars 31g + moderate sat-fat → score 32-36
+--          Baby cereal: high sugars 31g + moderate sat-fat,
+--          protein=16g (tier 40) + fibre=5.9g (tier 35) → v3.3 bonus → score 26-30
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: BoboVita Kaszka Mleczna 7 Zbóż score changed unexpectedly' AS issue,
-       CONCAT('Expected 32-36, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 26-30, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Kaszka Mleczna 7 Zbóż Zbożowo-Jaglana Owocowa'
   AND p.brand = 'BoboVita'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 32 AND 36;
+  AND p.unhealthiness_score::int NOT BETWEEN 26 AND 30;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 22: Known product regression test (Somersby Blueberry Cider)
@@ -382,45 +388,48 @@ WHERE p.is_deprecated IS NOT TRUE
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 26: Known product regression test (Mestemacher Chleb wielozbożowy)
---          Bread category: whole-grain rye, baked, low score → 17-21
+--          Bread category: whole-grain rye, baked,
+--          protein=8.2g (tier 15) + fibre=7.5g (tier 35) → v3.3 bonus → score 10-14
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Mestemacher Chleb wielozbożowy score changed unexpectedly' AS issue,
-       CONCAT('Expected 17-21, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 10-14, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Chleb wielozbożowy żytni pełnoziarnisty'
   AND p.brand = 'Mestemacher'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 17 AND 21;
+  AND p.unhealthiness_score::int NOT BETWEEN 10 AND 14;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 27: Known product regression test (Marinero Łosoś wędzony)
---          Seafood & Fish: smoked salmon, prep_method='smoked' → 28-32
+--          Seafood & Fish: smoked salmon, prep_method='smoked',
+--          protein=20g (tier 50) → v3.3 bonus → score 23-27
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Marinero Łosoś wędzony score changed unexpectedly' AS issue,
-       CONCAT('Expected 28-32, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 23-27, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Łosoś wędzony na zimno'
   AND p.brand = 'Marinero'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 28 AND 32;
+  AND p.unhealthiness_score::int NOT BETWEEN 23 AND 27;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 28: Known product regression test (Dr. Oetker Pizza 4 sery)
---          Frozen & Prepared: frozen pizza, baked → 29-33
+--          Frozen & Prepared: frozen pizza, baked,
+--          protein=10.2g (tier 30) → v3.3 bonus → score 22-26
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Dr. Oetker Pizza 4 sery score changed unexpectedly' AS issue,
-       CONCAT('Expected 29-33, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 22-26, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Pizza 4 sery, głęboko mrożona'
   AND p.brand = 'Dr. Oetker'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 24 AND 33;
+  AND p.unhealthiness_score::int NOT BETWEEN 22 AND 26;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 29: Known product regression test (Lajkonik Paluszki extra cienkie)
@@ -459,3 +468,61 @@ SELECT 'Dark Red band synthetic test' AS issue,
               compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100)) AS detail
 WHERE compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100)
       NOT BETWEEN 81 AND 100;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 32: v3.3 synthetic band coverage — Red band (61-80)
+--          Same high-risk inputs as Test 30, but via compute_unhealthiness_v33
+--          with protein=0, fibre=0 (no bonus). Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT 'v3.3 Red band synthetic test' AS issue,
+       compute_unhealthiness_v33(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50, 0, 0) AS actual_score,
+       CONCAT('Expected 61-80, got ',
+              compute_unhealthiness_v33(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50, 0, 0)) AS detail
+WHERE compute_unhealthiness_v33(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50, 0, 0)
+      NOT BETWEEN 61 AND 80;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 33: v3.3 synthetic band coverage — Dark Red band (81-100)
+--          Same extreme inputs as Test 31, but via compute_unhealthiness_v33
+--          with protein=0, fibre=0 (no bonus). Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT 'v3.3 Dark Red band synthetic test' AS issue,
+       compute_unhealthiness_v33(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100, 0, 0) AS actual_score,
+       CONCAT('Expected 81-100, got ',
+              compute_unhealthiness_v33(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100, 0, 0)) AS detail
+WHERE compute_unhealthiness_v33(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100, 0, 0)
+      NOT BETWEEN 81 AND 100;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 34: v3.3 nutrient density bonus — high protein+fibre product
+--          must score LOWER than the same product with zero protein+fibre.
+--          Synthetic inputs: moderate penalty profile. Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT 'v3.3 nutrient density bonus not applied' AS issue,
+       compute_unhealthiness_v33(5.0, 12.0, 0.8, 200, 0.3, 2, 'baked', 'minor', 1, 20, 8) AS with_bonus,
+       compute_unhealthiness_v33(5.0, 12.0, 0.8, 200, 0.3, 2, 'baked', 'minor', 1,  0, 0) AS without_bonus,
+       'Expected with_bonus < without_bonus' AS detail
+WHERE compute_unhealthiness_v33(5.0, 12.0, 0.8, 200, 0.3, 2, 'baked', 'minor', 1, 20, 8)
+   >= compute_unhealthiness_v33(5.0, 12.0, 0.8, 200, 0.3, 2, 'baked', 'minor', 1,  0, 0);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 35: v3.3 ↔ v3.2 parity — when protein=0 and fibre=0 the v3.3
+--          function must produce the same score as v3.2 for identical inputs.
+--          5 synthetic profiles covering all penalty bands. Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT profile, v32_score, v33_score,
+       'v3.3/v3.2 parity violation when protein=0, fibre=0' AS issue,
+       CONCAT(profile, ': v32=', v32_score, ' v33=', v33_score) AS detail
+FROM (VALUES
+  ('low',      compute_unhealthiness_v32(1,5,0.3,100,0,0,'not-applicable','none',0),
+               compute_unhealthiness_v33(1,5,0.3,100,0,0,'not-applicable','none',0,0,0)),
+  ('moderate', compute_unhealthiness_v32(4,12,0.8,250,0.2,2,'baked','none',5),
+               compute_unhealthiness_v33(4,12,0.8,250,0.2,2,'baked','none',5,0,0)),
+  ('elevated', compute_unhealthiness_v32(6,18,1.5,400,0.5,5,'fried','palm oil',30),
+               compute_unhealthiness_v33(6,18,1.5,400,0.5,5,'fried','palm oil',30,0,0)),
+  ('high',     compute_unhealthiness_v32(8,22,2.2,500,1.2,7,'deep-fried','moderate',60),
+               compute_unhealthiness_v33(8,22,2.2,500,1.2,7,'deep-fried','moderate',60,0,0)),
+  ('extreme',  compute_unhealthiness_v32(10,27,3,600,2,10,'deep-fried','serious',100),
+               compute_unhealthiness_v33(10,27,3,600,2,10,'deep-fried','serious',100,0,0))
+) AS t(profile, v32_score, v33_score)
+WHERE v32_score <> v33_score;

@@ -13,6 +13,17 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Changed
+
+- Update all scoring QA suites for v3.3 scoring formula with nutrient density
+  bonus (protein + fibre): QA\_\_scoring\_formula\_tests.sql 31→35 checks (4 new
+  v3.3-specific tests including nutrient density bonus validation and v3.3↔v3.2
+  parity), QA\_\_scoring\_determinism.sql 17→21 checks (4 new pure-function tests
+  for v3.3 floor, bonus ceiling, parity, and band coverage), QA\_\_scoring\_engine.sql
+  updated to validate v3.3 as active version with 10 factors and weight sum 0.92,
+  QA\_\_view\_consistency.sql updated for 10-factor score\_breakdown, all 16 anchor
+  product regression ranges recalibrated for v3.3 nutrient density impact (#613)
+
 ### Fixed
 
 - Remove 11 ESLint `@typescript-eslint/no-non-null-assertion` warnings across 8
