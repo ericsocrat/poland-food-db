@@ -13,6 +13,20 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Data
+
+- Validate protein/fibre backfill readiness for v3.3 nutrient density bonus:
+  audit confirms 100% non-NULL coverage for both `protein_g` (1,671 products)
+  and `fibre_g` (1,671 products); pipeline SQL generator and OFF API client
+  already include both fields in extraction and upsert; `compute_data_completeness()`
+  already includes both in its 15-checkpoint system (#609)
+
+### Tests
+
+- Add 2 QA checks to nutrition ranges suite (18 → 20 checks, total 733 → 735):
+  protein_g NULL coverage < 5% threshold and fibre_g NULL coverage < 10%
+  threshold — required for v3.3 nutrient density bonus (#609)
+
 ### Fixed
 
 - Remove 11 ESLint `@typescript-eslint/no-non-null-assertion` warnings across 8

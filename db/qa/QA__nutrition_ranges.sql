@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Nutrition Ranges & Plausibility — 18 checks
+-- QA: Nutrition Ranges & Plausibility — 20 checks
 -- Validates that nutrition values fall within physiologically
 -- plausible ranges and detects likely decimal point errors.
 -- Checks per-100g values only.
@@ -264,4 +264,36 @@ WHERE p.is_deprecated IS NOT TRUE
     'Condiments',
     'Dairy'
   );
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 19. Protein coverage: ≥ 95% of active products must have non-NULL protein_g
+--     Required for v3.3 nutrient density bonus (#608).
+--     Products without protein data cannot receive the density bonus.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '19. protein_g NULL coverage < 5%' AS check_name,
+       COUNT(*) AS violations
+FROM (
+  SELECT 1
+  FROM products p
+  JOIN nutrition_facts nf ON nf.product_id = p.product_id
+  WHERE p.is_deprecated IS NOT TRUE
+  HAVING ROUND(100.0 * COUNT(CASE WHEN nf.protein_g IS NULL THEN 1 END)
+             / NULLIF(COUNT(*), 0), 1) > 5.0
+) AS invalid;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 20. Fibre coverage: ≥ 90% of active products must have non-NULL fibre_g
+--     Required for v3.3 nutrient density bonus (#608).
+--     Products without fibre data default to 0 (no bonus, not penalty).
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '20. fibre_g NULL coverage < 10%' AS check_name,
+       COUNT(*) AS violations
+FROM (
+  SELECT 1
+  FROM products p
+  JOIN nutrition_facts nf ON nf.product_id = p.product_id
+  WHERE p.is_deprecated IS NOT TRUE
+  HAVING ROUND(100.0 * COUNT(CASE WHEN nf.fibre_g IS NULL THEN 1 END)
+             / NULLIF(COUNT(*), 0), 1) > 10.0
+) AS invalid;
 
