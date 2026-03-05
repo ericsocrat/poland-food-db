@@ -9,6 +9,7 @@ import {
   AUTH_MESSAGES,
   RATE_LIMIT_CODE,
   RATE_LIMIT_MESSAGES,
+  RPC_SLOW_THRESHOLD_MS,
 } from "@/lib/rpc";
 
 // ─── AUTH constants ─────────────────────────────────────────────────────────
@@ -450,6 +451,78 @@ describe("callRpc — rate limit errors", () => {
     expect(result.ok).toBe(false);
     if (!result.ok) {
       expect(result.error.code).toBe("RATE_LIMITED");
+    }
+  });
+});
+
+// ─── RPC latency tracking (#621) ────────────────────────────────────────────
+
+describe("RPC_SLOW_THRESHOLD_MS", () => {
+  it("is 400ms (matching docs/SLO.md p95 target)", () => {
+    expect(RPC_SLOW_THRESHOLD_MS).toBe(400);
+  });
+});
+
+describe("callRpc — latency tracking", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllEnvs();
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it("does not warn for fast RPCs (< 400ms)", async () => {
+    const spy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    let callCount = 0;
+    vi.spyOn(performance, "now").mockImplementation(() => {
+      callCount++;
+      // First call returns 1000, second call returns 1100 (100ms elapsed)
+      return callCount === 1 ? 1000 : 1100;
+    });
+
+    const supabase = createMockSupabase({ data: { ok: true }, error: null });
+    await callRpc(supabase, "fast_fn");
+
+    // console.warn should NOT be called with the slow RPC pattern
+    const slowCalls = spy.mock.calls.filter(
+      (call) => typeof call[0] === "string" && call[0].includes("slow"),
+    );
+    expect(slowCalls).toHaveLength(0);
+  });
+
+  it("warns for slow RPCs (> 400ms)", async () => {
+    const spy = vi.spyOn(console, "warn").mockImplementation(() => {});
+    let callCount = 0;
+    vi.spyOn(performance, "now").mockImplementation(() => {
+      callCount++;
+      // First call returns 1000, second call returns 1600 (600ms elapsed)
+      return callCount === 1 ? 1000 : 1600;
+    });
+
+    const supabase = createMockSupabase({ data: { ok: true }, error: null });
+    await callRpc(supabase, "slow_fn");
+
+    expect(spy).toHaveBeenCalledWith(
+      `[RPC] slow_fn slow: 600ms (threshold: ${RPC_SLOW_THRESHOLD_MS}ms)`,
+    );
+  });
+
+  it("still returns data successfully for slow RPCs", async () => {
+    vi.spyOn(console, "warn").mockImplementation(() => {});
+    let callCount = 0;
+    vi.spyOn(performance, "now").mockImplementation(() => {
+      callCount++;
+      return callCount === 1 ? 0 : 500;
+    });
+
+    const supabase = createMockSupabase({ data: { id: 42 }, error: null });
+    const result = await callRpc<{ id: number }>(supabase, "slow_fn");
+
+    expect(result.ok).toBe(true);
+    if (result.ok) {
+      expect(result.data).toEqual({ id: 42 });
     }
   });
 });

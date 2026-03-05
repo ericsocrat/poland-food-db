@@ -135,7 +135,7 @@ test.describe("Landing page features", () => {
 
   test("Get started CTA links to signup", async ({ page }) => {
     await page.goto("/");
-    const cta = page.getByRole("link", { name: "Get started" });
+    const cta = page.getByRole("link", { name: "Get started" }).first();
     await expect(cta).toBeVisible();
     await expect(cta).toHaveAttribute("href", "/auth/signup");
   });

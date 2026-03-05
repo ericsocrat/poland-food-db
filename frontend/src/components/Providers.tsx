@@ -8,6 +8,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { Toaster } from "sonner";
 import { initAchievementMiddleware } from "@/lib/events";
 import { FlagProvider } from "@/lib/flags";
+import { reportWebVitals } from "@/lib/web-vitals";
 
 /** Don't retry on 4xx auth or PostgREST JWT errors; retry up to 2× otherwise */
 export function shouldRetry(failureCount: number, error: Error): boolean {
@@ -36,6 +37,11 @@ export function Providers({ children }: Readonly<{ children: ReactNode }>) {
   useEffect(() => {
     const unsubscribe = initAchievementMiddleware();
     return unsubscribe;
+  }, []);
+
+  // Collect Core Web Vitals and report to Sentry (#621)
+  useEffect(() => {
+    reportWebVitals();
   }, []);
 
   return (

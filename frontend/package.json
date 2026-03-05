@@ -44,6 +44,7 @@
     "react-hook-form": "^7.71.1",
     "sonner": "^1.7.4",
     "tesseract.js": "^5.1.1",
+    "web-vitals": "^5.1.0",
     "zod": "^4.3.6",
     "zustand": "^5.0.11"
   },

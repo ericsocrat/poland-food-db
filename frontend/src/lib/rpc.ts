@@ -24,6 +24,11 @@ export const AUTH_MESSAGES = [
   "Invalid JWT",
 ] as const;
 
+// ─── RPC latency tracking (#621) ────────────────────────────────────────────
+
+/** Threshold in ms above which an RPC call is considered slow (docs/SLO.md p95 < 400ms). */
+export const RPC_SLOW_THRESHOLD_MS = 400;
+
 // ─── Rate limit constants (#182) ────────────────────────────────────────────
 
 /** Error code returned when a 429 is detected. */
@@ -90,7 +95,16 @@ export async function callRpc<T>(
   observeQuery(fnName);
 
   try {
+    const t0 = performance.now();
     const { data, error } = await supabase.rpc(fnName, params);
+    const durationMs = Math.round(performance.now() - t0);
+
+    // Log slow RPCs (> SLO threshold)
+    if (durationMs > RPC_SLOW_THRESHOLD_MS) {
+      console.warn(
+        `[RPC] ${fnName} slow: ${durationMs}ms (threshold: ${RPC_SLOW_THRESHOLD_MS}ms)`,
+      );
+    }
 
     // Supabase-level error (network, auth, permission, rate limit)
     if (error) {
