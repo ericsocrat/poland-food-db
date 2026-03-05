@@ -1,27 +1,29 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-05 by GitHub Copilot (session 19)
+> **Last updated:** 2026-03-05 by GitHub Copilot (session 20)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
 
 ## Active Branch & PR
 
-- **Branch:** `test/602-de-qa-validation` (PR pending)
-- **Latest SHA (main):** `fa00673`
-- **Open PRs:** 2 (#650 — scoring learn page, #654 — DE enrichment auto-merge)
+- **Branch:** `feat/589-scoring-learn-page` (PR #650 — a11y fix pushed, CI running)
+- **Latest SHA (main):** `7358204`
+- **Open PRs:** 3 (#650 — scoring learn page, #653 — docs update, #654 — DE enrichment)
 
 ## Recently Shipped (This Session)
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| `fa00673` | data(ingredients): enrich DE products with OFF API ingredient and allergen data (#654)  |
+| `1c34b77` | fix(frontend): improve a11y contrast ratio on scoring learn page (#589)                |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR/SHA    | Summary                                                                           |
 | ---------- | --------- | --------------------------------------------------------------------------------- |
+| 2026-03-05 | #655      | test(qa): DE validation suite — anchors, multi-country fixes (#602)               |
 | 2026-03-05 | #654      | data(ingredients): enrich DE products (#603)                                      |
+| 2026-03-05 | #652      | test(qa): PL validation gate (#595)                                               |
 | 2026-03-05 | #651      | data(ingredients): enrich PL products — 14,392 product_ingredients, 2,872 allergens/traces |
 | 2026-03-04 | #649      | chore(docs): copilot-instructions §8, §13 — merge marathon lessons learned       |
 | 2026-03-03 | #583      | **MERGED** — Milestone #17: 17 UX issues, 134 files, 4,504 tests                 |
@@ -52,8 +54,8 @@
 | Issue | Priority | Effort | Summary                                                          |
 | ----- | -------- | ------ | ---------------------------------------------------------------- |
 | #595  | P1       | S      | PL QA validation gate (PR pending)                               |
-| #589  | P1       | M      | Scoring learn page + v3.3 docs (PR #650 open)                   |
-| #602  | P1       | M      | DE QA validation suite (this session — PR pending)               |
+| #589  | P1       | M      | Scoring learn page + v3.3 docs (PR #650 open — a11y fix pushed) |
+| #602  | P1       | M      | DE QA validation suite (PR #655 merged)                          |
 | #599  | P1       | S      | Deploy expanded PL dataset to production                         |
 | #607  | P1       | S      | Deploy DE dataset to production                                  |
 | #614  | P1       | S      | Deploy v3.3 scoring to production                                |
@@ -72,7 +74,7 @@
 
 ## Next Planned Work
 
-- [ ] Complete #602 — DE QA validation (this session — PR pending)
+- [ ] Verify PR #650 CI passes after a11y fix push
 - [ ] Implement #598 — update docs for PL expansion
 - [ ] Implement #599 — deploy expanded PL dataset to production
 - [ ] Implement #563 — sync staging DB schema (P2, requires staging access)
@@ -91,8 +93,8 @@
 - **Confidence bands (PL):** 1,027 high / 168 medium / 3 low
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
-- **Open issues:** 15 (7 P1 + 4 P2 + 2 P3 + 2 deferred) | **Open PRs:** 2
-- **Vitest:** 4,504 tests passing (29 skipped)
+- **Open issues:** 15 (7 P1 + 4 P2 + 2 P3 + 2 deferred) | **Open PRs:** 3
+- **Vitest:** 4,901 tests passing (29 skipped)
 - **DB migrations:** 186 append-only
 - **Ruff lint:** 0 errors
 - **Nutrition rows:** 2,511
