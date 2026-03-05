@@ -1,13 +1,14 @@
 -- ─── pgTAP: Recipe API function tests ────────────────────────────────────────
--- Tests api_get_recipes, api_get_recipe_detail, api_get_recipe_nutrition.
+-- Tests api_get_recipes, api_get_recipe_detail, api_get_recipe_nutrition,
+--       api_get_recipe_score.
 -- Run via: supabase test db
 --
 -- Self-contained: inserts own fixture data so tests work on an empty DB.
--- Issue: #364 — Recipe system completion
+-- Issue: #364 — Recipe system completion, #616 — Recipe aggregate score
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(25);
+SELECT plan(33);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -213,6 +214,54 @@ SELECT ok(
 SELECT ok(
   (public.api_get_recipe_nutrition('nonexistent-slug')) ? 'error',
   'nutrition returns error for nonexistent slug'
+);
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 4. api_get_recipe_score — aggregate TryVit Score (#616)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Does not throw for valid slug
+SELECT lives_ok(
+  $$SELECT public.api_get_recipe_score('pgtap-test-recipe')$$,
+  'api_get_recipe_score does not throw for valid slug'
+);
+
+-- Top-level keys
+SELECT ok(
+  (public.api_get_recipe_score('pgtap-test-recipe')) ? 'api_version',
+  'score response has api_version'
+);
+
+SELECT ok(
+  (public.api_get_recipe_score('pgtap-test-recipe')) ? 'recipe_slug',
+  'score response has recipe_slug'
+);
+
+SELECT ok(
+  (public.api_get_recipe_score('pgtap-test-recipe')) ? 'aggregate_score',
+  'score response has aggregate_score'
+);
+
+SELECT ok(
+  (public.api_get_recipe_score('pgtap-test-recipe')) ? 'score_band',
+  'score response has score_band'
+);
+
+SELECT ok(
+  (public.api_get_recipe_score('pgtap-test-recipe')) ? 'coverage_pct',
+  'score response has coverage_pct'
+);
+
+SELECT ok(
+  (public.api_get_recipe_score('pgtap-test-recipe')) ? 'confidence',
+  'score response has confidence'
+);
+
+-- Error for nonexistent slug
+SELECT ok(
+  (public.api_get_recipe_score('nonexistent-slug')) ? 'error',
+  'score returns error for nonexistent slug'
 );
 
 

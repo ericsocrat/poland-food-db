@@ -33,8 +33,10 @@ vi.mock("next/link", () => ({
 }));
 
 const mockGetRecipeDetail = vi.fn();
+const mockGetRecipeScore = vi.fn();
 vi.mock("@/lib/api", () => ({
   getRecipeDetail: (...args: unknown[]) => mockGetRecipeDetail(...args),
+  getRecipeScore: (...args: unknown[]) => mockGetRecipeScore(...args),
 }));
 
 vi.mock("@/components/common/skeletons", () => ({
@@ -47,6 +49,7 @@ vi.mock("@/components/recipes", () => ({
   IngredientProductList: ({ products }: { products: unknown[] }) => (
     <div data-testid="ingredient-product-list">{products.length} products</div>
   ),
+  RecipeScoreBadge: () => <div data-testid="recipe-score-badge-stub" />,
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -139,6 +142,7 @@ const mockRecipeWithProducts: RecipeDetail = {
 beforeEach(() => {
   vi.clearAllMocks();
   mockGetRecipeDetail.mockResolvedValue({ ok: true, data: mockRecipe });
+  mockGetRecipeScore.mockResolvedValue({ ok: true, data: null });
 });
 
 // ─── Tests ──────────────────────────────────────────────────────────────────

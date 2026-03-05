@@ -50,6 +50,7 @@ import type {
     PushSubscriptionsResponse,
     RecentlyViewedResponse,
     RecipeDetail,
+    RecipeScore,
     RecipeSummary,
     RecordProductViewResponse,
     RecordScanResponse,
@@ -911,6 +912,15 @@ export function findProductsForIngredient(
       ...(country ? { p_country: country } : {}),
     },
   );
+}
+
+export function getRecipeScore(
+  supabase: SupabaseClient,
+  slug: string,
+): Promise<RpcResult<RecipeScore>> {
+  return callRpc<RecipeScore>(supabase, "api_get_recipe_score", {
+    p_slug: slug,
+  });
 }
 
 // ─── Allergen Batch Lookup (#128) ────────────────────────────────────────────

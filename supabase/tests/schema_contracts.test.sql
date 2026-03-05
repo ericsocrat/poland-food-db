@@ -368,6 +368,7 @@ SELECT has_function('public', 'find_products_for_recipe_ingredient', 'function f
 SELECT has_function('public', 'api_get_recipes',                 'function api_get_recipes exists');
 SELECT has_function('public', 'api_get_recipe_detail',           'function api_get_recipe_detail exists');
 SELECT has_function('public', 'api_get_recipe_nutrition',        'function api_get_recipe_nutrition exists');
+SELECT has_function('public', 'api_get_recipe_score',             'function api_get_recipe_score exists');
 
 -- ─── Admin Governance Dashboard (#206) ────────────────────────────────────────
 SELECT has_view('public', 'v_provenance_health',            'view v_provenance_health exists');

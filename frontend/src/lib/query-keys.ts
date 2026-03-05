@@ -141,6 +141,9 @@ export const queryKeys = {
   /** Single recipe detail by slug */
   recipe: (slug: string) => ["recipe", slug] as const,
 
+  /** Aggregate recipe score by slug (#616) */
+  recipeScore: (slug: string) => ["recipe-score", slug] as const,
+
   /** Products matching a recipe ingredient (#54) */
   ingredientProducts: (ingredientId: string) =>
     ["ingredient-products", ingredientId] as const,
@@ -276,6 +279,9 @@ export const staleTimes = {
 
   /** Recipe detail — 10 min (curated, changes rarely) */
   recipe: 10 * 60 * 1000,
+
+  /** Recipe score — 10 min (computed from linked product scores, changes rarely) */
+  recipeScore: 10 * 60 * 1000,
 
   /** Ingredient→product matches — 10 min (curated links, changes rarely) */
   ingredientProducts: 10 * 60 * 1000,
