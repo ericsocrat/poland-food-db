@@ -23,6 +23,8 @@ export type RpcResult<T> =
 
 // ─── User Preferences ──────────────────────────────────────────────────────
 
+export type NotificationFrequency = "immediate" | "daily_digest" | "weekly_digest";
+
 export interface UserPreferences {
   api_version: string;
   user_id: string;
@@ -38,6 +40,8 @@ export interface UserPreferences {
   onboarding_complete: boolean;
   onboarding_completed: boolean;
   onboarding_skipped: boolean;
+  notification_score_changes: boolean;
+  notification_frequency: NotificationFrequency;
   created_at: string;
   updated_at: string;
 }
@@ -1216,6 +1220,7 @@ export type AnalyticsEventName =
   | "push_notification_disabled"
   | "push_notification_denied"
   | "push_notification_dismissed"
+  | "notification_preferences_updated"
   | "pwa_install_prompted"
   | "pwa_install_accepted"
   | "pwa_install_dismissed"

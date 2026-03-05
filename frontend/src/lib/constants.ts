@@ -246,6 +246,13 @@ export const TRAFFIC_LIGHT_NUTRIENTS = [
   { nutrient: "salt", labelKey: "product.salt" },
 ] as const;
 
+// ─── Notification frequency options ─────────────────────────────────────────
+export const NOTIFICATION_FREQUENCY_OPTIONS = [
+  { value: "immediate",     labelKey: "notifications.frequencyImmediate",  descKey: "notifications.frequencyImmediateDescription" },
+  { value: "daily_digest",  labelKey: "notifications.frequencyDaily",      descKey: "notifications.frequencyDailyDescription" },
+  { value: "weekly_digest", labelKey: "notifications.frequencyWeekly",     descKey: "notifications.frequencyWeeklyDescription" },
+] as const;
+
 // ─── Feature flags ──────────────────────────────────────────────────────────
 // Flip to `true` when the corresponding feature is production-ready.
 export const FEATURES = {

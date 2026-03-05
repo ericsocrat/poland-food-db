@@ -63,6 +63,8 @@ SELECT has_column('public', 'products', 'product_name_en_reviewed_at', 'products
 SELECT has_column('public', 'products', 'name_translations',             'products.name_translations exists');
 SELECT has_column('public', 'products', 'nutri_score_source',             'products.nutri_score_source exists');
 SELECT has_column('public', 'user_preferences', 'preferred_language', 'user_preferences.preferred_language exists');
+SELECT has_column('public', 'user_preferences', 'notification_score_changes', 'user_preferences.notification_score_changes exists');
+SELECT has_column('public', 'user_preferences', 'notification_frequency',     'user_preferences.notification_frequency exists');
 SELECT has_column('public', 'country_ref', 'default_language',             'country_ref.default_language exists');
 SELECT has_column('public', 'country_ref', 'nutri_score_official',          'country_ref.nutri_score_official exists');
 

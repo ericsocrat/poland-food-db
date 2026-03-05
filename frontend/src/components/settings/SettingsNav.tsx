@@ -3,13 +3,14 @@
 // ─── Settings sub-page tab navigation ───────────────────────────────────────
 
 import { useTranslation } from "@/lib/i18n";
-import { KeyRound, Shield, User, Utensils } from "lucide-react";
+import { Bell, KeyRound, Shield, User, Utensils } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const TABS = [
   { key: "profile", href: "/app/settings", icon: User, matchExact: true },
   { key: "nutrition", href: "/app/settings/nutrition", icon: Utensils },
+  { key: "notifications", href: "/app/settings/notifications", icon: Bell },
   { key: "privacy", href: "/app/settings/privacy", icon: Shield },
   { key: "account", href: "/app/settings/account", icon: KeyRound },
 ] as const;
