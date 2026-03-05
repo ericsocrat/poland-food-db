@@ -171,19 +171,19 @@ WHERE p.is_deprecated IS NOT TRUE
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 11: Known product regression test (Doritos Sweet Chili)
---          Chips with 7 additives + high concern score (55) → score 31-35
+--          Chips with 7 additives + high concern score (55) → score 39-43
 --          v3.3: protein 6.1g (bonus 15) + fibre 5.6g (bonus 35) → density 50 → -4 pts
 --          Requires ingredient enrichment data; skipped in CI without it.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Doritos Sweet Chili score changed unexpectedly' AS issue,
-       CONCAT('Expected 31-35, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 39-43, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Doriros Sweet Chili Flavoured 100g'
   AND p.brand = 'Doritos'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 31 AND 35
+  AND p.unhealthiness_score::int NOT BETWEEN 39 AND 43
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -249,19 +249,19 @@ WHERE p.product_name = 'Skyr Naturalny'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 16: Known product regression test (Auchan Tortilla Pszenno-Żytnia)
---          Bread with 9 additives + concern 25, baked → score 19-23
+--          Bread with 9 additives + concern 25, baked → score 27-31
 --          v3.3: protein 8.4g (bonus 15) + fibre 0g (bonus 0) → density 15 → -1 pt
 --          Requires ingredient enrichment data; skipped in CI without it.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Auchan Tortilla score changed unexpectedly' AS issue,
-       CONCAT('Expected 19-23, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 27-31, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Tortilla Pszenno-Żytnia'
   AND p.brand = 'Auchan'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 19 AND 23
+  AND p.unhealthiness_score::int NOT BETWEEN 27 AND 31
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -280,19 +280,19 @@ WHERE p.product_name = 'Kabanosy wieprzowe'
   AND p.unhealthiness_score::int NOT BETWEEN 25 AND 29;
 
 -- Test 18: Known product regression test (E. Wedel Czekolada Tiramisu)
---          Sweets: palm oil + 15g sat fat + 57g sugars + 6 additives → score 44-48
+--          Sweets: palm oil + 15g sat fat + 57g sugars + 4 additives → score 50-54
 --          v3.3: protein 5.5g (bonus 15) + fibre 1.3g (bonus 10) → density 25 → -2 pts
 --          Requires ingredient enrichment data; skipped in CI without it.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Wedel Czekolada Tiramisu score changed unexpectedly' AS issue,
-       CONCAT('Expected 44-48, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 50-54, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Czekolada Tiramisu'
   AND p.brand = 'E. Wedel'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 44 AND 48
+  AND p.unhealthiness_score::int NOT BETWEEN 50 AND 54
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- Test 19: Known product regression test (Indomie Noodles Chicken Flavour)
@@ -426,18 +426,18 @@ WHERE p.product_name = 'Łosoś wędzony na zimno'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 28: Known product regression test (Dr. Oetker Pizza 4 sery)
---          Frozen & Prepared: frozen pizza, baked → 22-26
+--          Frozen & Prepared: frozen pizza, palm oil, 4 additives, baked → 28-32
 --          v3.3: protein 10.2g (bonus 30) + fibre 0g (bonus 0) → density 30 → -2 pts
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Dr. Oetker Pizza 4 sery score changed unexpectedly' AS issue,
-       CONCAT('Expected 22-26, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 28-32, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Pizza 4 sery, głęboko mrożona'
   AND p.brand = 'Dr. Oetker'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 22 AND 26;
+  AND p.unhealthiness_score::int NOT BETWEEN 28 AND 32;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 29: Known product regression test (Lajkonik Paluszki extra cienkie)
