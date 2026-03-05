@@ -1,4 +1,4 @@
--- QA: Scoring & Search Determinism (22 checks)
+-- QA: Scoring & Search Determinism (25 checks)
 -- Validates deterministic scoring via direct function calls with pinned expected outputs.
 -- No dependency on product data — tests computations in isolation.
 -- Catches unintended formula changes, rounding drift, and factor-weight misconfiguration.
@@ -6,7 +6,7 @@
 --         explain_score_v33(), stored-vs-recomputed parity.
 -- Search determinism stubs included for api_search_products() ordering consistency.
 -- Related: QA__scoring_formula_tests.sql (data-based regression); this suite is pure-function.
--- Reference: Issue #202 (GOV-C1), Issue #608 (v3.3)
+-- Reference: Issue #202 (GOV-C1), Issue #608 (v3.3), Issue #613 (v3.3 regression)
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Pinned healthy input → expected score 10 (±2)
@@ -328,3 +328,46 @@ SELECT '22. v33 nutrient density monotonic decrease' AS check_name,
         >= compute_unhealthiness_v33(3, 8, 0.5, 150, 0, 1, 'baked', 'none', 5, 20.0, 8.0)
             THEN 0 ELSE 1
        END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 23. v3.3 all-zero floor with no nutrient bonus → score 4
+--     Only prep_method contributes (default=50 → 50*0.08=4), no bonus
+--     Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '23. v3.3 all-zero floor score' AS check_name,
+       CASE WHEN compute_unhealthiness_v33(0, 0, 0, 0, 0, 0, 'not-applicable', 'none', 0, 0, 0) = 4
+            THEN 0 ELSE 1
+       END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 24. v3.3 parity with v3.2 when protein=0, fibre=0
+--     v33(inputs, 0, 0) must equal v32(inputs) for all 5 pinned profiles
+--     Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '24. v3.3 v3.2 parity (no bonus)' AS check_name,
+       (SELECT COUNT(*) FROM (
+           VALUES
+               (1.0, 4.0, 0.1, 56, 0, 0, 'none'::text, 'none'::text, 0),
+               (15.0, 45.0, 2.5, 520, 1.5, 8, 'deep-fried'::text, 'serious'::text, 4),
+               (0.5, 3.0, 1.0, 250, 0, 2, 'baked'::text, 'minor'::text, 1),
+               (0, 0, 0, 0, 0, 0, 'not-applicable'::text, 'none'::text, 0),
+               (10, 27, 3, 600, 2, 10, 'deep-fried'::text, 'serious'::text, 100)
+       ) AS t(sf, sg, sl, ca, tf, ad, pm, co, ic)
+       WHERE compute_unhealthiness_v33(sf, sg, sl, ca, tf, ad, pm, co, ic, 0, 0)
+          <> compute_unhealthiness_v32(sf, sg, sl, ca, tf, ad, pm, co, ic)
+       ) AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 25. v3.3 band coverage matrix — same inputs as v3.2 + protein=0, fibre=0
+--     Verifies v3.3 function covers all 5 scoring bands correctly
+--     Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '25. v3.3 band coverage matrix' AS check_name,
+       (SELECT COUNT(*) FROM (VALUES
+           ('Green',    1,  20, compute_unhealthiness_v33(1.0, 3.0, 0.3, 100, 0, 0, 'not-applicable', 'none', 0, 0, 0)),
+           ('Yellow',  21,  40, compute_unhealthiness_v33(5.0, 12.0, 1.0, 300, 0.5, 3, 'baked', 'none', 20, 0, 0)),
+           ('Orange',  41,  60, compute_unhealthiness_v33(6.0, 15.0, 1.5, 350, 0.5, 4, 'fried', 'none', 30, 0, 0)),
+           ('Red',     61,  80, compute_unhealthiness_v33(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50, 0, 0)),
+           ('DarkRed', 81, 100, compute_unhealthiness_v33(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100, 0, 0))
+       ) AS t(band, lo, hi, actual)
+       WHERE actual NOT BETWEEN lo AND hi) AS violations;
