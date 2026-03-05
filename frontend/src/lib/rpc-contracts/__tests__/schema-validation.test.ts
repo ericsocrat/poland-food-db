@@ -16,6 +16,7 @@ import {
     CategoryListingContract,
     CategoryOverviewContract,
     CompareContract,
+    CrossCountryLinksContract,
     DashboardDataContract,
     DataConfidenceContract,
     FilterOptionsContract,
@@ -461,6 +462,54 @@ describe("Schema validation: valid data accepted", () => {
   it("DataConfidenceContract accepts valid data", () => {
     const data = { api_version: "1.0", overall_score: 85 };
     expect(DataConfidenceContract.safeParse(data).success).toBe(true);
+  });
+
+  it("CrossCountryLinksContract accepts valid data", () => {
+    const data = [
+      {
+        link_id: 1,
+        link_type: "identical",
+        confidence: "brand_match",
+        notes: "Auto-linked: brand \"Pepsi\" + name similarity 1.00",
+        created_at: "2026-03-04T20:38:40.28373+00:00",
+        product: {
+          product_id: 783,
+          product_name: "Pepsi",
+          brand: "Pepsi",
+          country: "DE",
+          category: "Drinks",
+          unhealthiness_score: 7,
+          nutri_score_label: "D",
+        },
+      },
+    ];
+    expect(CrossCountryLinksContract.safeParse(data).success).toBe(true);
+  });
+
+  it("CrossCountryLinksContract accepts empty array", () => {
+    expect(CrossCountryLinksContract.safeParse([]).success).toBe(true);
+  });
+
+  it("CrossCountryLinksContract rejects invalid link_type", () => {
+    const data = [
+      {
+        link_id: 1,
+        link_type: "invalid_type",
+        confidence: "brand_match",
+        notes: null,
+        created_at: "2026-03-04T20:38:40.28373+00:00",
+        product: {
+          product_id: 1,
+          product_name: "Test",
+          brand: "Test",
+          country: "DE",
+          category: "Drinks",
+          unhealthiness_score: 10,
+          nutri_score_label: null,
+        },
+      },
+    ];
+    expect(CrossCountryLinksContract.safeParse(data).success).toBe(false);
   });
 });
 
