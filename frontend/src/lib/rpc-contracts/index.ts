@@ -9,53 +9,39 @@
 
 // ─── Helpers / shared fragments ─────────────────────────────────────────────
 export {
-  ScoreBandSchema,
-  NutriGradeSchema,
-  ListTypeSchema,
-  WarningSeveritySchema,
-  HealthConditionSchema,
-  ApiVersionFragment,
+    ApiVersionFragment, HealthConditionSchema, ListTypeSchema, NutriGradeSchema, ScoreBandSchema, WarningSeveritySchema
 } from "./helpers";
 
 // ─── Product domain ─────────────────────────────────────────────────────────
 export {
-  ProductDetailContract,
-  BetterAlternativesContract,
-  ScoreExplanationContract,
-  DataConfidenceContract,
+    BetterAlternativesContract, CrossCountryLinksContract, DataConfidenceContract, ProductDetailContract, ScoreExplanationContract
 } from "./product.contracts";
 
 // ─── Search domain ──────────────────────────────────────────────────────────
 export {
-  SearchProductsContract,
-  SearchAutocompleteContract,
-  FilterOptionsContract,
-  SavedSearchesContract,
-  SearchQualityReportContract,
+    FilterOptionsContract,
+    SavedSearchesContract, SearchAutocompleteContract, SearchProductsContract, SearchQualityReportContract
 } from "./search.contracts";
 
 // ─── Category domain ────────────────────────────────────────────────────────
 export {
-  CategoryOverviewContract,
-  CategoryOverviewItemSchema,
-  CategoryListingContract,
+    CategoryListingContract, CategoryOverviewContract,
+    CategoryOverviewItemSchema
 } from "./category.contracts";
 
 // ─── Dashboard domain ───────────────────────────────────────────────────────
 export {
-  DashboardDataContract,
-  RecentlyViewedContract,
+    DashboardDataContract,
+    RecentlyViewedContract
 } from "./dashboard.contracts";
 
 // ─── Health profile domain ──────────────────────────────────────────────────
 export {
-  HealthProfileListContract,
-  HealthProfileActiveContract,
-  HealthWarningsContract,
+    HealthProfileActiveContract, HealthProfileListContract, HealthWarningsContract
 } from "./health-profile.contracts";
 
 // ─── Lists domain ───────────────────────────────────────────────────────────
-export { ListsContract, ListItemsContract } from "./lists.contracts";
+export { ListItemsContract, ListsContract } from "./lists.contracts";
 
 // ─── Compare domain ─────────────────────────────────────────────────────────
 export { CompareContract } from "./compare.contracts";
@@ -65,9 +51,7 @@ export { ScanHistoryContract } from "./scan.contracts";
 
 // ─── Provenance domain ──────────────────────────────────────────────────────
 export {
-  ProductProvenanceContract,
-  CountryValidationContract,
-  ProvenanceDashboardContract,
+    CountryValidationContract, ProductProvenanceContract, ProvenanceDashboardContract
 } from "./provenance.contracts";
 
 // ─── User preferences domain ────────────────────────────────────────────────
