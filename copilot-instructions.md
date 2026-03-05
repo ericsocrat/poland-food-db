@@ -4,11 +4,11 @@
 > **Scope:** Poland (`PL`) primary + Germany (`DE`) micro-pilot (252 products across 5 categories)
 > **Products:** ~1,281 active (20 PL categories + 5 DE categories), 51 deprecated
 > **EAN coverage:** 1,024/1,026 (99.8%)
-> **Scoring:** v3.2 — 9-factor weighted formula via `compute_unhealthiness_v32()` (added ingredient concern scoring)
+> **Scoring:** v3.3 — 9-factor weighted penalty + nutrient density bonus via `compute_unhealthiness_v33()` (protein & fibre credit)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 2,995 unique ingredients (all clean ASCII English), 1,269 allergen declarations, 1,361 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 733 checks across 48 suites + 20 negative validation tests — all passing
+> **QA:** 735 checks across 48 suites + 20 negative validation tests — all passing
 
 ---
 
@@ -199,7 +199,7 @@ tryvit/
 │       ├── 20260215180000_enhanced_search.sql                # user_saved_searches + tsvector search
 │       └── 20260215200000_scanner_enhancements.sql           # scan_history + product_submissions
 ├── docs/
-│   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
+│   ├── SCORING_METHODOLOGY.md       # v3.3 algorithm (9 penalty factors + nutrient density bonus, ceilings, bands)
 │   ├── API_CONTRACTS.md             # API surface contracts (6 endpoints) — response shapes, hidden columns
 │   ├── API_CONVENTIONS.md           # RPC naming convention, breaking change definition, security standards
 │   ├── API_VERSIONING.md            # API deprecation & versioning policy
@@ -240,7 +240,7 @@ tryvit/
 │   ├── REPO_GOVERNANCE.md           # Repo structure rules, root cleanliness, CI integrity
 │   ├── RESEARCH_WORKFLOW.md         # Data collection lifecycle (manual + automated OFF pipeline)
 │   ├── SCORING_ENGINE.md            # Scoring engine architecture & version management
-│   ├── SCORING_METHODOLOGY.md       # v3.2 algorithm (9 factors, ceilings, bands)
+│   ├── SCORING_METHODOLOGY.md       # v3.3 algorithm (9 penalty factors + nutrient density bonus, ceilings, bands)
 │   ├── SEARCH_ARCHITECTURE.md       # Search architecture (pg_trgm, tsvector, ranking)
 │   ├── SECURITY_AUDIT.md            # Full security audit report
 │   ├── SLO.md                       # Service Level Objectives (availability, latency, error rate)
@@ -260,7 +260,7 @@ tryvit/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (733 checks across 48 suites)
+├── RUN_QA.ps1                       # QA test runner (735 checks across 48 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -434,8 +434,8 @@ tryvit/
 
 | Function                                | Purpose                                                                                                                                                             |
 | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `compute_unhealthiness_v32()`           | Scores 1–100 from 9 factors: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern                                         |
-| `explain_score_v32()`                   | Returns JSONB breakdown of score: final_score + 9 factors with name, weight, raw (0–100), weighted, input, ceiling                                                  |
+| `compute_unhealthiness_v33()`           | Scores 1–100 from 9 penalty factors + nutrient density bonus: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern − protein/fibre bonus |
+| `explain_score_v33()`                   | Returns JSONB breakdown of score: final_score + 10 factors (9 penalties + 1 bonus) with name, weight, raw (0–100), weighted, input, ceiling                          |
 | `find_similar_products()`               | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                                  |
 | `find_better_alternatives()`            | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                                      |
 | `resolve_ingredient_name()`             | Returns localized ingredient name. Fallback: requested lang → en translation → name_en → NULL                                                                       |
@@ -681,7 +681,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (733 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (735 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -819,7 +819,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (733 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (735 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 
@@ -853,7 +853,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 733 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 735 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -909,7 +909,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Ref. Integrity            | `QA__referential_integrity.sql`     |     18 | Yes       |
 | View Consistency          | `QA__view_consistency.sql`          |     13 | Yes       |
 | Naming Conventions        | `QA__naming_conventions.sql`        |     12 | Yes       |
-| Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     18 | Yes       |
+| Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     20 | Yes       |
 | Data Consistency          | `QA__data_consistency.sql`          |     26 | Yes       |
 | Allergen Integrity        | `QA__allergen_integrity.sql`        |     15 | Yes       |
 | Allergen Filtering        | `QA__allergen_filtering.sql`        |      6 | Yes       |
@@ -947,29 +947,29 @@ At the end of every PR-like change, include a **Verification** section:
 | Recipe Integrity          | `QA__recipe_integrity.sql`          |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **733/733 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **735/735 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
 
 These are **anchor products** whose scores must remain stable. If a scoring change causes drift beyond ±2 points, investigate before committing:
 
-- Doritos Sweet Chili ≈ 45 (chips, 7 additives + high concern)
-- Coca-Cola Zero (DE) ≈ 13 (zero nutrition, 8 additives + concern)
-- Piątnica Skyr Naturalny ≈ 8 (healthiest dairy, fermented)
-- Melvit Płatki owsiane górskie ≈ 13 (healthiest cereal)
-- Auchan Tortilla Pszenno-Żytnia ≈ 30 (bread, 9 additives + concern)
-- Tarczyński Kabanosy wieprzowe ≈ 31 (high-fat cured meat)
-- BoboVita Kaszka Mleczna ≈ 34 (baby food, high sugars)
-- Somersby Blueberry Cider ≈ 10 (alcohol regression)
-- Mestemacher Chleb wielozbożowy ≈ 18 (bread regression, baked)
-- Marinero Łosoś wędzony ≈ 29 (smoked salmon regression)
-- Dr. Oetker Pizza 4 sery ≈ 32 (frozen pizza, palm oil)
-- Lajkonik Paluszki extra cienkie ≈ 31 (snacks regression, baked)
-- Naleśniki z jabłkami ≈ 16 (żabka, low score)
+- Doritos Sweet Chili ≈ 33 (chips, 7 additives + concern, protein credit)
+- Coca-Cola Zero (DE) ≈ 4 (zero nutrition, additives + concern, no protein/fibre)
+- Piątnica Skyr Naturalny ≈ 5 (healthiest dairy, fermented, high protein bonus)
+- Melvit Płatki owsiane górskie ≈ 7 (healthiest cereal, protein + fibre bonus)
+- Auchan Tortilla Pszenno-Żytnia ≈ 21 (bread, 9 additives + concern, protein credit)
+- Tarczyński Kabanosy wieprzowe ≈ 27 (high-fat cured meat, high protein bonus)
+- BoboVita Kaszka Mleczna ≈ 28 (baby food, high sugars, protein credit)
+- Somersby Blueberry Cider ≈ 10 (alcohol regression — product deprecated)
+- Mestemacher Chleb wielozbożowy ≈ 12 (bread, baked, protein + fibre bonus)
+- Marinero Łosoś wędzony ≈ 25 (smoked salmon, high protein bonus)
+- Dr. Oetker Pizza 4 sery ≈ 24 (frozen pizza, palm oil, protein credit)
+- Lajkonik Paluszki extra cienkie ≈ 31 (snacks, baked — product deprecated)
+- Naleśniki z jabłkami ≈ 16 (żabka — product deprecated)
 - Pudliszki Ketchup łagodny ≈ 18 (condiments, sugar + salt)
-- E. Wedel Czekolada Tiramisu ≈ 57 (sweets, palm oil + additives)
-- Indomie Noodles Chicken ≈ 55 (instant, palm oil + 10 additives)
+- E. Wedel Czekolada Tiramisu ≈ 46 (sweets, palm oil + additives, protein credit)
+- Indomie Noodles Chicken ≈ 43 (instant, palm oil + 10 additives, protein credit)
 
 Run QA after **every** schema change, data update, or scoring formula adjustment.
 
@@ -1029,7 +1029,7 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_tryvit psql 
 - ❌ Invent nutrition data or Nutri-Score values
 - ❌ Add products from countries not in `country_ref` (currently PL and DE only)
 - ❌ Use `DELETE` or `TRUNCATE` in pipeline files — deprecate instead
-- ❌ Inline the scoring formula — always call `compute_unhealthiness_v32()`
+- ❌ Inline the scoring formula — always call `compute_unhealthiness_v33()`
 - ❌ Run pipelines against remote without explicit user confirmation
 - ❌ Drop or rename tables without a new migration
 - ❌ Collapse categories — each gets its own pipeline folder
@@ -1101,21 +1101,28 @@ security(rls): lock down product_submissions to authenticated users
 ## 14. Scoring Quick Reference
 
 ```
-unhealthiness_score (1-100) =
+penalty_sum (9 factors, weights sum to 1.00) =
   sat_fat(0.17) + sugars(0.17) + salt(0.17) + calories(0.10) +
   trans_fat(0.11) + additives(0.07) + prep_method(0.08) +
   controversies(0.08) + ingredient_concern(0.05)
+
+nutrient_density_raw = protein_bonus + fibre_bonus   -- 0–100, tiered
+unhealthiness_score  = GREATEST(1, LEAST(100, round(penalty_sum - nutrient_density_raw * 0.08)))
 ```
 
 **Ceilings** (per 100g): sat fat 10g, sugars 27g, salt 3g, trans fat 2g, calories 600 kcal, additives 10, ingredient concern 100.
 
-| Band     | Score  | Meaning        |
-| -------- | ------ | -------------- |
-| Green    | 1–20   | Low risk       |
-| Yellow   | 21–40  | Moderate risk  |
-| Orange   | 41–60  | Elevated risk  |
-| Red      | 61–80  | High risk      |
-| Dark red | 81–100 | Very high risk |
+**Nutrient density bonus** (v3.3): protein tiers (0/15/30/40/50 at 5/10/15/20g) + fibre tiers (0/10/20/35/50 at 1/3/5/8g). Weight −0.08 → max 8 pt reduction.
+
+**Consumer display (TryVit Score):** `TryVit Score = 100 − unhealthiness_score` (higher = healthier). This is a presentation-layer inversion only — the database, formula, and regression anchors (§8.19) all use unhealthiness values.
+
+| Band     | Unhealthiness | TryVit Score | Consumer Label | Meaning        |
+| -------- | ------------- | ------------ | -------------- | -------------- |
+| Green    | 1–20          | 80–100       | Excellent      | Low risk       |
+| Yellow   | 21–40         | 60–79        | Good           | Moderate risk  |
+| Orange   | 41–60         | 40–59        | Moderate       | Elevated risk  |
+| Red      | 61–80         | 20–39        | Poor           | High risk      |
+| Dark red | 81–100        | 1–19         | Bad            | Very high risk |
 
 Full documentation: `docs/SCORING_METHODOLOGY.md`
 
@@ -1583,7 +1590,7 @@ Produce **exactly this structure** — fill every section with real data:
 | Metric                    | Current Value   | Target / Baseline       | Status   |
 | ------------------------- | --------------- | ----------------------- | -------- |
 | Active products (PL+DE)   | ~X,XXX          | ≥1,281                  | ✅/⚠️/❌ |
-| QA checks passing         | XXX/733         | 733/733                 | ✅/⚠️/❌ |
+| QA checks passing         | XXX/735         | 735/735                 | ✅/⚠️/❌ |
 | Negative tests passing    | 23/23           | 23/23                   | ✅/⚠️/❌ |
 | Migrations committed      | XXX             | ≥182                    | ✅/⚠️/❌ |
 | Vitest coverage (lines)   | XX%             | ≥88%                    | ✅/⚠️/❌ |
@@ -2102,7 +2109,7 @@ Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
 
 | Document                        | Purpose                                                                              | Load When                                |
 | ------------------------------- | ------------------------------------------------------------------------------------ | ---------------------------------------- |
-| `docs/SCORING_METHODOLOGY.md`   | v3.2 algorithm — 9 factors, weights, ceilings, band thresholds, scientific rationale | Any scoring change                       |
+| `docs/SCORING_METHODOLOGY.md`   | v3.3 algorithm — 9 penalty factors + nutrient density bonus, weights, ceilings, bands, scientific rationale | Any scoring change                       |
 | `docs/SCORING_ENGINE.md`        | Scoring engine architecture — versioning, drift detection, formula registry          | Scoring formula work, version management |
 | `copilot-instructions.md §14`   | Scoring quick reference — formula, ceilings, band table                              | Quick coding reference                   |
 | `copilot-instructions.md §8.19` | Regression anchors — 16 products with expected scores ±2                             | Regression testing after scoring changes |
@@ -2344,7 +2351,7 @@ Execute every command. Record output. Do not skip.
 ```powershell
 # ── Database layer ───────────────────────────────────────────────────
 supabase test db                               # All pgTAP tests pass
-.\RUN_QA.ps1                                   # All 733+ QA checks pass
+.\RUN_QA.ps1                                   # All 735+ QA checks pass
 .\RUN_NEGATIVE_TESTS.ps1                       # All 20 negative tests caught
 python check_pipeline_structure.py            # 0 errors
 python validate_eans.py                       # 0 EAN failures
@@ -2394,7 +2401,7 @@ After implementation, update ALL of these that apply (per §18.1):
 
 ```powershell
 supabase test db                  → XX/XX pgTAP tests pass
-.\RUN_QA.ps1                      → 733/733 checks pass (0 failures)
+.\RUN_QA.ps1                      → 735/735 checks pass (0 failures)
 .\RUN_NEGATIVE_TESTS.ps1          → 23/23 caught
 npx tsc --noEmit                  → 0 errors
 npx vitest run                    → XXX/XXX tests pass
@@ -2443,7 +2450,7 @@ When encountering ambiguity, apply the default action without pausing to ask unl
 | ------------ | ------------------- |
 | Modifying an existing `supabase/migrations/` file | Write a new migration with next timestamp |
 | Inventing nutrition data or Nutri-Score values | Fetch from OFF API or mark `nutri_score_source = 'unknown'` |
-| Inlining the scoring formula | Always call `compute_unhealthiness_v32()` |
+| Inlining the scoring formula | Always call `compute_unhealthiness_v33()` |
 | Removing an API response key | Add a deprecation notice; keep the key returning `null` for 2 versions |
 | Using `DELETE` in pipeline SQL | Set `is_deprecated = true` with deprecation reason |
 | Writing tests after submitting PR | Tests are part of the same commit as the feature code |

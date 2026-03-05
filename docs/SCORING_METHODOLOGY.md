@@ -1,7 +1,7 @@
 # Scoring Methodology
 
-> **Version:** 3.2
-> **Last updated:** 2026-02-10
+> **Version:** 3.3
+> **Last updated:** 2026-03-16
 > **Scope:** TryVit
 
 ---
@@ -36,25 +36,28 @@ The score is a **weighted sum of sub-scores**, each normalized to 0–100, then 
 
 **Why these thresholds?** Each ceiling is set at the point where a product consumed regularly at that level would approach or exceed daily recommended limits. The per-100g ceiling represents the concentration at which ~2–3 servings would meet or exceed the WHO/EFSA daily guideline.
 
-| Factor             | Column source              | Weight   | Ceiling (per 100g) | Scientific basis for ceiling                                                                              |
-| ------------------ | -------------------------- | -------- | ------------------ | --------------------------------------------------------------------------------------------------------- |
-| Saturated fat      | `saturated_fat_g`          | 0.17     | 10g = 100          | EFSA DRV: <10% energy (~20g/day). 10g/100g = half daily limit in one portion.                             |
-| Sugars             | `sugars_g`                 | 0.17     | 27g = 100          | WHO: <10% energy (~50g/day). 27g/100g = half daily limit. Aligned with Nutri-Score max penalty.           |
-| Salt               | `salt_g`                   | 0.17     | 3.0g = 100         | WHO 2023: <5g/day. 3g/100g = >50% daily limit in 100g. EU Annex XIII "high" = 1.5g/100g.                  |
-| Calories (energy)  | `calories`                 | 0.10     | 600 kcal = 100     | Approx. energy density of pure fat (900) × 0.66. Products above 600 kcal/100g are extremely energy-dense. |
-| Trans fat          | `trans_fat_g`              | 0.11     | 2g = 100           | EU Reg. 2019/649: max 2g trans fat per 100g of fat. WHO: eliminate industrial trans fats.                 |
-| Additives count    | `additives_count`          | 0.07     | 10 = 100           | NOVA research (Monteiro 2019): ultra-processed products average 8–12 additives. 10 = firmly NOVA 4.       |
-| Oil / prep method  | `prep_method`              | 0.08     | categorical        | Acrylamide/PAH/HCA formation: deep-fried > fried > smoked > grilled > baked > steamed > air-popped.       |
-| Controversies      | `controversies`            | 0.08     | categorical        | E.g., palm oil (EFSA 2016: process contaminants), E171 (EFSA 2021: no longer safe).                       |
-| Ingredient concern | `ingredient_concern_score` | 0.05     | 100 = 100          | EFSA additive risk tiers. Nitrites (tier 3) = high; artificial sweeteners (tier 2) = moderate.            |
-|                    |                            | **1.00** |                    |                                                                                                           |
+| Factor              | Column source              | Weight    | Ceiling (per 100g) | Scientific basis for ceiling                                                                              |
+| ------------------- | -------------------------- | --------- | ------------------ | --------------------------------------------------------------------------------------------------------- |
+| Saturated fat       | `saturated_fat_g`          | 0.17      | 10g = 100          | EFSA DRV: <10% energy (~20g/day). 10g/100g = half daily limit in one portion.                             |
+| Sugars              | `sugars_g`                 | 0.17      | 27g = 100          | WHO: <10% energy (~50g/day). 27g/100g = half daily limit. Aligned with Nutri-Score max penalty.           |
+| Salt                | `salt_g`                   | 0.17      | 3.0g = 100         | WHO 2023: <5g/day. 3g/100g = >50% daily limit in 100g. EU Annex XIII "high" = 1.5g/100g.                  |
+| Calories (energy)   | `calories`                 | 0.10      | 600 kcal = 100     | Approx. energy density of pure fat (900) × 0.66. Products above 600 kcal/100g are extremely energy-dense. |
+| Trans fat           | `trans_fat_g`              | 0.11      | 2g = 100           | EU Reg. 2019/649: max 2g trans fat per 100g of fat. WHO: eliminate industrial trans fats.                 |
+| Additives count     | `additives_count`          | 0.07      | 10 = 100           | NOVA research (Monteiro 2019): ultra-processed products average 8–12 additives. 10 = firmly NOVA 4.       |
+| Oil / prep method   | `prep_method`              | 0.08      | categorical        | Acrylamide/PAH/HCA formation: deep-fried > fried > smoked > grilled > baked > steamed > air-popped.       |
+| Controversies       | `controversies`            | 0.08      | categorical        | E.g., palm oil (EFSA 2016: process contaminants), E171 (EFSA 2021: no longer safe).                       |
+| Ingredient concern  | `ingredient_concern_score` | 0.05      | 100 = 100          | EFSA additive risk tiers. Nitrites (tier 3) = high; artificial sweeteners (tier 2) = moderate.            |
+| **Penalty subtotal** |                           | **1.00**  |                    |                                                                                                           |
+| Nutrient density *(bonus)* | `protein_g`, `fibre_g` | **−0.08** | tiered (see §2.5)  | WHO/EFSA: protein and fibre contribute to satiety and diet quality. Bonus reduces unhealthiness.          |
 
-**Weight rationale (v3.2):** Saturated fat, sugars, and salt share the highest weight (0.17 each, reduced from 0.18 in v3.1) because they are the three nutrients cited by WHO as primary dietary risks for NCDs. Trans fat has high weight (0.11) because trans fats have no safe level of intake (WHO). The new ingredient concern factor (0.05) captures additive safety signals from EFSA re-evaluations — separate from additive count (which measures processing degree) and controversies (which covers product-level issues like palm oil). Calories carry moderate weight because energy density alone does not indicate harm.
+**Weight rationale (v3.2 penalties):** Saturated fat, sugars, and salt share the highest weight (0.17 each, reduced from 0.18 in v3.1) because they are the three nutrients cited by WHO as primary dietary risks for NCDs. Trans fat has high weight (0.11) because trans fats have no safe level of intake (WHO). The ingredient concern factor (0.05) captures additive safety signals from EFSA re-evaluations — separate from additive count (which measures processing degree) and controversies (which covers product-level issues like palm oil). Calories carry moderate weight because energy density alone does not indicate harm.
+
+**Nutrient density bonus rationale (v3.3):** The 9 penalty factors above only measure *harm potential*. Products with meaningful protein and fibre content contribute to satiety, lean mass maintenance, and digestive health (WHO/EFSA dietary reference values). The nutrient density bonus (weight −0.08) rewards these positive attributes by *subtracting* up to 8 points from the penalty sum. This ensures the score differentiates between an ultra-processed snack with zero protein/fibre and a moderately processed product containing significant nutritional value. The negative weight is applied *after* the penalty sum and before final clamping. See §2.5 for tier tables.
 
 ### 2.3 Formula
 
 ```
-Unhealthiness Score = round(
+penalty_sum = round(
     sat_fat_sub     * 0.17 +
     sugar_sub       * 0.17 +
     salt_sub        * 0.17 +
@@ -65,6 +68,12 @@ Unhealthiness Score = round(
     controversy_sub * 0.08 +
     concern_sub     * 0.05
 )
+
+nutrient_density_raw = protein_bonus + fibre_bonus   -- 0–100, see §2.5
+
+Unhealthiness Score = GREATEST(1, LEAST(100,
+    round(penalty_sum - nutrient_density_raw * 0.08)
+))
 ```
 
 Where each sub-score is computed as:
@@ -75,7 +84,7 @@ sub_score = LEAST(100, (value / threshold) * 100)
 
 For categorical factors (oil method, controversies, ingredient concern), use the fixed lookup values from the tables above.
 
-**Clamping:** The final score is clamped to the range `[1, 100]`. A product with all zeroes scores 1 (not 0) to avoid implying "perfectly healthy."
+**Clamping:** The final score is clamped to the range `[1, 100]` via `GREATEST(1, LEAST(100, ...))`. A product with all zeroes and maximum nutrient density bonus still scores 1 (not 0) to avoid implying "perfectly healthy." The nutrient density bonus (up to −8 points) is applied *before* clamping, so it can reduce a score from e.g. 15 to 7 but never below 1.
 
 **NULL handling:** If a numeric nutrition field is `NULL` or non-numeric text (e.g., `'N/A'`), that sub-score defaults to **0** and `data_completeness_pct` is reduced. The score is still computed but `confidence` is downgraded. See `RESEARCH_WORKFLOW.md` §4.3 for trace value handling (`'<0.5'` → midpoint `0.25`).
 
@@ -93,7 +102,7 @@ END
 
 ### 2.4 PostgreSQL Function
 
-The scoring formula is implemented as a reusable PostgreSQL function, defined in migration `20260207000501_scoring_function.sql` (v3.1 in `20260210001000`, v3.2 in `20260210001900`). All 20 category pipelines call this single function — changing weights or ceilings requires editing only one place.
+The scoring formula is implemented as a reusable PostgreSQL function, defined in migration `20260207000501_scoring_function.sql` (v3.1 in `20260210001000`, v3.2 in `20260210001900`, v3.3 in `20260315001900`). All 25 category pipelines call this single function — changing weights or ceilings requires editing only one place.
 
 **prep_method sub-score mapping:**
 
@@ -132,11 +141,44 @@ Each ingredient in `ingredient_ref` has a `concern_tier` (0–3) assigned from E
 | 2    | Moderate | Artificial sweeteners, some colorants | 40                 |
 | 3    | High     | Nitrites (E250), BHA (E320), azo dyes | 100                |
 
-The per-product `ingredient_concern_score` (0–100) is computed as: `LEAST(100, SUM(concern_tier_score_per_ingredient))`. Products with no classified additives score 0. The score is stored on the `products` table and passed to `compute_unhealthiness_v32()` as the 9th parameter.
+The per-product `ingredient_concern_score` (0–100) is computed as: `LEAST(100, SUM(concern_tier_score_per_ingredient))`. Products with no classified additives score 0. The score is stored on the `products` table and passed to the scoring function as a parameter.
+
+### 2.5 Nutrient Density Bonus (v3.3)
+
+The nutrient density bonus rewards products with meaningful protein and fibre content. Two tiered lookup tables produce a combined `nutrient_density_raw` value (0–100):
+
+**Protein bonus tiers (per 100g):**
+
+| Protein (g/100g) | Bonus | Scientific basis |
+| ---------------- | ----- | ---------------- |
+| ≥ 20g            | 50    | EFSA "high protein" claim threshold (≥20% energy from protein) |
+| 15–20g           | 40    | "Source of protein" claim level (~12% energy) |
+| 10–15g           | 30    | Meaningful contribution to daily intake (50g DRV) |
+| 5–10g            | 15    | Moderate protein content |
+| < 5g             | 0     | Negligible protein contribution |
+
+**Fibre bonus tiers (per 100g):**
+
+| Fibre (g/100g) | Bonus | Scientific basis |
+| -------------- | ----- | ---------------- |
+| ≥ 8g           | 50    | "High fibre" claim threshold (≥6g/100g, exceeded) |
+| 5–8g           | 35    | Meets "high fibre" EU claim requirement |
+| 3–5g           | 20    | "Source of fibre" EU claim (≥3g/100g) |
+| 1–3g           | 10    | Modest fibre content |
+| < 1g           | 0     | Negligible fibre contribution |
+
+**Combined formula:**
+
+```
+nutrient_density_raw = protein_bonus + fibre_bonus   -- range: 0–100
+nutrient_density_weighted = nutrient_density_raw * 0.08  -- max reduction: 8 points
+```
+
+The bonus is subtracted from the penalty sum *before* final clamping. A product with maximum protein (50) and maximum fibre (50) receives the full 8-point reduction. Products with zero protein and zero fibre receive no bonus.
 
 ```sql
 -- Function signature (returns INTEGER [1, 100])
-compute_unhealthiness_v32(
+compute_unhealthiness_v33(
     p_saturated_fat_g NUMERIC,    -- ceiling: 10g
     p_sugars_g        NUMERIC,    -- ceiling: 27g
     p_salt_g          NUMERIC,    -- ceiling: 3g
@@ -145,13 +187,15 @@ compute_unhealthiness_v32(
     p_additives_count NUMERIC,    -- ceiling: 10
     p_prep_method     TEXT,       -- categorical
     p_controversies   TEXT,       -- categorical
-    p_concern_score   NUMERIC     -- 0-100 EFSA concern score
+    p_concern_score   NUMERIC,    -- 0-100 EFSA concern score
+    p_protein_g       NUMERIC,    -- tiered bonus (see table above)
+    p_fibre_g         NUMERIC     -- tiered bonus (see table above)
 )
 ```
 
 **Pipeline usage** (each category's `04_scoring.sql`):
 
-Scoring is now consolidated into the `score_category()` procedure. Each category's
+Scoring is consolidated into the `score_category()` procedure. Each category's
 `04_scoring.sql` calls it after setting Nutri-Score and NOVA:
 
 ```sql
@@ -161,7 +205,8 @@ CALL score_category('<CATEGORY>');
 ```
 
 The `score_category()` procedure handles: ingredient concern defaults,
-`compute_unhealthiness_v32()`, flag computation, data completeness, and confidence.
+`compute_unhealthiness_v33()` (passing `protein_g` and `fibre_g` from `nutrition_facts`),
+flag computation, data completeness, and confidence.
 
 ### ~~2.5 `scored_at` Timestamp~~ (removed — column dropped in migration 20260211000500)
 
@@ -169,17 +214,59 @@ The `score_category()` procedure handles: ingredient concern defaults,
 
 ### 2.6 Score Bands
 
-| Range  | Interpretation                              | Typical products                   |
-| ------ | ------------------------------------------- | ---------------------------------- |
-| 1–20   | Low concern                                 | Plain oats, raw vegetables         |
-| 21–40  | Moderate — acceptable for regular use       | Whole-grain bread, basic yogurt    |
-| 41–60  | Elevated — occasional consumption advised   | Baked chips, sweetened cereal      |
-| 61–80  | High — frequent use is a health risk        | Fried chips, sugary drinks         |
-| 81–100 | Very high — minimal consumption recommended | Deep-fried + high-salt + additives |
+| Unhealthiness | Interpretation                              | TryVit Score | Consumer Band | Typical products                   |
+| ------------- | ------------------------------------------- | ------------ | ------------- | ---------------------------------- |
+| 1–20          | Low concern                                 | 80–100       | Excellent     | Plain oats, raw vegetables         |
+| 21–40         | Moderate — acceptable for regular use       | 60–79        | Good          | Whole-grain bread, basic yogurt    |
+| 41–60         | Elevated — occasional consumption advised   | 40–59        | Moderate      | Baked chips, sweetened cereal      |
+| 61–80         | High — frequent use is a health risk        | 20–39        | Poor          | Fried chips, sugary drinks         |
+| 81–100        | Very high — minimal consumption recommended | 1–19         | Bad           | Deep-fried + high-salt + additives |
 
 ### ~~2.7 Scoring Version~~ (removed — column dropped in migration 20260211000500)
 
 > The `scoring_version` column was dropped because all rows were `'v3.2'`. The version is now tracked only in `score_breakdown->>'version'` (JSONB). When methodology changes, update the function and this document.
+
+### 2.8 Consumer Display Layer (TryVit Score)
+
+The user-facing app presents health scores as the **TryVit Score** — a simple inversion of the internal unhealthiness score so that **higher values mean healthier products**.
+
+```
+TryVit Score = 100 − unhealthiness_score
+```
+
+Clamped to `[0, 100]`. A product with `unhealthiness_score = 25` displays as **TryVit Score 75**.
+
+**Rationale:** Consumer research consistently shows that "higher = better" scales are easier to understand and act on. The internal unhealthiness scale (lower = better) is retained in the database and scoring formula because it directly models harm accumulation — "how much risk does this product carry?" The display inversion is a **presentation-layer transformation only**; no formula, weight, or ceiling values change.
+
+**Important:** The underlying `compute_unhealthiness_v32()` function, all database columns (`unhealthiness_score`), and all regression anchors (§8.19 in `copilot-instructions.md`) continue to use the unhealthiness scale. The TryVit Score is computed at display time in the frontend.
+
+#### Consumer Band Table
+
+| TryVit Score | Consumer Label | Color   | Internal Unhealthiness | Internal Band |
+| ------------ | -------------- | ------- | ---------------------- | ------------- |
+| 80–100       | Excellent      | Green   | 1–20                   | Low concern   |
+| 60–79        | Good           | Yellow  | 21–40                  | Moderate      |
+| 40–59        | Moderate       | Orange  | 41–60                  | Elevated      |
+| 20–39        | Poor           | Red     | 61–80                  | High          |
+| 1–19         | Bad            | Darkred | 81–100                 | Very high     |
+
+#### Frontend Implementation
+
+The TryVit Score is computed by `toTryVitScore(unhealthinessScore)` in `frontend/src/lib/score-utils.ts`. Band resolution uses `getScoreBand()` which maps the **unhealthiness** value to its color/label configuration. The consumer-facing labels (Excellent, Good, Moderate, Poor, Bad) are resolved via i18n dictionary keys.
+
+### 2.9 Category Percentile
+
+Each product receives a **category percentile** indicating its relative ranking within its category. The percentile answers: *"This product is healthier than X% of products in its category."*
+
+```
+percentile = ((total_in_category − rank) / total_in_category) × 100
+```
+
+Where `rank` is the product's position when sorted by `unhealthiness_score` ascending (healthiest first). A product ranked 3rd out of 50 in its category has percentile = `((50 − 3) / 50) × 100 = 94%`.
+
+**Data source:** The `api_score_explanation()` function returns `category_rank`, `category_total`, and `category_avg_score` in its response, enabling the frontend to compute and display the percentile badge.
+
+**Display:** The frontend shows a "Top X%" badge when the product is in the top 25% of its category (percentile ≥ 75).
 
 ---
 
@@ -454,3 +541,4 @@ See `DATA_SOURCES.md` §5 and `RESEARCH_WORKFLOW.md` §6.4 for the full confiden
 | v3.1    | 2026-02-07 | Removed healthiness_score (derivable), personal lenses (unimplemented), ingredient_complexity scoring factor (redundant with additives + NOVA). Dropped cholesterol_mg, potassium_mg, aluminium_based_additives columns. Redistributed 0.04 weight to additives (0.05→0.07) and controversies (0.06→0.08). Extracted formula into `compute_unhealthiness_v31()` PostgreSQL function (migration 000501); all category pipelines now call the function instead of inline SQL.                                               |
 | v3.1b   | 2026-02-10 | Expanded `prep_method` scoring: added `steamed=30`, `grilled=60`, `smoked=65` (were all 50 via ELSE). Backfilled 134 NULL prep_method values across 5 categories. Made `prep_method` NOT NULL with default `'not-applicable'`. Added scientific references for PAH (EFSA 2008), HCA (IARC Group 2A).                                                                                                                                                                                                                      |
 | v3.2    | 2026-02-10 | Added 9th scoring factor: **ingredient concern** (weight 0.05) based on EFSA additive risk tiers (concern_tier 0–3 on ingredient_ref). New `compute_unhealthiness_v32()` function. Redistributed weights: sat_fat/sugars/salt 0.18→0.17, trans_fat 0.12→0.11, prep 0.09→0.08. Cleaned 375 foreign ingredient names to ASCII English. Rebuilt `ingredients_raw` from junction data (492 products). Added real serving sizes from OFF API (317 products). Fixed v_master fan-out with `serving_basis = 'per 100 g'` filter. |
+| v3.3    | 2026-03-16 | Added 10th factor: **nutrient density bonus** (weight −0.08) — protein and fibre credit that *reduces* the unhealthiness score by up to 8 points. New `compute_unhealthiness_v33()` function (11 params, adds `p_protein_g` and `p_fibre_g`). New `explain_score_v33()` returns 10-factor breakdown. Tiered protein bonus (0/15/30/40/50 at 5/10/15/20g thresholds) and fibre bonus (0/10/20/35/50 at 1/3/5/8g thresholds). Penalty weights unchanged (sum 1.00). `score_category()` updated to pass nutrition values. v3.2 retired in `scoring_model_versions`. score_breakdown now has 10 factors. |

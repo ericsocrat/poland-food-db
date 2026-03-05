@@ -40,10 +40,10 @@ const TOPICS: readonly {
     descKey: "learn.novaGroups.description",
   },
   {
-    slug: "unhealthiness-score",
+    slug: "tryvit-score",
     icon: BarChart3,
-    titleKey: "learn.unhealthinessScore.title",
-    descKey: "learn.unhealthinessScore.description",
+    titleKey: "learn.tryvitScore.title",
+    descKey: "learn.tryvitScore.description",
   },
   {
     slug: "additives",

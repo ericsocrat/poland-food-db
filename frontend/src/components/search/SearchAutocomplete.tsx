@@ -2,22 +2,23 @@
 
 // ─── SearchAutocomplete — debounced prefix search + recent/popular ──────────
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { Flame } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
 import { searchAutocomplete } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS, NUTRI_COLORS } from "@/lib/constants";
-import { nutriScoreLabel } from "@/lib/nutri-label";
-import {
-  getRecentSearches,
-  removeRecentSearch,
-  clearRecentSearches,
-} from "@/lib/recent-searches";
-import type { AutocompleteSuggestion } from "@/lib/types";
+import { NUTRI_COLORS, SCORE_BANDS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { nutriScoreLabel } from "@/lib/nutri-label";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import {
+    clearRecentSearches,
+    getRecentSearches,
+    removeRecentSearch,
+} from "@/lib/recent-searches";
+import { toTryVitScore } from "@/lib/score-utils";
+import { createClient } from "@/lib/supabase/client";
+import type { AutocompleteSuggestion } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { Flame } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 // ─── Text highlight helper (#62) ────────────────────────────────────────────
 
@@ -460,7 +461,7 @@ export function SearchAutocomplete({
                     <div
                       className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
                     >
-                      {s.unhealthiness_score}
+                      {toTryVitScore(s.unhealthiness_score)}
                     </div>
 
                     {/* Product info */}
@@ -524,3 +525,4 @@ export function SearchAutocomplete({
 }
 
 export { type SearchAutocompleteProps };
+

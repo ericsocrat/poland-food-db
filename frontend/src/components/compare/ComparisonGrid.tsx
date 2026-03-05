@@ -5,19 +5,20 @@
 // Mobile (<768px): horizontal swipe between product cards.
 // Highlights best/worst values per row with green/red coloring.
 
-import { useState, useRef, useCallback, useEffect } from "react";
-import { SCORE_BANDS, NUTRI_COLORS, scoreBandFromScore } from "@/lib/constants";
-import { nutriScoreLabel } from "@/lib/nutri-label";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
+import { NUTRI_COLORS, SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
-import { Scale, Trophy, Check, X as XIcon } from "lucide-react";
-import type { CompareProduct, CellValue } from "@/lib/types";
+import { nutriScoreLabel } from "@/lib/nutri-label";
+import { toTryVitScore } from "@/lib/score-utils";
+import type { CellValue, CompareProduct } from "@/lib/types";
+import { Check, Scale, Trophy, X as XIcon } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  fmtUnit,
-  fmtStr,
-  getWinnerIndex,
-  getBestWorst,
-  getCellHighlightClass,
+    fmtStr,
+    fmtUnit,
+    getBestWorst,
+    getCellHighlightClass,
+    getWinnerIndex,
 } from "./comparison-helpers";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -43,7 +44,7 @@ interface CompareRow {
 
 /** Maps row keys to i18n translation keys. */
 const ROW_LABEL_KEYS: Record<string, string> = {
-  unhealthiness_score: "compare.unhealthinessScore",
+  unhealthiness_score: "compare.tryvitScore",
   nutri_score: "filters.nutriScore",
   nova_group: "compare.novaGroupLabel",
   calories: "product.caloriesLabel",
@@ -60,10 +61,10 @@ const ROW_LABEL_KEYS: Record<string, string> = {
 
 const COMPARE_ROWS: CompareRow[] = [
   {
-    label: "Unhealthiness Score",
+    label: "TryVit Score",
     key: "unhealthiness_score",
-    getValue: (p) => p.unhealthiness_score,
-    betterDirection: "lower",
+    getValue: (p) => toTryVitScore(p.unhealthiness_score),
+    betterDirection: "higher",
   },
   {
     label: "Nutri-Score",
@@ -209,7 +210,7 @@ function DesktopGrid({
                     <div
                       className={`mx-auto flex h-12 w-12 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
                     >
-                      {p.unhealthiness_score}
+                      {toTryVitScore(p.unhealthiness_score)}
                     </div>
                     <p className="text-sm font-semibold text-foreground line-clamp-2">
                       {p.product_name}
@@ -459,7 +460,7 @@ function MobileSwipeView({
             <div
               className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl text-xl font-bold ${band.bg} ${band.color}`}
             >
-              {product.unhealthiness_score}
+              {toTryVitScore(product.unhealthiness_score)}
             </div>
             <div className="min-w-0 flex-1">
               <p className="font-bold text-foreground">

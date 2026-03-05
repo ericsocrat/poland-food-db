@@ -179,6 +179,20 @@ export const ScoreExplanationContract = z
         })
         .passthrough(),
     ),
+    nutrient_bonus: z
+      .object({
+        factor: z.string(),
+        raw: z.number(),
+        weighted: z.number(),
+        components: z
+          .object({
+            protein_bonus: z.number(),
+            fibre_bonus: z.number(),
+          })
+          .passthrough(),
+      })
+      .nullable()
+      .optional(),
     warnings: z.array(
       z
         .object({

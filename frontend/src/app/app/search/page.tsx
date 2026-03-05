@@ -29,6 +29,7 @@ import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { addRecentSearch, getRecentSearches } from "@/lib/recent-searches";
+import { toTryVitScore } from "@/lib/score-utils";
 import { createClient } from "@/lib/supabase/client";
 import type { FormSubmitEvent, SearchFilters, SearchResult } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -663,7 +664,7 @@ function ScoreTooltip({ product }: Readonly<{ product: SearchResult }>) {
   if (product.high_sat_fat) flags.push(t("product.highSatFat"));
   if (product.high_additive_load) flags.push(t("product.manyAdditives"));
 
-  const interpretation = getScoreInterpretation(product.unhealthiness_score);
+  const interpretation = getScoreInterpretation(toTryVitScore(product.unhealthiness_score));
 
   return (
     <span className="relative inline-flex">
@@ -753,7 +754,7 @@ function ProductRow({
             <div
               className={`flex h-10 w-10 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
             >
-              {product.unhealthiness_score}
+              {toTryVitScore(product.unhealthiness_score)}
             </div>
             <div className="flex items-center gap-1.5">
               <NutriScoreBadge grade={product.nutri_score} size="sm" />
@@ -821,7 +822,7 @@ function ProductRow({
           <div
             className={`flex h-12 w-12 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
           >
-            {product.unhealthiness_score}
+            {toTryVitScore(product.unhealthiness_score)}
           </div>
           <span className="absolute -right-1 -top-1">
             <ScoreTooltip product={product} />

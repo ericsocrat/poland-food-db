@@ -1,9 +1,9 @@
 // ─── Learn pages compliance tests ─────────────────────────────────────────
 // Validates /learn page structure, components, i18n keys, and metadata.
 
-import { readFileSync, existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 const frontendDir = join(__dirname, "../..");
 const appDir = join(frontendDir, "src/app/learn");
@@ -12,13 +12,14 @@ const messagesDir = join(frontendDir, "messages");
 
 const enJson = JSON.parse(readFileSync(join(messagesDir, "en.json"), "utf-8"));
 const plJson = JSON.parse(readFileSync(join(messagesDir, "pl.json"), "utf-8"));
+const deJson = JSON.parse(readFileSync(join(messagesDir, "de.json"), "utf-8"));
 
 /* ────────────────────── Topic pages exist ────────────────────── */
 
 const TOPICS = [
   "nutri-score",
   "nova-groups",
-  "unhealthiness-score",
+  "tryvit-score",
   "additives",
   "allergens",
   "reading-labels",
@@ -206,7 +207,7 @@ describe("i18n: English learn keys", () => {
   for (const topic of [
     "nutriScore",
     "novaGroups",
-    "unhealthinessScore",
+    "tryvitScore",
     "additives",
     "allergens",
     "readingLabels",
@@ -240,7 +241,7 @@ describe("i18n: Polish learn keys", () => {
   for (const topic of [
     "nutriScore",
     "novaGroups",
-    "unhealthinessScore",
+    "tryvitScore",
     "additives",
     "allergens",
     "readingLabels",
@@ -249,6 +250,33 @@ describe("i18n: Polish learn keys", () => {
     it(`has learn.${topic}.title in Polish`, () => {
       expect(plJson.learn[topic].title).toBeDefined();
       expect(plJson.learn[topic].title).not.toBe(enJson.learn[topic].title);
+    });
+  }
+});
+
+describe("i18n: German learn keys", () => {
+  it("has learn.hubTitle in German", () => {
+    expect(deJson.learn.hubTitle).toBeDefined();
+    expect(deJson.learn.hubTitle).not.toBe(enJson.learn.hubTitle);
+  });
+
+  it("has learn.disclaimer in German", () => {
+    expect(deJson.learn.disclaimer).toBeDefined();
+    expect(deJson.learn.disclaimer).not.toBe(enJson.learn.disclaimer);
+  });
+
+  for (const topic of [
+    "nutriScore",
+    "novaGroups",
+    "tryvitScore",
+    "additives",
+    "allergens",
+    "readingLabels",
+    "confidence",
+  ]) {
+    it(`has learn.${topic}.title in German`, () => {
+      expect(deJson.learn[topic].title).toBeDefined();
+      expect(deJson.learn[topic].title).not.toBe(enJson.learn[topic].title);
     });
   }
 });
@@ -273,8 +301,8 @@ describe("Content accuracy checks", () => {
     expect(enJson.learn.additives.whatAreText).toContain("EFSA");
   });
 
-  it("mentions WHO in unhealthiness score content", () => {
-    expect(enJson.learn.unhealthinessScore.factorSalt).toContain("WHO");
+  it("mentions WHO in TryVit Score content", () => {
+    expect(enJson.learn.tryvitScore.factorSalt).toContain("WHO");
   });
 
   it("lists all 14 EU allergens", () => {

@@ -1,13 +1,14 @@
+import de from "@/../messages/de.json";
+import en from "@/../messages/en.json";
+import pl from "@/../messages/pl.json";
 import fs from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import en from "@/../messages/en.json";
-import pl from "@/../messages/pl.json";
 
 // ─── Message dictionary parity tests ────────────────────────────────────────
-// Ensures en.json and pl.json have identical key structures so no translation
-// keys are missing or extra.  Also dynamically discovers ALL *.json files in
-// messages/ and verifies each matches en.json keys exactly — hard fail in dev.
+// Ensures en.json, pl.json, and de.json have identical key structures so no
+// translation keys are missing or extra.  Also dynamically discovers ALL
+// *.json files in messages/ and verifies each matches en.json keys exactly.
 
 type NestedObject = Record<string, unknown>;
 
@@ -38,6 +39,7 @@ function discoverLocaleFiles(): { locale: string; filePath: string }[] {
 describe("i18n message dictionaries", () => {
   const enKeys = collectKeys(en as NestedObject);
   const plKeys = collectKeys(pl as NestedObject);
+  const deKeys = collectKeys(de as NestedObject);
 
   it("en.json has at least 100 translation keys", () => {
     expect(enKeys.length).toBeGreaterThanOrEqual(100);
@@ -321,13 +323,245 @@ describe("i18n message dictionaries", () => {
     }
   });
 
+  // ─── Explicit German (de.json) coverage ─────────────────────────────────
+  // de.json gets the same explicit checks as pl.json above: key count, parity,
+  // non-empty, differentiation, interpolation, and tooltip validation.
+
+  it("de.json has at least 100 translation keys", () => {
+    expect(deKeys.length).toBeGreaterThanOrEqual(100);
+  });
+
+  it("en.json and de.json have identical key sets", () => {
+    const missingInDe = enKeys.filter((k) => !deKeys.includes(k));
+    const extraInDe = deKeys.filter((k) => !enKeys.includes(k));
+
+    if (missingInDe.length > 0 || extraInDe.length > 0) {
+      const msg = [
+        missingInDe.length > 0
+          ? `Missing in de.json:\n  ${missingInDe.join("\n  ")}`
+          : "",
+        extraInDe.length > 0
+          ? `Extra in de.json:\n  ${extraInDe.join("\n  ")}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+      expect.fail(msg);
+    }
+  });
+
+  it("all de.json leaf values are non-empty strings", () => {
+    for (const key of deKeys) {
+      const value = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          de as NestedObject,
+        );
+      expect(value, `de.json key "${key}" should be a non-empty string`).toSatisfy(
+        (v: unknown) => typeof v === "string" && v.length > 0,
+      );
+    }
+  });
+
+  it("de.json values differ from en.json for locale-specific keys", () => {
+    // Core UI labels that must be translated (avoid loanwords like Dashboard)
+    const keysToCheck = [
+      "nav.search",
+      "nav.scan",
+      "nav.lists",
+      "nav.settings",
+      "categories.title",
+      "product.nutrition",
+      "product.ingredients",
+      "product.alternatives",
+      "search.title",
+      "settings.title",
+    ];
+    for (const key of keysToCheck) {
+      const enVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          en as NestedObject,
+        );
+      const deVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          de as NestedObject,
+        );
+      expect(deVal, `de.json "${key}" should differ from en.json`).not.toBe(enVal);
+    }
+  });
+
+  it("interpolation placeholders are preserved in German translations", () => {
+    const paramRegex = /\{(\w+)\}/g;
+    for (const key of enKeys) {
+      const enVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          en as NestedObject,
+        ) as string;
+      const deVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          de as NestedObject,
+        ) as string;
+
+      const enParams = [...enVal.matchAll(paramRegex)].map((m) => m[1]).sort((a, b) => a.localeCompare(b));
+      const deParams = [...deVal.matchAll(paramRegex)].map((m) => m[1]).sort((a, b) => a.localeCompare(b));
+
+      if (enParams.length > 0) {
+        expect(deParams, `de.json "${key}" should have same {params} as en.json`).toEqual(
+          enParams,
+        );
+      }
+    }
+  });
+
+  it("de.json contains all required tooltip namespaces", () => {
+    for (const ns of REQUIRED_TOOLTIP_NAMESPACES) {
+      const tooltipKeys = deKeys.filter((k) => k.startsWith(`${ns}.`));
+      expect(
+        tooltipKeys.length,
+        `de.json should have keys under "${ns}"`,
+      ).toBeGreaterThan(0);
+    }
+  });
+
+  it("all required tooltip keys exist in de.json", () => {
+    const missing = REQUIRED_TOOLTIP_KEYS.filter((k) => !deKeys.includes(k));
+    if (missing.length > 0) {
+      expect.fail(
+        `Missing required tooltip keys in de.json:\n  ${missing.join("\n  ")}`,
+      );
+    }
+  });
+
+  it("en.json and de.json have identical tooltip key sets", () => {
+    const enTooltipKeys = enKeys.filter((k) => k.startsWith("tooltip."));
+    const deTooltipKeys = deKeys.filter((k) => k.startsWith("tooltip."));
+    const missingInDe = enTooltipKeys.filter((k) => !deTooltipKeys.includes(k));
+    const extraInDe = deTooltipKeys.filter((k) => !enTooltipKeys.includes(k));
+
+    if (missingInDe.length > 0 || extraInDe.length > 0) {
+      const msg = [
+        missingInDe.length > 0
+          ? `Tooltip keys missing in de.json:\n  ${missingInDe.join("\n  ")}`
+          : "",
+        extraInDe.length > 0
+          ? `Extra tooltip keys in de.json:\n  ${extraInDe.join("\n  ")}`
+          : "",
+      ]
+        .filter(Boolean)
+        .join("\n\n");
+      expect.fail(msg);
+    }
+  });
+
+  it("no tooltip key is an empty string in de.json", () => {
+    const tooltipKeys = deKeys.filter((k) => k.startsWith("tooltip."));
+    for (const key of tooltipKeys) {
+      const value = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          de as NestedObject,
+        );
+      expect(
+        value,
+        `de.json tooltip key "${key}" should be a non-empty string`,
+      ).toSatisfy((v: unknown) => typeof v === "string" && v.length > 0);
+    }
+  });
+
+  it("tooltip.warning keys use {value} interpolation in de.json", () => {
+    const warningKeys = REQUIRED_TOOLTIP_KEYS.filter((k) =>
+      k.startsWith("tooltip.warning."),
+    );
+    for (const key of warningKeys) {
+      const deVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          de as NestedObject,
+        ) as string;
+      expect(deVal, `de.json "${key}" should contain {value}`).toContain("{value}");
+    }
+  });
+
+  it("de.json onboarding category labels are in German", () => {
+    // Key onboarding category labels must be translated (not English)
+    const keysToCheck = [
+      "onboarding.catBread",
+      "onboarding.catDairy",
+      "onboarding.catDrinks",
+      "onboarding.catMeat",
+      "onboarding.catSweets",
+      "onboarding.catCereals",
+      "onboarding.catSauces",
+      "onboarding.catCondiments",
+    ];
+    for (const key of keysToCheck) {
+      const enVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          en as NestedObject,
+        );
+      const deVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          de as NestedObject,
+        );
+      expect(deVal, `de.json "${key}" should be defined`).toBeDefined();
+      expect(deVal, `de.json "${key}" should differ from en.json`).not.toBe(enVal);
+    }
+  });
+
+  it("de.json scoring and health terms are translated", () => {
+    // Health and scoring terms must be in German
+    const keysToCheck = [
+      "scoreBands.low",
+      "scoreBands.moderate",
+      "scoreBands.high",
+      "scoreBands.very_high",
+      "scoreInterpretation.title",
+      "healthWarnings.title",
+      "allergens.milk",
+      "allergens.eggs",
+      "allergens.nuts",
+      "allergens.peanuts",
+      "allergens.soy",
+    ];
+    for (const key of keysToCheck) {
+      const enVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          en as NestedObject,
+        );
+      const deVal = key
+        .split(".")
+        .reduce<unknown>(
+          (obj, k) => (obj as NestedObject)?.[k],
+          de as NestedObject,
+        );
+      expect(deVal, `de.json "${key}" should differ from en.json`).not.toBe(enVal);
+    }
+  });
+
   // ─── Dynamic locale parity (hard fail for any new language file) ────────
-  // If someone adds de.json (or any other locale), every key in en.json must
-  // exist in that file and vice-versa.  Missing or extra keys → test failure.
+  // If someone adds a new locale file, every key in en.json must exist in that
+  // file and vice-versa. Missing or extra keys → test failure.
   const localeFiles = discoverLocaleFiles();
   for (const { locale, filePath } of localeFiles) {
-    // Skip pl.json — already checked exhaustively above
-    if (locale === "pl") continue;
+    // Skip pl.json and de.json — already checked exhaustively above
+    if (locale === "pl" || locale === "de") continue;
 
     describe(`${locale}.json parity with en.json`, () => {
       const raw = JSON.parse(fs.readFileSync(filePath, "utf-8")) as NestedObject;

@@ -1,5 +1,50 @@
-import { describe, it, expect } from "vitest";
-import { getScoreBand, getAllBands } from "@/lib/score-utils";
+import { getAllBands, getScoreBand, toTryVitScore } from "@/lib/score-utils";
+import { describe, expect, it } from "vitest";
+
+// ─── toTryVitScore — unhealthiness → consumer-friendly inversion ────────────
+
+describe("toTryVitScore", () => {
+  it("inverts low unhealthiness to high TryVit score", () => {
+    expect(toTryVitScore(8)).toBe(92);
+  });
+
+  it("inverts mid-range unhealthiness", () => {
+    expect(toTryVitScore(57)).toBe(43);
+  });
+
+  it("inverts maximum unhealthiness to 0", () => {
+    expect(toTryVitScore(100)).toBe(0);
+  });
+
+  it("inverts minimum unhealthiness to 100", () => {
+    expect(toTryVitScore(0)).toBe(100);
+  });
+
+  it("inverts score 1 to 99", () => {
+    expect(toTryVitScore(1)).toBe(99);
+  });
+
+  it("inverts score 50 to 50 (midpoint symmetry)", () => {
+    expect(toTryVitScore(50)).toBe(50);
+  });
+
+  it("clamps negative input to 100", () => {
+    expect(toTryVitScore(-5)).toBe(100);
+  });
+
+  it("clamps input above 100 to 0", () => {
+    expect(toTryVitScore(105)).toBe(0);
+  });
+
+  it("handles fractional scores", () => {
+    expect(toTryVitScore(33.5)).toBe(66.5);
+  });
+
+  it("is symmetric: toTryVitScore(toTryVitScore(x)) ≈ x for valid range", () => {
+    // Double inversion recovers original (within valid 0-100)
+    expect(toTryVitScore(toTryVitScore(42))).toBe(42);
+  });
+});
 
 // ─── getScoreBand — 5-band mapping ─────────────────────────────────────────
 
@@ -10,7 +55,7 @@ describe("getScoreBand", () => {
     const result = getScoreBand(1);
     expect(result).toEqual({
       band: "green",
-      label: "Low",
+      label: "Excellent",
       color: "var(--color-score-green)",
       bgColor: "bg-score-green/10",
       textColor: "text-score-green-text",
@@ -23,14 +68,14 @@ describe("getScoreBand", () => {
 
   it("maps score 20 to green band (upper boundary)", () => {
     expect(getScoreBand(20)?.band).toBe("green");
-    expect(getScoreBand(20)?.label).toBe("Low");
+    expect(getScoreBand(20)?.label).toBe("Excellent");
   });
 
   // ─── Yellow band (21–40) ────────────────────────────────────────────────
 
   it("maps score 21 to yellow band (lower boundary)", () => {
     expect(getScoreBand(21)?.band).toBe("yellow");
-    expect(getScoreBand(21)?.label).toBe("Moderate");
+    expect(getScoreBand(21)?.label).toBe("Good");
   });
 
   it("maps score 30 to yellow band", () => {
@@ -45,7 +90,7 @@ describe("getScoreBand", () => {
 
   it("maps score 41 to orange band (lower boundary)", () => {
     expect(getScoreBand(41)?.band).toBe("orange");
-    expect(getScoreBand(41)?.label).toBe("High");
+    expect(getScoreBand(41)?.label).toBe("Moderate");
   });
 
   it("maps score 50 to orange band", () => {
@@ -60,7 +105,7 @@ describe("getScoreBand", () => {
 
   it("maps score 61 to red band (lower boundary)", () => {
     expect(getScoreBand(61)?.band).toBe("red");
-    expect(getScoreBand(61)?.label).toBe("Very High");
+    expect(getScoreBand(61)?.label).toBe("Poor");
   });
 
   it("maps score 70 to red band", () => {
@@ -75,7 +120,7 @@ describe("getScoreBand", () => {
 
   it("maps score 81 to darkred band (lower boundary)", () => {
     expect(getScoreBand(81)?.band).toBe("darkred");
-    expect(getScoreBand(81)?.label).toBe("Extreme");
+    expect(getScoreBand(81)?.label).toBe("Bad");
   });
 
   it("maps score 90 to darkred band", () => {

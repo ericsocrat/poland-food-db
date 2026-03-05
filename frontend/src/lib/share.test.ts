@@ -49,7 +49,7 @@ describe("shareProduct", () => {
 
     expect(shareFn).toHaveBeenCalledWith(
       expect.objectContaining({
-        title: "Skyr Naturalny — Health Score 9/100",
+        title: "Skyr Naturalny — TryVit Score 91/100",
         url: "https://food.test/app/product/42",
       }),
     );

@@ -42,10 +42,10 @@ describe("ScoreRadarChart", () => {
     expect(polygon?.getAttribute("points")).toBeTruthy();
   });
 
-  it("renders 9 axis labels", () => {
+  it("renders 10 axis labels", () => {
     const { container } = render(<ScoreRadarChart breakdown={[]} />);
     const labels = container.querySelectorAll("text");
-    expect(labels.length).toBe(9);
+    expect(labels.length).toBe(10);
   });
 
   it("renders concentric reference circles", () => {
@@ -64,9 +64,9 @@ describe("ScoreRadarChart", () => {
       makeFactor("calories", 0),
     ];
     const { container } = render(<ScoreRadarChart breakdown={breakdown} />);
-    // 3 reference circles + 9 data point circles (one per axis, even if zero)
+    // 3 reference circles + 10 data point circles (one per axis, even if zero)
     const circles = container.querySelectorAll("circle");
-    expect(circles.length).toBe(3 + 9);
+    expect(circles.length).toBe(3 + 10);
   });
 
   it("handles empty breakdown gracefully", () => {
@@ -75,6 +75,18 @@ describe("ScoreRadarChart", () => {
     expect(polygon).toBeTruthy();
     // All points should be at center (all zero)
     expect(polygon?.getAttribute("points")).toBeTruthy();
+  });
+
+  it("renders nutrient_density bonus axis with green color", () => {
+    const breakdown = [
+      makeFactor("nutrient_density", -8),
+    ];
+    const { container } = render(<ScoreRadarChart breakdown={breakdown} />);
+    // The nutrient_density label should have green class
+    const labels = container.querySelectorAll("text");
+    const nutrientLabel = Array.from(labels).find((l) => l.textContent === "Nutrient+");
+    expect(nutrientLabel).toBeTruthy();
+    expect(nutrientLabel?.getAttribute("class")).toContain("green");
   });
 
   it("clamps values that exceed maxWeighted", () => {

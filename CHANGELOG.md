@@ -13,7 +13,67 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Scoring
+
+- Implement v3.3 nutrient density bonus — protein and fibre credit that reduces
+  unhealthiness score by up to 8 points. New `compute_unhealthiness_v33()` (11
+  params: adds `p_protein_g`, `p_fibre_g`) and `explain_score_v33()` (returns 10
+  factors). Tiered bonus: protein (0/15/30/40/50 at 5/10/15/20g) + fibre
+  (0/10/20/35/50 at 1/3/5/8g). Weight −0.08, penalty weights unchanged (sum
+  1.00). All 1,279 products re-scored. v3.2 retired in scoring_model_versions.
+  Migration `20260315001900`. QA: 4 new determinism checks, 2 new engine checks,
+  all 31 formula anchor ranges updated, view consistency check updated (10
+  factors). Docs: SCORING_METHODOLOGY.md v3.3, copilot-instructions §14 (#608)
+
+### Changed
+
+- Update score explanation API and UI for v3.3 nutrient density factor:
+  `api_score_explanation()` now returns `nutrient_bonus` object with protein/fibre
+  component breakdown; ScoreBreakdownPanel renders green nutrient density bonus
+  section; ScoreRadarChart shows 10th axis with green accent; positive warnings
+  for good protein (≥10g) and fibre (≥3g); learn page and i18n updated for
+  10-factor model (#611)
+
+- Re-score all 1,671 active products with v3.3 nutrient density bonus (protein +
+  fibre credit); 1,667 products unchanged, 4 DE products drifted within expected
+  range (max |Δ|=5); updated 11 QA regression anchor ranges and copilot-instructions
+  anchor references to reflect v3.3 scores (#610)
+
+### Data
+
+- Scale all 20 PL categories to maximum OFF API capacity: 1,198 active PL
+  products (up from 1,027), 1,450 total active across PL + DE; regenerated
+  pipeline SQL for all 20 categories with `--max-products 95`; added
+  post-pipeline fixup steps for calorie back-calculation validation, zero-calorie
+  macro correction, brand casing normalization, orphan junction cleanup, and
+  Żabka reclassification reason backfill (#593)
+- Validate protein/fibre backfill readiness for v3.3 nutrient density bonus:
+  audit confirms 100% non-NULL coverage for both `protein_g` (1,671 products)
+  and `fibre_g` (1,671 products); pipeline SQL generator and OFF API client
+  already include both fields in extraction and upsert; `compute_data_completeness()`
+  already includes both in its 15-checkpoint system (#609)
+
+### Tests
+
+- Add 2 QA checks to nutrition ranges suite (18 → 20 checks, total 733 → 735):
+  protein_g NULL coverage < 5% threshold and fibre_g NULL coverage < 10%
+  threshold — required for v3.3 nutrient density bonus (#609)
+
+### Documentation
+
+- Overhaul scoring docs for TryVit Score consumer display layer: add §2.8
+  Consumer Display Layer (TryVit Score = 100 − unhealthiness, band table with
+  consumer labels Excellent/Good/Moderate/Poor/Bad, rationale for higher=healthier
+  inversion) and §2.9 Category Percentile to SCORING_METHODOLOGY.md; add
+  consumer-facing columns to §2.6 band table; add §10.1 TryVit Score and
+  regression anchor notes to SCORING_ENGINE.md; update copilot-instructions §14
+  with consumer display note and dual-column band table (#591)
+
 ### Fixed
+
+- Fix QA data consistency check 1 (case-insensitive duplicate detection): add
+  country-scoping to the JOIN condition so cross-country products with the same
+  brand+name (e.g. Pepsi PL vs Pepsi DE) are not flagged as duplicates (#593)
 
 - Remove 11 ESLint `@typescript-eslint/no-non-null-assertion` warnings across 8
   frontend files: replace `!` assertions with optional chaining (`?.`), nullish
