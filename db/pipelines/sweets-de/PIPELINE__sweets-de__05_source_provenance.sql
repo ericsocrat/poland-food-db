@@ -1,5 +1,5 @@
--- PIPELINE (Sweets): source provenance
--- Generated: 2026-02-25
+﻿-- PIPELINE (Sweets): source provenance
+-- Generated: 2026-03-04
 
 -- 1. Update source info on products
 UPDATE products p SET
@@ -9,12 +9,21 @@ UPDATE products p SET
 FROM (
   VALUES
     ('Ferrero', 'Ferrero Yogurette 40084060 Gefüllte Vollmilchschokolade mit Magermilchjoghurt-Erdbeer-Creme', 'https://world.openfoodfacts.org/product/40084060', '40084060'),
+    ('Back Family', 'Schoko-Tröpfchen - Zartbitter', 'https://world.openfoodfacts.org/product/4061458160971', '4061458160971'),
+    ('Ferrero', 'Kinder Überraschung Maxi', 'https://world.openfoodfacts.org/product/4008400230726', '4008400230726'),
+    ('Schogetten', 'Weiße Pistazie', 'https://world.openfoodfacts.org/product/4000607850011', '4000607850011'),
+    ('Schogetten', 'Weiße Schokolade', 'https://world.openfoodfacts.org/product/4000607167706', '4000607167706'),
+    ('RUF', 'Schoko Tröpfchen', 'https://world.openfoodfacts.org/product/4002809024306', '4002809024306'),
     ('Ritter Sport', 'Kakao-Klasse Die Kräftige 74%', 'https://world.openfoodfacts.org/product/4000417693310', '4000417693310'),
     ('Kinder', 'Überraschung', 'https://world.openfoodfacts.org/product/40084107', '40084107'),
-    ('J. D. Gross', 'Edelbitter Mild 90%', 'https://world.openfoodfacts.org/product/4056489471264', '4056489471264'),
+    ('Ritter Sport', 'Weiße Nuss', 'https://world.openfoodfacts.org/product/4000417670113', '4000417670113'),
+    ('August Storck KG', 'Merci Finest Selection Große Vielfalt', 'https://world.openfoodfacts.org/product/4014400932904', '4014400932904'),
+    ('Back Family', 'Kuvertüre Zartbitter', 'https://world.openfoodfacts.org/product/4061463588951', '4061463588951'),
+    ('Kinder', 'Kinder Überraschung', 'https://world.openfoodfacts.org/product/40084909', '40084909'),
+    ('Alpia', 'Zarte Weiße Schokolade', 'https://world.openfoodfacts.org/product/4001743760219', '4001743760219'),
+    ('Rapunzel', 'Nirwana Noir 55% Kakao mit dunkler Praliné-​Füllung', 'https://world.openfoodfacts.org/product/4006040202844', '4006040202844'),
     ('Moser Roth', 'Edelbitter-Schokolade 85 % Cacao', 'https://world.openfoodfacts.org/product/4061458021630', '4061458021630'),
     ('Ritter Sport', 'Kakao Klasse die Starke - 81%', 'https://world.openfoodfacts.org/product/4000417693815', '4000417693815'),
-    ('Moser Roth', 'Edelbitter 90 % Cacao', 'https://world.openfoodfacts.org/product/4061462044809', '4061462044809'),
     ('Lidl', 'Lidl Organic Dark Chocolate', 'https://world.openfoodfacts.org/product/40896243', '40896243'),
     ('Aldi', 'Edelbitter-Schokolade 70% Cacao', 'https://world.openfoodfacts.org/product/4061458021593', '4061458021593'),
     ('Ritter Sport', 'Schokolade Halbbitter', 'https://world.openfoodfacts.org/product/4000417602015', '4000417602015'),
@@ -58,7 +67,42 @@ FROM (
     ('Aldi', 'Rahm Mandel', 'https://world.openfoodfacts.org/product/4061458021647', '4061458021647'),
     ('Ritter Sport', 'Vegan Roasted Peanut', 'https://world.openfoodfacts.org/product/4000417106100', '4000417106100'),
     ('Ritter Sport', 'Nussklasse Ganze Mandel', 'https://world.openfoodfacts.org/product/4000417670311', '4000417670311'),
-    ('Ritter Sport', 'Ritter Sport Lemon', 'https://world.openfoodfacts.org/product/4000417628510', '4000417628510')
+    ('Aldi', 'Feinherbe Schokolade', 'https://world.openfoodfacts.org/product/4047247273459', '4047247273459'),
+    ('Ritter Sport', 'Ritter Sport White Lemon', 'https://world.openfoodfacts.org/product/4000417628510', '4000417628510'),
+    ('Choceur', 'Vollmilchschokolade Alpenmilch', 'https://world.openfoodfacts.org/product/4061458042963', '4061458042963'),
+    ('Romy', 'Kokos-Schoko-Creme', 'https://world.openfoodfacts.org/product/4021700903053', '4021700903053'),
+    ('Ritter Sport', 'Gebrannte Mandel', 'https://world.openfoodfacts.org/product/4000417629616', '4000417629616'),
+    ('Aldi', 'Zartbitterschokolade - Chili', 'https://world.openfoodfacts.org/product/4061458021555', '4061458021555'),
+    ('Gepa', 'Zartbitter Mild Pur 60%', 'https://world.openfoodfacts.org/product/4013320185629', '4013320185629'),
+    ('Ritter Sport', 'Groovy ritter', 'https://world.openfoodfacts.org/product/4000417628411', '4000417628411'),
+    ('Belbake', 'Schokochunks Zartbitter', 'https://world.openfoodfacts.org/product/4056489117841', '4056489117841'),
+    ('Gepa', 'Grand Chocolat Matcha Blanc', 'https://world.openfoodfacts.org/product/4013320033333', '4013320033333'),
+    ('Ritter Sport', 'Weisse Lakritz', 'https://world.openfoodfacts.org/product/4000417622310', '4000417622310'),
+    ('Lidl', 'Vegane helle Cookies', 'https://world.openfoodfacts.org/product/4056489345909', '4056489345909'),
+    ('Ritter Sport', 'Pfefferminz', 'https://world.openfoodfacts.org/product/4000417602817', '4000417602817'),
+    ('Choceur', 'Feine Weisse', 'https://world.openfoodfacts.org/product/4061458021913', '4061458021913'),
+    ('Ritter Sport', 'Salted Caramel Vegan', 'https://world.openfoodfacts.org/product/4000417107107', '4000417107107'),
+    ('Eszet', 'Schnitten- Zartbitter Schokolade', 'https://world.openfoodfacts.org/product/4030387760606', '4030387760606'),
+    ('Ritter Sport', 'Crunchy Mandel', 'https://world.openfoodfacts.org/product/4000417103109', '4000417103109'),
+    ('Alpia', 'Feine Zartbitter Schokolade', 'https://world.openfoodfacts.org/product/4001743760196', '4001743760196'),
+    ('Belbake', 'Dark Chocolate Drops', 'https://world.openfoodfacts.org/product/4056489005827', '4056489005827'),
+    ('Choceur', 'Mandelknacker - Zartbitterschokolade', 'https://world.openfoodfacts.org/product/4061459139860', '4061459139860'),
+    ('EnerBio', 'Feine Edelbitter Schokolade 70%', 'https://world.openfoodfacts.org/product/4068134089168', '4068134089168'),
+    ('Aldi', 'Edel-Vollmilch', 'https://world.openfoodfacts.org/product/4061458021579', '4061458021579'),
+    ('Aldi', 'Zartbitter Schokolade 70%', 'https://world.openfoodfacts.org/product/4061459605853', '4061459605853'),
+    ('GEPA Grand Noir', 'GEPA Grand Noir Zarte Bitter 70% 4013320066393 Bio Bitterschokolade', 'https://world.openfoodfacts.org/product/4013320066393', '4013320066393'),
+    ('Gepa', 'Vollmilch Schokolade, Espresso & Karamell', 'https://world.openfoodfacts.org/product/4013320185742', '4013320185742'),
+    ('Fin Carré', 'Vegane Helle mit Haselnuss', 'https://world.openfoodfacts.org/product/4056489242512', '4056489242512'),
+    ('Aldi', 'Choco Changer Salted Caramel', 'https://world.openfoodfacts.org/product/4061459605686', '4061459605686'),
+    ('Ferrero', 'Yogurette', 'https://world.openfoodfacts.org/product/40084244', '40084244'),
+    ('Zetti', 'Edel Bitter 75% Kakao', 'https://world.openfoodfacts.org/product/4012362024507', '4012362024507'),
+    ('Schogetten', 'Schokolade Caramel Brownie', 'https://world.openfoodfacts.org/product/4000607163609', '4000607163609'),
+    ('Dr. Oetker', 'Couverture fine gloss aigre-doux', 'https://world.openfoodfacts.org/product/4000521007027', '4000521007027'),
+    ('Fin CARRE', 'Mandel Kracher', 'https://world.openfoodfacts.org/product/4056489577294', '4056489577294'),
+    ('Lindt', 'Excellence 50% cacao Zartbitter', 'https://world.openfoodfacts.org/product/4000539113185', '4000539113185'),
+    ('Ritter Sport', 'Schokolade Crunchy Creamy Winter', 'https://world.openfoodfacts.org/product/4000417694218', '4000417694218'),
+    ('Gepa', 'Grand Noir Edelbitter 85%', 'https://world.openfoodfacts.org/product/4013320066379', '4013320066379'),
+    ('Rossmann', 'RAW Chocolate mit Dattelsüsse', 'https://world.openfoodfacts.org/product/4305615972374', '4305615972374')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'DE' AND p.brand = d.brand
   AND p.product_name = d.product_name
