@@ -2,7 +2,8 @@
  * ScoreBreakdownPanel — "Why this score?" collapsible panel.
  *
  * Fetches the score explanation via `api_score_explanation` and renders
- * a human-readable breakdown of the 9 scoring factors with progress bars.
+ * a human-readable breakdown of the scoring factors with progress bars.
+ * Penalty factors shown in red spectrum, nutrient density bonus in green.
  * Usable on the product profile page.
  */
 
@@ -15,7 +16,7 @@ import { getScoreExplanation } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { useTranslation } from "@/lib/i18n";
 import { Skeleton } from "@/components/common/Skeleton";
-import { BarChart3, AlertTriangle, Clock } from "lucide-react";
+import { BarChart3, AlertTriangle, Clock, Leaf } from "lucide-react";
 import type { ScoreExplanation } from "@/lib/types";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -128,6 +129,7 @@ function BreakdownContent({
 }: Readonly<{ explanation: ScoreExplanation }>) {
   const { t } = useTranslation();
   const factors = explanation.top_factors ?? [];
+  const bonus = explanation.nutrient_bonus;
 
   return (
     <div className="space-y-3">
@@ -136,7 +138,7 @@ function BreakdownContent({
         {explanation.summary?.headline}
       </p>
 
-      {/* Factor bars */}
+      {/* Penalty factor bars */}
       {factors.length > 0 && (
         <div className="space-y-2">
           {factors.map((f) => (
@@ -164,6 +166,40 @@ function BreakdownContent({
               </div>
             </div>
           ))}
+        </div>
+      )}
+
+      {/* Nutrient density bonus (v3.3) */}
+      {bonus && bonus.weighted < 0 && (
+        <div
+          className="rounded-md border border-green-200 bg-green-50 px-3 py-2 dark:border-green-800 dark:bg-green-950/20"
+          data-testid="nutrient-bonus"
+        >
+          <div className="flex items-center gap-1.5 text-xs font-medium text-green-700 dark:text-green-400">
+            <Leaf size={14} aria-hidden="true" />
+            <span>{t("tooltip.scoreBreakdown.nutrientBonus")}</span>
+            <span className="ml-auto tabular-nums">
+              {bonus.weighted.toFixed(1)} pts
+            </span>
+          </div>
+          {bonus.components && (
+            <div className="mt-1 flex gap-3 text-[10px] text-green-600 dark:text-green-500">
+              {bonus.components.protein_bonus > 0 && (
+                <span>
+                  {t("tooltip.scoreBreakdown.proteinBonus", {
+                    pts: String(bonus.components.protein_bonus),
+                  })}
+                </span>
+              )}
+              {bonus.components.fibre_bonus > 0 && (
+                <span>
+                  {t("tooltip.scoreBreakdown.fibreBonus", {
+                    pts: String(bonus.components.fibre_bonus),
+                  })}
+                </span>
+              )}
+            </div>
+          )}
         </div>
       )}
 

@@ -25,6 +25,20 @@ Adheres to [Semantic Versioning](https://semver.org/).
   all 31 formula anchor ranges updated, view consistency check updated (10
   factors). Docs: SCORING_METHODOLOGY.md v3.3, copilot-instructions §14 (#608)
 
+### Changed
+
+- Update score explanation API and UI for v3.3 nutrient density factor:
+  `api_score_explanation()` now returns `nutrient_bonus` object with protein/fibre
+  component breakdown; ScoreBreakdownPanel renders green nutrient density bonus
+  section; ScoreRadarChart shows 10th axis with green accent; positive warnings
+  for good protein (≥10g) and fibre (≥3g); learn page and i18n updated for
+  10-factor model (#611)
+
+- Re-score all 1,671 active products with v3.3 nutrient density bonus (protein +
+  fibre credit); 1,667 products unchanged, 4 DE products drifted within expected
+  range (max |Δ|=5); updated 11 QA regression anchor ranges and copilot-instructions
+  anchor references to reflect v3.3 scores (#610)
+
 ### Data
 
 - Scale all 20 PL categories to maximum OFF API capacity: 1,198 active PL
@@ -33,6 +47,17 @@ Adheres to [Semantic Versioning](https://semver.org/).
   post-pipeline fixup steps for calorie back-calculation validation, zero-calorie
   macro correction, brand casing normalization, orphan junction cleanup, and
   Żabka reclassification reason backfill (#593)
+- Validate protein/fibre backfill readiness for v3.3 nutrient density bonus:
+  audit confirms 100% non-NULL coverage for both `protein_g` (1,671 products)
+  and `fibre_g` (1,671 products); pipeline SQL generator and OFF API client
+  already include both fields in extraction and upsert; `compute_data_completeness()`
+  already includes both in its 15-checkpoint system (#609)
+
+### Tests
+
+- Add 2 QA checks to nutrition ranges suite (18 → 20 checks, total 733 → 735):
+  protein_g NULL coverage < 5% threshold and fibre_g NULL coverage < 10%
+  threshold — required for v3.3 nutrient density bonus (#609)
 
 ### Documentation
 
