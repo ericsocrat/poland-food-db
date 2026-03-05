@@ -21,7 +21,7 @@ const PUBLIC_PAGES = [
   { name: "Learn Hub", path: "/learn" },
   { name: "Learn: Nutri-Score", path: "/learn/nutri-score" },
   { name: "Learn: NOVA Groups", path: "/learn/nova-groups" },
-  { name: "Learn: Unhealthiness Score", path: "/learn/unhealthiness-score" },
+  { name: "Learn: TryVit Score", path: "/learn/tryvit-score" },
   { name: "Learn: Additives", path: "/learn/additives" },
   { name: "Learn: Allergens", path: "/learn/allergens" },
   { name: "Learn: Reading Labels", path: "/learn/reading-labels" },

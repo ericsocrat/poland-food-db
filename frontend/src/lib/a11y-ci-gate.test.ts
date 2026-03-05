@@ -229,7 +229,7 @@ describe("Smoke a11y spec — e2e/smoke-a11y.spec.ts", () => {
     const learnTopics = [
       "/learn/nutri-score",
       "/learn/nova-groups",
-      "/learn/unhealthiness-score",
+      "/learn/tryvit-score",
       "/learn/additives",
       "/learn/allergens",
       "/learn/reading-labels",

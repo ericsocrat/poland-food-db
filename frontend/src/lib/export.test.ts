@@ -1,10 +1,10 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  generateCSV,
-  generateText,
-  generateComparisonCSV,
-  downloadFile,
-  type ExportableProduct,
+    downloadFile,
+    generateComparisonCSV,
+    generateCSV,
+    generateText,
+    type ExportableProduct,
 } from "./export";
 
 // ─── Test data ──────────────────────────────────────────────────────────────
@@ -76,7 +76,7 @@ describe("generateCSV", () => {
   it("produces the correct column header row", () => {
     const csv = generateCSV([MINIMAL_PRODUCT], { includeTimestamp: false });
     expect(csv).toContain(
-      "Product Name,Brand,EAN,Category,Health Score,Nutri-Score,NOVA,Calories (kcal),Fat (g),Sat Fat (g),Sugars (g),Salt (g),Protein (g),Fiber (g),Allergens,Confidence",
+      "Product Name,Brand,EAN,Category,TryVit Score,Nutri-Score,NOVA,Calories (kcal),Fat (g),Sat Fat (g),Sugars (g),Salt (g),Protein (g),Fiber (g),Allergens,Confidence",
     );
   });
 
@@ -86,7 +86,7 @@ describe("generateCSV", () => {
     expect(csv).toContain("Piątnica Skyr Naturalny");
     expect(csv).toContain("Piątnica");
     expect(csv).toContain("5900820012345");
-    expect(csv).toContain(",9,"); // score
+    expect(csv).toContain(",91,"); // score
     expect(csv).toContain(",milk,"); // allergens
   });
 
@@ -149,7 +149,7 @@ describe("generateComparisonCSV", () => {
     expect(csv).toContain("Metric,Product 1,Product 2");
     expect(csv).toContain("Product Name,Piątnica Skyr Naturalny,Simple Item");
     expect(csv).toContain("Brand,Piątnica,TestBrand");
-    expect(csv).toContain("Health Score,9,50");
+    expect(csv).toContain("TryVit Score,91,50");
   });
 
   it("includes comparison header", () => {
@@ -183,7 +183,7 @@ describe("generateText", () => {
 
   it("includes health score, nutri-score, and NOVA per product", () => {
     const text = generateText([POLISH_PRODUCT], { includeTimestamp: false });
-    expect(text).toContain("Health Score: 9/100 · Nutri-Score: A · NOVA: 2");
+    expect(text).toContain("TryVit Score: 91/100 · Nutri-Score: A · NOVA: 2");
   });
 
   it("includes per-100g nutrition summary", () => {
@@ -208,7 +208,7 @@ describe("generateText", () => {
 
   it("can skip the header block", () => {
     const text = generateText([MINIMAL_PRODUCT], { includeHeader: false });
-    expect(text).not.toContain("TryVit");
+    expect(text).not.toContain("TryVit — Export");
     expect(text).toContain("1. Simple Item (TestBrand)");
   });
 });

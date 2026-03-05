@@ -14,7 +14,7 @@
         8. QA__referential_integrity.sql (18 referential integrity checks — blocking)
         9. QA__view_consistency.sql (13 view & function consistency checks — blocking)
        10. QA__naming_conventions.sql (12 naming/formatting convention checks — blocking)
-       11. QA__nutrition_ranges.sql (18 nutrition range & plausibility checks — blocking)
+       11. QA__nutrition_ranges.sql (20 nutrition range & plausibility checks — blocking)
        12. QA__data_consistency.sql (26 data consistency & domain checks — blocking)
        13. QA__allergen_integrity.sql (14 allergen & trace integrity checks — blocking)
        14. QA__serving_source_validation.sql (16 serving & source checks — blocking)
@@ -34,13 +34,13 @@
        28. QA__index_temporal.sql (19 index coverage & temporal checks — blocking)
        29. QA__attribute_contradiction.sql (5 attribute contradiction checks — blocking)
        30. QA__monitoring.sql (14 monitoring & health checks — blocking)
-       31. QA__scoring_determinism.sql (17 scoring determinism checks — blocking)
+       31. QA__scoring_determinism.sql (22 scoring determinism checks — blocking)
        32. QA__multi_country_consistency.sql (13 multi-country consistency checks — blocking)
        33. QA__performance_regression.sql (6 performance regression checks — informational)
        34. QA__event_intelligence.sql (18 event intelligence checks — blocking)
        35. QA__store_integrity.sql (12 store architecture checks — blocking)
        36. QA__data_provenance.sql (28 data provenance checks — blocking)
-       37. QA__scoring_engine.sql (25 scoring engine checks — blocking)
+       37. QA__scoring_engine.sql (27 scoring engine checks — blocking)
        38. QA__search_architecture.sql (26 search architecture checks — blocking)
        39. QA__gdpr_compliance.sql (15 GDPR compliance checks — blocking)
        40. QA__push_notifications.sql (14 push notification checks — blocking)
@@ -143,7 +143,7 @@ $suiteCatalog = @(
     @{ Num = 8; Name = "Referential Integrity"; Short = "RefInteg"; Id = "referential"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__referential_integrity.sql" },
     @{ Num = 9; Name = "View & Function Consistency"; Short = "Views"; Id = "views"; Checks = 13; Blocking = $true; Kind = "sql"; File = "QA__view_consistency.sql" },
     @{ Num = 10; Name = "Naming Conventions"; Short = "Naming"; Id = "naming"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__naming_conventions.sql" },
-    @{ Num = 11; Name = "Nutrition Ranges & Plausibility"; Short = "NutriRange"; Id = "nutrition_ranges"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__nutrition_ranges.sql" },
+    @{ Num = 11; Name = "Nutrition Ranges & Plausibility"; Short = "NutriRange"; Id = "nutrition_ranges"; Checks = 20; Blocking = $true; Kind = "sql"; File = "QA__nutrition_ranges.sql" },
     @{ Num = 12; Name = "Data Consistency"; Short = "DataConsist"; Id = "data_consistency"; Checks = 26; Blocking = $true; Kind = "sql"; File = "QA__data_consistency.sql" },
     @{ Num = 13; Name = "Allergen & Trace Integrity"; Short = "Allergen"; Id = "allergen_integrity"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__allergen_integrity.sql" },
     @{ Num = 14; Name = "Serving & Source Validation"; Short = "ServSource"; Id = "serving_source"; Checks = 16; Blocking = $true; Kind = "sql"; File = "QA__serving_source_validation.sql" },
@@ -163,13 +163,13 @@ $suiteCatalog = @(
     @{ Num = 28; Name = "Index & Temporal Integrity"; Short = "IdxTemporal"; Id = "index_temporal"; Checks = 19; Blocking = $true; Kind = "sql"; File = "QA__index_temporal.sql" },
     @{ Num = 29; Name = "Attribute Contradictions"; Short = "AttrContra"; Id = "attribute_contradiction"; Checks = 5; Blocking = $true; Kind = "sql"; File = "QA__attribute_contradiction.sql" },
     @{ Num = 30; Name = "Monitoring & Health Check"; Short = "Monitoring"; Id = "monitoring"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__monitoring.sql" },
-    @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 17; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" },
+    @{ Num = 31; Name = "Scoring Determinism"; Short = "Determinism"; Id = "scoring_determinism"; Checks = 22; Blocking = $true; Kind = "sql"; File = "QA__scoring_determinism.sql" },
     @{ Num = 32; Name = "Multi-Country Consistency"; Short = "MultiCountry"; Id = "multi_country_consistency"; Checks = 13; Blocking = $true; Kind = "sql"; File = "QA__multi_country_consistency.sql" },
     @{ Num = 33; Name = "Performance Regression"; Short = "PerfRegress"; Id = "performance_regression"; Checks = 6; Blocking = $false; Kind = "sql"; File = "QA__performance_regression.sql" },
     @{ Num = 34; Name = "Event Intelligence"; Short = "EventIntel"; Id = "event_intelligence"; Checks = 18; Blocking = $true; Kind = "sql"; File = "QA__event_intelligence.sql" },
     @{ Num = 35; Name = "Store Architecture"; Short = "StoreArch"; Id = "store_integrity"; Checks = 12; Blocking = $true; Kind = "sql"; File = "QA__store_integrity.sql" },
     @{ Num = 36; Name = "Data Provenance"; Short = "Provenance"; Id = "data_provenance"; Checks = 28; Blocking = $true; Kind = "sql"; File = "QA__data_provenance.sql" },
-    @{ Num = 37; Name = "Scoring Engine"; Short = "ScoreEngine"; Id = "scoring_engine"; Checks = 25; Blocking = $true; Kind = "sql"; File = "QA__scoring_engine.sql" },
+    @{ Num = 37; Name = "Scoring Engine"; Short = "ScoreEngine"; Id = "scoring_engine"; Checks = 27; Blocking = $true; Kind = "sql"; File = "QA__scoring_engine.sql" },
     @{ Num = 38; Name = "Search Architecture"; Short = "SearchArch"; Id = "search_architecture"; Checks = 26; Blocking = $true; Kind = "sql"; File = "QA__search_architecture.sql" },
     @{ Num = 39; Name = "GDPR Compliance"; Short = "GDPR"; Id = "gdpr_compliance"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__gdpr_compliance.sql" },
     @{ Num = 40; Name = "Push Notifications"; Short = "PushNotif"; Id = "push_notifications"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__push_notifications.sql" },
