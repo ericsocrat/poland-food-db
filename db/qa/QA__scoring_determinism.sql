@@ -1,11 +1,12 @@
--- QA: Scoring & Search Determinism (17 checks)
+-- QA: Scoring & Search Determinism (22 checks)
 -- Validates deterministic scoring via direct function calls with pinned expected outputs.
 -- No dependency on product data — tests computations in isolation.
 -- Catches unintended formula changes, rounding drift, and factor-weight misconfiguration.
--- Covers: compute_unhealthiness_v32(), explain_score_v32(), stored-vs-recomputed parity.
+-- Covers: compute_unhealthiness_v32(), explain_score_v32(), compute_unhealthiness_v33(),
+--         explain_score_v33(), stored-vs-recomputed parity.
 -- Search determinism stubs included for api_search_products() ordering consistency.
 -- Related: QA__scoring_formula_tests.sql (data-based regression); this suite is pure-function.
--- Reference: Issue #202 (GOV-C1)
+-- Reference: Issue #202 (GOV-C1), Issue #608 (v3.3)
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Pinned healthy input → expected score 10 (±2)
@@ -157,7 +158,8 @@ SELECT '13. explain vs compute parity' AS check_name,
        ) AS violations;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 14. Stored scores match recomputed for all active products
+-- 14. Stored scores match recomputed via v3.3 for all active products
+--     Products are now scored with v3.3 (nutrient density bonus)
 --     Any drift = scoring pipeline bug or missed rescore
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '14. stored vs recomputed parity' AS check_name,
@@ -173,7 +175,7 @@ LEFT JOIN (
 ) ia ON ia.product_id = p.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND p.unhealthiness_score IS NOT NULL
-  AND p.unhealthiness_score <> compute_unhealthiness_v32(
+  AND p.unhealthiness_score <> compute_unhealthiness_v33(
       nf.saturated_fat_g,
       nf.sugars_g,
       nf.salt_g,
@@ -182,21 +184,36 @@ WHERE p.is_deprecated IS NOT TRUE
       COALESCE(ia.additives_count, 0),
       p.prep_method,
       p.controversies,
-      COALESCE(p.ingredient_concern_score, 0)
+      COALESCE(p.ingredient_concern_score, 0),
+      nf.protein_g,
+      nf.fibre_g
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 15. Weight sum verification: all 9 factor weights sum to exactly 1.00
---     Validates via explain_score_v32 factors array
+-- 15. Weight verification: v3.3 has 10 factors
+--     9 penalty weights sum to 1.00; nutrient_density weight is -0.08
+--     Net sum of all weights = 0.92 (the bonus reduces the total)
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '15. factor weights sum to 1.00' AS check_name,
-       CASE WHEN (
-           SELECT round(SUM((f->>'weight')::numeric), 2)
-           FROM jsonb_array_elements(
-               (explain_score_v32(5,12,0.8,200,0.3,2,'baked','minor',1))->'factors'
-           ) AS f
-       ) = 1.00
-       THEN 0 ELSE 1
+SELECT '15. v3.3 factor weights check' AS check_name,
+       CASE
+         -- 10 factors total
+         WHEN (SELECT COUNT(*)
+               FROM jsonb_array_elements(
+                   (explain_score_v33(5,12,0.8,200,0.3,2,'baked','minor',1,8,3))->'factors'
+               )) = 10
+         -- 9 penalty weights (positive) sum to 1.00
+         AND (SELECT round(SUM((f->>'weight')::numeric), 2)
+              FROM jsonb_array_elements(
+                  (explain_score_v33(5,12,0.8,200,0.3,2,'baked','minor',1,8,3))->'factors'
+              ) AS f
+              WHERE (f->>'weight')::numeric > 0) = 1.00
+         -- 1 bonus weight is -0.08
+         AND (SELECT (f->>'weight')::numeric
+              FROM jsonb_array_elements(
+                  (explain_score_v33(5,12,0.8,200,0.3,2,'baked','minor',1,8,3))->'factors'
+              ) AS f
+              WHERE f->>'name' = 'nutrient_density') = -0.08
+         THEN 0 ELSE 1
        END AS violations;
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -236,3 +253,78 @@ SELECT '17. band coverage matrix' AS check_name,
            ('DarkRed', 81, 100, compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100))
        ) AS t(band, lo, hi, actual)
        WHERE actual NOT BETWEEN lo AND hi) AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 18. v3.3 pinned healthy yogurt WITH nutrient density bonus
+--     Same penalty inputs as Test 1 (sat=1, sug=4, salt=0.1, cal=56,
+--     trans=0, add=0, prep=none, contr=none, concern=0).
+--     Protein 8 g → bonus 15, fibre 0.5 g → bonus 0, density_raw = 15.
+--     Bonus reduction = 15 × 0.08 = 1.2 points.
+--     v3.2 score ≈ 10; v3.3 ≈ 9 (clamped to integer).
+--     Issue #608.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '18. v33 pinned yogurt with protein bonus' AS check_name,
+       CASE WHEN compute_unhealthiness_v33(1.0, 4.0, 0.1, 56, 0, 0, 'none', 'none', 0, 8.0, 0.5)
+                 BETWEEN 7 AND 11
+            THEN 0 ELSE 1
+       END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 19. v3.3 maximum nutrient density bonus — floor clamp to 1
+--     All penalties at minimum (prep=not-applicable gives raw 50 × 0.08 = 4).
+--     Protein 25 g → bonus 50, fibre 10 g → bonus 50, density_raw = 100.
+--     Bonus reduction = 100 × 0.08 = 8.0 points.
+--     Penalty score ≈ 4 → 4 - 8 = -4 → GREATEST(1, -4) = 1.
+--     Issue #608.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '19. v33 max nutrient density bonus clamps to 1' AS check_name,
+       CASE WHEN compute_unhealthiness_v33(0, 0, 0, 0, 0, 0, 'not-applicable', 'none', 0, 25.0, 10.0) = 1
+            THEN 0 ELSE 1
+       END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 20. v3.3 explain vs compute parity — 5 input vectors
+--     final_score from explain_score_v33 JSONB must equal
+--     compute_unhealthiness_v33 integer for every input vector.
+--     Issue #608.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '20. v33 explain vs compute parity' AS check_name,
+       (SELECT COUNT(*) FROM (VALUES
+           (1.0, 4.0, 0.1,  56, 0.0, 0, 'none',           'none',     0,  8.0,  0.5),
+           (5.0,12.0, 0.8, 200, 0.3, 2, 'baked',           'none',    10, 15.0,  3.0),
+           (8.0,20.0, 2.0, 450, 1.0, 6, 'deep-fried',      'palm oil',50,  0.0,  0.0),
+           (0.0, 0.0, 0.0,   0, 0.0, 0, 'not-applicable', 'none',     0, 25.0, 10.0),
+           (10.0,27.0,3.0, 600, 2.0,10, 'deep-fried',      'serious',100, 20.0,  8.0)
+       ) AS t(sf,sg,sl,ca,tf,ad,pm,co,ic,pr,fi)
+       WHERE compute_unhealthiness_v33(sf,sg,sl,ca,tf,ad,pm::text,co::text,ic,pr,fi)
+          <> (explain_score_v33(sf,sg,sl,ca,tf,ad,pm::text,co::text,ic,pr,fi)->>'final_score')::int
+       ) AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 21. v3.3 determinism — 100 identical calls yield one distinct result
+--     Same structure as Test 12 but calls v3.3 with protein/fibre.
+--     Issue #608.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '21. v33 determinism 100x' AS check_name,
+       CASE WHEN (
+           SELECT COUNT(DISTINCT compute_unhealthiness_v33(5, 12, 0.8, 200, 0.3, 2, 'baked', 'none', 10, 12.0, 3.0))
+           FROM generate_series(1, 100)
+       ) = 1 THEN 0 ELSE 1
+       END AS violations;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 22. v3.3 nutrient density factor isolation — monotonic decrease
+--     All penalty inputs fixed (prep=baked → ~40 × 0.08 = ~3 penalty base).
+--     Increasing protein/fibre must monotonically decrease the score.
+--     Issue #608.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '22. v33 nutrient density monotonic decrease' AS check_name,
+       CASE WHEN
+           compute_unhealthiness_v33(3, 8, 0.5, 150, 0, 1, 'baked', 'none', 5, 0.0, 0.0)
+         > compute_unhealthiness_v33(3, 8, 0.5, 150, 0, 1, 'baked', 'none', 5, 10.0, 0.0)
+       AND compute_unhealthiness_v33(3, 8, 0.5, 150, 0, 1, 'baked', 'none', 5, 10.0, 0.0)
+        >= compute_unhealthiness_v33(3, 8, 0.5, 150, 0, 1, 'baked', 'none', 5, 10.0, 5.0)
+       AND compute_unhealthiness_v33(3, 8, 0.5, 150, 0, 1, 'baked', 'none', 5, 10.0, 5.0)
+        >= compute_unhealthiness_v33(3, 8, 0.5, 150, 0, 1, 'baked', 'none', 5, 20.0, 8.0)
+            THEN 0 ELSE 1
+       END AS violations;

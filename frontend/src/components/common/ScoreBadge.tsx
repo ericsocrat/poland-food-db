@@ -1,12 +1,9 @@
 /**
- * ScoreBadge — unhealthiness score badge with correct band color mapping.
+ * ScoreBadge — TryVit Score badge with band color mapping.
  *
- * Score ranges:
- *   1–20  → green  (low)
- *   21–40 → yellow (moderate)
- *   41–60 → orange (high)
- *   61–80 → red    (very high)
- *   81–100 → dark red (extreme)
+ * Receives `unhealthiness_score` (1–100), displays inverted **TryVit Score**
+ * (100 − unhealthiness, so higher = healthier). Colors stay mapped to the
+ * original unhealthiness bands: green = healthy, red = unhealthy.
  *
  * Uses `--color-score-*` design tokens. Falls back gracefully for null/invalid.
  *
@@ -16,8 +13,8 @@
  *   lg  → 80×80 circular SVG ring with animated fill arc
  */
 
+import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
 import React from "react";
-import { getScoreBand } from "@/lib/score-utils";
 import { InfoTooltip } from "./InfoTooltip";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -25,7 +22,7 @@ import { InfoTooltip } from "./InfoTooltip";
 export type ScoreBadgeSize = "sm" | "md" | "lg";
 
 export interface ScoreBadgeProps {
-  /** Unhealthiness score 1–100. Null/undefined → "N/A" badge. */
+  /** Unhealthiness score 1–100 (API value). Displayed as TryVit Score (inverted). */
   readonly score: number | null | undefined;
   /** Size preset. @default "md" */
   readonly size?: ScoreBadgeSize;
@@ -66,7 +63,8 @@ export const ScoreBadge = React.memo(function ScoreBadge({
 }: Readonly<ScoreBadgeProps>) {
   const band = getScoreBand(score);
   const isValid = band !== null;
-  const displayText = isValid ? String(score) : "N/A";
+  const tryVitScore = isValid ? toTryVitScore(score as number) : 0;
+  const displayText = isValid ? String(tryVitScore) : "N/A";
   const tooltipKey = isValid ? `tooltip.score.${band.band}` : undefined;
   const bandLabel = isValid ? band.label : "N/A";
   const bgClass = isValid ? band.bgColor : "bg-surface-muted";
@@ -81,7 +79,7 @@ export const ScoreBadge = React.memo(function ScoreBadge({
   // ─── Large: circular SVG ring ───────────────────────────────────────────
 
   if (size === "lg" && isValid) {
-    const fillFraction = (score as number) / 100;
+    const fillFraction = tryVitScore / 100;
     const dashArray = `${RING_CIRCUMFERENCE * fillFraction} ${RING_CIRCUMFERENCE * (1 - fillFraction)}`;
 
     const ring = (

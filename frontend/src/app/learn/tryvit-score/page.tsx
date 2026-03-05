@@ -10,9 +10,9 @@ import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
 import { BarChart3 } from "lucide-react";
 
-// ─── Unhealthiness Score topic page ─────────────────────────────────────────
+// ─── TryVit Score topic page ─────────────────────────────────────────
 
-export default function UnhealthinessScorePage() {
+export default function TryVitScorePage() {
   const { t } = useTranslation();
 
   const factors = [
@@ -59,7 +59,7 @@ export default function UnhealthinessScorePage() {
                 aria-hidden="true"
                 className="inline-block"
               />{" "}
-              {t("learn.unhealthinessScore.title")}
+              {t("learn.tryvitScore.title")}
             </h1>
 
             <div className="rounded-lg bg-brand-subtle p-4 not-prose">
@@ -67,14 +67,14 @@ export default function UnhealthinessScorePage() {
                 {t("learn.tldr")}
               </p>
               <p className="mt-1 text-sm text-brand">
-                {t("learn.unhealthinessScore.summary")}
+                {t("learn.tryvitScore.summary")}
               </p>
             </div>
 
-            <h2>{t("learn.unhealthinessScore.whatIsTitle")}</h2>
-            <p>{t("learn.unhealthinessScore.whatIsText")}</p>
+            <h2>{t("learn.tryvitScore.whatIsTitle")}</h2>
+            <p>{t("learn.tryvitScore.whatIsText")}</p>
 
-            <h2>{t("learn.unhealthinessScore.factorsTitle")}</h2>
+            <h2>{t("learn.tryvitScore.factorsTitle")}</h2>
             <div className="not-prose space-y-2">
               {factors.map((key) => (
                 <div
@@ -82,13 +82,13 @@ export default function UnhealthinessScorePage() {
                   className="rounded-lg border bg-surface-subtle p-3"
                 >
                   <p className="text-sm text-foreground">
-                    {t(`learn.unhealthinessScore.${key}`)}
+                    {t(`learn.tryvitScore.${key}`)}
                   </p>
                 </div>
               ))}
             </div>
 
-            <h2>{t("learn.unhealthinessScore.bandsTitle")}</h2>
+            <h2>{t("learn.tryvitScore.bandsTitle")}</h2>
             <div className="not-prose space-y-2">
               {bands.map((key, i) => (
                 <div
@@ -96,17 +96,17 @@ export default function UnhealthinessScorePage() {
                   className={`rounded-lg border p-3 ${bandColors[i]}`}
                 >
                   <p className="text-sm font-medium text-foreground">
-                    {t(`learn.unhealthinessScore.${key}`)}
+                    {t(`learn.tryvitScore.${key}`)}
                   </p>
                 </div>
               ))}
             </div>
 
-            <h2>{t("learn.unhealthinessScore.formulaTitle")}</h2>
-            <p>{t("learn.unhealthinessScore.formulaText")}</p>
+            <h2>{t("learn.tryvitScore.formulaTitle")}</h2>
+            <p>{t("learn.tryvitScore.formulaText")}</p>
 
-            <h2>{t("learn.unhealthinessScore.whyDifferentTitle")}</h2>
-            <p>{t("learn.unhealthinessScore.whyDifferentText")}</p>
+            <h2>{t("learn.tryvitScore.whyDifferentTitle")}</h2>
+            <p>{t("learn.tryvitScore.whyDifferentText")}</p>
 
             <Disclaimer className="mt-8" />
 

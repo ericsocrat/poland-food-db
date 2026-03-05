@@ -5,29 +5,30 @@
 // with a prominent "Healthier Alternatives" section so users immediately see
 // better options without having to navigate to the full product detail page.
 
-import { useParams } from "next/navigation";
-import { useQuery } from "@tanstack/react-query";
-import Link from "next/link";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { createClient } from "@/lib/supabase/client";
-import { getProductDetail, getBetterAlternatives } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import {
-  ProductProfileSkeleton,
-  ProductCardSkeleton,
+    ProductCardSkeleton,
+    ProductProfileSkeleton,
 } from "@/components/common/skeletons";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { HealthWarningsCard } from "@/components/product/HealthWarningsCard";
-import type { ProductDetail, Alternative } from "@/lib/types";
+import { getBetterAlternatives, getProductDetail } from "@/lib/api";
+import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { toTryVitScore } from "@/lib/score-utils";
+import { createClient } from "@/lib/supabase/client";
+import type { Alternative, ProductDetail } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
 import {
-  AlertTriangle,
-  Camera,
-  ClipboardList,
-  Trophy,
-  Salad,
+    AlertTriangle,
+    Camera,
+    ClipboardList,
+    Salad,
+    Trophy,
 } from "lucide-react";
+import Link from "next/link";
+import { useParams } from "next/navigation";
 
 export default function ScanResultPage() {
   const params = useParams();
@@ -135,7 +136,7 @@ export default function ScanResultPage() {
           <div
             className={`flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl text-2xl font-bold ${band.bg} ${band.color}`}
           >
-            {product.scores.unhealthiness_score}
+            {toTryVitScore(product.scores.unhealthiness_score)}
           </div>
           <div className="min-w-0 flex-1">
             <p className="text-lg font-bold text-foreground">
@@ -369,7 +370,7 @@ function ScanAlternativeCard({
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${altBand.bg} ${altBand.color}`}
         >
-          {alt.unhealthiness_score}
+          {toTryVitScore(alt.unhealthiness_score)}
         </div>
 
         {/* Product info */}

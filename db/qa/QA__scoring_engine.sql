@@ -1,18 +1,18 @@
 -- ══════════════════════════════════════════════════════════════════════════
 -- QA: Canonical Scoring Engine — Integrity & Regression Tests
--- Issue: #189, #198
--- 25 checks (T01-T17 scoring engine, T18-T25 formula registry)
+-- Issue: #189, #198, #608
+-- 27 checks (T01-T17 scoring engine, T18-T25 formula registry, T26-T27 v3.3)
 -- ══════════════════════════════════════════════════════════════════════════
 
--- ─── T01: Version Registry — v3.2 is active ────────────────────────────
+-- ─── T01: Version Registry — v3.3 is active ────────────────────────────
 
 SELECT CASE
     WHEN EXISTS (
         SELECT 1 FROM scoring_model_versions
-        WHERE version = 'v3.2' AND status = 'active'
+        WHERE version = 'v3.3' AND status = 'active'
     )
     THEN 'PASS' ELSE 'FAIL'
-END AS "T01_v3.2_is_active";
+END AS "T01_v3.3_is_active";
 
 -- ─── T02: Exactly one active version ────────────────────────────────────
 
@@ -21,23 +21,26 @@ SELECT CASE
     THEN 'PASS' ELSE 'FAIL'
 END AS "T02_single_active_version";
 
--- ─── T03: v3.2 has 9 factors summing to 1.0 ─────────────────────────────
+-- ─── T03: v3.3 has 10 factors; 9 penalty weights sum to 1.0 ─────────────
+-- v3.3 adds nutrient_density (weight -0.08, type=bonus). The 9 penalty
+-- factor weights must still sum to exactly 1.00. Issue #608.
 
 SELECT CASE
     WHEN (
         SELECT COUNT(*)
         FROM scoring_model_versions smv,
              jsonb_array_elements(smv.config->'factors') f
-        WHERE smv.version = 'v3.2'
-    ) = 9
+        WHERE smv.version = 'v3.3'
+    ) = 10
     AND ABS((
         SELECT SUM((f->>'weight')::numeric)
         FROM scoring_model_versions smv,
              jsonb_array_elements(smv.config->'factors') f
-        WHERE smv.version = 'v3.2'
+        WHERE smv.version = 'v3.3'
+          AND (f->>'type') IS DISTINCT FROM 'bonus'
     ) - 1.0) < 0.01
     THEN 'PASS' ELSE 'FAIL'
-END AS "T03_v3.2_factor_config_valid";
+END AS "T03_v3.3_factor_config_valid";
 
 -- ─── T04: score_model_version populated ──────────────────────────────────
 
@@ -98,10 +101,10 @@ SELECT CASE
     THEN 'PASS' ELSE 'FAIL'
 END AS "T08_rescore_batch_exists";
 
--- ─── T09: validate_country_profile for v3.2 PL returns valid ─────────────
+-- ─── T09: validate_country_profile for v3.3 PL returns valid ─────────────
 
 SELECT CASE
-    WHEN (validate_country_profile('v3.2', 'PL')->>'valid')::boolean
+    WHEN (validate_country_profile('v3.3', 'PL')->>'valid')::boolean
     THEN 'PASS' ELSE 'FAIL'
 END AS "T09_pl_profile_valid";
 
@@ -303,4 +306,34 @@ END AS "T25_auto_fingerprint_trigger_smv";
 -- Summary
 -- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT 'Scoring Engine QA: 25 tests complete' AS summary;
+-- ─── T26: v3.3 scoring functions exist ───────────────────────────────────
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1 FROM information_schema.routines
+        WHERE routine_schema = 'public'
+          AND routine_name = 'compute_unhealthiness_v33'
+    )
+    AND EXISTS (
+        SELECT 1 FROM information_schema.routines
+        WHERE routine_schema = 'public'
+          AND routine_name = 'explain_score_v33'
+    )
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T26_v33_functions_exist";
+
+-- ─── T27: v3.2 is retired ────────────────────────────────────────────────
+
+SELECT CASE
+    WHEN EXISTS (
+        SELECT 1 FROM scoring_model_versions
+        WHERE version = 'v3.2' AND status = 'retired'
+    )
+    THEN 'PASS' ELSE 'FAIL'
+END AS "T27_v3.2_is_retired";
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Summary
+-- ═══════════════════════════════════════════════════════════════════════════
+
+SELECT 'Scoring Engine QA: 27 tests complete' AS summary;

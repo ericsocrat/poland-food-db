@@ -13,6 +13,28 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Scoring
+
+- Implement v3.3 nutrient density bonus — protein and fibre credit that reduces
+  unhealthiness score by up to 8 points. New `compute_unhealthiness_v33()` (11
+  params: adds `p_protein_g`, `p_fibre_g`) and `explain_score_v33()` (returns 10
+  factors). Tiered bonus: protein (0/15/30/40/50 at 5/10/15/20g) + fibre
+  (0/10/20/35/50 at 1/3/5/8g). Weight −0.08, penalty weights unchanged (sum
+  1.00). All 1,279 products re-scored. v3.2 retired in scoring_model_versions.
+  Migration `20260315001900`. QA: 4 new determinism checks, 2 new engine checks,
+  all 31 formula anchor ranges updated, view consistency check updated (10
+  factors). Docs: SCORING_METHODOLOGY.md v3.3, copilot-instructions §14 (#608)
+
+### Documentation
+
+- Overhaul scoring docs for TryVit Score consumer display layer: add §2.8
+  Consumer Display Layer (TryVit Score = 100 − unhealthiness, band table with
+  consumer labels Excellent/Good/Moderate/Poor/Bad, rationale for higher=healthier
+  inversion) and §2.9 Category Percentile to SCORING_METHODOLOGY.md; add
+  consumer-facing columns to §2.6 band table; add §10.1 TryVit Score and
+  regression anchor notes to SCORING_ENGINE.md; update copilot-instructions §14
+  with consumer display note and dual-column band table (#591)
+
 ### Fixed
 
 - Remove 11 ESLint `@typescript-eslint/no-non-null-assertion` warnings across 8

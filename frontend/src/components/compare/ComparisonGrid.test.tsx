@@ -1,7 +1,7 @@
-import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { ComparisonGrid } from "./ComparisonGrid";
 import type { CompareProduct } from "@/lib/types";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
+import { ComparisonGrid } from "./ComparisonGrid";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -112,12 +112,12 @@ describe("ComparisonGrid", () => {
     expect(brands.length).toBeGreaterThanOrEqual(1);
   });
 
-  it("renders unhealthiness scores", () => {
+  it("renders TryVit scores", () => {
     render(<ComparisonGrid products={products} />);
-    const scores35 = screen.getAllByText("35");
-    expect(scores35.length).toBeGreaterThanOrEqual(1);
-    const scores60 = screen.getAllByText("60");
-    expect(scores60.length).toBeGreaterThanOrEqual(1);
+    const scores65 = screen.getAllByText("65");
+    expect(scores65.length).toBeGreaterThanOrEqual(1);
+    const scores40 = screen.getAllByText("40");
+    expect(scores40.length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows winner badge for healthiest product", () => {
@@ -135,7 +135,7 @@ describe("ComparisonGrid", () => {
   it("renders all comparison row labels", () => {
     render(<ComparisonGrid products={products} />);
     const rowLabels = [
-      "Unhealthiness Score",
+      "TryVit Score",
       "Nutri-Score",
       "NOVA Group",
       "Calories",

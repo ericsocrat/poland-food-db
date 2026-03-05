@@ -6,7 +6,7 @@ import { ImageResponse } from "next/og";
 
 /* ---------- route configuration ---------- */
 export const runtime = "nodejs";
-export const alt = "Product health score card";
+export const alt = "Product TryVit Score card";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 export const revalidate = 3600; // 1 hour edge cache
@@ -22,17 +22,17 @@ export function getScoreColor(score: number): string {
   return "#991b1b"; // dark red
 }
 
-/** Human-readable band label for the OG card. */
+/** Human-readable band label for the OG card (TryVit terminology). */
 export function getScoreBandLabel(band: string): string {
   switch (band) {
     case "low":
-      return "Low Risk";
+      return "Excellent";
     case "moderate":
-      return "Moderate Risk";
+      return "Good";
     case "high":
-      return "High Risk";
+      return "Poor";
     case "very_high":
-      return "Very High Risk";
+      return "Bad";
     default:
       return "";
   }
@@ -237,7 +237,7 @@ export default async function OGImage({
                 fontWeight: 700,
               }}
             >
-              {score}
+              {100 - score}
             </div>
 
             <div style={{ display: "flex", flexDirection: "column" }}>
