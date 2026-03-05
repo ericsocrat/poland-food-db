@@ -1,0 +1,123 @@
+-- PIPELINE (Canned Goods): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Nixe - LIDL', 'Thunfisch Filets in Sonnenblumenöl', 'A'),
+    ('Hengstenberg', 'KNAX Gewürzgurken', 'C'),
+    ('Aldi', 'Bio-Gewürzgurken', 'C'),
+    ('Kuehne', 'Schlemmertöpfchen gew. Gurken', 'D'),
+    ('Wonnemeyer', 'Mediterrane Antipasti - Kirschpaprika mit Frischkäsecreme Senf-Honig', 'D'),
+    ('Erasco', 'Grüne-Bohnen-Eintopf', 'C'),
+    ('Kühne', 'Gewürzgurken', 'C'),
+    ('Spreewaldhof', 'Spreelinge Gewürzgurken', 'C'),
+    ('Erasco', 'Linseneintopf mit Würstchen', 'C'),
+    ('Erasco', 'Erasco Kartoffelsuppe m. Würstchen', 'C'),
+    ('Aldi', 'Sardinen in Sonnenblumenöl - Klassik', 'B'),
+    ('Nestlé', 'Ravioli Gemüse', 'C'),
+    ('Erasco', 'Westfälische Linsen Eintopf', 'B'),
+    ('Erasco', 'Hühner Reis-Topf', 'C'),
+    ('King''s Crown', 'Erbsen und Möhren sehr fein', 'A'),
+    ('Erasco', 'Erasco Linsentopf mit Würstchen 4037300103236 Linsentopf mit Würstchen', 'C'),
+    ('Kühne', 'Gurken Sauer Honig Schlemmertöpfchen', 'C'),
+    ('Nixe', 'Thunfisch', 'A'),
+    ('Appel', 'Zarte Filets vom Hering in Tomaten-Creme', 'C'),
+    ('KING''S CROWN (Aldi)', 'Tomatenmark', 'A'),
+    ('Almare Seafood', 'Thunfisch Filets in eigenen Saft', 'A'),
+    ('Aldi', 'Tomatenmark', 'A'),
+    ('Oro Di Parma', 'Famila Oro di Parma Tomatenmark mit Knoblauch 200g 1.29€ 1kg 6.45', 'B'),
+    ('King''s Crown', 'Tomaten gehackt', 'A'),
+    ('Oro Di Parma', 'Tomaten', 'A'),
+    ('Hawesta', 'Heringsfilets - Tomaten-Creme', 'B'),
+    ('Aldi', 'Cornichons', 'B'),
+    ('Erasco', 'Vegetarischer linsen-eintopf', 'B'),
+    ('DmBio', 'Tomatenmark', 'A'),
+    ('Erasco', 'Erbsensuppe Hubertus', 'A'),
+    ('Hawesta', 'Heringsfilets - Pfeffercreme', 'B'),
+    ('Hengstenberg', 'Mildes Weinsauerkraut', 'C'),
+    ('Bio Organic', 'Rote Beete', 'A'),
+    ('Appel', 'Zarte Filets vom Hering in Eier-Senf-Creme', 'C'),
+    ('Appel', 'Zarte Filets vom Hering Tomate-Mozzarella', 'D'),
+    ('Erasco', 'Erbseneintopf', 'A'),
+    ('Aldi', 'Mais', 'B'),
+    ('Hengstenberg', 'Tomaten - Passiert', 'A'),
+    ('Sweet Valley', 'Pfirsiche halbe Frucht, leicht gezuckert', 'B'),
+    ('Deutsche See', 'Thunfisch im Aufguss', 'A'),
+    ('King''s Crown', 'Rote Beete in Kugeln', 'B'),
+    ('Freshona', 'Sonnenmais natursüß', 'B'),
+    ('REWE Bio', 'Tomaten in Stücken', 'A'),
+    ('Erasco', 'Erasco Erbsen-Eintopf 4037300108309', 'B'),
+    ('Aldi', 'Gehackte Tomaten', 'A'),
+    ('K-Classic', 'Thunfisch Filets I.E.S', 'A'),
+    ('Nestlé', 'Dosen Ravioli', 'C'),
+    ('Edeka', 'Delikatess Gewürzgurken', 'A'),
+    ('Mutti', 'Geschälte Italienische Tomaten', 'A'),
+    ('Sweet Valley', 'ALDI SWEET VALLEY OBST Ananas in Scheiben ohne Zuckerzusatz', 'A'),
+    ('Erasco', 'Serbische Bohnensuppe', 'B')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Nixe - LIDL', 'Thunfisch Filets in Sonnenblumenöl', '3'),
+    ('Hengstenberg', 'KNAX Gewürzgurken', '3'),
+    ('Aldi', 'Bio-Gewürzgurken', '3'),
+    ('Kuehne', 'Schlemmertöpfchen gew. Gurken', '4'),
+    ('Wonnemeyer', 'Mediterrane Antipasti - Kirschpaprika mit Frischkäsecreme Senf-Honig', '4'),
+    ('Erasco', 'Grüne-Bohnen-Eintopf', '4'),
+    ('Kühne', 'Gewürzgurken', '4'),
+    ('Spreewaldhof', 'Spreelinge Gewürzgurken', '3'),
+    ('Erasco', 'Linseneintopf mit Würstchen', '4'),
+    ('Erasco', 'Erasco Kartoffelsuppe m. Würstchen', '4'),
+    ('Aldi', 'Sardinen in Sonnenblumenöl - Klassik', '3'),
+    ('Nestlé', 'Ravioli Gemüse', '4'),
+    ('Erasco', 'Westfälische Linsen Eintopf', '4'),
+    ('Erasco', 'Hühner Reis-Topf', '4'),
+    ('King''s Crown', 'Erbsen und Möhren sehr fein', '3'),
+    ('Erasco', 'Erasco Linsentopf mit Würstchen 4037300103236 Linsentopf mit Würstchen', '4'),
+    ('Kühne', 'Gurken Sauer Honig Schlemmertöpfchen', '4'),
+    ('Nixe', 'Thunfisch', '3'),
+    ('Appel', 'Zarte Filets vom Hering in Tomaten-Creme', '4'),
+    ('KING''S CROWN (Aldi)', 'Tomatenmark', '1'),
+    ('Almare Seafood', 'Thunfisch Filets in eigenen Saft', '3'),
+    ('Aldi', 'Tomatenmark', '1'),
+    ('Oro Di Parma', 'Famila Oro di Parma Tomatenmark mit Knoblauch 200g 1.29€ 1kg 6.45', '3'),
+    ('King''s Crown', 'Tomaten gehackt', '1'),
+    ('Oro Di Parma', 'Tomaten', '3'),
+    ('Hawesta', 'Heringsfilets - Tomaten-Creme', '4'),
+    ('Aldi', 'Cornichons', '3'),
+    ('Erasco', 'Vegetarischer linsen-eintopf', '4'),
+    ('DmBio', 'Tomatenmark', '1'),
+    ('Erasco', 'Erbsensuppe Hubertus', '4'),
+    ('Hawesta', 'Heringsfilets - Pfeffercreme', '4'),
+    ('Hengstenberg', 'Mildes Weinsauerkraut', '3'),
+    ('Bio Organic', 'Rote Beete', '1'),
+    ('Appel', 'Zarte Filets vom Hering in Eier-Senf-Creme', '4'),
+    ('Appel', 'Zarte Filets vom Hering Tomate-Mozzarella', '4'),
+    ('Erasco', 'Erbseneintopf', '4'),
+    ('Aldi', 'Mais', '3'),
+    ('Hengstenberg', 'Tomaten - Passiert', '3'),
+    ('Sweet Valley', 'Pfirsiche halbe Frucht, leicht gezuckert', '3'),
+    ('Deutsche See', 'Thunfisch im Aufguss', '4'),
+    ('King''s Crown', 'Rote Beete in Kugeln', '3'),
+    ('Freshona', 'Sonnenmais natursüß', '3'),
+    ('REWE Bio', 'Tomaten in Stücken', '1'),
+    ('Erasco', 'Erasco Erbsen-Eintopf 4037300108309', '4'),
+    ('Aldi', 'Gehackte Tomaten', '1'),
+    ('K-Classic', 'Thunfisch Filets I.E.S', '3'),
+    ('Nestlé', 'Dosen Ravioli', '4'),
+    ('Edeka', 'Delikatess Gewürzgurken', '3'),
+    ('Mutti', 'Geschälte Italienische Tomaten', '1'),
+    ('Sweet Valley', 'ALDI SWEET VALLEY OBST Ananas in Scheiben ohne Zuckerzusatz', '1'),
+    ('Erasco', 'Serbische Bohnensuppe', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Canned Goods', 100, 'DE');

@@ -1,0 +1,123 @@
+﻿-- PIPELINE (Baby): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Hipp', 'Reine Bio-Karotten mild-süßlich', 'NOT-APPLICABLE'),
+    ('Hipp', 'Früchte Riegel Joghurt-Kirsch in Banane', 'NOT-APPLICABLE'),
+    ('Mamia Bio', 'Bio-Fruchtpüree - Apfel-Birne-Aprikose', 'NOT-APPLICABLE'),
+    ('Hipp', 'Gemüse Allerlei', 'NOT-APPLICABLE'),
+    ('DmBio', 'Kürbis pur', 'NOT-APPLICABLE'),
+    ('Bebivita', 'Mini-Makkaroni mit buntem Rahmgemüse', 'NOT-APPLICABLE'),
+    ('Hipp', 'Reiner Butternut Kürbis', 'NOT-APPLICABLE'),
+    ('Hipp', 'Menü Karotten, Kartoffeln, Wildlachs', 'NOT-APPLICABLE'),
+    ('Hipp', 'Gemüse Kürbis Nach Dem 4. Monat', 'NOT-APPLICABLE'),
+    ('Puttkammer', 'Schinkenröllchen in Aspik', 'NOT-APPLICABLE'),
+    ('Hipp', 'Mango-Bananen-Grieß', 'NOT-APPLICABLE'),
+    ('Hipp', 'Spinatgemüse in Kartoffeln', 'NOT-APPLICABLE'),
+    ('Bebivita', 'Abendbrei Grieß-Vanille', 'NOT-APPLICABLE'),
+    ('Hipp', 'Grießbrei', 'NOT-APPLICABLE'),
+    ('Hipp', 'Schinkennudeln mit Gemüse (ab 8. Monat)', 'NOT-APPLICABLE'),
+    ('Hipp', 'Gemüse Lasagne', 'NOT-APPLICABLE'),
+    ('Bebivita', 'Gemüse-Spätzle-Pfanne', 'NOT-APPLICABLE'),
+    ('DmBio', 'Pastinaken mit Kartoffeln und Rind im Gläschen', 'NOT-APPLICABLE'),
+    ('Hipp', 'Kartoffel-Gemüse mit Bio-Rind (ab 8. Monat)', 'NOT-APPLICABLE'),
+    ('Hipp', 'Gemüsereis mit Erbsen und zartem Geschnetzelten', 'NOT-APPLICABLE'),
+    ('Hipp', 'Erdbeere in Apfel-Joghurt-Müsli', 'NOT-APPLICABLE'),
+    ('Hipp', 'Gartengemüse Mit Pute Und Rosmarin', 'NOT-APPLICABLE'),
+    ('Hipp', 'Tomaten Und Kartoffeln Mit Bio-hühnchen', 'NOT-APPLICABLE'),
+    ('Hipp', 'Hipp Gemüseallerlei Mit Bio Rind,250G', 'NOT-APPLICABLE'),
+    ('Hipp', 'Frühstücks Porridge Banane Blaubeeren Haferbrei', 'NOT-APPLICABLE'),
+    ('Hipp', 'Hippis Pfirsich Banane Mango Joghurt', 'NOT-APPLICABLE'),
+    ('DmBio', 'Hirse Getreidebrei', 'NOT-APPLICABLE'),
+    ('Hipp', 'Pfirsich in Apfel (ab 5. Monat)', 'NOT-APPLICABLE'),
+    ('Hipp', 'Williams Christ-Birnen mit Apfel (ab 5. Monat)', 'NOT-APPLICABLE'),
+    ('Unknown', 'Apfel Bananen müesli', 'NOT-APPLICABLE'),
+    ('DmBio', 'Apfel mit Banane & Hirse (ab 6. Monat)', 'NOT-APPLICABLE'),
+    ('Hipp', 'Birne-Apfel mit Dinkel, Frucht & urgetreide', 'NOT-APPLICABLE'),
+    ('Bebivita', 'Anfangsmilch', 'NOT-APPLICABLE'),
+    ('Hipp Bio', 'Himbeer Reiswaffeln', 'NOT-APPLICABLE'),
+    ('Hipp', 'Bio Combiotik Pre', 'NOT-APPLICABLE'),
+    ('Dr. Oetker', 'Banane & Pfirsich in Apfel (ab 5. Monat)', 'NOT-APPLICABLE'),
+    ('Hipp', 'Urkorn Dinos', 'NOT-APPLICABLE'),
+    ('Bebivita', 'Reis mit Karotten und Pute', 'NOT-APPLICABLE'),
+    ('Hipp', 'Hipp', 'NOT-APPLICABLE'),
+    ('Hipp', 'Hippis Apfel-Birne-Banane', 'NOT-APPLICABLE'),
+    ('Milupa', 'MILUPA MILUPINO KINDERMILCH 1 Liter', 'NOT-APPLICABLE'),
+    ('Hipp', 'Apfel Banane in Babykeks', 'NOT-APPLICABLE'),
+    ('Hipp', 'Pfirsich Aprikose mit Quarkcreme (ab 10. Monat)', 'NOT-APPLICABLE'),
+    ('Hipp', 'Hipp Guten Morgen', 'NOT-APPLICABLE'),
+    ('DmBio', 'Babyobst', 'NOT-APPLICABLE'),
+    ('Kölln', 'Schmelzflocken 5 korn 6. Monat', 'NOT-APPLICABLE'),
+    ('Hipp', 'Heidelbeer reiswaffeln', 'NOT-APPLICABLE'),
+    ('Hipp', 'BIO Getreidebrei 5-Korn', 'NOT-APPLICABLE'),
+    ('Hipp', 'Hipp Apfel-banane & Babykeks Ohne Zuckerzusatz', 'NOT-APPLICABLE'),
+    ('Hipp', 'Hipp, Karotten Mit Reis Und Wildlachs', 'NOT-APPLICABLE'),
+    ('Bebivita', 'Pfirsich mit Maracuja in Apfel', 'NOT-APPLICABLE')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Hipp', 'Reine Bio-Karotten mild-süßlich', '1'),
+    ('Hipp', 'Früchte Riegel Joghurt-Kirsch in Banane', '3'),
+    ('Mamia Bio', 'Bio-Fruchtpüree - Apfel-Birne-Aprikose', '1'),
+    ('Hipp', 'Gemüse Allerlei', '1'),
+    ('DmBio', 'Kürbis pur', '1'),
+    ('Bebivita', 'Mini-Makkaroni mit buntem Rahmgemüse', '3'),
+    ('Hipp', 'Reiner Butternut Kürbis', '4'),
+    ('Hipp', 'Menü Karotten, Kartoffeln, Wildlachs', '3'),
+    ('Hipp', 'Gemüse Kürbis Nach Dem 4. Monat', '3'),
+    ('Puttkammer', 'Schinkenröllchen in Aspik', '4'),
+    ('Hipp', 'Mango-Bananen-Grieß', '1'),
+    ('Hipp', 'Spinatgemüse in Kartoffeln', '1'),
+    ('Bebivita', 'Abendbrei Grieß-Vanille', '3'),
+    ('Hipp', 'Grießbrei', '4'),
+    ('Hipp', 'Schinkennudeln mit Gemüse (ab 8. Monat)', '4'),
+    ('Hipp', 'Gemüse Lasagne', '3'),
+    ('Bebivita', 'Gemüse-Spätzle-Pfanne', '3'),
+    ('DmBio', 'Pastinaken mit Kartoffeln und Rind im Gläschen', '4'),
+    ('Hipp', 'Kartoffel-Gemüse mit Bio-Rind (ab 8. Monat)', '1'),
+    ('Hipp', 'Gemüsereis mit Erbsen und zartem Geschnetzelten', '3'),
+    ('Hipp', 'Erdbeere in Apfel-Joghurt-Müsli', '3'),
+    ('Hipp', 'Gartengemüse Mit Pute Und Rosmarin', '3'),
+    ('Hipp', 'Tomaten Und Kartoffeln Mit Bio-hühnchen', '3'),
+    ('Hipp', 'Hipp Gemüseallerlei Mit Bio Rind,250G', '3'),
+    ('Hipp', 'Frühstücks Porridge Banane Blaubeeren Haferbrei', '4'),
+    ('Hipp', 'Hippis Pfirsich Banane Mango Joghurt', '1'),
+    ('DmBio', 'Hirse Getreidebrei', '4'),
+    ('Hipp', 'Pfirsich in Apfel (ab 5. Monat)', '4'),
+    ('Hipp', 'Williams Christ-Birnen mit Apfel (ab 5. Monat)', '4'),
+    ('Unknown', 'Apfel Bananen müesli', '1'),
+    ('DmBio', 'Apfel mit Banane & Hirse (ab 6. Monat)', '1'),
+    ('Hipp', 'Birne-Apfel mit Dinkel, Frucht & urgetreide', '1'),
+    ('Bebivita', 'Anfangsmilch', '4'),
+    ('Hipp Bio', 'Himbeer Reiswaffeln', '1'),
+    ('Hipp', 'Bio Combiotik Pre', '4'),
+    ('Dr. Oetker', 'Banane & Pfirsich in Apfel (ab 5. Monat)', '1'),
+    ('Hipp', 'Urkorn Dinos', '4'),
+    ('Bebivita', 'Reis mit Karotten und Pute', '1'),
+    ('Hipp', 'Hipp', '3'),
+    ('Hipp', 'Hippis Apfel-Birne-Banane', '1'),
+    ('Milupa', 'MILUPA MILUPINO KINDERMILCH 1 Liter', '4'),
+    ('Hipp', 'Apfel Banane in Babykeks', '4'),
+    ('Hipp', 'Pfirsich Aprikose mit Quarkcreme (ab 10. Monat)', '3'),
+    ('Hipp', 'Hipp Guten Morgen', '3'),
+    ('DmBio', 'Babyobst', '4'),
+    ('Kölln', 'Schmelzflocken 5 korn 6. Monat', '1'),
+    ('Hipp', 'Heidelbeer reiswaffeln', '4'),
+    ('Hipp', 'BIO Getreidebrei 5-Korn', '4'),
+    ('Hipp', 'Hipp Apfel-banane & Babykeks Ohne Zuckerzusatz', '4'),
+    ('Hipp', 'Hipp, Karotten Mit Reis Und Wildlachs', '4'),
+    ('Bebivita', 'Pfirsich mit Maracuja in Apfel', '1')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Baby', 100, 'DE');

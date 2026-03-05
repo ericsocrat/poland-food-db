@@ -1,0 +1,123 @@
+﻿-- PIPELINE (Condiments): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Hela', 'Gewürzketchup Curry', 'D'),
+    ('Aldi', 'Curry-Gewürzketchup - delikat', 'E'),
+    ('Werder', 'Gewürz Ketchup', 'D'),
+    ('Delikato', 'Curry-Gewürzketchup - scharf', 'E'),
+    ('American', 'Würzsauce 2 in 1 - Ketchup & Senf', 'D'),
+    ('HELA Gewürz Ketchup', 'Gewürz Ketchup Curry Scharf', 'D'),
+    ('Hela', 'Gewürz Ketchup Curry', 'UNKNOWN'),
+    ('Hela', 'Gewürz Ketchup Curry Delikat 30%', 'D'),
+    ('Hela', 'Soße Curry Ketchup', 'E'),
+    ('Develey', 'VW Ketchup Gewürz', 'D'),
+    ('Hela', 'Gewürz Ketchup Curry Leicht Scharf', 'D'),
+    ('Hela', 'Gewürzketchup Tomate', 'D'),
+    ('Hela', 'Hela Schaschlik Gewürz- Ketchup', 'E'),
+    ('Hela', 'Gewürz Ketchup Curry Extra Scharf', 'D'),
+    ('Delikato', 'Tomatenketchup', 'D'),
+    ('Kania', 'Ketchup', 'UNKNOWN'),
+    ('DmBio', 'Jemný kečup', 'C'),
+    ('Kania', 'Tomato Ketchup', 'B'),
+    ('Werder', 'Tomatenketchup von Werder', 'D'),
+    ('Jütro', 'Tomaten Ketchup', 'D'),
+    ('Nur Nur Natur', 'Bio-Tomatenketchup - Klassik', 'C'),
+    ('Delikato', 'Tomatenketchup Light', 'C'),
+    ('Kania', 'Kečup', 'E'),
+    ('La Vialla', 'Premium Tomatenketchup', 'C'),
+    ('Werder', 'Barbecue Sauce', 'D'),
+    ('Bio Zentrale', 'Tomaten Ketchup', 'D'),
+    ('Nur Nur Natur', 'Bio-Tomatenketchup - Curry', 'C'),
+    ('Gourmet Finest Cuisine', 'Steakhouse-Ketchup mit Fleur de Sel', 'D'),
+    ('Hela', 'Curry Ketchup', 'D'),
+    ('Dennree', 'Gewürz Ketchup', 'E'),
+    ('Develey', 'Ketchup - Tomaten Ketchup', 'D'),
+    ('Werder', 'Tomatenketchup ohne Zuckerzusatz', 'C'),
+    ('Bautz''ner', 'Ketchup', 'D'),
+    ('Hela', 'Tomaten-Ketchup', 'B'),
+    ('Werder', 'Tomaten Ketchup', 'D'),
+    ('K-Bio', 'Tomatenketchup', 'C'),
+    ('Delikato', 'Tomatenketchup Hot Chili', 'D'),
+    ('Byodo', 'Kinder ketchup', 'C'),
+    ('K-Classic', 'Tomatenketchup', 'D'),
+    ('Curry36', 'Tomatenketchup', 'C'),
+    ('Tomatenketchup', 'Tomatenketchup Original Bio', 'B'),
+    ('Born', 'Tomatenketchup', 'C'),
+    ('Kaufland Classic', 'Ketchup', 'D'),
+    ('Born', 'Tomaten Ketchup', 'C'),
+    ('Bio-Zentrale', 'Biokids Tomatenketchup', 'D'),
+    ('Hela', 'Ketchup', 'C'),
+    ('Zwergenwiese', 'Tomatensauce', 'C'),
+    ('Develey', 'Ketchup develey', 'D'),
+    ('K-Classic', 'Curry Gewürz Ketchup scharf', 'D'),
+    ('Werder', 'Kinder Bio Ketchup', 'C'),
+    ('Dennree', 'Ketchup', 'D')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Hela', 'Gewürzketchup Curry', '4'),
+    ('Aldi', 'Curry-Gewürzketchup - delikat', '4'),
+    ('Werder', 'Gewürz Ketchup', '4'),
+    ('Delikato', 'Curry-Gewürzketchup - scharf', '4'),
+    ('American', 'Würzsauce 2 in 1 - Ketchup & Senf', '4'),
+    ('HELA Gewürz Ketchup', 'Gewürz Ketchup Curry Scharf', '4'),
+    ('Hela', 'Gewürz Ketchup Curry', '4'),
+    ('Hela', 'Gewürz Ketchup Curry Delikat 30%', '4'),
+    ('Hela', 'Soße Curry Ketchup', '4'),
+    ('Develey', 'VW Ketchup Gewürz', '4'),
+    ('Hela', 'Gewürz Ketchup Curry Leicht Scharf', '4'),
+    ('Hela', 'Gewürzketchup Tomate', '4'),
+    ('Hela', 'Hela Schaschlik Gewürz- Ketchup', '4'),
+    ('Hela', 'Gewürz Ketchup Curry Extra Scharf', '4'),
+    ('Delikato', 'Tomatenketchup', '3'),
+    ('Kania', 'Ketchup', '3'),
+    ('DmBio', 'Jemný kečup', '3'),
+    ('Kania', 'Tomato Ketchup', '4'),
+    ('Werder', 'Tomatenketchup von Werder', '3'),
+    ('Jütro', 'Tomaten Ketchup', '3'),
+    ('Nur Nur Natur', 'Bio-Tomatenketchup - Klassik', '3'),
+    ('Delikato', 'Tomatenketchup Light', '4'),
+    ('Kania', 'Kečup', '4'),
+    ('La Vialla', 'Premium Tomatenketchup', '3'),
+    ('Werder', 'Barbecue Sauce', '4'),
+    ('Bio Zentrale', 'Tomaten Ketchup', '3'),
+    ('Nur Nur Natur', 'Bio-Tomatenketchup - Curry', '3'),
+    ('Gourmet Finest Cuisine', 'Steakhouse-Ketchup mit Fleur de Sel', '4'),
+    ('Hela', 'Curry Ketchup', '4'),
+    ('Dennree', 'Gewürz Ketchup', '4'),
+    ('Develey', 'Ketchup - Tomaten Ketchup', '3'),
+    ('Werder', 'Tomatenketchup ohne Zuckerzusatz', '4'),
+    ('Bautz''ner', 'Ketchup', '4'),
+    ('Hela', 'Tomaten-Ketchup', '4'),
+    ('Werder', 'Tomaten Ketchup', '4'),
+    ('K-Bio', 'Tomatenketchup', '3'),
+    ('Delikato', 'Tomatenketchup Hot Chili', '3'),
+    ('Byodo', 'Kinder ketchup', '3'),
+    ('K-Classic', 'Tomatenketchup', '4'),
+    ('Curry36', 'Tomatenketchup', '4'),
+    ('Tomatenketchup', 'Tomatenketchup Original Bio', '3'),
+    ('Born', 'Tomatenketchup', '4'),
+    ('Kaufland Classic', 'Ketchup', '3'),
+    ('Born', 'Tomaten Ketchup', '4'),
+    ('Bio-Zentrale', 'Biokids Tomatenketchup', '3'),
+    ('Hela', 'Ketchup', '3'),
+    ('Zwergenwiese', 'Tomatensauce', '3'),
+    ('Develey', 'Ketchup develey', '4'),
+    ('K-Classic', 'Curry Gewürz Ketchup scharf', '4'),
+    ('Werder', 'Kinder Bio Ketchup', '3'),
+    ('Dennree', 'Ketchup', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Condiments', 100, 'DE');

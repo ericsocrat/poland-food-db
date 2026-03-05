@@ -1,0 +1,123 @@
+-- PIPELINE (Breakfast & Grain-Based): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Dr. Oetker', 'Vitalis Knuspermüsli Weniger Süß Knusper pur ohne Rosinen', 'C'),
+    ('Kölln', 'Kölln Knusper Volkorn-Müsli mit Vanille-Note 500g', 'C'),
+    ('Kölln', 'Knusper Honig-Nuss Müsli', 'D'),
+    ('Dm', 'Bio Schokomüsli ohne Rosinen', 'C'),
+    ('Kölln', 'Kellogs, Hafer-Müsli, Schoko und Keks', 'D'),
+    ('Kölln', 'Zartes Bircher Müsli', 'A'),
+    ('Seitenbacher', 'Kakao-Düsis', 'A'),
+    ('Dr. Oetker Vitalis', 'Vitalis Weniger süß Knusper Himbeere', 'A'),
+    ('Kölln', 'Crunchy Choc-Choc-Choc - Hafer-Müsli', 'D'),
+    ('Kölln', 'Hafer Müsli Beere Apfel', 'A'),
+    ('Dr. Oetker', 'Schoko Müsli klassisch', 'C'),
+    ('Dr. Oetker', 'Vitalis Knusper Schoko Müsli', 'B'),
+    ('Golden Bridge', 'Trauben-Nuss Müsli Vollkorn', 'A'),
+    ('Dr. Oetker', 'Vitalis Knusper Müsli PLUS Nussmischung', 'C'),
+    ('Dr. Oetker', 'Vitalis Müsli Joghurt', 'C'),
+    ('Kölln', 'Crunchy Berry Hafer-Müsli', 'C'),
+    ('Kölln', 'Kölln Müsli Nuss & Krokant', 'A'),
+    ('Seitenbacher', 'Müsli 205 Für Sportliche', 'A'),
+    ('Dr. Oetker', 'Vitalis Knusper müsli Honeys', 'C'),
+    ('Golden Bridge', 'Schoko-Müsli mit 30 % weniger Zucker', 'A'),
+    ('Golden Bridge', 'Früchte-Müsli', 'C'),
+    ('DmBio', 'Beeren Müsli', 'B'),
+    ('Dr. Oetker', 'Vitalis Knusper Müsli klassisch', 'C'),
+    ('Crownfield', 'Schoko Müsli', 'C'),
+    ('Dr. Oetker', 'Knusper Schoko Müsli', 'C'),
+    ('GUT Bio', 'Basis Müsli 5-Kornmix', 'A'),
+    ('Kölln', 'Crunchy Mango-Maracuja Hafer-Müsli', 'D'),
+    ('Aldi', 'Bio-Müsli - Urkorn-Früchte', 'A'),
+    ('Dr. Oetker', 'Müsli Schoko weniger süss', 'C'),
+    ('Kölln', 'EDEKA Müsli Kölln Müsli Knusper Schoko-Krokant 500g 2.49€ 1kg 4.98€', 'D'),
+    ('GUT bio', 'Bio Knusper-Müsli Schoko-Amaranth', 'C'),
+    ('Seitenbacher', 'Seitenbacher Müsli 479 Knackige Mischung Ohne Süß', 'UNKNOWN'),
+    ('Golden Bridge', 'Früchte-Müsli Vollkorn', 'B'),
+    ('Kölln', 'Crunchy Hazel Hafer-Müsli', 'D'),
+    ('Kölln', 'Früchte Hafer-Müsli', 'C'),
+    ('Kölln kölln', 'Schoko Müsli', 'C'),
+    ('Kölln', 'Knusper Müsli', 'D'),
+    ('Kölln', 'Hafer Müsli', 'A'),
+    ('Kölln', 'Früchte Müsli ohne Zuckerzusatz', 'C'),
+    ('DmBio', 'Müsli Nuss', 'C'),
+    ('DmBio', 'Paleo Müsli', 'A'),
+    ('Golden Bridge', 'Premium Müsli', 'C'),
+    ('Dr. Oetker', 'Vitalis Müsli Knusper Schoko ohne Zuckerzusatz', 'B'),
+    ('DmBio', 'Basismüsli ohne Rosinen', 'A'),
+    ('Kölln', 'Knusper Schoko & Keks Müsli', 'D'),
+    ('Kölln', 'Knusper Joghurt Himbeer Müsli', 'D'),
+    ('Seitenbacher', 'Müsli 508 Dinos Frühstück', 'D'),
+    ('Dr. Oetker', 'Paula Müslispaß Schoko', 'C'),
+    ('DmBio', 'Früchte müsli', 'C'),
+    ('Bauck Mühle', 'Schoko+Flakes Hafer Müsli Bio', 'A'),
+    ('Brüggen', 'Schoko-Müsli', 'C')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Dr. Oetker', 'Vitalis Knuspermüsli Weniger Süß Knusper pur ohne Rosinen', '4'),
+    ('Kölln', 'Kölln Knusper Volkorn-Müsli mit Vanille-Note 500g', '4'),
+    ('Kölln', 'Knusper Honig-Nuss Müsli', '4'),
+    ('Dm', 'Bio Schokomüsli ohne Rosinen', '4'),
+    ('Kölln', 'Kellogs, Hafer-Müsli, Schoko und Keks', '4'),
+    ('Kölln', 'Zartes Bircher Müsli', '3'),
+    ('Seitenbacher', 'Kakao-Düsis', '4'),
+    ('Dr. Oetker Vitalis', 'Vitalis Weniger süß Knusper Himbeere', '4'),
+    ('Kölln', 'Crunchy Choc-Choc-Choc - Hafer-Müsli', '4'),
+    ('Kölln', 'Hafer Müsli Beere Apfel', '1'),
+    ('Dr. Oetker', 'Schoko Müsli klassisch', '4'),
+    ('Dr. Oetker', 'Vitalis Knusper Schoko Müsli', '4'),
+    ('Golden Bridge', 'Trauben-Nuss Müsli Vollkorn', '3'),
+    ('Dr. Oetker', 'Vitalis Knusper Müsli PLUS Nussmischung', '4'),
+    ('Dr. Oetker', 'Vitalis Müsli Joghurt', '4'),
+    ('Kölln', 'Crunchy Berry Hafer-Müsli', '4'),
+    ('Kölln', 'Kölln Müsli Nuss & Krokant', '4'),
+    ('Seitenbacher', 'Müsli 205 Für Sportliche', '3'),
+    ('Dr. Oetker', 'Vitalis Knusper müsli Honeys', '4'),
+    ('Golden Bridge', 'Schoko-Müsli mit 30 % weniger Zucker', '4'),
+    ('Golden Bridge', 'Früchte-Müsli', '3'),
+    ('DmBio', 'Beeren Müsli', '1'),
+    ('Dr. Oetker', 'Vitalis Knusper Müsli klassisch', '4'),
+    ('Crownfield', 'Schoko Müsli', '4'),
+    ('Dr. Oetker', 'Knusper Schoko Müsli', '4'),
+    ('GUT Bio', 'Basis Müsli 5-Kornmix', '4'),
+    ('Kölln', 'Crunchy Mango-Maracuja Hafer-Müsli', '4'),
+    ('Aldi', 'Bio-Müsli - Urkorn-Früchte', '1'),
+    ('Dr. Oetker', 'Müsli Schoko weniger süss', '4'),
+    ('Kölln', 'EDEKA Müsli Kölln Müsli Knusper Schoko-Krokant 500g 2.49€ 1kg 4.98€', '4'),
+    ('GUT bio', 'Bio Knusper-Müsli Schoko-Amaranth', '3'),
+    ('Seitenbacher', 'Seitenbacher Müsli 479 Knackige Mischung Ohne Süß', '1'),
+    ('Golden Bridge', 'Früchte-Müsli Vollkorn', '3'),
+    ('Kölln', 'Crunchy Hazel Hafer-Müsli', '4'),
+    ('Kölln', 'Früchte Hafer-Müsli', '4'),
+    ('Kölln kölln', 'Schoko Müsli', '4'),
+    ('Kölln', 'Knusper Müsli', '4'),
+    ('Kölln', 'Hafer Müsli', '4'),
+    ('Kölln', 'Früchte Müsli ohne Zuckerzusatz', '4'),
+    ('DmBio', 'Müsli Nuss', '3'),
+    ('DmBio', 'Paleo Müsli', '1'),
+    ('Golden Bridge', 'Premium Müsli', '4'),
+    ('Dr. Oetker', 'Vitalis Müsli Knusper Schoko ohne Zuckerzusatz', '4'),
+    ('DmBio', 'Basismüsli ohne Rosinen', '1'),
+    ('Kölln', 'Knusper Schoko & Keks Müsli', '4'),
+    ('Kölln', 'Knusper Joghurt Himbeer Müsli', '4'),
+    ('Seitenbacher', 'Müsli 508 Dinos Frühstück', '4'),
+    ('Dr. Oetker', 'Paula Müslispaß Schoko', '4'),
+    ('DmBio', 'Früchte müsli', '4'),
+    ('Bauck Mühle', 'Schoko+Flakes Hafer Müsli Bio', '4'),
+    ('Brüggen', 'Schoko-Müsli', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Breakfast & Grain-Based', 100, 'DE');

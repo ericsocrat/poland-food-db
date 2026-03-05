@@ -1,0 +1,123 @@
+-- PIPELINE (Alcohol): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Franziskaner', 'Franziskaner Premium Weissbier Naturtrüb', 'NOT-APPLICABLE'),
+    ('Hauser Weinimport', 'Glühwein rot', 'NOT-APPLICABLE'),
+    ('Köstritzer', 'Köstritzer Schwarzbier', 'NOT-APPLICABLE'),
+    ('Hasseröder', 'Hasseröder Premium Pils', 'NOT-APPLICABLE'),
+    ('Spaten', 'Münchner Hell', 'NOT-APPLICABLE'),
+    ('Paulaner München', 'Weißbier-Zitrone Alkoholfrei', 'NOT-APPLICABLE'),
+    ('Mönchshof', 'Mönchshof Kellerbier', 'NOT-APPLICABLE'),
+    ('Erdinger', 'Weißbier', 'NOT-APPLICABLE'),
+    ('Lübzer', 'Lübzer Pils', 'NOT-APPLICABLE'),
+    ('Paulaner', 'Paulaner Original Münchner Hell', 'NOT-APPLICABLE'),
+    ('Paulaner', 'Münchner Hell', 'NOT-APPLICABLE'),
+    ('Mönchshof', 'Mönchshof Original Naturtrüb''s Alkoholfrei 4082100003552 Alkoholfreies Schankbier', 'NOT-APPLICABLE'),
+    ('Wernesgrüner', 'Wernesgrüner Pils', 'NOT-APPLICABLE'),
+    ('Köstritzer', 'Köstritzer Edel Pils', 'NOT-APPLICABLE'),
+    ('Neumarkter Lammsbräu', 'Neumarkter Lammsbräu Glutenfrei', 'NOT-APPLICABLE'),
+    ('Bayreuther Brauhaus', 'Bayreuther', 'NOT-APPLICABLE'),
+    ('Pülleken', 'Veltins', 'NOT-APPLICABLE'),
+    ('Veltins', 'Bier - Veltins Pilsener', 'NOT-APPLICABLE'),
+    ('Rotkäppchen', 'Sekt halbtrocken', 'NOT-APPLICABLE'),
+    ('Berliner', 'Berliner Pilsner', 'NOT-APPLICABLE'),
+    ('Jever', 'Jever Pilsener', 'NOT-APPLICABLE'),
+    ('0 Original', '5,0 Original Pils', 'NOT-APPLICABLE'),
+    ('Mönchshof', 'Natur Radler', 'NOT-APPLICABLE'),
+    ('Störtebeker', 'Atlantik Ale', 'NOT-APPLICABLE'),
+    ('Nordbrand Nordhausen', 'Pfefferminz', 'NOT-APPLICABLE'),
+    ('Warsteiner', 'Radler alkoholfrei', 'NOT-APPLICABLE'),
+    ('Warsteiner', 'Pilsener', 'NOT-APPLICABLE'),
+    ('Mumm', 'Sekt, Jahrgang Dry, alkoholfrei', 'NOT-APPLICABLE'),
+    ('Mönchshof', 'Natur Radler 0,0%', 'NOT-APPLICABLE'),
+    ('Krombacher', 'Krombacher Pils', 'NOT-APPLICABLE'),
+    ('Herzoglich Bayerisches Brauhaus Tegernsee', 'Tegernseer Hell', 'NOT-APPLICABLE'),
+    ('Oettinger', 'Pils', 'NOT-APPLICABLE'),
+    ('Radeberger', 'Pilsner Alkoholfrei', 'NOT-APPLICABLE'),
+    ('Rothaus', 'Tannenzäpfle', 'NOT-APPLICABLE'),
+    ('Gesamt', 'Hefeweissbier hell', 'NOT-APPLICABLE'),
+    ('Unknown', 'Wodka Gorbatschow', 'NOT-APPLICABLE'),
+    ('Doppio Passo', 'Doppio Passo Rotwein alkoholfrei', 'NOT-APPLICABLE'),
+    ('Schloss Wachenheim', 'Light Live Red 0,0%', 'NOT-APPLICABLE'),
+    ('Paulaner', 'Natur-Radler', 'NOT-APPLICABLE'),
+    ('Franziskaner', 'Premium Weissbier Dunkel', 'NOT-APPLICABLE'),
+    ('Mönchshof', 'Radler Blutorange', 'NOT-APPLICABLE'),
+    ('Unknown', 'Benediktiner Hell', 'NOT-APPLICABLE'),
+    ('Christkindl', 'Christkindl Glühwein', 'NOT-APPLICABLE'),
+    ('Schöfferhofer', 'Weizen-Mix Grapefruit', 'NOT-APPLICABLE'),
+    ('Krombacher', 'Weizen Alkoholfrei', 'NOT-APPLICABLE'),
+    ('Allgäuer Brauhaus', 'Büble Bier Edelbräu', 'NOT-APPLICABLE'),
+    ('Gösser', 'Natur Radler', 'NOT-APPLICABLE'),
+    ('Budweiser', 'Budvar', 'NOT-APPLICABLE'),
+    ('Unknown', 'Pilsner Urquell', 'NOT-APPLICABLE'),
+    ('Carlsberg', 'Apple Cider', 'NOT-APPLICABLE'),
+    ('Cerveceria Modelio', 'Corona Extra', 'NOT-APPLICABLE')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Franziskaner', 'Franziskaner Premium Weissbier Naturtrüb', '3'),
+    ('Hauser Weinimport', 'Glühwein rot', '4'),
+    ('Köstritzer', 'Köstritzer Schwarzbier', '3'),
+    ('Hasseröder', 'Hasseröder Premium Pils', '3'),
+    ('Spaten', 'Münchner Hell', '3'),
+    ('Paulaner München', 'Weißbier-Zitrone Alkoholfrei', '4'),
+    ('Mönchshof', 'Mönchshof Kellerbier', '3'),
+    ('Erdinger', 'Weißbier', '3'),
+    ('Lübzer', 'Lübzer Pils', '3'),
+    ('Paulaner', 'Paulaner Original Münchner Hell', '3'),
+    ('Paulaner', 'Münchner Hell', '3'),
+    ('Mönchshof', 'Mönchshof Original Naturtrüb''s Alkoholfrei 4082100003552 Alkoholfreies Schankbier', '4'),
+    ('Wernesgrüner', 'Wernesgrüner Pils', '3'),
+    ('Köstritzer', 'Köstritzer Edel Pils', '3'),
+    ('Neumarkter Lammsbräu', 'Neumarkter Lammsbräu Glutenfrei', '3'),
+    ('Bayreuther Brauhaus', 'Bayreuther', '3'),
+    ('Pülleken', 'Veltins', '4'),
+    ('Veltins', 'Bier - Veltins Pilsener', '3'),
+    ('Rotkäppchen', 'Sekt halbtrocken', '3'),
+    ('Berliner', 'Berliner Pilsner', '3'),
+    ('Jever', 'Jever Pilsener', '3'),
+    ('0 Original', '5,0 Original Pils', '3'),
+    ('Mönchshof', 'Natur Radler', '4'),
+    ('Störtebeker', 'Atlantik Ale', '3'),
+    ('Nordbrand Nordhausen', 'Pfefferminz', '4'),
+    ('Warsteiner', 'Radler alkoholfrei', '4'),
+    ('Warsteiner', 'Pilsener', '3'),
+    ('Mumm', 'Sekt, Jahrgang Dry, alkoholfrei', '4'),
+    ('Mönchshof', 'Natur Radler 0,0%', '4'),
+    ('Krombacher', 'Krombacher Pils', '3'),
+    ('Herzoglich Bayerisches Brauhaus Tegernsee', 'Tegernseer Hell', '3'),
+    ('Oettinger', 'Pils', '3'),
+    ('Radeberger', 'Pilsner Alkoholfrei', '4'),
+    ('Rothaus', 'Tannenzäpfle', '3'),
+    ('Gesamt', 'Hefeweissbier hell', '3'),
+    ('Unknown', 'Wodka Gorbatschow', '4'),
+    ('Doppio Passo', 'Doppio Passo Rotwein alkoholfrei', '4'),
+    ('Schloss Wachenheim', 'Light Live Red 0,0%', '4'),
+    ('Paulaner', 'Natur-Radler', '4'),
+    ('Franziskaner', 'Premium Weissbier Dunkel', '3'),
+    ('Mönchshof', 'Radler Blutorange', '4'),
+    ('Unknown', 'Benediktiner Hell', '3'),
+    ('Christkindl', 'Christkindl Glühwein', '4'),
+    ('Schöfferhofer', 'Weizen-Mix Grapefruit', '4'),
+    ('Krombacher', 'Weizen Alkoholfrei', '4'),
+    ('Allgäuer Brauhaus', 'Büble Bier Edelbräu', '3'),
+    ('Gösser', 'Natur Radler', '4'),
+    ('Budweiser', 'Budvar', '3'),
+    ('Unknown', 'Pilsner Urquell', '3'),
+    ('Carlsberg', 'Apple Cider', '4'),
+    ('Cerveceria Modelio', 'Corona Extra', '3')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Alcohol', 100, 'DE');

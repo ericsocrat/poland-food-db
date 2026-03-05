@@ -1,0 +1,123 @@
+﻿-- PIPELINE (Sauces): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('DmBio', 'Tomatensoße Klassik', 'B'),
+    ('Hengstenberg', 'Tomaten stückig mit Kräutern', 'A'),
+    ('Bautz''ner', 'Fix Tomatensoße', 'D'),
+    ('DmBio', 'Tomatensoße Arrabbiata', 'B'),
+    ('InnFood Organic', 'Bio-Tomatensauce - Gemüse und Parmesan', 'A'),
+    ('DmBio', 'Tomatensauce Kräuter', 'A'),
+    ('Aldi', 'Passierte Tomaten', 'A'),
+    ('DmBio', 'Tomatensauce - Ricotta Pecorino', 'C'),
+    ('King''s Crown', 'Passata', 'B'),
+    ('Oro Di Parma', 'Pizzasauce Oregano', 'C'),
+    ('InnFood Organic', 'Bio-Tomatensauce - Basilikum', 'A'),
+    ('DmBio', 'Tomatensauce - gegrillte Paprika', 'A'),
+    ('InnFood Organic', 'Bio-Tomatensauce - Arrabiata', 'A'),
+    ('Clama', 'Tomate Frito', 'A'),
+    ('Cucina', 'Pasta-Sauce Arrabbiata', 'C'),
+    ('Mars', 'Pastasauce Miracoli Klassiker', 'B'),
+    ('Alnatura', 'Passata', 'A'),
+    ('Oro', 'Pastasauce Classico', 'C'),
+    ('Cucina', 'Pasta-Sauce - Napoletana', 'A'),
+    ('REWE Bio', 'Tomatensauce Kräuter', 'A'),
+    ('Allos', 'Olivers Olive Tomate', 'C'),
+    ('Barilla', 'Toscana Kräuter', 'A'),
+    ('Kaufland Bio', 'Tomatensauce Classic', 'A'),
+    ('Knorr', 'Tomaten passiert', 'B'),
+    ('Alnatura', 'Tomatensauce Kräuter', 'A'),
+    ('Nestlé', 'Tomaten Sauce', 'UNKNOWN'),
+    ('REWE Beste Wahl', 'Stückige Tomaten', 'A'),
+    ('Rewe', 'Kräuter Knoblauch Saucenbasis', 'A'),
+    ('Alnatura', 'Tomatensauce Gegrilltes Gemüse 350M', 'B'),
+    ('Ppura', 'Kinder Tomatensoße', 'C'),
+    ('Ppura', 'Kinder Tomatensoße mit verstecktem Gemüse', 'A'),
+    ('Barilla', 'Basilico 400g eu', 'A'),
+    ('Baresa', 'Tomatenmark', 'B'),
+    ('Baresa', 'Passierte Tomate', 'A'),
+    ('Gut & Günstig', 'Passierte Tomaten', 'A'),
+    ('Mutti', 'Triplo concentrato di pomodoro', 'A'),
+    ('Barilla', 'Arrabbiata', 'A'),
+    ('EDEKA Bio', 'Passata, passierte Tomaten - Bio', 'A'),
+    ('Ppura', 'Vegane Bolognese', 'C'),
+    ('Barilla', 'Napoletana', 'A'),
+    ('Barilla', 'Ricotta', 'B'),
+    ('Combino', 'Bolognese', 'C'),
+    ('Baresa', 'Passierte Tomaten', 'A'),
+    ('Ja!', 'Tomatensauce mit Basilikum', 'UNKNOWN'),
+    ('Mutti', 'Pizzasauce Aromatica', 'A'),
+    ('Combino', 'Arrabbiata', 'A'),
+    ('REWE Bio', 'Passata Tomaten', 'A'),
+    ('Barilla', 'Verdure mediterranee 400g eu cross', 'A'),
+    ('REWE Bio', 'Tomatensauce Ricotta', 'B'),
+    ('Alnatura', 'Tomatensauce Toscana', 'C'),
+    ('Rewe', 'Tomate Ricotta mit Basilikum', 'C')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('DmBio', 'Tomatensoße Klassik', '3'),
+    ('Hengstenberg', 'Tomaten stückig mit Kräutern', '4'),
+    ('Bautz''ner', 'Fix Tomatensoße', '4'),
+    ('DmBio', 'Tomatensoße Arrabbiata', '3'),
+    ('InnFood Organic', 'Bio-Tomatensauce - Gemüse und Parmesan', '3'),
+    ('DmBio', 'Tomatensauce Kräuter', '3'),
+    ('Aldi', 'Passierte Tomaten', '3'),
+    ('DmBio', 'Tomatensauce - Ricotta Pecorino', '3'),
+    ('King''s Crown', 'Passata', '3'),
+    ('Oro Di Parma', 'Pizzasauce Oregano', '3'),
+    ('InnFood Organic', 'Bio-Tomatensauce - Basilikum', '3'),
+    ('DmBio', 'Tomatensauce - gegrillte Paprika', '3'),
+    ('InnFood Organic', 'Bio-Tomatensauce - Arrabiata', '3'),
+    ('Clama', 'Tomate Frito', '4'),
+    ('Cucina', 'Pasta-Sauce Arrabbiata', '4'),
+    ('Mars', 'Pastasauce Miracoli Klassiker', '4'),
+    ('Alnatura', 'Passata', '3'),
+    ('Oro', 'Pastasauce Classico', '3'),
+    ('Cucina', 'Pasta-Sauce - Napoletana', '4'),
+    ('REWE Bio', 'Tomatensauce Kräuter', '3'),
+    ('Allos', 'Olivers Olive Tomate', '4'),
+    ('Barilla', 'Toscana Kräuter', '3'),
+    ('Kaufland Bio', 'Tomatensauce Classic', '3'),
+    ('Knorr', 'Tomaten passiert', '3'),
+    ('Alnatura', 'Tomatensauce Kräuter', '3'),
+    ('Nestlé', 'Tomaten Sauce', '4'),
+    ('REWE Beste Wahl', 'Stückige Tomaten', '4'),
+    ('Rewe', 'Kräuter Knoblauch Saucenbasis', '3'),
+    ('Alnatura', 'Tomatensauce Gegrilltes Gemüse 350M', '3'),
+    ('Ppura', 'Kinder Tomatensoße', '4'),
+    ('Ppura', 'Kinder Tomatensoße mit verstecktem Gemüse', '3'),
+    ('Barilla', 'Basilico 400g eu', '4'),
+    ('Baresa', 'Tomatenmark', '3'),
+    ('Baresa', 'Passierte Tomate', '3'),
+    ('Gut & Günstig', 'Passierte Tomaten', '1'),
+    ('Mutti', 'Triplo concentrato di pomodoro', '3'),
+    ('Barilla', 'Arrabbiata', '4'),
+    ('EDEKA Bio', 'Passata, passierte Tomaten - Bio', '1'),
+    ('Ppura', 'Vegane Bolognese', '3'),
+    ('Barilla', 'Napoletana', '4'),
+    ('Barilla', 'Ricotta', '4'),
+    ('Combino', 'Bolognese', '4'),
+    ('Baresa', 'Passierte Tomaten', '1'),
+    ('Ja!', 'Tomatensauce mit Basilikum', '3'),
+    ('Mutti', 'Pizzasauce Aromatica', '4'),
+    ('Combino', 'Arrabbiata', '3'),
+    ('REWE Bio', 'Passata Tomaten', '3'),
+    ('Barilla', 'Verdure mediterranee 400g eu cross', '3'),
+    ('REWE Bio', 'Tomatensauce Ricotta', '4'),
+    ('Alnatura', 'Tomatensauce Toscana', '3'),
+    ('Rewe', 'Tomate Ricotta mit Basilikum', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Sauces', 100, 'DE');

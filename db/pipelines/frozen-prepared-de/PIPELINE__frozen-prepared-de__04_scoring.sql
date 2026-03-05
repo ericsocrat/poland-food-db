@@ -1,0 +1,123 @@
+﻿-- PIPELINE (Frozen & Prepared): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Frosta', 'Bratkartoffel Hähnchen Pfanne', 'C'),
+    ('Frosta', 'Fischstäbchen ( Frosta)', 'D'),
+    ('Frosta', 'Hühnerfrikassee', 'C'),
+    ('Frosta', 'Tortellini Käse-Sahne (vegetarisch)', 'C'),
+    ('Frosta', 'Gemüse Pfanne alla Toscana', 'B'),
+    ('Frosta', 'Hähnchen Curry', 'B'),
+    ('Speisezeit', 'Süßkartoffel-Pommes', 'C'),
+    ('Original Wagner', 'Piccolinis Drei-Käse Pizza', 'D'),
+    ('Nur Nur Natur', 'Bio-Dinkel-Steinofenpizza - Grillgemüse', 'C'),
+    ('Dr. Oetker', 'Die Ofenfrische Vier Käse', 'D'),
+    ('Frosta', 'Wildlachs in Kräuterrahm', 'UNKNOWN'),
+    ('Frosta', 'Paprika Sahne Hähnchen mit Bandnudeln', 'C'),
+    ('Frosta', 'Gemüsepfanne a la Provence', 'B'),
+    ('Frosta', 'Gemüse Pfanne Style Asia Curry', 'A'),
+    ('Frosta', 'Reis Hähnchen Pfanne', 'D'),
+    ('Golden Seafood', 'Riesengarnelenschwänze - Natur', 'A'),
+    ('Freshona', 'Gemüsepfanne Bio Mediterrane Art', 'A'),
+    ('Frost', 'Pfannenfisch Müllerin Art', 'A'),
+    ('Frosta', 'Gemüse-Bowl - Pikanter Bulgur mit schwarzen Bohnen', 'A'),
+    ('Frosta', 'Bami Goreng', 'C'),
+    ('Frosta', 'Butter Chicken', 'C'),
+    ('Original Wagner', 'Pizza Die Backfrische Mozzarella', 'C'),
+    ('Frosta', 'Nice Rice - Korean Style', 'C'),
+    ('Dr. Oetker', 'Ristorante PIZZA TONNO', 'C'),
+    ('Frosta', 'Paella', 'C'),
+    ('Dr. Oetker', 'Suprema Pizza Calabrese & ''Nduja', 'D'),
+    ('Original Wagner', 'Steinofen-Pizza Mozzarella Vegetarisch', 'C'),
+    ('Dr. Oetker', 'Die Ofenfrische Margherita', 'D'),
+    ('Greenyard Frozen Langemark', 'Buckwheat & broccoli', 'A'),
+    ('Frosta', 'Fisch Schlemmerfilet Mediterraner Art', 'C'),
+    ('Frosta', 'Fettuccine Wildlachs', 'C'),
+    ('Dr. Oetker', 'Pizza Tradizionale Margherita', 'C'),
+    ('Original Wagner', 'Steinofen-Pizza - Diavolo', 'C'),
+    ('Dr. Oetker', 'Die Ofenfrische Speciale', 'D'),
+    ('Dr. Oetker', 'Pizza Salame Ristorante', 'D'),
+    ('Vemondo', 'Vegan pizza Verdura', 'B'),
+    ('Dr. Oetker', 'Die Ofenfrische Salami', 'D'),
+    ('Frosta', 'Fisch Schlemmerfilet Brokkoli Mandel', 'C'),
+    ('Dr. Oetker', 'La Mia Grande Rucola', 'D'),
+    ('GiaPizza', 'Bio-Dinkel-Steinofenpizza - Spinat', 'C'),
+    ('Nestlé', 'Pizza Speciale', 'D'),
+    ('Dr. Oetker', 'La Mia Grande Pizza Margherita', 'D'),
+    ('Speise Zeit', 'Wellenschnitt Pommes', 'A'),
+    ('Frosta', 'Nom Nom Noodles', 'C'),
+    ('Dr. Oetker', 'Pizza Traditionale Verdure Grigliate', 'C'),
+    ('Dr. Oetker', 'Ristorante Pizza Pasta', 'C'),
+    ('Nur Nur Natur', 'Bio-Eiscreme - Vanille', 'D'),
+    ('Nestlé', 'Steinofen-Pizza Thunfisch', 'C'),
+    ('Aldi', 'Pommes Frites', 'A'),
+    ('All Seasons', 'Rahm-Spinat', 'A'),
+    ('Vemondo', 'Pumpkin & quinoa', 'A')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Frosta', 'Bratkartoffel Hähnchen Pfanne', '4'),
+    ('Frosta', 'Fischstäbchen ( Frosta)', '3'),
+    ('Frosta', 'Hühnerfrikassee', '3'),
+    ('Frosta', 'Tortellini Käse-Sahne (vegetarisch)', '3'),
+    ('Frosta', 'Gemüse Pfanne alla Toscana', '3'),
+    ('Frosta', 'Hähnchen Curry', '4'),
+    ('Speisezeit', 'Süßkartoffel-Pommes', '4'),
+    ('Original Wagner', 'Piccolinis Drei-Käse Pizza', '3'),
+    ('Nur Nur Natur', 'Bio-Dinkel-Steinofenpizza - Grillgemüse', '4'),
+    ('Dr. Oetker', 'Die Ofenfrische Vier Käse', '4'),
+    ('Frosta', 'Wildlachs in Kräuterrahm', '3'),
+    ('Frosta', 'Paprika Sahne Hähnchen mit Bandnudeln', '3'),
+    ('Frosta', 'Gemüsepfanne a la Provence', '3'),
+    ('Frosta', 'Gemüse Pfanne Style Asia Curry', '3'),
+    ('Frosta', 'Reis Hähnchen Pfanne', '4'),
+    ('Golden Seafood', 'Riesengarnelenschwänze - Natur', '3'),
+    ('Freshona', 'Gemüsepfanne Bio Mediterrane Art', '3'),
+    ('Frost', 'Pfannenfisch Müllerin Art', '3'),
+    ('Frosta', 'Gemüse-Bowl - Pikanter Bulgur mit schwarzen Bohnen', '3'),
+    ('Frosta', 'Bami Goreng', '4'),
+    ('Frosta', 'Butter Chicken', '4'),
+    ('Original Wagner', 'Pizza Die Backfrische Mozzarella', '4'),
+    ('Frosta', 'Nice Rice - Korean Style', '3'),
+    ('Dr. Oetker', 'Ristorante PIZZA TONNO', '3'),
+    ('Frosta', 'Paella', '4'),
+    ('Dr. Oetker', 'Suprema Pizza Calabrese & ''Nduja', '4'),
+    ('Original Wagner', 'Steinofen-Pizza Mozzarella Vegetarisch', '3'),
+    ('Dr. Oetker', 'Die Ofenfrische Margherita', '4'),
+    ('Greenyard Frozen Langemark', 'Buckwheat & broccoli', '4'),
+    ('Frosta', 'Fisch Schlemmerfilet Mediterraner Art', '3'),
+    ('Frosta', 'Fettuccine Wildlachs', '4'),
+    ('Dr. Oetker', 'Pizza Tradizionale Margherita', '3'),
+    ('Original Wagner', 'Steinofen-Pizza - Diavolo', '4'),
+    ('Dr. Oetker', 'Die Ofenfrische Speciale', '4'),
+    ('Dr. Oetker', 'Pizza Salame Ristorante', '4'),
+    ('Vemondo', 'Vegan pizza Verdura', '4'),
+    ('Dr. Oetker', 'Die Ofenfrische Salami', '4'),
+    ('Frosta', 'Fisch Schlemmerfilet Brokkoli Mandel', '3'),
+    ('Dr. Oetker', 'La Mia Grande Rucola', '3'),
+    ('GiaPizza', 'Bio-Dinkel-Steinofenpizza - Spinat', '3'),
+    ('Nestlé', 'Pizza Speciale', '4'),
+    ('Dr. Oetker', 'La Mia Grande Pizza Margherita', '3'),
+    ('Speise Zeit', 'Wellenschnitt Pommes', '3'),
+    ('Frosta', 'Nom Nom Noodles', '3'),
+    ('Dr. Oetker', 'Pizza Traditionale Verdure Grigliate', '3'),
+    ('Dr. Oetker', 'Ristorante Pizza Pasta', '4'),
+    ('Nur Nur Natur', 'Bio-Eiscreme - Vanille', '3'),
+    ('Nestlé', 'Steinofen-Pizza Thunfisch', '3'),
+    ('Aldi', 'Pommes Frites', '3'),
+    ('All Seasons', 'Rahm-Spinat', '4'),
+    ('Vemondo', 'Pumpkin & quinoa', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Frozen & Prepared', 100, 'DE');
