@@ -1,21 +1,22 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-05 by GitHub Copilot (session 20)
+> **Last updated:** 2026-03-05 by GitHub Copilot (session 21)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
 
 ## Active Branch & PR
 
-- **Branch:** `feat/589-scoring-learn-page` (PR #650 — a11y fix pushed, CI running)
-- **Latest SHA (main):** `7358204`
-- **Open PRs:** 3 (#650 — scoring learn page, #653 — docs update, #654 — DE enrichment)
+- **Branch:** `docs/606-de-graduation-guide` (implementing #606 — DE graduation docs)
+- **Latest SHA (main):** `d08e7f5`
+- **Open PRs:** 1 (#653 — docs update for PL expansion, CI running)
 
 ## Recently Shipped (This Session)
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| `1c34b77` | fix(frontend): improve a11y contrast ratio on scoring learn page (#589)                |
+| `0e16d8c` | fix(frontend): a11y contrast ratio on scoring learn page — PR #650 merged              |
+| `d08e7f5` | data(ingredients): enrich DE products — PR #654 merged (18,938-line migration)          |
 
 ## Recently Shipped (Last 7 Days)
 
@@ -25,6 +26,7 @@
 | 2026-03-05 | #654      | data(ingredients): enrich DE products (#603)                                      |
 | 2026-03-05 | #652      | test(qa): PL validation gate (#595)                                               |
 | 2026-03-05 | #651      | data(ingredients): enrich PL products — 14,392 product_ingredients, 2,872 allergens/traces |
+| 2026-03-05 | #650      | fix(frontend): a11y contrast ratio on scoring learn page (#589)                   |
 | 2026-03-04 | #649      | chore(docs): copilot-instructions §8, §13 — merge marathon lessons learned       |
 | 2026-03-03 | #583      | **MERGED** — Milestone #17: 17 UX issues, 134 files, 4,504 tests                 |
 
@@ -49,18 +51,15 @@
 | quality-gate | ⚠️      | 18/20 pass; dashboard 400s from staging DB schema gap |
 | nightly      | ✅      | Data audit fix shipped (#560)                         |
 
-## Open Issues (15 total)
+## Open Issues (11 total)
 
 | Issue | Priority | Effort | Summary                                                          |
 | ----- | -------- | ------ | ---------------------------------------------------------------- |
-| #595  | P1       | S      | PL QA validation gate (PR pending)                               |
-| #589  | P1       | M      | Scoring learn page + v3.3 docs (PR #650 open — a11y fix pushed) |
-| #602  | P1       | M      | DE QA validation suite (PR #655 merged)                          |
 | #599  | P1       | S      | Deploy expanded PL dataset to production                         |
 | #607  | P1       | S      | Deploy DE dataset to production                                  |
 | #614  | P1       | S      | Deploy v3.3 scoring to production                                |
-| #598  | P2       | M      | Update CURRENT_STATE + copilot-instructions for PL expansion     |
-| #606  | P2       | S      | Update COUNTRY_EXPANSION_GUIDE for DE graduation                 |
+| #598  | P2       | M      | Update CURRENT_STATE + copilot-instructions for PL expansion (PR #653 open) |
+| #606  | P2       | S      | Update COUNTRY_EXPANSION_GUIDE for DE graduation (in progress)   |
 | #597  | P2       | M      | Validate MV refresh + API perf at 2K PL products                 |
 | #622  | P2       | L      | Comprehensive Playwright E2E for M18–M22 features                |
 | #594  | P3       | M      | Add Oils & Vinegars + Spreads & Dips categories for PL           |
@@ -74,10 +73,11 @@
 
 ## Next Planned Work
 
-- [ ] Verify PR #650 CI passes after a11y fix push
-- [ ] Implement #598 — update docs for PL expansion
-- [ ] Implement #599 — deploy expanded PL dataset to production
-- [ ] Implement #563 — sync staging DB schema (P2, requires staging access)
+- [ ] Merge PR #653 (issue #598) once CI passes
+- [ ] Ship PR for #606 (DE graduation docs — in progress)
+- [ ] Implement #599 — deploy expanded PL dataset to production (needs user confirmation)
+- [ ] Implement #607 — deploy DE dataset to production (needs user confirmation)
+- [ ] Implement #614 — deploy v3.3 scoring to production (needs user confirmation)
 
 ## Key Metrics Snapshot
 
@@ -93,7 +93,7 @@
 - **Confidence bands (PL):** 1,027 high / 168 medium / 3 low
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
-- **Open issues:** 15 (7 P1 + 4 P2 + 2 P3 + 2 deferred) | **Open PRs:** 3
+- **Open issues:** 11 (3 P1 + 4 P2 + 2 P3 + 2 deferred) | **Open PRs:** 1
 - **Vitest:** 4,901 tests passing (29 skipped)
 - **DB migrations:** 186 append-only
 - **Ruff lint:** 0 errors
