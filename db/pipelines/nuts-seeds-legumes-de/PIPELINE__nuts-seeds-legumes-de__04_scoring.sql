@@ -1,0 +1,123 @@
+﻿-- PIPELINE (Nuts, Seeds & Legumes): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Ültje', 'Erdnüsse geröstet & gesalzen', 'C'),
+    ('Ültje', 'Ültje Erdnüsse geröstet & ungesalzen 180g 2,49€ 13,83€ 1kg', 'A'),
+    ('Ültje', 'Erdnüsse', 'C'),
+    ('Ültje', 'EXTRA ROAST Erdnüsse gesalzen', 'C'),
+    ('Farmer', 'Cashewkerne - geröstet & gesalzen', 'C'),
+    ('Maryland', 'Snack Nüsse pur', 'A'),
+    ('K-Classic', 'Erdnüsse geröstet & gesalzen', 'C'),
+    ('Ültje', 'Ofen Erdnüsse gesalzen', 'C'),
+    ('Alesto', 'Erdnusskerne geröstet', 'B'),
+    ('Aldi', 'Pistazien - geröstet & gesalzen', 'C'),
+    ('Maryland', 'Nuss-Kern-Mischung geröstet & gesalzen', 'C'),
+    ('Alesto', 'XXL Erdnüsse', 'C'),
+    ('Eurofood', 'Macadamia geröstet & gesalzen', 'D'),
+    ('Aldi', 'Erdnüsse in der Schale, geröstet', 'UNKNOWN'),
+    ('Seeberger', 'Cashew Kerne Nüsse', 'B'),
+    ('August Töpfer', 'Nuss-Mix, geröstet & gesalzen', 'D'),
+    ('Maryland', 'Studentenfutter Berry mit Cranberries & Walnüssen', 'D'),
+    ('Farmer', 'Cashewkerne - pikant gewürzt', 'D'),
+    ('XOX', 'Erdnüsse geröstet ohne Salz', 'B'),
+    ('Farmer', 'Pistazien - geröstet & ungesalzen', 'A'),
+    ('K-Classic', 'Erdnüsse geröstet', 'A'),
+    ('Maryland', 'Snack Nüsse Honig & Salz', 'C'),
+    ('Ültje', 'Erdnüsse pikant gewürzt', 'C'),
+    ('Farmer', 'Erdnusskerne - geröstet und gesalzen', 'C'),
+    ('Trader Joe''s', 'Erdnüsse geröstet und gesalzen', 'C'),
+    ('Ültje', 'Kessel Nüsse Paprika', 'C'),
+    ('Farmer', 'Erdnüsse', 'C'),
+    ('Ültje', 'Erdnüsse, geröstet & gesalzen', 'C'),
+    ('K Classic', 'Erdnüsse pikant', 'C'),
+    ('Alesto', 'Spanische Mandeln blanchiert und geröstet', 'A'),
+    ('Ültje', 'Erdnüsse ungesalzen', 'B'),
+    ('Ültje', 'Mandeln & Erdnüsse Honig und Salz', 'D'),
+    ('Lorenz', 'NicNacs', 'D'),
+    ('Farmer Naturals', 'Walnusskerne naturbelassen', 'A'),
+    ('Seeberger', 'Nusskernmischung', 'D'),
+    ('Fazer naturals', 'Feinste Nuss-Variation, naturbelassen', 'C'),
+    ('Alesto', 'Mix Proteína Frutos Secos Y Soja', 'D'),
+    ('Farmer Naturals', 'Cashewkerne naturbelassen', 'B'),
+    ('Farmer Naturals', 'Premium-Nussmix - Fein mit Pekannusskernen', 'A'),
+    ('Alesto Selection', 'Pecan Nuts natural', 'A'),
+    ('Trader Joe''s', 'Walnusskerne naturbelassen', 'A'),
+    ('Farmer Naturals', 'Simply Roasted - Cashewkerne', 'C'),
+    ('Trader Joe''s', 'Cashewkerne, naturbelassen', 'B'),
+    ('Farmer', 'Trail-Mix Kerne', 'A'),
+    ('DmBio', 'Mandeln ganze Kerne', 'A'),
+    ('Farmer Naturals', 'Simply Roasted - Nussmischung', 'D'),
+    ('Trader joes', 'Pistachio mix', 'B'),
+    ('Seeberger', 'Seeberger Walnusskerne 4008258130018 Walnusskerne', 'A'),
+    ('Alesto', 'Cashew Nuts XXL', 'B'),
+    ('Alesto', 'Mandeln Honig & Salz', 'E'),
+    ('Alesto', 'Noisettes grillées', 'A')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Ültje', 'Erdnüsse geröstet & gesalzen', '3'),
+    ('Ültje', 'Ültje Erdnüsse geröstet & ungesalzen 180g 2,49€ 13,83€ 1kg', '3'),
+    ('Ültje', 'Erdnüsse', '3'),
+    ('Ültje', 'EXTRA ROAST Erdnüsse gesalzen', '4'),
+    ('Farmer', 'Cashewkerne - geröstet & gesalzen', '3'),
+    ('Maryland', 'Snack Nüsse pur', '1'),
+    ('K-Classic', 'Erdnüsse geröstet & gesalzen', '3'),
+    ('Ültje', 'Ofen Erdnüsse gesalzen', '4'),
+    ('Alesto', 'Erdnusskerne geröstet', '3'),
+    ('Aldi', 'Pistazien - geröstet & gesalzen', '3'),
+    ('Maryland', 'Nuss-Kern-Mischung geröstet & gesalzen', '3'),
+    ('Alesto', 'XXL Erdnüsse', '3'),
+    ('Eurofood', 'Macadamia geröstet & gesalzen', '3'),
+    ('Aldi', 'Erdnüsse in der Schale, geröstet', '1'),
+    ('Seeberger', 'Cashew Kerne Nüsse', '1'),
+    ('August Töpfer', 'Nuss-Mix, geröstet & gesalzen', '3'),
+    ('Maryland', 'Studentenfutter Berry mit Cranberries & Walnüssen', '3'),
+    ('Farmer', 'Cashewkerne - pikant gewürzt', '4'),
+    ('XOX', 'Erdnüsse geröstet ohne Salz', '3'),
+    ('Farmer', 'Pistazien - geröstet & ungesalzen', '1'),
+    ('K-Classic', 'Erdnüsse geröstet', '3'),
+    ('Maryland', 'Snack Nüsse Honig & Salz', '4'),
+    ('Ültje', 'Erdnüsse pikant gewürzt', '4'),
+    ('Farmer', 'Erdnusskerne - geröstet und gesalzen', '3'),
+    ('Trader Joe''s', 'Erdnüsse geröstet und gesalzen', '3'),
+    ('Ültje', 'Kessel Nüsse Paprika', '4'),
+    ('Farmer', 'Erdnüsse', '3'),
+    ('Ültje', 'Erdnüsse, geröstet & gesalzen', '3'),
+    ('K Classic', 'Erdnüsse pikant', '4'),
+    ('Alesto', 'Spanische Mandeln blanchiert und geröstet', '1'),
+    ('Ültje', 'Erdnüsse ungesalzen', '3'),
+    ('Ültje', 'Mandeln & Erdnüsse Honig und Salz', '4'),
+    ('Lorenz', 'NicNacs', '4'),
+    ('Farmer Naturals', 'Walnusskerne naturbelassen', '1'),
+    ('Seeberger', 'Nusskernmischung', '1'),
+    ('Fazer naturals', 'Feinste Nuss-Variation, naturbelassen', '1'),
+    ('Alesto', 'Mix Proteína Frutos Secos Y Soja', '3'),
+    ('Farmer Naturals', 'Cashewkerne naturbelassen', '1'),
+    ('Farmer Naturals', 'Premium-Nussmix - Fein mit Pekannusskernen', '1'),
+    ('Alesto Selection', 'Pecan Nuts natural', '1'),
+    ('Trader Joe''s', 'Walnusskerne naturbelassen', '1'),
+    ('Farmer Naturals', 'Simply Roasted - Cashewkerne', '1'),
+    ('Trader Joe''s', 'Cashewkerne, naturbelassen', '3'),
+    ('Farmer', 'Trail-Mix Kerne', '3'),
+    ('DmBio', 'Mandeln ganze Kerne', '1'),
+    ('Farmer Naturals', 'Simply Roasted - Nussmischung', '1'),
+    ('Trader joes', 'Pistachio mix', '4'),
+    ('Seeberger', 'Seeberger Walnusskerne 4008258130018 Walnusskerne', '1'),
+    ('Alesto', 'Cashew Nuts XXL', '1'),
+    ('Alesto', 'Mandeln Honig & Salz', '4'),
+    ('Alesto', 'Noisettes grillées', '1')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Nuts, Seeds & Legumes', 100, 'DE');

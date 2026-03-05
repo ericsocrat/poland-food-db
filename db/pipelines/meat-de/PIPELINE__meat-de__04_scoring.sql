@@ -1,0 +1,123 @@
+﻿-- PIPELINE (Meat): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Herta', 'Hähnchenbrust', 'D'),
+    ('Frosta', 'Hähnchen Paella', 'C'),
+    ('Gut Drei Eichen', 'Herzhafte Edelsalami, geräuchert', 'E'),
+    ('Güldenhof', 'Mini-Hähnchenbrust-Filetstücke - Klassik', 'A'),
+    ('Allfein Feinkost', 'Hähnchen-Knusper-Dinos', 'C'),
+    ('Güldenhof', 'Mini-Wiener - Geflügel', 'E'),
+    ('Güldenhof', 'Geflügel-Paprikalyoner', 'E'),
+    ('Adler Schwarzwald', 'ALDI GUT DREI EICHEN Schwarzwälder Schinken Aus der Kühlung 2.65€ 200g Packung 1kg 13.25€', 'E'),
+    ('Bio', 'Bio-Salami - geräuchert mit grünem Pfeffer', 'E'),
+    ('Güldenhof', 'Geflügel-Mortadella', 'D'),
+    ('Böklunder', 'ALDI Güldenhof Huhn Hähnchen-Mortadella 140g 1kg', 'D'),
+    ('Dulano', 'Geflügel Wiener', 'D'),
+    ('Familie Wein', 'Schwarzwälder Schinken', 'E'),
+    ('Zimmermann', 'Weißwurst', 'E'),
+    ('Rügenwalder Mühle', 'Mühlen Frikadellen 100% Geflügel', 'D'),
+    ('Gut Drei Eichen', 'Katenschinken-Würfel', 'E'),
+    ('Bernard Matthews Oldenburg', 'Hähnchen Filetstreifen', 'D'),
+    ('Gut Drei Eichen', 'Münchner Weißwurst', 'E'),
+    ('Gutfried', 'Geflügelwurst', 'D'),
+    ('Ferdi Fuchs', 'Wurst Ferdi Fuchs Mini Würstschen', 'E'),
+    ('Reinert', 'Bärchenwurst', 'D'),
+    ('Meine Metzgerei', 'Puten-Hackfleisch Frisch; gewürzt; zum Braten Aus der Frischetruhe Dauertiefpreis 2.49€ 400g Packung 1kg 6.23€', 'A'),
+    ('Gutfried', 'Hähnchenbrust', 'D'),
+    ('Meica', 'Geflügelwürstchen', 'D'),
+    ('Dulano', 'Delikatess Hähnchenbrust', 'B'),
+    ('Reinert', 'Bärchen SchlaWiener', 'E'),
+    ('Sprehe Feinkost', 'Hähnchen-Brustfiletstreifen', 'A'),
+    ('Reinert', 'Bärchen-Wurst', 'D'),
+    ('Gutfried', 'Gutfried - Hähnchen-Salami', 'E'),
+    ('Meica', 'Meica Geflügel-Wiener 4000503148601 Geflügel-Wiener im Saitling', 'D'),
+    ('Dulano', 'Wurst - Geflügel-Leberwurst', 'D'),
+    ('Aldi Meine Metzgerei', 'Hähnchenbrust', 'A'),
+    ('Herta', 'FARMERSCHINKEN mit Honig verfeinert und über Buchenholz geräuchert, gegart', 'D'),
+    ('Gutfried', 'Hähnchenbrust Kirschpaprika', 'D'),
+    ('Kupfer', 'Original Nürnberger Rostbratwürste', 'E'),
+    ('Kamar', 'Geflügelbratwurst', 'E'),
+    ('Meica', 'Zutat: Würstchen - Wiener Art', 'E'),
+    ('Gutfried', 'Hähnchenbrust, gepökelt und gebraten', 'D'),
+    ('Herta', 'Schinken', 'D'),
+    ('Gut Drei Eichen', 'Schinken-Lyoner', 'E'),
+    ('Herta', 'Schinken gegart ofengegrillt', 'D'),
+    ('Nestlé', 'Saftschinken', 'D'),
+    ('Ponnath Die Meistermetzger', 'Delikatess Prosciutto Cotto', 'D'),
+    ('Bio', 'Bio-Salami - luftgetrocknet', 'E'),
+    ('Abraham', 'Jamón Serrano Schinken', 'E'),
+    ('Zimbo', 'Schinken Zwiebelmettwurst fettreduziert', 'D'),
+    ('K-Classic', 'Kochhinterschinken', 'D'),
+    ('Herta', 'Schinken Belem Pfeffer', 'D'),
+    ('Steinhaus', 'Bergische Salami', 'E'),
+    ('Meica', 'Curryking fix & fertig', 'D'),
+    ('Reinert', 'Schinken Nuggets', 'E')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Herta', 'Hähnchenbrust', '4'),
+    ('Frosta', 'Hähnchen Paella', '4'),
+    ('Gut Drei Eichen', 'Herzhafte Edelsalami, geräuchert', '4'),
+    ('Güldenhof', 'Mini-Hähnchenbrust-Filetstücke - Klassik', '4'),
+    ('Allfein Feinkost', 'Hähnchen-Knusper-Dinos', '4'),
+    ('Güldenhof', 'Mini-Wiener - Geflügel', '4'),
+    ('Güldenhof', 'Geflügel-Paprikalyoner', '4'),
+    ('Adler Schwarzwald', 'ALDI GUT DREI EICHEN Schwarzwälder Schinken Aus der Kühlung 2.65€ 200g Packung 1kg 13.25€', '4'),
+    ('Bio', 'Bio-Salami - geräuchert mit grünem Pfeffer', '4'),
+    ('Güldenhof', 'Geflügel-Mortadella', '4'),
+    ('Böklunder', 'ALDI Güldenhof Huhn Hähnchen-Mortadella 140g 1kg', '4'),
+    ('Dulano', 'Geflügel Wiener', '4'),
+    ('Familie Wein', 'Schwarzwälder Schinken', '4'),
+    ('Zimmermann', 'Weißwurst', '4'),
+    ('Rügenwalder Mühle', 'Mühlen Frikadellen 100% Geflügel', '4'),
+    ('Gut Drei Eichen', 'Katenschinken-Würfel', '4'),
+    ('Bernard Matthews Oldenburg', 'Hähnchen Filetstreifen', '4'),
+    ('Gut Drei Eichen', 'Münchner Weißwurst', '4'),
+    ('Gutfried', 'Geflügelwurst', '4'),
+    ('Ferdi Fuchs', 'Wurst Ferdi Fuchs Mini Würstschen', '4'),
+    ('Reinert', 'Bärchenwurst', '4'),
+    ('Meine Metzgerei', 'Puten-Hackfleisch Frisch; gewürzt; zum Braten Aus der Frischetruhe Dauertiefpreis 2.49€ 400g Packung 1kg 6.23€', '3'),
+    ('Gutfried', 'Hähnchenbrust', '4'),
+    ('Meica', 'Geflügelwürstchen', '4'),
+    ('Dulano', 'Delikatess Hähnchenbrust', '4'),
+    ('Reinert', 'Bärchen SchlaWiener', '4'),
+    ('Sprehe Feinkost', 'Hähnchen-Brustfiletstreifen', '4'),
+    ('Reinert', 'Bärchen-Wurst', '4'),
+    ('Gutfried', 'Gutfried - Hähnchen-Salami', '4'),
+    ('Meica', 'Meica Geflügel-Wiener 4000503148601 Geflügel-Wiener im Saitling', '4'),
+    ('Dulano', 'Wurst - Geflügel-Leberwurst', '4'),
+    ('Aldi Meine Metzgerei', 'Hähnchenbrust', '1'),
+    ('Herta', 'FARMERSCHINKEN mit Honig verfeinert und über Buchenholz geräuchert, gegart', '4'),
+    ('Gutfried', 'Hähnchenbrust Kirschpaprika', '4'),
+    ('Kupfer', 'Original Nürnberger Rostbratwürste', '4'),
+    ('Kamar', 'Geflügelbratwurst', '4'),
+    ('Meica', 'Zutat: Würstchen - Wiener Art', '4'),
+    ('Gutfried', 'Hähnchenbrust, gepökelt und gebraten', '4'),
+    ('Herta', 'Schinken', '4'),
+    ('Gut Drei Eichen', 'Schinken-Lyoner', '4'),
+    ('Herta', 'Schinken gegart ofengegrillt', '4'),
+    ('Nestlé', 'Saftschinken', '4'),
+    ('Ponnath Die Meistermetzger', 'Delikatess Prosciutto Cotto', '4'),
+    ('Bio', 'Bio-Salami - luftgetrocknet', '4'),
+    ('Abraham', 'Jamón Serrano Schinken', '3'),
+    ('Zimbo', 'Schinken Zwiebelmettwurst fettreduziert', '4'),
+    ('K-Classic', 'Kochhinterschinken', '4'),
+    ('Herta', 'Schinken Belem Pfeffer', '4'),
+    ('Steinhaus', 'Bergische Salami', '4'),
+    ('Meica', 'Curryking fix & fertig', '4'),
+    ('Reinert', 'Schinken Nuggets', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Meat', 100, 'DE');

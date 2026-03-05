@@ -102,14 +102,20 @@ WHERE p.is_deprecated IS NOT TRUE
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- 8. DE micro-pilot only in allowed categories
+-- 8. DE only in allowed categories (19 of 20 — all except Żabka)
 -- ═══════════════════════════════════════════════════════════════════════════════
 SELECT '8. DE products only in allowed categories' AS check_name,
        COUNT(*) AS violations
 FROM products p
 WHERE p.country = 'DE'
   AND p.is_deprecated IS NOT TRUE
-  AND p.category NOT IN ('Chips', 'Bread', 'Dairy', 'Drinks', 'Sweets');
+  AND p.category NOT IN (
+    'Alcohol', 'Baby', 'Bread', 'Breakfast & Grain-Based', 'Canned Goods',
+    'Cereals', 'Chips', 'Condiments', 'Dairy', 'Drinks',
+    'Frozen & Prepared', 'Instant & Frozen', 'Meat',
+    'Nuts, Seeds & Legumes', 'Plant-Based & Alternatives',
+    'Sauces', 'Seafood & Fish', 'Snacks', 'Sweets'
+  );
 
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- 9. Data completeness parity: DE avg completeness within 30pts of PL
