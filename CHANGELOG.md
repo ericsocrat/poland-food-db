@@ -13,6 +13,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Documentation
+
+- Update COUNTRY_EXPANSION_GUIDE.md for DE full market graduation: DE status
+  from "micro-pilot (51 chips)" to "full parity (1,066 products, 19
+  categories)"; mark all §2.4/§2.5 prerequisites as complete; update pipeline
+  naming examples to match reality (`chips-de/`, `dairy-de/`); update §8
+  roadmap table with actual product counts; add §12 "Lessons Learned from DE
+  Expansion" with process recommendations, statistics, and pitfalls (#606)
+
 ### Added
 
 - Enrich all 1,066 DE products with ingredient and allergen data from Open Food

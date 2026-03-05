@@ -1,8 +1,8 @@
 # Country Expansion Guide
 
-> **Last updated:** 2026-02-22
-> **Current status:** Poland (`PL`) is fully active (1,025 products, 20 categories). Germany (`DE`) is active as a micro-pilot (51 chips products).
-> **Technical blockers resolved.** See Section 2.5 for go/no-go checklist.
+> **Last updated:** 2026-03-05
+> **Current status:** Poland (`PL`) is fully active (1,198 products, 20 categories). Germany (`DE`) is at **full parity** (1,066 products, 19 categories).
+> **DE graduated from micro-pilot to full market on 2026-03-05.** See Section 12 for lessons learned.
 
 ---
 
@@ -47,12 +47,12 @@ Before any data for country `XX` enters the database, **all** of the following m
 
 ### 2.4 Technical Setup (Implementation)
 
-- [x] Create pipeline folder: `db/pipelines/<country_lower>/` or `db/pipelines/<category>_<country>/`
+- [x] Create pipeline folder: `db/pipelines/<country_lower>/` or `db/pipelines/<category>-<country>/`
 - [x] Verify that the `products(country, brand, product_name)` unique constraint handles the new country
 - [x] Confirm that all schemas support the new country's data without migration changes
-- [ ] Create `RUN_LOCAL.ps1` / `RUN_REMOTE.ps1` entries for the new pipelines
-- [ ] Set `country_ref.nutri_score_official` for the new country (`true` if officially adopted, `false` otherwise)
-- [ ] Update `copilot-instructions.md` to list the new country as active
+- [x] Create `RUN_LOCAL.ps1` / `RUN_REMOTE.ps1` entries for the new pipelines
+- [x] Set `country_ref.nutri_score_official` for the new country (`true` if officially adopted, `false` otherwise)
+- [x] Update `copilot-instructions.md` to list the new country as active
 
 ### 2.5 Country Expansion Readiness (Go/No-Go Bar)
 
@@ -66,7 +66,9 @@ All of these must be true before activating a second country:
 - [x] Activation gating exists (`country_ref.is_active` enforced by QA)
 - [x] `sql_generator.py` accepts `country` parameter (no more hardcoded `'PL'`)
 - [x] QA checks for cross-country leakage (api_surfaces #16, #17, #18)
-- [ ] Pilot country with 5–10 products: all QA passes, no cross-country leakage
+- [x] Pilot country with 5–10 products: all QA passes, no cross-country leakage
+
+> **DE completion date:** 2026-03-05 — all prerequisites met, 1,066 products across 19 categories, full QA validation passed (see §12).
 
 ---
 
@@ -91,19 +93,23 @@ Each country's pipelines are independent:
 
 ```
 db/pipelines/
-├── chips/                  # PL chips (current)
-├── zabka/                  # PL Żabka store (current)
-├── chips_de/               # DE chips (future example)
-└── rewe/                   # DE REWE store (future example)
+├── chips-pl/               # PL chips
+├── dairy/                  # PL dairy (legacy naming — no DE counterpart yet uses this)
+├── zabka/                  # PL Żabka store (PL-only)
+├── chips-de/               # DE chips
+├── dairy-de/               # DE dairy
+├── bread-de/               # DE bread
+└── ...                     # 39 total folders (20 PL + 19 DE)
 ```
 
-**Naming convention options** — **decided: use category + country suffix for multi-country**:
+**Naming convention** — **decided: category + hyphenated country suffix**:
 
-| Strategy           | Example           | When to use                         | Status      |
-| ------------------ | ----------------- | ----------------------------------- | ----------- |
-| Category-only      | `chips/`          | Single-country (current PL)         | **Current** |
-| Category + country | `chips_de/`       | When 2nd country adds same category | **Adopted** |
-| Store-based        | `zabka/`, `rewe/` | Country-specific store chains       | **Adopted** |
+| Strategy           | Example            | When to use                         | Status           |
+| ------------------ | ------------------ | ----------------------------------- | ---------------- |
+| Category-only      | `dairy/`           | Single-country (legacy PL)          | **Legacy**       |
+| Category-pl        | `chips-pl/`        | PL category with DE counterpart     | **Active**       |
+| Category-de        | `chips-de/`        | DE category                         | **Active**       |
+| Store-based        | `zabka/`           | Country-specific store chains       | **Active (PL)**  |
 
 **Transition rule:** When a second country is added for an existing category:
 1. Rename the PL folder: `chips/` → `chips_pl/` (update `RUN_*.ps1` accordingly)
@@ -224,8 +230,8 @@ This is a **suggested** order based on data availability, market size, and Nutri
 
 | Phase | Country | Code | Rationale                                          | Status                             |
 | ----- | ------- | ---- | -------------------------------------------------- | ---------------------------------- |
-| 1     | Poland  | PL   | Founder's market; full access to labels            | **Active**                         |
-| 2     | Germany | DE   | Largest EU market; strong Open Food Facts coverage | **Active** (micro-pilot: 51 chips) |
+| 1     | Poland  | PL   | Founder's market; full access to labels            | **Active** — 1,198 products, 20 categories |
+| 2     | Germany | DE   | Largest EU market; strong Open Food Facts coverage | **Active** — 1,066 products, 19 categories (full parity since 2026-03-05) |
 | 3     | France  | FR   | Nutri-Score origin country; best data quality      | Planned                            |
 | 4     | Spain   | ES   | Large market; growing Nutri-Score adoption         | Future                             |
 | 5     | Italy   | IT   | Complex food landscape; controversial with NS      | Future                             |
@@ -376,3 +382,50 @@ UPDATE country_data_policies SET is_active = true WHERE country = 'XX';
 
 Run `db/qa/QA__data_provenance.sql` — tests T15–T16 validate country policies.
 Also run `validate_product_for_country(product_id, 'XX')` on sample products.
+
+---
+
+## 12. Lessons Learned from DE Expansion (2026-03-05)
+
+Expanding from PL-only to PL+DE took approximately 3 weeks of focused work. The following lessons apply to any future country expansion.
+
+### 12.1 What Went Well
+
+- **Country isolation worked perfectly.** The `products.country` discriminator + QA suite `QA__country_isolation.sql` (11 checks) caught all cross-contamination risks before they shipped.
+- **Pipeline generator (`pipeline/run.py --country DE`) scaled cleanly.** The `--country` flag required minimal code changes — `sql_generator.py` and `categories.py` were already parameterized.
+- **Automated enrichment (`enrich_ingredients.py`) applied unchanged to DE.** The same OFF API enrichment flow that processed PL ingredients worked for DE with zero code changes.
+- **Reference tables (`country_ref`, `category_ref`) made activation trivial.** Adding DE was a single `INSERT` + `UPDATE is_active = true`.
+
+### 12.2 What Was Harder Than Expected
+
+- **Volume of pipeline SQL files.** 19 categories × 4–5 SQL files each = ~85 new files. Each required manual review of product names, EANs, and nutrition values. The pipeline generator helped but still produced files needing spot-checks.
+- **Multi-country QA checks needed v3.3 scoring function updates.** Two QA checks in `QA__multi_country_consistency.sql` called the stale `compute_unhealthiness_v32()` and had to be upgraded to v3.3 with correct column names.
+- **Merge conflicts during parallel work.** `copilot-instructions.md` and `CURRENT_STATE.md` had frequent conflicts when multiple PRs updated documentation counts. Resolution rule from §13.1 ("take the higher/more complete version") was essential.
+- **OFF API data quality for DE.** Some German products had missing or inconsistent nutrition data. 9 products had calorie back-calculation outliers from OFF source data — documented as known QA exceptions.
+
+### 12.3 Recommended Process for Future Countries
+
+| Step | Action | Effort | Reference |
+|------|--------|--------|-----------|
+| 1 | Add `INSERT INTO country_ref` + `UPDATE is_active` | 1 migration | §2.4 |
+| 2 | Run `pipeline/run.py --country XX --category "..." --max-products 51` for each category | ~1 day per 5 categories | §5 |
+| 3 | Execute generated SQL against local DB | ~2h | `RUN_LOCAL.ps1` |
+| 4 | Run `enrich_ingredients.py` for the new country | ~2h | PR #651, #654 |
+| 5 | Run full QA suite + scoring anchor validation | ~1h | `RUN_QA.ps1` |
+| 6 | Update documentation (this guide, `copilot-instructions.md`, `CHANGELOG.md`) | ~2h | This section |
+| 7 | Deploy to production (after user confirmation) | ~30 min | §5, `RUN_REMOTE.ps1` |
+
+### 12.4 DE Expansion Statistics
+
+| Metric | Value |
+|--------|-------|
+| Products added | 1,066 active + 105 deprecated |
+| Categories | 19 (all PL categories except Żabka) |
+| Pipeline folders created | 19 (`*-de/` naming convention) |
+| Unique ingredients (DE) | Integrated into shared `ingredient_ref` (2,898 total) |
+| Product-ingredient links (DE) | Part of 14,392 total links |
+| Allergen declarations (DE) | Part of 2,691 allergens + 2,702 traces total |
+| QA checks added | 5 DE scoring anchors in `QA__scoring_formula_tests.sql` |
+| New QA suites | `QA__multi_country_consistency.sql` (13 checks) |
+| Migrations | 1 enrichment migration (18,938 lines) |
+| EAN coverage | 99.9% (2,261/2,264) |
