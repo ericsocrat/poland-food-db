@@ -57,14 +57,14 @@ describe("cacheProduct", () => {
     expect(entry!.data.version).toBe(2);
   });
 
-  it("evicts LRU entries when exceeding MAX_PRODUCTS (50)", async () => {
-    // Insert 52 products; oldest 2 should be evicted
-    for (let i = 1; i <= 52; i++) {
+  it("evicts LRU entries when exceeding MAX_PRODUCTS (100)", async () => {
+    // Insert 102 products; oldest 2 should be evicted
+    for (let i = 1; i <= 102; i++) {
       await cacheProduct(i, { idx: i });
     }
     // Give eviction time to process
     const count = await getCachedProductCount();
-    expect(count).toBeLessThanOrEqual(50);
+    expect(count).toBeLessThanOrEqual(100);
     // Product 1 or 2 (oldest) should be gone
     const oldest = await getCachedProduct(1);
     expect(oldest).toBeNull();
@@ -211,15 +211,15 @@ describe("cacheSearch", () => {
     expect(entry!.data.results.length).toBe(3);
   });
 
-  it("evicts LRU entries when exceeding MAX_SEARCHES (5)", async () => {
-    for (let i = 1; i <= 7; i++) {
+  it("evicts LRU entries when exceeding MAX_SEARCHES (10)", async () => {
+    for (let i = 1; i <= 12; i++) {
       await cacheSearch(`query${i}`, { idx: i });
     }
     // The oldest queries should be evicted
     const oldest = await getCachedSearch("query1");
     expect(oldest).toBeNull();
     // Recent queries should survive
-    const recent = await getCachedSearch("query7");
+    const recent = await getCachedSearch("query12");
     expect(recent).not.toBeNull();
   });
 
