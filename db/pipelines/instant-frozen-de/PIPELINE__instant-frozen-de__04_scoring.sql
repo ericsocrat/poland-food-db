@@ -1,0 +1,123 @@
+-- PIPELINE (Instant & Frozen): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Davert', 'Noodle Cup - Thailändisch', 'UNKNOWN'),
+    ('Kania', 'Instant Nudeln Gemüse Geschmack', 'UNKNOWN'),
+    ('Asia Green Garden', 'Instantnudeln Hühnergeschmack 5er-Pack', 'UNKNOWN'),
+    ('Asia Green Garden', 'Udon-Nudeln mit Soja-Ingwer-Soße', 'UNKNOWN'),
+    ('Asia Green Garden', 'Bratnudeln - Thailändische Art', 'UNKNOWN'),
+    ('Davert', 'Noodle Brokkoli Käse Sauce', 'UNKNOWN'),
+    ('Asia Green Garden', 'Instant Nudeln Gemüsegeschmack', 'UNKNOWN'),
+    ('Asia Green Garden', 'Instant-Reisnudeln mit Hühnerfleischgeschmack', 'UNKNOWN'),
+    ('Asia Green Garden', 'Pho Chat Instant-Reisnudeln mit Gemüsegeschmack', 'UNKNOWN'),
+    ('Asia Green Garden', 'Udon-Nudel-Bowl mit Sauce nach Kimchi Art Gewürzt', 'UNKNOWN'),
+    ('Aldi', 'Green Curry Noodles / Grüne Curry Nudeln', 'UNKNOWN'),
+    ('Asia Green Garden', 'Instant-Nudeln Beef', 'UNKNOWN'),
+    ('Asia Green Garden', 'Udon Noodle Bowl', 'UNKNOWN'),
+    ('Asia Green Garden', 'Bratnudeln - Entengeschmack', 'UNKNOWN'),
+    ('Asia Green Garden', 'Instant-Nudel-Cup 3er-Pack - Teriyaki-Geschmack – Asia Green Garden', 'UNKNOWN'),
+    ('Asia Green Garden', 'Phò Bò (Reisnudel-Suppe mit Rindfleischgeschmack)', 'UNKNOWN'),
+    ('Asia Green Garden', 'Bratnudeln - Chili', 'UNKNOWN'),
+    ('Unknown', 'Feurige Ramen Nudeln Spicy Hot Chicken Korean Style', 'UNKNOWN'),
+    ('Bamboo Garden', 'Mie Nudeln', 'UNKNOWN'),
+    ('Nissin', 'Thai Roasted Chicken', 'UNKNOWN'),
+    ('Knorr', 'Hühnersuppe', 'UNKNOWN'),
+    ('Davert', 'Noodle Cup No. 11 Linsen Bolognese', 'UNKNOWN'),
+    ('Kania', 'Instant Nudeln Rind', 'UNKNOWN'),
+    ('Davert', 'Noodle Cup No. 7', 'UNKNOWN'),
+    ('Lien Ying Asian-Spirit', 'Eier-Mie-Nudeln', 'UNKNOWN'),
+    ('Aldi', 'Asia-Instant-Noodles-Cup - Curry', 'UNKNOWN'),
+    ('Reeva', 'Instant Nudeln gebratenes Hähnchen', 'UNKNOWN'),
+    ('Buldak', 'Buldak HOT Chicken Flavour Ramen', 'UNKNOWN'),
+    ('Yum Yum', 'Instant Nudeln, Japanese Chicken Flavor', 'UNKNOWN'),
+    ('Nongshim', 'Soon Veggie Ramyun Noodle', 'UNKNOWN'),
+    ('Maggi', 'Saucy Noodles Teriyaki', 'UNKNOWN'),
+    ('Knorr', 'Asia Noodels Beef Taste', 'UNKNOWN'),
+    ('Maggi', 'Noodle Cup - Chicken Taste', 'UNKNOWN'),
+    ('Knorr', 'Asia Noodles Chicken Taste', 'UNKNOWN'),
+    ('Buldak', 'Buldak 2x Spicy', 'UNKNOWN'),
+    ('Maggi', 'Saucy Noodles Sesame Chicken Taste', 'UNKNOWN'),
+    ('Nissin', 'Soba Cup Noodles', 'UNKNOWN'),
+    ('Nongshim', 'Nouilles Chapaghetti Nongshim', 'UNKNOWN'),
+    ('Nissin', 'Cup Noodles Big Soba Wok Style', 'UNKNOWN'),
+    ('Maggi', 'Gebratene Nudeln Ente', 'UNKNOWN'),
+    ('Thai Chef', 'Thaisuppe, Curry Huhn', 'UNKNOWN'),
+    ('Knorr', 'Spaghetteria Spinaci', 'UNKNOWN'),
+    ('Maggi', 'Magic Asia - Gebratene Nudeln Thai-Curry', 'UNKNOWN'),
+    ('Indomie', 'Noodles', 'UNKNOWN'),
+    ('Maggi', 'Asia Noodle Cup Duck', 'UNKNOWN'),
+    ('Yum Yum', 'Nouilles instantanées au goût de légumes, pack de 5', 'UNKNOWN'),
+    ('Ajinomoto', 'Pork Ramen', 'UNKNOWN'),
+    ('Maggi', 'Saucy Noodles Sweet Chili', 'UNKNOWN'),
+    ('Nongshim', 'Shin Cup Gourmet Spicy Noodle Soup', 'UNKNOWN'),
+    ('Nissin', 'Soba Yakitori Chicken', 'UNKNOWN'),
+    ('Knorr', 'Asia Noodles Currygeschmack', 'UNKNOWN')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Davert', 'Noodle Cup - Thailändisch', '4'),
+    ('Kania', 'Instant Nudeln Gemüse Geschmack', '4'),
+    ('Asia Green Garden', 'Instantnudeln Hühnergeschmack 5er-Pack', '4'),
+    ('Asia Green Garden', 'Udon-Nudeln mit Soja-Ingwer-Soße', '4'),
+    ('Asia Green Garden', 'Bratnudeln - Thailändische Art', '4'),
+    ('Davert', 'Noodle Brokkoli Käse Sauce', '3'),
+    ('Asia Green Garden', 'Instant Nudeln Gemüsegeschmack', '4'),
+    ('Asia Green Garden', 'Instant-Reisnudeln mit Hühnerfleischgeschmack', '4'),
+    ('Asia Green Garden', 'Pho Chat Instant-Reisnudeln mit Gemüsegeschmack', '4'),
+    ('Asia Green Garden', 'Udon-Nudel-Bowl mit Sauce nach Kimchi Art Gewürzt', '4'),
+    ('Aldi', 'Green Curry Noodles / Grüne Curry Nudeln', '4'),
+    ('Asia Green Garden', 'Instant-Nudeln Beef', '4'),
+    ('Asia Green Garden', 'Udon Noodle Bowl', '4'),
+    ('Asia Green Garden', 'Bratnudeln - Entengeschmack', '4'),
+    ('Asia Green Garden', 'Instant-Nudel-Cup 3er-Pack - Teriyaki-Geschmack – Asia Green Garden', '4'),
+    ('Asia Green Garden', 'Phò Bò (Reisnudel-Suppe mit Rindfleischgeschmack)', '4'),
+    ('Asia Green Garden', 'Bratnudeln - Chili', '4'),
+    ('Unknown', 'Feurige Ramen Nudeln Spicy Hot Chicken Korean Style', '4'),
+    ('Bamboo Garden', 'Mie Nudeln', '1'),
+    ('Nissin', 'Thai Roasted Chicken', '4'),
+    ('Knorr', 'Hühnersuppe', '4'),
+    ('Davert', 'Noodle Cup No. 11 Linsen Bolognese', '3'),
+    ('Kania', 'Instant Nudeln Rind', '4'),
+    ('Davert', 'Noodle Cup No. 7', '3'),
+    ('Lien Ying Asian-Spirit', 'Eier-Mie-Nudeln', '4'),
+    ('Aldi', 'Asia-Instant-Noodles-Cup - Curry', '4'),
+    ('Reeva', 'Instant Nudeln gebratenes Hähnchen', '4'),
+    ('Buldak', 'Buldak HOT Chicken Flavour Ramen', '4'),
+    ('Yum Yum', 'Instant Nudeln, Japanese Chicken Flavor', '4'),
+    ('Nongshim', 'Soon Veggie Ramyun Noodle', '4'),
+    ('Maggi', 'Saucy Noodles Teriyaki', '4'),
+    ('Knorr', 'Asia Noodels Beef Taste', '4'),
+    ('Maggi', 'Noodle Cup - Chicken Taste', '4'),
+    ('Knorr', 'Asia Noodles Chicken Taste', '4'),
+    ('Buldak', 'Buldak 2x Spicy', '4'),
+    ('Maggi', 'Saucy Noodles Sesame Chicken Taste', '4'),
+    ('Nissin', 'Soba Cup Noodles', '4'),
+    ('Nongshim', 'Nouilles Chapaghetti Nongshim', '4'),
+    ('Nissin', 'Cup Noodles Big Soba Wok Style', '4'),
+    ('Maggi', 'Gebratene Nudeln Ente', '4'),
+    ('Thai Chef', 'Thaisuppe, Curry Huhn', '4'),
+    ('Knorr', 'Spaghetteria Spinaci', '4'),
+    ('Maggi', 'Magic Asia - Gebratene Nudeln Thai-Curry', '4'),
+    ('Indomie', 'Noodles', '4'),
+    ('Maggi', 'Asia Noodle Cup Duck', '4'),
+    ('Yum Yum', 'Nouilles instantanées au goût de légumes, pack de 5', '4'),
+    ('Ajinomoto', 'Pork Ramen', '4'),
+    ('Maggi', 'Saucy Noodles Sweet Chili', '4'),
+    ('Nongshim', 'Shin Cup Gourmet Spicy Noodle Soup', '4'),
+    ('Nissin', 'Soba Yakitori Chicken', '4'),
+    ('Knorr', 'Asia Noodles Currygeschmack', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Instant & Frozen', 100, 'DE');

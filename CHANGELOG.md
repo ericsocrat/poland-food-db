@@ -13,6 +13,16 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Expand Germany (DE) from 5 to 19 categories via OFF API pipeline: add 14 new
+  DE category pipelines (Alcohol, Baby, Breakfast & Grain-Based, Canned Goods,
+  Cereals, Condiments, Frozen & Prepared, Instant & Frozen, Meat, Nuts Seeds &
+  Legumes, Plant-Based & Alternatives, Sauces, Seafood & Fish, Snacks) with
+  ~650 new products; normalize brand casings across 67 pipeline SQL files to
+  eliminate case-duplicate brand_ref entries; update QA multi-country consistency
+  check to allowlist all 19 DE categories (#600)
+
 ### Scoring
 
 - Implement v3.3 nutrient density bonus — protein and fibre credit that reduces

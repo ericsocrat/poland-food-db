@@ -1,0 +1,123 @@
+﻿-- PIPELINE (Seafood & Fish): scoring
+-- Generated: 2026-03-04
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Aldi', 'ALDI ALMARE FISCH Räucherlachs XXL In hauchdünnen Scheiben Aus der Kühlung 3.49€ 220-g-Packung 1kg 15.86€', 'D'),
+    ('Aldi Archiv', 'Räucherlachs Bio', 'D'),
+    ('ArcticFish', 'Pures Grün Räucherlachs', 'D'),
+    ('Lidl', 'Bio-Räucherlachs, trockengesalzen, in Scheiben geschnitten', 'D'),
+    ('Golden Seafood', 'Fischstäbchen', 'A'),
+    ('Almare', 'Regenbogenforellenfilets über Eichenholzrauch heiß geräuchert', 'D'),
+    ('Almare', 'Norwegischer Räucherlachs in Scheiben - Mini-Pack', 'C'),
+    ('Krone', 'Räucherlachs', 'D'),
+    ('Appel', 'Bratheringe in würzigem Aufguss', 'B'),
+    ('Aldi', 'Bio-Räucherlachs', 'D'),
+    ('Almare Seafood', 'White Tiger Garnelen geschält, gekocht, entdarmt XXL', 'B'),
+    ('Aldi', 'Thunfischfilets in Sonnenblumenöl', 'A'),
+    ('Golden Seafood', 'Riesengarnelenschwänze - Provencale', 'B'),
+    ('Aldi', 'Knusper-Filets - Käse-Kräuter', 'B'),
+    ('Krone Fisch', 'Lachs aus verantwortungsvoller Fischzucht', 'D'),
+    ('Aldi', 'ALDI ALMARE FISCH Heringsfilets Geteilt in Tomaten-Sauce MSC-zertifiziert Dauertiefpreis 0.99€ 200-g-Dose 1kg 4.95€ 4061462739293', 'C'),
+    ('Almare', 'Stremellachs - Pfeffer', 'C'),
+    ('Almare Seafood', 'Lachs', 'D'),
+    ('Almare', 'Matjes Blister', 'E'),
+    ('Almare', 'Stremellachs - Natur', 'C'),
+    ('Ocean sea', 'King Prawns - White Tiger Garnelen', 'A'),
+    ('Frosta', 'Backofen Fisch (Knusprig Kross)', 'B'),
+    ('Nordsee', 'Fischfrikadellen', 'A'),
+    ('Almare Seafood', 'Lachsforelle', 'D'),
+    ('Lidl', 'Bio Stremel Lachs', 'C'),
+    ('Almare', 'Marinierte Garnelen - Tomate-Chili', 'D'),
+    ('Almare', 'Matjesfilets mit Honig-Senf-Sauce', 'E'),
+    ('Lidl', 'Smoke Salmon Slices', 'D'),
+    ('Deutsche See GmbH', 'Lachsfilet', 'A'),
+    ('Homann Feinkost', 'Sahne-Heringsfilets mit Zwiebel, Gurke & Apfel', 'D'),
+    ('Select & Go', 'Sushi Box', 'D'),
+    ('Almare', 'Heringsfilets geteilt in Tomatensauce - fettreduziert', 'B'),
+    ('Golden Seafood', 'White-Tiger-Garnelen', 'A'),
+    ('Nordsee', 'Backfisch in knuspriger Panade mit Remoulade', 'D'),
+    ('Krone', 'Bio-Lachs', 'D'),
+    ('Edeka', 'Räucherlachs', 'D'),
+    ('Golden Seafood', 'Wildlachsfilet', 'A'),
+    ('Fischerstolz', 'Frisches Lachsforellen-Filet mit Haut', 'A'),
+    ('REWE Bio', 'Räucherlachs', 'D'),
+    ('Natürlich für uns', 'Bio Räucherlachs', 'D'),
+    ('Golden Seafood', 'Lachsfilet-Portion mit Haut aus Norwegen', 'A'),
+    ('Golden Seafood', 'Lachsfilet', 'A'),
+    ('Almare Seafood', 'Matjesfilets mit Sauce nach Sylter Art', 'E'),
+    ('Krone', 'Kodiak Wildlachs', 'D'),
+    ('Ja!', 'Regenbogenforelle Geräuchert', 'D'),
+    ('Nadler', 'Alaska Seelachs Mus', 'E'),
+    ('Fischerstolz', 'Bio Lachsfiletportionen', 'A'),
+    ('Almare', 'Shrimps- Salat', 'D'),
+    ('Almare Seafood', 'Lachsfilet in Cranberry-Chili-Sauce', 'C'),
+    ('Sea Gold', 'Fischstäbchen', 'A'),
+    ('Fischersolz', 'Norwegische Lachsfiletportionen', 'A')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Aldi', 'ALDI ALMARE FISCH Räucherlachs XXL In hauchdünnen Scheiben Aus der Kühlung 3.49€ 220-g-Packung 1kg 15.86€', '4'),
+    ('Aldi Archiv', 'Räucherlachs Bio', '3'),
+    ('ArcticFish', 'Pures Grün Räucherlachs', '3'),
+    ('Lidl', 'Bio-Räucherlachs, trockengesalzen, in Scheiben geschnitten', '3'),
+    ('Golden Seafood', 'Fischstäbchen', '3'),
+    ('Almare', 'Regenbogenforellenfilets über Eichenholzrauch heiß geräuchert', '4'),
+    ('Almare', 'Norwegischer Räucherlachs in Scheiben - Mini-Pack', '4'),
+    ('Krone', 'Räucherlachs', '4'),
+    ('Appel', 'Bratheringe in würzigem Aufguss', '3'),
+    ('Aldi', 'Bio-Räucherlachs', '3'),
+    ('Almare Seafood', 'White Tiger Garnelen geschält, gekocht, entdarmt XXL', '3'),
+    ('Aldi', 'Thunfischfilets in Sonnenblumenöl', '3'),
+    ('Golden Seafood', 'Riesengarnelenschwänze - Provencale', '3'),
+    ('Aldi', 'Knusper-Filets - Käse-Kräuter', '4'),
+    ('Krone Fisch', 'Lachs aus verantwortungsvoller Fischzucht', '4'),
+    ('Aldi', 'ALDI ALMARE FISCH Heringsfilets Geteilt in Tomaten-Sauce MSC-zertifiziert Dauertiefpreis 0.99€ 200-g-Dose 1kg 4.95€ 4061462739293', '4'),
+    ('Almare', 'Stremellachs - Pfeffer', '3'),
+    ('Almare Seafood', 'Lachs', '4'),
+    ('Almare', 'Matjes Blister', '3'),
+    ('Almare', 'Stremellachs - Natur', '3'),
+    ('Ocean sea', 'King Prawns - White Tiger Garnelen', '3'),
+    ('Frosta', 'Backofen Fisch (Knusprig Kross)', '4'),
+    ('Nordsee', 'Fischfrikadellen', '3'),
+    ('Almare Seafood', 'Lachsforelle', '4'),
+    ('Lidl', 'Bio Stremel Lachs', '3'),
+    ('Almare', 'Marinierte Garnelen - Tomate-Chili', '3'),
+    ('Almare', 'Matjesfilets mit Honig-Senf-Sauce', '4'),
+    ('Lidl', 'Smoke Salmon Slices', '4'),
+    ('Deutsche See GmbH', 'Lachsfilet', '4'),
+    ('Homann Feinkost', 'Sahne-Heringsfilets mit Zwiebel, Gurke & Apfel', '4'),
+    ('Select & Go', 'Sushi Box', '4'),
+    ('Almare', 'Heringsfilets geteilt in Tomatensauce - fettreduziert', '4'),
+    ('Golden Seafood', 'White-Tiger-Garnelen', '3'),
+    ('Nordsee', 'Backfisch in knuspriger Panade mit Remoulade', '4'),
+    ('Krone', 'Bio-Lachs', '3'),
+    ('Edeka', 'Räucherlachs', '3'),
+    ('Golden Seafood', 'Wildlachsfilet', '4'),
+    ('Fischerstolz', 'Frisches Lachsforellen-Filet mit Haut', '4'),
+    ('REWE Bio', 'Räucherlachs', '3'),
+    ('Natürlich für uns', 'Bio Räucherlachs', '3'),
+    ('Golden Seafood', 'Lachsfilet-Portion mit Haut aus Norwegen', '4'),
+    ('Golden Seafood', 'Lachsfilet', '4'),
+    ('Almare Seafood', 'Matjesfilets mit Sauce nach Sylter Art', '4'),
+    ('Krone', 'Kodiak Wildlachs', '4'),
+    ('Ja!', 'Regenbogenforelle Geräuchert', '3'),
+    ('Nadler', 'Alaska Seelachs Mus', '4'),
+    ('Fischerstolz', 'Bio Lachsfiletportionen', '1'),
+    ('Almare', 'Shrimps- Salat', '4'),
+    ('Almare Seafood', 'Lachsfilet in Cranberry-Chili-Sauce', '4'),
+    ('Sea Gold', 'Fischstäbchen', '4'),
+    ('Fischersolz', 'Norwegische Lachsfiletportionen', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Seafood & Fish', 100, 'DE');
