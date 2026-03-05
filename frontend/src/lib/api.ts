@@ -19,6 +19,7 @@ import type {
     CategoryOverviewItem,
     CompareResponse,
     CreateListResponse,
+    CrossCountryLink,
     DashboardData,
     DashboardInsights,
     DataConfidence,
@@ -282,6 +283,21 @@ export function lookupByEan(
     {
       p_ean: ean,
       p_country: null,
+    },
+  );
+}
+
+// ─── Cross-Country Links ────────────────────────────────────────────────────
+
+export function getCrossCountryLinks(
+  supabase: SupabaseClient,
+  productId: number,
+): Promise<RpcResult<CrossCountryLink[]>> {
+  return callRpc<CrossCountryLink[]>(
+    supabase,
+    "api_get_cross_country_links",
+    {
+      p_product_id: productId,
     },
   );
 }

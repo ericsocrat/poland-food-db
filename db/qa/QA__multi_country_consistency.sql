@@ -4,7 +4,7 @@
 -- between PL (primary) and DE (micro-pilot) datasets.
 -- Complements QA__country_isolation (API boundary checks) with data-level
 -- consistency checks.
--- 13 checks.
+-- 13 checks + 3 cross-country link checks = 16 checks.
 -- ═══════════════════════════════════════════════════════════════════════════════
 
 -- ═══════════════════════════════════════════════════════════════════════════════
@@ -172,3 +172,34 @@ SELECT '13. product_links: ordering constraint valid' AS check_name,
        COUNT(*) AS violations
 FROM product_links pl
 WHERE pl.product_id_a >= pl.product_id_b;
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 14. Cross-country links only link products in different countries (#605)
+-- ═══════════════════════════════════════════════════════════════════════════════
+SELECT '14. cross-country links connect different countries' AS check_name,
+       COUNT(*) AS violations
+FROM product_links pl
+JOIN products pa ON pa.product_id = pl.product_id_a
+JOIN products pb ON pb.product_id = pl.product_id_b
+WHERE pa.country = pb.country
+  AND pl.confidence IN ('ean_match', 'brand_match');
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 15. EAN-match links both share the same EAN (#605)
+-- ═══════════════════════════════════════════════════════════════════════════════
+SELECT '15. ean_match links share the same EAN' AS check_name,
+       COUNT(*) AS violations
+FROM product_links pl
+JOIN products pa ON pa.product_id = pl.product_id_a
+JOIN products pb ON pb.product_id = pl.product_id_b
+WHERE pl.confidence = 'ean_match'
+  AND (pa.ean IS NULL OR pb.ean IS NULL OR pa.ean != pb.ean);
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 16. auto_link function is idempotent (re-run creates 0 new links) (#605)
+-- ═══════════════════════════════════════════════════════════════════════════════
+SELECT '16. auto_link_cross_country_products is idempotent' AS check_name,
+       CASE WHEN (
+           (auto_link_cross_country_products()->>'ean_links_created')::int = 0
+           AND (auto_link_cross_country_products()->>'brand_links_created')::int = 0
+       ) THEN 0 ELSE 1 END AS violations;
