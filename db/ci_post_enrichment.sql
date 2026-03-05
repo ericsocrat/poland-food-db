@@ -205,12 +205,26 @@ CALL score_category('Snacks');
 CALL score_category('Sweets');
 CALL score_category('Żabka');
 
--- DE categories (micro-pilot)
-CALL score_category('Chips',    p_country := 'DE');
-CALL score_category('Bread',    p_country := 'DE');
-CALL score_category('Dairy',    p_country := 'DE');
-CALL score_category('Drinks',   p_country := 'DE');
-CALL score_category('Sweets',   p_country := 'DE');
+-- DE categories (all 19)
+CALL score_category('Alcohol',                  p_country := 'DE');
+CALL score_category('Baby',                     p_country := 'DE');
+CALL score_category('Bread',                    p_country := 'DE');
+CALL score_category('Breakfast & Grain-Based',  p_country := 'DE');
+CALL score_category('Canned Goods',             p_country := 'DE');
+CALL score_category('Cereals',                  p_country := 'DE');
+CALL score_category('Chips',                    p_country := 'DE');
+CALL score_category('Condiments',               p_country := 'DE');
+CALL score_category('Dairy',                    p_country := 'DE');
+CALL score_category('Drinks',                   p_country := 'DE');
+CALL score_category('Frozen & Prepared',        p_country := 'DE');
+CALL score_category('Instant & Frozen',         p_country := 'DE');
+CALL score_category('Meat',                     p_country := 'DE');
+CALL score_category('Nuts, Seeds & Legumes',    p_country := 'DE');
+CALL score_category('Plant-Based & Alternatives', p_country := 'DE');
+CALL score_category('Sauces',                   p_country := 'DE');
+CALL score_category('Seafood & Fish',           p_country := 'DE');
+CALL score_category('Snacks',                   p_country := 'DE');
+CALL score_category('Sweets',                   p_country := 'DE');
 
 COMMIT;
 

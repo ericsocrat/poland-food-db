@@ -15,6 +15,16 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Enrich all 1,066 DE products with ingredient and allergen data from Open Food
+  Facts API: 2,445 new ingredient_ref entries, 13,676 product_ingredient links,
+  2,490 allergen/trace declarations; fix `enrich_ingredients.py` to strip
+  `en:yes` language prefixes from OFF vegan/vegetarian fields; expand
+  `ci_post_enrichment.sql` from 5 to 19 DE categories with explicit
+  `p_country := 'DE'` to prevent score_category defaulting to PL; update
+  Coca-Cola Zero QA anchor range (4→13, legitimate enrichment shift from 8
+  additives + concern_score=70); DE data completeness average 99%, confidence
+  1,017 high / 49 medium / 0 low (#603)
+
 - Expand Germany (DE) from 5 to 19 categories via OFF API pipeline: add 14 new
   DE category pipelines (Alcohol, Baby, Breakfast & Grain-Based, Canned Goods,
   Cereals, Condiments, Frozen & Prepared, Instant & Frozen, Meat, Nuts Seeds &

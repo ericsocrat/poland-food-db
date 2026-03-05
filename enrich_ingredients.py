@@ -241,6 +241,16 @@ def _display_name_for(name: str) -> str:
     return display.strip()[:200]
 
 
+_VALID_YES_NO = {"yes", "no", "maybe", "unknown"}
+
+
+def _strip_lang_prefix(val: str) -> str:
+    """Strip OFF API lang prefix (e.g. 'en:yes' → 'yes'). Return 'unknown' for unrecognised values."""
+    if ":" in val:
+        val = val.split(":", 1)[1]
+    return val if val in _VALID_YES_NO else "unknown"
+
+
 def _resolve_ingredient(
     item: dict,
     off_id: str,
@@ -259,9 +269,9 @@ def _resolve_ingredient(
         new_ingredients[name_lower] = {
             "name_en": _display_name_for(name),
             "is_additive": is_add,
-            "vegan": item.get("vegan", "unknown") or "unknown",
-            "vegetarian": item.get("vegetarian", "unknown") or "unknown",
-            "from_palm_oil": item.get("from_palm_oil", "unknown") or "unknown",
+            "vegan": _strip_lang_prefix(item.get("vegan", "unknown") or "unknown"),
+            "vegetarian": _strip_lang_prefix(item.get("vegetarian", "unknown") or "unknown"),
+            "from_palm_oil": _strip_lang_prefix(item.get("from_palm_oil", "unknown") or "unknown"),
         }
     return f"NEW:{name_lower}"
 

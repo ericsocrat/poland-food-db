@@ -1,14 +1,14 @@
 # Copilot Instructions — TryVit
 
 > **Last updated:** 2026-03-05
-> **Scope:** Poland (`PL`) primary + Germany (`DE`) (2,264 active products across 19 PL + 19 DE categories)
-> **Products:** 2,264 active (19 PL categories + 19 DE categories), 273 deprecated
+> **Scope:** Poland (`PL`) primary + Germany (`DE`) full parity (1,066 products across 19 categories)
+> **Products:** ~2,264 active (20 PL categories + 19 DE categories), 273 deprecated
 > **EAN coverage:** 2,261/2,264 (99.9%)
 > **Scoring:** v3.3 — 9-factor weighted penalty + nutrient density bonus via `compute_unhealthiness_v33()` (protein & fibre credit)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
-> **Ingredient analytics:** 2,898 unique ingredients (all clean ASCII English), 1,391 allergen declarations, 1,481 trace declarations
+> **Ingredient analytics:** 5,340 unique ingredients (all clean ASCII English), 2,691 allergen declarations, 2,702 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 735 checks across 48 suites + 23 negative validation tests — all passing
+> **QA:** 736 checks across 48 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -22,7 +22,7 @@ You are a **food scientist, nutrition researcher, and senior data engineer** mai
 - **Never guess Nutri-Score.** Compute from nutrition or cite official sources.
 - **Idempotent everything.** Every SQL file safe to run 1× or 100×.
 - **Reproducible setup.** `supabase db reset` + pipelines = full rebuild.
-- **Country-scoped.** PL is primary; DE active (19 categories). All queries are country-filtered. See `docs/COUNTRY_EXPANSION_GUIDE.md`.
+- **Country-scoped.** PL is primary; DE at full parity (1,066 products across 19 categories). All queries are country-filtered. See `docs/COUNTRY_EXPANSION_GUIDE.md`.
 - **Every change must be tested.** No code ships without corresponding tests. See §8.
 
 ---
@@ -78,17 +78,17 @@ tryvit/
 │   ├── image_importer.py            # Product image import utility
 │   └── categories.py               # 20 category definitions + OFF tag mappings
 ├── db/
-│   ├── pipelines/                   # 39 category folders (19 PL + 19 DE + Żabka), 4-5 SQL files each
+│   ├── pipelines/                   # 39 category folders (20 PL + 19 DE), 4-5 SQL files each
 │   │   ├── chips-pl/                # Reference PL implementation (copy for new categories)
-│   │   ├── chips-de/                # DE Chips
-│   │   ├── bread-de/                # DE Bread
-│   │   ├── dairy-de/                # DE Dairy
-│   │   ├── drinks-de/               # DE Drinks
-│   │   ├── sweets-de/               # DE Sweets
-│   │   └── ... (33 more PL+DE)      # Variable product counts per category
+│   │   ├── chips-de/                # DE Chips (~56 products)
+│   │   ├── bread-de/                # DE Bread (51 products)
+│   │   ├── dairy-de/                # DE Dairy (51 products)
+│   │   ├── drinks-de/               # DE Drinks (51 products)
+│   │   ├── sweets-de/               # DE Sweets (51 products)
+│   │   └── ... (20 PL + 14 more DE)  # Variable product counts per category
 │   ├── qa/                          # Test suites
 │   │   ├── QA__null_checks.sql      # 29 data integrity checks
-│   │   ├── QA__scoring_formula_tests.sql  # 31 scoring validation checks
+│   │   ├── QA__scoring_formula_tests.sql  # 29 scoring validation checks
 │   │   ├── QA__api_surfaces.sql     # 18 API surface validation checks
 │   │   ├── QA__api_contract.sql     # 33 API contract checks
 │   │   ├── QA__confidence_scoring.sql  # 14 confidence scoring checks
@@ -118,7 +118,7 @@ tryvit/
 │   │   ├── QA__event_intelligence.sql    # 18 event intelligence checks
 │   │   ├── QA__source_coverage.sql  # 8 informational reports (non-blocking)
 │   │   ├── QA__recipe_integrity.sql      # 6 recipe data integrity checks
-│   │   └── TEST__negative_checks.sql     # 23 negative validation tests
+│   │   └── TEST__negative_checks.sql     # 20 negative validation tests
 │   └── views/
 │       └── VIEW__master_product_view.sql  # v_master definition (reference copy)
 ├── supabase/
@@ -147,7 +147,7 @@ tryvit/
 │   │   ├── api-gateway/             # Write-path gateway (rate limiting, validation) (#478)
 │   │   └── send-push-notification/  # Push notification handler
 │   ├── dr-drill/                    # Disaster recovery drill artifacts
-│   └── migrations/                  # 193 append-only schema migrations
+│   └── migrations/                  # 185 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -209,7 +209,7 @@ tryvit/
 │   ├── BACKFILL_STANDARD.md         # Backfill orchestration standard & migration templates
 │   ├── CI_ARCHITECTURE_PROPOSAL.md  # CI pipeline design
 │   ├── CONTRACT_TESTING.md          # API contract testing strategy & pgTAP patterns
-│   ├── COUNTRY_EXPANSION_GUIDE.md   # Multi-country protocol (PL active, DE active)
+│   ├── COUNTRY_EXPANSION_GUIDE.md   # Multi-country protocol (PL active, DE full parity)
 │   ├── DATA_INTEGRITY_AUDITS.md     # Ongoing data integrity audit framework
 │   ├── DATA_PROVENANCE.md           # Data provenance & freshness governance
 │   ├── DATA_SOURCES.md              # Source hierarchy & validation workflow
@@ -217,7 +217,7 @@ tryvit/
 │   ├── DOCUMENTATION_GOVERNANCE.md  # Documentation ownership, versioning, deprecation, drift prevention
 │   ├── DOMAIN_BOUNDARIES.md         # Domain boundary enforcement & ownership mapping
 │   ├── DRIFT_DETECTION.md           # 8-check drift detection catalog, severity levels, CI plan
-│   ├── EAN_VALIDATION_STATUS.md     # 2,261/2,264 coverage (99.9%)
+│   ├── EAN_VALIDATION_STATUS.md     # 1,024/1,026 coverage (99.8%)
 │   ├── ENVIRONMENT_STRATEGY.md      # Local/staging/production environment strategy
 │   ├── FEATURE_FLAGS.md             # Feature flag architecture & toggle registry
 │   ├── FEATURE_SUNSETTING.md        # Feature retirement criteria & cleanup policy
@@ -260,7 +260,7 @@ tryvit/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (735 checks across 48 suites)
+├── RUN_QA.ps1                       # QA test runner (736 checks across 48 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -376,9 +376,9 @@ tryvit/
 | --------------------------- | ----------------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `products`                  | Product identity, scores, flags, provenance     | `product_id` (identity)                 | Upsert key: `(country, brand, product_name)`. Scores, flags, source columns all inline.                                                                                                                                            |
 | `nutrition_facts`           | Nutrition per product (per 100g)                | `product_id`                            | Numeric columns (calories, fat, sugar…)                                                                                                                                                                                            |
-| `ingredient_ref`            | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,898 unique ingredients; name_en (UNIQUE), vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                                                                                                               |
-| `product_ingredient`        | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~14,392 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                                                                                                                |
-| `product_allergen_info`     | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,872 rows (1,391 allergens + 1,481 traces) across 769 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags                                                                                          |
+| `ingredient_ref`            | Canonical ingredient dictionary                 | `ingredient_id` (identity)              | 2,995 unique ingredients; name_en (UNIQUE), vegan/vegetarian/palm_oil/is_additive/concern_tier flags                                                                                                                               |
+| `product_ingredient`        | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                                                                                                                |
+| `product_allergen_info`     | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags                                                                                          |
 | `country_ref`               | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag, nutri_score_official boolean; FK from products.country                                                                                                                                            |
 | `category_ref`              | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                                                                                                              |
 | `nutri_score_ref`           | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                                                                                                                  |
@@ -505,53 +505,60 @@ tryvit/
 
 ---
 
-## 5. Categories (20 PL + 5 DE)
+## 5. Categories (20 PL + 19 DE)
 
-All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each.
+All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each. All 19 PL categories (except Żabka) have a DE counterpart.
 
-| Category                          | Folder slug                      |
-| --------------------------------- | -------------------------------- |
-| Alcohol                           | `alcohol/`                       |
-| Alcohol (DE)                      | `alcohol-de/`                    |
-| Baby                              | `baby/`                          |
-| Baby (DE)                         | `baby-de/`                       |
-| Bread                             | `bread/`                         |
-| Bread (DE)                        | `bread-de/`                      |
-| Breakfast & Grain-Based           | `breakfast-grain-based/`         |
-| Breakfast & Grain-Based (DE)      | `breakfast-grain-based-de/`      |
-| Canned Goods                      | `canned-goods/`                  |
-| Canned Goods (DE)                 | `canned-goods-de/`               |
-| Cereals                           | `cereals/`                       |
-| Cereals (DE)                      | `cereals-de/`                    |
-| Chips (PL)                        | `chips-pl/`                      |
-| Chips (DE)                        | `chips-de/`                      |
-| Condiments                        | `condiments/`                    |
-| Condiments (DE)                   | `condiments-de/`                 |
-| Dairy                             | `dairy/`                         |
-| Dairy (DE)                        | `dairy-de/`                      |
-| Drinks                            | `drinks/`                        |
-| Drinks (DE)                       | `drinks-de/`                     |
-| Frozen & Prepared                 | `frozen-prepared/`               |
-| Frozen & Prepared (DE)            | `frozen-prepared-de/`            |
-| Instant & Frozen                  | `instant-frozen/`                |
-| Instant & Frozen (DE)             | `instant-frozen-de/`             |
-| Meat                              | `meat/`                          |
-| Meat (DE)                         | `meat-de/`                       |
-| Nuts, Seeds & Legumes             | `nuts-seeds-legumes/`            |
-| Nuts, Seeds & Legumes (DE)        | `nuts-seeds-legumes-de/`         |
-| Plant-Based & Alternatives        | `plant-based-alternatives/`      |
-| Plant-Based & Alternatives (DE)   | `plant-based-alternatives-de/`   |
-| Sauces                            | `sauces/`                        |
-| Sauces (DE)                       | `sauces-de/`                     |
-| Seafood & Fish                    | `seafood-fish/`                  |
-| Seafood & Fish (DE)               | `seafood-fish-de/`               |
-| Snacks                            | `snacks/`                        |
-| Snacks (DE)                       | `snacks-de/`                     |
-| Sweets                            | `sweets/`                        |
-| Sweets (DE)                       | `sweets-de/`                     |
-| Żabka                             | `zabka/`                         |
+### PL Categories (20)
 
-**39 pipeline folders** (19 PL + 19 DE + Żabka). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
+| Category                   | Folder slug                 |
+| -------------------------- | --------------------------- |
+| Alcohol                    | `alcohol/`                  |
+| Baby                       | `baby/`                     |
+| Bread                      | `bread/`                    |
+| Breakfast & Grain-Based    | `breakfast-grain-based/`    |
+| Canned Goods               | `canned-goods/`             |
+| Cereals                    | `cereals/`                  |
+| Chips (PL)                 | `chips-pl/`                 |
+| Condiments                 | `condiments/`               |
+| Dairy                      | `dairy/`                    |
+| Drinks                     | `drinks/`                   |
+| Frozen & Prepared          | `frozen-prepared/`          |
+| Instant & Frozen           | `instant-frozen/`           |
+| Meat                       | `meat/`                     |
+| Nuts, Seeds & Legumes      | `nuts-seeds-legumes/`       |
+| Plant-Based & Alternatives | `plant-based-alternatives/` |
+| Sauces                     | `sauces/`                   |
+| Seafood & Fish             | `seafood-fish/`             |
+| Snacks                     | `snacks/`                   |
+| Sweets                     | `sweets/`                   |
+| Żabka                      | `zabka/`                    |
+
+### DE Categories (19)
+
+| Category                   | Folder slug                       |
+| -------------------------- | --------------------------------- |
+| Alcohol (DE)               | `alcohol-de/`                     |
+| Baby (DE)                  | `baby-de/`                        |
+| Bread (DE)                 | `bread-de/`                       |
+| Breakfast & Grain-Based (DE) | `breakfast-grain-based-de/`     |
+| Canned Goods (DE)          | `canned-goods-de/`                |
+| Cereals (DE)               | `cereals-de/`                     |
+| Chips (DE)                 | `chips-de/`                       |
+| Condiments (DE)            | `condiments-de/`                  |
+| Dairy (DE)                 | `dairy-de/`                       |
+| Drinks (DE)                | `drinks-de/`                      |
+| Frozen & Prepared (DE)     | `frozen-prepared-de/`             |
+| Instant & Frozen (DE)      | `instant-frozen-de/`              |
+| Meat (DE)                  | `meat-de/`                        |
+| Nuts, Seeds & Legumes (DE) | `nuts-seeds-legumes-de/`          |
+| Plant-Based & Alternatives (DE) | `plant-based-alternatives-de/` |
+| Sauces (DE)                | `sauces-de/`                      |
+| Seafood & Fish (DE)        | `seafood-fish-de/`                |
+| Snacks (DE)                | `snacks-de/`                      |
+| Sweets (DE)                | `sweets-de/`                      |
+
+**39 pipeline folders** (20 PL + 19 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
 
 ---
 
@@ -620,7 +627,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **193 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **185 migrations**.
 
 **Rules:**
 
@@ -692,7 +699,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (735 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (736 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -833,7 +840,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (735 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (736 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 - **Required (merge-blocking) checks:** `Unit Tests`, `Playwright Smoke`, `Typecheck & Lint`, `Build`. These four must pass before a PR can merge.
@@ -870,7 +877,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\ RUN_QA.ps1` to verify all 735 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 736 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -964,7 +971,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Recipe Integrity          | `QA__recipe_integrity.sql`          |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **735/735 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **736/736 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
@@ -972,7 +979,7 @@ At the end of every PR-like change, include a **Verification** section:
 These are **anchor products** whose scores must remain stable. If a scoring change causes drift beyond ±2 points, investigate before committing:
 
 - Doritos Sweet Chili ≈ 41 (chips, 7 additives + concern 55, protein credit)
-- Coca-Cola Zero (DE) ≈ 4 (zero nutrition, additives + concern, no protein/fibre)
+- Coca-Cola Zero (DE) ≈ 13 (zero nutrition, 8 additives + concern 70 (enriched), no protein/fibre)
 - Piątnica Skyr Naturalny ≈ 5 (healthiest dairy, fermented, high protein bonus)
 - Melvit Płatki owsiane górskie ≈ 7 (healthiest cereal, protein + fibre bonus)
 - Auchan Tortilla Pszenno-Żytnia ≈ 29 (bread, 9 additives + concern 25, protein credit)
@@ -984,7 +991,7 @@ These are **anchor products** whose scores must remain stable. If a scoring chan
 - Dr. Oetker Pizza 4 sery ≈ 30 (frozen pizza, palm oil, 4 additives, protein credit)
 - Lajkonik Paluszki extra cienkie ≈ 31 (snacks, baked — product deprecated)
 - Naleśniki z jabłkami ≈ 16 (żabka — product deprecated)
-- Pudliszki Ketchup łagodny ≈ 18 (condiments, sugar + salt)
+- Pudliszki Ketchup Łagodny Premium ≈ 33 (condiments, sugar + salt + additives)
 - E. Wedel Czekolada Tiramisu ≈ 52 (sweets, palm oil + 4 additives, protein credit)
 - Indomie Noodles Chicken ≈ 43 (instant, palm oil + 10 additives, protein credit)
 
@@ -1626,8 +1633,8 @@ Produce **exactly this structure** — fill every section with real data:
 
 | Metric                    | Current Value   | Target / Baseline       | Status   |
 | ------------------------- | --------------- | ----------------------- | -------- |
-| Active products (PL+DE)   | ~X,XXX          | ≥2,264                  | ✅/⚠️/❌ |
-| QA checks passing         | XXX/735         | 735/735                 | ✅/⚠️/❌ |
+| Active products (PL+DE)   | ~X,XXX          | ≥1,281                  | ✅/⚠️/❌ |
+| QA checks passing         | XXX/736         | 736/736                 | ✅/⚠️/❌ |
 | Negative tests passing    | 23/23           | 23/23                   | ✅/⚠️/❌ |
 | Migrations committed      | XXX             | ≥182                    | ✅/⚠️/❌ |
 | Vitest coverage (lines)   | XX%             | ≥88%                    | ✅/⚠️/❌ |
@@ -2102,7 +2109,7 @@ Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
 | `docs/DATA_SOURCES.md`          | Source hierarchy, OFF API reliability tiers, validation workflow     | Pipeline changes, sourcing decisions       |
 | `docs/DATA_PROVENANCE.md`       | Data freshness governance, update cycles, source provenance tracking | Adding provenance columns, staleness logic |
 | `docs/DATA_INTEGRITY_AUDITS.md` | Nightly audit framework, check catalog, alert thresholds             | Adding data quality checks                 |
-| `docs/EAN_VALIDATION_STATUS.md` | 2,261/2,264 (99.9%) EAN coverage, known gaps, validation rules       | EAN changes, barcode work                  |
+| `docs/EAN_VALIDATION_STATUS.md` | 1,024/1,026 (99.8%) EAN coverage, known gaps, validation rules       | EAN changes, barcode work                  |
 | `docs/RESEARCH_WORKFLOW.md`     | Data collection lifecycle — manual curation + automated OFF pipeline | Adding new products, categories, countries |
 
 ### 18.4 Security & Privacy
@@ -2156,7 +2163,7 @@ Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
 | Document                          | Purpose                                                                   | Load When                        |
 | --------------------------------- | ------------------------------------------------------------------------- | -------------------------------- |
 | `docs/COUNTRY_EXPANSION_GUIDE.md` | Multi-country protocol — adding countries, activating DE, language matrix | Country/language expansion       |
-| `copilot-instructions.md §5`      | Active categories — 20 PL + 5 DE, pipeline folder mappings                | Category additions, DE expansion |
+| `copilot-instructions.md §5`      | Active categories — 20 PL + 19 DE, pipeline folder mappings               | Category additions, DE expansion |
 | `copilot-instructions.md §15.15`  | i18n impact checklist — dictionary keys, translations, search synonyms    | Any translated string change     |
 
 ### 18.9 Architecture Decision Records
@@ -2388,8 +2395,8 @@ Execute every command. Record output. Do not skip.
 ```powershell
 # ── Database layer ───────────────────────────────────────────────────
 supabase test db                               # All pgTAP tests pass
-.\RUN_QA.ps1                                   # All 735+ QA checks pass
-.\RUN_NEGATIVE_TESTS.ps1                       # All 23 negative tests caught
+.\RUN_QA.ps1                                   # All 736+ QA checks pass
+.\RUN_NEGATIVE_TESTS.ps1                       # All 20 negative tests caught
 python check_pipeline_structure.py            # 0 errors
 python validate_eans.py                       # 0 EAN failures
 python check_enrichment_identity.py           # 0 violations
@@ -2438,7 +2445,7 @@ After implementation, update ALL of these that apply (per §18.1):
 
 ```powershell
 supabase test db                  → XX/XX pgTAP tests pass
-.\RUN_QA.ps1                      → 735/735 checks pass (0 failures)
+.\RUN_QA.ps1                      → 736/736 checks pass (0 failures)
 .\RUN_NEGATIVE_TESTS.ps1          → 23/23 caught
 npx tsc --noEmit                  → 0 errors
 npx vitest run                    → XXX/XXX tests pass

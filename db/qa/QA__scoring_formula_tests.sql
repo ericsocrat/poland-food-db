@@ -217,19 +217,20 @@ WHERE p.product_name = 'Płatki owsiane górskie'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 14: Known product regression test (Coca-Cola Zero)
---          Zero sugar/fat but 8 additives + concern 2.0 (enriched) → score 2-6
+--          Zero sugar/fat but 8 additives + concern 70 (enriched) → score 11-16
 --          v3.3: protein 0g (bonus 0) + fibre 0g (bonus 0) → density 0 → no change
---          Requires ingredient enrichment data; skipped in CI without it.
+--          Score rose from ~4 to ~13 after ingredient enrichment added additive
+--          and concern data (8 additives, concern_score=70).
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Coca-Cola Zero score changed unexpectedly' AS issue,
-       CONCAT('Expected 2-6, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 11-16, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Coca-Cola Zero'
   AND p.country = 'DE'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 2 AND 6
+  AND p.unhealthiness_score::int NOT BETWEEN 11 AND 16
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- ═══════════════════════════════════════════════════════════════════════════
