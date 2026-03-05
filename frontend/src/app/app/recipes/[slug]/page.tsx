@@ -2,17 +2,18 @@
 
 // ─── Recipe detail page — full ingredients, steps, and metadata ─────────────
 // Issue #53 — Recipes v0
+// Issue #616 — Aggregate recipe score badge
 
 import { useParams } from "next/navigation";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createClient } from "@/lib/supabase/client";
-import { getRecipeDetail } from "@/lib/api";
+import { getRecipeDetail, getRecipeScore } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Card, Chip } from "@/components/common";
 import { Icon } from "@/components/common/Icon";
 import { RecipeGridSkeleton } from "@/components/common/skeletons";
-import { IngredientProductList } from "@/components/recipes";
+import { IngredientProductList, RecipeScoreBadge } from "@/components/recipes";
 import { useTranslation } from "@/lib/i18n";
 import { Clock, Users, ChefHat, Timer } from "lucide-react";
 
@@ -42,6 +43,17 @@ export default function RecipeDetailPage() {
       return result.data;
     },
     staleTime: staleTimes.recipe,
+    enabled: Boolean(slug),
+  });
+
+  const { data: recipeScore } = useQuery({
+    queryKey: queryKeys.recipeScore(slug),
+    queryFn: async () => {
+      const result = await getRecipeScore(supabase, slug);
+      if (!result.ok) return null;
+      return result.data;
+    },
+    staleTime: staleTimes.recipeScore,
     enabled: Boolean(slug),
   });
 
@@ -123,6 +135,9 @@ export default function RecipeDetailPage() {
           ))}
         </div>
       )}
+
+      {/* ── Recipe Score (#616) ────────────────────────────────────── */}
+      <RecipeScoreBadge score={recipeScore} showNutrition />
 
       {/* ── Ingredients ────────────────────────────────────────────── */}
       <Card variant="outlined" padding="md">

@@ -1556,3 +1556,37 @@ export interface BrowseRecipesFilters {
   limit?: number;
   offset?: number;
 }
+
+// ─── Recipe Score (#616) ───────────────────────────────────────────────────
+
+/** Nutrition summary from aggregated linked products (per 100g averages). */
+export interface RecipeNutritionSummary {
+  avg_calories: number | null;
+  avg_total_fat_g: number | null;
+  avg_saturated_fat_g: number | null;
+  avg_sugars_g: number | null;
+  avg_salt_g: number | null;
+  avg_protein_g: number | null;
+  avg_fibre_g: number | null;
+}
+
+/** Aggregate TryVit Score for a recipe, computed from linked product scores. */
+export interface RecipeScore {
+  api_version: string;
+  recipe_slug: string;
+  /** Average unhealthiness score of linked products (1–100, 0 if no links). */
+  aggregate_score: number;
+  /** Band name: "green" | "yellow" | "orange" | "red" | "darkred". */
+  score_band: string;
+  /** Per-100g nutrition averages from linked products. */
+  nutrition_summary: RecipeNutritionSummary;
+  /** Percentage of recipe ingredients that have linked products (0–100). */
+  coverage_pct: number;
+  /** Confidence based on coverage: "high" | "medium" | "low". */
+  confidence: string;
+  /** Total number of recipe ingredients. */
+  ingredient_count: number;
+  /** Number of ingredients with linked products. */
+  linked_count: number;
+  note: string;
+}
