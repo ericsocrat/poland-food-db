@@ -123,7 +123,7 @@ export default function TryVitScorePage() {
                         }}
                       />
                     </div>
-                    <span className="w-8 text-right text-xs font-medium text-green-600 dark:text-green-400">
+                    <span className="w-8 text-right text-xs font-medium text-green-700 dark:text-green-400">
                       −{bonusFactor.weight}%
                     </span>
                   </div>
