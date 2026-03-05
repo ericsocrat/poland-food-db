@@ -1,13 +1,13 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { renderHook, waitFor } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
-  useCompareProducts,
-  useSavedComparisons,
-  useSharedComparison,
-  useSaveComparison,
-  useDeleteComparison,
+    useCompareProducts,
+    useDeleteComparison,
+    useSaveComparison,
+    useSavedComparisons,
+    useSharedComparison,
 } from "@/hooks/use-compare";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { renderHook, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -81,6 +81,32 @@ describe("useCompareProducts", () => {
     expect(mockGetProductsForCompare).not.toHaveBeenCalled();
   });
 
+  it("does not fetch when array is empty", () => {
+    const { result } = renderHook(() => useCompareProducts([]), {
+      wrapper: createWrapper(),
+    });
+    expect(result.current.fetchStatus).toBe("idle");
+    expect(mockGetProductsForCompare).not.toHaveBeenCalled();
+  });
+
+  it("fetches when exactly 4 IDs provided (max boundary)", async () => {
+    const data = { products: [{ id: 1 }, { id: 2 }, { id: 3 }, { id: 4 }] };
+    mockGetProductsForCompare.mockResolvedValue({ ok: true, data });
+
+    const { result } = renderHook(
+      () => useCompareProducts([4, 3, 2, 1]),
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.data).toEqual(data);
+    // API receives original order, but queryKey uses sorted IDs
+    expect(mockGetProductsForCompare).toHaveBeenCalledWith(
+      expect.anything(),
+      [4, 3, 2, 1],
+    );
+  });
+
   it("throws on error result", async () => {
     mockGetProductsForCompare.mockResolvedValue({
       ok: false,
@@ -109,6 +135,22 @@ describe("useSavedComparisons", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(data);
+  });
+
+  it("passes limit and offset to API", async () => {
+    const data = { comparisons: [{ id: "c1" }] };
+    mockGetSavedComparisons.mockResolvedValue({ ok: true, data });
+
+    const { result } = renderHook(() => useSavedComparisons(10, 20), {
+      wrapper: createWrapper(),
+    });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockGetSavedComparisons).toHaveBeenCalledWith(
+      expect.anything(),
+      10,
+      20,
+    );
   });
 
   it("throws on error result", async () => {
@@ -164,6 +206,24 @@ describe("useSaveComparison", () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(data);
+  });
+
+  it("saves comparison without title", async () => {
+    const data = { comparison_id: "c2" };
+    mockSaveComparison.mockResolvedValue({ ok: true, data });
+
+    const { result } = renderHook(() => useSaveComparison(), {
+      wrapper: createWrapper(),
+    });
+
+    result.current.mutate({ productIds: [5, 6] });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockSaveComparison).toHaveBeenCalledWith(
+      expect.anything(),
+      [5, 6],
+      undefined,
+    );
   });
 
   it("throws on error result", async () => {

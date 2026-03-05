@@ -231,7 +231,7 @@
     "sortBy": "Sortieren nach",
     "relevance": "Relevanz",
     "name": "Name",
-    "healthScore": "Gesundheitsbewertung",
+    "healthScore": "TryVit Score",
     "nutriScore": "Nutri-Score",
     "notRated": "Nicht bewertet",
     "calories": "Kalorien",
@@ -244,7 +244,7 @@
     "nova2": "2 — Verarbeitete Zutaten",
     "nova3": "3 — Verarbeitet",
     "nova4": "4 — Hochverarbeitet",
-    "maxHealthScore": "Max. Gesundheitsbewertung",
+    "maxHealthScore": "Max. TryVit Score",
     "any": "Beliebig",
     "clearAll": "Alle zurücksetzen",
     "closeFilters": "Filter schließen",
@@ -452,6 +452,8 @@
     "rank": "Rang: {rank} von {total}",
     "categoryAvg": "Kategorie-Durchschn.: {avg}",
     "position": "Position: {position}",
+    "betterThan": "Besser als {pct}%",
+    "percentileTooltip": "#{rank} von {total}",
     "novaGroup1": "Unverarbeitet",
     "novaGroup2": "Verarbeitete Zutat",
     "novaGroup3": "Verarbeitetes Lebensmittel",
@@ -476,7 +478,7 @@
     "viewAllAlternatives": "Alle Alternativen anzeigen"
   },
   "scoreGauge": {
-    "label": "Gesundheitsbewertung: {score} von 100",
+    "label": "TryVit Score: {score} von 100",
     "outOf": "/100",
     "noScore": "Bewertung nicht verfügbar"
   },
@@ -533,7 +535,7 @@
     "metric": "Kennzahl",
     "healthiest": "Gesündestes",
     "best": "Bestes",
-    "unhealthinessScore": "Ungesundheitsbewertung",
+    "tryvitScore": "TryVit Score",
     "novaGroupLabel": "NOVA-Gruppe",
     "none": "Keine",
     "noneDeclared": "Keine deklariert",
@@ -1148,7 +1150,7 @@
       "unknownTitle": "Warum einige Produkte 'UNBEKANNT' anzeigen",
       "unknownText": "Wenn wir nicht genügend Nährwertdaten haben, um einen Nutri-Score zu berechnen, oder wenn die Produktkategorie nicht anwendbar ist (z. B. Alkohol), wird die Bewertung als UNBEKANNT oder NICHT ZUTREFFEND angezeigt. Das ist ehrlicher als zu raten.",
       "ourApproachTitle": "Unser Ansatz",
-      "ourApproachText": "Wir verwenden den Nutri-Score als eine von drei unabhängigen Dimensionen. Wir verlassen uns nie allein darauf, um ein Produkt zu beurteilen. Unsere Ungesundheitsbewertung und das Verarbeitungsrisiko füllen die Lücken, die der Nutri-Score lässt."
+      "ourApproachText": "Wir verwenden den Nutri-Score als eine von drei unabhängigen Dimensionen. Wir verlassen uns nie allein darauf, um ein Produkt zu beurteilen. Unser TryVit Score und das Verarbeitungsrisiko füllen die Lücken, die der Nutri-Score lässt."
     },
     "novaGroups": {
       "title": "NOVA-Lebensmittelklassifikation",
@@ -1170,14 +1172,14 @@
       "polishContextTitle": "Polnischer Kontext",
       "polishContextText": "Viele beliebte Produkte in polnischen Supermärkten wie Żabka, Biedronka und Lidl fallen in NOVA 4. Das bedeutet nicht, dass Sie sie nie essen sollten — es bedeutet, sich bewusst zu sein, wie viel Ihrer Ernährung aus hochverarbeiteten Quellen stammt.",
       "processingRiskTitle": "Wie wir es nutzen: Verarbeitungsrisiko",
-      "processingRiskText": "in TryVit werden NOVA-Gruppen drei Verarbeitungsrisikostufen zugeordnet: Niedrig (NOVA 1–2), Moderat (NOVA 3) und Hoch (NOVA 4). Dies gibt Ihnen einen schnellen Überblick über die Verarbeitung neben unserer Ungesundheitsbewertung und dem Nutri-Score."
+      "processingRiskText": "in TryVit werden NOVA-Gruppen drei Verarbeitungsrisikostufen zugeordnet: Niedrig (NOVA 1–2), Moderat (NOVA 3) und Hoch (NOVA 4). Dies gibt Ihnen einen schnellen Überblick über die Verarbeitung neben unserem TryVit Score und dem Nutri-Score."
     },
-    "unhealthinessScore": {
-      "title": "Unsere Gesundheitsbewertung",
-      "description": "Wie die 9-Faktor-Ungesundheitsbewertung funktioniert und was die Stufen bedeuten.",
-      "summary": "Die Ungesundheitsbewertung (1–100) ist unsere primäre zusammengesetzte Kennzahl. Sie schätzt das kumulative Schadenspotenzial durch Gewichtung von 9 Faktoren: gesättigte Fettsäuren, Zucker, Salz, Kalorien, Transfette, Zusatzstoffe, Zubereitungsart, Kontroversen und Zutatenbedenklichkeit.",
-      "whatIsTitle": "Was ist die Ungesundheitsbewertung?",
-      "whatIsText": "Die Ungesundheitsbewertung beantwortet eine einfache Frage: Wenn jemand dieses Produkt regelmäßig essen würde, wie viel kumulatives Schadenspotenzial birgt es? Die Skala reicht von 1 (geringes Bedenken) bis 100 (sehr hohes Bedenken). Wir nennen es bewusst 'Ungesundheit' statt 'Gesundheit' — eine Bewertung von 30 bedeutet nicht, dass ein Produkt gesund ist, sondern dass es weniger ungesund ist als eines mit 70.",
+    "tryvitScore": {
+      "title": "TryVit Score verstehen",
+      "description": "Wie der 9-Faktor-TryVit Score funktioniert und was die Stufen bedeuten.",
+      "summary": "Der TryVit Score (1–100) ist unsere primäre zusammengesetzte Kennzahl. Je höher, desto besser. Er bewertet 9 Faktoren: gesättigte Fettsäuren, Zucker, Salz, Kalorien, Transfette, Zusatzstoffe, Zubereitungsart, Kontroversen und Zutatenbedenklichkeit.",
+      "whatIsTitle": "Was ist der TryVit Score?",
+      "whatIsText": "Der TryVit Score beantwortet eine einfache Frage: Wie gut schneidet dieses Produkt ernährungsphysiologisch ab? Die Skala reicht von 1 (sehr hohes Risiko) bis 100 (ausgezeichnet). Ein Wert von 70 bedeutet, dass das Produkt besser ist als eines mit 30. Wir kombinieren neun evidenzbasierte Faktoren zu einer einzigen Zahl, damit Sie Produkte auf einen Blick vergleichen können.",
       "factorsTitle": "Die 9 Faktoren",
       "factorSatFat": "Gesättigte Fettsäuren (Gewicht: 17 %) — Obergrenze: 10 g pro 100 g. Basierend auf EFSA-Tagesreferenzwerten.",
       "factorSugars": "Zucker (Gewicht: 17 %) — Obergrenze: 27 g pro 100 g. Basierend auf WHO-Richtlinie für freien Zucker.",
@@ -1189,15 +1191,15 @@
       "factorControversies": "Kontroversen (Gewicht: 8 %) — erfasst produktbezogene Probleme wie Palmöl oder verbotene Substanzen.",
       "factorConcern": "Zutatenbedenklichkeit (Gewicht: 5 %) — basierend auf EFSA-Zusatzstoff-Risikostufen (Bedenklichkeitsstufen 0–3).",
       "bandsTitle": "Bewertungsstufen",
-      "band1": "1–20: Geringes Bedenken — einfache Haferflocken, rohes Gemüse",
-      "band2": "21–40: Moderat — Vollkornbrot, einfacher Joghurt",
-      "band3": "41–60: Erhöht — gebackene Chips, gesüßte Cerealien",
-      "band4": "61–80: Hoch — frittierte Chips, zuckerhaltige Getränke",
-      "band5": "81–100: Sehr hoch — frittiert + salzreich + Zusatzstoffe",
+      "band1": "80–100: Ausgezeichnet — einfache Haferflocken, rohes Gemüse",
+      "band2": "60–79: Gut — Vollkornbrot, einfacher Joghurt",
+      "band3": "40–59: Moderat — gebackene Chips, gesüßte Cerealien",
+      "band4": "20–39: Schlecht — frittierte Chips, zuckerhaltige Getränke",
+      "band5": "1–19: Sehr schlecht — frittiert + salzreich + Zusatzstoffe",
       "formulaTitle": "Wie sie berechnet wird",
       "formulaText": "Jeder Faktor wird auf 0–100 normalisiert (unter Verwendung wissenschaftlich begründeter Obergrenzen), mit seinem Gewicht multipliziert und summiert. Das Ergebnis wird auf 1–100 begrenzt. Bei fehlenden Daten ist der Faktor standardmäßig 0 und die Datenvollständigkeitsbewertung wird reduziert.",
       "whyDifferentTitle": "Warum nicht einfach den Nutri-Score verwenden?",
-      "whyDifferentText": "Der Nutri-Score ignoriert Verarbeitungsgrad, Lebensmittelzusatzstoffe, Zubereitungsmethoden und Kontroversen. Unsere Ungesundheitsbewertung füllt diese Lücken, indem sie alle neun Faktoren in einer einzigen Zahl zusammenfasst, die auf WHO-, EFSA- und EU-Regulierungsschwellen basiert."
+      "whyDifferentText": "Der Nutri-Score ignoriert Verarbeitungsgrad, Lebensmittelzusatzstoffe, Zubereitungsmethoden und Kontroversen. Unser TryVit Score füllt diese Lücken, indem er alle neun Faktoren in einer einzigen Zahl zusammenfasst, die auf WHO-, EFSA- und EU-Regulierungsschwellen basiert."
     },
     "additives": {
       "title": "Zusatzstoffe verstehen",
@@ -1213,7 +1215,7 @@
       "concernTier2": "Stufe 2 — Moderates Bedenken: Einige künstliche Süßstoffe und Farbstoffe. Bei zugelassenen Mengen sicher, aber Gegenstand laufender Forschung.",
       "concernTier3": "Stufe 3 — Hohes Bedenken: Nitrite (E250), BHA (E320), bestimmte Azofarbstoffe. EFSA hat Bedenken markiert; einige haben reduzierte ADI-Werte.",
       "howWeUseTitle": "Wie wir dies nutzen",
-      "howWeUseText": "in TryVit wird jeder Zutat basierend auf EFSA-Bewertungen eine Bedenklichkeitsstufe zugewiesen. Die Zutatenbedenklichkeitsbewertung des Produkts (0–100) trägt 5 % zur Gesamtungesundheitsbewertung bei. Produkte ohne bedenkliche Zusatzstoffe erhalten 0 bei diesem Faktor.",
+      "howWeUseText": "in TryVit wird jeder Zutat basierend auf EFSA-Bewertungen eine Bedenklichkeitsstufe zugewiesen. Die Zutatenbedenklichkeitsbewertung des Produkts (0–100) trägt 5 % zum TryVit Score bei. Produkte ohne bedenkliche Zusatzstoffe erhalten 0 bei diesem Faktor.",
       "polishContextTitle": "Polnischer Kontext",
       "polishContextText": "Die polnische Lebensmittelkennzeichnung folgt der EU-Verordnung 1169/2011. Alle Zusatzstoffe müssen mit ihrer E-Nummer oder ihrem vollständigen Namen in der Zutatenliste aufgeführt sein. Beim Einkauf bei Żabka oder Biedronka überprüfen Sie die Zutatenliste — kürzere Listen mit erkennbaren Zutaten weisen in der Regel auf weniger Verarbeitung hin."
     },
@@ -1251,7 +1253,7 @@
       "nutritionTableTitle": "Die Nährwerttabelle",
       "nutritionTableText": "EU-Recht schreibt vor, dass alle vorverpackten Lebensmittel eine Nährwertdeklaration tragen müssen. Die Tabelle muss enthalten: Energie (kJ/kcal), Fett, gesättigte Fettsäuren, Kohlenhydrate, Zucker, Eiweiß und Salz. Alle Werte werden pro 100 g (oder pro 100 ml bei Flüssigkeiten) angegeben.",
       "per100gTitle": "Pro 100 g vs. pro Portion",
-      "per100gText": "Die Pro-100g-Spalte ermöglicht einen fairen Vergleich zwischen Produkten — sie ist der Standard für Nutri-Score und unsere Ungesundheitsbewertung. Die Pro-Portion-Spalte ist optional und hängt von der vom Hersteller definierten Portionsgröße ab, die stark variieren kann. Überprüfen Sie immer die Portionsgröße bei der Verwendung von Pro-Portions-Werten.",
+      "per100gText": "Die Pro-100g-Spalte ermöglicht einen fairen Vergleich zwischen Produkten — sie ist der Standard für Nutri-Score und unseren TryVit Score. Die Pro-Portion-Spalte ist optional und hängt von der vom Hersteller definierten Portionsgröße ab, die stark variieren kann. Überprüfen Sie immer die Portionsgröße bei der Verwendung von Pro-Portions-Werten.",
       "mandatoryTitle": "Pflichtangaben auf polnischen Etiketten",
       "mandatoryItem1": "Produktname (nazwa produktu)",
       "mandatoryItem2": "Zutatenliste (skład) — in absteigender Reihenfolge nach Gewicht",
@@ -1274,7 +1276,7 @@
       "description": "Was verifiziert, geschätzt und geringes Vertrauen für unsere Produktdaten bedeuten.",
       "summary": "Nicht alle Produktdaten sind gleich zuverlässig. Wir verwenden drei Vertrauensstufen — Verifiziert, Geschätzt und Gering — damit Sie immer wissen, wie sehr Sie den angezeigten Bewertungen vertrauen können.",
       "whyTitle": "Warum Vertrauen wichtig ist",
-      "whyText": "Unsere Ungesundheitsbewertung ist nur so gut wie die Daten dahinter. Einige Produkte haben vollständige, etikettenverifizierte Nährwertdaten. Andere haben Lücken, die wir mit Schätzungen gefüllt haben. Wir glauben an Transparenz in dieser Hinsicht.",
+      "whyText": "Unser TryVit Score ist nur so gut wie die Daten dahinter. Einige Produkte haben vollständige, etikettenverifizierte Nährwertdaten. Andere haben Lücken, die wir mit Schätzungen gefüllt haben. Wir glauben an Transparenz in dieser Hinsicht.",
       "levelsTitle": "Vertrauensstufen",
       "levelVerified": "Verifiziert — Alle Daten stammen aus der primären Etikettenquelle. Jedes Nährwertfeld wurde anhand der tatsächlichen Produktverpackung bestätigt. Dies ist die höchste Vertrauensstufe.",
       "levelEstimated": "Geschätzt — Einige Werte wurden aus Kategoriedurchschnitten oder ähnlichen Produkten geschätzt. Die Bewertung ist zuverlässig, stimmt aber möglicherweise nicht mit den genauen Etikettenwerten überein.",

@@ -9,7 +9,7 @@
 -- ============================================================
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 1. No case-insensitive duplicate products (same brand + same name)
+-- 1. No case-insensitive duplicate products (same country + brand + name)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '1. no case-insensitive duplicate products' AS check_name,
        COUNT(*) AS violations
@@ -17,7 +17,8 @@ FROM (
   SELECT 1
   FROM products p1
   JOIN products p2
-    ON p1.brand = p2.brand
+    ON p1.country = p2.country
+   AND p1.brand = p2.brand
    AND p1.product_id < p2.product_id
    AND lower(trim(p1.product_name)) = lower(trim(p2.product_name))
   WHERE p1.is_deprecated IS NOT TRUE

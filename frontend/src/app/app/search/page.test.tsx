@@ -1,8 +1,8 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import SearchPage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -314,7 +314,7 @@ describe("SearchPage", () => {
     });
 
     // Score badge
-    expect(screen.getByText("65")).toBeInTheDocument();
+    expect(screen.getByText("35")).toBeInTheDocument();
     // Brand and category info
     expect(screen.getByText(/TestBrand/)).toBeInTheDocument();
   });

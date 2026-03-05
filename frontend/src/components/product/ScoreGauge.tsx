@@ -1,15 +1,14 @@
 /**
- * ScoreGauge — circular SVG gauge ring for product unhealthiness scores.
+ * ScoreGauge — circular SVG gauge ring for product TryVit Score.
  *
- * Uses `stroke-dasharray` on an SVG `<circle>` to create a fill-arc
- * proportional to the score (0–100). Color follows the 5-band system:
- *   1–20 → green, 21–40 → yellow, 41–60 → orange, 61–80 → red, 81–100 → dark red.
- *
- * Falls back to a gray neutral ring when score is null/undefined.
+ * Receives `unhealthiness_score` (0–100), displays inverted TryVit Score
+ * (higher = healthier). Stroke color stays mapped to the original
+ * unhealthiness bands: green = healthy, red = unhealthy.
  */
 
 import { scoreColorFromScore, type ScoreColorBand } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { toTryVitScore } from "@/lib/score-utils";
 import React from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -17,7 +16,7 @@ import React from "react";
 export type ScoreGaugeSize = "sm" | "md" | "lg";
 
 export interface ScoreGaugeProps {
-  /** Unhealthiness score 0–100. Null → neutral gauge. */
+  /** Unhealthiness score 0–100 (API value). Displayed as TryVit Score (inverted). */
   readonly score: number | null | undefined;
   /** Size preset. @default "md" */
   readonly size?: ScoreGaugeSize;
@@ -89,9 +88,9 @@ export const ScoreGauge = React.memo(function ScoreGauge({
   const circumference = 2 * Math.PI * radius;
   const hasScore = score != null && !Number.isNaN(score);
 
-  // Clamp to 0–100 for the arc calculation
-  const clampedScore = hasScore ? Math.max(0, Math.min(100, score)) : 0;
-  const fillFraction = clampedScore / 100;
+  // Invert to TryVit Score (higher = healthier) for display
+  const tryVitScore = hasScore ? toTryVitScore(Math.max(0, Math.min(100, score))) : 0;
+  const fillFraction = tryVitScore / 100;
   const dashArray = `${circumference * fillFraction} ${circumference * (1 - fillFraction)}`;
 
   // Rotate -90° so the arc starts from the top (12 o'clock)
@@ -107,7 +106,7 @@ export const ScoreGauge = React.memo(function ScoreGauge({
       style={{ width: svgSize, height: svgSize }}
       aria-label={
         hasScore
-          ? t("scoreGauge.label", { score: String(score) })
+          ? t("scoreGauge.label", { score: String(tryVitScore) })
           : t("scoreGauge.noScore")
       }
     >
@@ -146,7 +145,7 @@ export const ScoreGauge = React.memo(function ScoreGauge({
       {/* Center text */}
       <div className="relative flex flex-col items-center leading-none">
         <span className={`${fontSize} font-bold text-foreground`}>
-          {hasScore ? score : "—"}
+          {hasScore ? tryVitScore : "—"}
         </span>
         <span className={`${subFontSize} font-medium text-foreground-muted`}>
           {hasScore ? t("scoreGauge.outOf") : ""}
