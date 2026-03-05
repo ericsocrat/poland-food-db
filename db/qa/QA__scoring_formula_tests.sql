@@ -1,4 +1,4 @@
--- QA: Scoring Formula Tests (v3.3) — 31 checks
+-- QA: Scoring Formula Tests (v3.3) — 35 checks
 -- Validates that the scoring formula produces expected results for known test cases.
 -- Each test includes a product with controlled nutrition values and expected score.
 -- Run after pipelines to verify scoring algorithm correctness.
@@ -477,3 +477,61 @@ SELECT 'Dark Red band synthetic test' AS issue,
               compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100)) AS detail
 WHERE compute_unhealthiness_v32(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100)
       NOT BETWEEN 81 AND 100;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 32: v3.3 synthetic band coverage — Red band (61-80)
+--          Same high-risk inputs as Test 30, but via compute_unhealthiness_v33
+--          with protein=0, fibre=0 (no bonus). Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT 'v3.3 Red band synthetic test' AS issue,
+       compute_unhealthiness_v33(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50, 0, 0) AS actual_score,
+       CONCAT('Expected 61-80, got ',
+              compute_unhealthiness_v33(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50, 0, 0)) AS detail
+WHERE compute_unhealthiness_v33(8.0, 20.0, 2.0, 450, 1.0, 6, 'deep-fried', 'palm oil', 50, 0, 0)
+      NOT BETWEEN 61 AND 80;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 33: v3.3 synthetic band coverage — Dark Red band (81-100)
+--          Same extreme inputs as Test 31, but via compute_unhealthiness_v33
+--          with protein=0, fibre=0 (no bonus). Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT 'v3.3 Dark Red band synthetic test' AS issue,
+       compute_unhealthiness_v33(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100, 0, 0) AS actual_score,
+       CONCAT('Expected 81-100, got ',
+              compute_unhealthiness_v33(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100, 0, 0)) AS detail
+WHERE compute_unhealthiness_v33(10.0, 27.0, 3.0, 600, 2.0, 10, 'deep-fried', 'serious', 100, 0, 0)
+      NOT BETWEEN 81 AND 100;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 34: v3.3 nutrient density bonus — high protein+fibre product
+--          must score LOWER than the same product with zero protein+fibre.
+--          Synthetic inputs: moderate penalty profile. Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT 'v3.3 nutrient density bonus not applied' AS issue,
+       compute_unhealthiness_v33(5.0, 12.0, 0.8, 200, 0.3, 2, 'baked', 'minor', 1, 20, 8) AS with_bonus,
+       compute_unhealthiness_v33(5.0, 12.0, 0.8, 200, 0.3, 2, 'baked', 'minor', 1,  0, 0) AS without_bonus,
+       'Expected with_bonus < without_bonus' AS detail
+WHERE compute_unhealthiness_v33(5.0, 12.0, 0.8, 200, 0.3, 2, 'baked', 'minor', 1, 20, 8)
+   >= compute_unhealthiness_v33(5.0, 12.0, 0.8, 200, 0.3, 2, 'baked', 'minor', 1,  0, 0);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 35: v3.3 ↔ v3.2 parity — when protein=0 and fibre=0 the v3.3
+--          function must produce the same score as v3.2 for identical inputs.
+--          5 synthetic profiles covering all penalty bands. Issue #613.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT profile, v32_score, v33_score,
+       'v3.3/v3.2 parity violation when protein=0, fibre=0' AS issue,
+       CONCAT(profile, ': v32=', v32_score, ' v33=', v33_score) AS detail
+FROM (VALUES
+  ('low',      compute_unhealthiness_v32(1,5,0.3,100,0,0,'not-applicable','none',0),
+               compute_unhealthiness_v33(1,5,0.3,100,0,0,'not-applicable','none',0,0,0)),
+  ('moderate', compute_unhealthiness_v32(4,12,0.8,250,0.2,2,'baked','none',5),
+               compute_unhealthiness_v33(4,12,0.8,250,0.2,2,'baked','none',5,0,0)),
+  ('elevated', compute_unhealthiness_v32(6,18,1.5,400,0.5,5,'fried','palm oil',30),
+               compute_unhealthiness_v33(6,18,1.5,400,0.5,5,'fried','palm oil',30,0,0)),
+  ('high',     compute_unhealthiness_v32(8,22,2.2,500,1.2,7,'deep-fried','moderate',60),
+               compute_unhealthiness_v33(8,22,2.2,500,1.2,7,'deep-fried','moderate',60,0,0)),
+  ('extreme',  compute_unhealthiness_v32(10,27,3,600,2,10,'deep-fried','serious',100),
+               compute_unhealthiness_v33(10,27,3,600,2,10,'deep-fried','serious',100,0,0))
+) AS t(profile, v32_score, v33_score)
+WHERE v32_score <> v33_score;
