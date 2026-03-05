@@ -220,3 +220,31 @@ export const DataConfidenceContract = z
     api_version: z.string(),
   })
   .passthrough();
+
+// ─── api_get_cross_country_links ────────────────────────────────────────────
+
+const CrossCountryLinkedProductSchema = z
+  .object({
+    product_id: z.number(),
+    product_name: z.string(),
+    brand: z.string(),
+    country: z.string(),
+    category: z.string(),
+    unhealthiness_score: z.number(),
+    nutri_score_label: z.string().nullable(),
+  })
+  .passthrough();
+
+const CrossCountryLinkSchema = z
+  .object({
+    link_id: z.number(),
+    link_type: z.enum(["identical", "equivalent", "variant", "related"]),
+    confidence: z.enum(["manual", "ean_match", "brand_match", "verified"]),
+    notes: z.string().nullable(),
+    created_at: z.string(),
+    product: CrossCountryLinkedProductSchema,
+  })
+  .passthrough();
+
+/** Array of cross-country product links. */
+export const CrossCountryLinksContract = z.array(CrossCountryLinkSchema);

@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(264);
+SELECT plan(265);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -339,6 +339,7 @@ SELECT has_column('public', 'product_links', 'product_id_b',     'product_links 
 SELECT has_column('public', 'product_links', 'link_type',        'product_links has link_type column');
 SELECT has_column('public', 'product_links', 'confidence',       'product_links has confidence column');
 SELECT has_function('public', 'api_get_cross_country_links',     'function api_get_cross_country_links exists');
+SELECT has_function('public', 'auto_link_cross_country_products', 'function auto_link_cross_country_products exists');
 
 -- ─── Brand Normalization (#356) ──────────────────────────────────────────────
 SELECT has_table('public', 'brand_ref',                          'table brand_ref exists');

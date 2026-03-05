@@ -427,6 +427,27 @@ export interface EanNotFoundResponse {
   error: string;
 }
 
+// ─── Cross-Country Links ────────────────────────────────────────────────────
+
+export interface CrossCountryLinkedProduct {
+  product_id: number;
+  product_name: string;
+  brand: string;
+  country: string;
+  category: string;
+  unhealthiness_score: number;
+  nutri_score_label: string | null;
+}
+
+export interface CrossCountryLink {
+  link_id: number;
+  link_type: "identical" | "equivalent" | "variant" | "related";
+  confidence: "manual" | "ean_match" | "brand_match" | "verified";
+  notes: string | null;
+  created_at: string;
+  product: CrossCountryLinkedProduct;
+}
+
 // ─── Better Alternatives ────────────────────────────────────────────────────
 
 export interface Alternative {
