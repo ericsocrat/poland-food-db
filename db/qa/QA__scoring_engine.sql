@@ -106,7 +106,7 @@ END AS "T08_rescore_batch_exists";
 SELECT CASE
     WHEN (validate_country_profile('v3.3', 'PL')->>'valid')::boolean
     THEN 'PASS' ELSE 'FAIL'
-END AS "T09_pl_profile_valid";
+END AS "T09_v3.3_pl_profile_valid";
 
 -- ─── T10: score_shadow_results table exists ──────────────────────────────
 
