@@ -1175,7 +1175,7 @@
       "processingRiskText": "in TryVit werden NOVA-Gruppen drei Verarbeitungsrisikostufen zugeordnet: Niedrig (NOVA 1–2), Moderat (NOVA 3) und Hoch (NOVA 4). Dies gibt Ihnen einen schnellen Überblick über die Verarbeitung neben unserem TryVit Score und dem Nutri-Score."
     },
     "tryvitScore": {
-      "title": "TryVit Score",
+      "title": "TryVit Score verstehen",
       "description": "Wie der 9-Faktor-TryVit Score funktioniert und was die Stufen bedeuten.",
       "summary": "Der TryVit Score (1–100) ist unsere primäre zusammengesetzte Kennzahl. Je höher, desto besser. Er bewertet 9 Faktoren: gesättigte Fettsäuren, Zucker, Salz, Kalorien, Transfette, Zusatzstoffe, Zubereitungsart, Kontroversen und Zutatenbedenklichkeit.",
       "whatIsTitle": "Was ist der TryVit Score?",

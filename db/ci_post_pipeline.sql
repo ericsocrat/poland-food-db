@@ -75,12 +75,79 @@ WHERE  brand        = 'Mlekovita'
   AND  category = 'Baby'
   AND  is_deprecated IS NOT TRUE;
 
+-- Deprecate products with extreme calorie back-calculation deviation (>35%)
+-- These have unreliable OFF API nutrition data.
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: calorie back-calculation >35% deviation'
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_id IN (
+    SELECT p.product_id
+    FROM   products p
+    JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+    WHERE  p.is_deprecated IS NOT TRUE
+      AND  nf.calories IS NOT NULL AND nf.calories > 50
+      AND  nf.protein_g IS NOT NULL AND nf.carbs_g IS NOT NULL AND nf.total_fat_g IS NOT NULL
+      AND  p.category NOT IN ('Alcohol', 'Drinks', 'Condiments', 'Sauces')
+      AND  ABS(nf.calories - (nf.protein_g * 4 + nf.carbs_g * 4 + nf.total_fat_g * 9))
+           > nf.calories * 0.35
+  );
+
+-- ─── 3c. Clean product names from OFF API artifacts ─────────────────────
+-- The OFF API sometimes returns names with trailing periods, HTML entities,
+-- or invalid values.  Fix these before scoring.
+
+-- Deprecate products whose name is just a period (bad OFF API data)
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: product name is just a period'
+WHERE  product_name = '.'
+  AND  is_deprecated IS NOT TRUE;
+
+-- Deprecate products with HTML &quot; entities (clean-name versions exist)
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'Duplicate with HTML-encoded name from OFF API'
+WHERE  product_name LIKE '%&quot;%'
+  AND  is_deprecated IS NOT TRUE;
+
+-- Fix HTML &quot; entities in brand names (no conflict expected)
+UPDATE products
+SET    brand = replace(brand, '&quot;', '"')
+WHERE  brand LIKE '%&quot;%'
+  AND  is_deprecated IS NOT TRUE;
+
+-- Deprecate trailing-period products that conflict with existing clean names
+UPDATE products p1
+SET    is_deprecated    = true,
+       deprecated_reason = 'Duplicate with trailing period from OFF API'
+WHERE  p1.product_name ~ '\.$'
+  AND  p1.is_deprecated IS NOT TRUE
+  AND  length(p1.product_name) > 1
+  AND  EXISTS (
+    SELECT 1 FROM products p2
+    WHERE  p2.country      = p1.country
+      AND  p2.brand        = p1.brand
+      AND  p2.product_name = regexp_replace(p1.product_name, '\.+$', '')
+      AND  p2.product_id  != p1.product_id
+  );
+
+-- Remove trailing periods from remaining products (no conflicts)
+UPDATE products
+SET    product_name = regexp_replace(product_name, '\.+$', '')
+WHERE  product_name ~ '\.$'
+  AND  is_deprecated IS NOT TRUE
+  AND  length(product_name) > 1;
+
 -- Remove junction-table data for deprecated products so MV row counts
 -- stay consistent (mv_ingredient_frequency JOINs on active products only).
 DELETE FROM product_ingredient
 WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true);
 
 DELETE FROM product_allergen_info
+WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true);
+
+DELETE FROM product_store_availability
 WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true);
 
 -- Remove orphan ingredient_ref entries left behind
@@ -104,6 +171,17 @@ WHERE  product_id = (
            AND  country = 'PL'
        )
   AND  salt_g = 13.0;
+
+-- Fix zero-calorie macros: water branded products with corrupt OFF carb data
+UPDATE nutrition_facts
+SET    carbs_g = 0
+WHERE  product_id IN (
+         SELECT p.product_id FROM products p
+         JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+         WHERE  p.is_deprecated IS NOT TRUE
+           AND  nf.calories = 0
+           AND  (COALESCE(nf.total_fat_g, 0) + COALESCE(nf.protein_g, 0) + COALESCE(nf.carbs_g, 0)) > 2
+       );
 
 -- (Bread re-scoring deferred to step 7 — full re-score pass)
 
@@ -180,6 +258,14 @@ UPDATE products
 SET    category = 'Frozen & Prepared'
 WHERE  category = 'Żabka'
   AND  is_deprecated = false;
+
+-- 5b2. Backfill deprecated_reason for Żabka products that were deprecated
+-- by the reclassification migration but left without a reason.
+UPDATE products
+SET    deprecated_reason = 'Reclassified: Żabka category products moved to standard categories'
+WHERE  is_deprecated = true
+  AND  category = 'Żabka'
+  AND  (deprecated_reason IS NULL OR trim(deprecated_reason) = '');
 
 -- 5c. (F&P re-scoring deferred to step 7 — full re-score pass)
 
@@ -329,6 +415,69 @@ AND parent_company IS NULL;
 UPDATE public.brand_ref SET parent_company = 'Indofood', country_origin = 'ID'
 WHERE brand_name IN ('Indomie')
 AND parent_company IS NULL;
+
+-- ─── 6c. Normalize case-duplicate brands ──────────────────────────────────
+-- Pipeline data may introduce the same brand with different casing
+-- (e.g. "TOP" vs "Top", "Łosoś ustka" vs "Łosoś Ustka").
+-- Strategy:
+--   1. Pick the canonical casing (the variant with more active products).
+--   2. Deprecate products that would violate the UNIQUE(country,brand,product_name)
+--      constraint after brand rename (i.e. a deprecated product already exists
+--      with the canonical brand + same product_name + same country).
+--   3. Rename remaining minority-variant products to canonical brand.
+--   4. Delete orphan brand_ref entries (no products referencing them).
+
+-- Step 6c-i: Deprecate conflict rows before renaming
+-- A product cannot be renamed if a row with the new (country,brand,product_name)
+-- already exists (unique constraint covers ALL rows, including deprecated).
+WITH brand_pairs AS (
+  SELECT b1.brand_name AS minority, b2.brand_name AS canonical
+  FROM brand_ref b1
+  JOIN brand_ref b2
+    ON LOWER(b1.brand_name) = LOWER(b2.brand_name)
+   AND b1.brand_name <> b2.brand_name
+  WHERE (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
+      < (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+)
+UPDATE products p
+SET is_deprecated = true,
+    deprecated_reason = 'Duplicate: brand casing variant of existing product'
+FROM brand_pairs bp
+WHERE p.brand = bp.minority
+  AND p.is_deprecated IS NOT TRUE
+  AND EXISTS (
+    SELECT 1 FROM products p2
+    WHERE p2.country = p.country
+      AND p2.brand = bp.canonical
+      AND p2.product_name = p.product_name
+  );
+
+-- Step 6c-ii: Rename non-conflicting minority-variant products
+WITH brand_pairs AS (
+  SELECT b1.brand_name AS minority, b2.brand_name AS canonical
+  FROM brand_ref b1
+  JOIN brand_ref b2
+    ON LOWER(b1.brand_name) = LOWER(b2.brand_name)
+   AND b1.brand_name <> b2.brand_name
+  WHERE (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
+      < (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+)
+UPDATE products p
+SET brand = bp.canonical
+FROM brand_pairs bp
+WHERE p.brand = bp.minority
+  AND NOT EXISTS (
+    SELECT 1 FROM products p2
+    WHERE p2.country = p.country
+      AND p2.brand = bp.canonical
+      AND p2.product_name = p.product_name
+  );
+
+-- Step 6c-iii: Delete orphan brand_ref entries (no products reference them)
+DELETE FROM brand_ref br
+WHERE NOT EXISTS (
+  SELECT 1 FROM products p WHERE p.brand = br.brand_name
+);
 
 -- ─── 7. Final re-scoring pass ─────────────────────────────────────────────
 -- Earlier steps deprecate products, fix nutrition data, reclassify Żabka,
