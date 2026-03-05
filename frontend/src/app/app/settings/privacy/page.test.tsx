@@ -26,23 +26,10 @@ vi.mock("@/lib/supabase/client", () => ({
 const mockExportUserData = vi.fn();
 vi.mock("@/lib/api", () => ({
   exportUserData: (...args: unknown[]) => mockExportUserData(...args),
-  savePushSubscription: vi.fn().mockResolvedValue({ ok: true }),
-  deletePushSubscription: vi.fn().mockResolvedValue({ ok: true }),
 }));
 
 vi.mock("@/lib/toast", () => ({
   showToast: vi.fn(),
-}));
-
-// Push manager — default to unsupported (push tests skipped in jsdom)
-vi.mock("@/lib/push-manager", () => ({
-  isPushSupported: () => false,
-  getNotificationPermission: () => "default" as NotificationPermission,
-  requestNotificationPermission: vi.fn().mockResolvedValue("granted"),
-  subscribeToPush: vi.fn().mockResolvedValue(null),
-  unsubscribeFromPush: vi.fn().mockResolvedValue(undefined),
-  getCurrentPushSubscription: vi.fn().mockResolvedValue(null),
-  extractSubscriptionData: vi.fn().mockReturnValue(null),
 }));
 
 // Cache manager

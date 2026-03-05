@@ -95,6 +95,8 @@ export function setUserPreferences(
     p_strict_allergen?: boolean;
     p_strict_diet?: boolean;
     p_treat_may_contain_as_unsafe?: boolean;
+    p_notification_score_changes?: boolean;
+    p_notification_frequency?: string;
   },
 ): Promise<RpcResult<UserPreferences>> {
   return callRpc<UserPreferences>(

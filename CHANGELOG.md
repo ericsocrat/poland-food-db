@@ -35,6 +35,20 @@ Adheres to [Semantic Versioning](https://semver.org/).
   all 31 formula anchor ranges updated, view consistency check updated (10
   factors). Docs: SCORING_METHODOLOGY.md v3.3, copilot-instructions §14 (#608)
 
+### Added
+
+- Notification preferences settings page: push notification toggle (moved from
+  privacy page), score change alert toggle, notification frequency selector
+  (immediate / daily digest / weekly digest); new migration
+  `20260315001800_notification_preferences.sql` adds `notification_score_changes`
+  and `notification_frequency` columns to `user_preferences`; updated
+  `api_set_user_preferences` (9-param, backward-compatible) and
+  `api_get_user_preferences` to surface new fields;
+  `queue_score_change_notifications()` now respects user preferences with 5/24h
+  rate limit; `api_get_pending_notifications()` filters by frequency window;
+  QA push suite 14→17 checks; pgTAP plan 9→15; schema contracts plan 262→264;
+  15 Vitest tests for new page; i18n keys in en/pl/de (#617)
+
 ### Changed
 
 - Update all scoring QA suites for v3.3 scoring formula with nutrient density

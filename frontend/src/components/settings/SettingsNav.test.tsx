@@ -29,10 +29,10 @@ vi.mock("next/link", () => ({
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 describe("SettingsNav", () => {
-  it("renders 4 navigation tabs", () => {
+  it("renders 5 navigation tabs", () => {
     render(<SettingsNav />);
     const links = screen.getAllByRole("link");
-    expect(links).toHaveLength(4);
+    expect(links).toHaveLength(5);
   });
 
   it("links to correct settings routes", () => {
@@ -41,6 +41,7 @@ describe("SettingsNav", () => {
     const hrefs = links.map((l) => l.getAttribute("href"));
     expect(hrefs).toContain("/app/settings");
     expect(hrefs).toContain("/app/settings/nutrition");
+    expect(hrefs).toContain("/app/settings/notifications");
     expect(hrefs).toContain("/app/settings/privacy");
     expect(hrefs).toContain("/app/settings/account");
   });
