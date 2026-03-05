@@ -1,32 +1,33 @@
 "use client";
 
-import Link from "next/link";
-import { Header } from "@/components/layout/Header";
 import { SkipLink } from "@/components/common/SkipLink";
 import { Footer } from "@/components/layout/Footer";
-import { LearnSidebar } from "@/components/learn/LearnSidebar";
+import { Header } from "@/components/layout/Header";
 import { Disclaimer } from "@/components/learn/Disclaimer";
+import { LearnSidebar } from "@/components/learn/LearnSidebar";
 import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
 import { BarChart3 } from "lucide-react";
+import Link from "next/link";
 
 // ─── TryVit Score topic page ─────────────────────────────────────────
 
+const penaltyFactors = [
+  { key: "factorSatFat", weight: 17 },
+  { key: "factorSugars", weight: 17 },
+  { key: "factorSalt", weight: 17 },
+  { key: "factorCalories", weight: 10 },
+  { key: "factorTransFat", weight: 11 },
+  { key: "factorAdditives", weight: 7 },
+  { key: "factorPrepMethod", weight: 8 },
+  { key: "factorControversies", weight: 8 },
+  { key: "factorConcern", weight: 5 },
+] as const;
+
+const bonusFactor = { key: "factorNutrientDensity", weight: 8 } as const;
+
 export default function TryVitScorePage() {
   const { t } = useTranslation();
-
-  const factors = [
-    "factorSatFat",
-    "factorSugars",
-    "factorSalt",
-    "factorCalories",
-    "factorTransFat",
-    "factorAdditives",
-    "factorPrepMethod",
-    "factorControversies",
-    "factorConcern",
-    "factorNutrientDensity",
-  ] as const;
 
   const bands = ["band1", "band2", "band3", "band4", "band5"] as const;
   const bandColors = [
@@ -77,16 +78,57 @@ export default function TryVitScorePage() {
 
             <h2>{t("learn.tryvitScore.factorsTitle")}</h2>
             <div className="not-prose space-y-2">
-              {factors.map((key) => (
+              {penaltyFactors.map(({ key, weight }) => (
                 <div
                   key={key}
                   className="rounded-lg border bg-surface-subtle p-3"
                 >
-                  <p className="text-sm text-foreground">
-                    {t(`learn.tryvitScore.${key}`)}
-                  </p>
+                  <div className="flex items-start gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm text-foreground">
+                        {t(`learn.tryvitScore.${key}`)}
+                      </p>
+                    </div>
+                    <div className="flex w-28 shrink-0 items-center gap-2">
+                      <div className="relative h-2 flex-1 rounded-full bg-gray-200 dark:bg-gray-700">
+                        <div
+                          className="absolute left-0 top-0 h-full rounded-full bg-brand"
+                          style={{ width: `${(weight / 17) * 100}%` }}
+                        />
+                      </div>
+                      <span className="w-8 text-right text-xs font-medium text-muted">
+                        {weight}%
+                      </span>
+                    </div>
+                  </div>
                 </div>
               ))}
+            </div>
+
+            <h3>{t("learn.tryvitScore.bonusTitle")}</h3>
+            <div className="not-prose">
+              <div className="rounded-lg border border-green-200 bg-green-50 p-3 dark:border-green-800 dark:bg-green-950/20">
+                <div className="flex items-start gap-3">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm text-foreground">
+                      {t(`learn.tryvitScore.${bonusFactor.key}`)}
+                    </p>
+                  </div>
+                  <div className="flex w-28 shrink-0 items-center gap-2">
+                    <div className="relative h-2 flex-1 rounded-full bg-gray-200 dark:bg-gray-700">
+                      <div
+                        className="absolute left-0 top-0 h-full rounded-full bg-green-500"
+                        style={{
+                          width: `${(bonusFactor.weight / 17) * 100}%`,
+                        }}
+                      />
+                    </div>
+                    <span className="w-8 text-right text-xs font-medium text-green-700 dark:text-green-400">
+                      −{bonusFactor.weight}%
+                    </span>
+                  </div>
+                </div>
+              </div>
             </div>
 
             <h2>{t("learn.tryvitScore.bandsTitle")}</h2>

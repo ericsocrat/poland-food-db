@@ -108,6 +108,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Fix a11y color contrast ratio on scoring learn page: change `text-green-600`
+  to `text-green-700` for nutrient density bonus weight display. Previous ratio
+  3.14:1 failed WCAG 2.1 AA minimum 4.5:1 for small text (12px); new ratio
+  ~4.79:1 passes. Fixes Playwright smoke-a11y test failure (#589)
+
 - Fix QA data consistency check 1 (case-insensitive duplicate detection): add
   country-scoping to the JOIN condition so cross-country products with the same
   brand+name (e.g. Pepsi PL vs Pepsi DE) are not flagged as duplicates (#593)

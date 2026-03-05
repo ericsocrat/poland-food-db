@@ -1190,11 +1190,12 @@
     },
     "tryvitScore": {
       "title": "TryVit Score",
-      "description": "How the 9-factor TryVit Score works and what the bands mean.",
-      "summary": "The TryVit Score (1–100) is our primary composite metric. Higher is better. It evaluates 9 factors: saturated fat, sugars, salt, calories, trans fat, additives, preparation method, controversies, and ingredient concern.",
+      "description": "How the TryVit Score works — 9 penalty factors, a nutrient density bonus, and what the bands mean.",
+      "summary": "The TryVit Score (1–100) is our primary composite metric. Higher is better. It penalizes 9 factors (saturated fat, sugars, salt, calories, trans fat, additives, preparation method, controversies, ingredient concern) and rewards protein & fibre content with a nutrient density bonus.",
       "whatIsTitle": "What is the TryVit Score?",
-      "whatIsText": "The TryVit Score answers a simple question: how well does this product perform nutritionally? The scale runs from 1 (very high concern) to 100 (excellent). A score of 70 means the product is better than one scoring 30. We combine nine evidence-based factors into a single number so you can compare products at a glance.",
-      "factorsTitle": "The 9 factors",
+      "whatIsText": "The TryVit Score answers a simple question: how well does this product perform nutritionally? The scale runs from 1 (very high concern) to 100 (excellent). A score of 70 means the product is better than one scoring 30. We combine nine evidence-based penalty factors and a nutrient density bonus into a single number so you can compare products at a glance.",
+      "factorsTitle": "The 9 penalty factors",
+      "bonusTitle": "Nutrient density bonus",
       "factorSatFat": "Saturated fat (weight: 17%) — ceiling: 10g per 100g. Based on EFSA daily reference values.",
       "factorSugars": "Sugars (weight: 17%) — ceiling: 27g per 100g. Based on WHO guideline for free sugars.",
       "factorSalt": "Salt (weight: 17%) — ceiling: 3g per 100g. Based on WHO 2023 sodium guideline.",
@@ -1204,6 +1205,7 @@
       "factorPrepMethod": "Preparation method (weight: 8%) — deep-fried scores highest due to acrylamide/PAH/HCA formation.",
       "factorControversies": "Controversies (weight: 8%) — captures product-level issues like palm oil or banned substances.",
       "factorConcern": "Ingredient concern (weight: 5%) — based on EFSA additive risk tiers (concern levels 0–3).",
+      "factorNutrientDensity": "Protein & fibre bonus (weight: −8%) — products with higher protein and fibre content receive a score boost, rewarding nutritional value beyond penalizing harmful components.",
       "bandsTitle": "Score bands",
       "band1": "80–100: Excellent — plain oats, raw vegetables",
       "band2": "60–79: Good — whole-grain bread, basic yogurt",
@@ -1211,9 +1213,9 @@
       "band4": "20–39: Poor — fried chips, sugary drinks",
       "band5": "1–19: Bad — deep-fried + high-salt + additives",
       "formulaTitle": "How it's calculated",
-      "formulaText": "Each factor is normalized to 0–100 (using scientifically-justified ceilings), multiplied by its weight, and summed. The result is clamped to 1–100. When data is missing, that factor defaults to 0 and the data completeness score is reduced.",
+      "formulaText": "Each penalty factor is normalized to 0–100 (using scientifically-justified ceilings), multiplied by its weight, and summed. A nutrient density bonus (up to 8 points) is then subtracted for products rich in protein and fibre. The result is clamped to 1–100. When data is missing, that factor defaults to 0 and the data completeness score is reduced.",
       "whyDifferentTitle": "Why not just use Nutri-Score?",
-      "whyDifferentText": "Nutri-Score ignores processing degree, food additives, preparation methods, and controversies. Our TryVit Score fills those gaps by incorporating all nine factors into a single number backed by WHO, EFSA, and EU regulatory thresholds."
+      "whyDifferentText": "Nutri-Score ignores processing degree, food additives, preparation methods, and controversies. Our TryVit Score fills those gaps by incorporating all nine penalty factors and a nutrient density bonus into a single number backed by WHO, EFSA, and EU regulatory thresholds."
     },
     "additives": {
       "title": "Understanding Additives",
