@@ -25,6 +25,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
   all 31 formula anchor ranges updated, view consistency check updated (10
   factors). Docs: SCORING_METHODOLOGY.md v3.3, copilot-instructions §14 (#608)
 
+### Data
+
+- Scale all 20 PL categories to maximum OFF API capacity: 1,198 active PL
+  products (up from 1,027), 1,450 total active across PL + DE; regenerated
+  pipeline SQL for all 20 categories with `--max-products 95`; added
+  post-pipeline fixup steps for calorie back-calculation validation, zero-calorie
+  macro correction, brand casing normalization, orphan junction cleanup, and
+  Żabka reclassification reason backfill (#593)
+
 ### Documentation
 
 - Overhaul scoring docs for TryVit Score consumer display layer: add §2.8
@@ -36,6 +45,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
   with consumer display note and dual-column band table (#591)
 
 ### Fixed
+
+- Fix QA data consistency check 1 (case-insensitive duplicate detection): add
+  country-scoping to the JOIN condition so cross-country products with the same
+  brand+name (e.g. Pepsi PL vs Pepsi DE) are not flagged as duplicates (#593)
 
 - Remove 11 ESLint `@typescript-eslint/no-non-null-assertion` warnings across 8
   frontend files: replace `!` assertions with optional chaining (`?.`), nullish

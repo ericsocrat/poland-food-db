@@ -1,79 +1,73 @@
 -- PIPELINE (Snacks): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-02-09
+-- Generated: 2026-03-04
 
 -- 0a. DEPRECATE old products in this category & release their EANs
 update products
-set is_deprecated = true, ean = null
+set is_deprecated = true, deprecated_reason = 'Replaced by pipeline refresh', ean = null
 where country = 'PL'
   and category = 'Snacks'
   and is_deprecated is not true;
 
 -- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
 update products set ean = null
-where ean in ('5900125008750', '5905186300003', '5901888021314', '5902180470336', '5902172001524', '5900749610988', '5900449006890', '5900259115393', '5902973790894', '5903548002411', '5900049041017', '5903548002206', '5907799960902', '5900617013064', '5900320005950', '5902176738938', '5900617015723', '5900672001563', '5907029010797', '5900617035905', '5900320001136', '5905187001237', '5900320001334', '5900320008463', '5906747309893', '5900617034809', '5900320003420', '5903548002022', '5900320003536', '5900928004676', '59096009', '5900617044341', '5905617002612', '5905868420999', '5900320011036', '5900320007794', '5903246562552', '5907554476143', '5905299001194', '8595229924432', '8584004042089', '4820162520316', '4056489814092', '5907554479731', '8595229924449', '5201360521210', '8595229923398', '5201049132560', '4770299395595', '5201360677351', '3800205871255', '4056489784050', '20720285', '8710449944439', '7622202009051', '7622300784751', '7300400115889')
+where ean in ('5905617000854', '5900259115393', '5902180470336', '5902172001524', '5904569550394', '5900049041017', '5902973790894', '5900749610988', '5900449006890', '5900320003260', '5906747308582', '5903548013110', '5900617013064', '5900320011036', '5900320001136', '5900617035905', '5900320008463', '5900749610926', '5900617047304', '5900320001334', '5905187001237', '5907029001658', '5905186302410', '5905186302106', '5904358563994', '5900320003420', '5905187001213', '5907029010797', '5900320003536', '5900928004676', '5903246562552', '5904607004810', '5906747309893', '4056489814092', '8595229924432', '5900320008470', '5906747308490', '5900617047281', '8584004042089', '5900749115049', '5201360521210', '4056489827498', '4018077632006', '4014500513485', '8595229926573', '3800205871255', '5201360677351', '4056489784050', '8690526026220', '3258561400242', '8719979201470')
   and ean is not null;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('PL', 'Pano', 'Grocery', 'Snacks', 'Wafle Kukurydziane z Kaszą jaglaną i Pieprzem', 'baked', 'Biedronka', 'none', '5900125008750'),
-  ('PL', 'Go Active', 'Grocery', 'Snacks', 'Baton wysokobiałkowy Peanut Butter', 'not-applicable', 'Biedronka', 'none', '5905186300003'),
-  ('PL', 'Go Active', 'Grocery', 'Snacks', 'Baton białkowy malinowy', 'not-applicable', 'Biedronka', 'none', '5901888021314'),
-  ('PL', 'Sonko', 'Grocery', 'Snacks', 'Wafle ryżowe w czekoladzie mlecznej', 'baked', null, 'none', '5902180470336'),
-  ('PL', 'Kupiec', 'Grocery', 'Snacks', 'Wafle ryżowe naturalne', 'baked', null, 'none', '5902172001524'),
+  ('PL', 'Top', 'Grocery', 'Snacks', 'Popcorn o smaku maślanym', 'not-applicable', 'Biedronka', 'none', '5905617000854'),
+  ('PL', 'Lay''s', 'Grocery', 'Snacks', 'Oven Baked Krakersy wielozbożowe', 'baked', null, 'none', '5900259115393'),
+  ('PL', 'Sonko', 'Grocery', 'Snacks', 'Wafle ryżowe w czekoladzie mlecznej', 'not-applicable', null, 'none', '5902180470336'),
+  ('PL', 'Kupiec', 'Grocery', 'Snacks', 'Wafle ryżowe naturalne', 'not-applicable', null, 'none', '5902172001524'),
+  ('PL', 'Zdrowidło', 'Grocery', 'Snacks', 'Chipsy Loopea''s O Smaku Śmietanki Z Cebulką', 'not-applicable', null, 'none', '5904569550394'),
+  ('PL', 'Lubella', 'Grocery', 'Snacks', 'Paluszki z solą', 'not-applicable', null, 'none', '5900049041017'),
+  ('PL', 'Pano', 'Grocery', 'Snacks', 'Wafle mini, zbożowe', 'not-applicable', null, 'none', '5902973790894'),
   ('PL', 'Bakalland', 'Grocery', 'Snacks', 'Ba! żurawina', 'not-applicable', null, 'none', '5900749610988'),
   ('PL', 'Vital Fresh', 'Grocery', 'Snacks', 'Surówka Colesław z białej kapusty', 'not-applicable', null, 'none', '5900449006890'),
-  ('PL', 'Lay''s', 'Grocery', 'Snacks', 'Oven Baked Krakersy wielozbożowe', 'baked', null, 'none', '5900259115393'),
-  ('PL', 'Pano', 'Grocery', 'Snacks', 'Wafle mini, zbożowe', 'baked', null, 'none', '5902973790894'),
-  ('PL', 'Dobra Kaloria', 'Grocery', 'Snacks', 'Mini batoniki z nerkowców à la tarta malinowa', 'not-applicable', null, 'none', '5903548002411'),
-  ('PL', 'Lubella', 'Grocery', 'Snacks', 'Paluszki z solą', 'baked', null, 'none', '5900049041017'),
-  ('PL', 'Dobra Kaloria', 'Grocery', 'Snacks', 'Wysokobiałkowy Baton Krem Orzechowy Z Nutą Karmelu', 'not-applicable', null, 'none', '5903548002206'),
-  ('PL', 'Brześć', 'Grocery', 'Snacks', 'Słomka ptysiowa', 'baked', null, 'none', '5907799960902'),
+  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Paluszki o smaku waniliowym.', 'not-applicable', 'Biedronka', 'none', '5900320003260'),
+  ('PL', 'Delicje', 'Grocery', 'Snacks', 'Szampariskie pomaranczowe', 'not-applicable', 'Carrefour', 'none', '5906747308582'),
+  ('PL', 'Vitanella', 'Grocery', 'Snacks', 'Superballs Kokos i kakao', 'not-applicable', 'Biedronka', 'none', '5903548013110'),
   ('PL', 'Go On', 'Grocery', 'Snacks', 'Sante Baton Proteinowy Go On Kakaowy', 'not-applicable', 'Lidl', 'none', '5900617013064'),
-  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Paluszki extra cienkie', 'baked', 'Żabka', 'none', '5900320005950'),
-  ('PL', 'Wafle Dzik', 'Grocery', 'Snacks', 'Kukurydziane - ser', 'not-applicable', 'Lidl', 'none', '5902176738938'),
-  ('PL', 'Sante', 'Grocery', 'Snacks', 'Crunchy Cranberry & Raspberry - Sante', 'not-applicable', 'Kaufland', 'none', '5900617015723'),
-  ('PL', 'Miami', 'Grocery', 'Snacks', 'Paleczki', 'baked', 'Biedronka', 'none', '5900672001563'),
-  ('PL', 'Aksam', 'Grocery', 'Snacks', 'Beskidzkie paluszki o smaku sera i cebulki', 'baked', null, 'none', '5907029010797'),
+  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Dobry chrup', 'not-applicable', null, 'none', '5900320011036'),
+  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Salted cracker', 'not-applicable', null, 'none', '5900320001136'),
   ('PL', 'Go On Nutrition', 'Grocery', 'Snacks', 'Protein 33% Caramel', 'not-applicable', null, 'none', '5900617035905'),
-  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Salted cracker', 'baked', null, 'none', '5900320001136'),
+  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Krakersy mini', 'not-applicable', null, 'none', '5900320008463'),
+  ('PL', 'Bakalland', 'Grocery', 'Snacks', 'Barre chocolat ba', 'not-applicable', null, 'none', '5900749610926'),
+  ('PL', 'Go On', 'Grocery', 'Snacks', 'Go On Energy', 'not-applicable', null, 'none', '5900617047304'),
+  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Prezel', 'not-applicable', null, 'none', '5900320001334'),
   ('PL', 'Lorenz', 'Grocery', 'Snacks', 'Chrupki Curly', 'not-applicable', null, 'none', '5905187001237'),
-  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Prezel', 'baked', null, 'none', '5900320001334'),
-  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Krakersy mini', 'baked', null, 'none', '5900320008463'),
-  ('PL', 'San', 'Grocery', 'Snacks', 'San bieszczadzkie suchary', 'baked', null, 'none', '5906747309893'),
-  ('PL', 'Sante', 'Grocery', 'Snacks', 'Vitamin coconut bar', 'not-applicable', null, 'none', '5900617034809'),
-  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Junior Safari', 'baked', null, 'none', '5900320003420'),
-  ('PL', 'Dobra Kaloria', 'Grocery', 'Snacks', 'Kokos & Orzech', 'not-applicable', null, 'none', '5903548002022'),
-  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Drobne pieczywo o smaku waniliowym', 'baked', null, 'none', '5900320003536'),
-  ('PL', 'Top', 'Grocery', 'Snacks', 'Paluszki solone', 'baked', null, 'none', '5900928004676'),
-  ('PL', 'Baron', 'Grocery', 'Snacks', 'Protein BarMax Caramel', 'not-applicable', null, 'none', '59096009'),
-  ('PL', 'Go On', 'Grocery', 'Snacks', 'Keto Bar', 'not-applicable', null, 'none', '5900617044341'),
-  ('PL', 'Top', 'Grocery', 'Snacks', 'Popcorn solony', 'not-applicable', null, 'none', '5905617002612'),
-  ('PL', 'Oshee', 'Grocery', 'Snacks', 'Raspberry & Almond High Protein Bar PROMO', 'not-applicable', null, 'none', '5905868420999'),
-  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Dobry chrup', 'baked', null, 'none', '5900320011036'),
-  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Precelki chrupkie', 'baked', null, 'none', '5900320007794'),
+  ('PL', 'Beskidzkie', 'Grocery', 'Snacks', 'Beskidzkie paluchy z sezamem', 'not-applicable', null, 'none', '5907029001658'),
+  ('PL', 'Purella superfoods', 'Grocery', 'Snacks', 'Purella ciasteczko', 'not-applicable', null, 'none', '5905186302410'),
+  ('PL', 'Unknown', 'Grocery', 'Snacks', 'Vitanella raw', 'raw', 'Biedronka', 'none', '5905186302106'),
+  ('PL', 'Meltié Chocolatier', 'Grocery', 'Snacks', 'Dark Chocolate 64% Cocoa', 'not-applicable', null, 'none', '5904358563994'),
+  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Junior Safari', 'not-applicable', null, 'none', '5900320003420'),
+  ('PL', 'Lorenz', 'Grocery', 'Snacks', 'Monster munch', 'not-applicable', null, 'none', '5905187001213'),
+  ('PL', 'Aksam', 'Grocery', 'Snacks', 'Beskidzkie paluszki o smaku sera i cebulki', 'not-applicable', null, 'none', '5907029010797'),
+  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Drobne pieczywo o smaku waniliowym', 'not-applicable', null, 'none', '5900320003536'),
+  ('PL', 'TOP', 'Grocery', 'Snacks', 'Paluszki solone', 'not-applicable', null, 'none', '5900928004676'),
   ('PL', 'Be raw', 'Grocery', 'Snacks', 'Energy Raspberry', 'not-applicable', null, 'none', '5903246562552'),
-  ('PL', 'Go Active', 'Grocery', 'Snacks', 'Baton Proteinowy Smak Waniliowy 50%', 'not-applicable', null, 'none', '5907554476143'),
-  ('PL', 'As Babuni', 'Grocery', 'Snacks', 'Chrup Asy Wafle Paprykowe', 'baked', null, 'none', '5905299001194'),
+  ('PL', 'Top', 'Grocery', 'Snacks', 'Paluszki i precelki solone', 'not-applicable', null, 'none', '5904607004810'),
+  ('PL', 'San', 'Grocery', 'Snacks', 'San bieszczadzkie suchary', 'not-applicable', null, 'none', '5906747309893'),
+  ('PL', 'Tastino', 'Grocery', 'Snacks', 'Małe Wafle Kukurydziane O Smaku Pizzy', 'not-applicable', null, 'none', '4056489814092'),
   ('PL', 'Go Active', 'Grocery', 'Snacks', 'Baton wysokobiałkowy z pistacjami', 'not-applicable', null, 'none', '8595229924432'),
-  ('PL', 'Góralki', 'Grocery', 'Snacks', 'Góralki mleczne', 'baked', null, 'none', '8584004042089'),
-  ('PL', 'Bob Snail', 'Grocery', 'Snacks', 'Jabłkowo-truskawkowe przekąski', 'not-applicable', null, 'none', '4820162520316'),
-  ('PL', 'Tastino', 'Grocery', 'Snacks', 'Małe Wafle Kukurydziane O Smaku Pizzy', 'baked', null, 'none', '4056489814092'),
-  ('PL', 'Unknown', 'Grocery', 'Snacks', 'Protein vanillia raspberry', 'not-applicable', null, 'none', '5907554479731'),
-  ('PL', 'Go Active', 'Grocery', 'Snacks', 'Baton wysokobiałkowy z migdałami i kokosem', 'not-applicable', null, 'none', '8595229924449'),
-  ('PL', '7 Days', 'Grocery', 'Snacks', 'Croissant with Cocoa Filling', 'baked', 'Kaufland', 'palm oil', '5201360521210'),
-  ('PL', 'Vitanella', 'Grocery', 'Snacks', 'Barony', 'not-applicable', 'Biedronka', 'none', '8595229923398'),
-  ('PL', 'Unknown', 'Grocery', 'Snacks', 'Baton Vitanella z migdałami, żurawiną i orzeszkami ziemnymi', 'not-applicable', null, 'none', '5201049132560'),
-  ('PL', 'Tutti', 'Grocery', 'Snacks', 'Batonik twarogowy Tutti w polewie czekoladowej', 'not-applicable', 'Biedronka', 'none', '4770299395595'),
-  ('PL', '7 Days', 'Grocery', 'Snacks', '7 Days', 'baked', null, 'palm oil', '5201360677351'),
-  ('PL', 'Maretti', 'Grocery', 'Snacks', 'Bruschette Chips Pizza Flavour', 'baked', 'Penny', 'none', '3800205871255'),
-  ('PL', 'Tastino', 'Grocery', 'Snacks', 'Wafle Kukurydziane', 'baked', null, 'none', '4056489784050'),
-  ('PL', 'Pilos', 'Grocery', 'Snacks', 'Barretta al quark gusto Nocciola', 'not-applicable', null, 'none', '20720285'),
-  ('PL', 'Aviko', 'Grocery', 'Snacks', 'Frytki karbowane Zig Zag', 'not-applicable', null, 'none', '8710449944439'),
-  ('PL', '7 Days', 'Grocery', 'Snacks', 'Family', 'baked', null, 'none', '7622202009051'),
-  ('PL', 'Milka', 'Grocery', 'Snacks', 'Cake & Chock', 'not-applicable', null, 'none', '7622300784751'),
-  ('PL', 'Wasa', 'Grocery', 'Snacks', 'Lekkie 7 Ziaren', 'baked', null, 'none', '7300400115889')
+  ('PL', 'Lajkonik', 'Grocery', 'Snacks', 'Krakersy mini ser i cebula', 'not-applicable', null, 'none', '5900320008470'),
+  ('PL', 'Delicje', 'Grocery', 'Snacks', 'Delicje malinowe', 'not-applicable', null, 'none', '5906747308490'),
+  ('PL', 'Go On', 'Grocery', 'Snacks', 'Vitamin Coconut & Milk Chocolate', 'not-applicable', null, 'none', '5900617047281'),
+  ('PL', 'Góralki', 'Grocery', 'Snacks', 'Góralki mleczne', 'not-applicable', null, 'none', '8584004042089'),
+  ('PL', 'Unknown', 'Grocery', 'Snacks', 'Popcorn solony', 'not-applicable', null, 'palm oil', '5900749115049'),
+  ('PL', '7 Days', 'Grocery', 'Snacks', 'Croissant with Cocoa Filling', 'not-applicable', 'Kaufland', 'palm oil', '5201360521210'),
+  ('PL', 'Snack Day', 'Grocery', 'Snacks', 'Popcorn', 'not-applicable', 'Lidl', 'none', '4056489827498'),
+  ('PL', 'Lorenz', 'Grocery', 'Snacks', 'Monster Munch Crispy Potato-Snack Original', 'not-applicable', 'Biedronka', 'palm oil', '4018077632006'),
+  ('PL', 'Zott', 'Grocery', 'Snacks', 'Monte Snack', 'not-applicable', 'Biedronka', 'none', '4014500513485'),
+  ('PL', 'Emco', 'Grocery', 'Snacks', 'Vitanella Bars', 'not-applicable', 'Biedronka', 'none', '8595229926573'),
+  ('PL', 'Maretti', 'Grocery', 'Snacks', 'Bruschette Chips Pizza Flavour', 'not-applicable', 'Penny', 'none', '3800205871255'),
+  ('PL', '7days', 'Grocery', 'Snacks', '7days', 'not-applicable', null, 'palm oil', '5201360677351'),
+  ('PL', 'Tastino', 'Grocery', 'Snacks', 'Wafle Kukurydziane', 'not-applicable', null, 'none', '4056489784050'),
+  ('PL', 'Eti', 'Grocery', 'Snacks', 'Dare with MILK CHOCOLATE', 'not-applicable', null, 'none', '8690526026220'),
+  ('PL', 'Belle France', 'Grocery', 'Snacks', 'Brioche Tressée', 'not-applicable', null, 'none', '3258561400242'),
+  ('PL', 'Happy Creations', 'Grocery', 'Snacks', 'Cracker Mix Classic', 'not-applicable', null, 'none', '8719979201470')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -88,4 +82,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Snacks'
   and is_deprecated is not true
-  and product_name not in ('Wafle Kukurydziane z Kaszą jaglaną i Pieprzem', 'Baton wysokobiałkowy Peanut Butter', 'Baton białkowy malinowy', 'Wafle ryżowe w czekoladzie mlecznej', 'Wafle ryżowe naturalne', 'Ba! żurawina', 'Surówka Colesław z białej kapusty', 'Oven Baked Krakersy wielozbożowe', 'Wafle mini, zbożowe', 'Mini batoniki z nerkowców à la tarta malinowa', 'Paluszki z solą', 'Wysokobiałkowy Baton Krem Orzechowy Z Nutą Karmelu', 'Słomka ptysiowa', 'Sante Baton Proteinowy Go On Kakaowy', 'Paluszki extra cienkie', 'Kukurydziane - ser', 'Crunchy Cranberry & Raspberry - Sante', 'Paleczki', 'Beskidzkie paluszki o smaku sera i cebulki', 'Protein 33% Caramel', 'Salted cracker', 'Chrupki Curly', 'prezel', 'Krakersy mini', 'San bieszczadzkie suchary', 'Vitamin coconut bar', 'Junior Safari', 'Kokos & Orzech', 'Drobne pieczywo o smaku waniliowym', 'Paluszki solone', 'Protein BarMax Caramel', 'Keto Bar', 'popcorn solony', 'Raspberry & Almond High Protein Bar PROMO', 'dobry chrup', 'Precelki chrupkie', 'Energy Raspberry', 'Baton Proteinowy Smak Waniliowy 50%', 'Chrup Asy Wafle Paprykowe', 'Baton wysokobiałkowy z pistacjami', 'Góralki mleczne', 'Jabłkowo-truskawkowe przekąski', 'Małe Wafle Kukurydziane O Smaku Pizzy', 'Protein vanillia raspberry', 'Baton wysokobiałkowy z migdałami i kokosem', 'Croissant with Cocoa Filling', 'Barony', 'Baton Vitanella z migdałami, żurawiną i orzeszkami ziemnymi', 'Batonik twarogowy Tutti w polewie czekoladowej', '7 Days', 'Bruschette Chips Pizza Flavour', 'Wafle Kukurydziane', 'Barretta al quark gusto Nocciola', 'Frytki karbowane Zig Zag', 'family', 'Cake & Chock', 'Lekkie 7 Ziaren');
+  and product_name not in ('Popcorn o smaku maślanym', 'Oven Baked Krakersy wielozbożowe', 'Wafle ryżowe w czekoladzie mlecznej', 'Wafle ryżowe naturalne', 'Chipsy Loopea''s O Smaku Śmietanki Z Cebulką', 'Paluszki z solą', 'Wafle mini, zbożowe', 'Ba! żurawina', 'Surówka Colesław z białej kapusty', 'Paluszki o smaku waniliowym.', 'Szampariskie pomaranczowe', 'Superballs Kokos i kakao', 'Sante Baton Proteinowy Go On Kakaowy', 'Dobry chrup', 'Salted cracker', 'Protein 33% Caramel', 'Krakersy mini', 'Barre chocolat ba', 'Go On Energy', 'Prezel', 'Chrupki Curly', 'Beskidzkie paluchy z sezamem', 'Purella ciasteczko', 'Vitanella raw', 'Dark Chocolate 64% Cocoa', 'Junior Safari', 'Monster munch', 'Beskidzkie paluszki o smaku sera i cebulki', 'Drobne pieczywo o smaku waniliowym', 'Paluszki solone', 'Energy Raspberry', 'Paluszki i precelki solone', 'San bieszczadzkie suchary', 'Małe Wafle Kukurydziane O Smaku Pizzy', 'Baton wysokobiałkowy z pistacjami', 'Krakersy mini ser i cebula', 'Delicje malinowe', 'Vitamin Coconut & Milk Chocolate', 'Góralki mleczne', 'Popcorn solony', 'Croissant with Cocoa Filling', 'Popcorn', 'Monster Munch Crispy Potato-Snack Original', 'Monte Snack', 'Vitanella Bars', 'Bruschette Chips Pizza Flavour', '7days', 'Wafle Kukurydziane', 'Dare with MILK CHOCOLATE', 'Brioche Tressée', 'Cracker Mix Classic');
