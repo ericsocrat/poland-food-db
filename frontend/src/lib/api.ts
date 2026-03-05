@@ -10,6 +10,7 @@ import type {
     AchievementsResponse,
     AddToListResponse,
     AlternativesResponse,
+    AlternativesV2Response,
     AnalyticsEventName,
     AutocompleteResponse,
     AvoidProductIdsResponse,
@@ -320,6 +321,35 @@ export function getBetterAlternatives(
     p_product_id: productId,
     ...params,
   });
+}
+
+// ─── Better Alternatives v2 ─────────────────────────────────────────────────
+
+export function getBetterAlternativesV2(
+  supabase: SupabaseClient,
+  productId: number,
+  params?: {
+    p_same_category?: boolean;
+    p_cross_category?: boolean;
+    p_limit?: number;
+    p_diet_preference?: string;
+    p_avoid_allergens?: string[];
+    p_strict_diet?: boolean;
+    p_strict_allergen?: boolean;
+    p_treat_may_contain?: boolean;
+    p_health_profile_id?: string;
+    p_prefer_no_palm_oil?: boolean;
+    p_max_concern_tier?: number;
+  },
+): Promise<RpcResult<AlternativesV2Response>> {
+  return callRpc<AlternativesV2Response>(
+    supabase,
+    "api_better_alternatives_v2",
+    {
+      p_product_id: productId,
+      ...params,
+    },
+  );
 }
 
 // ─── Score Explanation ──────────────────────────────────────────────────────

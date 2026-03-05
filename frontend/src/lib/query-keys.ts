@@ -42,6 +42,10 @@ export const queryKeys = {
   /** Better alternatives for a product */
   alternatives: (productId: number) => ["alternatives", productId] as const,
 
+  /** Enhanced better alternatives v2 (cross-category, swap savings) */
+  alternativesV2: (productId: number) =>
+    ["alternatives-v2", productId] as const,
+
   /** Score explanation for a product */
   scoreExplanation: (productId: number) =>
     ["score-explanation", productId] as const,
@@ -198,6 +202,9 @@ export const staleTimes = {
 
   /** Alternatives — 10 min */
   alternatives: 10 * 60 * 1000,
+
+  /** Enhanced alternatives v2 — 10 min */
+  alternativesV2: 10 * 60 * 1000,
 
   /** Score explanation — 10 min */
   scoreExplanation: 10 * 60 * 1000,

@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(265);
+SELECT plan(267);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -102,6 +102,9 @@ SELECT has_function('public', 'api_record_scan',           'function api_record_
 SELECT has_function('public', 'api_product_detail_by_ean', 'function api_product_detail_by_ean exists');
 SELECT has_function('public', 'api_product_detail',        'function api_product_detail exists');
 SELECT has_function('public', 'api_better_alternatives',   'function api_better_alternatives exists');
+SELECT has_function('public', 'api_better_alternatives_v2','function api_better_alternatives_v2 exists');
+SELECT has_function('public', 'find_better_alternatives_v2','function find_better_alternatives_v2 exists');
+SELECT has_function('public', 'category_affinity',         'function category_affinity exists');
 SELECT has_function('public', 'api_score_explanation',     'function api_score_explanation exists');
 SELECT has_function('public', 'api_data_confidence',       'function api_data_confidence exists');
 SELECT has_function('public', 'api_category_overview',     'function api_category_overview exists');

@@ -477,6 +477,44 @@ export interface AlternativesResponse {
   alternatives_count: number;
 }
 
+// ─── Better Alternatives v2 ─────────────────────────────────────────────────
+
+export interface SwapSavings {
+  score_delta: number;
+  sat_fat_saved_g: number;
+  sugar_saved_g: number;
+  salt_saved_g: number;
+  calories_saved: number;
+  headline: string;
+}
+
+export interface AlternativeV2 extends Alternative {
+  is_cross_category: boolean;
+  palm_oil_free: boolean;
+  swap_savings: SwapSavings;
+}
+
+export interface AlternativesV2Response {
+  api_version: string;
+  source_product: {
+    product_id: number;
+    product_name: string;
+    brand: string;
+    category: string;
+    unhealthiness_score: number;
+    nutri_score: NutriGrade;
+    has_palm_oil: boolean;
+    saturated_fat_g: number;
+    sugars_g: number;
+    salt_g: number;
+    calories: number;
+  };
+  search_scope: string;
+  filters_applied: Record<string, unknown>;
+  alternatives: AlternativeV2[];
+  alternatives_count: number;
+}
+
 // ─── Score Explanation ──────────────────────────────────────────────────────
 
 export interface ScoreExplanation {

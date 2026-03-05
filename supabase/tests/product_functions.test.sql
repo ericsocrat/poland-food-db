@@ -8,7 +8,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(130);
+SELECT plan(137);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -51,25 +51,44 @@ INSERT INTO public.nutrition_facts (product_id, calories, total_fat_g, saturated
 VALUES (999996, '100', '2.0', '0.5', '15.0', '3.0', '10.0', '0.3')
 ON CONFLICT (product_id) DO NOTHING;
 
+-- v2 fixtures: cross-category test product
+INSERT INTO public.category_ref (category, slug, display_name, sort_order, is_active)
+VALUES ('pgtap-cross-cat', 'pgtap-cross-cat', 'pgTAP Cross Cat', 998, true)
+ON CONFLICT (category) DO UPDATE SET slug = 'pgtap-cross-cat';
+
+INSERT INTO public.products (
+  product_id, ean, product_name, brand, category, country,
+  unhealthiness_score, nutri_score_label, nova_classification,
+  high_salt_flag, high_sugar_flag, high_sat_fat_flag
+) VALUES (
+  999990, '5901234123465', 'pgTAP Cross Cat Alt', 'Cross Brand',
+  'pgtap-cross-cat', 'XX', 15, 'A', '1',
+  'NO', 'NO', 'NO'
+) ON CONFLICT (product_id) DO NOTHING;
+
+INSERT INTO public.nutrition_facts (product_id, calories, total_fat_g, saturated_fat_g, carbs_g, sugars_g, protein_g, salt_g)
+VALUES (999990, '80', '1.0', '0.3', '12.0', '2.0', '12.0', '0.1')
+ON CONFLICT (product_id) DO NOTHING;
+
 -- Second test country for cross-country linking
 INSERT INTO public.country_ref (country_code, country_name, is_active)
 VALUES ('YY', 'Test Country 2', true)
 ON CONFLICT (country_code) DO UPDATE SET nutri_score_official = false;
 
--- Cross-country product (same EAN as 999997, different country)
+-- Cross-country product (different EAN from cross-cat fixture, different country)
 INSERT INTO public.products (
   product_id, ean, product_name, brand, category, country,
   unhealthiness_score, nutri_score_label, nutri_score_source, nova_classification,
   high_salt_flag, high_sugar_flag, high_sat_fat_flag
 ) VALUES (
-  999990, '5901234123459', 'pgTAP Detail Product YY', 'Test Brand',
+  999989, '5901234123459', 'pgTAP Detail Product YY', 'Test Brand',
   'pgtap-prod-cat', 'YY', 45, 'C', 'off_computed', '3',
   'NO', 'NO', 'NO'
 ) ON CONFLICT (product_id) DO NOTHING;
 
 -- Product link between cross-country products
 INSERT INTO public.product_links (product_id_a, product_id_b, link_type, confidence, notes)
-VALUES (999990, 999997, 'identical', 'ean_match', 'pgTAP test: EAN match')
+VALUES (999989, 999997, 'identical', 'ean_match', 'pgTAP test: EAN match')
 ON CONFLICT (product_id_a, product_id_b) DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════════════════
@@ -312,6 +331,140 @@ SELECT ok(
 SELECT ok(
   (public.api_better_alternatives(999997)) ? 'search_scope',
   'alternatives response has search_scope'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 4b. api_better_alternatives_v2 — enhanced alternatives (#619)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Basic: v2 does not throw
+SELECT lives_ok(
+  $$SELECT public.api_better_alternatives_v2(999997)$$,
+  'api_better_alternatives_v2 does not throw'
+);
+
+-- Response keys
+SELECT ok(
+  (public.api_better_alternatives_v2(999997)) ? 'api_version',
+  'v2 response has api_version'
+);
+
+SELECT ok(
+  (public.api_better_alternatives_v2(999997)) ? 'alternatives',
+  'v2 response has alternatives array'
+);
+
+SELECT ok(
+  (public.api_better_alternatives_v2(999997)) ? 'source_product',
+  'v2 response has source_product'
+);
+
+SELECT ok(
+  (public.api_better_alternatives_v2(999997)) ? 'filters_applied',
+  'v2 response has filters_applied'
+);
+
+SELECT ok(
+  (public.api_better_alternatives_v2(999997)) ? 'search_scope',
+  'v2 response has search_scope'
+);
+
+-- api_version = 2.0
+SELECT is(
+  (public.api_better_alternatives_v2(999997))->>'api_version',
+  '2.0',
+  'v2 api_version is 2.0'
+);
+
+-- Same-category by default: search_scope = same_category
+SELECT is(
+  (public.api_better_alternatives_v2(999997))->>'search_scope',
+  'same_category',
+  'v2 default search scope is same_category'
+);
+
+-- Cross-category: search_scope = cross_category
+SELECT is(
+  (public.api_better_alternatives_v2(999997, p_cross_category => true))->>'search_scope',
+  'cross_category',
+  'v2 cross-category scope is cross_category'
+);
+
+-- Source product includes new v2 fields
+SELECT ok(
+  (public.api_better_alternatives_v2(999997))->'source_product' ? 'has_palm_oil',
+  'v2 source_product includes has_palm_oil'
+);
+
+SELECT ok(
+  (public.api_better_alternatives_v2(999997))->'source_product' ? 'sugars_g',
+  'v2 source_product includes sugars_g'
+);
+
+-- Swap savings present in alternatives
+SELECT ok(
+  COALESCE(
+    (SELECT (alt->>'swap_savings') IS NOT NULL
+     FROM jsonb_array_elements(
+       (public.api_better_alternatives_v2(999997))->'alternatives'
+     ) alt LIMIT 1),
+    true  -- no alternatives = vacuously true
+  ),
+  'v2 alternatives include swap_savings'
+);
+
+-- Swap savings contains score_delta
+SELECT ok(
+  COALESCE(
+    (SELECT alt->'swap_savings' ? 'score_delta'
+     FROM jsonb_array_elements(
+       (public.api_better_alternatives_v2(999997))->'alternatives'
+     ) alt LIMIT 1),
+    true
+  ),
+  'v2 swap_savings includes score_delta'
+);
+
+-- Swap savings contains headline
+SELECT ok(
+  COALESCE(
+    (SELECT alt->'swap_savings' ? 'headline'
+     FROM jsonb_array_elements(
+       (public.api_better_alternatives_v2(999997))->'alternatives'
+     ) alt LIMIT 1),
+    true
+  ),
+  'v2 swap_savings includes headline'
+);
+
+-- Alternatives include is_cross_category and palm_oil_free
+SELECT ok(
+  COALESCE(
+    (SELECT (alt->>'is_cross_category') IS NOT NULL
+     FROM jsonb_array_elements(
+       (public.api_better_alternatives_v2(999997))->'alternatives'
+     ) alt LIMIT 1),
+    true
+  ),
+  'v2 alternatives include is_cross_category'
+);
+
+SELECT ok(
+  COALESCE(
+    (SELECT (alt->>'palm_oil_free') IS NOT NULL
+     FROM jsonb_array_elements(
+       (public.api_better_alternatives_v2(999997))->'alternatives'
+     ) alt LIMIT 1),
+    true
+  ),
+  'v2 alternatives include palm_oil_free'
+);
+
+-- category_affinity helper: same category = 1.0
+SELECT is(
+  public.category_affinity('Chips', 'Chips')::text,
+  '1.00',
+  'category_affinity same category = 1.00'
 );
 
 -- ═══════════════════════════════════════════════════════════════════════════
