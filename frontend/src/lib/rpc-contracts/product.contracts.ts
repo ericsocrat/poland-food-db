@@ -148,6 +148,50 @@ export const BetterAlternativesContract = z
   })
   .passthrough();
 
+// ─── api_better_alternatives_v2 ─────────────────────────────────────────────
+
+const SwapSavingsSchema = z
+  .object({
+    score_delta: z.number(),
+    sat_fat_saved_g: z.number(),
+    sugar_saved_g: z.number(),
+    salt_saved_g: z.number(),
+    calories_saved: z.number(),
+    headline: z.string(),
+  })
+  .passthrough();
+
+const AlternativeV2Schema = AlternativeSchema.extend({
+  is_cross_category: z.boolean(),
+  palm_oil_free: z.boolean(),
+  swap_savings: SwapSavingsSchema,
+});
+
+export const BetterAlternativesV2Contract = z
+  .object({
+    api_version: z.string(),
+    source_product: z
+      .object({
+        product_id: z.number(),
+        product_name: z.string(),
+        brand: z.string(),
+        category: z.string(),
+        unhealthiness_score: z.number(),
+        nutri_score: NutriGradeSchema,
+        has_palm_oil: z.boolean(),
+        saturated_fat_g: z.number(),
+        sugars_g: z.number(),
+        salt_g: z.number(),
+        calories: z.number(),
+      })
+      .passthrough(),
+    search_scope: z.string(),
+    filters_applied: z.record(z.string(), z.unknown()),
+    alternatives: z.array(AlternativeV2Schema),
+    alternatives_count: z.number(),
+  })
+  .passthrough();
+
 // ─── api_score_explanation ──────────────────────────────────────────────────
 
 export const ScoreExplanationContract = z

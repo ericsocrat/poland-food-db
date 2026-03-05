@@ -13,6 +13,7 @@ import { describe, expect, it } from "vitest";
 
 import {
     BetterAlternativesContract,
+    BetterAlternativesV2Contract,
     CategoryListingContract,
     CategoryOverviewContract,
     CompareContract,
@@ -427,6 +428,91 @@ describe("Schema validation: valid data accepted", () => {
       alternatives_count: 0,
     };
     expect(BetterAlternativesContract.safeParse(data).success).toBe(true);
+  });
+
+  it("BetterAlternativesV2Contract accepts valid v2 alternatives", () => {
+    const data = {
+      api_version: "2.0",
+      source_product: {
+        product_id: 1,
+        product_name: "Test",
+        brand: "Brand",
+        category: "dairy",
+        unhealthiness_score: 50,
+        nutri_score: "C",
+        has_palm_oil: false,
+        saturated_fat_g: 3.5,
+        sugars_g: 10.0,
+        salt_g: 0.8,
+        calories: 200,
+      },
+      search_scope: "cross_category",
+      filters_applied: { cross_category: true },
+      alternatives: [
+        {
+          product_id: 2,
+          product_name: "Alt",
+          brand: "Alt Brand",
+          category: "snacks",
+          unhealthiness_score: 20,
+          score_improvement: 30,
+          nutri_score: "A",
+          similarity: 0.6,
+          shared_ingredients: 3,
+          is_cross_category: true,
+          palm_oil_free: true,
+          swap_savings: {
+            score_delta: -30,
+            sat_fat_saved_g: 2.5,
+            sugar_saved_g: 7.0,
+            salt_saved_g: 0.5,
+            calories_saved: 100,
+            headline: "30 points healthier — 70% less sugar",
+          },
+        },
+      ],
+      alternatives_count: 1,
+    };
+    expect(BetterAlternativesV2Contract.safeParse(data).success).toBe(true);
+  });
+
+  it("BetterAlternativesV2Contract rejects missing swap_savings", () => {
+    const data = {
+      api_version: "2.0",
+      source_product: {
+        product_id: 1,
+        product_name: "Test",
+        brand: "Brand",
+        category: "dairy",
+        unhealthiness_score: 50,
+        nutri_score: "C",
+        has_palm_oil: false,
+        saturated_fat_g: 3.5,
+        sugars_g: 10.0,
+        salt_g: 0.8,
+        calories: 200,
+      },
+      search_scope: "same_category",
+      filters_applied: {},
+      alternatives: [
+        {
+          product_id: 2,
+          product_name: "Alt",
+          brand: "Brand",
+          category: "dairy",
+          unhealthiness_score: 20,
+          score_improvement: 30,
+          nutri_score: "A",
+          similarity: 0.6,
+          shared_ingredients: 3,
+          is_cross_category: false,
+          palm_oil_free: true,
+          // swap_savings intentionally missing
+        },
+      ],
+      alternatives_count: 1,
+    };
+    expect(BetterAlternativesV2Contract.safeParse(data).success).toBe(false);
   });
 
   it("ScoreExplanationContract accepts valid explanation", () => {

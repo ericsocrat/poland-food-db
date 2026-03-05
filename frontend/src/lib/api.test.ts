@@ -1,6 +1,5 @@
 import {
     addToList,
-    // Recipes
     browseRecipes,
     createHealthProfile,
     createList,
@@ -12,7 +11,7 @@ import {
     getActiveHealthProfile,
     getAvoidProductIds,
     getBetterAlternatives,
-    // Category
+    getBetterAlternativesV2,
     getCategoryListing,
     getCategoryOverview,
     getCrossCountryLinks,
@@ -21,14 +20,11 @@ import {
     getFavoriteProductIds,
     getFilterOptions,
     getListItems,
-    // Lists
     getLists,
     getMySubmissions,
-    // Product Detail
     getProductDetail,
     getProductHealthWarnings,
     getProductListMembership,
-    // Comparisons
     getProductsForCompare,
     getRecentlyViewed,
     getRecipeDetail,
@@ -38,14 +34,10 @@ import {
     getScoreExplanation,
     getSharedComparison,
     getSharedList,
-    // User Preferences
     getUserPreferences,
-    // Health Profiles
     listHealthProfiles,
     lookupByEan,
-    // Dashboard
     recordProductView,
-    // Scanner & Submissions
     recordScan,
     removeFromList,
     reorderList,
@@ -53,12 +45,10 @@ import {
     saveComparison,
     saveSearch,
     searchAutocomplete,
-    // Search
     searchProducts,
     setUserPreferences,
     submitProduct,
     toggleShare,
-    // Analytics
     trackEvent,
     updateHealthProfile,
     updateList,
@@ -392,6 +382,31 @@ describe("Product Detail API functions", () => {
     mockCallRpc.mockResolvedValue({ ok: true, data: { alternatives: [] } });
     await getBetterAlternatives(fakeSupabase, 42);
     expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_better_alternatives", {
+      p_product_id: 42,
+    });
+  });
+
+  it("getBetterAlternativesV2 passes v2 params", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { alternatives: [] } });
+    await getBetterAlternativesV2(fakeSupabase, 42, {
+      p_cross_category: true,
+      p_limit: 3,
+      p_prefer_no_palm_oil: true,
+      p_max_concern_tier: 1,
+    });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_better_alternatives_v2", {
+      p_product_id: 42,
+      p_cross_category: true,
+      p_limit: 3,
+      p_prefer_no_palm_oil: true,
+      p_max_concern_tier: 1,
+    });
+  });
+
+  it("getBetterAlternativesV2 works without optional params", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { alternatives: [] } });
+    await getBetterAlternativesV2(fakeSupabase, 42);
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_better_alternatives_v2", {
       p_product_id: 42,
     });
   });
