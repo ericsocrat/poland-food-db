@@ -14,7 +14,12 @@ export {
 
 // ─── Product domain ─────────────────────────────────────────────────────────
 export {
-    BetterAlternativesContract, CrossCountryLinksContract, DataConfidenceContract, ProductDetailContract, ScoreExplanationContract
+    BetterAlternativesContract,
+    BetterAlternativesV2Contract,
+    CrossCountryLinksContract,
+    DataConfidenceContract,
+    ProductDetailContract,
+    ScoreExplanationContract,
 } from "./product.contracts";
 
 // ─── Search domain ──────────────────────────────────────────────────────────
