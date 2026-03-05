@@ -909,7 +909,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Ref. Integrity            | `QA__referential_integrity.sql`     |     18 | Yes       |
 | View Consistency          | `QA__view_consistency.sql`          |     13 | Yes       |
 | Naming Conventions        | `QA__naming_conventions.sql`        |     12 | Yes       |
-| Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     18 | Yes       |
+| Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     20 | Yes       |
 | Data Consistency          | `QA__data_consistency.sql`          |     26 | Yes       |
 | Allergen Integrity        | `QA__allergen_integrity.sql`        |     15 | Yes       |
 | Allergen Filtering        | `QA__allergen_filtering.sql`        |      6 | Yes       |

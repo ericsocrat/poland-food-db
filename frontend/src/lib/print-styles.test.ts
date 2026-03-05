@@ -1,9 +1,9 @@
 // ─── Print styles compliance tests ────────────────────────────────────────
 // Validates print CSS rules, no-print markers, and PrintButton component.
 
-import { readFileSync, existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 const stylesDir = join(__dirname, "../styles");
 const globalsCss = readFileSync(join(stylesDir, "globals.css"), "utf-8");
@@ -183,5 +183,13 @@ describe("Print i18n keys", () => {
     expect(pl.print).toBeDefined();
     expect(pl.print.button).toBeTruthy();
     expect(pl.print.printPage).toBeTruthy();
+  });
+
+  it("German has print keys", () => {
+    const dePath = join(__dirname, "../../messages/de.json");
+    const de = JSON.parse(readFileSync(dePath, "utf-8"));
+    expect(de.print).toBeDefined();
+    expect(de.print.button).toBeTruthy();
+    expect(de.print.printPage).toBeTruthy();
   });
 });

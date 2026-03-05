@@ -39,6 +39,26 @@ Adheres to [Semantic Versioning](https://semver.org/).
   QA push suite 14→17 checks; pgTAP plan 9→15; schema contracts plan 262→264;
   15 Vitest tests for new page; i18n keys in en/pl/de (#617)
 
+### Data
+
+- Scale all 20 PL categories to maximum OFF API capacity: 1,198 active PL
+  products (up from 1,027), 1,450 total active across PL + DE; regenerated
+  pipeline SQL for all 20 categories with `--max-products 95`; added
+  post-pipeline fixup steps for calorie back-calculation validation, zero-calorie
+  macro correction, brand casing normalization, orphan junction cleanup, and
+  Żabka reclassification reason backfill (#593)
+- Validate protein/fibre backfill readiness for v3.3 nutrient density bonus:
+  audit confirms 100% non-NULL coverage for both `protein_g` (1,671 products)
+  and `fibre_g` (1,671 products); pipeline SQL generator and OFF API client
+  already include both fields in extraction and upsert; `compute_data_completeness()`
+  already includes both in its 15-checkpoint system (#609)
+
+### Tests
+
+- Add 2 QA checks to nutrition ranges suite (18 → 20 checks, total 733 → 735):
+  protein_g NULL coverage < 5% threshold and fibre_g NULL coverage < 10%
+  threshold — required for v3.3 nutrient density bonus (#609)
+
 ### Documentation
 
 - Overhaul scoring docs for TryVit Score consumer display layer: add §2.8
@@ -50,6 +70,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
   with consumer display note and dual-column band table (#591)
 
 ### Fixed
+
+- Fix QA data consistency check 1 (case-insensitive duplicate detection): add
+  country-scoping to the JOIN condition so cross-country products with the same
+  brand+name (e.g. Pepsi PL vs Pepsi DE) are not flagged as duplicates (#593)
 
 - Remove 11 ESLint `@typescript-eslint/no-non-null-assertion` warnings across 8
   frontend files: replace `!` assertions with optional chaining (`?.`), nullish
