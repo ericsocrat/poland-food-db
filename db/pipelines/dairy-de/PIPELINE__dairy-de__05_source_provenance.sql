@@ -1,5 +1,5 @@
--- PIPELINE (Dairy): source provenance
--- Generated: 2026-02-25
+﻿-- PIPELINE (Dairy): source provenance
+-- Generated: 2026-03-04
 
 -- 1. Update source info on products
 UPDATE products p SET
@@ -19,14 +19,32 @@ FROM (
     ('Milsan', 'Grießpudding High-Protein - Zimt', 'https://world.openfoodfacts.org/product/4061458280334', '4061458280334'),
     ('Milram', 'Frühlingsquark Original', 'https://world.openfoodfacts.org/product/40466002', '40466002'),
     ('DMK', 'Müritzer original', 'https://world.openfoodfacts.org/product/4036300005311', '4036300005311'),
-    ('Milsani', 'Körniger Frischkäse - Magerstufe', 'https://world.openfoodfacts.org/product/4061458047708', '4061458047708'),
+    ('Milsani', 'Körniger Frischkäse mit fettarmem Joghurt - leicht', 'https://world.openfoodfacts.org/product/4061458047708', '4061458047708'),
     ('AF Deutschland', 'Hirtenkäse', 'https://world.openfoodfacts.org/product/4061458163903', '4061458163903'),
     ('Grünländer', 'Grünländer Mild & Nussig', 'https://world.openfoodfacts.org/product/4002468210454', '4002468210454'),
     ('Grünländer', 'Grünländer Leicht', 'https://world.openfoodfacts.org/product/4002468210478', '4002468210478'),
     ('Gazi', 'Grill- und Pfannenkäse', 'https://world.openfoodfacts.org/product/4002566010703', '4002566010703'),
     ('Bio', 'ALDI GUT BIO Milch Frische Bio-Milch 1.5 % Fett Aus der Kühlung 1l 1.15€ Fettarme Milch', 'https://world.openfoodfacts.org/product/4061459193312', '4061459193312'),
     ('Milsani', 'ALDI MILSANI Skyr Nach isländischer Art mit viel Eiweiß und wenig Fett Aus der Kühlung 1.49€ 500g Becher 1kg 2.98€', 'https://world.openfoodfacts.org/product/4061458229838', '4061458229838'),
-    ('Karwendel', 'Exquisa Balance Frischkäse', 'https://world.openfoodfacts.org/product/4019300005307', '4019300005307'),
+    ('Miree', 'Frischkäse Französische Kräuter', 'https://world.openfoodfacts.org/product/40193083', '40193083'),
+    ('Milram', 'Müritzer herzhaft', 'https://world.openfoodfacts.org/product/4036300005090', '4036300005090'),
+    ('Milbona', 'Frischkäse becher', 'https://world.openfoodfacts.org/product/4056489089797', '4056489089797'),
+    ('Gut Bio', 'ALDI BIO Frische Bio-Vollmilch 3,8 % Fett; kontrolliert ökologische Erzeugung Aus der Kühlung 1.35€ 1-L-Packung Liter 1.35€', 'https://world.openfoodfacts.org/product/4061462045509', '4061462045509'),
+    ('Exquisa', 'Körniger Frischkäse', 'https://world.openfoodfacts.org/product/4019300097005', '4019300097005'),
+    ('Milbona', 'Käse Aufschnitt Leicht', 'https://world.openfoodfacts.org/product/4056489091578', '4056489091578'),
+    ('Milram', 'Frühlingsquark Leicht', 'https://world.openfoodfacts.org/product/40466057', '40466057'),
+    ('Aldi', 'Bio-Bergbauernkäse nussig', 'https://world.openfoodfacts.org/product/4061459700275', '4061459700275'),
+    ('Milsani', 'Kräuterquark', 'https://world.openfoodfacts.org/product/4061458014793', '4061458014793'),
+    ('Milram', 'Sylter Käse, Milram', 'https://world.openfoodfacts.org/product/4036300005298', '4036300005298'),
+    ('Aldi', 'Grießpudding High-Protein - Pur/Classic', 'https://world.openfoodfacts.org/product/4061458278928', '4061458278928'),
+    ('Aldi', 'Fraîcho - Kräuter der Provence', 'https://world.openfoodfacts.org/product/4047247197830', '4047247197830'),
+    ('Milsani', 'Joghurt nach türkischer Art, 3,5 % Fett', 'https://world.openfoodfacts.org/product/4061458244299', '4061458244299'),
+    ('Hofburger', 'Butterkäse in Scheiben', 'https://world.openfoodfacts.org/product/4061458046947', '4061458046947'),
+    ('Milbona', 'Bio Hirtenkäse', 'https://world.openfoodfacts.org/product/4056489893547', '4056489893547'),
+    ('Exquisa', 'Exquisa Balance Frischkäse', 'https://world.openfoodfacts.org/product/4019300005307', '4019300005307'),
+    ('Milram', 'Körniger Frischkäse', 'https://world.openfoodfacts.org/product/4036300002648', '4036300002648'),
+    ('Aldi', 'ALDI LYTTOS Weißkäse in Salzlake', 'https://world.openfoodfacts.org/product/4061458044387', '4061458044387'),
+    ('Baackes & Heimes', 'Ziegenkäse in Scheiben - Natur', 'https://world.openfoodfacts.org/product/4061458047111', '4061458047111'),
     ('Weihenstephan', 'H-Milch 3,5%', 'https://world.openfoodfacts.org/product/4008452027602', '4008452027602'),
     ('Milbona', 'Skyr', 'https://world.openfoodfacts.org/product/4056489012788', '4056489012788'),
     ('Arla', 'Skyr Natur', 'https://world.openfoodfacts.org/product/4016241030603', '4016241030603'),
@@ -58,7 +76,33 @@ FROM (
     ('Bio', 'Bio-Feta', 'https://world.openfoodfacts.org/product/4061458005548', '4061458005548'),
     ('Ein gutes Stück Bayern', 'Haltbare Bio Vollmilch', 'https://world.openfoodfacts.org/product/4056489379850', '4056489379850'),
     ('Lyttos', 'Griechischer Joghurt', 'https://world.openfoodfacts.org/product/4061458244404', '4061458244404'),
-    ('AF Deutschland', 'Fettarme Milch (laktosefrei; 1,5% Fett)', 'https://world.openfoodfacts.org/product/4061462843723', '4061462843723')
+    ('AF Deutschland', 'Fettarme Milch (laktosefrei; 1,5% Fett)', 'https://world.openfoodfacts.org/product/4061462843723', '4061462843723'),
+    ('Lyttos', 'ALDI LYTTOS YOGRI nach griechischer Art 1kg 2.19€', 'https://world.openfoodfacts.org/product/4061459015072', '4061459015072'),
+    ('Müller', 'Joghurt mit der Ecke - Schoko Balls', 'https://world.openfoodfacts.org/product/40255729', '40255729'),
+    ('Milbona', 'Bio Organic Cremiger Joghurt Mild (3,8% Fett)', 'https://world.openfoodfacts.org/product/4056489018483', '4056489018483'),
+    ('Milsani', 'Gouda jung in Scheiben', 'https://world.openfoodfacts.org/product/4061462314568', '4061462314568'),
+    ('Milbona', 'Bio Speisequark Magerstufe', 'https://world.openfoodfacts.org/product/4056489013082', '4056489013082'),
+    ('Hofburger', 'Gouda in Scheiben', 'https://world.openfoodfacts.org/product/4061463808660', '4061463808660'),
+    ('Milbona', 'Skyr Erdbeere', 'https://world.openfoodfacts.org/product/4056489118206', '4056489118206'),
+    ('Milbona', 'Bio Vollmilch', 'https://world.openfoodfacts.org/product/4056489321354', '4056489321354'),
+    ('Ehrmann', 'Chocolate & Topping with Protein', 'https://world.openfoodfacts.org/product/4002971247503', '4002971247503'),
+    ('Goldsteig', 'Emmentaler in Scheiben', 'https://world.openfoodfacts.org/product/4061458046367', '4061458046367'),
+    ('Milbona', 'Joghurt 1,5%', 'https://world.openfoodfacts.org/product/4056489150497', '4056489150497'),
+    ('Milsani', 'Speisequark Magerstufe 0,3 % Fett', 'https://world.openfoodfacts.org/product/4061462542046', '4061462542046'),
+    ('Aldi', 'Joghurt mild 3,5% / 0x 500 gr / 3x 150 gr (Gebinde= 4x je 150 gr)', 'https://world.openfoodfacts.org/product/4061458028806', '4061458028806'),
+    ('Elinas', 'Joghurt, Natur', 'https://world.openfoodfacts.org/product/4003490032076', '4003490032076'),
+    ('Ehrmann', 'High Protein Chocolate Mousse', 'https://world.openfoodfacts.org/product/4002971283808', '4002971283808'),
+    ('DMK', 'Haltbare Schlagsahne', 'https://world.openfoodfacts.org/product/4061458032452', '4061458032452'),
+    ('Ehrmann', 'Grand Dessert - Vanille', 'https://world.openfoodfacts.org/product/4002971253108', '4002971253108'),
+    ('Karwendel', 'Miree - Paprika-Chili', 'https://world.openfoodfacts.org/product/40193052', '40193052'),
+    ('Der grüne Altenburger', 'Ziegencreme', 'https://world.openfoodfacts.org/product/4042089001246', '4042089001246'),
+    ('Aldi', 'Bio-Magerquark', 'https://world.openfoodfacts.org/product/4061458014151', '4061458014151'),
+    ('Weihenstephan', 'Sahne zum Kochen (Weihenstephan)', 'https://world.openfoodfacts.org/product/4008452023413', '4008452023413'),
+    ('Milbona', 'Skyr Blueberry', 'https://world.openfoodfacts.org/product/4056489118213', '4056489118213'),
+    ('Milbona', 'Kefir', 'https://world.openfoodfacts.org/product/4056489109570', '4056489109570'),
+    ('Zott', 'Monte MAXI', 'https://world.openfoodfacts.org/product/4014500036830', '4014500036830'),
+    ('Milsani', 'Crème fraîche, 30 % Fett', 'https://world.openfoodfacts.org/product/4061458038584', '4061458038584'),
+    ('Milsani', 'High-Protein-Pudding - Schoko', 'https://world.openfoodfacts.org/product/4047247031080', '4047247031080')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'DE' AND p.brand = d.brand
   AND p.product_name = d.product_name
