@@ -88,12 +88,12 @@ describe("RecipeScoreBadge", () => {
 
   it("renders band label for yellow score", () => {
     render(<RecipeScoreBadge score={baseScore} />);
-    expect(screen.getByText("Moderate")).toBeInTheDocument();
+    expect(screen.getByText("Good")).toBeInTheDocument();
   });
 
   it("renders band label for green score", () => {
     render(<RecipeScoreBadge score={greenScore} />);
-    expect(screen.getByText("Low")).toBeInTheDocument();
+    expect(screen.getByText("Excellent")).toBeInTheDocument();
   });
 
   it("renders ingredient coverage text", () => {
