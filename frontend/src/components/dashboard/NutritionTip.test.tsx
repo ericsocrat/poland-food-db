@@ -59,7 +59,7 @@ describe("NutritionTip", () => {
     const validPaths = [
       "/learn/reading-labels",
       "/learn/nova-groups",
-      "/learn/unhealthiness-score",
+      "/learn/tryvit-score",
       "/learn/nutri-score",
       "/learn/additives",
     ];

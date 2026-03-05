@@ -75,7 +75,7 @@ WHERE m.calories IS NOT NULL
   AND (detail->'nutrition_per_100g'->>'calories')::numeric != m.calories;
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 7. v_master score_breakdown factors count = 10 (all v3.3 scoring factors present)
+-- 7. v_master score_breakdown factors count = 10 (9 penalties + 1 bonus, v3.3)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '7. score_breakdown has 10 factors' AS check_name,
        COUNT(*) AS violations
