@@ -1,12 +1,13 @@
 "use client";
 
 // ─── ScoreRadarChart ────────────────────────────────────────────────────────
-// Custom SVG radar / spider chart for the 9 unhealthiness scoring factors.
+// Custom SVG radar / spider chart for unhealthiness scoring factors.
 // Zero external dependencies — pure React + SVG.
 //
-// Each axis represents a scoring factor. The value plotted is the raw weighted
-// contribution (0 → centre, ceiling → edge). The polygon area immediately
-// communicates the product's risk profile at a glance.
+// Each axis represents a scoring factor (9 penalty + 1 nutrient density bonus).
+// The value plotted is the raw weighted contribution (0 → centre, ceiling → edge).
+// The nutrient density bonus axis is rendered with a green accent.
+// The polygon area immediately communicates the product's risk profile at a glance.
 
 import type { ScoreBreakdownFactor } from "@/lib/types";
 
@@ -20,9 +21,10 @@ interface FactorMeta {
 }
 
 /**
- * The 9 scoring factors in the order they appear around the chart.
+ * The 10 scoring factors in the order they appear around the chart.
  * `maxWeighted` is computed from the formula: weight × ceiling.
  * If ceiling is absent we use a sensible cap.
+ * Nutrient density bonus is rendered with green accent (negative weighted → benefit).
  */
 const FACTORS: FactorMeta[] = [
   { key: "saturated_fat", label: "Sat Fat", maxWeighted: 17 },
@@ -34,7 +36,10 @@ const FACTORS: FactorMeta[] = [
   { key: "prep_method", label: "Processing", maxWeighted: 8 },
   { key: "controversies", label: "Controversies", maxWeighted: 8 },
   { key: "ingredient_concern", label: "Concern", maxWeighted: 5 },
+  { key: "nutrient_density", label: "Nutrient+", maxWeighted: 8 },
 ];
+
+const BONUS_FACTOR_KEY = "nutrient_density";
 
 const NUM_AXES = FACTORS.length;
 const CHART_SIZE = 240;
@@ -81,9 +86,12 @@ export function ScoreRadarChart({ breakdown }: ScoreRadarChartProps) {
   const valueMap = new Map(breakdown.map((f) => [f.name, f.weighted]));
 
   // Normalised values (0–1) for each axis
+  // For nutrient_density, the weighted value is negative (bonus) so we use the
+  // absolute value to plot the magnitude of the benefit.
   const normalisedValues = FACTORS.map((meta) => {
     const weighted = valueMap.get(meta.key) ?? 0;
-    return Math.min(weighted / meta.maxWeighted, 1);
+    const magnitude = meta.key === BONUS_FACTOR_KEY ? Math.abs(weighted) : weighted;
+    return Math.min(magnitude / meta.maxWeighted, 1);
   });
 
   return (
@@ -140,13 +148,14 @@ export function ScoreRadarChart({ breakdown }: ScoreRadarChartProps) {
         const angle = angleForIndex(i);
         const r = OUTER_RADIUS * Math.min(v, 1);
         const { x, y } = polarToCartesian(angle, r);
+        const isBonus = FACTORS[i].key === BONUS_FACTOR_KEY;
         return (
           <circle
             key={FACTORS[i].key}
             cx={x}
             cy={y}
             r={3}
-            className="fill-red-500"
+            className={isBonus ? "fill-green-500" : "fill-red-500"}
           />
         );
       })}
@@ -156,6 +165,7 @@ export function ScoreRadarChart({ breakdown }: ScoreRadarChartProps) {
         const angle = angleForIndex(i);
         const labelR = OUTER_RADIUS + 16;
         const { x, y } = polarToCartesian(angle, labelR);
+        const isBonus = meta.key === BONUS_FACTOR_KEY;
         return (
           <text
             key={`lbl-${meta.key}`}
@@ -163,7 +173,7 @@ export function ScoreRadarChart({ breakdown }: ScoreRadarChartProps) {
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            className="fill-foreground-secondary text-[9px]"
+            className={isBonus ? "fill-green-600 text-[9px] dark:fill-green-400" : "fill-foreground-secondary text-[9px]"}
           >
             {meta.label}
           </text>

@@ -71,6 +71,15 @@ const MOCK_EXPLANATION: ScoreExplanation = {
     { factor: "Saturated Fat", raw: 40, weighted: 12 },
     { factor: "Fiber", raw: 10, weighted: 3 },
   ],
+  nutrient_bonus: {
+    factor: "nutrient_density",
+    raw: 100,
+    weighted: -8.0,
+    components: {
+      protein_bonus: 50,
+      fibre_bonus: 50,
+    },
+  },
   warnings: [
     { type: "additives", message: "Contains controversial additives" },
   ],
@@ -255,5 +264,61 @@ describe("ScoreBreakdownPanel", () => {
     // Close
     fireEvent.click(button);
     expect(button).toHaveAttribute("aria-expanded", "false");
+  });
+
+  it("renders nutrient density bonus section", async () => {
+    mockGetScoreExplanation.mockResolvedValue({
+      ok: true,
+      data: MOCK_EXPLANATION,
+    });
+
+    render(
+      <ScoreBreakdownPanel
+        productId={42}
+        score={65}
+        scoreBand="Elevated Risk"
+        defaultOpen
+      />,
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("nutrient-bonus")).toBeInTheDocument();
+    });
+
+    // Shows bonus points (negative = benefit)
+    expect(screen.getByText("-8.0 pts")).toBeInTheDocument();
+    // Shows component labels
+    expect(screen.getByText(/proteinBonus/)).toBeInTheDocument();
+    expect(screen.getByText(/fibreBonus/)).toBeInTheDocument();
+  });
+
+  it("does not render nutrient bonus when absent", async () => {
+    const explanationWithoutBonus = {
+      ...MOCK_EXPLANATION,
+      nutrient_bonus: null,
+    };
+    mockGetScoreExplanation.mockResolvedValue({
+      ok: true,
+      data: explanationWithoutBonus,
+    });
+
+    render(
+      <ScoreBreakdownPanel
+        productId={42}
+        score={65}
+        scoreBand="Elevated Risk"
+        defaultOpen
+      />,
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("This product has elevated sugar levels."),
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.queryByTestId("nutrient-bonus")).not.toBeInTheDocument();
   });
 });

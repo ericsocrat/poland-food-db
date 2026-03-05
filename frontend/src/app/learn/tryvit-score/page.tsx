@@ -25,6 +25,7 @@ export default function TryVitScorePage() {
     "factorPrepMethod",
     "factorControversies",
     "factorConcern",
+    "factorNutrientDensity",
   ] as const;
 
   const bands = ["band1", "band2", "band3", "band4", "band5"] as const;

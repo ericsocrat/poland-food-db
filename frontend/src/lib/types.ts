@@ -478,6 +478,13 @@ export interface ScoreExplanation {
     processing_risk: string;
   };
   top_factors: { factor: string; raw: number; weighted: number }[];
+  /** Nutrient density bonus extracted from v3.3 score_breakdown (null if no bonus). */
+  nutrient_bonus?: {
+    factor: string;
+    raw: number;
+    weighted: number;
+    components: { protein_bonus: number; fibre_bonus: number };
+  } | null;
   warnings: { type: string; message: string }[];
   category_context: {
     category_avg_score: number;
@@ -615,10 +622,12 @@ export interface ProfileAllergens {
 export interface ScoreBreakdownFactor {
   name: string;
   raw: number;
-  input: number | string;
+  input: number | string | Record<string, number>;
   weight: number;
   ceiling?: number;
   weighted: number;
+  /** Present on nutrient_density factor — protein and fibre bonus breakdown. */
+  components?: { protein_bonus: number; fibre_bonus: number };
 }
 
 export interface CategoryContext {
