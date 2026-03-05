@@ -2,7 +2,7 @@
 
 > **Last updated:** 2026-03-02
 > **Status:** Active — update when adding, renaming, or archiving docs
-> **Total documents:** 50 in `docs/` + 8 in `docs/decisions/` + 17 in `docs/assets/logo/` + 5 in `docs/assets/banners/` + 7 elsewhere in repo
+> **Total documents:** 50 in `docs/` + 9 in `docs/decisions/` + 17 in `docs/assets/logo/` + 5 in `docs/assets/banners/` + 7 elsewhere in repo
 > **Reference:** Issue [#200](https://github.com/ericsocrat/tryvit/issues/200), [#201](https://github.com/ericsocrat/tryvit/issues/201)
 
 ---
@@ -24,7 +24,7 @@
 | [Frontend & UX](#frontend--ux)                           | 6     | UX/UI design, UX impact metrics, brand guidelines, name candidates, design system, frontend README                                  |
 | [Process & Workflow](#process--workflow)                 | 7     | Agent workflow reference, research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion |
 | [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance report, performance guardrails, doc governance, repo governance, this index                         |
-| [Architecture Decisions](#architecture-decisions-adrs)   | 8     | MADR template + 7 retroactive ADRs (stack, scoring, country isolation, pipeline, API versioning, migrations, ingredients)           |
+| [Architecture Decisions](#architecture-decisions-adrs)   | 9     | MADR template + 8 ADRs (stack, scoring, country isolation, pipeline, API versioning, migrations, ingredients, nutrient density)     |
 
 ---
 
@@ -241,6 +241,7 @@
 | [005-api-function-name-versioning.md](decisions/005-api-function-name-versioning.md)   | API versioning via function-name suffixes, not URL paths                         | accepted | 2026-02-13 |
 | [006-append-only-migrations.md](decisions/006-append-only-migrations.md)               | Strict append-only migration strategy — never modify existing files              | accepted | 2026-02-07 |
 | [007-english-canonical-ingredients.md](decisions/007-english-canonical-ingredients.md) | All 2,740 ingredients stored as clean ASCII English canonical names              | accepted | 2026-02-10 |
+| [008-nutrient-density-bonus.md](decisions/008-nutrient-density-bonus.md)               | Nutrient density bonus (protein + fibre) as subtracted 10th factor in v3.3       | accepted | 2026-03-03 |
 
 ---
 
