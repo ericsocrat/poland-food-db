@@ -1190,11 +1190,12 @@
     },
     "tryvitScore": {
       "title": "Wynik TryVit",
-      "description": "Jak działa 9-czynnikowy Wynik TryVit i co oznaczają zakresy.",
-      "summary": "Wynik TryVit (1–100) to nasz główny wskaźnik złożony. Im wyższy, tym lepiej. Ocenia 9 czynników: tłuszcze nasycone, cukry, sól, kalorie, tłuszcze trans, dodatki, metoda przygotowania, kontrowersje i obawy dotyczące składników.",
+      "description": "Jak działa Wynik TryVit — 9 czynników karnych, bonus za gęstość odżywczą i co oznaczają zakresy.",
+      "summary": "Wynik TryVit (1–100) to nasz główny wskaźnik złożony. Im wyższy, tym lepiej. Karze za 9 czynników (tłuszcze nasycone, cukry, sól, kalorie, tłuszcze trans, dodatki, metoda przygotowania, kontrowersje, obawy o składniki) i nagradza za zawartość białka i błonnika bonusem za gęstość odżywczą.",
       "whatIsTitle": "Czym jest Wynik TryVit?",
-      "whatIsText": "Wynik TryVit odpowiada na proste pytanie: jak dobrze ten produkt wypada pod względem odżywczym? Skala biegnie od 1 (bardzo wysokie ryzyko) do 100 (doskonały). Wynik 70 oznacza, że produkt jest lepszy niż ten z wynikiem 30. Łączymy dziewięć czynników opartych na dowodach w jeden numer, abyś mógł porównywać produkty na pierwszy rzut oka.",
-      "factorsTitle": "9 czynników",
+      "whatIsText": "Wynik TryVit odpowiada na proste pytanie: jak dobrze ten produkt wypada pod względem odżywczym? Skala biegnie od 1 (bardzo wysokie ryzyko) do 100 (doskonały). Wynik 70 oznacza, że produkt jest lepszy niż ten z wynikiem 30. Łączymy dziewięć czynników karnych opartych na dowodach i bonus za gęstość odżywczą w jeden numer, abyś mógł porównywać produkty na pierwszy rzut oka.",
+      "factorsTitle": "9 czynników karnych",
+      "bonusTitle": "Bonus za gęstość odżywczą",
       "factorSatFat": "Tłuszcze nasycone (waga: 17%) — pułap: 10g na 100g. Oparte na wartościach referencyjnych EFSA.",
       "factorSugars": "Cukry (waga: 17%) — pułap: 27g na 100g. Oparte na wytycznych WHO dot. wolnych cukrów.",
       "factorSalt": "Sól (waga: 17%) — pułap: 3g na 100g. Oparte na wytycznych WHO 2023 dot. sodu.",
@@ -1204,6 +1205,7 @@
       "factorPrepMethod": "Metoda przygotowania (waga: 8%) — smażenie głębokie punktuje najwyżej ze względu na akrylamid/WWA/HCA.",
       "factorControversies": "Kontrowersje (waga: 8%) — uwzględnia problemy produktowe jak olej palmowy lub zakazane substancje.",
       "factorConcern": "Obawy o składniki (waga: 5%) — oparte na klasach ryzyka EFSA (poziomy 0–3).",
+      "factorNutrientDensity": "Bonus za białko i błonnik (waga: −8%) — produkty z wyższą zawartością białka i błonnika otrzymują podwyższenie wyniku, nagradzając wartość odżywczą ponad karanie szkodliwych składników.",
       "bandsTitle": "Zakresy wyników",
       "band1": "80–100: Doskonały — płatki owsiane, surowe warzywa",
       "band2": "60–79: Dobry — chleb pełnoziarnisty, zwykły jogurt",
@@ -1211,9 +1213,9 @@
       "band4": "20–39: Słaby — chipsy smażone, słodkie napoje",
       "band5": "1–19: Zły — smażone na głębokim tłuszczu + dużo soli + dodatki",
       "formulaTitle": "Jak jest obliczany",
-      "formulaText": "Każdy czynnik jest normalizowany do 0–100 (przy użyciu naukowo uzasadnionych pułapów), mnożony przez swoją wagę i sumowany. Wynik jest ograniczony do 1–100. Gdy brakuje danych, ten czynnik przyjmuje wartość 0, a kompletność danych jest obniżana.",
+      "formulaText": "Każdy czynnik karny jest normalizowany do 0–100 (przy użyciu naukowo uzasadnionych pułapów), mnożony przez swoją wagę i sumowany. Następnie odejmowany jest bonus za gęstość odżywczą (do 8 punktów) dla produktów bogatych w białko i błonnik. Wynik jest ograniczony do 1–100. Gdy brakuje danych, ten czynnik przyjmuje wartość 0, a kompletność danych jest obniżana.",
       "whyDifferentTitle": "Dlaczego nie wystarczy sam Nutri-Score?",
-      "whyDifferentText": "Nutri-Score ignoruje stopień przetworzenia, dodatki do żywności, metody przygotowania i kontrowersje. Nasz Wynik TryVit wypełnia te luki, włączając wszystkie dziewięć czynników w jedną liczbę opartą na progach WHO, EFSA i regulacjach UE."
+      "whyDifferentText": "Nutri-Score ignoruje stopień przetworzenia, dodatki do żywności, metody przygotowania i kontrowersje. Nasz Wynik TryVit wypełnia te luki, włączając wszystkie dziewięć czynników karnych i bonus za gęstość odżywczą w jedną liczbę opartą na progach WHO, EFSA i regulacjach UE."
     },
     "additives": {
       "title": "Zrozumienie Dodatków",

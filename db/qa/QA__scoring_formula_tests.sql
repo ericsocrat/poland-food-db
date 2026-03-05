@@ -1,4 +1,4 @@
--- QA: Scoring Formula Tests (v3.3) — 35 checks
+-- QA: Scoring Formula Tests (v3.3) — 40 checks
 -- Validates that the scoring formula produces expected results for known test cases.
 -- Each test includes a product with controlled nutrition values and expected score.
 -- Run after pipelines to verify scoring algorithm correctness.
@@ -536,3 +536,83 @@ FROM (VALUES
                compute_unhealthiness_v33(10,27,3,600,2,10,'deep-fried','serious',100,0,0))
 ) AS t(profile, v32_score, v33_score)
 WHERE v32_score <> v33_score;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 36: DE regression anchor — Ritter Sport Edel-Vollmilch (Sweets)
+--          Full milk chocolate, high sugar/fat, palm oil → score ≈48
+--          v3.3: protein credit offsets partially. Issue #602.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       p.unhealthiness_score,
+       'REGRESSION: Ritter Sport Edel-Vollmilch (DE) score changed' AS issue,
+       CONCAT('Expected 46-50, got ', p.unhealthiness_score) AS detail
+FROM products p
+WHERE p.product_name = 'Edel-Vollmilch'
+  AND p.brand = 'Ritter Sport'
+  AND p.country = 'DE'
+  AND p.is_deprecated IS NOT TRUE
+  AND p.unhealthiness_score::int NOT BETWEEN 46 AND 50;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 37: DE regression anchor — Alpro Sojadrink Ungesüßt (Drinks)
+--          Unsweetened soy drink, minimal fat/sugar → score ≈8
+--          v3.3: protein 3.3g (no bonus), fibre 0.5g (no bonus). Issue #602.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       p.unhealthiness_score,
+       'REGRESSION: Alpro Sojadrink (DE) score changed' AS issue,
+       CONCAT('Expected 6-10, got ', p.unhealthiness_score) AS detail
+FROM products p
+WHERE p.product_name LIKE 'Alpro Sojadrink%'
+  AND p.brand = 'Alpro'
+  AND p.country = 'DE'
+  AND p.is_deprecated IS NOT TRUE
+  AND p.unhealthiness_score::int NOT BETWEEN 6 AND 10;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 38: DE regression anchor — Chipsfrisch ungarisch (Chips)
+--          Classic paprika chips, fried, moderate fat → score ≈25
+--          v3.3: protein 6g (bonus 15), no significant fibre. Issue #602.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       p.unhealthiness_score,
+       'REGRESSION: Chipsfrisch ungarisch (DE) score changed' AS issue,
+       CONCAT('Expected 23-27, got ', p.unhealthiness_score) AS detail
+FROM products p
+WHERE p.product_name = 'Chipsfrisch ungarisch'
+  AND p.brand = 'Funny Frisch'
+  AND p.country = 'DE'
+  AND p.is_deprecated IS NOT TRUE
+  AND p.unhealthiness_score::int NOT BETWEEN 23 AND 27;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 39: DE regression anchor — Wildlachsfilet (Seafood & Fish)
+--          Wild salmon fillet, high protein, low everything else → score ≈3
+--          v3.3: protein 20g (bonus 50) → large density reduction. Issue #602.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       p.unhealthiness_score,
+       'REGRESSION: Wildlachsfilet (DE) score changed' AS issue,
+       CONCAT('Expected 1-5, got ', p.unhealthiness_score) AS detail
+FROM products p
+WHERE p.product_name = 'Wildlachsfilet'
+  AND p.brand = 'Golden Seafood'
+  AND p.country = 'DE'
+  AND p.is_deprecated IS NOT TRUE
+  AND p.unhealthiness_score::int NOT BETWEEN 1 AND 5;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Test 40: DE regression anchor — Instant-Nudeln Beef (Instant & Frozen)
+--          Instant noodles, high additives + palm oil → score ≈55
+--          v3.3: protein credit minor, high penalty dominates. Issue #602.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT p.product_id, p.brand, p.product_name,
+       p.unhealthiness_score,
+       'REGRESSION: Instant-Nudeln Beef (DE) score changed' AS issue,
+       CONCAT('Expected 53-57, got ', p.unhealthiness_score) AS detail
+FROM products p
+WHERE p.product_name = 'Instant-Nudeln Beef'
+  AND p.brand = 'Asia Green Garden'
+  AND p.country = 'DE'
+  AND p.is_deprecated IS NOT TRUE
+  AND p.unhealthiness_score::int NOT BETWEEN 53 AND 57;

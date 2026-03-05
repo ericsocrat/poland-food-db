@@ -1190,11 +1190,12 @@
     },
     "tryvitScore": {
       "title": "TryVit Score verstehen",
-      "description": "Wie der 9-Faktor-TryVit Score funktioniert und was die Stufen bedeuten.",
-      "summary": "Der TryVit Score (1–100) ist unsere primäre zusammengesetzte Kennzahl. Je höher, desto besser. Er bewertet 9 Faktoren: gesättigte Fettsäuren, Zucker, Salz, Kalorien, Transfette, Zusatzstoffe, Zubereitungsart, Kontroversen und Zutatenbedenklichkeit.",
+      "description": "Wie der TryVit Score funktioniert — 9 Strafaktoren, ein Nährstoffdichtebonus und was die Stufen bedeuten.",
+      "summary": "Der TryVit Score (1–100) ist unsere primäre zusammengesetzte Kennzahl. Je höher, desto besser. Er bestraft 9 Faktoren (gesättigte Fettsäuren, Zucker, Salz, Kalorien, Transfette, Zusatzstoffe, Zubereitungsart, Kontroversen, Zutatenbedenklichkeit) und belohnt Protein- & Ballaststoffgehalt mit einem Nährstoffdichtebonus.",
       "whatIsTitle": "Was ist der TryVit Score?",
-      "whatIsText": "Der TryVit Score beantwortet eine einfache Frage: Wie gut schneidet dieses Produkt ernährungsphysiologisch ab? Die Skala reicht von 1 (sehr hohes Risiko) bis 100 (ausgezeichnet). Ein Wert von 70 bedeutet, dass das Produkt besser ist als eines mit 30. Wir kombinieren neun evidenzbasierte Faktoren zu einer einzigen Zahl, damit Sie Produkte auf einen Blick vergleichen können.",
-      "factorsTitle": "Die 9 Faktoren",
+      "whatIsText": "Der TryVit Score beantwortet eine einfache Frage: Wie gut schneidet dieses Produkt ernährungsphysiologisch ab? Die Skala reicht von 1 (sehr hohes Risiko) bis 100 (ausgezeichnet). Ein Wert von 70 bedeutet, dass das Produkt besser ist als eines mit 30. Wir kombinieren neun evidenzbasierte Strafaktoren und einen Nährstoffdichtebonus zu einer einzigen Zahl, damit Sie Produkte auf einen Blick vergleichen können.",
+      "factorsTitle": "Die 9 Strafaktoren",
+      "bonusTitle": "Nährstoffdichtebonus",
       "factorSatFat": "Gesättigte Fettsäuren (Gewicht: 17 %) — Obergrenze: 10 g pro 100 g. Basierend auf EFSA-Tagesreferenzwerten.",
       "factorSugars": "Zucker (Gewicht: 17 %) — Obergrenze: 27 g pro 100 g. Basierend auf WHO-Richtlinie für freien Zucker.",
       "factorSalt": "Salz (Gewicht: 17 %) — Obergrenze: 3 g pro 100 g. Basierend auf WHO-Natriumrichtlinie 2023.",
@@ -1204,6 +1205,7 @@
       "factorPrepMethod": "Zubereitungsart (Gewicht: 8 %) — Frittiertes erhält die höchste Bewertung aufgrund von Acrylamid-/PAK-/HCA-Bildung.",
       "factorControversies": "Kontroversen (Gewicht: 8 %) — erfasst produktbezogene Probleme wie Palmöl oder verbotene Substanzen.",
       "factorConcern": "Zutatenbedenklichkeit (Gewicht: 5 %) — basierend auf EFSA-Zusatzstoff-Risikostufen (Bedenklichkeitsstufen 0–3).",
+      "factorNutrientDensity": "Protein- & Ballaststoffbonus (Gewicht: −8 %) — Produkte mit höherem Protein- und Ballaststoffgehalt erhalten eine Aufwertung, die den Nährwert über die reine Bestrafung schädlicher Bestandteile hinaus belohnt.",
       "bandsTitle": "Bewertungsstufen",
       "band1": "80–100: Ausgezeichnet — einfache Haferflocken, rohes Gemüse",
       "band2": "60–79: Gut — Vollkornbrot, einfacher Joghurt",
@@ -1211,9 +1213,9 @@
       "band4": "20–39: Schlecht — frittierte Chips, zuckerhaltige Getränke",
       "band5": "1–19: Sehr schlecht — frittiert + salzreich + Zusatzstoffe",
       "formulaTitle": "Wie sie berechnet wird",
-      "formulaText": "Jeder Faktor wird auf 0–100 normalisiert (unter Verwendung wissenschaftlich begründeter Obergrenzen), mit seinem Gewicht multipliziert und summiert. Das Ergebnis wird auf 1–100 begrenzt. Bei fehlenden Daten ist der Faktor standardmäßig 0 und die Datenvollständigkeitsbewertung wird reduziert.",
+      "formulaText": "Jeder Strafaktor wird auf 0–100 normalisiert (unter Verwendung wissenschaftlich begründeter Obergrenzen), mit seinem Gewicht multipliziert und summiert. Ein Nährstoffdichtebonus (bis zu 8 Punkte) wird dann für Produkte mit hohem Protein- und Ballaststoffgehalt abgezogen. Das Ergebnis wird auf 1–100 begrenzt. Bei fehlenden Daten ist der Faktor standardmäßig 0 und die Datenvollständigkeitsbewertung wird reduziert.",
       "whyDifferentTitle": "Warum nicht einfach den Nutri-Score verwenden?",
-      "whyDifferentText": "Der Nutri-Score ignoriert Verarbeitungsgrad, Lebensmittelzusatzstoffe, Zubereitungsmethoden und Kontroversen. Unser TryVit Score füllt diese Lücken, indem er alle neun Faktoren in einer einzigen Zahl zusammenfasst, die auf WHO-, EFSA- und EU-Regulierungsschwellen basiert."
+      "whyDifferentText": "Der Nutri-Score ignoriert Verarbeitungsgrad, Lebensmittelzusatzstoffe, Zubereitungsmethoden und Kontroversen. Unser TryVit Score füllt diese Lücken, indem er alle neun Strafaktoren und einen Nährstoffdichtebonus in einer einzigen Zahl zusammenfasst, die auf WHO-, EFSA- und EU-Regulierungsschwellen basiert."
     },
     "additives": {
       "title": "Zusatzstoffe verstehen",

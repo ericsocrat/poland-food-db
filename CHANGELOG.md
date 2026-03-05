@@ -96,6 +96,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Tests
 
+- DE QA validation suite: fix multi-country consistency checks 1 and 10 (stale
+  `compute_unhealthiness_v32` calls → upgraded to v33 with `_g` param suffix,
+  `p_protein_g`/`p_fibre_g`, and LATERAL subquery for `additives_count`); add
+  5 DE scoring anchor regression tests (Ritter Sport ≈48, Alpro Sojadrink ≈8,
+  Chipsfrisch ≈25, Wildlachsfilet ≈3, Instant-Nudeln ≈55); scoring formula
+  checks 35→40, multi-country checks catalog 13→16 in RUN_QA.ps1 (#602)
 - Add 2 QA checks to nutrition ranges suite (18 → 20 checks, total 733 → 735):
   protein_g NULL coverage < 5% threshold and fibre_g NULL coverage < 10%
   threshold — required for v3.3 nutrient density bonus (#609)
@@ -111,6 +117,11 @@ Adheres to [Semantic Versioning](https://semver.org/).
   with consumer display note and dual-column band table (#591)
 
 ### Fixed
+
+- Fix a11y color contrast ratio on scoring learn page: change `text-green-600`
+  to `text-green-700` for nutrient density bonus weight display. Previous ratio
+  3.14:1 failed WCAG 2.1 AA minimum 4.5:1 for small text (12px); new ratio
+  ~4.79:1 passes. Fixes Playwright smoke-a11y test failure (#589)
 
 - Fix QA data consistency check 1 (case-insensitive duplicate detection): add
   country-scoping to the JOIN condition so cross-country products with the same

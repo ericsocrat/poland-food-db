@@ -1,7 +1,7 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
 -- QA Suite: Multi-Country Consistency
 -- Validates scoring equivalence, data integrity, and cross-country parity
--- between PL (primary) and DE (micro-pilot) datasets.
+-- between PL (primary) and DE datasets.
 -- Complements QA__country_isolation (API boundary checks) with data-level
 -- consistency checks.
 -- 13 checks + 3 cross-country link checks = 16 checks.
@@ -12,18 +12,18 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
 SELECT '1. cross-country scoring equivalence (same inputs = same score)' AS check_name,
        CASE WHEN (
-           SELECT compute_unhealthiness_v32(
-               p_saturated_fat := 5.0, p_sugars := 12.0, p_salt := 0.8,
-               p_calories := 200, p_trans_fat := 0, p_additive_count := 2,
+           SELECT compute_unhealthiness_v33(
+               p_saturated_fat_g := 5.0, p_sugars_g := 12.0, p_salt_g := 0.8,
+               p_calories := 200, p_trans_fat_g := 0, p_additives_count := 2,
                p_prep_method := 'baked', p_controversies := 'minor',
-               p_ingredient_concern := 1
+               p_concern_score := 1, p_protein_g := 10, p_fibre_g := 3
            )
        ) = (
-           SELECT compute_unhealthiness_v32(
-               p_saturated_fat := 5.0, p_sugars := 12.0, p_salt := 0.8,
-               p_calories := 200, p_trans_fat := 0, p_additive_count := 2,
+           SELECT compute_unhealthiness_v33(
+               p_saturated_fat_g := 5.0, p_sugars_g := 12.0, p_salt_g := 0.8,
+               p_calories := 200, p_trans_fat_g := 0, p_additives_count := 2,
                p_prep_method := 'baked', p_controversies := 'minor',
-               p_ingredient_concern := 1
+               p_concern_score := 1, p_protein_g := 10, p_fibre_g := 3
            )
        )
        THEN 0 ELSE 1 END AS violations;
@@ -138,18 +138,26 @@ SELECT '10. recomputed scores match stored scores across all countries' AS check
        COUNT(*) AS violations
 FROM products p
 JOIN nutrition_facts nf ON nf.product_id = p.product_id
+LEFT JOIN LATERAL (
+    SELECT COUNT(*) FILTER (WHERE ir.is_additive)::int AS additives_count
+    FROM product_ingredient pi
+    JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+    WHERE pi.product_id = p.product_id
+) ia ON true
 WHERE p.is_deprecated IS NOT TRUE
   AND p.unhealthiness_score IS NOT NULL
-  AND p.unhealthiness_score != compute_unhealthiness_v32(
-      p_saturated_fat      := nf.saturated_fat,
-      p_sugars             := nf.sugars,
-      p_salt               := nf.salt,
-      p_calories           := nf.calories,
-      p_trans_fat          := nf.trans_fat,
-      p_additive_count     := COALESCE(p.additive_count, 0),
-      p_prep_method        := p.prep_method,
-      p_controversies      := p.controversies,
-      p_ingredient_concern := COALESCE(p.ingredient_concern_score, 0)
+  AND p.unhealthiness_score != compute_unhealthiness_v33(
+      p_saturated_fat_g := nf.saturated_fat_g,
+      p_sugars_g        := nf.sugars_g,
+      p_salt_g          := nf.salt_g,
+      p_calories        := nf.calories,
+      p_trans_fat_g     := nf.trans_fat_g,
+      p_additives_count := COALESCE(ia.additives_count, 0),
+      p_prep_method     := p.prep_method,
+      p_controversies   := p.controversies,
+      p_concern_score   := COALESCE(p.ingredient_concern_score, 0),
+      p_protein_g       := COALESCE(nf.protein_g, 0),
+      p_fibre_g         := COALESCE(nf.fibre_g, 0)
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════════
