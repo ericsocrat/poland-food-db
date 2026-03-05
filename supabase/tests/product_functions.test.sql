@@ -8,7 +8,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(120);
+SELECT plan(130);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -50,6 +50,27 @@ ON CONFLICT (product_id) DO NOTHING;
 INSERT INTO public.nutrition_facts (product_id, calories, total_fat_g, saturated_fat_g, carbs_g, sugars_g, protein_g, salt_g)
 VALUES (999996, '100', '2.0', '0.5', '15.0', '3.0', '10.0', '0.3')
 ON CONFLICT (product_id) DO NOTHING;
+
+-- Second test country for cross-country linking
+INSERT INTO public.country_ref (country_code, country_name, is_active)
+VALUES ('YY', 'Test Country 2', true)
+ON CONFLICT (country_code) DO UPDATE SET nutri_score_official = false;
+
+-- Cross-country product (same EAN as 999997, different country)
+INSERT INTO public.products (
+  product_id, ean, product_name, brand, category, country,
+  unhealthiness_score, nutri_score_label, nutri_score_source, nova_classification,
+  high_salt_flag, high_sugar_flag, high_sat_fat_flag
+) VALUES (
+  999990, '5901234123459', 'pgTAP Detail Product YY', 'Test Brand',
+  'pgtap-prod-cat', 'YY', 45, 'C', 'off_computed', '3',
+  'NO', 'NO', 'NO'
+) ON CONFLICT (product_id) DO NOTHING;
+
+-- Product link between cross-country products
+INSERT INTO public.product_links (product_id_a, product_id_b, link_type, confidence, notes)
+VALUES (999990, 999997, 'identical', 'ean_match', 'pgTAP test: EAN match')
+ON CONFLICT (product_id_a, product_id_b) DO NOTHING;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. api_product_detail_by_ean — known EAN
@@ -778,6 +799,76 @@ SELECT ok(
 SELECT ok(
   (api_get_ingredient_profile(1))->'ingredient'->>'concern_tier_label' IS NOT NULL,
   'ingredient profile has concern_tier_label'
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 13. api_get_cross_country_links — Cross-country product linking (#605)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 13.1 Function executes without error
+SELECT lives_ok(
+  $$SELECT public.api_get_cross_country_links(999997)$$,
+  'api_get_cross_country_links lives for linked product'
+);
+
+-- 13.2 Returns non-empty result for linked product
+SELECT ok(
+  jsonb_array_length(api_get_cross_country_links(999997)) > 0,
+  'api_get_cross_country_links returns links for product with cross-country link'
+);
+
+-- 13.3 Linked product has correct country (should be YY, the other country)
+SELECT is(
+  (api_get_cross_country_links(999997))->0->'product'->>'country',
+  'YY',
+  'cross-country link returns product from other country'
+);
+
+-- 13.4 Link type is returned correctly
+SELECT is(
+  (api_get_cross_country_links(999997))->0->>'link_type',
+  'identical',
+  'cross-country link type is identical'
+);
+
+-- 13.5 Confidence is returned correctly
+SELECT is(
+  (api_get_cross_country_links(999997))->0->>'confidence',
+  'ean_match',
+  'cross-country link confidence is ean_match'
+);
+
+-- 13.6 Bidirectional: querying from the other product also returns link
+SELECT ok(
+  jsonb_array_length(api_get_cross_country_links(999990)) > 0,
+  'api_get_cross_country_links is bidirectional (query from product_id_b)'
+);
+
+-- 13.7 Bidirectional link points back to original country
+SELECT is(
+  (api_get_cross_country_links(999990))->0->'product'->>'country',
+  'XX',
+  'bidirectional cross-country link points to original country'
+);
+
+-- 13.8 Product without links returns empty array
+SELECT is(
+  api_get_cross_country_links(999996),
+  '[]'::jsonb,
+  'api_get_cross_country_links returns empty array for unlinked product'
+);
+
+-- 13.9 Non-existent product returns empty array
+SELECT is(
+  api_get_cross_country_links(0),
+  '[]'::jsonb,
+  'api_get_cross_country_links returns empty array for non-existent product'
+);
+
+-- 13.10 auto_link_cross_country_products lives
+SELECT lives_ok(
+  $$SELECT public.auto_link_cross_country_products()$$,
+  'auto_link_cross_country_products executes without error'
 );
 
 SELECT * FROM finish();
