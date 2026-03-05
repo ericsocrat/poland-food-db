@@ -1,69 +1,59 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import {
-  // User Preferences
-  getUserPreferences,
-  setUserPreferences,
-  // Search
-  searchProducts,
-  searchAutocomplete,
-  getFilterOptions,
-  saveSearch,
-  getSavedSearches,
-  deleteSavedSearch,
-  // Category
-  getCategoryListing,
-  getCategoryOverview,
-  // Product Detail
-  getProductDetail,
-  lookupByEan,
-  getBetterAlternatives,
-  getBetterAlternativesV2,
-  getScoreExplanation,
-  getDataConfidence,
-  // Health Profiles
-  listHealthProfiles,
-  getActiveHealthProfile,
-  createHealthProfile,
-  updateHealthProfile,
-  deleteHealthProfile,
-  getProductHealthWarnings,
-  // Lists
-  getLists,
-  getListItems,
-  createList,
-  updateList,
-  deleteList,
-  addToList,
-  removeFromList,
-  reorderList,
-  toggleShare,
-  revokeShare,
-  getSharedList,
-  getAvoidProductIds,
-  getProductListMembership,
-  getFavoriteProductIds,
-  // Comparisons
-  getProductsForCompare,
-  saveComparison,
-  getSavedComparisons,
-  getSharedComparison,
-  deleteComparison,
-  // Scanner & Submissions
-  recordScan,
-  getScanHistory,
-  submitProduct,
-  getMySubmissions,
-  // Analytics
-  trackEvent,
-  // Dashboard
-  recordProductView,
-  getRecentlyViewed,
-  getDashboardData,
-  // Recipes
-  browseRecipes,
-  getRecipeDetail,
-  findProductsForIngredient,
+    addToList,
+    browseRecipes,
+    createHealthProfile,
+    createList,
+    deleteComparison,
+    deleteHealthProfile,
+    deleteList,
+    deleteSavedSearch,
+    findProductsForIngredient,
+    getActiveHealthProfile,
+    getAvoidProductIds,
+    getBetterAlternatives,
+    getBetterAlternativesV2,
+    getCategoryListing,
+    getCategoryOverview,
+    getCrossCountryLinks,
+    getDashboardData,
+    getDataConfidence,
+    getFavoriteProductIds,
+    getFilterOptions,
+    getListItems,
+    getLists,
+    getMySubmissions,
+    getProductDetail,
+    getProductHealthWarnings,
+    getProductListMembership,
+    getProductsForCompare,
+    getRecentlyViewed,
+    getRecipeDetail,
+    getSavedComparisons,
+    getSavedSearches,
+    getScanHistory,
+    getScoreExplanation,
+    getSharedComparison,
+    getSharedList,
+    getUserPreferences,
+    listHealthProfiles,
+    lookupByEan,
+    recordProductView,
+    recordScan,
+    removeFromList,
+    reorderList,
+    revokeShare,
+    saveComparison,
+    saveSearch,
+    searchAutocomplete,
+    searchProducts,
+    setUserPreferences,
+    submitProduct,
+    toggleShare,
+    trackEvent,
+    updateHealthProfile,
+    updateList,
 } from "@/lib/api";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mock the RPC layer ─────────────────────────────────────────────────────
 
@@ -433,6 +423,14 @@ describe("Product Detail API functions", () => {
     mockCallRpc.mockResolvedValue({ ok: true, data: {} });
     await getDataConfidence(fakeSupabase, 42);
     expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_data_confidence", {
+      p_product_id: 42,
+    });
+  });
+
+  it("getCrossCountryLinks passes product_id", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: [] });
+    await getCrossCountryLinks(fakeSupabase, 42);
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_get_cross_country_links", {
       p_product_id: 42,
     });
   });
