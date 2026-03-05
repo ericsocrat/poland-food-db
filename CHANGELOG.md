@@ -108,6 +108,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Documentation
 
+- Update copilot-instructions and EAN docs for PL+DE expansion: 2,264 active
+  products (1,198 PL + 1,066 DE across 19+19 categories), 273 deprecated,
+  2,261/2,264 EAN coverage (99.9%), 2,898 ingredient refs, 2,872 allergen/trace
+  declarations across 769 products, 39 pipeline folders, 735 QA checks + 23
+  negative tests; full §5 categories table rewrite (28→39 entries); EAN doc
+  rewrite with per-country per-category coverage table (#598)
 - Overhaul scoring docs for TryVit Score consumer display layer: add §2.8
   Consumer Display Layer (TryVit Score = 100 − unhealthiness, band table with
   consumer labels Excellent/Good/Moderate/Poor/Bad, rationale for higher=healthier
