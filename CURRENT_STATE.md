@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-06 by GitHub Copilot (session 26)
+> **Last updated:** 2026-03-06 by GitHub Copilot (session 27)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,19 +8,20 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (clean tree, no active feature branch)
-- **Latest SHA (main):** `9de19c7`
+- **Latest SHA (main):** `39cddd0`
 - **Open PRs:** None
 
 ## Recently Shipped (This Session)
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| `9de19c7` | test(coverage): add hook unit tests for alternatives-v2 and cross-country-links — 7 tests (#668) |
+| `39cddd0` | test(coverage): add flags evaluator, PWA install prompt, and score history tests — 78 tests (#670) |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR/SHA    | Summary                                                                           |
 | ---------- | --------- | --------------------------------------------------------------------------------- |
+| 2026-03-06 | #670      | test(coverage): flags evaluator, PWA install prompt, score history — 78 tests |
 | 2026-03-06 | #668      | test(coverage): hook unit tests for alternatives-v2 + cross-country-links (7 tests) |
 | 2026-03-06 | #666      | test(coverage): product layout 0→covered (14 tests), export functions +5 tests |
 | 2026-03-06 | #664      | test(coverage): api.ts 70→99%, flags/server.ts 0→covered, service.ts 0→covered, fix flaky E2E |
@@ -94,7 +95,7 @@
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
 - **Open issues:** 5 (3 P1 + 2 deferred) | **Open PRs:** 0
-- **Vitest:** 4,984 tests passing (29 skipped)
+- **Vitest:** 5,062 tests passing (29 skipped)
 - **DB migrations:** 198 append-only
 - **Ruff lint:** 0 errors
 - **Nutrition rows:** 2,511
