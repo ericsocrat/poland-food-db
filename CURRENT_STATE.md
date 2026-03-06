@@ -1,26 +1,39 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-06 by GitHub Copilot (session 28)
+> **Last updated:** 2026-03-06 by GitHub Copilot (session 29)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
 
 ## Active Branch & PR
 
-- **Branch:** `main` (clean tree, no active feature branch)
-- **Latest SHA (main):** `68acfcd`
+- **Branch:** `main` (clean tree)
+- **Latest SHA (main):** `a095a43`
 - **Open PRs:** None
+
+## Production Deployment (2026-03-06)
+
+**All 3 P1 deployment issues shipped to production:**
+- #599 — Deploy expanded PL dataset ✅ CLOSED
+- #607 — Deploy DE dataset ✅ CLOSED
+- #614 — Deploy v3.3 scoring ✅ CLOSED
+
+**Production stats:**
+- 73/73 migrations applied (4 enrichment migrations skipped — hardcoded IDs)
+- 236/236 pipelines executed successfully
+- Pre-deploy backup: `backups/cloud_backup_20260306_172023.dump`
 
 ## Recently Shipped (This Session)
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| `68acfcd` | test(coverage): add dashboard + WatchButton component tests — 55 tests (#672) |
+| — | Production deployment: #599 (PL dataset), #607 (DE dataset), #614 (v3.3 scoring) |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR/SHA    | Summary                                                                           |
 | ---------- | --------- | --------------------------------------------------------------------------------- |
+| 2026-03-06 | Deploy    | **PRODUCTION DEPLOY** — 73 migrations + 236 pipelines → 2,434 active products |
 | 2026-03-06 | #672      | test(coverage): dashboard + WatchButton component tests — 55 tests |
 | 2026-03-06 | #670      | test(coverage): flags evaluator, PWA install prompt, score history — 78 tests |
 | 2026-03-06 | #668      | test(coverage): hook unit tests for alternatives-v2 + cross-country-links (7 tests) |
@@ -48,6 +61,7 @@
 - [x] QA Suite 16 (Security): 2 anon-accessible non-public api_* functions — **FIXED in #662**
 - [ ] QA Suite 35 (StoreArch): 48 orphan junction rows + 2 backfill coverage gaps
 - [ ] QA Suite 41 (IdxVerify): 1 FK column missing supporting index
+- [ ] Production enrichment gap: 784/2,434 products have ingredient data (4 enrichment migrations skipped — hardcoded IDs from local dev DB)
 
 ## CI Gate Status (main branch)
 
@@ -61,13 +75,10 @@
 | quality-gate | ⚠️      | 18/20 pass; dashboard 400s from staging DB schema gap |
 | nightly      | ✅      | Data audit fix shipped (#560)                         |
 
-## Open Issues (5 total)
+## Open Issues (2 total — all deferred)
 
 | Issue | Priority | Effort | Summary                                                          |
 | ----- | -------- | ------ | ---------------------------------------------------------------- |
-| #599  | P1       | S      | Deploy expanded PL dataset to production                         |
-| #607  | P1       | S      | Deploy DE dataset to production                                  |
-| #614  | P1       | S      | Deploy v3.3 scoring to production                                |
 | #563  | Deferred | S      | Sync staging DB schema for quality-gate                          |
 | #212  | Deferred | —      | Infrastructure Cost Attribution Framework                        |
 
@@ -77,29 +88,27 @@
 
 ## Next Planned Work
 
-- [ ] Implement #599 — deploy expanded PL dataset to production (needs user confirmation per §10)
-- [ ] Implement #607 — deploy DE dataset to production (needs user confirmation per §10)
-- [ ] Implement #614 — deploy v3.3 scoring to production (needs user confirmation per §10)
+- [ ] Re-run ingredient enrichment against production DB (resolve 784/2,434 coverage gap)
+- [ ] Sync staging DB schema for quality-gate (#563)
 
 ## Key Metrics Snapshot
 
-- **Products:** 2,264 active (1,198 PL + 1,066 DE across 19 PL + 19 DE categories)
-- **Deprecated products:** 273 (168 PL + 105 DE)
-- **QA checks:** 743/743 passing (48 suites)
+- **Products (production):** 2,434 active (1,332 PL + 1,102 DE across 22 PL + 19 DE categories)
+- **Deprecated products:** 286 (229 PL + 57 DE)
+- **QA checks:** 743/743 passing (48 suites) — local DB
 - **Negative tests:** 23/23 caught
-- **EAN coverage:** 2,261/2,264 with EAN (99.9%)
-- **Ingredient refs:** 2,898 unique ingredients
-- **Product-ingredient links:** 14,392
-- **Allergen declarations:** 1,391 allergens + 1,481 traces
-- **Data completeness (PL):** 97.5% average, 73% minimum, all 19 categories ≥92%
-- **Confidence bands (PL):** 1,027 high / 168 medium / 3 low
+- **EAN coverage:** 2,261/2,264 with EAN (99.9%) — local DB
+- **Ingredient refs:** 2,673 (production) / 2,898 (local)
+- **Product-ingredient links:** 12,580 (production) / 14,392 (local)
+- **Allergen declarations:** 2,330 (production) / 2,872 (local)
+- **Production ingredient coverage:** 784/2,434 products (32%) — enrichment gap
+- **Nutrition coverage (production):** 2,434/2,434 (100%)
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
-- **Open issues:** 5 (3 P1 + 2 deferred) | **Open PRs:** 0
+- **Open issues:** 2 (both deferred) | **Open PRs:** 0
 - **Vitest:** 5,117 tests passing (29 skipped)
-- **DB migrations:** 198 append-only
+- **DB migrations:** 198 append-only (73 applied to production, 4 skipped)
 - **Ruff lint:** 0 errors
-- **Nutrition rows:** 2,511
 
 ---
 
