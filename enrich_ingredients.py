@@ -301,7 +301,7 @@ def process_ingredients(
 
     rows: list[dict] = []
 
-    def process_item(item: dict, pos: int, is_sub: bool, parent_id: int | None) -> int:
+    def process_item(item: dict, pos: int, is_sub: bool, parent_name: str | None) -> int:
         """Process a single ingredient item. Returns next position."""
         text = item.get("text", "").strip()
         off_id = item.get("id", "").strip()
@@ -314,24 +314,27 @@ def process_ingredients(
         if not name_lower or _is_garbage_name(name_lower):
             return pos
 
-        ing_id = _resolve_ingredient(item, off_id, name_lower, name, ingredient_lookup, new_ingredients)
+        # Resolve for new_ingredients side-effect (registers unknown ingredients)
+        _resolve_ingredient(item, off_id, name_lower, name, ingredient_lookup, new_ingredients)
+
+        display_name = _display_name_for(name)
 
         rows.append(
             {
                 "country": country,
                 "ean": ean,
-                "ingredient_id": ing_id,
+                "ingredient_name": display_name,
                 "position": pos,
                 "percent": item.get("percent"),
                 "percent_estimate": _clamp_percent_estimate(item.get("percent_estimate")),
                 "is_sub_ingredient": is_sub,
-                "parent_ingredient_id": parent_id if is_sub else None,
+                "parent_ingredient_name": parent_name if is_sub else None,
             }
         )
 
         next_pos = pos + 1
         for sub in item.get("ingredients", []):
-            next_pos = process_item(sub, next_pos, True, ing_id)
+            next_pos = process_item(sub, next_pos, True, display_name)
         return next_pos
 
     position = 1
@@ -565,11 +568,11 @@ def _format_ingredient_row(r: dict) -> tuple[str, str, str, bool]:
     """Extract common fields from an ingredient row for SQL generation."""
     pct = _format_nullable(r["percent"])
     pct_est = _format_nullable(r["percent_estimate"])
-    parent_id = r["parent_ingredient_id"]
-    parent = str(parent_id) if parent_id is not None and not isinstance(parent_id, str) else "NULL"
+    parent_name = r.get("parent_ingredient_name")
+    parent_sql = sql_escape(parent_name) if parent_name else "NULL"
     # If parent can't be resolved, force is_sub=false to satisfy chk_sub_has_parent
-    is_sub = r["is_sub_ingredient"] and parent != "NULL"
-    return pct, pct_est, parent, is_sub
+    is_sub = r["is_sub_ingredient"] and parent_name is not None
+    return pct, pct_est, parent_sql, is_sub
 
 
 def _gen_new_ingredients_section(new_ingredients: dict[str, dict]) -> list[str]:
@@ -631,81 +634,52 @@ def _gen_allergen_section(allergen_rows: list[dict]) -> list[str]:
     return lines
 
 
-def _gen_resolved_ingredient_batch(batch: list[dict]) -> list[str]:
-    """Generate SQL for a batch of resolved ingredient inserts."""
+def _gen_ingredient_batch(batch: list[dict]) -> list[str]:
+    """Generate SQL for a batch of ingredient inserts using portable name-based JOINs.
+
+    All ingredient_id and parent_ingredient_id values are resolved at SQL execution
+    time via ingredient_ref.name_en lookups, making migrations portable across
+    environments (local, CI, production) where identity-column IDs may differ.
+    """
     lines = [
         "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)",
-        "SELECT p.product_id, v.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id",
+        "SELECT p.product_id, ir.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, ir_parent.ingredient_id",
         SQL_FROM_VALUES,
     ]
     vals = []
     for r in batch:
-        pct, pct_est, parent, is_sub = _format_ingredient_row(r)
+        pct, pct_est, parent_name_sql, is_sub = _format_ingredient_row(r)
         vals.append(
-            f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, "
-            f"{r['ingredient_id']}, {r['position']}, {pct}, {pct_est}, "
-            f"{'true' if is_sub else 'false'}, {parent})"
-        )
-    lines.append(",\n".join(vals))
-    lines.append(
-        ") AS v(country, ean, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
-    )
-    lines.append(SQL_JOIN_PRODUCTS)
-    lines.append(SQL_WHERE_ACTIVE)
-    lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
-    lines.append("")
-    return lines
-
-
-def _gen_unresolved_ingredient_batch(batch: list[dict], new_ingredients: dict[str, dict]) -> list[str]:
-    """Generate SQL for a batch of unresolved ingredient inserts (need name lookup)."""
-    lines = [
-        "INSERT INTO product_ingredient (product_id, ingredient_id, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)",
-        "SELECT p.product_id, ir.ingredient_id, v.position, v.percent, v.percent_estimate, v.is_sub_ingredient, v.parent_ingredient_id",
-        SQL_FROM_VALUES,
-    ]
-    vals = []
-    for r in batch:
-        name_lower = r["ingredient_id"].replace("NEW:", "")
-        display_name = new_ingredients[name_lower]["name_en"]
-        pct, pct_est, parent, is_sub = _format_ingredient_row(r)
-        vals.append(
-            f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, {sql_escape(display_name)}, {r['position']}, "
+            f"  ({sql_escape(r['country'])}, {sql_escape(r['ean'])}, {sql_escape(r['ingredient_name'])}, {r['position']}, "
             f"{pct}::numeric, {pct_est}::numeric, "
-            f"{'true' if is_sub else 'false'}, {parent}::bigint)"
+            f"{'true' if is_sub else 'false'}, {parent_name_sql})"
         )
     lines.append(",\n".join(vals))
     lines.append(
-        ") AS v(country, ean, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_id)"
+        ") AS v(country, ean, ingredient_name, position, percent, percent_estimate, is_sub_ingredient, parent_ingredient_name)"
     )
     lines.append(SQL_JOIN_PRODUCTS)
     lines.append("JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)")
+    lines.append("LEFT JOIN ingredient_ref ir_parent ON lower(ir_parent.name_en) = lower(v.parent_ingredient_name)")
     lines.append(SQL_WHERE_ACTIVE)
     lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
     lines.append("")
     return lines
 
 
-def _gen_ingredient_section(ingredient_rows: list[dict], new_ingredients: dict[str, dict]) -> list[str]:
+def _gen_ingredient_section(ingredient_rows: list[dict]) -> list[str]:
     """Generate SQL for populating product_ingredient."""
     lines = [
         SQL_SECTION_SEPARATOR,
         "-- 3. Populate product_ingredient",
         SQL_SECTION_SEPARATOR,
-        "-- Resolve product_id by stable key (country + ean) for portability",
+        "-- Resolve product_id by (country + ean) and ingredient_id by name for portability",
         "",
     ]
 
-    # Group by whether they need name resolution
-    resolved = [r for r in ingredient_rows if not isinstance(r["ingredient_id"], str)]
-    unresolved = [r for r in ingredient_rows if isinstance(r["ingredient_id"], str)]
-
     batch_size = 500
-    for i in range(0, len(resolved), batch_size):
-        lines.extend(_gen_resolved_ingredient_batch(resolved[i : i + batch_size]))
-
-    for i in range(0, len(unresolved), batch_size):
-        lines.extend(_gen_unresolved_ingredient_batch(unresolved[i : i + batch_size], new_ingredients))
+    for i in range(0, len(ingredient_rows), batch_size):
+        lines.extend(_gen_ingredient_batch(ingredient_rows[i : i + batch_size]))
 
     return lines
 
@@ -738,7 +712,7 @@ def generate_migration(
         lines.extend(_gen_allergen_section(allergen_rows))
 
     if ingredient_rows:
-        lines.extend(_gen_ingredient_section(ingredient_rows, new_ingredients))
+        lines.extend(_gen_ingredient_section(ingredient_rows))
 
     # 4. Refresh materialized views
     lines.append(SQL_SECTION_SEPARATOR)

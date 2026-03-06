@@ -15,6 +15,16 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Fixed
 
+- Fix enrichment SQL generator portability: replace hardcoded `ingredient_id`
+  integers with name-based JOINs on `ingredient_ref`. Unified
+  `_gen_resolved_ingredient_batch()` and `_gen_unresolved_ingredient_batch()`
+  into single `_gen_ingredient_batch()` that always resolves IDs via
+  `JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)`.
+  Updated `check_enrichment_identity.py` guard to validate both product_id
+  and ingredient_id portability. Added 21 new tests in
+  `test_enrichment_portability.py`. Root cause of production enrichment gap
+  (68% of products missing ingredient data after deploy)
+
 - Fix `api_get_score_history()` CASE type mismatch that crashed when a product
   had more than one history entry — `CASE types numeric and text cannot be
   matched` caused by mixing `->>` (returns text) with a numeric variable in
