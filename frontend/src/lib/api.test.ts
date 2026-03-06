@@ -1,40 +1,58 @@
 import {
     addToList,
     browseRecipes,
+    completeOnboarding,
     createHealthProfile,
     createList,
     deleteComparison,
     deleteHealthProfile,
     deleteList,
+    deletePushSubscription,
     deleteSavedSearch,
+    deleteUserData,
+    exportUserData,
     findProductsForIngredient,
+    getAchievements,
     getActiveHealthProfile,
     getAvoidProductIds,
     getBetterAlternatives,
     getBetterAlternativesV2,
+    getBusinessMetrics,
     getCategoryListing,
     getCategoryOverview,
     getCrossCountryLinks,
     getDashboardData,
+    getDashboardInsights,
     getDataConfidence,
     getFavoriteProductIds,
     getFilterOptions,
+    getIngredientProfile,
     getListItems,
     getLists,
     getMySubmissions,
+    getOnboardingStatus,
+    getProductAllergens,
     getProductDetail,
     getProductHealthWarnings,
     getProductListMembership,
+    getProductProfile,
+    getProductProfileByEan,
     getProductsForCompare,
+    getPushSubscriptions,
     getRecentlyViewed,
     getRecipeDetail,
+    getRecipeScore,
     getSavedComparisons,
     getSavedSearches,
     getScanHistory,
     getScoreExplanation,
+    getScoreHistory,
     getSharedComparison,
     getSharedList,
     getUserPreferences,
+    getWatchlist,
+    incrementAchievementProgress,
+    isWatchingProduct,
     listHealthProfiles,
     lookupByEan,
     recordProductView,
@@ -43,15 +61,20 @@ import {
     reorderList,
     revokeShare,
     saveComparison,
+    savePushSubscription,
     saveSearch,
     searchAutocomplete,
+    searchDidYouMean,
     searchProducts,
     setUserPreferences,
+    skipOnboarding,
     submitProduct,
     toggleShare,
     trackEvent,
+    unwatchProduct,
     updateHealthProfile,
     updateList,
+    watchProduct,
 } from "@/lib/api";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
@@ -954,6 +977,470 @@ describe("Recipe API functions", () => {
       fakeSupabase,
       "find_products_for_recipe_ingredient",
       { p_recipe_ingredient_id: "ing-uuid-3" },
+    );
+  });
+});
+
+// ─── Onboarding API functions ───────────────────────────────────────────────
+
+describe("Onboarding API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("getOnboardingStatus calls api_get_onboarding_status", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { completed: false } });
+    await getOnboardingStatus(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_onboarding_status",
+    );
+  });
+
+  it("completeOnboarding calls api_complete_onboarding with preferences", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    const prefs = {
+      country: "PL",
+      language: "pl",
+      diet: "vegetarian",
+      allergens: ["gluten", "milk"],
+      strict_allergen: true,
+      strict_diet: false,
+      treat_may_contain_as_unsafe: false,
+      health_goals: ["lose_weight"],
+      favorite_categories: ["Dairy"],
+    };
+    await completeOnboarding(fakeSupabase, prefs);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_complete_onboarding",
+      { p_preferences: prefs },
+    );
+  });
+
+  it("completeOnboarding sends minimal preferences", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await completeOnboarding(fakeSupabase, { country: "DE" });
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_complete_onboarding",
+      { p_preferences: { country: "DE" } },
+    );
+  });
+
+  it("skipOnboarding calls api_skip_onboarding", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { completed: true } });
+    await skipOnboarding(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_skip_onboarding",
+    );
+  });
+});
+
+// ─── Search Did You Mean ────────────────────────────────────────────────────
+
+describe("Search Did You Mean", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("searchDidYouMean calls api_search_did_you_mean with query", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { suggestions: [] } });
+    await searchDidYouMean(fakeSupabase, "mleko");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_search_did_you_mean",
+      { p_query: "mleko" },
+    );
+  });
+
+  it("searchDidYouMean passes limit when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { suggestions: [] } });
+    await searchDidYouMean(fakeSupabase, "jogurt", 5);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_search_did_you_mean",
+      { p_query: "jogurt", p_limit: 5 },
+    );
+  });
+
+  it("searchDidYouMean omits limit when undefined", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { suggestions: [] } });
+    await searchDidYouMean(fakeSupabase, "chleb", undefined);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_search_did_you_mean",
+      { p_query: "chleb" },
+    );
+  });
+});
+
+// ─── Product Profile API functions ──────────────────────────────────────────
+
+describe("Product Profile API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("getProductProfile calls api_get_product_profile with product ID", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getProductProfile(fakeSupabase, 42);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_product_profile",
+      { p_product_id: 42 },
+    );
+  });
+
+  it("getProductProfile passes language when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getProductProfile(fakeSupabase, 42, "pl");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_product_profile",
+      { p_product_id: 42, p_language: "pl" },
+    );
+  });
+
+  it("getProductProfileByEan calls api_get_product_profile_by_ean", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getProductProfileByEan(fakeSupabase, "5901234123457");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_product_profile_by_ean",
+      { p_ean: "5901234123457" },
+    );
+  });
+
+  it("getProductProfileByEan passes language when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getProductProfileByEan(fakeSupabase, "5901234123457", "de");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_product_profile_by_ean",
+      { p_ean: "5901234123457", p_language: "de" },
+    );
+  });
+
+  it("getIngredientProfile calls api_get_ingredient_profile", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getIngredientProfile(fakeSupabase, 99);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_ingredient_profile",
+      { p_ingredient_id: 99 },
+    );
+  });
+
+  it("getIngredientProfile passes language when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getIngredientProfile(fakeSupabase, 99, "en");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_ingredient_profile",
+      { p_ingredient_id: 99, p_language: "en" },
+    );
+  });
+});
+
+// ─── Dashboard Insights ─────────────────────────────────────────────────────
+
+describe("Dashboard Insights", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("getDashboardInsights calls api_dashboard_insights", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getDashboardInsights(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_dashboard_insights",
+    );
+  });
+});
+
+// ─── Score History & Watchlist ───────────────────────────────────────────────
+
+describe("Score History & Watchlist API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("getScoreHistory calls api_get_score_history with product ID", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { history: [] } });
+    await getScoreHistory(fakeSupabase, 10);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_score_history",
+      { p_product_id: 10 },
+    );
+  });
+
+  it("getScoreHistory passes limit when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { history: [] } });
+    await getScoreHistory(fakeSupabase, 10, 5);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_score_history",
+      { p_product_id: 10, p_limit: 5 },
+    );
+  });
+
+  it("watchProduct calls api_watch_product with product ID", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { watching: true } });
+    await watchProduct(fakeSupabase, 42);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_watch_product",
+      { p_product_id: 42 },
+    );
+  });
+
+  it("watchProduct passes threshold when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { watching: true } });
+    await watchProduct(fakeSupabase, 42, 5);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_watch_product",
+      { p_product_id: 42, p_threshold: 5 },
+    );
+  });
+
+  it("unwatchProduct calls api_unwatch_product", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { unwatched: true } });
+    await unwatchProduct(fakeSupabase, 42);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_unwatch_product",
+      { p_product_id: 42 },
+    );
+  });
+
+  it("getWatchlist calls api_get_watchlist with no params", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { items: [] } });
+    await getWatchlist(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_watchlist",
+      {},
+    );
+  });
+
+  it("getWatchlist passes page and pageSize when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { items: [] } });
+    await getWatchlist(fakeSupabase, 2, 10);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_watchlist",
+      { p_page: 2, p_page_size: 10 },
+    );
+  });
+
+  it("isWatchingProduct calls api_is_watching", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { watching: false } });
+    await isWatchingProduct(fakeSupabase, 42);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_is_watching",
+      { p_product_id: 42 },
+    );
+  });
+});
+
+// ─── Achievements API functions ─────────────────────────────────────────────
+
+describe("Achievements API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("getAchievements calls api_get_achievements", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { achievements: [] } });
+    await getAchievements(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_achievements",
+    );
+  });
+
+  it("incrementAchievementProgress calls increment_achievement_progress with slug", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await incrementAchievementProgress(fakeSupabase, "first_scan");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "increment_achievement_progress",
+      { p_achievement_slug: "first_scan" },
+    );
+  });
+
+  it("incrementAchievementProgress passes increment when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await incrementAchievementProgress(fakeSupabase, "scan_master", 5);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "increment_achievement_progress",
+      { p_achievement_slug: "scan_master", p_increment: 5 },
+    );
+  });
+});
+
+// ─── Recipe Score ───────────────────────────────────────────────────────────
+
+describe("Recipe Score", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("getRecipeScore calls api_get_recipe_score with slug", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { score: 42 } });
+    await getRecipeScore(fakeSupabase, "healthy-salad");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_recipe_score",
+      { p_slug: "healthy-salad" },
+    );
+  });
+});
+
+// ─── Product Allergens ──────────────────────────────────────────────────────
+
+describe("Product Allergens", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("getProductAllergens calls api_get_product_allergens with product IDs", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getProductAllergens(fakeSupabase, [1, 2, 3]);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_product_allergens",
+      { p_product_ids: [1, 2, 3] },
+    );
+  });
+
+  it("getProductAllergens handles empty array", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getProductAllergens(fakeSupabase, []);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_product_allergens",
+      { p_product_ids: [] },
+    );
+  });
+});
+
+// ─── Push Notifications API functions ───────────────────────────────────────
+
+describe("Push Notifications API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("savePushSubscription calls api_save_push_subscription", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await savePushSubscription(
+      fakeSupabase,
+      "https://push.example.com/sub1",
+      "p256dh-key",
+      "auth-key",
+    );
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_save_push_subscription",
+      {
+        p_endpoint: "https://push.example.com/sub1",
+        p_key_p256dh: "p256dh-key",
+        p_key_auth: "auth-key",
+      },
+    );
+  });
+
+  it("deletePushSubscription calls api_delete_push_subscription", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await deletePushSubscription(fakeSupabase, "https://push.example.com/sub1");
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_delete_push_subscription",
+      { p_endpoint: "https://push.example.com/sub1" },
+    );
+  });
+
+  it("getPushSubscriptions calls api_get_push_subscriptions", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { subscriptions: [] } });
+    await getPushSubscriptions(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_get_push_subscriptions",
+    );
+  });
+});
+
+// ─── GDPR API functions ─────────────────────────────────────────────────────
+
+describe("GDPR API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("exportUserData calls api_export_user_data", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await exportUserData(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_export_user_data",
+    );
+  });
+
+  it("deleteUserData calls api_delete_user_data", async () => {
+    mockCallRpc.mockResolvedValue({
+      ok: true,
+      data: { status: "deleted", timestamp: "2026-01-01" },
+    });
+    await deleteUserData(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_delete_user_data",
+    );
+  });
+});
+
+// ─── Business Metrics API functions ─────────────────────────────────────────
+
+describe("Business Metrics API functions", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("getBusinessMetrics calls api_admin_get_business_metrics with defaults", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getBusinessMetrics(fakeSupabase);
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_admin_get_business_metrics",
+      { p_date: null, p_days: 7 },
+    );
+  });
+
+  it("getBusinessMetrics passes custom date and days", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getBusinessMetrics(fakeSupabase, { date: "2026-03-01", days: 30 });
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_admin_get_business_metrics",
+      { p_date: "2026-03-01", p_days: 30 },
+    );
+  });
+
+  it("getBusinessMetrics defaults days to 7 when only date provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: {} });
+    await getBusinessMetrics(fakeSupabase, { date: "2026-03-01" });
+    expect(mockCallRpc).toHaveBeenCalledWith(
+      fakeSupabase,
+      "api_admin_get_business_metrics",
+      { p_date: "2026-03-01", p_days: 7 },
     );
   });
 });
