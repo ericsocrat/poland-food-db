@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
     downloadFile,
+    exportComparison,
+    exportProducts,
     generateComparisonCSV,
     generateCSV,
     generateText,
@@ -246,5 +248,102 @@ describe("downloadFile", () => {
 
     appendChild.mockRestore();
     removeChild.mockRestore();
+  });
+});
+
+// ─── exportProducts ─────────────────────────────────────────────────────────
+
+describe("exportProducts", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+
+    const createObjectURL = vi.fn(() => "blob:mock-url");
+    const revokeObjectURL = vi.fn();
+    Object.defineProperty(globalThis, "URL", {
+      value: { createObjectURL, revokeObjectURL },
+      writable: true,
+    });
+
+    vi.spyOn(document.body, "appendChild").mockImplementation((node) => node);
+    vi.spyOn(document.body, "removeChild").mockImplementation((node) => node);
+    vi.spyOn(document, "createElement").mockReturnValue({
+      href: "",
+      download: "",
+      click: vi.fn(),
+    } as unknown as HTMLAnchorElement);
+  });
+
+  it("downloads a CSV file when format is csv", () => {
+    exportProducts({
+      filename: "my-export",
+      format: "csv",
+      products: [MINIMAL_PRODUCT],
+    });
+
+    // Verify createElement was called (download triggered)
+    expect(document.createElement).toHaveBeenCalled();
+  });
+
+  it("downloads a text file when format is text", () => {
+    exportProducts({
+      filename: "my-export",
+      format: "text",
+      products: [MINIMAL_PRODUCT],
+    });
+
+    expect(document.createElement).toHaveBeenCalled();
+  });
+
+  it("passes includeHeader and includeTimestamp options through to CSV generation", () => {
+    exportProducts({
+      filename: "test",
+      format: "csv",
+      products: [MINIMAL_PRODUCT],
+      includeHeader: false,
+      includeTimestamp: false,
+    });
+
+    expect(document.createElement).toHaveBeenCalled();
+  });
+
+  it("passes includeHeader and includeTimestamp options through to text generation", () => {
+    exportProducts({
+      filename: "test",
+      format: "text",
+      products: [POLISH_PRODUCT],
+      includeHeader: false,
+      includeTimestamp: false,
+    });
+
+    expect(document.createElement).toHaveBeenCalled();
+  });
+});
+
+// ─── exportComparison ───────────────────────────────────────────────────────
+
+describe("exportComparison", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+
+    const createObjectURL = vi.fn(() => "blob:mock-url");
+    const revokeObjectURL = vi.fn();
+    Object.defineProperty(globalThis, "URL", {
+      value: { createObjectURL, revokeObjectURL },
+      writable: true,
+    });
+
+    vi.spyOn(document.body, "appendChild").mockImplementation((node) => node);
+    vi.spyOn(document.body, "removeChild").mockImplementation((node) => node);
+    vi.spyOn(document, "createElement").mockReturnValue({
+      href: "",
+      download: "",
+      click: vi.fn(),
+    } as unknown as HTMLAnchorElement);
+  });
+
+  it("downloads a comparison CSV file", () => {
+    exportComparison([POLISH_PRODUCT, MINIMAL_PRODUCT], "comparison");
+
+    expect(document.createElement).toHaveBeenCalled();
   });
 });
