@@ -1,15 +1,15 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-07 by GitHub Copilot (session 31)
+> **Last updated:** 2026-03-07 by GitHub Copilot (session 32)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
 
 ## Active Branch & PR
 
-- **Branch:** `main` at `41d2929` (PR #675 squash merge)
-- **Latest SHA (main):** `41d2929`
-- **Open PRs:** None
+- **Branch:** `fix/qa-orphan-rows-and-missing-index` off `main` at `084fad7`
+- **Latest SHA (main):** `084fad7` (PR #676 squash merge)
+- **Open PRs:** TBD (this branch)
 
 ## Production Deployment (2026-03-06)
 
@@ -27,9 +27,8 @@
 
 | SHA     | Summary                                                                           |
 | ------- | --------------------------------------------------------------------------------- |
-| 41d2929 | fix(pipeline): portable enrichment SQL + check_enrichment_identity fix (#675)     |
-| 5a49d40 | fix(pipeline): collision on oils-vinegars + spreads-dips categories (#674)        |
-| —       | data(production): enrichment migration — 1,836 products enriched (90.5% coverage) |
+| 084fad7 | fix(pipeline): add defensive WHERE guard for orphan sub-ingredients (#676)        |
+| —       | schema(production): fix orphan junction rows + add parent_ingredient_id index     |
 
 ## Recently Shipped (Last 7 Days)
 
@@ -61,8 +60,8 @@
 - [ ] QA Suite 2 (Scoring): Coca-Cola Zero test 12 — score 13 vs expected 2-6 (pre-existing after DE enrichment)
 - [ ] QA Suite 11 (NutriRange): 9 calorie back-calculation outliers — OFF source data quality
 - [x] QA Suite 16 (Security): 2 anon-accessible non-public api_* functions — **FIXED in #662**
-- [ ] QA Suite 35 (StoreArch): 48 orphan junction rows + 2 backfill coverage gaps
-- [ ] QA Suite 41 (IdxVerify): 1 FK column missing supporting index
+- [x] QA Suite 35 (StoreArch): 48 orphan junction rows + 2 backfill coverage gaps — **FIXED in migration 20260316000300**
+- [x] QA Suite 41 (IdxVerify): 1 FK column missing supporting index — **FIXED in migration 20260316000300**
 
 ## CI Gate Status (main branch)
 
@@ -91,6 +90,7 @@
 
 - [x] Fix enrichment SQL generator portability (hardcoded ingredient_id → name-based JOINs) — **MERGED in #675**
 - [x] Re-run ingredient enrichment against production DB — **DONE** (2,206/2,438 = 90.5% coverage)
+- [x] Fix QA Suite 35 orphan rows + Suite 41 missing FK index — **migration 20260316000300 applied to production**
 - [ ] Sync staging DB schema for quality-gate (#563)
 
 ## Key Metrics Snapshot
@@ -110,7 +110,7 @@
 - **ESLint warnings:** 0
 - **Open issues:** 2 (both deferred) | **Open PRs:** 0
 - **Vitest:** 5,117 tests passing (29 skipped)
-- **DB migrations:** 198 append-only (73 applied to production, 4 skipped)
+- **DB migrations:** 199 append-only (74 applied to production, 4 skipped)
 - **Ruff lint:** 0 errors
 
 ---
