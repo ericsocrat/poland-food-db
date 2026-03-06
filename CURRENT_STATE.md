@@ -9,7 +9,7 @@
 
 - **Branch:** `feat/620-score-trend-timeline` (implementing #620 — pgTAP tests + function bug fix)
 - **Latest SHA (main):** `a0ed189`
-- **Open PRs:** #658 (for #594, Oils & Vinegars), #657 (for #622, Playwright E2E)
+- **Open PRs:** #659 (for #620, score history fix + pgTAP), #658 (for #594, Oils & Vinegars), #657 (for #622, Playwright E2E)
 
 ## Recently Shipped (This Session)
 
@@ -21,6 +21,7 @@
 
 | Date       | PR/SHA    | Summary                                                                           |
 | ---------- | --------- | --------------------------------------------------------------------------------- |
+| 2026-03-05 | #659      | fix(schema): api_get_score_history CASE fix + pgTAP tests (#620)                  |
 | 2026-03-05 | #655      | test(qa): DE validation suite — anchors, multi-country fixes (#602)               |
 | 2026-03-05 | #654      | data(ingredients): enrich DE products (#603)                                      |
 | 2026-03-05 | #652      | test(qa): PL validation gate (#595)                                               |
