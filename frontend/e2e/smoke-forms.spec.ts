@@ -93,11 +93,12 @@ test.describe("Signup form validation UX", () => {
     expect(placeholder?.toLowerCase()).toContain("6");
   });
 
-  test("empty form submission is blocked by native validation", async ({
-    page,
-  }) => {
+  test("empty form submission is blocked", async ({ page }) => {
     const submit = page.locator('button[type="submit"]');
-    await submit.click();
+
+    // Signup button is disabled until Turnstile CAPTCHA token is obtained,
+    // so empty form submission is blocked by the disabled state.
+    await expect(submit).toBeDisabled();
 
     // Page should NOT navigate
     await expect(page).toHaveURL(/\/auth\/signup/);
