@@ -1,15 +1,15 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-06 by GitHub Copilot (session 29)
+> **Last updated:** 2026-03-07 by GitHub Copilot (session 30)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
 
 ## Active Branch & PR
 
-- **Branch:** `main` (clean tree)
-- **Latest SHA (main):** `a095a43`
-- **Open PRs:** None
+- **Branch:** `fix/portable-enrichment-sql` (from main at `5a49d40`)
+- **Latest SHA (main):** `5a49d40` (includes merged PR #674)
+- **Open PRs:** PR for portable enrichment fix (pending creation)
 
 ## Production Deployment (2026-03-06)
 
@@ -27,7 +27,7 @@
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| — | Production deployment: #599 (PL dataset), #607 (DE dataset), #614 (v3.3 scoring) |
+| 5a49d40   | fix(pipeline): collision on oils-vinegars + spreads-dips categories (#674)              |
 
 ## Recently Shipped (Last 7 Days)
 
@@ -88,7 +88,8 @@
 
 ## Next Planned Work
 
-- [ ] Re-run ingredient enrichment against production DB (resolve 784/2,434 coverage gap)
+- [x] Fix enrichment SQL generator portability (hardcoded ingredient_id → name-based JOINs) — PR pending
+- [ ] Re-run ingredient enrichment against production DB with fixed generator (resolve 1,650/2,434 coverage gap)
 - [ ] Sync staging DB schema for quality-gate (#563)
 
 ## Key Metrics Snapshot
