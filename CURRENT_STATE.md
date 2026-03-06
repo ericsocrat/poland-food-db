@@ -1,15 +1,15 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-07 by GitHub Copilot (session 32)
+> **Last updated:** 2026-03-07 by GitHub Copilot (session 33)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
 
 ## Active Branch & PR
 
-- **Branch:** `fix/qa-orphan-rows-and-missing-index` off `main` at `084fad7`
-- **Latest SHA (main):** `084fad7` (PR #676 squash merge)
-- **Open PRs:** TBD (this branch)
+- **Branch:** `main` (no active feature branch)
+- **Latest SHA (main):** `fa1eb5e` (PR #677 squash merge)
+- **Open PRs:** None
 
 ## Production Deployment (2026-03-06)
 
@@ -27,8 +27,8 @@
 
 | SHA     | Summary                                                                           |
 | ------- | --------------------------------------------------------------------------------- |
+| fa1eb5e | fix(schema): clean orphan store rows + add parent_ingredient_id index (#677)      |
 | 084fad7 | fix(pipeline): add defensive WHERE guard for orphan sub-ingredients (#676)        |
-| —       | schema(production): fix orphan junction rows + add parent_ingredient_id index     |
 
 ## Recently Shipped (Last 7 Days)
 
@@ -57,7 +57,7 @@
 ## Known Issues & Broken Items
 
 - [ ] Quality Gate dashboard test still fails — staging DB missing API functions (schema sync needed)
-- [ ] QA Suite 2 (Scoring): Coca-Cola Zero test 12 — score 13 vs expected 2-6 (pre-existing after DE enrichment)
+- [x] QA Suite 2 (Scoring): Coca-Cola Zero — score anchor updated to 11-16 in PR #655 (DE validation suite)
 - [ ] QA Suite 11 (NutriRange): 9 calorie back-calculation outliers — OFF source data quality
 - [x] QA Suite 16 (Security): 2 anon-accessible non-public api_* functions — **FIXED in #662**
 - [x] QA Suite 35 (StoreArch): 48 orphan junction rows + 2 backfill coverage gaps — **FIXED in migration 20260316000300**
@@ -110,7 +110,7 @@
 - **ESLint warnings:** 0
 - **Open issues:** 2 (both deferred) | **Open PRs:** 0
 - **Vitest:** 5,117 tests passing (29 skipped)
-- **DB migrations:** 199 append-only (74 applied to production, 4 skipped)
+- **DB migrations:** 200 append-only (75 applied to production, 4 skipped)
 - **Ruff lint:** 0 errors
 
 ---
