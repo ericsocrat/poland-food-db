@@ -29,11 +29,14 @@ logger = logging.getLogger(__name__)
 
 
 def _dedup(products: list[dict]) -> list[dict]:
-    """De-duplicate products by (brand, product_name), keeping first seen."""
+    """De-duplicate products by (brand, product_name), keeping first seen.
+
+    Uses lower/strip to match the DB identity_key: md5(lower(trim(brand)) || '::' || lower(trim(product_name))).
+    """
     seen: set[tuple[str, str]] = set()
     unique: list[dict] = []
     for p in products:
-        key = (p["brand"], p["product_name"])
+        key = (p["brand"].lower().strip(), p["product_name"].lower().strip())
         if key not in seen:
             seen.add(key)
             unique.append(p)

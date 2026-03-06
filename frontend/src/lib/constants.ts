@@ -101,10 +101,12 @@ export const FOOD_CATEGORIES = [
   { slug: "instant-frozen", emoji: "🍜", labelKey: "onboarding.catInstant" },
   { slug: "meat", emoji: "🥩", labelKey: "onboarding.catMeat" },
   { slug: "nuts-seeds-legumes", emoji: "🥜", labelKey: "onboarding.catNuts" },
+  { slug: "oils-vinegars", emoji: "🫒", labelKey: "onboarding.catOils" },
   { slug: "plant-based-alternatives", emoji: "🌱", labelKey: "onboarding.catPlantBased" },
   { slug: "sauces", emoji: "🫗", labelKey: "onboarding.catSauces" },
   { slug: "seafood-fish", emoji: "🐟", labelKey: "onboarding.catSeafood" },
   { slug: "snacks", emoji: "🍿", labelKey: "onboarding.catSnacks" },
+  { slug: "spreads-dips", emoji: "🫕", labelKey: "onboarding.catSpreads" },
   { slug: "sweets", emoji: "🍫", labelKey: "onboarding.catSweets" },
 ] as const;
 

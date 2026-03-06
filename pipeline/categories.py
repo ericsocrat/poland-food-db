@@ -24,6 +24,8 @@ CAT_BREAKFAST = "Breakfast & Grain-Based"
 CAT_INSTANT = "Instant & Frozen"
 CAT_PLANT = "Plant-Based & Alternatives"
 CAT_SEAFOOD = "Seafood & Fish"
+CAT_OILS = "Oils & Vinegars"
+CAT_SPREADS = "Spreads & Dips"
 
 # ---------------------------------------------------------------------------
 # OFF category tag  →  our database category
@@ -183,6 +185,22 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:herrings": CAT_SEAFOOD,
     "en:mackerels": CAT_SEAFOOD,
     "en:tunas": CAT_SEAFOOD,
+    # Oils & Vinegars
+    "en:olive-oils": CAT_OILS,
+    "en:sunflower-oils": CAT_OILS,
+    "en:rapeseed-oils": CAT_OILS,
+    "en:colza-oils": CAT_OILS,
+    "en:vinegars": CAT_OILS,
+    "en:balsamic-vinegars": CAT_OILS,
+    "en:vegetable-oils": CAT_OILS,
+    "en:cooking-oils": CAT_OILS,
+    "en:seed-oils": CAT_OILS,
+    # Spreads & Dips
+    "en:dips": CAT_SPREADS,
+    "en:pates": CAT_SPREADS,
+    "en:tapenades": CAT_SPREADS,
+    "en:guacamole": CAT_SPREADS,
+    "en:tzatzikis": CAT_SPREADS,
 }
 
 # Broad categories that should yield to more specific ones during resolution.
@@ -335,6 +353,35 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "vegan sausage",
     ],
     CAT_NUTS: ["peanuts", "almonds", "walnuts", "sunflower seeds"],
+    CAT_OILS: [
+        "olive oil",
+        "sunflower oil",
+        "rapeseed oil",
+        "canola oil",
+        "coconut oil",
+        "vegetable oil",
+        "cooking oil",
+        "vinegar",
+        "balsamic vinegar",
+        "apple cider vinegar",
+        "wine vinegar",
+        "spray oil",
+        "olej",
+        "ocet",
+    ],
+    CAT_SPREADS: [
+        "hummus",
+        "guacamole",
+        "pate",
+        "tapenade",
+        "dip",
+        "tzatziki",
+        "cream cheese spread",
+        "bean dip",
+        "salsa dip",
+        "cheese spread",
+        "pasztet",
+    ],
 }
 
 # Reverse lookup: DB category → list of OFF tags
