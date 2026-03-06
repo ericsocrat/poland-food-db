@@ -1,27 +1,31 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-05 by GitHub Copilot (session 21)
+> **Last updated:** 2026-03-06 by GitHub Copilot (session 22)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
 
 ## Active Branch & PR
 
-- **Branch:** `feat/620-score-trend-timeline` (implementing #620 — pgTAP tests + function bug fix)
-- **Latest SHA (main):** `a0ed189`
-- **Open PRs:** #659 (for #620, score history fix + pgTAP), #658 (for #594, Oils & Vinegars), #657 (for #622, Playwright E2E)
+- **Branch:** `main` (clean tree, no active feature branch)
+- **Latest SHA (main):** `ecf057c`
+- **Open PRs:** None
 
 ## Recently Shipped (This Session)
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| (pending) | fix(schema): api_get_score_history CASE type mismatch + pgTAP tests + schema contracts (#620) |
+| `ecf057c` | test(e2e): comprehensive Playwright E2E suite for M18-M22 features (#622)              |
+| `8f92594` | feat(pipeline): add Oils & Vinegars + Spreads & Dips categories for PL (#594)          |
+| `0889d86` | fix(schema): api_get_score_history CASE type mismatch + pgTAP tests (#620)             |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR/SHA    | Summary                                                                           |
 | ---------- | --------- | --------------------------------------------------------------------------------- |
-| 2026-03-05 | #659      | fix(schema): api_get_score_history CASE fix + pgTAP tests (#620)                  |
+| 2026-03-06 | #657      | test(e2e): comprehensive Playwright E2E for M18-M22 features (#622)               |
+| 2026-03-06 | #658      | feat(pipeline): Oils & Vinegars + Spreads & Dips for PL (~150 products) (#594)    |
+| 2026-03-06 | #659      | fix(schema): api_get_score_history CASE fix + pgTAP tests (#620)                  |
 | 2026-03-05 | #655      | test(qa): DE validation suite — anchors, multi-country fixes (#602)               |
 | 2026-03-05 | #654      | data(ingredients): enrich DE products (#603)                                      |
 | 2026-03-05 | #652      | test(qa): PL validation gate (#595)                                               |
@@ -51,19 +55,13 @@
 | quality-gate | ⚠️      | 18/20 pass; dashboard 400s from staging DB schema gap |
 | nightly      | ✅      | Data audit fix shipped (#560)                         |
 
-## Open Issues (11 total)
+## Open Issues (5 total)
 
 | Issue | Priority | Effort | Summary                                                          |
 | ----- | -------- | ------ | ---------------------------------------------------------------- |
 | #599  | P1       | S      | Deploy expanded PL dataset to production                         |
 | #607  | P1       | S      | Deploy DE dataset to production                                  |
 | #614  | P1       | S      | Deploy v3.3 scoring to production                                |
-| #598  | P2       | M      | Update CURRENT_STATE + copilot-instructions for PL expansion (PR #653 open) |
-| #606  | P2       | S      | Update COUNTRY_EXPANSION_GUIDE for DE graduation (in progress)   |
-| #597  | P2       | M      | Validate MV refresh + API perf at 2K PL products                 |
-| #622  | P2       | L      | Comprehensive Playwright E2E for M18–M22 features                |
-| #594  | P3       | M      | Add Oils & Vinegars + Spreads & Dips categories for PL           |
-| #620  | P3       | L      | Product score trend timeline + history visualization             |
 | #563  | Deferred | S      | Sync staging DB schema for quality-gate                          |
 | #212  | Deferred | —      | Infrastructure Cost Attribution Framework                        |
 
@@ -73,11 +71,9 @@
 
 ## Next Planned Work
 
-- [ ] Merge PR #653 (issue #598) once CI passes
-- [ ] Ship PR for #606 (DE graduation docs — in progress)
-- [ ] Implement #599 — deploy expanded PL dataset to production (needs user confirmation)
-- [ ] Implement #607 — deploy DE dataset to production (needs user confirmation)
-- [ ] Implement #614 — deploy v3.3 scoring to production (needs user confirmation)
+- [ ] Implement #599 — deploy expanded PL dataset to production (needs user confirmation per §10)
+- [ ] Implement #607 — deploy DE dataset to production (needs user confirmation per §10)
+- [ ] Implement #614 — deploy v3.3 scoring to production (needs user confirmation per §10)
 
 ## Key Metrics Snapshot
 
@@ -93,9 +89,9 @@
 - **Confidence bands (PL):** 1,027 high / 168 medium / 3 low
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
-- **Open issues:** 11 (3 P1 + 4 P2 + 2 P3 + 2 deferred) | **Open PRs:** 1
+- **Open issues:** 5 (3 P1 + 2 deferred) | **Open PRs:** 0
 - **Vitest:** 4,901 tests passing (29 skipped)
-- **DB migrations:** 195 append-only
+- **DB migrations:** 197 append-only
 - **Ruff lint:** 0 errors
 - **Nutrition rows:** 2,511
 
