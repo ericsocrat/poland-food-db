@@ -31,6 +31,16 @@ Adheres to [Semantic Versioning](https://semver.org/).
   2 new migration files; 12 new product_type_ref entries; frontend i18n updates
   (en/pl/de); QA NutriRange expected categories updated for oils/spreads (#594)
 
+### Testing
+
+- Comprehensive Playwright E2E suite for M18-M22 features: 4 new functional
+  spec files with 34 tests — product journey (TryVit Score display, progressive
+  disclosure, cross-country links, user actions), comparison sharing (grid,
+  empty state, save/share flow, public shared view), recipe nutrition (browse
+  filters, detail, score badge, ingredient-product linking), search cross-country
+  (search basics, autocomplete, country switching, result isolation). All files
+  auto-matched by existing `functional` project in Playwright config (#622)
+
 ### Tests
 
 - Add pgTAP test suite `score_history_functions.test.sql` — 30 tests covering

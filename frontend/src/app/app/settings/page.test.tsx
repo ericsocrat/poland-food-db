@@ -117,14 +117,11 @@ describe("ProfileSettingsPage", () => {
   it("shows only 2 language options for selected country (native + English)", async () => {
     render(<ProfileSettingsPage />, { wrapper: createWrapper() });
 
+    // Wait for country state to be populated from prefs (PL) via useEffect,
+    // which triggers getLanguagesForCountry("PL") → Polski + English
     await waitFor(() => {
-      expect(
-        screen.getByRole("heading", { name: /Profile & Preferences/i }),
-      ).toBeInTheDocument();
+      expect(screen.getByText("Polski")).toBeInTheDocument();
     });
-
-    // Poland = Polski + English (2 options, NOT Deutsch)
-    expect(screen.getByText("Polski")).toBeInTheDocument();
     expect(screen.getByText("English")).toBeInTheDocument();
     expect(screen.queryByText("Deutsch")).not.toBeInTheDocument();
   });
