@@ -280,7 +280,6 @@ describe("exportProducts", () => {
       products: [MINIMAL_PRODUCT],
     });
 
-    const anchor = document.createElement("a") as unknown as { download: string };
     // Verify createElement was called (download triggered)
     expect(document.createElement).toHaveBeenCalled();
   });
