@@ -13,6 +13,25 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Fix `api_get_score_history()` CASE type mismatch that crashed when a product
+  had more than one history entry — `CASE types numeric and text cannot be
+  matched` caused by mixing `->>` (returns text) with a numeric variable in
+  CASE branches. Added explicit `::numeric` casts. Migration
+  `20260316000100_fix_score_history_case_type.sql` (#620)
+
+### Tests
+
+- Add pgTAP test suite `score_history_functions.test.sql` — 30 tests covering
+  `api_get_score_history` (response keys, values, trend detection, empty history,
+  reformulation detection, limit parameter) and auth-error branches for
+  `api_watch_product`, `api_unwatch_product`, `api_get_watchlist` (#620)
+
+- Add 17 schema contract assertions for score history and watchlist objects
+  (`product_score_history`, `user_watched_products`, 5 API functions,
+  `trg_record_score_change` trigger) in `schema_contracts.test.sql` (#620)
+
 ### Documentation
 
 - Update COUNTRY_EXPANSION_GUIDE.md for DE full market graduation: DE status

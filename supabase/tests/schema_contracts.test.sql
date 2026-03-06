@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(267);
+SELECT plan(283);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -393,6 +393,25 @@ SELECT has_function('public', 'api_admin_health_overview',   'function api_admin
 -- === Scoring v3.3 — Nutrient Density Bonus (#608) ===
 SELECT has_function('public', 'compute_unhealthiness_v33',   'function compute_unhealthiness_v33 exists');
 SELECT has_function('public', 'explain_score_v33',           'function explain_score_v33 exists');
+
+-- ─── Score History & Watchlist (#620, #617) ──────────────────────────────────
+SELECT has_table('public', 'product_score_history',                          'table product_score_history exists');
+SELECT has_column('public', 'product_score_history', 'history_id',           'product_score_history has history_id column');
+SELECT has_column('public', 'product_score_history', 'product_id',           'product_score_history has product_id column');
+SELECT has_column('public', 'product_score_history', 'recorded_at',          'product_score_history has recorded_at column');
+SELECT has_column('public', 'product_score_history', 'unhealthiness_score',  'product_score_history has unhealthiness_score column');
+SELECT has_column('public', 'product_score_history', 'score_delta',          'product_score_history has score_delta column');
+SELECT has_column('public', 'product_score_history', 'trigger_source',       'product_score_history has trigger_source column');
+SELECT has_table('public', 'user_watched_products',                          'table user_watched_products exists');
+SELECT has_column('public', 'user_watched_products', 'user_id',             'user_watched_products has user_id column');
+SELECT has_column('public', 'user_watched_products', 'product_id',          'user_watched_products has product_id column');
+SELECT has_column('public', 'user_watched_products', 'alert_threshold',     'user_watched_products has alert_threshold column');
+SELECT has_function('public', 'record_score_change',                         'function record_score_change exists');
+SELECT has_function('public', 'api_get_score_history',                       'function api_get_score_history exists');
+SELECT has_function('public', 'api_watch_product',                           'function api_watch_product exists');
+SELECT has_function('public', 'api_unwatch_product',                         'function api_unwatch_product exists');
+SELECT has_function('public', 'api_get_watchlist',                           'function api_get_watchlist exists');
+SELECT has_trigger('products', 'trg_record_score_change',                    'trigger trg_record_score_change exists on products');
 
 SELECT * FROM finish();
 ROLLBACK;

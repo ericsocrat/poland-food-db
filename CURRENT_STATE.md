@@ -7,21 +7,21 @@
 
 ## Active Branch & PR
 
-- **Branch:** `docs/606-de-graduation-guide` (implementing #606 — DE graduation docs)
-- **Latest SHA (main):** `d08e7f5`
-- **Open PRs:** 1 (#653 — docs update for PL expansion, CI running)
+- **Branch:** `feat/620-score-trend-timeline` (implementing #620 — pgTAP tests + function bug fix)
+- **Latest SHA (main):** `a0ed189`
+- **Open PRs:** #659 (for #620, score history fix + pgTAP), #658 (for #594, Oils & Vinegars), #657 (for #622, Playwright E2E)
 
 ## Recently Shipped (This Session)
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| `0e16d8c` | fix(frontend): a11y contrast ratio on scoring learn page — PR #650 merged              |
-| `d08e7f5` | data(ingredients): enrich DE products — PR #654 merged (18,938-line migration)          |
+| (pending) | fix(schema): api_get_score_history CASE type mismatch + pgTAP tests + schema contracts (#620) |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR/SHA    | Summary                                                                           |
 | ---------- | --------- | --------------------------------------------------------------------------------- |
+| 2026-03-05 | #659      | fix(schema): api_get_score_history CASE fix + pgTAP tests (#620)                  |
 | 2026-03-05 | #655      | test(qa): DE validation suite — anchors, multi-country fixes (#602)               |
 | 2026-03-05 | #654      | data(ingredients): enrich DE products (#603)                                      |
 | 2026-03-05 | #652      | test(qa): PL validation gate (#595)                                               |
@@ -95,7 +95,7 @@
 - **ESLint warnings:** 0
 - **Open issues:** 11 (3 P1 + 4 P2 + 2 P3 + 2 deferred) | **Open PRs:** 1
 - **Vitest:** 4,901 tests passing (29 skipped)
-- **DB migrations:** 186 append-only
+- **DB migrations:** 195 append-only
 - **Ruff lint:** 0 errors
 - **Nutrition rows:** 2,511
 

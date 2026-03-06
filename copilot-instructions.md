@@ -627,7 +627,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **185 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **195 migrations**.
 
 **Rules:**
 
