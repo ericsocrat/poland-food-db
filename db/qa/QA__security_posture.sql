@@ -135,7 +135,9 @@ WHERE n.nspname = 'public'
     'api_get_cross_country_links',     -- public cross-country links (#352)
     'api_get_recipes',                 -- public recipe browsing (#364)
     'api_get_recipe_detail',           -- public recipe detail (#364)
-    'api_get_recipe_nutrition'         -- public recipe nutrition (#364)
+    'api_get_recipe_nutrition',        -- public recipe nutrition (#364)
+    'api_better_alternatives_v2',      -- public alternatives v2 (#356)
+    'api_get_recipe_score'             -- public recipe score (#364)
   );
 
 -- 10. anon cannot EXECUTE internal computation functions
@@ -145,9 +147,12 @@ FROM pg_proc p
 JOIN pg_namespace n ON p.pronamespace = n.oid
 WHERE n.nspname = 'public'
   AND p.proname IN (
-    'compute_unhealthiness_v32',
-    'explain_score_v32','compute_data_confidence','compute_data_completeness',
-    'assign_confidence','find_similar_products','find_better_alternatives',
+    'compute_unhealthiness_v32','compute_unhealthiness_v33',
+    'explain_score_v32','explain_score_v33',
+    'compute_data_confidence','compute_data_completeness',
+    'assign_confidence','find_similar_products',
+    'find_better_alternatives','find_better_alternatives_v2',
+    'category_affinity',
     'refresh_all_materialized_views','mv_staleness_check',
     'check_product_preferences','resolve_effective_country',
     'compute_health_warnings',
