@@ -662,6 +662,7 @@ def _gen_ingredient_batch(batch: list[dict]) -> list[str]:
     lines.append("JOIN ingredient_ref ir ON lower(ir.name_en) = lower(v.ingredient_name)")
     lines.append("LEFT JOIN ingredient_ref ir_parent ON lower(ir_parent.name_en) = lower(v.parent_ingredient_name)")
     lines.append(SQL_WHERE_ACTIVE)
+    lines.append("  AND NOT (v.is_sub_ingredient AND ir_parent.ingredient_id IS NULL)")
     lines.append("ON CONFLICT (product_id, ingredient_id, position) DO NOTHING;")
     lines.append("")
     return lines
