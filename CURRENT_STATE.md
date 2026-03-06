@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-06 by GitHub Copilot (session 23)
+> **Last updated:** 2026-03-06 by GitHub Copilot (session 24)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,21 +8,20 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (clean tree, no active feature branch)
-- **Latest SHA (main):** `b342316`
+- **Latest SHA (main):** `9f38945`
 - **Open PRs:** None
 
 ## Recently Shipped (This Session)
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| `b342316` | security(rls): revoke v33 internal functions from anon + update QA allowlists (#662)   |
-| `353d0ee` | fix(ci): rename colliding migration timestamps for repo_verify (#661)                  |
-| `d0edbca` | chore(state): update CURRENT_STATE.md after PR merges (#660)                           |
+| `9f38945` | test(coverage): improve frontend test coverage — api.ts 99%, flags/server 16 tests, service 5 tests (#664) |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR/SHA    | Summary                                                                           |
 | ---------- | --------- | --------------------------------------------------------------------------------- |
+| 2026-03-06 | #664      | test(coverage): api.ts 70→99%, flags/server.ts 0→covered, service.ts 0→covered, fix flaky E2E |
 | 2026-03-06 | #662      | security(rls): revoke v33 internal functions from anon + QA allowlists             |
 | 2026-03-06 | #661      | fix(ci): rename colliding migration timestamps for repo_verify                     |
 | 2026-03-06 | #660      | chore(state): update CURRENT_STATE.md after PR merges                              |
@@ -93,7 +92,7 @@
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
 - **Open issues:** 5 (3 P1 + 2 deferred) | **Open PRs:** 0
-- **Vitest:** 4,901 tests passing (29 skipped)
+- **Vitest:** 4,958 tests passing (29 skipped)
 - **DB migrations:** 198 append-only
 - **Ruff lint:** 0 errors
 - **Nutrition rows:** 2,511
