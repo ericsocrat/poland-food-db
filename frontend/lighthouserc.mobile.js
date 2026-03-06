@@ -22,7 +22,7 @@ module.exports = {
         `http://localhost:3000/app/product/${QA_PRODUCT_ID}`,
       ],
       numberOfRuns: 3,
-      puppeteerScript: "./tests/quality/lighthouse-auth.js",
+      puppeteerScript: "./frontend/tests/quality/lighthouse-auth.js",
       puppeteerLaunchOptions: {
         args: ["--no-sandbox", "--disable-gpu"],
       },
