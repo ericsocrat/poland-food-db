@@ -1,9 +1,9 @@
 # Copilot Instructions — TryVit
 
-> **Last updated:** 2026-03-06
+> **Last updated:** 2026-03-05
 > **Scope:** Poland (`PL`) primary + Germany (`DE`) full parity (1,066 products across 19 categories)
-> **Products:** ~2,396 active (22 PL categories + 19 DE categories), 275 deprecated
-> **EAN coverage:** 2,393/2,396 (99.9%)
+> **Products:** ~2,264 active (20 PL categories + 19 DE categories), 273 deprecated
+> **EAN coverage:** 2,261/2,264 (99.9%)
 > **Scoring:** v3.3 — 9-factor weighted penalty + nutrient density bonus via `compute_unhealthiness_v33()` (protein & fibre credit)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 5,340 unique ingredients (all clean ASCII English), 2,691 allergen declarations, 2,702 trace declarations
@@ -380,7 +380,7 @@ tryvit/
 | `product_ingredient`        | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                                                                                                                |
 | `product_allergen_info`     | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags                                                                                          |
 | `country_ref`               | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag, nutri_score_official boolean; FK from products.country                                                                                                                                            |
-| `category_ref`              | Product category master list                    | `category` (text PK)                    | 22 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                                                                                                              |
+| `category_ref`              | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                                                                                                              |
 | `nutri_score_ref`           | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                                                                                                                  |
 | `concern_tier_ref`          | EFSA ingredient concern tiers                   | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                                                                                                           |
 | `product_type_ref`          | Product sub-type taxonomy per category          | `product_type` (text PK)                | ~100 rows across 20 categories; FK from products.product_type; display_name, icon_emoji, sort_order. Issue #354.                                                                                                                   |
@@ -505,11 +505,11 @@ tryvit/
 
 ---
 
-## 5. Categories (22 PL + 19 DE)
+## 5. Categories (20 PL + 19 DE)
 
-All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each. All 19 original PL categories (except Żabka) have a DE counterpart.
+All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each. All 19 PL categories (except Żabka) have a DE counterpart.
 
-### PL Categories (22)
+### PL Categories (20)
 
 | Category                   | Folder slug                 |
 | -------------------------- | --------------------------- |
@@ -527,12 +527,10 @@ All categories have **variable product counts** (28–95 active products). Categ
 | Instant & Frozen           | `instant-frozen/`           |
 | Meat                       | `meat/`                     |
 | Nuts, Seeds & Legumes      | `nuts-seeds-legumes/`       |
-| Oils & Vinegars            | `oils-vinegars/`            |
 | Plant-Based & Alternatives | `plant-based-alternatives/` |
 | Sauces                     | `sauces/`                   |
 | Seafood & Fish             | `seafood-fish/`             |
 | Snacks                     | `snacks/`                   |
-| Spreads & Dips             | `spreads-dips/`             |
 | Sweets                     | `sweets/`                   |
 | Żabka                      | `zabka/`                    |
 
@@ -560,7 +558,7 @@ All categories have **variable product counts** (28–95 active products). Categ
 | Snacks (DE)                | `snacks-de/`                      |
 | Sweets (DE)                | `sweets-de/`                      |
 
-**41 pipeline folders** (22 PL + 19 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
+**39 pipeline folders** (20 PL + 19 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
 
 ---
 
@@ -629,7 +627,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **187 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **195 migrations**.
 
 **Rules:**
 
