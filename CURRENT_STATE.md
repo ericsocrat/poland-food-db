@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-06 by GitHub Copilot (session 22)
+> **Last updated:** 2026-03-06 by GitHub Copilot (session 23)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,21 +8,24 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (clean tree, no active feature branch)
-- **Latest SHA (main):** `ecf057c`
+- **Latest SHA (main):** `b342316`
 - **Open PRs:** None
 
 ## Recently Shipped (This Session)
 
 | SHA       | Summary                                                                                |
 | --------- | -------------------------------------------------------------------------------------- |
-| `ecf057c` | test(e2e): comprehensive Playwright E2E suite for M18-M22 features (#622)              |
-| `8f92594` | feat(pipeline): add Oils & Vinegars + Spreads & Dips categories for PL (#594)          |
-| `0889d86` | fix(schema): api_get_score_history CASE type mismatch + pgTAP tests (#620)             |
+| `b342316` | security(rls): revoke v33 internal functions from anon + update QA allowlists (#662)   |
+| `353d0ee` | fix(ci): rename colliding migration timestamps for repo_verify (#661)                  |
+| `d0edbca` | chore(state): update CURRENT_STATE.md after PR merges (#660)                           |
 
 ## Recently Shipped (Last 7 Days)
 
 | Date       | PR/SHA    | Summary                                                                           |
 | ---------- | --------- | --------------------------------------------------------------------------------- |
+| 2026-03-06 | #662      | security(rls): revoke v33 internal functions from anon + QA allowlists             |
+| 2026-03-06 | #661      | fix(ci): rename colliding migration timestamps for repo_verify                     |
+| 2026-03-06 | #660      | chore(state): update CURRENT_STATE.md after PR merges                              |
 | 2026-03-06 | #657      | test(e2e): comprehensive Playwright E2E for M18-M22 features (#622)               |
 | 2026-03-06 | #658      | feat(pipeline): Oils & Vinegars + Spreads & Dips for PL (~150 products) (#594)    |
 | 2026-03-06 | #659      | fix(schema): api_get_score_history CASE fix + pgTAP tests (#620)                  |
@@ -39,7 +42,7 @@
 - [ ] Quality Gate dashboard test still fails — staging DB missing API functions (schema sync needed)
 - [ ] QA Suite 2 (Scoring): Coca-Cola Zero test 12 — score 13 vs expected 2-6 (pre-existing after DE enrichment)
 - [ ] QA Suite 11 (NutriRange): 9 calorie back-calculation outliers — OFF source data quality
-- [ ] QA Suite 16 (Security): 2 anon-accessible non-public api_* functions
+- [x] QA Suite 16 (Security): 2 anon-accessible non-public api_* functions — **FIXED in #662**
 - [ ] QA Suite 35 (StoreArch): 48 orphan junction rows + 2 backfill coverage gaps
 - [ ] QA Suite 41 (IdxVerify): 1 FK column missing supporting index
 
@@ -91,7 +94,7 @@
 - **ESLint warnings:** 0
 - **Open issues:** 5 (3 P1 + 2 deferred) | **Open PRs:** 0
 - **Vitest:** 4,901 tests passing (29 skipped)
-- **DB migrations:** 197 append-only
+- **DB migrations:** 198 append-only
 - **Ruff lint:** 0 errors
 - **Nutrition rows:** 2,511
 
