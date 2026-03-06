@@ -72,7 +72,7 @@ def _identity_key(brand: str, product_name: str) -> str:
     Formula: ``md5(lower(trim(brand)) || '::' || lower(trim(product_name)))``
     """
     raw = f"{brand.lower().strip()}::{product_name.lower().strip()}"
-    return hashlib.md5(raw.encode("utf-8")).hexdigest()
+    return hashlib.md5(raw.encode("utf-8"), usedforsecurity=False).hexdigest()
 
 
 # Recognised Polish retail chains, ordered by market presence.
