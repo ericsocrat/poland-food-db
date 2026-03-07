@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { render, screen, waitFor } from "@testing-library/react";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -1639,6 +1639,224 @@ describe("ProductDetailPage", () => {
       });
 
       expect(screen.queryByTestId("quick-summary")).not.toBeInTheDocument();
+    });
+  });
+
+  // ── Responsive tab labels ───────────────────────────────────────────────
+
+  it("tab buttons have aria-label for accessibility", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    localStorage.setItem("tryvit:product-full-analysis", "true");
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "Overview" })).toBeInTheDocument();
+    });
+
+    const tabs = screen.getAllByRole("tab");
+    expect(tabs).toHaveLength(4);
+    expect(tabs[0]).toHaveAttribute("aria-label", "Overview");
+    expect(tabs[1]).toHaveAttribute("aria-label", "Nutrition");
+    expect(tabs[2]).toHaveAttribute("aria-label", "Alternatives");
+    expect(tabs[3]).toHaveAttribute("aria-label", "Scoring");
+  });
+
+  // ── Swipe gesture navigation ────────────────────────────────────────────
+
+  it("renders swipeable tab content container", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    localStorage.setItem("tryvit:product-full-analysis", "true");
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("tab-content")).toBeInTheDocument();
+    });
+  });
+
+  it("swipe left advances to next tab", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    localStorage.setItem("tryvit:product-full-analysis", "true");
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "Overview" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    const container = screen.getByTestId("tab-content");
+
+    // Simulate swipe left (positive diff = next tab)
+    act(() => {
+      container.dispatchEvent(
+        new TouchEvent("touchstart", {
+          bubbles: true,
+          touches: [{ clientX: 200 } as Touch],
+        }),
+      );
+      container.dispatchEvent(
+        new TouchEvent("touchend", {
+          bubbles: true,
+          changedTouches: [{ clientX: 100 } as Touch],
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "Nutrition" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+  });
+
+  it("swipe right goes to previous tab", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    localStorage.setItem("tryvit:product-full-analysis", "true");
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    // First navigate to Nutrition tab via click
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Nutrition" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Nutrition" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "Nutrition" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    const container = screen.getByTestId("tab-content");
+
+    // Simulate swipe right (negative diff = previous tab)
+    act(() => {
+      container.dispatchEvent(
+        new TouchEvent("touchstart", {
+          bubbles: true,
+          touches: [{ clientX: 100 } as Touch],
+        }),
+      );
+      container.dispatchEvent(
+        new TouchEvent("touchend", {
+          bubbles: true,
+          changedTouches: [{ clientX: 200 } as Touch],
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "Overview" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+  });
+
+  it("small swipe does not change tab", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    localStorage.setItem("tryvit:product-full-analysis", "true");
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "Overview" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    const container = screen.getByTestId("tab-content");
+
+    // Swipe under threshold (< 50px)
+    act(() => {
+      container.dispatchEvent(
+        new TouchEvent("touchstart", {
+          bubbles: true,
+          touches: [{ clientX: 200 } as Touch],
+        }),
+      );
+      container.dispatchEvent(
+        new TouchEvent("touchend", {
+          bubbles: true,
+          changedTouches: [{ clientX: 180 } as Touch],
+        }),
+      );
+    });
+
+    // Should still be on Overview
+    expect(screen.getByRole("tab", { name: "Overview" })).toHaveAttribute(
+      "aria-selected",
+      "true",
+    );
+  });
+
+  it("swipe left on last tab stays on last tab", async () => {
+    mockGetProductProfile.mockResolvedValue({
+      ok: true,
+      data: makeProfile(),
+    });
+    localStorage.setItem("tryvit:product-full-analysis", "true");
+    const user = userEvent.setup();
+    render(<ProductDetailPage />, { wrapper: createWrapper() });
+
+    // Navigate to Scoring (last tab)
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: "Scoring" }),
+      ).toBeInTheDocument();
+    });
+    await user.click(screen.getByRole("tab", { name: "Scoring" }));
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "Scoring" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
+    });
+
+    const container = screen.getByTestId("tab-content");
+
+    // Swipe left again — should stay on Scoring
+    act(() => {
+      container.dispatchEvent(
+        new TouchEvent("touchstart", {
+          bubbles: true,
+          touches: [{ clientX: 200 } as Touch],
+        }),
+      );
+      container.dispatchEvent(
+        new TouchEvent("touchend", {
+          bubbles: true,
+          changedTouches: [{ clientX: 100 } as Touch],
+        }),
+      );
+    });
+
+    await waitFor(() => {
+      expect(screen.getByRole("tab", { name: "Scoring" })).toHaveAttribute(
+        "aria-selected",
+        "true",
+      );
     });
   });
 });

@@ -58,9 +58,11 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp, Globe, Info } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 type Tab = "overview" | "nutrition" | "alternatives" | "scoring";
+const TAB_ORDER: Tab[] = ["overview", "nutrition", "alternatives", "scoring"];
+const SWIPE_THRESHOLD = 50;
 
 // ─── Progressive Disclosure Persistence ─────────────────────────────────────
 const FULL_ANALYSIS_KEY = "tryvit:product-full-analysis";
@@ -98,6 +100,27 @@ export default function ProductDetailPage() {
       return next;
     });
   }, []);
+
+  // ─── Swipe gesture handling ───────────────────────────────────────────────
+  const touchStartX = useRef(0);
+
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  }, []);
+
+  const handleTouchEnd = useCallback(
+    (e: React.TouchEvent) => {
+      const diff = touchStartX.current - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > SWIPE_THRESHOLD) {
+        setActiveTab((prev) => {
+          const idx = TAB_ORDER.indexOf(prev);
+          const next = idx + (diff > 0 ? 1 : -1);
+          return TAB_ORDER[Math.max(0, Math.min(next, TAB_ORDER.length - 1))];
+        });
+      }
+    },
+    [],
+  );
 
   const {
     data: profile,
@@ -200,11 +223,11 @@ export default function ProductDetailPage() {
 
   const band = SCORE_BANDS[profile.scores.score_band];
 
-  const tabs: { key: Tab; label: string }[] = [
-    { key: "overview", label: t("product.overview") },
-    { key: "nutrition", label: t("product.nutrition") },
-    { key: "alternatives", label: t("product.alternatives") },
-    { key: "scoring", label: t("product.scoring") },
+  const tabs: { key: Tab; label: string; shortLabel: string }[] = [
+    { key: "overview", label: t("product.overview"), shortLabel: t("product.overviewShort") },
+    { key: "nutrition", label: t("product.nutrition"), shortLabel: t("product.nutritionShort") },
+    { key: "alternatives", label: t("product.alternatives"), shortLabel: t("product.alternativesShort") },
+    { key: "scoring", label: t("product.scoring"), shortLabel: t("product.scoringShort") },
   ];
 
   return (
@@ -412,31 +435,39 @@ export default function ProductDetailPage() {
                     onClick={() => setActiveTab(tab.key)}
                     role="tab"
                     aria-selected={activeTab === tab.key}
-                    className={`flex-1 cursor-pointer rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
+                    aria-label={tab.label}
+                    className={`flex-1 cursor-pointer rounded-md px-2 py-2.5 text-sm font-medium transition-colors sm:px-3 ${
                       activeTab === tab.key
                         ? "bg-surface text-brand shadow-sm"
                         : "text-foreground-secondary hover:text-foreground"
                     }`}
                   >
-                    {tab.label}
+                    <span className="sm:hidden">{tab.shortLabel}</span>
+                    <span className="hidden sm:inline">{tab.label}</span>
                   </button>
                 ))}
               </div>
 
-              {/* Tab content */}
-              <ErrorBoundary
-                level="section"
-                context={{ section: "tab-content", productId, tab: activeTab }}
+              {/* Tab content — swipeable on touch devices */}
+              <div
+                onTouchStart={handleTouchStart}
+                onTouchEnd={handleTouchEnd}
+                data-testid="tab-content"
               >
-                {activeTab === "overview" && <OverviewTab profile={profile} />}
-                {activeTab === "nutrition" && (
-                  <NutritionTab profile={profile} />
-                )}
-                {activeTab === "alternatives" && (
-                  <AlternativesTab alternatives={profile.alternatives} />
-                )}
-                {activeTab === "scoring" && <ScoringTab profile={profile} />}
-              </ErrorBoundary>
+                <ErrorBoundary
+                  level="section"
+                  context={{ section: "tab-content", productId, tab: activeTab }}
+                >
+                  {activeTab === "overview" && <OverviewTab profile={profile} />}
+                  {activeTab === "nutrition" && (
+                    <NutritionTab profile={profile} />
+                  )}
+                  {activeTab === "alternatives" && (
+                    <AlternativesTab alternatives={profile.alternatives} />
+                  )}
+                  {activeTab === "scoring" && <ScoringTab profile={profile} />}
+                </ErrorBoundary>
+              </div>
             </>
           ) : (
             <QuickSummary
