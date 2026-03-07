@@ -610,7 +610,12 @@
     "deleteAccountConfirmPlaceholder": "Type DELETE here",
     "deleteAccountProcessing": "Deleting account…",
     "deleteAccountSuccess": "Your account has been deleted.",
-    "deleteAccountError": "Failed to delete account. Please try again later."
+    "deleteAccountError": "Failed to delete account. Please try again later.",
+    "unsavedTitle": "Unsaved changes",
+    "unsavedDescription": "You have unsaved changes. If you leave now, your changes will be lost.",
+    "unsavedDiscard": "Discard changes",
+    "unsavedStay": "Stay on page",
+    "unsavedIndicator": "Unsaved changes"
   },
   "healthProfile": {
     "title": "Health Profiles",
