@@ -3,6 +3,7 @@
 // and top items.  Edge-cached for 1 hour.  Uses Next.js ImageResponse (Satori).
 
 import { ImageResponse } from "next/og";
+import { getScoreHex } from "@/lib/score-utils";
 
 /* ---------- route configuration ---------- */
 export const runtime = "nodejs";
@@ -14,13 +15,7 @@ export const revalidate = 3600; // 1 hour edge cache
 /* ---------- helpers ---------- */
 
 /** OG-specific score colour (not Tailwind — raw hex for Satori). */
-export function getScoreColor(score: number): string {
-  if (score <= 20) return "#22c55e"; // green
-  if (score <= 40) return "#eab308"; // yellow
-  if (score <= 60) return "#f97316"; // orange
-  if (score <= 80) return "#ef4444"; // red
-  return "#991b1b"; // dark red
-}
+export const getScoreColor = getScoreHex;
 
 /** Truncate a string to `max` characters with an ellipsis. */
 export function truncate(text: string, max: number): string {

@@ -142,3 +142,28 @@ function resolveKey(score: number): ScoreColorBand {
   if (score <= 80) return "red";
   return "darkred";
 }
+
+// ─── Raw hex values (for SVG fill/Satori where CSS variables are unavailable) ─
+
+/**
+ * Raw hex color values for each score band.
+ * Use these ONLY when CSS variables are unavailable (e.g., OpenGraph/Satori
+ * image generation, server-rendered SVG).  For normal components, use
+ * `getScoreBand()` which returns CSS variable references.
+ */
+export const SCORE_BAND_HEX: Record<ScoreColorBand, string> = {
+  green: "#22c55e",
+  yellow: "#eab308",
+  orange: "#f97316",
+  red: "#ef4444",
+  darkred: "#991b1b",
+} as const;
+
+/**
+ * Map an unhealthiness score (0–100) to a raw hex color string.
+ * Intended for contexts where CSS variables are unavailable (Satori/OG images).
+ * For normal components, prefer `getScoreBand(score).color` instead.
+ */
+export function getScoreHex(score: number): string {
+  return SCORE_BAND_HEX[resolveKey(score)];
+}
