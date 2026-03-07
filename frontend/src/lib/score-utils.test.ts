@@ -1,4 +1,10 @@
-import { getAllBands, getScoreBand, toTryVitScore } from "@/lib/score-utils";
+import {
+  SCORE_BAND_HEX,
+  getAllBands,
+  getScoreBand,
+  getScoreHex,
+  toTryVitScore,
+} from "@/lib/score-utils";
 import { describe, expect, it } from "vitest";
 
 // ─── toTryVitScore — unhealthiness → consumer-friendly inversion ────────────
@@ -214,5 +220,71 @@ describe("getAllBands", () => {
     const a = getAllBands();
     const b = getAllBands();
     expect(a).toEqual(b);
+  });
+});
+
+// ─── SCORE_BAND_HEX ────────────────────────────────────────────────────────
+
+describe("SCORE_BAND_HEX", () => {
+  it("contains exactly 5 band keys", () => {
+    expect(Object.keys(SCORE_BAND_HEX)).toHaveLength(5);
+  });
+
+  it("has hex values for all bands", () => {
+    expect(SCORE_BAND_HEX.green).toBe("#22c55e");
+    expect(SCORE_BAND_HEX.yellow).toBe("#eab308");
+    expect(SCORE_BAND_HEX.orange).toBe("#f97316");
+    expect(SCORE_BAND_HEX.red).toBe("#ef4444");
+    expect(SCORE_BAND_HEX.darkred).toBe("#991b1b");
+  });
+
+  it("all values are valid hex color strings", () => {
+    for (const hex of Object.values(SCORE_BAND_HEX)) {
+      expect(hex).toMatch(/^#[0-9a-f]{6}$/i);
+    }
+  });
+});
+
+// ─── getScoreHex ────────────────────────────────────────────────────────────
+
+describe("getScoreHex", () => {
+  it("maps score 1 to green hex", () => {
+    expect(getScoreHex(1)).toBe("#22c55e");
+  });
+
+  it("maps score 20 to green hex (upper boundary)", () => {
+    expect(getScoreHex(20)).toBe("#22c55e");
+  });
+
+  it("maps score 21 to yellow hex (lower boundary)", () => {
+    expect(getScoreHex(21)).toBe("#eab308");
+  });
+
+  it("maps score 40 to yellow hex (upper boundary)", () => {
+    expect(getScoreHex(40)).toBe("#eab308");
+  });
+
+  it("maps score 41 to orange hex (lower boundary)", () => {
+    expect(getScoreHex(41)).toBe("#f97316");
+  });
+
+  it("maps score 60 to orange hex (upper boundary)", () => {
+    expect(getScoreHex(60)).toBe("#f97316");
+  });
+
+  it("maps score 61 to red hex (lower boundary)", () => {
+    expect(getScoreHex(61)).toBe("#ef4444");
+  });
+
+  it("maps score 80 to red hex (upper boundary)", () => {
+    expect(getScoreHex(80)).toBe("#ef4444");
+  });
+
+  it("maps score 81 to darkred hex (lower boundary)", () => {
+    expect(getScoreHex(81)).toBe("#991b1b");
+  });
+
+  it("maps score 100 to darkred hex (upper boundary)", () => {
+    expect(getScoreHex(100)).toBe("#991b1b");
   });
 });

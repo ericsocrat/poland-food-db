@@ -5,10 +5,10 @@ import { useTranslation } from "@/lib/i18n";
 import type { NovaDistribution } from "@/lib/types";
 
 const NOVA_GROUPS = [
-  { key: "1" as const, color: "#22c55e" },
-  { key: "2" as const, color: "#eab308" },
-  { key: "3" as const, color: "#f97316" },
-  { key: "4" as const, color: "#ef4444" },
+  { key: "1" as const, color: "var(--color-score-green)" },
+  { key: "2" as const, color: "var(--color-score-yellow)" },
+  { key: "3" as const, color: "var(--color-score-orange)" },
+  { key: "4" as const, color: "var(--color-score-red)" },
 ] as const;
 
 const BAR_WIDTH = 28;
