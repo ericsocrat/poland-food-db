@@ -610,7 +610,12 @@
     "deleteAccountConfirmPlaceholder": "Wpisz tutaj DELETE",
     "deleteAccountProcessing": "Usuwanie konta…",
     "deleteAccountSuccess": "Twoje konto zostało usunięte.",
-    "deleteAccountError": "Nie udało się usunąć konta. Spróbuj ponownie później."
+    "deleteAccountError": "Nie udało się usunąć konta. Spróbuj ponownie później.",
+    "unsavedTitle": "Niezapisane zmiany",
+    "unsavedDescription": "Masz niezapisane zmiany. Jeśli opuścisz tę stronę, zmiany zostaną utracone.",
+    "unsavedDiscard": "Odrzuć zmiany",
+    "unsavedStay": "Pozostań na stronie",
+    "unsavedIndicator": "Niezapisane zmiany"
   },
   "healthProfile": {
     "title": "Profile zdrowotne",

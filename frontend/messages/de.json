@@ -610,7 +610,12 @@
     "deleteAccountConfirmPlaceholder": "Geben Sie hier LÖSCHEN ein",
     "deleteAccountProcessing": "Konto wird gelöscht…",
     "deleteAccountSuccess": "Ihr Konto wurde gelöscht.",
-    "deleteAccountError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es später erneut."
+    "deleteAccountError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es später erneut.",
+    "unsavedTitle": "Ungespeicherte Änderungen",
+    "unsavedDescription": "Sie haben ungespeicherte Änderungen. Wenn Sie jetzt gehen, gehen Ihre Änderungen verloren.",
+    "unsavedDiscard": "Änderungen verwerfen",
+    "unsavedStay": "Auf Seite bleiben",
+    "unsavedIndicator": "Ungespeicherte Änderungen"
   },
   "healthProfile": {
     "title": "Gesundheitsprofile",
