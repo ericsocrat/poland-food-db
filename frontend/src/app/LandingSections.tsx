@@ -7,15 +7,15 @@
 import { Logo } from "@/components/common/Logo";
 import { useTranslation } from "@/lib/i18n";
 import {
-  BarChart3,
-  Camera,
-  ChevronRight,
-  Database,
-  Layers,
-  Search,
-  Shield,
-  ShoppingBasket,
-  type LucideIcon,
+    BarChart3,
+    Camera,
+    ChevronRight,
+    Database,
+    Layers,
+    Search,
+    Shield,
+    ShoppingBasket,
+    type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
 
