@@ -343,7 +343,7 @@ export default function SearchPage() {
                 />{" "}
                 {t("search.filters")}
                 {hasActiveFilters(filters) && (
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
+                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-xxs font-bold text-white">
                     {countActiveFilters(filters)}
                   </span>
                 )}

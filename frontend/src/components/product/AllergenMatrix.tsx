@@ -5,8 +5,8 @@
 // EU FIC Regulation 1169/2011-aligned grid with color-coded badges.
 
 import { useTranslation } from "@/lib/i18n";
-import { AlertTriangle, Check, Minus } from "lucide-react";
 import type { ProfileAllergens } from "@/lib/types";
+import { AlertTriangle, Check, Minus } from "lucide-react";
 
 /**
  * EU FIC Regulation 1169/2011 mandates declaration of these 14 allergens.
@@ -189,7 +189,7 @@ export function AllergenMatrix({ allergens }: AllergenMatrixProps) {
       </table>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-3 text-[10px] text-foreground-muted">
+      <div className="flex flex-wrap gap-3 text-xs text-foreground-muted">
         <span className="flex items-center gap-1">
           <AlertTriangle
             size={10}
@@ -209,7 +209,7 @@ export function AllergenMatrix({ allergens }: AllergenMatrixProps) {
       </div>
 
       {/* Disclaimer */}
-      <p className="text-[10px] leading-relaxed text-foreground-muted">
+      <p className="text-xs leading-relaxed text-foreground-muted">
         {t("allergenMatrix.disclaimer")}
       </p>
     </div>

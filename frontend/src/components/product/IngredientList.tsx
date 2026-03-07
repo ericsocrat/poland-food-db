@@ -5,14 +5,14 @@
 // with concern-tier color coding, additive vs natural icons, expandable
 // concern reasons, and a concern-tier legend.
 
-import { useState } from "react";
-import Link from "next/link";
 import {
-  CONCERN_TIER_STYLES,
-  CONCERN_TIER_LABEL_KEYS,
+    CONCERN_TIER_LABEL_KEYS,
+    CONCERN_TIER_STYLES,
 } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
 import type { ProfileIngredients } from "@/lib/types";
+import Link from "next/link";
+import { useState } from "react";
 
 interface IngredientListProps {
   readonly ingredients: ProfileIngredients;
@@ -200,7 +200,7 @@ export function IngredientList({ ingredients }: IngredientListProps) {
               return (
                 <span
                   key={tier}
-                  className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${style.bg} ${style.color} ${style.border}`}
+                  className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xxs font-medium ${style.bg} ${style.color} ${style.border}`}
                 >
                   {t(key)}
                 </span>
