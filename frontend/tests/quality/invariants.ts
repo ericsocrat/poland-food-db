@@ -410,20 +410,27 @@ export async function checkProductInvariants(
   // The tab bar is hidden behind a "Show full analysis" toggle (progressive
   // disclosure).  First, wait for the toggle button to appear (proves the
   // product data loaded), then click it to reveal the tab bar.
+  //
+  // During tab cycling the spec calls checkProductInvariants multiple times
+  // on the same page.  On subsequent calls the analysis is already expanded,
+  // so clicking the toggle would *collapse* it.  Guard: only click if the
+  // tab bar is not yet visible.
   const toggleLoaded = await waitForTestId(page, "toggle-analysis", 15_000);
   expect(
     toggleLoaded,
     `Analysis toggle did not appear on ${route} within 15 s — product data may have failed to load`
   ).toBe(true);
 
-  // Expand to full analysis so the tab bar becomes visible.
-  // Use JS-level click: async product-data loading causes continuous layout
-  // shifts that prevent Playwright from considering the button "stable" within
-  // the default action timeout; and force:true skips scrollIntoView which
-  // can cause the click to miss off-screen elements.
-  const toggle = page.locator('[data-testid="toggle-analysis"]');
-  await toggle.scrollIntoViewIfNeeded();
-  await toggle.evaluate((el) => (el as HTMLElement).click());
+  // If tab-bar is already visible, skip the toggle (analysis already expanded)
+  const tabBarAlreadyVisible = await waitForTestId(page, "tab-bar", 1_000);
+  if (!tabBarAlreadyVisible) {
+    // Expand to full analysis so the tab bar becomes visible.
+    // Use JS-level click: async product-data loading causes continuous layout
+    // shifts that prevent Playwright from considering the button "stable".
+    const toggle = page.locator('[data-testid="toggle-analysis"]');
+    await toggle.scrollIntoViewIfNeeded();
+    await toggle.evaluate((el) => (el as HTMLElement).click());
+  }
   const tabBarLoaded = await waitForTestId(page, "tab-bar", 5_000);
 
   // 21 — Exactly 1 tab bar
