@@ -1125,7 +1125,14 @@
     "saveSearchName": "Suchname",
     "sidebarNavigation": "Seitenleisten-Navigation",
     "headerNavigation": "Kopfzeilen-Navigation",
-    "moreNavigation": "Weitere Navigation"
+    "moreNavigation": "Weitere Navigation",
+    "mainNavigation": "Hauptnavigation",
+    "settingsSections": "Einstellungsbereiche",
+    "breadcrumb": "Brotkrümel-Navigation",
+    "dismiss": "Schließen",
+    "scoreRadarChart": "Radar-Diagramm der Bewertungsaufschlüsselung mit gewichtetem Beitrag jedes Bewertungsfaktors",
+    "scoreRadarChartTitle": "Radar-Diagramm der Bewertungsaufschlüsselung",
+    "flaggedUser": "Markierter Benutzer"
   },
   "print": {
     "button": "Drucken",

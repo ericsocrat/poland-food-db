@@ -11,25 +11,25 @@ import { callRpc } from "@/lib/rpc";
 import { createClient } from "@/lib/supabase/client";
 import { showToast } from "@/lib/toast";
 import type {
-  AdminBatchRejectResponse,
-  AdminReviewResponse,
-  AdminSubmission,
-  AdminSubmissionsResponse,
-  AdminVelocityResponse,
-  RpcResult,
+    AdminBatchRejectResponse,
+    AdminReviewResponse,
+    AdminSubmission,
+    AdminSubmissionsResponse,
+    AdminVelocityResponse,
+    RpcResult,
 } from "@/lib/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-  Activity,
-  Ban,
-  CheckCircle,
-  Clock,
-  FileText,
-  Link2,
-  RefreshCw,
-  ShieldAlert,
-  ShieldCheck,
-  XCircle,
+    Activity,
+    Ban,
+    CheckCircle,
+    Clock,
+    FileText,
+    Link2,
+    RefreshCw,
+    ShieldAlert,
+    ShieldCheck,
+    XCircle,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -392,7 +392,7 @@ function AdminSubmissionCard({
               {submission.user_flagged && (
                 <ShieldAlert
                   size={14}
-                  aria-label="Flagged user"
+                  aria-label={t("a11y.flaggedUser")}
                   className="ml-1 inline text-red-500"
                 />
               )}

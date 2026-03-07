@@ -7,6 +7,7 @@
 
 "use client";
 
+import { useTranslation } from "@/lib/i18n";
 import { AlertTriangle, CheckCircle, Info, X, XCircle, type LucideIcon } from "lucide-react";
 import { useState, type ReactNode } from "react";
 
@@ -76,6 +77,7 @@ export function Alert({
   className = "",
 }: Readonly<AlertProps>) {
   const [dismissed, setDismissed] = useState(false);
+  const { t } = useTranslation();
 
   if (dismissed) return null;
 
@@ -111,7 +113,7 @@ export function Alert({
           type="button"
           onClick={() => setDismissed(true)}
           className="shrink-0 text-foreground-muted hover:text-foreground transition-colors"
-          aria-label="Dismiss"
+          aria-label={t("a11y.dismiss")}
         >
           <X size={18} aria-hidden="true" />
         </button>
