@@ -9,12 +9,12 @@
 
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { ChevronDown, ChevronUp, LinkIcon } from "lucide-react";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 import { useTranslation } from "@/lib/i18n";
 import type { LinkedProduct } from "@/lib/types";
+import { ChevronDown, ChevronUp, LinkIcon } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export interface IngredientProductListProps {
   /** Linked products for this ingredient (may be empty). */

@@ -4,12 +4,12 @@
 // Displays recipe title, category, difficulty, time, servings, and tags.
 // Issue #53 — Recipes v0
 
-import Link from "next/link";
-import { useTranslation } from "@/lib/i18n";
 import { Card, Chip } from "@/components/common";
-import { Clock, Users, ChefHat } from "lucide-react";
 import { Icon } from "@/components/common/Icon";
+import { useTranslation } from "@/lib/i18n";
 import type { RecipeSummary } from "@/lib/types";
+import { ChefHat, Clock, Users } from "lucide-react";
+import Link from "next/link";
 
 /* ── Difficulty display ──────────────────────────────────────────────────── */
 

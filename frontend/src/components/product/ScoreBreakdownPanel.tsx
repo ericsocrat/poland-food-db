@@ -9,15 +9,15 @@
 
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
-import { getScoreExplanation } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { useTranslation } from "@/lib/i18n";
 import { Skeleton } from "@/components/common/Skeleton";
-import { BarChart3, AlertTriangle, Clock, Leaf } from "lucide-react";
+import { getScoreExplanation } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
 import type { ScoreExplanation } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { AlertTriangle, BarChart3, Clock, Leaf } from "lucide-react";
+import { useState } from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 

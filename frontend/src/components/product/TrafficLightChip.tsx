@@ -9,9 +9,9 @@
 // high = green (good), low = red (less ideal).
 
 import {
-  getNutritionBand,
-  BENEFICIAL_NUTRIENTS,
-  type NutritionBand,
+    BENEFICIAL_NUTRIENTS,
+    getNutritionBand,
+    type NutritionBand,
 } from "@/lib/nutrition-banding";
 
 export { BENEFICIAL_NUTRIENTS } from "@/lib/nutrition-banding";

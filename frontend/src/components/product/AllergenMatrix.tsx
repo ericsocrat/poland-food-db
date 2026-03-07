@@ -5,8 +5,8 @@
 // EU FIC Regulation 1169/2011-aligned grid with color-coded badges.
 
 import { useTranslation } from "@/lib/i18n";
-import { AlertTriangle, Check, Minus } from "lucide-react";
 import type { ProfileAllergens } from "@/lib/types";
+import { AlertTriangle, Check, Minus } from "lucide-react";
 
 /**
  * EU FIC Regulation 1169/2011 mandates declaration of these 14 allergens.

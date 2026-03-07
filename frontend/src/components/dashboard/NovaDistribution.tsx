@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
 import { useTranslation } from "@/lib/i18n";
 import type { NovaDistribution } from "@/lib/types";
+import { useMemo } from "react";
 
 const NOVA_GROUPS = [
   { key: "1" as const, color: "#22c55e" },

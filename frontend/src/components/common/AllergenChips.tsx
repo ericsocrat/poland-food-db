@@ -1,7 +1,7 @@
 "use client";
 
-import { useTranslation } from "@/lib/i18n";
 import type { AllergenWarning } from "@/lib/allergen-matching";
+import { useTranslation } from "@/lib/i18n";
 
 // ─── Constants ──────────────────────────────────────────────────────────────
 
