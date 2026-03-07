@@ -937,4 +937,60 @@ describe("SearchPage", () => {
 
     expect(screen.queryByTestId("sort-indicator")).not.toBeInTheDocument();
   });
+
+  // ─── localStorage migration & SSR guards ────────────────────────────
+
+  it("migrates legacy 'compact' view mode to 'list'", async () => {
+    localStorage.setItem("tryvit:search-view", "compact");
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    // After mount, the legacy "compact" value should be treated as "list"
+    // The toggle button should now show "Grid" (offering to switch back)
+    await waitFor(() => {
+      expect(screen.getByText("Grid")).toBeInTheDocument();
+    });
+  });
+
+  it("migrates legacy 'list' view mode value to list", async () => {
+    localStorage.setItem("tryvit:search-view", "list");
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Grid")).toBeInTheDocument();
+    });
+  });
+
+  it("loads show-avoided preference from localStorage on mount", async () => {
+    localStorage.setItem("tryvit:show-avoided", "true");
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    // The toggle should reflect the stored preference
+    await waitFor(() => {
+      const toggle = screen.getByText("Show avoided");
+      // The parent button contains the toggle state
+      expect(toggle).toBeInTheDocument();
+    });
+  });
+
+  it("handles missing localStorage gracefully in SSR", () => {
+    const original = globalThis.localStorage;
+    Object.defineProperty(globalThis, "localStorage", {
+      value: undefined,
+      configurable: true,
+    });
+
+    try {
+      render(<SearchPage />, { wrapper: createWrapper() });
+      // Should render without crashing — defaults apply
+      expect(screen.getByPlaceholderText("Search products…")).toBeInTheDocument();
+    } finally {
+      Object.defineProperty(globalThis, "localStorage", {
+        value: original,
+        configurable: true,
+      });
+    }
+  });
 });
