@@ -5,6 +5,7 @@
 
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { PrintButton } from "@/components/common/PrintButton";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
@@ -200,6 +201,10 @@ export default function ProductDetailPage() {
 
   const band = SCORE_BANDS[profile.scores.score_band];
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.productProfile(productId) });
+  }, [queryClient, productId]);
+
   const tabs: { key: Tab; label: string }[] = [
     { key: "overview", label: t("product.overview") },
     { key: "nutrition", label: t("product.nutrition") },
@@ -208,6 +213,7 @@ export default function ProductDetailPage() {
   ];
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4 lg:space-y-6">
       <Breadcrumbs
         items={[
@@ -447,6 +453,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
     </div>
+    </PullToRefresh>
   );
 }
 

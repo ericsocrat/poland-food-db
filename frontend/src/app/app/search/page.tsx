@@ -6,6 +6,7 @@ import { AllergenChips } from "@/components/common/AllergenChips";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LiveRegion } from "@/components/common/LiveRegion";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { NovaBadge } from "@/components/common/NovaBadge";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
@@ -181,6 +182,12 @@ export default function SearchPage() {
     });
   }, [queryClient, submittedQuery, filters, page]);
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.search(submittedQuery, filters, page),
+    });
+  }, [queryClient, submittedQuery, filters, page]);
+
   function selectRecent(q: string) {
     setQuery(q);
     setSubmittedQuery(q);
@@ -211,7 +218,7 @@ export default function SearchPage() {
       : "space-y-2";
 
   return (
-    <>
+    <PullToRefresh onRefresh={handleRefresh}>
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
@@ -647,7 +654,7 @@ export default function SearchPage() {
           />
         </div>
       </div>
-    </>
+    </PullToRefresh>
   );
 }
 

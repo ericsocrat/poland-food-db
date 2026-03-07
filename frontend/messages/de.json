@@ -71,7 +71,10 @@
     "installTitle": "TryVit installieren",
     "installDescription": "Fügen Sie die App zu Ihrem Startbildschirm hinzu, um schnellen Zugriff und Offline-Unterstützung zu erhalten.",
     "iosInstallHint": "Tippen Sie auf 'Teilen' und dann auf 'Zum Home-Bildschirm'.",
-    "dismissInstall": "Installationshinweis schließen"
+    "dismissInstall": "Installationshinweis schließen",
+    "pullToRefresh": "Zum Aktualisieren ziehen",
+    "releaseToRefresh": "Loslassen zum Aktualisieren",
+    "refreshing": "Wird aktualisiert…"
   },
   "notifications": {
     "title": "Push-Benachrichtigungen",

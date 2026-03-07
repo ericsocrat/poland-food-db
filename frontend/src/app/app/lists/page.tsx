@@ -6,6 +6,7 @@
 
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "@/components/common/EmptyState";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { ListViewSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import {
@@ -16,8 +17,10 @@ import {
 } from "@/hooks/use-lists";
 import { SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { queryKeys } from "@/lib/query-keys";
 import { toTryVitScore } from "@/lib/score-utils";
 import type { FormSubmitEvent, ListItem, ProductList } from "@/lib/types";
+import { useQueryClient } from "@tanstack/react-query";
 import {
     Ban,
     ClipboardList,
@@ -28,10 +31,11 @@ import {
     type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 export default function ListsPage() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useLists();
   const createList = useCreateList();
   const deleteList = useDeleteList();
@@ -42,6 +46,10 @@ export default function ListsPage() {
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const lists: ProductList[] = data?.lists ?? [];
+
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.lists });
+  }, [queryClient]);
 
   function handleCreate(e: FormSubmitEvent) {
     e.preventDefault();
@@ -67,6 +75,7 @@ export default function ListsPage() {
   }
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6 lg:space-y-8">
       <Breadcrumbs
         items={[
@@ -160,8 +169,7 @@ export default function ListsPage() {
         }}
         onCancel={() => setConfirmDeleteId(null)}
       />
-    </div>
-  );
+    </div>    </PullToRefresh>  );
 }
 
 // ─── ListCard ───────────────────────────────────────────────────────────────

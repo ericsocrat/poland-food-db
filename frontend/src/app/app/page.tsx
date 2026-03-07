@@ -5,6 +5,7 @@ import { EmptyState } from "@/components/common/EmptyState";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { DashboardSkeleton } from "@/components/common/skeletons";
 import { DashboardGreeting } from "@/components/dashboard/DashboardGreeting";
 import { QuickActions } from "@/components/dashboard/QuickActions";
@@ -38,7 +39,7 @@ import {
     TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -406,11 +407,16 @@ export default function DashboardPage() {
     dashboard.stats.total_viewed > 0 ||
     dashboard.stats.total_scanned > 0;
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
+  }, [queryClient]);
+
   if (!hasContent) {
     return <EmptyDashboard />;
   }
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6 lg:space-y-8">
       {/* Hero — greeting + summary */}
       <div className="space-y-4">
@@ -438,5 +444,6 @@ export default function DashboardPage() {
         </ErrorBoundary>
       )}
     </div>
+    </PullToRefresh>
   );
 }
