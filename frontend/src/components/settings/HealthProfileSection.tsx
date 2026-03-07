@@ -2,25 +2,25 @@
 
 // ─── Health profile management section for Settings page ────────────────────
 
-import { useState } from "react";
-import { Pause, Play, Pencil, Trash2 } from "lucide-react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { showToast } from "@/lib/toast";
-import { createClient } from "@/lib/supabase/client";
 import {
-  listHealthProfiles,
-  createHealthProfile,
-  updateHealthProfile,
-  deleteHealthProfile,
+    createHealthProfile,
+    deleteHealthProfile,
+    listHealthProfiles,
+    updateHealthProfile,
 } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { HEALTH_CONDITIONS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import { showToast } from "@/lib/toast";
 import type {
-  HealthCondition,
-  HealthProfile,
-  FormSubmitEvent,
+    FormSubmitEvent,
+    HealthCondition,
+    HealthProfile,
 } from "@/lib/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { Pause, Pencil, Play, Trash2 } from "lucide-react";
+import { useState } from "react";
 
 // ─── Sub-component: Create/Edit form ────────────────────────────────────────
 
@@ -128,7 +128,7 @@ function ProfileForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder={t("healthProfile.namePlaceholder")}
-          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus-visible:border-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
           maxLength={50}
         />
       </div>
@@ -251,7 +251,7 @@ function ProfileForm({
           onChange={(e) => setNotes(e.target.value)}
           rows={2}
           maxLength={200}
-          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus:border-brand focus:outline-none focus:ring-1 focus:ring-brand"
+          className="w-full rounded-lg border border-strong px-3 py-2 text-sm focus-visible:border-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
           placeholder={t("healthProfile.notesPlaceholder")}
         />
       </div>
@@ -262,7 +262,7 @@ function ProfileForm({
           type="checkbox"
           checked={isActive}
           onChange={(e) => setIsActive(e.target.checked)}
-          className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+          className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
         />
         <span className="text-sm text-foreground-secondary">
           {t("healthProfile.setActive")}
