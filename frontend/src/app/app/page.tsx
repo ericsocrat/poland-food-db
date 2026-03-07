@@ -138,7 +138,7 @@ function SummaryCard({
   return (
     <section className="card space-y-4" data-testid="weekly-summary">
       {/* Overview stats */}
-      <div className="grid grid-cols-4 gap-3" data-testid="stats-grid">
+      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 sm:gap-3" data-testid="stats-grid">
         {statItems.map((s) => (
           <div key={s.label} className="flex flex-col items-center gap-1">
             <s.icon
@@ -317,15 +317,25 @@ function RecentlyViewedSection({
         <h2 className="flex items-center gap-2 text-lg font-semibold text-foreground lg:text-xl">
           <Eye size={20} aria-hidden="true" /> {t("dashboard.recentlyViewed")}
         </h2>
+        <Link
+          href="/app/search"
+          className="text-sm font-medium text-brand-primary hover:underline"
+        >
+          {t("dashboard.viewAll")}
+        </Link>
       </div>
-      <div className="space-y-2 lg:space-y-3">
+      <div
+        className="flex gap-3 overflow-x-auto pb-2 snap-x snap-mandatory sm:flex-col sm:overflow-visible sm:pb-0 sm:snap-none"
+        data-testid="recently-viewed-list"
+      >
         {products.map((p) => (
-          <ProductRow
-            key={p.product_id}
-            product={p}
-            subtitle={new Date(p.viewed_at).toLocaleDateString()}
-            allergenWarnings={allergenMap[p.product_id] ?? []}
-          />
+          <div key={p.product_id} className="min-w-[280px] flex-shrink-0 snap-start sm:min-w-0 sm:flex-shrink">
+            <ProductRow
+              product={p}
+              subtitle={new Date(p.viewed_at).toLocaleDateString()}
+              allergenWarnings={allergenMap[p.product_id] ?? []}
+            />
+          </div>
         ))}
       </div>
     </section>
