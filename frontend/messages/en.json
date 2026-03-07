@@ -16,7 +16,10 @@
     "recipes": "Recipes",
     "imageSearch": "Image Search",
     "learn": "Learn",
-    "more": "More"
+    "more": "More",
+    "sectionBrowse": "Browse",
+    "sectionYourStuff": "Your Stuff",
+    "sectionApp": "App"
   },
   "common": {
     "loading": "Loading…",
