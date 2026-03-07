@@ -176,7 +176,7 @@ export function ImageLightbox({
               }
             }}
             disabled={!canZoomIn}
-            className="rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20 disabled:opacity-30"
+            className="touch-target rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20 disabled:opacity-30"
             aria-label={t("imageLightbox.zoomIn")}
           >
             <ZoomIn size={18} />
@@ -190,7 +190,7 @@ export function ImageLightbox({
               }
             }}
             disabled={!canZoomOut}
-            className="rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20 disabled:opacity-30"
+            className="touch-target rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20 disabled:opacity-30"
             aria-label={t("imageLightbox.zoomOut")}
           >
             <ZoomOut size={18} />
@@ -198,7 +198,7 @@ export function ImageLightbox({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
+            className="touch-target rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
             aria-label={t("common.close")}
           >
             <X size={18} />
@@ -212,7 +212,7 @@ export function ImageLightbox({
           <button
             type="button"
             onClick={prev}
-            className="absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
+            className="touch-target absolute left-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
             aria-label={t("imageLightbox.previous")}
           >
             <ChevronLeft size={24} />
@@ -220,7 +220,7 @@ export function ImageLightbox({
           <button
             type="button"
             onClick={next}
-            className="absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
+            className="touch-target absolute right-2 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/20"
             aria-label={t("imageLightbox.next")}
           >
             <ChevronRight size={24} />

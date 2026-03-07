@@ -37,4 +37,13 @@ describe("IconButton", () => {
     fireEvent.click(screen.getByRole("button"));
     expect(handler).toHaveBeenCalledOnce();
   });
+
+  // ─── Touch target a11y ──────────────────────────────────────────────
+
+  it("applies touch-target-expanded class for 44px minimum hit area", () => {
+    render(<IconButton icon={<span>✕</span>} label="Close" size="sm" />);
+    expect(screen.getByRole("button").className).toContain(
+      "touch-target-expanded",
+    );
+  });
 });
