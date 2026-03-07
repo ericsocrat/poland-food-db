@@ -243,4 +243,76 @@ describe("ProfileSettingsPage", () => {
       );
     });
   });
+
+  // ─── Sticky Save Bar ─────────────────────────────────────────────────────
+
+  it("renders save button inside a sticky bar with backdrop blur when dirty", async () => {
+    render(<ProfileSettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Deutschland")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Deutschland"));
+
+    const saveButton = screen.getByRole("button", { name: "Save changes" });
+    const stickyBar = saveButton.closest("div");
+
+    expect(stickyBar).toHaveClass("sticky");
+    expect(stickyBar).toHaveClass("bottom-0");
+    expect(stickyBar).toHaveClass("backdrop-blur");
+  });
+
+  // ─── Beforeunload Guard ───────────────────────────────────────────────────
+
+  it("adds beforeunload listener when dirty", async () => {
+    const addSpy = vi.spyOn(window, "addEventListener");
+    render(<ProfileSettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Deutschland")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Deutschland"));
+
+    await waitFor(() => {
+      expect(addSpy).toHaveBeenCalledWith(
+        "beforeunload",
+        expect.any(Function),
+      );
+    });
+
+    addSpy.mockRestore();
+  });
+
+  it("removes beforeunload listener after save", async () => {
+    mockSetPrefs.mockResolvedValue({ ok: true });
+    const removeSpy = vi.spyOn(window, "removeEventListener");
+    render(<ProfileSettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Deutschland")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Deutschland"));
+    await user.click(screen.getByRole("button", { name: "Save changes" }));
+
+    // After save, dirty becomes false — effect re-runs and re-attaches a no-op handler
+    await waitFor(() => {
+      expect(
+        screen.queryByRole("button", { name: "Save changes" }),
+      ).not.toBeInTheDocument();
+    });
+
+    // The beforeunload listener was removed and re-added (dirty changed)
+    expect(removeSpy).toHaveBeenCalledWith(
+      "beforeunload",
+      expect.any(Function),
+    );
+
+    removeSpy.mockRestore();
+  });
 });

@@ -263,15 +263,17 @@ export default function NutritionSettingsPage() {
       {/* Health Profiles */}
       <HealthProfileSection />
 
-      {/* Save button */}
+      {/* Save button — sticky bar at bottom when dirty */}
       {dirty && (
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="btn-primary w-full"
-        >
-          {saving ? t("common.saving") : t("settings.saveChanges")}
-        </button>
+        <div className="sticky bottom-0 z-30 -mx-4 animate-slide-in-up border-t border-border bg-surface/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="btn-primary w-full"
+          >
+            {saving ? t("common.saving") : t("settings.saveChanges")}
+          </button>
+        </div>
       )}
     </div>
   );
