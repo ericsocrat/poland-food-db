@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-07 by GitHub Copilot (session 33)
+> **Last updated:** 2026-03-07 by GitHub Copilot (session 34)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,7 +8,7 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (no active feature branch)
-- **Latest SHA (main):** `fa1eb5e` (PR #677 squash merge)
+- **Latest SHA (main):** `d138096` (PR #679 squash merge)
 - **Open PRs:** None
 
 ## Production Deployment (2026-03-06)
@@ -27,6 +27,8 @@
 
 | SHA     | Summary                                                                           |
 | ------- | --------------------------------------------------------------------------------- |
+| d138096 | fix(qa): quality-gate seed allergen tags + invariant stability (#679)             |
+| 56c02d7 | chore(state): update CURRENT_STATE.md session 33 + gitignore enrichment SQL (#678) |
 | fa1eb5e | fix(schema): clean orphan store rows + add parent_ingredient_id index (#677)      |
 | 084fad7 | fix(pipeline): add defensive WHERE guard for orphan sub-ingredients (#676)        |
 
@@ -56,7 +58,7 @@
 
 ## Known Issues & Broken Items
 
-- [ ] Quality Gate dashboard test still fails — staging DB missing API functions (schema sync needed)
+- [x] Quality Gate CI — **FIXED in #679** (seed allergen tags + invariant stability)
 - [x] QA Suite 2 (Scoring): Coca-Cola Zero — score anchor updated to 11-16 in PR #655 (DE validation suite)
 - [ ] QA Suite 11 (NutriRange): 9 calorie back-calculation outliers — OFF source data quality
 - [x] QA Suite 16 (Security): 2 anon-accessible non-public api_* functions — **FIXED in #662**
@@ -72,14 +74,13 @@
 | qa.yml       | ✅      | 735/735 checks passing                                |
 | dep-audit    | ✅      | 0 high/critical vulnerabilities                       |
 | python-lint  | ✅      | 0 ruff errors                                         |
-| quality-gate | ⚠️      | 18/20 pass; dashboard 400s from staging DB schema gap |
+| quality-gate | ✅      | All checks passing (fixed in #679)                    |
 | nightly      | ✅      | Data audit fix shipped (#560)                         |
 
-## Open Issues (2 total — all deferred)
+## Open Issues (1 total — deferred)
 
 | Issue | Priority | Effort | Summary                                   |
 | ----- | -------- | ------ | ----------------------------------------- |
-| #563  | Deferred | S      | Sync staging DB schema for quality-gate   |
 | #212  | Deferred | —      | Infrastructure Cost Attribution Framework |
 
 ## Milestones Completed
@@ -91,7 +92,7 @@
 - [x] Fix enrichment SQL generator portability (hardcoded ingredient_id → name-based JOINs) — **MERGED in #675**
 - [x] Re-run ingredient enrichment against production DB — **DONE** (2,206/2,438 = 90.5% coverage)
 - [x] Fix QA Suite 35 orphan rows + Suite 41 missing FK index — **migration 20260316000300 applied to production**
-- [ ] Sync staging DB schema for quality-gate (#563)
+- [x] Sync staging DB schema for quality-gate (#563) — **FIXED in #679**
 
 ## Key Metrics Snapshot
 
@@ -108,7 +109,7 @@
 - **Nutrition coverage (production):** 2,438/2,438 (100%)
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
-- **Open issues:** 2 (both deferred) | **Open PRs:** 0
+- **Open issues:** 1 (deferred) | **Open PRs:** 0
 - **Vitest:** 5,117 tests passing (29 skipped)
 - **DB migrations:** 200 append-only (75 applied to production, 4 skipped)
 - **Ruff lint:** 0 errors
