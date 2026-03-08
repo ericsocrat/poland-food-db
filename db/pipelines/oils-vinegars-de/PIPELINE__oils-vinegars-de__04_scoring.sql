@@ -1,0 +1,123 @@
+-- PIPELINE (Oils & Vinegars): scoring
+-- Generated: 2026-03-08
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Bellasan', 'Natives Olivenöl Extra', 'B'),
+    ('Primadonna', 'Natives Olivenöl Extra', 'B'),
+    ('DmBio', 'Natives Olivenöl extra', 'B'),
+    ('Lyttos', 'Olivenöl', 'B'),
+    ('DmBio', 'Bratolivenöl', 'B'),
+    ('Camaletti', 'Camaletti Olivenöl', 'B'),
+    ('Gut Bio', 'Natives Olivenöl Extra', 'B'),
+    ('Lyttos', 'Griechisches natives Olivenöl extra', 'D'),
+    ('Primadonna', 'Brat Olivenöl', 'B'),
+    ('Primadonna', 'Olivenöl (nativ, extra)', 'B'),
+    ('Aldi', 'Griechisches natives Olivenöl Extra', 'UNKNOWN'),
+    ('Bellasan', 'Oliven Öl', 'B'),
+    ('K-Classic', 'Natives Olivenöl extra', 'B'),
+    ('Lidl', 'Natives Olivenöl extra aus Griechenland', 'B'),
+    ('DmBio', 'Natives Olivenöl extra naturtrüb', 'B'),
+    ('Cucina Nobile', 'Natives Olivenöl', 'B'),
+    ('Aldi Bellasan', 'ALDI BELLASAN Natives Olivenöl extra für kalte Zubereitungen wie Salate und Vinaigretten geeignet, in PET-Flasche 1l 8.99€', 'B'),
+    ('Bellasan', 'Olivenöl', 'B'),
+    ('Aldi', 'Natives Olivenöl Extra', 'UNKNOWN'),
+    ('Primadonna', 'Olivenöl', 'B'),
+    ('Rapunzel', 'Ö-Kreta Olivenöl nativ extra-10,48€/29.6.22', 'B'),
+    ('Ener Bio', 'Griechisches natives Olivenöl e', 'B'),
+    ('Deluxe', 'Olivenöl', 'B'),
+    ('K Favorites', 'Natives Olivenöl Extra', 'B'),
+    ('Rapunzel', 'Olivenöl fruchtig', 'B'),
+    ('Rapunzel', 'Olivenöl nativ extra mild', 'C'),
+    ('Rapunzel', 'Ölivenöl Finca la Torre', 'B'),
+    ('Biozentrsle', 'Olivenöl', 'B'),
+    ('Deluxe', 'Öl - Olivenöl Extra G.G.A. Chania Kritis', 'B'),
+    ('Dennree', 'Olivenöl nativ extra', 'B'),
+    ('Rapunzel', 'Rapunzel Olivenöl Fruchtig, Nativ Extra, 0,5 LTR Flasche', 'B'),
+    ('Bertolli', 'Natives Olivenöl Originale', 'B'),
+    ('Rewe', 'Natives Olivenöl Extra', 'B'),
+    ('Edeka Bio', 'EDEKA Bio Natives Olivenöl extra 750ml 6.65€ 1l 9.27€', 'B'),
+    ('Alnatura', 'Olivenöl', 'B'),
+    ('Gut & Günstig', 'Olivenöl Extra Natives', 'B'),
+    ('D.O.P. Terra Di Bari Castel Del Monte', 'Italienisches natives Olivenöl extra', 'UNKNOWN'),
+    ('Bertolli', 'Olivenöl Natives Extra Gentile SANFT', 'B'),
+    ('BioBio', 'Natives Bio-Olivenöl Extra', 'B'),
+    ('EDEKA Bio', 'Natives Olivenöl extra', 'B'),
+    ('Rewe beste Wahl', 'Olivenöl ideal für warme Speisen', 'B'),
+    ('Ja!', 'Natives Olivenöl Extra', 'B'),
+    ('La Espaniola', 'Natives Ölivenöl extra', 'B'),
+    ('Las Cuarenta', 'Spanisches Natives Olivenöl extra', 'B'),
+    ('Natur Gut', 'Natives Olivenöl Extra', 'B'),
+    ('Bio', 'Bio natives Olivenöl', 'B'),
+    ('Primadonna', 'Bio natives Olivenöl extra', 'B'),
+    ('Vegola', 'Natives Olivenöl extra', 'B'),
+    ('Fiore', 'Natives Olivenöl Extra', 'B'),
+    ('REWE Feine Welt', 'Natives Olivenöl Extra Lesvos g.g.A.', 'B'),
+    ('Edeka', 'Griechisches Natives Olivenöl Extra', 'B')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Bellasan', 'Natives Olivenöl Extra', '2'),
+    ('Primadonna', 'Natives Olivenöl Extra', '2'),
+    ('DmBio', 'Natives Olivenöl extra', '2'),
+    ('Lyttos', 'Olivenöl', '2'),
+    ('DmBio', 'Bratolivenöl', '2'),
+    ('Camaletti', 'Camaletti Olivenöl', '2'),
+    ('Gut Bio', 'Natives Olivenöl Extra', '2'),
+    ('Lyttos', 'Griechisches natives Olivenöl extra', '2'),
+    ('Primadonna', 'Brat Olivenöl', '2'),
+    ('Primadonna', 'Olivenöl (nativ, extra)', '2'),
+    ('Aldi', 'Griechisches natives Olivenöl Extra', '2'),
+    ('Bellasan', 'Oliven Öl', '2'),
+    ('K-Classic', 'Natives Olivenöl extra', '2'),
+    ('Lidl', 'Natives Olivenöl extra aus Griechenland', '2'),
+    ('DmBio', 'Natives Olivenöl extra naturtrüb', '2'),
+    ('Cucina Nobile', 'Natives Olivenöl', '2'),
+    ('Aldi Bellasan', 'ALDI BELLASAN Natives Olivenöl extra für kalte Zubereitungen wie Salate und Vinaigretten geeignet, in PET-Flasche 1l 8.99€', '2'),
+    ('Bellasan', 'Olivenöl', '2'),
+    ('Aldi', 'Natives Olivenöl Extra', '2'),
+    ('Primadonna', 'Olivenöl', '2'),
+    ('Rapunzel', 'Ö-Kreta Olivenöl nativ extra-10,48€/29.6.22', '2'),
+    ('Ener Bio', 'Griechisches natives Olivenöl e', '2'),
+    ('Deluxe', 'Olivenöl', '2'),
+    ('K Favorites', 'Natives Olivenöl Extra', '4'),
+    ('Rapunzel', 'Olivenöl fruchtig', '2'),
+    ('Rapunzel', 'Olivenöl nativ extra mild', '2'),
+    ('Rapunzel', 'Ölivenöl Finca la Torre', '2'),
+    ('Biozentrsle', 'Olivenöl', '2'),
+    ('Deluxe', 'Öl - Olivenöl Extra G.G.A. Chania Kritis', '2'),
+    ('Dennree', 'Olivenöl nativ extra', '2'),
+    ('Rapunzel', 'Rapunzel Olivenöl Fruchtig, Nativ Extra, 0,5 LTR Flasche', '2'),
+    ('Bertolli', 'Natives Olivenöl Originale', '4'),
+    ('Rewe', 'Natives Olivenöl Extra', '2'),
+    ('Edeka Bio', 'EDEKA Bio Natives Olivenöl extra 750ml 6.65€ 1l 9.27€', '2'),
+    ('Alnatura', 'Olivenöl', '2'),
+    ('Gut & Günstig', 'Olivenöl Extra Natives', '4'),
+    ('D.O.P. Terra Di Bari Castel Del Monte', 'Italienisches natives Olivenöl extra', '2'),
+    ('Bertolli', 'Olivenöl Natives Extra Gentile SANFT', '4'),
+    ('BioBio', 'Natives Bio-Olivenöl Extra', '2'),
+    ('EDEKA Bio', 'Natives Olivenöl extra', '2'),
+    ('Rewe beste Wahl', 'Olivenöl ideal für warme Speisen', '2'),
+    ('Ja!', 'Natives Olivenöl Extra', '2'),
+    ('La Espaniola', 'Natives Ölivenöl extra', '2'),
+    ('Las Cuarenta', 'Spanisches Natives Olivenöl extra', '4'),
+    ('Natur Gut', 'Natives Olivenöl Extra', '2'),
+    ('Bio', 'Bio natives Olivenöl', '2'),
+    ('Primadonna', 'Bio natives Olivenöl extra', '2'),
+    ('Vegola', 'Natives Olivenöl extra', '2'),
+    ('Fiore', 'Natives Olivenöl Extra', '2'),
+    ('REWE Feine Welt', 'Natives Olivenöl Extra Lesvos g.g.A.', '2'),
+    ('Edeka', 'Griechisches Natives Olivenöl Extra', '2')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Oils & Vinegars', 100, 'DE');

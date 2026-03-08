@@ -1,0 +1,123 @@
+-- PIPELINE (Spreads & Dips): scoring
+-- Generated: 2026-03-08
+
+-- 2. Nutri-Score
+update products p set
+  nutri_score_label = d.ns
+from (
+  values
+    ('Aldi', 'Vegane Bio-Streichcreme - Kräuter-Tomate', 'C'),
+    ('Noa', 'Noa Brotaufstrich Hummus Kräuter', 'C'),
+    ('Lyttos', 'Griechischer Pitabrot-Dip - Grüne Oliven, Aprikosen & Mandeln', 'C'),
+    ('Lyttos', 'Griechischer Pitabrot-Dip - Tomaten, Walnüsse & Basilikum', 'D'),
+    ('Unknown', 'Hummus Kürbis Kürbis Kichererbsenpüree mit Kürbis und Sesam', 'C'),
+    ('Lyttos', 'Griechischer Pitabrot-Dip - Rote Linsen, Tomaten & Kürbis', 'B'),
+    ('Menken Salades & Sauzen', 'Hummus - Kürbis', 'C'),
+    ('Milram', 'Fein-würzige Sour Cream', 'D'),
+    ('BLM', 'Bruschetta-Creme mit Paprika und Ricottakäse', 'E'),
+    ('Sun Snacks', 'Salsa Dip Käse', 'D'),
+    ('Kühlmann', 'Kichererbsenpüree', 'C'),
+    ('W', 'Bio Hummus - Kichererbsenpüree mit Sesam und rotem Pesto', 'C'),
+    ('Schätze des Orients', 'Hummus Natur', 'C'),
+    ('NOA', 'Hummus , Natur', 'D'),
+    ('Heinrich Kuhmann GmbH', 'Hummus - Pikant', 'C'),
+    ('K Bio (Kaufland)', 'Bio Hummus Classic', 'A'),
+    ('Noa', 'Hummus Paprika-Chili', 'C'),
+    ('My Vay', 'Bio Streichcreme', 'C'),
+    ('DmBio', 'Hummus Natur', 'C'),
+    ('Chef Select', 'Bio Hummus Natur', 'A'),
+    ('Kaufland', 'Veganer Hummus Classic', 'A'),
+    ('Deluxe', 'Hummus und Guacamole', 'A'),
+    ('Noa', 'Brotaufstrich Kichererbse Tomate-Basilikum', 'C'),
+    ('Aldi', 'Vegane Bio-Streichcreme - Aubergine', 'D'),
+    ('Chef select', 'Bio organic humus', 'B'),
+    ('Feinkost Popp', 'Hummus Klassisch', 'C'),
+    ('Milbona', 'Zaziki', 'C'),
+    ('Aldi', 'Bio-Hummus - Natur', 'C'),
+    ('Aldi', 'Vegane Bio-Streichcreme - Rote Bete-Meerrettich', 'D'),
+    ('Chef Select', 'Guacamole scharf', 'B'),
+    ('Nur Nur Natur', 'Bio Humus Paprika Kurkuma Chili', 'A'),
+    ('Nur Nur Natur', 'Bio-Hummus - Rote Bete, Meerrettich, Hibiskus', 'A'),
+    ('Nabio', 'Gegrillte Paprika Cashew', 'C'),
+    ('Chef Select', 'Guacamole Avocado-Dip mild', 'UNKNOWN'),
+    ('Wonnemeyer', 'Antipasticreme - Feta', 'E'),
+    ('Nur Nur Natur', 'Bio-Hummus - Tomate', 'C'),
+    ('Popp', 'Brotaufstrich Bruschetta', 'C'),
+    ('Kaufland', 'Guacamole', 'A'),
+    ('Chef select', 'Hummus Nature', 'A'),
+    ('Kühlmann', 'Hummus Trio', 'D'),
+    ('Aldi', 'Bio-Hummus - Rote Beete', 'C'),
+    ('Chef Select', 'Hummus bruschetta', 'A'),
+    ('Aldi', 'Bio-Hummus - Paprika', 'C'),
+    ('Grossmann', 'Knoblauch-Dip', 'D'),
+    ('Kaufland', 'Hummus mit Topping Grünes Pesto', 'D'),
+    ('Wonnemeyer', 'Antipasticreme - Dattel-Curry', 'E'),
+    ('Lyttos', 'Griechischer Pitabrot-Dip - Paprika, Feta & Tomaten', 'D'),
+    ('Chef Select', 'Kirschpaprika Antipasti-Creme', 'E'),
+    ('Noa', 'Hummus Dattel Curry', 'D'),
+    ('Chio', 'Hot Cheese Dip!', 'D'),
+    ('Chio', 'Chip dip', 'D')
+) as d(brand, product_name, ns)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 3. NOVA classification
+update products p set
+  nova_classification = d.nova
+from (
+  values
+    ('Aldi', 'Vegane Bio-Streichcreme - Kräuter-Tomate', '3'),
+    ('Noa', 'Noa Brotaufstrich Hummus Kräuter', '3'),
+    ('Lyttos', 'Griechischer Pitabrot-Dip - Grüne Oliven, Aprikosen & Mandeln', '3'),
+    ('Lyttos', 'Griechischer Pitabrot-Dip - Tomaten, Walnüsse & Basilikum', '3'),
+    ('Unknown', 'Hummus Kürbis Kürbis Kichererbsenpüree mit Kürbis und Sesam', '3'),
+    ('Lyttos', 'Griechischer Pitabrot-Dip - Rote Linsen, Tomaten & Kürbis', '4'),
+    ('Menken Salades & Sauzen', 'Hummus - Kürbis', '4'),
+    ('Milram', 'Fein-würzige Sour Cream', '3'),
+    ('BLM', 'Bruschetta-Creme mit Paprika und Ricottakäse', '4'),
+    ('Sun Snacks', 'Salsa Dip Käse', '4'),
+    ('Kühlmann', 'Kichererbsenpüree', '4'),
+    ('W', 'Bio Hummus - Kichererbsenpüree mit Sesam und rotem Pesto', '4'),
+    ('Schätze des Orients', 'Hummus Natur', '3'),
+    ('NOA', 'Hummus , Natur', '3'),
+    ('Heinrich Kuhmann GmbH', 'Hummus - Pikant', '3'),
+    ('K Bio (Kaufland)', 'Bio Hummus Classic', '3'),
+    ('Noa', 'Hummus Paprika-Chili', '3'),
+    ('My Vay', 'Bio Streichcreme', '3'),
+    ('DmBio', 'Hummus Natur', '4'),
+    ('Chef Select', 'Bio Hummus Natur', '3'),
+    ('Kaufland', 'Veganer Hummus Classic', '3'),
+    ('Deluxe', 'Hummus und Guacamole', '4'),
+    ('Noa', 'Brotaufstrich Kichererbse Tomate-Basilikum', '3'),
+    ('Aldi', 'Vegane Bio-Streichcreme - Aubergine', '3'),
+    ('Chef select', 'Bio organic humus', '4'),
+    ('Feinkost Popp', 'Hummus Klassisch', '3'),
+    ('Milbona', 'Zaziki', '4'),
+    ('Aldi', 'Bio-Hummus - Natur', '3'),
+    ('Aldi', 'Vegane Bio-Streichcreme - Rote Bete-Meerrettich', '3'),
+    ('Chef Select', 'Guacamole scharf', '3'),
+    ('Nur Nur Natur', 'Bio Humus Paprika Kurkuma Chili', '3'),
+    ('Nur Nur Natur', 'Bio-Hummus - Rote Bete, Meerrettich, Hibiskus', '3'),
+    ('Nabio', 'Gegrillte Paprika Cashew', '4'),
+    ('Chef Select', 'Guacamole Avocado-Dip mild', '4'),
+    ('Wonnemeyer', 'Antipasticreme - Feta', '3'),
+    ('Nur Nur Natur', 'Bio-Hummus - Tomate', '3'),
+    ('Popp', 'Brotaufstrich Bruschetta', '4'),
+    ('Kaufland', 'Guacamole', '3'),
+    ('Chef select', 'Hummus Nature', '3'),
+    ('Kühlmann', 'Hummus Trio', '4'),
+    ('Aldi', 'Bio-Hummus - Rote Beete', '3'),
+    ('Chef Select', 'Hummus bruschetta', '3'),
+    ('Aldi', 'Bio-Hummus - Paprika', '3'),
+    ('Grossmann', 'Knoblauch-Dip', '4'),
+    ('Kaufland', 'Hummus mit Topping Grünes Pesto', '4'),
+    ('Wonnemeyer', 'Antipasticreme - Dattel-Curry', '4'),
+    ('Lyttos', 'Griechischer Pitabrot-Dip - Paprika, Feta & Tomaten', '4'),
+    ('Chef Select', 'Kirschpaprika Antipasti-Creme', '4'),
+    ('Noa', 'Hummus Dattel Curry', '3'),
+    ('Chio', 'Hot Cheese Dip!', '4'),
+    ('Chio', 'Chip dip', '4')
+) as d(brand, product_name, nova)
+where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
+
+-- 0/1/4/5. Score category (concern defaults, unhealthiness, flags, confidence)
+CALL score_category('Spreads & Dips', 100, 'DE');
