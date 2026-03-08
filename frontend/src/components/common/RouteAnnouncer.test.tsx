@@ -1,19 +1,14 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, act } from "@testing-library/react";
+import { render } from "@testing-library/react";
 
 // ─── Mock next/navigation ───────────────────────────────────────────────────
 
 let mockPathname = "/";
-const listeners: Array<() => void> = [];
+const _listeners: Array<() => void> = [];
 
 vi.mock("next/navigation", () => ({
   usePathname: () => mockPathname,
 }));
-
-function navigateTo(path: string) {
-  mockPathname = path;
-  // Force re-render by re-mounting — simulates Next.js navigation
-}
 
 import { RouteAnnouncer } from "./RouteAnnouncer";
 
