@@ -57,6 +57,9 @@ jobs:
           configPath: frontend/lighthouserc.mobile.js
           uploadArtifacts: true
           temporaryPublicStorage: true
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL || 'http://localhost:54321' }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder' }}
 
       - name: Upload reports
         if: always()
