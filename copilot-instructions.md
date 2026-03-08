@@ -1,8 +1,8 @@
 # Copilot Instructions — TryVit
 
 > **Last updated:** 2026-03-05
-> **Scope:** Poland (`PL`) primary + Germany (`DE`) full parity (1,066 products across 19 categories)
-> **Products:** ~2,264 active (20 PL categories + 19 DE categories), 273 deprecated
+> **Scope:** Poland (`PL`) primary + Germany (`DE`) full parity (1,168 products across 21 categories)
+> **Products:** ~2,366 active (22 PL categories + 21 DE categories), 273 deprecated
 > **EAN coverage:** 2,261/2,264 (99.9%)
 > **Scoring:** v3.3 — 9-factor weighted penalty + nutrient density bonus via `compute_unhealthiness_v33()` (protein & fibre credit)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
@@ -78,7 +78,7 @@ tryvit/
 │   ├── image_importer.py            # Product image import utility
 │   └── categories.py               # 20 category definitions + OFF tag mappings
 ├── db/
-│   ├── pipelines/                   # 39 category folders (20 PL + 19 DE), 4-5 SQL files each
+│   ├── pipelines/                   # 43 category folders (22 PL + 21 DE), 4-5 SQL files each
 │   │   ├── chips-pl/                # Reference PL implementation (copy for new categories)
 │   │   ├── chips-de/                # DE Chips (~56 products)
 │   │   ├── bread-de/                # DE Bread (51 products)
@@ -505,11 +505,11 @@ tryvit/
 
 ---
 
-## 5. Categories (20 PL + 19 DE)
+## 5. Categories (22 PL + 21 DE)
 
-All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each. All 19 PL categories (except Żabka) have a DE counterpart.
+All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each. All 21 PL categories (except Żabka) have a DE counterpart.
 
-### PL Categories (20)
+### PL Categories (22)
 
 | Category                   | Folder slug                 |
 | -------------------------- | --------------------------- |
@@ -527,14 +527,16 @@ All categories have **variable product counts** (28–95 active products). Categ
 | Instant & Frozen           | `instant-frozen/`           |
 | Meat                       | `meat/`                     |
 | Nuts, Seeds & Legumes      | `nuts-seeds-legumes/`       |
+| Oils & Vinegars            | `oils-vinegars/`            |
 | Plant-Based & Alternatives | `plant-based-alternatives/` |
 | Sauces                     | `sauces/`                   |
 | Seafood & Fish             | `seafood-fish/`             |
 | Snacks                     | `snacks/`                   |
+| Spreads & Dips             | `spreads-dips/`             |
 | Sweets                     | `sweets/`                   |
 | Żabka                      | `zabka/`                    |
 
-### DE Categories (19)
+### DE Categories (21)
 
 | Category                   | Folder slug                       |
 | -------------------------- | --------------------------------- |
@@ -552,13 +554,15 @@ All categories have **variable product counts** (28–95 active products). Categ
 | Instant & Frozen (DE)      | `instant-frozen-de/`              |
 | Meat (DE)                  | `meat-de/`                        |
 | Nuts, Seeds & Legumes (DE) | `nuts-seeds-legumes-de/`          |
+| Oils & Vinegars (DE)       | `oils-vinegars-de/`               |
 | Plant-Based & Alternatives (DE) | `plant-based-alternatives-de/` |
 | Sauces (DE)                | `sauces-de/`                      |
 | Seafood & Fish (DE)        | `seafood-fish-de/`                |
 | Snacks (DE)                | `snacks-de/`                      |
+| Spreads & Dips (DE)        | `spreads-dips-de/`                |
 | Sweets (DE)                | `sweets-de/`                      |
 
-**39 pipeline folders** (20 PL + 19 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
+**43 pipeline folders** (22 PL + 21 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
 
 ---
 
@@ -2163,7 +2167,7 @@ Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
 | Document                          | Purpose                                                                   | Load When                        |
 | --------------------------------- | ------------------------------------------------------------------------- | -------------------------------- |
 | `docs/COUNTRY_EXPANSION_GUIDE.md` | Multi-country protocol — adding countries, activating DE, language matrix | Country/language expansion       |
-| `copilot-instructions.md §5`      | Active categories — 20 PL + 19 DE, pipeline folder mappings               | Category additions, DE expansion |
+| `copilot-instructions.md §5`      | Active categories — 22 PL + 21 DE, pipeline folder mappings               | Category additions, DE expansion |
 | `copilot-instructions.md §15.15`  | i18n impact checklist — dictionary keys, translations, search synonyms    | Any translated string change     |
 
 ### 18.9 Architecture Decision Records

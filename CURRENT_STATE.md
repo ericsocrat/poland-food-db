@@ -112,7 +112,7 @@ All 26 open PRs merged into main in a single session:
 
 ## Key Metrics Snapshot
 
-- **Products (production):** 2,438 active (1,332 PL + 1,102 DE across 22 PL + 19 DE categories)
+- **Products (production):** 2,438 active (1,332 PL + 1,102 DE across 22 PL + 21 DE categories)
 - **Deprecated products:** 286 (229 PL + 57 DE)
 - **QA checks:** 743/743 passing (48 suites) — local DB
 - **Negative tests:** 23/23 caught
@@ -144,7 +144,7 @@ All 26 open PRs merged into main in a single session:
 | QA suites (48)             | 43 pass / 5 known issues | ✅      |
 | Negative tests             | 23/23 caught             | ✅      |
 | EAN checksums              | 2,261/2,261 valid (100%) | ✅      |
-| Pipeline structure         | 39 categories verified   | ✅      |
+| Pipeline structure         | 43 categories verified   | ✅      |
 | Enrichment identity        | PASSED                   | ✅      |
 | Scoring anchor regression  | 9/9 verified within ±2   | ✅      |
 | Data completeness avg (PL) | 97.5%                    | ✅      |
