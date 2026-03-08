@@ -4,11 +4,11 @@
 
 "use client";
 
-import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
-import { AlertTriangle } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
+import * as Sentry from "@sentry/nextjs";
+import { AlertTriangle } from "lucide-react";
+import { useEffect } from "react";
 
 export default function ErrorPage({
   error,

@@ -1,8 +1,8 @@
 "use client";
 
-import { WifiOff } from "lucide-react";
 import { Button } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
+import { WifiOff } from "lucide-react";
 
 export default function OfflinePage() {
   const { t } = useTranslation();

@@ -4,6 +4,7 @@
 
 "use client";
 
+import { ButtonLink } from "@/components/common/Button";
 import { Logo } from "@/components/common/Logo";
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -17,8 +18,6 @@ import {
     ShoppingBasket,
     type LucideIcon,
 } from "lucide-react";
-import { ButtonLink } from "@/components/common/Button";
-import Link from "next/link";
 
 // ─── Hero ───────────────────────────────────────────────────────────────────
 

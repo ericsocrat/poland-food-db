@@ -3,8 +3,8 @@
 "use client";
 
 import { ButtonLink } from "@/components/common/Button";
-import { FileQuestion } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { FileQuestion } from "lucide-react";
 
 export default function NotFound() {
   const { t } = useTranslation();

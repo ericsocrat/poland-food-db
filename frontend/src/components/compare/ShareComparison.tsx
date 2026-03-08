@@ -2,11 +2,11 @@
 
 // ─── ShareComparison — save & share toolbar for comparison view ─────────────
 
-import { useState } from "react";
+import { Button } from "@/components/common/Button";
 import { useSaveComparison } from "@/hooks/use-compare";
 import { useTranslation } from "@/lib/i18n";
-import { Button } from "@/components/common/Button";
-import { ClipboardCopy, Save, Link2, Check } from "lucide-react";
+import { Check, ClipboardCopy, Link2, Save } from "lucide-react";
+import { useState } from "react";
 
 interface ShareComparisonProps {
   productIds: number[];

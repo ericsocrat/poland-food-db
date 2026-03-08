@@ -9,9 +9,9 @@
 // closed <dialog> elements, inflating the layout viewport on mobile devices.
 // See PR #92.
 
-import { useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
+import { useCallback, useEffect, useRef } from "react";
 
 interface ConfirmDialogProps {
   /** Whether the dialog is open */

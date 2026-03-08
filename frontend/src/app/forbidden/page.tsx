@@ -6,9 +6,9 @@
 
 "use client";
 
+import { ButtonLink } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
 import { ShieldOff } from "lucide-react";
-import { ButtonLink } from "@/components/common/Button";
 
 export default function ForbiddenPage() {
   const { t } = useTranslation();

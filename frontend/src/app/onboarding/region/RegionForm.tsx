@@ -2,15 +2,15 @@
 
 // ─── Onboarding Step 1: Region selection (required) ─────────────────────────
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { Button } from "@/components/common/Button";
-import { showToast } from "@/lib/toast";
-import { createClient } from "@/lib/supabase/client";
 import { setUserPreferences } from "@/lib/api";
 import { COUNTRIES } from "@/lib/constants";
-import { Check } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
+import { createClient } from "@/lib/supabase/client";
+import { showToast } from "@/lib/toast";
+import { Check } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function RegionForm() {
   const router = useRouter();

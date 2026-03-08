@@ -5,6 +5,7 @@
 // Displays a shared comparison with the ComparisonGrid component.
 // No avoid badges or save features — read-only public view.
 
+import { ButtonLink } from "@/components/common/Button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Logo } from "@/components/common/Logo";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
@@ -12,7 +13,6 @@ import { useSharedComparison } from "@/hooks/use-compare";
 import { useTranslation } from "@/lib/i18n";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Link2, Scale } from "lucide-react";
-import { ButtonLink } from "@/components/common/Button";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 

@@ -1,10 +1,10 @@
 "use client";
 
-import { X } from "lucide-react";
 import { Button } from "@/components/common/Button";
-import { useTranslation } from "@/lib/i18n";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useInstallPrompt } from "@/hooks/use-install-prompt";
+import { useTranslation } from "@/lib/i18n";
+import { X } from "lucide-react";
 
 export function InstallPrompt() {
   const { t } = useTranslation();

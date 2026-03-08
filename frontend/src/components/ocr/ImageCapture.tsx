@@ -13,10 +13,10 @@
 "use client";
 
 import { Button } from "@/components/common/Button";
-import { useRef, useState, useCallback, useEffect } from "react";
-import { Camera, Upload, X, SwitchCamera } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
 import { Icon } from "@/components/common/Icon";
+import { useTranslation } from "@/lib/i18n";
+import { Camera, SwitchCamera, Upload, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface ImageCaptureProps {
   /** Called when user has selected/captured an image. */

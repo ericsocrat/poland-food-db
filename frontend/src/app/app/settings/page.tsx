@@ -3,8 +3,8 @@
 // ─── Settings — Profile & Preferences (Country, Language, Theme) ────────────
 
 import { Button } from "@/components/common/Button";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ThemeToggle } from "@/components/settings/ThemeToggle";
 import { useAnalytics } from "@/hooks/use-analytics";

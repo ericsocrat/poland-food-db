@@ -2,8 +2,8 @@
 
 // ─── Category listing — paginated product list for a single category ────────
 
-import { Button } from "@/components/common/Button";
 import { AllergenChips } from "@/components/common/AllergenChips";
+import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";

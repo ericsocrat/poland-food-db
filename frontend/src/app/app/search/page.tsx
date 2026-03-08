@@ -2,15 +2,15 @@
 
 // ─── Enhanced Search page — autocomplete, multi-faceted filters, pagination ─
 
-import { Button } from "@/components/common/Button";
 import { AllergenChips } from "@/components/common/AllergenChips";
+import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LiveRegion } from "@/components/common/LiveRegion";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { NovaBadge } from "@/components/common/NovaBadge";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
