@@ -1,5 +1,5 @@
-import { renderHook, act } from "@testing-library/react";
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { act, renderHook } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useUnsavedChanges } from "./use-unsaved-changes";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -105,9 +105,9 @@ describe("useUnsavedChanges", () => {
     });
 
     it("allows pushState when not dirty", () => {
-      const pushSpy = vi.fn();
+      const _pushSpy = vi.fn();
       history.pushState = originalPushState;
-      const origBound = history.pushState.bind(history);
+      const _origBound = history.pushState.bind(history);
 
       // We need a clean hook that intercepts pushState
       const { result } = renderHook(() => useUnsavedChanges(false));
