@@ -2,6 +2,7 @@
 
 // ─── Settings — Notifications (Push Toggle, Score Alerts, Frequency) ────────
 
+import { Button } from "@/components/common/Button";
 import { SettingsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -259,7 +260,7 @@ export default function NotificationSettingsPage() {
               className="peer sr-only"
               data-testid="score-changes-toggle"
             />
-            <div className="peer h-6 w-11 rounded-full bg-surface-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-strong after:bg-white after:transition-all after:content-[''] peer-checked:bg-brand peer-checked:after:translate-x-full peer-checked:after:border-white peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-brand/40" />
+            <div className="peer h-6 w-11 rounded-full bg-surface-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-strong after:bg-surface after:transition-all after:content-[''] peer-checked:bg-brand peer-checked:after:translate-x-full peer-checked:after:border-surface peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-brand/40" />
           </label>
         </div>
       </section>
@@ -309,7 +310,7 @@ export default function NotificationSettingsPage() {
                 }`}
               >
                 {frequency === option.value && (
-                  <div className="m-0.5 h-2 w-2 rounded-full bg-white" />
+                  <div className="m-0.5 h-2 w-2 rounded-full bg-surface" />
                 )}
               </div>
               <div>
@@ -328,15 +329,15 @@ export default function NotificationSettingsPage() {
       {/* ─── Save button — sticky bar at bottom when dirty ─────────────── */}
       {dirty && (
         <div className="sticky bottom-0 z-30 -mx-4 flex animate-slide-in-up justify-end border-t border-border bg-surface/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
-          <button
-            type="button"
+          <Button
+            variant="primary"
             onClick={handleSavePreferences}
             disabled={savingPrefs}
-            className="rounded-lg bg-brand px-6 py-2.5 text-sm font-medium text-white transition-colors hover:bg-brand-hover disabled:opacity-50 disabled:cursor-not-allowed"
+            loading={savingPrefs}
             data-testid="save-notification-prefs"
           >
             {savingPrefs ? t("common.loading") : t("common.save")}
-          </button>
+          </Button>
         </div>
       )}
     </div>

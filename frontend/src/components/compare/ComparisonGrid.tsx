@@ -409,11 +409,13 @@ function MobileSwipeView({
     <div className="md:hidden">
       {/* Sticky header with product names */}
       <div className="sticky top-12 md:top-14 z-30 bg-surface border-b border-border px-4 py-2">
-        <div className="flex items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-2" role="tablist">
           {products.map((p, i) => (
             <button
               key={p.product_id}
               onClick={() => setActiveIdx(i)}
+              role="tab"
+              aria-selected={i === activeIdx}
               className={`touch-target rounded-full px-3 py-1.5 text-xs font-medium transition-colors ${
                 i === activeIdx
                   ? "bg-brand text-white"

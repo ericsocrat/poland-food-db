@@ -78,7 +78,7 @@ export function Toggle({
         <span
           aria-hidden="true"
           className={[
-            "pointer-events-none inline-block transform rounded-full bg-white shadow-sm ring-0 transition-transform",
+            "pointer-events-none inline-block transform rounded-full bg-surface shadow-sm ring-0 transition-transform",
             THUMB_SIZES[size].size,
             checked ? THUMB_SIZES[size].translate : "translate-x-0",
           ].join(" ")}

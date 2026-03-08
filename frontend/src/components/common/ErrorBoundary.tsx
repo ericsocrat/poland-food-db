@@ -18,7 +18,8 @@
 import React, { Component, type ErrorInfo, type ReactNode } from "react";
 import { reportBoundaryError, type ErrorContext } from "@/lib/error-reporter";
 import { translate } from "@/lib/i18n";
-import { AlertTriangle } from "lucide-react";
+import { buttonClasses } from "@/components/common/Button";
+import { ErrorIllustration } from "@/components/common/ErrorIllustration";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -56,44 +57,30 @@ function PageFallback({
       role="alert"
       data-testid="error-boundary-page"
     >
-      <div className="mb-3" aria-hidden="true">
-        <AlertTriangle size={40} style={{ color: "var(--color-warning)" }} />
+      <div className="mb-4" aria-hidden="true">
+        <ErrorIllustration type="server-error" width={160} height={133} />
       </div>
-      <h2
-        className="mb-2 text-xl font-bold"
-        style={{ color: "var(--color-text-primary)" }}
-      >
+      <h2 className="mb-2 text-xl font-bold text-foreground">
         {translate("en", "errorBoundary.pageTitle")}
       </h2>
-      <p
-        className="mb-6 max-w-md text-sm"
-        style={{ color: "var(--color-text-secondary)" }}
-      >
+      <p className="mb-6 max-w-md text-sm text-foreground-secondary">
         {translate("en", "errorBoundary.pageDescription")}
       </p>
       {digest && (
-        <p
-          className="mb-4 font-mono text-xs"
-          style={{ color: "var(--color-text-muted)" }}
-        >
+        <p className="mb-4 font-mono text-xs text-foreground-muted">
           {translate("en", "errorBoundary.errorId")}: {digest}
         </p>
       )}
       <div className="flex gap-3">
         <button
           onClick={onReset}
-          className="rounded-lg px-5 py-2.5 text-sm font-medium text-white"
-          style={{ backgroundColor: "var(--color-brand)" }}
+          className={buttonClasses("primary", "md")}
         >
           {translate("en", "common.tryAgain")}
         </button>
         <a
           href="/app"
-          className="rounded-lg border px-5 py-2.5 text-sm font-medium"
-          style={{
-            borderColor: "var(--color-border)",
-            color: "var(--color-text-primary)",
-          }}
+          className={buttonClasses("secondary", "md")}
         >
           {translate("en", "errorBoundary.goHome")}
         </a>
@@ -105,24 +92,19 @@ function PageFallback({
 function SectionFallback({ onReset }: Readonly<{ onReset: () => void }>) {
   return (
     <div
-      className="my-4 flex flex-col items-center justify-center rounded-lg border border-dashed p-6 text-center"
+      className="my-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-strong p-6 text-center"
       role="alert"
       data-testid="error-boundary-section"
-      style={{ borderColor: "var(--color-border-strong)" }}
     >
       <div className="mb-2" aria-hidden="true">
-        <AlertTriangle size={28} style={{ color: "var(--color-warning)" }} />
+        <ErrorIllustration type="server-error" width={80} height={67} />
       </div>
-      <p
-        className="mb-3 text-sm font-medium"
-        style={{ color: "var(--color-text-primary)" }}
-      >
+      <p className="mb-3 text-sm font-medium text-foreground">
         {translate("en", "errorBoundary.sectionTitle")}
       </p>
       <button
         onClick={onReset}
-        className="rounded-md px-4 py-1.5 text-sm font-medium text-white"
-        style={{ backgroundColor: "var(--color-brand)" }}
+        className={buttonClasses("primary", "sm")}
       >
         {translate("en", "common.tryAgain")}
       </button>
@@ -133,13 +115,9 @@ function SectionFallback({ onReset }: Readonly<{ onReset: () => void }>) {
 function ComponentFallback() {
   return (
     <span
-      className="inline-flex items-center justify-center rounded border border-dashed px-2 py-0.5 text-xs"
+      className="inline-flex items-center justify-center rounded border border-dashed border-border px-2 py-0.5 text-xs text-foreground-muted"
       role="alert"
       data-testid="error-boundary-component"
-      style={{
-        borderColor: "var(--color-border)",
-        color: "var(--color-text-muted)",
-      }}
       title={translate("en", "errorBoundary.componentTooltip")}
     >
       —
