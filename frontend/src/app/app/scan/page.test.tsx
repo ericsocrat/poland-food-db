@@ -716,12 +716,12 @@ describe("ScanPage", () => {
   // ─── Camera Decode Callback & Mode Toggling ───────────────────────────────
 
   it("camera decode callback triggers scan when valid barcode detected", async () => {
-    let capturedCallback: Function | undefined;
+    let capturedCallback: ((...args: unknown[]) => void) | undefined;
     mockListDevices.mockResolvedValue([
       { deviceId: "cam1", label: "Back Camera" } as MediaDeviceInfo,
     ]);
     mockDecodeFromDevice.mockImplementation(
-      (_deviceId: unknown, _video: unknown, callback: Function) => {
+      (_deviceId: unknown, _video: unknown, callback: (...args: unknown[]) => void) => {
         capturedCallback = callback;
       },
     );
