@@ -16,6 +16,12 @@ describe("ContactPage", () => {
     expect(screen.getByText("Contact")).toBeInTheDocument();
   });
 
+  it("has main-content id on main element for skip-link target", () => {
+    render(<ContactPage />);
+    const main = document.querySelector("main");
+    expect(main).toHaveAttribute("id", "main-content");
+  });
+
   it("renders the feedback prompt", () => {
     render(<ContactPage />);
     expect(

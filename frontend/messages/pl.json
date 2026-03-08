@@ -346,7 +346,9 @@
     "title": "Moje listy",
     "newList": "+ Nowa lista",
     "namePlaceholder": "Nazwa listy",
+    "nameLabel": "Nazwa listy",
     "descriptionPlaceholder": "Opis (opcjonalnie)",
+    "descriptionLabel": "Opis listy",
     "creating": "Tworzenie…",
     "createList": "Utwórz listę",
     "emptyState": "Brak list. Utwórz jedną, aby organizować produkty.",
@@ -610,7 +612,12 @@
     "deleteAccountConfirmPlaceholder": "Wpisz tutaj DELETE",
     "deleteAccountProcessing": "Usuwanie konta…",
     "deleteAccountSuccess": "Twoje konto zostało usunięte.",
-    "deleteAccountError": "Nie udało się usunąć konta. Spróbuj ponownie później."
+    "deleteAccountError": "Nie udało się usunąć konta. Spróbuj ponownie później.",
+    "unsavedTitle": "Niezapisane zmiany",
+    "unsavedDescription": "Masz niezapisane zmiany. Jeśli opuścisz tę stronę, zmiany zostaną utracone.",
+    "unsavedDiscard": "Odrzuć zmiany",
+    "unsavedStay": "Pozostań na stronie",
+    "unsavedIndicator": "Niezapisane zmiany"
   },
   "healthProfile": {
     "title": "Profile zdrowotne",
@@ -656,7 +663,8 @@
     "noLists": "Brak list",
     "remove": "Usuń",
     "onAvoidList": "Na liście unikanych",
-    "avoid": "Unikaj"
+    "avoid": "Unikaj",
+    "moreActions": "Więcej akcji"
   },
   "savedSearches": {
     "title": "Zapisane wyszukiwania",
@@ -706,7 +714,26 @@
     "continueWithGoogle": "Kontynuuj z Google",
     "continueWithApple": "Kontynuuj z Apple",
     "orContinueWithEmail": "lub kontynuuj przez e-mail",
-    "socialLoginError": "Nie udało się zalogować przez {provider}. Spróbuj ponownie."
+    "socialLoginError": "Nie udało się zalogować przez {provider}. Spróbuj ponownie.",
+    "forgotPassword": "Nie pamiętasz hasła?",
+    "showPassword": "Pokaż hasło",
+    "hidePassword": "Ukryj hasło",
+    "invalidCredentials": "Nieprawidłowy e-mail lub hasło. Spróbuj ponownie.",
+    "tooManyAttempts": "Zbyt wiele prób logowania. Poczekaj i spróbuj ponownie.",
+    "resetPasswordTitle": "Resetuj hasło",
+    "resetPasswordSubtitle": "Podaj swój e-mail, a wyślemy Ci link do resetowania hasła.",
+    "sendResetLink": "Wyślij link resetujący",
+    "sendingResetLink": "Wysyłanie\u2026",
+    "resetEmailSent": "Jeśli konto z tym adresem e-mail istnieje, otrzymasz link do resetowania hasła.",
+    "backToLogin": "Powrót do logowania",
+    "updatePasswordTitle": "Zaktualizuj hasło",
+    "updatePasswordSubtitle": "Wprowadź nowe hasło dla swojego konta.",
+    "newPassword": "Nowe hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "updatePassword": "Zaktualizuj hasło",
+    "updatingPassword": "Aktualizowanie\u2026",
+    "passwordUpdated": "Hasło zostało zaktualizowane.",
+    "passwordMismatch": "Hasła nie są zgodne."
   },
   "layout": {
     "appName": "TryVit",
@@ -1125,7 +1152,14 @@
     "saveSearchName": "Nazwa wyszukiwania",
     "sidebarNavigation": "Nawigacja boczna",
     "headerNavigation": "Nawigacja nagłówka",
-    "moreNavigation": "Więcej nawigacji"
+    "moreNavigation": "Więcej nawigacji",
+    "mainNavigation": "Nawigacja główna",
+    "settingsSections": "Sekcje ustawień",
+    "breadcrumb": "Ścieżka nawigacji",
+    "dismiss": "Zamknij",
+    "scoreRadarChart": "Wykres radarowy rozkładu oceny pokazujący ważony wkład każdego czynnika",
+    "scoreRadarChartTitle": "Wykres radarowy rozkładu oceny",
+    "flaggedUser": "Zgłoszony użytkownik"
   },
   "print": {
     "button": "Drukuj",

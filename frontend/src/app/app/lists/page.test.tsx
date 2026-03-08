@@ -292,6 +292,15 @@ describe("ListsPage", () => {
     expect(screen.queryByPlaceholderText("List name")).not.toBeInTheDocument();
   });
 
+  it("create form inputs have aria-labels for accessibility", async () => {
+    render(<ListsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await user.click(screen.getByText("+ New List"));
+    expect(screen.getByLabelText("List name")).toBeInTheDocument();
+    expect(screen.getByLabelText("List description")).toBeInTheDocument();
+  });
+
   it("disables create button when name is empty", async () => {
     render(<ListsPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();

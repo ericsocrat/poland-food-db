@@ -33,5 +33,7 @@ export async function GET(request: NextRequest) {
   }
 
   // After confirming email, go to onboarding (app layout will check)
-  return NextResponse.redirect(new URL("/app/search", request.url));
+  const type = searchParams.get("type");
+  const destination = type === "recovery" ? "/auth/update-password" : "/app/search";
+  return NextResponse.redirect(new URL(destination, request.url));
 }

@@ -27,15 +27,14 @@ export default defineConfig({
         "src/__tests__/**",
         "src/**/types.ts",
       ],
-      // ── Coverage ratchet (#592) ────────────────────────────────────
-      // Thresholds set at current baseline (rounded down).
-      // Target: lines 90, branches 85, functions 88, statements 90
-      // after merging #586 (hooks), #587 (components), #588 (lib).
+      // ── Coverage ratchet (#718) ────────────────────────────────────
+      // Thresholds ratcheted to achieved coverage (rounded down to integer).
+      // Actual: lines 92.0, branches 85.9, functions 88.7, statements 90.7
       thresholds: {
-        lines: 87,
-        branches: 82,
-        functions: 84,
-        statements: 86,
+        lines: 92,
+        branches: 85,
+        functions: 88,
+        statements: 90,
       },
     },
   },

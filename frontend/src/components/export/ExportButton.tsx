@@ -91,7 +91,7 @@ export function ExportButton({
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className="touch-target flex items-center gap-1.5 rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors hover:bg-gray-50 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
+        className="touch-target flex items-center gap-1.5 rounded-lg border border-strong bg-surface px-3 py-2 text-sm font-medium text-foreground-secondary shadow-sm transition-colors hover:bg-surface-subtle"
         aria-expanded={open}
         aria-haspopup="true"
       >
@@ -133,14 +133,14 @@ export function ExportButton({
 
       {open && (
         <div
-          className="absolute right-0 z-20 mt-1 w-44 rounded-lg border border-gray-200 bg-white py-1 shadow-lg dark:border-gray-700 dark:bg-gray-800"
+          className="absolute right-0 z-20 mt-1 w-44 rounded-lg border bg-surface py-1 shadow-lg"
           role="menu"
         >
           <button
             type="button"
             role="menuitem"
             onClick={() => handleExport("csv")}
-            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-foreground-secondary transition-colors hover:bg-surface-muted"
           >
             <BarChart3 size={14} aria-hidden="true" className="inline" />{" "}
             {t("export.asCSV")}
@@ -149,7 +149,7 @@ export function ExportButton({
             type="button"
             role="menuitem"
             onClick={() => handleExport("text")}
-            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700"
+            className="flex w-full items-center gap-2 px-4 py-2 text-left text-sm text-foreground-secondary transition-colors hover:bg-surface-muted"
           >
             <FileText size={14} aria-hidden="true" className="inline" />{" "}
             {t("export.asText")}
