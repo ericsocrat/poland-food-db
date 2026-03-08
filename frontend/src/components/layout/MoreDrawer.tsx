@@ -2,9 +2,10 @@
 
 // ─── MoreDrawer — slide-up sheet for secondary mobile nav items ──────────────
 // Opened from the "More" button in the mobile bottom Navigation bar.
-// Shows Compare, Categories, Watchlist, Settings, and Admin (role-gated).
+// Groups items into semantic sections with visual dividers.
 //
 // Issue #67 — Navigation & IA Polish
+// Issue #692 — Group items, drag handle, swipe-to-dismiss
 
 import { Icon } from "@/components/common/Icon";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
@@ -23,7 +24,7 @@ import {
     type LucideIcon,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /* ── Types ────────────────────────────────────────────────────────────────── */
 
@@ -34,64 +35,46 @@ interface DrawerNavItem {
   readonly routeKey: PrimaryRouteKey;
 }
 
-/* ── Route definitions ────────────────────────────────────────────────────── */
+interface DrawerSection {
+  readonly labelKey: string;
+  readonly items: readonly DrawerNavItem[];
+}
 
-const DRAWER_ITEMS: readonly DrawerNavItem[] = [
+/* ── Section definitions ──────────────────────────────────────────────────── */
+
+const DRAWER_SECTIONS: readonly DrawerSection[] = [
   {
-    href: "/app/compare",
-    labelKey: "nav.compare",
-    icon: Scale,
-    routeKey: "compare",
+    labelKey: "nav.sectionBrowse",
+    items: [
+      { href: "/app/categories", labelKey: "nav.categories", icon: FolderOpen, routeKey: "categories" },
+      { href: "/app/recipes", labelKey: "nav.recipes", icon: UtensilsCrossed, routeKey: "recipes" },
+      { href: "/app/image-search", labelKey: "nav.imageSearch", icon: ScanText, routeKey: "image-search" },
+    ],
   },
   {
-    href: "/app/categories",
-    labelKey: "nav.categories",
-    icon: FolderOpen,
-    routeKey: "categories",
+    labelKey: "nav.sectionYourStuff",
+    items: [
+      { href: "/app/compare", labelKey: "nav.compare", icon: Scale, routeKey: "compare" },
+      { href: "/app/watchlist", labelKey: "nav.watchlist", icon: Eye, routeKey: "watchlist" },
+      { href: "/app/achievements", labelKey: "nav.achievements", icon: Trophy, routeKey: "achievements" },
+    ],
   },
   {
-    href: "/app/watchlist",
-    labelKey: "nav.watchlist",
-    icon: Eye,
-    routeKey: "watchlist",
+    labelKey: "nav.sectionApp",
+    items: [
+      { href: "/learn", labelKey: "nav.learn", icon: BookOpen, routeKey: null },
+      { href: "/app/settings", labelKey: "nav.settings", icon: Settings, routeKey: "settings" },
+    ],
   },
   {
-    href: "/app/settings",
-    labelKey: "nav.settings",
-    icon: Settings,
-    routeKey: "settings",
-  },
-  {
-    href: "/app/achievements",
-    labelKey: "nav.achievements",
-    icon: Trophy,
-    routeKey: "achievements",
-  },
-  {
-    href: "/app/recipes",
-    labelKey: "nav.recipes",
-    icon: UtensilsCrossed,
-    routeKey: "recipes",
-  },
-  {
-    href: "/app/image-search",
-    labelKey: "nav.imageSearch",
-    icon: ScanText,
-    routeKey: "image-search",
-  },
-  {
-    href: "/learn",
-    labelKey: "nav.learn",
-    icon: BookOpen,
-    routeKey: null,
-  },
-  {
-    href: "/app/admin/submissions",
     labelKey: "nav.admin",
-    icon: ShieldCheck,
-    routeKey: null,
+    items: [
+      { href: "/app/admin/submissions", labelKey: "nav.admin", icon: ShieldCheck, routeKey: null },
+    ],
   },
-] as const;
+];
+
+const SWIPE_DISMISS_THRESHOLD = 80;
 
 /* ── Props ────────────────────────────────────────────────────────────────── */
 
@@ -107,11 +90,12 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
   const { t } = useTranslation();
   const drawerRef = useRef<HTMLDialogElement>(null);
   const [animating, setAnimating] = useState(false);
+  const touchStartY = useRef(0);
+  const touchDeltaY = useRef(0);
 
   // Track mount animation
   useEffect(() => {
     if (open) {
-      // Force reflow then animate in
       requestAnimationFrame(() => setAnimating(true));
     } else {
       setAnimating(false);
@@ -137,6 +121,29 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
     firstFocusable?.focus();
   }, [open]);
 
+  // Swipe-to-dismiss handlers
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartY.current = e.touches[0].clientY;
+    touchDeltaY.current = 0;
+  }, []);
+
+  const handleTouchMove = useCallback((e: React.TouchEvent) => {
+    const delta = e.touches[0].clientY - touchStartY.current;
+    touchDeltaY.current = delta;
+    if (delta > 0 && drawerRef.current) {
+      drawerRef.current.style.transform = `translateY(${delta}px)`;
+    }
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    if (touchDeltaY.current > SWIPE_DISMISS_THRESHOLD) {
+      onClose();
+    }
+    if (drawerRef.current) {
+      drawerRef.current.style.transform = "";
+    }
+  }, [onClose]);
+
   if (!open) return null;
 
   return (
@@ -153,7 +160,7 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
         aria-label={t("shortcuts.closeOverlay")}
       />
 
-      {/* Drawer panel — uses native <dialog> for built-in accessibility */}
+      {/* Drawer panel */}
       <dialog
         ref={drawerRef}
         open
@@ -161,9 +168,17 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
         className={`fixed bottom-0 left-0 right-0 z-50 m-0 w-full max-w-full transform rounded-t-2xl border-t border-border bg-surface p-0 pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out ${
           animating ? "translate-y-0" : "translate-y-full"
         }`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        {/* Drag handle + close */}
-        <div className="flex items-center justify-between px-4 py-3">
+        {/* Drag handle */}
+        <div className="flex justify-center pt-2 pb-1">
+          <div className="h-1 w-8 rounded-full bg-border" />
+        </div>
+
+        {/* Header + close */}
+        <div className="flex items-center justify-between px-4 py-2">
           <span className="text-sm font-semibold text-foreground">
             {t("nav.more")}
           </span>
@@ -177,31 +192,45 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
           </button>
         </div>
 
-        {/* Nav items */}
+        {/* Grouped nav items */}
         <nav aria-label={t("a11y.moreNavigation")}>
-          <ul className="px-2 pb-4">
-            {DRAWER_ITEMS.map((item) => {
-              const isActive = activeRoute === item.routeKey;
-              const label = t(item.labelKey);
-              return (
-                <li key={item.href}>
-                  <Link
-                    href={item.href}
-                    onClick={onClose}
-                    aria-current={isActive ? "page" : undefined}
-                    className={`flex items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors ${
-                      isActive
-                        ? "border-l-3 border-brand bg-brand-subtle text-brand font-semibold"
-                        : "text-foreground-secondary hover:bg-surface-muted hover:text-foreground"
-                    }`}
-                  >
-                    <Icon icon={item.icon} size="md" />
-                    <span>{label}</span>
-                  </Link>
-                </li>
-              );
-            })}
-          </ul>
+          <div className="px-2 pb-4">
+            {DRAWER_SECTIONS.map((section, sectionIdx) => (
+              <div key={section.labelKey}>
+                {/* Section divider (not before first section) */}
+                {sectionIdx > 0 && (
+                  <div className="mx-3 my-1.5 border-t border-border" />
+                )}
+                {/* Section label */}
+                <p className="px-3 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-foreground-muted">
+                  {t(section.labelKey)}
+                </p>
+                <ul>
+                  {section.items.map((item) => {
+                    const isActive = activeRoute === item.routeKey;
+                    const label = t(item.labelKey);
+                    return (
+                      <li key={item.href}>
+                        <Link
+                          href={item.href}
+                          onClick={onClose}
+                          aria-current={isActive ? "page" : undefined}
+                          className={`flex min-h-[48px] items-center gap-3 rounded-xl px-3 py-3 text-sm font-medium transition-colors ${
+                            isActive
+                              ? "border-l-3 border-brand bg-brand-subtle text-brand font-semibold"
+                              : "text-foreground-secondary hover:bg-surface-muted hover:text-foreground"
+                          }`}
+                        >
+                          <Icon icon={item.icon} size="md" />
+                          <span>{label}</span>
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
         </nav>
       </dialog>
     </div>

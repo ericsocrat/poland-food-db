@@ -16,7 +16,10 @@
     "recipes": "Przepisy",
     "imageSearch": "Szukaj po zdjęciu",
     "learn": "Wiedza",
-    "more": "Więcej"
+    "more": "Więcej",
+    "sectionBrowse": "Przeglądaj",
+    "sectionYourStuff": "Twoje",
+    "sectionApp": "Aplikacja"
   },
   "common": {
     "loading": "Ładowanie…",
