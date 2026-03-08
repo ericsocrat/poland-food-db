@@ -266,6 +266,26 @@ describe("ProfileSettingsPage", () => {
     });
   });
 
+  // ─── Sticky Save Bar ─────────────────────────────────────────────────────
+
+  it("renders save button inside a sticky bar with backdrop blur when dirty", async () => {
+    render(<ProfileSettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Deutschland")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Deutschland"));
+
+    const saveButton = screen.getByRole("button", { name: "Save changes" });
+    const stickyBar = saveButton.closest("div");
+
+    expect(stickyBar).toHaveClass("sticky");
+    expect(stickyBar).toHaveClass("bottom-0");
+    expect(stickyBar).toHaveClass("backdrop-blur");
+  });
+
   // ─── Unsaved changes integration ────────────────────────────────────────
 
   it("shows unsaved changes indicator when dirty", async () => {

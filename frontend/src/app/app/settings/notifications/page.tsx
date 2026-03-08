@@ -329,9 +329,9 @@ export default function NotificationSettingsPage() {
         </div>
       </section>
 
-      {/* ─── Save button ──────────────────────────────────────────────────── */}
+      {/* ─── Save button — sticky bar at bottom when dirty ─────────────── */}
       {dirty && (
-        <div className="flex justify-end">
+        <div className="sticky bottom-0 z-30 -mx-4 flex animate-slide-in-up justify-end border-t border-border bg-surface/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
           <button
             type="button"
             onClick={handleSavePreferences}
