@@ -5,9 +5,9 @@
 "use client";
 
 import { Button } from "@/components/common/Button";
+import { ErrorIllustration } from "@/components/common/ErrorIllustration";
 import { useTranslation } from "@/lib/i18n";
 import * as Sentry from "@sentry/nextjs";
-import { AlertTriangle } from "lucide-react";
 import { useEffect } from "react";
 
 export default function ErrorPage({
@@ -31,7 +31,7 @@ export default function ErrorPage({
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
-      <AlertTriangle size={48} className="mb-4 text-error" aria-hidden="true" />
+      <ErrorIllustration type="server-error" className="mb-6" />
       <h1 className="mb-2 text-2xl font-bold text-foreground">
         {t("error.somethingWrong")}
       </h1>

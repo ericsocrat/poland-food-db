@@ -4,10 +4,26 @@ import AppError from "./error";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
-const mockPush = vi.fn();
+vi.mock("next/link", () => ({
+  default: ({
+    href,
+    children,
+    ...rest
+  }: {
+    href: string;
+    children: React.ReactNode;
+  }) => (
+    <a href={href} {...rest}>
+      {children}
+    </a>
+  ),
+}));
 
-vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
+vi.mock("next/image", () => ({
+  default: ({ priority, ...props }: Record<string, unknown>) => (
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+    <img {...props} data-priority={priority ? "true" : "false"} />
+  ),
 }));
 
 vi.mock("@/lib/i18n", () => ({
@@ -53,11 +69,10 @@ describe("AppError (app-level error boundary)", () => {
     expect(reset).toHaveBeenCalledOnce();
   });
 
-  it("renders Go Home button that navigates to /app", () => {
+  it("renders Go Home link that points to /app", () => {
     render(<AppError error={baseError} reset={vi.fn()} />);
-    const btn = screen.getByRole("button", { name: "Go Home" });
-    fireEvent.click(btn);
-    expect(mockPush).toHaveBeenCalledWith("/app");
+    const link = screen.getByRole("link", { name: "Go Home" });
+    expect(link).toHaveAttribute("href", "/app");
   });
 
   it("shows error digest when present", () => {
@@ -82,10 +97,13 @@ describe("AppError (app-level error boundary)", () => {
     spy.mockRestore();
   });
 
-  it("renders warning icon as decorative", () => {
-    render(<AppError error={baseError} reset={vi.fn()} />);
-    const alert = screen.getByRole("alert");
-    const svg = alert.querySelector("svg");
-    expect(svg).toHaveAttribute("aria-hidden", "true");
+  it("renders error illustration", () => {
+    const { container } = render(
+      <AppError error={baseError} reset={vi.fn()} />,
+    );
+    const img = container.querySelector(
+      "img[data-illustration='server-error']",
+    );
+    expect(img).toBeTruthy();
   });
 });

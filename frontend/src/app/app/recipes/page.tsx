@@ -3,6 +3,7 @@
 // ─── Recipes browse — grid of curated recipe cards with filters ─────────────
 // Issue #53 — Recipes v0
 
+import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { RecipeGridSkeleton } from "@/components/common/skeletons";
@@ -65,14 +66,10 @@ export default function RecipesBrowsePage() {
   if (error) {
     return (
       <div className="py-12 text-center">
-        <p className="mb-3 text-sm text-red-500">{t("recipes.loadFailed")}</p>
-        <button
-          type="button"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
-          onClick={handleRetry}
-        >
+        <p className="mb-3 text-sm text-error">{t("recipes.loadFailed")}</p>
+        <Button onClick={handleRetry} size="sm">
           {t("common.retry")}
-        </button>
+        </Button>
       </div>
     );
   }
