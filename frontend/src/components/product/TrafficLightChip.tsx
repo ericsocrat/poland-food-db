@@ -63,7 +63,7 @@ interface TrafficLightChipProps {
 export function TrafficLightChip({ level }: TrafficLightChipProps) {
   return (
     <span
-      className={`inline-flex h-4 items-center rounded px-1.5 text-[10px] font-semibold leading-none text-white ${TL_STYLES[level]}`}
+      className={`inline-flex h-4 items-center rounded px-1.5 text-xxs font-semibold leading-none text-white ${TL_STYLES[level]}`}
       title={TL_LABELS[level]}
       aria-label={TL_LABELS[level]}
     >

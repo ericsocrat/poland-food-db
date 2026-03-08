@@ -189,7 +189,7 @@ export function AllergenMatrix({ allergens }: AllergenMatrixProps) {
       </table>
 
       {/* Legend */}
-      <div className="flex flex-wrap gap-3 text-[10px] text-foreground-muted">
+      <div className="flex flex-wrap gap-3 text-xs text-foreground-muted">
         <span className="flex items-center gap-1">
           <AlertTriangle
             size={10}
@@ -209,7 +209,7 @@ export function AllergenMatrix({ allergens }: AllergenMatrixProps) {
       </div>
 
       {/* Disclaimer */}
-      <p className="text-[10px] leading-relaxed text-foreground-muted">
+      <p className="text-xs leading-relaxed text-foreground-muted">
         {t("allergenMatrix.disclaimer")}
       </p>
     </div>

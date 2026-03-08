@@ -18,10 +18,10 @@ interface ScoreSparklineProps {
 
 /** Band definitions in bar order (left → right = healthiest → least healthy). */
 const BANDS = [
-  { key: "low", min: 0, max: 25, fill: "#22c55e", label: "0–25" },
-  { key: "moderate", min: 26, max: 50, fill: "#eab308", label: "26–50" },
-  { key: "high", min: 51, max: 75, fill: "#f97316", label: "51–75" },
-  { key: "very_high", min: 76, max: 100, fill: "#ef4444", label: "76–100" },
+  { key: "low", min: 0, max: 25, fill: "var(--color-score-green)", label: "0–25" },
+  { key: "moderate", min: 26, max: 50, fill: "var(--color-score-yellow)", label: "26–50" },
+  { key: "high", min: 51, max: 75, fill: "var(--color-score-orange)", label: "51–75" },
+  { key: "very_high", min: 76, max: 100, fill: "var(--color-score-red)", label: "76–100" },
 ] as const;
 
 const BAR_WIDTH = 36;

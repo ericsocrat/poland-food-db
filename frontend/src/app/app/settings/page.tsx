@@ -2,28 +2,28 @@
 
 // ─── Settings — Profile & Preferences (Country, Language, Theme) ────────────
 
-import { useState, useEffect } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { showToast } from "@/lib/toast";
-import { createClient } from "@/lib/supabase/client";
-import { getUserPreferences, setUserPreferences } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import {
-  COUNTRIES,
-  COUNTRY_DEFAULT_LANGUAGES,
-  getLanguagesForCountry,
-} from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ThemeToggle } from "@/components/settings/ThemeToggle";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { useTranslation } from "@/lib/i18n";
+import { getUserPreferences, setUserPreferences } from "@/lib/api";
 import {
-  useLanguageStore,
-  type SupportedLanguage,
+    COUNTRIES,
+    COUNTRY_DEFAULT_LANGUAGES,
+    getLanguagesForCountry,
+} from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import { showToast } from "@/lib/toast";
+import {
+    useLanguageStore,
+    type SupportedLanguage,
 } from "@/stores/language-store";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useEffect, useState } from "react";
 
 export default function ProfileSettingsPage() {
   const supabase = createClient();
@@ -61,6 +61,21 @@ export default function ProfileSettingsPage() {
   function markDirty() {
     setDirty(true);
   }
+
+  // Warn on tab close / reload when form has unsaved changes
+  const handleBeforeUnload = useCallback(
+    (e: BeforeUnloadEvent) => {
+      if (dirty) {
+        e.preventDefault();
+      }
+    },
+    [dirty],
+  );
+
+  useEffect(() => {
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [handleBeforeUnload]);
 
   async function handleSave() {
     setSaving(true);
@@ -186,10 +201,10 @@ export default function ProfileSettingsPage() {
         <ThemeToggle />
       </section>
 
-      {/* Save button + unsaved indicator */}
+      {/* Save button — sticky bar at bottom when dirty */}
       {dirty && (
-        <div className="space-y-2">
-          <p className="text-center text-xs font-medium text-warning">
+        <div className="sticky bottom-0 z-30 -mx-4 animate-slide-in-up border-t border-border bg-surface/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+          <p className="mb-2 text-center text-xs font-medium text-warning">
             {t("settings.unsavedIndicator")}
           </p>
           <button

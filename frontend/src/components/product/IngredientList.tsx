@@ -200,7 +200,7 @@ export function IngredientList({ ingredients }: IngredientListProps) {
               return (
                 <span
                   key={tier}
-                  className={`inline-flex items-center rounded-full border px-2 py-0.5 text-[10px] font-medium ${style.bg} ${style.color} ${style.border}`}
+                  className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xxs font-medium ${style.bg} ${style.color} ${style.border}`}
                 >
                   {t(key)}
                 </span>

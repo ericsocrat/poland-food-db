@@ -16,7 +16,10 @@
     "recipes": "Przepisy",
     "imageSearch": "Szukaj po zdjęciu",
     "learn": "Wiedza",
-    "more": "Więcej"
+    "more": "Więcej",
+    "sectionBrowse": "Przeglądaj",
+    "sectionYourStuff": "Twoje",
+    "sectionApp": "Aplikacja"
   },
   "common": {
     "loading": "Ładowanie…",
@@ -292,6 +295,11 @@
     "noCamera": "Nie znaleziono kamery na tym urządzeniu.",
     "permissionDenied": "Brak uprawnień do kamery. Zezwól na dostęp do kamery w ustawieniach przeglądarki.",
     "cameraError": "Nie udało się uruchomić kamery. Spróbuj wpisać kod ręcznie.",
+    "cameraBlocked": "Dostęp do kamery zablokowany",
+    "cameraBlockedHint": "Aby skanować kody kreskowe, zezwól na dostęp do kamery w ustawieniach przeglądarki lub urządzenia, a następnie kliknij Spróbuj ponownie.",
+    "retryCamera": "Spróbuj ponownie",
+    "noCameraTitle": "Brak kamery",
+    "noCameraHint": "To urządzenie nie posiada kamery. Użyj trybu ręcznego, aby wyszukać produkty.",
     "torchNotSupported": "Latarka nie jest obsługiwana na tym urządzeniu",
     "torchError": "Nie udało się przełączyć latarki",
     "invalidBarcode": "Wprowadź prawidłowy 8- lub 13-cyfrowy kod kreskowy",

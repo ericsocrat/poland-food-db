@@ -37,7 +37,7 @@ test.describe("Login form validation UX", () => {
     await expect(submit).toHaveAttribute("type", "submit");
   });
 
-  test("tab order follows logical flow: email → password → submit", async ({
+  test("tab order follows logical flow: email → password → toggle → forgot → submit", async ({
     page,
   }) => {
     const emailInput = page.locator("#email");
@@ -46,6 +46,11 @@ test.describe("Login form validation UX", () => {
 
     await page.keyboard.press("Tab");
     await expect(page.locator("#password")).toBeFocused();
+
+    // Password toggle button
+    await page.keyboard.press("Tab");
+    // Forgot password link
+    await page.keyboard.press("Tab");
 
     await page.keyboard.press("Tab");
     await expect(page.locator('button[type="submit"]')).toBeFocused();

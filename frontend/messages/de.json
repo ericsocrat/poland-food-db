@@ -16,7 +16,10 @@
     "recipes": "Rezepte",
     "imageSearch": "Bildersuche",
     "learn": "Lernen",
-    "more": "Mehr"
+    "more": "Mehr",
+    "sectionBrowse": "Entdecken",
+    "sectionYourStuff": "Dein Bereich",
+    "sectionApp": "App"
   },
   "common": {
     "loading": "Laden…",
@@ -292,6 +295,11 @@
     "noCamera": "Keine Kamera auf diesem Gerät gefunden.",
     "permissionDenied": "Kameraberechtigung verweigert. Bitte erlauben Sie den Kamerazugriff in Ihren Browsereinstellungen.",
     "cameraError": "Kamera konnte nicht gestartet werden. Versuchen Sie stattdessen die manuelle Eingabe.",
+    "cameraBlocked": "Kamerazugriff blockiert",
+    "cameraBlockedHint": "Um Barcodes zu scannen, erlauben Sie den Kamerazugriff in Ihren Browser- oder Geräteeinstellungen und tippen Sie dann auf Erneut versuchen.",
+    "retryCamera": "Erneut versuchen",
+    "noCameraTitle": "Keine Kamera verfügbar",
+    "noCameraHint": "Dieses Gerät hat keine Kamera. Verwenden Sie die manuelle Eingabe, um Produkte nachzuschlagen.",
     "torchNotSupported": "Taschenlampe wird auf diesem Gerät nicht unterstützt",
     "torchError": "Taschenlampe konnte nicht umgeschaltet werden",
     "invalidBarcode": "Bitte geben Sie einen gültigen 8- oder 13-stelligen Barcode ein",

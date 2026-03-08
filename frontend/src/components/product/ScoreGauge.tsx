@@ -41,21 +41,21 @@ const SIZE_CONFIG: Record<
     radius: 18,
     strokeWidth: 4,
     fontSize: "text-sm",
-    subFontSize: "text-[7px]",
+    subFontSize: "text-[9px]",
   },
   md: {
     svgSize: 64,
     radius: 24,
     strokeWidth: 5,
     fontSize: "text-xl",
-    subFontSize: "text-[9px]",
+    subFontSize: "text-[10px]",
   },
   lg: {
     svgSize: 80,
     radius: 30,
     strokeWidth: 6,
     fontSize: "text-2xl",
-    subFontSize: "text-[10px]",
+    subFontSize: "text-xxs",
   },
 };
 

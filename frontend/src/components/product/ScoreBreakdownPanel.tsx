@@ -183,7 +183,7 @@ function BreakdownContent({
             </span>
           </div>
           {bonus.components && (
-            <div className="mt-1 flex gap-3 text-[10px] text-success-text/80">
+            <div className="mt-1 flex gap-3 text-xs text-success-text/80">
               {bonus.components.protein_bonus > 0 && (
                 <span>
                   {t("tooltip.scoreBreakdown.proteinBonus", {
@@ -239,7 +239,7 @@ function BreakdownContent({
       {/* Scoring model provenance */}
       {(explanation.model_version || explanation.scored_at) && (
         <div
-          className="flex items-center gap-2 pt-1 text-[10px] text-foreground-muted"
+          className="flex items-center gap-2 pt-1 text-xs text-foreground-muted"
           data-testid="score-provenance"
         >
           {explanation.model_version && (

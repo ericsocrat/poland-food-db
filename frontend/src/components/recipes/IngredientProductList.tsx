@@ -9,12 +9,12 @@
 
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { ChevronDown, ChevronUp, LinkIcon } from "lucide-react";
 import { ScoreBadge } from "@/components/common/ScoreBadge";
 import { useTranslation } from "@/lib/i18n";
 import type { LinkedProduct } from "@/lib/types";
+import { ChevronDown, ChevronUp, LinkIcon } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 export interface IngredientProductListProps {
   /** Linked products for this ingredient (may be empty). */
@@ -67,7 +67,7 @@ export function IngredientProductList({
                   </span>
                 )}
                 {product.is_primary && (
-                  <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+                  <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-xxs font-semibold text-primary">
                     {t("recipes.linkedProducts.primary")}
                   </span>
                 )}
