@@ -2,6 +2,13 @@ import { describe, expect, it, vi } from "vitest";
 import { render, screen, fireEvent } from "@testing-library/react";
 import ErrorPage from "./error";
 
+vi.mock("next/image", () => ({
+  default: ({ priority, ...props }: Record<string, unknown>) => (
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+    <img {...props} data-priority={priority ? "true" : "false"} />
+  ),
+}));
+
 describe("ErrorPage", () => {
   it("renders heading", () => {
     render(<ErrorPage error={new Error("test")} reset={vi.fn()} />);
@@ -30,12 +37,13 @@ describe("ErrorPage", () => {
     spy.mockRestore();
   });
 
-  it("renders AlertTriangle icon", () => {
+  it("renders error illustration", () => {
     const { container } = render(
       <ErrorPage error={new Error("test")} reset={vi.fn()} />,
     );
-    const svg = container.querySelector("svg");
-    expect(svg).toBeTruthy();
-    expect(svg?.getAttribute("aria-hidden")).toBe("true");
+    const img = container.querySelector(
+      "img[data-illustration='server-error']",
+    );
+    expect(img).toBeTruthy();
   });
 });

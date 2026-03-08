@@ -5,9 +5,9 @@
 "use client";
 
 import { useEffect } from "react";
-import { AlertTriangle } from "lucide-react";
 import { useTranslation } from "@/lib/i18n";
-import { useRouter } from "next/navigation";
+import { Button, ButtonLink } from "@/components/common/Button";
+import { ErrorIllustration } from "@/components/common/ErrorIllustration";
 
 export default function AppError({
   error,
@@ -17,7 +17,6 @@ export default function AppError({
   reset: () => void;
 }>) {
   const { t } = useTranslation();
-  const router = useRouter();
 
   useEffect(() => {
     if (process.env.NODE_ENV === "development") {
@@ -31,49 +30,25 @@ export default function AppError({
       role="alert"
       data-testid="error-boundary-page"
     >
-      <AlertTriangle
-        size={40}
-        aria-hidden="true"
-        className="mb-3 text-warning"
-      />
-      <h2
-        className="mb-2 text-xl font-bold"
-        style={{ color: "var(--color-text-primary)" }}
-      >
+      <ErrorIllustration type="server-error" className="mb-4" />
+      <h2 className="mb-2 text-xl font-bold text-foreground">
         {t("errorBoundary.pageTitle")}
       </h2>
-      <p
-        className="mb-6 max-w-md text-sm"
-        style={{ color: "var(--color-text-secondary)" }}
-      >
+      <p className="mb-6 max-w-md text-sm text-foreground-secondary">
         {t("errorBoundary.pageDescription")}
       </p>
       {error.digest && (
-        <p
-          className="mb-4 font-mono text-xs"
-          style={{ color: "var(--color-text-muted)" }}
-        >
+        <p className="mb-4 font-mono text-xs text-foreground-muted">
           {t("errorBoundary.errorId")}: {error.digest}
         </p>
       )}
       <div className="flex gap-3">
-        <button
-          onClick={reset}
-          className="rounded-lg px-5 py-2.5 text-sm font-medium text-white"
-          style={{ backgroundColor: "var(--color-brand)" }}
-        >
+        <Button onClick={reset}>
           {t("common.tryAgain")}
-        </button>
-        <button
-          onClick={() => router.push("/app")}
-          className="rounded-lg border px-5 py-2.5 text-sm font-medium"
-          style={{
-            borderColor: "var(--color-border)",
-            color: "var(--color-text-primary)",
-          }}
-        >
+        </Button>
+        <ButtonLink href="/app" variant="secondary">
           {t("errorBoundary.goHome")}
-        </button>
+        </ButtonLink>
       </div>
     </div>
   );

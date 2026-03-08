@@ -17,6 +17,13 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+vi.mock("next/image", () => ({
+  default: ({ priority, ...props }: Record<string, unknown>) => (
+    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
+    <img {...props} data-priority={priority ? "true" : "false"} />
+  ),
+}));
+
 describe("NotFound (404)", () => {
   it("renders 404 heading", () => {
     render(<NotFound />);
@@ -34,10 +41,11 @@ describe("NotFound (404)", () => {
     expect(link.closest("a")).toHaveAttribute("href", "/");
   });
 
-  it("renders FileQuestion icon", () => {
+  it("renders error illustration", () => {
     const { container } = render(<NotFound />);
-    const svg = container.querySelector("svg");
-    expect(svg).toBeTruthy();
-    expect(svg?.getAttribute("aria-hidden")).toBe("true");
+    const img = container.querySelector(
+      "img[data-illustration='not-found']",
+    );
+    expect(img).toBeTruthy();
   });
 });

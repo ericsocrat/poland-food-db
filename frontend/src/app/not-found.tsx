@@ -3,14 +3,14 @@
 "use client";
 
 import { ButtonLink } from "@/components/common/Button";
+import { ErrorIllustration } from "@/components/common/ErrorIllustration";
 import { useTranslation } from "@/lib/i18n";
-import { FileQuestion } from "lucide-react";
 
 export default function NotFound() {
   const { t } = useTranslation();
   return (
     <div className="flex min-h-screen flex-col items-center justify-center px-4">
-      <FileQuestion size={48} className="mb-4 text-foreground-muted" aria-hidden="true" />
+      <ErrorIllustration type="not-found" priority className="mb-6" />
       <h1 className="mb-2 text-6xl font-bold text-foreground">
         {t("error.notFoundCode")}
       </h1>

@@ -15,12 +15,17 @@ describe("PWA Manifest", () => {
   const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
 
   it("has required PWA fields", () => {
-    expect(manifest.name).toBe("TryVit");
+    expect(manifest.name).toBe("TryVit \u2014 Know What You Eat");
     expect(manifest.short_name).toBe("TryVit");
     expect(manifest.start_url).toBe("/app");
     expect(manifest.display).toBe("standalone");
     expect(manifest.theme_color).toBeTruthy();
     expect(manifest.background_color).toBeTruthy();
+  });
+
+  it("has language and direction", () => {
+    expect(manifest.lang).toBe("en");
+    expect(manifest.dir).toBe("ltr");
   });
 
   it("has app identity id field", () => {
