@@ -1,7 +1,7 @@
-import { describe, it, expect } from "vitest";
-import { render, screen } from "@testing-library/react";
-import { ScoreRadarChart } from "./ScoreRadarChart";
 import type { ScoreBreakdownFactor } from "@/lib/types";
+import { render, screen } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
+import { ScoreRadarChart } from "./ScoreRadarChart";
 
 function makeFactor(
   name: string,
@@ -82,11 +82,11 @@ describe("ScoreRadarChart", () => {
       makeFactor("nutrient_density", -8),
     ];
     const { container } = render(<ScoreRadarChart breakdown={breakdown} />);
-    // The nutrient_density label should have green class
+    // The nutrient_density label should use bonus text color class
     const labels = container.querySelectorAll("text");
     const nutrientLabel = Array.from(labels).find((l) => l.textContent === "Nutrient+");
     expect(nutrientLabel).toBeTruthy();
-    expect(nutrientLabel?.getAttribute("class")).toContain("green");
+    expect(nutrientLabel?.getAttribute("class")).toContain("fill-bonus-text");
   });
 
   it("clamps values that exceed maxWeighted", () => {

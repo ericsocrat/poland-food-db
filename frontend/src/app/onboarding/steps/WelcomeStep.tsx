@@ -2,6 +2,7 @@
 
 // ─── Step 1: Welcome ────────────────────────────────────────────────────────
 
+import { Button } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
 
 interface WelcomeStepProps {
@@ -23,13 +24,14 @@ export function WelcomeStep({ onNext, onSkipAll }: WelcomeStepProps) {
         {t("onboarding.welcomeSubtitle")}
       </p>
 
-      <button
+      <Button
         onClick={onNext}
-        className="btn-primary mb-4 w-full"
+        fullWidth
+        className="mb-4"
         data-testid="onboarding-get-started"
       >
         {t("onboarding.getStarted")}
-      </button>
+      </Button>
 
       <button
         onClick={onSkipAll}

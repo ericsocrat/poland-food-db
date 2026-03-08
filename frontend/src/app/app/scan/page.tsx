@@ -5,6 +5,7 @@
 // Enhancements: records scans to history, batch mode, submission CTA,
 // scan history link.
 
+import { Button, ButtonLink } from "@/components/common/Button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -303,20 +304,20 @@ export default function ScanPage() {
           </p>
         </div>
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="secondary"
             onClick={() => {
               setScanState("looking-up");
               scanMutation.mutate(ean);
             }}
-            className="btn-secondary flex-1"
+            className="flex-1"
+            icon={<RefreshCw size={16} aria-hidden="true" />}
           >
-            <span className="inline-flex items-center gap-1">
-              <RefreshCw size={16} aria-hidden="true" /> {t("common.retry")}
-            </span>
-          </button>
-          <button onClick={() => handleReset()} className="btn-primary flex-1">
+            {t("common.retry")}
+          </Button>
+          <Button onClick={() => handleReset()} className="flex-1">
             {t("scan.scanAnother")}
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -354,31 +355,31 @@ export default function ScanPage() {
             </p>
           </div>
         ) : (
-          <Link
+          <ButtonLink
             href={`/app/scan/submit?ean=${ean}`}
-            className="btn-primary block w-full text-center"
+            fullWidth
+            icon={<FileText size={16} aria-hidden="true" />}
           >
-            <span className="inline-flex items-center gap-1">
-              <FileText size={16} aria-hidden="true" /> {t("scan.helpAdd")}
-            </span>
-          </Link>
+            {t("scan.helpAdd")}
+          </ButtonLink>
         )}
 
         <div className="flex gap-2">
-          <button
+          <Button
+            variant="secondary"
             onClick={() => handleReset()}
-            className="btn-secondary flex-1"
+            className="flex-1"
           >
             {t("scan.scanAnother")}
-          </button>
-          <Link
+          </Button>
+          <ButtonLink
             href="/app/scan/history"
-            className="btn-secondary flex-1 text-center"
+            variant="secondary"
+            className="flex-1"
+            icon={<ClipboardList size={16} aria-hidden="true" />}
           >
-            <span className="inline-flex items-center gap-1">
-              <ClipboardList size={16} aria-hidden="true" /> {t("scan.history")}
-            </span>
-          </Link>
+            {t("scan.history")}
+          </ButtonLink>
         </div>
       </div>
     );
@@ -510,19 +511,18 @@ export default function ScanPage() {
                     : t("scan.cameraError")}
               </p>
               {cameraError !== "no-camera" && (
-                <button
+                <Button
+                  variant="secondary"
                   onClick={() => {
                     setCameraError(null);
                     setMode("camera");
                     startScanner();
                   }}
-                  className="btn-secondary mt-3"
+                  className="mt-3"
+                  icon={<RefreshCw size={16} aria-hidden="true" />}
                 >
-                  <span className="inline-flex items-center gap-1">
-                    <RefreshCw size={16} aria-hidden="true" />{" "}
-                    {t("scan.retryCamera")}
-                  </span>
-                </button>
+                  {t("scan.retryCamera")}
+                </Button>
               )}
             </div>
           ) : (
@@ -555,39 +555,22 @@ export default function ScanPage() {
                 )}
               </div>
               <div className="flex gap-2">
-                <button onClick={toggleTorch} className="btn-secondary flex-1">
-                  {torchOn ? (
-                    <>
-                      <Flashlight
-                        size={16}
-                        className="inline-block"
-                        aria-hidden="true"
-                      />{" "}
-                      {t("scan.off")}
-                    </>
-                  ) : (
-                    <>
-                      <Flashlight
-                        size={16}
-                        className="inline-block"
-                        aria-hidden="true"
-                      />{" "}
-                      {t("scan.torch")}
-                    </>
-                  )}
-                </button>
-                <button
+                <Button variant="secondary" onClick={toggleTorch} className="flex-1"
+                  icon={<Flashlight size={16} aria-hidden="true" />}
+                >
+                  {torchOn ? t("scan.off") : t("scan.torch")}
+                </Button>
+                <Button
+                  variant="secondary"
                   onClick={() => {
                     stopScanner();
                     startScanner();
                   }}
-                  className="btn-secondary flex-1"
+                  className="flex-1"
+                  icon={<RefreshCw size={16} aria-hidden="true" />}
                 >
-                  <span className="inline-flex items-center gap-1">
-                    <RefreshCw size={16} aria-hidden="true" />{" "}
-                    {t("scan.restart")}
-                  </span>
-                </button>
+                  {t("scan.restart")}
+                </Button>
               </div>
             </>
           )}
@@ -608,13 +591,13 @@ export default function ScanPage() {
             inputMode="numeric"
             autoFocus
           />
-          <button
+          <Button
             type="submit"
             disabled={manualEan.length < 8}
-            className="btn-primary w-full"
+            fullWidth
           >
             {t("scan.lookUp")}
-          </button>
+          </Button>
           <p className="text-center text-xs text-foreground-muted">
             {t("scan.digitHint")}
           </p>
@@ -661,12 +644,12 @@ export default function ScanPage() {
               </li>
             ))}
           </ul>
-          <button
+          <Button
             onClick={() => setBatchMode(false)}
-            className="btn-primary w-full"
+            fullWidth
           >
             {t("scan.doneScan")}
-          </button>
+          </Button>
         </div>
       )}
     </div>

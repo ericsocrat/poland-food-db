@@ -139,6 +139,28 @@ const config: Config = {
           text: "var(--color-info-text)",
           border: "var(--color-info-border)",
         },
+
+        // ── Accent Tags & Charts (#685) ──
+        tag: {
+          "purple-bg": "var(--color-tag-purple-bg)",
+          "purple-text": "var(--color-tag-purple-text)",
+          "emerald-bg": "var(--color-tag-emerald-bg)",
+          "emerald-text": "var(--color-tag-emerald-text)",
+        },
+        chart: {
+          blue: "var(--color-chart-blue)",
+          amber: "var(--color-chart-amber)",
+        },
+        bonus: {
+          text: "var(--color-bonus-text)",
+        },
+        band: {
+          "good-bg": "var(--color-band-good-bg)",
+          "good-border": "var(--color-band-good-border)",
+          "caution-bg": "var(--color-band-caution-bg)",
+          "caution-border": "var(--color-band-caution-border)",
+        },
+        "chip-remove-hover": "var(--color-chip-remove-hover)",
       },
 
       // ── Font sizes ──

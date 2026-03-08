@@ -3,13 +3,14 @@
 // ─── Enhanced Search page — autocomplete, multi-faceted filters, pagination ─
 
 import { AllergenChips } from "@/components/common/AllergenChips";
+import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LiveRegion } from "@/components/common/LiveRegion";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
-import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { NovaBadge } from "@/components/common/NovaBadge";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { SearchResultsSkeleton } from "@/components/common/skeletons";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -332,13 +333,12 @@ export default function SearchPage() {
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
               {/* Primary actions: search + filter (always first row) */}
               <div className="flex items-center gap-2">
-                <button
+                <Button
                   type="submit"
                   disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
-                  className="btn-primary px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
                 >
                   {t("search.searchButton")}
-                </button>
+                </Button>
 
                 {/* Mobile filter toggle */}
                 <button

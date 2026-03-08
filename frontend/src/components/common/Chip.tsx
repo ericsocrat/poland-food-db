@@ -5,8 +5,8 @@
  * removable (onRemove) modes.
  */
 
-import React, { type KeyboardEvent, type ReactNode } from "react";
 import { X } from "lucide-react";
+import React, { type KeyboardEvent, type ReactNode } from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -87,7 +87,7 @@ export const Chip = React.memo(function Chip({
             onRemove();
           }}
           aria-label={removeLabel}
-          className="ml-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full hover:bg-black/10 dark:hover:bg-white/10 transition-colors"
+          className="ml-0.5 inline-flex h-4 w-4 items-center justify-center rounded-full hover:bg-chip-remove-hover transition-colors"
         >
           <X size={10} aria-hidden="true" />
         </button>

@@ -9,8 +9,9 @@
 // closed <dialog> elements, inflating the layout viewport on mobile devices.
 // See PR #92.
 
-import { useRef, useEffect, useCallback } from "react";
+import { Button } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
+import { useCallback, useEffect, useRef } from "react";
 
 interface ConfirmDialogProps {
   /** Whether the dialog is open */
@@ -69,11 +70,6 @@ function ConfirmDialogInner({
     return () => el.removeEventListener("cancel", handleCancel);
   }, [handleCancel]);
 
-  const confirmBtnClass =
-    variant === "danger"
-      ? "rounded-lg bg-error px-4 py-2 text-sm font-medium text-foreground-inverse hover:bg-error/90"
-      : "btn-primary px-4 py-2 text-sm";
-
   return (
     <dialog
       ref={dialogRef}
@@ -91,16 +87,15 @@ function ConfirmDialogInner({
       )}
 
       <div className="flex justify-end gap-2">
-        <button
-          type="button"
-          onClick={onCancel}
-          className="btn-secondary px-4 py-2 text-sm"
-        >
+        <Button variant="secondary" onClick={onCancel}>
           {t("common.cancel")}
-        </button>
-        <button type="button" onClick={onConfirm} className={confirmBtnClass}>
+        </Button>
+        <Button
+          variant={variant === "danger" ? "danger" : "primary"}
+          onClick={onConfirm}
+        >
           {confirmLabel ?? t("common.confirm")}
-        </button>
+        </Button>
       </div>
     </dialog>
   );

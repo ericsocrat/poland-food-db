@@ -3,6 +3,7 @@
 // ─── Step 5: Health Goals ───────────────────────────────────────────────────
 
 import type { StepProps } from "@/app/onboarding/types";
+import { Button } from "@/components/common/Button";
 import { HEALTH_GOALS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
 
@@ -48,12 +49,12 @@ export function HealthGoalsStep({ data, onChange, onNext, onBack }: StepProps) {
       </div>
 
       <div className="mt-8 flex gap-3">
-        <button onClick={onBack} className="btn-secondary flex-1">
+        <Button variant="secondary" onClick={onBack} className="flex-1">
           {t("onboarding.back")}
-        </button>
-        <button onClick={onNext} className="btn-primary flex-1">
+        </Button>
+        <Button onClick={onNext} className="flex-1">
           {t("onboarding.next")}
-        </button>
+        </Button>
       </div>
     </div>
   );

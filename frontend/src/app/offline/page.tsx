@@ -1,7 +1,8 @@
 "use client";
 
-import { WifiOff } from "lucide-react";
+import { Button } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
+import { WifiOff } from "lucide-react";
 
 export default function OfflinePage() {
   const { t } = useTranslation();
@@ -14,12 +15,12 @@ export default function OfflinePage() {
       <p className="mt-2 max-w-sm text-sm text-foreground-secondary">
         {t("offline.offlinePage")}
       </p>
-      <button
-        className="btn-primary mt-6"
+      <Button
+        className="mt-6"
         onClick={() => globalThis.location.reload()}
       >
         {t("offline.tryAgain")}
-      </button>
+      </Button>
     </div>
   );
 }

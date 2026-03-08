@@ -7,6 +7,7 @@
 // ⚠️  Conditionally rendered (unmounted when closed) to avoid Android Chrome
 // closed-dialog layout inflation. See PR #92.
 
+import { Button } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
 import { AlertTriangle } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -116,25 +117,23 @@ function DeleteAccountDialogInner({
 
       {/* Actions */}
       <div className="flex justify-end gap-2">
-        <button
-          type="button"
+        <Button
+          variant="secondary"
           onClick={onCancel}
           disabled={loading}
-          className="btn-secondary px-4 py-2 text-sm"
         >
           {t("common.cancel")}
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="danger"
           onClick={onConfirm}
           disabled={!isConfirmed || loading}
-          className="rounded-lg bg-error px-4 py-2 text-sm font-medium text-foreground-inverse hover:bg-error/90 disabled:opacity-50 disabled:cursor-not-allowed"
           data-testid="delete-account-confirm-button"
         >
           {loading
             ? t("settings.deleteAccountProcessing")
             : t("settings.deleteAccount")}
-        </button>
+        </Button>
       </div>
     </dialog>
   );

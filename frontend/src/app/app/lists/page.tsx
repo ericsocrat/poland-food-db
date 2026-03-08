@@ -4,6 +4,7 @@
 // Shows all user lists with item counts, create-new-list form, and links to
 // individual list detail pages. Default lists (Favorites, Avoid) show first.
 
+import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "@/components/common/EmptyState";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
@@ -88,13 +89,12 @@ export default function ListsPage() {
         <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5 lg:text-2xl">
           <ClipboardList size={20} aria-hidden="true" /> {t("lists.title")}
         </h1>
-        <button
-          type="button"
-          className="btn-primary text-sm"
+        <Button
+          size="sm"
           onClick={() => setShowForm((v) => !v)}
         >
           {showForm ? t("common.cancel") : t("lists.newList")}
-        </button>
+        </Button>
       </div>
 
       {/* Create form */}
@@ -121,22 +121,23 @@ export default function ListsPage() {
             maxLength={500}
           />
           <div className="flex gap-2">
-            <button
+            <Button
               type="submit"
-              className="btn-primary text-sm"
+              size="sm"
               disabled={createList.isPending || !newName.trim()}
             >
               {createList.isPending
                 ? t("lists.creating")
                 : t("lists.createList")}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
-              className="btn-secondary text-sm"
+              variant="secondary"
+              size="sm"
               onClick={() => setShowForm(false)}
             >
               {t("common.cancel")}
-            </button>
+            </Button>
           </div>
         </form>
       )}

@@ -4,6 +4,7 @@
 // This is the AUTHORITATIVE onboarding gate (server-side).
 // RouteGuard provides a secondary client-side gate for UX + session expiry handling.
 
+import { buttonClasses } from "@/components/common/Button";
 import { CountryChip } from "@/components/common/CountryChip";
 import { Logo } from "@/components/common/Logo";
 import { SkipLink } from "@/components/common/SkipLink";
@@ -66,7 +67,7 @@ export default async function AppLayout({
         <p className="mb-6 text-sm text-foreground-secondary">
           {translate(locale, "layout.errorMessage")}
         </p>
-        <a href="/app/search" className="btn-primary inline-block px-6">
+        <a href="/app/search" className={buttonClasses("primary", "md", { className: "inline-block" })}>
           {translate(locale, "common.tryAgain")}
         </a>
       </div>

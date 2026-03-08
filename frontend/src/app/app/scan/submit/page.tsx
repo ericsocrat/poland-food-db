@@ -7,6 +7,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
 import { eventBus } from "@/lib/events";
+import { Button } from "@/components/common/Button";
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { FileText } from "lucide-react";
@@ -187,17 +188,17 @@ export default function SubmitProductPage() {
             />
           </div>
 
-          <button
+          <Button
             type="submit"
+            fullWidth
             disabled={
               mutation.isPending || ean.length < 8 || productName.length < 2
             }
-            className="btn-primary w-full"
           >
             {mutation.isPending
               ? t("submit.submitting")
               : t("submit.submitButton")}
-          </button>
+          </Button>
         </form>
       </div>
 

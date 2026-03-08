@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ConfirmDialog } from "./ConfirmDialog";
 
 // ─── Mock HTMLDialogElement methods (jsdom doesn't implement them) ───────────
@@ -80,6 +80,6 @@ describe("ConfirmDialog", () => {
   it("applies default variant styling to confirm button", () => {
     render(<ConfirmDialog {...defaultProps} variant="default" />);
     const btn = screen.getByText("Confirm");
-    expect(btn.className).toContain("btn-primary");
+    expect(btn.className).toContain("bg-brand");
   });
 });

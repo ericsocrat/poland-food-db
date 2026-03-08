@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/common/Button";
 import { Logo } from "@/components/common/Logo";
 import { SkipLink } from "@/components/common/SkipLink";
 import { useTranslation } from "@/lib/i18n";
@@ -134,15 +135,11 @@ export function UpdatePasswordForm() {
             </div>
           </div>
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="btn-primary w-full"
-          >
+          <Button type="submit" disabled={loading} fullWidth>
             {loading
               ? t("auth.updatingPassword")
               : t("auth.updatePassword")}
-          </button>
+          </Button>
         </form>
 
         <p className="mt-6 text-center text-sm text-foreground-secondary">

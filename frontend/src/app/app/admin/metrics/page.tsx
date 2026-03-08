@@ -188,7 +188,7 @@ function FeatureUsageChart({
           label={item.feature.replace(/_/g, " ")}
           value={item.usage_count}
           maxValue={maxVal}
-          color="bg-blue-400 dark:bg-blue-600"
+          color="bg-chart-blue"
         />
       ))}
     </div>
@@ -487,7 +487,7 @@ export default function AdminMetricsPage() {
                       label={item.allergen.replace("en:", "")}
                       value={item.user_count}
                       maxValue={data.allergen_distribution[0].user_count}
-                      color="bg-amber-400 dark:bg-amber-600"
+                      color="bg-chart-amber"
                     />
                   ))}
                 </div>

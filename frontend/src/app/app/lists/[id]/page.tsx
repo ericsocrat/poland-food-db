@@ -4,6 +4,7 @@
 // Shows all products in a list with health scores, supports removing items,
 // and has share toggle for custom/favorites lists.
 
+import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
@@ -156,20 +157,21 @@ export default function ListDetailPage() {
                 maxLength={500}
               />
               <div className="flex gap-2">
-                <button
+                <Button
                   type="submit"
-                  className="btn-primary text-sm"
+                  size="sm"
                   disabled={updateMutation.isPending}
                 >
                   {t("common.save")}
-                </button>
-                <button
+                </Button>
+                <Button
                   type="button"
-                  className="btn-secondary text-sm"
+                  variant="secondary"
+                  size="sm"
                   onClick={() => setEditing(false)}
                 >
                   {t("common.cancel")}
-                </button>
+                </Button>
               </div>
             </form>
           ) : (
@@ -262,13 +264,13 @@ export default function ListDetailPage() {
                 </button>
                 {list.share_enabled && list.share_token && (
                   <>
-                    <button
-                      type="button"
-                      className="btn-secondary text-xs"
+                    <Button
+                      variant="secondary"
+                      size="sm"
                       onClick={handleCopyLink}
                     >
                       {copied ? t("lists.copied") : t("lists.copyLink")}
-                    </button>
+                    </Button>
                     <button
                       type="button"
                       className="text-xs text-error hover:text-error/80"

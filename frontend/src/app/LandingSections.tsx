@@ -4,6 +4,7 @@
 
 "use client";
 
+import { ButtonLink } from "@/components/common/Button";
 import { Logo } from "@/components/common/Logo";
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -17,7 +18,6 @@ import {
     ShoppingBasket,
     type LucideIcon,
 } from "lucide-react";
-import Link from "next/link";
 
 // ─── Hero ───────────────────────────────────────────────────────────────────
 
@@ -36,19 +36,22 @@ function HeroSection() {
           {t("landing.description")}
         </p>
         <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-          <Link
+          <ButtonLink
             href="/auth/signup"
-            className="btn-primary px-8 py-3 text-base"
+            size="lg"
+            className="px-8"
+            iconRight={<ChevronRight size={18} aria-hidden="true" />}
           >
             {t("landing.getStarted")}
-            <ChevronRight size={18} className="ml-1 inline-block" aria-hidden="true" />
-          </Link>
-          <Link
+          </ButtonLink>
+          <ButtonLink
             href="/auth/login"
-            className="btn-secondary px-8 py-3 text-base"
+            variant="secondary"
+            size="lg"
+            className="px-8"
           >
             {t("landing.signIn")}
-          </Link>
+          </ButtonLink>
         </div>
       </div>
     </section>
@@ -163,10 +166,14 @@ function CtaRepeatSection() {
         <p className="mb-8 text-foreground-secondary">
           {t("landing.ctaDescription")}
         </p>
-        <Link href="/auth/signup" className="btn-primary px-10 py-3 text-base">
+        <ButtonLink
+          href="/auth/signup"
+          size="lg"
+          className="px-10"
+          iconRight={<ChevronRight size={18} aria-hidden="true" />}
+        >
           {t("landing.getStarted")}
-          <ChevronRight size={18} className="ml-1 inline-block" aria-hidden="true" />
-        </Link>
+        </ButtonLink>
       </div>
     </section>
   );

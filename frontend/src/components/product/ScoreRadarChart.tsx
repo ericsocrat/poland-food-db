@@ -176,7 +176,7 @@ export function ScoreRadarChart({ breakdown }: ScoreRadarChartProps) {
             y={y}
             textAnchor="middle"
             dominantBaseline="middle"
-            className={isBonus ? "fill-green-600 text-[10px] dark:fill-green-400" : "fill-foreground-secondary text-[10px]"}
+            className={isBonus ? "fill-bonus-text text-[10px]" : "fill-foreground-secondary text-[10px]"}
           >
             {meta.label}
           </text>

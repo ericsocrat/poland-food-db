@@ -1,5 +1,6 @@
 "use client";
 
+import { ButtonLink } from "@/components/common/Button";
 import { Logo } from "@/components/common/Logo";
 import { useTheme } from "@/hooks/use-theme";
 import { useTranslation } from "@/lib/i18n";
@@ -41,9 +42,9 @@ export function Header() {
               <Moon size={20} aria-hidden="true" />
             )}
           </button>
-          <Link href="/auth/login" className="btn-primary text-sm">
+          <ButtonLink href="/auth/login">
             {t("auth.signIn")}
-          </Link>
+          </ButtonLink>
         </nav>
       </div>
     </header>

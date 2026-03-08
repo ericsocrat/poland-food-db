@@ -6,6 +6,7 @@
 
 "use client";
 
+import { Button } from "@/components/common/Button";
 import { Icon } from "@/components/common/Icon";
 import { useTranslation } from "@/lib/i18n";
 import { CheckCircle, EyeOff, Lock, Shield, Smartphone, type LucideIcon } from "lucide-react";
@@ -87,14 +88,13 @@ function PrivacyNoticeInner({
           ))}
         </ul>
 
-        <button
-          type="button"
+        <Button
           onClick={onAccept}
-          className="btn-primary w-full py-2.5 text-sm font-medium"
+          fullWidth
           data-testid="privacy-accept-btn"
         >
           {t("imageSearch.privacy.accept")}
-        </button>
+        </Button>
       </div>
     </dialog>
   );

@@ -11,6 +11,7 @@
 
 "use client";
 
+import { Button } from "@/components/common/Button";
 import { Icon } from "@/components/common/Icon";
 import { useTranslation } from "@/lib/i18n";
 import { CONFIDENCE, type OCRResult } from "@/lib/ocr";
@@ -87,25 +88,24 @@ export function OCRResults({ result, onSearch, onRetry }: OCRResultsProps) {
 
       {/* Actions */}
       <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
+        <Button
           onClick={() => onSearch(editedText)}
           disabled={editedText.trim().length === 0}
-          className="btn-primary flex items-center gap-2 px-4 py-2 text-sm"
+          className="flex items-center gap-2"
           data-testid="search-btn"
         >
           <Icon icon={Search} size="sm" />
           {t("imageSearch.results.search")}
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="secondary"
           onClick={onRetry}
-          className="btn-secondary flex items-center gap-2 px-4 py-2 text-sm"
+          className="flex items-center gap-2"
           data-testid="retry-btn"
         >
           <Icon icon={RefreshCw} size="sm" />
           {t("imageSearch.results.retry")}
-        </button>
+        </Button>
       </div>
 
       {/* Privacy confirmation */}

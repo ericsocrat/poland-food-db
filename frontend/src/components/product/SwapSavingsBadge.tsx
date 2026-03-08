@@ -62,12 +62,12 @@ export function SwapSavingsBadge({
       {(isCrossCategory || palmOilFree) && (
         <div className="flex gap-1.5">
           {isCrossCategory && (
-            <span className="inline-flex items-center rounded bg-purple-50 px-1.5 py-0.5 text-xs text-purple-600 dark:bg-purple-900/30 dark:text-purple-300">
+            <span className="inline-flex items-center rounded bg-tag-purple-bg px-1.5 py-0.5 text-xs text-tag-purple-text">
               Cross-category
             </span>
           )}
           {palmOilFree && (
-            <span className="inline-flex items-center rounded bg-emerald-50 px-1.5 py-0.5 text-xs text-emerald-600 dark:bg-emerald-900/30 dark:text-emerald-300">
+            <span className="inline-flex items-center rounded bg-tag-emerald-bg px-1.5 py-0.5 text-xs text-tag-emerald-text">
               No palm oil
             </span>
           )}

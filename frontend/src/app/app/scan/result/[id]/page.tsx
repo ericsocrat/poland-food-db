@@ -5,6 +5,7 @@
 // with a prominent "Healthier Alternatives" section so users immediately see
 // better options without having to navigate to the full product detail page.
 
+import { ButtonLink } from "@/components/common/Button";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import {
     ProductCardSkeleton,
@@ -92,9 +93,9 @@ export default function ScanResultPage() {
           </div>
           <p className="text-sm text-error-text">{t("product.loadFailed")}</p>
         </div>
-        <Link href="/app/scan" className="btn-primary block w-full text-center">
+        <ButtonLink href="/app/scan" fullWidth>
           ← {t("common.back")}
-        </Link>
+        </ButtonLink>
       </div>
     );
   }
@@ -240,17 +241,21 @@ export default function ScanResultPage() {
 
       {/* ── Action Buttons ───────────────────────────────────────────────── */}
       <div className="flex gap-2 pt-2">
-        <Link
+        <ButtonLink
           href={`/app/product/${productId}`}
-          className="btn-secondary flex-1 text-center"
+          variant="secondary"
+          className="flex-1"
+          icon={<ClipboardList size={16} aria-hidden="true" />}
         >
-          <ClipboardList size={16} aria-hidden="true" className="inline" />{" "}
           {t("product.fullDetails")}
-        </Link>
-        <Link href="/app/scan" className="btn-primary flex-1 text-center">
-          <Camera size={16} aria-hidden="true" className="inline" />{" "}
+        </ButtonLink>
+        <ButtonLink
+          href="/app/scan"
+          className="flex-1"
+          icon={<Camera size={16} aria-hidden="true" />}
+        >
           {t("product.scanAnother")}
-        </Link>
+        </ButtonLink>
       </div>
     </div>
   );

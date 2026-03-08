@@ -5,6 +5,7 @@
 // Issue #701: streamline onboarding from 7 steps to 4.
 
 import type { StepProps } from "@/app/onboarding/types";
+import { Button } from "@/components/common/Button";
 import { CategoryIcon } from "@/components/common/CategoryIcon";
 import { FOOD_CATEGORIES, HEALTH_GOALS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
@@ -92,16 +93,16 @@ export function GoalsCategoriesStep({
       </div>
 
       <div className="mt-8 flex gap-3">
-        <button onClick={onBack} className="btn-secondary flex-1">
+        <Button variant="secondary" onClick={onBack} className="flex-1">
           {t("onboarding.back")}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={onNext}
-          className="btn-primary flex-1"
+          className="flex-1"
           data-testid="onboarding-complete"
         >
           {t("onboarding.finish")}
-        </button>
+        </Button>
       </div>
     </div>
   );

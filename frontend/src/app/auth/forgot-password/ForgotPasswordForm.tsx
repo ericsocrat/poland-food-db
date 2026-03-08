@@ -1,5 +1,6 @@
 "use client";
 
+import { Button, ButtonLink } from "@/components/common/Button";
 import { Logo } from "@/components/common/Logo";
 import { SkipLink } from "@/components/common/SkipLink";
 import { useTranslation } from "@/lib/i18n";
@@ -51,12 +52,9 @@ export function ForgotPasswordForm() {
             <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
               {t("auth.resetEmailSent")}
             </div>
-            <Link
-              href="/auth/login"
-              className="btn-primary block w-full text-center"
-            >
+            <ButtonLink href="/auth/login" fullWidth>
               {t("auth.backToLogin")}
-            </Link>
+            </ButtonLink>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -78,15 +76,11 @@ export function ForgotPasswordForm() {
               />
             </div>
 
-            <button
-              type="submit"
-              disabled={loading}
-              className="btn-primary w-full"
-            >
+            <Button type="submit" disabled={loading} fullWidth>
               {loading
                 ? t("auth.sendingResetLink")
                 : t("auth.sendResetLink")}
-            </button>
+            </Button>
 
             <p className="text-center text-sm text-foreground-secondary">
               <Link

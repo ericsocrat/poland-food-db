@@ -12,10 +12,11 @@
 
 "use client";
 
-import { useRef, useState, useCallback, useEffect } from "react";
-import { Camera, Upload, X, SwitchCamera } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
+import { Button } from "@/components/common/Button";
 import { Icon } from "@/components/common/Icon";
+import { useTranslation } from "@/lib/i18n";
+import { Camera, SwitchCamera, Upload, X } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface ImageCaptureProps {
   /** Called when user has selected/captured an image. */
@@ -135,16 +136,15 @@ export function ImageCapture({ onCapture, processing }: ImageCaptureProps) {
           {/* Alignment guide */}
           <div className="pointer-events-none absolute inset-4 rounded-lg border-2 border-dashed border-white/50" />
           <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
-            <button
-              type="button"
+            <Button
               onClick={captureFrame}
               disabled={processing}
-              className="btn-primary rounded-full px-6 py-2.5 text-sm font-medium shadow-lg"
+              className="rounded-full px-6 shadow-lg"
               data-testid="capture-btn"
             >
               <Icon icon={Camera} size="sm" className="mr-1.5" />
               {t("imageSearch.capture")}
-            </button>
+            </Button>
             <button
               type="button"
               onClick={stopCamera}
@@ -166,27 +166,26 @@ export function ImageCapture({ onCapture, processing }: ImageCaptureProps) {
 
           <div className="flex gap-3">
             {cameraSupported && (
-              <button
-                type="button"
+              <Button
                 onClick={startCamera}
                 disabled={processing}
-                className="btn-primary flex items-center gap-2 px-4 py-2.5 text-sm"
+                className="flex items-center gap-2"
                 data-testid="open-camera-btn"
               >
                 <Icon icon={SwitchCamera} size="sm" />
                 {t("imageSearch.openCamera")}
-              </button>
+              </Button>
             )}
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={() => fileInputRef.current?.click()}
               disabled={processing}
-              className="btn-secondary flex items-center gap-2 px-4 py-2.5 text-sm"
+              className="flex items-center gap-2"
               data-testid="upload-btn"
             >
               <Icon icon={Upload} size="sm" />
               {t("imageSearch.uploadPhoto")}
-            </button>
+            </Button>
           </div>
 
           {cameraError && (

@@ -4,6 +4,7 @@
 // Accessible without authentication via share token URL.
 // Shows read-only view of a shared list with product details.
 
+import { ButtonLink } from "@/components/common/Button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Logo } from "@/components/common/Logo";
 import { SkipLink } from "@/components/common/SkipLink";
@@ -11,7 +12,6 @@ import { useSharedList } from "@/hooks/use-lists";
 import { NUTRI_COLORS, SCORE_BANDS, scoreBandFromScore } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
 import { toTryVitScore } from "@/lib/score-utils";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 
 export default function SharedListPage() {
@@ -39,9 +39,9 @@ export default function SharedListPage() {
         <p className="mb-6 text-sm text-foreground-secondary">
           {t("shared.listNotFoundMessage")}
         </p>
-        <Link href="/" className="btn-primary">
+        <ButtonLink href="/">
           {t("error.goHome")}
-        </Link>
+        </ButtonLink>
       </div>
     );
   }

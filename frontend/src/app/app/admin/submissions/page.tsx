@@ -4,6 +4,7 @@
 // Accessible at /app/admin/submissions — uses SECURITY DEFINER functions
 // that bypass RLS. In production, restrict route via middleware or auth check.
 
+import { Button } from "@/components/common/Button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useTranslation } from "@/lib/i18n";
@@ -321,23 +322,25 @@ export default function AdminSubmissionsPage() {
       {/* Pagination */}
       {data && data.pages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-2">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1}
-            className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
             {t("common.prev")}
-          </button>
+          </Button>
           <span className="text-sm text-foreground-secondary">
             {data.page} / {data.pages} ({data.total} total)
           </span>
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setPage((p) => Math.min(data.pages, p + 1))}
             disabled={page >= data.pages}
-            className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
             {t("common.next")}
-          </button>
+          </Button>
         </div>
       )}
     </div>

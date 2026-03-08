@@ -3,6 +3,7 @@
 // ─── Step 7: Done — Summary + CTA ──────────────────────────────────────────
 
 import type { OnboardingData } from "@/app/onboarding/types";
+import { Button } from "@/components/common/Button";
 import { ALLERGEN_TAGS, COUNTRIES, DIET_OPTIONS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
 
@@ -64,14 +65,14 @@ export function DoneStep({ data, loading, onComplete }: DoneStepProps) {
         )}
       </div>
 
-      <button
+      <Button
         onClick={onComplete}
         disabled={loading}
-        className="btn-primary w-full"
+        fullWidth
         data-testid="onboarding-complete"
       >
         {loading ? t("onboarding.saving") : t("onboarding.goToDashboard")}
-      </button>
+      </Button>
     </div>
   );
 }

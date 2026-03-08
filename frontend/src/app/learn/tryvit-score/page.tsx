@@ -32,9 +32,9 @@ export default function TryVitScorePage() {
   const bands = ["band1", "band2", "band3", "band4", "band5"] as const;
   const bandColors = [
     "bg-success-bg border-success-border",
-    "bg-lime-50 border-lime-200 dark:bg-lime-950/20 dark:border-lime-800",
+    "bg-band-good-bg border-band-good-border",
     "bg-warning-bg border-warning-border",
-    "bg-orange-50 border-orange-200 dark:bg-orange-950/20 dark:border-orange-800",
+    "bg-band-caution-bg border-band-caution-border",
     "bg-error-bg border-error-border",
   ];
 

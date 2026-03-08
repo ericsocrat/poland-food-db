@@ -2,6 +2,7 @@
 
 // ─── Health profile management section for Settings page ────────────────────
 
+import { Button } from "@/components/common/Button";
 import {
     createHealthProfile,
     deleteHealthProfile,
@@ -271,9 +272,9 @@ function ProfileForm({
 
       {/* Actions */}
       <div className="flex gap-2">
-        <button type="submit" disabled={saving} className="btn-primary flex-1">
+        <Button type="submit" disabled={saving} className="flex-1">
           {submitLabel}
-        </button>
+        </Button>
         <button
           type="button"
           onClick={onCancel}

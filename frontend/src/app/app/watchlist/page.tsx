@@ -6,20 +6,21 @@
  * score deltas, and reformulation badges.
  */
 
-import { useState } from "react";
-import Link from "next/link";
-import { useQuery } from "@tanstack/react-query";
-import { Eye, ChevronLeft, ChevronRight } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
+import { ButtonLink } from "@/components/common/Button";
 import { Icon } from "@/components/common/Icon";
-import { createClient } from "@/lib/supabase/client";
-import { getWatchlist } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { ScoreTrendChart } from "@/components/product/ScoreTrendChart";
-import { ScoreChangeIndicator } from "@/components/product/ScoreChangeIndicator";
 import { ReformulationBadge } from "@/components/product/ReformulationBadge";
+import { ScoreChangeIndicator } from "@/components/product/ScoreChangeIndicator";
+import { ScoreTrendChart } from "@/components/product/ScoreTrendChart";
+import { getWatchlist } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
 import type { WatchlistItem } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { ChevronLeft, ChevronRight, Eye } from "lucide-react";
+import Link from "next/link";
+import { useState } from "react";
 
 const SCORE_BAND_COLORS: Record<string, string> = {
   low: "text-success",
@@ -152,9 +153,9 @@ export default function WatchlistPage() {
           <p className="max-w-md text-sm text-foreground-secondary">
             {t("watchlist.emptyDescription")}
           </p>
-          <Link href="/app/search" className="btn-primary mt-2 text-sm">
+          <ButtonLink href="/app/search" className="mt-2" size="sm">
             {t("watchlist.browseProducts")}
-          </Link>
+          </ButtonLink>
         </div>
       )}
 

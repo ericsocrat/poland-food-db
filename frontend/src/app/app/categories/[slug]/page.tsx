@@ -3,6 +3,7 @@
 // ─── Category listing — paginated product list for a single category ────────
 
 import { AllergenChips } from "@/components/common/AllergenChips";
+import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
@@ -245,23 +246,25 @@ export default function CategoryListingPage() {
       {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex items-center justify-center gap-3 pt-2">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             disabled={offset === 0}
             onClick={() => setOffset((o) => Math.max(0, o - PAGE_SIZE))}
-            className="btn-secondary text-sm"
           >
             {t("categories.previous")}
-          </button>
+          </Button>
           <span className="text-sm text-foreground-secondary">
             {t("common.pageOf", { page: currentPage, pages: totalPages })}
           </span>
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             disabled={currentPage >= totalPages}
             onClick={() => setOffset((o) => o + PAGE_SIZE)}
-            className="btn-secondary text-sm"
           >
             {t("common.next")}
-          </button>
+          </Button>
         </div>
       )}
     </div>

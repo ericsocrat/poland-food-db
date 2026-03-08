@@ -2,6 +2,7 @@
 
 // ─── FilterPanel — sidebar (desktop) / bottom sheet (mobile) ────────────────
 
+import { Button } from "@/components/common/Button";
 import { CategoryIcon } from "@/components/common/CategoryIcon";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { getFilterOptions } from "@/lib/api";
@@ -419,13 +420,12 @@ export function FilterPanel({
             </div>
             {filterContent}
             <div className="mt-4">
-              <button
-                type="button"
+              <Button
                 onClick={onClose}
-                className="btn-primary w-full py-2.5 text-sm"
+                fullWidth
               >
                 {t("filters.showResults")}
-              </button>
+              </Button>
             </div>
           </div>
         </div>

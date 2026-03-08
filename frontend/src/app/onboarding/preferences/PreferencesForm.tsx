@@ -2,6 +2,7 @@
 
 // ─── Onboarding Step 2: Dietary preferences (optional, skippable) ───────────
 
+import { Button } from "@/components/common/Button";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { setUserPreferences } from "@/lib/api";
 import { ALLERGEN_TAGS, DIET_OPTIONS } from "@/lib/constants";
@@ -164,16 +165,16 @@ export function PreferencesForm() {
       )}
 
       <div className="flex gap-3">
-        <button onClick={handleSkip} className="btn-secondary flex-1">
+        <Button variant="secondary" onClick={handleSkip} className="flex-1">
           {t("onboarding.skipForNow")}
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={handleSave}
           disabled={loading}
-          className="btn-primary flex-1"
+          className="flex-1"
         >
           {loading ? t("common.saving") : t("onboarding.saveAndContinue")}
-        </button>
+        </Button>
       </div>
     </div>
   );

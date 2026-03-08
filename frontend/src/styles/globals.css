@@ -142,6 +142,31 @@
     --toast-warning: #d97706;
     --toast-info: #2563eb;
 
+    /* ── Accent Tags & Charts (#685) ── */
+    --color-tag-purple-bg: #faf5ff;
+    /* purple-50 */
+    --color-tag-purple-text: #9333ea;
+    /* purple-600 */
+    --color-tag-emerald-bg: #ecfdf5;
+    /* emerald-50 */
+    --color-tag-emerald-text: #059669;
+    /* emerald-600 */
+    --color-chart-blue: #60a5fa;
+    /* blue-400 */
+    --color-chart-amber: #fbbf24;
+    /* amber-400 */
+    --color-bonus-text: #16a34a;
+    /* green-600 */
+    --color-chip-remove-hover: rgba(0, 0, 0, 0.1);
+    --color-band-good-bg: #f7fee7;
+    /* lime-50 */
+    --color-band-good-border: #d9f99d;
+    /* lime-200 */
+    --color-band-caution-bg: #fff7ed;
+    /* orange-50 */
+    --color-band-caution-border: #fed7aa;
+    /* orange-200 */
+
     /* ── Elevation (Shadows) ── */
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
@@ -222,7 +247,11 @@
     --duration-slow: 300ms;
   }
 
-  /* ── Dark mode overrides ── */
+  /* ── Dark mode overrides ──
+     Single source of truth for all dark-mode CSS variables.
+     The inline <ThemeScript> in <head> sets data-theme before first paint,
+     handling both manual toggle AND system preference detection.
+     See: src/components/ThemeScript.tsx */
   [data-theme="dark"] {
     --color-surface: #111827;
     /* gray-900 */
@@ -332,109 +361,34 @@
     --toast-warning: #fbbf24;
     --toast-info: #60a5fa;
 
+    /* ── Accent Tags & Charts (#685) ── */
+    --color-tag-purple-bg: rgba(88, 28, 135, 0.3);
+    /* purple-900/30 */
+    --color-tag-purple-text: #d8b4fe;
+    /* purple-300 */
+    --color-tag-emerald-bg: rgba(6, 78, 59, 0.3);
+    /* emerald-900/30 */
+    --color-tag-emerald-text: #6ee7b7;
+    /* emerald-300 */
+    --color-chart-blue: #2563eb;
+    /* blue-600 */
+    --color-chart-amber: #d97706;
+    /* amber-600 */
+    --color-bonus-text: #4ade80;
+    /* green-400 */
+    --color-chip-remove-hover: rgba(255, 255, 255, 0.1);
+    --color-band-good-bg: rgba(26, 46, 5, 0.2);
+    /* lime-950/20 */
+    --color-band-good-border: #3f6212;
+    /* lime-800 */
+    --color-band-caution-bg: rgba(67, 20, 7, 0.2);
+    /* orange-950/20 */
+    --color-band-caution-border: #9a3412;
+    /* orange-800 */
+
     --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
     --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-  }
-
-  /* System-preference dark mode fallback (used until data-theme is set) */
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --color-surface: #111827;
-      --color-surface-subtle: #1f2937;
-      --color-surface-muted: #374151;
-      --color-surface-overlay: rgba(0, 0, 0, 0.7);
-
-      --color-text-primary: #f9fafb;
-      --color-text-secondary: #d1d5db;
-      --color-text-muted: #9ca3af;
-      --color-text-inverse: #111827;
-
-      --color-border: #374151;
-      --color-border-strong: #4b5563;
-
-      --color-brand: #4ade80;
-      --color-brand-hover: #22c55e;
-      --color-brand-subtle: #14532d;
-
-      /* ── Brand Identity (dark mode — system preference fallback) ── */
-      --color-brand-primary: #1DB954;
-      /* vitGreen — 7.4:1 on vitDark (AAA) */
-      --color-brand-primary-dark: #F0FAF4;
-      /* vitLight — inverted for text on dark bg */
-      --color-brand-secondary: #0A2E1A;
-      /* vitDark — dark surface */
-      --color-brand-accent: #00E676;
-      /* vitAccent — 8.2:1 on vitDark (AAA) */
-
-      --color-neutral-50: #0f172a;
-      --color-neutral-200: #334155;
-      --color-neutral-400: #94a3b8;
-      --color-neutral-600: #cbd5e1;
-      --color-neutral-900: #f8fafc;
-
-      --color-score-green: #4ade80;
-      --color-score-yellow: #facc15;
-      --color-score-orange: #fb923c;
-      --color-score-red: #f87171;
-      --color-score-darkred: #dc2626;
-
-      --color-score-green-text: #4ade80;
-      --color-score-yellow-text: #facc15;
-      --color-score-orange-text: #fb923c;
-      --color-score-red-text: #f87171;
-      --color-score-darkred-text: #dc2626;
-
-      --color-nutri-A: #34d399;
-      --color-nutri-B: #a3e635;
-      --color-nutri-C: #fde047;
-      --color-nutri-D: #fb923c;
-      --color-nutri-E: #f87171;
-
-      --color-nutrient-low: #4ade80;
-      --color-nutrient-medium: #fbbf24;
-      --color-nutrient-high: #f87171;
-
-      --color-nova-1: #4ade80;
-      --color-nova-2: #a3e635;
-      --color-nova-3: #fbbf24;
-      --color-nova-4: #f87171;
-
-      --color-confidence-high: #4ade80;
-      --color-confidence-medium: #fbbf24;
-      --color-confidence-low: #f87171;
-
-      --color-allergen-present: #f87171;
-      --color-allergen-traces: #fbbf24;
-      --color-allergen-free: #4ade80;
-
-      --color-success: #4ade80;
-      --color-warning: #fbbf24;
-      --color-error: #f87171;
-      --color-info: #60a5fa;
-
-      --color-success-bg: #052e16;
-      --color-success-text: #4ade80;
-      --color-success-border: #166534;
-      --color-warning-bg: #451a03;
-      --color-warning-text: #fbbf24;
-      --color-warning-border: #92400e;
-      --color-danger-bg: #450a0a;
-      --color-danger-text: #f87171;
-      --color-danger-border: #991b1b;
-      --color-info-bg: #172554;
-      --color-info-text: #60a5fa;
-      --color-info-border: #1e40af;
-
-      --toast-success: #4ade80;
-      --toast-error: #f87171;
-      --toast-warning: #fbbf24;
-      --toast-info: #60a5fa;
-
-      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
-      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
-      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
-    }
   }
 
   html {
@@ -508,17 +462,6 @@
 }
 
 @layer components {
-  .btn-primary {
-    @apply inline-flex items-center justify-center rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-foreground-inverse shadow-sm transition-colors cursor-pointer hover:bg-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 disabled:cursor-not-allowed press-scale;
-    /* Prevent double-tap zoom on buttons in PWA */
-    touch-action: manipulation;
-  }
-
-  .btn-secondary {
-    @apply inline-flex items-center justify-center rounded-lg border border-strong bg-surface px-4 py-2.5 text-sm font-semibold text-foreground-secondary shadow-sm transition-colors cursor-pointer hover:bg-surface-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:opacity-50 disabled:cursor-not-allowed press-scale;
-    touch-action: manipulation;
-  }
-
   .input-field {
     @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5 text-sm text-foreground shadow-sm placeholder:text-foreground-muted focus-visible:border-brand focus-visible:ring-1 focus-visible:ring-brand focus-visible:outline-none;
   }
@@ -755,20 +698,16 @@
 
 /* ── Fade-edge scroll indicator ── */
 .scroll-fade-x {
-  mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 1.5rem,
-    black calc(100% - 1.5rem),
-    transparent
-  );
-  -webkit-mask-image: linear-gradient(
-    to right,
-    transparent,
-    black 1.5rem,
-    black calc(100% - 1.5rem),
-    transparent
-  );
+  mask-image: linear-gradient(to right,
+      transparent,
+      black 1.5rem,
+      black calc(100% - 1.5rem),
+      transparent);
+  -webkit-mask-image: linear-gradient(to right,
+      transparent,
+      black 1.5rem,
+      black calc(100% - 1.5rem),
+      transparent);
 }
 
 @media (min-width: 768px) {

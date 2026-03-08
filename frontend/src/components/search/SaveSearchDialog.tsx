@@ -7,15 +7,16 @@
 // of closed <dialog> elements, inflating the layout viewport on mobile devices.
 // See PR #92.
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { Button } from "@/components/common/Button";
+import { useAnalytics } from "@/hooks/use-analytics";
+import { saveSearch } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n";
+import { queryKeys } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import type { SearchFilters } from "@/lib/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Save } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import { saveSearch } from "@/lib/api";
-import { queryKeys } from "@/lib/query-keys";
-import { useAnalytics } from "@/hooks/use-analytics";
-import { useTranslation } from "@/lib/i18n";
-import type { SearchFilters } from "@/lib/types";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface SaveSearchDialogProps {
   query: string | null;
@@ -134,20 +135,20 @@ function SaveSearchDialogInner({
         />
 
         <div className="flex gap-2">
-          <button
-            type="button"
+          <Button
+            variant="secondary"
             onClick={onClose}
-            className="btn-secondary flex-1 py-2 text-sm"
+            className="flex-1"
           >
             {t("common.cancel")}
-          </button>
-          <button
+          </Button>
+          <Button
             type="submit"
             disabled={name.trim().length === 0 || mutation.isPending}
-            className="btn-primary flex-1 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex-1"
           >
             {mutation.isPending ? `${t("common.saving")}` : t("common.save")}
-          </button>
+          </Button>
         </div>
 
         {mutation.isError && (

@@ -1,9 +1,10 @@
 "use client";
 
-import { X } from "lucide-react";
-import { useTranslation } from "@/lib/i18n";
+import { Button } from "@/components/common/Button";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useInstallPrompt } from "@/hooks/use-install-prompt";
+import { useTranslation } from "@/lib/i18n";
+import { X } from "lucide-react";
 
 export function InstallPrompt() {
   const { t } = useTranslation();
@@ -57,13 +58,14 @@ export function InstallPrompt() {
 
       {/* Native install button (Android / Desktop) */}
       {!isIOS && (
-        <button
+        <Button
           onClick={handleInstall}
-          className="btn-primary mt-3 w-full text-sm"
+          fullWidth
+          className="mt-3"
           data-testid="install-button"
         >
           {t("common.install")}
-        </button>
+        </Button>
       )}
     </div>
   );

@@ -5,6 +5,7 @@
 // Displays a shared comparison with the ComparisonGrid component.
 // No avoid badges or save features — read-only public view.
 
+import { ButtonLink } from "@/components/common/Button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Logo } from "@/components/common/Logo";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
@@ -59,9 +60,9 @@ function SharedComparisonContent() {
             <p className="mb-1 text-sm text-error-text">
               {t("shared.comparisonInvalid")}
             </p>
-            <Link href="/" className="mt-3 btn-primary inline-block text-sm">
+            <ButtonLink href="/" className="mt-3" size="sm">
               {t("shared.goToTryVit")}
-            </Link>
+            </ButtonLink>
           </div>
         )}
 
@@ -90,9 +91,9 @@ function SharedComparisonContent() {
           <p className="mb-2 text-sm text-foreground-secondary">
             {t("shared.wantToCompare")}
           </p>
-          <Link href="/auth/login" className="btn-primary inline-block text-sm">
+          <ButtonLink href="/auth/login" size="sm">
             {t("shared.signUpFree")}
-          </Link>
+          </ButtonLink>
         </div>
       </main>
     </div>

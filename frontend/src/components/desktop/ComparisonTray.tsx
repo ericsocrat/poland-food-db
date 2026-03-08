@@ -4,6 +4,7 @@
 // Shows selected products with names. Collapse/expand. Navigate to compare page.
 // Desktop only (hidden below lg via CSS). Replaces CompareFloatingButton on lg+.
 
+import { Button } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
 import { useCompareStore } from "@/stores/compare-store";
 import { ChevronDown, ChevronUp, Scale, X } from "lucide-react";
@@ -102,13 +103,12 @@ export function ComparisonTray() {
           {/* Compare button */}
           <div className="border-t border-border px-4 py-3">
             {count >= 2 ? (
-              <button
-                type="button"
+              <Button
                 onClick={handleCompare}
-                className="btn-primary w-full text-sm"
+                fullWidth
               >
                 {t("comparisonTray.compareNow")}
-              </button>
+              </Button>
             ) : (
               <p className="text-center text-xs text-foreground-secondary">
                 {t("compare.selectAtLeast2")}

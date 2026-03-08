@@ -2,6 +2,7 @@
 
 // ─── Scan History page — paginated list of past scans ───────────────────────
 
+import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -138,23 +139,25 @@ export default function ScanHistoryPage() {
       {/* Pagination */}
       {data && data.pages > 1 && (
         <div className="flex items-center justify-center gap-2 pt-2">
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page <= 1}
-            className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
             {t("common.prev")}
-          </button>
+          </Button>
           <span className="text-sm text-foreground-secondary">
             {t("common.pageOf", { page: data.page, pages: data.pages })}
           </span>
-          <button
+          <Button
+            variant="secondary"
+            size="sm"
             onClick={() => setPage((p) => Math.min(data.pages, p + 1))}
             disabled={page >= data.pages}
-            className="btn-secondary px-3 py-1.5 text-sm disabled:opacity-40"
           >
             {t("common.next")}
-          </button>
+          </Button>
         </div>
       )}
     </div>
