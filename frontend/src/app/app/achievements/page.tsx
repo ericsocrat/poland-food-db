@@ -8,12 +8,16 @@
 // Unlocked achievements are full-color; locked show progress bars.
 // Overall progress bar at top.
 
+import { useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "@/lib/i18n";
+import { queryKeys } from "@/lib/query-keys";
 import { useAchievements } from "@/hooks/use-achievements";
 import { AchievementGrid } from "@/components/achievements/AchievementGrid";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ProgressBar } from "@/components/common/ProgressBar";
 import { EmptyState } from "@/components/common/EmptyState";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { Icon } from "@/components/common/Icon";
 import { Skeleton } from "@/components/common/Skeleton";
 import { Trophy } from "lucide-react";
@@ -31,7 +35,12 @@ const LOADING_SKELETON_KEYS = [
 
 export default function AchievementsPage() {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
   const { data, isLoading, error } = useAchievements();
+
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.achievements });
+  }, [queryClient]);
 
   const totalCount = data?.total ?? 0;
   const unlockedCount = data?.unlocked ?? 0;
@@ -39,8 +48,9 @@ export default function AchievementsPage() {
     totalCount > 0 ? Math.round((unlockedCount / totalCount) * 100) : 0;
 
   return (
-    <div>
-      <Breadcrumbs
+    <PullToRefresh onRefresh={handleRefresh}>
+      <div>
+        <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
           { labelKey: "achievements.title" },
@@ -116,6 +126,7 @@ export default function AchievementsPage() {
           <AchievementGrid achievements={data.achievements} />
         </>
       )}
-    </div>
+      </div>
+    </PullToRefresh>
   );
 }

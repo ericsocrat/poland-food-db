@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { OnboardingWizard } from "./OnboardingWizard";
+import { ONBOARDING_STORAGE_KEY } from "./types";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -28,6 +29,7 @@ vi.mock("@/lib/toast", () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  localStorage.clear();
 });
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -40,75 +42,53 @@ describe("OnboardingWizard", () => {
     expect(screen.getByTestId("onboarding-wizard")).toBeInTheDocument();
   });
 
-  it("starts on the Welcome step", () => {
+  it("starts on the Welcome+Region step", () => {
     render(<OnboardingWizard />);
     expect(screen.getByTestId("onboarding-get-started")).toBeInTheDocument();
-  });
-
-  it("does not show progress bar on Welcome step", () => {
-    render(<OnboardingWizard />);
-    expect(screen.queryByRole("progressbar")).not.toBeInTheDocument();
-  });
-
-  // ── Step Navigation ───────────────────────────────────────────────────
-
-  it("navigates from Welcome to Region step", async () => {
-    const user = userEvent.setup();
-    render(<OnboardingWizard />);
-
-    await user.click(screen.getByTestId("onboarding-get-started"));
-
-    // Region step should be visible
     expect(screen.getByTestId("country-PL")).toBeInTheDocument();
-    expect(screen.getByTestId("country-DE")).toBeInTheDocument();
   });
 
-  it("shows progress bar on inner steps", async () => {
-    const user = userEvent.setup();
+  it("shows progress bar on all steps", () => {
     render(<OnboardingWizard />);
-
-    await user.click(screen.getByTestId("onboarding-get-started"));
     expect(screen.getByRole("progressbar")).toBeInTheDocument();
   });
 
-  it("navigates through all 7 steps to Done", async () => {
+  // ── Step Navigation (3-step flow) ─────────────────────────────────────
+
+  it("navigates from Welcome+Region to Diet+Allergens step", async () => {
     const user = userEvent.setup();
     render(<OnboardingWizard />);
 
-    // Step 0 → 1: Welcome → Region
-    await user.click(screen.getByTestId("onboarding-get-started"));
-    expect(screen.getByTestId("country-PL")).toBeInTheDocument();
-
-    // Select Poland and continue
     await user.click(screen.getByTestId("country-PL"));
-    await user.click(screen.getByText("Next"));
+    await user.click(screen.getByTestId("onboarding-get-started"));
 
-    // Step 2: Diet
+    // Diet + Allergens step
     expect(screen.getByTestId("diet-none")).toBeInTheDocument();
-    await user.click(screen.getByText("Next"));
-
-    // Step 3: Allergens
     expect(screen.getByTestId("allergen-gluten")).toBeInTheDocument();
-    await user.click(screen.getByText("Next"));
-
-    // Step 4: Health Goals
-    expect(screen.getByTestId("goal-diabetes")).toBeInTheDocument();
-    await user.click(screen.getByText("Next"));
-
-    // Step 5: Categories
-    expect(screen.getByTestId("category-chips")).toBeInTheDocument();
-    await user.click(screen.getByText("Next"));
-
-    // Step 6: Done
-    expect(screen.getByTestId("onboarding-complete")).toBeInTheDocument();
   });
 
-  it("navigates back from Region to Welcome", async () => {
+  it("navigates from Diet+Allergens to Goals+Categories step", async () => {
     const user = userEvent.setup();
     render(<OnboardingWizard />);
 
+    // Step 0 → 1
+    await user.click(screen.getByTestId("country-PL"));
     await user.click(screen.getByTestId("onboarding-get-started"));
-    expect(screen.getByTestId("country-PL")).toBeInTheDocument();
+
+    // Step 1 → 2
+    await user.click(screen.getByText("Next"));
+
+    expect(screen.getByTestId("goal-diabetes")).toBeInTheDocument();
+    expect(screen.getByTestId("category-bread")).toBeInTheDocument();
+  });
+
+  it("navigates back from Diet+Allergens to Welcome+Region", async () => {
+    const user = userEvent.setup();
+    render(<OnboardingWizard />);
+
+    await user.click(screen.getByTestId("country-PL"));
+    await user.click(screen.getByTestId("onboarding-get-started"));
+    expect(screen.getByTestId("diet-none")).toBeInTheDocument();
 
     await user.click(screen.getByText("Back"));
     expect(screen.getByTestId("onboarding-get-started")).toBeInTheDocument();
@@ -116,7 +96,7 @@ describe("OnboardingWizard", () => {
 
   // ── Skip All ──────────────────────────────────────────────────────────
 
-  it("calls skipOnboarding when clicking Skip on Welcome", async () => {
+  it("calls skipOnboarding from Welcome step skip button", async () => {
     mockSkipOnboarding.mockResolvedValue({ ok: true, data: {} });
     const user = userEvent.setup();
     render(<OnboardingWizard />);
@@ -126,7 +106,7 @@ describe("OnboardingWizard", () => {
     await waitFor(() => {
       expect(mockSkipOnboarding).toHaveBeenCalled();
     });
-    expect(mockPush).toHaveBeenCalledWith("/app/search");
+    expect(mockPush).toHaveBeenCalledWith("/app/categories");
   });
 
   it("shows error toast when skip fails", async () => {
@@ -152,39 +132,37 @@ describe("OnboardingWizard", () => {
     const user = userEvent.setup();
     render(<OnboardingWizard />);
 
-    // Navigate to Region step
+    // Navigate to step 1 (Diet+Allergens)
+    await user.click(screen.getByTestId("country-PL"));
     await user.click(screen.getByTestId("onboarding-get-started"));
 
-    // The skip-all link in the wizard footer (not the Welcome button)
     expect(screen.getByTestId("onboarding-skip-all")).toBeInTheDocument();
   });
 
   // ── Complete ──────────────────────────────────────────────────────────
 
-  it("calls completeOnboarding with accumulated data on Done step", async () => {
+  it("calls completeOnboarding with accumulated data on Finish", async () => {
     mockCompleteOnboarding.mockResolvedValue({ ok: true, data: {} });
     const user = userEvent.setup();
     render(<OnboardingWizard />);
 
-    // Navigate through all steps
-    await user.click(screen.getByTestId("onboarding-get-started"));
+    // Step 0: Select country + click next
     await user.click(screen.getByTestId("country-PL"));
-    await user.click(screen.getByText("Next"));
+    await user.click(screen.getByTestId("onboarding-get-started"));
+
+    // Step 1: Select diet + allergen
     await user.click(screen.getByTestId("diet-vegetarian"));
-    await user.click(screen.getByText("Next"));
     await user.click(screen.getByTestId("allergen-gluten"));
     await user.click(screen.getByText("Next"));
-    await user.click(screen.getByTestId("goal-diabetes"));
-    await user.click(screen.getByText("Next"));
-    await user.click(screen.getByTestId("category-chips"));
-    await user.click(screen.getByText("Next"));
 
-    // Click complete on Done step
+    // Step 2: Select goal + category, click Finish
+    await user.click(screen.getByTestId("goal-diabetes"));
+    await user.click(screen.getByTestId("category-chips"));
     await user.click(screen.getByTestId("onboarding-complete"));
 
     await waitFor(() => {
       expect(mockCompleteOnboarding).toHaveBeenCalledWith(
-        expect.anything(), // supabase client
+        expect.anything(),
         expect.objectContaining({
           country: "PL",
           diet: "vegetarian",
@@ -194,7 +172,7 @@ describe("OnboardingWizard", () => {
         }),
       );
     });
-    expect(mockPush).toHaveBeenCalledWith("/app/search");
+    expect(mockPush).toHaveBeenCalledWith("/app/categories");
   });
 
   it("shows error on completion failure", async () => {
@@ -206,15 +184,10 @@ describe("OnboardingWizard", () => {
     const user = userEvent.setup();
     render(<OnboardingWizard />);
 
-    // Navigate to Done step quickly
-    await user.click(screen.getByTestId("onboarding-get-started"));
+    // Navigate through all steps quickly
     await user.click(screen.getByTestId("country-DE"));
+    await user.click(screen.getByTestId("onboarding-get-started"));
     await user.click(screen.getByText("Next"));
-    await user.click(screen.getByText("Next"));
-    await user.click(screen.getByText("Next"));
-    await user.click(screen.getByText("Next"));
-    await user.click(screen.getByText("Next"));
-
     await user.click(screen.getByTestId("onboarding-complete"));
 
     await waitFor(() => {
@@ -225,35 +198,74 @@ describe("OnboardingWizard", () => {
     expect(mockPush).not.toHaveBeenCalled();
   });
 
-  // ── Data Accumulation ─────────────────────────────────────────────────
+  // ── localStorage Persistence ──────────────────────────────────────────
 
-  it("accumulates selections across steps in Done summary", async () => {
+  it("persists step and data to localStorage", async () => {
     const user = userEvent.setup();
     render(<OnboardingWizard />);
 
-    // Welcome → Region
-    await user.click(screen.getByTestId("onboarding-get-started"));
     await user.click(screen.getByTestId("country-PL"));
-    await user.click(screen.getByText("Next"));
+    await user.click(screen.getByTestId("onboarding-get-started"));
 
-    // Diet: select vegan
-    await user.click(screen.getByTestId("diet-vegan"));
-    await user.click(screen.getByText("Next"));
+    await waitFor(() => {
+      const stored = JSON.parse(
+        localStorage.getItem(ONBOARDING_STORAGE_KEY) || "{}",
+      );
+      expect(stored.step).toBe(1);
+      expect(stored.data.country).toBe("PL");
+    });
+  });
 
-    // Allergens: select gluten + milk
-    await user.click(screen.getByTestId("allergen-gluten"));
-    await user.click(screen.getByTestId("allergen-milk"));
-    await user.click(screen.getByText("Next"));
+  it("restores persisted state on mount", () => {
+    localStorage.setItem(
+      ONBOARDING_STORAGE_KEY,
+      JSON.stringify({
+        step: 1,
+        data: {
+          country: "DE",
+          language: "",
+          diet: "vegan",
+          allergens: [],
+          strictAllergen: false,
+          strictDiet: false,
+          treatMayContain: false,
+          healthGoals: [],
+          favoriteCategories: [],
+        },
+      }),
+    );
 
-    // Health goals: skip (click next)
-    await user.click(screen.getByText("Next"));
+    render(<OnboardingWizard />);
 
-    // Categories: skip (click next)
-    await user.click(screen.getByText("Next"));
+    // Should be on step 1 (Diet+Allergens), not step 0
+    expect(screen.getByTestId("diet-none")).toBeInTheDocument();
+    expect(screen.queryByTestId("onboarding-get-started")).not.toBeInTheDocument();
+  });
 
-    // Done step should show summary
-    expect(screen.getByText("Poland")).toBeInTheDocument();
-    expect(screen.getByText("Vegan")).toBeInTheDocument();
-    expect(screen.getByText(/Gluten.*Milk|Milk.*Gluten/)).toBeInTheDocument();
+  it("clears localStorage after successful completion", async () => {
+    mockCompleteOnboarding.mockResolvedValue({ ok: true, data: {} });
+    const user = userEvent.setup();
+    render(<OnboardingWizard />);
+
+    await user.click(screen.getByTestId("country-PL"));
+    await user.click(screen.getByTestId("onboarding-get-started"));
+    await user.click(screen.getByText("Next"));
+    await user.click(screen.getByTestId("onboarding-complete"));
+
+    await waitFor(() => {
+      expect(localStorage.getItem(ONBOARDING_STORAGE_KEY)).toBeNull();
+    });
+  });
+
+  it("clears localStorage after skip", async () => {
+    mockSkipOnboarding.mockResolvedValue({ ok: true, data: {} });
+    const user = userEvent.setup();
+    render(<OnboardingWizard />);
+
+    await user.click(screen.getByTestId("onboarding-skip-all"));
+
+    await waitFor(() => {
+      expect(localStorage.getItem(ONBOARDING_STORAGE_KEY)).toBeNull();
+    });
   });
 });

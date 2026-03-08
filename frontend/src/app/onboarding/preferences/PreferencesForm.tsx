@@ -2,14 +2,14 @@
 
 // ─── Onboarding Step 2: Dietary preferences (optional, skippable) ───────────
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { showToast } from "@/lib/toast";
-import { createClient } from "@/lib/supabase/client";
-import { setUserPreferences } from "@/lib/api";
-import { DIET_OPTIONS, ALLERGEN_TAGS } from "@/lib/constants";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { setUserPreferences } from "@/lib/api";
+import { ALLERGEN_TAGS, DIET_OPTIONS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
+import { createClient } from "@/lib/supabase/client";
+import { showToast } from "@/lib/toast";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export function PreferencesForm() {
   const router = useRouter();
@@ -105,7 +105,7 @@ export function PreferencesForm() {
             type="checkbox"
             checked={strictDiet}
             onChange={(e) => setStrictDiet(e.target.checked)}
-            className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+            className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
           />
           <span className="text-sm text-foreground-secondary">
             {t("onboarding.strictDiet")}
@@ -143,7 +143,7 @@ export function PreferencesForm() {
               type="checkbox"
               checked={strictAllergen}
               onChange={(e) => setStrictAllergen(e.target.checked)}
-              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+              className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("onboarding.strictAllergen")}
@@ -154,7 +154,7 @@ export function PreferencesForm() {
               type="checkbox"
               checked={treatMayContain}
               onChange={(e) => setTreatMayContain(e.target.checked)}
-              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+              className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("onboarding.treatMayContain")}

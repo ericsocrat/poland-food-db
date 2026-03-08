@@ -7,9 +7,9 @@
 // ⚠️  Conditionally rendered (unmounted when closed) to avoid Android Chrome
 // closed-dialog layout inflation. See PR #92.
 
-import { useRef, useEffect, useCallback, useState } from "react";
 import { useTranslation } from "@/lib/i18n";
 import { AlertTriangle } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface DeleteAccountDialogProps {
   /** Whether the dialog is open */
@@ -110,7 +110,7 @@ function DeleteAccountDialogInner({
         onChange={(e) => setConfirmText(e.target.value)}
         disabled={loading}
         placeholder={t("settings.deleteAccountConfirmPlaceholder")}
-        className="mb-4 w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm text-foreground placeholder:text-foreground-secondary/50 focus:outline-none focus:ring-2 focus:ring-error/50 disabled:opacity-50"
+        className="mb-4 w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm text-foreground placeholder:text-foreground-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/50 disabled:opacity-50"
         data-testid="delete-confirm-input"
       />
 

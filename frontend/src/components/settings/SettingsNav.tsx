@@ -26,7 +26,7 @@ export function SettingsNav() {
 
   return (
     <nav
-      className="flex gap-1 overflow-x-auto border-b border-border pb-px"
+      className="scroll-fade-x flex gap-1 overflow-x-auto border-b border-border pb-px md:scroll-fade-none"
       aria-label={t("a11y.settingsSections")}
     >
       {TABS.map((tab) => {

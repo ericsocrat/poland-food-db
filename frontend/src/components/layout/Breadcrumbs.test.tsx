@@ -163,4 +163,18 @@ describe("Breadcrumbs", () => {
       "A very long product name that should be truncated in the UI",
     );
   });
+
+  it("hides breadcrumbs on mobile via hidden md:block classes", () => {
+    render(
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { label: "Current" },
+        ]}
+      />,
+    );
+    const nav = screen.getByRole("navigation", { name: "Breadcrumb" });
+    expect(nav.className).toContain("hidden");
+    expect(nav.className).toContain("md:block");
+  });
 });

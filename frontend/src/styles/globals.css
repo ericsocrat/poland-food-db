@@ -34,6 +34,8 @@
     /* green-800 */
     --color-brand-subtle: #dcfce7;
     /* brand-100 */
+    --color-focus: var(--color-brand);
+    /* semantic alias — focus ring color for all interactive elements */
 
     /* ── Brand Identity (TryVit) ── */
     --color-brand-primary: #1DB954;
@@ -235,6 +237,7 @@
     /* green-500 */
     --color-brand-subtle: #14532d;
     /* green-900 */
+    --color-focus: var(--color-brand);
 
     /* ── Brand Identity (TryVit dark mode) ── */
     --color-brand-primary: #1DB954;
@@ -476,7 +479,7 @@
   }
 
   .input-field {
-    @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5 text-sm text-foreground shadow-sm placeholder:text-foreground-muted focus:border-brand focus:ring-1 focus:ring-brand focus:outline-none;
+    @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5 text-sm text-foreground shadow-sm placeholder:text-foreground-muted focus-visible:border-brand focus-visible:ring-1 focus-visible:ring-brand focus-visible:outline-none;
   }
 
   .card {
@@ -533,7 +536,7 @@
 
 /* ── Global focus-visible indicator for all interactive elements ── */
 *:focus-visible {
-  outline: 2px solid var(--color-brand);
+  outline: 2px solid var(--color-focus);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -707,6 +710,38 @@
 
 .scrollbar-hide::-webkit-scrollbar {
   display: none;
+}
+
+/* ── Fade-edge scroll indicator ── */
+.scroll-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 1.5rem,
+    black calc(100% - 1.5rem),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 1.5rem,
+    black calc(100% - 1.5rem),
+    transparent
+  );
+}
+
+@media (min-width: 768px) {
+  .md\:scroll-fade-none {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:scroll-fade-none {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════

@@ -171,7 +171,7 @@ export default function NutritionSettingsPage() {
                 setStrictDiet(e.target.checked);
                 markDirty();
               }}
-              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+              className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("settings.strictDiet")}
@@ -236,7 +236,7 @@ export default function NutritionSettingsPage() {
                   setStrictAllergen(e.target.checked);
                   markDirty();
                 }}
-                className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+                className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
               />
               <span className="text-sm text-foreground-secondary">
                 {t("settings.strictAllergen")}
@@ -250,7 +250,7 @@ export default function NutritionSettingsPage() {
                   setTreatMayContain(e.target.checked);
                   markDirty();
                 }}
-                className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+                className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
               />
               <span className="text-sm text-foreground-secondary">
                 {t("settings.treatMayContain")}
