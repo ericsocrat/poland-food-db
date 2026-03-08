@@ -1125,7 +1125,14 @@
     "saveSearchName": "Search name",
     "sidebarNavigation": "Sidebar navigation",
     "headerNavigation": "Header navigation",
-    "moreNavigation": "More navigation"
+    "moreNavigation": "More navigation",
+    "mainNavigation": "Main navigation",
+    "settingsSections": "Settings sections",
+    "breadcrumb": "Breadcrumb",
+    "dismiss": "Dismiss",
+    "scoreRadarChart": "Score breakdown radar chart showing weighted contribution of each scoring factor",
+    "scoreRadarChartTitle": "Score Breakdown Radar Chart",
+    "flaggedUser": "Flagged user"
   },
   "print": {
     "button": "Print",

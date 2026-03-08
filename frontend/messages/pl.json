@@ -1125,7 +1125,14 @@
     "saveSearchName": "Nazwa wyszukiwania",
     "sidebarNavigation": "Nawigacja boczna",
     "headerNavigation": "Nawigacja nagłówka",
-    "moreNavigation": "Więcej nawigacji"
+    "moreNavigation": "Więcej nawigacji",
+    "mainNavigation": "Nawigacja główna",
+    "settingsSections": "Sekcje ustawień",
+    "breadcrumb": "Ścieżka nawigacji",
+    "dismiss": "Zamknij",
+    "scoreRadarChart": "Wykres radarowy rozkładu oceny pokazujący ważony wkład każdego czynnika",
+    "scoreRadarChartTitle": "Wykres radarowy rozkładu oceny",
+    "flaggedUser": "Zgłoszony użytkownik"
   },
   "print": {
     "button": "Drukuj",
