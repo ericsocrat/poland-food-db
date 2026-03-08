@@ -49,7 +49,7 @@ export function ForgotPasswordForm() {
 
         {sent ? (
           <div className="space-y-4">
-            <div className="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-800">
+            <div className="rounded-lg border border-success-border bg-success-bg p-4 text-sm text-success-text">
               {t("auth.resetEmailSent")}
             </div>
             <ButtonLink href="/auth/login" fullWidth>
