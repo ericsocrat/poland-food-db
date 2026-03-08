@@ -656,7 +656,8 @@
     "noLists": "Noch keine Listen",
     "remove": "Entfernen",
     "onAvoidList": "Auf Ihrer Vermeidungsliste",
-    "avoid": "Vermeiden"
+    "avoid": "Vermeiden",
+    "moreActions": "Weitere Aktionen"
   },
   "savedSearches": {
     "title": "Gespeicherte Suchen",

@@ -656,7 +656,8 @@
     "noLists": "No lists yet",
     "remove": "remove",
     "onAvoidList": "On your Avoid list",
-    "avoid": "Avoid"
+    "avoid": "Avoid",
+    "moreActions": "More actions"
   },
   "savedSearches": {
     "title": "Saved Searches",

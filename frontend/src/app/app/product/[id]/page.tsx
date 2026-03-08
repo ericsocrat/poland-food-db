@@ -9,6 +9,7 @@ import { PrintButton } from "@/components/common/PrintButton";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { ActionOverflowMenu } from "@/components/product/ActionOverflowMenu";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { AllergenMatrix } from "@/components/product/AllergenMatrix";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
@@ -246,7 +247,7 @@ export default function ProductDetailPage() {
                 size="lg"
               />
               <div className="min-w-0 flex-1">
-                <div className="flex items-start justify-between">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                   <div>
                     <p className="text-lg font-bold text-foreground lg:text-xl">
                       {profile.product.product_name_display ??
@@ -283,8 +284,14 @@ export default function ProductDetailPage() {
                         profile.product.product_name
                       }
                     />
-                    <WatchButton productId={productId} />
-                    <PrintButton />
+                    <span className="hidden sm:contents">
+                      <WatchButton productId={productId} />
+                      <PrintButton />
+                    </span>
+                    <ActionOverflowMenu className="sm:hidden">
+                      <WatchButton productId={productId} />
+                      <PrintButton />
+                    </ActionOverflowMenu>
                   </div>
                 </div>
                 <div className="mt-2 flex items-center gap-2">

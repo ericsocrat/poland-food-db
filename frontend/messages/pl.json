@@ -656,7 +656,8 @@
     "noLists": "Brak list",
     "remove": "Usuń",
     "onAvoidList": "Na liście unikanych",
-    "avoid": "Unikaj"
+    "avoid": "Unikaj",
+    "moreActions": "Więcej akcji"
   },
   "savedSearches": {
     "title": "Zapisane wyszukiwania",
