@@ -874,6 +874,7 @@
     "skipAll": "Pomiń — przejdź do aplikacji",
     "back": "Wstecz",
     "next": "Dalej",
+    "finish": "Zakończ",
     "stepOf": "Krok {current} z {total}",
     "regionTitle": "Gdzie się znajdujesz?",
     "languageLabel": "Preferowany język",
