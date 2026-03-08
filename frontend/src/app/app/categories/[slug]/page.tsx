@@ -6,6 +6,7 @@ import { AllergenChips } from "@/components/common/AllergenChips";
 import { EmptyState } from "@/components/common/EmptyState";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { CategoryListingSkeleton } from "@/components/common/skeletons";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -129,7 +130,12 @@ export default function CategoryListingPage() {
   const totalPages = data ? Math.ceil(data.total_count / PAGE_SIZE) : 0;
   const currentPage = Math.floor(offset / PAGE_SIZE) + 1;
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.categoryListing(slug, sortBy, sortDir, offset) });
+  }, [queryClient, slug, sortBy, sortDir, offset]);
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4">
       {/* Breadcrumbs */}
       <Breadcrumbs
@@ -259,6 +265,7 @@ export default function CategoryListingPage() {
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }
 

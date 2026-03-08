@@ -6,6 +6,7 @@
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { PrintButton } from "@/components/common/PrintButton";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -152,6 +153,10 @@ export default function ProductDetailPage() {
     }
   }, [error, isOnline, productId, profile, queryClient]);
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.productProfile(productId) });
+  }, [queryClient, productId]);
+
   if (isLoading) {
     return <ProductProfileSkeleton />;
   }
@@ -209,6 +214,7 @@ export default function ProductDetailPage() {
   ];
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4 lg:space-y-6">
       <Breadcrumbs
         items={[
@@ -454,6 +460,7 @@ export default function ProductDetailPage() {
         </div>
       </div>
     </div>
+    </PullToRefresh>
   );
 }
 

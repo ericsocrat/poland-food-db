@@ -3,17 +3,18 @@
 // ─── Recipes browse — grid of curated recipe cards with filters ─────────────
 // Issue #53 — Recipes v0
 
-import { useState, useCallback, useMemo } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
-import { browseRecipes } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { RecipeGridSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
+import { RecipeGridSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { RecipeCard } from "@/components/recipes";
+import { browseRecipes } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
-import type { RecipeCategory, RecipeDifficulty, BrowseRecipesFilters } from "@/lib/types";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import type { BrowseRecipesFilters, RecipeCategory, RecipeDifficulty } from "@/lib/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo, useState } from "react";
 
 /* ── Filter options (keys map to i18n) ───────────────────────────────────── */
 
@@ -55,6 +56,10 @@ export default function RecipesBrowsePage() {
     queryClient.invalidateQueries({ queryKey: queryKeys.recipes(filters as Record<string, unknown>) });
   }, [queryClient, filters]);
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.recipes(filters as Record<string, unknown>) });
+  }, [queryClient, filters]);
+
   if (isLoading) return <RecipeGridSkeleton />;
 
   if (error) {
@@ -73,6 +78,7 @@ export default function RecipesBrowsePage() {
   }
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div>
       <Breadcrumbs
         items={[
@@ -131,5 +137,6 @@ export default function RecipesBrowsePage() {
         />
       )}
     </div>
+    </PullToRefresh>
   );
 }

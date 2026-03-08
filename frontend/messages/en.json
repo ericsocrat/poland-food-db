@@ -71,7 +71,10 @@
     "installTitle": "Install TryVit",
     "installDescription": "Add to your home screen for quick access and offline support.",
     "iosInstallHint": "Tap the Share button, then \"Add to Home Screen\".",
-    "dismissInstall": "Dismiss install prompt"
+    "dismissInstall": "Dismiss install prompt",
+    "pullToRefresh": "Pull to refresh",
+    "releaseToRefresh": "Release to refresh",
+    "refreshing": "Refreshing…"
   },
   "notifications": {
     "title": "Push Notifications",
