@@ -778,10 +778,13 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    // Falls back to manual because no devices
+    // Wait for initial camera attempt (no devices → shows error in camera mode)
     await waitFor(() => {
-      expect(screen.getByText("Manual")).toBeInTheDocument();
+      expect(mockListDevices).toHaveBeenCalledTimes(1);
     });
+
+    // Explicitly switch to manual mode first
+    await user.click(screen.getByRole("button", { name: /Manual/ }));
 
     // Click Camera button to switch back
     await user.click(screen.getByRole("button", { name: /Camera/ }));
