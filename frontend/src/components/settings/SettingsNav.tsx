@@ -27,7 +27,7 @@ export function SettingsNav() {
   return (
     <nav
       className="flex gap-1 overflow-x-auto border-b border-border pb-px"
-      aria-label="Settings sections"
+      aria-label={t("a11y.settingsSections")}
     >
       {TABS.map((tab) => {
         const active = isActive(tab);

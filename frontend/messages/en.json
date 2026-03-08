@@ -349,7 +349,9 @@
     "title": "My Lists",
     "newList": "+ New List",
     "namePlaceholder": "List name",
+    "nameLabel": "List name",
     "descriptionPlaceholder": "Description (optional)",
+    "descriptionLabel": "List description",
     "creating": "Creating…",
     "createList": "Create List",
     "emptyState": "No lists yet. Create one to start organizing products.",
@@ -613,7 +615,12 @@
     "deleteAccountConfirmPlaceholder": "Type DELETE here",
     "deleteAccountProcessing": "Deleting account…",
     "deleteAccountSuccess": "Your account has been deleted.",
-    "deleteAccountError": "Failed to delete account. Please try again later."
+    "deleteAccountError": "Failed to delete account. Please try again later.",
+    "unsavedTitle": "Unsaved changes",
+    "unsavedDescription": "You have unsaved changes. If you leave now, your changes will be lost.",
+    "unsavedDiscard": "Discard changes",
+    "unsavedStay": "Stay on page",
+    "unsavedIndicator": "Unsaved changes"
   },
   "healthProfile": {
     "title": "Health Profiles",
@@ -659,7 +666,8 @@
     "noLists": "No lists yet",
     "remove": "remove",
     "onAvoidList": "On your Avoid list",
-    "avoid": "Avoid"
+    "avoid": "Avoid",
+    "moreActions": "More actions"
   },
   "savedSearches": {
     "title": "Saved Searches",
@@ -709,7 +717,26 @@
     "continueWithGoogle": "Continue with Google",
     "continueWithApple": "Continue with Apple",
     "orContinueWithEmail": "or continue with email",
-    "socialLoginError": "Could not sign in with {provider}. Please try again."
+    "socialLoginError": "Could not sign in with {provider}. Please try again.",
+    "forgotPassword": "Forgot password?",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "invalidCredentials": "Invalid email or password. Please try again.",
+    "tooManyAttempts": "Too many login attempts. Please wait and try again.",
+    "resetPasswordTitle": "Reset password",
+    "resetPasswordSubtitle": "Enter your email and we'll send you a link to reset your password.",
+    "sendResetLink": "Send reset link",
+    "sendingResetLink": "Sending\u2026",
+    "resetEmailSent": "If an account exists with that email, you'll receive a password reset link shortly.",
+    "backToLogin": "Back to login",
+    "updatePasswordTitle": "Update your password",
+    "updatePasswordSubtitle": "Enter a new password for your account.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm password",
+    "updatePassword": "Update password",
+    "updatingPassword": "Updating\u2026",
+    "passwordUpdated": "Password updated successfully.",
+    "passwordMismatch": "Passwords do not match."
   },
   "layout": {
     "appName": "TryVit",
@@ -1128,7 +1155,14 @@
     "saveSearchName": "Search name",
     "sidebarNavigation": "Sidebar navigation",
     "headerNavigation": "Header navigation",
-    "moreNavigation": "More navigation"
+    "moreNavigation": "More navigation",
+    "mainNavigation": "Main navigation",
+    "settingsSections": "Settings sections",
+    "breadcrumb": "Breadcrumb",
+    "dismiss": "Dismiss",
+    "scoreRadarChart": "Score breakdown radar chart showing weighted contribution of each scoring factor",
+    "scoreRadarChartTitle": "Score Breakdown Radar Chart",
+    "flaggedUser": "Flagged user"
   },
   "print": {
     "button": "Print",

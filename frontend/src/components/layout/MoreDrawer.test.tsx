@@ -166,11 +166,17 @@ describe("MoreDrawer", () => {
     expect(screen.getByText("More")).toBeInTheDocument();
   });
 
-  // ─── 48px touch targets ───────────────────────────────────────────────
+  // ─── Touch targets ─────────────────────────────────────────────────
 
   it("nav items have min-h-[48px] for touch targets", () => {
     render(<MoreDrawer open={true} onClose={onClose} />);
     const categoriesLink = screen.getByText("Categories").closest("a");
     expect(categoriesLink?.className).toContain("min-h-[48px]");
+  });
+
+  it("applies touch-target class to close button", () => {
+    render(<MoreDrawer open={true} onClose={onClose} />);
+    const closeBtn = screen.getByLabelText("Close");
+    expect(closeBtn.className).toContain("touch-target");
   });
 });

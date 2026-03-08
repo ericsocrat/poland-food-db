@@ -9,6 +9,7 @@
 // The nutrient density bonus axis is rendered with a green accent.
 // The polygon area immediately communicates the product's risk profile at a glance.
 
+import { useTranslation } from "@/lib/i18n";
 import type { ScoreBreakdownFactor } from "@/lib/types";
 
 // ── Factor metadata (order determines axis placement) ────────────────────────
@@ -82,6 +83,8 @@ interface ScoreRadarChartProps {
 }
 
 export function ScoreRadarChart({ breakdown }: ScoreRadarChartProps) {
+  const { t } = useTranslation();
+
   // Build a lookup map: factor name → weighted value
   const valueMap = new Map(breakdown.map((f) => [f.name, f.weighted]));
 
@@ -98,9 +101,9 @@ export function ScoreRadarChart({ breakdown }: ScoreRadarChartProps) {
     <svg
       viewBox={`0 0 ${CHART_SIZE} ${CHART_SIZE}`}
       className="mx-auto h-56 w-56"
-      aria-label="Score breakdown radar chart showing weighted contribution of each scoring factor"
+      aria-label={t("a11y.scoreRadarChart")}
     >
-      <title>Score Breakdown Radar Chart</title>
+      <title>{t("a11y.scoreRadarChartTitle")}</title>
 
       {/* Concentric reference rings */}
       {Array.from({ length: RINGS }, (_, ring) => {

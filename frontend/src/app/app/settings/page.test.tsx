@@ -6,7 +6,28 @@ import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ProfileSettingsPage from "./page";
 
+// ─── Polyfills ──────────────────────────────────────────────────────────────
+
+HTMLDialogElement.prototype.showModal ??= function (this: HTMLDialogElement) {
+  this.setAttribute("open", "");
+};
+HTMLDialogElement.prototype.close ??= function (this: HTMLDialogElement) {
+  this.removeAttribute("open");
+};
+
 // ─── Mocks ──────────────────────────────────────────────────────────────────
+
+const mockConfirmNav = vi.fn();
+const mockCancelNav = vi.fn();
+let mockShowDialog = false;
+
+vi.mock("@/hooks/use-unsaved-changes", () => ({
+  useUnsavedChanges: () => ({
+    showConfirmDialog: mockShowDialog,
+    confirmNavigation: mockConfirmNav,
+    cancelNavigation: mockCancelNav,
+  }),
+}));
 
 vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({
@@ -62,6 +83,7 @@ beforeEach(() => {
   useLanguageStore.getState().reset();
   localStorage.clear();
   mockGetPrefs.mockResolvedValue({ ok: true, data: mockPrefsData });
+  mockShowDialog = false;
 });
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -241,6 +263,44 @@ describe("ProfileSettingsPage", () => {
       expect(showToast).toHaveBeenCalledWith(
         expect.objectContaining({ type: "error", message: "Save failed" }),
       );
+    });
+  });
+
+  // ─── Unsaved changes integration ────────────────────────────────────────
+
+  it("shows unsaved changes indicator when dirty", async () => {
+    render(<ProfileSettingsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByText("Deutschland")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Deutschland"));
+
+    expect(screen.getByText("Unsaved changes")).toBeInTheDocument();
+  });
+
+  it("does not show unsaved indicator when clean", async () => {
+    render(<ProfileSettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("heading", { name: /Profile & Preferences/i }),
+      ).toBeInTheDocument();
+    });
+
+    expect(screen.queryByText("Unsaved changes")).not.toBeInTheDocument();
+  });
+
+  it("shows discard confirmation dialog when showConfirmDialog is true", async () => {
+    mockShowDialog = true;
+    render(<ProfileSettingsPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Unsaved changes", { selector: "h3" }),
+      ).toBeInTheDocument();
     });
   });
 });
