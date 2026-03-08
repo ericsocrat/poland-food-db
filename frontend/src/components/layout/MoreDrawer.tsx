@@ -170,7 +170,7 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full p-1.5 text-foreground-secondary hover:bg-surface-muted hover:text-foreground transition-colors"
+            className="touch-target rounded-full p-1.5 text-foreground-secondary hover:bg-surface-muted hover:text-foreground transition-colors"
             aria-label={t("common.close")}
           >
             <Icon icon={X} size="md" />

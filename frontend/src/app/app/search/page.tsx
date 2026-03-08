@@ -218,6 +218,7 @@ export default function SearchPage() {
           { labelKey: "nav.search" },
         ]}
       />
+      <h1 className="sr-only">{t("search.title")}</h1>
       <div className="flex lg:gap-6">
         {/* Filter sidebar (desktop) */}
         <FilterPanel

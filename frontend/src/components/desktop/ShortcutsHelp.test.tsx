@@ -88,4 +88,12 @@ describe("ShortcutsHelp", () => {
     fireEvent.click(screen.getByText("Keyboard Shortcuts"));
     expect(onClose).not.toHaveBeenCalled();
   });
+
+  // ─── Touch target a11y ──────────────────────────────────────────────
+
+  it("applies touch-target-expanded to close button", () => {
+    render(<ShortcutsHelp open={true} onClose={onClose} />);
+    const closeBtn = screen.getByLabelText("Close");
+    expect(closeBtn.className).toContain("touch-target-expanded");
+  });
 });

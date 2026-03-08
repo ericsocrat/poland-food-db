@@ -51,7 +51,7 @@ export function ComparisonTray() {
           <button
             type="button"
             onClick={() => setCollapsed((c) => !c)}
-            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded text-foreground-secondary transition-colors hover:bg-surface-subtle hover:text-foreground"
+            className="touch-target-expanded flex h-7 w-7 cursor-pointer items-center justify-center rounded text-foreground-secondary transition-colors hover:bg-surface-subtle hover:text-foreground"
             aria-label={
               collapsed
                 ? t("comparisonTray.expand")
@@ -67,7 +67,7 @@ export function ComparisonTray() {
           <button
             type="button"
             onClick={clear}
-            className="flex h-7 w-7 cursor-pointer items-center justify-center rounded text-foreground-secondary transition-colors hover:bg-red-50 hover:text-red-600"
+            className="touch-target-expanded flex h-7 w-7 cursor-pointer items-center justify-center rounded text-foreground-secondary transition-colors hover:bg-red-50 hover:text-red-600"
             aria-label={t("compare.clearSelection")}
           >
             <X size={14} aria-hidden="true" />
@@ -90,7 +90,7 @@ export function ComparisonTray() {
                 <button
                   type="button"
                   onClick={() => remove(id)}
-                  className="flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded text-foreground-secondary/60 transition-colors hover:bg-red-50 hover:text-red-600"
+                  className="touch-target-expanded flex h-6 w-6 shrink-0 cursor-pointer items-center justify-center rounded text-foreground-secondary/60 transition-colors hover:bg-red-50 hover:text-red-600"
                   aria-label={t("compare.removeFromComparison")}
                 >
                   <X size={12} aria-hidden="true" />

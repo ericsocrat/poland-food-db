@@ -633,4 +633,33 @@ describe("ImageLightbox", () => {
     fireEvent.keyDown(document, { key: "=" });
     expect(screen.getByLabelText("imageLightbox.zoomOut")).not.toBeDisabled();
   });
+
+  // ─── Touch target a11y ───────────────────────────────────────────────
+
+  it("applies touch-target class to toolbar and navigation buttons", () => {
+    render(
+      <ImageLightbox
+        images={makeImages()}
+        initialIndex={0}
+        productName="Test Product"
+        onClose={onClose}
+      />,
+    );
+
+    expect(screen.getByLabelText("imageLightbox.zoomIn").className).toContain(
+      "touch-target",
+    );
+    expect(screen.getByLabelText("imageLightbox.zoomOut").className).toContain(
+      "touch-target",
+    );
+    expect(
+      screen.getByLabelText("common.close").className,
+    ).toContain("touch-target");
+    expect(
+      screen.getByLabelText("imageLightbox.previous").className,
+    ).toContain("touch-target");
+    expect(
+      screen.getByLabelText("imageLightbox.next").className,
+    ).toContain("touch-target");
+  });
 });

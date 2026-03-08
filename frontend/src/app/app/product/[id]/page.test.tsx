@@ -70,6 +70,20 @@ vi.mock("@/components/product/WatchButton", () => ({
   WatchButton: () => <span data-testid="watch-button" />,
 }));
 
+vi.mock("@/components/product/ActionOverflowMenu", () => ({
+  ActionOverflowMenu: ({
+    children,
+    className,
+  }: {
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <div data-testid="action-overflow-menu" className={className}>
+      {children}
+    </div>
+  ),
+}));
+
 vi.mock("@/components/product/ScoreHistoryPanel", () => ({
   ScoreHistoryPanel: () => <div data-testid="score-history-panel" />,
 }));

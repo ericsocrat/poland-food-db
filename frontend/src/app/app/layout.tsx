@@ -19,7 +19,9 @@ import { InstallPrompt } from "@/components/pwa/InstallPrompt";
 import { OfflineIndicator } from "@/components/pwa/OfflineIndicator";
 import { translate } from "@/lib/i18n";
 import { createServerSupabaseClient } from "@/lib/supabase/server";
+import type { SupportedLanguage } from "@/stores/language-store";
 import { AlertTriangle } from "lucide-react";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function AppLayout({
@@ -41,6 +43,16 @@ export default async function AppLayout({
   // Transient RPC / network failure — show error instead of wrongly redirecting
   // an onboarded user back to region selection.
   if (error || !data) {
+    // Detect locale from Accept-Language since user preferences are unavailable.
+    const headerList = await headers();
+    const accept = headerList.get("accept-language") ?? "";
+    const locale: SupportedLanguage =
+      accept.startsWith("pl") || accept.includes(",pl")
+        ? "pl"
+        : accept.startsWith("de") || accept.includes(",de")
+          ? "de"
+          : "en";
+
     return (
       <div className="flex min-h-screen flex-col items-center justify-center px-4 text-center">
         <AlertTriangle
@@ -49,13 +61,13 @@ export default async function AppLayout({
           className="mb-2 text-amber-500"
         />
         <h1 className="mb-1 text-lg font-bold text-foreground">
-          {translate("en", "layout.errorTitle")}
+          {translate(locale, "layout.errorTitle")}
         </h1>
         <p className="mb-6 text-sm text-foreground-secondary">
-          {translate("en", "layout.errorMessage")}
+          {translate(locale, "layout.errorMessage")}
         </p>
         <a href="/app/search" className="btn-primary inline-block px-6">
-          {translate("en", "common.tryAgain")}
+          {translate(locale, "common.tryAgain")}
         </a>
       </div>
     );

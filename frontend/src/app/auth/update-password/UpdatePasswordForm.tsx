@@ -1,57 +1,47 @@
 "use client";
 
-import { SocialLoginButtons } from "@/components/auth/SocialLoginButtons";
 import { Logo } from "@/components/common/Logo";
 import { SkipLink } from "@/components/common/SkipLink";
 import { useTranslation } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
 import { showToast } from "@/lib/toast";
 import type { FormSubmitEvent } from "@/lib/types";
-import { sanitizeRedirect } from "@/lib/validation";
 import { Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-function classifyAuthError(message: string): string {
-  const lower = message.toLowerCase();
-  if (lower.includes("rate") || lower.includes("too many")) {
-    return "auth.tooManyAttempts";
-  }
-  return "auth.invalidCredentials";
-}
-
-export function LoginForm() {
+export function UpdatePasswordForm() {
   const router = useRouter();
-  const searchParams = useSearchParams();
   const supabase = createClient();
-  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const { t } = useTranslation();
 
-  const reason = searchParams.get("reason");
-  const redirect = sanitizeRedirect(searchParams.get("redirect"));
-
-  async function handleLogin(e: FormSubmitEvent) {
+  async function handleSubmit(e: FormSubmitEvent) {
     e.preventDefault();
+
+    if (password !== confirmPassword) {
+      showToast({ type: "error", messageKey: "auth.passwordMismatch" });
+      return;
+    }
+
     setLoading(true);
 
-    const { error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
+    const { error } = await supabase.auth.updateUser({ password });
 
     setLoading(false);
 
     if (error) {
-      showToast({ type: "error", messageKey: classifyAuthError(error.message) });
+      showToast({ type: "error", message: error.message });
       return;
     }
 
-    router.push(redirect);
-    router.refresh();
+    showToast({ type: "success", messageKey: "auth.passwordUpdated" });
+    router.push("/auth/login");
   }
 
   return (
@@ -65,51 +55,26 @@ export function LoginForm() {
           {t("landing.tagline")}
         </p>
         <h1 className="mb-2 text-center text-2xl font-bold text-foreground">
-          {t("auth.welcomeBack")}
+          {t("auth.updatePasswordTitle")}
         </h1>
         <p className="mb-8 text-center text-sm text-foreground-secondary">
-          {t("auth.signInSubtitle")}
+          {t("auth.updatePasswordSubtitle")}
         </p>
 
-        {reason === "expired" && (
-          <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800">
-            {t("auth.sessionExpiredBanner")}
-          </div>
-        )}
-
-        <SocialLoginButtons />
-
-        <form onSubmit={handleLogin} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
-              htmlFor="email"
+              htmlFor="new-password"
               className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
-              {t("auth.email")}
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input-field"
-              placeholder={t("auth.emailPlaceholder")}
-            />
-          </div>
-
-          <div>
-            <label
-              htmlFor="password"
-              className="mb-1 block text-sm font-medium text-foreground-secondary"
-            >
-              {t("auth.password")}
+              {t("auth.newPassword")}
             </label>
             <div className="relative">
               <input
-                id="password"
+                id="new-password"
                 type={showPassword ? "text" : "password"}
                 required
+                minLength={6}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="input-field pr-10"
@@ -131,13 +96,41 @@ export function LoginForm() {
                 )}
               </button>
             </div>
-            <div className="mt-1 text-right">
-              <Link
-                href="/auth/forgot-password"
-                className="text-xs font-medium text-brand hover:text-brand-hover"
+          </div>
+
+          <div>
+            <label
+              htmlFor="confirm-password"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
+            >
+              {t("auth.confirmPassword")}
+            </label>
+            <div className="relative">
+              <input
+                id="confirm-password"
+                type={showConfirmPassword ? "text" : "password"}
+                required
+                minLength={6}
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="input-field pr-10"
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword((prev) => !prev)}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-foreground-muted hover:text-foreground-secondary"
+                aria-label={
+                  showConfirmPassword
+                    ? t("auth.hidePassword")
+                    : t("auth.showPassword")
+                }
               >
-                {t("auth.forgotPassword")}
-              </Link>
+                {showConfirmPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
             </div>
           </div>
 
@@ -146,17 +139,18 @@ export function LoginForm() {
             disabled={loading}
             className="btn-primary w-full"
           >
-            {loading ? t("auth.signingIn") : t("auth.signIn")}
+            {loading
+              ? t("auth.updatingPassword")
+              : t("auth.updatePassword")}
           </button>
         </form>
 
         <p className="mt-6 text-center text-sm text-foreground-secondary">
-          {t("auth.noAccount")}{" "}
           <Link
-            href="/auth/signup"
+            href="/auth/login"
             className="font-medium text-brand hover:text-brand-hover"
           >
-            {t("auth.signUp")}
+            {t("auth.backToLogin")}
           </Link>
         </p>
       </div>

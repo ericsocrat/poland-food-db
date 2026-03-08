@@ -90,8 +90,8 @@ describe("TrustBadge", () => {
   it("uses gray classes for low trust (not red)", () => {
     render(<TrustBadge trustScore={0.2} />);
     const badge = screen.getByRole("status");
-    expect(badge.className).toContain("text-gray-500");
-    expect(badge.className).toContain("bg-gray-100");
+    expect(badge.className).toContain("text-foreground-muted");
+    expect(badge.className).toContain("bg-surface-muted");
     // Must NOT use red (unverified is uncertain, not alarming)
     expect(badge.className).not.toContain("text-red");
     expect(badge.className).not.toContain("bg-red");

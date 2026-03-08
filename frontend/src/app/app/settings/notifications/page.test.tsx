@@ -40,8 +40,8 @@ vi.mock("@/lib/toast", () => ({
 
 // Push manager — default to unsupported (push tests skipped in jsdom)
 vi.mock("@/lib/push-manager", () => ({
-  isPushSupported: () => false,
-  getNotificationPermission: () => "default" as NotificationPermission,
+  isPushSupported: vi.fn().mockReturnValue(false),
+  getNotificationPermission: vi.fn().mockReturnValue("default" as NotificationPermission),
   requestNotificationPermission: vi.fn().mockResolvedValue("granted"),
   subscribeToPush: vi.fn().mockResolvedValue(null),
   unsubscribeFromPush: vi.fn().mockResolvedValue(undefined),
@@ -339,6 +339,174 @@ describe("NotificationSettingsPage", () => {
           p_preferred_language: "de",
         }),
       );
+    });
+  });
+
+  // ─── Push Notification Flows ──────────────────────────────────────────────
+
+  describe("when push is supported", () => {
+    beforeEach(async () => {
+      const pushManager = await import("@/lib/push-manager");
+      vi.mocked(pushManager.isPushSupported).mockReturnValue(true);
+      vi.mocked(pushManager.getNotificationPermission).mockReturnValue(
+        "default",
+      );
+      vi.mocked(pushManager.getCurrentPushSubscription).mockResolvedValue(null);
+    });
+
+    it("renders push notifications section", async () => {
+      render(<NotificationSettingsPage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("push-notifications-section"),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("renders enable button when permission is default", async () => {
+      render(<NotificationSettingsPage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(screen.getByTestId("push-toggle-button")).toBeInTheDocument();
+      });
+    });
+
+    it("renders denied message when permission is denied", async () => {
+      const pushManager = await import("@/lib/push-manager");
+      vi.mocked(pushManager.getNotificationPermission).mockReturnValue(
+        "denied",
+      );
+
+      render(<NotificationSettingsPage />, { wrapper: createWrapper() });
+
+      await waitFor(() => {
+        expect(
+          screen.getByTestId("push-denied-message"),
+        ).toBeInTheDocument();
+      });
+    });
+
+    it("enables push when permission is granted", async () => {
+      const pushManager = await import("@/lib/push-manager");
+      const { showToast } = await import("@/lib/toast");
+      const mockSub = { endpoint: "https://example.com/push" } as PushSubscription;
+
+      vi.mocked(pushManager.requestNotificationPermission).mockResolvedValue(
+        "granted",
+      );
+      vi.mocked(pushManager.subscribeToPush).mockResolvedValue(mockSub);
+      vi.mocked(pushManager.extractSubscriptionData).mockReturnValue({
+        endpoint: "https://example.com/push",
+        p256dh: "key1",
+        auth: "key2",
+      });
+      vi.stubEnv("NEXT_PUBLIC_VAPID_PUBLIC_KEY", "test-vapid-key");
+
+      render(<NotificationSettingsPage />, { wrapper: createWrapper() });
+      const user = userEvent.setup();
+
+      await waitFor(() => {
+        expect(screen.getByTestId("push-toggle-button")).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByTestId("push-toggle-button"));
+
+      await waitFor(() => {
+        expect(pushManager.subscribeToPush).toHaveBeenCalledWith(
+          "test-vapid-key",
+        );
+      });
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "success" }),
+      );
+
+      vi.unstubAllEnvs();
+    });
+
+    it("shows error toast when permission is denied by user", async () => {
+      const pushManager = await import("@/lib/push-manager");
+      const { showToast } = await import("@/lib/toast");
+
+      vi.mocked(pushManager.requestNotificationPermission).mockResolvedValue(
+        "denied",
+      );
+
+      render(<NotificationSettingsPage />, { wrapper: createWrapper() });
+      const user = userEvent.setup();
+
+      await waitFor(() => {
+        expect(screen.getByTestId("push-toggle-button")).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByTestId("push-toggle-button"));
+
+      await waitFor(() => {
+        expect(showToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: "error",
+            messageKey: "notifications.permissionDenied",
+          }),
+        );
+      });
+    });
+
+    it("disables push when already enabled", async () => {
+      const pushManager = await import("@/lib/push-manager");
+      const { showToast } = await import("@/lib/toast");
+      const mockSub = { endpoint: "https://example.com/push" } as PushSubscription;
+
+      vi.mocked(pushManager.getCurrentPushSubscription).mockResolvedValue(
+        mockSub,
+      );
+      vi.mocked(pushManager.extractSubscriptionData).mockReturnValue({
+        endpoint: "https://example.com/push",
+        p256dh: "key1",
+        auth: "key2",
+      });
+
+      render(<NotificationSettingsPage />, { wrapper: createWrapper() });
+      const user = userEvent.setup();
+
+      await waitFor(() => {
+        expect(screen.getByTestId("push-toggle-button")).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByTestId("push-toggle-button"));
+
+      await waitFor(() => {
+        expect(pushManager.unsubscribeFromPush).toHaveBeenCalled();
+      });
+      expect(showToast).toHaveBeenCalledWith(
+        expect.objectContaining({ type: "success" }),
+      );
+    });
+
+    it("shows error toast when toggle push throws", async () => {
+      const pushManager = await import("@/lib/push-manager");
+      const { showToast } = await import("@/lib/toast");
+
+      vi.mocked(pushManager.requestNotificationPermission).mockRejectedValue(
+        new Error("network error"),
+      );
+
+      render(<NotificationSettingsPage />, { wrapper: createWrapper() });
+      const user = userEvent.setup();
+
+      await waitFor(() => {
+        expect(screen.getByTestId("push-toggle-button")).toBeInTheDocument();
+      });
+
+      await user.click(screen.getByTestId("push-toggle-button"));
+
+      await waitFor(() => {
+        expect(showToast).toHaveBeenCalledWith(
+          expect.objectContaining({
+            type: "error",
+            messageKey: "common.error",
+          }),
+        );
+      });
     });
   });
 });

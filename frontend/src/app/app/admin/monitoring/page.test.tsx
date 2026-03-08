@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { HealthCheckResponse } from "@/app/api/health/route";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { render, screen, waitFor, within } from "@testing-library/react";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { HealthCheckResponse } from "@/app/api/health/route";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -269,5 +269,75 @@ describe("AdminMonitoringPage", () => {
 
     const mvCard = screen.getByTestId("mv-mv_ingredient_frequency");
     expect(mvCard).toHaveTextContent("No");
+  });
+
+  // ─── RowCountCard utilization thresholds ────────────────────────────
+
+  it("shows unhealthy status when utilization > 95%", async () => {
+    mockFetchResponse = {
+      ...healthyData,
+      status: "unhealthy",
+      checks: {
+        ...healthyData.checks,
+        row_counts: {
+          products: 14500,
+          ceiling: 15000,
+          utilization_pct: 96.7,
+        },
+      },
+    };
+    setupFetchMock();
+
+    render(<AdminMonitoringPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("unhealthy")).toBeInTheDocument();
+    });
+
+    const card = within(screen.getByTestId("row-counts"));
+    expect(card.getByText("96.7%")).toBeInTheDocument();
+  });
+
+  it("shows degraded row count when utilization > 80%", async () => {
+    mockFetchResponse = {
+      ...healthyData,
+      status: "degraded",
+      checks: {
+        ...healthyData.checks,
+        row_counts: {
+          products: 12500,
+          ceiling: 15000,
+          utilization_pct: 83.3,
+        },
+      },
+    };
+    setupFetchMock();
+
+    render(<AdminMonitoringPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByTestId("row-counts")).toBeInTheDocument();
+    });
+
+    const card = within(screen.getByTestId("row-counts"));
+    expect(card.getByText("83.3%")).toBeInTheDocument();
+  });
+
+  // ─── StatusIcon default branch ──────────────────────────────────────
+
+  it("renders fallback icon for unknown status", async () => {
+    mockFetchResponse = {
+      ...healthyData,
+      status: "pending" as HealthCheckResponse["status"],
+    };
+    setupFetchMock();
+
+    render(<AdminMonitoringPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("pending")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Overall Status")).toBeInTheDocument();
   });
 });
