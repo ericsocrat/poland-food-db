@@ -16,6 +16,9 @@ const QA_PRODUCT_ID = process.env.QA_PRODUCT_ID ?? "1";
 module.exports = {
   ci: {
     collect: {
+      startServerCommand: "cd frontend && npm run start -- -p 3000",
+      startServerReadyPattern: "Ready in",
+      startServerReadyTimeout: 30000,
       url: [
         "http://localhost:3000/auth/login",
         "http://localhost:3000/app",
@@ -27,8 +30,20 @@ module.exports = {
         args: ["--no-sandbox", "--disable-gpu"],
       },
       settings: {
-        preset: "desktop",
+        formFactor: "desktop",
         chromeFlags: "--no-sandbox --headless --disable-gpu",
+        onlyCategories: [
+          "performance",
+          "accessibility",
+          "best-practices",
+        ],
+        screenEmulation: {
+          mobile: false,
+          width: 1350,
+          height: 940,
+          deviceScaleFactor: 1,
+          disabled: false,
+        },
         // Desktop uses default throttling (no simulated mobile throttling)
         skipAudits: ["uses-http2"],
       },

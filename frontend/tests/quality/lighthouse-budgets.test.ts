@@ -49,14 +49,32 @@ describe("Lighthouse CI Configuration", () => {
       expect(mobileConfig.ci.collect.numberOfRuns).toBe(3);
     });
 
+    it("starts the server automatically", () => {
+      expect(mobileConfig.ci.collect.startServerCommand).toBe(
+        "cd frontend && npm run start -- -p 3000"
+      );
+      expect(mobileConfig.ci.collect.startServerReadyPattern).toBe(
+        "Ready in"
+      );
+      expect(mobileConfig.ci.collect.startServerReadyTimeout).toBe(30000);
+    });
+
     it("uses puppeteer auth script", () => {
       expect(mobileConfig.ci.collect.puppeteerScript).toBe(
         "./frontend/tests/quality/lighthouse-auth.js"
       );
     });
 
-    it("uses mobile preset (perf)", () => {
-      expect(getSettings(mobileConfig).preset).toBe("perf");
+    it("uses mobile formFactor", () => {
+      expect(getSettings(mobileConfig).formFactor).toBe("mobile");
+    });
+
+    it("runs only performance, accessibility, and best-practices categories", () => {
+      expect(getSettings(mobileConfig).onlyCategories).toEqual([
+        "performance",
+        "accessibility",
+        "best-practices",
+      ]);
     });
 
     it("applies simulated throttling", () => {
@@ -86,14 +104,39 @@ describe("Lighthouse CI Configuration", () => {
       expect(desktopConfig.ci.collect.numberOfRuns).toBe(3);
     });
 
+    it("starts the server automatically", () => {
+      expect(desktopConfig.ci.collect.startServerCommand).toBe(
+        "cd frontend && npm run start -- -p 3000"
+      );
+      expect(desktopConfig.ci.collect.startServerReadyPattern).toBe(
+        "Ready in"
+      );
+      expect(desktopConfig.ci.collect.startServerReadyTimeout).toBe(30000);
+    });
+
     it("uses puppeteer auth script", () => {
       expect(desktopConfig.ci.collect.puppeteerScript).toBe(
         "./frontend/tests/quality/lighthouse-auth.js"
       );
     });
 
-    it("uses desktop preset", () => {
-      expect(getSettings(desktopConfig).preset).toBe("desktop");
+    it("uses desktop formFactor", () => {
+      expect(getSettings(desktopConfig).formFactor).toBe("desktop");
+    });
+
+    it("runs only performance, accessibility, and best-practices categories", () => {
+      expect(getSettings(desktopConfig).onlyCategories).toEqual([
+        "performance",
+        "accessibility",
+        "best-practices",
+      ]);
+    });
+
+    it("configures desktop screen emulation", () => {
+      const screen = getSettings(desktopConfig).screenEmulation as Record<string, unknown>;
+      expect(screen.mobile).toBe(false);
+      expect(screen.width).toBe(1350);
+      expect(screen.height).toBe(940);
     });
 
     it("does NOT apply simulated mobile throttling", () => {
@@ -162,13 +205,6 @@ describe("Lighthouse CI Configuration", () => {
       ]);
     });
 
-    it("enforces PWA >= 0.90 (mobile only)", () => {
-      expect(assertions["categories:pwa"]).toEqual([
-        "error",
-        { minScore: 0.9 },
-      ]);
-    });
-
     it("enforces CLS < 0.1", () => {
       expect(assertions["cumulative-layout-shift"]).toEqual([
         "error",
@@ -205,10 +241,6 @@ describe("Lighthouse CI Configuration", () => {
         "error",
         { minScore: 0.9 },
       ]);
-    });
-
-    it("does NOT enforce PWA on desktop", () => {
-      expect(assertions["categories:pwa"]).toBeUndefined();
     });
 
     it("enforces CLS < 0.1", () => {
