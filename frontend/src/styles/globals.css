@@ -709,6 +709,38 @@
   display: none;
 }
 
+/* ── Fade-edge scroll indicator ── */
+.scroll-fade-x {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 1.5rem,
+    black calc(100% - 1.5rem),
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 1.5rem,
+    black calc(100% - 1.5rem),
+    transparent
+  );
+}
+
+@media (min-width: 768px) {
+  .md\:scroll-fade-none {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+
+@media (min-width: 1024px) {
+  .lg\:scroll-fade-none {
+    mask-image: none;
+    -webkit-mask-image: none;
+  }
+}
+
 /* ══════════════════════════════════════════════════════════════════════════
    Print Styles — A4-optimized for product profile + compare pages
    All rules scoped to @media print so screen layout is unaffected.

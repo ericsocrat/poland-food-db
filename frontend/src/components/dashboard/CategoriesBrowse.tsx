@@ -77,7 +77,7 @@ export function CategoriesBrowse() {
       {isLoading && <CategoriesBrowseSkeleton />}
       {!isLoading && data && data.length > 0 && (
         <ul
-          className="scrollbar-hide flex list-none gap-3 overflow-x-auto pb-1 lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
+          className="scroll-fade-x scrollbar-hide flex list-none gap-3 overflow-x-auto pb-1 lg:scroll-fade-none lg:grid lg:grid-cols-3 lg:overflow-visible lg:pb-0"
           aria-label={t("dashboard.categoriesTitle")}
         >
           {data.map((cat) => (
