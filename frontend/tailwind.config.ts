@@ -121,6 +121,11 @@ const config: Config = {
         info: "var(--color-info)",
       },
 
+      // ── Font sizes ──
+      fontSize: {
+        xxs: ["0.6875rem", { lineHeight: "1rem" }], // 11px — minimum readable for badges/chips
+      },
+
       // ── Border colors ──
       borderColor: {
         DEFAULT: "var(--color-border)",

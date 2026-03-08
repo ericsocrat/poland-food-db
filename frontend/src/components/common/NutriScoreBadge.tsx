@@ -65,7 +65,7 @@ const STRIP_LETTER_SIZE: Record<
   "md" | "lg",
   { active: string; inactive: string }
 > = {
-  md: { active: "h-7 w-7 text-sm", inactive: "h-5 w-5 text-[10px]" },
+  md: { active: "h-7 w-7 text-sm", inactive: "h-5 w-5 text-xxs" },
   lg: { active: "h-9 w-9 text-base", inactive: "h-7 w-7 text-xs" },
 };
 

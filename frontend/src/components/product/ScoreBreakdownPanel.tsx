@@ -9,15 +9,15 @@
 
 "use client";
 
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
-import { getScoreExplanation } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { useTranslation } from "@/lib/i18n";
 import { Skeleton } from "@/components/common/Skeleton";
-import { BarChart3, AlertTriangle, Clock, Leaf } from "lucide-react";
+import { getScoreExplanation } from "@/lib/api";
+import { useTranslation } from "@/lib/i18n";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
 import type { ScoreExplanation } from "@/lib/types";
+import { useQuery } from "@tanstack/react-query";
+import { AlertTriangle, BarChart3, Clock, Leaf } from "lucide-react";
+import { useState } from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -183,7 +183,7 @@ function BreakdownContent({
             </span>
           </div>
           {bonus.components && (
-            <div className="mt-1 flex gap-3 text-[10px] text-green-600 dark:text-green-500">
+            <div className="mt-1 flex gap-3 text-xs text-green-600 dark:text-green-500">
               {bonus.components.protein_bonus > 0 && (
                 <span>
                   {t("tooltip.scoreBreakdown.proteinBonus", {
@@ -239,7 +239,7 @@ function BreakdownContent({
       {/* Scoring model provenance */}
       {(explanation.model_version || explanation.scored_at) && (
         <div
-          className="flex items-center gap-2 pt-1 text-[10px] text-foreground-muted"
+          className="flex items-center gap-2 pt-1 text-xs text-foreground-muted"
           data-testid="score-provenance"
         >
           {explanation.model_version && (
