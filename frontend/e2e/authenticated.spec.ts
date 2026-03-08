@@ -52,7 +52,7 @@ test.describe("Signup form", () => {
       page.getByRole("heading", { name: /create your account/i }),
     ).toBeVisible();
     await expect(page.getByLabel("Email")).toBeVisible();
-    await expect(page.getByLabel("Password")).toBeVisible();
+    await expect(page.getByLabel("Password", { exact: true })).toBeVisible();
     await expect(
       page.getByRole("button", { name: /sign up/i }),
     ).toBeVisible();
@@ -61,7 +61,7 @@ test.describe("Signup form", () => {
   test("shows validation for short password", async ({ page }) => {
     await page.goto("/auth/signup");
     await page.getByLabel("Email").fill("test-short-pw@example.com");
-    await page.getByLabel("Password").fill("ab"); // too short (min 6)
+    await page.getByLabel("Password", { exact: true }).fill("ab"); // too short (min 6)
     await page.getByRole("button", { name: /sign up/i }).click();
 
     // HTML5 minLength prevents submission — button still visible, no redirect
@@ -85,7 +85,7 @@ test.describe("Signup form", () => {
 
     await page.goto("/auth/signup");
     await page.getByLabel("Email").fill("signup-test@example.com");
-    await page.getByLabel("Password").fill("StrongPassword123!");
+    await page.getByLabel("Password", { exact: true }).fill("StrongPassword123!");
     await page.getByRole("button", { name: /sign up/i }).click();
 
     // App redirects to login with msg=check-email after successful signup,

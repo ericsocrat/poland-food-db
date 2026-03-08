@@ -199,7 +199,7 @@ async function signInViaUI(page: Page) {
   await page.goto("/auth/login");
   await page.waitForLoadState("networkidle");
   await page.getByLabel("Email").fill(TEST_EMAIL);
-  await page.getByLabel("Password").fill(TEST_PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(TEST_PASSWORD);
   await page.getByRole("button", { name: "Sign In" }).click();
 
   // Wait for navigation to authenticated area (longer timeout for SSR warmup)

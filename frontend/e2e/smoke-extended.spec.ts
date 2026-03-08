@@ -185,7 +185,7 @@ test.describe("Login page details", () => {
 test.describe("Signup page details", () => {
   test("password field has correct placeholder", async ({ page }) => {
     await page.goto("/auth/signup");
-    const passwordInput = page.getByLabel("Password");
+    const passwordInput = page.getByLabel("Password", { exact: true });
     await expect(passwordInput).toHaveAttribute(
       "placeholder",
       "At least 6 characters",

@@ -116,7 +116,7 @@ test.describe("Onboarding: wizard flow", () => {
     // Log in as the onboarding user
     await page.goto("/auth/login");
     await page.getByLabel("Email").fill(ONBOARDING_EMAIL);
-    await page.getByLabel("Password").fill(ONBOARDING_PASSWORD);
+    await page.getByLabel("Password", { exact: true }).fill(ONBOARDING_PASSWORD);
     await page.getByRole("button", { name: "Sign In" }).click();
 
     // Should land on onboarding (no preferences set)
@@ -136,7 +136,7 @@ test.describe("Onboarding: wizard flow", () => {
   test("Skip All from welcome goes to /app/search", async ({ page }) => {
     await page.goto("/auth/login");
     await page.getByLabel("Email").fill(ONBOARDING_EMAIL);
-    await page.getByLabel("Password").fill(ONBOARDING_PASSWORD);
+    await page.getByLabel("Password", { exact: true }).fill(ONBOARDING_PASSWORD);
     await page.getByRole("button", { name: "Sign In" }).click();
 
     await page.waitForURL(/\/(onboarding|app)/, { timeout: 15_000 });
@@ -154,7 +154,7 @@ test.describe("Onboarding: wizard flow", () => {
 
     await page.goto("/auth/login");
     await page.getByLabel("Email").fill(ONBOARDING_EMAIL);
-    await page.getByLabel("Password").fill(ONBOARDING_PASSWORD);
+    await page.getByLabel("Password", { exact: true }).fill(ONBOARDING_PASSWORD);
     await page.getByRole("button", { name: "Sign In" }).click();
 
     await page.waitForURL(/\/(onboarding|app)/, { timeout: 15_000 });
@@ -178,7 +178,7 @@ test.describe("Onboarding: wizard flow", () => {
 
     await page.goto("/auth/login");
     await page.getByLabel("Email").fill(ONBOARDING_EMAIL);
-    await page.getByLabel("Password").fill(ONBOARDING_PASSWORD);
+    await page.getByLabel("Password", { exact: true }).fill(ONBOARDING_PASSWORD);
     await page.getByRole("button", { name: "Sign In" }).click();
 
     await page.waitForURL(/\/(onboarding|app)/, { timeout: 15_000 });
@@ -210,7 +210,7 @@ test.describe("Onboarding: wizard flow", () => {
 
     await page.goto("/auth/login");
     await page.getByLabel("Email").fill(ONBOARDING_EMAIL);
-    await page.getByLabel("Password").fill(ONBOARDING_PASSWORD);
+    await page.getByLabel("Password", { exact: true }).fill(ONBOARDING_PASSWORD);
     await page.getByRole("button", { name: "Sign In" }).click();
 
     await page.waitForURL(/\/(onboarding|app)/, { timeout: 15_000 });

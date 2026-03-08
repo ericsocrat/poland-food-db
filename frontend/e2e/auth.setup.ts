@@ -20,7 +20,7 @@ setup("create user and authenticate via UI", async ({ page }) => {
   // ── 2. Login via the UI ───────────────────────────────────────────────────
   await page.goto("/auth/login");
   await page.getByLabel("Email").fill(TEST_EMAIL);
-  await page.getByLabel("Password").fill(TEST_PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(TEST_PASSWORD);
   await page.getByRole("button", { name: "Sign In" }).click();
 
   // After login the user is already onboarded (ensureTestUser pre-creates

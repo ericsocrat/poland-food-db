@@ -146,7 +146,7 @@ async function signInViaUI(page: Page) {
   await page.goto("/auth/login");
   await page.waitForLoadState("networkidle").catch(() => {});
   await page.getByLabel("Email").fill(TEST_EMAIL);
-  await page.getByLabel("Password").fill(TEST_PASSWORD);
+  await page.getByLabel("Password", { exact: true }).fill(TEST_PASSWORD);
   await page.getByRole("button", { name: "Sign In" }).click();
   await page.waitForURL(/\/(app|onboarding)/, { timeout: 30_000 });
 
