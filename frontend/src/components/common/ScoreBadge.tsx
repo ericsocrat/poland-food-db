@@ -87,9 +87,7 @@ export const ScoreBadge = React.memo(function ScoreBadge({
         className={["inline-flex flex-col items-center gap-1", className]
           .filter(Boolean)
           .join(" ")}
-        aria-label={[`Score: ${displayText}`, showLabel ? bandLabel : ""]
-          .filter(Boolean)
-          .join(", ")}
+        aria-label={`Score: ${displayText}, ${bandLabel}`}
         role="img"
       >
         <svg
@@ -138,10 +136,12 @@ export const ScoreBadge = React.memo(function ScoreBadge({
             {displayText}
           </text>
         </svg>
-        {showLabel && (
+        {showLabel ? (
           <span className={`text-sm font-medium ${textClass}`}>
             {bandLabel}
           </span>
+        ) : (
+          <span className="sr-only">{bandLabel}</span>
         )}
       </div>
     );
@@ -166,12 +166,14 @@ export const ScoreBadge = React.memo(function ScoreBadge({
       ]
         .filter(Boolean)
         .join(" ")}
-      aria-label={[`Score: ${displayText}`, showLabel ? bandLabel : ""]
-        .filter(Boolean)
-        .join(", ")}
+      aria-label={`Score: ${displayText}, ${bandLabel}`}
     >
       {displayText}
-      {showLabel && <span className="font-medium">{bandLabel}</span>}
+      {showLabel ? (
+        <span className="font-medium">{bandLabel}</span>
+      ) : (
+        <span className="sr-only">{bandLabel}</span>
+      )}
     </span>
   );
 

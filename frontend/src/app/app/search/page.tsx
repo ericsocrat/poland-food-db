@@ -6,6 +6,7 @@ import { AllergenChips } from "@/components/common/AllergenChips";
 import { EmptyState } from "@/components/common/EmptyState";
 import { LiveRegion } from "@/components/common/LiveRegion";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { NovaBadge } from "@/components/common/NovaBadge";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
@@ -181,6 +182,12 @@ export default function SearchPage() {
     });
   }, [queryClient, submittedQuery, filters, page]);
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.search(submittedQuery, filters, page),
+    });
+  }, [queryClient, submittedQuery, filters, page]);
+
   function selectRecent(q: string) {
     setQuery(q);
     setSubmittedQuery(q);
@@ -211,7 +218,7 @@ export default function SearchPage() {
       : "space-y-2";
 
   return (
-    <>
+    <PullToRefresh onRefresh={handleRefresh}>
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
@@ -323,110 +330,116 @@ export default function SearchPage() {
 
             {/* Action row: search button, filter toggle, avoid toggle, save */}
             <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5">
-              <button
-                type="submit"
-                disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
-                className="btn-primary px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {t("search.searchButton")}
-              </button>
-
-              {/* Mobile filter toggle */}
-              <button
-                type="button"
-                onClick={() => setShowFilters(true)}
-                className="touch-target flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted lg:hidden"
-              >
-                <SlidersHorizontal
-                  size={14}
-                  aria-hidden="true"
-                  className="inline"
-                />{" "}
-                {t("search.filters")}
-                {hasActiveFilters(filters) && (
-                  <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
-                    {countActiveFilters(filters)}
-                  </span>
-                )}
-              </button>
-
-              {/* Avoid toggle */}
-              <button
-                type="button"
-                onClick={handleAvoidToggle}
-                className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
-                title={
-                  showAvoided
-                    ? t("search.avoidedShown")
-                    : t("search.avoidedDemoted")
-                }
-              >
-                <span
-                  className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
-                    showAvoided ? "bg-brand" : "bg-surface-muted"
-                  }`}
+              {/* Primary actions: search + filter (always first row) */}
+              <div className="flex items-center gap-2">
+                <button
+                  type="submit"
+                  disabled={query.trim().length < 1 && !hasActiveFilters(filters)}
+                  className="btn-primary px-4 py-2 text-sm disabled:cursor-not-allowed disabled:opacity-50"
                 >
-                  <span
-                    className={`inline-block h-3 w-3 transform rounded-full bg-surface transition-transform ${
-                      showAvoided ? "translate-x-3.5" : "translate-x-0.5"
-                    }`}
-                  />
-                </span>{" "}
-                {t("search.showAvoided")}
-              </button>
+                  {t("search.searchButton")}
+                </button>
 
-              {/* View mode toggle */}
-              <button
-                type="button"
-                onClick={() => {
-                  const next: ViewMode = viewMode === "grid" ? "list" : "grid";
-                  setViewMode(next);
-                  setViewModeStorage(next);
-                }}
-                className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
-                aria-label={t("search.toggleViewMode")}
-              >
-                {viewMode === "list" ? (
-                  <LayoutGrid size={14} aria-hidden="true" className="inline" />
-                ) : (
-                  <LayoutList size={14} aria-hidden="true" className="inline" />
-                )}
-                <span className="hidden xs:inline">
-                  {viewMode === "list"
-                    ? t("search.gridView")
-                    : t("search.listView")}
-                </span>
-              </button>
-
-              {/* Right-aligned group: save + saved searches */}
-              <span className="ml-auto flex items-center gap-2">
-                {/* Save search */}
-                {isSearchActive && (
-                  <button
-                    type="button"
-                    onClick={() => setShowSaveDialog(true)}
-                    className="touch-target text-xs text-foreground-muted hover:text-brand"
-                  >
-                    <Save size={14} aria-hidden="true" className="inline" />{" "}
-                    <span className="hidden xs:inline">
-                      {t("search.saveSearch")}
-                    </span>
-                  </button>
-                )}
-
-                {/* Saved searches link */}
-                <Link
-                  href="/app/search/saved"
-                  className="touch-target text-xs text-foreground-muted hover:text-brand"
+                {/* Mobile filter toggle */}
+                <button
+                  type="button"
+                  onClick={() => setShowFilters(true)}
+                  className="touch-target flex items-center gap-1.5 rounded-lg border border-border px-3 py-2 text-sm text-foreground-secondary transition-colors hover:bg-surface-muted lg:hidden"
                 >
-                  <ClipboardList
+                  <SlidersHorizontal
                     size={14}
                     aria-hidden="true"
                     className="inline"
                   />{" "}
-                  <span className="hidden xs:inline">{t("search.saved")}</span>
-                </Link>
-              </span>
+                  {t("search.filters")}
+                  {hasActiveFilters(filters) && (
+                    <span className="flex h-4 w-4 items-center justify-center rounded-full bg-brand text-[10px] font-bold text-white">
+                      {countActiveFilters(filters)}
+                    </span>
+                  )}
+                </button>
+              </div>
+
+              {/* Secondary controls: avoid, view mode, save/saved (wrap as group) */}
+              <div className="flex flex-1 items-center gap-2">
+                {/* Avoid toggle */}
+                <button
+                  type="button"
+                  onClick={handleAvoidToggle}
+                  className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
+                  title={
+                    showAvoided
+                      ? t("search.avoidedShown")
+                      : t("search.avoidedDemoted")
+                  }
+                >
+                  <span
+                    className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
+                      showAvoided ? "bg-brand" : "bg-surface-muted"
+                    }`}
+                  >
+                    <span
+                      className={`inline-block h-3 w-3 transform rounded-full bg-surface transition-transform ${
+                        showAvoided ? "translate-x-3.5" : "translate-x-0.5"
+                      }`}
+                    />
+                  </span>{" "}
+                  <span className="hidden xs:inline">{t("search.showAvoided")}</span>
+                </button>
+
+                {/* View mode toggle */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next: ViewMode = viewMode === "grid" ? "list" : "grid";
+                    setViewMode(next);
+                    setViewModeStorage(next);
+                  }}
+                  className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
+                  aria-label={t("search.toggleViewMode")}
+                >
+                  {viewMode === "list" ? (
+                    <LayoutGrid size={14} aria-hidden="true" className="inline" />
+                  ) : (
+                    <LayoutList size={14} aria-hidden="true" className="inline" />
+                  )}
+                  <span className="hidden xs:inline">
+                    {viewMode === "list"
+                      ? t("search.gridView")
+                      : t("search.listView")}
+                  </span>
+                </button>
+
+                {/* Right-aligned group: save + saved searches */}
+                <span className="ml-auto flex items-center gap-2">
+                  {/* Save search */}
+                  {isSearchActive && (
+                    <button
+                      type="button"
+                      onClick={() => setShowSaveDialog(true)}
+                      className="touch-target text-xs text-foreground-muted hover:text-brand"
+                    >
+                      <Save size={14} aria-hidden="true" className="inline" />{" "}
+                      <span className="hidden xs:inline">
+                        {t("search.saveSearch")}
+                      </span>
+                    </button>
+                  )}
+
+                  {/* Saved searches link */}
+                  <Link
+                    href="/app/search/saved"
+                    className="touch-target text-xs text-foreground-muted hover:text-brand"
+                  >
+                    <ClipboardList
+                      size={14}
+                      aria-hidden="true"
+                      className="inline"
+                    />{" "}
+                    <span className="hidden xs:inline">{t("search.saved")}</span>
+                  </Link>
+                </span>
+              </div>
             </div>
           </form>
 
@@ -648,7 +661,7 @@ export default function SearchPage() {
           />
         </div>
       </div>
-    </>
+    </PullToRefresh>
   );
 }
 

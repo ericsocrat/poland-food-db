@@ -1,8 +1,9 @@
 "use client";
 
-// ─── OnboardingWizard — Multi-step onboarding flow ──────────────────────────
-// Manages step state, accumulates preferences, submits atomically on completion.
-// Issue #42: 7-step wizard (Welcome → Region → Diet → Allergens → Health Goals → Categories → Done).
+// ─── OnboardingWizard — Streamlined 3-step onboarding flow ──────────────────
+// Issue #701: Merged from 7 steps → 3 visible steps + auto-complete.
+// Step 0: Welcome + Region — Step 1: Diet + Allergens — Step 2: Goals + Categories
+// Auto-saves to localStorage so refresh doesn't lose progress.
 
 import { useAnalytics } from "@/hooks/use-analytics";
 import { completeOnboarding, skipOnboarding } from "@/lib/api";
@@ -10,39 +11,101 @@ import { useTranslation } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
 import { showToast } from "@/lib/toast";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { OnboardingProgress } from "./OnboardingProgress";
-import { AllergensStep } from "./steps/AllergensStep";
-import { CategoriesStep } from "./steps/CategoriesStep";
-import { DietStep } from "./steps/DietStep";
-import { DoneStep } from "./steps/DoneStep";
-import { HealthGoalsStep } from "./steps/HealthGoalsStep";
-import { RegionStep } from "./steps/RegionStep";
-import { WelcomeStep } from "./steps/WelcomeStep";
-import { INITIAL_ONBOARDING_DATA, TOTAL_STEPS, type OnboardingData } from "./types";
+import { DietAllergensStep } from "./steps/DietAllergensStep";
+import { GoalsCategoriesStep } from "./steps/GoalsCategoriesStep";
+import { WelcomeRegionStep } from "./steps/WelcomeRegionStep";
+import {
+  INITIAL_ONBOARDING_DATA,
+  ONBOARDING_STORAGE_KEY,
+  TOTAL_STEPS,
+  type OnboardingData,
+} from "./types";
 
-const STEP_NAMES = [
-  "welcome",
-  "region",
-  "diet",
-  "allergens",
-  "health_goals",
-  "categories",
-  "done",
-] as const;
+const STEP_NAMES = ["welcome_region", "diet_allergens", "goals_categories"] as const;
+
+function loadPersistedState(): { step: number; data: OnboardingData } | null {
+  try {
+    const raw = localStorage.getItem(ONBOARDING_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { step: number; data: OnboardingData };
+    if (typeof parsed.step !== "number" || !parsed.data) return null;
+    return parsed;
+  } catch {
+    return null;
+  }
+}
 
 export function OnboardingWizard() {
   const router = useRouter();
   const supabase = createClient();
   const { track } = useAnalytics();
   const { t } = useTranslation();
-  const [step, setStep] = useState(0); // 0-indexed
-  const [data, setData] = useState<OnboardingData>(INITIAL_ONBOARDING_DATA);
+
+  const [step, setStep] = useState(() => loadPersistedState()?.step ?? 0);
+  const [data, setData] = useState<OnboardingData>(
+    () => loadPersistedState()?.data ?? INITIAL_ONBOARDING_DATA,
+  );
   const [loading, setLoading] = useState(false);
+
+  // Persist step + data to localStorage on every change
+  useEffect(() => {
+    try {
+      localStorage.setItem(
+        ONBOARDING_STORAGE_KEY,
+        JSON.stringify({ step, data }),
+      );
+    } catch {
+      // localStorage unavailable — silently ignore
+    }
+  }, [step, data]);
 
   const updateData = useCallback((patch: Partial<OnboardingData>) => {
     setData((prev) => ({ ...prev, ...patch }));
   }, []);
+
+  async function handleComplete() {
+    setLoading(true);
+    const result = await completeOnboarding(supabase, {
+      country: data.country,
+      language: data.language || undefined,
+      diet: data.diet,
+      allergens: data.allergens,
+      strict_allergen: data.strictAllergen,
+      strict_diet: data.strictDiet,
+      treat_may_contain_as_unsafe: data.treatMayContain,
+      health_goals: data.healthGoals,
+      favorite_categories: data.favoriteCategories,
+    });
+    setLoading(false);
+
+    if (!result.ok) {
+      showToast({
+        type: "error",
+        messageKey: "onboarding.onboardingFailed",
+      });
+      return;
+    }
+
+    // Clear persisted progress after successful save
+    try {
+      localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+    } catch {
+      // noop
+    }
+
+    track("onboarding_completed", {
+      skipped: false,
+      diet: data.diet,
+      allergen_count: data.allergens.length,
+      health_goal_count: data.healthGoals.length,
+      category_count: data.favoriteCategories.length,
+    });
+    showToast({ type: "success", messageKey: "onboarding.preferencesSaved" });
+    router.push("/app/categories");
+    router.refresh();
+  }
 
   const goNext = useCallback(() => {
     setStep((s) => {
@@ -74,73 +137,39 @@ export function OnboardingWizard() {
       return;
     }
 
-    track("onboarding_completed", { skipped: true });
-    router.push("/app/search");
-    router.refresh();
-  }
-
-  async function handleComplete() {
-    setLoading(true);
-    const result = await completeOnboarding(supabase, {
-      country: data.country,
-      language: data.language || undefined,
-      diet: data.diet,
-      allergens: data.allergens,
-      strict_allergen: data.strictAllergen,
-      strict_diet: data.strictDiet,
-      treat_may_contain_as_unsafe: data.treatMayContain,
-      health_goals: data.healthGoals,
-      favorite_categories: data.favoriteCategories,
-    });
-    setLoading(false);
-
-    if (!result.ok) {
-      showToast({
-        type: "error",
-        messageKey: "onboarding.onboardingFailed",
-      });
-      return;
+    // Clear persisted progress
+    try {
+      localStorage.removeItem(ONBOARDING_STORAGE_KEY);
+    } catch {
+      // noop
     }
 
-    track("onboarding_completed", {
-      skipped: false,
-      diet: data.diet,
-      allergen_count: data.allergens.length,
-      health_goal_count: data.healthGoals.length,
-      category_count: data.favoriteCategories.length,
-    });
-    showToast({ type: "success", messageKey: "onboarding.preferencesSaved" });
-    router.push("/app/search");
+    track("onboarding_completed", { skipped: true });
+    router.push("/app/categories");
     router.refresh();
   }
 
   const stepProps = {
     data,
     onChange: updateData,
-    onNext: goNext,
+    onNext: step === TOTAL_STEPS - 1 ? handleComplete : goNext,
     onBack: goBack,
   };
 
   return (
     <div data-testid="onboarding-wizard">
-      {/* Progress bar (hidden on Welcome and Done steps) */}
-      {step > 0 && step < TOTAL_STEPS - 1 && (
-        <OnboardingProgress currentStep={step} totalSteps={TOTAL_STEPS - 2} />
-      )}
+      {/* Progress bar (shown on all steps) */}
+      <OnboardingProgress currentStep={step + 1} totalSteps={TOTAL_STEPS} />
 
       {/* Step content */}
-      {step === 0 && <WelcomeStep onNext={goNext} onSkipAll={handleSkipAll} />}
-      {step === 1 && <RegionStep {...stepProps} />}
-      {step === 2 && <DietStep {...stepProps} />}
-      {step === 3 && <AllergensStep {...stepProps} />}
-      {step === 4 && <HealthGoalsStep {...stepProps} />}
-      {step === 5 && <CategoriesStep {...stepProps} />}
-      {step === 6 && (
-        <DoneStep data={data} loading={loading} onComplete={handleComplete} />
+      {step === 0 && (
+        <WelcomeRegionStep {...stepProps} onSkipAll={handleSkipAll} />
       )}
+      {step === 1 && <DietAllergensStep {...stepProps} />}
+      {step === 2 && <GoalsCategoriesStep {...stepProps} />}
 
-      {/* Skip all link (shown on steps 1–5, not on Welcome or Done) */}
-      {step > 0 && step < TOTAL_STEPS - 1 && (
+      {/* Skip link (shown on steps 1+; step 0 has its own skip button) */}
+      {step > 0 && (
         <div className="mt-6 text-center">
           <button
             onClick={handleSkipAll}
@@ -148,7 +177,7 @@ export function OnboardingWizard() {
             className="text-sm text-foreground-secondary underline hover:text-foreground"
             data-testid="onboarding-skip-all"
           >
-            {t("onboarding.skipAll")}
+            {t("onboarding.skipForNow")}
           </button>
         </div>
       )}

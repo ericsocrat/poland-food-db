@@ -160,11 +160,13 @@ describe("DashboardPage", () => {
     });
   });
 
-  it("renders stats in summary card", async () => {
+  it("renders stats grid with responsive 2-col mobile / 4-col desktop classes", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
       const grid = screen.getByTestId("stats-grid");
       expect(grid).toBeInTheDocument();
+      expect(grid.className).toContain("grid-cols-2");
+      expect(grid.className).toContain("sm:grid-cols-4");
       expect(screen.getByText("42")).toBeInTheDocument();
       expect(screen.getByText("15")).toBeInTheDocument();
       expect(screen.getByText("3")).toBeInTheDocument();
@@ -197,6 +199,25 @@ describe("DashboardPage", () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
       expect(screen.getByText(/Recently Viewed/)).toBeInTheDocument();
+    });
+  });
+
+  it("renders 'View all' link in recently viewed section", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText(/Recently Viewed/)).toBeInTheDocument();
+    });
+    const viewAllLink = screen.getByText("View all →").closest("a");
+    expect(viewAllLink).toHaveAttribute("href", "/app/search");
+  });
+
+  it("renders recently viewed list with horizontal scroll container", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      const list = screen.getByTestId("recently-viewed-list");
+      expect(list).toBeInTheDocument();
+      expect(list.className).toContain("overflow-x-auto");
+      expect(list.className).toContain("snap-x");
     });
   });
 

@@ -43,20 +43,19 @@ describe("ScoreBadge", () => {
 
   it("renders N/A for null score", () => {
     render(<ScoreBadge score={null} />);
-    expect(screen.getByText("N/A")).toBeTruthy();
-    expect(screen.getByText("N/A").className).toContain(
-      "text-foreground-muted",
-    );
+    const elements = screen.getAllByText("N/A");
+    expect(elements.length).toBeGreaterThanOrEqual(1);
+    expect(elements[0].className).toContain("text-foreground-muted");
   });
 
   it("renders N/A for undefined score", () => {
     render(<ScoreBadge score={undefined} />);
-    expect(screen.getByText("N/A")).toBeTruthy();
+    expect(screen.getAllByText("N/A").length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders gray badge for out-of-range score", () => {
     render(<ScoreBadge score={0} />);
-    expect(screen.getByText("N/A")).toBeTruthy();
+    expect(screen.getAllByText("N/A").length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows label when showLabel is true", () => {
@@ -71,7 +70,7 @@ describe("ScoreBadge", () => {
 
   it("has accessible aria-label", () => {
     render(<ScoreBadge score={42} />);
-    expect(screen.getByLabelText("Score: 58")).toBeTruthy();
+    expect(screen.getByLabelText("Score: 58, Moderate")).toBeTruthy();
   });
 
   it("shows tooltip on hover when showTooltip is true", async () => {
@@ -225,7 +224,7 @@ describe("ScoreBadge", () => {
     const { container } = render(<ScoreBadge score={null} size="lg" />);
     // Null score does not render SVG ring — falls through to pill
     expect(container.querySelector("svg")).toBeNull();
-    expect(screen.getByText("N/A")).toBeTruthy();
+    expect(screen.getAllByText("N/A").length).toBeGreaterThanOrEqual(1);
   });
 
   it("has role=img on lg ring container", () => {
@@ -235,6 +234,6 @@ describe("ScoreBadge", () => {
 
   it("has accessible aria-label on lg ring", () => {
     render(<ScoreBadge score={42} size="lg" />);
-    expect(screen.getByLabelText("Score: 58")).toBeTruthy();
+    expect(screen.getByLabelText("Score: 58, Moderate")).toBeTruthy();
   });
 });

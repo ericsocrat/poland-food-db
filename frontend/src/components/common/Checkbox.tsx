@@ -5,11 +5,11 @@
  */
 
 import {
-  forwardRef,
-  useEffect,
-  useId,
-  useRef,
-  type InputHTMLAttributes,
+    forwardRef,
+    useEffect,
+    useId,
+    useRef,
+    type InputHTMLAttributes,
 } from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -53,7 +53,7 @@ export const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>(
           id={checkboxId}
           className={[
             "h-4 w-4 shrink-0 rounded border-strong bg-surface text-brand",
-            "focus:ring-2 focus:ring-brand focus:ring-offset-0",
+            "focus-visible:ring-2 focus-visible:ring-brand focus-visible:ring-offset-0",
             "disabled:opacity-50 disabled:cursor-not-allowed",
             "accent-brand cursor-pointer",
           ].join(" ")}

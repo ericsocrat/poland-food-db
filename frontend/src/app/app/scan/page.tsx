@@ -6,6 +6,7 @@
 // scan history link.
 
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { recordScan } from "@/lib/api";
@@ -271,6 +272,10 @@ export default function ScanPage() {
     }
   }
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: ["scan-history"] });
+  }, [queryClient]);
+
   // ─── Render ─────────────────────────────────────────────────────────────────
 
   // Error state
@@ -387,6 +392,7 @@ export default function ScanPage() {
   }
 
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4">
       <Breadcrumbs
         items={[
@@ -616,5 +622,6 @@ export default function ScanPage() {
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }

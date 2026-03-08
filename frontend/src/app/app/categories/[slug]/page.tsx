@@ -6,6 +6,7 @@ import { AllergenChips } from "@/components/common/AllergenChips";
 import { EmptyState } from "@/components/common/EmptyState";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { CategoryListingSkeleton } from "@/components/common/skeletons";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -129,7 +130,12 @@ export default function CategoryListingPage() {
   const totalPages = data ? Math.ceil(data.total_count / PAGE_SIZE) : 0;
   const currentPage = Math.floor(offset / PAGE_SIZE) + 1;
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({ queryKey: queryKeys.categoryListing(slug, sortBy, sortDir, offset) });
+  }, [queryClient, slug, sortBy, sortDir, offset]);
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4">
       {/* Breadcrumbs */}
       <Breadcrumbs
@@ -259,6 +265,7 @@ export default function CategoryListingPage() {
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }
 
@@ -278,8 +285,11 @@ function ProductRow({
 
   if (viewMode === "compact") {
     return (
-      <Link href={`/app/product/${product.product_id}`}>
-        <li className="card hover-lift-press flex items-center gap-3 py-3">
+      <li className="card hover-lift-press">
+        <Link
+          href={`/app/product/${product.product_id}`}
+          className="flex items-center gap-3 py-3"
+        >
           <ProductThumbnail
             imageUrl={product.image_thumb_url}
             productName={product.product_name}
@@ -300,15 +310,18 @@ function ProductRow({
             {toTryVitScore(product.unhealthiness_score)}
           </div>
           <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
-        </li>
-      </Link>
+        </Link>
+      </li>
     );
   }
 
   // Detailed view — full data per row (power-user mode)
   return (
-    <Link href={`/app/product/${product.product_id}`}>
-      <li className="card hover-lift-press flex items-center gap-3">
+    <li className="card hover-lift-press flex items-center gap-3">
+      <Link
+        href={`/app/product/${product.product_id}`}
+        className="flex flex-1 items-center gap-3 min-w-0"
+      >
         <ProductThumbnail
           imageUrl={product.image_thumb_url}
           productName={product.product_name}
@@ -347,25 +360,21 @@ function ProductRow({
           {/* Allergen warnings */}
           <AllergenChips warnings={allergenWarnings} />
         </div>
+      </Link>
 
-        {/* Health warning badge */}
+      {/* Action buttons — outside Link to avoid nested interactive elements */}
+      <div className="flex flex-shrink-0 items-center gap-1">
         <HealthWarningBadge productId={product.product_id} />
-
-        {/* Avoid badge */}
         <AvoidBadge productId={product.product_id} />
-
-        {/* Favorites heart */}
         <AddToListMenu productId={product.product_id} compact />
-
-        {/* Compare checkbox */}
         <CompareCheckbox
           productId={product.product_id}
           productName={product.product_name}
         />
+      </div>
 
-        <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
-      </li>
-    </Link>
+      <NutriScoreBadge grade={product.nutri_score} size="sm" showTooltip />
+    </li>
   );
 }
 

@@ -462,6 +462,7 @@ export function SearchAutocomplete({
                       className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
                     >
                       {toTryVitScore(s.unhealthiness_score)}
+                      <span className="sr-only">{band.label}</span>
                     </div>
 
                     {/* Product info */}

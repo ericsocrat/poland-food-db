@@ -105,7 +105,7 @@ export function PreferencesForm() {
             type="checkbox"
             checked={strictDiet}
             onChange={(e) => setStrictDiet(e.target.checked)}
-            className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+            className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
           />
           <span className="text-sm text-foreground-secondary">
             {t("onboarding.strictDiet")}
@@ -143,7 +143,7 @@ export function PreferencesForm() {
               type="checkbox"
               checked={strictAllergen}
               onChange={(e) => setStrictAllergen(e.target.checked)}
-              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+              className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("onboarding.strictAllergen")}
@@ -154,7 +154,7 @@ export function PreferencesForm() {
               type="checkbox"
               checked={treatMayContain}
               onChange={(e) => setTreatMayContain(e.target.checked)}
-              className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+              className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
             />
             <span className="text-sm text-foreground-secondary">
               {t("onboarding.treatMayContain")}

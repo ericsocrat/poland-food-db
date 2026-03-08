@@ -31,5 +31,8 @@ export interface StepProps {
   readonly onBack: () => void;
 }
 
-/** Total number of wizard steps (Welcome through Done). */
-export const TOTAL_STEPS = 7;
+/** Total number of visible wizard steps (WelcomeRegion, DietAllergens, GoalsCategories). */
+export const TOTAL_STEPS = 3;
+
+/** localStorage key for persisting onboarding progress. */
+export const ONBOARDING_STORAGE_KEY = "tryvit_onboarding_progress";
