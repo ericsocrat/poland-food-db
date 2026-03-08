@@ -5,9 +5,19 @@
 
 "use client";
 
-import { useEffect } from "react";
-import * as Sentry from "@sentry/nextjs";
 import { translate } from "@/lib/i18n";
+import type { SupportedLanguage } from "@/stores/language-store";
+import * as Sentry from "@sentry/nextjs";
+import { useEffect } from "react";
+
+/** Detect locale from browser language (no React context available in global error boundary). */
+function detectClientLocale(): SupportedLanguage {
+  if (typeof navigator !== "undefined") {
+    const lang = navigator.language.slice(0, 2);
+    if (lang === "pl" || lang === "de") return lang;
+  }
+  return "en";
+}
 
 export default function GlobalError({
   error,
@@ -16,13 +26,15 @@ export default function GlobalError({
   error: Error & { digest?: string };
   reset: () => void;
 }>) {
+  const locale = detectClientLocale();
+
   useEffect(() => {
     Sentry.captureException(error, {
       tags: { boundary: "global-error" },
     });
   }, [error]);
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body>
         <div
           style={{
@@ -42,10 +54,10 @@ export default function GlobalError({
               marginBottom: "0.5rem",
             }}
           >
-            {translate("en", "error.somethingWrong")}
+            {translate(locale, "error.somethingWrong")}
           </h1>
           <p style={{ color: "#6b7280", marginBottom: "1.5rem" }}>
-            {translate("en", "error.critical")}
+            {translate(locale, "error.critical")}
           </p>
           <button
             onClick={reset}
@@ -60,7 +72,7 @@ export default function GlobalError({
               fontWeight: 500,
             }}
           >
-            {translate("en", "common.tryAgain")}
+            {translate(locale, "common.tryAgain")}
           </button>
         </div>
       </body>
