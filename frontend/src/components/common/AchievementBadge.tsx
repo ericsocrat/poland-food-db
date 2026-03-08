@@ -121,7 +121,7 @@ export function AchievementBadge({
       {showLabel && (
         <span
           className={`text-xs font-medium text-center leading-tight ${
-            unlocked ? "text-gray-900 dark:text-gray-100" : "text-gray-400 dark:text-gray-500"
+            unlocked ? "text-foreground" : "text-foreground-muted"
           }`}
           style={{ maxWidth: px }}
         >

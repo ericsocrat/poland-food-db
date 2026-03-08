@@ -47,6 +47,31 @@ vi.mock("@/lib/toast", () => ({
   showToast: vi.fn(),
 }));
 
+vi.mock("@/lib/i18n", () => ({
+  useTranslation: () => ({
+    t: (key: string) => {
+      const map: Record<string, string> = {
+        "auth.email": "Email",
+        "auth.password": "Password",
+        "auth.emailPlaceholder": "you@example.com",
+        "auth.signIn": "Sign In",
+        "auth.noAccount": "Don't have an account?",
+        "auth.signUp": "Sign Up",
+        "auth.signingIn": "Signing in\u2026",
+        "auth.showPassword": "Show password",
+        "auth.hidePassword": "Hide password",
+        "auth.forgotPassword": "Forgot password?",
+        "auth.sessionExpired":
+          "Your session has expired. Please sign in again.",
+        "auth.sessionExpiredBanner":
+          "Your session has expired. Please sign in again.",
+        "landing.tagline": "tagline",
+      };
+      return map[key] ?? key;
+    },
+  }),
+}));
+
 vi.mock("@/components/auth/SocialLoginButtons", () => ({
   SocialLoginButtons: () => <div data-testid="social-login-buttons" />,
 }));
@@ -127,7 +152,7 @@ describe("LoginForm", () => {
     });
   });
 
-  it("shows error toast on auth failure", async () => {
+  it("shows invalidCredentials messageKey on auth failure", async () => {
     const { showToast } = await import("@/lib/toast");
     mockSignIn.mockResolvedValue({
       error: { message: "Invalid credentials" },
@@ -140,15 +165,51 @@ describe("LoginForm", () => {
     await user.click(screen.getByRole("button", { name: "Sign In" }));
 
     await waitFor(() => {
-      expect(showToast).toHaveBeenCalledWith(
-        expect.objectContaining({
-          type: "error",
-          message: "Invalid credentials",
-        }),
-      );
+      expect(showToast).toHaveBeenCalledWith({
+        type: "error",
+        messageKey: "auth.invalidCredentials",
+      });
     });
-    // Should NOT redirect
     expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("shows tooManyAttempts messageKey for rate-limit errors", async () => {
+    const { showToast } = await import("@/lib/toast");
+    mockSignIn.mockResolvedValue({
+      error: { message: "Too many requests" },
+    });
+    const user = userEvent.setup();
+
+    render(<LoginForm />);
+    await user.type(screen.getByLabelText("Email"), "a@b.com");
+    await user.type(screen.getByLabelText("Password"), "pass");
+    await user.click(screen.getByRole("button", { name: "Sign In" }));
+
+    await waitFor(() => {
+      expect(showToast).toHaveBeenCalledWith({
+        type: "error",
+        messageKey: "auth.tooManyAttempts",
+      });
+    });
+  });
+
+  it("toggles password visibility", async () => {
+    const user = userEvent.setup();
+    render(<LoginForm />);
+
+    const passwordInput = screen.getByLabelText("Password");
+    expect(passwordInput).toHaveAttribute("type", "password");
+
+    await user.click(
+      screen.getByRole("button", { name: "Show password" }),
+    );
+    expect(passwordInput).toHaveAttribute("type", "text");
+  });
+
+  it("renders forgot password link", () => {
+    render(<LoginForm />);
+    const link = screen.getByText("Forgot password?").closest("a");
+    expect(link).toHaveAttribute("href", "/auth/forgot-password");
   });
 
   it("shows 'Signing in…' while loading", async () => {

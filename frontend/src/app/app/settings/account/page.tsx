@@ -139,7 +139,7 @@ export default function AccountSettingsPage() {
                 <button
                   type="button"
                   onClick={handleCopyUserId}
-                  className="flex items-center gap-1 rounded border border-gray-200 px-2 py-0.5 text-xs text-foreground-secondary hover:bg-gray-50 transition-colors"
+                  className="flex items-center gap-1 rounded border px-2 py-0.5 text-xs text-foreground-secondary hover:bg-surface-subtle transition-colors"
                   aria-label={t("settings.copyUserId")}
                 >
                   {copied ? (

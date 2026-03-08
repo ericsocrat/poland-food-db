@@ -65,8 +65,8 @@ const TRUST_CONFIG: Record<
   },
   low: {
     icon: ShieldQuestion,
-    colorClass: "text-gray-500 dark:text-gray-400",
-    bgClass: "bg-gray-100 dark:bg-gray-800/40",
+    colorClass: "text-foreground-muted",
+    bgClass: "bg-surface-muted",
     labelKey: "trust.badge.low",
     tooltipKey: "trust.badge.lowTooltip",
   },

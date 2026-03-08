@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import HomePage from "./page";
+import HomePage, { metadata } from "./page";
 
 // ─── i18n translations map ──────────────────────────────────────────────────
 
@@ -203,7 +203,7 @@ describe("HomePage — Data Stats section", () => {
 
   it("renders four stat values", () => {
     render(<HomePage />);
-    expect(screen.getByText("1,200+")).toBeInTheDocument();
+    expect(screen.getByText("2,400+")).toBeInTheDocument();
     expect(screen.getByText("25")).toBeInTheDocument();
     expect(screen.getByText("9")).toBeInTheDocument();
   });
@@ -265,5 +265,53 @@ describe("HomePage — Layout", () => {
     const h2s = screen.getAllByRole("heading", { level: 2 });
     // Features, How It Works, Stats, CTA = 4 h2 headings
     expect(h2s.length).toBe(4);
+  });
+});
+
+// ─── SEO metadata export ────────────────────────────────────────────────────
+
+describe("HomePage — SEO metadata", () => {
+  it("exports page-level metadata with title", () => {
+    expect(metadata).toBeDefined();
+    expect(metadata.title).toBe("TryVit — Know What You Eat");
+  });
+
+  it("exports metadata description mentioning products and countries", () => {
+    expect(metadata.description).toContain("2,400+");
+    expect(metadata.description).toContain("Poland and Germany");
+  });
+
+  it("exports openGraph metadata with type website", () => {
+    const og = metadata.openGraph as Record<string, unknown>;
+    expect(og).toBeDefined();
+    expect(og.type).toBe("website");
+    expect(og.title).toBe("TryVit — Know What You Eat");
+  });
+
+  it("exports twitter card metadata", () => {
+    const tw = metadata.twitter as Record<string, unknown>;
+    expect(tw).toBeDefined();
+    expect(tw.card).toBe("summary_large_image");
+  });
+});
+
+// ─── JSON-LD structured data ────────────────────────────────────────────────
+
+describe("HomePage — JSON-LD", () => {
+  it("renders a WebSite JSON-LD script tag", () => {
+    const { container } = render(<HomePage />);
+    const script = container.querySelector('script[type="application/ld+json"]');
+    expect(script).not.toBeNull();
+    const jsonLd = JSON.parse(script!.textContent!);
+    expect(jsonLd["@type"]).toBe("WebSite");
+    expect(jsonLd.name).toBe("TryVit");
+  });
+
+  it("includes SearchAction in JSON-LD", () => {
+    const { container } = render(<HomePage />);
+    const script = container.querySelector('script[type="application/ld+json"]');
+    const jsonLd = JSON.parse(script!.textContent!);
+    expect(jsonLd.potentialAction["@type"]).toBe("SearchAction");
+    expect(jsonLd.potentialAction.target.urlTemplate).toContain("/app/search");
   });
 });

@@ -1,16 +1,26 @@
-import { describe, expect, it, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import ScanPage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
-const { mockPush, mockRecordScan, mockShowToast } = vi.hoisted(() => ({
+const {
+  mockPush,
+  mockRecordScan,
+  mockShowToast,
+  mockListDevices,
+  mockDecodeFromDevice,
+  mockResetReader,
+} = vi.hoisted(() => ({
   mockPush: vi.fn(),
   mockRecordScan: vi.fn(),
   mockShowToast: vi.fn(),
+  mockListDevices: vi.fn(),
+  mockDecodeFromDevice: vi.fn(),
+  mockResetReader: vi.fn(),
 }));
 
 vi.mock("next/navigation", () => ({
@@ -56,20 +66,21 @@ vi.mock("@/lib/toast", () => ({
 }));
 
 // Mock ZXing library — prevent actual camera access
-vi.mock("@zxing/library", () => ({
-  BrowserMultiFormatReader: vi.fn().mockImplementation(() => ({
-    listVideoInputDevices: vi.fn().mockResolvedValue([]),
-    decodeFromVideoDevice: vi.fn(),
-    reset: vi.fn(),
-  })),
-  DecodeHintType: { POSSIBLE_FORMATS: 0 },
-  BarcodeFormat: {
-    EAN_13: 0,
-    EAN_8: 1,
-    UPC_A: 2,
-    UPC_E: 3,
-  },
-}));
+vi.mock("@zxing/library", () => {
+  // Plain constructor (not vi.fn) so vi.clearAllMocks() doesn't strip it
+  function MockBrowserMultiFormatReader() {
+    return {
+      listVideoInputDevices: (...a: unknown[]) => mockListDevices(...a),
+      decodeFromVideoDevice: (...a: unknown[]) => mockDecodeFromDevice(...a),
+      reset: (...a: unknown[]) => mockResetReader(...a),
+    };
+  }
+  return {
+    BrowserMultiFormatReader: MockBrowserMultiFormatReader,
+    DecodeHintType: { POSSIBLE_FORMATS: 0 },
+    BarcodeFormat: { EAN_13: 0, EAN_8: 1, UPC_A: 2, UPC_E: 3 },
+  };
+});
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
@@ -119,6 +130,8 @@ const mockNotFoundResponse = {
 
 beforeEach(() => {
   vi.clearAllMocks();
+  // Re-establish ZXing defaults (clearAllMocks strips implementations)
+  mockListDevices.mockResolvedValue([]);
 });
 
 describe("ScanPage", () => {
@@ -643,5 +656,172 @@ describe("ScanPage", () => {
         screen.getByText(/Something went wrong|error|try again/i),
       ).toBeInTheDocument();
     });
+  });
+
+  // ─── Camera Error Handling ──────────────────────────────────────────────────
+
+  it("falls back to manual mode when camera permission is denied", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
+    ]);
+    mockDecodeFromDevice.mockImplementation(() => {
+      const err = new Error("Permission denied");
+      err.name = "NotAllowedError";
+      throw err;
+    });
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    // Should fall back to manual mode and show permission denied toast
+    await waitFor(() => {
+      expect(mockShowToast).toHaveBeenCalledWith(
+        expect.objectContaining({ messageKey: "scan.permissionDenied" }),
+      );
+    });
+  });
+
+  it("falls back to manual mode on generic camera error", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
+    ]);
+    mockDecodeFromDevice.mockImplementation(() => {
+      throw new Error("Generic camera error");
+    });
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    // Should fall back to manual mode
+    await waitFor(() => {
+      expect(screen.getByText("Manual")).toBeInTheDocument();
+    });
+  });
+
+  it("selects back camera when available", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "front1", label: "Front Camera" } as MediaDeviceInfo,
+      { deviceId: "back1", label: "Back Camera" } as MediaDeviceInfo,
+    ]);
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(mockDecodeFromDevice).toHaveBeenCalledWith(
+        "back1",
+        expect.anything(),
+        expect.any(Function),
+      );
+    });
+  });
+
+  // ─── Camera Decode Callback & Mode Toggling ───────────────────────────────
+
+  it("camera decode callback triggers scan when valid barcode detected", async () => {
+    let capturedCallback: ((...args: unknown[]) => void) | undefined;
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Back Camera" } as MediaDeviceInfo,
+    ]);
+    mockDecodeFromDevice.mockImplementation(
+      (_deviceId: unknown, _video: unknown, callback: (...args: unknown[]) => void) => {
+        capturedCallback = callback;
+      },
+    );
+    mockRecordScan.mockResolvedValue({
+      ok: true,
+      data: {
+        found: true,
+        product_id: 42,
+        product_name: "Camera Product",
+        brand: "TestBrand",
+        nutri_score: "B",
+      },
+    });
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    // Wait for ZXing to start decoding
+    await waitFor(() => {
+      expect(mockDecodeFromDevice).toHaveBeenCalled();
+    });
+
+    // Simulate barcode detection — invoke the captured callback
+    await act(async () => {
+      capturedCallback!({ getText: () => "5901234123457" }, null);
+    });
+
+    await waitFor(() => {
+      expect(mockRecordScan).toHaveBeenCalledWith(
+        expect.anything(),
+        "5901234123457",
+      );
+    });
+  });
+
+  it("camera error with non-Error object falls back to manual mode", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
+    ]);
+    mockDecodeFromDevice.mockImplementation(() => {
+      // Throw a plain object (not an Error instance)
+      throw { name: "SomeNonErrorObject" };
+    });
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getByText("Manual")).toBeInTheDocument();
+    });
+  });
+
+  it("camera mode button switches from manual back to camera", async () => {
+    mockListDevices.mockResolvedValue([]);
+
+    const user = userEvent.setup();
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    // Falls back to manual because no devices
+    await waitFor(() => {
+      expect(screen.getByText("Manual")).toBeInTheDocument();
+    });
+
+    // Click Camera button to switch back
+    await user.click(screen.getByRole("button", { name: /Camera/ }));
+
+    // It should attempt to start camera again (listVideoInputDevices called again)
+    await waitFor(() => {
+      expect(mockListDevices).toHaveBeenCalledTimes(2);
+    });
+  });
+
+  it("Done scanning button exits batch mode", async () => {
+    mockRecordScan.mockResolvedValue({
+      ok: true,
+      data: {
+        found: true,
+        product_id: 42,
+        product_name: "Batch Product",
+        brand: "TestBrand",
+        nutri_score: "A",
+      },
+    });
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByLabelText(/Batch mode/));
+    await user.click(screen.getByText("Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Done scanning")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Done scanning"));
+
+    // Batch list should be gone; batch mode is off
+    expect(screen.queryByText("Done scanning")).not.toBeInTheDocument();
+    expect(screen.queryByText("Scanned (1)")).not.toBeInTheDocument();
   });
 });

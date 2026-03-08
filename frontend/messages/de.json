@@ -346,7 +346,9 @@
     "title": "Meine Listen",
     "newList": "+ Neue Liste",
     "namePlaceholder": "Listenname",
+    "nameLabel": "Listenname",
     "descriptionPlaceholder": "Beschreibung (optional)",
+    "descriptionLabel": "Listenbeschreibung",
     "creating": "Erstellen…",
     "createList": "Liste erstellen",
     "emptyState": "Noch keine Listen. Erstellen Sie eine, um Produkte zu organisieren.",
@@ -610,7 +612,12 @@
     "deleteAccountConfirmPlaceholder": "Geben Sie hier LÖSCHEN ein",
     "deleteAccountProcessing": "Konto wird gelöscht…",
     "deleteAccountSuccess": "Ihr Konto wurde gelöscht.",
-    "deleteAccountError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es später erneut."
+    "deleteAccountError": "Konto konnte nicht gelöscht werden. Bitte versuchen Sie es später erneut.",
+    "unsavedTitle": "Ungespeicherte Änderungen",
+    "unsavedDescription": "Sie haben ungespeicherte Änderungen. Wenn Sie jetzt gehen, gehen Ihre Änderungen verloren.",
+    "unsavedDiscard": "Änderungen verwerfen",
+    "unsavedStay": "Auf Seite bleiben",
+    "unsavedIndicator": "Ungespeicherte Änderungen"
   },
   "healthProfile": {
     "title": "Gesundheitsprofile",
@@ -656,7 +663,8 @@
     "noLists": "Noch keine Listen",
     "remove": "Entfernen",
     "onAvoidList": "Auf Ihrer Vermeidungsliste",
-    "avoid": "Vermeiden"
+    "avoid": "Vermeiden",
+    "moreActions": "Weitere Aktionen"
   },
   "savedSearches": {
     "title": "Gespeicherte Suchen",
@@ -706,7 +714,26 @@
     "continueWithGoogle": "Weiter mit Google",
     "continueWithApple": "Weiter mit Apple",
     "orContinueWithEmail": "oder weiter mit E-Mail",
-    "socialLoginError": "Anmeldung mit {provider} fehlgeschlagen. Bitte versuchen Sie es erneut."
+    "socialLoginError": "Anmeldung mit {provider} fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "forgotPassword": "Passwort vergessen?",
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen",
+    "invalidCredentials": "Ungültige E-Mail oder Passwort. Bitte versuchen Sie es erneut.",
+    "tooManyAttempts": "Zu viele Anmeldeversuche. Bitte warten Sie und versuchen Sie es erneut.",
+    "resetPasswordTitle": "Passwort zurücksetzen",
+    "resetPasswordSubtitle": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen.",
+    "sendResetLink": "Link senden",
+    "sendingResetLink": "Wird gesendet\u2026",
+    "resetEmailSent": "Wenn ein Konto mit dieser E-Mail-Adresse existiert, erhalten Sie in Kürze einen Link zum Zurücksetzen.",
+    "backToLogin": "Zurück zur Anmeldung",
+    "updatePasswordTitle": "Passwort aktualisieren",
+    "updatePasswordSubtitle": "Geben Sie ein neues Passwort für Ihr Konto ein.",
+    "newPassword": "Neues Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "updatePassword": "Passwort aktualisieren",
+    "updatingPassword": "Wird aktualisiert\u2026",
+    "passwordUpdated": "Passwort erfolgreich aktualisiert.",
+    "passwordMismatch": "Passwörter stimmen nicht überein."
   },
   "layout": {
     "appName": "TryVit",
@@ -1125,7 +1152,14 @@
     "saveSearchName": "Suchname",
     "sidebarNavigation": "Seitenleisten-Navigation",
     "headerNavigation": "Kopfzeilen-Navigation",
-    "moreNavigation": "Weitere Navigation"
+    "moreNavigation": "Weitere Navigation",
+    "mainNavigation": "Hauptnavigation",
+    "settingsSections": "Einstellungsbereiche",
+    "breadcrumb": "Brotkrümel-Navigation",
+    "dismiss": "Schließen",
+    "scoreRadarChart": "Radar-Diagramm der Bewertungsaufschlüsselung mit gewichtetem Beitrag jedes Bewertungsfaktors",
+    "scoreRadarChartTitle": "Radar-Diagramm der Bewertungsaufschlüsselung",
+    "flaggedUser": "Markierter Benutzer"
   },
   "print": {
     "button": "Drucken",

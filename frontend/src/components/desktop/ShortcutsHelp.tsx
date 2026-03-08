@@ -90,7 +90,7 @@ export function ShortcutsHelp({ open, onClose }: Readonly<ShortcutsHelpProps>) {
         <button
           type="button"
           onClick={onClose}
-          className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-foreground-secondary transition-colors hover:bg-surface-subtle hover:text-foreground"
+          className="touch-target-expanded flex h-8 w-8 cursor-pointer items-center justify-center rounded-full text-foreground-secondary transition-colors hover:bg-surface-subtle hover:text-foreground"
           aria-label={t("common.close")}
         >
           <X size={18} aria-hidden="true" />

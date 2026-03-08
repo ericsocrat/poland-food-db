@@ -50,7 +50,7 @@ export default function SharedListPage() {
     <div className="min-h-screen bg-surface-subtle">
       <SkipLink />
       {/* Header */}
-      <header className="border-b border bg-white/80 backdrop-blur">
+      <header className="border-b border bg-surface backdrop-blur">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
           <Logo variant="lockup" size={28} />
           <span className="rounded-full bg-blue-50 px-2.5 py-0.5 text-xs font-medium text-blue-600">

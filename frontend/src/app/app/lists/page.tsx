@@ -94,6 +94,7 @@ export default function ListsPage() {
           <input
             type="text"
             placeholder={t("lists.namePlaceholder")}
+            aria-label={t("lists.nameLabel")}
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             className="input-field"
@@ -104,6 +105,7 @@ export default function ListsPage() {
           <input
             type="text"
             placeholder={t("lists.descriptionPlaceholder")}
+            aria-label={t("lists.descriptionLabel")}
             value={newDesc}
             onChange={(e) => setNewDesc(e.target.value)}
             className="input-field"
