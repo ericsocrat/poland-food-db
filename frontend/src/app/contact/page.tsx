@@ -12,7 +12,7 @@ export default function ContactPage() {
     <div className="flex min-h-screen flex-col">
       <Header />
 
-      <main className="flex flex-1 flex-col items-center px-4 py-16">
+      <main id="main-content" className="flex flex-1 flex-col items-center px-4 py-16">
         <div className="max-w-md">
           <h1 className="mb-4 text-2xl font-bold text-foreground">
             {t("legal.contactTitle")}

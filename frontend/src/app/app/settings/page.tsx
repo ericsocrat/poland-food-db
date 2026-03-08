@@ -14,8 +14,10 @@ import {
   getLanguagesForCountry,
 } from "@/lib/constants";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { ThemeToggle } from "@/components/settings/ThemeToggle";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useUnsavedChanges } from "@/hooks/use-unsaved-changes";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useTranslation } from "@/lib/i18n";
 import {
@@ -44,6 +46,9 @@ export default function ProfileSettingsPage() {
   const [language, setLanguage] = useState<SupportedLanguage>("en");
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
+
+  const { showConfirmDialog, confirmNavigation, cancelNavigation } =
+    useUnsavedChanges(dirty);
 
   // Populate from fetched prefs
   useEffect(() => {
@@ -181,16 +186,32 @@ export default function ProfileSettingsPage() {
         <ThemeToggle />
       </section>
 
-      {/* Save button */}
+      {/* Save button + unsaved indicator */}
       {dirty && (
-        <button
-          onClick={handleSave}
-          disabled={saving}
-          className="btn-primary w-full"
-        >
-          {saving ? t("common.saving") : t("settings.saveChanges")}
-        </button>
+        <div className="space-y-2">
+          <p className="text-center text-xs font-medium text-warning">
+            {t("settings.unsavedIndicator")}
+          </p>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="btn-primary w-full"
+          >
+            {saving ? t("common.saving") : t("settings.saveChanges")}
+          </button>
+        </div>
       )}
+
+      {/* Discard changes confirmation dialog */}
+      <ConfirmDialog
+        open={showConfirmDialog}
+        title={t("settings.unsavedTitle")}
+        description={t("settings.unsavedDescription")}
+        confirmLabel={t("settings.unsavedDiscard")}
+        variant="danger"
+        onConfirm={confirmNavigation}
+        onCancel={cancelNavigation}
+      />
     </div>
   );
 }
