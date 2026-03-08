@@ -129,4 +129,12 @@ describe("MoreDrawer", () => {
     // The drawer header shows "More"
     expect(screen.getByText("More")).toBeInTheDocument();
   });
+
+  // ─── Touch target a11y ──────────────────────────────────────────────
+
+  it("applies touch-target class to close button", () => {
+    render(<MoreDrawer open={true} onClose={onClose} />);
+    const closeBtn = screen.getByLabelText("Close");
+    expect(closeBtn.className).toContain("touch-target");
+  });
 });

@@ -127,4 +127,22 @@ describe("ComparisonTray", () => {
     expect(aside.className).toContain("hidden");
     expect(aside.className).toContain("lg:block");
   });
+
+  // ─── Touch target a11y ──────────────────────────────────────────────
+
+  it("applies touch-target-expanded to interactive buttons", () => {
+    mockCount.mockReturnValue(2);
+    render(<ComparisonTray />);
+
+    const collapseBtn = screen.getByLabelText("Collapse comparison tray");
+    expect(collapseBtn.className).toContain("touch-target-expanded");
+
+    const clearBtn = screen.getByLabelText("Clear selection");
+    expect(clearBtn.className).toContain("touch-target-expanded");
+
+    const removeBtns = screen.getAllByLabelText("Remove from comparison");
+    for (const btn of removeBtns) {
+      expect(btn.className).toContain("touch-target-expanded");
+    }
+  });
 });
