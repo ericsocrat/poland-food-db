@@ -2,6 +2,7 @@
 
 // ─── Categories overview — grid of category cards ───────────────────────────
 
+import { Button } from "@/components/common/Button";
 import { CategoryIcon } from "@/components/common/CategoryIcon";
 import { CategoryGridSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -38,9 +39,7 @@ export default function CategoriesPage() {
         <p className="mb-3 text-sm text-red-500">
           {t("categories.loadFailed")}
         </p>
-        <button
-          type="button"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        <Button
           onClick={() =>
             queryClient.invalidateQueries({
               queryKey: queryKeys.categoryOverview,
@@ -48,7 +47,7 @@ export default function CategoriesPage() {
           }
         >
           {t("common.retry")}
-        </button>
+        </Button>
       </div>
     );
   }

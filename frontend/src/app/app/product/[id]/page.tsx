@@ -3,6 +3,7 @@
 // ─── Product detail page ────────────────────────────────────────────────────
 // Uses the composite api_get_product_profile() endpoint for a single round-trip.
 
+import { Button } from "@/components/common/Button";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { PrintButton } from "@/components/common/PrintButton";
@@ -17,8 +18,8 @@ import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { DVLegend } from "@/components/product/DVLegend";
 import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
 import {
-  HealthWarningBadge,
-  HealthWarningsCard,
+    HealthWarningBadge,
+    HealthWarningsCard,
 } from "@/components/product/HealthWarningsCard";
 import { IngredientList } from "@/components/product/IngredientList";
 import { NovaIndicator } from "@/components/product/NovaIndicator";
@@ -40,10 +41,10 @@ import { useOnlineStatus } from "@/hooks/use-online-status";
 import { getProductProfile, recordProductView } from "@/lib/api";
 import { cacheProduct, getCachedProduct } from "@/lib/cache-manager";
 import {
-  FEATURES,
-  getScoreInterpretation,
-  SCORE_BANDS,
-  scoreBandFromScore,
+    FEATURES,
+    getScoreInterpretation,
+    SCORE_BANDS,
+    scoreBandFromScore,
 } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
@@ -52,9 +53,9 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { toTryVitScore } from "@/lib/score-utils";
 import { createClient } from "@/lib/supabase/client";
 import type {
-  DataConfidence,
-  ProductProfile,
-  ProfileAlternative,
+    DataConfidence,
+    ProductProfile,
+    ProfileAlternative,
 } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp, Globe, Info } from "lucide-react";
@@ -195,9 +196,7 @@ export default function ProductDetailPage() {
         />
         <div className="card border-error-border bg-error-bg py-8 text-center">
           <p className="mb-3 text-sm text-error-text">{t("product.loadFailed")}</p>
-          <button
-            type="button"
-            className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          <Button
             onClick={() =>
               queryClient.invalidateQueries({
                 queryKey: queryKeys.productProfile(productId),
@@ -205,7 +204,7 @@ export default function ProductDetailPage() {
             }
           >
             {t("common.retry")}
-          </button>
+          </Button>
         </div>
       </div>
     );
@@ -445,6 +444,7 @@ export default function ProductDetailPage() {
                 {tabs.map((tab) => (
                   <button
                     key={tab.key}
+                    id={`tab-${tab.key}`}
                     onClick={() => setActiveTab(tab.key)}
                     role="tab"
                     aria-selected={activeTab === tab.key}
@@ -466,6 +466,8 @@ export default function ProductDetailPage() {
                 onTouchStart={handleTouchStart}
                 onTouchEnd={handleTouchEnd}
                 data-testid="tab-content"
+                role="tabpanel"
+                aria-labelledby={`tab-${activeTab}`}
               >
                 <ErrorBoundary
                   level="section"
@@ -548,15 +550,14 @@ function QuickSummary({
       )}
 
       {/* Expand to full analysis */}
-      <button
-        type="button"
+      <Button
+        fullWidth
         onClick={onExpand}
         data-testid="toggle-analysis"
-        className="flex w-full items-center justify-center gap-2 rounded-lg bg-brand px-4 py-3 text-sm font-medium text-white transition-colors hover:bg-brand-hover"
       >
         <ChevronDown className="h-4 w-4" />
         {t("product.showFullAnalysis")}
-      </button>
+      </Button>
     </div>
   );
 }

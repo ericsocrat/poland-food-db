@@ -4,18 +4,19 @@
 // Issue #53 — Recipes v0
 // Issue #616 — Aggregate recipe score badge
 
-import { useParams } from "next/navigation";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { createClient } from "@/lib/supabase/client";
-import { getRecipeDetail, getRecipeScore } from "@/lib/api";
-import { queryKeys, staleTimes } from "@/lib/query-keys";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { Card, Chip } from "@/components/common";
+import { Button } from "@/components/common/Button";
 import { Icon } from "@/components/common/Icon";
 import { RecipeGridSkeleton } from "@/components/common/skeletons";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { IngredientProductList, RecipeScoreBadge } from "@/components/recipes";
+import { getRecipeDetail, getRecipeScore } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
-import { Clock, Users, ChefHat, Timer } from "lucide-react";
+import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { createClient } from "@/lib/supabase/client";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ChefHat, Clock, Timer, Users } from "lucide-react";
+import { useParams } from "next/navigation";
 
 /* ── Difficulty styling ──────────────────────────────────────────────────── */
 
@@ -63,15 +64,13 @@ export default function RecipeDetailPage() {
     return (
       <div className="py-12 text-center">
         <p className="mb-3 text-sm text-red-500">{t("recipes.loadFailed")}</p>
-        <button
-          type="button"
-          className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+        <Button
           onClick={() =>
             queryClient.invalidateQueries({ queryKey: queryKeys.recipe(slug) })
           }
         >
           {t("common.retry")}
-        </button>
+        </Button>
       </div>
     );
   }

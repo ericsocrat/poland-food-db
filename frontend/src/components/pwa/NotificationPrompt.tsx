@@ -8,6 +8,7 @@
 
 import { useState, useCallback } from "react";
 import { Bell, X } from "lucide-react";
+import { Button } from "@/components/common/Button";
 import { Icon } from "@/components/common/Icon";
 import { useTranslation } from "@/lib/i18n";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -106,14 +107,15 @@ export function NotificationPrompt({
         <p className="mt-0.5 text-xs text-foreground-secondary">
           {t("notifications.promptDescription")}
         </p>
-        <button
+        <Button
+          size="sm"
           onClick={handleEnable}
           disabled={enabling}
-          className="mt-2 rounded-md bg-brand px-3 py-1.5 text-xs font-medium text-white transition-colors hover:bg-brand/90 disabled:opacity-70"
+          className="mt-2"
           data-testid="enable-notifications-button"
         >
           {enabling ? t("common.loading") : t("notifications.enable")}
-        </button>
+        </Button>
       </div>
       <button
         onClick={handleDismiss}

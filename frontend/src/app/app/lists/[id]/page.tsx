@@ -223,7 +223,7 @@ export default function ListDetailPage() {
                     type="button"
                     title={t("lists.shareSettings")}
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-surface-muted ${
-                      list.share_enabled ? "text-blue-600" : ""
+                      list.share_enabled ? "text-brand" : ""
                     }`}
                     onClick={() => setShowSharePanel((v) => !v)}
                   >
