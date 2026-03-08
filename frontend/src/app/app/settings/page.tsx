@@ -4,7 +4,7 @@
 
 import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SettingsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ThemeToggle } from "@/components/settings/ThemeToggle";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -118,11 +118,7 @@ export default function ProfileSettingsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <SettingsSkeleton />;
   }
 
   return (

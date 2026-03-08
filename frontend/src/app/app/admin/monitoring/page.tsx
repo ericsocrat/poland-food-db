@@ -6,7 +6,7 @@
 // Protected by existing middleware (auth required).
 
 import type { HealthCheckResponse } from "@/app/api/health/route";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { AdminDashboardSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useTranslation } from "@/lib/i18n";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
@@ -231,8 +231,8 @@ export default function AdminMonitoringPage() {
 
       {/* Loading state */}
       {isLoading && (
-        <div className="mt-8 flex justify-center" data-testid="loading">
-          <LoadingSpinner />
+        <div className="mt-8" data-testid="loading">
+          <AdminDashboardSkeleton />
         </div>
       )}
 

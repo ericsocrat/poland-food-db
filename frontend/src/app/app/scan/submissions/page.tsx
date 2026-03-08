@@ -3,7 +3,7 @@
 // ─── My Submissions page — user's product submissions with status ───────────
 
 import { Button } from "@/components/common/Button";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SubmissionsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getMySubmissions } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
@@ -106,11 +106,7 @@ export default function MySubmissionsPage() {
       </div>
 
       {/* Loading */}
-      {isLoading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
+      {isLoading && <SubmissionsSkeleton />}
 
       {/* Error */}
       {error && (

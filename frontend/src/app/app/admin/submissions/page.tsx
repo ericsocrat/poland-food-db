@@ -5,7 +5,7 @@
 // that bypass RLS. In production, restrict route via middleware or auth check.
 
 import { Button } from "@/components/common/Button";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SubmissionsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useTranslation } from "@/lib/i18n";
 import { callRpc } from "@/lib/rpc";
@@ -260,11 +260,7 @@ export default function AdminSubmissionsPage() {
       </div>
 
       {/* Loading */}
-      {isLoading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
+      {isLoading && <SubmissionsSkeleton />}
 
       {/* Error */}
       {error && (

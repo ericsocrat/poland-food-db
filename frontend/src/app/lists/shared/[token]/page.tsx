@@ -5,7 +5,7 @@
 // Shows read-only view of a shared list with product details.
 
 import { ButtonLink } from "@/components/common/Button";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ListDetailSkeleton } from "@/components/common/skeletons";
 import { Logo } from "@/components/common/Logo";
 import { SkipLink } from "@/components/common/SkipLink";
 import { useSharedList } from "@/hooks/use-lists";
@@ -24,7 +24,7 @@ export default function SharedListPage() {
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-surface-subtle">
-        <LoadingSpinner />
+        <ListDetailSkeleton />
       </div>
     );
   }

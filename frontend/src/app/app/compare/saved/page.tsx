@@ -7,7 +7,7 @@ import Link from "next/link";
 import { Trash2, FolderOpen, Link2 } from "lucide-react";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useSavedComparisons, useDeleteComparison } from "@/hooks/use-compare";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SavedItemsSkeleton } from "@/components/common/skeletons";
 import { EmptyState } from "@/components/common/EmptyState";
 import { useTranslation } from "@/lib/i18n";
 import type { SavedComparison } from "@/lib/types";
@@ -35,11 +35,7 @@ export default function SavedComparisonsPage() {
       </h1>
 
       {/* Loading */}
-      {isLoading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
+      {isLoading && <SavedItemsSkeleton />}
 
       {/* Error */}
       {error && <EmptyState variant="error" titleKey="compare.loadFailed" />}

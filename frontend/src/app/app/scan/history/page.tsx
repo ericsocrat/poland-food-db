@@ -4,7 +4,7 @@
 
 import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ScanHistorySkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getScanHistory } from "@/lib/api";
 import { NUTRI_COLORS } from "@/lib/constants";
@@ -97,11 +97,7 @@ export default function ScanHistoryPage() {
       </div>
 
       {/* Loading */}
-      {isLoading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
+      {isLoading && <ScanHistorySkeleton />}
 
       {/* Error */}
       {error && (

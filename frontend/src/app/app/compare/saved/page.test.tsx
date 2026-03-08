@@ -24,8 +24,8 @@ vi.mock("next/link", () => ({
   }) => <a href={href}>{children}</a>,
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  SavedItemsSkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading saved items" />,
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -82,14 +82,14 @@ describe("SavedComparisonsPage", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows loading spinner", () => {
+  it("shows loading skeleton", () => {
     mockUseSavedComparisons.mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
     });
     render(<SavedComparisonsPage />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Loading saved items" })).toBeInTheDocument();
   });
 
   it("shows error state", () => {

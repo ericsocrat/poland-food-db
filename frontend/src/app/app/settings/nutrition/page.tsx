@@ -3,7 +3,7 @@
 // ─── Settings — Nutrition & Diet (Diet, Allergens, Health Profiles) ─────────
 
 import { Button } from "@/components/common/Button";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SettingsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { HealthProfileSection } from "@/components/settings/HealthProfileSection";
 import { useAnalytics } from "@/hooks/use-analytics";
@@ -120,11 +120,7 @@ export default function NutritionSettingsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <SettingsSkeleton />;
   }
 
   return (

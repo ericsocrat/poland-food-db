@@ -7,7 +7,7 @@
 // Data fetched via api_admin_get_business_metrics RPC.
 // Protected by middleware (ADMIN_EMAILS allow-list).
 
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { AdminDashboardSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getBusinessMetrics } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
@@ -363,8 +363,8 @@ export default function AdminMetricsPage() {
 
       {/* Loading state */}
       {isLoading && (
-        <div className="mt-8 flex justify-center" data-testid="loading">
-          <LoadingSpinner />
+        <div className="mt-8" data-testid="loading">
+          <AdminDashboardSkeleton />
         </div>
       )}
 

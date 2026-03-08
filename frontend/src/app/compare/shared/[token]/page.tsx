@@ -6,7 +6,7 @@
 // No avoid badges or save features — read-only public view.
 
 import { ButtonLink } from "@/components/common/Button";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ComparisonGridSkeleton } from "@/components/common/skeletons";
 import { Logo } from "@/components/common/Logo";
 import { ComparisonGrid } from "@/components/compare/ComparisonGrid";
 import { useSharedComparison } from "@/hooks/use-compare";
@@ -43,11 +43,7 @@ function SharedComparisonContent() {
 
       <main className="mx-auto max-w-5xl px-4 py-6 space-y-4">
         {/* Loading */}
-        {isLoading && (
-          <div className="flex justify-center py-12">
-            <LoadingSpinner />
-          </div>
-        )}
+        {isLoading && <ComparisonGridSkeleton />}
 
         {/* Error / not found */}
         {error && (

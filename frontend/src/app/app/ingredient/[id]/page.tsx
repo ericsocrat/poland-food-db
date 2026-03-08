@@ -4,7 +4,7 @@
 // Deep-dive into a single ingredient: concern tier, EFSA guidance, products
 // containing it, and co-occurring ingredients.
 
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { IngredientDetailSkeleton } from "@/components/common/skeletons";
 import { ConcernBadge } from "@/components/ingredient/ConcernBadge";
 import { IngredientUsageStats } from "@/components/ingredient/IngredientUsageStats";
 import { ProductsContainingList } from "@/components/ingredient/ProductsContainingList";
@@ -40,11 +40,7 @@ export default function IngredientProfilePage() {
   });
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <IngredientDetailSkeleton />;
   }
 
   if (error || !profile || profile.error) {

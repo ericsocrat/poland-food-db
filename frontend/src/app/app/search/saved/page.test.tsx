@@ -33,8 +33,8 @@ vi.mock("@/lib/api", () => ({
   deleteSavedSearch: (...args: unknown[]) => mockDeleteSavedSearch(...args),
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  SavedItemsSkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading saved items" />,
 }));
 
 vi.mock("@/components/common/ConfirmDialog", () => ({
@@ -136,10 +136,10 @@ describe("SavedSearchesPage", () => {
     expect(link).toBeTruthy();
   });
 
-  it("shows loading spinner", () => {
+  it("shows loading skeleton", () => {
     mockGetSavedSearches.mockReturnValue(new Promise(() => {}));
     render(<SavedSearchesPage />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Loading saved items" })).toBeInTheDocument();
   });
 
   it("shows error state with retry button", async () => {

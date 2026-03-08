@@ -2,7 +2,7 @@
 
 // ─── Settings — Notifications (Push Toggle, Score Alerts, Frequency) ────────
 
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SettingsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useAnalytics } from "@/hooks/use-analytics";
 import {
@@ -175,11 +175,7 @@ export default function NotificationSettingsPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <SettingsSkeleton />;
   }
 
   return (

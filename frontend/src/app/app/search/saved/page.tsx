@@ -4,7 +4,7 @@
 
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "@/components/common/EmptyState";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { SavedItemsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { deleteSavedSearch, getSavedSearches } from "@/lib/api";
 import { ALLERGEN_TAGS } from "@/lib/constants";
@@ -83,11 +83,7 @@ export default function SavedSearchesPage() {
       </div>
 
       {/* Loading */}
-      {isLoading && (
-        <div className="flex justify-center py-12">
-          <LoadingSpinner />
-        </div>
-      )}
+      {isLoading && <SavedItemsSkeleton />}
 
       {/* Error */}
       {error && (

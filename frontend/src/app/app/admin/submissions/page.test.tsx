@@ -21,8 +21,8 @@ vi.mock("@/lib/toast", () => ({
   showToast: (...args: unknown[]) => mockShowToast(...args),
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  SubmissionsSkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading submissions" />,
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -149,10 +149,10 @@ describe("AdminSubmissionsPage", () => {
     expect(screen.getByText("All")).toBeInTheDocument();
   });
 
-  it("shows loading spinner", () => {
+  it("shows loading skeleton", () => {
     mockCallRpc.mockReturnValue(new Promise(() => {}));
     render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Loading submissions" })).toBeInTheDocument();
   });
 
   it("shows error with retry", async () => {

@@ -7,7 +7,7 @@
 import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "@/components/common/EmptyState";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { ListDetailSkeleton } from "@/components/common/skeletons";
 import { ExportButton } from "@/components/export/ExportButton";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import {
@@ -94,11 +94,7 @@ export default function ListDetailPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center py-12">
-        <LoadingSpinner />
-      </div>
-    );
+    return <ListDetailSkeleton />;
   }
 
   if (error) {

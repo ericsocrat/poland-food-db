@@ -31,8 +31,8 @@ vi.mock("@/lib/api", () => ({
   getScanHistory: (...args: unknown[]) => mockGetScanHistory(...args),
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  ScanHistorySkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading scan history" />,
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -125,10 +125,10 @@ describe("ScanHistoryPage", () => {
     );
   });
 
-  it("shows loading spinner", () => {
+  it("shows loading skeleton", () => {
     mockGetScanHistory.mockReturnValue(new Promise(() => {}));
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Loading scan history" })).toBeInTheDocument();
   });
 
   it("shows error state with retry button", async () => {

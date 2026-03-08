@@ -8,6 +8,7 @@
 
 import { ButtonLink } from "@/components/common/Button";
 import { Icon } from "@/components/common/Icon";
+import { WatchlistSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ReformulationBadge } from "@/components/product/ReformulationBadge";
 import { ScoreChangeIndicator } from "@/components/product/ScoreChangeIndicator";
@@ -122,13 +123,8 @@ export default function WatchlistPage() {
       </div>
 
       {isLoading && (
-        <div className="space-y-3" data-testid="watchlist-loading">
-          {[1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-20 animate-pulse rounded-xl border border-border bg-surface-muted"
-            />
-          ))}
+        <div data-testid="watchlist-loading">
+          <WatchlistSkeleton />
         </div>
       )}
 

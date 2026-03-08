@@ -54,8 +54,8 @@ vi.mock("@/hooks/use-lists", () => ({
   }),
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  ListDetailSkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading list" />,
 }));
 
 vi.mock("@/components/common/ConfirmDialog", () => ({
@@ -142,14 +142,14 @@ beforeEach(() => {
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 describe("ListDetailPage", () => {
-  it("shows loading spinner when loading", () => {
+  it("shows loading skeleton when loading", () => {
     mockUseListItems.mockReturnValue({
       data: undefined,
       isLoading: true,
       error: null,
     });
     render(<ListDetailPage />);
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Loading list" })).toBeInTheDocument();
   });
 
   it("shows error state with retry button", () => {

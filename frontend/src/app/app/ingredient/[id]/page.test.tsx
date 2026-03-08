@@ -20,6 +20,10 @@ vi.mock("next/navigation", () => ({
   useParams: () => ({ id: "42" }),
 }));
 
+vi.mock("@/components/common/skeletons", () => ({
+  IngredientDetailSkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading ingredient" />,
+}));
+
 // ─── Import after mocks ────────────────────────────────────────────────────
 
 import IngredientProfilePage from "./page";
@@ -90,7 +94,7 @@ describe("IngredientProfilePage", () => {
     // Never resolve — keep loading
     mockGetIngredientProfile.mockReturnValue(new Promise(() => {}));
     render(<IngredientProfilePage />, { wrapper: createWrapper() });
-    expect(screen.getByText("Loading…")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Loading ingredient" })).toBeInTheDocument();
   });
 
   it("shows not-found when API returns error", async () => {

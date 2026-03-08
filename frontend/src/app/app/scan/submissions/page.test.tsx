@@ -31,8 +31,8 @@ vi.mock("@/lib/api", () => ({
   getMySubmissions: (...args: unknown[]) => mockGetMySubmissions(...args),
 }));
 
-vi.mock("@/components/common/LoadingSpinner", () => ({
-  LoadingSpinner: () => <div data-testid="spinner">Loading…</div>,
+vi.mock("@/components/common/skeletons", () => ({
+  SubmissionsSkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading submissions" />,
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -124,10 +124,10 @@ describe("MySubmissionsPage", () => {
     );
   });
 
-  it("shows loading spinner", () => {
+  it("shows loading skeleton", () => {
     mockGetMySubmissions.mockReturnValue(new Promise(() => {}));
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("spinner")).toBeInTheDocument();
+    expect(screen.getByRole("status", { name: "Loading submissions" })).toBeInTheDocument();
   });
 
   it("shows error state with retry button", async () => {

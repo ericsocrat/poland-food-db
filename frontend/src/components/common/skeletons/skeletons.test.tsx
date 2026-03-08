@@ -9,6 +9,14 @@ import { CategoryListingSkeleton } from "./CategoryListingSkeleton";
 import { CategoryGridSkeleton } from "./CategoryGridSkeleton";
 import { ListViewSkeleton } from "./ListViewSkeleton";
 import { RecipeGridSkeleton } from "./RecipeGridSkeleton";
+import { SettingsSkeleton } from "./SettingsSkeleton";
+import { SavedItemsSkeleton } from "./SavedItemsSkeleton";
+import { ListDetailSkeleton } from "./ListDetailSkeleton";
+import { ScanHistorySkeleton } from "./ScanHistorySkeleton";
+import { SubmissionsSkeleton } from "./SubmissionsSkeleton";
+import { AdminDashboardSkeleton } from "./AdminDashboardSkeleton";
+import { IngredientDetailSkeleton } from "./IngredientDetailSkeleton";
+import { WatchlistSkeleton } from "./WatchlistSkeleton";
 
 // Each skeleton must:
 // 1. Render with role="status"
@@ -140,5 +148,147 @@ describe("RecipeGridSkeleton", () => {
     const { container } = render(<RecipeGridSkeleton />);
     const cards = container.querySelectorAll(".card");
     expect(cards.length).toBe(6);
+  });
+});
+
+// ─── New skeleton components (issue #687) ──────────────────────────────────────
+
+describe("SettingsSkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<SettingsSkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe("Loading settings");
+  });
+
+  it("renders 3 settings card sections", () => {
+    const { container } = render(<SettingsSkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(3);
+  });
+
+  it("renders shimmer blocks for content areas", () => {
+    const { container } = render(<SettingsSkeleton />);
+    const blocks = container.querySelectorAll(".skeleton");
+    expect(blocks.length).toBeGreaterThan(10);
+  });
+});
+
+describe("SavedItemsSkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<SavedItemsSkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe("Loading saved items");
+  });
+
+  it("renders 4 saved item card placeholders", () => {
+    const { container } = render(<SavedItemsSkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(4);
+  });
+});
+
+describe("ListDetailSkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<ListDetailSkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe("Loading list");
+  });
+
+  it("renders header card plus 5 product item cards", () => {
+    const { container } = render(<ListDetailSkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(6);
+  });
+
+  it("renders shimmer blocks for content areas", () => {
+    const { container } = render(<ListDetailSkeleton />);
+    const blocks = container.querySelectorAll(".skeleton");
+    expect(blocks.length).toBeGreaterThan(15);
+  });
+});
+
+describe("ScanHistorySkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<ScanHistorySkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe("Loading scan history");
+  });
+
+  it("renders 5 scan item card placeholders", () => {
+    const { container } = render(<ScanHistorySkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(5);
+  });
+});
+
+describe("SubmissionsSkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<SubmissionsSkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe("Loading submissions");
+  });
+
+  it("renders 4 submission card placeholders", () => {
+    const { container } = render(<SubmissionsSkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(4);
+  });
+});
+
+describe("AdminDashboardSkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<AdminDashboardSkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe(
+      "Loading admin dashboard",
+    );
+  });
+
+  it("renders metric cards and content sections", () => {
+    const { container } = render(<AdminDashboardSkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(7);
+  });
+
+  it("renders responsive grid layout", () => {
+    const { container } = render(<AdminDashboardSkeleton />);
+    const grids = container.querySelectorAll(".grid");
+    expect(grids.length).toBeGreaterThanOrEqual(2);
+  });
+});
+
+describe("IngredientDetailSkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<IngredientDetailSkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe("Loading ingredient");
+  });
+
+  it("renders header card plus 2 detail section cards", () => {
+    const { container } = render(<IngredientDetailSkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(3);
+  });
+});
+
+describe("WatchlistSkeleton", () => {
+  it("renders with correct a11y attributes", () => {
+    render(<WatchlistSkeleton />);
+    const container = screen.getByRole("status");
+    expect(container.getAttribute("aria-busy")).toBe("true");
+    expect(container.getAttribute("aria-label")).toBe("Loading watchlist");
+  });
+
+  it("renders 4 watchlist card placeholders", () => {
+    const { container } = render(<WatchlistSkeleton />);
+    const cards = container.querySelectorAll(".card");
+    expect(cards.length).toBe(4);
   });
 });
