@@ -77,10 +77,10 @@ export const Select = forwardRef<HTMLSelectElement, SelectProps>(
           aria-describedby={errorId}
           className={[
             "block w-full appearance-none rounded-lg border bg-surface shadow-sm transition-colors",
-            "focus:outline-none focus:ring-1",
+            "focus-visible:outline-none focus-visible:ring-1",
             error
-              ? "border-error focus:border-error focus:ring-error"
-              : "border-strong focus:border-brand focus:ring-brand",
+              ? "border-error focus-visible:border-error focus-visible:ring-error"
+              : "border-strong focus-visible:border-brand focus-visible:ring-brand",
             SIZE_CLASSES[size],
             // Space for chevron
             "pr-10",

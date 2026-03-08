@@ -6,10 +6,10 @@
  */
 
 import {
-  forwardRef,
-  useId,
-  type InputHTMLAttributes,
-  type ReactNode,
+    forwardRef,
+    useId,
+    type InputHTMLAttributes,
+    type ReactNode,
 } from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -86,10 +86,10 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           className={[
             "block w-full rounded-lg border bg-surface shadow-sm transition-colors",
             "placeholder:text-foreground-muted",
-            "focus:outline-none focus:ring-1",
+            "focus-visible:outline-none focus-visible:ring-1",
             error
-              ? "border-error focus:border-error focus:ring-error"
-              : "border-strong focus:border-brand focus:ring-brand",
+              ? "border-error focus-visible:border-error focus-visible:ring-error"
+              : "border-strong focus-visible:border-brand focus-visible:ring-brand",
             SIZE_CLASSES[size],
             icon ? "pl-10" : "",
           ]

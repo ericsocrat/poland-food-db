@@ -189,7 +189,7 @@ export function FilterPanel({
                         onChange={() =>
                           toggleArrayFilter("category", cat.category)
                         }
-                        className="h-5 w-5 rounded border-strong text-brand focus:ring-brand"
+                        className="h-5 w-5 rounded border-strong text-brand focus-visible:ring-brand"
                       />
                       <span className="flex items-center gap-1.5 text-sm">
                         <CategoryIcon slug={cat.category} size="sm" />
@@ -299,7 +299,7 @@ export function FilterPanel({
                         onChange={() =>
                           toggleArrayFilter("allergen_free", al.tag)
                         }
-                        className="h-5 w-5 rounded border-strong text-brand focus:ring-brand"
+                        className="h-5 w-5 rounded border-strong text-brand focus-visible:ring-brand"
                       />
                       <span className="text-sm">{label}-free</span>
                       <span className="ml-auto text-xs text-foreground-muted">

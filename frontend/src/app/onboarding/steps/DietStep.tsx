@@ -42,7 +42,7 @@ export function DietStep({ data, onChange, onNext, onBack }: StepProps) {
             type="checkbox"
             checked={data.strictDiet}
             onChange={(e) => onChange({ strictDiet: e.target.checked })}
-            className="h-4 w-4 rounded border-strong text-brand focus:ring-brand"
+            className="h-4 w-4 rounded border-strong text-brand focus-visible:ring-brand"
           />
           <span className="text-sm text-foreground-secondary">
             {t("onboarding.strictDiet")}
