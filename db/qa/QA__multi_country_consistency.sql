@@ -102,8 +102,8 @@ WHERE p.is_deprecated IS NOT TRUE
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════════
--- 8. DE only in allowed categories (19 of 20 — all except Żabka)
--- ═══════════════════════════════════════════════════════════════════════════════
+-- 8. DE only in allowed categories (21 of 22 — all except Żabka)
+-- ═══════════════════════════════════════════════════════════════════════════
 SELECT '8. DE products only in allowed categories' AS check_name,
        COUNT(*) AS violations
 FROM products p
@@ -113,8 +113,8 @@ WHERE p.country = 'DE'
     'Alcohol', 'Baby', 'Bread', 'Breakfast & Grain-Based', 'Canned Goods',
     'Cereals', 'Chips', 'Condiments', 'Dairy', 'Drinks',
     'Frozen & Prepared', 'Instant & Frozen', 'Meat',
-    'Nuts, Seeds & Legumes', 'Plant-Based & Alternatives',
-    'Sauces', 'Seafood & Fish', 'Snacks', 'Sweets'
+    'Nuts, Seeds & Legumes', 'Oils & Vinegars', 'Plant-Based & Alternatives',
+    'Sauces', 'Seafood & Fish', 'Snacks', 'Spreads & Dips', 'Sweets'
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════════

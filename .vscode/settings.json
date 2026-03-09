@@ -27,7 +27,7 @@
       "name": "Local Supabase",
       "driver": "PostgreSQL",
       "server": "127.0.0.1",
-      "port": 54322,
+      "port": 55002,
       "database": "postgres",
       "username": "postgres",
       "password": "postgres",

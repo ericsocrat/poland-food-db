@@ -982,22 +982,30 @@ At the end of every PR-like change, include a **Verification** section:
 
 These are **anchor products** whose scores must remain stable. If a scoring change causes drift beyond ±2 points, investigate before committing:
 
+**PL Anchors:**
+
 - Doritos Sweet Chili ≈ 41 (chips, 7 additives + concern 55, protein credit)
-- Coca-Cola Zero (DE) ≈ 13 (zero nutrition, 8 additives + concern 70 (enriched), no protein/fibre)
 - Piątnica Skyr Naturalny ≈ 5 (healthiest dairy, fermented, high protein bonus)
 - Melvit Płatki owsiane górskie ≈ 7 (healthiest cereal, protein + fibre bonus)
 - Auchan Tortilla Pszenno-Żytnia ≈ 29 (bread, 9 additives + concern 25, protein credit)
 - Tarczyński Kabanosy wieprzowe ≈ 27 (high-fat cured meat, high protein bonus)
 - BoboVita Kaszka Mleczna ≈ 28 (baby food, high sugars, protein credit)
-- Somersby Blueberry Cider ≈ 10 (alcohol regression — product deprecated)
-- Mestemacher Chleb wielozbożowy ≈ 12 (bread, baked, protein + fibre bonus)
-- Marinero Łosoś wędzony ≈ 25 (smoked salmon, high protein bonus)
+- Mestemacher Chleb wielozbożowy ≈ 13 (bread, baked, protein + fibre bonus)
+- Marinero Łosoś wędzony ≈ 25 (cold-smoked salmon, high protein bonus)
 - Dr. Oetker Pizza 4 sery ≈ 30 (frozen pizza, palm oil, 4 additives, protein credit)
-- Lajkonik Paluszki extra cienkie ≈ 31 (snacks, baked — product deprecated)
-- Naleśniki z jabłkami ≈ 16 (żabka — product deprecated)
+- Naleśniki z jabłkami ≈ 15 (frozen crepes, low penalty, fibre credit)
 - Pudliszki Ketchup Łagodny Premium ≈ 33 (condiments, sugar + salt + additives)
-- E. Wedel Czekolada Tiramisu ≈ 52 (sweets, palm oil + 4 additives, protein credit)
-- Indomie Noodles Chicken ≈ 43 (instant, palm oil + 10 additives, protein credit)
+- E. Wedel Czekolada Tiramisu ≈ 55 (sweets, palm oil + 44 ingredients + 6 additives + concern 30)
+- Indomie Noodles Chicken ≈ 54 (instant, palm oil + 29 ingredients + 10 additives + concern 75)
+
+**DE Anchors:**
+
+- Coca-Cola Zero (DE) ≈ 13 (zero nutrition, 8 additives + concern 70, no protein/fibre)
+- Ritter Sport Edel-Vollmilch (DE) ≈ 48 (sweets, full milk chocolate, high sugar/fat)
+- Alpro Sojadrink Ungesüßt (DE) ≈ 6 (drinks, minimal fat/sugar, low penalty)
+- Chipsfrisch ungarisch (DE) ≈ 25 (chips, fried, moderate fat, protein credit)
+- Golden Seafood Wildlachsfilet (DE) ≈ 3 (seafood, high protein, minimal penalties)
+- Asia Green Garden Instant-Nudeln Beef (DE) ≈ 55 (instant noodles, 10 additives, high penalty)
 
 Run QA after **every** schema change, data update, or scoring formula adjustment.
 

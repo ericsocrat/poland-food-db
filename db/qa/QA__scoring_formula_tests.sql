@@ -281,35 +281,37 @@ WHERE p.product_name = 'Kabanosy wieprzowe'
   AND p.unhealthiness_score::int NOT BETWEEN 25 AND 29;
 
 -- Test 18: Known product regression test (E. Wedel Czekolada Tiramisu)
---          Sweets: palm oil + 15g sat fat + 57g sugars + 4 additives → score 50-54
+--          Sweets: palm oil + 15g sat fat + 57g sugars + 6 additives + concern 30 → score 53-57
 --          v3.3: protein 5.5g (bonus 15) + fibre 1.3g (bonus 10) → density 25 → -2 pts
+--          Post-enrichment: 44 ingredients, 6 additives, concern_score 30.
 --          Requires ingredient enrichment data; skipped in CI without it.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Wedel Czekolada Tiramisu score changed unexpectedly' AS issue,
-       CONCAT('Expected 50-54, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 53-57, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Czekolada Tiramisu'
   AND p.brand = 'E. Wedel'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 50 AND 54
+  AND p.unhealthiness_score::int NOT BETWEEN 53 AND 57
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- Test 19: Known product regression test (Indomie Noodles Chicken Flavour)
---          Instant noodles: palm oil + 10 additives + concern 75, dried → score 41-45
+--          Instant noodles: palm oil + 10 additives + concern 75 → score 52-56
 --          v3.3: protein 9.4g (bonus 15) + fibre 0g (bonus 0) → density 15 → -1 pt
+--          Post-enrichment: 29 ingredients, 10 additives, concern_score 75.
 --          Requires ingredient enrichment data; skipped in CI without it.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
        'REGRESSION: Indomie Noodles score changed unexpectedly' AS issue,
-       CONCAT('Expected 41-45, got ', p.unhealthiness_score) AS detail
+       CONCAT('Expected 52-56, got ', p.unhealthiness_score) AS detail
 FROM products p
 WHERE p.product_name = 'Noodles Chicken Flavour'
   AND p.brand = 'Indomie'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 41 AND 45
+  AND p.unhealthiness_score::int NOT BETWEEN 52 AND 56
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- Test 20: Known product regression test (Pudliszki Ketchup łagodny)
@@ -603,8 +605,10 @@ WHERE p.product_name = 'Wildlachsfilet'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 40: DE regression anchor — Instant-Nudeln Beef (Instant & Frozen)
---          Instant noodles, high additives + palm oil → score ≈55
---          v3.3: protein credit minor, high penalty dominates. Issue #602.
+--          Instant noodles, enriched with 10 additives, concern_score 0.
+--          v3.3: protein 10g (bonus 15), fibre 0g → density 15 → -1 pt
+--          Post-enrichment score ≈55 (higher due to additives penalty).
+--          Issues #602, #715.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
