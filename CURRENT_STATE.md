@@ -7,9 +7,9 @@
 
 ## Active Branch & PR
 
-- **Branch:** `test/721-suite-reconciliation` (issue #721)
-- **Latest SHA (main):** `eee3a94` (PR #770 merged — enrichment for #714/#715)
-- **Open PRs:** None (PR pending for #721)
+- **Branch:** `data/717-coverage-thresholds` (feature branch for #717)
+- **Latest SHA (main):** `fbfe57f` (PR #771 merged — #721 QA count reconciliation)
+- **Open PRs:** #772 (#717 coverage thresholds, auto-merge pending conflict resolution)
 
 ## Production Deployment (2026-03-06)
 
@@ -105,14 +105,16 @@ All 26 open PRs merged into main in a single session:
 ## Next Planned Work
 
 - [x] PR #770 merged — enrichment for #714/#715 (eee3a94)
-- [ ] #721 — Test suite reconciliation (QA counts phase done, PR pending)
+- [x] #721 — Test suite reconciliation (PR #771 merged)
+- [x] Implement #717 — automated data coverage thresholds (PR #772 pending)
 - [ ] Deploy 26-PR changes to production (staging validation first)
+- [ ] Merge PR #771 (#721 QA count reconciliation)
 
 ## Key Metrics Snapshot
 
 - **Products (production):** 2,438 active (1,332 PL + 1,102 DE across 22 PL + 21 DE categories)
 - **Deprecated products:** 286 (229 PL + 57 DE)
-- **QA checks:** 752/752 passing (48 suites) — local DB
+- **QA checks:** 756/756 passing (48 suites) — local DB
 - **Negative tests:** 23/23 caught
 - **EAN coverage:** 2,261/2,264 with EAN (99.9%) — local DB
 - **Ingredient refs:** 5,882 (local, post-enrichment)
@@ -126,7 +128,7 @@ All 26 open PRs merged into main in a single session:
 - **ESLint warnings:** 0
 - **Open issues:** 16 | **Open PRs:** 0 (PR pending for #721)
 - **Vitest:** 5,324 tests passing (29 skipped) across 318 test files
-- **DB migrations:** 200 append-only (75 applied to production, 4 skipped)
+- **DB migrations:** 202 append-only (75 applied to production, 4 skipped)
 - **Ruff lint:** 0 errors
 - **GitHub Ruleset:** strict_required_status_checks_policy = true (restored)
 

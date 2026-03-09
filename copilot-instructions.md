@@ -489,6 +489,8 @@ tryvit/
 
 **`v_data_freshness_summary`** — Per-country, per-category freshness breakdown. Columns: country, category, total_products, has_fetch_date, fresh_30d, aging_30_90d, stale_90d, never_fetched, oldest_fetch, newest_fetch, pct_fresh. Used for monitoring data staleness.
 
+**`v_data_coverage_summary`** — Materialized view of per-country, per-category data coverage metrics. Columns: country, category, total_products, with_ingredients, with_allergens, with_ean, ingredient_pct, allergen_pct, ean_pct, avg_completeness. Unique index on (country, category). Used by QA coverage threshold checks (§8.18, checks 34–37). Refreshed by `refresh_all_materialized_views()`.
+
 ### Edge Functions
 
 > **Location:** `supabase/functions/`
@@ -933,7 +935,7 @@ At the end of every PR-like change, include a **Verification** section:
 | API Contract              | `QA__api_contract.sql`              |     33 | Yes       |
 | Confidence Scoring        | `QA__confidence_scoring.sql`        |     14 | Yes       |
 | Confidence Reporting      | `QA__confidence_reporting.sql`      |      7 | Yes       |
-| Data Quality              | `QA__data_quality.sql`              |     25 | Yes       |
+| Data Quality              | `QA__data_quality.sql`              |     29 | Yes       |
 | Ref. Integrity            | `QA__referential_integrity.sql`     |     18 | Yes       |
 | View Consistency          | `QA__view_consistency.sql`          |     13 | Yes       |
 | Naming Conventions        | `QA__naming_conventions.sql`        |     12 | Yes       |
@@ -975,7 +977,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Recipe Integrity          | `QA__recipe_integrity.sql`          |      6 | Yes       |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **752/752 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **756/756 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
