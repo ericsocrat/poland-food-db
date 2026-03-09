@@ -214,12 +214,15 @@ WHERE (SELECT COUNT(*) FROM v_master) !=
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 23. Orphan ingredient_ref rows (not linked to any product)
 --     Skipped when product_ingredient is empty (pipeline not yet built).
+--     Also checks parent_ingredient_id references (sub-ingredient parents).
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT ir.ingredient_id, ir.name_en,
        'ORPHAN INGREDIENT REF' AS issue
 FROM ingredient_ref ir
 LEFT JOIN product_ingredient pi ON pi.ingredient_id = ir.ingredient_id
+LEFT JOIN product_ingredient pi2 ON pi2.parent_ingredient_id = ir.ingredient_id
 WHERE pi.ingredient_id IS NULL
+  AND pi2.parent_ingredient_id IS NULL
   AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- ═══════════════════════════════════════════════════════════════════════════

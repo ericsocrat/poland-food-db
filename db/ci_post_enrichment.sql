@@ -118,8 +118,65 @@ AND NOT EXISTS (
 )
 ON CONFLICT (product_id, tag, type) DO NOTHING;
 
+-- Peanuts
+INSERT INTO product_allergen_info (product_id, tag, type)
+SELECT DISTINCT pi.product_id, 'peanuts', 'contains'
+FROM product_ingredient pi
+JOIN ingredient_ref ir ON ir.ingredient_id = pi.ingredient_id
+JOIN products p ON p.product_id = pi.product_id AND p.is_deprecated IS NOT TRUE
+WHERE ir.name_en ILIKE '%peanut%'
+AND NOT EXISTS (
+    SELECT 1 FROM product_allergen_info pai
+    WHERE pai.product_id = pi.product_id AND pai.tag = 'peanuts' AND pai.type = 'contains'
+)
+ON CONFLICT (product_id, tag, type) DO NOTHING;
+
 -- ═══════════════════════════════════════════════════════════════
--- Step 0c: Remove ingredient data for deprecated products
+-- Step 0c: Fix ingredient position ordering
+-- ═══════════════════════════════════════════════════════════════
+-- After enrichment, some products may have a sub-ingredient at
+-- position 1 while the first top-level ingredient is at position 2+.
+-- QA check 8 (ingredient_quality) requires top-level position starts at 1.
+-- Fix: swap the earliest sub-ingredient with the earliest top-level.
+
+DO $$
+DECLARE
+  r RECORD;
+BEGIN
+  FOR r IN
+    SELECT pi_sub.product_id,
+           pi_sub.ingredient_id AS sub_ing_id,
+           pi_sub.position      AS sub_pos,
+           first_top.ingredient_id AS top_ing_id,
+           first_top.position      AS top_pos
+    FROM product_ingredient pi_sub
+    JOIN (
+      SELECT product_id, MIN(position) AS min_top_pos
+      FROM product_ingredient
+      WHERE is_sub_ingredient IS NOT TRUE
+      GROUP BY product_id
+      HAVING MIN(position) <> 1
+    ) bad ON bad.product_id = pi_sub.product_id AND pi_sub.position = 1
+    JOIN product_ingredient first_top
+      ON first_top.product_id = bad.product_id
+     AND first_top.position = bad.min_top_pos
+    WHERE pi_sub.is_sub_ingredient = true
+  LOOP
+    -- Swap via temp position 9999
+    UPDATE product_ingredient SET position = 9999
+    WHERE product_id = r.product_id AND ingredient_id = r.sub_ing_id AND position = r.sub_pos;
+
+    UPDATE product_ingredient SET position = r.sub_pos
+    WHERE product_id = r.product_id AND ingredient_id = r.top_ing_id AND position = r.top_pos;
+
+    UPDATE product_ingredient SET position = r.top_pos
+    WHERE product_id = r.product_id AND ingredient_id = r.sub_ing_id AND position = 9999;
+  END LOOP;
+END $$;
+
+-- ═══════════════════════════════════════════════════════════════
+-- Step 0d: Remove ingredient data for deprecated products
+-- ═══════════════════════════════════════════════════════════════
 -- ═══════════════════════════════════════════════════════════════
 -- Keeps MV row counts consistent (mv_ingredient_frequency excludes
 -- deprecated products via JOIN, but product_ingredient doesn't).
@@ -134,6 +191,9 @@ WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true)
 DELETE FROM ingredient_ref
 WHERE NOT EXISTS (
     SELECT 1 FROM product_ingredient pi WHERE pi.ingredient_id = ingredient_ref.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi WHERE pi.parent_ingredient_id = ingredient_ref.ingredient_id
 )
 AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 

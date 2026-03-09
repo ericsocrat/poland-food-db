@@ -155,6 +155,9 @@ DELETE FROM ingredient_ref
 WHERE NOT EXISTS (
     SELECT 1 FROM product_ingredient pi WHERE pi.ingredient_id = ingredient_ref.ingredient_id
 )
+AND NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi WHERE pi.parent_ingredient_id = ingredient_ref.ingredient_id
+)
 AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- ─── 3b. Fix data errors in nutrition_facts ─────────────────────────────
