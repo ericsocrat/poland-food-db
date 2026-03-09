@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-09 by GitHub Copilot (session 36)
+> **Last updated:** 2026-03-09 by GitHub Copilot (session 37)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,8 +8,8 @@
 ## Active Branch & PR
 
 - **Branch:** `main`
-- **Latest SHA (main):** `a7c7f01` (deps bumps + #717 coverage thresholds)
-- **Open PRs:** PR pending for #773 (fix digest() schema qualification)
+- **Latest SHA (main):** `17f70c2` — fix(ci): qualify digest() as extensions.digest() (#773) (#797)
+- **Open PRs:** PR #798 — fix(ci): add extensions to CI search_path before migrations (#773) — auto-merge set, CI running
 
 ## Production Deployment (2026-03-06)
 
@@ -23,44 +23,23 @@
 - 236/236 pipelines executed successfully
 - Pre-deploy backup: `backups/cloud_backup_20260306_172023.dump`
 
-## Recently Shipped (This Session — 26-PR Merge Marathon)
+## Recently Shipped
 
-All 26 open PRs merged into main in a single session:
-
-| PR   | Summary                                                                           |
-| ---- | --------------------------------------------------------------------------------- |
-| #748 | fix(ci): Lighthouse CI server start                                               |
-| #724 | fix(frontend): eliminate hardcoded English in error boundaries (#699)              |
-| #723 | test(coverage): ratchet coverage + typecheck fix (#718)                            |
-| #726 | fix(frontend): action button overflow on 320px mobile (#690)                       |
-| #727 | feat(frontend): forgot password flow, password toggle (#700)                       |
-| #728 | feat(frontend): landing page server component with SEO metadata (#698)             |
-| #729 | fix(frontend): WCAG 2.1 AA accessibility audit fixes (#709)                        |
-| #730 | fix(frontend): dark mode color violations (#708)                                   |
-| #734 | feat(frontend): unsaved changes dialog + navigation guard (#707)                   |
-| #739 | fix(frontend): enforce 44x44px minimum touch targets (#695)                        |
-| #744 | feat(frontend): pull-to-refresh feature (#694)                                     |
-| #741 | feat(frontend): responsive stats grid (#706)                                       |
-| #725 | fix(frontend): restructure category listing nested interactives (#691)             |
-| #747 | test(e2e): expand Playwright E2E coverage (#719)                                   |
-| #742 | feat(frontend): responsive search action row (#703)                                |
-| #733 | fix(frontend): keyboard nav, motion, color indicators (#711)                       |
-| #746 | feat(frontend): streamline onboarding 7→3 steps (#701)                             |
-| #740 | feat(frontend): swipeable tabs + responsive labels (#693)                           |
-| #736 | fix(frontend): remove global overflow-x-hidden (#697)                              |
-| #732 | fix(frontend): standardize focus-visible everywhere (#689)                         |
-| #745 | fix(frontend): scanner camera permission recovery + scan feedback (#702)           |
-| #738 | refactor(frontend): centralize score band colors into utility (#688)               |
-| #735 | fix(frontend): sticky save button bar on settings pages (#696)                     |
-| #743 | feat(frontend): group MoreDrawer into sections with swipe-to-dismiss (#692)        |
-| #737 | fix(frontend): replace sub-10px font sizes with readable alternatives (#686)       |
-| #731 | fix(frontend): eliminate 80+ hardcoded Tailwind color classes — CSS tokens (#682)  |
+| PR   | Summary                                                                          |
+| ---- | -------------------------------------------------------------------------------- |
+| #797 | fix(ci): qualify digest() as extensions.digest() (#773)                          |
+| #772 | feat(qa): automated data coverage thresholds (#717)                              |
+| #771 | chore(qa): reconcile QA suite check counts (#721)                                |
+| #770 | data(enrichment): enrich ingredients + allergens for #714/#715                    |
+| #748 | fix(ci): Lighthouse CI server start                                              |
+| #724–#747 | 26-PR merge marathon — Elite UX v1.0 (accessibility, mobile, design tokens) |
 
 ## Known Issues & Broken Items
 
-- [x] Quality Gate CI — **FIXED in #679** (seed allergen tags + invariant stability)
+- [ ] QA Suite 11 (NutriRange): 9 calorie back-calculation outliers — OFF source data quality (tracked as #780)
+- [ ] CI `DB Integrity` check: `digest()` schema qualification — fix in PR #798, pending merge
+- [x] Quality Gate CI — **FIXED in #679**
 - [x] QA Suite 2 (Scoring): Coca-Cola Zero — score anchor updated to 11-16 in PR #655
-- [ ] QA Suite 11 (NutriRange): 9 calorie back-calculation outliers — OFF source data quality
 - [x] QA Suite 16 (Security): 2 anon-accessible non-public api_* functions — **FIXED in #662**
 - [x] QA Suite 35 (StoreArch): 48 orphan junction rows + 2 backfill coverage gaps — **FIXED**
 - [x] QA Suite 41 (IdxVerify): 1 FK column missing supporting index — **FIXED**
@@ -68,147 +47,114 @@ All 26 open PRs merged into main in a single session:
 
 ## CI Gate Status (main branch)
 
-| Gate         | Status | Notes                                                 |
-| ------------ | ------ | ----------------------------------------------------- |
-| pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke  |
-| main-gate    | ✅      | Last runs all success                                 |
-| qa.yml       | ✅      | 752/752 checks passing                                |
-| dep-audit    | ✅      | 0 high/critical vulnerabilities                       |
-| python-lint  | ✅      | 0 ruff errors                                         |
-| quality-gate | ✅      | All checks passing (fixed in #679)                    |
-| nightly      | ✅      | Data audit fix shipped (#560)                         |
+| Gate         | Status | Notes                                                    |
+| ------------ | ------ | -------------------------------------------------------- |
+| pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke     |
+| main-gate    | ✅      | Last runs all success                                    |
+| qa.yml       | ❌      | DB Integrity broken — `digest()` not in search_path (PR #798 pending) |
+| dep-audit    | ✅      | 0 high/critical vulnerabilities                          |
+| python-lint  | ✅      | 0 ruff errors                                            |
+| quality-gate | ✅      | All checks passing                                       |
+| nightly      | ✅      | Data audit fix shipped (#560)                            |
 
-## Open Issues (16 total)
+## Open Issues (24 total)
 
-| Issue | Priority | Summary                                                              |
-| ----- | -------- | -------------------------------------------------------------------- |
-| #713  | P1       | Create DE Oils & Vinegars + Spreads & Dips pipelines for DE parity   |
-| #722  | P2       | Comprehensive CI/CD workflow audit and quality gate tightening        |
-| #721  | P2       | Test suite reconciliation — **IN PROGRESS** (QA counts reconciled)   |
-| #720  | P2       | Update stale docs — README, CHANGELOG, copilot-instructions          |
-| #717  | P2       | Automated data coverage thresholds and regression detection           |
-| #712  | P2       | Dark mode visual audit — every page at 320px and 1280px              |
-| #705  | P2       | Recipe pages — search, active filter chips, product-ingredient links |
-| #704  | P2       | Streamline compare workflow — add-from-anywhere + floating badge     |
-| #687  | P2       | Standardize skeleton loading screens across all pages                |
-| #685  | P2       | Replace all dark: Tailwind prefixes with CSS variable tokens         |
-| #683  | P2       | Unify button pattern — eliminate 3 coexisting approaches             |
-| #710  | P3       | PWA manifest completeness and install prompt i18n                    |
-| #684  | P3       | Consolidate duplicate dark mode CSS variable blocks                  |
-| #212  | Deferred | Infrastructure Cost Attribution Framework                            |
+### M29 — CI Stability & Infrastructure Foundation (2 open)
+
+| Issue | Priority | Summary                                                   |
+| ----- | -------- | --------------------------------------------------------- |
+| #774  | P1       | Reconcile CURRENT_STATE.md — data severely stale          |
+| #775  | P2       | Apply safe minor/patch dependency bumps — 8 packages      |
+
+### M30 — Data Platform Perfection PL + DE (5 open)
+
+| Issue | Priority | Summary                                                                 |
+| ----- | -------- | ----------------------------------------------------------------------- |
+| #776  | P1       | Enrich 262 products missing ingredient data — close the 10.2% gap       |
+| #777  | P1       | Enrich 857 products missing allergen data — close the 33.3% safety gap  |
+| #778  | P2       | Expand underpopulated DE categories to target density                   |
+| #779  | P2       | Investigate scoring band distribution — zero products in Red/Dark Red   |
+| #780  | P2       | Resolve 9 NutriRange calorie back-calculation outliers                  |
+
+### M31 — Mobile-First Product Experience Revolution (4 open)
+
+| Issue | Priority | Summary                                                                        |
+| ----- | -------- | ------------------------------------------------------------------------------ |
+| #781  | P2       | Mobile-first product detail redesign — score hero, nutrition bars              |
+| #782  | P2       | Better alternatives with visual comparison cards                               |
+| #783  | P2       | Mobile-optimized product comparison — winner verdict, swipe nav                |
+| #784  | P2       | Premium barcode scanner UX — haptic feedback, batch mode                       |
+
+### M32 — Mobile-First Navigation & Discovery (4 open)
+
+| Issue | Priority | Summary                                                                        |
+| ----- | -------- | ------------------------------------------------------------------------------ |
+| #785  | P2       | Category browsing — visual card grid with score distribution                   |
+| #786  | P2       | Mobile search experience — instant results, smart filter chips                 |
+| #787  | P2       | Dashboard redesign — actionable health insights, quick-win swaps               |
+| #788  | P2       | Recipe pages — functional browsing, product-linked ingredients                 |
+
+### M33 — Visual Polish & Design System Maturity (5 open)
+
+| Issue | Priority | Summary                                                                        |
+| ----- | -------- | ------------------------------------------------------------------------------ |
+| #789  | P2       | Standardize skeleton loading screens — unified primitives, zero CLS            |
+| #790  | P2       | Design meaningful empty states for every page                                  |
+| #791  | P2       | Consumer-friendly error boundaries — offline banner, component recovery        |
+| #792  | P2       | Learn Hub — fix broken rendering, enhance content                              |
+| #793  | P2       | Mobile typography, spacing, and visual consistency audit                        |
+
+### M34 — Testing & Quality Assurance Excellence (3 open)
+
+| Issue | Priority | Summary                                                                        |
+| ----- | -------- | ------------------------------------------------------------------------------ |
+| #794  | P2       | Debug and fix 18 broken Playwright screenshot renders                          |
+| #795  | P2       | Comprehensive Playwright E2E test expansion — 7 critical user flow suites      |
+| #796  | P3       | Tailwind CSS v4 migration — PostCSS configuration overhaul                     |
+
+### Deferred
+
+| Issue | Priority | Summary                                    |
+| ----- | -------- | ------------------------------------------ |
+| #212  | Deferred | Infrastructure Cost Attribution Framework  |
 
 ## Milestones Completed
 
 - **Milestone #17 — Elite World-Class UX v1.0:** 17/17 issues shipped in PR #583 (squash merged 2026-03-03)
 - **26-PR Merge Marathon:** All 26 open PRs merged in a single session (2026-03-08)
+- **Issue #773 CLOSED:** PR #797 merged (fix migration) + PR #798 pending (CI qa.yml fix)
 
 ## Next Planned Work
 
-- [x] PR #770 merged — enrichment for #714/#715 (eee3a94)
-- [x] #721 — Test suite reconciliation (PR #771 merged)
-- [x] Implement #717 — automated data coverage thresholds (PR #772 pending)
-- [ ] Deploy 26-PR changes to production (staging validation first)
-- [ ] Merge PR #771 (#721 QA count reconciliation)
+- [x] #773 — Fix DB Integrity CI (PR #797 merged, PR #798 pending)
+- [x] #774 — Reconcile CURRENT_STATE.md (this PR)
+- [ ] #775 — Apply safe dependency bumps (8 packages)
+- [ ] #776 — Enrich 262 products missing ingredients
+- [ ] #777 — Enrich 857 products missing allergens
+- [ ] Deploy 26-PR + post-marathon changes to production
 
 ## Key Metrics Snapshot
 
+- **Products (local):** 2,576 active (1,373 PL + 1,203 DE across 21 PL + 21 DE categories)
 - **Products (production):** 2,438 active (1,332 PL + 1,102 DE across 22 PL + 21 DE categories)
-- **Deprecated products:** 286 (229 PL + 57 DE)
+- **Deprecated products:** 37 (27 PL + 10 DE) — local DB
 - **QA checks:** 756/756 passing (48 suites) — local DB
 - **Negative tests:** 23/23 caught
-- **EAN coverage:** 2,261/2,264 with EAN (99.9%) — local DB
-- **Ingredient refs:** 5,882 (local, post-enrichment)
-- **Product-ingredient links:** 31,680 (local, post-enrichment)
-- **Allergen contains:** 2,977 (local, post-enrichment)
-- **Allergen traces:** 3,092 (local, post-enrichment)
-- **Local ingredient coverage:** ~89.8% (post-enrichment)
-- **Local allergen coverage:** ~66.7% (post-enrichment)
-- **Nutrition coverage (production):** 2,438/2,438 (100%)
+- **EAN coverage:** 2,569/2,576 with EAN (99.7%) — local DB
+- **Ingredient refs:** 5,882
+- **Product-ingredient links:** 31,680
+- **Allergen contains:** 2,977
+- **Allergen traces:** 3,092
+- **Ingredient coverage:** ~89.8% (262 products missing)
+- **Allergen coverage:** ~66.7% (857 products missing)
+- **Nutrition coverage:** 2,576/2,576 (100%)
 - **Frontend test coverage:** ~88% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
-- **Open issues:** 16 | **Open PRs:** 0 (PR pending for #721)
-- **Vitest:** 5,324 tests passing (29 skipped) across 318 test files
-- **DB migrations:** 202 append-only (75 applied to production, 4 skipped)
+- **Open issues:** 24 | **Open PRs:** 1 (#798)
+- **Vitest:** ~5,430 tests across 322 test files
+- **DB migrations:** 203 append-only (75 applied to production, 4 skipped)
 - **Ruff lint:** 0 errors
-- **GitHub Ruleset:** strict_required_status_checks_policy = true (restored)
-
----
-
-## PL QA Validation Report (#595)
-
-> **Date:** 2026-03-05 | **Branch:** `test/595-pl-qa-validation`
-
-### Validation Results
-
-| Check                      | Result                   | Status |
-| -------------------------- | ------------------------ | ------ |
-| QA suites (48)             | 43 pass / 5 known issues | ✅      |
-| Negative tests             | 23/23 caught             | ✅      |
-| EAN checksums              | 2,261/2,261 valid (100%) | ✅      |
-| Pipeline structure         | 43 categories verified   | ✅      |
-| Enrichment identity        | PASSED                   | ✅      |
-| Scoring anchor regression  | 9/9 verified within ±2   | ✅      |
-| Data completeness avg (PL) | 97.5%                    | ✅      |
-| Min completeness (PL)      | 73% (Instant & Frozen)   | ✅      |
-
-### Scoring Anchor Verification
-
-| Product                     | Expected | Actual | Delta | Status |
-| --------------------------- | -------- | ------ | ----- | ------ |
-| Piątnica Skyr Naturalny     | ≈5       | 5      | 0     | ✅      |
-| Melvit Płatki owsiane       | ≈7       | 7      | 0     | ✅      |
-| Tarczyński Kabanosy         | ≈27      | 27     | 0     | ✅      |
-| Auchan Tortilla             | ≈29      | 29     | 0     | ✅      |
-| Dr. Oetker Pizza 4 sery     | ≈30      | 30     | 0     | ✅      |
-| Pudliszki Ketchup łagodny   | ≈18      | 33     | +15   | ⚠️ *    |
-| Doritos Sweet Chili         | ≈41      | 41     | 0     | ✅      |
-| Indomie Noodles Chicken     | ≈43      | 43     | 0     | ✅      |
-| E. Wedel Czekolada Tiramisu | ≈52      | 52     | 0     | ✅      |
-
-\* Pudliszki Ketchup: score shifted from 18→33 after enrichment (new ingredients/allergens added from OFF API). Needs anchor update in copilot-instructions.md §8.19.
-
-### Known QA Failures (Pre-existing, Non-blocking)
-
-| Suite                 | Failures | Cause                                 |
-| --------------------- | -------- | ------------------------------------- |
-| Suite 11 (NutriRange) | 9        | OFF calorie back-calculation outliers |
-| Suite 16 (Security)   | 2        | Anon-accessible non-public functions  |
-| Suite 35 (StoreArch)  | 48+2     | Orphan junction rows + backfill gaps  |
-| Suite 41 (IdxVerify)  | 1        | FK column missing index               |
-
----
-
-## DE QA Validation Report (#602)
-
-> **Date:** 2026-03-05 | **Branch:** `test/602-de-qa-validation`
-
-### Validation Results
-
-| Check                         | Result                    | Status |
-| ----------------------------- | ------------------------- | ------ |
-| Country isolation (11 checks) | 11/11 pass                | ✅      |
-| Multi-country consistency     | 16/16 pass (2 bugs fixed) | ✅      |
-| Scoring formula (40 checks)   | 39/40 pass (1 pre-exist)  | ✅      |
-| DE anchor regression (5 new)  | 5/5 pass                  | ✅      |
-| Negative tests                | 23/23 caught              | ✅      |
-| EAN checksums                 | 2,261/2,261 valid (100%)  | ✅      |
-
-### Bugs Fixed
-
-| Check                  | Bug                                                              | Fix                                                 |
-| ---------------------- | ---------------------------------------------------------------- | --------------------------------------------------- |
-| Multi-country check 1  | Called stale `compute_unhealthiness_v32()` with old params       | Upgraded to v33 with `_g` suffix + protein/fibre    |
-| Multi-country check 10 | Stale v32 + wrong column names + non-existent `p.additive_count` | v33 + `_g` columns + LATERAL subquery for additives |
-
-### DE Anchor Products Added (Tests 36-40)
-
-| Product                         | Category     | Score | Range | Status |
-| ------------------------------- | ------------ | ----- | ----- | ------ |
-| Ritter Sport Edel-Vollmilch     | Sweets (DE)  | 48    | 46-50 | ✅      |
-| Alpro Sojadrink, Ungesüßt       | Drinks (DE)  | 8     | 6-10  | ✅      |
-| Chipsfrisch ungarisch           | Chips (DE)   | 25    | 23-27 | ✅      |
-| Wildlachsfilet / Golden Seafood | Seafood (DE) | 3     | 1-5   | ✅      |
-| Instant-Nudeln Beef             | Instant (DE) | 55    | 53-57 | ✅      |
+- **GitHub Ruleset:** strict_required_status_checks_policy = true
 
 ---
 
