@@ -16,13 +16,13 @@
        10. QA__naming_conventions.sql (12 naming/formatting convention checks — blocking)
        11. QA__nutrition_ranges.sql (20 nutrition range & plausibility checks — blocking)
        12. QA__data_consistency.sql (26 data consistency & domain checks — blocking)
-       13. QA__allergen_integrity.sql (14 allergen & trace integrity checks — blocking)
+       13. QA__allergen_integrity.sql (15 allergen & trace integrity checks — blocking)
        14. QA__serving_source_validation.sql (16 serving & source checks — blocking)
        15. QA__ingredient_quality.sql (17 ingredient quality checks — blocking)
        16. QA__security_posture.sql (41 security posture checks — blocking)
-       17. QA__api_contract.sql (30 API contract checks — blocking)
+       17. QA__api_contract.sql (33 API contract checks — blocking)
        18. QA__scale_guardrails.sql (23 scale guardrails checks — blocking)
-       19. QA__country_isolation.sql (6 country isolation checks — blocking)
+       19. QA__country_isolation.sql (11 country isolation checks — blocking)
        20. QA__diet_filtering.sql (6 diet filtering checks — blocking)
        21. QA__allergen_filtering.sql (6 allergen filtering checks — blocking)
        22. QA__barcode_lookup.sql (9 barcode scanner checks — blocking)
@@ -43,7 +43,7 @@
        37. QA__scoring_engine.sql (27 scoring engine checks — blocking)
        38. QA__search_architecture.sql (26 search architecture checks — blocking)
        39. QA__gdpr_compliance.sql (15 GDPR compliance checks — blocking)
-       40. QA__push_notifications.sql (14 push notification checks — blocking)
+       40. QA__push_notifications.sql (17 push notification checks — blocking)
        41. QA__index_verification.sql (13 index verification checks — informational)
        42. QA__slow_queries.sql (12 slow query detection checks — informational)
        43. QA__explain_analysis.sql (10 explain analysis checks — informational)
@@ -173,7 +173,7 @@ $suiteCatalog = @(
     @{ Num = 37; Name = "Scoring Engine"; Short = "ScoreEngine"; Id = "scoring_engine"; Checks = 27; Blocking = $true; Kind = "sql"; File = "QA__scoring_engine.sql" },
     @{ Num = 38; Name = "Search Architecture"; Short = "SearchArch"; Id = "search_architecture"; Checks = 26; Blocking = $true; Kind = "sql"; File = "QA__search_architecture.sql" },
     @{ Num = 39; Name = "GDPR Compliance"; Short = "GDPR"; Id = "gdpr_compliance"; Checks = 15; Blocking = $true; Kind = "sql"; File = "QA__gdpr_compliance.sql" },
-    @{ Num = 40; Name = "Push Notifications"; Short = "PushNotif"; Id = "push_notifications"; Checks = 14; Blocking = $true; Kind = "sql"; File = "QA__push_notifications.sql" },
+    @{ Num = 40; Name = "Push Notifications"; Short = "PushNotif"; Id = "push_notifications"; Checks = 17; Blocking = $true; Kind = "sql"; File = "QA__push_notifications.sql" },
     @{ Num = 41; Name = "Index Verification"; Short = "IdxVerify"; Id = "index_verification"; Checks = 13; Blocking = $false; Kind = "sql"; File = "QA__index_verification.sql" },
     @{ Num = 42; Name = "Slow Query Detection"; Short = "SlowQuery"; Id = "slow_queries"; Checks = 12; Blocking = $false; Kind = "sql"; File = "QA__slow_queries.sql" },
     @{ Num = 43; Name = "Explain Analysis"; Short = "Explain"; Id = "explain_analysis"; Checks = 10; Blocking = $false; Kind = "sql"; File = "QA__explain_analysis.sql" },
