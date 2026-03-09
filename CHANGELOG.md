@@ -13,7 +13,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-_No unreleased changes._
+### Fixed
+
+- Fix QA CI broken on main — qualify `digest()` as `extensions.digest()` in
+  `formula_source_hashes` seeding so pgcrypto works in CI's bare `postgres:17`
+  containers where `extensions` is not in `search_path`. Migration
+  `20260316000500_fix_digest_extensions_schema.sql` (#773)
 
 ---
 

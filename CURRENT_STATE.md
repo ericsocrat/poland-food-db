@@ -7,9 +7,9 @@
 
 ## Active Branch & PR
 
-- **Branch:** `data/717-coverage-thresholds` (feature branch for #717)
-- **Latest SHA (main):** `fbfe57f` (PR #771 merged — #721 QA count reconciliation)
-- **Open PRs:** #772 (#717 coverage thresholds, auto-merge pending conflict resolution)
+- **Branch:** `main`
+- **Latest SHA (main):** `a7c7f01` (deps bumps + #717 coverage thresholds)
+- **Open PRs:** PR pending for #773 (fix digest() schema qualification)
 
 ## Production Deployment (2026-03-06)
 
