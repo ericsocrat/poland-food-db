@@ -729,7 +729,7 @@ describe("WatchlistPage", () => {
     await waitFor(() => {
       const scores = screen.getAllByTestId("watchlist-score");
       expect(scores[0].className).toContain("text-success");
-      expect(scores[1].className).toContain("text-orange");
+      expect(scores[1].className).toContain("text-score-orange-text");
     });
   });
 
