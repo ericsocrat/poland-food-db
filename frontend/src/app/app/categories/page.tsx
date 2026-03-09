@@ -36,7 +36,7 @@ export default function CategoriesPage() {
   if (error) {
     return (
       <div className="py-12 text-center">
-        <p className="mb-3 text-sm text-red-500">
+        <p className="mb-3 text-sm text-error">
           {t("categories.loadFailed")}
         </p>
         <Button

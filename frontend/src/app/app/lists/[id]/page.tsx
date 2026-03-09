@@ -208,6 +208,7 @@ export default function ListDetailPage() {
                 <button
                   type="button"
                   title={t("lists.editList")}
+                  aria-label={t("lists.editList")}
                   className="flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-surface-muted"
                   onClick={() => {
                     setEditName(list.name);
@@ -222,6 +223,7 @@ export default function ListDetailPage() {
                   <button
                     type="button"
                     title={t("lists.shareSettings")}
+                    aria-label={t("lists.shareSettings")}
                     className={`flex h-8 w-8 items-center justify-center rounded-full text-sm transition-colors hover:bg-surface-muted ${
                       list.share_enabled ? "text-brand" : ""
                     }`}

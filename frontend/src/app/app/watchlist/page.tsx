@@ -26,7 +26,7 @@ import { useState } from "react";
 const SCORE_BAND_COLORS: Record<string, string> = {
   low: "text-success",
   moderate: "text-warning",
-  high: "text-orange-500",
+  high: "text-score-orange-text",
   very_high: "text-error",
 };
 

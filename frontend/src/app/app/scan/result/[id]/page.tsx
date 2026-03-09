@@ -8,8 +8,8 @@
 import { ButtonLink } from "@/components/common/Button";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import {
-    ProductCardSkeleton,
-    ProductProfileSkeleton,
+  ProductCardSkeleton,
+  ProductProfileSkeleton,
 } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { HealthWarningsCard } from "@/components/product/HealthWarningsCard";
@@ -22,11 +22,11 @@ import { createClient } from "@/lib/supabase/client";
 import type { Alternative, ProductDetail } from "@/lib/types";
 import { useQuery } from "@tanstack/react-query";
 import {
-    AlertTriangle,
-    Camera,
-    ClipboardList,
-    Salad,
-    Trophy,
+  AlertTriangle,
+  Camera,
+  ClipboardList,
+  Salad,
+  Trophy,
 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
@@ -370,7 +370,7 @@ function ScanAlternativeCard({
 
   return (
     <Link href={`/app/product/${alt.product_id}`}>
-      <div className="card hover-lift-press flex items-center gap-3 border-green-100">
+      <div className="card hover-lift-press flex items-center gap-3 border-success-border">
         {/* Score */}
         <div
           className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${altBand.bg} ${altBand.color}`}
@@ -386,10 +386,10 @@ function ScanAlternativeCard({
           <p className="truncate text-sm text-foreground-secondary">
             {alt.brand}
           </p>
-          <p className="text-xs font-medium text-green-600">
+          <p className="text-xs font-medium text-success-text">
             {t("product.pointsBetter", { points: alt.score_improvement })}
             {improvementPct > 0 && (
-              <span className="text-green-500">
+              <span className="text-success">
                 {" "}
                 ({improvementPct}% healthier)
               </span>

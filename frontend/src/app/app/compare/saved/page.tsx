@@ -9,8 +9,9 @@ import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useDeleteComparison, useSavedComparisons } from "@/hooks/use-compare";
 import { useTranslation } from "@/lib/i18n";
 import type { SavedComparison } from "@/lib/types";
-import { FolderOpen, Link2, Trash2 } from "lucide-react";
+import { Check, FolderOpen, Link2, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
 export default function SavedComparisonsPage() {
   const { data, isLoading, error } = useSavedComparisons();
@@ -75,6 +76,7 @@ function ComparisonCard({
   onDelete: () => void;
 }>) {
   const { t } = useTranslation();
+  const [copied, setCopied] = useState(false);
   const ids = comparison.product_ids.join(",");
   const date = new Date(comparison.created_at).toLocaleDateString();
 
@@ -113,11 +115,14 @@ function ComparisonCard({
                 e.preventDefault();
                 const url = `${globalThis.location.origin}/compare/shared/${comparison.share_token}`;
                 navigator.clipboard.writeText(url);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
               }}
-              className="text-sm text-foreground-muted hover:text-brand"
-              title={t("compare.copyShareLink")}
+              className={`text-sm transition-colors ${copied ? "text-success" : "text-foreground-muted hover:text-brand"}`}
+              title={copied ? t("compare.copiedToClipboard") : t("compare.copyShareLink")}
+              aria-label={copied ? t("compare.copiedToClipboard") : t("compare.copyShareLink")}
             >
-              <Link2 size={16} aria-hidden="true" />
+              {copied ? <Check size={16} aria-hidden="true" /> : <Link2 size={16} aria-hidden="true" />}
             </button>
           )}
 
@@ -128,8 +133,9 @@ function ComparisonCard({
               e.preventDefault();
               onDelete();
             }}
-            className="text-sm text-foreground-muted hover:text-red-500"
+            className="text-sm text-foreground-muted hover:text-error"
             title={t("compare.deleteComparison")}
+            aria-label={t("compare.deleteComparison")}
           >
             <Trash2 size={16} aria-hidden="true" />
           </button>

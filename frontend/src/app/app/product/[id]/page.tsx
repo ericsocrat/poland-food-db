@@ -1034,7 +1034,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
             {alt.product_name}
           </p>
           <p className="text-sm text-foreground-secondary">{alt.brand}</p>
-          <p className="text-xs text-green-600">
+          <p className="text-xs text-success-text">
             {t("product.pointsBetter", { points: alt.score_delta })}
           </p>
         </div>

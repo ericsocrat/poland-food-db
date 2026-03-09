@@ -59,7 +59,7 @@ export default async function AppLayout({
         <AlertTriangle
           size={40}
           aria-hidden="true"
-          className="mb-2 text-amber-500"
+          className="mb-2 text-warning"
         />
         <h1 className="mb-1 text-lg font-bold text-foreground">
           {translate(locale, "layout.errorTitle")}

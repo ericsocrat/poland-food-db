@@ -203,7 +203,7 @@ export default function NotificationSettingsPage() {
           </p>
           {pushPermission === "denied" ? (
             <p
-              className="text-sm text-amber-600"
+              className="text-sm text-warning-text"
               data-testid="push-denied-message"
             >
               {t("notifications.blockedByBrowser")}

@@ -711,7 +711,7 @@ function ScoreTooltip({ product }: Readonly<{ product: SearchResult }>) {
                   className="flex items-center gap-1 text-xs text-foreground-secondary"
                 >
                   <span
-                    className="h-1.5 w-1.5 rounded-full bg-red-400"
+                    className="h-1.5 w-1.5 rounded-full bg-error"
                     aria-hidden="true"
                   />
                   {f}

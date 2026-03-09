@@ -174,17 +174,17 @@ function DietaryFlag({
       <CheckCircle
         size={14}
         aria-hidden="true"
-        className="inline text-green-600"
+        className="inline text-success-text"
       />
     ),
     no: (
-      <XCircle size={14} aria-hidden="true" className="inline text-red-600" />
+      <XCircle size={14} aria-hidden="true" className="inline text-error-text" />
     ),
     maybe: (
       <AlertTriangle
         size={14}
         aria-hidden="true"
-        className="inline text-amber-500"
+        className="inline text-warning"
       />
     ),
   };

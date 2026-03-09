@@ -180,7 +180,7 @@ export function PullToRefresh({
                 }}
               />
             </svg>
-            <span className="text-[11px] text-foreground-muted">
+            <span className="text-xs text-foreground-muted">
               {statusText}
             </span>
           </div>

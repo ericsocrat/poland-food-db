@@ -202,7 +202,7 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
                   <div className="mx-3 my-1.5 border-t border-border" />
                 )}
                 {/* Section label */}
-                <p className="px-3 pt-2 pb-1 text-[11px] font-semibold uppercase tracking-wider text-foreground-muted">
+                <p className="px-3 pt-2 pb-1 text-xs font-semibold uppercase tracking-wider text-foreground-muted">
                   {t(section.labelKey)}
                 </p>
                 <ul>

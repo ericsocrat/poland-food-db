@@ -260,7 +260,7 @@ function SubmissionRow({
               active={submission.status === "merged"}
               color={
                 submission.status === "merged"
-                  ? "bg-blue-400"
+                  ? "bg-info"
                   : "bg-surface-muted"
               }
             />
@@ -275,11 +275,11 @@ function SubmissionRow({
 function statusDotColor(status: string): string {
   switch (status) {
     case "rejected":
-      return "bg-red-400";
+      return "bg-error";
     case "pending":
       return "bg-surface-muted";
     default:
-      return "bg-green-400";
+      return "bg-success";
   }
 }
 
@@ -301,7 +301,7 @@ function StatusDot({
   return (
     <span
       className={`inline-block h-2 w-2 rounded-full ${
-        color ?? (active ? "bg-green-400" : "bg-surface-muted")
+        color ?? (active ? "bg-success" : "bg-surface-muted")
       }`}
     />
   );

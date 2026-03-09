@@ -544,7 +544,7 @@ export default function ScanPage() {
                     <div className="absolute -bottom-0.5 -left-0.5 h-4 w-4 border-b-[3px] border-l-[3px] border-white rounded-bl" />
                     <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 border-b-[3px] border-r-[3px] border-white rounded-br" />
                     {/* Center scan line */}
-                    <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-red-400/70" />
+                    <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-error/70" />
                   </div>
                 </div>
                 {/* Batch mode indicator */}

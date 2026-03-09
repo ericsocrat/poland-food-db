@@ -101,7 +101,7 @@ export default function AccountSettingsPage() {
       </h1>
 
       {/* Account section */}
-      <section className="card border-red-100">
+      <section className="card border-error-border">
         <h2 className="mb-3 text-sm font-semibold text-foreground-secondary lg:text-base">
           {t("settings.account")}
         </h2>
