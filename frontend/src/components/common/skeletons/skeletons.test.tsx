@@ -1,21 +1,21 @@
-import { describe, it, expect } from "vitest";
 import { render, screen } from "@testing-library/react";
-import { ProductCardSkeleton } from "./ProductCardSkeleton";
-import { DashboardSkeleton } from "./DashboardSkeleton";
-import { ProductProfileSkeleton } from "./ProductProfileSkeleton";
-import { ComparisonGridSkeleton } from "./ComparisonGridSkeleton";
-import { SearchResultsSkeleton } from "./SearchResultsSkeleton";
-import { CategoryListingSkeleton } from "./CategoryListingSkeleton";
-import { CategoryGridSkeleton } from "./CategoryGridSkeleton";
-import { ListViewSkeleton } from "./ListViewSkeleton";
-import { RecipeGridSkeleton } from "./RecipeGridSkeleton";
-import { SettingsSkeleton } from "./SettingsSkeleton";
-import { SavedItemsSkeleton } from "./SavedItemsSkeleton";
-import { ListDetailSkeleton } from "./ListDetailSkeleton";
-import { ScanHistorySkeleton } from "./ScanHistorySkeleton";
-import { SubmissionsSkeleton } from "./SubmissionsSkeleton";
+import { describe, expect, it } from "vitest";
 import { AdminDashboardSkeleton } from "./AdminDashboardSkeleton";
+import { CategoryGridSkeleton } from "./CategoryGridSkeleton";
+import { CategoryListingSkeleton } from "./CategoryListingSkeleton";
+import { ComparisonGridSkeleton } from "./ComparisonGridSkeleton";
+import { DashboardSkeleton } from "./DashboardSkeleton";
 import { IngredientDetailSkeleton } from "./IngredientDetailSkeleton";
+import { ListDetailSkeleton } from "./ListDetailSkeleton";
+import { ListViewSkeleton } from "./ListViewSkeleton";
+import { ProductCardSkeleton } from "./ProductCardSkeleton";
+import { ProductProfileSkeleton } from "./ProductProfileSkeleton";
+import { RecipeGridSkeleton } from "./RecipeGridSkeleton";
+import { SavedItemsSkeleton } from "./SavedItemsSkeleton";
+import { ScanHistorySkeleton } from "./ScanHistorySkeleton";
+import { SearchResultsSkeleton } from "./SearchResultsSkeleton";
+import { SettingsSkeleton } from "./SettingsSkeleton";
+import { SubmissionsSkeleton } from "./SubmissionsSkeleton";
 import { WatchlistSkeleton } from "./WatchlistSkeleton";
 
 // Each skeleton must:
