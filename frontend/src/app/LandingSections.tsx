@@ -128,10 +128,10 @@ function HowItWorksSection() {
 function DataStatsSection() {
   const { t } = useTranslation();
   const stats: { icon: LucideIcon; value: string; label: string }[] = [
-    { icon: ShoppingBasket, value: "2,400+", label: t("landing.statProducts") },
-    { icon: Layers, value: "25", label: t("landing.statCategories") },
-    { icon: Database, value: "9", label: t("landing.statFactors") },
-    { icon: Shield, value: "2", label: t("landing.statCountries") },
+    { icon: ShoppingBasket, value: t("landing.statProductsValue"), label: t("landing.statProducts") },
+    { icon: Layers, value: t("landing.statCategoriesValue"), label: t("landing.statCategories") },
+    { icon: Database, value: t("landing.statFactorsValue"), label: t("landing.statFactors") },
+    { icon: Shield, value: t("landing.statCountriesValue"), label: t("landing.statCountries") },
   ];
   return (
     <section aria-labelledby="stats-heading" className="py-16 sm:py-20">

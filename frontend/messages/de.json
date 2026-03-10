@@ -847,9 +847,13 @@
     "step3Desc": "Entdecken Sie gesündere Alternativen in derselben Kategorie.",
     "statsHeading": "Vertrauenswürdige Daten",
     "statProducts": "Analysierte Produkte",
+    "statProductsValue": "2.400+",
     "statCategories": "Lebensmittelkategorien",
+    "statCategoriesValue": "25",
     "statFactors": "Bewertungsfaktoren",
+    "statFactorsValue": "9",
     "statCountries": "Abgedeckte Länder",
+    "statCountriesValue": "2",
     "ctaHeading": "Bereit, gesünder zu essen?",
     "ctaDescription": "Treten Sie TryVit bei und treffen Sie fundierte Lebensmittelentscheidungen auf Basis echter Ernährungsdaten."
   },
