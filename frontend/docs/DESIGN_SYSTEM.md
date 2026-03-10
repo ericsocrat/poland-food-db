@@ -208,6 +208,45 @@ This document defines the design token vocabulary for the tryvit frontend. All v
 | `--transition-normal` | `200ms ease` |
 | `--transition-slow`   | `300ms ease` |
 
+### Mobile Typography Standards
+
+Standardized text sizing and spacing rules for visual consistency across all pages.
+
+#### Page Headings (h1)
+
+All top-level page headings follow this pattern:
+
+```
+className="text-xl font-bold text-foreground lg:text-2xl"
+```
+
+- **Mobile (< lg):** `text-xl` (20px)
+- **Desktop (≥ lg):** `text-2xl` (24px)
+- **Icon size:** 22px (`size={22}`) when inline with heading text
+- **Icon gap:** `gap-2` (8px) between icon and text
+
+#### Page Spacing
+
+All top-level page containers use consistent vertical rhythm:
+
+| Pattern                     | Usage                                          |
+| --------------------------- | ---------------------------------------------- |
+| `space-y-6`                 | Standard page section spacing (most pages)     |
+| `space-y-6 lg:space-y-8`   | Dashboard and content-heavy pages              |
+| `space-y-3`                 | Compact card/form internals                    |
+
+#### Touch Targets (WCAG 2.5.5)
+
+All interactive elements must meet 44×44px minimum:
+
+| Button Size | Min Height | Enforced Via            |
+| ----------- | ---------- | ----------------------- |
+| `sm`        | Auto       | Inline actions only     |
+| `md`        | 44px       | `min-h-[44px]` in class |
+| `lg`        | 44px       | `min-h-[44px]` in class |
+
+Use `.touch-target` or `.touch-target-expanded` utilities from `globals.css` for non-button interactive elements.
+
 ---
 
 ## Component Classes

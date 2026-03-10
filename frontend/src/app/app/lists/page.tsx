@@ -7,6 +7,7 @@
 import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "@/components/common/EmptyState";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { ListViewSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -86,8 +87,8 @@ export default function ListsPage() {
       />
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5 lg:text-2xl">
-          <ClipboardList size={20} aria-hidden="true" /> {t("lists.title")}
+        <h1 className="text-xl font-bold text-foreground flex items-center gap-2 lg:text-2xl">
+          <ClipboardList size={22} aria-hidden="true" /> {t("lists.title")}
         </h1>
         <Button
           size="sm"
@@ -144,7 +145,7 @@ export default function ListsPage() {
 
       {/* Empty state */}
       {lists.length === 0 && (
-        <EmptyState variant="no-data" titleKey="lists.emptyState" />
+        <EmptyStateIllustration type="no-lists" titleKey="lists.emptyState" />
       )}
 
       {/* List grid */}

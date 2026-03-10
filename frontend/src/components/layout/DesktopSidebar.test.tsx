@@ -1,5 +1,5 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { DesktopSidebar } from "./DesktopSidebar";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -22,7 +22,18 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+const mockIsAdmin = vi.fn<() => boolean>().mockReturnValue(false);
+vi.mock("@/stores/admin-store", () => ({
+  useAdminStore: (selector: (s: { isAdmin: boolean }) => boolean) =>
+    selector({ isAdmin: mockIsAdmin() }),
+}));
+
 describe("DesktopSidebar", () => {
+  beforeEach(() => {
+    mockPathname.mockReturnValue("/app");
+    mockIsAdmin.mockReturnValue(false);
+  });
+
   it("renders all primary nav items", () => {
     render(<DesktopSidebar />);
     expect(screen.getByText("Dashboard")).toBeInTheDocument();
@@ -41,7 +52,16 @@ describe("DesktopSidebar", () => {
 
   // ─── Admin section ─────────────────────────────────────────────────────────
 
-  it("renders admin section with heading and three sub-links", () => {
+  it("hides admin section when user is not admin", () => {
+    mockIsAdmin.mockReturnValue(false);
+    render(<DesktopSidebar />);
+    expect(screen.queryByText("Submissions")).not.toBeInTheDocument();
+    expect(screen.queryByText("Metrics")).not.toBeInTheDocument();
+    expect(screen.queryByText("Monitoring")).not.toBeInTheDocument();
+  });
+
+  it("renders admin section with heading and three sub-links when admin", () => {
+    mockIsAdmin.mockReturnValue(true);
     render(<DesktopSidebar />);
     expect(screen.getByText("Admin")).toBeInTheDocument();
     expect(screen.getByText("Submissions")).toBeInTheDocument();
@@ -50,6 +70,7 @@ describe("DesktopSidebar", () => {
   });
 
   it("has correct hrefs for admin sub-links", () => {
+    mockIsAdmin.mockReturnValue(true);
     render(<DesktopSidebar />);
     expect(screen.getByText("Submissions").closest("a")).toHaveAttribute(
       "href",
@@ -66,6 +87,7 @@ describe("DesktopSidebar", () => {
   });
 
   it("marks admin sub-link as active on /app/admin/submissions", () => {
+    mockIsAdmin.mockReturnValue(true);
     mockPathname.mockReturnValue("/app/admin/submissions");
     render(<DesktopSidebar />);
     const submissionsLink = screen.getByText("Submissions").closest("a");
@@ -73,6 +95,7 @@ describe("DesktopSidebar", () => {
   });
 
   it("does not mark admin sub-links as active on non-admin route", () => {
+    mockIsAdmin.mockReturnValue(true);
     mockPathname.mockReturnValue("/app/search");
     render(<DesktopSidebar />);
     const submissionsLink = screen.getByText("Submissions").closest("a");

@@ -7,6 +7,7 @@
 import { Button } from "@/components/common/Button";
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "@/components/common/EmptyState";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { ListDetailSkeleton } from "@/components/common/skeletons";
 import { ExportButton } from "@/components/export/ExportButton";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -286,9 +287,8 @@ export default function ListDetailPage() {
 
       {/* Empty state */}
       {items.length === 0 && (
-        <EmptyState
-          variant="no-data"
-          icon={<span>📭</span>}
+        <EmptyStateIllustration
+          type="no-lists"
           titleKey="lists.emptyList"
           action={{ labelKey: "lists.searchProducts", href: "/app/search" }}
         />

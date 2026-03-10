@@ -4,6 +4,7 @@
 
 import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { ScanHistorySkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getScanHistory } from "@/lib/api";
@@ -13,7 +14,7 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { createClient } from "@/lib/supabase/client";
 import type { ScanHistoryItem } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { Camera, ClipboardList } from "lucide-react";
+import { ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
@@ -110,9 +111,8 @@ export default function ScanHistoryPage() {
 
       {/* Empty */}
       {data?.scans.length === 0 && (
-        <EmptyState
-          variant="no-data"
-          icon={<Camera size={48} className="text-foreground-muted" />}
+        <EmptyStateIllustration
+          type="no-scan-history"
           titleKey="scanHistory.emptyTitle"
           descriptionKey="scanHistory.emptyMessage"
           action={{ labelKey: "scanHistory.startScanning", href: "/app/scan" }}

@@ -5,6 +5,7 @@
 // that bypass RLS. In production, restrict route via middleware or auth check.
 
 import { Button } from "@/components/common/Button";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { SubmissionsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useTranslation } from "@/lib/i18n";
@@ -278,11 +279,11 @@ export default function AdminSubmissionsPage() {
 
       {/* Empty */}
       {data?.submissions.length === 0 && (
-        <div className="py-12 text-center">
-          <p className="text-sm text-foreground-secondary">
-            {t("admin.noSubmissions", { status: statusFilter })}
-          </p>
-        </div>
+        <EmptyStateIllustration
+          type="no-submissions"
+          titleKey="admin.noSubmissions"
+          titleParams={{ status: statusFilter }}
+        />
       )}
 
       {/* Submission cards */}

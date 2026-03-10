@@ -5,6 +5,7 @@
 import { AllergenChips } from "@/components/common/AllergenChips";
 import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { LiveRegion } from "@/components/common/LiveRegion";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { NovaBadge } from "@/components/common/NovaBadge";
@@ -41,11 +42,21 @@ import {
     LayoutGrid,
     LayoutList,
     Save,
-    Search,
     SlidersHorizontal,
 } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+
+/* ── Debounce hook for instant search ─────────────────────────────────────── */
+
+function useDebounce(value: string, delay: number): string {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
 
 const AVOID_TOGGLE_KEY = "tryvit:show-avoided";
 const VIEW_MODE_KEY = "tryvit:search-view";
@@ -103,7 +114,10 @@ export default function SearchPage() {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
-  // The active search query (submitted)
+  // Debounced query for instant as-you-type search (300ms delay)
+  const debouncedQuery = useDebounce(query, 300);
+
+  // The active search query (submitted or debounced)
   const activeQuery = submittedQuery || undefined;
 
   // Load localStorage prefs on mount
@@ -112,6 +126,16 @@ export default function SearchPage() {
     setShowAvoided(getShowAvoided());
     setViewMode(getViewMode());
   }, []);
+
+  // Auto-trigger search as the user types (instant search)
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
+    if (trimmed.length >= 2) {
+      setSubmittedQuery(trimmed);
+    } else if (trimmed.length === 0 && !hasActiveFilters(filters)) {
+      setSubmittedQuery("");
+    }
+  }, [debouncedQuery, filters]);
 
   // Reset page when filters or query change
   useEffect(() => {
@@ -468,9 +492,8 @@ export default function SearchPage() {
 
           {/* Empty state — no search or filters active */}
           {!isSearchActive && recentSearches.length === 0 && (
-            <EmptyState
-              variant="no-data"
-              icon={<Search size={40} />}
+            <EmptyStateIllustration
+              type="no-results"
               titleKey="search.emptyState"
             />
           )}
@@ -525,8 +548,8 @@ export default function SearchPage() {
 
               {data.results.length === 0 ? (
                 <div className="space-y-4" data-testid="zero-results">
-                  <EmptyState
-                    variant="no-results"
+                  <EmptyStateIllustration
+                    type="no-results"
                     titleKey={
                       data.query
                         ? "search.noMatchSearch"

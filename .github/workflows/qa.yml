@@ -104,6 +104,10 @@ jobs:
       - name: Apply schema migrations
         run: |
           set -euo pipefail
+          # Include "extensions" schema in search_path so that functions
+          # installed there (e.g. pgcrypto's digest()) are visible without
+          # schema-qualification — mirrors the Supabase CLI default.
+          psql -c "ALTER DATABASE postgres SET search_path TO public, extensions;"
           for f in $(ls supabase/migrations/*.sql | sort); do
             echo "Applying: $f"
             psql -v ON_ERROR_STOP=1 -f "$f"

@@ -81,10 +81,10 @@ export function HealthWarningsCard({
   // Loading profile — show skeleton to avoid layout jump
   if (profileLoading) {
     return (
-      <div className="card animate-pulse" data-testid="health-warnings-card">
+      <div className="card" data-testid="health-warnings-card">
         <div className="flex items-center gap-2">
-          <div className="h-5 w-5 rounded-full bg-surface-muted" />
-          <div className="h-4 w-48 rounded bg-surface-muted" />
+          <div className="skeleton h-5 w-5 rounded-full" />
+          <div className="skeleton h-4 w-48 rounded" />
         </div>
       </div>
     );
@@ -130,9 +130,9 @@ export function HealthWarningsCard({
   // Loading warnings
   if (warningsLoading) {
     return (
-      <div className="card animate-pulse" data-testid="health-warnings-card">
-        <div className="h-4 w-40 rounded bg-surface-muted" />
-        <div className="mt-2 h-3 w-64 rounded bg-surface-muted" />
+      <div className="card" data-testid="health-warnings-card">
+        <div className="skeleton h-4 w-40 rounded" />
+        <div className="skeleton mt-2 h-3 w-64 rounded" />
       </div>
     );
   }

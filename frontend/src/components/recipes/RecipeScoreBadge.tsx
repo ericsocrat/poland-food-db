@@ -33,6 +33,46 @@ const CONFIDENCE_STYLE: Record<string, { label: string; className: string }> = {
   low: { label: "Low confidence", className: "text-error-text" },
 };
 
+// ─── NutrientBar — visual bar for a single nutrient value ───────────────────
+
+interface NutrientBarProps {
+  readonly label: string;
+  readonly value: number | null | undefined;
+  readonly unit: string;
+  /** Daily reference intake ceiling for the bar. */
+  readonly max: number;
+  /** Positive nutrient (protein, fibre) — use brand color instead of warning. */
+  readonly positive?: boolean;
+}
+
+function NutrientBar({ label, value, unit, max, positive }: NutrientBarProps) {
+  if (value == null) return null;
+  const pct = Math.min(Math.round((value / max) * 100), 100);
+  const barColor = positive ? "bg-success" : pct > 75 ? "bg-warning" : "bg-brand-primary";
+
+  return (
+    <div className="text-xs" data-testid={`nutrient-bar-${label.toLowerCase()}`}>
+      <div className="flex items-center justify-between text-foreground-muted mb-0.5">
+        <span>{label}</span>
+        <span>
+          {value} {unit}
+        </span>
+      </div>
+      <div className="h-1.5 w-full rounded-full bg-surface-muted overflow-hidden">
+        <div
+          className={`h-full rounded-full ${barColor} transition-all duration-500`}
+          style={{ width: `${pct}%` }}
+          role="progressbar"
+          aria-valuenow={value}
+          aria-valuemin={0}
+          aria-valuemax={max}
+          aria-label={`${label}: ${value} ${unit}`}
+        />
+      </div>
+    </div>
+  );
+}
+
 // ─── Component ──────────────────────────────────────────────────────────────
 
 export const RecipeScoreBadge = React.memo(function RecipeScoreBadge({
@@ -132,25 +172,13 @@ export const RecipeScoreBadge = React.memo(function RecipeScoreBadge({
 
       {/* Optional nutrition summary */}
       {showNutrition && score.nutrition_summary && (
-        <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-foreground-muted" data-testid="recipe-score-nutrition">
-          {score.nutrition_summary.avg_calories != null && (
-            <span>Calories: {score.nutrition_summary.avg_calories} kcal</span>
-          )}
-          {score.nutrition_summary.avg_protein_g != null && (
-            <span>Protein: {score.nutrition_summary.avg_protein_g} g</span>
-          )}
-          {score.nutrition_summary.avg_total_fat_g != null && (
-            <span>Fat: {score.nutrition_summary.avg_total_fat_g} g</span>
-          )}
-          {score.nutrition_summary.avg_sugars_g != null && (
-            <span>Sugars: {score.nutrition_summary.avg_sugars_g} g</span>
-          )}
-          {score.nutrition_summary.avg_salt_g != null && (
-            <span>Salt: {score.nutrition_summary.avg_salt_g} g</span>
-          )}
-          {score.nutrition_summary.avg_fibre_g != null && (
-            <span>Fibre: {score.nutrition_summary.avg_fibre_g} g</span>
-          )}
+        <div className="mt-3 space-y-2" data-testid="recipe-score-nutrition">
+          <NutrientBar label="Calories" value={score.nutrition_summary.avg_calories} unit="kcal" max={2000} />
+          <NutrientBar label="Protein" value={score.nutrition_summary.avg_protein_g} unit="g" max={50} positive />
+          <NutrientBar label="Fat" value={score.nutrition_summary.avg_total_fat_g} unit="g" max={70} />
+          <NutrientBar label="Sugars" value={score.nutrition_summary.avg_sugars_g} unit="g" max={90} />
+          <NutrientBar label="Salt" value={score.nutrition_summary.avg_salt_g} unit="g" max={6} />
+          <NutrientBar label="Fibre" value={score.nutrition_summary.avg_fibre_g} unit="g" max={30} positive />
         </div>
       )}
     </div>

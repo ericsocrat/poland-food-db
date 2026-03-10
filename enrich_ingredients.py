@@ -75,7 +75,8 @@ def get_products(country_filter: str | None = None) -> list[dict]:
     country_clause = f"AND p.country = '{country_filter}'" if country_filter else ""
     cmd = _psql_cmd(
         f"""
-        SELECT p.product_id, p.country, p.ean, p.brand, p.product_name, p.category
+        SELECT p.product_id, p.country, p.ean, p.brand, p.product_name, p.category,
+          EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id) as has_ingredients
         FROM products p
         WHERE p.is_deprecated = FALSE
           AND p.ean IS NOT NULL
@@ -106,6 +107,7 @@ def get_products(country_filter: str | None = None) -> list[dict]:
                     "brand": parts[3].strip(),
                     "product_name": parts[4].strip() if len(parts) > 4 else "",
                     "category": parts[5].strip() if len(parts) > 5 else "",
+                    "has_ingredients": parts[6].strip() == "t" if len(parts) > 6 else False,
                 }
             )
     return products
@@ -309,15 +311,18 @@ def process_ingredients(
         if not text and not off_id:
             return pos
 
-        name = text or off_id
+        # Prefer OFF taxonomy ID (usually English, e.g. "en:water") over raw
+        # label text (local language, e.g. "Woda") so the name matches
+        # ingredient_ref.name_en after normalization.
+        name = off_id or text
         name_lower = normalize_ingredient_name(name)
         if not name_lower or _is_garbage_name(name_lower):
             return pos
 
         # Resolve for new_ingredients side-effect (registers unknown ingredients)
-        _resolve_ingredient(item, off_id, name_lower, name, ingredient_lookup, new_ingredients)
+        _resolve_ingredient(item, off_id, name_lower, name_lower, ingredient_lookup, new_ingredients)
 
-        display_name = _display_name_for(name)
+        display_name = _display_name_for(name_lower)
 
         rows.append(
             {
@@ -787,17 +792,18 @@ def main():
                 time.sleep(DELAY)
                 continue
 
-            # Process ingredients
-            ing_rows = process_ingredients(
-                off_data,
-                product["country"],
-                product["ean"],
-                ingredient_lookup,
-                new_ingredients,
-            )
-            if ing_rows:
-                stats["with_ingredients"] += 1
-                all_ingredient_rows.extend(ing_rows)
+            # Process ingredients — only for products that don't already have them
+            if not product["has_ingredients"]:
+                ing_rows = process_ingredients(
+                    off_data,
+                    product["country"],
+                    product["ean"],
+                    ingredient_lookup,
+                    new_ingredients,
+                )
+                if ing_rows:
+                    stats["with_ingredients"] += 1
+                    all_ingredient_rows.extend(ing_rows)
 
             # Process allergens/traces
             alg_rows = process_allergens(off_data, product["country"], product["ean"])

@@ -6,7 +6,7 @@
  * score deltas, and reformulation badges.
  */
 
-import { ButtonLink } from "@/components/common/Button";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { Icon } from "@/components/common/Icon";
 import { WatchlistSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
@@ -102,7 +102,7 @@ export default function WatchlistPage() {
   const totalPages = data?.total_pages ?? 1;
 
   return (
-    <div>
+    <div className="space-y-6">
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
@@ -110,10 +110,10 @@ export default function WatchlistPage() {
         ]}
       />
 
-      <div className="mb-6 flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <Icon icon={Eye} size="lg" className="text-brand" />
         <div>
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="text-xl font-bold text-foreground lg:text-2xl">
             {t("watchlist.title")}
           </h1>
           <p className="text-sm text-foreground-secondary">
@@ -138,21 +138,12 @@ export default function WatchlistPage() {
       )}
 
       {!isLoading && !error && items.length === 0 && (
-        <div
-          className="flex flex-col items-center gap-3 rounded-xl border border-border bg-surface p-8 text-center"
-          data-testid="watchlist-empty"
-        >
-          <Icon icon={Eye} size="xl" className="text-foreground-muted" />
-          <h2 className="text-lg font-semibold text-foreground">
-            {t("watchlist.emptyTitle")}
-          </h2>
-          <p className="max-w-md text-sm text-foreground-secondary">
-            {t("watchlist.emptyDescription")}
-          </p>
-          <ButtonLink href="/app/search" className="mt-2" size="sm">
-            {t("watchlist.browseProducts")}
-          </ButtonLink>
-        </div>
+        <EmptyStateIllustration
+          type="no-favorites"
+          titleKey="watchlist.emptyTitle"
+          descriptionKey="watchlist.emptyDescription"
+          action={{ labelKey: "watchlist.browseProducts", href: "/app/search" }}
+        />
       )}
 
       {items.length > 0 && (

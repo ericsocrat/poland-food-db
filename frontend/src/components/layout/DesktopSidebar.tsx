@@ -10,6 +10,7 @@ import { Icon } from "@/components/common/Icon";
 import { Logo } from "@/components/common/Logo";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
+import { useAdminStore } from "@/stores/admin-store";
 import {
     Activity,
     BookOpen,
@@ -111,7 +112,7 @@ const SECONDARY_ITEMS: readonly SidebarNavItem[] = [
   },
 ] as const;
 
-/* ── Admin items (middleware-gated, shown unconditionally for discoverability) */
+/* ── Admin items (middleware-gated, shown only to admins via Zustand hydration) */
 
 interface AdminNavItem {
   readonly href: string;
@@ -143,6 +144,7 @@ export function DesktopSidebar() {
   const activeRoute = useActiveRoute();
   const pathname = usePathname();
   const { t } = useTranslation();
+  const isAdmin = useAdminStore((s) => s.isAdmin);
 
   return (
     <nav
@@ -178,8 +180,8 @@ export function DesktopSidebar() {
         ))}
       </div>
 
-      {/* Divider + admin nav (access gated by middleware) */}
-      <div className="border-t border-border px-3 py-2">
+      {/* Divider + admin nav (access gated by middleware, visibility by admin store) */}
+      {isAdmin && <div className="border-t border-border px-3 py-2">
         <div className="mb-1 flex items-center gap-2 px-3 pt-1 pb-1.5">
           <Icon icon={ShieldCheck} size="sm" className="text-foreground-tertiary" />
           <span className="text-xs font-semibold uppercase tracking-wider text-foreground-tertiary">
@@ -207,7 +209,7 @@ export function DesktopSidebar() {
             </Link>
           );
         })}
-      </div>
+      </div>}
     </nav>
   );
 }

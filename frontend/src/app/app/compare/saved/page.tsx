@@ -4,6 +4,7 @@
 // URL: /app/compare/saved
 
 import { EmptyState } from "@/components/common/EmptyState";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { SavedItemsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { useDeleteComparison, useSavedComparisons } from "@/hooks/use-compare";
@@ -43,9 +44,8 @@ export default function SavedComparisonsPage() {
 
       {/* Empty state */}
       {data?.comparisons.length === 0 && (
-        <EmptyState
-          variant="no-data"
-          icon={<FolderOpen size={40} />}
+        <EmptyStateIllustration
+          type="no-comparisons"
           titleKey="compare.noSaved"
           descriptionKey="compare.noSavedDescription"
           action={{ labelKey: "compare.findProducts", href: "/app/search" }}

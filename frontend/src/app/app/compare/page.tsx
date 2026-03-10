@@ -6,6 +6,7 @@
 // Authenticated users can save comparisons and see avoid badges.
 
 import { EmptyState } from "@/components/common/EmptyState";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { PrintButton } from "@/components/common/PrintButton";
 import { ComparisonGridSkeleton } from "@/components/common/skeletons";
@@ -83,13 +84,12 @@ export default function ComparePage() {
   // Empty state — no IDs provided
   if (productIds.length < 2) {
     return (
-      <div className="space-y-4">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground">
+      <div className="space-y-6">
+        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground lg:text-2xl">
           <Scale size={22} aria-hidden="true" /> {t("compare.title")}
         </h1>
-        <EmptyState
-          variant="no-data"
-          icon={<Scale size={48} className="text-foreground-muted" />}
+        <EmptyStateIllustration
+          type="no-comparisons"
           titleKey="compare.selectPrompt"
           descriptionKey="compare.useCheckbox"
           action={{ labelKey: "compare.searchProducts", href: "/app/search" }}
@@ -103,7 +103,7 @@ export default function ComparePage() {
   }
 
   return (
-    <div className="compare-print-container space-y-4">
+    <div className="compare-print-container space-y-6">
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
@@ -112,7 +112,7 @@ export default function ComparePage() {
       />
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground">
+        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground lg:text-2xl">
           <Scale size={22} aria-hidden="true" /> {t("compare.title")}
         </h1>
         <div className="no-print flex items-center gap-2">

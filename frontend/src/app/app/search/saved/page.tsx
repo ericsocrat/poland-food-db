@@ -4,6 +4,7 @@
 
 import { ConfirmDialog } from "@/components/common/ConfirmDialog";
 import { EmptyState } from "@/components/common/EmptyState";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { SavedItemsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { deleteSavedSearch, getSavedSearches } from "@/lib/api";
@@ -13,7 +14,7 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { createClient } from "@/lib/supabase/client";
 import type { SavedSearch, SearchFilters } from "@/lib/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { ClipboardList, Save, Trash2 } from "lucide-react";
+import { ClipboardList, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
@@ -96,9 +97,8 @@ export default function SavedSearchesPage() {
 
       {/* Empty state */}
       {data?.searches.length === 0 && (
-        <EmptyState
-          variant="no-data"
-          icon={<Save size={40} />}
+        <EmptyStateIllustration
+          type="no-saved-searches"
           titleKey="savedSearches.emptyTitle"
           descriptionKey="savedSearches.emptyMessage"
           action={{ labelKey: "savedSearches.goToSearch", href: "/app/search" }}
