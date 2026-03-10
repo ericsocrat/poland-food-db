@@ -60,7 +60,7 @@ All 26 open PRs merged into main in a single session:
 
 - [x] Quality Gate CI — **FIXED in #679** (seed allergen tags + invariant stability)
 - [x] QA Suite 2 (Scoring): Coca-Cola Zero — score anchor updated to 11-16 in PR #655
-- [ ] QA Suite 11 (NutriRange): 9 calorie back-calculation outliers — OFF source data quality
+- [x] QA Suite 11 (NutriRange): 9 calorie back-calculation outliers — **RESOLVED** (data enrichment fixed all outliers; tolerance tightened 35%→20% per EU FIC 1169/2011 in #780)
 - [x] QA Suite 16 (Security): 2 anon-accessible non-public api_* functions — **FIXED in #662**
 - [x] QA Suite 35 (StoreArch): 48 orphan junction rows + 2 backfill coverage gaps — **FIXED**
 - [x] QA Suite 41 (IdxVerify): 1 FK column missing supporting index — **FIXED**
@@ -171,7 +171,7 @@ All 26 open PRs merged into main in a single session:
 
 | Suite                 | Failures | Cause                                 |
 | --------------------- | -------- | ------------------------------------- |
-| Suite 11 (NutriRange) | 9        | OFF calorie back-calculation outliers |
+| Suite 11 (NutriRange) | 0        | **RESOLVED** — tolerance tightened to ±20% (EU FIC 1169/2011) |
 | Suite 16 (Security)   | 2        | Anon-accessible non-public functions  |
 | Suite 35 (StoreArch)  | 48+2     | Orphan junction rows + backfill gaps  |
 | Suite 41 (IdxVerify)  | 1        | FK column missing index               |

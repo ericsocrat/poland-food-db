@@ -22,11 +22,12 @@ WHERE p.is_deprecated IS NOT TRUE
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 2. Calorie back-calculation: stated calories should roughly match
---    protein×4 + carbs×4 + fat×9 (±35% tolerance for alcohol, fibre,
---    fermented products, organic acids, etc.)
+--    protein×4 + carbs×4 + fat×9 (±20% tolerance per EU FIC Regulation
+--    1169/2011 energy value guidance; accounts for label rounding,
+--    fibre, organic acids, fermented products)
 --    Only checks products with calories > 50 to avoid noise from beverages
 -- ═══════════════════════════════════════════════════════════════════════════
-SELECT '2. calorie back-calculation within 35%' AS check_name,
+SELECT '2. calorie back-calculation within 20%' AS check_name,
        COUNT(*) AS violations
 FROM nutrition_facts nf
 JOIN products p  ON p.product_id  = nf.product_id
@@ -37,7 +38,7 @@ WHERE p.is_deprecated IS NOT TRUE
   AND ABS(
       nf.calories::numeric
       - (nf.protein_g::numeric * 4 + nf.carbs_g::numeric * 4 + nf.total_fat_g::numeric * 9)
-  ) > nf.calories::numeric * 0.35;
+  ) > nf.calories::numeric * 0.20;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. Protein must be in [0, 95] per 100g

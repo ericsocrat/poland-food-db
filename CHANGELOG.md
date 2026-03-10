@@ -15,6 +15,10 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Tighten calorie back-calculation QA tolerance from ±35% to ±20% per EU FIC
+  Regulation 1169/2011 energy value guidance. All 9 previously-documented
+  outliers resolved by prior data enrichment (#780)
+
 - Redesign dashboard with HealthSummary (avg TryVit score + band distribution),
   QuickWinCard (swap suggestion for worst product), compact RecentlyViewed list,
   and NewUserWelcome onboarding CTA. Add 18 i18n keys (en/pl/de), 50 tests
