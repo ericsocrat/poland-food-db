@@ -604,7 +604,10 @@
     "compareProducts": "Compare {count} {count|product|products}",
     "deleteComparison": "Delete comparison",
     "productsNotFound": "{count} {count|product|products} not found.",
-    "onlyShowingAvailable": "Only showing available products."
+    "onlyShowingAvailable": "Only showing available products.",
+    "winnerVerdict": "{points} points healthier",
+    "keyDifferences": "Key Differences",
+    "fullNutrition": "Full Nutrition"
   },
   "settings": {
     "title": "Settings",
