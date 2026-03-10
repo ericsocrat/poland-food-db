@@ -49,7 +49,7 @@ export default function AchievementsPage() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-      <div>
+      <div className="space-y-6">
         <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
@@ -58,10 +58,10 @@ export default function AchievementsPage() {
       />
 
       {/* Header */}
-      <div className="mb-6 flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <Icon icon={Trophy} size="lg" className="text-brand" />
         <div>
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="text-xl font-bold text-foreground lg:text-2xl">
             {t("achievements.title")}
           </h1>
           <p className="text-sm text-foreground-secondary">

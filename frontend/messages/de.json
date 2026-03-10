@@ -202,7 +202,25 @@
     "categoryDiversityDiscover": "Mehr entdecken",
     "recentComparisons": "Letzte Vergleiche",
     "untitledComparison": "Unbenannter Vergleich",
-    "comparisonProducts": "{count} {count|Produkt|Produkte}"
+    "comparisonProducts": "{count} {count|Produkt|Produkte}",
+    "healthSummaryTitle": "Gesundheitsübersicht",
+    "healthSummaryAvg": "Ø TryVit-Wert",
+    "healthSummaryProducts": "über {count} {count|Produkt|Produkte}",
+    "healthSummaryNoData": "Scanne oder durchsuche Produkte, um deine Übersicht zu sehen.",
+    "quickWinTitle": "Schneller Tausch",
+    "quickWinSwap": "Tausche {from} gegen {to}",
+    "quickWinGain": "+{points} Punkte",
+    "quickWinViewSwap": "Tausch ansehen",
+    "quickWinNone": "Aktuell keine Alternativen verfügbar.",
+    "quickWinLoading": "Suche bessere Alternative…",
+    "recentlyViewedCompact": "Kürzlich angesehen",
+    "newUserTitle": "Willkommen bei TryVit",
+    "newUserSubtitle": "Entdecke gesündere Lebensmittel.",
+    "newUserScanTitle": "Produkt scannen",
+    "newUserScanDesc": "Scanne einen Barcode mit der Kamera und erhalte sofort Gesundheitsinfos.",
+    "newUserBrowseTitle": "Kategorien durchsuchen",
+    "newUserBrowseDesc": "Erkunde Produkte nach Kategorie und finde gesündere Alternativen.",
+    "newUserFunFact": "Fun Fact"
   },
   "search": {
     "title": "Suche",
@@ -587,7 +605,10 @@
     "compareProducts": "{count} {count|Produkt|Produkte} vergleichen",
     "deleteComparison": "Vergleich löschen",
     "productsNotFound": "{count} {count|Produkt|Produkte} nicht gefunden.",
-    "onlyShowingAvailable": "Es werden nur verfügbare Produkte angezeigt."
+    "onlyShowingAvailable": "Es werden nur verfügbare Produkte angezeigt.",
+    "winnerVerdict": "{points} Punkte gesünder",
+    "keyDifferences": "Wichtigste Unterschiede",
+    "fullNutrition": "Vollständige Nährwerte"
   },
   "settings": {
     "title": "Einstellungen",

@@ -112,9 +112,9 @@ export default function RecipesBrowsePage() {
         {t("recipes.title")}
       </h1>
 
-      {/* ── Search + Filters ─────────────────────────────────────── */}
-      <div className="mb-4 flex flex-wrap gap-2" data-testid="recipe-filter">
-        <div className="relative w-full sm:w-auto sm:min-w-[220px]">
+      {/* ── Search bar ────────────────────────────────────────────── */}
+      <div className="mb-3 flex gap-2" data-testid="recipe-filter">
+        <div className="relative flex-1">
           <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-foreground-secondary" aria-hidden="true" />
           <input
             type="search"
@@ -137,23 +137,9 @@ export default function RecipesBrowsePage() {
         </div>
 
         <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value as RecipeCategory | "")}
-          className="input rounded-lg px-3 py-2 text-sm"
-          aria-label={t("recipes.filterCategory")}
-        >
-          <option value="">{t("recipes.allCategories")}</option>
-          {CATEGORY_OPTIONS.map((c) => (
-            <option key={c} value={c}>
-              {t(`recipes.category.${c}`)}
-            </option>
-          ))}
-        </select>
-
-        <select
           value={difficulty}
           onChange={(e) => setDifficulty(e.target.value as RecipeDifficulty | "")}
-          className="input rounded-lg px-3 py-2 text-sm"
+          className="input shrink-0 rounded-lg px-3 py-2 text-sm"
           aria-label={t("recipes.filterDifficulty")}
         >
           <option value="">{t("recipes.allDifficulties")}</option>
@@ -163,6 +149,48 @@ export default function RecipesBrowsePage() {
             </option>
           ))}
         </select>
+      </div>
+
+      {/* ── Category tabs (horizontal scroll) ────────────────────── */}
+      <div
+        className="mb-4 -mx-4 px-4 overflow-x-auto scrollbar-hide"
+        role="tablist"
+        aria-label={t("recipes.filterCategory")}
+        data-testid="recipe-category-tabs"
+      >
+        <div className="flex gap-1.5 whitespace-nowrap pb-1">
+          <button
+            type="button"
+            role="tab"
+            aria-selected={category === ""}
+            onClick={() => setCategory("")}
+            className={[
+              "rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
+              category === ""
+                ? "bg-brand-primary text-on-brand"
+                : "bg-surface-muted text-foreground-secondary hover:bg-surface-muted/80",
+            ].join(" ")}
+          >
+            {t("recipes.allCategories")}
+          </button>
+          {CATEGORY_OPTIONS.map((c) => (
+            <button
+              key={c}
+              type="button"
+              role="tab"
+              aria-selected={category === c}
+              onClick={() => setCategory(c)}
+              className={[
+                "rounded-full px-3.5 py-1.5 text-sm font-medium transition-colors",
+                category === c
+                  ? "bg-brand-primary text-on-brand"
+                  : "bg-surface-muted text-foreground-secondary hover:bg-surface-muted/80",
+              ].join(" ")}
+            >
+              {t(`recipes.category.${c}`)}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* ── Active filter chips ──────────────────────────────────── */}
@@ -186,13 +214,15 @@ export default function RecipesBrowsePage() {
               {t(`recipes.difficulty.${difficulty}`)}
             </Chip>
           )}
-          <button
-            type="button"
-            onClick={handleClearAll}
-            className="text-xs font-medium text-brand hover:underline"
-          >
-            {t("recipes.clearFilters")}
-          </button>
+          {(category || difficulty) && (
+            <button
+              type="button"
+              onClick={handleClearAll}
+              className="text-xs font-medium text-brand hover:underline"
+            >
+              {t("recipes.clearFilters")}
+            </button>
+          )}
         </div>
       )}
 

@@ -27,8 +27,8 @@ vi.mock("next/link", () => ({
   ),
 }));
 
-vi.mock("@/hooks/use-product-allergens", () => ({
-  useProductAllergenWarnings: () => ({}),
+vi.mock("@/hooks/use-alternatives-v2", () => ({
+  useAlternativesV2: () => ({ data: null, isLoading: false }),
 }));
 
 // ─── Wrapper ────────────────────────────────────────────────────────────────
@@ -55,7 +55,7 @@ function createWrapper() {
 
 // ─── Mock data ──────────────────────────────────────────────────────────────
 
-// Use relative dates so weekly summary logic works regardless of when tests run
+// Use relative dates so tests work regardless of when they run
 const now = new Date();
 const oneDayAgo = new Date(
   now.getTime() - 1 * 24 * 60 * 60 * 1000,
@@ -65,9 +65,6 @@ const twoDaysAgo = new Date(
 ).toISOString();
 const threeDaysAgo = new Date(
   now.getTime() - 3 * 24 * 60 * 60 * 1000,
-).toISOString();
-const tenDaysAgo = new Date(
-  now.getTime() - 10 * 24 * 60 * 60 * 1000,
 ).toISOString();
 
 const mockDashboard: DashboardData = {
@@ -160,28 +157,24 @@ describe("DashboardPage", () => {
     });
   });
 
-  it("renders stats grid with responsive 2-col mobile / 4-col desktop classes", async () => {
+  it("renders health summary section", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      const grid = screen.getByTestId("stats-grid");
-      expect(grid).toBeInTheDocument();
-      expect(grid.className).toContain("grid-cols-2");
-      expect(grid.className).toContain("sm:grid-cols-4");
-      expect(screen.getByText("42")).toBeInTheDocument();
-      expect(screen.getByText("15")).toBeInTheDocument();
-      expect(screen.getByText("3")).toBeInTheDocument();
-      expect(screen.getByText("7")).toBeInTheDocument();
+      expect(screen.getByTestId("health-summary")).toBeInTheDocument();
     });
   });
 
-  it("renders stats labels in summary card", async () => {
+  it("renders quick win card", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Scanned")).toBeInTheDocument();
-      expect(screen.getByText("Viewed")).toBeInTheDocument();
-      // "Lists" may also appear in QuickActions
-      expect(screen.getAllByText("Lists").length).toBeGreaterThanOrEqual(1);
-      expect(screen.getAllByText("Favorites").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getByTestId("quick-win-card")).toBeInTheDocument();
+    });
+  });
+
+  it("renders recently viewed compact list", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("recently-viewed-compact")).toBeInTheDocument();
     });
   });
 
@@ -192,32 +185,6 @@ describe("DashboardPage", () => {
         screen.getAllByText("Lay's Classic").length,
       ).toBeGreaterThanOrEqual(1);
       expect(screen.getAllByText("Pepsi Max").length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
-  it("renders recently viewed section header", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText(/Recently Viewed/)).toBeInTheDocument();
-    });
-  });
-
-  it("renders 'View all' link in recently viewed section", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByText(/Recently Viewed/)).toBeInTheDocument();
-    });
-    const viewAllLink = screen.getByText("View all →").closest("a");
-    expect(viewAllLink).toHaveAttribute("href", "/app/search");
-  });
-
-  it("renders recently viewed list with horizontal scroll container", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      const list = screen.getByTestId("recently-viewed-list");
-      expect(list).toBeInTheDocument();
-      expect(list.className).toContain("overflow-x-auto");
-      expect(list.className).toContain("snap-x");
     });
   });
 
@@ -232,26 +199,6 @@ describe("DashboardPage", () => {
     expect(link).toHaveAttribute("href", "/app/product/1");
   });
 
-  it("renders nutri-score badges", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(
-        screen.getAllByText("Lay's Classic").length,
-      ).toBeGreaterThanOrEqual(1);
-    });
-    // Should have D and B badges from recently viewed products
-    const badges = screen.getAllByText("D");
-    expect(badges.length).toBeGreaterThanOrEqual(1);
-  });
-
-  it("renders score pills", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getAllByText("35").length).toBeGreaterThanOrEqual(1);
-      expect(screen.getAllByText("70").length).toBeGreaterThanOrEqual(1);
-    });
-  });
-
   it("shows error state on failure", async () => {
     mockGetDashboardData.mockResolvedValue({
       ok: false,
@@ -263,7 +210,7 @@ describe("DashboardPage", () => {
     });
   });
 
-  it("shows empty dashboard when no content", async () => {
+  it("shows new user welcome when no content", async () => {
     mockGetDashboardData.mockResolvedValue({
       ok: true,
       data: {
@@ -276,11 +223,11 @@ describe("DashboardPage", () => {
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Welcome to your Dashboard")).toBeInTheDocument();
+      expect(screen.getByTestId("new-user-welcome")).toBeInTheDocument();
     });
   });
 
-  it("shows scan CTA on empty dashboard", async () => {
+  it("shows scan CTA on new user welcome", async () => {
     mockGetDashboardData.mockResolvedValue({
       ok: true,
       data: {
@@ -293,9 +240,10 @@ describe("DashboardPage", () => {
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      const scanLink = screen.getByText(/Scan a Product/).closest("a");
-      expect(scanLink).toHaveAttribute("href", "/app/scan");
+      expect(screen.getByTestId("new-user-scan-cta")).toBeInTheDocument();
     });
+    const scanLink = screen.getByTestId("new-user-scan-cta").closest("a");
+    expect(scanLink).toHaveAttribute("href", "/app/scan");
   });
 
   it("hides recently viewed section when empty", async () => {
@@ -304,106 +252,23 @@ describe("DashboardPage", () => {
       data: {
         ...mockDashboard,
         recently_viewed: [],
+        stats: { ...mockDashboard.stats, total_viewed: 1 },
       },
     });
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      // Stats values ensure dashboard is not empty
-      expect(screen.getByText("42")).toBeInTheDocument();
+      // Health summary should still render (with no scored products)
+      expect(screen.getByTestId("health-summary")).toBeInTheDocument();
     });
-    expect(screen.queryByText(/Recently Viewed/)).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId("recently-viewed-compact"),
+    ).not.toBeInTheDocument();
   });
 
-  // ─── Summary Card & Layout ────────────────────────────────────────────────
-
-  it("uses tabular-nums on stat values", async () => {
+  it("renders quick actions section", async () => {
     render(<DashboardPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("42")).toBeInTheDocument();
-    });
-    const statValue = screen.getByText("42");
-    expect(statValue.className).toContain("tabular-nums");
-  });
-
-  // ─── Weekly Summary Card (§3.5) ──────────────────────────────────────────
-
-  it("renders weekly summary card", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByTestId("weekly-summary")).toBeInTheDocument();
-    });
-    expect(screen.getByText("This Week")).toBeInTheDocument();
-  });
-
-  it("shows weekly viewed and favorited counts", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByTestId("weekly-viewed-count")).toHaveTextContent("2");
-      expect(screen.getByTestId("weekly-favorited-count")).toHaveTextContent(
-        "1",
-      );
+      expect(screen.getByTestId("quick-actions")).toBeInTheDocument();
     });
   });
-
-  it("shows weekly average score", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      // Avg of 65 + 30 = 95 / 2 = 48 (rounded), displayed as toTryVitScore(48) = 52
-      const avgBadge = screen.getByTestId("weekly-avg-score");
-      expect(avgBadge).toHaveTextContent("52");
-    });
-  });
-
-  it("shows best find of the week", async () => {
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      const bestFind = screen.getByTestId("weekly-best-find");
-      // Pepsi Max has score 30 (lowest)
-      expect(bestFind).toHaveTextContent("Pepsi Max");
-    });
-  });
-
-  it("hides weekly activity when all activity is older than 7 days", async () => {
-    mockGetDashboardData.mockResolvedValue({
-      ok: true,
-      data: {
-        ...mockDashboard,
-        recently_viewed: [
-          {
-            ...mockDashboard.recently_viewed[0],
-            viewed_at: tenDaysAgo,
-          },
-        ],
-        favorites_preview: [
-          {
-            ...mockDashboard.favorites_preview[0],
-            added_at: tenDaysAgo,
-          },
-        ],
-      },
-    });
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      // Stats grid always renders
-      expect(screen.getByTestId("stats-grid")).toBeInTheDocument();
-    });
-    // Weekly activity section hidden — heading not present
-    expect(screen.queryByText("This Week")).not.toBeInTheDocument();
-  });
-
-  it("renders score sparkline in weekly summary", async () => {
-    mockGetDashboardData.mockResolvedValue({
-      ok: true,
-      data: mockDashboard,
-    });
-    render(<DashboardPage />, { wrapper: createWrapper() });
-    await waitFor(() => {
-      expect(screen.getByTestId("weekly-summary")).toBeInTheDocument();
-    });
-    expect(screen.getByTestId("score-sparkline")).toBeInTheDocument();
-    // 2 recently viewed products this week have scores 65 and 30
-    expect(screen.getByTestId("sparkline-bar-low")).toBeInTheDocument();
-    expect(screen.getByTestId("sparkline-bar-high")).toBeInTheDocument();
-  });
-
 });

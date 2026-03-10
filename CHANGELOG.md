@@ -15,6 +15,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Redesign dashboard with HealthSummary (avg TryVit score + band distribution),
+  QuickWinCard (swap suggestion for worst product), compact RecentlyViewed list,
+  and NewUserWelcome onboarding CTA. Add 18 i18n keys (en/pl/de), 50 tests
+  across 5 files (#787)
+
+- Search results now appear instantly as-you-type with 300ms debounce (≥ 2
+  chars) — no longer requires pressing Enter or clicking the Search button.
+  Explicit submit still works for immediate results (#786)
+
 - Standardize skeleton loading screens — rewrite `ProductProfileSkeleton` to
   match current 2-column grid layout with progressive disclosure, replace all
   `animate-pulse` Tailwind classes with unified `.skeleton` CSS shimmer in
@@ -31,6 +40,22 @@ Adheres to [Semantic Versioning](https://semver.org/).
   `formula_source_hashes` seeding so pgcrypto works in CI's bare `postgres:17`
   containers where `extensions` is not in `search_path`. Migration
   `20260316000500_fix_digest_extensions_schema.sql` (#773)
+- Fix CI `DB Integrity` check — add `ALTER DATABASE postgres SET search_path TO
+  public, extensions;` before migration loop in `qa.yml` so `pgcrypto` functions
+  resolve correctly in CI's bare postgres container (#773)
+
+### Changed
+
+- Bump 9 frontend dependencies to latest minor/patch: `@sentry/nextjs` 10.40→10.42,
+  `@supabase/supabase-js` 2.98→2.99, `@supabase/ssr` 0.8→0.9,
+  `lucide-react` 0.574→0.577, `react-hook-form` 7.71.1→7.71.2,
+  `@upstash/redis` 1.36.2→1.36.4, `autoprefixer` 10.4.24→10.4.27,
+  `postcss` 8.5.6→8.5.8, `@types/node` 22.19.11→22.19.15 (#775)
+
+### Documentation
+
+- Reconcile `CURRENT_STATE.md` with live data — product counts, issue inventory,
+  milestones M29–M34, CI status, key metrics (#774)
 
 ---
 

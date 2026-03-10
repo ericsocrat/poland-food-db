@@ -245,4 +245,57 @@ describe("ComparisonGrid", () => {
     const badges = screen.getAllByText(/Healthiest/);
     expect(badges.length).toBeGreaterThanOrEqual(1);
   });
+
+  // ─── Mobile-specific: winner announcement ───────────────────────────────
+
+  it("renders winner announcement on mobile", () => {
+    render(<ComparisonGrid products={products} />);
+    const announcement = screen.getByTestId("winner-announcement");
+    expect(announcement).toBeInTheDocument();
+    // Product A (score 35) is healthier → winner
+    expect(announcement).toHaveTextContent("Product A");
+  });
+
+  it("shows score delta in winner announcement", () => {
+    render(<ComparisonGrid products={products} />);
+    const announcement = screen.getByTestId("winner-announcement");
+    // TryVit scores: A=65, B=40 → delta=25
+    expect(announcement).toHaveTextContent("25");
+  });
+
+  // ─── Mobile-specific: key differences ───────────────────────────────────
+
+  it("renders key differences section on mobile", () => {
+    render(<ComparisonGrid products={products} />);
+    const section = screen.getByTestId("key-differences");
+    expect(section).toBeInTheDocument();
+    expect(section).toHaveTextContent("Key Differences");
+  });
+
+  it("shows nutrient values in key differences", () => {
+    render(<ComparisonGrid products={products} />);
+    const section = screen.getByTestId("key-differences");
+    // Products differ in sugars (5 vs 20), saturated fat (10 vs 15), etc.
+    // At least one row should be visible
+    expect(section.querySelectorAll(".flex.items-center.justify-between").length).toBeGreaterThan(0);
+  });
+
+  // ─── Mobile-specific: collapsible sections ──────────────────────────────
+
+  it("renders collapsible nutrition section", () => {
+    render(<ComparisonGrid products={products} />);
+    expect(screen.getAllByText("Full Nutrition").length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("renders collapsible allergens section", () => {
+    render(<ComparisonGrid products={products} />);
+    const allergenSections = screen.getAllByText("Allergens");
+    expect(allergenSections.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it("renders collapsible warnings section", () => {
+    render(<ComparisonGrid products={products} />);
+    const warnSections = screen.getAllByText("Warnings");
+    expect(warnSections.length).toBeGreaterThanOrEqual(1);
+  });
 });

@@ -47,6 +47,17 @@ import {
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+/* ── Debounce hook for instant search ─────────────────────────────────────── */
+
+function useDebounce(value: string, delay: number): string {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debounced;
+}
+
 const AVOID_TOGGLE_KEY = "tryvit:show-avoided";
 const VIEW_MODE_KEY = "tryvit:search-view";
 const PAGE_SIZE = 20;
@@ -103,7 +114,10 @@ export default function SearchPage() {
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
 
-  // The active search query (submitted)
+  // Debounced query for instant as-you-type search (300ms delay)
+  const debouncedQuery = useDebounce(query, 300);
+
+  // The active search query (submitted or debounced)
   const activeQuery = submittedQuery || undefined;
 
   // Load localStorage prefs on mount
@@ -112,6 +126,16 @@ export default function SearchPage() {
     setShowAvoided(getShowAvoided());
     setViewMode(getViewMode());
   }, []);
+
+  // Auto-trigger search as the user types (instant search)
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
+    if (trimmed.length >= 2) {
+      setSubmittedQuery(trimmed);
+    } else if (trimmed.length === 0 && !hasActiveFilters(filters)) {
+      setSubmittedQuery("");
+    }
+  }, [debouncedQuery, filters]);
 
   // Reset page when filters or query change
   useEffect(() => {
