@@ -204,13 +204,27 @@ describe("RecipesBrowsePage", () => {
     });
   });
 
-  it("renders category filter dropdown", async () => {
+  it("renders category tabs", async () => {
     render(<RecipesBrowsePage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
       expect(
-        screen.getByRole("combobox", { name: /Filter by category/i }),
+        screen.getByTestId("recipe-category-tabs"),
       ).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole("tab", { name: /All categories/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Breakfast/i })).toBeInTheDocument();
+    expect(screen.getByRole("tab", { name: /Soup/i })).toBeInTheDocument();
+  });
+
+  it("marks 'All categories' tab as selected by default", async () => {
+    render(<RecipesBrowsePage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(
+        screen.getByRole("tab", { name: /All categories/i }),
+      ).toHaveAttribute("aria-selected", "true");
     });
   });
 
@@ -224,20 +238,17 @@ describe("RecipesBrowsePage", () => {
     });
   });
 
-  it("passes category filter to API when selected", async () => {
+  it("passes category filter to API when tab is clicked", async () => {
     render(<RecipesBrowsePage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
 
     await waitFor(() => {
       expect(
-        screen.getByRole("combobox", { name: /Filter by category/i }),
+        screen.getByRole("tab", { name: /Breakfast/i }),
       ).toBeInTheDocument();
     });
 
-    const categorySelect = screen.getByRole("combobox", {
-      name: /Filter by category/i,
-    });
-    await user.selectOptions(categorySelect, "breakfast");
+    await user.click(screen.getByRole("tab", { name: /Breakfast/i }));
 
     await waitFor(() => {
       const lastCall =
@@ -364,20 +375,17 @@ describe("RecipesBrowsePage", () => {
 
   // ─── Filter chips ──────────────────────────────────────────────────────
 
-  it("shows filter chips when a category is selected", async () => {
+  it("shows filter chips when a category tab is selected", async () => {
     render(<RecipesBrowsePage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
 
     await waitFor(() => {
       expect(
-        screen.getByRole("combobox", { name: /Filter by category/i }),
+        screen.getByRole("tab", { name: /Breakfast/i }),
       ).toBeInTheDocument();
     });
 
-    const categorySelect = screen.getByRole("combobox", {
-      name: /Filter by category/i,
-    });
-    await user.selectOptions(categorySelect, "breakfast");
+    await user.click(screen.getByRole("tab", { name: /Breakfast/i }));
 
     await waitFor(() => {
       expect(screen.getByTestId("active-filter-chips")).toBeInTheDocument();
@@ -392,14 +400,11 @@ describe("RecipesBrowsePage", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("combobox", { name: /Filter by category/i }),
+        screen.getByRole("tab", { name: /Breakfast/i }),
       ).toBeInTheDocument();
     });
 
-    const categorySelect = screen.getByRole("combobox", {
-      name: /Filter by category/i,
-    });
-    await user.selectOptions(categorySelect, "breakfast");
+    await user.click(screen.getByRole("tab", { name: /Breakfast/i }));
 
     await waitFor(() => {
       expect(screen.getByTestId("active-filter-chips")).toBeInTheDocument();
@@ -418,14 +423,11 @@ describe("RecipesBrowsePage", () => {
 
     await waitFor(() => {
       expect(
-        screen.getByRole("combobox", { name: /Filter by category/i }),
+        screen.getByRole("tab", { name: /Breakfast/i }),
       ).toBeInTheDocument();
     });
 
-    const categorySelect = screen.getByRole("combobox", {
-      name: /Filter by category/i,
-    });
-    await user.selectOptions(categorySelect, "breakfast");
+    await user.click(screen.getByRole("tab", { name: /Breakfast/i }));
 
     await waitFor(() => {
       expect(screen.getByText("Clear all")).toBeInTheDocument();
