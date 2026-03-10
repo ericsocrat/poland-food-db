@@ -7,6 +7,7 @@ import {
     fmtUnit,
     getBestWorst,
     getCellHighlightClass,
+    getKeyDifferences,
     getProductWarnings,
     getWinnerIndex,
 } from "./comparison-helpers";
@@ -329,5 +330,81 @@ describe("getCellHighlightClass", () => {
     expect(getCellHighlightClass(1, ranking, 1)).toBe(
       "bg-success-bg text-success-text font-semibold",
     );
+  });
+});
+
+// ─── getKeyDifferences ──────────────────────────────────────────────────────
+
+describe("getKeyDifferences", () => {
+  it("returns differences sorted by significance", () => {
+    const a = makeProduct({ calories: 100, sugars_g: 5, salt_g: 0.2 });
+    const b = makeProduct({ calories: 500, sugars_g: 6, salt_g: 0.3 });
+    const diffs = getKeyDifferences([a, b]);
+
+    // Calories diff = 400/600 = 0.667, sugars diff = 1/50 = 0.02, salt diff = 0.1/5 = 0.02
+    expect(diffs[0].label).toBe("Calories");
+    expect(diffs[0].betterIdx).toBe(0); // lower is better for calories
+  });
+
+  it("respects maxResults limit", () => {
+    const a = makeProduct({
+      calories: 100,
+      sugars_g: 30,
+      salt_g: 4,
+      total_fat_g: 40,
+      saturated_fat_g: 20,
+      protein_g: 5,
+      fibre_g: 1,
+      additives_count: 8,
+    });
+    const b = makeProduct({
+      calories: 500,
+      sugars_g: 5,
+      salt_g: 0.5,
+      total_fat_g: 5,
+      saturated_fat_g: 2,
+      protein_g: 30,
+      fibre_g: 10,
+      additives_count: 1,
+    });
+    const diffs = getKeyDifferences([a, b], 3);
+    expect(diffs).toHaveLength(3);
+  });
+
+  it("returns empty array when products have identical values", () => {
+    const a = makeProduct();
+    const b = makeProduct();
+    const diffs = getKeyDifferences([a, b]);
+    expect(diffs).toHaveLength(0);
+  });
+
+  it("identifies correct better index for higher-is-better nutrients", () => {
+    const a = makeProduct({ protein_g: 5 });
+    const b = makeProduct({ protein_g: 30 });
+    const diffs = getKeyDifferences([a, b]);
+    const proteinDiff = diffs.find((d) => d.label === "Protein");
+    expect(proteinDiff).toBeDefined();
+    expect(proteinDiff!.betterIdx).toBe(1); // higher protein is better
+  });
+
+  it("handles null values gracefully", () => {
+    const a = makeProduct({ fibre_g: null as unknown as number });
+    const b = makeProduct({ fibre_g: 5 });
+    const diffs = getKeyDifferences([a, b]);
+    // fibre should be skipped since one value is null/undefined
+    const fibreDiff = diffs.find((d) => d.label === "Fibre");
+    expect(fibreDiff).toBeUndefined();
+  });
+
+  it("works with 3+ products", () => {
+    const a = makeProduct({ calories: 100 });
+    const b = makeProduct({ calories: 300 });
+    const c = makeProduct({ calories: 500 });
+    const diffs = getKeyDifferences([a, b, c]);
+    const calDiff = diffs.find((d) => d.label === "Calories");
+    expect(calDiff).toBeDefined();
+    // Max diff is 500-100=400, best is lowest
+    expect(calDiff!.betterIdx).toBe(0);
+    expect(calDiff!.values).toEqual([100, 300, 500]);
   });
 });

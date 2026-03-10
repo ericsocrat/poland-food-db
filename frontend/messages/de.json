@@ -604,7 +604,10 @@
     "compareProducts": "{count} {count|Produkt|Produkte} vergleichen",
     "deleteComparison": "Vergleich löschen",
     "productsNotFound": "{count} {count|Produkt|Produkte} nicht gefunden.",
-    "onlyShowingAvailable": "Es werden nur verfügbare Produkte angezeigt."
+    "onlyShowingAvailable": "Es werden nur verfügbare Produkte angezeigt.",
+    "winnerVerdict": "{points} Punkte gesünder",
+    "keyDifferences": "Wichtigste Unterschiede",
+    "fullNutrition": "Vollständige Nährwerte"
   },
   "settings": {
     "title": "Einstellungen",
