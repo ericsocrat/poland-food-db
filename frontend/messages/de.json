@@ -336,7 +336,14 @@
     "statusInReview": "In Überprüfung",
     "statusLive": "Live",
     "submittedDate": "Eingereicht {date}",
-    "categoryLabel": "Kategorie: {category}"
+    "categoryLabel": "Kategorie: {category}",
+    "scanningStatus": "Scannen… Kamera auf den Barcode richten",
+    "timeoutTitle": "Probleme beim Scannen?",
+    "timeoutHint": "Versuchen Sie bessere Beleuchtung oder halten Sie ruhig. Sie können den Barcode auch manuell eingeben.",
+    "productFound": "Produkt gefunden!",
+    "viewDetails": "Details anzeigen",
+    "scanNext": "Nächstes scannen",
+    "pasteBarcode": "Einfügen"
   },
   "scanHistory": {
     "title": "Scanverlauf",

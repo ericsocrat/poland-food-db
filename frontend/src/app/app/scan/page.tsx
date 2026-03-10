@@ -14,6 +14,7 @@ import { recordScan } from "@/lib/api";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
+import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
 import { createClient } from "@/lib/supabase/client";
 import { showToast } from "@/lib/toast";
 import type {
@@ -27,7 +28,9 @@ import {
     AlertTriangle,
     Camera,
     CameraOff,
+    CheckCircle,
     ClipboardList,
+    ClipboardPaste,
     Clock,
     FileText,
     Flashlight,
@@ -89,10 +92,13 @@ export default function ScanPage() {
   const [batchResults, setBatchResults] = useState<RecordScanFoundResponse[]>(
     [],
   );
+  const [scanTimeout, setScanTimeout] = useState(false);
+  const [foundProduct, setFoundProduct] = useState<RecordScanFoundResponse | null>(null);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BarcodeReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // ─── Record scan mutation ─────────────────────────────────────────────────
 
@@ -130,7 +136,7 @@ export default function ScanPage() {
           handleReset(true); // reset but stay in camera mode
         } else {
           setScanState("found");
-          router.push(`/app/scan/result/${found.product_id}`);
+          setFoundProduct(found);
         }
       } else {
         setScanState("not-found");
@@ -256,6 +262,21 @@ export default function ScanPage() {
     return () => stopScanner();
   }, [mode, scanState, startScanner, stopScanner]);
 
+  // ─── Scan timeout — "Having trouble?" after 15 seconds ──────────────────
+  useEffect(() => {
+    if (mode === "camera" && scanState === "idle" && !cameraError) {
+      setScanTimeout(false);
+      timeoutRef.current = setTimeout(() => setScanTimeout(true), 15_000);
+      return () => {
+        if (timeoutRef.current) {
+          clearTimeout(timeoutRef.current);
+          timeoutRef.current = null;
+        }
+      };
+    }
+    setScanTimeout(false);
+  }, [mode, scanState, cameraError]);
+
   function handleManualSubmit(e: FormSubmitEvent) {
     e.preventDefault();
     const cleaned = manualEan.trim();
@@ -273,6 +294,12 @@ export default function ScanPage() {
     setManualEan("");
     setScanState("idle");
     setScanResult(null);
+    setFoundProduct(null);
+    setScanTimeout(false);
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current);
+      timeoutRef.current = null;
+    }
     if (!keepCamera) {
       setMode("camera");
     }
@@ -393,6 +420,77 @@ export default function ScanPage() {
         <p className="text-sm text-foreground-secondary">
           {t("scan.lookingUp", { ean })}
         </p>
+      </div>
+    );
+  }
+
+  // Found state — preview overlay before navigating
+  if (scanState === "found" && foundProduct) {
+    const band = getScoreBand(foundProduct.unhealthiness_score);
+    const tryVitScore = toTryVitScore(foundProduct.unhealthiness_score);
+
+    return (
+      <div className="space-y-4">
+        <div className="card text-center">
+          <div className="mb-3 flex justify-center">
+            <CheckCircle
+              size={48}
+              className="text-success"
+              aria-hidden="true"
+            />
+          </div>
+          <p className="text-lg font-bold text-foreground">
+            {t("scan.productFound")}
+          </p>
+          <p className="mt-2 text-base font-semibold text-foreground">
+            {foundProduct.product_name_display ?? foundProduct.product_name}
+          </p>
+          {foundProduct.brand && (
+            <p className="text-sm text-foreground-secondary">
+              {foundProduct.brand}
+            </p>
+          )}
+          {band && (
+            <div className="mt-3 flex items-center justify-center gap-2">
+              <span
+                className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold"
+                style={{ backgroundColor: band.bgColor, color: band.textColor }}
+              >
+                {tryVitScore}
+              </span>
+              <span className="text-sm text-foreground-secondary">
+                {band.label}
+              </span>
+            </div>
+          )}
+          {foundProduct.nutri_score && (
+            <div className="mt-2 flex items-center justify-center gap-1">
+              <span
+                className={`inline-flex h-6 w-6 items-center justify-center rounded text-xs font-bold text-white ${
+                  NUTRI_COLORS[foundProduct.nutri_score] ?? "bg-foreground-muted"
+                }`}
+              >
+                {foundProduct.nutri_score}
+              </span>
+              <span className="text-xs text-foreground-muted">Nutri-Score</span>
+            </div>
+          )}
+        </div>
+        <div className="flex gap-2">
+          <Button
+            onClick={() => router.push(`/app/scan/result/${foundProduct.product_id}`)}
+            className="flex-1"
+          >
+            {t("scan.viewDetails")}
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => handleReset()}
+            className="flex-1"
+          >
+            {t("scan.scanNext")}
+          </Button>
+        </div>
       </div>
     );
   }
@@ -543,8 +641,15 @@ export default function ScanPage() {
                     <div className="absolute -right-0.5 -top-0.5 h-4 w-4 border-r-[3px] border-t-[3px] border-white rounded-tr" />
                     <div className="absolute -bottom-0.5 -left-0.5 h-4 w-4 border-b-[3px] border-l-[3px] border-white rounded-bl" />
                     <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 border-b-[3px] border-r-[3px] border-white rounded-br" />
-                    {/* Center scan line */}
-                    <div className="absolute left-2 right-2 top-1/2 h-0.5 bg-error/70" />
+                    {/* Animated scan line */}
+                    <div
+                      className="absolute left-2 right-2 h-0.5 bg-error/70"
+                      style={{
+                        animation: "scanLine 2s ease-in-out infinite",
+                        top: "50%",
+                      }}
+                    />
+                    <style>{`@keyframes scanLine { 0%,100% { top: 15%; } 50% { top: 85%; } }`}</style>
                   </div>
                 </div>
                 {/* Batch mode indicator */}
@@ -572,6 +677,25 @@ export default function ScanPage() {
                   {t("scan.restart")}
                 </Button>
               </div>
+
+              {/* Scanning status */}
+              {!scanTimeout && (
+                <p className="animate-pulse text-center text-sm text-foreground-secondary">
+                  {t("scan.scanningStatus")}
+                </p>
+              )}
+
+              {/* Timeout hint */}
+              {scanTimeout && (
+                <div className="card border-warning-border bg-warning-bg text-center">
+                  <p className="text-sm font-semibold text-warning-text">
+                    {t("scan.timeoutTitle")}
+                  </p>
+                  <p className="mt-1 text-xs text-warning-text/80">
+                    {t("scan.timeoutHint")}
+                  </p>
+                </div>
+              )}
             </>
           )}
           <p className="text-center text-xs text-foreground-muted">
@@ -580,17 +704,36 @@ export default function ScanPage() {
         </div>
       ) : (
         <form onSubmit={handleManualSubmit} className="space-y-3">
-          <input
-            type="text"
-            value={manualEan}
-            onChange={(e) => setManualEan(stripNonDigits(e.target.value))}
-            placeholder={t("scan.manualPlaceholder")}
-            aria-label={t("scan.manualPlaceholder")}
-            className="input-field text-center text-lg tracking-widest"
-            maxLength={13}
-            inputMode="numeric"
-            autoFocus
-          />
+          <div className="flex gap-2">
+            <input
+              type="text"
+              value={manualEan}
+              onChange={(e) => setManualEan(stripNonDigits(e.target.value))}
+              placeholder={t("scan.manualPlaceholder")}
+              aria-label={t("scan.manualPlaceholder")}
+              className="input-field min-w-0 flex-1 text-center text-lg tracking-widest"
+              maxLength={13}
+              inputMode="numeric"
+              autoFocus
+            />
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={async () => {
+                try {
+                  const text = await navigator.clipboard.readText();
+                  const digits = stripNonDigits(text).slice(0, 13);
+                  if (digits) setManualEan(digits);
+                } catch {
+                  /* clipboard not available */
+                }
+              }}
+              icon={<ClipboardPaste size={16} aria-hidden="true" />}
+              aria-label={t("scan.pasteBarcode")}
+            >
+              {t("scan.pasteBarcode")}
+            </Button>
+          </div>
           <Button
             type="submit"
             disabled={manualEan.length < 8}

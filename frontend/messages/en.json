@@ -336,7 +336,14 @@
     "statusInReview": "In Review",
     "statusLive": "Live",
     "submittedDate": "Submitted {date}",
-    "categoryLabel": "Category: {category}"
+    "categoryLabel": "Category: {category}",
+    "scanningStatus": "Scanning… point camera at barcode",
+    "timeoutTitle": "Having trouble scanning?",
+    "timeoutHint": "Try better lighting or hold steady. You can also enter the barcode manually.",
+    "productFound": "Product Found!",
+    "viewDetails": "View Details",
+    "scanNext": "Scan Next",
+    "pasteBarcode": "Paste"
   },
   "scanHistory": {
     "title": "Scan History",

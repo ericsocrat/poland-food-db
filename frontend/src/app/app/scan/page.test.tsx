@@ -65,6 +65,18 @@ vi.mock("@/lib/toast", () => ({
   showToast: mockShowToast,
 }));
 
+vi.mock("@/lib/score-utils", () => ({
+  toTryVitScore: (u: number) => 100 - u,
+  getScoreBand: (u: number) => {
+    if (u >= 1 && u <= 20) return { band: "green", label: "Excellent", color: "#22c55e", bgColor: "#dcfce7", textColor: "#166534" };
+    if (u >= 21 && u <= 40) return { band: "yellow", label: "Good", color: "#eab308", bgColor: "#fef9c3", textColor: "#854d0e" };
+    if (u >= 41 && u <= 60) return { band: "orange", label: "Moderate", color: "#f97316", bgColor: "#fff7ed", textColor: "#9a3412" };
+    if (u >= 61 && u <= 80) return { band: "red", label: "Poor", color: "#ef4444", bgColor: "#fef2f2", textColor: "#991b1b" };
+    if (u >= 81 && u <= 100) return { band: "darkred", label: "Bad", color: "#991b1b", bgColor: "#fef2f2", textColor: "#7f1d1d" };
+    return null;
+  },
+}));
+
 // Mock ZXing library — prevent actual camera access
 vi.mock("@zxing/library", () => {
   // Plain constructor (not vi.fn) so vi.clearAllMocks() doesn't strip it
@@ -212,7 +224,7 @@ describe("ScanPage", () => {
     expect(screen.getByText("Look up")).toBeEnabled();
   });
 
-  it("submits manual EAN and navigates to scan result on found", async () => {
+  it("submits manual EAN and shows found preview", async () => {
     mockRecordScan.mockResolvedValue(mockFoundResponse);
     const user = userEvent.setup();
 
@@ -226,8 +238,13 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Look up"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
+      expect(screen.getByText("Product Found!")).toBeInTheDocument();
     });
+    expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    expect(screen.getByText("TestBrand")).toBeInTheDocument();
+
+    await user.click(screen.getByText("View Details"));
+    expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
   });
 
   it("shows not-found state with submission CTA", async () => {
@@ -316,8 +333,11 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Retry"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
+      expect(screen.getByText("Product Found!")).toBeInTheDocument();
     });
+
+    await user.click(screen.getByText("View Details"));
+    expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
   });
 
   it("resets from error state to scan another", async () => {
@@ -465,6 +485,7 @@ describe("ScanPage", () => {
         product_name: "Test Product",
         brand: "TestBrand",
         nutri_score: "B",
+        unhealthiness_score: 35,
       },
     });
     const user = userEvent.setup();
@@ -478,8 +499,12 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Look up"));
 
     await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
+      expect(screen.getByText("Product Found!")).toBeInTheDocument();
     });
+    expect(screen.getByText("Test Product")).toBeInTheDocument();
+
+    await user.click(screen.getByText("View Details"));
+    expect(mockPush).toHaveBeenCalledWith("/app/scan/result/42");
   });
 
   it("shows looking-up state with spinner while scan is pending", async () => {
@@ -921,5 +946,102 @@ describe("ScanPage", () => {
     await waitFor(() => {
       expect(vibrateSpy).toHaveBeenCalledWith(100);
     });
+  });
+
+  // ─── Found Preview Overlay ──────────────────────────────────────────────────
+
+  it("found preview Scan Next button resets to idle state", async () => {
+    mockRecordScan.mockResolvedValue(mockFoundResponse);
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Product Found!")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Scan Next"));
+
+    // Should return to idle
+    expect(screen.getByText("Scan Barcode")).toBeInTheDocument();
+    expect(mockPush).not.toHaveBeenCalled();
+  });
+
+  it("found preview shows score band for product", async () => {
+    mockRecordScan.mockResolvedValue(mockFoundResponse);
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Product Found!")).toBeInTheDocument();
+    });
+    // unhealthiness_score 65 → TryVit Score 35, band = "Poor"
+    expect(screen.getByText("35")).toBeInTheDocument();
+    expect(screen.getByText("Poor")).toBeInTheDocument();
+  });
+
+  it("found preview shows nutri-score badge", async () => {
+    mockRecordScan.mockResolvedValue(mockFoundResponse);
+    const user = userEvent.setup();
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Manual"));
+    await user.type(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      "5901234123457",
+    );
+    await user.click(screen.getByText("Look up"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Product Found!")).toBeInTheDocument();
+    });
+    expect(screen.getByText("D")).toBeInTheDocument();
+    expect(screen.getByText("Nutri-Score")).toBeInTheDocument();
+  });
+
+  // ─── Paste Button ──────────────────────────────────────────────────────────
+
+  it("shows paste button in manual mode", async () => {
+    const user = userEvent.setup();
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Manual"));
+
+    expect(screen.getByText("Paste")).toBeInTheDocument();
+  });
+
+  // ─── Scan Timeout ──────────────────────────────────────────────────────────
+
+  it("shows timeout hint after 15 seconds of camera scanning", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Back Camera" } as MediaDeviceInfo,
+    ]);
+
+    // Spy on setTimeout — verify the 15 s scan timeout is registered
+    const spy = vi.spyOn(globalThis, "setTimeout");
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    // Wait for camera to fully initialise
+    await waitFor(() => {
+      expect(mockDecodeFromDevice).toHaveBeenCalled();
+    });
+
+    // The timeout useEffect should have called setTimeout(fn, 15_000)
+    expect(spy).toHaveBeenCalledWith(expect.any(Function), 15_000);
+
+    spy.mockRestore();
   });
 });

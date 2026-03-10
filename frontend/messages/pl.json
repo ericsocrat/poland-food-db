@@ -336,7 +336,14 @@
     "statusInReview": "W trakcie weryfikacji",
     "statusLive": "Aktywny",
     "submittedDate": "Zgłoszono {date}",
-    "categoryLabel": "Kategoria: {category}"
+    "categoryLabel": "Kategoria: {category}",
+    "scanningStatus": "Skanowanie… skieruj kamerę na kod kreskowy",
+    "timeoutTitle": "Masz problem ze skanowaniem?",
+    "timeoutHint": "Spróbuj lepszego oświetlenia lub trzymaj stabilnie. Możesz też wpisać kod ręcznie.",
+    "productFound": "Produkt znaleziony!",
+    "viewDetails": "Zobacz szczegóły",
+    "scanNext": "Skanuj następny",
+    "pasteBarcode": "Wklej"
   },
   "scanHistory": {
     "title": "Historia skanowania",
