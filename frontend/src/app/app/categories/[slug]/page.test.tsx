@@ -163,11 +163,11 @@ describe("CategoryListingPage", () => {
     render(<CategoryListingPage />, { wrapper: createWrapper() });
     const nav = screen.getByLabelText("Breadcrumb");
     expect(nav).toBeInTheDocument();
-    expect(screen.getByText("Dashboard").closest("a")).toHaveAttribute(
+    expect(screen.getAllByText("Dashboard")[0].closest("a")).toHaveAttribute(
       "href",
       "/app",
     );
-    expect(screen.getByText("Categories").closest("a")).toHaveAttribute(
+    expect(screen.getAllByText("Categories")[0].closest("a")).toHaveAttribute(
       "href",
       "/app/categories",
     );
