@@ -15,11 +15,11 @@
 
 "use client";
 
-import React, { Component, type ErrorInfo, type ReactNode } from "react";
-import { reportBoundaryError, type ErrorContext } from "@/lib/error-reporter";
-import { translate } from "@/lib/i18n";
 import { buttonClasses } from "@/components/common/Button";
 import { ErrorIllustration } from "@/components/common/ErrorIllustration";
+import { reportBoundaryError, type ErrorContext } from "@/lib/error-reporter";
+import { useTranslation } from "@/lib/i18n";
+import { Component, type ErrorInfo, type ReactNode } from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -50,6 +50,7 @@ function PageFallback({
   error: Error;
   onReset: () => void;
 }>) {
+  const { t } = useTranslation();
   const digest = (error as Error & { digest?: string }).digest;
   return (
     <div
@@ -61,14 +62,14 @@ function PageFallback({
         <ErrorIllustration type="server-error" width={160} height={133} />
       </div>
       <h2 className="mb-2 text-xl font-bold text-foreground">
-        {translate("en", "errorBoundary.pageTitle")}
+        {t("errorBoundary.pageTitle")}
       </h2>
       <p className="mb-6 max-w-md text-sm text-foreground-secondary">
-        {translate("en", "errorBoundary.pageDescription")}
+        {t("errorBoundary.pageDescription")}
       </p>
       {digest && (
         <p className="mb-4 font-mono text-xs text-foreground-muted">
-          {translate("en", "errorBoundary.errorId")}: {digest}
+          {t("errorBoundary.errorId")}: {digest}
         </p>
       )}
       <div className="flex gap-3">
@@ -76,13 +77,13 @@ function PageFallback({
           onClick={onReset}
           className={buttonClasses("primary", "md")}
         >
-          {translate("en", "common.tryAgain")}
+          {t("common.tryAgain")}
         </button>
         <a
           href="/app"
           className={buttonClasses("secondary", "md")}
         >
-          {translate("en", "errorBoundary.goHome")}
+          {t("errorBoundary.goHome")}
         </a>
       </div>
     </div>
@@ -90,6 +91,7 @@ function PageFallback({
 }
 
 function SectionFallback({ onReset }: Readonly<{ onReset: () => void }>) {
+  const { t } = useTranslation();
   return (
     <div
       className="my-4 flex flex-col items-center justify-center rounded-lg border border-dashed border-strong p-6 text-center"
@@ -100,25 +102,26 @@ function SectionFallback({ onReset }: Readonly<{ onReset: () => void }>) {
         <ErrorIllustration type="server-error" width={80} height={67} />
       </div>
       <p className="mb-3 text-sm font-medium text-foreground">
-        {translate("en", "errorBoundary.sectionTitle")}
+        {t("errorBoundary.sectionTitle")}
       </p>
       <button
         onClick={onReset}
         className={buttonClasses("primary", "sm")}
       >
-        {translate("en", "common.tryAgain")}
+        {t("common.tryAgain")}
       </button>
     </div>
   );
 }
 
 function ComponentFallback() {
+  const { t } = useTranslation();
   return (
     <span
       className="inline-flex items-center justify-center rounded border border-dashed border-border px-2 py-0.5 text-xs text-foreground-muted"
       role="alert"
       data-testid="error-boundary-component"
-      title={translate("en", "errorBoundary.componentTooltip")}
+      title={t("errorBoundary.componentTooltip")}
     >
       —
     </span>

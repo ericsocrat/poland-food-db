@@ -13,11 +13,19 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
-### Added
+### Changed
 
-- Mobile-first product detail redesign with `ProductScoreHero`, `NutritionHighlights`, and `AllergenQuickBadges` components. Restructured left column into multi-card layout with score verdict, traffic-light nutrition bars, and allergen pill badges (#781)
+- Standardize skeleton loading screens — rewrite `ProductProfileSkeleton` to
+  match current 2-column grid layout with progressive disclosure, replace all
+  `animate-pulse` Tailwind classes with unified `.skeleton` CSS shimmer in
+  `ProductHeroImage` and `HealthWarningsCard`, add grid layout test (#789)
 
 ### Fixed
+
+- Regenerate all 74 Playwright screenshot baselines — fix 18 broken renders
+  (public learn pages, login/signup, admin panels) that were blank or showing
+  error states. Screenshots now capture correct content after recent UI fixes
+  (#789, #790, #803). Add new P09-learn-tryvit-score screenshot (#794)
 
 - Fix QA CI broken on main — qualify `digest()` as `extensions.digest()` in
   `formula_source_hashes` seeding so pgcrypto works in CI's bare `postgres:17`

@@ -3,10 +3,10 @@
  * Issue #38 — Product Score History, Watchlist & Reformulation Alerts
  */
 
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import type { ReactNode } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -58,12 +58,12 @@ vi.mock("@/lib/api", () => ({
 
 // ─── Imports ────────────────────────────────────────────────────────────────
 
+import WatchlistPage from "@/app/app/watchlist/page";
+import { ReformulationBadge } from "./ReformulationBadge";
+import { ScoreChangeIndicator } from "./ScoreChangeIndicator";
+import { ScoreHistoryPanel } from "./ScoreHistoryPanel";
 import { ScoreTrendChart } from "./ScoreTrendChart";
 import { WatchButton } from "./WatchButton";
-import { ScoreChangeIndicator } from "./ScoreChangeIndicator";
-import { ReformulationBadge } from "./ReformulationBadge";
-import { ScoreHistoryPanel } from "./ScoreHistoryPanel";
-import WatchlistPage from "@/app/app/watchlist/page";
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 

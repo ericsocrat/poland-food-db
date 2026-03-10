@@ -22,12 +22,19 @@ vi.mock("next/link", () => ({
   ),
 }));
 
+const mockIsAdmin = vi.fn<() => boolean>().mockReturnValue(false);
+vi.mock("@/stores/admin-store", () => ({
+  useAdminStore: (selector: (s: { isAdmin: boolean }) => boolean) =>
+    selector({ isAdmin: mockIsAdmin() }),
+}));
+
 describe("MoreDrawer", () => {
   const onClose = vi.fn();
 
   beforeEach(() => {
     onClose.mockClear();
     mockPathname.mockReturnValue("/app");
+    mockIsAdmin.mockReturnValue(false);
   });
 
   // ─── Closed state ──────────────────────────────────────────────────────
@@ -37,9 +44,9 @@ describe("MoreDrawer", () => {
     expect(container.innerHTML).toBe("");
   });
 
-  // ─── All 9 nav items ──────────────────────────────────────────────────
+  // ─── All 8 nav items (non-admin) ────────────────────────────────────
 
-  it("renders all 9 drawer nav items when open", () => {
+  it("renders all 8 drawer nav items when open (non-admin)", () => {
     render(<MoreDrawer open={true} onClose={onClose} />);
     expect(screen.getByText("Categories")).toBeInTheDocument();
     expect(screen.getByText("Recipes")).toBeInTheDocument();
@@ -49,18 +56,18 @@ describe("MoreDrawer", () => {
     expect(screen.getByText("Achievements")).toBeInTheDocument();
     expect(screen.getByText("Learn")).toBeInTheDocument();
     expect(screen.getByText("Settings")).toBeInTheDocument();
-    // Admin appears as both a section label and nav item text
-    const adminElements = screen.getAllByText("Admin");
-    expect(adminElements.length).toBeGreaterThanOrEqual(1);
+    // Admin should NOT appear when not admin
+    expect(screen.queryByText("Admin")).not.toBeInTheDocument();
   });
 
   // ─── Section headers ──────────────────────────────────────────────────
 
-  it("renders section headers", () => {
+  it("renders section headers (non-admin)", () => {
     render(<MoreDrawer open={true} onClose={onClose} />);
     expect(screen.getByText("Browse")).toBeInTheDocument();
     expect(screen.getByText("Your Stuff")).toBeInTheDocument();
     expect(screen.getByText("App")).toBeInTheDocument();
+    expect(screen.queryByText("Admin")).not.toBeInTheDocument();
   });
 
   // ─── Correct hrefs ────────────────────────────────────────────────────
@@ -83,7 +90,15 @@ describe("MoreDrawer", () => {
         href,
       );
     }
-    // Admin link
+  });
+
+  // ─── Admin visible when admin ─────────────────────────────────────────
+
+  it("renders admin section when user is admin", () => {
+    mockIsAdmin.mockReturnValue(true);
+    render(<MoreDrawer open={true} onClose={onClose} />);
+    const adminElements = screen.getAllByText("Admin");
+    expect(adminElements.length).toBeGreaterThanOrEqual(1);
     const adminLink = screen.getByRole("link", { name: /admin/i });
     expect(adminLink).toHaveAttribute("href", "/app/admin/submissions");
   });

@@ -78,8 +78,7 @@ export function ProductHeroImage({
       return (
         <div className="flex h-32 w-full items-center justify-center overflow-hidden rounded-xl bg-surface-muted">
           <div
-            className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200"
-            style={{ filter: "blur(8px)" }}
+            className="skeleton absolute inset-0"
             aria-hidden="true"
           />
           <span className="relative text-sm text-foreground-muted">
@@ -103,8 +102,7 @@ export function ProductHeroImage({
         {/* Blur placeholder shown until image fully loads */}
         {!imageLoaded && (
           <div
-            className="absolute inset-0 animate-pulse bg-gradient-to-br from-gray-200 via-gray-100 to-gray-200"
-            style={{ filter: "blur(8px)" }}
+            className="skeleton absolute inset-0"
             aria-hidden="true"
             data-testid="image-blur-placeholder"
           />

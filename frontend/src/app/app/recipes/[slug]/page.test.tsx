@@ -316,10 +316,10 @@ describe("RecipeDetailPage", () => {
     render(<RecipeDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("Recipes")).toBeInTheDocument();
+      expect(screen.getAllByText("Recipes").length).toBeGreaterThanOrEqual(1);
     });
 
-    const recipesLink = screen.getByText("Recipes").closest("a");
+    const recipesLink = screen.getAllByText("Recipes")[0].closest("a");
     expect(recipesLink).toHaveAttribute("href", "/app/recipes");
   });
 

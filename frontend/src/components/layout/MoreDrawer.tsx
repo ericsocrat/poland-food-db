@@ -10,6 +10,7 @@
 import { Icon } from "@/components/common/Icon";
 import { useActiveRoute, type PrimaryRouteKey } from "@/hooks/use-active-route";
 import { useTranslation } from "@/lib/i18n";
+import { useAdminStore } from "@/stores/admin-store";
 import {
     BookOpen,
     Eye,
@@ -88,6 +89,7 @@ interface MoreDrawerProps {
 export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
   const activeRoute = useActiveRoute();
   const { t } = useTranslation();
+  const isAdmin = useAdminStore((s) => s.isAdmin);
   const drawerRef = useRef<HTMLDialogElement>(null);
   const [animating, setAnimating] = useState(false);
   const touchStartY = useRef(0);
@@ -195,7 +197,9 @@ export function MoreDrawer({ open, onClose }: Readonly<MoreDrawerProps>) {
         {/* Grouped nav items */}
         <nav aria-label={t("a11y.moreNavigation")}>
           <div className="px-2 pb-4">
-            {DRAWER_SECTIONS.map((section, sectionIdx) => (
+            {DRAWER_SECTIONS.filter(
+              (s) => s.labelKey !== "nav.admin" || isAdmin,
+            ).map((section, sectionIdx) => (
               <div key={section.labelKey}>
                 {/* Section divider (not before first section) */}
                 {sectionIdx > 0 && (

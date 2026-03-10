@@ -37,6 +37,10 @@ const tMap: Record<string, string> = {
   "landing.ctaHeading": "Ready to eat healthier?",
   "landing.ctaDescription":
     "Join TryVit and make informed food choices backed by real nutrition data.",
+  "landing.statProductsValue": "2,400+",
+  "landing.statCategoriesValue": "25",
+  "landing.statFactorsValue": "9",
+  "landing.statCountriesValue": "2",
 };
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────

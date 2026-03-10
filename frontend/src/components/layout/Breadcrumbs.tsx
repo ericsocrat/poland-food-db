@@ -12,6 +12,7 @@
 //   ]} />
 
 import { useTranslation } from "@/lib/i18n";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 
 // ---------------------------------------------------------------------------
@@ -40,9 +41,29 @@ export function Breadcrumbs({ items }: Readonly<BreadcrumbsProps>) {
 
   if (items.length === 0) return null;
 
+  // Parent item = second-to-last (the page one level up)
+  const parentItem = items.length >= 2 ? items[items.length - 2] : null;
+  const parentText = parentItem
+    ? parentItem.labelKey
+      ? t(parentItem.labelKey)
+      : (parentItem.label ?? "")
+    : "";
+
   return (
-    <nav aria-label={t("a11y.breadcrumb")} className="mb-3 hidden md:block">
-      <ol className="flex flex-wrap items-center gap-1 text-sm text-foreground-secondary">
+    <nav aria-label={t("a11y.breadcrumb")} className="mb-3">
+      {/* Mobile: compact parent-only link */}
+      {parentItem?.href && (
+        <Link
+          href={parentItem.href}
+          className="flex items-center gap-1 text-sm text-foreground-secondary hover:text-foreground transition-colors min-h-[44px] md:hidden"
+        >
+          <ChevronLeft size={16} aria-hidden="true" />
+          <span className="truncate max-w-[200px]">{parentText}</span>
+        </Link>
+      )}
+
+      {/* Desktop: full breadcrumb trail */}
+      <ol className="hidden md:flex flex-wrap items-center gap-1 text-sm text-foreground-secondary">
         {items.map((item, index) => {
           const isLast = index === items.length - 1;
           const text = item.labelKey ? t(item.labelKey) : (item.label ?? "");
