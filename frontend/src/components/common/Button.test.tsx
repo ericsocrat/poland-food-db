@@ -41,6 +41,15 @@ describe("Button", () => {
     expect(screen.getByRole("button").className).toContain("text-base");
   });
 
+  it("enforces 44px min-height on md and lg sizes", () => {
+    const { rerender } = render(<Button size="md">M</Button>);
+    expect(screen.getByRole("button").className).toContain("min-h-[44px]");
+    rerender(<Button size="lg">L</Button>);
+    expect(screen.getByRole("button").className).toContain("min-h-[44px]");
+    rerender(<Button size="sm">S</Button>);
+    expect(screen.getByRole("button").className).not.toContain("min-h-[44px]");
+  });
+
   it("shows loading spinner and disables button", () => {
     const onClick = vi.fn();
     render(

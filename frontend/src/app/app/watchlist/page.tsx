@@ -102,7 +102,7 @@ export default function WatchlistPage() {
   const totalPages = data?.total_pages ?? 1;
 
   return (
-    <div>
+    <div className="space-y-6">
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
@@ -110,10 +110,10 @@ export default function WatchlistPage() {
         ]}
       />
 
-      <div className="mb-6 flex items-center gap-3">
+      <div className="flex items-center gap-3">
         <Icon icon={Eye} size="lg" className="text-brand" />
         <div>
-          <h1 className="text-xl font-bold text-foreground">
+          <h1 className="text-xl font-bold text-foreground lg:text-2xl">
             {t("watchlist.title")}
           </h1>
           <p className="text-sm text-foreground-secondary">

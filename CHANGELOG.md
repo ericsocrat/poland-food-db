@@ -28,6 +28,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Changed
 
+- Redesign dashboard with HealthSummary (avg TryVit score + band distribution),
+  QuickWinCard (swap suggestion for worst product), compact RecentlyViewed list,
+  and NewUserWelcome onboarding CTA. Add 18 i18n keys (en/pl/de), 50 tests
+  across 5 files (#787)
+
+- Search results now appear instantly as-you-type with 300ms debounce (≥ 2
+  chars) — no longer requires pressing Enter or clicking the Search button.
+  Explicit submit still works for immediate results (#786)
+
 - Standardize skeleton loading screens — rewrite `ProductProfileSkeleton` to
   match current 2-column grid layout with progressive disclosure, replace all
   `animate-pulse` Tailwind classes with unified `.skeleton` CSS shimmer in

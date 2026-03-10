@@ -137,7 +137,7 @@ export default function CategoryListingPage() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div className="space-y-4">
+    <div className="space-y-6">
       {/* Breadcrumbs */}
       <Breadcrumbs
         items={[
@@ -149,7 +149,7 @@ export default function CategoryListingPage() {
 
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold capitalize text-foreground">
+        <h1 className="text-xl font-bold capitalize text-foreground lg:text-2xl">
           {formatSlug(slug)}
         </h1>
         {data && (

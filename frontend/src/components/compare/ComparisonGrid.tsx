@@ -11,13 +11,14 @@ import { useTranslation } from "@/lib/i18n";
 import { nutriScoreLabel } from "@/lib/nutri-label";
 import { toTryVitScore } from "@/lib/score-utils";
 import type { CellValue, CompareProduct } from "@/lib/types";
-import { Check, Scale, Trophy, X as XIcon } from "lucide-react";
+import { Check, ChevronDown, Scale, Trophy, X as XIcon } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
     fmtStr,
     fmtUnit,
     getBestWorst,
     getCellHighlightClass,
+    getKeyDifferences,
     getWinnerIndex,
 } from "./comparison-helpers";
 
@@ -356,7 +357,39 @@ function DesktopGrid({
   );
 }
 
-// ─── Mobile Swipe View ──────────────────────────────────────────────────────
+// ─── Mobile Comparison View ─────────────────────────────────────────────────
+
+/** Collapsible section with chevron toggle */
+function CollapsibleSection({
+  title,
+  defaultOpen = false,
+  children,
+}: Readonly<{
+  title: string;
+  defaultOpen?: boolean;
+  children: React.ReactNode;
+}>) {
+  const [open, setOpen] = useState(defaultOpen);
+
+  return (
+    <div className="border-t border">
+      <button
+        type="button"
+        onClick={() => setOpen(!open)}
+        className="flex w-full items-center justify-between px-4 py-3 touch-target"
+        aria-expanded={open}
+      >
+        <span className="text-sm font-semibold text-foreground">{title}</span>
+        <ChevronDown
+          size={16}
+          aria-hidden="true"
+          className={`text-foreground-muted transition-transform ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      {open && <div className="px-4 pb-4">{children}</div>}
+    </div>
+  );
+}
 
 function MobileSwipeView({
   products,
@@ -367,6 +400,13 @@ function MobileSwipeView({
   const containerRef = useRef<HTMLDivElement>(null);
   const touchStartX = useRef(0);
   const winnerIdx = getWinnerIndex(products);
+  const keyDiffs = getKeyDifferences(products);
+  const scoreDelta = Math.abs(
+    toTryVitScore(products[winnerIdx].unhealthiness_score) -
+      toTryVitScore(
+        products[winnerIdx === 0 ? 1 : 0].unhealthiness_score,
+      ),
+  );
 
   const swipeTo = useCallback(
     (idx: number) => {
@@ -400,14 +440,89 @@ function MobileSwipeView({
   }, [activeIdx, swipeTo]);
 
   const product = products[activeIdx];
-  const band = SCORE_BANDS[scoreBandFromScore(product.unhealthiness_score)];
   const nutriClass = product.nutri_score
     ? NUTRI_COLORS[product.nutri_score]
     : "bg-surface-muted text-foreground-secondary";
 
   return (
     <div className="md:hidden">
-      {/* Sticky header with product names */}
+      {/* ── Score header — all products side by side ── */}
+      <div className="px-4 pt-4 pb-2">
+        <div className="flex items-stretch justify-center gap-3">
+          {products.map((p, i) => {
+            const band = SCORE_BANDS[scoreBandFromScore(p.unhealthiness_score)];
+            return (
+              <div
+                key={p.product_id}
+                className={`flex-1 text-center rounded-xl p-3 ${i === winnerIdx ? "ring-2 ring-success-text bg-success-bg/30" : "bg-surface-alt"}`}
+              >
+                <div
+                  className={`mx-auto flex h-12 w-12 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
+                >
+                  {toTryVitScore(p.unhealthiness_score)}
+                  <span className="sr-only">{band.label}</span>
+                </div>
+                <p className="mt-1 text-xs font-semibold text-foreground line-clamp-2">
+                  {p.product_name}
+                </p>
+                <p className="text-xs text-foreground-secondary line-clamp-1">
+                  {p.brand}
+                </p>
+                {showAvoidBadge && (
+                  <div className="mt-1">
+                    <AvoidBadge productId={p.product_id} />
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Winner announcement ── */}
+      <div className="mx-4 mb-3 rounded-xl bg-success-bg p-3 text-center" data-testid="winner-announcement">
+        <Trophy size={20} aria-hidden="true" className="inline text-success-text" />
+        <p className="mt-1 text-sm font-bold text-success-text">
+          {products[winnerIdx].product_name}
+        </p>
+        <p className="text-xs text-success-text/80">
+          {t("compare.winnerVerdict", { points: scoreDelta })}
+        </p>
+      </div>
+
+      {/* ── Key differences ── */}
+      {keyDiffs.length > 0 && (
+        <div className="mx-4 mb-3 card" data-testid="key-differences">
+          <p className="text-sm font-semibold text-foreground mb-2">
+            {t("compare.keyDifferences")}
+          </p>
+          <div className="space-y-2">
+            {keyDiffs.map((diff) => (
+              <div key={diff.labelKey} className="flex items-center justify-between text-sm">
+                <span className="text-foreground-secondary">
+                  {t(diff.labelKey) ?? diff.label}
+                </span>
+                <div className="flex items-center gap-2">
+                  {products.map((_, i) => (
+                    <span
+                      key={products[i].product_id}
+                      className={`text-xs font-medium ${i === diff.betterIdx ? "text-success-text" : "text-foreground-secondary"}`}
+                    >
+                      {diff.values[i]}
+                      {diff.unit ? ` ${diff.unit}` : ""}
+                      {i === diff.betterIdx && (
+                        <Check size={12} className="inline ml-0.5 text-success-text" aria-hidden="true" />
+                      )}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* ── Swipeable detail tabs ── */}
       <div className="sticky top-12 md:top-14 z-30 bg-surface border-b border-border px-4 py-2">
         <div className="flex items-center justify-center gap-2" role="tablist">
           {products.map((p, i) => (
@@ -450,22 +565,16 @@ function MobileSwipeView({
         </div>
       </div>
 
-      {/* Swipeable card */}
+      {/* Swipeable card with collapsible sections */}
       <div
         ref={containerRef}
         onTouchStart={handleTouchStart}
         onTouchEnd={handleTouchEnd}
-        className="mt-4 px-4"
+        className="mt-2 px-4"
       >
-        <div className="card space-y-4">
+        <div className="card overflow-hidden p-0">
           {/* Product header */}
-          <div className="flex items-start gap-3">
-            <div
-              className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl text-xl font-bold ${band.bg} ${band.color}`}
-            >
-              {toTryVitScore(product.unhealthiness_score)}
-              <span className="sr-only">{band.label}</span>
-            </div>
+          <div className="flex items-start gap-3 p-4">
             <div className="min-w-0 flex-1">
               <p className="font-bold text-foreground">
                 {product.product_name}
@@ -488,74 +597,68 @@ function MobileSwipeView({
                     {t("compare.best")}
                   </span>
                 )}
-                {showAvoidBadge && (
-                  <AvoidBadge productId={product.product_id} />
-                )}
               </div>
             </div>
           </div>
 
-          {/* Nutrition data */}
-          <div className="divide-y divide-gray-100">
-            {COMPARE_ROWS.filter(
-              (r) => r.key !== "nutri_score" && r.key !== "nova_group",
-            ).map((row) => {
-              const rawValue = row.getValue(product);
-              const formatted = row.format
-                ? row.format(rawValue)
-                : fmtStr(rawValue);
+          {/* Nutrition data — collapsible */}
+          <CollapsibleSection title={t("compare.fullNutrition")} defaultOpen>
+            <div className="divide-y divide-gray-100">
+              {COMPARE_ROWS.filter(
+                (r) => r.key !== "nutri_score" && r.key !== "nova_group",
+              ).map((row) => {
+                const rawValue = row.getValue(product);
+                const formatted = row.format
+                  ? row.format(rawValue)
+                  : fmtStr(rawValue);
 
-              // Compare with other products
-              const allValues = products.map((p) => {
-                const v = row.getValue(p);
-                return typeof v === "number" ? v : null;
-              });
-              const ranking = getBestWorst(allValues, row.betterDirection);
-              let indicator = "";
-              if (ranking) {
-                if (activeIdx === ranking.bestIdx)
-                  indicator = "text-success-text font-semibold";
-                else if (activeIdx === ranking.worstIdx)
-                  indicator = "text-error-text";
-              }
+                const allValues = products.map((p) => {
+                  const v = row.getValue(p);
+                  return typeof v === "number" ? v : null;
+                });
+                const ranking = getBestWorst(allValues, row.betterDirection);
+                let indicator = "";
+                if (ranking) {
+                  if (activeIdx === ranking.bestIdx)
+                    indicator = "text-success-text font-semibold";
+                  else if (activeIdx === ranking.worstIdx)
+                    indicator = "text-error-text";
+                }
 
-              return (
-                <div
-                  key={row.key}
-                  className="flex items-center justify-between py-2"
-                >
-                  <span className="text-sm text-foreground-secondary">
-                    {t(ROW_LABEL_KEYS[row.key]) ?? row.label}
-                  </span>
-                  <span className={`text-sm ${indicator || "text-foreground"}`}>
-                    {formatted}
-                    {ranking?.bestIdx === activeIdx && (
-                      <Check
-                        size={14}
-                        className="inline ml-1 text-success-text"
-                        aria-hidden="true"
-                      />
-                    )}
-                    {ranking?.worstIdx === activeIdx && (
-                      <XIcon
-                        size={14}
-                        className="inline ml-1 text-error-text"
-                        aria-hidden="true"
-                      />
-                    )}
-                  </span>
-                </div>
-              );
-            })}
-          </div>
+                return (
+                  <div
+                    key={row.key}
+                    className="flex items-center justify-between py-2"
+                  >
+                    <span className="text-sm text-foreground-secondary">
+                      {t(ROW_LABEL_KEYS[row.key]) ?? row.label}
+                    </span>
+                    <span className={`text-sm ${indicator || "text-foreground"}`}>
+                      {formatted}
+                      {ranking?.bestIdx === activeIdx && (
+                        <Check
+                          size={14}
+                          className="inline ml-1 text-success-text"
+                          aria-hidden="true"
+                        />
+                      )}
+                      {ranking?.worstIdx === activeIdx && (
+                        <XIcon
+                          size={14}
+                          className="inline ml-1 text-error-text"
+                          aria-hidden="true"
+                        />
+                      )}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </CollapsibleSection>
 
-          {/* Allergens */}
-          <div className="pt-2 border-t border">
-            <p className="text-xs font-medium text-foreground-muted uppercase mb-1">
-              {t("product.allergens")}
-            </p>
+          {/* Allergens — collapsible */}
+          <CollapsibleSection title={t("product.allergens")}>
             <p className="text-sm text-foreground-secondary">
-              {/* Tags are bare canonical IDs; strip legacy en: prefix as fallback */}
               {product.allergen_tags
                 ? product.allergen_tags
                     .split(", ")
@@ -563,13 +666,10 @@ function MobileSwipeView({
                     .join(", ")
                 : t("compare.noneDeclared")}
             </p>
-          </div>
+          </CollapsibleSection>
 
-          {/* Flags */}
-          <div>
-            <p className="text-xs font-medium text-foreground-muted uppercase mb-1">
-              {t("product.warnings")}
-            </p>
+          {/* Flags — collapsible */}
+          <CollapsibleSection title={t("product.warnings")}>
             <div className="flex flex-wrap gap-1">
               {product.high_salt && (
                 <span className="rounded bg-warning-bg px-2 py-0.5 text-xs text-warning-text">
@@ -600,7 +700,7 @@ function MobileSwipeView({
                   </span>
                 )}
             </div>
-          </div>
+          </CollapsibleSection>
         </div>
 
         {/* Swipe hint */}

@@ -202,7 +202,25 @@
     "categoryDiversityDiscover": "Discover more",
     "recentComparisons": "Recent Comparisons",
     "untitledComparison": "Untitled comparison",
-    "comparisonProducts": "{count} {count|product|products}"
+    "comparisonProducts": "{count} {count|product|products}",
+    "healthSummaryTitle": "Health Summary",
+    "healthSummaryAvg": "Avg. TryVit Score",
+    "healthSummaryProducts": "across {count} {count|product|products}",
+    "healthSummaryNoData": "Scan or browse products to see your health summary.",
+    "quickWinTitle": "Quick Win",
+    "quickWinSwap": "Swap {from} for {to}",
+    "quickWinGain": "+{points} points",
+    "quickWinViewSwap": "View swap",
+    "quickWinNone": "No swaps available right now.",
+    "quickWinLoading": "Finding a better swap…",
+    "recentlyViewedCompact": "Recently Viewed",
+    "newUserTitle": "Welcome to TryVit",
+    "newUserSubtitle": "Start exploring healthier food choices.",
+    "newUserScanTitle": "Scan a product",
+    "newUserScanDesc": "Use your camera to scan a barcode and get instant health insights.",
+    "newUserBrowseTitle": "Browse categories",
+    "newUserBrowseDesc": "Explore products by category and find healthier alternatives.",
+    "newUserFunFact": "Fun Fact"
   },
   "search": {
     "title": "Search",
@@ -586,7 +604,10 @@
     "compareProducts": "Compare {count} {count|product|products}",
     "deleteComparison": "Delete comparison",
     "productsNotFound": "{count} {count|product|products} not found.",
-    "onlyShowingAvailable": "Only showing available products."
+    "onlyShowingAvailable": "Only showing available products.",
+    "winnerVerdict": "{points} points healthier",
+    "keyDifferences": "Key Differences",
+    "fullNutrition": "Full Nutrition"
   },
   "settings": {
     "title": "Settings",

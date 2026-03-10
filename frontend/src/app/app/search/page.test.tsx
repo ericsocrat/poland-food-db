@@ -998,4 +998,35 @@ describe("SearchPage", () => {
       });
     }
   });
+
+  // ── Instant as-you-type search (issue #786) ─────────────────────────────
+
+  it("shows results as-you-type without clicking Search button", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    // Type a query (≥ 2 chars triggers instant search after 300ms debounce)
+    await user.type(screen.getByPlaceholderText("Search products…"), "chips");
+
+    // Results should appear without clicking search button
+    await waitFor(() => {
+      expect(screen.getByText("Test Chips")).toBeInTheDocument();
+    });
+    expect(mockSearchProducts).toHaveBeenCalled();
+  });
+
+  it("does not trigger instant search for single character", async () => {
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    await user.type(screen.getByPlaceholderText("Search products…"), "c");
+
+    // Wait a tick to ensure debounce would have fired
+    await new Promise((r) => setTimeout(r, 400));
+
+    expect(mockSearchProducts).not.toHaveBeenCalled();
+  });
 });

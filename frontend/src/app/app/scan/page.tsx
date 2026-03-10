@@ -399,7 +399,7 @@ export default function ScanPage() {
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
-    <div className="space-y-4">
+    <div className="space-y-6">
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
@@ -408,7 +408,7 @@ export default function ScanPage() {
       />
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground">
+        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground lg:text-2xl">
           <Camera size={22} aria-hidden="true" /> {t("scan.title")}
         </h1>
         <div className="flex gap-2">
