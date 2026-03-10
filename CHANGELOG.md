@@ -13,6 +13,15 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Category browsing visual card grid with score distribution bars: new
+  `CategoryScoreBar` component showing min/max score range with color-coded
+  band; `CategoryCard` redesigned as horizontal layout with TryVit score badge
+  and score distribution bar; `CategoryStatsCard` enhanced with score bar;
+  `ProductRow` gains "Best in category" badge for top-scored product; new
+  `bestInCategory` translation key (en/pl/de) (#785)
+
 ### Fixed
 
 - Fix QA CI broken on main — qualify `digest()` as `extensions.digest()` in

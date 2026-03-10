@@ -32,6 +32,10 @@ vi.mock("@/components/common/skeletons", () => ({
   ),
 }));
 
+vi.mock("@/components/category/CategoryScoreBar", () => ({
+  CategoryScoreBar: () => <div data-testid="score-bar" />,
+}));
+
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
 function Wrapper({ children }: Readonly<{ children: React.ReactNode }>) {
@@ -56,6 +60,8 @@ const mockCategories = [
     icon_emoji: "🍟",
     product_count: 42,
     avg_score: 72,
+    min_score: 50,
+    max_score: 90,
   },
   {
     category: "Drinks",
@@ -64,6 +70,8 @@ const mockCategories = [
     icon_emoji: "🥤",
     product_count: 1,
     avg_score: 30,
+    min_score: 15,
+    max_score: 45,
   },
   {
     category: "Cereals",
@@ -72,6 +80,8 @@ const mockCategories = [
     icon_emoji: "🥣",
     product_count: 10,
     avg_score: 55,
+    min_score: 40,
+    max_score: 70,
   },
 ];
 
@@ -124,14 +134,28 @@ describe("CategoriesPage", () => {
     expect(screen.getByText("10 products")).toBeInTheDocument();
   });
 
-  it("shows average score badges", async () => {
+  it("shows TryVit score badges", async () => {
+    render(<CategoriesPage />, { wrapper: createWrapper() });
+
+    // TryVit score = 100 - unhealthiness
+    // Chips: 100-72 = 28, Drinks: 100-30 = 70, Cereals: 100-55 = 45
+    await waitFor(() => {
+      expect(screen.getByText("28")).toBeInTheDocument();
+    });
+    expect(screen.getByText("70")).toBeInTheDocument();
+    expect(screen.getByText("45")).toBeInTheDocument();
+  });
+
+  it("renders score distribution bars", async () => {
     render(<CategoriesPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("avg 72")).toBeInTheDocument();
+      expect(screen.getAllByText("Chips").length).toBeGreaterThan(0);
     });
-    expect(screen.getByText("avg 30")).toBeInTheDocument();
-    expect(screen.getByText("avg 55")).toBeInTheDocument();
+
+    // Each category card should render a CategoryScoreBar
+    const bars = screen.getAllByTestId("score-bar");
+    expect(bars).toHaveLength(3);
   });
 
   it("links each card to the category detail page", async () => {
@@ -156,6 +180,8 @@ describe("CategoriesPage", () => {
           icon_emoji: "🐟",
           product_count: 15,
           avg_score: 40,
+          min_score: 20,
+          max_score: 60,
         },
       ],
     });
@@ -231,18 +257,22 @@ describe("scoreToBand (via CategoryCard rendering)", () => {
       data: [
         {
           category: "test",
+          slug: "test",
           display_name: "Test",
           icon_emoji: "📦",
           product_count: 5,
           avg_score: 20,
+          min_score: 10,
+          max_score: 30,
         },
       ],
     });
 
     render(<CategoriesPage />, { wrapper: createWrapper() });
 
+    // TryVit score = 100 - 20 = 80
     await waitFor(() => {
-      expect(screen.getByText("avg 20")).toBeInTheDocument();
+      expect(screen.getByText("80")).toBeInTheDocument();
     });
   });
 
@@ -252,18 +282,22 @@ describe("scoreToBand (via CategoryCard rendering)", () => {
       data: [
         {
           category: "test",
+          slug: "test",
           display_name: "Test",
           icon_emoji: "📦",
           product_count: 5,
           avg_score: 90,
+          min_score: 80,
+          max_score: 100,
         },
       ],
     });
 
     render(<CategoriesPage />, { wrapper: createWrapper() });
 
+    // TryVit score = 100 - 90 = 10
     await waitFor(() => {
-      expect(screen.getByText("avg 90")).toBeInTheDocument();
+      expect(screen.getByText("10")).toBeInTheDocument();
     });
   });
 });
@@ -292,5 +326,17 @@ describe("Categories desktop grid layout", () => {
     const card = screen.getAllByText("Chips")[0].closest(".card")!;
     expect(card.className).toContain("transition-all");
     expect(card.className).toContain("duration-fast");
+  });
+
+  it("renders cards with horizontal layout", async () => {
+    render(<CategoriesPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Chips").length).toBeGreaterThan(0);
+    });
+
+    const card = screen.getAllByText("Chips")[0].closest(".card")!;
+    expect(card.className).toContain("flex");
+    expect(card.className).toContain("flex-col");
   });
 });
