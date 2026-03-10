@@ -158,7 +158,9 @@ describe("SavedComparisonsPage", () => {
 
   it("links back to compare page", () => {
     render(<SavedComparisonsPage />, { wrapper: createWrapper() });
-    const backLink = screen.getByText("Compare Products").closest("a");
+    // "Compare Products" appears in both mobile compact link and desktop breadcrumb trail
+    const backLinks = screen.getAllByText("Compare Products");
+    const backLink = backLinks[0].closest("a");
     expect(backLink).toHaveAttribute("href", "/app/compare");
   });
 });

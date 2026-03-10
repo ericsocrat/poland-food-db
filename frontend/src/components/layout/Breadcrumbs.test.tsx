@@ -65,10 +65,14 @@ describe("Breadcrumbs", () => {
         ]}
       />,
     );
+    // Desktop breadcrumb links (2) + mobile compact parent link (1)
     const links = screen.getAllByRole("link");
-    expect(links).toHaveLength(2);
-    expect(links[0]).toHaveAttribute("href", "/app");
-    expect(links[1]).toHaveAttribute("href", "/app/search");
+    expect(links).toHaveLength(3);
+    // Mobile compact link points to parent (Search)
+    expect(links[0]).toHaveAttribute("href", "/app/search");
+    // Desktop breadcrumb links
+    expect(links[1]).toHaveAttribute("href", "/app");
+    expect(links[2]).toHaveAttribute("href", "/app/search");
   });
 
   it("renders the last item as text with aria-current=page", () => {
@@ -108,8 +112,8 @@ describe("Breadcrumbs", () => {
         ]}
       />,
     );
-    // `t("nav.home")` returns "Dashboard" from messages/en.json
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    // "Dashboard" appears in both mobile compact link and desktop trail
+    expect(screen.getAllByText("Dashboard").length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText("Search")).toBeInTheDocument();
   });
 
@@ -164,7 +168,7 @@ describe("Breadcrumbs", () => {
     );
   });
 
-  it("hides breadcrumbs on mobile via hidden md:block classes", () => {
+  it("hides desktop breadcrumb trail on mobile via hidden md:flex", () => {
     render(
       <Breadcrumbs
         items={[
@@ -173,8 +177,56 @@ describe("Breadcrumbs", () => {
         ]}
       />,
     );
+    const ol = screen.getByRole("list");
+    expect(ol.className).toContain("hidden");
+    expect(ol.className).toContain("md:flex");
+  });
+
+  // ─── Mobile compact breadcrumb ──────────────────────────────────────────
+
+  it("renders compact parent link on mobile when parent has href", () => {
+    render(
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.lists", href: "/app/lists" },
+          { label: "My Favorites" },
+        ]}
+      />,
+    );
+    // Parent is "Lists" (second-to-last)
+    const mobileLink = screen.getAllByRole("link").find(
+      (el) => el.className.includes("md:hidden"),
+    );
+    expect(mobileLink).toBeDefined();
+    expect(mobileLink).toHaveAttribute("href", "/app/lists");
+    expect(mobileLink).toHaveTextContent("Lists");
+  });
+
+  it("mobile compact link has min-h-[44px] for touch target", () => {
+    render(
+      <Breadcrumbs
+        items={[
+          { labelKey: "nav.home", href: "/app" },
+          { labelKey: "nav.lists", href: "/app/lists" },
+          { label: "My Favorites" },
+        ]}
+      />,
+    );
+    const mobileLink = screen.getAllByRole("link").find(
+      (el) => el.className.includes("md:hidden"),
+    );
+    expect(mobileLink?.className).toContain("min-h-[44px]");
+  });
+
+  it("does not render mobile compact link for single-item breadcrumb", () => {
+    render(
+      <Breadcrumbs
+        items={[{ label: "Dashboard" }]}
+      />,
+    );
     const nav = screen.getByRole("navigation", { name: "Breadcrumb" });
-    expect(nav.className).toContain("hidden");
-    expect(nav.className).toContain("md:block");
+    const mobileLink = nav.querySelector("a.md\\:hidden");
+    expect(mobileLink).toBeNull();
   });
 });

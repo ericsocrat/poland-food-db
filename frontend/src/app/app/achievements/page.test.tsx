@@ -215,8 +215,8 @@ describe("AchievementsPage", () => {
       </Wrapper>,
     );
 
-    // Breadcrumbs should have home link
-    expect(screen.getByText("Dashboard")).toBeInTheDocument();
+    // Breadcrumbs should have home link (mobile compact + desktop trail)
+    expect(screen.getAllByText("Dashboard").length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows category sections for achievements", async () => {

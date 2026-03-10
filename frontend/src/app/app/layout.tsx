@@ -11,6 +11,7 @@ import { SkipLink } from "@/components/common/SkipLink";
 import { CompareFloatingButton } from "@/components/compare/CompareFloatingButton";
 import { ComparisonTray } from "@/components/desktop/ComparisonTray";
 import { LanguageHydrator } from "@/components/i18n/LanguageHydrator";
+import { AdminHydrator } from "@/components/layout/AdminHydrator";
 import { DesktopHeaderNav } from "@/components/layout/DesktopHeaderNav";
 import { DesktopSidebar } from "@/components/layout/DesktopSidebar";
 import { GlobalKeyboardShortcuts } from "@/components/layout/GlobalKeyboardShortcuts";
@@ -83,6 +84,12 @@ export default async function AppLayout({
     redirect("/onboarding");
   }
 
+  const adminEmails = (process.env.ADMIN_EMAILS ?? "")
+    .split(",")
+    .map((e) => e.trim().toLowerCase())
+    .filter(Boolean);
+  const isAdmin = adminEmails.includes(user.email?.toLowerCase() ?? "");
+
   return (
     <div className="flex min-h-screen flex-col xl:flex-row">
       <SkipLink />
@@ -111,6 +118,7 @@ export default async function AppLayout({
         >
           <ListsHydrator />
           <LanguageHydrator />
+          <AdminHydrator isAdmin={isAdmin} />
           {children}
         </main>
 

@@ -84,11 +84,10 @@ describe("LandingSections", () => {
   it("renders stats heading and 4 stat values", () => {
     render(<LandingSections />);
     expect(screen.getByText("landing.statsHeading")).toBeInTheDocument();
-    expect(screen.getByText("2,400+")).toBeInTheDocument();
-    // "25", "9", "2" may conflict with step numbers — use getAllByText and verify at least one
-    expect(screen.getAllByText("25").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("9").length).toBeGreaterThanOrEqual(1);
-    expect(screen.getAllByText("2").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("landing.statProductsValue")).toBeInTheDocument();
+    expect(screen.getByText("landing.statCategoriesValue")).toBeInTheDocument();
+    expect(screen.getByText("landing.statFactorsValue")).toBeInTheDocument();
+    expect(screen.getByText("landing.statCountriesValue")).toBeInTheDocument();
   });
 
   it("renders CTA repeat section", () => {

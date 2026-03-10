@@ -847,9 +847,13 @@
     "step3Desc": "Discover healthier alternatives in the same category.",
     "statsHeading": "Trusted data you can rely on",
     "statProducts": "Products analyzed",
+    "statProductsValue": "2,400+",
     "statCategories": "Food categories",
+    "statCategoriesValue": "25",
     "statFactors": "Scoring factors",
+    "statFactorsValue": "9",
     "statCountries": "Countries covered",
+    "statCountriesValue": "2",
     "ctaHeading": "Ready to eat healthier?",
     "ctaDescription": "Join TryVit and make informed food choices backed by real nutrition data."
   },

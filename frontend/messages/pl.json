@@ -847,9 +847,13 @@
     "step3Desc": "Odkryj zdrowsze zamienniki w tej samej kategorii.",
     "statsHeading": "Wiarygodne dane, na których możesz polegać",
     "statProducts": "Przeanalizowanych produktów",
+    "statProductsValue": "2 400+",
     "statCategories": "Kategorii żywności",
+    "statCategoriesValue": "25",
     "statFactors": "Czynników w ocenie",
+    "statFactorsValue": "9",
     "statCountries": "Obsługiwanych krajów",
+    "statCountriesValue": "2",
     "ctaHeading": "Gotowy, by jeść zdrowiej?",
     "ctaDescription": "Dołącz do TryVit i podejmuj świadome decyzje żywieniowe oparte na prawdziwych danych."
   },

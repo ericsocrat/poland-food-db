@@ -302,7 +302,7 @@ export function FilterPanel({
                         }
                         className="h-5 w-5 rounded border-strong text-brand focus-visible:ring-brand"
                       />
-                      <span className="text-sm">{label}-free</span>
+                      <span className="text-sm">{t("chips.allergenFree", { label })}</span>
                       <span className="ml-auto text-xs text-foreground-muted">
                         {al.count}
                       </span>
