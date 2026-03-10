@@ -53,14 +53,14 @@ export default function CategoriesPage() {
   }
 
   return (
-    <div>
+    <div className="space-y-6">
       <Breadcrumbs
         items={[
           { labelKey: "nav.home", href: "/app" },
           { labelKey: "nav.categories" },
         ]}
       />
-      <h1 className="mb-4 text-xl font-bold text-foreground lg:text-2xl">
+      <h1 className="text-xl font-bold text-foreground lg:text-2xl">
         {t("categories.title")}
       </h1>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4">

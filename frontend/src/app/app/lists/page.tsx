@@ -87,8 +87,8 @@ export default function ListsPage() {
       />
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="text-xl font-bold text-foreground flex items-center gap-1.5 lg:text-2xl">
-          <ClipboardList size={20} aria-hidden="true" /> {t("lists.title")}
+        <h1 className="text-xl font-bold text-foreground flex items-center gap-2 lg:text-2xl">
+          <ClipboardList size={22} aria-hidden="true" /> {t("lists.title")}
         </h1>
         <Button
           size="sm"
