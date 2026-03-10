@@ -10,6 +10,8 @@
 //
 // Usage:
 //   # Ensure dev server running against LOCAL Supabase
+//   # Admin screenshots require ADMIN_EMAILS set on the dev server:
+//   #   $env:ADMIN_EMAILS="screenshots@test.tryvit.local"
 //   CAPTURE_SCREENSHOTS=true npx playwright test --project=screenshots
 //
 // Output: docs/screenshots/{desktop,mobile,dark-mode}/

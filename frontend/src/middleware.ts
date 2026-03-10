@@ -19,7 +19,7 @@ import { type NextRequest, NextResponse } from "next/server";
 
 // ─── Auth Helpers ───────────────────────────────────────────────────────────
 
-const PUBLIC_PATHS = new Set(["/", "/contact", "/privacy", "/terms", "/forbidden"]);
+const PUBLIC_PATHS = new Set(["/", "/contact", "/privacy", "/terms", "/forbidden", "/offline"]);
 
 function isPublicPath(pathname: string): boolean {
   return PUBLIC_PATHS.has(pathname) || pathname.startsWith("/auth/") || pathname.startsWith("/learn");

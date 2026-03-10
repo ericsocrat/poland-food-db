@@ -7,6 +7,8 @@
 //   $env:CAPTURE_SCREENSHOTS="true"
 //   $env:NEXT_PUBLIC_SUPABASE_URL="http://127.0.0.1:54321"
 //   $env:SUPABASE_SERVICE_ROLE_KEY="<local-service-role-key>"
+//   # Admin pages require ADMIN_EMAILS set on the dev server:
+//   $env:ADMIN_EMAILS="visual-audit@test.tryvit.local"
 //   npx playwright test visual-audit --project=screenshots
 //
 // Output: docs/screenshots/audit/{desktop,mobile}/
