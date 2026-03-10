@@ -1564,6 +1564,7 @@ export interface LinkedProduct {
   unhealthiness_score: number | null;
   image_url: string | null;
   is_primary: boolean;
+  match_confidence: number | null;
 }
 
 export interface RecipeIngredient {

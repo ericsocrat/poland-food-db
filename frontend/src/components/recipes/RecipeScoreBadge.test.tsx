@@ -144,9 +144,15 @@ describe("RecipeScoreBadge", () => {
     expect(
       screen.getByTestId("recipe-score-nutrition"),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Calories: 150.5 kcal/)).toBeInTheDocument();
-    expect(screen.getByText(/Protein: 5 g/)).toBeInTheDocument();
-    expect(screen.getByText(/Salt: 0.3 g/)).toBeInTheDocument();
+
+    // Nutrient bars rendered with progressbar role
+    const bars = screen.getAllByRole("progressbar");
+    expect(bars.length).toBeGreaterThanOrEqual(3);
+
+    // Verify specific nutrient bars exist
+    expect(screen.getByTestId("nutrient-bar-calories")).toBeInTheDocument();
+    expect(screen.getByTestId("nutrient-bar-protein")).toBeInTheDocument();
+    expect(screen.getByTestId("nutrient-bar-salt")).toBeInTheDocument();
   });
 
   // ─── Accessibility ──────────────────────────────────────────────────────

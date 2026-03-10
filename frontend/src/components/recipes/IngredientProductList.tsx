@@ -66,6 +66,21 @@ export function IngredientProductList({
                     {product.brand}
                   </span>
                 )}
+                {product.match_confidence != null && (
+                  <span
+                    className={[
+                      "shrink-0 rounded px-1.5 py-0.5 text-xxs font-medium",
+                      product.match_confidence >= 0.8
+                        ? "bg-success/10 text-success-text"
+                        : product.match_confidence >= 0.5
+                          ? "bg-warning/10 text-warning-text"
+                          : "bg-surface-muted text-foreground-muted",
+                    ].join(" ")}
+                    title={`${Math.round(product.match_confidence * 100)}% match`}
+                  >
+                    {Math.round(product.match_confidence * 100)}%
+                  </span>
+                )}
                 {product.is_primary && (
                   <span className="shrink-0 rounded bg-primary/10 px-1.5 py-0.5 text-xxs font-semibold text-primary">
                     {t("recipes.linkedProducts.primary")}

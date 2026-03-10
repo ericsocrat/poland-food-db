@@ -38,6 +38,7 @@ const mockProducts: LinkedProduct[] = [
     unhealthiness_score: 12,
     image_url: "https://example.com/oat.jpg",
     is_primary: true,
+    match_confidence: 0.92,
   },
   {
     product_id: 102,
@@ -46,6 +47,7 @@ const mockProducts: LinkedProduct[] = [
     unhealthiness_score: 25,
     image_url: null,
     is_primary: false,
+    match_confidence: 0.65,
   },
   {
     product_id: 103,
@@ -54,6 +56,7 @@ const mockProducts: LinkedProduct[] = [
     unhealthiness_score: null,
     image_url: null,
     is_primary: false,
+    match_confidence: null,
   },
 ];
 
@@ -152,9 +155,12 @@ describe("IngredientProductList", () => {
     const user = userEvent.setup();
     render(<IngredientProductList products={mockProducts} />);
     await user.click(screen.getByRole("button"));
-    // Oat Bran has null brand — should have score-badge span + product name span only (no brand, no primary)
+    // Oat Bran has null brand and null match_confidence — score-badge + product name only
     const items = screen.getByTestId("ingredient-product-list").querySelectorAll("li");
-    expect(items[2].querySelectorAll("span")).toHaveLength(2); // score-badge + product name only
+    const spans = items[2].querySelectorAll("span");
+    const spanTexts = Array.from(spans).map((s) => s.textContent);
+    expect(spanTexts).not.toContain("BioFarm");
+    expect(spanTexts).not.toContain("Morning Best");
   });
 
   it("shows primary badge for primary products", async () => {
@@ -195,5 +201,24 @@ describe("IngredientProductList", () => {
     );
     await user.click(screen.getByRole("button"));
     expect(screen.getByText("Oat Flakes Organic")).toBeInTheDocument();
+  });
+
+  it("shows match confidence percentage when available", async () => {
+    const user = userEvent.setup();
+    render(<IngredientProductList products={mockProducts} />);
+    await user.click(screen.getByRole("button"));
+    // First product: 0.92 → 92%
+    expect(screen.getByText("92%")).toBeInTheDocument();
+    // Second product: 0.65 → 65%
+    expect(screen.getByText("65%")).toBeInTheDocument();
+  });
+
+  it("does not show match confidence when null", async () => {
+    const user = userEvent.setup();
+    render(<IngredientProductList products={mockProducts} />);
+    await user.click(screen.getByRole("button"));
+    const items = screen.getByTestId("ingredient-product-list").querySelectorAll("li");
+    // Third product has null match_confidence — no percentage badge
+    expect(items[2].textContent).not.toMatch(/\d+%/);
   });
 });

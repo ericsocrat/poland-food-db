@@ -17,7 +17,7 @@ export function QuickActions() {
   const { t } = useTranslation();
 
   return (
-    <section aria-label={t("dashboard.quickActions")}>
+    <section aria-label={t("dashboard.quickActions")} data-testid="quick-actions">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:gap-4">
         {ACTIONS.map((action) => (
           <Link

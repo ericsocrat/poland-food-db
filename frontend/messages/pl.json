@@ -202,7 +202,25 @@
     "categoryDiversityDiscover": "Odkryj więcej",
     "recentComparisons": "Ostatnie porównania",
     "untitledComparison": "Porównanie bez tytułu",
-    "comparisonProducts": "{count} {count|produkt|produkty|produktów}"
+    "comparisonProducts": "{count} {count|produkt|produkty|produktów}",
+    "healthSummaryTitle": "Podsumowanie zdrowia",
+    "healthSummaryAvg": "Śr. wynik TryVit",
+    "healthSummaryProducts": "z {count} {count|produktu|produktów|produktów}",
+    "healthSummaryNoData": "Zeskanuj lub przeglądaj produkty, by zobaczyć podsumowanie.",
+    "quickWinTitle": "Szybka zmiana",
+    "quickWinSwap": "Zamień {from} na {to}",
+    "quickWinGain": "+{points} pkt",
+    "quickWinViewSwap": "Zobacz zamianę",
+    "quickWinNone": "Brak dostępnych zamian.",
+    "quickWinLoading": "Szukam lepszej alternatywy…",
+    "recentlyViewedCompact": "Ostatnio przeglądane",
+    "newUserTitle": "Witaj w TryVit",
+    "newUserSubtitle": "Zacznij odkrywać zdrowsze wybory żywieniowe.",
+    "newUserScanTitle": "Zeskanuj produkt",
+    "newUserScanDesc": "Użyj aparatu, by zeskanować kod kreskowy i poznać zdrowotność produktu.",
+    "newUserBrowseTitle": "Przeglądaj kategorie",
+    "newUserBrowseDesc": "Przeglądaj produkty wg kategorii i znajdź zdrowsze alternatywy.",
+    "newUserFunFact": "Ciekawostka"
   },
   "search": {
     "title": "Szukaj",
@@ -588,7 +606,10 @@
     "compareProducts": "Porównaj {count} {count|produkt|produkty|produktów}",
     "deleteComparison": "Usuń porównanie",
     "productsNotFound": "{count} {count|produkt nie znaleziony|produkty nie znalezione|produktów nie znalezionych}.",
-    "onlyShowingAvailable": "Pokazano tylko dostępne produkty."
+    "onlyShowingAvailable": "Pokazano tylko dostępne produkty.",
+    "winnerVerdict": "O {points} pkt zdrowszy",
+    "keyDifferences": "Kluczowe różnice",
+    "fullNutrition": "Pełne wartości odżywcze"
   },
   "settings": {
     "title": "Ustawienia",

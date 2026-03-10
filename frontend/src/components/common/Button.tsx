@@ -53,8 +53,8 @@ const VARIANT_CLASSES: Record<ButtonVariant, string> = {
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
   sm: "px-3 py-1.5 text-xs gap-1.5 rounded-md",
-  md: "px-4 py-2.5 text-sm gap-2 rounded-lg",
-  lg: "px-6 py-3 text-base gap-2.5 rounded-lg",
+  md: "px-4 py-2.5 text-sm gap-2 rounded-lg min-h-[44px]",
+  lg: "px-6 py-3 text-base gap-2.5 rounded-lg min-h-[44px]",
 };
 
 const SPINNER_SIZES: Record<ButtonSize, string> = {
