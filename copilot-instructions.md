@@ -2191,6 +2191,8 @@ Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
 | `docs/decisions/005-api-function-name-versioning.md`  | Accepted | Additive versioning via suffix (`_v2`), never rename                     |
 | `docs/decisions/006-append-only-migrations.md`        | Accepted | Never modify committed migrations; forward-only schema evolution         |
 | `docs/decisions/007-english-canonical-ingredients.md` | Accepted | `name_en` is canonical; translations stored in `ingredient_translations` |
+| `docs/decisions/008-nutrient-density-bonus.md`        | Accepted | Nutrient density bonus (protein + fibre) as subtracted 10th factor in v3.3 |
+| `docs/decisions/009-scoring-band-calibration.md`      | Accepted | Scoring band calibration — catalog limited, formula correct, no changes needed |
 
 ---
 

@@ -111,7 +111,7 @@ function DeleteAccountDialogInner({
         onChange={(e) => setConfirmText(e.target.value)}
         disabled={loading}
         placeholder={t("settings.deleteAccountConfirmPlaceholder")}
-        className="mb-4 w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm text-foreground placeholder:text-foreground-secondary/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error/50 disabled:opacity-50"
+        className="mb-4 w-full rounded-lg border border-border bg-surface-muted px-3 py-2 text-sm text-foreground placeholder:text-foreground-secondary/50 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-error/50 disabled:opacity-50"
         data-testid="delete-confirm-input"
       />
 

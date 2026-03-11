@@ -80,7 +80,7 @@ export function RecentlyViewed({ products }: Readonly<RecentlyViewedProps>) {
             >
               {/* Score circle */}
               <div
-                className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full ${band?.bgColor ?? "bg-muted"}`}
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${band?.bgColor ?? "bg-muted"}`}
               >
                 <span
                   className={`text-xs font-bold tabular-nums ${band?.textColor ?? "text-foreground-secondary"}`}
@@ -100,7 +100,7 @@ export function RecentlyViewed({ products }: Readonly<RecentlyViewedProps>) {
               </div>
 
               {/* Relative time */}
-              <span className="flex-shrink-0 text-xs tabular-nums text-foreground-secondary">
+              <span className="shrink-0 text-xs tabular-nums text-foreground-secondary">
                 {timeAgo}
               </span>
             </Link>

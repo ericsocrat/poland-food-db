@@ -108,7 +108,7 @@ function ShieldIcon({
       height={size}
       viewBox="0 0 16 18"
       fill="none"
-      className={`inline-block flex-shrink-0 ${className}`}
+      className={`inline-block shrink-0 ${className}`}
       aria-hidden="true"
       data-testid="shield-icon"
     >

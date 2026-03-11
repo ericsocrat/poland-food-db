@@ -135,7 +135,7 @@ export default function SavedSearchesPage() {
                 </button>
 
                 {/* Actions */}
-                <div className="flex flex-shrink-0 gap-1">
+                <div className="flex shrink-0 gap-1">
                   <button
                     type="button"
                     onClick={() => applySearch(search)}

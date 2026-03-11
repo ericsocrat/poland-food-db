@@ -13,6 +13,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Documentation
+
+- Scoring band distribution investigation (ADR-009): confirmed formula is correct,
+  empty Red/Dark Red bands reflect catalog composition not calibration deficiency.
+  Added SCORING_METHODOLOGY.md § 2.10 with observed distribution data. No formula
+  or band changes needed (#779)
+
 ### Changed
 
 - Redesign dashboard with HealthSummary (avg TryVit score + band distribution),

@@ -86,7 +86,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(function Input(
           className={[
             "block w-full rounded-lg border bg-surface shadow-sm transition-colors",
             "placeholder:text-foreground-muted",
-            "focus-visible:outline-none focus-visible:ring-1",
+            "focus-visible:outline-hidden focus-visible:ring-1",
             error
               ? "border-error focus-visible:border-error focus-visible:ring-error"
               : "border-strong focus-visible:border-brand focus-visible:ring-brand",

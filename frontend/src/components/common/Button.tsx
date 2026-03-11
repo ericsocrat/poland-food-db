@@ -114,7 +114,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         aria-busy={loading || undefined}
         className={[
           BASE_CLASSES,
-          "disabled:opacity-50 disabled:cursor-not-allowed disabled:!transform-none",
+          "disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none!",
           VARIANT_CLASSES[variant],
           SIZE_CLASSES[size],
           fullWidth ? "w-full" : "",

@@ -102,7 +102,7 @@ export const ScoreGauge = React.memo(function ScoreGauge({
 
   return (
     <figure
-      className={`relative inline-flex flex-shrink-0 items-center justify-center ${className}`}
+      className={`relative inline-flex shrink-0 items-center justify-center ${className}`}
       style={{ width: svgSize, height: svgSize }}
       aria-label={
         hasScore

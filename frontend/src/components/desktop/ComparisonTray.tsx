@@ -44,7 +44,7 @@ export function ComparisonTray() {
           <span className="text-sm font-semibold text-foreground">
             {t("comparisonTray.title")}
           </span>
-          <span className="flex h-5 min-w-[1.25rem] items-center justify-center rounded-full bg-brand px-1.5 text-xs font-bold text-white">
+          <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-brand px-1.5 text-xs font-bold text-white">
             {count}
           </span>
         </div>

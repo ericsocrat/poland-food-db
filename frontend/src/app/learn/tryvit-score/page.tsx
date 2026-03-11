@@ -90,7 +90,7 @@ export default function TryVitScorePage() {
                       </p>
                     </div>
                     <div className="flex w-28 shrink-0 items-center gap-2">
-                      <div className="relative h-2 flex-1 rounded-full bg-[var(--color-border)]">
+                      <div className="relative h-2 flex-1 rounded-full bg-(--color-border)">
                         <div
                           className="absolute left-0 top-0 h-full rounded-full bg-brand"
                           style={{ width: `${(weight / 17) * 100}%` }}
@@ -115,7 +115,7 @@ export default function TryVitScorePage() {
                     </p>
                   </div>
                   <div className="flex w-28 shrink-0 items-center gap-2">
-                    <div className="relative h-2 flex-1 rounded-full bg-[var(--color-border)]">
+                    <div className="relative h-2 flex-1 rounded-full bg-(--color-border)">
                       <div
                         className="absolute left-0 top-0 h-full rounded-full bg-success"
                         style={{

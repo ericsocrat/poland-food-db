@@ -98,7 +98,7 @@ export function SocialLoginButtons() {
           type="button"
           disabled={loadingProvider !== null}
           onClick={() => handleSocialLogin("google")}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-default bg-surface px-4 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-surface-subtle focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-default bg-surface px-4 py-2.5 text-sm font-medium text-foreground shadow-sm transition-colors hover:bg-surface-subtle focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
         >
           <GoogleIcon />
           {loadingProvider === "google"
@@ -110,7 +110,7 @@ export function SocialLoginButtons() {
           type="button"
           disabled={loadingProvider !== null}
           onClick={() => handleSocialLogin("apple")}
-          className="flex w-full items-center justify-center gap-3 rounded-xl border border-default bg-foreground px-4 py-2.5 text-sm font-medium text-foreground-inverse shadow-sm transition-colors hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-3 rounded-xl border border-default bg-foreground px-4 py-2.5 text-sm font-medium text-foreground-inverse shadow-sm transition-colors hover:opacity-90 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-brand disabled:opacity-50"
         >
           <AppleIcon className="text-foreground-inverse" />
           {loadingProvider === "apple"

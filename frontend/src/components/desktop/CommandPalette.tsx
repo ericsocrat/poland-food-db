@@ -318,7 +318,7 @@ export function CommandPalette({
           }}
           onKeyDown={handleKeyDown}
           placeholder={t("commandPalette.placeholder")}
-          className="flex-1 bg-transparent text-base text-foreground outline-none placeholder:text-foreground-secondary/60"
+          className="flex-1 bg-transparent text-base text-foreground outline-hidden placeholder:text-foreground-secondary/60"
           aria-label={t("commandPalette.placeholder")}
           autoComplete="off"
           spellCheck={false}

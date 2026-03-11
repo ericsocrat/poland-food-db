@@ -346,7 +346,7 @@ export function SearchAutocomplete({
                 </button>
                 <button
                   type="button"
-                  className="ml-auto flex-shrink-0 rounded p-0.5 text-foreground-muted hover:bg-surface-muted hover:text-foreground"
+                  className="ml-auto shrink-0 rounded p-0.5 text-foreground-muted hover:bg-surface-muted hover:text-foreground"
                   aria-label={t("search.removeRecent", { query: q })}
                   onClick={() => {
                     removeRecentSearch(q);
@@ -459,7 +459,7 @@ export function SearchAutocomplete({
                   >
                     {/* Score badge */}
                     <div
-                      className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
+                      className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
                     >
                       {toTryVitScore(s.unhealthiness_score)}
                       <span className="sr-only">{band.label}</span>
@@ -480,7 +480,7 @@ export function SearchAutocomplete({
 
                     {/* Nutri badge */}
                     <span
-                      className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${nutriClass}`}
+                      className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-bold ${nutriClass}`}
                     >
                       {nutriScoreLabel(s.nutri_score, "?")}
                     </span>
