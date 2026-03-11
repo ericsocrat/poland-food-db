@@ -88,6 +88,30 @@ vi.mock("@/components/product/ScoreHistoryPanel", () => ({
   ScoreHistoryPanel: () => <div data-testid="score-history-panel" />,
 }));
 
+vi.mock("@/components/product/ProductScoreHero", () => ({
+  ProductScoreHero: ({
+    unhealthinessScore,
+    headline,
+  }: {
+    unhealthinessScore: number;
+    headline: string;
+  }) => (
+    <div
+      data-testid="product-score-hero"
+      data-score={unhealthinessScore}
+      data-headline={headline}
+    />
+  ),
+}));
+
+vi.mock("@/components/product/NutritionHighlights", () => ({
+  NutritionHighlights: () => <div data-testid="nutrition-highlights" />,
+}));
+
+vi.mock("@/components/product/AllergenQuickBadges", () => ({
+  AllergenQuickBadges: () => <div data-testid="allergen-quick-badges" />,
+}));
+
 vi.mock("@/components/common/skeletons", () => ({
   ProductProfileSkeleton: () => (
     <div data-testid="skeleton" role="status" aria-busy="true" />
@@ -349,7 +373,7 @@ describe("ProductDetailPage", () => {
     expect(screen.getByText("TestBrand")).toBeInTheDocument();
   });
 
-  it("renders unhealthiness score badge with /100 denominator", async () => {
+  it("renders ProductScoreHero with unhealthiness score", async () => {
     mockGetProductProfile.mockResolvedValue({
       ok: true,
       data: makeProfile(),
@@ -357,12 +381,10 @@ describe("ProductDetailPage", () => {
     render(<ProductDetailPage />, { wrapper: createWrapper() });
 
     await waitFor(() => {
-      expect(screen.getByText("35")).toBeInTheDocument();
+      const hero = screen.getByTestId("product-score-hero");
+      expect(hero).toBeInTheDocument();
+      expect(hero.getAttribute("data-score")).toBe("65");
     });
-    expect(screen.getByText("/100")).toBeInTheDocument();
-    expect(
-      screen.getByLabelText("TryVit Score: 35 out of 100"),
-    ).toBeInTheDocument();
   });
 
   it("renders nutri-score badge", async () => {
@@ -1407,7 +1429,7 @@ describe("ProductDetailPage", () => {
     expect(thead).toBeInTheDocument();
   });
 
-  it("uses large ScoreGauge size", async () => {
+  it("renders ProductScoreHero with correct score", async () => {
     mockGetProductProfile.mockResolvedValue({
       ok: true,
       data: makeProfile(),
@@ -1420,11 +1442,10 @@ describe("ProductDetailPage", () => {
       ).toBeGreaterThanOrEqual(1);
     });
 
-    // The ScoreGauge wrapper div should have 80px dimensions (lg size)
-    const gaugeArc = document.querySelector("[data-testid='gauge-arc']");
-    expect(gaugeArc).toBeInTheDocument();
-    const svg = gaugeArc?.closest("svg");
-    expect(svg?.getAttribute("width")).toBe("80");
+    // ProductScoreHero is now rendered with the unhealthiness score
+    const hero = screen.getByTestId("product-score-hero");
+    expect(hero).toBeInTheDocument();
+    expect(hero.getAttribute("data-score")).toBe("65");
   });
 
   // ── #122 Single-instance rendering — no duplication on ANY tab ────────

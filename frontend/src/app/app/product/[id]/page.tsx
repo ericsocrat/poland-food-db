@@ -16,6 +16,7 @@ import { AlternativesSection } from "@/components/alternatives/AlternativesSecti
 import { ActionOverflowMenu } from "@/components/product/ActionOverflowMenu";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { AllergenMatrix } from "@/components/product/AllergenMatrix";
+import { AllergenQuickBadges } from "@/components/product/AllergenQuickBadges";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { DVLegend } from "@/components/product/DVLegend";
 import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
@@ -23,11 +24,12 @@ import { HealthWarningsCard } from "@/components/product/HealthWarningsCard";
 import { IngredientList } from "@/components/product/IngredientList";
 import { NovaIndicator } from "@/components/product/NovaIndicator";
 import { NutritionDVBar } from "@/components/product/NutritionDVBar";
+import { NutritionHighlights } from "@/components/product/NutritionHighlights";
 import { PercentileBadge } from "@/components/product/PercentileBadge";
 import { ProductHeroImage } from "@/components/product/ProductHeroImage";
 import { ProductImageTabs } from "@/components/product/ProductImageTabs";
+import { ProductScoreHero } from "@/components/product/ProductScoreHero";
 import { ScoreBreakdownPanel } from "@/components/product/ScoreBreakdownPanel";
-import { ScoreGauge } from "@/components/product/ScoreGauge";
 import { ScoreHistoryPanel } from "@/components/product/ScoreHistoryPanel";
 import { ScoreRadarChart } from "@/components/product/ScoreRadarChart";
 import { ShareButton } from "@/components/product/ShareButton";
@@ -250,7 +252,7 @@ export default function ProductDetailPage() {
       <div className="lg:grid lg:grid-cols-12 lg:gap-6">
         {/* Left column — sticky on desktop */}
         <div className="space-y-4 lg:col-span-5 lg:space-y-6 lg:self-start lg:sticky lg:top-20">
-          {/* Header */}
+          {/* Product Identity Card */}
           <div className="card">
             {/* Product Hero Image */}
             <div className="mb-4">
@@ -265,85 +267,78 @@ export default function ProductDetailPage() {
               />
             </div>
 
-            <div className="flex items-start gap-4">
-              <ScoreGauge
-                score={profile.scores.unhealthiness_score}
-                size="lg"
-              />
-              <div className="min-w-0 flex-1">
-                <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                  <div>
-                    <h1 className="text-lg font-bold text-foreground lg:text-xl">
-                      {profile.product.product_name_display ??
-                        profile.product.product_name}
-                    </h1>
-                    {profile.product.product_name_en &&
-                      profile.product.product_name_display !==
-                        profile.product.product_name && (
-                        <p className="text-xs text-foreground-muted">
-                          {t("product.originalName")}:{" "}
-                          {profile.product.product_name}
-                        </p>
-                      )}
-                    <p className="text-sm text-foreground-secondary lg:text-base">
-                      {profile.product.brand}
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <h1 className="text-lg font-bold text-foreground lg:text-xl">
+                  {profile.product.product_name_display ??
+                    profile.product.product_name}
+                </h1>
+                {profile.product.product_name_en &&
+                  profile.product.product_name_display !==
+                    profile.product.product_name && (
+                    <p className="text-xs text-foreground-muted">
+                      {t("product.originalName")}:{" "}
+                      {profile.product.product_name}
                     </p>
-                    {cachedAt && <CachedTimestamp cachedAt={cachedAt} />}
-                  </div>
-                  <div className="no-print flex flex-wrap items-center gap-2">
-                    <ShareButton
-                      productName={
-                        profile.product.product_name_display ??
-                        profile.product.product_name
-                      }
-                      score={profile.scores.unhealthiness_score}
-                      productId={productId}
-                    />
-                    <AvoidBadge productId={productId} />
-                    <AddToListMenu productId={productId} />
-                    <CompareCheckbox
-                      productId={productId}
-                      productName={
-                        profile.product.product_name_display ??
-                        profile.product.product_name
-                      }
-                    />
-                    <span className="hidden sm:contents">
-                      <WatchButton productId={productId} />
-                      <PrintButton />
-                    </span>
-                    <ActionOverflowMenu className="sm:hidden">
-                      <WatchButton productId={productId} />
-                      <PrintButton />
-                    </ActionOverflowMenu>
-                  </div>
-                </div>
-                <div className="mt-2 flex items-center gap-2">
-                  <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-xs font-bold">
-                    <NutriScoreBadge
-                      grade={profile.scores.nutri_score_label}
-                      size="sm"
-                    />
-                    <span className="text-foreground-secondary">
-                      {t("product.nutriScoreLabel")}
-                    </span>
-                  </span>
-                  <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary">
-                    {t("product.novaGroup", {
-                      group: profile.scores.nova_group,
-                    })}
-                  </span>
-                  <span
-                    className={`rounded-full px-2 py-0.5 text-xs font-medium ${band.bg} ${band.color}`}
-                  >
-                    {band.label}
-                  </span>
-                  <PercentileBadge
-                    rank={profile.scores.category_context?.rank}
-                    total={profile.scores.category_context?.total_in_category}
-                  />
-                </div>
+                  )}
+                <p className="text-sm text-foreground-secondary lg:text-base">
+                  {profile.product.brand}
+                </p>
+                {cachedAt && <CachedTimestamp cachedAt={cachedAt} />}
               </div>
+              <div className="no-print flex flex-wrap items-center gap-2">
+                <ShareButton
+                  productName={
+                    profile.product.product_name_display ??
+                    profile.product.product_name
+                  }
+                  score={profile.scores.unhealthiness_score}
+                  productId={productId}
+                />
+                <AvoidBadge productId={productId} />
+                <AddToListMenu productId={productId} />
+                <CompareCheckbox
+                  productId={productId}
+                  productName={
+                    profile.product.product_name_display ??
+                    profile.product.product_name
+                  }
+                />
+                <span className="hidden sm:contents">
+                  <WatchButton productId={productId} />
+                  <PrintButton />
+                </span>
+                <ActionOverflowMenu className="sm:hidden">
+                  <WatchButton productId={productId} />
+                  <PrintButton />
+                </ActionOverflowMenu>
+              </div>
+            </div>
+
+            <div className="mt-2 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-xs font-bold">
+                <NutriScoreBadge
+                  grade={profile.scores.nutri_score_label}
+                  size="sm"
+                />
+                <span className="text-foreground-secondary">
+                  {t("product.nutriScoreLabel")}
+                </span>
+              </span>
+              <span className="rounded-full bg-surface-muted px-2 py-0.5 text-xs text-foreground-secondary">
+                {t("product.novaGroup", {
+                  group: profile.scores.nova_group,
+                })}
+              </span>
+              <span
+                className={`rounded-full px-2 py-0.5 text-xs font-medium ${band.bg} ${band.color}`}
+              >
+                {band.label}
+              </span>
+              <PercentileBadge
+                rank={profile.scores.category_context?.rank}
+                total={profile.scores.category_context?.total_in_category}
+              />
             </div>
 
             {/* Category & EAN */}
@@ -357,52 +352,64 @@ export default function ProductDetailPage() {
                 <span>Store: {profile.product.store_availability}</span>
               )}
             </div>
-
-            {/* Flags — with "why" explanations */}
-            {(profile.flags.high_sugar ||
-              profile.flags.high_salt ||
-              profile.flags.high_sat_fat ||
-              profile.flags.high_additive_load ||
-              profile.flags.has_palm_oil) && (
-              <div className="mt-3 space-y-1">
-                <p className="text-xs font-medium text-foreground-muted">
-                  {t("product.healthFlags")}
-                </p>
-                <div className="flex flex-wrap gap-1">
-                  {profile.flags.high_sugar && (
-                    <FlagWithExplanation
-                      label={t("product.highSugar")}
-                      explanation={t("product.highSugarExplanation")}
-                    />
-                  )}
-                  {profile.flags.high_salt && (
-                    <FlagWithExplanation
-                      label={t("product.highSalt")}
-                      explanation={t("product.highSaltExplanation")}
-                    />
-                  )}
-                  {profile.flags.high_sat_fat && (
-                    <FlagWithExplanation
-                      label={t("product.highSatFat")}
-                      explanation={t("product.highSatFatExplanation")}
-                    />
-                  )}
-                  {profile.flags.high_additive_load && (
-                    <FlagWithExplanation
-                      label={t("product.manyAdditives")}
-                      explanation={t("product.manyAdditivesExplanation")}
-                    />
-                  )}
-                  {profile.flags.has_palm_oil && (
-                    <FlagWithExplanation
-                      label={t("product.palmOil")}
-                      explanation={t("product.palmOilExplanation")}
-                    />
-                  )}
-                </div>
-              </div>
-            )}
           </div>
+
+          {/* Score Hero — prominent score display */}
+          <ProductScoreHero
+            unhealthinessScore={profile.scores.unhealthiness_score}
+            headline={profile.scores.headline}
+          />
+
+          {/* Nutrition Highlights — key nutrient bars */}
+          <NutritionHighlights nutrition={profile.nutrition.per_100g} />
+
+          {/* Allergen Quick Badges */}
+          <AllergenQuickBadges allergens={profile.allergens} />
+
+          {/* Health Flags */}
+          {(profile.flags.high_sugar ||
+            profile.flags.high_salt ||
+            profile.flags.high_sat_fat ||
+            profile.flags.high_additive_load ||
+            profile.flags.has_palm_oil) && (
+            <div className="card space-y-1">
+              <p className="text-xs font-medium text-foreground-muted">
+                {t("product.healthFlags")}
+              </p>
+              <div className="flex flex-wrap gap-1">
+                {profile.flags.high_sugar && (
+                  <FlagWithExplanation
+                    label={t("product.highSugar")}
+                    explanation={t("product.highSugarExplanation")}
+                  />
+                )}
+                {profile.flags.high_salt && (
+                  <FlagWithExplanation
+                    label={t("product.highSalt")}
+                    explanation={t("product.highSaltExplanation")}
+                  />
+                )}
+                {profile.flags.high_sat_fat && (
+                  <FlagWithExplanation
+                    label={t("product.highSatFat")}
+                    explanation={t("product.highSatFatExplanation")}
+                  />
+                )}
+                {profile.flags.high_additive_load && (
+                  <FlagWithExplanation
+                    label={t("product.manyAdditives")}
+                    explanation={t("product.manyAdditivesExplanation")}
+                  />
+                )}
+                {profile.flags.has_palm_oil && (
+                  <FlagWithExplanation
+                    label={t("product.palmOil")}
+                    explanation={t("product.palmOilExplanation")}
+                  />
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Score interpretation — expandable "What does this score mean?" */}
           <ScoreInterpretationCard score={toTryVitScore(profile.scores.unhealthiness_score)} />
