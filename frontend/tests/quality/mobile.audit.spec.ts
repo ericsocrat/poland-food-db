@@ -78,9 +78,11 @@ for (const route of routes) {
     // ── Tab cycling for product pages ─────────────────────────────────────
     if (route.hasTabs?.length) {
       for (const tabId of route.hasTabs) {
-        const tabLocator = page.getByTestId("tab-bar").getByText(tabId, {
-          exact: false,
-        });
+        // Use role="tab" + aria-label to avoid strict-mode violation from
+        // the dual-span pattern (mobile shortLabel + desktop label).
+        const tabLocator = page
+          .getByTestId("tab-bar")
+          .getByRole("tab", { name: new RegExp(tabId, "i") });
 
         // Some tabs may not exist yet (feature in progress) — skip gracefully.
         if ((await tabLocator.count()) === 0) continue;

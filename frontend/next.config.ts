@@ -129,8 +129,10 @@ export default withSentryConfig(withSerwist(nextConfig), {
   project: process.env.SENTRY_PROJECT,
   authToken: process.env.SENTRY_AUTH_TOKEN,
 
-  // Upload source maps to Sentry, then delete from build output
+  // Upload source maps to Sentry, then delete from build output.
+  // Disable uploads when authToken is missing/empty to avoid noisy CI errors.
   sourcemaps: {
+    disable: !process.env.SENTRY_AUTH_TOKEN,
     deleteSourcemapsAfterUpload: true,
   },
 

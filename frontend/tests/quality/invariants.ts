@@ -149,6 +149,9 @@ export const CONSOLE_ERROR_ALLOWLIST = [
   // Browser-emitted console error for 405 status on auth endpoints (mirrors
   // NETWORK_ALLOWLIST entries for supabase.co/auth — harmless in audit context)
   "the server responded with a status of 405",
+  // PostgREST returns 404 for RPC functions that don't exist yet in the test
+  // DB (e.g. api_get_watchlist). The browser emits a console.error for these.
+  "the server responded with a status of 404",
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════
