@@ -66,7 +66,7 @@ export type FixtureKey = keyof FixtureValues;
  * | productWithAlternatives  | At least one alternative product                  |
  * | productNoAlternatives    | Zero alternatives                                 |
  * | productWithAllergens     | Allergen warnings present                         |
- * | productMissingNutriscore | Nutri-Score is null                               |
+ * | productMissingNutriscore | Nutri-Score is UNKNOWN                            |
  * | categorySlug             | Category with ≥ 3 products                        |
  * | ingredientId             | Ingredient with linked products                   |
  */

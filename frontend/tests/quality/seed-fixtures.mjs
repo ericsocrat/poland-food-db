@@ -277,7 +277,7 @@ const NUTRITION_ALLERGENS = {
 };
 
 /**
- * Product 4: Missing Nutri-Score — null label.
+ * Product 4: Unknown Nutri-Score — label set to UNKNOWN.
  * Used for: QA_PRODUCT_MISSING_NS.
  */
 const PRODUCT_NO_NS = {
@@ -289,8 +289,8 @@ const PRODUCT_NO_NS = {
   prep_method: "not-applicable",
   controversies: "none",
   unhealthiness_score: 12,
-  nutri_score_label: null,
-  nutri_score_source: null,
+  nutri_score_label: "UNKNOWN",
+  nutri_score_source: "unknown",
   nova_classification: "1",
   confidence: "low",
   data_completeness_pct: 55,
