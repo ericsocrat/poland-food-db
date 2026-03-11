@@ -524,7 +524,13 @@
     "showFullAnalysis": "Pokaż pełną analizę",
     "showSummary": "Pokaż podsumowanie",
     "topAlternatives": "Najlepsze alternatywy",
-    "viewAllAlternatives": "Zobacz wszystkie alternatywy"
+    "viewAllAlternatives": "Zobacz wszystkie alternatywy",
+    "verdictMuchHealthier": "Dużo zdrowsze",
+    "verdictHealthier": "Zdrowsze",
+    "verdictSlightlyHealthier": "Nieco zdrowsze",
+    "ingredientMatch": "wspólnych składników",
+    "showMoreAlternatives": "Pokaż jeszcze {count}",
+    "showLessAlternatives": "Pokaż mniej"
   },
   "scoreGauge": {
     "label": "Wynik TryVit: {score} na 100",
