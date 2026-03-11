@@ -1,22 +1,20 @@
 "use client";
 
-import Link from "next/link";
-import { Header } from "@/components/layout/Header";
 import { SkipLink } from "@/components/common/SkipLink";
 import { Footer } from "@/components/layout/Footer";
-import { LearnSidebar } from "@/components/learn/LearnSidebar";
+import { Header } from "@/components/layout/Header";
 import { Disclaimer } from "@/components/learn/Disclaimer";
+import { LearnSidebar } from "@/components/learn/LearnSidebar";
 import { LearnTopicNav } from "@/components/learn/LearnTopicNav";
 import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
-import { AlertTriangle } from "lucide-react";
+import { Heart } from "lucide-react";
+import Link from "next/link";
 
-// ─── Allergens topic page ──────────────────────────────────────────────────
+// ─── Making Healthier Choices topic page ───────────────────────────────────
 
-export default function AllergensPage() {
+export default function HealthyChoicesPage() {
   const { t } = useTranslation();
-
-  const allergenKeys = Array.from({ length: 14 }, (_, i) => `allergen${i + 1}`);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -36,12 +34,12 @@ export default function AllergensPage() {
 
           <article className="prose max-w-none">
             <h1 className="flex items-center gap-2">
-              <AlertTriangle
+              <Heart
                 size={28}
                 aria-hidden="true"
                 className="inline-block"
               />{" "}
-              {t("learn.allergens.title")}
+              {t("learn.healthyChoices.title")}
             </h1>
 
             <div className="rounded-lg bg-brand-subtle p-4 not-prose">
@@ -49,37 +47,42 @@ export default function AllergensPage() {
                 {t("learn.tldr")}
               </p>
               <p className="mt-1 text-sm text-brand">
-                {t("learn.allergens.summary")}
+                {t("learn.healthyChoices.summary")}
               </p>
             </div>
 
-            <h2>{t("learn.allergens.eu14Title")}</h2>
-            <p>{t("learn.allergens.eu14Text")}</p>
+            <h2>{t("learn.healthyChoices.startSmallTitle")}</h2>
+            <p>{t("learn.healthyChoices.startSmallText")}</p>
 
-            <ol>
-              {allergenKeys.map((key) => (
-                <li key={key}>{t(`learn.allergens.${key}`)}</li>
-              ))}
-            </ol>
+            <h2>{t("learn.healthyChoices.compareTitle")}</h2>
+            <p>{t("learn.healthyChoices.compareText")}</p>
 
-            <h2>{t("learn.allergens.containsVsTracesTitle")}</h2>
-            <p>{t("learn.allergens.containsVsTracesText")}</p>
+            <h2>{t("learn.healthyChoices.readLabelsTitle")}</h2>
+            <p>{t("learn.healthyChoices.readLabelsText")}</p>
 
-            <h2>{t("learn.allergens.polishLabelsTitle")}</h2>
-            <p>{t("learn.allergens.polishLabelsText")}</p>
+            <h2>{t("learn.healthyChoices.processingTitle")}</h2>
+            <p>{t("learn.healthyChoices.processingText")}</p>
 
-            <h2>{t("learn.allergens.inTryVitTitle")}</h2>
-            <p>{t("learn.allergens.inTryVitText")}</p>
+            <h2>{t("learn.healthyChoices.allergenTitle")}</h2>
+            <p>{t("learn.healthyChoices.allergenText")}</p>
+
+            <h2>{t("learn.healthyChoices.habitsTitle")}</h2>
+            <p>{t("learn.healthyChoices.habitsText")}</p>
 
             <Disclaimer className="mt-8" />
 
             <h2>{t("learn.sourcesTitle")}</h2>
             <div className="not-prose space-y-2">
               <SourceCitation
-                author="EU"
-                title="Regulation (EU) No 1169/2011 on the provision of food information to consumers"
-                year={2011}
-                url="https://eur-lex.europa.eu/legal-content/EN/ALL/?uri=CELEX:32011R1169"
+                author="WHO"
+                title="Healthy diet fact sheet"
+                year={2024}
+                url="https://www.who.int/news-room/fact-sheets/detail/healthy-diet"
+              />
+              <SourceCitation
+                author="EFSA"
+                title="Dietary reference values for nutrients"
+                url="https://www.efsa.europa.eu/en/topics/topic/dietary-reference-values"
               />
             </div>
 

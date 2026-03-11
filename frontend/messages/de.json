@@ -1404,7 +1404,25 @@
       "howWeImproveText": "Wir aktualisieren Produktdaten kontinuierlich aus mehreren Quellen: manuelle Etiketteneingabe, Open Food Facts API und Benutzermeldungen. Wenn bessere Daten verfügbar werden, werden die Bewertungen automatisch neu berechnet.",
       "whatYouCanDoTitle": "Was Sie tun können",
       "whatYouCanDoText": "Wenn Sie falsche Daten für ein Produkt bemerken, können Sie dazu beitragen, unsere Datenbank zu verbessern. Achten Sie auf den Vertrauensindikator auf jedem Produktprofil — er zeigt Ihnen, wie zuverlässig die aktuellen Daten sind."
-    }
+    },
+    "healthyChoices": {
+      "title": "Gesündere Entscheidungen treffen",
+      "description": "Praktische Tipps zur Nutzung von TryVit für bessere alltägliche Lebensmittelentscheidungen.",
+      "summary": "Kleine, konsequente Verbesserungen sind wichtiger als Perfektion. Nutzen Sie den TryVit Score, um ähnliche Produkte innerhalb einer Kategorie zu vergleichen, und wechseln Sie schrittweise zu gesünderen Optionen.",
+      "startSmallTitle": "Klein anfangen, nicht perfekt",
+      "startSmallText": "Sie müssen nicht Ihre gesamte Ernährung umstellen. Wählen Sie eine Kategorie, die Sie häufig kaufen — z.B. Brot oder Milchprodukte — und vergleichen Sie einige Optionen anhand des TryVit Scores. Ein Wechsel zu einem Produkt mit nur 10 Punkten mehr kann langfristig einen bedeutenden Unterschied machen.",
+      "compareTitle": "Innerhalb von Kategorien vergleichen",
+      "compareText": "Der TryVit Score ist am nützlichsten beim Vergleich von Produkten derselben Kategorie. Ein Joghurt mit 85 Punkten und einer mit 60 sind beide 'gut', aber der Unterschied zählt, wenn Sie täglich Joghurt essen. Nutzen Sie die Vergleichsfunktion, um genau zu sehen, wo sich Produkte bei jedem Faktor unterscheiden.",
+      "readLabelsTitle": "Etiketten als Verbündete nutzen",
+      "readLabelsText": "Prüfen Sie die ersten drei Zutaten — sie machen den Großteil des Produkts aus. Kürzere Zutatenlisten bedeuten in der Regel weniger Verarbeitung. Suchen Sie nach Produkten, bei denen Sie jede Zutat erkennen können.",
+      "processingTitle": "Verarbeitungsgrad beachten",
+      "processingText": "NOVA-Gruppe-4-Produkte (hochverarbeitet) sind mit höheren Gesundheitsrisiken verbunden, auch wenn ihr Nährstoffprofil akzeptabel aussieht. Wenn zwei Produkte ähnliche TryVit Scores haben, bevorzugen Sie dasjenige mit einer niedrigeren NOVA-Gruppe.",
+      "allergenTitle": "Kennen Sie Ihre Allergene",
+      "allergenText": "Wenn Sie Lebensmittelallergien oder -unverträglichkeiten haben, richten Sie diese in Ihrem TryVit-Profil ein. Die App markiert Produkte, die Ihre Allergene enthalten, damit Sie sichere Entscheidungen treffen können, ohne jedes Etikett manuell lesen zu müssen.",
+      "habitsTitle": "Gewohnheiten statt Regeln",
+      "habitsText": "Der gesündeste Ansatz ist nachhaltig. Nutzen Sie TryVit, um sich bewusst zu werden, was Sie essen, und wechseln Sie dann schrittweise zu besseren Optionen. Kein einzelnes Produkt wird Ihre Gesundheit ruinieren — es ist das Gesamtmuster, das zählt."
+    },
+    "topicNavLabel": "Themen-Navigation"
   },
   "commandPalette": {
     "placeholder": "Suchen oder springen zu…",

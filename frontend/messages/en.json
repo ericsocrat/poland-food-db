@@ -1404,7 +1404,25 @@
       "howWeImproveText": "We continuously update product data from multiple sources: manual label entry, Open Food Facts API, and user reports. When better data becomes available, scores are recalculated automatically.",
       "whatYouCanDoTitle": "What you can do",
       "whatYouCanDoText": "If you notice incorrect data for a product, you can help improve our database. Look for the confidence indicator on each product profile — it tells you how reliable the current data is."
-    }
+    },
+    "healthyChoices": {
+      "title": "Making Healthier Choices",
+      "description": "Practical tips for using TryVit to improve your everyday food decisions.",
+      "summary": "Small, consistent improvements matter more than perfection. Use TryVit Score to compare similar products within a category and swap towards lower-scoring (healthier) options over time.",
+      "startSmallTitle": "Start small, not perfect",
+      "startSmallText": "You don't need to overhaul your entire diet. Pick one category you buy frequently — say, bread or dairy — and compare a few options using the TryVit Score. Swapping to a product that scores even 10 points higher can make a meaningful difference over time.",
+      "compareTitle": "Compare within categories",
+      "compareText": "The TryVit Score is most useful when comparing products in the same category. A yogurt scoring 85 and one scoring 60 are both 'good', but the difference matters if you eat yogurt daily. Use the comparison feature to see exactly where products differ on each factor.",
+      "readLabelsTitle": "Use labels as your ally",
+      "readLabelsText": "Check the first three ingredients — they make up most of the product. Shorter ingredient lists generally mean less processing. Look for products where you can recognize and pronounce every ingredient.",
+      "processingTitle": "Mind the processing level",
+      "processingText": "NOVA Group 4 (ultra-processed) products are linked to higher health risks even when their nutrient profile looks acceptable. When two products have similar TryVit Scores, prefer the one with a lower NOVA group.",
+      "allergenTitle": "Know your allergens",
+      "allergenText": "If you have food allergies or intolerances, set them up in your TryVit profile. The app will flag products containing your allergens so you can make safe choices without reading every label manually.",
+      "habitsTitle": "Build habits, not rules",
+      "habitsText": "The healthiest approach is sustainable. Use TryVit to become aware of what you're eating, then gradually shift towards better options. No single product will make or break your health — it's the overall pattern that counts."
+    },
+    "topicNavLabel": "Topic navigation"
   },
   "commandPalette": {
     "placeholder": "Search or jump to…",

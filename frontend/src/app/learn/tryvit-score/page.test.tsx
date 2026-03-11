@@ -30,6 +30,10 @@ vi.mock("@/components/learn/LearnSidebar", () => ({
   LearnSidebar: () => <nav data-testid="learn-sidebar" />,
 }));
 
+vi.mock("@/components/learn/LearnTopicNav", () => ({
+  LearnTopicNav: () => <nav data-testid="topic-nav" />,
+}));
+
 vi.mock("@/components/learn/Disclaimer", () => ({
   Disclaimer: () => <div data-testid="disclaimer" />,
 }));

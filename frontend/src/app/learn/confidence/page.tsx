@@ -5,6 +5,8 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { Disclaimer } from "@/components/learn/Disclaimer";
 import { LearnSidebar } from "@/components/learn/LearnSidebar";
+import { LearnTopicNav } from "@/components/learn/LearnTopicNav";
+import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
 import { AlertTriangle, BadgeCheck, Ruler, type LucideIcon } from "lucide-react";
 import Link from "next/link";
@@ -94,6 +96,22 @@ export default function ConfidencePage() {
             <p>{t("learn.confidence.whatYouCanDoText")}</p>
 
             <Disclaimer className="mt-8" />
+
+            <h2>{t("learn.sourcesTitle")}</h2>
+            <div className="not-prose space-y-2">
+              <SourceCitation
+                author="EFSA"
+                title="Guidance on the assessment of the safety of feed additives"
+                year={2017}
+              />
+              <SourceCitation
+                author="Open Food Facts"
+                title="Data quality framework and completeness metrics"
+                url="https://wiki.openfoodfacts.org/Data_quality"
+              />
+            </div>
+
+            <LearnTopicNav />
           </article>
         </main>
       </div>

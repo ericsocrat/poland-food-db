@@ -9,6 +9,7 @@ import {
     BookOpen,
     Factory,
     FlaskConical,
+    Heart,
     Tag,
     type LucideIcon,
 } from "lucide-react";
@@ -35,6 +36,11 @@ const TOPICS: LearnTopic[] = [
   { slug: "allergens", labelKey: "learn.allergens.title", icon: AlertTriangle },
   { slug: "reading-labels", labelKey: "learn.readingLabels.title", icon: Tag },
   { slug: "confidence", labelKey: "learn.confidence.title", icon: BadgeCheck },
+  {
+    slug: "healthy-choices",
+    labelKey: "learn.healthyChoices.title",
+    icon: Heart,
+  },
 ];
 
 interface LearnSidebarProps {
