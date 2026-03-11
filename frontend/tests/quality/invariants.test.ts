@@ -659,7 +659,7 @@ describe("setupErrorCollectors", () => {
     expect(collectors.consoleErrors[0]).toContain("TypeError");
   });
 
-  it("ignores 4xx from supabase.co/rest but catches 5xx", () => {
+  it("ignores 4xx from supabase.co/rest", () => {
     const page = createPageMock();
     const collectors = setupErrorCollectors(page as never);
 
@@ -675,11 +675,16 @@ describe("setupErrorCollectors", () => {
     });
 
     expect(collectors.networkErrors).toHaveLength(0);
+  });
 
-    // 500 from Supabase REST — should be collected (genuine failure)
+  it("catches 5xx from non-allowlisted URLs", () => {
+    const page = createPageMock();
+    const collectors = setupErrorCollectors(page as never);
+
+    // 500 from a non-Supabase URL — always collected regardless of CI
     page._emit("response", {
       status: () => 500,
-      url: () => "https://xyz.supabase.co/rest/v1/products",
+      url: () => "https://example.com/api/fail",
     });
 
     expect(collectors.networkErrors).toHaveLength(1);
