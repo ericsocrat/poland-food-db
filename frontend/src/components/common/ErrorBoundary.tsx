@@ -16,8 +16,7 @@
 "use client";
 
 import { buttonClasses } from "@/components/common/Button";
-import type { ErrorType } from "@/components/common/ErrorIllustration";
-import { ErrorIllustration } from "@/components/common/ErrorIllustration";
+import { type ErrorType, ErrorIllustration } from "@/components/common/ErrorIllustration";
 import { classifyError, type ErrorCategory } from "@/lib/error-classifier";
 import { reportBoundaryError, type ErrorContext } from "@/lib/error-reporter";
 import { useTranslation } from "@/lib/i18n";
