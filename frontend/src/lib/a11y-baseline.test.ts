@@ -7,9 +7,9 @@
 // - useReducedMotion hook existence
 // - Visible focus indicators in CSS
 
-import { readFileSync, existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import { describe, it, expect } from "vitest";
+import { describe, expect, it } from "vitest";
 
 const SRC = join(__dirname, "..");
 const css = readFileSync(join(SRC, "styles/globals.css"), "utf-8");

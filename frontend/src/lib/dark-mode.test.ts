@@ -2,9 +2,9 @@
 // Verifies that dark mode tokens exist, are properly differentiated from light
 // mode, and that the ThemeScript generates valid inline JS.
 
-import { describe, it, expect } from "vitest";
 import fs from "fs";
 import path from "path";
+import { describe, expect, it } from "vitest";
 
 const GLOBALS_CSS = fs.readFileSync(
   path.resolve(__dirname, "../styles/globals.css"),
@@ -18,7 +18,7 @@ describe("Dark mode CSS tokens", () => {
 
   it("system preference fallback exists", () => {
     expect(GLOBALS_CSS).toContain("prefers-color-scheme: dark");
-    expect(GLOBALS_CSS).toContain(':root:not([data-theme="light"])');
+    expect(GLOBALS_CSS).toContain(":root:not([data-theme='light'])");
   });
 
   const darkTokens = [

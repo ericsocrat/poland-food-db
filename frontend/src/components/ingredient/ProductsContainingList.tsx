@@ -56,7 +56,7 @@ function ScorePill({ score }: Readonly<{ score: number }>) {
   const style = CONCERN_TIER_STYLES[tier] ?? CONCERN_TIER_STYLES[0];
   return (
     <span
-      className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-xs font-bold ${style.bg} ${style.color}`}
+      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold ${style.bg} ${style.color}`}
     >
       {score}
     </span>

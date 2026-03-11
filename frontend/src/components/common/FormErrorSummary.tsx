@@ -68,7 +68,7 @@ export function FormErrorSummary({
       role="alert"
       aria-live="assertive"
       tabIndex={-1}
-      className="mb-4 rounded-lg border border-error/30 bg-error/5 p-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-error"
+      className="mb-4 rounded-lg border border-error/30 bg-error/5 p-4 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-error"
     >
       <h3 className="mb-2 text-sm font-semibold text-error">
         {heading.replace("{count}", String(entries.length))}
@@ -78,7 +78,7 @@ export function FormErrorSummary({
           <li key={name} className="text-sm text-error">
             <a
               href={`#${name}`}
-              className="underline hover:no-underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-error"
+              className="underline hover:no-underline focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-error"
               onClick={(e) => {
                 e.preventDefault();
                 // Find the input by name attribute and focus it

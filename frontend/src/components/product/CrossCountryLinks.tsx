@@ -57,7 +57,7 @@ function LinkCard({ link }: Readonly<{ link: CrossCountryLink }>) {
 
       {/* Score badge */}
       <span
-        className={`inline-flex min-w-[2rem] items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${display.bg} ${display.color}`}
+        className={`inline-flex min-w-8 items-center justify-center rounded-full px-2 py-0.5 text-xs font-semibold ${display.bg} ${display.color}`}
       >
         {link.product.unhealthiness_score}
       </span>

@@ -242,6 +242,7 @@
 | [006-append-only-migrations.md](decisions/006-append-only-migrations.md)               | Strict append-only migration strategy — never modify existing files              | accepted | 2026-02-07 |
 | [007-english-canonical-ingredients.md](decisions/007-english-canonical-ingredients.md) | All 2,740 ingredients stored as clean ASCII English canonical names              | accepted | 2026-02-10 |
 | [008-nutrient-density-bonus.md](decisions/008-nutrient-density-bonus.md)               | Nutrient density bonus (protein + fibre) as subtracted 10th factor in v3.3       | accepted | 2026-03-03 |
+| [009-scoring-band-calibration.md](decisions/009-scoring-band-calibration.md)           | Scoring band calibration — catalog limited, formula correct, no changes needed   | accepted | 2026-03-10 |
 
 ---
 

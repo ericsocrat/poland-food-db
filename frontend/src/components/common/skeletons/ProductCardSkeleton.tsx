@@ -22,7 +22,7 @@ export function ProductCardSkeleton({
             variant="rect"
             width={48}
             height={48}
-            className="flex-shrink-0 !rounded-lg"
+            className="shrink-0 rounded-lg!"
           />
 
           {/* Product info */}
@@ -36,7 +36,7 @@ export function ProductCardSkeleton({
             variant="circle"
             width={32}
             height={32}
-            className="flex-shrink-0"
+            className="shrink-0"
           />
         </div>
       ))}

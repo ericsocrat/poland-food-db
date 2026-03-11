@@ -11,16 +11,15 @@ import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { ProductProfileSkeleton } from "@/components/common/skeletons";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { AlternativeProductCard } from "@/components/alternatives/AlternativeProductCard";
+import { AlternativesSection } from "@/components/alternatives/AlternativesSection";
 import { ActionOverflowMenu } from "@/components/product/ActionOverflowMenu";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
 import { AllergenMatrix } from "@/components/product/AllergenMatrix";
 import { AvoidBadge } from "@/components/product/AvoidBadge";
 import { DVLegend } from "@/components/product/DVLegend";
 import { DVReferenceBadge } from "@/components/product/DVReferenceBadge";
-import {
-    HealthWarningBadge,
-    HealthWarningsCard,
-} from "@/components/product/HealthWarningsCard";
+import { HealthWarningsCard } from "@/components/product/HealthWarningsCard";
 import { IngredientList } from "@/components/product/IngredientList";
 import { NovaIndicator } from "@/components/product/NovaIndicator";
 import { NutritionDVBar } from "@/components/product/NutritionDVBar";
@@ -44,7 +43,6 @@ import {
     FEATURES,
     getScoreInterpretation,
     SCORE_BANDS,
-    scoreBandFromScore,
 } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
@@ -55,11 +53,9 @@ import { createClient } from "@/lib/supabase/client";
 import type {
     DataConfidence,
     ProductProfile,
-    ProfileAlternative,
 } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChevronDown, ChevronUp, Globe, Info } from "lucide-react";
-import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
@@ -478,7 +474,10 @@ export default function ProductDetailPage() {
                     <NutritionTab profile={profile} />
                   )}
                   {activeTab === "alternatives" && (
-                    <AlternativesTab alternatives={profile.alternatives} />
+                    <AlternativesSection
+                      alternatives={profile.alternatives}
+                      currentScore={profile.scores.unhealthiness_score}
+                    />
                   )}
                   {activeTab === "scoring" && <ScoringTab profile={profile} />}
                 </ErrorBoundary>
@@ -531,9 +530,13 @@ function QuickSummary({
           <h2 className="mb-2 text-sm font-semibold text-foreground-secondary">
             {t("product.topAlternatives")}
           </h2>
-          <div className="space-y-2">
+          <div className="space-y-3">
             {topAlts.map((alt) => (
-              <AlternativeCard key={alt.product_id} alt={alt} />
+              <AlternativeProductCard
+                key={alt.product_id}
+                alt={alt}
+                currentScore={profile.scores.unhealthiness_score}
+              />
             ))}
           </div>
           {profile.alternatives.length > 2 && (
@@ -988,60 +991,6 @@ function DataQualityCard({ quality }: Readonly<{ quality: DataConfidence }>) {
         </div>
       </div>
     </div>
-  );
-}
-
-// ─── Alternatives Tab ───────────────────────────────────────────────────────
-
-function AlternativesTab({
-  alternatives,
-}: Readonly<{ alternatives: ProfileAlternative[] }>) {
-  const { t } = useTranslation();
-
-  if (alternatives.length === 0) {
-    return (
-      <p className="py-8 text-center text-sm text-foreground-muted">
-        {t("product.noAlternatives")}
-      </p>
-    );
-  }
-
-  return (
-    <div className="space-y-2">
-      <p className="text-sm text-foreground-secondary">
-        {t("product.healthierOptions", { count: alternatives.length })}
-      </p>
-      {alternatives.map((alt) => (
-        <AlternativeCard key={alt.product_id} alt={alt} />
-      ))}
-    </div>
-  );
-}
-
-function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
-  const { t } = useTranslation();
-
-  return (
-    <Link href={`/app/product/${alt.product_id}`}>
-      <div className="card hover-lift-press flex items-center gap-3">
-        <div
-          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].bg} ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].color}`}
-        >
-          {toTryVitScore(alt.unhealthiness_score)}
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate font-medium text-foreground">
-            {alt.product_name}
-          </p>
-          <p className="text-sm text-foreground-secondary">{alt.brand}</p>
-          <p className="text-xs text-success-text">
-            {t("product.pointsBetter", { points: alt.score_delta })}
-          </p>
-        </div>
-        <HealthWarningBadge productId={alt.product_id} />
-        <NutriScoreBadge grade={alt.nutri_score} size="sm" showTooltip />
-      </div>
-    </Link>
   );
 }
 

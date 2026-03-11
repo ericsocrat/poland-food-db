@@ -19,7 +19,7 @@ export function CategoryGridSkeleton() {
               variant="rect"
               width={40}
               height={40}
-              className="!rounded-lg"
+              className="rounded-lg!"
             />
             <Skeleton variant="text" width="70%" height={14} />
             <Skeleton variant="text" width="50%" height={12} />

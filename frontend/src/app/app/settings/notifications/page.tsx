@@ -260,7 +260,7 @@ export default function NotificationSettingsPage() {
               className="peer sr-only"
               data-testid="score-changes-toggle"
             />
-            <div className="peer h-6 w-11 rounded-full bg-surface-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-strong after:bg-surface after:transition-all after:content-[''] peer-checked:bg-brand peer-checked:after:translate-x-full peer-checked:after:border-surface peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-brand/40" />
+            <div className="peer h-6 w-11 rounded-full bg-surface-muted after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:border after:border-strong after:bg-surface after:transition-all after:content-[''] peer-checked:bg-brand peer-checked:after:translate-x-full peer-checked:after:border-surface peer-focus-visible:outline-hidden peer-focus-visible:ring-2 peer-focus-visible:ring-brand/40" />
           </label>
         </div>
       </section>
@@ -328,7 +328,7 @@ export default function NotificationSettingsPage() {
 
       {/* ─── Save button — sticky bar at bottom when dirty ─────────────── */}
       {dirty && (
-        <div className="sticky bottom-0 z-30 -mx-4 flex animate-slide-in-up justify-end border-t border-border bg-surface/95 px-4 py-3 backdrop-blur sm:-mx-6 sm:px-6">
+        <div className="sticky bottom-0 z-30 -mx-4 flex animate-slide-in-up justify-end border-t border-border bg-surface/95 px-4 py-3 backdrop-blur-sm sm:-mx-6 sm:px-6">
           <Button
             variant="primary"
             onClick={handleSavePreferences}
