@@ -849,10 +849,24 @@
   "errorBoundary": {
     "pageTitle": "Something went wrong on this page",
     "pageDescription": "An unexpected error prevented this page from loading. You can try again or go back to the home page.",
+    "networkTitle": "Connection problem",
+    "networkDescription": "We couldn't load this page. Check your internet connection and try again.",
+    "authTitle": "Session expired",
+    "authDescription": "Your session has expired. Please sign in again to continue.",
+    "serverTitle": "Server error",
+    "serverDescription": "Something went wrong on our end. Please try again in a moment.",
     "sectionTitle": "This section couldn't load",
     "componentTooltip": "This item couldn't display",
     "goHome": "Go home",
+    "signIn": "Sign in",
     "errorId": "Error ID"
+  },
+  "sectionError": {
+    "network": "Couldn't load — check your connection",
+    "auth": "Session expired — sign in to continue",
+    "server": "Couldn't load — server error",
+    "unknown": "This section couldn't load",
+    "labeledMessage": "{label} couldn't be loaded"
   },
   "landing": {
     "tagline": "healthier choices, made simple",

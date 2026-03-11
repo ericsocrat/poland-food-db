@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { ErrorBoundary } from "./ErrorBoundary";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -303,5 +303,81 @@ describe("ErrorBoundary — error reporting", () => {
     // console.error is mocked — ErrorBoundary calls reportBoundaryError
     // which calls console.error in development
     expect(console.error).toHaveBeenCalled();
+  });
+});
+
+// ─── Error Classification ───────────────────────────────────────────────────
+
+describe("ErrorBoundary — error classification", () => {
+  it("shows network title for fetch errors", () => {
+    render(
+      <ErrorBoundary level="page">
+        <ThrowingComponent message="Failed to fetch" />
+      </ErrorBoundary>,
+    );
+    expect(screen.getByText("Connection problem")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("error-boundary-page"),
+    ).toHaveAttribute("data-error-category", "network");
+  });
+
+  it("shows auth title for JWT errors", () => {
+    render(
+      <ErrorBoundary level="page">
+        <ThrowingComponent message="JWT expired" />
+      </ErrorBoundary>,
+    );
+    expect(screen.getByText("Session expired")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("error-boundary-page"),
+    ).toHaveAttribute("data-error-category", "auth");
+  });
+
+  it("shows Sign in link for auth errors instead of Go home", () => {
+    render(
+      <ErrorBoundary level="page">
+        <ThrowingComponent message="JWT expired" />
+      </ErrorBoundary>,
+    );
+    const signIn = screen.getByText("Sign in");
+    expect(signIn).toBeInTheDocument();
+    expect(signIn.closest("a")).toHaveAttribute("href", "/auth/login");
+    expect(screen.queryByText("Go home")).not.toBeInTheDocument();
+  });
+
+  it("shows server title for 500 errors", () => {
+    render(
+      <ErrorBoundary level="page">
+        <ThrowingComponent message="500 Internal Server Error" />
+      </ErrorBoundary>,
+    );
+    expect(screen.getByText("Server error")).toBeInTheDocument();
+    expect(
+      screen.getByTestId("error-boundary-page"),
+    ).toHaveAttribute("data-error-category", "server");
+  });
+
+  it("shows Go home link for non-auth errors", () => {
+    render(
+      <ErrorBoundary level="page">
+        <ThrowingComponent message="500 Internal Server Error" />
+      </ErrorBoundary>,
+    );
+    expect(screen.getByText("Go home")).toBeInTheDocument();
+    expect(screen.queryByText("Sign in")).not.toBeInTheDocument();
+  });
+
+  it("falls back to generic title for unknown errors", () => {
+    render(
+      <ErrorBoundary level="page">
+        <ThrowingComponent message="Random crash" />
+      </ErrorBoundary>,
+    );
+    expect(
+      screen.getByText("Something went wrong on this page"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByTestId("error-boundary-page"),
+    ).toHaveAttribute("data-error-category", "unknown");
   });
 });
