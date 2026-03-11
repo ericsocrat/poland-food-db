@@ -10,6 +10,18 @@ DELETE FROM ingredient_ref ir
 WHERE NOT EXISTS (
     SELECT 1 FROM product_ingredient pi
     WHERE pi.ingredient_id = ir.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi
+    WHERE pi.parent_ingredient_id = ir.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM recipe_ingredient ri
+    WHERE ri.ingredient_ref_id = ir.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM ingredient_translations it
+    WHERE it.ingredient_id = ir.ingredient_id
 );
 
 -- Deduplicate product_ingredient rows sharing the same (product_id, position)
@@ -32,6 +44,18 @@ DELETE FROM ingredient_ref ir
 WHERE NOT EXISTS (
     SELECT 1 FROM product_ingredient pi
     WHERE pi.ingredient_id = ir.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi
+    WHERE pi.parent_ingredient_id = ir.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM recipe_ingredient ri
+    WHERE ri.ingredient_ref_id = ir.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM ingredient_translations it
+    WHERE it.ingredient_id = ir.ingredient_id
 );
 
 -- Re-score affected categories after ingredient count changes
