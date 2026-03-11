@@ -250,13 +250,42 @@ WHERE concern_tier = 3
 --    products to use the canonical brand_name from brand_ref.
 -- ═══════════════════════════════════════════════════════════════════════════
 
+-- Deprecate non-canonical brand duplicates that would collide after normalization
+-- (p1 has the wrong-case brand; p2 already has the canonical brand)
+UPDATE products AS p1
+SET is_deprecated = true,
+    deprecated_reason = 'Duplicate after brand case normalization — canonical version already exists'
+WHERE p1.is_deprecated IS NOT TRUE
+  AND EXISTS (
+    SELECT 1 FROM brand_ref br
+    WHERE LOWER(p1.brand) = LOWER(br.brand_name)
+      AND p1.brand != br.brand_name  -- p1 has non-canonical case
+  )
+  AND EXISTS (
+    SELECT 1 FROM products p2
+    JOIN brand_ref br2 ON p2.brand = br2.brand_name  -- p2 already has canonical brand
+    WHERE p2.country = p1.country
+      AND p2.product_name = p1.product_name
+      AND p2.product_id <> p1.product_id
+      AND p2.is_deprecated IS NOT TRUE
+      AND LOWER(p2.brand) = LOWER(p1.brand)
+  );
+
 -- Normalize product brands to match existing brand_ref entries
+-- (skip products where normalization would cause a unique constraint collision)
 UPDATE products p
 SET brand = br.brand_name
 FROM brand_ref br
 WHERE LOWER(p.brand) = LOWER(br.brand_name)
   AND p.brand != br.brand_name
-  AND p.is_deprecated IS NOT TRUE;
+  AND p.is_deprecated IS NOT TRUE
+  AND NOT EXISTS (
+    SELECT 1 FROM products p2
+    WHERE p2.country = p.country
+      AND p2.brand = br.brand_name
+      AND p2.product_name = p.product_name
+      AND p2.product_id <> p.product_id
+  );
 
 -- Insert any remaining brands not yet in brand_ref (new brands from pipeline)
 INSERT INTO brand_ref (brand_name, display_name)
