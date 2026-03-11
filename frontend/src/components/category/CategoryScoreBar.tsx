@@ -1,7 +1,6 @@
 // ─── Category Score Bar — mini score range visualization ─────────────────────
 
-import type { ScoreColorBand } from "@/lib/constants";
-import { scoreColorFromScore } from "@/lib/constants";
+import { type ScoreColorBand, scoreColorFromScore } from "@/lib/constants";
 
 // Tailwind-safe bg classes for each 5-band color token
 const BAND_BG: Record<ScoreColorBand, string> = {
