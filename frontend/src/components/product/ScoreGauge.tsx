@@ -13,7 +13,7 @@ import React from "react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
-export type ScoreGaugeSize = "sm" | "md" | "lg";
+export type ScoreGaugeSize = "sm" | "md" | "lg" | "xl";
 
 export interface ScoreGaugeProps {
   /** Unhealthiness score 0–100 (API value). Displayed as TryVit Score (inverted). */
@@ -56,6 +56,13 @@ const SIZE_CONFIG: Record<
     strokeWidth: 6,
     fontSize: "text-2xl",
     subFontSize: "text-xxs",
+  },
+  xl: {
+    svgSize: 120,
+    radius: 46,
+    strokeWidth: 8,
+    fontSize: "text-4xl",
+    subFontSize: "text-xs",
   },
 };
 

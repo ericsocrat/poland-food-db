@@ -520,6 +520,8 @@
     "ecoScoreTitle": "Environmental Impact",
     "ecoScoreComingSoon": "Eco-Score data coming soon. We're working on integrating environmental impact data for products.",
     "trafficLightSummary": "Nutrient traffic light summary",
+    "keyNutrients": "Key Nutrients",
+    "noKnownAllergens": "No known allergens",
     "quickSummary": "Quick Summary",
     "showFullAnalysis": "Show full analysis",
     "showSummary": "Show summary",
