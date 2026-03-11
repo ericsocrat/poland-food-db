@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { Disclaimer } from "@/components/learn/Disclaimer";
 import { LearnSidebar } from "@/components/learn/LearnSidebar";
+import { LearnTopicNav } from "@/components/learn/LearnTopicNav";
 import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
 import { Factory } from "lucide-react";
@@ -107,6 +108,8 @@ export default function NovaGroupsPage() {
                 url="https://doi.org/10.1136/bmj.k322"
               />
             </div>
+
+            <LearnTopicNav />
           </article>
         </main>
       </div>

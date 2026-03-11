@@ -76,7 +76,7 @@ describe("LearnSidebar", () => {
   });
 
   it("exports TOPICS array with correct structure", () => {
-    expect(TOPICS).toHaveLength(7);
+    expect(TOPICS).toHaveLength(8);
     for (const topic of TOPICS) {
       expect(topic).toHaveProperty("slug");
       expect(topic).toHaveProperty("labelKey");

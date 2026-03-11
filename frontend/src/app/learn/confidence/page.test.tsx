@@ -30,8 +30,18 @@ vi.mock("@/components/learn/LearnSidebar", () => ({
   LearnSidebar: () => <nav data-testid="learn-sidebar" />,
 }));
 
+vi.mock("@/components/learn/LearnTopicNav", () => ({
+  LearnTopicNav: () => <nav data-testid="topic-nav" />,
+}));
+
 vi.mock("@/components/learn/Disclaimer", () => ({
   Disclaimer: () => <div data-testid="disclaimer" />,
+}));
+
+vi.mock("@/components/learn/SourceCitation", () => ({
+  SourceCitation: ({ title }: { title: string }) => (
+    <cite data-testid="source-citation">{title}</cite>
+  ),
 }));
 
 vi.mock("@/lib/i18n", () => ({

@@ -2,6 +2,12 @@ import { render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ReadingLabelsPage from "./page";
 
+// ─── Mocks ──────────────────────────────────────────────────────────────────
+
+vi.mock("@/components/learn/LearnTopicNav", () => ({
+  LearnTopicNav: () => <nav data-testid="topic-nav" />,
+}));
+
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 beforeEach(() => {

@@ -1409,7 +1409,25 @@
       "howWeImproveText": "Ciągle aktualizujemy dane produktów z wielu źródeł: ręczne wprowadzanie z etykiet, API Open Food Facts i zgłoszenia użytkowników. Gdy dostępne są lepsze dane, wyniki są przeliczane automatycznie.",
       "whatYouCanDoTitle": "Co możesz zrobić",
       "whatYouCanDoText": "Jeśli zauważysz nieprawidłowe dane dla produktu, możesz pomóc ulepszyć naszą bazę danych. Szukaj wskaźnika pewności na profilu każdego produktu — mówi ci, jak wiarygodne są obecne dane."
-    }
+    },
+    "healthyChoices": {
+      "title": "Zdrowsze wybory",
+      "description": "Praktyczne wskazówki, jak używać TryVit do lepszych codziennych decyzji żywieniowych.",
+      "summary": "Małe, konsekwentne zmiany są ważniejsze niż perfekcja. Używaj TryVit Score do porównywania podobnych produktów w danej kategorii i stopniowo wybieraj zdrowsze opcje.",
+      "startSmallTitle": "Zacznij od małych kroków",
+      "startSmallText": "Nie musisz zmieniać całej diety naraz. Wybierz jedną kategorię, którą kupujesz regularnie — np. pieczywo lub nabiał — i porównaj kilka opcji za pomocą TryVit Score. Zamiana na produkt o zaledwie 10 punktów wyższym wyniku może mieć znaczenie w dłuższej perspektywie.",
+      "compareTitle": "Porównuj w ramach kategorii",
+      "compareText": "TryVit Score jest najbardziej przydatny przy porównywaniu produktów w tej samej kategorii. Jogurt z wynikiem 85 i ten z 60 to oba 'dobre' produkty, ale różnica ma znaczenie, jeśli jesz jogurt codziennie. Użyj funkcji porównania, aby zobaczyć dokładnie, czym produkty się różnią.",
+      "readLabelsTitle": "Etykiety to Twój sojusznik",
+      "readLabelsText": "Sprawdzaj trzy pierwsze składniki — stanowią większość produktu. Krótsze listy składników zazwyczaj oznaczają mniejszy stopień przetworzenia. Szukaj produktów, w których rozpoznajesz każdy składnik.",
+      "processingTitle": "Zwracaj uwagę na przetworzenie",
+      "processingText": "Produkty NOVA Grupy 4 (ultra-przetworzone) wiążą się z wyższym ryzykiem zdrowotnym, nawet gdy ich profil odżywczy wygląda akceptowalnie. Gdy dwa produkty mają podobny TryVit Score, wybierz ten z niższą grupą NOVA.",
+      "allergenTitle": "Znaj swoje alergeny",
+      "allergenText": "Jeśli masz alergie lub nietolerancje pokarmowe, ustaw je w swoim profilu TryVit. Aplikacja oznaczy produkty zawierające Twoje alergeny, abyś mógł dokonywać bezpiecznych wyborów bez czytania każdej etykiety.",
+      "habitsTitle": "Buduj nawyki, nie reguły",
+      "habitsText": "Najzdrowsze podejście to takie, które da się utrzymać. Używaj TryVit, aby być świadomym tego, co jesz, a potem stopniowo przechodź na lepsze opcje. Żaden pojedynczy produkt nie zrujnuje Twojego zdrowia — liczy się ogólny wzorzec."
+    },
+    "topicNavLabel": "Nawigacja między tematami"
   },
   "commandPalette": {
     "placeholder": "Szukaj lub przejdź do…",

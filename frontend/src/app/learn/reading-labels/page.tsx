@@ -6,6 +6,7 @@ import { SkipLink } from "@/components/common/SkipLink";
 import { Footer } from "@/components/layout/Footer";
 import { LearnSidebar } from "@/components/learn/LearnSidebar";
 import { Disclaimer } from "@/components/learn/Disclaimer";
+import { LearnTopicNav } from "@/components/learn/LearnTopicNav";
 import { SourceCitation } from "@/components/learn/SourceCitation";
 import { useTranslation } from "@/lib/i18n";
 import { Tag } from "lucide-react";
@@ -88,6 +89,8 @@ export default function ReadingLabelsPage() {
                 year={2011}
               />
             </div>
+
+            <LearnTopicNav />
           </article>
         </main>
       </div>

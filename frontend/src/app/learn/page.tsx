@@ -15,6 +15,7 @@ import {
     BookOpen,
     Factory,
     FlaskConical,
+    Heart,
     Tag,
     type LucideIcon,
 } from "lucide-react";
@@ -68,6 +69,12 @@ const TOPICS: readonly {
     icon: BadgeCheck,
     titleKey: "learn.confidence.title",
     descKey: "learn.confidence.description",
+  },
+  {
+    slug: "healthy-choices",
+    icon: Heart,
+    titleKey: "learn.healthyChoices.title",
+    descKey: "learn.healthyChoices.description",
   },
 ];
 

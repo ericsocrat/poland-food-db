@@ -1,6 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
-import AllergensPage from "./page";
+import HealthyChoicesPage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -30,18 +30,12 @@ vi.mock("@/components/learn/LearnSidebar", () => ({
   LearnSidebar: () => <nav data-testid="learn-sidebar" />,
 }));
 
-vi.mock("@/components/learn/LearnTopicNav", () => ({
-  LearnTopicNav: () => <nav data-testid="topic-nav" />,
-}));
-
 vi.mock("@/components/learn/Disclaimer", () => ({
   Disclaimer: () => <div data-testid="disclaimer" />,
 }));
 
-vi.mock("@/components/learn/SourceCitation", () => ({
-  SourceCitation: ({ title }: { title: string }) => (
-    <div data-testid="source-citation">{title}</div>
-  ),
+vi.mock("@/components/learn/LearnTopicNav", () => ({
+  LearnTopicNav: () => <nav data-testid="topic-nav" />,
 }));
 
 vi.mock("@/lib/i18n", () => ({
@@ -52,75 +46,63 @@ vi.mock("@/lib/i18n", () => ({
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
-describe("AllergensPage", () => {
+describe("HealthyChoicesPage", () => {
   it("renders the page title", () => {
-    render(<AllergensPage />);
-    expect(screen.getByText("learn.allergens.title")).toBeInTheDocument();
+    render(<HealthyChoicesPage />);
+    expect(
+      screen.getByText("learn.healthyChoices.title"),
+    ).toBeInTheDocument();
   });
 
   it("renders the summary block", () => {
-    render(<AllergensPage />);
-    expect(screen.getByText("learn.allergens.summary")).toBeInTheDocument();
-  });
-
-  it("renders EU 14 allergens heading", () => {
-    render(<AllergensPage />);
+    render(<HealthyChoicesPage />);
     expect(
-      screen.getByText("learn.allergens.eu14Title"),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByText("learn.allergens.eu14Text"),
+      screen.getByText("learn.healthyChoices.summary"),
     ).toBeInTheDocument();
   });
 
-  it("renders all 14 allergen items", () => {
-    render(<AllergensPage />);
-    const listItems = screen.getAllByRole("listitem");
-    // Filter to only allergen items (page may have other list items)
-    const allergenItems = listItems.filter((li) =>
-      li.textContent?.startsWith("learn.allergens.allergen"),
-    );
-    expect(allergenItems).toHaveLength(14);
-  });
-
-  it("renders containsVsTraces section", () => {
-    render(<AllergensPage />);
+  it("renders all 6 content sections", () => {
+    render(<HealthyChoicesPage />);
     expect(
-      screen.getByText("learn.allergens.containsVsTracesTitle"),
+      screen.getByText("learn.healthyChoices.startSmallTitle"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("learn.healthyChoices.compareTitle"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("learn.healthyChoices.readLabelsTitle"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("learn.healthyChoices.processingTitle"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("learn.healthyChoices.allergenTitle"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("learn.healthyChoices.habitsTitle"),
     ).toBeInTheDocument();
   });
 
-  it("renders polishLabels section", () => {
-    render(<AllergensPage />);
-    expect(
-      screen.getByText("learn.allergens.polishLabelsTitle"),
-    ).toBeInTheDocument();
-  });
-
-  it("renders inTryVit section", () => {
-    render(<AllergensPage />);
-    expect(
-      screen.getByText("learn.allergens.inTryVitTitle"),
-    ).toBeInTheDocument();
-  });
-
-  it("renders layout components", () => {
-    render(<AllergensPage />);
+  it("renders header and footer", () => {
+    render(<HealthyChoicesPage />);
     expect(screen.getByTestId("header")).toBeInTheDocument();
     expect(screen.getByTestId("footer")).toBeInTheDocument();
+  });
+
+  it("renders sidebar and topic nav", () => {
+    render(<HealthyChoicesPage />);
     expect(screen.getByTestId("learn-sidebar")).toBeInTheDocument();
+    expect(screen.getByTestId("topic-nav")).toBeInTheDocument();
+  });
+
+  it("renders disclaimer", () => {
+    render(<HealthyChoicesPage />);
     expect(screen.getByTestId("disclaimer")).toBeInTheDocument();
   });
 
-  it("renders source citation", () => {
-    render(<AllergensPage />);
-    const citations = screen.getAllByTestId("source-citation");
-    expect(citations).toHaveLength(1);
-  });
-
   it("renders back-to-hub link", () => {
-    render(<AllergensPage />);
+    render(<HealthyChoicesPage />);
     const backLink = screen.getByText("learn.backToHub");
-    expect(backLink.closest("a")).toHaveAttribute("href", "/learn");
+    expect(backLink).toHaveAttribute("href", "/learn");
   });
 });
