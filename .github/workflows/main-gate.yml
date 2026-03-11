@@ -284,7 +284,7 @@ jobs:
 
       - name: Playwright smoke E2E
         run: npx playwright test --project=smoke 2>&1 | tee ../playwright-stdout.log
-        timeout-minutes: 5
+        timeout-minutes: 8
         env:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

@@ -47,6 +47,7 @@ test.describe("A11y audit — dark mode", () => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/");
     await page.waitForLoadState("networkidle");
+    await page.waitForSelector("html[data-theme='dark']");
     await assertNoA11yViolations(page);
   });
 
@@ -54,6 +55,7 @@ test.describe("A11y audit — dark mode", () => {
     await page.emulateMedia({ colorScheme: "dark" });
     await page.goto("/auth/login");
     await page.waitForLoadState("networkidle");
+    await page.waitForSelector("html[data-theme='dark']");
     await assertNoA11yViolations(page);
   });
 });
