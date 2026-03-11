@@ -37,7 +37,7 @@ function AllergenChip({ warning }: AllergenChipProps) {
       data-testid="allergen-chip"
     >
       <span aria-hidden="true">{warning.icon}</span>
-      <span className="max-w-[4rem] truncate">{warning.label}</span>
+      <span className="max-w-16 truncate">{warning.label}</span>
     </span>
   );
 }

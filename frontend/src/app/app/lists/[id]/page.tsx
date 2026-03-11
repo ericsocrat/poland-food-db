@@ -369,7 +369,7 @@ function ListItemRow({
       >
         {/* Score badge */}
         <div
-          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
         >
           {toTryVitScore(item.unhealthiness_score)}
         </div>
@@ -392,7 +392,7 @@ function ListItemRow({
 
         {/* Nutri badge */}
         <span
-          className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
+          className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
         >
           {item.nutri_score_label ?? "?"}
         </span>
@@ -404,7 +404,7 @@ function ListItemRow({
         title={t("lists.removeFromList")}
         aria-label={`Remove ${item.product_name}`}
         disabled={isRemoving}
-        className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-error/10 hover:text-error disabled:opacity-50"
+        className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm text-foreground-muted transition-colors hover:bg-error/10 hover:text-error disabled:opacity-50"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();

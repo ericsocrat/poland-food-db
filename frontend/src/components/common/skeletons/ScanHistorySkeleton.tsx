@@ -15,19 +15,19 @@ export function ScanHistorySkeleton() {
           variant="rect"
           width={80}
           height={32}
-          className="!rounded-full"
+          className="rounded-full!"
         />
         <Skeleton
           variant="rect"
           width={80}
           height={32}
-          className="!rounded-full"
+          className="rounded-full!"
         />
         <Skeleton
           variant="rect"
           width={80}
           height={32}
-          className="!rounded-full"
+          className="rounded-full!"
         />
       </div>
 
@@ -38,7 +38,7 @@ export function ScanHistorySkeleton() {
             variant="rect"
             width={44}
             height={44}
-            className="!rounded-lg"
+            className="rounded-lg!"
           />
           <div className="flex-1 space-y-1">
             <Skeleton variant="text" width="55%" height={14} />
@@ -49,7 +49,7 @@ export function ScanHistorySkeleton() {
               variant="rect"
               width={28}
               height={28}
-              className="!rounded-md"
+              className="rounded-md!"
             />
             <Skeleton variant="text" width="3rem" height={10} />
           </div>

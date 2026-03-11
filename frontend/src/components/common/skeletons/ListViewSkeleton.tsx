@@ -15,7 +15,7 @@ export function ListViewSkeleton() {
           variant="rect"
           width={80}
           height={36}
-          className="!rounded-lg"
+          className="rounded-lg!"
         />
       </div>
 
@@ -32,13 +32,13 @@ export function ListViewSkeleton() {
                 variant="rect"
                 width={48}
                 height={24}
-                className="!rounded-full"
+                className="rounded-full!"
               />
               <Skeleton
                 variant="rect"
                 width={20}
                 height={20}
-                className="!rounded-md"
+                className="rounded-md!"
               />
             </div>
           </div>

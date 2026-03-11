@@ -69,7 +69,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
           className={[
             "block w-full rounded-lg border bg-surface px-3.5 py-2.5 text-sm shadow-sm transition-colors",
             "placeholder:text-foreground-muted resize-y",
-            "focus-visible:outline-none focus-visible:ring-1",
+            "focus-visible:outline-hidden focus-visible:ring-1",
             error
               ? "border-error focus-visible:border-error focus-visible:ring-error"
               : "border-strong focus-visible:border-brand focus-visible:ring-brand",

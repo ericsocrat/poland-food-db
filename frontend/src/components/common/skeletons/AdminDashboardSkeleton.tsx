@@ -38,7 +38,7 @@ export function AdminDashboardSkeleton() {
       {/* Bottom section */}
       <div className="card space-y-3">
         <Skeleton variant="text" width="10rem" height={18} />
-        <Skeleton variant="rect" height={120} className="!rounded-lg" />
+        <Skeleton variant="rect" height={120} className="rounded-lg!" />
       </div>
     </SkeletonContainer>
   );

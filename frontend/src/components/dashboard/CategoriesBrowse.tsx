@@ -22,7 +22,7 @@ function CategoryChip({
       style={{ minWidth: "5rem" }}
     >
       <CategoryIcon slug={category.slug} size="xl" />
-      <span className="max-w-[5rem] truncate text-xs font-medium text-foreground">
+      <span className="max-w-20 truncate text-xs font-medium text-foreground">
         {category.display_name}
       </span>
     </Link>

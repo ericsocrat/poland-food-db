@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-  FreshnessIndicator,
-  getDaysSince,
-  getFreshnessStatus,
+    FreshnessIndicator,
+    getDaysSince,
+    getFreshnessStatus,
 } from "./FreshnessIndicator";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────

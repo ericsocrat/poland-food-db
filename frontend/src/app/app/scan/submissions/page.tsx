@@ -208,7 +208,7 @@ function SubmissionRow({
               {submission.product_name}
             </p>
             <span
-              className={`inline-flex flex-shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
+              className={`inline-flex shrink-0 rounded-full px-2 py-0.5 text-xs font-medium ${style.bg} ${style.text}`}
             >
               {(() => {
                 const StatusIcon = style.icon;
@@ -235,7 +235,7 @@ function SubmissionRow({
         {submission.merged_product_id && (
           <button
             onClick={() => onViewProduct(submission.merged_product_id ?? 0)}
-            className="flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-brand hover:bg-brand-subtle"
+            className="shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium text-brand hover:bg-brand-subtle"
           >
             {t("scan.viewProduct")}
           </button>

@@ -97,7 +97,7 @@ export function NotificationPrompt({
       className="mt-3 flex items-start gap-3 rounded-lg border border-brand/20 bg-brand-subtle p-3"
       data-testid="notification-prompt"
     >
-      <div className="flex-shrink-0 mt-0.5">
+      <div className="shrink-0 mt-0.5">
         <Icon icon={Bell} size="sm" className="text-brand" />
       </div>
       <div className="flex-1 min-w-0">
@@ -119,7 +119,7 @@ export function NotificationPrompt({
       </div>
       <button
         onClick={handleDismiss}
-        className="flex-shrink-0 text-foreground-secondary hover:text-foreground transition-colors"
+        className="shrink-0 text-foreground-secondary hover:text-foreground transition-colors"
         aria-label={t("common.dismiss")}
         data-testid="dismiss-notification-prompt"
       >

@@ -71,7 +71,7 @@ export function HealthSummary({ products }: Readonly<HealthSummaryProps>) {
         {/* Score circle */}
         <div
           data-testid="health-score-circle"
-          className={`flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-full ${band?.bgColor ?? "bg-muted"}`}
+          className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full ${band?.bgColor ?? "bg-muted"}`}
         >
           <span
             className={`text-2xl font-bold tabular-nums ${band?.textColor ?? "text-foreground"}`}
