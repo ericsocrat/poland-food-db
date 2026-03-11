@@ -524,7 +524,13 @@
     "showFullAnalysis": "Show full analysis",
     "showSummary": "Show summary",
     "topAlternatives": "Top Alternatives",
-    "viewAllAlternatives": "View all alternatives"
+    "viewAllAlternatives": "View all alternatives",
+    "verdictMuchHealthier": "Much healthier",
+    "verdictHealthier": "Healthier",
+    "verdictSlightlyHealthier": "Slightly healthier",
+    "ingredientMatch": "match",
+    "showMoreAlternatives": "Show {count} more",
+    "showLessAlternatives": "Show less"
   },
   "scoreGauge": {
     "label": "TryVit Score: {score} out of 100",
