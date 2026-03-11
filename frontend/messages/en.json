@@ -576,7 +576,8 @@
     "statAvgScore": "Avg. Score",
     "scoreRange": "Score Range",
     "nutriAB": "Nutri-Score A–B",
-    "nova4Pct": "NOVA 4"
+    "nova4Pct": "NOVA 4",
+    "bestInCategory": "★ Best in category"
   },
   "compare": {
     "title": "Compare Products",

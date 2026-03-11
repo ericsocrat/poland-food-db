@@ -9,6 +9,7 @@ import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { ProductThumbnail } from "@/components/common/ProductThumbnail";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { CategoryListingSkeleton } from "@/components/common/skeletons";
+import { CategoryScoreBar } from "@/components/category/CategoryScoreBar";
 import { CompareCheckbox } from "@/components/compare/CompareCheckbox";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { AddToListMenu } from "@/components/product/AddToListMenu";
@@ -238,6 +239,12 @@ export default function CategoryListingPage() {
               allergenWarnings={allergenMap[p.product_id] ?? []}
               viewMode={viewMode}
               categorySlug={slug}
+              isBest={
+                offset === 0 &&
+                sortBy === "score" &&
+                sortDir === "asc" &&
+                p.product_id === data.products[0]?.product_id
+              }
             />
           ))}
         </ul>
@@ -277,11 +284,13 @@ function ProductRow({
   allergenWarnings = [],
   viewMode = "compact",
   categorySlug,
+  isBest = false,
 }: Readonly<{
   product: CategoryProduct;
   allergenWarnings?: AllergenWarning[];
   viewMode?: ViewMode;
   categorySlug?: string;
+  isBest?: boolean;
 }>) {
   const { t } = useTranslation();
   const band = SCORE_BANDS[product.score_band];
@@ -306,6 +315,11 @@ function ProductRow({
             <p className="truncate text-sm text-foreground-secondary">
               {product.brand}
             </p>
+            {isBest && (
+              <span className="mt-0.5 inline-block rounded-full bg-score-green/15 px-2 py-0.5 text-xs font-medium text-score-green">
+                {t("categories.bestInCategory")}
+              </span>
+            )}
           </div>
           <div
             className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
@@ -339,6 +353,11 @@ function ProductRow({
         <div className="min-w-0 flex-1">
           <p className="truncate font-medium text-foreground">
             {product.product_name}
+            {isBest && (
+              <span className="ml-2 inline-block rounded-full bg-score-green/15 px-2 py-0.5 text-xs font-medium text-score-green">
+                {t("categories.bestInCategory")}
+              </span>
+            )}
           </p>
           <p className="text-sm text-foreground-secondary">
             {product.brand} &middot; {product.calories} kcal
@@ -389,39 +408,46 @@ function CategoryStatsCard({
   const { t } = useTranslation();
 
   return (
-    <div className="card grid grid-cols-2 gap-3 sm:grid-cols-4">
-      <div className="text-center">
-        <p className="text-lg font-bold text-foreground">
-          {Math.round(stats.avg_score)}
-        </p>
-        <p className="text-xs text-foreground-secondary">
-          {t("categories.statAvgScore")}
-        </p>
+    <div className="card space-y-3 p-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="text-center">
+          <p className="text-lg font-bold text-foreground">
+            {Math.round(stats.avg_score)}
+          </p>
+          <p className="text-xs text-foreground-secondary">
+            {t("categories.statAvgScore")}
+          </p>
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-bold text-foreground">
+            {stats.min_score}–{stats.max_score}
+          </p>
+          <p className="text-xs text-foreground-secondary">
+            {t("categories.scoreRange")}
+          </p>
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-bold text-confidence-high">
+            {Math.round(stats.pct_nutri_a_b)}%
+          </p>
+          <p className="text-xs text-foreground-secondary">
+            {t("categories.nutriAB")}
+          </p>
+        </div>
+        <div className="text-center">
+          <p className="text-lg font-bold text-warning">
+            {Math.round(stats.pct_nova_4)}%
+          </p>
+          <p className="text-xs text-foreground-secondary">
+            {t("categories.nova4Pct")}
+          </p>
+        </div>
       </div>
-      <div className="text-center">
-        <p className="text-lg font-bold text-foreground">
-          {stats.min_score}–{stats.max_score}
-        </p>
-        <p className="text-xs text-foreground-secondary">
-          {t("categories.scoreRange")}
-        </p>
-      </div>
-      <div className="text-center">
-        <p className="text-lg font-bold text-confidence-high">
-          {Math.round(stats.pct_nutri_a_b)}%
-        </p>
-        <p className="text-xs text-foreground-secondary">
-          {t("categories.nutriAB")}
-        </p>
-      </div>
-      <div className="text-center">
-        <p className="text-lg font-bold text-warning">
-          {Math.round(stats.pct_nova_4)}%
-        </p>
-        <p className="text-xs text-foreground-secondary">
-          {t("categories.nova4Pct")}
-        </p>
-      </div>
+      <CategoryScoreBar
+        minScore={stats.min_score}
+        maxScore={stats.max_score}
+        avgScore={stats.avg_score}
+      />
     </div>
   );
 }
