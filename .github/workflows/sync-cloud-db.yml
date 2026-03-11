@@ -96,7 +96,7 @@ jobs:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
           echo "Pushing migrations to staging..."
-          supabase db push --linked
+          supabase db push --linked --include-all
           echo "## Staging Sync" >> "$GITHUB_STEP_SUMMARY"
           echo "Migrations applied to **staging** at $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_STEP_SUMMARY"
           echo "Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"
@@ -180,7 +180,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "Pushing migrations to PRODUCTION..."
-          supabase db push --linked
+          supabase db push --linked --include-all
           echo "## Production Sync" >> "$GITHUB_STEP_SUMMARY"
           echo "Migrations applied to **production** at $(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_STEP_SUMMARY"
           echo "Commit: \`${{ github.sha }}\`" >> "$GITHUB_STEP_SUMMARY"

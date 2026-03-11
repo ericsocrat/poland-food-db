@@ -207,7 +207,7 @@ jobs:
         run: |
           set -euo pipefail
           echo "Pushing pending migrations to ${{ github.event.inputs.environment }}..."
-          supabase db push --linked
+          supabase db push --linked --include-all
           echo "✅ Migrations applied successfully" >> "$GITHUB_STEP_SUMMARY"
 
       # ── Post-deploy sanity checks ──────────────────────────────────────
