@@ -7,9 +7,9 @@
 
 ## Active Branch & PR
 
-- **Branch:** `main`
+- **Branch:** `data/778-expand-de-categories`
 - **Latest SHA (main):** `a7c7f01` (deps bumps + #717 coverage thresholds)
-- **Open PRs:** PR pending for #773 (fix digest() schema qualification)
+- **Open PRs:** PR pending for #778 (expand DE categories)
 
 ## Production Deployment (2026-03-06)
 
@@ -30,31 +30,31 @@ All 26 open PRs merged into main in a single session:
 | PR   | Summary                                                                           |
 | ---- | --------------------------------------------------------------------------------- |
 | #748 | fix(ci): Lighthouse CI server start                                               |
-| #724 | fix(frontend): eliminate hardcoded English in error boundaries (#699)              |
-| #723 | test(coverage): ratchet coverage + typecheck fix (#718)                            |
-| #726 | fix(frontend): action button overflow on 320px mobile (#690)                       |
-| #727 | feat(frontend): forgot password flow, password toggle (#700)                       |
-| #728 | feat(frontend): landing page server component with SEO metadata (#698)             |
-| #729 | fix(frontend): WCAG 2.1 AA accessibility audit fixes (#709)                        |
-| #730 | fix(frontend): dark mode color violations (#708)                                   |
-| #734 | feat(frontend): unsaved changes dialog + navigation guard (#707)                   |
-| #739 | fix(frontend): enforce 44x44px minimum touch targets (#695)                        |
-| #744 | feat(frontend): pull-to-refresh feature (#694)                                     |
-| #741 | feat(frontend): responsive stats grid (#706)                                       |
-| #725 | fix(frontend): restructure category listing nested interactives (#691)             |
-| #747 | test(e2e): expand Playwright E2E coverage (#719)                                   |
-| #742 | feat(frontend): responsive search action row (#703)                                |
-| #733 | fix(frontend): keyboard nav, motion, color indicators (#711)                       |
-| #746 | feat(frontend): streamline onboarding 7→3 steps (#701)                             |
-| #740 | feat(frontend): swipeable tabs + responsive labels (#693)                           |
-| #736 | fix(frontend): remove global overflow-x-hidden (#697)                              |
-| #732 | fix(frontend): standardize focus-visible everywhere (#689)                         |
-| #745 | fix(frontend): scanner camera permission recovery + scan feedback (#702)           |
-| #738 | refactor(frontend): centralize score band colors into utility (#688)               |
-| #735 | fix(frontend): sticky save button bar on settings pages (#696)                     |
-| #743 | feat(frontend): group MoreDrawer into sections with swipe-to-dismiss (#692)        |
-| #737 | fix(frontend): replace sub-10px font sizes with readable alternatives (#686)       |
-| #731 | fix(frontend): eliminate 80+ hardcoded Tailwind color classes — CSS tokens (#682)  |
+| #724 | fix(frontend): eliminate hardcoded English in error boundaries (#699)             |
+| #723 | test(coverage): ratchet coverage + typecheck fix (#718)                           |
+| #726 | fix(frontend): action button overflow on 320px mobile (#690)                      |
+| #727 | feat(frontend): forgot password flow, password toggle (#700)                      |
+| #728 | feat(frontend): landing page server component with SEO metadata (#698)            |
+| #729 | fix(frontend): WCAG 2.1 AA accessibility audit fixes (#709)                       |
+| #730 | fix(frontend): dark mode color violations (#708)                                  |
+| #734 | feat(frontend): unsaved changes dialog + navigation guard (#707)                  |
+| #739 | fix(frontend): enforce 44x44px minimum touch targets (#695)                       |
+| #744 | feat(frontend): pull-to-refresh feature (#694)                                    |
+| #741 | feat(frontend): responsive stats grid (#706)                                      |
+| #725 | fix(frontend): restructure category listing nested interactives (#691)            |
+| #747 | test(e2e): expand Playwright E2E coverage (#719)                                  |
+| #742 | feat(frontend): responsive search action row (#703)                               |
+| #733 | fix(frontend): keyboard nav, motion, color indicators (#711)                      |
+| #746 | feat(frontend): streamline onboarding 7→3 steps (#701)                            |
+| #740 | feat(frontend): swipeable tabs + responsive labels (#693)                         |
+| #736 | fix(frontend): remove global overflow-x-hidden (#697)                             |
+| #732 | fix(frontend): standardize focus-visible everywhere (#689)                        |
+| #745 | fix(frontend): scanner camera permission recovery + scan feedback (#702)          |
+| #738 | refactor(frontend): centralize score band colors into utility (#688)              |
+| #735 | fix(frontend): sticky save button bar on settings pages (#696)                    |
+| #743 | feat(frontend): group MoreDrawer into sections with swipe-to-dismiss (#692)       |
+| #737 | fix(frontend): replace sub-10px font sizes with readable alternatives (#686)      |
+| #731 | fix(frontend): eliminate 80+ hardcoded Tailwind color classes — CSS tokens (#682) |
 
 ## Known Issues & Broken Items
 
@@ -68,25 +68,25 @@ All 26 open PRs merged into main in a single session:
 
 ## CI Gate Status (main branch)
 
-| Gate         | Status | Notes                                                 |
-| ------------ | ------ | ----------------------------------------------------- |
-| pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke  |
-| main-gate    | ✅      | Last runs all success                                 |
-| qa.yml       | ✅      | 752/752 checks passing                                |
-| dep-audit    | ✅      | 0 high/critical vulnerabilities                       |
-| python-lint  | ✅      | 0 ruff errors                                         |
-| quality-gate | ✅      | All checks passing (fixed in #679)                    |
-| nightly      | ✅      | Data audit fix shipped (#560)                         |
+| Gate         | Status | Notes                                                |
+| ------------ | ------ | ---------------------------------------------------- |
+| pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke |
+| main-gate    | ✅      | Last runs all success                                |
+| qa.yml       | ✅      | 752/752 checks passing                               |
+| dep-audit    | ✅      | 0 high/critical vulnerabilities                      |
+| python-lint  | ✅      | 0 ruff errors                                        |
+| quality-gate | ✅      | All checks passing (fixed in #679)                   |
+| nightly      | ✅      | Data audit fix shipped (#560)                        |
 
 ## Open Issues (16 total)
 
 | Issue | Priority | Summary                                                              |
 | ----- | -------- | -------------------------------------------------------------------- |
 | #713  | P1       | Create DE Oils & Vinegars + Spreads & Dips pipelines for DE parity   |
-| #722  | P2       | Comprehensive CI/CD workflow audit and quality gate tightening        |
+| #722  | P2       | Comprehensive CI/CD workflow audit and quality gate tightening       |
 | #721  | P2       | Test suite reconciliation — **IN PROGRESS** (QA counts reconciled)   |
 | #720  | P2       | Update stale docs — README, CHANGELOG, copilot-instructions          |
-| #717  | P2       | Automated data coverage thresholds and regression detection           |
+| #717  | P2       | Automated data coverage thresholds and regression detection          |
 | #712  | P2       | Dark mode visual audit — every page at 320px and 1280px              |
 | #705  | P2       | Recipe pages — search, active filter chips, product-ingredient links |
 | #704  | P2       | Streamline compare workflow — add-from-anywhere + floating badge     |
@@ -107,16 +107,17 @@ All 26 open PRs merged into main in a single session:
 - [x] PR #770 merged — enrichment for #714/#715 (eee3a94)
 - [x] #721 — Test suite reconciliation (PR #771 merged)
 - [x] Implement #717 — automated data coverage thresholds (PR #772 pending)
+- [x] #778 — Expand DE categories (Plant-Based 19, Snacks 29, Cereals 36 — OFF API ceiling)
 - [ ] Deploy 26-PR changes to production (staging validation first)
-- [ ] Merge PR #771 (#721 QA count reconciliation)
+- [ ] Implement remaining open issues (#796, #722, #720, etc.)
 
 ## Key Metrics Snapshot
 
-- **Products (production):** 2,438 active (1,332 PL + 1,102 DE across 22 PL + 21 DE categories)
+- **Products (local):** 2,602 active (1,380 PL + 1,222 DE across 22 PL + 21 DE categories)
 - **Deprecated products:** 286 (229 PL + 57 DE)
 - **QA checks:** 756/756 passing (48 suites) — local DB
 - **Negative tests:** 23/23 caught
-- **EAN coverage:** 2,261/2,264 with EAN (99.9%) — local DB
+- **EAN coverage:** 2,595/2,595 with EAN (100%) — local DB
 - **Ingredient refs:** 5,882 (local, post-enrichment)
 - **Product-ingredient links:** 31,680 (local, post-enrichment)
 - **Allergen contains:** 2,977 (local, post-enrichment)

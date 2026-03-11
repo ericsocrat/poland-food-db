@@ -1,6 +1,6 @@
-﻿-- PIPELINE (Plant-Based & Alternatives): store availability
+-- PIPELINE (Plant-Based & Alternatives): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-11
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -28,6 +28,7 @@ FROM (
     ('Rügenwalder Mühle', 'Vegane Mühlen Nuggets Klassisch', 'Penny'),
     ('Rügenwalder Mühle', 'Vegane Mühlen Nuggets Klassisch', 'Kaufland'),
     ('DmBio', 'Maiswaffeln', 'dm'),
+    ('Vemondo', 'Tofu Natur', 'Lidl'),
     ('REWE Bio +vegan', 'Räucher-Tofu', 'REWE'),
     ('Rewe', 'Falafel bällchen', 'REWE'),
     ('Like Meat', 'Like Grilled Chicken', 'REWE'),
@@ -36,8 +37,11 @@ FROM (
     ('Baresa', 'Tomatenmark 2-Fach Konzentriert', 'Lidl'),
     ('Freshona', 'Cornichons Gurken', 'Lidl'),
     ('Freshona', 'Cornichons Gurken', 'Norma'),
-    ('REWE Bio', 'Tofu Natur', 'REWE'),
-    ('Baresa', 'Tomaten passiert', 'Lidl')
+    ('Rewe Bio', 'Tofu Natur', 'REWE'),
+    ('Baresa', 'Tomaten passiert', 'Lidl'),
+    ('Garden Gourmet', 'Sensational Burger aus Sojaprotein', 'REWE'),
+    ('Sondey', 'Mais Waffeln mit Meersalz Bio', 'Lidl'),
+    ('Barilla', 'Fusilli 98', 'Lidl')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'DE' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Plant-Based & Alternatives' AND p.is_deprecated IS NOT TRUE

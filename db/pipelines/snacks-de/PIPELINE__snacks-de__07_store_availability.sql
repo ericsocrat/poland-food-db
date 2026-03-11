@@ -1,6 +1,6 @@
 -- PIPELINE (Snacks): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-11
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -27,8 +27,9 @@ FROM (
     ('Lorenz', 'Clubs Cracker', 'Edeka'),
     ('Lorenz', 'Clubs Cracker', 'REWE'),
     ('Lorenz', 'Clubs Cracker', 'Kaufland'),
-    ('Corny', 'Corny Schoko', 'Netto'),
     ('Seeberger', 'Nuts''n Berries', 'Edeka'),
+    ('Corny', 'Nussvoll Nuss &Traube', 'REWE'),
+    ('Corny', 'Milch Classic', 'REWE'),
     ('Tuc', 'Tuc Original', 'REWE'),
     ('Pågen', 'Gifflar Cannelle', 'Aldi'),
     ('Alnatura', 'Linsenwaffeln', 'Edeka'),

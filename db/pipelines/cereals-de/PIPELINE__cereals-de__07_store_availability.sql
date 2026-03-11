@@ -1,6 +1,6 @@
-﻿-- PIPELINE (Cereals): store availability
+-- PIPELINE (Cereals): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-11
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -10,9 +10,9 @@ SELECT
   'pipeline'
 FROM (
   VALUES
-    ('Kölln', 'Haferflocken Blütenzart', 'Edeka'),
-    ('Kölln', 'Haferflocken Blütenzart', 'REWE'),
-    ('Kölln', 'Haferflocken Blütenzart', 'Tegut'),
+    ('Kölln', 'Haferflocken, Blütenzarte Köllnflocken', 'Edeka'),
+    ('Kölln', 'Haferflocken, Blütenzarte Köllnflocken', 'REWE'),
+    ('Kölln', 'Haferflocken, Blütenzarte Köllnflocken', 'Tegut'),
     ('Kölln', 'E Knusprige Haferfleks Klassik Kölln', 'Aldi'),
     ('Kölln', 'E Knusprige Haferfleks Klassik Kölln', 'Edeka'),
     ('Lorenz', 'Erdnußlocken Classic', 'Aldi'),
@@ -46,12 +46,16 @@ FROM (
     ('Wholey', 'Chillo Pillows - Bio-Kakaokissen', 'REWE'),
     ('Nestlé', 'FITNESS Cerealien', 'REWE'),
     ('Gut & Günstig', 'Nougat Bits', 'Edeka'),
-    ('REWE Bio', 'Rewe Bio Haferflocken zart', 'REWE'),
-    ('REWE Bio', 'Dinkel Flakes', 'REWE'),
+    ('Rewe Bio', 'Rewe Bio Haferflocken zart', 'REWE'),
+    ('Rewe Bio', 'Dinkel Flakes', 'REWE'),
     ('De-Vau-Ge', 'Cornflakes - Nougat Bits', 'REWE'),
     ('Edeka', 'Haferflocken extra zart', 'Edeka'),
     ('Nestlé', 'NESTLE NESQUIK WAVES Cerealien', 'Lidl'),
-    ('Nestlé', 'NESTLE NESQUIK WAVES Cerealien', 'REWE')
+    ('Nestlé', 'NESTLE NESQUIK WAVES Cerealien', 'REWE'),
+    ('Kellogg''s', 'Kellogg''s Smacks', 'Aldi'),
+    ('Kellogg''s', 'Kellogg''s Smacks', 'Edeka'),
+    ('Kellogg''s', 'Kellogg''s Smacks', 'REWE'),
+    ('Ja!', 'Chico Chips', 'REWE')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'DE' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Cereals' AND p.is_deprecated IS NOT TRUE

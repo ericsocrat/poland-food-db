@@ -1,12 +1,12 @@
-﻿-- PIPELINE (Cereals): scoring
--- Generated: 2026-03-04
+-- PIPELINE (Cereals): scoring
+-- Generated: 2026-03-11
 
 -- 2. Nutri-Score
 update products p set
   nutri_score_label = d.ns
 from (
   values
-    ('Kölln', 'Haferflocken Blütenzart', 'A'),
+    ('Kölln', 'Haferflocken, Blütenzarte Köllnflocken', 'A'),
     ('Kölln', 'E Knusprige Haferfleks Klassik Kölln', 'C'),
     ('Lorenz', 'Erdnußlocken Classic', 'D'),
     ('Kölln', 'Kernige Haferflocken', 'A'),
@@ -22,21 +22,22 @@ from (
     ('Golden Bridge', 'Haferflocken kernig', 'A'),
     ('EDEKA Bio', 'Cornflakes ungesüßt', 'B'),
     ('REWE Bio', 'Dinkel gepufft mit Honig gesüßt', 'B'),
-    ('Dm Bio', 'Dinkel Gepufft', 'B'),
+    ('EnerBiO', 'Dinkel Gepufft', 'B'),
+    ('DmBio', 'Fruchtringe', 'A'),
     ('Ja', 'Haferflocken', 'A'),
     ('Nestlé', 'NESTLE NESQUIK Cerealien', 'C'),
     ('Crownfield', 'Flocons d''Avoine', 'A'),
     ('Wholey', 'Chillo Pillows - Bio-Kakaokissen', 'C'),
     ('Nestlé', 'FITNESS Cerealien', 'A'),
     ('Gut & Günstig', 'Nougat Bits', 'D'),
-    ('REWE Bio', 'Rewe Bio Haferflocken zart', 'A'),
-    ('REWE Bio', 'Dinkel Flakes', 'A'),
+    ('Rewe Bio', 'Rewe Bio Haferflocken zart', 'A'),
+    ('Rewe Bio', 'Dinkel Flakes', 'A'),
     ('De-Vau-Ge', 'Cornflakes - Nougat Bits', 'E'),
     ('Edeka', 'Haferflocken extra zart', 'A'),
     ('Nestlé', 'NESTLE NESQUIK WAVES Cerealien', 'C'),
-    ('Alpro', 'Hafer Milch', 'A'),
-    ('Oatly!', 'Haferdrink Barista Bio', 'A'),
-    ('Oatly!', 'Hafer Barista light', 'A'),
+    ('Kellogg''s', 'Kellogg''s Smacks', 'D'),
+    ('Ja!', 'Chico Chips', 'B'),
+    ('Oat-Ly!', 'Hafer Barista light', 'A'),
     ('Alnatura', 'Dinkel Crunchy', 'C'),
     ('Oatly!', 'Oatly Hafer Barista Edition', 'A'),
     ('Weetabix', 'Weetabix produit à base de blé complet 100%', 'A'),
@@ -49,7 +50,7 @@ update products p set
   nova_classification = d.nova
 from (
   values
-    ('Kölln', 'Haferflocken Blütenzart', '1'),
+    ('Kölln', 'Haferflocken, Blütenzarte Köllnflocken', '1'),
     ('Kölln', 'E Knusprige Haferfleks Klassik Kölln', '4'),
     ('Lorenz', 'Erdnußlocken Classic', '4'),
     ('Kölln', 'Kernige Haferflocken', '1'),
@@ -65,21 +66,22 @@ from (
     ('Golden Bridge', 'Haferflocken kernig', '1'),
     ('EDEKA Bio', 'Cornflakes ungesüßt', '4'),
     ('REWE Bio', 'Dinkel gepufft mit Honig gesüßt', '3'),
-    ('Dm Bio', 'Dinkel Gepufft', '3'),
+    ('EnerBiO', 'Dinkel Gepufft', '3'),
+    ('DmBio', 'Fruchtringe', '1'),
     ('Ja', 'Haferflocken', '1'),
     ('Nestlé', 'NESTLE NESQUIK Cerealien', '4'),
     ('Crownfield', 'Flocons d''Avoine', '1'),
     ('Wholey', 'Chillo Pillows - Bio-Kakaokissen', '3'),
     ('Nestlé', 'FITNESS Cerealien', '4'),
     ('Gut & Günstig', 'Nougat Bits', '4'),
-    ('REWE Bio', 'Rewe Bio Haferflocken zart', '1'),
-    ('REWE Bio', 'Dinkel Flakes', '3'),
+    ('Rewe Bio', 'Rewe Bio Haferflocken zart', '1'),
+    ('Rewe Bio', 'Dinkel Flakes', '3'),
     ('De-Vau-Ge', 'Cornflakes - Nougat Bits', '4'),
     ('Edeka', 'Haferflocken extra zart', '1'),
     ('Nestlé', 'NESTLE NESQUIK WAVES Cerealien', '4'),
-    ('Alpro', 'Hafer Milch', '4'),
-    ('Oatly!', 'Haferdrink Barista Bio', '3'),
-    ('Oatly!', 'Hafer Barista light', '3'),
+    ('Kellogg''s', 'Kellogg''s Smacks', '4'),
+    ('Ja!', 'Chico Chips', '4'),
+    ('Oat-Ly!', 'Hafer Barista light', '3'),
     ('Alnatura', 'Dinkel Crunchy', '3'),
     ('Oatly!', 'Oatly Hafer Barista Edition', '3'),
     ('Weetabix', 'Weetabix produit à base de blé complet 100%', '3'),

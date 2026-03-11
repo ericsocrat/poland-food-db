@@ -57,6 +57,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 - Reconcile `CURRENT_STATE.md` with live data — product counts, issue inventory,
   milestones M29–M34, CI status, key metrics (#774)
 
+### Data
+
+- Expand 3 underpopulated DE categories — Plant-Based & Alternatives (16→19),
+  Snacks (26→29), Cereals (33→36). OFF API data availability ceiling reached;
+  these are the maximum validated German products available. Total DE active
+  products: 1,222. EAN coverage: 2,595/2,595 (100%) (#778)
+
 ---
 
 ## [0.2.0] — 2026-03-09
