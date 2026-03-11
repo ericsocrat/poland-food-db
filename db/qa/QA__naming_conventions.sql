@@ -59,13 +59,13 @@ WHERE is_deprecated IS NOT TRUE
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 6. No trailing punctuation in product names (period, comma, semicolon)
---    Parentheses and % are acceptable (e.g. "Czekolada 80%")
+--    Parentheses, % and ! are acceptable (e.g. "80%", "Hot Cheese Dip!")
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '6. no trailing punctuation in product_name' AS check_name,
        COUNT(*) AS violations
 FROM products
 WHERE is_deprecated IS NOT TRUE
-  AND product_name ~ '[.,;:!]\s*$';
+  AND product_name ~ '[.,;:]\s*$';
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 7. Product names should not contain tab or newline characters

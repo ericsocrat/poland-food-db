@@ -264,7 +264,8 @@ WHERE p.is_deprecated IS NOT TRUE
     'Plant-Based & Alternatives',
     'Condiments',
     'Dairy',
-    'Oils & Vinegars'
+    'Oils & Vinegars',
+    'Baby'  -- ghee/clarified butter is correct at ~900 kcal
   );
 
 -- ═══════════════════════════════════════════════════════════════════════════

@@ -221,6 +221,7 @@ WHERE p.product_name = 'Płatki owsiane górskie'
 --          v3.3: protein 0g (bonus 0) + fibre 0g (bonus 0) → density 0 → no change
 --          Score rose from ~4 to ~13 after ingredient enrichment added additive
 --          and concern data (8 additives, concern_score=70).
+--          Guard: per-product ingredient check — DE enrichment data may be missing.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.brand, p.product_name,
        p.unhealthiness_score,
@@ -231,7 +232,7 @@ WHERE p.product_name = 'Coca-Cola Zero'
   AND p.country = 'DE'
   AND p.is_deprecated IS NOT TRUE
   AND p.unhealthiness_score::int NOT BETWEEN 11 AND 16
-  AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
+  AND EXISTS (SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 15: Known product regression test (Piątnica Skyr Naturalny)
