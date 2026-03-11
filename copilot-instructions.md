@@ -1010,7 +1010,7 @@ These are **anchor products** whose scores must remain stable. If a scoring chan
 - Alpro Sojadrink Ungesüßt (DE) ≈ 6 (drinks, minimal fat/sugar, low penalty)
 - Chipsfrisch ungarisch (DE) ≈ 25 (chips, fried, moderate fat, protein credit)
 - Golden Seafood Wildlachsfilet (DE) ≈ 3 (seafood, high protein, minimal penalties)
-- Asia Green Garden Instant-Nudeln Beef (DE) ≈ 55 (instant noodles, 10 additives, high penalty)
+- Asia Green Garden Instant-Nudeln Beef (DE) ≈ 45 (instant noodles, no ingredient data, high sat fat + salt)
 
 Run QA after **every** schema change, data update, or scoring formula adjustment.
 
