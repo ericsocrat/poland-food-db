@@ -15,13 +15,13 @@ export function WatchlistSkeleton() {
             variant="rect"
             width={48}
             height={48}
-            className="!rounded-lg"
+            className="rounded-lg!"
           />
           <div className="flex-1 space-y-1">
             <Skeleton variant="text" width="55%" height={14} />
             <Skeleton variant="text" width="35%" height={12} />
           </div>
-          <Skeleton variant="rect" width={64} height={32} className="!rounded-md" />
+          <Skeleton variant="rect" width={64} height={32} className="rounded-md!" />
         </div>
       ))}
     </SkeletonContainer>

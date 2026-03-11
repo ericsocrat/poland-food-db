@@ -668,7 +668,7 @@ function OverviewTab({ profile }: Readonly<{ profile: ProductProfile }>) {
           <div className="flex items-center gap-2 rounded-lg border border-dashed border-info-border bg-info-bg/50 px-3 py-3">
             <Info
               size={18}
-              className="flex-shrink-0 text-info-text"
+              className="shrink-0 text-info-text"
               aria-hidden="true"
             />
             <p className="text-sm text-info-text">
@@ -1025,7 +1025,7 @@ function AlternativeCard({ alt }: Readonly<{ alt: ProfileAlternative }>) {
     <Link href={`/app/product/${alt.product_id}`}>
       <div className="card hover-lift-press flex items-center gap-3">
         <div
-          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].bg} ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].color}`}
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-bold ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].bg} ${SCORE_BANDS[scoreBandFromScore(alt.unhealthiness_score)].color}`}
         >
           {toTryVitScore(alt.unhealthiness_score)}
         </div>

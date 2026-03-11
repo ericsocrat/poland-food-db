@@ -1,6 +1,287 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --breakpoint-*: initial;
+  --breakpoint-xs: 375px;
+  --breakpoint-sm: 640px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1280px;
+  --breakpoint-2xl: 1440px;
+
+  --color-brand-50: #f0fdf4;
+  --color-brand-100: #dcfce7;
+  --color-brand-200: #bbf7d0;
+  --color-brand-300: #86efac;
+  --color-brand-400: #4ade80;
+  --color-brand-500: #22c55e;
+  --color-brand-600: #15803d;
+  --color-brand-700: #166534;
+  --color-brand-800: #14532d;
+  --color-brand-900: #14532d;
+  --color-brand: var(--color-brand);
+  --color-brand-hover: var(--color-brand-hover);
+  --color-brand-subtle: var(--color-brand-subtle);
+  --color-brand-primary: var(--color-brand-primary);
+  --color-brand-primary-dark: var(--color-brand-primary-dark);
+  --color-brand-secondary: var(--color-brand-secondary);
+  --color-brand-accent: var(--color-brand-accent);
+
+  --color-nutri-A: var(--color-nutri-A);
+  --color-nutri-B: var(--color-nutri-B);
+  --color-nutri-C: var(--color-nutri-C);
+  --color-nutri-D: var(--color-nutri-D);
+  --color-nutri-E: var(--color-nutri-E);
+
+  --color-surface: var(--color-surface);
+  --color-surface-subtle: var(--color-surface-subtle);
+  --color-surface-muted: var(--color-surface-muted);
+  --color-surface-overlay: var(--color-surface-overlay);
+
+  --color-foreground: var(--color-text-primary);
+  --color-foreground-secondary: var(--color-text-secondary);
+  --color-foreground-muted: var(--color-text-muted);
+  --color-foreground-inverse: var(--color-text-inverse);
+
+  --color-neutral-50: var(--color-neutral-50);
+  --color-neutral-200: var(--color-neutral-200);
+  --color-neutral-400: var(--color-neutral-400);
+  --color-neutral-600: var(--color-neutral-600);
+  --color-neutral-900: var(--color-neutral-900);
+
+  --color-score-green: var(--color-score-green);
+  --color-score-yellow: var(--color-score-yellow);
+  --color-score-orange: var(--color-score-orange);
+  --color-score-red: var(--color-score-red);
+  --color-score-darkred: var(--color-score-darkred);
+  --color-score-green-text: var(--color-score-green-text);
+  --color-score-yellow-text: var(--color-score-yellow-text);
+  --color-score-orange-text: var(--color-score-orange-text);
+  --color-score-red-text: var(--color-score-red-text);
+  --color-score-darkred-text: var(--color-score-darkred-text);
+
+  --color-nutrient-low: var(--color-nutrient-low);
+  --color-nutrient-medium: var(--color-nutrient-medium);
+  --color-nutrient-high: var(--color-nutrient-high);
+
+  --color-nova-1: var(--color-nova-1);
+  --color-nova-2: var(--color-nova-2);
+  --color-nova-3: var(--color-nova-3);
+  --color-nova-4: var(--color-nova-4);
+
+  --color-confidence-high: var(--color-confidence-high);
+  --color-confidence-medium: var(--color-confidence-medium);
+  --color-confidence-low: var(--color-confidence-low);
+
+  --color-allergen-present: var(--color-allergen-present);
+  --color-allergen-traces: var(--color-allergen-traces);
+  --color-allergen-free: var(--color-allergen-free);
+
+  --color-success: var(--color-success);
+  --color-success-bg: var(--color-success-bg);
+  --color-success-text: var(--color-success-text);
+  --color-success-border: var(--color-success-border);
+
+  --color-warning: var(--color-warning);
+  --color-warning-bg: var(--color-warning-bg);
+  --color-warning-text: var(--color-warning-text);
+  --color-warning-border: var(--color-warning-border);
+
+  --color-error: var(--color-error);
+  --color-error-bg: var(--color-danger-bg);
+  --color-error-text: var(--color-danger-text);
+  --color-error-border: var(--color-danger-border);
+
+  --color-info: var(--color-info);
+  --color-info-bg: var(--color-info-bg);
+  --color-info-text: var(--color-info-text);
+  --color-info-border: var(--color-info-border);
+
+  --color-tag-purple-bg: var(--color-tag-purple-bg);
+  --color-tag-purple-text: var(--color-tag-purple-text);
+  --color-tag-emerald-bg: var(--color-tag-emerald-bg);
+  --color-tag-emerald-text: var(--color-tag-emerald-text);
+
+  --color-chart-blue: var(--color-chart-blue);
+  --color-chart-amber: var(--color-chart-amber);
+
+  --color-bonus-text: var(--color-bonus-text);
+
+  --color-band-good-bg: var(--color-band-good-bg);
+  --color-band-good-border: var(--color-band-good-border);
+  --color-band-caution-bg: var(--color-band-caution-bg);
+  --color-band-caution-border: var(--color-band-caution-border);
+
+  --color-chip-remove-hover: var(--color-chip-remove-hover);
+
+  --text-xxs: 0.6875rem;
+  --text-xxs--line-height: 1rem;
+  --border-color-strong: var(--color-border-strong);
+
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+
+  --transition-duration-instant: var(--duration-instant);
+  --transition-duration-fast: var(--duration-fast);
+  --transition-duration-normal: var(--duration-normal);
+  --transition-duration-slow: var(--duration-slow);
+
+  --ease-standard: var(--ease-standard);
+  --ease-decelerate: var(--ease-decelerate);
+  --ease-accelerate: var(--ease-accelerate);
+  --ease-spring: var(--ease-spring);
+
+  --animate-fade-in-up: fade-in-up var(--duration-normal) var(--ease-decelerate)
+    both;
+  --animate-slide-in-up: slide-in-up var(--duration-normal)
+    var(--ease-decelerate) both;
+  --animate-scale-in: scale-in var(--duration-fast) var(--ease-decelerate) both;
+  --animate-chip-enter: chip-enter var(--duration-fast) var(--ease-decelerate)
+    both;
+  --animate-trust-verified: trust-verified 0.6s var(--ease-decelerate) 0.3s both;
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(0.5rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes slide-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.92);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes chip-enter {
+    from {
+      opacity: 0;
+      transform: scale(0.85);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+  @keyframes trust-verified {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.15);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-border);
+  }
+}
+
+@utility input-field {
+  @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5 text-sm text-foreground shadow-sm placeholder:text-foreground-muted focus-visible:border-brand focus-visible:ring-1 focus-visible:ring-brand focus-visible:outline-hidden;
+}
+
+@utility card {
+  @apply rounded-xl border bg-surface p-3 shadow-sm sm:p-4 lg:p-5;
+}
+
+@utility transition-interactive {
+  /* ── Motion Utility Classes (#61) ── */
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    opacity var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+  will-change: transform;
+}
+
+@utility hover-lift {
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    opacity var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(
+        --shadow-md,
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -2px rgba(0, 0, 0, 0.1)
+      );
+    }
+  }
+}
+
+@utility press-scale {
+  transition: transform var(--duration-instant) var(--ease-standard);
+
+  &:active {
+    transform: scale(0.97);
+  }
+}
+
+@utility hover-lift-press {
+  transition:
+    transform var(--duration-fast) var(--ease-standard),
+    box-shadow var(--duration-fast) var(--ease-standard);
+  cursor: pointer;
+
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: var(
+        --shadow-md,
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -2px rgba(0, 0, 0, 0.1)
+      );
+    }
+  }
+
+  &:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: none;
+  }
+}
 
 @layer base {
   :root {
@@ -427,94 +708,41 @@
   }
 }
 
-/* ── Logo theme switching ──────────────────────────────────────────────────── */
-/* Pure CSS dark-mode swap: .logo-light visible by default, .logo-dark hidden.
+@layer utilities {
+  /* ── Logo theme switching ──────────────────────────────────────────────────── */
+  /* Pure CSS dark-mode swap: .logo-light visible by default, .logo-dark hidden.
    Flipped when [data-theme="dark"] is set or when system prefers dark
    (before the JS theme script runs). */
-.logo-dark {
-  display: none;
-}
-
-[data-theme="dark"] .logo-light {
-  display: none;
-}
-
-[data-theme="dark"] .logo-dark {
-  display: inline;
-}
-
-/* System-preference fallback (mirrors the variable override block above) */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) .logo-light {
+  .logo-dark {
     display: none;
   }
 
-  :root:not([data-theme="light"]) .logo-dark {
+  [data-theme='dark'] .logo-light {
+    display: none;
+  }
+
+  [data-theme='dark'] .logo-dark {
     display: inline;
   }
-}
 
-/* ── Auth page illustration panel ──────────────────────────────────────────── */
-.auth-illustration {
-  background: linear-gradient(135deg,
+  /* System-preference fallback (mirrors the variable override block above) */
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) .logo-light {
+      display: none;
+    }
+
+    :root:not([data-theme='light']) .logo-dark {
+      display: inline;
+    }
+  }
+
+  /* ── Auth page illustration panel ──────────────────────────────────────────── */
+  .auth-illustration {
+    background: linear-gradient(
+      135deg,
       var(--color-brand-secondary) 0%,
-      var(--color-surface) 100%);
-}
-
-@layer components {
-  .input-field {
-    @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5 text-sm text-foreground shadow-sm placeholder:text-foreground-muted focus-visible:border-brand focus-visible:ring-1 focus-visible:ring-brand focus-visible:outline-none;
-  }
-
-  .card {
-    @apply rounded-xl border bg-surface p-3 shadow-sm sm:p-4 lg:p-5;
-  }
-
-  /* ── Motion Utility Classes (#61) ── */
-  .transition-interactive {
-    transition: transform var(--duration-fast) var(--ease-standard),
-      opacity var(--duration-fast) var(--ease-standard),
-      box-shadow var(--duration-fast) var(--ease-standard);
-    will-change: transform;
-  }
-
-  .hover-lift {
-    transition: transform var(--duration-fast) var(--ease-standard),
-      opacity var(--duration-fast) var(--ease-standard),
-      box-shadow var(--duration-fast) var(--ease-standard);
-  }
-
-  @media (hover: hover) {
-    .hover-lift:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
-    }
-  }
-
-  .press-scale {
-    transition: transform var(--duration-instant) var(--ease-standard);
-  }
-
-  .press-scale:active {
-    transform: scale(0.97);
-  }
-
-  .hover-lift-press {
-    transition: transform var(--duration-fast) var(--ease-standard),
-      box-shadow var(--duration-fast) var(--ease-standard);
-    cursor: pointer;
-  }
-
-  @media (hover: hover) {
-    .hover-lift-press:hover {
-      transform: translateY(-2px);
-      box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1));
-    }
-  }
-
-  .hover-lift-press:active {
-    transform: translateY(0) scale(0.97);
-    box-shadow: none;
+      var(--color-surface) 100%
+    );
   }
 }
 

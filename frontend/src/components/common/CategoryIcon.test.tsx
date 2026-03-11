@@ -1,9 +1,9 @@
-import { describe, it, expect } from "vitest";
 import { render } from "@testing-library/react";
+import { describe, expect, it } from "vitest";
 import {
-  CategoryIcon,
-  hasCategoryIcon,
-  getSupportedCategorySlugs,
+    CategoryIcon,
+    getSupportedCategorySlugs,
+    hasCategoryIcon,
 } from "./CategoryIcon";
 
 describe("CategoryIcon", () => {

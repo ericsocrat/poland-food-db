@@ -30,7 +30,7 @@ export function ProductProfileSkeleton() {
                 variant="rect"
                 width="100%"
                 height={200}
-                className="!rounded-xl"
+                className="rounded-xl!"
               />
             </div>
 
@@ -40,7 +40,7 @@ export function ProductProfileSkeleton() {
                 variant="circle"
                 width={64}
                 height={64}
-                className="flex-shrink-0"
+                className="shrink-0"
               />
               <div className="min-w-0 flex-1 space-y-2">
                 {/* Product name */}
@@ -55,7 +55,7 @@ export function ProductProfileSkeleton() {
                       variant="rect"
                       width={36}
                       height={36}
-                      className="!rounded-lg"
+                      className="rounded-lg!"
                     />
                   ))}
                 </div>
@@ -64,9 +64,9 @@ export function ProductProfileSkeleton() {
 
             {/* Badge row: Nutri-Score, NOVA, score band */}
             <div className="mt-2 flex items-center gap-2">
-              <Skeleton variant="rect" width={56} height={22} className="!rounded-full" />
-              <Skeleton variant="rect" width={64} height={22} className="!rounded-full" />
-              <Skeleton variant="rect" width={60} height={22} className="!rounded-full" />
+              <Skeleton variant="rect" width={56} height={22} className="rounded-full!" />
+              <Skeleton variant="rect" width={64} height={22} className="rounded-full!" />
+              <Skeleton variant="rect" width={60} height={22} className="rounded-full!" />
             </div>
 
             {/* Metadata row */}
@@ -99,7 +99,7 @@ export function ProductProfileSkeleton() {
                   variant="rect"
                   width="24%"
                   height={48}
-                  className="!rounded-lg"
+                  className="rounded-lg!"
                 />
               ))}
             </div>
@@ -114,7 +114,7 @@ export function ProductProfileSkeleton() {
                   variant="rect"
                   width={48}
                   height={48}
-                  className="flex-shrink-0 !rounded-lg"
+                  className="shrink-0 rounded-lg!"
                 />
                 <div className="flex-1 space-y-1">
                   <Skeleton variant="text" width="70%" height={14} />
@@ -129,7 +129,7 @@ export function ProductProfileSkeleton() {
             variant="rect"
             width="100%"
             height={40}
-            className="!rounded-lg"
+            className="rounded-lg!"
           />
         </div>
       </div>

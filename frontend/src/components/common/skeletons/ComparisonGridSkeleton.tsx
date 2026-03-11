@@ -18,13 +18,13 @@ export function ComparisonGridSkeleton() {
             variant="rect"
             width={80}
             height={28}
-            className="!rounded-lg"
+            className="rounded-lg!"
           />
           <Skeleton
             variant="rect"
             width={60}
             height={28}
-            className="!rounded-lg"
+            className="rounded-lg!"
           />
         </div>
       </div>
@@ -36,7 +36,7 @@ export function ComparisonGridSkeleton() {
           variant="rect"
           width={60}
           height={28}
-          className="!rounded-lg"
+          className="rounded-lg!"
         />
       </div>
 
@@ -53,7 +53,7 @@ export function ComparisonGridSkeleton() {
                 variant="rect"
                 width="100%"
                 height={60}
-                className="!rounded-lg"
+                className="rounded-lg!"
               />
               <Skeleton variant="text" width="80%" height={14} />
               <Skeleton variant="text" width="60%" height={12} />

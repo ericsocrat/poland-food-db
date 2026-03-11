@@ -1,107 +1,70 @@
+import fs from "fs";
+import path from "path";
 import { describe, expect, it } from "vitest";
-// eslint-disable-next-line no-restricted-imports -- tailwind.config lives outside src/, no @/ alias available
-import tailwindConfig from "../../tailwind.config";
 
 // ─── Responsive Layout Tests ────────────────────────────────────────────────
 // Verifies that breakpoint tokens, container query infrastructure, and
 // touch target utilities are correctly configured.
 // Issue #59: Responsive Layout Polish — Mobile-First Breakpoints + Touch Targets
+//
+// Tailwind v4: breakpoints and design tokens live in @theme {} inside globals.css
+// (tailwind.config.ts was removed during the v4 migration).
+
+const css = fs.readFileSync(
+  path.resolve(__dirname, "../styles/globals.css"),
+  "utf-8",
+);
 
 describe("Tailwind breakpoint tokens", () => {
-  const screens =
-    tailwindConfig.theme && "screens" in tailwindConfig.theme
-      ? (tailwindConfig.theme.screens as Record<string, string>)
-      : {};
-
   it("defines xs breakpoint at 375px", () => {
-    expect(screens.xs).toBe("375px");
+    expect(css).toContain("--breakpoint-xs: 375px");
   });
 
   it("defines sm breakpoint at 640px", () => {
-    expect(screens.sm).toBe("640px");
+    expect(css).toContain("--breakpoint-sm: 640px");
   });
 
   it("defines md breakpoint at 768px", () => {
-    expect(screens.md).toBe("768px");
+    expect(css).toContain("--breakpoint-md: 768px");
   });
 
   it("defines lg breakpoint at 1024px", () => {
-    expect(screens.lg).toBe("1024px");
+    expect(css).toContain("--breakpoint-lg: 1024px");
   });
 
   it("defines xl breakpoint at 1280px", () => {
-    expect(screens.xl).toBe("1280px");
+    expect(css).toContain("--breakpoint-xl: 1280px");
   });
 
   it("defines 2xl breakpoint at 1440px", () => {
-    expect(screens["2xl"]).toBe("1440px");
+    expect(css).toContain("--breakpoint-2xl: 1440px");
   });
 
   it("has all 6 breakpoints", () => {
-    expect(Object.keys(screens)).toHaveLength(6);
-  });
-
-  it("breakpoints are ordered by size", () => {
-    const values = Object.values(screens).map((v) => parseInt(v));
-    for (let i = 1; i < values.length; i++) {
-      expect(values[i]).toBeGreaterThan(values[i - 1]);
-    }
+    const breakpoints = css.match(/--breakpoint-(?![\*])\S+:/g) ?? [];
+    expect(breakpoints).toHaveLength(6);
   });
 });
 
-describe("Tailwind container queries plugin", () => {
-  it("includes container-queries plugin", () => {
-    const plugins = tailwindConfig.plugins ?? [];
-    // The plugin is loaded either as a function or as a wrapped plugin object
-    const hasContainerPlugin = plugins.some((plugin) => {
-      if (typeof plugin === "function") {
-        return plugin.name?.includes("container") || true;
-      }
-      if (plugin && typeof plugin === "object" && "handler" in plugin) {
-        return true;
-      }
-      return false;
-    });
-    expect(hasContainerPlugin).toBe(true);
-  });
-});
-
-describe("Tailwind design tokens", () => {
-  const colors =
-    tailwindConfig.theme?.extend?.colors as Record<string, unknown>;
-
+describe("Tailwind design tokens in @theme", () => {
   it("defines surface color tokens", () => {
-    expect(colors.surface).toBeDefined();
-    expect((colors.surface as Record<string, string>).DEFAULT).toBeDefined();
-    expect((colors.surface as Record<string, string>).muted).toBeDefined();
+    expect(css).toContain("--color-surface:");
+    expect(css).toContain("--color-surface-muted:");
   });
 
   it("defines foreground color tokens", () => {
-    expect(colors.foreground).toBeDefined();
-    expect(
-      (colors.foreground as Record<string, string>).DEFAULT,
-    ).toBeDefined();
-    expect(
-      (colors.foreground as Record<string, string>).secondary,
-    ).toBeDefined();
-    expect(
-      (colors.foreground as Record<string, string>).muted,
-    ).toBeDefined();
+    expect(css).toContain("--color-foreground:");
+    expect(css).toContain("--color-foreground-secondary:");
+    expect(css).toContain("--color-foreground-muted:");
   });
 
   it("defines border color tokens", () => {
-    const borderColor = tailwindConfig.theme?.extend?.borderColor as Record<
-      string,
-      string
-    >;
-    expect(borderColor).toBeDefined();
-    expect(borderColor.DEFAULT).toBeDefined();
+    expect(css).toContain("--color-border:");
   });
 
   it("defines brand color palette", () => {
-    expect(colors.brand).toBeDefined();
-    expect((colors.brand as Record<string, string>)["600"]).toBeDefined();
-    expect((colors.brand as Record<string, string>)["700"]).toBeDefined();
+    expect(css).toContain("--color-brand-600:");
+    expect(css).toContain("--color-brand-700:");
   });
 });
 

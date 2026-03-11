@@ -38,7 +38,7 @@ export function InstallAppSection() {
         <div className="flex items-start gap-2 rounded-lg bg-warning-bg p-3 text-sm text-warning-text">
           <Share
             size={16}
-            className="mt-0.5 flex-shrink-0"
+            className="mt-0.5 shrink-0"
             aria-hidden="true"
           />
           <p>{t("pwa.iosInstallHint")}</p>

@@ -398,7 +398,7 @@ export default function SearchPage() {
                   }
                 >
                   <span
-                    className={`relative inline-flex h-4 w-7 flex-shrink-0 items-center rounded-full transition-colors ${
+                    className={`relative inline-flex h-4 w-7 shrink-0 items-center rounded-full transition-colors ${
                       showAvoided ? "bg-brand" : "bg-surface-muted"
                     }`}
                   >
@@ -853,7 +853,7 @@ function ProductRow({
         />
 
         {/* Score badge */}
-        <div className="relative flex-shrink-0">
+        <div className="relative shrink-0">
           <div
             className={`flex h-12 w-12 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
           >
@@ -884,7 +884,7 @@ function ProductRow({
       </Link>
 
       {/* Action buttons — grouped with tighter gap */}
-      <div className="flex flex-shrink-0 items-center gap-1 sm:gap-1.5">
+      <div className="flex shrink-0 items-center gap-1 sm:gap-1.5">
         {/* Health warning badge */}
         <HealthWarningBadge productId={product.product_id} />
 

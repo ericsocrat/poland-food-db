@@ -103,7 +103,7 @@ export default async function AppLayout({
       {/* Main column — offset by sidebar width on xl+ */}
       <div className="flex min-h-screen max-w-full flex-1 flex-col pb-16 lg:pb-0 xl:pl-56">
         {/* Header — visible below xl. Hidden at xl+ where sidebar takes over. */}
-        <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur xl:hidden">
+        <header className="sticky top-0 z-40 border-b border-border bg-surface/80 pt-[env(safe-area-inset-top)] backdrop-blur-sm xl:hidden">
           <div className="mx-auto flex h-12 md:h-14 max-w-5xl items-center justify-between px-4">
             <Logo variant="lockup" size={24} />
             {/* Desktop header nav — lg to xl only */}

@@ -268,6 +268,31 @@ Where `rank` is the product's position when sorted by `unhealthiness_score` asce
 
 **Display:** The frontend shows a "Top X%" badge when the product is in the top 25% of its category (percentile ≥ 75).
 
+### 2.10 Practical Score Distribution
+
+The scoring formula produces a theoretical range of 1–100, but the **observed distribution** across the product catalog is narrower. As of March 2026 (2,593 products across 43 categories in PL + DE):
+
+| Band | Unhealthiness | Count | % |
+|------|--------------|------:|----:|
+| Green (Excellent) | 1–20 | 1,423 | 54.9% |
+| Yellow (Good) | 21–40 | 984 | 37.9% |
+| Orange (Moderate) | 41–60 | 186 | 7.2% |
+| Red (Poor) | 61–80 | 0 | 0% |
+| Dark Red (Bad) | 81–100 | 0 | 0% |
+
+The maximum observed score is 53 (Orange band). The empty Red and Dark Red bands are expected given the catalog composition — packaged supermarket foods in the EU market:
+
+- **Never simultaneously max all 9 penalty factors.** The highest-scoring products hit ceiling on only 2 of 9 factors (saturated fat + sugars), leaving 66% of weight capacity unused.
+- **Trans fat is absent.** EU Regulation 2019/649 caps industrial trans fat at 2 g/100 g. The catalog average is 0.0%, rendering the 0.11 weight factor effectively zero.
+- **Prep method is predominantly "not-applicable"** for packaged goods (no deep-frying).
+- **Additives and ingredient concerns** contribute modestly — even heavily processed products rarely exceed concern score 75 or 10 additives.
+
+This is a deliberate consequence of the multi-factor design: a product must be **comprehensively unhealthy** across many dimensions to score above 60. Single-dimension outliers (e.g., very high sugar but clean on all other factors) correctly remain in the Orange band.
+
+The Red and Dark Red bands serve as **reserve capacity** for future product categories (fast food, energy drinks, ultra-processed convenience meals) and ensure scoring headroom as the catalog expands.
+
+> **See also:** [ADR-009: Scoring Band Calibration](decisions/009-scoring-band-calibration.md) for the full investigation report and decision rationale.
+
 ---
 
 ## 3. Nutri-Score (A–E)

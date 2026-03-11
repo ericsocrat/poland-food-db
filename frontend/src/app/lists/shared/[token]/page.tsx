@@ -50,7 +50,7 @@ export default function SharedListPage() {
     <div className="min-h-screen bg-surface-subtle">
       <SkipLink />
       {/* Header */}
-      <header className="border-b border bg-surface backdrop-blur">
+      <header className="border-b border bg-surface backdrop-blur-sm">
         <div className="mx-auto flex h-14 max-w-3xl items-center justify-between px-4">
           <Logo variant="lockup" size={28} />
           <span className="rounded-full bg-info-bg px-2.5 py-0.5 text-xs font-medium text-info-text">
@@ -101,7 +101,7 @@ export default function SharedListPage() {
                   >
                     {/* Score badge */}
                     <div
-                      className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
+                      className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
                     >
                       {toTryVitScore(item.unhealthiness_score)}
                     </div>
@@ -119,7 +119,7 @@ export default function SharedListPage() {
 
                     {/* Nutri badge */}
                     <span
-                      className={`flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
+                      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold ${nutriClass}`}
                     >
                       {item.nutri_score_label ?? "?"}
                     </span>
