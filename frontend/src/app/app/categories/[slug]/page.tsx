@@ -308,7 +308,7 @@ function ProductRow({
             </p>
           </div>
           <div
-            className={`flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
+            className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-bold ${band.bg} ${band.color}`}
           >
             {toTryVitScore(product.unhealthiness_score)}
           </div>
@@ -332,7 +332,7 @@ function ProductRow({
           size="sm"
         />
         <div
-          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-bold ${band.bg} ${band.color}`}
         >
           {toTryVitScore(product.unhealthiness_score)}
         </div>
@@ -366,7 +366,7 @@ function ProductRow({
       </Link>
 
       {/* Action buttons — outside Link to avoid nested interactive elements */}
-      <div className="flex flex-shrink-0 items-center gap-1">
+      <div className="flex shrink-0 items-center gap-1">
         <HealthWarningBadge productId={product.product_id} />
         <AvoidBadge productId={product.product_id} />
         <AddToListMenu productId={product.product_id} compact />

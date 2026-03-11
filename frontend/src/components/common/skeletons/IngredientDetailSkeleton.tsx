@@ -22,7 +22,7 @@ export function IngredientDetailSkeleton() {
           variant="rect"
           width={56}
           height={56}
-          className="!rounded-xl"
+          className="rounded-xl!"
         />
         <div className="flex-1 space-y-2">
           <Skeleton variant="text" width="10rem" height={22} />
@@ -31,13 +31,13 @@ export function IngredientDetailSkeleton() {
               variant="rect"
               width={72}
               height={24}
-              className="!rounded-full"
+              className="rounded-full!"
             />
             <Skeleton
               variant="rect"
               width={56}
               height={24}
-              className="!rounded-full"
+              className="rounded-full!"
             />
           </div>
         </div>

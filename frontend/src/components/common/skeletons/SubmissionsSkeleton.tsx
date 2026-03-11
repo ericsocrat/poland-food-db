@@ -17,7 +17,7 @@ export function SubmissionsSkeleton() {
               variant="rect"
               width={72}
               height={24}
-              className="!rounded-full"
+              className="rounded-full!"
             />
           </div>
           <Skeleton variant="text" width="70%" height={12} />

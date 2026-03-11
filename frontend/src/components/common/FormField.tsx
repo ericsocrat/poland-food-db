@@ -73,7 +73,7 @@ export function FormField({
       })}
 
       {/* Reserve min-height to prevent layout shift when error appears */}
-      <div className="min-h-[1.25rem]">
+      <div className="min-h-5">
         {error && (
           <p id={errorId} className="mt-1 text-xs text-error" role="alert">
             {error}

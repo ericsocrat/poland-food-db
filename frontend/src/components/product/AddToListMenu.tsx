@@ -140,7 +140,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
             ? t("productActions.removeFromFavorites")
             : t("productActions.addToFavorites")
         }
-        className="touch-target flex-shrink-0 text-xl transition-transform hover:scale-110 disabled:opacity-50"
+        className="touch-target shrink-0 text-xl transition-transform hover:scale-110 disabled:opacity-50"
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
@@ -171,7 +171,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
   }
 
   return (
-    <div ref={ref} className="relative flex-shrink-0">
+    <div ref={ref} className="relative shrink-0">
       <button
         ref={triggerRef}
         type="button"
@@ -224,7 +224,7 @@ export function AddToListMenu({ productId, compact }: AddToListMenuProps) {
                   toggleList(list);
                 }}
               >
-                <span className="flex-shrink-0">
+                <span className="shrink-0">
                   <ListIcon
                     size={16}
                     aria-hidden="true"

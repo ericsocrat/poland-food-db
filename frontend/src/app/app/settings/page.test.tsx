@@ -268,7 +268,7 @@ describe("ProfileSettingsPage", () => {
 
   // ─── Sticky Save Bar ─────────────────────────────────────────────────────
 
-  it("renders save button inside a sticky bar with backdrop blur when dirty", async () => {
+  it("renders save button inside a sticky bar with backdrop blur-sm when dirty", async () => {
     render(<ProfileSettingsPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
 
@@ -283,7 +283,7 @@ describe("ProfileSettingsPage", () => {
 
     expect(stickyBar).toHaveClass("sticky");
     expect(stickyBar).toHaveClass("bottom-0");
-    expect(stickyBar).toHaveClass("backdrop-blur");
+    expect(stickyBar).toHaveClass("backdrop-blur-sm");
   });
 
   // ─── Unsaved changes integration ────────────────────────────────────────

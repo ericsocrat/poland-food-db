@@ -181,71 +181,63 @@ describe("Design System — Token Existence", () => {
   });
 });
 
-describe("Design System — Tailwind Config Mapping", () => {
-  const config = readSource("tailwind.config.ts");
+describe("Design System — Theme Token Mapping (v4)", () => {
+  // In Tailwind v4, config mappings live in the @theme block of globals.css
+  const css = readSource("src/styles/globals.css");
 
-  const EXPECTED_TAILWIND_KEYS = [
-    // Surface
+  const EXPECTED_COLOR_GROUPS = [
     "surface",
-    // Foreground
     "foreground",
-    // Score
     "score",
-    // Nutrient
     "nutrient",
-    // NOVA
     "nova",
-    // Confidence
     "confidence",
-    // Allergen
     "allergen",
-    // Semantic
     "success",
     "warning",
     "error",
     "info",
   ];
 
-  it.each(EXPECTED_TAILWIND_KEYS)(
-    'maps "%s" color group in Tailwind config',
+  it.each(EXPECTED_COLOR_GROUPS)(
+    'registers "%s" color group in @theme',
     (key) => {
-      expect(config).toContain(`${key}:`);
+      expect(css).toContain(`--color-${key}`);
     }
   );
 
   it("maps CSS variables for all semantic color groups", () => {
-    const cssVarRefs = config.match(/var\(--color-[a-z-]+\)/g) ?? [];
+    const cssVarRefs = css.match(/--color-[a-z]+-[a-z]+/g) ?? [];
     expect(cssVarRefs.length).toBeGreaterThanOrEqual(20);
   });
 
-  it("extends borderColor with DEFAULT and strong", () => {
-    expect(config).toContain("borderColor");
-    expect(config).toContain("var(--color-border)");
-    expect(config).toContain("var(--color-border-strong)");
+  it("defines border-color-strong token", () => {
+    expect(css).toContain("--border-color-strong");
+    expect(css).toContain("var(--color-border-strong)");
   });
 
-  it("extends boxShadow with token references", () => {
-    expect(config).toContain("boxShadow");
-    expect(config).toContain("var(--shadow-sm)");
-    expect(config).toContain("var(--shadow-md)");
-    expect(config).toContain("var(--shadow-lg)");
+  it("defines shadow tokens in @theme", () => {
+    expect(css).toContain("--shadow-sm:");
+    expect(css).toContain("--shadow-md:");
+    expect(css).toContain("--shadow-lg:");
   });
 
-  it("extends borderRadius with token references", () => {
-    expect(config).toContain("borderRadius");
-    expect(config).toContain("var(--radius-sm)");
-    expect(config).toContain("var(--radius-lg)");
+  it("defines radius tokens in @theme", () => {
+    expect(css).toContain("--radius-sm:");
+    expect(css).toContain("--radius-md:");
+    expect(css).toContain("--radius-lg:");
+    expect(css).toContain("--radius-xl:");
   });
 
   it("preserves backward-compatible brand-50 through brand-900", () => {
     for (const shade of [50, 100, 200, 300, 400, 500, 600, 700, 800, 900]) {
-      expect(config).toContain(`${shade}:`);
+      expect(css).toContain(`--color-brand-${shade}:`);
     }
   });
 
   it("preserves backward-compatible nutri-A through nutri-E", () => {
-    expect(config).toContain("var(--color-nutri-A)");
-    expect(config).toContain("var(--color-nutri-E)");
+    expect(css).toContain("--color-nutri-A:");
+    expect(css).toContain("--color-nutri-E:");
   });
 });
 
@@ -432,14 +424,14 @@ describe("Design System — Component Classes Use Tokens", () => {
   });
 
   it("input-field uses bg-surface (not bg-white)", () => {
-    const input = css.match(/\.input-field\s*\{([^}]+)\}/s);
+    const input = css.match(/@utility input-field\s*\{([\s\S]*?)\n\}/m);
     expect(input).toBeTruthy();
     expect(input![1]).toContain("bg-surface");
     expect(input![1]).not.toContain("bg-white");
   });
 
   it("card uses bg-surface (not bg-white)", () => {
-    const card = css.match(/\.card\s*\{([^}]+)\}/s);
+    const card = css.match(/@utility card\s*\{([\s\S]*?)\n\}/m);
     expect(card).toBeTruthy();
     expect(card![1]).toContain("bg-surface");
     expect(card![1]).not.toContain("bg-white");

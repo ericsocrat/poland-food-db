@@ -24,7 +24,7 @@ import {
 function HeroSection() {
   const { t } = useTranslation();
   return (
-    <section className="relative overflow-hidden bg-gradient-to-b from-brand/5 to-transparent pb-16 pt-20 sm:pb-24 sm:pt-28">
+    <section className="relative overflow-hidden bg-linear-to-b from-brand/5 to-transparent pb-16 pt-20 sm:pb-24 sm:pt-28">
       <div className="mx-auto max-w-5xl px-4 text-center">
         <div className="mb-6">
           <Logo variant="icon" size={64} />

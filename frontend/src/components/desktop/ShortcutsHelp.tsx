@@ -144,7 +144,7 @@ function ShortcutRow({
       <span className="flex items-center gap-1">
         {keys.map((key, i) => (
           <span key={`${key}-${i}`}>
-            <kbd className="inline-block min-w-[1.5rem] rounded border border-border bg-surface-muted px-1.5 py-0.5 text-center text-xs font-medium text-foreground-secondary">
+            <kbd className="inline-block min-w-6 rounded border border-border bg-surface-muted px-1.5 py-0.5 text-center text-xs font-medium text-foreground-secondary">
               {key}
             </kbd>
             {i < keys.length - 1 && (

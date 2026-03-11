@@ -135,7 +135,7 @@ export default function ScanResultPage() {
       <div className="card">
         <div className="flex items-start gap-4">
           <div
-            className={`flex h-16 w-16 flex-shrink-0 items-center justify-center rounded-xl text-2xl font-bold ${band.bg} ${band.color}`}
+            className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-xl text-2xl font-bold ${band.bg} ${band.color}`}
           >
             {toTryVitScore(product.scores.unhealthiness_score)}
           </div>
@@ -373,7 +373,7 @@ function ScanAlternativeCard({
       <div className="card hover-lift-press flex items-center gap-3 border-success-border">
         {/* Score */}
         <div
-          className={`flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg text-lg font-bold ${altBand.bg} ${altBand.color}`}
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-lg text-lg font-bold ${altBand.bg} ${altBand.color}`}
         >
           {toTryVitScore(alt.unhealthiness_score)}
         </div>
@@ -401,7 +401,7 @@ function ScanAlternativeCard({
         <NutriScoreBadge grade={alt.nutri_score} size="sm" showTooltip />
 
         {/* Arrow */}
-        <span className="flex-shrink-0 text-foreground-muted">›</span>
+        <span className="shrink-0 text-foreground-muted">›</span>
       </div>
     </Link>
   );

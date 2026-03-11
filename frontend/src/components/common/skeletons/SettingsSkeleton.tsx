@@ -32,7 +32,7 @@ export function SettingsSkeleton() {
                 key={j}
                 variant="rect"
                 height={44}
-                className="!rounded-lg"
+                className="rounded-lg!"
               />
             ))}
           </div>
@@ -46,7 +46,7 @@ export function SettingsSkeleton() {
           variant="rect"
           width={120}
           height={40}
-          className="!rounded-lg"
+          className="rounded-lg!"
         />
       </div>
     </SkeletonContainer>

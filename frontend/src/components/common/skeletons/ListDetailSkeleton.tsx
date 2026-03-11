@@ -25,13 +25,13 @@ export function ListDetailSkeleton() {
               variant="rect"
               width={32}
               height={32}
-              className="!rounded-md"
+              className="rounded-md!"
             />
             <Skeleton
               variant="rect"
               width={32}
               height={32}
-              className="!rounded-md"
+              className="rounded-md!"
             />
           </div>
         </div>
@@ -46,7 +46,7 @@ export function ListDetailSkeleton() {
             variant="rect"
             width={48}
             height={48}
-            className="!rounded-lg"
+            className="rounded-lg!"
           />
           <div className="flex-1 space-y-1">
             <Skeleton variant="text" width="60%" height={14} />
