@@ -8,7 +8,7 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (clean working tree)
-- **Latest SHA (main):** `d5e7021` (chore(state): repo hygiene — branch cleanup, tmp cleanup, state update #830)
+- **Latest SHA (main):** `e72635f` (fix(qa): resolve store integrity failures — orphan cleanup, Żabka reclassification, backfill #831)
 - **Open PRs:** 0
 
 ## Recently Shipped (Sessions 37-40)
