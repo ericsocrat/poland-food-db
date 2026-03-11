@@ -25,7 +25,7 @@ export function QuickWinCard({ products }: Readonly<QuickWinCardProps>) {
     if (scored.length === 0) return null;
     return scored.reduce((worst, p) =>
       p.unhealthiness_score > worst.unhealthiness_score ? p : worst,
-    );
+    scored[0]);
   }, [products]);
 
   const { data, isLoading } = useAlternativesV2({
