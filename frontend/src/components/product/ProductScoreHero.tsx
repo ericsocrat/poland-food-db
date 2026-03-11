@@ -2,7 +2,7 @@
 
 import { ScoreGauge } from "@/components/product/ScoreGauge";
 import { useTranslation } from "@/lib/i18n";
-import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
+import { getScoreBand } from "@/lib/score-utils";
 
 interface ProductScoreHeroProps {
   readonly unhealthinessScore: number;
@@ -15,7 +15,6 @@ export function ProductScoreHero({
 }: ProductScoreHeroProps) {
   const { t } = useTranslation();
   const band = getScoreBand(unhealthinessScore);
-  const tryVitScore = toTryVitScore(unhealthinessScore);
 
   if (!band) return null;
 
