@@ -849,10 +849,24 @@
   "errorBoundary": {
     "pageTitle": "Auf dieser Seite ist etwas schiefgelaufen",
     "pageDescription": "Ein unerwarteter Fehler hat das Laden dieser Seite verhindert. Sie können es erneut versuchen oder zur Startseite zurückkehren.",
+    "networkTitle": "Verbindungsproblem",
+    "networkDescription": "Diese Seite konnte nicht geladen werden. Überprüfen Sie Ihre Internetverbindung und versuchen Sie es erneut.",
+    "authTitle": "Sitzung abgelaufen",
+    "authDescription": "Ihre Sitzung ist abgelaufen. Bitte melden Sie sich erneut an, um fortzufahren.",
+    "serverTitle": "Serverfehler",
+    "serverDescription": "Auf unserer Seite ist etwas schiefgelaufen. Bitte versuchen Sie es in einem Moment erneut.",
     "sectionTitle": "Dieser Bereich konnte nicht geladen werden",
     "componentTooltip": "Dieses Element konnte nicht angezeigt werden",
     "goHome": "Zur Startseite",
+    "signIn": "Anmelden",
     "errorId": "Fehler-ID"
+  },
+  "sectionError": {
+    "network": "Laden fehlgeschlagen — Verbindung prüfen",
+    "auth": "Sitzung abgelaufen — bitte erneut anmelden",
+    "server": "Laden fehlgeschlagen — Serverfehler",
+    "unknown": "Dieser Bereich konnte nicht geladen werden",
+    "labeledMessage": "{label} konnte nicht geladen werden"
   },
   "landing": {
     "tagline": "Gesündere Entscheidungen, einfach gemacht",

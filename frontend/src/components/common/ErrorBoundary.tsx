@@ -16,10 +16,39 @@
 "use client";
 
 import { buttonClasses } from "@/components/common/Button";
-import { ErrorIllustration } from "@/components/common/ErrorIllustration";
+import { type ErrorType, ErrorIllustration } from "@/components/common/ErrorIllustration";
+import { classifyError, type ErrorCategory } from "@/lib/error-classifier";
 import { reportBoundaryError, type ErrorContext } from "@/lib/error-reporter";
 import { useTranslation } from "@/lib/i18n";
 import { Component, type ErrorInfo, type ReactNode } from "react";
+
+// ─── Error Category → Illustration + i18n mapping ──────────────────────────
+
+const CATEGORY_ILLUSTRATION: Record<ErrorCategory, ErrorType> = {
+  network: "offline",
+  auth: "server-error",
+  server: "server-error",
+  unknown: "server-error",
+};
+
+const CATEGORY_I18N: Record<ErrorCategory, { title: string; description: string }> = {
+  network: {
+    title: "errorBoundary.networkTitle",
+    description: "errorBoundary.networkDescription",
+  },
+  auth: {
+    title: "errorBoundary.authTitle",
+    description: "errorBoundary.authDescription",
+  },
+  server: {
+    title: "errorBoundary.serverTitle",
+    description: "errorBoundary.serverDescription",
+  },
+  unknown: {
+    title: "errorBoundary.pageTitle",
+    description: "errorBoundary.pageDescription",
+  },
+};
 
 // ─── Types ──────────────────────────────────────────────────────────────────
 
@@ -52,20 +81,25 @@ function PageFallback({
 }>) {
   const { t } = useTranslation();
   const digest = (error as Error & { digest?: string }).digest;
+  const category = classifyError(error);
+  const illustration = CATEGORY_ILLUSTRATION[category];
+  const i18nKeys = CATEGORY_I18N[category];
+
   return (
     <div
       className="flex min-h-[60vh] flex-col items-center justify-center px-4 text-center"
       role="alert"
       data-testid="error-boundary-page"
+      data-error-category={category}
     >
       <div className="mb-4" aria-hidden="true">
-        <ErrorIllustration type="server-error" width={160} height={133} />
+        <ErrorIllustration type={illustration} width={160} height={133} />
       </div>
       <h2 className="mb-2 text-xl font-bold text-foreground">
-        {t("errorBoundary.pageTitle")}
+        {t(i18nKeys.title)}
       </h2>
       <p className="mb-6 max-w-md text-sm text-foreground-secondary">
-        {t("errorBoundary.pageDescription")}
+        {t(i18nKeys.description)}
       </p>
       {digest && (
         <p className="mb-4 font-mono text-xs text-foreground-muted">
@@ -79,12 +113,21 @@ function PageFallback({
         >
           {t("common.tryAgain")}
         </button>
-        <a
-          href="/app"
-          className={buttonClasses("secondary", "md")}
-        >
-          {t("errorBoundary.goHome")}
-        </a>
+        {category === "auth" ? (
+          <a
+            href="/auth/login"
+            className={buttonClasses("secondary", "md")}
+          >
+            {t("errorBoundary.signIn")}
+          </a>
+        ) : (
+          <a
+            href="/app"
+            className={buttonClasses("secondary", "md")}
+          >
+            {t("errorBoundary.goHome")}
+          </a>
+        )}
       </div>
     </div>
   );

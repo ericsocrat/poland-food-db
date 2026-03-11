@@ -849,10 +849,24 @@
   "errorBoundary": {
     "pageTitle": "Coś poszło nie tak na tej stronie",
     "pageDescription": "Nieoczekiwany błąd uniemożliwił załadowanie tej strony. Możesz spróbować ponownie lub wrócić na stronę główną.",
+    "networkTitle": "Problem z połączeniem",
+    "networkDescription": "Nie udało się załadować tej strony. Sprawdź połączenie z internetem i spróbuj ponownie.",
+    "authTitle": "Sesja wygasła",
+    "authDescription": "Twoja sesja wygasła. Zaloguj się ponownie, aby kontynuować.",
+    "serverTitle": "Błąd serwera",
+    "serverDescription": "Coś poszło nie tak po naszej stronie. Spróbuj ponownie za chwilę.",
     "sectionTitle": "Nie udało się załadować tej sekcji",
     "componentTooltip": "Nie udało się wyświetlić tego elementu",
     "goHome": "Strona główna",
+    "signIn": "Zaloguj się",
     "errorId": "ID błędu"
+  },
+  "sectionError": {
+    "network": "Nie udało się załadować — sprawdź połączenie",
+    "auth": "Sesja wygasła — zaloguj się, aby kontynuować",
+    "server": "Nie udało się załadować — błąd serwera",
+    "unknown": "Nie udało się załadować tej sekcji",
+    "labeledMessage": "Nie udało się załadować: {label}"
   },
   "landing": {
     "tagline": "zdrowsze wybory, po prostu",
