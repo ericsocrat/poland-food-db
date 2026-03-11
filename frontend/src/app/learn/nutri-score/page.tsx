@@ -60,7 +60,7 @@ export default function NutriScorePage() {
                 <p className="text-sm font-medium text-error-text">
                   {t("learn.nutriScore.negativeLabel")}
                 </p>
-                <p className="mt-1 text-sm text-error-text/80">
+                <p className="mt-1 text-sm text-error-text">
                   {t("learn.nutriScore.negativeItems")}
                 </p>
               </div>
@@ -68,7 +68,7 @@ export default function NutriScorePage() {
                 <p className="text-sm font-medium text-success-text">
                   {t("learn.nutriScore.positiveLabel")}
                 </p>
-                <p className="mt-1 text-sm text-success-text/80">
+                <p className="mt-1 text-sm text-success-text">
                   {t("learn.nutriScore.positiveItems")}
                 </p>
               </div>

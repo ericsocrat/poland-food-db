@@ -485,7 +485,7 @@ function MobileSwipeView({
         <p className="mt-1 text-sm font-bold text-success-text">
           {products[winnerIdx].product_name}
         </p>
-        <p className="text-xs text-success-text/80">
+        <p className="text-xs text-success-text">
           {t("compare.winnerVerdict", { points: scoreDelta })}
         </p>
       </div>

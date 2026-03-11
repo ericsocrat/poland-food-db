@@ -154,7 +154,7 @@ export function HealthWarningsCard({
             <p className="text-sm font-medium text-success-text">
               {t("healthWarnings.withinLimits")}
             </p>
-            <p className="text-xs text-success-text/80">
+            <p className="text-xs text-success-text">
               {t("healthWarnings.noWarningsFor", {
                 name: profileData.profile?.profile_name ?? "",
               })}

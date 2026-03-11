@@ -183,7 +183,7 @@ function BreakdownContent({
             </span>
           </div>
           {bonus.components && (
-            <div className="mt-1 flex gap-3 text-xs text-success-text/80">
+            <div className="mt-1 flex gap-3 text-xs text-success-text">
               {bonus.components.protein_bonus > 0 && (
                 <span>
                   {t("tooltip.scoreBreakdown.proteinBonus", {
