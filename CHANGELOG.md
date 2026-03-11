@@ -25,6 +25,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
   Added SCORING_METHODOLOGY.md § 2.10 with observed distribution data. No formula
   or band changes needed (#779)
 
+### Fixed
+
+- Allowlist transient Supabase 502/504 Gateway Timeout errors in CI quality gate
+  (console + network errors). Locally, 5xx still fails audits. Fixes flaky
+  category-detail test on `/app/categories/dairy`
+
 ### Changed
 
 - Tighten calorie back-calculation QA tolerance from ±35% to ±20% per EU FIC
