@@ -40,7 +40,7 @@ export function DashboardSkeleton() {
                 variant="rect"
                 width={32}
                 height={32}
-                className="!rounded-md"
+                className="rounded-md!"
               />
               <Skeleton variant="text" width="3rem" height={20} />
               <Skeleton variant="text" width="4rem" height={12} />

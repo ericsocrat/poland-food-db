@@ -1,6 +1,6 @@
-import { describe, it, expect } from "vitest";
 import { readFileSync } from "fs";
 import { join } from "path";
+import { describe, expect, it } from "vitest";
 
 // ─── Motion token compliance tests (#61) ─────────────────────────────────────
 // Verify motion tokens exist in globals.css and follow design system rules.
@@ -9,9 +9,8 @@ import { join } from "path";
 const cssPath = join(__dirname, "../styles/globals.css");
 const css = readFileSync(cssPath, "utf-8");
 
-// Also validate Tailwind config exposes motion tokens
-const twConfigPath = join(__dirname, "../../tailwind.config.ts");
-const twConfig = readFileSync(twConfigPath, "utf-8");
+// In Tailwind v4, config mappings live in the @theme block of globals.css
+// (tailwind.config.ts was removed during the v4 migration).
 
 describe("Motion Tokens (#61)", () => {
   describe("easing curves exist in :root", () => {
@@ -63,24 +62,22 @@ describe("Motion Tokens (#61)", () => {
   });
 
   describe("utility classes exist", () => {
-    it("defines .hover-lift", () => {
-      expect(css).toContain(".hover-lift");
-      expect(css).toContain(".hover-lift:hover");
+    it("defines hover-lift utility", () => {
+      expect(css).toContain("@utility hover-lift");
+      expect(css).toContain("&:hover");
     });
 
-    it("defines .press-scale", () => {
-      expect(css).toContain(".press-scale");
-      expect(css).toContain(".press-scale:active");
+    it("defines press-scale utility", () => {
+      expect(css).toContain("@utility press-scale");
+      expect(css).toContain("&:active");
     });
 
-    it("defines .hover-lift-press", () => {
-      expect(css).toContain(".hover-lift-press");
-      expect(css).toContain(".hover-lift-press:hover");
-      expect(css).toContain(".hover-lift-press:active");
+    it("defines hover-lift-press utility", () => {
+      expect(css).toContain("@utility hover-lift-press");
     });
 
-    it("defines .transition-interactive", () => {
-      expect(css).toContain(".transition-interactive");
+    it("defines transition-interactive utility", () => {
+      expect(css).toContain("@utility transition-interactive");
     });
   });
 
@@ -100,8 +97,9 @@ describe("Motion Tokens (#61)", () => {
 
   describe("GPU-composited properties only", () => {
     it("hover-lift uses transform (not top/left/margin)", () => {
+      // In v4, @utility hover-lift uses nested &:hover syntax
       const hoverLiftBlock = css.match(
-        /\.hover-lift:hover\s*\{([\s\S]*?)\}/,
+        /@utility hover-lift\s*\{([\s\S]*?)\n\}/,
       );
       expect(hoverLiftBlock).not.toBeNull();
       const block = hoverLiftBlock![1];
@@ -112,8 +110,9 @@ describe("Motion Tokens (#61)", () => {
     });
 
     it("press-scale uses transform (not width/height)", () => {
+      // In v4, @utility press-scale uses nested &:active syntax
       const pressScaleBlock = css.match(
-        /\.press-scale:active\s*\{([\s\S]*?)\}/,
+        /@utility press-scale\s*\{([\s\S]*?)\n\}/,
       );
       expect(pressScaleBlock).not.toBeNull();
       const block = pressScaleBlock![1];
@@ -135,7 +134,7 @@ describe("Motion Tokens (#61)", () => {
     });
   });
 
-  describe("Tailwind config motion extensions (#61)", () => {
+  describe("@theme motion extensions (v4)", () => {
     describe("transitionDuration tokens", () => {
       const requiredDurations = [
         "instant",
@@ -144,8 +143,8 @@ describe("Motion Tokens (#61)", () => {
         "slow",
       ];
       for (const name of requiredDurations) {
-        it(`maps ${name} → var(--duration-${name})`, () => {
-          expect(twConfig).toContain(`"var(--duration-${name})"`);
+        it(`maps ${name} → --transition-duration-${name}`, () => {
+          expect(css).toContain(`--transition-duration-${name}: var(--duration-${name})`);
         });
       }
     });
@@ -158,8 +157,8 @@ describe("Motion Tokens (#61)", () => {
         "spring",
       ];
       for (const name of requiredEasings) {
-        it(`maps ${name} → var(--ease-${name})`, () => {
-          expect(twConfig).toContain(`"var(--ease-${name})"`);
+        it(`maps ${name} → --ease-${name}`, () => {
+          expect(css).toContain(`--ease-${name}:`);
         });
       }
     });
@@ -172,7 +171,7 @@ describe("Motion Tokens (#61)", () => {
       ];
       for (const name of requiredAnimations) {
         it(`defines animation "${name}"`, () => {
-          expect(twConfig).toContain(`"${name}"`);
+          expect(css).toContain(`--animate-${name}:`);
         });
       }
     });

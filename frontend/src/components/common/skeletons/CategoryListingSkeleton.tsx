@@ -24,13 +24,13 @@ export function CategoryListingSkeleton() {
           variant="rect"
           width={120}
           height={36}
-          className="!rounded-lg"
+          className="rounded-lg!"
         />
         <Skeleton
           variant="rect"
           width={50}
           height={36}
-          className="!rounded-lg"
+          className="rounded-lg!"
         />
       </div>
 

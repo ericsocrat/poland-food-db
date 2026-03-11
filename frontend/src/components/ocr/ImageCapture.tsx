@@ -148,7 +148,7 @@ export function ImageCapture({ onCapture, processing }: ImageCaptureProps) {
             <button
               type="button"
               onClick={stopCamera}
-              className="rounded-full bg-surface/80 p-2.5 shadow-lg backdrop-blur-sm"
+              className="rounded-full bg-surface/80 p-2.5 shadow-lg backdrop-blur-xs"
               aria-label={t("common.cancel")}
             >
               <Icon icon={X} size="sm" />

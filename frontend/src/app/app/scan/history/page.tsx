@@ -186,7 +186,7 @@ function ScanRow({
           {/* Nutri badge */}
           {scan.nutri_score && (
             <span
-              className={`flex h-7 w-7 flex-shrink-0 items-center justify-center rounded text-xs font-bold text-white ${
+              className={`flex h-7 w-7 shrink-0 items-center justify-center rounded text-xs font-bold text-white ${
                 NUTRI_COLORS[scan.nutri_score] ?? "bg-foreground-muted"
               }`}
             >
@@ -201,7 +201,7 @@ function ScanRow({
               {scan.brand} · {scan.category}
             </p>
           </div>
-          <div className="flex flex-shrink-0 flex-col items-end">
+          <div className="flex shrink-0 flex-col items-end">
             <span className="text-xs text-foreground-muted">{timeStr}</span>
             <span className="mt-0.5 text-xs font-mono text-foreground-muted">
               {scan.ean}
@@ -216,7 +216,7 @@ function ScanRow({
   return (
     <li className="card border-warning-border bg-warning-bg/50">
       <div className="flex items-center gap-3">
-        <span className="flex h-7 w-7 flex-shrink-0 items-center justify-center rounded bg-warning text-sm">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-warning text-sm">
           ❓
         </span>
         <div className="min-w-0 flex-1">
@@ -235,7 +235,7 @@ function ScanRow({
             )}
           </p>
         </div>
-        <div className="flex flex-shrink-0 flex-col items-end gap-1">
+        <div className="flex shrink-0 flex-col items-end gap-1">
           <span className="text-xs text-foreground-muted">{timeStr}</span>
           {!scan.submission_status && (
             <Link

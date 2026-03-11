@@ -21,13 +21,13 @@ export function SavedItemsSkeleton() {
               variant="rect"
               width={32}
               height={32}
-              className="!rounded-md"
+              className="rounded-md!"
             />
             <Skeleton
               variant="rect"
               width={32}
               height={32}
-              className="!rounded-md"
+              className="rounded-md!"
             />
           </div>
         </div>

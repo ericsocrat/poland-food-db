@@ -17,7 +17,7 @@ export function RecipeGridSkeleton() {
       {/* Filter bar */}
       <div className="flex gap-2">
         {Array.from({ length: 3 }, (_, i) => (
-          <Skeleton key={i} variant="rect" width={96} height={36} className="!rounded-lg" />
+          <Skeleton key={i} variant="rect" width={96} height={36} className="rounded-lg!" />
         ))}
       </div>
 
@@ -33,8 +33,8 @@ export function RecipeGridSkeleton() {
               <Skeleton variant="text" width="3rem" height={12} />
             </div>
             <div className="flex gap-1.5">
-              <Skeleton variant="rect" width={48} height={18} className="!rounded-full" />
-              <Skeleton variant="rect" width={48} height={18} className="!rounded-full" />
+              <Skeleton variant="rect" width={48} height={18} className="rounded-full!" />
+              <Skeleton variant="rect" width={48} height={18} className="rounded-full!" />
             </div>
           </div>
         ))}

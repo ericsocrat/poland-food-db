@@ -219,7 +219,7 @@ function WarningRow({ warning }: Readonly<{ warning: HealthWarning }>) {
 
   return (
     <li className="flex items-start gap-2">
-      <span className="mt-0.5 flex-shrink-0" title={style.label}>
+      <span className="mt-0.5 shrink-0" title={style.label}>
         <SeverityIcon size={16} aria-hidden="true" />
       </span>
       <div className="min-w-0 flex-1">
@@ -273,7 +273,7 @@ export function HealthWarningBadge({
     if (hasProfile && warningsData?.warning_count === 0) {
       return (
         <span
-          className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-success/15 text-xs text-success"
+          className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success/15 text-xs text-success"
           title={t("healthWarnings.noWarnings")}
         >
           <Check size={12} />
@@ -297,7 +297,7 @@ export function HealthWarningBadge({
 
   return (
     <span
-      className={`flex h-5 min-w-5 flex-shrink-0 items-center justify-center rounded-full px-1 text-xs font-bold ${style.bg} ${style.color}`}
+      className={`flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full px-1 text-xs font-bold ${style.bg} ${style.color}`}
       title={t("healthWarnings.warningCount", {
         count: warningsData.warning_count,
       })}

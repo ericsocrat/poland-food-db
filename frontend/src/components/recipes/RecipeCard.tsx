@@ -79,7 +79,7 @@ export function RecipeCard({ recipe }: RecipeCardProps) {
           {recipe.tags.length > 0 && (
             <div className="flex flex-wrap gap-1.5">
               {recipe.tags.slice(0, 3).map((tag) => (
-                <Chip key={tag} variant="default" className="!text-xxs !px-1.5 !py-0">
+                <Chip key={tag} variant="default" className="text-xxs! px-1.5! py-0!">
                   {tag}
                 </Chip>
               ))}

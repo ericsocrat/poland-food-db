@@ -81,7 +81,7 @@ export function OCRResults({ result, onSearch, onRetry }: OCRResultsProps) {
         value={editedText}
         onChange={(e) => setEditedText(e.target.value)}
         rows={5}
-        className="w-full rounded-lg border border-border bg-surface-muted p-3 text-sm text-foreground focus-visible:border-brand focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand"
+        className="w-full rounded-lg border border-border bg-surface-muted p-3 text-sm text-foreground focus-visible:border-brand focus-visible:outline-hidden focus-visible:ring-1 focus-visible:ring-brand"
         placeholder={t("imageSearch.results.placeholder")}
         data-testid="ocr-text"
       />

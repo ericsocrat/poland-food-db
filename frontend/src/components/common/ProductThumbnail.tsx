@@ -53,7 +53,7 @@ export function ProductThumbnail({
 
   return (
     <div
-      className={`relative flex-shrink-0 overflow-hidden rounded-lg bg-surface-muted ${preset.container}`}
+      className={`relative shrink-0 overflow-hidden rounded-lg bg-surface-muted ${preset.container}`}
       data-testid="product-thumbnail"
     >
       {showImage ? (

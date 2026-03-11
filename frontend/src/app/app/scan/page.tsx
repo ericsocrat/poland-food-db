@@ -530,7 +530,7 @@ export default function ScanPage() {
               <div className="relative overflow-hidden rounded-xl bg-black">
                 <video
                   ref={videoRef}
-                  className="aspect-[4/3] w-full object-cover"
+                  className="aspect-4/3 w-full object-cover"
                   playsInline
                   muted
                 />
@@ -638,7 +638,7 @@ export default function ScanPage() {
                 >
                   {p.product_name_display ?? p.product_name}
                 </button>
-                <span className="flex-shrink-0 text-xs text-foreground-muted">
+                <span className="shrink-0 text-xs text-foreground-muted">
                   {p.brand}
                 </span>
               </li>
