@@ -1,5 +1,5 @@
 -- PIPELINE (Snacks): scoring
--- Generated: 2026-03-04
+-- Generated: 2026-03-11
 
 -- 2. Nutri-Score
 update products p set
@@ -15,12 +15,15 @@ from (
     ('Lorenz', 'Lorenz Saltletts Sticks', 'E'),
     ('Corny', 'Haferkraft Zero - Kakao 4er-Pack', 'B'),
     ('Lorenz', 'Clubs Cracker', 'D'),
-    ('Corny', 'Corny Schoko', 'E'),
     ('Seeberger', 'Nuts''n Berries', 'D'),
+    ('Corny', 'Nussvoll Nuss &Traube', 'D'),
+    ('Corny', 'Milch Classic', 'E'),
     ('Rivercote', 'Knusperbrot Weizen', 'A'),
+    ('Corny', 'CORNY Schoko', 'E'),
     ('Corny', 'Corny - Schoko-Banane', 'E'),
     ('DmBio', 'Schoko Reiswaffeln Zartbitter', 'E'),
     ('Leicht & Cross', 'Knusperbrot Goldweizen', 'C'),
+    ('DmBio', 'Dinkel Mini brezeln', 'E'),
     ('Tuc', 'Tuc Original', 'E'),
     ('Pågen', 'Gifflar Cannelle', 'D'),
     ('Alnatura', 'Linsenwaffeln', 'A'),
@@ -30,7 +33,7 @@ from (
     ('KoRo', 'Protein Bar Deluxe', 'NOT-APPLICABLE'),
     ('REWE Bio', 'Dattel-Erdnuss Riegel (3er)', 'D'),
     ('Mondelez', 'Paprika', 'E'),
-    ('ESN', 'ESN Designer protein bar hazelnut nougat', 'A'),
+    ('ESN', 'Designer Protein Bar', 'NOT-APPLICABLE'),
     ('Maretti', 'Bruschette', 'D')
 ) as d(brand, product_name, ns)
 where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
@@ -49,12 +52,15 @@ from (
     ('Lorenz', 'Lorenz Saltletts Sticks', '3'),
     ('Corny', 'Haferkraft Zero - Kakao 4er-Pack', '4'),
     ('Lorenz', 'Clubs Cracker', '3'),
-    ('Corny', 'Corny Schoko', '4'),
     ('Seeberger', 'Nuts''n Berries', '3'),
+    ('Corny', 'Nussvoll Nuss &Traube', '4'),
+    ('Corny', 'Milch Classic', '4'),
     ('Rivercote', 'Knusperbrot Weizen', '3'),
+    ('Corny', 'CORNY Schoko', '4'),
     ('Corny', 'Corny - Schoko-Banane', '4'),
     ('DmBio', 'Schoko Reiswaffeln Zartbitter', '3'),
     ('Leicht & Cross', 'Knusperbrot Goldweizen', '3'),
+    ('DmBio', 'Dinkel Mini brezeln', '3'),
     ('Tuc', 'Tuc Original', '4'),
     ('Pågen', 'Gifflar Cannelle', '4'),
     ('Alnatura', 'Linsenwaffeln', '3'),
@@ -64,7 +70,7 @@ from (
     ('KoRo', 'Protein Bar Deluxe', '4'),
     ('REWE Bio', 'Dattel-Erdnuss Riegel (3er)', '3'),
     ('Mondelez', 'Paprika', '4'),
-    ('ESN', 'ESN Designer protein bar hazelnut nougat', '4'),
+    ('ESN', 'Designer Protein Bar', '4'),
     ('Maretti', 'Bruschette', '4')
 ) as d(brand, product_name, nova)
 where p.country = 'DE' and p.brand = d.brand and p.product_name = d.product_name;
