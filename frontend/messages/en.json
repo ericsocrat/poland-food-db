@@ -748,6 +748,7 @@
     "sessionExpired": "Session expired. Please log in again.",
     "preferencesFailed": "Failed to load preferences.",
     "signIn": "Sign In",
+    "dashboard": "Dashboard",
     "welcomeBack": "Welcome back",
     "signInSubtitle": "Sign in to your TryVit account.",
     "sessionExpiredBanner": "Your session has expired. Please sign in again.",

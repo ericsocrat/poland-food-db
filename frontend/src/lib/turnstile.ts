@@ -108,11 +108,11 @@ export async function verifyTurnstileToken(
 export function isTurnstileSuccess(
   result: TurnstileVerifyResult,
 ): result is TurnstileVerifySuccess {
-  return result.valid === true;
+  return result.valid;
 }
 
 export function isTurnstileFailure(
   result: TurnstileVerifyResult,
 ): result is TurnstileVerifyFailure {
-  return result.valid === false;
+  return !result.valid;
 }

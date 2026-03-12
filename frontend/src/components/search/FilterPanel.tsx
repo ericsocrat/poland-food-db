@@ -297,7 +297,7 @@ export function FilterPanel({
                 {data.allergens.map((al) => {
                   const labelInfo = ALLERGEN_TAGS.find((a) => a.tag === al.tag);
                   // Tags are bare canonical IDs; strip legacy en: prefix as fallback
-                  const label = labelInfo?.label ?? al.tag.replace("en:", "");
+                  const label = labelInfo?.label ?? al.tag.replace(/^en:/, "");
                   const selected = (filters.allergen_free ?? []).includes(
                     al.tag,
                   );

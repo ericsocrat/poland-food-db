@@ -54,7 +54,8 @@ export function HealthInsightsSummary({
         <div
           className={`flex h-14 w-14 items-center justify-center rounded-full border-4 ${bandCfg.bg}`}
           style={{
-            borderColor: `var(--color-${bandCfg.color.replace("text-", "")})`,
+            borderColor: `var(--color-${bandCfg.color.replace(/^text-/, "")})`,
+
           }}
           data-testid="avg-score-circle"
         >
