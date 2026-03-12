@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(283);
+SELECT plan(288);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -352,6 +352,13 @@ SELECT has_column('public', 'brand_ref', 'brand_name',           'brand_ref has 
 SELECT has_column('public', 'brand_ref', 'display_name',         'brand_ref has display_name column');
 SELECT has_column('public', 'brand_ref', 'parent_company',       'brand_ref has parent_company column');
 SELECT has_column('public', 'brand_ref', 'is_store_brand',       'brand_ref has is_store_brand column');
+
+-- ─── Brand Alias & Normalization (#861) ───────────────────────────────────────
+SELECT has_table('public', 'brand_alias',                          'table brand_alias exists');
+SELECT has_column('public', 'brand_alias', 'alias',               'brand_alias has alias column');
+SELECT has_column('public', 'brand_alias', 'canonical_brand',     'brand_alias has canonical_brand column');
+SELECT has_column('public', 'brand_alias', 'source',              'brand_alias has source column');
+SELECT has_function('public', 'normalize_brand',                  'function normalize_brand exists');
 
 -- ─── Ingredient Translations (#355) ─────────────────────────────────────────
 SELECT has_table('public', 'ingredient_translations',                       'table ingredient_translations exists');

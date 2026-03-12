@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import argparse
 import logging
+import re
 import sys
 from pathlib import Path
 
@@ -41,6 +42,62 @@ def _dedup(products: list[dict]) -> list[dict]:
             seen.add(key)
             unique.append(p)
     return unique
+
+
+# Pattern to extract EAN literals from pipeline 01_insert SQL files.
+# Matches EAN values in:  ('brand', 'name', 'EAN1234567890', ...)
+_EAN_IN_SQL_RE = re.compile(r"'(\d{8}|\d{13})'")
+
+
+def _collect_existing_eans(pipeline_dir: Path, exclude_slug: str) -> set[str]:
+    """Scan all pipeline 01_insert_products SQL files for EAN values.
+
+    Returns the set of EANs already claimed by *other* categories
+    (i.e. all folders except *exclude_slug*).
+    """
+    eans: set[str] = set()
+    if not pipeline_dir.is_dir():
+        return eans
+    for folder in pipeline_dir.iterdir():
+        if not folder.is_dir() or folder.name == exclude_slug:
+            continue
+        for sql_file in folder.glob("PIPELINE__*__01_insert_products.sql"):
+            try:
+                content = sql_file.read_text(encoding="utf-8")
+            except OSError:
+                continue
+            for match in _EAN_IN_SQL_RE.finditer(content):
+                eans.add(match.group(1))
+    return eans
+
+
+def _cross_category_ean_dedup(
+    products: list[dict],
+    pipeline_dir: Path,
+    current_slug: str,
+) -> tuple[list[dict], list[dict]]:
+    """Remove products whose EANs already exist in other category pipelines.
+
+    First-writer-wins: the category that already has the EAN keeps it.
+
+    Returns
+    -------
+    tuple
+        (kept_products, dropped_products)
+    """
+    existing_eans = _collect_existing_eans(pipeline_dir, current_slug)
+    if not existing_eans:
+        return products, []
+
+    kept: list[dict] = []
+    dropped: list[dict] = []
+    for p in products:
+        ean = p.get("ean") or ""
+        if ean and ean in existing_eans:
+            dropped.append(p)
+        else:
+            kept.append(p)
+    return kept, dropped
 
 
 # ---------------------------------------------------------------------------
@@ -184,11 +241,21 @@ def run_pipeline(
     validated, warn_count, blocked = _validate_products(extracted, category, max_warnings)
     print(f"  After validation: {len(validated)} products")
 
-    # 4. De-duplicate
+    # 4. De-duplicate (within this category run)
     unique = _dedup(validated)
     print(f"  After dedup: {len(unique)} unique products")
     if warn_count:
         print(f"  Warnings: {warn_count} products outside expected ranges")
+
+    # 4b. Cross-category EAN dedup (first-writer-wins)
+    pipeline_base = project_root / "db" / "pipelines"
+    slug_base = _slug(category)
+    dir_slug = f"{slug_base}-{country.lower()}" if country != "PL" else slug_base
+    unique, ean_dropped = _cross_category_ean_dedup(unique, pipeline_base, dir_slug)
+    if ean_dropped:
+        print(f"  Cross-category EAN dedup: {len(ean_dropped)} product(s) removed (EAN already in another category)")
+        for dp in ean_dropped:
+            print(f"    ✗ {dp.get('brand', '?')} / {dp.get('product_name', '?')} (EAN {dp.get('ean', '?')})")
 
     # Anomaly report — blocked products with absolute cap violations
     if blocked:

@@ -1,5 +1,5 @@
 -- ============================================================
--- QA: Data Quality & Plausibility Checks (29 checks)
+-- QA: Data Quality & Plausibility Checks (39 checks)
 -- Validates data hygiene, plausibility bounds, cross-field
 -- consistency, and coverage regression thresholds.
 -- All checks are BLOCKING unless marked informational.
@@ -351,4 +351,31 @@ FROM (
   GROUP BY p.country
 ) sub
 WHERE avg_completeness < threshold;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 38. Cross-category EAN duplicates
+--     The same EAN must not appear in more than one active product.
+--     (Detects cross-category collisions that the pipeline should prevent.)
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '38. Cross-category EAN duplicate' AS check_name,
+       p.ean || ' appears in ' || string_agg(DISTINCT p.category, ', ' ORDER BY p.category) AS detail
+FROM products p
+WHERE p.ean IS NOT NULL
+  AND p.is_deprecated IS NOT TRUE
+GROUP BY p.ean
+HAVING COUNT(DISTINCT p.category) > 1;
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 39. Fuzzy brand variants (normalize_brand collision)
+--     Brands that normalize to the same canonical form but differ in raw
+--     spelling indicate data-entry inconsistencies (e.g. "Dr.Oetker" vs
+--     "Dr. Oetker").  Informational — helps drive brand_alias curation.
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '39. Fuzzy brand variants' AS check_name,
+       normalize_brand(p.brand) || ': ' || string_agg(DISTINCT p.brand, ', ' ORDER BY p.brand) AS detail
+FROM products p
+WHERE p.is_deprecated IS NOT TRUE
+  AND p.brand IS NOT NULL
+GROUP BY normalize_brand(p.brand)
+HAVING COUNT(DISTINCT p.brand) > 1;
 
