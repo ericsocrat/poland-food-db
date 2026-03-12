@@ -518,6 +518,7 @@
     "processingLevel": "Poziom przetworzenia",
     "loadFailed": "Nie udało się załadować produktu.",
     "notFoundPage": "Nie znaleziono produktu.",
+    "notFoundDescription": "Ten produkt mógł zostać usunięty lub nie istnieje.",
     "fullDetails": "Pełne szczegóły",
     "healthierAlternatives": "Zdrowsze zamienniki",
     "found": "{count} znalezione",

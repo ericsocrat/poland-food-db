@@ -524,6 +524,7 @@
     "processingLevel": "Verarbeitungsgrad",
     "loadFailed": "Produkt konnte nicht geladen werden.",
     "notFoundPage": "Produkt nicht gefunden.",
+    "notFoundDescription": "Dieses Produkt wurde möglicherweise entfernt oder existiert nicht.",
     "fullDetails": "Vollständige Details",
     "healthierAlternatives": "Gesündere Alternativen",
     "found": "{count} gefunden",

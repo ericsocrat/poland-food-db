@@ -340,3 +340,20 @@ describe("Categories desktop grid layout", () => {
     expect(card.className).toContain("flex-col");
   });
 });
+
+describe("Category name display", () => {
+  it("uses line-clamp-2 instead of truncate for category names", async () => {
+    render(<CategoriesPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(screen.getAllByText("Chips").length).toBeGreaterThan(0);
+    });
+
+    const nameEl = screen
+      .getAllByText("Chips")
+      .find((el) => el.tagName === "P")!;
+    expect(nameEl).toBeDefined();
+    expect(nameEl.className).toContain("line-clamp-2");
+    expect(nameEl.className).not.toContain("truncate");
+  });
+});

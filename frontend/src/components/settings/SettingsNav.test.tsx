@@ -80,4 +80,12 @@ describe("SettingsNav", () => {
       "Settings sections",
     );
   });
+
+  it("all tab links have shrink-0 to prevent text truncation", () => {
+    render(<SettingsNav />);
+    const links = screen.getAllByRole("link");
+    for (const link of links) {
+      expect(link.className).toContain("shrink-0");
+    }
+  });
 });
