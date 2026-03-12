@@ -90,3 +90,5 @@ tmp-*.json
 qa-results.json
 qa-baseline.json
 tmp-*.sql
+.vercel
+.env*.local
