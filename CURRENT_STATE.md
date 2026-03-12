@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-17 by GitHub Copilot (session 43)
+> **Last updated:** 2026-03-12 by GitHub Copilot (session 44)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,39 +8,35 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (clean working tree)
-- **Latest SHA (main):** `aa2d80a` (fix(frontend): visual polish — filter skeleton loader, grid cleanup #849)
+- **Latest SHA (main):** `fb9b442` (fix(schema): fix 7 broken production functions #854)
 - **Open PRs:** 0
+
+## Recently Shipped (Session 44 — Production Fix)
+
+| PR   | Summary                                                                                       |
+| ---- | --------------------------------------------------------------------------------------------- |
+| #854 | fix(schema): fix 7 broken production functions — STABLE→VOLATILE + watchlist SQL alias        |
 
 ## Recently Shipped (Session 43 — UX Audit)
 
 | PR   | Summary                                                                                       |
 | ---- | --------------------------------------------------------------------------------------------- |
+| #853 | fix(ci): skip orphan cleanup migration in CI to prevent enrichment FK violation               |
+| #852 | fix(frontend): UX polish round 2 — SkipLink removal, camera fix, recipe slugs                |
+| #851 | fix(frontend): SonarCloud reliability + maintainability fixes, auth-aware Header              |
 | #849 | fix(frontend): visual polish — filter skeleton loader, grid cleanup (#845, P3)                |
 | #848 | fix(frontend): UX improvements — flags, scanner default, QuickWin, 403 page (#844, P2)        |
 | #847 | fix(ui): category truncation, product not-found empty state, settings tab overflow (#843, P1) |
 | #846 | fix(scoring): invert filter slider & category stats to TryVit Score (#842, P0)                |
-
-## Recently Shipped (Sessions 41-42)
-
-| PR   | Summary                                                                        |
-| ---- | ------------------------------------------------------------------------------ |
-| #840 | fix(ci): make deploy health check non-blocking                                 |
-| #839 | fix(ci): update QA fixture nutri_score_label from NULL to UNKNOWN              |
-| #838 | fix(schema): pre-deprecate brand collision duplicates before normalization     |
-| #837 | fix(schema): deprecate HTML-encoded duplicate products before decode           |
-| #836 | fix(schema): guard orphan ingredient_ref deletion against all FK references    |
-| #835 | fix(ci): add --include-all flag to deploy and sync workflows                   |
-| #834 | fix(qa): data quality cleanup — 47/48 QA suites passing                        |
-| #833 | fix(data): restore enrichment pipeline — ingredient/allergen data + re-scoring |
 
 ## CI Gate Status (main branch)
 
 | Gate         | Status | Notes                                                |
 | ------------ | ------ | ---------------------------------------------------- |
 | pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke |
-| main-gate    | ✅      | All passing (585098f)                                |
+| main-gate    | ✅      | All passing                                          |
 | qa.yml       | ✅      | 756/756 checks passing (48 suites)                   |
-| deploy.yml   | ✅      | All 205 migrations on production, 16/16 sanity pass  |
+| deploy.yml   | ✅      | All 207 migrations on production, 16/16 sanity pass  |
 | dep-audit    | ✅      | 0 high/critical vulnerabilities                      |
 | python-lint  | ✅      | 0 ruff errors                                        |
 | quality-gate | ✅      | All checks passing                                   |
@@ -76,6 +72,7 @@ All UX audit issues (#842–#845) have been closed. All other previously-tracked
 - [x] P1 fix: Category truncation, product not-found empty state, settings tab overflow (PR #847)
 - [x] P2 fix: Language flags removed, scanner default to manual, QuickWin null guard, 403 page enhanced (PR #848)
 - [x] P3 fix: Filter skeleton loader, category grid cleanup (PR #849)
+- [x] Fix 7 broken production functions — STABLE→VOLATILE + watchlist alias (PR #854)
 - [ ] Configure PRODUCTION_URL secret for health endpoint verification
 - [ ] Set up staging environment for pre-production validation
 
@@ -97,7 +94,7 @@ All UX audit issues (#842–#845) have been closed. All other previously-tracked
 - **ESLint warnings:** 0
 - **Open issues:** 1 | **Open PRs:** 0
 - **Vitest:** 5,614 tests passing (29 skipped) across 343 test files
-- **DB migrations:** 205 append-only (all applied to production)
+- **DB migrations:** 207 append-only (all applied to production)
 - **pgTAP test files:** 17
 - **Ruff lint:** 0 errors
 - **GitHub Ruleset:** strict_required_status_checks_policy = true
