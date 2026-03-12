@@ -184,13 +184,15 @@ describe("ScanPage", () => {
     );
   });
 
-  it("defaults to manual mode with input visible", () => {
+  it("defaults to camera mode", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
 
+    // Camera mode is active by default — manual input not visible
     expect(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
-    ).toBeInTheDocument();
-    expect(screen.getByText("Look up")).toBeInTheDocument();
+      screen.queryByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+    ).not.toBeInTheDocument();
+    // Camera tab should be selected
+    expect(screen.getByText("Camera")).toBeInTheDocument();
   });
 
   it("disables look up button when EAN is too short", async () => {
