@@ -28,9 +28,11 @@ describe("AUTH_MESSAGES", () => {
   it("is a readonly tuple of known auth substrings", () => {
     expect(AUTH_MESSAGES).toContain("JWT expired");
     expect(AUTH_MESSAGES).toContain("not authenticated");
+    expect(AUTH_MESSAGES).toContain("not_authenticated");
     expect(AUTH_MESSAGES).toContain("permission denied");
     expect(AUTH_MESSAGES).toContain("Invalid JWT");
-    expect(AUTH_MESSAGES.length).toBe(4);
+    expect(AUTH_MESSAGES).toContain("Authentication required");
+    expect(AUTH_MESSAGES.length).toBe(6);
   });
 });
 
@@ -327,6 +329,18 @@ describe("isAuthError", () => {
   it("recognises 'Invalid JWT' message", () => {
     expect(
       isAuthError({ code: "UNKNOWN", message: "Invalid JWT provided" }),
+    ).toBe(true);
+  });
+
+  it("recognises 'not_authenticated' message (watchlist format)", () => {
+    expect(
+      isAuthError({ code: "BUSINESS_ERROR", message: "not_authenticated" }),
+    ).toBe(true);
+  });
+
+  it("recognises 'Authentication required' message (SQL function format)", () => {
+    expect(
+      isAuthError({ code: "BUSINESS_ERROR", message: "Authentication required" }),
     ).toBe(true);
   });
 

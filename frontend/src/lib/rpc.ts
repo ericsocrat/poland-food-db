@@ -20,8 +20,10 @@ export const AUTH_CODES: readonly string[] = [
 export const AUTH_MESSAGES = [
   "JWT expired",
   "not authenticated",
+  "not_authenticated",
   "permission denied",
   "Invalid JWT",
+  "Authentication required",
 ] as const;
 
 // ─── RPC latency tracking (#621) ────────────────────────────────────────────
