@@ -82,6 +82,41 @@ CATEGORY_RANGES: dict[str, dict[str, tuple[float, float]]] = {
         "total_fat_g": (5, 55),
         "protein_g": (5, 30),
     },
+    "Pasta & Rice": {
+        "calories": (200, 400),
+        "total_fat_g": (0, 10),
+        "salt_g": (0, 3),
+    },
+    "Soups": {
+        "calories": (15, 200),
+        "total_fat_g": (0, 12),
+        "salt_g": (0, 4),
+    },
+    "Coffee & Tea": {
+        "calories": (0, 500),
+        "total_fat_g": (0, 30),
+        "sugars_g": (0, 60),
+    },
+    "Frozen Vegetables": {
+        "calories": (15, 150),
+        "total_fat_g": (0, 8),
+        "sugars_g": (0, 12),
+    },
+    "Ready Meals": {
+        "calories": (50, 350),
+        "total_fat_g": (0, 25),
+        "salt_g": (0, 4),
+    },
+    "Desserts & Ice Cream": {
+        "calories": (50, 500),
+        "total_fat_g": (0, 35),
+        "sugars_g": (5, 60),
+    },
+    "Spices & Seasonings": {
+        "calories": (0, 450),
+        "total_fat_g": (0, 25),
+        "salt_g": (0, 90),
+    },
 }
 
 

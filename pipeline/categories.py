@@ -26,6 +26,13 @@ CAT_PLANT = "Plant-Based & Alternatives"
 CAT_SEAFOOD = "Seafood & Fish"
 CAT_OILS = "Oils & Vinegars"
 CAT_SPREADS = "Spreads & Dips"
+CAT_PASTA_RICE = "Pasta & Rice"
+CAT_SOUPS = "Soups"
+CAT_COFFEE_TEA = "Coffee & Tea"
+CAT_FROZEN_VEG = "Frozen Vegetables"
+CAT_READY_MEALS = "Ready Meals"
+CAT_DESSERTS = "Desserts & Ice Cream"
+CAT_SPICES = "Spices & Seasonings"
 
 # ---------------------------------------------------------------------------
 # OFF category tag  →  our database category
@@ -201,6 +208,82 @@ OFF_TO_DB_CATEGORY: dict[str, str] = {
     "en:tapenades": CAT_SPREADS,
     "en:guacamole": CAT_SPREADS,
     "en:tzatzikis": CAT_SPREADS,
+    # Pasta & Rice
+    "en:pastas": CAT_PASTA_RICE,
+    "en:pasta": CAT_PASTA_RICE,
+    "en:rice": CAT_PASTA_RICE,
+    "en:noodles": CAT_PASTA_RICE,
+    "en:couscous": CAT_PASTA_RICE,
+    "en:egg-noodles": CAT_PASTA_RICE,
+    "en:rice-noodles": CAT_PASTA_RICE,
+    "en:spaghetti": CAT_PASTA_RICE,
+    "en:penne": CAT_PASTA_RICE,
+    "en:fusilli": CAT_PASTA_RICE,
+    "en:macaroni": CAT_PASTA_RICE,
+    "en:bulgur": CAT_PASTA_RICE,
+    "en:quinoa": CAT_PASTA_RICE,
+    # Soups
+    "en:soups": CAT_SOUPS,
+    "en:bouillons": CAT_SOUPS,
+    "en:broths": CAT_SOUPS,
+    "en:cream-soups": CAT_SOUPS,
+    "en:vegetable-soups": CAT_SOUPS,
+    "en:soup-mixes": CAT_SOUPS,
+    # Coffee & Tea
+    "en:coffees": CAT_COFFEE_TEA,
+    "en:instant-coffees": CAT_COFFEE_TEA,
+    "en:ground-coffees": CAT_COFFEE_TEA,
+    "en:coffee-beans": CAT_COFFEE_TEA,
+    "en:teas": CAT_COFFEE_TEA,
+    "en:green-teas": CAT_COFFEE_TEA,
+    "en:herbal-teas": CAT_COFFEE_TEA,
+    "en:black-teas": CAT_COFFEE_TEA,
+    "en:rooibos": CAT_COFFEE_TEA,
+    "en:mate": CAT_COFFEE_TEA,
+    "en:coffee-capsules": CAT_COFFEE_TEA,
+    "en:coffee-pads": CAT_COFFEE_TEA,
+    # Frozen Vegetables
+    "en:frozen-vegetables": CAT_FROZEN_VEG,
+    "en:frozen-fruits": CAT_FROZEN_VEG,
+    "en:frozen-berries": CAT_FROZEN_VEG,
+    "en:frozen-mixed-vegetables": CAT_FROZEN_VEG,
+    "en:frozen-spinach": CAT_FROZEN_VEG,
+    "en:frozen-peas": CAT_FROZEN_VEG,
+    "en:frozen-broccoli": CAT_FROZEN_VEG,
+    "en:frozen-corn": CAT_FROZEN_VEG,
+    # Ready Meals
+    "en:meals": CAT_READY_MEALS,
+    "en:prepared-meals": CAT_READY_MEALS,
+    "en:meal-kits": CAT_READY_MEALS,
+    "en:microwaveable-meals": CAT_READY_MEALS,
+    "en:ready-meals": CAT_READY_MEALS,
+    "en:tv-dinners": CAT_READY_MEALS,
+    "en:bento": CAT_READY_MEALS,
+    "en:lunch-boxes": CAT_READY_MEALS,
+    # Desserts & Ice Cream
+    "en:desserts": CAT_DESSERTS,
+    "en:ice-creams": CAT_DESSERTS,
+    "en:puddings": CAT_DESSERTS,
+    "en:gelato": CAT_DESSERTS,
+    "en:sorbets": CAT_DESSERTS,
+    "en:frozen-desserts": CAT_DESSERTS,
+    "en:panna-cotta": CAT_DESSERTS,
+    "en:mousse": CAT_DESSERTS,
+    "en:tiramisu": CAT_DESSERTS,
+    "en:creme-brulee": CAT_DESSERTS,
+    "en:ice-cream-bars": CAT_DESSERTS,
+    "en:ice-cream-cones": CAT_DESSERTS,
+    # Spices & Seasonings
+    "en:spices": CAT_SPICES,
+    "en:seasonings": CAT_SPICES,
+    "en:herbs": CAT_SPICES,
+    "en:dried-herbs": CAT_SPICES,
+    "en:pepper": CAT_SPICES,
+    "en:salt": CAT_SPICES,
+    "en:curry-powders": CAT_SPICES,
+    "en:paprika": CAT_SPICES,
+    "en:cinnamon": CAT_SPICES,
+    "en:seasoning-mixes": CAT_SPICES,
 }
 
 # Broad categories that should yield to more specific ones during resolution.
@@ -381,6 +464,52 @@ CATEGORY_SEARCH_TERMS: dict[str, list[str]] = {
         "salsa dip",
         "cheese spread",
         "pasztet",
+    ],
+    CAT_PASTA_RICE: [
+        "pasta",
+        "rice",
+        "noodles",
+        "makaron",
+        "ryż",
+        "kasza",
+    ],
+    CAT_SOUPS: [
+        "soup",
+        "broth",
+        "bouillon",
+        "zupa",
+        "bulion",
+        "rosół",
+    ],
+    CAT_COFFEE_TEA: [
+        "coffee",
+        "tea",
+        "kawa",
+        "herbata",
+        "Kaffee",
+        "Tee",
+    ],
+    CAT_FROZEN_VEG: [
+        "frozen vegetables",
+        "mrożone warzywa",
+        "frozen fruits",
+    ],
+    CAT_READY_MEALS: [
+        "ready meal",
+        "danie gotowe",
+        "meal kit",
+    ],
+    CAT_DESSERTS: [
+        "dessert",
+        "ice cream",
+        "lody",
+        "deser",
+    ],
+    CAT_SPICES: [
+        "spice",
+        "seasoning",
+        "przyprawa",
+        "zioła",
     ],
 }
 
