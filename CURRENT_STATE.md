@@ -73,7 +73,7 @@ All UX audit issues (#842–#845) have been closed. All other previously-tracked
 - [x] P2 fix: Language flags removed, scanner default to manual, QuickWin null guard, 403 page enhanced (PR #848)
 - [x] P3 fix: Filter skeleton loader, category grid cleanup (PR #849)
 - [x] Fix 7 broken production functions — STABLE→VOLATILE + watchlist alias (PR #854)
-- [ ] Configure PRODUCTION_URL secret for health endpoint verification
+- [x] Configure PRODUCTION_URL secret for health endpoint verification
 - [ ] Set up staging environment for pre-production validation
 
 ## Key Metrics Snapshot
