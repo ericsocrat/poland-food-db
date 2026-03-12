@@ -185,7 +185,7 @@ function FeatureUsageChart({
       {data.slice(0, 12).map((item) => (
         <BarRow
           key={item.feature}
-          label={item.feature.replace(/_/g, " ")}
+          label={item.feature.replaceAll("_", " ")}
           value={item.usage_count}
           maxValue={maxVal}
           color="bg-chart-blue"
@@ -218,7 +218,7 @@ function ScanSearchRatio({
             style={{ flex: pct }}
           >
             <span className="text-xs font-medium opacity-80">
-              {item.method.replace(/_/g, " ")}
+              {item.method.replaceAll("_", " ")}
             </span>
             <span className="text-lg font-bold">{pct}%</span>
             <span className="text-xs opacity-80">
@@ -484,7 +484,7 @@ export default function AdminMetricsPage() {
                     <BarRow
                       key={item.allergen}
                       // Tags are bare canonical IDs; strip legacy en: prefix as fallback
-                      label={item.allergen.replace("en:", "")}
+                      label={item.allergen.replace(/^en:/, "")}
                       value={item.user_count}
                       maxValue={data.allergen_distribution[0].user_count}
                       color="bg-chart-amber"

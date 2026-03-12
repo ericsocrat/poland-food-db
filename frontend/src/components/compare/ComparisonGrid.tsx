@@ -292,7 +292,7 @@ function DesktopGrid({
                 {p.allergen_tags
                   ? p.allergen_tags
                       .split(", ")
-                      .map((tag) => tag.replace("en:", ""))
+                      .map((tag) => tag.replace(/^en:/, ""))
                       .join(", ")
                   : t("compare.none")}
               </td>
@@ -662,7 +662,7 @@ function MobileSwipeView({
               {product.allergen_tags
                 ? product.allergen_tags
                     .split(", ")
-                    .map((tag) => tag.replace("en:", ""))
+                    .map((tag) => tag.replace(/^en:/, ""))
                     .join(", ")
                 : t("compare.noneDeclared")}
             </p>

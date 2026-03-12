@@ -14,7 +14,8 @@ export function deterministicHash(flagKey: string, identifier: string): number {
   let hash = 2166136261;
   const input = `${flagKey}:${identifier}`;
   for (let i = 0; i < input.length; i++) {
-    hash ^= input.charCodeAt(i);
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion -- index always valid within loop bounds
+    hash ^= input.codePointAt(i)!;
     hash = Math.imul(hash, 16777619);
   }
   return Math.abs(hash) % 100;
