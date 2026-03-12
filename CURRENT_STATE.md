@@ -13,25 +13,25 @@
 
 ## Recently Shipped (Session 43 — UX Audit)
 
-| PR   | Summary                                                                                     |
-| ---- | ------------------------------------------------------------------------------------------- |
-| #849 | fix(frontend): visual polish — filter skeleton loader, grid cleanup (#845, P3)               |
-| #848 | fix(frontend): UX improvements — flags, scanner default, QuickWin, 403 page (#844, P2)      |
-| #847 | fix(ui): category truncation, product not-found empty state, settings tab overflow (#843, P1)|
-| #846 | fix(scoring): invert filter slider & category stats to TryVit Score (#842, P0)              |
+| PR   | Summary                                                                                       |
+| ---- | --------------------------------------------------------------------------------------------- |
+| #849 | fix(frontend): visual polish — filter skeleton loader, grid cleanup (#845, P3)                |
+| #848 | fix(frontend): UX improvements — flags, scanner default, QuickWin, 403 page (#844, P2)        |
+| #847 | fix(ui): category truncation, product not-found empty state, settings tab overflow (#843, P1) |
+| #846 | fix(scoring): invert filter slider & category stats to TryVit Score (#842, P0)                |
 
 ## Recently Shipped (Sessions 41-42)
 
-| PR   | Summary                                                                                     |
-| ---- | ------------------------------------------------------------------------------------------- |
-| #840 | fix(ci): make deploy health check non-blocking                                              |
-| #839 | fix(ci): update QA fixture nutri_score_label from NULL to UNKNOWN                           |
-| #838 | fix(schema): pre-deprecate brand collision duplicates before normalization                   |
-| #837 | fix(schema): deprecate HTML-encoded duplicate products before decode                        |
-| #836 | fix(schema): guard orphan ingredient_ref deletion against all FK references                 |
-| #835 | fix(ci): add --include-all flag to deploy and sync workflows                                |
-| #834 | fix(qa): data quality cleanup — 47/48 QA suites passing                                     |
-| #833 | fix(data): restore enrichment pipeline — ingredient/allergen data + re-scoring               |
+| PR   | Summary                                                                        |
+| ---- | ------------------------------------------------------------------------------ |
+| #840 | fix(ci): make deploy health check non-blocking                                 |
+| #839 | fix(ci): update QA fixture nutri_score_label from NULL to UNKNOWN              |
+| #838 | fix(schema): pre-deprecate brand collision duplicates before normalization     |
+| #837 | fix(schema): deprecate HTML-encoded duplicate products before decode           |
+| #836 | fix(schema): guard orphan ingredient_ref deletion against all FK references    |
+| #835 | fix(ci): add --include-all flag to deploy and sync workflows                   |
+| #834 | fix(qa): data quality cleanup — 47/48 QA suites passing                        |
+| #833 | fix(data): restore enrichment pipeline — ingredient/allergen data + re-scoring |
 
 ## CI Gate Status (main branch)
 
@@ -139,12 +139,12 @@ All UX audit issues (#842–#845) have been closed. All other previously-tracked
 
 ### Known QA Failures (Pre-existing, Non-blocking)
 
-| Suite                       | Failures | Cause                                                                                   |
-| --------------------------- | -------- | --------------------------------------------------------------------------------------- |
-| Suite 7 (DataQuality)       | 6        | Ingredient coverage PL 58.4%/DE 16.3%, allergen coverage PL 44.5%/DE 13.3%, completeness PL 94%/DE 88.7% (all below threshold — OFF API data gaps) |
-| Suite 10 (Naming)           | 2        | Trailing punctuation (24 products), HTML entities (4 products)                           |
-| Suite 11 (NutriRange)       | 4        | Calorie back-calc (21), zero-cal macros (1), extreme salt (1), extreme calories (1)      |
-| Suite 12 (DataConsist)      | 4        | nutri_score_source (2258), types (2), brands (886)                                       |
+| Suite                  | Failures | Cause                                                                                                                                              |
+| ---------------------- | -------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Suite 7 (DataQuality)  | 6        | Ingredient coverage PL 58.4%/DE 16.3%, allergen coverage PL 44.5%/DE 13.3%, completeness PL 94%/DE 88.7% (all below threshold — OFF API data gaps) |
+| Suite 10 (Naming)      | 2        | Trailing punctuation (24 products), HTML entities (4 products)                                                                                     |
+| Suite 11 (NutriRange)  | 4        | Calorie back-calc (21), zero-cal macros (1), extreme salt (1), extreme calories (1)                                                                |
+| Suite 12 (DataConsist) | 4        | nutri_score_source (2258), types (2), brands (886)                                                                                                 |
 
 **Root cause:** Suite 7 failures are OFF API data coverage gaps (enrichment data only available for ~58% PL, ~16% DE products).
 Suites 10, 11, 12 are pre-existing source data quality issues unrelated to enrichment.
