@@ -4,6 +4,7 @@
 // Uses the composite api_get_product_profile() endpoint for a single round-trip.
 
 import { Button } from "@/components/common/Button";
+import { EmptyState } from "@/components/common/EmptyState";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
 import { PrintButton } from "@/components/common/PrintButton";
@@ -217,9 +218,13 @@ export default function ProductDetailPage() {
             { labelKey: "nav.search", href: "/app/search" },
           ]}
         />
-        <p className="py-12 text-center text-sm text-foreground-muted">
-          {t("product.notFoundPage")}
-        </p>
+        <EmptyState
+          variant="no-results"
+          titleKey="product.notFoundPage"
+          descriptionKey="product.notFoundDescription"
+          action={{ labelKey: "nav.browseCategories", href: "/app/categories" }}
+          secondaryAction={{ labelKey: "nav.searchProducts", href: "/app/search" }}
+        />
       </div>
     );
   }

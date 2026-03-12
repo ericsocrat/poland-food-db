@@ -36,7 +36,7 @@ export function SettingsNav() {
           <Link
             key={tab.key}
             href={tab.href}
-            className={`flex items-center gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
+            className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap px-3 py-2 text-sm font-medium transition-colors ${
               active
                 ? "border-b-2 border-brand text-brand"
                 : "text-foreground-secondary hover:text-foreground-primary"

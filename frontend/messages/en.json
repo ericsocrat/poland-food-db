@@ -518,6 +518,7 @@
     "processingLevel": "Processing Level",
     "loadFailed": "Failed to load product.",
     "notFoundPage": "Product not found.",
+    "notFoundDescription": "This product may have been removed or doesn't exist.",
     "fullDetails": "Full Details",
     "healthierAlternatives": "Healthier Alternatives",
     "found": "{count} found",
