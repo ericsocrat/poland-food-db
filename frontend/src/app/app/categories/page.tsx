@@ -2,10 +2,10 @@
 
 // ─── Categories overview — grid of category cards ───────────────────────────
 
+import { CategoryScoreBar } from "@/components/category/CategoryScoreBar";
 import { Button } from "@/components/common/Button";
 import { CategoryIcon } from "@/components/common/CategoryIcon";
 import { CategoryGridSkeleton } from "@/components/common/skeletons";
-import { CategoryScoreBar } from "@/components/category/CategoryScoreBar";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getCategoryOverview } from "@/lib/api";
 import { SCORE_5BAND_DISPLAY, scoreColorFromScore } from "@/lib/constants";
@@ -65,7 +65,7 @@ export default function CategoriesPage() {
       <h1 className="text-xl font-bold text-foreground lg:text-2xl">
         {t("categories.title")}
       </h1>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 lg:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4 lg:gap-4">
         {data?.map((cat) => (
           <CategoryCard key={cat.category} category={cat} />
         ))}

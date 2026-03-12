@@ -105,9 +105,9 @@ describe("FilterPanel", () => {
   it("shows loading state initially", () => {
     mockGetFilterOptions.mockReturnValue(new Promise(() => {}));
     renderPanel();
-    // The loading spinner uses <output aria-label="Loading">
-    const spinners = screen.getAllByLabelText("Loading…");
-    expect(spinners.length).toBeGreaterThanOrEqual(1);
+    // Loading state renders a skeleton placeholder instead of a spinner
+    const skeletons = screen.getAllByTestId("filter-skeleton");
+    expect(skeletons.length).toBeGreaterThanOrEqual(1);
   });
 
   it("renders sort options after loading", async () => {

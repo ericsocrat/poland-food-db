@@ -4,7 +4,6 @@
 
 import { Button } from "@/components/common/Button";
 import { CategoryIcon } from "@/components/common/CategoryIcon";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { getFilterOptions } from "@/lib/api";
 import { ALLERGEN_TAGS, NUTRI_COLORS } from "@/lib/constants";
 import { useTranslation } from "@/lib/i18n";
@@ -97,8 +96,20 @@ export function FilterPanel({
   const filterContent = (
     <div className="space-y-5">
       {isLoading ? (
-        <div className="flex justify-center py-8">
-          <LoadingSpinner />
+        <div className="animate-pulse space-y-5" data-testid="filter-skeleton">
+          {[1, 2, 3].map((section) => (
+            <div key={section}>
+              <div className="mb-2 h-3 w-20 rounded bg-surface-muted" />
+              <div className="grid grid-cols-2 gap-1.5">
+                {[1, 2, 3, 4].map((item) => (
+                  <div
+                    key={item}
+                    className="h-9 rounded-lg bg-surface-muted"
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
         </div>
       ) : (
         <>

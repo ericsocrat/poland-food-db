@@ -312,7 +312,7 @@ describe("Categories desktop grid layout", () => {
 
     const grid = screen.getByRole("link", { name: /Chips/ })!.parentElement!;
     expect(grid.className).toContain("grid");
-    expect(grid.className).toContain("lg:grid-cols-3");
+    expect(grid.className).toContain("sm:grid-cols-3");
     expect(grid.className).toContain("xl:grid-cols-4");
   });
 
