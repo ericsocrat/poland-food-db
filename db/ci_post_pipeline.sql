@@ -444,6 +444,11 @@ WITH brand_pairs AS (
    AND b1.brand_name <> b2.brand_name
   WHERE (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
       < (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+     OR (
+       (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
+       = (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+       AND b1.brand_name > b2.brand_name
+     )
 )
 UPDATE products p
 SET is_deprecated = true,
@@ -467,6 +472,11 @@ WITH brand_pairs AS (
    AND b1.brand_name <> b2.brand_name
   WHERE (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
       < (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+     OR (
+       (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
+       = (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+       AND b1.brand_name > b2.brand_name
+     )
 )
 UPDATE products p
 SET brand = bp.canonical
@@ -490,6 +500,11 @@ WITH brand_pairs AS (
    AND b1.brand_name <> b2.brand_name
   WHERE (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
       < (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+     OR (
+       (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
+       = (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+       AND b1.brand_name > b2.brand_name
+     )
 )
 UPDATE products p
 SET brand = bp.canonical
@@ -525,6 +540,22 @@ USING dupes d
 WHERE pi.product_id = d.product_id
   AND pi.position = d.position
   AND pi.ingredient_id != d.keep_id;
+
+-- 6d-ii: Remove orphan ingredient_ref entries created by the dedup
+DELETE FROM ingredient_ref
+WHERE NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi WHERE pi.ingredient_id = ingredient_ref.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi WHERE pi.parent_ingredient_id = ingredient_ref.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM ingredient_translations it WHERE it.ingredient_id = ingredient_ref.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM recipe_ingredient ri WHERE ri.ingredient_ref_id = ingredient_ref.ingredient_id
+)
+AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
 
 -- ─── 7. Final re-scoring pass ─────────────────────────────────────────────
 -- Earlier steps deprecate products, fix nutrition data, reclassify Żabka,
