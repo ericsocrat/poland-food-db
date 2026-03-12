@@ -3,6 +3,7 @@
 > **Last updated:** 2026-03-05
 > **Scope:** Poland (`PL`) primary + Germany (`DE`) full parity (1,168 products across 21 categories)
 > **Products:** ~2,366 active (22 PL categories + 21 DE categories), 273 deprecated
+> **Categories:** 29 defined (22 PL + 21 DE active + 7 new cross-country, not yet populated)
 > **EAN coverage:** 2,261/2,264 (99.9%)
 > **Scoring:** v3.3 — 9-factor weighted penalty + nutrient density bonus via `compute_unhealthiness_v33()` (protein & fibre credit)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
@@ -383,10 +384,10 @@ tryvit/
 | `product_ingredient`        | Product ↔ ingredient junction                   | `(product_id, ingredient_id, position)` | ~13,858 rows across 913 products; tracks percent, percent_estimate, sub-ingredients, position order                                                                                                                                |
 | `product_allergen_info`     | Allergens + traces per product (unified)        | `(product_id, tag, type)`               | ~2,630 rows (1,269 allergens + 1,361 traces) across 655 products; type IN ('contains','traces'); source: OFF allergens_tags / traces_tags                                                                                          |
 | `country_ref`               | ISO 3166-1 alpha-2 country codes                | `country_code` (text PK)                | 2 rows (PL, DE); is_active flag, nutri_score_official boolean; FK from products.country                                                                                                                                            |
-| `category_ref`              | Product category master list                    | `category` (text PK)                    | 20 rows; FK from products.category; display_name, description, icon_emoji, sort_order                                                                                                                                              |
+| `category_ref`              | Product category master list                    | `category` (text PK)                    | 29 rows (22 PL + 7 new); FK from products.category; display_name, description, icon_emoji, sort_order                                                                                                                             |
 | `nutri_score_ref`           | Nutri-Score label definitions                   | `label` (text PK)                       | 7 rows (A–E + UNKNOWN + NOT-APPLICABLE); FK from scores.nutri_score_label; color_hex, description                                                                                                                                  |
 | `concern_tier_ref`          | EFSA ingredient concern tiers                   | `tier` (integer PK)                     | 4 rows (0–3); FK from ingredient_ref.concern_tier; score_impact, examples, EFSA guidance                                                                                                                                           |
-| `product_type_ref`          | Product sub-type taxonomy per category          | `product_type` (text PK)                | ~100 rows across 20 categories; FK from products.product_type; display_name, icon_emoji, sort_order. Issue #354.                                                                                                                   |
+| `product_type_ref`          | Product sub-type taxonomy per category          | `product_type` (text PK)                | ~137 rows across 29 categories; FK from products.product_type; display_name, icon_emoji, sort_order. Issue #354.                                                                                                                   |
 | `brand_ref`                 | Canonical brand dictionary                      | `brand_name` (text PK)                  | Auto-seeded from products.brand (~478 rows); parent_company, country_origin, is_store_brand, display_name. Issue #356.                                                                                                             |
 | `ingredient_translations`   | Localized ingredient display names              | `(ingredient_id, language_code)`        | FK to ingredient_ref + language_ref; name, source (curated/off_api/auto_translated/user_submitted), reviewed_at. Issue #355.                                                                                                       |
 | `user_preferences`          | User personalization (country, diet, allergens) | `user_id` (FK → auth.users)             | One row per user; diet enum, allergen arrays, strict_mode flags, notification_score_changes, notification_frequency; RLS by user                                                                                                   |
@@ -510,11 +511,11 @@ tryvit/
 
 ---
 
-## 5. Categories (22 PL + 21 DE)
+## 5. Categories (29 defined, 22 PL + 21 DE active)
 
-All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each. All 21 PL categories (except Żabka) have a DE counterpart.
+All categories have **variable product counts** (28–95 active products). Categories are expanded by running the pipeline with `--max-products N`. DE categories target ~51 products each. All 21 PL categories (except Żabka) have a DE counterpart. 7 new categories added for 10K expansion (not yet populated).
 
-### PL Categories (22)
+### PL Categories (22 active)
 
 | Category                   | Folder slug                 |
 | -------------------------- | --------------------------- |
@@ -567,7 +568,19 @@ All categories have **variable product counts** (28–95 active products). Categ
 | Spreads & Dips (DE)        | `spreads-dips-de/`                |
 | Sweets (DE)                | `sweets-de/`                      |
 
-**43 pipeline folders** (22 PL + 21 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage.
+### New Categories (7, not yet populated — Issue #858)
+
+| Category               | Slug                  |
+| ---------------------- | --------------------- |
+| Pasta & Rice           | `pasta-rice`          |
+| Soups                  | `soups`               |
+| Coffee & Tea           | `coffee-tea`          |
+| Frozen Vegetables      | `frozen-vegetables`   |
+| Ready Meals            | `ready-meals`         |
+| Desserts & Ice Cream   | `desserts-ice-cream`  |
+| Spices & Seasonings    | `spices-seasonings`   |
+
+**43 pipeline folders** (22 PL + 21 DE). Category-to-OFF tag mappings live in `pipeline/categories.py`. Each category has multiple OFF tags and search terms for comprehensive coverage. 7 new categories defined in `category_ref` but not yet added to the pipeline (see Issue #859).
 
 ---
 

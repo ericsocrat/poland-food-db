@@ -13,6 +13,18 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Raise scale guardrails for 10K+ products per country: products 15K→25K,
+  nutrition_facts 15K→25K, product_ingredient 200K→250K, ingredient_ref
+  10K→15K, product_allergen_info 50K→75K, source_nutrition 30K→50K,
+  product_field_provenance 150K→250K (#858)
+- Add 7 new food categories to `category_ref`: Pasta & Rice, Soups,
+  Coffee & Tea, Frozen Vegetables, Ready Meals, Desserts & Ice Cream,
+  Spices & Seasonings (sort_order 23–29, not yet populated) (#858)
+- Seed 37 `product_type_ref` entries for 7 new categories (4–6 subtypes +
+  "other" fallback per category) (#858)
+
 ### Documentation
 
 - Reconcile CURRENT_STATE.md with live data: update branch, SHA, open issues
