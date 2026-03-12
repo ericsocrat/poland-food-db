@@ -183,8 +183,7 @@ export default function ProfileSettingsPage() {
                   : "border text-foreground-secondary hover:border-strong"
               }`}
             >
-              <span className="text-2xl">{lang.flag}</span>
-              <p className="mt-1 text-sm font-medium">{lang.native}</p>
+              <p className="text-sm font-medium">{lang.native}</p>
             </button>
           ))}
         </div>

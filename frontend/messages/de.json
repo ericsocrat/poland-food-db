@@ -853,7 +853,9 @@
     "forbiddenCode": "403",
     "forbiddenTitle": "Zugriff verweigert",
     "forbiddenMessage": "Sie haben keine Berechtigung, diese Seite anzuzeigen.",
-    "goToDashboard": "Zum Dashboard"
+    "goToDashboard": "Zum Dashboard",
+    "browseCategories": "Kategorien durchsuchen",
+    "searchProducts": "Produkte suchen"
   },
   "errorBoundary": {
     "pageTitle": "Auf dieser Seite ist etwas schiefgelaufen",

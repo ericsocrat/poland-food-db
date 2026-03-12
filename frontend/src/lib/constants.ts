@@ -9,9 +9,9 @@ export const COUNTRIES = [
 ] as const;
 
 export const LANGUAGES = [
-  { code: "en", name: "English", native: "English", flag: "🇬🇧" },
-  { code: "pl", name: "Polish", native: "Polski", flag: "🇵🇱" },
-  { code: "de", name: "German", native: "Deutsch", flag: "🇩🇪" },
+  { code: "en", name: "English", native: "English" },
+  { code: "pl", name: "Polish", native: "Polski" },
+  { code: "de", name: "German", native: "Deutsch" },
 ] as const;
 
 /**

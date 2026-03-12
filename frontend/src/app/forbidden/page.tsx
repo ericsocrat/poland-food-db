@@ -8,7 +8,7 @@
 
 import { ButtonLink } from "@/components/common/Button";
 import { useTranslation } from "@/lib/i18n";
-import { ShieldOff } from "lucide-react";
+import { LayoutGrid, Search, ShieldOff } from "lucide-react";
 
 export default function ForbiddenPage() {
   const { t } = useTranslation();
@@ -28,9 +28,27 @@ export default function ForbiddenPage() {
       <p className="mb-6 text-lg text-foreground-secondary">
         {t("error.forbiddenMessage")}
       </p>
-      <ButtonLink href="/app" size="lg">
-        {t("error.goToDashboard")}
-      </ButtonLink>
+      <div className="flex flex-col gap-3 sm:flex-row">
+        <ButtonLink href="/app" size="lg">
+          {t("error.goToDashboard")}
+        </ButtonLink>
+        <ButtonLink
+          href="/app/categories"
+          size="lg"
+          variant="secondary"
+          icon={<LayoutGrid size={16} aria-hidden="true" />}
+        >
+          {t("error.browseCategories")}
+        </ButtonLink>
+        <ButtonLink
+          href="/app/search"
+          size="lg"
+          variant="secondary"
+          icon={<Search size={16} aria-hidden="true" />}
+        >
+          {t("error.searchProducts")}
+        </ButtonLink>
+      </div>
     </div>
   );
 }

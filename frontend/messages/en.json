@@ -853,7 +853,9 @@
     "forbiddenCode": "403",
     "forbiddenTitle": "Access denied",
     "forbiddenMessage": "You don't have permission to view this page.",
-    "goToDashboard": "Go to Dashboard"
+    "goToDashboard": "Go to Dashboard",
+    "browseCategories": "Browse Categories",
+    "searchProducts": "Search Products"
   },
   "errorBoundary": {
     "pageTitle": "Something went wrong on this page",

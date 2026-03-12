@@ -853,7 +853,9 @@
     "forbiddenCode": "403",
     "forbiddenTitle": "Brak dostępu",
     "forbiddenMessage": "Nie masz uprawnień do wyświetlenia tej strony.",
-    "goToDashboard": "Przejdź do Pulpitu"
+    "goToDashboard": "Przejdź do Pulpitu",
+    "browseCategories": "Przeglądaj kategorie",
+    "searchProducts": "Szukaj produktów"
   },
   "errorBoundary": {
     "pageTitle": "Coś poszło nie tak na tej stronie",

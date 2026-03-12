@@ -28,7 +28,21 @@ vi.mock("next/link", () => ({
 }));
 
 vi.mock("@/hooks/use-alternatives-v2", () => ({
-  useAlternativesV2: () => ({ data: null, isLoading: false }),
+  useAlternativesV2: () => ({
+    data: {
+      alternatives: [
+        {
+          product_id: 99,
+          product_name: "Healthy Chips",
+          brand: "GoodBrand",
+          category: "chips",
+          country: "PL",
+          unhealthiness_score: 20,
+        },
+      ],
+    },
+    isLoading: false,
+  }),
 }));
 
 // ─── Wrapper ────────────────────────────────────────────────────────────────

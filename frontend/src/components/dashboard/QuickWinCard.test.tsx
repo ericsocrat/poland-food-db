@@ -133,14 +133,16 @@ describe("QuickWinCard", () => {
     expect(screen.getByTestId("quick-win-loading")).toBeInTheDocument();
   });
 
-  it("shows no-alternatives state", () => {
+  it("returns null when no alternatives available", () => {
     mockUseAlternativesV2.mockReturnValue({
       data: { alternatives: [], alternatives_count: 0 },
       isLoading: false,
     });
     const products = [makeProduct()];
-    render(<QuickWinCard products={products} />, { wrapper: createWrapper() });
-    expect(screen.getByTestId("quick-win-none")).toBeInTheDocument();
+    const { container } = render(<QuickWinCard products={products} />, {
+      wrapper: createWrapper(),
+    });
+    expect(container.innerHTML).toBe("");
   });
 
   it("shows swap suggestion with score comparison", () => {

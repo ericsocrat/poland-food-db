@@ -47,4 +47,16 @@ describe("ForbiddenPage (403)", () => {
     expect(svg).toBeTruthy();
     expect(svg?.getAttribute("aria-hidden")).toBe("true");
   });
+
+  it("renders Browse Categories link pointing to /app/categories", () => {
+    render(<ForbiddenPage />);
+    const link = screen.getByText("Browse Categories");
+    expect(link.closest("a")).toHaveAttribute("href", "/app/categories");
+  });
+
+  it("renders Search Products link pointing to /app/search", () => {
+    render(<ForbiddenPage />);
+    const link = screen.getByText("Search Products");
+    expect(link.closest("a")).toHaveAttribute("href", "/app/search");
+  });
 });

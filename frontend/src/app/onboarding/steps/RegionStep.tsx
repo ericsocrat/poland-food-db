@@ -80,7 +80,6 @@ export function RegionStep({
                     : "border text-foreground-secondary hover:border-strong"
                 }`}
               >
-                <span>{lang.flag}</span>
                 <span>{lang.native}</span>
               </button>
             ))}

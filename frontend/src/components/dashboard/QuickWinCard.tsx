@@ -37,6 +37,10 @@ export function QuickWinCard({ products }: Readonly<QuickWinCardProps>) {
   if (!worstProduct) return null;
 
   const alternative = data?.alternatives?.[0];
+
+  // Hide the entire card when no swap is available (not just the text)
+  if (!isLoading && !alternative) return null;
+
   const worstScore = worstProduct.unhealthiness_score;
   const scoreDelta = alternative
     ? toTryVitScore(alternative.unhealthiness_score) -
@@ -59,12 +63,6 @@ export function QuickWinCard({ products }: Readonly<QuickWinCardProps>) {
       {isLoading && (
         <p data-testid="quick-win-loading" className="text-sm text-foreground-secondary">
           {t("dashboard.quickWinLoading")}
-        </p>
-      )}
-
-      {!isLoading && !alternative && (
-        <p data-testid="quick-win-none" className="text-sm text-foreground-secondary">
-          {t("dashboard.quickWinNone")}
         </p>
       )}
 

@@ -83,7 +83,7 @@ export default function ScanPage() {
   const { t } = useTranslation();
   const [ean, setEan] = useState("");
   const [manualEan, setManualEan] = useState("");
-  const [mode, setMode] = useState<"camera" | "manual">("camera");
+  const [mode, setMode] = useState<"camera" | "manual">("manual");
   const [cameraError, setCameraError] = useState<CameraErrorKind | null>(null);
   const [torchOn, setTorchOn] = useState(false);
   const [scanState, setScanState] = useState<ScanState>("idle");
@@ -99,6 +99,13 @@ export default function ScanPage() {
   const readerRef = useRef<BarcodeReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Default to camera mode on touch devices (mobile/tablet)
+  useEffect(() => {
+    if (window.matchMedia("(pointer: coarse)").matches) {
+      setMode("camera");
+    }
+  }, []);
 
   // ─── Record scan mutation ─────────────────────────────────────────────────
 

@@ -184,11 +184,8 @@ describe("ScanPage", () => {
     );
   });
 
-  it("switches to manual mode and shows input", async () => {
-    const user = userEvent.setup();
+  it("defaults to manual mode with input visible", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
-
-    await user.click(screen.getByText("Manual"));
 
     expect(
       screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
@@ -397,8 +394,10 @@ describe("ScanPage", () => {
     expect(input).toHaveValue("590123412");
   });
 
-  it("supports barcode format info text", () => {
+  it("supports barcode format info text", async () => {
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
     expect(
       screen.getByText(/Supports EAN-13, EAN-8, UPC-A, UPC-E/),
     ).toBeInTheDocument();
@@ -654,8 +653,10 @@ describe("ScanPage", () => {
     expect(mockPush).toHaveBeenCalledWith("/app/product/42");
   });
 
-  it("shows camera info text in camera mode", () => {
+  it("shows camera info text in camera mode", async () => {
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
     expect(
       screen.getByText(/Supports EAN-13, EAN-8, UPC-A, UPC-E/),
     ).toBeInTheDocument();
@@ -695,7 +696,9 @@ describe("ScanPage", () => {
       throw err;
     });
 
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
     // Should fall back to manual mode and show permission denied toast
     await waitFor(() => {
@@ -713,9 +716,11 @@ describe("ScanPage", () => {
       throw new Error("Generic camera error");
     });
 
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
-    // Should fall back to manual mode
+    // Should show camera error state
     await waitFor(() => {
       expect(screen.getByText("Manual")).toBeInTheDocument();
     });
@@ -727,7 +732,9 @@ describe("ScanPage", () => {
       { deviceId: "back1", label: "Back Camera" } as MediaDeviceInfo,
     ]);
 
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
     await waitFor(() => {
       expect(mockDecodeFromDevice).toHaveBeenCalledWith(
@@ -761,7 +768,9 @@ describe("ScanPage", () => {
       },
     });
 
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
     // Wait for ZXing to start decoding
     await waitFor(() => {
@@ -790,8 +799,11 @@ describe("ScanPage", () => {
       throw { name: "SomeNonErrorObject" };
     });
 
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
+    // Should show camera error state
     await waitFor(() => {
       expect(screen.getByText("Manual")).toBeInTheDocument();
     });
@@ -803,12 +815,15 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
 
+    // Start in manual mode (default), switch to camera
+    await user.click(screen.getByRole("button", { name: /Camera/ }));
+
     // Wait for initial camera attempt (no devices → shows error in camera mode)
     await waitFor(() => {
       expect(mockListDevices).toHaveBeenCalledTimes(1);
     });
 
-    // Explicitly switch to manual mode first
+    // Switch to manual mode
     await user.click(screen.getByRole("button", { name: /Manual/ }));
 
     // Click Camera button to switch back
@@ -857,7 +872,9 @@ describe("ScanPage", () => {
 
   it("shows no-camera error card when no devices found", async () => {
     // mockListDevices already returns [] by default from beforeEach
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
     await waitFor(() => {
       expect(screen.getByText("No Camera Available")).toBeInTheDocument();
@@ -880,7 +897,9 @@ describe("ScanPage", () => {
       throw err;
     });
 
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
     await waitFor(() => {
       expect(screen.getByText("Camera Access Blocked")).toBeInTheDocument();
@@ -902,6 +921,7 @@ describe("ScanPage", () => {
 
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
     await waitFor(() => {
       expect(screen.getByText("Retry Camera")).toBeInTheDocument();
@@ -1032,7 +1052,9 @@ describe("ScanPage", () => {
     // Spy on setTimeout — verify the 15 s scan timeout is registered
     const spy = vi.spyOn(globalThis, "setTimeout");
 
+    const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
 
     // Wait for camera to fully initialise
     await waitFor(() => {
