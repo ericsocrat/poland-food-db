@@ -108,6 +108,17 @@ jobs:
           # installed there (e.g. pgcrypto's digest()) are visible without
           # schema-qualification — mirrors the Supabase CLI default.
           psql -c "ALTER DATABASE postgres SET search_path TO public, extensions;"
+
+          # CI builds from scratch: enrichment migrations create ingredient_refs
+          # but can't populate product_ingredient (products don't exist yet).
+          # The orphan cleanup migration then incorrectly deletes those
+          # ingredient_refs as "orphans". The enrichment replay later fails
+          # because product_ingredient references the deleted ingredient_ids.
+          # Replace with a no-op; ci_post_enrichment.sql handles orphan cleanup
+          # after enrichment replay (Step 0d).
+          echo '-- CI: skipped (orphan cleanup deferred to ci_post_enrichment.sql)' \
+            > supabase/migrations/20260316000700_cleanup_orphan_ingredient_refs.sql
+
           for f in $(ls supabase/migrations/*.sql | sort); do
             echo "Applying: $f"
             psql -v ON_ERROR_STOP=1 -f "$f"
