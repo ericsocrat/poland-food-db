@@ -179,10 +179,17 @@ WHERE  product_id = (
   AND  salt_g = 13.0;
 
 -- Fix zero-calorie macros: water branded products with corrupt OFF carb data
--- Must zero both carbs AND sugars to preserve chk_nutrition_sugars_le_carbs
+-- Zero ALL macros to fix QA check 14 (zero-cal with nonzero macros >2g)
+-- and preserve all CHECK constraints (sugars<=carbs, satfat<=totalfat)
 UPDATE nutrition_facts
-SET    carbs_g = 0,
-       sugars_g = 0
+SET    total_fat_g     = 0,
+       saturated_fat_g = 0,
+       carbs_g         = 0,
+       sugars_g        = 0,
+       protein_g       = 0,
+       fibre_g         = 0,
+       salt_g          = 0,
+       trans_fat_g     = 0
 WHERE  product_id IN (
          SELECT p.product_id FROM products p
          JOIN   nutrition_facts nf ON nf.product_id = p.product_id
@@ -544,6 +551,179 @@ WHERE pi.product_id = d.product_id
   AND pi.ingredient_id != d.keep_id;
 
 -- 6d-ii: Remove orphan ingredient_ref entries created by the dedup
+DELETE FROM ingredient_ref
+WHERE NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi WHERE pi.ingredient_id = ingredient_ref.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM product_ingredient pi WHERE pi.parent_ingredient_id = ingredient_ref.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM ingredient_translations it WHERE it.ingredient_id = ingredient_ref.ingredient_id
+)
+AND NOT EXISTS (
+    SELECT 1 FROM recipe_ingredient ri WHERE ri.ingredient_ref_id = ingredient_ref.ingredient_id
+)
+AND EXISTS (SELECT 1 FROM product_ingredient LIMIT 1);
+
+-- ─── 6e. Fix naming convention issues ────────────────────────────────────
+-- QA checks 2 (ALL CAPS brands), 5 (double spaces), 6 (trailing punct)
+
+-- Fix ALL CAPS brands (length > 3) → INITCAP
+UPDATE products
+SET    brand = INITCAP(brand)
+WHERE  is_deprecated IS NOT TRUE
+  AND  length(brand) > 3
+  AND  brand = upper(brand)
+  AND  brand ~ '[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]';
+
+-- Fix double spaces in product names and brands
+UPDATE products
+SET    product_name = regexp_replace(product_name, '\s{2,}', ' ', 'g'),
+       brand        = regexp_replace(brand, '\s{2,}', ' ', 'g')
+WHERE  is_deprecated IS NOT TRUE
+  AND  (product_name ~ '\s{2,}' OR brand ~ '\s{2,}');
+
+-- Fix trailing punctuation in product names (period, comma, semicolon, colon)
+-- Must handle conflicts: if trimmed name already exists, deprecate instead
+UPDATE products p1
+SET    is_deprecated    = true,
+       deprecated_reason = 'Duplicate with trailing punctuation'
+WHERE  p1.is_deprecated IS NOT TRUE
+  AND  p1.product_name ~ '[.,;:]\s*$'
+  AND  EXISTS (
+    SELECT 1 FROM products p2
+    WHERE  p2.country      = p1.country
+      AND  p2.brand        = p1.brand
+      AND  p2.product_name = regexp_replace(p1.product_name, '[.,;:\s]+$', '')
+      AND  p2.product_id  != p1.product_id
+  );
+
+UPDATE products
+SET    product_name = regexp_replace(product_name, '[.,;:\s]+$', '')
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_name ~ '[.,;:]\s*$';
+
+-- Sync brand_ref after brand renames
+INSERT INTO public.brand_ref (brand_name, display_name)
+SELECT DISTINCT brand, brand
+FROM public.products
+WHERE brand IS NOT NULL
+  AND is_deprecated IS NOT TRUE
+ON CONFLICT (brand_name) DO NOTHING;
+
+-- ─── 6f. Null invalid EANs ──────────────────────────────────────────────
+-- QA barcode check: all EANs must pass GS1 checksum validation
+UPDATE products
+SET    ean = NULL
+WHERE  ean IS NOT NULL
+  AND  is_valid_ean(ean) IS NOT TRUE
+  AND  is_deprecated IS NOT TRUE;
+
+-- ─── 6g. Deprecate products with extreme nutrition values ───────────────
+-- QA nutrition_ranges checks 11-18: suspect/extreme values from OFF API
+
+-- Deprecate salt >= 30g/100g (QA check 12: suspect high salt)
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: extreme salt >= 30g/100g'
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_id IN (
+    SELECT p.product_id
+    FROM   products p
+    JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+    WHERE  p.is_deprecated IS NOT TRUE
+      AND  nf.salt_g >= 30
+  );
+
+-- Deprecate salt > 10g outside expected-high-salt categories (QA check 17)
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: extreme salt > 10g/100g outside expected category'
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_id IN (
+    SELECT p.product_id
+    FROM   products p
+    JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+    WHERE  p.is_deprecated IS NOT TRUE
+      AND  nf.salt_g > 10
+      AND  p.category NOT IN ('Sauces', 'Condiments', 'Seafood & Fish', 'Instant & Frozen', 'Spreads & Dips')
+  );
+
+-- Deprecate protein >= 50g outside expected categories (QA check 11)
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: suspect protein >= 50g/100g'
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_id IN (
+    SELECT p.product_id
+    FROM   products p
+    JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+    WHERE  p.is_deprecated IS NOT TRUE
+      AND  nf.protein_g >= 50
+      AND  p.category NOT IN ('Nuts, Seeds & Legumes', 'Seafood & Fish', 'Meat')
+      AND  p.product_name !~* '(protein|whey|casein|isolate)'
+  );
+
+-- Deprecate sugars >= 80g outside expected categories (QA check 13)
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: suspect sugars >= 80g/100g'
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_id IN (
+    SELECT p.product_id
+    FROM   products p
+    JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+    WHERE  p.is_deprecated IS NOT TRUE
+      AND  nf.sugars_g >= 80
+      AND  p.category NOT IN ('Sweets', 'Drinks', 'Condiments', 'Sauces', 'Baby')
+      AND  p.product_name !~* '(sugar|honey|syrup|zucker|honig|sirup)'
+  );
+
+-- Deprecate calories > 700 outside expected categories (QA check 18)
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: extreme calories > 700 kcal/100g'
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_id IN (
+    SELECT p.product_id
+    FROM   products p
+    JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+    WHERE  p.is_deprecated IS NOT TRUE
+      AND  nf.calories > 700
+      AND  p.category NOT IN ('Nuts, Seeds & Legumes', 'Plant-Based & Alternatives', 'Condiments', 'Dairy', 'Oils & Vinegars', 'Baby')
+  );
+
+-- Deprecate kJ-stored-as-kcal pattern (QA check 16)
+-- calories > 400 AND back-calculated from kJ conversion matches within 15%
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: kJ stored as kcal'
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_id IN (
+    SELECT p.product_id
+    FROM   products p
+    JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+    WHERE  p.is_deprecated IS NOT TRUE
+      AND  nf.calories > 400
+      AND  nf.protein_g IS NOT NULL AND nf.carbs_g IS NOT NULL AND nf.total_fat_g IS NOT NULL
+      AND  ABS(nf.calories / 4.184 - (nf.protein_g * 4 + nf.carbs_g * 4 + nf.total_fat_g * 9))
+           < (nf.calories / 4.184) * 0.15
+      AND  ABS(nf.calories - (nf.protein_g * 4 + nf.carbs_g * 4 + nf.total_fat_g * 9))
+           > nf.calories * 0.25
+  );
+
+-- Clean up junction data for newly deprecated products (from section 6g)
+DELETE FROM product_ingredient
+WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true);
+
+DELETE FROM product_allergen_info
+WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true);
+
+DELETE FROM product_store_availability
+WHERE product_id IN (SELECT product_id FROM products WHERE is_deprecated = true);
+
+-- Remove orphan ingredient_ref entries from new deprecations
 DELETE FROM ingredient_ref
 WHERE NOT EXISTS (
     SELECT 1 FROM product_ingredient pi WHERE pi.ingredient_id = ingredient_ref.ingredient_id

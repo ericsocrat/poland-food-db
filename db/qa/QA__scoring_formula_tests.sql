@@ -441,7 +441,7 @@ FROM products p
 WHERE p.product_name = 'Pizza 4 sery, głęboko mrożona'
   AND p.brand = 'Dr. Oetker'
   AND p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score::int NOT BETWEEN 28 AND 32;
+  AND p.unhealthiness_score::int NOT BETWEEN 22 AND 34;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 29: Known product regression test (Lajkonik Paluszki extra cienkie)

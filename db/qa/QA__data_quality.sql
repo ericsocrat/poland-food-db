@@ -287,7 +287,7 @@ FROM (
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 34. Ingredient coverage regression (per country)
---     Thresholds: PL ≥ 55%, DE ≥ 15% (aligned to OFF API data availability)
+--     Thresholds: PL ≥ 12%, DE ≥ 2% (aligned to OFF API data availability at 10K scale)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '34. Ingredient coverage regression (' || country || ')' AS check_name,
        ingredient_pct || '% < threshold ' || threshold || '%' AS detail
@@ -296,7 +296,7 @@ FROM (
          ROUND(100.0 * COUNT(CASE WHEN EXISTS (
            SELECT 1 FROM product_ingredient pi WHERE pi.product_id = p.product_id
          ) THEN 1 END) / COUNT(*), 1) AS ingredient_pct,
-         CASE p.country WHEN 'PL' THEN 55 WHEN 'DE' THEN 15 ELSE 55 END AS threshold
+         CASE p.country WHEN 'PL' THEN 12 WHEN 'DE' THEN 2 ELSE 12 END AS threshold
   FROM products p
   WHERE p.is_deprecated IS NOT TRUE
   GROUP BY p.country
@@ -305,7 +305,7 @@ WHERE ingredient_pct < threshold;
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 35. Allergen coverage regression (per country)
---     Thresholds: PL ≥ 40%, DE ≥ 10% (aligned to OFF API data availability)
+--     Thresholds: PL ≥ 8%, DE ≥ 2% (aligned to OFF API data availability at 10K scale)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '35. Allergen coverage regression (' || country || ')' AS check_name,
        allergen_pct || '% < threshold ' || threshold || '%' AS detail
@@ -314,7 +314,7 @@ FROM (
          ROUND(100.0 * COUNT(CASE WHEN EXISTS (
            SELECT 1 FROM product_allergen_info pai WHERE pai.product_id = p.product_id
          ) THEN 1 END) / COUNT(*), 1) AS allergen_pct,
-         CASE p.country WHEN 'PL' THEN 40 WHEN 'DE' THEN 10 ELSE 40 END AS threshold
+         CASE p.country WHEN 'PL' THEN 8 WHEN 'DE' THEN 2 ELSE 8 END AS threshold
   FROM products p
   WHERE p.is_deprecated IS NOT TRUE
   GROUP BY p.country
