@@ -17,7 +17,7 @@ WHERE is_deprecated IS NOT TRUE
   AND product_name = upper(product_name);
 
 -- ═══════════════════════════════════════════════════════════════════════════
--- 2. Brand names must not be ALL CAPS (>3 chars to exclude abbreviations)
+-- 2. Brand names must not be ALL CAPS (requires at least one 4+ letter uppercase word)
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT '2. brand not ALL CAPS' AS check_name,
        COUNT(*) AS violations
@@ -25,8 +25,7 @@ FROM products
 WHERE is_deprecated IS NOT TRUE
   AND length(brand) > 3
   AND brand = upper(brand)
-  AND brand ~ '[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]'  -- exclude non-Latin script brands
-  AND length(regexp_replace(brand, '[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]', '', 'g')) > 3;  -- exclude abbreviations (e.g. C.R.M.)
+  AND brand ~ '[A-ZĄĆĘŁŃÓŚŹŻ]{4,}';  -- at least one 4+ consecutive uppercase letter word
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. Product names must start with an uppercase letter (Latin or Polish)

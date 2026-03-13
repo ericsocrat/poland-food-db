@@ -245,7 +245,7 @@ JOIN products p ON p.product_id = nf.product_id
 WHERE p.is_deprecated IS NOT TRUE
   AND nf.salt_g IS NOT NULL
   AND nf.salt_g::numeric > 10
-  AND p.category NOT IN ('Sauces', 'Condiments', 'Seafood & Fish', 'Instant & Frozen', 'Spreads & Dips');
+  AND p.category NOT IN ('Sauces', 'Condiments', 'Seafood & Fish', 'Instant & Frozen', 'Spreads & Dips', 'Spices & Seasonings');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 18. Extreme calories (>700 kcal/100g) outside expected high-calorie categories

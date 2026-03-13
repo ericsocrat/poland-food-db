@@ -619,6 +619,24 @@ WHERE NOT EXISTS (
   SELECT 1 FROM products p WHERE p.brand = br.brand_name
 );
 
+-- Force-delete minority case-duplicate brand_ref entries
+-- (deprecated products may still reference old ALL CAPS brand, preventing orphan cleanup)
+DELETE FROM brand_ref b1
+WHERE EXISTS (
+  SELECT 1 FROM brand_ref b2
+  WHERE LOWER(b1.brand_name) = LOWER(b2.brand_name)
+    AND b1.brand_name <> b2.brand_name
+    AND (
+      (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
+      < (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+      OR (
+        (SELECT COUNT(*) FROM products p WHERE p.brand = b1.brand_name AND p.is_deprecated IS NOT TRUE)
+        = (SELECT COUNT(*) FROM products p WHERE p.brand = b2.brand_name AND p.is_deprecated IS NOT TRUE)
+        AND b1.brand_name > b2.brand_name
+      )
+    )
+);
+
 -- ─── 6f. Null invalid EANs ──────────────────────────────────────────────
 -- QA barcode check: all EANs must pass GS1 checksum validation
 UPDATE products
