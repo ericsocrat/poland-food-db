@@ -500,6 +500,8 @@ tryvit/
 
 **`v_data_coverage_summary`** — Materialized view of per-country, per-category data coverage metrics. Columns: country, category, total_products, with_ingredients, with_allergens, with_ean, ingredient_pct, allergen_pct, ean_pct, avg_completeness. Unique index on (country, category). Used by QA coverage threshold checks (§8.18, checks 34–37). Refreshed by `refresh_all_materialized_views()`.
 
+**`mv_scoring_distribution`** — Materialized view of scoring band distribution per country and category. Columns: country, category, band (Green/Yellow/Orange/Red/Dark Red), product_count, pct_of_category, avg_score, min_score, max_score, stddev_score. Unique index on (country, category, band). Refreshed by `refresh_all_materialized_views()`.
+
 ### Edge Functions
 
 > **Location:** `supabase/functions/`
@@ -996,9 +998,10 @@ At the end of every PR-like change, include a **Verification** section:
 | RLS Audit                 | `QA__rls_audit.sql`                 |      7 | Yes       |
 | Function Security Audit   | `QA__function_security_audit.sql`   |      6 | Yes       |
 | Recipe Integrity          | `QA__recipe_integrity.sql`          |      6 | Yes       |
+| Scoring Band Distribution | `QA__scoring_distribution.sql`      |     12 | No        |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **756/756 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **768/768 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)

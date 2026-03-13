@@ -93,8 +93,9 @@ SELECT has_view('public', 'v_api_category_overview_by_country', 'view v_api_cate
 -- 6. Materialized views exist
 -- ═══════════════════════════════════════════════════════════════════════════
 
-SELECT has_materialized_view('public', 'mv_ingredient_frequency', 'materialized view mv_ingredient_frequency exists');
-SELECT has_materialized_view('public', 'v_product_confidence',    'materialized view v_product_confidence exists');
+SELECT has_materialized_view('public', 'mv_ingredient_frequency',  'materialized view mv_ingredient_frequency exists');
+SELECT has_materialized_view('public', 'v_product_confidence',     'materialized view v_product_confidence exists');
+SELECT has_materialized_view('public', 'mv_scoring_distribution',  'materialized view mv_scoring_distribution exists');
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 7. Core API functions exist (no-auth functions)

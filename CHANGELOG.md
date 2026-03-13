@@ -15,6 +15,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Scoring band distribution materialized view (`mv_scoring_distribution`) for
+  10K scale monitoring: pre-aggregated Green/Yellow/Orange/Red/Dark Red bands
+  per country and category with product count, percentage, avg/min/max/stddev
+  scores. Integrated into `refresh_all_materialized_views()` and
+  `mv_staleness_check()`. 12-check non-blocking QA suite
+  `QA__scoring_distribution.sql` monitors band concentration, empty bands,
+  cross-country divergence, and category dominance (#865)
 - Automated retailer product scrapers for PL and DE markets:
   `BaseScraper` ABC with robots.txt compliance, 2s rate limiting, retry logic
   (5xx/429 backoff), CSV export; `BiedronkaScraper` (bfrisco.pl, 16 categories)
