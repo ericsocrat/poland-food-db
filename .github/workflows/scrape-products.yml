@@ -1,0 +1,61 @@
+name: Scrape Products
+
+on:
+  schedule:
+    # Weekly: Monday 3 AM UTC
+    - cron: '0 3 * * 1'
+  workflow_dispatch:
+    inputs:
+      retailer:
+        description: 'Retailer to scrape (biedronka, rewe, or all)'
+        required: true
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - biedronka
+          - rewe
+      max_products:
+        description: 'Maximum products per retailer'
+        required: false
+        default: '500'
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      matrix:
+        retailer: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.retailer != 'all' && fromJSON(format('["{0}"]', github.event.inputs.retailer)) || fromJSON('["biedronka","rewe"]') }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run scraper
+        run: |
+          python -m pipeline.scrape \
+            --retailer ${{ matrix.retailer }} \
+            --max-products ${{ github.event.inputs.max_products || '500' }} \
+            --output-dir scraped-data/${{ matrix.retailer }}
+
+      - name: Upload scraped CSV
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scraped-${{ matrix.retailer }}-${{ github.run_id }}
+          path: scraped-data/${{ matrix.retailer }}/*.csv
+          retention-days: 30
+          if-no-files-found: warn
