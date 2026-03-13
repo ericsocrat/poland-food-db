@@ -15,6 +15,13 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- User product submission UX: scan-miss CTA (`ScanMissSubmitCTA`) shown when
+  barcode not found, contributor badge (`ContributorBadge`) displaying tier
+  (bronze/silver/gold) based on approved submissions, missing-product CTA on
+  category pages linking to submit flow, TanStack Query hooks for submission
+  history and contributor stats (`useSubmissionHistory`,
+  `useContributorStats`, `useSubmitProduct`). Full i18n coverage (en/pl/de)
+  (#867)
 - Scheduled weekly data refresh orchestrator (`pipeline/orchestrate.py`):
   `PipelineOrchestrator` class sequences OFF API fetch → SQL execution →
   ingredient enrichment → scoring for all categories per country. Supports

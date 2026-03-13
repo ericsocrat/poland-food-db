@@ -274,6 +274,14 @@ export default function CategoryListingPage() {
           </Button>
         </div>
       )}
+
+      {/* Missing product CTA */}
+      <p className="text-center text-xs text-foreground-tertiary pt-2">
+        {t("categories.missingProduct")}{" "}
+        <Link href="/app/scan/submit" className="text-brand hover:text-brand-hover font-medium">
+          {t("categories.submitIt")}
+        </Link>
+      </p>
     </div>
     </PullToRefresh>
   );

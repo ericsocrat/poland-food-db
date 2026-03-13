@@ -9,6 +9,7 @@ import { Button, ButtonLink } from "@/components/common/Button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { ScanMissSubmitCTA } from "@/components/scan/ScanMissSubmitCTA";
 import { useAnalytics } from "@/hooks/use-analytics";
 import { recordScan } from "@/lib/api";
 import { NUTRI_COLORS } from "@/lib/constants";
@@ -31,7 +32,6 @@ import {
     CheckCircle,
     ClipboardList,
     ClipboardPaste,
-    Clock,
     FileText,
     Flashlight,
     Keyboard,
@@ -372,24 +372,7 @@ export default function ScanPage() {
           </p>
         </div>
 
-        {hasPending ? (
-          <div className="card border-warning-border bg-warning-bg">
-            <p className="text-sm text-warning-text">
-              <span className="inline-flex items-center gap-1">
-                <Clock size={16} aria-hidden="true" />{" "}
-                {t("scan.alreadySubmitted")}
-              </span>
-            </p>
-          </div>
-        ) : (
-          <ButtonLink
-            href={`/app/scan/submit?ean=${ean}`}
-            fullWidth
-            icon={<FileText size={16} aria-hidden="true" />}
-          >
-            {t("scan.helpAdd")}
-          </ButtonLink>
-        )}
+        <ScanMissSubmitCTA ean={ean} hasPendingSubmission={hasPending} />
 
         <div className="flex gap-2">
           <Button
