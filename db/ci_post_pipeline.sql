@@ -612,6 +612,13 @@ WHERE brand IS NOT NULL
   AND is_deprecated IS NOT TRUE
 ON CONFLICT (brand_name) DO NOTHING;
 
+-- Remove orphan brand_ref entries after INITCAP renames
+-- (6e may convert "REWE" → "Rewe" in products, leaving "REWE" orphaned in brand_ref)
+DELETE FROM brand_ref br
+WHERE NOT EXISTS (
+  SELECT 1 FROM products p WHERE p.brand = br.brand_name
+);
+
 -- ─── 6f. Null invalid EANs ──────────────────────────────────────────────
 -- QA barcode check: all EANs must pass GS1 checksum validation
 UPDATE products
@@ -647,7 +654,7 @@ WHERE  is_deprecated IS NOT TRUE
     JOIN   nutrition_facts nf ON nf.product_id = p.product_id
     WHERE  p.is_deprecated IS NOT TRUE
       AND  nf.salt_g > 10
-      AND  p.category NOT IN ('Sauces', 'Condiments', 'Seafood & Fish', 'Instant & Frozen', 'Spreads & Dips')
+      AND  p.category NOT IN ('Sauces', 'Condiments', 'Seafood & Fish', 'Instant & Frozen', 'Spreads & Dips', 'Spices & Seasonings')
   );
 
 -- Deprecate protein >= 50g outside expected categories (QA check 11)
@@ -692,6 +699,19 @@ WHERE  is_deprecated IS NOT TRUE
     WHERE  p.is_deprecated IS NOT TRUE
       AND  nf.calories > 700
       AND  p.category NOT IN ('Nuts, Seeds & Legumes', 'Plant-Based & Alternatives', 'Condiments', 'Dairy', 'Oils & Vinegars', 'Baby')
+  );
+
+-- Deprecate products with total macros > 105g/100g (physically impossible)
+UPDATE products
+SET    is_deprecated    = true,
+       deprecated_reason = 'OFF API data error: total macros (fat+carbs+protein) > 105g/100g'
+WHERE  is_deprecated IS NOT TRUE
+  AND  product_id IN (
+    SELECT p.product_id
+    FROM   products p
+    JOIN   nutrition_facts nf ON nf.product_id = p.product_id
+    WHERE  p.is_deprecated IS NOT TRUE
+      AND  COALESCE(nf.total_fat_g, 0) + COALESCE(nf.carbs_g, 0) + COALESCE(nf.protein_g, 0) > 105
   );
 
 -- Deprecate kJ-stored-as-kcal pattern (QA check 16)
@@ -771,7 +791,16 @@ CALL score_category('Spreads & Dips');
 CALL score_category('Sweets');
 CALL score_category('Żabka');
 
--- DE categories (all 21)
+-- New M-18 categories (7 PL)
+CALL score_category('Pasta & Rice');
+CALL score_category('Soups');
+CALL score_category('Coffee & Tea');
+CALL score_category('Frozen Vegetables');
+CALL score_category('Ready Meals');
+CALL score_category('Desserts & Ice Cream');
+CALL score_category('Spices & Seasonings');
+
+-- DE categories (all 21 + 7 new)
 CALL score_category('Alcohol',                    p_country := 'DE');
 CALL score_category('Baby',                       p_country := 'DE');
 CALL score_category('Bread',                      p_country := 'DE');
@@ -793,6 +822,15 @@ CALL score_category('Seafood & Fish',             p_country := 'DE');
 CALL score_category('Snacks',                     p_country := 'DE');
 CALL score_category('Spreads & Dips',             p_country := 'DE');
 CALL score_category('Sweets',                     p_country := 'DE');
+
+-- New M-18 categories (7 DE)
+CALL score_category('Pasta & Rice',              p_country := 'DE');
+CALL score_category('Soups',                     p_country := 'DE');
+CALL score_category('Coffee & Tea',              p_country := 'DE');
+CALL score_category('Frozen Vegetables',         p_country := 'DE');
+CALL score_category('Ready Meals',               p_country := 'DE');
+CALL score_category('Desserts & Ice Cream',      p_country := 'DE');
+CALL score_category('Spices & Seasonings',       p_country := 'DE');
 
 COMMIT;
 

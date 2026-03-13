@@ -25,7 +25,8 @@ FROM products
 WHERE is_deprecated IS NOT TRUE
   AND length(brand) > 3
   AND brand = upper(brand)
-  AND brand ~ '[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]';  -- exclude non-Latin script brands
+  AND brand ~ '[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]'  -- exclude non-Latin script brands
+  AND length(regexp_replace(brand, '[^a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ]', '', 'g')) > 3;  -- exclude abbreviations (e.g. C.R.M.)
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 3. Product names must start with an uppercase letter (Latin or Polish)
