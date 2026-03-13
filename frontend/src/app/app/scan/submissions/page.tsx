@@ -11,6 +11,7 @@ import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { createClient } from "@/lib/supabase/client";
 import type { Submission } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { ContributorBadge } from "@/components/scan/ContributorBadge";
 import {
     CheckCircle,
     Clock,
@@ -96,6 +97,7 @@ export default function MySubmissionsPage() {
           <p className="text-sm text-foreground-secondary">
             {t("scan.submissionsSubtitle")}
           </p>
+          <ContributorBadge />
         </div>
         <Link
           href="/app/scan"

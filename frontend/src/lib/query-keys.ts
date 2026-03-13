@@ -165,6 +165,9 @@ export const queryKeys = {
 
   /** Push subscriptions (#143) */
   pushSubscriptions: ["push-subscriptions"] as const,
+
+  /** Contributor stats (approved submission count for badges) (#867) */
+  contributorStats: ["contributor-stats"] as const,
 } as const;
 
 // ─── Stale time constants (ms) ──────────────────────────────────────────────
@@ -304,4 +307,7 @@ export const staleTimes = {
 
   /** Push subscriptions — 10 min (changes on user action) */
   pushSubscriptions: 10 * 60 * 1000,
+
+  /** Contributor stats — 10 min (changes only on approval) */
+  contributorStats: 10 * 60 * 1000,
 } as const;

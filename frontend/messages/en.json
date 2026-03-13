@@ -310,6 +310,7 @@
     "notFoundMessage": "EAN: {ean} is not in our database yet.",
     "alreadySubmitted": "Someone has already submitted this product. It's pending review.",
     "helpAdd": "Help us add it!",
+    "helpAddHint": "Your submission helps everyone discover healthier options.",
     "noCamera": "No camera found on this device.",
     "permissionDenied": "Camera permission denied. Please allow camera access in your browser settings.",
     "cameraError": "Could not start camera. Try manual entry instead.",
@@ -587,7 +588,9 @@
     "scoreRange": "TryVit Score Range",
     "nutriAB": "Nutri-Score A–B",
     "nova4Pct": "NOVA 4",
-    "bestInCategory": "★ Best in category"
+    "bestInCategory": "★ Best in category",
+    "missingProduct": "Can't find a product?",
+    "submitIt": "Submit it"
   },
   "compare": {
     "title": "Compare Products",
@@ -1907,5 +1910,10 @@
       "noSourceData": "Source attribution data is not yet available for this product.",
       "ariaLabel": "Data source information"
     }
+  },
+  "contributor": {
+    "bronze": "Bronze Contributor",
+    "silver": "Silver Contributor",
+    "gold": "Gold Contributor"
   }
 }
