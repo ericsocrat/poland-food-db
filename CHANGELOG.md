@@ -15,6 +15,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Automated retailer product scrapers for PL and DE markets:
+  `BaseScraper` ABC with robots.txt compliance, 2s rate limiting, retry logic
+  (5xx/429 backoff), CSV export; `BiedronkaScraper` (bfrisco.pl, 16 categories)
+  and `REWEScraper` (rewe.de, 17 categories); CLI entry point `pipeline/scrape.py`;
+  GitHub Actions weekly workflow; DB migration adds 'scraper' source_type.
+  Includes 35-test pytest suite (#863)
 - Batch SQL generation for 10K scale: pipeline splits large category runs
   (>batch_size products) into multiple batch files per step (01, 03) with
   independent transactions, stale file cleanup, batch progress headers.
