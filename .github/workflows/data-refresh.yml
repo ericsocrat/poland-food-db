@@ -1,0 +1,91 @@
+name: Scheduled Data Refresh
+
+on:
+  schedule:
+    # Every Sunday at 03:00 UTC
+    - cron: '0 3 * * 0'
+  workflow_dispatch:
+    inputs:
+      country:
+        description: 'Country to refresh (PL, DE, or ALL)'
+        required: false
+        default: 'ALL'
+        type: choice
+        options:
+          - ALL
+          - PL
+          - DE
+      category:
+        description: 'Single category name (leave empty for all)'
+        required: false
+        default: ''
+        type: string
+      max_products:
+        description: 'Max products per category'
+        required: false
+        default: '100'
+        type: string
+      dry_run:
+        description: 'Dry run (generate SQL only, do not execute)'
+        required: false
+        default: true
+        type: boolean
+      stale_only:
+        description: 'Only re-fetch stale products'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  refresh:
+    name: Data Refresh (${{ inputs.country || 'ALL' }})
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: 'pip'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run data refresh
+        env:
+          PYTHONIOENCODING: utf-8
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          ARGS="--country ${{ inputs.country || 'ALL' }}"
+          ARGS="$ARGS --max-products ${{ inputs.max_products || '100' }}"
+
+          if [ -n "${{ inputs.category }}" ]; then
+            ARGS="$ARGS --category \"${{ inputs.category }}\""
+          fi
+
+          if [ "${{ inputs.dry_run || 'true' }}" = "true" ]; then
+            ARGS="$ARGS --dry-run"
+          fi
+
+          if [ "${{ inputs.stale_only }}" = "true" ]; then
+            ARGS="$ARGS --stale-only"
+          fi
+
+          echo "Running: python -m pipeline.orchestrate $ARGS"
+          eval "python -m pipeline.orchestrate $ARGS"
+
+      - name: Upload execution report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: refresh-report-${{ github.run_id }}
+          path: pipeline/reports/refresh_*.json
+          retention-days: 30
+          if-no-files-found: ignore

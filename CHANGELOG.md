@@ -15,6 +15,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ### Added
 
+- Scheduled weekly data refresh orchestrator (`pipeline/orchestrate.py`):
+  `PipelineOrchestrator` class sequences OFF API fetch → SQL execution →
+  ingredient enrichment → scoring for all categories per country. Supports
+  `--dry-run`, `--stale-only`, `--category` filters, JSON execution reports
+  to `pipeline/reports/`. GitHub Actions weekly cron workflow
+  (`data-refresh.yml`) with `workflow_dispatch` manual trigger (#866)
 - Scoring band distribution materialized view (`mv_scoring_distribution`) for
   10K scale monitoring: pre-aggregated Green/Yellow/Orange/Red/Dark Red bands
   per country and category with product count, percentage, avg/min/max/stddev

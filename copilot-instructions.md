@@ -47,6 +47,14 @@ $env:PYTHONIOENCODING="utf-8"
 .\.venv\Scripts\python.exe -m pipeline.run --category "Dairy" --country DE --max-products 51
 ````
 
+**Orchestrated refresh (all categories):**
+```powershell
+$env:PYTHONIOENCODING="utf-8"
+.\.venv\Scripts\python.exe -m pipeline.orchestrate --country PL --max-products 100 --dry-run
+.\.venv\Scripts\python.exe -m pipeline.orchestrate --country ALL
+.\.venv\Scripts\python.exe -m pipeline.orchestrate --stale-only --stale-days 90
+```
+
 **Execute generated SQL:**
 
 ```powershell
@@ -80,6 +88,10 @@ tryvit/
 │   ├── csv_importer.py              # CSV bulk import → SQL generator (10K expansion)
 │   ├── csv_import.py                # CLI for CSV bulk import
 │   ├── test_csv_importer.py         # CSV importer pytest suite (25 tests)
+│   ├── orchestrate.py              # Full data refresh orchestrator (all categories)
+│   ├── test_orchestrate.py         # Orchestrator pytest suite
+│   ├── reports/                    # JSON execution reports (gitignored)
+│   │   └── .gitkeep
 │   ├── templates/                   # Import templates
 │   │   └── product_import_template.csv  # CSV template (21 columns)
 │   └── categories.py               # 28 category definitions + OFF tag mappings
@@ -358,7 +370,8 @@ tryvit/
 │   ├── repo-verify.yml              # Repo hygiene verification
 │   ├── smoke-test.yml               # Post-deploy smoke test
 │   ├── validate-alerts.yml          # Alert configuration validation
-│   └── dr-drill.yml                 # Disaster recovery drill
+│   ├── dr-drill.yml                 # Disaster recovery drill
+│   └── data-refresh.yml             # Scheduled weekly data refresh (cron + manual)
 ├── .commitlintrc.json               # Conventional Commits config (12 types, 24 scopes)
 ├── .editorconfig                    # Editor configuration (indent styles per language)
 ├── sonar-project.properties         # SonarCloud configuration

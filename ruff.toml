@@ -53,6 +53,7 @@ known-first-party = ["pipeline"]
 "pipeline/test_validator.py" = ["S101"]
 # Pipeline fetch/utility scripts: print() calls are intentional progress indicators
 "pipeline/run.py" = ["T20"]
+"pipeline/orchestrate.py" = ["T20"]
 "pipeline/csv_import.py" = ["T20"]
 "pipeline/scrape.py" = ["T20"]
 "pipeline/image_importer.py" = ["T20"]

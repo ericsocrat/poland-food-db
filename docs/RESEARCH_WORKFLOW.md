@@ -515,9 +515,55 @@ Use `--country XX` flag. See [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUID
 
 ---
 
-## 10. Edge Cases & Decision Rules
+## 10. Orchestrated Refresh (All Categories)
 
-### 9.1 Product Variants
+> **For scheduled or bulk data refresh** use `pipeline/orchestrate.py` to run the
+> full pipeline across all categories for a country in a single command.
+
+### CLI Usage
+
+```powershell
+$env:PYTHONIOENCODING="utf-8"
+
+# Dry-run all PL categories (no DB writes)
+.\.venv\Scripts\python.exe -m pipeline.orchestrate --country PL --max-products 100 --dry-run
+
+# Refresh all countries
+.\.venv\Scripts\python.exe -m pipeline.orchestrate --country ALL
+
+# Refresh only stale products (>90 days since last fetch)
+.\.venv\Scripts\python.exe -m pipeline.orchestrate --stale-only --stale-days 90
+```
+
+### What the Orchestrator Does (per Category)
+
+1. **Detect stale products** — queries `last_fetched_at` to find products older than `--stale-days`
+2. **Fetch from OFF API** — calls `pipeline.run.run_pipeline()` with `--max-products` cap
+3. **Execute generated SQL** — runs all `PIPELINE__*.sql` files in sorted order
+4. **Enrich ingredients** — calls `enrich_ingredients.py` for ingredient + allergen data
+5. **Re-score** — calls `score_category()` to recompute unhealthiness scores
+
+Errors in a single category do **not** abort the entire run — the orchestrator continues
+to the next category and includes failure details in the final report.
+
+### JSON Reports
+
+Each run writes a timestamped JSON report to `pipeline/reports/` with:
+- Per-category status (`ok` / `skipped` / `error`), timing, stale product counts
+- Overall summary: total categories, successes, failures, skips, duration
+- Reports are gitignored (only `.gitkeep` is tracked)
+
+### GitHub Actions (Scheduled)
+
+The `data-refresh.yml` workflow runs weekly (Sunday 03:00 UTC) with `--dry-run` by default.
+Manual dispatch allows selecting country, category, max products, and disabling dry-run.
+Reports are uploaded as workflow artifacts (30-day retention).
+
+---
+
+## 11. Edge Cases & Decision Rules
+
+### 11.1 Product Variants
 
 | Scenario                           | Rule                                                            |
 | ---------------------------------- | --------------------------------------------------------------- |
@@ -527,7 +573,7 @@ Use `--country XX` flag. See [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUID
 | Multi-pack vs single               | One row (nutrition per 100g is the same)                        |
 | Seasonal/limited edition           | Separate row; add `eu_notes = 'Seasonal - verify availability'` |
 
-### 9.2 When Data Conflicts
+### 11.2 When Data Conflicts
 
 | Conflict                                      | Resolution                                          |
 | --------------------------------------------- | --------------------------------------------------- |
@@ -537,7 +583,7 @@ Use `--country XX` flag. See [COUNTRY_EXPANSION_GUIDE.md](COUNTRY_EXPANSION_GUID
 | Two label photos show different values        | Use the more recent date. Product was reformulated. |
 | Product has different name on OFF vs label    | Use label name for `product_name`. Note OFF name.   |
 
-### 9.3 Products Without Label Access
+### 11.3 Products Without Label Access
 
 When no physical label or verified image is available:
 
@@ -548,7 +594,7 @@ When no physical label or verified image is available:
 
 ---
 
-## 11. Research Checklist Template
+## 12. Research Checklist Template
 
 Use this checklist for every product batch:
 

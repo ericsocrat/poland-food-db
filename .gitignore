@@ -57,6 +57,8 @@ backups/*.dump
 
 # ─── Pipeline output / scratch ──────────────────────────────────────────────
 pipeline_output/
+pipeline/reports/
+!pipeline/reports/.gitkeep
 *_research.json
 *_products.txt
 schema_*.txt
