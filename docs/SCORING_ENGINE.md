@@ -258,7 +258,29 @@ See `SCORING_METHODOLOGY.md` §2.8 for the full consumer band table and scientif
 
 ---
 
-## 11. Performance
+## 11. Distribution Monitoring
+
+**Materialized view:** `mv_scoring_distribution` — pre-aggregated scoring band distribution per country and category.
+
+| Column           | Type    | Description                              |
+| ---------------- | ------- | ---------------------------------------- |
+| `country`        | text    | Country code (PL, DE)                    |
+| `category`       | text    | Product category                         |
+| `band`           | text    | Green / Yellow / Orange / Red / Dark Red |
+| `product_count`  | bigint  | Products in this band                    |
+| `pct_of_category`| numeric | Percentage of category in this band      |
+| `avg_score`      | numeric | Mean unhealthiness score                 |
+| `min_score`      | integer | Lowest score in band                     |
+| `max_score`      | integer | Highest score in band                    |
+| `stddev_score`   | numeric | Score standard deviation                 |
+
+**Refresh:** Included in `refresh_all_materialized_views()`. Checked by `mv_staleness_check()`.
+
+**QA suite:** `QA__scoring_distribution.sql` — 12 non-blocking checks monitoring band concentration, empty bands, cross-country divergence, category dominance, and score spread. Thresholds calibrated for ~2,600 products; will tighten at 10K scale.
+
+---
+
+## 12. Performance
 
 | Operation                       | Target           | Method                      |
 | ------------------------------- | ---------------- | --------------------------- |
@@ -271,7 +293,7 @@ The v3.3 fast path ensures zero performance regression for pipeline scoring.
 
 ---
 
-## 12. Security
+## 13. Security
 
 - `compute_score()`, admin RPCs: `SECURITY DEFINER SET search_path = public`
 - Audit log: INSERT-only for service_role, read-only for authenticated
@@ -280,7 +302,7 @@ The v3.3 fast path ensures zero performance regression for pipeline scoring.
 
 ---
 
-## 13. QA Tests
+## 14. QA Tests
 
 17 QA SQL tests in `db/qa/QA__scoring_engine.sql`:
 
@@ -310,7 +332,7 @@ Consumer display tests (TryVit Score bands, percentile badges) are **separate** 
 
 ---
 
-## 14. Unified Formula Registry (#198)
+## 15. Unified Formula Registry (#198)
 
 Both scoring and search ranking formulas are governed under a single **formula registry** system — the `v_formula_registry` view unifies `scoring_model_versions` and `search_ranking_config` into one read-only surface.
 
@@ -372,7 +394,7 @@ WHERE  n.nspname = 'public'
 
 ---
 
-## 15. Weight Change Governance
+## 16. Weight Change Governance
 
 Changing scoring or search weights is a **controlled operation** with mandatory documentation. This process applies to any modification of factor weights, ceilings, categorical maps, or ranking signals.
 

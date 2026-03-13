@@ -181,7 +181,8 @@ $suiteCatalog = @(
     @{ Num = 45; Name = "Governance Drift"; Short = "GovDrift"; Id = "governance_drift"; Checks = 8; Blocking = $true; Kind = "sql"; File = "QA__governance_drift.sql" },
     @{ Num = 46; Name = "RLS Audit"; Short = "RLSAudit"; Id = "rls_audit"; Checks = 7; Blocking = $true; Kind = "sql"; File = "QA__rls_audit.sql" },
     @{ Num = 47; Name = "Function Security Audit"; Short = "FuncSecAudit"; Id = "function_security_audit"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__function_security_audit.sql" },
-    @{ Num = 48; Name = "Recipe Integrity"; Short = "RecipeInteg"; Id = "recipe_integrity"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__recipe_integrity.sql" }
+    @{ Num = 48; Name = "Recipe Integrity"; Short = "RecipeInteg"; Id = "recipe_integrity"; Checks = 6; Blocking = $true; Kind = "sql"; File = "QA__recipe_integrity.sql" },
+    @{ Num = 49; Name = "Scoring Band Distribution"; Short = "ScoringDist"; Id = "scoring_distribution"; Checks = 12; Blocking = $false; Kind = "sql"; File = "QA__scoring_distribution.sql" }
 )
 
 $suiteByNum = @{}
