@@ -1,6 +1,6 @@
 -- PIPELINE (Spreads & Dips): add product images
 -- Source: Open Food Facts API image URLs
--- Generated: 2026-03-06
+-- Generated: 2026-03-12
 
 -- 1. Remove existing OFF images for this category
 DELETE FROM product_images
@@ -26,6 +26,7 @@ FROM (
     ('Niewieścin', 'Pasztetowa Podwędzana', 'https://images.openfoodfacts.org/images/products/590/722/267/3294/front_pl.6.400.jpg', 'off_api', 'front', true, 'Front — EAN 5907222673294', 'front_5907222673294'),
     ('Go Vege', 'Hummus klasyczny', 'https://images.openfoodfacts.org/images/products/590/419/490/6641/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5904194906641', 'front_5904194906641'),
     ('Go Vege', 'Hummus paprykowy', 'https://images.openfoodfacts.org/images/products/590/419/490/6658/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5904194906658', 'front_5904194906658'),
+    ('Go Vege', 'Hummus z ciecierzycy spicy salsa', 'https://images.openfoodfacts.org/images/products/590/419/490/6696/front_pl.8.400.jpg', 'off_api', 'front', true, 'Front — EAN 5904194906696', 'front_5904194906696'),
     ('Go Vege', 'Hummus pomidorowy', 'https://images.openfoodfacts.org/images/products/590/419/490/6665/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5904194906665', 'front_5904194906665'),
     ('Go Vege', 'Hummus z ciecierzycy z burakiem', 'https://images.openfoodfacts.org/images/products/590/419/490/6672/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5904194906672', 'front_5904194906672'),
     ('I&lt;3vege', 'Hummus z papryką na ostro', 'https://images.openfoodfacts.org/images/products/590/061/703/9514/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900617039514', 'front_5900617039514'),
@@ -34,6 +35,7 @@ FROM (
     ('Vital Fresh', 'Hummus pomidorowy', 'https://images.openfoodfacts.org/images/products/590/751/780/1968/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5907517801968', 'front_5907517801968'),
     ('Lisner', 'Hummus z wędzonym pstrągiem', 'https://images.openfoodfacts.org/images/products/590/034/400/2324/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900344002324', 'front_5900344002324'),
     ('Lavica Food', 'Hummus dynia & imbir', 'https://images.openfoodfacts.org/images/products/590/324/079/3884/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5903240793884', 'front_5903240793884'),
+    ('Pilos', 'Masło Klarowane', 'https://images.openfoodfacts.org/images/products/590/547/700/3743/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5905477003743', 'front_5905477003743'),
     ('SmaczneGo!', 'Hummus klasyczny z preclami', 'https://images.openfoodfacts.org/images/products/590/751/780/5478/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5907517805478', 'front_5907517805478'),
     ('I-love-vege', 'Hummus z suszonymi pomidorami', 'https://images.openfoodfacts.org/images/products/590/061/703/5714/front_pl.16.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900617035714', 'front_5900617035714'),
     ('Dega', 'Hummus', 'https://images.openfoodfacts.org/images/products/590/762/326/8136/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5907623268136', 'front_5907623268136'),
@@ -56,7 +58,6 @@ FROM (
     ('Profi', 'Pasztet Dworski Z Dzikiem', 'https://images.openfoodfacts.org/images/products/590/169/601/1644/front_pl.10.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901696011644', 'front_5901696011644'),
     ('Sokołów', 'Pasztet dzidunia', 'https://images.openfoodfacts.org/images/products/590/056/226/6935/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900562266935', 'front_5900562266935'),
     ('Gzella', 'Pasztet z borowikami', 'https://images.openfoodfacts.org/images/products/590/189/174/4026/front_pl.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901891744026', 'front_5901891744026'),
-    ('Nestlé', 'Przyprawa Maggi', 'https://images.openfoodfacts.org/images/products/590/008/501/1180/front_pl.28.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900085011180', 'front_5900085011180'),
     ('Vemondo', 'Hummus z pastą sezamowa i pesto bazyliowym', 'https://images.openfoodfacts.org/images/products/433/561/912/7524/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 4335619127524', 'front_4335619127524'),
     ('Chef Select', 'Guacamole Z Kawałkami Awokado', 'https://images.openfoodfacts.org/images/products/405/648/985/1400/front_en.20.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489851400', 'front_4056489851400'),
     ('Unknown', 'Ekologiczny Hummus Naturalny', 'https://images.openfoodfacts.org/images/products/590/236/740/9982/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5902367409982', 'front_5902367409982'),
@@ -65,11 +66,8 @@ FROM (
     ('Lavica Food', 'Hummus z suszonymi pomidorami', 'https://images.openfoodfacts.org/images/products/590/324/079/3044/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5903240793044', 'front_5903240793044'),
     ('Sobkowiak', 'Pasztet pieczony z żurawiną', 'https://images.openfoodfacts.org/images/products/153/230/200/5449/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 1532302005449', 'front_1532302005449'),
     ('Tzatziki', 'Taziki', 'https://images.openfoodfacts.org/images/products/590/113/501/0177/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5901135010177', 'front_5901135010177'),
-    ('Pudliszki', 'Pudliszki', 'https://images.openfoodfacts.org/images/products/590/078/300/9960/front_de.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900783009960', 'front_5900783009960'),
     ('Vemondo', 'Hummus klasyczny', 'https://images.openfoodfacts.org/images/products/405/648/930/6344/front_pl.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489306344', 'front_4056489306344'),
     ('Chef select', 'Hummus classic', 'https://images.openfoodfacts.org/images/products/000/002/090/1882/front_pl.20.400.jpg', 'off_api', 'front', true, 'Front — EAN 20901882', 'front_20901882'),
-    ('Deluxe', 'Hummus und Guacamole', 'https://images.openfoodfacts.org/images/products/405/648/945/9545/front_de.41.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489459545', 'front_4056489459545'),
-    ('Chef Select', 'Hummus bruschetta', 'https://images.openfoodfacts.org/images/products/405/648/945/9514/front_cs.38.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489459514', 'front_4056489459514'),
     ('Taverna-Bio', 'Classic Hummus', 'https://images.openfoodfacts.org/images/products/871/917/205/0608/front_pl.11.400.jpg', 'off_api', 'front', true, 'Front — EAN 8719172050608', 'front_8719172050608'),
     ('Vital', 'Guacamole', 'https://images.openfoodfacts.org/images/products/843/600/852/0950/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 8436008520950', 'front_8436008520950'),
     ('K-take it veggie', 'K-take it veggie Hummus Classic', 'https://images.openfoodfacts.org/images/products/406/336/720/1967/front_pl.7.400.jpg', 'off_api', 'front', true, 'Front — EAN 4063367201967', 'front_4063367201967'),
@@ -77,7 +75,7 @@ FROM (
     ('Vitasia', 'Hummus sweet chili', 'https://images.openfoodfacts.org/images/products/405/648/955/0587/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489550587', 'front_4056489550587'),
     ('Athos', 'Tzatziki', 'https://images.openfoodfacts.org/images/products/520/227/700/0515/front_pl.21.400.jpg', 'off_api', 'front', true, 'Front — EAN 5202277000515', 'front_5202277000515'),
     ('Chef select', 'Bio Hummus paprykowy', 'https://images.openfoodfacts.org/images/products/405/648/930/6351/front_pl.10.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489306351', 'front_4056489306351'),
-    ('Chef Select', 'Guacamole mild', 'https://images.openfoodfacts.org/images/products/405/648/996/2991/front_de.103.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489962991', 'front_4056489962991'),
+    ('Chef select', 'Guacamole Classic with tomato and spices', 'https://images.openfoodfacts.org/images/products/405/648/996/2991/front_de.103.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489962991', 'front_4056489962991'),
     ('Chef select', 'Bio Hummus pomidorowy', 'https://images.openfoodfacts.org/images/products/405/648/930/6368/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489306368', 'front_4056489306368'),
     ('Vemondo', 'Hummus Paprykowy', 'https://images.openfoodfacts.org/images/products/000/002/090/1929/front_pl.13.400.jpg', 'off_api', 'front', true, 'Front — EAN 20901929', 'front_20901929'),
     ('Vital Fresh', 'Guacamole', 'https://images.openfoodfacts.org/images/products/843/600/852/1414/front_en.10.400.jpg', 'off_api', 'front', true, 'Front — EAN 8436008521414', 'front_8436008521414'),
@@ -86,7 +84,11 @@ FROM (
     ('Nature''s Promise', 'Hummus klasik', 'https://images.openfoodfacts.org/images/products/859/042/104/4872/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 8590421044872', 'front_8590421044872'),
     ('La campagna', 'Hummus', 'https://images.openfoodfacts.org/images/products/571/287/367/4534/front_da.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5712873674534', 'front_5712873674534'),
     ('Taverna', 'Hummus coriander & lemon', 'https://images.openfoodfacts.org/images/products/858/800/434/8585/front_cs.11.400.jpg', 'off_api', 'front', true, 'Front — EAN 8588004348585', 'front_8588004348585'),
-    ('Pikok', 'Pasztet z indyka', 'https://images.openfoodfacts.org/images/products/405/648/950/8274/front_pl.9.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489508274', 'front_4056489508274')
+    ('Pikok', 'Pasztet z indyka', 'https://images.openfoodfacts.org/images/products/405/648/950/8274/front_pl.9.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489508274', 'front_4056489508274'),
+    ('Unknown', 'Mild salsa dip', 'https://images.openfoodfacts.org/images/products/570/820/900/1518/front_fr.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5708209001518', 'front_5708209001518'),
+    ('Taverna', 'Hummus Oriental', 'https://images.openfoodfacts.org/images/products/858/800/434/8387/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 8588004348387', 'front_8588004348387'),
+    ('Unknown', 'Dip nacho', 'https://images.openfoodfacts.org/images/products/570/820/900/1570/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5708209001570', 'front_5708209001570'),
+    ('Hellas feinkost', 'Tzatziki', 'https://images.openfoodfacts.org/images/products/900/297/452/9915/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 9002974529915', 'front_9002974529915')
 ) AS d(brand, product_name, url, source, image_type, is_primary, alt_text, off_image_id)
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Spreads & Dips' AND p.is_deprecated IS NOT TRUE

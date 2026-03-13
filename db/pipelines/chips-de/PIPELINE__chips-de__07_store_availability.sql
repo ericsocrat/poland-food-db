@@ -1,6 +1,6 @@
-﻿-- PIPELINE (Chips): store availability
+-- PIPELINE (Chips): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-13
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -10,7 +10,7 @@ SELECT
   'pipeline'
 FROM (
   VALUES
-    ('Funny Frisch', 'Pom-Bär Ketchup Style', 'Netto'),
+    ('Funny frisch', 'Pom-Bär Ketchup Style', 'Netto'),
     ('Bio-Zentrale', 'Gemüsechips – Pastinake, Rote Beete, Süßkartoffel, lila Süßkartoffel, Meersalz', 'Edeka'),
     ('Lorenz', 'Naturals Mediterranes Gemüse', 'Edeka'),
     ('Lorenz', 'Naturals Mediterranes Gemüse', 'REWE'),
@@ -18,9 +18,13 @@ FROM (
     ('Pom-Bär', 'Pom-Bär Crizzlies - Paprika-Style', 'Aldi'),
     ('Pom-Bär', 'Pom-Bär Crizzlies - Paprika-Style', 'Edeka'),
     ('Pom-Bär', 'Pom-Bär Crizzlies - Paprika-Style', 'REWE'),
+    ('Lay''s', 'Aus dem Ofen Mediterrane Kräuter', 'REWE'),
+    ('Gut Bio', 'Bio-Gemüsechips mit Meersalz', 'Aldi'),
+    ('Gut Bio', 'Bio-Süßkartoffelchips mit Meersalz', 'Aldi'),
+    ('Bio-Zentrale', 'Gemüsechips – Pastinake, Chioggia Beete, lila Süßkartoffel, Kartoffel, schwarzer Pfeffer & Meersalz', 'Edeka'),
     ('Lorenz', 'Crunchips Paprika', 'REWE'),
-    ('Funny-frisch', 'Chipsfrisch Oriental', 'Edeka'),
-    ('Funny-frisch', 'Chipsfrisch Oriental', 'REWE'),
+    ('Funny-Frisch', 'Chipsfrisch Oriental', 'Edeka'),
+    ('Funny-Frisch', 'Chipsfrisch Oriental', 'REWE'),
     ('Funny-frisch', 'Chipsfrisch Sour Cream', 'REWE'),
     ('Funny-frisch', 'Chipsfrisch Sour Cream', 'Kaufland'),
     ('Funny Frisch', 'Chipsfrisch ungarisch', 'Edeka'),
@@ -42,7 +46,7 @@ FROM (
     ('Lorenz', 'Crunchips Western Style', 'Netto'),
     ('Chio', 'Tortillas - Wild Paprika', 'Edeka'),
     ('Chio', 'Tortillas - Wild Paprika', 'REWE'),
-    ('Lay''s', 'Chips "Subway Terriyaki"', 'REWE'),
+    ('Lay''s', 'Chips &quot;Subway Terriyaki&quot;', 'REWE'),
     ('Funny-frisch', 'Salziges, Riffels Naturell', 'Edeka'),
     ('LORENZ Crunchips', 'Crunchips Salted Gesalzene Kartoffel-Chips', 'Edeka'),
     ('LORENZ Crunchips', 'Crunchips Salted Gesalzene Kartoffel-Chips', 'REWE'),
@@ -52,13 +56,13 @@ FROM (
     ('Doritos', 'Sweet-Chili-Peppergeschmack', 'Edeka'),
     ('Doritos', 'Sweet-Chili-Peppergeschmack', 'REWE'),
     ('Aldi', 'Tortilla-Chips - Paprika', 'Aldi'),
-    ('Funny-frisch', 'Frit-Sticks ungarisch', 'Penny'),
-    ('Lorenz', 'Naturals Chips "fein gesalzen"', 'REWE'),
+    ('Funny-Frisch', 'Frit-Sticks ungarisch', 'Penny'),
+    ('Lorenz', 'Naturals Chips &quot;fein gesalzen&quot;', 'REWE'),
     ('Funny-frisch', 'Linsenchips Oriental', 'REWE'),
     ('Chio', 'Tortillas Hot Chili', 'REWE'),
     ('Lorenz', 'Naturals - Meersalz und Pfeffer', 'Edeka'),
-    ('Funny-frisch', 'Kessel Chips sweet chili', 'Lidl'),
-    ('Funny-frisch', 'Kessel Chips sweet chili', 'Kaufland'),
+    ('Funny-frisch', 'Kesselchips Sweet Chili', 'Lidl'),
+    ('Funny-frisch', 'Kesselchips Sweet Chili', 'Kaufland'),
     ('Sun Snacks', 'Erdnussflips Classic', 'Aldi'),
     ('Lorenz', 'Crunchips Cheese & Onion 150g', 'REWE'),
     ('DmBio', 'Tortilla Chips', 'dm'),
@@ -78,7 +82,7 @@ FROM (
     ('Aldi', 'Linsen-Chips - Paprika-Style', 'Aldi'),
     ('Aldi', 'Linsen-Chips - Sour Cream Style', 'Aldi'),
     ('Funny-frisch', 'Zwiebli-Ringe', 'REWE'),
-    ('K-Classic', 'Kartoffelchips Paprika', 'Kaufland'),
+    ('K Classic', 'Kartoffelchips Paprika', 'Kaufland'),
     ('Bio zentrale', 'Tortilla Chips Mais & Paprika', 'Edeka'),
     ('Funny-frisch', 'Chipsfrisch Zaziki Style', 'Edeka'),
     ('Aldi', 'Stapelchips - Original', 'Aldi'),
@@ -97,7 +101,27 @@ FROM (
     ('Ültje', 'Fusion - Peanuts Paprika Flamed Style', 'REWE'),
     ('Ültje', 'Fusion - Peanuts Paprika Flamed Style', 'Netto'),
     ('Halloween', 'Gespenster - Ketchupgeschmack', 'Aldi'),
-    ('Rewe', 'Kartoffel Chips mit Trüffel Geschmack', 'REWE')
+    ('Lorenz', 'Naturals - Milde Paprika', 'REWE'),
+    ('Aldi', 'Stapelchips - Sour Cream & Onion-Geschmack', 'Aldi'),
+    ('Lorenz', 'Crunchips WoW Paprika and Sour Cream', 'REWE'),
+    ('Snack Day', 'Tortilla Chips Gesalzen', 'Lidl'),
+    ('XOX', 'Krupuk', 'Netto'),
+    ('Asia Green Garden', 'Krabbenchips - Chili', 'Aldi'),
+    ('Bio-Zentrale', 'Rote Beete Chips – Meersalz', 'Edeka'),
+    ('Aldi Sports', 'Protein-Chips - Sour Cream & Onion-Geschmack', 'Aldi'),
+    ('Sun Snacks', 'Kessel-Chips - Salt & Vinegar-Geschmack', 'Aldi'),
+    ('Funny-frisch', 'Popchips Sea Salt & Black Pepper', 'REWE'),
+    ('Henderson and Sons', 'Tortilla Chips', 'REWE'),
+    ('Henderson and Sons', 'Tortilla Chips Hot Chili Taste', 'REWE'),
+    ('Lorenz', 'Crunchips African Style', 'Edeka'),
+    ('K-Classic', 'Sonne,mond & sterne snack', 'Kaufland'),
+    ('Halloween', 'Gespenster - Original', 'Aldi'),
+    ('Aldi', 'Farmer-Kartoffelchips - Chili Style', 'Aldi'),
+    ('Aldi Sports', 'Protein-Chips - Paprikageschmack', 'Aldi'),
+    ('Funny-frisch', 'Chipsfrisch ungarisch', 'Aldi'),
+    ('Funny-frisch', 'Chipsfrisch ungarisch', 'REWE'),
+    ('Rewe', 'Kartoffel Chips mit Trüffel Geschmack', 'REWE'),
+    ('Heimatgut', 'Bio-Gemüsechips - Fein gesalzen', 'Aldi')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'DE' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Chips' AND p.is_deprecated IS NOT TRUE

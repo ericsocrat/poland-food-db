@@ -1,6 +1,6 @@
-﻿-- PIPELINE (Seafood & Fish): insert products
+-- PIPELINE (Seafood & Fish): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-03-04
+-- Generated: 2026-03-13
 
 -- 0a. DEPRECATE old products in this category & release their EANs
 update products
@@ -11,8 +11,18 @@ where country = 'DE'
 
 -- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
 update products set ean = null
-where ean in ('4061458027458', '4061461356569', '4057295250227', '4056489452676', '4061458017367', '4061458016599', '4061458110754', '4006451000312', '4020500920819', '4061458011235', '4061462746543', '4061462633591', '4061458034838', '4061458049474', '4006451000596', '4061462739293', '4061458027489', '4047247687317', '4047247423748', '4061458027533', '4056489237846', '4008366011940', '4030800078943', '4061458017107', '4056489554967', '4061458025188', '4061458043083', '4056489144083', '4009239512298', '4021900008817', '4056489638353', '4061462698781', '4061461758158', '4021900010698', '4064872000250', '4311501715307', '4088500649598', '4056489639992', '4337256782623', '20442484', '4061458024105', '4061458032551', '4061458043090', '4006451000152', '4337256843973', '4021900006561', '4056489919339', '4061458026918', '4061458156165', '4316268643160', '4056489672074')
+where ean in ('4061458027458', '4061461356569', '4057295250227', '4056489452676', '4061458016599', '4061458110754', '4006451000312', '4020500920819', '4061458011235', '4061462746543', '4061462633591', '4061458034838', '4061461460563', '4057295253686', '4063600006380', '4061458136174', '4056489530268', '4006451000237', '4047247423762', '4061458154727', '4056489577980', '4020500922608', '4061458229555', '4061461100643', '4061458025584', '40898605', '4009239522624', '4061458049474', '4047247423670', '4061458079525', '4008366013517', '4057295587750', '4064872000670', '4061461828592', '4061458026758', '4047247423663', '4030800068777', '4006451000473', '4056489790976', '4056489789840', '4026968015203', '4006099273208', '4020500977011', '4006099273307', '4021900006332', '4013276140697', '4006451000596', '4061462739293', '4061458027489', '4047247687317', '4047247423748', '4061458027533', '4056489237846', '4008366011940', '4061458017107', '4056489554967', '4061458025188', '4061458043083', '4056489144083', '4009239512298', '4021900008817', '4061462698781', '4061461758158', '4061461264420', '4061458158305', '4056489351665', '4061458024969', '4061458024976', '4047247423755', '4008467094248', '4047247588195', '4061458134439', '4056489147268', '4006451000367', '4047247423687', '4056489417910', '4056489417927', '4006451000183', '4056489294818', '4056489351672', '4061458156615', '4061458156189', '4063367385117', '4061458025195', '4061461460594', '4008366012343', '4056489328650', '4061464057654', '4010871009114', '4069365247600', '4061463814586', '4061458167079', '4061458027397', '4061458048545', '4056489593232', '4021900008619', '4021900010698', '4064872000250', '4311501715307', '4088500649598', '4056489639992', '4337256782623', '20442484', '4061458024105', '4061458032551', '4061458043090', '4006451000152', '4337256843973', '4021900006561', '4056489919339', '4061458026918', '4061458156165', '4316268643160', '4056489672074', '4028855011503', '4337256766692', '4061458026956', '4061458017404', '4061458027410', '4018344511171', '4337256487665', '4009457784415', '4061462608629', '4002239230001', '4056489530282', '25907599', '4064872001509', '4047247018661', '4021900008831', '4056489387596', '4009457783791', '4012839514449', '4316734081076', '4056489028918', '4021900008695', '4316268664417', '4047247056717', '4250241209328', '4056489246268', '4020500922851', '4033300064416', '4056489882725', '4337256907484', '4008366013142', '4002239220507', '4311501443651', '4061458029124', '4061458026963', '4006451001210', '4056489091509')
   and ean is not null;
+
+-- 0c. Deprecate cross-category products whose identity_key collides with this batch
+update products
+set is_deprecated = true,
+    deprecated_reason = 'Reassigned to Seafood & Fish by pipeline',
+    ean = null
+where country = 'DE'
+  and category != 'Seafood & Fish'
+  and identity_key in ('0451d69cf3e3ea82d224cffab0773d2e', '0625009c9ce835b520007663c9b0d195', '06405d0e77101daaa4220e442899cf2b', '0692ef70ea62d7dd1ea13e4b6fdabf72', '084f61aa9fe14159e4db422c7b5525c8', '08abfa12054dcd571024b9306c334bbd', '0a287ada73e286b1e44b1be0b0896162', '0c836908b9b2303d97e35a54ec93f5bb', '0d32e22674818e69632bfff0607b95e6', '0d888895763345e53c391a58da6cfc49', '117874f2fd6a39e6d86981d95b27f30a', '124a2d6d7c67dc7523467c6fe0c8a2b8', '13357e93998f4ff468e1ab7ea67c7e57', '176c1e43c6374f112b55e9cd6d3c96c4', '1ad737110959b3f93785126390dea0fd', '1b4f27d9d9682d3b17d36e02f607485a', '1dce5390960b6a04fcba0b44dd22bfa2', '257599efea579a733a8dc64a6dfe6d0c', '29eabcfd8437621b0c7633512a172c61', '2a6b54009c96cd910818f08801ec987f', '2bff7a4717c2a68f9537425b47efe0dd', '2c654296fea4a1e08462e053b944ade6', '2d3c9548f7d1f01c9ca73dedb093243e', '2d5ac979c5e69b22baa58ea3c9dbcf84', '2e450a948cdc32e8985552e16a41aa3f', '2e955e092113f83c6947692d7a3d3d3b', '2f37ac73da44b93f1ca5ae2b7742e019', '32e58843770bd7553dd79d9d5aacbbb0', '35f0e02039a3abaa4a87c38f91024830', '3801f239209701a3b686b0c12dfc89ab', '39ec7031c1bc4985320e1630731865ff', '3dd557f57c4413b0880e71bed3547625', '3de718e005f3ab031ef04b55030559f7', '3e86f247bcb630280537ed5cf76b48b6', '42e95d80d6c5cb3e9088c8e3699fc5a7', '4308822d9c2872fba06487c203de27a5', '44b007b984fbdddbd38708a1c36ff265', '460f29fa1441b5ca96beab189040b29e', '48a7bb825f60dafe1224a450a453a008', '4a33fbae8391d6f9c34faf2bf4bf58e8', '4c272efe9683479d6e476bc2cd13778f', '4d91d4010b333b544e70a07d6c4c7cfe', '4f42b37320cb858849e01a31197a22c8', '4ff8ff7eaf570deaa8a7eee6a30f9390', '511b9417d401980ea70228e070e628f4', '516833059fe4a34401653505dfd9703f', '5465d08fa73fdf928b9a2349b2fa0559', '54b5ed68acddbb749191a8ccc41f9b3c', '575976cd7039c710755cdeaf25de1b20', '57e7e3fea6351e818626b5a30b7d5988', '582934647011ea4508261754ca5d7fd3', '598b760dbfeb37fdccd4470d5d7c44a4', '5b01fb21ddea29fdc6494698786e1b81', '5b1161448facda03de4df0ff73bacdf9', '5b64ee29c21dc6fcc1ad487a1a19b18c', '5c374fa33a4693701394d9330ce6d6cd', '5ce01ed0772c37e896accb96480e91bf', '5d1418f19ead3555decd0304e7cfce4f', '5d2118fb0e983ff4d48cf13a72cdda27', '5ec45ec97e5a7e1a3e68261a78e93304', '631e15f264bd751be81f02abc74f02a5', '6368cb38b45131e0bccbcee908b869d5', '63773765eadcd82e8f7902537d50d3f8', '6513e9768c57af90a96d8ecc6abd807f', '654a0bc26acac360cc9e904804419710', '67636275f6108ae8928b3dc0d2c1a84e', '679af63d8441bcc0890a79af088fcd35', '67c6643af4b2b86f5ff6507f1480077a', '6829e1543ce1852320afa2d1bb5af368', '6b96fbc00bd305c51034f661a9d73e80', '6c34929e119be5c3404fbea6c5fec3d4', '6cd17cb1bcb478f087e1d20eec72b00a', '6cf0f675f0e3413d8e0f72ab8981ea29', '6f4fd6e745b1f581dca692ab0964831e', '705e7aeab1a3cc61a42838a60086ccf0', '70eca057cc9d490a5cfd1138c3c79cc0', '71ec3cbe44b50cba9ca903a6ac0c2286', '79acaf42ead918d9f88003b7669e03ba', '7acc20f625c4fb2bf2c5758f518315d6', '807418d2c46e0c2d046919b7f84335cb', '832d60c594f1d6d9f79eacf3cfbafecf', '835b00fb96ce3e070520a680f3976a4e', '83ce854a6e1567ac619516f92959be8f', '856298822ff972cd5d0698eaf41dbdd8', '8839328fda51eb00a5e96d8260291a2e', '8a82714861862459efe302d7d2c5c120', '8ab3895e93b4b5c90ec30aaf6c573e7e', '8cf480c0d65067a4c5bd84005daf6d4e', '8d01a337fa23f6eed60540c97da33aaf', '8ece88428cd47a2e66e629b39ae44590', '9043a7394acdce0a5cc060b53efdd0a3', '913903558e26e878e1dac63eef5a8ac1', '91ea2a6070e96818c215ea00b54f42c0', '92123b5f556f1a1d93db86fe6caf8e5c', '921e6d4df4d04eb48fed2a56d5405b41', '942a8fc2a9c3207ec059dab674612255', '9767bc8b9293ebcd163b8b94f40e0040', '9e52e41420bd922ee8f000d0b61061d6', 'a3c48e6b42bf3912e2b530e9b408200f', 'a429418b623db93d60d346276f30060c', 'a4d627a15b4f040ff1f49dc9dc754e65', 'a67f91b6a477515b19862e91d05d3b4f', 'a8b8b8128c60ff490d59462b17f25bf6', 'aa1ea7c239d21ffb21ab1e279cb5c492', 'aca750c4bc2964ddab11ab0db14af10e', 'ad9583aa4ec19373cf1c54d5e0e56368', 'b02cc372274710b167fa398d5a5ded52', 'b057dd13def6dcf5c157ea528aeeeb1d', 'b1424bcf1ffe06b129fed200895db766', 'b373eb98a3eb82b712190eeb57c96975', 'b3f45bb8f26e236d0753addeaf037940', 'b5c54852d69a3aca616a5b4fdb0ad100', 'b61d1523d7b927565c648e585af22e9e', 'b7b46c358bc2a6955479aa740ed9364c', 'b8bef52ce89370b1d0065bb52fc54b13', 'b9dbefcf03f399296aeb80b7892ba33b', 'bb4ca6cc80dc04b39848e451fb4d7ad1', 'bc5e238e1a6348012e50b8cb639974b1', 'bd347ca183dc8d4fa7d7ee14e1551ee5', 'bd37875233f32621383c123213ef7418', 'c1c2175d2fd52f9f600bc437af888598', 'c6a4bc74120221fa5231a23609f12c27', 'c8c260e1461dc7a81dd652a8b74b528f', 'cad5644e48e5dc9fceb47a64df52e031', 'ccb831a611ae98d0f3bdfaf2f95eb481', 'cf6c9aa7648849d8d3fab5bbb76851b1', 'd2b97246a2ac5d555a674b78f8fa8c0b', 'd50e4a5183e2b8f643c2b33393d9fffe', 'd592a1881c16bc5b8e5fd43ebbf0b027', 'd8dc8a0e02a175aad87e9eeaa72ee8c0', 'd9574711584b282b951ddcc2070fccb8', 'dccfd5ef8d3d1a7076daa49af1298894', 'de2181e3c52c487a1acb72345a20e926', 'e1ce9b01ed373d79198b121144b6e978', 'e2edbbf8e4c2917c7d74979ea20da83c', 'e6b2b1f8feb26b46a012f2c76022c5c0', 'e6e0e2f94de9c2ae9f2f3ef09af58650', 'e7c5409e6240d7ac9a7b8d7ccf205e30', 'e9433bbf0d20d02cbb2c146f7cde5694', 'e9f72c12d62c5faffd566bcbf2bd3df8', 'ed45c5ae063672b1388df00ec434a598', 'f0557f88857f5c71de5cef2c14f0bc96', 'f166f41323edec77f0daa354716e7277', 'f446e2584911d5d720286d59a446e70c', 'f48a673e372f9de353016717b28163b8', 'f73bff9c66cef3b4494af196c407041a', 'f81de31177cb509c1cd96c03f40c5cc9', 'fba5386e6cde1d7b6989df554e1bbbac', 'fbf545c34335471361d4a4b20f08f5b7', 'fe53981d11c8305e27f3f610b3b0df98')
+  and is_deprecated is not true;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
@@ -21,7 +31,6 @@ values
   ('DE', 'Aldi Archiv', 'Grocery', 'Seafood & Fish', 'Räucherlachs Bio', 'smoked', 'Aldi', 'none', '4061461356569'),
   ('DE', 'ArcticFish', 'Grocery', 'Seafood & Fish', 'Pures Grün Räucherlachs', 'smoked', 'Lidl', 'none', '4057295250227'),
   ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Bio-Räucherlachs, trockengesalzen, in Scheiben geschnitten', 'smoked', 'Lidl', 'none', '4056489452676'),
-  ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Fischstäbchen', 'not-applicable', 'Aldi', 'none', '4061458017367'),
   ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Regenbogenforellenfilets über Eichenholzrauch heiß geräuchert', 'smoked', 'Aldi', 'none', '4061458016599'),
   ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Norwegischer Räucherlachs in Scheiben - Mini-Pack', 'smoked', 'Aldi', 'none', '4061458110754'),
   ('DE', 'Krone', 'Grocery', 'Seafood & Fish', 'Räucherlachs', 'smoked', null, 'none', '4006451000312'),
@@ -30,7 +39,40 @@ values
   ('DE', 'Almare Seafood', 'Grocery', 'Seafood & Fish', 'White Tiger Garnelen geschält, gekocht, entdarmt XXL', 'not-applicable', 'Aldi', 'none', '4061462746543'),
   ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Thunfischfilets in Sonnenblumenöl', 'not-applicable', 'Aldi', 'none', '4061462633591'),
   ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Riesengarnelenschwänze - Provencale', 'not-applicable', 'Aldi', 'none', '4061458034838'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Thunfisch / in Öl', 'not-applicable', 'Aldi', 'none', '4061461460563'),
+  ('DE', 'ArticFish', 'Grocery', 'Seafood & Fish', 'Coho Räucherlachs', 'smoked', 'Lidl', 'none', '4057295253686'),
+  ('DE', 'Friedrichs', 'Grocery', 'Seafood & Fish', 'Friedrichs Kodiak Wildlachs geräuchert 4063600006380 Rotlachs kaltgeräuchert, in Scheiben geschnitten', 'smoked', null, 'none', '4063600006380'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Garnelen, geschält & mariniert - Knoblauch-Chili', 'not-applicable', 'Aldi', 'none', '4061458136174'),
+  ('DE', 'Nautica', 'Grocery', 'Seafood & Fish', 'Norwegischer Räucherlachs', 'smoked', 'Lidl', 'none', '4056489530268'),
+  ('DE', 'Krone', 'Grocery', 'Seafood & Fish', 'Lachs Wild- geräuchert', 'smoked', null, 'none', '4006451000237'),
+  ('DE', 'Almare Seafood', 'Grocery', 'Seafood & Fish', 'Matjesfilets mit Gartenkräutern', 'not-applicable', 'Aldi', 'none', '4047247423762'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'ALDI ALMARE FISCH Räucherlachs XXL In hauchdünnen Scheiben Aus der Kühlung 4.99€ 220-g-Packung 1kg 22.68€', 'smoked', 'Aldi', 'none', '4061458154727'),
+  ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Nori Blätter', 'not-applicable', 'Lidl', 'none', '4056489577980'),
+  ('DE', 'Appel', 'Grocery', 'Seafood & Fish', 'Kater Frühstück', 'not-applicable', null, 'none', '4020500922608'),
+  ('DE', 'Aldi Gourmet Finest Cuisine', 'Grocery', 'Seafood & Fish', 'ALDI GOURMET FINEST CUISINE FISCH Lachsfiletseite Frisch; aus Norwegen; mit Haut; zum Braten oder für den Grill; aus zertifizierter Aquakultur Aus der Frischetruhe 14.99 750-g-Packung kg = 19.99', 'grilled', 'Aldi', 'none', '4061458229555'),
+  ('DE', 'Gourmet Finest Cuisine', 'Grocery', 'Seafood & Fish', 'Lachsrückenfilet trockengesalzen, kaltgeräuchert', 'smoked', 'Aldi', 'none', '4061461100643'),
+  ('DE', 'Almare (Aldi)', 'Grocery', 'Seafood & Fish', 'Heringsfilets in Joghurtsauce mit Kräutern', 'not-applicable', 'Aldi', 'none', '4061458025584'),
+  ('DE', 'Nautica', 'Grocery', 'Seafood & Fish', 'Surimi in Garnelenform in Rapsöl mit Knoblaucharoma', 'not-applicable', 'Lidl', 'none', '40898605'),
+  ('DE', 'Deutsche See', 'Grocery', 'Seafood & Fish', 'Lachs geräuchert', 'smoked', null, 'none', '4009239522624'),
   ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Knusper-Filets - Käse-Kräuter', 'not-applicable', null, 'none', '4061458049474'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Heringsfilet in Joghurtsauce mit Kräutern', 'not-applicable', null, 'none', '4047247423670'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'THUNFISCH in Dressing mit Gemüse', 'not-applicable', null, 'none', '4061458079525'),
+  ('DE', 'Frosta', 'Grocery', 'Seafood & Fish', 'Backofen Fisch Knusper Käse', 'not-applicable', null, 'none', '4008366013517'),
+  ('DE', 'K Classic', 'Grocery', 'Seafood & Fish', 'Norwegischer Räucher-Lachs', 'smoked', null, 'none', '4057295587750'),
+  ('DE', 'Krone', 'Grocery', 'Seafood & Fish', 'Forellen-Filets geräuchert', 'smoked', null, 'none', '4064872000670'),
+  ('DE', 'Gourmet Finest Cuisine', 'Grocery', 'Seafood & Fish', 'Wildlachsfilet mit Gemüse-Topping', 'not-applicable', null, 'none', '4061461828592'),
+  ('DE', 'Almare Seafood', 'Grocery', 'Seafood & Fish', 'Heringssalat Mit Roter Bete, Gurken und Äpfeln', 'not-applicable', null, 'none', '4061458026758'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Heringsfilet in Sahnesauce mit Gurken, Äpfeln und Dill', 'not-applicable', null, 'none', '4047247423663'),
+  ('DE', 'Nordsee', 'Grocery', 'Seafood & Fish', 'Matjesfilets nach nordischer Art mit Rapsölfilm, mit milder Rauchnote', 'not-applicable', null, 'none', '4030800068777'),
+  ('DE', 'Krone Fisch', 'Grocery', 'Seafood & Fish', 'Schottischer Räucherlachs', 'smoked', null, 'none', '4006451000473'),
+  ('DE', 'Nautica', 'Grocery', 'Seafood & Fish', 'Räucherlachs', 'smoked', null, 'none', '4056489790976'),
+  ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Räucherlachs', 'smoked', null, 'none', '4056489789840'),
+  ('DE', 'Fontaine', 'Grocery', 'Seafood & Fish', 'Sardinen mit Haut und Gräten in Bio-Olivenöl', 'not-applicable', null, 'none', '4026968015203'),
+  ('DE', 'La Sienna', 'Grocery', 'Seafood & Fish', 'Sardellen-Filets in Öl', 'not-applicable', null, 'none', '4006099273208'),
+  ('DE', 'Appel', 'Grocery', 'Seafood & Fish', 'Forellenfilets geräuchert in Rapsöl', 'not-applicable', null, 'none', '4020500977011'),
+  ('DE', 'La Sienna', 'Grocery', 'Seafood & Fish', 'Sardellen-Ringe in Öl', 'not-applicable', null, 'none', '4006099273307'),
+  ('DE', 'Nadler', 'Grocery', 'Seafood & Fish', 'Edle Matjesfilets in Rapsöl', 'not-applicable', null, 'none', '4021900006332'),
+  ('DE', 'Ostseefisch', 'Grocery', 'Seafood & Fish', 'Bismarckhering im würzigen Aufguss', 'not-applicable', null, 'none', '4013276140697'),
   ('DE', 'Krone Fisch', 'Grocery', 'Seafood & Fish', 'Lachs aus verantwortungsvoller Fischzucht', 'smoked', 'Kaufland', 'none', '4006451000596'),
   ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'ALDI ALMARE FISCH Heringsfilets Geteilt in Tomaten-Sauce MSC-zertifiziert Dauertiefpreis 0.99€ 200-g-Dose 1kg 4.95€ 4061462739293', 'not-applicable', 'Aldi', 'none', '4061462739293'),
   ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Stremellachs - Pfeffer', 'smoked', 'Aldi', 'none', '4061458027489'),
@@ -39,7 +81,6 @@ values
   ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Stremellachs - Natur', 'smoked', 'Aldi', 'none', '4061458027533'),
   ('DE', 'Ocean sea', 'Grocery', 'Seafood & Fish', 'King Prawns - White Tiger Garnelen', 'not-applicable', 'Lidl', 'none', '4056489237846'),
   ('DE', 'Frosta', 'Grocery', 'Seafood & Fish', 'Backofen Fisch (Knusprig Kross)', 'raw', 'Kaufland', 'none', '4008366011940'),
-  ('DE', 'Nordsee', 'Grocery', 'Seafood & Fish', 'Fischfrikadellen', 'not-applicable', 'Lidl', 'none', '4030800078943'),
   ('DE', 'Almare Seafood', 'Grocery', 'Seafood & Fish', 'Lachsforelle', 'smoked', 'Aldi', 'none', '4061458017107'),
   ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Bio Stremel Lachs', 'not-applicable', 'Lidl', 'none', '4056489554967'),
   ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Marinierte Garnelen - Tomate-Chili', 'not-applicable', 'Aldi', 'none', '4061458025188'),
@@ -47,15 +88,47 @@ values
   ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Smoke Salmon Slices', 'smoked', 'Lidl', 'none', '4056489144083'),
   ('DE', 'Deutsche See GmbH', 'Grocery', 'Seafood & Fish', 'Lachsfilet', 'not-applicable', null, 'none', '4009239512298'),
   ('DE', 'Homann Feinkost', 'Grocery', 'Seafood & Fish', 'Sahne-Heringsfilets mit Zwiebel, Gurke & Apfel', 'not-applicable', 'Lidl', 'none', '4021900008817'),
-  ('DE', 'Select & Go', 'Grocery', 'Seafood & Fish', 'Sushi Box', 'not-applicable', 'Lidl', 'none', '4056489638353'),
   ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Heringsfilets geteilt in Tomatensauce - fettreduziert', 'not-applicable', 'Aldi', 'none', '4061462698781'),
   ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'White-Tiger-Garnelen', 'not-applicable', 'Aldi', 'none', '4061461758158'),
+  ('DE', 'Bio', 'Grocery', 'Seafood & Fish', 'Bio-Lachsfilets naturbelassen', 'not-applicable', 'Aldi', 'none', '4061461264420'),
+  ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Lachsforellenfilet mit Haut', 'not-applicable', 'Aldi', 'none', '4061458158305'),
+  ('DE', 'Arctic Seafood', 'Grocery', 'Seafood & Fish', 'Makrelenfilets. Fisch', 'not-applicable', 'Lidl', 'none', '4056489351665'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Makrelenfilets - Natur', 'smoked', 'Aldi', 'none', '4061458024969'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Filet de maqureaux au poivre', 'not-applicable', 'Aldi', 'none', '4061458024976'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Matjesfilets nordische Art', 'not-applicable', 'Aldi', 'none', '4047247423755'),
+  ('DE', 'Costa', 'Grocery', 'Seafood & Fish', 'Lachsfilets', 'not-applicable', null, 'none', '4008467094248'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Ofenbackfisch, knuspriger Backteig', 'not-applicable', 'Aldi', 'none', '4047247588195'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Marinierte Garnelen - Zitrone-Pfeffer', 'not-applicable', 'Aldi', 'none', '4061458134439'),
+  ('DE', 'Nautica', 'Grocery', 'Seafood & Fish', 'Regenbogen Forellenfilets', 'smoked', 'Lidl', 'none', '4056489147268'),
+  ('DE', 'Krone Fisch', 'Grocery', 'Seafood & Fish', 'Forelle', 'smoked', null, 'none', '4006451000367'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Heringsfilets in Sahnesauce mit Zwiebeln und Gurken', 'not-applicable', 'Aldi', 'none', '4047247423687'),
+  ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Regenbogen Forellenfilets', 'smoked', 'Lidl', 'none', '4056489417910'),
+  ('DE', 'Nautica', 'Grocery', 'Seafood & Fish', 'Regenbogen Forellenfilets Pfeffer', 'smoked', 'Lidl', 'none', '4056489417927'),
+  ('DE', 'Krone', 'Grocery', 'Seafood & Fish', 'Meine Lieblings Garnele', 'not-applicable', null, 'none', '4006451000183'),
+  ('DE', 'Iglo', 'Grocery', 'Seafood & Fish', 'Schlemmer Filet', 'not-applicable', 'Lidl', 'none', '4056489294818'),
+  ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Makrele', 'smoked', 'Lidl', 'none', '4056489351672'),
+  ('DE', 'Almare Seafood', 'Grocery', 'Seafood & Fish', 'Regenbogen Forellenfilets', 'smoked', 'Aldi', 'none', '4061458156615'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Lachsfilet in herzhafter Tomaten-Sauce', 'not-applicable', 'Aldi', 'none', '4061458156189'),
+  ('DE', 'K-Classic', 'Grocery', 'Seafood & Fish', 'Heringsfilets in Dill-Sahnesauce', 'not-applicable', 'Kaufland', 'none', '4063367385117'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Marinierte Garnelen - Knoblauch-Petersilie', 'not-applicable', 'Aldi', 'none', '4061458025195'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Thunfisch Filet im eigenen Saft XXL', 'not-applicable', 'Aldi', 'none', '4061461460594'),
+  ('DE', 'Frosta', 'Grocery', 'Seafood & Fish', 'Schlemmerfilet a la Bordelaise Klassik', 'not-applicable', 'Netto', 'none', '4008366012343'),
+  ('DE', 'Fischerstolz', 'Grocery', 'Seafood & Fish', '8 lomos de salmón', 'not-applicable', 'Lidl', 'none', '4056489328650'),
+  ('DE', 'Gourmet Finest Cuisine', 'Grocery', 'Seafood & Fish', 'Doraden-Filets', 'not-applicable', 'Aldi', 'none', '4061464057654'),
+  ('DE', 'Laschinger', 'Grocery', 'Seafood & Fish', 'Norwegisches Lachsfilet mit Haut', 'not-applicable', 'Netto', 'none', '4010871009114'),
+  ('DE', 'Gourmet Finest Cuisine', 'Grocery', 'Seafood & Fish', 'White Tiger Garnelen', 'not-applicable', 'Aldi', 'none', '4069365247600'),
+  ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Knusper-Backfisch Alaska-Seelachs', 'not-applicable', 'Aldi', 'none', '4061463814586'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Stremellachs - Dill', 'not-applicable', 'Aldi', 'none', '4061458167079'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Graved Lachs', 'not-applicable', 'Aldi', 'none', '4061458027397'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Party-Crevetten', 'not-applicable', 'Aldi', 'none', '4061458048545'),
+  ('DE', 'Fisher''s Choice Bio Organic', 'Grocery', 'Seafood & Fish', 'Filetti di salmone con pelle', 'not-applicable', 'Lidl', 'none', '4056489593232'),
+  ('DE', 'Nadler', 'Grocery', 'Seafood & Fish', 'Sahne Heringsfilets', 'not-applicable', null, 'none', '4021900008619'),
   ('DE', 'Nordsee', 'Grocery', 'Seafood & Fish', 'Backfisch in knuspriger Panade mit Remoulade', 'not-applicable', null, 'none', '4021900010698'),
   ('DE', 'Krone', 'Grocery', 'Seafood & Fish', 'Bio-Lachs', 'smoked', null, 'none', '4064872000250'),
   ('DE', 'Edeka', 'Grocery', 'Seafood & Fish', 'Räucherlachs', 'smoked', null, 'none', '4311501715307'),
   ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Wildlachsfilet', 'not-applicable', null, 'none', '4088500649598'),
   ('DE', 'Fischerstolz', 'Grocery', 'Seafood & Fish', 'Frisches Lachsforellen-Filet mit Haut', 'not-applicable', null, 'none', '4056489639992'),
-  ('DE', 'REWE Bio', 'Grocery', 'Seafood & Fish', 'Räucherlachs', 'smoked', null, 'none', '4337256782623'),
+  ('DE', 'Rewe Bio', 'Grocery', 'Seafood & Fish', 'Räucherlachs', 'smoked', null, 'none', '4337256782623'),
   ('DE', 'Natürlich für uns', 'Grocery', 'Seafood & Fish', 'Bio Räucherlachs', 'smoked', 'Lidl', 'none', '20442484'),
   ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Lachsfilet-Portion mit Haut aus Norwegen', 'not-applicable', null, 'none', '4061458024105'),
   ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Lachsfilet', 'not-applicable', null, 'none', '4061458032551'),
@@ -67,7 +140,43 @@ values
   ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Shrimps- Salat', 'not-applicable', null, 'none', '4061458026918'),
   ('DE', 'Almare Seafood', 'Grocery', 'Seafood & Fish', 'Lachsfilet in Cranberry-Chili-Sauce', 'not-applicable', null, 'none', '4061458156165'),
   ('DE', 'Sea Gold', 'Grocery', 'Seafood & Fish', 'Fischstäbchen', 'not-applicable', 'Netto', 'none', '4316268643160'),
-  ('DE', 'Fischersolz', 'Grocery', 'Seafood & Fish', 'Norwegische Lachsfiletportionen', 'not-applicable', null, 'none', '4056489672074')
+  ('DE', 'Fischersolz', 'Grocery', 'Seafood & Fish', 'Norwegische Lachsfiletportionen', 'not-applicable', null, 'none', '4056489672074'),
+  ('DE', 'Kaufland', 'Grocery', 'Seafood & Fish', 'Pazifisches Wildlachsfilet', 'not-applicable', null, 'none', '4028855011503'),
+  ('DE', 'Rewe', 'Grocery', 'Seafood & Fish', 'Räucherlachs mit Buchenholz geräuchert', 'smoked', null, 'none', '4337256766692'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Shrimps in Cocktailsauce', 'not-applicable', null, 'none', '4061458026956'),
+  ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Schlemmer-Filet Broccoli', 'not-applicable', null, 'none', '4061458017404'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Party Garnelen', 'not-applicable', null, 'none', '4061458027410'),
+  ('DE', 'Larsen', 'Grocery', 'Seafood & Fish', 'Wildbahn Tomate-Mozzarella', 'not-applicable', null, 'none', '4018344511171'),
+  ('DE', 'Ja!', 'Grocery', 'Seafood & Fish', 'Räucherlachs', 'smoked', null, 'none', '4337256487665'),
+  ('DE', 'Gosch Sylt', 'Grocery', 'Seafood & Fish', 'Garnelen Dill', 'not-applicable', null, 'none', '4009457784415'),
+  ('DE', 'Gomdesn Seafood', 'Grocery', 'Seafood & Fish', 'Pangasius Filet', 'not-applicable', null, 'none', '4061462608629'),
+  ('DE', 'Unknown', 'Grocery', 'Seafood & Fish', 'Fischkonserve Sardinen', 'not-applicable', null, 'none', '4002239230001'),
+  ('DE', 'Fischerstolz', 'Grocery', 'Seafood & Fish', 'Norwegische Lachsfilet', 'not-applicable', null, 'none', '4056489530282'),
+  ('DE', 'Naturgut', 'Grocery', 'Seafood & Fish', 'Bio-Räucherlachs in Scheiben', 'smoked', 'Penny', 'none', '25907599'),
+  ('DE', 'REWE Meine Lieblinge', 'Grocery', 'Seafood & Fish', 'Louisiana Flusskrebse', 'not-applicable', null, 'none', '4064872001509'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Matjesfilets mit zarter Rauchnote', 'not-applicable', null, 'none', '4047247018661'),
+  ('DE', 'Homann Feinkost', 'Grocery', 'Seafood & Fish', 'Dill-Sahne-Heringsfilets mit Gurke & Zwiebel', 'not-applicable', null, 'none', '4021900008831'),
+  ('DE', 'Ocean Sea', 'Grocery', 'Seafood & Fish', 'Lachsfilet ohne Haut, tiefgefroren', 'not-applicable', null, 'none', '4056489387596'),
+  ('DE', 'Gosch Sylt', 'Grocery', 'Seafood & Fish', 'Lister Heringstopf', 'not-applicable', null, 'none', '4009457783791'),
+  ('DE', 'RügenFisch', 'Grocery', 'Seafood & Fish', 'Makrelenfilets', 'not-applicable', null, 'none', '4012839514449'),
+  ('DE', 'Miyako Japan', 'Grocery', 'Seafood & Fish', 'Sushi Nori Blätter', 'dried', null, 'none', '4316734081076'),
+  ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Edel Lachs', 'not-applicable', null, 'none', '4056489028918'),
+  ('DE', 'Nadler', 'Grocery', 'Seafood & Fish', 'Dill Sahne Heringsfilets', 'not-applicable', null, 'none', '4021900008695'),
+  ('DE', 'Sea Gold', 'Grocery', 'Seafood & Fish', 'Norwegischer Räucherlachs', 'smoked', 'Netto', 'none', '4316268664417'),
+  ('DE', 'Golden Seafood', 'Grocery', 'Seafood & Fish', 'Schlemmer-Filet', 'not-applicable', null, 'none', '4047247056717'),
+  ('DE', 'Iglo', 'Grocery', 'Seafood & Fish', 'Rösti-Stäbchen', 'not-applicable', 'Netto', 'none', '4250241209328'),
+  ('DE', 'Ocean sea', 'Grocery', 'Seafood & Fish', 'Garnelen', 'not-applicable', null, 'none', '4056489246268'),
+  ('DE', 'Appel', 'Grocery', 'Seafood & Fish', 'Fisch Zarte Filets vom Hering Toskana Art', 'not-applicable', null, 'none', '4020500922851'),
+  ('DE', 'Tide', 'Grocery', 'Seafood & Fish', 'Bratheringstaler', 'not-applicable', null, 'none', '4033300064416'),
+  ('DE', 'Deluxe', 'Grocery', 'Seafood & Fish', 'Zanderfilet', 'not-applicable', null, 'none', '4056489882725'),
+  ('DE', 'Ja!', 'Grocery', 'Seafood & Fish', 'Garnelen, roh, geschält, entdarmt, mit Knoblauch-Chili-Marinade', 'not-applicable', null, 'none', '4337256907484'),
+  ('DE', 'Frosta', 'Grocery', 'Seafood & Fish', 'Schlemmerfilet Knusper Spinat', 'not-applicable', null, 'none', '4008366013142'),
+  ('DE', 'Dittmann', 'Grocery', 'Seafood & Fish', 'Sardellen Filets', 'not-applicable', null, 'none', '4002239220507'),
+  ('DE', 'Gut & Günstig', 'Grocery', 'Seafood & Fish', 'Fischstäbchen', 'not-applicable', null, 'none', '4311501443651'),
+  ('DE', 'Almare', 'Grocery', 'Seafood & Fish', 'Bratheringsfilets', 'not-applicable', null, 'none', '4061458029124'),
+  ('DE', 'Aldi', 'Grocery', 'Seafood & Fish', 'Shrimps in Dillsauce', 'not-applicable', null, 'none', '4061458026963'),
+  ('DE', 'Krone Fisch', 'Grocery', 'Seafood & Fish', 'Bio Lachs', 'smoked', null, 'none', '4006451001210'),
+  ('DE', 'Lidl', 'Grocery', 'Seafood & Fish', 'Crispy Battered Fish Sticks', 'not-applicable', null, 'none', '4056489091509')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -82,4 +191,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'DE' and category = 'Seafood & Fish'
   and is_deprecated is not true
-  and product_name not in ('ALDI ALMARE FISCH Räucherlachs XXL In hauchdünnen Scheiben Aus der Kühlung 3.49€ 220-g-Packung 1kg 15.86€', 'Räucherlachs Bio', 'Pures Grün Räucherlachs', 'Bio-Räucherlachs, trockengesalzen, in Scheiben geschnitten', 'Fischstäbchen', 'Regenbogenforellenfilets über Eichenholzrauch heiß geräuchert', 'Norwegischer Räucherlachs in Scheiben - Mini-Pack', 'Räucherlachs', 'Bratheringe in würzigem Aufguss', 'Bio-Räucherlachs', 'White Tiger Garnelen geschält, gekocht, entdarmt XXL', 'Thunfischfilets in Sonnenblumenöl', 'Riesengarnelenschwänze - Provencale', 'Knusper-Filets - Käse-Kräuter', 'Lachs aus verantwortungsvoller Fischzucht', 'ALDI ALMARE FISCH Heringsfilets Geteilt in Tomaten-Sauce MSC-zertifiziert Dauertiefpreis 0.99€ 200-g-Dose 1kg 4.95€ 4061462739293', 'Stremellachs - Pfeffer', 'Lachs', 'Matjes Blister', 'Stremellachs - Natur', 'King Prawns - White Tiger Garnelen', 'Backofen Fisch (Knusprig Kross)', 'Fischfrikadellen', 'Lachsforelle', 'Bio Stremel Lachs', 'Marinierte Garnelen - Tomate-Chili', 'Matjesfilets mit Honig-Senf-Sauce', 'Smoke Salmon Slices', 'Lachsfilet', 'Sahne-Heringsfilets mit Zwiebel, Gurke & Apfel', 'Sushi Box', 'Heringsfilets geteilt in Tomatensauce - fettreduziert', 'White-Tiger-Garnelen', 'Backfisch in knuspriger Panade mit Remoulade', 'Bio-Lachs', 'Räucherlachs', 'Wildlachsfilet', 'Frisches Lachsforellen-Filet mit Haut', 'Räucherlachs', 'Bio Räucherlachs', 'Lachsfilet-Portion mit Haut aus Norwegen', 'Lachsfilet', 'Matjesfilets mit Sauce nach Sylter Art', 'Kodiak Wildlachs', 'Regenbogenforelle Geräuchert', 'Alaska Seelachs Mus', 'Bio Lachsfiletportionen', 'Shrimps- Salat', 'Lachsfilet in Cranberry-Chili-Sauce', 'Fischstäbchen', 'Norwegische Lachsfiletportionen');
+  and product_name not in ('ALDI ALMARE FISCH Räucherlachs XXL In hauchdünnen Scheiben Aus der Kühlung 3.49€ 220-g-Packung 1kg 15.86€', 'Räucherlachs Bio', 'Pures Grün Räucherlachs', 'Bio-Räucherlachs, trockengesalzen, in Scheiben geschnitten', 'Regenbogenforellenfilets über Eichenholzrauch heiß geräuchert', 'Norwegischer Räucherlachs in Scheiben - Mini-Pack', 'Räucherlachs', 'Bratheringe in würzigem Aufguss', 'Bio-Räucherlachs', 'White Tiger Garnelen geschält, gekocht, entdarmt XXL', 'Thunfischfilets in Sonnenblumenöl', 'Riesengarnelenschwänze - Provencale', 'Thunfisch / in Öl', 'Coho Räucherlachs', 'Friedrichs Kodiak Wildlachs geräuchert 4063600006380 Rotlachs kaltgeräuchert, in Scheiben geschnitten', 'Garnelen, geschält & mariniert - Knoblauch-Chili', 'Norwegischer Räucherlachs', 'Lachs Wild- geräuchert', 'Matjesfilets mit Gartenkräutern', 'ALDI ALMARE FISCH Räucherlachs XXL In hauchdünnen Scheiben Aus der Kühlung 4.99€ 220-g-Packung 1kg 22.68€', 'Nori Blätter', 'Kater Frühstück', 'ALDI GOURMET FINEST CUISINE FISCH Lachsfiletseite Frisch; aus Norwegen; mit Haut; zum Braten oder für den Grill; aus zertifizierter Aquakultur Aus der Frischetruhe 14.99 750-g-Packung kg = 19.99', 'Lachsrückenfilet trockengesalzen, kaltgeräuchert', 'Heringsfilets in Joghurtsauce mit Kräutern', 'Surimi in Garnelenform in Rapsöl mit Knoblaucharoma', 'Lachs geräuchert', 'Knusper-Filets - Käse-Kräuter', 'Heringsfilet in Joghurtsauce mit Kräutern', 'THUNFISCH in Dressing mit Gemüse', 'Backofen Fisch Knusper Käse', 'Norwegischer Räucher-Lachs', 'Forellen-Filets geräuchert', 'Wildlachsfilet mit Gemüse-Topping', 'Heringssalat Mit Roter Bete, Gurken und Äpfeln', 'Heringsfilet in Sahnesauce mit Gurken, Äpfeln und Dill', 'Matjesfilets nach nordischer Art mit Rapsölfilm, mit milder Rauchnote', 'Schottischer Räucherlachs', 'Räucherlachs', 'Räucherlachs', 'Sardinen mit Haut und Gräten in Bio-Olivenöl', 'Sardellen-Filets in Öl', 'Forellenfilets geräuchert in Rapsöl', 'Sardellen-Ringe in Öl', 'Edle Matjesfilets in Rapsöl', 'Bismarckhering im würzigen Aufguss', 'Lachs aus verantwortungsvoller Fischzucht', 'ALDI ALMARE FISCH Heringsfilets Geteilt in Tomaten-Sauce MSC-zertifiziert Dauertiefpreis 0.99€ 200-g-Dose 1kg 4.95€ 4061462739293', 'Stremellachs - Pfeffer', 'Lachs', 'Matjes Blister', 'Stremellachs - Natur', 'King Prawns - White Tiger Garnelen', 'Backofen Fisch (Knusprig Kross)', 'Lachsforelle', 'Bio Stremel Lachs', 'Marinierte Garnelen - Tomate-Chili', 'Matjesfilets mit Honig-Senf-Sauce', 'Smoke Salmon Slices', 'Lachsfilet', 'Sahne-Heringsfilets mit Zwiebel, Gurke & Apfel', 'Heringsfilets geteilt in Tomatensauce - fettreduziert', 'White-Tiger-Garnelen', 'Bio-Lachsfilets naturbelassen', 'Lachsforellenfilet mit Haut', 'Makrelenfilets. Fisch', 'Makrelenfilets - Natur', 'Filet de maqureaux au poivre', 'Matjesfilets nordische Art', 'Lachsfilets', 'Ofenbackfisch, knuspriger Backteig', 'Marinierte Garnelen - Zitrone-Pfeffer', 'Regenbogen Forellenfilets', 'Forelle', 'Heringsfilets in Sahnesauce mit Zwiebeln und Gurken', 'Regenbogen Forellenfilets', 'Regenbogen Forellenfilets Pfeffer', 'Meine Lieblings Garnele', 'Schlemmer Filet', 'Makrele', 'Regenbogen Forellenfilets', 'Lachsfilet in herzhafter Tomaten-Sauce', 'Heringsfilets in Dill-Sahnesauce', 'Marinierte Garnelen - Knoblauch-Petersilie', 'Thunfisch Filet im eigenen Saft XXL', 'Schlemmerfilet a la Bordelaise Klassik', '8 lomos de salmón', 'Doraden-Filets', 'Norwegisches Lachsfilet mit Haut', 'White Tiger Garnelen', 'Knusper-Backfisch Alaska-Seelachs', 'Stremellachs - Dill', 'Graved Lachs', 'Party-Crevetten', 'Filetti di salmone con pelle', 'Sahne Heringsfilets', 'Backfisch in knuspriger Panade mit Remoulade', 'Bio-Lachs', 'Räucherlachs', 'Wildlachsfilet', 'Frisches Lachsforellen-Filet mit Haut', 'Räucherlachs', 'Bio Räucherlachs', 'Lachsfilet-Portion mit Haut aus Norwegen', 'Lachsfilet', 'Matjesfilets mit Sauce nach Sylter Art', 'Kodiak Wildlachs', 'Regenbogenforelle Geräuchert', 'Alaska Seelachs Mus', 'Bio Lachsfiletportionen', 'Shrimps- Salat', 'Lachsfilet in Cranberry-Chili-Sauce', 'Fischstäbchen', 'Norwegische Lachsfiletportionen', 'Pazifisches Wildlachsfilet', 'Räucherlachs mit Buchenholz geräuchert', 'Shrimps in Cocktailsauce', 'Schlemmer-Filet Broccoli', 'Party Garnelen', 'Wildbahn Tomate-Mozzarella', 'Räucherlachs', 'Garnelen Dill', 'Pangasius Filet', 'Fischkonserve Sardinen', 'Norwegische Lachsfilet', 'Bio-Räucherlachs in Scheiben', 'Louisiana Flusskrebse', 'Matjesfilets mit zarter Rauchnote', 'Dill-Sahne-Heringsfilets mit Gurke & Zwiebel', 'Lachsfilet ohne Haut, tiefgefroren', 'Lister Heringstopf', 'Makrelenfilets', 'Sushi Nori Blätter', 'Edel Lachs', 'Dill Sahne Heringsfilets', 'Norwegischer Räucherlachs', 'Schlemmer-Filet', 'Rösti-Stäbchen', 'Garnelen', 'Fisch Zarte Filets vom Hering Toskana Art', 'Bratheringstaler', 'Zanderfilet', 'Garnelen, roh, geschält, entdarmt, mit Knoblauch-Chili-Marinade', 'Schlemmerfilet Knusper Spinat', 'Sardellen Filets', 'Fischstäbchen', 'Bratheringsfilets', 'Shrimps in Dillsauce', 'Bio Lachs', 'Crispy Battered Fish Sticks');

@@ -30,21 +30,26 @@ from (
     ('Browar Fortuna', 'Piwo Pilzner, dolnej fermentacji', 43.0, 0.0, 0.0, 0, 3.4, 0, 0, 0.1, 0),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 40.0, 0.0, 0.0, 0, 3.3, 0.2, 0, 0.2, 0.0),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 43.0, 0.0, 0.0, 0, 3.0, 0.2, 0, 0.5, 0.0),
+    ('Książęce', 'Książęce czerwony lager', 42.0, 0.0, 0, 0, 3.2, 0, 0, 0.6, 0),
     ('Lech', 'Lech Premium', 41.0, 0.1, 0.1, 0, 2.8, 0.8, 0, 0.6, 0.1),
     ('Kompania Piwowarska', 'Lech free', 22.0, 0.0, 0.0, 0, 5.5, 3.0, 0, 0.0, 0.0),
     ('Zatecky', 'Zatecky 0%', 12.0, 0.0, 0, 0, 2.9, 0.0, 0, 0.0, 0),
     ('Łomża', 'Radler 0,0%', 26.0, 0.0, 0.0, 0, 6.1, 4.8, 0, 0.5, 0.0),
+    ('Łomża', 'Bière sans alcool', 32.0, 0.0, 0.0, 0, 7.5, 2.8, 0.0, 0.5, 0.0),
+    ('Warka', 'Piwo Warka Radler', 26.0, 0.0, 0.0, 0, 6.4, 4.5, 0, 0.0, 0.0),
     ('Lech', 'Lech Free Lime Mint', 28.0, 0.0, 0, 0, 7.8, 5.8, 0, 0.0, 0),
     ('Carlsberg', 'Pilsner 0.0%', 15.0, 0.0, 0, 0, 3.2, 0, 0, 0.0, 0.0),
     ('Amber', 'Amber IPA zero', 23.0, 0.1, 0.1, 0, 4.9, 2.3, 0, 0.3, 0),
-    ('Christkindl', 'Christkindl Glühwein', 82.0, 0.5, 0.1, 0, 9.0, 8.5, 0.0, 0.5, 0.0),
+    ('Unknown', 'Lech Free Citrus Sour', 21.0, 0.0, 0.0, 0, 5.4, 4.1, 0.0, 0.0, 0.0),
+    ('Shroom', 'Shroom power', 16.1, 0.0, 0.0, 0, 3.4, 0.8, 3.2, 0.0, 0.1),
     ('Heineken', 'Heineken Beer', 42.0, 0.0, 0.0, 0, 3.2, 0.0, 0, 0.0, 0.0),
     ('Choya', 'Silver', 112.0, 0.0, 0.0, 0, 14.0, 14.0, 0.0, 0.0, 0.0),
     ('Ikea', 'Glühwein', 77.0, 0.0, 0.0, 0, 19.0, 19.0, 0.0, 0.0, 0.0),
     ('Just 0.', 'Just 0 White alcoholfree', 29.0, 0.0, 0.0, 0, 6.8, 6.3, 0, 0.0, 0.0),
     ('Just 0.', 'Just 0. Red', 22.0, 0.0, 0.0, 0, 4.9, 4.3, 0, 0.0, 0.0),
     ('Hoegaarden', 'Hoegaarden hveteøl, 4,9%', 44.1, 0.0, 0.0, 0, 3.5, 0.1, 0, 0.5, 0.0),
-    ('Carlo Rossi', 'Vin carlo rossi', 92.0, 0.0, 0, 0, 23.0, 0, 0, 0.0, 0)
+    ('Carlo Rossi', 'Vin carlo rossi', 92.0, 0.0, 0, 0, 23.0, 0, 0, 0.0, 0),
+    ('Somersby', 'Somersby Blueberry Flavoured Cider', 57.0, 0.0, 0.0, 0, 7.7, 7.5, 0, 0.0, 0.0)
 ) as d(brand, product_name, calories, total_fat_g, saturated_fat_g, trans_fat_g,
        carbs_g, sugars_g, fibre_g, protein_g, salt_g)
 join products p on p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name

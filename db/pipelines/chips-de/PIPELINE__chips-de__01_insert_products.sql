@@ -1,6 +1,6 @@
-﻿-- PIPELINE (Chips): insert products
+-- PIPELINE (Chips): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-03-04
+-- Generated: 2026-03-13
 
 -- 0a. DEPRECATE old products in this category & release their EANs
 update products
@@ -11,26 +11,45 @@ where country = 'DE'
 
 -- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
 update products set ean = null
-where ean in ('4000522105227', '4062139005536', '4005009101730', '4018077812750', '4063367149092', '4000522108426', '4066447884906', '4062139005963', '4000522105234', '4067796083460', '4061458058544', '4000522108433', '4018077004377', '4003586100399', '4003586101723', '4003586101310', '4003586102072', '4062139005864', '4003586104038', '4062139005888', '4018077714016', '4001242105917', '4018077004117', '4001242105931', '4062139003136', '4003586000347', '4018077004285', '4018077006258', '4003586107350', '4001242105924', '4062139006052', '4061459158236', '4003586105196', '4018077714351', '4003586104137', '4001242105900', '4018077714313', '4003586002914', '4061458059015', '4018077004469', '4066447225662', '4056489236559', '4061458024631', '4061458061445', '4061458061452', '4018077004193', '4061458058995', '4018077619458', '4003586104007', '4062139026159', '4047247037235', '4047247037242', '4003586006042', '4014740611125', '4005009100566', '4003586108630', '4061458061551', '4061458104012', '4061458239981', '4056489096092', '4056489238799', '4004980885004', '4047247544696', '4056489238775', '4001242105955', '4014740611132', '4004980409507', '4061458036306', '4061461010355', '4003586102089', '4001242108536', '4062139006038', '4061458058537', '4061464838192', '4068262083588', '4003586104120', '4062139007677', '4003586101358', '4337256543675', '4062139005949', '4003586100306', '4062139026760', '4003586102317', '4062139026333', '4003586101082', '4062139005826', '4018077010316', '4003586102676', '4003586105165', '4018077680588', '4062139003150', '4018077006883', '4018077714054', '4003586108456', '4062139006762')
+where ean in ('4000522105227', '4062139005536', '4005009101730', '4018077812750', '4063367149092', '4000522108426', '4062139005550', '4047247004657', '4047247004664', '4005009103345', '4066447884906', '4062139005963', '4000522105234', '4067796083460', '4061458058544', '4000522108433', '4005009103352', '4005009104625', '4031446402611', '4018077010170', '4000522105241', '4018077004377', '4003586100399', '4003586101723', '4003586101310', '4003586102072', '4062139005864', '4003586104038', '4062139005888', '4018077714016', '4001242105917', '4018077004117', '4001242105931', '4062139003136', '4003586000347', '4018077004285', '4018077006258', '4003586107350', '4001242105924', '4062139006052', '4061459158236', '4003586105196', '4018077714351', '4003586104137', '4001242105900', '4018077714313', '4003586002914', '4061458059015', '4018077004469', '4066447225662', '4056489236559', '4061458024631', '4061458061445', '4061458061452', '4018077004193', '4061458058995', '4018077619458', '4003586104007', '4062139026159', '4047247037235', '4047247037242', '4003586006042', '4014740611125', '4005009100566', '4003586108630', '4061458061551', '4061458104012', '4061458239981', '4056489096092', '4056489238799', '4004980885004', '4047247544696', '4056489238775', '4001242105955', '4014740611132', '4004980409507', '4061458036306', '4018077714399', '4061458061575', '4018077822018', '4018077009266', '4056489462866', '4031446820453', '4061458104029', '4005009103383', '4061462912238', '4061458059008', '4003586105134', '4053091082048', '4053091082352', '4018077004568', '4063367194788', '4061458036269', '4061461922719', '4061462912191', '4003586105677', '4003586100313', '4061461010355', '4003586102089', '4001242108536', '4062139006038', '4061458058537', '4061464838192', '4068262083588', '4003586104120', '4062139007677', '4003586101358', '4337256543675', '4062139005949', '4003586100306', '4062139026760', '4003586102317', '4062139026333', '4003586101082', '4062139005826', '4018077010316', '4003586102676', '4003586105165', '4018077680588', '4062139003150', '4018077006883', '4018077714054', '4003586108456', '4062139006762', '4018077006104', '4062139009879', '4003586100795', '4067796125450', '4260350926566', '4003586105141', '4003586000330', '4001242108567', '4066447247138', '4061464596610', '4001242108758', '4003586102713', '4003586108937', '4062139026463', '4003586107503', '4003586105721', '4056489462897', '4001242106471', '4061462255328', '4063367424526', '4001242108543', '4000522137075', '4001242105962', '4061464596641', '4063367424533', '4056489462903')
   and ean is not null;
+
+-- 0c. Deprecate cross-category products whose identity_key collides with this batch
+update products
+set is_deprecated = true,
+    deprecated_reason = 'Reassigned to Chips by pipeline',
+    ean = null
+where country = 'DE'
+  and category != 'Chips'
+  and identity_key in ('025fb688acbbbbe1a5f5527903596ebf', '03bde9c5cd04e6b149b4c464b785a9ae', '05c370b3b0a018ae948ab0c8ac515174', '05ea56dbdba8f4ae9793847cec94d0c0', '0b16b1d64833c5eb1545b06bfcee4502', '13246542dca2d6db460716ebbd196f9a', '14923c0b766f5970c71ee017bcc696be', '15bd434b636e70c6a3b2c20ec7ee3137', '185059e4f6d05fe93203e1943aef9921', '196fe4535ea665048f0566025ae1299a', '1ac763f81f37f2dc486dc1b151c676ff', '1e04724e06db11c988870c5113535476', '1e47d0421f154ba50b662b12366ce89a', '20b3b8349ac5048ec2a7246f6f2b14fe', '234a90e8764a5bcf389686f297ecefcc', '2691003c0dbd13f056a97baf0de4704b', '27afa9ac33add66a9090e7f7287e027d', '2ad532fa2e72646cfa683086d1012f7f', '2eedeffc865241ebfc683eb55cc56091', '2ff95b3c0ab9a20e42bf41cf51a9d800', '3000c6a2f092c479331deb67673649b8', '31376269a17b31eef95521eea3f2359b', '316e331e5389a359f5b9c4c9ae900d05', '34a3946984bdc7b0033c43af031e279b', '36537852daed8fe225b06486cb3334d2', '36b6df52481ef4295c4620bf2763e942', '397636ff49fb56097e3d3b7f388db4a1', '39a3948dc828d55d4134ad1bd59bd91a', '39debdfb1240258a1083952b41b0bea1', '39f1e746ee8d2c55ee3599c08d2a07ae', '3ae23d3aa5e4570c169cb52fc376ef0c', '3b771ade3e5bd56bea264504e086fc5a', '3bd6c6fa57cb6765e7f0070537ad4ac6', '3c7a2a6a2ba380bdf212245b03384495', '3ed6f859719ba9b575110588bf88ec18', '402cdc3274bcd7f22aa3e39b970bc421', '44412206edddc924198859721f420b85', '457909993d996aa304cb34e9df75e121', '46dcc9a1e233ae10ddd5369cff9925ef', '4af603de377da697ef7e5116726c4435', '4e56268a10097d456b1e60f180489324', '4f182ba5eb67ddef709d7c618ff32d14', '515fdc782bdfcb3ca52a72ddda2eb217', '52a7222fa7e61cf4ea3a8324364228f7', '549a81c73c7578d6b0c40fedb0acf933', '56ba177cb9d5ff717b210440824f3ce2', '5793e883b8ce07a662a99ecd6c7b7534', '58ab72aa258b12140cb7adb328cb3c63', '59b9d3077f4f3a603c777f1d55f9b3ba', '602511cbdf44e30a3080b7e70a9b4e3f', '63c235fb7634d7a997cddfdd901a0808', '6571bf1284ce66dfa40aa49e292ee140', '65f4334913ae2b310203d390384c161d', '66f3ed9615c378d932e0adf01dd580fe', '67b43aa4e59eab7943f0997836ec660c', '69107ec9dde2fd4aa2c936335e5e012f', '6959f991d11f89e07491c74311cd4740', '69696573f507764aca7f1ed629122135', '6a30f01289b2c34909805fe0e56561ef', '6c8ce9d9c4c3b35234dd907b756ba59b', '6da16c4adbf5cd200f510fc750554118', '6e91570d62d02e0c9f9aba3fa431e4bf', '73a2c7ccac6554006bd31cecdec0f404', '774e9028ca5d05e6736f77b78633caee', '78ef7a16b43b419f11a7d53e3b3709b7', '7ac4c02cd32c9c053ad6eb2d3506f53a', '7c27dad513ca4e65614a8fb6f79898a6', '7e624b20aae33b5401a770ac2ed50c4a', '7fe84c1f5e56d9b19b9f29ce985e3095', '800169dc02fe1eb5f60920c25639db47', '821c53cdfce6d6f1c1a4d3c64cf75dba', '86a8eb5a9fb75d04ec39da477d12e6d3', '8764053650d8c5ae0b070e2e54871cee', '87aef32c0f774498832aa21a95960827', '8906106c93f1a3be7486267ee4c5547f', '89f5c9d70906f8cabd565346e7d8122c', '89f7f69cb9797d5afe27ed94100c3605', '8cec78651da2c7a452b544a1fe47f968', '8d88419908698cb4e76d31b9516e7887', '8dce90182b83c5034aff73eb6470dd9b', '91b788ccedb5d68fec7f98c63b067ec8', '9231fd50d56aad55e096ec9539d0cf55', '926988f2961cba1c8dd550a004652433', '92a4fd71cc3c15400d29553186b332e8', '93e57920ffe2b0c5f0869fc5a995ca58', '96ef7d921ae952579a08fe63085d4d23', '97ac21b3a93a88c1644a3ee81d180059', '98a0694eb13ada11012d8d398ba8e326', '999777f046cf5c459e6db28642ada619', '99b2f1ee2a03f5d6d96e64b582eae59f', '9bc24e925b19776a9a78636b49b3b94a', '9c27daf0c61c64e07edc2f78a021b7d4', '9f22553c7bebf3511ada76d002f73e16', '9f3e77b6292ed62479dc37e5c7abcc8c', '9fb751ccfd666601459cdf621273325a', 'a079080f9e36d697f74aa77dd14050f2', 'a1a05911da78cfb0a03273e3952fa305', 'a2df6c2a855aa11197c433567f4f1112', 'a37db07ec4955cf968a2aeee2c6bb45e', 'a44590f539136052b6a7a1b9ed042c73', 'a490abe34ab30048d0b176688e51bcc0', 'a627a804ae4cbc194d53bb0705b6f52a', 'a877677ab04f6669fad6c32c4a10c9ac', 'ab2ef39c0abf60eef24a97214253e687', 'adfe984057551c7ae43400c7d2716dd1', 'af56d648bd181044035f5c1b0dfcbb3a', 'b0b8d1ae331c65f0ad4728e4fe834d63', 'b1256ff233cc381d7ad00fa8f82911bb', 'b135c29a1ae5a57a1aebc4e90d5b4d0d', 'b15840ff52680584a951832c913b4e5d', 'b5444c2f715b402fb3a9081535d59dcd', 'b79585fefcbc52254c1b0c91403c46f7', 'b79d2f77a6e7dba48f395159dc8dfb6a', 'b8417a89680e46a5919336b10a869db1', 'ba6459a542b01fe9c934fd39cf8647bf', 'bdd8ccf9c24a832bf2320e735c73eccc', 'bee1b34beeeaade89875e5571ad430f1', 'bf96adadd0a21871d0652017b2335934', 'c06f3ba1a06fbce38d6a178d0c729426', 'c148a7b8024cb6df7da99863db2e8937', 'c4280d0e90c06f4dc3ce0a67698c61c1', 'c6d56fe6e779239acbec1f2f2e0e0b5b', 'cbfd32dfdbd3680b8db6a3011ec993c3', 'cd0ec231b45e9dd0fea2cb6c4fc886b0', 'cdba325e16bfc31e3fd77692d8fabceb', 'cfc9e14d7caf1d5e958504071389a1de', 'cff592ac0e22f21fd0b4f03c05551370', 'd171ad260d5658f78684332d0eacff0d', 'd3ea2754dafff47c9715b925af74fa86', 'd45540592ea2b24cdbed23d5cd241785', 'd8099b77223092da13dda76d3c2bdb1d', 'da5957802427dbbc222eb67bea03a90f', 'da5b8accbb09a109e78bb1faef94012e', 'dead3635392562d3cbaeb4a0f1523387', 'dfb17eb5bff6ac92c5c7705534df30ee', 'e4e7406e0eaa684cb2fd4679d0410cf0', 'e6388be92c721ede44c931be1059c5ca', 'e706ec1a7481fa8ec7aff690afd1576e', 'e781709941529755f039f93f8e866822', 'e8c036990066448b9bf51e4aeb28a26e', 'e93ee12d675eb9a4b3866172c80b3145', 'eaba98bbf474f9189f239e911a4fe957', 'eb4f49a1c41d94d650655aa79c074232', 'f00e627050dda5be0216062d3ce7bbe9', 'f10074805d17a90feb7a4793e0ad7bab', 'f519b7828f3bc272f0535d24e9edbda1', 'f7fdb17e482a78373d19b33c39f01878', 'f8f501f69f5b7b83b1985825235425ac', 'f961416fda237e0b8a507e03b2790b17', 'fd1129dba2c21c45085fb118cbb68956')
+  and is_deprecated is not true;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('DE', 'Funny Frisch', 'Grocery', 'Chips', 'Pom-Bär Ketchup Style', 'not-applicable', 'Netto', 'none', '4000522105227'),
+  ('DE', 'Funny frisch', 'Grocery', 'Chips', 'Pom-Bär Ketchup Style', 'not-applicable', 'Netto', 'none', '4000522105227'),
   ('DE', 'Lay''s', 'Grocery', 'Chips', 'Aus dem Ofen Geröstete Paprika', 'not-applicable', null, 'none', '4062139005536'),
   ('DE', 'Bio-Zentrale', 'Grocery', 'Chips', 'Gemüsechips – Pastinake, Rote Beete, Süßkartoffel, lila Süßkartoffel, Meersalz', 'not-applicable', null, 'none', '4005009101730'),
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'Naturals Mediterranes Gemüse', 'not-applicable', null, 'none', '4018077812750'),
   ('DE', 'K-Classic', 'Grocery', 'Chips', 'Knuspermäuse Salz', 'not-applicable', 'Kaufland', 'none', '4063367149092'),
   ('DE', 'Pom-Bär', 'Grocery', 'Chips', 'Pom-Bär Crizzlies - Paprika-Style', 'not-applicable', 'Aldi', 'none', '4000522108426'),
+  ('DE', 'Lay''s', 'Grocery', 'Chips', 'Aus dem Ofen Mediterrane Kräuter', 'not-applicable', null, 'none', '4062139005550'),
+  ('DE', 'Gut Bio', 'Grocery', 'Chips', 'Bio-Gemüsechips mit Meersalz', 'not-applicable', 'Aldi', 'none', '4047247004657'),
+  ('DE', 'Gut Bio', 'Grocery', 'Chips', 'Bio-Süßkartoffelchips mit Meersalz', 'not-applicable', 'Aldi', 'none', '4047247004664'),
+  ('DE', 'Bio-Zentrale', 'Grocery', 'Chips', 'Gemüsechips – Pastinake, Chioggia Beete, lila Süßkartoffel, Kartoffel, schwarzer Pfeffer & Meersalz', 'not-applicable', null, 'none', '4005009103345'),
   ('DE', 'DmBio', 'Grocery', 'Chips', 'Gemüsechips mit Meersalz', 'not-applicable', null, 'none', '4066447884906'),
   ('DE', 'Lay''s', 'Grocery', 'Chips', 'Kräuterbutterchips', 'not-applicable', null, 'none', '4062139005963'),
   ('DE', 'Fanny frisch', 'Grocery', 'Chips', 'Pombär Sour Cream', 'not-applicable', null, 'none', '4000522105234'),
   ('DE', 'DmBio', 'Grocery', 'Chips', 'Gemüse Chips mit Meersalz', 'fried', null, 'none', '4067796083460'),
   ('DE', 'Snack Food Poco Loco', 'Grocery', 'Chips', 'Tortilla-Chips - Käse', 'not-applicable', null, 'none', '4061458058544'),
   ('DE', 'Pom-Bär', 'Grocery', 'Chips', 'Pom-Bär Crizzlies - Original', 'not-applicable', null, 'none', '4000522108433'),
+  ('DE', 'Biozentrale', 'Grocery', 'Chips', 'Biozentrale Gemüsechips Süsskartoffel Rosmarin 4005009103352 Süßkartofelchips', 'not-applicable', null, 'none', '4005009103352'),
+  ('DE', 'Bio Zentrale', 'Grocery', 'Chips', 'Tortilla Röllchen', 'not-applicable', null, 'none', '4005009104625'),
+  ('DE', 'XOX Snack', 'Grocery', 'Chips', 'Knuffels Schinken & Käse', 'not-applicable', null, 'none', '4031446402611'),
+  ('DE', 'Lorenz', 'Grocery', 'Chips', 'Erdnuß Locken Balls Classic', 'not-applicable', null, 'none', '4018077010170'),
+  ('DE', 'Funny Frisch', 'Grocery', 'Chips', 'Pom-Bär', 'not-applicable', null, 'none', '4000522105241'),
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'Crunchips Paprika', 'not-applicable', null, 'none', '4018077004377'),
-  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch Oriental', 'not-applicable', null, 'none', '4003586100399'),
+  ('DE', 'Funny-Frisch', 'Grocery', 'Chips', 'Chipsfrisch Oriental', 'not-applicable', null, 'none', '4003586100399'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch Sour Cream', 'not-applicable', 'Kaufland', 'none', '4003586101723'),
   ('DE', 'Funny Frisch', 'Grocery', 'Chips', 'Chipsfrisch ungarisch', 'not-applicable', null, 'none', '4003586101310'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Ofenchips paprika', 'not-applicable', null, 'none', '4003586102072'),
@@ -41,7 +60,7 @@ values
   ('DE', 'Chio', 'Grocery', 'Chips', 'Tortillas Nacho Cheese', 'not-applicable', null, 'none', '4001242105917'),
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'Crunchips Western Style', 'not-applicable', 'Netto', 'none', '4018077004117'),
   ('DE', 'Chio', 'Grocery', 'Chips', 'Tortillas - Wild Paprika', 'not-applicable', null, 'none', '4001242105931'),
-  ('DE', 'Lay''s', 'Grocery', 'Chips', 'Chips "Subway Terriyaki"', 'not-applicable', null, 'none', '4062139003136'),
+  ('DE', 'Lay''s', 'Grocery', 'Chips', 'Chips &quot;Subway Terriyaki&quot;', 'not-applicable', null, 'none', '4062139003136'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Salziges, Riffels Naturell', 'not-applicable', null, 'none', '4003586000347'),
   ('DE', 'LORENZ Crunchips', 'Grocery', 'Chips', 'Crunchips Salted Gesalzene Kartoffel-Chips', 'not-applicable', null, 'none', '4018077004285'),
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'Erdnusslocken Jumbos', 'not-applicable', null, 'none', '4018077006258'),
@@ -49,12 +68,12 @@ values
   ('DE', 'Chio', 'Grocery', 'Chips', 'Tortillas Salted', 'not-applicable', null, 'none', '4001242105924'),
   ('DE', 'Doritos', 'Grocery', 'Chips', 'Sweet-Chili-Peppergeschmack', 'not-applicable', 'Aldi', 'none', '4062139006052'),
   ('DE', 'Aldi', 'Grocery', 'Chips', 'Tortilla-Chips - Paprika', 'not-applicable', 'Aldi', 'none', '4061459158236'),
-  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Frit-Sticks ungarisch', 'not-applicable', 'Penny', 'none', '4003586105196'),
-  ('DE', 'Lorenz', 'Grocery', 'Chips', 'Naturals Chips "fein gesalzen"', 'not-applicable', null, 'none', '4018077714351'),
+  ('DE', 'Funny-Frisch', 'Grocery', 'Chips', 'Frit-Sticks ungarisch', 'not-applicable', 'Penny', 'none', '4003586105196'),
+  ('DE', 'Lorenz', 'Grocery', 'Chips', 'Naturals Chips &quot;fein gesalzen&quot;', 'not-applicable', null, 'none', '4018077714351'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Linsenchips Oriental', 'not-applicable', null, 'none', '4003586104137'),
   ('DE', 'Chio', 'Grocery', 'Chips', 'Tortillas Hot Chili', 'not-applicable', null, 'none', '4001242105900'),
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'Naturals - Meersalz und Pfeffer', 'not-applicable', null, 'none', '4018077714313'),
-  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Kessel Chips sweet chili', 'not-applicable', 'Lidl', 'none', '4003586002914'),
+  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Kesselchips Sweet Chili', 'not-applicable', 'Lidl', 'none', '4003586002914'),
   ('DE', 'Sun Snacks', 'Grocery', 'Chips', 'Erdnussflips Classic', 'not-applicable', 'Aldi', 'none', '4061458059015'),
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'Crunchips Cheese & Onion 150g', 'not-applicable', null, 'none', '4018077004469'),
   ('DE', 'DmBio', 'Grocery', 'Chips', 'Tortilla Chips', 'not-applicable', null, 'none', '4066447225662'),
@@ -70,7 +89,7 @@ values
   ('DE', 'Aldi', 'Grocery', 'Chips', 'Linsen-Chips - Paprika-Style', 'not-applicable', 'Aldi', 'none', '4047247037235'),
   ('DE', 'Aldi', 'Grocery', 'Chips', 'Linsen-Chips - Sour Cream Style', 'not-applicable', 'Aldi', 'none', '4047247037242'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Zwiebli-Ringe', 'not-applicable', null, 'none', '4003586006042'),
-  ('DE', 'K-Classic', 'Grocery', 'Chips', 'Kartoffelchips Paprika', 'not-applicable', 'Kaufland', 'none', '4014740611125'),
+  ('DE', 'K Classic', 'Grocery', 'Chips', 'Kartoffelchips Paprika', 'not-applicable', 'Kaufland', 'none', '4014740611125'),
   ('DE', 'Bio zentrale', 'Grocery', 'Chips', 'Tortilla Chips Mais & Paprika', 'not-applicable', null, 'none', '4005009100566'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch Zaziki Style', 'not-applicable', null, 'none', '4003586108630'),
   ('DE', 'Aldi', 'Grocery', 'Chips', 'Stapelchips - Original', 'not-applicable', 'Aldi', 'none', '4061458061551'),
@@ -85,12 +104,32 @@ values
   ('DE', 'K-Classic', 'Grocery', 'Chips', 'Geriffelte Paprika Chips', 'not-applicable', 'Kaufland', 'none', '4014740611132'),
   ('DE', 'Ültje', 'Grocery', 'Chips', 'Fusion - Peanuts Paprika Flamed Style', 'not-applicable', 'Netto', 'none', '4004980409507'),
   ('DE', 'Halloween', 'Grocery', 'Chips', 'Gespenster - Ketchupgeschmack', 'not-applicable', 'Aldi', 'none', '4061458036306'),
+  ('DE', 'Lorenz', 'Grocery', 'Chips', 'Naturals - Milde Paprika', 'not-applicable', null, 'none', '4018077714399'),
+  ('DE', 'Aldi', 'Grocery', 'Chips', 'Stapelchips - Sour Cream & Onion-Geschmack', 'not-applicable', 'Aldi', 'none', '4061458061575'),
+  ('DE', 'Lorenz', 'Grocery', 'Chips', 'Crunchips WoW Paprika and Sour Cream', 'not-applicable', null, 'none', '4018077822018'),
+  ('DE', 'Lorenz', 'Grocery', 'Chips', 'Crunchips Burrito Style', 'not-applicable', null, 'none', '4018077009266'),
+  ('DE', 'Snack Day', 'Grocery', 'Chips', 'Tortilla Chips Gesalzen', 'not-applicable', 'Lidl', 'none', '4056489462866'),
+  ('DE', 'XOX', 'Grocery', 'Chips', 'Krupuk', 'not-applicable', 'Netto', 'none', '4031446820453'),
+  ('DE', 'Asia Green Garden', 'Grocery', 'Chips', 'Krabbenchips - Chili', 'not-applicable', 'Aldi', 'none', '4061458104029'),
+  ('DE', 'Bio-Zentrale', 'Grocery', 'Chips', 'Rote Beete Chips – Meersalz', 'not-applicable', null, 'none', '4005009103383'),
+  ('DE', 'Aldi Sports', 'Grocery', 'Chips', 'Protein-Chips - Sour Cream & Onion-Geschmack', 'not-applicable', 'Aldi', 'none', '4061462912238'),
+  ('DE', 'Sun Snacks', 'Grocery', 'Chips', 'Kessel-Chips - Salt & Vinegar-Geschmack', 'not-applicable', 'Aldi', 'none', '4061458059008'),
+  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Popchips Sea Salt & Black Pepper', 'not-applicable', null, 'none', '4003586105134'),
+  ('DE', 'Henderson and Sons', 'Grocery', 'Chips', 'Tortilla Chips', 'not-applicable', null, 'none', '4053091082048'),
+  ('DE', 'Henderson and Sons', 'Grocery', 'Chips', 'Tortilla Chips Hot Chili Taste', 'not-applicable', null, 'none', '4053091082352'),
+  ('DE', 'Lorenz', 'Grocery', 'Chips', 'Crunchips African Style', 'not-applicable', null, 'none', '4018077004568'),
+  ('DE', 'K-Classic', 'Grocery', 'Chips', 'Sonne,mond & sterne snack', 'not-applicable', 'Kaufland', 'none', '4063367194788'),
+  ('DE', 'Halloween', 'Grocery', 'Chips', 'Gespenster - Original', 'not-applicable', 'Aldi', 'none', '4061458036269'),
+  ('DE', 'Aldi', 'Grocery', 'Chips', 'Farmer-Kartoffelchips - Chili Style', 'not-applicable', 'Aldi', 'none', '4061461922719'),
+  ('DE', 'Aldi Sports', 'Grocery', 'Chips', 'Protein-Chips - Paprikageschmack', 'not-applicable', 'Aldi', 'none', '4061462912191'),
+  ('DE', 'Funny frisch', 'Grocery', 'Chips', 'Intense Perky Pepper Chips', 'not-applicable', null, 'none', '4003586105677'),
+  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch ungarisch', 'not-applicable', 'Aldi', 'none', '4003586100313'),
   ('DE', 'Sun Snacks', 'Grocery', 'Chips', 'Chips Paprika Style', 'not-applicable', null, 'none', '4061461010355'),
   ('DE', 'Funny Frisch', 'Grocery', 'Chips', 'Ofen Chips Sour Cream', 'not-applicable', null, 'none', '4003586102089'),
   ('DE', 'Chio', 'Grocery', 'Chips', 'Red Paprika Chips', 'not-applicable', null, 'none', '4001242108536'),
   ('DE', 'Doritos', 'Grocery', 'Chips', 'Doritos Nacho Cheese', 'not-applicable', null, 'none', '4062139006038'),
   ('DE', 'Snack Food Poco Loco', 'Grocery', 'Chips', 'ALDI SUN SNACKS Tortilla Chips Salz 300g 1.59€ 1kg 5.30€', 'not-applicable', null, 'none', '4061458058537'),
-  ('DE', 'Clancy''s', 'Grocery', 'Chips', 'Nacho Cheese Tortilla Chips', 'not-applicable', null, 'none', '4061464838192'),
+  ('DE', 'Clancy''s', 'Grocery', 'Chips', 'Nacho Cheese Flavored Tortilla Chips', 'not-applicable', null, 'none', '4061464838192'),
   ('DE', 'Sun Snacks', 'Grocery', 'Chips', 'Sun Snacks Party Snack Paprika', 'not-applicable', null, 'none', '4068262083588'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Linsen Chips Paprika Style', 'not-applicable', null, 'none', '4003586104120'),
   ('DE', 'Lay''s', 'Grocery', 'Chips', 'Chips Red Paprika Lays', 'not-applicable', null, 'none', '4062139007677'),
@@ -98,10 +137,10 @@ values
   ('DE', 'Rewe', 'Grocery', 'Chips', 'Kartoffel Chips mit Trüffel Geschmack', 'not-applicable', null, 'none', '4337256543675'),
   ('DE', 'Lay''s', 'Grocery', 'Chips', 'Salt & Vinegar', 'not-applicable', null, 'none', '4062139005949'),
   ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch Peperoni', 'not-applicable', null, 'none', '4003586100306'),
-  ('DE', 'Doritos', 'Grocery', 'Chips', 'Doritos - Whopper-Geschmack', 'not-applicable', null, 'none', '4062139026760'),
+  ('DE', 'Doritos', 'Grocery', 'Chips', 'Maischips - Whopper-Geschmack', 'not-applicable', null, 'none', '4062139026760'),
   ('DE', 'Funnyfrisch', 'Grocery', 'Chips', 'Ofen Chips Smoky BBQ Style', 'not-applicable', null, 'none', '4003586102317'),
   ('DE', 'Lay''s', 'Grocery', 'Chips', 'Chili und Lime Chips', 'not-applicable', null, 'none', '4062139026333'),
-  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch Chakalaka', 'not-applicable', null, 'none', '4003586101082'),
+  ('DE', 'Funny-Frisch', 'Grocery', 'Chips', 'Chipsfrisch Chakalaka', 'not-applicable', null, 'none', '4003586101082'),
   ('DE', 'Doritos', 'Grocery', 'Chips', 'Doritos Paprikageschmack', 'not-applicable', null, 'none', '4062139005826'),
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'Snack-Hits', 'not-applicable', null, 'none', '4018077010316'),
   ('DE', 'Funny Frisch', 'Grocery', 'Chips', 'Jumpys', 'not-applicable', null, 'none', '4003586102676'),
@@ -111,7 +150,33 @@ values
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'CrunChips Sour Cream', 'not-applicable', null, 'none', '4018077006883'),
   ('DE', 'Lorenz', 'Grocery', 'Chips', 'Naturals Balsamico', 'not-applicable', null, 'none', '4018077714054'),
   ('DE', 'EDEKA funnyfrisch', 'Grocery', 'Chips', 'EDEKA funnyfrisch Chipsfrisch Salt & Vinegar Style 150g 0.99€ 1kg 6.60€', 'not-applicable', null, 'none', '4003586108456'),
-  ('DE', 'Lay''s', 'Grocery', 'Chips', 'Pizza Hut Chips Margherita', 'not-applicable', null, 'none', '4062139006762')
+  ('DE', 'Lay''s', 'Grocery', 'Chips', 'Pizza Hut Chips Margherita', 'not-applicable', null, 'none', '4062139006762'),
+  ('DE', 'Crunchips', 'Grocery', 'Chips', 'Crunchips Paprika', 'not-applicable', null, 'none', '4018077006104'),
+  ('DE', 'Lay''s', 'Grocery', 'Chips', 'Bugles Nacho Cheese', 'not-applicable', null, 'none', '4062139009879'),
+  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Kessel Chips Cross Cut - Spicy BBQ', 'not-applicable', null, 'none', '4003586100795'),
+  ('DE', 'DmBio', 'Grocery', 'Chips', 'Kichererbsen Chips', 'not-applicable', null, 'none', '4067796125450'),
+  ('DE', 'Heimatgut', 'Grocery', 'Chips', 'Bio-Gemüsechips - Fein gesalzen', 'not-applicable', 'Aldi', 'none', '4260350926566'),
+  ('DE', 'Funny-Frisch', 'Grocery', 'Chips', 'Popchips', 'not-applicable', null, 'none', '4003586105141'),
+  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Riffels Chili & Paprika', 'not-applicable', null, 'none', '4003586000330'),
+  ('DE', 'Chio', 'Grocery', 'Chips', 'CHIO Chips', 'not-applicable', null, 'none', '4001242108567'),
+  ('DE', 'Sportness', 'Grocery', 'Chips', 'Protein Linsen Chips', 'not-applicable', null, 'none', '4066447247138'),
+  ('DE', 'Sun Snacks', 'Grocery', 'Chips', 'Geriffelte Chips - Salz', 'not-applicable', null, 'none', '4061464596610'),
+  ('DE', 'Chio', 'Grocery', 'Chips', 'Chio', 'not-applicable', null, 'none', '4001242108758'),
+  ('DE', 'Funny Frisch', 'Grocery', 'Chips', 'Ringli', 'not-applicable', null, 'none', '4003586102713'),
+  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Sweet & Roasted onian', 'roasted', null, 'none', '4003586108937'),
+  ('DE', 'Doritos', 'Grocery', 'Chips', 'Doritos BBQ Style', 'not-applicable', null, 'none', '4062139026463'),
+  ('DE', 'Funny-frisch', 'Grocery', 'Chips', 'Chipsfrisch', 'not-applicable', null, 'none', '4003586107503'),
+  ('DE', 'Funny-Frisch', 'Grocery', 'Chips', 'Cornados - Paprika Style', 'not-applicable', null, 'none', '4003586105721'),
+  ('DE', 'Snack Day', 'Grocery', 'Chips', 'Tortilla Chips Paprika', 'not-applicable', null, 'none', '4056489462897'),
+  ('DE', 'Chio', 'Grocery', 'Chips', 'Tortilla Mexican', 'not-applicable', null, 'none', '4001242106471'),
+  ('DE', 'Sun Snacks', 'Grocery', 'Chips', 'Dolphy''s Paprikageschmack', 'not-applicable', null, 'none', '4061462255328'),
+  ('DE', 'K-Classic', 'Grocery', 'Chips', 'Stapelchips Sourcream & Onion', 'not-applicable', null, 'none', '4063367424526'),
+  ('DE', 'Chio', 'Grocery', 'Chips', 'Hot peperoni chips', 'not-applicable', null, 'none', '4001242108543'),
+  ('DE', 'Intersnack', 'Grocery', 'Chips', 'Ofen-Minis - Paprika', 'not-applicable', null, 'none', '4000522137075'),
+  ('DE', 'Intersnack Deutschland SE', 'Grocery', 'Chips', 'Tortillas', 'not-applicable', null, 'none', '4001242105962'),
+  ('DE', 'Sun Snacks', 'Grocery', 'Chips', 'Geriffelte Chips - Chili-Paprika', 'not-applicable', null, 'none', '4061464596641'),
+  ('DE', 'K-Classic', 'Grocery', 'Chips', 'Stapel Chips Paprika Style', 'not-applicable', null, 'none', '4063367424533'),
+  ('DE', 'Snack Day', 'Grocery', 'Chips', 'Tortilla Chips Nacho Cheese', 'not-applicable', null, 'none', '4056489462903')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -126,4 +191,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'DE' and category = 'Chips'
   and is_deprecated is not true
-  and product_name not in ('Pom-Bär Ketchup Style', 'Aus dem Ofen Geröstete Paprika', 'Gemüsechips – Pastinake, Rote Beete, Süßkartoffel, lila Süßkartoffel, Meersalz', 'Naturals Mediterranes Gemüse', 'Knuspermäuse Salz', 'Pom-Bär Crizzlies - Paprika-Style', 'Gemüsechips mit Meersalz', 'Kräuterbutterchips', 'Pombär Sour Cream', 'Gemüse Chips mit Meersalz', 'Tortilla-Chips - Käse', 'Pom-Bär Crizzlies - Original', 'Crunchips Paprika', 'Chipsfrisch Oriental', 'Chipsfrisch Sour Cream', 'Chipsfrisch ungarisch', 'Ofenchips paprika', 'Lays Salted Chips', 'Linsen Chips Sour Creme Style', 'Sour Cream & Onion', 'Naturals - Rosmarin', 'Tortillas Nacho Cheese', 'Crunchips Western Style', 'Tortillas - Wild Paprika', 'Chips "Subway Terriyaki"', 'Salziges, Riffels Naturell', 'Crunchips Salted Gesalzene Kartoffel-Chips', 'Erdnusslocken Jumbos', 'Chipsfrisch Chili Cheese Fries Style', 'Tortillas Salted', 'Sweet-Chili-Peppergeschmack', 'Tortilla-Chips - Paprika', 'Frit-Sticks ungarisch', 'Naturals Chips "fein gesalzen"', 'Linsenchips Oriental', 'Tortillas Hot Chili', 'Naturals - Meersalz und Pfeffer', 'Kessel Chips sweet chili', 'Erdnussflips Classic', 'Crunchips Cheese & Onion 150g', 'Tortilla Chips', 'Chips Paprika', 'Chips SALZ', 'Light-Chips - Classic', 'Light-Chips - Paprika-Style', 'Crunchips Hot Paprika', 'Kessel-Chips Sweet-Chili-Geschmack', 'Pommels Original', 'Linsen Chips Sweet Chili', 'Nacho Cheese', 'Linsen-Chips - Paprika-Style', 'Linsen-Chips - Sour Cream Style', 'Zwiebli-Ringe', 'Kartoffelchips Paprika', 'Tortilla Chips Mais & Paprika', 'Chipsfrisch Zaziki Style', 'Stapelchips - Original', 'Krabbenchips - Classic', 'Kartoffelringe Paprikageschmack', 'Salz Chips', 'Sour Cream & Onion Flavour', 'Linsen Crackets Paprika', 'Hurricorn', 'Snack Day Paprika Stapelchips', 'Tortillias Nacho Cheese', 'Geriffelte Paprika Chips', 'Fusion - Peanuts Paprika Flamed Style', 'Gespenster - Ketchupgeschmack', 'Chips Paprika Style', 'Ofen Chips Sour Cream', 'Red Paprika Chips', 'Doritos Nacho Cheese', 'ALDI SUN SNACKS Tortilla Chips Salz 300g 1.59€ 1kg 5.30€', 'Nacho Cheese Tortilla Chips', 'Sun Snacks Party Snack Paprika', 'Linsen Chips Paprika Style', 'Chips Red Paprika Lays', 'Chipsfrisch XXL Ungarisch', 'Kartoffel Chips mit Trüffel Geschmack', 'Salt & Vinegar', 'Chipsfrisch Peperoni', 'Doritos - Whopper-Geschmack', 'Ofen Chips Smoky BBQ Style', 'Chili und Lime Chips', 'Chipsfrisch Chakalaka', 'Doritos Paprikageschmack', 'Snack-Hits', 'Jumpys', 'Popchips Potato - Red Paprika', 'Rohscheiben mit Steinsalz', 'Iconic Restauraunt Flavours', 'CrunChips Sour Cream', 'Naturals Balsamico', 'EDEKA funnyfrisch Chipsfrisch Salt & Vinegar Style 150g 0.99€ 1kg 6.60€', 'Pizza Hut Chips Margherita');
+  and product_name not in ('Pom-Bär Ketchup Style', 'Aus dem Ofen Geröstete Paprika', 'Gemüsechips – Pastinake, Rote Beete, Süßkartoffel, lila Süßkartoffel, Meersalz', 'Naturals Mediterranes Gemüse', 'Knuspermäuse Salz', 'Pom-Bär Crizzlies - Paprika-Style', 'Aus dem Ofen Mediterrane Kräuter', 'Bio-Gemüsechips mit Meersalz', 'Bio-Süßkartoffelchips mit Meersalz', 'Gemüsechips – Pastinake, Chioggia Beete, lila Süßkartoffel, Kartoffel, schwarzer Pfeffer & Meersalz', 'Gemüsechips mit Meersalz', 'Kräuterbutterchips', 'Pombär Sour Cream', 'Gemüse Chips mit Meersalz', 'Tortilla-Chips - Käse', 'Pom-Bär Crizzlies - Original', 'Biozentrale Gemüsechips Süsskartoffel Rosmarin 4005009103352 Süßkartofelchips', 'Tortilla Röllchen', 'Knuffels Schinken & Käse', 'Erdnuß Locken Balls Classic', 'Pom-Bär', 'Crunchips Paprika', 'Chipsfrisch Oriental', 'Chipsfrisch Sour Cream', 'Chipsfrisch ungarisch', 'Ofenchips paprika', 'Lays Salted Chips', 'Linsen Chips Sour Creme Style', 'Sour Cream & Onion', 'Naturals - Rosmarin', 'Tortillas Nacho Cheese', 'Crunchips Western Style', 'Tortillas - Wild Paprika', 'Chips &quot;Subway Terriyaki&quot;', 'Salziges, Riffels Naturell', 'Crunchips Salted Gesalzene Kartoffel-Chips', 'Erdnusslocken Jumbos', 'Chipsfrisch Chili Cheese Fries Style', 'Tortillas Salted', 'Sweet-Chili-Peppergeschmack', 'Tortilla-Chips - Paprika', 'Frit-Sticks ungarisch', 'Naturals Chips &quot;fein gesalzen&quot;', 'Linsenchips Oriental', 'Tortillas Hot Chili', 'Naturals - Meersalz und Pfeffer', 'Kesselchips Sweet Chili', 'Erdnussflips Classic', 'Crunchips Cheese & Onion 150g', 'Tortilla Chips', 'Chips Paprika', 'Chips SALZ', 'Light-Chips - Classic', 'Light-Chips - Paprika-Style', 'Crunchips Hot Paprika', 'Kessel-Chips Sweet-Chili-Geschmack', 'Pommels Original', 'Linsen Chips Sweet Chili', 'Nacho Cheese', 'Linsen-Chips - Paprika-Style', 'Linsen-Chips - Sour Cream Style', 'Zwiebli-Ringe', 'Kartoffelchips Paprika', 'Tortilla Chips Mais & Paprika', 'Chipsfrisch Zaziki Style', 'Stapelchips - Original', 'Krabbenchips - Classic', 'Kartoffelringe Paprikageschmack', 'Salz Chips', 'Sour Cream & Onion Flavour', 'Linsen Crackets Paprika', 'Hurricorn', 'Snack Day Paprika Stapelchips', 'Tortillias Nacho Cheese', 'Geriffelte Paprika Chips', 'Fusion - Peanuts Paprika Flamed Style', 'Gespenster - Ketchupgeschmack', 'Naturals - Milde Paprika', 'Stapelchips - Sour Cream & Onion-Geschmack', 'Crunchips WoW Paprika and Sour Cream', 'Crunchips Burrito Style', 'Tortilla Chips Gesalzen', 'Krupuk', 'Krabbenchips - Chili', 'Rote Beete Chips – Meersalz', 'Protein-Chips - Sour Cream & Onion-Geschmack', 'Kessel-Chips - Salt & Vinegar-Geschmack', 'Popchips Sea Salt & Black Pepper', 'Tortilla Chips', 'Tortilla Chips Hot Chili Taste', 'Crunchips African Style', 'Sonne,mond & sterne snack', 'Gespenster - Original', 'Farmer-Kartoffelchips - Chili Style', 'Protein-Chips - Paprikageschmack', 'Intense Perky Pepper Chips', 'Chipsfrisch ungarisch', 'Chips Paprika Style', 'Ofen Chips Sour Cream', 'Red Paprika Chips', 'Doritos Nacho Cheese', 'ALDI SUN SNACKS Tortilla Chips Salz 300g 1.59€ 1kg 5.30€', 'Nacho Cheese Flavored Tortilla Chips', 'Sun Snacks Party Snack Paprika', 'Linsen Chips Paprika Style', 'Chips Red Paprika Lays', 'Chipsfrisch XXL Ungarisch', 'Kartoffel Chips mit Trüffel Geschmack', 'Salt & Vinegar', 'Chipsfrisch Peperoni', 'Maischips - Whopper-Geschmack', 'Ofen Chips Smoky BBQ Style', 'Chili und Lime Chips', 'Chipsfrisch Chakalaka', 'Doritos Paprikageschmack', 'Snack-Hits', 'Jumpys', 'Popchips Potato - Red Paprika', 'Rohscheiben mit Steinsalz', 'Iconic Restauraunt Flavours', 'CrunChips Sour Cream', 'Naturals Balsamico', 'EDEKA funnyfrisch Chipsfrisch Salt & Vinegar Style 150g 0.99€ 1kg 6.60€', 'Pizza Hut Chips Margherita', 'Crunchips Paprika', 'Bugles Nacho Cheese', 'Kessel Chips Cross Cut - Spicy BBQ', 'Kichererbsen Chips', 'Bio-Gemüsechips - Fein gesalzen', 'Popchips', 'Riffels Chili & Paprika', 'CHIO Chips', 'Protein Linsen Chips', 'Geriffelte Chips - Salz', 'Chio', 'Ringli', 'Sweet & Roasted onian', 'Doritos BBQ Style', 'Chipsfrisch', 'Cornados - Paprika Style', 'Tortilla Chips Paprika', 'Tortilla Mexican', 'Dolphy''s Paprikageschmack', 'Stapelchips Sourcream & Onion', 'Hot peperoni chips', 'Ofen-Minis - Paprika', 'Tortillas', 'Geriffelte Chips - Chili-Paprika', 'Stapel Chips Paprika Style', 'Tortilla Chips Nacho Cheese');

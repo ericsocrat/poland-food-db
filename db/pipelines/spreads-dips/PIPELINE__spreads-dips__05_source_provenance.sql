@@ -1,5 +1,5 @@
 -- PIPELINE (Spreads & Dips): source provenance
--- Generated: 2026-03-06
+-- Generated: 2026-03-12
 
 -- 1. Update source info on products
 UPDATE products p SET
@@ -16,6 +16,7 @@ FROM (
     ('Niewieścin', 'Pasztetowa Podwędzana', 'https://world.openfoodfacts.org/product/5907222673294', '5907222673294'),
     ('Go Vege', 'Hummus klasyczny', 'https://world.openfoodfacts.org/product/5904194906641', '5904194906641'),
     ('Go Vege', 'Hummus paprykowy', 'https://world.openfoodfacts.org/product/5904194906658', '5904194906658'),
+    ('Go Vege', 'Hummus z ciecierzycy spicy salsa', 'https://world.openfoodfacts.org/product/5904194906696', '5904194906696'),
     ('Go Vege', 'Hummus pomidorowy', 'https://world.openfoodfacts.org/product/5904194906665', '5904194906665'),
     ('Go Vege', 'Hummus z ciecierzycy z burakiem', 'https://world.openfoodfacts.org/product/5904194906672', '5904194906672'),
     ('I&lt;3vege', 'Hummus z papryką na ostro', 'https://world.openfoodfacts.org/product/5900617039514', '5900617039514'),
@@ -24,6 +25,7 @@ FROM (
     ('Vital Fresh', 'Hummus pomidorowy', 'https://world.openfoodfacts.org/product/5907517801968', '5907517801968'),
     ('Lisner', 'Hummus z wędzonym pstrągiem', 'https://world.openfoodfacts.org/product/5900344002324', '5900344002324'),
     ('Lavica Food', 'Hummus dynia & imbir', 'https://world.openfoodfacts.org/product/5903240793884', '5903240793884'),
+    ('Pilos', 'Masło Klarowane', 'https://world.openfoodfacts.org/product/5905477003743', '5905477003743'),
     ('SmaczneGo!', 'Hummus klasyczny z preclami', 'https://world.openfoodfacts.org/product/5907517805478', '5907517805478'),
     ('I-love-vege', 'Hummus z suszonymi pomidorami', 'https://world.openfoodfacts.org/product/5900617035714', '5900617035714'),
     ('Well Well', 'Hummus klasyczny', 'https://world.openfoodfacts.org/product/5901473001868', '5901473001868'),
@@ -47,8 +49,6 @@ FROM (
     ('Profi', 'Pasztet Dworski Z Dzikiem', 'https://world.openfoodfacts.org/product/5901696011644', '5901696011644'),
     ('Sokołów', 'Pasztet dzidunia', 'https://world.openfoodfacts.org/product/5900562266935', '5900562266935'),
     ('Gzella', 'Pasztet z borowikami', 'https://world.openfoodfacts.org/product/5901891744026', '5901891744026'),
-    ('Nestlé', 'Przyprawa Maggi', 'https://world.openfoodfacts.org/product/5900085011180', '5900085011180'),
-    ('Unknown', 'Hummus z ciecierzycy spicy salsa go vege', 'https://world.openfoodfacts.org/product/5904194906696', '5904194906696'),
     ('Vemondo', 'Hummus z pastą sezamowa i pesto bazyliowym', 'https://world.openfoodfacts.org/product/4335619127524', '4335619127524'),
     ('Chef Select', 'Guacamole Z Kawałkami Awokado', 'https://world.openfoodfacts.org/product/4056489851400', '4056489851400'),
     ('Unknown', 'Ekologiczny Hummus Naturalny', 'https://world.openfoodfacts.org/product/5902367409982', '5902367409982'),
@@ -58,11 +58,8 @@ FROM (
     ('Lavica Food', 'Hummus z suszonymi pomidorami', 'https://world.openfoodfacts.org/product/5903240793044', '5903240793044'),
     ('Sobkowiak', 'Pasztet pieczony z żurawiną', 'https://world.openfoodfacts.org/product/1532302005449', '1532302005449'),
     ('Tzatziki', 'Taziki', 'https://world.openfoodfacts.org/product/5901135010177', '5901135010177'),
-    ('Pudliszki', 'Pudliszki', 'https://world.openfoodfacts.org/product/5900783009960', '5900783009960'),
     ('Vemondo', 'Hummus klasyczny', 'https://world.openfoodfacts.org/product/4056489306344', '4056489306344'),
     ('Chef select', 'Hummus classic', 'https://world.openfoodfacts.org/product/20901882', '20901882'),
-    ('Deluxe', 'Hummus und Guacamole', 'https://world.openfoodfacts.org/product/4056489459545', '4056489459545'),
-    ('Chef Select', 'Hummus bruschetta', 'https://world.openfoodfacts.org/product/4056489459514', '4056489459514'),
     ('K-take it veggie', 'K-take it veggie Hummus Tomato', 'https://world.openfoodfacts.org/product/4063367201882', '4063367201882'),
     ('K-take it veggie', 'K-take it veggie Hummus Red Pepper 200g', 'https://world.openfoodfacts.org/product/4063367201837', '4063367201837'),
     ('Taverna-Bio', 'Classic Hummus', 'https://world.openfoodfacts.org/product/8719172050608', '8719172050608'),
@@ -72,7 +69,7 @@ FROM (
     ('Vitasia', 'Hummus sweet chili', 'https://world.openfoodfacts.org/product/4056489550587', '4056489550587'),
     ('Athos', 'Tzatziki', 'https://world.openfoodfacts.org/product/5202277000515', '5202277000515'),
     ('Chef select', 'Bio Hummus paprykowy', 'https://world.openfoodfacts.org/product/4056489306351', '4056489306351'),
-    ('Chef Select', 'Guacamole mild', 'https://world.openfoodfacts.org/product/4056489962991', '4056489962991'),
+    ('Chef select', 'Guacamole Classic with tomato and spices', 'https://world.openfoodfacts.org/product/4056489962991', '4056489962991'),
     ('Chef select', 'Bio Hummus pomidorowy', 'https://world.openfoodfacts.org/product/4056489306368', '4056489306368'),
     ('Vemondo', 'Hummus Paprykowy', 'https://world.openfoodfacts.org/product/20901929', '20901929'),
     ('Vital Fresh', 'Guacamole', 'https://world.openfoodfacts.org/product/8436008521414', '8436008521414'),
@@ -82,7 +79,12 @@ FROM (
     ('La campagna', 'Hummus', 'https://world.openfoodfacts.org/product/5712873674534', '5712873674534'),
     ('Meyers', 'Hummus', 'https://world.openfoodfacts.org/product/5744001102299', '5744001102299'),
     ('Taverna', 'Hummus coriander & lemon', 'https://world.openfoodfacts.org/product/8588004348585', '8588004348585'),
-    ('Pikok', 'Pasztet z indyka', 'https://world.openfoodfacts.org/product/4056489508274', '4056489508274')
+    ('Pikok', 'Pasztet z indyka', 'https://world.openfoodfacts.org/product/4056489508274', '4056489508274'),
+    ('Unknown', 'Mild salsa dip', 'https://world.openfoodfacts.org/product/5708209001518', '5708209001518'),
+    ('Taverna', 'Hummus Oriental', 'https://world.openfoodfacts.org/product/8588004348387', '8588004348387'),
+    ('Unknown', 'Dip nacho', 'https://world.openfoodfacts.org/product/5708209001570', '5708209001570'),
+    ('Hellas feinkost', 'Tzatziki', 'https://world.openfoodfacts.org/product/9002974529915', '9002974529915'),
+    ('Unknown', 'Oliwa', 'https://world.openfoodfacts.org/product/8018440050792', '8018440050792')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

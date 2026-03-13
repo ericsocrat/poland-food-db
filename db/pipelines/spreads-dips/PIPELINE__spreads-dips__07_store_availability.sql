@@ -1,6 +1,6 @@
 -- PIPELINE (Spreads & Dips): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-06
+-- Generated: 2026-03-12
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -15,6 +15,7 @@ FROM (
     ('Auchan', 'Hummus z solą morską', 'Auchan'),
     ('Go Vege', 'Hummus klasyczny', 'Biedronka'),
     ('Go Vege', 'Hummus paprykowy', 'Biedronka'),
+    ('Go Vege', 'Hummus z ciecierzycy spicy salsa', 'Biedronka'),
     ('Go Vege', 'Hummus pomidorowy', 'Biedronka'),
     ('Go Vege', 'Hummus z ciecierzycy z burakiem', 'Biedronka'),
     ('Go Vege', 'Hummus', 'Biedronka'),
@@ -24,8 +25,6 @@ FROM (
     ('Perla', 'Pomidor hummus', 'Aldi'),
     ('Vemondo', 'Hummus klasyczny', 'Lidl'),
     ('Chef select', 'Hummus classic', 'Lidl'),
-    ('Deluxe', 'Hummus und Guacamole', 'Lidl'),
-    ('Chef Select', 'Hummus bruschetta', 'Lidl'),
     ('K-take it veggie', 'K-take it veggie Hummus Tomato', 'Kaufland'),
     ('K-take it veggie', 'K-take it veggie Hummus Red Pepper 200g', 'Kaufland'),
     ('Taverna-Bio', 'Classic Hummus', 'Auchan'),

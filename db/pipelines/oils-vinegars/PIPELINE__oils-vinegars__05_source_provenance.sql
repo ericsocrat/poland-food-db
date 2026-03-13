@@ -1,5 +1,5 @@
 -- PIPELINE (Oils & Vinegars): source provenance
--- Generated: 2026-03-06
+-- Generated: 2026-03-12
 
 -- 1. Update source info on products
 UPDATE products p SET
@@ -58,14 +58,15 @@ FROM (
     ('Go Bio', 'Olej Kokosowy', 'https://world.openfoodfacts.org/product/5902150284123', '5902150284123'),
     ('Vita Natura', 'Olej kokosowy Bio', 'https://world.openfoodfacts.org/product/5906185012744', '5906185012744'),
     ('Unknown', 'Olej kokosowy bezzapachowy rafinowany', 'https://world.openfoodfacts.org/product/5902627090516', '5902627090516'),
+    ('Unknown', 'Olej z czarnuszki', 'https://world.openfoodfacts.org/product/5906395631384', '5906395631384'),
     ('Nestlé', 'Przyprawa Maggi', 'https://world.openfoodfacts.org/product/5900085011180', '5900085011180'),
     ('Iorgos', 'Olive Oil', 'https://world.openfoodfacts.org/product/5903900941358', '5903900941358'),
     ('PPHU &quot;OLMAJ&quot; Sławomir Majewski', 'Olej rzepakowy zwyczajny', 'https://world.openfoodfacts.org/product/5908235944975', '5908235944975'),
     ('Lyrakis Family', 'Oliwa z oliwek z pierwszego tłoczenia', 'https://world.openfoodfacts.org/product/5204401580061', '5204401580061'),
     ('Suriny', 'Olej z ryżu 100%', 'https://world.openfoodfacts.org/product/8851046010025', '8851046010025'),
+    ('Basso', 'Olej z ryżu', 'https://world.openfoodfacts.org/product/8004123005920', '8004123005920'),
     ('Pudliszki', 'Pudliszki', 'https://world.openfoodfacts.org/product/5900783009960', '5900783009960'),
     ('Primadonna', 'Extra Virgin Olive Oil', 'https://world.openfoodfacts.org/product/4056489973010', '4056489973010'),
-    ('Primadonna', 'Olivenöl (nativ, extra)', 'https://world.openfoodfacts.org/product/4056489957652', '4056489957652'),
     ('Casa de Azeite', 'Oliwa z oliwek', 'https://world.openfoodfacts.org/product/8410660078929', '8410660078929'),
     ('Carrefour BIO', 'Huile d''olive vierge extra', 'https://world.openfoodfacts.org/product/3560070973743', '3560070973743'),
     ('Casa de Azeite', 'Casa de Azeite', 'https://world.openfoodfacts.org/product/5601855179009', '5601855179009'),
@@ -82,7 +83,40 @@ FROM (
     ('Lidl', 'Olej kokosowy', 'https://world.openfoodfacts.org/product/40875224', '40875224'),
     ('Carrefour', 'Huile pour friture', 'https://world.openfoodfacts.org/product/3560071267643', '3560071267643'),
     ('Monini', 'Oliwa z oliwek', 'https://world.openfoodfacts.org/product/80053828', '80053828'),
-    ('Gallo', 'Olive Oil', 'https://world.openfoodfacts.org/product/5601252115983', '5601252115983')
+    ('Gallo', 'Olive Oil', 'https://world.openfoodfacts.org/product/5601252115983', '5601252115983'),
+    ('Lidl', 'Huile d''olive vierge extra origine Espagne extraite à froid bio', 'https://world.openfoodfacts.org/product/4056489095897', '4056489095897'),
+    ('K-Classic', 'Extra virgin olive oil', 'https://world.openfoodfacts.org/product/8410660073368', '8410660073368'),
+    ('Unknown', 'Olio Extre Vergine Do Oliva Grecale', 'https://world.openfoodfacts.org/product/8018440050129', '8018440050129'),
+    ('Lyttos', 'Greek Olive Oil', 'https://world.openfoodfacts.org/product/2008080122207', '2008080122207'),
+    ('Eridanous', 'Öl - Griechisches natives Olivenöl Extra', 'https://world.openfoodfacts.org/product/20706784', '20706784'),
+    ('Basso', 'Olio extravergine di oliva', 'https://world.openfoodfacts.org/product/8004123000284', '8004123000284'),
+    ('La PEDRIZA', 'Aceite de Olive Virgen Extra', 'https://world.openfoodfacts.org/product/8423329113138', '8423329113138'),
+    ('Basso', 'Oliwa z wytloczyn z oliwek', 'https://world.openfoodfacts.org/product/8004123004237', '8004123004237'),
+    ('Goccia d''oro', 'Olio di Sansa di Oliva', 'https://world.openfoodfacts.org/product/8003250000129', '8003250000129'),
+    ('Neféli', 'Extra Virgin Olive Oil', 'https://world.openfoodfacts.org/product/5203447760055', '5203447760055'),
+    ('Kaufland', 'Bio oliwa z oliwek', 'https://world.openfoodfacts.org/product/8410660073306', '8410660073306'),
+    ('Salvadori', 'Olio Di Sansa Di Oliva Salvadori', 'https://world.openfoodfacts.org/product/8008460223139', '8008460223139'),
+    ('Font Oliva', 'Olive Oil', 'https://world.openfoodfacts.org/product/8424536944157', '8424536944157'),
+    ('Unknown', 'Pedriza extra virgin olive oil', 'https://world.openfoodfacts.org/product/8423329113121', '8423329113121'),
+    ('Basso', 'Oliwa z oliwek extra vergine al basilico', 'https://world.openfoodfacts.org/product/8004123004664', '8004123004664'),
+    ('Basso', 'Oliwa z oliwek extra vergine al rosmarino', 'https://world.openfoodfacts.org/product/8004123004909', '8004123004909'),
+    ('Ollineo', 'Ollineo Öl', 'https://world.openfoodfacts.org/product/5712872292470', '5712872292470'),
+    ('Monini', 'Aceto di vino blanco 7,1 %', 'https://world.openfoodfacts.org/product/80054627', '80054627'),
+    ('JCCoinbra II', 'Olej z pestek winogron. Rafinowany', 'https://world.openfoodfacts.org/product/5601855579021', '5601855579021'),
+    ('Basso', 'Peanut oil', 'https://world.openfoodfacts.org/product/8004123007306', '8004123007306'),
+    ('Sottile Gusto', 'Olej z pestek winogron', 'https://world.openfoodfacts.org/product/5601855579007', '5601855579007'),
+    ('Bio Planete', 'Olej Kokosowy ekologiczny', 'https://world.openfoodfacts.org/product/4260355580572', '4260355580572'),
+    ('Bio planete', 'Ekologiczny Olej kokosowy virgin', 'https://world.openfoodfacts.org/product/4260355580558', '4260355580558'),
+    ('Foodbroker as', 'Olej z pestek winogron', 'https://world.openfoodfacts.org/product/8004123002509', '8004123002509'),
+    ('Vilgain', 'Avocado oil spray', 'https://world.openfoodfacts.org/product/8594199375251', '8594199375251'),
+    ('Basso', 'Olej z pestek winogron', 'https://world.openfoodfacts.org/product/8004123002721', '8004123002721'),
+    ('Unknown', 'Oliwa z Oliwek', 'https://world.openfoodfacts.org/product/5601999400014', '5601999400014'),
+    ('La Espanola', 'Oliwa Z Oliwek', 'https://world.openfoodfacts.org/product/8410660091416', '8410660091416'),
+    ('Agrelos', 'Extra Virgin Olive Oil', 'https://world.openfoodfacts.org/product/5200124185620', '5200124185620'),
+    ('Unknown', 'Aceite de oliva virgen extra', 'https://world.openfoodfacts.org/product/8437000542445', '8437000542445'),
+    ('Unknown', 'Orazio''s olive oil', 'https://world.openfoodfacts.org/product/0720189810190', '0720189810190'),
+    ('Unknown', 'Extra Virgin Olive Oil', 'https://world.openfoodfacts.org/product/0062273551283', '0062273551283'),
+    ('Unknown', 'Huile de coco', 'https://world.openfoodfacts.org/product/3160920774126', '3160920774126')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'PL' AND p.brand = d.brand
   AND p.product_name = d.product_name

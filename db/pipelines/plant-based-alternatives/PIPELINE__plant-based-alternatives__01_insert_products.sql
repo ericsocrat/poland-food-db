@@ -1,72 +1,87 @@
 -- PIPELINE (Plant-Based & Alternatives): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-02-09
+-- Generated: 2026-03-12
 
 -- 0a. DEPRECATE old products in this category & release their EANs
 update products
-set is_deprecated = true, ean = null
+set is_deprecated = true, deprecated_reason = 'Replaced by pipeline refresh', ean = null
 where country = 'PL'
   and category = 'Plant-Based & Alternatives'
   and is_deprecated is not true;
 
 -- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
 update products set ean = null
-where ean in ('5906823002342', '5900049006375', '5904194906153', '5901473560303', '5904378645595', '5900012000232', '5900049823026', '5902560393187', '5900766000076', '5906827022049', '5902768584295', '5904730127844', '5906716208707', '5900012004858', '5900437039435', '5903264001460', '5900012003196', '5901713016799', '5900617031969', '8586024420106', '5900397751972', '5900397751996', '5901844101685', '5900084274074', '20809539', '5902481019197', '5900783009090', '5900783003968', '20052652', '8410660081691', '5900125009627', '5901473052013', '5900012007866', '5903077000841', '5900334014450', '5907544131229', '8076800105056', '8586024420113', '4056489957652', '4056489067566', '8586024420090', '8445290493125', '80053828', '4056489587026', '5601252115983', '5601009955176', '8410791074227', '4028856011106', '5202390023576', '5601999400014')
+where ean in ('5900125001508', '5906395015344', '5901473560303', '5904378645595', '5902020163213', '5903548002008', '5908230530753', '5906012000852', '5900617002945', '5902180240106', '5900125001478', '5900766000076', '5902172000695', '5907180315090', '5904142000018', '5907771443218', '5907500500014', '5906827022605', '5900125001485', '5906716208707', '5904645001727', '5901713001245', '5906827018141', '5901713020659', '5901549093483', '5900783003968', '5906716208042', '5901713016799', '5901844101661', '20809539', '5907544132431', '5900977011595', '5901844101685', '20355968', '4056489717607', '8410134026876', '4770205128866', '5908267100073', '8586024422537', '8586024420113', '20229030', '20173074', '4056489529712', '4056489067566', '4335896750729', '8002920016675', '8445290493125', '4056489717591', '4056489587026', '4056489064503', '4001163111929', '5202390023576', '20282516', '8435493398006', '8712355263178')
   and ean is not null;
+
+-- 0c. Deprecate cross-category products whose identity_key collides with this batch
+update products
+set is_deprecated = true,
+    deprecated_reason = 'Reassigned to Plant-Based & Alternatives by pipeline',
+    ean = null
+where country = 'PL'
+  and category != 'Plant-Based & Alternatives'
+  and identity_key in ('07ff9834bab19511595c139447bcf214', '0813f47f6a6b5b05c351cfd1c120f172', '0cd21723b0b3f1e433f0f3bf53b3aaf1', '176d4ed19ee93f1b7ded010466f2f255', '19828b0f873ccab92bf51d7a8547bbce', '1bad05e7dec41123c8524ab49a133ed5', '21fc9b668f177ba67dbda110b6471ab8', '267d91ddbd553dbbb92e37389fd377e4', '2de54e341e578c1a4143bc613faf16fa', '2f8972c01dd81f2eeb49b9523a7e5c0f', '34c3683af33c5073c3c0a7cca267d6cb', '35dba10e820868aad512f2f845427f62', '3c8fcf5dc6bb578d241eb54ce0872b16', '3def426c7056a3116f33c31acb12ddec', '44b3ccfe1792326580bf3d4a3a7c2610', '4910afd97f8db32f9c7d590c011344f6', '4c03b640e565f82403a96c04cbfe9e5c', '4c41e112275ea7a7a61609f1bfc9b157', '4cf7b0790af72e5c5efecd8d8c97d61a', '5ac7ffce8b29104a03fc03e297c384ae', '64a816f09d8b1fe425fd886e5142a8a0', '64b7c3317138b454660886f387b7a349', '65bd701921520c234cf35dae8701af7f', '689187f425a9f4780eef23179d67fbbd', '6d3c03605bc0843e06c0033fc42541c5', '6e6b69f53273c243fd1958e710d5616b', '76cf2cef431d798a77ad0e60873aa909', '788f6a2df632e6b915df63672fa622a7', '7ed7b311070776ff3d97dd0d32dc202f', '7f180397ec0ce0fb8778a84417697b21', '80383b4df886bffbd0e0d7ba6b07176d', '86deaa7ac6121742f0f04e7a8341765d', '88acd5d562c87f7a3de75b4be22ffea6', '8bdcd671fd93f6ffdcf64f544dcb0cd9', '8c7531e00bae0a2213644f271f2b2022', '9093618703c6c69dd6d23cf6b8b45518', '93bc2180744967fb7575cae18e526c34', '9f654a963441161fe375bf605dd3fe4a', 'a11051b063986d8c719a3ae75863369d', 'a24506efde88ef3737ab6ba59c78cb79', 'ad0f9f75c3ebadd4c0d3ad71985f6ef7', 'b49fbd1288157f41c9a061a8c712179b', 'b506d2729e17d560bf21e37d6c2f42bc', 'b9f9666a5aa227fc992af3b4080bd922', 'bcb1f7562efd6c7c05d8c6ee919be185', 'c52272e29845caa7d722561174341693', 'c703b6cc81b8fabdf00dc2cd0fc6c96f', 'cabb994f611a9a42dcca13fa47845013', 'cfb934270ef8446619df50ffb8be2984', 'd23b51da852bfd63bfa2cc4a8dc2e906', 'd4b6fe0a6671e52c71b316546b375bc5', 'dca665f0ebcba0429c5a36152ce0b06a', 'e68e6dc92c8aeadd540d5109e09714b5', 'edf0c9ead845487a663cddeddbf95b87', 'f014be4fd789752bb8a5f0f89ceb23b6')
+  and is_deprecated is not true;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
-  ('PL', 'Biedronka', 'Grocery', 'Plant-Based & Alternatives', 'Wyborny olej słonecznikowy', 'not-applicable', 'Biedronka', 'none', '5906823002342'),
-  ('PL', 'Lubella', 'Grocery', 'Plant-Based & Alternatives', 'Makaron Lubella Pióra nr 17', 'not-applicable', 'Dino', 'none', '5900049006375'),
-  ('PL', 'Go Active', 'Grocery', 'Plant-Based & Alternatives', 'Kuskus perłowy z ciecierzycą, fasolką i hummusem', 'not-applicable', 'Biedronka', 'none', '5904194906153'),
+  ('PL', 'Pano', 'Grocery', 'Plant-Based & Alternatives', 'Wafle Ryżowe Wieloziarnisty', 'not-applicable', 'Biedronka', 'none', '5900125001508'),
+  ('PL', 'Pri', 'Grocery', 'Plant-Based & Alternatives', 'Ziemniaczki Już Gotowe z papryką', 'steamed', 'Biedronka', 'none', '5906395015344'),
   ('PL', 'Go Vege', 'Grocery', 'Plant-Based & Alternatives', 'Parówki sojowe klasyczne', 'not-applicable', 'Biedronka', 'none', '5901473560303'),
   ('PL', 'Nasza Spiżarnia', 'Grocery', 'Plant-Based & Alternatives', 'Nasza Spiżarnia Korniszony z chilli', 'not-applicable', 'Biedronka', 'none', '5904378645595'),
-  ('PL', 'Kujawski', 'Grocery', 'Plant-Based & Alternatives', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', 'not-applicable', null, 'none', '5900012000232'),
-  ('PL', 'Lubella', 'Grocery', 'Plant-Based & Alternatives', 'Świderki', 'not-applicable', null, 'none', '5900049823026'),
-  ('PL', 'Plony Natury', 'Grocery', 'Plant-Based & Alternatives', 'Mąka orkiszowa pełnoziarnista typ 2000', 'not-applicable', null, 'none', '5902560393187'),
+  ('PL', 'Basia', 'Grocery', 'Plant-Based & Alternatives', 'Mąka Tortowa Extra typ 405 Basia', 'not-applicable', 'Dino', 'none', '5902020163213'),
+  ('PL', 'Dobra-kaloria', 'Grocery', 'Plant-Based & Alternatives', 'Baton owocowy chrupiący orzech', 'not-applicable', 'Lidl', 'none', '5903548002008'),
+  ('PL', 'Tarczyński', 'Grocery', 'Plant-Based & Alternatives', 'Rośl-inne Kabanosy 3 Ziarna', 'not-applicable', 'Biedronka', 'none', '5908230530753'),
+  ('PL', 'Złote Pola', 'Grocery', 'Plant-Based & Alternatives', 'Mąka tortowa pszenna. Typ 450', 'not-applicable', 'Biedronka', 'none', '5906012000852'),
+  ('PL', 'Sante', 'Grocery', 'Plant-Based & Alternatives', 'Otręby owsiane', 'not-applicable', 'Dino', 'none', '5900617002945'),
+  ('PL', 'Sonko', 'Grocery', 'Plant-Based & Alternatives', 'Kasza jęczmienna perłowa', 'not-applicable', 'Tesco', 'none', '5902180240106'),
+  ('PL', 'Pano', 'Grocery', 'Plant-Based & Alternatives', 'Wafle Kukurydziane sól morska', 'not-applicable', null, 'none', '5900125001478'),
   ('PL', 'Polskie Mlyny', 'Grocery', 'Plant-Based & Alternatives', 'Mąka pszenna Szymanowska 480', 'not-applicable', null, 'none', '5900766000076'),
-  ('PL', 'Unknown', 'Grocery', 'Plant-Based & Alternatives', 'Mąka kukurydziana', 'not-applicable', 'Biedronka', 'none', '5906827022049'),
-  ('PL', 'Komagra', 'Grocery', 'Plant-Based & Alternatives', 'Polski olej rzepakowy', 'not-applicable', 'Biedronka', 'none', '5902768584295'),
-  ('PL', 'Vitanella', 'Grocery', 'Plant-Based & Alternatives', 'Olej kokosowy, bezzapachowy', 'not-applicable', 'Biedronka', 'none', '5904730127844'),
+  ('PL', 'Kupiec', 'Grocery', 'Plant-Based & Alternatives', 'Kasza manna błyskawiczna', 'not-applicable', null, 'none', '5902172000695'),
+  ('PL', 'GustoBello', 'Grocery', 'Plant-Based & Alternatives', 'Mąka do pizzy neapolitańskiej typ 00', 'not-applicable', null, 'none', '5907180315090'),
+  ('PL', 'PZZ Kraków', 'Grocery', 'Plant-Based & Alternatives', 'Mąka pszenna tortowa', 'not-applicable', null, 'none', '5904142000018'),
+  ('PL', 'Uniflora', 'Grocery', 'Plant-Based & Alternatives', 'Kiełki rzodkiewki', 'not-applicable', null, 'none', '5907771443218'),
+  ('PL', 'Szczepanki', 'Grocery', 'Plant-Based & Alternatives', 'Mąka pszenna wrocławska typ 500', 'not-applicable', null, 'none', '5907500500014'),
+  ('PL', 'Unknown', 'Grocery', 'Plant-Based & Alternatives', 'Kasza gryczana prażona', 'not-applicable', null, 'none', '5906827022605'),
+  ('PL', 'Pani', 'Grocery', 'Plant-Based & Alternatives', 'Wafle Prowansalskie', 'not-applicable', 'Biedronka', 'none', '5900125001485'),
   ('PL', 'Culineo', 'Grocery', 'Plant-Based & Alternatives', 'Koncentrat Pomidorowy 30%', 'not-applicable', 'Biedronka', 'none', '5906716208707'),
-  ('PL', 'Kujawski', 'Grocery', 'Plant-Based & Alternatives', 'Olej rzepakowy pomidor czosnek bazylia', 'not-applicable', 'Biedronka', 'none', '5900012004858'),
-  ('PL', 'Dr. Oetker', 'Grocery', 'Plant-Based & Alternatives', 'KASZKA manna z malinami', 'not-applicable', 'Carrefour', 'none', '5900437039435'),
-  ('PL', 'Wyborny Olej', 'Grocery', 'Plant-Based & Alternatives', 'Wyborny olej rzepakowy', 'not-applicable', 'Biedronka', 'none', '5903264001460'),
-  ('PL', 'Kujawski', 'Grocery', 'Plant-Based & Alternatives', 'Olej 3 ziarna', 'not-applicable', null, 'none', '5900012003196'),
-  ('PL', 'Dawtona', 'Grocery', 'Plant-Based & Alternatives', 'Koncentrat pomidorowy', 'not-applicable', null, 'none', '5901713016799'),
-  ('PL', 'Sante', 'Grocery', 'Plant-Based & Alternatives', 'Extra thin corn cakes', 'not-applicable', null, 'none', '5900617031969'),
-  ('PL', 'Go Vege', 'Grocery', 'Plant-Based & Alternatives', 'Tofu Wędzone', 'not-applicable', 'Biedronka', 'none', '8586024420106'),
-  ('PL', 'AntyBaton', 'Grocery', 'Plant-Based & Alternatives', 'Antybaton Choco Nuts', 'not-applicable', null, 'none', '5900397751972'),
-  ('PL', 'AntyBaton', 'Grocery', 'Plant-Based & Alternatives', 'Antybaton Choco Coco', 'not-applicable', null, 'none', '5900397751996'),
-  ('PL', 'Culineo', 'Grocery', 'Plant-Based & Alternatives', 'Passata klasyczna', 'not-applicable', null, 'none', '5901844101685'),
-  ('PL', 'Kamis', 'Grocery', 'Plant-Based & Alternatives', 'Cynamon', 'not-applicable', null, 'none', '5900084274074'),
-  ('PL', 'Biedronka', 'Grocery', 'Plant-Based & Alternatives', 'Borówka amerykańska odmiany Brightwell', 'not-applicable', 'Biedronka', 'none', '20809539'),
-  ('PL', 'Plony Natury', 'Grocery', 'Plant-Based & Alternatives', 'Kasza bulgur', 'not-applicable', null, 'none', '5902481019197'),
-  ('PL', 'Heinz', 'Grocery', 'Plant-Based & Alternatives', 'Heinz beanz', 'baked', null, 'none', '5900783009090'),
+  ('PL', 'Madero', 'Grocery', 'Plant-Based & Alternatives', 'Chrzan tarty', 'not-applicable', 'Biedronka', 'none', '5904645001727'),
+  ('PL', 'Dawtona', 'Grocery', 'Plant-Based & Alternatives', 'Sűrített paradicsom', 'not-applicable', 'Kaufland', 'none', '5901713001245'),
+  ('PL', 'Melvit', 'Grocery', 'Plant-Based & Alternatives', 'Natural Mix', 'not-applicable', 'Biedronka', 'none', '5906827018141'),
+  ('PL', 'Culineo', 'Grocery', 'Plant-Based & Alternatives', 'Koncentrat pomidorowy', 'not-applicable', null, 'none', '5901713020659'),
+  ('PL', 'Wojan team', 'Grocery', 'Plant-Based & Alternatives', 'Wojanek', 'not-applicable', null, 'none', '5901549093483'),
   ('PL', 'Pudliszki', 'Grocery', 'Plant-Based & Alternatives', 'Koncentrat pomidorowy', 'not-applicable', null, 'none', '5900783003968'),
-  ('PL', 'Lidl', 'Grocery', 'Plant-Based & Alternatives', 'Mąka pszenna typ 650', 'not-applicable', 'Lidl', 'none', '20052652'),
-  ('PL', 'Biedronka', 'Grocery', 'Plant-Based & Alternatives', 'Olej z awokado z pierwszego tłoczenia', 'not-applicable', 'Biedronka', 'none', '8410660081691'),
-  ('PL', 'Pano', 'Grocery', 'Plant-Based & Alternatives', 'Wafle kukurydziane', 'not-applicable', null, 'none', '5900125009627'),
-  ('PL', 'Polsoja', 'Grocery', 'Plant-Based & Alternatives', 'TOFU naturalne', 'not-applicable', null, 'none', '5901473052013'),
-  ('PL', 'Kujawski', 'Grocery', 'Plant-Based & Alternatives', 'Olej z lnu', 'not-applicable', null, 'none', '5900012007866'),
-  ('PL', 'Unknown', 'Grocery', 'Plant-Based & Alternatives', 'Pastani Makaron', 'not-applicable', null, 'none', '5903077000841'),
-  ('PL', 'Tymbark', 'Grocery', 'Plant-Based & Alternatives', 'Tymbark mus mango', 'not-applicable', null, 'none', '5900334014450'),
-  ('PL', 'GustoBello', 'Grocery', 'Plant-Based & Alternatives', 'Gnocchi', 'not-applicable', null, 'none', '5907544131229'),
-  ('PL', 'Barilla', 'Grocery', 'Plant-Based & Alternatives', 'Pâtes spaghetti n°5 1kg', 'not-applicable', 'Carrefour', 'none', '8076800105056'),
-  ('PL', 'Go Vege', 'Grocery', 'Plant-Based & Alternatives', 'Tofu sweet chili', 'not-applicable', 'Biedronka', 'none', '8586024420113'),
-  ('PL', 'Primadonna', 'Grocery', 'Plant-Based & Alternatives', 'Olivenöl (nativ, extra)', 'not-applicable', 'Lidl', 'none', '4056489957652'),
+  ('PL', 'Nasza Spiżarnia', 'Grocery', 'Plant-Based & Alternatives', 'Fasola czerwona', 'not-applicable', null, 'none', '5906716208042'),
+  ('PL', 'Dawtona', 'Grocery', 'Plant-Based & Alternatives', 'Koncentrat pomidorowy', 'not-applicable', null, 'none', '5901713016799'),
+  ('PL', 'Culineo', 'Grocery', 'Plant-Based & Alternatives', 'Pasta z czosnkiem', 'not-applicable', null, 'none', '5901844101661'),
+  ('PL', 'Biedronka', 'Grocery', 'Plant-Based & Alternatives', 'Borówka amerykańska odmiany Brightwell', 'not-applicable', 'Biedronka', 'none', '20809539'),
+  ('PL', 'GustoBello', 'Grocery', 'Plant-Based & Alternatives', 'Gnocchi Di Patate', 'not-applicable', null, 'none', '5907544132431'),
+  ('PL', 'Plony natury', 'Grocery', 'Plant-Based & Alternatives', 'Kasza manna', 'not-applicable', null, 'none', '5900977011595'),
+  ('PL', 'Culineo', 'Grocery', 'Plant-Based & Alternatives', 'Passata klasyczna', 'not-applicable', null, 'none', '5901844101685'),
+  ('PL', 'Anecoop', 'Grocery', 'Plant-Based & Alternatives', 'Włoszczyzna', 'not-applicable', 'Biedronka', 'none', '20355968'),
+  ('PL', 'Vemondo', 'Grocery', 'Plant-Based & Alternatives', 'Tofu wędzone', 'smoked', null, 'none', '4056489717607'),
+  ('PL', 'El Toro Rojo', 'Grocery', 'Plant-Based & Alternatives', 'Oliwki zielone nadziewane pastą paprykową', 'not-applicable', null, 'none', '8410134026876'),
+  ('PL', 'Plony Natury', 'Grocery', 'Plant-Based & Alternatives', 'Kasza Gryczana Biała', 'not-applicable', null, 'none', '4770205128866'),
+  ('PL', 'Janex', 'Grocery', 'Plant-Based & Alternatives', 'Kasza Gryczana', 'not-applicable', null, 'none', '5908267100073'),
+  ('PL', 'Go Vege', 'Grocery', 'Plant-Based & Alternatives', 'Tofu Naturalne', 'not-applicable', 'Biedronka', 'none', '8586024422537'),
+  ('PL', 'Go VEGE', 'Grocery', 'Plant-Based & Alternatives', 'Tofu sweet chili', 'marinated', 'Biedronka', 'none', '8586024420113'),
+  ('PL', 'Lidl', 'Grocery', 'Plant-Based & Alternatives', 'Avocados', 'not-applicable', 'Lidl', 'none', '20229030'),
+  ('PL', 'Kania', 'Grocery', 'Plant-Based & Alternatives', 'Crispy Fried Onions', 'fried', 'Lidl', 'none', '20173074'),
+  ('PL', 'Vemondo', 'Grocery', 'Plant-Based & Alternatives', 'Tofu plain', 'not-applicable', 'Lidl', 'none', '4056489529712'),
   ('PL', 'Vemondo', 'Grocery', 'Plant-Based & Alternatives', 'Tofu naturalne', 'not-applicable', 'Lidl', 'none', '4056489067566'),
-  ('PL', 'Go Vege', 'Grocery', 'Plant-Based & Alternatives', 'Tofu naturalne', 'not-applicable', 'Biedronka', 'none', '8586024420090'),
+  ('PL', 'K-take it veggie', 'Grocery', 'Plant-Based & Alternatives', 'Tofu natur eco', 'not-applicable', 'Kaufland', 'none', '4335896750729'),
+  ('PL', 'GustoBello', 'Grocery', 'Plant-Based & Alternatives', 'Polpa di pomodoro', 'not-applicable', null, 'none', '8002920016675'),
   ('PL', 'Garden Gourmet', 'Grocery', 'Plant-Based & Alternatives', 'Veggie Balls', 'not-applicable', null, 'none', '8445290493125'),
-  ('PL', 'Monini', 'Grocery', 'Plant-Based & Alternatives', 'Oliwa z oliwek', 'not-applicable', null, 'none', '80053828'),
+  ('PL', 'Vemondo', 'Grocery', 'Plant-Based & Alternatives', 'Tofu', 'not-applicable', null, 'none', '4056489717591'),
   ('PL', 'Tastino', 'Grocery', 'Plant-Based & Alternatives', 'Wafle Kukurydziane', 'not-applicable', null, 'none', '4056489587026'),
-  ('PL', 'Gallo', 'Grocery', 'Plant-Based & Alternatives', 'Olive Oil', 'not-applicable', null, 'none', '5601252115983'),
-  ('PL', 'Dania Express', 'Grocery', 'Plant-Based & Alternatives', 'Lasaña', 'not-applicable', null, 'none', '5601009955176'),
-  ('PL', 'El toro rojo', 'Grocery', 'Plant-Based & Alternatives', 'Oliwki zielone drylowane', 'not-applicable', null, 'none', '8410791074227'),
-  ('PL', 'GustoBello', 'Grocery', 'Plant-Based & Alternatives', 'Gnocchi di patate', 'not-applicable', null, 'none', '4028856011106'),
+  ('PL', 'Crownfield', 'Grocery', 'Plant-Based & Alternatives', 'Owsianka Truskawkowa', 'not-applicable', null, 'none', '4056489064503'),
+  ('PL', 'Bakello', 'Grocery', 'Plant-Based & Alternatives', 'Ciasto francuskie', 'not-applicable', null, 'none', '4001163111929'),
   ('PL', 'Violife', 'Grocery', 'Plant-Based & Alternatives', 'Cheddar flavour slices', 'not-applicable', null, 'none', '5202390023576'),
-  ('PL', 'Unknown', 'Grocery', 'Plant-Based & Alternatives', 'Oliwa z Oliwek', 'not-applicable', null, 'none', '5601999400014')
+  ('PL', 'Golden Sun Lidl', 'Grocery', 'Plant-Based & Alternatives', 'Kasza manna', 'not-applicable', null, 'none', '20282516'),
+  ('PL', 'Nasza Spiżarnia', 'Grocery', 'Plant-Based & Alternatives', 'Ananas Plastry', 'not-applicable', null, 'none', '8435493398006'),
+  ('PL', 'Unknown', 'Grocery', 'Plant-Based & Alternatives', 'Awokado hass', 'not-applicable', null, 'none', '8712355263178')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -81,4 +96,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'PL' and category = 'Plant-Based & Alternatives'
   and is_deprecated is not true
-  and product_name not in ('Wyborny olej słonecznikowy', 'Makaron Lubella Pióra nr 17', 'Kuskus perłowy z ciecierzycą, fasolką i hummusem', 'Parówki sojowe klasyczne', 'Nasza Spiżarnia Korniszony z chilli', 'Olej rzepakowy z pierwszego tłoczenia, filtrowany', 'Świderki', 'Mąka orkiszowa pełnoziarnista typ 2000', 'Mąka pszenna Szymanowska 480', 'Mąka kukurydziana', 'Polski olej rzepakowy', 'Olej kokosowy, bezzapachowy', 'Koncentrat Pomidorowy 30%', 'Olej rzepakowy pomidor czosnek bazylia', 'KASZKA manna z malinami', 'Wyborny olej rzepakowy', 'Olej 3 ziarna', 'Koncentrat pomidorowy', 'Extra thin corn cakes', 'Tofu Wędzone', 'Antybaton Choco Nuts', 'Antybaton Choco Coco', 'Passata klasyczna', 'cynamon', 'Borówka amerykańska odmiany Brightwell', 'Kasza bulgur', 'Heinz beanz', 'Koncentrat pomidorowy', 'Mąka pszenna typ 650', 'Olej z awokado z pierwszego tłoczenia', 'Wafle kukurydziane', 'TOFU naturalne', 'Olej z lnu', 'Pastani Makaron', 'Tymbark mus mango', 'Gnocchi', 'Pâtes spaghetti n°5 1kg', 'Tofu sweet chili', 'Olivenöl (nativ, extra)', 'Tofu naturalne', 'Tofu naturalne', 'Veggie Balls', 'Oliwa z oliwek', 'Wafle Kukurydziane', 'Olive Oil', 'Lasaña', 'oliwki zielone drylowane', 'Gnocchi di patate', 'Cheddar flavour slices', 'Oliwa z Oliwek');
+  and product_name not in ('Wafle Ryżowe Wieloziarnisty', 'Ziemniaczki Już Gotowe z papryką', 'Parówki sojowe klasyczne', 'Nasza Spiżarnia Korniszony z chilli', 'Mąka Tortowa Extra typ 405 Basia', 'Baton owocowy chrupiący orzech', 'Rośl-inne Kabanosy 3 Ziarna', 'Mąka tortowa pszenna. Typ 450', 'Otręby owsiane', 'Kasza jęczmienna perłowa', 'Wafle Kukurydziane sól morska', 'Mąka pszenna Szymanowska 480', 'Kasza manna błyskawiczna', 'Mąka do pizzy neapolitańskiej typ 00', 'Mąka pszenna tortowa', 'Kiełki rzodkiewki', 'Mąka pszenna wrocławska typ 500', 'Kasza gryczana prażona', 'Wafle Prowansalskie', 'Koncentrat Pomidorowy 30%', 'Chrzan tarty', 'Sűrített paradicsom', 'Natural Mix', 'Koncentrat pomidorowy', 'Wojanek', 'Koncentrat pomidorowy', 'Fasola czerwona', 'Koncentrat pomidorowy', 'Pasta z czosnkiem', 'Borówka amerykańska odmiany Brightwell', 'Gnocchi Di Patate', 'Kasza manna', 'Passata klasyczna', 'Włoszczyzna', 'Tofu wędzone', 'Oliwki zielone nadziewane pastą paprykową', 'Kasza Gryczana Biała', 'Kasza Gryczana', 'Tofu Naturalne', 'Tofu sweet chili', 'Avocados', 'Crispy Fried Onions', 'Tofu plain', 'Tofu naturalne', 'Tofu natur eco', 'Polpa di pomodoro', 'Veggie Balls', 'Tofu', 'Wafle Kukurydziane', 'Owsianka Truskawkowa', 'Ciasto francuskie', 'Cheddar flavour slices', 'Kasza manna', 'Ananas Plastry', 'Awokado hass');

@@ -1,6 +1,6 @@
-﻿-- PIPELINE (Nuts, Seeds & Legumes): insert products
+-- PIPELINE (Nuts, Seeds & Legumes): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-03-04
+-- Generated: 2026-03-13
 
 -- 0a. DEPRECATE old products in this category & release their EANs
 update products
@@ -11,8 +11,18 @@ where country = 'DE'
 
 -- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
 update products set ean = null
-where ean in ('4004980401907', '4004980404007', '4004980400504', '4004980512801', '4061458056618', '4008088919821', '4063367419102', '4004980513006', '4056489150374', '4088500665956', '4008088184038', '4056489105169', '4061458056557', '4061461698263', '4008258107010', '4061458056595', '4008088920018', '4061458056656', '4031446850108', '4088500665963', '4063367143144', '4008088184458', '4004980514003', '4061461229917', '4047247192583', '4004980516809', '4088500658026', '4004980501607', '4063367353499', '4056489694403', '4004980507500', '4004980530508', '4018077004896', '4061461689087', '4008258150092', '4061462369551', '4056489357117', '4061458057813', '4061458140102', '4056489682677', '4047247192637', '4061462602375', '4047247192743', '4061462713910', '4066447615821', '4061462602399', '4047247971287', '4008258130018', '40893532', '4056489018995', '4056489033042')
+where ean in ('4004980401907', '4004980404007', '4004980400504', '4004980512801', '4061458056618', '4008088919821', '4063367419102', '4004980513006', '4056489150374', '4088500665956', '4008088184038', '4056489105169', '4061458056557', '4061461698263', '4008258107010', '4061458056595', '4008088920018', '4061458056656', '4031446850108', '4088500665963', '4063367143144', '4008088184458', '4008088903684', '4008088184298', '4047247204798', '4047247095617', '4047247108249', '4004980401006', '4047247192613', '4008088888745', '4047247192590', '4047247457521', '4068706476747', '4047247192620', '4063367403019', '4056489421511', '4061462698460', '4010442418994', '4003786923002', '4008088916479', '4056489235422', '4063367097744', '4063367097690', '4008088184373', '4047247193535', '4004980514003', '4061461229917', '4047247192583', '4004980516809', '4088500658026', '4004980501607', '4063367353499', '4056489694403', '4004980507500', '4004980530508', '4008088184793', '4061464180338', '4008088362795', '4008258021026', '4004980536807', '4008088111300', '4004980511606', '4008088181501', '4047247193405', '4014522302104', '4066447615845', '4004980409705', '4061458056663', '4063367143342', '4063367409295', '4003786602259', '4008258109007', '4063367143137', '4021851457665', '4004980505506', '4008088902175', '4063367150890', '4047247193382', '4004980509801', '4008258038000', '4004980536906', '4063367143151', '4018077004896', '4061461689087', '4008258150092', '4061462369551', '4056489357117', '4061458057813', '4061458140102', '4056489682677', '4047247192637', '4061462602375', '4047247192743', '4061462713910', '4066447615821', '4061462602399', '4047247971287', '4008258130018', '40893532', '4056489018995', '4056489033042', '4061462131561', '4063367507106', '4067796245134', '4008088244084', '4061458140119', '4047247193498', '4047247084529', '4066447717969', '4058172330087', '4056489105381', '4010442458891', '4061461801397', '4061462602511', '4088500695557', '4061462040931', '4047247623407', '4066447602692', '4061463170200', '4047247210188', '4004980409606', '4004980537903', '4008258046005', '4010442418192', '4047247273855', '4061461618681', '4056489421504', '4061462713897', '4063367143175', '4063367097669', '4061463494610', '4061458004541', '4010442401194', '4047247192606', '4047247192774', '4047247192767', '4056489714392', '4061461709891', '4063367507625', '20005689', '20051013', '4337256545518', '4008258460009', '20005672', '4311596421053', '4311596421077', '20089955', '4038934778999', '4316268360364', '4337256660792')
   and ean is not null;
+
+-- 0c. Deprecate cross-category products whose identity_key collides with this batch
+update products
+set is_deprecated = true,
+    deprecated_reason = 'Reassigned to Nuts, Seeds & Legumes by pipeline',
+    ean = null
+where country = 'DE'
+  and category != 'Nuts, Seeds & Legumes'
+  and identity_key in ('00b361c26808336ea1ca3be204324de7', '03d08cdd5e4012771000155d37a45ed0', '0be5f1eea357661b8feefd772ff76dc5', '0c5eb5e82895faabc8eba1aa09f32d62', '0c95fdc2fce1e72abcb8d8ac3dab3982', '10f260c33b539499abdf901ae9586f09', '11e9e59225cd4cce414b0f1d73ec90ca', '148e5703b6bb8b1f4aa9ff5121eeae8a', '15bbc98ca21bdfb830e8320210668376', '188928ada77177ca84d4430a6ec18a7d', '18ce8737d21a1970d16a8ce843e5e013', '1a0702cafb122d703a923d7d43e11f29', '1c24965ee7806bdc84faef4bd70f090a', '1c81ad3a2dd3508cb065404b7634a4eb', '1e66ebf8816fd33d3e002e028761a65e', '22d8f800ad5df415c1bf5b0df780b07a', '231a295ef3d525e09279de55aaededaf', '239fffee35a5868ce9a1b6234e3d77ac', '25d429772d77899254ea1ab28b85a4fc', '2945df5d16402fb90631370965a43e4e', '2a07778f3794c684658f891f083d9632', '2cca4793b9ba768b583402937e68e49d', '2f66134cd263118172525987794087e3', '3017ee5c5b43cc885fbfc075658ba8c9', '31437752dc755e714c24f7d4c4513da2', '3cdd44a81a4af8abd6c1725cd9066333', '3f2964e1745ec3ce98fb10ab3965adac', '403c43ebb2ffa797fc8c27f01023d8d7', '40bf3eefe3cf098e011c4a29d391c7bc', '417f4b0789c9110030e832615f2c5e51', '41caaf5924e00ed21e1cad47765ae539', '46b78283cd3670361fb5f87645285d4d', '47389cfbdbba54638d0980d8f685ac9d', '47cc3051aefa34c50257938224e30802', '4954db18fcbf7cf4c9ddbe6b5a64c7a7', '4b39e5c2ae0a3dfc9970e9f69ec1a4d2', '4da0c184409d7d108cc4ee8e6631a38b', '4fb2d5e90f3dc1c4b8456ac1b2afdace', '52aa530a34089df9ff741ae6e926474b', '52ad5e4ab8cf41c395115077915f29a6', '54c6a8f65bf0daa4cdbec13a5c8f9bf3', '55f910c436a147fb963c6f223346c9c6', '56b5286e80bde8004549a616515cac60', '592e96c96e6362c1cd57cd6a89dcabc2', '5a0999ab2634f4642f107285025e84b0', '5be11d95c89b65957b4f44bfeb7ac2f6', '5c876adc4ea1f3130dd5b98e52c9b01d', '5cd0f0f30af6e8a5f1ffbc22fce9c256', '5d195b546f309de6ab1efd05445aff32', '6033c28080601a95e9cb96b2d96a14dc', '63b006f10c7216ae1596916c46a17da6', '656ac13c780e2cd57756c2f1b787ee5d', '661fcc7a9396af95987d4203a139b212', '676c9e05b111e3968676dce75b4b6aca', '67c75126573db61ed943710d9764efbb', '6829d04b76d7efee3dc9483217b39706', '6a94eecbf8ca89fb81a03910aee4f387', '6c64d14634acad14e044d98fbb0f4ec2', '6d159de11801eac285eefd343eded807', '6d9442a24042980b3729e1a8b15ccd58', '6dea9f592ea7d3c247b0e5b5819b8169', '6e2ad520e60db91c6cea6f458fdfade3', '73a0bb7288eec02382ee24188d1395c4', '75f3b93afe339690c59812da000050e1', '76921c4b3e20bca0186c3c743033a30e', '77954d310998807c981b2f5f69a50e04', '78f02e16e96f310528e879e9f3b335e4', '7c6ca16d752c18689d4ed4655d700569', '7d4143a403f601e25a9e1ef3905038c1', '7fbb809489aa2aa336d2a5b61104aaa2', '8106960921b5e7e434a1d23ebce88fae', '86422941b05936547305fb7701d8259a', '86662842131c677ddb4a8c22ef61aa71', '87120cb74ccccd5a932cc4ca0d8f3822', '87605a50ef2c253c5093fce61a7f7d12', '8acae7a8fedb69c957be95e5f9e7e0ab', '8ae78c4362464a41bfca7b965748a7b1', '8dd8353d38f08d44441fdea5bf645438', '8e1c7a2be8f4bdddcd980e29ee5d727b', '8f9d720db91a034ed6f68d4b65b8ccd9', '8ff5432998021333248ab29991c2c117', '90e192ff3acb6c1bce421cc5d6cf4df0', '947e7b6c0179a82b0e574add9f83d545', '95122ac8981d50f4ce627ded88398982', '9544090738bcec1db882a60679b912db', '968d797f80b5858a9daefeac7af2d0fe', '97da03ee720f80128390cd82d040e031', '98483cee745b5b6fb65eddf0a3465a15', '9d1d84a1408e02ea65b7aa541c6d6409', '9eec331648ea62235007ce75b7fe24a3', 'a01f5b3ef2a234f17b1baa03a1120942', 'a4c331f7552c4c9407622cfe48dd39e0', 'a57836a26b166f93d752bef5a10190e0', 'a6246375c9719f95a3b47bc315f198de', 'a9cb5b91cbb1fc373326504d0bc19f25', 'aaaa8b39b8d9eaf60505c998e19f1704', 'aae0c77845b729e0d54a595f48cb5779', 'ab71b32f15256e7a12befc2c60a13c65', 'ac0750868427d6c5b30c62439d4f52eb', 'ac31545e1336fdbbd112466c8422dff1', 'b13bbba265f8501386c22286f902586e', 'b1667b0fec82532696f268066df0db78', 'b1b1693d6488d28fcb0e338f958a636a', 'b37d35d1319015210392b398b180536c', 'b5bb66864c086ecca10f80661cd35bad', 'b725b3dfad27d0b7581701ec2e894586', 'b788acbd7412675cff216ef38568cbe1', 'bb3eba9d4e82839eb9c44af90ef96a83', 'c13ffed6274cc81d9ba28e22794f47ba', 'c230b2ae741b084bf0879779c94b6432', 'c417e896afb0cb9feaa3d11272ca6089', 'c5560d99949507ad253b3d2dc4910533', 'c76de60d173d16ed1b9b6e0182297b4f', 'c951566c5147479a03022736c12ca1dc', 'ce530d3e2264fe57a3ce37bb313b9633', 'd19c29c7fac8442f145f637e56342173', 'd1be3ce68e4fc70ce47d6b6db1075278', 'd369302bce149d926c864543f63c6125', 'd3c4a9bf7ce0529e9e48806d7d837812', 'd3c8926cfbfad793ee68c81e87bbdd3d', 'd538e70ccb737eb5dfd70050b43b8a18', 'd7bdaff7545d42599b862b4b7244f6b6', 'd90c44b27920ec4fb4c5946696be8676', 'db9961b2e88932011ea02def9621d3bd', 'dd373affdf3e7f4dee15b4a0dade7b54', 'de896c8845cb212758c0bf8ea94c6c9a', 'df97a006a90e7cdd663caff8ccc0b76c', 'e193b991b0530f6e2dc54f98dda859f8', 'e1eabe10db9841ba8cb77e0e2e9756ee', 'e2e3436d1a61aec57cdec52d775b527d', 'e634bdf28908d9b9f58d1311c5435831', 'e67e2c598df344a1f7c5cf7b94c50c35', 'e78c4173c7268b37e7816e45ea0c5f12', 'e848f4488c1bda15d297693030435565', 'ea562f267caf95f76f967ec5662bea8e', 'eaa0cf70810d58ded9602543d5819db8', 'ecf31d31f96cd6911fc1b143d359de07', 'ed186db6782f88498468fa9c95709280', 'edf34c829d29bdb7483e4d852e2a0150', 'eeb5b5aa2713f85834f2c6811d27eee2', 'efbb69989527dd178c86643fc2398f44', 'f1a1e9bbe5e266577d7971c6ad712ea1', 'f6bed3a19d22fa45c7b594643eec7f30', 'f74b0e0230c7dbe3e9621d0f8e1c57ff', 'f81c5a2c4c7381232ccf7684ac2fc793', 'f861202fa01545f504aa6fe19b5d2330', 'f87902ad5b586d27a61b6da3d6438d9d', 'f8cb2fc7f67229c1dad6e16910551b80', 'fc40c2297e32166e9bd7f000370b1ff1', 'ff4ee51d6956007a0fe5c661d09dacd8')
+  and is_deprecated is not true;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
@@ -29,7 +39,7 @@ values
   ('DE', 'Aldi', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistazien - geröstet & gesalzen', 'roasted', 'Aldi', 'none', '4088500665956'),
   ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Nuss-Kern-Mischung geröstet & gesalzen', 'not-applicable', 'Netto', 'none', '4008088184038'),
   ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'XXL Erdnüsse', 'roasted', 'Lidl', 'none', '4056489105169'),
-  ('DE', 'Eurofood', 'Grocery', 'Nuts, Seeds & Legumes', 'Macadamia geröstet & gesalzen', 'not-applicable', 'Aldi', 'none', '4061458056557'),
+  ('DE', 'Farmer', 'Grocery', 'Nuts, Seeds & Legumes', 'Macadamia geröstet & gesalzen', 'not-applicable', 'Aldi', 'none', '4061458056557'),
   ('DE', 'Aldi', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse in der Schale, geröstet', 'roasted', 'Aldi', 'none', '4061461698263'),
   ('DE', 'Seeberger', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashew Kerne Nüsse', 'not-applicable', 'Carrefour', 'none', '4008258107010'),
   ('DE', 'August Töpfer', 'Grocery', 'Nuts, Seeds & Legumes', 'Nuss-Mix, geröstet & gesalzen', 'not-applicable', 'Aldi', 'none', '4061458056595'),
@@ -39,6 +49,29 @@ values
   ('DE', 'Farmer', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistazien - geröstet & ungesalzen', 'roasted', 'Aldi', 'none', '4088500665963'),
   ('DE', 'K-Classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse geröstet', 'roasted', 'Kaufland', 'none', '4063367143144'),
   ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Snack Nüsse Honig & Salz', 'not-applicable', 'Netto', 'none', '4008088184458'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Snack Nüsse Provence', 'not-applicable', 'Netto', 'none', '4008088903684'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Snack Nüsse Ungarisch Style', 'roasted', 'Netto', 'none', '4008088184298'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Salat-Plus - Mischung aus Sonnenblumen-, Kürbis- & Pinienkerne', 'not-applicable', 'Aldi', 'none', '4047247204798'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Jumbo Erdnüsse in der Schale, geröstet', 'roasted', 'Aldi', 'none', '4047247095617'),
+  ('DE', 'Aldi', 'Grocery', 'Nuts, Seeds & Legumes', 'Wasabi-Erdnüsse', 'not-applicable', 'Aldi', 'none', '4047247108249'),
+  ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse - geröstet & gezalzen XXL Party Edition', 'roasted', null, 'none', '4004980401006'),
+  ('DE', 'Traders Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashews, geröstet & gesalzen', 'roasted', 'Aldi', 'none', '4047247192613'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Snack Nüsse Salz & Pfeffer', 'roasted', 'Netto', 'none', '4008088888745'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Kalifornische Pistazien, geröstet & gesalzen', 'roasted', 'Aldi', 'none', '4047247192590'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Haselnusskerne geröstet, ungesalzen', 'roasted', 'Aldi', 'none', '4047247457521'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse mit Knusperhülle', 'not-applicable', 'Aldi', 'none', '4068706476747'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashews, geröstet & pikant gewürzt', 'not-applicable', 'Aldi', 'none', '4047247192620'),
+  ('DE', 'K-Classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashewkerne geröstet u. gesalzen', 'roasted', 'Kaufland', 'none', '4063367403019'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Californische Pistazienkerne geröstet & gesalzen', 'roasted', 'Lidl', 'none', '4056489421511'),
+  ('DE', 'Aldi', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse im Teigmantel - Paprika', 'roasted', 'Aldi', 'none', '4061462698460'),
+  ('DE', 'Farmer''s Snack', 'Grocery', 'Nuts, Seeds & Legumes', 'Geröstete Mandel, ungesalzen', 'not-applicable', 'Netto', 'none', '4010442418994'),
+  ('DE', 'Max', 'Grocery', 'Nuts, Seeds & Legumes', 'Jumbo Erdnüsse geröstet & gesalzen', 'roasted', null, 'none', '4003786923002'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Snack Nüsse BBQ', 'not-applicable', 'Netto', 'none', '4008088916479'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashewkerne geröstet & ungesalzen', 'not-applicable', 'Lidl', 'none', '4056489235422'),
+  ('DE', 'Kaufland Classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse', 'not-applicable', 'Kaufland', 'none', '4063367097744'),
+  ('DE', 'K-Bio', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnusskerne geröstet & gesalzen', 'roasted', 'Kaufland', 'none', '4063367097690'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Snack Nüsse Oriental Style', 'not-applicable', 'Netto', 'none', '4008088184373'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistazienkerne geröstet, ungesalzen', 'roasted', 'Aldi', 'none', '4047247193535'),
   ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse pikant gewürzt', 'not-applicable', null, 'none', '4004980514003'),
   ('DE', 'Farmer', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnusskerne - geröstet und gesalzen', 'roasted', null, 'none', '4061461229917'),
   ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse geröstet und gesalzen', 'roasted', null, 'none', '4047247192583'),
@@ -49,13 +82,40 @@ values
   ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Spanische Mandeln blanchiert und geröstet', 'not-applicable', null, 'none', '4056489694403'),
   ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse ungesalzen', 'roasted', null, 'none', '4004980507500'),
   ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Mandeln & Erdnüsse Honig und Salz', 'not-applicable', null, 'none', '4004980530508'),
+  ('DE', 'Kluth', 'Grocery', 'Nuts, Seeds & Legumes', 'Nuss-Mix geröstet und gesalzen', 'not-applicable', null, 'none', '4008088184793'),
+  ('DE', 'Farmer', 'Grocery', 'Nuts, Seeds & Legumes', 'Geröstete Snackmandeln', 'not-applicable', null, 'none', '4061464180338'),
+  ('DE', 'Kluth', 'Grocery', 'Nuts, Seeds & Legumes', 'Macadamias geröstet & ungesalzen', 'not-applicable', null, 'none', '4008088362795'),
+  ('DE', 'Seeberger', 'Grocery', 'Nuts, Seeds & Legumes', 'Edel-Nuss-Mix geröstet & gesalzen', 'not-applicable', 'Carrefour', 'none', '4008258021026'),
+  ('DE', 'Intersnack', 'Grocery', 'Nuts, Seeds & Legumes', 'Ültje Cashews, geröstet & gesalzen', 'not-applicable', null, 'none', '4004980536807'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Röst-Cashews', 'not-applicable', null, 'none', '4008088111300'),
+  ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse - Cacahuètes grillées sans huile et salées, épicées', 'roasted', null, 'none', '4004980511606'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Snack Nüsse Salz XXL', 'not-applicable', null, 'none', '4008088181501'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Snackmandeln geröstet & gesalzen', 'not-applicable', null, 'none', '4047247193405'),
+  ('DE', 'Bodeta', 'Grocery', 'Nuts, Seeds & Legumes', 'Gebrannte Erdnüsse', 'roasted', null, 'none', '4014522302104'),
+  ('DE', 'DmBio', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse ungesalzen', 'not-applicable', null, 'none', '4066447615845'),
+  ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Fusion BBQ Erdnüsse', 'not-applicable', null, 'none', '4004980409705'),
+  ('DE', 'Aldi', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse geröstet & gesalzen', 'not-applicable', null, 'none', '4061458056663'),
+  ('DE', 'K-Classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse ger. & ges.', 'not-applicable', null, 'none', '4063367143342'),
+  ('DE', 'Kaufland K-classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Macadamia geröstet & gesalzen', 'not-applicable', null, 'none', '4063367409295'),
+  ('DE', 'Max', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistazien geröstet & gesalzen', 'roasted', null, 'none', '4003786602259'),
+  ('DE', 'Seeberger', 'Grocery', 'Nuts, Seeds & Legumes', 'Geröstete Cashews ohne Salz', 'not-applicable', 'Carrefour', 'none', '4008258109007'),
+  ('DE', 'Kaufland', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse im Paprika-Knuspermantel', 'not-applicable', null, 'none', '4063367143137'),
+  ('DE', 'Dennree', 'Grocery', 'Nuts, Seeds & Legumes', 'Mandelkerne, europäische', 'not-applicable', null, 'none', '4021851457665'),
+  ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse geröstet und gesalzen', 'roasted', null, 'none', '4004980505506'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Nüsse Sportmix', 'not-applicable', null, 'none', '4008088902175'),
+  ('DE', 'Kaufland K-classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Mandeln unblanchiert geröstet & gesalzen', 'roasted', null, 'none', '4063367150890'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Walnüsse in der Schale', 'not-applicable', null, 'none', '4047247193382'),
+  ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Ültje pur Erdnüsse, im Ofen gebacken & ungesalzen, 200g', 'not-applicable', null, 'none', '4004980509801'),
+  ('DE', 'Seeberger', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashewkerne geröstet & gesalzen', 'not-applicable', null, 'none', '4008258038000'),
+  ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Nüsse Cashew geröstet', 'not-applicable', null, 'none', '4004980536906'),
+  ('DE', 'Kaufland K-Classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse mit schwarzem Pfeffer', 'not-applicable', null, 'none', '4063367143151'),
   ('DE', 'Lorenz', 'Grocery', 'Nuts, Seeds & Legumes', 'NicNacs', 'roasted', null, 'none', '4018077004896'),
   ('DE', 'Farmer Naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Walnusskerne naturbelassen', 'not-applicable', 'Aldi', 'none', '4061461689087'),
   ('DE', 'Seeberger', 'Grocery', 'Nuts, Seeds & Legumes', 'Nusskernmischung', 'not-applicable', 'Kaufland', 'none', '4008258150092'),
   ('DE', 'Fazer naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Feinste Nuss-Variation, naturbelassen', 'not-applicable', 'Aldi', 'none', '4061462369551'),
   ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Mix Proteína Frutos Secos Y Soja', 'not-applicable', 'Lidl', 'none', '4056489357117'),
   ('DE', 'Farmer Naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashewkerne naturbelassen', 'not-applicable', 'Aldi', 'none', '4061458057813'),
-  ('DE', 'Farmer Naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Premium-Nussmix - Fein mit Pekannusskernen', 'not-applicable', 'Aldi', 'none', '4061458140102'),
+  ('DE', 'Farmer naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Premium-Nussmix - Fein mit Pekannusskernen', 'not-applicable', 'Aldi', 'none', '4061458140102'),
   ('DE', 'Alesto Selection', 'Grocery', 'Nuts, Seeds & Legumes', 'Pecan Nuts natural', 'not-applicable', 'Lidl', 'none', '4056489682677'),
   ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Walnusskerne naturbelassen', 'not-applicable', 'Aldi', 'none', '4047247192637'),
   ('DE', 'Farmer Naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Simply Roasted - Cashewkerne', 'roasted', 'Aldi', 'none', '4061462602375'),
@@ -67,7 +127,56 @@ values
   ('DE', 'Seeberger', 'Grocery', 'Nuts, Seeds & Legumes', 'Seeberger Walnusskerne 4008258130018 Walnusskerne', 'not-applicable', 'Carrefour', 'none', '4008258130018'),
   ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashew Nuts XXL', 'not-applicable', 'Lidl', 'none', '40893532'),
   ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Mandeln Honig & Salz', 'not-applicable', 'Lidl', 'none', '4056489018995'),
-  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Noisettes grillées', 'roasted', 'Lidl', 'none', '4056489033042')
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Noisettes grillées', 'roasted', 'Lidl', 'none', '4056489033042'),
+  ('DE', 'Farmer', 'Grocery', 'Nuts, Seeds & Legumes', 'Nuss-Frucht-Mix 5er-Pack - Cranberry', 'not-applicable', 'Aldi', 'none', '4061462131561'),
+  ('DE', 'K-Classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Nuts royal', 'not-applicable', 'Kaufland', 'none', '4063367507106'),
+  ('DE', 'Dm', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistazien Creme', 'not-applicable', null, 'none', '4067796245134'),
+  ('DE', 'Maryland', 'Grocery', 'Nuts, Seeds & Legumes', 'Studentenfutter', 'dried', null, 'none', '4008088244084'),
+  ('DE', 'Farmer naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Premium-Nussmix - Extra mit Mandeln, Cashew-, Para-, Pekan-, Macadamia-Nusskernen', 'not-applicable', 'Aldi', 'none', '4061458140119'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Studentenfutter', 'not-applicable', 'Aldi', 'none', '4047247193498'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Knusperkracher', 'not-applicable', 'Aldi', 'none', '4047247084529'),
+  ('DE', 'DmBio', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistaziencreme', 'not-applicable', null, 'none', '4066447717969'),
+  ('DE', 'DmBio', 'Grocery', 'Nuts, Seeds & Legumes', 'Mandelmehl', 'not-applicable', null, 'none', '4058172330087'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashews roasted & salted', 'roasted', 'Lidl', 'none', '4056489105381'),
+  ('DE', 'Farmer''s Snack', 'Grocery', 'Nuts, Seeds & Legumes', 'Studentenfutter ohne Rosinen mit saftigen Cranberries', 'dried', 'Netto', 'none', '4010442458891'),
+  ('DE', 'Farmer naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Paranusskerne naturbelassen', 'not-applicable', 'Aldi', 'none', '4061461801397'),
+  ('DE', 'Farmer Naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Simply Roasted - Mandeln', 'roasted', 'Aldi', 'none', '4061462602511'),
+  ('DE', 'Farmer naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Pinienkerne', 'not-applicable', 'Aldi', 'none', '4088500695557'),
+  ('DE', 'Farmer Naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Energieschub', 'not-applicable', 'Aldi', 'none', '4061462040931'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Mandelkerne naturbelassen', 'not-applicable', 'Aldi', 'none', '4047247623407'),
+  ('DE', 'DmBio', 'Grocery', 'Nuts, Seeds & Legumes', 'Paranuss Kerne', 'not-applicable', null, 'none', '4066447602692'),
+  ('DE', 'Afrika', 'Grocery', 'Nuts, Seeds & Legumes', 'Bio Cashewkerne naturbelassen aus Westafrika', 'not-applicable', 'Aldi', 'none', '4061463170200'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Premiumnuss-Mix mit Mandel-, Cashew-, Pekan-, Macadamia- & Paranusskernen, ungesalzen', 'not-applicable', 'Aldi', 'none', '4047247210188'),
+  ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Fusion - Peanuts Curry Orient Style', 'roasted', 'Netto', 'none', '4004980409606'),
+  ('DE', 'Ültje', 'Grocery', 'Nuts, Seeds & Legumes', 'Rauchmandeln', 'smoked', null, 'none', '4004980537903'),
+  ('DE', 'Seeberger', 'Grocery', 'Nuts, Seeds & Legumes', 'Macadamia Nusskerne', 'not-applicable', null, 'none', '4008258046005'),
+  ('DE', 'Farmer''s Snack', 'Grocery', 'Nuts, Seeds & Legumes', 'Pinienkerne', 'not-applicable', null, 'none', '4010442418192'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashewkerne naturbelassen', 'not-applicable', 'Aldi', 'none', '4047247273855'),
+  ('DE', 'Aldi', 'Grocery', 'Nuts, Seeds & Legumes', 'Mandeln blanchiert, gemahlen', 'not-applicable', 'Aldi', 'none', '4061461618681'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistazienkerne', 'roasted', 'Lidl', 'none', '4056489421504'),
+  ('DE', 'Farmer', 'Grocery', 'Nuts, Seeds & Legumes', 'Trail mix Beeren', 'not-applicable', 'Aldi', 'none', '4061462713897'),
+  ('DE', 'Unknown', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse Wasabi Style', 'not-applicable', null, 'none', '4063367143175'),
+  ('DE', 'K-Bio', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashew Cranberry mix', 'dried', 'Kaufland', 'none', '4063367097669'),
+  ('DE', 'Farmer Naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashewkerne naturbelassen XXL', 'not-applicable', 'Aldi', 'none', '4061463494610'),
+  ('DE', 'Gut bio', 'Grocery', 'Nuts, Seeds & Legumes', 'Kerne-Mix', 'not-applicable', 'Aldi', 'none', '4061458004541'),
+  ('DE', 'Farmer''s Snack', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashewkerne', 'not-applicable', null, 'none', '4010442401194'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Kalifornische Pistazien, ungesalzen', 'roasted', 'Aldi', 'none', '4047247192606'),
+  ('DE', 'Gut Bio', 'Grocery', 'Nuts, Seeds & Legumes', 'Walnusskerne', 'not-applicable', 'Aldi', 'none', '4047247192774'),
+  ('DE', 'Trader Joe''s', 'Grocery', 'Nuts, Seeds & Legumes', 'Paranusskerne', 'not-applicable', 'Aldi', 'none', '4047247192767'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Walnuts', 'not-applicable', 'Lidl', 'none', '4056489714392'),
+  ('DE', 'Farmer naturals', 'Grocery', 'Nuts, Seeds & Legumes', 'Kernige Vielfalt', 'not-applicable', 'Aldi', 'none', '4061461709891'),
+  ('DE', 'K-Classic', 'Grocery', 'Nuts, Seeds & Legumes', 'Walnuss-Kerne', 'not-applicable', null, 'none', '4063367507625'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse geröstet und gesalzen', 'roasted', 'Lidl', 'none', '20005689'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Cashewkerne geröstet & gesalzen', 'roasted', 'Lidl', 'none', '20051013'),
+  ('DE', 'REWE Beste Wahl', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse große Kerne geröstet ungesalzen', 'roasted', null, 'none', '4337256545518'),
+  ('DE', 'Seeberger', 'Grocery', 'Nuts, Seeds & Legumes', 'Crunchy Fava-Snack salted', 'not-applicable', null, 'none', '4008258460009'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse, pikant gewürzt', 'roasted', 'Lidl', 'none', '20005672'),
+  ('DE', 'Gut & Günstig', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse geröstet & gesalzen', 'roasted', null, 'none', '4311596421053'),
+  ('DE', 'Edeka', 'Grocery', 'Nuts, Seeds & Legumes', 'Pistazien, geröstet & gesalzen', 'roasted', null, 'none', '4311596421077'),
+  ('DE', 'Alesto', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse – geröstet & gesalzen', 'roasted', 'Lidl', 'none', '20089955'),
+  ('DE', 'K-Bio', 'Grocery', 'Nuts, Seeds & Legumes', 'Walnusskerne', 'not-applicable', null, 'none', '4038934778999'),
+  ('DE', 'Clarkys', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse im Teigmantel Paprika', 'roasted', 'Netto', 'none', '4316268360364'),
+  ('DE', 'Ja!', 'Grocery', 'Nuts, Seeds & Legumes', 'Erdnüsse pikant gewürzt', 'roasted', null, 'none', '4337256660792')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -82,4 +191,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'DE' and category = 'Nuts, Seeds & Legumes'
   and is_deprecated is not true
-  and product_name not in ('Erdnüsse geröstet & gesalzen', 'Ültje Erdnüsse geröstet & ungesalzen 180g 2,49€ 13,83€ 1kg', 'Erdnüsse', 'EXTRA ROAST Erdnüsse gesalzen', 'Cashewkerne - geröstet & gesalzen', 'Snack Nüsse pur', 'Erdnüsse geröstet & gesalzen', 'Ofen Erdnüsse gesalzen', 'Erdnusskerne geröstet', 'Pistazien - geröstet & gesalzen', 'Nuss-Kern-Mischung geröstet & gesalzen', 'XXL Erdnüsse', 'Macadamia geröstet & gesalzen', 'Erdnüsse in der Schale, geröstet', 'Cashew Kerne Nüsse', 'Nuss-Mix, geröstet & gesalzen', 'Studentenfutter Berry mit Cranberries & Walnüssen', 'Cashewkerne - pikant gewürzt', 'Erdnüsse geröstet ohne Salz', 'Pistazien - geröstet & ungesalzen', 'Erdnüsse geröstet', 'Snack Nüsse Honig & Salz', 'Erdnüsse pikant gewürzt', 'Erdnusskerne - geröstet und gesalzen', 'Erdnüsse geröstet und gesalzen', 'Kessel Nüsse Paprika', 'Erdnüsse', 'Erdnüsse, geröstet & gesalzen', 'Erdnüsse pikant', 'Spanische Mandeln blanchiert und geröstet', 'Erdnüsse ungesalzen', 'Mandeln & Erdnüsse Honig und Salz', 'NicNacs', 'Walnusskerne naturbelassen', 'Nusskernmischung', 'Feinste Nuss-Variation, naturbelassen', 'Mix Proteína Frutos Secos Y Soja', 'Cashewkerne naturbelassen', 'Premium-Nussmix - Fein mit Pekannusskernen', 'Pecan Nuts natural', 'Walnusskerne naturbelassen', 'Simply Roasted - Cashewkerne', 'Cashewkerne, naturbelassen', 'Trail-Mix Kerne', 'Mandeln ganze Kerne', 'Simply Roasted - Nussmischung', 'Pistachio mix', 'Seeberger Walnusskerne 4008258130018 Walnusskerne', 'Cashew Nuts XXL', 'Mandeln Honig & Salz', 'Noisettes grillées');
+  and product_name not in ('Erdnüsse geröstet & gesalzen', 'Ültje Erdnüsse geröstet & ungesalzen 180g 2,49€ 13,83€ 1kg', 'Erdnüsse', 'EXTRA ROAST Erdnüsse gesalzen', 'Cashewkerne - geröstet & gesalzen', 'Snack Nüsse pur', 'Erdnüsse geröstet & gesalzen', 'Ofen Erdnüsse gesalzen', 'Erdnusskerne geröstet', 'Pistazien - geröstet & gesalzen', 'Nuss-Kern-Mischung geröstet & gesalzen', 'XXL Erdnüsse', 'Macadamia geröstet & gesalzen', 'Erdnüsse in der Schale, geröstet', 'Cashew Kerne Nüsse', 'Nuss-Mix, geröstet & gesalzen', 'Studentenfutter Berry mit Cranberries & Walnüssen', 'Cashewkerne - pikant gewürzt', 'Erdnüsse geröstet ohne Salz', 'Pistazien - geröstet & ungesalzen', 'Erdnüsse geröstet', 'Snack Nüsse Honig & Salz', 'Snack Nüsse Provence', 'Snack Nüsse Ungarisch Style', 'Salat-Plus - Mischung aus Sonnenblumen-, Kürbis- & Pinienkerne', 'Jumbo Erdnüsse in der Schale, geröstet', 'Wasabi-Erdnüsse', 'Erdnüsse - geröstet & gezalzen XXL Party Edition', 'Cashews, geröstet & gesalzen', 'Snack Nüsse Salz & Pfeffer', 'Kalifornische Pistazien, geröstet & gesalzen', 'Haselnusskerne geröstet, ungesalzen', 'Erdnüsse mit Knusperhülle', 'Cashews, geröstet & pikant gewürzt', 'Cashewkerne geröstet u. gesalzen', 'Californische Pistazienkerne geröstet & gesalzen', 'Erdnüsse im Teigmantel - Paprika', 'Geröstete Mandel, ungesalzen', 'Jumbo Erdnüsse geröstet & gesalzen', 'Snack Nüsse BBQ', 'Cashewkerne geröstet & ungesalzen', 'Erdnüsse', 'Erdnusskerne geröstet & gesalzen', 'Snack Nüsse Oriental Style', 'Pistazienkerne geröstet, ungesalzen', 'Erdnüsse pikant gewürzt', 'Erdnusskerne - geröstet und gesalzen', 'Erdnüsse geröstet und gesalzen', 'Kessel Nüsse Paprika', 'Erdnüsse', 'Erdnüsse, geröstet & gesalzen', 'Erdnüsse pikant', 'Spanische Mandeln blanchiert und geröstet', 'Erdnüsse ungesalzen', 'Mandeln & Erdnüsse Honig und Salz', 'Nuss-Mix geröstet und gesalzen', 'Geröstete Snackmandeln', 'Macadamias geröstet & ungesalzen', 'Edel-Nuss-Mix geröstet & gesalzen', 'Ültje Cashews, geröstet & gesalzen', 'Röst-Cashews', 'Erdnüsse - Cacahuètes grillées sans huile et salées, épicées', 'Snack Nüsse Salz XXL', 'Snackmandeln geröstet & gesalzen', 'Gebrannte Erdnüsse', 'Erdnüsse ungesalzen', 'Fusion BBQ Erdnüsse', 'Erdnüsse geröstet & gesalzen', 'Erdnüsse ger. & ges.', 'Macadamia geröstet & gesalzen', 'Pistazien geröstet & gesalzen', 'Geröstete Cashews ohne Salz', 'Erdnüsse im Paprika-Knuspermantel', 'Mandelkerne, europäische', 'Erdnüsse geröstet und gesalzen', 'Nüsse Sportmix', 'Mandeln unblanchiert geröstet & gesalzen', 'Walnüsse in der Schale', 'Ültje pur Erdnüsse, im Ofen gebacken & ungesalzen, 200g', 'Cashewkerne geröstet & gesalzen', 'Nüsse Cashew geröstet', 'Erdnüsse mit schwarzem Pfeffer', 'NicNacs', 'Walnusskerne naturbelassen', 'Nusskernmischung', 'Feinste Nuss-Variation, naturbelassen', 'Mix Proteína Frutos Secos Y Soja', 'Cashewkerne naturbelassen', 'Premium-Nussmix - Fein mit Pekannusskernen', 'Pecan Nuts natural', 'Walnusskerne naturbelassen', 'Simply Roasted - Cashewkerne', 'Cashewkerne, naturbelassen', 'Trail-Mix Kerne', 'Mandeln ganze Kerne', 'Simply Roasted - Nussmischung', 'Pistachio mix', 'Seeberger Walnusskerne 4008258130018 Walnusskerne', 'Cashew Nuts XXL', 'Mandeln Honig & Salz', 'Noisettes grillées', 'Nuss-Frucht-Mix 5er-Pack - Cranberry', 'Nuts royal', 'Pistazien Creme', 'Studentenfutter', 'Premium-Nussmix - Extra mit Mandeln, Cashew-, Para-, Pekan-, Macadamia-Nusskernen', 'Studentenfutter', 'Knusperkracher', 'Pistaziencreme', 'Mandelmehl', 'Cashews roasted & salted', 'Studentenfutter ohne Rosinen mit saftigen Cranberries', 'Paranusskerne naturbelassen', 'Simply Roasted - Mandeln', 'Pinienkerne', 'Energieschub', 'Mandelkerne naturbelassen', 'Paranuss Kerne', 'Bio Cashewkerne naturbelassen aus Westafrika', 'Premiumnuss-Mix mit Mandel-, Cashew-, Pekan-, Macadamia- & Paranusskernen, ungesalzen', 'Fusion - Peanuts Curry Orient Style', 'Rauchmandeln', 'Macadamia Nusskerne', 'Pinienkerne', 'Cashewkerne naturbelassen', 'Mandeln blanchiert, gemahlen', 'Pistazienkerne', 'Trail mix Beeren', 'Erdnüsse Wasabi Style', 'Cashew Cranberry mix', 'Cashewkerne naturbelassen XXL', 'Kerne-Mix', 'Cashewkerne', 'Kalifornische Pistazien, ungesalzen', 'Walnusskerne', 'Paranusskerne', 'Walnuts', 'Kernige Vielfalt', 'Walnuss-Kerne', 'Erdnüsse geröstet und gesalzen', 'Cashewkerne geröstet & gesalzen', 'Erdnüsse große Kerne geröstet ungesalzen', 'Crunchy Fava-Snack salted', 'Erdnüsse, pikant gewürzt', 'Erdnüsse geröstet & gesalzen', 'Pistazien, geröstet & gesalzen', 'Erdnüsse – geröstet & gesalzen', 'Walnusskerne', 'Erdnüsse im Teigmantel Paprika', 'Erdnüsse pikant gewürzt');

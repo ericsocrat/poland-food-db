@@ -1,6 +1,6 @@
 -- PIPELINE (Meat): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-12
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -55,13 +55,30 @@ FROM (
     ('Sokołów', 'Parówki wieprzowe', 'Netto'),
     ('Kraina Mięs', 'Mięso mielone z karkówki', 'Biedronka'),
     ('Yeemy', 'Pikantne skrzydełka panierowane z kurczaka', 'Biedronka'),
+    ('Bergio', 'Boczek wędzony, plastry', 'Netto'),
+    ('Podlaski', 'Pasta z kurczakiem, ciecierzycą i papryką', 'Auchan'),
+    ('Duda', 'Parówki wieprzowe Mediolanki', 'Tesco'),
+    ('Strzała', 'Konserwa mięsna z dziczyzny z dodatkiem mięsa wieprzowego', 'Biedronka'),
+    ('Kraina Mięs', 'Indyk ze śliwką', 'Biedronka'),
+    ('Auchan Collection', 'Kiełbasa bamberska', 'Auchan'),
+    ('Dolina Dobra', 'Mięso Mielone z Szynki Wieprzowej', 'Kaufland'),
+    ('Goodvalley', 'Parówki 100% polskiej szynki', 'Stokrotka'),
+    ('Kraina Wędlin', 'Kiełbasa Żywiecka', 'Biedronka'),
+    ('Kraina Wędlin', 'Kiełbaski z szynki i cielęciny', 'Biedronka'),
+    ('Krakus', 'Kiełbasa Żywiecka Sucha', 'Lidl'),
+    ('Sokołów', 'Kiełbasa biała wieprzowa', 'Biedronka'),
+    ('Morliny', 'Kiełbaski z kurczaka', 'Biedronka'),
+    ('Auchan', 'Parówki z fileta kurczaka', 'Auchan'),
+    ('Krakus', 'Kiełbasa podwawelska', 'Biedronka'),
+    ('Kraina Wędlin', 'Pieczona Pierś Z Kurczaka', 'Biedronka'),
+    ('Kraina wędlin', 'Szynka z beskidzkiej wędzarni', 'Biedronka'),
+    ('Auchan', 'Parówki z Tofu', 'Auchan'),
     ('Sokołów', 'Sokoliki drobiowo-cielece', 'Biedronka'),
     ('Morliny', 'Berlinki classic', 'Biedronka'),
     ('Krakus', 'Szynka eksportowa', 'Stokrotka'),
     ('Profi', 'Pasztet z pomidorami', 'Auchan'),
     ('Tarczyński', 'Kabanosy wieprzowe', 'Lidl'),
     ('Tarczyński', 'Kabanosy wieprzowe', 'Żabka'),
-    ('Morliny', 'Berlinki Classic', 'Dino'),
     ('Profi', 'Chicken Pâté', 'Auchan'),
     ('Animex Foods', 'Berlinki Kurczak', 'Dino'),
     ('Animex Foods', 'Berlinki Kurczak', 'Penny'),
@@ -81,7 +98,37 @@ FROM (
     ('Sokołów', 'Szynka Basiuni', 'Kaufland'),
     ('Animex Foods', 'Golonkowa', 'Tesco'),
     ('Bell', 'Salami Delikatesowe', 'Auchan'),
-    ('Bell', 'Salami Delikatesowe', 'Netto')
+    ('Bell', 'Salami Delikatesowe', 'Netto'),
+    ('Podlaski', 'Pasztet Belgijski drobiowo-wieprzowy', 'Auchan'),
+    ('Tarczyński', 'Krakowska sucha', 'Auchan'),
+    ('Sokołów', 'Beef Jerky Klasyczne', 'Żabka'),
+    ('Krakus', 'Filet z indyka gotowany', 'Biedronka'),
+    ('Morliny', 'Berlinki pepperoni', 'Auchan'),
+    ('Delikatesowy', 'Pasztet z pieczarkami', 'Biedronka'),
+    ('Könecke', 'Salami z pieprzem', 'Dino'),
+    ('Masarnia Strzała', 'Kaszanka konserwowa', 'Auchan'),
+    ('Animex Kutno', 'Szynka', 'Biedronka'),
+    ('Sokołów', 'Kabanosy bekonowe z pieprzem', 'Biedronka'),
+    ('Delikatesowy', 'Pasztet drobiowo-wieprzowy', 'Biedronka'),
+    ('Delikatesowy', 'Pasztet z pomidorami', 'Biedronka'),
+    ('Podlaski', 'Pasztet drobiowy z pieprzem', 'Auchan'),
+    ('Kraina Wędlin', 'Salceson Wieprzowy', 'Biedronka'),
+    ('Berlinki', 'Berlinki chilli', 'Auchan'),
+    ('Bell', 'Salami z oliwkami', 'Auchan'),
+    ('Kraina Mięs', 'Szynka wieprzowa', 'Biedronka'),
+    ('Carrefour', 'Salami wyborowe w posypce pomidorowej', 'Carrefour'),
+    ('Pamapol', 'Pork luncheou meat tinely minced', 'Tesco'),
+    ('Podlaski', 'Pasztet angielski drobiowy', 'Auchan'),
+    ('Profi', 'Pasztet wielkopolski z czerwonym winem', 'Lewiatan'),
+    ('Wiejski Stół Dr Maryniak', 'Pasztet wiejski', 'Lewiatan'),
+    ('Bell', 'Salami naturalne', 'Żabka'),
+    ('Duda', 'Schab', 'Auchan'),
+    ('Spichlerz Rusiecki', 'White sausage', 'Auchan'),
+    ('Tarczynski', 'Krakauer Wurst (polnische Brühwurst)', 'Kaufland'),
+    ('Morliny', 'Szynka wieprzowa parzona', 'Kaufland'),
+    ('Tarczyński', 'Kabanos excellence z indyka z dodatkiem wieprzowiny', 'Biedronka'),
+    ('Kraina Wędlin Select', 'Frankfurterki z szynki', 'Biedronka'),
+    ('Konspol', 'Kabanosy z kurczaka', 'Biedronka')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Meat' AND p.is_deprecated IS NOT TRUE

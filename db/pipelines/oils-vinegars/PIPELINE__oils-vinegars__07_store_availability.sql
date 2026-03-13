@@ -1,6 +1,6 @@
 -- PIPELINE (Oils & Vinegars): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-06
+-- Generated: 2026-03-12
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -32,7 +32,6 @@ FROM (
     ('Biedronka', 'Olej z awokado z pierwszego tłoczenia', 'Biedronka'),
     ('Olejarnia Świecie', 'Naturalny olej konopny', 'Delikatesy Centrum'),
     ('Primadonna', 'Extra Virgin Olive Oil', 'Lidl'),
-    ('Primadonna', 'Olivenöl (nativ, extra)', 'Lidl'),
     ('Casa de Azeite', 'Oliwa z oliwek', 'Biedronka'),
     ('Carrefour BIO', 'Huile d''olive vierge extra', 'Carrefour'),
     ('Casa de Azeite', 'Casa de Azeite', 'Biedronka'),
@@ -47,7 +46,8 @@ FROM (
     ('Złote Łany', 'Olej rzepakowy', 'Dino'),
     ('Vitasia', 'Vinagre de arroz', 'Lidl'),
     ('Lidl', 'Olej kokosowy', 'Lidl'),
-    ('Carrefour', 'Huile pour friture', 'Carrefour')
+    ('Carrefour', 'Huile pour friture', 'Carrefour'),
+    ('K-Classic', 'Extra virgin olive oil', 'Kaufland')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Oils & Vinegars' AND p.is_deprecated IS NOT TRUE

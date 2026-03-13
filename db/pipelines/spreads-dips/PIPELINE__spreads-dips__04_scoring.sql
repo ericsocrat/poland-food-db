@@ -1,5 +1,5 @@
 -- PIPELINE (Spreads & Dips): scoring
--- Generated: 2026-03-06
+-- Generated: 2026-03-12
 
 -- 2. Nutri-Score
 update products p set
@@ -14,6 +14,7 @@ from (
     ('Niewieścin', 'Pasztetowa Podwędzana', 'E'),
     ('Go Vege', 'Hummus klasyczny', 'A'),
     ('Go Vege', 'Hummus paprykowy', 'A'),
+    ('Go Vege', 'Hummus z ciecierzycy spicy salsa', 'D'),
     ('Go Vege', 'Hummus pomidorowy', 'C'),
     ('Go Vege', 'Hummus z ciecierzycy z burakiem', 'C'),
     ('I&lt;3vege', 'Hummus z papryką na ostro', 'D'),
@@ -22,6 +23,7 @@ from (
     ('Vital Fresh', 'Hummus pomidorowy', 'C'),
     ('Lisner', 'Hummus z wędzonym pstrągiem', 'UNKNOWN'),
     ('Lavica Food', 'Hummus dynia & imbir', 'B'),
+    ('Pilos', 'Masło Klarowane', 'UNKNOWN'),
     ('SmaczneGo!', 'Hummus klasyczny z preclami', 'D'),
     ('I-love-vege', 'Hummus z suszonymi pomidorami', 'C'),
     ('Well Well', 'Hummus klasyczny', 'D'),
@@ -45,8 +47,6 @@ from (
     ('Profi', 'Pasztet Dworski Z Dzikiem', 'E'),
     ('Sokołów', 'Pasztet dzidunia', 'D'),
     ('Gzella', 'Pasztet z borowikami', 'D'),
-    ('Nestlé', 'Przyprawa Maggi', 'E'),
-    ('Unknown', 'Hummus z ciecierzycy spicy salsa go vege', 'D'),
     ('Vemondo', 'Hummus z pastą sezamowa i pesto bazyliowym', 'A'),
     ('Chef Select', 'Guacamole Z Kawałkami Awokado', 'A'),
     ('Unknown', 'Ekologiczny Hummus Naturalny', 'B'),
@@ -56,11 +56,8 @@ from (
     ('Lavica Food', 'Hummus z suszonymi pomidorami', 'UNKNOWN'),
     ('Sobkowiak', 'Pasztet pieczony z żurawiną', 'D'),
     ('Tzatziki', 'Taziki', 'UNKNOWN'),
-    ('Pudliszki', 'Pudliszki', 'UNKNOWN'),
     ('Vemondo', 'Hummus klasyczny', 'C'),
     ('Chef select', 'Hummus classic', 'C'),
-    ('Deluxe', 'Hummus und Guacamole', 'A'),
-    ('Chef Select', 'Hummus bruschetta', 'A'),
     ('K-take it veggie', 'K-take it veggie Hummus Tomato', 'B'),
     ('K-take it veggie', 'K-take it veggie Hummus Red Pepper 200g', 'A'),
     ('Taverna-Bio', 'Classic Hummus', 'C'),
@@ -70,7 +67,7 @@ from (
     ('Vitasia', 'Hummus sweet chili', 'C'),
     ('Athos', 'Tzatziki', 'B'),
     ('Chef select', 'Bio Hummus paprykowy', 'UNKNOWN'),
-    ('Chef Select', 'Guacamole mild', 'C'),
+    ('Chef select', 'Guacamole Classic with tomato and spices', 'C'),
     ('Chef select', 'Bio Hummus pomidorowy', 'C'),
     ('Vemondo', 'Hummus Paprykowy', 'A'),
     ('Vital Fresh', 'Guacamole', 'A'),
@@ -80,7 +77,12 @@ from (
     ('La campagna', 'Hummus', 'C'),
     ('Meyers', 'Hummus', 'C'),
     ('Taverna', 'Hummus coriander & lemon', 'D'),
-    ('Pikok', 'Pasztet z indyka', 'D')
+    ('Pikok', 'Pasztet z indyka', 'D'),
+    ('Unknown', 'Mild salsa dip', 'UNKNOWN'),
+    ('Taverna', 'Hummus Oriental', 'D'),
+    ('Unknown', 'Dip nacho', 'D'),
+    ('Hellas feinkost', 'Tzatziki', 'D'),
+    ('Unknown', 'Oliwa', 'UNKNOWN')
 ) as d(brand, product_name, ns)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 
@@ -97,6 +99,7 @@ from (
     ('Niewieścin', 'Pasztetowa Podwędzana', '4'),
     ('Go Vege', 'Hummus klasyczny', '3'),
     ('Go Vege', 'Hummus paprykowy', '3'),
+    ('Go Vege', 'Hummus z ciecierzycy spicy salsa', '4'),
     ('Go Vege', 'Hummus pomidorowy', '3'),
     ('Go Vege', 'Hummus z ciecierzycy z burakiem', '3'),
     ('I&lt;3vege', 'Hummus z papryką na ostro', '4'),
@@ -105,6 +108,7 @@ from (
     ('Vital Fresh', 'Hummus pomidorowy', '3'),
     ('Lisner', 'Hummus z wędzonym pstrągiem', '4'),
     ('Lavica Food', 'Hummus dynia & imbir', '3'),
+    ('Pilos', 'Masło Klarowane', '4'),
     ('SmaczneGo!', 'Hummus klasyczny z preclami', '3'),
     ('I-love-vege', 'Hummus z suszonymi pomidorami', '4'),
     ('Well Well', 'Hummus klasyczny', '4'),
@@ -128,8 +132,6 @@ from (
     ('Profi', 'Pasztet Dworski Z Dzikiem', '3'),
     ('Sokołów', 'Pasztet dzidunia', '4'),
     ('Gzella', 'Pasztet z borowikami', '4'),
-    ('Nestlé', 'Przyprawa Maggi', '4'),
-    ('Unknown', 'Hummus z ciecierzycy spicy salsa go vege', '4'),
     ('Vemondo', 'Hummus z pastą sezamowa i pesto bazyliowym', '4'),
     ('Chef Select', 'Guacamole Z Kawałkami Awokado', '3'),
     ('Unknown', 'Ekologiczny Hummus Naturalny', '4'),
@@ -139,11 +141,8 @@ from (
     ('Lavica Food', 'Hummus z suszonymi pomidorami', '4'),
     ('Sobkowiak', 'Pasztet pieczony z żurawiną', '4'),
     ('Tzatziki', 'Taziki', '4'),
-    ('Pudliszki', 'Pudliszki', '4'),
     ('Vemondo', 'Hummus klasyczny', '3'),
     ('Chef select', 'Hummus classic', '3'),
-    ('Deluxe', 'Hummus und Guacamole', '4'),
-    ('Chef Select', 'Hummus bruschetta', '3'),
     ('K-take it veggie', 'K-take it veggie Hummus Tomato', '3'),
     ('K-take it veggie', 'K-take it veggie Hummus Red Pepper 200g', '3'),
     ('Taverna-Bio', 'Classic Hummus', '3'),
@@ -153,7 +152,7 @@ from (
     ('Vitasia', 'Hummus sweet chili', '3'),
     ('Athos', 'Tzatziki', '4'),
     ('Chef select', 'Bio Hummus paprykowy', '4'),
-    ('Chef Select', 'Guacamole mild', '4'),
+    ('Chef select', 'Guacamole Classic with tomato and spices', '4'),
     ('Chef select', 'Bio Hummus pomidorowy', '3'),
     ('Vemondo', 'Hummus Paprykowy', '3'),
     ('Vital Fresh', 'Guacamole', '1'),
@@ -163,7 +162,12 @@ from (
     ('La campagna', 'Hummus', '3'),
     ('Meyers', 'Hummus', '3'),
     ('Taverna', 'Hummus coriander & lemon', '3'),
-    ('Pikok', 'Pasztet z indyka', '4')
+    ('Pikok', 'Pasztet z indyka', '4'),
+    ('Unknown', 'Mild salsa dip', '4'),
+    ('Taverna', 'Hummus Oriental', '4'),
+    ('Unknown', 'Dip nacho', '4'),
+    ('Hellas feinkost', 'Tzatziki', '4'),
+    ('Unknown', 'Oliwa', '4')
 ) as d(brand, product_name, nova)
 where p.country = 'PL' and p.brand = d.brand and p.product_name = d.product_name;
 

@@ -1,6 +1,6 @@
 -- PIPELINE (Instant & Frozen): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-13
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -15,6 +15,9 @@ FROM (
     ('Asia Green Garden', 'Instantnudeln Hühnergeschmack 5er-Pack', 'Aldi'),
     ('Asia Green Garden', 'Udon-Nudeln mit Soja-Ingwer-Soße', 'Aldi'),
     ('Asia Green Garden', 'Bratnudeln - Thailändische Art', 'Aldi'),
+    ('Kania', 'Pasta Snack Nudeln in Rahmsoße', 'Lidl'),
+    ('Lorado', 'Instant Nudeln mit Hühnerfleischgeschmack', 'Netto'),
+    ('Hügli', 'Frühlings-Suppe (Bio)', 'Tegut'),
     ('Asia Green Garden', 'Instant-Nudeln Beef', 'Aldi'),
     ('Asia Green Garden', 'Udon Noodle Bowl', 'Aldi'),
     ('Asia Green Garden', 'Bratnudeln - Entengeschmack', 'Aldi'),
@@ -22,8 +25,23 @@ FROM (
     ('Asia Green Garden', 'Phò Bò (Reisnudel-Suppe mit Rindfleischgeschmack)', 'REWE'),
     ('Asia Green Garden', 'Bratnudeln - Chili', 'Aldi'),
     ('Unknown', 'Feurige Ramen Nudeln Spicy Hot Chicken Korean Style', 'Aldi'),
+    ('Vitasia', 'Nouilles instantanées', 'Lidl'),
+    ('Vitasia', 'Instante Noodles Shrimp Flavour', 'Lidl'),
+    ('Aldi', 'Instant nudeln', 'Aldi'),
+    ('Lidl', 'Instant noodles', 'Lidl'),
+    ('Gourmet Finest Cuisine', 'Lenticchie e Riso Jasmin all Indiana', 'Aldi'),
+    ('Vitasia', 'Miso Soup', 'Lidl'),
+    ('DmBio', 'Instantní nudlová polévka', 'dm'),
+    ('AsiaGreen garden', 'Tasty Noodles', 'Aldi'),
     ('Knorr', 'Hühnersuppe', 'Edeka'),
     ('Knorr', 'Hühnersuppe', 'REWE'),
+    ('Unknown', 'Bratnudeln Thailändische Art', 'Aldi'),
+    ('Knorr', 'Snack Pot Käse Sahne', 'Edeka'),
+    ('Knorr', 'Snack Pot Käse Sahne', 'REWE'),
+    ('Knorr', 'Cup a Soup, Hühner Suppe mit Nudeln', 'REWE'),
+    ('Lidl Kania', 'Frühlingssuppe mit Nudeln und Gemüse', 'Lidl'),
+    ('DUC-HOA GmbH', 'Instant Reisnudelsuppe mit Hähnchenfleischgeschmack', 'Kaufland'),
+    ('Cook', 'Hühnersuppe', 'Norma'),
     ('Buldak', 'Buldak HOT Chicken Flavour Ramen', 'Lidl'),
     ('Yum Yum', 'Instant Nudeln, Japanese Chicken Flavor', 'REWE'),
     ('Nongshim', 'Soon Veggie Ramyun Noodle', 'REWE'),
@@ -55,7 +73,36 @@ FROM (
     ('Maggi', 'Saucy Noodles Sweet Chili', 'REWE'),
     ('Nongshim', 'Shin Cup Gourmet Spicy Noodle Soup', 'Real'),
     ('Nissin', 'Soba Yakitori Chicken', 'Real'),
-    ('Knorr', 'Asia Noodles Currygeschmack', 'Netto')
+    ('Knorr', 'Asia Noodles Currygeschmack', 'Netto'),
+    ('Knorr', 'Asia noodles beef taste', 'REWE'),
+    ('Mama', 'Oriental style instant noodles, artificial pork flavour', 'Real'),
+    ('Vitasia', 'Wok noodles curry', 'Lidl'),
+    ('Yum Yum', 'Nouilles instantanées saveur poulet, pack de 5', 'Aldi'),
+    ('Yum Yum', 'Nouilles instantanées saveur poulet, pack de 5', 'Lidl'),
+    ('Yum Yum', 'Nouilles instantanées saveur poulet, pack de 5', 'Edeka'),
+    ('Yum Yum', 'Nouilles instantanées saveur poulet, pack de 5', 'REWE'),
+    ('Knorr', 'Asia Noodles Huhngeschmack', 'Edeka'),
+    ('Knorr', 'Asia Noodles Huhngeschmack', 'Netto'),
+    ('Knorr', 'Pasta Snack Pot &quot;Pilz & Rahm&quot;', 'Edeka'),
+    ('Knorr', 'Pasta Snack Pot &quot;Pilz & Rahm&quot;', 'REWE'),
+    ('Knorr', 'Asia Noodles Rind Geschmack', 'Netto'),
+    ('Diamond', 'Quick cooking noodles', 'REWE'),
+    ('Thai Chef', 'Instant Nudelsuppe Shrimp', 'REWE'),
+    ('Ming Chu', 'Instant-Nudeln Rind', 'Edeka'),
+    ('Vitasia', 'Instant Nudeln', 'Lidl'),
+    ('Nissin', 'Soba Thai', 'Edeka'),
+    ('Nissin', 'CUP NOODLES Huhn - Nissin - 63g / 350ml', 'REWE'),
+    ('Naked', 'Vietnamese Style Beef Pho', 'Edeka'),
+    ('Tao', 'Asia Instant-Nudeln Entenfleischgeschmack', 'Norma'),
+    ('Vitasia Thai', 'Noodles with peanut satay sauce', 'Lidl'),
+    ('Feelfood', 'Pasta Bolo Vegan', 'Edeka'),
+    ('Feelfood', 'Pasta Bolo Vegan', 'REWE'),
+    ('Maggi', 'Fix Pad Thai Nudeln', 'Edeka'),
+    ('Nissin', 'SOBA Sachet Thai', 'Kaufland'),
+    ('Nissin', 'SOBA Sachet Thai', 'Real'),
+    ('Tao', 'Instant-nudeln Schweinefleischgeschmsck', 'Norma'),
+    ('Orient Plaza', 'Tikka Masala', 'Netto'),
+    ('Ajinomoto', 'OYAKATA Miso Ramen', 'REWE')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'DE' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Instant & Frozen' AND p.is_deprecated IS NOT TRUE

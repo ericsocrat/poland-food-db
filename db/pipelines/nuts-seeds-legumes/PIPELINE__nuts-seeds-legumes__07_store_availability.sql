@@ -1,0 +1,81 @@
+-- PIPELINE (Nuts, Seeds & Legumes): store availability
+-- Source: Open Food Facts API store field
+-- Generated: 2026-03-12
+
+INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
+SELECT
+  p.product_id,
+  sr.store_id,
+  NOW(),
+  'pipeline'
+FROM (
+  VALUES
+    ('BakaD''Or', 'Mieszanka orzechów prażonych', 'Biedronka'),
+    ('Bakador', 'Migdały Kalifornijskie', 'Biedronka'),
+    ('Bakallino', 'Migdały', 'Biedronka'),
+    ('Bakalland', 'Migdały w płatkach', 'Kaufland'),
+    ('BakaDOr', 'Pistacje niesolone prażone', 'Biedronka'),
+    ('Makar bakalie', 'Migdały', 'Auchan'),
+    ('Top', 'Orzechy ziemne prażone nieslone', 'Biedronka'),
+    ('Top', 'Orzeszki ziemne prażone smak ostra papryka', 'Biedronka'),
+    ('Baka D''or', 'Orzechy włoskie', 'Biedronka'),
+    ('Simpl', 'Orzechy laskowe łuskane', 'Carrefour'),
+    ('Kresto', 'Słonecznik łuskany', 'Kaufland'),
+    ('Bakalland', 'Orzechy laskowe prażone', 'Kaufland'),
+    ('Plony natury', 'Ryż biały', 'Biedronka'),
+    ('Plony natury', 'Kasza jęczmienna wiejska', 'Biedronka'),
+    ('Risana', 'Kasza Gryczana prażona', 'Auchan'),
+    ('Cenos', 'Kasza gryczana prażona', 'Auchan'),
+    ('Carrefour', 'Pestki Dyni Łuskane', 'Carrefour'),
+    ('Kuchnia smaku', 'Fasola Jaś piękny', 'Dino'),
+    ('Cenos', 'Ryż do risotto', 'Kaufland'),
+    ('Carrefour', 'Ryż biały', 'Carrefour'),
+    ('Supreme', 'Ryż biały', 'Biedronka'),
+    ('Auchan', 'Ryż biały', 'Auchan'),
+    ('BakaD''Or sélection', 'Słonecznik łuskany', 'Biedronka'),
+    ('Carrefour', 'Groch żółty łuskany połówki', 'Carrefour'),
+    ('Bakalland', 'Siemię lniane', 'Dino'),
+    ('Konpack', 'Fasola Piękny Jaś karłowy', 'Dino'),
+    ('Halina', 'Kasza gryczana prażona', 'Auchan'),
+    ('Carrefour Classic', 'Siemię lniane', 'Carrefour'),
+    ('BakaDOr', 'Mieszanka orzechowa', 'Biedronka'),
+    ('Bakador', 'Orzechy nerkowca', 'Biedronka'),
+    ('Haps', 'Haps orzechy laskowe', 'Żabka'),
+    ('Felix', 'Felix orzeszki ziemne', 'Biedronka'),
+    ('Bakalland', 'Orzechy laskowe', 'Kaufland'),
+    ('Felix', 'Orzeszki ziemne lekko solone', 'Biedronka'),
+    ('BakaD''Or', 'Orzechy Nerkowca', 'Biedronka'),
+    ('BakaDOr', 'Orzechy pekan', 'Biedronka'),
+    ('BakaDOr', 'Orzechy brazylijskie', 'Biedronka'),
+    ('BakaD''Or', 'Mieszanka egzotyczna', 'Biedronka'),
+    ('Top', 'Orzeszki Top smak papryka', 'Biedronka'),
+    ('Asia Flavours', 'Orzeszki ziemne w skorupce o smaku curry', 'Biedronka'),
+    ('Asia Flavours', 'Orzeszki ziemne w skorupce o smaku wasabi', 'Biedronka'),
+    ('Helio S.A.', 'Mieszanka Studencka', 'Biedronka'),
+    ('Makar', 'Orzechy Brazylijskie', 'Auchan'),
+    ('Plony Natury', 'Natural mix', 'Biedronka'),
+    ('Sonko', 'Natürlicher brauner Reis', 'Biedronka'),
+    ('Sonko', 'Natürlicher brauner Reis', 'Kaufland'),
+    ('Plony Natury', 'Soczewica', 'Biedronka'),
+    ('Nasza Spiżarnia', 'Soczewica zielona', 'Biedronka'),
+    ('Plony Natury', 'Ciecierzyca ziarno', 'Biedronka'),
+    ('Plony Natury', 'Kasza Jaglana', 'Biedronka'),
+    ('Melvit', 'Linseed', 'Tesco'),
+    ('Dawtona', 'Cieciorka', 'Kaufland'),
+    ('Bakalland', 'Pestki dyni', 'Dino'),
+    ('EkoWital', 'Ekologiczna Ciecierzyca', 'Carrefour'),
+    ('EkoWital', 'Ekologiczna Ciecierzyca', 'Netto'),
+    ('Sonko', 'Country style barley groats', 'Auchan'),
+    ('Konpack', 'Soczewica czerwona', 'Dino'),
+    ('Go Bio', 'Soczewica zielona', 'Biedronka'),
+    ('Soligrano', 'Soczewica zielona z certyfikowanych upraw ekologicznych', 'Lidl'),
+    ('Sante', 'Sezam', 'Carrefour'),
+    ('Carrefour', 'Soczewica czerwona', 'Carrefour'),
+    ('Alesto Lidl', 'Orzeszki ziemne prażone, niesolone', 'Lidl'),
+    ('Alesto', 'Alesto pörkölt egészmogyoró', 'Lidl'),
+    ('Alesto', 'Mieszanka orzechów prażonych', 'Lidl')
+) AS d(brand, product_name, store_name)
+JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
+  AND p.category = 'Nuts, Seeds & Legumes' AND p.is_deprecated IS NOT TRUE
+JOIN store_ref sr ON sr.country = 'PL' AND sr.store_name = d.store_name AND sr.is_active = true
+ON CONFLICT (product_id, store_id) DO NOTHING;

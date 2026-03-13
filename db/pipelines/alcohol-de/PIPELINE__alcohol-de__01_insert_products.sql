@@ -1,6 +1,6 @@
 -- PIPELINE (Alcohol): insert products
 -- Source: Open Food Facts API (automated pipeline)
--- Generated: 2026-03-04
+-- Generated: 2026-03-13
 
 -- 0a. DEPRECATE old products in this category & release their EANs
 update products
@@ -11,15 +11,29 @@ where country = 'DE'
 
 -- 0b. Release EANs across ALL categories to prevent unique constraint conflicts
 update products set ean = null
-where ean in ('4072700001126', '4061458002622', '4014964111555', '4014558326839', '4072700005315', '4066600242024', '4082100009097', '4002103000013', '40678337', '4066600251101', '4066600301110', '4082100003552', '4015444000017', '4014964111340', '4012852001698', '40173894', '4005249061702', '4005249000565', '4400066903530', '4004160005338', '4008948027000', '4014086093364', '4082100005044', '4014807204840', '4400065403109', '4000856007129', '4000856003688', '4011900670015', '4082100006508', '4008287056020', '4022396000026', '4014086010361', '4053400208527', '41051825', '4066600641964', '4003310013759', '4002859125800', '4001744024532', '4066600201199', '4072700001188', '4082100006102', '4052197003599', '4304493261709', '4053400271729', '4008287064025', '4103210001297', '9028800638644', '8594403110111', '8594404110110', '42400868', '75033927')
+where ean in ('4005249061702', '4072700001126', '4061458002622', '4014964111555', '40885032', '4061464823075', '4040626078287', '4014558326839', '4072700005315', '4066600242024', '4082100009097', '4002103000013', '40678337', '4066600251101', '4066600301110', '4082100003552', '4015444000017', '4014964111340', '4012852001698', '4003304142205', '4066600641919', '4013060005003', '4066600641018', '4072700803829', '4005686001361', '4008287910681', '4014086010224', '4003304122009', '4014807202044', '4079600330202', '40173894', '4005249000565', '4400066903530', '4004160005338', '4008948027000', '4014086093364', '4082100005044', '4014807204840', '4400065403109', '4000856007129', '4000856003688', '4011900670015', '4004866721020', '4061458279093', '4061458130745', '4053400201597', '4000856005958', '4003669016203', '4008948194016', '4082100006508', '4008287056020', '4022396000026', '4014086010361', '4053400208527', '41051825', '4066600641964', '4003310013759', '4002859125800', '4001744024532', '4066600201199', '4072700001188', '4082100006102', '4052197003599', '4304493261709', '4053400271729', '4008287064025', '40179650', '4000856005446', '4008287073522', '4008287914368', '4400066903424', '4061458279123', '4014741651014', '40341002', '4017300000452', '4061458001861', '4014964020277', '4053400257501', '4019046402330', '4054500121426', '4072700802518', '4015345132534', '4012852001803', '4018905330968', '4047247672054', '4005971397360', '4012852001100', '40173832', '4000856005972', '4008287919752', '4008287072938', '4005249001296', '4018588003302', '4103210001297', '40534305', '4103210273014', '42462989', '41007785', '9028800638644', '8594403110111', '8594404110110', '42400868', '75033927', '41058145', '42178170', '42150022', '42256700', '42276036', '41057759', '4388441007168', '42111702', '5000299223017', '7312040017683', '42141327', '4316268630870', '5202413007019', '3119780251889', '4105250022003', '8002230000319', '41001318', '41001301', '42400905', '4105250029002', '4102430036898', '4102430015107', '41030806', '4260248223616', '4102430315009', '42021315', '42278153', '4102430079512', '42400981', '5000213009437', '8712000039370', '42111719', '4388844029040', '4102430083571', '7610113028124', '5011013100156', '42077442', '5740600514143', '42354734', '4101010007518', '4100130010224', '8002335104066', '4101010010624', '4102430015206', '42011859', '41007723', '42253112')
   and ean is not null;
+
+-- 0c. Deprecate cross-category products whose identity_key collides with this batch
+update products
+set is_deprecated = true,
+    deprecated_reason = 'Reassigned to Alcohol by pipeline',
+    ean = null
+where country = 'DE'
+  and category != 'Alcohol'
+  and identity_key in ('00c8b3be554dd0add54a5043715ebba0', '01f7ca6dd50a44e20e398c2cedb486b1', '054d0899b5c77edb2b7e028c4dfb2d6d', '06473738632028710200bb8476d26c36', '072a2247a77790703cd5f5c98bbd78db', '0894fdf5b2e1eeb0435a011f20369685', '095bc357f453490ee7977ef02e371e87', '0b0d9365629bcf5960e6781620ea70d6', '0b26e347629d139e9939d3418951ab1a', '0d9771ae69921ca03eae226e2f18ac24', '112082d6547de923661d5255af670136', '15dd7cec8046b3c4b2e626bc357a6ff0', '16f7954c41fc2f43e6b9b47e4cdf733b', '17c84d0291c6b277137ea0232282cbf7', '19b440257d65bd9c10e0f60c10f10c9c', '1a8f32527a77fbad64257d948afdfdde', '200c8bc065ed1daad23825c43d0366f2', '217a1a4c480b14ab20d7917114b2746c', '26052d74080ad01823d53df5cc1a4b65', '2c835097331f6bb26b02a16a24951872', '2fb23f9b069a0a9d43c8f6c25b724fba', '31c1d43f29d379f25706fdef7350293d', '35d88993a377b5e3626de3ffa4b5ce13', '360360ba760574d89d9d48ab30836b99', '37f05033c4ddd60348173afa7d561728', '3897af689345656db8726e913db3f8d2', '3b89257dbe1f67a4fe76419390ca0ccb', '3c1719faecbd1700a00de854eb9903fb', '3d68c196dbb4779dc9976823a46cebbc', '40772ea569b3294cdeb6451b8582169a', '4261a5fe06aa51f51ad0bd3a167ec696', '42c0347df47ce65c680fcd898e22fb68', '448d031333bcecaee277152fa7ac006e', '4830dabd31ef13ff2398bb21c8e9ac69', '490cd67f017d496381e707b5af1c41ae', '49ed1a1fa476dacc71368b6ac068eb11', '4c5ff7696837d18e32a6e08dbd9ddd9b', '4e1e02156b18d3ccf2cff9a8cf9e46d6', '4ec0a1bad38b24ea00ab27175bb6b478', '4f174727b2a3fb15dad3f6a6f6caffd2', '4f402b7b822e3ccaed87711f37975fc5', '516d9c4d81022afc303de248f02661a5', '52d43b5b26dfb1c8bcb0490f783f0c24', '552da1fd006cf6fd708eecfa600eccea', '5658a205ad20fb190058a00ed63736a2', '5678869eca39368f2804b8e2bbe681b7', '56e97410aefd41dae156fad1c04188c0', '5aa787c4783047642746d16e8be39a55', '5b0f271a9c07a74cff58936b8533158b', '5d62946dcf83d2d622ad63e6f1f68042', '61f5c545a334413ef1a3dac00c3a8353', '63fd1d381aafd6c53187145fb6406b69', '65b26b2e7e9d3054ac2782d3758eca9f', '66ed0c7227ff7889b1c209e3f7827b74', '679e61172f5592a44220ce4814c37485', '68d3befe8ca94c33e5b947894b46bdb7', '692f6a9f53f131a45a239bc726343e49', '6afe41f065aa19c37f38ce61f0ab4005', '6b3c71d9f1e390b3376d591fa9b09a8c', '6b4ee1b8d7694c4ce09c3375620c796f', '6cdef38bd0f9ff37285ec17202cb9321', '6d491cfbd51a3099ae9ab7ba2d368c9e', '6e7586956373231d8b7da6146c771b51', '6ed72f9750473618b432a2ffd14eedce', '700f81873256ba544e7452ec1e547871', '71044281d93ac3ab83eef81eba837947', '742cc224bc3a31a57d5b4cbe03dd195b', '74c0f4b6a55108bbf76697650ccde30b', '74ec865691686bb1db4d1ff101e46ba4', '752a3e1ecdf0171127f08a5b43d65137', '75e88ee24897d4857921ab303097c2cf', '77754979eea986726f844ecfdd45bfb7', '77d0b38faf001ed5a001d48f5b3398ea', '7913b3cfa6812e471074530fa761f0bb', '7a830f222910a707e4a5f35123f92e9c', '7b433f31245189167e248396e36ca971', '7e0990eebfe634500b9dff94beb6ec8f', '7fb5e8cc5582c3366097d88c0546fe3e', '800a6fa2ac2b4304de54cd1db15ee030', '81d7cbe7b994801f3848700dd089f0ac', '84b18474d951fe481ab72a977190e397', '857637dbd5bdffe37350614b922ffd25', '859d256daf81d66e1af3abd9dcf8fd41', '866d8267d724de3115f3e865a58ea253', '888f5fb8be460a5fbc99f20b3614a3a4', '88b736aa16a6ee65a9cfa9e01c6192df', '8a12c625dbf206a005bd5d22aff334a1', '8a780135c9d4f0d42815830393bee945', '8ca10fec10d27a38121b986680a3e70c', '8d4d5f5d4295683dd2ddd191f2e1c467', '8dc66449de6eddcc0247df2bbea3cd4e', '8dc7b2c572ee5471adfe21a4d9c32e60', '8ea36a8886be2fa43bd1a402a5800c72', '9164623952d0b912648b9ec0e9635592', '9605438be70f82d7bd6dd0d185edb6de', '965eba621ec54eba6656b7395eb68d4c', '96f2edc0a759f477546d0eded1272771', '999f459c6d6aa8b3ea7a10010cb95244', '9a59b8fd7a73bbd87530afdd618342d4', '9b05b1cd7d4b1ca78e5197e995359043', '9b6a3379f15b890af9cf017a09df67b6', '9c38fdf9814a6a53eade1b2897da12c1', '9f2956330df9ff17c254ce9ce265cef5', 'a367d9235facd2c909a4eb437fa2a91a', 'a6c961f14084c56b4657658292224543', 'a96eb28a72f027b56ee8f7d50a665f47', 'aa3ec6b96d0fe6e81d471bbb06140ed9', 'ab55f30e4baca226240d349b605f6e50', 'abf397d6c9aa83f7d91391005f1cb30c', 'ad44f197ecaa1d0b72d4857470aed1a1', 'b0dac369570ccf594d7535f29d94cae0', 'b6278ea39a00e69783275105bddc00d1', 'b6be534cd6b9b2b26e5c6085220ad621', 'b87e269e4fec917f2f64936a7731117a', 'b8867246b598f6bb75803769b5a9864d', 'b8c234e496f1e8eadf7407db8f8ddebb', 'b9bed0c15ae3235ba5e6aaa28946a7c9', 'bbd09f1c44c548c04f907e9180931a67', 'bbfbcf413701c771ebbe3452fe9dc281', 'bcb24e396ec752001e32ce77f8253177', 'bd316992044788e2cfc86696128f6fa7', 'bef252ad13bed8410f0bca0d97911360', 'c197e7d82dab7f6ea44e69f724453e07', 'c218795caccd15c304e592447387da44', 'c2f30fde77edb05c3a92d9f8b025b6d1', 'c642aaaf94dbfd9cc69b3291053bbfac', 'c6e15261a19ae5b8da2221b0ffb8c724', 'c6f73288d90a5a1376f102dcb1b882dd', 'c891d9a749af23aa5da5a9393f84d7d3', 'c9a7585ec3369ed18746ea5b9c166c41', 'cbe465b0798b531f1c1c6d0aaab4cd36', 'ccab2a7c7ff6530a49bb8d3501a2e92a', 'ce7eaa289b99f3abd886b0135b2ed888', 'd272e577847245a6cfd72b81e7013ea7', 'd2dda5b1688dd110bf5e80bf1dbdf0a5', 'd70bca61d7598c9a2713d242431efd56', 'd926c021f8aa65a07a21289474c6108d', 'e075ec1c292f3b009478ce06d221672e', 'e10ed7d9095ab93b033ff754390f7dc4', 'e184b1f5ae950cece7edfaf7b98d8578', 'e2275d4bf7c42888611319fd83c50f4b', 'e2d91c3188fdfe837905ac1a9efc918f', 'e741c2c9eaa6130df020505ab2f9cb5c', 'e7a9c13f3c5051e0b4a98f0a8079cfda', 'ec87b93a521eea387c5f85bbbe24ad7d', 'ed8e37614570e1b13196199fedb74d2f', 'ee0ec5d979868af58f0bb3712e51a963', 'ef81c9023688fea4b6ff643f8659a43b', 'f8577af0e58746c85d031d2c04725f9f', 'fefe33c08cc56f0fdaa521167a7ee4bf')
+  and is_deprecated is not true;
 
 -- 1. INSERT products
 insert into products (country, brand, product_type, category, product_name, prep_method, store_availability, controversies, ean)
 values
+  ('DE', 'Veltins', 'Grocery', 'Alcohol', 'Pülleken', 'not-applicable', 'Penny', 'none', '4005249061702'),
   ('DE', 'Franziskaner', 'Grocery', 'Alcohol', 'Franziskaner Premium Weissbier Naturtrüb', 'not-applicable', null, 'none', '4072700001126'),
   ('DE', 'Hauser Weinimport', 'Grocery', 'Alcohol', 'Glühwein rot', 'not-applicable', 'Aldi', 'none', '4061458002622'),
   ('DE', 'Köstritzer', 'Grocery', 'Alcohol', 'Köstritzer Schwarzbier', 'not-applicable', null, 'none', '4014964111555'),
+  ('DE', 'Schulten Bräu', 'Grocery', 'Alcohol', 'Radler Naturtrüb', 'not-applicable', 'Aldi', 'none', '40885032'),
+  ('DE', 'Hauser Weinimport', 'Grocery', 'Alcohol', 'Glühwein weiß', 'not-applicable', 'Aldi', 'none', '4061464823075'),
+  ('DE', 'Weico Weinkellerei', 'Grocery', 'Alcohol', 'Bio-Glühwein rot', 'not-applicable', 'Netto', 'none', '4040626078287'),
   ('DE', 'Hasseröder', 'Grocery', 'Alcohol', 'Hasseröder Premium Pils', 'not-applicable', null, 'none', '4014558326839'),
   ('DE', 'Spaten', 'Grocery', 'Alcohol', 'Münchner Hell', 'not-applicable', null, 'none', '4072700005315'),
   ('DE', 'Paulaner München', 'Grocery', 'Alcohol', 'Weißbier-Zitrone Alkoholfrei', 'not-applicable', null, 'none', '4066600242024'),
@@ -32,11 +46,21 @@ values
   ('DE', 'Wernesgrüner', 'Grocery', 'Alcohol', 'Wernesgrüner Pils', 'not-applicable', null, 'none', '4015444000017'),
   ('DE', 'Köstritzer', 'Grocery', 'Alcohol', 'Köstritzer Edel Pils', 'not-applicable', null, 'none', '4014964111340'),
   ('DE', 'Neumarkter Lammsbräu', 'Grocery', 'Alcohol', 'Neumarkter Lammsbräu Glutenfrei', 'not-applicable', null, 'none', '4012852001698'),
-  ('DE', 'Bayreuther Brauhaus', 'Grocery', 'Alcohol', 'Bayreuther', 'not-applicable', null, 'none', '40173894'),
-  ('DE', 'Pülleken', 'Grocery', 'Alcohol', 'Veltins', 'not-applicable', 'Penny', 'none', '4005249061702'),
-  ('DE', 'Veltins', 'Grocery', 'Alcohol', 'Bier - Veltins Pilsener', 'not-applicable', null, 'none', '4005249000565'),
+  ('DE', 'König Ludwig Brauerei', 'Grocery', 'Alcohol', 'König Ludwig Weissbier hell', 'not-applicable', null, 'none', '4003304142205'),
+  ('DE', 'Paulaner', 'Grocery', 'Alcohol', 'Paulaner Hefe weißbier Alkoholfrei', 'not-applicable', null, 'none', '4066600641919'),
+  ('DE', 'Reissdorf', 'Grocery', 'Alcohol', 'Reissdorf Kölsch', 'not-applicable', null, 'none', '4013060005003'),
+  ('DE', 'Paulaner', 'Grocery', 'Alcohol', 'Münchner Hell alkoholfrei', 'not-applicable', null, 'none', '4066600641018'),
+  ('DE', 'Franziskaner', 'Grocery', 'Alcohol', 'Hefe-Weißbier naturtrüb', 'not-applicable', null, 'none', '4072700803829'),
+  ('DE', 'Hofbräuhaus', 'Grocery', 'Alcohol', 'Hofbräuhaus Helles Vollbier', 'not-applicable', null, 'none', '4005686001361'),
+  ('DE', 'Krombacher Brauerei', 'Grocery', 'Alcohol', 'Naturtrübes Dunkel', 'not-applicable', null, 'none', '4008287910681'),
+  ('DE', 'Oettinger', 'Grocery', 'Alcohol', 'Oettinger Radler naturtrüb', 'not-applicable', null, 'none', '4014086010224'),
+  ('DE', 'König Ludwig Brauerei', 'Grocery', 'Alcohol', 'König Ludwig Dunkel', 'not-applicable', null, 'none', '4003304122009'),
+  ('DE', 'Störtebecker', 'Grocery', 'Alcohol', 'Störtebecker BRAUSPEZIALITÄTEN Bernstein-Weizen', 'not-applicable', null, 'none', '4014807202044'),
+  ('DE', 'Wicküler', 'Grocery', 'Alcohol', 'Wicküler , Pilsener', 'not-applicable', null, 'none', '4079600330202'),
+  ('DE', 'Bayreuther Brauhaus', 'Grocery', 'Alcohol', 'Hell', 'not-applicable', null, 'none', '40173894'),
+  ('DE', 'Veltins', 'Grocery', 'Alcohol', 'Pilsener', 'not-applicable', null, 'none', '4005249000565'),
   ('DE', 'Rotkäppchen', 'Grocery', 'Alcohol', 'Sekt halbtrocken', 'not-applicable', null, 'none', '4400066903530'),
-  ('DE', 'Berliner', 'Grocery', 'Alcohol', 'Berliner Pilsner', 'not-applicable', 'Penny', 'none', '4004160005338'),
+  ('DE', 'Berliner', 'Grocery', 'Alcohol', 'Pilsner', 'not-applicable', 'Penny', 'none', '4004160005338'),
   ('DE', 'Jever', 'Grocery', 'Alcohol', 'Jever Pilsener', 'not-applicable', null, 'none', '4008948027000'),
   ('DE', '0 Original', 'Grocery', 'Alcohol', '5,0 Original Pils', 'not-applicable', null, 'none', '4014086093364'),
   ('DE', 'Mönchshof', 'Grocery', 'Alcohol', 'Natur Radler', 'not-applicable', null, 'none', '4082100005044'),
@@ -45,6 +69,13 @@ values
   ('DE', 'Warsteiner', 'Grocery', 'Alcohol', 'Radler alkoholfrei', 'not-applicable', null, 'none', '4000856007129'),
   ('DE', 'Warsteiner', 'Grocery', 'Alcohol', 'Pilsener', 'not-applicable', 'Kaufland', 'none', '4000856003688'),
   ('DE', 'Mumm', 'Grocery', 'Alcohol', 'Sekt, Jahrgang Dry, alkoholfrei', 'not-applicable', null, 'none', '4011900670015'),
+  ('DE', 'Hacker Pschorr', 'Grocery', 'Alcohol', 'Hacker Pschorr Hell Alkoholfrei (naturtrüb)', 'not-applicable', null, 'none', '4004866721020'),
+  ('DE', 'Karlskrone', 'Grocery', 'Alcohol', 'Weissbier Alkoholfrei', 'not-applicable', 'Aldi', 'none', '4061458279093'),
+  ('DE', 'Aldi', 'Grocery', 'Alcohol', 'Lagerbier Hell', 'not-applicable', 'Aldi', 'none', '4061458130745'),
+  ('DE', 'Schöfferhofer', 'Grocery', 'Alcohol', 'Schöfferhofer Weizen 0,0%', 'not-applicable', null, 'none', '4053400201597'),
+  ('DE', 'Warsteiner', 'Grocery', 'Alcohol', 'Warsteiner alkoholfrei', 'not-applicable', null, 'none', '4000856005958'),
+  ('DE', 'Schneider Weisse', 'Grocery', 'Alcohol', 'Schneider Weisse, Weissbier, Original', 'not-applicable', null, 'none', '4003669016203'),
+  ('DE', 'Jever', 'Grocery', 'Alcohol', 'Fun', 'not-applicable', null, 'none', '4008948194016'),
   ('DE', 'Mönchshof', 'Grocery', 'Alcohol', 'Natur Radler 0,0%', 'not-applicable', null, 'none', '4082100006508'),
   ('DE', 'Krombacher', 'Grocery', 'Alcohol', 'Krombacher Pils', 'not-applicable', null, 'none', '4008287056020'),
   ('DE', 'Herzoglich Bayerisches Brauhaus Tegernsee', 'Grocery', 'Alcohol', 'Tegernseer Hell', 'not-applicable', null, 'none', '4022396000026'),
@@ -62,12 +93,90 @@ values
   ('DE', 'Christkindl', 'Grocery', 'Alcohol', 'Christkindl Glühwein', 'not-applicable', 'Lidl', 'none', '4304493261709'),
   ('DE', 'Schöfferhofer', 'Grocery', 'Alcohol', 'Weizen-Mix Grapefruit', 'not-applicable', null, 'none', '4053400271729'),
   ('DE', 'Krombacher', 'Grocery', 'Alcohol', 'Weizen Alkoholfrei', 'not-applicable', null, 'none', '4008287064025'),
+  ('DE', 'Kloster Scheyern', 'Grocery', 'Alcohol', 'Kloster-Gold Dunkel', 'not-applicable', null, 'none', '40179650'),
+  ('DE', 'Warsteiner', 'Grocery', 'Alcohol', 'Warsteiner Pilsner', 'not-applicable', null, 'none', '4000856005446'),
+  ('DE', 'Krombacher', 'Grocery', 'Alcohol', 'Krombacher Radler', 'not-applicable', null, 'none', '4008287073522'),
+  ('DE', 'Krombacher', 'Grocery', 'Alcohol', 'Krombacher Alkoholfrei 0,0%', 'not-applicable', null, 'none', '4008287914368'),
+  ('DE', 'Rotkäppchen', 'Grocery', 'Alcohol', 'Trocken', 'not-applicable', null, 'none', '4400066903424'),
+  ('DE', 'KarlsKrone', 'Grocery', 'Alcohol', 'Bier', 'not-applicable', null, 'none', '4061458279123'),
+  ('DE', 'ALDI Rotkäppchen', 'Grocery', 'Alcohol', 'Sekt Rose alkoholfrei', 'not-applicable', null, 'none', '4014741651014'),
+  ('DE', 'Underberg', 'Grocery', 'Alcohol', 'Underberg 44 % Vol.', 'not-applicable', null, 'none', '40341002'),
+  ('DE', 'Maisel & Friends', 'Grocery', 'Alcohol', 'Maisel & Friends Alkoholfrei', 'not-applicable', null, 'none', '4017300000452'),
+  ('DE', 'Aldi', 'Grocery', 'Alcohol', 'Stolzenfels Sekt trocken', 'not-applicable', null, 'none', '4061458001861'),
+  ('DE', 'Köstritzer', 'Grocery', 'Alcohol', 'Radler', 'not-applicable', null, 'none', '4014964020277'),
+  ('DE', 'Jever', 'Grocery', 'Alcohol', 'Jever', 'not-applicable', null, 'none', '4053400257501'),
+  ('DE', 'Bolten', 'Grocery', 'Alcohol', 'Bolten Alt (4,9%)', 'not-applicable', null, 'none', '4019046402330'),
+  ('DE', 'Steam Brew German Red', 'Grocery', 'Alcohol', 'Steam Brew - German Red', 'not-applicable', null, 'none', '4054500121426'),
+  ('DE', 'Franziskaner', 'Grocery', 'Alcohol', 'Franziskaner Hefe-Weissbier Leicht', 'not-applicable', null, 'none', '4072700802518'),
+  ('DE', 'Waldhaus', 'Grocery', 'Alcohol', 'Ohne Filter alkoholfrei', 'not-applicable', null, 'none', '4015345132534'),
+  ('DE', 'Neumarkter lammsbräu', 'Grocery', 'Alcohol', 'Aktivmalz', 'not-applicable', null, 'none', '4012852001803'),
+  ('DE', 'Valmarone', 'Grocery', 'Alcohol', 'Secco', 'not-applicable', null, 'none', '4018905330968'),
+  ('DE', 'Schultenbräu Helles', 'Grocery', 'Alcohol', 'Helles (4,7%)', 'not-applicable', null, 'none', '4047247672054'),
+  ('DE', 'ABSOLUT Cocktails', 'Grocery', 'Alcohol', 'Berry Fizz', 'not-applicable', null, 'none', '4005971397360'),
+  ('DE', 'Neumarkter Lammsbräu', 'Grocery', 'Alcohol', 'Urstoff', 'not-applicable', null, 'none', '4012852001100'),
+  ('DE', 'Brauerei Gebr. Maisel KG', 'Grocery', 'Alcohol', 'Maisel''s Weise alkoholfrei', 'not-applicable', null, 'none', '40173832'),
+  ('DE', 'Warsteiner', 'Grocery', 'Alcohol', 'Warsteiner Pilsener Alkoholfrei', 'not-applicable', null, 'none', '4000856005972'),
+  ('DE', 'Krombacher', 'Grocery', 'Alcohol', 'Krombacher Radler 0,0', 'not-applicable', null, 'none', '4008287919752'),
+  ('DE', 'Krombacher', 'Grocery', 'Alcohol', 'Radler', 'not-applicable', null, 'none', '4008287072938'),
+  ('DE', 'V+', 'Grocery', 'Alcohol', 'V+curuba', 'not-applicable', null, 'none', '4005249001296'),
+  ('DE', 'Lausitzer Brauspezialitäten', 'Grocery', 'Alcohol', 'Lausitzer Porter', 'not-applicable', null, 'none', '4018588003302'),
   ('DE', 'Allgäuer Brauhaus', 'Grocery', 'Alcohol', 'Büble Bier Edelbräu', 'not-applicable', null, 'none', '4103210001297'),
+  ('DE', 'Clausthaler', 'Grocery', 'Alcohol', 'Original', 'not-applicable', null, 'none', '40534305'),
+  ('DE', 'Allgäuer Brauhaus AG', 'Grocery', 'Alcohol', 'Allgäuer Büble Radler', 'not-applicable', null, 'none', '4103210273014'),
+  ('DE', 'Veltins', 'Grocery', 'Alcohol', 'Helles Pülleken (5,2%)', 'not-applicable', null, 'none', '42462989'),
+  ('DE', 'König-Brauerei Duisburg-Beek', 'Grocery', 'Alcohol', 'König Pilsener', 'not-applicable', null, 'none', '41007785'),
   ('DE', 'Gösser', 'Grocery', 'Alcohol', 'Natur Radler', 'not-applicable', 'Aldi', 'none', '9028800638644'),
   ('DE', 'Budweiser', 'Grocery', 'Alcohol', 'Budvar', 'not-applicable', 'Kaufland', 'none', '8594403110111'),
   ('DE', 'Unknown', 'Grocery', 'Alcohol', 'Pilsner Urquell', 'not-applicable', 'Penny', 'none', '8594404110110'),
   ('DE', 'Carlsberg', 'Grocery', 'Alcohol', 'Apple Cider', 'not-applicable', null, 'none', '42400868'),
-  ('DE', 'Cerveceria Modelio', 'Grocery', 'Alcohol', 'Corona Extra', 'not-applicable', null, 'none', '75033927')
+  ('DE', 'Corona', 'Grocery', 'Alcohol', 'Extra', 'not-applicable', null, 'none', '75033927'),
+  ('DE', 'Ur-Krostitzer', 'Grocery', 'Alcohol', 'Ur-Krostitzer Pilsner', 'not-applicable', 'Kaufland', 'none', '41058145'),
+  ('DE', 'Anheuser-Busch Inbev', 'Grocery', 'Alcohol', 'Beck''s Pils, 4,9 % Vol.', 'not-applicable', 'Netto', 'none', '42178170'),
+  ('DE', 'Beck''s', 'Grocery', 'Alcohol', 'Beck''s Ice - Lime & Mint', 'not-applicable', null, 'none', '42150022'),
+  ('DE', 'Perlenbacher', 'Grocery', 'Alcohol', 'Perlenbacher Radler alkoholfrei', 'not-applicable', 'Lidl', 'none', '42256700'),
+  ('DE', 'Perlenbacher', 'Grocery', 'Alcohol', 'Perlenbacher Alkoholfrei', 'not-applicable', 'Lidl', 'none', '42276036'),
+  ('DE', 'Steinburg', 'Grocery', 'Alcohol', 'Bier Steinburg', 'not-applicable', 'Kaufland', 'none', '41057759'),
+  ('DE', 'Brauerei Mönchengladbach', 'Grocery', 'Alcohol', 'Naturradler', 'not-applicable', 'Penny', 'none', '4388441007168'),
+  ('DE', 'Beck''s', 'Grocery', 'Alcohol', 'Green Lemon', 'not-applicable', null, 'none', '42111702'),
+  ('DE', 'Captain Morgan', 'Grocery', 'Alcohol', 'Captain Morgan - Spiced Gold', 'not-applicable', 'Aldi', 'none', '5000299223017'),
+  ('DE', 'Absolut', 'Grocery', 'Alcohol', 'Absolut Vodka', 'not-applicable', 'Carrefour', 'none', '7312040017683'),
+  ('DE', 'Beck''s', 'Grocery', 'Alcohol', 'Beck''s Green Lemon', 'not-applicable', 'Lidl', 'none', '42141327'),
+  ('DE', 'Vinetti', 'Grocery', 'Alcohol', 'Fruity-Secco Mango 4er-Pack', 'not-applicable', 'Netto', 'none', '4316268630870'),
+  ('DE', 'Plomari', 'Grocery', 'Alcohol', 'Plomari Ouzo', 'not-applicable', null, 'none', '5202413007019'),
+  ('DE', 'Desperados', 'Grocery', 'Alcohol', 'Desperados Original', 'not-applicable', 'Lidl', 'none', '3119780251889'),
+  ('DE', 'Augustiner-Bräu', 'Grocery', 'Alcohol', 'Lager Hell', 'not-applicable', null, 'none', '4105250022003'),
+  ('DE', 'Aperol', 'Grocery', 'Alcohol', 'Aperol', 'not-applicable', null, 'none', '8002230000319'),
+  ('DE', 'Beck''s', 'Grocery', 'Alcohol', 'Pils', 'not-applicable', null, 'none', '41001318'),
+  ('DE', 'Beck''s', 'Grocery', 'Alcohol', 'Beck''s Pils', 'not-applicable', null, 'none', '41001301'),
+  ('DE', 'Somersby', 'Grocery', 'Alcohol', 'Somersby Cider - Blackberry', 'not-applicable', null, 'none', '42400905'),
+  ('DE', 'Augustiner-Bräu', 'Grocery', 'Alcohol', 'Augustiner Alkoholfrei Hell', 'not-applicable', null, 'none', '4105250029002'),
+  ('DE', 'Bitburger', 'Grocery', 'Alcohol', 'Radler Alkoholfrei', 'not-applicable', null, 'none', '4102430036898'),
+  ('DE', 'Bitburger', 'Grocery', 'Alcohol', 'Pilsener Steinie', 'not-applicable', null, 'none', '4102430015107'),
+  ('DE', 'Flensburger', 'Grocery', 'Alcohol', 'Flensburger Pilsener', 'not-applicable', null, 'none', '41030806'),
+  ('DE', 'Chiemseer', 'Grocery', 'Alcohol', 'Helles Bier', 'not-applicable', null, 'none', '4260248223616'),
+  ('DE', 'Alkoholfrei', 'Grocery', 'Alcohol', 'Bitburger 0.0% Pils', 'not-applicable', null, 'none', '4102430315009'),
+  ('DE', 'Beck''s', 'Grocery', 'Alcohol', 'Beck''s Blue Alkoholfrei', 'not-applicable', null, 'none', '42021315'),
+  ('DE', 'Astra', 'Grocery', 'Alcohol', 'Astra', 'not-applicable', null, 'none', '42278153'),
+  ('DE', 'Bitburger', 'Grocery', 'Alcohol', 'Bitburger Herb 0.0', 'not-applicable', null, 'none', '4102430079512'),
+  ('DE', 'Somersby', 'Grocery', 'Alcohol', 'Mango & Lime Cider', 'not-applicable', null, 'none', '42400981'),
+  ('DE', 'Guinness', 'Grocery', 'Alcohol', 'Guinness Draught', 'not-applicable', null, 'none', '5000213009437'),
+  ('DE', 'Heineken', 'Grocery', 'Alcohol', 'Heineken', 'not-applicable', null, 'none', '8712000039370'),
+  ('DE', 'Becks', 'Grocery', 'Alcohol', 'Bier', 'not-applicable', null, 'none', '42111719'),
+  ('DE', 'Casella', 'Grocery', 'Alcohol', 'Amaretto', 'not-applicable', null, 'none', '4388844029040'),
+  ('DE', 'Bitburger', 'Grocery', 'Alcohol', 'Pils alkoholfrei herb', 'not-applicable', null, 'none', '4102430083571'),
+  ('DE', 'Bacardi', 'Grocery', 'Alcohol', 'Bacardi Razz', 'not-applicable', null, 'none', '7610113028124'),
+  ('DE', 'Baileys', 'Grocery', 'Alcohol', 'The Original Irish Cream', 'not-applicable', 'Carrefour', 'none', '5011013100156'),
+  ('DE', 'Beck''s', 'Grocery', 'Alcohol', 'BECK''S Gold', 'not-applicable', null, 'none', '42077442'),
+  ('DE', 'Carlsberg', 'Grocery', 'Alcohol', 'Carlsberg', 'not-applicable', null, 'none', '5740600514143'),
+  ('DE', 'Unknown', 'Grocery', 'Alcohol', 'Flensburger Radler alkoholfrei', 'not-applicable', null, 'none', '42354734'),
+  ('DE', 'Unknown', 'Grocery', 'Alcohol', 'Naturradler Grapfruit', 'not-applicable', null, 'none', '4101010007518'),
+  ('DE', 'Corona', 'Grocery', 'Alcohol', 'Corona extra', 'not-applicable', null, 'none', '4100130010224'),
+  ('DE', 'Valdo', 'Grocery', 'Alcohol', 'Valdobbiadene Prosecco Superiore', 'not-applicable', null, 'none', '8002335104066'),
+  ('DE', 'Carlsberg', 'Grocery', 'Alcohol', 'Carlsberg 0.0 Lager Beer', 'not-applicable', null, 'none', '4101010010624'),
+  ('DE', 'Bitburger', 'Grocery', 'Alcohol', 'Bitburger Premium Pils', 'not-applicable', null, 'none', '4102430015206'),
+  ('DE', 'Freiberger', 'Grocery', 'Alcohol', 'Pils', 'not-applicable', null, 'none', '42011859'),
+  ('DE', 'König Pilsener', 'Grocery', 'Alcohol', 'Bier', 'not-applicable', null, 'none', '41007723'),
+  ('DE', 'Astra', 'Grocery', 'Alcohol', 'Astra Rakete', 'not-applicable', null, 'none', '42253112')
 on conflict (country, brand, product_name) do update set
   category = excluded.category,
   ean = excluded.ean,
@@ -82,4 +191,4 @@ update products
 set is_deprecated = true, deprecated_reason = 'Removed from pipeline batch'
 where country = 'DE' and category = 'Alcohol'
   and is_deprecated is not true
-  and product_name not in ('Franziskaner Premium Weissbier Naturtrüb', 'Glühwein rot', 'Köstritzer Schwarzbier', 'Hasseröder Premium Pils', 'Münchner Hell', 'Weißbier-Zitrone Alkoholfrei', 'Mönchshof Kellerbier', 'Weißbier', 'Lübzer Pils', 'Paulaner Original Münchner Hell', 'Münchner Hell', 'Mönchshof Original Naturtrüb''s Alkoholfrei 4082100003552 Alkoholfreies Schankbier', 'Wernesgrüner Pils', 'Köstritzer Edel Pils', 'Neumarkter Lammsbräu Glutenfrei', 'Bayreuther', 'Veltins', 'Bier - Veltins Pilsener', 'Sekt halbtrocken', 'Berliner Pilsner', 'Jever Pilsener', '5,0 Original Pils', 'Natur Radler', 'Atlantik Ale', 'Pfefferminz', 'Radler alkoholfrei', 'Pilsener', 'Sekt, Jahrgang Dry, alkoholfrei', 'Natur Radler 0,0%', 'Krombacher Pils', 'Tegernseer Hell', 'Pils', 'Pilsner Alkoholfrei', 'Tannenzäpfle', 'Hefeweissbier hell', 'Wodka Gorbatschow', 'Doppio Passo Rotwein alkoholfrei', 'Light Live Red 0,0%', 'Natur-Radler', 'Premium Weissbier Dunkel', 'Radler Blutorange', 'Benediktiner Hell', 'Christkindl Glühwein', 'Weizen-Mix Grapefruit', 'Weizen Alkoholfrei', 'Büble Bier Edelbräu', 'Natur Radler', 'Budvar', 'Pilsner Urquell', 'Apple Cider', 'Corona Extra');
+  and product_name not in ('Pülleken', 'Franziskaner Premium Weissbier Naturtrüb', 'Glühwein rot', 'Köstritzer Schwarzbier', 'Radler Naturtrüb', 'Glühwein weiß', 'Bio-Glühwein rot', 'Hasseröder Premium Pils', 'Münchner Hell', 'Weißbier-Zitrone Alkoholfrei', 'Mönchshof Kellerbier', 'Weißbier', 'Lübzer Pils', 'Paulaner Original Münchner Hell', 'Münchner Hell', 'Mönchshof Original Naturtrüb''s Alkoholfrei 4082100003552 Alkoholfreies Schankbier', 'Wernesgrüner Pils', 'Köstritzer Edel Pils', 'Neumarkter Lammsbräu Glutenfrei', 'König Ludwig Weissbier hell', 'Paulaner Hefe weißbier Alkoholfrei', 'Reissdorf Kölsch', 'Münchner Hell alkoholfrei', 'Hefe-Weißbier naturtrüb', 'Hofbräuhaus Helles Vollbier', 'Naturtrübes Dunkel', 'Oettinger Radler naturtrüb', 'König Ludwig Dunkel', 'Störtebecker BRAUSPEZIALITÄTEN Bernstein-Weizen', 'Wicküler , Pilsener', 'Hell', 'Pilsener', 'Sekt halbtrocken', 'Pilsner', 'Jever Pilsener', '5,0 Original Pils', 'Natur Radler', 'Atlantik Ale', 'Pfefferminz', 'Radler alkoholfrei', 'Pilsener', 'Sekt, Jahrgang Dry, alkoholfrei', 'Hacker Pschorr Hell Alkoholfrei (naturtrüb)', 'Weissbier Alkoholfrei', 'Lagerbier Hell', 'Schöfferhofer Weizen 0,0%', 'Warsteiner alkoholfrei', 'Schneider Weisse, Weissbier, Original', 'Fun', 'Natur Radler 0,0%', 'Krombacher Pils', 'Tegernseer Hell', 'Pils', 'Pilsner Alkoholfrei', 'Tannenzäpfle', 'Hefeweissbier hell', 'Wodka Gorbatschow', 'Doppio Passo Rotwein alkoholfrei', 'Light Live Red 0,0%', 'Natur-Radler', 'Premium Weissbier Dunkel', 'Radler Blutorange', 'Benediktiner Hell', 'Christkindl Glühwein', 'Weizen-Mix Grapefruit', 'Weizen Alkoholfrei', 'Kloster-Gold Dunkel', 'Warsteiner Pilsner', 'Krombacher Radler', 'Krombacher Alkoholfrei 0,0%', 'Trocken', 'Bier', 'Sekt Rose alkoholfrei', 'Underberg 44 % Vol.', 'Maisel & Friends Alkoholfrei', 'Stolzenfels Sekt trocken', 'Radler', 'Jever', 'Bolten Alt (4,9%)', 'Steam Brew - German Red', 'Franziskaner Hefe-Weissbier Leicht', 'Ohne Filter alkoholfrei', 'Aktivmalz', 'Secco', 'Helles (4,7%)', 'Berry Fizz', 'Urstoff', 'Maisel''s Weise alkoholfrei', 'Warsteiner Pilsener Alkoholfrei', 'Krombacher Radler 0,0', 'Radler', 'V+curuba', 'Lausitzer Porter', 'Büble Bier Edelbräu', 'Original', 'Allgäuer Büble Radler', 'Helles Pülleken (5,2%)', 'König Pilsener', 'Natur Radler', 'Budvar', 'Pilsner Urquell', 'Apple Cider', 'Extra', 'Ur-Krostitzer Pilsner', 'Beck''s Pils, 4,9 % Vol.', 'Beck''s Ice - Lime & Mint', 'Perlenbacher Radler alkoholfrei', 'Perlenbacher Alkoholfrei', 'Bier Steinburg', 'Naturradler', 'Green Lemon', 'Captain Morgan - Spiced Gold', 'Absolut Vodka', 'Beck''s Green Lemon', 'Fruity-Secco Mango 4er-Pack', 'Plomari Ouzo', 'Desperados Original', 'Lager Hell', 'Aperol', 'Pils', 'Beck''s Pils', 'Somersby Cider - Blackberry', 'Augustiner Alkoholfrei Hell', 'Radler Alkoholfrei', 'Pilsener Steinie', 'Flensburger Pilsener', 'Helles Bier', 'Bitburger 0.0% Pils', 'Beck''s Blue Alkoholfrei', 'Astra', 'Bitburger Herb 0.0', 'Mango & Lime Cider', 'Guinness Draught', 'Heineken', 'Bier', 'Amaretto', 'Pils alkoholfrei herb', 'Bacardi Razz', 'The Original Irish Cream', 'BECK''S Gold', 'Carlsberg', 'Flensburger Radler alkoholfrei', 'Naturradler Grapfruit', 'Corona extra', 'Valdobbiadene Prosecco Superiore', 'Carlsberg 0.0 Lager Beer', 'Bitburger Premium Pils', 'Pils', 'Bier', 'Astra Rakete');

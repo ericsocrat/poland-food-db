@@ -1,5 +1,5 @@
-﻿-- PIPELINE (Baby): source provenance
--- Generated: 2026-03-04
+-- PIPELINE (Baby): source provenance
+-- Generated: 2026-03-13
 
 -- 1. Update source info on products
 UPDATE products p SET
@@ -9,7 +9,7 @@ UPDATE products p SET
 FROM (
   VALUES
     ('Hipp', 'Reine Bio-Karotten mild-süßlich', 'https://world.openfoodfacts.org/product/4062300020719', '4062300020719'),
-    ('Hipp', 'Früchte Riegel Joghurt-Kirsch in Banane', 'https://world.openfoodfacts.org/product/4062300362215', '4062300362215'),
+    ('HiPP', 'Früchte Riegel Joghurt-Kirsch in Banane', 'https://world.openfoodfacts.org/product/4062300362215', '4062300362215'),
     ('Mamia Bio', 'Bio-Fruchtpüree - Apfel-Birne-Aprikose', 'https://world.openfoodfacts.org/product/4061459751420', '4061459751420'),
     ('Hipp', 'Gemüse Allerlei', 'https://world.openfoodfacts.org/product/4062300020313', '4062300020313'),
     ('DmBio', 'Kürbis pur', 'https://world.openfoodfacts.org/product/4067796017090', '4067796017090'),
@@ -17,8 +17,14 @@ FROM (
     ('Hipp', 'Reiner Butternut Kürbis', 'https://world.openfoodfacts.org/product/4062300381971', '4062300381971'),
     ('Hipp', 'Menü Karotten, Kartoffeln, Wildlachs', 'https://world.openfoodfacts.org/product/4062300255142', '4062300255142'),
     ('Hipp', 'Gemüse Kürbis Nach Dem 4. Monat', 'https://world.openfoodfacts.org/product/4062300257597', '4062300257597'),
+    ('DmBio', 'DM Bio Grieß Getreidebrei', 'https://world.openfoodfacts.org/product/4010355217103', '4010355217103'),
+    ('Bebevita', 'Sternchennudeln in Tomaten-Kürbis-Sauce', 'https://world.openfoodfacts.org/product/4018852010494', '4018852010494'),
+    ('DmBio', 'Couscous Gemüsepfanne', 'https://world.openfoodfacts.org/product/4058172067709', '4058172067709'),
+    ('DmBio', 'Karotten mit Süßkartoffeln und Rind', 'https://world.openfoodfacts.org/product/4058172010149', '4058172010149'),
+    ('Bebivita', 'Rahmkartoffeln mit Karotten und Hühnchen', 'https://world.openfoodfacts.org/product/4018852013969', '4018852013969'),
+    ('DmBio', 'Gemüse mit Süßkartoffeln und Huhn', 'https://world.openfoodfacts.org/product/4058172067785', '4058172067785'),
     ('Puttkammer', 'Schinkenröllchen in Aspik', 'https://world.openfoodfacts.org/product/4004176100539', '4004176100539'),
-    ('Hipp', 'Mango-Bananen-Grieß', 'https://world.openfoodfacts.org/product/4062300406476', '4062300406476'),
+    ('HiPP', 'Mango-Bananen-Grieß', 'https://world.openfoodfacts.org/product/4062300406476', '4062300406476'),
     ('Hipp', 'Spinatgemüse in Kartoffeln', 'https://world.openfoodfacts.org/product/4062300350403', '4062300350403'),
     ('Bebivita', 'Abendbrei Grieß-Vanille', 'https://world.openfoodfacts.org/product/4018852035855', '4018852035855'),
     ('Hipp', 'Grießbrei', 'https://world.openfoodfacts.org/product/4062300123175', '4062300123175'),
@@ -33,6 +39,18 @@ FROM (
     ('Hipp', 'Tomaten Und Kartoffeln Mit Bio-hühnchen', 'https://world.openfoodfacts.org/product/4062300266025', '4062300266025'),
     ('Hipp', 'Hipp Gemüseallerlei Mit Bio Rind,250G', 'https://world.openfoodfacts.org/product/4062300261303', '4062300261303'),
     ('Hipp', 'Frühstücks Porridge Banane Blaubeeren Haferbrei', 'https://world.openfoodfacts.org/product/4062300349445', '4062300349445'),
+    ('HiPP', 'Mini Pasta mit Alaska Seelachsfilet & Butter Gemüse (ab 6. Monat)', 'https://world.openfoodfacts.org/product/4062300261563', '4062300261563'),
+    ('Bebivita', 'Gemüse-Reis mit Rind', 'https://world.openfoodfacts.org/product/4018852030522', '4018852030522'),
+    ('Hipp', 'Frühkarotten mit Kartoffeln & Wildlachs', 'https://world.openfoodfacts.org/product/4062300015920', '4062300015920'),
+    ('Bebivita', 'Bebivita Abendbrei Grieß-Vanille', 'https://world.openfoodfacts.org/product/4018852029366', '4018852029366'),
+    ('Hipp', 'Gemüse Eintopf', 'https://world.openfoodfacts.org/product/4062300259829', '4062300259829'),
+    ('Hipp', 'Menü Nudel-ABC mit Bolognese Sauce', 'https://world.openfoodfacts.org/product/4062300255234', '4062300255234'),
+    ('Hipp', 'Buttergemüse mit Süßkartoffeln', 'https://world.openfoodfacts.org/product/4062300257689', '4062300257689'),
+    ('Hipp', 'Buntes Gemüse mit Süsskartoffeln und Bio-Hühnchen', 'https://world.openfoodfacts.org/product/4062300266209', '4062300266209'),
+    ('Hipp', 'Hipp Mediterranes Gemüse Mit Auberginen', 'https://world.openfoodfacts.org/product/4062300257658', '4062300257658'),
+    ('Dm', 'Buttergemüse mit Vollkornpasta', 'https://world.openfoodfacts.org/product/4058172031335', '4058172031335'),
+    ('DmBio', 'Bircher Müsli (ab 8. Monat)', 'https://world.openfoodfacts.org/product/4058172260223', '4058172260223'),
+    ('DmBio', 'Kürbispüree', 'https://world.openfoodfacts.org/product/4058172438257', '4058172438257'),
     ('Hipp', 'Hippis Pfirsich Banane Mango Joghurt', 'https://world.openfoodfacts.org/product/4062300432123', '4062300432123'),
     ('DmBio', 'Hirse Getreidebrei', 'https://world.openfoodfacts.org/product/4066447398649', '4066447398649'),
     ('Hipp', 'Pfirsich in Apfel (ab 5. Monat)', 'https://world.openfoodfacts.org/product/4062300297104', '4062300297104'),
@@ -41,6 +59,12 @@ FROM (
     ('DmBio', 'Apfel mit Banane & Hirse (ab 6. Monat)', 'https://world.openfoodfacts.org/product/4058172437892', '4058172437892'),
     ('Hipp', 'Birne-Apfel mit Dinkel, Frucht & urgetreide', 'https://world.openfoodfacts.org/product/4062300269842', '4062300269842'),
     ('Bebivita', 'Anfangsmilch', 'https://world.openfoodfacts.org/product/4018852026655', '4018852026655'),
+    ('DmBio', 'Dinkelnudeln mit Rahmspinat & Lachs', 'https://world.openfoodfacts.org/product/4058172480805', '4058172480805'),
+    ('Hipp', 'Erdbeere mit Himbeere in Apfel', 'https://world.openfoodfacts.org/product/4062300347854', '4062300347854'),
+    ('Babylove', 'Aprikose in Apfel', 'https://world.openfoodfacts.org/product/4058172042591', '4058172042591'),
+    ('Babylove', 'Quetschie Banane & Ananas in Apfel mit Kokosmilch', 'https://world.openfoodfacts.org/product/4058172425738', '4058172425738'),
+    ('DmBio', 'Apfel mit Heidelbeere (ab 5. Monat)', 'https://world.openfoodfacts.org/product/4058172438073', '4058172438073'),
+    ('DmBio', 'Hähnchenfleisch', 'https://world.openfoodfacts.org/product/4058172438714', '4058172438714'),
     ('Hipp Bio', 'Himbeer Reiswaffeln', 'https://world.openfoodfacts.org/product/4062300376182', '4062300376182'),
     ('Hipp', 'Bio Combiotik Pre', 'https://world.openfoodfacts.org/product/4062300398894', '4062300398894'),
     ('Dr. Oetker', 'Banane & Pfirsich in Apfel (ab 5. Monat)', 'https://world.openfoodfacts.org/product/4062300297081', '4062300297081'),
@@ -55,10 +79,35 @@ FROM (
     ('DmBio', 'Babyobst', 'https://world.openfoodfacts.org/product/4058172438011', '4058172438011'),
     ('Kölln', 'Schmelzflocken 5 korn 6. Monat', 'https://world.openfoodfacts.org/product/4000540002560', '4000540002560'),
     ('Hipp', 'Heidelbeer reiswaffeln', 'https://world.openfoodfacts.org/product/4062300376205', '4062300376205'),
-    ('Hipp', 'BIO Getreidebrei 5-Korn', 'https://world.openfoodfacts.org/product/4062300344877', '4062300344877'),
+    ('HiPP', 'BIO Getreidebrei 5-Korn', 'https://world.openfoodfacts.org/product/4062300344877', '4062300344877'),
     ('Hipp', 'Hipp Apfel-banane & Babykeks Ohne Zuckerzusatz', 'https://world.openfoodfacts.org/product/4062300289406', '4062300289406'),
     ('Hipp', 'Hipp, Karotten Mit Reis Und Wildlachs', 'https://world.openfoodfacts.org/product/4062300208254', '4062300208254'),
-    ('Bebivita', 'Pfirsich mit Maracuja in Apfel', 'https://world.openfoodfacts.org/product/4018852029083', '4018852029083')
+    ('Bebivita', 'Pfirsich mit Maracuja in Apfel', 'https://world.openfoodfacts.org/product/4018852029083', '4018852029083'),
+    ('King''s crown', 'Jalapeño-mix', 'https://world.openfoodfacts.org/product/4061461962432', '4061461962432'),
+    ('Babylove', 'Erdbeere Heidelbeere in Apfel', 'https://world.openfoodfacts.org/product/4058172843228', '4058172843228'),
+    ('Hipp', 'Folgemilch', 'https://world.openfoodfacts.org/product/4062300355439', '4062300355439'),
+    ('DmBio', 'Apfel mit Banane (ab 5. Monat)', 'https://world.openfoodfacts.org/product/4058172438110', '4058172438110'),
+    ('DmBio', 'Mango in Apfel (ab 5. Monat)', 'https://world.openfoodfacts.org/product/4058172438158', '4058172438158'),
+    ('DmBio', 'Dinkelnudeln mit Rahmspinat und Lachs', 'https://world.openfoodfacts.org/product/4058172795459', '4058172795459'),
+    ('Bebivita', 'Pflaume-Cassis in Birne-Banane', 'https://world.openfoodfacts.org/product/4018852024958', '4018852024958'),
+    ('HiPP', 'Pflaume in Birne (ab 5. Monat)', 'https://world.openfoodfacts.org/product/4062300441170', '4062300441170'),
+    ('Aptamil', 'Aptamil Pronutra Anfangsmilch Pre 2x90ml trinkfertig', 'https://world.openfoodfacts.org/product/4056631003398', '4056631003398'),
+    ('Aptamil', 'Aptamil Pronutra Anfangsmilch Pre 4x200ml trinkfertig', 'https://world.openfoodfacts.org/product/4056631002414', '4056631002414'),
+    ('Bebivita', 'Bandnudeln mit Spinat', 'https://world.openfoodfacts.org/product/4018852035763', '4018852035763'),
+    ('Bebivita', 'Spaghetti Bolognese', 'https://world.openfoodfacts.org/product/4018852035374', '4018852035374'),
+    ('Hipp', 'Grignoteur asterix', 'https://world.openfoodfacts.org/product/4062300344167', '4062300344167'),
+    ('HiPP', 'Hippies', 'https://world.openfoodfacts.org/product/4062300342811', '4062300342811'),
+    ('Hipp', 'Spaghetti mit Tomate & Mozzarella (ab 8. Monat)', 'https://world.openfoodfacts.org/product/4062300240995', '4062300240995'),
+    ('Bebivita', 'Milchbrei Keks', 'https://world.openfoodfacts.org/product/4018852026150', '4018852026150'),
+    ('Bebivita', 'Biscuit au lait sans sucre ajouté', 'https://world.openfoodfacts.org/product/4018852030201', '4018852030201'),
+    ('Hipp', 'Karotten mit Kartoffeln', 'https://world.openfoodfacts.org/product/4062300021112', '4062300021112'),
+    ('HiPP', 'Drachenriegel', 'https://world.openfoodfacts.org/product/4062300362277', '4062300362277'),
+    ('Hipp', 'Pflaume-Birne mit Vollkorn', 'https://world.openfoodfacts.org/product/4062300269897', '4062300269897'),
+    ('DmBio', 'Himbeer Reiswaffeln', 'https://world.openfoodfacts.org/product/4058172445828', '4058172445828'),
+    ('Bebivita', 'Mango in Apfel', 'https://world.openfoodfacts.org/product/4018852028970', '4018852028970'),
+    ('Hipp', 'Erdbeerschlitz', 'https://world.openfoodfacts.org/product/4062300322851', '4062300322851'),
+    ('Milupa', 'Milupa milupino kindermilch 200ml', 'https://world.openfoodfacts.org/product/4056631002513', '4056631002513'),
+    ('HiPP', 'Mango-Banane in Apfel', 'https://world.openfoodfacts.org/product/4062300293779', '4062300293779')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'DE' AND p.brand = d.brand
   AND p.product_name = d.product_name

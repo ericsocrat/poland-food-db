@@ -1,6 +1,6 @@
 -- PIPELINE (Alcohol): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-13
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -10,17 +10,20 @@ SELECT
   'pipeline'
 FROM (
   VALUES
+    ('Veltins', 'Pülleken', 'Penny'),
     ('Franziskaner', 'Franziskaner Premium Weissbier Naturtrüb', 'REWE'),
     ('Hauser Weinimport', 'Glühwein rot', 'Aldi'),
     ('Köstritzer', 'Köstritzer Schwarzbier', 'REWE'),
-    ('Bayreuther Brauhaus', 'Bayreuther', 'REWE'),
-    ('Pülleken', 'Veltins', 'Penny'),
-    ('Veltins', 'Bier - Veltins Pilsener', 'Edeka'),
+    ('Schulten Bräu', 'Radler Naturtrüb', 'Aldi'),
+    ('Hauser Weinimport', 'Glühwein weiß', 'Aldi'),
+    ('Weico Weinkellerei', 'Bio-Glühwein rot', 'Netto'),
+    ('Bayreuther Brauhaus', 'Hell', 'REWE'),
+    ('Veltins', 'Pilsener', 'Edeka'),
     ('Rotkäppchen', 'Sekt halbtrocken', 'Edeka'),
     ('Rotkäppchen', 'Sekt halbtrocken', 'REWE'),
     ('Rotkäppchen', 'Sekt halbtrocken', 'Norma'),
-    ('Berliner', 'Berliner Pilsner', 'Edeka'),
-    ('Berliner', 'Berliner Pilsner', 'Penny'),
+    ('Berliner', 'Pilsner', 'Edeka'),
+    ('Berliner', 'Pilsner', 'Penny'),
     ('Jever', 'Jever Pilsener', 'REWE'),
     ('0 Original', '5,0 Original Pils', 'REWE'),
     ('Mönchshof', 'Natur Radler', 'Edeka'),
@@ -31,6 +34,11 @@ FROM (
     ('Warsteiner', 'Radler alkoholfrei', 'Edeka'),
     ('Warsteiner', 'Pilsener', 'Aldi'),
     ('Warsteiner', 'Pilsener', 'Kaufland'),
+    ('Karlskrone', 'Weissbier Alkoholfrei', 'Aldi'),
+    ('Aldi', 'Lagerbier Hell', 'Aldi'),
+    ('Warsteiner', 'Warsteiner alkoholfrei', 'Edeka'),
+    ('Warsteiner', 'Warsteiner alkoholfrei', 'REWE'),
+    ('Schneider Weisse', 'Schneider Weisse, Weissbier, Original', 'Edeka'),
     ('Rothaus', 'Tannenzäpfle', 'Edeka'),
     ('Christkindl', 'Christkindl Glühwein', 'Lidl'),
     ('Gösser', 'Natur Radler', 'Aldi'),
@@ -39,8 +47,37 @@ FROM (
     ('Unknown', 'Pilsner Urquell', 'REWE'),
     ('Unknown', 'Pilsner Urquell', 'Penny'),
     ('Carlsberg', 'Apple Cider', 'REWE'),
-    ('Cerveceria Modelio', 'Corona Extra', 'Real'),
-    ('Cerveceria Modelio', 'Corona Extra', 'Norma')
+    ('Corona', 'Extra', 'Real'),
+    ('Corona', 'Extra', 'Norma'),
+    ('Ur-Krostitzer', 'Ur-Krostitzer Pilsner', 'Edeka'),
+    ('Ur-Krostitzer', 'Ur-Krostitzer Pilsner', 'REWE'),
+    ('Ur-Krostitzer', 'Ur-Krostitzer Pilsner', 'Penny'),
+    ('Ur-Krostitzer', 'Ur-Krostitzer Pilsner', 'Netto'),
+    ('Ur-Krostitzer', 'Ur-Krostitzer Pilsner', 'Kaufland'),
+    ('Ur-Krostitzer', 'Ur-Krostitzer Pilsner', 'Norma'),
+    ('Anheuser-Busch Inbev', 'Beck''s Pils, 4,9 % Vol.', 'Edeka'),
+    ('Anheuser-Busch Inbev', 'Beck''s Pils, 4,9 % Vol.', 'REWE'),
+    ('Anheuser-Busch Inbev', 'Beck''s Pils, 4,9 % Vol.', 'Netto'),
+    ('Beck''s', 'Beck''s Ice - Lime & Mint', 'Edeka'),
+    ('Beck''s', 'Beck''s Ice - Lime & Mint', 'REWE'),
+    ('Perlenbacher', 'Perlenbacher Radler alkoholfrei', 'Lidl'),
+    ('Perlenbacher', 'Perlenbacher Alkoholfrei', 'Lidl'),
+    ('Steinburg', 'Bier Steinburg', 'REWE'),
+    ('Steinburg', 'Bier Steinburg', 'Penny'),
+    ('Steinburg', 'Bier Steinburg', 'Kaufland'),
+    ('Steinburg', 'Bier Steinburg', 'Norma'),
+    ('Brauerei Mönchengladbach', 'Naturradler', 'REWE'),
+    ('Brauerei Mönchengladbach', 'Naturradler', 'Penny'),
+    ('Beck''s', 'Green Lemon', 'Edeka'),
+    ('Captain Morgan', 'Captain Morgan - Spiced Gold', 'Aldi'),
+    ('Beck''s', 'Beck''s Green Lemon', 'Lidl'),
+    ('Beck''s', 'Beck''s Green Lemon', 'REWE'),
+    ('Beck''s', 'Beck''s Green Lemon', 'Netto'),
+    ('Beck''s', 'Beck''s Green Lemon', 'Kaufland'),
+    ('Vinetti', 'Fruity-Secco Mango 4er-Pack', 'Netto'),
+    ('Plomari', 'Plomari Ouzo', 'Edeka'),
+    ('Desperados', 'Desperados Original', 'Aldi'),
+    ('Desperados', 'Desperados Original', 'Lidl')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'DE' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Alcohol' AND p.is_deprecated IS NOT TRUE

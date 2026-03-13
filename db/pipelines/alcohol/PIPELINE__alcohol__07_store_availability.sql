@@ -1,6 +1,6 @@
 -- PIPELINE (Alcohol): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-12
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -17,7 +17,6 @@ FROM (
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 'Kaufland'),
     ('Velkopopovicky Kozel', 'Polnische Bier (Dose)', 'Netto'),
     ('Tyskie', 'Bier &quot;Tyskie Gronie&quot;', 'Kaufland'),
-    ('Christkindl', 'Christkindl Glühwein', 'Lidl'),
     ('Ikea', 'Glühwein', 'Ikea'),
     ('Just 0.', 'Just 0 White alcoholfree', 'Dealz'),
     ('Just 0.', 'Just 0. Red', 'Dealz')

@@ -1,5 +1,5 @@
 -- PIPELINE (Plant-Based & Alternatives): source provenance
--- Generated: 2026-03-11
+-- Generated: 2026-03-12
 
 -- 1. Update source info on products
 UPDATE products p SET
@@ -10,13 +10,39 @@ FROM (
   VALUES
     ('Rügenwalder Mühle', 'Veganer Schinken-Spicker Grillgemüse', 'https://world.openfoodfacts.org/product/4000405004593', '4000405004593'),
     ('Rügenwalder Mühle', 'Veganes Mühlen Cordon Bleu auf Basis von Soja', 'https://world.openfoodfacts.org/product/4000405005026', '4000405005026'),
-    ('Bürger', 'Maultaschen traditionell schwäbisch', 'https://world.openfoodfacts.org/product/4075600055039', '4075600055039'),
     ('Rügenwalder Mühle', 'Vegane Mühlen Nuggets Klassisch', 'https://world.openfoodfacts.org/product/4000405005033', '4000405005033'),
+    ('Mühlenbauer', 'Vegane Bratwürste', 'https://world.openfoodfacts.org/product/4000405001523', '4000405001523'),
+    ('Eberswalder', 'Vegetarios Würstchen', 'https://world.openfoodfacts.org/product/4012371620103', '4012371620103'),
+    ('Vemondo', 'Bio Tofu geräuchert', 'https://world.openfoodfacts.org/product/4056489616221', '4056489616221'),
+    ('Rügenwalder Mühle', 'Vegane Mühlen Crispies', 'https://world.openfoodfacts.org/product/4000405001868', '4000405001868'),
+    ('Gut Bio', 'Griechische Bio-Oliven, grün', 'https://world.openfoodfacts.org/product/4061459188745', '4061459188745'),
+    ('Jerg', 'Vegane Genießerscheiben würzig', 'https://world.openfoodfacts.org/product/4056489467939', '4056489467939'),
+    ('Rügenwalder Mühle', 'Vegane Mühlen Bratwurst', 'https://world.openfoodfacts.org/product/4000405001752', '4000405001752'),
     ('Rügenwalder Mühle', 'Veganer Hauchgenuss Mediterrane Kräuter-Typ Salami', 'https://world.openfoodfacts.org/product/4000405003251', '4000405003251'),
+    ('My Vay', 'Bio-Tofu Geräuchert', 'https://world.openfoodfacts.org/product/4061462938825', '4061462938825'),
+    ('DmBio', 'Tomaten Stücke', 'https://world.openfoodfacts.org/product/4066447610048', '4066447610048'),
+    ('Taifun', 'Räuchertofu Mandel-Sesam', 'https://world.openfoodfacts.org/product/4012359113108', '4012359113108'),
+    ('Henglein', 'Gnocchi Kartoffel-Klößchen', 'https://world.openfoodfacts.org/product/4001163154858', '4001163154858'),
     ('DmBio', 'Maiswaffeln', 'https://world.openfoodfacts.org/product/4066447584035', '4066447584035'),
     ('Vemondo', 'Tofu Natur', 'https://world.openfoodfacts.org/product/4056489616214', '4056489616214'),
+    ('Rügenwalder Mühle', 'Veganer Schinken Spicker Bunter Pfeffer', 'https://world.openfoodfacts.org/product/4000405004999', '4000405004999'),
+    ('DmBio', 'Mais Waffeln gesalzen', 'https://world.openfoodfacts.org/product/4066447562682', '4066447562682'),
+    ('Rügenwalder Mühle', 'Vegan Curry aufschnitt', 'https://world.openfoodfacts.org/product/4000405001745', '4000405001745'),
+    ('Gut Bio', 'Bio-Linsenwaffeln - Meersalz', 'https://world.openfoodfacts.org/product/4061463803764', '4061463803764'),
+    ('Kühne', 'Rotkohl', 'https://world.openfoodfacts.org/product/40804002', '40804002'),
+    ('Harry', 'Steinofenbrot, Harry 1688', 'https://world.openfoodfacts.org/product/4071800000855', '4071800000855'),
+    ('Better Plant', 'Vegane Creme', 'https://world.openfoodfacts.org/product/4056489671411', '4056489671411'),
     ('REWE Bio +vegan', 'Räucher-Tofu', 'https://world.openfoodfacts.org/product/4337256250122', '4337256250122'),
     ('Rewe', 'Falafel bällchen', 'https://world.openfoodfacts.org/product/4337256857086', '4337256857086'),
+    ('Taifun', 'Tofu fumé', 'https://world.openfoodfacts.org/product/4012359111104', '4012359111104'),
+    ('Rewe Beste Wahl', 'Milde Genießer Scheiben', 'https://world.openfoodfacts.org/product/21763847', '21763847'),
+    ('Simply V', 'Würzig verfeinert mit Mandelöl', 'https://world.openfoodfacts.org/product/4260444962982', '4260444962982'),
+    ('Plant Republic', 'Räucher-Tofu', 'https://world.openfoodfacts.org/product/4337256242585', '4337256242585'),
+    ('K-take it veggie', 'Bio Tofu geräuchert', 'https://world.openfoodfacts.org/product/4335896750200', '4335896750200'),
+    ('No-Name', 'Bananen süß & samtig', 'https://world.openfoodfacts.org/product/4251291113221', '4251291113221'),
+    ('Taifun', 'Filets de tofu à la japonaise', 'https://world.openfoodfacts.org/product/4012359144003', '4012359144003'),
+    ('EDEKA Bio', 'My Veggie Tofu geräuchert', 'https://world.openfoodfacts.org/product/4311501704288', '4311501704288'),
+    ('Taifun', 'Tofu natur', 'https://world.openfoodfacts.org/product/4012359110107', '4012359110107'),
     ('Like Meat', 'Like Grilled Chicken', 'https://world.openfoodfacts.org/product/4260380665039', '4260380665039'),
     ('Like Meat', 'Like Chicken', 'https://world.openfoodfacts.org/product/4260380665015', '4260380665015'),
     ('Baresa', 'Tomatenmark 2-Fach Konzentriert', 'https://world.openfoodfacts.org/product/20319335', '20319335'),
@@ -25,8 +51,22 @@ FROM (
     ('Baresa', 'Tomaten passiert', 'https://world.openfoodfacts.org/product/20163402', '20163402'),
     ('Garden Gourmet', 'Sensational Burger aus Sojaprotein', 'https://world.openfoodfacts.org/product/7613036915076', '7613036915076'),
     ('Sondey', 'Mais Waffeln mit Meersalz Bio', 'https://world.openfoodfacts.org/product/20884697', '20884697'),
-    ('Barilla', 'Fusilli 98', 'https://world.openfoodfacts.org/product/8076802085981', '8076802085981'),
-    ('Barilla', 'Spaghetti n5', 'https://world.openfoodfacts.org/product/8076800195057', '8076800195057')
+    ('Greenforce', 'Pflanzliche Mini-Frika', 'https://world.openfoodfacts.org/product/4260322211348', '4260322211348'),
+    ('Ja', 'Tomaten passiert', 'https://world.openfoodfacts.org/product/4337256733359', '4337256733359'),
+    ('REWE Bio', 'Sojasahne', 'https://world.openfoodfacts.org/product/4337256266383', '4337256266383'),
+    ('Simply V', 'Gerieben Pizza', 'https://world.openfoodfacts.org/product/4260444962807', '4260444962807'),
+    ('Ja!', 'Cherry-Roma Tomaten Klasse 1', 'https://world.openfoodfacts.org/product/8436557138934', '8436557138934'),
+    ('EDEKA Bio', 'My Veggie Tofu Natur', 'https://world.openfoodfacts.org/product/4311501451076', '4311501451076'),
+    ('REWE Bio', 'Linsenwaffeln', 'https://world.openfoodfacts.org/product/4337256669160', '4337256669160'),
+    ('Nestlé', 'Vegane Filet-Streifen', 'https://world.openfoodfacts.org/product/7290109359021', '7290109359021'),
+    ('Greenforce', 'Pflanzliche Cevapcici', 'https://world.openfoodfacts.org/product/4260322211362', '4260322211362'),
+    ('EnerBiO', 'Veggie Hack', 'https://world.openfoodfacts.org/product/4305615783208', '4305615783208'),
+    ('Edeka Bio', 'Tomatenmark 2-fach konzentriert', 'https://world.openfoodfacts.org/product/4311501446232', '4311501446232'),
+    ('Rewe', 'Tofu Natur', 'https://world.openfoodfacts.org/product/4337256253222', '4337256253222'),
+    ('Like Meat', 'Like Beef Strips', 'https://world.openfoodfacts.org/product/4260380665930', '4260380665930'),
+    ('Rama', 'Kochcreme', 'https://world.openfoodfacts.org/product/8719200207172', '8719200207172'),
+    ('Edeka', 'My Veggie Tofu Classic', 'https://world.openfoodfacts.org/product/4311501012246', '4311501012246'),
+    ('Alnatura', 'Linsen Waffeln', 'https://world.openfoodfacts.org/product/4104420208254', '4104420208254')
 ) AS d(brand, product_name, source_url, source_ean)
 WHERE p.country = 'DE' AND p.brand = d.brand
   AND p.product_name = d.product_name

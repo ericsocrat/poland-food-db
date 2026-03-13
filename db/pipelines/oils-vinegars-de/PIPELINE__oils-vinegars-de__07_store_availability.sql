@@ -1,6 +1,6 @@
 -- PIPELINE (Oils & Vinegars): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-08
+-- Generated: 2026-03-13
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -11,7 +11,7 @@ SELECT
 FROM (
   VALUES
     ('Bellasan', 'Natives Olivenöl Extra', 'Aldi'),
-    ('Primadonna', 'Natives Olivenöl Extra', 'Lidl'),
+    ('Primadonna', 'Natives Olivenöl extra', 'Lidl'),
     ('DmBio', 'Natives Olivenöl extra', 'dm'),
     ('Lyttos', 'Olivenöl', 'Aldi'),
     ('DmBio', 'Bratolivenöl', 'dm'),
@@ -29,9 +29,15 @@ FROM (
     ('Aldi Bellasan', 'ALDI BELLASAN Natives Olivenöl extra für kalte Zubereitungen wie Salate und Vinaigretten geeignet, in PET-Flasche 1l 8.99€', 'Aldi'),
     ('Bellasan', 'Olivenöl', 'Aldi'),
     ('Aldi', 'Natives Olivenöl Extra', 'Aldi'),
+    ('Gourmet Finest Cuisine', 'Aromatisiertes Olivenöl mit Gewürzen - Rosmarin', 'Aldi'),
+    ('Cucina Nobile', 'Aromatisiertes Würzöl aus nativem Olivenöl Extra - Zitrone', 'Aldi'),
+    ('Aldi', 'Aromatisiertes Würzöl aus nativem Olivenöl Extra - Tomate', 'Aldi'),
+    ('Primadonna', 'Extra Virgin Olive Oil', 'Lidl'),
+    ('Lidl', 'Huile d''olive vierge extra', 'Lidl'),
+    ('Eridanous', 'Greek Extra Virgin Olive Oil Kalamata P.D.O.', 'Lidl'),
     ('Bertolli', 'Natives Olivenöl Originale', 'Edeka'),
     ('Bertolli', 'Natives Olivenöl Originale', 'REWE'),
-    ('Rewe', 'Natives Olivenöl Extra', 'REWE'),
+    ('Rewe Bio', 'Natives Olivenöl Extra', 'REWE'),
     ('Edeka Bio', 'EDEKA Bio Natives Olivenöl extra 750ml 6.65€ 1l 9.27€', 'Edeka'),
     ('Alnatura', 'Olivenöl', 'Edeka'),
     ('Gut & Günstig', 'Olivenöl Extra Natives', 'Edeka'),
@@ -48,7 +54,33 @@ FROM (
     ('Vegola', 'Natives Olivenöl extra', 'Netto'),
     ('Fiore', 'Natives Olivenöl Extra', 'REWE'),
     ('REWE Feine Welt', 'Natives Olivenöl Extra Lesvos g.g.A.', 'REWE'),
-    ('Edeka', 'Griechisches Natives Olivenöl Extra', 'Edeka')
+    ('Edeka', 'Griechisches Natives Olivenöl Extra', 'Edeka'),
+    ('Carapelli', 'Bio Natives Olivenöl Extra', 'REWE'),
+    ('De Cecco', 'Natives Olivenöl Extra', 'REWE'),
+    ('Primadonna', 'Olivenöl Extra', 'Lidl'),
+    ('Ener Bio', 'Bratöl Olive mit Sonnenblumenöl', 'Rossmann'),
+    ('Bertolli', 'Olivenöl Extra vergin', 'Aldi'),
+    ('Bertolli', 'Olivenöl Extra vergin', 'Edeka'),
+    ('Bertolli', 'Olivenöl Extra vergin', 'Kaufland'),
+    ('Edeka', 'Natives Olivenöl extra angef.', 'Edeka'),
+    ('Eridanous', 'Olivenöl', 'Lidl'),
+    ('Sol&mar', 'Natives Olivenöl extra', 'Lidl'),
+    ('Rewe', 'Natives Olivenöl Extra', 'REWE'),
+    ('Tegut Bio', 'Olivenöl Bio', 'Tegut'),
+    ('Rewe', 'Natives Olivenöl etra', 'REWE'),
+    ('K Classic', 'Natives Olivenöl extra von K-Bio', 'Kaufland'),
+    ('Bertolli', 'Olivenöl', 'Real'),
+    ('Kölln', 'Olivenöl', 'REWE'),
+    ('Rewe Bio', 'Bio Natives Olivenöl Extra', 'REWE'),
+    ('Bio', 'Natives Olivenöl extra', 'Aldi'),
+    ('Mylos', 'Bio Natives Olivenöl extra', 'Edeka'),
+    ('Bellucino', 'Olivenöl', 'Lidl'),
+    ('Bellucino', 'Olivenöl', 'Norma'),
+    ('Rewe', 'Olivenöl', 'REWE'),
+    ('Olivari', 'Olivari Bratöl', 'Kaufland'),
+    ('Kaufland', 'Natives Olivenöl extra', 'Kaufland'),
+    ('Premieur', 'Natives Olivenöl Extra', 'Netto'),
+    ('Aceites del Sur-Coosur', 'Natives Olivenöl Extra', 'Netto')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'DE' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Oils & Vinegars' AND p.is_deprecated IS NOT TRUE

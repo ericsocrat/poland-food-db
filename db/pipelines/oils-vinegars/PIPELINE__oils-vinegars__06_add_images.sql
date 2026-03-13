@@ -1,6 +1,6 @@
 -- PIPELINE (Oils & Vinegars): add product images
 -- Source: Open Food Facts API image URLs
--- Generated: 2026-03-06
+-- Generated: 2026-03-12
 
 -- 1. Remove existing OFF images for this category
 DELETE FROM product_images
@@ -67,14 +67,15 @@ FROM (
     ('Radix-Bis', 'Olej kokosowy rafinowany', 'https://images.openfoodfacts.org/images/products/590/756/900/5864/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5907569005864', 'front_5907569005864'),
     ('Go Bio', 'Olej Kokosowy', 'https://images.openfoodfacts.org/images/products/590/215/028/4123/front_pl.18.400.jpg', 'off_api', 'front', true, 'Front — EAN 5902150284123', 'front_5902150284123'),
     ('Vita Natura', 'Olej kokosowy Bio', 'https://images.openfoodfacts.org/images/products/590/618/501/2744/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5906185012744', 'front_5906185012744'),
+    ('Unknown', 'Olej z czarnuszki', 'https://images.openfoodfacts.org/images/products/590/639/563/1384/front_pl.11.400.jpg', 'off_api', 'front', true, 'Front — EAN 5906395631384', 'front_5906395631384'),
     ('Nestlé', 'Przyprawa Maggi', 'https://images.openfoodfacts.org/images/products/590/008/501/1180/front_pl.28.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900085011180', 'front_5900085011180'),
     ('Iorgos', 'Olive Oil', 'https://images.openfoodfacts.org/images/products/590/390/094/1358/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5903900941358', 'front_5903900941358'),
     ('PPHU &quot;OLMAJ&quot; Sławomir Majewski', 'Olej rzepakowy zwyczajny', 'https://images.openfoodfacts.org/images/products/590/823/594/4975/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5908235944975', 'front_5908235944975'),
     ('Lyrakis Family', 'Oliwa z oliwek z pierwszego tłoczenia', 'https://images.openfoodfacts.org/images/products/520/440/158/0061/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5204401580061', 'front_5204401580061'),
     ('Suriny', 'Olej z ryżu 100%', 'https://images.openfoodfacts.org/images/products/885/104/601/0025/front_pl.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 8851046010025', 'front_8851046010025'),
+    ('Basso', 'Olej z ryżu', 'https://images.openfoodfacts.org/images/products/800/412/300/5920/front_pl.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 8004123005920', 'front_8004123005920'),
     ('Pudliszki', 'Pudliszki', 'https://images.openfoodfacts.org/images/products/590/078/300/9960/front_de.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5900783009960', 'front_5900783009960'),
     ('Primadonna', 'Extra Virgin Olive Oil', 'https://images.openfoodfacts.org/images/products/405/648/997/3010/front_en.12.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489973010', 'front_4056489973010'),
-    ('Primadonna', 'Olivenöl (nativ, extra)', 'https://images.openfoodfacts.org/images/products/405/648/995/7652/front_de.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489957652', 'front_4056489957652'),
     ('Casa de Azeite', 'Oliwa z oliwek', 'https://images.openfoodfacts.org/images/products/841/066/007/8929/front_pl.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 8410660078929', 'front_8410660078929'),
     ('Carrefour BIO', 'Huile d''olive vierge extra', 'https://images.openfoodfacts.org/images/products/356/007/097/3743/front_fr.62.400.jpg', 'off_api', 'front', true, 'Front — EAN 3560070973743', 'front_3560070973743'),
     ('Casa de Azeite', 'Casa de Azeite', 'https://images.openfoodfacts.org/images/products/560/185/517/9009/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5601855179009', 'front_5601855179009'),
@@ -91,7 +92,38 @@ FROM (
     ('Lidl', 'Olej kokosowy', 'https://images.openfoodfacts.org/images/products/000/004/087/5224/front_pl.9.400.jpg', 'off_api', 'front', true, 'Front — EAN 40875224', 'front_40875224'),
     ('Carrefour', 'Huile pour friture', 'https://images.openfoodfacts.org/images/products/356/007/126/7643/front_fr.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 3560071267643', 'front_3560071267643'),
     ('Monini', 'Oliwa z oliwek', 'https://images.openfoodfacts.org/images/products/000/008/005/3828/front_en.46.400.jpg', 'off_api', 'front', true, 'Front — EAN 80053828', 'front_80053828'),
-    ('Gallo', 'Olive Oil', 'https://images.openfoodfacts.org/images/products/560/125/211/5983/front_en.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5601252115983', 'front_5601252115983')
+    ('Gallo', 'Olive Oil', 'https://images.openfoodfacts.org/images/products/560/125/211/5983/front_en.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 5601252115983', 'front_5601252115983'),
+    ('Lidl', 'Huile d''olive vierge extra origine Espagne extraite à froid bio', 'https://images.openfoodfacts.org/images/products/405/648/909/5897/front_en.67.400.jpg', 'off_api', 'front', true, 'Front — EAN 4056489095897', 'front_4056489095897'),
+    ('K-Classic', 'Extra virgin olive oil', 'https://images.openfoodfacts.org/images/products/841/066/007/3368/front_en.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 8410660073368', 'front_8410660073368'),
+    ('Unknown', 'Olio Extre Vergine Do Oliva Grecale', 'https://images.openfoodfacts.org/images/products/801/844/005/0129/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 8018440050129', 'front_8018440050129'),
+    ('Lyttos', 'Greek Olive Oil', 'https://images.openfoodfacts.org/images/products/200/808/012/2207/front_pl.9.400.jpg', 'off_api', 'front', true, 'Front — EAN 2008080122207', 'front_2008080122207'),
+    ('Eridanous', 'Öl - Griechisches natives Olivenöl Extra', 'https://images.openfoodfacts.org/images/products/000/002/070/6784/front_pl.36.400.jpg', 'off_api', 'front', true, 'Front — EAN 20706784', 'front_20706784'),
+    ('Basso', 'Olio extravergine di oliva', 'https://images.openfoodfacts.org/images/products/800/412/300/0284/front_en.35.400.jpg', 'off_api', 'front', true, 'Front — EAN 8004123000284', 'front_8004123000284'),
+    ('La PEDRIZA', 'Aceite de Olive Virgen Extra', 'https://images.openfoodfacts.org/images/products/842/332/911/3138/front_pl.10.400.jpg', 'off_api', 'front', true, 'Front — EAN 8423329113138', 'front_8423329113138'),
+    ('Basso', 'Oliwa z wytloczyn z oliwek', 'https://images.openfoodfacts.org/images/products/800/412/300/4237/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 8004123004237', 'front_8004123004237'),
+    ('Goccia d''oro', 'Olio di Sansa di Oliva', 'https://images.openfoodfacts.org/images/products/800/325/000/0129/front_pl.6.400.jpg', 'off_api', 'front', true, 'Front — EAN 8003250000129', 'front_8003250000129'),
+    ('Neféli', 'Extra Virgin Olive Oil', 'https://images.openfoodfacts.org/images/products/520/344/776/0055/front_en.13.400.jpg', 'off_api', 'front', true, 'Front — EAN 5203447760055', 'front_5203447760055'),
+    ('Kaufland', 'Bio oliwa z oliwek', 'https://images.openfoodfacts.org/images/products/841/066/007/3306/front_de.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 8410660073306', 'front_8410660073306'),
+    ('Salvadori', 'Olio Di Sansa Di Oliva Salvadori', 'https://images.openfoodfacts.org/images/products/800/846/022/3139/front_fr.30.400.jpg', 'off_api', 'front', true, 'Front — EAN 8008460223139', 'front_8008460223139'),
+    ('Font Oliva', 'Olive Oil', 'https://images.openfoodfacts.org/images/products/842/453/694/4157/front_en.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 8424536944157', 'front_8424536944157'),
+    ('Unknown', 'Pedriza extra virgin olive oil', 'https://images.openfoodfacts.org/images/products/842/332/911/3121/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 8423329113121', 'front_8423329113121'),
+    ('Basso', 'Oliwa z oliwek extra vergine al basilico', 'https://images.openfoodfacts.org/images/products/800/412/300/4664/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 8004123004664', 'front_8004123004664'),
+    ('Basso', 'Oliwa z oliwek extra vergine al rosmarino', 'https://images.openfoodfacts.org/images/products/800/412/300/4909/front_pl.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 8004123004909', 'front_8004123004909'),
+    ('Ollineo', 'Ollineo Öl', 'https://images.openfoodfacts.org/images/products/571/287/229/2470/front_de.14.400.jpg', 'off_api', 'front', true, 'Front — EAN 5712872292470', 'front_5712872292470'),
+    ('Monini', 'Aceto di vino blanco 7,1 %', 'https://images.openfoodfacts.org/images/products/000/008/005/4627/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 80054627', 'front_80054627'),
+    ('JCCoinbra II', 'Olej z pestek winogron. Rafinowany', 'https://images.openfoodfacts.org/images/products/560/185/557/9021/front_pl.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5601855579021', 'front_5601855579021'),
+    ('Basso', 'Peanut oil', 'https://images.openfoodfacts.org/images/products/800/412/300/7306/front_en.15.400.jpg', 'off_api', 'front', true, 'Front — EAN 8004123007306', 'front_8004123007306'),
+    ('Sottile Gusto', 'Olej z pestek winogron', 'https://images.openfoodfacts.org/images/products/560/185/557/9007/front_pl.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 5601855579007', 'front_5601855579007'),
+    ('Bio Planete', 'Olej Kokosowy ekologiczny', 'https://images.openfoodfacts.org/images/products/426/035/558/0572/front_pl.12.400.jpg', 'off_api', 'front', true, 'Front — EAN 4260355580572', 'front_4260355580572'),
+    ('Bio planete', 'Ekologiczny Olej kokosowy virgin', 'https://images.openfoodfacts.org/images/products/426/035/558/0558/front_pl.5.400.jpg', 'off_api', 'front', true, 'Front — EAN 4260355580558', 'front_4260355580558'),
+    ('Foodbroker as', 'Olej z pestek winogron', 'https://images.openfoodfacts.org/images/products/800/412/300/2509/front_pl.14.400.jpg', 'off_api', 'front', true, 'Front — EAN 8004123002509', 'front_8004123002509'),
+    ('Vilgain', 'Avocado oil spray', 'https://images.openfoodfacts.org/images/products/859/419/937/5251/front_en.4.400.jpg', 'off_api', 'front', true, 'Front — EAN 8594199375251', 'front_8594199375251'),
+    ('Unknown', 'Oliwa z Oliwek', 'https://images.openfoodfacts.org/images/products/560/199/940/0014/front_fr.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5601999400014', 'front_5601999400014'),
+    ('Agrelos', 'Extra Virgin Olive Oil', 'https://images.openfoodfacts.org/images/products/520/012/418/5620/front_en.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 5200124185620', 'front_5200124185620'),
+    ('Unknown', 'Aceite de oliva virgen extra', 'https://images.openfoodfacts.org/images/products/843/700/054/2445/front_fr.9.400.jpg', 'off_api', 'front', true, 'Front — EAN 8437000542445', 'front_8437000542445'),
+    ('Unknown', 'Orazio''s olive oil', 'https://images.openfoodfacts.org/images/products/072/018/981/0190/front_fr.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 0720189810190', 'front_0720189810190'),
+    ('Unknown', 'Extra Virgin Olive Oil', 'https://images.openfoodfacts.org/images/products/006/227/355/1283/front_fr.3.400.jpg', 'off_api', 'front', true, 'Front — EAN 0062273551283', 'front_0062273551283'),
+    ('Unknown', 'Huile de coco', 'https://images.openfoodfacts.org/images/products/316/092/077/4126/front_en.8.400.jpg', 'off_api', 'front', true, 'Front — EAN 3160920774126', 'front_3160920774126')
 ) AS d(brand, product_name, url, source, image_type, is_primary, alt_text, off_image_id)
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Oils & Vinegars' AND p.is_deprecated IS NOT TRUE

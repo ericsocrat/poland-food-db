@@ -1,6 +1,6 @@
 -- PIPELINE (Seafood & Fish): store availability
 -- Source: Open Food Facts API store field
--- Generated: 2026-03-04
+-- Generated: 2026-03-12
 
 INSERT INTO product_store_availability (product_id, store_id, verified_at, source)
 SELECT
@@ -28,6 +28,9 @@ FROM (
     ('Jantar', 'Filet z pstrąga wędzonego na gorąco z pieprzem', 'Auchan'),
     ('Northlantica', 'Śledź filet (wędzony z przyprawami)', 'Carrefour'),
     ('Dega', 'Ryba śledź po grecku', 'Lewiatan'),
+    ('Auchan', 'Płaty śledziowe marynowane', 'Auchan'),
+    ('Auchan', 'Łosoś Atlantycki', 'Auchan'),
+    ('Mariners', 'Dziki Łosoś Sockeye', 'Biedronka'),
     ('Lisner', 'Marinated Herring in mushroom sauce', 'Auchan'),
     ('Marinero', 'Filety z makreli w sosie pomidorowym', 'Biedronka'),
     ('SuperFish', 'Smoked Salmon', 'Kaufland'),
@@ -44,7 +47,21 @@ FROM (
     ('Marinero', 'Świeży pstrąg tęczowy łososiowy filet', 'Biedronka'),
     ('Nautica', 'Opiekane filety śledziowe w zalewie octowej', 'Lidl'),
     ('Nautica', 'Filety śledziowe w sosie śmietanowym', 'Lidl'),
-    ('K classic', 'Filety Śledziowe w sosie koperkowym', 'Kaufland')
+    ('K classic', 'Filety Śledziowe w sosie koperkowym', 'Kaufland'),
+    ('Princes', 'Tuńczyk Jednolity', 'Kaufland'),
+    ('Targ rybny Lidla', 'Łosoś atlantycki filet ze skórą', 'Lidl'),
+    ('Ocean sea', 'Paluszki surimi', 'Lidl'),
+    ('Vitasia', 'Wakame seaweed dried sprinkles', 'Lidl'),
+    ('Carrefour', '16 Grosses croquettes de poisson', 'Carrefour'),
+    ('Carrefour', 'Queues de crevettes CRUES', 'Carrefour'),
+    ('Simplo', 'Crevettes sauvages décortiquées cuites', 'Carrefour'),
+    ('Carrefour', 'Filets DE MERLU BLANC', 'Carrefour'),
+    ('Carrefour', 'Bâtonnets de Poissons PANÉS', 'Carrefour'),
+    ('Carrefour', 'Filets de CABILLAUD', 'Carrefour'),
+    ('Carrefour', 'Tonno a pinne gialle al naturale', 'Carrefour'),
+    ('Carrefour', 'Thon albacore Au naturel', 'Carrefour'),
+    ('Carrefour', 'Filets de sardines', 'Carrefour'),
+    ('Auchan', 'Thon.', 'Auchan')
 ) AS d(brand, product_name, store_name)
 JOIN products p ON p.country = 'PL' AND p.brand = d.brand AND p.product_name = d.product_name
   AND p.category = 'Seafood & Fish' AND p.is_deprecated IS NOT TRUE
