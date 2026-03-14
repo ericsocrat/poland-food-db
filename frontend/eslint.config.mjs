@@ -68,6 +68,14 @@ const eslintConfig = [
     },
   },
 
+  // OG image generators — Satori requires plain <img>, not next/image
+  {
+    files: ["**/opengraph-image.tsx"],
+    rules: {
+      "@next/next/no-img-element": "off",
+    },
+  },
+
   // Logger & metrics utilities — intentional console usage
   {
     files: ["**/logger.ts", "**/monitoring/**", "**/web-vitals.ts"],

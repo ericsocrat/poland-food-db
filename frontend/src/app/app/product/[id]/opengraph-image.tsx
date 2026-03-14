@@ -176,7 +176,6 @@ export default async function OGImage({
           }}
         >
           {heroUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element -- Satori renderer requires plain <img>, not next/image
             <img
               src={heroUrl}
               alt=""
