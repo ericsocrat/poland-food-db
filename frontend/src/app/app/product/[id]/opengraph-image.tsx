@@ -2,8 +2,8 @@
 // Generates a 1200×630 PNG with product name, score ring, hero image, and
 // warnings.  Edge-cached for 1 hour.  Uses Next.js  ImageResponse (Satori).
 
-import { ImageResponse } from "next/og";
 import { getScoreHex } from "@/lib/score-utils";
+import { ImageResponse } from "next/og";
 
 /* ---------- route configuration ---------- */
 export const runtime = "nodejs";
@@ -176,7 +176,7 @@ export default async function OGImage({
           }}
         >
           {heroUrl ? (
-            // eslint-disable-next-line @next/next/no-img-element
+            // eslint-disable-next-line @next/next/no-img-element -- Satori renderer requires plain <img>, not next/image
             <img
               src={heroUrl}
               alt=""

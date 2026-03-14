@@ -136,7 +136,8 @@ export default withSentryConfig(withSerwist(nextConfig), {
     deleteSourcemapsAfterUpload: true,
   },
 
-  silent: !process.env.CI,
+  // Suppress Sentry build output (sourcemap reference warnings are not actionable)
+  silent: true,
 
   // Disable Sentry telemetry about its own SDK usage
   telemetry: false,

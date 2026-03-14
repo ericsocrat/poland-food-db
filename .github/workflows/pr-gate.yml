@@ -27,7 +27,7 @@ concurrency:
 env:
   # ── CI runtime observability baselines (seconds) ─────────────────────────
   BASELINE_STATIC: 90
-  BASELINE_UNIT: 180
+  BASELINE_UNIT: 280
   BASELINE_BUILD: 120
   BASELINE_SMOKE: 300
 

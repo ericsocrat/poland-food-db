@@ -28,7 +28,7 @@ env:
   NODE_VERSION: "20"
   # ── CI runtime observability baselines (seconds) ─────────────────────────
   BASELINE_STATIC: 90
-  BASELINE_UNIT: 180
+  BASELINE_UNIT: 280
   BASELINE_BUILD: 120
   BASELINE_E2E: 300
   BASELINE_SONAR: 300
