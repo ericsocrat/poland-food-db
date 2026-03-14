@@ -83,7 +83,7 @@ describe("CompareCheckbox", () => {
   it("stops event propagation on click", () => {
     const parentClick = vi.fn();
     render(
-      // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-static-element-interactions
+       
       <div onClick={parentClick}>
         <CompareCheckbox productId={42} />
       </div>,

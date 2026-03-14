@@ -72,7 +72,7 @@ export function ShortcutsHelp({ open, onClose }: Readonly<ShortcutsHelpProps>) {
   );
 
   return (
-    // eslint-disable-next-line jsx-a11y/click-events-have-key-events, jsx-a11y/no-noninteractive-element-interactions
+     
     <dialog
       ref={dialogRef}
       aria-labelledby="shortcuts-help-title"

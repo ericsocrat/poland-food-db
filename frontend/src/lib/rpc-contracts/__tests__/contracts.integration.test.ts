@@ -86,7 +86,7 @@ function assertContract<T>(
     if (allMissing) return;
 
     // Real contract violation — log and fail
-    // eslint-disable-next-line no-console
+     
     console.error(
       `\n❌ Contract violation [${rpcName}]:\n`,
       JSON.stringify(result.error.issues, null, 2),

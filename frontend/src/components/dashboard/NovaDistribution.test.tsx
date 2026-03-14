@@ -24,7 +24,7 @@ describe("NovaDistributionChart", () => {
 
   it("renders nothing for empty/undefined distribution values", () => {
     const { container } = render(
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       <NovaDistributionChart distribution={{} as any} />,
     );
     expect(container.innerHTML).toBe("");

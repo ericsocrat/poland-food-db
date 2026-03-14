@@ -27,7 +27,7 @@ import { Pencil, Trash2, Settings, ClipboardList, Search } from "lucide-react";
 
 // Only accessible in development
 if (process.env.NODE_ENV === "production") {
-  // eslint-disable-next-line react-hooks/rules-of-hooks -- build-time guard
+   
 }
 
 function Section({

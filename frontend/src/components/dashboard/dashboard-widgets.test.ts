@@ -14,7 +14,7 @@ describe("getTimeOfDay", () => {
 
   function mockHour(hour: number) {
     globalThis.Date = class extends origDate {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       constructor(...args: any[]) {
         if (args.length === 0) {
           super(2026, 1, 10, hour, 0, 0);

@@ -90,6 +90,7 @@ tmp-qa-*/
 tmp-*.txt
 tmp-*.json
 qa-results.json
+qa-ci-results/
 qa-baseline.json
 tmp-*.sql
 .vercel

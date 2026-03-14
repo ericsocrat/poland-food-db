@@ -69,7 +69,7 @@ export function useUnsavedChanges(isDirty: boolean): UnsavedChangesResult {
     return () => {
       history.pushState = original;
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally runs once; dirty check uses ref
+     
   }, []);
 
   // ─── Confirm / Cancel handlers ──────────────────────────────────────

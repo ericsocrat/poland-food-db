@@ -211,7 +211,7 @@ describe("GET /api/health", () => {
 
   it("rejects response with missing status field", async () => {
     const noStatus = { ...healthyResponse };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     delete (noStatus as any).status;
     mockRpc.mockResolvedValue({ data: noStatus, error: null });
 

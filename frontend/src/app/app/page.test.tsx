@@ -19,7 +19,7 @@ vi.mock("@/lib/api", () => ({
 }));
 
 vi.mock("next/link", () => ({
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   
   default: ({ href, children, className, ...rest }: any) => (
     <a href={href} className={className} {...rest}>
       {children}

@@ -110,14 +110,14 @@ describe("extractBusinessError", () => {
 function createMockSupabase(rpcResult: { data: unknown; error: unknown }) {
   return {
     rpc: vi.fn().mockResolvedValue(rpcResult),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
   } as any;
 }
 
 function createThrowingSupabase(err: unknown) {
   return {
     rpc: vi.fn().mockRejectedValue(err),
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
   } as any;
 }
 

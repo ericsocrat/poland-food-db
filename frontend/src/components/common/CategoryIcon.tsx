@@ -251,7 +251,7 @@ export function CategoryIcon({
       aria-label={label}
     >
       <title>{iconData.title}</title>
-      {/* eslint-disable-next-line react/no-danger */}
+      { }
       <g dangerouslySetInnerHTML={{ __html: iconData[variant] }} />
     </svg>
   );

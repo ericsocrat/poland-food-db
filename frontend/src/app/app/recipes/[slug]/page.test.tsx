@@ -403,7 +403,7 @@ describe("RecipeDetailPage", () => {
   it("calls navigator.share when available", async () => {
     const originalShare = navigator.share;
     const shareSpy = vi.fn().mockResolvedValue(undefined);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (navigator as any).share = shareSpy;
 
     render(<RecipeDetailPage />, { wrapper: createWrapper() });
@@ -425,7 +425,7 @@ describe("RecipeDetailPage", () => {
     });
 
     // cleanup
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (navigator as any).share = originalShare;
   });
 
@@ -460,7 +460,7 @@ describe("RecipeDetailPage", () => {
     if (shareDescriptor) {
       Object.defineProperty(navigator, "share", shareDescriptor);
     } else {
-      // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
+       
       delete (navigator as Record<string, unknown>)["share"];
     }
   });

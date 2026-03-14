@@ -88,7 +88,7 @@ vi.mock("@/lib/rpc", () => ({
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const fakeSupabase = {} as any;
 
 // ─── Tests ──────────────────────────────────────────────────────────────────

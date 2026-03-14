@@ -67,7 +67,7 @@ jobs:
         timeout-minutes: 3
 
       - name: ESLint
-        run: npx next lint
+        run: npx eslint src/
         timeout-minutes: 3
 
       - name: CI runtime summary

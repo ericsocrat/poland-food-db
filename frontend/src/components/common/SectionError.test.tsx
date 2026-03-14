@@ -24,7 +24,7 @@ vi.mock("@/lib/error-classifier", () => ({
   classifyError: vi.fn().mockReturnValue("unknown"),
 }));
 
-// eslint-disable-next-line @typescript-eslint/consistent-type-imports
+ 
 const { classifyError } = await import("@/lib/error-classifier");
 const mockClassify = vi.mocked(classifyError);
 

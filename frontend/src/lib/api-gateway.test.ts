@@ -23,7 +23,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mockInvoke = vi.fn();
 const mockRpc = vi.fn();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const fakeSupabase = { functions: { invoke: mockInvoke }, rpc: mockRpc } as any;
 
 beforeEach(() => {

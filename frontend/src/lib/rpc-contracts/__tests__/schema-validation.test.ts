@@ -606,28 +606,28 @@ describe("Schema validation: valid data accepted", () => {
 describe("Schema validation: missing required keys rejected", () => {
   it("ProductDetailContract rejects missing product_name", () => {
     const data = mockProductDetail();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     delete (data as any).product_name;
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
 
   it("ProductDetailContract rejects missing scores", () => {
     const data = mockProductDetail();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     delete (data as any).scores;
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
 
   it("SearchProductsContract rejects missing results", () => {
     const data = mockSearchResponse();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     delete (data as any).results;
     expect(SearchProductsContract.safeParse(data).success).toBe(false);
   });
 
   it("SearchProductsContract rejects missing total", () => {
     const data = mockSearchResponse();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     delete (data as any).total;
     expect(SearchProductsContract.safeParse(data).success).toBe(false);
   });
@@ -665,7 +665,7 @@ describe("Schema validation: missing required keys rejected", () => {
 describe("Schema validation: type mismatches rejected", () => {
   it("rejects product_id as string instead of number", () => {
     const data = mockProductDetail();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (data as any).product_id = "not-a-number";
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
@@ -678,28 +678,28 @@ describe("Schema validation: type mismatches rejected", () => {
 
   it("rejects nutri_score as non-string value", () => {
     const data = mockProductDetail();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (data.scores as any).nutri_score = 123;
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
 
   it("rejects calories as string instead of number", () => {
     const data = mockProductDetail();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (data.nutrition_per_100g as any).calories = "120";
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
 
   it("rejects search total as string instead of number", () => {
     const data = mockSearchResponse();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (data as any).total = "1";
     expect(SearchProductsContract.safeParse(data).success).toBe(false);
   });
 
   it("rejects high_salt as string instead of boolean", () => {
     const data = mockProductDetail();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (data.flags as any).high_salt = "true";
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
@@ -761,7 +761,7 @@ describe("Schema validation: nullable fields", () => {
 
   it("rejects null where non-nullable", () => {
     const data = mockProductDetail();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     (data as any).product_name = null;
     expect(ProductDetailContract.safeParse(data).success).toBe(false);
   });
@@ -804,13 +804,13 @@ describe("Schema validation: SearchQualityReportContract", () => {
   });
 
   it("rejects report missing planned_metrics", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { planned_metrics: _pm, ...data } = validStubReport;
     expect(SearchQualityReportContract.safeParse(data).success).toBe(false);
   });
 
   it("rejects report missing period_days", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { period_days: _pd, ...data } = validStubReport;
     expect(SearchQualityReportContract.safeParse(data).success).toBe(false);
   });
@@ -868,13 +868,13 @@ describe("ProductProvenanceContract", () => {
   });
 
   it("rejects missing product_name", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { product_name: _pn, ...data } = validProvenance;
     expect(ProductProvenanceContract.safeParse(data).success).toBe(false);
   });
 
   it("rejects missing trust_explanation", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { trust_explanation: _te, ...data } = validProvenance;
     expect(ProductProvenanceContract.safeParse(data).success).toBe(false);
   });
@@ -955,7 +955,7 @@ describe("ProvenanceDashboardContract", () => {
   });
 
   it("rejects missing policies array", () => {
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+     
     const { policies: _p, ...data } = validDashboard;
     expect(ProvenanceDashboardContract.safeParse(data).success).toBe(false);
   });

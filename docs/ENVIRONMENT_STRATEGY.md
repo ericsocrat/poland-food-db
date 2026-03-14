@@ -25,22 +25,22 @@ We maintain two Supabase cloud projects:
 
 ### 8.1 — Staging Supabase Project (Active)
 
-| Field   | Value                                                                                                  |
-| ------- | ------------------------------------------------------------------------------------------------------ |
-| Status  | **Active** — staging project created and wired into scripts + CI                                       |
-| Setup   | Follow [STAGING_SETUP.md](STAGING_SETUP.md) for the step-by-step guide                                 |
-| Scripts | `RUN_REMOTE.ps1 -Env staging`, `RUN_SEED.ps1 -Env staging`, `RUN_SANITY.ps1 -Env staging` all work     |
+| Field   | Value                                                                                              |
+| ------- | -------------------------------------------------------------------------------------------------- |
+| Status  | **Active** — staging project created and wired into scripts + CI                                   |
+| Setup   | Follow [STAGING_SETUP.md](STAGING_SETUP.md) for the step-by-step guide                             |
+| Scripts | `RUN_REMOTE.ps1 -Env staging`, `RUN_SEED.ps1 -Env staging`, `RUN_SANITY.ps1 -Env staging` all work |
 
 ### 8.1A — Cloud Mode Guardrails (Required)
 
-| #   | Task                                                                                                                          | Status |
-| --- | ----------------------------------------------------------------------------------------------------------------------------- | ------ |
-| 1   | All scripts targeting the cloud require explicit `-Env` parameter and refuse destructive actions by default                    | ✅      |
-| 2   | Seed pipeline is idempotent — uses `ON CONFLICT DO UPDATE`, no accidental overwrite                                           | ✅      |
-| 3   | CI / E2E uses least-privileged keys and cannot perform destructive operations                                                 | ✅      |
-| 4   | All schema changes remain migrations-only — no dashboard drift allowed                                                        | ✅      |
-| 5   | `RUN_REMOTE.ps1` requires mandatory `-Env staging` or `-Env production` (no default)                                          | ✅      |
-| 6   | `sync-cloud-db.yml` pushes migrations to staging first, then production                                                       | ✅      |
+| #   | Task                                                                                                        | Status |
+| --- | ----------------------------------------------------------------------------------------------------------- | ------ |
+| 1   | All scripts targeting the cloud require explicit `-Env` parameter and refuse destructive actions by default | ✅      |
+| 2   | Seed pipeline is idempotent — uses `ON CONFLICT DO UPDATE`, no accidental overwrite                         | ✅      |
+| 3   | CI / E2E uses least-privileged keys and cannot perform destructive operations                               | ✅      |
+| 4   | All schema changes remain migrations-only — no dashboard drift allowed                                      | ✅      |
+| 5   | `RUN_REMOTE.ps1` requires mandatory `-Env staging` or `-Env production` (no default)                        | ✅      |
+| 6   | `sync-cloud-db.yml` pushes migrations to staging first, then production                                     | ✅      |
 
 **Acceptance criteria:**
 
@@ -72,7 +72,7 @@ This document defines the three-environment strategy for `tryvit`:
 | Environment    | Purpose                   | Supabase                                      | Vercel                |
 | -------------- | ------------------------- | --------------------------------------------- | --------------------- |
 | **Local**      | Development & iteration   | Docker (`supabase start`)                     | `next dev`            |
-| **Staging**    | Pre-production validation | Cloud `<staging-ref>` (via env var)            | Preview deployments   |
+| **Staging**    | Pre-production validation | Cloud `<staging-ref>` (via env var)           | Preview deployments   |
 | **Production** | Live user-facing app      | Cloud `uskvezwftkkudvksmken` (single project) | Production deployment |
 
 > **Current status — two-cloud mode:** Local, Staging, and Production all exist.
@@ -97,8 +97,8 @@ This document defines the three-environment strategy for `tryvit`:
 | Supabase CLI     | `supabase start`                      |
 | DB host          | `127.0.0.1:54322`                     |
 | API URL          | `http://127.0.0.1:54321`              |
-| Project ID       | `tryvit`                      |
-| Docker container | `supabase_db_tryvit`          |
+| Project ID       | `tryvit`                              |
+| Docker container | `supabase_db_tryvit`                  |
 | Data load        | `supabase db reset` → `RUN_LOCAL.ps1` |
 | QA               | `RUN_QA.ps1`                          |
 
@@ -108,13 +108,13 @@ This document defines the three-environment strategy for `tryvit`:
 
 > **Status:** Active. See [STAGING_SETUP.md](STAGING_SETUP.md) for setup.
 
-| Setting          | Value                                                   |
-| ---------------- | ------------------------------------------------------- |
-| Supabase project | `tryvit-staging` (ref via `SUPABASE_STAGING_PROJECT_REF`)  |
-| DB host          | `db.<staging-ref>.supabase.co:5432`                     |
-| API URL          | `https://<staging-ref>.supabase.co`                     |
-| Schema source    | `supabase link --project-ref <ref> && supabase db push` |
-| Data load        | `RUN_SEED.ps1 -Env staging`                             |
+| Setting          | Value                                                     |
+| ---------------- | --------------------------------------------------------- |
+| Supabase project | `tryvit-staging` (ref via `SUPABASE_STAGING_PROJECT_REF`) |
+| DB host          | `db.<staging-ref>.supabase.co:5432`                       |
+| API URL          | `https://<staging-ref>.supabase.co`                       |
+| Schema source    | `supabase link --project-ref <ref> && supabase db push`   |
+| Data load        | `RUN_SEED.ps1 -Env staging`                               |
 
 **Data contents:** Will mirror production — full PL dataset + DE micro-pilot.
 
@@ -251,10 +251,10 @@ mutated or wiped:
 > **Two-cloud mode:** Preview deployments point to the staging Supabase
 > project. Production deployments point to the production project.
 
-| Vercel Environment | Supabase Target                | `NEXT_PUBLIC_SUPABASE_URL`                 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
-| ------------------ | ------------------------------ | ------------------------------------------ | ------------------------------- |
-| Preview            | Staging                        | `https://<staging-ref>.supabase.co`        | Staging anon key                |
-| Production         | Production                     | `https://uskvezwftkkudvksmken.supabase.co` | Production anon key             |
+| Vercel Environment | Supabase Target | `NEXT_PUBLIC_SUPABASE_URL`                 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` |
+| ------------------ | --------------- | ------------------------------------------ | ------------------------------- |
+| Preview            | Staging         | `https://<staging-ref>.supabase.co`        | Staging anon key                |
+| Production         | Production      | `https://uskvezwftkkudvksmken.supabase.co` | Production anon key             |
 
 ### Vercel Configuration
 
@@ -311,12 +311,12 @@ SUPABASE_STAGING_DB_PASSWORD=
 
 ### Current CI Architecture
 
-| Workflow           | Backend                           | Purpose                                | Cloud mutation risk                    |
-| ------------------ | --------------------------------- | -------------------------------------- | -------------------------------------- |
-| `qa.yml`           | Ephemeral PostgreSQL 17 container | Schema + pipeline + 421 QA + 17 sanity | **None** — container only              |
-| `ci.yml`           | Production keys (anon-level only) | Lint, build, Playwright E2E            | **Read-only** — anon key cannot mutate |
-| `build.yml`        | N/A (build only) + SonarCloud     | Build, unit tests, coverage            | **None**                               |
-| `sync-cloud-db.yml`| Staging then Production           | Auto-apply migrations on merge to main | **Schema only** — `supabase db push`   |
+| Workflow            | Backend                           | Purpose                                | Cloud mutation risk                    |
+| ------------------- | --------------------------------- | -------------------------------------- | -------------------------------------- |
+| `qa.yml`            | Ephemeral PostgreSQL 17 container | Schema + pipeline + 421 QA + 17 sanity | **None** — container only              |
+| `ci.yml`            | Production keys (anon-level only) | Lint, build, Playwright E2E            | **Read-only** — anon key cannot mutate |
+| `build.yml`         | N/A (build only) + SonarCloud     | Build, unit tests, coverage            | **None**                               |
+| `sync-cloud-db.yml` | Staging then Production           | Auto-apply migrations on merge to main | **Schema only** — `supabase db push`   |
 
 ### Target CI Architecture (§ issue #141)
 
@@ -387,3 +387,47 @@ SUPABASE_STAGING_DB_PASSWORD=
 7. ☐ Set environment variables in Vercel (if applicable)
 8. ☐ Run Playwright E2E against the new environment
 ```
+
+---
+
+## §10 Known Limitations & Future Improvements
+
+### 10.1 PITR (Point-in-Time Recovery)
+
+Supabase **Free** and **Pro** tiers below the PITR add-on do **not** include point-in-time recovery. Current mitigation:
+
+- `deploy.yml` creates a pre-deploy backup artifact (retained 30 days).
+- `BACKUP.ps1` provides manual backup capability.
+
+**Recommendation:** When the project moves to a paid Supabase plan, enable PITR for the production project (`uskvezwftkkudvksmken`). Until then, the CI-generated backup artifacts and manual backups are the recovery safety net.
+
+### 10.2 Staging Data Freshness
+
+`sync-cloud-db.yml` automatically pushes **schema migrations** to production on merge to `main`, but does **not** sync product data to staging. The staging environment (`rxtaicdpnaqigowdbmsb`) has reference data (countries, categories, nutri-score labels, concern tiers) but no product data unless manually seeded.
+
+**To seed staging with product data:**
+
+```powershell
+$env:SUPABASE_DB_PASSWORD = "<staging-db-password>"
+supabase link --project-ref rxtaicdpnaqigowdbmsb
+.\RUN_REMOTE.ps1 -Env staging
+```
+
+**Recommendation:** Consider a periodic (weekly/monthly) staging data refresh workflow — either manual or automated via a scheduled GitHub Action — to keep staging representative of production for E2E and QA testing.
+
+### 10.3 CODEOWNERS for Production Deployments
+
+Currently, any maintainer can trigger `deploy.yml` (manual dispatch). As the team grows, consider adding a `CODEOWNERS` file to require explicit approval from designated reviewers for:
+
+- `supabase/migrations/**` — schema changes
+- `.github/workflows/deploy.yml` — deployment workflow modifications
+- `supabase/functions/**` — Edge Function changes
+
+This provides an additional review gate beyond the existing CI checks.
+
+### 10.4 Backup Archival & Long-Term Retention
+
+CI-generated backup artifacts are retained for **30 days** (GitHub Actions default). For long-term compliance or disaster recovery beyond 30 days:
+
+- Consider quarterly archival of database dumps to external storage (e.g., S3, GCS, or Azure Blob).
+- Document retention requirements in `docs/PRIVACY_CHECKLIST.md` if GDPR mandates specific data retention periods for backups.

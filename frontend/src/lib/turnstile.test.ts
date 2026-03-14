@@ -15,7 +15,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockInvoke = vi.fn();
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 const fakeSupabase = { functions: { invoke: mockInvoke } } as any;
 
 beforeEach(() => {
