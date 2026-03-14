@@ -6,7 +6,7 @@
 // Development / CI: rate limiting disabled (no Redis configured).
 
 import { Ratelimit, type Duration } from "@upstash/ratelimit";
-import { Redis } from "@upstash/redis";
+import { Redis } from "@upstash/redis/cloudflare";
 
 // ─── Redis Client ───────────────────────────────────────────────────────────
 
