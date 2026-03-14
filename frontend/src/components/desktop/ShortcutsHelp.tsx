@@ -77,6 +77,7 @@ export function ShortcutsHelp({ open, onClose }: Readonly<ShortcutsHelpProps>) {
       ref={dialogRef}
       aria-labelledby="shortcuts-help-title"
       onClick={handleBackdropClick}
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
       className="fixed inset-0 z-50 m-auto w-full max-w-sm rounded-2xl bg-surface p-6 shadow-xl backdrop:bg-black/30"
     >
       {/* Header */}

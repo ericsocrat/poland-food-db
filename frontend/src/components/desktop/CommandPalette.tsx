@@ -299,6 +299,7 @@ export function CommandPalette({
       ref={dialogRef}
       aria-label={t("commandPalette.placeholder")}
       onClick={handleBackdropClick}
+      onKeyDown={(e) => e.key === "Escape" && onClose()}
       className="fixed inset-0 z-50 m-auto mt-[15vh] mb-auto w-full max-w-lg rounded-2xl bg-surface p-0 shadow-2xl backdrop:bg-black/40"
     >
       {/* Search input */}
