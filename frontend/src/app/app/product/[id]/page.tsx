@@ -363,6 +363,7 @@ export default function ProductDetailPage() {
           <ProductScoreHero
             unhealthinessScore={profile.scores.unhealthiness_score}
             headline={profile.scores.headline}
+            hasConflicts={profile.scores.has_signal_conflicts}
           />
 
           {/* Nutrition Highlights — key nutrient bars */}

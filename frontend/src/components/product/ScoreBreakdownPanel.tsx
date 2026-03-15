@@ -10,6 +10,7 @@
 "use client";
 
 import { Skeleton } from "@/components/common/Skeleton";
+import { ConflictWarnings } from "@/components/product/ConflictWarnings";
 import { getScoreExplanation } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
@@ -235,6 +236,15 @@ function BreakdownContent({
           ))}
         </div>
       )}
+
+      {/* Signal conflicts */}
+      {explanation.summary?.conflicts &&
+        explanation.summary.conflicts.length > 0 && (
+          <ConflictWarnings
+            conflicts={explanation.summary.conflicts}
+            nutriScoreLabel={explanation.summary?.nutri_score}
+          />
+        )}
 
       {/* Scoring model provenance */}
       {(explanation.model_version || explanation.scored_at) && (

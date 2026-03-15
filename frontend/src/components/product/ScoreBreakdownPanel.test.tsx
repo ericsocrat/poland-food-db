@@ -1,8 +1,8 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import type { ReactNode } from "react";
 import type { ScoreExplanation } from "@/lib/types";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -320,5 +320,79 @@ describe("ScoreBreakdownPanel", () => {
     });
 
     expect(screen.queryByTestId("nutrient-bonus")).not.toBeInTheDocument();
+  });
+
+  // ── Signal conflict warnings ──────────────────────────────────────────────
+
+  it("renders conflict warnings when present", async () => {
+    const explanationWithConflicts: ScoreExplanation = {
+      ...MOCK_EXPLANATION,
+      summary: {
+        ...MOCK_EXPLANATION.summary!,
+        conflicts: [
+          {
+            rule: "M1",
+            key: "nova_ultra_processed",
+            severity: "high" as const,
+            message: "NOVA 4 conflicts with score band",
+          },
+        ],
+      },
+    };
+    mockGetScoreExplanation.mockResolvedValue({
+      ok: true,
+      data: explanationWithConflicts,
+    });
+
+    render(
+      <ScoreBreakdownPanel
+        productId={42}
+        score={65}
+        scoreBand="Elevated Risk"
+        defaultOpen
+      />,
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => {
+      expect(screen.getByTestId("conflict-warnings")).toBeInTheDocument();
+    });
+    expect(
+      screen.getByText("conflicts.nova_ultra_processed"),
+    ).toBeInTheDocument();
+  });
+
+  it("does not render conflict warnings when conflicts is empty", async () => {
+    const explanationWithoutConflicts: ScoreExplanation = {
+      ...MOCK_EXPLANATION,
+      summary: {
+        ...MOCK_EXPLANATION.summary!,
+        conflicts: [],
+      },
+    };
+    mockGetScoreExplanation.mockResolvedValue({
+      ok: true,
+      data: explanationWithoutConflicts,
+    });
+
+    render(
+      <ScoreBreakdownPanel
+        productId={42}
+        score={65}
+        scoreBand="Elevated Risk"
+        defaultOpen
+      />,
+      { wrapper: createWrapper() },
+    );
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("This product has elevated sugar levels."),
+      ).toBeInTheDocument();
+    });
+
+    expect(
+      screen.queryByTestId("conflict-warnings"),
+    ).not.toBeInTheDocument();
   });
 });

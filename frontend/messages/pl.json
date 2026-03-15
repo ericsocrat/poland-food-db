@@ -556,6 +556,18 @@
     "red": "Niekorzystny profil odżywczy. Poszukaj lepszych zamienników w tej samej kategorii.",
     "darkRed": "Bardzo wysoki poziom zastrzeżeń zdrowotnych. Rezerwuj do okazjonalnego spożycia."
   },
+  "conflicts": {
+    "title": "Sprzeczne sygnały",
+    "nova_ultra_processed": "Ten produkt jest sklasyfikowany jako ultraprzetworzona żywność (NOVA 4).",
+    "nutri_score_poor": "Nutri-Score ocenia ten produkt na {grade}.",
+    "high_salt_flag": "Wysoka zawartość soli.",
+    "high_sugar_flag": "Wysoka zawartość cukru.",
+    "high_sat_fat_flag": "Wysoka zawartość tłuszczów nasyconych.",
+    "nutri_score_favorable": "Nutri-Score ocenia ten produkt korzystnie ({grade}).",
+    "nova_minimal_processing": "NOVA klasyfikuje ten produkt jako minimalnie przetworzony.",
+    "high_ingredient_concern": "Zawiera składniki o podwyższonym poziomie zastrzeżeń.",
+    "qualifierSuffix": "Niektóre sygnały są jednak sprzeczne z tą oceną."
+  },
   "allergen": {
     "contains": "Zawiera",
     "traces": "Może zawierać (śladowe ilości)"
