@@ -83,4 +83,24 @@ describe("ProductScoreHero", () => {
       screen.getByText("scoreInterpretation.darkRed"),
     ).toBeInTheDocument();
   });
+
+  // ── Conflict qualifier ──────────────────────────────────────────────────
+
+  it("does not render conflict qualifier by default", () => {
+    render(
+      <ProductScoreHero unhealthinessScore={20} headline="Low risk" />,
+    );
+    expect(screen.queryByText("conflicts.qualifierSuffix")).not.toBeInTheDocument();
+  });
+
+  it("renders conflict qualifier when hasConflicts is true", () => {
+    render(
+      <ProductScoreHero
+        unhealthinessScore={20}
+        headline="Low risk"
+        hasConflicts
+      />,
+    );
+    expect(screen.getByText("conflicts.qualifierSuffix")).toBeInTheDocument();
+  });
 });

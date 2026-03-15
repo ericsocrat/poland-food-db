@@ -519,6 +519,15 @@ export interface AlternativesV2Response {
   alternatives_count: number;
 }
 
+// ─── Signal Conflicts ────────────────────────────────────────────────────────
+
+export interface ConflictItem {
+  rule: string;
+  key: string;
+  severity: "high" | "medium" | "info";
+  message: string;
+}
+
 // ─── Score Explanation ──────────────────────────────────────────────────────
 
 export interface ScoreExplanation {
@@ -536,9 +545,11 @@ export interface ScoreExplanation {
     score: number;
     score_band: ScoreBand;
     headline: string;
+    qualified_headline?: string;
     nutri_score: NutriGrade;
     nova_group: string;
     processing_risk: string;
+    conflicts?: ConflictItem[];
   };
   top_factors: { factor: string; raw: number; weighted: number }[];
   /** Nutrient density bonus extracted from v3.3 score_breakdown (null if no bonus). */

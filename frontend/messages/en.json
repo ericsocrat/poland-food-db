@@ -556,6 +556,18 @@
     "red": "Poor nutritional profile. Look for better alternatives in the same category.",
     "darkRed": "Very high health concern. Reserve for occasional consumption only."
   },
+  "conflicts": {
+    "title": "Mixed signals",
+    "nova_ultra_processed": "This product is classified as ultra-processed (NOVA 4).",
+    "nutri_score_poor": "Nutri-Score rates this product {grade}.",
+    "high_salt_flag": "High salt content flagged.",
+    "high_sugar_flag": "High sugar content flagged.",
+    "high_sat_fat_flag": "High saturated fat content flagged.",
+    "nutri_score_favorable": "Nutri-Score rates this product favorably ({grade}).",
+    "nova_minimal_processing": "NOVA classifies this as minimally processed.",
+    "high_ingredient_concern": "Contains ingredients with elevated concern levels.",
+    "qualifierSuffix": "However, some signals conflict with this assessment."
+  },
   "allergen": {
     "contains": "Contains",
     "traces": "May contain (traces)"

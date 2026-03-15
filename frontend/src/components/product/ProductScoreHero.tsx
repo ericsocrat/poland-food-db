@@ -7,11 +7,13 @@ import { getScoreBand } from "@/lib/score-utils";
 interface ProductScoreHeroProps {
   readonly unhealthinessScore: number;
   readonly headline: string;
+  readonly hasConflicts?: boolean;
 }
 
 export function ProductScoreHero({
   unhealthinessScore,
   headline,
+  hasConflicts = false,
 }: ProductScoreHeroProps) {
   const { t } = useTranslation();
   const band = getScoreBand(unhealthinessScore);
@@ -29,6 +31,11 @@ export function ProductScoreHero({
           <p className="mt-1 text-sm text-foreground-secondary">
             {headline}
           </p>
+          {hasConflicts && (
+            <p className="mt-0.5 text-xs text-warning">
+              {t("conflicts.qualifierSuffix")}
+            </p>
+          )}
         </div>
       </div>
     </div>

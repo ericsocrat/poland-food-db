@@ -556,6 +556,18 @@
     "red": "Ungünstiges Nährwertprofil. Suchen Sie nach besseren Alternativen in derselben Kategorie.",
     "darkRed": "Sehr hohes Gesundheitsrisiko. Nur gelegentlich verzehren."
   },
+  "conflicts": {
+    "title": "Widersprüchliche Signale",
+    "nova_ultra_processed": "Dieses Produkt ist als hochverarbeitet eingestuft (NOVA 4).",
+    "nutri_score_poor": "Nutri-Score bewertet dieses Produkt mit {grade}.",
+    "high_salt_flag": "Hoher Salzgehalt festgestellt.",
+    "high_sugar_flag": "Hoher Zuckergehalt festgestellt.",
+    "high_sat_fat_flag": "Hoher Gehalt an gesättigten Fettsäuren festgestellt.",
+    "nutri_score_favorable": "Nutri-Score bewertet dieses Produkt günstig ({grade}).",
+    "nova_minimal_processing": "NOVA stuft dieses Produkt als minimal verarbeitet ein.",
+    "high_ingredient_concern": "Enthält Zutaten mit erhöhtem Bedenklichkeitsniveau.",
+    "qualifierSuffix": "Einige Signale stehen jedoch im Widerspruch zu dieser Bewertung."
+  },
   "allergen": {
     "contains": "Enthält",
     "traces": "Kann Spuren enthalten von"
