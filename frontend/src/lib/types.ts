@@ -720,6 +720,7 @@ export interface ProfileScores {
   processing_risk: string;
   score_breakdown: ScoreBreakdownFactor[];
   headline: string;
+  has_signal_conflicts?: boolean;
   category_context: CategoryContext;
 }
 
