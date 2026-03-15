@@ -1,6 +1,6 @@
 import {
-  INITIAL_ONBOARDING_DATA,
-  type OnboardingData,
+    INITIAL_ONBOARDING_DATA,
+    type OnboardingData,
 } from "@/app/onboarding/types";
 import { FOOD_CATEGORIES, HEALTH_GOALS } from "@/lib/constants";
 import { render, screen } from "@testing-library/react";
@@ -46,7 +46,7 @@ describe("GoalsCategoriesStep", () => {
     renderStep();
     expect(screen.getByText("Diabetes management")).toBeInTheDocument();
     expect(
-      screen.getByText(/Warns you when sugar exceeds your limit/),
+      screen.getByText(/Warns you when sugar meets or exceeds your limit/),
     ).toBeInTheDocument();
   });
 

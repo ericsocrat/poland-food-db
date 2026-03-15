@@ -187,7 +187,7 @@ BEGIN
             v_warnings := v_warnings || jsonb_build_object(
                 'condition', 'custom_threshold',
                 'severity', 'high',
-                'message', format('Sugar: %.1fg exceeds your limit of %.1fg per 100g',
+                'message', format('Sugar: %.1fg meets or exceeds your limit of %.1fg per 100g',
                                   v_nutrition.sugars_g, v_profile.max_sugar_g)
             );
         END IF;
@@ -195,7 +195,7 @@ BEGIN
             v_warnings := v_warnings || jsonb_build_object(
                 'condition', 'custom_threshold',
                 'severity', 'high',
-                'message', format('Salt: %.2fg exceeds your limit of %.2fg per 100g',
+                'message', format('Salt: %.2fg meets or exceeds your limit of %.2fg per 100g',
                                   v_nutrition.salt_g, v_profile.max_salt_g)
             );
         END IF;
@@ -203,7 +203,7 @@ BEGIN
             v_warnings := v_warnings || jsonb_build_object(
                 'condition', 'custom_threshold',
                 'severity', 'high',
-                'message', format('Saturated fat: %.1fg exceeds your limit of %.1fg per 100g',
+                'message', format('Saturated fat: %.1fg meets or exceeds your limit of %.1fg per 100g',
                                   v_nutrition.saturated_fat_g, v_profile.max_saturated_fat_g)
             );
         END IF;
@@ -211,7 +211,7 @@ BEGIN
             v_warnings := v_warnings || jsonb_build_object(
                 'condition', 'custom_threshold',
                 'severity', 'moderate',
-                'message', format('Calories: %.0f exceeds your limit of %.0f per 100g',
+                'message', format('Calories: %.0f meets or exceeds your limit of %.0f per 100g',
                                   v_nutrition.calories, v_profile.max_calories_kcal)
             );
         END IF;

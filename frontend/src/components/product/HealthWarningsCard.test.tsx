@@ -1,12 +1,12 @@
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HealthWarningsCard, HealthWarningBadge } from "./HealthWarningsCard";
 import type {
-  RpcResult,
-  HealthProfileActiveResponse,
-  HealthWarningsResponse,
+    HealthProfileActiveResponse,
+    HealthWarningsResponse,
+    RpcResult,
 } from "@/lib/types";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { HealthWarningBadge, HealthWarningsCard } from "./HealthWarningsCard";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
@@ -80,7 +80,7 @@ const twoWarnings: HealthWarningsResponse = {
     {
       condition: "diabetes",
       severity: "high",
-      message: "Sugar exceeds your limit: 13.5g vs max 10g",
+      message: "Sugar meets or exceeds your limit: 13.5g vs max 10g",
     },
     {
       condition: "hypertension",
@@ -152,7 +152,7 @@ describe("HealthWarningsCard", () => {
       expect(screen.getByText("2 health warnings")).toBeInTheDocument();
     });
     expect(
-      screen.getByText("Sugar exceeds your limit: 13.5g vs max 10g"),
+      screen.getByText("Sugar meets or exceeds your limit: 13.5g vs max 10g"),
     ).toBeInTheDocument();
     expect(
       screen.getByText("Salt is elevated for hypertension"),
