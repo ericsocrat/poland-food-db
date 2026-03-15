@@ -17,6 +17,11 @@ import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
 import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
 import { createClient } from "@/lib/supabase/client";
+import {
+    classifyScannerError,
+    getBrowserSummary,
+    getFacingMode,
+} from "@/lib/scanner-errors";
 import { showToast } from "@/lib/toast";
 import type {
     FormSubmitEvent,
@@ -99,6 +104,9 @@ export default function ScanPage() {
   const readerRef = useRef<BarcodeReader | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isMountedRef = useRef(true);
+  const initStartTimeRef = useRef(0);
+  const streamReadyTimeRef = useRef(0);
 
   // ─── Record scan mutation ─────────────────────────────────────────────────
 
@@ -111,6 +119,13 @@ export default function ScanPage() {
     onSuccess: (data, scanEan) => {
       setScanResult(data);
       track("scanner_used", { ean: scanEan, found: data.found, method: mode });
+      track(data.found ? "scanner_scan_success" : "scanner_scan_not_found", {
+        ean: scanEan,
+        found: data.found,
+        time_to_scan_ms: streamReadyTimeRef.current
+          ? Date.now() - streamReadyTimeRef.current
+          : undefined,
+      });
       void eventBus.emit({
         type: "product.scanned",
         payload: { ean: scanEan },
@@ -167,6 +182,8 @@ export default function ScanPage() {
 
   const startScanner = useCallback(async () => {
     setCameraError(null);
+    initStartTimeRef.current = Date.now();
+    track("scanner_init_start", { browser: getBrowserSummary() });
 
     try {
       const { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } =
@@ -186,6 +203,10 @@ export default function ScanPage() {
       const devices = await reader.listVideoInputDevices();
       if (devices.length === 0) {
         setCameraError("no-camera");
+        track("scanner_init_error", {
+          error_type: "no-camera",
+          browser: getBrowserSummary(),
+        });
         return;
       }
 
@@ -215,25 +236,39 @@ export default function ScanPage() {
 
       if (videoRef.current?.srcObject instanceof MediaStream) {
         streamRef.current = videoRef.current.srcObject;
+        const videoTrack = streamRef.current.getVideoTracks()[0];
+        streamReadyTimeRef.current = Date.now();
+        track("scanner_stream_ready", {
+          camera_count: devices.length,
+          has_multiple_cameras: devices.length > 1,
+          facing_mode: videoTrack ? getFacingMode(videoTrack) : "unknown",
+          browser: getBrowserSummary(),
+          time_to_ready_ms: Date.now() - initStartTimeRef.current,
+        });
       }
     } catch (err: unknown) {
-      let errName = "";
-      if (err instanceof Error) {
-        errName = err.name;
-      } else if (err && typeof err === "object" && "name" in err) {
-        errName = String(err.name);
-      }
-      if (
-        errName === "NotAllowedError" ||
-        errName === "PermissionDeniedError"
-      ) {
+      const errorType = classifyScannerError(err);
+      track("scanner_init_error", {
+        error_type: errorType,
+        browser: getBrowserSummary(),
+      });
+      if (errorType === "permission-denied") {
         setCameraError("permission-denied");
         showToast({ type: "error", messageKey: "scan.permissionDenied" });
       } else {
         setCameraError("generic");
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- track is fire-and-forget; including it causes double-init from deviceType change
   }, [stopScanner]);
+
+  // Mounted guard for async telemetry reliability
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   async function toggleTorch() {
     if (!streamRef.current) return;

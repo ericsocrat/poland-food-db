@@ -346,6 +346,15 @@
     "scanNext": "Nächstes scannen",
     "pasteBarcode": "Einfügen"
   },
+  "scannerError": {
+    "permissionDenied": "Kamerazugriff verweigert. Erlauben Sie den Kamerazugriff in Ihren Browsereinstellungen und versuchen Sie es erneut.",
+    "noCamera": "Keine Kamera auf diesem Gerät gefunden. Verwenden Sie stattdessen die manuelle Eingabe.",
+    "notReadable": "Kamera wird von einer anderen App verwendet. Schließen Sie andere Kamera-Apps und versuchen Sie es erneut.",
+    "overconstrained": "Kamera konnte mit den angeforderten Einstellungen nicht geöffnet werden. Versuchen Sie einen anderen Browser oder ein anderes Gerät.",
+    "streamEnded": "Kamerastream unerwartet beendet. Tippen Sie auf Wiederholen, um erneut zu verbinden.",
+    "libraryLoad": "Scanner-Bibliothek konnte nicht geladen werden. Überprüfen Sie Ihre Verbindung und laden Sie die Seite neu.",
+    "unknown": "Ein unerwarteter Kamerafehler ist aufgetreten. Versuchen Sie die manuelle Eingabe oder laden Sie die Seite neu."
+  },
   "scanHistory": {
     "title": "Scanverlauf",
     "subtitle": "Ihre Barcode-Scan-Aktivitäten",
