@@ -84,8 +84,6 @@ export const HEALTH_GOALS = [
   { value: "diabetes", labelKey: "onboarding.goalDiabetes", descKey: "onboarding.goalDiabetesDesc" },
   { value: "low_sodium", labelKey: "onboarding.goalLowSodium", descKey: "onboarding.goalLowSodiumDesc" },
   { value: "heart_health", labelKey: "onboarding.goalHeartHealth", descKey: "onboarding.goalHeartHealthDesc" },
-  { value: "weight_management", labelKey: "onboarding.goalWeightMgmt", descKey: "onboarding.goalWeightMgmtDesc" },
-  { value: "general_wellness", labelKey: "onboarding.goalWellness", descKey: "onboarding.goalWellnessDesc" },
 ] as const;
 
 export const FOOD_CATEGORIES = [

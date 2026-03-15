@@ -24,13 +24,11 @@ describe("HealthGoalsStep", () => {
     vi.clearAllMocks();
   });
 
-  it("renders all 5 health goal buttons", () => {
+  it("renders all 3 health goal buttons", () => {
     renderStep();
     expect(screen.getByTestId("goal-diabetes")).toBeInTheDocument();
     expect(screen.getByTestId("goal-low_sodium")).toBeInTheDocument();
     expect(screen.getByTestId("goal-heart_health")).toBeInTheDocument();
-    expect(screen.getByTestId("goal-weight_management")).toBeInTheDocument();
-    expect(screen.getByTestId("goal-general_wellness")).toBeInTheDocument();
   });
 
   it("renders goal labels and descriptions", () => {
