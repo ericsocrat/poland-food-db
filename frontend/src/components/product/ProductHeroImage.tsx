@@ -8,9 +8,9 @@
 // When the product_images table has no entry but the product has an EAN,
 // we fetch the image URL from the OFF API as a runtime fallback.
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
 import type { ProductImages } from "@/lib/types";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import { CategoryPlaceholder } from "./CategoryPlaceholder";
 import { ImageSourceBadge } from "./ImageSourceBadge";
 
@@ -98,7 +98,7 @@ export function ProductHeroImage({
 
   return (
     <div className="group relative" data-testid="product-image">
-      <div className="relative h-72 w-full overflow-hidden rounded-xl bg-surface-muted">
+      <div className="relative h-40 w-full overflow-hidden rounded-xl bg-surface-muted sm:h-72">
         {/* Blur placeholder shown until image fully loads */}
         {!imageLoaded && (
           <div

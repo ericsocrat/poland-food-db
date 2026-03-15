@@ -103,4 +103,59 @@ describe("ProductScoreHero", () => {
     );
     expect(screen.getByText("conflicts.qualifierSuffix")).toBeInTheDocument();
   });
+
+  // ── Inline variant ─────────────────────────────────────────────────────
+
+  it("renders inline variant with data-testid", () => {
+    render(
+      <ProductScoreHero
+        variant="inline"
+        unhealthinessScore={25}
+        headline="Good product"
+      />,
+    );
+    expect(screen.getByTestId("score-hero-inline")).toBeInTheDocument();
+  });
+
+  it("renders band label and headline in inline variant", () => {
+    render(
+      <ProductScoreHero
+        variant="inline"
+        unhealthinessScore={25}
+        headline="Good product"
+      />,
+    );
+    expect(screen.getByText("scoreBand.good")).toBeInTheDocument();
+    expect(screen.getByText("Good product")).toBeInTheDocument();
+  });
+
+  it("renders SVG gauge in inline variant", () => {
+    render(
+      <ProductScoreHero
+        variant="inline"
+        unhealthinessScore={10}
+        headline="Healthy"
+      />,
+    );
+    expect(document.querySelector("svg")).toBeInTheDocument();
+  });
+
+  it("renders conflict qualifier in inline variant when hasConflicts is true", () => {
+    render(
+      <ProductScoreHero
+        variant="inline"
+        unhealthinessScore={10}
+        headline="Healthy"
+        hasConflicts
+      />,
+    );
+    expect(screen.getByText("conflicts.qualifierSuffix")).toBeInTheDocument();
+  });
+
+  it("does not render inline testid when variant is card (default)", () => {
+    render(
+      <ProductScoreHero unhealthinessScore={20} headline="Low risk" />,
+    );
+    expect(screen.queryByTestId("score-hero-inline")).not.toBeInTheDocument();
+  });
 });

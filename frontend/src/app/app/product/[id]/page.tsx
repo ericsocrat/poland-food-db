@@ -6,6 +6,7 @@
 import { AlternativeProductCard } from "@/components/alternatives/AlternativeProductCard";
 import { AlternativesSection } from "@/components/alternatives/AlternativesSection";
 import { Button } from "@/components/common/Button";
+import { ConfidenceBadge } from "@/components/common/ConfidenceBadge";
 import { EmptyState } from "@/components/common/EmptyState";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
 import { NutriScoreBadge } from "@/components/common/NutriScoreBadge";
@@ -229,8 +230,6 @@ export default function ProductDetailPage() {
     );
   }
 
-  const band = SCORE_BANDS[profile.scores.score_band];
-
   const tabs: { key: Tab; label: string; shortLabel: string }[] = [
     { key: "overview", label: t("product.overview"), shortLabel: t("product.overviewShort") },
     { key: "nutrition", label: t("product.nutrition"), shortLabel: t("product.nutritionShort") },
@@ -260,7 +259,7 @@ export default function ProductDetailPage() {
           {/* Product Identity Card */}
           <div className="card">
             {/* Product Hero Image */}
-            <div className="mb-4">
+            <div className="mb-1 sm:mb-4">
               <ProductHeroImage
                 images={profile.images}
                 productName={
@@ -320,7 +319,7 @@ export default function ProductDetailPage() {
               </div>
             </div>
 
-            <div className="mt-2 flex flex-wrap items-center gap-2">
+            <div className="mt-1 flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1 rounded-full bg-surface-muted px-2 py-0.5 text-xs font-bold">
                 <NutriScoreBadge
                   grade={profile.scores.nutri_score_label}
@@ -335,16 +334,80 @@ export default function ProductDetailPage() {
                   group: profile.scores.nova_group,
                 })}
               </span>
-              <span
-                className={`rounded-full px-2 py-0.5 text-xs font-medium ${band.bg} ${band.color}`}
-              >
-                {t(band.labelKey)}
-              </span>
               <PercentileBadge
                 rank={profile.scores.category_context?.rank}
                 total={profile.scores.category_context?.total_in_category}
               />
             </div>
+
+            {/* Inline score hero + confidence badge */}
+            <div className="mt-1 space-y-1">
+              <ProductScoreHero
+                variant="inline"
+                unhealthinessScore={profile.scores.unhealthiness_score}
+                headline={profile.scores.headline}
+                hasConflicts={profile.scores.has_signal_conflicts}
+              />
+              {(() => {
+                const q = profile.quality as Record<string, unknown> | null;
+                const level = q ? (q.confidence_band as string | undefined) : undefined;
+                const pct = q ? (q.confidence_score as number | undefined) : undefined;
+                return level ? (
+                  <ConfidenceBadge
+                    level={level}
+                    percentage={pct ?? undefined}
+                    size="sm"
+                    showLabel={false}
+                    showTooltip
+                  />
+                ) : null;
+              })()}
+            </div>
+
+            {/* Health flags (inline) */}
+            {(profile.flags.high_sugar ||
+              profile.flags.high_salt ||
+              profile.flags.high_sat_fat ||
+              profile.flags.high_additive_load ||
+              profile.flags.has_palm_oil) && (
+              <div className="mt-2 space-y-1">
+                <p className="text-xs font-medium text-foreground-muted">
+                  {t("product.healthFlags")}
+                </p>
+                <div className="flex flex-wrap gap-1">
+                  {profile.flags.high_sugar && (
+                    <FlagWithExplanation
+                      label={t("product.highSugar")}
+                      explanation={t("product.highSugarExplanation")}
+                    />
+                  )}
+                  {profile.flags.high_salt && (
+                    <FlagWithExplanation
+                      label={t("product.highSalt")}
+                      explanation={t("product.highSaltExplanation")}
+                    />
+                  )}
+                  {profile.flags.high_sat_fat && (
+                    <FlagWithExplanation
+                      label={t("product.highSatFat")}
+                      explanation={t("product.highSatFatExplanation")}
+                    />
+                  )}
+                  {profile.flags.high_additive_load && (
+                    <FlagWithExplanation
+                      label={t("product.manyAdditives")}
+                      explanation={t("product.manyAdditivesExplanation")}
+                    />
+                  )}
+                  {profile.flags.has_palm_oil && (
+                    <FlagWithExplanation
+                      label={t("product.palmOil")}
+                      explanation={t("product.palmOilExplanation")}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Category & EAN */}
             <div className="mt-3 flex flex-wrap gap-2 text-xs text-foreground-secondary">
@@ -359,63 +422,11 @@ export default function ProductDetailPage() {
             </div>
           </div>
 
-          {/* Score Hero — prominent score display */}
-          <ProductScoreHero
-            unhealthinessScore={profile.scores.unhealthiness_score}
-            headline={profile.scores.headline}
-            hasConflicts={profile.scores.has_signal_conflicts}
-          />
-
           {/* Nutrition Highlights — key nutrient bars */}
           <NutritionHighlights nutrition={profile.nutrition.per_100g} />
 
           {/* Allergen Quick Badges */}
           <AllergenQuickBadges allergens={profile.allergens} />
-
-          {/* Health Flags */}
-          {(profile.flags.high_sugar ||
-            profile.flags.high_salt ||
-            profile.flags.high_sat_fat ||
-            profile.flags.high_additive_load ||
-            profile.flags.has_palm_oil) && (
-            <div className="card space-y-1">
-              <p className="text-xs font-medium text-foreground-muted">
-                {t("product.healthFlags")}
-              </p>
-              <div className="flex flex-wrap gap-1">
-                {profile.flags.high_sugar && (
-                  <FlagWithExplanation
-                    label={t("product.highSugar")}
-                    explanation={t("product.highSugarExplanation")}
-                  />
-                )}
-                {profile.flags.high_salt && (
-                  <FlagWithExplanation
-                    label={t("product.highSalt")}
-                    explanation={t("product.highSaltExplanation")}
-                  />
-                )}
-                {profile.flags.high_sat_fat && (
-                  <FlagWithExplanation
-                    label={t("product.highSatFat")}
-                    explanation={t("product.highSatFatExplanation")}
-                  />
-                )}
-                {profile.flags.high_additive_load && (
-                  <FlagWithExplanation
-                    label={t("product.manyAdditives")}
-                    explanation={t("product.manyAdditivesExplanation")}
-                  />
-                )}
-                {profile.flags.has_palm_oil && (
-                  <FlagWithExplanation
-                    label={t("product.palmOil")}
-                    explanation={t("product.palmOilExplanation")}
-                  />
-                )}
-              </div>
-            </div>
-          )}
 
           {/* Score interpretation — expandable "What does this score mean?" */}
           <ScoreInterpretationCard score={toTryVitScore(profile.scores.unhealthiness_score)} />

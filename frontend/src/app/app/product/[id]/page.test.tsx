@@ -92,15 +92,24 @@ vi.mock("@/components/product/ProductScoreHero", () => ({
   ProductScoreHero: ({
     unhealthinessScore,
     headline,
+    variant,
   }: {
     unhealthinessScore: number;
     headline: string;
+    variant?: string;
   }) => (
     <div
       data-testid="product-score-hero"
       data-score={unhealthinessScore}
       data-headline={headline}
+      data-variant={variant ?? "card"}
     />
+  ),
+}));
+
+vi.mock("@/components/common/ConfidenceBadge", () => ({
+  ConfidenceBadge: ({ level }: { level: string }) => (
+    <div data-testid="confidence-badge" data-level={level} />
   ),
 }));
 
