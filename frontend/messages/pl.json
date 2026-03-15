@@ -346,6 +346,15 @@
     "scanNext": "Skanuj następny",
     "pasteBarcode": "Wklej"
   },
+  "scannerError": {
+    "permissionDenied": "Odmowa dostępu do kamery. Zezwól na dostęp do kamery w ustawieniach przeglądarki i spróbuj ponownie.",
+    "noCamera": "Nie znaleziono kamery na tym urządzeniu. Użyj ręcznego wprowadzania.",
+    "notReadable": "Kamera jest używana przez inną aplikację. Zamknij inne aplikacje korzystające z kamery i spróbuj ponownie.",
+    "overconstrained": "Nie można otworzyć kamery z żądanymi ustawieniami. Spróbuj innej przeglądarki lub urządzenia.",
+    "streamEnded": "Strumień kamery niespodziewanie się zakończył. Naciśnij Ponów, aby ponownie połączyć.",
+    "libraryLoad": "Nie udało się załadować biblioteki skanera. Sprawdź połączenie i odśwież stronę.",
+    "unknown": "Wystąpił nieoczekiwany błąd kamery. Spróbuj ręcznego wprowadzania lub odśwież stronę."
+  },
   "scanHistory": {
     "title": "Historia skanowania",
     "subtitle": "Twoja aktywność skanowania kodów",

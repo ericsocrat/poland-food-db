@@ -346,6 +346,15 @@
     "scanNext": "Scan Next",
     "pasteBarcode": "Paste"
   },
+  "scannerError": {
+    "permissionDenied": "Camera permission denied. Allow camera access in your browser settings, then try again.",
+    "noCamera": "No camera found on this device. Use manual entry instead.",
+    "notReadable": "Camera is in use by another app. Close other camera apps and try again.",
+    "overconstrained": "Could not open camera with requested settings. Try a different browser or device.",
+    "streamEnded": "Camera stream ended unexpectedly. Tap Retry to reconnect.",
+    "libraryLoad": "Failed to load scanner library. Check your connection and reload the page.",
+    "unknown": "An unexpected camera error occurred. Try manual entry or reload the page."
+  },
   "scanHistory": {
     "title": "Scan History",
     "subtitle": "Your barcode scan activity",
