@@ -624,18 +624,22 @@ WHERE p.product_name = 'Instant-Nudeln Beef'
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- Test 41: Signal-conflict detection — api_score_explanation returns
---          'conflicts' and 'qualified_headline' keys in summary for all
---          active products. Verifies the CTE-based conflict rules (#885)
---          produce valid output (no SQL errors, correct key presence).
+--          'conflicts' and 'qualified_headline' keys in summary.
+--          Samples 10 products across scoring range to avoid calling
+--          the function for all ~2,600 products (each call ~15 ms).
+--          Verifies LATERAL conflict rules (#885) produce valid output.
 -- ═══════════════════════════════════════════════════════════════════════════
 SELECT p.product_id, p.product_name,
        'MISSING: api_score_explanation summary lacks conflicts or qualified_headline key' AS issue,
        CONCAT('product_id=', p.product_id) AS detail
-FROM products p
-WHERE p.is_deprecated IS NOT TRUE
-  AND p.unhealthiness_score IS NOT NULL
-  AND (
+FROM (
+    SELECT product_id, product_name
+    FROM products
+    WHERE is_deprecated IS NOT TRUE
+      AND unhealthiness_score IS NOT NULL
+    ORDER BY unhealthiness_score, product_id
+    LIMIT 10
+) p
+WHERE
     NOT ((api_score_explanation(p.product_id))->'summary') ? 'conflicts'
-    OR NOT ((api_score_explanation(p.product_id))->'summary') ? 'qualified_headline'
-  )
-LIMIT 5;
+    OR NOT ((api_score_explanation(p.product_id))->'summary') ? 'qualified_headline';

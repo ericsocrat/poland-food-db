@@ -303,12 +303,30 @@ Body: {"p_product_id": 32}
     "score": 32,
     "score_band": "moderate",
     "headline": "This product has several areas of nutritional concern.",
+    "qualified_headline": "This product has several areas of nutritional concern.",
+    // ^ Same as headline when no conflicts; appends " — but note conflicting signals"
+    //   when conflicts[] is non-empty.
     "nutri_score": "D",
     "nutri_score_source": "off_computed",           // provenance of Nutri-Score value
     "nutri_score_official_in_country": false,        // whether Nutri-Score is officially adopted
     "nutri_score_note": "Nutri-Score is not officially adopted in this country. Value is computed by Open Food Facts.",
     "nova_group": "4",
     "processing_risk": "High"
+  },
+
+  // Scoring model metadata (#885)
+  "model_version": "v3.3",              // scoring formula version
+  "scored_at": "2026-03-19T12:00:00Z",  // when score was last computed
+
+  // Nutrient density bonus (#885)
+  "nutrient_bonus": {
+    "factor": "nutrient_density",
+    "raw": 30.0,                         // raw bonus sub-score (0-100)
+    "weighted": -2.40,                   // negative = improves score
+    "components": {
+      "protein_tier": 30,                // 0/15/30/40/50 at 5/10/15/20g thresholds
+      "fibre_tier": 0                    // 0/10/20/35/50 at 1/3/5/8g thresholds
+    }
   },
 
   // Top contributing factors (sorted by weighted contribution, descending)
@@ -322,6 +340,19 @@ Body: {"p_product_id": 32}
   "warnings": [
     {"type": "additives", "message": "This product has a high additive load."},
     {"type": "nova_4", "message": "Classified as ultra-processed (NOVA 4)."}
+  ],
+
+  // Signal conflicts — contradictions between headline sentiment and
+  // co-displayed signals like Nutri-Score, NOVA, or high-nutrient flags (#885).
+  // Empty array when no contradictions found.
+  "conflicts": [
+    {
+      "rule": "M1",                      // rule identifier (M1–M6)
+      "key": "nova_ultra_processed",     // i18n lookup key for frontend
+      "severity": "high",               // "high" | "medium"
+      "message": "Score says 'Excellent' but NOVA group is 4 (ultra-processed)"
+      // ^ English fallback; frontend uses `key` for localized rendering
+    }
   ],
 
   // Category context — where this product sits in its category
@@ -355,6 +386,46 @@ Body: {"p_product_id": 32}
 | `additives`    | `high_additive_load = 'YES'` | "This product has a high additive load."  |
 | `palm_oil`     | `has_palm_oil = true`        | "Contains palm oil."                      |
 | `nova_4`       | `nova_classification = '4'`  | "Classified as ultra-processed (NOVA 4)." |
+
+### Signal Conflict Rules (#885)
+
+Six rules detect contradictions between the score headline and co-displayed signals.
+Frontend uses the `key` field for localized rendering, not `message`.
+
+| Rule | Key                       | Severity | Trigger                                                       |
+| ---- | ------------------------- | -------- | ------------------------------------------------------------- |
+| M1   | `nova_ultra_processed`    | high     | Good headline (≤30) + NOVA 4                                  |
+| M2   | `nutri_score_poor`        | high     | Good headline (≤30) + Nutri-Score D or E                      |
+| M3   | `high_sugar_flag` / etc.  | medium   | Excellent headline (≤15) + any high flag (sugar/salt/sat fat) |
+| M4   | `nutri_score_good`        | medium   | Bad headline (>30) + Nutri-Score A or B                       |
+| M5   | `nova_low_processing`     | medium   | Bad headline (>30) + NOVA 1 or 2                              |
+| M6   | `ingredient_concern_high` | medium   | Low/moderate score band (≤40) + ingredient concern > 50       |
+
+---
+
+### 4b. `api_get_product_profile` — Signal Conflict Flag (#886)
+
+The `api_get_product_profile(p_product_id, p_language)` function returns a `scores` section that includes a `has_signal_conflicts` boolean. This flag uses the same M1–M6 rules above as a lightweight inline check, without computing the full conflicts array.
+
+**Scores section (relevant fields):**
+
+```jsonc
+{
+  "scores": {
+    "unhealthiness_score": 12,
+    "score_band": "low",
+    "headline": "This product scores very well. It has low levels of nutrients of concern.",
+    "has_signal_conflicts": true,  // <-- NEW: true when M1–M6 rules detect contradiction
+    "nutri_score_label": "E",
+    "nova_group": "4",
+    // ... other existing fields unchanged
+  }
+}
+```
+
+**Frontend usage:** When `has_signal_conflicts` is `true`, the `ProductScoreHero` component renders a small warning-colored qualifier below the headline (e.g., "Some signals may not align with this score"). The full conflict details are available in `api_score_explanation().conflicts[]` when the user expands the breakdown panel.
+
+**Backward compatibility:** Additive-only — new boolean key. All existing response keys unchanged.
 
 ---
 
