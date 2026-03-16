@@ -2238,6 +2238,7 @@ Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
 | `docs/decisions/007-english-canonical-ingredients.md` | Accepted | `name_en` is canonical; translations stored in `ingredient_translations`       |
 | `docs/decisions/008-nutrient-density-bonus.md`        | Accepted | Nutrient density bonus (protein + fibre) as subtracted 10th factor in v3.3     |
 | `docs/decisions/009-scoring-band-calibration.md`      | Accepted | Scoring band calibration — catalog limited, formula correct, no changes needed |
+| `docs/decisions/010-ingredient-language-model.md`     | Accepted | English canonical + `ingredient_translations` fallback; no schema changes needed |
 
 ---
 

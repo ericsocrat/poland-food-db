@@ -13,6 +13,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Documentation
+
+- ADR-010: Ingredient Language Model — English canonical identity reaffirmed,
+  `ingredient_translations` fallback chain documented, source-language text
+  trade-offs acknowledged, 5 follow-up issues identified (#890)
+
 ### Added
 
 - User product submission UX: scan-miss CTA (`ScanMissSubmitCTA`) shown when
