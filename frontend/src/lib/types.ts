@@ -364,6 +364,7 @@ export interface ProductDetail {
     score_band: ScoreBand;
     nutri_score: NutriGrade;
     nutri_score_color: string;
+    nutri_score_source: NutriScoreSource | null;
     nova_group: string;
     processing_risk: string;
   };
@@ -716,6 +717,7 @@ export interface ProfileScores {
   score_band: ScoreBand;
   nutri_score_label: NutriGrade;
   nutri_score_color: string;
+  nutri_score_source: NutriScoreSource | null;
   nova_group: string;
   processing_risk: string;
   score_breakdown: ScoreBreakdownFactor[];
@@ -826,6 +828,11 @@ export interface ProductProfileNotFound {
 
 export type ScoreBand = "low" | "moderate" | "high" | "very_high";
 export type NutriGrade = "A" | "B" | "C" | "D" | "E" | null;
+export type NutriScoreSource =
+  | "official_label"
+  | "off_computed"
+  | "manual"
+  | "unknown";
 export type DietPreference = "none" | "vegetarian" | "vegan";
 
 // ─── Health Profiles ────────────────────────────────────────────────────────

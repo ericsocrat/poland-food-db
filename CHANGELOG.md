@@ -13,6 +13,12 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Fixed
+
+- Populate `nutri_score_source` for all products — pipeline now sets source
+  alongside label, backfill migration covers 8,204 existing scored products
+  (7,462 `off_computed` + 742 `unknown`), QA checks 21–22 pass (#893)
+
 ### Documentation
 
 - Health-goal personalization design spec (`docs/HEALTH_GOAL_PERSONALIZATION.md`) —

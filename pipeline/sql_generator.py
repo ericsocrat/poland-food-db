@@ -349,6 +349,18 @@ from (
 ) as d(brand, product_name, ns)
 where p.country = {_sql_text(country)} and p.brand = d.brand and p.product_name = d.product_name;
 
+-- 2b. Nutri-Score source provenance (derived from label)
+update products p set
+  nutri_score_source = case
+    when p.nutri_score_label is null            then null
+    when p.nutri_score_label = 'NOT-APPLICABLE' then null
+    when p.nutri_score_label = 'UNKNOWN'        then 'unknown'
+    else 'off_computed'
+  end
+where p.country = {_sql_text(country)}
+  and p.category = {_sql_text(category)}
+  and p.is_deprecated is not true;
+
 -- 3. NOVA classification
 update products p set
   nova_classification = d.nova
