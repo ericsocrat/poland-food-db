@@ -5,6 +5,19 @@ import { useState } from "react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import ScanPage from "./page";
 
+// ─── jsdom stubs ────────────────────────────────────────────────────────────
+
+if (typeof globalThis.MediaStream === "undefined") {
+  globalThis.MediaStream = class MediaStream {
+    getVideoTracks() {
+      return [];
+    }
+    getTracks() {
+      return [];
+    }
+  } as unknown as typeof MediaStream;
+}
+
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
 const {
@@ -1067,5 +1080,103 @@ describe("ScanPage", () => {
     expect(spy).toHaveBeenCalledWith(expect.any(Function), 15_000);
 
     spy.mockRestore();
+  });
+
+  // ─── Camera Feed Status ─────────────────────────────────────────────────────
+
+  it("shows 'Starting camera' message while feed is initializing", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Back Camera" } as MediaDeviceInfo,
+    ]);
+    // Keep decodeFromVideoDevice pending so startScanner stays in try block
+    mockDecodeFromDevice.mockImplementation(
+      () => new Promise(() => {}),
+    );
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(mockDecodeFromDevice).toHaveBeenCalled();
+    });
+
+    // feedActive starts false → "Starting camera…" shown, "Scanning…" hidden
+    expect(
+      screen.getByText("Starting camera\u2026"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Scanning\u2026 point camera at barcode/),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows scanning status after video feed becomes active", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Back Camera" } as MediaDeviceInfo,
+    ]);
+    mockDecodeFromDevice.mockImplementation(
+      () => new Promise(() => {}),
+    );
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(mockDecodeFromDevice).toHaveBeenCalled();
+    });
+
+    // Simulate the video element reaching a ready state
+    const videoEl = document.querySelector("video");
+    expect(videoEl).not.toBeNull();
+    Object.defineProperty(videoEl!, "readyState", {
+      value: 3,
+      configurable: true,
+    });
+    Object.defineProperty(videoEl!, "videoWidth", {
+      value: 640,
+      configurable: true,
+    });
+
+    // Dispatch 'playing' event — triggers feedActive transition
+    await act(async () => {
+      videoEl!.dispatchEvent(new Event("playing"));
+    });
+
+    // feedActive now true → "Scanning…" shown, "Starting camera…" hidden
+    expect(
+      screen.getByText(/Scanning\u2026 point camera at barcode/),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText("Starting camera\u2026"),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not show scanning status when readyState is too low", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Back Camera" } as MediaDeviceInfo,
+    ]);
+    mockDecodeFromDevice.mockImplementation(
+      () => new Promise(() => {}),
+    );
+
+    render(<ScanPage />, { wrapper: createWrapper() });
+
+    await waitFor(() => {
+      expect(mockDecodeFromDevice).toHaveBeenCalled();
+    });
+
+    // Video element with readyState=0 (not ready) — keep videoWidth=0 too
+    const videoEl = document.querySelector("video");
+    expect(videoEl).not.toBeNull();
+
+    // Dispatch 'playing' without mocking readyState — defaults to 0 in jsdom
+    await act(async () => {
+      videoEl!.dispatchEvent(new Event("playing"));
+    });
+
+    // feedActive should remain false — "Starting camera…" still shown
+    expect(
+      screen.getByText("Starting camera\u2026"),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(/Scanning\u2026 point camera at barcode/),
+    ).not.toBeInTheDocument();
   });
 });

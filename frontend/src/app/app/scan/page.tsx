@@ -15,13 +15,13 @@ import { recordScan } from "@/lib/api";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
-import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
-import { createClient } from "@/lib/supabase/client";
 import {
     classifyScannerError,
     getBrowserSummary,
     getFacingMode,
 } from "@/lib/scanner-errors";
+import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
+import { createClient } from "@/lib/supabase/client";
 import { showToast } from "@/lib/toast";
 import type {
     FormSubmitEvent,
@@ -76,7 +76,7 @@ interface BarcodeReader {
       result: { getText: () => string } | null,
       error: unknown,
     ) => void,
-  ) => void;
+  ) => Promise<void>;
   reset: () => void;
 }
 
@@ -99,6 +99,7 @@ export default function ScanPage() {
   );
   const [scanTimeout, setScanTimeout] = useState(false);
   const [foundProduct, setFoundProduct] = useState<RecordScanFoundResponse | null>(null);
+  const [feedActive, setFeedActive] = useState(false);
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const readerRef = useRef<BarcodeReader | null>(null);
@@ -107,6 +108,7 @@ export default function ScanPage() {
   const isMountedRef = useRef(true);
   const initStartTimeRef = useRef(0);
   const streamReadyTimeRef = useRef(0);
+  const streamReadyFiredRef = useRef(false);
 
   // ─── Record scan mutation ─────────────────────────────────────────────────
 
@@ -178,6 +180,8 @@ export default function ScanPage() {
       streamRef.current = null;
     }
     setTorchOn(false);
+    setFeedActive(false);
+    streamReadyFiredRef.current = false;
   }, []);
 
   const startScanner = useCallback(async () => {
@@ -218,7 +222,35 @@ export default function ScanPage() {
       );
       const deviceId = backCamera?.deviceId || devices[0].deviceId;
 
-      reader.decodeFromVideoDevice(
+      // Attach video feed listeners before starting decode
+      const videoEl = videoRef.current;
+      const onPlaying = () => {
+        if (!isMountedRef.current) return;
+        if (!videoEl || videoEl.readyState < 2 || videoEl.videoWidth === 0) return;
+        setFeedActive(true);
+
+        // Fire stream-ready telemetry exactly once per scanner start
+        if (!streamReadyFiredRef.current) {
+          streamReadyFiredRef.current = true;
+          streamReadyTimeRef.current = Date.now();
+          if (videoEl.srcObject instanceof MediaStream) {
+            streamRef.current = videoEl.srcObject;
+            const videoTrack = streamRef.current.getVideoTracks()[0];
+            track("scanner_stream_ready", {
+              camera_count: devices.length,
+              has_multiple_cameras: devices.length > 1,
+              facing_mode: videoTrack ? getFacingMode(videoTrack) : "unknown",
+              browser: getBrowserSummary(),
+              time_to_ready_ms: Date.now() - initStartTimeRef.current,
+            });
+          }
+        }
+      };
+      if (videoEl) {
+        videoEl.addEventListener("playing", onPlaying);
+      }
+
+      await reader.decodeFromVideoDevice(
         deviceId,
         videoRef.current,
         (result, _error) => {
@@ -234,18 +266,17 @@ export default function ScanPage() {
         },
       );
 
-      if (videoRef.current?.srcObject instanceof MediaStream) {
-        streamRef.current = videoRef.current.srcObject;
-        const videoTrack = streamRef.current.getVideoTracks()[0];
-        streamReadyTimeRef.current = Date.now();
-        track("scanner_stream_ready", {
-          camera_count: devices.length,
-          has_multiple_cameras: devices.length > 1,
-          facing_mode: videoTrack ? getFacingMode(videoTrack) : "unknown",
-          browser: getBrowserSummary(),
-          time_to_ready_ms: Date.now() - initStartTimeRef.current,
-        });
-      }
+      // Watchdog: if feed is still not active after 5 s, flag camera error
+      setTimeout(() => {
+        if (!isMountedRef.current) return;
+        if (videoEl && (videoEl.readyState < 2 || videoEl.videoWidth === 0)) {
+          setCameraError("generic");
+          track("scanner_init_error", {
+            error_type: "feed-timeout",
+            browser: getBrowserSummary(),
+          });
+        }
+      }, 5_000);
     } catch (err: unknown) {
       const errorType = classifyScannerError(err);
       track("scanner_init_error", {
@@ -649,6 +680,7 @@ export default function ScanPage() {
                   className="aspect-4/3 w-full object-cover"
                   playsInline
                   muted
+                  autoPlay
                 />
                 {/* Viewfinder overlay with alignment guides */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
@@ -697,9 +729,14 @@ export default function ScanPage() {
               </div>
 
               {/* Scanning status */}
-              {!scanTimeout && (
+              {!scanTimeout && feedActive && (
                 <p className="animate-pulse text-center text-sm text-foreground-secondary">
                   {t("scan.scanningStatus")}
+                </p>
+              )}
+              {!scanTimeout && !feedActive && !cameraError && (
+                <p className="animate-pulse text-center text-sm text-foreground-muted">
+                  {t("scan.cameraStarting")}
                 </p>
               )}
 

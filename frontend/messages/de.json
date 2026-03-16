@@ -339,6 +339,7 @@
     "submittedDate": "Eingereicht {date}",
     "categoryLabel": "Kategorie: {category}",
     "scanningStatus": "Scannen… Kamera auf den Barcode richten",
+    "cameraStarting": "Kamera wird gestartet…",
     "timeoutTitle": "Probleme beim Scannen?",
     "timeoutHint": "Versuchen Sie bessere Beleuchtung oder halten Sie ruhig. Sie können den Barcode auch manuell eingeben.",
     "productFound": "Produkt gefunden!",

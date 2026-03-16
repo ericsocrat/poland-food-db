@@ -339,6 +339,7 @@
     "submittedDate": "Submitted {date}",
     "categoryLabel": "Category: {category}",
     "scanningStatus": "Scanning… point camera at barcode",
+    "cameraStarting": "Starting camera…",
     "timeoutTitle": "Having trouble scanning?",
     "timeoutHint": "Try better lighting or hold steady. You can also enter the barcode manually.",
     "productFound": "Product Found!",

@@ -339,6 +339,7 @@
     "submittedDate": "Zgłoszono {date}",
     "categoryLabel": "Kategoria: {category}",
     "scanningStatus": "Skanowanie… skieruj kamerę na kod kreskowy",
+    "cameraStarting": "Uruchamianie kamery…",
     "timeoutTitle": "Masz problem ze skanowaniem?",
     "timeoutHint": "Spróbuj lepszego oświetlenia lub trzymaj stabilnie. Możesz też wpisać kod ręcznie.",
     "productFound": "Produkt znaleziony!",
