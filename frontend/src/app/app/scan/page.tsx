@@ -2,83 +2,48 @@
 
 // ─── Barcode scanner page — ZXing camera + manual EAN fallback ──────────────
 // State machine: idle → scanning → looking-up → found / not-found / error
-// Enhancements: records scans to history, batch mode, submission CTA,
-// scan history link.
+// Camera lifecycle extracted to useBarcodeScanner hook.
+// Error and result views extracted to ScannerErrorState/ScanResultView.
 
-import { Button, ButtonLink } from "@/components/common/Button";
-import { LoadingSpinner } from "@/components/common/LoadingSpinner";
+import { Button } from "@/components/common/Button";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { ScanMissSubmitCTA } from "@/components/scan/ScanMissSubmitCTA";
+import { ScannerErrorState } from "@/components/scan/ScannerErrorState";
+import {
+    ScanErrorView,
+    ScanFoundView,
+    ScanLookingUpView,
+    ScanNotFoundView,
+} from "@/components/scan/ScanResultView";
 import { useAnalytics } from "@/hooks/use-analytics";
+import { useBarcodeScanner } from "@/hooks/use-barcode-scanner";
 import { recordScan } from "@/lib/api";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
-import {
-    classifyScannerError,
-    getBrowserSummary,
-    getFacingMode,
-} from "@/lib/scanner-errors";
-import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
 import { createClient } from "@/lib/supabase/client";
 import { showToast } from "@/lib/toast";
 import type {
     FormSubmitEvent,
     RecordScanFoundResponse,
-    RecordScanResponse,
+    RecordScanNotFoundResponse,
 } from "@/lib/types";
 import { isValidEan, stripNonDigits } from "@/lib/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-    AlertTriangle,
     Camera,
-    CameraOff,
-    CheckCircle,
     ClipboardList,
     ClipboardPaste,
     FileText,
     Flashlight,
     Keyboard,
     RefreshCw,
-    Search,
-    ShieldAlert,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type ScanState = "idle" | "looking-up" | "found" | "not-found" | "error";
-type CameraErrorKind = "permission-denied" | "no-camera" | "generic";
-
-/** Torch extensions not yet in the standard MediaTrack types. */
-interface TorchCapabilities extends MediaTrackCapabilities {
-  torch?: boolean;
-}
-
-interface TorchConstraintSet extends MediaTrackConstraintSet {
-  torch?: boolean;
-}
-
-function isTorchCapable(
-  caps: MediaTrackCapabilities,
-): caps is TorchCapabilities {
-  return "torch" in caps;
-}
-
-/** Reader instance from @zxing/library (dynamically imported). */
-interface BarcodeReader {
-  listVideoInputDevices: () => Promise<MediaDeviceInfo[]>;
-  decodeFromVideoDevice: (
-    deviceId: string,
-    videoElement: HTMLVideoElement | null,
-    callback: (
-      result: { getText: () => string } | null,
-      error: unknown,
-    ) => void,
-  ) => Promise<void>;
-  reset: () => void;
-}
 
 export default function ScanPage() {
   const router = useRouter();
@@ -89,26 +54,17 @@ export default function ScanPage() {
   const [ean, setEan] = useState("");
   const [manualEan, setManualEan] = useState("");
   const [mode, setMode] = useState<"camera" | "manual">("camera");
-  const [cameraError, setCameraError] = useState<CameraErrorKind | null>(null);
-  const [torchOn, setTorchOn] = useState(false);
   const [scanState, setScanState] = useState<ScanState>("idle");
-  const [scanResult, setScanResult] = useState<RecordScanResponse | null>(null);
+  const [scanResult, setScanResult] = useState<RecordScanFoundResponse | { found: false; has_pending_submission: boolean } | null>(null);
   const [batchMode, setBatchMode] = useState(false);
   const [batchResults, setBatchResults] = useState<RecordScanFoundResponse[]>(
     [],
   );
   const [scanTimeout, setScanTimeout] = useState(false);
   const [foundProduct, setFoundProduct] = useState<RecordScanFoundResponse | null>(null);
-  const [feedActive, setFeedActive] = useState(false);
 
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const readerRef = useRef<BarcodeReader | null>(null);
-  const streamRef = useRef<MediaStream | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const isMountedRef = useRef(true);
-  const initStartTimeRef = useRef(0);
   const streamReadyTimeRef = useRef(0);
-  const streamReadyFiredRef = useRef(false);
 
   // ─── Record scan mutation ─────────────────────────────────────────────────
 
@@ -132,25 +88,20 @@ export default function ScanPage() {
         type: "product.scanned",
         payload: { ean: scanEan },
       });
-      // Haptic feedback on successful scan
       if (typeof navigator !== "undefined" && navigator.vibrate) {
         navigator.vibrate(100);
       }
-      // Invalidate scan history
-      queryClient.invalidateQueries({
-        queryKey: ["scan-history"],
-      });
+      queryClient.invalidateQueries({ queryKey: ["scan-history"] });
 
       if (data.found) {
         const found = data;
         if (batchMode) {
-          // Batch mode: add to list, keep scanning
           setBatchResults((prev) => [found, ...prev]);
           showToast({
             type: "success",
             message: `✓ ${found.product_name_display ?? found.product_name}`,
           });
-          handleReset(true); // reset but stay in camera mode
+          handleReset(true);
         } else {
           setScanState("found");
           setFoundProduct(found);
@@ -168,165 +119,21 @@ export default function ScanPage() {
   const scanMutateRef = useRef(scanMutation.mutate);
   scanMutateRef.current = scanMutation.mutate;
 
-  // ─── ZXing barcode scanning ───────────────────────────────────────────────
+  // ─── Barcode scanner hook ─────────────────────────────────────────────────
 
-  const stopScanner = useCallback(() => {
-    if (readerRef.current) {
-      readerRef.current.reset();
-      readerRef.current = null;
-    }
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((t: MediaStreamTrack) => t.stop());
-      streamRef.current = null;
-    }
-    setTorchOn(false);
-    setFeedActive(false);
-    streamReadyFiredRef.current = false;
-  }, []);
-
-  const startScanner = useCallback(async () => {
-    setCameraError(null);
-    initStartTimeRef.current = Date.now();
-    track("scanner_init_start", { browser: getBrowserSummary() });
-
-    try {
-      const { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } =
-        await import("@zxing/library");
-
-      const hints = new Map();
-      hints.set(DecodeHintType.POSSIBLE_FORMATS, [
-        BarcodeFormat.EAN_13,
-        BarcodeFormat.EAN_8,
-        BarcodeFormat.UPC_A,
-        BarcodeFormat.UPC_E,
-      ]);
-
-      const reader = new BrowserMultiFormatReader(hints);
-      readerRef.current = reader;
-
-      const devices = await reader.listVideoInputDevices();
-      if (devices.length === 0) {
-        setCameraError("no-camera");
-        track("scanner_init_error", {
-          error_type: "no-camera",
-          browser: getBrowserSummary(),
-        });
-        return;
-      }
-
-      const backCamera = devices.find(
-        (d) =>
-          d.label.toLowerCase().includes("back") ||
-          d.label.toLowerCase().includes("rear") ||
-          d.label.toLowerCase().includes("environment"),
-      );
-      const deviceId = backCamera?.deviceId || devices[0].deviceId;
-
-      // Attach video feed listeners before starting decode
-      const videoEl = videoRef.current;
-      const onPlaying = () => {
-        if (!isMountedRef.current) return;
-        if (!videoEl || videoEl.readyState < 2 || videoEl.videoWidth === 0) return;
-        setFeedActive(true);
-
-        // Fire stream-ready telemetry exactly once per scanner start
-        if (!streamReadyFiredRef.current) {
-          streamReadyFiredRef.current = true;
-          streamReadyTimeRef.current = Date.now();
-          if (videoEl.srcObject instanceof MediaStream) {
-            streamRef.current = videoEl.srcObject;
-            const videoTrack = streamRef.current.getVideoTracks()[0];
-            track("scanner_stream_ready", {
-              camera_count: devices.length,
-              has_multiple_cameras: devices.length > 1,
-              facing_mode: videoTrack ? getFacingMode(videoTrack) : "unknown",
-              browser: getBrowserSummary(),
-              time_to_ready_ms: Date.now() - initStartTimeRef.current,
-            });
-          }
-        }
-      };
-      if (videoEl) {
-        videoEl.addEventListener("playing", onPlaying);
-      }
-
-      await reader.decodeFromVideoDevice(
-        deviceId,
-        videoRef.current,
-        (result, _error) => {
-          if (result) {
-            const code = result.getText();
-            if (isValidEan(code)) {
-              setScanState("looking-up");
-              setEan(code);
-              stopScanner();
-              scanMutateRef.current(code);
-            }
-          }
-        },
-      );
-
-      // Watchdog: if feed is still not active after 5 s, flag camera error
-      setTimeout(() => {
-        if (!isMountedRef.current) return;
-        if (videoEl && (videoEl.readyState < 2 || videoEl.videoWidth === 0)) {
-          setCameraError("generic");
-          track("scanner_init_error", {
-            error_type: "feed-timeout",
-            browser: getBrowserSummary(),
-          });
-        }
-      }, 5_000);
-    } catch (err: unknown) {
-      const errorType = classifyScannerError(err);
-      track("scanner_init_error", {
-        error_type: errorType,
-        browser: getBrowserSummary(),
-      });
-      if (errorType === "permission-denied") {
-        setCameraError("permission-denied");
-        showToast({ type: "error", messageKey: "scan.permissionDenied" });
-      } else {
-        setCameraError("generic");
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- track is fire-and-forget; including it causes double-init from deviceType change
-  }, [stopScanner]);
-
-  // Mounted guard for async telemetry reliability
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
-
-  async function toggleTorch() {
-    if (!streamRef.current) return;
-    const track = streamRef.current.getVideoTracks()[0];
-    if (!track) return;
-
-    try {
-      const capabilities = track.getCapabilities();
-      if (isTorchCapable(capabilities) && capabilities.torch) {
-        const newState = !torchOn;
-        const constraint: TorchConstraintSet = { torch: newState };
-        await track.applyConstraints({ advanced: [constraint] });
-        setTorchOn(newState);
-      } else {
-        showToast({ type: "error", messageKey: "scan.torchNotSupported" });
-      }
-    } catch {
-      showToast({ type: "error", messageKey: "scan.torchError" });
-    }
-  }
-
-  useEffect(() => {
-    if (mode === "camera" && scanState === "idle") {
-      startScanner();
-    }
-    return () => stopScanner();
-  }, [mode, scanState, startScanner, stopScanner]);
+  const {
+    videoRef, cameraError, torchOn, feedActive,
+    startScanner, stopScanner, toggleTorch, clearError, streamReadyTime,
+  } = useBarcodeScanner({
+    onBarcodeDetected: (code) => {
+      setScanState("looking-up");
+      setEan(code);
+      scanMutateRef.current(code);
+    },
+    enabled: mode === "camera" && scanState === "idle",
+    track,
+  });
+  streamReadyTimeRef.current = streamReadyTime;
 
   // ─── Scan timeout — "Having trouble?" after 15 seconds ──────────────────
   useEffect(() => {
@@ -375,172 +182,39 @@ export default function ScanPage() {
     await queryClient.invalidateQueries({ queryKey: ["scan-history"] });
   }, [queryClient]);
 
-  // ─── Render ─────────────────────────────────────────────────────────────────
+  // ─── Early-return result states ─────────────────────────────────────────────
 
-  // Error state
   if (scanState === "error") {
     return (
-      <div className="space-y-4">
-        <div className="card border-error-border bg-error-bg text-center">
-          <div className="mb-2 flex justify-center">
-            <AlertTriangle
-              size={40}
-              className="text-error"
-              aria-hidden="true"
-            />
-          </div>
-          <p className="text-lg font-semibold text-foreground">
-            {t("scan.lookupFailed")}
-          </p>
-          <p className="mt-1 text-sm text-foreground-secondary">
-            {t("scan.lookupError", { ean })}
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => {
-              setScanState("looking-up");
-              scanMutation.mutate(ean);
-            }}
-            className="flex-1"
-            icon={<RefreshCw size={16} aria-hidden="true" />}
-          >
-            {t("common.retry")}
-          </Button>
-          <Button onClick={() => handleReset()} className="flex-1">
-            {t("scan.scanAnother")}
-          </Button>
-        </div>
-      </div>
+      <ScanErrorView
+        ean={ean}
+        onRetry={() => { setScanState("looking-up"); scanMutation.mutate(ean); }}
+        onReset={() => handleReset()}
+      />
     );
   }
 
-  // Not found state — with submission CTA
   if (scanState === "not-found" && scanResult && !scanResult.found) {
-    const hasPending = scanResult.has_pending_submission;
-
     return (
-      <div className="space-y-4">
-        <div className="card text-center">
-          <div className="mb-2 flex justify-center">
-            <Search
-              size={40}
-              className="text-foreground-muted"
-              aria-hidden="true"
-            />
-          </div>
-          <p className="text-lg font-semibold text-foreground">
-            {t("scan.notFound")}
-          </p>
-          <p className="mt-1 text-sm text-foreground-secondary">
-            {t("scan.notFoundMessage", { ean })}
-          </p>
-        </div>
-
-        <ScanMissSubmitCTA ean={ean} hasPendingSubmission={hasPending} />
-
-        <div className="flex gap-2">
-          <Button
-            variant="secondary"
-            onClick={() => handleReset()}
-            className="flex-1"
-          >
-            {t("scan.scanAnother")}
-          </Button>
-          <ButtonLink
-            href="/app/scan/history"
-            variant="secondary"
-            className="flex-1"
-            icon={<ClipboardList size={16} aria-hidden="true" />}
-          >
-            {t("scan.history")}
-          </ButtonLink>
-        </div>
-      </div>
+      <ScanNotFoundView
+        ean={ean}
+        scanResult={scanResult as RecordScanNotFoundResponse}
+        onReset={() => handleReset()}
+      />
     );
   }
 
-  // Looking-up state
   if (scanState === "looking-up" && scanMutation.isPending) {
-    return (
-      <div className="flex flex-col items-center gap-3 py-12">
-        <LoadingSpinner />
-        <p className="text-sm text-foreground-secondary">
-          {t("scan.lookingUp", { ean })}
-        </p>
-      </div>
-    );
+    return <ScanLookingUpView ean={ean} />;
   }
 
-  // Found state — preview overlay before navigating
   if (scanState === "found" && foundProduct) {
-    const band = getScoreBand(foundProduct.unhealthiness_score);
-    const tryVitScore = toTryVitScore(foundProduct.unhealthiness_score);
-
     return (
-      <div className="space-y-4">
-        <div className="card text-center">
-          <div className="mb-3 flex justify-center">
-            <CheckCircle
-              size={48}
-              className="text-success"
-              aria-hidden="true"
-            />
-          </div>
-          <p className="text-lg font-bold text-foreground">
-            {t("scan.productFound")}
-          </p>
-          <p className="mt-2 text-base font-semibold text-foreground">
-            {foundProduct.product_name_display ?? foundProduct.product_name}
-          </p>
-          {foundProduct.brand && (
-            <p className="text-sm text-foreground-secondary">
-              {foundProduct.brand}
-            </p>
-          )}
-          {band && (
-            <div className="mt-3 flex items-center justify-center gap-2">
-              <span
-                className="inline-flex items-center gap-1 rounded-full px-3 py-1 text-sm font-semibold"
-                style={{ backgroundColor: band.bgColor, color: band.textColor }}
-              >
-                {tryVitScore}
-              </span>
-              <span className="text-sm text-foreground-secondary">
-                {t(band.labelKey)}
-              </span>
-            </div>
-          )}
-          {foundProduct.nutri_score && (
-            <div className="mt-2 flex items-center justify-center gap-1">
-              <span
-                className={`inline-flex h-6 w-6 items-center justify-center rounded text-xs font-bold text-white ${
-                  NUTRI_COLORS[foundProduct.nutri_score] ?? "bg-foreground-muted"
-                }`}
-              >
-                {foundProduct.nutri_score}
-              </span>
-              <span className="text-xs text-foreground-muted">Nutri-Score</span>
-            </div>
-          )}
-        </div>
-        <div className="flex gap-2">
-          <Button
-            onClick={() => router.push(`/app/scan/result/${foundProduct.product_id}`)}
-            className="flex-1"
-          >
-            {t("scan.viewDetails")}
-          </Button>
-          <Button
-            variant="secondary"
-            onClick={() => handleReset()}
-            className="flex-1"
-          >
-            {t("scan.scanNext")}
-          </Button>
-        </div>
-      </div>
+      <ScanFoundView
+        product={foundProduct}
+        onViewDetails={() => router.push(`/app/scan/result/${foundProduct.product_id}`)}
+        onReset={() => handleReset()}
+      />
     );
   }
 
@@ -627,51 +301,11 @@ export default function ScanPage() {
       {mode === "camera" ? (
         <div className="space-y-3">
           {cameraError ? (
-            <div className="card border-warning-border bg-warning-bg text-center">
-              <div className="mb-2 flex justify-center">
-                {cameraError === "permission-denied" ? (
-                  <ShieldAlert
-                    size={36}
-                    className="text-warning-text"
-                    aria-hidden="true"
-                  />
-                ) : (
-                  <CameraOff
-                    size={36}
-                    className="text-warning-text"
-                    aria-hidden="true"
-                  />
-                )}
-              </div>
-              <p className="text-sm font-semibold text-warning-text">
-                {cameraError === "no-camera"
-                  ? t("scan.noCameraTitle")
-                  : cameraError === "permission-denied"
-                    ? t("scan.cameraBlocked")
-                    : t("scan.cameraError")}
-              </p>
-              <p className="mt-1 text-xs text-warning-text/80">
-                {cameraError === "no-camera"
-                  ? t("scan.noCameraHint")
-                  : cameraError === "permission-denied"
-                    ? t("scan.cameraBlockedHint")
-                    : t("scan.cameraError")}
-              </p>
-              {cameraError !== "no-camera" && (
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    setCameraError(null);
-                    setMode("camera");
-                    startScanner();
-                  }}
-                  className="mt-3"
-                  icon={<RefreshCw size={16} aria-hidden="true" />}
-                >
-                  {t("scan.retryCamera")}
-                </Button>
-              )}
-            </div>
+            <ScannerErrorState
+              error={cameraError}
+              onRetry={() => { clearError(); startScanner(); }}
+              onManualEntry={() => { clearError(); setMode("manual"); }}
+            />
           ) : (
             <>
               <div className="relative overflow-hidden rounded-xl bg-black">

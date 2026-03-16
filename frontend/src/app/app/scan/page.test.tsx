@@ -701,7 +701,7 @@ describe("ScanPage", () => {
 
   // ─── Camera Error Handling ──────────────────────────────────────────────────
 
-  it("falls back to manual mode when camera permission is denied", async () => {
+  it("shows permission error card when camera permission is denied", async () => {
     mockListDevices.mockResolvedValue([
       { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
     ]);
@@ -715,12 +715,16 @@ describe("ScanPage", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Camera"));
 
-    // Should fall back to manual mode and show permission denied toast
+    // Without Permissions API (jsdom default) → permission-unknown → error card
     await waitFor(() => {
-      expect(mockShowToast).toHaveBeenCalledWith(
-        expect.objectContaining({ messageKey: "scan.permissionDenied" }),
-      );
+      expect(
+        screen.getByText("Camera Permission Required"),
+      ).toBeInTheDocument();
     });
+    expect(screen.getByText("Reload Page")).toBeInTheDocument();
+    expect(screen.getByText("Enter Barcode Manually")).toBeInTheDocument();
+    // No toast for permission errors
+    expect(mockShowToast).not.toHaveBeenCalled();
   });
 
   it("falls back to manual mode on generic camera error", async () => {
@@ -839,10 +843,10 @@ describe("ScanPage", () => {
     });
 
     // Switch to manual mode
-    await user.click(screen.getByRole("button", { name: /Manual/ }));
+    await user.click(screen.getByRole("button", { name: "Manual" }));
 
     // Click Camera button to switch back
-    await user.click(screen.getByRole("button", { name: /Camera/ }));
+    await user.click(screen.getByRole("button", { name: "Camera" }));
 
     // It should attempt to start camera again (listVideoInputDevices called again)
     await waitFor(() => {
@@ -903,7 +907,13 @@ describe("ScanPage", () => {
     expect(screen.queryByText("Retry Camera")).not.toBeInTheDocument();
   });
 
-  it("shows permission-denied error card with retry button", async () => {
+  it("shows permission-denied error card with reload button", async () => {
+    Object.defineProperty(navigator, "permissions", {
+      value: {
+        query: vi.fn().mockResolvedValue({ state: "denied" }),
+      },
+      configurable: true,
+    });
     mockListDevices.mockResolvedValue([
       { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
     ]);
@@ -920,18 +930,19 @@ describe("ScanPage", () => {
       expect(screen.getByText("Camera Access Blocked")).toBeInTheDocument();
     });
     expect(
-      screen.getByText(/allow camera access in your browser/),
+      screen.getByText(/Allow camera access for this site/),
     ).toBeInTheDocument();
-    expect(screen.getByText("Retry Camera")).toBeInTheDocument();
+    expect(screen.getByText("Reload Page")).toBeInTheDocument();
+    expect(screen.getByText("Enter Barcode Manually")).toBeInTheDocument();
+    expect(screen.queryByText("Retry Camera")).not.toBeInTheDocument();
   });
 
-  it("retry camera button restarts scanner", async () => {
+  it("retry camera button restarts scanner on generic error", async () => {
     mockListDevices.mockResolvedValue([
       { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
     ]);
     mockDecodeFromDevice.mockImplementation(() => {
-      const err = new DOMException("Permission denied", "NotAllowedError");
-      throw err;
+      throw new Error("Generic camera failure");
     });
 
     const user = userEvent.setup();
@@ -948,6 +959,61 @@ describe("ScanPage", () => {
     await waitFor(() => {
       expect(mockListDevices.mock.calls.length).toBeGreaterThan(callsBefore);
     });
+  });
+
+  it("shows permission-prompt card when Permissions API indicates prompt", async () => {
+    Object.defineProperty(navigator, "permissions", {
+      value: {
+        query: vi.fn().mockResolvedValue({ state: "prompt" }),
+      },
+      configurable: true,
+    });
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
+    ]);
+    mockDecodeFromDevice.mockImplementation(() => {
+      const err = new DOMException("Permission denied", "NotAllowedError");
+      throw err;
+    });
+
+    const user = userEvent.setup();
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
+
+    await waitFor(() => {
+      expect(
+        screen.getByText("Camera Permission Required"),
+      ).toBeInTheDocument();
+    });
+    expect(
+      screen.getByText(/permission was dismissed/),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Reload Page")).toBeInTheDocument();
+    expect(screen.queryByText("Retry Camera")).not.toBeInTheDocument();
+  });
+
+  it("enter barcode manually button switches to manual mode from error", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
+    ]);
+    mockDecodeFromDevice.mockImplementation(() => {
+      throw new Error("Generic camera failure");
+    });
+
+    const user = userEvent.setup();
+    render(<ScanPage />, { wrapper: createWrapper() });
+    await user.click(screen.getByText("Camera"));
+
+    await waitFor(() => {
+      expect(screen.getByText("Enter Barcode Manually")).toBeInTheDocument();
+    });
+
+    await user.click(screen.getByText("Enter Barcode Manually"));
+
+    // Should switch to manual mode — show EAN input field
+    expect(
+      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+    ).toBeInTheDocument();
   });
 
   it("triggers haptic feedback on successful scan", async () => {
