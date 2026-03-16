@@ -11,6 +11,7 @@ const eslintConfig = [
       // Address in a dedicated cleanup pass.
       "react-hooks/set-state-in-effect": "warn",
       "react-hooks/preserve-manual-memoization": "warn",
+      "react-hooks/purity": "warn",
       "react-hooks/refs": "warn",
       "react-hooks/static-components": "warn",
 
