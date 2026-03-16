@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-19 by GitHub Copilot (session 46)
+> **Last updated:** 2026-03-19 by GitHub Copilot (session 48)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,22 +8,41 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (clean working tree)
-- **Latest SHA (main):** `29c1e58` (data(scoring): populate nutri_score_source #912)
-- **Open PRs:** 6 (all Dependabot dependency updates — #904, #907, #908, #909, #910, #911)
+- **Latest SHA (main):** `a4d7de11` (ci(deps): bump treosh/lighthouse-ci-action #910)
+- **Open PRs:** 1 (#904 — Next.js breaking change, needs code fix)
+
+## Recently Shipped (Session 48 — CI Baseline Restoration)
+
+| PR   | Summary                                                                                   |
+| ---- | ----------------------------------------------------------------------------------------- |
+| #914 | security(frontend): prevent ReDoS in browser UA regex (SonarCloud hotspot S5852)          |
+| #907 | chore(deps): bump testing group in frontend (vitest, @testing-library/react, jsdom)       |
+| #908 | ci(deps): bump github-official Actions group (4 updates)                                  |
+| #910 | ci(deps): bump treosh/lighthouse-ci-action from 12.6.1 to 12.6.2                         |
+| #909 | **CLOSED** — @vitejs/plugin-react 6.0.1 requires vite 5-6, project uses vite 7           |
+| #911 | **CLOSED** — @eslint/js 10.0.1 requires eslint 10, project uses eslint 9                 |
+
+## Recently Shipped (Session 47 — Post-Deploy Verification)
+
+| PR   | Summary                                                                                  |
+| ---- | ---------------------------------------------------------------------------------------- |
+| #913 | fix(schema): add 5 scanner event names to analytics constraint (#889)                    |
+| #906 | deps(frontend): bump @supabase/supabase-js from 2.99.0 to 2.99.1 (Dependabot auto-merge) |
+| #905 | deps(frontend): bump @sentry/nextjs from 10.42.0 to 10.43.0 (Dependabot auto-merge)      |
 
 ## Recently Shipped (Session 46 — Sprint Close-Out)
 
-| PR   | Summary                                                                                                  |
-| ---- | -------------------------------------------------------------------------------------------------------- |
-| #912 | data(scoring): populate nutri_score_source across pipeline and existing products (#893)                  |
-| #903 | docs(892): health-goal personalization design spec                                                       |
-| #902 | docs(ingredients): add ADR-010 ingredient language model (#890)                                          |
-| #901 | feat(frontend): ingredient language toggle with raw display + feature flag (#891)                        |
-| #900 | fix(scanner): instrument error taxonomy, fix lifecycle bugs, add test coverage (#889)                    |
-| #899 | feat(frontend): FilterPanel performance — virtualized lists, debounced inputs, memoized callbacks (#888) |
-| #898 | feat(frontend): product detail nutrition table, allergen chips, loading skeleton (#887)                  |
-| #897 | feat(frontend): enhanced search with saved searches, autocomplete, filter chips (#886)                   |
-| #896 | feat(frontend): PersonalizedBadge component with health profile integration (#885)                       |
+| PR   | Summary                                                                                 |
+| ---- | --------------------------------------------------------------------------------------- |
+| #912 | data(scoring): populate nutri_score_source across pipeline and existing products (#893) |
+| #903 | docs(892): health-goal personalization design spec                                      |
+| #902 | docs(ingredients): add ADR-010 ingredient language model (#890)                         |
+| #901 | fix(frontend): consolidate above-the-fold trust layout (#891)                           |
+| #900 | feat(scanner): add scanner telemetry instrumentation (#889)                             |
+| #899 | fix(frontend): move hardcoded English strings into i18n system (#888)                   |
+| #898 | fix(onboarding): remove dead health goals, fix threshold comparisons (#887)             |
+| #897 | feat(frontend): add localized conflict warnings to score breakdown panel (#886)         |
+| #896 | fix(scoring): add signal-conflict detection to api_score_explanation (#885)             |
 
 ## Recently Shipped (Session 45 — Infrastructure)
 
@@ -34,25 +53,26 @@
 
 ## CI Gate Status (main branch)
 
-| Gate         | Status | Notes                                                |
-| ------------ | ------ | ---------------------------------------------------- |
-| pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke |
-| main-gate    | ✅      | All passing                                          |
-| qa.yml       | ✅      | 756/756 checks passing (48 suites)                   |
-| deploy.yml   | ✅      | All 207 migrations on production, 16/16 sanity pass  |
-| dep-audit    | ✅      | 0 high/critical vulnerabilities                      |
-| python-lint  | ✅      | 0 ruff errors                                        |
-| quality-gate | ✅      | All checks passing                                   |
-| nightly      | ✅      | Data audit passing                                   |
+| Gate         | Status | Notes                                                            |
+| ------------ | ------ | ---------------------------------------------------------------- |
+| pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke             |
+| main-gate    | ✅      | All passing                                                      |
+| qa.yml       | ✅      | 756/756 checks passing (48 suites)                               |
+| deploy.yml   | ✅      | All 209 migrations on production (deployed 2026-03-16T08:24:26Z) |
+| dep-audit    | ✅      | 0 high/critical vulnerabilities                                  |
+| python-lint  | ✅      | 0 ruff errors                                                    |
+| quality-gate | ✅      | Passing — ReDoS hotspot resolved (PR #914)                       |
+| nightly      | ✅      | Data audit passing                                               |
 
 ## Open Issues (2 total)
 
-| Issue | Priority | Summary                                                                                |
-| ----- | -------- | -------------------------------------------------------------------------------------- |
-| #889  | P1       | Scanner error taxonomy — observation mode (Phase 1 instrumentation shipped in PR #900) |
-| #212  | Deferred | Infrastructure Cost Attribution Framework                                              |
+| Issue | Priority | Summary                                                                                                     |
+| ----- | -------- | ----------------------------------------------------------------------------------------------------------- |
+| #889  | P1       | Scanner error taxonomy — observation mode (constraint fix deployed PR #913, window 2026-03-16 → 2026-03-30) |
+| #212  | Deferred | Infrastructure Cost Attribution Framework                                                                   |
 
-Sprint issues #885–#895 have been shipped and closed. #889 remains open in observation mode (error taxonomy instrumented, awaiting data).
+Sprint issues #885–#895 have been shipped and closed. #889 remains open in observation mode.
+**#889 observation window:** Start 2026-03-16T08:24:26Z, checkpoint 2026-03-30, threshold ≥50 `scanner_init_start` events.
 
 ## Milestones Completed
 
@@ -80,9 +100,11 @@ Sprint issues #885–#895 have been shipped and closed. #889 remains open in obs
 - [x] Configure PRODUCTION_URL secret for health endpoint verification
 - [x] Set up staging environment — project `rxtaicdpnaqigowdbmsb` (eu-west-1), 207 migrations, seeded, secrets configured
 - [x] Ship sprint issues #885–#895 (PRs #896–#903, #912)
-- [ ] Review #889 observation data after checkpoint (see issue comment)
-- [ ] Review and merge 6 Dependabot PRs (#904, #907–#911)
-- [ ] Deploy migration 20260319000400 to production
+- [x] Deploy migrations 20260319000400 + 20260319000500 to production (deployed 2026-03-16T08:24:26Z)
+- [x] Verify scanner event constraint fix in production (PR #913 — all 3 layers confirmed)
+- [x] Verify nutri_score_source backfill in production (#893 — 2,197 off_computed + 238 unknown + 3 manual)
+- [ ] Review #889 observation data after 2026-03-30 checkpoint (see issue comment)
+- [ ] Fix PR #904 — Next.js breaking change (remove `eslint` property from NextConfig)
 
 ## Staging Environment
 
@@ -111,9 +133,9 @@ Sprint issues #885–#895 have been shipped and closed. #889 remains open in obs
 - **Nutrition coverage (production):** 2,438/2,438 (100%)
 - **Frontend test coverage:** ~92% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
-- **Open issues:** 2 | **Open PRs:** 6 (Dependabot)
+- **Open issues:** 2 | **Open PRs:** 1 (Next.js breaking change)
 - **Vitest:** 5,614 tests passing (29 skipped) across 343 test files
-- **DB migrations:** 209 append-only (207 applied to production + 2 pending)
+- **DB migrations:** 209 append-only (all 209 applied to production)
 - **pgTAP test files:** 17
 - **Ruff lint:** 0 errors
 - **GitHub Ruleset:** strict_required_status_checks_policy = true
