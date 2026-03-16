@@ -49,7 +49,12 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 type ScanState = "idle" | "looking-up" | "found" | "not-found" | "error";
-type CameraErrorKind = "permission-denied" | "no-camera" | "generic";
+type CameraErrorKind =
+  | "permission-prompt"
+  | "permission-denied"
+  | "permission-unknown"
+  | "no-camera"
+  | "generic";
 
 /** Torch extensions not yet in the standard MediaTrack types. */
 interface TorchCapabilities extends MediaTrackCapabilities {
@@ -284,8 +289,22 @@ export default function ScanPage() {
         browser: getBrowserSummary(),
       });
       if (errorType === "permission-denied") {
-        setCameraError("permission-denied");
-        showToast({ type: "error", messageKey: "scan.permissionDenied" });
+        // Best-effort permission state detection
+        let permKind: CameraErrorKind = "permission-unknown";
+        try {
+          if (navigator.permissions?.query) {
+            const result = await navigator.permissions.query({
+              name: "camera" as PermissionName,
+            });
+            permKind =
+              result.state === "denied"
+                ? "permission-denied"
+                : "permission-prompt";
+          }
+        } catch {
+          // Permissions API unavailable or 'camera' not supported
+        }
+        setCameraError(permKind);
       } else {
         setCameraError("generic");
       }
@@ -544,6 +563,11 @@ export default function ScanPage() {
     );
   }
 
+  const isPermissionError =
+    cameraError === "permission-prompt" ||
+    cameraError === "permission-denied" ||
+    cameraError === "permission-unknown";
+
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6">
@@ -629,7 +653,7 @@ export default function ScanPage() {
           {cameraError ? (
             <div className="card border-warning-border bg-warning-bg text-center">
               <div className="mb-2 flex justify-center">
-                {cameraError === "permission-denied" ? (
+                {isPermissionError ? (
                   <ShieldAlert
                     size={36}
                     className="text-warning-text"
@@ -648,29 +672,55 @@ export default function ScanPage() {
                   ? t("scan.noCameraTitle")
                   : cameraError === "permission-denied"
                     ? t("scan.cameraBlocked")
-                    : t("scan.cameraError")}
+                    : isPermissionError
+                      ? t("scan.cameraPermissionRequired")
+                      : t("scan.cameraUnavailable")}
               </p>
               <p className="mt-1 text-xs text-warning-text/80">
                 {cameraError === "no-camera"
                   ? t("scan.noCameraHint")
                   : cameraError === "permission-denied"
                     ? t("scan.cameraBlockedHint")
-                    : t("scan.cameraError")}
+                    : cameraError === "permission-prompt"
+                      ? t("scan.cameraPermissionHint")
+                      : cameraError === "permission-unknown"
+                        ? t("scan.cameraPermissionUnknownHint")
+                        : t("scan.cameraUnavailableHint")}
               </p>
-              {cameraError !== "no-camera" && (
+              <div className="mt-3 flex flex-col gap-2">
+                {isPermissionError && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => window.location.reload()}
+                    icon={<RefreshCw size={16} aria-hidden="true" />}
+                  >
+                    {t("scan.reloadPage")}
+                  </Button>
+                )}
+                {cameraError === "generic" && (
+                  <Button
+                    variant="secondary"
+                    onClick={() => {
+                      setCameraError(null);
+                      setMode("camera");
+                      startScanner();
+                    }}
+                    icon={<RefreshCw size={16} aria-hidden="true" />}
+                  >
+                    {t("scan.retryCamera")}
+                  </Button>
+                )}
                 <Button
-                  variant="secondary"
+                  variant="ghost"
                   onClick={() => {
                     setCameraError(null);
-                    setMode("camera");
-                    startScanner();
+                    setMode("manual");
                   }}
-                  className="mt-3"
-                  icon={<RefreshCw size={16} aria-hidden="true" />}
+                  icon={<Keyboard size={16} aria-hidden="true" />}
                 >
-                  {t("scan.retryCamera")}
+                  {t("scan.enterManually")}
                 </Button>
-              )}
+              </div>
             </div>
           ) : (
             <>
