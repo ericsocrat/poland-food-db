@@ -89,6 +89,7 @@ tmp-qa-results/
 tmp-qa-*/
 tmp-*.txt
 tmp-*.json
+tmp-*.md
 qa-results.json
 qa-ci-results/
 qa-baseline.json

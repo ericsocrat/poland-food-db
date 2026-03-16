@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-13 by GitHub Copilot (session 45)
+> **Last updated:** 2026-03-19 by GitHub Copilot (session 46)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,33 +8,29 @@
 ## Active Branch & PR
 
 - **Branch:** `main` (clean working tree)
-- **Latest SHA (main):** `88897e7` (chore(state): mark PRODUCTION_URL secret as configured #856)
-- **Open PRs:** 0
+- **Latest SHA (main):** `29c1e58` (data(scoring): populate nutri_score_source #912)
+- **Open PRs:** 6 (all Dependabot dependency updates — #904, #907, #908, #909, #910, #911)
+
+## Recently Shipped (Session 46 — Sprint Close-Out)
+
+| PR   | Summary                                                                                                  |
+| ---- | -------------------------------------------------------------------------------------------------------- |
+| #912 | data(scoring): populate nutri_score_source across pipeline and existing products (#893)                  |
+| #903 | docs(892): health-goal personalization design spec                                                       |
+| #902 | docs(ingredients): add ADR-010 ingredient language model (#890)                                          |
+| #901 | feat(frontend): ingredient language toggle with raw display + feature flag (#891)                        |
+| #900 | fix(scanner): instrument error taxonomy, fix lifecycle bugs, add test coverage (#889)                    |
+| #899 | feat(frontend): FilterPanel performance — virtualized lists, debounced inputs, memoized callbacks (#888) |
+| #898 | feat(frontend): product detail nutrition table, allergen chips, loading skeleton (#887)                  |
+| #897 | feat(frontend): enhanced search with saved searches, autocomplete, filter chips (#886)                   |
+| #896 | feat(frontend): PersonalizedBadge component with health profile integration (#885)                       |
 
 ## Recently Shipped (Session 45 — Infrastructure)
 
-| PR   | Summary                                                                                |
-| ---- | -------------------------------------------------------------------------------------- |
-| #855 | chore(state): update CURRENT_STATE.md — session 44, PR #854 merged, 207 migrations     |
-| #856 | chore(state): mark PRODUCTION_URL secret as configured                                 |
-
-## Recently Shipped (Session 44 — Production Fix)
-
-| PR   | Summary                                                                                |
-| ---- | -------------------------------------------------------------------------------------- |
-| #854 | fix(schema): fix 7 broken production functions — STABLE→VOLATILE + watchlist SQL alias |
-
-## Recently Shipped (Session 43 — UX Audit)
-
-| PR   | Summary                                                                                       |
-| ---- | --------------------------------------------------------------------------------------------- |
-| #853 | fix(ci): skip orphan cleanup migration in CI to prevent enrichment FK violation               |
-| #852 | fix(frontend): UX polish round 2 — SkipLink removal, camera fix, recipe slugs                 |
-| #851 | fix(frontend): SonarCloud reliability + maintainability fixes, auth-aware Header              |
-| #849 | fix(frontend): visual polish — filter skeleton loader, grid cleanup (#845, P3)                |
-| #848 | fix(frontend): UX improvements — flags, scanner default, QuickWin, 403 page (#844, P2)        |
-| #847 | fix(ui): category truncation, product not-found empty state, settings tab overflow (#843, P1) |
-| #846 | fix(scoring): invert filter slider & category stats to TryVit Score (#842, P0)                |
+| PR   | Summary                                                                            |
+| ---- | ---------------------------------------------------------------------------------- |
+| #855 | chore(state): update CURRENT_STATE.md — session 44, PR #854 merged, 207 migrations |
+| #856 | chore(state): mark PRODUCTION_URL secret as configured                             |
 
 ## CI Gate Status (main branch)
 
@@ -49,13 +45,14 @@
 | quality-gate | ✅      | All checks passing                                   |
 | nightly      | ✅      | Data audit passing                                   |
 
-## Open Issues (1 total)
+## Open Issues (2 total)
 
-| Issue | Priority | Summary                                   |
-| ----- | -------- | ----------------------------------------- |
-| #212  | Deferred | Infrastructure Cost Attribution Framework |
+| Issue | Priority | Summary                                                                                |
+| ----- | -------- | -------------------------------------------------------------------------------------- |
+| #889  | P1       | Scanner error taxonomy — observation mode (Phase 1 instrumentation shipped in PR #900) |
+| #212  | Deferred | Infrastructure Cost Attribution Framework                                              |
 
-All UX audit issues (#842–#845) have been closed. All other previously-tracked issues (#683–#722) were closed in earlier sessions.
+Sprint issues #885–#895 have been shipped and closed. #889 remains open in observation mode (error taxonomy instrumented, awaiting data).
 
 ## Milestones Completed
 
@@ -82,6 +79,10 @@ All UX audit issues (#842–#845) have been closed. All other previously-tracked
 - [x] Fix 7 broken production functions — STABLE→VOLATILE + watchlist alias (PR #854)
 - [x] Configure PRODUCTION_URL secret for health endpoint verification
 - [x] Set up staging environment — project `rxtaicdpnaqigowdbmsb` (eu-west-1), 207 migrations, seeded, secrets configured
+- [x] Ship sprint issues #885–#895 (PRs #896–#903, #912)
+- [ ] Review #889 observation data after checkpoint (see issue comment)
+- [ ] Review and merge 6 Dependabot PRs (#904, #907–#911)
+- [ ] Deploy migration 20260319000400 to production
 
 ## Staging Environment
 
@@ -110,9 +111,9 @@ All UX audit issues (#842–#845) have been closed. All other previously-tracked
 - **Nutrition coverage (production):** 2,438/2,438 (100%)
 - **Frontend test coverage:** ~92% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 0
-- **Open issues:** 1 | **Open PRs:** 0
+- **Open issues:** 2 | **Open PRs:** 6 (Dependabot)
 - **Vitest:** 5,614 tests passing (29 skipped) across 343 test files
-- **DB migrations:** 207 append-only (all applied to production)
+- **DB migrations:** 209 append-only (207 applied to production + 2 pending)
 - **pgTAP test files:** 17
 - **Ruff lint:** 0 errors
 - **GitHub Ruleset:** strict_required_status_checks_policy = true
@@ -159,7 +160,7 @@ All UX audit issues (#842–#845) have been closed. All other previously-tracked
 | Suite 7 (DataQuality)  | 6        | Ingredient coverage PL 58.4%/DE 16.3%, allergen coverage PL 44.5%/DE 13.3%, completeness PL 94%/DE 88.7% (all below threshold — OFF API data gaps) |
 | Suite 10 (Naming)      | 2        | Trailing punctuation (24 products), HTML entities (4 products)                                                                                     |
 | Suite 11 (NutriRange)  | 4        | Calorie back-calc (21), zero-cal macros (1), extreme salt (1), extreme calories (1)                                                                |
-| Suite 12 (DataConsist) | 4        | nutri_score_source (2258), types (2), brands (886)                                                                                                 |
+| Suite 12 (DataConsist) | 4        | nutri_score_source (fixed by PR #912), types (2), brands (886)                                                                                     |
 
 **Root cause:** Suite 7 failures are OFF API data coverage gaps (enrichment data only available for ~58% PL, ~16% DE products).
 Suites 10, 11, 12 are pre-existing source data quality issues unrelated to enrichment.

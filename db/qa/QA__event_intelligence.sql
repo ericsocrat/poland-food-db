@@ -1,5 +1,5 @@
 -- ═══════════════════════════════════════════════════════════════════════════════
--- QA Suite: Event Intelligence Integrity — 18 checks
+-- QA Suite: Event Intelligence Integrity — 19 checks
 --
 -- Validates event_schema_registry, analytics_events evolution,
 -- and function behavior for the Event Intelligence Layer (#190 Phase 1+2).
@@ -220,4 +220,46 @@ WHERE NOT EXISTS (
     WHERE schemaname = 'public'
       AND tablename = 'analytics_events'
       AND indexname = expected_name
+);
+
+-- ═══════════════════════════════════════════════════════════════════════════════
+-- 19. Scanner event names accepted by CHECK constraint + allowed_event_names
+-- Regression guard: PR #900 added scanner telemetry but omitted DB constraint
+-- update, causing silent data loss for 4 days. This check ensures all scanner
+-- event names are present in BOTH the CHECK constraint and the lookup table.
+-- ═══════════════════════════════════════════════════════════════════════════════
+
+SELECT
+    'CHK-19: scanner event name missing from chk_ae_event_name constraint' AS issue,
+    required_name AS detail
+FROM (VALUES
+    ('scanner_init_start'),
+    ('scanner_stream_ready'),
+    ('scanner_init_error'),
+    ('scanner_scan_success'),
+    ('scanner_scan_not_found')
+) AS scanner_events(required_name)
+WHERE NOT EXISTS (
+    SELECT 1 FROM pg_constraint c
+    JOIN pg_class r ON r.oid = c.conrelid
+    JOIN pg_namespace n ON n.oid = r.relnamespace
+    WHERE n.nspname = 'public'
+      AND r.relname = 'analytics_events'
+      AND c.conname = 'chk_ae_event_name'
+      AND pg_get_constraintdef(c.oid) LIKE '%' || required_name || '%'
+)
+UNION ALL
+SELECT
+    'CHK-19: scanner event name missing from allowed_event_names table' AS issue,
+    required_name AS detail
+FROM (VALUES
+    ('scanner_init_start'),
+    ('scanner_stream_ready'),
+    ('scanner_init_error'),
+    ('scanner_scan_success'),
+    ('scanner_scan_not_found')
+) AS scanner_events(required_name)
+WHERE NOT EXISTS (
+    SELECT 1 FROM public.allowed_event_names
+    WHERE event_name = required_name
 );
