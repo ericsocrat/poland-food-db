@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(101);
+SELECT plan(107);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -847,6 +847,73 @@ SELECT ok(
     WHERE n.nspname = 'public' AND c.relname = 'idx_ps_ean_country_pending'
   ),
   'new idx_ps_ean_country_pending exists (#930)'
+);
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Country-aware submission quality scoring — Signal 3 (#931)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Fixture product 999999 has EAN '5901234123457' in country 'XX'.
+-- Using NULL brand/name to isolate Signal 3 (Signals 5/6 are penalty-only,
+-- they don't fire when p_brand/p_product_name is NULL).
+
+-- 1. Same-country EAN match → +15 (score 65)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, 'XX'
+  ))->>'quality_score')::int,
+  65,
+  '_score_submission_quality: same-country EAN match gives +15 (#931)'
+);
+
+-- 2. Same-country signal name is ean_exists_same_country
+SELECT ok(
+  (_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, 'XX'
+  ))->'signals' @> '[{"signal": "ean_exists_same_country"}]'::jsonb,
+  '_score_submission_quality: same-country signal is ean_exists_same_country (#931)'
+);
+
+-- 3. Cross-country EAN match → +5 (score 55)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, 'DE'
+  ))->>'quality_score')::int,
+  55,
+  '_score_submission_quality: cross-country EAN match gives +5 (#931)'
+);
+
+-- 4. Cross-country signal name is ean_exists_other_country
+SELECT ok(
+  (_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, 'DE'
+  ))->'signals' @> '[{"signal": "ean_exists_other_country"}]'::jsonb,
+  '_score_submission_quality: cross-country signal is ean_exists_other_country (#931)'
+);
+
+-- 5. Unknown EAN globally → +0 (score 50)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '0000000000000', NULL, NULL, NULL, 'PL'
+  ))->>'quality_score')::int,
+  50,
+  '_score_submission_quality: unknown EAN gives +0 (#931)'
+);
+
+-- 6. NULL country fallback → global match → +15 (score 65)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, NULL
+  ))->>'quality_score')::int,
+  65,
+  '_score_submission_quality: NULL country fallback gives +15 for existing EAN (#931)'
 );
 
 
