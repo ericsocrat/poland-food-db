@@ -2,10 +2,10 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
-    ScanErrorView,
-    ScanFoundView,
-    ScanLookingUpView,
-    ScanNotFoundView,
+  ScanErrorView,
+  ScanFoundView,
+  ScanLookingUpView,
+  ScanNotFoundView,
 } from "./ScanResultView";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -85,6 +85,14 @@ vi.mock("@/lib/constants", () => ({
     D: "bg-orange-500",
     E: "bg-red-600",
   },
+  getCountryFlag: (code: string) => {
+    const flags: Record<string, string> = { PL: "🇵🇱", DE: "🇩🇪" };
+    return flags[code] ?? "🌐";
+  },
+  getCountryName: (code: string) => {
+    const names: Record<string, string> = { PL: "Poland", DE: "Germany" };
+    return names[code] ?? code;
+  },
 }));
 
 // ─── Fixtures ───────────────────────────────────────────────────────────────
@@ -102,6 +110,8 @@ const mockFoundProduct = {
   category_icon: "🍟",
   unhealthiness_score: 35,
   nutri_score: "C" as const,
+  product_country: "PL",
+  is_cross_country: false,
 };
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -331,5 +341,38 @@ describe("ScanFoundView", () => {
     );
     await user.click(screen.getByText("scan.scanNext"));
     expect(onReset).toHaveBeenCalledOnce();
+  });
+
+  // ─── Cross-country badge ────────────────────────────────────────────
+
+  it("does not render cross-country badge when is_cross_country is false", () => {
+    render(
+      <ScanFoundView product={mockFoundProduct} onViewDetails={onViewDetails} onReset={onReset} />,
+    );
+    expect(screen.queryByText(/scan\.crossCountryBadge/)).toBeNull();
+  });
+
+  it("renders cross-country badge when is_cross_country is true", () => {
+    const crossCountryProduct = { ...mockFoundProduct, is_cross_country: true, product_country: "DE" };
+    render(
+      <ScanFoundView product={crossCountryProduct} onViewDetails={onViewDetails} onReset={onReset} />,
+    );
+    expect(screen.getByText(/scan\.crossCountryBadge/)).toBeInTheDocument();
+  });
+
+  it("shows correct country name in cross-country badge", () => {
+    const crossCountryProduct = { ...mockFoundProduct, is_cross_country: true, product_country: "DE" };
+    render(
+      <ScanFoundView product={crossCountryProduct} onViewDetails={onViewDetails} onReset={onReset} />,
+    );
+    expect(screen.getByText(/Germany/)).toBeInTheDocument();
+  });
+
+  it("shows country flag emoji in cross-country badge", () => {
+    const crossCountryProduct = { ...mockFoundProduct, is_cross_country: true, product_country: "PL" };
+    render(
+      <ScanFoundView product={crossCountryProduct} onViewDetails={onViewDetails} onReset={onReset} />,
+    );
+    expect(screen.getByText("🇵🇱")).toBeInTheDocument();
   });
 });

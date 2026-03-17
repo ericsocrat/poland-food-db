@@ -1085,6 +1085,8 @@ export interface RecordScanFoundResponse {
   category_icon: string;
   unhealthiness_score: number;
   nutri_score: NutriGrade;
+  product_country: string;
+  is_cross_country: boolean;
 }
 
 export interface RecordScanNotFoundResponse {

@@ -352,7 +352,8 @@
     "productFound": "Produkt znaleziony!",
     "viewDetails": "Zobacz szczegóły",
     "scanNext": "Skanuj następny",
-    "pasteBarcode": "Wklej"
+    "pasteBarcode": "Wklej",
+    "crossCountryBadge": "Z katalogu: {country}"
   },
   "scannerError": {
     "permissionDenied": "Odmowa dostępu do kamery. Zezwól na dostęp do kamery w ustawieniach przeglądarki i spróbuj ponownie.",
