@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(80);
+SELECT plan(92);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -651,6 +651,92 @@ SELECT is(
   (public.api_record_scan('4015000969611'))->>'found',
   'false',
   'deprecated product excluded from scan lookup (#926)'
+);
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- gs1_country_hint — GS1 prefix to country hint utility (#928)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 1. PL prefix (590) → Poland
+SELECT is(
+  (public.gs1_country_hint('5901234123457'))->>'code',
+  'PL',
+  'gs1_country_hint: 590 prefix returns PL (#928)'
+);
+
+-- 2. DE prefix (400–440 range) → Germany
+SELECT is(
+  (public.gs1_country_hint('4000000000000'))->>'code',
+  'DE',
+  'gs1_country_hint: 400 prefix returns DE (#928)'
+);
+
+SELECT is(
+  (public.gs1_country_hint('4400000000000'))->>'code',
+  'DE',
+  'gs1_country_hint: 440 prefix returns DE (#928)'
+);
+
+-- 3. FR prefix (300–379) → France
+SELECT is(
+  (public.gs1_country_hint('3000000000000'))->>'code',
+  'FR',
+  'gs1_country_hint: 300 prefix returns FR (#928)'
+);
+
+-- 4. GB prefix (50) → United Kingdom
+SELECT is(
+  (public.gs1_country_hint('5000000000000'))->>'code',
+  'GB',
+  'gs1_country_hint: 50 prefix returns GB (#928)'
+);
+
+-- 5. IE prefix (539) → Ireland
+SELECT is(
+  (public.gs1_country_hint('5390000000000'))->>'code',
+  'IE',
+  'gs1_country_hint: 539 prefix returns IE (#928)'
+);
+
+-- 6. IT prefix (800–839) → Italy
+SELECT is(
+  (public.gs1_country_hint('8000000000000'))->>'code',
+  'IT',
+  'gs1_country_hint: 800 prefix returns IT (#928)'
+);
+
+-- 7. ES prefix (840–849) → Spain
+SELECT is(
+  (public.gs1_country_hint('8400000000000'))->>'code',
+  'ES',
+  'gs1_country_hint: 840 prefix returns ES (#928)'
+);
+
+-- 8. Store-internal (020–029)
+SELECT is(
+  (public.gs1_country_hint('0200000000000'))->>'code',
+  'STORE',
+  'gs1_country_hint: 020 prefix returns STORE (#928)'
+);
+
+-- 9. Store-internal (200–299)
+SELECT is(
+  (public.gs1_country_hint('2000000000000'))->>'code',
+  'STORE',
+  'gs1_country_hint: 200 prefix returns STORE (#928)'
+);
+
+-- 10. Unknown prefix → UNKNOWN with prefix field
+SELECT is(
+  (public.gs1_country_hint('9990000000000'))->>'code',
+  'UNKNOWN',
+  'gs1_country_hint: unknown prefix returns UNKNOWN (#928)'
+);
+
+SELECT ok(
+  (public.gs1_country_hint('9990000000000')) ? 'prefix',
+  'gs1_country_hint: unknown result includes prefix field (#928)'
 );
 
 

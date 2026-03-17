@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(302);
+SELECT plan(303);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -445,6 +445,10 @@ SELECT has_function('public', 'api_record_scan', ARRAY['text', 'text'],
                     'api_record_scan(text, text) — 2-param country-aware signature (#923)');
 SELECT has_function('public', 'api_submit_product', ARRAY['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text'],
                     'api_submit_product(text ×8) — 8-param country-aware signature (#923)');
+
+-- ─── GS1 Country Hint (#928, epic #920) ──────────────────────────────────────
+SELECT has_function('public', 'gs1_country_hint', ARRAY['text'],
+                    'gs1_country_hint(text) — GS1 prefix to country JSONB (#928)');
 
 SELECT * FROM finish();
 ROLLBACK;
