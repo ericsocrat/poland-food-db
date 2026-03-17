@@ -1,5 +1,5 @@
-import { describe, it, expect, vi } from "vitest";
 import { render, screen } from "@testing-library/react";
+import { describe, expect, it, vi } from "vitest";
 import { CountryChip } from "./CountryChip";
 
 // ─── Mocks ────────────────────────────────────────────────────────────────────
@@ -22,6 +22,14 @@ describe("CountryChip", () => {
   it("renders null when country is null", () => {
     const { container } = render(<CountryChip country={null} />);
     expect(container.innerHTML).toBe("");
+  });
+
+  it("renders fallback chip with nullLabel when country is null", () => {
+    render(<CountryChip country={null} nullLabel="No country" />);
+    const chip = screen.getByRole("img");
+    expect(chip).toBeTruthy();
+    expect(chip.getAttribute("aria-label")).toBe("No country");
+    expect(screen.getByText("No country")).toBeTruthy();
   });
 
   // ─── SVG flag rendering ────────────────────────────────────────────────

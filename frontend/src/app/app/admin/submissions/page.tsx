@@ -9,31 +9,31 @@ import { CountryChip } from "@/components/common/CountryChip";
 import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { SubmissionsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { useTranslation } from "@/lib/i18n";
 import { COUNTRIES } from "@/lib/constants";
+import { useTranslation } from "@/lib/i18n";
 import { callRpc } from "@/lib/rpc";
 import { createClient } from "@/lib/supabase/client";
 import { showToast } from "@/lib/toast";
 import type {
-    AdminBatchRejectResponse,
-    AdminReviewResponse,
-    AdminSubmission,
-    AdminSubmissionsResponse,
-    AdminVelocityResponse,
-    RpcResult,
+  AdminBatchRejectResponse,
+  AdminReviewResponse,
+  AdminSubmission,
+  AdminSubmissionsResponse,
+  AdminVelocityResponse,
+  RpcResult,
 } from "@/lib/types";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
-    Activity,
-    Ban,
-    CheckCircle,
-    Clock,
-    FileText,
-    Link2,
-    RefreshCw,
-    ShieldAlert,
-    ShieldCheck,
-    XCircle,
+  Activity,
+  Ban,
+  CheckCircle,
+  Clock,
+  FileText,
+  Link2,
+  RefreshCw,
+  ShieldAlert,
+  ShieldCheck,
+  XCircle,
 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
 
@@ -284,6 +284,7 @@ export default function AdminSubmissionsPage() {
               {c.code}
             </option>
           ))}
+          <option value="__none__">{t("admin.noCountry")}</option>
         </select>
       </div>
 
@@ -408,6 +409,7 @@ function AdminSubmissionCard({
   const { t } = useTranslation();
   const date = new Date(submission.created_at).toLocaleString();
   const canReview = submission.status === "pending";
+  const effectiveCountry = submission.suggested_country ?? submission.scan_country;
 
   return (
     <li className="card">
@@ -432,10 +434,9 @@ function AdminSubmissionCard({
           </div>
           <div className="flex items-center gap-2">
             <CountryChip
-              country={
-                submission.suggested_country ?? submission.scan_country
-              }
+              country={effectiveCountry}
               size="sm"
+              nullLabel={t("admin.noCountry")}
             />
             {submission.user_trust_score !== null &&
               submission.user_trust_score !== undefined && (
@@ -459,6 +460,13 @@ function AdminSubmissionCard({
           </p>
         )}
 
+        {/* Legacy help text for null-country submissions */}
+        {!effectiveCountry && (
+          <p className="text-xs italic text-foreground-muted" data-testid="no-country-info">
+            ℹ {t("admin.noCountryHint")}
+          </p>
+        )}
+
         {submission.existing_product_match && (
           <p className="text-xs text-warning-text">
             ⚠ Possible duplicate — existing product #{submission.existing_product_match.product_id}{" "}
@@ -470,15 +478,23 @@ function AdminSubmissionCard({
         {submission.gs1_hint &&
           submission.gs1_hint.code !== "UNKNOWN" &&
           submission.gs1_hint.code !== "STORE" &&
-          (submission.suggested_country ?? submission.scan_country) &&
-          submission.gs1_hint.code !==
-            (submission.suggested_country ?? submission.scan_country) && (
+          effectiveCountry &&
+          submission.gs1_hint.code !== effectiveCountry && (
             <p className="text-xs text-warning-text" data-testid="gs1-mismatch-badge">
               ⚠ {t("admin.gs1Mismatch", {
                 gs1Country: submission.gs1_hint.name,
-                effectiveCountry:
-                  (submission.suggested_country ?? submission.scan_country)!,
+                effectiveCountry: effectiveCountry,
               })}
+            </p>
+          )}
+
+        {/* GS1 informational hint for legacy null-country submissions */}
+        {!effectiveCountry &&
+          submission.gs1_hint &&
+          submission.gs1_hint.code !== "UNKNOWN" &&
+          submission.gs1_hint.code !== "STORE" && (
+            <p className="text-xs text-foreground-secondary" data-testid="gs1-info-hint">
+              ℹ {t("admin.gs1InfoHint", { gs1Country: submission.gs1_hint.name })}
             </p>
           )}
 

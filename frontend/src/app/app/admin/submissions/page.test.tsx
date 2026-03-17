@@ -26,8 +26,12 @@ vi.mock("@/components/common/skeletons", () => ({
 }));
 
 vi.mock("@/components/common/CountryChip", () => ({
-  CountryChip: ({ country }: { country: string | null }) =>
-    country ? <span data-testid="country-chip">{country}</span> : null,
+  CountryChip: ({ country, nullLabel }: { country: string | null; nullLabel?: string }) =>
+    country ? (
+      <span data-testid="country-chip">{country}</span>
+    ) : nullLabel ? (
+      <span data-testid="country-chip" data-null-country="">{nullLabel}</span>
+    ) : null,
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -581,7 +585,7 @@ describe("AdminSubmissionsPage", () => {
     expect(chip).toHaveTextContent("DE");
   });
 
-  it("does not render country chip when both countries are null", async () => {
+  it("shows fallback country chip when both countries are null", async () => {
     mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
       if (fnName === "api_admin_get_submissions") {
         return Promise.resolve({
@@ -606,7 +610,9 @@ describe("AdminSubmissionsPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Unknown Origin")).toBeInTheDocument();
     });
-    expect(screen.queryByTestId("country-chip")).not.toBeInTheDocument();
+    const chip = screen.getByTestId("country-chip");
+    expect(chip).toBeInTheDocument();
+    expect(chip).toHaveAttribute("data-null-country");
   });
 
   it("renders country filter dropdown", async () => {
@@ -856,5 +862,120 @@ describe("AdminSubmissionsPage", () => {
       expect(screen.getByText("No Cross Country")).toBeInTheDocument();
     });
     expect(screen.queryByTestId("cross-country-badge")).not.toBeInTheDocument();
+  });
+
+  // ─── Legacy Null-Country UX Tests ─────────────────────────────────────────
+
+  it("shows legacy help text for null-country submission", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                scan_country: null,
+                suggested_country: null,
+                product_name: "Legacy Product",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("no-country-info")).toBeInTheDocument();
+    });
+  });
+
+  it("shows GS1 informational hint when country is null but gs1_hint exists", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                scan_country: null,
+                suggested_country: null,
+                gs1_hint: { code: "DE", name: "Germany", confidence: "high", prefix: "400" },
+                product_name: "GS1 Hint Legacy",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("gs1-info-hint")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("gs1-mismatch-badge")).not.toBeInTheDocument();
+  });
+
+  it("renders No country option in country filter", async () => {
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("country-filter")).toBeInTheDocument();
+    });
+    expect(screen.getByText("No country")).toBeInTheDocument();
+  });
+
+  it("sends p_country __none__ when No country filter is selected", async () => {
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    const user = userEvent.setup();
+
+    await waitFor(() => {
+      expect(screen.getByTestId("country-filter")).toBeInTheDocument();
+    });
+
+    await user.selectOptions(screen.getByTestId("country-filter"), "__none__");
+
+    await waitFor(() => {
+      expect(mockCallRpc).toHaveBeenCalledWith(
+        expect.anything(),
+        "api_admin_get_submissions",
+        expect.objectContaining({ p_country: "__none__" }),
+      );
+    });
+  });
+
+  it("suppresses mismatch badges for null-country submissions", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                scan_country: null,
+                suggested_country: null,
+                gs1_hint: { code: "DE", name: "Germany", confidence: "high", prefix: "400" },
+                product_name: "No Mismatch Legacy",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("No Mismatch Legacy")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("gs1-mismatch-badge")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("region-mismatch-badge")).not.toBeInTheDocument();
   });
 });

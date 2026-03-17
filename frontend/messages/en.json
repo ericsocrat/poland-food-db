@@ -1096,7 +1096,10 @@
     "allCountries": "All countries",
     "gs1Mismatch": "GS1 barcode suggests {gs1Country} but submission targets {effectiveCountry}",
     "regionMismatch": "Scanned in {scanCountry} but suggested for {suggestedCountry}",
-    "crossCountryProducts": "Same EAN exists in {countries} ({count} product(s))"
+    "crossCountryProducts": "Same EAN exists in {countries} ({count} product(s))",
+    "noCountry": "No country",
+    "noCountryHint": "Submitted before country tracking was added",
+    "gs1InfoHint": "GS1 barcode registered in {gs1Country} (informational)"
   },
   "monitoring": {
     "title": "System Monitoring",

@@ -10,12 +10,14 @@ import { useTranslation } from "@/lib/i18n";
 // ─── Types ──────────────────────────────────────────────────────────────────
 
 interface CountryChipProps {
-  /** ISO 3166-1 alpha-2 country code. Null → render nothing. */
+  /** ISO 3166-1 alpha-2 country code. Null → render nothing (unless nullLabel provided). */
   country: string | null;
   /** Show full country name instead of 2-letter code. */
   showLabel?: boolean;
   /** Badge size variant. */
   size?: "sm" | "md";
+  /** Label to show when country is null. If omitted, null renders nothing. */
+  nullLabel?: string;
   className?: string;
 }
 
@@ -95,11 +97,26 @@ export function CountryChip({
   country,
   showLabel = false,
   size = "md",
+  nullLabel,
   className = "",
 }: Readonly<CountryChipProps>) {
   const { t } = useTranslation();
 
-  if (!country) return null;
+  if (!country && !nullLabel) return null;
+
+  if (!country) {
+    const cfg = SIZE_CONFIG[size];
+    return (
+      <span
+        role="img"
+        aria-label={nullLabel!}
+        className={`inline-flex items-center ${cfg.gap} rounded-full border border-border bg-surface-muted ${cfg.px} ${cfg.text} font-medium text-foreground-muted ${className}`}
+      >
+        <FallbackFlag size={cfg.flag} />
+        <span>{nullLabel}</span>
+      </span>
+    );
+  }
 
   const meta = COUNTRIES.find((c) => c.code === country);
   const name = meta?.name ?? country;

@@ -1096,7 +1096,10 @@
     "allCountries": "Wszystkie kraje",
     "gs1Mismatch": "Kod GS1 wskazuje na {gs1Country}, ale zgłoszenie dotyczy {effectiveCountry}",
     "regionMismatch": "Zeskanowano w {scanCountry}, ale zasugerowano dla {suggestedCountry}",
-    "crossCountryProducts": "Ten sam EAN istnieje w {countries} ({count} produkt(ów))"
+    "crossCountryProducts": "Ten sam EAN istnieje w {countries} ({count} produkt(ów))",
+    "noCountry": "Brak kraju",
+    "noCountryHint": "Zgłoszone przed dodaniem śledzenia krajów",
+    "gs1InfoHint": "Kod GS1 zarejestrowany w {gs1Country} (informacyjnie)"
   },
   "monitoring": {
     "title": "Monitoring systemu",
