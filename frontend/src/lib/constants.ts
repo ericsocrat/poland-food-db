@@ -24,6 +24,16 @@ export const COUNTRY_DEFAULT_LANGUAGES: Record<string, string> = {
   DE: "de",
 } as const;
 
+/** Get flag emoji for a country code. Falls back to globe for unknown codes. */
+export function getCountryFlag(code: string): string {
+  return COUNTRIES.find((c) => c.code === code)?.flag ?? "🌐";
+}
+
+/** Get English display name for a country code. Falls back to the code itself. */
+export function getCountryName(code: string): string {
+  return COUNTRIES.find((c) => c.code === code)?.name ?? code;
+}
+
 /** Get the available languages for a country: [native, English]. */
 export function getLanguagesForCountry(countryCode: string) {
   const nativeLang = COUNTRY_DEFAULT_LANGUAGES[countryCode] ?? "en";

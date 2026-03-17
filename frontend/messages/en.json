@@ -352,7 +352,8 @@
     "productFound": "Product Found!",
     "viewDetails": "View Details",
     "scanNext": "Scan Next",
-    "pasteBarcode": "Paste"
+    "pasteBarcode": "Paste",
+    "crossCountryBadge": "From the {country} catalog"
   },
   "scannerError": {
     "permissionDenied": "Camera permission denied. Allow camera access in your browser settings, then try again.",

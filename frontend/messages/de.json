@@ -352,7 +352,8 @@
     "productFound": "Produkt gefunden!",
     "viewDetails": "Details anzeigen",
     "scanNext": "Nächstes scannen",
-    "pasteBarcode": "Einfügen"
+    "pasteBarcode": "Einfügen",
+    "crossCountryBadge": "Aus dem {country}-Katalog"
   },
   "scannerError": {
     "permissionDenied": "Kamerazugriff verweigert. Erlauben Sie den Kamerazugriff in Ihren Browsereinstellungen und versuchen Sie es erneut.",
