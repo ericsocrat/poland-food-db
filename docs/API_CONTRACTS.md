@@ -687,6 +687,94 @@ Pre-computed confidence for all 1,025 products. Faster than calling `compute_dat
 
 **Access:** anon, authenticated, service_role
 
+### `api_record_scan(p_ean text, p_scan_country text DEFAULT NULL)`
+
+**Purpose:** Records a barcode scan in `scan_history` and returns product info if the EAN matches.
+
+**PostgREST:** `POST /rpc/api_record_scan` with `{ "p_ean": "5900259135360" }` or `{ "p_ean": "5900259135360", "p_scan_country": "PL" }`
+
+**Parameters:**
+
+| Name             | Type | Default | Description                                                                                                     |
+| ---------------- | ---- | ------- | --------------------------------------------------------------------------------------------------------------- |
+| `p_ean`          | text | —       | Barcode (EAN-8 or EAN-13). Validated via `is_valid_ean()`.                                                      |
+| `p_scan_country` | text | NULL    | Country scope of the scan. Auto-resolves from `user_preferences.country` when NULL and caller is authenticated. |
+
+**Country resolution order:** explicit `p_scan_country` → `user_preferences.country` → NULL.
+
+**Found Response:**
+```jsonc
+{
+  "api_version": "1.0",
+  "found": true,
+  "product_id": 42,
+  "product_name": "Lay's Solone",
+  "product_name_en": "Lay's Salted",
+  "product_name_display": "Lay's Solone",    // localized via resolve_language
+  "brand": "Lay's",
+  "category": "Chips",
+  "category_display": "Chipsy",              // from category_ref
+  "category_icon": "🥔",
+  "unhealthiness_score": 41,
+  "nutri_score": "D",
+  "scan_country": "PL",                      // resolved country (#923)
+  "product_country": "PL"                    // the product's stored country (#923)
+}
+```
+
+**Not-Found Response:**
+```jsonc
+{
+  "api_version": "1.0",
+  "found": false,
+  "ean": "0000000000000",
+  "has_pending_submission": false,
+  "scan_country": "PL"                       // resolved country (#923)
+}
+```
+
+**Error cases:** invalid EAN checksum, rate limit (100/24h per user).
+
+**Access:** authenticated, service_role
+
+### `api_submit_product(p_ean, p_product_name, p_brand, p_category, p_photo_url, p_notes, p_scan_country, p_suggested_country)`
+
+**Purpose:** Submit a missing product for review. Stores in `product_submissions` with country metadata.
+
+**PostgREST:** `POST /rpc/api_submit_product` with `{ "p_ean": "...", "p_product_name": "..." }`
+
+**Parameters:**
+
+| Name                  | Type | Default | Description                                                                   |
+| --------------------- | ---- | ------- | ----------------------------------------------------------------------------- |
+| `p_ean`               | text | —       | Barcode (validated via `is_valid_ean()`).                                     |
+| `p_product_name`      | text | —       | Product name (required, non-empty).                                           |
+| `p_brand`             | text | NULL    | Brand name.                                                                   |
+| `p_category`          | text | NULL    | Category key.                                                                 |
+| `p_photo_url`         | text | NULL    | Product photo URL.                                                            |
+| `p_notes`             | text | NULL    | Submission notes.                                                             |
+| `p_scan_country`      | text | NULL    | Country of the scan. Auto-resolves from `user_preferences.country` when NULL. |
+| `p_suggested_country` | text | NULL    | Suggested product country. Defaults to resolved `scan_country` when NULL.     |
+
+**Country resolution order:** `p_scan_country` → `user_preferences.country` → NULL. `p_suggested_country` → resolved scan_country.
+
+**Success Response:**
+```jsonc
+{
+  "api_version": "1.0",
+  "submission_id": "a1b2c3d4-...",
+  "ean": "5900259135360",
+  "product_name": "New Product",
+  "status": "pending",
+  "scan_country": "PL",                      // resolved country (#923)
+  "suggested_country": "PL"                  // resolved or explicit (#923)
+}
+```
+
+**Error cases:** authentication required, invalid EAN checksum, product_name required, EAN already exists in products, pending submission exists, rate limit (10/24h per user).
+
+**Access:** authenticated only
+
 ---
 
 ## 9. Preference-Aware Filtering
