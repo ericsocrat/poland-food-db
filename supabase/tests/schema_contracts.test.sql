@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(300);
+SELECT plan(302);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -439,6 +439,12 @@ SELECT col_is_null('public', 'product_submissions', 'suggested_country', 'produc
 SELECT fk_ok('public', 'product_submissions', 'suggested_country',
              'public', 'country_ref', 'country_code',
              'product_submissions.suggested_country references country_ref(country_code)');
+
+-- ─── Country-aware RPC signatures (#923, epic #920) ─────────────────────────
+SELECT has_function('public', 'api_record_scan', ARRAY['text', 'text'],
+                    'api_record_scan(text, text) — 2-param country-aware signature (#923)');
+SELECT has_function('public', 'api_submit_product', ARRAY['text', 'text', 'text', 'text', 'text', 'text', 'text', 'text'],
+                    'api_submit_product(text ×8) — 8-param country-aware signature (#923)');
 
 SELECT * FROM finish();
 ROLLBACK;

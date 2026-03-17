@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(64);
+SELECT plan(70);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -91,6 +91,16 @@ SELECT ok(
   'found response contains nutri_score key (mapped from nutri_score_label)'
 );
 
+SELECT ok(
+  (public.api_record_scan('5901234123457')) ? 'scan_country',
+  'found response contains scan_country key (#923)'
+);
+
+SELECT ok(
+  (public.api_record_scan('5901234123457')) ? 'product_country',
+  'found response contains product_country key (#923)'
+);
+
 -- ─── 3. Returned values match fixture data ──────────────────────────────────
 
 SELECT is(
@@ -155,6 +165,11 @@ SELECT ok(
   'not-found response contains has_pending_submission key'
 );
 
+SELECT ok(
+  (public.api_record_scan('0000000000000')) ? 'scan_country',
+  'not-found response contains scan_country key (#923)'
+);
+
 -- ─── 6. Invalid EAN returns error ───────────────────────────────────────────
 
 SELECT ok(
@@ -178,6 +193,28 @@ SELECT ok(
 );
 
 -- ─── 7. Whitespace trimming ────────────────────────────────────────────────
+
+-- ─── 6b. Explicit scan_country parameter (#923) ───────────────────────────
+
+SELECT is(
+  (public.api_record_scan('5901234123457', 'PL'))->>'scan_country',
+  'PL',
+  'explicit p_scan_country=PL is returned in response (#923)'
+);
+
+SELECT is(
+  (public.api_record_scan('5901234123457', 'PL'))->>'product_country',
+  'XX',
+  'product_country reflects fixture product country XX (#923)'
+);
+
+SELECT is(
+  (public.api_record_scan('5901234123457'))->>'scan_country',
+  NULL,
+  'scan_country is NULL when no param and no auth (#923)'
+);
+
+-- ─── 7 (cont). Whitespace trimming ────────────────────────────────────────
 
 SELECT is(
   (public.api_record_scan('  5901234123457  '))->>'found',
