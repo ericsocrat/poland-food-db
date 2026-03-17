@@ -1,6 +1,6 @@
 # CURRENT_STATE.md
 
-> **Last updated:** 2026-03-17 by GitHub Copilot (session 51)
+> **Last updated:** 2026-03-21 by GitHub Copilot (epic #920 closeout)
 > **Purpose:** Volatile project status for AI agent context recovery. Read this FIRST at session start.
 
 ---
@@ -8,9 +8,36 @@
 ## Active Branch & PR
 
 - **Branch:** `main`
-- **Latest SHA (main):** `b4e3c877` (fix(scanner): permission-aware error recovery + extract scan page into modules #918)
-- **Open PRs:** 0
+- **Latest SHA (main):** `dbe06364` (feat(scanner): cross-country analytics views (#932) (#945))
+- **Open PRs:** 1 (Dependabot #941 — Next.js 16.1.6→16.1.7 security patch, 5 CVEs)
 - **Mode:** 🟢 Clean — no active work
+
+## Recently Shipped (Epic #920 — Country-Aware Scanner & Submission Pipeline)
+
+12/12 issues implemented, merged, and closed. Epic #920 closed.
+
+| PR   | Issue | Summary                                                           |
+| ---- | ----- | ----------------------------------------------------------------- |
+| #933 | #921  | `scan_country` column on `scan_history`                           |
+| #934 | #922  | `scan_country` + `suggested_country` on `product_submissions`     |
+| #935 | #923  | Pass user region through `api_record_scan` / `api_submit_product` |
+| #936 | #924  | Frontend scan/submit country propagation                          |
+| #937 | #925  | Admin submission review UI country context                        |
+| #938 | #926  | Region-preferred product matching in `api_record_scan`            |
+| #939 | #927  | Cross-country product badge in scan result card                   |
+| #940 | #928  | GS1 prefix → country hint utility function                        |
+| #942 | #929  | Country mismatch detection badges in admin review                 |
+| #943 | #930  | Country-scoped pending submission uniqueness                      |
+| #944 | #931  | Country-aware submission quality scoring                          |
+| #945 | #932  | Cross-country analytics views (3 views)                           |
+
+**10 new migrations** (`20260320000100`–`20260321000700`), 3 new views, 1 new function (`gs1_country_hint`), 4 modified RPC functions, 3 new QA checks (view consistency 13→16).
+
+## Recently Shipped (Session 51 — Scanner Error Recovery + Extraction)
+
+| PR   | Summary                                                                               |
+| ---- | ------------------------------------------------------------------------------------- |
+| #918 | fix(scanner): permission-aware error recovery + extract scan page into modules (#889) |
 
 ## Recently Shipped (Session 49 — Next.js 16 Upgrade)
 
@@ -31,34 +58,11 @@
 
 **Security CVEs patched:** CVE-2025-59471, CVE-2025-59472, CVE-2026-23864
 
-## Recently Shipped (Session 51 — Scanner Error Recovery + Extraction)
-
-| PR   | Summary                                                                                |
-| ---- | -------------------------------------------------------------------------------------- |
-| #918 | fix(scanner): permission-aware error recovery + extract scan page into modules (#889)  |
-
-**Phase 1 — Permission-aware error recovery:**
-- 5-state camera error model (`CameraErrorKind`): permission-prompt, permission-denied, permission-unknown, no-camera, generic
-- Per-error-kind user guidance with contextual hints and retry/settings CTAs
-- `classifyCameraError()` maps DOMException names to structured error kinds
-- Browser detection for permission-recovery instructions (Chrome vs Safari vs Firefox)
-
-**Phase 2 — Scan page extraction (856→463 lines, 46% reduction):**
-- `useBarcodeScanner` hook: ZXing camera lifecycle, device enumeration, torch control, watchdog timeout
-- `ScannerErrorState` component: 5-state error card with i18n text and callbacks
-- `ScanResultView` component: 4 sub-components (Error, NotFound, LookingUp, Found)
-
-**Phase 3 — CI fixes + test coverage:**
-- Fixed `Typecheck & Lint` CI failure: downgraded `react-hooks/purity` to "warn" (5th React Compiler rule)
-- 66 new tests: 24 hook tests + 20 error state tests + 22 result view tests
-- i18n: en/pl/de `scan.cameraStarting` key + error state strings
-- 12 files changed, +1,992 / -433 lines
-
 ## Recently Shipped (Session 50 — Scanner Black Camera Fix)
 
-| PR   | Summary                                                                                |
-| ---- | -------------------------------------------------------------------------------------- |
-| #916 | fix(scanner): resolve black camera feed with event-driven stream readiness (#889)       |
+| PR   | Summary                                                                           |
+| ---- | --------------------------------------------------------------------------------- |
+| #916 | fix(scanner): resolve black camera feed with event-driven stream readiness (#889) |
 
 **6 root causes diagnosed and fixed in scan/page.tsx:**
 - `decodeFromVideoDevice()` not awaited → now properly awaited
@@ -69,12 +73,6 @@
 - "Scanning…" shown without feed verification → gated on `feedActive` state
 
 **3 new tests + MediaStream jsdom stub. i18n: en/pl/de `scan.cameraStarting` key.**
-
-## Recently Shipped (Session 49 — Next.js 16 Upgrade)
-
-| PR   | Summary                                                                             |
-| ---- | ----------------------------------------------------------------------------------- |
-| #904 | chore(deps): bump next 15.5.12 → 16.1.6 + eslint-config-next 16.1.6 (MAJOR upgrade) |
 
 ## Recently Shipped (Session 48 — CI Baseline Restoration)
 
@@ -122,8 +120,8 @@
 | ------------ | ------ | --------------------------------------------------------------------- |
 | pr-gate      | ✅      | Typecheck, lint, unit tests, build, Playwright smoke                  |
 | main-gate    | ✅      | All passing                                                           |
-| qa.yml       | ✅      | 756/756 checks passing (48 suites)                                    |
-| deploy.yml   | ✅      | All 209 migrations on production (deployed 2026-03-16T08:24:26Z)      |
+| qa.yml       | ✅      | 759/759 checks passing (48 suites)                                    |
+| deploy.yml   | ⚠️      | 209/227 migrations on production — 18 pending deploy (epic #920)      |
 | dep-audit    | ✅      | 0 high/critical vulnerabilities                                       |
 | python-lint  | ✅      | 0 ruff errors                                                         |
 | quality-gate | ✅      | Passing — ReDoS hotspot resolved (PR #914)                            |
@@ -137,6 +135,7 @@
 | #212  | Deferred | Infrastructure Cost Attribution Framework |
 
 Issue #889 fully resolved and closed with PR #918 merge.
+Epic #920 fully resolved and closed — all 12/12 issues shipped.
 
 ## Milestones Completed
 
@@ -193,7 +192,7 @@ These are documented follow-ups, not active work items. Address opportunisticall
 
 - **Products (local DB):** 2,602 active (1,380 PL + 1,222 DE across 21 active + 1 deactivated category)
 - **Deprecated products:** 58
-- **QA checks:** 756 total (48 suites) — 47 pass, 1 pre-existing failure (Suite 11 NutriRange), 1 warning (local DB)
+- **QA checks:** 759 total (48 suites) — view_consistency +3 checks for cross-country analytics views
 - **Negative tests:** 23/23 caught
 - **EAN coverage:** 2,261/2,264 with EAN (99.9%) — local DB
 - **Ingredient refs:** 3,100 (local, after orphan cleanup from 6,279)
@@ -205,9 +204,9 @@ These are documented follow-ups, not active work items. Address opportunisticall
 - **Nutrition coverage (production):** 2,438/2,438 (100%)
 - **Frontend test coverage:** ~92% lines (SonarCloud Quality Gate passing)
 - **ESLint warnings:** 23 (React Compiler rules — 5 rules downgraded to warn, see follow-ups)
-- **Open issues:** 1 | **Open PRs:** 0
-- **Vitest:** 5,733 tests passing across 348 test files
-- **DB migrations:** 209 append-only (all 209 applied to production)
+- **Open issues:** 1 | **Open PRs:** 1 (Dependabot #941)
+- **Vitest:** 5,755 tests passing across 348 test files
+- **DB migrations:** 227 append-only (209 applied to production, 18 pending from epic #920)
 - **pgTAP test files:** 17
 - **Ruff lint:** 0 errors
 - **GitHub Ruleset:** strict_required_status_checks_policy = true

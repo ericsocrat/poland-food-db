@@ -13,6 +13,16 @@ Adheres to [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
 
+### Added
+
+- Epic #920 — Country-Aware Scanner & Submission Pipeline: 12 issues (#921–#932),
+  10 new migrations, `gs1_country_hint()` GS1 prefix → country utility,
+  `scan_country` + `suggested_country` columns, region-preferred product matching,
+  country-aware quality scoring, cross-country analytics views
+  (`v_cross_country_scan_analytics`, `v_cross_country_ean_candidates`,
+  `v_submission_country_analytics`), admin mismatch badges, 3 new QA checks
+  (view_consistency 13→16), frontend country propagation for scan/submit flows
+
 ### Fixed
 
 - Populate `nutri_score_source` for all products — pipeline now sets source

@@ -68,6 +68,8 @@ const makeSubmission = (overrides: Record<string, unknown> = {}) => ({
   existing_product_match: null,
   scan_country: "PL",
   suggested_country: null,
+  gs1_hint: null,
+  cross_country_products: [],
   ...overrides,
 });
 
@@ -632,5 +634,227 @@ describe("AdminSubmissionsPage", () => {
         expect.objectContaining({ p_country: "PL" }),
       );
     });
+  });
+
+  // ─── Mismatch Badge Tests (#929) ──────────────────────────────────────────
+
+  it("shows GS1 mismatch badge when countries differ", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                scan_country: "PL",
+                suggested_country: null,
+                gs1_hint: { code: "DE", name: "Germany", confidence: "high", prefix: "400" },
+                product_name: "GS1 Mismatch Product",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("gs1-mismatch-badge")).toBeInTheDocument();
+    });
+  });
+
+  it("hides GS1 badge when GS1 hint matches effective country", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                scan_country: "PL",
+                gs1_hint: { code: "PL", name: "Poland", confidence: "high", prefix: "590" },
+                product_name: "Matching GS1",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Matching GS1")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("gs1-mismatch-badge")).not.toBeInTheDocument();
+  });
+
+  it("hides GS1 badge when hint is UNKNOWN", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                gs1_hint: { code: "UNKNOWN", name: "Unknown", confidence: "none" },
+                product_name: "Unknown GS1",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Unknown GS1")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("gs1-mismatch-badge")).not.toBeInTheDocument();
+  });
+
+  it("hides GS1 badge when hint is STORE", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                gs1_hint: { code: "STORE", name: "Store/internal", confidence: "high" },
+                product_name: "Store EAN",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Store EAN")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("gs1-mismatch-badge")).not.toBeInTheDocument();
+  });
+
+  it("shows region mismatch when scan and suggested countries differ", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                scan_country: "PL",
+                suggested_country: "DE",
+                product_name: "Region Mismatch",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("region-mismatch-badge")).toBeInTheDocument();
+    });
+  });
+
+  it("hides region badge when scan equals suggested", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                scan_country: "DE",
+                suggested_country: "DE",
+                product_name: "Same Region",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("Same Region")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("region-mismatch-badge")).not.toBeInTheDocument();
+  });
+
+  it("shows cross-country badge when products exist in other countries", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                cross_country_products: [
+                  { product_id: 42, product_name: "Same Chips DE", country: "DE" },
+                ],
+                product_name: "Cross Country",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByTestId("cross-country-badge")).toBeInTheDocument();
+    });
+  });
+
+  it("hides cross-country badge when no products in other countries", async () => {
+    mockCallRpc.mockImplementation((_client: unknown, fnName: string) => {
+      if (fnName === "api_admin_get_submissions") {
+        return Promise.resolve({
+          ok: true,
+          data: {
+            submissions: [
+              makeSubmission({
+                cross_country_products: [],
+                product_name: "No Cross Country",
+              }),
+            ],
+            page: 1,
+            pages: 1,
+            total: 1,
+          },
+        });
+      }
+      return Promise.resolve({ ok: true, data: {} });
+    });
+    render(<AdminSubmissionsPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      expect(screen.getByText("No Cross Country")).toBeInTheDocument();
+    });
+    expect(screen.queryByTestId("cross-country-badge")).not.toBeInTheDocument();
   });
 });

@@ -1093,7 +1093,10 @@
     "approve": "✅ Zatwierdź",
     "reject": "❌ Odrzuć",
     "countryLabel": "Kraj:",
-    "allCountries": "Wszystkie kraje"
+    "allCountries": "Wszystkie kraje",
+    "gs1Mismatch": "Kod GS1 wskazuje na {gs1Country}, ale zgłoszenie dotyczy {effectiveCountry}",
+    "regionMismatch": "Zeskanowano w {scanCountry}, ale zasugerowano dla {suggestedCountry}",
+    "crossCountryProducts": "Ten sam EAN istnieje w {countries} ({count} produkt(ów))"
   },
   "monitoring": {
     "title": "Monitoring systemu",

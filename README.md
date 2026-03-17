@@ -13,9 +13,9 @@
 
 <p align="center">
   <a href="https://github.com/ericsocrat/tryvit/actions/workflows/pr-gate.yml"><img src="https://img.shields.io/github/actions/workflow/status/ericsocrat/tryvit/pr-gate.yml?style=flat-square&label=build" alt="Build Status" /></a>
-  <img src="https://img.shields.io/badge/QA%20checks-747%20passing-brightgreen?style=flat-square" alt="QA Checks" />
+  <img src="https://img.shields.io/badge/QA%20checks-759%20passing-brightgreen?style=flat-square" alt="QA Checks" />
   <img src="https://img.shields.io/badge/coverage-%E2%89%A588%25-brightgreen?style=flat-square" alt="Coverage" />
-  <img src="https://img.shields.io/badge/products-2%2C438-1DB954?style=flat-square" alt="Products" />
+  <img src="https://img.shields.io/badge/products-2%2C602-1DB954?style=flat-square" alt="Products" />
   <img src="https://img.shields.io/badge/market-PL%20%2B%20DE-1DB954?style=flat-square" alt="Market" />
   <img src="https://img.shields.io/badge/scoring-v3.3-7c3aed?style=flat-square" alt="Scoring Version" />
   <a href="LICENSE"><img src="https://img.shields.io/github/license/ericsocrat/tryvit?style=flat-square" alt="License" /></a>
@@ -137,7 +137,7 @@ supabase db reset                        # Full rebuild (migrations + seed)
 .\RUN_SEED.ps1                           # Seed reference data only
 
 # ── Testing ──
-.\RUN_QA.ps1                             # 747 QA checks across 48 suites
+.\RUN_QA.ps1                             # 759 QA checks across 48 suites
 .\RUN_NEGATIVE_TESTS.ps1                 # 23 constraint violation tests
 .\RUN_SANITY.ps1 -Env local              # Row-count + schema assertions
 python validate_eans.py                  # EAN checksum validation
@@ -168,7 +168,7 @@ echo "SELECT * FROM v_master LIMIT 5;" | docker exec -i supabase_db_tryvit psql 
 ```
 ┌─────────────────┐     ┌──────────────────┐     ┌─────────────────────────┐
 │  Open Food Facts │────▶│  Python Pipeline │────▶│  PostgreSQL (Supabase)  │
-│  API v2          │     │  sql_generator   │     │  199 migrations         │
+│  API v2          │     │  sql_generator   │     │  227 migrations         │
 │  (category tags, │     │  validator       │     │  43 pipeline folders    │
 │   countries=PL,DE│     │  off_client      │     │  products + nutrition   │
 └─────────────────┘     └──────────────────┘     │  + ingredients + scores │
@@ -231,18 +231,18 @@ Every score is fully explainable via `api_score_explanation()` — returns the 9
 
 <table>
   <tr>
-    <td align="center" width="16%"><strong>2,438</strong><br />Active Products</td>
+    <td align="center" width="16%"><strong>2,602</strong><br />Active Products</td>
     <td align="center" width="16%"><strong>43</strong><br />Categories</td>
     <td align="center" width="16%"><strong>PL + DE</strong><br />Markets</td>
     <td align="center" width="16%"><strong>2,995</strong><br />Ingredients</td>
     <td align="center" width="16%"><strong>99.9%</strong><br />EAN Coverage</td>
-    <td align="center" width="16%"><strong>199</strong><br />Migrations</td>
+    <td align="center" width="16%"><strong>227</strong><br />Migrations</td>
   </tr>
 </table>
 
 <table>
   <tr>
-    <td align="center" width="16%"><strong>747</strong><br />QA Checks</td>
+    <td align="center" width="16%"><strong>759</strong><br />QA Checks</td>
     <td align="center" width="16%"><strong>48</strong><br />Test Suites</td>
     <td align="center" width="16%"><strong>23</strong><br />Negative Tests</td>
     <td align="center" width="16%"><strong>≥88%</strong><br />Line Coverage</td>
@@ -296,11 +296,11 @@ tryvit/
 │   │   ├── chips-pl/                # Reference PL implementation
 │   │   ├── chips-de/                # DE Chips (51 products)
 │   │   └── ... (21 more PL + 20 DE) # Variable product counts per category
-│   ├── qa/                          # 48 test suites (747 checks)
+│   ├── qa/                          # 48 test suites (759 checks)
 │   └── views/                       # Reference view definitions
 │
 ├── supabase/
-│   ├── migrations/                  # 199 append-only schema migrations
+│   ├── migrations/                  # 227 append-only schema migrations
 │   ├── seed/                        # Reference data seeds
 │   ├── tests/                       # pgTAP integration tests
 │   └── functions/                   # Edge Functions (API gateway, push notifications, CAPTCHA)
@@ -327,7 +327,7 @@ tryvit/
 ├── monitoring/                      # Alert definitions
 │
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (747 checks)
+├── RUN_QA.ps1                       # QA test runner (759 checks)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 tests)
 ├── RUN_SANITY.ps1                   # Sanity checks
 ├── CHANGELOG.md                     # Structured changelog
@@ -400,7 +400,7 @@ Every change is validated against **747 automated checks** across 48 QA suites p
 
 1. **PR Gate** — Typecheck → Lint → Build → Unit tests → Playwright smoke E2E
 2. **Main Gate** — Above + Coverage → SonarCloud Quality Gate
-3. **QA Gate** — Schema → Pipelines → 747 QA checks → Sanity → Confidence threshold
+3. **QA Gate** — Schema → Pipelines → 759 QA checks → Sanity → Confidence threshold
 4. **Nightly** — Full Playwright (all projects) + Data Integrity Audit
 
 ---

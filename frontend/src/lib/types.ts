@@ -1170,6 +1170,18 @@ export interface AdminSubmission extends Submission {
     product_id: number;
     product_name: string;
   } | null;
+  // Mismatch detection (#929)
+  gs1_hint: {
+    code: string;
+    name: string;
+    confidence: string;
+    prefix?: string;
+  } | null;
+  cross_country_products: {
+    product_id: number;
+    product_name: string;
+    country: string;
+  }[];
 }
 
 export interface AdminSubmissionsResponse {

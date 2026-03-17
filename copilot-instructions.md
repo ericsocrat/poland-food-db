@@ -1,15 +1,15 @@
 # Copilot Instructions — TryVit
 
 > **Last updated:** 2026-03-05
-> **Scope:** Poland (`PL`) primary + Germany (`DE`) full parity (1,168 products across 21 categories)
-> **Products:** ~2,366 active (22 PL categories + 21 DE categories), 273 deprecated
+> **Scope:** Poland (`PL`) primary + Germany (`DE`) full parity (1,222 products across 21 categories)
+> **Products:** ~2,602 active (22 PL categories + 21 DE categories), 58 deprecated
 > **Categories:** 29 defined (22 PL + 21 DE active + 7 new cross-country, not yet populated)
 > **EAN coverage:** 2,261/2,264 (99.9%)
 > **Scoring:** v3.3 — 9-factor weighted penalty + nutrient density bonus via `compute_unhealthiness_v33()` (protein & fibre credit)
 > **Servings:** removed as separate table — all nutrition data is per-100g on nutrition_facts
 > **Ingredient analytics:** 5,340 unique ingredients (all clean ASCII English), 2,691 allergen declarations, 2,702 trace declarations
 > **Ingredient concerns:** EFSA-based 4-tier additive classification (0=none, 1=low, 2=moderate, 3=high)
-> **QA:** 756 checks across 48 suites + 23 negative validation tests — all passing
+> **QA:** 759 checks across 48 suites + 23 negative validation tests — all passing
 
 ---
 
@@ -115,7 +115,7 @@ tryvit/
 │   │   ├── QA__data_quality.sql          # 25 data quality checks
 │   │   ├── QA__data_consistency.sql      # 24 data consistency checks
 │   │   ├── QA__referential_integrity.sql # 18 referential integrity checks
-│   │   ├── QA__view_consistency.sql      # 13 view consistency checks
+│   │   ├── QA__view_consistency.sql      # 16 view consistency checks
 │   │   ├── QA__naming_conventions.sql    # 12 naming convention checks
 │   │   ├── QA__nutrition_ranges.sql      # 16 nutrition range checks
 │   │   ├── QA__allergen_integrity.sql    # 15 allergen integrity checks
@@ -169,7 +169,7 @@ tryvit/
 │   │   ├── api-gateway/             # Write-path gateway (rate limiting, validation) (#478)
 │   │   └── send-push-notification/  # Push notification handler
 │   ├── dr-drill/                    # Disaster recovery drill artifacts
-│   └── migrations/                  # 203 append-only schema migrations
+│   └── migrations/                  # 227 append-only schema migrations
 │       ├── 20260207000100_create_schema.sql
 │       ├── 20260207000200_baseline.sql
 │       ├── 20260207000300_add_chip_metadata.sql
@@ -283,7 +283,7 @@ tryvit/
 │       ├── 006-append-only-migrations.md
 │       └── 007-english-canonical-ingredients.md
 ├── RUN_LOCAL.ps1                    # Pipeline runner (idempotent)
-├── RUN_QA.ps1                       # QA test runner (756 checks across 48 suites)
+├── RUN_QA.ps1                       # QA test runner (759 checks across 48 suites)
 ├── RUN_NEGATIVE_TESTS.ps1           # Negative test runner (23 injection tests)
 ├── RUN_SANITY.ps1                   # Sanity checks (16) — row counts, schema assertions
 ├── RUN_REMOTE.ps1                   # Remote deployment (requires confirmation)
@@ -357,7 +357,7 @@ tryvit/
 │   ├── pr-gate.yml                  # Lint → Typecheck → Build → Playwright E2E
 │   ├── pr-title-lint.yml            # PR title conventional-commit validation (all PRs)
 │   ├── main-gate.yml                # Build → Unit tests + coverage → SonarCloud
-│   ├── qa.yml                       # Schema → Pipelines → QA (756) → Sanity
+│   ├── qa.yml                       # Schema → Pipelines → QA (759) → Sanity
 │   ├── nightly.yml                  # Full Playwright (all projects) + Data Integrity Audit
 │   ├── deploy.yml                   # Manual trigger → Schema diff → Approval → db push
 │   ├── sync-cloud-db.yml            # Remote DB sync
@@ -456,50 +456,51 @@ tryvit/
 
 ### Key Functions
 
-| Function                                | Purpose                                                                                                                                                                            |
-| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `compute_unhealthiness_v33()`           | Scores 1–100 from 9 penalty factors + nutrient density bonus: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern − protein/fibre bonus |
-| `explain_score_v33()`                   | Returns JSONB breakdown of score: final_score + 10 factors (9 penalties + 1 bonus) with name, weight, raw (0–100), weighted, input, ceiling                                        |
-| `find_similar_products()`               | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                                                 |
-| `find_better_alternatives()`            | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                                                     |
-| `resolve_ingredient_name()`             | Returns localized ingredient name. Fallback: requested lang → en translation → name_en → NULL                                                                                      |
-| `assign_confidence()`                   | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                                                                                  |
-| `score_category()`                      | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category                          |
-| `compute_data_confidence()`             | Composite confidence score (0-100) with 6 components; band, completeness profile                                                                                                   |
-| `compute_data_completeness()`           | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source)                                    |
-| `api_data_confidence()`                 | API wrapper for compute_data_confidence(); returns structured JSONB                                                                                                                |
-| `api_product_detail()`                  | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                                                                             |
-| `api_category_listing()`                | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                                                                        |
-| `api_score_explanation()`               | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                                             |
-| `api_better_alternatives()`             | Healthier substitutes wrapper with source product context and structured JSON                                                                                                      |
-| `api_search_products()`                 | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                                 |
-| `api_get_cross_country_links()`         | Returns linked products for a given product_id; bidirectional query across product_links; returns JSONB array                                                                      |
-| `api_get_recipes()`                     | Browse published recipes with filters (country, category, tag, difficulty, max_time); paginated JSONB with total_count + recipes array                                             |
-| `api_get_recipe_detail()`               | Full recipe detail by slug: recipe metadata + ingredients (with linked products) + steps; returns structured JSONB                                                                 |
-| `api_get_recipe_nutrition()`            | Aggregate nutrition summary from linked products; picks primary product per ingredient; returns per-100g averages + coverage_pct                                                   |
-| `browse_recipes()`                      | Browse published recipes with filters (category, country, tag, difficulty, max_time); returns TABLE rows                                                                           |
-| `get_recipe_detail()`                   | Recipe detail by slug: returns JSONB with metadata, steps, ingredients (with linked_products array)                                                                                |
-| `find_products_for_recipe_ingredient()` | Finds products for a recipe ingredient: admin-curated links first, then auto-suggested via ingredient_ref matching                                                                 |
-| `refresh_all_materialized_views()`      | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                                        |
-| `mv_staleness_check()`                  | Checks if MVs are stale by comparing row counts to source tables                                                                                                                   |
-| `check_formula_drift()`                 | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                                  |
-| `check_function_source_drift()`         | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                                                    |
-| `governance_drift_check()`              | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                                             |
-| `log_drift_check()`                     | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                                               |
-| `validate_log_entry()`                  | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                                                       |
-| `execute_retention_cleanup()`           | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary                                      |
-| `mv_last_refresh()`                     | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                                          |
-| `check_flag_readiness()`                | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                                         |
-| `api_export_user_data()`                | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER                                   |
-| `api_delete_user_data()`                | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                                                 |
-| `is_valid_ean()`                        | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                                                     |
-| `check_submission_rate_limit()`         | Returns rate limit status for product submissions: 10 per 24h rolling window per user. SECURITY DEFINER                                                                            |
-| `check_scan_rate_limit()`               | Returns rate limit status for barcode scans: 100 per 24h rolling window per user. SECURITY DEFINER                                                                                 |
-| `check_api_rate_limit()`                | Generic per-endpoint rate limiter: checks `api_rate_limits` config, logs to `api_rate_limit_log`. Returns `{allowed, remaining}` or blocked JSONB. SECURITY DEFINER                |
-| `check_share_limit()`                   | Per-user share count limiter: max 50 shared items per type (comparisons/lists). Returns `{allowed, type, limit}` JSONB. SECURITY DEFINER                                           |
-| `score_submission_quality()`            | Scores a submission's quality (0-100) from 7 signals: account age, velocity, EAN match, photo, brand/name quality, user trust score. SECURITY DEFINER                              |
-| `api_admin_batch_reject_user()`         | Rejects all pending/manual_review/flag_for_review submissions from a user, flags trust score (cap at 10). SECURITY DEFINER                                                         |
-| `api_admin_submission_velocity()`       | Returns submission velocity stats: last_24h, last_7d, pending_count, auto_rejected_24h, status_breakdown, top_submitters with trust. SECURITY DEFINER                              |
+| Function                                | Purpose                                                                                                                                                                                              |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `compute_unhealthiness_v33()`           | Scores 1–100 from 9 penalty factors + nutrient density bonus: sat fat, sugars, salt, calories, trans fat, additives, prep, controversies, ingredient concern − protein/fibre bonus                   |
+| `explain_score_v33()`                   | Returns JSONB breakdown of score: final_score + 10 factors (9 penalties + 1 bonus) with name, weight, raw (0–100), weighted, input, ceiling                                                          |
+| `find_similar_products()`               | Top-N products by Jaccard ingredient similarity (returns product details + similarity coefficient)                                                                                                   |
+| `find_better_alternatives()`            | Healthier substitutes in same/any category, ranked by score improvement and ingredient overlap                                                                                                       |
+| `resolve_ingredient_name()`             | Returns localized ingredient name. Fallback: requested lang → en translation → name_en → NULL                                                                                                        |
+| `assign_confidence()`                   | Returns `'verified'`/`'estimated'`/`'low'` from data completeness                                                                                                                                    |
+| `score_category()`                      | Consolidated scoring procedure: Steps 0/1/4/5 (concern defaults, unhealthiness, flags + dynamic `data_completeness_pct`, confidence) for a given category                                            |
+| `compute_data_confidence()`             | Composite confidence score (0-100) with 6 components; band, completeness profile                                                                                                                     |
+| `compute_data_completeness()`           | Dynamic 15-checkpoint field-coverage function for `data_completeness_pct` (EAN, 9 nutrition, Nutri-Score, NOVA, ingredients, allergens, source)                                                      |
+| `api_data_confidence()`                 | API wrapper for compute_data_confidence(); returns structured JSONB                                                                                                                                  |
+| `api_product_detail()`                  | Single product as structured JSONB (identity, scores, flags, nutrition, ingredients, allergens, trust)                                                                                               |
+| `api_category_listing()`                | Paged category listing with sort (score\|calories\|protein\|name\|nutri_score) + pagination                                                                                                          |
+| `api_score_explanation()`               | Score breakdown + human-readable headline + warnings + category context (rank, avg, relative position)                                                                                               |
+| `api_better_alternatives()`             | Healthier substitutes wrapper with source product context and structured JSON                                                                                                                        |
+| `api_search_products()`                 | Full-text + trigram search across product_name and brand; uses pg_trgm GIN indexes                                                                                                                   |
+| `api_get_cross_country_links()`         | Returns linked products for a given product_id; bidirectional query across product_links; returns JSONB array                                                                                        |
+| `api_get_recipes()`                     | Browse published recipes with filters (country, category, tag, difficulty, max_time); paginated JSONB with total_count + recipes array                                                               |
+| `api_get_recipe_detail()`               | Full recipe detail by slug: recipe metadata + ingredients (with linked products) + steps; returns structured JSONB                                                                                   |
+| `api_get_recipe_nutrition()`            | Aggregate nutrition summary from linked products; picks primary product per ingredient; returns per-100g averages + coverage_pct                                                                     |
+| `browse_recipes()`                      | Browse published recipes with filters (category, country, tag, difficulty, max_time); returns TABLE rows                                                                                             |
+| `get_recipe_detail()`                   | Recipe detail by slug: returns JSONB with metadata, steps, ingredients (with linked_products array)                                                                                                  |
+| `find_products_for_recipe_ingredient()` | Finds products for a recipe ingredient: admin-curated links first, then auto-suggested via ingredient_ref matching                                                                                   |
+| `refresh_all_materialized_views()`      | Refreshes all MVs concurrently; returns timing report JSONB                                                                                                                                          |
+| `mv_staleness_check()`                  | Checks if MVs are stale by comparing row counts to source tables                                                                                                                                     |
+| `check_formula_drift()`                 | Compares stored SHA-256 fingerprints against recomputed hashes for active scoring/search formulas                                                                                                    |
+| `check_function_source_drift()`         | Compares registered pg_proc source hashes against actual function bodies for critical functions                                                                                                      |
+| `governance_drift_check()`              | Master drift detection runner — 8 checks across scoring, search, naming conventions, and feature flags                                                                                               |
+| `log_drift_check()`                     | Executes governance_drift_check() and persists results into drift_check_results; returns run_id UUID                                                                                                 |
+| `validate_log_entry()`                  | Validates a structured log JSON entry against LOG_SCHEMA.md spec; returns `{valid: true}` or `{valid: false, errors: [...]}`                                                                         |
+| `execute_retention_cleanup()`           | Deletes audit rows older than retention_policies window; SECURITY DEFINER, dry-run by default, batch deletion via ctid; returns JSONB summary                                                        |
+| `mv_last_refresh()`                     | Returns the most recent refresh per MV; columns: mv_name, refreshed_at, duration_ms, row_count, triggered_by, age_minutes                                                                            |
+| `check_flag_readiness()`                | Returns activation readiness status for all feature flags — dependency resolution, expiry tracking, status (ready/blocked/expired/enabled)                                                           |
+| `api_export_user_data()`                | GDPR Art.15/20 — exports all user data as structured JSONB (preferences, health profiles, lists, comparisons, searches, scans). SECURITY DEFINER                                                     |
+| `api_delete_user_data()`                | GDPR Art.17 — cascading delete across 8 tables in FK-safe order; writes anonymized audit to `deletion_audit_log`. SECURITY DEFINER                                                                   |
+| `is_valid_ean()`                        | GS1 checksum validation for EAN-8/EAN-13 barcodes. IMMUTABLE STRICT — returns NULL for NULL, false for invalid                                                                                       |
+| `gs1_country_hint()`                    | Extracts GS1 country-of-registration hint from EAN-13 prefix. IMMUTABLE STRICT — returns JSONB `{code, name, confidence}` where confidence ∈ {high, low, none}. Not definitive for imported products |
+| `check_submission_rate_limit()`         | Returns rate limit status for product submissions: 10 per 24h rolling window per user. SECURITY DEFINER                                                                                              |
+| `check_scan_rate_limit()`               | Returns rate limit status for barcode scans: 100 per 24h rolling window per user. SECURITY DEFINER                                                                                                   |
+| `check_api_rate_limit()`                | Generic per-endpoint rate limiter: checks `api_rate_limits` config, logs to `api_rate_limit_log`. Returns `{allowed, remaining}` or blocked JSONB. SECURITY DEFINER                                  |
+| `check_share_limit()`                   | Per-user share count limiter: max 50 shared items per type (comparisons/lists). Returns `{allowed, type, limit}` JSONB. SECURITY DEFINER                                                             |
+| `score_submission_quality()`            | Scores a submission's quality (0-100) from 7 signals: account age, velocity, EAN match, photo, brand/name quality, user trust score. SECURITY DEFINER                                                |
+| `api_admin_batch_reject_user()`         | Rejects all pending/manual_review/flag_for_review submissions from a user, flags trust score (cap at 10). SECURITY DEFINER                                                                           |
+| `api_admin_submission_velocity()`       | Returns submission velocity stats: last_24h, last_7d, pending_count, auto_rejected_24h, status_breakdown, top_submitters with trust. SECURITY DEFINER                                                |
 
 ### Views
 
@@ -516,6 +517,12 @@ tryvit/
 **`v_data_coverage_summary`** — Materialized view of per-country, per-category data coverage metrics. Columns: country, category, total_products, with_ingredients, with_allergens, with_ean, ingredient_pct, allergen_pct, ean_pct, avg_completeness. Unique index on (country, category). Used by QA coverage threshold checks (§8.18, checks 34–37). Refreshed by `refresh_all_materialized_views()`.
 
 **`mv_scoring_distribution`** — Materialized view of scoring band distribution per country and category. Columns: country, category, band (Green/Yellow/Orange/Red/Dark Red), product_count, pct_of_category, avg_score, min_score, max_score, stddev_score. Unique index on (country, category, band). Refreshed by `refresh_all_materialized_views()`.
+
+**`v_cross_country_scan_analytics`** — Per-country scan metrics. Columns: scan_country, total_scans, found_scans, missed_scans, miss_rate_pct, unique_eans_scanned, unique_eans_missed. Used for cross-country scanner performance monitoring.
+
+**`v_cross_country_ean_candidates`** — EANs scanned in more than one country — candidates for product_links. Columns: ean, scanned_in_countries (text[]), country_count, first_scanned, last_scanned, total_scans.
+
+**`v_submission_country_analytics`** — Per-country submission metrics. Columns: suggested_country, total_submissions, pending, approved, rejected, merged, acceptance_rate_pct. Used for cross-country submission monitoring.
 
 ### Edge Functions
 
@@ -671,7 +678,7 @@ a mix of `'baked'`, `'fried'`, and `'none'`.
 
 ## 7. Migrations
 
-**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **203 migrations**.
+**Location:** `supabase/migrations/` — managed by Supabase CLI. Currently **227 migrations**.
 
 **Rules:**
 
@@ -743,7 +750,7 @@ A change is **not done** unless relevant tests were added/updated, every suite i
 | Component tests     | **Testing Library React** + Vitest                | `frontend/src/components/**/*.test.tsx`      | same as above                        |
 | E2E smoke           | **Playwright 1.58** (Chromium)                    | `frontend/e2e/smoke.spec.ts`                 | `cd frontend && npx playwright test` |
 | E2E auth            | Playwright (requires `SUPABASE_SERVICE_ROLE_KEY`) | `frontend/e2e/authenticated.spec.ts`         | same (CI auto-detects key)           |
-| DB QA (756 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
+| DB QA (759 checks)  | Raw SQL (zero rows = pass)                        | `db/qa/QA__*.sql` (48 suites)                | `.\RUN_QA.ps1`                       |
 | Negative validation | SQL injection/constraint tests                    | `db/qa/TEST__negative_checks.sql`            | `.\RUN_NEGATIVE_TESTS.ps1`           |
 | DB sanity           | Row-count + schema assertions                     | via `RUN_SANITY.ps1`                         | `.\RUN_SANITY.ps1 -Env local`        |
 | Pipeline structure  | Python validator                                  | `check_pipeline_structure.py`                | `python check_pipeline_structure.py` |
@@ -884,7 +891,7 @@ E2E tests are the **only** exception — they run against a live dev server but 
   - **`pr-title-lint.yml`**: PR title conventional-commit validation (all PRs)
   - **`main-gate.yml`**: Typecheck → Lint → Build → Unit tests with coverage → Playwright smoke E2E → SonarCloud scan + BLOCKING Quality Gate → Sentry sourcemap upload
   - **`nightly.yml`**: Full Playwright (all projects incl. visual regression) + Data Integrity Audit (parallel)
-  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (756 checks) → Sanity (17 checks) → Confidence threshold
+  - **`qa.yml`**: Pipeline structure guard → Schema migrations → Schema drift detection → Pipelines → QA (759 checks) → Sanity (17 checks) → Confidence threshold
   - **`deploy.yml`**: Manual trigger → Schema diff → Approval gate (production) → Pre-deploy backup → `supabase db push` → Post-deploy sanity
   - **`sync-cloud-db.yml`**: Auto-sync migrations to production on merge to `main`
 - **Required (merge-blocking) checks:** `Unit Tests`, `Playwright Smoke`, `Typecheck & Lint`, `Build`. These four must pass before a PR can merge.
@@ -921,7 +928,7 @@ If adding/changing DB schema or SQL functions:
 - For rollback procedures, see `DEPLOYMENT.md` → **Rollback Procedures** (5 scenarios + emergency checklist).
 - Add a QA check that verifies the migration outcome (row counts, constraint behavior).
 - Ensure idempotency (`IF NOT EXISTS`, `ON CONFLICT`, `DO UPDATE SET`).
-- Run `.\RUN_QA.ps1` to verify all 756 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
+- Run `.\RUN_QA.ps1` to verify all 759 checks pass + `.\RUN_NEGATIVE_TESTS.ps1` for 23 injection tests.
 
 ### 8.14 Snapshots Are Not Enough
 
@@ -975,7 +982,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Confidence Reporting      | `QA__confidence_reporting.sql`      |      7 | Yes       |
 | Data Quality              | `QA__data_quality.sql`              |     29 | Yes       |
 | Ref. Integrity            | `QA__referential_integrity.sql`     |     18 | Yes       |
-| View Consistency          | `QA__view_consistency.sql`          |     13 | Yes       |
+| View Consistency          | `QA__view_consistency.sql`          |     16 | Yes       |
 | Naming Conventions        | `QA__naming_conventions.sql`        |     12 | Yes       |
 | Nutrition Ranges          | `QA__nutrition_ranges.sql`          |     20 | Yes       |
 | Data Consistency          | `QA__data_consistency.sql`          |     26 | Yes       |
@@ -1016,7 +1023,7 @@ At the end of every PR-like change, include a **Verification** section:
 | Scoring Band Distribution | `QA__scoring_distribution.sql`      |     12 | No        |
 | **Negative Validation**   | `TEST__negative_checks.sql`         |     23 | Yes       |
 
-**Run:** `.\RUN_QA.ps1` — expects **768/768 checks passing** (+ EAN validation).
+**Run:** `.\RUN_QA.ps1` — expects **771/771 checks passing** (+ EAN validation).
 **Run:** `.\RUN_NEGATIVE_TESTS.ps1` — expects **23/23 caught**.
 
 ### 8.19 Key Regression Tests (Scoring Suite)
@@ -1174,7 +1181,7 @@ security(rls): lock down product_submissions to authenticated users
 
 **Pre-commit checklist:**
 
-1. `.\RUN_QA.ps1` — 756/756 pass
+1. `.\RUN_QA.ps1` — 759/759 pass
 2. No credentials in committed files
 3. No modifications to existing `supabase/migrations/`
 4. Docs updated if schema or methodology changed
@@ -1548,7 +1555,7 @@ Before a feature is considered complete, verify against all CI gates:
 | Gate                | Command                               | Expected                        |
 | ------------------- | ------------------------------------- | ------------------------------- |
 | Pipeline structure  | `python check_pipeline_structure.py`  | 0 errors                        |
-| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 756) |
+| DB QA               | `.\RUN_QA.ps1`                        | All checks pass (currently 759) |
 | Negative tests      | `.\RUN_NEGATIVE_TESTS.ps1`            | All caught (currently 23)       |
 | pgTAP tests         | `supabase test db`                    | All pass                        |
 | TypeScript          | `cd frontend && npx tsc --noEmit`     | 0 errors                        |
@@ -1693,10 +1700,10 @@ Produce **exactly this structure** — fill every section with real data:
 
 | Metric                    | Current Value   | Target / Baseline       | Status   |
 | ------------------------- | --------------- | ----------------------- | -------- |
-| Active products (PL+DE)   | ~X,XXX          | ≥2,366                  | ✅/⚠️/❌ |
-| QA checks passing         | XXX/756         | 756/756                 | ✅/⚠️/❌ |
+| Active products (PL+DE)   | ~X,XXX          | ≥2,602                  | ✅/⚠️/❌ |
+| QA checks passing         | XXX/759         | 759/759                 | ✅/⚠️/❌ |
 | Negative tests passing    | 23/23           | 23/23                   | ✅/⚠️/❌ |
-| Migrations committed      | XXX             | ≥199                    | ✅/⚠️/❌ |
+| Migrations committed      | XXX             | ≥227                    | ✅/⚠️/❌ |
 | Vitest coverage (lines)   | XX%             | ≥88%                    | ✅/⚠️/❌ |
 | SonarCloud quality gate   | PASS/FAIL       | PASS                    | ✅/⚠️/❌ |
 | EAN coverage              | XXXX/XXXX (XX%) | ≥99.8%                  | ✅/⚠️/❌ |
@@ -2015,7 +2022,7 @@ Else → fallback Z (always safe, always returns a value)
 ## Verification Checklist (Definition of Done)
 
 - [ ] `python check_pipeline_structure.py` — 0 errors
-- [ ] `.\RUN_QA.ps1` — all 756 checks pass
+- [ ] `.\RUN_QA.ps1` — all 759 checks pass
 - [ ] `.\RUN_NEGATIVE_TESTS.ps1` — 23/23 caught
 - [ ] `supabase test db` — all pgTAP pass
 - [ ] `cd frontend && npx tsc --noEmit` — 0 errors
@@ -2137,15 +2144,15 @@ Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
 
 ### 18.1 Architecture & System Design
 
-| Document                        | Purpose                                                                                                | Load When                                      |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------- |
-| `docs/ARCHITECTURE.md`          | Full system architecture — data flow, schema topology, scoring pipeline, API layer, security perimeter | Any schema, API, or infra work                 |
-| `docs/DOMAIN_BOUNDARIES.md`     | Domain ownership map — who owns what, cross-domain coupling rules                                      | Adding new domains, touching multiple services |
-| `docs/ENVIRONMENT_STRATEGY.md`  | Local / staging / production environment strategy, secret management                                   | Env config, deployment, secrets changes        |
-| `docs/STAGING_SETUP.md`         | Staging environment setup guide                                                                        | Setting up staging, CI config                  |
-| `docs/DEPLOYMENT.md`            | Deployment procedures, rollback playbook, emergency checklist                                          | Any production deployment                      |
-| `docs/DISASTER_DRILL_REPORT.md` | DR drill findings and follow-up actions                                                                | Incident prep, DR automation                   |
-| `docs/PRODUCTION_DATA.md`       | Production data management rules — no PII, retention policies                                          | Any migration touching prod                    |
+| Document                              | Purpose                                                                                                    | Load When                                         |
+| ------------------------------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `docs/ARCHITECTURE.md`                | Full system architecture — data flow, schema topology, scoring pipeline, API layer, security perimeter     | Any schema, API, or infra work                    |
+| `docs/DOMAIN_BOUNDARIES.md`           | Domain ownership map — who owns what, cross-domain coupling rules                                          | Adding new domains, touching multiple services    |
+| `docs/ENVIRONMENT_STRATEGY.md`        | Local / staging / production environment strategy, secret management                                       | Env config, deployment, secrets changes           |
+| `docs/STAGING_SETUP.md`               | Staging environment setup guide                                                                            | Setting up staging, CI config                     |
+| `docs/DEPLOYMENT.md`                  | Deployment procedures, rollback playbook, emergency checklist                                              | Any production deployment                         |
+| `docs/DISASTER_DRILL_REPORT.md`       | DR drill findings and follow-up actions                                                                    | Incident prep, DR automation                      |
+| `docs/PRODUCTION_DATA.md`             | Production data management rules — no PII, retention policies                                              | Any migration touching prod                       |
 | `docs/HEALTH_GOAL_PERSONALIZATION.md` | Health-goal personalization design — goal taxonomy, personalization model, MVP scope, privacy, copy safety | Health profile, personalization, onboarding goals |
 
 ### 18.2 API & Frontend
@@ -2229,17 +2236,17 @@ Then execute §19 (Canonical Execution Discipline Protocol v2) in full.
 
 ### 18.9 Architecture Decision Records
 
-| Decision                                              | Status   | Summary                                                                        |
-| ----------------------------------------------------- | -------- | ------------------------------------------------------------------------------ |
-| `docs/decisions/001-postgresql-only-stack.md`         | Accepted | No ORM, no Redis cluster, PostgreSQL as sole data store                        |
-| `docs/decisions/002-weighted-scoring-formula.md`      | Accepted | 9-factor weighted model, science-backed, EFSA-aligned                          |
-| `docs/decisions/003-country-scoped-isolation.md`      | Accepted | All queries country-filtered, no cross-contamination                           |
-| `docs/decisions/004-pipeline-generates-sql.md`        | Accepted | Python pipeline generates idempotent SQL, no runtime inserts                   |
-| `docs/decisions/005-api-function-name-versioning.md`  | Accepted | Additive versioning via suffix (`_v2`), never rename                           |
-| `docs/decisions/006-append-only-migrations.md`        | Accepted | Never modify committed migrations; forward-only schema evolution               |
-| `docs/decisions/007-english-canonical-ingredients.md` | Accepted | `name_en` is canonical; translations stored in `ingredient_translations`       |
-| `docs/decisions/008-nutrient-density-bonus.md`        | Accepted | Nutrient density bonus (protein + fibre) as subtracted 10th factor in v3.3     |
-| `docs/decisions/009-scoring-band-calibration.md`      | Accepted | Scoring band calibration — catalog limited, formula correct, no changes needed |
+| Decision                                              | Status   | Summary                                                                          |
+| ----------------------------------------------------- | -------- | -------------------------------------------------------------------------------- |
+| `docs/decisions/001-postgresql-only-stack.md`         | Accepted | No ORM, no Redis cluster, PostgreSQL as sole data store                          |
+| `docs/decisions/002-weighted-scoring-formula.md`      | Accepted | 9-factor weighted model, science-backed, EFSA-aligned                            |
+| `docs/decisions/003-country-scoped-isolation.md`      | Accepted | All queries country-filtered, no cross-contamination                             |
+| `docs/decisions/004-pipeline-generates-sql.md`        | Accepted | Python pipeline generates idempotent SQL, no runtime inserts                     |
+| `docs/decisions/005-api-function-name-versioning.md`  | Accepted | Additive versioning via suffix (`_v2`), never rename                             |
+| `docs/decisions/006-append-only-migrations.md`        | Accepted | Never modify committed migrations; forward-only schema evolution                 |
+| `docs/decisions/007-english-canonical-ingredients.md` | Accepted | `name_en` is canonical; translations stored in `ingredient_translations`         |
+| `docs/decisions/008-nutrient-density-bonus.md`        | Accepted | Nutrient density bonus (protein + fibre) as subtracted 10th factor in v3.3       |
+| `docs/decisions/009-scoring-band-calibration.md`      | Accepted | Scoring band calibration — catalog limited, formula correct, no changes needed   |
 | `docs/decisions/010-ingredient-language-model.md`     | Accepted | English canonical + `ingredient_translations` fallback; no schema changes needed |
 
 ---
@@ -2459,7 +2466,7 @@ Execute every command. Record output. Do not skip.
 ```powershell
 # ── Database layer ───────────────────────────────────────────────────
 supabase test db                               # All pgTAP tests pass
-.\RUN_QA.ps1                                   # All 756+ QA checks pass
+.\RUN_QA.ps1                                   # All 759+ QA checks pass
 .\RUN_NEGATIVE_TESTS.ps1                       # All 23 negative tests caught
 python check_pipeline_structure.py            # 0 errors
 python validate_eans.py                       # 0 EAN failures
@@ -2509,7 +2516,7 @@ After implementation, update ALL of these that apply (per §18.1):
 
 ```powershell
 supabase test db                  → XX/XX pgTAP tests pass
-.\RUN_QA.ps1                      → 756/756 checks pass (0 failures)
+.\RUN_QA.ps1                      → 759/759 checks pass (0 failures)
 .\RUN_NEGATIVE_TESTS.ps1          → 23/23 caught
 npx tsc --noEmit                  → 0 errors
 npx vitest run                    → XXX/XXX tests pass

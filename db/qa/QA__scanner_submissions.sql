@@ -56,15 +56,15 @@ SELECT '3. product_submissions status CHECK exists' AS check_name,
        ) THEN 0 ELSE 1 END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────
--- #4  Unique partial index prevents duplicate pending submissions per EAN
+-- #4  Unique partial index prevents duplicate pending submissions per EAN+country
 -- ─────────────────────────────────────────────────────────────────────────────
-SELECT '4. Unique pending-per-EAN index exists' AS check_name,
+SELECT '4. Unique pending-per-EAN-country index exists' AS check_name,
        CASE WHEN EXISTS (
            SELECT 1 FROM pg_class c
            JOIN pg_namespace n ON c.relnamespace = n.oid
            WHERE n.nspname = 'public'
              AND c.relkind = 'i'
-             AND c.relname = 'idx_ps_ean_pending'
+             AND c.relname = 'idx_ps_ean_country_pending'
        ) THEN 0 ELSE 1 END AS violations;
 
 -- ─────────────────────────────────────────────────────────────────────────────

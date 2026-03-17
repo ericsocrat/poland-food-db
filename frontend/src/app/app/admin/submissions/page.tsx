@@ -466,6 +466,47 @@ function AdminSubmissionCard({
           </p>
         )}
 
+        {/* GS1 country mismatch badge (#929) */}
+        {submission.gs1_hint &&
+          submission.gs1_hint.code !== "UNKNOWN" &&
+          submission.gs1_hint.code !== "STORE" &&
+          (submission.suggested_country ?? submission.scan_country) &&
+          submission.gs1_hint.code !==
+            (submission.suggested_country ?? submission.scan_country) && (
+            <p className="text-xs text-warning-text" data-testid="gs1-mismatch-badge">
+              ⚠ {t("admin.gs1Mismatch", {
+                gs1Country: submission.gs1_hint.name,
+                effectiveCountry:
+                  (submission.suggested_country ?? submission.scan_country)!,
+              })}
+            </p>
+          )}
+
+        {/* Region mismatch badge (#929) */}
+        {submission.scan_country &&
+          submission.suggested_country &&
+          submission.scan_country !== submission.suggested_country && (
+            <p className="text-xs text-info-text" data-testid="region-mismatch-badge">
+              ℹ {t("admin.regionMismatch", {
+                scanCountry: submission.scan_country,
+                suggestedCountry: submission.suggested_country,
+              })}
+            </p>
+          )}
+
+        {/* Cross-country product badge (#929) */}
+        {submission.cross_country_products.length > 0 && (
+          <p className="text-xs text-info-text" data-testid="cross-country-badge">
+            ℹ {t("admin.crossCountryProducts", {
+              count: submission.cross_country_products.length,
+              countries: submission.cross_country_products
+                .map((p) => p.country)
+                .filter((v, i, a) => a.indexOf(v) === i)
+                .join(", "),
+            })}
+          </p>
+        )}
+
         {submission.review_notes && (
           <p className="rounded-md bg-warning-bg p-2 text-xs text-warning-text">
             <ShieldAlert size={14} aria-hidden="true" className="mr-1 inline" />

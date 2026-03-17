@@ -173,3 +173,30 @@ SELECT '13. v_master has expected column count (58)' AS check_name,
 FROM information_schema.columns
 WHERE table_schema = 'public'
   AND table_name = 'v_master';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 14. v_cross_country_scan_analytics view exists and has 7 columns
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '14. v_cross_country_scan_analytics has 7 columns' AS check_name,
+       ABS(7 - COUNT(*)) AS violations
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'v_cross_country_scan_analytics';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 15. v_cross_country_ean_candidates view exists and has 6 columns
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '15. v_cross_country_ean_candidates has 6 columns' AS check_name,
+       ABS(6 - COUNT(*)) AS violations
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'v_cross_country_ean_candidates';
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- 16. v_submission_country_analytics view exists and has 7 columns
+-- ═══════════════════════════════════════════════════════════════════════════
+SELECT '16. v_submission_country_analytics has 7 columns' AS check_name,
+       ABS(7 - COUNT(*)) AS violations
+FROM information_schema.columns
+WHERE table_schema = 'public'
+  AND table_name = 'v_submission_country_analytics';

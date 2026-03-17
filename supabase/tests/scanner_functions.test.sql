@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(80);
+SELECT plan(107);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -651,6 +651,269 @@ SELECT is(
   (public.api_record_scan('4015000969611'))->>'found',
   'false',
   'deprecated product excluded from scan lookup (#926)'
+);
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- gs1_country_hint — GS1 prefix to country hint utility (#928)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- 1. PL prefix (590) → Poland
+SELECT is(
+  (public.gs1_country_hint('5901234123457'))->>'code',
+  'PL',
+  'gs1_country_hint: 590 prefix returns PL (#928)'
+);
+
+-- 2. DE prefix (400–440 range) → Germany
+SELECT is(
+  (public.gs1_country_hint('4000000000000'))->>'code',
+  'DE',
+  'gs1_country_hint: 400 prefix returns DE (#928)'
+);
+
+SELECT is(
+  (public.gs1_country_hint('4400000000000'))->>'code',
+  'DE',
+  'gs1_country_hint: 440 prefix returns DE (#928)'
+);
+
+-- 3. FR prefix (300–379) → France
+SELECT is(
+  (public.gs1_country_hint('3000000000000'))->>'code',
+  'FR',
+  'gs1_country_hint: 300 prefix returns FR (#928)'
+);
+
+-- 4. GB prefix (50) → United Kingdom
+SELECT is(
+  (public.gs1_country_hint('5000000000000'))->>'code',
+  'GB',
+  'gs1_country_hint: 50 prefix returns GB (#928)'
+);
+
+-- 5. IE prefix (539) → Ireland
+SELECT is(
+  (public.gs1_country_hint('5390000000000'))->>'code',
+  'IE',
+  'gs1_country_hint: 539 prefix returns IE (#928)'
+);
+
+-- 6. IT prefix (800–839) → Italy
+SELECT is(
+  (public.gs1_country_hint('8000000000000'))->>'code',
+  'IT',
+  'gs1_country_hint: 800 prefix returns IT (#928)'
+);
+
+-- 7. ES prefix (840–849) → Spain
+SELECT is(
+  (public.gs1_country_hint('8400000000000'))->>'code',
+  'ES',
+  'gs1_country_hint: 840 prefix returns ES (#928)'
+);
+
+-- 8. Store-internal (020–029)
+SELECT is(
+  (public.gs1_country_hint('0200000000000'))->>'code',
+  'STORE',
+  'gs1_country_hint: 020 prefix returns STORE (#928)'
+);
+
+-- 9. Store-internal (200–299)
+SELECT is(
+  (public.gs1_country_hint('2000000000000'))->>'code',
+  'STORE',
+  'gs1_country_hint: 200 prefix returns STORE (#928)'
+);
+
+-- 10. Unknown prefix → UNKNOWN with prefix field
+SELECT is(
+  (public.gs1_country_hint('9990000000000'))->>'code',
+  'UNKNOWN',
+  'gs1_country_hint: unknown prefix returns UNKNOWN (#928)'
+);
+
+SELECT ok(
+  (public.gs1_country_hint('9990000000000')) ? 'prefix',
+  'gs1_country_hint: unknown result includes prefix field (#928)'
+);
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Country-scoped pending submission uniqueness (#930)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Disable triggers for direct submission inserts (quality triage auto-resolves known EANs)
+ALTER TABLE public.product_submissions DISABLE TRIGGER trg_trust_score_adjustment;
+ALTER TABLE public.product_submissions DISABLE TRIGGER trg_submission_quality_triage;
+
+-- Clean up any leftover test submissions from prior runs
+DELETE FROM public.product_submissions WHERE ean = '9780000000002' AND product_name LIKE 'pgTAP 930%';
+
+-- 1. Insert pending submission for EAN in PL → succeeds
+INSERT INTO public.product_submissions (ean, product_name, status, suggested_country)
+VALUES ('9780000000002', 'pgTAP 930 PL', 'pending', 'PL');
+
+SELECT ok(
+  EXISTS (SELECT 1 FROM public.product_submissions WHERE ean = '9780000000002' AND suggested_country = 'PL' AND status = 'pending' AND product_name = 'pgTAP 930 PL'),
+  'pending submission for EAN in PL inserted successfully (#930)'
+);
+
+-- 2. Same EAN + different country (DE) → also succeeds (country-scoped uniqueness)
+INSERT INTO public.product_submissions (ean, product_name, status, suggested_country)
+VALUES ('9780000000002', 'pgTAP 930 DE', 'pending', 'DE');
+
+SELECT ok(
+  EXISTS (SELECT 1 FROM public.product_submissions WHERE ean = '9780000000002' AND suggested_country = 'DE' AND status = 'pending' AND product_name = 'pgTAP 930 DE'),
+  'same EAN pending in DE allowed when PL already pending (#930)'
+);
+
+-- 3. Same EAN + same country (PL again) → blocked by unique index
+SELECT throws_ok(
+  $$INSERT INTO public.product_submissions (ean, product_name, status, suggested_country) VALUES ('9780000000002', 'pgTAP 930 PL dup', 'pending', 'PL')$$,
+  '23505',
+  NULL,
+  'duplicate EAN+country pending blocked by idx_ps_ean_country_pending (#930)'
+);
+
+-- 4. NULL suggested_country inserts are allowed (NULLs excluded from unique index)
+INSERT INTO public.product_submissions (ean, product_name, status, suggested_country)
+VALUES ('9780000000002', 'pgTAP 930 NULL country', 'pending', NULL);
+
+SELECT ok(
+  EXISTS (SELECT 1 FROM public.product_submissions WHERE ean = '9780000000002' AND suggested_country IS NULL AND status = 'pending' AND product_name = 'pgTAP 930 NULL country'),
+  'pending submission with NULL country allowed alongside PL/DE (#930)'
+);
+
+-- Clean up test submissions
+DELETE FROM public.product_submissions WHERE ean = '9780000000002' AND product_name LIKE 'pgTAP 930%';
+
+-- Re-enable triggers
+ALTER TABLE public.product_submissions ENABLE TRIGGER trg_trust_score_adjustment;
+ALTER TABLE public.product_submissions ENABLE TRIGGER trg_submission_quality_triage;
+
+-- ─── api_record_scan has_pending_submission is country-scoped (#930) ─────────
+
+-- Insert one pending submission for PL only
+ALTER TABLE public.product_submissions DISABLE TRIGGER trg_trust_score_adjustment;
+ALTER TABLE public.product_submissions DISABLE TRIGGER trg_submission_quality_triage;
+
+INSERT INTO public.product_submissions (ean, product_name, status, suggested_country)
+VALUES ('4006381333931', 'pgTAP 930 Scan PL', 'pending', 'PL');
+
+-- 5. Scan with PL country → has_pending_submission = true
+SELECT is(
+  (public.api_record_scan('4006381333931', 'PL'))->>'has_pending_submission',
+  'true',
+  'api_record_scan: has_pending_submission true for PL where PL pending exists (#930)'
+);
+
+-- 6. Scan with DE country → has_pending_submission = false (only PL is pending)
+SELECT is(
+  (public.api_record_scan('4006381333931', 'DE'))->>'has_pending_submission',
+  'false',
+  'api_record_scan: has_pending_submission false for DE when only PL pending (#930)'
+);
+
+-- 7. Scan with NULL country → has_pending_submission = true (global fallback finds PL pending)
+SELECT is(
+  (public.api_record_scan('4006381333931'))->>'has_pending_submission',
+  'true',
+  'api_record_scan: has_pending_submission true for NULL country — global fallback (#930)'
+);
+
+-- Clean up
+DELETE FROM public.product_submissions WHERE ean = '4006381333931' AND product_name LIKE 'pgTAP 930%';
+
+ALTER TABLE public.product_submissions ENABLE TRIGGER trg_trust_score_adjustment;
+ALTER TABLE public.product_submissions ENABLE TRIGGER trg_submission_quality_triage;
+
+-- ─── Verify index exists ─────────────────────────────────────────────────────
+
+-- 8. Old global index should not exist
+SELECT ok(
+  NOT EXISTS (
+    SELECT 1 FROM pg_class c JOIN pg_namespace n ON c.relnamespace = n.oid
+    WHERE n.nspname = 'public' AND c.relname = 'idx_ps_ean_pending'
+  ),
+  'old global idx_ps_ean_pending no longer exists (#930)'
+);
+
+-- 9. New country-scoped index should exist
+SELECT ok(
+  EXISTS (
+    SELECT 1 FROM pg_class c JOIN pg_namespace n ON c.relnamespace = n.oid
+    WHERE n.nspname = 'public' AND c.relname = 'idx_ps_ean_country_pending'
+  ),
+  'new idx_ps_ean_country_pending exists (#930)'
+);
+
+
+-- ═══════════════════════════════════════════════════════════════════════════
+-- Country-aware submission quality scoring — Signal 3 (#931)
+-- ═══════════════════════════════════════════════════════════════════════════
+
+-- Fixture product 999999 has EAN '5901234123457' in country 'XX'.
+-- Using NULL brand/name to isolate Signal 3 (Signals 5/6 are penalty-only,
+-- they don't fire when p_brand/p_product_name is NULL).
+
+-- 1. Same-country EAN match → +15 (score 65)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, 'XX'
+  ))->>'quality_score')::int,
+  65,
+  '_score_submission_quality: same-country EAN match gives +15 (#931)'
+);
+
+-- 2. Same-country signal name is ean_exists_same_country
+SELECT ok(
+  (_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, 'XX'
+  ))->'signals' @> '[{"signal": "ean_exists_same_country"}]'::jsonb,
+  '_score_submission_quality: same-country signal is ean_exists_same_country (#931)'
+);
+
+-- 3. Cross-country EAN match → +5 (score 55)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, 'DE'
+  ))->>'quality_score')::int,
+  55,
+  '_score_submission_quality: cross-country EAN match gives +5 (#931)'
+);
+
+-- 4. Cross-country signal name is ean_exists_other_country
+SELECT ok(
+  (_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, 'DE'
+  ))->'signals' @> '[{"signal": "ean_exists_other_country"}]'::jsonb,
+  '_score_submission_quality: cross-country signal is ean_exists_other_country (#931)'
+);
+
+-- 5. Unknown EAN globally → +0 (score 50)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '0000000000000', NULL, NULL, NULL, 'PL'
+  ))->>'quality_score')::int,
+  50,
+  '_score_submission_quality: unknown EAN gives +0 (#931)'
+);
+
+-- 6. NULL country fallback → global match → +15 (score 65)
+SELECT is(
+  ((_score_submission_quality(
+    '00000000-0000-0000-0000-000000000099'::uuid,
+    '5901234123457', NULL, NULL, NULL, NULL
+  ))->>'quality_score')::int,
+  65,
+  '_score_submission_quality: NULL country fallback gives +15 for existing EAN (#931)'
 );
 
 
