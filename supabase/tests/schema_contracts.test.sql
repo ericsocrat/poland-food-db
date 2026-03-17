@@ -421,6 +421,13 @@ SELECT has_function('public', 'api_unwatch_product',                         'fu
 SELECT has_function('public', 'api_get_watchlist',                           'function api_get_watchlist exists');
 SELECT has_trigger('products', 'trg_record_score_change',                    'trigger trg_record_score_change exists on products');
 
+-- ─── scan_history.scan_country (#921, epic #920) ─────────────────────────────
+SELECT has_column('public', 'scan_history', 'scan_country',       'scan_history has scan_country column');
+SELECT col_is_null('public', 'scan_history', 'scan_country',      'scan_history.scan_country is nullable');
+SELECT fk_ok('public', 'scan_history', 'scan_country',
+             'public', 'country_ref', 'country_code',
+             'scan_history.scan_country references country_ref(country_code)');
+
 -- ─── product_submissions.scan_country + suggested_country (#922, epic #920) ──
 SELECT has_column('public', 'product_submissions', 'scan_country',       'product_submissions has scan_country column');
 SELECT col_is_null('public', 'product_submissions', 'scan_country',      'product_submissions.scan_country is nullable');
