@@ -1093,7 +1093,10 @@
     "approve": "Genehmigen",
     "reject": "Ablehnen",
     "countryLabel": "Land:",
-    "allCountries": "Alle Länder"
+    "allCountries": "Alle Länder",
+    "gs1Mismatch": "GS1-Barcode deutet auf {gs1Country}, aber Einreichung zielt auf {effectiveCountry}",
+    "regionMismatch": "Gescannt in {scanCountry}, aber vorgeschlagen für {suggestedCountry}",
+    "crossCountryProducts": "Gleiche EAN existiert in {countries} ({count} Produkt(e))"
   },
   "monitoring": {
     "title": "Systemüberwachung",
