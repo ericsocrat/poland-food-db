@@ -71,12 +71,14 @@ interface ScanNotFoundProps {
   ean: string;
   scanResult: RecordScanNotFoundResponse;
   onReset: () => void;
+  country?: string;
 }
 
 export function ScanNotFoundView({
   ean,
   scanResult,
   onReset,
+  country,
 }: ScanNotFoundProps) {
   const { t } = useTranslation();
 
@@ -101,6 +103,7 @@ export function ScanNotFoundView({
       <ScanMissSubmitCTA
         ean={ean}
         hasPendingSubmission={scanResult.has_pending_submission}
+        country={country}
       />
 
       <div className="flex gap-2">

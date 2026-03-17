@@ -120,14 +120,19 @@ async function invokeGateway<T = unknown>(
 export async function recordScanViaGateway(
   supabase: SupabaseClient,
   ean: string,
+  scanCountry?: string,
 ): Promise<GatewayResult> {
-  const result = await invokeGateway(supabase, "record-scan", { ean });
+  const result = await invokeGateway(supabase, "record-scan", {
+    ean,
+    scan_country: scanCountry ?? null,
+  });
 
   // Graceful degradation: if gateway is unreachable, fall back to direct RPC
   if (!result.ok && result.error === "gateway_unreachable") {
     try {
       const { data, error } = await supabase.rpc("api_record_scan", {
         p_ean: ean,
+        p_scan_country: scanCountry ?? null,
       });
       if (error) {
         return {
@@ -155,6 +160,8 @@ export interface SubmitProductParams {
   category?: string | null;
   photo_url?: string | null;
   notes?: string | null;
+  scan_country?: string | null;
+  suggested_country?: string | null;
   /** Turnstile CAPTCHA token. Required when trust is low or velocity is high. */
   turnstile_token?: string | null;
 }
@@ -180,6 +187,8 @@ export async function submitProductViaGateway(
         p_category: params.category ?? null,
         p_photo_url: params.photo_url ?? null,
         p_notes: params.notes ?? null,
+        p_scan_country: params.scan_country ?? null,
+        p_suggested_country: params.suggested_country ?? null,
       });
       if (error) {
         return {
@@ -287,7 +296,7 @@ export async function saveSearchViaGateway(
 // ─── Gateway Factory ────────────────────────────────────────────────────────
 
 export interface ApiGateway {
-  recordScan: (ean: string) => Promise<GatewayResult>;
+  recordScan: (ean: string, scanCountry?: string) => Promise<GatewayResult>;
   submitProduct: (params: SubmitProductParams) => Promise<GatewayResult>;
   trackEvent: (params: TrackEventParams) => Promise<GatewayResult>;
   saveSearch: (params: SaveSearchParams) => Promise<GatewayResult>;
@@ -309,7 +318,8 @@ export interface ApiGateway {
  */
 export function createApiGateway(supabase: SupabaseClient): ApiGateway {
   return {
-    recordScan: (ean: string) => recordScanViaGateway(supabase, ean),
+    recordScan: (ean: string, scanCountry?: string) =>
+      recordScanViaGateway(supabase, ean, scanCountry),
     submitProduct: (params: SubmitProductParams) =>
       submitProductViaGateway(supabase, params),
     trackEvent: (params: TrackEventParams) =>

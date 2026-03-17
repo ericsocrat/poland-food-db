@@ -723,9 +723,11 @@ export function deleteComparison(
 export function recordScan(
   supabase: SupabaseClient,
   ean: string,
+  scanCountry?: string,
 ): Promise<RpcResult<RecordScanResponse>> {
   return callRpc<RecordScanResponse>(supabase, "api_record_scan", {
     p_ean: ean,
+    p_scan_country: scanCountry ?? null,
   });
 }
 
@@ -751,6 +753,8 @@ export function submitProduct(
     category?: string;
     photoUrl?: string;
     notes?: string;
+    scanCountry?: string;
+    suggestedCountry?: string;
   },
 ): Promise<RpcResult<SubmitProductResponse>> {
   return callRpc<SubmitProductResponse>(supabase, "api_submit_product", {
@@ -760,6 +764,8 @@ export function submitProduct(
     p_category: params.category ?? null,
     p_photo_url: params.photoUrl ?? null,
     p_notes: params.notes ?? null,
+    p_scan_country: params.scanCountry ?? null,
+    p_suggested_country: params.suggestedCountry ?? null,
   });
 }
 

@@ -18,6 +18,7 @@ import {
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useBarcodeScanner } from "@/hooks/use-barcode-scanner";
 import { recordScan } from "@/lib/api";
+import { usePreferences } from "@/components/common/RouteGuard";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";
@@ -51,6 +52,8 @@ export default function ScanPage() {
   const queryClient = useQueryClient();
   const { track } = useAnalytics();
   const { t } = useTranslation();
+  const prefs = usePreferences();
+  const userCountry = prefs?.country ?? undefined;
   const [ean, setEan] = useState("");
   const [manualEan, setManualEan] = useState("");
   const [mode, setMode] = useState<"camera" | "manual">("camera");
@@ -70,7 +73,7 @@ export default function ScanPage() {
 
   const scanMutation = useMutation({
     mutationFn: async (scanEan: string) => {
-      const result = await recordScan(supabase, scanEan);
+      const result = await recordScan(supabase, scanEan, userCountry);
       if (!result.ok) throw new Error(result.error.message);
       return result.data;
     },
@@ -200,6 +203,7 @@ export default function ScanPage() {
         ean={ean}
         scanResult={scanResult as RecordScanNotFoundResponse}
         onReset={() => handleReset()}
+        country={userCountry}
       />
     );
   }

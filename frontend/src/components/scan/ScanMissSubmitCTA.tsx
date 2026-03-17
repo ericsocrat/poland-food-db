@@ -7,12 +7,14 @@ import { Clock, FileText } from "lucide-react";
 interface ScanMissSubmitCTAProps {
   ean: string;
   hasPendingSubmission?: boolean;
+  country?: string;
 }
 
 /** CTA shown when a scanned barcode is not found in the database. */
 export function ScanMissSubmitCTA({
   ean,
   hasPendingSubmission = false,
+  country,
 }: ScanMissSubmitCTAProps) {
   const { t } = useTranslation();
 
@@ -29,10 +31,14 @@ export function ScanMissSubmitCTA({
     );
   }
 
+  const submitHref = country
+    ? `/app/scan/submit?ean=${ean}&country=${country}`
+    : `/app/scan/submit?ean=${ean}`;
+
   return (
     <div className="space-y-2">
       <ButtonLink
-        href={`/app/scan/submit?ean=${ean}`}
+        href={submitHref}
         fullWidth
         icon={<FileText size={16} aria-hidden="true" />}
       >

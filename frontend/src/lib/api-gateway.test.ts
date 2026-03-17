@@ -203,9 +203,23 @@ describe("recordScanViaGateway", () => {
     const result = await recordScanViaGateway(fakeSupabase, "5901234123457");
 
     expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
-      body: { action: "record-scan", ean: "5901234123457" },
+      body: { action: "record-scan", ean: "5901234123457", scan_country: null },
     });
     expect(result).toEqual({ ok: true, data: { scan_id: 42 } });
+  });
+
+  it("should pass scan_country to gateway when provided", async () => {
+    mockInvoke.mockResolvedValue({
+      data: { ok: true, data: { scan_id: 43 } },
+      error: null,
+    });
+
+    const result = await recordScanViaGateway(fakeSupabase, "5901234123457", "PL");
+
+    expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
+      body: { action: "record-scan", ean: "5901234123457", scan_country: "PL" },
+    });
+    expect(result).toEqual({ ok: true, data: { scan_id: 43 } });
   });
 
   it("should return gateway error response as-is", async () => {
@@ -253,6 +267,7 @@ describe("recordScanViaGateway", () => {
 
     expect(mockRpc).toHaveBeenCalledWith("api_record_scan", {
       p_ean: "5901234123457",
+      p_scan_country: null,
     });
     expect(result).toEqual({ ok: true, data: { scan_id: 99 } });
   });
@@ -444,6 +459,8 @@ describe("submitProductViaGateway", () => {
       p_category: "Chips",
       p_photo_url: null,
       p_notes: null,
+      p_scan_country: null,
+      p_suggested_country: null,
     });
     expect(result.ok).toBe(true);
   });
@@ -609,7 +626,7 @@ describe("createApiGateway", () => {
     const result = await gateway.recordScan("5901234123457");
 
     expect(mockInvoke).toHaveBeenCalledWith("api-gateway", {
-      body: { action: "record-scan", ean: "5901234123457" },
+      body: { action: "record-scan", ean: "5901234123457", scan_country: null },
     });
     expect(result).toEqual({ ok: true, data: { scan_id: 1 } });
   });

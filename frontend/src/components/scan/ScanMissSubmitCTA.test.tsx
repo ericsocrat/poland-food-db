@@ -40,6 +40,14 @@ describe("ScanMissSubmitCTA", () => {
     );
   });
 
+  it("includes country in submit link when provided", () => {
+    render(<ScanMissSubmitCTA ean="5901234123457" country="DE" />);
+    const link = screen.getByRole("link");
+    expect(link.getAttribute("href")).toBe(
+      "/app/scan/submit?ean=5901234123457&country=DE"
+    );
+  });
+
   it("renders hint text below the button", () => {
     render(<ScanMissSubmitCTA ean="5901234123457" />);
     expect(screen.getByText("scan.helpAddHint")).toBeTruthy();

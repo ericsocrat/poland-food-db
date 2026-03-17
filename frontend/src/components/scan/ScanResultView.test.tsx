@@ -50,11 +50,13 @@ vi.mock("@/components/scan/ScanMissSubmitCTA", () => ({
   ScanMissSubmitCTA: ({
     ean,
     hasPendingSubmission,
+    country,
   }: {
     ean: string;
     hasPendingSubmission?: boolean;
+    country?: string;
   }) => (
-    <div data-testid="scan-miss-submit-cta" data-ean={ean} data-pending={String(!!hasPendingSubmission)} />
+    <div data-testid="scan-miss-submit-cta" data-ean={ean} data-pending={String(!!hasPendingSubmission)} data-country={country ?? ""} />
   ),
 }));
 
@@ -181,6 +183,19 @@ describe("ScanNotFoundView", () => {
     const cta = screen.getByTestId("scan-miss-submit-cta");
     expect(cta).toHaveAttribute("data-ean", "5901234123457");
     expect(cta).toHaveAttribute("data-pending", "true");
+  });
+
+  it("passes country prop to ScanMissSubmitCTA", () => {
+    render(
+      <ScanNotFoundView
+        ean="5901234123457"
+        scanResult={{ api_version: "v1", found: false, ean: "5901234123457", has_pending_submission: false }}
+        onReset={onReset}
+        country="DE"
+      />,
+    );
+    const cta = screen.getByTestId("scan-miss-submit-cta");
+    expect(cta).toHaveAttribute("data-country", "DE");
   });
 
   it("renders scan-another and history links", () => {

@@ -14,6 +14,7 @@ import { FileText } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { submitProduct } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
+import { usePreferences } from "@/components/common/RouteGuard";
 import type { FormSubmitEvent } from "@/lib/types";
 
 export default function SubmitProductPage() {
@@ -21,6 +22,9 @@ export default function SubmitProductPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const prefillEan = searchParams.get("ean") ?? "";
+  const urlCountry = searchParams.get("country") ?? undefined;
+  const prefs = usePreferences();
+  const scanCountry = urlCountry ?? prefs?.country ?? undefined;
 
   const [ean, setEan] = useState(prefillEan);
   const [productName, setProductName] = useState("");
@@ -37,6 +41,8 @@ export default function SubmitProductPage() {
         brand: brand || undefined,
         category: category || undefined,
         notes: notes || undefined,
+        scanCountry,
+        suggestedCountry: scanCountry,
       });
       if (!result.ok) throw new Error(result.error.message);
       if (result.data.error) throw new Error(result.data.error);

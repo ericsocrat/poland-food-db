@@ -684,11 +684,21 @@ describe("Product Comparisons API functions", () => {
 describe("Scanner & Submissions API functions", () => {
   beforeEach(() => vi.clearAllMocks());
 
-  it("recordScan passes ean", async () => {
+  it("recordScan passes ean with null country by default", async () => {
     mockCallRpc.mockResolvedValue({ ok: true, data: { scan_id: "s1" } });
     await recordScan(fakeSupabase, "5901234123457");
     expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_record_scan", {
       p_ean: "5901234123457",
+      p_scan_country: null,
+    });
+  });
+
+  it("recordScan passes scan country when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { scan_id: "s2" } });
+    await recordScan(fakeSupabase, "5901234123457", "PL");
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_record_scan", {
+      p_ean: "5901234123457",
+      p_scan_country: "PL",
     });
   });
 
@@ -722,6 +732,8 @@ describe("Scanner & Submissions API functions", () => {
       p_category: null,
       p_photo_url: null,
       p_notes: null,
+      p_scan_country: null,
+      p_suggested_country: null,
     });
   });
 
@@ -742,6 +754,28 @@ describe("Scanner & Submissions API functions", () => {
       p_category: "Chips",
       p_photo_url: "https://example.com/img.jpg",
       p_notes: "Found at Żabka",
+      p_scan_country: null,
+      p_suggested_country: null,
+    });
+  });
+
+  it("submitProduct passes scan and suggested country when provided", async () => {
+    mockCallRpc.mockResolvedValue({ ok: true, data: { submission_id: "sub3" } });
+    await submitProduct(fakeSupabase, {
+      ean: "123",
+      productName: "Test",
+      scanCountry: "DE",
+      suggestedCountry: "DE",
+    });
+    expect(mockCallRpc).toHaveBeenCalledWith(fakeSupabase, "api_submit_product", {
+      p_ean: "123",
+      p_product_name: "Test",
+      p_brand: null,
+      p_category: null,
+      p_photo_url: null,
+      p_notes: null,
+      p_scan_country: "DE",
+      p_suggested_country: "DE",
     });
   });
 

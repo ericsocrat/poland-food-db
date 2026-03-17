@@ -95,6 +95,8 @@ export function useSubmitProduct() {
       category?: string;
       photoUrl?: string;
       notes?: string;
+      scanCountry?: string;
+      suggestedCountry?: string;
     }) => {
       const result = await submitProduct(supabase, params);
       if (!result.ok) throw new Error(result.error.message);
