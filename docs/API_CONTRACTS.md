@@ -702,6 +702,8 @@ Pre-computed confidence for all 1,025 products. Faster than calling `compute_dat
 
 **Country resolution order:** explicit `p_scan_country` → `user_preferences.country` → NULL.
 
+**Matching behaviour:** When the same EAN exists in multiple countries, the function prefers the product whose `country` matches the resolved `scan_country`. Deprecated products (`is_deprecated = true`) are excluded. (#926)
+
 **Found Response:**
 ```jsonc
 {
@@ -718,7 +720,8 @@ Pre-computed confidence for all 1,025 products. Faster than calling `compute_dat
   "unhealthiness_score": 41,
   "nutri_score": "D",
   "scan_country": "PL",                      // resolved country (#923)
-  "product_country": "PL"                    // the product's stored country (#923)
+  "product_country": "PL",                   // the product's stored country (#923)
+  "is_cross_country": false                  // true when product_country ≠ scan_country (#926)
 }
 ```
 

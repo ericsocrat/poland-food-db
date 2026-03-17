@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(72);
+SELECT plan(80);
 
 -- ─── Fixtures ───────────────────────────────────────────────────────────────
 
@@ -287,6 +287,10 @@ SELECT is(
 
 -- ─── 10. Trigger: auto-reject invalid EAN on product_submissions ────────────
 
+-- Temporarily disable trust trigger so submission INSERTs with NULL user_id work
+-- (EAN validation + quality triage triggers remain active)
+ALTER TABLE public.product_submissions DISABLE TRIGGER trg_trust_score_adjustment;
+
 -- Valid EAN → stays pending
 INSERT INTO public.product_submissions (ean, product_name, status)
 VALUES ('4006381333931', 'pgTAP Trigger Valid EAN', 'pending');
@@ -300,6 +304,8 @@ SELECT is(
 -- Invalid EAN → auto-rejected by trigger
 INSERT INTO public.product_submissions (ean, product_name, status)
 VALUES ('4006381333932', 'pgTAP Trigger Invalid EAN', 'pending');
+
+ALTER TABLE public.product_submissions ENABLE TRIGGER trg_trust_score_adjustment;
 
 SELECT is(
   (SELECT status FROM public.product_submissions WHERE product_name = 'pgTAP Trigger Invalid EAN'),
@@ -503,7 +509,7 @@ SET LOCAL session_replication_role = 'replica';
 INSERT INTO user_trust_scores (user_id, trust_score)
 VALUES ('00000000-0000-0000-0000-000000000099'::uuid, 85)
 ON CONFLICT (user_id) DO UPDATE SET trust_score = 85;
-SET LOCAL session_replication_role = 'DEFAULT';
+SET LOCAL session_replication_role = 'origin';
 
 -- High trust (85) gives +15 bonus → score = 65
 SELECT is(
@@ -519,7 +525,7 @@ SELECT is(
 SET LOCAL session_replication_role = 'replica';
 UPDATE user_trust_scores SET trust_score = 15
 WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
-SET LOCAL session_replication_role = 'DEFAULT';
+SET LOCAL session_replication_role = 'origin';
 
 SELECT is(
   ((_score_submission_quality(
@@ -534,7 +540,7 @@ SELECT is(
 SET LOCAL session_replication_role = 'replica';
 UPDATE user_trust_scores SET trust_score = 35
 WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
-SET LOCAL session_replication_role = 'DEFAULT';
+SET LOCAL session_replication_role = 'origin';
 
 SELECT is(
   ((_score_submission_quality(
@@ -549,7 +555,7 @@ SELECT is(
 SET LOCAL session_replication_role = 'replica';
 UPDATE user_trust_scores SET trust_score = 10
 WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
-SET LOCAL session_replication_role = 'DEFAULT';
+SET LOCAL session_replication_role = 'origin';
 
 SELECT ok(
   (_score_submission_quality(
@@ -562,6 +568,90 @@ SELECT ok(
 -- Clean up trust record
 DELETE FROM user_trust_scores
 WHERE user_id = '00000000-0000-0000-0000-000000000099'::uuid;
+
+
+-- ─── 15. Region-preferred matching + is_cross_country (#926) ────────────────
+
+-- Response contains is_cross_country key
+SELECT ok(
+  (public.api_record_scan('5901234123457', 'PL')) ? 'is_cross_country',
+  'found response contains is_cross_country key (#926)'
+);
+
+-- is_cross_country = true when scan_country differs from product_country
+SELECT is(
+  (public.api_record_scan('5901234123457', 'PL'))->>'is_cross_country',
+  'true',
+  'is_cross_country=true when scan_country=PL but product_country=XX (#926)'
+);
+
+-- is_cross_country = false when scan_country matches product_country
+SELECT is(
+  (public.api_record_scan('5901234123457', 'XX'))->>'is_cross_country',
+  'false',
+  'is_cross_country=false when scan_country matches product_country (#926)'
+);
+
+-- is_cross_country = false when no scan_country (NULL)
+SELECT is(
+  (public.api_record_scan('5901234123457'))->>'is_cross_country',
+  'false',
+  'is_cross_country=false when scan_country is NULL (#926)'
+);
+
+-- Region-preferred matching: insert PL + DE products with same EAN
+-- EAN 4015000969604 is unused; PL product gets lower product_id
+INSERT INTO public.products (
+  product_id, ean, product_name, brand, category, country,
+  unhealthiness_score, nutri_score_label
+) VALUES (
+  999990, '4015000969604', 'pgTAP Dual-EAN PL', 'Dual Brand',
+  'pgtap-test-cat', 'PL', 35, 'C'
+) ON CONFLICT (product_id) DO NOTHING;
+
+INSERT INTO public.products (
+  product_id, ean, product_name, brand, category, country,
+  unhealthiness_score, nutri_score_label
+) VALUES (
+  999991, '4015000969604', 'pgTAP Dual-EAN DE', 'Dual Brand',
+  'pgtap-test-cat', 'DE', 30, 'B'
+) ON CONFLICT (product_id) DO NOTHING;
+
+-- DE user gets DE product (region-preferred)
+SELECT is(
+  ((public.api_record_scan('4015000969604', 'DE'))->>'product_id')::bigint,
+  999991::bigint,
+  'DE user gets DE product when same EAN exists in PL + DE (#926)'
+);
+
+-- PL user gets PL product (region-preferred)
+SELECT is(
+  ((public.api_record_scan('4015000969604', 'PL'))->>'product_id')::bigint,
+  999990::bigint,
+  'PL user gets PL product when same EAN exists in PL + DE (#926)'
+);
+
+-- Cross-country fallback: user in XX scans PL-only EAN
+SELECT is(
+  (public.api_record_scan('5901234123457', 'PL'))->>'found',
+  'true',
+  'cross-country fallback: PL user still finds XX-only product (#926)'
+);
+
+-- Deprecated products excluded from scan lookup
+INSERT INTO public.products (
+  product_id, ean, product_name, brand, category, country,
+  unhealthiness_score, nutri_score_label, is_deprecated, deprecated_reason
+) VALUES (
+  999989, '4015000969611', 'pgTAP Deprecated Product', 'Dead Brand',
+  'pgtap-test-cat', 'XX', 50, 'D', true, 'test-deprecated'
+) ON CONFLICT (product_id) DO NOTHING;
+
+SELECT is(
+  (public.api_record_scan('4015000969611'))->>'found',
+  'false',
+  'deprecated product excluded from scan lookup (#926)'
+);
 
 
 SELECT * FROM finish();

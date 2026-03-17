@@ -107,7 +107,7 @@ $$;
 GRANT EXECUTE ON FUNCTION public.api_admin_get_submissions(text, integer, integer, text)
   TO service_role, authenticated;
 
-COMMENT ON FUNCTION public.api_admin_get_submissions IS
+COMMENT ON FUNCTION public.api_admin_get_submissions(text, integer, integer, text) IS
   'Purpose: List product submissions with trust enrichment and country context
    Auth: authenticated (SECURITY DEFINER)
    Params: p_status (default pending), p_page (default 1), p_page_size (default 20, max 50), p_country (optional country filter)
