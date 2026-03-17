@@ -7,7 +7,7 @@
 -- ─────────────────────────────────────────────────────────────────────────────
 
 BEGIN;
-SELECT plan(288);
+SELECT plan(300);
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- 1. Core data tables exist
@@ -420,6 +420,18 @@ SELECT has_function('public', 'api_watch_product',                           'fu
 SELECT has_function('public', 'api_unwatch_product',                         'function api_unwatch_product exists');
 SELECT has_function('public', 'api_get_watchlist',                           'function api_get_watchlist exists');
 SELECT has_trigger('products', 'trg_record_score_change',                    'trigger trg_record_score_change exists on products');
+
+-- ─── product_submissions.scan_country + suggested_country (#922, epic #920) ──
+SELECT has_column('public', 'product_submissions', 'scan_country',       'product_submissions has scan_country column');
+SELECT col_is_null('public', 'product_submissions', 'scan_country',      'product_submissions.scan_country is nullable');
+SELECT fk_ok('public', 'product_submissions', 'scan_country',
+             'public', 'country_ref', 'country_code',
+             'product_submissions.scan_country references country_ref(country_code)');
+SELECT has_column('public', 'product_submissions', 'suggested_country',  'product_submissions has suggested_country column');
+SELECT col_is_null('public', 'product_submissions', 'suggested_country', 'product_submissions.suggested_country is nullable');
+SELECT fk_ok('public', 'product_submissions', 'suggested_country',
+             'public', 'country_ref', 'country_code',
+             'product_submissions.suggested_country references country_ref(country_code)');
 
 SELECT * FROM finish();
 ROLLBACK;
