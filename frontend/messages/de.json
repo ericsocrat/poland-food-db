@@ -357,7 +357,11 @@
     "crossCountryBadge": "Aus dem {country}-Katalog",
     "gs1Hint": "Barcode registriert in {country}",
     "gs1CoverageNote": "Die Abdeckung variiert je nach Region \u2014 das Produkt kann in einer anderen Datenbank existieren.",
-    "checksumWarning": "Pr\u00fcfziffer stimmt nicht \u2014 Barcode \u00fcberpr\u00fcfen"
+    "checksumWarning": "Pr\u00fcfziffer stimmt nicht \u2014 Barcode \u00fcberpr\u00fcfen",
+    "manualTipsTitle": "Tipps zur manuellen Eingabe",
+    "manualTip1": "Finden Sie den Barcode auf der Verpackung",
+    "manualTip2": "Geben Sie alle 8 oder 13 Ziffern sorgf\u00e4ltig ein",
+    "manualTip3": "Pr\u00fcfen Sie vor dem Absenden auf Tippfehler"
   },
   "scannerError": {
     "permissionDenied": "Kamerazugriff verweigert. Erlauben Sie den Kamerazugriff in Ihren Browsereinstellungen und versuchen Sie es erneut.",

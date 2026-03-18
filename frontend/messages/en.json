@@ -357,7 +357,11 @@
     "crossCountryBadge": "From the {country} catalog",
     "gs1Hint": "Barcode registered in {country}",
     "gs1CoverageNote": "Coverage varies by region — the product may still exist in another database.",
-    "checksumWarning": "Check digit doesn\u2019t match \u2014 verify the barcode"
+    "checksumWarning": "Check digit doesn\u2019t match \u2014 verify the barcode",
+    "manualTipsTitle": "Tips for manual entry",
+    "manualTip1": "Find the barcode on the packaging",
+    "manualTip2": "Type all 8 or 13 digits carefully",
+    "manualTip3": "Check for typos before submitting"
   },
   "scannerError": {
     "permissionDenied": "Camera permission denied. Allow camera access in your browser settings, then try again.",

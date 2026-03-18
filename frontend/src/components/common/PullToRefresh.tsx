@@ -139,8 +139,8 @@ export function PullToRefresh({
             className="flex flex-col items-center gap-1"
             style={{
               opacity: progress,
-              transform: `scale(${0.5 + progress * 0.5})`,
-              transition: prefersReduced ? "none" : undefined,
+              transform: `scale(${pullState === "triggered" || pullState === "refreshing" ? 1.1 : 0.5 + progress * 0.5})`,
+              transition: prefersReduced ? "none" : "transform 0.2s ease-out",
             }}
           >
             {/* Spinner circle */}
@@ -148,11 +148,11 @@ export function PullToRefresh({
               width={INDICATOR_SIZE}
               height={INDICATOR_SIZE}
               viewBox="0 0 32 32"
-              className={
+              className={`${
                 pullState === "refreshing" && !prefersReduced
                   ? "animate-spin"
                   : ""
-              }
+              } ${pullState === "triggered" || pullState === "refreshing" ? "drop-shadow-[0_0_6px_var(--color-brand)]" : ""}`}
               aria-hidden="true"
             >
               <circle
