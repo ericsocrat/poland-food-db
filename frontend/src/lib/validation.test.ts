@@ -1,12 +1,12 @@
-import { describe, it, expect } from "vitest";
 import {
-  sanitizeRedirect,
-  isValidEan,
-  computeEanCheckDigit,
-  isValidEanChecksum,
-  stripNonDigits,
-  formatSlug,
+    computeEanCheckDigit,
+    formatSlug,
+    isValidEan,
+    isValidEanChecksum,
+    sanitizeRedirect,
+    stripNonDigits,
 } from "@/lib/validation";
+import { describe, expect, it } from "vitest";
 
 // ─── sanitizeRedirect ───────────────────────────────────────────────────────
 

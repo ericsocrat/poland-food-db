@@ -395,6 +395,8 @@
     "photoLabel": "Product Photo",
     "photoHint": "Take a photo of the front label",
     "photoRemove": "Remove photo",
+    "photoInvalidType": "Please select an image file (JPEG, PNG, or WebP)",
+    "photoTooLarge": "Photo must be smaller than 5 MB",
     "countryLabel": "Country",
     "notesLabel": "Notes",
     "notesPlaceholder": "Any additional info about this product…",

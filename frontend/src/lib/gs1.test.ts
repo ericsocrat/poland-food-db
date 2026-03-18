@@ -1,5 +1,5 @@
-import { describe, it, expect } from "vitest";
 import { gs1CountryHint } from "@/lib/gs1";
+import { describe, expect, it } from "vitest";
 
 // ─── gs1CountryHint ─────────────────────────────────────────────────────────
 

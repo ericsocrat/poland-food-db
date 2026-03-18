@@ -395,6 +395,8 @@
     "photoLabel": "Zdjęcie produktu",
     "photoHint": "Zrób zdjęcie przedniej etykiety",
     "photoRemove": "Usuń zdjęcie",
+    "photoInvalidType": "Wybierz plik graficzny (JPEG, PNG lub WebP)",
+    "photoTooLarge": "Zdjęcie musi być mniejsze niż 5 MB",
     "countryLabel": "Kraj",
     "notesLabel": "Uwagi",
     "notesPlaceholder": "Dodatkowe informacje o produkcie…",

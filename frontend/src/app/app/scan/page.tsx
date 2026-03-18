@@ -7,6 +7,7 @@
 
 import { Button } from "@/components/common/Button";
 import { PullToRefresh } from "@/components/common/PullToRefresh";
+import { usePreferences } from "@/components/common/RouteGuard";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ScannerErrorState } from "@/components/scan/ScannerErrorState";
 import {
@@ -18,7 +19,6 @@ import {
 import { useAnalytics } from "@/hooks/use-analytics";
 import { useBarcodeScanner } from "@/hooks/use-barcode-scanner";
 import { recordScan } from "@/lib/api";
-import { usePreferences } from "@/components/common/RouteGuard";
 import { NUTRI_COLORS } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { useTranslation } from "@/lib/i18n";

@@ -16,7 +16,10 @@ import type { FormSubmitEvent } from "@/lib/types";
 import { useMutation } from "@tanstack/react-query";
 import { Camera, FileText, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+
+const MAX_PHOTO_BYTES = 5 * 1024 * 1024; // 5 MB
+const ALLOWED_IMAGE_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/heic"]);
 
 export default function SubmitProductPage() {
   const supabase = createClient();
@@ -36,9 +39,28 @@ export default function SubmitProductPage() {
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const { t } = useTranslation();
   const gs1Hint = ean.length >= 8 ? gs1CountryHint(ean) : null;
+  const photoPreviewRef = useRef(photoPreview);
+  photoPreviewRef.current = photoPreview;
+
+  // Revoke blob URL on unmount to prevent memory leaks
+  useEffect(() => {
+    return () => {
+      if (photoPreviewRef.current) URL.revokeObjectURL(photoPreviewRef.current);
+    };
+  }, []);
 
   function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0] ?? null;
+    if (file) {
+      if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+        showToast({ type: "error", messageKey: "submit.photoInvalidType" });
+        return;
+      }
+      if (file.size > MAX_PHOTO_BYTES) {
+        showToast({ type: "error", messageKey: "submit.photoTooLarge" });
+        return;
+      }
+    }
     setPhotoFile(file);
     if (photoPreview) URL.revokeObjectURL(photoPreview);
     if (file) {
@@ -61,12 +83,13 @@ export default function SubmitProductPage() {
       let photoUrl: string | undefined;
 
       if (photoFile) {
-        const ext = photoFile.name.split(".").pop() ?? "jpg";
+        const rawExt = photoFile.name.split(".").pop()?.toLowerCase() ?? "jpg";
+        const ext = ["jpg", "jpeg", "png", "webp", "heic"].includes(rawExt) ? rawExt : "jpg";
         const path = `submissions/${ean}-${Date.now()}.${ext}`;
         const { error: uploadErr } = await supabase.storage
           .from("product-photos")
           .upload(path, photoFile, { contentType: photoFile.type });
-        if (uploadErr) throw new Error(uploadErr.message);
+        if (uploadErr) throw new Error(`Photo upload failed: ${uploadErr.message}`);
         const { data: urlData } = supabase.storage
           .from("product-photos")
           .getPublicUrl(path);
