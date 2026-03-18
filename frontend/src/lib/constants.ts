@@ -24,9 +24,13 @@ export const COUNTRY_DEFAULT_LANGUAGES: Record<string, string> = {
   DE: "de",
 } as const;
 
-/** Get flag emoji for a country code. Falls back to globe for unknown codes. */
+/** Get flag emoji for any ISO 3166-1 alpha-2 country code via regional indicator symbols. */
 export function getCountryFlag(code: string): string {
-  return COUNTRIES.find((c) => c.code === code)?.flag ?? "🌐";
+  if (!/^[A-Z]{2}$/i.test(code)) return "🌐";
+  const upper = code.toUpperCase();
+  return String.fromCodePoint(
+    ...([...upper].map((c) => 0x1f1e6 + c.charCodeAt(0) - 65)),
+  );
 }
 
 /** Get English display name for a country code. Falls back to the code itself. */

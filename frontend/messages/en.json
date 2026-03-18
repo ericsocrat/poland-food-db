@@ -393,7 +393,7 @@
     "categoryLabel": "Category",
     "categoryPlaceholder": "Select a category",
     "photoLabel": "Product Photo",
-    "photoHint": "Take a photo of the front label",
+    "photoHint": "Take a photo of the front label or nutrition table",
     "photoRemove": "Remove photo",
     "photoInvalidType": "Please select an image file (JPEG, PNG, or WebP)",
     "photoTooLarge": "Photo must be smaller than 5 MB",

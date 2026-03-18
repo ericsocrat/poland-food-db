@@ -412,12 +412,17 @@ describe("ScanPage", () => {
   });
 
   it("supports barcode format info text", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
+    ]);
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Camera"));
-    expect(
-      screen.getByText(/Supports EAN-13, EAN-8, UPC-A, UPC-E/),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Supports EAN-13, EAN-8, UPC-A, UPC-E/),
+      ).toBeInTheDocument();
+    });
   });
 
   it("enables batch mode checkbox", async () => {
@@ -556,11 +561,9 @@ describe("ScanPage", () => {
 
     render(<ScanPage />, { wrapper: createWrapper() });
 
-    // Enable batch mode
-    await user.click(screen.getByLabelText(/Batch mode/));
-
-    // Switch to manual and scan
+    // Switch to manual first (avoids camera-error hiding batch toggle)
     await user.click(screen.getByText("Manual"));
+    await user.click(screen.getByLabelText(/Batch mode/));
     await user.type(
       screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
@@ -592,8 +595,8 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByLabelText(/Batch mode/));
     await user.click(screen.getByText("Manual"));
+    await user.click(screen.getByLabelText(/Batch mode/));
     await user.type(
       screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
@@ -622,8 +625,8 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByLabelText(/Batch mode/));
     await user.click(screen.getByText("Manual"));
+    await user.click(screen.getByLabelText(/Batch mode/));
     await user.type(
       screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
@@ -654,8 +657,8 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByLabelText(/Batch mode/));
     await user.click(screen.getByText("Manual"));
+    await user.click(screen.getByLabelText(/Batch mode/));
     await user.type(
       screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
@@ -671,12 +674,17 @@ describe("ScanPage", () => {
   });
 
   it("shows camera info text in camera mode", async () => {
+    mockListDevices.mockResolvedValue([
+      { deviceId: "cam1", label: "Front Camera" } as MediaDeviceInfo,
+    ]);
     const user = userEvent.setup();
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Camera"));
-    expect(
-      screen.getByText(/Supports EAN-13, EAN-8, UPC-A, UPC-E/),
-    ).toBeInTheDocument();
+    await waitFor(() => {
+      expect(
+        screen.getByText(/Supports EAN-13, EAN-8, UPC-A, UPC-E/),
+      ).toBeInTheDocument();
+    });
   });
 
   it("mutation error sets scan state to error", async () => {
@@ -871,8 +879,8 @@ describe("ScanPage", () => {
     const user = userEvent.setup();
 
     render(<ScanPage />, { wrapper: createWrapper() });
-    await user.click(screen.getByLabelText(/Batch mode/));
     await user.click(screen.getByText("Manual"));
+    await user.click(screen.getByLabelText(/Batch mode/));
     await user.type(
       screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",

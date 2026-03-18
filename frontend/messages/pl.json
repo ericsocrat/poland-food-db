@@ -393,7 +393,7 @@
     "categoryLabel": "Kategoria",
     "categoryPlaceholder": "Wybierz kategorię",
     "photoLabel": "Zdjęcie produktu",
-    "photoHint": "Zrób zdjęcie przedniej etykiety",
+    "photoHint": "Zrób zdjęcie przedniej etykiety lub tabeli wartości odżywczych",
     "photoRemove": "Usuń zdjęcie",
     "photoInvalidType": "Wybierz plik graficzny (JPEG, PNG lub WebP)",
     "photoTooLarge": "Zdjęcie musi być mniejsze niż 5 MB",

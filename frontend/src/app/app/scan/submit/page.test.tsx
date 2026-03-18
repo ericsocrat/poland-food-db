@@ -214,7 +214,7 @@ describe("SubmitProductPage", () => {
 
   it("shows photo upload prompt initially", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("Take a photo of the front label")).toBeInTheDocument();
+    expect(screen.getByText("Take a photo of the front label or nutrition table")).toBeInTheDocument();
   });
 
   it("shows photo preview and remove button after selecting a valid photo", async () => {
@@ -242,7 +242,7 @@ describe("SubmitProductPage", () => {
       expect.objectContaining({ type: "error", messageKey: "submit.photoInvalidType" }),
     );
     // Photo prompt should still be shown (no preview)
-    expect(screen.getByText("Take a photo of the front label")).toBeInTheDocument();
+    expect(screen.getByText("Take a photo of the front label or nutrition table")).toBeInTheDocument();
   });
 
   it("rejects files exceeding 5 MB", async () => {
@@ -272,7 +272,7 @@ describe("SubmitProductPage", () => {
     });
 
     await user.click(screen.getByRole("button", { name: "Remove photo" }));
-    expect(screen.getByText("Take a photo of the front label")).toBeInTheDocument();
+    expect(screen.getByText("Take a photo of the front label or nutrition table")).toBeInTheDocument();
   });
 
   // ─── GS1 country hint ─────────────────────────────────────────────────────

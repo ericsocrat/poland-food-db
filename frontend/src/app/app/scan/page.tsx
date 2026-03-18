@@ -187,42 +187,11 @@ export default function ScanPage() {
     await queryClient.invalidateQueries({ queryKey: ["scan-history"] });
   }, [queryClient]);
 
-  // ─── Early-return result states ─────────────────────────────────────────────
-
-  if (scanState === "error") {
-    return (
-      <ScanErrorView
-        ean={ean}
-        onRetry={() => { setScanState("looking-up"); scanMutation.mutate(ean); }}
-        onReset={() => handleReset()}
-      />
-    );
-  }
-
-  if (scanState === "not-found" && scanResult && !scanResult.found) {
-    return (
-      <ScanNotFoundView
-        ean={ean}
-        scanResult={scanResult as RecordScanNotFoundResponse}
-        onReset={() => handleReset()}
-        country={userCountry}
-      />
-    );
-  }
-
-  if (scanState === "looking-up" && scanMutation.isPending) {
-    return <ScanLookingUpView ean={ean} />;
-  }
-
-  if (scanState === "found" && foundProduct) {
-    return (
-      <ScanFoundView
-        product={foundProduct}
-        onViewDetails={() => router.push(`/app/scan/result/${foundProduct.product_id}`)}
-        onReset={() => handleReset()}
-      />
-    );
-  }
+  // ─── Idle-state flag — scanState is "idle" and not transitioning ────────────
+  const isIdle =
+    scanState === "idle" ||
+    (scanState === "looking-up" && !scanMutation.isPending) ||
+    (scanState === "found" && !foundProduct);
 
   return (
     <PullToRefresh onRefresh={handleRefresh}>
@@ -259,7 +228,44 @@ export default function ScanPage() {
         </div>
       </div>
 
-      {/* Batch mode toggle */}
+      {/* ── Result states ─────────────────────────────────────────────────── */}
+
+      {scanState === "error" && (
+        <ScanErrorView
+          ean={ean}
+          onRetry={() => { setScanState("looking-up"); scanMutation.mutate(ean); }}
+          onReset={() => handleReset()}
+        />
+      )}
+
+      {scanState === "not-found" && scanResult && !scanResult.found && (
+        <ScanNotFoundView
+          ean={ean}
+          scanResult={scanResult as RecordScanNotFoundResponse}
+          onReset={() => handleReset()}
+          country={userCountry}
+        />
+      )}
+
+      {scanState === "looking-up" && scanMutation.isPending && (
+        <ScanLookingUpView ean={ean} />
+      )}
+
+      {scanState === "found" && foundProduct && (
+        <ScanFoundView
+          product={foundProduct}
+          onViewDetails={() => router.push(`/app/scan/result/${foundProduct.product_id}`)}
+          onReset={() => handleReset()}
+        />
+      )}
+
+      {/* ── Idle scanner UI ───────────────────────────────────────────────── */}
+
+      {isIdle && (
+        <>
+
+      {/* Batch mode toggle (hidden when camera has an error) */}
+      {!(mode === "camera" && cameraError) && (
       <label className="touch-target flex cursor-pointer items-center gap-2 rounded-lg border border-border px-3 py-2.5">
         <input
           type="checkbox"
@@ -272,6 +278,7 @@ export default function ScanPage() {
         />
         <span className="text-sm text-foreground">{t("scan.batchMode")}</span>
       </label>
+      )}
 
       {/* Mode toggle */}
       <div className="flex gap-1 rounded-lg bg-surface-muted p-1">
@@ -391,11 +398,11 @@ export default function ScanPage() {
                   </p>
                 </div>
               )}
+              <p className="text-center text-xs text-foreground-muted">
+                {t("scan.cameraHint")}
+              </p>
             </>
           )}
-          <p className="text-center text-xs text-foreground-muted">
-            {t("scan.cameraHint")}
-          </p>
         </div>
       ) : (
         <form onSubmit={handleManualSubmit} className="space-y-3">
@@ -498,6 +505,8 @@ export default function ScanPage() {
             {t("scan.doneScan")}
           </Button>
         </div>
+      )}
+        </>
       )}
     </div>
     </PullToRefresh>

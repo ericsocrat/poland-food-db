@@ -393,7 +393,7 @@
     "categoryLabel": "Kategorie",
     "categoryPlaceholder": "Kategorie wählen",
     "photoLabel": "Produktfoto",
-    "photoHint": "Fotografieren Sie die Vorderseite",
+    "photoHint": "Fotografieren Sie die Vorderseite oder die Nährwerttabelle",
     "photoRemove": "Foto entfernen",
     "photoInvalidType": "Bitte wählen Sie eine Bilddatei (JPEG, PNG oder WebP)",
     "photoTooLarge": "Das Foto muss kleiner als 5 MB sein",

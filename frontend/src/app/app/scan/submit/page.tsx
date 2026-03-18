@@ -13,6 +13,7 @@ import { useTranslation } from "@/lib/i18n";
 import { createClient } from "@/lib/supabase/client";
 import { showToast } from "@/lib/toast";
 import type { FormSubmitEvent } from "@/lib/types";
+import { isValidEan, isValidEanChecksum } from "@/lib/validation";
 import { useMutation } from "@tanstack/react-query";
 import { Camera, FileText, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -37,6 +38,7 @@ export default function SubmitProductPage() {
   const [notes, setNotes] = useState("");
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+  const [checksumWarn, setChecksumWarn] = useState(false);
   const { t } = useTranslation();
   const gs1Hint = ean.length >= 8 ? gs1CountryHint(ean) : null;
   const photoPreviewRef = useRef(photoPreview);
@@ -159,9 +161,11 @@ export default function SubmitProductPage() {
               id="ean"
               type="text"
               value={ean}
-              onChange={(e) =>
-                setEan(e.target.value.replaceAll(/\D/g, "").slice(0, 13))
-              }
+              onChange={(e) => {
+                const v = e.target.value.replaceAll(/\D/g, "").slice(0, 13);
+                setEan(v);
+                setChecksumWarn(v.length >= 8 && isValidEan(v) && !isValidEanChecksum(v));
+              }}
               className="input-field font-mono tracking-widest"
               placeholder={t("submit.eanPlaceholder")}
               inputMode="numeric"
@@ -169,6 +173,11 @@ export default function SubmitProductPage() {
               required
               readOnly={!!prefillEan}
             />
+            {checksumWarn && (
+              <p className="mt-1 text-xs text-warning-text">
+                {t("scan.checksumWarning")}
+              </p>
+            )}
           </div>
 
           {/* Product name */}

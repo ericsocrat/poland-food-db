@@ -4,6 +4,7 @@ import {
     COUNTRIES,
     DIET_OPTIONS,
     FEATURES,
+    getCountryFlag,
     getScoreInterpretation,
     HEALTH_CONDITIONS,
     NUTRI_COLORS,
@@ -239,5 +240,33 @@ describe("TRAFFIC_LIGHT_NUTRIENTS", () => {
 describe("FEATURES", () => {
   it("has ECO_SCORE set to false by default", () => {
     expect(FEATURES.ECO_SCORE).toBe(false);
+  });
+});
+
+// ─── getCountryFlag ─────────────────────────────────────────────────────────
+
+describe("getCountryFlag", () => {
+  it("returns 🇵🇱 for PL", () => {
+    expect(getCountryFlag("PL")).toBe("🇵🇱");
+  });
+
+  it("returns 🇩🇪 for DE", () => {
+    expect(getCountryFlag("DE")).toBe("🇩🇪");
+  });
+
+  it("returns 🇺🇸 for US (not in COUNTRIES array)", () => {
+    expect(getCountryFlag("US")).toBe("🇺🇸");
+  });
+
+  it("handles lowercase codes", () => {
+    expect(getCountryFlag("pl")).toBe("🇵🇱");
+    expect(getCountryFlag("us")).toBe("🇺🇸");
+  });
+
+  it("returns 🌐 for invalid codes", () => {
+    expect(getCountryFlag("")).toBe("🌐");
+    expect(getCountryFlag("X")).toBe("🌐");
+    expect(getCountryFlag("USA")).toBe("🌐");
+    expect(getCountryFlag("12")).toBe("🌐");
   });
 });
