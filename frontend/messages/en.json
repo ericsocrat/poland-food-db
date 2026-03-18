@@ -384,7 +384,11 @@
     "emptyMessage": "Scan a barcode to start building your history.",
     "startScanning": "Start scanning →",
     "submissionStatus": "Submission: {status}",
-    "submit": "Submit →"
+    "submit": "Submit →",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "thisWeek": "This Week",
+    "earlier": "Earlier"
   },
   "submit": {
     "title": "Submit Product",
@@ -1988,5 +1992,9 @@
     "bronze": "Bronze Contributor",
     "silver": "Silver Contributor",
     "gold": "Gold Contributor"
+  },
+  "categoryPicker": {
+    "showAll": "Show all categories",
+    "showLess": "Show less"
   }
 }

@@ -23,7 +23,6 @@ import {
     XCircle,
     type LucideIcon,
 } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 
@@ -112,12 +111,6 @@ export default function MySubmissionsPage() {
           </p>
           <ContributorBadge />
         </div>
-        <Link
-          href="/app/scan"
-          className="text-sm text-brand hover:text-brand-hover"
-        >
-          {t("scanHistory.backToScanner")}
-        </Link>
       </div>
 
       {/* Loading */}

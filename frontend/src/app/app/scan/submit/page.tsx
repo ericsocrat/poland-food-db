@@ -17,7 +17,7 @@ import { showToast } from "@/lib/toast";
 import type { FormSubmitEvent } from "@/lib/types";
 import { isValidEan, isValidEanChecksum } from "@/lib/validation";
 import { useMutation } from "@tanstack/react-query";
-import { ArrowLeft, Camera, FileText, Lock, X } from "lucide-react";
+import { ArrowLeft, Camera, CheckCircle, FileText, Lock, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -41,6 +41,7 @@ export default function SubmitProductPage() {
   const [photoFile, setPhotoFile] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [checksumWarn, setChecksumWarn] = useState(false);
+  const [showSuccess, setShowSuccess] = useState(false);
   const { t } = useTranslation();
   const gs1Hint = ean.length >= 8 ? gs1CountryHint(ean) : null;
   const photoPreviewRef = useRef(photoPreview);
@@ -117,7 +118,8 @@ export default function SubmitProductPage() {
     onSuccess: () => {
       showToast({ type: "success", messageKey: "submit.successToast" });
       void eventBus.emit({ type: "product.submitted", payload: { ean } });
-      router.push("/app/scan/submissions");
+      setShowSuccess(true);
+      setTimeout(() => router.push("/app/scan/submissions"), 1500);
     },
     onError: (error: Error) => {
       showToast({ type: "error", message: error.message });
@@ -162,7 +164,7 @@ export default function SubmitProductPage() {
       </div>
 
       <div className="card">
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form id="submit-product-form" onSubmit={handleSubmit} className="space-y-4">
           {/* EAN (pre-filled, editable) */}
           <div>
             <label
@@ -342,16 +344,30 @@ export default function SubmitProductPage() {
             </p>
           </div>
 
+        </form>
+      </div>
+
+      <p className="text-center text-xs text-foreground-muted pb-20">
+        {t("submit.disclaimer")}
+      </p>
+
+      {/* R1: Sticky submit bar with glassmorphism */}
+      <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/50 bg-background/80 px-4 pb-[env(safe-area-inset-bottom,8px)] pt-3 backdrop-blur-lg md:sticky md:bottom-auto md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0 md:backdrop-blur-none">
+        {showSuccess ? (
+          <div className="flex items-center justify-center gap-2 py-3 text-score-green-text animate-fade-in-up">
+            <CheckCircle size={20} />
+            <span className="font-medium">{t("submit.submitted")}</span>
+          </div>
+        ) : (
           <Button
             type="submit"
+            form="submit-product-form"
             fullWidth
             disabled={
               mutation.isPending || mutation.isSuccess || ean.length < 8 || productName.length < 2
             }
           >
-            {mutation.isSuccess ? (
-              <span className="inline-flex items-center gap-1.5">✓ {t("submit.submitted")}</span>
-            ) : mutation.isPending ? (
+            {mutation.isPending ? (
               <span className="inline-flex items-center gap-2">
                 <LoadingSpinner size="sm" />
                 {t("submit.submitting")}
@@ -360,12 +376,8 @@ export default function SubmitProductPage() {
               t("submit.submitButton")
             )}
           </Button>
-        </form>
+        )}
       </div>
-
-      <p className="text-center text-xs text-foreground-muted">
-        {t("submit.disclaimer")}
-      </p>
     </div>
   );
 }

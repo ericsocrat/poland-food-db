@@ -3,6 +3,7 @@
 // ─── Scan result views — error, not-found, looking-up, found states ─────────
 
 import { Button, ButtonLink } from "@/components/common/Button";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ScanMissSubmitCTA } from "@/components/scan/ScanMissSubmitCTA";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
@@ -18,14 +19,13 @@ import {
     AlertTriangle,
     CheckCircle,
     ClipboardList,
-    PackageSearch,
     RefreshCw,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 
 // ─── Shared animation wrapper ───────────────────────────────────────────────
 
-function FadeSlideIn({ children }: Readonly<{ children: React.ReactNode }>) {
+export function FadeSlideIn({ children }: Readonly<{ children: React.ReactNode }>) {
   const prefersReduced = useReducedMotion();
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
@@ -114,16 +114,9 @@ export function ScanNotFoundView({
     <FadeSlideIn>
       <div className="mx-auto max-w-md space-y-4">
         <div className="card text-center">
-          <div className="mb-2 flex justify-center">
-            <PackageSearch
-              size={40}
-              className="text-foreground-muted"
-              aria-hidden="true"
-            />
+          <div className="mb-2 flex animate-shake justify-center">
+            <EmptyStateIllustration type="no-results" titleKey="scan.notFound" />
           </div>
-          <p className="text-lg font-semibold text-foreground">
-            {t("scan.notFound")}
-          </p>
           <p className="mt-1 text-sm text-foreground-secondary">
             {t("scan.notFoundMessage", { ean })}
           </p>
@@ -147,20 +140,20 @@ export function ScanNotFoundView({
         />
 
         <div className="flex gap-2">
-          <Button
-            onClick={onReset}
-            className="flex-1"
-          >
-            {t("scan.scanAnother")}
-          </Button>
           <ButtonLink
             href="/app/scan/history"
-            variant="secondary"
             className="flex-1"
             icon={<ClipboardList size={16} aria-hidden="true" />}
           >
             {t("scan.history")}
           </ButtonLink>
+          <Button
+            onClick={onReset}
+            variant="secondary"
+            className="flex-1"
+          >
+            {t("scan.scanAnother")}
+          </Button>
         </div>
       </div>
     </FadeSlideIn>

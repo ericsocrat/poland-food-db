@@ -384,7 +384,11 @@
     "emptyMessage": "Scannen Sie einen Barcode, um Ihren Verlauf aufzubauen.",
     "startScanning": "Scannen starten →",
     "submissionStatus": "Einreichung: {status}",
-    "submit": "Einreichen →"
+    "submit": "Einreichen →",
+    "today": "Heute",
+    "yesterday": "Gestern",
+    "thisWeek": "Diese Woche",
+    "earlier": "Früher"
   },
   "submit": {
     "title": "Produkt einreichen",
@@ -1988,5 +1992,9 @@
     "bronze": "Bronze-Beiträger",
     "silver": "Silber-Beiträger",
     "gold": "Gold-Beiträger"
+  },
+  "categoryPicker": {
+    "showAll": "Alle Kategorien anzeigen",
+    "showLess": "Weniger anzeigen"
   }
 }

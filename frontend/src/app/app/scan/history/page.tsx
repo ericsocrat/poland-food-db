@@ -5,6 +5,7 @@
 import { Button } from "@/components/common/Button";
 import { EmptyState } from "@/components/common/EmptyState";
 import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
+import { PullToRefresh } from "@/components/common/PullToRefresh";
 import { ScanHistorySkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getScanHistory } from "@/lib/api";
@@ -12,6 +13,7 @@ import { NUTRI_COLORS } from "@/lib/constants";
 import { formatRelativeTime } from "@/lib/format-time";
 import { useTranslation } from "@/lib/i18n";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
+import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
 import { createClient } from "@/lib/supabase/client";
 import type { ScanHistoryItem } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -50,7 +52,14 @@ export default function ScanHistoryPage() {
     });
   }, [queryClient, page, filter]);
 
+  const handleRefresh = useCallback(async () => {
+    await queryClient.invalidateQueries({
+      queryKey: queryKeys.scanHistory(page, filter),
+    });
+  }, [queryClient, page, filter]);
+
   return (
+    <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-4">
       <div className="hidden md:block">
         <Breadcrumbs
@@ -79,12 +88,6 @@ export default function ScanHistoryPage() {
             {t("scanHistory.subtitle")}
           </p>
         </div>
-        <Link
-          href="/app/scan"
-          className="text-sm text-brand hover:text-brand-hover"
-        >
-          {t("scanHistory.backToScanner")}
-        </Link>
       </div>
 
       {/* Filter toggle */}
@@ -162,6 +165,7 @@ export default function ScanHistoryPage() {
         </div>
       )}
     </div>
+    </PullToRefresh>
   );
 }
 
@@ -182,6 +186,45 @@ function groupScans(scans: ScanHistoryItem[]): GroupedScan[] {
   return grouped;
 }
 
+// ─── Date grouping helper ────────────────────────────────────────────────────
+
+type DateGroup = { labelKey: string; scans: GroupedScan[] };
+
+function groupByDate(scans: GroupedScan[]): DateGroup[] {
+  const now = new Date();
+  const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const weekAgo = new Date(today);
+  weekAgo.setDate(weekAgo.getDate() - 7);
+
+  const groups: Record<string, GroupedScan[]> = {
+    today: [],
+    yesterday: [],
+    thisWeek: [],
+    earlier: [],
+  };
+
+  for (const scan of scans) {
+    const d = new Date(scan.scanned_at);
+    if (d >= today) groups.today.push(scan);
+    else if (d >= yesterday) groups.yesterday.push(scan);
+    else if (d >= weekAgo) groups.thisWeek.push(scan);
+    else groups.earlier.push(scan);
+  }
+
+  const keys: { key: string; labelKey: string }[] = [
+    { key: "today", labelKey: "scanHistory.today" },
+    { key: "yesterday", labelKey: "scanHistory.yesterday" },
+    { key: "thisWeek", labelKey: "scanHistory.thisWeek" },
+    { key: "earlier", labelKey: "scanHistory.earlier" },
+  ];
+
+  return keys
+    .filter(({ key }) => groups[key].length > 0)
+    .map(({ key, labelKey }) => ({ labelKey, scans: groups[key] }));
+}
+
 function ScanList({
   scans,
   onNavigate,
@@ -189,18 +232,40 @@ function ScanList({
   scans: ScanHistoryItem[];
   onNavigate: (productId: number) => void;
 }>) {
+  const { t } = useTranslation();
   const grouped = useMemo(() => groupScans(scans), [scans]);
+  const dateGroups = useMemo(() => groupByDate(grouped), [grouped]);
+  const groupStartIndexes = useMemo(() => {
+    const starts: number[] = [];
+    dateGroups.reduce((acc, g) => {
+      starts.push(acc);
+      return acc + g.scans.length;
+    }, 0);
+    return starts;
+  }, [dateGroups]);
   return (
-    <ul className="space-y-2">
-      {grouped.map((scan, idx) => (
-        <ScanRow
-          key={scan.scan_id}
-          scan={scan}
-          index={idx}
-          onNavigate={onNavigate}
-        />
-      ))}
-    </ul>
+    <div className="space-y-4">
+      {dateGroups.map((group, gi) => {
+        const startIndex = groupStartIndexes[gi];
+        return (
+          <section key={group.labelKey}>
+            <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+              {t(group.labelKey)}
+            </h2>
+            <ul className="space-y-2">
+              {group.scans.map((scan, idx) => (
+                <ScanRow
+                  key={scan.scan_id}
+                  scan={scan}
+                  index={startIndex + idx}
+                  onNavigate={onNavigate}
+                />
+              ))}
+            </ul>
+          </section>
+        );
+      })}
+    </div>
   );
 }
 
@@ -239,6 +304,17 @@ function ScanRow({
               {scan.nutri_score}
             </span>
           )}
+          {/* TryVit Score badge */}
+          {scan.unhealthiness_score != null && (() => {
+            const band = getScoreBand(scan.unhealthiness_score);
+            return band ? (
+              <span
+                className={`flex h-7 shrink-0 items-center justify-center rounded px-1.5 text-xs font-bold ${band.bgColor} ${band.textColor}`}
+              >
+                {toTryVitScore(scan.unhealthiness_score)}
+              </span>
+            ) : null;
+          })()}
           <div className="min-w-0 flex-1">
             <p className="truncate font-medium text-foreground">
               {scan.product_name}

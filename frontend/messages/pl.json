@@ -384,7 +384,11 @@
     "emptyMessage": "Zeskanuj kod kreskowy, aby rozpocząć budowanie historii.",
     "startScanning": "Rozpocznij skanowanie →",
     "submissionStatus": "Zgłoszenie: {status}",
-    "submit": "Zgłoś →"
+    "submit": "Zgłoś →",
+    "today": "Dzisiaj",
+    "yesterday": "Wczoraj",
+    "thisWeek": "Ten tydzień",
+    "earlier": "Wcześniej"
   },
   "submit": {
     "title": "Zgłoś produkt",
@@ -1988,5 +1992,9 @@
     "bronze": "Brązowy Kontrybutor",
     "silver": "Srebrny Kontrybutor",
     "gold": "Złoty Kontrybutor"
+  },
+  "categoryPicker": {
+    "showAll": "Pokaż wszystkie kategorie",
+    "showLess": "Pokaż mniej"
   }
 }

@@ -69,4 +69,74 @@ describe("CategoryPicker", () => {
     fireEvent.click(screen.getByText(/🥤/));
     expect(onChange).toHaveBeenCalledWith("drinks");
   });
+
+  it("applies active:scale-95 class on category buttons", () => {
+    render(<CategoryPicker value="" onChange={onChange} />);
+    const button = screen.getAllByRole("button")[0];
+    expect(button.className).toContain("active:scale-95");
+  });
+
+  it("does not show expand/collapse toggle with few categories", () => {
+    render(<CategoryPicker value="" onChange={onChange} />);
+    expect(screen.queryByText("categoryPicker.showAll")).not.toBeInTheDocument();
+    expect(screen.queryByText("categoryPicker.showLess")).not.toBeInTheDocument();
+  });
+});
+
+// ─── Expand / Collapse (>8 categories) ──────────────────
+
+describe("CategoryPicker — expand/collapse", () => {
+  const onChange = vi.fn();
+  const manyCategories = Array.from({ length: 12 }, (_, i) => ({
+    slug: `cat-${i}`,
+    emoji: "🔹",
+    labelKey: `onboarding.cat${i}`,
+  }));
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
+    // Override FOOD_CATEGORIES with 12 items for this suite
+    vi.doMock("@/lib/constants", () => ({
+      FOOD_CATEGORIES: manyCategories,
+    }));
+  });
+
+  // Use dynamic import to get the module with overridden mock
+  async function renderPicker(value = "") {
+    const mod = await import("./CategoryPicker");
+    const { rerender } = render(<mod.CategoryPicker value={value} onChange={onChange} />);
+    return rerender;
+  }
+
+  it("shows only 8 categories when collapsed", async () => {
+    await renderPicker();
+    // 8 category buttons + 1 "Show All" toggle button = 9 total
+    const buttons = screen.getAllByRole("button");
+    const categoryButtons = buttons.filter((b) => b.getAttribute("aria-pressed") !== null);
+    expect(categoryButtons).toHaveLength(8);
+  });
+
+  it("shows expand toggle with correct label", async () => {
+    await renderPicker();
+    expect(screen.getByText("categoryPicker.showAll")).toBeInTheDocument();
+  });
+
+  it("shows all categories after expanding", async () => {
+    await renderPicker();
+    fireEvent.click(screen.getByText("categoryPicker.showAll"));
+    const buttons = screen.getAllByRole("button");
+    const categoryButtons = buttons.filter((b) => b.getAttribute("aria-pressed") !== null);
+    expect(categoryButtons).toHaveLength(12);
+    expect(screen.getByText("categoryPicker.showLess")).toBeInTheDocument();
+  });
+
+  it("collapses back to 8 when clicking Show Less", async () => {
+    await renderPicker();
+    fireEvent.click(screen.getByText("categoryPicker.showAll"));
+    fireEvent.click(screen.getByText("categoryPicker.showLess"));
+    const buttons = screen.getAllByRole("button");
+    const categoryButtons = buttons.filter((b) => b.getAttribute("aria-pressed") !== null);
+    expect(categoryButtons).toHaveLength(8);
+  });
 });

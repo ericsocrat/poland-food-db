@@ -11,6 +11,7 @@ import { usePreferences } from "@/components/common/RouteGuard";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { ScannerErrorState } from "@/components/scan/ScannerErrorState";
 import {
+    FadeSlideIn,
     ScanErrorView,
     ScanFoundView,
     ScanLookingUpView,
@@ -326,11 +327,13 @@ export default function ScanPage() {
       {mode === "camera" ? (
         <div className="space-y-3">
           {cameraError ? (
-            <ScannerErrorState
-              error={cameraError}
-              onRetry={() => { clearError(); startScanner(); }}
-              onManualEntry={() => { clearError(); setMode("manual"); }}
-            />
+            <FadeSlideIn>
+              <ScannerErrorState
+                error={cameraError}
+                onRetry={() => { clearError(); startScanner(); }}
+                onManualEntry={() => { clearError(); setMode("manual"); }}
+              />
+            </FadeSlideIn>
           ) : (
             <>
               <div className="relative overflow-hidden rounded-xl bg-black">
@@ -343,8 +346,8 @@ export default function ScanPage() {
                 />
                 {/* Viewfinder overlay with alignment guides */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                  <div className="relative h-36 w-72">
-                    <div className="absolute inset-0 rounded-xl border-2 border-white/60" />
+                  <div className={`relative h-36 w-72 transition-colors duration-300 ${scanState === "looking-up" ? "[&>div:first-child]:border-green-400" : ""}`}>
+                    <div className="absolute inset-0 rounded-xl border-2 border-white/60 transition-colors duration-300" />
                     {/* Corner guides */}
                     <div className="absolute -left-0.5 -top-0.5 h-5 w-5 border-l-[3px] border-t-[3px] border-white rounded-tl" />
                     <div className="absolute -right-0.5 -top-0.5 h-5 w-5 border-r-[3px] border-t-[3px] border-white rounded-tr" />
@@ -365,7 +368,7 @@ export default function ScanPage() {
                 <button
                   type="button"
                   onClick={toggleTorch}
-                  className={`absolute bottom-3 right-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors ${
+                  className={`absolute bottom-3 right-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-all duration-300 ${
                     torchOn
                       ? "bg-yellow-500/80 shadow-[0_0_12px_rgba(234,179,8,0.5)]"
                       : "bg-white/20 hover:bg-white/30"

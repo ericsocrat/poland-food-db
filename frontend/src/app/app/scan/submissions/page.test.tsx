@@ -11,9 +11,18 @@ vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({}),
 }));
 
+vi.mock("@/lib/i18n", () => ({
+  useTranslation: () => ({
+    t: (key: string, params?: Record<string, unknown>) => {
+      if (params) return `${key}:${JSON.stringify(params)}`;
+      return key;
+    },
+  }),
+}));
+
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
+  useRouter: () => ({ push: mockPush, back: vi.fn() }),
 }));
 
 vi.mock("next/link", () => ({
@@ -33,6 +42,31 @@ vi.mock("@/lib/api", () => ({
 
 vi.mock("@/components/common/skeletons", () => ({
   SubmissionsSkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading submissions" />,
+}));
+
+vi.mock("@/components/common/EmptyStateIllustration", () => ({
+  EmptyStateIllustration: ({ titleKey, action }: { titleKey: string; action?: { labelKey: string; href?: string } }) => (
+    <div>
+      <p>{titleKey}</p>
+      {action && <a href={action.href}>{action.labelKey}</a>}
+    </div>
+  ),
+}));
+
+vi.mock("@/components/layout/Breadcrumbs", () => ({
+  Breadcrumbs: () => <nav data-testid="breadcrumbs" />,
+}));
+
+vi.mock("@/components/product/ContributorBadge", () => ({
+  ContributorBadge: () => <div data-testid="contributor-badge" />,
+}));
+
+vi.mock("@/lib/format-time", () => ({
+  formatRelativeTime: (date: string) => date,
+}));
+
+vi.mock("@/lib/events", () => ({
+  trackEvent: vi.fn(),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -109,19 +143,11 @@ describe("MySubmissionsPage", () => {
   it("renders page title and subtitle", async () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /My Submissions/i })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /scan\.mySubmissions/i })).toBeInTheDocument();
     });
     expect(
-      screen.getByText("Products you've submitted for review"),
+      screen.getByText("scan.submissionsSubtitle"),
     ).toBeInTheDocument();
-  });
-
-  it("links back to scanner", () => {
-    render(<MySubmissionsPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("← Back to Scanner").closest("a")).toHaveAttribute(
-      "href",
-      "/app/scan",
-    );
   });
 
   it("shows loading skeleton", () => {
@@ -138,10 +164,10 @@ describe("MySubmissionsPage", () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
       expect(
-        screen.getByText("Failed to load submissions."),
+        screen.getByText("scan.submissionsLoadFailed"),
       ).toBeInTheDocument();
     });
-    expect(screen.getByText("Retry")).toBeInTheDocument();
+    expect(screen.getByText("common.retry")).toBeInTheDocument();
   });
 
   it("shows empty state", async () => {
@@ -151,9 +177,9 @@ describe("MySubmissionsPage", () => {
     });
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("No submissions yet")).toBeInTheDocument();
+      expect(screen.getByText("scan.submissionsEmptyTitle")).toBeInTheDocument();
     });
-    expect(screen.getByText("Start scanning →").closest("a")).toHaveAttribute(
+    expect(screen.getByText("scan.startScanning").closest("a")).toHaveAttribute(
       "href",
       "/app/scan",
     );
@@ -179,24 +205,24 @@ describe("MySubmissionsPage", () => {
   it("shows category when present", async () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Category: chips")).toBeInTheDocument();
+      expect(screen.getByText('scan.categoryLabel:{"category":"chips"}')).toBeInTheDocument();
     });
   });
 
   it("shows status badges", async () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Pending")).toBeInTheDocument();
+      expect(screen.getByText("scan.statusPending")).toBeInTheDocument();
     });
-    expect(screen.getByText("Merged")).toBeInTheDocument();
-    // "Rejected" appears in both the status badge and status timeline
-    expect(screen.getAllByText("Rejected").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByText("scan.statusMerged")).toBeInTheDocument();
+    // "scan.statusRejected" appears in both the status badge and status timeline
+    expect(screen.getAllByText("scan.statusRejected").length).toBeGreaterThanOrEqual(1);
   });
 
   it("shows View button for merged submissions", async () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("View →")).toBeInTheDocument();
+      expect(screen.getByText("scan.viewProduct")).toBeInTheDocument();
     });
   });
 
@@ -205,10 +231,10 @@ describe("MySubmissionsPage", () => {
     const user = userEvent.setup();
 
     await waitFor(() => {
-      expect(screen.getByText("View →")).toBeInTheDocument();
+      expect(screen.getByText("scan.viewProduct")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("View →"));
+    await user.click(screen.getByText("scan.viewProduct"));
     expect(mockPush).toHaveBeenCalledWith("/app/product/42");
   });
 
@@ -218,14 +244,14 @@ describe("MySubmissionsPage", () => {
       expect(screen.getByText("Test Chips")).toBeInTheDocument();
     });
     // All submissions show "Submitted" step
-    const submittedLabels = screen.getAllByText("Submitted");
+    const submittedLabels = screen.getAllByText("scan.statusSubmitted");
     expect(submittedLabels.length).toBeGreaterThanOrEqual(3);
   });
 
   it("shows Live step for merged submissions", async () => {
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("Live")).toBeInTheDocument();
+      expect(screen.getByText("scan.statusLive")).toBeInTheDocument();
     });
   });
 
@@ -234,7 +260,7 @@ describe("MySubmissionsPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Test Chips")).toBeInTheDocument();
     });
-    expect(screen.queryByText("← Prev")).not.toBeInTheDocument();
+    expect(screen.queryByText("common.prev")).not.toBeInTheDocument();
   });
 
   it("shows pagination for multiple pages", async () => {
@@ -249,9 +275,9 @@ describe("MySubmissionsPage", () => {
     });
     render(<MySubmissionsPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("← Prev")).toBeInTheDocument();
+      expect(screen.getByText("common.prev")).toBeInTheDocument();
     });
-    expect(screen.getByText("Next →")).toBeInTheDocument();
-    expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
+    expect(screen.getByText("common.next")).toBeInTheDocument();
+    expect(screen.getByText('common.pageOf:{"page":1,"pages":3}')).toBeInTheDocument();
   });
 });

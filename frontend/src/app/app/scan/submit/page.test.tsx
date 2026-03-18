@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useState } from "react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import SubmitProductPage from "./page";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -11,11 +11,29 @@ vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({}),
 }));
 
+vi.mock("@/lib/i18n", () => ({
+  useTranslation: () => ({
+    t: (key: string, params?: Record<string, unknown>) => {
+      if (params) return `${key}:${JSON.stringify(params)}`;
+      return key;
+    },
+  }),
+}));
+
 const mockPush = vi.fn();
 const mockSearchGet = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
+  useRouter: () => ({ push: mockPush, back: vi.fn() }),
   useSearchParams: () => ({ get: mockSearchGet }),
+}));
+
+vi.mock("@/components/layout/Breadcrumbs", () => ({
+  Breadcrumbs: () => <nav data-testid="breadcrumbs" />,
+}));
+
+vi.mock("@/lib/events", () => ({
+  trackEvent: vi.fn(),
+  eventBus: { emit: vi.fn().mockResolvedValue(undefined) },
 }));
 
 vi.mock("@/lib/gs1", () => ({
@@ -70,70 +88,74 @@ beforeEach(() => {
   });
 });
 
+afterEach(() => {
+  vi.restoreAllMocks();
+});
+
 // ─── Tests ──────────────────────────────────────────────────────────────────
 
 describe("SubmitProductPage", () => {
   it("renders page title", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     expect(
-      screen.getByRole("heading", { name: /Submit Product/ }),
+      screen.getByRole("heading", { name: /submit\.title/ }),
     ).toBeInTheDocument();
     expect(
-      screen.getByText("Help us add a missing product"),
+      screen.getByText("submit.subtitle"),
     ).toBeInTheDocument();
   });
 
   it("renders all form fields", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    expect(screen.getByLabelText("EAN Barcode *")).toBeInTheDocument();
-    expect(screen.getByLabelText("Product Name *")).toBeInTheDocument();
-    expect(screen.getByLabelText(/^Brand/)).toBeInTheDocument();
+    expect(screen.getByLabelText("submit.eanLabel")).toBeInTheDocument();
+    expect(screen.getByLabelText("submit.nameLabel")).toBeInTheDocument();
+    expect(screen.getByLabelText(/submit\.brandLabel/)).toBeInTheDocument();
     // Category uses CategoryPicker (button pills) instead of a <select>
-    expect(screen.getByRole("button", { name: /Dairy/ })).toBeInTheDocument();
-    expect(screen.getByLabelText(/^Notes/)).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /onboarding\.catDairy/ })).toBeInTheDocument();
+    expect(screen.getByLabelText(/submit\.notesLabel/)).toBeInTheDocument();
   });
 
   it("pre-fills EAN from URL search params", () => {
     mockSearchGet.mockReturnValue("5901234123457");
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    const input = screen.getByLabelText("EAN Barcode *");
+    const input = screen.getByLabelText("submit.eanLabel");
     expect(input).toHaveValue("5901234123457");
     expect(input).toHaveAttribute("readOnly");
   });
 
   it("EAN is editable when not pre-filled", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    const input = screen.getByLabelText("EAN Barcode *");
+    const input = screen.getByLabelText("submit.eanLabel");
     expect(input).not.toHaveAttribute("readOnly");
   });
 
   it("disables submit when EAN too short", async () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText("EAN Barcode *"), "1234");
-    await user.type(screen.getByLabelText("Product Name *"), "Test Product");
+    await user.type(screen.getByLabelText("submit.eanLabel"), "1234");
+    await user.type(screen.getByLabelText("submit.nameLabel"), "Test Product");
     expect(
-      screen.getByRole("button", { name: "Submit Product" }),
+      screen.getByRole("button", { name: "submit.submitButton" }),
     ).toBeDisabled();
   });
 
   it("disables submit when product name too short", async () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
-    await user.type(screen.getByLabelText("Product Name *"), "A");
+    await user.type(screen.getByLabelText("submit.eanLabel"), "12345678");
+    await user.type(screen.getByLabelText("submit.nameLabel"), "A");
     expect(
-      screen.getByRole("button", { name: "Submit Product" }),
+      screen.getByRole("button", { name: "submit.submitButton" }),
     ).toBeDisabled();
   });
 
   it("enables submit when both EAN and name are valid", async () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
-    await user.type(screen.getByLabelText("Product Name *"), "Test Product");
+    await user.type(screen.getByLabelText("submit.eanLabel"), "12345678");
+    await user.type(screen.getByLabelText("submit.nameLabel"), "Test Product");
     expect(
-      screen.getByRole("button", { name: "Submit Product" }),
+      screen.getByRole("button", { name: "submit.submitButton" }),
     ).not.toBeDisabled();
   });
 
@@ -141,10 +163,10 @@ describe("SubmitProductPage", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
 
-    await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
-    await user.type(screen.getByLabelText("Product Name *"), "Test Product");
-    await user.type(screen.getByLabelText(/^Brand/), "TestBrand");
-    await user.click(screen.getByRole("button", { name: "Submit Product" }));
+    await user.type(screen.getByLabelText("submit.eanLabel"), "12345678");
+    await user.type(screen.getByLabelText("submit.nameLabel"), "Test Product");
+    await user.type(screen.getByLabelText(/submit\.brandLabel/), "TestBrand");
+    await user.click(screen.getByRole("button", { name: "submit.submitButton" }));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(
@@ -154,7 +176,9 @@ describe("SubmitProductPage", () => {
         }),
       );
     });
-    expect(mockPush).toHaveBeenCalledWith("/app/scan/submissions");
+    await waitFor(() => {
+      expect(mockPush).toHaveBeenCalledWith("/app/scan/submissions");
+    }, { timeout: 3000 });
   });
 
   it("shows error toast on failure", async () => {
@@ -165,9 +189,9 @@ describe("SubmitProductPage", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
 
-    await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
-    await user.type(screen.getByLabelText("Product Name *"), "Test Product");
-    await user.click(screen.getByRole("button", { name: "Submit Product" }));
+    await user.type(screen.getByLabelText("submit.eanLabel"), "12345678");
+    await user.type(screen.getByLabelText("submit.nameLabel"), "Test Product");
+    await user.click(screen.getByRole("button", { name: "submit.submitButton" }));
 
     await waitFor(() => {
       expect(mockShowToast).toHaveBeenCalledWith(
@@ -179,9 +203,7 @@ describe("SubmitProductPage", () => {
   it("shows submission review notice", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     expect(
-      screen.getByText(
-        "Submissions are reviewed before being added to the database.",
-      ),
+      screen.getByText("submit.disclaimer"),
     ).toBeInTheDocument();
   });
 
@@ -190,7 +212,7 @@ describe("SubmitProductPage", () => {
   it("renders category pills with FOOD_CATEGORIES", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     // CategoryPicker renders one button per FOOD_CATEGORIES entry
-    const dairyBtn = screen.getByRole("button", { name: /Dairy/ });
+    const dairyBtn = screen.getByRole("button", { name: /onboarding\.catDairy/ });
     expect(dairyBtn).toBeInTheDocument();
     expect(dairyBtn).toHaveAttribute("aria-pressed", "false");
   });
@@ -198,11 +220,11 @@ describe("SubmitProductPage", () => {
   it("sends selected category in submission", async () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
-    await user.type(screen.getByLabelText("Product Name *"), "Test");
+    await user.type(screen.getByLabelText("submit.eanLabel"), "12345678");
+    await user.type(screen.getByLabelText("submit.nameLabel"), "Test");
     // Click the CategoryPicker button instead of using selectOptions
-    await user.click(screen.getByRole("button", { name: /Dairy/ }));
-    await user.click(screen.getByRole("button", { name: "Submit Product" }));
+    await user.click(screen.getByRole("button", { name: /onboarding\.catDairy/ }));
+    await user.click(screen.getByRole("button", { name: "submit.submitButton" }));
 
     await waitFor(() => {
       expect(mockSubmitProduct).toHaveBeenCalledWith(
@@ -216,7 +238,7 @@ describe("SubmitProductPage", () => {
 
   it("shows photo upload prompt initially", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("Take a photo of the front label or nutrition table")).toBeInTheDocument();
+    expect(screen.getByText("submit.photoHint")).toBeInTheDocument();
   });
 
   it("shows photo preview and remove button after selecting a valid photo", async () => {
@@ -228,7 +250,7 @@ describe("SubmitProductPage", () => {
     await user.upload(input, file);
 
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Remove photo" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "submit.photoRemove" })).toBeInTheDocument();
     });
   });
 
@@ -244,7 +266,7 @@ describe("SubmitProductPage", () => {
       expect.objectContaining({ type: "error", messageKey: "submit.photoInvalidType" }),
     );
     // Photo prompt should still be shown (no preview)
-    expect(screen.getByText("Take a photo of the front label or nutrition table")).toBeInTheDocument();
+    expect(screen.getByText("submit.photoHint")).toBeInTheDocument();
   });
 
   it("rejects files exceeding 5 MB", async () => {
@@ -270,11 +292,11 @@ describe("SubmitProductPage", () => {
 
     await user.upload(input, file);
     await waitFor(() => {
-      expect(screen.getByRole("button", { name: "Remove photo" })).toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "submit.photoRemove" })).toBeInTheDocument();
     });
 
-    await user.click(screen.getByRole("button", { name: "Remove photo" }));
-    expect(screen.getByText("Take a photo of the front label or nutrition table")).toBeInTheDocument();
+    await user.click(screen.getByRole("button", { name: "submit.photoRemove" }));
+    expect(screen.getByText("submit.photoHint")).toBeInTheDocument();
   });
 
   // ─── GS1 country hint ─────────────────────────────────────────────────────
@@ -310,11 +332,11 @@ describe("SubmitProductPage", () => {
   it("sends brand and notes in submission payload", async () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
-    await user.type(screen.getByLabelText("Product Name *"), "Test Prod");
-    await user.type(screen.getByLabelText(/^Brand/), "TestBrand");
-    await user.type(screen.getByLabelText(/^Notes/), "Some note");
-    await user.click(screen.getByRole("button", { name: "Submit Product" }));
+    await user.type(screen.getByLabelText("submit.eanLabel"), "12345678");
+    await user.type(screen.getByLabelText("submit.nameLabel"), "Test Prod");
+    await user.type(screen.getByLabelText(/submit\.brandLabel/), "TestBrand");
+    await user.type(screen.getByLabelText(/submit\.notesLabel/), "Some note");
+    await user.click(screen.getByRole("button", { name: "submit.submitButton" }));
 
     await waitFor(() => {
       expect(mockSubmitProduct).toHaveBeenCalledWith(
@@ -337,7 +359,7 @@ describe("SubmitProductPage", () => {
     });
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     expect(
-      screen.getByText(/Based on your profile or the barcode/),
+      screen.getByText(/submit\.countryExplainer/),
     ).toBeInTheDocument();
   });
 
@@ -345,7 +367,7 @@ describe("SubmitProductPage", () => {
 
   it("shows optional indicator on non-required fields", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    const optionalLabels = screen.getAllByText("(Optional)");
+    const optionalLabels = screen.getAllByText("common.optional");
     // Brand, Category, Photo, Notes — 4 optional fields
     expect(optionalLabels.length).toBeGreaterThanOrEqual(4);
   });
@@ -359,7 +381,7 @@ describe("SubmitProductPage", () => {
 
     // Type some text and verify counter updates
     const user = userEvent.setup();
-    await user.type(screen.getByLabelText(/^Notes/), "Hello");
+    await user.type(screen.getByLabelText(/submit\.notesLabel/), "Hello");
     expect(screen.getByText("5/500")).toBeInTheDocument();
   });
 
@@ -368,7 +390,7 @@ describe("SubmitProductPage", () => {
   it("shows step indicator below subtitle", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     expect(
-      screen.getByText(/Step 2 of 2/),
+      screen.getByText("submit.stepIndicator"),
     ).toBeInTheDocument();
   });
 });

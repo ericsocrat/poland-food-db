@@ -11,9 +11,18 @@ vi.mock("@/lib/supabase/client", () => ({
   createClient: () => ({}),
 }));
 
+vi.mock("@/lib/i18n", () => ({
+  useTranslation: () => ({
+    t: (key: string, params?: Record<string, unknown>) => {
+      if (params) return `${key}:${JSON.stringify(params)}`;
+      return key;
+    },
+  }),
+}));
+
 const mockPush = vi.fn();
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ push: mockPush }),
+  useRouter: () => ({ push: mockPush, back: vi.fn() }),
 }));
 
 vi.mock("next/link", () => ({
@@ -33,6 +42,53 @@ vi.mock("@/lib/api", () => ({
 
 vi.mock("@/components/common/skeletons", () => ({
   ScanHistorySkeleton: () => <div data-testid="skeleton" role="status" aria-label="Loading scan history" />,
+}));
+
+vi.mock("@/components/common/PullToRefresh", () => ({
+  PullToRefresh: ({ children }: { children: React.ReactNode }) => <div data-testid="pull-to-refresh">{children}</div>,
+}));
+
+vi.mock("@/components/common/EmptyState", () => ({
+  EmptyState: ({ titleKey, action }: { titleKey: string; action?: { labelKey: string } }) => (
+    <div>
+      <p>{titleKey}</p>
+      {action && <button>{action.labelKey}</button>}
+    </div>
+  ),
+}));
+
+vi.mock("@/components/common/EmptyStateIllustration", () => ({
+  EmptyStateIllustration: ({ titleKey, action }: { titleKey: string; action?: { labelKey: string; href?: string } }) => (
+    <div>
+      <p>{titleKey}</p>
+      {action && <a href={action.href}>{action.labelKey}</a>}
+    </div>
+  ),
+}));
+
+vi.mock("@/components/layout/Breadcrumbs", () => ({
+  Breadcrumbs: () => <nav data-testid="breadcrumbs" />,
+}));
+
+vi.mock("@/lib/format-time", () => ({
+  formatRelativeTime: () => "just now",
+}));
+
+vi.mock("@/lib/score-utils", () => ({
+  getScoreColor: () => "bg-green-500",
+  getScoreBand: (score: number) => {
+    if (score == null || score < 1 || score > 100) return null;
+    return { band: "red", labelKey: "scoreBand.poor", color: "var(--color-score-red)", bgColor: "bg-score-red/10", textColor: "text-score-red-text" };
+  },
+  toTryVitScore: (score: number) => 100 - score,
+}));
+
+vi.mock("@/lib/constants", () => ({
+  NUTRI_COLORS: { A: "#038141", B: "#85BB2F", C: "#FECB02", D: "#EE8100", E: "#E63E11" },
+}));
+
+vi.mock("@/lib/events", () => ({
+  trackEvent: vi.fn(),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -112,17 +168,9 @@ describe("ScanHistoryPage", () => {
   it("renders page title and subtitle", async () => {
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByRole("heading", { name: /Scan History/i })).toBeInTheDocument();
+      expect(screen.getByRole("heading", { name: /scanHistory\.title/i })).toBeInTheDocument();
     });
-    expect(screen.getByText("Your barcode scan activity")).toBeInTheDocument();
-  });
-
-  it("links back to scanner", async () => {
-    render(<ScanHistoryPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("← Back to Scanner").closest("a")).toHaveAttribute(
-      "href",
-      "/app/scan",
-    );
+    expect(screen.getByText("scanHistory.subtitle")).toBeInTheDocument();
   });
 
   it("shows loading skeleton", () => {
@@ -139,10 +187,10 @@ describe("ScanHistoryPage", () => {
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
       expect(
-        screen.getByText("Failed to load scan history."),
+        screen.getByText("scanHistory.loadFailed"),
       ).toBeInTheDocument();
     });
-    expect(screen.getByText("Retry")).toBeInTheDocument();
+    expect(screen.getByText("common.retry")).toBeInTheDocument();
   });
 
   it("shows empty state when no scans", async () => {
@@ -152,9 +200,9 @@ describe("ScanHistoryPage", () => {
     });
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("No scans yet")).toBeInTheDocument();
+      expect(screen.getByText("scanHistory.emptyTitle")).toBeInTheDocument();
     });
-    expect(screen.getByText("Start scanning →").closest("a")).toHaveAttribute(
+    expect(screen.getByText("scanHistory.startScanning").closest("a")).toHaveAttribute(
       "href",
       "/app/scan",
     );
@@ -162,9 +210,9 @@ describe("ScanHistoryPage", () => {
 
   it("renders filter buttons", async () => {
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("All")).toBeInTheDocument();
-    expect(screen.getByText("Found")).toBeInTheDocument();
-    expect(screen.getByText("Not Found")).toBeInTheDocument();
+    expect(screen.getByText("scanHistory.all")).toBeInTheDocument();
+    expect(screen.getByText("scanHistory.found")).toBeInTheDocument();
+    expect(screen.getByText("scanHistory.notFound")).toBeInTheDocument();
   });
 
   it("renders found scan rows with product info", async () => {
@@ -195,7 +243,7 @@ describe("ScanHistoryPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
     });
-    const submitLink = screen.getByText("Submit →").closest("a");
+    const submitLink = screen.getByText("scanHistory.submit").closest("a");
     expect(submitLink).toHaveAttribute(
       "href",
       "/app/scan/submit?ean=9999999999999",
@@ -205,7 +253,7 @@ describe("ScanHistoryPage", () => {
   it("shows submission status when already submitted", async () => {
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText(/Submission: pending/)).toBeInTheDocument();
+      expect(screen.getByText(/scanHistory\.submissionStatus/)).toBeInTheDocument();
     });
   });
 
@@ -216,7 +264,7 @@ describe("ScanHistoryPage", () => {
     });
     // scan-3 has submission_status "pending" so it should NOT have a Submit → link
     // scan-2 has no submission_status so it SHOULD have a Submit → link
-    const submitLinks = screen.getAllByText("Submit →");
+    const submitLinks = screen.getAllByText("scanHistory.submit");
     expect(submitLinks).toHaveLength(1);
   });
 
@@ -235,7 +283,7 @@ describe("ScanHistoryPage", () => {
     await waitFor(() => {
       expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
     });
-    expect(screen.queryByText("← Prev")).not.toBeInTheDocument();
+    expect(screen.queryByText("common.prev")).not.toBeInTheDocument();
   });
 
   it("shows pagination for multiple pages", async () => {
@@ -245,10 +293,10 @@ describe("ScanHistoryPage", () => {
     });
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("← Prev")).toBeInTheDocument();
+      expect(screen.getByText("common.prev")).toBeInTheDocument();
     });
-    expect(screen.getByText("Next →")).toBeInTheDocument();
-    expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
+    expect(screen.getByText("common.next")).toBeInTheDocument();
+    expect(screen.getByText('common.pageOf:{"page":1,"pages":3}')).toBeInTheDocument();
   });
 
   it("disables prev button on first page", async () => {
@@ -258,7 +306,7 @@ describe("ScanHistoryPage", () => {
     });
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      expect(screen.getByText("← Prev")).toBeDisabled();
+      expect(screen.getByText("common.prev")).toBeDisabled();
     });
   });
 
@@ -270,7 +318,7 @@ describe("ScanHistoryPage", () => {
       expect(screen.getByText("Lay's Classic")).toBeInTheDocument();
     });
 
-    await user.click(screen.getByText("Found"));
+    await user.click(screen.getByText("scanHistory.found"));
     // Filter should have been changed; a new query would fire
     expect(mockGetScanHistory).toHaveBeenCalled();
   });
@@ -278,7 +326,7 @@ describe("ScanHistoryPage", () => {
   it("shows not-found indicator for failed lookups", async () => {
     render(<ScanHistoryPage />, { wrapper: createWrapper() });
     await waitFor(() => {
-      const notFoundTexts = screen.getAllByText("Not Found");
+      const notFoundTexts = screen.getAllByText("scanHistory.notFound");
       expect(notFoundTexts.length).toBeGreaterThanOrEqual(1);
     });
   });
