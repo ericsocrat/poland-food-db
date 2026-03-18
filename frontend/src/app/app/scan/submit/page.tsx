@@ -3,10 +3,12 @@
 // ─── Submit Product page — form for adding missing products ─────────────────
 
 import { Button } from "@/components/common/Button";
+import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { usePreferences } from "@/components/common/RouteGuard";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { CategoryPicker } from "@/components/scan/CategoryPicker";
 import { submitProduct } from "@/lib/api";
-import { FOOD_CATEGORIES, getCountryFlag, getCountryName } from "@/lib/constants";
+import { getCountryFlag, getCountryName } from "@/lib/constants";
 import { eventBus } from "@/lib/events";
 import { gs1CountryHint } from "@/lib/gs1";
 import { useTranslation } from "@/lib/i18n";
@@ -15,7 +17,7 @@ import { showToast } from "@/lib/toast";
 import type { FormSubmitEvent } from "@/lib/types";
 import { isValidEan, isValidEanChecksum } from "@/lib/validation";
 import { useMutation } from "@tanstack/react-query";
-import { Camera, FileText, X } from "lucide-react";
+import { ArrowLeft, Camera, FileText, Lock, X } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
@@ -130,16 +132,25 @@ export default function SubmitProductPage() {
 
   return (
     <div className="space-y-4">
-      <Breadcrumbs
-        items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.scan", href: "/app/scan" },
-          { labelKey: "submit.title" },
-        ]}
-      />
+      <div className="hidden md:block">
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.scan", href: "/app/scan" },
+            { labelKey: "submit.title" },
+          ]}
+        />
+      </div>
       {/* Header */}
       <div>
         <h1 className="text-lg font-semibold text-foreground flex items-center gap-1.5">
+          <button
+            onClick={() => router.back()}
+            className="md:hidden rounded-lg p-1 text-foreground-secondary hover:bg-surface-muted"
+            aria-label={t("common.back")}
+          >
+            <ArrowLeft size={18} />
+          </button>
           <FileText size={18} aria-hidden="true" /> {t("submit.title")}
         </h1>
         <p className="text-sm text-foreground-secondary">
@@ -160,22 +171,31 @@ export default function SubmitProductPage() {
             >
               {t("submit.eanLabel")}
             </label>
-            <input
-              id="ean"
-              type="text"
-              value={ean}
-              onChange={(e) => {
-                const v = e.target.value.replaceAll(/\D/g, "").slice(0, 13);
-                setEan(v);
-                setChecksumWarn(v.length >= 8 && isValidEan(v) && !isValidEanChecksum(v));
-              }}
-              className="input-field font-mono tracking-widest"
-              placeholder={t("submit.eanPlaceholder")}
-              inputMode="numeric"
-              maxLength={13}
-              required
-              readOnly={!!prefillEan}
-            />
+            <div className="relative">
+              <input
+                id="ean"
+                type="text"
+                value={ean}
+                onChange={(e) => {
+                  const v = e.target.value.replaceAll(/\D/g, "").slice(0, 13);
+                  setEan(v);
+                  setChecksumWarn(v.length >= 8 && isValidEan(v) && !isValidEanChecksum(v));
+                }}
+                className={`input-field font-mono tracking-widest ${prefillEan ? "bg-surface-muted pr-9" : ""}`}
+                placeholder={t("submit.eanPlaceholder")}
+                inputMode="numeric"
+                maxLength={13}
+                required
+                readOnly={!!prefillEan}
+              />
+              {!!prefillEan && (
+                <Lock
+                  size={14}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted"
+                  aria-label={t("submit.eanLocked")}
+                />
+              )}
+            </div>
             {checksumWarn && (
               <p className="mt-1 text-xs text-warning-text">
                 {t("scan.checksumWarning")}
@@ -226,25 +246,12 @@ export default function SubmitProductPage() {
           {/* Category */}
           <div>
             <label
-              htmlFor="category"
               className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
               {t("submit.categoryLabel")}{" "}
               <span className="font-normal text-foreground-muted">{t("common.optional")}</span>
             </label>
-            <select
-              id="category"
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
-              className="input-field"
-            >
-              <option value="">{t("submit.categoryPlaceholder")}</option>
-              {FOOD_CATEGORIES.map((cat) => (
-                <option key={cat.slug} value={cat.slug}>
-                  {cat.emoji} {t(cat.labelKey)}
-                </option>
-              ))}
-            </select>
+            <CategoryPicker value={category} onChange={setCategory} />
           </div>
 
           {/* Country hint */}
@@ -339,12 +346,19 @@ export default function SubmitProductPage() {
             type="submit"
             fullWidth
             disabled={
-              mutation.isPending || ean.length < 8 || productName.length < 2
+              mutation.isPending || mutation.isSuccess || ean.length < 8 || productName.length < 2
             }
           >
-            {mutation.isPending
-              ? t("submit.submitting")
-              : t("submit.submitButton")}
+            {mutation.isSuccess ? (
+              <span className="inline-flex items-center gap-1.5">✓ {t("submit.submitted")}</span>
+            ) : mutation.isPending ? (
+              <span className="inline-flex items-center gap-2">
+                <LoadingSpinner size="sm" />
+                {t("submit.submitting")}
+              </span>
+            ) : (
+              t("submit.submitButton")
+            )}
           </Button>
         </form>
       </div>

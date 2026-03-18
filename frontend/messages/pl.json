@@ -357,7 +357,11 @@
     "crossCountryBadge": "Z katalogu: {country}",
     "gs1Hint": "Kod kreskowy zarejestrowany w {country}",
     "gs1CoverageNote": "Pokrycie różni się w zależności od regionu — produkt może istnieć w innej bazie danych.",
-    "checksumWarning": "Cyfra kontrolna nie zgadza si\u0119 \u2014 sprawd\u017a kod kreskowy"
+    "checksumWarning": "Cyfra kontrolna nie zgadza si\u0119 \u2014 sprawd\u017a kod kreskowy",
+    "manualTipsTitle": "Wskaz\u00f3wki do r\u0119cznego wprowadzania",
+    "manualTip1": "Znajd\u017a kod kreskowy na opakowaniu",
+    "manualTip2": "Wpisz dok\u0142adnie wszystkie 8 lub 13 cyfr",
+    "manualTip3": "Sprawd\u017a czy nie ma liter\u00f3wek przed wys\u0142aniem"
   },
   "scannerError": {
     "permissionDenied": "Odmowa dostępu do kamery. Zezwól na dostęp do kamery w ustawieniach przeglądarki i spróbuj ponownie.",

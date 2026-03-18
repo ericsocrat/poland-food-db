@@ -9,15 +9,16 @@ import { ScanHistorySkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getScanHistory } from "@/lib/api";
 import { NUTRI_COLORS } from "@/lib/constants";
+import { formatRelativeTime } from "@/lib/format-time";
 import { useTranslation } from "@/lib/i18n";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { createClient } from "@/lib/supabase/client";
 import type { ScanHistoryItem } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { ClipboardList } from "lucide-react";
+import { ArrowLeft, ClipboardList } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 
 const FILTERS = [
   { value: "all", labelKey: "scanHistory.all" },
@@ -51,16 +52,25 @@ export default function ScanHistoryPage() {
 
   return (
     <div className="space-y-4">
-      <Breadcrumbs
-        items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.scan", href: "/app/scan" },
-          { labelKey: "scanHistory.title" },
-        ]}
-      />
+      <div className="hidden md:block">
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.scan", href: "/app/scan" },
+            { labelKey: "scanHistory.title" },
+          ]}
+        />
+      </div>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.back()}
+            className="inline-flex items-center justify-center rounded-lg p-1.5 text-foreground-secondary hover:bg-surface-muted md:hidden"
+            aria-label={t("common.back")}
+          >
+            <ArrowLeft size={20} />
+          </button>
           <h1 className="flex items-center gap-2 text-lg font-semibold text-foreground">
             <ClipboardList size={20} aria-hidden="true" />{" "}
             {t("scanHistory.title")}
@@ -121,15 +131,10 @@ export default function ScanHistoryPage() {
 
       {/* Scan list */}
       {data && data.scans.length > 0 && (
-        <ul className="space-y-2">
-          {data.scans.map((scan) => (
-            <ScanRow
-              key={scan.scan_id}
-              scan={scan}
-              onNavigate={(id) => router.push(`/app/product/${id}`)}
-            />
-          ))}
-        </ul>
+        <ScanList
+          scans={data.scans}
+          onNavigate={(id) => router.push(`/app/product/${id}`)}
+        />
       )}
 
       {/* Pagination */}
@@ -160,25 +165,66 @@ export default function ScanHistoryPage() {
   );
 }
 
-function ScanRow({
-  scan,
+// ─── R1: Group consecutive duplicate EAN scans ──────────────────────────────
+
+type GroupedScan = ScanHistoryItem & { count: number };
+
+function groupScans(scans: ScanHistoryItem[]): GroupedScan[] {
+  const grouped: GroupedScan[] = [];
+  for (const scan of scans) {
+    const prev = grouped[grouped.length - 1];
+    if (prev && prev.ean === scan.ean) {
+      prev.count += 1;
+    } else {
+      grouped.push({ ...scan, count: 1 });
+    }
+  }
+  return grouped;
+}
+
+function ScanList({
+  scans,
   onNavigate,
 }: Readonly<{
-  scan: ScanHistoryItem;
+  scans: ScanHistoryItem[];
+  onNavigate: (productId: number) => void;
+}>) {
+  const grouped = useMemo(() => groupScans(scans), [scans]);
+  return (
+    <ul className="space-y-2">
+      {grouped.map((scan, idx) => (
+        <ScanRow
+          key={scan.scan_id}
+          scan={scan}
+          index={idx}
+          onNavigate={onNavigate}
+        />
+      ))}
+    </ul>
+  );
+}
+
+// ─── Individual scan row ─────────────────────────────────────────────────────
+
+function ScanRow({
+  scan,
+  index,
+  onNavigate,
+}: Readonly<{
+  scan: GroupedScan;
+  index: number;
   onNavigate: (productId: number) => void;
 }>) {
   const { t } = useTranslation();
   const date = new Date(scan.scanned_at);
-  const timeStr = date.toLocaleString(undefined, {
-    month: "short",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-  });
+  const timeStr = formatRelativeTime(date);
 
   if (scan.found && scan.product_id) {
     return (
-      <li className="card hover-lift-press">
+      <li
+        className="card hover-lift-press animate-[fadeInUp_0.3s_ease-out_both]"
+        style={{ animationDelay: `${index * 60}ms` }}
+      >
         <button
           onClick={() => onNavigate(scan.product_id ?? 0)}
           className="flex w-full items-center gap-3 text-left"
@@ -206,6 +252,11 @@ function ScanRow({
             <span className="mt-0.5 text-xs font-mono text-foreground-muted">
               {scan.ean}
             </span>
+            {scan.count > 1 && (
+              <span className="mt-0.5 rounded-full bg-brand/10 px-1.5 text-[10px] font-semibold text-brand">
+                ×{scan.count}
+              </span>
+            )}
           </div>
         </button>
       </li>
@@ -214,7 +265,10 @@ function ScanRow({
 
   // Not found scan
   return (
-    <li className="card border-warning-border bg-warning-bg/50">
+    <li
+      className="card border-warning-border bg-warning-bg/50 animate-[fadeInUp_0.3s_ease-out_both]"
+      style={{ animationDelay: `${index * 60}ms` }}
+    >
       <div className="flex items-center gap-3">
         <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded bg-warning text-sm">
           ❓

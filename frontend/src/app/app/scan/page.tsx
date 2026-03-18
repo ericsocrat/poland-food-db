@@ -32,6 +32,7 @@ import type {
 import { isValidEan, isValidEanChecksum, stripNonDigits } from "@/lib/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
+    ArrowLeft,
     Camera,
     ClipboardList,
     ClipboardPaste,
@@ -196,17 +197,28 @@ export default function ScanPage() {
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6">
-      <Breadcrumbs
-        items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.scan" },
-        ]}
-      />
+      <div className="hidden md:block">
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.scan" },
+          ]}
+        />
+      </div>
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h1 className="flex items-center gap-2 text-xl font-bold text-foreground lg:text-2xl">
-          <Camera size={22} aria-hidden="true" /> {t("scan.title")}
-        </h1>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => router.back()}
+            className="md:hidden rounded-lg p-1.5 text-foreground-secondary hover:bg-surface-muted"
+            aria-label={t("common.back")}
+          >
+            <ArrowLeft size={20} />
+          </button>
+          <h1 className="flex items-center gap-2 text-xl font-bold text-foreground lg:text-2xl">
+            <Camera size={22} aria-hidden="true" /> {t("scan.title")}
+          </h1>
+        </div>
         <div className="flex gap-2">
           <Link
             href="/app/scan/history"
@@ -331,16 +343,16 @@ export default function ScanPage() {
                 />
                 {/* Viewfinder overlay with alignment guides */}
                 <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-                  <div className="relative h-32 w-64">
+                  <div className="relative h-36 w-72">
                     <div className="absolute inset-0 rounded-xl border-2 border-white/60" />
                     {/* Corner guides */}
-                    <div className="absolute -left-0.5 -top-0.5 h-4 w-4 border-l-[3px] border-t-[3px] border-white rounded-tl" />
-                    <div className="absolute -right-0.5 -top-0.5 h-4 w-4 border-r-[3px] border-t-[3px] border-white rounded-tr" />
-                    <div className="absolute -bottom-0.5 -left-0.5 h-4 w-4 border-b-[3px] border-l-[3px] border-white rounded-bl" />
-                    <div className="absolute -bottom-0.5 -right-0.5 h-4 w-4 border-b-[3px] border-r-[3px] border-white rounded-br" />
-                    {/* Animated scan line */}
+                    <div className="absolute -left-0.5 -top-0.5 h-5 w-5 border-l-[3px] border-t-[3px] border-white rounded-tl" />
+                    <div className="absolute -right-0.5 -top-0.5 h-5 w-5 border-r-[3px] border-t-[3px] border-white rounded-tr" />
+                    <div className="absolute -bottom-0.5 -left-0.5 h-5 w-5 border-b-[3px] border-l-[3px] border-white rounded-bl" />
+                    <div className="absolute -bottom-0.5 -right-0.5 h-5 w-5 border-b-[3px] border-r-[3px] border-white rounded-br" />
+                    {/* Animated scan line — brand color */}
                     <div
-                      className="absolute left-2 right-2 h-0.5 bg-error/70"
+                      className="absolute left-2 right-2 h-0.5 bg-brand/70"
                       style={{
                         animation: "scanLine 2s ease-in-out infinite",
                         top: "50%",
@@ -349,6 +361,20 @@ export default function ScanPage() {
                     <style>{`@keyframes scanLine { 0%,100% { top: 15%; } 50% { top: 85%; } }`}</style>
                   </div>
                 </div>
+                {/* Torch floating pill — inside viewfinder */}
+                <button
+                  type="button"
+                  onClick={toggleTorch}
+                  className={`absolute bottom-3 right-3 z-10 flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-white backdrop-blur-sm transition-colors ${
+                    torchOn
+                      ? "bg-yellow-500/80 shadow-[0_0_12px_rgba(234,179,8,0.5)]"
+                      : "bg-white/20 hover:bg-white/30"
+                  }`}
+                  aria-label={torchOn ? t("scan.off") : t("scan.torch")}
+                >
+                  <Flashlight size={14} aria-hidden="true" />
+                  {torchOn ? t("scan.off") : t("scan.torch")}
+                </button>
                 {/* Batch mode indicator */}
                 {batchMode && (
                   <div className="absolute left-3 top-3 rounded-full bg-brand px-2 py-0.5 text-xs font-medium text-white">
@@ -356,24 +382,17 @@ export default function ScanPage() {
                   </div>
                 )}
               </div>
-              <div className="flex gap-2">
-                <Button variant="secondary" onClick={toggleTorch} className="flex-1"
-                  icon={<Flashlight size={16} aria-hidden="true" />}
-                >
-                  {torchOn ? t("scan.off") : t("scan.torch")}
-                </Button>
-                <Button
-                  variant="secondary"
-                  onClick={() => {
-                    stopScanner();
-                    startScanner();
-                  }}
-                  className="flex-1"
-                  icon={<RefreshCw size={16} aria-hidden="true" />}
-                >
-                  {t("scan.restart")}
-                </Button>
-              </div>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  stopScanner();
+                  startScanner();
+                }}
+                fullWidth
+                icon={<RefreshCw size={16} aria-hidden="true" />}
+              >
+                {t("scan.restart")}
+              </Button>
 
               {/* Scanning status */}
               {!scanTimeout && feedActive && (
@@ -456,6 +475,27 @@ export default function ScanPage() {
           <p className="text-center text-xs text-foreground-muted">
             {t("scan.digitHint")}
           </p>
+
+          {/* Manual mode tips */}
+          <div className="rounded-lg border border-border bg-surface-muted/50 p-3">
+            <p className="mb-2 text-xs font-semibold text-foreground-secondary">
+              {t("scan.manualTipsTitle")}
+            </p>
+            <ul className="space-y-1.5 text-xs text-foreground-muted">
+              <li className="flex items-start gap-2">
+                <span aria-hidden="true">📦</span>
+                <span>{t("scan.manualTip1")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span aria-hidden="true">🔢</span>
+                <span>{t("scan.manualTip2")}</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span aria-hidden="true">📋</span>
+                <span>{t("scan.manualTip3")}</span>
+              </li>
+            </ul>
+          </div>
         </form>
       )}
 

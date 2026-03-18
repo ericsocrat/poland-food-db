@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import {
@@ -9,6 +9,10 @@ import {
 } from "./ScanResultView";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
+
+vi.mock("@/hooks/use-reduced-motion", () => ({
+  useReducedMotion: () => true,
+}));
 
 vi.mock("@/lib/i18n", () => ({
   useTranslation: () => ({
@@ -347,12 +351,12 @@ describe("ScanFoundView", () => {
     expect(screen.queryByText("TestBrand")).toBeNull();
   });
 
-  it("renders TryVit score badge", () => {
+  it("renders TryVit score badge", async () => {
     render(
       <ScanFoundView product={mockFoundProduct} onViewDetails={onViewDetails} onReset={onReset} />,
     );
-    // toTryVitScore(35) = 65
-    expect(screen.getByText("65")).toBeInTheDocument();
+    // toTryVitScore(35) = 65 — score animates via count-up, so wait for it
+    await waitFor(() => expect(screen.getByText("65")).toBeInTheDocument());
   });
 
   it("renders score band label", () => {

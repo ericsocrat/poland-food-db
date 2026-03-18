@@ -88,7 +88,8 @@ describe("SubmitProductPage", () => {
     expect(screen.getByLabelText("EAN Barcode *")).toBeInTheDocument();
     expect(screen.getByLabelText("Product Name *")).toBeInTheDocument();
     expect(screen.getByLabelText(/^Brand/)).toBeInTheDocument();
-    expect(screen.getByLabelText(/^Category/)).toBeInTheDocument();
+    // Category uses CategoryPicker (button pills) instead of a <select>
+    expect(screen.getByRole("button", { name: /Dairy/ })).toBeInTheDocument();
     expect(screen.getByLabelText(/^Notes/)).toBeInTheDocument();
   });
 
@@ -186,12 +187,12 @@ describe("SubmitProductPage", () => {
 
   // ─── Category select ───────────────────────────────────────────────────────
 
-  it("renders category dropdown with FOOD_CATEGORIES", () => {
+  it("renders category pills with FOOD_CATEGORIES", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    const select = screen.getByLabelText(/^Category/);
-    expect(select).toBeInTheDocument();
-    // Default placeholder option + 1 mocked category
-    expect(select.querySelectorAll("option")).toHaveLength(2);
+    // CategoryPicker renders one button per FOOD_CATEGORIES entry
+    const dairyBtn = screen.getByRole("button", { name: /Dairy/ });
+    expect(dairyBtn).toBeInTheDocument();
+    expect(dairyBtn).toHaveAttribute("aria-pressed", "false");
   });
 
   it("sends selected category in submission", async () => {
@@ -199,7 +200,8 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "Test");
-    await user.selectOptions(screen.getByLabelText(/^Category/), "dairy");
+    // Click the CategoryPicker button instead of using selectOptions
+    await user.click(screen.getByRole("button", { name: /Dairy/ }));
     await user.click(screen.getByRole("button", { name: "Submit Product" }));
 
     await waitFor(() => {

@@ -36,6 +36,10 @@ const {
   mockResetReader: vi.fn(),
 }));
 
+vi.mock("@/hooks/use-reduced-motion", () => ({
+  useReducedMotion: () => true,
+}));
+
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: mockPush }),
 }));
@@ -1101,7 +1105,8 @@ describe("ScanPage", () => {
       expect(screen.getByText("Product Found!")).toBeInTheDocument();
     });
     // unhealthiness_score 65 → TryVit Score 35, band = "Poor"
-    expect(screen.getByText("35")).toBeInTheDocument();
+    // Score uses count-up animation, wait for final value
+    await waitFor(() => expect(screen.getByText("35")).toBeInTheDocument());
     expect(screen.getByText("Poor")).toBeInTheDocument();
   });
 

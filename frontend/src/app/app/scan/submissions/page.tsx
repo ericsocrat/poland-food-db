@@ -3,6 +3,7 @@
 // ─── My Submissions page — user's product submissions with status ───────────
 
 import { Button } from "@/components/common/Button";
+import { EmptyStateIllustration } from "@/components/common/EmptyStateIllustration";
 import { SubmissionsSkeleton } from "@/components/common/skeletons";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
 import { getMySubmissions } from "@/lib/api";
@@ -13,6 +14,7 @@ import type { Submission } from "@/lib/types";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { ContributorBadge } from "@/components/scan/ContributorBadge";
 import {
+    ArrowLeft,
     CheckCircle,
     Clock,
     FileText,
@@ -80,20 +82,31 @@ export default function MySubmissionsPage() {
 
   return (
     <div className="space-y-4">
-      <Breadcrumbs
-        items={[
-          { labelKey: "nav.home", href: "/app" },
-          { labelKey: "nav.scan", href: "/app/scan" },
-          { labelKey: "scan.mySubmissions" },
-        ]}
-      />
+      <div className="hidden md:block">
+        <Breadcrumbs
+          items={[
+            { labelKey: "nav.home", href: "/app" },
+            { labelKey: "nav.scan", href: "/app/scan" },
+            { labelKey: "scan.mySubmissions" },
+          ]}
+        />
+      </div>
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-lg font-semibold text-foreground flex items-center gap-1.5">
-            <FileText size={18} aria-hidden="true" />
-            {t("scan.mySubmissions")}
-          </h1>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => router.back()}
+              className="inline-flex items-center justify-center rounded-lg p-1.5 text-foreground-secondary hover:bg-surface-muted md:hidden"
+              aria-label={t("common.back")}
+            >
+              <ArrowLeft size={20} />
+            </button>
+            <h1 className="text-lg font-semibold text-foreground flex items-center gap-1.5">
+              <FileText size={18} aria-hidden="true" />
+              {t("scan.mySubmissions")}
+            </h1>
+          </div>
           <p className="text-sm text-foreground-secondary">
             {t("scan.submissionsSubtitle")}
           </p>
@@ -126,36 +139,24 @@ export default function MySubmissionsPage() {
         </div>
       )}
 
-      {/* Empty */}
+      {/* Empty — R10: illustration + contributor teaser */}
       {data?.submissions.length === 0 && (
-        <div className="py-12 text-center">
-          <FileText
-            size={40}
-            aria-hidden="true"
-            className="mx-auto mb-2 text-foreground-muted"
-          />
-          <p className="mb-1 text-sm text-foreground-secondary">
-            {t("scan.submissionsEmptyTitle")}
-          </p>
-          <p className="mb-4 text-xs text-foreground-muted">
-            {t("scan.submissionsEmptyMessage")}
-          </p>
-          <Link
-            href="/app/scan"
-            className="text-sm text-brand hover:text-brand-hover"
-          >
-            {t("scan.startScanning")}
-          </Link>
-        </div>
+        <EmptyStateIllustration
+          type="no-submissions"
+          titleKey="scan.submissionsEmptyTitle"
+          descriptionKey="scan.submissionsEmptyMessage"
+          action={{ labelKey: "scan.startScanning", href: "/app/scan" }}
+        />
       )}
 
       {/* Submission list */}
       {data && data.submissions.length > 0 && (
         <ul className="space-y-2">
-          {data.submissions.map((sub) => (
+          {data.submissions.map((sub, idx) => (
             <SubmissionRow
               key={sub.id}
               submission={sub}
+              index={idx}
               onViewProduct={(id) => router.push(`/app/product/${id}`)}
             />
           ))}
@@ -192,9 +193,11 @@ export default function MySubmissionsPage() {
 
 function SubmissionRow({
   submission,
+  index,
   onViewProduct,
 }: Readonly<{
   submission: Submission;
+  index: number;
   onViewProduct: (productId: number) => void;
 }>) {
   const { t } = useTranslation();
@@ -202,7 +205,10 @@ function SubmissionRow({
   const date = new Date(submission.created_at).toLocaleDateString();
 
   return (
-    <li className="card">
+    <li
+      className="card animate-[fadeInUp_0.3s_ease-out_both]"
+      style={{ animationDelay: `${index * 60}ms` }}
+    >
       <div className="flex items-start gap-3">
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
