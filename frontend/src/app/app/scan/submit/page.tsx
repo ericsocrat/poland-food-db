@@ -2,21 +2,21 @@
 
 // ─── Submit Product page — form for adding missing products ─────────────────
 
-import { useState } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { showToast } from "@/lib/toast";
-import { eventBus } from "@/lib/events";
 import { Button } from "@/components/common/Button";
-import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { FileText, Camera, X } from "lucide-react";
-import { createClient } from "@/lib/supabase/client";
-import { submitProduct } from "@/lib/api";
-import { useTranslation } from "@/lib/i18n";
 import { usePreferences } from "@/components/common/RouteGuard";
+import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
+import { submitProduct } from "@/lib/api";
 import { FOOD_CATEGORIES, getCountryFlag, getCountryName } from "@/lib/constants";
+import { eventBus } from "@/lib/events";
 import { gs1CountryHint } from "@/lib/gs1";
+import { useTranslation } from "@/lib/i18n";
+import { createClient } from "@/lib/supabase/client";
+import { showToast } from "@/lib/toast";
 import type { FormSubmitEvent } from "@/lib/types";
+import { useMutation } from "@tanstack/react-query";
+import { Camera, FileText, X } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 export default function SubmitProductPage() {
   const supabase = createClient();
@@ -41,7 +41,13 @@ export default function SubmitProductPage() {
     const file = e.target.files?.[0] ?? null;
     setPhotoFile(file);
     if (photoPreview) URL.revokeObjectURL(photoPreview);
-    setPhotoPreview(file ? URL.createObjectURL(file) : null);
+    if (file) {
+      const objectUrl = URL.createObjectURL(file);
+      // Only allow blob: scheme URLs — prevents DOM-XSS (CodeQL js/xss-through-dom)
+      setPhotoPreview(objectUrl.startsWith("blob:") ? objectUrl : null);
+    } else {
+      setPhotoPreview(null);
+    }
   }
 
   function removePhoto() {
@@ -230,7 +236,7 @@ export default function SubmitProductPage() {
             >
               {t("submit.photoLabel")}
             </label>
-            {photoPreview ? (
+            {photoPreview && photoPreview.startsWith("blob:") ? (
               <div className="relative inline-block">
                 <img
                   src={photoPreview}
