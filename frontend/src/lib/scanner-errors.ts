@@ -94,7 +94,7 @@ export function getBrowserSummary(): string {
     [/SamsungBrowser\/(\d+)/, "Samsung"],
     [/Firefox\/(\d+)/, "Firefox"],
     [/Chrome\/(\d+)/, "Chrome"],
-    [/Version\/(\d+)[^ ]* Safari/, "Safari"],
+    [/Version\/(\d+)[\d.]* Safari/, "Safari"],
   ];
   for (const [regex, name] of browsers) {
     const match = ua.match(regex);
