@@ -87,9 +87,9 @@ describe("SubmitProductPage", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
     expect(screen.getByLabelText("EAN Barcode *")).toBeInTheDocument();
     expect(screen.getByLabelText("Product Name *")).toBeInTheDocument();
-    expect(screen.getByLabelText("Brand")).toBeInTheDocument();
-    expect(screen.getByLabelText("Category")).toBeInTheDocument();
-    expect(screen.getByLabelText("Notes")).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Brand/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Category/)).toBeInTheDocument();
+    expect(screen.getByLabelText(/^Notes/)).toBeInTheDocument();
   });
 
   it("pre-fills EAN from URL search params", () => {
@@ -142,7 +142,7 @@ describe("SubmitProductPage", () => {
 
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "Test Product");
-    await user.type(screen.getByLabelText("Brand"), "TestBrand");
+    await user.type(screen.getByLabelText(/^Brand/), "TestBrand");
     await user.click(screen.getByRole("button", { name: "Submit Product" }));
 
     await waitFor(() => {
@@ -188,7 +188,7 @@ describe("SubmitProductPage", () => {
 
   it("renders category dropdown with FOOD_CATEGORIES", () => {
     render(<SubmitProductPage />, { wrapper: createWrapper() });
-    const select = screen.getByLabelText("Category");
+    const select = screen.getByLabelText(/^Category/);
     expect(select).toBeInTheDocument();
     // Default placeholder option + 1 mocked category
     expect(select.querySelectorAll("option")).toHaveLength(2);
@@ -199,7 +199,7 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "Test");
-    await user.selectOptions(screen.getByLabelText("Category"), "dairy");
+    await user.selectOptions(screen.getByLabelText(/^Category/), "dairy");
     await user.click(screen.getByRole("button", { name: "Submit Product" }));
 
     await waitFor(() => {
@@ -310,8 +310,8 @@ describe("SubmitProductPage", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("EAN Barcode *"), "12345678");
     await user.type(screen.getByLabelText("Product Name *"), "Test Prod");
-    await user.type(screen.getByLabelText("Brand"), "TestBrand");
-    await user.type(screen.getByLabelText("Notes"), "Some note");
+    await user.type(screen.getByLabelText(/^Brand/), "TestBrand");
+    await user.type(screen.getByLabelText(/^Notes/), "Some note");
     await user.click(screen.getByRole("button", { name: "Submit Product" }));
 
     await waitFor(() => {
@@ -323,5 +323,50 @@ describe("SubmitProductPage", () => {
         }),
       );
     });
+  });
+
+  // ─── R3: Country explainer ─────────────────────────────────────────────────
+
+  it("shows country explainer text below country badge", () => {
+    mockSearchGet.mockImplementation((key: string) => {
+      if (key === "ean") return "5901234567890";
+      if (key === "country") return "PL";
+      return null;
+    });
+    render(<SubmitProductPage />, { wrapper: createWrapper() });
+    expect(
+      screen.getByText(/Based on your profile or the barcode/),
+    ).toBeInTheDocument();
+  });
+
+  // ─── R4: Optional labels ───────────────────────────────────────────────────
+
+  it("shows optional indicator on non-required fields", () => {
+    render(<SubmitProductPage />, { wrapper: createWrapper() });
+    const optionalLabels = screen.getAllByText("(Optional)");
+    // Brand, Category, Photo, Notes — 4 optional fields
+    expect(optionalLabels.length).toBeGreaterThanOrEqual(4);
+  });
+
+  // ─── R8: Notes character counter ───────────────────────────────────────────
+
+  it("shows character counter for notes field", async () => {
+    render(<SubmitProductPage />, { wrapper: createWrapper() });
+    // Initial counter
+    expect(screen.getByText("0/500")).toBeInTheDocument();
+
+    // Type some text and verify counter updates
+    const user = userEvent.setup();
+    await user.type(screen.getByLabelText(/^Notes/), "Hello");
+    expect(screen.getByText("5/500")).toBeInTheDocument();
+  });
+
+  // ─── R10: Step indicator ───────────────────────────────────────────────────
+
+  it("shows step indicator below subtitle", () => {
+    render(<SubmitProductPage />, { wrapper: createWrapper() });
+    expect(
+      screen.getByText(/Step 2 of 2/),
+    ).toBeInTheDocument();
   });
 });

@@ -47,6 +47,7 @@
     "products": "{count} {count|product|products}",
     "allergenWarnings": "{count} allergen {count|warning|warnings}",
     "dismiss": "Dismiss",
+    "optional": "(Optional)",
     "productFrom": "Product from {country}"
   },
   "toast": {
@@ -355,6 +356,7 @@
     "pasteBarcode": "Paste",
     "crossCountryBadge": "From the {country} catalog",
     "gs1Hint": "Barcode registered in {country}",
+    "gs1CoverageNote": "Coverage varies by region — the product may still exist in another database.",
     "checksumWarning": "Check digit doesn\u2019t match \u2014 verify the barcode"
   },
   "scannerError": {
@@ -402,6 +404,8 @@
     "notesPlaceholder": "Any additional info about this product…",
     "submitting": "Submitting…",
     "submitButton": "Submit Product",
+    "countryExplainer": "Based on your profile or the barcode\u2019s GS1 prefix.",
+    "stepIndicator": "Step 2 of 2 \u2014 Add product details",
     "disclaimer": "Submissions are reviewed before being added to the database.",
     "successToast": "Product submitted! We'll review it soon."
   },

@@ -145,6 +145,9 @@ export default function SubmitProductPage() {
         <p className="text-sm text-foreground-secondary">
           {t("submit.subtitle")}
         </p>
+        <p className="mt-1 text-xs text-foreground-muted">
+          {t("submit.stepIndicator")}
+        </p>
       </div>
 
       <div className="card">
@@ -206,7 +209,8 @@ export default function SubmitProductPage() {
               htmlFor="brand"
               className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
-              {t("submit.brandLabel")}
+              {t("submit.brandLabel")}{" "}
+              <span className="font-normal text-foreground-muted">{t("common.optional")}</span>
             </label>
             <input
               id="brand"
@@ -225,7 +229,8 @@ export default function SubmitProductPage() {
               htmlFor="category"
               className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
-              {t("submit.categoryLabel")}
+              {t("submit.categoryLabel")}{" "}
+              <span className="font-normal text-foreground-muted">{t("common.optional")}</span>
             </label>
             <select
               id="category"
@@ -257,6 +262,9 @@ export default function SubmitProductPage() {
                   </span>
                 )}
               </p>
+              <p className="mt-1 text-xs text-foreground-muted">
+                {t("submit.countryExplainer")}
+              </p>
             </div>
           )}
 
@@ -266,7 +274,8 @@ export default function SubmitProductPage() {
               htmlFor="photo"
               className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
-              {t("submit.photoLabel")}
+              {t("submit.photoLabel")}{" "}
+              <span className="font-normal text-foreground-muted">{t("common.optional")}</span>
             </label>
             {photoPreview && photoPreview.startsWith("blob:") ? (
               <div className="relative inline-block">
@@ -287,9 +296,9 @@ export default function SubmitProductPage() {
             ) : (
               <label
                 htmlFor="photo"
-                className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border px-4 py-3 text-sm text-foreground-secondary hover:border-brand hover:text-brand"
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-8 text-sm text-foreground-secondary hover:border-brand hover:text-brand"
               >
-                <Camera size={18} aria-hidden="true" />
+                <Camera size={24} aria-hidden="true" />
                 {t("submit.photoHint")}
               </label>
             )}
@@ -309,7 +318,8 @@ export default function SubmitProductPage() {
               htmlFor="notes"
               className="mb-1 block text-sm font-medium text-foreground-secondary"
             >
-              {t("submit.notesLabel")}
+              {t("submit.notesLabel")}{" "}
+              <span className="font-normal text-foreground-muted">{t("common.optional")}</span>
             </label>
             <textarea
               id="notes"
@@ -320,6 +330,9 @@ export default function SubmitProductPage() {
               maxLength={500}
               rows={2}
             />
+            <p className="mt-1 text-right text-xs text-foreground-muted">
+              {notes.length}/500
+            </p>
           </div>
 
           <Button

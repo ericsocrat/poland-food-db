@@ -47,6 +47,7 @@
     "products": "{count} {count|Produkt|Produkte}",
     "allergenWarnings": "{count} Allergen-{count|Warnung|Warnungen}",
     "dismiss": "Schließen",
+    "optional": "(Optional)",
     "productFrom": "Produkt aus {country}"
   },
   "toast": {
@@ -355,6 +356,7 @@
     "pasteBarcode": "Einfügen",
     "crossCountryBadge": "Aus dem {country}-Katalog",
     "gs1Hint": "Barcode registriert in {country}",
+    "gs1CoverageNote": "Die Abdeckung variiert je nach Region \u2014 das Produkt kann in einer anderen Datenbank existieren.",
     "checksumWarning": "Pr\u00fcfziffer stimmt nicht \u2014 Barcode \u00fcberpr\u00fcfen"
   },
   "scannerError": {
@@ -402,6 +404,8 @@
     "notesPlaceholder": "Zusätzliche Informationen zu diesem Produkt…",
     "submitting": "Wird eingereicht…",
     "submitButton": "Produkt einreichen",
+    "countryExplainer": "Basierend auf Ihrem Profil oder dem GS1-Präfix des Barcodes.",
+    "stepIndicator": "Schritt 2 von 2 — Produktdetails hinzufügen",
     "disclaimer": "Einreichungen werden vor der Aufnahme in die Datenbank überprüft.",
     "successToast": "Produkt eingereicht! Wir werden es in Kürze überprüfen."
   },

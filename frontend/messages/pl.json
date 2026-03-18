@@ -47,6 +47,7 @@
     "products": "{count} {count|produkt|produkty|produktów}",
     "allergenWarnings": "{count} {count|ostrzeżenie alergenowe|ostrzeżenia alergenowe|ostrzeżeń alergenowych}",
     "dismiss": "Odrzuć",
+    "optional": "(Opcjonalne)",
     "productFrom": "Produkt z {country}"
   },
   "toast": {
@@ -355,6 +356,7 @@
     "pasteBarcode": "Wklej",
     "crossCountryBadge": "Z katalogu: {country}",
     "gs1Hint": "Kod kreskowy zarejestrowany w {country}",
+    "gs1CoverageNote": "Pokrycie różni się w zależności od regionu — produkt może istnieć w innej bazie danych.",
     "checksumWarning": "Cyfra kontrolna nie zgadza si\u0119 \u2014 sprawd\u017a kod kreskowy"
   },
   "scannerError": {
@@ -402,6 +404,8 @@
     "notesPlaceholder": "Dodatkowe informacje o produkcie…",
     "submitting": "Wysyłanie…",
     "submitButton": "Zgłoś produkt",
+    "countryExplainer": "Na podstawie Twojego profilu lub prefiksu GS1 kodu kreskowego.",
+    "stepIndicator": "Krok 2 z 2 — Dodaj szczegóły produktu",
     "disclaimer": "Zgłoszenia są weryfikowane przed dodaniem do bazy danych.",
     "successToast": "Produkt zgłoszony! Wkrótce go zweryfikujemy."
   },

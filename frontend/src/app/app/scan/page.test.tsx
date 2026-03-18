@@ -1140,6 +1140,9 @@ describe("ScanPage", () => {
     mockListDevices.mockResolvedValue([
       { deviceId: "cam1", label: "Back Camera" } as MediaDeviceInfo,
     ]);
+    mockDecodeFromDevice.mockImplementation(
+      () => new Promise(() => {}),
+    );
 
     // Spy on setTimeout — verify the 15 s scan timeout is registered
     const spy = vi.spyOn(globalThis, "setTimeout");
@@ -1151,6 +1154,21 @@ describe("ScanPage", () => {
     // Wait for camera to fully initialise
     await waitFor(() => {
       expect(mockDecodeFromDevice).toHaveBeenCalled();
+    });
+
+    // Simulate feedActive becoming true — timeout only starts after feed is active
+    const videoEl = document.querySelector("video");
+    expect(videoEl).not.toBeNull();
+    Object.defineProperty(videoEl!, "readyState", {
+      value: 3,
+      configurable: true,
+    });
+    Object.defineProperty(videoEl!, "videoWidth", {
+      value: 640,
+      configurable: true,
+    });
+    await act(async () => {
+      videoEl!.dispatchEvent(new Event("playing"));
     });
 
     // The timeout useEffect should have called setTimeout(fn, 15_000)
