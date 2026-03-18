@@ -254,6 +254,28 @@ describe("ScanNotFoundView", () => {
     expect(screen.getByText(/scan\.gs1Hint/)).toBeInTheDocument();
   });
 
+  it("shows GS1 coverage note alongside hint", () => {
+    render(
+      <ScanNotFoundView
+        ean="5901234123457"
+        scanResult={{ api_version: "v1", found: false, ean: "5901234123457", has_pending_submission: false }}
+        onReset={onReset}
+      />,
+    );
+    expect(screen.getByText(/scan\.gs1CoverageNote/)).toBeInTheDocument();
+  });
+
+  it("does not show GS1 coverage note when prefix is unrecognised", () => {
+    render(
+      <ScanNotFoundView
+        ean="9999999999999"
+        scanResult={{ api_version: "v1", found: false, ean: "9999999999999", has_pending_submission: false }}
+        onReset={onReset}
+      />,
+    );
+    expect(screen.queryByText(/scan\.gs1CoverageNote/)).toBeNull();
+  });
+
   it("does not show GS1 country hint when prefix is unrecognised", () => {
     render(
       <ScanNotFoundView

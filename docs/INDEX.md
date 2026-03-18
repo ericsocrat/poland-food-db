@@ -21,7 +21,7 @@
 | [Security & Compliance](#security--compliance)           | 5     | Root policy, audit report, access audit, privacy checklist, rate limiting                                                           |
 | [Observability & Operations](#observability--operations) | 9     | Monitoring, observability, log schema, alerts, on-call policy, SLOs, metrics, incident response, disaster drill                     |
 | [DevOps & Environment](#devops--environment)             | 3     | Environment strategy, staging setup, Sonar config                                                                                   |
-| [Frontend & UX](#frontend--ux)                           | 6     | UX/UI design, UX impact metrics, brand guidelines, name candidates, design system, frontend README                                  |
+| [Frontend & UX](#frontend--ux)                           | 7     | UX/UI design, UX impact metrics, brand guidelines, name candidates, design system, frontend README, design refresh spec             |
 | [Process & Workflow](#process--workflow)                 | 7     | Agent workflow reference, research workflow, viewing & testing, backfill standard, migration conventions, labels, country expansion |
 | [Governance & Policy](#governance--policy)               | 6     | Feature sunsetting, performance report, performance guardrails, doc governance, repo governance, this index                         |
 | [Architecture Decisions](#architecture-decisions-adrs)   | 10    | MADR template + 9 ADRs (stack, scoring, country isolation, pipeline, API versioning, migrations, ingredients, nutrient density, ingredient language model) |
@@ -200,6 +200,7 @@
 | [NAME_CANDIDATES.md](NAME_CANDIDATES.md)                               | App name research — ~419 candidates scored across 41 rounds, domain availability checks                                | [#539](https://github.com/ericsocrat/tryvit/issues/539) | 2025-07-21   |
 | [../frontend/docs/DESIGN_SYSTEM.md](../frontend/docs/DESIGN_SYSTEM.md) | Frontend design system — Tailwind tokens, component patterns                                                           | Frontend domain                                         | 2026-02-17   |
 | [../frontend/README.md](../frontend/README.md)                         | Frontend project overview — setup, scripts, architecture                                                               | Frontend domain                                         | 2026-02-24   |
+| [DESIGN_REFRESH_SPEC.md](DESIGN_REFRESH_SPEC.md)                       | Mobile-first design system & UX refresh spec — component redesign rules, layout principles, implementation order       | Frontend domain                                         | 2026-03-14   |
 
 ## Process & Workflow
 

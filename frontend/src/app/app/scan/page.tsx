@@ -141,7 +141,7 @@ export default function ScanPage() {
 
   // ─── Scan timeout — "Having trouble?" after 15 seconds ──────────────────
   useEffect(() => {
-    if (mode === "camera" && scanState === "idle" && !cameraError) {
+    if (mode === "camera" && scanState === "idle" && !cameraError && feedActive) {
       setScanTimeout(false);
       timeoutRef.current = setTimeout(() => setScanTimeout(true), 15_000);
       return () => {
@@ -152,7 +152,7 @@ export default function ScanPage() {
       };
     }
     setScanTimeout(false);
-  }, [mode, scanState, cameraError]);
+  }, [mode, scanState, cameraError, feedActive]);
 
   function handleManualSubmit(e: FormSubmitEvent) {
     e.preventDefault();
@@ -387,6 +387,10 @@ export default function ScanPage() {
                 </p>
               )}
 
+              <p className="text-center text-xs text-foreground-muted">
+                {t("scan.cameraHint")}
+              </p>
+
               {/* Timeout hint */}
               {scanTimeout && (
                 <div className="card border-warning-border bg-warning-bg text-center">
@@ -398,9 +402,6 @@ export default function ScanPage() {
                   </p>
                 </div>
               )}
-              <p className="text-center text-xs text-foreground-muted">
-                {t("scan.cameraHint")}
-              </p>
             </>
           )}
         </div>

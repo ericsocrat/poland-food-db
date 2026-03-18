@@ -159,8 +159,8 @@ jobs:
         env:
           QA_MODE_LEVEL: ${{ steps.mode.outputs.mode }}
           BASE_URL: http://localhost:3000
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
 
       # ── Desktop Audit ────────────────────────────────────────────────────
       - name: Run Desktop Audit
@@ -170,8 +170,8 @@ jobs:
         env:
           QA_MODE_LEVEL: ${{ steps.mode.outputs.mode }}
           BASE_URL: http://localhost:3000
-          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
-          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
 
       # ── Lighthouse CI (Mobile) ─────────────────────────────────────────
       - name: Run Lighthouse CI (Mobile)

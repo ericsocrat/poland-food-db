@@ -4,16 +4,21 @@
 //
 // Skipped automatically when SUPABASE_SERVICE_ROLE_KEY is not set.
 
-import { test as setup, expect } from "@playwright/test";
+import { expect, test as setup } from "@playwright/test";
 import {
-  TEST_EMAIL,
-  TEST_PASSWORD,
-  ensureTestUser,
+    TEST_EMAIL,
+    TEST_PASSWORD,
+    ensureTestUser,
 } from "./helpers/test-user";
 
 const AUTH_STATE_PATH = "e2e/.auth/user.json";
 
 setup("create user and authenticate via UI", async ({ page }) => {
+  // Auth flow involves a network round-trip to Supabase (user creation +
+  // login + redirect). In CI the latency can spike, so give this setup
+  // test a generous 60 s budget (default per-test timeout is 30 s).
+  setup.setTimeout(60_000);
+
   // ── 1. Provision test user ────────────────────────────────────────────────
   await ensureTestUser();
 
@@ -26,9 +31,9 @@ setup("create user and authenticate via UI", async ({ page }) => {
   // After login the user is already onboarded (ensureTestUser pre-creates
   // preferences with onboarding_skipped=true), so we should land on /app/search.
   // If somehow onboarding still appears, complete it.
-  await page.waitForURL(/\/(app\/search|onboarding)/, {
-    timeout: 15_000,
-  });
+  // Explicit timeout overrides the global navigationTimeout (15 s) which is
+  // too tight for Supabase auth redirects under CI load.
+  await page.waitForURL(/\/(app\/search|onboarding)/, { timeout: 45_000 });
 
   // ── 3. Complete onboarding (if needed) ────────────────────────────────────
   if (page.url().includes("/onboarding")) {

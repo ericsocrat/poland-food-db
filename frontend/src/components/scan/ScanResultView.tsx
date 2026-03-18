@@ -17,8 +17,8 @@ import {
     AlertTriangle,
     CheckCircle,
     ClipboardList,
+    PackageSearch,
     RefreshCw,
-    Search,
 } from "lucide-react";
 
 // ─── Error state ────────────────────────────────────────────────────────────
@@ -85,10 +85,10 @@ export function ScanNotFoundView({
   const gs1Hint = gs1CountryHint(ean);
 
   return (
-    <div className="space-y-4">
+    <div className="mx-auto max-w-md space-y-4">
       <div className="card text-center">
         <div className="mb-2 flex justify-center">
-          <Search
+          <PackageSearch
             size={40}
             className="text-foreground-muted"
             aria-hidden="true"
@@ -101,10 +101,15 @@ export function ScanNotFoundView({
           {t("scan.notFoundMessage", { ean })}
         </p>
         {gs1Hint && (
-          <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-foreground-secondary dark:bg-gray-800">
-            <span aria-hidden="true">{getCountryFlag(gs1Hint.code)}</span>
-            {t("scan.gs1Hint", { country: gs1Hint.name })}
-          </p>
+          <>
+            <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-foreground-secondary dark:bg-gray-800">
+              <span aria-hidden="true">{getCountryFlag(gs1Hint.code)}</span>
+              {t("scan.gs1Hint", { country: gs1Hint.name })}
+            </p>
+            <p className="mt-1 text-xs text-foreground-muted">
+              {t("scan.gs1CoverageNote")}
+            </p>
+          </>
         )}
       </div>
 
