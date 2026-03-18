@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 import {
   sanitizeRedirect,
   isValidEan,
+  computeEanCheckDigit,
+  isValidEanChecksum,
   stripNonDigits,
   formatSlug,
 } from "@/lib/validation";
@@ -67,8 +69,8 @@ describe("isValidEan", () => {
     expect(isValidEan("123456789")).toBe(false);
   });
 
-  it("rejects 12 digits (UPC)", () => {
-    expect(isValidEan("012345678901")).toBe(false);
+  it("accepts 12 digits (UPC-A)", () => {
+    expect(isValidEan("012345678901")).toBe(true);
   });
 
   it("rejects non-digit characters", () => {
@@ -81,6 +83,53 @@ describe("isValidEan", () => {
 
   it("rejects strings with spaces", () => {
     expect(isValidEan("5901234 123457")).toBe(false);
+  });
+});
+
+// ─── computeEanCheckDigit ────────────────────────────────────────────────────
+
+describe("computeEanCheckDigit", () => {
+  it("computes correct check digit for EAN-13", () => {
+    // 5901234123457 → check digit 7
+    expect(computeEanCheckDigit("5901234123457")).toBe(7);
+  });
+
+  it("computes correct check digit for EAN-8", () => {
+    // 96385074 → check digit 4
+    expect(computeEanCheckDigit("96385074")).toBe(4);
+  });
+
+  it("computes correct check digit for UPC-A", () => {
+    // 036000291452 → check digit 2
+    expect(computeEanCheckDigit("036000291452")).toBe(2);
+  });
+});
+
+// ─── isValidEanChecksum ─────────────────────────────────────────────────────
+
+describe("isValidEanChecksum", () => {
+  it("returns true for valid EAN-13 checksum", () => {
+    expect(isValidEanChecksum("5901234123457")).toBe(true);
+  });
+
+  it("returns true for valid EAN-8 checksum", () => {
+    expect(isValidEanChecksum("96385074")).toBe(true);
+  });
+
+  it("returns true for valid UPC-A checksum", () => {
+    expect(isValidEanChecksum("036000291452")).toBe(true);
+  });
+
+  it("returns false for invalid check digit", () => {
+    expect(isValidEanChecksum("5901234123450")).toBe(false);
+  });
+
+  it("returns false for non-barcode strings", () => {
+    expect(isValidEanChecksum("abc")).toBe(false);
+  });
+
+  it("returns false for empty string", () => {
+    expect(isValidEanChecksum("")).toBe(false);
   });
 });
 

@@ -77,6 +77,14 @@ vi.mock("@/lib/score-utils", () => ({
   },
 }));
 
+vi.mock("@/lib/gs1", () => ({
+  gs1CountryHint: (ean: string) => {
+    if (ean.startsWith("590")) return { code: "PL", name: "Poland" };
+    if (ean.startsWith("400")) return { code: "DE", name: "Germany" };
+    return null;
+  },
+}));
+
 vi.mock("@/lib/constants", () => ({
   NUTRI_COLORS: {
     A: "bg-green-600",
@@ -232,6 +240,29 @@ describe("ScanNotFoundView", () => {
       "href",
       "/app/scan/history",
     );
+  });
+
+  it("shows GS1 country hint when EAN has recognised prefix", () => {
+    render(
+      <ScanNotFoundView
+        ean="5901234123457"
+        scanResult={{ api_version: "v1", found: false, ean: "5901234123457", has_pending_submission: false }}
+        onReset={onReset}
+      />,
+    );
+    expect(screen.getByText("🇵🇱")).toBeInTheDocument();
+    expect(screen.getByText(/scan\.gs1Hint/)).toBeInTheDocument();
+  });
+
+  it("does not show GS1 country hint when prefix is unrecognised", () => {
+    render(
+      <ScanNotFoundView
+        ean="9999999999999"
+        scanResult={{ api_version: "v1", found: false, ean: "9999999999999", has_pending_submission: false }}
+        onReset={onReset}
+      />,
+    );
+    expect(screen.queryByText(/scan\.gs1Hint/)).toBeNull();
   });
 });
 

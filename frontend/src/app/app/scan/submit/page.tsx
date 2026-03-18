@@ -8,13 +8,14 @@ import { useMutation } from "@tanstack/react-query";
 import { showToast } from "@/lib/toast";
 import { eventBus } from "@/lib/events";
 import { Button } from "@/components/common/Button";
-import Link from "next/link";
 import { Breadcrumbs } from "@/components/layout/Breadcrumbs";
-import { FileText } from "lucide-react";
+import { FileText, Camera, X } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { submitProduct } from "@/lib/api";
 import { useTranslation } from "@/lib/i18n";
 import { usePreferences } from "@/components/common/RouteGuard";
+import { FOOD_CATEGORIES, getCountryFlag, getCountryName } from "@/lib/constants";
+import { gs1CountryHint } from "@/lib/gs1";
 import type { FormSubmitEvent } from "@/lib/types";
 
 export default function SubmitProductPage() {
@@ -31,15 +32,47 @@ export default function SubmitProductPage() {
   const [brand, setBrand] = useState("");
   const [category, setCategory] = useState("");
   const [notes, setNotes] = useState("");
+  const [photoFile, setPhotoFile] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const { t } = useTranslation();
+  const gs1Hint = ean.length >= 8 ? gs1CountryHint(ean) : null;
+
+  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0] ?? null;
+    setPhotoFile(file);
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhotoPreview(file ? URL.createObjectURL(file) : null);
+  }
+
+  function removePhoto() {
+    setPhotoFile(null);
+    if (photoPreview) URL.revokeObjectURL(photoPreview);
+    setPhotoPreview(null);
+  }
 
   const mutation = useMutation({
     mutationFn: async () => {
+      let photoUrl: string | undefined;
+
+      if (photoFile) {
+        const ext = photoFile.name.split(".").pop() ?? "jpg";
+        const path = `submissions/${ean}-${Date.now()}.${ext}`;
+        const { error: uploadErr } = await supabase.storage
+          .from("product-photos")
+          .upload(path, photoFile, { contentType: photoFile.type });
+        if (uploadErr) throw new Error(uploadErr.message);
+        const { data: urlData } = supabase.storage
+          .from("product-photos")
+          .getPublicUrl(path);
+        photoUrl = urlData.publicUrl;
+      }
+
       const result = await submitProduct(supabase, {
         ean,
         productName,
         brand: brand || undefined,
         category: category || undefined,
+        photoUrl,
         notes: notes || undefined,
         scanCountry,
         suggestedCountry: scanCountry,
@@ -74,21 +107,13 @@ export default function SubmitProductPage() {
         ]}
       />
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-lg font-semibold text-foreground flex items-center gap-1.5">
-            <FileText size={18} aria-hidden="true" /> {t("submit.title")}
-          </h1>
-          <p className="text-sm text-foreground-secondary">
-            {t("submit.subtitle")}
-          </p>
-        </div>
-        <Link
-          href="/app/scan"
-          className="text-sm text-brand hover:text-brand-hover"
-        >
-          {t("submit.backToScanner")}
-        </Link>
+      <div>
+        <h1 className="text-lg font-semibold text-foreground flex items-center gap-1.5">
+          <FileText size={18} aria-hidden="true" /> {t("submit.title")}
+        </h1>
+        <p className="text-sm text-foreground-secondary">
+          {t("submit.subtitle")}
+        </p>
       </div>
 
       <div className="card">
@@ -164,14 +189,79 @@ export default function SubmitProductPage() {
             >
               {t("submit.categoryLabel")}
             </label>
-            <input
+            <select
               id="category"
-              type="text"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               className="input-field"
-              placeholder={t("submit.categoryPlaceholder")}
-              maxLength={100}
+            >
+              <option value="">{t("submit.categoryPlaceholder")}</option>
+              {FOOD_CATEGORIES.map((cat) => (
+                <option key={cat.slug} value={cat.slug}>
+                  {cat.emoji} {t(cat.labelKey)}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Country hint */}
+          {scanCountry && (
+            <div>
+              <span className="mb-1 block text-sm font-medium text-foreground-secondary">
+                {t("submit.countryLabel")}
+              </span>
+              <p className="inline-flex items-center gap-1.5 rounded-full bg-gray-100 px-3 py-1 text-sm dark:bg-gray-800">
+                <span aria-hidden="true">{getCountryFlag(scanCountry)}</span>
+                {getCountryName(scanCountry)}
+                {gs1Hint && gs1Hint.code !== scanCountry && (
+                  <span className="ml-1 text-xs text-foreground-muted">
+                    ({t("scan.gs1Hint", { country: gs1Hint.name })})
+                  </span>
+                )}
+              </p>
+            </div>
+          )}
+
+          {/* Photo */}
+          <div>
+            <label
+              htmlFor="photo"
+              className="mb-1 block text-sm font-medium text-foreground-secondary"
+            >
+              {t("submit.photoLabel")}
+            </label>
+            {photoPreview ? (
+              <div className="relative inline-block">
+                <img
+                  src={photoPreview}
+                  alt=""
+                  className="h-32 w-32 rounded-lg border border-border object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={removePhoto}
+                  className="absolute -right-2 -top-2 rounded-full bg-red-500 p-0.5 text-white shadow-sm hover:bg-red-600"
+                  aria-label={t("submit.photoRemove")}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            ) : (
+              <label
+                htmlFor="photo"
+                className="flex cursor-pointer items-center gap-2 rounded-lg border border-dashed border-border px-4 py-3 text-sm text-foreground-secondary hover:border-brand hover:text-brand"
+              >
+                <Camera size={18} aria-hidden="true" />
+                {t("submit.photoHint")}
+              </label>
+            )}
+            <input
+              id="photo"
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handlePhotoChange}
+              className="hidden"
             />
           </div>
 

@@ -18,14 +18,21 @@ vi.mock("next/navigation", () => ({
   useSearchParams: () => ({ get: mockSearchGet }),
 }));
 
-vi.mock("next/link", () => ({
-  default: ({
-    href,
-    children,
-  }: {
-    href: string;
-    children: React.ReactNode;
-  }) => <a href={href}>{children}</a>,
+vi.mock("@/lib/gs1", () => ({
+  gs1CountryHint: (ean: string) =>
+    ean.startsWith("590") ? { code: "PL", name: "Poland" } : null,
+}));
+
+vi.mock("@/lib/constants", () => ({
+  FOOD_CATEGORIES: [
+    { slug: "dairy", emoji: "\ud83e\uddc0", labelKey: "onboarding.catDairy" },
+  ],
+  getCountryFlag: (c: string) => (c === "PL" ? "\ud83c\uddf5\ud83c\uddf1" : ""),
+  getCountryName: (c: string) => (c === "PL" ? "Poland" : c),
+}));
+
+vi.mock("@/components/common/RouteGuard", () => ({
+  usePreferences: () => ({ country: "PL" }),
 }));
 
 const mockSubmitProduct = vi.fn();
@@ -74,14 +81,6 @@ describe("SubmitProductPage", () => {
     expect(
       screen.getByText("Help us add a missing product"),
     ).toBeInTheDocument();
-  });
-
-  it("links back to scanner", () => {
-    render(<SubmitProductPage />, { wrapper: createWrapper() });
-    expect(screen.getByText("← Back to Scanner").closest("a")).toHaveAttribute(
-      "href",
-      "/app/scan",
-    );
   });
 
   it("renders all form fields", () => {

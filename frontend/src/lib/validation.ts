@@ -15,10 +15,41 @@ export function sanitizeRedirect(
 }
 
 /**
- * Returns true if `code` is a valid EAN‑8 or EAN‑13 string.
+ * Returns true if `code` is a valid EAN‑8, UPC‑A (12), or EAN‑13 string.
  */
 export function isValidEan(code: string): boolean {
-  return /^\d{8}$|^\d{13}$/.test(code);
+  return /^\d{8}$|^\d{12,13}$/.test(code);
+}
+
+/**
+ * Compute the GS1 check digit for an EAN-8, UPC-A, or EAN-13 barcode.
+ * Pass the full code (including check digit position) or just the payload digits.
+ * Returns the expected check digit (0–9).
+ */
+export function computeEanCheckDigit(digits: string): number {
+  const stripped = digits.replace(/\D/g, "");
+  // Use up to 12 (EAN-13) or 7 (EAN-8) payload digits
+  const payload = stripped.length >= 12 ? stripped.slice(0, 12) : stripped.slice(0, 7);
+  let sum = 0;
+  const isEan13 = payload.length >= 12;
+  for (let i = 0; i < payload.length; i++) {
+    const digit = Number(payload[i]);
+    // EAN-13/UPC-A: positions 0,2,4… weight 1; positions 1,3,5… weight 3
+    // EAN-8: positions 0,2,4,6 weight 3; positions 1,3,5 weight 1
+    const weight = isEan13 ? (i % 2 === 0 ? 1 : 3) : (i % 2 === 0 ? 3 : 1);
+    sum += digit * weight;
+  }
+  return (10 - (sum % 10)) % 10;
+}
+
+/**
+ * Validate the check digit of a full EAN-8, UPC-A, or EAN-13 barcode.
+ * Returns true if the last digit matches the computed check digit.
+ */
+export function isValidEanChecksum(code: string): boolean {
+  if (!/^\d{8}$|^\d{12,13}$/.test(code)) return false;
+  const expected = computeEanCheckDigit(code);
+  return Number(code[code.length - 1]) === expected;
 }
 
 /**

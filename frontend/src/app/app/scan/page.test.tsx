@@ -65,7 +65,9 @@ vi.mock("@/lib/api", () => ({
 }));
 
 vi.mock("@/lib/validation", () => ({
-  isValidEan: (ean: string) => ean.length === 8 || ean.length === 13,
+  isValidEan: (ean: string) =>
+    ean.length === 8 || ean.length === 12 || ean.length === 13,
+  isValidEanChecksum: () => true,
   stripNonDigits: (s: string) => s.replace(/\D/g, ""),
 }));
 
@@ -202,7 +204,7 @@ describe("ScanPage", () => {
 
     // Camera mode is active by default — manual input not visible
     expect(
-      screen.queryByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.queryByPlaceholderText("Enter barcode"),
     ).not.toBeInTheDocument();
     // Camera tab should be selected
     expect(screen.getByText("Camera")).toBeInTheDocument();
@@ -215,7 +217,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Manual"));
 
     const input = screen.getByPlaceholderText(
-      "Enter EAN barcode (8 or 13 digits)",
+      "Enter barcode",
     );
     await user.type(input, "123");
 
@@ -229,7 +231,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Manual"));
 
     const input = screen.getByPlaceholderText(
-      "Enter EAN barcode (8 or 13 digits)",
+      "Enter barcode",
     );
     await user.type(input, "12345678");
 
@@ -244,7 +246,7 @@ describe("ScanPage", () => {
 
     await user.click(screen.getByText("Manual"));
     const input = screen.getByPlaceholderText(
-      "Enter EAN barcode (8 or 13 digits)",
+      "Enter barcode",
     );
     await user.type(input, "5901234123457");
     await user.click(screen.getByText("Look up"));
@@ -267,7 +269,7 @@ describe("ScanPage", () => {
 
     await user.click(screen.getByText("Manual"));
     const input = screen.getByPlaceholderText(
-      "Enter EAN barcode (8 or 13 digits)",
+      "Enter barcode",
     );
     await user.type(input, "5901234123457");
     await user.click(screen.getByText("Look up"));
@@ -293,7 +295,7 @@ describe("ScanPage", () => {
 
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -313,7 +315,7 @@ describe("ScanPage", () => {
 
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -332,7 +334,7 @@ describe("ScanPage", () => {
 
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -360,7 +362,7 @@ describe("ScanPage", () => {
 
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -381,7 +383,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Manual"));
 
     const input = screen.getByPlaceholderText(
-      "Enter EAN barcode (8 or 13 digits)",
+      "Enter barcode",
     );
     // Type exactly 9 digits — not valid (not 8 or 13)
     await user.type(input, "123456789");
@@ -402,7 +404,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Manual"));
 
     const input = screen.getByPlaceholderText(
-      "Enter EAN barcode (8 or 13 digits)",
+      "Enter barcode",
     );
     await user.type(input, "590-123-412");
 
@@ -437,7 +439,7 @@ describe("ScanPage", () => {
 
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -458,7 +460,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Manual"));
 
     expect(
-      screen.getByText("Enter 8 digits (EAN-8) or 13 digits (EAN-13)"),
+      screen.getByText("EAN-8 (8 digits), UPC-A (12) or EAN-13 (13)"),
     ).toBeInTheDocument();
   });
 
@@ -469,7 +471,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Manual"));
 
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "1234",
     );
 
@@ -483,7 +485,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByText("Manual"));
 
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "12345678",
     );
 
@@ -507,7 +509,7 @@ describe("ScanPage", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -529,7 +531,7 @@ describe("ScanPage", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -560,7 +562,7 @@ describe("ScanPage", () => {
     // Switch to manual and scan
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -593,7 +595,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByLabelText(/Batch mode/));
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -623,7 +625,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByLabelText(/Batch mode/));
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -655,7 +657,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByLabelText(/Batch mode/));
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -687,7 +689,7 @@ describe("ScanPage", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -872,7 +874,7 @@ describe("ScanPage", () => {
     await user.click(screen.getByLabelText(/Batch mode/));
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -1013,7 +1015,7 @@ describe("ScanPage", () => {
 
     // Should switch to manual mode — show EAN input field
     expect(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
     ).toBeInTheDocument();
   });
 
@@ -1040,7 +1042,7 @@ describe("ScanPage", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -1059,7 +1061,7 @@ describe("ScanPage", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -1082,7 +1084,7 @@ describe("ScanPage", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));
@@ -1102,7 +1104,7 @@ describe("ScanPage", () => {
     render(<ScanPage />, { wrapper: createWrapper() });
     await user.click(screen.getByText("Manual"));
     await user.type(
-      screen.getByPlaceholderText("Enter EAN barcode (8 or 13 digits)"),
+      screen.getByPlaceholderText("Enter barcode"),
       "5901234123457",
     );
     await user.click(screen.getByText("Look up"));

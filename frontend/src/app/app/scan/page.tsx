@@ -29,7 +29,7 @@ import type {
     RecordScanFoundResponse,
     RecordScanNotFoundResponse,
 } from "@/lib/types";
-import { isValidEan, stripNonDigits } from "@/lib/validation";
+import { isValidEan, isValidEanChecksum, stripNonDigits } from "@/lib/validation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import {
     Camera,
@@ -65,6 +65,7 @@ export default function ScanPage() {
   );
   const [scanTimeout, setScanTimeout] = useState(false);
   const [foundProduct, setFoundProduct] = useState<RecordScanFoundResponse | null>(null);
+  const [checksumWarn, setChecksumWarn] = useState(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const streamReadyTimeRef = useRef(0);
@@ -172,6 +173,7 @@ export default function ScanPage() {
     setScanResult(null);
     setFoundProduct(null);
     setScanTimeout(false);
+    setChecksumWarn(false);
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
       timeoutRef.current = null;
@@ -401,7 +403,11 @@ export default function ScanPage() {
             <input
               type="text"
               value={manualEan}
-              onChange={(e) => setManualEan(stripNonDigits(e.target.value))}
+              onChange={(e) => {
+                const v = stripNonDigits(e.target.value);
+                setManualEan(v);
+                setChecksumWarn(v.length >= 8 && isValidEan(v) && !isValidEanChecksum(v));
+              }}
               placeholder={t("scan.manualPlaceholder")}
               aria-label={t("scan.manualPlaceholder")}
               className="input-field min-w-0 flex-1 text-center text-lg tracking-widest"
@@ -424,9 +430,14 @@ export default function ScanPage() {
               icon={<ClipboardPaste size={16} aria-hidden="true" />}
               aria-label={t("scan.pasteBarcode")}
             >
-              {t("scan.pasteBarcode")}
+              <span className="hidden sm:inline">{t("scan.pasteBarcode")}</span>
             </Button>
           </div>
+          {checksumWarn && (
+            <p className="text-center text-xs text-warning-text">
+              {t("scan.checksumWarning")}
+            </p>
+          )}
           <Button
             type="submit"
             disabled={manualEan.length < 8}

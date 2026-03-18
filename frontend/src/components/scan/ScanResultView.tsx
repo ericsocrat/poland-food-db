@@ -6,6 +6,7 @@ import { Button, ButtonLink } from "@/components/common/Button";
 import { LoadingSpinner } from "@/components/common/LoadingSpinner";
 import { ScanMissSubmitCTA } from "@/components/scan/ScanMissSubmitCTA";
 import { getCountryFlag, getCountryName, NUTRI_COLORS } from "@/lib/constants";
+import { gs1CountryHint } from "@/lib/gs1";
 import { useTranslation } from "@/lib/i18n";
 import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
 import type {
@@ -81,6 +82,7 @@ export function ScanNotFoundView({
   country,
 }: ScanNotFoundProps) {
   const { t } = useTranslation();
+  const gs1Hint = gs1CountryHint(ean);
 
   return (
     <div className="space-y-4">
@@ -98,6 +100,12 @@ export function ScanNotFoundView({
         <p className="mt-1 text-sm text-foreground-secondary">
           {t("scan.notFoundMessage", { ean })}
         </p>
+        {gs1Hint && (
+          <p className="mt-2 inline-flex items-center gap-1 rounded-full bg-gray-100 px-3 py-1 text-xs text-foreground-secondary dark:bg-gray-800">
+            <span aria-hidden="true">{getCountryFlag(gs1Hint.code)}</span>
+            {t("scan.gs1Hint", { country: gs1Hint.name })}
+          </p>
+        )}
       </div>
 
       <ScanMissSubmitCTA
