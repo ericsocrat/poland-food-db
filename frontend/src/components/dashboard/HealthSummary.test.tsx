@@ -12,6 +12,16 @@ vi.mock("@/lib/i18n", () => ({
         "dashboard.healthSummaryTitle": "Health Summary",
         "dashboard.healthSummaryAvg": "Avg. TryVit Score",
         "dashboard.healthSummaryNoData": "Scan or browse products to see your health summary.",
+        "score.excellent": "Excellent",
+        "score.good": "Good",
+        "score.moderate": "Moderate",
+        "score.poor": "Poor",
+        "score.bad": "Bad",
+        "scoreBand.excellent": "Excellent",
+        "scoreBand.good": "Good",
+        "scoreBand.moderate": "Moderate",
+        "scoreBand.poor": "Poor",
+        "scoreBand.bad": "Bad",
       };
       if (key === "dashboard.healthSummaryProducts" && params) {
         return `across ${params.count} products`;
@@ -19,6 +29,12 @@ vi.mock("@/lib/i18n", () => ({
       return map[key] ?? key;
     },
   }),
+}));
+
+vi.mock("@/components/product/ScoreGauge", () => ({
+  ScoreGauge: ({ score }: { score: number }) => (
+    <div data-testid="score-gauge-mock">{100 - score}</div>
+  ),
 }));
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -56,14 +72,15 @@ describe("HealthSummary", () => {
     expect(screen.getByText(/Scan or browse/)).toBeInTheDocument();
   });
 
-  it("renders score circle with TryVit score", () => {
+  it("renders ScoreGauge with TryVit score", () => {
     // unhealthiness 40 → TryVit 60
     const products = [makeProduct({ unhealthiness_score: 40 })];
     render(<HealthSummary products={products} />);
 
-    const circle = screen.getByTestId("health-score-circle");
-    expect(circle).toBeInTheDocument();
-    expect(circle.textContent).toBe("60");
+    const gauge = screen.getByTestId("health-score-gauge");
+    expect(gauge).toBeInTheDocument();
+    // ScoreGauge mock renders 100 - score = TryVit score
+    expect(screen.getByTestId("score-gauge-mock").textContent).toBe("60");
   });
 
   it("computes average across multiple products", () => {
@@ -74,8 +91,7 @@ describe("HealthSummary", () => {
     ];
     render(<HealthSummary products={products} />);
 
-    const circle = screen.getByTestId("health-score-circle");
-    expect(circle.textContent).toBe("60");
+    expect(screen.getByTestId("score-gauge-mock").textContent).toBe("60");
   });
 
   it("shows product count", () => {
@@ -129,8 +145,30 @@ describe("HealthSummary", () => {
     ];
     render(<HealthSummary products={products} />);
 
-    const circle = screen.getByTestId("health-score-circle");
-    expect(circle.textContent).toBe("80");
+    expect(screen.getByTestId("score-gauge-mock").textContent).toBe("80");
     expect(screen.getByText("across 1 products")).toBeInTheDocument();
+  });
+
+  it("renders distribution legend with band labels and counts", () => {
+    const products = [
+      makeProduct({ product_id: 1, unhealthiness_score: 10 }), // green
+      makeProduct({ product_id: 2, unhealthiness_score: 30 }), // yellow
+      makeProduct({ product_id: 3, unhealthiness_score: 50 }), // orange
+    ];
+    render(<HealthSummary products={products} />);
+
+    const legend = screen.getByTestId("health-distribution-legend");
+    expect(legend).toBeInTheDocument();
+    expect(legend.textContent).toContain("Excellent (1)");
+    expect(legend.textContent).toContain("Good (1)");
+    expect(legend.textContent).toContain("Moderate (1)");
+  });
+
+  it("wraps gauge in scale-in animation", () => {
+    const products = [makeProduct({ unhealthiness_score: 30 })];
+    render(<HealthSummary products={products} />);
+
+    const gaugeWrapper = screen.getByTestId("health-score-gauge");
+    expect(gaugeWrapper.className).toContain("animate-scale-in");
   });
 });

@@ -2,9 +2,10 @@
 
 // ─── QuickWinCard — swap suggestion for worst-scoring product ───────────────
 
+import { ScoreGauge } from "@/components/product/ScoreGauge";
 import { useAlternativesV2 } from "@/hooks/use-alternatives-v2";
 import { useTranslation } from "@/lib/i18n";
-import { getScoreBand, toTryVitScore } from "@/lib/score-utils";
+import { toTryVitScore } from "@/lib/score-utils";
 import type { RecentlyViewedProduct } from "@/lib/types";
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
@@ -47,9 +48,6 @@ export function QuickWinCard({ products }: Readonly<QuickWinCardProps>) {
       toTryVitScore(worstScore)
     : 0;
 
-  const worstBand = getScoreBand(worstScore);
-  const altBand = alternative ? getScoreBand(alternative.unhealthiness_score) : null;
-
   return (
     <section
       data-testid="quick-win-card"
@@ -77,19 +75,13 @@ export function QuickWinCard({ products }: Readonly<QuickWinCardProps>) {
 
           {/* Score comparison */}
           <div className="flex items-center gap-3">
-            <span
-              data-testid="quick-win-from-score"
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold tabular-nums ${worstBand?.bgColor ?? "bg-muted"} ${worstBand?.textColor ?? "text-foreground"}`}
-            >
-              {toTryVitScore(worstScore)}
-            </span>
+            <div data-testid="quick-win-from-score">
+              <ScoreGauge score={worstScore} size="sm" />
+            </div>
             <ArrowRight className="h-4 w-4 text-foreground-secondary" aria-hidden="true" />
-            <span
-              data-testid="quick-win-to-score"
-              className={`inline-flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold tabular-nums ${altBand?.bgColor ?? "bg-muted"} ${altBand?.textColor ?? "text-foreground"}`}
-            >
-              {toTryVitScore(alternative.unhealthiness_score)}
-            </span>
+            <div data-testid="quick-win-to-score">
+              <ScoreGauge score={alternative.unhealthiness_score} size="sm" />
+            </div>
             {scoreDelta > 0 && (
               <span
                 data-testid="quick-win-gain"

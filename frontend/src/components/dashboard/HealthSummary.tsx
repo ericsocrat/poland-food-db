@@ -2,6 +2,7 @@
 
 // ─── HealthSummary — avg TryVit score + band distribution bar ───────────────
 
+import { ScoreGauge } from "@/components/product/ScoreGauge";
 import { useTranslation } from "@/lib/i18n";
 import {
     getAllBands,
@@ -59,7 +60,7 @@ export function HealthSummary({ products }: Readonly<HealthSummaryProps>) {
     );
   }
 
-  const { avgTryVit, band, distribution, total } = analysis;
+  const { avgTryVit, distribution, total } = analysis;
 
   return (
     <section
@@ -68,16 +69,9 @@ export function HealthSummary({ products }: Readonly<HealthSummaryProps>) {
       aria-label={t("dashboard.healthSummaryTitle")}
     >
       <div className="flex items-center gap-4">
-        {/* Score circle */}
-        <div
-          data-testid="health-score-circle"
-          className={`flex h-16 w-16 shrink-0 items-center justify-center rounded-full ${band?.bgColor ?? "bg-muted"}`}
-        >
-          <span
-            className={`text-2xl font-bold tabular-nums ${band?.textColor ?? "text-foreground"}`}
-          >
-            {avgTryVit}
-          </span>
+        {/* Score gauge */}
+        <div className="animate-scale-in" data-testid="health-score-gauge">
+          <ScoreGauge score={100 - avgTryVit} size="lg" />
         </div>
 
         <div className="min-w-0 flex-1">
@@ -113,6 +107,27 @@ export function HealthSummary({ products }: Readonly<HealthSummaryProps>) {
             />
           ) : null,
         )}
+      </div>
+
+      {/* Band legend */}
+      <div
+        data-testid="health-distribution-legend"
+        className="mt-2 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground"
+      >
+        {distribution
+          .filter((d) => d.count > 0)
+          .map((d) => (
+            <span key={d.band} className="inline-flex items-center gap-1">
+              <span
+                className="inline-block h-2 w-2 rounded-full"
+                style={{
+                  backgroundColor:
+                    SCORE_BAND_HEX[d.band as keyof typeof SCORE_BAND_HEX],
+                }}
+              />
+              {t(d.labelKey)} ({d.count})
+            </span>
+          ))}
       </div>
     </section>
   );

@@ -6,6 +6,12 @@ import { QuickWinCard } from "./QuickWinCard";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
+vi.mock("@/components/product/ScoreGauge", () => ({
+  ScoreGauge: ({ score }: { score: number }) => (
+    <div data-testid="score-gauge-mock">{100 - score}</div>
+  ),
+}));
+
 const mockAlternativesData = {
   alternatives: [
     {
