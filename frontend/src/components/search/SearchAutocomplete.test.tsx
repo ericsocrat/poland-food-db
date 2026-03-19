@@ -394,6 +394,37 @@ describe("SearchAutocomplete", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  // ─── Backdrop overlay (#982) ──────────────────────────────────────────────
+
+  it("renders backdrop overlay when dropdown is visible", () => {
+    render(
+      <SearchAutocomplete {...defaultProps} query="" show={true} />,
+      { wrapper: createWrapper() },
+    );
+    const backdrop = screen.getByTestId("autocomplete-backdrop");
+    expect(backdrop).toBeInTheDocument();
+    expect(backdrop).toHaveAttribute("aria-hidden", "true");
+  });
+
+  it("does not render backdrop when show is false", () => {
+    render(
+      <SearchAutocomplete {...defaultProps} show={false} />,
+      { wrapper: createWrapper() },
+    );
+    expect(screen.queryByTestId("autocomplete-backdrop")).not.toBeInTheDocument();
+  });
+
+  it("calls onClose when backdrop is clicked", () => {
+    const onClose = vi.fn();
+    render(
+      <SearchAutocomplete {...defaultProps} query="" onClose={onClose} />,
+      { wrapper: createWrapper() },
+    );
+    const backdrop = screen.getByTestId("autocomplete-backdrop");
+    fireEvent.click(backdrop);
+    expect(onClose).toHaveBeenCalled();
+  });
+
   it("shows loading state while fetching suggestions", () => {
     // Return a never-resolving promise to simulate loading
     mockSearchAutocomplete.mockReturnValue(new Promise(() => {}));

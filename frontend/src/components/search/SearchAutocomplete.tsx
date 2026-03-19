@@ -292,13 +292,21 @@ export function SearchAutocomplete({
     : t(dropdownLabelKey);
 
   return (
-    <div
-      ref={containerRef}
-      id="search-autocomplete-listbox"
-      role="listbox"
-      aria-label={dropdownLabel}
-      className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-xl border bg-surface shadow-lg"
-    >
+    <>
+      {/* Backdrop overlay — dims content behind the dropdown */}
+      <div
+        className="fixed inset-0 z-40 bg-black/20 animate-[backdropIn_150ms_var(--ease-standard)]"
+        onClick={onClose}
+        aria-hidden="true"
+        data-testid="autocomplete-backdrop"
+      />
+      <div
+        ref={containerRef}
+        id="search-autocomplete-listbox"
+        role="listbox"
+        aria-label={dropdownLabel}
+        className="absolute left-0 right-0 top-full z-50 mt-1 max-h-80 overflow-y-auto rounded-xl border bg-surface shadow-lg"
+      >
       {/* ── Recent searches (empty-query mode) ────────────────────── */}
       {showRecent && (
         <>
@@ -522,6 +530,7 @@ export function SearchAutocomplete({
         </>
       )}
     </div>
+    </>
   );
 }
 
