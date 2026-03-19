@@ -69,7 +69,7 @@ export const PAGE_MAP: PageEntry[] = [
 
   // ── Authenticated pages ─────────────────────────────────────────────────
   {
-    patterns: ["src/app/app/page.tsx", "src/components/layout/"],
+    patterns: ["src/app/app/page.tsx", "src/components/layout/", "src/components/dashboard/"],
     url: "/app",
     label: "dashboard",
     auth: true,

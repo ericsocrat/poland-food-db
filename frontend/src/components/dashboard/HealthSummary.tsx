@@ -98,7 +98,7 @@ export function HealthSummary({ products }: Readonly<HealthSummaryProps>) {
           d.count > 0 ? (
             <div
               key={d.band}
-              className="transition-all duration-300"
+              className="transition-all duration-300 first:rounded-l-full last:rounded-r-full"
               style={{
                 width: `${(d.count / total) * 100}%`,
                 backgroundColor:

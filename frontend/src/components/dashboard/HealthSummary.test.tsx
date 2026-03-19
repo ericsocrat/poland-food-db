@@ -131,6 +131,22 @@ describe("HealthSummary", () => {
     expect(bar.children).toHaveLength(1);
   });
 
+  it("applies rounded corners to first and last distribution bar segments", () => {
+    const products = [
+      makeProduct({ product_id: 1, unhealthiness_score: 10 }), // green
+      makeProduct({ product_id: 2, unhealthiness_score: 30 }), // yellow
+      makeProduct({ product_id: 3, unhealthiness_score: 50 }), // orange
+    ];
+    render(<HealthSummary products={products} />);
+
+    const bar = screen.getByTestId("health-distribution-bar");
+    const firstSegment = bar.children[0] as HTMLElement;
+    const lastSegment = bar.children[bar.children.length - 1] as HTMLElement;
+
+    expect(firstSegment.className).toContain("first:rounded-l-full");
+    expect(lastSegment.className).toContain("last:rounded-r-full");
+  });
+
   it("has correct aria-label on section", () => {
     const products = [makeProduct({ unhealthiness_score: 30 })];
     render(<HealthSummary products={products} />);
