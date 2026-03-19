@@ -304,4 +304,24 @@ describe("DashboardPage", () => {
       expect(screen.getByTestId("quick-actions")).toBeInTheDocument();
     });
   });
+
+  it("applies staggered fade-in-up animations to dashboard sections", async () => {
+    const { container } = render(<DashboardPage />, {
+      wrapper: createWrapper(),
+    });
+    await waitFor(() => {
+      expect(screen.getByTestId("health-summary")).toBeInTheDocument();
+    });
+    const animated = container.querySelectorAll(".animate-fade-in-up");
+    expect(animated.length).toBeGreaterThanOrEqual(5);
+    // First section (greeting) has no delay; subsequent have staggered delays
+    const delays = Array.from(animated).map(
+      (el) => (el as HTMLElement).style.animationDelay,
+    );
+    expect(delays[0]).toBe(""); // no explicit delay
+    expect(delays[1]).toBe("50ms");
+    expect(delays[2]).toBe("100ms");
+    expect(delays[3]).toBe("150ms");
+    expect(delays[4]).toBe("200ms");
+  });
 });

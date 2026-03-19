@@ -89,28 +89,38 @@ export default function DashboardPage() {
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6 lg:space-y-8">
-      <DashboardGreeting displayName={displayName} />
+      <div className="animate-fade-in-up">
+        <DashboardGreeting displayName={displayName} />
+      </div>
 
       {/* Health summary — average score + band distribution */}
-      <HealthSummary products={dashboard.recently_viewed} />
+      <div className="animate-fade-in-up" style={{ animationDelay: "50ms" }}>
+        <HealthSummary products={dashboard.recently_viewed} />
+      </div>
 
       {/* Quick win — swap suggestion for worst product */}
-      <ErrorBoundary level="section" context={{ section: "quick-win" }}>
-        <QuickWinCard products={dashboard.recently_viewed} />
-      </ErrorBoundary>
+      <div className="animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+        <ErrorBoundary level="section" context={{ section: "quick-win" }}>
+          <QuickWinCard products={dashboard.recently_viewed} />
+        </ErrorBoundary>
+      </div>
 
       {/* Recently viewed — compact card list */}
       {dashboard.recently_viewed.length > 0 && (
-        <ErrorBoundary
-          level="section"
-          context={{ section: "recently-viewed" }}
-        >
-          <RecentlyViewed products={dashboard.recently_viewed} />
-        </ErrorBoundary>
+        <div className="animate-fade-in-up" style={{ animationDelay: "150ms" }}>
+          <ErrorBoundary
+            level="section"
+            context={{ section: "recently-viewed" }}
+          >
+            <RecentlyViewed products={dashboard.recently_viewed} />
+          </ErrorBoundary>
+        </div>
       )}
 
       {/* Quick actions */}
-      <QuickActions />
+      <div className="animate-fade-in-up" style={{ animationDelay: "200ms" }}>
+        <QuickActions />
+      </div>
     </div>
     </PullToRefresh>
   );
