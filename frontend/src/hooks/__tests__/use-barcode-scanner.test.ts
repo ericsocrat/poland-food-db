@@ -481,6 +481,43 @@ describe("useBarcodeScanner", () => {
         error_type: "unknown",
       }));
     });
+
+    it("auto-retries when permissions.query returns granted (transient SPA error)", async () => {
+      // First attempt fails with NotAllowedError
+      mockListDevices.mockRejectedValueOnce(
+        new DOMException("NotAllowedError", "NotAllowedError"),
+      );
+      mockClassify.mockReturnValue("permission-denied");
+
+      Object.defineProperty(navigator, "permissions", {
+        value: {
+          query: vi.fn().mockResolvedValue({ state: "granted" }),
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      const { result } = renderHook(() =>
+        useBarcodeScanner(makeOptions()),
+      );
+
+      await act(async () => {
+        await result.current.startScanner();
+      });
+
+      // No error yet — retry is scheduled
+      expect(result.current.cameraError).toBeNull();
+
+      // Retry succeeds (mockRejectedValueOnce only rejects once)
+      mockListDevices.mockResolvedValue([makeDevice("cam1")]);
+
+      await act(async () => {
+        await vi.advanceTimersByTimeAsync(700);
+      });
+
+      // Scanner recovered
+      expect(result.current.cameraError).toBeNull();
+    });
   });
 
   // ─── Watchdog timeout ─────────────────────────────────────────────────

@@ -100,6 +100,7 @@ export function useBarcodeScanner({
   const initStartTimeRef = useRef(0);
   const streamReadyTimeRef = useRef(0);
   const streamReadyFiredRef = useRef(false);
+  const startIdRef = useRef(0);
   const onBarcodeDetectedRef = useRef(onBarcodeDetected);
   onBarcodeDetectedRef.current = onBarcodeDetected;
 
@@ -119,10 +120,11 @@ export function useBarcodeScanner({
     streamReadyFiredRef.current = false;
   }, []);
 
-  const startScanner = useCallback(async () => {
+  const startScanner = useCallback(async (retryAttempt = 0) => {
+    const thisStartId = ++startIdRef.current;
     setCameraError(null);
     initStartTimeRef.current = Date.now();
-    track("scanner_init_start", { browser: getBrowserSummary() });
+    track("scanner_init_start", { browser: getBrowserSummary(), retry_attempt: retryAttempt });
 
     try {
       const { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } =
@@ -203,7 +205,7 @@ export function useBarcodeScanner({
 
       // Watchdog: if feed is still not active after 5 s, flag camera error
       setTimeout(() => {
-        if (!isMountedRef.current) return;
+        if (!isMountedRef.current || thisStartId !== startIdRef.current) return;
         if (videoEl && (videoEl.readyState < 2 || videoEl.videoWidth === 0)) {
           setCameraError("generic");
           track("scanner_init_error", {
@@ -213,33 +215,53 @@ export function useBarcodeScanner({
         }
       }, 5_000);
     } catch (err: unknown) {
+      if (thisStartId !== startIdRef.current) return; // stale call — discard
+
       const errorType = classifyScannerError(err);
       track("scanner_init_error", {
         error_type: errorType,
         browser: getBrowserSummary(),
+        retry_attempt: retryAttempt,
       });
+
       if (errorType === "permission-denied") {
         // Best-effort permission state detection
-        let permKind: CameraErrorKind = "permission-unknown";
+        let permState: string | null = null;
         try {
           if (navigator.permissions?.query) {
             const result = await navigator.permissions.query({
               name: "camera" as PermissionName,
             });
-            permKind =
-              result.state === "denied"
-                ? "permission-denied"
-                : "permission-prompt";
+            permState = result.state;
           }
         } catch {
           // Permissions API unavailable or 'camera' not supported
         }
-        setCameraError(permKind);
+
+        // Auto-retry only when the Permissions API confirms "granted" —
+        // the NotAllowedError is a transient SPA-navigation artifact
+        // on mobile browsers (especially Android Chrome).
+        if (permState === "granted" && retryAttempt < 2) {
+          setTimeout(() => {
+            if (thisStartId === startIdRef.current && isMountedRef.current) {
+              startScanner(retryAttempt + 1);
+            }
+          }, 600 * (retryAttempt + 1));
+          return;
+        }
+
+        setCameraError(
+          permState === "denied"
+            ? "permission-denied"
+            : permState === "prompt"
+              ? "permission-prompt"
+              : "permission-unknown",
+        );
       } else {
         setCameraError("generic");
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- track is fire-and-forget
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- track is fire-and-forget; self-ref in retry is stable
   }, [stopScanner]);
 
   // ─── Torch ──────────────────────────────────────────────────────────────
@@ -281,6 +303,30 @@ export function useBarcodeScanner({
     }
     return () => stopScanner();
   }, [enabled, startScanner, stopScanner]);
+
+  // Listen for camera-permission state changes — auto-recover from
+  // transient NotAllowedError when the user grants access via settings.
+  useEffect(() => {
+    if (!cameraError) return;
+    let cleanup: (() => void) | null = null;
+    async function listen() {
+      try {
+        if (!navigator.permissions?.query) return;
+        const permStatus = await navigator.permissions.query({
+          name: "camera" as PermissionName,
+        });
+        const onChange = () => {
+          if (permStatus.state === "granted") startScanner();
+        };
+        permStatus.addEventListener("change", onChange);
+        cleanup = () => permStatus.removeEventListener("change", onChange);
+      } catch {
+        /* Permissions API unavailable */
+      }
+    }
+    listen();
+    return () => cleanup?.();
+  }, [cameraError, startScanner]);
 
   // ─── Public API ─────────────────────────────────────────────────────────
 
