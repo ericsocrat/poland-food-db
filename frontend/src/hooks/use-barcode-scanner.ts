@@ -108,21 +108,24 @@ async function ensureCameraAccess(): Promise<void> {
 
       if (attempt === PREFLIGHT_MAX_RETRIES) throw err;
 
-      // Only retry when the Permissions API confirms the user already
-      // granted camera access — the failure is a transient browser bug.
-      let permGranted = false;
+      // Only bail when the Permissions API explicitly says "denied" —
+      // that means the user actively blocked camera access and retrying
+      // won't help.  In every other state ("prompt", "granted", or API
+      // unavailable) we retry, because the failure is likely a transient
+      // browser bug during SPA navigation.
+      let permExplicitlyDenied = false;
       try {
         if (navigator.permissions?.query) {
           const ps = await navigator.permissions.query({
             name: "camera" as PermissionName,
           });
-          permGranted = ps.state === "granted";
+          permExplicitlyDenied = ps.state === "denied";
         }
       } catch {
-        /* Permissions API unavailable */
+        /* Permissions API unavailable — retry optimistically */
       }
 
-      if (!permGranted) throw err;
+      if (permExplicitlyDenied) throw err;
 
       await new Promise<void>((r) =>
         setTimeout(r, PREFLIGHT_BASE_DELAY_MS * 2 ** attempt),

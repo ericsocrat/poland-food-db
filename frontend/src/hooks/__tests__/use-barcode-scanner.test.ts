@@ -434,7 +434,11 @@ describe("useBarcodeScanner", () => {
       );
 
       await act(async () => {
-        await result.current.startScanner();
+        // "prompt" is not "denied", so pre-flight retries — advance timers
+        // to flush all 5 retry delays (250+500+1000+2000+4000 = 7750ms).
+        const promise = result.current.startScanner();
+        await vi.advanceTimersByTimeAsync(8_000);
+        await promise;
       });
 
       expect(result.current.cameraError).toBe("permission-prompt");
@@ -455,7 +459,10 @@ describe("useBarcodeScanner", () => {
       );
 
       await act(async () => {
-        await result.current.startScanner();
+        // Permissions API unavailable → not explicitly denied → retries
+        const promise = result.current.startScanner();
+        await vi.advanceTimersByTimeAsync(8_000);
+        await promise;
       });
 
       expect(result.current.cameraError).toBe("permission-unknown");
@@ -524,6 +531,40 @@ describe("useBarcodeScanner", () => {
       });
 
       // Scanner recovered via pre-flight — no error shown
+      expect(result.current.cameraError).toBeNull();
+      expect(mockGetUserMedia).toHaveBeenCalledTimes(2);
+    });
+
+    it("pre-flight retries getUserMedia when permission state is prompt (not denied)", async () => {
+      // First getUserMedia call fails (transient), second succeeds
+      mockGetUserMedia
+        .mockRejectedValueOnce(
+          new DOMException("NotAllowedError", "NotAllowedError"),
+        )
+        .mockResolvedValueOnce({ getTracks: () => [{ stop: vi.fn() }] });
+
+      mockListDevices.mockResolvedValue([makeDevice("cam1")]);
+
+      // Permission state is "prompt" — should still retry (not bail)
+      Object.defineProperty(navigator, "permissions", {
+        value: {
+          query: vi.fn().mockResolvedValue({ state: "prompt" }),
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      const { result } = renderHook(() =>
+        useBarcodeScanner(makeOptions()),
+      );
+
+      await act(async () => {
+        const promise = result.current.startScanner();
+        await vi.advanceTimersByTimeAsync(300);
+        await promise;
+      });
+
+      // Scanner recovered via pre-flight retry — no error shown
       expect(result.current.cameraError).toBeNull();
       expect(mockGetUserMedia).toHaveBeenCalledTimes(2);
     });
