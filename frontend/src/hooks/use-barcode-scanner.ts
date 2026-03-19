@@ -99,6 +99,13 @@ async function ensureCameraAccess(): Promise<void> {
       stream.getTracks().forEach((t) => t.stop());
       return;
     } catch (err) {
+      // NotFoundError / OverconstrainedError = genuinely no camera hardware.
+      // Don't retry — let the caller handle it as a real no-camera error.
+      const errName = err instanceof DOMException ? err.name : "";
+      if (errName === "NotFoundError" || errName === "OverconstrainedError") {
+        throw err;
+      }
+
       if (attempt === PREFLIGHT_MAX_RETRIES) throw err;
 
       // Only retry when the Permissions API confirms the user already
@@ -146,9 +153,14 @@ export function useBarcodeScanner({
   const onBarcodeDetectedRef = useRef(onBarcodeDetected);
   onBarcodeDetectedRef.current = onBarcodeDetected;
 
+  const trackRef = useRef(track);
+  trackRef.current = track;
+
   // ─── Lifecycle ──────────────────────────────────────────────────────────
 
   const stopScanner = useCallback(() => {
+    // Invalidate any in-flight startScanner() so it bails after pre-flight
+    startIdRef.current++;
     if (readerRef.current) {
       readerRef.current.reset();
       readerRef.current = null;
@@ -166,12 +178,16 @@ export function useBarcodeScanner({
     const thisStartId = ++startIdRef.current;
     setCameraError(null);
     initStartTimeRef.current = Date.now();
-    track("scanner_init_start", { browser: getBrowserSummary() });
+    trackRef.current("scanner_init_start", { browser: getBrowserSummary() });
 
     try {
       // Pre-flight: ensure camera is accessible before heavy ZXing init.
       // Handles transient NotAllowedError on Android Chrome SPA navigation.
       await ensureCameraAccess();
+
+      // Bail if the start was invalidated during pre-flight (e.g. user
+      // navigated away or stopScanner was called).
+      if (thisStartId !== startIdRef.current || !isMountedRef.current) return;
 
       const { BrowserMultiFormatReader, DecodeHintType, BarcodeFormat } =
         await import("@zxing/library");
@@ -190,7 +206,7 @@ export function useBarcodeScanner({
       const devices = await reader.listVideoInputDevices();
       if (devices.length === 0) {
         setCameraError("no-camera");
-        track("scanner_init_error", {
+        trackRef.current("scanner_init_error", {
           error_type: "no-camera",
           browser: getBrowserSummary(),
         });
@@ -220,7 +236,7 @@ export function useBarcodeScanner({
           if (videoEl.srcObject instanceof MediaStream) {
             streamRef.current = videoEl.srcObject;
             const videoTrack = streamRef.current.getVideoTracks()[0];
-            track("scanner_stream_ready", {
+              trackRef.current("scanner_stream_ready", {
               camera_count: devices.length,
               has_multiple_cameras: devices.length > 1,
               facing_mode: videoTrack
@@ -254,7 +270,7 @@ export function useBarcodeScanner({
         if (!isMountedRef.current || thisStartId !== startIdRef.current) return;
         if (videoEl && (videoEl.readyState < 2 || videoEl.videoWidth === 0)) {
           setCameraError("generic");
-          track("scanner_init_error", {
+          trackRef.current("scanner_init_error", {
             error_type: "feed-timeout",
             browser: getBrowserSummary(),
           });
@@ -264,7 +280,7 @@ export function useBarcodeScanner({
       if (thisStartId !== startIdRef.current) return; // stale call — discard
 
       const errorType = classifyScannerError(err);
-      track("scanner_init_error", {
+      trackRef.current("scanner_init_error", {
         error_type: errorType,
         browser: getBrowserSummary(),
       });
@@ -294,7 +310,7 @@ export function useBarcodeScanner({
         setCameraError("generic");
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps -- track is fire-and-forget
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- trackRef is stable
   }, [stopScanner]);
 
   // ─── Torch ──────────────────────────────────────────────────────────────

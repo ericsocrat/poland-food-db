@@ -18,13 +18,6 @@ if (typeof globalThis.MediaStream === "undefined") {
   } as unknown as typeof MediaStream;
 }
 
-// Pre-flight getUserMedia stub — delegates to hoisted mock
-Object.defineProperty(navigator, "mediaDevices", {
-  value: { getUserMedia: (...a: unknown[]) => mockGetUserMedia(...a) },
-  writable: true,
-  configurable: true,
-});
-
 // ─── Mocks ──────────────────────────────────────────────────────────────────
 
 const {
@@ -44,6 +37,14 @@ const {
   mockResetReader: vi.fn(),
   mockGetUserMedia: vi.fn(),
 }));
+
+// Pre-flight getUserMedia stub — delegates to hoisted mock (placed after
+// vi.hoisted so the reference is explicit in source order).
+Object.defineProperty(navigator, "mediaDevices", {
+  value: { getUserMedia: (...a: unknown[]) => mockGetUserMedia(...a) },
+  writable: true,
+  configurable: true,
+});
 
 vi.mock("@/hooks/use-reduced-motion", () => ({
   useReducedMotion: () => true,
