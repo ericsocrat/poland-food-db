@@ -24,6 +24,16 @@ function getSeasonKey(): "spring" | "summer" | "autumn" | "winter" {
   return "winter";
 }
 
+const SEASON_STYLE: Record<
+  ReturnType<typeof getSeasonKey>,
+  { emoji: string; className: string }
+> = {
+  spring: { emoji: "🌱", className: "bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300" },
+  summer: { emoji: "☀️", className: "bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300" },
+  autumn: { emoji: "🍂", className: "bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-300" },
+  winter: { emoji: "❄️", className: "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-300" },
+};
+
 interface DashboardGreetingProps {
   displayName?: string | null;
 }
@@ -39,23 +49,25 @@ export function DashboardGreeting({
     ? t(`dashboard.greeting.${timeOfDay}Named`, { name: displayName })
     : t(`dashboard.greeting.${timeOfDay}`);
 
+  const { emoji, className: seasonClass } = SEASON_STYLE[season];
+
   return (
-    <div className="space-y-1">
+    <div className="space-y-2">
       <h1 className="text-xl font-bold text-foreground sm:text-2xl md:text-3xl lg:text-4xl">
         {greeting}
       </h1>
       <p className="text-sm text-foreground-secondary lg:text-base">
         {t("dashboard.subtitle")}
       </p>
-      <p
-        className="text-xs text-foreground-muted lg:text-sm"
+      <span
+        className={`inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs font-medium ${seasonClass}`}
         data-testid="seasonal-nudge"
       >
-        {t(`dashboard.season.${season}`)}
-      </p>
+        {emoji} {t(`dashboard.season.${season}`)}
+      </span>
     </div>
   );
 }
 
 /** Export for testing */
-export { getTimeOfDay, getSeasonKey };
+export { getTimeOfDay, getSeasonKey, SEASON_STYLE };

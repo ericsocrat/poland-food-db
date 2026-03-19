@@ -10,7 +10,18 @@ const mockGetDashboardData = vi.fn();
 const mockGetCategoryOverview = vi.fn();
 
 vi.mock("@/lib/supabase/client", () => ({
-  createClient: () => ({}),
+  createClient: () => ({
+    auth: {
+      getUser: () =>
+        Promise.resolve({
+          data: {
+            user: {
+              user_metadata: { full_name: "Jan Kowalski" },
+            },
+          },
+        }),
+    },
+  }),
 }));
 
 vi.mock("@/lib/api", () => ({
@@ -168,6 +179,14 @@ describe("DashboardPage", () => {
       expect(greetingEl.textContent).toMatch(
         /Good morning|Good afternoon|Good evening|Good night/,
       );
+    });
+  });
+
+  it("passes display name from auth to greeting", async () => {
+    render(<DashboardPage />, { wrapper: createWrapper() });
+    await waitFor(() => {
+      const greetingEl = screen.getByRole("heading", { level: 1 });
+      expect(greetingEl.textContent).toContain("Jan Kowalski");
     });
   });
 

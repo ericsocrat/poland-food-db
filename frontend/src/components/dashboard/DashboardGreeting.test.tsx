@@ -4,6 +4,7 @@ import {
   DashboardGreeting,
   getTimeOfDay,
   getSeasonKey,
+  SEASON_STYLE,
 } from "./DashboardGreeting";
 
 // ─── Mocks ──────────────────────────────────────────────────────────────────
@@ -117,9 +118,20 @@ describe("DashboardGreeting", () => {
     expect(screen.getByText("dashboard.subtitle")).toBeInTheDocument();
   });
 
-  it("shows seasonal nudge", () => {
+  it("shows seasonal nudge as a styled chip", () => {
     render(<DashboardGreeting />);
-    expect(screen.getByTestId("seasonal-nudge")).toBeInTheDocument();
+    const nudge = screen.getByTestId("seasonal-nudge");
+    expect(nudge).toBeInTheDocument();
+    expect(nudge.tagName).toBe("SPAN");
+    expect(nudge.className).toContain("rounded-full");
+  });
+
+  it("renders seasonal emoji matching the current season", () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-07-01T12:00:00")); // summer
+    render(<DashboardGreeting />);
+    const nudge = screen.getByTestId("seasonal-nudge");
+    expect(nudge.textContent).toContain(SEASON_STYLE.summer.emoji);
   });
 
   it("includes display name when provided", () => {

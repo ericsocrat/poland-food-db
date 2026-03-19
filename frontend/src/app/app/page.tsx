@@ -15,7 +15,7 @@ import { getDashboardData } from "@/lib/api";
 import { queryKeys, staleTimes } from "@/lib/query-keys";
 import { createClient } from "@/lib/supabase/client";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 // ─── Main Page ──────────────────────────────────────────────────────────────
 
@@ -23,6 +23,7 @@ export default function DashboardPage() {
   const supabase = createClient();
   const queryClient = useQueryClient();
   const { track } = useAnalytics();
+  const [displayName, setDisplayName] = useState<string | null>(null);
 
   const { data, isLoading, isError } = useQuery({
     queryKey: queryKeys.dashboard,
@@ -38,6 +39,16 @@ export default function DashboardPage() {
     track("dashboard_viewed");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      const name =
+        user?.user_metadata?.full_name ??
+        user?.user_metadata?.name ??
+        null;
+      setDisplayName(typeof name === "string" ? name : null);
+    });
+  }, [supabase]);
 
   const handleRefresh = useCallback(async () => {
     await queryClient.invalidateQueries({ queryKey: queryKeys.dashboard });
@@ -78,7 +89,7 @@ export default function DashboardPage() {
   return (
     <PullToRefresh onRefresh={handleRefresh}>
     <div className="space-y-6 lg:space-y-8">
-      <DashboardGreeting />
+      <DashboardGreeting displayName={displayName} />
 
       {/* Health summary — average score + band distribution */}
       <HealthSummary products={dashboard.recently_viewed} />
