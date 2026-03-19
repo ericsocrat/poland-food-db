@@ -173,4 +173,17 @@ describe("CategoriesBrowse", () => {
       expect(screen.getByTestId("cat-icon-chips")).toBeInTheDocument();
     });
   });
+
+  it("scroll container has padding to prevent clipping under fade mask", async () => {
+    mockGetCategoryOverview.mockResolvedValue({
+      ok: true,
+      data: MOCK_CATEGORIES,
+    });
+    render(<CategoriesBrowse />, { wrapper: createWrapper() });
+    await vi.waitFor(() => {
+      const list = screen.getByRole("list");
+      expect(list.className).toMatch(/px-4/);
+      expect(list.className).toMatch(/-mx-4/);
+    });
+  });
 });
