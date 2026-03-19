@@ -1,0 +1,191 @@
+# ═══════════════════════════════════════════════════════════════════════════════
+# PR Screenshots — Captures screenshots of pages affected by the PR
+# Non-blocking: this workflow provides visual review artifacts but does not
+# block PR merging.
+# ═══════════════════════════════════════════════════════════════════════════════
+
+name: PR Screenshots
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'frontend/src/**'
+      - 'frontend/messages/**'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: pr-screenshots-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  capture:
+    name: Capture Screenshots
+    runs-on: ubuntu-latest
+    # Skip fork PRs (no secrets available for auth pages)
+    if: github.event.pull_request.head.repo.fork == false
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          fetch-depth: 0  # Full history for git diff
+
+      - name: Get changed files
+        id: changes
+        run: |
+          files=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }} -- . | head -200)
+          if [ -z "$files" ]; then
+            echo "skip=true" >> "$GITHUB_OUTPUT"
+            echo "No frontend files changed — skipping screenshots"
+          else
+            echo "skip=false" >> "$GITHUB_OUTPUT"
+            count=$(echo "$files" | wc -l)
+            echo "count=$count" >> "$GITHUB_OUTPUT"
+            # Store as multiline output
+            {
+              echo "files<<EOF"
+              echo "$files"
+              echo "EOF"
+            } >> "$GITHUB_OUTPUT"
+            echo "📂 $count changed file(s) detected"
+          fi
+        working-directory: .
+
+      - name: Skip if no relevant changes
+        if: steps.changes.outputs.skip == 'true'
+        run: echo "No pages to screenshot — exiting early"
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        if: steps.changes.outputs.skip != 'true'
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        if: steps.changes.outputs.skip != 'true'
+        run: npm ci
+
+      - name: Get Playwright version
+        if: steps.changes.outputs.skip != 'true'
+        id: pw-version
+        run: echo "version=$(node -e "console.log(require('@playwright/test/package.json').version)")" >> "$GITHUB_OUTPUT"
+
+      - name: Cache Playwright browsers
+        if: steps.changes.outputs.skip != 'true'
+        id: pw-cache
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
+        with:
+          path: ~/.cache/ms-playwright
+          key: pw-${{ runner.os }}-${{ steps.pw-version.outputs.version }}
+
+      - name: Install Playwright browsers
+        if: steps.changes.outputs.skip != 'true' && steps.pw-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps chromium
+        timeout-minutes: 8
+
+      - name: Install Playwright system deps
+        if: steps.changes.outputs.skip != 'true' && steps.pw-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps chromium
+        timeout-minutes: 8
+
+      - name: Capture PR screenshots
+        if: steps.changes.outputs.skip != 'true'
+        run: npx playwright test --project=pr-screenshots --reporter=list
+        timeout-minutes: 5
+        env:
+          PR_SCREENSHOTS: "true"
+          CHANGED_FILES: ${{ steps.changes.outputs.files }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.SUPABASE_URL_STAGING || secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY_STAGING || secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY_STAGING || secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        continue-on-error: true
+
+      - name: Upload screenshots
+        if: steps.changes.outputs.skip != 'true'
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: pr-screenshots
+          path: frontend/pr-screenshots/
+          retention-days: 14
+          if-no-files-found: ignore
+
+      - name: Post PR comment
+        if: steps.changes.outputs.skip != 'true'
+        uses: actions/github-script@60a0d83039c74a4aee543508d2ffcb1c3799cdea # v7.0.1
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+
+            const screenshotDir = 'frontend/pr-screenshots';
+            const viewports = ['mobile', 'desktop'];
+            const pages = [];
+
+            for (const vp of viewports) {
+              const dir = path.join(screenshotDir, vp);
+              if (fs.existsSync(dir)) {
+                const files = fs.readdirSync(dir).filter(f => f.endsWith('.png'));
+                for (const f of files) {
+                  const label = f.replace('.png', '');
+                  if (!pages.includes(label)) pages.push(label);
+                }
+              }
+            }
+
+            if (pages.length === 0) {
+              console.log('No screenshots captured — skipping comment');
+              return;
+            }
+
+            const mobileDir = path.join(screenshotDir, 'mobile');
+            const desktopDir = path.join(screenshotDir, 'desktop');
+            const mobileCount = fs.existsSync(mobileDir)
+              ? fs.readdirSync(mobileDir).filter(f => f.endsWith('.png')).length
+              : 0;
+            const desktopCount = fs.existsSync(desktopDir)
+              ? fs.readdirSync(desktopDir).filter(f => f.endsWith('.png')).length
+              : 0;
+
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+
+            let body = `## 📸 PR Screenshots\n\n`;
+            body += `Captured **${mobileCount + desktopCount}** screenshots (${mobileCount} mobile, ${desktopCount} desktop) for **${pages.length}** changed page(s):\n\n`;
+            body += pages.map(p => `- \`${p}\``).join('\n');
+            body += `\n\n📥 **[Download screenshots](${runUrl}#artifacts)** from workflow artifacts.\n`;
+            body += `\n<sub>Captured by PR Screenshots workflow • ${new Date().toISOString().slice(0, 10)}</sub>`;
+
+            // Find and update existing comment, or create new
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user?.type === 'Bot' && c.body?.includes('## 📸 PR Screenshots')
+            );
+
+            if (existing) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+                body,
+              });
+              console.log(`Updated comment ${existing.id}`);
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body,
+              });
+              console.log('Created new PR comment');
+            }

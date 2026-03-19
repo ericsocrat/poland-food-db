@@ -63,12 +63,29 @@ const visualAuthenticatedProject = {
 // This captures polished PNGs for docs/screenshots/ (Issues #404, #430, #431).
 const HAS_SCREENSHOTS = !!process.env.CAPTURE_SCREENSHOTS;
 
+// ── PR screenshot toggle ────────────────────────────────────────────────────
+// Set PR_SCREENSHOTS=true to capture screenshots of only pages affected by
+// the current branch's changes. Output: frontend/pr-screenshots/
+const HAS_PR_SCREENSHOTS = !!process.env.PR_SCREENSHOTS;
+
 const screenshotsProject = {
   name: "screenshots",
   testMatch: /screenshot-capture\.spec\.ts|visual-audit\.spec\.ts/,
   // Self-contained: handles its own auth (no dependency on auth-setup).
   // CSP bypass needed because local Supabase (127.0.0.1) is blocked by
   // connect-src in production CSP headers.
+  dependencies: [] as string[],
+  use: {
+    ...devices["Desktop Chrome"],
+    bypassCSP: true,
+    actionTimeout: 15_000,
+    navigationTimeout: 20_000,
+  },
+};
+
+const prScreenshotsProject = {
+  name: "pr-screenshots",
+  testMatch: /pr-screenshots\.spec\.ts/,
   dependencies: [] as string[],
   use: {
     ...devices["Desktop Chrome"],
@@ -116,6 +133,7 @@ const projects = [
   ...(HAS_VISUAL && HAS_AUTH ? [visualAuthenticatedProject] : []),
   ...(HAS_QUALITY ? [qualityMobileProject, qualityDesktopProject] : []),
   ...(HAS_SCREENSHOTS ? [screenshotsProject] : []),
+  ...(HAS_PR_SCREENSHOTS ? [prScreenshotsProject] : []),
 ];
 
 /* ── Config ──────────────────────────────────────────────────────────────── */
