@@ -478,4 +478,27 @@ describe("FilterPanel", () => {
       expect(screen.getAllByText("Clear all").length).toBeGreaterThanOrEqual(1);
     });
   });
+
+  // ─── Section Dividers ─────────────────────────────────────────────────────
+
+  it("renders section dividers between filter groups", async () => {
+    renderPanel();
+    await waitFor(() => {
+      expect(screen.getAllByText("Relevance").length).toBeGreaterThanOrEqual(1);
+    });
+    const separators = document.querySelectorAll("hr");
+    expect(separators.length).toBeGreaterThanOrEqual(5);
+  });
+
+  // ─── Sort Layout (col-span-2 on last odd button) ─────────────────────────
+
+  it("adds col-span-2 to last sort button when odd count", async () => {
+    renderPanel();
+    await waitFor(() => {
+      expect(screen.getAllByText("Calories").length).toBeGreaterThanOrEqual(1);
+    });
+    // "Calories" is the 5th (odd-last) sort button
+    const caloriesBtn = screen.getAllByText("Calories")[0].closest("button");
+    expect(caloriesBtn?.className).toContain("col-span-2");
+  });
 });

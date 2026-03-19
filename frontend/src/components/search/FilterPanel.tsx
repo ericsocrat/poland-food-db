@@ -131,14 +131,17 @@ export function FilterPanel({
                   label: t("filters.nutriScore"),
                 },
                 { value: "calories" as const, label: t("filters.calories") },
-              ].map((opt) => {
+              ].map((opt, idx, arr) => {
                 const isActive = (filters.sort_by ?? "relevance") === opt.value;
+                const isLastOdd = arr.length % 2 === 1 && idx === arr.length - 1;
                 return (
                   <button
                     key={opt.value}
                     type="button"
                     onClick={() => setSortBy(opt.value)}
                     className={`rounded-lg px-3 py-2 text-xs font-medium transition-colors ${
+                      isLastOdd ? "col-span-2" : ""
+                    } ${
                       isActive
                         ? "bg-brand-subtle text-brand ring-2 ring-brand/30"
                         : "bg-surface-muted text-foreground-secondary hover:bg-surface-subtle"
@@ -180,6 +183,8 @@ export function FilterPanel({
             )}
           </div>
 
+          <hr className="border-t border-border/40" />
+
           {/* Categories */}
           {data && (data.categories?.length ?? 0) > 0 && (
             <div>
@@ -218,6 +223,8 @@ export function FilterPanel({
             </div>
           )}
 
+          <hr className="border-t border-border/40" />
+
           {/* Nutri-Score */}
           {data && (data.nutri_scores?.length ?? 0) > 0 && (
             <div>
@@ -253,6 +260,8 @@ export function FilterPanel({
             </div>
           )}
 
+          <hr className="border-t border-border/40" />
+
           {/* NOVA Group */}
           {data && (data.nova_groups?.length ?? 0) > 0 && (
             <div>
@@ -286,6 +295,8 @@ export function FilterPanel({
               </div>
             </div>
           )}
+
+          <hr className="border-t border-border/40" />
 
           {/* Allergen-Free */}
           {data && (data.allergens?.length ?? 0) > 0 && (
@@ -324,6 +335,8 @@ export function FilterPanel({
               </div>
             </div>
           )}
+
+          <hr className="border-t border-border/40" />
 
           {/* Min TryVit Score Slider */}
           <div>
