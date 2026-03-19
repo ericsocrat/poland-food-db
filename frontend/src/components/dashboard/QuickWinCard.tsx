@@ -101,7 +101,7 @@ export function QuickWinCard({ products }: Readonly<QuickWinCardProps>) {
           </div>
 
           <Link
-            href={`/app/product/${worstProduct.product_id}`}
+            href={`/app/product/${alternative.product_id}`}
             className="inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
           >
             {t("dashboard.quickWinViewSwap")}

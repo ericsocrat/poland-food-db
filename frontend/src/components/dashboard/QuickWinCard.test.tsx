@@ -176,12 +176,13 @@ describe("QuickWinCard", () => {
     );
   });
 
-  it("links to product page", () => {
+  it("links to the alternative product page (not the worst product)", () => {
     const products = [makeProduct({ product_id: 42 })];
     render(<QuickWinCard products={products} />, { wrapper: createWrapper() });
 
     const link = screen.getByRole("link", { name: /View swap/ });
-    expect(link).toHaveAttribute("href", "/app/product/42");
+    // Alternative product_id is 99 (from mockAlternativesData)
+    expect(link).toHaveAttribute("href", "/app/product/99");
   });
 
   it("has correct section aria-label", () => {
