@@ -299,7 +299,9 @@ export default function ScanPage() {
           onClick={() => setMode("camera")}
           className={`flex-1 rounded-md px-3 py-2.5 text-sm font-medium transition-colors ${
             mode === "camera"
-              ? "bg-surface text-brand shadow-sm"
+              ? cameraError
+                ? "bg-surface text-warning-text shadow-sm"
+                : "bg-surface text-brand shadow-sm"
               : "text-foreground-secondary hover:text-foreground"
           }`}
         >

@@ -25,7 +25,10 @@ import { useEffect, useState } from "react";
 
 // ─── Shared animation wrapper ───────────────────────────────────────────────
 
-export function FadeSlideIn({ children }: Readonly<{ children: React.ReactNode }>) {
+export function FadeSlideIn({
+  children,
+  delay = 0,
+}: Readonly<{ children: React.ReactNode; delay?: number }>) {
   const prefersReduced = useReducedMotion();
   const [visible, setVisible] = useState(false);
   useEffect(() => { setVisible(true); }, []);
@@ -38,6 +41,7 @@ export function FadeSlideIn({ children }: Readonly<{ children: React.ReactNode }
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(12px)",
+        transitionDelay: delay ? `${delay}ms` : undefined,
       }}
     >
       {children}
@@ -114,11 +118,17 @@ export function ScanNotFoundView({
     <FadeSlideIn>
       <div className="mx-auto max-w-md space-y-4">
         <div className="card text-center">
-          <div className="mb-2 flex animate-shake justify-center">
+          <div className="mb-2 flex animate-fade-in-up justify-center">
             <EmptyStateIllustration type="no-results" titleKey="scan.notFound" />
           </div>
           <p className="mt-1 text-sm text-foreground-secondary">
-            {t("scan.notFoundMessage", { ean })}
+            {t("scan.notFoundEanPrefix")}
+          </p>
+          <code className="mt-1 inline-block rounded bg-surface-muted px-2 py-0.5 font-mono text-sm tracking-widest text-foreground">
+            {ean}
+          </code>
+          <p className="mt-1 text-sm text-foreground-secondary">
+            {t("scan.notFoundEanSuffix")}
           </p>
           {gs1Hint && (
             <>
@@ -140,20 +150,20 @@ export function ScanNotFoundView({
         />
 
         <div className="flex gap-2">
+          <Button
+            onClick={onReset}
+            className="flex-1"
+          >
+            {t("scan.scanAnother")}
+          </Button>
           <ButtonLink
             href="/app/scan/history"
+            variant="secondary"
             className="flex-1"
             icon={<ClipboardList size={16} aria-hidden="true" />}
           >
             {t("scan.history")}
           </ButtonLink>
-          <Button
-            onClick={onReset}
-            variant="secondary"
-            className="flex-1"
-          >
-            {t("scan.scanAnother")}
-          </Button>
         </div>
       </div>
     </FadeSlideIn>

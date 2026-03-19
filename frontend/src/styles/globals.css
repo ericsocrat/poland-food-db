@@ -143,6 +143,7 @@
   --animate-chip-enter: chip-enter var(--duration-fast) var(--ease-decelerate) both;
   --animate-trust-verified: trust-verified 0.6s var(--ease-decelerate) 0.3s both;
   --animate-shake: shake 0.5s ease-in-out both;
+  --animate-pulse-glow: pulse-glow 2s ease-in-out infinite;
 
   @keyframes shake {
     0%, 100% { transform: translateX(0); }
@@ -213,6 +214,15 @@
       transform: scale(1);
     }
   }
+
+  @keyframes pulse-glow {
+    0%, 100% {
+      box-shadow: 0 0 0 0 rgb(var(--color-brand) / 0.4);
+    }
+    50% {
+      box-shadow: 0 0 0 6px rgb(var(--color-brand) / 0);
+    }
+  }
 }
 
 /*
@@ -235,7 +245,7 @@
 }
 
 @utility input-field {
-  @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5 text-sm text-foreground shadow-sm placeholder:text-foreground-muted focus-visible:border-brand focus-visible:ring-1 focus-visible:ring-brand focus-visible:outline-hidden;
+  @apply block w-full rounded-lg border border-strong bg-surface px-3.5 py-2.5 text-sm text-foreground shadow-sm transition-shadow duration-200 placeholder:text-foreground-muted focus-visible:border-brand focus-visible:ring-2 focus-visible:ring-brand/40 focus-visible:outline-hidden;
 }
 
 @utility card {

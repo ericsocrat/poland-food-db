@@ -26,18 +26,18 @@ export function ScannerErrorState({
     error === "permission-unknown";
 
   return (
-    <div className="card border-warning-border bg-warning-bg text-center">
-      <div className="mb-2 flex justify-center">
+    <div className="card border-warning-border bg-warning-bg px-5 py-6 text-center">
+      <div className="mb-3 flex justify-center">
         {isPermissionError ? (
           <ShieldAlert
-            size={36}
-            className="text-warning-text"
+            size={40}
+            className="animate-fade-in-up text-warning-text"
             aria-hidden="true"
           />
         ) : (
           <CameraOff
-            size={36}
-            className="text-warning-text"
+            size={40}
+            className="animate-fade-in-up text-warning-text"
             aria-hidden="true"
           />
         )}
@@ -51,7 +51,7 @@ export function ScannerErrorState({
               ? t("scan.cameraPermissionRequired")
               : t("scan.cameraUnavailable")}
       </p>
-      <p className="mt-1 text-xs text-warning-text/80">
+      <p className="mt-1.5 text-xs leading-relaxed text-warning-text/80">
         {error === "no-camera"
           ? t("scan.noCameraHint")
           : error === "permission-denied"
@@ -62,8 +62,8 @@ export function ScannerErrorState({
                 ? t("scan.cameraPermissionUnknownHint")
                 : t("scan.cameraUnavailableHint")}
       </p>
-      <div className="mt-3 flex flex-col gap-2">
-        {isPermissionError && (
+      <div className="mt-4 flex flex-col gap-2">
+        {(error === "permission-denied" || error === "permission-unknown") && (
           <Button
             variant="secondary"
             onClick={() => window.location.reload()}
@@ -82,7 +82,7 @@ export function ScannerErrorState({
           </Button>
         )}
         <Button
-          variant="ghost"
+          variant={error === "permission-denied" ? "primary" : "ghost"}
           onClick={onManualEntry}
           icon={<Keyboard size={16} aria-hidden="true" />}
         >

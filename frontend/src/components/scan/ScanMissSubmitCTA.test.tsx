@@ -14,10 +14,12 @@ vi.mock("@/components/common/Button", () => ({
   ButtonLink: ({
     children,
     href,
+    className,
   }: {
     children: React.ReactNode;
     href: string;
-  }) => <a href={href}>{children}</a>,
+    className?: string;
+  }) => <a href={href} className={className}>{children}</a>,
 }));
 
 // ─── Tests ──────────────────────────────────────────────────────────────────
@@ -30,6 +32,12 @@ describe("ScanMissSubmitCTA", () => {
   it("renders submit button when hasPendingSubmission is false", () => {
     render(<ScanMissSubmitCTA ean="5901234123457" />);
     expect(screen.getByText("scan.helpAdd")).toBeTruthy();
+  });
+
+  it("applies pulse-glow animation to submit CTA", () => {
+    render(<ScanMissSubmitCTA ean="5901234123457" />);
+    const link = screen.getByRole("link");
+    expect(link.className).toContain("animate-pulse-glow");
   });
 
   it("links to submit page with ean in query string", () => {

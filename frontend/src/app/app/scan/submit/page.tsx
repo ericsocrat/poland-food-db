@@ -158,13 +158,23 @@ export default function SubmitProductPage() {
         <p className="text-sm text-foreground-secondary">
           {t("submit.subtitle")}
         </p>
-        <p className="mt-1 text-xs text-foreground-muted">
-          {t("submit.stepIndicator")}
-        </p>
+      </div>
+
+      {/* R6: Progress indicator */}
+      <div className="flex items-center gap-2" aria-label={t("submit.progressLabel")}>
+        <div className="h-1 flex-1 rounded-full bg-brand" />
+        <div className={`h-1 flex-1 rounded-full ${productName.length >= 2 ? "bg-brand" : "bg-border"}`} />
+        <p className="text-xs text-foreground-muted">{t("submit.stepIndicator")}</p>
       </div>
 
       <div className="card">
-        <form id="submit-product-form" onSubmit={handleSubmit} className="space-y-4">
+        <form id="submit-product-form" onSubmit={handleSubmit} className="space-y-5">
+          {/* ─── Section: Required ──────────────────────────── */}
+          <fieldset className="space-y-4">
+            <legend className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+              {t("submit.sectionRequired")}
+            </legend>
+
           {/* EAN (pre-filled, editable) */}
           <div>
             <label
@@ -191,11 +201,10 @@ export default function SubmitProductPage() {
                 readOnly={!!prefillEan}
               />
               {!!prefillEan && (
-                <Lock
-                  size={14}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground-muted"
-                  aria-label={t("submit.eanLocked")}
-                />
+                <span className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1 rounded-full bg-brand/10 px-2 py-0.5 text-xs font-medium text-brand">
+                  <Lock size={12} aria-hidden="true" />
+                  {t("submit.eanLockedBadge")}
+                </span>
               )}
             </div>
             {checksumWarn && (
@@ -224,6 +233,14 @@ export default function SubmitProductPage() {
               required
             />
           </div>
+
+          </fieldset>
+
+          {/* ─── Section: Optional details ──────────────────── */}
+          <fieldset className="space-y-4">
+            <legend className="text-xs font-semibold uppercase tracking-wider text-foreground-muted">
+              {t("submit.sectionOptional")}
+            </legend>
 
           {/* Brand */}
           <div>
@@ -287,11 +304,11 @@ export default function SubmitProductPage() {
               <span className="font-normal text-foreground-muted">{t("common.optional")}</span>
             </label>
             {photoPreview && photoPreview.startsWith("blob:") ? (
-              <div className="relative inline-block">
+              <div className="relative inline-block animate-scale-in">
                 <img
                   src={photoPreview}
                   alt=""
-                  className="h-32 w-32 rounded-lg border border-border object-cover"
+                  className="h-40 w-40 rounded-xl border border-border object-cover shadow-sm"
                 />
                 <button
                   type="button"
@@ -305,7 +322,7 @@ export default function SubmitProductPage() {
             ) : (
               <label
                 htmlFor="photo"
-                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-8 text-sm text-foreground-secondary hover:border-brand hover:text-brand"
+                className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed border-border px-4 py-5 text-sm text-foreground-secondary hover:border-brand hover:text-brand"
               >
                 <Camera size={24} aria-hidden="true" />
                 {t("submit.photoHint")}
@@ -344,6 +361,7 @@ export default function SubmitProductPage() {
             </p>
           </div>
 
+          </fieldset>
         </form>
       </div>
 
@@ -354,28 +372,36 @@ export default function SubmitProductPage() {
       {/* R1: Sticky submit bar with glassmorphism */}
       <div className="fixed inset-x-0 bottom-0 z-30 border-t border-border/50 bg-background/80 px-4 pb-[env(safe-area-inset-bottom,8px)] pt-3 backdrop-blur-lg md:sticky md:bottom-auto md:border-t-0 md:bg-transparent md:px-0 md:pb-0 md:pt-0 md:backdrop-blur-none">
         {showSuccess ? (
-          <div className="flex items-center justify-center gap-2 py-3 text-score-green-text animate-fade-in-up">
-            <CheckCircle size={20} />
-            <span className="font-medium">{t("submit.submitted")}</span>
+          <div className="flex flex-col items-center justify-center gap-1 py-3 animate-fade-in-up">
+            <CheckCircle size={28} className="animate-scale-in text-score-green-text" />
+            <span className="font-medium text-score-green-text">{t("submit.submitted")}</span>
+            <span className="text-xs text-foreground-muted">{t("submit.redirecting")}</span>
           </div>
         ) : (
-          <Button
-            type="submit"
-            form="submit-product-form"
-            fullWidth
-            disabled={
-              mutation.isPending || mutation.isSuccess || ean.length < 8 || productName.length < 2
-            }
-          >
-            {mutation.isPending ? (
-              <span className="inline-flex items-center gap-2">
-                <LoadingSpinner size="sm" />
-                {t("submit.submitting")}
-              </span>
-            ) : (
-              t("submit.submitButton")
+          <>
+            <Button
+              type="submit"
+              form="submit-product-form"
+              fullWidth
+              disabled={
+                mutation.isPending || mutation.isSuccess || ean.length < 8 || productName.length < 2
+              }
+            >
+              {mutation.isPending ? (
+                <span className="inline-flex items-center gap-2">
+                  <LoadingSpinner size="sm" />
+                  {t("submit.submitting")}
+                </span>
+              ) : (
+                t("submit.submitButton")
+              )}
+            </Button>
+            {(ean.length < 8 || productName.length < 2) && !mutation.isPending && (
+              <p className="mt-1 text-center text-xs text-foreground-muted">
+                {t("submit.disabledHint")}
+              </p>
             )}
-          </Button>
+          </>
         )}
       </div>
     </div>

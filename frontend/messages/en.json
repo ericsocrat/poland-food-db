@@ -309,6 +309,8 @@
     "scanAnother": "Scan another",
     "notFound": "Product not found",
     "notFoundMessage": "EAN: {ean} is not in our database yet.",
+    "notFoundEanPrefix": "We couldn\u2019t find this barcode:",
+    "notFoundEanSuffix": "It\u2019s not in our database yet.",
     "alreadySubmitted": "Someone has already submitted this product. It's pending review.",
     "helpAdd": "Help us add it!",
     "helpAddHint": "Your submission helps everyone discover healthier options.",
@@ -415,7 +417,15 @@
     "countryExplainer": "Based on your profile or the barcode\u2019s GS1 prefix.",
     "stepIndicator": "Step 2 of 2 \u2014 Add product details",
     "disclaimer": "Submissions are reviewed before being added to the database.",
-    "successToast": "Product submitted! We'll review it soon."
+    "successToast": "Product submitted! We'll review it soon.",
+    "submitted": "Submitted!",
+    "redirecting": "Redirecting back\u2026",
+    "eanLocked": "EAN pre-filled from scan",
+    "eanLockedBadge": "Scanned",
+    "sectionRequired": "Required",
+    "sectionOptional": "Optional Details",
+    "progressLabel": "Submit form progress",
+    "disabledHint": "Fill in the barcode (8+ digits) and product name (2+ characters) to submit."
   },
   "lists": {
     "title": "My Lists",

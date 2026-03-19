@@ -309,6 +309,8 @@
     "scanAnother": "Weiteren scannen",
     "notFound": "Produkt nicht gefunden",
     "notFoundMessage": "EAN: {ean} ist noch nicht in unserer Datenbank.",
+    "notFoundEanPrefix": "Wir konnten diesen Barcode nicht finden:",
+    "notFoundEanSuffix": "Er ist noch nicht in unserer Datenbank.",
     "alreadySubmitted": "Jemand hat dieses Produkt bereits eingereicht. Es wird gerade überprüft.",
     "helpAdd": "Helfen Sie uns, es hinzuzufügen!",
     "helpAddHint": "Ihr Beitrag hilft allen, gesündere Optionen zu entdecken.",
@@ -415,7 +417,15 @@
     "countryExplainer": "Basierend auf Ihrem Profil oder dem GS1-Präfix des Barcodes.",
     "stepIndicator": "Schritt 2 von 2 — Produktdetails hinzufügen",
     "disclaimer": "Einreichungen werden vor der Aufnahme in die Datenbank überprüft.",
-    "successToast": "Produkt eingereicht! Wir werden es in Kürze überprüfen."
+    "successToast": "Produkt eingereicht! Wir werden es in Kürze überprüfen.",
+    "submitted": "Eingereicht!",
+    "redirecting": "Weiterleitung\u2026",
+    "eanLocked": "EAN aus Scan vorausgefüllt",
+    "eanLockedBadge": "Gescannt",
+    "sectionRequired": "Erforderlich",
+    "sectionOptional": "Optionale Angaben",
+    "progressLabel": "Fortschritt des Einreichungsformulars",
+    "disabledHint": "Geben Sie den Barcode (8+ Ziffern) und Produktnamen (2+ Zeichen) ein, um einzureichen."
   },
   "lists": {
     "title": "Meine Listen",

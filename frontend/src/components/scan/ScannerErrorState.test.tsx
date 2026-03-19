@@ -193,7 +193,7 @@ describe("ScannerErrorState", () => {
     expect(screen.getByText("scan.reloadPage")).toBeInTheDocument();
   });
 
-  it("shows reload button for permission-prompt", () => {
+  it("does NOT show reload button for permission-prompt", () => {
     render(
       <ScannerErrorState
         error="permission-prompt"
@@ -201,7 +201,7 @@ describe("ScannerErrorState", () => {
         onManualEntry={onManualEntry}
       />,
     );
-    expect(screen.getByText("scan.reloadPage")).toBeInTheDocument();
+    expect(screen.queryByText("scan.reloadPage")).toBeNull();
   });
 
   it("does NOT show reload button for generic error", () => {

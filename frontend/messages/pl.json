@@ -309,6 +309,8 @@
     "scanAnother": "Skanuj kolejny",
     "notFound": "Produkt nie znaleziony",
     "notFoundMessage": "EAN: {ean} nie jest jeszcze w naszej bazie danych.",
+    "notFoundEanPrefix": "Nie znaleźliśmy tego kodu kreskowego:",
+    "notFoundEanSuffix": "Nie ma go jeszcze w naszej bazie danych.",
     "alreadySubmitted": "Ktoś już zgłosił ten produkt. Oczekuje na weryfikację.",
     "helpAdd": "Pomóż nam go dodać!",
     "helpAddHint": "Twoje zgłoszenie pomaga wszystkim odkrywać zdrowsze opcje.",
@@ -415,7 +417,15 @@
     "countryExplainer": "Na podstawie Twojego profilu lub prefiksu GS1 kodu kreskowego.",
     "stepIndicator": "Krok 2 z 2 — Dodaj szczegóły produktu",
     "disclaimer": "Zgłoszenia są weryfikowane przed dodaniem do bazy danych.",
-    "successToast": "Produkt zgłoszony! Wkrótce go zweryfikujemy."
+    "successToast": "Produkt zgłoszony! Wkrótce go zweryfikujemy.",
+    "submitted": "Zgłoszono!",
+    "redirecting": "Przekierowywanie\u2026",
+    "eanLocked": "EAN wypełniony ze skanu",
+    "eanLockedBadge": "Zeskanowany",
+    "sectionRequired": "Wymagane",
+    "sectionOptional": "Opcjonalne szczegóły",
+    "progressLabel": "Postęp formularza zgłoszenia",
+    "disabledHint": "Podaj kod kreskowy (8+ cyfr) i nazwę produktu (2+ znaki), aby zgłosić."
   },
   "lists": {
     "title": "Moje listy",

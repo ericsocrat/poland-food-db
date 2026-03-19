@@ -1017,7 +1017,8 @@ describe("ScanPage", () => {
     expect(
       screen.getByText(/permission was dismissed/),
     ).toBeInTheDocument();
-    expect(screen.getByText("Reload Page")).toBeInTheDocument();
+    // R17: Reload button NOT shown for permission-prompt (only for denied/unknown)
+    expect(screen.queryByText("Reload Page")).not.toBeInTheDocument();
     expect(screen.queryByText("Retry Camera")).not.toBeInTheDocument();
   });
 

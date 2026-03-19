@@ -183,7 +183,7 @@ describe("ScanNotFoundView", () => {
     expect(screen.getByText("scan.notFound")).toBeInTheDocument();
   });
 
-  it("renders ean in message", () => {
+  it("renders ean in monospace code element", () => {
     render(
       <ScanNotFoundView
         ean="5901234123457"
@@ -191,7 +191,8 @@ describe("ScanNotFoundView", () => {
         onReset={onReset}
       />,
     );
-    expect(screen.getByText(/5901234123457/)).toBeInTheDocument();
+    const codeEl = screen.getByText("5901234123457");
+    expect(codeEl.tagName).toBe("CODE");
   });
 
   it("renders ScanMissSubmitCTA with correct props", () => {
@@ -230,6 +231,22 @@ describe("ScanNotFoundView", () => {
     );
     expect(screen.getByText("scan.scanAnother")).toBeInTheDocument();
     expect(screen.getByText("scan.history")).toBeInTheDocument();
+  });
+
+  it("renders scan-another button before history link (R5 button order)", () => {
+    render(
+      <ScanNotFoundView
+        ean="5901234123457"
+        scanResult={{ api_version: "v1", found: false, ean: "5901234123457", has_pending_submission: false }}
+        onReset={onReset}
+      />,
+    );
+    const scanAnother = screen.getByText("scan.scanAnother");
+    const history = screen.getByText("scan.history");
+    // scanAnother should appear before history in DOM order
+    expect(
+      scanAnother.compareDocumentPosition(history) & Node.DOCUMENT_POSITION_FOLLOWING,
+    ).toBeTruthy();
   });
 
   it("history link points to /app/scan/history", () => {

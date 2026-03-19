@@ -40,6 +40,7 @@ export function ScanMissSubmitCTA({
       <ButtonLink
         href={submitHref}
         fullWidth
+        className="animate-pulse-glow"
         icon={<FileText size={16} aria-hidden="true" />}
       >
         {t("scan.helpAdd")}
