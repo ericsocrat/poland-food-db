@@ -141,7 +141,7 @@ export default function DashboardPage() {
 
       {/* Quick actions */}
       <div className="animate-fade-in-up" style={{ animationDelay: "350ms" }}>
-        <QuickActions />
+        <QuickActions stats={dashboard.stats} />
       </div>
     </div>
     </PullToRefresh>

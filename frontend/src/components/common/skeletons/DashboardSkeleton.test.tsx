@@ -69,4 +69,14 @@ describe("DashboardSkeleton", () => {
     expect(chipContainer).toBeInTheDocument();
     expect(chipContainer?.children.length).toBe(6);
   });
+
+  it("renders all 8 sections in correct order", () => {
+    render(<DashboardSkeleton />);
+    const container = screen.getByRole("status");
+    // 8 visible sections + 1 sr-only span from SkeletonContainer
+    expect(container.children.length).toBe(9);
+    // Quick actions is the 8th section (index 7), before sr-only span
+    const quickActions = container.children[7] as HTMLElement;
+    expect(quickActions.matches(".grid.grid-cols-2")).toBe(true);
+  });
 });

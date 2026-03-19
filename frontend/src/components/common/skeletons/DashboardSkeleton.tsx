@@ -99,9 +99,9 @@ export function DashboardSkeleton() {
         {Array.from({ length: 4 }, (_, i) => (
           <div
             key={i}
-            className="card flex flex-col items-center gap-2 py-3 lg:py-5"
+            className="card flex flex-col items-center gap-2 py-4 lg:py-6"
           >
-            <Skeleton variant="rect" width={28} height={28} className="rounded-md!" />
+            <Skeleton variant="rect" width={40} height={40} className="rounded-xl!" />
             <Skeleton variant="text" width="3.5rem" height={12} />
           </div>
         ))}
