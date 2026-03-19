@@ -242,7 +242,7 @@ export function FilterPanel({
                           : `${nutriClass} hover:ring-2 hover:ring-offset-1 hover:ring-brand/50`
                       }`}
                     >
-                      {nutriScoreLabel(ns.label, t("filters.notRated"))}
+                      {nutriScoreLabel(ns.label, t("filters.unknown"), t("filters.notApplicable"))}
                       <span className="text-xs font-normal opacity-75">
                         ({ns.count})
                       </span>

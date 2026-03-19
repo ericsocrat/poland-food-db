@@ -174,6 +174,8 @@ export const NUTRI_COLORS: Record<string, string> = {
   C: "bg-nutri-C text-foreground",
   D: "bg-nutri-D text-foreground-inverse",
   E: "bg-nutri-E text-foreground-inverse",
+  UNKNOWN: "bg-surface-muted text-foreground-secondary",
+  "NOT-APPLICABLE": "border border-dashed border-strong bg-transparent text-foreground-muted",
 };
 
 // Health conditions for personal health profiles

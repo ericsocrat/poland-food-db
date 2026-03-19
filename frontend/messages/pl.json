@@ -273,6 +273,8 @@
     "healthScore": "Wynik TryVit",
     "nutriScore": "Nutri-Score",
     "notRated": "Brak oceny",
+    "unknown": "Nieznany",
+    "notApplicable": "Nie dotyczy",
     "calories": "Kalorie",
     "asc": "↑ Rosnąco",
     "desc": "↓ Malejąco",

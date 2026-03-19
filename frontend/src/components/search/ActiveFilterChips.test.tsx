@@ -84,15 +84,25 @@ describe("ActiveFilterChips", () => {
     });
   });
 
-  it('renders "Nutri Not Rated" chip for NOT-APPLICABLE value', () => {
+  it('renders "Nutri Exempt" chip for NOT-APPLICABLE value', () => {
     render(
       <ActiveFilterChips
         filters={{ nutri_score: ["NOT-APPLICABLE"] }}
         onChange={onChange}
       />,
     );
-    expect(screen.getByText("Nutri Not Rated")).toBeTruthy();
+    expect(screen.getByText("Nutri Exempt")).toBeTruthy();
     expect(screen.queryByText(/NOT.APPLICABLE/i)).toBeNull();
+  });
+
+  it('renders "Nutri Unknown" chip for UNKNOWN value', () => {
+    render(
+      <ActiveFilterChips
+        filters={{ nutri_score: ["UNKNOWN"] }}
+        onChange={onChange}
+      />,
+    );
+    expect(screen.getByText("Nutri Unknown")).toBeTruthy();
   });
 
   // ─── Allergen-free chips ────────────────────────────────────────────

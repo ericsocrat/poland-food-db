@@ -40,7 +40,7 @@ export function ActiveFilterChips({
     chips.push({
       key: `ns-${ns}`,
       label: t("chips.nutri", {
-        value: nutriScoreLabel(ns, t("filters.notRated")),
+        value: nutriScoreLabel(ns, t("filters.unknown"), t("filters.notApplicable")),
       }),
       onRemove: () => {
         const next = (filters.nutri_score ?? []).filter((n) => n !== ns);

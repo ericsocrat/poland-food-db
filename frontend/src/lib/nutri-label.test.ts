@@ -23,6 +23,23 @@ describe("nutriScoreLabel", () => {
   });
 
   it("uses custom fallback when provided", () => {
+    expect(nutriScoreLabel("UNKNOWN", "?")).toBe("?");
+    expect(nutriScoreLabel("X", "?")).toBe("?");
+  });
+
+  // ─── 3-param signature (NOT-APPLICABLE vs UNKNOWN distinction) ───
+
+  it("maps NOT-APPLICABLE to notApplicableFallback when provided", () => {
+    expect(nutriScoreLabel("NOT-APPLICABLE", "Unknown", "Exempt")).toBe(
+      "Exempt",
+    );
+  });
+
+  it("maps UNKNOWN to fallback (not notApplicableFallback)", () => {
+    expect(nutriScoreLabel("UNKNOWN", "Unknown", "Exempt")).toBe("Unknown");
+  });
+
+  it("maps NOT-APPLICABLE to fallback when notApplicableFallback is omitted", () => {
     expect(nutriScoreLabel("NOT-APPLICABLE", "Not Rated")).toBe("Not Rated");
     expect(nutriScoreLabel("NOT-APPLICABLE", "?")).toBe("?");
   });

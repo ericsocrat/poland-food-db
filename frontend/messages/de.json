@@ -273,6 +273,8 @@
     "healthScore": "TryVit Score",
     "nutriScore": "Nutri-Score",
     "notRated": "Nicht bewertet",
+    "unknown": "Unbekannt",
+    "notApplicable": "Ausgenommen",
     "calories": "Kalorien",
     "asc": "↑ Aufsteigend",
     "desc": "↓ Absteigend",

@@ -33,6 +33,7 @@ const mockFilterOptions = {
     { label: "A", count: 5 },
     { label: "B", count: 10 },
     { label: "C", count: 8 },
+    { label: "UNKNOWN", count: 51 },
     { label: "NOT-APPLICABLE", count: 3 },
   ],
   nova_groups: [
@@ -147,13 +148,22 @@ describe("FilterPanel", () => {
     expect(screen.getAllByText("C").length).toBeGreaterThanOrEqual(1);
   });
 
-  it('renders "Not Rated" instead of "NOT-APPLICABLE"', async () => {
+  it('renders "Exempt" for NOT-APPLICABLE nutri-score', async () => {
     renderPanel();
     await waitFor(() => {
-      expect(screen.getAllByText("Not Rated").length).toBeGreaterThanOrEqual(1);
+      expect(screen.getAllByText("Exempt").length).toBeGreaterThanOrEqual(1);
     });
     // Raw DB value must NOT appear
     expect(screen.queryAllByText(/NOT.APPLICABLE/i)).toHaveLength(0);
+  });
+
+  it('renders "Unknown" for UNKNOWN nutri-score', async () => {
+    renderPanel();
+    await waitFor(() => {
+      expect(screen.getAllByText("Unknown").length).toBeGreaterThanOrEqual(1);
+    });
+    // Raw DB value must NOT appear
+    expect(screen.queryAllByText(/^UNKNOWN$/)).toHaveLength(0);
   });
 
   it("renders allergen-free filter checkboxes", async () => {
