@@ -421,6 +421,7 @@ export default function SearchPage() {
                   }}
                   className="touch-target flex items-center gap-1.5 text-xs text-foreground-secondary hover:text-foreground"
                   aria-label={t("search.toggleViewMode")}
+                  title={t("search.toggleViewMode")}
                 >
                   {viewMode === "list" ? (
                     <LayoutGrid size={14} aria-hidden="true" className="inline" />
@@ -442,6 +443,7 @@ export default function SearchPage() {
                       type="button"
                       onClick={() => setShowSaveDialog(true)}
                       className="touch-target text-xs text-foreground-muted hover:text-brand"
+                      title={t("search.saveSearch")}
                     >
                       <Save size={14} aria-hidden="true" className="inline" />{" "}
                       <span className="hidden xs:inline">
@@ -454,6 +456,7 @@ export default function SearchPage() {
                   <Link
                     href="/app/search/saved"
                     className="touch-target text-xs text-foreground-muted hover:text-brand"
+                    title={t("search.savedSearches")}
                   >
                     <ClipboardList
                       size={14}
@@ -492,10 +495,35 @@ export default function SearchPage() {
 
           {/* Empty state — no search or filters active */}
           {!isSearchActive && recentSearches.length === 0 && (
-            <EmptyStateIllustration
-              type="no-results"
-              titleKey="search.emptyState"
-            />
+            <div className="space-y-6">
+              <EmptyStateIllustration
+                type="no-results"
+                titleKey="search.emptyState"
+                descriptionKey="search.emptyStateDescription"
+              />
+
+              {/* Popular search suggestions */}
+              <div className="text-center">
+                <p className="mb-2 text-xs font-medium uppercase tracking-wider text-foreground-muted">
+                  {t("search.trySearching")}
+                </p>
+                <div className="flex flex-wrap justify-center gap-2">
+                  {t("search.popularTerms")
+                    .split(",")
+                    .slice(0, 6)
+                    .map((term) => (
+                      <button
+                        key={term}
+                        type="button"
+                        onClick={() => selectRecent(term.trim())}
+                        className="touch-target rounded-full border border-border px-3 py-1.5 text-sm text-foreground-secondary transition-colors hover:border-brand hover:text-brand"
+                      >
+                        {term.trim()}
+                      </button>
+                    ))}
+                </div>
+              </div>
+            </div>
           )}
 
           {/* Loading */}

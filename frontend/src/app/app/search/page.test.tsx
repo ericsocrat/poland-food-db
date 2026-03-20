@@ -228,6 +228,52 @@ describe("SearchPage", () => {
     ).toBeInTheDocument();
   });
 
+  it("renders empty state with description and popular search chips", () => {
+    render(<SearchPage />, { wrapper: createWrapper() });
+    // Description text from search.emptyStateDescription
+    expect(
+      screen.getByText(
+        "Find healthier alternatives, compare products, and make informed choices.",
+      ),
+    ).toBeInTheDocument();
+    // "Try searching for" label
+    expect(screen.getByText("Try searching for")).toBeInTheDocument();
+    // First 6 popular terms rendered as chips
+    expect(screen.getByText("milk")).toBeInTheDocument();
+    expect(screen.getByText("cheese")).toBeInTheDocument();
+    expect(screen.getByText("yogurt")).toBeInTheDocument();
+    expect(screen.getByText("bread")).toBeInTheDocument();
+    expect(screen.getByText("butter")).toBeInTheDocument();
+    expect(screen.getByText("sausage")).toBeInTheDocument();
+    // 7th term should NOT be visible (sliced to 6)
+    expect(screen.queryByText("ham")).not.toBeInTheDocument();
+  });
+
+  it("clicking a popular search chip triggers search", async () => {
+    mockSearchProducts.mockResolvedValue(makeSearchResponse());
+    const user = userEvent.setup();
+
+    render(<SearchPage />, { wrapper: createWrapper() });
+
+    const chip = screen.getByText("milk");
+    await user.click(chip);
+
+    // Input should be populated with the term
+    const input = screen.getByPlaceholderText("Search products…");
+    expect(input).toHaveValue("milk");
+
+    // Search should be triggered
+    await waitFor(() => {
+      expect(mockSearchProducts).toHaveBeenCalled();
+    });
+  });
+
+  it("saved searches link has title attribute for accessibility", () => {
+    render(<SearchPage />, { wrapper: createWrapper() });
+    const link = screen.getByTitle("Saved searches");
+    expect(link).toBeInTheDocument();
+  });
+
   it("submits search on form submit and shows results", async () => {
     mockSearchProducts.mockResolvedValue(makeSearchResponse());
     const user = userEvent.setup();
